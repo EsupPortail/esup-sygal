@@ -1,0 +1,120 @@
+<?php
+
+use Application\Entity\Db\These;
+use Application\Entity\Db\TypeValidation;
+use Application\Entity\Db\Validation;
+use Application\Provider\Privilege\ThesePrivileges;
+use Application\Provider\Privilege\ValidationPrivileges;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer      $this
+ * @var These            $these
+ * @var string           $validationDepotTheseCorrigeeUrl
+ * @var string           $validationCorrectionTheseUrl
+ * @var TypeValidation   $typeValidation
+ * @var Validation|null  $validation
+ * @var string           $nextStepUrl
+ */
+
+$canValidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE);
+$canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE);
+
+?>
+
+<?php $this->headTitle("Validations")->prepend($these->getDoctorant()->getNomUsuel()) ?>
+
+<h1 class="page-header">Validations
+    <small><?php echo $this->partial('application/these/partial/titre') ?></small>
+</h1>
+
+<!-------------------------------------- Validation dépôt thèse corrigée --------------------------------------->
+<div id="validationDepotTheseCorrigeeDiv" data-url="<?php echo $validationDepotTheseCorrigeeUrl ?>">
+    <!-- màj via ajax -->
+</div>
+
+<!-------------------------------------- Validation correction thèse --------------------------------------->
+<div id="validationCorrectionTheseDiv" data-url="<?php echo $validationCorrectionTheseUrl ?>">
+    <!-- màj via ajax -->
+</div>
+
+<!-------------------------------------- Next step --------------------------------------->
+<div id="nextStepDiv" data-url="<?php echo $nextStepUrl ?>" style="display: none">
+    <!-- màj via ajax -->
+</div>
+
+
+
+<script>
+    $(function () {
+        var body = $("body");
+        var self = this;
+
+        var validationDepotTheseCorrigeeDiv = $("#validationDepotTheseCorrigeeDiv");
+        var validationCorrectionTheseDiv    = $("#validationCorrectionTheseDiv");
+
+        var validationDepotTheseCorrigeeDivLoader = function(done, effect) {
+            return function() {
+                validationDepotTheseCorrigeeDiv.addClass("loading").refresh(null, function () {
+                    $(this).removeClass("loading");
+                    if (effect) {
+                        $(this).hide().fadeIn(250);
+                    } else {
+                        $(this).show();
+                    }
+                    if (done) done();
+                });
+            };
+        };
+        var validationCorrectionTheseDivLoader = function(done, effect) {
+            return function() {
+                validationCorrectionTheseDiv.addClass("loading").refresh(null, function () {
+                    $(this).removeClass("loading");
+                    if (effect) {
+                        $(this).hide().fadeIn(250);
+                    } else {
+                        $(this).show();
+                    }
+                    if (done) done();
+                });
+            };
+        };
+        var refreshingNextStep = function(done, effect) {
+            return function() {
+                console.log("refreshingNextStep");
+                $("#nextStepDiv").addClass("loading").refresh(null, function () {
+                    $(this).removeClass("loading").show();
+                    if (done) done();
+                });
+            };
+        };
+
+        // Au chargement de la page, on actualise les div
+        runInCascade([
+            { func: validationDepotTheseCorrigeeDivLoader, effect: true },
+            { func: validationCorrectionTheseDivLoader, effect: true },
+            refreshingNextStep
+        ], self);
+
+        // Validation dépôt thèse corrigée enregistrée dans la modale
+        body.on("event-validation-depot-these-corrigee", function (event) {
+            // Les métadonnées viennent d'être modifiées.
+            event.div.modal('hide'); // ferme la fenêtre modale
+            runInCascade([
+                { func: validationDepotTheseCorrigeeDivLoader, effect: true },
+                { func: validationCorrectionTheseDivLoader, effect: true },
+                refreshingNextStep
+            ], self);
+        });
+
+        // Validation correction thèse enregistrée dans la modale
+        body.on("event-validation-correction-these", function (event) {
+            // Les métadonnées viennent d'être modifiées.
+            event.div.modal('hide'); // ferme la fenêtre modale
+            runInCascade([
+                { func: validationCorrectionTheseDivLoader, effect: false },
+                refreshingNextStep
+            ], self);
+        });
+    });
+</script>

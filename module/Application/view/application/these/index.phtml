@@ -1,0 +1,104 @@
+<?php
+
+use Application\Entity\Db\Role;
+use Application\Entity\Db\These;
+use Application\Filter\ActeursFormatter;
+use Application\Provider\Privilege\ExportPrivileges;
+use Application\Provider\Privilege\ThesePrivileges;
+use Application\View\Renderer\PhpRenderer;
+use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenAuth\Provider\Privilege\Privileges;
+use Zend\Paginator\Paginator;
+
+/**
+ * @var PhpRenderer $this
+ * @var Paginator   $theses
+ * @var string      $text
+ * @var Role        $roleDirecteurThese
+ */
+
+$queryParams = $this->queryParams();
+
+$canExport = $this->isAllowed(Privileges::getResourceId(ThesePrivileges::THESE_EXPORT_CSV));
+
+$acteursFormatter = new ActeursFormatter();
+$acteursFormatter->asSeparated()
+    ->paramDisplay(['role' => false, 'complement' => false, "qualite" => false, "etablissement" => false,])
+    ->paramFilter((['role' => "Directeur de thèse"]));
+?>
+
+<h1 class="page-header">Thèses</h1>
+
+<?php $this->headTitle("Thèses") ?>
+
+<div class="pull-left">
+    <!-- Formulaire de filtrage -->
+    <?php echo $this->partial('partial/form-filtrage') ?>
+</div>
+<div class="pull-right">
+    <!-- Formulaire de recherche -->
+    <?php echo $this->partial('partial/form-recherche', ['text' => $text]) ?>
+</div>
+<div class="clearfix"></div>
+
+<p>
+    <?php echo $theses->getTotalItemCount() ?> thèse(s) trouvée(s).
+</p>
+
+<table class="table table-condensed">
+    <thead>
+    <tr>
+        <th><a href="<?php echo $s = $this->sortable('t.titre'); ?>">Titre</a> <?php echo $s->icon() ?></th>
+        <th><a href="<?php echo $s = $this->sortable('th.sourceCode'); ?>" title="Numéro étudiant">N°étud.</a> <?php echo $s->icon() ?></th>
+        <th><a href="<?php echo $s = $this->sortable('th.nomUsuel+th.prenom'); ?>">Doctorant</a> <?php echo $s->icon() ?></th>
+        <th>Dir. de thèse</th>
+        <?php if (empty($queryParams['etatThese'])): ?>
+            <th><a href="<?php echo $s = $this->sortable('t.etatThese'); ?>">État</a> <?php echo $s->icon() ?></th>
+        <?php endif ?>
+        <th><a href="<?php echo $s = $this->sortable('ed.sourceCode'); ?>" title="École doctorale">École<br>doct.</a> <?php echo $s->icon() ?></th>
+        <th><a href="<?php echo $s = $this->sortable('ur.sourceCode'); ?>" title="Unité de recherche">Unité<br>rech.</a> <?php echo $s->icon() ?></th>
+        <th><a href="<?php echo $s = $this->sortable('t.datePremiereInscription'); ?>" title="Date de première inscription">Date 1ère<br>inscr.</a> <?php echo $s->icon() ?></th>
+        <th style="display: none;"><a href="<?php echo $s = $this->sortable('t.resultat'); ?>" title="Résultat de la thèse">Rés.</a> <?php echo $s->icon() ?></th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php /** @var These $these */
+    foreach ($theses as $these): ?>
+        <tr>
+            <td>
+                <span title="<?php echo $these->getTitre() ?>"><a href="<?php echo $this->url('these/identite', ['these' => $these->getId()]) ?>"
+                    ><?php echo $this->partial('application/these/partial/titre', ['these' => $these, 'useTitreThese' => true]) ?></a>
+                </span>
+            </td>
+            <td><?php echo $these->getDoctorant()->getSourceCode() ?></td>
+            <td><?php echo $these->getDoctorant()->getNomComplet() ?></td>
+            <td class="acteurs">
+
+                <?php
+                $directeurs = $acteursFormatter->filter($these->getActeurs());
+                foreach ($directeurs as $directeur) {
+                    echo $acteursFormatter->htmlifyActeur($directeur)."<br/>";
+                }
+                ?>
+            <?php if (empty($queryParams['etatThese'])): ?>
+                <td><span title="<?php echo $these->getEtatTheseToString() ?>"><?php echo $these->getEtatThese() ?></span></td>
+            <?php endif ?>
+            <td>
+                <?php if($these->getEcoleDoctorale()): ?>
+                <abbr title="<?php echo $these->getEcoleDoctorale()->getLibelle() ?>"><?php echo $these->getEcoleDoctorale()->getSourceCode() ?></abbr>
+                <?php endif ?>
+            </td>
+            <td><abbr title="<?php echo $these->getLibelleUniteRecherche() ?>"><?php echo $these->getCodeUniteRecherche() ?></abbr></td>
+            <td><?php echo $these->getDatePremiereInscriptionToString() ?></td>
+            <td style="display: none;"><abbr title="<?php echo $these->getResultatToString(false) ?>"><?php echo $these->getResultatToString(true) ?></abbr></td>
+        </tr>
+    <?php endforeach ?>
+    </tbody>
+</table>
+
+<?php echo $paginationControl = $this->paginationControl($theses, 'sliding', 'partial/paginator.phtml', ['route' => 'these']) ?>
+
+<?php if ($canExport): ?>
+    <a class="btn btn-default" href="<?php echo $this->url('export/csv', [], ['query' => $queryParams]) ?>"
+        ><span class="glyphicon glyphicon-export"></span> Exporter au format CSV</a>
+<?php endif ?>

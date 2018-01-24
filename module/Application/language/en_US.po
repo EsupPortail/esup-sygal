@@ -1,0 +1,488 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-01-12 16:01+0100\n"
+"PO-Revision-Date: 2018-01-16 11:32+0100\n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"X-Generator: Poedit 1.8.7.1\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-01-12 16:10+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-01-12 16:17+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-01-12 16:56+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-01-15 08:46+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-01-15 08:58+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-01-15 09:06+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-01-15 10:27+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-01-15 10:40+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-01-15 10:40+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-01-15 10:44+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-01-16 08:55+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-01-16 09:00+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-01-16 10:58+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-01-16 11:18+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-01-16 11:31+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: module/Application/view/application/admin/index.phtml:1
+#: module/Application/view/application/admin/index.phtml:5
+msgid "Administration"
+msgstr "Administration"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:20
+#: module/Application/view/application/ecole-doctorale/index.phtml:22
+msgid "Écoles doctorales"
+msgstr "Doctoral Schools"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:30
+msgid "Libellé"
+msgstr "Name"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:31
+msgid "Sigle"
+msgstr "Sigle"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:32
+msgid "Code"
+msgstr "Code"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:33
+#: module/Application/view/application/ecole-doctorale/index.phtml:85
+msgid "Actions"
+msgstr "Actions"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:47
+msgid "Cliquez pour sélectionner cette école doctorale"
+msgstr "Click to select this doctoral school"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:57
+msgid "Modifier l'école doctorale"
+msgstr "Modify "
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:62
+msgid "Supprimer l'école doctorale"
+msgstr "Remove "
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:68
+msgid "Restaurer l'école doctorale"
+msgstr "Restore "
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:70
+msgid "Restaurer"
+msgstr "Restore"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:79
+msgid "Membres"
+msgstr "Members"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:83
+msgid "Individu"
+msgstr "Person"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:84
+msgid "Rôle"
+msgstr "Role"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:95
+msgid "Retirer"
+msgstr "Revoke "
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:104
+msgid "Aucun"
+msgstr "None"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:114
+msgid "Recherche d'un individu à ajouter :"
+msgstr "Searching a person to be added:"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:119
+msgid "Ajouter cet individu"
+msgstr "Add this person"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:120
+msgid "Ajouter cet individu comme membre"
+msgstr "Add this person as member"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:135
+msgid "Créer une nouvelle ED"
+msgstr "Create a new doctoral school"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:136
+msgid "Ajouter"
+msgstr "Add"
+
+#: module/Application/view/application/index/index.phtml:44
+msgid "Connectez-vous..."
+msgstr "Log on yourself ..."
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:146
+msgid "Êtes-vous sûr-e de vouloir retirer "
+msgstr "Are you sure you want to remove "
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:146
+msgid "de la liste des membres ?"
+msgstr "of the list of members ?"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:150
+msgid "Êtes-vous sûr-e de vouloir supprimer l'école doctorale "
+msgstr "Are you sure you want to remove the doctoral school "
+
+#: module/Application/view/application/ecole-doctorale/modifier.phtml:27
+msgid "Libellé :"
+msgstr "Name:"
+
+#: module/Application/view/application/ecole-doctorale/modifier.phtml:28
+msgid "Sigle :"
+msgstr "Sigle:"
+
+#: module/Application/view/application/ecole-doctorale/modifier.phtml:29
+msgid "Code :"
+msgstr "Code:"
+
+#: module/Application/view/application/ecole-doctorale/modifier.phtml:30
+msgid "Enregistrer"
+msgstr "Save"
+
+#: module/Application/view/application/unite-recherche/index.phtml:20
+#: module/Application/view/application/unite-recherche/index.phtml:22
+msgid "Unités de recherche"
+msgstr "Research Units"
+
+#: module/Application/view/application/unite-recherche/index.phtml:47
+msgid "Cliquez pour sélectionner cette unité de recherche"
+msgstr "Click to select this research unit"
+
+#: module/Application/view/application/unite-recherche/index.phtml:56
+msgid "Modifier l'unité de recherche"
+msgstr "Modify "
+
+#: module/Application/view/application/unite-recherche/index.phtml:62
+msgid "Supprimer l'unité de recherche"
+msgstr "Remove "
+
+#: module/Application/view/application/unite-recherche/index.phtml:69
+msgid "Restaurer l'unité de recherche"
+msgstr "Restore "
+
+#: module/Application/view/application/unite-recherche/index.phtml:142
+msgid "Créer une nouvelle UR"
+msgstr "Create a new research unit"
+
+#: module/Application/view/application/unite-recherche/index.phtml:158
+msgid "Êtes-vous sûr-e de vouloir supprimer l'unité de recherche"
+msgstr "Are you sure you want to remove the research unit "
+
+#: module/Application/view/application/utilisateur/index.phtml:117
+msgid "Ajouter un utilisateur"
+msgstr "Add a user"
+
+#: module/Application/view/application/utilisateur/index.phtml:130
+msgid "Ajouter cet individu comme utilisateur"
+msgstr "Add this person as user"
+
+#: module/Application/view/application/utilisateur/index.phtml:27
+#: module/Application/view/application/utilisateur/index.phtml:29
+msgid "Utilisateurs"
+msgstr "Users"
+
+#: module/Application/view/application/utilisateur/index.phtml:35
+msgid "Sur cette page vous pouvez attribuer les rôles suivants :"
+msgstr "On this page, you can assign the following roles:"
+
+#: module/Application/view/application/utilisateur/index.phtml:47
+#: module/Application/view/application/utilisateur/index.phtml:55
+msgid "Si vous voulez attribuer le rôle &laquo;"
+msgstr "If you want to assign the role ''"
+
+#: module/Application/view/application/utilisateur/index.phtml:49
+#: module/Application/view/application/utilisateur/index.phtml:57
+msgid "&raquo;, rendez-vous sur la page"
+msgstr "'', go to the page"
+
+#: module/Application/view/application/utilisateur/index.phtml:66
+msgid ""
+"Les rôles suivants sont attribués automatiquement à partir des données "
+"importées d'Apogée :"
+msgstr ""
+"The following roles are automatically assigned from imported Apogée data:"
+
+#: module/Application/view/application/utilisateur/index.phtml:174
+msgid "Unité de recherche"
+msgstr "Research Unit"
+
+#: module/Application/view/application/utilisateur/index.phtml:175
+msgid "École doctorale"
+msgstr "Doctoral School"
+
+#: module/Application/view/application/utilisateur/index.phtml:177
+msgid "Administrateur"
+msgstr "Administrator"
+
+#: module/Application/view/application/utilisateur/index.phtml:178
+msgid "Administrateur technique"
+msgstr "Technical Administrator"
+
+#: module/Application/view/application/utilisateur/index.phtml:179
+msgid "Bibliothèque universitaire"
+msgstr "University Library"
+
+#: module/Application/view/application/utilisateur/index.phtml:180
+msgid "Bureau des doctorats"
+msgstr "Doctorate Office"
+
+#: module/Application/view/application/utilisateur/index.phtml:181
+msgid "Observateur"
+msgstr "Observator"
+
+#: module/Application/view/application/utilisateur/index.phtml:183
+msgid "Directeur de thèse"
+msgstr "PhD Supervisor"
+
+#: module/Application/view/application/utilisateur/index.phtml:184
+msgid "Doctorant"
+msgstr "PhD Student"
+
+#: module/Application/view/application/utilisateur/index.phtml:185
+msgid "Membre du jury"
+msgstr "Member of the Jury"
+
+#: module/Application/view/application/utilisateur/index.phtml:186
+msgid "Rapporteur du jury"
+msgstr "Jury Reporter"
+
+#: module/Application/view/application/utilisateur/index.phtml:90
+msgid "Nom"
+msgstr "Name"
+
+#: module/Application/view/application/utilisateur/index.phtml:93
+msgid "Identifiant"
+msgstr "Identifier"
+
+#: module/Application/view/application/utilisateur/index.phtml:96
+msgid "Email"
+msgstr "Email"
+
+#: module/Application/view/application/utilisateur/index.phtml:99
+msgid "Rôles statiques"
+msgstr "Static Roles"
+
+#: module/Application/view/application/utilisateur/index.phtml:196
+msgid "(Aucun)"
+msgstr "(None)"
+
+#: module/Application/view/application/utilisateur/index.phtml:197
+#, php-format
+msgid "%s rôles sélectionnés"
+msgstr "%s selected roles"
+
+#: module/Application/view/application/utilisateur/index.phtml:167
+msgid "rôles sélectionnés"
+msgstr "selected roles"
+
+#: module/Application/view/application/fichier-these/deposes.phtml:18
+#: module/Application/view/application/fichier-these/deposes.phtml:20
+msgid "Fichiers déposés"
+msgstr "Stored Files"
+
+#: module/Application/view/application/fichier-these/deposes.phtml:23
+msgid "fichier(s) trouvé(s)"
+msgstr "found file(s)"
+
+#: module/Application/view/application/fichier-these/deposes.phtml:30
+msgid "Fichier"
+msgstr "File"
+
+#: module/Application/view/application/fichier-these/deposes.phtml:33
+msgid "Nom original"
+msgstr "Initial name"
+
+#: module/Application/view/application/fichier-these/deposes.phtml:36
+msgid "Version"
+msgstr "Version"
+
+#: module/Application/view/application/fichier-these/deposes.phtml:39
+msgid "Thèse"
+msgstr "Phd These"
+
+#: module/Application/view/application/fichier-these/deposes.phtml:45
+msgid "Archivable"
+msgstr "Archivability"
+
+#: module/Application/view/application/fichier-these/deposes.phtml:48
+msgid "Valide"
+msgstr "Valid"
+
+#: module/Application/view/application/fichier-these/deposes.phtml:89
+msgid "Oui"
+msgstr "Yes"
+
+#: module/Application/view/application/fichier-these/deposes.phtml:90
+msgid "Non"
+msgstr "No"
+
+#: module/Application/view/application/fichier-these/deposes.phtml:91
+msgid "Mr"
+msgstr "Mr"
+
+#: module/Application/view/application/fichier-these/deposes.phtml:92
+msgid "Mme"
+msgstr "Mrs"
+
+#: module/Application/view/application/fichier-these/deposes.phtml:99
+msgid "M"
+msgstr "M"
+
+#: module/Application/view/application/fichier-these/deposes.phtml:101
+msgid "le"
+msgstr "on"
+
+#: module/Application/view/application/fichier-these/deposes.phtml:102
+msgid "à"
+msgstr "at"
+
+#: module/Application/view/application/fichier-these/deposes.phtml:103
+msgid "Télécharger le fichier déposé"
+msgstr "Download the stored file"

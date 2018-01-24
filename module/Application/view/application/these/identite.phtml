@@ -1,0 +1,326 @@
+<?php
+
+use Application\Entity\Db\These;
+use Application\Entity\Db\Acteur;
+use Application\Entity\Db\Individu;
+use Application\Filter\ActeursFormatter;
+use Application\Entity\Db\WfEtape;
+use Application\Provider\Privilege\DoctorantPrivileges;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var        $this PhpRenderer
+ * @var These  $these
+ * @var string $modifierPersopassUrl
+ * @var bool   $estDoctorant
+ * @var bool   $showCorrecAttendue
+ * @var string $pvSoutenanceUrl
+ * @var string $rapportSoutenanceUrl
+ * @var string $preRapportSoutenanceUrl
+ * @var string $demandeConfidentUrl
+ * @var string $prolongConfidentUrl
+ * @var string $convMiseEnLigneUrl
+ * @var string $avenantConvMiseEnLigneUrl
+ * @var string $nextStepUrl
+ */
+
+$canEditPersopass = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_MODIFICATION_PERSOPASS);
+$canEditPersopass = $canEditPersopass && (!$estDoctorant || !$these->getDoctorant()->getPersopass());
+
+$persopassModifiedEvent = 'persopass-modified-event';
+?>
+
+<?php $this->headTitle("Thèse")->prepend($these->getDoctorant()->getNomUsuel()) ?>
+
+<h1 class="page-header">Thèse <small><?php echo $this->partial('application/these/partial/titre') ?></small></h1>
+
+<a class='navbar-link' data-placement='bottom' data-toggle='popover' data-html='true'  id='thistest' title='ceci est un test' data-content='ceci est un test !!!' >test</a>
+
+<div class="box panel panel-info">
+
+    <div class="panel-heading">
+        <h2 class="first">Fiche</h2>
+    </div>
+
+    <div class="panel-body">
+
+        <div id="photo-div" class="pull-right">
+            <div class="photo-placeholder loading" data-src="<?php echo $this->url('leocarte/photo', ['id' => $these->getDoctorant()->getSourceCode()]) ?>"></div>
+        </div>
+
+        <dl class="dl-horizontal">
+
+            <dt>Doctorant</dt>
+            <dd>
+                <?php echo $these->getDoctorant()->getNomComplet(true, true, true) ?>
+                (<?php echo $these->getDoctorant()->getDateNaissanceToString() ?>)  <br>
+                <strong>Nationalité :</strong> <?php echo $these->getDoctorant()->getNationalite() ?> <br>
+                <strong>N° étudiant :</strong> <?php echo $these->getDoctorant()->getSourceCode() ?> <br>
+                <strong>PersoP@ss :</strong> <?php echo $these->getDoctorant()->getPersopass() ?: "(Non renseigné)" ?>
+                <?php if ($canEditPersopass): ?>
+                    <a href="<?php echo $modifierPersopassUrl ?>" data-event="<?php echo $persopassModifiedEvent ?>"
+                       class="btn btn-default btn-xs ajax-modal"><span class="glyphicon glyphicon-pencil"></span> Modifier</a>
+                <?php endif ?> <br>
+                <strong>Mèl :</strong>
+                <?php if ($email = $these->getDoctorant()->getEmailPro() ?: $these->getDoctorant()->getEmail()): ?>
+                    <a href="mailto: <?php echo $email ?>"><?php echo $email ?></a>
+                <?php else: ?>
+                    (Inconnu)
+                <?php endif ?>
+            </dd>
+
+            <?php
+            //AFFICHAGE DES ACTEURS DE LA THESE
+            $acteursFormatter = new ActeursFormatter();
+            $acteursFormatter->paramDisplay(["role" => true,"complement" => false, "qualite" => true, "etablissement" => true]);
+            $acteursFormatter->asArray();
+
+            $acteurs = $these->getActeurs()->toArray();
+            usort($acteurs, [Acteur::class, 'cmp']);
+            $results = $acteursFormatter->doFormat($acteurs);
+
+            $previous = "";
+            foreach($results as $result) {
+
+                    if ($previous != $result["role"]) {
+                        echo "</dd>";
+                        echo "<dt>" . $result["role"] . "</dt>";
+                        echo "<dd>";
+                        $previous = $result["role"];
+                    }
+                    if (isset($result["nom"])           )              echo $result["nom"];
+                    if (isset($result["qualite"])           && trim($result["qualite"]) != "")          echo ", ".$result["qualite"];
+                    if (isset($result["etablissement"])     && trim($result["etablissement"]) != "")    echo ", ".$result["etablissement"];
+                    if (isset($result["complement"]))       echo ", (" . $result["complement"] . ")";
+                    echo "<br/>";
+
+            }
+            echo "<br/>";
+
+
+            ?>
+
+            <dt>École doctorale</dt>
+            <dd>
+                <?php if($these->getEcoleDoctorale()): ?>
+                    <?php echo $these->getEcoleDoctorale()->getSourceCode() . " - " . $these->getEcoleDoctorale()->getLibelle() ?>
+                <?php endif ?>
+            </dd>
+
+            <dt>Unité de recherche</dt>
+            <dd><?php echo $these->getCodeUniteRecherche() . " - " . $these->getLibelleUniteRecherche() ?></dd>
+
+            <dt>Titre</dt>
+            <dd><?php echo $these->getTitre() ?></dd>
+
+            <dt>Confidentialité</dt>
+            <?php if ($these->etaitConfidentielle()): ?>
+                <dd>Confidentielle, jusqu'au <?php echo $these->getDateFinConfidentialiteToString() ?></dd>
+            <?php elseif ($these->estConfidentielle()): ?>
+                <dd class="text-danger">Confidentielle, jusqu'au <?php echo $these->getDateFinConfidentialiteToString() ?></dd>
+            <?php else: ?>
+                <dd>Non confidentielle</dd>
+            <?php endif ?>
+
+            <dt>État</dt>
+            <dd>
+                <?php echo $these->getEtatTheseToString() ?>
+            </dd>
+
+            <?php if ($resultat = $these->getResultatToString(false)): ?>
+            <dt>Résultat</dt>
+            <dd>
+                <?php echo $resultat ?>
+            </dd>
+            <?php endif ?>
+
+            <dt>Discipline</dt>
+            <dd><?php echo $these->getLibelleDiscipline() ?></dd>
+
+            <dt>Date de première<br>inscription</dt>
+            <dd><?php echo $these->getDatePremiereInscriptionToString() ?: "(Non renseignée)" ?></dd>
+
+            <?php if ($these->getSoutenanceAutorisee()): ?>
+                <dt>Soutenance autorisée</dt>
+                <dd><?php echo $these->getSoutenanceAutorisee() === 'O' ? "Oui" : "Non" ?></dd>
+            <?php endif ?>
+
+            <?php if ($these->getDateSoutenance()): ?>
+                <dt>Date réelle<br>de soutenance</dt>
+                <dd><?php echo $these->getDateSoutenanceToString() ?></dd>
+            <?php else: ?>
+                <dt>Date prévisionnelle<br>de soutenance</dt>
+                <dd><?php echo $these->getDatePrevisionSoutenanceToString() ?: "(Non renseignée)" ?></dd>
+            <?php endif ?>
+
+            <?php if ($these->getLibelleEtabCotutelle()): ?>
+                <dt>Cotutelle</dt>
+                <dd>En cotutelle avec <?php echo $these->getLibelleEtabCotutelle() ?>,
+                    <?php echo $these->getLibellePaysCotutelle() ?></dd>
+            <?php endif ?>
+
+            <?php if ($showCorrecAttendue): ?>
+                <?php if ($these->getCorrectionAutoriseeEstMineure()): ?>
+                    <dt class="text-warning">Corrections attendues</dt>
+                    <?php if ($these->getDateButoirDepotVersionCorrigeeDepassee()): ?>
+                        <dd class="text-warning">
+                            Non. Délai pour corrections mineures écoulé : la version déposée avant soutenance
+                            constitue désormais la version de référence.
+                        </dd>
+                    <?php else: ?>
+                        <dd class="text-warning">
+                            Oui, mineures.
+                        </dd>
+                    <?php endif ?>
+                <?php elseif ($these->getCorrectionAutoriseeEstMajeure()): ?>
+                    <dt class="text-danger">Corrections attendues</dt>
+                    <?php if ($these->getDateButoirDepotVersionCorrigeeDepassee()): ?>
+                        <dd class="text-danger">
+                            Non. Délai pour corrections majeures écoulé : ni l’attestation de réussite ni
+                            le diplôme ne peuvent désormais être délivrés.
+                        </dd>
+                    <?php else: ?>
+                        <dd class="text-danger">
+                            Oui, majeures.
+                        </dd>
+                    <?php endif ?>
+                <?php endif ?>
+            <?php endif ?>
+
+        </dl>
+
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div id="pvSoutenanceDiv" class="" data-url="<?php echo $pvSoutenanceUrl ?>">
+            <!-- màj via ajax -->
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div id="preRapportSoutenanceDiv" class="" data-url="<?php echo $preRapportSoutenanceUrl ?>">
+            <!-- màj via ajax -->
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div id="rapportSoutenanceDiv" class="" data-url="<?php echo $rapportSoutenanceUrl ?>">
+            <!-- màj via ajax -->
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div id="demandeConfidentDiv" class="" data-url="<?php echo $demandeConfidentUrl ?>">
+            <!-- màj via ajax -->
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div id="prolongConfidentDiv" class="" data-url="<?php echo $prolongConfidentUrl ?>">
+            <!-- màj via ajax -->
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div id="convMiseEnLigneDiv" class="" data-url="<?php echo $convMiseEnLigneUrl ?>">
+            <!-- màj via ajax -->
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div id="avenantConvMiseEnLigneDiv" class="" data-url="<?php echo $avenantConvMiseEnLigneUrl ?>">
+            <!-- màj via ajax -->
+        </div>
+    </div>
+</div>
+
+<!-------------------------------------- Next step --------------------------------------->
+<div id="nextStepDiv" data-url="<?php echo $nextStepUrl ?>" style="display: none">
+    <!-- màj via ajax -->
+</div>
+
+
+
+<script>
+    $(function () {
+        var body = $("body");
+        var self = this;
+
+        var loaderFactory = function(divName) {
+            return function(done, effect) {
+                return function() {
+                    $("#" + divName).addClass("loading").refresh(null, function () {
+                        $(this).removeClass("loading").show();
+                        if (done) done();
+                    });
+                };
+            };
+        };
+
+        var pvSoutenanceLoader = loaderFactory("pvSoutenanceDiv");
+        var rapportSoutenanceLoader = loaderFactory("rapportSoutenanceDiv");
+        var preRapportSoutenanceLoader = loaderFactory("preRapportSoutenanceDiv");
+
+        var demandeConfidentLoader = loaderFactory("demandeConfidentDiv");
+        var prolongConfidentLoader = loaderFactory("prolongConfidentDiv");
+        var convMiseEnLigneLoader = loaderFactory("convMiseEnLigneDiv");
+        var avenantConvMiseEnLigneLoader = loaderFactory("avenantConvMiseEnLigneDiv");
+
+        var refreshingNextStep = loaderFactory("nextStepDiv");
+
+        // Au chargement de la page, on actualise les div
+        runInCascade([
+            pvSoutenanceLoader,
+            preRapportSoutenanceLoader,
+            rapportSoutenanceLoader,
+            refreshingNextStep,
+            demandeConfidentLoader,
+            prolongConfidentLoader,
+            convMiseEnLigneLoader,
+            avenantConvMiseEnLigneLoader,
+        ], self);
+
+
+        body.one("<?php echo $persopassModifiedEvent ?>", function (event, data) {
+            // Le persopass vient d'être modifié.
+            event.div.modal('hide'); // ferme la fenêtre modale
+            window.location.reload();
+        });
+
+        $(window).load(function() {
+            $(".photo-placeholder").each(function() {
+                loadPhoto(this);
+            });
+        });
+    });
+
+    function loadPhoto(photoPlaceholder)
+    {
+        var photoUrl = $(photoPlaceholder).data('src');
+
+        //create image to preload:
+        var imgPreload = new Image();
+        $(imgPreload).load(function (response, status, xhr) {
+            if (status == 'error') {
+                imgPreload = null;
+            }
+            insertResult();
+        });
+        $(imgPreload).attr({
+            src: photoUrl,
+            width: $(photoPlaceholder).css('width')
+        });
+
+        function insertResult() {
+            var content = imgPreload ? $(imgPreload) : $("<span />").html("Erreur!");
+            $(photoPlaceholder).removeClass('loading').replaceWith(content);
+        }
+    }
+</script>

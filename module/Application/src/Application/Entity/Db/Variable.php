@@ -1,0 +1,139 @@
+<?php
+
+namespace Application\Entity\Db;
+
+use UnicaenApp\Entity\HistoriqueAwareInterface;
+use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
+
+/**
+ * Variable
+ */
+class Variable implements HistoriqueAwareInterface
+{
+    use HistoriqueAwareTrait;
+    use SourceAwareTrait;
+
+    const SOURCE_CODE_ETB_ART_ETB_LIB = 'ETB_ART_ETB_LIB';      // Ex: "L'"
+    const SOURCE_CODE_ETB_LIB = 'ETB_LIB';                      // Ex: "Université de Caen Normandie"
+    const SOURCE_CODE_ETB_LIB_TIT_RESP = 'ETB_LIB_TIT_RESP';    // Ex: "Le Président"
+    const SOURCE_CODE_ETB_LIB_NOM_RESP = 'ETB_LIB_NOM_RESP';    // Ex: "Pierre Denise"
+
+    /**
+     * @var string
+     */
+    private $description;
+
+    /**
+     * @var string
+     */
+    private $valeur;
+
+    /**
+     * @var string
+     */
+    private $sourceCode;
+
+    /**
+     * @var integer
+     */
+    private $id;
+
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     *
+     * @return Variable
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * Set valeur
+     *
+     * @param string $valeur
+     *
+     * @return Variable
+     */
+    public function setValeur($valeur)
+    {
+        $this->valeur = $valeur;
+
+        return $this;
+    }
+
+    /**
+     * Get valeur
+     *
+     * @return string
+     */
+    public function getValeur()
+    {
+        return $this->valeur;
+    }
+
+    /**
+     * Set sourceCode
+     *
+     * @param string $sourceCode
+     *
+     * @return Variable
+     */
+    public function setSourceCode($sourceCode)
+    {
+        $this->sourceCode = $sourceCode;
+
+        return $this;
+    }
+
+    /**
+     * Get sourceCode
+     *
+     * @return string
+     */
+    public function getSourceCode()
+    {
+        return $this->sourceCode;
+    }
+
+    /**
+     * Set id
+     *
+     * @param integer $id
+     *
+     * @return Variable
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+}
+

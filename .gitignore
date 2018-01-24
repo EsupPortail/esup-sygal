@@ -1,0 +1,4 @@
+auth.json
+vendor/
+.idea/
+data/DoctrineORMModule/

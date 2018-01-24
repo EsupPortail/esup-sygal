@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="Application\Entity\Db\ImportObservNotif" table="IMPORT_OBS_NOTIF">
+
+        <id name="id" type="integer" column="ID"/>
+
+        <many-to-one field="importObserv" target-entity="Application\Entity\Db\ImportObserv">
+            <join-columns>
+                <join-column name="IMPORT_OBSERV_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="notif" target-entity="Notification\Entity\Notif">
+            <join-columns>
+                <join-column name="NOTIF_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
+    </entity>
+</doctrine-mapping>

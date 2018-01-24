@@ -1,0 +1,26 @@
+<?php
+/**
+ * @var PhpRenderer $this
+ * @var array       $messages
+ */
+
+use Application\View\Renderer\PhpRenderer;
+
+$subtitle = "SOutenance, Doctorat et Organisation du Circuit des Thèses";
+?>
+
+<?php $this->headTitle("Accueil") ?>
+
+<div class="jumbotron">
+
+    <h1 class="page-header">SoDoct</h1>
+
+    <p class="appname-subtitle">
+        <strong><?php echo $subtitle ?></strong>
+    </p>
+
+    <?php echo $this->messenger()->setMessages($messages); ?>
+
+    <?php echo $this->content ?>
+
+</div>

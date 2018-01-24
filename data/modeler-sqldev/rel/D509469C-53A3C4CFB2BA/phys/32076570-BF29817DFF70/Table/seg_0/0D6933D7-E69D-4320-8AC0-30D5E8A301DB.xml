@@ -1,0 +1,128 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<TableProxyOraclev11g class="oracle.dbtools.crest.model.design.storage.oracle.v11g.TableProxyOraclev11g" name="INDIVIDU" directorySegmentName="seg_0" id="0D6933D7-E69D-4320-8AC0-30D5E8A301DB">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<schemaObject>2C79EC04-6E03-C462-036D-1ED1958B7C87</schemaObject>
+<logging>YES</logging>
+<partitionedRowMovement>DISABLE</partitionedRowMovement>
+<segment>42E9A3FF-DE12-77CD-96D8-7A0C8D0BD23D</segment>
+<tableSpace>21672606-61A9-C2B3-9166-9F3C6D240B0D</tableSpace>
+<temporaryChanged>false</temporaryChanged>
+<accessDriverType>oracle_loader</accessDriverType>
+<rejectLimit></rejectLimit>
+<indexProxies>
+<IndexProxy class="oracle.dbtools.crest.model.design.storage.oracle.v10g.IndexProxyOraclev10g" name="INDIVIDU_PK" id="AB046CF7-5569-8F12-6284-A7287306AA51">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<schemaObject>2C79EC04-6E03-C462-036D-1ED1958B7C87</schemaObject>
+<segment>895323A9-EA20-878A-1B2B-67DBAB21D67A</segment>
+<tableSpace>21672606-61A9-C2B3-9166-9F3C6D240B0D</tableSpace>
+</IndexProxy>
+</indexProxies>
+<columnProxies itemClass="oracle.dbtools.crest.model.design.storage.oracle.v12c.ColumnProxyOraclev12c">
+<ColumnProxy name="SOURCE_CODE" id="1012EE3A-1D85-30CA-D6B9-0E20A76035D3">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="TEL" id="2DE19E3E-672B-A9F1-74D8-32BAA3A96EEE">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="HISTO_CREATEUR_ID" id="418D7149-9215-C24B-F982-4609D1E56222">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="CIVILITE" id="59CCACE9-04A0-85B3-C1D7-70A867A6507A">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="HISTO_MODIFICATION" id="751BA6D7-C261-C167-C2D3-39D64BB115E3">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<defaultValue>SYSDATE</defaultValue>
+</ColumnProxy>
+<ColumnProxy name="EMAIL" id="867FE7A4-4817-5AC7-E3E5-CF5BBFB637FB">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="ID" id="94F0179D-96E6-E1C4-D743-52213CAC8657">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="SOURCE_ID" id="ADCC59AD-BE5F-4CFE-0153-4093CF272B06">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="HISTO_DESTRUCTION" id="B8907275-5DA8-6F14-4DAC-77CA1DEB4C04">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="NOM_USUEL" id="BA7F647D-1E57-25EF-6900-E8AB050FAE13">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="HISTO_MODIFICATEUR_ID" id="BE394A0B-A279-5E4B-C901-9E6AA8D92F10">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="HISTO_CREATION" id="DA874EE1-7ACB-719C-0BD2-DA53B818903E">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<defaultValue>SYSDATE</defaultValue>
+</ColumnProxy>
+<ColumnProxy name="PRENOM" id="E16D095F-B603-D667-3DF1-8F42D4BBD4D7">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="HISTO_DESTRUCTEUR_ID" id="E8048265-E98D-4E10-4DB4-03F28C094222">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+</ColumnProxy>
+</columnProxies>
+<primaryKeys>
+<PrimaryKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.PKProxyOraclev10g" name="INDIVIDU_PK" id="C554A592-C42B-02AC-831E-3A3671F1A0C1">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<segment>895323A9-EA20-878A-1B2B-67DBAB21D67A</segment>
+<tableSpace>21672606-61A9-C2B3-9166-9F3C6D240B0D</tableSpace>
+<existingIndex>AB046CF7-5569-8F12-6284-A7287306AA51</existingIndex>
+<indexSegment>895323A9-EA20-878A-1B2B-67DBAB21D67A</indexSegment>
+<indexSort>SORTED</indexSort>
+<usingIndex>BY INDEX NAME</usingIndex>
+</PrimaryKey>
+</primaryKeys>
+</TableProxyOraclev11g>

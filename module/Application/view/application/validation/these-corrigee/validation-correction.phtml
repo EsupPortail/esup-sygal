@@ -1,0 +1,81 @@
+<?php
+
+use Application\Assertion\BaseAssertion;
+use Application\Constants;
+use Application\Entity\Db\These;
+use Application\Entity\Db\TypeValidation;
+use Application\Entity\Db\Validation;
+use Application\Entity\Db\VSitu\DepotVersionCorrigeeValidationDirecteur;
+use Application\Provider\Privilege\ValidationPrivileges;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer                               $this
+ * @var These                                     $these
+ * @var string                                    $validerUrl
+ * @var string                                    $devaliderUrl
+ * @var TypeValidation                            $typeValidation
+ * @var Validation[]                              $validations
+ * @var DepotVersionCorrigeeValidationDirecteur[] $attendues
+ */
+
+$canValidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_CORRECTION_THESE);
+$canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_CORRECTION_THESE_SUPPR);
+?>
+
+<div class="panel panel-info box">
+    <div class="panel-heading">
+        <h2><?php echo $typeValidation ?></h2>
+    </div>
+    <div class="panel-body">
+
+        <?php if (count($validations)): ?>
+            <ul class="validation">
+            <?php foreach ($validations as $validation): ?>
+                <li>
+                    <?php echo $validation->getIndividu() ?> a validé le
+                    <?php echo $validation->getHistoModification()->format(Constants::DATETIME_FORMAT) ?>.
+                </li>
+            <?php endforeach ?>
+            </ul>
+        <?php endif ?>
+
+        <?php if (count($attendues)): ?>
+            <ul class="validation-attendue">
+            <?php foreach ($attendues as $validation): ?>
+                <li>
+                    <?php echo $i = $validation->getIndividu() ?> n'a pas encore validé.
+                    <?php if (! $i->getEmail()): ?>
+                        <span class="text-danger"><small><span class="glyphicon glyphicon-warning-sign"></span>
+                                Cette personne ne peut pas valider car son email n'est pas connu
+                                dans <?php echo $i->getSource() ?>.</small></span>
+                    <?php endif ?>
+                </li>
+            <?php endforeach ?>
+            </ul>
+        <?php endif ?>
+
+        <?php if ($canValidate): ?>
+            <a href="<?php echo $validerUrl ?>"
+               class="btn btn-success ajax-modal"
+               data-event="event-validation-correction-these"><span class="glyphicon glyphicon-thumbs-up"></span> Valider</a>
+        <?php endif ?>
+        <?php if ($canUnvalidate): ?>
+            <br>
+            <a href="<?php echo $devaliderUrl ?>"
+               class="btn btn-danger ajax-modal"
+               data-event="event-validation-correction-these"><span class="glyphicon glyphicon-trash"></span> Annuler la validation</a>
+        <?php endif ?>
+
+        <?php
+        $msgCollector = $this->messageCollector(BaseAssertion::class);
+        $msgCollector->getMessengerHelper()->setContainerClassesToAdd('alert-sm');
+        echo $msgCollector->render();
+        ?>
+    </div>
+</div>
+
+
+<?php echo $this->messenger()
+    ->setContainerClassesToAdd('alert-md')
+    ->addMessagesFromFlashMessenger($typeValidation->getCode() . '/*') ?>

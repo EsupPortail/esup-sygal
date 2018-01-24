@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="Application\Entity\Db\Civilite" table="CIVILITE">
+
+    <id name="id" type="integer" column="ID">
+      <generator strategy="SEQUENCE"/>
+    </id>
+
+    <field name="libelleCourt" type="string" column="LIBELLE_COURT" length="5" nullable="false"/>
+    <field name="libelleLong" type="string" column="LIBELLE_LONG" length="15" nullable="false"/>
+    <field name="sexe" type="string" column="SEXE" length="1" nullable="false"/>
+  </entity>
+</doctrine-mapping>

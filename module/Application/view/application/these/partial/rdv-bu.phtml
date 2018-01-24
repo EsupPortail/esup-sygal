@@ -1,0 +1,83 @@
+<?php
+/**
+ * Affichage des renseignements concernant le RDV BU.
+ *
+ * @var These $these
+ */
+
+use Application\Entity\Db\MetadonneeThese;
+use Application\Entity\Db\RdvBu;
+use Application\Entity\Db\These;
+use Application\Filter\MotsClesFormatter;
+
+$rdvBu = $these->getRdvBu();
+$desc = $these->getMetadonnee();
+$motsClesFormatter = new MotsClesFormatter(['separator' => MetadonneeThese::SEPARATEUR_MOTS_CLES]);
+$motsClesRameauFormatter = new MotsClesFormatter(['separator' => RdvBu::SEPARATEUR_MOTS_CLES_RAMEAU]);
+$motsClesLibresFrancais = $desc ? $desc->getMotsClesLibresFrancais() : null;
+$motsClesLibresAnglais = $desc ? $desc->getMotsClesLibresAnglais() : null;
+
+$check_icon     = '<span class="glyphicon glyphicon-check"></span>';
+$uncheck_icon   = '<span class="glyphicon glyphicon-unchecked"></span>';
+$checked        = $check_icon.' Oui';
+$unchecked      = $uncheck_icon.' Non';
+
+$fichier = $rdvBu->getThese()->getVersionArchivable();
+$versionArchivableFournie = $rdvBu->isVersionArchivableFournie();
+if ($fichier && $versionArchivableFournie) {
+    $ddVersionArchivage = sprintf('%s (%s)', $checked, (bool)$fichier->getRetraitement() ? 'version retraitée et validée' : 'version originale');
+}
+else {
+    $ddVersionArchivage = $unchecked;
+}
+?>
+
+<dl class="rdv-bu">
+    <dt>Rappel des propositions de mots-clés en français :</dt>
+    <dd><?php echo $motsClesLibresFrancais ? $motsClesFormatter->filter($motsClesLibresFrancais) : "(Non renseignés)" ?></dd>
+    <dt>Rappel des propositions de mots-clés en anglais :</dt>
+    <dd><?php echo $motsClesLibresAnglais ? $motsClesFormatter->filter($motsClesLibresAnglais) : "(Non renseignés)" ?></dd>
+
+    <dt>Mots-clés RAMEAU :</dt>
+    <?php $class = ($ok = $rdvBu->getMotsClesRameau()) ? '' : 'text-danger' ?>
+    <dd class="<?php echo $class ?>"><?php echo $motsClesRameauFormatter->filter($rdvBu->getMotsClesRameau()) ?: "(Non renseignés)" ?></dd>
+
+    <dt>Page de couverture conforme :</dt>
+    <dd class="<?php echo '' ?>">
+        <?php
+            //TODO JP 05/12/2017 créer une fonction ou un ViewHelper ?
+            $ok = $rdvBu->getPageTitreConforme();
+            switch($ok) {
+                case 1:
+                    echo "<span style='color:green;'>" . $check_icon . " Oui</span>" . "&nbsp;&nbsp;&nbsp;&nbsp;" . $uncheck_icon." Non";
+                    break;
+                case 0:
+                    echo $uncheck_icon ." Oui". "&nbsp;&nbsp;&nbsp;&nbsp;" . "<span style='color:crimson;'>" . $uncheck_icon ." Non". "</span>";
+                    break;
+                default:
+                    echo $uncheck_icon ." Oui". "&nbsp;&nbsp;&nbsp;&nbsp;" . $uncheck_icon ." Non". "&nbsp;" . "(Validité de la page de titre non évalée)";
+                    break;
+            }
+        ?>
+
+    </dd>
+
+    <dt>Version archivable fournie :</dt>
+    <?php $class = $versionArchivableFournie ? '' : 'text-danger' ?>
+    <dd class="<?php echo $class ?>"><?php echo $ddVersionArchivage ?></dd>
+
+    <dt>Conventions de mise en ligne signées :</dt>
+    <?php $class = ($ok = $rdvBu->getConventionMelSignee()) ? '' : 'text-danger' ?>
+    <dd class="<?php echo $class ?>"><?php echo $ok ? $checked : $unchecked ?></dd>
+
+    <dt>Exemplaire papier fourni :</dt>
+    <?php $class = ($ok = $rdvBu->getExemplPapierFourni()) ? '' : 'text-danger' ?>
+    <dd class="<?php echo $class ?>"><?php echo $ok ? $checked : $unchecked ?></dd>
+
+    <dt>Points de vigilance :</dt>
+    <dd>
+        <p class="pre-scrollable">
+            <?php echo $rdvBu->getDivers() ? $this->escapeText()->render($rdvBu->getDivers()) : "(Non renseigné)" ?>
+        </p>
+    </dd>
+</dl>

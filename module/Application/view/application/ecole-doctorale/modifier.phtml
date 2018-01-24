@@ -1,0 +1,31 @@
+<?php
+
+use Application\Form\EcoleDoctoraleForm;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer        $this
+ * @var string             $title
+ * @var EcoleDoctoraleForm $form
+ *
+* @method string formControlGroup()
+*/
+
+$fcg = $this->formControlGroup();
+?>
+
+<?php echo $this->form()->openTag($form->prepare()->setAttribute('class', 'ecole-doctorale')) ?>
+<?php echo $this->formHidden($form->get('id')) ?>
+<?php echo $fcg($form->get('libelle')) ?>
+<?php echo $fcg($form->get('sigle')) ?>
+<?php echo $fcg($form->get('sourceCode')) ?>
+<?php echo $this->formElement($form->get('submit')) ?>
+<?php echo $this->form()->closeTag() ?>
+
+<!-- pour traduction -->
+<?php
+    $this->translate("Libellé :");
+    $this->translate("Sigle :");
+    $this->translate("Code :");
+    $this->translate("Enregistrer");
+?>

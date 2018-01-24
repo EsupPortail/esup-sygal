@@ -1,0 +1,19 @@
+<?php
+
+use Application\Entity\Db\These;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var These       $these
+ * @var string      $action
+ */
+?>
+
+<?php
+$libs = [
+    'valider'   => "la validation",
+    'devalider' => "l'annulation",
+];
+
+echo $this->confirm(sprintf("Confirmez-vous %s, svp ?", $libs[$action]));

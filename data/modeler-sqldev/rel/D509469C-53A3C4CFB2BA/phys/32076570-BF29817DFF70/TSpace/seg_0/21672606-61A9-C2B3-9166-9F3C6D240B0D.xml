@@ -1,0 +1,12 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<TableSpaceOraclev10g class="oracle.dbtools.crest.model.design.storage.oracle.v10g.TableSpaceOraclev10g" name="DOCT_TS" directorySegmentName="seg_0" id="21672606-61A9-C2B3-9166-9F3C6D240B0D">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>SODOCT</sourceObjSchema>
+<sourceObjName>DOCT_TS</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:11 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<emUniformSize>0</emUniformSize>
+<extentManagement>LOCAL</extentManagement>
+</TableSpaceOraclev10g>

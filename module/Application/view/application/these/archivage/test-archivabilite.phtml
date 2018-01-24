@@ -1,0 +1,66 @@
+<?php
+
+use Application\Entity\Db\Fichier;
+use Application\Entity\Db\These;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var         $this PhpRenderer
+ * @var These   $these
+ * @var Fichier $fichierThese
+ * @var string  $testArchivabiliteUrl
+ */
+
+$validiteFichierThese = $fichierThese ? $fichierThese->getValidite() : null;
+$estVersionCorrigee = $fichierThese->getVersion()->estVersionCorrigee();
+?>
+
+<div class="box panel panel-info" id="div-tester-archi">
+
+    <div class="panel-heading">
+        <?php $heading = $estVersionCorrigee ? "Archivabilité de la thèse corrigée" : "Archivabilité de la thèse" ?>
+        <h2 class="first"><?php echo $heading ?></h2>
+    </div>
+
+    <div class="panel-body">
+        <?php if (!$validiteFichierThese): ?>
+
+            <form method="post" class="tester-archi" action="<?php echo $testArchivabiliteUrl ?>">
+                <input type="hidden" name="action" value="tester"/>
+                <input type="submit" class="btn btn-primary" value="Tester l'archivabilité"/>
+            </form>
+
+        <?php elseif ($validiteFichierThese->getEstValide() === null): ?>
+
+            <p class="text-warning lead">
+                <span class="glyphicon glyphicon-warning-sign"></span>
+                Indéterminée !
+            </p>
+            <form method="post" action="">
+                <input type="hidden" name="action" value="tester"/>
+                <input type="submit" class="btn btn-primary" value="Relancer le test d'archivabilité"/>
+            </form>
+
+        <?php elseif ($validiteFichierThese->getEstValide() === true): ?>
+
+            <p class="text-success lead">
+                <span class="glyphicon glyphicon-thumbs-up"></span>
+                Thèse archivable.
+            </p>
+
+        <?php else: ?>
+
+            <p class="text-danger lead">
+                <span class="glyphicon glyphicon-thumbs-down"></span>
+                Thèse non archivable en l'état.
+            </p>
+            <p>
+                Pour remédier au problème, 2 solutions s'offrent à vous : <strong>le retraitement automatique</strong>
+                ou le <strong>retraitement par vos soins</strong>...
+            </p>
+
+        <?php endif ?>
+
+    </div>
+</div>
+

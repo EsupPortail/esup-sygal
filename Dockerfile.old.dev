@@ -1,0 +1,30 @@
+########################################################################################################################
+#                                    Image pour le développement.
+########################################################################################################################
+
+# Cette image utilise un volume, dans lequel le répertoire complet de l'application doit être monté au lancement
+# du container (ex: docker run -d -p 8080:80 --name <CONTAINER> -v `pwd`:/webapp <IMAGE>).
+
+FROM unicaen/unicaen
+
+LABEL maintainer "Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>"
+
+# Point de montage pour les sources de l'appli
+VOLUME /webapp
+
+## Création du répertoire des proxies Doctrine
+#RUN mkdir -p data/DoctrineORMModule/Proxy && \
+#    chmod 777 data/DoctrineORMModule/Proxy
+
+# Configuration et activation du site Apache
+RUN echo "<VirtualHost *:80>"                >> /etc/apache2/sites-available/app.conf && \
+    echo "     ServerName localhost"         >> /etc/apache2/sites-available/app.conf && \
+    echo "     DocumentRoot /webapp/public"  >> /etc/apache2/sites-available/app.conf && \
+    echo "     RewriteEngine On"             >> /etc/apache2/sites-available/app.conf && \
+    echo "     <Directory /webapp/public>"   >> /etc/apache2/sites-available/app.conf && \
+    echo "         DirectoryIndex index.php" >> /etc/apache2/sites-available/app.conf && \
+    echo "         AllowOverride All"        >> /etc/apache2/sites-available/app.conf && \
+    echo "         Require all granted"      >> /etc/apache2/sites-available/app.conf && \
+    echo "     </Directory>"                 >> /etc/apache2/sites-available/app.conf && \
+    echo "</VirtualHost>"                    >> /etc/apache2/sites-available/app.conf
+RUN a2ensite app

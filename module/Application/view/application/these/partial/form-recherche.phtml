@@ -1,0 +1,48 @@
+<?php
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var string      $text
+ */
+
+$queryParams = $this->queryParams();
+$urlRechercher = $this->url('these/rechercher', [], ['query' => $queryParams], true);
+$inputTitle = <<<EOS
+<div class="these-search-input-help">
+    Recherche possible sur 
+    <ul>
+        <li>le titre de la thèse</li>
+        <li>le numéro étudiant de l'auteur</li>
+        <li>le nom de l'auteur</li>
+        <li>le prénom de l'auteur</li>
+        <li>le nom du directeur ou co-directeur de thèse</li>
+        <li>le code national de l'école doctorale concernée (ex: 181)</li>
+        <li>l'unité de recherche concernée (ex: umr6211)</li>
+    </ul>
+</div>
+EOS;
+
+?>
+
+<form method="post" action="<?php echo $urlRechercher ?>" class="search-form these form-inline">
+    <div class="form-group">
+        <label class="sr-only" for="search-input">Recherche d'une thèse (code, titre de la thèse ; code, nom, prénom de l'auteur) :</label>
+        <div class="input-group">
+            <div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>
+            <input type="search" value="<?php echo $text; ?>" name="text" class="form-control"
+                   id="search-input" placeholder="Entrez 2 caractères au moins..."
+                   data-content="<?php echo htmlspecialchars($inputTitle); ?>">
+        </div>
+    </div>
+    <button type="button" class="btn btn-default" onclick="$('form.these input').val('')"
+            title="Vider"><span class="glyphicon glyphicon-erase"></span></button>
+    <button type="submit" class="btn btn-primary">Rechercher</button>
+<!--    <p class="help-block">Recherche sur le titre, le code national de l'école doctorale, l'unité de recherche de la thèse, le numéro étudiant, le nom, le prénom de l'auteur.</p>-->
+</form>
+
+<script>
+    $(function() {
+        $("#search-input").popover({html: true, trigger: "hover", placement: "bottom"});
+    });
+</script>

@@ -1,0 +1,39 @@
+<?php
+use Application\Entity\Db\These;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var string      $paramName
+ * @var array       $paramConfig Format : ['label' => "", 'value' => ""]
+ * @var string      $filterUrl
+ * Exemple :
+ *      $filterUrl = function ($param, $value, &$queryParams) use ($queryParams) {
+ *          $queryParams[$param] = $value;
+ *          return $this->url('these/rechercher', [], ['query' => $queryParams], true);
+ *      };
+ *
+ */
+
+$queryParams = $this->queryParams();
+?>
+
+<?php foreach ($paramConfig as $data): ?>
+
+    <?php
+    $value = $data['value'];
+    $label = $data['label'];
+    ?>
+    <span class="filter">
+        <?php
+        $isActive =
+            ($value !== '' && ((isset($queryParams[$paramName]) && $queryParams[$paramName] === $value))) ||
+            ($value === '' && (!isset($queryParams[$paramName]) || !isset($queryParams[$paramName]) || $queryParams[$paramName] === ''));
+        if ($isActive): ?>
+            <span class="label label-info"><?php echo $label ?></span>
+        <?php else: ?>
+            <a href="<?php echo $filterUrl($paramName, $value, $queryParams) ?>"><?php echo $label ?></a>
+        <?php endif ?>
+    </span>
+
+<?php endforeach ?>

@@ -1,0 +1,10 @@
+
+
+<?php
+echo $this->form()->openTag($form->prepare());
+echo $this->formRow($form->get('submit'));
+echo $this->formControlGroup($form->get('commands'));
+echo $this->formControlGroup($form->get('files'));
+echo $this->formRow($form->get('submit'));
+echo $this->form()->closeTag();
+

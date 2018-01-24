@@ -1,0 +1,26 @@
+<?php
+
+use Application\Entity\Db\These;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var string      $text
+ */
+?>
+
+<?php echo $this->filterPanel([
+//    "État" => [
+//        'paramName' => 'etatThese',
+//        'paramConfig' => [
+//            ['value' => '', 'label' => "Tous"],
+//            ['value' => $v = These::ETAT_EN_COURS, 'label' => These::$etatsLibelles[$v]],
+//            ['value' => $v = These::ETAT_ABANDONNEE, 'label' => These::$etatsLibelles[$v]],
+//            ['value' => $v = These::ETAT_SOUTENUE, 'label' => These::$etatsLibelles[$v]],
+//        ],
+//        'filterUrl' => function ($param, $value, $queryParams) {
+//            $queryParams[$param] = $value;
+//            return $this->url('these/rechercher', [], ['query' => $queryParams], true);
+//        },
+//    ],
+]) ?>

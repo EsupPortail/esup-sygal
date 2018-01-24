@@ -1,0 +1,79 @@
+#! /bin/bash
+#
+# pdf2star
+# 
+# Auteur     : Jose-Marcio Martins da Cruz
+#              Centre de Calcul et Systemes d'Information
+#              Ecole des Mines de Paris
+# Historique : 22/04/2013 - Creation
+#              25/06/2013 - Modification Aurelien: remplace tmp.pdf 
+#                           par $bname-tmp.pdf (évite concurrence si 
+#                           plusieurs personnes utilisent le script 
+#                           simultanément)
+#              09/09/2013 - Ajout de /opt/gs/bin dans le path, de
+#                           façon a pouvoir utiliser un ghostscript
+#                           alternatif dans les installations ou la
+#                           version de ghostscript fournie avec l'OS
+#                           n'est pas assez recente.
+#              18/11/2013 - Utilisation de la variable d'environnement
+#                           $GS pour definir un emplacement alternatif
+#                           de gs (ghostscript)
+#
+# Traitement de fichiers pdf pour les rendre compatibles avec
+#   les contraintes de depot de theses - ABES
+#
+# Utilisation :
+#   pdf2star f1.pdf f2.pdf f3.pdf
+# En sortie : fichiers convertis f1-cvt.pdf f2-cvt.pdf
+#
+# Après conversion :
+#   Controler la conformite du contenu du fichier PDF converti
+#   Vérifier compatibilite du fichier : http://facile.cines.fr
+#
+# Compatibilite :
+#     gs 9.06   - Fedora 18                - OK
+#     gs 8.71   - Debian Squeeze           - Non compatible
+#     gs 9.05   - Debian Wheezy            - OK
+#     gs 8.70   - RedHad EL 6.2 (Santiago) - OK (1)
+#     gs 8.64   - OpenIndiana 151a7        - OK (1)
+#     gs 8.15.4 - Solaris 10 5/09 u7       - Non compatible
+#     gs 8.64   - Solaris 10 9/10 u9       - OK (1)
+#   (1) Les versions de ghostscript inferieures a 9.00 ne
+#       corrigent que partie des non conformites. Nous conseillons
+#       d'installer la derniere version de ghostscript dans /opt/gs
+#
+
+[ -n "$SUFFIX" ] || SUFFIX=-cvt
+[ -n "$GS" ] || GS=gs
+
+NVER=1.7
+
+DCS="-dColorConversionStrategy=/LeaveColorUnchanged"
+
+suf="$GS"
+
+for fin in $*
+do
+  echo "* Conversion du fichier $fin"
+  bname=`basename $fin .pdf`
+  if [ ! -f "$bname.pdf" ]
+  then
+    echo "  Ce n'est pas un fichier .pdf"
+    continue
+  fi
+  fouttmp="$bname-tmp.pdf"
+  fout="$bname$suf.pdf"
+  $GS   -sDEVICE=pdfwrite -dCompatibilityLevel=$NVER \
+	-dPDFSETTINGS=/printer $DCS \
+	-dNOPAUSE -dQUIET -dBATCH \
+	-sOutputFile=$fouttmp $fin
+  R=$?
+  if [ "$R" = "0" ]
+  then
+    echo "  Conversion reussie -> $fout"
+    mv $fouttmp $fout
+  else
+    echo "  La conversion n'a pas pu etre realisee"
+    rm -f $fouttmp
+  fi
+done

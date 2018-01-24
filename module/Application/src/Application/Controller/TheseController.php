@@ -1,0 +1,1350 @@
+<?php
+
+namespace Application\Controller;
+
+use Application\Entity\Db\Attestation;
+use Application\Entity\Db\Diffusion;
+use Application\Entity\Db\Fichier;
+use Application\Entity\Db\MetadonneeThese;
+use Application\Entity\Db\NatureFichier;
+use Application\Entity\Db\RdvBu;
+use Application\Entity\Db\Role;
+use Application\Entity\Db\These;
+use Application\Entity\Db\TypeValidation;
+use Application\Entity\Db\Variable;
+use Application\Entity\Db\VersionFichier;
+use Application\Entity\Db\WfEtape;
+use Application\Filter\FichierFilter;
+use Application\Filter\IdifyFilterAwareTrait;
+use Application\Form\AttestationTheseForm;
+use Application\Form\ConformiteFichierForm;
+use Application\Form\DiffusionTheseForm;
+use Application\Form\MetadonneeTheseForm;
+use Application\Form\RdvBuTheseDoctorantForm;
+use Application\Form\RdvBuTheseForm;
+use Application\Notification\ValidationRdvBuNotification;
+use Application\Service\Env\EnvServiceAwareInterface;
+use Application\Service\Env\EnvServiceAwareTrait;
+use Application\Service\Fichier\Exception\ValidationImpossibleException;
+use Application\Service\Fichier\FichierServiceAwareInterface;
+use Application\Service\Fichier\FichierServiceAwareTrait;
+use Application\Service\Notification\NotificationServiceAwareInterface;
+use Application\Service\Notification\NotificationServiceAwareTrait;
+use Application\Service\Role\RoleServiceAwareInterface;
+use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\These\TheseServiceAwareInterface;
+use Application\Service\These\TheseServiceAwareTrait;
+use Application\Service\Validation\ValidationServiceAwareInterface;
+use Application\Service\Validation\ValidationServiceAwareTrait;
+use Application\Service\Variable\VariableServiceAwareInterface;
+use Application\Service\Variable\VariableServiceAwareTrait;
+use Application\Service\VersionFichier\VersionFichierServiceAwareInterface;
+use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
+use Application\Service\Workflow\WorkflowServiceAwareInterface;
+use Application\Service\Workflow\WorkflowServiceAwareTrait;
+use Application\View\Helper\Sortable;
+use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
+use UnicaenApp\Exception\RuntimeException;
+use UnicaenApp\Exporter\Pdf as PdfExporter;
+use UnicaenApp\Service\MessageCollectorAwareTrait;
+use UnicaenApp\Traits\MessageAwareInterface;
+use UnicaenApp\Util;
+use Zend\Form\Element\Hidden;
+use Zend\Http\Response;
+use Zend\Stdlib\ParametersInterface;
+use Zend\View\Model\ViewModel;
+
+class TheseController extends AbstractController implements
+    EnvServiceAwareInterface, VariableServiceAwareInterface ,
+    ValidationServiceAwareInterface, VersionFichierServiceAwareInterface,
+    TheseServiceAwareInterface, RoleServiceAwareInterface, FichierServiceAwareInterface,
+    WorkflowServiceAwareInterface, NotificationServiceAwareInterface
+{
+    use EnvServiceAwareTrait;
+    use VariableServiceAwareTrait;
+    use TheseServiceAwareTrait;
+    use RoleServiceAwareTrait;
+    use FichierServiceAwareTrait;
+    use ValidationServiceAwareTrait;
+    use MessageCollectorAwareTrait;
+    use VersionFichierServiceAwareTrait;
+    use WorkflowServiceAwareTrait;
+    use NotificationServiceAwareTrait;
+    use IdifyFilterAwareTrait;
+
+    /**
+     * @return ViewModel|Response
+     */
+    public function indexAction()
+    {
+        /**
+         * L'utilisateur est un doctorant, redirection vers l'accueil.
+         */
+        if ($this->userContextService->getSelectedRoleDoctorant()) {
+            return $this->redirect()->toRoute('home');
+        }
+
+        /**
+         * Application des filtres et tris par défaut.
+         */
+        $needsRedirect = false;
+        $queryParams = $this->params()->fromQuery();
+        // filtres
+        $etatThese = $this->params()->fromQuery($name = 'etatThese');
+        if ($etatThese === null) { // null <=> paramètre absent
+            // filtrage par défaut : thèse en préparation
+            $queryParams = array_merge($queryParams, [$name => These::ETAT_EN_COURS]);
+            $needsRedirect = true;
+        }
+        // tris
+        $sort = $this->params()->fromQuery('sort');
+        if ($sort === null) { // null <=> paramètre absent
+            // tri par défaut : datePremiereInscription
+            $queryParams = array_merge($queryParams, ['sort' => 't.datePremiereInscription', 'direction' => Sortable::ASC]);
+            $needsRedirect = true;
+        }
+        // redirection si nécessaire
+        if ($needsRedirect) {
+            return $this->redirect()->toRoute(null, [], ['query' => $queryParams], true);
+        }
+
+        $maxi = $this->params()->fromQuery('maxi', 20);
+        $page = $this->params()->fromQuery('page', 1);
+
+        $qb = $this->createQueryBuilder();
+
+        $paginator = new \Zend\Paginator\Paginator(new DoctrinePaginator(new Paginator($qb, true)));
+        $paginator
+            ->setPageRange(30)
+            ->setItemCountPerPage((int)$maxi)
+            ->setCurrentPageNumber((int)$page);
+
+        $text = $this->params()->fromQuery('text');
+
+        return new ViewModel([
+            'theses' => $paginator,
+            'text'   => $text,
+            'roleDirecteurThese' => $this->roleService->getRepository()->findOneBy(['sourceCode' => Role::SOURCE_CODE_DIRECTEUR_THESE]),
+        ]);
+    }
+
+    public function rechercherAction()
+    {
+        $prg = $this->postRedirectGet();
+        if ($prg instanceof \Zend\Http\PhpEnvironment\Response) {
+            return $prg;
+        }
+
+        $queryParams = $this->params()->fromQuery();
+
+        if (is_array($prg)) {
+            if (isset($queryParams['page'])) {
+                unset($queryParams['page']);
+            }
+            $queryParams['text'] = $prg['text'];
+        }
+
+        return $this->redirect()->toRoute('these', [], ['query' => $queryParams]);
+    }
+
+    /**
+     * @return QueryBuilder
+     */
+    private function createQueryBuilder()
+    {
+        $etatThese = $this->params()->fromQuery($name = 'etatThese');
+
+        $sort = $this->params()->fromQuery('sort');
+
+        $text = $this->params()->fromQuery('text');
+        $dir  = $this->params()->fromQuery('direction', Sortable::ASC);
+
+        $qb = $this->theseService->getRepository()->createQueryBuilder('t')
+// TODO: chercher pourquoi l'ajout de ces jointures ralentit la page 1 du listing des thèses avec les paramètres
+// etatThese=E&sort=t.datePremiereInscription&direction=asc
+//            ->addSelect('a')->leftJoin('t.acteurs', 'a')
+//            ->addSelect('i')->leftJoin('a.individu', 'i')
+//            ->addSelect('r')->leftJoin('a.role', 'r')
+            ->addSelect('ed')->leftJoin('t.ecoleDoctorale', 'ed')
+            ->addSelect('ur')->leftJoin('t.uniteRecherche', 'ur')
+            ->andWhere('1 = pasHistorise(t)');
+        if ($etatThese) {
+            $qb->andWhere('t.etatThese = :etat')->setParameter('etat', $etatThese);
+        }
+//        if (in_array($resultat = $this->params()->fromQuery($name = 'resultat'), ['0', '1'])) {
+//            $qb->andWhere('t.resultat = :resultat')->setParameter('resultat', $resultat);
+//        }
+        $sortProps = $sort ? explode('+', $sort) : [];
+        foreach ($sortProps as $sortProp) {
+            if ($sortProp === 't.titre') {
+                // trim et suppression des guillemets
+                $sortProp = "TRIM(REPLACE($sortProp, CHR(34), ''))"; // CHR(34) <=> "
+            }
+            $qb->addOrderBy($sortProp, $dir);
+        }
+
+        /**
+         * Filtres découlant du rôle de l'utilisateur.
+         */
+        $this->theseService->decorateQbFromUserContext($qb, $this->userContextService);
+
+        /**
+         * Prise en compte du champ de recherche textuelle.
+         */
+        if (strlen($text) > 1) {
+            $results = $this->theseService->rechercherThese($text);
+            $sourceCodes = array_unique(array_keys($results));
+            if ($sourceCodes) {
+                $qb
+                    ->andWhere($qb->expr()->in('t.sourceCode', ':sourceCodes'))
+                    ->setParameter('sourceCodes', $sourceCodes);
+            }
+            else {
+                $qb->andWhere("0 = 1"); // i.e. aucune thèse trouvée
+            }
+        }
+
+        return $qb;
+    }
+
+    public function roadmapAction()
+    {
+        $these = $this->requestedThese();
+
+        $view = new ViewModel([
+            'these' => $these,
+        ]);
+        $view->setTemplate('application/these/roadmap');
+
+        return $view;
+    }
+
+    public function detailIdentiteAction()
+    {
+        $these = $this->requestedThese();
+
+        $showCorrecAttendue =
+            $these->getCorrectionAutorisee() &&
+            count($this->validationService->getValidationsAttenduesPourCorrectionThese($these)) > 0;
+
+        $view = new ViewModel([
+            'these'                     => $these,
+            'estDoctorant'              => (bool)$this->userContextService->getSelectedRoleDoctorant(),
+            'showCorrecAttendue'        => $showCorrecAttendue,
+            'modifierPersopassUrl'      => $this->urlDoctorant()->modifierPersopassUrl($these),
+            'pvSoutenanceUrl'           => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_PV_SOUTENANCE),
+            'rapportSoutenanceUrl'      => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_RAPPORT_SOUTENANCE),
+            'preRapportSoutenanceUrl'   => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE),
+            'demandeConfidentUrl'       => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_DEMANDE_CONFIDENT),
+            'prolongConfidentUrl'       => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_PROLONG_CONFIDENT),
+            'convMiseEnLigneUrl'        => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_CONV_MISE_EN_LIGNE),
+            'avenantConvMiseEnLigneUrl' => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_AVENANT_CONV_MISE_EN_LIGNE),
+            'nextStepUrl'               => $this->urlWorkflow()->nextStepBox($these, null, [
+                WfEtape::PSEUDO_ETAPE_FINALE,
+            ]),
+        ]);
+        $view->setTemplate('application/these/identite');
+
+        return $view;
+    }
+
+    public function detailDescriptionAction()
+    {
+        $these = $this->requestedThese();
+
+        $view = new ViewModel([
+            'these'                  => $these,
+            'modifierMetadonneesUrl' => $this->urlThese()->modifierMetadonneesUrl($these),
+            'nextStepUrl'            => $this->urlWorkflow()->nextStepBox($these, null, [
+                WfEtape::CODE_SIGNALEMENT_THESE,
+                WfEtape::PSEUDO_ETAPE_FINALE,
+            ]),
+        ]);
+        $view->setTemplate('application/these/description');
+
+        return $view;
+    }
+
+
+    public function detailDepotAction()
+    {
+        $view = $this->detailDepotActionViewModel(false);
+        $view->setTemplate('application/these/depot');
+
+        return $view;
+    }
+
+    public function detailDepotVersionCorrigeeAction()
+    {
+        $view = $this->detailDepotActionViewModel(true);
+        $view->setTemplate('application/these/depot-version-corrigee');
+
+        return $view;
+    }
+
+    /**
+     * @param bool $versionCorrigee
+     * @return ViewModel
+     */
+    private function detailDepotActionViewModel($versionCorrigee = false)
+    {
+        $these = $this->requestedThese();
+
+        $codeVersion = $versionCorrigee ?
+            VersionFichier::CODE_ORIG_CORR :
+            VersionFichier::CODE_ORIG;
+
+        $view = new ViewModel([
+            'these'            => $these,
+            'theseUrl'         => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_THESE_PDF, $codeVersion),
+            'annexesUrl'       => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_FICHIER_NON_PDF, $codeVersion),
+            'zipUrl'           => $this->urlThese()->zipUrl($these),
+            'attestationUrl'   => $this->urlThese()->attestationThese($these, $codeVersion),
+            'diffusionUrl'     => $this->urlThese()->diffusionThese($these, $codeVersion),
+            'nextStepUrl'      => $this->urlWorkflow()->nextStepBox($these, null, [
+                WfEtape::CODE_DEPOT_VERSION_ORIGINALE,
+                WfEtape::CODE_DEPOT_VERSION_ORIGINALE_CORRIGEE,
+                WfEtape::CODE_ATTESTATIONS,
+                WfEtape::CODE_AUTORISATION_DIFFUSION_THESE,
+                WfEtape::PSEUDO_ETAPE_FINALE,
+            ]),
+        ]);
+
+        return $view;
+    }
+
+    public function detailArchivageAction()
+    {
+        $view = $this->detailArchivageActionViewModel(false);
+
+        return $view;
+    }
+
+    public function detailArchivageVersionCorrigeeAction()
+    {
+        $view = $this->detailArchivageActionViewModel(true);
+
+        return $view;
+    }
+
+    /**
+     * @param bool $versionCorrigee
+     * @return Response|ViewModel
+     */
+    private function detailArchivageActionViewModel($versionCorrigee = false)
+    {
+        $these = $this->requestedThese();
+
+        $version = $versionCorrigee ?
+            VersionFichier::CODE_ORIG_CORR :
+            VersionFichier::CODE_ORIG;
+
+        $theseFichiers = $these->getFichiersByNatureEtVersion(NatureFichier::CODE_THESE_PDF, $version, false);
+        $fichierThese = $theseFichiers->first();
+
+        if ($this->getRequest()->isPost()) {
+            $action = $this->params()->fromPost('action', $this->params()->fromQuery('action'));
+            if ('tester' === $action) {
+                try {
+                    $this->fichierService->validerFichier($fichierThese);
+                }
+                catch (ValidationImpossibleException $vie) {
+                    // Le test d'archivabilité du fichier '%s' a rencontré un problème indépendant de notre volonté
+                }
+            }
+            return $this->redirect()->refresh();
+        }
+
+        $theseFichiersItems = array_map(function (Fichier $fichier) use ($these) {
+            return [
+                'file'        => $fichier,
+                'downloadUrl' => $this->urlFichierThese()->telechargerFichierThese($these, $fichier),
+            ];
+        }, $theseFichiers->toArray());
+
+        $theseFichiersRetraites = $these->getFichiersByNatureEtVersion(NatureFichier::CODE_THESE_PDF, $version, true);
+        $fichierTheseRetraite = $theseFichiersRetraites->first();
+
+        $theseRetraiteeUrl = $this->urlThese()->depotFichiers($these, NatureFichier::CODE_THESE_PDF, $version, true);
+
+        $view = new ViewModel([
+            'these'                              => $these,
+            'fichierThese'                       => $fichierThese,
+            'fichierTheseRetraite'               => $fichierTheseRetraite,
+            'theseFichiersItems'                 => $theseFichiersItems,
+            'theseRetraiteeUrl'                  => $theseRetraiteeUrl,
+            'testArchivabiliteTheseOriginaleUrl' => $this->urlThese()->testArchivabilite($these, $version),
+            'archivabiliteTheseRetraiteeUrl'     => $this->urlThese()->archivabiliteThese($these, $version, true),
+            'conformiteTheseRetraiteeUrl'        => $this->urlThese()->conformiteTheseRetraitee($these, $version),
+            'nextStepUrl'                        => $this->urlWorkflow()->nextStepBox($these, null, [
+                WfEtape::CODE_ARCHIVABILITE_VERSION_ORIGINALE,
+                WfEtape::CODE_ARCHIVABILITE_VERSION_ORIGINALE_CORRIGEE,
+                WfEtape::CODE_ARCHIVABILITE_VERSION_ARCHIVAGE,
+                WfEtape::CODE_ARCHIVABILITE_VERSION_ARCHIVAGE_CORRIGEE,
+                WfEtape::CODE_DEPOT_VERSION_ARCHIVAGE,
+                WfEtape::CODE_DEPOT_VERSION_ARCHIVAGE_CORRIGEE,
+                WfEtape::CODE_VERIFICATION_VERSION_ARCHIVAGE,
+                WfEtape::CODE_VERIFICATION_VERSION_ARCHIVAGE_CORRIGEE,
+                WfEtape::PSEUDO_ETAPE_FINALE,
+            ]),
+        ]);
+        $view->setTemplate('application/these/archivage');
+
+        return $view;
+    }
+
+    public function detailRdvBuAction()
+    {
+        $estDoctorant = (bool) $this->userContextService->getSelectedRoleDoctorant();
+        $these = $this->requestedThese();
+
+        $view = new ViewModel([
+            'these'        => $these,
+            'estDoctorant' => $estDoctorant,
+            'modifierUrl'  => $this->urlThese()->modifierRdvBuUrl($these),
+            'validerUrl'   => $this->urlThese()->validerRdvBuUrl($these),
+            'devaliderUrl' => $this->urlThese()->devaliderRdvBuUrl($these),
+            'validation'   => $these->getValidation(TypeValidation::CODE_RDV_BU),
+            'msgCollector' => $this->getServiceMessageCollector(),
+            'nextStepUrl'  => $this->urlWorkflow()->nextStepBox($these, null, [
+                WfEtape::CODE_RDV_BU_SAISIE_DOCTORANT,
+                WfEtape::CODE_RDV_BU_VALIDATION_BU,
+            ]),
+        ]);
+
+        $view->setTemplate('application/these/rdv-bu' . ($estDoctorant ? '-doctorant' : null));
+
+        return $view;
+    }
+
+    public function modifierRdvBuAction()
+    {
+        $these = $this->requestedThese();
+        $estDoctorant = (bool) $this->userContextService->getSelectedRoleDoctorant();
+
+        $rdvBu = $these->getRdvBu() ?: new RdvBu($these);
+        $rdvBu->setVersionArchivableFournie($these->existeVersionArchivable());
+
+        /** @var RdvBuTheseForm|RdvBuTheseDoctorantForm $form */
+        $form = $this->getServiceLocator()->get('formElementManager')->get($estDoctorant ? 'RdvBuTheseDoctorantForm' : 'RdvBuTheseForm');
+        $form->bind($rdvBu);
+
+        if ($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            $form->setData($post);
+            if ($form->isValid()) {
+                /** @var RdvBu $formRdvBu */
+                $formRdvBu = $form->getData();
+                $inserting = $formRdvBu->getId() === null;
+                $this->theseService->updateRdvBu($these, $formRdvBu);
+
+                $this->flashMessenger()->addSuccessMessage("Informations enregistrées avec succès.");
+                $this->flashMessenger()->addSuccessMessage($this->theseService->getMessage('<br>', MessageAwareInterface::SUCCESS));
+                $this->flashMessenger()->addInfoMessage($this->theseService->getMessage('<br>', MessageAwareInterface::INFO));
+
+                // notification par mail à la BU quand le doctorant saisit les infos pour la 1ere fois
+                if ($estDoctorant && $inserting) {
+                    $subject = sprintf("%s Saisie des informations pour la prise de rendez-vous BU",
+                        $these->getLibelleDiscipline());
+                    $mailViewModel = (new ViewModel())
+                        ->setTemplate('application/these/mail/notif-modif-rdv-bu-doctorant')
+                        ->setVariables([
+                            'these'    => $these,
+                            'updating' => !$inserting,
+                            'subject'  => $subject,
+                        ]);
+                    $this->notificationService->notifierBU($mailViewModel);
+
+                    $notificationLog = $this->notificationService->getMessage('<br>', 'info');
+                    $this->flashMessenger()->addInfoMessage($notificationLog);
+                }
+
+                if (! $this->getRequest()->isXmlHttpRequest()) {
+                    return $this->redirect()->toRoute('these/rdv-bu', [], [], true);
+                }
+            }
+        }
+
+        $form->setAttribute('action', $this->urlThese()->modifierRdvBuUrl($these));
+
+        $vm = new ViewModel([
+            'these' => $these,
+            'form'  => $form,
+            'title' => "Rendez-vous BU"
+        ]);
+
+        $vm->setTemplate('application/these/modifier-rdv-bu' . ($estDoctorant ? '-doctorant' : null));
+
+        return $vm;
+    }
+
+    public function validationTheseCorrigeeAction()
+    {
+        $these = $this->requestedThese();
+
+        $view = new ViewModel([
+            'these'                           => $these,
+            'validationDepotTheseCorrigeeUrl' => $this->urlThese()->validationDepotTheseCorrigeeUrl($these),
+            'validationCorrectionTheseUrl'    => $this->urlThese()->validationCorrectionTheseUrl($these),
+            'nextStepUrl'                     => $this->urlWorkflow()->nextStepBox($these, null, [
+                WfEtape::CODE_DEPOT_VERSION_CORRIGEE_VALIDATION_DOCTORANT,
+                WfEtape::CODE_DEPOT_VERSION_CORRIGEE_VALIDATION_DIRECTEUR,
+            ], [
+                'message' => "Il vous reste encore à fournir à la BU un exemplaire imprimé de la version corrigée pour valider le dépôt.",
+            ]),
+        ]);
+
+        return $view;
+    }
+
+    public function validerFichierAction()
+    {
+        $these = $this->requestedThese();
+
+        $view = new ViewModel([
+            'these' => $these,
+            'testerFichierUrl' => $this->urlThese()->modifierMetadonneesUrl($these),
+        ]);
+        $view->setTemplate('application/these/archivage');
+
+        return $view;
+    }
+
+    public function theseAction()
+    {
+        $these = $this->requestedThese();
+        $estCorrige = (bool) $this->params()->fromQuery('corrige', false);
+        $estExpurge = (bool) $this->params()->fromQuery('expurge', false);
+        $inclureValidite = (bool) $this->params()->fromQuery('inclureValidite', false);
+        $validerAuto = (bool) $this->params()->fromQuery('validerAuto', false);
+        $version = $this->fichierService->fetchVersionFichier($this->params()->fromQuery('version'));
+
+        $nature = $this->fichierService->fetchNatureFichier(NatureFichier::CODE_THESE_PDF);
+
+        $titre = $estExpurge ?
+            sprintf("Version %s expurgée pour la diffusion", $estCorrige ? "corrigée" : "") :
+            sprintf("Thèse %s au format PDF", $estCorrige ? "corrigée" : "");
+
+        $form = $this->uploader()->getForm();
+        $form->setAttribute('id', uniqid('form-'));
+        $form->setUploadMaxFilesize(FichierTheseController::UPLOAD_MAX_FILESIZE);
+//        $form->addElement((new Hidden('annexe'))->setValue(0));
+        $form->addElement((new Hidden('nature'))->setValue($this->idify($nature)));
+        $form->addElement((new Hidden('version'))->setValue($this->idify($version)));
+        if ($validerAuto) {
+            $form->addElement((new Hidden('validerAuto'))->setValue(1));
+        }
+
+        $view = new ViewModel([
+            'titre'          => $titre,
+            'these'          => $these,
+            'info'           => $estExpurge ? "<strong>NB</strong>: rassembler la thèse sur un seul fichier au format PDF." : null,
+            'uploadUrl'      => $this->urlFichierThese()->televerserFichierThese($these),
+            'theseListUrl'   => $this->urlFichierThese()->listerFichiers($these, $nature, $version, false, ['inclureValidite' => $inclureValidite]),
+            'nature'         => $nature,
+            'versionFichier' => $version,
+            'env'            => $this->envService->findOneByAnnee(),
+        ]);
+        $view->setTemplate('application/these/depot/these');
+
+        return $view;
+    }
+
+    /**
+     * @return ViewModel|Response
+     */
+    public function theseRetraiteeAction()
+    {
+        $these = $this->requestedThese();
+        $nature = $this->fichierService->fetchNatureFichier(NatureFichier::CODE_THESE_PDF);
+        $version = $this->fichierService->fetchVersionFichier($this->params()->fromQuery('version'));
+
+        $versionOriginale = $this->fichierService->fetchVersionFichier(
+            $version->estVersionCorrigee() ? VersionFichier::CODE_ORIG_CORR : VersionFichier::CODE_ORIG
+        );
+        $versionArchivage = $this->fichierService->fetchVersionFichier(
+            $version->estVersionCorrigee() ? VersionFichier::CODE_ARCHI_CORR : VersionFichier::CODE_ARCHI
+        );
+
+        /** @var Fichier $fichierVersionOriginale */
+        $fichierVersionOriginale = $these->getFichiersByNatureEtVersion($nature, $versionOriginale)->first();
+        /** @var Fichier $fichierVersionArchivage */
+        $fichierVersionArchivage = $these->getFichiersByNatureEtVersion($nature, $versionArchivage, true)->first() ?: null;
+
+        $form = $this->uploader()->getForm();
+        $form->setAttribute('id', uniqid('form-'));
+        $form->setUploadMaxFilesize(FichierTheseController::UPLOAD_MAX_FILESIZE);
+        $form->addElement((new Hidden('validerAuto'))->setValue(1));
+        $form->addElement((new Hidden('retraitement'))->setValue(Fichier::RETRAITEMENT_MANU));
+        $form->addElement((new Hidden('nature'))->setValue($this->idify($nature)));
+        $form->addElement((new Hidden('version'))->setValue($this->idify($versionArchivage)));
+
+        if ($this->getRequest()->isPost()) {
+            if ('creerVersionRetraitee' === $this->params()->fromQuery('action')) {
+                $fichierVersionArchivage = $this->fichierService->creerFichierRetraite($fichierVersionOriginale);
+                try {
+                    $this->fichierService->validerFichier($fichierVersionArchivage);
+                }
+                catch (ValidationImpossibleException $vie) {
+                    // Le test d'archivabilité du fichier '%s' a rencontré un problème indépendant de notre volonté
+                }
+            }
+            return $this->redirect()->refresh();
+        }
+
+        $theseRetraiteeAutoListUrl = $this->urlFichierThese()->listerFichiers(
+            $these, $nature, $versionArchivage, Fichier::RETRAITEMENT_AUTO, ['inclureValidite' => true]);
+        $theseRetraiteeManuListUrl = $this->urlFichierThese()->listerFichiers(
+            $these, $nature, $versionArchivage, Fichier::RETRAITEMENT_MANU, ['inclureValidite' => true]);
+
+        $view = new ViewModel([
+            'these'                     => $these,
+            'info'                      => null,
+            'uploadUrl'                 => $this->urlFichierThese()->televerserFichierThese($these),
+            'theseRetraiteeAutoListUrl' => $theseRetraiteeAutoListUrl,
+            'theseRetraiteeManuListUrl' => $theseRetraiteeManuListUrl,
+//            'creerVersionRetraiteeUrl'  => $this->url()->fromRoute(null, [], ['query' => ['action' => 'creerVersionRetraitee']], true),
+            'creerVersionRetraiteeUrl'  => $this->urlThese()->creerVersionRetraitee($these, $versionArchivage),
+            'fichierVOouVOC'            => $fichierVersionOriginale,
+            'fichierVAouVAC'            => $fichierVersionArchivage,
+            'nature'                    => $nature,
+            'versionFichier'            => $versionArchivage,
+        ]);
+        $view->setTemplate('application/these/archivage/these-retraitee');
+
+        return $view;
+    }
+
+    public function annexesAction()
+    {
+        $these = $this->requestedThese();
+        $estCorrige = (bool) $this->params()->fromQuery('corrige', false);
+        $estExpurge = (bool) $this->params()->fromQuery('expurge', false);
+        $version = $this->fichierService->fetchVersionFichier($this->params()->fromQuery('version'));
+
+        $nature = $this->fichierService->fetchNatureFichier(NatureFichier::CODE_FICHIER_NON_PDF);
+
+        $titre = $estExpurge ?
+            sprintf("Fichiers %s expurgés hors PDF", $estCorrige ? "corrigés" : "") :
+            sprintf("Fichiers %s hors PDF", $estCorrige ? "corrigés" : "");
+
+        $form = $this->uploader()->getForm();
+        $form->setAttribute('id', uniqid('form-'));
+        $form->setUploadMaxFilesize(FichierTheseController::UPLOAD_MAX_FILESIZE);
+        $form->addElement((new Hidden('annexe'))->setValue(1));
+        $form->addElement((new Hidden('nature'))->setValue($this->idify($nature)));
+        $form->addElement((new Hidden('version'))->setValue($this->idify($version)));
+
+        $view = new ViewModel([
+            'titre'          => $titre,
+            'these'          => $these,
+            'uploadUrl'      => $this->urlFichierThese()->televerserFichierThese($these),
+            'annexesListUrl' => $this->urlFichierThese()->listerFichiers($these, $nature, $version),
+            'nature'         => $nature,
+            'versionFichier' => $version,
+        ]);
+        $view->setTemplate('application/these/depot/annexes');
+
+        return $view;
+    }
+
+    /**
+     * @return ViewModel
+     */
+    public function depotPvSoutenanceAction()
+    {
+        $these = $this->requestedThese();
+        $dateSoutenanceDepassee = $these->getDateSoutenance() && $these->getDateSoutenance() < new \DateTime();
+
+        $view = $this->createViewForFichierAction(NatureFichier::CODE_PV_SOUTENANCE);
+        $view->setVariable('isVisible', $dateSoutenanceDepassee);
+        $view->setTemplate('application/these/depot/fichier-divers');
+
+        return $view;
+    }
+
+    /**
+     * @return ViewModel
+     */
+    public function depotRapportSoutenanceAction()
+    {
+        $these = $this->requestedThese();
+        $dateSoutenanceDepassee = $these->getDateSoutenance() && $these->getDateSoutenance() < new \DateTime();
+
+        $view = $this->createViewForFichierAction(NatureFichier::CODE_RAPPORT_SOUTENANCE);
+        $view->setVariable('isVisible', $dateSoutenanceDepassee);
+        $view->setTemplate('application/these/depot/fichier-divers');
+
+        return $view;
+    }
+
+    /**
+     * @return ViewModel
+     */
+    public function depotPreRapportSoutenanceAction()
+    {
+        $these = $this->requestedThese();
+        $dateSoutenanceDepassee = $these->getDateSoutenance() && $these->getDateSoutenance() < new \DateTime();
+
+        $view = $this->createViewForFichierAction(NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE);
+        $view->setVariable('isVisible', $dateSoutenanceDepassee);
+        $view->setVariable('maxUploadableFilesCount', 3);
+        $view->setTemplate('application/these/depot/fichier-divers');
+
+        return $view;
+    }
+
+    /**
+     * @return ViewModel
+     */
+    public function depotDemandeConfidentAction()
+    {
+        $view = $this->createViewForFichierAction(NatureFichier::CODE_DEMANDE_CONFIDENT);
+        $view->setTemplate('application/these/depot/fichier-divers');
+
+        return $view;
+    }
+
+    /**
+     * @return ViewModel
+     */
+    public function depotProlongConfidentAction()
+    {
+        $view = $this->createViewForFichierAction(NatureFichier::CODE_PROLONG_CONFIDENT);
+        $view->setTemplate('application/these/depot/fichier-divers');
+
+        return $view;
+    }
+
+    /**
+     * @return ViewModel
+     */
+    public function depotConvMiseEnLigneAction()
+    {
+        $view = $this->createViewForFichierAction(NatureFichier::CODE_CONV_MISE_EN_LIGNE);
+        $view->setTemplate('application/these/depot/fichier-divers');
+
+        return $view;
+    }
+
+    /**
+     * @return ViewModel
+     */
+    public function depotAvenantConvMiseEnLigneAction()
+    {
+        $view = $this->createViewForFichierAction(NatureFichier::CODE_AVENANT_CONV_MISE_EN_LIGNE);
+        $view->setTemplate('application/these/depot/fichier-divers');
+
+        return $view;
+    }
+
+    /**
+     * @param string $codeNatureFichier
+     * @return ViewModel
+     */
+    private function createViewForFichierAction($codeNatureFichier)
+    {
+        $these = $this->requestedThese();
+        $nature = $this->fichierService->fetchNatureFichier($codeNatureFichier);
+        $version = $this->fichierService->fetchVersionFichier(VersionFichier::CODE_ORIG);
+
+        if (!$nature) {
+            throw new RuntimeException("Nature de fichier introuvable: " . $codeNatureFichier);
+        }
+
+        $form = $this->uploader()->getForm();
+        $form->setAttribute('id', uniqid('form-'));
+        $form->setUploadMaxFilesize('10M');
+        $form->addElement((new Hidden('nature'))->setValue($this->idify($nature)));
+        $form->addElement((new Hidden('version'))->setValue($this->idify($version)));
+        $form->get('files')->setLabel("")->setAttribute('multiple', false)/*->setAttribute('accept', '.pdf')*/;
+
+        $view = new ViewModel([
+            'these'           => $these,
+            'uploadUrl'       => $this->urlFichierThese()->televerserFichierThese($these),
+            'fichiersListUrl' => $this->urlFichierThese()->listerFichiers($these, $nature),
+            'nature'          => $nature,
+            'version'         => $version,
+        ]);
+
+        return $view;
+    }
+
+    public function testArchivabiliteAction()
+    {
+        $these = $this->requestedThese();
+        $version = $this->fichierService->fetchVersionFichier($this->params()->fromQuery('version'));
+
+        $theseFichiers = $these->getFichiersByNatureEtVersion(NatureFichier::CODE_THESE_PDF, $version);
+        /** @var Fichier $fichierThese */
+        $fichierThese = $theseFichiers->first();
+
+        if ($this->getRequest()->isPost()) {
+
+            //TODO move this to the suppr action
+            // retrait de la validation précédente si le fichier est identique afin de pouvoir retester l'archivabilité après effacement
+            $qb = $this->validationService->getRepository()->createQueryBuilder('v')
+                ->where("t.id = :theseid")
+                ->andWhere("tv.code = :type");
+            $qb->setParameter(":theseid", $these->getId());
+            $qb->setParameter(":type", TypeValidation::CODE_DEPOT_THESE_CORRIGEE);
+            $res = $qb->getQuery()->getResult();
+
+            if(isset($res) && count($res) > 0) {
+                //echo "something is here !"."<br/>";
+                $validation = $res[0];
+                $this->validationService->getEntityManager()->remove($validation);
+                $this->validationService->getEntityManager()->flush();
+            }
+
+            $action = $this->params()->fromPost('action', $this->params()->fromQuery('action'));
+            if ('tester' === $action) {
+                try {
+                    $validite = $this->fichierService->validerFichier($fichierThese);
+
+                    // création automatique d'une validation du dépôt de la version corrigée (par le doctorant)
+                    if ($validite->getEstValide() && $version->estVersionCorrigee()) {
+                        $this->validationService->validateDepotTheseCorrigee($these);
+
+                        // todo: envoi de mail aux directeurs de thèse
+                        $mailViewModel = (new ViewModel())
+                            ->setTemplate('application/notification/mail/notif-validation-depot-these-corrigee')
+                            ->setVariables([
+                                'subject' => "Validation du dépôt de la thèse corrigée",
+                                'these'    => $these,
+                                'url' => $this->url()->fromRoute('these/validation-these-corrigee', ['these' => $these->getId()], ['force_canonical' => true]),
+                            ]);
+                        $this->notificationService->notifierValidationDepotTheseCorrigee($mailViewModel, $these);
+
+                    }
+                } catch (ValidationImpossibleException $vie) {
+                    // Le test d'archivabilité du fichier '%s' a rencontré un problème indépendant de notre volonté
+                }
+            }
+            return $this->redirect()->toUrl($this->urlThese()->archivageThese($these, $version->getCode()));
+        }
+
+        $view = new ViewModel([
+            'these'                => $these,
+            'fichierThese'         => $fichierThese,
+            'testArchivabiliteUrl' => $this->urlThese()->testArchivabilite($these, $version->getCode()),
+        ]);
+        $view->setTemplate('application/these/archivage/test-archivabilite');
+
+        return $view;
+    }
+
+    public function archivabiliteTheseAction()
+    {
+        $these = $this->requestedThese();
+        $version = $this->fichierService->fetchVersionFichier($this->params()->fromQuery('version'));
+        $retraite = true;
+
+        $codeVersionRetraitee = $version->estVersionCorrigee() ?
+            VersionFichier::CODE_ARCHI_CORR :
+            VersionFichier::CODE_ARCHI;
+
+        $theseFichiersRetraite = $these->getFichiersByNatureEtVersion(NatureFichier::CODE_THESE_PDF, $codeVersionRetraitee, true);
+        $fichierTheseRetraite = $theseFichiersRetraite->first();
+
+        $view = new ViewModel([
+            'these'    => $these,
+            'fichier'  => $fichierTheseRetraite,
+            'retraite' => $retraite,
+            'contact'  => $this->envService->findOneByAnnee()->getEmailAssistance(),
+        ]);
+        $view->setTemplate('application/these/archivage/archivabilite-these');
+
+        return $view;
+    }
+
+    public function conformiteTheseRetraiteeAction()
+    {
+        $these = $this->requestedThese();
+        $version = $this->fichierService->fetchVersionFichier($this->params()->fromQuery('version'));
+
+        $versionArchivage = $this->fichierService->fetchVersionFichier(
+            $version->estVersionCorrigee() ? VersionFichier::CODE_ARCHI_CORR : VersionFichier::CODE_ARCHI
+        );
+        $fichier = $these->getFichiersByNatureEtVersion(NatureFichier::CODE_THESE_PDF, $versionArchivage, true)->first() ?: null;
+
+        $view = new ViewModel([
+            'these'                     => $these,
+            'fichierTheseRetraite'      => $fichier,
+            'validerFichierRetraiteUrl' => $this->urlThese()->certifierConformiteTheseRetraiteUrl($these, $versionArchivage),
+            'contact'                   => $this->envService->findOneByAnnee()->getEmailAssistance(),
+        ]);
+        $view->setTemplate('application/these/archivage/conformite-these-retraitee');
+
+        return $view;
+    }
+
+    public function zipAction()
+    {
+        $these = $this->requestedThese();
+
+        $view = new ViewModel([
+            'these'            => $these,
+            'constituerZipUrl' => $this->urlThese()->constituerZipUrl($these),
+        ]);
+        $view->setTemplate('application/these/zip');
+
+        return $view;
+    }
+
+    public function attestationAction()
+    {
+        $these = $this->requestedThese();
+        $attestation = $these->getAttestation();
+        $version = $this->fichierService->fetchVersionFichier($this->params()->fromQuery('version'));
+
+        $versionInitialeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_ATTESTATIONS)->getAtteignable();
+        $versionCorrigeeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_ATTESTATIONS_VERSION_CORRIGEE)->getAtteignable();
+        $visible =
+            $version->estVersionCorrigee() && $versionCorrigeeAtteignable ||
+            !$version->estVersionCorrigee() && $versionInitialeAtteignable && !$versionCorrigeeAtteignable;
+
+        if (! $visible) {
+            return false;
+        }
+
+        $form = $this->getAttestationTheseForm();
+
+        $view = new ViewModel([
+            'these'                  => $these,
+            'version'                => $version,
+            'attestation'            => $attestation,
+            'form'                   => $form,
+            'modifierAttestationUrl' => $this->urlThese()->modifierAttestationUrl($these),
+        ]);
+        $view->setTemplate('application/these/attestation');
+
+        return $view;
+    }
+
+    public function modifierAttestationAction()
+    {
+        $these = $this->requestedThese();
+        $form = $this->getAttestationTheseForm();
+
+        if ($this->getRequest()->isPost()) {
+            /** @var ParametersInterface $post */
+            $post = $this->getRequest()->getPost();
+            $form->setData($post);
+            $isValid = $form->isValid();
+            if ($isValid) {
+                /** @var Attestation $attestation */
+                $attestation = $form->getData();
+                $this->theseService->updateAttestation($these, $attestation);
+                $this->flashMessenger()->addSuccessMessage("Réponses au questionnaire enregistrées avec succès.");
+
+                if (! $this->getRequest()->isXmlHttpRequest()) {
+                    return $this->redirect()->toRoute('these/depot', [], [], true);
+                }
+            }
+        }
+
+        $form->setAttribute('action', $this->urlThese()->modifierAttestationUrl($these));
+
+        return new ViewModel([
+            'these' => $these,
+            'form'  => $form,
+            'title' => "Attestations",
+        ]);
+    }
+
+    /**
+     * @return AttestationTheseForm
+     */
+    private function getAttestationTheseForm()
+    {
+        $these = $this->requestedThese();
+
+        /** @var AttestationTheseForm $form */
+        $form = $this->getServiceLocator()->get('formElementManager')->get('AttestationTheseForm');
+
+        $attestation = $these->getAttestation();
+
+        if ($attestation === null) {
+            // si l'on est dans le cadre du dépôt de la version corrigée, on rappelle les infos historisées
+            if ($this->existeVersionCorrigee()) {
+                $attestations = $these->getAttestations($historise = true);
+                $attestationPrec = $attestations->last() ?: null; // la plus récente
+
+                /** @var Attestation $attestation */
+                $attestation = clone $attestationPrec;
+            } else {
+                $attestation = new Attestation();
+                $attestation->setThese($these);
+            }
+        }
+
+        $form->bind($attestation);
+
+        return $form;
+    }
+
+    /**
+     * @var bool
+     */
+    protected $existeVersionCorrigee = null;
+
+    /**
+     * Si le fichier de la thèse originale est une version corrigée, on est dans le cadre d'un dépôt d'une version
+     * corrigée et cette fonction retourne true.
+     *
+     * @param These|null $these
+     * @return bool
+     */
+    private function existeVersionCorrigee(These $these = null)
+    {
+        if ($these !== null) {
+            return $these->getFichiersByVersion(VersionFichier::CODE_ORIG_CORR, false)->count() > 0;
+        }
+        if ($this->existeVersionCorrigee !== null) {
+            return $this->existeVersionCorrigee;
+        }
+        if ($these === null) {
+            $these = $this->requestedThese();
+        }
+
+        $this->existeVersionCorrigee = $these->getFichiersByVersion(VersionFichier::CODE_ORIG_CORR, false)->count() > 0;
+
+        return $this->existeVersionCorrigee;
+    }
+
+    public function diffusionAction()
+    {
+        $these = $this->requestedThese();
+        $version = $this->fichierService->fetchVersionFichier($this->params()->fromQuery('version'));
+
+        $versionInitialeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_AUTORISATION_DIFFUSION_THESE)->getAtteignable();
+        $versionCorrigeeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_AUTORISATION_DIFFUSION_THESE_VERSION_CORRIGEE)->getAtteignable();
+        $visible =
+            $version->estVersionCorrigee() && $versionCorrigeeAtteignable ||
+            !$version->estVersionCorrigee() && $versionInitialeAtteignable && !$versionCorrigeeAtteignable;
+
+        if (! $visible) {
+            return false;
+        }
+
+        /** @var DiffusionTheseForm $form */
+        $form = $this->getServiceLocator()->get('formElementManager')->get('DiffusionTheseForm');
+
+        $ff = FichierFilter::inst()->version($version);
+        $theseFichiersExpurges = $ff->annexe(false)->filter($these->getFichiers());
+        $annexesFichiersExpurges = $ff->annexe(true)->filter($these->getFichiers());
+
+        if ($diffusion = $these->getDiffusion()) {
+            $form->bind($diffusion);
+        }
+
+        $theseFichiersExpurgesItems = array_map(function (Fichier $fichier) use ($these) {
+            return [
+                'file'          => $fichier,
+                'apercevoirUrl' => $this->urlFichierThese()->apercevoirFichierThese($these, $fichier),
+                'downloadUrl'   => $this->urlFichierThese()->telechargerFichierThese($these, $fichier),
+            ];
+        }, $theseFichiersExpurges->toArray());
+        $annexesFichiersExpurgesItems = array_map(function (Fichier $fichier) use ($these) {
+            return [
+                'file'          => $fichier,
+                'apercevoirUrl' => $this->urlFichierThese()->apercevoirFichierThese($these, $fichier),
+                'downloadUrl'   => $this->urlFichierThese()->telechargerFichierThese($these, $fichier),
+            ];
+        }, $annexesFichiersExpurges->toArray());
+
+        $view = new ViewModel([
+            'these'                        => $these,
+            'version'                      => $version,
+            'form'                         => $form,
+            'theseFichiersExpurgesItems'   => $theseFichiersExpurgesItems,
+            'annexesFichiersExpurgesItems' => $annexesFichiersExpurgesItems,
+            'modifierDiffusionUrl'         => $this->urlThese()->modifierDiffusionUrl($these),
+            'exporterConventionMelUrl'     => $this->urlThese()->exporterConventionMiseEnLigneUrl($these),
+        ]);
+        $view->setTemplate('application/these/diffusion');
+
+        return $view;
+    }
+
+    public function modifierDiffusionAction()
+    {
+        $these = $this->requestedThese();
+
+        // si le fichier de la thèse originale est une version corrigée, la version de diffusion est aussi en version corrigée
+        $existeVersionOrigCorrig = $these->getFichiersByVersion(VersionFichier::CODE_ORIG_CORR, false)->count() > 0;
+        $version = $existeVersionOrigCorrig ? VersionFichier::CODE_DIFF_CORR : VersionFichier::CODE_DIFF;
+
+        $form = $this->getDiffusionForm($version);
+
+        if ($this->getRequest()->isPost()) {
+            /** @var ParametersInterface $post */
+            $post = $this->getRequest()->getPost();
+            $form->setData($post);
+            $isValid = $form->isValid();
+            if ($isValid) {
+                $diffusion = $form->getData();
+                $this->theseService->updateDiffusion($these, $diffusion);
+                $this->flashMessenger()->addSuccessMessage("Réponses au questionnaire enregistrées avec succès.");
+
+                // suppression des fichiers expurgés éventuellement déposés en l'absence de pb de droit d'auteur
+                $besoinVersionExpurgee = ! $diffusion->getDroitAuteurOk();
+                $fichiersExpurgesDeposes = $these->getFichiersBy(null, true, false, $version);
+                if (! $besoinVersionExpurgee && $fichiersExpurgesDeposes->count() > 0) {
+                    $this->fichierService->deleteFichiers($fichiersExpurgesDeposes);
+                    $this->flashMessenger()->addSuccessMessage("Les fichiers expurgés fournis devenus inutiles ont été supprimés.");
+                }
+
+                if (! $this->getRequest()->isXmlHttpRequest()) {
+                    return $this->redirect()->toRoute('these/depot', [], [], true);
+                }
+            }
+        }
+
+        $form->setAttribute('action', $this->urlThese()->modifierDiffusionUrl($these));
+
+        return new ViewModel([
+            'these'      => $these,
+            'form'       => $form,
+            'title'      => "Autorisation de diffusion",
+            'theseUrl'   => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_THESE_PDF, $version),
+//            'annexesUrl' => $this->urlThese()->fichiersAnnexes($these, NatureFichier::CODE_FICHIER_NON_PDF, $version),
+            'annexesUrl' => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_FICHIER_NON_PDF, $version),
+        ]);
+    }
+
+    /**
+     * @param string $version
+     * @return DiffusionTheseForm
+     */
+    private function getDiffusionForm($version)
+    {
+        $these = $this->requestedThese();
+
+        /** @var DiffusionTheseForm $form */
+        $form = $this->getServiceLocator()->get('formElementManager')->get('DiffusionTheseForm');
+        $form->setVersionFichier($this->versionFichierService->getRepository()->findOneByCode($version));
+
+        $diffusion = $these->getDiffusion();
+
+        if ($diffusion === null) {
+            // si l'on est dans le cadre du dépôt de la version corrigée, on rappelle les infos historisées
+            if ($this->existeVersionCorrigee()) {
+                $diffusions = $these->getDiffusions($historise = true);
+                $diffusionPrec = $diffusions->last() ?: null; // la plus récente
+
+                /** @var Diffusion $diffusion */
+                $diffusion = clone $diffusionPrec;
+            } else {
+                $diffusion = new Diffusion();
+                $diffusion->setThese($these);
+            }
+        }
+
+        $form->bind($diffusion);
+
+        return $form;
+    }
+
+    public function exporterConventionMiseEnLigneAction()
+    {
+        $these = $this->requestedThese();
+
+        /** @var DiffusionTheseForm $form */
+        $form = $this->getServiceLocator()->get('formElementManager')->get('DiffusionTheseForm');
+        $variableRepo = $this->variableService->getRepository();
+
+        $etab = $variableRepo->valeur(Variable::SOURCE_CODE_ETB_LIB);
+        $letab = lcfirst($variableRepo->valeur(Variable::SOURCE_CODE_ETB_ART_ETB_LIB)) . $etab;
+        $libEtablissementA = "à " . $letab;
+        $libEtablissementLe = $letab;
+        $libEtablissementDe = "de " . $letab;
+        $libPresidentLe = $variableRepo->valeur(Variable::SOURCE_CODE_ETB_LIB_TIT_RESP);
+        $nomPresid = $variableRepo->valeur(Variable::SOURCE_CODE_ETB_LIB_NOM_RESP);
+
+        $renderer = $this->getServiceLocator()->get('view_renderer'); /* @var $renderer \Zend\View\Renderer\PhpRenderer */
+        $exporter = new PdfExporter($renderer, 'A4');
+        $exporter->setLogo(file_get_contents(APPLICATION_DIR . '/public/logo_normandie_univ.jpg'));
+        $exporter->setHeaderScript('application/these/convention-pdf/partial/header.phtml');
+        $exporter->setFooterScript('application/these/convention-pdf/partial/footer.phtml');
+        $exporter->setMarginTop(20);
+        $exporter->setMarginBottom(25);
+        $exporter->setFooterTitle("Convention de mise en ligne");
+        $exporter->addBodyHtml('<style>' . file_get_contents(APPLICATION_DIR . '/public/css/app.css') . '</style>');
+        $exporter->addBodyScript('application/these/convention-pdf/convention.phtml', false, $vars = [
+            'these'              => $these,
+            'form'               => $form,
+            'exporter'           => $exporter,
+            'libEtablissement'   => $etab,
+            'libEtablissementA'  => $libEtablissementA,
+            'libEtablissementLe' => $libEtablissementLe,
+            'libEtablissementDe' => $libEtablissementDe,
+            'libPresidentLe'     => $libPresidentLe,
+            'nomPresid'          => $nomPresid,
+        ]);
+        $exporter->addBodyScript('application/these/convention-pdf/convention.phtml', true, $vars, 1);
+        $exporter->export('export.pdf');
+        exit;
+    }
+
+    public function constituerZipAction()
+    {
+        $these = $this->requestedThese();
+
+        $tmpDirPath = sys_get_temp_dir();
+
+        /**
+         * Création d'un répertoire contenant les fichiers à compresser.
+         */
+        $sourceDirName = uniqid('sodoct_');
+        $sourceDirPath = $tmpDirPath . '/' . $sourceDirName;
+        if (! mkdir($sourceDirPath)) {
+            throw new \RuntimeException("Impossible de créer le répertoire temporaire " . $sourceDirPath);
+        }
+        /** @var Fichier $fichier */
+        foreach ($these->getFichiers() as $fichier) {
+            $fichier->exportToFile($sourceDirPath . '/' . $fichier->getNom(), true);
+        }
+
+        /**
+         * Compression du répertoire.
+         */
+        $zipFileName = $sourceDirName . '.zip';
+        $zipFilePath = $tmpDirPath . '/' . $zipFileName;
+        Util::zip($sourceDirPath, $zipFilePath);
+
+        /**
+         * Envoi du zip au client.
+         */
+        header("Pragma: public");
+        header("Expires: 0");
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header("Cache-Control: public");
+        header("Content-Description: File Transfer");
+        header("Content-type: application/zip");
+//        header("Content-type: application/octet-stream");
+        header("Content-Disposition: attachment; filename=$zipFileName");
+        header('Content-Transfer-Encoding: binary');
+        header("Content-Length: " . filesize($zipFilePath));
+        ob_end_flush();
+        readfile($zipFilePath);
+        unlink($zipFilePath);
+        exit;
+    }
+
+    public function modifierDescriptionAction()
+    {
+        $these = $this->requestedThese();
+
+        $form = $this->getDescriptionForm();
+
+        if ($this->getRequest()->isPost()) {
+            /** @var ParametersInterface $post */
+            $post = $this->getRequest()->getPost();
+            $form->setData($post);
+            if ($form->isValid()) {
+                /** @var MetadonneeThese $metadonnee */
+                $metadonnee = $form->getData();
+                $this->theseService->updateMetadonnees($these, $metadonnee);
+
+                $this->flashMessenger()->addSuccessMessage("Informations enregistrées avec succès.");
+
+                if (! $this->getRequest()->isXmlHttpRequest()) {
+                    return $this->redirect()->toRoute('these/description', [], [], true);
+                }
+            }
+        }
+
+        $form->setAttribute('action', $this->urlThese()->modifierMetadonneesUrl($these));
+
+        return new ViewModel([
+            'these' => $these,
+            'form' => $form,
+            'title' => "Signalement",
+        ]);
+    }
+
+    /**
+     * @return MetadonneeTheseForm
+     */
+    private function getDescriptionForm()
+    {
+        $these = $this->requestedThese();
+
+        /** @var MetadonneeTheseForm $form */
+        $form = $this->getServiceLocator()->get('formElementManager')->get('MetadonneeTheseForm');
+
+        $description = $these->getMetadonnee();
+
+        if ($description === null) {
+            $description = new MetadonneeThese();
+            $description->setTitre($these->getTitre());
+        }
+
+        $form->bind($description);
+
+        return $form;
+    }
+
+    public function modifierCertifConformiteAction()
+    {
+        $these = $this->requestedThese();
+        $versionArchivage = $this->fichierService->fetchVersionFichier($this->params()->fromQuery('version'));
+
+        $fichierTheseRetraite = $these->getFichiersByNatureEtVersion(NatureFichier::CODE_THESE_PDF, $versionArchivage, true)->first();
+
+        $form = new ConformiteFichierForm('conformite');
+
+        if ($this->getRequest()->isPost()) {
+            /** @var ParametersInterface $post */
+            $post = $this->getRequest()->getPost();
+            $form->setData($post);
+            if ($form->isValid()) {
+                $conforme = $post->get('conforme');
+                $this->theseService->updateConformiteTheseRetraitee($these, $conforme);
+                if ($conforme && $versionArchivage->estVersionCorrigee()) {
+                    $this->validationService->validateDepotTheseCorrigee($these);
+
+                }
+            }
+        }
+        else {
+            $conforme = $fichierTheseRetraite->getEstConforme();
+            $form->get('conforme')->setValue($conforme !== null ? (string) $conforme : null);
+        }
+
+        $form->setAttribute('action', $this->urlThese()->certifierConformiteTheseRetraiteUrl($these, $versionArchivage));
+
+        return new ViewModel([
+            'these' => $these,
+            'form' => $form,
+            'title' => "Conformité de " . $versionArchivage->toString(),
+        ]);
+    }
+
+    public function depotPapierFinalAction() {
+
+        $these = $this->requestedThese();
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+
+            $post = $request->getPost();
+
+            echo "Ajout de la validation<br/>";
+            $this->validationService->validateVersionPapierCorrigee($these);
+            //pour sortir du post
+            return $this->redirect()->toRoute('these/version-papier', [], [], true);
+
+        }
+
+        return new ViewModel(array(
+            'these' => $these,
+        ));
+
+    }
+
+}

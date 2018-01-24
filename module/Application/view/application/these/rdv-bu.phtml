@@ -1,0 +1,138 @@
+<?php
+
+use Application\Entity\Db\These;
+use Application\Entity\Db\Validation;
+use Application\Entity\Db\WfEtape;
+use Application\Provider\Privilege\ThesePrivileges;
+use Application\Provider\Privilege\ValidationPrivileges;
+use Application\View\Renderer\PhpRenderer;
+use UnicaenApp\Service\MessageCollector;
+
+/**
+ * @var PhpRenderer      $this
+ * @var These            $these
+ * @var bool             $estDoctorant
+ * @var string           $modifierUrl
+ * @var string           $validerUrl
+ * @var string           $devaliderUrl
+ * @var Validation|null  $validation
+ * @var MessageCollector $msgCollector
+ * @var string           $nextStepUrl
+ */
+
+$canEdit = $this->isAllowed($these, ThesePrivileges::THESE_SAISIE_RDV_BU);
+$canValidate = $this->isAllowed($these, ValidationPrivileges::THESE_VALIDATION_RDV_BU);
+$canUnvalidate = $this->isAllowed($these, ValidationPrivileges::THESE_VALIDATION_RDV_BU_SUPPR);
+
+$rdvBu = $these->getRdvBu();
+?>
+
+<?php $this->headTitle("Rendez-vous BU")->prepend($these->getDoctorant()->getNomUsuel()) ?>
+
+<h1 class="page-header">Rendez-vous BU
+    <small><?php echo $this->partial('application/these/partial/titre') ?></small>
+</h1>
+
+<div class="panel panel-info box">
+    <div class="panel-heading">
+        <h2 class="first">Rendez-vous BU</h2>
+    </div>
+    <div class="panel-body">
+        <?php if ($rdvBu): ?>
+            <div class="row">
+                <div class="col-md-4">
+                    <h2 class="first">Doctorant</h2>
+                    <dl class="rdv-bu">
+                        <dt>Téléphone :</dt>
+                        <dd><?php echo $this->escapeText()->render($rdvBu->getCoordDoctorant()) ?: "(Non renseignées)" ?></dd>
+                        <dt>Disponibilités :</dt>
+                        <dd><?php echo $this->escapeText()->render($rdvBu->getDispoDoctorant()) ?: "(Non renseignées)" ?></dd>
+                    </dl>
+                </div>
+                <div class="col-md-8">
+                    <h2 class="first">BU</h2>
+                    <?php echo $this->partial('application/these/partial/rdv-bu') ?>
+                </div>
+            </div>
+            <?php if ($canEdit): ?>
+                <a href="<?php echo $modifierUrl ?>"
+                   class="btn btn-default ajax-modal"
+                   data-event="event-rdv-bu-modified"><span class="glyphicon glyphicon-pencil"></span> Modifier</a>
+            <?php endif ?>
+        <?php else: ?>
+            <p>Vous n'avez pas encore completé les informations concernant le rendez-vous à la BU.</p>
+            <?php if ($canEdit): ?>
+                <a href="<?php echo $modifierUrl ?>"
+                   class="btn btn-primary ajax-modal"
+                   data-event="event-rdv-bu-modified"><span class="glyphicon glyphicon-pencil"></span> Compléter</a>
+            <?php endif ?>
+        <?php endif ?>
+    </div>
+</div>
+
+<div class="panel panel-info box">
+    <div class="panel-heading">
+        <h2 class="first">Validation</h2>
+    </div>
+    <div class="panel-body">
+        <?php if ($validation): ?>
+            <?php echo $this->validation($validation) ?>
+            <?php if ($canUnvalidate): ?>
+                <a href="<?php echo $devaliderUrl ?>"
+                   class="btn btn-danger ajax-modal"
+                   data-event="event-rdv-bu-validated"><span class="glyphicon glyphicon-trash"></span> Annuler la validation</a>
+            <?php endif ?>
+        <?php else: ?>
+            <p>Aucune.</p>
+            <?php if ($canValidate): ?>
+                <a href="<?php echo $validerUrl ?>"
+                   class="btn btn-success ajax-modal"
+                   data-event="event-rdv-bu-validated"><span class="glyphicon glyphicon-thumbs-up"></span> Valider</a>
+            <?php //elseif ($msgCollector->hasMessages($etape = WfEtape::CODE_RDV_BU_VALIDATION_BU)): ?>
+                <?php
+    //            $message = "La validation n'est pas possible pour la raison suivante : " .
+    //                lcfirst($msgCollector->getMessage('<br>', WfEtape::CODE_RDV_BU_VALIDATION_BU));
+    //            echo $this->messenger()->addMessage($message);
+                ?>
+            <?php endif ?>
+        <?php endif ?>
+    </div>
+</div>
+
+<!-------------------------------------- Next step --------------------------------------->
+<div id="nextStepDiv" data-url="<?php echo $nextStepUrl ?>" style="display: none">
+    <!-- màj via ajax -->
+</div>
+
+<?php //echo $this->partial('next-step-box', ['these' => $these, 'etape' => WfEtape::CODE_RDV_BU_VALIDATION_BU]) ?>
+
+
+<script>
+    $(function () {
+        var refreshingNextStep = function(done, effect) {
+            return function() {
+                console.log("refreshingNextStep");
+                $("#nextStepDiv").addClass("loading").refresh(null, function () {
+                    $(this).removeClass("loading").show();
+                    if (done) done();
+                });
+            };
+        };
+
+        // au chargement de la page, on actualise toutes les div en cascade.
+        runInCascade([
+            refreshingNextStep
+        ], self);
+
+
+        $("body").one("event-rdv-bu-modified", function (event, data) {
+            // Les données viennent d'être modifiées.
+            event.div.modal('hide'); // ferme la fenêtre modale
+            window.location.reload();
+        }).one("event-rdv-bu-validated", function (event, data) {
+            // La validation vient d'être saisie.
+            event.div.modal('hide'); // ferme la fenêtre modale
+            window.location.reload();
+        });
+    });
+</script>

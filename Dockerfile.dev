@@ -1,0 +1,88 @@
+########################################################################################################################
+#
+# Dockerfile pour le développement.
+#
+# Build :
+#    docker build \
+#    --add-host="proxy.unicaen.fr:10.14.128.99" \
+#    --add-host="svn.unicaen.fr:10.14.129.44" \
+#    --build-arg http_proxy="http://proxy.unicaen.fr:3128" \
+#    --build-arg https_proxy="http://proxy.unicaen.fr:3128" \
+#    --build-arg no_proxy=".unicaen.fr,localhost" \
+#    -t unicaen/sodoct-docker \
+#    -f Dockerfile.dev
+#    .
+# Run :
+#    docker run -d \
+#    -p 8080:80 \
+#    -v "$PWD":/webapp \
+#    --dns=10.14.128.125 \
+#    --dns-search=unicaen.fr \
+#    --name sodoct-docker \
+#    unicaen/sodoct-docker
+#
+########################################################################################################################
+
+FROM thomasbisignani/docker-apache-php-oracle
+
+LABEL maintainer="Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>"
+
+# Mise à niveau de la distrib.
+RUN apt-get update && apt-get install -y \
+    git \
+    make \
+    netcat-openbsd \
+    php-soap \
+    php5-curl \
+    php5-gd \
+    php5-intl \
+    php5-ldap \
+    php5-xdebug \
+    phpunit \
+    subversion \
+    vim \
+    wget \
+ && rm -rf /var/lib/apt/lists/*
+
+#RUN pear channel-update pear.php.net && \
+#    pecl channel-update pecl.php.net
+
+# Installation de Composer dans /usr/local/bin.
+RUN cd $HOME && \
+    curl -sS https://getcomposer.org/installer | php && \
+    chmod +x composer.phar && \
+    mv composer.phar /usr/local/bin/composer
+
+# Ajustement des config PHP.
+RUN echo "date.timezone = Europe/Paris"       >> /etc/php5/apache2/conf.d/01-timezone.ini && \
+    echo "upload_max_filesize = 51M"          >> /etc/php5/apache2/conf.d/02-uploads.ini && \
+    echo "post_max_size = 60M"                >> /etc/php5/apache2/conf.d/02-uploads.ini && \
+    echo "error_reporting = E_ALL"            >> /etc/php5/apache2/conf.d/01-errors.ini && \
+    echo "display_startup_errors = 1"         >> /etc/php5/apache2/conf.d/01-errors.ini && \
+    echo "display_errors = 1"                 >> /etc/php5/apache2/conf.d/01-errors.ini && \
+    echo "error_reporting = E_ALL"            >> /etc/php5/cli/conf.d/01-errors.ini && \
+    echo "display_startup_errors = 1"         >> /etc/php5/cli/conf.d/01-errors.ini && \
+    echo "display_errors = 1"                 >> /etc/php5/cli/conf.d/01-errors.ini && \
+    echo "xdebug.remote_enable = 1"           >> /etc/php5/apache2/conf.d/20-xdebug.ini && \
+    echo "xdebug.remote_connect_back = 1"     >> /etc/php5/apache2/conf.d/20-xdebug.ini && \
+    echo "xdebug.profiler_enable_trigger = 1" >> /etc/php5/apache2/conf.d/20-xdebug.ini && \
+    echo "xdebug.max_nesting_level = 250"     >> /etc/php5/apache2/conf.d/20-xdebug.ini
+
+# Activation de l'extension PHP OCI8 en mode CLI (non fait par "thomasbisignani/docker-apache-php-oracle").
+RUN echo "extension=oci8.so" > /etc/php5/cli/conf.d/30-oci8.ini
+
+# Point de montage pour les sources de l'appli
+VOLUME /webapp
+
+# Configuration et activation du site Apache
+RUN echo "<VirtualHost *:80>"                >> /etc/apache2/sites-available/webapp.conf && \
+    echo "     ServerName localhost"         >> /etc/apache2/sites-available/webapp.conf && \
+    echo "     DocumentRoot /webapp/public"  >> /etc/apache2/sites-available/webapp.conf && \
+    echo "     RewriteEngine On"             >> /etc/apache2/sites-available/webapp.conf && \
+    echo "     <Directory /webapp/public>"   >> /etc/apache2/sites-available/webapp.conf && \
+    echo "         DirectoryIndex index.php" >> /etc/apache2/sites-available/webapp.conf && \
+    echo "         AllowOverride All"        >> /etc/apache2/sites-available/webapp.conf && \
+    echo "         Require all granted"      >> /etc/apache2/sites-available/webapp.conf && \
+    echo "     </Directory>"                 >> /etc/apache2/sites-available/webapp.conf && \
+    echo "</VirtualHost>"                    >> /etc/apache2/sites-available/webapp.conf && \
+    a2ensite webapp

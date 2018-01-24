@@ -1,0 +1,54 @@
+<?php
+
+use Application\Entity\Db\Attestation;
+use Application\Entity\Db\Privilege;
+use Application\Entity\Db\These;
+use Application\Entity\Db\VersionFichier;
+use Application\Entity\Db\WfEtape;
+use Application\Form\AttestationTheseForm;
+use Application\Provider\Privilege\ThesePrivileges;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer          $this
+ * @var These                $these
+ * @var Attestation          $attestation
+ * @var AttestationTheseForm $form
+ * @var string               $modifierAttestationUrl
+ */
+
+$hasFichierThese = $these->getFichiersBy(false, false, false)->count() > 0;
+
+$canEdit = $this->isAllowed($these, ThesePrivileges::THESE_SAISIE_ATTESTATIONS);
+?>
+
+<div class="box panel panel-info">
+
+    <div class="panel-heading">
+        <h2>Attestations</h2>
+    </div>
+
+    <div class="panel-body">
+        <?php if ($hasFichierThese): ?>
+
+            <?php if ($attestation): ?>
+                <?php
+                // NB: les réponses aux attestations ne sont pas modifiables
+                echo $this->partial('application/these/partial/attestation');
+                ?>
+            <?php else: ?>
+                <?php if ($canEdit): ?>
+                    <p><a href="<?php echo $modifierAttestationUrl ?>"
+                          class="btn btn-primary ajax-modal"
+                          data-event="event-attestation-modified"><span class="glyphicon glyphicon-pencil"></span> Compléter</a></p>
+                <?php endif ?>
+            <?php endif ?>
+
+        <?php else: ?>
+
+            <p>Vous devez d'abord téléverser la thèse au format PDF.</p>
+
+        <?php endif ?>
+    </div>
+</div>
+

@@ -1,0 +1,238 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="5F9FEBDD-9C5F-86DE-C51A-600F597C627D" name="UNITE_RECH">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>SODOCT</sourceObjSchema>
+<sourceObjName>UNITE_RECH</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<schemaObject>2C79EC04-6E03-C462-036D-1ED1958B7C87</schemaObject>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="ID" id="9E2EF571-D362-33BA-6F63-CD745F0F32E1">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>UNITE_RECH</sourceObjSchema>
+<sourceObjName>ID</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<dataTypePrecision>*</dataTypePrecision>
+<dataTypeScale>0</dataTypeScale>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="LIBELLE" id="594C61B7-5EEF-D73A-3DC8-F698139FC203">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>UNITE_RECH</sourceObjSchema>
+<sourceObjName>LIBELLE</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>200 CHAR</dataTypeSize>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="SIGLE" id="464014A2-B475-74F4-CF47-A95F5AE661B4">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>UNITE_RECH</sourceObjSchema>
+<sourceObjName>SIGLE</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>50 CHAR</dataTypeSize>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="ETAB_SUPPORT" id="66FC75AF-B694-4116-1809-866D89CD0FE8">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>UNITE_RECH</sourceObjSchema>
+<sourceObjName>ETAB_SUPPORT</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>500 CHAR</dataTypeSize>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="AUTRES_ETAB" id="1F97645E-580C-2E86-1B12-6023FA2C28E6">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>UNITE_RECH</sourceObjSchema>
+<sourceObjName>AUTRES_ETAB</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>500 CHAR</dataTypeSize>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="HISTO_CREATION" id="7F256AFF-8E3E-B718-6068-B40A4FD33017">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>UNITE_RECH</sourceObjSchema>
+<sourceObjName>HISTO_CREATION</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT007</logicalDatatype>
+<dataTypeSize>7</dataTypeSize>
+<defaultValue>SYSDATE</defaultValue>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="HISTO_CREATEUR_ID" id="58149B3B-46E7-C62C-EC03-7C9A7E854258">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>UNITE_RECH</sourceObjSchema>
+<sourceObjName>HISTO_CREATEUR_ID</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<dataTypePrecision>38</dataTypePrecision>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="HISTO_MODIFICATION" id="28B1E674-9E99-45C1-D113-B57702DF9267">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>UNITE_RECH</sourceObjSchema>
+<sourceObjName>HISTO_MODIFICATION</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT007</logicalDatatype>
+<dataTypeSize>7</dataTypeSize>
+<defaultValue>SYSDATE</defaultValue>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="HISTO_MODIFICATEUR_ID" id="2D38D0EA-C69A-C157-C8AB-FA903D0A5E7F">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>UNITE_RECH</sourceObjSchema>
+<sourceObjName>HISTO_MODIFICATEUR_ID</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<dataTypePrecision>38</dataTypePrecision>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="HISTO_DESTRUCTION" id="D954F10D-9726-9AF3-FA95-911D42F14188">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>UNITE_RECH</sourceObjSchema>
+<sourceObjName>HISTO_DESTRUCTION</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT007</logicalDatatype>
+<dataTypeSize>7</dataTypeSize>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="HISTO_DESTRUCTEUR_ID" id="ED815D65-0B3E-7EE7-1307-063189F2F7F5">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>UNITE_RECH</sourceObjSchema>
+<sourceObjName>HISTO_DESTRUCTEUR_ID</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<dataTypePrecision>38</dataTypePrecision>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="SOURCE_ID" id="9A84E2FC-42B1-022C-4FCD-C080E68DC246">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>UNITE_RECH</sourceObjSchema>
+<sourceObjName>SOURCE_ID</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<dataTypePrecision>38</dataTypePrecision>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="SOURCE_CODE" id="04750381-9871-45D6-68D5-670EC799A7F2">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>UNITE_RECH</sourceObjSchema>
+<sourceObjName>SOURCE_CODE</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>64 CHAR</dataTypeSize>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="0B80751C-199B-E859-E664-D19AB59F74B0" name="UNITE_RECH_PK">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>SODOCT</sourceObjSchema>
+<sourceObjName>UNITE_RECH_PK</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="9E2EF571-D362-33BA-6F63-CD745F0F32E1"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="E8E9679D-2E67-B221-3BCD-385B39968E1C" name="UNITE_RECH_PK">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>SODOCT</sourceObjSchema>
+<sourceObjName>UNITE_RECH_PK</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<indexState>Unique Plain Index</indexState>
+<schemaObject>2C79EC04-6E03-C462-036D-1ED1958B7C87</schemaObject>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="9E2EF571-D362-33BA-6F63-CD745F0F32E1"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>

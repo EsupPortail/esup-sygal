@@ -1,0 +1,197 @@
+<?php
+
+use Application\Entity\Db\Role;
+use Application\Entity\Db\Utilisateur;
+use Application\Filter\RolesUtilisateurFormatter;
+use Application\Provider\Privilege\UtilisateurPrivileges;
+use Application\View\Renderer\PhpRenderer;
+use UnicaenApp\Form\Element\LdapPeople;
+use UnicaenApp\Util;
+use Zend\Form\Element\Select;
+use Zend\Paginator\Paginator;
+
+/**
+ * @var PhpRenderer $this
+ * @var Paginator   $utilisateurs
+ * @var Role[]      $roles
+ * @var Role[]      $rolesDynamiques
+ */
+
+$rolesUtilisateurFormatter = new RolesUtilisateurFormatter();
+$select = (new Select("roles"))
+    ->setAttribute('class', 'roles-select btn btn-xs')
+    ->setAttribute('multiple', true)
+    ->setValueOptions(Util::collectionAsOptions($roles));
+?>
+
+<?php $this->headTitle($this->translate("Utilisateurs")) ?>
+
+<h1 class="page-header"><?php echo $this->translate("Utilisateurs"); ?> <span class="badge"><?php echo $utilisateurs->getTotalItemCount() ?></span></h1>
+
+<?php echo $this->messenger()->addCurrentMessagesFromFlashMessenger() ?>
+
+<div class="alert alert-info alert-md">
+    <span class="glyphicon glyphicon-info-sign"></span>
+    <?php echo $this->translate("Sur cette page vous pouvez attribuer les rôles suivants :"); ?>
+    <ul>
+    <?php foreach ($roles as $r): ?>
+        <li><?php echo $this->translate($r->getRoleId()) ?></li>
+    <?php endforeach ?>
+    </ul>
+</div>
+
+<div class="row">
+    <div class="col-md-5">
+        <div class="alert alert-warning alert-sm">
+            <p>
+                <?php echo $this->translate("Si vous voulez attribuer le rôle &laquo;");?>
+                <?php echo $this->translate(Role::ROLE_ID_ECOLE_DOCT); ?>
+                <?php echo $this->translate("&raquo;, rendez-vous sur la page"); ?>
+                <a href="<?php echo $this->url('ecole-doctorale', [], [], true) ?>">
+                    <?php echo $this->translate("Écoles doctorales");?>
+                </a>.
+            </p>
+            <p>
+                <?php echo $this->translate("Si vous voulez attribuer le rôle &laquo;");?>
+                <?php echo $this->translate(Role::ROLE_ID_UNITE_RECH); ?>
+                <?php echo $this->translate("&raquo;, rendez-vous sur la page"); ?>
+                <a href="<?php echo $this->url('unite-recherche', [], [], true) ?>">
+                    <?php echo $this->translate("Unités de recherche");?>
+                </a>.
+            </p>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="alert alert-danger alert-sm">
+            <?php echo $this->translate("Les rôles suivants sont attribués automatiquement à partir des données importées d'Apogée :"); ?>
+            <ul>
+                <?php foreach ($rolesDynamiques as $r): ?>
+                    <li><?php echo $this->translate($r->getRoleId()) ?></li>
+                <?php endforeach ?>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="pull-left">
+    <!-- Formulaire de filtrage -->
+    <?php //echo $this->partial('partial/form-filtrage') ?>
+</div>
+<div class="pull-right">
+    <!-- Formulaire de recherche -->
+    <?php //echo $this->partial('partial/form-recherche', ['text' => $text]) ?>
+</div>
+<div class="clearfix"></div>
+
+<table class="table table-condensed">
+    <thead>
+    <tr>
+        <th><a href="<?php echo $s = $this->sortable('u.displayName'); ?>">
+                <?php echo $this->translate("Nom"); ?>
+            </a> <?php echo $s->icon() ?></th>
+        <th><a href="<?php echo $s = $this->sortable('u.username'); ?>">
+                <?php echo $this->translate("Identifiant"); ?>
+            </a> <?php echo $s->icon() ?></th>
+        <th><a href="<?php echo $s = $this->sortable('u.email'); ?>">
+                <?php echo $this->translate("Email"); ?>
+            </a> <?php echo $s->icon() ?></th>
+        <th>
+            <?php echo $this->translate("Rôles statiques"); ?>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($utilisateurs as $u /** @var Utilisateur $u */): ?>
+        <tr>
+            <td><a href="<?php echo $this->url('utilisateur', ['utilisateur' => $u->getId()], [], true) ?>"><?php echo $u->getDisplayName() ?></a></td>
+            <td><?php echo $u->getUsername() ?></td>
+            <td><?php echo $u->getEmail() ?></td>
+            <td>
+                <?php if ($this->isAllowed(UtilisateurPrivileges::getResourceId(UtilisateurPrivileges::UTILISATEUR_ATTRIBUTION_ROLE))): ?>
+                    <?php
+                    $url = $this->url('utilisateur/attribuer-role', ['utilisateur' => $u->getId()], [], true);
+                    $select
+                        ->setValue(array_keys(Util::collectionAsOptions($u->getRoles())))
+                        ->setAttribute('data-url', $url);
+                    echo (string) $this->formSelect($select);
+                    ?>
+                <?php else: ?>
+                <?php echo $rolesUtilisateurFormatter->asSeparated()->filter($u) ?>
+                <?php endif ?>
+            </td>
+        </tr>
+    <?php endforeach ?>
+    </tbody>
+</table>
+
+<?php echo $paginationControl = $this->paginationControl($utilisateurs, 'sliding', 'paginator.phtml', ['route' => 'utilisateur']) ?>
+
+
+<?php if ($this->isAllowed(UtilisateurPrivileges::getResourceId(UtilisateurPrivileges::UTILISATEUR_MODIFICATION))): ?>
+    <hr>
+    <div class="row">
+        <div class="col-lg-5 col-sm-7">
+            <h2><?php echo $this->translate("Ajouter un utilisateur"); ?></h2>
+            <?php $url = $this->url('utilisateur/ajouter', [], [], true) ?>
+            <form method="post" action="<?php echo $url ?>">
+                <?php
+                $sas = new LdapPeople('people');
+                $sas->setLabel($this->translate("Recherche d'un individu à ajouter :"));
+                $sas->setAttribute('class', 'people-finder');
+                $sas->setAutocompleteSource($this->url('utilisateur/rechercher-people', [], [], true));
+                echo $this->formControlGroup($sas, 'formLdapPeople');
+                ?>
+                <input type="submit"
+                       value="<?php echo $this->translate("Ajouter cet individu"); ?>"
+                       style="margin-top: 0;"
+                       title="<?php echo $this->translate("Ajouter cet individu comme utilisateur");?>"
+                       class="btn btn-default btn-sm"/>
+            </form>
+        </div>
+    </div>
+<?php endif ?>
+
+
+
+<script type="text/javascript" src="<?php echo $this->basePath('/js/bootstrap-multiselect.js') ?>"></script>
+<link rel="stylesheet" href="<?php echo $this->basePath('/css/bootstrap-multiselect.css') ?>" type="text/css"/>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        // utilisation du plugin Multiselect : https://github.com/davidstutz/bootstrap-multiselect
+        $("select.roles-select").multiselect({
+            inheritClass: true,
+            nonSelectedText: '<?php echo $this->translate("(Aucun)"); ?>',
+            delimiterText: ' | ',
+            numberDisplayed: 1,
+            nSelectedText: ' <?php echo $this->translate("rôles sélectionnés")?>',
+            buttonWidth: '150px',
+            onChange: function(option/*, checked*/) {
+                var url = $(this.$select).data('url');
+                $.post(url, {role: $(option).val()}, function(data) {
+                    console.log('done!', data);
+                    alertFlash(data.message, data.status, 5000);
+                });
+            }
+        });
+    });
+</script>
+
+<!-- for translation purpose -->
+<?php
+$this->translate("Unité de recherche");
+$this->translate("École doctorale");
+
+$this->translate("Administrateur");
+$this->translate("Administrateur technique");
+$this->translate("Bibliothèque universitaire");
+$this->translate("Bureau des doctorats");
+$this->translate("Observateur");
+
+$this->translate("Directeur de thèse");
+$this->translate("Doctorant");
+$this->translate("Membre du jury");
+$this->translate("Rapporteur du jury");
+
+
+?>

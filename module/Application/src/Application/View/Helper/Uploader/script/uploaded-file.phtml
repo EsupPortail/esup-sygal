@@ -1,0 +1,34 @@
+<?php
+$fichier = $this->fichier; /* @var $fichier UnicaenApp\Controller\Plugin\Upload\UploadedFileInterface */
+$file    = sprintf("%s (<abbr title=\"%s octets\">%s</abbr>)", $fichier->getNom(), $fichier->getTaille(), $fichier->getTailleToString());
+?>
+
+<?php if ($this->url): ?>
+
+    <!-- lien de téléchargement du fichier -->
+    <a class="download-file" href="<?php echo $this->url ?>"
+       title="<?php echo $this->translate("Télécharger le fichier déposé");?> '<?php echo $fichier->getNom() ?>'"
+    ><span class="glyphicon glyphicon-file"></span> <span class="filename"><?php echo $file ?></span></a>
+        
+<?php else: ?>
+    
+    <!-- nom du fichier -->
+    <span class="glyphicon glyphicon-file"></span> <?php echo $file ?>
+
+<?php endif ?>
+
+<!-- date de dépôt éventuelle du fichier -->
+<?php if ($fichier->getDate()): ?>
+    <br /><span class="upload-date">
+        <?php
+            echo $this->translate("le");
+            echo " ";
+            echo $this->dateFormat($fichier->getDate(),IntlDateFormatter::MEDIUM);
+            //echo $fichier->getDate()->format('d/m/Y');
+            echo " ";
+            echo $this->translate("à");
+            echo " ";
+            echo $fichier->getDate()->format('H:i');
+        ?>
+    </span>
+<?php endif;

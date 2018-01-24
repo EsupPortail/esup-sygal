@@ -1,0 +1,17 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<FKIndexAssociation class="oracle.dbtools.crest.model.design.relational.FKIndexAssociation" directorySegmentName="seg_0" id="31EFBDC5-96AC-4B6B-5F25-273083A5DE5E" name="ECOLE_DOCT_IND_RFK">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>SODOCT</sourceObjSchema>
+<sourceObjName>ECOLE_DOCT_IND_RFK</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<containerWithKeyObject>88864CCF-AE36-E0B7-723C-41004275D159</containerWithKeyObject>
+<deleteRule>NO ACTION</deleteRule>
+<localFKIndex>2E28D87F-F64B-3A4F-BA55-D06C81EC35CF</localFKIndex>
+<keyObject>0FD454DF-90F0-4AF5-5CCF-3EFDF26B569A</keyObject>
+<mandatory>true</mandatory>
+<transferable>true</transferable>
+<columnDependencyConstraintGenerateInDDL>true</columnDependencyConstraintGenerateInDDL>
+</FKIndexAssociation>

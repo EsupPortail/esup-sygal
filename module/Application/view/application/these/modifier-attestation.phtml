@@ -1,0 +1,35 @@
+<?php
+
+use Application\Entity\Db\These;
+use Application\Form\AttestationTheseForm;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer          $this
+ * @var string               $title
+ * @var These                $these
+ * @var AttestationTheseForm $form
+ *
+ * @method string formControlGroup()
+ */
+
+$canEdit = true;
+$fcg = $this->formControlGroup();
+$form->prepare();
+?>
+
+<?php $this->headTitle("Attestations") ?>
+
+<!--<h1 class="page-header">--><?php //echo $title ?>
+<!--    <small>--><?php //echo $this->partial('application/these/partial/titre') ?><!--</small>-->
+<!--</h1>-->
+
+<?php echo $this->form()->openTag($form->setAttribute('class', 'attestations')) ?>
+
+<label><?php echo $form->getText() ?></label>
+<?php echo $fcg->render($form->get('versionDeposeeEstVersionRef')) ?>
+<?php echo $fcg->render($form->get('exemplaireImprimeConformeAVersionDeposee')) ?>
+
+<?php echo $this->formElement($form->get('submit')) ?>
+
+<?php echo $this->form()->closeTag() ?>

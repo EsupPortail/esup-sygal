@@ -1,0 +1,227 @@
+<?php
+
+use Application\Entity\Db\These;
+use Application\Entity\Db\WfEtape;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * Dépot des originaux.
+ *
+ * @var PhpRenderer $this
+ * @var These       $these
+ * @var string      $theseUrl
+ * @var string      $annexesUrl
+ * @var string      $zipUrl
+ * @var string      $attestationUrl
+ * @var string      $diffusionUrl
+ * @var string      $nextStepUrl
+ */
+
+$maxFileCountThese = 1;
+$maxFileCountAutres = 50;
+
+$toggleDetailsDepotInitial = clone $this->toggleDetails('div-depot-initial');
+?>
+
+<?php $this->headTitle("Dépôt thèse")->prepend($these->getDoctorant()->getNomUsuel()) ?>
+
+<div class="no-intranavigation">
+
+    <h1 class="page-header">Dépôt de la thèse <small><?php echo $this->partial('application/these/partial/titre') ?></small></h1>
+
+    <p class="lead">
+        Le dépôt est obligatoire pour toutes les thèses, y compris confidentielles.
+        La thèse doit être regroupée en un seul fichier, en format PDF. Si certaines parties ne s’y prêtent pas,
+        vous devez les déposer à part.
+    </p>
+
+    <div class="box panel panel-info">
+
+        <div class="panel-heading">
+            <?php $toggleDetailsDepotInitial->setShowDetailsLabel(' <small>Afficher</small>')->setHideDetailsLabel(' <small>Masquer</small>') ?>
+            <h2 class="first">Téléversement <?php echo $toggleDetailsDepotInitial ?></h2>
+        </div>
+
+        <div class="panel-body">
+            <div class="row" id="div-depot-initial">
+                <div class="col-md-6">
+                    <!-------------------------------------- Thèse PDF --------------------------------------->
+                    <div id="theseDiv" class="" data-url="<?php echo $theseUrl ?>" style="display: none">
+                        <!-- màj via ajax -->
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <!-------------------------------------- Autres formats --------------------------------------->
+                    <div id="annexesDiv" class="" data-url="<?php echo $annexesUrl ?>" style="display: none">
+                        <!-- màj via ajax -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-------------------------------------- Zip --------------------------------------->
+    <div id="zipDiv" class="box" data-url="<?php echo $zipUrl ?>" style="display: none">
+        <!-- màj via ajax -->
+    </div>
+
+    <!-------------------------------------- Attestations --------------------------------------->
+    <div id="attestationDiv" data-url="<?php echo $attestationUrl ?>">
+        <!-- màj via ajax -->
+    </div>
+
+    <!-------------------------------------- Diffusion --------------------------------------->
+    <div id="diffusionDiv" data-url="<?php echo $diffusionUrl ?>">
+        <!-- màj via ajax -->
+    </div>
+
+    <!-------------------------------------- Next step --------------------------------------->
+    <div id="nextStepDiv" data-url="<?php echo $nextStepUrl ?>" style="display: none">
+        <!-- màj via ajax -->
+    </div>
+
+</div>
+
+
+
+<script>
+    // Evénements déclenchés par le widget Uploader (cf. app.js)
+    var uploadEventFilesListed    = "upload-event-files-listed";
+    var uploadEventFilePreDeleted = "upload-event-file-pre-deleted";
+    var uploadEventFileDeleted    = "upload-event-file-deleted";
+    var uploadEventFileUploaded   = "upload-event-file-uploaded";
+    var uploadEventFilesAdded     = "upload-event-files-added";
+
+    $(function () {
+        var body = $("body");
+        var self = this;
+
+        var theseDiv = $("#theseDiv");
+        var annexesDiv = $("#annexesDiv");
+
+        var zipDiv = $("#zipDiv");
+        var attestationDiv = $("#attestationDiv");
+        var diffusionDiv = $("#diffusionDiv");
+
+        var theseLoader = function(done, effect) {
+            return function() {
+                theseDiv.addClass("loading").refresh({}, function () {
+                    $(this).removeClass("loading").show();
+                    if (done) done();
+                });
+            };
+        };
+        var annexesLoader = function(done, effect) {
+            return function() {
+                annexesDiv.addClass("loading").refresh({}, function () {
+                    $(this).removeClass("loading").show();
+                    if (done) done();
+                });
+            };
+        };
+        var fichiersVersionInitialeLoader = function(done, effect) {
+            return function() {
+                // Le refresh de la div n'est plus déclenché automatiquement mais seulement lorsque
+                // le lien 'toggle details' est cliqué.
+                body.on("<?php echo $toggleDetailsDepotInitial->getJsEventNameWhenVisible() ?>", function (event) {
+                    runInCascade([
+                        theseLoader,
+                        annexesLoader
+                    ], self);
+                });
+                if (done) done();
+            };
+        };
+        var attestationsLoader = function(done, effect) {
+            return function() {
+                attestationDiv.addClass("loading").refresh({}, function () {
+                    $(this).removeClass("loading");
+                    if (effect) {
+                        $(this).hide().fadeIn(250);
+                    } else {
+                        $(this).show();
+                    }
+                    if (done) done();
+                });
+            };
+        };
+        var diffusionLoader = function(done, effect) {
+            return function() {
+                diffusionDiv.addClass("loading").refresh({}, function () {
+                    $(this).removeClass("loading");
+                    if (effect) {
+                        $(this).hide().fadeIn(250);
+                    } else {
+                        $(this).show();
+                    }
+                    if (done) done();
+                });
+            };
+        };
+        var refreshingNextStep = function(done, effect) {
+            return function() {
+                $("#nextStepDiv").addClass("loading").refresh(null, function () {
+                    $(this).removeClass("loading").show();
+                    if (done) done();
+                });
+            };
+        };
+
+        // Au chargement de la page, on actualise les div
+        runInCascade([
+            fichiersVersionInitialeLoader,
+            { func: attestationsLoader, effect: true },
+            { func: diffusionLoader, effect: true },
+            refreshingNextStep
+        ], self);
+
+        // Un upload de fichier vient de commencer.
+        body.on(uploadEventFilesAdded, ".these.widget-uploader", function(event, data) {
+            var uploadContainer = $(data[0]);
+            // masque le formulaire pour éviter un dépôt de thèse pendant qu'un upload est déjà en cours
+            uploadContainer.find(".upload-form").hide();
+        });
+
+        var events;
+        // Un fichier de thèse en version initiale vient d'être déposé ou supprimé.
+        events =  uploadEventFileDeleted + ' ' + uploadEventFileUploaded;
+        body.on(events, "#div-depot-initial .these.widget-uploader", function() {
+            runInCascade([
+                annexesLoader,
+                { func: attestationsLoader, effect: true },
+                { func: diffusionLoader, effect: true },
+                refreshingNextStep
+            ], self);
+        });
+        // Un fichier de thèse en version corrigée vient d'être déposé ou supprimé.
+        events =  uploadEventFileDeleted + ' ' + uploadEventFileUploaded;
+        body.on(events, "#div-depot-corrige .these.widget-uploader", function() {
+            runInCascade([
+                { func: attestationsLoader, effect: true },
+                { func: diffusionLoader, effect: true },
+                refreshingNextStep
+            ], self);
+        });
+
+        // Attestions enregistrées dans la modale
+        body.on("event-attestation-modified", function (event) {
+            // Les métadonnées viennent d'être modifiées.
+            event.div.modal('hide'); // ferme la fenêtre modale
+            runInCascade([
+                { func: attestationsLoader, effect: false },
+                { func: diffusionLoader, effect: true },
+                refreshingNextStep
+            ], self);
+        });
+
+        // Diffusion enregistrée dans la modale
+        body.on("event-diffusion-modified", function (event) {
+            // Les métadonnées viennent d'être modifiées.
+            event.div.modal('hide'); // ferme la fenêtre modale
+            runInCascade([
+                { func: diffusionLoader, effect: false },
+                refreshingNextStep
+            ], self);
+        });
+    });
+</script>

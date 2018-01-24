@@ -1,0 +1,17 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<FKIndexAssociation class="oracle.dbtools.crest.model.design.relational.FKIndexAssociation" directorySegmentName="seg_0" id="9BA05BE5-FE82-DC38-5C8D-DCBD891A662F" name="USER_ROLE_USER_ROLE_FK">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>SODOCT</sourceObjSchema>
+<sourceObjName>USER_ROLE_USER_ROLE_FK</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<containerWithKeyObject>E82692D7-8A8A-7EF2-4BB1-9D09BF47F85D</containerWithKeyObject>
+<deleteRule>NO ACTION</deleteRule>
+<localFKIndex>04E1242C-A326-DB23-2931-71C235B317D7</localFKIndex>
+<keyObject>0FD454DF-90F0-4AF5-5CCF-3EFDF26B569A</keyObject>
+<mandatory>false</mandatory>
+<transferable>true</transferable>
+<columnDependencyConstraintGenerateInDDL>true</columnDependencyConstraintGenerateInDDL>
+</FKIndexAssociation>

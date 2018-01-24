@@ -1,0 +1,153 @@
+<?php
+
+use Application\Entity\Db\EcoleDoctorale;
+use Application\Entity\Db\EcoleDoctoraleIndividu;
+use Application\Provider\Privilege\EcoleDoctoralePrivileges;
+use Application\View\Renderer\PhpRenderer;
+use UnicaenApp\Form\Element\LdapPeople;
+use Zend\Paginator\Paginator;
+
+/**
+ * @var PhpRenderer $this
+ * @var Paginator   $ecoles
+ * @var string      $selected
+ * @var array|null  $ecoleDoctoraleIndividus
+ */
+
+$selectedEcole = null;
+?>
+
+<?php $this->headTitle($this->translate("Écoles doctorales")) ?>
+
+<h1 class="page-header first"><?php echo $this->translate("Écoles doctorales") ?> <span
+        class="badge"><?php echo $ecoles->getTotalItemCount() ?></span></h1>
+
+<?php echo $this->messenger()->addCurrentMessagesFromFlashMessenger() ?>
+
+<table class="table table-condensed">
+    <thead>
+    <tr>
+        <th><?php echo $this->translate("Libellé") ?></th>
+        <th><?php echo $this->translate("Sigle") ?></th>
+        <th><?php echo $this->translate("Code") ?></th>
+        <th><?php echo $this->translate("Actions") ?></th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php /** @var EcoleDoctorale $ecole */
+    foreach ($ecoles as $ecole): ?>
+        <?php
+        $isSelected = $selected !== null && $ecole->getId() === (int)$selected;
+        $selectedEcole = $isSelected ? $ecole : $selectedEcole;
+        $trClass = $isSelected ? 'selected' : '';
+        $query = $isSelected ? [] : ['selected' => $ecole->getId()];
+        ?>
+        <tr class="ecole-doctorale <?php echo $trClass ?>">
+            <td><a href="<?php echo $this->url(null, [], ['query' => $query], true) ?>"
+                   title="<?php echo $this->translate("Cliquez pour sélectionner cette école doctorale");?>" >
+                    <?php echo $this->ed($ecole)->getLibelle() ?>
+                </a>
+            </td>
+            <td><?php echo $ecole->getSigle() ?></td>
+            <td><?php echo $ecole->getSourceCode() ?></td>
+            <td>
+                <?php if ($this->isAllowed(EcoleDoctoralePrivileges::getResourceId(EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION))): ?>
+                    <?php if ($ecole->estNonHistorise()): ?>
+                        <?php $url = $this->url('ecole-doctorale/modifier', ['ecoleDoctorale' => $ecole->getId()], [], true) ?>
+                        <a href="<?php echo $url ?>" title="<?php echo $this->translate("Modifier l'école doctorale"); ?>'<?php echo $ecole ?>'"
+                           class="modifier-ecole" data-ecole="<?php echo $ecole ?>">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </a>
+                        <?php $url = $this->url('ecole-doctorale/supprimer', ['ecoleDoctorale' => $ecole->getId()], [], true) ?>
+                        <a href="<?php echo $url ?>" title="<?php echo $this->translate("Supprimer l'école doctorale");?> '<?php echo $ecole ?>'"
+                           class="supprimer-ecole" data-ecole="<?php echo $ecole ?>">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </a>
+                    <?php else: ?>
+                        <?php $url = $this->url('ecole-doctorale/restaurer', ['ecoleDoctorale' => $ecole->getId()], [], true) ?>
+                        <a href="<?php echo $url ?>" title="<?php echo $this->translate("Restaurer l'école doctorale");?> '<?php echo $ecole ?>'"
+                           class="restaurer-ecole" data-ecole="<?php echo $ecole ?>">
+                            <?php echo $this->translate("Restaurer");?>
+                        </a>
+                    <?php endif ?>
+                <?php endif ?>
+            </td>
+        </tr>
+        <?php if ($isSelected): ?>
+            <tr>
+                <td colspan="3" class="bg-info">
+                    <h2 class="first"><?php echo $this->translate("Membres");?> <small><?php echo $selectedEcole ?></small></h2>
+                    <?php if (count($ecoleDoctoraleIndividus)): ?>
+                        <table class="table table-condensed">
+                            <tr>
+                                <th><?php echo $this->translate("Individu");?></th>
+                                <th><?php echo $this->translate("Rôle");?></th>
+                                <th><?php echo $this->translate("Actions");?></th>
+                            </tr>
+                            <?php /** @var EcoleDoctoraleIndividu $edi */
+                            foreach ($ecoleDoctoraleIndividus as $edi): ?>
+                                <tr>
+                                    <td><?php echo $edi->getIndividu() ?></td>
+                                    <td><?php echo $edi->getRole() ?></td>
+                                    <td>
+                                        <?php if ($this->isAllowed(EcoleDoctoralePrivileges::getResourceId(EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION))): ?>
+                                            <?php $url = $this->url('ecole-doctorale/retirer-individu', ['ecoleDoctorale' => $ecole->getId(), 'edi' => $edi->getId()], [], true) ?>
+                                            <a href="<?php echo $url ?>" title="<?php echo $this->translate("Retirer")." ";?> <?php echo $edi->getIndividu() ?>"
+                                               class="retirer-individu" data-individu="<?php echo $edi->getIndividu() ?>"><span
+                                                    class="glyphicon glyphicon-trash"></span></a>
+                                        <?php endif ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach ?>
+                        </table>
+                    <?php else: ?>
+                        <p><?php echo $this->translate("Aucun");?></p>
+                    <?php endif ?>
+
+                    <?php if ($this->isAllowed(EcoleDoctoralePrivileges::getResourceId(EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION))): ?>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <?php $url = $this->url('ecole-doctorale/ajouter-individu', ['ecoleDoctorale' => $selected], [], true) ?>
+                                <form method="post" action="<?php echo $url ?>">
+                                    <?php
+                                    $sas = new LdapPeople('people');
+                                    $sas->setLabel($this->translate("Recherche d'un individu à ajouter :"));
+                                    $sas->setAttribute('class', 'people-finder');
+                                    $sas->setAutocompleteSource($this->url('utilisateur/rechercher-people', [], [], true));
+                                    echo $this->formcontrolgroup($sas, 'formLdapPeople');
+                                    ?>
+                                    <input type="submit" value="<?php echo $this->translate("Ajouter cet individu");?>" style="margin-top: 0;"
+                                           title="<?php echo $this->translate("Ajouter cet individu comme membre");?>" class="btn btn-default btn-sm"/>
+                                </form>
+                            </div>
+                        </div>
+                    <?php endif ?>
+                </td>
+            </tr>
+        <?php endif ?>
+    <?php endforeach ?>
+    </tbody>
+</table>
+
+<?php if ($this->isAllowed(EcoleDoctoralePrivileges::getResourceId(EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION))): ?>
+    <?php $url = $this->url('ecole-doctorale/ajouter', [], [], true) ?>
+    <a class="btn btn-default btn-sm" href="<?php echo $url ?>"
+       title="<?php echo $this->translate("Créer une nouvelle ED");?>">
+        <span class="glyphicon glyphicon-plus"></span> <?php echo $this->translate("Ajouter");?>
+    </a>
+<?php endif ?>
+
+
+
+<script type="text/javascript">
+    $(function () {
+        $(".retirer-individu").click(function() {
+            var individu = $(this).data('individu');
+            return confirm("<?php echo $this->translate("Êtes-vous sûr-e de vouloir retirer ");?>" + "'" + individu + "'" + " " + "<?php echo $this->translate("de la liste des membres ?");?>");
+        });
+        $(".supprimer-ecole").click(function() {
+            var ecole = $(this).data('ecole');
+            return confirm("<?php echo $this->translate("Êtes-vous sûr-e de vouloir supprimer l'école doctorale ");?>" + "'" + ecole + "'" + " ? ");
+        });
+    });
+</script>

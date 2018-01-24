@@ -1,0 +1,30 @@
+########################################################################################################################
+#                               Image pour les tests unitaires/fonctionnels.
+########################################################################################################################
+
+# Contrairement à l'image Unicaen pour le développement, cette image n'utilise pas de volume.
+# Elle contient une copie des sources de l'appli (sans le contenu de "vendor", cf. ".dockerignore")
+# puis lance un "composer install".
+
+# Lancement des tests :
+#     docker run -d --name <CONTAINER> <IMAGE> && docker exec -it <CONTAINER> vendor/bin/phpunit
+
+FROM unicaen/unicaen
+
+LABEL maintainer "Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>"
+
+RUN apt-get install -y \
+    netcat-openbsd
+
+# Copie des sources de l'application dans l'image
+COPY . /webapp
+
+# Spécification du répertoire courant dans l'image
+WORKDIR /webapp
+
+# Installation des dépendances PHP
+RUN composer install --no-interaction --no-suggest
+
+# Création du répertoire des proxies Doctrine
+RUN mkdir -p data/DoctrineORMModule/Proxy && \
+    chmod 777 data/DoctrineORMModule/Proxy

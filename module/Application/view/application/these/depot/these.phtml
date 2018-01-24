@@ -1,0 +1,129 @@
+<?php
+
+use Application\Assertion\BaseAssertion;
+use Application\Entity\Db\Env;
+use Application\Entity\Db\NatureFichier;
+use Application\Entity\Db\These;
+use Application\Entity\Db\VersionFichier;
+use Application\Provider\Privilege\ThesePrivileges;
+use Application\View\Renderer\PhpRenderer;
+use UnicaenApp\View\Helper\AppInfos;
+
+/**
+ * @var PhpRenderer    $this
+ * @var These          $these
+ * @var string         $info
+ * @var string         $uploadUrl
+ * @var string         $theseListUrl
+ * @var NatureFichier  $nature
+ * @var VersionFichier $versionFichier
+ * @var Env            $env
+ */
+
+$canEdit = $this->isAllowed($these, $p = ThesePrivileges::privilegeDeposerFor($nature, $versionFichier));
+
+$uploader = $this->uploader()->setUrl($uploadUrl);
+
+$maxFileCountThese = 1;
+?>
+
+<h3 class=""><?php echo $titre ?></h3>
+
+<?php if (isset($info)): ?>
+<div class="alert alert-md alert-danger">
+    <span class="glyphicon glyphicon-exclamation-sign"></span> <?php echo $info ?>
+</div>
+<?php endif ?>
+
+<?php /*
+<div class="these widget-uploader" id="uploader-div-these">
+    <div>
+        <!-- Liste des fichiers déposés -->
+        <?php echo $uploader->renderUploadedFiles($theseListUrl, "Fichier téléversé :") ?>
+    </div>
+    <div class="upload-form" style="display: none">
+        <!-- formulaire de dépôt -->
+        <?php if ($canEdit): ?>
+            <?php
+            $form = $uploader->getForm();
+            $form->get('files')->setLabel("")->setAttribute('multiple', false)->setAttribute('accept', '.pdf');
+            echo $uploader->renderForm();
+            ?>
+            <div class="clearfix"></div>
+            <div class="text-sm text-info" style="margin-top: 8px; max-width: 250px">
+                <strong>NB: </strong> <?php echo Fichier::MESSAGE_DEPOT_DUREE ?>
+            </div>
+        <?php endif ?>
+    </div>
+</div>
+*/ ?>
+<?php echo $this->partial('application/these/depot/partial/fichier', [
+    'canUpload'               => $canEdit,
+    'class'                   => 'these',
+    'uploadUrl'               => $uploadUrl,
+    'uploadedFilesListUrl'    => $theseListUrl,
+    'maxUploadableFilesCount' => $maxFileCountThese,
+]);
+?>
+
+<div class="alert alert-sm alert-warning">
+    <p>
+        <span class="glyphicon glyphicon-warning-sign"></span> Les modèles de page de couverture des thèses de
+        <?php echo $env->getLibComue() ?> doivent être rigoureusement respectés.
+    </p>
+    <p>
+        Ils sont obligatoires pour le dépôt numérique de la thèse dans <?php echo $this->appInfos()->nom ?> pour archivage et diffusion.
+        Sur la page de 4e de couverture, les informations obligatoires sont : titre, mots clés et résumé en français et en anglais.
+    </p>
+    <p>
+        Téléchargez les modèles de page de couverture
+        <a href="http://recherche.unicaen.fr/etudes-doctorales/soutenir-sa-these/modeles-de-page-de-couverture-de-these-normandie-universite-844344.kjsp?RH=1275467239552"
+           target="_blank">sur cette page</a>.
+    </p>
+</div>
+
+<?php
+$msgCollector = $this->messageCollector(BaseAssertion::class);
+$msgCollector->getMessengerHelper()->setContainerClassesToAdd('alert-sm');
+echo $msgCollector->render();
+?>
+
+
+<script>
+
+//    $(function () {
+//        var maxFileCountThese = <?php //echo $maxFileCountThese ?>//;
+//        var eventNames = "upload-event-files-listed upload-event-file-deleted upload-event-file-uploaded";
+//        var body = $("body");
+//
+//        // Un upload de fichier vient de commencer.
+//        body.on("upload-event-files-added", ".these.widget-uploader", function(event, data) {
+//            var uploadContainer = $(data[0]);
+//            // masque le formulaire pour éviter un dépôt de thèse pendant qu'un upload est déjà en cours
+//            uploadContainer.find(".upload-form").hide();
+//        });
+//
+//        // Un fichier vient d'être déposé ou supprimé, ou la liste des fichiers a été actualisée.
+//        body.on(eventNames, ".these.widget-uploader", function(event, data) {
+//            var uploadContainer = $(data[0]);
+//            updateUploadForm(uploadContainer);
+//        });
+//
+//        /**
+//         * Compte le nombre de fichiers déjà déposés et masque le formulaire de dépôt si le maximum est atteint.
+//         *
+//         * @param uploadContainer
+//         */
+//        function updateUploadForm(uploadContainer) {
+//            var fichiersCount = uploadContainer.find(".uploaded-files-div ul li").length;
+//            var div = uploadContainer.find("div.upload-form");
+//
+//            if (fichiersCount >= maxFileCountThese) {
+//                div.hide('fade');
+//            }
+//            else {
+//                div.show('fade');
+//            }
+//        }
+//    });
+</script>

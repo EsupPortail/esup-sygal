@@ -1,0 +1,39 @@
+<h1>Thèses</h1>
+
+<?php
+use Application\Entity\Db\These;
+use UnicaenApp\Util;
+use UnicaenImport\Entity\Db\Source;
+
+/**
+ * @var array  $theses
+ * @var Source $source
+ */
+
+$source = $theses->count() ? $theses->getItem(1)->getSource() : null;
+$queryParams = $this->queryParams();
+$text = $queryParams['text'] ?: "";
+?>
+
+<table class="table table-condensed ">
+    <thead>
+    <tr>
+        <th><a href="<?php echo $this->sortable('t.id'); ?>">Code <?php echo $source ?></a></th>
+        <th><a href="<?php echo $this->sortable('t.titre'); ?>">Nom</a></th>
+        <th><a href="<?php echo $this->sortable('th.nomUsuel'); ?>">Auteur</a></th>
+    </tr>
+    </thead>
+    <tbody>
+<?php foreach ($theses as $these): ?>
+    <tr>
+        <td><a href="<?php echo $this->url('these/identite', ['these' => $these->getId()]) ?>"><?php echo $these->getSourceCode() ?></a></td>
+        <td><span title="<?php echo $these->getNom() ?>"><?php echo Util::truncatedString($these->getNom()) ?></span></td>
+        <td><?php echo $these->getDoctorant()->getNomComplet(true, true) ?></td>
+    </tr>
+    <?php endforeach ?>
+    </tbody>
+</table>
+
+<?php echo $paginationControl = $this->paginationControl($theses, 'sliding', 'partial/paginator.phtml', ['route' => 'these']) ?>
+
+

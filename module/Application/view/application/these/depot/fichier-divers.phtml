@@ -1,0 +1,42 @@
+<?php
+
+use Application\Entity\Db\NatureFichier;
+use Application\Entity\Db\These;
+use Application\Entity\Db\VersionFichier;
+use Application\Provider\Privilege\ThesePrivileges;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer    $this
+ * @var These          $these
+ * @var string         $uploadUrl
+ * @var string         $fichiersListUrl
+ * @var NatureFichier  $nature
+ * @var VersionFichier $version
+ * @var bool           $isVisible
+ * @var int            $maxUploadableFilesCount
+ */
+
+$canEdit = $this->isAllowed($these, $p = ThesePrivileges::privilegeDeposerFor($nature, $version));
+$maxUploadableFilesCount = isset($maxUploadableFilesCount) ? $maxUploadableFilesCount : 1;
+$isVisible = isset($isVisible) ? $isVisible : true;
+?>
+
+<?php if ($isVisible): ?>
+
+<div class="box panel panel-info">
+    <div class="panel-heading">
+        <h2 class="first"><?php echo $nature ?></h2>
+    </div>
+    <div class="panel-body">
+        <?php echo $this->partial('application/these/depot/partial/fichier', [
+            'canUpload'               => $canEdit,
+            'class'                   => NatureFichier::toRoute($nature->getCode()),
+            'uploadUrl'               => $uploadUrl,
+            'uploadedFilesListUrl'    => $fichiersListUrl,
+            'maxUploadableFilesCount' => $maxUploadableFilesCount,
+        ]) ?>
+    </div>
+</div>
+
+<?php endif ?>

@@ -1,0 +1,61 @@
+<?php
+
+use Application\Entity\Db\These;
+use Application\View\Renderer\PhpRenderer;
+use Zend\Form\Form;
+
+/**
+ * @var        $this PhpRenderer
+ * @var These  $these
+ * @var Form   $form
+ * @var string $title
+ * @var bool   $detournement Indique s'il s'agit d'un détournement de requête pour saisie du persopass
+ * @var string $emailBdD
+ */
+?>
+
+<h1 class="page-header"><?php echo $title ?></h1>
+
+<?php if ($detournement): ?>
+    <p class="lead">
+        Avant de continuer, merci de saisir votre identifiant
+        <abbr title="Compte d'accès au système d'information de l'université">PersoP@ss</abbr>, svp. <br>
+        Il sera utile ultérieurement dans l'application pour faire le lien entre vos comptes étudiant et personnel.
+    </p>
+<?php else: ?>
+    <p class="lead">
+        L'identifiant <abbr title="Compte d'accès au système d'information de l'université">PersoP@ss</abbr>
+        sera utile ultérieurement dans l'application pour faire le lien entre vos comptes étudiant et personnel.
+    </p>
+<?php endif ?>
+<p class="alert alert-info">
+    <strong>NB:</strong> Si vous ne possédez pas encore d'identifiant
+    <abbr title="Compte d'accès au système d'information de l'université">PersoP@ss</abbr>, envoyez un mail à
+    <a href="mailto:<?php echo $email = $emailBdD ?>"><?php echo $email ?></a>.
+</p>
+
+<?php //echo $this->messenger()->addCurrentMessagesFromFlashMessenger() ?>
+
+<?php echo $this->form()->openTag($form) ?>
+
+<?php if (($errors = $this->formErrors($form))): ?>
+    <p><?php echo $errors ?></p>
+<?php endif ?>
+
+<?php
+$identity = $form->get($name = 'identity');
+$credential = $form->get($name = 'credential');
+
+$identity->setAttributes(['autocomplete' => 'off']);
+$credential->setAttributes(['autocomplete' => 'off']);
+
+$fcg = $this->formControlGroup()->setIncludeErrors(false);
+echo $fcg->render($identity);
+echo $fcg->render($credential->setLabel("Mot de passe (permet d'authentifier l'identifiant)"));
+?>
+
+<?php echo $this->formElement($form->get('submit')) ?>
+
+<?php echo $this->form()->closeTag() ?>
+
+

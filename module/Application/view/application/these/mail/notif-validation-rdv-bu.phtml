@@ -1,0 +1,19 @@
+<p>
+    Bonjour,
+</p>
+<p>
+    Ceci est un mail envoyé automatiquement par l'application SoDoct.
+</p>
+<p>
+    <?php if ($this->estDevalidation): ?>
+        Vous êtes informé-e que la validation du dépôt a été annulée par la BU.
+    <?php else: ?>
+        Vous êtes informé-e que la validation du dépôt a été effectuée par la BU.
+    <?php endif ?>
+</p>
+
+<?php if ($this->notifierDoctorantImpossibleMessage): ?>
+    <p>
+        <em><?php echo $this->notifierDoctorantImpossibleMessage ?></em>
+    </p>
+<?php endif ?>

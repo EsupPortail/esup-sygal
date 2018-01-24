@@ -1,0 +1,30 @@
+<?php
+
+use Application\Entity\Db\These;
+
+/**
+ * @var These  $these
+ * @var string $url
+ * @var string $message
+ */
+?>
+
+<p>
+    Bonjour,
+</p>
+<p>
+    Ceci est un mail envoyé automatiquement par l'application <?php echo $this->appInfos()->nom ?>.
+</p>
+<p>
+    Vous êtes informé-e que <?php echo $these->getDoctorant() ?> a déposé une version corrigée de sa thèse
+    et que votre validation est attendue.
+</p>
+<p>
+    Cliquez <a href="<?php echo $this->url('these/depot-version-corrigee', ['these' => $these->getId()], ['force_canonical' => true]) ?>">ici</a>
+    pour accéder à l'application <?php echo $this->appInfos()->nom ?>.
+</p>
+
+<?php if (isset($message)): ?>
+    <p><?php echo $message ?></p>
+<?php endif ?>
+

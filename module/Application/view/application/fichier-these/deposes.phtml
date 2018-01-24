@@ -1,0 +1,104 @@
+<?php
+/**
+ * Liste de tous les fichiers uploadés.
+ *
+ * @var PhpRenderer     $this
+ * @var Paginator       $fichiers
+ * @var UrlFichierThese $urlFichierThese
+ */
+
+use Application\Controller\Plugin\UrlFichierThese;
+use Application\Entity\Db\Fichier;
+use Application\Provider\Privilege\ThesePrivileges;
+use Application\View\Renderer\PhpRenderer;
+use Zend\Paginator\Paginator;
+
+?>
+
+<?php $this->headTitle($this->translate("Fichiers déposés")) ?>
+
+<h1 class="page-header"><?php echo $this->translate("Fichiers déposés"); ?> </h1>
+
+<p>
+    <?php echo $fichiers->getTotalItemCount() ." ". $this->translate("fichier(s) trouvé(s)"); ?>.
+</p>
+
+<table class="table table-bordered table-hovered table-condensed">
+    <thead>
+        <tr>
+            <th><a href="<?php echo $s = $this->sortable('f.nom'); ?>">
+                    <?php echo $this->translate("Fichier"); ?>
+                </a> <?php echo $s->icon() ?></th>
+            <th><a href="<?php echo $s = $this->sortable('f.nomOriginal'); ?>">
+                    <?php echo $this->translate("Nom original"); ?>
+                </a> <?php echo $s->icon() ?></th>
+            <th><a href="<?php echo $s = $this->sortable('ver.code'); ?>">
+                    <?php echo $this->translate("Version"); ?>
+                </a> <?php echo $s->icon() ?></th>
+            <th><a href="<?php echo $s = $this->sortable('t.titre'); ?>">
+                    <?php echo $this->translate("Thèse"); ?>
+                </a> <?php echo $s->icon() ?></th>
+            <th><a href="<?php echo $s = $this->sortable('d.nomUsuel+d.prenom'); ?>">
+                    <?php echo $this->translate("Doctorant"); ?>
+                </a> <?php echo $s->icon() ?></th>
+            <th><a href="<?php echo $s = $this->sortable('val.estValide'); ?>">
+                    <?php echo $this->translate("Archivable"); ?>
+                </a> <?php echo $s->icon() ?></th>
+            <th><a href="<?php echo $s = $this->sortable('f.estConforme'); ?>">
+                    <?php echo $this->translate("Valide"); ?>
+                </a> <?php echo $s->icon() ?></th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($fichiers as $fichier): /** @var Fichier $fichier */ ?>
+        <tr>
+            <td>
+                <?php
+                $canDownload = $this->isAllowed($fichier->getThese(), ThesePrivileges::THESE_TELECHARGEMENT_FICHIER);
+                $urlTelecharger = $canDownload ? $urlFichierThese->telechargerFichierThese($fichier->getThese(), $fichier) : null;
+                echo $this->uploader()->renderUploadedFile($fichier, $urlTelecharger);
+                ?>
+            </td>
+            <td>
+                <?php echo $fichier->getNomOriginal() ?>
+            </td>
+            <td>
+                <?php echo $fichier->getVersion()->getCode() ?>
+            </td>
+            <td>
+                <a href="<?php echo $this->url('these/identite', ['these' => $fichier->getThese()->getId()], [], true) ?>"><?php echo $fichier->getThese()->getTitre() ?></a>
+            </td>
+            <td>
+                <?php
+                    //echo $fichier->getThese()->getDoctorant()
+                    $doctorant = $fichier->getThese()->getDoctorant();
+                    echo $this->translate($doctorant->getCivilite());
+                    echo " ";
+                    echo $doctorant->getPrenom();
+                    echo " ";
+                    echo $doctorant->getNomUsuel();
+                ?>
+            </td>
+            <td>
+                <?php echo $this->translate($fichier->estArchivableToString()); ?>
+            </td>
+            <td>
+                <?php echo $this->translate($fichier->getEstConformeToString()); ?>
+            </td>
+        </tr>
+    <?php endforeach ?>
+    </tbody>
+</table>
+
+<?php echo $paginationControl = $this->paginationControl($fichiers, 'sliding', 'paginator.phtml', ['route' => 'fichier/deposes']) ?>
+
+<!-- for translation purpose -->
+<?php
+$this->translate("Oui");
+$this->translate("Non");
+$this->translate("M");
+$this->translate("Mme");
+$this->translate("le");
+$this->translate("à");
+$this->translate("Télécharger le fichier déposé");
+?>

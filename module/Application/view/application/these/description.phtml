@@ -1,0 +1,80 @@
+<?php
+
+use Application\Entity\Db\These;
+use Application\Entity\Db\WfEtape;
+use Application\Provider\Privilege\ThesePrivileges;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var        $this PhpRenderer
+ * @var These  $these
+ * @var string $modifierMetadonneesUrl
+ * @var string $nextStepUrl
+ */
+
+$canEdit = $this->isAllowed($these, ThesePrivileges::THESE_SAISIE_DESCRIPTION);
+?>
+
+<?php $this->headTitle("Signalement")->prepend($these->getDoctorant()->getNomUsuel()) ?>
+
+<h1 class="page-header">Signalement <small><?php echo $this->partial('application/these/partial/titre') ?></small></h1>
+
+<div class="box panel panel-info">
+
+    <div class="panel-heading">
+        <h2 class="first">Formulaire</h2>
+    </div>
+
+    <div class="panel-body">
+
+        <?php if ($these->getMetadonnee()): ?>
+            <?php echo $this->partial('application/these/partial/description') ?>
+            <?php if ($canEdit): ?>
+                <a href="<?php echo $modifierMetadonneesUrl ?>"
+                   class="btn btn-default ajax-modal"
+                    data-event="event-description-modified"><span class="glyphicon glyphicon-pencil"></span> Modifier</a>
+            <?php endif ?>
+        <?php else: ?>
+            <?php if ($canEdit): ?>
+                <a href="<?php echo $modifierMetadonneesUrl ?>"
+                   class="btn btn-primary ajax-modal"
+                   data-event="event-description-modified"><span class="glyphicon glyphicon-pencil"></span> Compléter</a>
+            <?php endif ?>
+        <?php endif ?>
+
+    </div>
+
+</div>
+
+<!-------------------------------------- Next step --------------------------------------->
+<div id="nextStepDiv" data-url="<?php echo $nextStepUrl ?>" style="display: none">
+    <!-- màj via ajax -->
+</div>
+
+
+
+<script>
+    $(function () {
+        var self = this;
+
+        var refreshingNextStep = function(done, effect) {
+            return function() {
+                $("#nextStepDiv").addClass("loading").refresh(null, function () {
+                    $(this).removeClass("loading").show();
+                    if (done) done();
+                });
+            };
+        };
+
+        // Au chargement de la page, on actualise les div
+        runInCascade([
+            refreshingNextStep
+        ], self);
+
+        $("body").one("event-description-modified", function (event, data) {
+            // Les métadonnées viennent d'être modifiées.
+            event.div.modal('hide'); // ferme la fenêtre modale
+            window.location.reload();
+        });
+    });
+</script>

@@ -1,0 +1,161 @@
+<?php
+
+use Application\Entity\Db\UniteRecherche;
+use Application\Entity\Db\UniteRechercheIndividu;
+use Application\Provider\Privilege\UniteRecherchePrivileges;
+use Application\View\Renderer\PhpRenderer;
+use UnicaenApp\Form\Element\LdapPeople;
+use Zend\Paginator\Paginator;
+
+/**
+ * @var PhpRenderer $this
+ * @var Paginator   $unites
+ * @var string      $selected
+ * @var array|null  $uniteRechercheIndividus
+ */
+
+$selectedUnite = null;
+?>
+
+<?php $this->headTitle($this->translate("Unités de recherche")) ?>
+
+<h1 class="page-header first"><?php echo $this->translate("Unités de recherche"); ?> <span
+        class="badge"><?php echo $unites->getTotalItemCount() ?></span></h1>
+
+<?php echo $this->messenger()->addCurrentMessagesFromFlashMessenger() ?>
+
+<table class="table table-condensed">
+    <thead>
+    <tr>
+        <th><?php echo $this->translate("Libellé"); ?></th>
+        <th><?php echo $this->translate("Sigle"); ?></th>
+        <th><?php echo $this->translate("Code"); ?></th>
+        <th><?php echo $this->translate("Actions"); ?></th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php /** @var UniteRecherche $unite */
+    foreach ($unites as $unite): ?>
+        <?php
+        $isSelected = $selected !== null && $unite->getId() === (int)$selected;
+        $selectedUnite = $isSelected ? $unite : $selectedUnite;
+        $trClass = $isSelected ? 'selected' : '';
+        $query = $isSelected ? [] : ['selected' => $unite->getId()];
+        ?>
+        <tr class="unite-recherche <?php echo $trClass ?>">
+            <td><a href="<?php echo $this->url(null, [], ['query' => $query], true) ?>"
+                   title="<?php echo $this->translate("Cliquez pour sélectionner cette unité de recherche"); ?> "><?php echo $unite->getLibelle() ?></a>
+            </td>
+            <td><?php echo $unite->getSigle() ?></td>
+            <td><?php echo $unite->getSourceCode() ?></td>
+            <td>
+                <?php if ($this->isAllowed(UniteRecherchePrivileges::getResourceId(UniteRecherchePrivileges::UNITE_RECH_MODIFICATION))): ?>
+                    <?php if ($unite->estNonHistorise()): ?>
+                        <?php $url = $this->url('unite-recherche/modifier', ['uniteRecherche' => $unite->getId()], [], true) ?>
+                        <a href="<?php echo $url ?>"
+                           title="<?php echo $this->translate("Modifier l'unité de recherche");?> '<?php echo $unite ?>'"
+                           class="modifier-unite" data-unite="<?php echo $unite ?>">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </a>
+                        <?php $url = $this->url('unite-recherche/supprimer', ['uniteRecherche' => $unite->getId()], [], true) ?>
+                        <a href="<?php echo $url ?>"
+                           title="<?php echo $this->translate("Supprimer l'unité de recherche"); ?> '<?php echo $unite ?>'"
+                           class="supprimer-unite" data-unite="<?php echo $unite ?>">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </a>
+                    <?php else: ?>
+                        <?php $url = $this->url('unite-recherche/restaurer', ['uniteRecherche' => $unite->getId()], [], true) ?>
+                        <a href="<?php echo $url ?>"
+                           title="<?php echo $this->translate("Restaurer l'unité de recherche"); ?> '<?php echo $unite ?>'"
+                           class="restaurer-unite" data-unite="<?php echo $unite ?>">
+                            <?php echo $this->translate("Restaurer"); ?>
+                        </a>
+                    <?php endif ?>
+                <?php endif ?>
+            </td>
+        </tr>
+        <?php if ($isSelected): ?>
+            <tr>
+                <td colspan="3" class="bg-info">
+                    <h2 class="first"><?php echo $this->translate("Membres");?> <small><?php echo $selectedUnite ?></small></h2>
+                    <?php if (count($uniteRechercheIndividus)): ?>
+                        <table class="table table-condensed">
+                            <tr>
+                                <th><?php echo $this->translate("Individu");?></th>
+                                <th><?php echo $this->translate("Rôle");?></th>
+                                <th><?php echo $this->translate("Actions");?></th>
+                            </tr>
+                            <?php /** @var UniteRechercheIndividu $edi */
+                            foreach ($uniteRechercheIndividus as $edi): ?>
+                                <tr>
+                                    <td><?php echo $edi->getIndividu() ?></td>
+                                    <td><?php echo $edi->getRole() ?></td>
+                                    <td>
+                                        <?php if ($this->isAllowed(UniteRecherchePrivileges::getResourceId(UniteRecherchePrivileges::UNITE_RECH_MODIFICATION))): ?>
+                                            <?php $url = $this->url('unite-recherche/retirer-individu', ['uniteRecherche' => $unite->getId(), 'edi' => $edi->getId(),], [], true) ?>
+                                            <a href="<?php echo $url ?>"
+                                               title="<?php echo $this->translate("Retirer");?> <?php echo $edi->getIndividu() ?>"
+                                               class="retirer-individu" data-individu="<?php echo $edi->getIndividu() ?>">
+                                                <span class="glyphicon glyphicon-trash"></span>
+                                            </a>
+                                        <?php endif ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach ?>
+                        </table>
+                    <?php else: ?>
+                        <p>Aucun.</p>
+                    <?php endif ?>
+
+                    <?php if ($this->isAllowed(UniteRecherchePrivileges::getResourceId(UniteRecherchePrivileges::UNITE_RECH_MODIFICATION))): ?>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <?php $url = $this->url('unite-recherche/ajouter-individu', ['uniteRecherche' => $selected], [], true) ?>
+                                <form method="post" action="<?php echo $url ?>">
+                                    <?php
+                                    $sas = new LdapPeople('people');
+                                    $sas->setLabel($this->translate("Recherche d'un individu à ajouter :"));
+                                    $sas->setAttribute('class', 'people-finder');
+                                    $sas->setAutocompleteSource($this->url('utilisateur/rechercher-people',[],[],true));
+                                    echo $this->formcontrolgroup($sas, 'formLdapPeople');
+                                    ?>
+                                    <input type="submit"
+                                           value="<?php echo $this->translate("Ajouter cet individu");?>"
+                                           style="margin-top: 0;"
+                                           title="<?php echo $this->translate("Ajouter cet individu comme membre");?>"
+                                           class="btn btn-default btn-sm"/>
+                                </form>
+                            </div>
+                        </div>
+                    <?php endif ?>
+                </td>
+            </tr>
+        <?php endif ?>
+    <?php endforeach ?>
+    </tbody>
+</table>
+
+<?php if ($this->isAllowed(UniteRecherchePrivileges::getResourceId(UniteRecherchePrivileges::UNITE_RECH_MODIFICATION))): ?>
+    <?php $url = $this->url('unite-recherche/ajouter', [], [], true) ?>
+    <a class="btn btn-default btn-sm"
+       href="<?php echo $url ?>"
+       title="<?php echo $this->translate("Créer une nouvelle UR");?>">
+        <span class="glyphicon glyphicon-plus"></span> <?php echo $this->translate("Ajouter"); ?>
+    </a>
+<?php endif ?>
+
+
+
+
+<script type="text/javascript">
+    $(function () {
+        $(".retirer-individu").click(function() {
+            var individu = $(this).data('individu');
+            return confirm("<?php echo $this->translate("Êtes-vous sûr-e de vouloir retirer ");?>" + individu + " " + "<?php echo $this->translate("de la liste des membres ?"); ?>");
+        });
+        $(".supprimer-unite").click(function() {
+            var unite = $(this).data('unite');
+            return confirm("<?php echo $this->translate("Êtes-vous sûr-e de vouloir supprimer l'unité de recherche");?>" + " " + unite + " ?");
+        });
+    });
+</script>

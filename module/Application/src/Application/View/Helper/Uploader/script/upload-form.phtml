@@ -1,0 +1,54 @@
+<style>
+    .progress {
+        margin-top: 10px;
+    }
+</style>
+
+<?php
+
+use Zend\Form\Element\File;
+use Zend\Form\ElementInterface;
+
+if ($this->url): ?>
+
+    <?php
+    $this->form->prepare(); // The correct enctype is set here
+
+    /** @var File $fileElement */
+    $fileElement = $this->form->get('files')
+        ->setAttribute('class', "choose-file uploader-submitable pull-left ")
+        ->setAttribute('data-url', $this->url);
+
+    // indication de la taille maximum autorisée par fichier déposé
+//    $appendToLabel = sprintf(" (<abbr title=\"%s octets au maximum par fichier\">%s max.</abbr>)",
+//        (new \NumberFormatter(\Locale::getDefault(), \NumberFormatter::DEFAULT_STYLE))->format($this->form->getUploadMaxFilesize()),
+//        $this->form->getUploadMaxFilesizeFormatted());
+    $appendToLabel = "";
+    ?>
+
+    <!-- éléments de formulaire SANS BALISE FORM -->
+    <?php if ($fileElement->getLabel()): ?>
+    <div>
+        <?php echo $this->formLabel($fileElement) . $appendToLabel ?>
+    </div>
+    <?php endif ?>
+    <?php echo $this->formFile($fileElement) ?>
+    <?php echo $this->formElementErrors($fileElement) ?>
+
+    <?php /** @var ElementInterface $element */
+    foreach($this->form->getAddedElements() as $element): ?>
+        <?php echo $this->formElement($element->setAttribute('class', 'uploader-submitable')) ?>
+    <?php endforeach ?>
+
+    <!-- NB: bouton non exploité pour l'instant car l'upload est déclenché dès la sélection de fichiers -->
+    <button class="upload-file btn btn-primary btn-xs pull-right" data-loading-text="Patientez..." style="display: none;">
+        <span class="glyphicon glyphicon-upload"></span> Envoyer
+    </button>
+
+    <div class="clearfix"></div>
+    <div class="progress" style="display: none;">
+        <div class="progress-bar progress-bar-striped active" role="progressbar"
+             aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+             style="width: 0%;"></div>
+    </div>
+<?php endif;

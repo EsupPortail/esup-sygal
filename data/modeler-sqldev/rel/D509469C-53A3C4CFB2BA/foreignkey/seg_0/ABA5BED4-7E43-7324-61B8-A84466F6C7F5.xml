@@ -1,0 +1,17 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<FKIndexAssociation class="oracle.dbtools.crest.model.design.relational.FKIndexAssociation" directorySegmentName="seg_0" id="ABA5BED4-7E43-7324-61B8-A84466F6C7F5" name="THESE_THESARD_FK">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>SODOCT</sourceObjSchema>
+<sourceObjName>THESE_THESARD_FK</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<containerWithKeyObject>C8A87CEA-AA10-99CF-B3EE-523D169BF64E</containerWithKeyObject>
+<deleteRule>CASCADE</deleteRule>
+<localFKIndex>28EA854F-002F-BDD8-A33F-FED7219B625D</localFKIndex>
+<keyObject>B448F797-41B2-D284-EF3C-6B3E26532672</keyObject>
+<mandatory>true</mandatory>
+<transferable>true</transferable>
+<columnDependencyConstraintGenerateInDDL>true</columnDependencyConstraintGenerateInDDL>
+</FKIndexAssociation>

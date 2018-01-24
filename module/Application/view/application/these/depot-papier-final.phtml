@@ -1,0 +1,90 @@
+<?php
+
+/**
+ * @var These $these
+ */
+
+use Application\Entity\Db\These;
+use Zend\Form\Form;
+use Application\Provider\Privilege\ThesePrivileges;
+
+$canEdit = $this->isAllowed($these, ThesePrivileges::THESE_VERSION_PAPIER_CORRIGEE);
+$toggleDetails = clone $this->toggleDetails('div-depot-corrige');
+?>
+
+
+<?php
+    class VersionFinalForm extends Form {
+
+        private $these;
+
+        /**
+         * @return mixed
+         */
+        public function getThese()
+        {
+            return $this->these;
+        }
+
+        /**
+         * @param mixed $these
+         */
+        public function setThese($these)
+        {
+            $this->these = $these;
+        }
+
+
+        public function __construct($name = null)
+        {
+
+            parent::__construct('version-papier');
+            $this->add(array(
+                'name' => 'id',
+                //'value' => $these->getId(),
+                'type' => 'hidden',
+            ));
+            $this->add((new \Zend\Form\Element\Submit('submit'))
+                ->setValue("Validation")
+                ->setAttribute('class', 'btn btn-primary')
+            );
+        }
+
+    }
+?>
+<?php $this->headTitle("Dépôt version papier corrigée")->prepend($these->getDoctorant()->getNomUsuel()) ?>
+
+<div class="no-intranavigation">
+
+    <h1 class="page-header">Dépôt version papier corrigée <small><?php echo $this->partial('application/these/partial/titre') ?></small></h1>
+
+    <p class="lead">
+        Lorsque des corrections (mineures ou majeures) sont demandées, un exemplaire papier corrigé doit être remis à la bibliothèque universitaire.
+    </p>
+
+    <div class="box panel panel-success">
+
+        <div class="panel-heading">
+            <h2 class="first">Validation de la remise de l'exemplaire papier corrigé </h2>
+        </div>
+
+        <div class="panel-body">
+
+            <?php
+
+
+            if($canEdit) {
+                echo "Validation du dépôt de l'exemplaire papier corrigé par le docteur";
+                echo " à la bilbiothèque universitaire.";
+                $form = new VersionFinalForm();
+                echo $this->form()->openTag($form->prepare());
+                echo $this->formElement($form->get('submit'));
+                echo $this->form()->closeTag();
+            } else {
+                echo "Le docteur a bien remis son exemplaire papier corrigé à la";
+                echo " bibliothèque universitaire.";
+            }
+                ?>
+        </div>
+
+    </div>

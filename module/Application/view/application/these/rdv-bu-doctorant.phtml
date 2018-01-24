@@ -1,0 +1,114 @@
+<?php
+
+use Application\Entity\Db\These;
+use Application\Entity\Db\Validation;
+use Application\Provider\Privilege\ThesePrivileges;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var                 $this PhpRenderer
+ * @var These           $these
+ * @var bool            $estDoctorant
+ * @var string          $modifierUrl
+ * @var Validation|null $validation
+ * @var string          $nextStepUrl
+ */
+
+$canEdit = $this->isAllowed($these, ThesePrivileges::THESE_SAISIE_DESCRIPTION);
+
+$rdvBu = $these->getRdvBu();
+?>
+
+<?php $this->headTitle("Rendez-vous BU")->prepend($these->getDoctorant()->getNomUsuel()) ?>
+
+<h1 class="page-header">Rendez-vous BU
+    <small><?php echo $this->partial('application/these/partial/titre') ?></small>
+</h1>
+
+<div class="panel panel-info box">
+    <div class="panel-heading">
+        <h2 class="first">Doctorant</h2>
+    </div>
+    <div class="panel-body">
+        <?php if ($rdvBu): ?>
+            <dl class="rdv-bu">
+                <dt>Téléphone :</dt>
+                <dd><?php echo $this->escapeText()->render($rdvBu->getCoordDoctorant()) ?: "(Non renseignées)" ?></dd>
+                <dt>Disponibilités :</dt>
+                <dd><?php echo $this->escapeText()->render($rdvBu->getDispoDoctorant()) ?: "(Non renseignées)" ?></dd>
+            </dl>
+        <?php endif ?>
+        <?php if ($canEdit): ?>
+            <?php if ($rdvBu): ?>
+                <a href="<?php echo $modifierUrl ?>"
+                   class="btn btn-default text-center ajax-modal"
+                   data-event="event-rdv-bu-modified"><span
+                        class="glyphicon glyphicon-pencil"></span> Modifier</a>
+            <?php else: ?>
+                <a href="<?php echo $modifierUrl ?>"
+                   class="btn btn-primary text-center ajax-modal"
+                   data-event="event-rdv-bu-modified"><span
+                        class="glyphicon glyphicon-pencil"></span> Compléter les informations nécessaires à la prise de rendez-vous avec la BU</a>
+            <?php endif ?>
+
+        <?php endif ?>
+    </div>
+</div>
+
+<div class="panel panel-info box">
+    <div class="panel-heading">
+        <h2 class="first">BU</h2>
+    </div>
+    <div class="panel-body">
+        <?php if ($rdvBu): ?>
+            <?php echo $this->partial('application/these/partial/rdv-bu') ?>
+        <?php else: ?>
+            <p>La BU n'a pas encore completé les informations concernant votre rendez-vous avec elle.</p>
+        <?php endif ?>
+    </div>
+</div>
+
+<div class="panel panel-info box">
+    <div class="panel-heading">
+        <h2 class="first">Validation</h2>
+    </div>
+    <div class="panel-body">
+        <?php if ($validation): ?>
+            <?php echo $this->validation($validation) ?>
+        <?php else: ?>
+            <p>Aucune.</p>
+        <?php endif ?>
+    </div>
+</div>
+
+<!-------------------------------------- Next step --------------------------------------->
+<div id="nextStepDiv" data-url="<?php echo $nextStepUrl ?>" style="display: none">
+    <!-- màj via ajax -->
+</div>
+
+
+<script>
+    $(function () {
+        var self = this;
+
+        var refreshingNextStep = function(done, effect) {
+            return function() {
+                $("#nextStepDiv").addClass("loading").refresh(null, function () {
+                    $(this).removeClass("loading").show();
+                    if (done) done();
+                });
+            };
+        };
+
+        // au chargement de la page, on actualise toutes les div en cascade.
+        runInCascade([
+            refreshingNextStep
+        ], self);
+
+        $("body").one("event-rdv-bu-modified", function (event, data) {
+            // Les données viennent d'être modifiées.
+            event.div.modal('hide'); // ferme la fenêtre modale
+            window.location.reload();
+        });
+    });
+</script>

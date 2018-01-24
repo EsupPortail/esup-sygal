@@ -1,0 +1,110 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<TableProxyOraclev11g class="oracle.dbtools.crest.model.design.storage.oracle.v11g.TableProxyOraclev11g" name="ECOLE_DOCT" directorySegmentName="seg_0" id="23ED8C6C-EA6C-5F89-0EB6-748471042855">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<schemaObject>2C79EC04-6E03-C462-036D-1ED1958B7C87</schemaObject>
+<logging>YES</logging>
+<partitionedRowMovement>DISABLE</partitionedRowMovement>
+<segment>42E9A3FF-DE12-77CD-96D8-7A0C8D0BD23D</segment>
+<tableSpace>21672606-61A9-C2B3-9166-9F3C6D240B0D</tableSpace>
+<temporaryChanged>false</temporaryChanged>
+<accessDriverType>oracle_loader</accessDriverType>
+<rejectLimit></rejectLimit>
+<indexProxies>
+<IndexProxy class="oracle.dbtools.crest.model.design.storage.oracle.v10g.IndexProxyOraclev10g" name="ECOLE_DOCT_PK" id="2780B5F2-3272-1859-7EE4-98FC14532470">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<schemaObject>2C79EC04-6E03-C462-036D-1ED1958B7C87</schemaObject>
+<segment>895323A9-EA20-878A-1B2B-67DBAB21D67A</segment>
+<tableSpace>21672606-61A9-C2B3-9166-9F3C6D240B0D</tableSpace>
+</IndexProxy>
+</indexProxies>
+<columnProxies itemClass="oracle.dbtools.crest.model.design.storage.oracle.v12c.ColumnProxyOraclev12c">
+<ColumnProxy name="HISTO_CREATEUR_ID" id="0B266D6A-2BA6-78BB-1F28-4E21B730FA1B">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="HISTO_MODIFICATEUR_ID" id="253F7D49-AE8A-F0F4-97F8-093E6B580847">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="ID" id="39E5DE67-B906-030E-3373-21481DF09BD3">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="HISTO_DESTRUCTEUR_ID" id="3DD2F7DB-B2C0-3C47-D0C6-97CC484D274C">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="HISTO_DESTRUCTION" id="6536D5F8-08ED-4D57-D96A-504584DDA877">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="HISTO_MODIFICATION" id="67E3863E-EF20-F765-076F-DDE4FFB7278F">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<defaultValue>SYSDATE</defaultValue>
+</ColumnProxy>
+<ColumnProxy name="SOURCE_CODE" id="9937CC45-1173-69AC-304F-D6EEB2738959">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="LIBELLE" id="C9399AF1-B315-6FCD-709B-174AA332A017">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="SOURCE_ID" id="D51330C6-3874-1C24-6CB0-CBA4D4FFCF4F">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="HISTO_CREATION" id="F0413ED8-8B0C-2CA2-CD6C-F6F529930440">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<defaultValue>SYSDATE</defaultValue>
+</ColumnProxy>
+<ColumnProxy name="SIGLE" id="F5A8B514-DE45-B8ED-4E6A-F422016DD18D">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+</ColumnProxy>
+</columnProxies>
+<primaryKeys>
+<PrimaryKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.PKProxyOraclev10g" name="ECOLE_DOCT_PK" id="CB9AE041-6EBC-2E86-97EA-6C932A304D39">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<segment>895323A9-EA20-878A-1B2B-67DBAB21D67A</segment>
+<tableSpace>21672606-61A9-C2B3-9166-9F3C6D240B0D</tableSpace>
+<existingIndex>2780B5F2-3272-1859-7EE4-98FC14532470</existingIndex>
+<indexSegment>895323A9-EA20-878A-1B2B-67DBAB21D67A</indexSegment>
+<indexSort>SORTED</indexSort>
+<usingIndex>BY INDEX NAME</usingIndex>
+</PrimaryKey>
+</primaryKeys>
+</TableProxyOraclev11g>

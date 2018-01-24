@@ -1,0 +1,45 @@
+<?php
+
+use Application\Entity\Db\These;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var string      $text
+ */
+
+/**
+ * @param string $paramName
+ * @param string $paramValue
+ * @param array $queryParams
+ * @return string
+ */
+$urlFiltrer = function ($paramName, $paramValue, $queryParams) {
+    $queryParams[$paramName] = $paramValue;
+    return $this->url('these/rechercher', [], ['query' => $queryParams], true);
+};
+?>
+
+<?php echo $this->filterPanel([
+    "État" => [
+        'paramName' => 'etatThese',
+        'paramConfig' => [
+            ['value' => '', 'label' => "Tous"],
+            ['value' => $v = These::ETAT_EN_COURS, 'label' => These::$etatsLibelles[$v]],
+            ['value' => $v = These::ETAT_ABANDONNEE, 'label' => These::$etatsLibelles[$v]],
+            ['value' => $v = These::ETAT_SOUTENUE, 'label' => These::$etatsLibelles[$v]],
+            ['value' => $v = These::ETAT_TRANSFEREE, 'label' => These::$etatsLibelles[$v]],
+        ],
+        'filterUrl' => $urlFiltrer,
+    ],
+//    "Résultat" => [
+//        'paramName' => 'resultat',
+//        'paramConfig' => [
+//            ['value' => '', 'label' => "Tous"],
+//            ['value' => $v = (string) These::RESULTAT_ADMIS, 'label' => These::$resultatsLibellesCourts[$v]],
+//            ['value' => $v = (string) These::RESULTAT_AJOURNE, 'label' => These::$resultatsLibellesCourts[$v]],
+//            ['value' => $v = These::ETAT_SOUTENUE, 'label' => These::$etatsLibelles[$v]],
+//        ],
+//        'filterUrl' => $urlFiltrer,
+//    ],
+]) ?>

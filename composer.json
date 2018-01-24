@@ -1,0 +1,40 @@
+{
+    "name": "unicaen/sodoct",
+    "description": "Application de gestion des soutenances de thèse",
+    "repositories": [
+        {
+            "type": "composer",
+            "url":  "https://dev.unicaen.fr/packagist"
+        }
+    ],
+    "require-dev": {
+        "unicaen/unicaen-test":                 "^1.0",
+        "zendframework/zend-developer-tools":   "1.0.0"
+    },
+    "require": {
+        "unicaen/unicaen-app":                  "^1.2",
+        "unicaen/unicaen-auth":                 "1.2.0.x-dev",
+        "unicaen/unicaen-faq":                  "^1.0",
+        "unicaen/unicaen-ldap":                 "^2.1",
+        "unicaen/unicaen-import":               "1.0.7",
+        "unicaen/unicaen-leocarte":             "^1.0",
+        "unicaen/unicaen-code":                 "^1.0",
+        "ramsey/uuid":                          "^3.3",
+        "mpdf/mpdf":                            "v5.7",
+        "bjyoungblood/bjy-authorize":           "dev-master"
+    },
+    "autoload": {
+        "psr-0": {
+            "Application\\": "module/Application/src",
+            "Retraitement\\": "module/Retraitement/src",
+            "Notification\\": "module/Notification/src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ApplicationUnitTest\\":        "module/Application/tests/ApplicationUnitTest",
+            "ApplicationFunctionalTest\\":  "module/Application/tests/ApplicationFunctionalTest",
+            "RetraitementTest\\":           "module/Retraitement/test/RetraitementTest"
+        }
+    }
+}

@@ -1,0 +1,347 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="E82692D7-8A8A-7EF2-4BB1-9D09BF47F85D" name="USER_ROLE">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>SODOCT</sourceObjSchema>
+<sourceObjName>USER_ROLE</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<schemaObject>2C79EC04-6E03-C462-036D-1ED1958B7C87</schemaObject>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="ID" id="192E50DF-F50B-956D-177D-92D32753F232">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>USER_ROLE</sourceObjSchema>
+<sourceObjName>ID</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<dataTypePrecision>*</dataTypePrecision>
+<dataTypeScale>0</dataTypeScale>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="ROLE_ID" id="98E709A0-F2D6-17D2-3188-CBAC92691510">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>USER_ROLE</sourceObjSchema>
+<sourceObjName>ROLE_ID</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>64 CHAR</dataTypeSize>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="IS_DEFAULT" id="E01F2D11-FC68-1A70-BD5D-6CD676A6687A">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>USER_ROLE</sourceObjSchema>
+<sourceObjName>IS_DEFAULT</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<dataTypePrecision>38</dataTypePrecision>
+<defaultValue>0</defaultValue>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="PARENT_ID" id="8E7E3EB9-8AC6-3E08-11BA-2585DADDA0E9">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>USER_ROLE</sourceObjSchema>
+<sourceObjName>PARENT_ID</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<dataTypePrecision>*</dataTypePrecision>
+<dataTypeScale>0</dataTypeScale>
+<delegate>192E50DF-F50B-956D-177D-92D32753F232</delegate>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="9BA05BE5-FE82-DC38-5C8D-DCBD891A662F" referredColumn="192E50DF-F50B-956D-177D-92D32753F232"/>
+</associations>
+</Column>
+<Column name="LDAP_FILTER" id="31D4D8F4-2812-4092-086E-69DAEFCFC78B">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>USER_ROLE</sourceObjSchema>
+<sourceObjName>LDAP_FILTER</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>255 CHAR</dataTypeSize>
+<defaultValue>NULL</defaultValue>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="HISTO_CREATEUR_ID" id="D87C3579-FA6E-F7F2-4CAE-E3E12AD35D51">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>USER_ROLE</sourceObjSchema>
+<sourceObjName>HISTO_CREATEUR_ID</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<dataTypePrecision>38</dataTypePrecision>
+<defaultValue>1</defaultValue>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="HISTO_CREATION" id="6029A34F-63FB-2947-7088-4BCF67C70C4E">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>USER_ROLE</sourceObjSchema>
+<sourceObjName>HISTO_CREATION</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT007</logicalDatatype>
+<dataTypeSize>7</dataTypeSize>
+<defaultValue>SYSDATE</defaultValue>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="HISTO_DESTRUCTEUR_ID" id="C76CA34A-E6FD-CB5C-50F6-335FEB485035">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>USER_ROLE</sourceObjSchema>
+<sourceObjName>HISTO_DESTRUCTEUR_ID</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<dataTypePrecision>38</dataTypePrecision>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="HISTO_DESTRUCTION" id="4FE55C2C-5DBA-D94D-9882-E4A4DEACDBC6">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>USER_ROLE</sourceObjSchema>
+<sourceObjName>HISTO_DESTRUCTION</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT007</logicalDatatype>
+<dataTypeSize>7</dataTypeSize>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="HISTO_MODIFICATEUR_ID" id="FE2344E0-9142-870F-CDBC-4F4811DEC8FC">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>USER_ROLE</sourceObjSchema>
+<sourceObjName>HISTO_MODIFICATEUR_ID</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<dataTypePrecision>38</dataTypePrecision>
+<defaultValue>1</defaultValue>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="HISTO_MODIFICATION" id="F5FF0AD2-325F-46F2-1655-D3F48E54B466">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>USER_ROLE</sourceObjSchema>
+<sourceObjName>HISTO_MODIFICATION</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT007</logicalDatatype>
+<dataTypeSize>7</dataTypeSize>
+<defaultValue>SYSDATE</defaultValue>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="SOURCE_CODE" id="ABB6E005-FE8D-3831-12AC-7F31A705E84D">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>USER_ROLE</sourceObjSchema>
+<sourceObjName>SOURCE_CODE</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>64 CHAR</dataTypeSize>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="SOURCE_ID" id="1D66F35D-BE45-1A56-B29A-46657D0EAA60">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>USER_ROLE</sourceObjSchema>
+<sourceObjName>SOURCE_ID</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<dataTypePrecision>38</dataTypePrecision>
+<defaultValue>1</defaultValue>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="ATTRIB_AUTO" id="ADFF7813-B00B-1B5B-A5CF-D01C4E55D8FA">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>USER_ROLE</sourceObjSchema>
+<sourceObjName>ATTRIB_AUTO</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<dataTypePrecision>1</dataTypePrecision>
+<defaultValue>0</defaultValue>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="STRUCTURE_DEP" id="B0A09FBB-7799-4DE1-CC12-55551C2BAD8C">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>USER_ROLE</sourceObjSchema>
+<sourceObjName>STRUCTURE_DEP</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<dataTypePrecision>1</dataTypePrecision>
+<defaultValue>0</defaultValue>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="THESE_DEP" id="8864C89A-EF2A-C0BB-AC7C-5F0F6E948834">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>USER_ROLE</sourceObjSchema>
+<sourceObjName>THESE_DEP</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<dataTypePrecision>1</dataTypePrecision>
+<defaultValue>0</defaultValue>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="0FD454DF-90F0-4AF5-5CCF-3EFDF26B569A" name="USER_ROLE_PK">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>SODOCT</sourceObjSchema>
+<sourceObjName>USER_ROLE_PK</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="192E50DF-F50B-956D-177D-92D32753F232"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="D4E6949C-26B1-B081-ECB1-DC5577412DF5" name="USER_ROLE_ROLE_UN">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>SODOCT</sourceObjSchema>
+<sourceObjName>USER_ROLE_ROLE_UN</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<indexState>Unique Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="98E709A0-F2D6-17D2-3188-CBAC92691510"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="748C49DA-117B-7552-0911-0C92CCFDC699" name="USER_ROLE_ROLE_UN">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>SODOCT</sourceObjSchema>
+<sourceObjName>USER_ROLE_ROLE_UN</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<indexState>Unique Plain Index</indexState>
+<schemaObject>2C79EC04-6E03-C462-036D-1ED1958B7C87</schemaObject>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="98E709A0-F2D6-17D2-3188-CBAC92691510"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="B01AFEFF-543F-C1FF-E99C-B3F85CBE1433" name="USER_ROLE_PK">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>SODOCT</sourceObjSchema>
+<sourceObjName>USER_ROLE_PK</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<indexState>Unique Plain Index</indexState>
+<schemaObject>2C79EC04-6E03-C462-036D-1ED1958B7C87</schemaObject>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="192E50DF-F50B-956D-177D-92D32753F232"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="48A040D7-2D75-7B35-3942-24448E57EE7A" name="USER_ROLE_PARENT__IDX">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>SODOCT</sourceObjSchema>
+<sourceObjName>USER_ROLE_PARENT__IDX</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<schemaObject>2C79EC04-6E03-C462-036D-1ED1958B7C87</schemaObject>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="8E7E3EB9-8AC6-3E08-11BA-2585DADDA0E9"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="04E1242C-A326-DB23-2931-71C235B317D7" name="USER_ROLE_USER_ROLE_FK">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="8E7E3EB9-8AC6-3E08-11BA-2585DADDA0E9"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>

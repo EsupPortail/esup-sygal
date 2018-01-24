@@ -1,0 +1,66 @@
+<?php
+
+use Application\Entity\Db\These;
+use Application\Entity\Db\VersionFichier;
+use Application\Entity\Db\WfEtape;
+use Application\Form\DiffusionTheseForm;
+use Application\Provider\Privilege\ThesePrivileges;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var                    $this PhpRenderer
+ * @var These              $these
+ * @var DiffusionTheseForm $form
+ * @var array              $theseFichiersExpurgesItems
+ * @var array              $annexesFichiersExpurgesItems
+ * @var string             $modifierDiffusionUrl
+ * @var string             $exporterConventionMelUrl
+ */
+
+$hasFichierThese = $these->getFichiersBy(false, false, false)->count() > 0;
+
+$canEdit = $this->isAllowed($these, ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION);
+?>
+
+<div class="box panel panel-info">
+
+    <div class="panel-heading">
+        <h2 class="first">Autorisation de diffusion</h2>
+    </div>
+
+    <div class="panel-body">
+        <?php if ($hasFichierThese): ?>
+
+            <!-------------------------------------- Questionnaire --------------------------------------->
+            <?php if ($these->getDiffusion()): ?>
+                <?php echo $this->partial('application/these/partial/diffusion') ?>
+                <?php if ($canEdit): ?>
+                    <p><a href="<?php echo $modifierDiffusionUrl ?>"
+                          class="btn btn-default ajax-modal"
+                          data-event="event-diffusion-modified"><span class="glyphicon glyphicon-pencil"></span> Modifier</a></p>
+                <?php endif ?>
+            <?php else: ?>
+                <?php if ($canEdit): ?>
+                    <p><a href="<?php echo $modifierDiffusionUrl ?>"
+                          class="btn btn-primary ajax-modal"
+                          data-event="event-diffusion-modified"><span class="glyphicon glyphicon-pencil"></span> Compléter</a></p>
+                <?php endif ?>
+            <?php endif ?>
+
+            <!-------------------------------------- Convention de mise en ligne --------------------------------------->
+            <?php if ($these->getDiffusion()): ?>
+                <hr>
+
+                <h2>Convention de mise en ligne</h2>
+                <p><a href="<?php echo $exporterConventionMelUrl ?>" target="_blank"
+                      class="btn btn-primary"><span class="glyphicon glyphicon-export"></span>
+                        Éditer la convention de mise en ligne en 2 exemplaires</a></p>
+            <?php endif ?>
+
+        <?php else: ?>
+
+            <p>Vous devez d'abord téléverser la thèse au format PDF.</p>
+
+        <?php endif ?>
+    </div>
+</div>

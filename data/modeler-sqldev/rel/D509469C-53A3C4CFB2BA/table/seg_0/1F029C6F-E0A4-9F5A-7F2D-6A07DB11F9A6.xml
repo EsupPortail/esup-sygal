@@ -1,0 +1,183 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="1F029C6F-E0A4-9F5A-7F2D-6A07DB11F9A6" name="UNITE_RECH_IND">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>SODOCT</sourceObjSchema>
+<sourceObjName>UNITE_RECH_IND</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<schemaObject>2C79EC04-6E03-C462-036D-1ED1958B7C87</schemaObject>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="ID" id="9C64EB55-EB11-5381-E73D-96C067414FD7">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>UNITE_RECH_IND</sourceObjSchema>
+<sourceObjName>ID</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<dataTypePrecision>38</dataTypePrecision>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="UNITE_RECH_ID" id="3AFE66D8-BE94-F100-BB3A-2FCE3A8F0E3B">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>UNITE_RECH_IND</sourceObjSchema>
+<sourceObjName>UNITE_RECH_ID</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<dataTypePrecision>*</dataTypePrecision>
+<dataTypeScale>0</dataTypeScale>
+<delegate>9E2EF571-D362-33BA-6F63-CD745F0F32E1</delegate>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="62400F07-83FF-B3CF-430C-9D397CD0B3A8" referredColumn="9E2EF571-D362-33BA-6F63-CD745F0F32E1"/>
+</associations>
+</Column>
+<Column name="INDIVIDU_ID" id="2D06330E-7ACA-6700-591A-2C664A88CD46">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>UNITE_RECH_IND</sourceObjSchema>
+<sourceObjName>INDIVIDU_ID</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<dataTypePrecision>38</dataTypePrecision>
+<delegate>94F0179D-96E6-E1C4-D743-52213CAC8657</delegate>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="924264A8-9588-FC52-44D0-4CD2B01A8BEA" referredColumn="94F0179D-96E6-E1C4-D743-52213CAC8657"/>
+</associations>
+</Column>
+<Column name="ROLE_ID" id="A234BB08-E0FB-CBAD-F7C2-8EC07D7A9F57">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>UNITE_RECH_IND</sourceObjSchema>
+<sourceObjName>ROLE_ID</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<dataTypePrecision>*</dataTypePrecision>
+<dataTypeScale>0</dataTypeScale>
+<delegate>192E50DF-F50B-956D-177D-92D32753F232</delegate>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="809C21D8-0DEE-974C-80F8-262633146C97" referredColumn="192E50DF-F50B-956D-177D-92D32753F232"/>
+</associations>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="CCD5D4BF-AB96-3832-64EA-BACB8C9B816B" name="UNITE_RECH_IND_PK">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>SODOCT</sourceObjSchema>
+<sourceObjName>UNITE_RECH_IND_PK</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="9C64EB55-EB11-5381-E73D-96C067414FD7"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="01F73A71-6257-3192-6D91-EFF2DD2C8038" name="UNITE_RECH_IND_UN">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>SODOCT</sourceObjSchema>
+<sourceObjName>UNITE_RECH_IND_UN</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<indexState>Unique Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="3AFE66D8-BE94-F100-BB3A-2FCE3A8F0E3B"/>
+<colUsage columnID="2D06330E-7ACA-6700-591A-2C664A88CD46"/>
+<colUsage columnID="A234BB08-E0FB-CBAD-F7C2-8EC07D7A9F57"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="4238D331-EA98-2045-4AEE-432D016A5887" name="UNITE_RECH_IND_PK">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>SODOCT</sourceObjSchema>
+<sourceObjName>UNITE_RECH_IND_PK</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<indexState>Unique Plain Index</indexState>
+<schemaObject>2C79EC04-6E03-C462-036D-1ED1958B7C87</schemaObject>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="9C64EB55-EB11-5381-E73D-96C067414FD7"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="B8FD7443-2AC5-8EEA-A24B-8E5885221AE8" name="UNITE_RECH_IND_UN">
+<sourceConnName>sodoct@DOCTTEST</sourceConnName>
+<sourceObjSchema>SODOCT</sourceObjSchema>
+<sourceObjName>UNITE_RECH_IND_UN</sourceObjName>
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<indexState>Unique Plain Index</indexState>
+<schemaObject>2C79EC04-6E03-C462-036D-1ED1958B7C87</schemaObject>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="3AFE66D8-BE94-F100-BB3A-2FCE3A8F0E3B"/>
+<colUsage columnID="2D06330E-7ACA-6700-591A-2C664A88CD46"/>
+<colUsage columnID="A234BB08-E0FB-CBAD-F7C2-8EC07D7A9F57"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="7A0C1446-A518-AF99-DDE3-3FB3CB4C566E" name="UNITE_RECH_IND_IFK">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="2D06330E-7ACA-6700-591A-2C664A88CD46"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="30222429-FA24-8947-F71A-A76DE5C00212" name="UNITE_RECH_IND_RFK">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="A234BB08-E0FB-CBAD-F7C2-8EC07D7A9F57"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="B0FA7E38-737E-1051-1615-93B8078DB1B0" name="UNITE_RECH_IND_URFK">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="3AFE66D8-BE94-F100-BB3A-2FCE3A8F0E3B"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>

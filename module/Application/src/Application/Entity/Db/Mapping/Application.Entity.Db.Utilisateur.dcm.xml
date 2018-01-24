@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="Application\Entity\Db\Utilisateur" table="UTILISATEUR">
+    <id name="id" type="integer" column="ID">
+      <generator strategy="SEQUENCE"/>
+    </id>
+
+    <field name="username" type="string" column="USERNAME" length="255" nullable="false"/>
+    <field name="password" type="string" column="PASSWORD" length="128" nullable="false"/>
+    <field name="displayName" type="string" column="DISPLAY_NAME" length="64" nullable="false"/>
+    <field name="email" type="string" column="EMAIL" length="255" nullable="true"/>
+    <field name="state" type="integer" column="STATE" nullable="false"/>
+
+    <many-to-one field="lastRole" target-entity="Application\Entity\Db\Role">
+      <join-columns>
+        <join-column name="LAST_ROLE_ID" referenced-column-name="ID"/>
+      </join-columns>
+    </many-to-one>
+
+    <many-to-many field="roles" target-entity="Application\Entity\Db\Role">
+      <join-table name="USER_ROLE_LINKER">
+        <join-columns>
+          <join-column name="USER_ID" referenced-column-name="ID"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="ROLE_ID" referenced-column-name="ID"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
+
+  </entity>
+</doctrine-mapping>

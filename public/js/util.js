@@ -1,0 +1,1 @@
+../../vendor/unicaen/unicaen-app/public/js/util.js

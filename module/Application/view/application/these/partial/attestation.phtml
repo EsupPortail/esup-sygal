@@ -1,0 +1,19 @@
+<?php
+
+use Application\Entity\Db\These;
+use Application\Form\AttestationTheseForm;
+
+/**
+ * @var These                $these
+ * @var AttestationTheseForm $form
+ * @var boolean              $masquerFichiers
+ * @var array                $theseFichiersExpurgesItems
+ * @var array                $annexesFichiersExpurgesItems
+ */
+?>
+
+<p><?php echo $form->getText() ?></p>
+<ul class="attestation">
+    <li><?php echo $form->get('versionDeposeeEstVersionRef')->getLabel() . " ; " ?>
+    <li><?php echo $form->get('exemplaireImprimeConformeAVersionDeposee')->getLabel() . "." ?>
+</ul>

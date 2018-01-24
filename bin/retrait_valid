@@ -1,0 +1,7 @@
+#!/usr/bin/env php
+
+<?php
+exec('export http_proxy=proxy.unicaen.fr:3128');
+exec('export https_proxy=proxy.unicaen.fr:3128');
+
+include('retrait_valid.php');

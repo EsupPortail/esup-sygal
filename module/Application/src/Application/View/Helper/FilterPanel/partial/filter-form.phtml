@@ -1,0 +1,44 @@
+<?php
+
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var array       $config
+ * Exemple :
+ [
+    "État" => [
+        'paramName' => 'etatThese',
+        'paramConfig' => [
+            ['value' => '', 'label' => "Tous"],
+            ['value' => $v = These::ETAT_EN_COURS, 'label' => These::$etatsLibelles[$v]],
+            ['value' => $v = These::ETAT_ABANDONNEE, 'label' => These::$etatsLibelles[$v]],
+            ['value' => $v = These::ETAT_SOUTENUE, 'label' => These::$etatsLibelles[$v]],
+        ],
+        'filterUrl' => function ($param, $value, $queryParams) {
+            $queryParams[$param] = $value;
+            return $this->url('these/rechercher', [], ['query' => $queryParams], true);
+        },
+    ],
+ ]
+ *
+ */
+?>
+
+<div class="panel panel-default filters">
+    <div class="panel-heading">
+        <span class="glyphicon glyphicon-filter"></span>Filtres
+    </div>
+    <table class="table table-bordered">
+        <?php foreach ($config as $label => $data): ?>
+        <tr>
+            <th>
+                <?php echo $label ?>
+            </th>
+            <td>
+                <?php echo $this->partial('filter-form-item', $data) ?>
+            </td>
+        </tr>
+        <?php endforeach ?>
+    </table>
+</div>

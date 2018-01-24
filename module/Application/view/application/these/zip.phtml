@@ -1,0 +1,24 @@
+<?php
+
+use Application\Entity\Db\These;
+use Application\Provider\Privilege\ThesePrivileges;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var These       $these
+ * @var string      $constituerZipUrl
+ */
+
+$canEdit = $this->isAllowed($these, ThesePrivileges::getResourceId(ThesePrivileges::THESE_CREATION_ZIP));
+
+$hasFichierThese = $these->getFichiersBy(false, false, false)->count() > 0;
+?>
+
+<?php if ($canEdit && $hasFichierThese): ?>
+
+    <h2>Archive Zip <small>Thèse au format PDF + Autres formats de fichiers, le cas échéant</small></h2>
+    <a href="<?php echo $constituerZipUrl ?>"
+       class="btn btn-default"><span class="glyphicon glyphicon-compressed"></span> Constituer le fichier Zip</a>
+
+<?php endif ?>

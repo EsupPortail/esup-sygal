@@ -1,0 +1,9 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<OSDM_Design class="oracle.dbtools.crest.model.design.Design" name="modeler-sqldev" id="B049D438-0EEC-46BB-8D0E-C63A5CAC4B1D" version="3.5">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 09:52:19 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<capitalNames>false</capitalNames>
+<designId>B049D438-0EEC-46BB-8D0E-C63A5CAC4B1D</designId>
+</OSDM_Design>

@@ -1,0 +1,109 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<TableProxyOraclev11g class="oracle.dbtools.crest.model.design.storage.oracle.v11g.TableProxyOraclev11g" name="UNITE_RECH_IND" directorySegmentName="seg_0" id="1F029C6F-E0A4-9F5A-7F2D-6A07DB11F9A6">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<schemaObject>2C79EC04-6E03-C462-036D-1ED1958B7C87</schemaObject>
+<logging>YES</logging>
+<partitionedRowMovement>DISABLE</partitionedRowMovement>
+<segment>42E9A3FF-DE12-77CD-96D8-7A0C8D0BD23D</segment>
+<tableSpace>21672606-61A9-C2B3-9166-9F3C6D240B0D</tableSpace>
+<temporaryChanged>false</temporaryChanged>
+<accessDriverType>oracle_loader</accessDriverType>
+<rejectLimit></rejectLimit>
+<indexProxies>
+<IndexProxy class="oracle.dbtools.crest.model.design.storage.oracle.v10g.IndexProxyOraclev10g" name="UNITE_RECH_IND_PK" id="4238D331-EA98-2045-4AEE-432D016A5887">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<schemaObject>2C79EC04-6E03-C462-036D-1ED1958B7C87</schemaObject>
+<segment>895323A9-EA20-878A-1B2B-67DBAB21D67A</segment>
+<tableSpace>21672606-61A9-C2B3-9166-9F3C6D240B0D</tableSpace>
+</IndexProxy>
+<IndexProxy class="oracle.dbtools.crest.model.design.storage.oracle.v10g.IndexProxyOraclev10g" name="UNITE_RECH_IND_UN" id="B8FD7443-2AC5-8EEA-A24B-8E5885221AE8">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<schemaObject>2C79EC04-6E03-C462-036D-1ED1958B7C87</schemaObject>
+<segment>895323A9-EA20-878A-1B2B-67DBAB21D67A</segment>
+<tableSpace>21672606-61A9-C2B3-9166-9F3C6D240B0D</tableSpace>
+</IndexProxy>
+</indexProxies>
+<columnProxies itemClass="oracle.dbtools.crest.model.design.storage.oracle.v12c.ColumnProxyOraclev12c">
+<ColumnProxy name="INDIVIDU_ID" id="2D06330E-7ACA-6700-591A-2C664A88CD46">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="UNITE_RECH_ID" id="3AFE66D8-BE94-F100-BB3A-2FCE3A8F0E3B">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="ID" id="9C64EB55-EB11-5381-E73D-96C067414FD7">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="ROLE_ID" id="A234BB08-E0FB-CBAD-F7C2-8EC07D7A9F57">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+</ColumnProxy>
+</columnProxies>
+<foreignKeys>
+<ForeignKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.FKProxyOraclev10g" name="UNITE_RECH_IND_RFK" id="30222429-FA24-8947-F71A-A76DE5C00212">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+</ForeignKey>
+<ForeignKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.FKProxyOraclev10g" name="UNITE_RECH_IND_IFK" id="7A0C1446-A518-AF99-DDE3-3FB3CB4C566E">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+</ForeignKey>
+<ForeignKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.FKProxyOraclev10g" name="UNITE_RECH_IND_URFK" id="B0FA7E38-737E-1051-1615-93B8078DB1B0">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+</ForeignKey>
+</foreignKeys>
+<primaryKeys>
+<PrimaryKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.PKProxyOraclev10g" name="UNITE_RECH_IND_PK" id="CCD5D4BF-AB96-3832-64EA-BACB8C9B816B">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<segment>895323A9-EA20-878A-1B2B-67DBAB21D67A</segment>
+<tableSpace>21672606-61A9-C2B3-9166-9F3C6D240B0D</tableSpace>
+<existingIndex>4238D331-EA98-2045-4AEE-432D016A5887</existingIndex>
+<indexSegment>895323A9-EA20-878A-1B2B-67DBAB21D67A</indexSegment>
+<indexSort>SORTED</indexSort>
+<usingIndex>BY INDEX NAME</usingIndex>
+</PrimaryKey>
+</primaryKeys>
+<uniqueKeys>
+<UniqueKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.UniqueOraclev10g" name="UNITE_RECH_IND_UN" id="01F73A71-6257-3192-6D91-EFF2DD2C8038">
+<createdBy>gauthierb</createdBy>
+<createdTime>2017-12-06 10:22:12 UTC</createdTime>
+<generatorID>Généré par l&apos;utilisateur</generatorID>
+<ownerDesignName>modeler-sqldev</ownerDesignName>
+<segment>895323A9-EA20-878A-1B2B-67DBAB21D67A</segment>
+<tableSpace>21672606-61A9-C2B3-9166-9F3C6D240B0D</tableSpace>
+<existingIndex>B8FD7443-2AC5-8EEA-A24B-8E5885221AE8</existingIndex>
+<indexSegment>895323A9-EA20-878A-1B2B-67DBAB21D67A</indexSegment>
+<indexSort>SORTED</indexSort>
+<usingIndex>BY INDEX NAME</usingIndex>
+</UniqueKey>
+</uniqueKeys>
+</TableProxyOraclev11g>

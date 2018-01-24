@@ -1,0 +1,25 @@
+<?php
+/**
+ * @var These[] $theses
+ */
+
+use Application\Entity\Db\These;
+?>
+
+        <h2><?php echo count($theses) > 1 ? "Vos thèses en cours" : "Votre thèse en cours" ?></h2>
+        <?php foreach ($theses as $these): ?>
+            <?php echo $this->partial('application/these/partial/panel', ['these' => $these]) ?>
+        <?php endforeach ?>
+
+<p>
+    Avec SoDoct, vous allez :
+</p>
+<ul>
+    <li>déposer le fichier de votre thèse simplement et de manière sécurisée un mois avant la soutenance ;</li>
+    <li>décrire votre thèse en lien avec la BU pour le signalement dans <a href="http://www.theses.fr/">theses.fr</a> ;</li>
+    <li>indiquer vos choix de mise en ligne ;</li>
+    <li>suivre les différentes étapes du processus de dépôt et de validation grâce à votre « feuille de route ».</li>
+</ul>
+<p>
+    <em>C’est à la BU que revient la validation finale du dépôt de la thèse dans SoDoct et l’envoi au Bureau des Doctorats de la convention de mise en ligne signée par vos soins. Le bureau des doctorats  procéde dès réception à la demande d’autorisation de soutenance auprès du Président.</em>
+</p>

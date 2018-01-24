@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="Application\Entity\Db\ImportObserv" table="IMPORT_OBSERV">
+
+        <id name="id" type="integer" column="ID"/>
+
+        <field name="code" type="string" column="CODE" nullable="false"/>
+        <field name="tableName" type="string" column="TABLE_NAME" nullable="false"/>
+        <field name="columnName" type="string" column="COLUMN_NAME" nullable="false"/>
+        <field name="operation" type="string" column="OPERATION" nullable="false"/>
+        <field name="toValue" type="string" column="TO_VALUE" nullable="true"/>
+        <field name="description" type="string" column="DESCRIPTION" nullable="false"/>
+        <field name="enabled" type="boolean" column="ENABLED" nullable="false"/>
+
+    </entity>
+</doctrine-mapping>

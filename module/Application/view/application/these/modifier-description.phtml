@@ -1,0 +1,112 @@
+<?php
+
+use Application\Entity\Db\These;
+use Application\Provider\Privilege\ThesePrivileges;
+use Application\View\Renderer\PhpRenderer;
+use Zend\Form\Form;
+
+/**
+ * @var        $this PhpRenderer
+ * @var These  $these
+ * @var string $title
+ * @var Form   $form
+ *
+ * @method string formControlGroup()
+ */
+
+$canEdit = true;
+$canEditMotsClesRameau = $canEdit && $this->isAllowed(ThesePrivileges::getResourceId(ThesePrivileges::THESE_SAISIE_MOT_CLE_RAMEAU));
+
+$fcg = $this->formControlGroup();
+?>
+
+<!--<h1 class="page-header">Signalement <small>--><?php //echo $this->partial('application/these/partial/titre') ?><!--</small></h1>-->
+
+<?php echo $this->form()->openTag($form->setAttribute('class', 'metadonnees')) ?>
+
+<div class="row">
+    <div class="col-md-8">
+        <?php echo $fcg($form->get('titre')->setAttribute('disabled', 'disabled')) ?>
+    </div>
+</div>
+
+<div class="widget-titre-langue-these" id="titre-langue-these">
+    <div class="row">
+        <div class="col-sm-4 col-md-2">
+            <?php echo $fcg($form->get('langue')) ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <?php echo $fcg($form->get('titreAutreLangue')) ?>
+        </div>
+    </div>
+</div>
+
+<?php echo $fcg($form->get('resume')->setAttributes(['class' => 'resume', 'rows' => 5])) ?>
+<span class="resume-wc text-info"></span>
+
+<?php echo $fcg($form->get('resumeAnglais')->setAttributes(['class' => 'resume', 'rows' => 5])) ?>
+<span class="resume-wc text-info"></span>
+
+<?php
+$motsClesLibresFrancais = $form->get('motsClesLibresFrancais')->setAttribute('class', 'taggable');
+echo $fcg()
+    ->setHelpContent($motsClesLibresFrancais->getAttribute('title'), 'before')
+    ->render($motsClesLibresFrancais) ?>
+
+<?php
+$motsClesLibresAnglais = $form->get('motsClesLibresAnglais')->setAttribute('class', 'taggable');
+echo $fcg()
+    ->setHelpContent($motsClesLibresAnglais->getAttribute('title'), 'before')
+    ->render($motsClesLibresAnglais) ?>
+
+<?php echo $this->formElement($form->get('submit')) ?>
+
+<?php echo $this->form()->closeTag() ?>
+
+
+<!--<link href="--><?php //echo $this->basePath('/css/jquery.tag-editor.css') ?><!--" rel="stylesheet" />-->
+<!--<script src="--><?php //echo $this->basePath('/js/jquery.tag-editor.min.js') ?><!--"></script>-->
+
+<script>
+    $(function() {
+        /**
+         * Saisie des mots-clés comme des tags.
+         *
+         * @see https://goodies.pixabay.com/jquery/tag-editor/demo.html
+         * @todo: tagEditor semble être le meilleur SAUF que l'attribut "disabled" n'est pas supporté!
+         */
+//        $("input.taggable").tagEditor({
+//            delimiter: ';'
+//        });
+
+        /**
+         * Init avec options du widget TitreLangueThese.
+         */
+        $("#titre-langue-these").widgetTitreLangueThese({
+            valueForLangueFrancais: "fr",
+            labelForLangueFrancais: "Titre en <u>anglais</u>",
+            labelForLangueAutre:    "Titre en <u>français</u>"
+        });
+
+        /**
+         * Comptage des caractères dans les résumés.
+         */
+        $("textarea.resume")
+            .each(function(i, elem) {
+                updateResumeWc($(elem));
+            })
+            .keyup(function(event, data) {
+                updateResumeWc($(this));
+            });
+    });
+    function updateResumeWc(source) {
+        var length = source.val().length;
+        source.parent().next(".resume-wc").html(resumeWcContent(length));
+    }
+    function resumeWcContent(length) {
+        return length ? length + " caractères, espaces compris" : "";
+    }
+</script>

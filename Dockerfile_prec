@@ -1,0 +1,43 @@
+FROM thomasbisignani/docker-apache-php-oracle
+# Autre images intéressantes : https://hub.docker.com/r/alexisno/apache-php-dev/
+
+MAINTAINER Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>
+
+#ENV http_proxy http://10.14.128.99:3128
+# Remplacé par "--build-arg http_proxy=http://10.14.128.99:3128" lors du build
+ARG http_proxy
+
+RUN apt-get update
+RUN apt-get install -y vim wget git subversion php5-ldap php5-intl php5-curl php5-xdebug
+
+#ADD . /app/sodoct/
+
+#RUN echo "10.14.129.44 svn.unicaen.fr" >> /etc/hosts && \
+#    cd /app/sodoct && \
+#    php ./composer.phar install --prefer-dist --no-interaction
+
+#RUN sed -i "s/upload_max_filesize = .*$/upload_max_filesize = 51M/" /etc/php5/apache2/php.ini &&\
+#    sed -i "s/post_max_size = .*$/post_max_size = 60M/" /etc/php5/apache2/php.ini
+RUN echo "date.timezone=Europe/Paris" >> /etc/php5/apache2/conf.d/01-timezone.ini &&\
+    echo "upload_max_filesize = 51M\npost_max_size = 60M" >> /etc/php5/apache2/conf.d/02-uploads.ini &&\
+    echo "error_reporting = E_ALL\ndisplay_startup_errors = 1\ndisplay_errors = 1" >> /etc/php5/apache2/conf.d/01-errors.ini &&\
+    echo "error_reporting = E_ALL\ndisplay_startup_errors = 1\ndisplay_errors = 1" >> /etc/php5/cli/conf.d/01-errors.ini &&\
+    echo "xdebug.remote_enable=1" >> /etc/php5/apache2/conf.d/20-xdebug.ini &&\
+    echo "xdebug.remote_connect_back=1" >> /etc/php5/apache2/conf.d/20-xdebug.ini &&\
+    echo "xdebug.profiler_enable_trigger=1" >> /etc/php5/apache2/conf.d/20-xdebug.ini &&\
+    echo "xdebug.max_nesting_level=250" >> /etc/php5/apache2/conf.d/20-xdebug.ini
+
+# Install Composer
+RUN cd $HOME &&\
+    curl -sS https://getcomposer.org/installer | php &&\
+    chmod +x composer.phar &&\
+    mv composer.phar /usr/local/bin/composer
+
+# Install phing, PHPUnit and PHPDocx with user "dev"
+RUN composer global require "phing/phing=2.*" &&\
+    composer global require "phpunit/phpunit=*"
+ENV PATH $PATH:$COMPOSER_HOME/vendor/bin/
+
+
+COPY docker/apache-site.conf /etc/apache2/sites-available/sodoct.conf
+RUN a2ensite sodoct

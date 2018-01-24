@@ -1,0 +1,99 @@
+<?php
+
+use Application\Entity\Db\These;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var These       $these
+ * @var string      $libEtablissement
+ * @var string      $libEtablissementA
+ * @var string      $libEtablissementLe
+ * @var string      $libEtablissementDe
+ * @var string      $libPresidentLe
+ * @var string      $nomPresid
+ */
+?>
+
+<style>
+    body { font-family: Arial, Helvetica, sans-serif; font-size: 13px; }
+    h1 { font-size: 22px; }
+    h2 { font-size: 18px; margin-top: 15px; font-variant: small-caps; }
+    hr { margin: 30px 0; }
+    dl dt { font-weight: bold; margin-top: 10px; }
+    .attestations { margin: 0; }
+    .diffusion { margin: 0; }
+    .signatures { margin: 30px auto; width: 90%; }
+    .signatures td { width: 50%; height: 30px; }
+    address { font-style: normal; font-size: 8px; }
+</style>
+
+<div style="text-align: center; margin-bottom: 30px;">
+    <h1>CONVENTION DE MISE EN LIGNE<br>D'UNE THÈSE SOUTENUE</h1>
+
+    <img src="<?php echo $this->basePath('logo_normandie_univ.jpg') ?>" height="100px" alt="Logo de Normandie Université" />
+</div>
+
+<p>
+    En application de la Charte de dépôt et de diffusion des thèses votée par le
+    Conseil Académique de Normandie Université le 28/11/2016, il est convenu ce qui suit
+    entre Normandie Université, représentée par <?php echo lcfirst($libPresidentLe) ?> <?php echo $libEtablissementDe ?>,
+    et l’auteur identifié ci-dessous :
+</p>
+<p>
+    <strong>Nom :</strong> <?php echo $these->getDoctorant()->getNomUsuel() ?> <br>
+    <strong>Prénom :</strong> <?php echo $these->getDoctorant()->getPrenom() ?> <br>
+    <strong>Etablissement de préparation :</strong> <?php echo $libEtablissement ?> <br>
+
+    <?php if ($these->getDateSoutenance()): ?>
+        <strong>Date de soutenance :</strong> <?php echo $these->getDateSoutenanceToString() ?><br>
+    <?php else: ?>
+        <strong>Date prévisionnelle de soutenance :</strong> <?php echo $these->getDatePrevisionSoutenanceToString() ?: "" ?><br>
+    <?php endif ?>
+
+    <?php if ($these->getDateFinConfidentialite() !== null): ?>
+        <strong>Date de fin de confidentialité :</strong> <?php echo $these->getDateFinConfidentialiteToString() ?> <br>
+    <?php endif ?>
+
+    <strong>Titre de la thèse :</strong> <?php echo $these->getTitre() ?: "(Aucun titre)" ?> <br>
+</p>
+
+<div class="attestations">
+    <?php echo $this->partial('application/these/convention-pdf/partial/attestations') ?>
+</div>
+
+<div class="diffusion">
+    <?php echo $this->partial('application/these/convention-pdf/partial/diffusion') ?>
+</div>
+
+<pagebreak>
+
+<div class="droits">
+    <?php echo $this->partial('application/these/convention-pdf/partial/droits') ?>
+</div>
+
+<hr>
+
+<div>
+    <p>
+        La thèse est disponible en version imprimée au service de documentation <?php echo $libEtablissementDe ?> et
+        en PDF pour l'esemble de la communauté universitaire (en intranet ou dans le cadre du Prêt Entre Bibliothèques).
+    </p>
+    <p>
+        La loi applicable à cette présente convention est la loi française. Le tribunal compétent pour juger de tout
+        contentieux lié au présent contrat est le Tribunal Administratif de Caen.
+    </p>
+</div>
+
+<table class="signatures">
+    <tr>
+        <td>Date,</td>
+        <td>Date,</td>
+    </tr>
+    <tr>
+        <td>L'auteur</td>
+        <td>
+            <?php echo $libPresidentLe ?> <?php echo $libEtablissementDe ?>
+        </td>
+    </tr>
+</table>

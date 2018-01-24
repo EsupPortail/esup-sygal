@@ -1,0 +1,392 @@
+h1, h2, h3 {
+    font-weight: bold;
+}
+
+h2 {
+    margin-top: 35px;
+}
+h2:nth-of-type(1) {
+    margin-top: 20px;
+}
+
+blockquote {
+    font-size: 100%;
+}
+blockquote ul {
+    font-size: 100%;
+    padding-left: 10px;
+}
+
+
+div.jumbotron p,
+div.jumbotron ul li {
+    font-size: 120%;
+}
+
+p.appname-subtitle {
+    margin-top: -25px;
+    margin-bottom: 30px;
+}
+
+div.box {
+    padding: 10px;
+    margin-bottom: 15px;
+    box-shadow: 1px 1px 12px #555;
+}
+div.box h1.first, div.box h2.first {
+    margin-top: 0;
+}
+
+
+div#sidebar {
+    margin-bottom: 30px;
+}
+div#sidebar .glyphicon {
+    margin-right: 3px;
+}
+
+div#contenu-principal {
+    min-height: 500px;
+}
+
+.page-header:nth-of-type(1) {
+    margin-top: 0;
+}
+
+.page-header small {
+    font-size: 50%;
+}
+
+.panel-heading {
+    /*text-transform: uppercase;*/
+}
+
+.panel-heading h2 {
+    font-size: 130%;
+    margin: 0;
+}
+
+.panel-heading span.glyphicon {
+    margin-right: 5px;
+}
+
+.panel-body h3:nth-of-type(1) {
+    margin-top: 0;
+}
+
+.panel-body h3 {
+    font-size: 125%;
+    font-weight: bold;
+    border-bottom: #ddd dotted 1px;
+}
+
+li.uploaded-file {
+    padding: 3px 3px 5px 3px;
+    margin-bottom: 10px;
+    border: 1px dashed #ddd;
+}
+
+ul.pagination li a {
+    padding: 3px 6px;
+    font-size: 80%;
+}
+
+span.sortable-icon {
+    font-size: 75%;
+}
+
+p.help-block {
+    font-size: 80%;
+}
+
+/** Tabs **/
+
+ul.nav-tabs h2 {
+    font-weight: bold;
+    font-size: 140%;
+    margin-top: 0;
+    margin-bottom: 0;
+
+}
+
+div.tab-content {
+    padding: 10px 0 0 25px;
+    border-left: 1px solid #ddd;
+}
+
+h2.modal-title {
+    background-color: white;
+    border: none;
+    margin-top: 0;
+    padding: 0;
+}
+
+div.bootstrap-tagsinput {
+    display: block;
+}
+div.bootstrap-tagsinput .tag {
+    font-size: 90%;
+    font-weight: normal;
+}
+
+form.metadonnees .help-block {
+    margin-left: 1em;
+}
+
+dl dd {
+    margin-bottom: 8px;
+}
+
+dl.metadonnees .resume {
+    max-height: 200px;
+}
+
+form.search-form {
+    margin-bottom: 25px;
+}
+
+span.resume-wc {
+    font-size: 70%;
+    left: -10px;
+    top: -30px;
+    float: right !important;
+    position: relative;
+
+}
+
+input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+}
+
+.text-md {
+    font-size: 90%;
+}
+
+.text-sm {
+    font-size: 80%;
+}
+
+.alert .glyphicon {
+    float: left;
+    padding-right: 6px;
+}
+
+.alert.alert-md {
+    font-size: 90%;
+    padding: 6px 10px;
+}
+
+.alert.alert-sm {
+    font-size: 80%;
+    padding: 4px 8px;
+}
+
+.panel.panel-md {
+    font-size: 90%;
+}
+
+.panel.panel-md .panel-heading,
+.panel.panel-md .panel-body {
+    padding: 6px 10px;
+}
+
+.panel.panel-sm .panel-heading,
+.panel.panel-sm .panel-body {
+    font-size: 80%;
+    padding: 4px 8px;
+}
+
+td.acteurs ul {
+    padding: 0;
+    list-style-type: none;;
+}
+
+td.acteurs ul li {
+    border-bottom: 1px dotted lightgrey;
+}
+
+td.acteurs ul li:nth-last-of-type(1) {
+    border-bottom: none;
+}
+
+div.filters table td, div.filters table th {
+    border-left: none !important;
+    border-right: none !important;
+    padding-top: 4px !important;
+    padding-bottom: 6px !important;
+}
+
+div.filters .panel-heading {
+    padding: 5px 10px;
+}
+
+div.filters span.filter {
+    padding-right: 5px;
+}
+
+div.filters span.filter span, div.filters span.filter a {
+    font-size: 90%;
+}
+
+table.these-fiche {
+    max-width: 400px;
+    font-size: 80%;
+}
+
+.popover {
+    max-width: 100%; /* Max Width of the popover (depending on the container!) */
+}
+
+.autorisation-laius {
+    font-size: 90%;
+    font-style: oblique;
+}
+
+ul.autorisation-diffusion li {
+    margin-bottom: 15px;
+}
+ul.autorisation-diffusion li p.autoris-diffusion-motif {
+    padding-left: 15px;
+}
+
+div.these-search-input-help {
+    font-size: 80%;
+}
+
+.imported-role-name::after {
+    content: 'IMPORTÉ';
+    margin-left: 5px;
+    color: #d22828;
+    font-size: 50%;
+    font-weight: bold;
+    vertical-align: top;
+}
+.historise-role-name {
+    text-decoration: line-through;
+}
+
+div.fichier-validite {
+    margin-top: 4px;
+}
+
+span.label-validite.label {
+    font-size: 90%;
+}
+
+span.mots-cles.label {
+    font-size: 90%;
+}
+
+div.fichier-retraitement {
+    margin-top: 6px;
+}
+
+form.form-retraiter {
+    margin: 4px 0 15px 0;
+}
+
+@media (min-width: 768px) {
+    .dl-horizontal.dl-horizontal-md dt {
+        width: 200px;
+    }
+}
+@media (min-width: 768px) {
+    .dl-horizontal.dl-horizontal-md dd {
+        margin-left: 220px;
+    }
+}
+
+@media (min-width: 768px) {
+    .dl-horizontal.dl-horizontal-lg dt {
+        width: 260px;
+    }
+    .dl-horizontal.dl-horizontal-lg dd {
+        margin-left: 280px;
+    }
+}
+@media (min-width: 1100px) {
+    .modal-dialog {
+        width: 1000px;
+    }
+}
+
+form input[type='submit'] {
+    margin-top: 20px;
+}
+
+
+/******** Boutons ***********/
+
+.btn span.glyphicon {
+    margin-right: 5px;
+}
+
+.btn.btn-xs span.glyphicon {
+    margin-right: 2px;
+}
+
+.box .btn.btn-primary {
+    margin-bottom: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+
+/******** Feuille de route ********/
+
+table.roadmap .glyphicon.glyphicon-check,
+table.roadmap .glyphicon.glyphicon-unchecked {
+    font-size: 110%;
+    margin-right: 5px;
+}
+
+ul.roadmap.pagination {
+    margin: 5px 0;
+}
+
+.roadmap-step-link {
+    font-size: 18px !important;
+}
+.roadmap-step-link .glyphicon {
+    margin-right: 8px;
+    font-size: 120%;
+    vertical-align: text-bottom;
+}
+
+.jumbotron .roadmap-step-link {
+    font-size: 22px !important;
+}
+.jumbotron .roadmap-step-link:hover {
+    background-color: white;
+}
+
+/************* Menu *************/
+
+ul.menu-secondaire li a.roadmap {
+    margin-bottom: 20px;
+}
+
+
+
+tr.ecole-doctorale.selected,
+tr.unite-recherche.selected {
+    /*border: 2px solid lightblue;*/
+    /*border-left-width: 5px;*/
+    background-color: rgba(51, 122, 183, 0.7);
+    color: white;
+}
+tr.ecole-doctorale.selected a,
+tr.unite-recherche.selected a {
+    color: white;
+}
+
+
+
+ul.ui-autocomplete li .extra {
+    font-size: 80%;
+    color: grey;
+}
+
+
+

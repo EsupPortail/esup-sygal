@@ -1,0 +1,29 @@
+<?php
+
+use Application\Entity\Db\These;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var        $this PhpRenderer
+ * @var These  $these
+ */
+?>
+
+<?php $this->headTitle("Feuille de route")->prepend($these->getDoctorant()->getNomUsuel()) ?>
+
+<h1 class="page-header">Feuille de route <small><?php echo $this->partial('application/these/partial/titre') ?></small></h1>
+
+<?php echo $this->roadmap($these) ?>
+
+<?php
+$wfHelper = $this->wf($these);
+$wfStepHelper = $wfHelper->current();
+?>
+
+<?php if ($wfStepHelper->step() === null): ?>
+    <div class="box roadmap-next-step">
+        <p class="lead"><!--<span class="glyphicon glyphicon-thumbs-up"></span>--> Dépôt validé.</p>
+    </div>
+<?php endif ?>
+
+<?php echo $this->partial('next-step-box', ['these' => $these]) ?>

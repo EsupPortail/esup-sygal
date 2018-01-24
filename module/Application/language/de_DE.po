@@ -1,0 +1,176 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-01-12 16:17+0100\n"
+"PO-Revision-Date: 2018-01-12 17:03+0100\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"X-Generator: Poedit 1.8.7.1\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-01-12 16:56+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: module/Application/view/application/admin/index.phtml:1
+#: module/Application/view/application/admin/index.phtml:5
+msgid "Administration"
+msgstr "Verwaltung"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:20
+#: module/Application/view/application/ecole-doctorale/index.phtml:22
+msgid "Écoles doctorales"
+msgstr "Doktoratsschule"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:30
+msgid "Libellé"
+msgstr "Name"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:31
+msgid "Sigle"
+msgstr "Sigle"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:32
+msgid "Code"
+msgstr "Code"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:33
+#: module/Application/view/application/ecole-doctorale/index.phtml:85
+msgid "Actions"
+msgstr "Aktionen"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:47
+msgid "Cliquez pour sélectionner cette école doctorale"
+msgstr "Klicken Sie um diese Doktorschule auszuwählen"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:57
+msgid "Modifier l'école doctorale"
+msgstr "Veränderung "
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:62
+msgid "Supprimer l'école doctorale"
+msgstr "Entfernen"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:68
+msgid "Restaurer l'école doctorale"
+msgstr "Wiederherstellen "
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:70
+msgid "Restaurer"
+msgstr "Wiederherstellen"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:79
+msgid "Membres"
+msgstr "Mitglieder"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:83
+msgid "Individu"
+msgstr "Person"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:84
+msgid "Rôle"
+msgstr "Rolle"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:95
+msgid "Retirer"
+msgstr "Zurückziehen"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:104
+msgid "Aucun"
+msgstr "Keine"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:114
+msgid "Recherche d'un individu à ajouter :"
+msgstr "Suche nach einer Person zum Hinzufügen:"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:119
+msgid "Ajouter cet individu"
+msgstr "Fügen Sie diese Person hinzu"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:120
+msgid "Ajouter cet individu comme membre"
+msgstr "Fügen Sie diese Person als Mitglied hinzu"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:135
+msgid "Créer une nouvelle ED"
+msgstr "Erstellen Sie eine neue Doktoratsschule"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:136
+msgid "Ajouter"
+msgstr "Hinzufügen"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:146
+msgid "Êtes-vous sûr-e de vouloir retirer "
+msgstr "Möchtest du wirklich entfernen "
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:146
+msgid "de la liste des membres ?"
+msgstr "aus der Mitgliederliste ?"
+
+#: module/Application/view/application/ecole-doctorale/index.phtml:150
+msgid "Êtes-vous sûr-e de vouloir supprimer l'école doctorale "
+msgstr "Möchten Sie das Doktoratskolleg wirklich löschen "
+
+#: module/Application/view/application/ecole-doctorale/modifier.phtml:27
+msgid "Libellé :"
+msgstr "Name:"
+
+#: module/Application/view/application/ecole-doctorale/modifier.phtml:28
+msgid "Sigle :"
+msgstr "Sigle:"
+
+#: module/Application/view/application/ecole-doctorale/modifier.phtml:29
+msgid "Code :"
+msgstr "Code:"
+
+#: module/Application/view/application/ecole-doctorale/modifier.phtml:30
+msgid "Enregistrer"
+msgstr "Rekord"
+
+#: module/Application/view/application/index/index.phtml:44
+msgid "Connectez-vous..."
+msgstr "Login ..."
+
+#: module/Application/view/application/unite-recherche/index.phtml:20
+#: module/Application/view/application/unite-recherche/index.phtml:22
+msgid "Unités de recherche"
+msgstr "Forschungseinheit"
+
+#: module/Application/view/application/unite-recherche/index.phtml:47
+msgid "Cliquez pour sélectionner cette unité de recherche"
+msgstr "Klicken Sie um diese Forschungseinheit auszuwählen"
+
+#: module/Application/view/application/unite-recherche/index.phtml:56
+msgid "Modifier l'unité de recherche"
+msgstr "Veränderung "
+
+#: module/Application/view/application/unite-recherche/index.phtml:62
+msgid "Supprimer l'unité de recherche"
+msgstr "Entfernen"
+
+#: module/Application/view/application/unite-recherche/index.phtml:69
+msgid "Restaurer l'unité de recherche"
+msgstr "Wiederherstellen "
+
+#: module/Application/view/application/unite-recherche/index.phtml:142
+msgid "Créer une nouvelle UR"
+msgstr "Erstellen Sie eine neue Doktoratsschule Forschungseinheit"
+
+#: module/Application/view/application/unite-recherche/index.phtml:158
+msgid "Êtes-vous sûr-e de vouloir supprimer l'unité de recherche"
+msgstr "Möchten Sie das Forschungseinheit wirklich löschen "
