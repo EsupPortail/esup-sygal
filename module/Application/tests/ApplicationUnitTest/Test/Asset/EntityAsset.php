@@ -4,6 +4,7 @@ namespace ApplicationUnitTest\Test\Asset;
 
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Attestation;
+use Application\Entity\Db\ContenuFichier;
 use Application\Entity\Db\Diffusion;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Fichier;
@@ -43,6 +44,16 @@ class EntityAsset
         return $e;
     }
 
+    static public function newContenuFichier(Fichier $fichier, $data)
+    {
+        $cf = new ContenuFichier();
+        $cf
+            ->setFichier($fichier)
+            ->setData($data);
+
+        return $cf;
+    }
+
     static public function newFichier(These $these, NatureFichier $nature, VersionFichier $version)
     {
         $e = new Fichier();
@@ -54,8 +65,9 @@ class EntityAsset
             ->setNomOriginal(uniqid('Fichier_') . '.png')
             ->setDescription('Fichier de test')
             ->setTypeMime("image/png")
-            ->setTaille(1024)
-            ->setContenu("binary data");
+            ->setTaille(1024);
+
+        $e->setContenuFichier(self::newContenuFichier($e, "binary data"));
 
         return $e;
     }

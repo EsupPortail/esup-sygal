@@ -168,7 +168,7 @@ class TheseService extends BaseService implements ValidationServiceAwareInterfac
                 $criCode = (int) $c;
             }
         }
-        $orc = '';
+        $orc = [];
         if ($sqlCri != '') {
             $orc[] = '(' . $sqlCri . ')';
         }

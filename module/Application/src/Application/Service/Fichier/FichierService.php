@@ -2,6 +2,7 @@
 
 namespace Application\Service\Fichier;
 
+use Application\Entity\Db\ContenuFichier;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\Repository\FichierRepository;
@@ -129,6 +130,7 @@ class FichierService extends BaseService
                 throw new DepotImpossibleException("Seul le format de fichier PDF est accepté pour la thèse");
             }
 
+
             $fichier = new Fichier();
             $fichier
                 ->setThese($these)
@@ -137,13 +139,19 @@ class FichierService extends BaseService
                 ->setTypeMime($typeFichier)
                 ->setNomOriginal($nomFichier)
                 ->setTaille($tailleFichier)
-                ->setContenu(file_get_contents($path))
                 ->setRetraitement($retraitement);
 
             // à faire en dernier car le formatter exploite des propriétés du Fichier
             $fichier->setNom($nomFichierFormatter ? $nomFichierFormatter->filter($fichier) : $nomFichier);
 
+            $contenuFichier = new ContenuFichier();
+            $contenuFichier->setData(file_get_contents($path));
+            $fichier->setContenuFichier($contenuFichier);
+            $contenuFichier->setFichier($fichier);
+
+            $this->entityManager->persist($contenuFichier);
             $this->entityManager->persist($fichier);
+            $this->entityManager->flush($contenuFichier);
             $this->entityManager->flush($fichier);
 
             unlink($path);
@@ -226,7 +234,6 @@ class FichierService extends BaseService
             ->setTypeMime($fichier->getTypeMime())
             ->setNomOriginal($fichier->getNomOriginal())
             ->setTaille(strlen($outputFileContent))
-            ->setContenu($outputFileContent)
             ->setEstAnnexe($fichier->getEstAnnexe());
 
         // suppression du fichier corrigé sur le disque
@@ -238,7 +245,14 @@ class FichierService extends BaseService
         $nomFichierFormatter = new NomFichierFormatter();
         $newFichier->setNom($nomFichierFormatter->filter($newFichier));
 
+        $contenuNewFichier = new ContenuFichier();
+        $contenuNewFichier->setData($outputFileContent);
+        $newFichier->setContenuFichier($contenuNewFichier);
+        $contenuNewFichier->setFichier($newFichier);
+
+        $this->entityManager->persist($contenuNewFichier);
         $this->entityManager->persist($newFichier);
+        $this->entityManager->flush($contenuNewFichier);
         $this->entityManager->flush($newFichier);
 
         return $newFichier;

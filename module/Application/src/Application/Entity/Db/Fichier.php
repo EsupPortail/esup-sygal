@@ -64,11 +64,6 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     /**
      * @var string
      */
-    private $contenu;
-
-    /**
-     * @var string
-     */
     private $description;
 
     /**
@@ -95,6 +90,11 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
      * @var These
      */
     private $these;
+
+    /**
+     * @var ContenuFichier
+     */
+    private $contenuFichier;
 
     /**
      * @var NatureFichier
@@ -148,7 +148,8 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
             throw new \RuntimeException("Le fichier suivant existe déjà : " . $filePath);
         }
 
-        $contenu = $this->getContenu();
+//        $contenu = $this->getContenu();
+        $contenu = $this->getContenuFichier()->getData();
         $content = is_resource($contenu) ? stream_get_contents($contenu) : $contenu;
 
         file_put_contents($filePath, $content);
@@ -175,26 +176,14 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     }
 
     /**
-     * Set contenu
-     *
-     * @param string $contenu
-     * @return self
-     */
-    public function setContenu($contenu)
-    {
-        $this->contenu = $contenu;
-
-        return $this;
-    }
-
-    /**
      * Get contenu
      *
-     * @return string 
+     * @return string
+     * @see UploadedFileInterface
      */
     public function getContenu()
     {
-        return $this->contenu;
+        return $this->getContenuFichier()->getData();
     }
 
     /**
@@ -467,6 +456,25 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     }
 
     /**
+     * @return ContenuFichier
+     */
+    public function getContenuFichier()
+    {
+        return $this->contenuFichier;
+    }
+
+    /**
+     * @param ContenuFichier $contenuFichier
+     * @return Fichier
+     */
+    public function setContenuFichier($contenuFichier)
+    {
+        $this->contenuFichier = $contenuFichier;
+
+        return $this;
+    }
+
+    /**
      * @return NatureFichier
      */
     public function getNature()
@@ -596,7 +604,8 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     public function writeFichierToDisk($filePath = null)
     {
         // création du fichier temporaire sur le disque à partir de la bdd
-        $contenu = $this->getContenu();
+//        $contenu = $this->getContenu();
+        $contenu = $this->getContenuFichier()->getData();
         $content = is_resource($contenu) ? stream_get_contents($contenu) : $contenu;
 
         $tmpDir = sys_get_temp_dir();

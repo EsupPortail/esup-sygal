@@ -3,7 +3,6 @@
   <entity name="Application\Entity\Db\Fichier" table="FICHIER">
     <id name="id" type="string" length="36" column="ID" /><!-- C'est un UUID. -->
 
-    <field name="contenu" type="blob" column="CONTENU" nullable="false"/>
     <field name="nom" type="string" column="NOM" nullable="false"/>
     <field name="nomOriginal" type="string" column="NOM_ORIGINAL" nullable="false"/>
     <field name="taille" type="integer" column="TAILLE" nullable="false"/>
@@ -17,6 +16,8 @@
     <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
     <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
     <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
+
+    <one-to-one field="contenuFichier" target-entity="Application\Entity\Db\ContenuFichier" mapped-by="fichier"/>
 
     <one-to-many field="validites" target-entity="Application\Entity\Db\ValiditeFichier" mapped-by="fichier" >
       <order-by>
