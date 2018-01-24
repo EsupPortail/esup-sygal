@@ -44,7 +44,7 @@ create or replace view APOGEE.OBJECTH_INDIVIDU as
     decode(ind.cod_civ, 1, 'M.', 'Mme')                 as civ,             -- Civilite etudiant
     ind.lib_nom_pat_ind                                 as lib_nom_pat_ind, -- Nom de famille etudiant
     coalesce(ind.lib_nom_usu_ind, ind.lib_nom_pat_ind)  as lib_nom_usu_ind, -- Nom usage etudiant
-    initcap(ind.lib_pr1_ind)                            as lib_pr1_ind,     -- Prenom 1 etudiant
+    initcap(coalesce(ind.lib_pr1_ind,'Aucun'))          as lib_pr1_ind,     -- Prenom 1 etudiant
     initcap(ind.lib_pr2_ind)                            as lib_pr2_ind,     -- Prenom 2 etudiant
     initcap(ind.lib_pr3_ind)                            as lib_pr3_ind,     -- Prenom 3 etudiant
     null as email,--ucbn_ldap.etu2mail ( ind.cod_etu )                  as email,           -- Mail etudiant
