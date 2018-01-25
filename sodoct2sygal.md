@@ -1,0 +1,130 @@
+# Transformation de SoDoct en SYGAL
+
+## Base de données 
+
+### Création des tables
+
+|Fait|Nom|Commentaires|
+|----|---|------------|
+|x|ACTEUR|
+|x|ATTESTATION|
+|x|CATEGORIE_PRIVILEGE|
+|x|CONTENU_FICHIER|
+|x|DIFFUSION|
+|x|ECOLE_DOCT|
+|x|ECOLE_DOCT_IND|
+|x|ETAB|renommée ETABLISSEMENT|
+|x|FAQ|
+|x|FICHIER|
+|x|IMPORT_OBS_NOTIF|
+|x|IMPORT_OBS_RESULT_NOTIF|
+|x|IMPORT_OBSERV|
+|x|IMPORT_OBSERV_RESULT|
+|x|INDIVIDU|
+|x|METADONNEE_THESE|
+|x|NOTIF|Module Notification|
+|x|NOTIF_RESULT|Module Notification|
+| |MV_RECHERCHE_THESE|Aïe, utilise des vues materialisées!|
+|x|NATURE_FICHIER|
+|x|PRIVILEGE|
+|x|RDV_BU|
+|x|ROLE_PRIVILEGE|pointe sur une table ROLE qui a changé!|
+|x|SOURCE|
+|x|THESARD|renommée DOCTORANT|
+|x|THESARD_COMPL|renommée DOCTORANT_COMPL|
+|x|THESE|
+|x|TYPE_VALIDATION|
+|x|UNITE_RECH|
+|x|UNITE_RECH_IND|
+|x|USER_ROLE|devenue ROLE|
+|x|USER_ROLE_LINKER|renommé UTILISATEUR_ROLE|
+|x|UTILISATEUR|
+|x|VALIDATION|
+|x|VALIDITE_FICHIER|
+|x|VARIABLE|
+|x|VERSION_FICHIER|
+|x|WF_ETAPE|
+|-----|-----|-----|
+| |MV_ACTEUR|?|
+| |MV_INDIVIDU|?|
+| |MV_THESARD|?|
+| |MV_THESE|?|
+| |MV_USER_ROLE|?|
+| |MV_VARIABLE|?|
+| |ENV|Abandonnée|
+| |PARAMETRE|semble inutilisée|
+| |SYNC_LOG|créée auto par import|
+| |WF_ETAPE_DEP|Pas utilisée|
+
+### Création des vues
+
+|Fait|Nom|Commentaires|
+|----|---|------------|
+|x|V_SITU_ARCHIVAB_VA|
+|x|V_SITU_ARCHIVAB_VAC|
+|x|V_SITU_ARCHIVAB_VO|
+|x|V_SITU_ARCHIVAB_VOC|
+|x|V_SITU_ATTESTATIONS|
+|x|V_SITU_ATTESTATIONS_VOC|
+|x|V_SITU_AUTORIS_DIFF_THESE|
+|x|V_SITU_AUTORIS_DIFF_THESE_VOC|
+|x|V_SITU_DEPOT_PV_SOUT|
+|x|V_SITU_DEPOT_RAPPORT_SOUT|
+|x|V_SITU_DEPOT_VA|
+|x|V_SITU_DEPOT_VAC|
+|x|V_SITU_DEPOT_VC_VALID_DIR|Créée mais à réécrire pour prendre en compte l'étab|
+|x|V_SITU_DEPOT_VC_VALID_DOCT|
+|x|V_SITU_DEPOT_VO|
+|x|V_SITU_DEPOT_VOC|
+|x|V_SITU_RDV_BU_SAISIE_BU|
+|x|V_SITU_RDV_BU_SAISIE_DOCT|
+|x|V_SITU_RDV_BU_VALIDATION_BU|
+|x|V_SITU_SIGNALEMENT_THESE|
+|x|V_SITU_VERIF_VA|
+|x|V_SITU_VERIF_VAC|
+|x|V_SITU_VERSION_PAPIER_CORRIGEE|
+|x|V_WF_ETAPE_PERTIN|
+|x|V_WORKFLOW|
+
+### Peuplement des tables
+
+|Fait|Nom|Commentaires|
+|----|---|------------|
+| |ACTEUR|
+| |ATTESTATION|
+|x|CATEGORIE_PRIVILEGE|
+| |CONTENU_FICHIER|
+| |DIFFUSION|
+| |ECOLE_DOCT|
+| |ECOLE_DOCT_IND|
+|x|ETABLISSEMENT|
+|x|FAQ|
+| |FICHIER|
+| |IMPORT_OBS_NOTIF|
+| |IMPORT_OBS_RESULT_NOTIF|
+| |IMPORT_OBSERV|
+| |IMPORT_OBSERV_RESULT|
+| |INDIVIDU|
+| |METADONNEE_THESE|
+| |NOTIF|Module Notification|
+| |NOTIF_RESULT|Module Notification|
+| |MV_RECHERCHE_THESE|Aïe, utilise des vues materialisées!|
+|x|NATURE_FICHIER|
+|x|PRIVILEGE|
+| |RDV_BU|
+| |ROLE_PRIVILEGE|pointe sur une table ROLE qui a changé!|
+| |SOURCE|
+| |THESARD|renommée DOCTORANT|
+| |THESARD_COMPL|renommée DOCTORANT_COMPL|
+| |THESE|
+|x|TYPE_VALIDATION|
+| |UNITE_RECH|
+| |UNITE_RECH_IND|
+| |USER_ROLE|devenue ROLE|
+| |USER_ROLE_LINKER|renommé UTILISATEUR_ROLE|
+| |UTILISATEUR|
+| |VALIDATION|
+| |VALIDITE_FICHIER|
+| |VARIABLE|
+|x|VERSION_FICHIER|
+|x|WF_ETAPE|
