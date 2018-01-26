@@ -312,6 +312,13 @@ create table ROLE
   SOURCE_CODE VARCHAR2(64 char) not null,
   SOURCE_ID NUMBER not null constraint ROLE_SOURCE_FK references SOURCE on delete cascade,
 
+  ROLE_ID VARCHAR2(64 CHAR) NOT NULL,
+  IS_DEFAULT NUMBER DEFAULT 0,
+  LDAP_FILTER VARCHAR2(255 CHAR),
+  ATTRIB_AUTO NUMBER(1,0) DEFAULT 0 NOT NULL,
+  STRUCTURE_DEP NUMBER(1,0) DEFAULT 0 NOT NULL ENABLE,
+  THESE_DEP NUMBER(1,0) DEFAULT 0 NOT NULL ENABLE,
+
   HISTO_CREATEUR_ID NUMBER not null constraint ROLE_HC_FK references UTILISATEUR on delete cascade,
   HISTO_CREATION DATE default SYSDATE not null,
   HISTO_MODIFICATEUR_ID NUMBER not null constraint ROLE_HM_FK references UTILISATEUR on delete cascade,
@@ -1361,4 +1368,63 @@ IS
 
 END APP_IMPORT;
 /
+
+
+------------------------- Workflow ---------------------------
+
+create or replace PACKAGE          "APP_WORKFLOW" AS
+
+  function atteignable(p_etape_id NUMERIC, p_these_id NUMERIC) return NUMERIC;
+  function atteignable2(p_etape_id NUMERIC, p_these_id NUMERIC) return NUMERIC;
+
+END APP_WORKFLOW;
+/
+
+create or replace PACKAGE BODY          "APP_WORKFLOW"
+AS
+
+  function atteignable(p_etape_id NUMERIC, p_these_id NUMERIC) return NUMERIC AS
+    v_ordre numeric;
+    BEGIN
+      select ordre into v_ordre from wf_etape where id = p_etape_id;
+      --DBMS_OUTPUT.PUT_LINE('ordre ' || v_ordre);
+      for row in (
+      select code, ORDRE, franchie, resultat, objectif
+      from V_WORKFLOW v
+      where v.these_id = p_these_id and v.ordre < v_ordre
+      order by v.ordre
+      ) loop
+        --DBMS_OUTPUT.PUT_LINE(rpad(row.ordre, 5) || ' ' || row.code || ' : ' || row.franchie);
+        if row.franchie = 0 then
+          return 0;
+        end if;
+      end loop;
+
+      RETURN 1;
+    END atteignable;
+
+
+
+  function atteignable2(p_etape_id NUMERIC, p_these_id NUMERIC) return NUMERIC AS
+    v_ordre numeric;
+    BEGIN
+      select ordre into v_ordre from wf_etape where id = p_etape_id;
+      --DBMS_OUTPUT.PUT_LINE('ordre ' || v_ordre);
+      for row in (
+      select code, ORDRE, franchie, resultat, objectif
+      from V_WORKFLOW v
+      where v.these_id = p_these_id and v.ordre < v_ordre
+      order by v.ordre
+      ) loop
+        --DBMS_OUTPUT.PUT_LINE(rpad(row.ordre, 5) || ' ' || row.code || ' : ' || row.franchie);
+        if row.franchie = 0 then
+          return 0;
+        end if;
+      end loop;
+
+      RETURN 1;
+    END atteignable2;
+
+END APP_WORKFLOW;
+  /
 

@@ -72,7 +72,8 @@ CREATE OR REPLACE VIEW SRC_ROLE AS
     src.ID                                   AS source_id,
     e.id                                     AS etablissement_id,
     tmp.LIB_ROJ                              AS libelle,
-    to_char(tmp.id)                          AS code
+    to_char(tmp.id)                          AS code,
+    tmp.LIB_ROJ||' '||e.CODE                 AS role_id
   FROM TMP_ROLE tmp
     JOIN ETABLISSEMENT e ON e.code = tmp.ETABLISSEMENT_ID
     JOIN SOURCE src ON src.CODE = tmp.SOURCE_ID;

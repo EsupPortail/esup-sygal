@@ -90,7 +90,7 @@
 
 |Fait|Nom|Commentaires|
 |----|---|------------|
-| |ACTEUR|
+|x|ACTEUR|Import
 | |ATTESTATION|
 |x|CATEGORIE_PRIVILEGE|
 | |CONTENU_FICHIER|
@@ -104,27 +104,27 @@
 | |IMPORT_OBS_RESULT_NOTIF|
 | |IMPORT_OBSERV|
 | |IMPORT_OBSERV_RESULT|
-| |INDIVIDU|
+|x|INDIVIDU|Import
 | |METADONNEE_THESE|
 | |NOTIF|Module Notification|
 | |NOTIF_RESULT|Module Notification|
-| |MV_RECHERCHE_THESE|Aïe, utilise des vues materialisées!|
+|x|MV_RECHERCHE_THESE|Exploitait des VM dans SoDoct!|
 |x|NATURE_FICHIER|
 |x|PRIVILEGE|
 | |RDV_BU|
 | |ROLE_PRIVILEGE|pointe sur une table ROLE qui a changé!|
-| |SOURCE|
-| |THESARD|renommée DOCTORANT|
-| |THESARD_COMPL|renommée DOCTORANT_COMPL|
-| |THESE|
+|x|SOURCE|
+|x|DOCTORANT|Import
+| |DOCTORANT_COMPL|
+|x|THESE|Import
 |x|TYPE_VALIDATION|
 | |UNITE_RECH|
 | |UNITE_RECH_IND|
-| |USER_ROLE|devenue ROLE|
-| |USER_ROLE_LINKER|renommé UTILISATEUR_ROLE|
+|x|ROLE|Import
+| |UTILISATEUR_ROLE|
 | |UTILISATEUR|
 | |VALIDATION|
 | |VALIDITE_FICHIER|
-| |VARIABLE|
+|x|VARIABLE|Import
 |x|VERSION_FICHIER|
 |x|WF_ETAPE|
