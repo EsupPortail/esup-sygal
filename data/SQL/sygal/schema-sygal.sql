@@ -4,13 +4,13 @@
 -- Schéma.
 --
 
+
 create or replace function GEN_SOURCE_CODE(code_etablissement VARCHAR2, string_id VARCHAR2) return VARCHAR2
 IS
-BEGIN
-  return code_etablissement || '_' || string_id;
-END;
+  BEGIN
+    return code_etablissement || '::' || string_id;
+  END;
 /
-
 
 ---------------------- SOURCE ---------------------
 
@@ -20,13 +20,17 @@ create table TMP_SOURCE
   insert_date date default sysdate,
 
   ID VARCHAR2(64),
-
   ETABLISSEMENT_ID VARCHAR2(64 char) not null,
+  SOURCE_ID VARCHAR2(64 char),
+  SOURCE_CODE VARCHAR2(64),
 
   CODE VARCHAR2(64 char) not null,
   LIBELLE VARCHAR2(128 char) not null,
   IMPORTABLE NUMBER(1) not null
 );
+
+create index TMP_SOURCE_SOURCE_CODE_IDX on TMP_SOURCE (SOURCE_CODE);
+create index TMP_SOURCE_SOURCE_ID_IDX on TMP_SOURCE (SOURCE_ID);
 
 create table SOURCE
 (
@@ -74,9 +78,9 @@ create table TMP_INDIVIDU
   insert_date date default sysdate,
 
   ID VARCHAR2(64),
-
-  SOURCE_ID VARCHAR2(64 char) not null,
   ETABLISSEMENT_ID VARCHAR2(64 char) not null,
+  SOURCE_ID VARCHAR2(64 char) not null,
+  SOURCE_CODE VARCHAR2(64) not null,
 
   TYPE varchar2(32), -- 'acteur' ou 'doctorant'
   civ varchar2(5),
@@ -90,24 +94,9 @@ create table TMP_INDIVIDU
   lib_nat VARCHAR2(128 CHAR)
 );
 
-CREATE OR REPLACE VIEW SRC_INDIVIDU AS
-  SELECT
-    NULL                                     AS id,
-    GEN_SOURCE_CODE(e.CODE, to_char(tmp.id)) AS SOURCE_CODE,
-    src.id                                   AS SOURCE_ID,
-    TYPE,
-    civ                                      AS CIVILITE,
-    lib_nom_usu_ind                          AS NOM_USUEL,
-    lib_nom_pat_ind                          AS NOM_PATRONYMIQUE,
-    lib_pr1_ind                              AS PRENOM1,
-    lib_pr2_ind                              AS PRENOM2,
-    lib_pr3_ind                              AS PRENOM3,
-    EMAIL,
-    dat_nai_per                              AS DATE_NAISSANCE,
-    lib_nat                                  AS NATIONALITE
-  FROM TMP_INDIVIDU tmp
-    JOIN ETABLISSEMENT e ON e.CODE = tmp.ETABLISSEMENT_ID
-    JOIN SOURCE src ON src.CODE = GEN_SOURCE_CODE(e.CODE, tmp.SOURCE_ID);
+create index TMP_INDIVIDU_SOURCE_CODE_IDX on TMP_INDIVIDU (SOURCE_CODE);
+create index TMP_INDIVIDU_SOURCE_ID_IDX on TMP_INDIVIDU (SOURCE_ID);
+
 
 create table INDIVIDU
 (
@@ -122,7 +111,7 @@ create table INDIVIDU
   PRENOM2          VARCHAR2(60 CHAR),
   PRENOM3          VARCHAR2(60 CHAR),
   EMAIL            VARCHAR2(255 CHAR),
-  DATE_NAISSANCE   DATE                 NOT NULL,
+  DATE_NAISSANCE   DATE,
   NATIONALITE      VARCHAR2(128 CHAR),
 
   SOURCE_CODE VARCHAR2(64 char) not null,
@@ -155,23 +144,15 @@ create table TMP_DOCTORANT
   insert_date date default sysdate,
 
   ID VARCHAR2(64),
-
-  SOURCE_ID VARCHAR2(64 char) not null,
   ETABLISSEMENT_ID VARCHAR2(64 char) not null,
+  SOURCE_ID VARCHAR2(64 char) not null,
+  SOURCE_CODE VARCHAR2(64) not null,
+
   INDIVIDU_ID VARCHAR2(64 char) not null
 );
 
-CREATE OR REPLACE VIEW SRC_DOCTORANT AS
-  SELECT
-    NULL                                     AS id,
-    GEN_SOURCE_CODE(e.CODE, to_char(tmp.id)) AS SOURCE_CODE,
-    src.id                                   AS source_id,
-    i.id                                     AS individu_id,
-    e.id                                     AS etablissement_id
-  FROM TMP_DOCTORANT tmp
-    JOIN ETABLISSEMENT e ON e.CODE = tmp.ETABLISSEMENT_ID
-    JOIN SOURCE src ON src.CODE = GEN_SOURCE_CODE(e.CODE, tmp.SOURCE_ID)
-    JOIN INDIVIDU i ON i.SOURCE_CODE = GEN_SOURCE_CODE(e.CODE, tmp.INDIVIDU_ID);
+create index TMP_DOCTORANT_SOURCE_CODE_IDX on TMP_DOCTORANT (SOURCE_CODE);
+create index TMP_DOCTORANT_SOURCE_ID_IDX on TMP_DOCTORANT (SOURCE_ID);
 
 --DROP TABLE DOCTORANT cascade constraints;
 create table DOCTORANT
@@ -203,6 +184,8 @@ create index DOCTORANT_HCFK_IDX on DOCTORANT (HISTO_CREATEUR_ID);
 create index DOCTORANT_HMFK_IDX on DOCTORANT (HISTO_MODIFICATEUR_ID);
 create index DOCTORANT_HDFK_IDX on DOCTORANT (HISTO_DESTRUCTEUR_ID);
 
+create sequence DOCTORANT_ID_SEQ;
+
 
 --------------------------- THESE -----------------------
 
@@ -212,9 +195,10 @@ create table TMP_THESE
   insert_date date default sysdate,
 
   ID VARCHAR2(64),
-
-  SOURCE_ID VARCHAR2(64 char) not null,
   ETABLISSEMENT_ID VARCHAR2(64 char) not null,
+  SOURCE_ID VARCHAR2(64 char) not null,
+  SOURCE_CODE VARCHAR2(64) not null,
+
   DOCTORANT_ID VARCHAR2(64 char) not null,
   ECOLE_DOCT_ID VARCHAR2(64 char),
   UNITE_RECH_ID VARCHAR2(64 char),
@@ -235,33 +219,8 @@ create table TMP_THESE
   lib_ths VARCHAR2(2048 char)
 );
 
-CREATE OR REPLACE VIEW SRC_THESE AS
-  SELECT
-    NULL                                     AS id,
-    GEN_SOURCE_CODE(e.CODE, to_char(tmp.id)) AS SOURCE_CODE,
-    src.ID                                   AS source_id,
-    e.id                                     AS etablissement_id,
-    d.id                                     AS doctorant_id,
-    NULL                                     AS ecole_doct_id,
-    NULL                                     AS unite_rech_id,
-    tmp.lib_ths                              AS titre,
-    tmp.eta_ths                              AS etat_these,
-    to_number(tmp.cod_neg_tre)               AS resultat,
-    tmp.lib_int1_dis                         AS lib_disc,
-    tmp.dat_deb_ths                          AS date_prem_insc,
-    tmp.dat_prev_sou                         AS date_prev_soutenance,
-    tmp.dat_sou_ths                          AS date_soutenance,
-    tmp.dat_fin_cfd_ths                      AS date_fin_confid,
-    tmp.lib_etab_cotut                       AS lib_etab_cotut,
-    tmp.lib_pays_cotut                       AS lib_pays_cotut,
-    tmp.correction_possible                  AS CORREC_AUTORISEE,
-    tem_sou_aut_ths                          AS soutenance_autoris,
-    dat_aut_sou_ths                          AS date_autoris_soutenance,
-    tem_avenant_cotut                        AS tem_avenant_cotut
-  FROM TMP_THESE tmp
-    JOIN ETABLISSEMENT e ON e.CODE = tmp.ETABLISSEMENT_ID
-    JOIN SOURCE src ON src.CODE = GEN_SOURCE_CODE(e.CODE, tmp.SOURCE_ID)
-    JOIN DOCTORANT d ON d.SOURCE_CODE = GEN_SOURCE_CODE(e.CODE, tmp.DOCTORANT_ID);
+create index TMP_THESE_SOURCE_CODE_INDEX on TMP_THESE (SOURCE_CODE);
+create index TMP_THESE_SOURCE_ID_INDEX on TMP_THESE (SOURCE_ID);
 
 --DROP TABLE THESE cascade constraints;
 create table THESE
@@ -318,6 +277,8 @@ create index THESE_HCFK_IDX on THESE (HISTO_CREATEUR_ID);
 create index THESE_HMFK_IDX on THESE (HISTO_MODIFICATEUR_ID);
 create index THESE_HDFK_IDX on THESE (HISTO_DESTRUCTEUR_ID);
 
+create sequence THESE_ID_SEQ;
+
 
 --------------------------- ROLE -----------------------
 
@@ -327,25 +288,16 @@ create table TMP_ROLE
   insert_date date default sysdate,
 
   ID VARCHAR2(64),
-
-  SOURCE_ID VARCHAR2(64 char) not null,
   ETABLISSEMENT_ID VARCHAR2(64 char) not null,
+  SOURCE_ID VARCHAR2(64 char) not null,
+  SOURCE_CODE VARCHAR2(64) not null,
 
   LIB_ROJ VARCHAR2(200 char),
   LIC_ROJ VARCHAR2(50 char)
 );
 
-CREATE OR REPLACE VIEW SRC_ROLE AS
-  SELECT
-    NULL                                     AS id,
-    GEN_SOURCE_CODE(e.CODE, to_char(tmp.id)) AS SOURCE_CODE,
-    src.ID                                   AS source_id,
-    e.id                                     AS etablissement_id,
-    tmp.LIB_ROJ                              AS libelle,
-    to_char(tmp.id)                          AS code
-  FROM TMP_ROLE tmp
-    JOIN ETABLISSEMENT e ON e.code = tmp.ETABLISSEMENT_ID
-    JOIN SOURCE src ON src.CODE = GEN_SOURCE_CODE(e.CODE, tmp.SOURCE_ID);
+create index TMP_ROLE_SOURCE_CODE_INDEX on TMP_ROLE (SOURCE_CODE);
+create index TMP_ROLE_SOURCE_ID_INDEX on TMP_ROLE (SOURCE_ID);
 
 --DROP TABLE ROLE cascade constraints;
 create table ROLE
@@ -409,9 +361,10 @@ create table TMP_ACTEUR
   insert_date date default sysdate,
 
   ID VARCHAR2(64),
-
-  SOURCE_ID VARCHAR2(64 char) not null,
   ETABLISSEMENT_ID VARCHAR2(64 char) not null,
+  SOURCE_ID VARCHAR2(64 char) not null,
+  SOURCE_CODE VARCHAR2(64) not null,
+
   INDIVIDU_ID VARCHAR2(64 char) not null,
   THESE_ID VARCHAR2(64 char) not null,
   ROLE_ID VARCHAR2(64 char) not null,
@@ -426,23 +379,8 @@ create table TMP_ACTEUR
   TEM_RAP_RECU VARCHAR2(1 char)
 );
 
-CREATE OR REPLACE VIEW SRC_ACTEUR AS
-  SELECT
-    NULL                                     AS id,
-    GEN_SOURCE_CODE(e.CODE, to_char(tmp.id)) AS SOURCE_CODE,
-    src.ID                                   AS SOURCE_ID,
-    i.id                                     AS INDIVIDU_ID,
-    t.id                                     AS THESE_ID,
-    r.id                                     AS ROLE_ID,
-    tmp.LIB_CPS                              AS QUALITE,
-    tmp.LIB_ETB                              AS ETABLISSEMENT,
-    tmp.LIB_ROJ_COMPL                        AS LIB_ROLE_COMPL
-  FROM TMP_ACTEUR tmp
-    JOIN ETABLISSEMENT e ON e.CODE = tmp.ETABLISSEMENT_ID
-    JOIN SOURCE src ON src.CODE = GEN_SOURCE_CODE(e.CODE, tmp.SOURCE_ID)
-    JOIN INDIVIDU i ON i.SOURCE_CODE = GEN_SOURCE_CODE(e.CODE, tmp.INDIVIDU_ID)
-    JOIN THESE t ON t.SOURCE_CODE = GEN_SOURCE_CODE(e.CODE, tmp.THESE_ID)
-    JOIN ROLE r ON r.SOURCE_CODE = GEN_SOURCE_CODE(e.CODE, tmp.ROLE_ID);
+create index TMP_ACTEUR_SOURCE_CODE_INDEX on TMP_ACTEUR (SOURCE_CODE);
+create index TMP_ACTEUR_SOURCE_ID_INDEX on TMP_ACTEUR (SOURCE_ID);
 
 --DROP TABLE ACTEUR cascade constraints;
 create table ACTEUR
@@ -454,9 +392,9 @@ create table ACTEUR
   THESE_ID NUMBER constraint ACTEUR_THESE_FK references THESE on delete cascade,
   ROLE_ID NUMBER constraint ACTEUR_ROLE_FK references ROLE on delete cascade,
 
-  QUALITE VARCHAR2(200 char) not null,
-  ETABLISSEMENT VARCHAR2(200 char) not null,
-  LIB_ROLE_COMPL VARCHAR2(200 char) not null,
+  ETABLISSEMENT VARCHAR2(200 char),
+  QUALITE VARCHAR2(200 char),
+  LIB_ROLE_COMPL VARCHAR2(200 char),
 
   SOURCE_CODE VARCHAR2(64 char) not null,
   SOURCE_ID NUMBER not null constraint ACTEUR_SOURCE_FK references SOURCE on delete cascade,
@@ -482,6 +420,8 @@ create index ACTEUR_HC_IDX on ACTEUR (HISTO_CREATEUR_ID);
 create index ACTEUR_HM_IDX on ACTEUR (HISTO_MODIFICATEUR_ID);
 create index ACTEUR_HD_IDX on ACTEUR (HISTO_DESTRUCTEUR_ID);
 
+create sequence ACTEUR_ID_SEQ;
+
 
 --------------------------- VARIABLE -----------------------
 
@@ -491,27 +431,17 @@ create table TMP_VARIABLE
   insert_date date default sysdate,
 
   ID VARCHAR2(64),
-
-  SOURCE_ID VARCHAR2(64 char) not null,
   ETABLISSEMENT_ID VARCHAR2(64 char) not null,
+  SOURCE_ID VARCHAR2(64 char) not null,
+  SOURCE_CODE VARCHAR2(64) not null,
 
   cod_vap VARCHAR2(50 char),
   lib_vap VARCHAR2(300 char),
   par_vap VARCHAR2(200 char)
 );
 
-CREATE OR REPLACE VIEW SRC_VARIABLE AS
-  SELECT
-    NULL                                     AS id,
-    GEN_SOURCE_CODE(e.CODE, to_char(tmp.id)) AS SOURCE_CODE,
-    src.ID                                   AS SOURCE_ID,
-    e.id                                     AS ETABLISSEMENT_ID,
-    tmp.cod_vap,
-    tmp.lib_vap,
-    tmp.par_vap
-  FROM TMP_VARIABLE tmp
-    JOIN ETABLISSEMENT e ON e.CODE = tmp.ETABLISSEMENT_ID
-    JOIN SOURCE src ON src.CODE = GEN_SOURCE_CODE(e.CODE, tmp.SOURCE_ID);
+create index TMP_VARIABLE_SOURCE_CODE_INDEX on TMP_VARIABLE (SOURCE_CODE);
+create index TMP_VARIABLE_SOURCE_ID_INDEX on TMP_VARIABLE (SOURCE_ID);
 
 --DROP TABLE VARIABLE cascade constraints;
 create table VARIABLE
@@ -544,8 +474,7 @@ create index VARIABLE_HC_IDX on VARIABLE (HISTO_CREATEUR_ID);
 create index VARIABLE_HM_IDX on VARIABLE (HISTO_MODIFICATEUR_ID);
 create index VARIABLE_HD_IDX on VARIABLE (HISTO_DESTRUCTEUR_ID);
 
-
-
+create sequence VARIABLE_ID_SEQ;
 
 
 --------------------------- INDIVIDU_ROLE -----------------------
@@ -1057,6 +986,8 @@ create table IMPORT_OBSERV_RESULT
 
 create index IMPORT_OBSERV_RESULT_IO_IDX on IMPORT_OBSERV_RESULT (IMPORT_OBSERV_ID);
 
+create sequence IMPORT_OBSERV_RESULT_ID_SEQ;
+
 create table IMPORT_OBS_NOTIF
 (
   ID NUMBER not null constraint IOND_PK primary key,
@@ -1077,1005 +1008,357 @@ create table IMPORT_OBS_RESULT_NOTIF
 create index IMPORT_OBS_NOTIF_IOR_IDX on IMPORT_OBS_RESULT_NOTIF (IMPORT_OBSERV_RESULT_ID);
 create index IMPORT_OBS_NOTIF_NR_IDX on IMPORT_OBS_RESULT_NOTIF (NOTIF_RESULT_ID);
 
+create sequence IMPORT_OBS_RESULT_NOTIF_ID_SEQ;
 
 
 
+------------------ Package UNICAEN_ORACLE ----------------------
 
+create or replace PACKAGE UNICAEN_ORACLE AS
 
------------------------------ Vues ------------------------------
+  FUNCTION implode(i_query VARCHAR2, i_seperator VARCHAR2 DEFAULT ',') RETURN VARCHAR2;
 
-create view V_SITU_ARCHIVAB_VO as
-  SELECT
-    t.id AS these_id,
-    vf.EST_VALIDE
-  FROM these t
-    JOIN FICHIER f ON f.THESE_ID = t.id AND EST_ANNEXE = 0 AND EST_EXPURGE = 0 and f.HISTO_DESTRUCTION is null
-    JOIN VERSION_FICHIER v ON f.VERSION_FICHIER_ID = v.id AND v.CODE = 'VO'
-    JOIN VALIDITE_FICHIER vf ON vf.FICHIER_ID = f.id
+  FUNCTION STR_REDUCE( str CLOB ) RETURN CLOB;
+
+  FUNCTION STR_FIND( haystack CLOB, needle VARCHAR2 ) RETURN NUMERIC;
+
+  FUNCTION LIKED( haystack CLOB, needle CLOB ) RETURN NUMERIC;
+
+  FUNCTION COMPRISE_ENTRE( date_debut DATE, date_fin DATE, date_obs DATE DEFAULT NULL, inclusif NUMERIC DEFAULT 0 ) RETURN NUMERIC;
+
+END UNICAEN_ORACLE;
 /
 
-create view V_SITU_ARCHIVAB_VOC as
-  SELECT
-    t.id AS these_id,
-    vf.EST_VALIDE
-  FROM these t
-    JOIN FICHIER f ON f.THESE_ID = t.id AND EST_ANNEXE = 0 AND EST_EXPURGE = 0 and f.HISTO_DESTRUCTION is null
-    JOIN VERSION_FICHIER v ON f.VERSION_FICHIER_ID = v.id AND v.CODE = 'VOC'
-    JOIN VALIDITE_FICHIER vf ON vf.FICHIER_ID = f.id
+create or replace PACKAGE BODY UNICAEN_ORACLE AS
+
+  FUNCTION implode(i_query VARCHAR2, i_seperator VARCHAR2 DEFAULT ',') RETURN VARCHAR2 AS
+    l_return CLOB:='';
+    l_temp CLOB;
+    TYPE r_cursor is REF CURSOR;
+    rc r_cursor;
+    BEGIN
+      OPEN rc FOR i_query;
+      LOOP
+        FETCH rc INTO L_TEMP;
+        EXIT WHEN RC%NOTFOUND;
+        l_return:=l_return||L_TEMP||i_seperator;
+      END LOOP;
+      RETURN RTRIM(l_return,i_seperator);
+    END;
+
+  FUNCTION STR_REDUCE( str CLOB ) RETURN CLOB IS
+    BEGIN
+      RETURN utl_raw.cast_to_varchar2((nlssort(str, 'nls_sort=binary_ai')));
+    END;
+
+  FUNCTION STR_FIND( haystack CLOB, needle VARCHAR2 ) RETURN NUMERIC IS
+    BEGIN
+      IF STR_REDUCE( haystack ) LIKE STR_REDUCE( '%' || needle || '%' ) THEN RETURN 1; END IF;
+      RETURN 0;
+    END;
+
+  FUNCTION LIKED( haystack CLOB, needle CLOB ) RETURN NUMERIC IS
+    BEGIN
+      RETURN CASE WHEN STR_REDUCE(haystack) LIKE STR_REDUCE(needle) THEN 1 ELSE 0 END;
+    END;
+
+  FUNCTION COMPRISE_ENTRE( date_debut DATE, date_fin DATE, date_obs DATE DEFAULT NULL, inclusif NUMERIC DEFAULT 0 ) RETURN NUMERIC IS
+    d_deb DATE;
+    d_fin DATE;
+    d_obs DATE;
+    res NUMERIC;
+    BEGIN
+      IF inclusif = 1 THEN
+        d_obs := TRUNC( COALESCE( d_obs     , SYSDATE ) );
+        d_deb := TRUNC( COALESCE( date_debut, d_obs   ) );
+        d_fin := TRUNC( COALESCE( date_fin  , d_obs   ) );
+        IF d_obs BETWEEN d_deb AND d_fin THEN
+          RETURN 1;
+        ELSE
+          RETURN 0;
+        END IF;
+      ELSE
+        d_obs := TRUNC( COALESCE( d_obs, SYSDATE ) );
+        d_deb := TRUNC( date_debut );
+        d_fin := TRUNC( date_fin   );
+
+        IF d_deb IS NOT NULL AND NOT d_deb <= d_obs THEN
+          RETURN 0;
+        END IF;
+        IF d_fin IS NOT NULL AND NOT d_obs < d_fin THEN
+          RETURN 0;
+        END IF;
+        RETURN 1;
+      END IF;
+    END;
+
+END UNICAEN_ORACLE;
 /
 
-create view V_SITU_ARCHIVAB_VA as
-  SELECT
-    t.id AS these_id,
-    f.RETRAITEMENT,
-    vf.EST_VALIDE
-  FROM these t
-    JOIN FICHIER f ON f.THESE_ID = t.id AND EST_ANNEXE = 0 AND EST_EXPURGE = 0 and f.HISTO_DESTRUCTION is null
-    JOIN VERSION_FICHIER v ON f.VERSION_FICHIER_ID = v.id AND v.CODE = 'VA'
-    JOIN VALIDITE_FICHIER vf ON vf.FICHIER_ID = f.id
+
+------------------ UNICAEN_IMPORT ----------------------
+
+CREATE TABLE SYNC_LOG
+(
+    ID NUMBER(*, 0) NOT NULL
+  , DATE_SYNC TIMESTAMP(6) NOT NULL
+  , MESSAGE CLOB NOT NULL
+  , TABLE_NAME VARCHAR2(30 CHAR)
+  , SOURCE_CODE VARCHAR2(200 CHAR)
+  , CONSTRAINT SYNC_LOG_PK PRIMARY KEY (ID)
+  USING INDEX (CREATE UNIQUE INDEX SYNC_LOG_PK ON SYNC_LOG (ID ASC)) ENABLE
+);
+
 /
 
-create view V_SITU_ARCHIVAB_VAC as
-  SELECT
-    t.id AS these_id,
-    f.RETRAITEMENT,
-    vf.EST_VALIDE
-  FROM these t
-    JOIN FICHIER f ON f.THESE_ID = t.id AND EST_ANNEXE = 0 AND EST_EXPURGE = 0 and f.HISTO_DESTRUCTION is null
-    JOIN VERSION_FICHIER v ON f.VERSION_FICHIER_ID = v.id AND v.CODE = 'VAC'
-    JOIN VALIDITE_FICHIER vf ON vf.FICHIER_ID = f.id
+create sequence SYNC_LOG_ID_SEQ;
+
 /
 
-create view V_SITU_RDV_BU_VALIDATION_BU as
-  SELECT
-    t.id AS these_id,
-    CASE WHEN v.id is not null THEN 1 ELSE 0 END valide
-  FROM these t
-    JOIN VALIDATION v ON v.THESE_ID = t.id and v.HISTO_DESTRUCTEUR_ID is null
-    JOIN TYPE_VALIDATION tv on v.TYPE_VALIDATION_ID = tv.id and tv.code = 'RDV_BU'
-/
+CREATE OR REPLACE VIEW "V_IMPORT_TAB_COLS" AS
+  WITH importable_tables (table_name )AS (
+    SELECT
+      t.table_name
+    FROM
+      user_tab_cols c
+      join user_tables t on t.table_name = c.table_name
+    WHERE
+      c.column_name = 'SOURCE_CODE'
 
-create view V_SITU_AUTORIS_DIFF_THESE as
-  SELECT
-    t.id AS these_id,
-    d.id AS diffusion_id
-  FROM these t
-    JOIN DIFFUSION d ON d.THESE_ID = t.id and d.HISTO_DESTRUCTEUR_ID is null
-/
+    MINUS
 
-create view V_SITU_SIGNALEMENT_THESE as
-  SELECT
-    t.id AS these_id,
-    d.id AS description_id
-  FROM these t
-    JOIN METADONNEE_THESE d ON d.THESE_ID = t.id
-/
-
-create view V_SITU_RDV_BU_SAISIE_DOCT as
-  SELECT
-    t.id AS these_id,
-    CASE WHEN r.COORD_DOCTORANT IS NOT NULL AND r.DISPO_DOCTORANT IS NOT NULL
-      THEN 1 ELSE 0 END ok
-  FROM these t
-    JOIN RDV_BU r ON r.THESE_ID = t.id
-/
-
-create view V_SITU_RDV_BU_SAISIE_BU as
-  SELECT
-    t.id AS these_id,
-    CASE WHEN r.VERSION_ARCHIVABLE_FOURNIE = 1 and r.CONVENTION_MEL_SIGNEE = 1 and r.EXEMPL_PAPIER_FOURNI = 1
-              and r.PAGE_TITRE_CONFORME = 1 and r.MOTS_CLES_RAMEAU is not null
-      THEN 1 ELSE 0 END ok
-  FROM these t
-    JOIN RDV_BU r ON r.THESE_ID = t.id
-/
-
-create view V_SITU_ATTESTATIONS as
-  SELECT
-    t.id AS these_id,
-    a.id AS attestation_id
-  FROM these t
-    JOIN ATTESTATION a ON a.THESE_ID = t.id and a.HISTO_DESTRUCTEUR_ID is null
-/
-
-create view V_SITU_DEPOT_VO as
-  SELECT
-    t.id AS these_id,
-    f.id AS fichier_id
-  FROM these t
-    JOIN FICHIER f ON f.THESE_ID = t.id AND EST_ANNEXE = 0 AND EST_EXPURGE = 0 AND RETRAITEMENT IS NULL AND
-                      f.HISTO_DESTRUCTION IS NULL
-    JOIN NATURE_FICHIER nf ON f.NATURE_ID = nf.id AND nf.CODE = 'THESE_PDF'
-    JOIN VERSION_FICHIER vf ON f.VERSION_FICHIER_ID = vf.ID AND vf.CODE = 'VO'
-/
-
-create view V_SITU_DEPOT_VOC as
-  SELECT
-    t.id AS these_id,
-    f.id AS fichier_id
-  FROM these t
-    JOIN FICHIER f ON f.THESE_ID = t.id AND EST_ANNEXE = 0 AND EST_EXPURGE = 0 AND RETRAITEMENT IS NULL AND
-                      f.HISTO_DESTRUCTION IS NULL
-    JOIN NATURE_FICHIER nf ON f.NATURE_ID = nf.id AND nf.CODE = 'THESE_PDF'
-    JOIN VERSION_FICHIER vf ON f.VERSION_FICHIER_ID = vf.ID AND vf.CODE = 'VOC'
-/
-
-create view V_SITU_DEPOT_VA as
-  SELECT
-    t.id AS these_id,
-    f.id AS fichier_id
-  FROM these t
-    JOIN FICHIER f ON f.THESE_ID = t.id AND EST_ANNEXE = 0 AND EST_EXPURGE = 0 AND f.HISTO_DESTRUCTION IS NULL
-    JOIN NATURE_FICHIER nf ON f.NATURE_ID = nf.id AND nf.CODE = 'THESE_PDF'
-    JOIN VERSION_FICHIER v ON f.VERSION_FICHIER_ID = v.id AND v.CODE = 'VA'
-/
-
-create view V_SITU_DEPOT_VAC as
-  SELECT
-    t.id AS these_id,
-    f.id AS fichier_id
-  FROM these t
-    JOIN FICHIER f ON f.THESE_ID = t.id AND EST_ANNEXE = 0 AND EST_EXPURGE = 0 AND f.HISTO_DESTRUCTION IS NULL
-    JOIN NATURE_FICHIER nf ON f.NATURE_ID = nf.id AND nf.CODE = 'THESE_PDF'
-    JOIN VERSION_FICHIER v ON f.VERSION_FICHIER_ID = v.id AND v.CODE = 'VAC'
-/
-
-create view V_SITU_VERIF_VA as
-  SELECT
-    t.id AS these_id,
-    f.EST_CONFORME
-  FROM these t
-    JOIN FICHIER f ON f.THESE_ID = t.id AND EST_ANNEXE = 0 AND EST_EXPURGE = 0 and f.HISTO_DESTRUCTION is null
-    JOIN VERSION_FICHIER v ON f.VERSION_FICHIER_ID = v.id AND v.CODE = 'VA'
-/
-
-create view V_SITU_VERIF_VAC as
-  SELECT
-    t.id AS these_id,
-    f.EST_CONFORME
-  FROM these t
-    JOIN FICHIER f ON f.THESE_ID = t.id AND EST_ANNEXE = 0 AND EST_EXPURGE = 0 and f.HISTO_DESTRUCTION is null
-    JOIN VERSION_FICHIER v ON f.VERSION_FICHIER_ID = v.id AND v.CODE = 'VAC'
-/
-
-create view V_SITU_DEPOT_VC_VALID_DOCT as
-  SELECT
-    t.id AS these_id,
-    CASE WHEN v.id is not null THEN 1 ELSE 0 END valide
-  FROM these t
-    JOIN VALIDATION v ON v.THESE_ID = t.id and v.HISTO_DESTRUCTEUR_ID is null
-    JOIN TYPE_VALIDATION tv on v.TYPE_VALIDATION_ID = tv.id and tv.code = 'DEPOT_THESE_CORRIGEE'
-/
-
-create view V_SITU_DEPOT_VC_VALID_DIR as
-  WITH validations_attendues AS (
-      SELECT a.THESE_ID, a.INDIVIDU_ID, tv.ID as TYPE_VALIDATION_ID
-      FROM ACTEUR a
-        JOIN ROLE r on a.ROLE_ID = r.ID and r.SOURCE_CODE = 'D' -- directeur de thèse
-        JOIN TYPE_VALIDATION tv on tv.code = 'CORRECTION_THESE'
-      where a.HISTO_DESTRUCTION is null
+    SELECT
+      mview_name table_name
+    FROM
+      USER_MVIEWS
+  ), c_values (table_name, column_name, c_table_name, c_column_name) AS (
+      SELECT
+        tc.table_name,
+        tc.column_name,
+        pcc.table_name c_table_name,
+        pcc.column_name c_column_name
+      FROM
+        user_tab_cols tc
+        JOIN USER_CONS_COLUMNS cc ON cc.table_name = tc.table_name AND cc.column_name = tc.column_name
+        JOIN USER_CONSTRAINTS c ON c.constraint_name = cc.constraint_name
+        JOIN USER_CONSTRAINTS pc ON pc.constraint_name = c.r_constraint_name
+        JOIN USER_CONS_COLUMNS pcc ON pcc.constraint_name = pc.constraint_name
+      WHERE
+        c.constraint_type = 'R' AND pc.constraint_type = 'P'
   )
   SELECT
-    ROWNUM as id,
-    t.id AS these_id,
-    va.INDIVIDU_ID,
-    CASE WHEN v.id is not null THEN 1 ELSE 0 END valide
-  FROM validations_attendues va
-    JOIN these t on va.THESE_ID = t.id
-    LEFT JOIN VALIDATION v ON v.THESE_ID = t.id and
-                              v.INDIVIDU_ID = va.INDIVIDU_ID and -- suppose que l'INDIVIDU_ID soit enregistré lors de la validation
-                              v.HISTO_DESTRUCTEUR_ID is null and
-                              v.TYPE_VALIDATION_ID = va.TYPE_VALIDATION_ID
+    tc.table_name,
+    tc.column_name,
+    tc.data_type,
+    CASE WHEN tc.char_length = 0 THEN NULL ELSE tc.char_length END length,
+    CASE WHEN tc.nullable = 'Y' THEN 1 ELSE 0 END nullable,
+    CASE WHEN tc.data_default IS NOT NULL THEN 1 ELSE 0 END has_default,
+    cv.c_table_name,
+    cv.c_column_name,
+    CASE WHEN stc.table_name IS NULL THEN 0 ELSE 1 END AS import_actif
+  FROM
+    user_tab_cols tc
+    JOIN importable_tables t ON t.table_name = tc.table_name
+    LEFT JOIN c_values cv ON cv.table_name = tc.table_name AND cv.column_name = tc.column_name
+    LEFT JOIN user_tab_cols stc ON stc.table_name = 'SRC_' || tc.table_name AND stc.column_name = tc.column_name
+  WHERE
+    tc.column_name not like 'HISTO_%'
+  ORDER BY
+    tc.table_name, tc.column_id;
+
 /
 
-create view V_SITU_DEPOT_PV_SOUT as
-  SELECT
-    t.id AS these_id,
-    f.id AS fichier_id
-  FROM these t
-    JOIN FICHIER f ON f.THESE_ID = t.id and f.HISTO_DESTRUCTION is null and f.HISTO_DESTRUCTION is null
-    JOIN NATURE_FICHIER nf on f.NATURE_ID = nf.id and nf.CODE = 'PV_SOUTENANCE'
+create or replace PACKAGE UNICAEN_IMPORT AS
+
+  PROCEDURE set_current_user(p_current_user IN INTEGER);
+  FUNCTION get_current_user return INTEGER;
+
+  FUNCTION get_current_annee RETURN INTEGER;
+  PROCEDURE set_current_annee (p_current_annee INTEGER);
+
+  FUNCTION get_sql_criterion( table_name varchar2, sql_criterion VARCHAR2 ) RETURN CLOB;
+  PROCEDURE SYNC_LOG( message CLOB, table_name VARCHAR2 DEFAULT NULL, source_code VARCHAR2 DEFAULT NULL );
+
+  -- AUTOMATIC GENERATION --
+
+  PROCEDURE MAJ_VARIABLE(SQL_CRITERION CLOB DEFAULT '', IGNORE_UPD_COLS CLOB DEFAULT '');
+  PROCEDURE MAJ_THESE(SQL_CRITERION CLOB DEFAULT '', IGNORE_UPD_COLS CLOB DEFAULT '');
+  PROCEDURE MAJ_ROLE(SQL_CRITERION CLOB DEFAULT '', IGNORE_UPD_COLS CLOB DEFAULT '');
+  PROCEDURE MAJ_INDIVIDU(SQL_CRITERION CLOB DEFAULT '', IGNORE_UPD_COLS CLOB DEFAULT '');
+  PROCEDURE MAJ_DOCTORANT(SQL_CRITERION CLOB DEFAULT '', IGNORE_UPD_COLS CLOB DEFAULT '');
+  PROCEDURE MAJ_ACTEUR(SQL_CRITERION CLOB DEFAULT '', IGNORE_UPD_COLS CLOB DEFAULT '');
+
+  -- END OF AUTOMATIC GENERATION --
+END UNICAEN_IMPORT;
 /
 
-create view V_SITU_DEPOT_RAPPORT_SOUT as
-  SELECT
-    t.id AS these_id,
-    f.id AS fichier_id
-  FROM these t
-    JOIN FICHIER f ON f.THESE_ID = t.id and f.HISTO_DESTRUCTION is null and f.HISTO_DESTRUCTION is null
-    JOIN NATURE_FICHIER nf on f.NATURE_ID = nf.id and nf.CODE = 'RAPPORT_SOUTENANCE'
+create or replace PACKAGE BODY UNICAEN_IMPORT AS
+
+  v_current_user INTEGER;
+  v_current_annee INTEGER;
+
+
+
+  FUNCTION get_current_user RETURN INTEGER IS
+    BEGIN
+      IF v_current_user IS NULL THEN
+        v_current_user := 1; -- A remplacer par l'utilisateur (ID de la table USER) qui sera le créateur ou le modificateur des données
+      END IF;
+      RETURN v_current_user;
+    END get_current_user;
+
+  PROCEDURE set_current_user (p_current_user INTEGER) is
+    BEGIN
+      v_current_user := p_current_user;
+    END set_current_user;
+
+
+
+  FUNCTION get_current_annee RETURN INTEGER IS
+    BEGIN
+      IF v_current_annee IS NULL THEN
+        v_current_annee := NULL; -- A remplacer par l'année d'import souhaitée (si vous avez de l'annualisation de prévue dans votre BDD)
+      END IF;
+      RETURN v_current_annee;
+    END get_current_annee;
+
+  PROCEDURE set_current_annee (p_current_annee INTEGER) IS
+    BEGIN
+      v_current_annee := p_current_annee;
+    END set_current_annee;
+
+
+
+  FUNCTION get_sql_criterion( table_name varchar2, sql_criterion VARCHAR2 ) RETURN CLOB IS
+    BEGIN
+      IF sql_criterion <> '' OR sql_criterion IS NOT NULL THEN
+        RETURN sql_criterion;
+      END IF;
+      RETURN '';
+      /* Exemple d'usage :
+
+      RETURN CASE table_name
+        WHEN 'INTERVENANT' THEN -- Met à jour toutes les données sauf le statut, qui sera traité à part
+          'WHERE IMPORT_ACTION IN (''delete'',''update'',''undelete'')'
+
+        WHEN 'AFFECTATION_RECHERCHE' THEN
+          'WHERE INTERVENANT_ID IS NOT NULL'
+
+        WHEN 'ADRESSE_INTERVENANT' THEN
+          'WHERE INTERVENANT_ID IS NOT NULL'
+
+        WHEN 'ELEMENT_TAUX_REGIMES' THEN
+          'WHERE IMPORT_ACTION IN (''delete'',''insert'',''undelete'')'
+
+        ELSE
+          ''
+      END;*/
+    END;
+
+
+
+  PROCEDURE SYNC_LOG( message CLOB, table_name VARCHAR2 DEFAULT NULL, source_code VARCHAR2 DEFAULT NULL ) IS
+    BEGIN
+      INSERT INTO SYNC_LOG("ID","DATE_SYNC","MESSAGE","TABLE_NAME","SOURCE_CODE") VALUES (SYNC_LOG_ID_SEQ.NEXTVAL, SYSDATE, message,table_name,source_code);
+    END SYNC_LOG;
+
+
+
+  FUNCTION IN_COLUMN_LIST( VALEUR VARCHAR2, CHAMPS CLOB ) RETURN NUMERIC IS
+    BEGIN
+      IF REGEXP_LIKE(CHAMPS, '(^|,)[ \t\r\n\v\f]*' || VALEUR || '[ \t\r\n\v\f]*(,|$)') THEN RETURN 1; END IF;
+      RETURN 0;
+    END;
+
+
+  -- AUTOMATIC GENERATION --
+
+  -- END OF AUTOMATIC GENERATION --
+END UNICAEN_IMPORT;
 /
 
-create view V_SITU_ATTESTATIONS_VOC as
-  SELECT
-    t.id AS these_id,
-    a.id AS attestation_id
-  FROM these t
-    JOIN ATTESTATION a ON a.THESE_ID = t.id and a.HISTO_DESTRUCTEUR_ID is null
-    -- NB: on se base sur l'existence d'une version corrigée et pas sur t.CORRECTION_AUTORISEE qui peut revenir à null
-    JOIN FICHIER f ON f.THESE_ID = t.id AND EST_ANNEXE = 0 AND EST_EXPURGE = 0 and f.HISTO_DESTRUCTION is null
-    JOIN VERSION_FICHIER v ON f.VERSION_FICHIER_ID = v.id AND v.CODE = 'VOC'
+
+------------------ Package APP_IMPORT ----------------------
+
+create or replace PACKAGE "APP_IMPORT" IS
+
+  PROCEDURE REFRESH_MV( mview_name VARCHAR2 );
+  PROCEDURE SYNC_TABLES;
+  PROCEDURE SYNCHRONISATION;
+
+  PROCEDURE STORE_OBSERV_RESULTS;
+
+END APP_IMPORT;
 /
 
-create view V_SITU_AUTORIS_DIFF_THESE_VOC as
-  SELECT
-    t.id AS these_id,
-    d.id AS diffusion_id
-  FROM these t
-    JOIN DIFFUSION d ON d.THESE_ID = t.id and d.HISTO_DESTRUCTEUR_ID is null
-    -- NB: on se base sur l'existence d'une version corrigée et pas sur t.CORRECTION_AUTORISEE qui peut revenir à null
-    JOIN FICHIER f ON f.THESE_ID = t.id AND EST_ANNEXE = 0 AND EST_EXPURGE = 0 and f.HISTO_DESTRUCTION is null
-    JOIN VERSION_FICHIER v ON f.VERSION_FICHIER_ID = v.id AND v.CODE = 'VOC'
-/
-
-create view V_SITU_VERSION_PAPIER_CORRIGEE as
-  SELECT
-    t.id AS these_id,
-    v.id as validation_id
-  FROM these t
-    JOIN VALIDATION v ON v.THESE_ID = t.id
-    JOIN TYPE_VALIDATION tv ON tv.ID = v.TYPE_VALIDATION_ID
-  WHERE tv.CODE='VERSION_PAPIER_CORRIGEE'
-/
-
-
-create view V_WF_ETAPE_PERTIN as
-  SELECT
-    to_number(these_id) these_id,
-    to_number(etape_id) etape_id,
-    code,
-    ORDRE,
-    ROWNUM id
-  FROM (
-    --
-    -- DEPOT_VERSION_ORIGINALE : étape toujours pertinente
-    --
-    SELECT
-      t.id AS these_id,
-      e.id AS etape_id,
-      e.code,
-      e.ORDRE
-    FROM these t
-      JOIN WF_ETAPE e ON e.code = 'DEPOT_VERSION_ORIGINALE'
-
-    UNION ALL
-
-    --
-    -- ATTESTATIONS : étape toujours pertinente
-    --
-    SELECT
-      t.id AS these_id,
-      e.id AS etape_id,
-      e.code,
-      e.ORDRE
-    FROM these t
-      JOIN WF_ETAPE e ON e.code = 'ATTESTATIONS'
-
-    UNION ALL
-
-    --
-    -- AUTORISATION_DIFFUSION_THESE : étape toujours pertinente
-    --
-    SELECT
-      t.id AS these_id,
-      e.id AS etape_id,
-      e.code,
-      e.ORDRE
-    FROM these t
-      JOIN WF_ETAPE e ON e.code = 'AUTORISATION_DIFFUSION_THESE'
-
-    UNION ALL
-
-    --
-    -- SIGNALEMENT_THESE : étape toujours pertinente
-    --
-    SELECT
-      t.id AS these_id,
-      e.id AS etape_id,
-      e.code,
-      e.ORDRE
-    FROM these t
-      JOIN WF_ETAPE e ON e.code = 'SIGNALEMENT_THESE'
-
-    UNION ALL
-
-    --
-    -- ARCHIVABILITE_VERSION_ORIGINALE : étape toujours pertinente
-    --
-    SELECT
-      t.id AS these_id,
-      e.id AS etape_id,
-      e.code,
-      e.ORDRE
-    FROM these t
-      JOIN WF_ETAPE e ON e.code = 'ARCHIVABILITE_VERSION_ORIGINALE'
-
-    UNION ALL
-
-    --
-    -- DEPOT_VERSION_ARCHIVAGE : étape pertinente si version originale non archivable
-    --
-    SELECT
-      t.id AS these_id,
-      e.id AS etape_id,
-      e.code,
-      e.ORDRE
-    FROM these t
-      JOIN WF_ETAPE e ON e.code = 'DEPOT_VERSION_ARCHIVAGE'
-      JOIN V_SITU_ARCHIVAB_VO situ ON situ.these_id = t.id AND situ.EST_VALIDE = 0
-
-    UNION ALL
-
-    --
-    -- ARCHIVABILITE_VERSION_ARCHIVAGE : étape pertinente si version originale non archivable
-    --
-    SELECT
-      t.id AS these_id,
-      e.id AS etape_id,
-      e.code,
-      e.ORDRE
-    FROM these t
-      JOIN WF_ETAPE e ON e.code = 'ARCHIVABILITE_VERSION_ARCHIVAGE'
-      JOIN V_SITU_ARCHIVAB_VO situ ON situ.these_id = t.id AND situ.EST_VALIDE = 0
-
-    UNION ALL
-
-    --
-    -- VERIFICATION_VERSION_ARCHIVAGE : étape pertinente si version d'archivage archivable
-    --
-    SELECT
-      t.id AS these_id,
-      e.id AS etape_id,
-      e.code,
-      e.ORDRE
-    FROM these t
-      JOIN WF_ETAPE e ON e.code = 'VERIFICATION_VERSION_ARCHIVAGE'
-      JOIN V_SITU_ARCHIVAB_VA situ ON situ.these_id = t.id AND situ.EST_VALIDE = 1
-
-    UNION ALL
-
-    --
-    -- RDV_BU_SAISIE_DOCTORANT : étape toujours pertinente
-    --
-    SELECT
-      t.id AS these_id,
-      e.id AS etape_id,
-      e.code,
-      e.ORDRE
-    FROM these t
-      JOIN WF_ETAPE e ON e.code = 'RDV_BU_SAISIE_DOCTORANT'
-
-    UNION ALL
-
-    --
-    -- RDV_BU_SAISIE_BU : étape toujours pertinente
-    --
-    SELECT
-      t.id AS these_id,
-      e.id AS etape_id,
-      e.code,
-      e.ORDRE
-    FROM these t
-      JOIN WF_ETAPE e ON e.code = 'RDV_BU_SAISIE_BU'
-
-    UNION ALL
-
-    --
-    -- RDV_BU_VALIDATION_BU : étape toujours pertinente
-    --
-    SELECT
-      t.id AS these_id,
-      e.id AS etape_id,
-      e.code,
-      e.ORDRE
-    FROM these t
-      JOIN WF_ETAPE e ON e.code = 'RDV_BU_VALIDATION_BU'
-
-    UNION ALL
-
-
-
-
-
-    --
-    -- DEPOT_VERSION_ORIGINALE_CORRIGEE : étape pertinente si correction attendue
-    --
-    SELECT
-      t.id AS these_id,
-      e.id AS etape_id,
-      e.code,
-      e.ORDRE
-    FROM these t
-      JOIN WF_ETAPE e ON e.code = 'DEPOT_VERSION_ORIGINALE_CORRIGEE'
-    WHERE t.CORREC_AUTORISEE is not null
-
-    UNION ALL
-
-    --
-    -- ATTESTATIONS_VERSION_CORRIGEE : étape pertinente si correction attendue
-    --
-    SELECT
-      t.id AS these_id,
-      e.id AS etape_id,
-      e.code,
-      e.ORDRE
-    FROM these t
-      JOIN WF_ETAPE e ON e.code = 'ATTESTATIONS_VERSION_CORRIGEE'
-    WHERE t.CORREC_AUTORISEE is not null
-
-    UNION ALL
-
-    --
-    -- AUTORISATION_DIFFUSION_THESE_VERSION_CORRIGEE : étape pertinente si correction attendue
-    --
-    SELECT
-      t.id AS these_id,
-      e.id AS etape_id,
-      e.code,
-      e.ORDRE
-    FROM these t
-      JOIN WF_ETAPE e ON e.code = 'AUTORISATION_DIFFUSION_THESE_VERSION_CORRIGEE'
-    WHERE t.CORREC_AUTORISEE is not null
-
-    UNION ALL
-
-    --
-    -- ARCHIVABILITE_VERSION_ORIGINALE_CORRIGEE : étape pertinente si correction attendue
-    --
-    SELECT
-      t.id AS these_id,
-      e.id AS etape_id,
-      e.code,
-      e.ORDRE
-    FROM these t
-      JOIN WF_ETAPE e ON e.code = 'ARCHIVABILITE_VERSION_ORIGINALE_CORRIGEE'
-    WHERE t.CORREC_AUTORISEE is not null
-
-    UNION ALL
-
-    --
-    -- DEPOT_VERSION_ARCHIVAGE_CORRIGEE : étape pertinente si version originale corrigée non archivable
-    --
-    SELECT
-      t.id AS these_id,
-      e.id AS etape_id,
-      e.code,
-      e.ORDRE
-    FROM these t
-      JOIN WF_ETAPE e ON e.code = 'DEPOT_VERSION_ARCHIVAGE_CORRIGEE'
-      JOIN V_SITU_ARCHIVAB_VOC situ ON situ.these_id = t.id AND situ.EST_VALIDE = 0
-    WHERE t.CORREC_AUTORISEE is not null
-
-    UNION ALL
-
-    --
-    -- ARCHIVABILITE_VERSION_ARCHIVAGE_CORRIGEE : étape pertinente si version originale corrigée non archivable
-    --
-    SELECT
-      t.id AS these_id,
-      e.id AS etape_id,
-      e.code,
-      e.ORDRE
-    FROM these t
-      JOIN WF_ETAPE e ON e.code = 'ARCHIVABILITE_VERSION_ARCHIVAGE_CORRIGEE'
-      JOIN V_SITU_ARCHIVAB_VOC situ ON situ.these_id = t.id AND situ.EST_VALIDE = 0
-    WHERE t.CORREC_AUTORISEE is not null
-
-    UNION ALL
-
-    --
-    -- VERIFICATION_VERSION_ARCHIVAGE_CORRIGEE : étape pertinente si version d'archivage corrigée archivable
-    --
-    SELECT
-      t.id AS these_id,
-      e.id AS etape_id,
-      e.code,
-      e.ORDRE
-    FROM these t
-      JOIN WF_ETAPE e ON e.code = 'VERIFICATION_VERSION_ARCHIVAGE_CORRIGEE'
-      JOIN V_SITU_ARCHIVAB_VAC situ ON situ.these_id = t.id AND situ.EST_VALIDE = 1
-    WHERE t.CORREC_AUTORISEE is not null
-
-    UNION ALL
-
-    --
-    -- DEPOT_VERSION_CORRIGEE_VALIDATION_DOCTORANT : étape pertinente si correction attendue
-    --
-    SELECT
-      t.id AS these_id,
-      e.id AS etape_id,
-      e.code,
-      e.ORDRE
-    FROM these t
-      JOIN WF_ETAPE e ON e.code = 'DEPOT_VERSION_CORRIGEE_VALIDATION_DOCTORANT'
-    WHERE t.CORREC_AUTORISEE is not null
-
-    UNION ALL
-
-    --
-    -- DEPOT_VERSION_CORRIGEE_VALIDATION_DIRECTEUR : étape pertinente si correction attendue
-    --
-    SELECT
-      t.id AS these_id,
-      e.id AS etape_id,
-      e.code,
-      e.ORDRE
-    FROM these t
-      JOIN WF_ETAPE e ON e.code = 'DEPOT_VERSION_CORRIGEE_VALIDATION_DIRECTEUR'
-    WHERE t.CORREC_AUTORISEE is not null
-
-    UNION ALL
-
-    SELECT
-      t.id AS these_id,
-      e.id AS etape_id,
-      e.code,
-      e.ORDRE
-    FROM these t
-      JOIN WF_ETAPE e ON e.code = 'REMISE_EXEMPLAIRE_PAPIER_THESE_CORRIGEE'
-    WHERE t.CORREC_AUTORISEE is not null
-
-  )
-/
-
-create view V_WORKFLOW as
-  SELECT
-    ROWNUM id,
-    t."THESE_ID",t."ETAPE_ID",t."CODE",t."ORDRE",t."FRANCHIE",t."RESULTAT",t."OBJECTIF"
-  FROM (
-         --
-         -- DEPOT_VERSION_ORIGINALE : franchie si version originale déposée
-         --
-         SELECT
-           t.id AS    these_id,
-           e.id AS    etape_id,
-           e.code,
-           e.ORDRE,
-           CASE WHEN v.fichier_id IS NULL
-             THEN 0
-           ELSE 1 END franchie,
-           CASE WHEN v.fichier_id IS NULL
-             THEN 0
-           ELSE 1 END resultat,
-           1          objectif
-         FROM these t
-           JOIN WF_ETAPE e ON e.code = 'DEPOT_VERSION_ORIGINALE'
-           LEFT JOIN V_SITU_DEPOT_VO v ON v.these_id = t.id
-
-         UNION ALL
-
-         --
-         -- ATTESTATIONS : franchie si données saisies
-         --
-         SELECT
-           t.id AS    these_id,
-           e.id AS    etape_id,
-           e.code,
-           e.ORDRE,
-           CASE WHEN v.attestation_id IS NULL
-             THEN 0
-           ELSE 1 END franchie,
-           CASE WHEN v.attestation_id IS NULL
-             THEN 0
-           ELSE 1 END resultat,
-           1          objectif
-         FROM these t
-           JOIN WF_ETAPE e ON e.code = 'ATTESTATIONS'
-           LEFT JOIN V_SITU_ATTESTATIONS v ON v.these_id = t.id
-
-         UNION ALL
-
-         --
-         -- AUTORISATION_DIFFUSION_THESE : franchie si données saisies
-         --
-         SELECT
-           t.id AS    these_id,
-           e.id AS    etape_id,
-           e.code,
-           e.ORDRE,
-           CASE WHEN v.diffusion_id IS NULL
-             THEN 0
-           ELSE 1 END franchie,
-           CASE WHEN v.diffusion_id IS NULL
-             THEN 0
-           ELSE 1 END resultat,
-           1          objectif
-         FROM these t
-           JOIN WF_ETAPE e ON e.code = 'AUTORISATION_DIFFUSION_THESE'
-           LEFT JOIN V_SITU_AUTORIS_DIFF_THESE v ON v.these_id = t.id
-
-         UNION ALL
-
-         --
-         -- SIGNALEMENT_THESE : franchie si données saisies
-         --
-         SELECT
-           t.id AS    these_id,
-           e.id AS    etape_id,
-           e.code,
-           e.ORDRE,
-           CASE WHEN v.description_id IS NULL
-             THEN 0
-           ELSE 1 END franchie,
-           CASE WHEN v.description_id IS NULL
-             THEN 0
-           ELSE 1 END resultat,
-           1          objectif
-         FROM these t
-           JOIN WF_ETAPE e ON e.code = 'SIGNALEMENT_THESE'
-           LEFT JOIN V_SITU_SIGNALEMENT_THESE v ON v.these_id = t.id
-
-         UNION ALL
-
-         --
-         -- ARCHIVABILITE_VERSION_ORIGINALE : franchie si l'archivabilité de la version originale a été testée
-         --
-         SELECT
-           t.id AS    these_id,
-           e.id AS    etape_id,
-           e.code,
-           e.ORDRE,
-           CASE WHEN v.THESE_ID IS NULL THEN 0 ELSE 1 END franchie,
-           --            CASE WHEN v.THESE_ID IS NULL THEN
-           --              0 -- test d'archivabilité inexistant
-           --            ELSE
-           --              CASE WHEN v.EST_VALIDE IS NULL THEN
-           --                1 -- test d'archivabilité existant mais résultat indéterminé (plantage)
-           --              ELSE
-           --                CASE WHEN v.EST_VALIDE = 1 THEN
-           --                  1 -- test d'archivabilité réussi
-           --                ELSE
-           --                  0 -- test d'archivabilité échoué
-           --                END
-           --              END
-           --            END franchie,
-           CASE WHEN v.EST_VALIDE IS NULL OR v.EST_VALIDE = 0 THEN 0 ELSE 1 END resultat,
-           1 objectif
-         FROM these t
-           JOIN WF_ETAPE e ON e.code = 'ARCHIVABILITE_VERSION_ORIGINALE'
-           LEFT JOIN V_SITU_ARCHIVAB_VO v ON v.these_id = t.id
-
-         UNION ALL
-
-         --
-         -- DEPOT_VERSION_ARCHIVAGE : franchie si version d'archivage déposée
-         --
-         SELECT
-           t.id AS    these_id,
-           e.id AS    etape_id,
-           e.code,
-           e.ORDRE,
-           CASE WHEN v.fichier_id IS NULL
-             THEN 0
-           ELSE 1 END franchie,
-           CASE WHEN v.fichier_id IS NULL
-             THEN 0
-           ELSE 1 END resultat,
-           1          objectif
-         FROM these t
-           JOIN WF_ETAPE e ON e.code = 'DEPOT_VERSION_ARCHIVAGE'
-           LEFT JOIN V_SITU_DEPOT_VA v ON v.these_id = t.id
-           LEFT JOIN fichier f ON f.id = v.fichier_id
-
-         UNION ALL
-
-         --
-         -- ARCHIVABILITE_VERSION_ARCHIVAGE : franchie si l'archivabilité de la version d'archivage a été testée
-         --
-         SELECT
-           t.id AS    these_id,
-           e.id AS    etape_id,
-           e.code,
-           e.ORDRE,
-           CASE WHEN v.EST_VALIDE IS NULL
-             THEN 0
-           ELSE 1 END franchie,
-           CASE WHEN v.EST_VALIDE IS NULL OR v.EST_VALIDE = 0
-             THEN 0
-           ELSE 1 END resultat,
-           1          objectif
-         FROM these t
-           JOIN WF_ETAPE e ON e.code = 'ARCHIVABILITE_VERSION_ARCHIVAGE'
-           LEFT JOIN V_SITU_ARCHIVAB_VA v ON v.these_id = t.id
-
-         UNION ALL
-
-         --
-         -- VERIFICATION_VERSION_ARCHIVAGE : franchie si vérification de la version originale effectuée (peu importe la réponse)
-         --
-         SELECT
-           t.id AS    these_id,
-           e.id AS    etape_id,
-           e.code,
-           e.ORDRE,
-           CASE WHEN v.EST_CONFORME IS NULL
-             THEN 0
-           ELSE 1 END franchie,
-           CASE WHEN v.EST_CONFORME IS NULL OR v.EST_CONFORME = 0
-             THEN 0
-           ELSE 1 END resultat,
-           1          objectif
-         FROM these t
-           JOIN WF_ETAPE e ON e.code = 'VERIFICATION_VERSION_ARCHIVAGE'
-           LEFT JOIN V_SITU_VERIF_VA v ON v.these_id = t.id
-
-         UNION ALL
-
-         --
-         -- RDV_BU_SAISIE_DOCTORANT : franchie si données doctorant saisies
-         --
-         SELECT
-           t.id AS                      these_id,
-           e.id AS                      etape_id,
-           e.code,
-           e.ORDRE,
-           coalesce(v.ok, 0)            franchie,
-           (CASE WHEN rdv.COORD_DOCTORANT IS NULL
-             THEN 0
-            ELSE 1 END +
-            CASE WHEN rdv.DISPO_DOCTORANT IS NULL
-              THEN 0
-            ELSE 1 END)                 resultat,
-           2                            objectif
-         FROM these t
-           JOIN WF_ETAPE e ON e.code = 'RDV_BU_SAISIE_DOCTORANT'
-           LEFT JOIN V_SITU_RDV_BU_SAISIE_DOCT v ON v.these_id = t.id
-           LEFT JOIN RDV_BU rdv ON rdv.THESE_ID = t.id
-
-         UNION ALL
-
-         --          --
-         --          -- RDV_BU_SAISIE_BU : franchie si données BU saisies
-         --          --
-         --          SELECT
-         --            t.id AS                                                                          these_id,
-         --            e.id AS                                                                          etape_id,
-         --            e.code,
-         --            e.ORDRE,
-         --            coalesce(v.ok, 0)                                                                franchie,
-         --            CASE WHEN rdv.MOTS_CLES_RAMEAU IS NULL THEN 0 ELSE 1 END +
-         --            coalesce(rdv.VERSION_ARCHIVABLE_FOURNIE, 0) +
-         --            coalesce(rdv.EXEMPL_PAPIER_FOURNI, 0) +
-         --            coalesce(rdv.CONVENTION_MEL_SIGNEE, 0)                                           resultat,
-         --            4                                                                                objectif
-         --          FROM these t
-         --            JOIN WF_ETAPE e ON e.code = 'RDV_BU_SAISIE_BU'
-         --            LEFT JOIN V_SITU_RDV_BU_SAISIE_BU v ON v.these_id = t.id
-         --            LEFT JOIN RDV_BU rdv ON rdv.THESE_ID = t.id
-         --
-         --       UNION ALL
-
-         --
-         -- RDV_BU_VALIDATION_BU : franchie si données BU saisies ET une validation BU existe
-         --
-         SELECT
-           t.id AS               these_id,
-           e.id AS               etape_id,
-           e.code,
-           e.ORDRE,
-           coalesce(vs.ok, 0) * coalesce(v.valide, 0) franchie,
-           coalesce(vs.ok, 0) + coalesce(v.valide, 0) resultat,
-           2 objectif
-         FROM these t
-           JOIN WF_ETAPE e ON e.code = 'RDV_BU_VALIDATION_BU'
-           LEFT JOIN V_SITU_RDV_BU_SAISIE_BU vs ON vs.these_id = t.id
-           LEFT JOIN V_SITU_RDV_BU_VALIDATION_BU v ON v.these_id = t.id
-
-         UNION ALL
-
-
-
-
-         --
-         -- DEPOT_VERSION_ORIGINALE_CORRIGEE : franchie si version originale corrigée déposée
-         --
-         SELECT
-           t.id AS    these_id,
-           e.id AS    etape_id,
-           e.code,
-           e.ORDRE,
-           CASE WHEN v.fichier_id IS NULL
-             THEN 0
-           ELSE 1 END franchie,
-           CASE WHEN v.fichier_id IS NULL
-             THEN 0
-           ELSE 1 END resultat,
-           1          objectif
-         FROM these t
-           JOIN WF_ETAPE e ON e.code = 'DEPOT_VERSION_ORIGINALE_CORRIGEE'
-           LEFT JOIN V_SITU_DEPOT_VOC v ON v.these_id = t.id
-
-         UNION ALL
-
-         --
-         -- ATTESTATIONS_VERSION_CORRIGEE : franchie si données saisies
-         --
-         SELECT
-           t.id AS these_id,
-           e.id AS etape_id,
-           e.code,
-           e.ORDRE,
-           CASE WHEN v.attestation_id IS NULL THEN 0 ELSE 1 END franchie,
-           CASE WHEN v.attestation_id IS NULL THEN 0 ELSE 1 END resultat,
-           1 objectif
-         FROM these t
-           JOIN WF_ETAPE e ON e.code = 'ATTESTATIONS_VERSION_CORRIGEE'
-           LEFT JOIN V_SITU_ATTESTATIONS_VOC v ON v.these_id = t.id
-
-         UNION ALL
-
-         --
-         -- AUTORISATION_DIFFUSION_THESE_VERSION_CORRIGEE : franchie si données saisies
-         --
-         SELECT
-           t.id AS these_id,
-           e.id AS etape_id,
-           e.code,
-           e.ORDRE,
-           CASE WHEN v.diffusion_id IS NULL THEN 0 ELSE 1 END franchie,
-           CASE WHEN v.diffusion_id IS NULL THEN 0 ELSE 1 END resultat,
-           1 objectif
-         FROM these t
-           JOIN WF_ETAPE e ON e.code = 'AUTORISATION_DIFFUSION_THESE_VERSION_CORRIGEE'
-           LEFT JOIN V_SITU_AUTORIS_DIFF_THESE_VOC v ON v.these_id = t.id
-
-         UNION ALL
-
-         --
-         -- ARCHIVABILITE_VERSION_ORIGINALE_CORRIGEE : franchie si l'archivabilité de la version originale corrigée a été testée
-         --
-         SELECT
-           t.id AS    these_id,
-           e.id AS    etape_id,
-           e.code,
-           e.ORDRE,
-           CASE WHEN v.THESE_ID IS NULL THEN 0 ELSE 1 END franchie,
-           CASE WHEN v.EST_VALIDE IS NULL OR v.EST_VALIDE = 0 THEN 0 ELSE 1 END resultat,
-           1 objectif
-         FROM these t
-           JOIN WF_ETAPE e ON e.code = 'ARCHIVABILITE_VERSION_ORIGINALE_CORRIGEE'
-           LEFT JOIN V_SITU_ARCHIVAB_VOC v ON v.these_id = t.id
-
-         UNION ALL
-
-         --
-         -- DEPOT_VERSION_ARCHIVAGE_CORRIGEE : franchie si version d'archivage corrigée déposée
-         --
-         SELECT
-           t.id AS    these_id,
-           e.id AS    etape_id,
-           e.code,
-           e.ORDRE,
-           CASE WHEN v.fichier_id IS NULL
-             THEN 0
-           ELSE 1 END franchie,
-           CASE WHEN v.fichier_id IS NULL
-             THEN 0
-           ELSE 1 END resultat,
-           1          objectif
-         FROM these t
-           JOIN WF_ETAPE e ON e.code = 'DEPOT_VERSION_ARCHIVAGE_CORRIGEE'
-           LEFT JOIN V_SITU_DEPOT_VAC v ON v.these_id = t.id
-           LEFT JOIN fichier f ON f.id = v.fichier_id
-
-         UNION ALL
-
-         --
-         -- ARCHIVABILITE_VERSION_ARCHIVAGE_CORRIGEE : franchie si la version d'archivage corrigée est archivable
-         --
-         SELECT
-           t.id AS    these_id,
-           e.id AS    etape_id,
-           e.code,
-           e.ORDRE,
-           CASE WHEN v.EST_VALIDE = 1 THEN 1 ELSE 0 END franchie,
-           CASE WHEN v.EST_VALIDE = 1 THEN 1 ELSE 0 END resultat,
-           1 objectif
-         FROM these t
-           JOIN WF_ETAPE e ON e.code = 'ARCHIVABILITE_VERSION_ARCHIVAGE_CORRIGEE'
-           LEFT JOIN V_SITU_ARCHIVAB_VAC v ON v.these_id = t.id
-
-         UNION ALL
-
-         --
-         -- VERIFICATION_VERSION_ARCHIVAGE_CORRIGEE : franchie si la version corrigée est certifiée conforme
-         --
-         SELECT
-           t.id AS    these_id,
-           e.id AS    etape_id,
-           e.code,
-           e.ORDRE,
-           CASE WHEN v.EST_CONFORME = 1 THEN 1 ELSE 0 END franchie,
-           CASE WHEN v.EST_CONFORME = 1 THEN 1 ELSE 0 END resultat,
-           1 objectif
-         FROM these t
-           JOIN WF_ETAPE e ON e.code = 'VERIFICATION_VERSION_ARCHIVAGE_CORRIGEE'
-           LEFT JOIN V_SITU_VERIF_VAC v ON v.these_id = t.id
-
-         UNION ALL
-
-         --
-         -- DEPOT_VERSION_CORRIGEE_VALIDATION_DOCTORANT : franchie si la validation attendue existe
-         --
-         SELECT
-           t.id AS               these_id,
-           e.id AS               etape_id,
-           e.code,
-           e.ORDRE,
-           coalesce(v.valide, 0) franchie,
-           coalesce(v.valide, 0) resultat,
-           1 objectif
-         FROM these t
-           JOIN WF_ETAPE e ON e.code = 'DEPOT_VERSION_CORRIGEE_VALIDATION_DOCTORANT'
-           LEFT JOIN V_SITU_DEPOT_VC_VALID_DOCT v ON v.these_id = t.id
-
-         UNION ALL
-
-         --
-         -- DEPOT_VERSION_CORRIGEE_VALIDATION_DIRECTEUR : franchie si toutes les validations attendues existent
-         --
-         select * from (
-           WITH tmp AS (
-               SELECT
-                 these_id,
-                 sum(valide)   AS resultat,
-                 count(valide) AS objectif
-               FROM V_SITU_DEPOT_VC_VALID_DIR
-               GROUP BY these_id
-           )
-           SELECT
-             t.id AS                 these_id,
-             e.id AS                 etape_id,
-             e.code,
-             e.ORDRE,
-             coalesce(v.resultat, 0) franchie,
-             coalesce(v.resultat, 0) resultat,
-             v.objectif
-           FROM these t
-             JOIN WF_ETAPE e ON e.code = 'DEPOT_VERSION_CORRIGEE_VALIDATION_DIRECTEUR'
-             LEFT JOIN tmp v ON v.these_id = t.id
-         )
-
-         UNION ALL
-         --
-         -- REMISE_EXEMPLAIRE_PAPIER_THESE_CORRIGEE  : franchie pas pour le moment
-         --
-
-         select * from (
-           WITH tmp_last AS (
-               SELECT
-                 THESE_ID as these_id,
-                 count(THESE_ID) AS resultat
-               FROM V_SITU_VERSION_PAPIER_CORRIGEE
-               GROUP BY THESE_ID
-           )
-           SELECT
-             t.id AS                 these_id,
-             e.id AS                 etape_id,
-             e.code,
-             e.ORDRE,
-             coalesce(tl.resultat, 0) franchie,
-             0,
-             1
-           FROM these t
-             JOIN WF_ETAPE e ON e.code = 'REMISE_EXEMPLAIRE_PAPIER_THESE_CORRIGEE'
-             LEFT JOIN tmp_last tl ON tl.these_id = t.id
-         )
-         --          e.code,
-         --          e.ORDRE,
-         --          0 franchie,
-         --          0 resultat,
-         --          1 objectif
-         --        FROM V_SITU_VERSION_PAPIER_CORRIGEE
-         --          JOIN WF_ETAPE e ON e.code = 'REMISE_EXEMPLAIRE_PAPIER_THESE_CORRIGEE'
-
-
-
-         -- LEFT JOIN V_SITU_DEPOT_VO v ON v.these_id = t.id
-
-
-
-       ) t
-    JOIN V_WF_ETAPE_PERTIN v ON t.these_id = v.these_id AND t.etape_id = v.etape_id
+create or replace PACKAGE BODY "APP_IMPORT"
+IS
+
+  PROCEDURE REFRESH_MV( mview_name VARCHAR2 ) IS
+    BEGIN
+      DBMS_MVIEW.REFRESH(mview_name, 'C');
+      EXCEPTION WHEN OTHERS THEN
+      UNICAEN_IMPORT.SYNC_LOG( SQLERRM, mview_name );
+    END;
+
+  PROCEDURE SYNC_TABLES
+  IS
+    BEGIN
+      -- mise à jour des tables à partir des vues sources
+      -- NB: l'ordre importe !
+      UNICAEN_IMPORT.MAJ_INDIVIDU();
+      UNICAEN_IMPORT.MAJ_DOCTORANT();
+      UNICAEN_IMPORT.MAJ_THESE();
+      UNICAEN_IMPORT.MAJ_ROLE();
+      UNICAEN_IMPORT.MAJ_ACTEUR();
+      UNICAEN_IMPORT.MAJ_VARIABLE();
+      REFRESH_MV('MV_RECHERCHE_THESE'); -- NB: à faire en dernier
+    END;
+
+  --
+  -- Recherche des changements de type UPDATE concernant la colonne de table observée et
+  -- enregistrement de ces changements dans une table.
+  --
+  PROCEDURE STORE_UPDATE_OBSERV_RESULT(observ IMPORT_OBSERV%ROWTYPE)
+  IS
+    u_col_name VARCHAR2(50) := 'U_' || observ.column_name;
+    where_to_value CLOB := 'v.' || observ.column_name || case when observ.to_value is null then ' is null' else ' = ''' || observ.to_value || '''' end;
+    i_query clob := 'select v.source_code, t.' || observ.column_name || ' || ''>'' || v.' || observ.column_name || ' detail ' ||
+                    'from v_diff_' || observ.table_name || ' v join ' || observ.table_name || ' t on t.source_code = v.source_code where ' || u_col_name || ' = 1 and ' || where_to_value || ' order by v.source_code';
+    TYPE r_cursor is REF CURSOR;
+    rc r_cursor;
+    l_id CLOB;
+    l_detail CLOB;
+    BEGIN
+      OPEN rc FOR i_query;
+      LOOP
+        FETCH rc INTO l_id, l_detail;
+        EXIT WHEN rc%NOTFOUND;
+        --DBMS_OUTPUT.PUT_LINE(l_id); DBMS_OUTPUT.PUT_LINE(l_detail);
+        insert into IMPORT_OBSERV_RESULT(ID, IMPORT_OBSERV_ID, DATE_CREATION, SOURCE_CODE, RESULTAT) values
+          (IMPORT_OBSERV_RESULT_ID_SEQ.nextval, observ.id, sysdate, l_id, l_detail);
+      END LOOP;
+    END;
+
+
+  PROCEDURE STORE_OBSERV_RESULTS
+  IS
+    BEGIN
+      for observ in (select * from IMPORT_OBSERV where enabled = 1) loop
+        if (observ.operation = 'UPDATE') then
+          STORE_UPDATE_OBSERV_RESULT(observ);
+        end if;
+      end loop;
+    END;
+
+
+  PROCEDURE SYNCHRONISATION
+  IS
+    BEGIN
+--       STORE_OBSERV_RESULTS;
+      SYNC_TABLES;
+    END;
+
+END APP_IMPORT;
 /
 

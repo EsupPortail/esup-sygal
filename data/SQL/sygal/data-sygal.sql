@@ -7,8 +7,13 @@
 
 ---------------------- SOURCE ---------------------
 
-INSERT INTO SOURCE (ID, CODE, LIBELLE, IMPORTABLE) VALUES (1, 'UCN_apogee', 'Apogée Université de Caen Normandie', 1);
-INSERT INTO SOURCE (ID, CODE, LIBELLE, IMPORTABLE) VALUES (2, 'SYGAL',      'SYGAL',                                 0);
+INSERT INTO SOURCE (ID, CODE, LIBELLE, IMPORTABLE)
+with ds(id, code_etab, code_source, lib, importable) as (
+    select 1, 'UCN',   'apogee', 'Apogée UCN', 1 from dual union all
+    select 2, 'COMUE', 'SYGAL',  'SYGAL COMUE', 1 from dual
+)
+select ds.id, ds.code_etab||'::'||ds.code_source, ds.lib, ds.importable
+from ds;
 
 
 ---------------------- ETABLISSEMENT ---------------------
@@ -56,13 +61,13 @@ SELECT
   etab.id,
   ds.LIBELLE,
   ds.CODE,
-  GEN_SOURCE_CODE(etab.id, ds.CODE),
+  etab.CODE||'::'||ds.CODE,
   src.id,
   u.id,
   u.id
 FROM ds
   join ETABLISSEMENT etab on etab.CODE <> 'COMUE'
-  join SOURCE src on src.CODE = 'SYGAL'
+  join SOURCE src on src.CODE = GEN_SOURCE_CODE('COMUE', 'SYGAL')
   join UTILISATEUR u on u.USERNAME = 'sygal-app'
 ;
 
