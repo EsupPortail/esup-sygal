@@ -2,6 +2,7 @@
 
 namespace Application\Entity\Db;
 
+use Application\Constants;
 use Application\Filter\NomCompletFormatter;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
@@ -18,27 +19,47 @@ class Individu implements HistoriqueAwareInterface
     /**
      * @var string
      */
-    private $nomUsuel;
+    protected $civilite;
 
     /**
      * @var string
      */
-    private $prenom;
+    protected $nationalite;
+
+    /**
+     * @var \DateTime
+     */
+    protected $dateNaissance;
 
     /**
      * @var string
      */
-    private $civilite;
+    protected $email;
 
     /**
      * @var string
      */
-    private $email;
+    protected $nomPatronymique;
 
     /**
      * @var string
      */
-    private $tel;
+    protected $nomUsuel;
+
+    /**
+     * @var string
+     */
+    protected $prenom1;
+
+    /**
+     * @var string
+     */
+    protected $prenom2;
+
+    /**
+     * @var string
+     */
+    protected $prenom3;
 
     /**
      * @var string
@@ -51,13 +72,94 @@ class Individu implements HistoriqueAwareInterface
     private $id;
 
     /**
+     * Set dateNaissance
+     *
+     * @param \DateTime $dateNaissance
+     *
+     * @return self
+     */
+    public function setDateNaissance($dateNaissance)
+    {
+        $this->dateNaissance = $dateNaissance;
+
+        return $this;
+    }
+
+    /**
+     * Get dateNaissance
+     *
+     * @return \DateTime
+     */
+    public function getDateNaissance()
+    {
+        return $this->dateNaissance;
+    }
+
+    /**
      * @return string
      */
-    function __toString()
+    public function getNationalite()
     {
-        $f = new NomCompletFormatter(true, true);
+        return $this->nationalite;
+    }
 
-        return $f->filter($this);
+    /**
+     * @param string $nationalite
+     * @return Individu
+     */
+    public function setNationalite($nationalite)
+    {
+        $this->nationalite = $nationalite;
+
+        return $this;
+    }
+
+    /**
+     * Set email
+     *
+     * @param string $email
+     *
+     * @return self
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * Get email
+     *
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * Set nomPatronymique
+     *
+     * @param string $nomPatronymique
+     *
+     * @return self
+     */
+    public function setNomPatronymique($nomPatronymique)
+    {
+        $this->nomPatronymique = $nomPatronymique;
+
+        return $this;
+    }
+
+    /**
+     * Get nomPatronymique
+     *
+     * @return string
+     */
+    public function getNomPatronymique()
+    {
+        return $this->nomPatronymique;
     }
 
     /**
@@ -65,7 +167,7 @@ class Individu implements HistoriqueAwareInterface
      *
      * @param string $nomUsuel
      *
-     * @return Individu
+     * @return self
      */
     public function setNomUsuel($nomUsuel)
     {
@@ -85,27 +187,97 @@ class Individu implements HistoriqueAwareInterface
     }
 
     /**
-     * Set prenom
-     *
-     * @param string $prenom
-     *
+     * @return string
+     */
+    public function getPrenom1()
+    {
+        return $this->prenom1;
+    }
+
+    /**
+     * @param string $prenom1
      * @return Individu
      */
-    public function setPrenom($prenom)
+    public function setPrenom1($prenom1)
     {
-        $this->prenom = $prenom;
+        $this->prenom1 = $prenom1;
 
         return $this;
     }
 
     /**
+     * @return string
+     */
+    public function getPrenom2()
+    {
+        return $this->prenom2;
+    }
+
+    /**
+     * @param string $prenom2
+     * @return Individu
+     */
+    public function setPrenom2($prenom2)
+    {
+        $this->prenom2 = $prenom2;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPrenom3()
+    {
+        return $this->prenom3;
+    }
+
+    /**
+     * @param string $prenom3
+     * @return Individu
+     */
+    public function setPrenom3($prenom3)
+    {
+        $this->prenom3 = $prenom3;
+
+        return $this;
+    }
+
+    /**
+     * Set prenom
+     *
+     * @param string $prenom
+     *
+     * @return self
+     */
+    public function setPrenom($prenom)
+    {
+        return $this->setPrenom1($prenom);
+    }
+
+    /**
      * Get prenom
+     *
+     * @param bool $tous
+     * @return string
+     */
+    public function getPrenom($tous = false)
+    {
+        return $tous ? $this->getPrenoms() : $this->getPrenom1();
+    }
+
+    /**
+     * Get prenoms
      *
      * @return string
      */
-    public function getPrenom()
+    public function getPrenoms()
     {
-        return $this->prenom;
+        return join(' ', array_filter([
+            $this->getPrenom1(),
+            $this->getPrenom2(),
+            $this->getPrenom3(),
+        ]));
     }
 
     /**
@@ -143,51 +315,50 @@ class Individu implements HistoriqueAwareInterface
     }
 
     /**
-     * Set email
+     * Get estUneFemme
      *
-     * @param string $email
-     *
-     * @return Individu
+     * @return bool
      */
-    public function setEmail($email)
+    public function estUneFemme()
     {
-        $this->email = $email;
-
-        return $this;
+        return 'Mme' === $this->getCivilite();
     }
 
     /**
-     * Get email
+     * Retourne la représentation littérale de cet objet.
      *
      * @return string
      */
-    public function getEmail()
+    public function __toString()
     {
-        return $this->email;
+        $f = new NomCompletFormatter(true, true);
+
+        return $f->filter($this);
     }
 
     /**
-     * Set tel
+     * Get nomUsuel
      *
-     * @param string $tel
-     *
-     * @return Individu
+     * @param bool $avecCivilite
+     * @param bool $avecNomPatro
+     * @param bool $prenoms
+     * @return string
      */
-    public function setTel($tel)
+    public function getNomComplet($avecCivilite = false, $avecNomPatro = false, $prenoms = false)
     {
-        $this->tel = $tel;
+        $f = new NomCompletFormatter(true, $avecCivilite, $avecNomPatro, false, $prenoms);
 
-        return $this;
+        return $f->filter($this);
     }
 
     /**
-     * Get tel
+     * Get dateNaissance
      *
      * @return string
      */
-    public function getTel()
+    public function getDateNaissanceToString()
     {
-        return $this->tel;
+        return $this->dateNaissance->format(Constants::DATE_FORMAT);
     }
 
     /**
@@ -224,11 +395,17 @@ class Individu implements HistoriqueAwareInterface
         return $this->id;
     }
 
-    public function getNomCivil($civilite=true) {
+    /**
+     * @param bool $civilite
+     * @return string
+     */
+    public function getNomCivil($civilite = true)
+    {
         $text = "";
-        if ($civilite) $text .= $this->getCivilite()." ";
-        $text .= ucwords(strtolower($this->getPrenom())," -")." ";
+        if ($civilite) $text .= $this->getCivilite() . " ";
+        $text .= ucwords(strtolower($this->getPrenom()), " -") . " ";
         $text .= strtoupper($this->getNomUsuel());
+
         return $text;
     }
 }

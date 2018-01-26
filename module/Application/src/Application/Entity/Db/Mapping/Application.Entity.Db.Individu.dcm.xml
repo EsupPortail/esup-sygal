@@ -7,12 +7,15 @@
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <field name="nomUsuel" type="string" column="NOM_USUEL" length="60" nullable="false"/>
-        <field name="prenom" type="string" column="PRENOM" length="60" nullable="false"/>
         <field name="civilite" type="string" column="CIVILITE" length="5" nullable="false"/>
+        <field name="dateNaissance" type="datetime" column="DATE_NAISSANCE" nullable="false"/>
+        <field name="nationalite" type="string" column="NATIONALITE" nullable="true"/>
         <field name="email" type="string" column="EMAIL" length="255" nullable="true"/>
-        <field name="tel" type="string" column="TEL" length="20" nullable="true"/>
-        <!--<field name="libEtab" type="string" column="LIB_ETAB" length="100" nullable="true"/>-->
+        <field name="nomPatronymique" type="string" column="NOM_PATRONYMIQUE" length="60" nullable="false"/>
+        <field name="nomUsuel" type="string" column="NOM_USUEL" length="60" nullable="false"/>
+        <field name="prenom1" type="string" column="PRENOM1" length="60" nullable="false"/>
+        <field name="prenom2" type="string" column="PRENOM2" length="60" nullable="false"/>
+        <field name="prenom3" type="string" column="PRENOM3" length="60" nullable="false"/>
 
         <field name="sourceCode" type="string" column="SOURCE_CODE" length="100" nullable="true"/>
 

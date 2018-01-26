@@ -51,7 +51,7 @@
 
         <many-to-one field="doctorant" target-entity="Application\Entity\Db\Doctorant">
             <join-columns>
-                <join-column name="THESARD_ID" referenced-column-name="ID"/>
+                <join-column name="DOCTORANT_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
 

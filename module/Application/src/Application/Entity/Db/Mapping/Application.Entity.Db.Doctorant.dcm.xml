@@ -2,25 +2,22 @@
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-    <entity name="Application\Entity\Db\Doctorant" table="THESARD">
+    <entity name="Application\Entity\Db\Doctorant" table="DOCTORANT">
         <id name="id" type="integer" column="ID">
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <field name="civilite" type="string" column="CIVILITE" length="5" nullable="false"/>
-        <field name="dateNaissance" type="datetime" column="DATE_NAISSANCE" nullable="false"/>
-        <field name="nationalite" type="string" column="NATIONALITE" nullable="true"/>
-        <field name="email" type="string" column="EMAIL" length="255" nullable="true"/>
-        <field name="nomPatronymique" type="string" column="NOM_PATRONYMIQUE" length="60" nullable="false"/>
-        <field name="nomUsuel" type="string" column="NOM_USUEL" length="60" nullable="false"/>
-        <field name="prenom" type="string" column="PRENOM" length="60" nullable="false"/>
-        <field name="prenoms" type="string" column="PRENOMS" length="100" nullable="false"/>
-        <field name="tel" type="string" column="TEL" length="20" nullable="true"/>
         <field name="sourceCode" type="string" column="SOURCE_CODE" length="100" nullable="true"/>
 
         <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
         <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
         <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
+
+        <many-to-one field="individu" target-entity="Application\Entity\Db\Individu">
+            <join-columns>
+                <join-column name="INDIVIDU_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
 
         <one-to-many field="complements" target-entity="Application\Entity\Db\DoctorantCompl" mapped-by="doctorant"/>
 
@@ -46,15 +43,5 @@
             </join-columns>
         </many-to-one>
 
-        <!--<many-to-many field="adresses" target-entity="Application\Entity\Db\Adresse">-->
-            <!--<join-table name="ADRESSE_THESARD">-->
-                <!--<join-columns>-->
-                    <!--<join-column name="THESARD_ID" referenced-column-name="ID"/>-->
-                <!--</join-columns>-->
-                <!--<inverse-join-columns>-->
-                    <!--<join-column name="ADRESSE_ID" referenced-column-name="ID"/>-->
-                <!--</inverse-join-columns>-->
-            <!--</join-table>-->
-        <!--</many-to-many>-->
     </entity>
 </doctrine-mapping>

@@ -2,16 +2,13 @@
 
 namespace Application\Entity\Db;
 
-use Application\Constants;
 use Application\Entity\Db\Interfaces\DoctorantInterface;
-use Application\Filter\NomCompletFormatter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use LogicException;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
-use Zend\Form\Annotation;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 
 /**
@@ -30,52 +27,12 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
     /**
      * @var string
      */
-    protected $civilite;
-
-    /**
-     * @var string
-     */
-    protected $nationalite;
-
-    /**
-     * @var \DateTime
-     */
-    protected $dateNaissance;
-
-    /**
-     * @var string
-     */
-    protected $email;
-
-    /**
-     * @var string
-     */
-    protected $nomPatronymique;
-
-    /**
-     * @var string
-     */
-    protected $nomUsuel;
-
-    /**
-     * @var string
-     */
-    protected $prenom;
-
-    /**
-     * @var string
-     */
-    protected $prenoms;
-
-    /**
-     * @var string
-     */
     protected $sourceCode;
 
     /**
-     * @var string
+     * @var Individu
      */
-    protected $tel;
+    private $individu;
 
     /**
      * @var Collection
@@ -89,170 +46,6 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
     public function __construct()
     {
         $this->complements = new ArrayCollection();
-    }
-
-    /**
-     * Set dateNaissance
-     *
-     * @param \DateTime $dateNaissance
-     *
-     * @return self
-     */
-    public function setDateNaissance($dateNaissance)
-    {
-        $this->dateNaissance = $dateNaissance;
-
-        return $this;
-    }
-
-    /**
-     * Get dateNaissance
-     *
-     * @return \DateTime
-     */
-    public function getDateNaissance()
-    {
-        return $this->dateNaissance;
-    }
-
-    /**
-     * @return string
-     */
-    public function getNationalite()
-    {
-        return $this->nationalite;
-    }
-
-    /**
-     * @param string $nationalite
-     * @return Doctorant
-     */
-    public function setNationalite($nationalite)
-    {
-        $this->nationalite = $nationalite;
-
-        return $this;
-    }
-
-    /**
-     * Set email
-     *
-     * @param string $email
-     *
-     * @return self
-     */
-    public function setEmail($email)
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    /**
-     * Get email
-     *
-     * @return string
-     */
-    public function getEmail()
-    {
-        return $this->email;
-    }
-
-    /**
-     * Set nomPatronymique
-     *
-     * @param string $nomPatronymique
-     *
-     * @return self
-     */
-    public function setNomPatronymique($nomPatronymique)
-    {
-        $this->nomPatronymique = $nomPatronymique;
-
-        return $this;
-    }
-
-    /**
-     * Get nomPatronymique
-     *
-     * @return string
-     */
-    public function getNomPatronymique()
-    {
-        return $this->nomPatronymique;
-    }
-
-    /**
-     * Set nomUsuel
-     *
-     * @param string $nomUsuel
-     *
-     * @return self
-     */
-    public function setNomUsuel($nomUsuel)
-    {
-        $this->nomUsuel = $nomUsuel;
-
-        return $this;
-    }
-
-    /**
-     * Get nomUsuel
-     *
-     * @return string
-     */
-    public function getNomUsuel()
-    {
-        return $this->nomUsuel;
-    }
-
-    /**
-     * Set prenom
-     *
-     * @param string $prenom
-     *
-     * @return self
-     */
-    public function setPrenom($prenom)
-    {
-        $this->prenom = $prenom;
-
-        return $this;
-    }
-
-    /**
-     * Get prenom
-     *
-     * @param bool $tous
-     * @return string
-     */
-    public function getPrenom($tous = false)
-    {
-        return $tous ? $this->prenoms : $this->prenom;
-    }
-
-    /**
-     * Get prenoms
-     *
-     * @return string
-     */
-    public function getPrenoms()
-    {
-        return $this->prenoms;
-    }
-
-    /**
-     * Set prenoms
-     *
-     * @param string $prenoms
-     *
-     * @return self
-     */
-    public function setPrenoms($prenoms)
-    {
-        $this->prenoms = $prenoms;
-
-        return $this;
     }
 
     /**
@@ -280,30 +73,6 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
     }
 
     /**
-     * Set tel
-     *
-     * @param string $tel
-     *
-     * @return self
-     */
-    public function setTel($tel)
-    {
-        $this->tel = $tel;
-
-        return $this;
-    }
-
-    /**
-     * Get tel
-     *
-     * @return string
-     */
-    public function getTel()
-    {
-        return $this->tel;
-    }
-
-    /**
      * Get id
      *
      * @return integer
@@ -314,15 +83,179 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
     }
 
     /**
+     * Set dateNaissance
+     *
+     * @param \DateTime $dateNaissance
+     *
+     * @return self
+     * @deprecated Passe par getIndividu() toi-même !
+     */
+    public function setDateNaissance($dateNaissance)
+    {
+        $this->getIndividu()->setDateNaissance($dateNaissance);
+
+        return $this;
+    }
+
+    /**
+     * Get dateNaissance
+     *
+     * @return \DateTime
+     * @deprecated Passe par getIndividu() toi-même !
+     */
+    public function getDateNaissance()
+    {
+        return $this->getIndividu()->getDateNaissance();
+    }
+
+    /**
+     * @return string
+     * @deprecated Passe par getIndividu() toi-même !
+     */
+    public function getNationalite()
+    {
+        return $this->getIndividu()->getNationalite();
+    }
+
+    /**
+     * @param string $nationalite
+     * @return Doctorant
+     * @deprecated Passe par getIndividu() toi-même !
+     */
+    public function setNationalite($nationalite)
+    {
+        $this->getIndividu()->setNationalite($nationalite);
+
+        return $this;
+    }
+
+    /**
+     * Set email
+     *
+     * @param string $email
+     *
+     * @return self
+     * @deprecated Passe par getIndividu() toi-même !
+     */
+    public function setEmail($email)
+    {
+        $this->getIndividu()->setEmail($email);
+
+        return $this;
+    }
+
+    /**
+     * Get email
+     *
+     * @return string
+     * @deprecated Passe par getIndividu() toi-même !
+     */
+    public function getEmail()
+    {
+        return $this->getIndividu()->getEmail();
+    }
+
+    /**
+     * Set nomPatronymique
+     *
+     * @param string $nomPatronymique
+     *
+     * @return self
+     * @deprecated Passe par getIndividu() toi-même !
+     */
+    public function setNomPatronymique($nomPatronymique)
+    {
+        $this->getIndividu()->setNomPatronymique($nomPatronymique);
+
+        return $this;
+    }
+
+    /**
+     * Get nomPatronymique
+     *
+     * @return string
+     * @deprecated Passe par getIndividu() toi-même !
+     */
+    public function getNomPatronymique()
+    {
+        return $this->getIndividu()->getNomPatronymique();
+    }
+
+    /**
+     * Set nomUsuel
+     *
+     * @param string $nomUsuel
+     *
+     * @return self
+     * @deprecated Passe par getIndividu() toi-même !
+     */
+    public function setNomUsuel($nomUsuel)
+    {
+        $this->getIndividu()->setNomUsuel($nomUsuel);
+
+        return $this;
+    }
+
+    /**
+     * Get nomUsuel
+     *
+     * @return string
+     * @deprecated Passe par getIndividu() toi-même !
+     */
+    public function getNomUsuel()
+    {
+        return $this->getIndividu()->getNomUsuel();
+    }
+
+    /**
+     * Set prenom
+     *
+     * @param string $prenom
+     *
+     * @return self
+     * @deprecated Passe par getIndividu() toi-même !
+     */
+    public function setPrenom($prenom)
+    {
+        $this->getIndividu()->setPrenom($prenom);
+
+        return $this;
+    }
+
+    /**
+     * Get prenom
+     *
+     * @param bool $tous
+     * @return string
+     * @deprecated Passe par getIndividu() toi-même !
+     */
+    public function getPrenom($tous = false)
+    {
+        return $tous ? $this->getIndividu()->getPrenoms() : $this->getIndividu()->getPrenom();
+    }
+
+    /**
+     * Get prenoms
+     *
+     * @return string
+     * @deprecated Passe par getIndividu() toi-même !
+     */
+    public function getPrenoms()
+    {
+        return $this->getIndividu()->getPrenoms();
+    }
+
+    /**
      * Set civilite
      *
      * @param string $civilite
      *
      * @return self
+     * @deprecated Passe par getIndividu() toi-même !
      */
     public function setCivilite($civilite)
     {
-        $this->civilite = $civilite;
+        $this->getIndividu()->setCivilite($civilite);
 
         return $this;
     }
@@ -331,30 +264,33 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
      * Get civilite
      *
      * @return string
+     * @deprecated Passe par getIndividu() toi-même !
      */
     public function getCivilite()
     {
-        return $this->civilite;
+        return $this->getIndividu()->getCivilite();
     }
 
     /**
      * Get civilite
      *
      * @return string
+     * @deprecated Passe par getIndividu() toi-même !
      */
     public function getCiviliteToString()
     {
-        return $this->getCivilite();
+        return $this->getIndividu()->getCiviliteToString();
     }
 
     /**
      * Get estUneFemme
      *
      * @return bool
+     * @deprecated Passe par getIndividu() toi-même !
      */
     public function estUneFemme()
     {
-        return 'Mme' === $this->getCivilite();
+        return $this->getIndividu()->estUneFemme();
     }
 
     /**
@@ -364,9 +300,7 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
      */
     public function __toString()
     {
-        $f = new NomCompletFormatter(true, true);
-
-        return $f->filter($this);
+        return $this->getIndividu()->__toString();
     }
 
     /**
@@ -376,22 +310,41 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
      * @param bool $avecNomPatro
      * @param bool $prenoms
      * @return string
+     * @deprecated Passe par getIndividu() toi-même !
      */
     public function getNomComplet($avecCivilite = false, $avecNomPatro = false, $prenoms = false)
     {
-        $f = new NomCompletFormatter(true, $avecCivilite, $avecNomPatro, false, $prenoms);
-
-        return $f->filter($this);
+        return $this->getIndividu()->getNomComplet($avecCivilite, $avecNomPatro, $prenoms);
     }
 
     /**
      * Get dateNaissance
      *
      * @return string
+     * @deprecated Passe par getIndividu() toi-même !
      */
     public function getDateNaissanceToString()
     {
-        return $this->dateNaissance->format(Constants::DATE_FORMAT);
+        return $this->getIndividu()->getDateNaissanceToString();
+    }
+
+    /**
+     * @return Individu
+     */
+    public function getIndividu()
+    {
+        return $this->individu;
+    }
+
+    /**
+     * @param Individu $individu
+     * @return Doctorant
+     */
+    public function setIndividu($individu)
+    {
+        $this->individu = $individu;
+
+        return $this;
     }
 
     /**
@@ -426,7 +379,7 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
      */
     public function getPersopass()
     {
-        if (! ($complement = $this->getComplement())) {
+        if (!($complement = $this->getComplement())) {
             return null;
         }
 
@@ -440,7 +393,7 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
      */
     public function getEmailPro()
     {
-        if (! ($complement = $this->getComplement())) {
+        if (!($complement = $this->getComplement())) {
             return null;
         }
 

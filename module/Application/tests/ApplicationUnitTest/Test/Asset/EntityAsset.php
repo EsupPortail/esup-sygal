@@ -103,7 +103,6 @@ class EntityAsset
         $e->setNomPatronymique(null);
         $e->setNomUsuel('Hochon');
         $e->setPrenom('Paul');
-        $e->setPrenoms('Paul Antoine');
         $e->setTel(null);
         $e->setCivilite('M.');
 

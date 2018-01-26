@@ -16,7 +16,7 @@ use Doctrine\ORM\Query\SqlWalker;
  * $qb->andWhere("1 = atteignable(e, t)")
  * </pre>
  * 
- * En SQL, génère l'appel à la fonction Oracle SODOCT_WORKFLOW.ATTEIGNABLE().
+ * En SQL, génère l'appel à la fonction Oracle APP_WORKFLOW.ATTEIGNABLE().
  */
 class Atteignable extends FunctionNode
 {
@@ -57,7 +57,7 @@ class Atteignable extends FunctionNode
         $expr1->field = 'id';
         $expr2->field = 'id';
         
-        $sql = sprintf('SODOCT_WORKFLOW.ATTEIGNABLE(%s, %s)',
+        $sql = sprintf('APP_WORKFLOW.ATTEIGNABLE(%s, %s)',
             $expr1->dispatch($sqlWalker),
             $expr2->dispatch($sqlWalker)
         );

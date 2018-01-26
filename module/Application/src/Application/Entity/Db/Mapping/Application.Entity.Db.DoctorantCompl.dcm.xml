@@ -2,7 +2,7 @@
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-    <entity name="Application\Entity\Db\DoctorantCompl" table="THESARD_COMPL">
+    <entity name="Application\Entity\Db\DoctorantCompl" table="DOCTORANT_COMPL">
         <id name="id" type="integer" column="ID">
             <generator strategy="SEQUENCE"/>
         </id>
@@ -16,7 +16,7 @@
 
         <many-to-one field="doctorant" target-entity="Application\Entity\Db\Doctorant">
             <join-columns>
-                <join-column name="THESARD_ID" referenced-column-name="ID"/>
+                <join-column name="DOCTORANT_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
 
