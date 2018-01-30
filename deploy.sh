@@ -25,10 +25,12 @@
 #   -w|--www  : chemin absolu du répertoire www sur le serveur ("/var/www" par exemple)
 #
 # Arguments facultatifs :
+#   include-local-config
 #   -N : valeur de N pour Conservation des N dernières versions déployées seulement (5 par défaut)
 
 ################################################################################################################################
 
+excludeLocalConfig="--exclude config/autoload/*local.php --exlude public/.htaccess"
 N=5
 
 # Nom du répertoire de l'appli : c'est le nom du répertoire courant sans le chemin.
@@ -36,7 +38,7 @@ N=5
 name=${PWD##*/}
 
 # Execute getopt
-ARGS=`getopt -o "h:w:N:" -l "host:,www:,N:" -n "getopt.sh" -- "$@"`
+ARGS=`getopt -o "h:w:N:" -l "host:,www:,N:,include-local-config" -n "getopt.sh" -- "$@"`
 # Bad arguments
 if [ $? -ne 0 ];
 then
@@ -62,6 +64,11 @@ do
         www=$2
       fi
       shift 2;;
+
+    --include-local-config)
+    #---------------
+      excludeLocalConfig=""
+      shift 1;;
 
     -N)
     #---------------
@@ -129,7 +136,7 @@ echo -e ""
 echo -e "> Synchronisation du répertoire courant avec \e[4m$host:$tmpdir\e[24m ..."
 echo -e "  (fichier des exclusions: ./deploy-ignore.txt)"
 echo -ne "\e[0m"
-rsync -az --perms --delete --exclude-from "./deploy-ignore.txt" -e ssh . "$host:$tmpdir"
+rsync -az --perms --delete $excludeLocalConfig --exclude-from "./deploy-ignore.txt" -e ssh . "$host:$tmpdir"
 
 ### Stop si erreur.
 if [ $? -ne 0 ]; then
@@ -161,33 +168,35 @@ cmd="rm $versionsdir/latest ; ln -sf $destdir $versionsdir/latest"
 ssh "$host" "$cmd"
 
 
-### Reprise des fichiers de config locaux de la version mise en ligne.
-echo -ne "\e[34m"
-echo -e ""
-echo -e "> Reprise des fichiers de config \e[4m$www/$name/config/autoload/*local.php\e[24m ..."
-echo -e "\e[0m"
-cmd="cp -v --backup=numbered $www/$name/config/autoload/*local.php $destdir/config/autoload/"
-ssh "$host" "$cmd"
+if [ "$excludeLocalConfig" ]; then
+    ### Reprise des fichiers de config locaux de la version mise en ligne.
+    echo -ne "\e[34m"
+    echo -e ""
+    echo -e "> Reprise des fichiers de config \e[4m$www/$name/config/autoload/*local.php\e[24m ..."
+    echo -e "\e[0m"
+    cmd="cp -v --backup=numbered $www/$name/config/autoload/*local.php $destdir/config/autoload/"
+    ssh "$host" "$cmd"
 
-### Avertissement si erreur.
-if [ $? -ne 0 ]; then
-  echo -e ""
-  echo -e "\e[95mProblème rencontré lors de la reprise des fichiers de config !\e[0m"
-fi
+    ### Avertissement si erreur.
+    if [ $? -ne 0 ]; then
+      echo -e ""
+      echo -e "\e[95mProblème rencontré lors de la reprise des fichiers de config !\e[0m"
+    fi
 
 
-### Reprise du .htaccess de la version mise en ligne.
-echo -ne "\e[34m"
-echo -e ""
-echo -e "> Reprise du fichier \e[4m$www/$name/public/.htaccess\e[24m ..."
-echo -e "\e[0m"
-cmd="cp -v $www/$name/public/.htaccess $destdir/public/.htaccess"
-ssh "$host" "$cmd"
+    ### Reprise du .htaccess de la version mise en ligne.
+    echo -ne "\e[34m"
+    echo -e ""
+    echo -e "> Reprise du fichier \e[4m$www/$name/public/.htaccess\e[24m ..."
+    echo -e "\e[0m"
+    cmd="cp -v $www/$name/public/.htaccess $destdir/public/.htaccess"
+    ssh "$host" "$cmd"
 
-### Avertissement si erreur.
-if [ $? -ne 0 ]; then
-  echo -e ""
-  echo -e "\e[95mProblème rencontré lors de la reprise du .htaccess !\e[0m"
+    ### Avertissement si erreur.
+    if [ $? -ne 0 ]; then
+      echo -e ""
+      echo -e "\e[95mProblème rencontré lors de la reprise du .htaccess !\e[0m"
+    fi
 fi
 
 
@@ -251,7 +260,7 @@ echo -ne "\e[34m"
 echo -e ""
 echo -e "> Conservation des $N dernières versions déployées seulement..."
 echo -ne "\e[0m"
-listDirCmd='ls -d /var/www/sodoct-versions/sodoct-* | sort --reverse'
+listDirCmd="ls -d /var/www/sodoct-versions/$name-* | sort --reverse"
 i=1
 dirsToRemove=''
 for f in `ssh "$host" "$listDirCmd"`; do

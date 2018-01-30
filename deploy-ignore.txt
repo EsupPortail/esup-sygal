@@ -1,6 +1,4 @@
 auth.json
-/config/autoload/*local.php
-/public/.htaccess
 /docs/*
 /logs/*
 /tests
