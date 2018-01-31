@@ -55,7 +55,7 @@ order by categorie_id, code;
 -- Mise en conformité entre 2 bdd des privilèges accordés aux rôles.
 --
 -- 1/ Interrogation de la bdd de référence pour génération des insert :
-select 'insert into role_privilege(role_id, privilege_id) select r.id, p.id from user_role r, privilege p, categorie_privilege cp where p.categorie_id = cp.id and r.role_id = ''' || replace(r.role_id,'''','''''') || ''' and p.code = ''' || p.code || ''' and cp.code = ''' || cp.code || ''';'
+select 'insert into role_privilege(role_id, privilege_id) select r.id, p.id from role r, privilege p, categorie_privilege cp where p.categorie_id = cp.id and r.libelle = ''' || replace(r.role_id,'''','''''') || ''' and p.code = ''' || p.code || ''' and cp.code = ''' || cp.code || ''';'
 from role_privilege rp
   join user_role r on rp.role_id = r.id
   join privilege p on rp.privilege_id = p.id
