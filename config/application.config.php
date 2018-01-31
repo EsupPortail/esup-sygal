@@ -3,7 +3,7 @@
 $modules = [
     'ZfcBase', 'DoctrineModule', 'DoctrineORMModule', 'ZfcUser', 'ZfcUserDoctrineORM', 'BjyAuthorize',
     'UnicaenApp', 'UnicaenAuth', 'UnicaenLdap', 'UnicaenOracle', 'UnicaenImport', 'UnicaenFaq', 'UnicaenLeocarte',
-    'Application', 'Retraitement', 'Notification',
+    'Application', 'Import', 'Retraitement', 'Notification',
 ];
 
 if ('development' === (getenv('APPLICATION_ENV') ?: 'production')) {

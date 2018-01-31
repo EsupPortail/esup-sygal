@@ -29,8 +29,10 @@ RUN docker-php-ext-install -j$(nproc) gd soap curl gd intl
 RUN docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu && docker-php-ext-install ldap
 
 # Installation d'extensions PECL
-RUN pear config-set http_proxy "$HTTP_PROXY"
-RUN pecl install xdebug && docker-php-ext-enable xdebug
+#RUN pear config-set http_proxy "$HTTP_PROXY"
+#RUN pear clear-cache ; pear update-channels ; pear upgrade
+#RUN pecl install xdebug && docker-php-ext-enable xdebug
+#RUN apt-get install php-xdebug
 
 # Ajustement des config PHP.
 RUN echo "date.timezone = Europe/Paris"       >> /usr/local/etc/php/conf.d/01-timezone.ini && \
@@ -50,6 +52,8 @@ RUN echo "date.timezone = Europe/Paris"       >> /usr/local/etc/php/conf.d/01-ti
 # Point de montage pour les sources de l'appli
 VOLUME /webapp
 
+EXPOSE 8000
+
 # Configuration et activation du site Apache
 RUN echo "<VirtualHost *:80>"                >> /etc/apache2/sites-available/webapp.conf && \
     echo "     ServerName localhost"         >> /etc/apache2/sites-available/webapp.conf && \
@@ -62,3 +66,4 @@ RUN echo "<VirtualHost *:80>"                >> /etc/apache2/sites-available/web
     echo "     </Directory>"                 >> /etc/apache2/sites-available/webapp.conf && \
     echo "</VirtualHost>"                    >> /etc/apache2/sites-available/webapp.conf && \
     a2ensite webapp
+

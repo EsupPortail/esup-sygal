@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="Import\Model\TmpVariable" table="TMP_VARIABLE">
+        <id name="id" type="string" column="ID"/>
+        <field name="sourceId"              type="string" column="SOURCE_ID"        length="64"  nullable="true"/>
+        <field name="etablissementId"       type="string" column="ETABLISSEMENT_ID" length="64"  nullable="true"/>
+        <field name="libEtablissement"      type="string" column="COD_VAP"          length="50"  nullable="true"/>
+        <field name="libResponsable"        type="string" column="LIB_VAP"          length="300" nullable="true"/>
+        <field name="libTitre"              type="string" column="PAR_VAP"          length="200" nullable="true"/>
+        <field name="sourceCode"            type="string" column="SOURCE_CODE"      length="64"     nullable="true"/>
+    </entity>
+</doctrine-mapping>
