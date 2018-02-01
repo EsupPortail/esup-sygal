@@ -9,7 +9,10 @@
         <field name="code"      type="string"   length="32"  column="CODE"      nullable="false"/>
         <field name="libelle"   type="string"   length="128" column="LIBELLE"   nullable="false"/>
 
-        <one-to-many field="theses" target-entity="Application\Entity\Db\These" mapped-by="etablissement"/>
+        <one-to-many field="theses"         target-entity="Application\Entity\Db\These"     mapped-by="etablissement"/>
+        <one-to-many field="doctorants"     target-entity="Application\Entity\Db\Doctorant" mapped-by="etablissement"/>
+        <one-to-many field="roles"          target-entity="Application\Entity\Db\Role"      mapped-by="etablissement"/>
+
 
     </entity>
 </doctrine-mapping>

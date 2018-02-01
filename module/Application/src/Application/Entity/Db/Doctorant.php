@@ -38,7 +38,23 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
      * @var Collection
      */
     private $complements;
+    protected $etablissement;
 
+    /**
+     * @return mixed
+     */
+    public function getEtablissement()
+    {
+        return $this->etablissement;
+    }
+
+    /**
+     * @param mixed $etablissement
+     */
+    public function setEtablissement($etablissement)
+    {
+        $this->etablissement = $etablissement;
+    }
 
     /**
      * Constructor
