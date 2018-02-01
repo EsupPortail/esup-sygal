@@ -19,6 +19,12 @@
             </join-columns>
         </many-to-one>
 
+        <many-to-one field="etablissement" target-entity="Application\Entity\Db\Etablissement" fetch="LAZY">
+            <join-columns>
+                <join-column name="ETABLISSEMENT_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
         <one-to-many field="complements" target-entity="Application\Entity\Db\DoctorantCompl" mapped-by="doctorant"/>
 
         <many-to-one field="source" target-entity="UnicaenImport\Entity\Db\Source">

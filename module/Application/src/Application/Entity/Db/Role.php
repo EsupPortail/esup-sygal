@@ -40,6 +40,23 @@ class Role extends AbstractRole
      * @var string
      */
     protected $sourceCode;
+    protected $etablissement;
+
+    /**
+     * @return mixed
+     */
+    public function getEtablissement()
+    {
+        return $this->etablissement;
+    }
+
+    /**
+     * @param mixed $etablissement
+     */
+    public function setEtablissement($etablissement)
+    {
+        $this->etablissement = $etablissement;
+    }
 
     /**
      * Set sourceCode
