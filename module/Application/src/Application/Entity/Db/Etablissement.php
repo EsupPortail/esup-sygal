@@ -10,6 +10,7 @@ class Etablissement
     protected $id;
     protected $code;
     protected $libelle;
+    protected $theses;
 
     /**
      * @return mixed

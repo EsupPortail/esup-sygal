@@ -22,11 +22,8 @@ use Application\Form\DiffusionTheseForm;
 use Application\Form\MetadonneeTheseForm;
 use Application\Form\RdvBuTheseDoctorantForm;
 use Application\Form\RdvBuTheseForm;
-use Application\Notification\ValidationRdvBuNotification;
 use Application\Service\Env\EnvServiceAwareInterface;
 use Application\Service\Env\EnvServiceAwareTrait;
-use Application\Service\Etablissement\EtablissementServiceAwareInterface;
-use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Fichier\Exception\ValidationImpossibleException;
 use Application\Service\Fichier\FichierServiceAwareInterface;
 use Application\Service\Fichier\FichierServiceAwareTrait;
@@ -62,7 +59,6 @@ class TheseController extends AbstractController implements
     EnvServiceAwareInterface, VariableServiceAwareInterface ,
     ValidationServiceAwareInterface, VersionFichierServiceAwareInterface,
     TheseServiceAwareInterface, RoleServiceAwareInterface, FichierServiceAwareInterface,
-    EtablissementServiceAwareInterface,
     WorkflowServiceAwareInterface, NotificationServiceAwareInterface
 {
     use EnvServiceAwareTrait;
@@ -71,7 +67,6 @@ class TheseController extends AbstractController implements
     use RoleServiceAwareTrait;
     use FichierServiceAwareTrait;
     use ValidationServiceAwareTrait;
-    use EtablissementServiceAwareTrait;
     use MessageCollectorAwareTrait;
     use VersionFichierServiceAwareTrait;
     use WorkflowServiceAwareTrait;
@@ -228,7 +223,9 @@ class TheseController extends AbstractController implements
     public function detailIdentiteAction()
     {
         $these = $this->requestedThese();
-        $etablissement = $this->etablissementService->getRepository()->findOneBy(["id" => $these->getEtablissementId()]) ;
+        $etablissement = $these->getEtablissement();
+
+
 
         $showCorrecAttendue =
             $these->getCorrectionAutorisee() &&

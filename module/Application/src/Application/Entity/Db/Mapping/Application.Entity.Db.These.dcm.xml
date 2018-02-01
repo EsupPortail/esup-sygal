@@ -25,7 +25,6 @@
         <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
         <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
         <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
-        <field name="etablissementId"  type="string" column="ETABLISSEMENT_ID" length="64" nullable="true"/>
 
         <field name="sourceCode" type="string" column="SOURCE_CODE" length="64" nullable="true"/>
 
@@ -48,6 +47,12 @@
         <one-to-many field="acteurs" target-entity="Application\Entity\Db\Acteur" mapped-by="these"/>
         <one-to-many field="rdvBus" target-entity="Application\Entity\Db\RdvBu" mapped-by="these"/>
         <one-to-many field="validations" target-entity="Application\Entity\Db\Validation" mapped-by="these"/>
+
+        <many-to-one field="etablissement" target-entity="Application\Entity\Db\Etablissement" fetch="LAZY">
+            <join-columns>
+                <join-column name="ETABLISSEMENT_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
 
         <many-to-one field="doctorant" target-entity="Application\Entity\Db\Doctorant">
             <join-columns>

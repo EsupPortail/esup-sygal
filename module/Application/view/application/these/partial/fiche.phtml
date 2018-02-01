@@ -43,9 +43,9 @@ $acteursFormatter = new ActeursFormatter();
         <th>Établissement</th>
         <td>
             <?php
-                if ($etablissement === null) echo "NULL"; else echo $etablissement->getCode();
+                if ($etablissement === null) echo "Non renseigné"; else echo $etablissement->getCode();
                 echo " - ";
-                if ($etablissement === null) echo "NULL"; else echo $etablissement->getLibelle();
+                if ($etablissement === null) echo "Non renseigné"; else echo $etablissement->getLibelle();
             ?>
         </td>
 

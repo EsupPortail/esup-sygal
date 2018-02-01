@@ -29,6 +29,7 @@ $canEditPersopass = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_MODI
 $canEditPersopass = $canEditPersopass && (!$estDoctorant || !$these->getDoctorant()->getPersopass());
 
 $persopassModifiedEvent = 'persopass-modified-event';
+
 ?>
 
 <?php $this->headTitle("Thèse")->prepend($these->getDoctorant()->getNomUsuel()) ?>
@@ -103,9 +104,9 @@ $persopassModifiedEvent = 'persopass-modified-event';
             <dd>
                 <?php
                     /** @var Etablissement $etablissement */
-                    if($etablissement === null) echo "NULL"; else echo $etablissement->getCode();
+                    if($etablissement === null) echo "Non renseigné"; else echo $etablissement->getCode();
                     echo " - ";
-                    if($etablissement === null) echo "NULL"; else echo $etablissement->getLibelle(); ?>
+                    if($etablissement === null) echo "Non renseigné"; else echo $etablissement->getLibelle(); ?>
             </dd>
 
 

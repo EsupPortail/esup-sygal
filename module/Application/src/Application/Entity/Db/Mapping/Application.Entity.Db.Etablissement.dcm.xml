@@ -9,27 +9,7 @@
         <field name="code"      type="string"   length="32"  column="CODE"      nullable="false"/>
         <field name="libelle"   type="string"   length="128" column="LIBELLE"   nullable="false"/>
 
+        <one-to-many field="theses" target-entity="Application\Entity\Db\These" mapped-by="etablissement"/>
 
-        <!--<many-to-one field="source" target-entity="UnicaenImport\Entity\Db\Source">-->
-            <!--<join-columns>-->
-                <!--<join-column name="SOURCE_ID" referenced-column-name="ID"/>-->
-            <!--</join-columns>-->
-        <!--</many-to-one>-->
-
-        <!--<many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">-->
-            <!--<join-columns>-->
-                <!--<join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>-->
-            <!--</join-columns>-->
-        <!--</many-to-one>-->
-        <!--<many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur">-->
-            <!--<join-columns>-->
-                <!--<join-column name="HISTO_DESTRUCTEUR_ID" referenced-column-name="ID"/>-->
-            <!--</join-columns>-->
-        <!--</many-to-one>-->
-        <!--<many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">-->
-            <!--<join-columns>-->
-                <!--<join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>-->
-            <!--</join-columns>-->
-        <!--</many-to-one>-->
     </entity>
 </doctrine-mapping>

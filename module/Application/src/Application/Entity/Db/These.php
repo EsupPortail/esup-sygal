@@ -204,7 +204,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * @var TitreApogeeFilter
      */
-    private $etablissementId;
+    private $etablissement;
 
     /**
      * @return TitreApogeeFilter
@@ -1101,17 +1101,17 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * @return TitreApogeeFilter
      */
-    public function getEtablissementId()
+    public function getEtablissement()
     {
-        return $this->etablissementId;
+        return $this->etablissement;
     }
 
     /**
-     * @param TitreApogeeFilter $etablissementId
+     * @param Etablissement $etablissement
      */
-    public function setEtablissementId($etablissementId)
+    public function setEtablissementId($etablissement)
     {
-        $this->etablissementId = $etablissementId;
+        $this->etablissement = $etablissement;
     }
 
 
@@ -1324,13 +1324,5 @@ class These implements HistoriqueAwareInterface, ResourceInterface
             return true;
         }
         return false;
-    }
-
-    public function getEtablissementLibelle() {
-        if ($this->getEtablissementId() === null) {
-            return "Aucun établissement de renseigné.";
-        } else {
-            return "TODO faire la requete dans la table etablissement...";
-        }
     }
 }
