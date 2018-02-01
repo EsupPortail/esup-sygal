@@ -22,7 +22,6 @@ use Application\Form\DiffusionTheseForm;
 use Application\Form\MetadonneeTheseForm;
 use Application\Form\RdvBuTheseDoctorantForm;
 use Application\Form\RdvBuTheseForm;
-use Application\Notification\ValidationRdvBuNotification;
 use Application\Service\Env\EnvServiceAwareInterface;
 use Application\Service\Env\EnvServiceAwareTrait;
 use Application\Service\Fichier\Exception\ValidationImpossibleException;
@@ -224,6 +223,9 @@ class TheseController extends AbstractController implements
     public function detailIdentiteAction()
     {
         $these = $this->requestedThese();
+        $etablissement = $these->getEtablissement();
+
+
 
         $showCorrecAttendue =
             $these->getCorrectionAutorisee() &&
@@ -231,6 +233,7 @@ class TheseController extends AbstractController implements
 
         $view = new ViewModel([
             'these'                     => $these,
+            'etablissement'             => $etablissement,
             'estDoctorant'              => (bool)$this->userContextService->getSelectedRoleDoctorant(),
             'showCorrecAttendue'        => $showCorrecAttendue,
             'modifierPersopassUrl'      => $this->urlDoctorant()->modifierPersopassUrl($these),

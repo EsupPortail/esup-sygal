@@ -202,6 +202,11 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     private $titreFilter;
 
     /**
+     * @var TitreApogeeFilter
+     */
+    private $etablissement;
+
+    /**
      * @return TitreApogeeFilter
      */
     public function getTitreFilter()
@@ -1093,6 +1098,24 @@ class These implements HistoriqueAwareInterface, ResourceInterface
 
         return $this;
     }
+
+    /**
+     * @return TitreApogeeFilter
+     */
+    public function getEtablissement()
+    {
+        return $this->etablissement;
+    }
+
+    /**
+     * @param Etablissement $etablissement
+     */
+    public function setEtablissementId($etablissement)
+    {
+        $this->etablissement = $etablissement;
+    }
+
+
 
     /**
      * Retourne la version archivable de la thèse, s'il elle existe.

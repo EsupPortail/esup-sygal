@@ -3,6 +3,7 @@
 use Application\Entity\Db\These;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Individu;
+use Application\Entity\Db\Etablissement;
 use Application\Filter\ActeursFormatter;
 use Application\Entity\Db\WfEtape;
 use Application\Provider\Privilege\DoctorantPrivileges;
@@ -28,6 +29,7 @@ $canEditPersopass = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_MODI
 $canEditPersopass = $canEditPersopass && (!$estDoctorant || !$these->getDoctorant()->getPersopass());
 
 $persopassModifiedEvent = 'persopass-modified-event';
+
 ?>
 
 <?php $this->headTitle("Thèse")->prepend($these->getDoctorant()->getNomUsuel()) ?>
@@ -97,6 +99,16 @@ $persopassModifiedEvent = 'persopass-modified-event';
 
 
             ?>
+
+            <dt>Établissement</dt>
+            <dd>
+                <?php
+                    /** @var Etablissement $etablissement */
+                    if($etablissement === null) echo "Non renseigné"; else echo $etablissement->getCode();
+                    echo " - ";
+                    if($etablissement === null) echo "Non renseigné"; else echo $etablissement->getLibelle(); ?>
+            </dd>
+
 
             <dt>École doctorale</dt>
             <dd>

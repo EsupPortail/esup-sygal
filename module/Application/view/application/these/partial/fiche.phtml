@@ -40,6 +40,18 @@ $acteursFormatter = new ActeursFormatter();
     ?>
 
     <tr>
+        <th>Établissement</th>
+        <td>
+            <?php
+                if ($etablissement === null) echo "Non renseigné"; else echo $etablissement->getCode();
+                echo " - ";
+                if ($etablissement === null) echo "Non renseigné"; else echo $etablissement->getLibelle();
+            ?>
+        </td>
+
+    </tr>
+
+    <tr>
         <th>École doct.</th>
         <td>
             <?php if ($these->getEcoleDoctorale()): ?>

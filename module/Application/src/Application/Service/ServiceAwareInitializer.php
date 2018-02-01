@@ -2,6 +2,7 @@
 
 namespace Application\Service;
 
+use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Doctorant\DoctorantService;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\Env\EnvService;
@@ -58,6 +59,7 @@ class ServiceAwareInitializer implements InitializerInterface
             'UniteRechercheService'  => UniteRechercheService::class,
             'IndividuService'        => IndividuService::class,
             'NotificationService'    => NotificationService::class,
+            'EtablissementService'   => EtablissementService::class,
         ];
 
         foreach ($services as $name => $class) {

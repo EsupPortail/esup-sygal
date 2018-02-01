@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="Application\Entity\Db\Etablissement" table="ETABLISSEMENT" repository-class="\Application\Entity\Db\Repository\EtablissementRepository">
+
+        <id name="id" type="integer" column="ID"/>
+        <field name="code"      type="string"   length="32"  column="CODE"      nullable="false"/>
+        <field name="libelle"   type="string"   length="128" column="LIBELLE"   nullable="false"/>
+
+        <one-to-many field="theses" target-entity="Application\Entity\Db\These" mapped-by="etablissement"/>
+
+    </entity>
+</doctrine-mapping>
