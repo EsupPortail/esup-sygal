@@ -597,6 +597,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      * @param int|bool|string       $estRetraite '0', '1', booléen ou code du retraitement
      * @return Collection
      * @todo Devrait remplacer static::getFichiersBy et static::getFichiersByVersion
+     * @deprecated Faire plutôt un fetch via le repo car ici la jointure avec contenu_fichier est inévitable et coûteuse.
      */
     public function getFichiersByNatureEtVersion($nature, $version = null, $estRetraite = false)
     {
