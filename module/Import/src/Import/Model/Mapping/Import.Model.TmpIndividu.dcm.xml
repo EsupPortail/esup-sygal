@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="Import\Model\TmpIndividu" table="TMP_INDIVIDU">
+        <id name="id" type="integer" column="ID"/>
+
+        <field name="sourceId"                  type="string" column="SOURCE_ID"        length="64"     nullable="true"/>
+        <field name="etablissementId"           type="string" column="ETABLISSEMENT_ID" length="64"     nullable="true"/>
+        <field name="type"                      type="string" column="TYPE"             length="32"     nullable="true"/>
+        <field name="civilite"                  type="string" column="CIV"              length="5"      nullable="true"/>
+        <field name="nomUsuel"                  type="string" column="LIB_NOM_USU_IND"  length="60"     nullable="true"/>
+        <field name="nomPatronymique"           type="string" column="LIB_NOM_PAT_IND"  length="60"     nullable="true"/>
+        <field name="prenom1"                   type="string" column="LIB_PR1_IND"      length="60"     nullable="true"/>
+        <field name="prenom2"                   type="string" column="LIB_PR2_IND"      length="60"     nullable="true"/>
+        <field name="prenom3"                   type="string" column="LIB_PR3_IND"      length="60"     nullable="true"/>
+        <field name="email"                     type="string" column="EMAIL"            length="255"    nullable="true"/>
+        <field name="dateNaissance"             type="date"   column="DAT_NAI_PER"                      nullable="true"/>
+        <field name="nationalite"               type="string" column="LIB_NAT"          length="128"    nullable="true"/>
+        <field name="sourceCode"                type="string" column="SOURCE_CODE"      length="64"     nullable="true"/>
+
+    </entity>
+</doctrine-mapping>

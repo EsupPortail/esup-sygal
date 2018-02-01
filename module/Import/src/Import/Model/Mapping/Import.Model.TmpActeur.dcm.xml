@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="Import\Model\TmpActeur" table="TMP_ACTEUR">
+        <id name="id" type="integer" column="ID"/>
+
+        <field name="sourceId"          type="string"   column="SOURCE_ID"          length="64"     nullable="true"/>
+        <field name="etablissementId"   type="string"   column="ETABLISSEMENT_ID"   length="64"     nullable="true"/>
+        <field name="individuId"        type="string"   column="INDIVIDU_ID"        length="64"     nullable="true"/>
+        <field name="theseId"           type="string"   column="THESE_ID"           length="64"     nullable="true"/>
+        <field name="roleId"            type="string"   column="ROLE_ID"            length="64"     nullable="true"/>
+        <field name="libQualite"        type="string"   column="LIB_CPS"            length="200"    nullable="true"/>
+        <field name="libEtablissement"  type="string"   column="LIB_ETB"            length="200"    nullable="true"/>
+        <field name="codeQualite"       type="string"   column="COD_CPS"            length="50"     nullable="true"/>
+        <field name="codeEtablissement" type="string"   column="COD_ETB"            length="50"     nullable="true"/>
+        <field name="codeRoleJury"      type="string"   column="COD_ROJ_COMPL"      length="50"     nullable="true"/>
+        <field name="libRoleJury"       type="string"   column="LIB_ROJ_COMPL"      length="50"     nullable="true"/>
+        <field name="temoinHDR"         type="string"   column="TEM_HAB_RCH_PER"    length="1"      nullable="true"/>
+        <field name="temoinRapport"     type="string"   column="TEM_RAP_RECU"       length="1"      nullable="true"/>
+        <field name="sourceCode"                type="string" column="SOURCE_CODE"      length="64"     nullable="true"/>
+    </entity>
+</doctrine-mapping>

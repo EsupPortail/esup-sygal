@@ -15,8 +15,28 @@ class IndexController extends AbstractController
 {
     use TheseServiceAwareTrait;
 
+    public function pretty_print(array $array, $level = 0) {
+        foreach($array as $key => $value) {
+            for ($i = 0 ; $i < $level ; ++$i) print "&nbsp;|&nbsp;";
+            print "<b>". $key ."</b> => ";
+            if (is_array($value)) {
+                print "<br/>";
+                $this->pretty_print($value, $level+1);
+            } else {
+                print $value;
+                print "<br/>";
+            }
+
+        }
+    }
+
     public function indexAction()
     {
+
+//        $config = ($this->getServiceLocator()->get('config'));
+//        $this->pretty_print($config);
+
+
         if ($this->identity() && count($this->userContextService->getSelectableIdentityRoles()) === 0) {
             return $this->redirect()->toRoute('not-allowed');
         }
