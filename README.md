@@ -34,13 +34,13 @@ PHP7, build à partir du fichier *Dockerfile.php7.dev* :
 
 Run :
 
-    docker run -d \
-    -p 8080:80 \
-    -v "$PWD":/webapp \
-    --dns=10.14.128.125 \
-    --dns-search=unicaen.fr \
-    --name sodoct-docker \
-    unicaen/sodoct-docker
+        sudo docker run -d \
+        -p 8080:80 \
+        -v "$PWD":/webapp \
+        --dns=10.14.128.125 \
+        --dns-search=unicaen.fr \
+        --name sygal \
+        unicaen/sygal-php7-dev
 
 Use :
 

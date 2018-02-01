@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="Import\Model\TmpThese" table="TMP_THESE">
+        <id name="id" type="integer" column="ID"/>
+
+        <field name="sourceId"                  type="string" column="SOURCE_ID" length="64" nullable="true"/>
+        <field name="etablissementId"           type="string" column="ETABLISSEMENT_ID" length="64" nullable="true"/>
+        <field name="doctorantId"               type="string" column="DOCTORANT_ID" length="64" nullable="true"/>
+        <field name="ecoleDoctId"               type="string" column="ECOLE_DOCT_ID" length="64" nullable="true"/>
+        <field name="uniteRechId"               type="string" column="UNITE_RECH_ID" length="64" nullable="true"/>
+        <field name="title"                     type="string" column="LIB_THS" length="2048" nullable="true"/>
+
+        <field name="dateSoutenanceAutorisee"   type="date" column="DAT_AUT_SOU_THS" nullable="true"/>
+        <field name="dateConfidFin"             type="date" column="DAT_FIN_CFD_THS" nullable="true"/>
+        <field name="datePremiereInsc"          type="date" column="DAT_DEB_THS" nullable="true"/>
+        <field name="dateSoutenancePrev"        type="date" column="DAT_PREV_SOU" nullable="true"/>
+        <field name="dateSoutenance"            type="date" column="DAT_SOU_THS" nullable="true"/>
+
+        <field name="etatThese"                 type="string" column="ETA_THS" length="20" nullable="true"/>
+        <field name="libDiscipline"             type="string" column="LIB_INT1_DIS" length="200" nullable="true"/>
+        <field name="libEtabCotut"              type="string" column="LIB_ETAB_COTUT" length="60" nullable="true"/>
+        <field name="libPaysCotut"              type="string" column="LIB_PAYS_COTUT" length="40" nullable="true"/>
+
+        <field name="correctionAutorisee"       type="string" column="CORRECTION_POSSIBLE" length="30" nullable="true"/>
+        <field name="resultat"                  type="string" column="COD_NEG_TRE" length="1" nullable="true"/>
+        <field name="temAvenant"                type="string" column="TEM_AVENANT_COTUT" length="1" nullable="true"/>
+        <field name="temSoutenanceAutorisee"    type="string" column="TEM_SOU_AUT_THS" length="1" nullable="true"/>
+        <field name="sourceCode"                type="string" column="SOURCE_CODE"      length="64"     nullable="true"/>
+    </entity>
+</doctrine-mapping>

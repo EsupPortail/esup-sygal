@@ -8,16 +8,16 @@
 use Application\Entity\Db\Role;
 use Application\View\Renderer\PhpRenderer;
 
-$subtitle = "SOutenance, Doctorat et Organisation du Circuit des Thèses";
+$subtitle = "SYstème de Gestion et d'Accompagnement doctoraL";
 ?>
 
-<?php $this->headTitle("Accueil") ?>
+<?php $this->headTitle($this->translate("Accueil")); ?>
 
 <?php echo $this->messenger()->addMessagesFromFlashMessenger(); ?>
 
 <div class="jumbotron">
 
-    <h1 class="page-header">SoDoct</h1>
+    <h1 class="page-header">SyGAL</h1>
 
     <p class="appname-subtitle">
         <strong><?php echo $subtitle ?></strong>
@@ -25,32 +25,40 @@ $subtitle = "SOutenance, Doctorat et Organisation du Circuit des Thèses";
 
     <?php if (!$this->identity()): ?>
         <p>
-            Bienvenue dans l’outil de suivi et de dépôt numérique des thèses de l'université de Caen Normandie.
+            <?php echo $this->translate("Bienvenue dans l’outil de suivi et de dépôt numérique des thèses de l'université de Caen Normandie.") ?>
         </p>
         <p>
-            SoDoct offre aux différents acteurs du circuit des thèses UNICAEN une vision d’ensemble sur les thèses préparées à
-            l’Université de Caen Normandie.
-            Il permet la gestion du dépôt de la thèse sous forme numérique, pour archivage et affichage dans le portail
-            national : <a href="http://www.theses.fr/">theses.fr</a>.
+            <?php echo $this->translate("SyGAL offre aux différents acteurs du circuit des thèses de Normandie Université une vision d’ensemble sur les thèses préparées au sein de la COMUE."); ?>
+            <?php echo $this->translate("Il permet la gestion du dépôt de la thèse sous forme numérique, pour archivage et affichage dans le portail national :"); ?>
+            <a href="http://www.theses.fr/">theses.fr</a>.
         </p>
     <?php endif ?>
 
     <?php if (!$this->identity()): ?>
         <p class="text-danger">
-            <strong>Vous n'êtes pas connecté-e.</strong>
+            <strong>
+                <?php echo $this->translate("Vous n'êtes pas connecté-e."); ?>
+            </strong>
         </p>
         <p>
-            <a class="btn btn-success btn-lg"
-               href="<?php echo $this->url('zfcuser/login') ?>"><?php echo $this->translate('Connectez-vous...') ?></a>
+            <a class="btn btn-success btn-lg" href="<?php echo $this->url('zfcuser/login') ?>">
+                <?php echo $this->translate('Connectez-vous...') ?>
+            </a>
         </p>
     <?php else: ?>
         <?php if (!$estDoctorant): ?>
             <p class="text-success">
-                <strong>Vous êtes connecté-e en tant que &laquo; <?php echo $role ?> &raquo;.</strong>
+                <strong>
+                    <?php echo $this->translate("Vous êtes connecté-e en tant que"); ?>
+                    &laquo; <?php echo $role ?> &raquo;.
+                </strong>
             </p>
             <ul class="roadmap pagination">
                 <li>
-                    <a class="roadmap-step-link " href="<?php echo $this->url('these') ?>"><span class="glyphicon glyphicon-circle-arrow-right"></span>Accès aux thèses...</a>
+                    <a class="roadmap-step-link " href="<?php echo $this->url('these') ?>">
+                        <span class="glyphicon glyphicon-circle-arrow-right"></span>
+                        <?php echo $this->translate("Accès aux thèses..."); ?>
+                    </a>
                 </li>
             </ul>
         <?php endif ?>

@@ -21,7 +21,8 @@
         "unicaen/unicaen-code":                 "^1.0",
         "ramsey/uuid":                          "^3.3",
         "mpdf/mpdf":                            "v5.7",
-        "bjyoungblood/bjy-authorize":           "dev-master"
+        "bjyoungblood/bjy-authorize":           "dev-master",
+        "guzzlehttp/guzzle": "^6.3"
     },
     "autoload": {
         "psr-0": {
