@@ -72,5 +72,5 @@ RUN composer dump-autoload --optimize
 RUN mkdir -p data/DoctrineORMModule/Proxy && chmod 777 data/DoctrineORMModule/Proxy
 
 # Création de la config et activation du site Apache.
-COPY apache.conf /etc/apache2/sites-available/sodoct.conf
+COPY docker/apache.conf /etc/apache2/sites-available/sodoct.conf
 RUN a2ensite sodoct
