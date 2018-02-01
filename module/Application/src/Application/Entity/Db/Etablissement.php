@@ -11,6 +11,8 @@ class Etablissement
     protected $code;
     protected $libelle;
     protected $theses;
+    protected $doctorants;
+    protected $roles;
 
     /**
      * @return mixed
@@ -59,6 +61,56 @@ class Etablissement
     {
         $this->libelle = $libelle;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getTheses()
+    {
+        return $this->theses;
+    }
+
+    /**
+     * @param mixed $theses
+     */
+    public function setTheses($theses)
+    {
+        $this->theses = $theses;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDoctorants()
+    {
+        return $this->doctorants;
+    }
+
+    /**
+     * @param mixed $doctorants
+     */
+    public function setDoctorants($doctorants)
+    {
+        $this->doctorants = $doctorants;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRoles()
+    {
+        return $this->roles;
+    }
+
+    /**
+     * @param mixed $roles
+     */
+    public function setRoles($roles)
+    {
+        $this->roles = $roles;
+    }
+
+
 
 
 }

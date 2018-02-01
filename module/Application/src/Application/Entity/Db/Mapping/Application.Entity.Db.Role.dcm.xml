@@ -17,11 +17,11 @@
         <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
         <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
 
-        <!--<many-to-one field="parent" target-entity="Application\Entity\Db\Role">-->
-            <!--<join-columns>-->
-                <!--<join-column name="PARENT_ID" referenced-column-name="ID"/>-->
-            <!--</join-columns>-->
-        <!--</many-to-one>-->
+        <many-to-one field="etablissement" target-entity="Application\Entity\Db\Etablissement" fetch="LAZY">
+            <join-columns>
+                <join-column name="ETABLISSEMENT_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
 
         <many-to-one field="source" target-entity="UnicaenImport\Entity\Db\Source">
             <join-columns>
