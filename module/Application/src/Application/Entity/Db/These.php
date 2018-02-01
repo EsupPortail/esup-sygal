@@ -1103,8 +1103,6 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      */
     public function getEtablissementId()
     {
-        //TODO remove this once the thesis table is fixed ...
-        //return "UCN";
         return $this->etablissementId;
     }
 

@@ -228,7 +228,7 @@ class TheseController extends AbstractController implements
     public function detailIdentiteAction()
     {
         $these = $this->requestedThese();
-        $etablissement = $this->etablissementService->getRepository()->findOneBy(["code" => $these->getEtablissementId()]) ;
+        $etablissement = $this->etablissementService->getRepository()->findOneBy(["id" => $these->getEtablissementId()]) ;
 
         $showCorrecAttendue =
             $these->getCorrectionAutorisee() &&
