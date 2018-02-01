@@ -202,6 +202,11 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     private $titreFilter;
 
     /**
+     * @var TitreApogeeFilter
+     */
+    private $etablissementId;
+
+    /**
      * @return TitreApogeeFilter
      */
     public function getTitreFilter()
@@ -1094,6 +1099,26 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
+     * @return TitreApogeeFilter
+     */
+    public function getEtablissementId()
+    {
+        //TODO remove this once the thesis table is fixed ...
+        //return "UCN";
+        return $this->etablissementId;
+    }
+
+    /**
+     * @param TitreApogeeFilter $etablissementId
+     */
+    public function setEtablissementId($etablissementId)
+    {
+        $this->etablissementId = $etablissementId;
+    }
+
+
+
+    /**
      * Retourne la version archivable de la thèse, s'il elle existe.
      *
      * C'est soit la version originale si elle est archivable.
@@ -1301,5 +1326,13 @@ class These implements HistoriqueAwareInterface, ResourceInterface
             return true;
         }
         return false;
+    }
+
+    public function getEtablissementLibelle() {
+        if ($this->getEtablissementId() === null) {
+            return "Aucun établissement de renseigné.";
+        } else {
+            return "TODO faire la requete dans la table etablissement...";
+        }
     }
 }

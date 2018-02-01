@@ -3,6 +3,7 @@
 use Application\Entity\Db\These;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Individu;
+use Application\Entity\Db\Etablissement;
 use Application\Filter\ActeursFormatter;
 use Application\Entity\Db\WfEtape;
 use Application\Provider\Privilege\DoctorantPrivileges;
@@ -97,6 +98,16 @@ $persopassModifiedEvent = 'persopass-modified-event';
 
 
             ?>
+
+            <dt>Établissement</dt>
+            <dd>
+                <?php
+                    /** @var Etablissement $etablissement */
+                    if($etablissement === null) echo "NULL"; else echo $etablissement->getCode();
+                    echo " - ";
+                    if($etablissement === null) echo "NULL"; else echo $etablissement->getLibelle(); ?>
+            </dd>
+
 
             <dt>École doctorale</dt>
             <dd>
