@@ -72,6 +72,8 @@ RUN echo "date.timezone = Europe/Paris"       >> /usr/local/etc/php/conf.d/01-ti
 # Point de montage pour les sources de l'appli
 VOLUME /webapp
 
+EXPOSE 8000
+
 # Configuration et activation du site Apache
 RUN a2enmod rewrite
 RUN echo "<VirtualHost *:80>"                >> /etc/apache2/sites-available/webapp.conf && \
@@ -85,3 +87,4 @@ RUN echo "<VirtualHost *:80>"                >> /etc/apache2/sites-available/web
     echo "     </Directory>"                 >> /etc/apache2/sites-available/webapp.conf && \
     echo "</VirtualHost>"                    >> /etc/apache2/sites-available/webapp.conf && \
     a2ensite webapp
+
