@@ -8,7 +8,15 @@ SOutenance, Doctorat et Organisation du Circuit des Thèses
 
 En dev, on monte les sources (répertoire courant) dans un volume.
 
-PHP5, build à partir du fichier *Dockerfile.dev* :
+#### Avec docker-compose
+
+    docker-compose up -d --build
+    
+Enlever le `-d` (detached) pour voir les logs en direct.
+
+#### Sans docker-compose
+
+Build à partir du fichier *Dockerfile.php7.dev* :
 
     docker build \
     --add-host="proxy.unicaen.fr:10.14.128.99" \
@@ -16,35 +24,23 @@ PHP5, build à partir du fichier *Dockerfile.dev* :
     --build-arg http_proxy="http://proxy.unicaen.fr:3128" \
     --build-arg https_proxy="http://proxy.unicaen.fr:3128" \
     --build-arg no_proxy=".unicaen.fr,localhost" \
-    -t unicaen/sodoct-dev \
-    -f Dockerfile.dev \
-    .
-
-PHP7, build à partir du fichier *Dockerfile.php7.dev* :
-
-    docker build \
-    --add-host="proxy.unicaen.fr:10.14.128.99" \
-    --add-host="svn.unicaen.fr:10.14.129.44" \
-    --build-arg http_proxy="http://proxy.unicaen.fr:3128" \
-    --build-arg https_proxy="http://proxy.unicaen.fr:3128" \
-    --build-arg no_proxy=".unicaen.fr,localhost" \
-    -t unicaen/sodoct-php7-dev \
+    -t unicaen/sygal-php7-dev-image \
     -f Dockerfile.php7.dev \
     .
 
+NB: Il est possible de spécifier le proxy par son adresse IP mais 
+*il ne faut pas oublier* de mettre `http://` devant 
+(càd: `--build-arg http_proxy="http://10.14.128.99:3128"`).
+
 Run :
 
-        sudo docker run -d \
-        -p 8080:80 \
-        -v "$PWD":/webapp \
-        --dns=10.14.128.125 \
-        --dns-search=unicaen.fr \
-        --name sygal \
-        unicaen/sygal-php7-dev
-
-Use :
-
-    http://localhost:8080
+    sudo docker run -d \
+    -p 8080:80 \
+    -v "$PWD":/webapp \
+    --dns=10.14.128.125 \
+    --dns-search=unicaen.fr \
+    --name sygal-php7-dev-container \
+    unicaen/sygal-php7-dev-image
 
 
 ### Test
@@ -80,19 +76,7 @@ en lecture pour l'installation des packages unicaen/* avec composer :
       }
     }
     
-PHP5, build à partir du fichier *Dockerfile.test*:
-
-    docker build \
-    --add-host="proxy.unicaen.fr:10.14.128.99" \
-    --add-host="svn.unicaen.fr:10.14.129.44" \
-    --build-arg http_proxy="http://proxy.unicaen.fr:3128" \
-    --build-arg https_proxy="http://proxy.unicaen.fr:3128" \
-    --build-arg no_proxy=".unicaen.fr,localhost" \
-    -t unicaen/sodoct-test \
-    -f Dockerfile.test \
-    .
-    
-PHP7, build à partir du fichier *Dockerfile.php7.test* :
+Build à partir du fichier *Dockerfile.php7.test* :
 
     docker build \
     --add-host="proxy.unicaen.fr:10.14.128.99" \
@@ -115,6 +99,3 @@ Run :
 
 NB: pas possible de spécifier le serveur DNS par "proxy.unicaen.fr".
 
-Use :
-
-    http://localhost:8080
