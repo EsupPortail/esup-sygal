@@ -12,7 +12,7 @@
         "zendframework/zend-developer-tools":   "1.0.0"
     },
     "require": {
-        "unicaen/unicaen-app":                  "^1.2",
+        "unicaen/unicaen-app":                  "~1.2.0",
         "unicaen/unicaen-auth":                 "1.2.0.x-dev",
         "unicaen/unicaen-faq":                  "^1.0",
         "unicaen/unicaen-ldap":                 "^2.1",
@@ -22,7 +22,7 @@
         "ramsey/uuid":                          "^3.3",
         "mpdf/mpdf":                            "v5.7",
         "bjyoungblood/bjy-authorize":           "dev-master",
-        "guzzlehttp/guzzle": "^6.3"
+        "guzzlehttp/guzzle":                    "^6.3"
     },
     "autoload": {
         "psr-0": {

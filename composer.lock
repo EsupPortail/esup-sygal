@@ -4,12 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-<<<<<<< HEAD
-    "content-hash": "b7633c3f807a457754dc60de6be2b144",
-=======
-    "hash": "16b1fac6e951f2d37bad27e8ec8e893f",
-    "content-hash": "38b42d4d36ac503e4ef8ddb93d1b34a0",
->>>>>>> f419720e78a634c3b99df317bd943c541eeaaa3d
+    "content-hash": "6786912631230bf1da0e75c58337ce4a",
     "packages": [
         {
             "name": "bjyoungblood/bjy-authorize",
@@ -79,7 +74,7 @@
                 "zf2",
                 "zfc-user"
             ],
-            "time": "2015-07-25 21:11:49"
+            "time": "2015-07-25T21:11:49+00:00"
         },
         {
             "name": "doctrine/annotations",
@@ -147,7 +142,7 @@
                 "docblock",
                 "parser"
             ],
-            "time": "2017-02-24 16:22:25"
+            "time": "2017-02-24T16:22:25+00:00"
         },
         {
             "name": "doctrine/cache",
@@ -217,7 +212,7 @@
                 "cache",
                 "caching"
             ],
-            "time": "2017-07-22 12:49:21"
+            "time": "2017-07-22T12:49:21+00:00"
         },
         {
             "name": "doctrine/collections",
@@ -284,7 +279,7 @@
                 "collections",
                 "iterator"
             ],
-            "time": "2017-01-03 10:49:41"
+            "time": "2017-01-03T10:49:41+00:00"
         },
         {
             "name": "doctrine/common",
@@ -357,7 +352,7 @@
                 "persistence",
                 "spl"
             ],
-            "time": "2017-07-22 08:35:12"
+            "time": "2017-07-22T08:35:12+00:00"
         },
         {
             "name": "doctrine/dbal",
@@ -428,7 +423,7 @@
                 "persistence",
                 "queryobject"
             ],
-            "time": "2017-07-22 20:44:48"
+            "time": "2017-07-22T20:44:48+00:00"
         },
         {
             "name": "doctrine/doctrine-module",
@@ -506,7 +501,7 @@
                 "module",
                 "zf2"
             ],
-            "time": "2016-03-21 22:50:01"
+            "time": "2016-03-21T22:50:01+00:00"
         },
         {
             "name": "doctrine/doctrine-orm-module",
@@ -584,7 +579,7 @@
                 "orm",
                 "zf2"
             ],
-            "time": "2016-03-22 00:43:08"
+            "time": "2016-03-22T00:43:08+00:00"
         },
         {
             "name": "doctrine/inflector",
@@ -651,7 +646,7 @@
                 "singularize",
                 "string"
             ],
-            "time": "2017-07-22 12:18:28"
+            "time": "2017-07-22T12:18:28+00:00"
         },
         {
             "name": "doctrine/instantiator",
@@ -705,7 +700,7 @@
                 "constructor",
                 "instantiate"
             ],
-            "time": "2015-06-14 21:17:01"
+            "time": "2015-06-14T21:17:01+00:00"
         },
         {
             "name": "doctrine/lexer",
@@ -759,7 +754,7 @@
                 "lexer",
                 "parser"
             ],
-            "time": "2014-09-09 13:34:57"
+            "time": "2014-09-09T13:34:57+00:00"
         },
         {
             "name": "doctrine/orm",
@@ -835,7 +830,7 @@
                 "database",
                 "orm"
             ],
-            "time": "2017-12-17 02:57:51"
+            "time": "2017-12-17T02:57:51+00:00"
         },
         {
             "name": "easybook/geshi",
@@ -881,7 +876,7 @@
                 "highlighter",
                 "syntax"
             ],
-            "time": "2016-10-05 07:15:42"
+            "time": "2016-10-05T07:15:42+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -946,7 +941,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2017-06-22 18:50:49"
+            "time": "2017-06-22T18:50:49+00:00"
         },
         {
             "name": "guzzlehttp/promises",
@@ -997,7 +992,7 @@
             "keywords": [
                 "promise"
             ],
-            "time": "2016-12-20 10:07:11"
+            "time": "2016-12-20T10:07:11+00:00"
         },
         {
             "name": "guzzlehttp/psr7",
@@ -1062,7 +1057,7 @@
                 "uri",
                 "url"
             ],
-            "time": "2017-03-20 17:10:46"
+            "time": "2017-03-20T17:10:46+00:00"
         },
         {
             "name": "jasig/phpcas",
@@ -1116,7 +1111,7 @@
                 "cas",
                 "jasig"
             ],
-            "time": "2017-04-10 19:12:45"
+            "time": "2017-04-10T19:12:45+00:00"
         },
         {
             "name": "kriswallsmith/assetic",
@@ -1190,7 +1185,7 @@
                 "compression",
                 "minification"
             ],
-            "time": "2014-12-12 05:04:05"
+            "time": "2014-12-12T05:04:05+00:00"
         },
         {
             "name": "mpdf/mpdf",
@@ -1232,7 +1227,7 @@
                 "php",
                 "utf-8"
             ],
-            "time": "2013-07-18 15:12:49"
+            "time": "2013-07-18T15:12:49+00:00"
         },
         {
             "name": "paragonie/random_compat",
@@ -1280,7 +1275,7 @@
                 "pseudorandom",
                 "random"
             ],
-            "time": "2017-09-27 21:40:39"
+            "time": "2017-09-27T21:40:39+00:00"
         },
         {
             "name": "psr/http-message",
@@ -1330,7 +1325,7 @@
                 "request",
                 "response"
             ],
-            "time": "2016-08-06 14:39:51"
+            "time": "2016-08-06T14:39:51+00:00"
         },
         {
             "name": "psr/log",
@@ -1377,7 +1372,7 @@
                 "psr",
                 "psr-3"
             ],
-            "time": "2016-10-10 12:19:37"
+            "time": "2016-10-10T12:19:37+00:00"
         },
         {
             "name": "ramsey/uuid",
@@ -1457,7 +1452,7 @@
                 "identifier",
                 "uuid"
             ],
-            "time": "2018-01-20 00:28:24"
+            "time": "2018-01-20T00:28:24+00:00"
         },
         {
             "name": "rwoverdijk/assetmanager",
@@ -1518,7 +1513,7 @@
                 "zend framework 2",
                 "zf2"
             ],
-            "time": "2016-03-31 09:19:26"
+            "time": "2016-03-31T09:19:26+00:00"
         },
         {
             "name": "symfony/console",
@@ -1586,11 +1581,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-<<<<<<< HEAD
             "time": "2018-01-29T09:02:23+00:00"
-=======
-            "time": "2018-01-03 07:37:11"
->>>>>>> f419720e78a634c3b99df317bd943c541eeaaa3d
         },
         {
             "name": "symfony/debug",
@@ -1646,24 +1637,20 @@
             ],
             "description": "Symfony Debug Component",
             "homepage": "https://symfony.com",
-<<<<<<< HEAD
             "time": "2018-01-18T22:16:57+00:00"
-=======
-            "time": "2018-01-03 17:14:19"
->>>>>>> f419720e78a634c3b99df317bd943c541eeaaa3d
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.6.0",
+            "version": "v1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "2ec8b39c38cb16674bbf3fea2b6ce5bf117e1296"
+                "reference": "78be803ce01e55d3491c1397cf1c64beb9c1b63b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/2ec8b39c38cb16674bbf3fea2b6ce5bf117e1296",
-                "reference": "2ec8b39c38cb16674bbf3fea2b6ce5bf117e1296",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/78be803ce01e55d3491c1397cf1c64beb9c1b63b",
+                "reference": "78be803ce01e55d3491c1397cf1c64beb9c1b63b",
                 "shasum": ""
             },
             "require": {
@@ -1675,7 +1662,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.6-dev"
+                    "dev-master": "1.7-dev"
                 }
             },
             "autoload": {
@@ -1709,7 +1696,7 @@
                 "portable",
                 "shim"
             ],
-            "time": "2017-10-11 12:05:26"
+            "time": "2018-01-30T19:27:44+00:00"
         },
         {
             "name": "symfony/process",
@@ -1758,11 +1745,7 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "https://symfony.com",
-<<<<<<< HEAD
             "time": "2018-01-29T08:54:45+00:00"
-=======
-            "time": "2018-01-03 07:36:31"
->>>>>>> f419720e78a634c3b99df317bd943c541eeaaa3d
         },
         {
             "name": "unicaen/unicaen-app",
@@ -1813,7 +1796,7 @@
                 ]
             },
             "description": "Module commun aux applis ZF2 de l'UCBN",
-            "time": "2018-01-18 11:22:44"
+            "time": "2018-01-18T11:22:44+00:00"
         },
         {
             "name": "unicaen/unicaen-auth",
@@ -1843,24 +1826,20 @@
                 ]
             },
             "description": "Module d'authentification pour les applis ZF2 de l'UCBN",
-            "time": "2016-12-07 15:08:04"
+            "time": "2016-12-07T15:08:04+00:00"
         },
         {
             "name": "unicaen/unicaen-code",
-            "version": "1.0.11",
+            "version": "1.1",
             "source": {
                 "type": "svn",
                 "url": "https://svn.unicaen.fr/svn/UnicaenCode",
-                "reference": "/tags/1.0.11/@65"
+                "reference": "/tags/1.1/@67"
             },
             "require": {
                 "doctrine/dbal": "^2.5",
                 "easybook/geshi": ">=1.0",
                 "zendframework/zend-developer-tools": ">=1.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": ">=3.7",
-                "zendframework/zend-test": ">=2.2"
             },
             "type": "library",
             "autoload": {
@@ -1873,7 +1852,7 @@
                 ]
             },
             "description": "Boite à outils pour la programmation avec la bibliothèque Unicaen",
-            "time": "2017-11-07 16:13:20"
+            "time": "2018-01-31T16:41:13+00:00"
         },
         {
             "name": "unicaen/unicaen-faq",
@@ -1902,7 +1881,7 @@
                 ]
             },
             "description": "Module de foire aux questions",
-            "time": "2017-04-25 17:21:22"
+            "time": "2017-04-25T17:21:22+00:00"
         },
         {
             "name": "unicaen/unicaen-import",
@@ -1930,7 +1909,7 @@
                 ]
             },
             "description": "Boite à outils pour la programmation avec la bibliothèque Unicaen",
-            "time": "2017-06-29 12:04:11"
+            "time": "2017-06-29T12:04:11+00:00"
         },
         {
             "name": "unicaen/unicaen-ldap",
@@ -1967,7 +1946,7 @@
                 ]
             },
             "description": "Module Ldap de l'UCBN",
-            "time": "2017-11-22 16:30:12"
+            "time": "2017-11-22T16:30:12+00:00"
         },
         {
             "name": "unicaen/unicaen-leocarte",
@@ -1996,7 +1975,7 @@
                 ]
             },
             "description": "Module de communication avec le web service des Leocartes",
-            "time": "2017-04-25 17:25:47"
+            "time": "2017-04-25T17:25:47+00:00"
         },
         {
             "name": "unicaen/unicaen-oracle",
@@ -2024,7 +2003,7 @@
                 ]
             },
             "description": "Bibliothèque utile lorsqu'on utilise un base de données Oracle",
-            "time": "2017-01-17 11:13:51"
+            "time": "2017-01-17T11:13:51+00:00"
         },
         {
             "name": "zendframework/zend-developer-tools",
@@ -2092,7 +2071,7 @@
                 "module",
                 "zf2"
             ],
-            "time": "2015-11-24 11:08:25"
+            "time": "2015-11-24T11:08:25+00:00"
         },
         {
             "name": "zendframework/zendframework",
@@ -2209,7 +2188,7 @@
                 "framework",
                 "zf2"
             ],
-            "time": "2017-07-13 17:23:56"
+            "time": "2017-07-13T17:23:56+00:00"
         },
         {
             "name": "zendframework/zendxml",
@@ -2254,7 +2233,7 @@
                 "xml",
                 "zf2"
             ],
-            "time": "2016-02-04 21:02:08"
+            "time": "2016-02-04T21:02:08+00:00"
         },
         {
             "name": "zf-commons/zfc-base",
@@ -2307,7 +2286,7 @@
             "keywords": [
                 "zf2"
             ],
-            "time": "2013-05-02 12:33:49"
+            "time": "2013-05-02T12:33:49+00:00"
         },
         {
             "name": "zf-commons/zfc-user",
@@ -2384,7 +2363,7 @@
             "keywords": [
                 "zf2"
             ],
-            "time": "2016-05-07 11:21:34"
+            "time": "2016-05-07T11:21:34+00:00"
         },
         {
             "name": "zf-commons/zfc-user-doctrine-orm",
@@ -2440,7 +2419,7 @@
             "keywords": [
                 "zf2"
             ],
-            "time": "2015-07-20 20:10:49"
+            "time": "2015-07-20T20:10:49+00:00"
         }
     ],
     "packages-dev": [
@@ -2487,7 +2466,7 @@
                 "object",
                 "object graph"
             ],
-            "time": "2017-10-19 19:58:43"
+            "time": "2017-10-19T19:58:43+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",
@@ -2541,7 +2520,7 @@
                 "reflection",
                 "static analysis"
             ],
-            "time": "2017-09-11 18:02:19"
+            "time": "2017-09-11T18:02:19+00:00"
         },
         {
             "name": "phpdocumentor/reflection-docblock",
@@ -2592,11 +2571,7 @@
                 }
             ],
             "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
-<<<<<<< HEAD
             "time": "2017-11-30T07:14:17+00:00"
-=======
-            "time": "2017-11-27 17:38:31"
->>>>>>> f419720e78a634c3b99df317bd943c541eeaaa3d
         },
         {
             "name": "phpdocumentor/type-resolver",
@@ -2643,7 +2618,7 @@
                     "email": "me@mikevanriel.com"
                 }
             ],
-            "time": "2017-07-14 14:27:02"
+            "time": "2017-07-14T14:27:02+00:00"
         },
         {
             "name": "phpspec/prophecy",
@@ -2706,7 +2681,7 @@
                 "spy",
                 "stub"
             ],
-            "time": "2017-11-24 13:59:53"
+            "time": "2017-11-24T13:59:53+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -2769,7 +2744,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2017-04-02 07:44:40"
+            "time": "2017-04-02T07:44:40+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -2816,7 +2791,7 @@
                 "filesystem",
                 "iterator"
             ],
-            "time": "2017-11-27 13:52:08"
+            "time": "2017-11-27T13:52:08+00:00"
         },
         {
             "name": "phpunit/php-text-template",
@@ -2857,7 +2832,7 @@
             "keywords": [
                 "template"
             ],
-            "time": "2015-06-21 13:50:34"
+            "time": "2015-06-21T13:50:34+00:00"
         },
         {
             "name": "phpunit/php-timer",
@@ -2906,7 +2881,7 @@
             "keywords": [
                 "timer"
             ],
-            "time": "2017-02-26 11:10:40"
+            "time": "2017-02-26T11:10:40+00:00"
         },
         {
             "name": "phpunit/php-token-stream",
@@ -2955,20 +2930,20 @@
             "keywords": [
                 "tokenizer"
             ],
-            "time": "2017-11-27 05:48:46"
+            "time": "2017-11-27T05:48:46+00:00"
         },
         {
             "name": "phpunit/phpunit",
-            "version": "5.7.26",
+            "version": "5.7.27",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "7fbc25c13309de0c4c9bb48b7361f1eca34c7fbd"
+                "reference": "b7803aeca3ccb99ad0a506fa80b64cd6a56bbc0c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/7fbc25c13309de0c4c9bb48b7361f1eca34c7fbd",
-                "reference": "7fbc25c13309de0c4c9bb48b7361f1eca34c7fbd",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/b7803aeca3ccb99ad0a506fa80b64cd6a56bbc0c",
+                "reference": "b7803aeca3ccb99ad0a506fa80b64cd6a56bbc0c",
                 "shasum": ""
             },
             "require": {
@@ -2992,7 +2967,7 @@
                 "sebastian/global-state": "^1.1",
                 "sebastian/object-enumerator": "~2.0",
                 "sebastian/resource-operations": "~1.0",
-                "sebastian/version": "~1.0.3|~2.0",
+                "sebastian/version": "^1.0.6|^2.0.1",
                 "symfony/yaml": "~2.1|~3.0|~4.0"
             },
             "conflict": {
@@ -3037,7 +3012,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2017-12-17 06:14:38"
+            "time": "2018-02-01T05:50:59+00:00"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -3096,7 +3071,7 @@
                 "mock",
                 "xunit"
             ],
-            "time": "2017-06-30 09:13:00"
+            "time": "2017-06-30T09:13:00+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
@@ -3141,7 +3116,7 @@
             ],
             "description": "Looks up which function or method a line of code belongs to",
             "homepage": "https://github.com/sebastianbergmann/code-unit-reverse-lookup/",
-            "time": "2017-03-04 06:30:41"
+            "time": "2017-03-04T06:30:41+00:00"
         },
         {
             "name": "sebastian/comparator",
@@ -3205,7 +3180,7 @@
                 "compare",
                 "equality"
             ],
-            "time": "2017-01-29 09:50:25"
+            "time": "2017-01-29T09:50:25+00:00"
         },
         {
             "name": "sebastian/diff",
@@ -3257,7 +3232,7 @@
             "keywords": [
                 "diff"
             ],
-            "time": "2017-05-22 07:24:03"
+            "time": "2017-05-22T07:24:03+00:00"
         },
         {
             "name": "sebastian/environment",
@@ -3307,7 +3282,7 @@
                 "environment",
                 "hhvm"
             ],
-            "time": "2016-11-26 07:53:53"
+            "time": "2016-11-26T07:53:53+00:00"
         },
         {
             "name": "sebastian/exporter",
@@ -3374,7 +3349,7 @@
                 "export",
                 "exporter"
             ],
-            "time": "2016-11-19 08:54:04"
+            "time": "2016-11-19T08:54:04+00:00"
         },
         {
             "name": "sebastian/global-state",
@@ -3425,7 +3400,7 @@
             "keywords": [
                 "global state"
             ],
-            "time": "2015-10-12 03:26:01"
+            "time": "2015-10-12T03:26:01+00:00"
         },
         {
             "name": "sebastian/object-enumerator",
@@ -3471,7 +3446,7 @@
             ],
             "description": "Traverses array structures and object graphs to enumerate all referenced objects",
             "homepage": "https://github.com/sebastianbergmann/object-enumerator/",
-            "time": "2017-02-18 15:18:39"
+            "time": "2017-02-18T15:18:39+00:00"
         },
         {
             "name": "sebastian/recursion-context",
@@ -3524,7 +3499,7 @@
             ],
             "description": "Provides functionality to recursively process PHP variables",
             "homepage": "http://www.github.com/sebastianbergmann/recursion-context",
-            "time": "2016-11-19 07:33:16"
+            "time": "2016-11-19T07:33:16+00:00"
         },
         {
             "name": "sebastian/resource-operations",
@@ -3566,7 +3541,7 @@
             ],
             "description": "Provides a list of PHP built-in functions that operate on resources",
             "homepage": "https://www.github.com/sebastianbergmann/resource-operations",
-            "time": "2015-07-28 20:34:47"
+            "time": "2015-07-28T20:34:47+00:00"
         },
         {
             "name": "sebastian/version",
@@ -3609,7 +3584,7 @@
             ],
             "description": "Library that helps with managing the version number of Git-hosted PHP projects",
             "homepage": "https://github.com/sebastianbergmann/version",
-            "time": "2016-10-03 07:35:21"
+            "time": "2016-10-03T07:35:21+00:00"
         },
         {
             "name": "symfony/yaml",
@@ -3664,11 +3639,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-<<<<<<< HEAD
             "time": "2018-01-20T15:04:53+00:00"
-=======
-            "time": "2018-01-03 07:37:11"
->>>>>>> f419720e78a634c3b99df317bd943c541eeaaa3d
         },
         {
             "name": "unicaen/unicaen-test",
@@ -3694,7 +3665,7 @@
                 ]
             },
             "description": "Module consacré aux tests",
-            "time": "2017-04-25 17:33:16"
+            "time": "2017-04-25T17:33:16+00:00"
         },
         {
             "name": "webmozart/assert",
@@ -3744,11 +3715,7 @@
                 "check",
                 "validate"
             ],
-<<<<<<< HEAD
             "time": "2018-01-29T19:49:41+00:00"
-=======
-            "time": "2016-11-23 20:04:58"
->>>>>>> f419720e78a634c3b99df317bd943c541eeaaa3d
         }
     ],
     "aliases": [],
