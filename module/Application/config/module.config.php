@@ -62,30 +62,71 @@ return array(
             ]
         ]
     ],
-    'router' => array(
-        'routes' => array(
-            'home' => array(
+    'router' => [
+        'routes' => [
+            'home' => [
                 'type' => 'Literal',
-                'options' => array(
+                'options' => [
                     'route'    => '/',
-                    'defaults' => array(
+                    'defaults' => [
                         'controller' => 'Application\Controller\Index',
                         'action'     => 'index',
-                    ),
-                ),
-            ),
-            'not-allowed' => array(
+                    ],
+                ],
+            ],
+            'lhome' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route'    => '/:language',
+                    'defaults' => [
+                        'controller' => 'Application\Controller\Index',
+                        'action'     => 'index',
+                        'language'   => 'fr_FR',
+                    ],
+                    'may_terminate' => true,
+                ],
+                'child_routes'  => [
+                    'lthese' => [
+                        'type' => 'Literal',
+                        'options'       => [
+                            'route'    => '/these',
+                            'defaults' => [
+                                'controller'    => 'Application\Controller\These',
+                                'action'        => 'index',
+                            ],
+                        ],
+                        'may_terminate' => true,
+
+                        'child_routes'  => [
+                            'lidentite' => [
+                                'type'          => 'Segment',
+                                'options'       => [
+                                    'route'       => '/identite/:these',
+                                    'constraints' => [
+                                        'these' => '\d+',
+                                    ],
+                                    'defaults'    => [
+                                        'action' => 'detail-identite',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+
+                ],
+            ],
+            'not-allowed' => [
                 'type' => 'Literal',
-                'options' => array(
+                'options' => [
                     'route'    => '/not-allowed',
-                    'defaults' => array(
+                    'defaults' => [
                         'controller' => 'Application\Controller\Index',
                         'action'     => 'not-allowed',
-                    ),
-                ),
-            ),
-        ),
-    ),
+                    ],
+                ],
+            ],
+        ],
+    ],
     'navigation'      => [
         'default' => [
             'home' => [
