@@ -2,10 +2,13 @@
 
 namespace Application\Controller;
 
+use Application\Entity\Db\These;
 use Application\Service\These\TheseServiceAwareInterface;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\View\Helper\Sortable;
+use Doctrine\ORM\QueryBuilder;
 use UnicaenApp\View\Model\CsvModel;
+use Zend\View\Model\ViewModel;
 
 class ExportController extends AbstractController implements TheseServiceAwareInterface
 {
@@ -13,23 +16,95 @@ class ExportController extends AbstractController implements TheseServiceAwareIn
 
     public function csvAction()
     {
+
+        //Generer la requete avec les filtres ...
+        /**
+         * @var \Doctrine\ORM\QueryBuilder      $qb
+         * @var \Doctrine\ORM\Query             $query
+         * @var These                           $these
+         */
+
+        $headers = [
+            'Civilité'                              => function ($these) { return $these->getDoctorant()->getIndividu()->getCivilite(); },
+            'Nom usuel'                             => function ($these) { return $these->getDoctorant()->getIndividu()->getNomUsuel(); },
+            'Prenom'                                => function ($these) { return $these->getDoctorant()->getIndividu()->getPrenom(); },
+            'Nom patronymique'                      => function ($these) { return $these->getDoctorant()->getIndividu()->getNomPatronymique(); },
+            'Date de naissance'                     => function ($these) { return $these->getDoctorant()->getIndividu()->getDateNaissance(); },
+            'Mail'                                  => function ($these) { return $these->getDoctorant()->getIndividu()->getEmail(); },
+            'Numéro étudiant'                       => function ($these) { return $these->getDoctorant()->getSourceCode(); },
+            'Titre'                                 => function ($these) { return $these->getTitre(); },
+            'Identifiant de la thèse'               => function ($these) { return $these->getSourceCode(); },
+            'Date de première inscription'          => function ($these) { return $these->getDatePremiereInscription(); },
+            'Date de prévisionnel de soutenance'    => function ($these) { return $these->getDatePrevisionSoutenance(); },
+            'Date de soutenance'                    => function ($these) { return $these->getDateSoutenance(); },
+            //'Date d\'autorisation à soutenir'       => function ($these) { return $these->getDateAutSoutenance(); },
+
+        ];
+        $etatThese = $this->params()->fromQuery('etatThese');
+        $sort = $this->params()->fromQuery('sort');
+        $text = $this->params()->fromQuery('text');
+        $dir  = $this->params()->fromQuery('direction', Sortable::ASC);
+        var_dump($etatThese);
+        var_dump($sort);
+        var_dump($text);
+        var_dump($dir);
+
+        $repoThese = $this->theseService->getEntityManager()->getRepository(These::class);
+        $qb = $repoThese->createQueryBuilder("t")
+            ->where("t.ecoleDoctorale = 41")
+            ->andWhere("t.etatThese = :etatThese")
+            ->orderBy($sort,$dir);
+        $qb->setParameter("etatThese", $etatThese);
+//        $qb->setParameter("dir", $sort);
+        //$qb->setParameter("attrib", $sort);
+        $query = $qb->getQuery();
+//        var_dump($query);
+
+        //Execution de la requete
+        $theses = $query->execute();
+
+        $records = [];
+        echo count($theses);
+        for ($i = 0 ; $i < 10 ; $i++) {
+            $these = $theses[$i];
+            $record = [];
+            foreach($headers as $key => $fct) {
+                $record[] = $fct($these);
+            }
+            //var_dump($record);
+
+            $records[] = $record;
+        }
+
+//        var_dump($result);
+//        die("My Job Is Done ...");
+
+
+        $result = new CsvModel();
+        $result->setDelimiter(';');
+        $result->setEnclosure('"');
+        $result->setHeader(array_keys($headers));
+        $result->setData($records);
+        $result->setFilename('export_theses.csv');
+
+        return $result;
+
+
         $cols = [
             // CSV                                          => SQL
-            'CIVILITE'                                      => 'CIVILITE',
-            'NOM_USUEL'                                     => 'NOM_USUEL',
-            'PRENOM'                                        => 'PRENOM',
-            'NOM_PATRONYMIQUE'                              => 'NOM_PATRONYMIQUE',
-            'DATE_NAISSANCE'                                => "to_char(DATE_NAISSANCE, 'DD/MM/YYYY')",
-            'TEL'                                           => 'TEL',
-            'EMAIL'                                         => 'EMAIL',
-            'NUMERO_ETUDIANT'                               => 'NUMERO_ETUDIANT',
-            'TITRE_APOGEE'                                  => 'TITRE_APOGEE',
-            'NUMERO_APOGEE'                                 => 'NUMERO_APOGEE',
+//            'CIVILITE'                                      => 'CIVILITE',
+//            'NOM_USUEL'                                     => 'NOM_USUEL',
+//            'PRENOM'                                        => 'PRENOM',
+//            'NOM_PATRONYMIQUE'                              => 'NOM_PATRONYMIQUE',
+//            'DATE_NAISSANCE'                                => "to_char(DATE_NAISSANCE, 'DD/MM/YYYY')",
+//            'EMAIL'                                         => 'EMAIL',
+//            'NUMERO_ETUDIANT'                               => 'NUMERO_ETUDIANT',
+//            'TITRE_APOGEE'                                  => 'TITRE_APOGEE',
+//            'NUMERO_APOGEE'                                 => 'NUMERO_APOGEE',
             'DATE_FIN_CONFID'                               => "to_char(DATE_FIN_CONFID, 'DD/MM/YYYY')",
-            'DATE_PREMIERE_INSCR'                           => "to_char(DATE_PREM_INSC, 'DD/MM/YYYY')",
-            'DATE_SOUTENANCE'                               => "to_char(DATE_SOUTENANCE, 'DD/MM/YYYY')",
+//            'DATE_PREMIERE_INSCR'                           => "to_char(DATE_PREM_INSC, 'DD/MM/YYYY')",
+//            'DATE_SOUTENANCE'                               => "to_char(DATE_SOUTENANCE, 'DD/MM/YYYY')",
             'SOUTENANCE_AUTORIS'                            => 'SOUTENANCE_AUTORIS',
-//            'DATE_AUTORIS_SOUTENANCE'                       => 'DATE_AUTORIS_SOUTENANCE',
             'TEM_AVENANT_COTUT'                             => 'TEM_AVENANT_COTUT',
             'ETAT_THESE'                                    => 'ETAT_THESE',
             'LIB_DISC'                                      => 'LIB_DISC',
@@ -77,6 +152,7 @@ class ExportController extends AbstractController implements TheseServiceAwareIn
 
         $sql = sprintf($sql, implode(', ', array_values($cols)));
 
+        var_dump($sql);
         /**
          * Filtres et tris.
          */
