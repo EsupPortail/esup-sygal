@@ -247,10 +247,14 @@ class FetcherService
         foreach ($metadata->columnNames as $propriete => $colonne) {
             $type = $metadata->fieldMappings[$propriete]["type"];
             $value = null;
+            //TODO (jp) nettoie moi çà
             if ($propriete === "etablissementId")   $value = $this->code;
             elseif ($propriete === "sourceCode")    $value = $this->code."::".$entity_json->{'id'};
             elseif ($propriete === "sourceId")      $value = $this->code."::".$entity_json->{'sourceId'};
             elseif ($propriete === "individuId")    $value = $this->code."::".$entity_json->{'individuId'};
+            elseif ($propriete === "roleId")        $value = $this->code."::".$entity_json->{'roleId'};
+            elseif ($propriete === "theseId")       $value = $this->code."::".$entity_json->{'theseId'};
+            elseif ($propriete === "doctorantId")   $value = $this->code."::".$entity_json->{'doctorantId'};
             else $value = $entity_json->{$propriete};
             $valuesArray[] = $this->prepValue($value, $type);
         }
