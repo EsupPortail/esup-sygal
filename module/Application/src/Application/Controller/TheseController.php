@@ -78,6 +78,7 @@ class TheseController extends AbstractController implements
      */
     public function indexAction()
     {
+        //var_dump($this->getEvent()->getRouteMatch()->getParam('language'));
         /**
          * L'utilisateur est un doctorant, redirection vers l'accueil.
          */
@@ -106,7 +107,10 @@ class TheseController extends AbstractController implements
         }
         // redirection si nécessaire
         if ($needsRedirect) {
+//            var_dump("here redirect");
+//            var_dump($this->getEvent()->getRouteMatch()->getParam('language'));
             return $this->redirect()->toRoute(null, [], ['query' => $queryParams], true);
+//            return $this->redirect()->toRoute(null, [], ['query' => $queryParams], true);
         }
 
         $maxi = $this->params()->fromQuery('maxi', 20);

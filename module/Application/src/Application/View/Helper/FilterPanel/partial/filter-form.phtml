@@ -27,7 +27,7 @@ use Application\View\Renderer\PhpRenderer;
 
 <div class="panel panel-default filters">
     <div class="panel-heading">
-        <span class="glyphicon glyphicon-filter"></span>Filtres
+        <span class="glyphicon glyphicon-filter"></span> <?php echo $this->translate("Filtres"); ?>
     </div>
     <table class="table table-bordered">
         <?php foreach ($config as $label => $data): ?>

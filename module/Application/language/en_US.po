@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-01-12 16:01+0100\n"
-"PO-Revision-Date: 2018-01-16 11:32+0100\n"
+"PO-Revision-Date: 2018-02-02 13:04+0100\n"
 "Language: en_US\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -159,6 +159,106 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-01-16 11:31+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-02-02 09:30+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-02-02 12:08+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-02-02 12:35+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-02-02 12:39+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-02-02 12:40+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-02-02 12:41+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-02-02 12:45+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-02-02 12:47+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-02-02 12:55+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-02-02 13:01+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -445,7 +545,7 @@ msgstr "Version"
 
 #: module/Application/view/application/fichier-these/deposes.phtml:39
 msgid "Thèse"
-msgstr "Phd These"
+msgstr "Phd Thesis"
 
 #: module/Application/view/application/fichier-these/deposes.phtml:45
 msgid "Archivable"
@@ -486,3 +586,195 @@ msgstr "at"
 #: module/Application/view/application/fichier-these/deposes.phtml:103
 msgid "Télécharger le fichier déposé"
 msgstr "Download the stored file"
+
+#: module/Application/view/application/index/index.phtml:14
+msgid "Accueil"
+msgstr ""
+
+#: module/Application/view/application/index/index.phtml:28
+msgid ""
+"Bienvenue dans l’outil de suivi et de dépôt numérique des thèses de "
+"l'université de Caen Normandie."
+msgstr ""
+"Welcome to the tool dedicated to the tracking and digital repository of "
+"theses of the University of Caen Normandy."
+
+#: module/Application/view/application/index/index.phtml:31
+msgid ""
+"SyGAL offre aux différents acteurs du circuit des thèses de Normandie "
+"Université une vision d’ensemble sur les thèses préparées au sein de la "
+"COMUE."
+msgstr ""
+
+#: module/Application/view/application/index/index.phtml:32
+msgid ""
+"Il permet la gestion du dépôt de la thèse sous forme numérique, pour "
+"archivage et affichage dans le portail national :"
+msgstr ""
+
+#: module/Application/view/application/index/index.phtml:40
+msgid "Vous n'êtes pas connecté-e."
+msgstr ""
+
+#: module/Application/view/application/index/index.phtml:52
+msgid "Vous êtes connecté-e en tant que"
+msgstr ""
+
+#: module/Application/view/application/index/index.phtml:60
+msgid "Accès aux thèses..."
+msgstr ""
+
+#: module/Application/view/application/these/identite.phtml:45
+msgid "Fiche"
+msgstr "Information Sheet"
+
+#: module/Application/view/application/these/identite.phtml:67
+msgid "Nationalité :"
+msgstr "Nationality:"
+
+#: module/Application/view/application/these/identite.phtml:72
+msgid "N° étudiant :"
+msgstr "Student no.:"
+
+#: module/Application/view/application/these/identite.phtml:77
+msgid "PersoP@ss :"
+msgstr "PersoP@ss:"
+
+#: module/Application/view/application/these/identite.phtml:85
+msgid "Modifier"
+msgstr "Modify"
+
+#: module/Application/view/application/these/identite.phtml:90
+msgid "Mail :"
+msgstr "Mail:"
+
+#: module/Application/view/application/these/identite.phtml:95
+msgid "(Inconnu)"
+msgstr "(Unknown)"
+
+#: module/Application/view/application/these/identite.phtml:131
+msgid "Établissement"
+msgstr "Institution"
+
+#: module/Application/view/application/these/identite.phtml:136
+#: module/Application/view/application/these/identite.phtml:138
+msgid "Non renseigné"
+msgstr "None given"
+
+#: module/Application/view/application/these/identite.phtml:159
+msgid "Titre"
+msgstr "Title"
+
+#: module/Application/view/application/these/identite.phtml:166
+msgid "Confidentialité"
+msgstr "Confidentiality"
+
+#: module/Application/view/application/these/index.phtml:30
+#: module/Application/view/application/these/index.phtml:33
+msgid "Thèses"
+msgstr "PhD Theses"
+
+#: module/Application/view/application/these/index.phtml:49
+msgid "thèse(s) trouvée(s)."
+msgstr "found PhD theses."
+
+#: module/Application/view/application/these/index.phtml:58
+msgid "Titre de la thèse"
+msgstr "Title of the PhD thesis"
+
+#: module/Application/view/application/these/index.phtml:64
+msgid "Numéro étudiant"
+msgstr "Student number of the PhD student"
+
+#: module/Application/view/application/these/index.phtml:65
+msgid "N°étud."
+msgstr "Student Number"
+
+#: module/Application/view/application/these/index.phtml:70
+msgid "Nom du doctorant"
+msgstr "Name of the PhD student"
+
+#: module/Application/view/application/these/index.phtml:75
+msgid "Liste des directeurs de thèse"
+msgstr "List of the PhD supervisors"
+
+#: module/Application/view/application/these/index.phtml:76
+msgid "Dir. de thèse"
+msgstr "PhD Supervisors"
+
+#: module/Application/view/application/these/index.phtml:82
+msgid "École<br>doct."
+msgstr "Doctoral<br/>School"
+
+#: module/Application/view/application/these/index.phtml:88
+msgid "Unité<br>rech."
+msgstr "Research<br/>Unit"
+
+#: module/Application/view/application/these/index.phtml:92
+msgid "Date de première inscription"
+msgstr "Date of first inscription"
+
+#: module/Application/view/application/these/index.phtml:93
+msgid "Date 1ère<br>inscr."
+msgstr "Date of 1st<br/> Inscription"
+
+#: module/Application/view/application/these/index.phtml:142
+msgid "Exporter au format CSV"
+msgstr "Export as CSV"
+
+#: module/Application/view/application/these/index.phtml:148
+msgid "Filtres"
+msgstr "Filters"
+
+#: module/Application/view/application/these/index.phtml:149
+msgid "État"
+msgstr "State"
+
+#: module/Application/view/application/these/index.phtml:150
+msgid "En cours"
+msgstr "Ongoing"
+
+#: module/Application/view/application/these/index.phtml:151
+msgid "Abandonnée"
+msgstr "Dropped"
+
+#: module/Application/view/application/these/index.phtml:152
+msgid "Soutenue"
+msgstr "Defended"
+
+#: module/Application/view/application/these/index.phtml:153
+msgid "Transférée"
+msgstr "Transfered"
+
+#: module/Application/view/application/these/index.phtml:154
+msgid "Tous"
+msgstr "All"
+
+#: module/Application/view/application/these/index.phtml:156
+msgid "Rechercher"
+msgstr "Search"
+
+#: module/Application/view/application/these/index.phtml:157
+msgid "Vider"
+msgstr "Clear"
+
+#: module/Application/view/application/these/index.phtml:158
+msgid "Entrez 2 caractères au moins..."
+msgstr "Enter at least 2 characters..."
+
+#: module/Application/view/application/these/index.phtml:159
+msgid ""
+"Recherche possible sur<ul><li>le titre de la thèse</li><li>le numéro "
+"étudiant de l'auteur</li><li>le nom de l'auteur</li><li>le nom du directeur "
+"ou co-directeur de thèse</li><li>le code national de l'école doctorale "
+"concernée (ex: 181)</li><li>l'unité de recherche concernée (ex: umr6211)</"
+"li></ul>"
+msgstr ""
+"The search can use\n"
+"<ul>\n"
+"<li>the title of a PhD thesis</li>\n"
+"<li>the student number of a PhD student</li>\n"
+"<li>the name of a PhD student</li>\n"
+"<li>the name of a PhD supervisor</li>\n"
+"<li>the national identifier of a doctoral school (for instance: 181)</li>\n"
+"<li>the identifier of research unit (for instance: umr6211)</li></ul>"
