@@ -3,7 +3,7 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
     <entity name="Import\Model\TmpThese" table="TMP_THESE">
-        <id name="id" type="integer" column="ID"/>
+        <id name="id" type="string" column="ID"/>
 
         <field name="sourceId"                  type="string" column="SOURCE_ID" length="64" nullable="true"/>
         <field name="etablissementId"           type="string" column="ETABLISSEMENT_ID" length="64" nullable="true"/>
