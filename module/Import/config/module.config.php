@@ -25,6 +25,7 @@ return array(
                         'help',
                         'fetch',
                     ],
+                    //TODO changer le privilège
                     'privileges' => \Application\Provider\Privilege\ThesePrivileges::THESE_RECHERCHE,
                 ],
             ],

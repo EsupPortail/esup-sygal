@@ -27,19 +27,23 @@ use Application\View\Renderer\PhpRenderer;
 
 $canEditPersopass = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_MODIFICATION_PERSOPASS);
 $canEditPersopass = $canEditPersopass && (!$estDoctorant || !$these->getDoctorant()->getPersopass());
-
 $persopassModifiedEvent = 'persopass-modified-event';
 
 ?>
 
-<?php $this->headTitle("Thèse")->prepend($these->getDoctorant()->getNomUsuel()) ?>
+<?php $this->headTitle($this->translate("Thèse"))->prepend($these->getDoctorant()->getNomUsuel()) ?>
 
-<h1 class="page-header">Thèse <small><?php echo $this->partial('application/these/partial/titre') ?></small></h1>
+<h1 class="page-header">
+    <?php echo $this->translate("Thèse"); ?>
+    <small><?php echo $this->partial('application/these/partial/titre') ?></small>
+</h1>
 
 <div class="box panel panel-info">
 
     <div class="panel-heading">
-        <h2 class="first">Fiche</h2>
+        <h2 class="first">
+            <?php echo $this->translate("Fiche"); ?>
+        </h2>
     </div>
 
     <div class="panel-body">
@@ -50,22 +54,45 @@ $persopassModifiedEvent = 'persopass-modified-event';
 
         <dl class="dl-horizontal">
 
-            <dt>Doctorant</dt>
+            <dt>
+                <?php echo $this->translate("Doctorant"); ?>
+            </dt>
             <dd>
-                <?php echo $these->getDoctorant()->getNomComplet(true, true, true) ?>
-                (<?php echo $these->getDoctorant()->getDateNaissanceToString() ?>)  <br>
-                <strong>Nationalité :</strong> <?php echo $these->getDoctorant()->getNationalite() ?> <br>
-                <strong>N° étudiant :</strong> <?php echo $these->getDoctorant()->getSourceCode() ?> <br>
-                <strong>PersoP@ss :</strong> <?php echo $these->getDoctorant()->getPersopass() ?: "(Non renseigné)" ?>
+                <?php
+                    echo $these->getDoctorant()->getNomComplet(true, true, true);
+                    echo "(".$these->getDoctorant()->getDateNaissanceToString().")";
+                ?><br>
+
+                <strong>
+                    <?php echo $this->translate("Nationalité :"); ?>
+                </strong>
+                <?php echo $these->getDoctorant()->getNationalite() ?> <br>
+
+                <strong>
+                    <?php echo $this->translate("N° étudiant :"); ?>
+                </strong>
+                <?php echo $these->getDoctorant()->getSourceCode() ?> <br>
+
+                <strong>
+                    <?php echo $this->translate("PersoP@ss :"); ?>
+                </strong>
+                <?php echo $these->getDoctorant()->getPersopass() ?: "(Non renseigné)" ?>
                 <?php if ($canEditPersopass): ?>
-                    <a href="<?php echo $modifierPersopassUrl ?>" data-event="<?php echo $persopassModifiedEvent ?>"
-                       class="btn btn-default btn-xs ajax-modal"><span class="glyphicon glyphicon-pencil"></span> Modifier</a>
+                    <a href="<?php echo $modifierPersopassUrl ?>"
+                       data-event="<?php echo $persopassModifiedEvent ?>"
+                       class="btn btn-default btn-xs ajax-modal">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                        <?php echo $this->translate("Modifier"); ?>
+                    </a>
                 <?php endif ?> <br>
-                <strong>Mèl :</strong>
+
+                <strong>
+                    <?php echo $this->translate("Mail :"); ?>
+                </strong>
                 <?php if ($email = $these->getDoctorant()->getEmailPro() ?: $these->getDoctorant()->getEmail()): ?>
                     <a href="mailto: <?php echo $email ?>"><?php echo $email ?></a>
                 <?php else: ?>
-                    (Inconnu)
+                    <?php echo $this->translate("(Inconnu)"); ?>
                 <?php endif ?>
             </dd>
 
@@ -100,30 +127,44 @@ $persopassModifiedEvent = 'persopass-modified-event';
 
             ?>
 
-            <dt>Établissement</dt>
+            <dt>
+                <?php echo $this->translate("Établissement"); ?>
+            </dt>
             <dd>
                 <?php
                     /** @var Etablissement $etablissement */
-                    if($etablissement === null) echo "Non renseigné"; else echo $etablissement->getCode();
+                    if($etablissement === null) echo $this->translate("Non renseigné"); else echo $etablissement->getCode();
                     echo " - ";
-                    if($etablissement === null) echo "Non renseigné"; else echo $etablissement->getLibelle(); ?>
+                    if($etablissement === null) echo $this->translate("Non renseigné"); else echo $etablissement->getLibelle(); ?>
             </dd>
 
 
-            <dt>École doctorale</dt>
+            <dt>
+                <?php echo $this->translate("École doctorale"); ?>
+            </dt>
             <dd>
                 <?php if($these->getEcoleDoctorale()): ?>
                     <?php echo $these->getEcoleDoctorale()->getSourceCode() . " - " . $these->getEcoleDoctorale()->getLibelle() ?>
                 <?php endif ?>
             </dd>
 
-            <dt>Unité de recherche</dt>
-            <dd><?php echo $these->getCodeUniteRecherche() . " - " . $these->getLibelleUniteRecherche() ?></dd>
+            <dt>
+                <?php echo $this->translate("Unité de recherche"); ?>
+            </dt>
+            <dd>
+                <?php echo $these->getCodeUniteRecherche() . " - " . $these->getLibelleUniteRecherche() ?>
+            </dd>
 
-            <dt>Titre</dt>
-            <dd><?php echo $these->getTitre() ?></dd>
+            <dt>
+                <?php echo $this->translate("Titre"); ?>
+            </dt>
+            <dd>
+                <?php echo $these->getTitre() ?>
+            </dd>
 
-            <dt>Confidentialité</dt>
+            <dt>
+                <?php echo $this->translate("Confidentialité"); ?>
+            </dt>
             <?php if ($these->etaitConfidentielle()): ?>
                 <dd>Confidentielle, jusqu'au <?php echo $these->getDateFinConfidentialiteToString() ?></dd>
             <?php elseif ($these->estConfidentielle()): ?>

@@ -37,7 +37,7 @@ class LanguageSelectorHelper extends AbstractHelper
     public function __toString()
     {
 
-        $languages =
+        $languages ="";
 
         $id = "LanguageSelector";
         $title   = $this->getView()->translate("Choix de la langue");
