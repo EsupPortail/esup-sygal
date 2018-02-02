@@ -1,4 +1,5 @@
 version: '2'
+
 services:
   sygal:
     build:
@@ -13,5 +14,23 @@ services:
     volumes:
      - .:/webapp
     container_name: sygal-container
-#    dns: 10.14.128.125
-#    dns_search: unicaen.fr
+    network_mode: bridge
+    dns: 10.14.128.125
+    dns_search: unicaen.fr
+
+  sygal-import-ws:
+    build:
+      context: ../sygal-import-ws
+      dockerfile: Dockerfile
+      args:
+        http_proxy: http://10.14.128.99:3128
+        https_proxy: http://10.14.128.99:3128
+        no_proxy: localhost,127.0.0.1,.unicaen.fr
+    ports:
+     - "8080:8080"
+    volumes:
+     - ../sygal-import-ws:/var/www
+    network_mode: bridge
+    dns: 10.14.128.125
+    dns_search: unicaen.fr
+
