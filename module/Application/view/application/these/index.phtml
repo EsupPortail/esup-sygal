@@ -134,7 +134,7 @@ $acteursFormatter->asSeparated()
     </tbody>
 </table>
 
-<?php echo $paginationControl = $this->paginationControl($theses, 'sliding', 'partial/paginator.phtml', ['route' => 'these']) ?>
+<?php echo $paginationControl = $this->paginationControl($theses, 'sliding', 'partial/paginator.phtml', ['route' => 'lhome/lthese']) ?>
 
 <?php if ($canExport): ?>
     <a class="btn btn-default" href="<?php echo $this->url('export/csv', [], ['query' => $queryParams]) ?>">
