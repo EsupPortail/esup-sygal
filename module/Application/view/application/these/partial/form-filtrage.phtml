@@ -18,9 +18,8 @@ $urlFiltrer = function ($paramName, $paramValue, $queryParams) {
     $queryParams[$paramName] = $paramValue;
     return $this->url('these/rechercher', [], ['query' => $queryParams], true);
 };
-?>
 
-<?php echo $this->filterPanel([
+echo $this->filterPanel([
     $this->translate("État") => [
         'paramName' => 'etatThese',
         'paramConfig' => [
@@ -32,16 +31,6 @@ $urlFiltrer = function ($paramName, $paramValue, $queryParams) {
         ],
         'filterUrl' => $urlFiltrer,
     ],
-//    "Résultat" => [
-//        'paramName' => 'resultat',
-//        'paramConfig' => [
-//            ['value' => '', 'label' => "Tous"],
-//            ['value' => $v = (string) These::RESULTAT_ADMIS, 'label' => These::$resultatsLibellesCourts[$v]],
-//            ['value' => $v = (string) These::RESULTAT_AJOURNE, 'label' => These::$resultatsLibellesCourts[$v]],
-//            ['value' => $v = These::ETAT_SOUTENUE, 'label' => These::$etatsLibelles[$v]],
-//        ],
-//        'filterUrl' => $urlFiltrer,
-//    ],
 ]) ?>
 
 

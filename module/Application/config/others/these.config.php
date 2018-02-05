@@ -669,7 +669,7 @@ return [
                     'these' => [
                         'order'    => -100,
                         'label'    => 'Thèses',
-                        'route'    => 'lhome/lthese',
+                        'route'    => 'these',
                         'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'index'),
                         'pages' => [
                             'roadmap' => [

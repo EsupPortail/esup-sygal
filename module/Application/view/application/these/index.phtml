@@ -103,7 +103,7 @@ $acteursFormatter->asSeparated()
         <tr>
             <td>
                 <span title="<?php echo $these->getTitre() ?>">
-                    <a href="<?php echo $this->url('lhome/lthese/lidentite', ['these' => $these->getId()], [], true) ?>">
+                    <a href="<?php echo $this->url('these/identite', ['these' => $these->getId()], [], true) ?>">
                         <?php echo $this->partial('application/these/partial/titre', ['these' => $these, 'useTitreThese' => true]) ?>
                     </a>
                 </span>
@@ -134,7 +134,7 @@ $acteursFormatter->asSeparated()
     </tbody>
 </table>
 
-<?php echo $paginationControl = $this->paginationControl($theses, 'sliding', 'partial/paginator.phtml', ['route' => 'lhome/lthese']) ?>
+<?php echo $paginationControl = $this->paginationControl($theses, 'sliding', 'partial/paginator.phtml', ['route' => 'these']) ?>
 
 <?php if ($canExport): ?>
     <a class="btn btn-default" href="<?php echo $this->url('export/csv', [], ['query' => $queryParams]) ?>">
