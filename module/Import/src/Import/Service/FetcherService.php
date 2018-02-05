@@ -199,8 +199,8 @@ class FetcherService
         $log_query .= " values (";
         $log_query .= "API_LOG_ID_SEQ.nextval ,";
         $log_query .= "'" . $route . "' , ";
-        $log_query .= "to_date('" . $start_date->format('y-m-d h:m:s') . "','YY-MM-DD HH24:MI:SS') , ";
-        $log_query .= "to_date('" . $end_date->format('y-m-d h:m:s') . "','YY-MM-DD HH24:MI:SS') , ";
+        $log_query .= "to_date('" . $start_date->format('y-m-d h:i:s') . "','YY-MM-DD HH24:MI:SS') , ";
+        $log_query .= "to_date('" . $end_date->format('y-m-d h:i:s') . "','YY-MM-DD HH24:MI:SS') , ";
         $log_query .= "'" . $status . "' , ";
         $log_query .= "'" . $response . "'";
         $log_query .= ")";
@@ -271,9 +271,20 @@ class FetcherService
      */
     public function fetch($dataName, $entityClass, $source_code = null)
     {
-        if ($source_code !== null) return $this->fetchOne($dataName, $entityClass, $source_code);
-        return $this->fetchAll($dataName, $entityClass);
+        $logs = [];
+        if ($source_code !== null) {
+            $logs = $this->fetchOne($dataName, $entityClass, $source_code);
+        } else {
+            $logs = $this->fetchAll($dataName, $entityClass);
+        }
+        return $logs;
+
     }
+
+    public function updateBDD() {
+        $this->entityManager->getConnection()->executeQuery("begin APP_IMPORT.SYNCHRONISATION(); end;");
+    }
+
     public function fetchOne($dataName, $entityClass, $sourceCode, $debug_level = 0)
     {
         $debut = microtime(true);

@@ -10,3 +10,4 @@ MAILTO=bertrand.gauthier@unicaen.fr
 # Du lundi au vendredi, chaque heure de 5h à 17h :
 0 5-17 * * 1-5 root /usr/bin/php {SODOCT_ROOT_DIR}/public/index.php process-observed-import-results 1> /tmp/sodoct-process-observed-import-results.log 2>&1
 0 *    * * *   root cd {SODOCT_ROOT_DIR}/data/cron && bash ./test-cines-ws.bash 1> /tmp/sodoct-test-cines-ws.log 2>&1
+*/15 * * * *   root /usr/bin/php /home/metivier/MyWeb/sygal/public/index.php fetch --service=all --etablissement=UCN 1> /tmp/sygal-import-ws.log 2>&1

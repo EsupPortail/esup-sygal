@@ -25,8 +25,21 @@ return array(
                         'help',
                         'fetch',
                     ],
-                    //TODO changer le privilège
-                    'privileges' => \Application\Provider\Privilege\ThesePrivileges::THESE_RECHERCHE,
+                    'roles' => [
+                        'Administrateur technique COMUE', 'Administrateur technique UCN',
+                        'Administrateur technique URN', 'Administrateur technique ULHN',
+                        'Administrateur technique INSA',
+                        'Administrateur COMUE', 'Administrateur UCN',
+                        'Administrateur URN', 'Administrateur ULHN',
+                        'Administrateur INSA',
+                    ],
+                ],
+                [
+                    'controller' => Import\Controller\ImportController::class,
+                    'action'     => [
+                        'fetch-console',
+                    ],
+                    'roles' => [],
                 ],
             ],
         ],
@@ -62,7 +75,7 @@ return array(
                     'options' => [
                         'route'    => 'fetch --service=  --etablissement= [--source-code=]',
                         'defaults' => [
-                            'controller' => 'Import\Controller\Import',
+                            'controller' => Import\Controller\ImportController::class,
                             'action'     => 'fetch',
                             'service'       => 'non renseigné',
                             'etablissement' => 'non renseigné',

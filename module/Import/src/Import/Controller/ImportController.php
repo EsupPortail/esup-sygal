@@ -61,6 +61,8 @@ class ImportController extends AbstractActionController
                 throw $e;
             }
         }
+
+        $this->fetcherService->updateBDD();
         return new ViewModel([
             'service' => $service_para,
             'etablissement' => $etablissement,
@@ -68,5 +70,42 @@ class ImportController extends AbstractActionController
 
             'logs' => $logs,
         ]);
+    }
+
+    public function fetchConsoleAction() {
+
+        $service_para  = $this->params('service');
+        $etablissement = $this->params('etablissement');
+        $source_code   = $this->params('source_code');
+
+        /** is it all ? */
+        if ($service_para === "all") {
+            $services = ['source', 'variable', 'role', 'doctorant', 'these', 'individu', 'acteur'];
+        } else {
+            $services = [ $service_para ];
+        }
+
+        $logs = [];
+        foreach ($services as $service) {
+
+            /** Paramétrage du service de récupération */
+            $this->fetcherService->setCode($etablissement);
+            $this->fetcherService->setUrlWithEtablissement($etablissement);
+            $dataName = $service;
+            $entityClass = "Import\Model\Tmp" . ucwords($service);
+            $source_code = ($source_code != "non renseigné") ? $source_code : null;
+
+            /** Execution de la récupération */
+            try {
+                $logs[] = $this->fetcherService->fetch($dataName, $entityClass, $source_code);
+            } catch (\Exception $e) {
+                print "Une exception a été levée (".$e->getCode()." - ".$e->getMessage() .")";
+                throw $e;
+            }
+        }
+
+        $this->fetcherService->updateBDD();
+        print "Importation des données réussie";
+
     }
 }
