@@ -88,43 +88,43 @@
 
 ### Peuplement des tables
 
-|Fait|Nom|Commentaires|
-|----|---|------------|
-|x|ACTEUR|Import
-| |ATTESTATION|
-|x|CATEGORIE_PRIVILEGE|
-| |CONTENU_FICHIER|
-| |DIFFUSION|
-| |ECOLE_DOCT|
-| |ECOLE_DOCT_IND|
-|x|ETABLISSEMENT|
-|x|FAQ|
-| |FICHIER|
-| |IMPORT_OBS_NOTIF|
-| |IMPORT_OBS_RESULT_NOTIF|
-| |IMPORT_OBSERV|
-| |IMPORT_OBSERV_RESULT|
-|x|INDIVIDU|Import
-| |METADONNEE_THESE|
-| |NOTIF|Module Notification|
-| |NOTIF_RESULT|Module Notification|
-|x|MV_RECHERCHE_THESE|Exploitait des VM dans SoDoct!|
-|x|NATURE_FICHIER|
-|x|PRIVILEGE|
-| |RDV_BU|
-| |ROLE_PRIVILEGE|pointe sur une table ROLE qui a changé!|
-|x|SOURCE|
-|x|DOCTORANT|Import
-| |DOCTORANT_COMPL|
-|x|THESE|Import
-|x|TYPE_VALIDATION|
-| |UNITE_RECH|
-| |UNITE_RECH_IND|
-|x|ROLE|Import
-| |UTILISATEUR_ROLE|
-| |UTILISATEUR|
-| |VALIDATION|
-| |VALIDITE_FICHIER|
-|x|VARIABLE|Import
-|x|VERSION_FICHIER|
-|x|WF_ETAPE|
+|Fait | Nom                     | Commentaires
+|-----|-------------------------|------------------------------------------------------|
+|  *  | ACTEUR                  | Données SoDoct reprises. Tester import...
+|  *  | ATTESTATION             | Données SoDoct reprises. 
+|  x  | CATEGORIE_PRIVILEGE     | 
+|     | CONTENU_FICHIER         | 
+|  *  | DIFFUSION               | Données SoDoct reprises. 
+|  *  | ECOLE_DOCT              | Données SoDoct reprises. 
+|     | ECOLE_DOCT_IND          | 
+|  x  | ETABLISSEMENT           | 
+|  x  | FAQ                     | Données SoDoct reprises. 
+|     | FICHIER                 | 
+|     | IMPORT_OBS_NOTIF        | 
+|     | IMPORT_OBS_RESULT_NOTIF | 
+|  *  | IMPORT_OBSERV           | 
+|  *  | IMPORT_OBSERV_RESULT    | 
+|  *  | INDIVIDU                | Données SoDoct reprises. Tester import...
+|  *  | METADONNEE_THESE        | Données SoDoct reprises. 
+|     | NOTIF                   | Module Notification | 
+|     | NOTIF_RESULT            | Module Notification | 
+|  x  | MV_RECHERCHE_THESE      | Exploitait des VM dans SoDoct! | 
+|  x  | NATURE_FICHIER          | Données SoDoct reprises. 
+|  x  | PRIVILEGE               | Données SoDoct reprises. 
+|  *  | RDV_BU                  | Données SoDoct reprises. 
+|  x  | ROLE_PRIVILEGE          | 
+|  x  | SOURCE                  | 
+|  *  | DOCTORANT               | Données SoDoct reprises. Tester import...
+|  *  | DOCTORANT_COMPL         | Données SoDoct reprises.
+|  x  | THESE                   | Données SoDoct reprises. Tester import...
+|  x  | TYPE_VALIDATION         | Données SoDoct reprises. 
+|  *  | UNITE_RECH              | Données SoDoct reprises. 
+|     | UNITE_RECH_IND          | 
+|  x  | ROLE                    | Données SoDoct reprises. Tester import...
+|  *  | UTILISATEUR_ROLE        | 
+|  *  | UTILISATEUR             | Données SoDoct reprises. 
+|     | VALIDATION              | Données SoDoct reprises. 
+|     | VALIDITE_FICHIER        | 
+|  x  | VARIABLE                | Import
+|  x  | VERSION_FICHIER         | Données SoDoct reprises. 
+|  x  | WF_ETAPE                | Données SoDoct reprises. 
