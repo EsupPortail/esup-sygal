@@ -76,7 +76,7 @@ return array(
                         'route'    => 'fetch --service=  --etablissement= [--source-code=]',
                         'defaults' => [
                             'controller' => Import\Controller\ImportController::class,
-                            'action'     => 'fetch',
+                            'action'     => 'fetch-console',
                             'service'       => 'non renseigné',
                             'etablissement' => 'non renseigné',
                             'source_code'   => 'non renseigné',

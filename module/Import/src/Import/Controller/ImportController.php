@@ -105,7 +105,7 @@ class ImportController extends AbstractActionController
         }
 
         $this->fetcherService->updateBDD();
-        print "Importation des données réussie";
+        print "Importation des données réussie \n";
 
     }
 }
