@@ -199,8 +199,8 @@ class FetcherService
         $log_query .= " values (";
         $log_query .= "API_LOG_ID_SEQ.nextval ,";
         $log_query .= "'" . $route . "' , ";
-        $log_query .= "to_date('" . $start_date->format('y-m-d h:i:s') . "','YY-MM-DD HH24:MI:SS') , ";
-        $log_query .= "to_date('" . $end_date->format('y-m-d h:i:s') . "','YY-MM-DD HH24:MI:SS') , ";
+        $log_query .= "to_date('" . $start_date->format('y-m-d H:i:s') . "','YY-MM-DD HH24:MI:SS') , ";
+        $log_query .= "to_date('" . $end_date->format('y-m-d H:i:s') . "','YY-MM-DD HH24:MI:SS') , ";
         $log_query .= "'" . $status . "' , ";
         $log_query .= "'" . $response . "'";
         $log_query .= ")";
