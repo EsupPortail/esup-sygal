@@ -74,7 +74,7 @@ return array(
                     ],
                 ],
             ],
-            'lhome' => [
+            /*'lhome' => [
                 'type' => 'Segment',
                 'options' => [
                     'route'    => '/:language',
@@ -106,7 +106,18 @@ return array(
                                         'these' => '\d+',
                                     ],
                                     'defaults'    => [
+                                        'controller'    => 'Application\Controller\These',
                                         'action' => 'detail-identite',
+                                    ],
+                                ],
+                            ],
+                            'lrechercher' => [
+                                'type'          => 'Segment',
+                                'options'       => [
+                                    'route'       => '/rechercher',
+                                    'defaults'    => [
+                                        'controller'    => 'Application\Controller\These',
+                                        'action' => 'rechercher',
                                     ],
                                 ],
                             ],
@@ -114,7 +125,7 @@ return array(
                     ],
 
                 ],
-            ],
+            ],*/
             'not-allowed' => [
                 'type' => 'Literal',
                 'options' => [

@@ -78,7 +78,6 @@ class TheseController extends AbstractController implements
      */
     public function indexAction()
     {
-        //var_dump($this->getEvent()->getRouteMatch()->getParam('language'));
         /**
          * L'utilisateur est un doctorant, redirection vers l'accueil.
          */
@@ -93,6 +92,7 @@ class TheseController extends AbstractController implements
         $queryParams = $this->params()->fromQuery();
         // filtres
         $etatThese = $this->params()->fromQuery($name = 'etatThese');
+//        var_dump($etatThese);
         if ($etatThese === null) { // null <=> paramètre absent
             // filtrage par défaut : thèse en préparation
             $queryParams = array_merge($queryParams, [$name => These::ETAT_EN_COURS]);
@@ -105,15 +105,14 @@ class TheseController extends AbstractController implements
             $queryParams = array_merge($queryParams, ['sort' => 't.datePremiereInscription', 'direction' => Sortable::ASC]);
             $needsRedirect = true;
         }
+//        var_dump("Redirection needed: ");
+//        var_dump($needsRedirect);
         // redirection si nécessaire
         if ($needsRedirect) {
-//            var_dump("here redirect");
-//            var_dump($this->getEvent()->getRouteMatch()->getParam('language'));
             return $this->redirect()->toRoute(null, [], ['query' => $queryParams], true);
-//            return $this->redirect()->toRoute(null, [], ['query' => $queryParams], true);
         }
 
-        $maxi = $this->params()->fromQuery('maxi', 20);
+        $maxi = $this->params()->fromQuery('maxi', 10);
         $page = $this->params()->fromQuery('page', 1);
 
         $qb = $this->createQueryBuilder();

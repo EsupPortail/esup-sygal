@@ -36,7 +36,6 @@ class LanguageSelectorHelper extends AbstractHelper
 
     public function __toString()
     {
-
         $languages ="";
 
         $id = "LanguageSelector";
@@ -44,7 +43,7 @@ class LanguageSelectorHelper extends AbstractHelper
 
         $content = "<ul>";
         foreach ($this->languages as $language) {
-            $url   = $this->getView()->url($this->getView()->route,  ['language' => $language], [], true);
+            $url   = $this->getView()->url($this->getView()->route,  ['language' => $language], [$this->getView()->queryParams()], true);
             $flag  = $this->flagPath.$language.".png";
             $label = "<img src=\"".$this->getView()->basePath($flag)."\" style=\"width:40px;\"/>";
             $content .= "<li><a href=\"".$url."\">".$label."</a></li><br/>";
