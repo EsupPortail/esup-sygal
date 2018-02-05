@@ -103,10 +103,13 @@ $persopassModifiedEvent = 'persopass-modified-event';
             $acteursFormatter->asArray();
 
             $acteurs = $these->getActeurs()->toArray();
-            usort($acteurs, [Acteur::class, 'cmp']);
+            //usort($acteurs, [Acteur::class, 'cmp']);
+            usort($acteurs, function ($a,$b) {return $a->getRole() < $b->getRole();});
             $results = $acteursFormatter->doFormat($acteurs);
 
             $previous = "";
+
+
             foreach($results as $result) {
 
                     if ($previous != $result["role"]) {
