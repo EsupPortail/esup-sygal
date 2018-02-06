@@ -17,8 +17,6 @@ use Application\View\Renderer\PhpRenderer;
  * @var string               $modifierAttestationUrl
  */
 
-$hasFichierThese = $these->getFichiersBy(false, false, false)->count() > 0;
-
 $canEdit = $this->isAllowed($these, ThesePrivileges::THESE_SAISIE_ATTESTATIONS);
 ?>
 

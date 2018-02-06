@@ -10,18 +10,22 @@ use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
+use Application\Entity\Db\VersionFichier;
 use Application\Entity\Db\VSitu\DepotVersionCorrigeeValidationDirecteur;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\Provider\Privilege\ValidationPrivileges;
+use Application\Service\Fichier\FichierServiceAwareInterface;
+use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareInterface;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 
-class TheseEntityAssertion implements EntityAssertionInterface, ValidationServiceAwareInterface
+class TheseEntityAssertion implements EntityAssertionInterface, ValidationServiceAwareInterface, FichierServiceAwareInterface
 {
     use UserContextServiceAwareTrait;
     use ValidationServiceAwareTrait;
     use ThrowsFailedAssertionExceptionTrait;
+    use FichierServiceAwareTrait;
 
     /**
      * @var These
@@ -61,7 +65,7 @@ class TheseEntityAssertion implements EntityAssertionInterface, ValidationServic
                  * THESE_SAISIE_CONFORMITE_ARCHIVAGE
                  */
                 case ThesePrivileges::THESE_SAISIE_CONFORMITE_ARCHIVAGE:
-                    if ($this->these->existeFichierTheseVersionCorrigee()) {
+                    if ($this->existeFichierTheseVersionCorrigee()) {
                         $this->assertDepotVersionCorrigeeNonEncoreValide();
                     } else {
                         $this->assertAucuneValidationBU();
@@ -101,7 +105,7 @@ class TheseEntityAssertion implements EntityAssertionInterface, ValidationServic
                  */
                 case ValidationPrivileges::THESE_VALIDATION_RDV_BU_SUPPR:
                     $this->assertTrue($this->these && $this->these->getValidation(TypeValidation::CODE_RDV_BU));
-                    $this->assertFalse($this->these->existeFichierTheseVersionCorrigee());
+                    $this->assertFalse($this->existeFichierTheseVersionCorrigee());
                     break;
 
                 /**
@@ -210,7 +214,7 @@ class TheseEntityAssertion implements EntityAssertionInterface, ValidationServic
             case ThesePrivileges::THESE_SAISIE_ATTESTATIONS:
             case ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION:
             case ThesePrivileges::THESE_DEPOT_VERSION_INITIALE:
-                if ($this->these->existeFichierTheseVersionCorrigee()) {
+                if ($this->existeFichierTheseVersionCorrigee()) {
                     $this->assertDepotVersionCorrigeeNonEncoreValide();
                 } else {
                     $this->assertAucuneValidationBU();
@@ -220,7 +224,7 @@ class TheseEntityAssertion implements EntityAssertionInterface, ValidationServic
         //Une correction doit être apportée par le doctorant, celui-ci ne peut plus modifier son autorisation de diffusion
         if ($privilege === ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION) {
             $this->assertFalse(
-                $this->these->existeFichierTheseVersionCorrigee(),
+                $this->existeFichierTheseVersionCorrigee(),
             "Aucune version corrigée n'a été fournie.");
         }
     }
@@ -298,5 +302,14 @@ class TheseEntityAssertion implements EntityAssertionInterface, ValidationServic
         }
 
         return $this->identityDoctorant;
+    }
+
+    private function existeFichierTheseVersionCorrigee()
+    {
+//        if (! $this->getFichiersByNatureEtVersion(NatureFichier::CODE_THESE_PDF, VersionFichier::CODE_ORIG_CORR)->isEmpty()) {
+        if (! empty($this->fichierService->getRepository()->fetchFichiers($this->these, NatureFichier::CODE_THESE_PDF, VersionFichier::CODE_ORIG_CORR, false))) {
+            return true;
+        }
+        return false;
     }
 }

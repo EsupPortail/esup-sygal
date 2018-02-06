@@ -347,8 +347,9 @@ class TheseController extends AbstractController implements
             VersionFichier::CODE_ORIG_CORR :
             VersionFichier::CODE_ORIG;
 
-        $theseFichiers = $these->getFichiersByNatureEtVersion(NatureFichier::CODE_THESE_PDF, $version, false);
-        $fichierThese = $theseFichiers->first();
+//        $theseFichiers = $these->getFichiersByNatureEtVersion(NatureFichier::CODE_THESE_PDF, $version, false);
+        $theseFichiers = $this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF, $version, false);
+        $fichierThese = current($theseFichiers);
 
         if ($this->getRequest()->isPost()) {
             $action = $this->params()->fromPost('action', $this->params()->fromQuery('action'));
@@ -368,10 +369,11 @@ class TheseController extends AbstractController implements
                 'file'        => $fichier,
                 'downloadUrl' => $this->urlFichierThese()->telechargerFichierThese($these, $fichier),
             ];
-        }, $theseFichiers->toArray());
+        }, $theseFichiers);
 
-        $theseFichiersRetraites = $these->getFichiersByNatureEtVersion(NatureFichier::CODE_THESE_PDF, $version, true);
-        $fichierTheseRetraite = $theseFichiersRetraites->first();
+//        $theseFichiersRetraites = $these->getFichiersByNatureEtVersion(NatureFichier::CODE_THESE_PDF, $version, true);
+        $theseFichiersRetraites = $this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF, $version, true);
+        $fichierTheseRetraite = current($theseFichiersRetraites);
 
         $theseRetraiteeUrl = $this->urlThese()->depotFichiers($these, NatureFichier::CODE_THESE_PDF, $version, true);
 
@@ -431,7 +433,7 @@ class TheseController extends AbstractController implements
         $estDoctorant = (bool) $this->userContextService->getSelectedRoleDoctorant();
 
         $rdvBu = $these->getRdvBu() ?: new RdvBu($these);
-        $rdvBu->setVersionArchivableFournie($these->existeVersionArchivable());
+        $rdvBu->setVersionArchivableFournie($this->fichierService->getRepository()->existeVersionArchivable($these));
 
         /** @var RdvBuTheseForm|RdvBuTheseDoctorantForm $form */
         $form = $this->getServiceLocator()->get('formElementManager')->get($estDoctorant ? 'RdvBuTheseDoctorantForm' : 'RdvBuTheseForm');
@@ -575,9 +577,11 @@ class TheseController extends AbstractController implements
         );
 
         /** @var Fichier $fichierVersionOriginale */
-        $fichierVersionOriginale = $these->getFichiersByNatureEtVersion($nature, $versionOriginale)->first();
+//        $fichierVersionOriginale = $these->getFichiersByNatureEtVersion($nature, $versionOriginale)->first();
+        $fichierVersionOriginale = current($this->fichierService->getRepository()->fetchFichiers($these, $nature, $versionOriginale, false));
         /** @var Fichier $fichierVersionArchivage */
-        $fichierVersionArchivage = $these->getFichiersByNatureEtVersion($nature, $versionArchivage, true)->first() ?: null;
+//        $fichierVersionArchivage = $these->getFichiersByNatureEtVersion($nature, $versionArchivage, true)->first() ?: null;
+        $fichierVersionArchivage = current($this->fichierService->getRepository()->fetchFichiers($these, $nature, $versionArchivage,true)) ?: null;
 
         $form = $this->uploader()->getForm();
         $form->setAttribute('id', uniqid('form-'));
@@ -629,8 +633,12 @@ class TheseController extends AbstractController implements
         $estCorrige = (bool) $this->params()->fromQuery('corrige', false);
         $estExpurge = (bool) $this->params()->fromQuery('expurge', false);
         $version = $this->fichierService->fetchVersionFichier($this->params()->fromQuery('version'));
-
         $nature = $this->fichierService->fetchNatureFichier(NatureFichier::CODE_FICHIER_NON_PDF);
+
+        //$hasFichierThese = $these->getFichiersBy(false, false, false)->count() > 0;
+        //$hasFichiersAnnexesThese = $these->getFichiersBy(true, false, false)->count() > 0;
+        $hasFichierThese = ! empty($this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF, $version, false));
+        $hasFichiersAnnexesThese = ! empty($this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_FICHIER_NON_PDF, $version, false));
 
         $titre = $estExpurge ?
             sprintf("Fichiers %s expurgés hors PDF", $estCorrige ? "corrigés" : "") :
@@ -650,6 +658,8 @@ class TheseController extends AbstractController implements
             'annexesListUrl' => $this->urlFichierThese()->listerFichiers($these, $nature, $version),
             'nature'         => $nature,
             'versionFichier' => $version,
+            'hasFichierThese' => $hasFichierThese,
+            'hasFichiersAnnexesThese' => $hasFichiersAnnexesThese,
         ]);
         $view->setTemplate('application/these/depot/annexes');
 
@@ -783,9 +793,10 @@ class TheseController extends AbstractController implements
         $these = $this->requestedThese();
         $version = $this->fichierService->fetchVersionFichier($this->params()->fromQuery('version'));
 
-        $theseFichiers = $these->getFichiersByNatureEtVersion(NatureFichier::CODE_THESE_PDF, $version);
+//        $theseFichiers = $these->getFichiersByNatureEtVersion(NatureFichier::CODE_THESE_PDF, $version);
+        $theseFichiers = $this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF, $version, false);
         /** @var Fichier $fichierThese */
-        $fichierThese = $theseFichiers->first();
+        $fichierThese = current($theseFichiers);
 
         if ($this->getRequest()->isPost()) {
 
@@ -852,8 +863,9 @@ class TheseController extends AbstractController implements
             VersionFichier::CODE_ARCHI_CORR :
             VersionFichier::CODE_ARCHI;
 
-        $theseFichiersRetraite = $these->getFichiersByNatureEtVersion(NatureFichier::CODE_THESE_PDF, $codeVersionRetraitee, true);
-        $fichierTheseRetraite = $theseFichiersRetraite->first();
+//        $theseFichiersRetraite = $these->getFichiersByNatureEtVersion(NatureFichier::CODE_THESE_PDF, $codeVersionRetraitee, true);
+        $theseFichiersRetraite = $this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF, $codeVersionRetraitee, true);
+        $fichierTheseRetraite = current($theseFichiersRetraite);
 
         $view = new ViewModel([
             'these'    => $these,
@@ -874,7 +886,9 @@ class TheseController extends AbstractController implements
         $versionArchivage = $this->fichierService->fetchVersionFichier(
             $version->estVersionCorrigee() ? VersionFichier::CODE_ARCHI_CORR : VersionFichier::CODE_ARCHI
         );
-        $fichier = $these->getFichiersByNatureEtVersion(NatureFichier::CODE_THESE_PDF, $versionArchivage, true)->first() ?: null;
+
+//        $fichier = $these->getFichiersByNatureEtVersion(NatureFichier::CODE_THESE_PDF, $versionArchivage, true)->first() ?: null;
+        $fichier = current($this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF, $versionArchivage, true)) ?: null;
 
         $view = new ViewModel([
             'these'                     => $these,
@@ -905,6 +919,7 @@ class TheseController extends AbstractController implements
         $these = $this->requestedThese();
         $attestation = $these->getAttestation();
         $version = $this->fichierService->fetchVersionFichier($this->params()->fromQuery('version'));
+        $hasFichierThese = ! empty($this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF, $version, false));
 
         $versionInitialeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_ATTESTATIONS)->getAtteignable();
         $versionCorrigeeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_ATTESTATIONS_VERSION_CORRIGEE)->getAtteignable();
@@ -918,12 +933,16 @@ class TheseController extends AbstractController implements
 
         $form = $this->getAttestationTheseForm();
 
+
+
+
         $view = new ViewModel([
             'these'                  => $these,
             'version'                => $version,
             'attestation'            => $attestation,
             'form'                   => $form,
             'modifierAttestationUrl' => $this->urlThese()->modifierAttestationUrl($these),
+            'hasFichierThese'        => $hasFichierThese,
         ]);
         $view->setTemplate('application/these/attestation');
 
@@ -1007,7 +1026,8 @@ class TheseController extends AbstractController implements
     private function existeVersionCorrigee(These $these = null)
     {
         if ($these !== null) {
-            return $these->getFichiersByVersion(VersionFichier::CODE_ORIG_CORR, false)->count() > 0;
+//            return $these->getFichiersByVersion(VersionFichier::CODE_ORIG_CORR, false)->count() > 0;
+            return (!empty($this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF , VersionFichier::CODE_ORIG_CORR)));
         }
         if ($this->existeVersionCorrigee !== null) {
             return $this->existeVersionCorrigee;
@@ -1016,7 +1036,8 @@ class TheseController extends AbstractController implements
             $these = $this->requestedThese();
         }
 
-        $this->existeVersionCorrigee = $these->getFichiersByVersion(VersionFichier::CODE_ORIG_CORR, false)->count() > 0;
+       // $this->existeVersionCorrigee = $these->getFichiersByVersion(VersionFichier::CODE_ORIG_CORR, false)->count() > 0;
+        $this->existeVersionCorrigee = ! empty($this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF , VersionFichier::CODE_ORIG_CORR));
 
         return $this->existeVersionCorrigee;
     }
@@ -1025,6 +1046,7 @@ class TheseController extends AbstractController implements
     {
         $these = $this->requestedThese();
         $version = $this->fichierService->fetchVersionFichier($this->params()->fromQuery('version'));
+        $hasFichierThese = ! empty($this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF, $version, false));
 
         $versionInitialeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_AUTORISATION_DIFFUSION_THESE)->getAtteignable();
         $versionCorrigeeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_AUTORISATION_DIFFUSION_THESE_VERSION_CORRIGEE)->getAtteignable();
@@ -1039,9 +1061,11 @@ class TheseController extends AbstractController implements
         /** @var DiffusionTheseForm $form */
         $form = $this->getServiceLocator()->get('formElementManager')->get('DiffusionTheseForm');
 
-        $ff = FichierFilter::inst()->version($version);
-        $theseFichiersExpurges = $ff->annexe(false)->filter($these->getFichiers());
-        $annexesFichiersExpurges = $ff->annexe(true)->filter($these->getFichiers());
+        //$ff = FichierFilter::inst()->version($version);
+        //        $theseFichiersExpurges = $ff->annexe(false)->filter($these->getFichiers());
+        //        $annexesFichiersExpurges = $ff->annexe(true)->filter($these->getFichiers());
+        $theseFichiersExpurges = $this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF, $version, false);
+        $annexesFichiersExpurges = $this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_FICHIER_NON_PDF, $version, false);
 
         if ($diffusion = $these->getDiffusion()) {
             $form->bind($diffusion);
@@ -1053,14 +1077,14 @@ class TheseController extends AbstractController implements
                 'apercevoirUrl' => $this->urlFichierThese()->apercevoirFichierThese($these, $fichier),
                 'downloadUrl'   => $this->urlFichierThese()->telechargerFichierThese($these, $fichier),
             ];
-        }, $theseFichiersExpurges->toArray());
+        }, $theseFichiersExpurges);
         $annexesFichiersExpurgesItems = array_map(function (Fichier $fichier) use ($these) {
             return [
                 'file'          => $fichier,
                 'apercevoirUrl' => $this->urlFichierThese()->apercevoirFichierThese($these, $fichier),
                 'downloadUrl'   => $this->urlFichierThese()->telechargerFichierThese($these, $fichier),
             ];
-        }, $annexesFichiersExpurges->toArray());
+        }, $annexesFichiersExpurges);
 
         $view = new ViewModel([
             'these'                        => $these,
@@ -1070,6 +1094,7 @@ class TheseController extends AbstractController implements
             'annexesFichiersExpurgesItems' => $annexesFichiersExpurgesItems,
             'modifierDiffusionUrl'         => $this->urlThese()->modifierDiffusionUrl($these),
             'exporterConventionMelUrl'     => $this->urlThese()->exporterConventionMiseEnLigneUrl($these),
+            'hasFichierThese'              => $hasFichierThese,
         ]);
         $view->setTemplate('application/these/diffusion');
 
@@ -1081,7 +1106,8 @@ class TheseController extends AbstractController implements
         $these = $this->requestedThese();
 
         // si le fichier de la thèse originale est une version corrigée, la version de diffusion est aussi en version corrigée
-        $existeVersionOrigCorrig = $these->getFichiersByVersion(VersionFichier::CODE_ORIG_CORR, false)->count() > 0;
+        //$existeVersionOrigCorrig = $these->getFichiersByVersion(VersionFichier::CODE_ORIG_CORR, false)->count() > 0;
+        $existeVersionOrigCorrig = ! empty($this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF , VersionFichier::CODE_ORIG_CORR));
         $version = $existeVersionOrigCorrig ? VersionFichier::CODE_DIFF_CORR : VersionFichier::CODE_DIFF;
 
         $form = $this->getDiffusionForm($version);
@@ -1098,7 +1124,8 @@ class TheseController extends AbstractController implements
 
                 // suppression des fichiers expurgés éventuellement déposés en l'absence de pb de droit d'auteur
                 $besoinVersionExpurgee = ! $diffusion->getDroitAuteurOk();
-                $fichiersExpurgesDeposes = $these->getFichiersBy(null, true, false, $version);
+//                $fichiersExpurgesDeposes = $these->getFichiersBy(null, true, false, $version);
+                $fichiersExpurgesDeposes = $this->fichierService->getRepository()->fetchFichiers($these, null , $version, false);
                 if (! $besoinVersionExpurgee && $fichiersExpurgesDeposes->count() > 0) {
                     $this->fichierService->deleteFichiers($fichiersExpurgesDeposes);
                     $this->flashMessenger()->addSuccessMessage("Les fichiers expurgés fournis devenus inutiles ont été supprimés.");
@@ -1196,6 +1223,10 @@ class TheseController extends AbstractController implements
         exit;
     }
 
+    /**
+     * TODO a supprimer car pas utilisée
+     * @deprecated
+     */
     public function constituerZipAction()
     {
         $these = $this->requestedThese();
@@ -1300,7 +1331,8 @@ class TheseController extends AbstractController implements
         $these = $this->requestedThese();
         $versionArchivage = $this->fichierService->fetchVersionFichier($this->params()->fromQuery('version'));
 
-        $fichierTheseRetraite = $these->getFichiersByNatureEtVersion(NatureFichier::CODE_THESE_PDF, $versionArchivage, true)->first();
+        //$fichierTheseRetraite = $these->getFichiersByNatureEtVersion(NatureFichier::CODE_THESE_PDF, $versionArchivage, true)->first();
+        $fichierTheseRetraite = current($this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF, $versionArchivage, true));
 
         $form = new ConformiteFichierForm('conformite');
 
