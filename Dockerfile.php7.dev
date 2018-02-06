@@ -56,32 +56,12 @@ RUN unzip /tmp/instantclient-basiclite-linux.x64-12.2.0.1.0.zip -d /usr/local/ &
     echo 'instantclient,/usr/local/instantclient' | pecl install oci8 && \
     echo "extension=oci8.so" > /usr/local/etc/php/conf.d/php-oci8.ini
 
-# Ajustement des config PHP.
-#RUN printf "log_errors = On \nerror_log = /dev/stderr\n" > /usr/local/etc/php/conf.d/php-logs.ini
-RUN echo "date.timezone = Europe/Paris"       >> /usr/local/etc/php/conf.d/01-timezone.ini && \
-    echo "upload_max_filesize = 51M"          >> /usr/local/etc/php/conf.d/02-uploads.ini && \
-    echo "post_max_size = 60M"                >> /usr/local/etc/php/conf.d/02-uploads.ini && \
-    echo "error_reporting = E_ALL"            >> /usr/local/etc/php/conf.d/01-errors.ini && \
-    echo "display_startup_errors = 1"         >> /usr/local/etc/php/conf.d/01-errors.ini && \
-    echo "display_errors = 1"                 >> /usr/local/etc/php/conf.d/01-errors.ini && \
-    echo "xdebug.remote_enable = 1"           >> /usr/local/etc/php/conf.d/20-xdebug.ini && \
-    echo "xdebug.remote_connect_back = 1"     >> /usr/local/etc/php/conf.d/20-xdebug.ini && \
-    echo "xdebug.profiler_enable_trigger = 1" >> /usr/local/etc/php/conf.d/20-xdebug.ini && \
-    echo "xdebug.max_nesting_level = 250"     >> /usr/local/etc/php/conf.d/20-xdebug.ini
+# Config PHP.
+ADD docker/php.conf /usr/local/etc/php/conf.d/webapp.ini
+
+# Configuration et activation du site Apache
+ADD docker/apache.conf /etc/apache2/sites-available/webapp.conf
+RUN a2enmod rewrite && a2ensite webapp
 
 # Point de montage pour les sources de l'appli
 VOLUME /webapp
-
-# Configuration et activation du site Apache
-RUN a2enmod rewrite
-RUN echo "<VirtualHost *:80>"                >> /etc/apache2/sites-available/webapp.conf && \
-    echo "     ServerName localhost"         >> /etc/apache2/sites-available/webapp.conf && \
-    echo "     DocumentRoot /webapp/public"  >> /etc/apache2/sites-available/webapp.conf && \
-    echo "     RewriteEngine On"             >> /etc/apache2/sites-available/webapp.conf && \
-    echo "     <Directory /webapp/public>"   >> /etc/apache2/sites-available/webapp.conf && \
-    echo "         DirectoryIndex index.php" >> /etc/apache2/sites-available/webapp.conf && \
-    echo "         AllowOverride All"        >> /etc/apache2/sites-available/webapp.conf && \
-    echo "         Require all granted"      >> /etc/apache2/sites-available/webapp.conf && \
-    echo "     </Directory>"                 >> /etc/apache2/sites-available/webapp.conf && \
-    echo "</VirtualHost>"                    >> /etc/apache2/sites-available/webapp.conf && \
-    a2ensite webapp
