@@ -11,7 +11,6 @@ use Application\View\Renderer\PhpRenderer;
  * @var These       $these
  * @var string      $theseUrl
  * @var string      $annexesUrl
- * @var string      $zipUrl
  * @var string      $attestationUrl
  * @var string      $diffusionUrl
  * @var string      $nextStepUrl
@@ -60,11 +59,6 @@ $toggleDetailsDepotInitial = clone $this->toggleDetails('div-depot-initial');
         </div>
     </div>
 
-    <!-------------------------------------- Zip --------------------------------------->
-    <div id="zipDiv" class="box" data-url="<?php echo $zipUrl ?>" style="display: none">
-        <!-- màj via ajax -->
-    </div>
-
     <!-------------------------------------- Attestations --------------------------------------->
     <div id="attestationDiv" data-url="<?php echo $attestationUrl ?>">
         <!-- màj via ajax -->
@@ -99,7 +93,6 @@ $toggleDetailsDepotInitial = clone $this->toggleDetails('div-depot-initial');
         var theseDiv = $("#theseDiv");
         var annexesDiv = $("#annexesDiv");
 
-        var zipDiv = $("#zipDiv");
         var attestationDiv = $("#attestationDiv");
         var diffusionDiv = $("#diffusionDiv");
 

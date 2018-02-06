@@ -306,7 +306,6 @@ class TheseController extends AbstractController implements
             'these'            => $these,
             'theseUrl'         => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_THESE_PDF, $codeVersion),
             'annexesUrl'       => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_FICHIER_NON_PDF, $codeVersion),
-            'zipUrl'           => $this->urlThese()->zipUrl($these),
             'attestationUrl'   => $this->urlThese()->attestationThese($these, $codeVersion),
             'diffusionUrl'     => $this->urlThese()->diffusionThese($these, $codeVersion),
             'nextStepUrl'      => $this->urlWorkflow()->nextStepBox($these, null, [
@@ -901,19 +900,6 @@ class TheseController extends AbstractController implements
         return $view;
     }
 
-    public function zipAction()
-    {
-        $these = $this->requestedThese();
-
-        $view = new ViewModel([
-            'these'            => $these,
-            'constituerZipUrl' => $this->urlThese()->constituerZipUrl($these),
-        ]);
-        $view->setTemplate('application/these/zip');
-
-        return $view;
-    }
-
     public function attestationAction()
     {
         $these = $this->requestedThese();
@@ -1220,55 +1206,6 @@ class TheseController extends AbstractController implements
         ]);
         $exporter->addBodyScript('application/these/convention-pdf/convention.phtml', true, $vars, 1);
         $exporter->export('export.pdf');
-        exit;
-    }
-
-    /**
-     * TODO a supprimer car pas utilisée
-     * @deprecated
-     */
-    public function constituerZipAction()
-    {
-        $these = $this->requestedThese();
-
-        $tmpDirPath = sys_get_temp_dir();
-
-        /**
-         * Création d'un répertoire contenant les fichiers à compresser.
-         */
-        $sourceDirName = uniqid('sodoct_');
-        $sourceDirPath = $tmpDirPath . '/' . $sourceDirName;
-        if (! mkdir($sourceDirPath)) {
-            throw new \RuntimeException("Impossible de créer le répertoire temporaire " . $sourceDirPath);
-        }
-        /** @var Fichier $fichier */
-        foreach ($these->getFichiers() as $fichier) {
-            $fichier->exportToFile($sourceDirPath . '/' . $fichier->getNom(), true);
-        }
-
-        /**
-         * Compression du répertoire.
-         */
-        $zipFileName = $sourceDirName . '.zip';
-        $zipFilePath = $tmpDirPath . '/' . $zipFileName;
-        Util::zip($sourceDirPath, $zipFilePath);
-
-        /**
-         * Envoi du zip au client.
-         */
-        header("Pragma: public");
-        header("Expires: 0");
-        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-        header("Cache-Control: public");
-        header("Content-Description: File Transfer");
-        header("Content-type: application/zip");
-//        header("Content-type: application/octet-stream");
-        header("Content-Disposition: attachment; filename=$zipFileName");
-        header('Content-Transfer-Encoding: binary');
-        header("Content-Length: " . filesize($zipFilePath));
-        ob_end_flush();
-        readfile($zipFilePath);
-        unlink($zipFilePath);
         exit;
     }
 

@@ -193,13 +193,6 @@ class UrlThese extends UrlPlugin
         ]);
     }
 
-    public function zipUrl(These $these)
-    {
-        return $this->fromRoute('these/zip', [
-            'these' => $this->idify($these),
-        ]);
-    }
-
     public function attestationThese(These $these, $version)
     {
         if (!in_array($version, [VersionFichier::CODE_ORIG, VersionFichier::CODE_ORIG_CORR])) {
@@ -269,13 +262,6 @@ class UrlThese extends UrlPlugin
     public function exporterConventionMiseEnLigneUrl(These $these)
     {
         return $this->fromRoute('these/exporter-convention-mise-en-ligne',
-            ['these' => $this->idify($these)]
-        );
-    }
-
-    public function constituerZipUrl(These $these)
-    {
-        return $this->fromRoute('these/constituer-zip',
             ['these' => $this->idify($these)]
         );
     }

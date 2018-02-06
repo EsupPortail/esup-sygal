@@ -54,7 +54,6 @@ class ThesePrivileges extends Privileges
      */
     const THESE_CONSULTATION_ARCHIVAGE              = 'these-consultation-archivage';
     const THESE_SAISIE_CONFORMITE_ARCHIVAGE         = 'these-saisie-conformite-archivage';
-    const THESE_CREATION_ZIP                        = 'these-creation-zip';
 
     /**
      * Rendez-vous BU
