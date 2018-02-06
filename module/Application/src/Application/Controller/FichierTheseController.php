@@ -3,6 +3,7 @@
 namespace Application\Controller;
 
 use Application\Entity\Db\Fichier;
+use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\VersionFichier;
 use Application\Filter\IdifyFilterAwareTrait;
 use Application\Filter\NomFichierFormatter;
@@ -113,14 +114,16 @@ class FichierTheseController extends AbstractController implements
     {
         $these = $this->requestedThese();
         $estAnnexe   = $this->params()->fromQuery('annexe',  false);
-        $estExpurge  = $this->params()->fromQuery('expurge', false);
+//        $estExpurge  = $this->params()->fromQuery('expurge', false);
         $estRetraite = $this->params()->fromQuery('retraite', false);
         $inclureValidite = (bool)$this->params()->fromQuery('inclureValidite', false);
         $inclureRetraitement = (bool)$this->params()->fromQuery('inclureRetraitement', false);
 
         $version = $this->params()->fromQuery('version');
 
-        $fichiers = $these->getFichiersBy($estAnnexe, $estExpurge, $estRetraite, $version);
+//      $fichiers = $these->getFichiersBy($estAnnexe, $estExpurge, $estRetraite, $version);
+        $nature = $estAnnexe ? NatureFichier::CODE_FICHIER_NON_PDF : NatureFichier::CODE_THESE_PDF;
+        $fichiers = $this->fichierService->getRepository()->fetchFichiers($these, $nature , $version , $estRetraite);
 
         $items = array_map(function (Fichier $fichier) use ($these) {
             return [
@@ -129,7 +132,7 @@ class FichierTheseController extends AbstractController implements
                 'apercevoirUrl' => $this->urlFichierThese()->apercevoirFichierThese($these, $fichier),
                 'deleteUrl'     => $this->urlFichierThese()->supprimerFichierThese($these, $fichier),
             ];
-        }, $fichiers->toArray());
+        }, $fichiers);
 
         $viewModel = new ViewModel([
             'items' => $items,
@@ -166,7 +169,9 @@ class FichierTheseController extends AbstractController implements
 
         $estRetraite = $this->params()->fromQuery('retraite', false);
 
-        $fichiers = $these->getFichiersByNatureEtVersion($nature, $version, $estRetraite);
+        //TODO substituer
+//        $fichiers = $these->getFichiersByNatureEtVersion($nature, $version, $estRetraite);
+        $fichiers = $this->fichierService->getRepository()->fetchFichiers($these, $nature, $version, $estRetraite);
 
         $items = array_map(function (Fichier $fichier) use ($these) {
             return [
@@ -175,7 +180,7 @@ class FichierTheseController extends AbstractController implements
                 'apercevoirUrl' => $this->urlFichierThese()->apercevoirFichierThese($these, $fichier),
                 'deleteUrl'     => $this->urlFichierThese()->supprimerFichierThese($these, $fichier),
             ];
-        }, $fichiers->toArray());
+        }, $fichiers);
 
         $viewModel = new ViewModel([
             'items' => $items,
@@ -237,14 +242,15 @@ class FichierTheseController extends AbstractController implements
         // Enregistrement des fichiers temporaires uploadés.
         if (is_array($result)) {
 
-            // si l'on dépose manuellement une version d'archivage, suppression de tout autre fichier retraité existant
+            // si l'on dépose manuellement une version d'archivage (retraitée manuellement), suppression de toute autre version d'archivage existante
             if ($version->estVersionArchivage()) {
                 $versionASupprimer = $version->estVersionCorrigee() ?
                     VersionFichier::CODE_ARCHI_CORR :
                     VersionFichier::CODE_ARCHI;
-                $fichiersTheseRetraites = $these->getFichiersBy(null, null, null, $versionASupprimer);
-                if ($fichiersTheseRetraites->count()) {
-                    $this->fichierService->deleteFichiers($fichiersTheseRetraites);
+//                $fichiersTheseRetraites = $these->getFichiersBy(null, null, null, $versionASupprimer);
+                $fichiersThese = $this->fichierService->getRepository()->fetchFichiers($these, null, $versionASupprimer, null) ;
+                if (! empty($fichiersThese)) {
+                    $this->fichierService->deleteFichiers($fichiersThese);
                 }
             }
 

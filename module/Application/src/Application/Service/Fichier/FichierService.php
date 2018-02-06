@@ -218,7 +218,8 @@ class FichierService extends BaseService
         $version = $fichier->getVersion()->estVersionCorrigee() ?
             VersionFichier::CODE_ARCHI_CORR :
             VersionFichier::CODE_ARCHI;
-        $fichierTheseRetraite = $fichier->getThese()->getFichiersBy(false, null, true, $version)->first() ?: null;
+        //$fichierTheseRetraite = $fichier->getThese()->getFichiersBy(false, null, true, $version)->first() ?: null;
+        $fichierTheseRetraite = current($this->getRepository()->fetchFichiers($fichier->getThese(), NatureFichier::CODE_THESE_PDF, $version, true));
         if ($fichierTheseRetraite !== null) {
             $this->deleteFichiers([$fichierTheseRetraite]);
         }
@@ -282,7 +283,8 @@ class FichierService extends BaseService
             $versionASupprimer = $version->estVersionCorrigee() ?
                 VersionFichier::CODE_ARCHI_CORR :
                 VersionFichier::CODE_ARCHI;
-            $fichierTheseRetraite = $these->getFichiersBy(false, null, true, $versionASupprimer)->first() ?: null;
+//            $fichierTheseRetraite = $these->getFichiersBy(false, null, true, $versionASupprimer)->first() ?: null;
+            $fichierTheseRetraite = current($this->getRepository()->fetchFichiers($fichier->getThese(), NatureFichier::CODE_THESE_PDF, $versionASupprimer, true));
             if ($fichierTheseRetraite !== null) {
                 $this->deleteFichiers([$fichierTheseRetraite]);
             }

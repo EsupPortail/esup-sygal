@@ -571,89 +571,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
 
         return $this;
     }
-
-    /**
-     * Retourne les fichiers liés à cette thèse, qui répondent aux critères spécifiés.
-     *
-     * @param int|bool        $estAnnexe
-     * @param int|bool        $estExpurge
-     * @param int|bool|string $estRetraite
-     * @param bool|string     $version
-     * @return Collection
-     * @deprecated Utiliser static::getFichiersByNatureEtVersion
-     */
-    public function getFichiersBy($estAnnexe = null, $estExpurge = null, $estRetraite = null, $version = null)
-    {
-        $f = new FichierFilter();
-        $f
-            ->annexe($estAnnexe)
-//            ->expurge($estExpurge)
-            ->retraite($estRetraite)
-            ->version($version);
-
-        return $f->filter($this->getFichiers());
-    }
-
-    /**
-     * Retourne les fichiers liés à cette thèse, qui ont la nature et version spécifiées.
-     *
-     * @param NatureFichier|string  $nature
-     * @param VersionFichier|string $version
-     * @param int|bool|string       $estRetraite '0', '1', booléen ou code du retraitement
-     * @return Collection
-     * @todo Devrait remplacer static::getFichiersBy et static::getFichiersByVersion
-     * @deprecated Faire plutôt un fetch via le repo car ici la jointure avec contenu_fichier est inévitable et coûteuse.
-     */
-    public function getFichiersByNatureEtVersion($nature, $version = null, $estRetraite = false)
-    {
-        $filterByNature = FichierFiltering::getFilterByNature($nature);
-        $filterByVersion = FichierFiltering::getFilterByVersion($version);
-        $filterByRetraite = FichierFiltering::getFilterByRetraitement($estRetraite);
-
-        $chain = new FilterChain();
-        $chain
-            ->attach($filterByNature)
-            ->attach($filterByVersion)
-            ->attach($filterByRetraite);
-
-        return $this->getFichiers()->filter(function(Fichier $f) use ($chain) {
-            return (bool) $chain->filter($f);
-        });
-    }
-
-    /**
-     * Retourne les fichiers liés à cette thèse, qui ont la version spécifiée.
-     *
-     * @param VersionFichier|string $version
-     * @param null|bool             $estAnnexe
-     * @return Collection
-     * @deprecated Utiliser static::getFichiersByNatureEtVersion
-     */
-    public function getFichiersByVersion($version, $estAnnexe = null)
-    {
-        $filterByVersion = FichierFiltering::getFilterByVersion($version);
-        $filterByAnnexe = FichierFiltering::getFilterByAnnexe($estAnnexe);
-
-        $chain = new FilterChain();
-        $chain
-            ->attach($filterByVersion)
-            ->attach($filterByAnnexe);
-
-        return $this->getFichiers()->filter(function(Fichier $f) use ($chain) {
-            return (bool) $chain->filter($f);
-        });
-    }
-
-    /**
-     * Retourne tous les fichiers liés à cette thèse.
-     *
-     * @return Collection
-     */
-    public function getFichiers()
-    {
-        return $this->fichiers;
-    }
-
+    
     /**
      * @param Fichier $fichier
      * @return $this
@@ -1115,52 +1033,6 @@ class These implements HistoriqueAwareInterface, ResourceInterface
         $this->etablissement = $etablissement;
     }
 
-
-
-    /**
-     * Retourne la version archivable de la thèse, s'il elle existe.
-     *
-     * C'est soit la version originale si elle est archivable.
-     * Soit la version retraitée si elle est archivable et vérifiée conforme.
-     *
-     * @return Fichier|null
-     */
-    public function getVersionArchivable()
-    {
-        $theseFichiers = $this->getFichiersBy(false, false, false);
-        /** @var Fichier $fichierThese */
-        $fichierThese = $theseFichiers->first();
-        /** @var ValiditeFichier $validiteFichierThese */
-        $validiteFichierThese = $fichierThese ? $fichierThese->getValidite() : null;
-
-        if ($validiteFichierThese && $validiteFichierThese->getEstValide() === true) {
-            return $fichierThese;
-        }
-
-        $theseFichiersRetraites = $this->getFichiersBy(false, false, true);
-        /** @var Fichier $fichierTheseRetraite */
-        $fichierTheseRetraite = $theseFichiersRetraites->first();
-        /** @var ValiditeFichier $validiteFichierTheseRetraite */
-        $validiteFichierTheseRetraite = $fichierTheseRetraite ? $fichierTheseRetraite->getValidite() : null;
-
-        if ($validiteFichierTheseRetraite && $validiteFichierTheseRetraite->getEstValide() === true
-            && $fichierTheseRetraite->getEstConforme()) {
-            return $fichierTheseRetraite;
-        }
-
-        return null;
-    }
-
-    /**
-     * Détermine s'il existe une version archivable de la thèse.
-     *
-     * @return bool
-     */
-    public function existeVersionArchivable()
-    {
-        return (bool) $this->getVersionArchivable();
-    }
-
     /**
      * Retourne les mails des directeurs de thèse.
      *
@@ -1317,13 +1189,5 @@ class These implements HistoriqueAwareInterface, ResourceInterface
             default:
                 throw new RuntimeException("Interval rencontré non prévu: " . $spec);
         }
-    }
-
-    public function existeFichierTheseVersionCorrigee()
-    {
-        if (! $this->getFichiersByNatureEtVersion(NatureFichier::CODE_THESE_PDF, VersionFichier::CODE_ORIG_CORR)->isEmpty()) {
-            return true;
-        }
-        return false;
     }
 }

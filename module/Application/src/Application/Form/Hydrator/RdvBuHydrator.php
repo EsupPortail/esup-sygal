@@ -3,10 +3,19 @@
 namespace Application\Form\Hydrator;
 
 use Application\Entity\Db\RdvBu;
+use Application\Service\Fichier\FichierServiceAwareTrait;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 
 class RdvBuHydrator extends DoctrineObject
 {
+    use FichierServiceAwareTrait;
+
+
+    private function existeVersionArchivable(RdvBu $rdvBu)
+    {
+        return (int) $this->fichierService->getRepository()->existeVersionArchivable($rdvBu->getThese());
+    }
+
     /**
      * Extract values from an object
      *
@@ -16,8 +25,7 @@ class RdvBuHydrator extends DoctrineObject
     public function extract($rdvBu)
     {
         $data = parent::extract($rdvBu);
-
-        $data['versionArchivableFournie'] = (int) $rdvBu->getThese()->existeVersionArchivable();
+        $data['versionArchivableFournie'] = $this->existeVersionArchivable($rdvBu);
 
         return $data;
     }
@@ -33,7 +41,7 @@ class RdvBuHydrator extends DoctrineObject
     {
         // la case à cocher "version archivable fournie" est grisée
         if (!isset($data['versionArchivableFournie'])) {
-            $data['versionArchivableFournie'] = (int) $rdvBu->getThese()->existeVersionArchivable();
+            $data['versionArchivableFournie'] = $this->existeVersionArchivable($rdvBu);
         }
         $data['pageTitreConforme'] = (int) $data['pageTitreConforme'];
 

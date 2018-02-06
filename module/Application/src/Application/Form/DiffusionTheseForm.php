@@ -3,7 +3,10 @@
 namespace Application\Form;
 
 use Application\Entity\Db\Diffusion;
+use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\VersionFichier;
+use Application\Service\Fichier\FichierServiceAwareInterface;
+use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\Message\DiffusionMessages;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Form\Element\Date;
@@ -14,9 +17,10 @@ use Zend\Form\FormInterface;
 use Zend\InputFilter\InputFilterProviderInterface;
 use Zend\Validator\Callback;
 
-class DiffusionTheseForm extends Form implements InputFilterProviderInterface, MessageServiceAwareInterface
+class DiffusionTheseForm extends Form implements InputFilterProviderInterface, MessageServiceAwareInterface, FichierServiceAwareInterface
 {
     use MessageServiceAwareTrait;
+    use FichierServiceAwareTrait;
 
     /**
      * @var VersionFichier
@@ -357,7 +361,8 @@ class DiffusionTheseForm extends Form implements InputFilterProviderInterface, M
                                 /** @var Diffusion $diffusion */
                                 $diffusion = $this->getObject();
                                 $besoinVersionExpurgee = $value === Diffusion::DROIT_AUTEUR_OK_NON;
-                                $theseExpurgeeDeposee = $diffusion->getThese()->getFichiersBy(false, true, false, $this->versionFichier)->count() > 0;
+//                                $theseExpurgeeDeposee = $diffusion->getThese()->getFichiersBy(false, true, false, $this->versionFichier)->count() > 0;
+                                $theseExpurgeeDeposee = ! empty($this->fichierService->getRepository()->fetchFichiers($diffusion->getThese(), NatureFichier::CODE_THESE_PDF, $this->versionFichier, false));
 
                                 // des fichiers expurgés doivent avoir été déposés en cas de pb de droit d'auteur
                                 if ($besoinVersionExpurgee && !$theseExpurgeeDeposee) {

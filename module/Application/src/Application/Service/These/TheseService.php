@@ -7,6 +7,7 @@ use Application\Entity\Db\Diffusion;
 use Application\Entity\Db\EcoleDoctoraleIndividu;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\MetadonneeThese;
+use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\RdvBu;
 use Application\Entity\Db\Repository\TheseRepository;
 use Application\Entity\Db\Role;
@@ -15,6 +16,8 @@ use Application\Entity\Db\UniteRechercheIndividu;
 use Application\Entity\Db\VersionFichier;
 use Application\Notification\ValidationRdvBuNotification;
 use Application\Service\BaseService;
+use Application\Service\Fichier\FichierServiceAwareInterface;
+use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\Notification\NotificationServiceAwareInterface;
 use Application\Service\Notification\NotificationServiceAwareTrait;
 use Application\Service\UserContextService;
@@ -27,10 +30,11 @@ use UnicaenApp\Traits\MessageAwareInterface;
 use UnicaenApp\Util;
 use UnicaenAuth\Entity\Db\UserInterface;
 
-class TheseService extends BaseService implements ValidationServiceAwareInterface, NotificationServiceAwareInterface
+class TheseService extends BaseService implements ValidationServiceAwareInterface, NotificationServiceAwareInterface, FichierServiceAwareInterface
 {
     use ValidationServiceAwareTrait;
     use NotificationServiceAwareTrait;
+    use FichierServiceAwareTrait;
 
     /**
      * @return TheseRepository
@@ -294,14 +298,17 @@ class TheseService extends BaseService implements ValidationServiceAwareInterfac
      */
     public function updateConformiteTheseRetraitee(These $these, $conforme = null)
     {
-        $fichiersVA  = $these->getFichiersByVersion(VersionFichier::CODE_ARCHI,      false);
-        $fichiersVAC = $these->getFichiersByVersion(VersionFichier::CODE_ARCHI_CORR, false);
+//        $fichiersVA  = $these->getFichiersByVersion(VersionFichier::CODE_ARCHI,      false);
+//        $fichiersVAC = $these->getFichiersByVersion(VersionFichier::CODE_ARCHI_CORR, false);
+        $fichiersVA  = $this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF , VersionFichier::CODE_ARCHI);
+        $fichiersVAC = $this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF , VersionFichier::CODE_ARCHI_CORR);
+
 
         /** @var Fichier $fichier */
-        if ($fichiersVAC->count() > 0) {
-            $fichier = $fichiersVAC->first() ?: null;
+        if (! empty($fichiersVAC)) {
+            $fichier = current($fichiersVAC) ?: null;
         } else {
-            $fichier = $fichiersVA->first() ?: null;
+            $fichier = current($fichiersVA) ?: null;
         }
 
         // il n'existe pas forcément de fichier en version d'archivage (si la version originale est testée archivable)

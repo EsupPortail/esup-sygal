@@ -143,16 +143,6 @@ return [
                     'privileges' => ThesePrivileges::THESE_CONSULTATION_RDV_BU,
                     'assertion'  => 'Assertion\\These',
                 ],
-                [
-                    'controller' => 'Application\Controller\These',
-                    'action'     => [
-                        'zip',
-                        'constituer-zip',
-                    ],
-                    'privileges' => ThesePrivileges::THESE_CREATION_ZIP,
-                    'assertion'  => 'Assertion\\These',
-                ],
-
 //                [ NB: ECLATÉ JUSTE APRÈS
 //                    'controller' => 'Application\Controller\These',
 //                    'action'     => [
@@ -425,18 +415,6 @@ return [
                             ],
                         ],
                     ],
-                    'zip' => [
-                        'type'          => 'Segment',
-                        'options'       => [
-                            'route'       => '/zip/:these',
-                            'constraints' => [
-                                'these' => '\d+',
-                            ],
-                            'defaults'    => [
-                                'action' => 'zip',
-                            ],
-                        ],
-                    ],
                     'attestation' => [
                         'type'          => 'Segment',
                         'options'       => [
@@ -557,20 +535,6 @@ return [
                             ],
                         ],
                     ],
-
-                    'constituer-zip' => [
-                        'type'          => 'Segment',
-                        'options'       => [
-                            'route'       => '/constituer-zip/:these',
-                            'constraints' => [
-                                'these' => '\d+',
-                            ],
-                            'defaults'    => [
-                                'action' => 'constituer-zip',
-                            ],
-                        ],
-                    ],
-
                     'modifier-description' => [
                         'type'          => 'Segment',
                         'options'       => [
