@@ -2,3 +2,4 @@ auth.json
 vendor/
 .idea/
 data/DoctrineORMModule/
+.DS_Store
