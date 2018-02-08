@@ -1,6 +1,8 @@
-.logo-comue {
+div.logo-comue {
     width:5cm;
     text-align: center;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .bandeau-these {
@@ -28,6 +30,9 @@
     font-weight: bold;
     font-size:12pt;
     text-align: center;
+    line-height: 1.5;
+    margin-top: 1ex;
+    margin-bottom: 1ex;
 }
 
 .larger-infos {
@@ -48,6 +53,8 @@
     color:black;
     line-height: 1.3;
     text-align: center;
+    margin-top: 2ex;
+    margin-bottom: 1ex;
 }
 
 .infos-doctorant {
@@ -60,6 +67,8 @@
     font-weight: bold;
     font-size:14pt;
     text-align: center;
+    margin-top: 1ex;
+    margin-bottom: 1ex;
 }
 
 .infos-encadrement{
@@ -70,16 +79,19 @@
 
     font-family: Arial, Helvetica, sans-serifl;
     font-weight: bold;
-    font-size:14pt;
+    font-size:12pt;
     text-align: left;
 
     border-left: solid;
     border-width: 1.5mm;
     padding-left: 2mm;
     border-color: #F5A756;
-    border-collapse: collapse;
-
 }
+
+table.jury {
+    border-collapse: collapse;
+}
+
 table.jury th {
     background-color: #F5A756;
     width: 18cm;
@@ -88,29 +100,40 @@ table.jury th {
     font-size:12pt;
     text-align: center;
 
-    border-width: 0.6mm;
+    border-width: 0.3mm;
     border-color: #F5A756;
     border: solid;
     border-collapse: collapse;
 }
 
-tr {
-    border-collapse: collapse;
-}
-td {
+table.jury td {
     font-size: 10pt;
     min-width: 4cm;
 
     font-family: Arial, Helvetica, sans-serifl;
 
-    border-width: 0.6mm;
+    border-width: 0.3mm;
     border-color: #F5A756;
     border: solid;
     border-collapse: collapse;
+    padding: 1mm;
 }
 
-div.logo {
-    float:left;
-    max-width: 6cm;
+
+table.logos {
+
+    width:18cm;
+    height:5cm;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+table.logos td {
+    width:6cm;
+    text-align: center;
+}
+img.logo_small {
+    max-width:4cm;
+    max-height:3cm;
     text-align: center;
 }

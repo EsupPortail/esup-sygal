@@ -4,6 +4,22 @@ use Application\Entity\Db\These;
 
 define(PATH,"/webapp/public/");
 
+/**
+ * @param \Application\Entity\Db\Acteur $acteur
+ * @param bool $civilite
+ */
+function getActeurDenomination($acteur, $civilite = false) {
+    $texte = "";
+    if ($civilite) $texte .=$acteur->getIndividu()->getCivilite(). " ";
+    $texte .= ucwords(strtolower($acteur->getIndividu()->getPrenom1(). " "), " -");
+    $texte .= $acteur->getIndividu()->getNomUsuel();
+    if ($acteur->getIndividu()->getNomUsuel() != $acteur->getIndividu()->getNomPatronymique()) {
+        $texte .= "-".$acteur->getIndividu()->getNomPatronymique();
+    }
+    return $texte;
+
+}
+
 function generateLogoComue(These $these) {
 
 
@@ -11,7 +27,7 @@ function generateLogoComue(These $these) {
 
     $texte  = "<div class='logo-comue'>";
     $texte .= "<img src='".$img_src."'/>";
-    $texte .= "</div>";
+    $texte .= "</div><br/>";
 
     return $texte;
 }
@@ -45,7 +61,7 @@ function generateDoctorantInfos(These $these) {
     $nom = mb_strtoupper($these->getDoctorant()->getIndividu()->getNomUsuel());
     $prenom = $these->getDoctorant()->getIndividu()->getPrenom1();
 
-    $texte  = "<div class='infos-doctorant'>";
+    $texte  = "<div class='infos-doctorant' style=''>";
     $texte .= "Présentée et soutenue par" . "<br/>";
     $texte .= $prenom ." ".$nom . "<br/>";
     $texte .= "</div>";
@@ -57,7 +73,7 @@ function generateJuryInfos(These $these) {
 
     $date = $these->getDateSoutenance()->format("d/m/Y");
     $publiquement = "publiquement";
-    $jury = $these->getActeurs();
+    $jury = $these->getActeurs()->toArray();
 
     $texte  = "<table class='jury'>";
     $texte .= "<tr><th colspan='3'>";
@@ -65,13 +81,16 @@ function generateJuryInfos(These $these) {
     $texte .= "devant le jury composé de";
     $texte .= "</th></tr>";
 
-    /** @var \Application\Entity\Db\Acteur $acteur */
-    foreach ($jury as $acteur) {
+    $rapporteurs = array_filter($jury, "estRapporteur");
+    $directeurs = array_filter($jury, "estDirecteur");
+    $membres =  array_diff(array_diff($jury, $rapporteurs), $directeurs);
+    $roles = [$rapporteurs, $membres, $directeurs];
 
-        $nom  = $acteur->getIndividu()->getCivilite() . " ";
-        $nom .= $acteur->getIndividu()->getPrenom1() . " ";
-        $nom .= mb_strtoupper($acteur->getIndividu()->getNomUsuel());
-        if ($acteur->getIndividu()->getNomUsuel() != $acteur->getIndividu()->getNomPatronymique()) $nom .= "-". mb_strtoupper($acteur->getIndividu()->getNomPatronymique());
+    /** @var \Application\Entity\Db\Acteur $acteur */
+    foreach ($roles as $subroles) {
+    foreach ($subroles as $acteur) {
+
+        $nom  = getActeurDenomination($acteur, true);
 
         $qualite = $acteur->getQualite();
         $etablissement = $acteur->getEtablissement();
@@ -83,7 +102,7 @@ function generateJuryInfos(These $these) {
         $texte .= "<td>".$qualite.", ".$etablissement."</td>";
         $texte .= "<td>".$role."</td>";
         $texte .= "</tr>";
-    }
+    }}
     $texte .= "</table>";
     return $texte;
 }
@@ -95,6 +114,12 @@ function estDirecteur($var) {
     return  (explode("::", $role)[1] == "D");
 }
 
+/** @var \Application\Entity\Db\Acteur $var */
+function estRapporteur($var) {
+    $role = $var->getRole()->getSourceCode();
+    return  (explode("::", $role)[1] == "R");
+}
+
 function generateEncadrementInfos(These $these) {
 
     $ur = $these->getUniteRecherche()->getLibelle();
@@ -104,10 +129,10 @@ function generateEncadrementInfos(These $these) {
     /** @var \Application\Entity\Db\Acteur $directeur */
     $directeurs_array = [];
     foreach ($directeurs as $directeur) {
-        $directeurs_array[] = ucwords(mb_strtolower($directeur->getIndividu()->getPrenom1()));
+        $directeurs_array[] = getActeurDenomination($directeur);
     }
     $texte .= implode(" et ", $directeurs_array);
-    $texte .= ",";
+    $texte .= ", ";
     $texte .= $ur;
     $texte .= "</div>";
     return $texte;
@@ -117,13 +142,22 @@ function generateLogos(These $these) {
 
     $logouni = PATH. "ressources/unicaen.png";
     $logoed = PATH. "ressources/ednbise.png";
+    if($these->getEcoleDoctorale()->getSigle() == "ED 590 MIIS") $logoed = PATH. "ressources/edmiis.png";
     $logour = PATH. "ressources/cermn.png";
+    var_dump($these->getCodeUniteRecherche());
+    if($these->getCodeUniteRecherche() == "UMR6072") $logour = PATH. "ressources/greyc.png";
 
-    $texte  = "<div class='logos'>";
-    $texte .= "<div class='logo'><img src='".$logouni."'/></div>";
-    $texte .= "<div class='logo'><img src='".$logoed."'/></div>";
-    $texte .= "<div class='logo'><img src='".$logour."'/></div>";
-    $texte .= "</div>";
+    $texte = "";
+//    $texte  .= "<div class='logos'>";
+    $texte .= "<table style='border:none;' class='logos'>";
+    $texte .= "<tr><td>";
+    $texte .= "<img class='logo_small' src='".$logouni."'/>";
+    $texte .= "</td><td>";
+    $texte .= "<img class='logo_small' src='".$logoed."'/>";
+    $texte .= "</td><td>";
+    $texte .= "<img class='logo_small' src='".$logour."'/>";
+    $texte .= "</td></tr></table>";
+//    $texte .= "</div>";
     return $texte;
 }
 
@@ -131,13 +165,35 @@ $pdf = new \Mpdf\Mpdf();
 $stylesheet = file_get_contents(PATH. "css/page-unicaen.css" );
 $pdf->WriteHTML($stylesheet,1);
 
-$pdf->WriteHTML(generateLogoComue($these));
-$pdf->WriteHTML(generateDiplomeInfos($these));
-$pdf->WriteHTML(generateTitre($these));
-$pdf->WriteHTML(generateDoctorantInfos($these));
-$pdf->WriteHTML(generateJuryInfos($these));
-$pdf->WriteHTML(generateEncadrementInfos($these));
-$pdf->WriteHTML(generateLogos($these));
+
+//$pdf->WriteHTML("<div style='height:2cm;'></div>");
+
+$couverture  = generateLogoComue($these);
+$couverture .= generateDiplomeInfos($these);
+$couverture .= generateTitre($these);
+$couverture .= generateDoctorantInfos($these);
+$couverture .= generateJuryInfos($these) . "<br/>";
+$couverture .= generateEncadrementInfos($these);
+$couverture .= generateLogos($these);
+
+//$couverture  = "<table style='height:28cm;'><tr style='margin:auto;padding:auto;'><td style='margin:auto;padding:auto;'>";
+//$couverture .= generateLogoComue($these);
+//$couverture .= "</td></tr><tr><td>";
+//$couverture .= generateDiplomeInfos($these);
+//$couverture .= "</td></tr><tr><td>";
+//$couverture .= generateTitre($these);
+//$couverture .= "</td></tr><tr><td>";
+//$couverture .= generateDoctorantInfos($these);
+//$couverture .= "</td></tr><tr><td>";
+//$couverture .= generateJuryInfos($these);
+//$couverture .= "</td></tr><tr><td>";
+//$couverture .= generateEncadrementInfos($these);
+//$couverture .= "</td></tr><tr><td>";
+//$couverture .= generateLogos($these);
+//$couverture .= "</td></tr></table>";
+
+$pdf->WriteHTML( $couverture );
+
 $pdf->Output();
 
 
