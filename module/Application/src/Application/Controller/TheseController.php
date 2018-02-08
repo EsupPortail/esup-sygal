@@ -4,6 +4,7 @@ namespace Application\Controller;
 
 use Application\Entity\Db\Attestation;
 use Application\Entity\Db\Diffusion;
+use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\MetadonneeThese;
 use Application\Entity\Db\NatureFichier;
@@ -22,6 +23,7 @@ use Application\Form\DiffusionTheseForm;
 use Application\Form\MetadonneeTheseForm;
 use Application\Form\RdvBuTheseDoctorantForm;
 use Application\Form\RdvBuTheseForm;
+use Application\Service\These\Convention\ConventionPdfExporter;
 use Application\Service\Env\EnvServiceAwareInterface;
 use Application\Service\Env\EnvServiceAwareTrait;
 use Application\Service\Fichier\Exception\ValidationImpossibleException;
@@ -1174,29 +1176,29 @@ class TheseController extends AbstractController implements
 
         /** @var DiffusionTheseForm $form */
         $form = $this->getServiceLocator()->get('formElementManager')->get('DiffusionTheseForm');
-        $variableRepo = $this->variableService->getRepository();
 
-        $etab = $variableRepo->valeur(Variable::SOURCE_CODE_ETB_LIB);
-        $letab = lcfirst($variableRepo->valeur(Variable::SOURCE_CODE_ETB_ART_ETB_LIB)) . $etab;
+        $codes = [
+            Variable::SOURCE_CODE_ETB_LIB,
+            Variable::SOURCE_CODE_ETB_ART_ETB_LIB,
+            Variable::SOURCE_CODE_ETB_LIB_TIT_RESP,
+            Variable::SOURCE_CODE_ETB_LIB_NOM_RESP,
+        ];
+        $dateObs = $these->getDateSoutenance() ?: $these->getDatePrevisionSoutenance();
+        $variableRepo = $this->variableService->getRepository();
+        $vars = $variableRepo->findByCodeAndEtab($codes, $these->getEtablissement(), $dateObs);
+        $etab = $vars[Variable::SOURCE_CODE_ETB_LIB];
+        $letab = lcfirst($vars[Variable::SOURCE_CODE_ETB_ART_ETB_LIB]) . $etab;
         $libEtablissementA = "à " . $letab;
         $libEtablissementLe = $letab;
         $libEtablissementDe = "de " . $letab;
-        $libPresidentLe = $variableRepo->valeur(Variable::SOURCE_CODE_ETB_LIB_TIT_RESP);
-        $nomPresid = $variableRepo->valeur(Variable::SOURCE_CODE_ETB_LIB_NOM_RESP);
+        $libPresidentLe = $vars[Variable::SOURCE_CODE_ETB_LIB_TIT_RESP];
+        $nomPresid = $vars[Variable::SOURCE_CODE_ETB_LIB_NOM_RESP];
 
         $renderer = $this->getServiceLocator()->get('view_renderer'); /* @var $renderer \Zend\View\Renderer\PhpRenderer */
-        $exporter = new PdfExporter($renderer, 'A4');
-        $exporter->setLogo(file_get_contents(APPLICATION_DIR . '/public/logo_normandie_univ.jpg'));
-        $exporter->setHeaderScript('application/these/convention-pdf/partial/header.phtml');
-        $exporter->setFooterScript('application/these/convention-pdf/partial/footer.phtml');
-        $exporter->setMarginTop(20);
-        $exporter->setMarginBottom(25);
-        $exporter->setFooterTitle("Convention de mise en ligne");
-        $exporter->addBodyHtml('<style>' . file_get_contents(APPLICATION_DIR . '/public/css/app.css') . '</style>');
-        $exporter->addBodyScript('application/these/convention-pdf/convention.phtml', false, $vars = [
+        $exporter = new ConventionPdfExporter($renderer, 'A4');
+        $exporter->setVars([
             'these'              => $these,
             'form'               => $form,
-            'exporter'           => $exporter,
             'libEtablissement'   => $etab,
             'libEtablissementA'  => $libEtablissementA,
             'libEtablissementLe' => $libEtablissementLe,
@@ -1204,7 +1206,6 @@ class TheseController extends AbstractController implements
             'libPresidentLe'     => $libPresidentLe,
             'nomPresid'          => $nomPresid,
         ]);
-        $exporter->addBodyScript('application/these/convention-pdf/convention.phtml', true, $vars, 1);
         $exporter->export('export.pdf');
         exit;
     }

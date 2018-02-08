@@ -9,12 +9,20 @@
 
         <field name="description" type="string" column="DESCRIPTION" nullable="false"/>
         <field name="valeur" type="string" column="VALEUR" nullable="false"/>
+        <field name="dateDebutValidite" type="datetime" column="DATE_DEB_VALIDITE" nullable="false"/>
+        <field name="dateFinValidite" type="datetime" column="DATE_FIN_VALIDITE" nullable="false"/>
 
         <field name="sourceCode" type="string" column="SOURCE_CODE" length="64" nullable="true"/>
 
         <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
         <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
         <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
+
+        <many-to-one field="etablissement" target-entity="Application\Entity\Db\Etablissement" fetch="LAZY">
+            <join-columns>
+                <join-column name="ETABLISSEMENT_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
 
         <many-to-one field="source" target-entity="UnicaenImport\Entity\Db\Source">
             <join-columns>

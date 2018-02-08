@@ -202,7 +202,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     private $titreFilter;
 
     /**
-     * @var TitreApogeeFilter
+     * @var Etablissement
      */
     private $etablissement;
 
@@ -1018,7 +1018,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
-     * @return TitreApogeeFilter
+     * @return Etablissement
      */
     public function getEtablissement()
     {

@@ -31,7 +31,7 @@ use Application\View\Renderer\PhpRenderer;
 <div style="text-align: center; margin-bottom: 30px;">
     <h1>CONVENTION DE MISE EN LIGNE<br>D'UNE THÈSE SOUTENUE</h1>
 
-    <img src="<?php echo $this->basePath('logo_normandie_univ.jpg') ?>" height="100px" alt="Logo de Normandie Université" />
+    <img src="var:logo" height="100px" alt="Logo de Normandie Université" />
 </div>
 
 <p>
@@ -59,17 +59,17 @@ use Application\View\Renderer\PhpRenderer;
 </p>
 
 <div class="attestations">
-    <?php echo $this->partial('application/these/convention-pdf/partial/attestations') ?>
+    <?php echo $this->partial('partial/attestations') ?>
 </div>
 
 <div class="diffusion">
-    <?php echo $this->partial('application/these/convention-pdf/partial/diffusion') ?>
+    <?php echo $this->partial('partial/diffusion') ?>
 </div>
 
 <pagebreak>
 
 <div class="droits">
-    <?php echo $this->partial('application/these/convention-pdf/partial/droits') ?>
+    <?php echo $this->partial('partial/droits') ?>
 </div>
 
 <hr>

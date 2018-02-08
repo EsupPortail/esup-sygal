@@ -30,6 +30,21 @@ class Variable implements HistoriqueAwareInterface
     private $valeur;
 
     /**
+     * @var \DateTime
+     */
+    private $dateDebutValidite;
+
+    /**
+     * @var \DateTime
+     */
+    private $dateFinValidite;
+
+    /**
+     * @var Etablissement
+     */
+    protected $etablissement;
+
+    /**
      * @var string
      */
     private $sourceCode;
@@ -89,6 +104,44 @@ class Variable implements HistoriqueAwareInterface
     }
 
     /**
+     * @return \DateTime
+     */
+    public function getDateDebutValidite()
+    {
+        return $this->dateDebutValidite;
+    }
+
+    /**
+     * @param \DateTime $dateDebutValidite
+     * @return Variable
+     */
+    public function setDateDebutValidite(\DateTime $dateDebutValidite)
+    {
+        $this->dateDebutValidite = $dateDebutValidite;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDateFinValidite()
+    {
+        return $this->dateFinValidite;
+    }
+
+    /**
+     * @param \DateTime $dateFinValidite
+     * @return Variable
+     */
+    public function setDateFinValidite(\DateTime $dateFinValidite)
+    {
+        $this->dateFinValidite = $dateFinValidite;
+
+        return $this;
+    }
+
+    /**
      * Set sourceCode
      *
      * @param string $sourceCode
@@ -134,6 +187,26 @@ class Variable implements HistoriqueAwareInterface
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return Etablissement
+     */
+    public function getEtablissement()
+    {
+        return $this->etablissement;
+    }
+
+    /**
+     * @param Etablissement $etablissement
+     *
+     * @return Variable
+     */
+    public function setEtablissement(Etablissement $etablissement)
+    {
+        $this->etablissement = $etablissement;
+
+        return $this;
     }
 }
 
