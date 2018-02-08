@@ -1,1 +1,145 @@
-GENERATE
+<?php
+
+use Application\Entity\Db\These;
+
+define(PATH,"/webapp/public/");
+
+function generateLogoComue(These $these) {
+
+
+    $img_src = PATH . "ressources/normandie-universite.png";
+
+    $texte  = "<div class='logo-comue'>";
+    $texte .= "<img src='".$img_src."'/>";
+    $texte .= "</div>";
+
+    return $texte;
+}
+
+function generateDiplomeInfos(These $these) {
+
+    $specialite = ucwords(mb_strtolower($these->getLibelleDiscipline()));
+    $etablissement = $these->getEtablissement()->getLibelle();
+
+    $texte  = "<div class='bandeau-these'>THÈSE</div>";
+    $texte .= "<div class='infos-diplome'>";
+    $texte .= "<span class='larger-infos'>Pour obtenir le diplôme de doctorat" ."</span><br/>";
+    $texte .= "Spécialité ". $specialite ."<br/>";
+    $texte .= "Préparé au sein de l'". $etablissement ."<br/>";
+    $texte .= "</div>";
+
+    return $texte;
+}
+
+function generateTitre(These $these) {
+
+    $titre = $these->getTitre();
+
+    $texte  = "<div class='bandeau-titre'>".$titre."</div>";
+    return $texte;
+
+}
+
+function generateDoctorantInfos(These $these) {
+
+    $nom = mb_strtoupper($these->getDoctorant()->getIndividu()->getNomUsuel());
+    $prenom = $these->getDoctorant()->getIndividu()->getPrenom1();
+
+    $texte  = "<div class='infos-doctorant'>";
+    $texte .= "Présentée et soutenue par" . "<br/>";
+    $texte .= $prenom ." ".$nom . "<br/>";
+    $texte .= "</div>";
+
+    return $texte;
+}
+
+function generateJuryInfos(These $these) {
+
+    $date = $these->getDateSoutenance()->format("d/m/Y");
+    $publiquement = "publiquement";
+    $jury = $these->getActeurs();
+
+    $texte  = "<table class='jury'>";
+    $texte .= "<tr><th colspan='3'>";
+    $texte .= "Thèse soutenue ".$publiquement." le ".$date." <br/>";
+    $texte .= "devant le jury composé de";
+    $texte .= "</th></tr>";
+
+    /** @var \Application\Entity\Db\Acteur $acteur */
+    foreach ($jury as $acteur) {
+
+        $nom  = $acteur->getIndividu()->getCivilite() . " ";
+        $nom .= $acteur->getIndividu()->getPrenom1() . " ";
+        $nom .= mb_strtoupper($acteur->getIndividu()->getNomUsuel());
+        if ($acteur->getIndividu()->getNomUsuel() != $acteur->getIndividu()->getNomPatronymique()) $nom .= "-". mb_strtoupper($acteur->getIndividu()->getNomPatronymique());
+
+        $qualite = $acteur->getQualite();
+        $etablissement = $acteur->getEtablissement();
+
+        $role = $acteur->getRole()->getRoleId();
+
+        $texte .= "<tr>";
+        $texte .= "<td>".$nom."</td>";
+        $texte .= "<td>".$qualite.", ".$etablissement."</td>";
+        $texte .= "<td>".$role."</td>";
+        $texte .= "</tr>";
+    }
+    $texte .= "</table>";
+    return $texte;
+}
+
+
+/** @var \Application\Entity\Db\Acteur $var */
+function estDirecteur($var) {
+    $role = $var->getRole()->getSourceCode();
+    return  (explode("::", $role)[1] == "D");
+}
+
+function generateEncadrementInfos(These $these) {
+
+    $ur = $these->getUniteRecherche()->getLibelle();
+    $directeurs = array_filter($these->getActeurs()->toArray(), "estDirecteur");
+    $texte  = "<div class='infos-encadrement'>";
+    $texte .= "Thèse dirigée par ";
+    /** @var \Application\Entity\Db\Acteur $directeur */
+    $directeurs_array = [];
+    foreach ($directeurs as $directeur) {
+        $directeurs_array[] = ucwords(mb_strtolower($directeur->getIndividu()->getPrenom1()));
+    }
+    $texte .= implode(" et ", $directeurs_array);
+    $texte .= ",";
+    $texte .= $ur;
+    $texte .= "</div>";
+    return $texte;
+}
+
+function generateLogos(These $these) {
+
+    $logouni = PATH. "ressources/unicaen.png";
+    $logoed = PATH. "ressources/ednbise.png";
+    $logour = PATH. "ressources/cermn.png";
+
+    $texte  = "<div class='logos'>";
+    $texte .= "<div class='logo'><img src='".$logouni."'/></div>";
+    $texte .= "<div class='logo'><img src='".$logoed."'/></div>";
+    $texte .= "<div class='logo'><img src='".$logour."'/></div>";
+    $texte .= "</div>";
+    return $texte;
+}
+
+$pdf = new \Mpdf\Mpdf();
+$stylesheet = file_get_contents(PATH. "css/page-unicaen.css" );
+$pdf->WriteHTML($stylesheet,1);
+
+$pdf->WriteHTML(generateLogoComue($these));
+$pdf->WriteHTML(generateDiplomeInfos($these));
+$pdf->WriteHTML(generateTitre($these));
+$pdf->WriteHTML(generateDoctorantInfos($these));
+$pdf->WriteHTML(generateJuryInfos($these));
+$pdf->WriteHTML(generateEncadrementInfos($these));
+$pdf->WriteHTML(generateLogos($these));
+$pdf->Output();
+
+
+
+
