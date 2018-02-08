@@ -1323,4 +1323,12 @@ class TheseController extends AbstractController implements
 
     }
 
+    public function generateAction()
+    {
+        $these = $this->requestedThese();
+        return new ViewModel(array(
+            'these' => $these,
+        ));
+    }
+
 }
