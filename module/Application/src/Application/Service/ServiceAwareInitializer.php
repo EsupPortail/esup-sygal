@@ -5,7 +5,6 @@ namespace Application\Service;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Doctorant\DoctorantService;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
-use Application\Service\Env\EnvService;
 use Application\Service\Fichier\FichierService;
 use Application\Service\Individu\IndividuService;
 use Application\Service\Notification\NotificationService;
@@ -44,7 +43,6 @@ class ServiceAwareInitializer implements InitializerInterface
             'UtilisateurService'     => UtilisateurService::class,
             'RoleService'            => RoleService::class,
             'ParametreService'       => ParametreService::class,
-            'EnvService'             => EnvService::class,
             'VariableService'        => VariableService::class,
             'TheseService'           => TheseService::class,
             'DoctorantService'       => DoctorantService::class,

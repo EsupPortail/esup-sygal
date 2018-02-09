@@ -2,9 +2,8 @@
 
 namespace Application\Notification;
 
-use Application\Entity\Db\Env;
+use Application\Entity\Db\Variable;
 use Application\Service\Notification\Notification;
-use UnicaenApp\Exception\RuntimeException;
 
 class ValidationRdvBuNotification extends Notification
 {
@@ -19,32 +18,32 @@ class ValidationRdvBuNotification extends Notification
      */
     public function prepare(array $context = [])
     {
-        if (!isset($context['env']) || ! $context['env'] instanceof Env) {
-            throw new RuntimeException("Aucun environnement valide trouvé dans le contexte fourni.");
-        }
-
-        /** @var Env $env */
-        $env = $context['env'];
+        $variables = $this->variableService->getRepository()->findByCodeAndThese([
+            Variable::CODE_EMAIL_BDD,
+            Variable::CODE_EMAIL_BU,
+        ], $this->getThese());
+        $emailBDD = $variables[Variable::CODE_EMAIL_BDD];
+        $emailBU = $variables[Variable::CODE_EMAIL_BU];
 
         $doctorant = $this->these->getDoctorant();
 
         if ($this->estDevalidation) {
-            $to = $env->getEmailBU();
-            $cc = $env->getEmailBdD();
+            $to = $emailBU;
+            $cc = $emailBDD;
         } else {
             if ($this->notifierDoctorant) {
                 $emailDoctorant = $doctorant->getEmailPro() ?: $doctorant->getEmail();
                 if ($emailDoctorant) {
                     $to = $emailDoctorant;
-                    $cc = $env->getEmailBdD();
+                    $cc = $emailBDD;
                 } else {
                     $this->notifierDoctorantImpossibleMessage =
                         "NB: il n'a pas été possible d'envoyer ce mail à $doctorant car ce doctorant n'a aucune adresse email.";
-                    $to = $env->getEmailBdD();
+                    $to = $emailBDD;
                     $cc = [];
                 }
             } else {
-                $to = $env->getEmailBdD();
+                $to = $emailBDD;
                 $cc = [];
             }
         }

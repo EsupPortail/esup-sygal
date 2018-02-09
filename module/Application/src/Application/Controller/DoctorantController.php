@@ -3,12 +3,13 @@
 namespace Application\Controller;
 
 use Application\Entity\Db\Doctorant;
+use Application\Entity\Db\Variable;
 use Application\Filter\DbExceptionFormatter;
 use Application\RouteMatch;
 use Application\Service\Doctorant\DoctorantServiceAwareInterface;
 use Application\Service\Doctorant\DoctorantServiceAwareTrait;
-use Application\Service\Env\EnvServiceAwareInterface;
-use Application\Service\Env\EnvServiceAwareTrait;
+use Application\Service\Variable\VariableServiceAwareInterface;
+use Application\Service\Variable\VariableServiceAwareTrait;
 use Doctrine\DBAL\DBALException;
 use UnicaenAuth\Authentication\Adapter\Ldap as LdapAuthAdapter;
 use Zend\Form\Form;
@@ -17,9 +18,9 @@ use Zend\Stdlib\ParametersInterface;
 use Zend\View\Model\ViewModel;
 
 class DoctorantController extends AbstractController implements
-    EnvServiceAwareInterface, DoctorantServiceAwareInterface
+    VariableServiceAwareInterface, DoctorantServiceAwareInterface
 {
-    use EnvServiceAwareTrait;
+    use VariableServiceAwareTrait;
     use DoctorantServiceAwareTrait;
 
     public function modifierPersopassAction()
@@ -64,12 +65,16 @@ class DoctorantController extends AbstractController implements
 
         $form->setAttribute('action', $request->getRequestUri());
 
+        $variable = $this->variableService->getRepository()->findByCodeAndEtab(
+            Variable::CODE_EMAIL_BDD,
+            $doctorant->getEtablissement());
+
         return new ViewModel([
             'doctorant' => $doctorant,
             'form' => $form,
             'title' => "Saisie du Persopass",
             'detournement' => (bool) $this->params('detournement'),
-            'emailBdD' => $this->envService->findOneByAnnee()->getEmailBdD(),
+            'emailBdD' => $variable->getValeur(),
         ]);
     }
 
