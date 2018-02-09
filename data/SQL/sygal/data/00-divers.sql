@@ -1,15 +1,4 @@
 
----------------------- SOURCE ---------------------
-
-INSERT INTO SOURCE (ID, CODE, LIBELLE, IMPORTABLE)
-  with ds(id, code_etab, code_source, lib, importable) as (
-    select 1, 'UCN',   'apogee', 'Apogée UCN', 1 from dual union all
-    select 2, 'COMUE', 'SYGAL',  'SYGAL COMUE', 1 from dual
-  )
-  select ds.id, ds.code_etab||'::'||ds.code_source, ds.lib, ds.importable
-  from ds;
-
-
 ---------------------- ETABLISSEMENT ---------------------
 
 INSERT INTO ETABLISSEMENT (ID, CODE, LIBELLE) VALUES (1, 'COMUE', 'Normandie Université');
@@ -17,6 +6,17 @@ INSERT INTO ETABLISSEMENT (ID, CODE, LIBELLE) VALUES (2, 'UCN',   'Université d
 INSERT INTO ETABLISSEMENT (ID, CODE, LIBELLE) VALUES (3, 'URN',   'Université de Rouen Normandie');
 INSERT INTO ETABLISSEMENT (ID, CODE, LIBELLE) VALUES (4, 'ULHN',  'Université Le Havre Normandie');
 INSERT INTO ETABLISSEMENT (ID, CODE, LIBELLE) VALUES (5, 'INSA',  'INSA de Rouen');
+
+
+---------------------- SOURCE ---------------------
+
+INSERT INTO SOURCE (ID, CODE, LIBELLE, IMPORTABLE)
+  with ds(id, code_etab, code_source, lib, importable) as (
+    select 1, 'UCN',   'apogee', 'Apogée UCN',       1 from dual union all
+    select 2, 'COMUE', 'SYGAL',  'SYGAL COMUE',      1 from dual
+  )
+  select ds.id, ds.code_etab||'::'||ds.code_source, ds.lib, ds.importable
+  from ds;
 
 
 ------
@@ -45,3 +45,33 @@ INSERT INTO TYPE_VALIDATION (ID, CODE, LIBELLE) VALUES (3, 'CORRECTION_THESE', '
 INSERT INTO TYPE_VALIDATION (ID, CODE, LIBELLE) VALUES (1, 'RDV_BU', 'Validation suite au rendez-vous avec le doctorant');
 INSERT INTO TYPE_VALIDATION (ID, CODE, LIBELLE) VALUES (4, 'VERSION_PAPIER_CORRIGEE', 'Confirmation dépot de la version papier corrigée');
 
+INSERT INTO ENV(
+  ID,
+  ANNEE_ID,
+  LIB_ETAB,
+  LIB_ETAB_A,
+  LIB_ETAB_LE,
+  LIB_ETAB_DE,
+  LIB_PRESID_LE,
+  LIB_PRESID_DE,
+  NOM_PRESID,
+  EMAIL_ASSISTANCE,
+  EMAIL_BU,
+  EMAIL_BDD,
+  LIB_COMUE
+) VALUES (
+  1,
+  NULL,
+  'Université de Caen Normandie',
+  'à l''Université de Caen Normandie',
+  'l''Université de Caen Normandie',
+  'de l''Université de Caen Normandie',
+  'le Président',
+  'du Président',
+  'Pierre DENISE',
+  'assistance-sodoct@unicaen.fr',
+  'scd.theses@unicaen.fr',
+  'recherche.doctorat@unicaen.fr',
+  'Normandie Université'
+)
+;
