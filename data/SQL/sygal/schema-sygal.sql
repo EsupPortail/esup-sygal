@@ -447,9 +447,11 @@ create table TMP_VARIABLE
   SOURCE_ID VARCHAR2(64 char) not null,
   SOURCE_CODE VARCHAR2(64) not null,
 
-  cod_vap VARCHAR2(50 char),
-  lib_vap VARCHAR2(300 char),
-  par_vap VARCHAR2(200 char)
+  COD_VAP VARCHAR2(50 char),
+  LIB_VAP VARCHAR2(300 char),
+  PAR_VAP VARCHAR2(200 char),
+  DATE_DEB_VALIDITE DATE not null,
+  DATE_FIN_VALIDITE DATE not null
 );
 
 create index TMP_VARIABLE_SOURCE_CODE_INDEX on TMP_VARIABLE (SOURCE_CODE);
@@ -463,8 +465,11 @@ create table VARIABLE
 
   ETABLISSEMENT_ID NUMBER not null CONSTRAINT VARIABLE_ETAB_FK REFERENCES ETABLISSEMENT ON DELETE CASCADE,
 
+  CODE VARCHAR2(64) NOT NULL,
   DESCRIPTION VARCHAR2(300 char) not null,
   VALEUR VARCHAR2(200 char) not null,
+  DATE_DEB_VALIDITE DATE default sysdate not null,
+  DATE_FIN_VALIDITE DATE default to_date('9999-12-31', 'YYYY-MM-DD') not null,
 
   SOURCE_CODE VARCHAR2(64 char) not null,
   SOURCE_ID NUMBER not null constraint VARIABLE_SOURCE_FK references SOURCE on delete cascade,
@@ -479,6 +484,7 @@ create table VARIABLE
 
 comment on table VARIABLE is 'Variables d''environnement concernant un établissement, ex: nom de l''établissement, nom du président, etc.';
 
+create unique index VARIABLE_CODE_UNIQ on VARIABLE (CODE, ETABLISSEMENT_ID);
 create unique index VARIABLE_SOURCE_CODE_UNIQ on VARIABLE (SOURCE_CODE);
 
 create index VARIABLE_ETABLISSEMENT_IDX on VARIABLE (ETABLISSEMENT_ID);
@@ -1054,6 +1060,31 @@ create table IMPORT_NOTIF
   URL VARCHAR2(1000 char) not null,
   constraint IMPORT_NOTIF_UN unique (TABLE_NAME, COLUMN_NAME, OPERATION)
 );
+
+
+------------------------------ ENV ---------------------------
+
+create table ENV
+(
+  ID NUMBER not null constraint ENV_PK primary key,
+  ANNEE_ID NUMBER constraint ENV_ANNEE_UNIQ unique,
+  LIB_ETAB VARCHAR2(200 char) default 'Université Formidable' not null,
+  LIB_ETAB_A VARCHAR2(200 char) default 'à l''Université Formidable' not null,
+  LIB_ETAB_LE VARCHAR2(200 char) default 'l''Université Formidable' not null,
+  LIB_ETAB_DE VARCHAR2(200 char) default 'de l''Université Formidable' not null,
+  LIB_PRESID_LE VARCHAR2(100 char) default 'le Chef' not null,
+  LIB_PRESID_DE VARCHAR2(100 char) default 'du Chef' not null,
+  NOM_PRESID VARCHAR2(100 char) default 'Patrick Patron' not null,
+  EMAIL_ASSISTANCE VARCHAR2(100 char) default null not null,
+  EMAIL_BU VARCHAR2(100 char) default null not null,
+  EMAIL_BDD VARCHAR2(100 char) default null not null,
+  LIB_COMUE VARCHAR2(200) default 'Normandie Université Formidable'
+)
+/
+
+comment on column ENV.EMAIL_BU is 'Adresse de contact de la bibliothèque universitaire';
+comment on column ENV.EMAIL_BDD is 'Adresse de contact du Bureau des doctorat';
+
 
 
 ------------------ Package UNICAEN_ORACLE ----------------------

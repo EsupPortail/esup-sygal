@@ -44,8 +44,8 @@ CREATE OR REPLACE VIEW SRC_THESE AS
     src.ID                                   AS source_id,
     e.id                                     AS etablissement_id,
     d.id                                     AS doctorant_id,
-    NULL                                     AS ecole_doct_id,
-    NULL                                     AS unite_rech_id,
+    ed.id                                    AS ecole_doct_id,
+    ur.id                                    AS unite_rech_id,
     tmp.lib_ths                              AS titre,
     tmp.eta_ths                              AS etat_these,
     to_number(tmp.cod_neg_tre)               AS resultat,
@@ -63,7 +63,9 @@ CREATE OR REPLACE VIEW SRC_THESE AS
   FROM TMP_THESE tmp
     JOIN ETABLISSEMENT e ON e.CODE = tmp.ETABLISSEMENT_ID
     JOIN SOURCE src ON src.CODE = tmp.SOURCE_ID
-    JOIN DOCTORANT d ON d.SOURCE_CODE = tmp.DOCTORANT_ID;
+    JOIN DOCTORANT d ON d.SOURCE_CODE = tmp.DOCTORANT_ID
+    LEFT JOIN ECOLE_DOCT ed ON ed.SOURCE_CODE = tmp.ECOLE_DOCT_ID
+    LEFT JOIN UNITE_RECH ur ON ur.SOURCE_CODE = tmp.UNITE_RECH_ID;
 
 CREATE OR REPLACE VIEW SRC_ROLE AS
   SELECT
@@ -103,7 +105,9 @@ CREATE OR REPLACE VIEW SRC_VARIABLE AS
     src.ID                                   AS SOURCE_ID,
     e.id                                     AS ETABLISSEMENT_ID,
     tmp.lib_vap                              AS DESCRIPTION,
-    tmp.par_vap                              AS VALEUR
+    tmp.par_vap                              AS VALEUR,
+    tmp.DATE_DEB_VALIDITE,
+    tmp.DATE_FIN_VALIDITE
   FROM TMP_VARIABLE tmp
     JOIN ETABLISSEMENT e ON e.CODE = tmp.ETABLISSEMENT_ID
     JOIN SOURCE src ON src.CODE = tmp.SOURCE_ID;
