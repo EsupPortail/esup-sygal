@@ -1114,7 +1114,7 @@ class TheseController extends AbstractController implements
                 $besoinVersionExpurgee = ! $diffusion->getDroitAuteurOk();
 //                $fichiersExpurgesDeposes = $these->getFichiersBy(null, true, false, $version);
                 $fichiersExpurgesDeposes = $this->fichierService->getRepository()->fetchFichiers($these, null , $version, false);
-                if (! $besoinVersionExpurgee && $fichiersExpurgesDeposes->count() > 0) {
+                if (! $besoinVersionExpurgee && !empty($fichiersExpurgesDeposes)) {
                     $this->fichierService->deleteFichiers($fichiersExpurgesDeposes);
                     $this->flashMessenger()->addSuccessMessage("Les fichiers expurgés fournis devenus inutiles ont été supprimés.");
                 }
