@@ -23,9 +23,9 @@ use Application\Form\DiffusionTheseForm;
 use Application\Form\MetadonneeTheseForm;
 use Application\Form\RdvBuTheseDoctorantForm;
 use Application\Form\RdvBuTheseForm;
+use Application\Service\Etablissement\EtablissementServiceAwareInterface;
+use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\These\Convention\ConventionPdfExporter;
-use Application\Service\Env\EnvServiceAwareInterface;
-use Application\Service\Env\EnvServiceAwareTrait;
 use Application\Service\Fichier\Exception\ValidationImpossibleException;
 use Application\Service\Fichier\FichierServiceAwareInterface;
 use Application\Service\Fichier\FichierServiceAwareTrait;
@@ -58,12 +58,12 @@ use Zend\Stdlib\ParametersInterface;
 use Zend\View\Model\ViewModel;
 
 class TheseController extends AbstractController implements
-    EnvServiceAwareInterface, VariableServiceAwareInterface ,
+    VariableServiceAwareInterface ,
     ValidationServiceAwareInterface, VersionFichierServiceAwareInterface,
     TheseServiceAwareInterface, RoleServiceAwareInterface, FichierServiceAwareInterface,
-    WorkflowServiceAwareInterface, NotificationServiceAwareInterface
+    WorkflowServiceAwareInterface, NotificationServiceAwareInterface,
+    EtablissementServiceAwareInterface
 {
-    use EnvServiceAwareTrait;
     use VariableServiceAwareTrait;
     use TheseServiceAwareTrait;
     use RoleServiceAwareTrait;
@@ -74,6 +74,7 @@ class TheseController extends AbstractController implements
     use WorkflowServiceAwareTrait;
     use NotificationServiceAwareTrait;
     use IdifyFilterAwareTrait;
+    use EtablissementServiceAwareTrait;
 
     /**
      * @return ViewModel|Response
@@ -464,7 +465,7 @@ class TheseController extends AbstractController implements
                             'updating' => !$inserting,
                             'subject'  => $subject,
                         ]);
-                    $this->notificationService->notifierBU($mailViewModel);
+                    $this->notificationService->notifierBU($mailViewModel, $these);
 
                     $notificationLog = $this->notificationService->getMessage('<br>', 'info');
                     $this->flashMessenger()->addInfoMessage($notificationLog);
@@ -554,7 +555,7 @@ class TheseController extends AbstractController implements
             'theseListUrl'   => $this->urlFichierThese()->listerFichiers($these, $nature, $version, false, ['inclureValidite' => $inclureValidite]),
             'nature'         => $nature,
             'versionFichier' => $version,
-            'env'            => $this->envService->findOneByAnnee(),
+            'etabComue'      => $this->etablissementService->getRepository()->libelle(Etablissement::CODE_COMUE),
         ]);
         $view->setTemplate('application/these/depot/these');
 
@@ -868,11 +869,13 @@ class TheseController extends AbstractController implements
         $theseFichiersRetraite = $this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF, $codeVersionRetraitee, true);
         $fichierTheseRetraite = current($theseFichiersRetraite);
 
+        $variableEmailAssist = $this->variableService->getRepository()->findByCodeAndThese(Variable::CODE_EMAIL_ASSISTANCE, $these);
+
         $view = new ViewModel([
             'these'    => $these,
             'fichier'  => $fichierTheseRetraite,
             'retraite' => $retraite,
-            'contact'  => $this->envService->findOneByAnnee()->getEmailAssistance(),
+            'contact'  => $variableEmailAssist->getValeur(),
         ]);
         $view->setTemplate('application/these/archivage/archivabilite-these');
 
@@ -891,11 +894,13 @@ class TheseController extends AbstractController implements
 //        $fichier = $these->getFichiersByNatureEtVersion(NatureFichier::CODE_THESE_PDF, $versionArchivage, true)->first() ?: null;
         $fichier = current($this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF, $versionArchivage, true)) ?: null;
 
+        $variableEmailAssist = $this->variableService->getRepository()->findByCodeAndThese(Variable::CODE_EMAIL_ASSISTANCE, $these);
+
         $view = new ViewModel([
             'these'                     => $these,
             'fichierTheseRetraite'      => $fichier,
             'validerFichierRetraiteUrl' => $this->urlThese()->certifierConformiteTheseRetraiteUrl($these, $versionArchivage),
-            'contact'                   => $this->envService->findOneByAnnee()->getEmailAssistance(),
+            'contact'                   => $variableEmailAssist->getValeur(),
         ]);
         $view->setTemplate('application/these/archivage/conformite-these-retraitee');
 
@@ -1178,21 +1183,21 @@ class TheseController extends AbstractController implements
         $form = $this->getServiceLocator()->get('formElementManager')->get('DiffusionTheseForm');
 
         $codes = [
-            Variable::SOURCE_CODE_ETB_LIB,
-            Variable::SOURCE_CODE_ETB_ART_ETB_LIB,
-            Variable::SOURCE_CODE_ETB_LIB_TIT_RESP,
-            Variable::SOURCE_CODE_ETB_LIB_NOM_RESP,
+            Variable::CODE_ETB_LIB,
+            Variable::CODE_ETB_ART_ETB_LIB,
+            Variable::CODE_ETB_LIB_TIT_RESP,
+            Variable::CODE_ETB_LIB_NOM_RESP,
         ];
         $dateObs = $these->getDateSoutenance() ?: $these->getDatePrevisionSoutenance();
         $variableRepo = $this->variableService->getRepository();
         $vars = $variableRepo->findByCodeAndEtab($codes, $these->getEtablissement(), $dateObs);
-        $etab = $vars[Variable::SOURCE_CODE_ETB_LIB];
-        $letab = lcfirst($vars[Variable::SOURCE_CODE_ETB_ART_ETB_LIB]) . $etab;
+        $etab = $vars[Variable::CODE_ETB_LIB]->getValeur();
+        $letab = lcfirst($vars[Variable::CODE_ETB_ART_ETB_LIB]->getValeur()) . $etab;
         $libEtablissementA = "à " . $letab;
         $libEtablissementLe = $letab;
         $libEtablissementDe = "de " . $letab;
-        $libPresidentLe = $vars[Variable::SOURCE_CODE_ETB_LIB_TIT_RESP];
-        $nomPresid = $vars[Variable::SOURCE_CODE_ETB_LIB_NOM_RESP];
+        $libPresidentLe = $vars[Variable::CODE_ETB_LIB_TIT_RESP]->getValeur();
+        $nomPresid = $vars[Variable::CODE_ETB_LIB_NOM_RESP]->getValeur();
 
         $renderer = $this->getServiceLocator()->get('view_renderer'); /* @var $renderer \Zend\View\Renderer\PhpRenderer */
         $exporter = new ConventionPdfExporter($renderer, 'A4');

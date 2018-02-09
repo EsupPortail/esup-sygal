@@ -7,6 +7,8 @@ namespace Application\Entity\Db;
  */
 class Etablissement
 {
+    const CODE_COMUE = 'COMUE';
+
     protected $id;
     protected $code;
     protected $libelle;

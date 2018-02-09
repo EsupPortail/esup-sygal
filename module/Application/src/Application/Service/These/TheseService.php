@@ -23,6 +23,8 @@ use Application\Service\Notification\NotificationServiceAwareTrait;
 use Application\Service\UserContextService;
 use Application\Service\Validation\ValidationServiceAwareInterface;
 use Application\Service\Validation\ValidationServiceAwareTrait;
+use Application\Service\Variable\VariableServiceAwareInterface;
+use Application\Service\Variable\VariableServiceAwareTrait;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use UnicaenApp\Exception\LogicException;
@@ -30,11 +32,14 @@ use UnicaenApp\Traits\MessageAwareInterface;
 use UnicaenApp\Util;
 use UnicaenAuth\Entity\Db\UserInterface;
 
-class TheseService extends BaseService implements ValidationServiceAwareInterface, NotificationServiceAwareInterface, FichierServiceAwareInterface
+class TheseService extends BaseService
+    implements ValidationServiceAwareInterface, NotificationServiceAwareInterface, FichierServiceAwareInterface,
+    VariableServiceAwareInterface
 {
     use ValidationServiceAwareTrait;
     use NotificationServiceAwareTrait;
     use FichierServiceAwareTrait;
+    use VariableServiceAwareTrait;
 
     /**
      * @return TheseRepository
@@ -343,6 +348,7 @@ class TheseService extends BaseService implements ValidationServiceAwareInterfac
 
             // notification (doctorant: à la 1ere validation seulement)
             $notification = new ValidationRdvBuNotification();
+            $notification->setVariableService($this->variableService);
             $notification->setThese($these);
             $notification->setNotifierDoctorant(! $this->validationService->existsValidationRdvBuHistorisee($these));
             $this->notificationService->trigger($notification);

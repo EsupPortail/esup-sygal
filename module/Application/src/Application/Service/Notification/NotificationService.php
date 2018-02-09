@@ -4,13 +4,14 @@ namespace Application\Service\Notification;
 
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\These;
+use Application\Entity\Db\Variable;
 use Application\Service\Notification\Notification;
-use Application\Service\Env\EnvServiceAwareInterface;
-use Application\Service\Env\EnvServiceAwareTrait;
 use Application\Service\MailerService;
 use Application\Service\MailerServiceAwareInterface;
 use Application\Service\MailerServiceAwareTrait;
 use Application\Notification\ValidationRdvBuNotification;
+use Application\Service\Variable\VariableServiceAwareInterface;
+use Application\Service\Variable\VariableServiceAwareTrait;
 use UnicaenApp\Traits\MessageAwareTrait;
 use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\RendererInterface;
@@ -20,9 +21,9 @@ use Zend\View\Renderer\RendererInterface;
  *
  * @author Unicaen
  */
-class NotificationService implements EnvServiceAwareInterface, MailerServiceAwareInterface
+class NotificationService implements VariableServiceAwareInterface, MailerServiceAwareInterface
 {
-    use EnvServiceAwareTrait;
+    use VariableServiceAwareTrait;
     use MailerServiceAwareTrait;
     use MessageAwareTrait;
 
@@ -65,7 +66,9 @@ class NotificationService implements EnvServiceAwareInterface, MailerServiceAwar
      */
     public function notifierSaisieRdvBUParDoctoroant(ViewModel $viewModel)
     {
-        $to = $this->envService->findOneByAnnee()->getEmailBU();
+        $variable = $this->variableService->getRepository()->findByCodeAndThese(Variable::CODE_EMAIL_BU, $this->getThese());
+
+        $to = $variable->getValeur();
         $viewModel->setVariable('to', $to);
 
         $this->notifier($viewModel);
@@ -87,6 +90,10 @@ class NotificationService implements EnvServiceAwareInterface, MailerServiceAwar
      */
     public function notifierBdDUpdateResultat(array $data)
     {
+        $these = current($data)['these'];
+        $variable = $this->variableService->getRepository()->findByCodeAndThese(Variable::CODE_EMAIL_BDD, $these);
+        $to = $variable->getValeur();
+
         $viewModel = (new ViewModel())
             ->setTemplate('application/these/mail/notif-evenement-import')
             ->setVariables([
@@ -95,12 +102,7 @@ class NotificationService implements EnvServiceAwareInterface, MailerServiceAwar
                 'message' => "Vous êtes informé-e que des modifications de résultats de thèses ont été détectées lors de la synchro avec Apogée.",
             ]);
 
-        $env = $this->envService->findOneByAnnee();
-        $to = $env->getEmailBdD();
-        $bcc = 'bertrand.gauthier@unicaen.fr';
-
         $viewModel->setVariable('to', $to);
-        $viewModel->setVariable('bcc', $bcc);
 
         $this->notifier($viewModel);
 
@@ -122,16 +124,11 @@ class NotificationService implements EnvServiceAwareInterface, MailerServiceAwar
 
         foreach ($data as $array) {
             $these = $array['these']; /* @var These $these */
-
-            $env = $this->envService->findOneByAnnee();
-
-            $viewModel->setVariable('contact', $env->getEmailBdD());
-
+            $variable = $this->variableService->getRepository()->findByCodeAndThese(Variable::CODE_EMAIL_BDD, $these);
             $to = $these->getDoctorant()->getEmailPro() ?: $these->getDoctorant()->getEmail();
-            $bcc = 'bertrand.gauthier@unicaen.fr';
 
+            $viewModel->setVariable('contact', $variable->getValeur());
             $viewModel->setVariable('to', $to);
-            $viewModel->setVariable('bcc', $bcc);
 
             $this->notifier($viewModel);
         }
@@ -155,10 +152,8 @@ class NotificationService implements EnvServiceAwareInterface, MailerServiceAwar
             ]);
 
         $to = $these->getDoctorant()->getEmailPro() ?: $these->getDoctorant()->getEmail();
-        $bcc = 'bertrand.gauthier@unicaen.fr';
 
         $viewModel->setVariable('to', $to);
-        $viewModel->setVariable('bcc', $bcc);
 
         if ($directeursTheseEnCopie) {
             $viewModel->setVariable('cc', $these->getDirecteursTheseEmails());
@@ -183,13 +178,10 @@ class NotificationService implements EnvServiceAwareInterface, MailerServiceAwar
                 'these' => $these,
             ]);
 
-        $env = $this->envService->findOneByAnnee();
-
-        $to = $env->getEmailBdD();
-        $bcc = 'bertrand.gauthier@unicaen.fr';
+        $variable = $this->variableService->getRepository()->findByCodeAndThese(Variable::CODE_EMAIL_BDD, $these);
+        $to = $variable->getValeur();
 
         $viewModel->setVariable('to', $to);
-        $viewModel->setVariable('bcc', $bcc);
 
         $this->notifier($viewModel);
 
@@ -204,12 +196,12 @@ class NotificationService implements EnvServiceAwareInterface, MailerServiceAwar
      */
     public function notifierValidationDepotTheseCorrigee(ViewModel $viewModel, These $these)
     {
-        $env = $this->envService->findOneByAnnee();
+        $variable = $this->variableService->getRepository()->findByCodeAndThese(Variable::CODE_EMAIL_BDD, $these);
 
         /** @var Individu[] $unknownMails */
         $unknownMails = [];
         $to = $these->getDirecteursTheseEmails($unknownMails);
-        $cc = $env->getEmailBdD();
+        $cc = $variable->getValeur();
         $infoMessage = sprintf(
             "Un mail de notification vient d'être envoyé au(x) directeur(s) de thèse (%s) avec copie au Bureau des Doctorats (%s)",
             implode(',', $to),
@@ -247,14 +239,15 @@ class NotificationService implements EnvServiceAwareInterface, MailerServiceAwar
 
     /**
      * @param ViewModel $viewModel
+     * @param These     $these
      * @return static
      * @deprecated Utiliser trigger(Notification)
      */
-    public function notifierValidationCorrectionThese(ViewModel $viewModel)
+    public function notifierValidationCorrectionThese(ViewModel $viewModel, These $these)
     {
-        $env = $this->envService->findOneByAnnee();
+        $variable = $this->variableService->getRepository()->findByCodeAndThese(Variable::CODE_EMAIL_BDD, $these);
 
-        $to = $env->getEmailBdD();
+        $to = $variable->getValeur();
         $infoMessage = sprintf(
             "Un mail de notification vient d'être envoyé aux Bureau des Doctorats (%s)",
             $to
@@ -270,13 +263,12 @@ class NotificationService implements EnvServiceAwareInterface, MailerServiceAwar
 
     /**
      * @param ViewModel $viewModel
+     * @param These     $these
      * @return static
      * @deprecated Utiliser trigger(Notification)
      */
     public function notifierValidationCorrectionTheseEtudiant(ViewModel $viewModel, These $these)
     {
-        $env = $this->envService->findOneByAnnee();
-
         $to = $these->getDoctorant()->getEmail() ;
         $infoMessage = sprintf(
             "Un mail de notification vient d'être envoyé à votre doctorant (%s)",
@@ -298,12 +290,14 @@ class NotificationService implements EnvServiceAwareInterface, MailerServiceAwar
 
     /**
      * @param ViewModel $mailViewModel
+     * @param These     $these
      * @return $this
      * @deprecated Utiliser trigger(Notification)
      */
-    public function notifierBU(ViewModel $mailViewModel)
+    public function notifierBU(ViewModel $mailViewModel, These $these)
     {
-        $to = $this->envService->findOneByAnnee()->getEmailBU();
+        $variable = $this->variableService->getRepository()->findByCodeAndThese(Variable::CODE_EMAIL_BU, $these);
+        $to = $variable->getValeur();
 
         $infoMessage = sprintf(
             "Un mail de notification vient d'être envoyé à la BU (%s).",
@@ -320,12 +314,14 @@ class NotificationService implements EnvServiceAwareInterface, MailerServiceAwar
 
     /**
      * @param ViewModel $mailViewModel
+     * @param These     $these
      * @return $this
      * @deprecated Utiliser trigger(Notification)
      */
-    public function notifierBdD(ViewModel $mailViewModel)
+    public function notifierBdD(ViewModel $mailViewModel, These $these)
     {
-        $to = $this->envService->findOneByAnnee()->getEmailBdD();
+        $variable = $this->variableService->getRepository()->findByCodeAndThese(Variable::CODE_EMAIL_BDD, $these);
+        $to = $variable->getValeur();
 
         $mailViewModel->setVariable('to', $to);
         $this->notifier($mailViewModel);
@@ -363,9 +359,7 @@ class NotificationService implements EnvServiceAwareInterface, MailerServiceAwar
 
     public function trigger(Notification $notification)
     {
-        $env = $this->envService->findOneByAnnee();
-
-        $notification->prepare(['env' => $env]);
+        $notification->prepare();
         $html = $this->renderNotification($notification);
 
         $subject = "[SoDoct] " . $notification->getSubject();

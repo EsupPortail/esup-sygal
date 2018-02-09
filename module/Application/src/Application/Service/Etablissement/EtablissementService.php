@@ -6,9 +6,6 @@ use Application\Entity\Db\Repository\EtablissementRepository;
 use Application\Entity\Db\Etablissement;
 use Application\Service\BaseService;
 
-/**
- * @method Etablissement|null findOneBy(array $criteria, array $orderBy = null)
- */
 class EtablissementService extends BaseService
 {
     /**
