@@ -8,9 +8,13 @@ use Zend\View\Renderer\PhpRenderer;
 use Zend\View\Resolver\AggregateResolver;
 use Zend\View\Resolver\TemplatePathStack;
 
+
 class ConventionPdfExporter extends PdfExporter
 {
     private $vars;
+
+
+
 
     public function __construct(PhpRenderer $renderer = null, $format = 'A4', $orientationPaysage = false, $defaultFontSize = 10)
     {

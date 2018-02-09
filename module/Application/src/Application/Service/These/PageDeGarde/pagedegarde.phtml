@@ -1,0 +1,372 @@
+<?php
+
+use Application\Entity\Db\These;
+use Application\Entity\Db\Acteur;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var These       $these
+ */
+
+define(PATH,"/webapp/public/");
+
+/**
+ * Cette fonction retourne et formate la denomination d'un $acteur
+ * TODO d'un individu ?
+ * @param  Acteur       $acteur
+ * @param  bool         $civilite permet d'afficher la civilité de l'acteur
+ * @return string       la denomination de l'acteur
+ *
+ * RMQ: en cas où le nom usuel et le nom patronymique sont différent alors les deux sont affichés liés d'un trait d'union
+ */
+function getActeurDenomination(Acteur $acteur, $civilite = false) {
+    $texte = "";
+    if ($civilite) $texte .=$acteur->getIndividu()->getCivilite(). " ";
+    $texte .= ucwords(strtolower($acteur->getIndividu()->getPrenom1(). " "), " -");
+    $texte .= $acteur->getIndividu()->getNomUsuel();
+    if ($acteur->getIndividu()->getNomUsuel() != $acteur->getIndividu()->getNomPatronymique()) {
+        $texte .= "-".$acteur->getIndividu()->getNomPatronymique();
+    }
+    return $texte;
+}
+
+/**
+ * Cette fonction retourne le rôle d'un acteur au sein d'une thèse avec la notation "correcte"
+ * @param Acteur        $acteur
+ * @param bbol          $inclusive permet l'utilisation de l'écriture inclusive
+ * @return string       le rôle "corrigé"
+ *
+ * TODO gérer les co-directeurs / co-directrices
+ */
+function getActeurRole(Acteur $acteur, $inclusive) {
+    $roleCode   = $acteur->getRole()->getSourceCode();
+    $abrev      = explode("::", $roleCode)[1];
+    $femme      = $acteur->getIndividu()->estUneFemme();
+
+    $role = "Inconnu";
+    switch ($abrev) {
+        case "R" :
+            if (!$inclusive || !$femme) {
+                $role = "Rapporteur";
+            } else {
+                $role = "Rapportrice";
+            }
+            break;
+        case "D" :
+            if (!$inclusive || !$femme) {
+                $role = "Directeur";
+            } else {
+                $role = "Directrice";
+            }
+            break;
+        case "M" :
+            if (!$inclusive || !$femme) {
+                $role = "Examinateur";
+            } else {
+                $role = "Examinatrice";
+            }
+            break;
+    }
+    return $role;
+
+}
+
+function generateLogoComue() {
+    $img_src = PATH . "ressources/normandie-universite.png";
+    $texte  = "<div class='logo-comue'>";
+    $texte .= "<img src='".$img_src."'/>";
+    $texte .= "</div>";
+
+    return $texte;
+}
+
+function generateDiplomeInfos(These $these) {
+
+    $specialite = ucwords(mb_strtolower($these->getLibelleDiscipline()));
+    $etablissement = $these->getEtablissement()->getLibelle();
+
+    $texte  = "<div class='bandeau-these'>THÈSE</div>";
+    $texte .= "<div class='infos-diplome'>";
+    $texte .= "<span class='larger-infos'>Pour obtenir le diplôme de doctorat" ."</span><br/>";
+    $texte .= "Spécialité ". $specialite ."<br/>";
+    $texte .= "Préparé au sein de l'". $etablissement ."<br/>";
+    $texte .= "</div>";
+    return $texte;
+}
+
+
+function generateTitre(These $these) {
+
+    $titre = $these->getTitre();
+
+    $texte  = "<div class='bandeau-titre'>".$titre."</div>";
+    return $texte;
+
+}
+
+function generateDoctorantInfos(These $these) {
+
+    $nom = mb_strtoupper($these->getDoctorant()->getIndividu()->getNomUsuel());
+    $prenom = $these->getDoctorant()->getIndividu()->getPrenom1();
+
+    $texte  = "<div class='infos-doctorant' style=''>";
+    $texte .= "Présentée et soutenue par" . "<br/>";
+    $texte .= $prenom ." ".$nom . "<br/>";
+    $texte .= "</div>";
+
+    return $texte;
+}
+
+function generateJuryInfos(These $these, $inclusive=false) {
+
+    $date = $these->getDateSoutenance()->format("d/m/Y");
+    $publiquement = "publiquement";
+    $jury = $these->getActeurs()->toArray();
+
+    $texte  = "<table class='jury'>";
+    $texte .= "<tr><th colspan='3'>";
+    $texte .= "Thèse soutenue ".$publiquement." le ".$date." <br/>";
+    $texte .= "devant le jury composé de";
+    $texte .= "</th></tr>";
+
+    $rapporteurs = array_filter($jury, "estRapporteur");
+    $directeurs = array_filter($jury, "estDirecteur");
+    $membres =  array_diff(array_diff($jury, $rapporteurs), $directeurs);
+    $roles = [$rapporteurs, $membres, $directeurs];
+
+    /** @var \Application\Entity\Db\Acteur $acteur */
+    foreach ($roles as $subroles) {
+        foreach ($subroles as $acteur) {
+
+            $nom  = getActeurDenomination($acteur, true);
+
+            $qualite = $acteur->getQualite();
+            $etablissement = $acteur->getEtablissement();
+
+            $role = getActeurRole($acteur, $inclusive);
+
+            $texte .= "<tr>";
+            $texte .= "<td>".$nom."</td>";
+            $texte .= "<td>".$qualite.", ".$etablissement."</td>";
+            $texte .= "<td>".$role."</td>";
+            $texte .= "</tr>";
+        }}
+    $texte .= "</table>";
+    return $texte;
+}
+
+
+/** @var \Application\Entity\Db\Acteur $var */
+function estDirecteur($var) {
+    $role = $var->getRole()->getSourceCode();
+    return  (explode("::", $role)[1] == "D");
+}
+
+/** @var \Application\Entity\Db\Acteur $var */
+function estRapporteur($var) {
+    $role = $var->getRole()->getSourceCode();
+    return  (explode("::", $role)[1] == "R");
+}
+
+function generateEncadrementInfos(These $these) {
+
+    $ur = $these->getUniteRecherche()->getLibelle();
+    $directeurs = array_filter($these->getActeurs()->toArray(), "estDirecteur");
+    $texte  = "<div class='infos-encadrement'>";
+    $texte .= "Thèse dirigée par ";
+    /** @var \Application\Entity\Db\Acteur $directeur */
+    $directeurs_array = [];
+    foreach ($directeurs as $directeur) {
+        $directeurs_array[] = getActeurDenomination($directeur);
+    }
+    $texte .= implode(" et ", $directeurs_array);
+    $texte .= ", ";
+    $texte .= $ur;
+    $texte .= "</div>";
+    return $texte;
+}
+
+function generateLogos(These $these) {
+
+    $logouni = PATH. "ressources/unicaen.png";
+    $logoed = PATH. "ressources/ednbise.png";
+    if($these->getEcoleDoctorale()->getSigle() == "ED 590 MIIS") $logoed = PATH. "ressources/edmiis.png";
+    $logour = PATH. "ressources/cermn.png";
+    if($these->getCodeUniteRecherche() == "UMR6072") $logour = PATH. "ressources/greyc.png";
+
+    $texte = "";
+//    $texte  .= "<div class='logos'>";
+    $texte .= "<table style='border:none;' class='logos'>";
+    $texte .= "<tr><td>";
+    $texte .= "<img class='logo_small' src='".$logouni."'/>";
+    $texte .= "</td><td>";
+    $texte .= "<img class='logo_small' src='".$logoed."'/>";
+    $texte .= "</td><td>";
+    $texte .= "<img class='logo_small' src='".$logour."'/>";
+    $texte .= "</td></tr></table>";
+//    $texte .= "</div>";
+    return $texte;
+}
+
+?>
+
+
+<style>
+    body { background-color: white; }
+    div.logo-comue {
+        width:5cm;
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .bandeau-these {
+        width:18cm;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        background-color: #5B2268;
+
+        font-family: Arial, Helvetica, sans-serifl;
+        font-weight: bold;
+        font-size:16pt;
+        color:white;
+        text-align: center;
+    }
+
+    .infos-diplome {
+        width:18cm;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+
+
+        font-family: Arial, Helvetica, sans-serifl;
+        font-weight: bold;
+        font-size:12pt;
+        text-align: center;
+        line-height: 1.5;
+        margin-top: 1ex;
+        margin-bottom: 1ex;
+    }
+
+    .larger-infos {
+        font-size:14pt;
+    }
+
+    .bandeau-titre {
+        width:18cm;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+
+        background-color: #BFBFBF;
+        font-family: Arial, Helvetica, sans-serif;
+        font-weight: bold;
+        font-size:15pt;
+        padding: 0.1cm;
+        color:black;
+        line-height: 1.3;
+        text-align: center;
+        margin-top: 2ex;
+        margin-bottom: 1ex;
+    }
+
+    .infos-doctorant {
+        width:18cm;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+
+        font-family: Arial, Helvetica, sans-serifl;
+        font-weight: bold;
+        font-size:14pt;
+        text-align: center;
+        margin-top: 1ex;
+        margin-bottom: 1ex;
+    }
+
+    .infos-encadrement{
+        width:18cm;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+
+        font-family: Arial, Helvetica, sans-serifl;
+        font-weight: bold;
+        font-size:12pt;
+        text-align: left;
+
+        border-left: solid;
+        border-width: 1.5mm;
+        padding-left: 2mm;
+        border-color: #F5A756;
+    }
+
+    table.jury {
+        border-collapse: collapse;
+        width:18.5cm;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+
+    }
+
+    table.jury th {
+        background-color: #F5A756;
+        width: 18cm;
+        font-family: Arial, Helvetica, sans-serifl;
+        font-weight: bold;
+        font-size:12pt;
+        text-align: center;
+
+        border-width: 0.3mm;
+        border-color: #F5A756;
+        border: solid;
+        border-collapse: collapse;
+    }
+
+    table.jury td {
+        font-size: 10pt;
+        min-width: 4cm;
+
+        font-family: Arial, Helvetica, sans-serifl;
+
+        border-width: 0.3mm;
+        border-color: #F5A756;
+        border: solid;
+        border-collapse: collapse;
+        padding: 1mm;
+    }
+
+    table.logos {
+
+        width:18cm;
+        height:5cm;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    table.logos td {
+        width:6cm;
+        text-align: center;
+    }
+
+    img.logo_small {
+        max-width:4cm;
+        max-height:3cm;
+        text-align: center;
+    }
+</style>
+
+<div style="text-align: center; margin-bottom: 30px;">
+    <?php echo generateLogoComue(); ?>
+</div>
+<?php echo generateDiplomeInfos($these); ?>
+<?php echo generateTitre($these); ?>
+<?php echo generateDoctorantInfos($these); ?>
+<?php echo generateJuryInfos($these) ?>
+<br/>
+<?php echo generateEncadrementInfos($these); ?>
+<?php echo generateLogos($these); ?>
+

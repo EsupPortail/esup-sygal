@@ -119,7 +119,6 @@ table.jury td {
     padding: 1mm;
 }
 
-
 table.logos {
 
     width:18cm;
@@ -132,6 +131,7 @@ table.logos td {
     width:6cm;
     text-align: center;
 }
+
 img.logo_small {
     max-width:4cm;
     max-height:3cm;

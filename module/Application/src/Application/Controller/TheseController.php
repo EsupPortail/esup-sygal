@@ -24,6 +24,7 @@ use Application\Form\MetadonneeTheseForm;
 use Application\Form\RdvBuTheseDoctorantForm;
 use Application\Form\RdvBuTheseForm;
 use Application\Service\These\Convention\ConventionPdfExporter;
+use Application\Service\These\PageDeGarde\PageDeGardePdfExporter;
 use Application\Service\Env\EnvServiceAwareInterface;
 use Application\Service\Env\EnvServiceAwareTrait;
 use Application\Service\Fichier\Exception\ValidationImpossibleException;
@@ -1325,10 +1326,20 @@ class TheseController extends AbstractController implements
 
     public function generateAction()
     {
+
         $these = $this->requestedThese();
+        $renderer = $this->getServiceLocator()->get('view_renderer'); /* @var $renderer \Zend\View\Renderer\PhpRenderer */
+        $exporter = new PageDeGardePdfExporter($renderer, 'A4');
+        $exporter->setVars([
+            'these'              => $these,
+        ]);
+        $exporter->export('export.pdf');
+        exit;
+
+        /*$these = $this->requestedThese();
         return new ViewModel(array(
             'these' => $these,
-        ));
+        ));*/
     }
 
 }
