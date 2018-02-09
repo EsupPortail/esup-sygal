@@ -1,3 +1,5 @@
+body { background-color: white; }
+
 div.logo-comue {
     width:5cm;
     text-align: center;
@@ -18,7 +20,6 @@ div.logo-comue {
     color:white;
     text-align: center;
 }
-
 .infos-diplome {
     width:18cm;
     display: block;
@@ -30,11 +31,10 @@ div.logo-comue {
     font-weight: bold;
     font-size:12pt;
     text-align: center;
-    line-height: 1.5;
+    line-height: 2em;
     margin-top: 1ex;
     margin-bottom: 1ex;
 }
-
 .larger-infos {
     font-size:14pt;
 }
@@ -71,6 +71,39 @@ div.logo-comue {
     margin-bottom: 1ex;
 }
 
+table.jury {
+    border-collapse: collapse;
+    width:18.5cm;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+table.jury th {
+    background-color: #F5A756;
+    width: 18cm;
+    font-family: Arial, Helvetica, sans-serifl;
+    font-weight: bold;
+    font-size:12pt;
+    text-align: center;
+
+    border-width: 0.3mm;
+    border-color: #F5A756;
+    border: solid;
+    border-collapse: collapse;
+}
+table.jury td {
+    font-size: 10pt;
+    min-width: 4cm;
+
+    font-family: Arial, Helvetica, sans-serifl;
+
+    border-width: 0.3mm;
+    border-color: #F5A756;
+    border: solid;
+    border-collapse: collapse;
+    padding: 1mm;
+}
+
 .infos-encadrement{
     width:18cm;
     display: block;
@@ -88,52 +121,25 @@ div.logo-comue {
     border-color: #F5A756;
 }
 
-table.jury {
-    border-collapse: collapse;
+div.logos {
+    position: absolute;
+    top: 25cm;
+    left:1.5cm;
 }
-
-table.jury th {
-    background-color: #F5A756;
-    width: 18cm;
-    font-family: Arial, Helvetica, sans-serifl;
-    font-weight: bold;
-    font-size:12pt;
-    text-align: center;
-
-    border-width: 0.3mm;
-    border-color: #F5A756;
-    border: solid;
-    border-collapse: collapse;
-}
-
-table.jury td {
-    font-size: 10pt;
-    min-width: 4cm;
-
-    font-family: Arial, Helvetica, sans-serifl;
-
-    border-width: 0.3mm;
-    border-color: #F5A756;
-    border: solid;
-    border-collapse: collapse;
-    padding: 1mm;
-}
-
 table.logos {
-
     width:18cm;
-    height:5cm;
     margin-left: auto;
     margin-right: auto;
 }
-
 table.logos td {
+    /*border: solid;*/
+    /*border-color: black;*/
     width:6cm;
+    height:4.5cm;
     text-align: center;
 }
-
 img.logo_small {
     max-width:4cm;
-    max-height:3cm;
+    max-height:4cm;
     text-align: center;
 }

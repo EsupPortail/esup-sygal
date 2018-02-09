@@ -9,8 +9,6 @@ use Application\View\Renderer\PhpRenderer;
  * @var These       $these
  */
 
-define(PATH,"/webapp/public/");
-
 /**
  * Cette fonction retourne et formate la denomination d'un $acteur
  * TODO d'un individu ?
@@ -72,8 +70,12 @@ function getActeurRole(Acteur $acteur, $inclusive) {
 
 }
 
+/**
+ * Cette fonction retourne le code HTML associé au logo de la COMUE
+ * @return string
+ */
 function generateLogoComue() {
-    $img_src = PATH . "ressources/normandie-universite.png";
+    $img_src = APPLICATION_DIR . "/public/ressources/normandie-universite.png";
     $texte  = "<div class='logo-comue'>";
     $texte .= "<img src='".$img_src."'/>";
     $texte .= "</div>";
@@ -82,7 +84,6 @@ function generateLogoComue() {
 }
 
 function generateDiplomeInfos(These $these) {
-
     $specialite = ucwords(mb_strtolower($these->getLibelleDiscipline()));
     $etablissement = $these->getEtablissement()->getLibelle();
 
@@ -97,16 +98,13 @@ function generateDiplomeInfos(These $these) {
 
 
 function generateTitre(These $these) {
-
     $titre = $these->getTitre();
 
     $texte  = "<div class='bandeau-titre'>".$titre."</div>";
     return $texte;
-
 }
 
 function generateDoctorantInfos(These $these) {
-
     $nom = mb_strtoupper($these->getDoctorant()->getIndividu()->getNomUsuel());
     $prenom = $these->getDoctorant()->getIndividu()->getPrenom1();
 
@@ -124,7 +122,7 @@ function generateJuryInfos(These $these, $inclusive=false) {
     $publiquement = "publiquement";
     $jury = $these->getActeurs()->toArray();
 
-    $texte  = "<table class='jury'>";
+    $texte .= "<table class='jury'>";
     $texte .= "<tr><th colspan='3'>";
     $texte .= "Thèse soutenue ".$publiquement." le ".$date." <br/>";
     $texte .= "devant le jury composé de";
@@ -189,14 +187,14 @@ function generateEncadrementInfos(These $these) {
 
 function generateLogos(These $these) {
 
-    $logouni = PATH. "ressources/unicaen.png";
-    $logoed = PATH. "ressources/ednbise.png";
-    if($these->getEcoleDoctorale()->getSigle() == "ED 590 MIIS") $logoed = PATH. "ressources/edmiis.png";
-    $logour = PATH. "ressources/cermn.png";
-    if($these->getCodeUniteRecherche() == "UMR6072") $logour = PATH. "ressources/greyc.png";
+    $logouni = APPLICATION_DIR. "/public/ressources/unicaen.png";
+    $logoed = APPLICATION_DIR. "/public/ressources/ednbise.png";
+    if($these->getEcoleDoctorale()->getSigle() == "ED 590 MIIS") $logoed = APPLICATION_DIR. "/public/ressources/edmiis.png";
+    $logour = APPLICATION_DIR. "/public/ressources/cermn.png";
+    if($these->getCodeUniteRecherche() == "UMR6072") $logour = APPLICATION_DIR. "/public/ressources/greyc.png";
 
     $texte = "";
-//    $texte  .= "<div class='logos'>";
+    $texte  .= "<div class='logos'>";
     $texte .= "<table style='border:none;' class='logos'>";
     $texte .= "<tr><td>";
     $texte .= "<img class='logo_small' src='".$logouni."'/>";
@@ -205,159 +203,13 @@ function generateLogos(These $these) {
     $texte .= "</td><td>";
     $texte .= "<img class='logo_small' src='".$logour."'/>";
     $texte .= "</td></tr></table>";
-//    $texte .= "</div>";
+    $texte .= "</div>";
     return $texte;
 }
 
 ?>
 
 
-<style>
-    body { background-color: white; }
-    div.logo-comue {
-        width:5cm;
-        text-align: center;
-        margin-left: auto;
-        margin-right: auto;
-    }
-    .bandeau-these {
-        width:18cm;
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-        background-color: #5B2268;
-
-        font-family: Arial, Helvetica, sans-serifl;
-        font-weight: bold;
-        font-size:16pt;
-        color:white;
-        text-align: center;
-    }
-
-    .infos-diplome {
-        width:18cm;
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-
-
-        font-family: Arial, Helvetica, sans-serifl;
-        font-weight: bold;
-        font-size:12pt;
-        text-align: center;
-        line-height: 1.5;
-        margin-top: 1ex;
-        margin-bottom: 1ex;
-    }
-
-    .larger-infos {
-        font-size:14pt;
-    }
-
-    .bandeau-titre {
-        width:18cm;
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-
-        background-color: #BFBFBF;
-        font-family: Arial, Helvetica, sans-serif;
-        font-weight: bold;
-        font-size:15pt;
-        padding: 0.1cm;
-        color:black;
-        line-height: 1.3;
-        text-align: center;
-        margin-top: 2ex;
-        margin-bottom: 1ex;
-    }
-
-    .infos-doctorant {
-        width:18cm;
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-
-        font-family: Arial, Helvetica, sans-serifl;
-        font-weight: bold;
-        font-size:14pt;
-        text-align: center;
-        margin-top: 1ex;
-        margin-bottom: 1ex;
-    }
-
-    .infos-encadrement{
-        width:18cm;
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-
-        font-family: Arial, Helvetica, sans-serifl;
-        font-weight: bold;
-        font-size:12pt;
-        text-align: left;
-
-        border-left: solid;
-        border-width: 1.5mm;
-        padding-left: 2mm;
-        border-color: #F5A756;
-    }
-
-    table.jury {
-        border-collapse: collapse;
-        width:18.5cm;
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-
-    }
-
-    table.jury th {
-        background-color: #F5A756;
-        width: 18cm;
-        font-family: Arial, Helvetica, sans-serifl;
-        font-weight: bold;
-        font-size:12pt;
-        text-align: center;
-
-        border-width: 0.3mm;
-        border-color: #F5A756;
-        border: solid;
-        border-collapse: collapse;
-    }
-
-    table.jury td {
-        font-size: 10pt;
-        min-width: 4cm;
-
-        font-family: Arial, Helvetica, sans-serifl;
-
-        border-width: 0.3mm;
-        border-color: #F5A756;
-        border: solid;
-        border-collapse: collapse;
-        padding: 1mm;
-    }
-
-    table.logos {
-
-        width:18cm;
-        height:5cm;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    table.logos td {
-        width:6cm;
-        text-align: center;
-    }
-
-    img.logo_small {
-        max-width:4cm;
-        max-height:3cm;
-        text-align: center;
-    }
-</style>
 
 <div style="text-align: center; margin-bottom: 30px;">
     <?php echo generateLogoComue(); ?>
