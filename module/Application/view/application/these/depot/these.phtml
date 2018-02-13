@@ -1,13 +1,12 @@
 <?php
 
 use Application\Assertion\BaseAssertion;
-use Application\Entity\Db\Env;
+use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
 use Application\Entity\Db\VersionFichier;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\View\Renderer\PhpRenderer;
-use UnicaenApp\View\Helper\AppInfos;
 
 /**
  * @var PhpRenderer    $this
@@ -17,7 +16,7 @@ use UnicaenApp\View\Helper\AppInfos;
  * @var string         $theseListUrl
  * @var NatureFichier  $nature
  * @var VersionFichier $versionFichier
- * @var Env            $env
+ * @var Etablissement  $etabComue
  */
 
 $canEdit = $this->isAllowed($these, $p = ThesePrivileges::privilegeDeposerFor($nature, $versionFichier));
@@ -69,7 +68,7 @@ $maxFileCountThese = 1;
 <div class="alert alert-sm alert-warning">
     <p>
         <span class="glyphicon glyphicon-warning-sign"></span> Les modèles de page de couverture des thèses de
-        <?php echo $env->getLibComue() ?> doivent être rigoureusement respectés.
+        <?php echo $etabComue ?> doivent être rigoureusement respectés.
     </p>
     <p>
         Ils sont obligatoires pour le dépôt numérique de la thèse dans <?php echo $this->appInfos()->nom ?> pour archivage et diffusion.

@@ -3,10 +3,13 @@
 namespace Application\Service\Notification;
 
 use Application\Entity\Db\Interfaces\TheseAwareTrait;
+use Application\Service\Variable\VariableServiceAwareInterface;
+use Application\Service\Variable\VariableServiceAwareTrait;
 use Zend\View\Model\ViewModel;
 
 abstract class Notification
 {
+    use VariableServiceAwareTrait;
     use TheseAwareTrait;
 
     /**

@@ -22,7 +22,7 @@ return array(
         ],
         'notification' => [
             // destinataires à mettre systématiquement en copie cachée des mails
-            'bcc' => ['suivi-mail-sodoct@unicaen.fr'],
+            'cc' => ['suivi-mail-sodoct@unicaen.fr'],
         ],
     ],
     //'translator' => array(

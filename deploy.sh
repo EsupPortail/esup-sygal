@@ -25,7 +25,7 @@
 #   -w|--www  : chemin absolu du répertoire www sur le serveur ("/var/www" par exemple)
 #
 # Arguments facultatifs :
-#   include-local-config
+#   --include-local-config : Inclure les fichiers de config config/autoload/*local.php et public/.htaccess
 #   -N : valeur de N pour Conservation des N dernières versions déployées seulement (5 par défaut)
 
 ################################################################################################################################
@@ -260,7 +260,7 @@ echo -ne "\e[34m"
 echo -e ""
 echo -e "> Conservation des $N dernières versions déployées seulement..."
 echo -ne "\e[0m"
-listDirCmd="ls -d /var/www/sodoct-versions/$name-* | sort --reverse"
+listDirCmd="ls -d /var/www/$name-versions/$name-* | sort --reverse"
 i=1
 dirsToRemove=''
 for f in `ssh "$host" "$listDirCmd"`; do

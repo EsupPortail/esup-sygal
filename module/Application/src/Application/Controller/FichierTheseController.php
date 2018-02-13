@@ -8,8 +8,6 @@ use Application\Entity\Db\VersionFichier;
 use Application\Filter\IdifyFilterAwareTrait;
 use Application\Filter\NomFichierFormatter;
 use Application\RouteMatch;
-use Application\Service\Env\EnvServiceAwareInterface;
-use Application\Service\Env\EnvServiceAwareTrait;
 use Application\Service\Fichier\Exception\DepotImpossibleException;
 use Application\Service\Fichier\Exception\ValidationImpossibleException;
 use Application\Service\Fichier\FichierServiceAwareInterface;
@@ -33,13 +31,12 @@ use Zend\View\Model\ViewModel;
 
 class FichierTheseController extends AbstractController implements
     TheseServiceAwareInterface, FichierServiceAwareInterface, VersionFichierServiceAwareInterface,
-    EnvServiceAwareInterface, NotificationServiceAwareInterface
+    NotificationServiceAwareInterface
 {
     use TheseServiceAwareTrait;
     use FichierServiceAwareTrait;
     use VersionFichierServiceAwareTrait;
     use IdifyFilterAwareTrait;
-    use EnvServiceAwareTrait;
     use NotificationServiceAwareTrait;
 
     const UPLOAD_MAX_FILESIZE = '500M';
@@ -299,7 +296,7 @@ class FichierTheseController extends AbstractController implements
                         'version'  => $version,
                         'subject'  => $subject,
                     ]);
-                $this->notificationService->notifierBdD($mailViewModel);
+                $this->notificationService->notifierBdD($mailViewModel, $these);
             }
 
             // si un rapport de soutenance est déposé, on notifie de BdD
@@ -311,7 +308,7 @@ class FichierTheseController extends AbstractController implements
                         'these'    => $these,
                         'subject'  => $subject,
                     ]);
-                $this->notificationService->notifierBdD($mailViewModel);
+                $this->notificationService->notifierBdD($mailViewModel, $these);
             }
         }
 

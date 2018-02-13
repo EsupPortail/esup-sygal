@@ -17,7 +17,8 @@ use Zend\Form\FormInterface;
 use Zend\InputFilter\InputFilterProviderInterface;
 use Zend\Validator\Callback;
 
-class DiffusionTheseForm extends Form implements InputFilterProviderInterface, MessageServiceAwareInterface, FichierServiceAwareInterface
+class DiffusionTheseForm extends Form
+    implements InputFilterProviderInterface, MessageServiceAwareInterface, FichierServiceAwareInterface
 {
     use MessageServiceAwareTrait;
     use FichierServiceAwareTrait;

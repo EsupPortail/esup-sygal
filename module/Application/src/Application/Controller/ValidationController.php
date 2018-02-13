@@ -5,8 +5,6 @@ namespace Application\Controller;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\TypeValidation;
 use Application\Provider\Privilege\ValidationPrivileges;
-use Application\Service\Env\EnvServiceAwareInterface;
-use Application\Service\Env\EnvServiceAwareTrait;
 use Application\Notification\ValidationRdvBuNotification;
 use Application\Service\Notification\NotificationServiceAwareInterface;
 use Application\Service\Notification\NotificationServiceAwareTrait;
@@ -19,9 +17,8 @@ use UnicaenApp\Exception\RuntimeException;
 use Zend\View\Model\ViewModel;
 
 class ValidationController extends AbstractController
-    implements ValidationServiceAwareInterface, NotificationServiceAwareInterface, EnvServiceAwareInterface, RoleServiceAwareInterface
+    implements ValidationServiceAwareInterface, NotificationServiceAwareInterface, RoleServiceAwareInterface
 {
-    use EnvServiceAwareTrait;
     use TheseServiceAwareTrait;
     use ValidationServiceAwareTrait;
     use NotificationServiceAwareTrait;
@@ -202,7 +199,7 @@ class ValidationController extends AbstractController
                         'role' => $this->roleService->getRepository()->findOneBy(['sourceCode' => Role::SOURCE_CODE_DIRECTEUR_THESE]),
                         'url' => $this->url()->fromRoute('these/depot', ['these' => $these->getId()], ['force_canonical' => true]),
                     ]);
-                    $this->notificationService->notifierValidationCorrectionThese($mailViewModel);
+                    $this->notificationService->notifierValidationCorrectionThese($mailViewModel, $these);
                     $this->notificationService->notifierValidationCorrectionTheseEtudiant($mailViewModel, $these);
 
 

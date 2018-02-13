@@ -18,6 +18,7 @@ use Application\Form\Factory\RdvBuTheseDoctorantFormFactory;
 use Application\Form\Factory\RdvBuTheseFormFactory;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\Service\Message\DiffusionMessages;
+use Application\Service\ServiceAwareInitializer;
 use Application\Service\These\TheseObserverService;
 use Application\Service\These\TheseService;
 use UnicaenAuth\Guard\PrivilegeController;
@@ -846,6 +847,9 @@ return [
             'RdvBuTheseForm' => RdvBuTheseFormFactory::class,
             'RdvBuTheseDoctorantForm' => RdvBuTheseDoctorantFormFactory::class,
         ],
+        'initializers' => [
+            ServiceAwareInitializer::class,
+        ]
     ],
     'hydrators' => array(
         'factories' => array(

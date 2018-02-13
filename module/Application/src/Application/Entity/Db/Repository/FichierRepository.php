@@ -71,6 +71,8 @@ class FichierRepository extends DefaultEntityRepository
         $qb->andWhere("f.these = :these");
         $qb->setParameter("these", $these);
 
+        $qb->andWhere("1 = pasHistorise(f)");
+
         return $qb->getQuery()->getResult();
     }
 
