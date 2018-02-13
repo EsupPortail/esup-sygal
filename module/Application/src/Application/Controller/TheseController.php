@@ -56,6 +56,7 @@ use Zend\Form\Element\Hidden;
 use Zend\Http\Response;
 use Zend\Stdlib\ParametersInterface;
 use Zend\View\Model\ViewModel;
+use Application\Service\These\PageDeGarde\PageDeGardePdfExporter;
 
 class TheseController extends AbstractController implements
     VariableServiceAwareInterface ,
