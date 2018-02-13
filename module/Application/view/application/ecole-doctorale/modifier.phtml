@@ -18,7 +18,14 @@ $fcg = $this->formControlGroup();
 <?php echo $this->formHidden($form->get('id')) ?>
 <?php echo $fcg($form->get('libelle')) ?>
 <?php echo $fcg($form->get('sigle')) ?>
-<?php echo $fcg($form->get('sourceCode')) ?>
+<div id="logo-div">
+    <img
+            style="max-width: 200px; max-height: 200px; border: 1px solid black; background-color: white;"
+            src="data:image/png;base64,<?php echo base64_encode($form->getObject()->getLogoContent()); ?>"
+
+    />
+</div>
+
 <?php echo $this->formElement($form->get('submit')) ?>
 <?php echo $this->form()->closeTag() ?>
 
