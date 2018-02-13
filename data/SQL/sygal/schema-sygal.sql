@@ -655,9 +655,9 @@ create table FICHIER
   HISTO_DESTRUCTEUR_ID NUMBER constraint FICHIER_HDFK references UTILISATEUR,
   EST_ANNEXE NUMBER(1) default 0  not null,
   NOM_ORIGINAL VARCHAR2(255 char) default NULL  not null,
-  EST_CONVERTI NUMBER(1) default 0  not null,
   EST_EXPURGE NUMBER(1) default 0  not null,
   EST_CONFORME NUMBER(1),
+  EST_PARTIEL NUMBER(1) DEFAULT 0 NOT NULL,
   RETRAITEMENT VARCHAR2(50 char),
   NATURE_ID NUMBER default 1  not null constraint FICHIER_NATURE_FICHIER_ID_FK references NATURE_FICHIER
 );
