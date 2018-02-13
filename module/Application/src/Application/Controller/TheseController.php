@@ -1328,4 +1328,15 @@ class TheseController extends AbstractController implements
 
     }
 
+    public function generateAction()
+    {
+        $these = $this->requestedThese();
+        $renderer = $this->getServiceLocator()->get('view_renderer'); /* @var $renderer \Zend\View\Renderer\PhpRenderer */
+        $exporter = new PageDeGardePdfExporter($renderer, 'A4');
+        $exporter->setVars([
+            'these'              => $these,
+        ]);
+        $exporter->export('export.pdf');
+        exit;
+    }
 }
