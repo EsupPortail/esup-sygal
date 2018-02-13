@@ -283,11 +283,29 @@ function getLogoUniteRecherche(These $these) {
         "EA967"             => "institut demolombe ea967.png",
         "FRE2001"           => "ISTCT FRE2001.tif",
         "EA7466"            => "ISTS_Ea 7466s.tiff",
-
-
-
+        "EA7478"            => "LAC ea7478.png",
+        "UMR8240"           => "LaPsyDE_umr8240.pdf",
+        "EA4256"            => "LASLAR  ea4256.jpg",
+        "UMR6507"           => "LCMT umr6507.png",
+        "UMR6506"           => "LCS umr6506.png",
+        "UMR6554"           => "LETG  umr6554.png",
+        "UMR6139"           => "LMNO umr 6139.png",
+        "UMR6434"           => "LPC_ umr6534.jpg",
+        "EA7452"            => "LPCN ea7452.png",
+        "EA4253"            => "LUSAC ea4253",
+        "UMR6143"           => "M2C umr6143.jpg",
+        "EA696"             => "NIMEC ea969.pdf",
+        "UMR1077"           => "NIMH_umr1077_titre.png",
+        "FR3638"            => "NORMASTIC fr3638.png",
+        "EA2608"            => "OeReCa ea2608.png",
+        "UMRS1237"          => "PhIND Umr S1237-  INSERM 2018.png"
     ];
-    $url = APPLICATION_DIR. "/public/Logos/UR/" .$code_2_file[$these->getUniteRecherche()->getSourceCode()];
+    $img = $code_2_file[$these->getUniteRecherche()->getSourceCode()];
+    if ($img === null) {
+        $url = null;
+    } else {
+        $url = APPLICATION_DIR . "/public/Logos/UR/" . $img;
+    }
     return $url;
 }
 
