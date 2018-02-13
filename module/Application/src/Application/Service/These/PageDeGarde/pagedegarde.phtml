@@ -1,0 +1,353 @@
+<?php
+
+use Application\Entity\Db\These;
+use Application\Entity\Db\Acteur;
+use Application\Entity\Db\Doctorant;
+use Application\Entity\Db\Individu;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var These       $these
+ */
+
+/**
+ * Cette fonction retourne et formate la denomination d'un acteur
+ * @param  Acteur       $acteur
+ * @param  bool         $civilite permet d'afficher la civilité de l'acteur
+ * @return string       la denomination de l'acteur
+ */
+function getActeurDenomination(Acteur $acteur, $civilite = false) {
+   return getIndividuDenomination($acteur->getIndividu(), $civilite);
+}
+/**
+ * Cette fonction retourne et formate la denomination d'un doctorant
+ * @param  Doctorant    $doctorant
+ * @param  bool         $civilite permet d'afficher la civilité du doctorant
+ * @return string       la denomination du doctorant
+ */
+function getDoctorantDenomination(Doctorant $doctorant, $civilite = false) {
+    return getIndividuDenomination($doctorant->getIndividu(), $civilite);
+}
+/**
+ * Cette fonction retourne et formate la denomination d'un individu
+ * @param Individu      $individu
+ * @param bool          $civilite
+ * @return string       la denomination de l'individu
+ *
+ * RMQ: en cas où le nom usuel et le nom patronymique sont différent alors les deux sont affichés liés d'un trait d'union
+ * RMQ: elle est appellé par les autres fonctions getXXXDenomination
+ */
+function getIndividuDenomination(Individu $individu, $civilite = false) {
+    $texte = "";
+    if ($civilite) $texte .= $individu->getCivilite(). " ";
+    $texte .= ucwords(strtolower($individu->getPrenom1(). " "), " -");
+    $texte .= $individu->getNomUsuel();
+    if ($individu->getNomUsuel() != $individu->getNomPatronymique()) {
+        $texte .= "-".$individu->getNomPatronymique();
+    }
+    return $texte;
+}
+
+/**
+ * Cette fonction retourne le rôle d'un acteur au sein d'une thèse avec la notation "correcte"
+ * @param Acteur        $acteur
+ * @param bbol          $inclusive permet l'utilisation de l'écriture inclusive
+ * @return string       le rôle "corrigé"
+ *
+ * TODO gérer les co-directeurs / co-directrices
+ */
+function getActeurRole(Acteur $acteur, $inclusive) {
+    $roleCode   = $acteur->getRole()->getSourceCode();
+    $abrev      = explode("::", $roleCode)[1];
+    $femme      = $acteur->getIndividu()->estUneFemme();
+
+    $role = "Inconnu";
+    switch ($abrev) {
+        case ($abrev == "R" && !$inclusive) :
+            $role = "Rapporteur";
+            break;
+        case ($abrev == "R" && $inclusive && $femme):
+            $role = "Rapportrice";
+            break;
+        case ($abrev == "D" && !$inclusive) :
+            $role = "Directeur";
+            break;
+        case ($abrev == "D" && $inclusive && $femme):
+            $role = "Directrice";
+            break;
+        case ($abrev == "M" && !$inclusive) :
+            $role = "Examinateur";
+            break;
+        case ($abrev == "M" && $inclusive && $femme):
+            $role = "Examinatrice";
+            break;
+    }
+    return $role;
+
+}
+
+/**
+ * Cette fonction retourne le code HTML associé au logo de la COMUE
+ * @return string
+ */
+function generateLogoComue() {
+    $img_src = APPLICATION_DIR . "/public/ressources/normandie-universite.png";
+    $texte  = "<div class='logo-comue'>";
+    $texte .= "<img src='".$img_src."'/>";
+    $texte .= "</div>";
+
+    return $texte;
+}
+
+/**
+ * Cette fonction retourne le code HTML du bloc de description du diplôme
+ * @param These         $these
+ * @return string
+ */
+function generateDiplomeInfos(These $these) {
+    $specialite = ucwords(mb_strtolower($these->getLibelleDiscipline()));
+    $etablissement = $these->getEtablissement()->getLibelle();
+
+    $texte  = "<div class='bandeau-these'>THÈSE</div>";
+    $texte .= "<div class='infos-diplome'>";
+    $texte .= "<span class='larger-infos'>Pour obtenir le diplôme de doctorat" ."</span><br/>";
+    $texte .= "Spécialité ". $specialite ."<br/>";
+    $texte .= "Préparé au sein de l'". $etablissement ."<br/>";
+    $texte .= "</div>";
+    return $texte;
+}
+
+/**
+ * Cette fonction retourne le code HTML du bloc de titre
+ * @param These         $these
+ * @return string
+ */
+function generateTitre(These $these) {
+    $titre = $these->getTitre();
+
+    $texte  = "<div class='bandeau-titre'>".$titre."</div>";
+    return $texte;
+}
+
+/**
+ * Cette fonction retourne le code HTML du bloc de description du diplôme
+ * @param These         $these
+ * @return string
+ */
+function generateDoctorantInfos(These $these) {
+    $texte  = "<div class='infos-doctorant' style=''>";
+    $texte .= "Présentée et soutenue par" . "<br/>";
+    $texte .= getDoctorantDenomination($these->getDoctorant(), false) . "<br/>";
+    $texte .= "</div>";
+
+    return $texte;
+}
+
+/**
+ * Prédicat testant si un acteur est un directeur de thèse
+ * @param Acteur $var
+ * @return bool
+ */
+function estDirecteur(Acteur $var) {
+    $role = $var->getRole()->getSourceCode();
+    return  (explode("::", $role)[1] == "D");
+}
+/**
+ * Prédicat testant si un acteur est un rapporteur de thèse
+ * @param Acteur $var
+ * @return bool
+ */
+function estRapporteur(Acteur $var) {
+    $role = $var->getRole()->getSourceCode();
+    return  (explode("::", $role)[1] == "R");
+}
+/**
+ * Cette fonction retourne le code HTML du bloc de description du diplôme
+ * @param These         $these
+ * @param bool          $inclusive gère l'utilisation de l'écriture inclusive pour les rôles
+ * @return string
+ */
+function generateJuryInfos(These $these, $inclusive=false) {
+
+    $date = $these->getDateSoutenance()->format("d/m/Y");
+    $publiquement = "publiquement";
+    $jury = $these->getActeurs()->toArray();
+
+    $texte  = "<table class='jury'>";
+    $texte .= "<tr><th colspan='3'>";
+    $texte .= "Thèse soutenue ".$publiquement." le ".$date." <br/>";
+    $texte .= "devant le jury composé de";
+    $texte .= "</th></tr>";
+
+    $rapporteurs = array_filter($jury, "estRapporteur");
+    $directeurs = array_filter($jury, "estDirecteur");
+    $membres =  array_diff(array_diff($jury, $rapporteurs), $directeurs);
+    $roles = [$rapporteurs, $membres, $directeurs];
+
+    /** @var \Application\Entity\Db\Acteur $acteur */
+    foreach ($roles as $subroles) {
+        foreach ($subroles as $acteur) {
+
+            $nom  = getActeurDenomination($acteur, true);
+
+            $qualite = $acteur->getQualite();
+            $etablissement = $acteur->getEtablissement();
+
+            $role = getActeurRole($acteur, $inclusive);
+
+            $texte .= "<tr>";
+            $texte .= "<td>".$nom."</td>";
+            $texte .= "<td>".$qualite.", ".$etablissement."</td>";
+            $texte .= "<td>".$role."</td>";
+            $texte .= "</tr>";
+        }}
+    $texte .= "</table>";
+    return $texte;
+}
+
+/** Fonction générant le code HTML lié au encradrant
+ * @param These         $these
+ * @return string
+ */
+function generateEncadrementInfos(These $these) {
+    $ur = $these->getUniteRecherche()->getLibelle();
+    $directeurs = array_filter($these->getActeurs()->toArray(), "estDirecteur");
+    $texte  = "<div class='infos-encadrement'>";
+    $texte .= "Thèse dirigée par ";
+    /** @var \Application\Entity\Db\Acteur $directeur */
+    $directeurs_array = [];
+    foreach ($directeurs as $directeur) {
+        $directeurs_array[] = getActeurDenomination($directeur);
+    }
+    $texte .= implode(" et ", $directeurs_array);
+    $texte .= ", ";
+    $texte .= $ur;
+    $texte .= "</div>";
+    return $texte;
+}
+
+
+/** Fonction retournant l'URL du logo de l'école doctorale d'une thèse donnée
+ * TODO prevoir un logo pour ED non trouvée
+ */
+function getLogoEcoleDoctoral(These $these) {
+    $code_2_file = [
+            "98"            => "DN ED98.png",
+            "508"           => "EDNC ED508.png",
+            "242"           => "EGN ED242.jpg",
+            "558"           => "HMPL ED558.jpg",
+            "556"           => "HSRT ED 556 hsrt.jpg",
+            "590"           => "MIIS ED591.png",
+            "497"           => "NBISE_ed497.png",
+            "591"           => "psime_ED591.png",
+    ];
+    $url = APPLICATION_DIR. "/public/Logos/ED/" .$code_2_file[$these->getEcoleDoctorale()->getSourceCode()];
+    return $url;
+}
+
+/** Fonction retournant l'URL du logo de l'école doctorale d'une thèse donnée
+ * TODO prevoir un logo pour UR non trouvée
+ */
+function getLogoUniteRecherche(These $these) {
+    $code_2_file = [
+        "EA4651"            => "ABTE-ea4651-768x481.png",
+        "UMRS1086"          => "ANTICIPE-umr-s1086.jpg",
+        "EA7451"            => "bioconnect ea7451.tif",
+        "EA7450"            => "BIOTARGEN ea 7450.png",
+        "UMR7208"           => "BOREA Umr7208.png",
+        "UMR6266"           => "Capture d’écran 2017-11-23 à 14.37.25.png",
+        "EA4258"            => "cermin ea4258.png",
+        "EA3918"            => "cerrev ea3918.jpg",
+        "EA4260"            => "CesamS-ea4260.png",
+        "UMR6252"           => "cimap umr6252.jpg",
+        "EA7454"            => "CIRNEF ea7454.png",
+        "UMS3318"           => "CNRT Materiaux _ UMS3318.png",
+        "UMRS1075"          => "comete umr-s 1075.JPG",
+        "UMR6273"           => "CRAHAM umr 6273.png",
+        "EA2132"            => "CRDFED ea2132.png",
+        "EA6211"            => "CREM-ea6211_preview.png",
+        "EA7455"            => "CRHQ ea7455.jpg",
+        "EA4255"            => "CRISCO ea4255.png",
+        "UMR6508"           => "CRISMAT umr6508.jpg",
+        "UMS3408"           => "Cyceron-UMS3408.png",
+        "EA2610"            => "eribia_ea2610.gif",
+        "UMR6590"           => "ESO  umr 6590.png",
+        "UMR6552"           => "ETHOS umr6552 cnrs.jpeg",
+        "UMRA950"           => "EVA umr A950.jpg",
+        "FR3335"            => "FNM-FR3335.png",
+        "EA2656"            => "GRAM  ea2656 .jpg",
+        "UMR6072"           => "GREYC umr6072.png",
+        "EA4206"            => "ICORE_ea4206.jpg",
+        "EA2129"            => "IDEM ea2129.png",
+        "EA967"             => "institut demolombe ea967.png",
+        "FRE2001"           => "ISTCT FRE2001.tif",
+        "EA7466"            => "ISTS_Ea 7466s.tiff",
+        "EA7478"            => "LAC ea7478.png",
+        "UMR8240"           => "LaPsyDE_umr8240.pdf",
+        "EA4256"            => "LASLAR  ea4256.jpg",
+        "UMR6507"           => "LCMT umr6507.png",
+        "UMR6506"           => "LCS umr6506.png",
+        "UMR6554"           => "LETG  umr6554.png",
+        "UMR6139"           => "LMNO umr 6139.png",
+        "UMR6434"           => "LPC_ umr6534.jpg",
+        "EA7452"            => "LPCN ea7452.png",
+        "EA4253"            => "LUSAC ea4253",
+        "UMR6143"           => "M2C umr6143.jpg",
+        "EA696"             => "NIMEC ea969.pdf",
+        "UMR1077"           => "NIMH_umr1077_titre.png",
+        "FR3638"            => "NORMASTIC fr3638.png",
+        "EA2608"            => "OeReCa ea2608.png",
+        "UMRS1237"          => "PhIND Umr S1237-  INSERM 2018.png"
+    ];
+    $img = $code_2_file[$these->getUniteRecherche()->getSourceCode()];
+    if ($img === null) {
+        $url = null;
+    } else {
+        $url = APPLICATION_DIR . "/public/Logos/UR/" . $img;
+    }
+    return $url;
+}
+
+/** Fonction générant le code HTML lié au encradrant
+ * @param These         $these
+ * @return string
+ *
+ * TODO utiliser le vrai pool de logos ...
+ */
+function generateLogos(These $these) {
+
+    $logouni = APPLICATION_DIR. "/public/ressources/unicaen.png";
+    $logoed = getLogoEcoleDoctoral($these);
+    $logour = getLogoUniteRecherche($these);
+
+    $texte = "";
+    $texte  .= "<div class='logos'>";
+    $texte .= "<table style='border:none;' class='logos'>";
+    $texte .= "<tr><td>";
+    $texte .= "<img class='logo_small' src='".$logouni."'/>";
+    $texte .= "</td><td>";
+    $texte .= "<img class='logo_small' src='".$logoed."'/>";
+    $texte .= "</td><td>";
+    $texte .= "<img class='logo_small' src='".$logour."'/>";
+    $texte .= "</td></tr></table>";
+    $texte .= "</div>";
+    return $texte;
+}
+
+?>
+
+
+
+<div style="text-align: center; margin-bottom: 30px;">
+    <?php echo generateLogoComue(); ?>
+</div>
+<?php echo generateDiplomeInfos($these); ?>
+<?php echo generateTitre($these); ?>
+<?php echo generateDoctorantInfos($these); ?>
+<br/>
+<?php echo generateJuryInfos($these) ?>
+<br/>
+<?php echo generateEncadrementInfos($these); ?>
+<?php echo generateLogos($these); ?>
+

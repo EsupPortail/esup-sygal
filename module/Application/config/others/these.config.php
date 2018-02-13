@@ -80,6 +80,7 @@ return [
                     'action'     => [
                         'roadmap',
                         'detail-identite',
+                        'generate',
                     ],
                     'privileges' => ThesePrivileges::THESE_CONSULTATION_FICHE,
                     'assertion'  => 'Assertion\\These',
@@ -283,6 +284,18 @@ return [
                             ],
                             'defaults'    => [
                                 'action' => 'detail-identite',
+                            ],
+                        ],
+                    ],
+                    'generate' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'       => '/generate/:these',
+                            'constraints' => [
+                                'these' => '\d+',
+                            ],
+                            'defaults'    => [
+                                'action' => 'generate',
                             ],
                         ],
                     ],
