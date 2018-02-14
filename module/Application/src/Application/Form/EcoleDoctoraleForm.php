@@ -3,15 +3,12 @@
 namespace Application\Form;
 
 use Application\Entity\Db\EcoleDoctorale;
-use Zend\Form\Annotation\InputFilter;
-use Zend\Form\Element;
 use Zend\Form\Element\Hidden;
-use Zend\Form\Element\Image;
+use Zend\Form\Element\File;
 use Zend\Form\Element\Submit;
 use Zend\Form\Element\Text;
 use Zend\Form\Form;
 use Zend\InputFilter\Factory;
-use Zend\InputFilter\FileInput;
 
 class EcoleDoctoraleForm extends Form
 {
@@ -43,7 +40,7 @@ class EcoleDoctoraleForm extends Form
         );
         $this
             ->add((
-                new Element\File('cheminLogo'))
+                new File('cheminLogo'))
                 ->setLabel('Logo de l\'école doctorale :')
             );
         $this

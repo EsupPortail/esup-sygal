@@ -23,24 +23,33 @@ class UniteRechercheController extends AbstractController
     use LdapPeopleServiceAwareTrait;
     use IndividuServiceAwareTrait;
 
+    /**
+     * L'index récupére la liste des unités de recherche et la liste des individus associés à une unité
+     * de recherche si celle-ci est selectionnée.
+     * @return \Zend\Http\Response|ViewModel
+     *
+     * RMQ: les résultats sont paginés.
+     * TODO on affiche pas la partie basse de la pagination ce qui bloque l'acces aux pages suivantes ...
+     */
     public function indexAction()
     {
         $selected = $this->params()->fromQuery('selected');
 
+        // récupération des unités de recherche et pagination
         $qb = $this->uniteRechercheService->getRepository()->createQueryBuilder('ed');
         $qb->addOrderBy('ed.libelle');
-
         $paginator = new \Zend\Paginator\Paginator(new DoctrinePaginator(new Paginator($qb, true)));
         $paginator
             ->setPageRange(30)
             ->setItemCountPerPage(50)
             ->setCurrentPageNumber(1);
 
+        // récupération de la liste des individus de l'unité de recherche séléctionnée
         $uniteRechercheIndividus = null;
         if ($selected) {
-            /** @var UniteRecherche $ed */
-            $ed = $this->uniteRechercheService->getRepository()->find($selected);
-            $uniteRechercheIndividus = $ed->getUniteRechercheIndividus();
+            /** @var UniteRecherche ur */
+            $ur = $this->uniteRechercheService->getRepository()->find($selected);
+            $uniteRechercheIndividus = $ur->getUniteRechercheIndividus();
         }
 
         return new ViewModel([
@@ -50,27 +59,54 @@ class UniteRechercheController extends AbstractController
         ]);
     }
 
+    /**
+     * Modifier permet soit d'afficher le formulaire associé à la modification soit de mettre à jour
+     * les données associées à une unité de recherche (Sigle, Libellé, Code et Logo)
+     *
+     * @return \Zend\Http\Response|ViewModel
+     *
+     * TODO en cas de changement de SIGLE ou de CODE penser à faire un renommage du logo
+     */
     public function modifierAction()
     {
+        /** @var UniteRecherche $unite */
         $unite = $this->requestUniteRecherche();
         $this->uniteRechercheForm->bind($unite);
 
+        // si POST alors on revient du formulaire
         if ($data = $this->params()->fromPost()) {
+
+            // récupération des données et des fichiers
+            $request = $this->getRequest();
+            $data = $request->getPost()->toArray();
+            $file = $request->getFiles()->toArray();
+
+            // action d'affacement du logo
+            if (isset($data['supprimer-logo'])) {
+                $this->supprimerLogoUniteRecherche();
+                return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $unite->getId()]], true);
+            }
+
+            // action de modification
             $this->uniteRechercheForm->setData($data);
             if ($this->uniteRechercheForm->isValid()) {
-                /** @var UniteRecherche $unite */
+
+                // sauvegarde du logo si fourni
+                if ($file['cheminLogo']['tmp_name'] !== '') {
+                    $this->ajouterLogoUniteRecherche($file['cheminLogo']['tmp_name']);
+                }
+                // mise à jour des données relatives aux unités de recherche
                 $unite = $this->uniteRechercheForm->getData();
                 $this->uniteRechercheService->update($unite);
 
                 $this->flashMessenger()->addSuccessMessage("Unité de recherche '$unite' modifiée avec succès");
-
                 return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $unite->getId()]], true);
             }
+            $this->flashMessenger()->addErrorMessage("Echec de la mise à jour : données incorrectes saissie");
+            return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $unite->getId()]], true);
         }
 
-        $this->uniteRechercheForm->setAttribute('action',
-            $this->url()->fromRoute('unite-recherche/modifier', [], ['uniteRecherche' => $unite->getUniteRechercheIndividus()], true));
-
+        // envoie vers le formulaire de modification
         $viewModel = new ViewModel([
             'form' => $this->uniteRechercheForm,
         ]);
@@ -191,5 +227,70 @@ class UniteRechercheController extends AbstractController
         $this->uniteRechercheForm = $form;
 
         return $this;
+    }
+
+    /**
+     * Retire le logo associé à une unite de recherche:
+     * - modification base de donnée (champ CHEMIN_LOG <- null)
+     * - effacement du fichier stocké sur le serveur
+     */
+    public function supprimerLogoUniteRecherche()
+    {
+        $unite = $this->requestUniteRecherche();
+
+        $this->uniteRechercheService->deleteLogo($unite);
+        $filename   = UniteRechercheController::getLogoFilename($unite, true);
+        if (file_exists($filename)) {
+            $result = unlink($filename);
+            if ($result) {
+                $this->flashMessenger()->addSuccessMessage("Le logo de l'unité de recherche {$unite->getLibelle()} vient d'être supprimé.");
+            } else {
+                $this->flashMessenger()->addErrorMessage("Erreur lors de l'effacement du logo de l'unité de recherche <strong>{$unite->getLibelle()}.</strong>");
+            }
+        } else {
+            $this->flashMessenger()->addWarningMessage("Aucun logo à supprimer pour l'unité de recherche <strong>{$unite->getLibelle()}.</strong>");
+        }
+
+    }
+
+    /**
+     * Ajoute le logo associé à une unité de recherche:
+     * - modification base de donnée (champ CHEMIN_LOG <- /public/Logos/UR/LOGO_NAME)
+     * - enregistrement du fichier sur le serveur
+     * @param string $cheminLogoUploade     chemin vers le fichier temporaire associé au logo
+     */
+    public function ajouterLogoUniteRecherche($cheminLogoUploade)
+    {
+        if ($cheminLogoUploade === null || $cheminLogoUploade === '') {
+            $this->flashMessenger()->addErrorMessage("Fichier logo invalide.");
+            return;
+        }
+
+        $unite      = $this->requestUniteRecherche();
+        $chemin     = UniteRechercheController::getLogoFilename($unite, false);
+        $filename   = UniteRechercheController::getLogoFilename($unite, true);
+        $result = rename($cheminLogoUploade, $filename);
+        if ($result) {
+            $this->flashMessenger()->addSuccessMessage("Le logo de l'unité de recherche {$unite->getLibelle()} vient d'être ajouté.");
+            $this->uniteRechercheService->setLogo($unite,$chemin);
+        } else {
+            $this->flashMessenger()->addErrorMessage("Erreur lors de l'enregistrement du logo de l'unité de recherche <strong>{$unite->getLibelle()}</strong>.");
+        }
+    }
+
+    /**
+     * Retourne le chemin vers le logo d'une unité de recherche
+     * @param UniteRecherche $unite
+     * @param bool $fullpath            si true chemin absolue sinon chemin relatif au répertoire de l'application
+     * @return string                   le chemin vers le logo de l'unité de recherche $ecole
+     *
+     * TODO ne pas mettre les fichiers dans public problème de sécurité du fait que le répertoire est en écriture
+     */
+    static public function getLogoFilename(UniteRecherche $unite, $fullpath=true)
+    {
+        $chemin = "";
+        if ($fullpath) $chemin .= APPLICATION_DIR;
+        $chemin .= "/public/Logos/UR/".$unite->getSourceCode()."-".$unite->getSigle().".png";
+        return $chemin;
     }
 }

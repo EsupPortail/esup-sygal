@@ -64,6 +64,8 @@ class EcoleDoctoraleController extends AbstractController
      * les données associées à une école doctorale (Sigle, Libellé et Logo)
      *
      * @return \Zend\Http\Response|ViewModel
+     *
+     * TODO en cas de changement de SIGLE penser à faire un renommage du logo
      */
     public function modifierAction()
     {
@@ -93,7 +95,7 @@ class EcoleDoctoraleController extends AbstractController
                 if ($file['cheminLogo']['tmp_name'] !== '') {
                     $this->ajouterLogoEcoleDoctorale($file['cheminLogo']['tmp_name']);
                 }
-                // mise à jour des données relatives au écoles doctorales
+                // mise à jour des données relatives aux écoles doctorales
                 $ecole = $this->ecoleDoctoraleForm->getData();
                 $this->ecoleDoctoraleService->update($ecole);
 
@@ -263,7 +265,7 @@ class EcoleDoctoraleController extends AbstractController
             return;
         }
 
-        $ecole = $this->requestEcoleDoctorale();
+        $ecole      = $this->requestEcoleDoctorale();
         $chemin     = EcoleDoctoraleController::getLogoFilename($ecole, false);
         $filename   = EcoleDoctoraleController::getLogoFilename($ecole, true);
         $result = rename($cheminLogoUploade, $filename);
