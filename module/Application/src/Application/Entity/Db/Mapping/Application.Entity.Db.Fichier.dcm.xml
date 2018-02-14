@@ -12,6 +12,7 @@
     <field name="retraitement" type="string" column="RETRAITEMENT" nullable="true"/>
     <field name="estExpurge" type="boolean" column="EST_EXPURGE" nullable="false"/>
     <field name="estConforme" type="integer" column="EST_CONFORME" nullable="true"/>
+    <field name="estPartiel" type="boolean" column="EST_PARTIEL" nullable="false"/>
 
     <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
     <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>

@@ -2,7 +2,7 @@
 
 namespace Application\Controller;
 
-use Application\Controller\Plugin\UrlThese;
+use Application\Controller\Plugin\Url\UrlThesePlugin;
 use Application\Entity\Db\ImportObserv;
 use Application\Entity\Db\ImportObserv as ImportNotification;
 use Application\Service\Import\SchemaService;
@@ -18,7 +18,7 @@ use Zend\View\Model\ViewModel;
 
 /**
  *
- * @method UrlThese urlThese()
+ * @method UrlThesePlugin urlThese()
  * @author Unicaen
  */
 class ImportController extends \UnicaenImport\Controller\ImportController

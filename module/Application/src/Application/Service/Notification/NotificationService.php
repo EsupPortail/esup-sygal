@@ -2,8 +2,10 @@
 
 namespace Application\Service\Notification;
 
+use Application\Entity\Db\Fichier;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\These;
+use Application\Entity\Db\ValiditeFichier;
 use Application\Entity\Db\Variable;
 use Application\Service\Notification\Notification;
 use Application\Service\MailerService;
@@ -107,6 +109,32 @@ class NotificationService implements VariableServiceAwareInterface, MailerServic
         $this->notifier($viewModel);
 
         return $this;
+    }
+
+    /**
+     * @param string               $destinataires   Emails séparés par une virgule
+     * @param Fichier              $fichierRetraite Fichier retraité concerné
+     * @param ValiditeFichier|null $validite        Résultat du test d'archivabilité éventuel
+     * @return ViewModel
+     * @deprecated Utiliser trigger(Notification)
+     */
+    public function notifierRetraitementFini($destinataires, Fichier $fichierRetraite, ValiditeFichier $validite = null)
+    {
+        $viewModel = (new ViewModel())
+            ->setTemplate('application/these/mail/notif-retraitement-fini')
+            ->setVariables([
+                'subject' => "Retraitement terminé",
+                'fichierRetraite' => $fichierRetraite,
+                'validite' => $validite,
+                'url' => '',
+            ]);
+
+        $to = array_map('trim', explode(',', $destinataires));
+        $viewModel->setVariable('to', $to);
+
+        $this->notifier($viewModel);
+
+        return $viewModel;
     }
 
     /**
@@ -344,11 +372,16 @@ class NotificationService implements VariableServiceAwareInterface, MailerServic
 
         $mail = $this->mailerService->createNewMessage($html, $subject);
         $mail->setTo($to);
+
         if ($cc) {
             $mail->setCc($cc);
         }
         if ($bcc) {
             $mail->setBcc($bcc);
+        }
+
+        if (isset($this->options['cc'])) {
+            $mail->addCc($this->options['cc']);
         }
         if (isset($this->options['bcc'])) {
             $mail->addBcc($this->options['bcc']);

@@ -15,7 +15,6 @@ use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Variable;
 use Application\Entity\Db\VersionFichier;
 use Application\Entity\Db\WfEtape;
-use Application\Filter\FichierFilter;
 use Application\Filter\IdifyFilterAwareTrait;
 use Application\Form\AttestationTheseForm;
 use Application\Form\ConformiteFichierForm;
@@ -25,7 +24,6 @@ use Application\Form\RdvBuTheseDoctorantForm;
 use Application\Form\RdvBuTheseForm;
 use Application\Service\Etablissement\EtablissementServiceAwareInterface;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
-use Application\Service\These\Convention\ConventionPdfExporter;
 use Application\Service\Fichier\Exception\ValidationImpossibleException;
 use Application\Service\Fichier\FichierServiceAwareInterface;
 use Application\Service\Fichier\FichierServiceAwareTrait;
@@ -33,6 +31,7 @@ use Application\Service\Notification\NotificationServiceAwareInterface;
 use Application\Service\Notification\NotificationServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareInterface;
 use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\These\Convention\ConventionPdfExporter;
 use Application\Service\These\TheseServiceAwareInterface;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareInterface;
@@ -47,11 +46,10 @@ use Application\View\Helper\Sortable;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
+use Retraitement\Exception\TimedOutCommandException;
 use UnicaenApp\Exception\RuntimeException;
-use UnicaenApp\Exporter\Pdf as PdfExporter;
 use UnicaenApp\Service\MessageCollectorAwareTrait;
 use UnicaenApp\Traits\MessageAwareInterface;
-use UnicaenApp\Util;
 use Zend\Form\Element\Hidden;
 use Zend\Http\Response;
 use Zend\Stdlib\ParametersInterface;
@@ -75,6 +73,21 @@ class TheseController extends AbstractController implements
     use NotificationServiceAwareTrait;
     use IdifyFilterAwareTrait;
     use EtablissementServiceAwareTrait;
+
+    private $timeoutRetraitement;
+
+    /**
+     * Spécifie le timout à appliquer au lancement du script de retraitement.
+     *
+     * @param string $timeoutRetraitement Ex: '30s', '1m', cf. "man timout".
+     * @return self
+     */
+    public function setTimeoutRetraitement($timeoutRetraitement)
+    {
+        $this->timeoutRetraitement = $timeoutRetraitement;
+
+        return $this;
+    }
 
     /**
      * @return ViewModel|Response
@@ -353,6 +366,10 @@ class TheseController extends AbstractController implements
         $theseFichiers = $this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF, $version, false);
         $fichierThese = current($theseFichiers);
 
+        if (!$fichierThese) {
+            return $this->redirect()->toUrl($this->urlThese()->depotThese($these));
+        }
+
         if ($this->getRequest()->isPost()) {
             $action = $this->params()->fromPost('action', $this->params()->fromQuery('action'));
             if ('tester' === $action) {
@@ -563,6 +580,13 @@ class TheseController extends AbstractController implements
     }
 
     /**
+     * - Affichage de la thèse retraitée.
+     * - Retraitement automatique de la thèse
+     *
+     * NB: En fonction de la propriété 'timeoutRetraitement', un timeout peut être appliqué au lancement du
+     * script de retraitement. Si ce timout est atteint, l'exécution du script est interrompue
+     * et une exception TimedOutCommandException est levée.
+     *
      * @return ViewModel|Response
      */
     public function theseRetraiteeAction()
@@ -595,12 +619,22 @@ class TheseController extends AbstractController implements
 
         if ($this->getRequest()->isPost()) {
             if ('creerVersionRetraitee' === $this->params()->fromQuery('action')) {
-                $fichierVersionArchivage = $this->fichierService->creerFichierRetraite($fichierVersionOriginale);
                 try {
-                    $this->fichierService->validerFichier($fichierVersionArchivage);
-                }
-                catch (ValidationImpossibleException $vie) {
-                    // Le test d'archivabilité du fichier '%s' a rencontré un problème indépendant de notre volonté
+                    // Un timeout peut être appliqué au lancement du  script de retraitement.
+                    // Si ce timout est atteint, l'exécution du script est interrompue
+                    // et une exception TimedOutCommandException est levée.
+                    $timeout = $this->timeoutRetraitement;
+                    $fichierVersionArchivage = $this->fichierService->creerFichierRetraite($fichierVersionOriginale, $timeout);
+                    try {
+                        $this->fichierService->validerFichier($fichierVersionArchivage);
+                    } catch (ValidationImpossibleException $vie) {
+                        // Le test d'archivabilité du fichier '%s' a rencontré un problème indépendant de notre volonté
+                    }
+                } catch (TimedOutCommandException $toce) {
+                    // relancer le retraitement en tâche de fond
+                    $this->fichierService->creerFichierRetraiteAsync($fichierVersionOriginale);
+                } catch (RuntimeException $re) {
+                    // erreur prévue
                 }
             }
             return $this->redirect()->refresh();

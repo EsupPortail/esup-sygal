@@ -1,9 +1,10 @@
 <?php
 
 use Application\Service\ServiceAwareInitializer;
+use Retraitement\Controller\IndexControllerFactory;
 use Retraitement\Service\RetraitementServiceFactory;
 
-return array(
+return [
     'bjyauthorize'    => [
         'resource_providers' => [
             'BjyAuthorize\Provider\Resource\Config' => [
@@ -11,22 +12,7 @@ return array(
             ],
         ],
         'rule_providers'     => [
-//            PrivilegeRuleProvider::class => [
-//                'allow' => [
-//                    [
-//                        'privileges' => [
-//                            Privileges::THESE_CONSULTATION,
-//                            Privileges::THESE_SAISIE_DESCRIPTION,
-//                            Privileges::THESE_SAISIE_AUTORISATION_DIFFUSION,
-//                            Privileges::THESE_DEPOT_FICHIER,
-////                            Privileges::THESE_SAISIE_MOT_CLE_RAMEAU,
-//                            Privileges::THESE_SAISIE_CONFORMITE_ARCHIVAGE,
-//                        ],
-//                        'resources'  => ['These'],
-//                        'assertion'  => 'Assertion\\These',
-//                    ],
-//                ],
-//            ],
+
         ],
         'guards' => [
             \UnicaenAuth\Guard\PrivilegeController::class => [
@@ -37,63 +23,46 @@ return array(
                     ],
                     'privileges' => \Application\Provider\Privilege\ThesePrivileges::THESE_RECHERCHE,
                 ],
+                [
+                    'controller' => 'Retraitement\Controller\Index',
+                    'action'     => [
+                        'retraiter-console',
+                    ],
+                    'roles' => [],
+                ],
             ],
         ],
     ],
-    'router' => array(
-        'routes' => array(
-//            'home' => array(
-//                'type' => 'Literal',
-//                'options' => array(
-//                    'route'    => '/',
-//                    'defaults' => array(
-//                        'controller' => 'Application\Controller\Index', // <-- change here
-//                        'action'     => 'index',
-//                    ),
-//                ),
-//            ),
-//            'accueil-doctorant' => array(
-//                'type' => 'Literal',
-//                'options' => array(
-//                    'route'    => '/accueil/doctorant',
-//                    'defaults' => array(
-//                        'controller' => 'Application\Controller\Index',
-//                        'action'     => 'index-doctorant',
-//                    ),
-//                ),
-//            ),
-            // The following is a route to simplify getting started creating
-            // new controllers and actions without needing to create a new
-            // module. Simply drop new controllers in, and you can access them
-            // using the path /application/:controller/:action
-            'application' => array(
+    'router' => [
+        'routes' => [
+            'application' => [
                 'type'    => 'Literal',
-                'options' => array(
+                'options' => [
                     'route'    => '/retraitement',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'Retraitement\Controller',
                         'controller'    => 'Index',
                         'action'        => 'index',
-                    ),
-                ),
+                    ],
+                ],
                 'may_terminate' => true,
-                'child_routes' => array(
-                    'default' => array(
+                'child_routes' => [
+                    'default' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/[:controller[/:action]]',
-                            'constraints' => array(
+                            'constraints' => [
                                 'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
                                 'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
-                            ),
-                            'defaults' => array(
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        ),
-    ),
+                            ],
+                            'defaults' => [
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
     'navigation'      => [
         'default' => [
             'home' => [
@@ -105,29 +74,46 @@ return array(
             ],
         ],
     ],
-    'service_manager' => array(
-        'invokables' => array(
+    'console' => [
+        'router' => [
+            'routes' => [
+                'retraiter-console' => [
+                    'options' => [
+                        'route'    => 'fichier retraiter [--tester-archivabilite] [--notifier=] <fichier>',
+                        'defaults' => [
+                            'controller' => 'Retraitement\Controller\Index',
+                            'action'     => 'retraiter-console',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
+    'service_manager' => [
+        'invokables' => [
 
-        ),
-        'factories' => array(
+        ],
+        'factories' => [
             'RetraitementService' => RetraitementServiceFactory::class,
-        ),
+        ],
         'initializers' => [
             ServiceAwareInitializer::class,
         ]
-    ),
+    ],
 
-    'controllers' => array(
-        'invokables' => array(
-            'Retraitement\Controller\Index' => 'Retraitement\Controller\IndexController',
-        ),
+    'controllers' => [
+        'invokables' => [
+        ],
+        'factories' => [
+            'Retraitement\Controller\Index' => IndexControllerFactory::class
+        ],
         'initializers' => [
             ServiceAwareInitializer::class,
         ]
-    ),
-    'view_manager' => array(
-        'template_path_stack' => array(
+    ],
+    'view_manager' => [
+        'template_path_stack' => [
             __DIR__ . '/../view',
-        ),
-    ),
-);
+        ],
+    ],
+];

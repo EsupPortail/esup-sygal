@@ -115,17 +115,28 @@ class VersionFichier
     }
 
     /**
+     * Indique si le code spécifié correspond à une version corrigée ou non.
+     *
+     * @param string $code Ex: VersionFichier::CODE_ORIG
+     * @return bool
+     */
+    static public function codeEstVersionCorrigee($code)
+    {
+        return in_array($code, [
+            self::CODE_ORIG_CORR,
+            self::CODE_ARCHI_CORR,
+            self::CODE_DIFF_CORR,
+        ]);
+    }
+
+    /**
      * Indique si cette version est corrigée ou non.
      *
      * @return bool
      */
     public function estVersionCorrigee()
     {
-        return in_array($this->getCode(), [
-            self::CODE_ORIG_CORR,
-            self::CODE_ARCHI_CORR,
-            self::CODE_DIFF_CORR,
-        ]);
+        return self::codeEstVersionCorrigee($this->getCode());
     }
 
     /**

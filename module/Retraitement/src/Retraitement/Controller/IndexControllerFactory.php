@@ -1,0 +1,77 @@
+<?php
+
+namespace Retraitement\Controller;
+
+use Application\Entity\Db\Utilisateur;
+use Application\EventRouterReplacer;
+use Doctrine\ORM\EntityManager;
+use UnicaenApp\Exception\RuntimeException;
+use Zend\Mvc\Controller\ControllerManager;
+use Zend\Mvc\Router\Http\TreeRouteStack;
+use Zend\ServiceManager\ServiceLocatorInterface;
+
+class IndexControllerFactory
+{
+    /**
+     * Create service
+     *
+     * @param ControllerManager $controllerManager
+     * @return IndexController
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\TransactionRequiredException
+     */
+    public function __invoke(ControllerManager $controllerManager)
+    {
+        $sl = $controllerManager->getServiceLocator();
+
+        /** @var TreeRouteStack $httpRouter */
+        $httpRouter = $sl->get('HttpRouter');
+        $cliConfig = $this->getCliConfig($sl);
+
+        $routerReplacer = new EventRouterReplacer($httpRouter, $cliConfig);
+
+        $controller = new IndexController();
+        $controller->setUtilisateurApplication($this->getUtilisateurApp($sl));
+        $controller->setEventRouterReplacer($routerReplacer);
+
+        return $controller;
+    }
+
+    /**
+     * Retourne le pseudo-utilisateur correspondant à l'application.
+     *
+     * @param ServiceLocatorInterface $sl
+     * @return Utilisateur
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\TransactionRequiredException
+     */
+    public function getUtilisateurApp(ServiceLocatorInterface $sl)
+    {
+        /** @var EntityManager $em */
+        $em = $sl->get('doctrine.entitymanager.orm_default');
+        /** @var Utilisateur $utilisateur */
+        $utilisateur = $em->find(Utilisateur::class, $id = Utilisateur::APP_UTILISATEUR_ID);
+
+        if (!$utilisateur) {
+            throw new RuntimeException("Utilisateur-application introuvable: $id");
+        }
+
+        return $utilisateur;
+    }
+
+    /**
+     * @param ServiceLocatorInterface $serviceLocator
+     * @return array
+     */
+    private function getCliConfig(ServiceLocatorInterface $serviceLocator)
+    {
+        $config = $serviceLocator->get('Config');
+
+        return [
+            'domain' => isset($config['cli_config']['domain']) ? $config['cli_config']['domain'] : null,
+            'scheme' => isset($config['cli_config']['scheme']) ? $config['cli_config']['scheme'] : null,
+        ];
+    }
+}

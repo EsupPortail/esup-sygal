@@ -87,6 +87,11 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     private $estConforme = null;
 
     /**
+     * @var bool
+     */
+    private $estPartiel = false;
+
+    /**
      * @var These
      */
     private $these;
@@ -432,6 +437,25 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     public function setEstConforme($estConforme = null)
     {
         $this->estConforme = $estConforme;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getEstPartiel()
+    {
+        return $this->estPartiel;
+    }
+
+    /**
+     * @param bool $estPartiel
+     * @return Fichier
+     */
+    public function setEstPartiel($estPartiel = true)
+    {
+        $this->estPartiel = $estPartiel;
 
         return $this;
     }

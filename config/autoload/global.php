@@ -1,7 +1,6 @@
 <?php
 
 use Application\Navigation\NavigationFactoryFactory;
-use Retraitement\Filter\Command\CinesCommand;
 use Retraitement\Filter\Command\MinesCommand;
 
 return array(
@@ -10,7 +9,11 @@ return array(
             'check_ws_script_path' => __DIR__ . '/../../bin/from_cines/check_webservice_response.sh',
             'script_path'          => __DIR__ . '/../../bin/validation_cines.sh',
         ],
+
         'retraitement' => [
+            /**
+             * Commande utilisée pour retraiter les fichiers PDF, et ses options.
+             */
             'command' => [
                 'class' => MinesCommand::class,
                 'options' => [
@@ -19,15 +22,23 @@ return array(
 //                    'gs_args' => '-dPDFACompatibilityPolicy=1'
                 ],
             ],
+
+            /**
+             * Durée au bout de laquelle le retraitement est interrompu pour le relancer en tâche de fond.
+             * Valeurs possibles: '30s', '1m', etc. (cf. "man timeout").
+             */
+            'timeout' => '20s',
         ],
+
         'notification' => [
-            // destinataires à mettre systématiquement en copie cachée des mails
+            /**
+             * Destinataires à ajouter systématiquement lors de l'envoi d'une notification.
+             */
             'cc' => ['suivi-mail-sodoct@unicaen.fr'],
+            //'bcc' => [],
         ],
     ],
-    //'translator' => array(
-        //'locale' => 'fr_FR',
-    //),
+
     'service_manager' => array(
         'factories' => array(
             'navigation' => NavigationFactoryFactory::class,
