@@ -59,16 +59,27 @@ class EcoleDoctoraleController extends AbstractController
         $this->ecoleDoctoraleForm->bind($ecole);
 
         if ($data = $this->params()->fromPost()) {
+            if (isset($data['supprimer-logo'])) {
+                $this->supprimerLogoEcoleDoctorale();
+            } else {
+                var_dump($data);
+                $this->ajouterLogoEcoleDoctorale();
+            }
+
             $this->ecoleDoctoraleForm->setData($data);
             if ($this->ecoleDoctoraleForm->isValid()) {
+
+                var_dump("formulaire valide");
                 /** @var EcoleDoctorale $ecole */
                 $ecole = $this->ecoleDoctoraleForm->getData();
                 $this->ecoleDoctoraleService->update($ecole);
+
 
                 $this->flashMessenger()->addSuccessMessage("École doctorale '$ecole' modifiée avec succès");
 
                 return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecole->getId()]], true);
             }
+
         }
 
         $this->ecoleDoctoraleForm->setAttribute('action',
@@ -194,5 +205,23 @@ class EcoleDoctoraleController extends AbstractController
         $this->ecoleDoctoraleForm = $form;
 
         return $this;
+    }
+
+    public function supprimerLogoEcoleDoctorale()
+    {
+        $ecole = $this->requestEcoleDoctorale();
+        $this->ecoleDoctoraleService->deleteLogo($ecole);
+
+        $this->flashMessenger()->addSuccessMessage("Le logo de l'école doctorale {$ecole->getLibelle()} vient d'être supprimé");
+        return $this->redirect()->toRoute('ecole-doctorale', [], [], true);
+    }
+
+    public function ajouterLogoEcoleDoctorale()
+    {
+        $ecole = $this->requestEcoleDoctorale();
+        $chemin = "/public/Logos/ED/".$ecole->getSourceCode()."-".$ecole->getSigle().".png";
+        $this->ecoleDoctoraleService->setLogo($ecole,$chemin);
+
+        //return $this->redirect()->toRoute('ecole-doctorale', [], [], true);
     }
 }

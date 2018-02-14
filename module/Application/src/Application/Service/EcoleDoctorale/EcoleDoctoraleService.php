@@ -110,4 +110,20 @@ class EcoleDoctoraleService extends BaseService
 
         return $ecole;
     }
+
+    public function setLogo(EcoleDoctorale $ecole, $cheminLogo)
+    {
+        $ecole->setCheminLogo($cheminLogo);
+        $this->getEntityManager()->flush($ecole);
+
+        return $ecole;
+    }
+
+    public function deleteLogo(EcoleDoctorale $ecole)
+    {
+        $ecole->setCheminLogo(null);
+        $this->getEntityManager()->flush($ecole);
+
+        return $ecole;
+    }
 }
