@@ -14,7 +14,7 @@ return [
          */
         'entity_source_injector' => [
             // Code unique de la source à injecter (null pour désactiver le mécanisme).
-            'source_code' => 'App',
+            'source_code' => 'COMUE::SYGAL',
         ],
     ],
 ];

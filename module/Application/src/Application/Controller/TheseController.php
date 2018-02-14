@@ -54,6 +54,7 @@ use Zend\Form\Element\Hidden;
 use Zend\Http\Response;
 use Zend\Stdlib\ParametersInterface;
 use Zend\View\Model\ViewModel;
+use Application\Service\These\PageDeGarde\PageDeGardePdfExporter;
 
 class TheseController extends AbstractController implements
     VariableServiceAwareInterface ,
@@ -1362,4 +1363,15 @@ class TheseController extends AbstractController implements
 
     }
 
+    public function generateAction()
+    {
+        $these = $this->requestedThese();
+        $renderer = $this->getServiceLocator()->get('view_renderer'); /* @var $renderer \Zend\View\Renderer\PhpRenderer */
+        $exporter = new PageDeGardePdfExporter($renderer, 'A4');
+        $exporter->setVars([
+            'these'              => $these,
+        ]);
+        $exporter->export('export.pdf');
+        exit;
+    }
 }

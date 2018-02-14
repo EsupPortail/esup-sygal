@@ -25,17 +25,18 @@ class IndividuService extends BaseService
     public function createFromPeople(People $people)
     {
         $sns = (array)$people->get('sn');
+        $usuel = array_pop($sns);
+        $patro = array_pop($sns);
+        if ($patro === null) $patro = $usuel;
 
         $entity = new Individu();
-        $entity->setNomUsuel(array_pop($sns));
+        $entity->setNomUsuel($usuel);
+        $entity->setNomPatronymique($patro);
         $entity->setPrenom($people->get('givenName'));
         $entity->setCivilite($people->get('supannCivilite'));
         $entity->setEmail($people->get('mail'));
-        $entity->setTel($people->get('telephoneNumber'));
 
         /** @var Source $source */
-        $source = $this->getEntityManager()->getRepository(Source::class)->findOneBy(['code' => 'App']);
-        $entity->setSource($source);
         $entity->setSourceCode($people->get('supannEmpId'));
 
         $this->getEntityManager()->persist($entity);

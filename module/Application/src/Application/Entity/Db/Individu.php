@@ -6,12 +6,13 @@ use Application\Constants;
 use Application\Filter\NomCompletFormatter;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenImport\Entity\Db\Interfaces\SourceAwareInterface;
 use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
 
 /**
  * Individu
  */
-class Individu implements HistoriqueAwareInterface
+class Individu implements HistoriqueAwareInterface, SourceAwareInterface
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
