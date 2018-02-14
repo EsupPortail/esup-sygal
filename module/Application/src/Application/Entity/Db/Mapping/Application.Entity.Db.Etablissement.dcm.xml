@@ -8,6 +8,7 @@
         <id name="id" type="integer" column="ID"/>
         <field name="code"      type="string"   length="32"  column="CODE"      nullable="false"/>
         <field name="libelle"   type="string"   length="128" column="LIBELLE"   nullable="false"/>
+        <field name="cheminLogo" type="string" column="CHEMIN_LOGO" length="200" nullable="true"/>
 
         <one-to-many field="theses"         target-entity="Application\Entity\Db\These"     mapped-by="etablissement"/>
         <one-to-many field="doctorants"     target-entity="Application\Entity\Db\Doctorant" mapped-by="etablissement"/>
