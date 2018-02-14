@@ -3,6 +3,8 @@
 namespace Application\Form;
 
 use Application\Entity\Db\EcoleDoctorale;
+use Zend\Form\Element\Hidden;
+use Zend\Form\Element\File;
 use Zend\Form\Element\Submit;
 use Zend\Form\Element\Text;
 use Zend\Form\Form;
@@ -18,7 +20,7 @@ class EcoleDoctoraleForm extends Form
         $this->setObject(new EcoleDoctorale());
 
         $this
-            ->add(new Text('id'));
+            ->add(new Hidden('id'));
 
         $this->add((
             new Text('sigle'))
@@ -33,9 +35,20 @@ class EcoleDoctoraleForm extends Form
 
         $this
             ->add((
-                new Text('sourceCode'))
+                new Hidden('sourceCode'))
                     ->setLabel("Code :")
         );
+        $this
+            ->add((
+                new File('cheminLogo'))
+                ->setLabel('Logo de l\'école doctorale :')
+            );
+        $this
+            ->add((
+            new Submit('supprimer-logo'))
+                ->setValue("Supprimer le logo")
+                ->setAttribute('class', 'btn btn-danger')
+            );
 
         $this
             ->add((
@@ -43,6 +56,7 @@ class EcoleDoctoraleForm extends Form
                     ->setValue("Enregistrer")
                     ->setAttribute('class', 'btn btn-primary')
         );
+
 
         $this->setInputFilter((new Factory())->createInputFilter([
             'sigle' => [
@@ -53,10 +67,10 @@ class EcoleDoctoraleForm extends Form
                 'name' => 'libelle',
                 'required' => true,
             ],
-            'sourceCode' => [
+            /*'sourceCode' => [
                 'name' => 'sourceCode',
                 'required' => true,
-            ],
+            ],*/
         ]));
     }
 }
