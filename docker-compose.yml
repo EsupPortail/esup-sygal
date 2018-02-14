@@ -10,6 +10,7 @@ services:
      - "8000:80"
     volumes:
      - .:/sygal
+    working_dir: /sygal
     network_mode: bridge
 
   sygal-import-ws:
@@ -21,4 +22,5 @@ services:
      - "8080:8080"
     volumes:
      - ../sygal-import-ws:/sygal-import-ws
+    working_dir: /sygal-import-ws
     network_mode: bridge
