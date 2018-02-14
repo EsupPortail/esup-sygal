@@ -1,32 +1,14 @@
 <?php
 
-namespace Application\Controller\Plugin;
+namespace Application\Service\Url;
 
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
 use Application\Entity\Db\VersionFichier;
-use Application\Filter\IdifyFilterAwareTrait;
 use UnicaenApp\Exception\LogicException;
-use Zend\Filter\Word\DashToCamelCase;
-use Zend\Filter\Word\UnderscoreToDash;
-use Zend\Mvc\Controller\Plugin\Url as UrlPlugin;
 
-class UrlThese extends UrlPlugin
+class UrlTheseService extends UrlService
 {
-    use IdifyFilterAwareTrait;
-
-    protected $options = [];
-
-    /**
-     * @param array $options
-     * @return $this
-     */
-    public function setOptions(array $options = [])
-    {
-        $this->options = $options;
-        return $this;
-    }
-
     /**
      * @param These                 $these
      * @param NatureFichier|string  $nature
@@ -94,16 +76,11 @@ class UrlThese extends UrlPlugin
         );
     }
 
-    public function archivageThese(These $these, $version)
+    public function archivageThese(These $these, $version = VersionFichier::CODE_ORIG)
     {
-        if (!in_array($version, [VersionFichier::CODE_ORIG, VersionFichier::CODE_ORIG_CORR])) {
-            throw new LogicException("Version fichier spécifiée inattendue: " . $version);
-        }
-
-        $route = [
-            VersionFichier::CODE_ORIG      => 'these/archivage',
-            VersionFichier::CODE_ORIG_CORR => 'these/archivage-version-corrigee',
-        ][$version];
+        $route = VersionFichier::codeEstVersionCorrigee($version) ?
+            'these/archivage-version-corrigee' :
+            'these/archivage';
 
         $queryParams = [
             'version' => $this->idify($version),
