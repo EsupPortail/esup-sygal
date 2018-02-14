@@ -37,6 +37,18 @@ class ValiditeFichier implements HistoriqueAwareInterface
      */
     private $fichier;
 
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return implode(PHP_EOL, [
+            '- Date: ' . $this->getHistoModification()->format('d/m/Y H:i:s'),
+            '- Archivable: ' . $this->getEstValideToString(),
+            '- Message: ' . $this->getMessage(),
+            '- Log: ' . $this->getLog(),
+        ]);
+    }
 
     /**
      * Set estValide
@@ -63,6 +75,22 @@ class ValiditeFichier implements HistoriqueAwareInterface
     public function getEstValide()
     {
         return $this->estValide;
+    }
+
+    /**
+     * Get estValide
+     *
+     * @return bool|null
+     * <code>true</code>  : archivable ;
+     * <code>false</code> : non archivable ;
+     * <code>null</code>  : archivabilité indéterminée car plantage lors du test.
+     */
+    public function getEstValideToString()
+    {
+        if ($this->estValide === null) {
+            return 'Indéterminé';
+        }
+        return $this->estValide ? 'Oui' : 'Non';
     }
 
     /**

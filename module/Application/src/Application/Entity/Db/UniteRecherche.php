@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenApp\Util;
 use UnicaenImport\Entity\Db\Interfaces\SourceAwareInterface;
 use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
 
@@ -48,6 +49,11 @@ class UniteRecherche implements HistoriqueAwareInterface, SourceAwareInterface
      * @var string
      */
     protected $sourceCode;
+
+    /**
+     * @var string
+     */
+    protected $cheminLogo;
 
     /**
      * @var Collection
@@ -215,4 +221,32 @@ class UniteRecherche implements HistoriqueAwareInterface, SourceAwareInterface
 
         return $this;
     }
+
+    public function getLogoContent()
+    {
+        if ($this->cheminLogo === null) {
+            $image = Util::createImageWithText("Aucun logo pour l'UR|[".$this->getSourceCode()." - ".$this->getSigle()."]",200,200);
+            return $image;
+        }
+        return file_get_contents(APPLICATION_DIR . $this->cheminLogo);
+
+    }
+
+    /**
+     * @return string
+     */
+    public function getCheminLogo()
+    {
+        return $this->cheminLogo;
+    }
+
+    /**
+     * @param string $cheminLogo
+     */
+    public function setCheminLogo($cheminLogo)
+    {
+        $this->cheminLogo = $cheminLogo;
+    }
+
+
 }

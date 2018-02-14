@@ -1,13 +1,10 @@
 <?php
 
 use Application\Assertion\AssertionAbstractFactory;
-use Application\Assertion\TheseAssertion;
+use Application\Controller\Factory\TheseControllerFactory;
 use Application\Controller\Factory\TheseObserverControllerFactory;
-use Application\Controller\TheseController;
-use Application\Controller\TheseObserverController;
+use Application\Controller\Plugin\Url\UrlThesePluginFactory;
 use Application\Entity\Db\Diffusion;
-use Application\Entity\Db\NatureFichier;
-use Application\Entity\Db\VersionFichier;
 use Application\Entity\Db\WfEtape;
 use Application\Form\Factory\AttestationHydratorFactory;
 use Application\Form\Factory\AttestationTheseFormFactory;
@@ -21,6 +18,10 @@ use Application\Service\Message\DiffusionMessages;
 use Application\Service\ServiceAwareInitializer;
 use Application\Service\These\TheseObserverService;
 use Application\Service\These\TheseService;
+use Application\Service\Url\UrlServiceFactory;
+use Application\Service\Url\UrlTheseService;
+use Application\Service\Url\UrlTheseServiceFactory;
+use Application\View\Helper\Url\UrlTheseHelperFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 
@@ -868,13 +869,14 @@ return [
         ],
         'abstract_factories' => [
             AssertionAbstractFactory::class,
+            UrlServiceFactory::class, // construit: 'urlTheseService'
         ],
     ],
     'controllers'     => [
         'invokables' => [
-            'Application\Controller\These' => TheseController::class,
         ],
         'factories' => [
+            'Application\Controller\These' => TheseControllerFactory::class,
             'Application\Controller\TheseObserver' => TheseObserverControllerFactory::class,
         ],
         'aliases' => [
@@ -883,7 +885,14 @@ return [
     ],
     'controller_plugins' => [
         'invokables' => [
-            'urlThese'              => 'Application\Controller\Plugin\UrlThese',
+        ],
+        'factories' => [
+            'urlThese' => UrlThesePluginFactory::class,
+        ],
+    ],
+    'view_helpers' => [
+        'factories' => [
+            'urlThese' => UrlTheseHelperFactory::class,
         ],
     ],
 

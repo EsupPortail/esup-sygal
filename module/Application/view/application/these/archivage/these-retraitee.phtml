@@ -58,6 +58,7 @@ if ($validite === null || $validiteEstInconnue || $estValide) {
 
                 $displayContent =
                     !$fichierVAouVAC ||
+                    $fichierVAouVAC->getEstPartiel() ||
                     $fichierVAouVAC->isRetraitementAuto() ||
                     $autreMethodeRetraitementEchouee;
 
@@ -67,7 +68,8 @@ if ($validite === null || $validiteEstInconnue || $estValide) {
 
                 $displayFiles =
                     $fichierVAouVAC &&
-                    $fichierVAouVAC->isRetraitementAuto();
+                    $fichierVAouVAC->isRetraitementAuto() &&
+                    !$fichierVAouVAC->getEstPartiel();
                 ?>
 
                 <?php if ($displayContent): ?>
@@ -89,6 +91,12 @@ if ($validite === null || $validiteEstInconnue || $estValide) {
                         <p>
                             Vous avez opté pour le retraitement automatique.
                         </p>
+                        <?php if ($fichierVAouVAC->getEstPartiel()): ?>
+                            <div class="alert alert-md alert-success alert-strong">
+                                <span class="glyphicon glyphicon-info-sign"></span>
+                                Le retraitement du fichier est en cours, vous recevrez un courriel lorsqu'il sera terminé...
+                            </div>
+                        <?php endif ?>
                     <?php endif ?>
 
                     <?php if ($displayForm): ?>

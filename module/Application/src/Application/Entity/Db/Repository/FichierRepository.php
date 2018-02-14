@@ -29,7 +29,7 @@ class FichierRepository extends DefaultEntityRepository
      * @param NatureFichier|string $nature
      * @param VersionFichier|string $version
      * @param int|bool|string $retraitement '0', '1', booléen ou code du retraitementOTH
-     * @return array
+     * @return Fichier[]
      */
     public function fetchFichiers(These $these, $nature = null, $version = null, $retraitement = null)
     {

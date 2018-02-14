@@ -39,7 +39,37 @@ INSERT INTO ROLE (
     u.id
   FROM ds
     --join ETABLISSEMENT etab on etab.CODE <> 'COMUE'
-    join ETABLISSEMENT etab on etab.CODE = etab.CODE
+    join ETABLISSEMENT etab on etab.CODE = etab.CODE -- i.e. tous les établissements
+    join SOURCE src on src.CODE = 'COMUE::SYGAL'
+    join UTILISATEUR u on u.USERNAME = 'sygal-app'
+;
+
+INSERT INTO ROLE (
+  ID,
+  ETABLISSEMENT_ID,
+  LIBELLE,
+  CODE,
+  ROLE_ID,
+  SOURCE_CODE,
+  SOURCE_ID,
+  HISTO_CREATEUR_ID,
+  HISTO_MODIFICATEUR_ID)
+  with ds (LIBELLE, CODE) as (
+    SELECT 'École doctorale',            'ED'         from dual union all
+    SELECT 'Unité de recherche',         'UR'         from dual
+  )
+  SELECT
+    ROLE_ID_SEQ.nextval,
+    etab.id,
+    ds.LIBELLE,
+    ds.CODE,
+    ds.LIBELLE/*||' '||etab.CODE*/, -- NB: sans le code établissement
+    etab.CODE||'::'||ds.CODE,
+    src.id,
+    u.id,
+    u.id
+  FROM ds
+    join ETABLISSEMENT etab on etab.CODE = 'COMUE'
     join SOURCE src on src.CODE = 'COMUE::SYGAL'
     join UTILISATEUR u on u.USERNAME = 'sygal-app'
 ;

@@ -17,6 +17,12 @@ interface CommandInterface
     public function setOptions(array $options);
 
     /**
+     * @param string $name
+     * @param mixed  $value
+     */
+    public function setOption($name, $value);
+
+    /**
      * @param string $outputFilePath
      * @param string $inputFilePath
      * @param string $errorFilePath

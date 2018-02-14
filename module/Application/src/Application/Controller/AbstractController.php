@@ -5,9 +5,10 @@ namespace Application\Controller;
 use Application\Controller\Plugin\Uploader\UploaderPlugin;
 use Application\Controller\Plugin\UrlDoctorant;
 use Application\Controller\Plugin\UrlFichierThese;
-use Application\Controller\Plugin\UrlThese;
+use Application\Controller\Plugin\Url\UrlThesePlugin;
 use Application\Controller\Plugin\UrlWorkflow;
 use Application\Entity\Db\These;
+use Application\Entity\Db\Utilisateur;
 use Application\RouteMatch;
 use Application\Service\UserContextServiceAwareInterface;
 use Application\Service\UserContextServiceAwareTrait;
@@ -25,7 +26,7 @@ use ZfcUser\Controller\Plugin\ZfcUserAuthentication;
  * @method HttpRequest getRequest()
  * @method UploaderPlugin uploader()
  * @method boolean isAllowed($resource, $privilege)
- * @method UrlThese urlThese()
+ * @method UrlThesePlugin urlThese()
  * @method UrlDoctorant urlDoctorant()
  * @method UrlFichierThese urlFichierThese()
  * @method UrlWorkflow urlWorkflow()
@@ -36,6 +37,13 @@ class AbstractController extends AbstractActionController
     implements UserContextServiceAwareInterface
 {
     use UserContextServiceAwareTrait;
+
+    /**
+     * Pseudo-utilisateur correspondant à l'application elle-même.
+     *
+     * @var Utilisateur
+     */
+    protected $utilisateurApplication;
 
     /**
      * Teste si un privilège est accordé sur une ressource.
@@ -63,5 +71,18 @@ class AbstractController extends AbstractActionController
         $routeMatch = $this->getEvent()->getRouteMatch();
 
         return $routeMatch->getThese();
+    }
+
+    /**
+     * Spécifie le Pseudo-utilisateur correspondant à l'application elle-même.
+     *
+     * @param Utilisateur $utilisateurApplication
+     * @return self
+     */
+    public function setUtilisateurApplication(Utilisateur $utilisateurApplication)
+    {
+        $this->utilisateurApplication = $utilisateurApplication;
+
+        return $this;
     }
 }

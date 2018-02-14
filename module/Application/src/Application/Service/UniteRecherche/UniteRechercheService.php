@@ -110,4 +110,20 @@ class UniteRechercheService extends BaseService
 
         return $ecole;
     }
+
+    public function setLogo(UniteRecherche $unite, $cheminLogo)
+    {
+        $unite->setCheminLogo($cheminLogo);
+        $this->getEntityManager()->flush($unite);
+
+        return $unite;
+    }
+
+    public function deleteLogo(UniteRecherche $unite)
+    {
+        $unite->setCheminLogo(null);
+        $this->getEntityManager()->flush($unite);
+
+        return $unite;
+    }
 }

@@ -28,6 +28,11 @@ class ShellScriptRunner
     private $shell;
 
     /**
+     * @var boolean
+     */
+    private $async = false;
+
+    /**
      * Constructor.
      *
      * @param string $scriptFilePath Chemin absolu du script à exécuter.
@@ -49,6 +54,17 @@ class ShellScriptRunner
     }
 
     /**
+     * @param bool $async
+     * @return self
+     */
+    public function setAsync($async = true)
+    {
+        $this->async = $async;
+
+        return $this;
+    }
+
+    /**
      * Lance le script.
      *
      * @param string $args
@@ -58,15 +74,20 @@ class ShellScriptRunner
     {
         $this->checkPrerequisites();
 
-//        $scriptName = basename($this->scriptFilePath);
-
         chdir($this->scriptDirPath);
 
-//        $command = sprintf("%s %s %s", $this->shell, $scriptName, $args);
         $command = $this->getCommandToString($args);
+
+        if ($this->async) {
+            $command = 'nohup ' . $command . ' > /dev/null 2>&1 &';
+        }
 
         // exécution de la commande
         exec($command, $output, $returnCode);
+
+        if ($this->async) {
+            return null;
+        }
 
         if (!is_array($output) || !isset($output[0])) {
             throw new RuntimeException(

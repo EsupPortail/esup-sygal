@@ -2,6 +2,7 @@
 
 namespace Application\Service\Fichier;
 
+use Application\Command\ShellScriptRunner;
 use Application\Entity\Db\ContenuFichier;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\NatureFichier;
@@ -27,12 +28,6 @@ use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
 use Zend\Filter\FilterInterface;
 
-/**
- * Created by PhpStorm.
- * User: gauthierb
- * Date: 26/04/16
- * Time: 09:07
- */
 class FichierService extends BaseService
     implements VersionFichierServiceAwareInterface, ValiditeFichierServiceAwareInterface, RetraitementServiceAwareInterface
 {
@@ -207,56 +202,113 @@ class FichierService extends BaseService
     }
 
     /**
-     * À partir du fichier spécifié, crée un nouveau fichier "corrigé" rattaché à la même thèse.
-     *
-     * @param Fichier $fichier
-     * @return Fichier
+     * @param Fichier $fichier Fichier à retraiter
+     * @return Fichier Futur fichier retraité
      */
-    public function creerFichierRetraite(Fichier $fichier)
+    private function preparerFichierRetraite(Fichier $fichier)
     {
-        // suppression de tout autre fichier retraité existant
         $version = $fichier->getVersion()->estVersionCorrigee() ?
             VersionFichier::CODE_ARCHI_CORR :
             VersionFichier::CODE_ARCHI;
-        //$fichierTheseRetraite = $fichier->getThese()->getFichiersBy(false, null, true, $version)->first() ?: null;
-        $fichierTheseRetraite = current($this->getRepository()->fetchFichiers($fichier->getThese(), NatureFichier::CODE_THESE_PDF, $version, true));
-        if ($fichierTheseRetraite !== null) {
-            $this->deleteFichiers([$fichierTheseRetraite]);
+
+        // si un fichier retraité "partiel" peut avoir déjà été créé en cas de retraitement en tâche de fond, on l'utilise.
+        $fichierRetraite = current($this->getRepository()->fetchFichiers($fichier->getThese(), NatureFichier::CODE_THESE_PDF, $version, true));
+        if ($fichierRetraite && $fichierRetraite->getEstPartiel()) {
+            return $fichierRetraite;
         }
 
-        $outputFilePath = $this->retraitementService->retraiterFichier($fichier);
-        $outputFileContent = file_get_contents($outputFilePath);
+        // suppression de tout fichier retraité existant
+        if ($fichierRetraite) {
+            $this->deleteFichiers([$fichierRetraite]);
+        }
 
-        $newFichier = new Fichier();
-        $newFichier
+        $fichierRetraite = new Fichier();
+        $fichierRetraite
             ->setThese($fichier->getThese())
             ->setNature($fichier->getNature())
             ->setNom($fichier->getNom())
             ->setTypeMime($fichier->getTypeMime())
             ->setNomOriginal($fichier->getNomOriginal())
-            ->setTaille(strlen($outputFileContent))
+            ->setEstPartiel(true)
+            ->setTaille(0)
             ->setEstAnnexe($fichier->getEstAnnexe());
 
-        // suppression du fichier corrigé sur le disque
-        unlink($outputFilePath);
-
-        $newFichier->setVersion($this->versionFichierService->getRepository()->findOneByCode($version));
-        $newFichier->setRetraitement(Fichier::RETRAITEMENT_AUTO);
+        $fichierRetraite->setVersion($this->versionFichierService->getRepository()->findOneByCode($version));
+        $fichierRetraite->setRetraitement(Fichier::RETRAITEMENT_AUTO);
 
         $nomFichierFormatter = new NomFichierFormatter();
-        $newFichier->setNom($nomFichierFormatter->filter($newFichier));
+        $fichierRetraite->setNom($nomFichierFormatter->filter($fichierRetraite));
 
-        $contenuNewFichier = new ContenuFichier();
-        $contenuNewFichier->setData($outputFileContent);
-        $newFichier->setContenuFichier($contenuNewFichier);
-        $contenuNewFichier->setFichier($newFichier);
+        return $fichierRetraite;
+    }
 
-        $this->entityManager->persist($contenuNewFichier);
-        $this->entityManager->persist($newFichier);
-        $this->entityManager->flush($contenuNewFichier);
-        $this->entityManager->flush($newFichier);
+    /**
+     * À partir du fichier spécifié, crée un fichier retraité rattaché à la même thèse.
+     *
+     * @param Fichier $fichier Fichier à retraiter
+     * @param string  $timeout Timeout éventuel à appliquer au lancement du script de retraitement.
+     * @return Fichier Fichier retraité
+     */
+    public function creerFichierRetraite(Fichier $fichier, $timeout = null)
+    {
+        $outputFilePath = $this->retraitementService->retraiterFichier($fichier, $timeout);
+        // Si le timout éventuel est atteint, une exception TimedOutCommandException est levée.
 
-        return $newFichier;
+        $outputFileContent = file_get_contents($outputFilePath);
+        unlink($outputFilePath);
+
+        $fichierRetraite = $this->preparerFichierRetraite($fichier);
+        $fichierRetraite
+            ->setEstPartiel(false)
+            ->setTaille(strlen($outputFileContent));
+
+        $contenuFichierRetraite = new ContenuFichier();
+        $contenuFichierRetraite->setData($outputFileContent);
+        $contenuFichierRetraite->setFichier($fichierRetraite);
+        $fichierRetraite->setContenuFichier($contenuFichierRetraite);
+
+        $this->entityManager->beginTransaction();
+        try {
+            $this->entityManager->persist($fichierRetraite);
+            $this->entityManager->persist($contenuFichierRetraite);
+            $this->entityManager->flush($fichierRetraite);
+            $this->entityManager->flush($contenuFichierRetraite);
+            $this->entityManager->commit();
+        } catch (\Exception $e) {
+            $this->entityManager->rollback();
+            throw new RuntimeException("Erreur survenue lors de l'enregistrement du fichier retraité", 0, $e);
+        }
+
+        return $fichierRetraite;
+    }
+
+    /**
+     * Version asynchrone de la création d'un fichier retraité.
+     *
+     * L'idée est de créer un Fichier partiel (sans ContenuFichier associé) puis de lancer le retraitement
+     * en tâche de fond.
+     *
+     * @param Fichier $fichier
+     * @see FichierService::creerFichierRetraite()
+     */
+    public function creerFichierRetraiteAsync(Fichier $fichier)
+    {
+        $newFichier = $this->preparerFichierRetraite($fichier);
+
+        try {
+            $this->entityManager->persist($newFichier);
+            $this->entityManager->flush($newFichier);
+        } catch (\Exception $e) {
+            throw new RuntimeException("Erreur survenue lors de l'enregistrement du fichier retraité", 0, $e);
+        }
+
+        // lancement du script de retraitement en tâche de fond
+        $scriptPath = APPLICATION_DIR . '/bin/fichier-retraiter.sh';
+        $destinataires = $newFichier->getHistoModificateur()->getEmail();
+        $args = sprintf('--tester-archivabilite --notifier="%s" %s', $destinataires, $fichier->getId());
+        $runner = new ShellScriptRunner($scriptPath);
+        $runner->setAsync();
+        $runner->run($args);
     }
 
     /**
