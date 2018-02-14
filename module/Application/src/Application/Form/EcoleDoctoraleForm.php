@@ -23,7 +23,7 @@ class EcoleDoctoraleForm extends Form
         $this->setObject(new EcoleDoctorale());
 
         $this
-            ->add(new Text('id'));
+            ->add(new Hidden('id'));
 
         $this->add((
             new Text('sigle'))
@@ -38,20 +38,13 @@ class EcoleDoctoraleForm extends Form
 
         $this
             ->add((
-                new Text('sourceCode'))
+                new Hidden('sourceCode'))
                     ->setLabel("Code :")
         );
         $this
             ->add((
                 new Element\File('cheminLogo'))
                 ->setLabel('Logo de l\'école doctorale :')
-            );
-
-        $this
-            ->add((
-            new Submit('changer-logo'))
-                ->setValue("Sélectionner le logo")
-                ->setAttribute('class', 'btn btn-info')
             );
         $this
             ->add((
@@ -77,10 +70,10 @@ class EcoleDoctoraleForm extends Form
                 'name' => 'libelle',
                 'required' => true,
             ],
-            'sourceCode' => [
+            /*'sourceCode' => [
                 'name' => 'sourceCode',
                 'required' => true,
-            ],
+            ],*/
         ]));
     }
 }
