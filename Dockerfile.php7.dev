@@ -21,6 +21,7 @@ RUN apt-get update && apt-get install -y \
         libjpeg62-turbo-dev \
         libldap2-dev \
         libmcrypt-dev \
+        libmemcached-dev \
         libssl-dev \
         libxml2-dev \
         make \
@@ -32,11 +33,13 @@ RUN apt-get update && apt-get install -y \
         zlib1g-dev \
     && docker-php-ext-install -j$(nproc) iconv gettext gd soap curl intl zip \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu && docker-php-ext-install ldap \
+    && docker-php-ext-configure opcache --enable-opcache && docker-php-ext-install opcache \
     && rm -rf /var/lib/apt/lists/*
 
 # Installation d'extensions PECL
 RUN pear config-set http_proxy "$HTTP_PROXY" && \
-    pecl install xdebug && docker-php-ext-enable xdebug
+    pecl install xdebug && docker-php-ext-enable xdebug && \
+    pecl install memcached && docker-php-ext-enable memcached
 
 # Package PHP Oracle OCI8
 ADD docker/instantclient-basiclite-linux.x64-12.2.0.1.0.zip /tmp/
@@ -58,6 +61,7 @@ ENV LD_LIBRARY_PATH /usr/local/instantclient
 
 # Config PHP.
 ADD docker/php.conf /usr/local/etc/php/conf.d/webapp.ini
+#ADD docker/opcache.ini /usr/local/etc/php/conf.d/01-opcache.ini
 
 # Configuration et activation du site Apache
 ADD docker/apache.conf /etc/apache2/sites-available/webapp.conf

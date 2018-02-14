@@ -1,5 +1,6 @@
 <?php
 
+use Application\Cache\MemcachedFactory;
 use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\Event\UserAuthenticatedEventListenerFactory;
 use Application\Event\UserRoleSelectedEventListener;
@@ -60,7 +61,13 @@ return array(
             'orm_default' => [
                 'default_repository_class_name' => DefaultEntityRepository::class,
             ]
-        ]
+        ],
+        'cache' => [
+            'memcached' => [
+                'namespace' => 'Sygal_Doctrine',
+                'instance'  => 'Sygal\Memcached',
+            ],
+        ],
     ],
     'router' => [
         'routes' => [
@@ -164,6 +171,7 @@ return array(
             'UserAuthenticatedEventListener' => UserAuthenticatedEventListenerFactory::class,
             'UnicaenApp\Service\Mailer'      => MailerServiceFactory::class,
             'NotificationService'            => NotificationServiceFactory::class,
+            'Sygal\Memcached'                => MemcachedFactory::class,
         ),
         'initializers' => [
             ServiceAwareInitializer::class,
