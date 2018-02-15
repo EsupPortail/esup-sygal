@@ -27,7 +27,6 @@ class PageDeGardePdfExporter extends PdfExporter
 
     public function export($filename = null, $destination = self::DESTINATION_BROWSER, $memoryLimit = null)
     {
-
         $this->addBodyHtml('<style>' . file_get_contents(APPLICATION_DIR . '/public/css/page-unicaen.css') . '</style>');
         $this->setHeaderScript('empty.phtml');
         $this->setFooterScript('empty.phtml');
