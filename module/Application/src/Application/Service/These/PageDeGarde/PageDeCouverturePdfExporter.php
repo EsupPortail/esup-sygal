@@ -6,7 +6,7 @@ use UnicaenApp\Exporter\Pdf as PdfExporter;
 use Zend\View\Renderer\PhpRenderer;
 use Zend\View\Resolver\TemplatePathStack;
 
-class PageDeGardePdfExporter extends PdfExporter
+class PageDeCouverturePdfExporter extends PdfExporter
 {
     private $vars;
 
@@ -30,7 +30,7 @@ class PageDeGardePdfExporter extends PdfExporter
         $this->addBodyHtml('<style>' . file_get_contents(APPLICATION_DIR . '/public/css/page-unicaen.css') . '</style>');
         $this->setHeaderScript('empty.phtml');
         $this->setFooterScript('empty.phtml');
-        $this->addBodyScript('pagedegarde.phtml', false, $this->vars);
+        $this->addBodyScript('pagedecouverture.phtml', false, $this->vars);
         return PdfExporter::export($filename, $destination, $memoryLimit);
     }
 }
