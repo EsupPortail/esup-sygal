@@ -20,7 +20,7 @@ $selectedEcole = null;
 <?php $this->headTitle($this->translate("Écoles doctorales")) ?>
 
 <h1 class="page-header first"><?php echo $this->translate("Écoles doctorales") ?> <span
-        class="badge"><?php echo $ecoles->getTotalItemCount() ?></span></h1>
+        class="badge"><?php echo count($ecoles) ?></span></h1>
 
 <?php echo $this->messenger()->addCurrentMessagesFromFlashMessenger() ?>
 

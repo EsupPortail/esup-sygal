@@ -9,8 +9,6 @@ use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareInterface;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareInterface;
 use Application\Service\Individu\IndividuServiceAwareTrait;
-use Doctrine\ORM\Tools\Pagination\Paginator;
-use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
 use UnicaenLdap\Entity\People;
 use UnicaenLdap\Service\LdapPeopleServiceAwareInterface;
 use UnicaenLdap\Service\LdapPeopleServiceAwareTrait;
@@ -27,22 +25,12 @@ class EcoleDoctoraleController extends AbstractController
      * L'index récupére la liste des écoles doctorales et la liste des individus associés à une école
      * doctorale si celle-ci est selectionnée.
      * @return \Zend\Http\Response|ViewModel
-     *
-     * RMQ: les résultats sont paginés.
-     * TODO on affiche pas la partie basse de la pagination ce qui bloque l'acces aux pages suivantes ...
      */
     public function indexAction()
     {
         $selected = $this->params()->fromQuery('selected');
-
-        // récupération des écoles doctorales et pagination
-        $qb = $this->ecoleDoctoraleService->getRepository()->createQueryBuilder('ed');
-        $qb->addOrderBy('ed.libelle');
-        $paginator = new \Zend\Paginator\Paginator(new DoctrinePaginator(new Paginator($qb, true)));
-        $paginator
-            ->setPageRange(30)
-            ->setItemCountPerPage(20)
-            ->setCurrentPageNumber(1);
+        $ecoles = $this->ecoleDoctoraleService->getRepository()->findAll();
+        usort($ecoles, function($a,$b) {return $a->getLibelle() > $b->getLibelle();});
 
         // récupération de la liste des individus de l'école doctorale séléctionnée
         $ecoleDoctoraleIndividus = null;
@@ -53,7 +41,7 @@ class EcoleDoctoraleController extends AbstractController
         }
 
         return new ViewModel([
-            'ecoles'                  => $paginator,
+            'ecoles'                  => $ecoles,
             'selected'                => $selected,
             'ecoleDoctoraleIndividus' => $ecoleDoctoraleIndividus,
         ]);

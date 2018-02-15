@@ -4,13 +4,10 @@ namespace Application\Controller;
 
 use Application\Entity\Db\Etablissement;
 use Application\Form\EtablissementForm;
-use Application\QueryBuilder\DefaultQueryBuilder;
 use Application\Service\Etablissement\EtablissementServiceAwareInterface;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareInterface;
 use Application\Service\Individu\IndividuServiceAwareTrait;
-use Doctrine\ORM\Tools\Pagination\Paginator;
-use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
 use UnicaenLdap\Service\LdapPeopleServiceAwareInterface;
 use UnicaenLdap\Service\LdapPeopleServiceAwareTrait;
 use Zend\View\Model\ViewModel;
@@ -53,27 +50,19 @@ class EtablissementController extends AbstractController
     public function indexAction()
     {
         $selected = $this->params()->fromQuery('selected');
-
-        /** la pagination est desactivée pour le moment */
-        /** @var DefaultQueryBuilder $qb */
-        $qb = $this->etablissementService->getRepository()->createQueryBuilder('ed');
-        $qb->addOrderBy('ed.libelle');
-        $paginator = new \Zend\Paginator\Paginator(new DoctrinePaginator(new Paginator($qb, true)));
-        $paginator
-            ->setPageRange(30)
-            ->setItemCountPerPage(20)
-            ->setCurrentPageNumber(1);
+        $etablissements = $this->etablissementService->getRepository()->findAll();
+        usort($etablissements, function($a,$b) {return $a->getLibelle() > $b->getLibelle();});
 
         /** les individus sont desactivés pour le moment */
         $etablissementIndividus = null;
         if ($selected) {
             /** @var Etablissement $etab */
             $etab = $this->etablissementService->getRepository()->find($selected);
-            $etablissementIndividus = [];//$etab->getEtablissementIndividus();
+            $etablissementIndividus = []; //$etab->getEtablissementIndividus();
         }
 
         return new ViewModel([
-            'etablissements' => $paginator,
+            'etablissements' => $etablissements,
             'selected' => $selected,
             'etablissementIndividus' => $etablissementIndividus,
 

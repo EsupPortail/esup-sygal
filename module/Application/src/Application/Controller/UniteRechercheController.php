@@ -27,22 +27,12 @@ class UniteRechercheController extends AbstractController
      * L'index récupére la liste des unités de recherche et la liste des individus associés à une unité
      * de recherche si celle-ci est selectionnée.
      * @return \Zend\Http\Response|ViewModel
-     *
-     * RMQ: les résultats sont paginés.
-     * TODO on affiche pas la partie basse de la pagination ce qui bloque l'acces aux pages suivantes ...
      */
     public function indexAction()
     {
         $selected = $this->params()->fromQuery('selected');
-
-        // récupération des unités de recherche et pagination
-        $qb = $this->uniteRechercheService->getRepository()->createQueryBuilder('ed');
-        $qb->addOrderBy('ed.libelle');
-        $paginator = new \Zend\Paginator\Paginator(new DoctrinePaginator(new Paginator($qb, true)));
-        $paginator
-            ->setPageRange(30)
-            ->setItemCountPerPage(50)
-            ->setCurrentPageNumber(1);
+        $unites = $this->uniteRechercheService->getRepository()->findAll();
+        usort($unites, function($a,$b) {return $a->getLibelle() > $b->getLibelle();});
 
         // récupération de la liste des individus de l'unité de recherche séléctionnée
         $uniteRechercheIndividus = null;
@@ -53,7 +43,7 @@ class UniteRechercheController extends AbstractController
         }
 
         return new ViewModel([
-            'unites'                  => $paginator,
+            'unites'                  => $unites,
             'selected'                => $selected,
             'uniteRechercheIndividus' => $uniteRechercheIndividus,
         ]);

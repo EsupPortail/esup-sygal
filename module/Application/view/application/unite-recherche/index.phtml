@@ -20,7 +20,7 @@ $selectedUnite = null;
 <?php $this->headTitle($this->translate("Unités de recherche")) ?>
 
 <h1 class="page-header first"><?php echo $this->translate("Unités de recherche"); ?> <span
-        class="badge"><?php echo $unites->getTotalItemCount() ?></span></h1>
+        class="badge"><?php echo count($unites) ?></span></h1>
 
 <?php echo $this->messenger()->addCurrentMessagesFromFlashMessenger() ?>
 
