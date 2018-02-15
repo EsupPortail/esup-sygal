@@ -54,7 +54,7 @@ class EtablissementForm extends Form
 
 
         $this->setInputFilter((new Factory())->createInputFilter([
-            'sigle' => [
+            'code' => [
                 'name' => 'code',
                 'required' => true,
             ],

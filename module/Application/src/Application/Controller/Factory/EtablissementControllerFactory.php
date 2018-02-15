@@ -20,7 +20,7 @@ class EtablissementControllerFactory
         $form = $controllerManager->getServiceLocator()->get('FormElementManager')->get('EtablissementForm');
 
         $controller = new EtablissementController();
-        $controller->setEcoleDoctoraleForm($form);
+        $controller->setEtablissementForm($form);
 
 
         return $controller;

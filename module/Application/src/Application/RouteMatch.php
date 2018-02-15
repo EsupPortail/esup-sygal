@@ -212,4 +212,21 @@ class RouteMatch extends BaseRouteMatch
 
         return $this->uniteRecherche;
     }
+
+    /**
+     * @var EcoleDoctorale
+     */
+    private $etablissement;
+
+    /**
+     * @return EcoleDoctorale
+     */
+    public function getEtablissement()
+    {
+        if (null === $this->etablissement) {
+            $this->etablissement = $this->fetchEntityParam('etablissement');
+        }
+
+        return $this->etablissement;
+    }
 }
