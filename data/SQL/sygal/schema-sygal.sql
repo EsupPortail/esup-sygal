@@ -49,8 +49,10 @@ CREATE TABLE ETABLISSEMENT
 (
   ID NUMBER constraint ETAB_PK primary key,
   CODE VARCHAR2(32 char) not null constraint ETAB_CODE_UN unique,
-  LIBELLE VARCHAR2(128) NOT NULL constraint ETAB_LIBELLE_UN unique
+  LIBELLE VARCHAR2(128) NOT NULL constraint ETAB_LIBELLE_UN unique,
+  CHEMIN_LOGO VARCHAR2(200) NOT NULL
 );
+CREATE SEQUENCE ETABLISSEMENT_ID_SEQ;
 
 
 --------------------------- API_LOG -----------------------
@@ -737,7 +739,8 @@ create table ECOLE_DOCT
   SOURCE_ID NUMBER not null
     constraint ECOLE_DOCT_SOURCE_FK
     references SOURCE,
-  SOURCE_CODE VARCHAR2(64 char)
+  SOURCE_CODE VARCHAR2(64 char),
+  CHEMIN_LOGO VARCHAR2(200) NOT NULL
 );
 
 create unique index ECOLE_DOCT_SOURCE_CODE_UN on ECOLE_DOCT (SOURCE_CODE);
@@ -873,6 +876,7 @@ create table UNITE_RECH
 
   SOURCE_ID NUMBER not null constraint UNITE_RECH_SOURCE_FK references SOURCE,
   SOURCE_CODE VARCHAR2(64 char),
+  CHEMIN_LOGO VARCHAR2(200) NOT NULL,
 
   HISTO_CREATION DATE default SYSDATE not null,
   HISTO_CREATEUR_ID NUMBER not null constraint UNITE_RECH_COMPL_HCFK references UTILISATEUR,

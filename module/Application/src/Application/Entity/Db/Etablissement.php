@@ -2,6 +2,8 @@
 
 namespace Application\Entity\Db;
 
+use UnicaenApp\Util;
+
 /**
  * Etablissement
  */
@@ -15,6 +17,7 @@ class Etablissement
     protected $theses;
     protected $doctorants;
     protected $roles;
+    protected $cheminLogo;
 
     /**
      * @return mixed
@@ -112,7 +115,40 @@ class Etablissement
         $this->roles = $roles;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getCheminLogo()
+    {
+        return $this->cheminLogo;
+    }
+
+    /**
+     * @param mixed $cheminLogo
+     */
+    public function setCheminLogo($cheminLogo)
+    {
+        $this->cheminLogo = $cheminLogo;
+    }
 
 
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->getLibelle();
+    }
+
+    public function getLogoContent()
+    {
+        if ($this->cheminLogo === null) {
+            $image = Util::createImageWithText("Aucun logo pour l'Etab|" . $this->getCode() . "|" . $this->getLibelle(), 200, 200);
+            return $image;
+        }
+        return file_get_contents(APPLICATION_DIR . $this->cheminLogo);
+
+    }
 
 }

@@ -282,14 +282,12 @@ class EcoleDoctoraleController extends AbstractController
      * @param EcoleDoctorale $ecole
      * @param bool $fullpath            si true chemin absolue sinon chemin relatif au répertoire de l'application
      * @return string                   le chemin vers le logo de l'école doctorale $ecole
-     *
-     * TODO ne pas mettre les fichiers dans public problème de sécurité du fait que le répertoire est en écriture
      */
     static public function getLogoFilename(EcoleDoctorale $ecole, $fullpath=true)
     {
         $chemin = "";
         if ($fullpath) $chemin .= APPLICATION_DIR;
-        $chemin .= "/public/Logos/ED/".$ecole->getSourceCode()."-".$ecole->getSigle().".png";
+        $chemin .= "/ressources/Logos/ED/".$ecole->getSourceCode()."-".$ecole->getSigle().".png";
         return $chemin;
     }
 }
