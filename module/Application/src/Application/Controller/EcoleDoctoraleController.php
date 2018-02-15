@@ -117,11 +117,22 @@ class EcoleDoctoraleController extends AbstractController
     public function ajouterAction()
     {
         if ($data = $this->params()->fromPost()) {
+
+            // récupération des données et des fichiers
+            $request = $this->getRequest();
+            $data = $request->getPost()->toArray();
+            $file = $request->getFiles()->toArray();
+
             $this->ecoleDoctoraleForm->setData($data);
             if ($this->ecoleDoctoraleForm->isValid()) {
                 /** @var EcoleDoctorale $ecole */
                 $ecole = $this->ecoleDoctoraleForm->getData();
-                $this->ecoleDoctoraleService->create($ecole, $this->userContextService->getIdentityDb());
+                $ecole = $this->ecoleDoctoraleService->create($ecole, $this->userContextService->getIdentityDb());
+
+                // sauvegarde du logo si fourni
+                if ($file['cheminLogo']['tmp_name'] !== '') {
+                    $this->ajouterLogoEcoleDoctorale($file['cheminLogo']['tmp_name'], $ecole);
+                }
 
                 $this->flashMessenger()->addSuccessMessage("École doctorale '$ecole' créée avec succès");
 
@@ -257,15 +268,16 @@ class EcoleDoctoraleController extends AbstractController
      * - modification base de donnée (champ CHEMIN_LOG <- /public/Logos/ED/LOGO_NAME)
      * - enregistrement du fichier sur le serveur
      * @param string $cheminLogoUploade     chemin vers le fichier temporaire associé au logo
+     * @param EcoleDoctorale $ecole
      */
-    public function ajouterLogoEcoleDoctorale($cheminLogoUploade)
+    public function ajouterLogoEcoleDoctorale($cheminLogoUploade, EcoleDoctorale $ecole = null)
     {
         if ($cheminLogoUploade === null || $cheminLogoUploade === '') {
             $this->flashMessenger()->addErrorMessage("Fichier logo invalide.");
             return;
         }
 
-        $ecole      = $this->requestEcoleDoctorale();
+        if ($ecole === null) $ecole      = $this->requestEcoleDoctorale();
         $chemin     = EcoleDoctoraleController::getLogoFilename($ecole, false);
         $filename   = EcoleDoctoraleController::getLogoFilename($ecole, true);
         $result = rename($cheminLogoUploade, $filename);

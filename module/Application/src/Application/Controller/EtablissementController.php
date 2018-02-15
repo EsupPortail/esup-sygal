@@ -83,11 +83,21 @@ class EtablissementController extends AbstractController
     public function ajouterAction() {
 
         if ($data = $this->params()->fromPost()) {
+
+            $request = $this->getRequest();
+            $data = $request->getPost()->toArray();
+            $file = $request->getFiles()->toArray();
+
             $this->etablissementForm->setData($data);
             if ($this->etablissementForm->isValid()) {
                 /** @var Etablissement $etablissement */
                 $etablissement = $this->etablissementForm->getData();
                 $this->etablissementService->create($etablissement);
+
+                // sauvegarde du logo si fourni
+                if ($file['cheminLogo']['tmp_name'] !== '') {
+                    $this->ajouterLogoEtablissement($file['cheminLogo']['tmp_name'], $etablissement);
+                }
 
                 $this->flashMessenger()->addSuccessMessage("Établissement '$etablissement' créée avec succès");
 
@@ -190,15 +200,16 @@ class EtablissementController extends AbstractController
      * - modification base de donnée (champ CHEMIN_LOG <- /public/Logos/Etab/LOGO_NAME)
      * - enregistrement du fichier sur le serveur
      * @param string $cheminLogoUploade     chemin vers le fichier temporaire associé au logo
+     * @param Etablissement $etablissement
      */
-    public function ajouterLogoEtablissement($cheminLogoUploade)
+    public function ajouterLogoEtablissement($cheminLogoUploade, Etablissement $etablissement = null)
     {
         if ($cheminLogoUploade === null || $cheminLogoUploade === '') {
             $this->flashMessenger()->addErrorMessage("Fichier logo invalide.");
             return;
         }
 
-        $etablissement  = $this->requestEtablissement();
+        if ($etablissement === null) $etablissement  = $this->requestEtablissement();
         $chemin         = EtablissementController::getLogoFilename($etablissement, false);
         $filename       = EtablissementController::getLogoFilename($etablissement, true);
         $result = rename($cheminLogoUploade, $filename);

@@ -118,11 +118,21 @@ class UniteRechercheController extends AbstractController
     public function ajouterAction()
     {
         if ($data = $this->params()->fromPost()) {
+
+            $request = $this->getRequest();
+            $data = $request->getPost()->toArray();
+            $file = $request->getFiles()->toArray();
+
             $this->uniteRechercheForm->setData($data);
             if ($this->uniteRechercheForm->isValid()) {
                 /** @var UniteRecherche $unite */
                 $unite = $this->uniteRechercheForm->getData();
                 $this->uniteRechercheService->create($unite, $this->userContextService->getIdentityDb());
+
+                // sauvegarde du logo si fourni
+                if ($file['cheminLogo']['tmp_name'] !== '') {
+                    $this->ajouterLogoUniteRecherche($file['cheminLogo']['tmp_name'], $unite);
+                }
 
                 $this->flashMessenger()->addSuccessMessage("Unité de recherche '$unite' créée avec succès");
 
@@ -258,15 +268,16 @@ class UniteRechercheController extends AbstractController
      * - modification base de donnée (champ CHEMIN_LOG <- /public/Logos/UR/LOGO_NAME)
      * - enregistrement du fichier sur le serveur
      * @param string $cheminLogoUploade     chemin vers le fichier temporaire associé au logo
+     * @param UniteRecherche $unite
      */
-    public function ajouterLogoUniteRecherche($cheminLogoUploade)
+    public function ajouterLogoUniteRecherche($cheminLogoUploade, UniteRecherche $unite = null)
     {
         if ($cheminLogoUploade === null || $cheminLogoUploade === '') {
             $this->flashMessenger()->addErrorMessage("Fichier logo invalide.");
             return;
         }
 
-        $unite      = $this->requestUniteRecherche();
+        if ($unite === null) $unite      = $this->requestUniteRecherche();
         $chemin     = UniteRechercheController::getLogoFilename($unite, false);
         $filename   = UniteRechercheController::getLogoFilename($unite, true);
         $result = rename($cheminLogoUploade, $filename);

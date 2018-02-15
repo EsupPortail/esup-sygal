@@ -35,7 +35,7 @@ class EcoleDoctoraleForm extends Form
 
         $this
             ->add((
-                new Hidden('sourceCode'))
+                new Text('sourceCode'))
                     ->setLabel("Code :")
         );
         $this
