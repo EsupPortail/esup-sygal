@@ -1,0 +1,27 @@
+<?php
+
+use Application\Entity\Db\These;
+use Application\Entity\Db\VersionFichier;
+use Application\Filter\IdifyFilter;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var string $structure
+ * @var string $libelle
+ */
+?>
+
+<p>
+    Bonjour,
+</p>
+<p>
+    Ceci est un mail envoyé automatiquement par l'application SyGAL.
+</p>
+<p>
+    Vous êtes informé-e que le logo associé à <?php echo $structure ?> [<?php echo $libelle ?>] est manquant.<br/>
+    Connectez vous afin d'ajouter celui-ci.
+</p>
+<p>
+<!--    Cliquez sur <a href="--><?php //echo $this->url('ecole-doctorale') ?><!--">ce lien</a> pour accéder à la page correspondante de l'application.-->
+</p>

@@ -1367,9 +1367,11 @@ class TheseController extends AbstractController implements
     {
         $these = $this->requestedThese();
         $renderer = $this->getServiceLocator()->get('view_renderer'); /* @var $renderer \Zend\View\Renderer\PhpRenderer */
+        $notifier = $this->getServiceLocator()->get('NotificationService');
         $exporter = new PageDeCouverturePdfExporter($renderer, 'A4');
         $exporter->setVars([
             'these'              => $these,
+            'notifier'           => $notifier,
         ]);
         $exporter->export('export.pdf');
         exit;

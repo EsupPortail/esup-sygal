@@ -2,9 +2,13 @@
 
 namespace Application\Service\Notification;
 
+use Application\Entity\Db\EcoleDoctorale;
+use Application\Entity\Db\EcoleDoctoraleIndividu;
+use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\These;
+use Application\Entity\Db\UniteRecherche;
 use Application\Entity\Db\ValiditeFichier;
 use Application\Entity\Db\Variable;
 use Application\Service\Notification\Notification;
@@ -15,6 +19,7 @@ use Application\Notification\ValidationRdvBuNotification;
 use Application\Service\Variable\VariableServiceAwareInterface;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use UnicaenApp\Traits\MessageAwareTrait;
+use Zend\Db\Sql\Predicate\In;
 use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\RendererInterface;
 
@@ -365,7 +370,7 @@ class NotificationService implements VariableServiceAwareInterface, MailerServic
     {
         $html = $this->renderer->render($viewModel);
 
-        $subject = "[SoDoct] " . $viewModel->getVariable('subject');
+        $subject = "[SyGAL] " . $viewModel->getVariable('subject');
         $to = $viewModel->getVariable('to');
         $cc = $viewModel->getVariable('cc');
         $bcc = $viewModel->getVariable('bcc');
@@ -386,7 +391,6 @@ class NotificationService implements VariableServiceAwareInterface, MailerServic
         if (isset($this->options['bcc'])) {
             $mail->addBcc($this->options['bcc']);
         }
-
         $this->mailerService->send($mail);
     }
 
@@ -435,5 +439,68 @@ class NotificationService implements VariableServiceAwareInterface, MailerServic
     public function getLogs()
     {
         return $this->getMessages();
+    }
+
+    public function notifierLogoAbsentEcoleDoctorale(EcoleDoctorale $ecole) {
+
+        $libelle = $ecole->getLibelle();
+        $viewModel = (new ViewModel())
+            ->setTemplate('application/these/mail/notif-logo-absent')
+            ->setVariables([
+                'subject' => "Logo manquant pour l'ED [".$libelle."]",
+                'type' => "l'école doctorale",
+                'libelle' => $libelle,
+            ]);
+
+        $mails = [];
+        foreach ($ecole->getEcoleDoctoraleIndividus() as $individu) {
+            /** @var EcoleDoctoraleIndividu $individu */
+            $email = $individu->getIndividu()->getEmail();
+            if ($email !== null) $mails[] = $email;
+
+        }
+
+        $viewModel->setVariable('to', $mails);
+        $this->notifier($viewModel);
+    }
+
+    public function notifierLogoAbsentUniteRecherche(UniteRecherche $unite) {
+
+        $libelle = $unite->getLibelle();
+        $viewModel = (new ViewModel())
+            ->setTemplate('application/these/mail/notif-logo-absent')
+            ->setVariables([
+                'subject' => "Logo manquant pour l'UR [".$libelle."]",
+                'type' => "l'unité de recherche",
+                'libelle' => $libelle,
+            ]);
+
+        $mails = [];
+        foreach ($unite->getUniteRechercheIndividus() as $individu) {
+            /** @var EcoleDoctoraleIndividu $individu */
+            $email = $individu->getIndividu()->getEmail();
+            if ($email !== null) $mails[] = $email;
+
+        }
+
+        $viewModel->setVariable('to', $mails);
+        $this->notifier($viewModel);
+    }
+
+    public function notifierLogoAbsentEtablissement(Etablissement $etablissement) {
+
+        $libelle = $etablissement->getLibelle();
+        $viewModel = (new ViewModel())
+            ->setTemplate('application/these/mail/notif-logo-absent')
+            ->setVariables([
+                'subject' => "Logo manquant pour l'Etab [".$libelle."]",
+                'type' => "l'établissement",
+                'libelle' => $libelle,
+            ]);
+
+        //TODO ne pas laisser en dur ... (mail les administrateurs techniques de l'établissement)
+        $mails = ["jean-philippe.metivier@unicaen.fr", "bertrand.gauthier@unicaen.fr"];
+        $viewModel->setVariable('to', $mails);
+        $this->notifier($viewModel);
     }
 }

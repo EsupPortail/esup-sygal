@@ -5,6 +5,7 @@ use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
 use Application\View\Renderer\PhpRenderer;
+use Application\Service\Notification\NotificationService;
 
 /**
  * @var PhpRenderer $this
@@ -229,10 +230,17 @@ function generateEncadrementInfos(These $these) {
 
 /** Fonction générant le code HTML lié au encradrant
  * @param These         $these
+ * @param NotificationService $notifier
  * @return string
  */
-function generateLogos(These $these) {
+function generateLogos(These $these, NotificationService $notifier) {
 
+    if ($these->getEtablissement()->getCheminLogo() === null)
+        $notifier->notifierLogoAbsentEtablissement($these->getEtablissement());
+    if ($these->getEcoleDoctorale()->getCheminLogo() === null)
+        $notifier->notifierLogoAbsentEcoleDoctorale($these->getEcoleDoctorale());
+    if ($these->getUniteRecherche()->getCheminLogo() === null)
+        $notifier->notifierLogoAbsentUniteRecherche($these->getUniteRecherche());
     $logouni = APPLICATION_DIR. $these->getEtablissement()->getCheminLogo();
     $logoed  = APPLICATION_DIR. $these->getEcoleDoctorale()->getCheminLogo();
     $logour  = APPLICATION_DIR. $these->getUniteRecherche()->getCheminLogo();
@@ -266,5 +274,5 @@ function generateLogos(These $these) {
 <?php echo generateJuryInfos($these) ?>
 <br/>
 <?php echo generateEncadrementInfos($these); ?>
-<?php echo generateLogos($these); ?>
+<?php echo generateLogos($these, $notifier); ?>
 
