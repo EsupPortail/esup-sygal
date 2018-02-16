@@ -178,6 +178,7 @@ class TheseController extends AbstractController implements
             ->addSelect('ur')->leftJoin('t.uniteRecherche', 'ur')
             ->addSelect('a')->leftJoin('t.acteurs', 'a')
             ->addSelect('i')->leftJoin('a.individu', 'i')
+            ->addSelect('di')->leftJoin('th.individu', 'di')
             ->addSelect('r')->leftJoin('a.role', 'r')
             ->andWhere('1 = pasHistorise(t)');
         if ($etatThese) {
