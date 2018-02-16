@@ -19,11 +19,9 @@ class TheseQueryBuilder extends DefaultQueryBuilder
     public function initWithDefault()
     {
         $this
-            ->addSelect("th, f")
+            ->addSelect("th")
             ->join("$this->rootAlias.doctorant", "th")
-            ->leftJoin("$this->rootAlias.fichiers", "f")
             ->andWhere('1 = pasHistorise(th)')
-//            ->orderBy("p.nomUsuel, i.type, i.ordre")
         ;
 
         return $this;

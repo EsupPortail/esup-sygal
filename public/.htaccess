@@ -21,7 +21,7 @@ RewriteRule ^(.*)$ %{ENV:BASE}index.php [NC,L]
 SetEnv APPLICATION_ENV "development"
 
 # NB: ne peut-être supérieur au memory_limit du php.ini
-php_value memory_limit 2047M
+php_value memory_limit 2048M
 
 # NB: post_max_size > upload_max_filesize
 php_value upload_max_filesize 501M

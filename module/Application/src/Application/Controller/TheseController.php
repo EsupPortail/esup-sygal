@@ -122,14 +122,12 @@ class TheseController extends AbstractController implements
             $queryParams = array_merge($queryParams, ['sort' => 't.datePremiereInscription', 'direction' => Sortable::ASC]);
             $needsRedirect = true;
         }
-//        var_dump("Redirection needed: ");
-//        var_dump($needsRedirect);
         // redirection si nécessaire
         if ($needsRedirect) {
             return $this->redirect()->toRoute(null, [], ['query' => $queryParams], true);
         }
 
-        $maxi = $this->params()->fromQuery('maxi', 10);
+        $maxi = $this->params()->fromQuery('maxi', 25);
         $page = $this->params()->fromQuery('page', 1);
 
         $qb = $this->createQueryBuilder();
@@ -168,33 +166,23 @@ class TheseController extends AbstractController implements
         return $this->redirect()->toRoute('these', [], ['query' => $queryParams]);
     }
 
-    /**
-     * @return QueryBuilder
-     */
-    private function createQueryBuilder()
-    {
+
+    private function createQueryBuilder() {
         $etatThese = $this->params()->fromQuery($name = 'etatThese');
-
         $sort = $this->params()->fromQuery('sort');
-
         $text = $this->params()->fromQuery('text');
         $dir  = $this->params()->fromQuery('direction', Sortable::ASC);
 
         $qb = $this->theseService->getRepository()->createQueryBuilder('t')
-// TODO: chercher pourquoi l'ajout de ces jointures ralentit la page 1 du listing des thèses avec les paramètres
-// etatThese=E&sort=t.datePremiereInscription&direction=asc
-//            ->addSelect('a')->leftJoin('t.acteurs', 'a')
-//            ->addSelect('i')->leftJoin('a.individu', 'i')
-//            ->addSelect('r')->leftJoin('a.role', 'r')
             ->addSelect('ed')->leftJoin('t.ecoleDoctorale', 'ed')
             ->addSelect('ur')->leftJoin('t.uniteRecherche', 'ur')
+            ->addSelect('a')->leftJoin('t.acteurs', 'a')
+            ->addSelect('i')->leftJoin('a.individu', 'i')
+            ->addSelect('r')->leftJoin('a.role', 'r')
             ->andWhere('1 = pasHistorise(t)');
         if ($etatThese) {
             $qb->andWhere('t.etatThese = :etat')->setParameter('etat', $etatThese);
         }
-//        if (in_array($resultat = $this->params()->fromQuery($name = 'resultat'), ['0', '1'])) {
-//            $qb->andWhere('t.resultat = :resultat')->setParameter('resultat', $resultat);
-//        }
         $sortProps = $sort ? explode('+', $sort) : [];
         foreach ($sortProps as $sortProp) {
             if ($sortProp === 't.titre') {
@@ -227,6 +215,7 @@ class TheseController extends AbstractController implements
 
         return $qb;
     }
+
 
     public function roadmapAction()
     {
@@ -1371,7 +1360,7 @@ class TheseController extends AbstractController implements
         $exporter = new PageDeCouverturePdfExporter($renderer, 'A4');
         $exporter->setVars([
             'these'              => $these,
-            'notifier'           => $notifier,
+            'notifier'
         ]);
         $exporter->export('export.pdf');
         exit;
