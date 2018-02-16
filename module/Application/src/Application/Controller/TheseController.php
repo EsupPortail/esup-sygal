@@ -127,7 +127,7 @@ class TheseController extends AbstractController implements
             return $this->redirect()->toRoute(null, [], ['query' => $queryParams], true);
         }
 
-        $maxi = $this->params()->fromQuery('maxi', 25);
+        $maxi = $this->params()->fromQuery('maxi', 50);
         $page = $this->params()->fromQuery('page', 1);
 
         $qb = $this->createQueryBuilder();

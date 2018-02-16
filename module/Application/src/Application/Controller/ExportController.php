@@ -24,6 +24,7 @@ class ExportController extends AbstractController implements TheseServiceAwareIn
          * @var These                           $these
          */
 
+        //TODO compléter avec les infos demandées
         $headers = [
             'Civilité'                              => function ($these) { return $these->getDoctorant()->getIndividu()->getCivilite(); },
             'Nom usuel'                             => function ($these) { return $these->getDoctorant()->getIndividu()->getNomUsuel(); },
@@ -44,14 +45,14 @@ class ExportController extends AbstractController implements TheseServiceAwareIn
         $sort = $this->params()->fromQuery('sort');
         $text = $this->params()->fromQuery('text');
         $dir  = $this->params()->fromQuery('direction', Sortable::ASC);
-        var_dump($etatThese);
-        var_dump($sort);
-        var_dump($text);
-        var_dump($dir);
+//        var_dump($etatThese);
+//        var_dump($sort);
+//        var_dump($text);
+//        var_dump($dir);
 
         $repoThese = $this->theseService->getEntityManager()->getRepository(These::class);
         $qb = $repoThese->createQueryBuilder("t")
-            ->where("t.ecoleDoctorale = 41")
+//            ->where("t.ecoleDoctorale = 41")
             ->andWhere("t.etatThese = :etatThese")
             ->orderBy($sort,$dir);
         $qb->setParameter("etatThese", $etatThese);
@@ -64,8 +65,8 @@ class ExportController extends AbstractController implements TheseServiceAwareIn
         $theses = $query->execute();
 
         $records = [];
-        echo count($theses);
-        for ($i = 0 ; $i < 10 ; $i++) {
+        //echo "~~~~~~~~~ {".count($theses)." thèse(s) à exporter} ~~~~~~~~~<br/>";
+        for ($i = 0 ; $i < count($theses) ; $i++) {
             $these = $theses[$i];
             $record = [];
             foreach($headers as $key => $fct) {
@@ -75,9 +76,8 @@ class ExportController extends AbstractController implements TheseServiceAwareIn
 
             $records[] = $record;
         }
+        //echo "Préparation accomplie<br/>";
 
-//        var_dump($result);
-//        die("My Job Is Done ...");
 
 
         $result = new CsvModel();
@@ -91,7 +91,7 @@ class ExportController extends AbstractController implements TheseServiceAwareIn
 
 
         $cols = [
-            // CSV                                          => SQL
+//////////////CSV                                          => SQL
 //            'CIVILITE'                                      => 'CIVILITE',
 //            'NOM_USUEL'                                     => 'NOM_USUEL',
 //            'PRENOM'                                        => 'PRENOM',
@@ -147,92 +147,5 @@ class ExportController extends AbstractController implements TheseServiceAwareIn
 
             'DATE_EXTRACTION'                               => 'DATE_EXTRACTION',
         ];
-
-        $sql = "select %s from v_export_all";
-
-        $sql = sprintf($sql, implode(', ', array_values($cols)));
-
-        var_dump($sql);
-        /**
-         * Filtres et tris.
-         */
-        $etatThese = $this->params()->fromQuery($name = 'etatThese');
-        $sort = $this->params()->fromQuery('sort');
-        $text = $this->params()->fromQuery('text');
-        $dir  = $this->params()->fromQuery('direction', Sortable::ASC);
-
-        $wheres = $params = [];
-        if ($etatThese) {
-            $wheres[] = "ETAT_THESE = :etat";
-            $params['etat'] = $etatThese;
-        }
-
-        $orderBys = [];
-        $sortProps = $sort ? explode('+', $sort) : [];
-        foreach ($sortProps as $sortProp) {
-            switch ($sortProp) {
-                case 't.titre':
-                    // trim et suppression des guillemets
-                    $sortProp = "TRIM(REPLACE(TITRE, CHR(34), ''))"; // CHR(34) <=> "
-                    break;
-                case 'th.nomUsuel':
-                    $sortProp = 'NOM_USUEL';
-                    break;
-                case 'th.prenom':
-                    $sortProp = 'PRENOM';
-                    break;
-                case 't.codeEcoleDoctorale':
-                    $sortProp = 'CODE_ED';
-                    break;
-                case 't.codeUniteRecherche':
-                    $sortProp = 'CODE_UR';
-                    break;
-                case 't.datePremiereInscription':
-                    $sortProp = 'DATE_PREM_INSC';
-                    break;
-                default:
-                    break;
-            }
-            $orderBys[] = $sortProp . ' ' . $dir;
-        }
-
-        /**
-         * Recherche textuelle.
-         */
-        if (strlen($text) > 1) {
-            $results = $this->theseService->rechercherThese($text);
-            $sourceCodes = array_unique(array_keys($results));
-            if ($sourceCodes) {
-                $wheres[] = sprintf("NUMERO_APOGEE in (%s)", implode(',', $sourceCodes));
-            }
-            else {
-                $wheres[] = "0 = 1"; // i.e. aucune thèse trouvée
-            }
-        }
-
-        /**
-         * Filtres découlant du rôle de l'utilisateur.
-         */
-        $this->theseService->decorateSqlQueryFromUserContext($wheres, $params, $this->userContextService);
-
-
-        if (count($wheres) > 0) {
-            $sql .= ' WHERE ' . implode(' AND ', $wheres);
-        }
-        if (count($orderBys) > 0) {
-            $sql .= ' ORDER BY ' . implode(',', $orderBys);
-        }
-
-        $statement = $this->theseService->getEntityManager()->getConnection()->executeQuery($sql, $params);
-        $records = $statement->fetchAll(\PDO::FETCH_ASSOC);
-
-        $result = new CsvModel();
-        $result->setDelimiter(';');
-        $result->setEnclosure('"');
-        $result->setHeader(array_keys($cols));
-        $result->setData($records);
-        $result->setFilename('export_theses.csv');
-
-        return $result;
     }
 }
