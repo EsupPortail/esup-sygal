@@ -26,6 +26,7 @@ RUN apt-get update && apt-get install -y \
         libxml2-dev \
         make \
         netcat-openbsd \
+        ssl-cert \
         subversion \
         unzip \
         vim \
@@ -61,11 +62,15 @@ ENV LD_LIBRARY_PATH /usr/local/instantclient
 
 # Config PHP.
 ADD docker/php.conf /usr/local/etc/php/conf.d/webapp.ini
-#ADD docker/opcache.ini /usr/local/etc/php/conf.d/01-opcache.ini
+#ADD docker/php-opcache.ini /usr/local/etc/php/conf.d/01-opcache.ini
 
-# Configuration et activation du site Apache
-ADD docker/apache.conf /etc/apache2/sites-available/webapp.conf
-RUN a2enmod rewrite && a2ensite webapp
+# Configuration et activation des sites Apache
+ADD docker/apache-ports.conf    /etc/apache2/ports.conf
+ADD docker/apache-site.conf     /etc/apache2/sites-available/webapp.conf
+ADD docker/apache-site-ssl.conf /etc/apache2/sites-available/webapp-ssl.conf
+RUN a2enmod rewrite ssl && \
+    a2ensite webapp && \
+    a2ensite webapp-ssl
 
 # Install Composer.
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
