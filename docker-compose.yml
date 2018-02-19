@@ -8,6 +8,7 @@ services:
       dockerfile: Dockerfile.php7.dev
     ports:
      - "8000:80"
+     - "443:443"
     volumes:
      - .:/var/www/html/sygal
     working_dir: /var/www/html/sygal
@@ -20,6 +21,7 @@ services:
       dockerfile: Dockerfile.php7.dev
     ports:
      - "8080:8080"
+     - "8443:8443"
     volumes:
      - ../sygal-import-ws:/var/www/html/sygal-import-ws
     working_dir: /var/www/html/sygal-import-ws
