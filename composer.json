@@ -17,7 +17,7 @@
     },
     "require": {
         "unicaen/unicaen-app":                  "^1.3",
-        "unicaen/unicaen-auth":                 "^1.2",
+        "unicaen/unicaen-auth":                 "1.2.0",
         "unicaen/unicaen-faq":                  "^1.0",
         "unicaen/unicaen-ldap":                 "^2.1",
         "unicaen/unicaen-import":               "1.0.10",
