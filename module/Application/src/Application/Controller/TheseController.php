@@ -43,7 +43,6 @@ use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\Service\Workflow\WorkflowServiceAwareInterface;
 use Application\Service\Workflow\WorkflowServiceAwareTrait;
 use Application\View\Helper\Sortable;
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
 use Retraitement\Exception\TimedOutCommandException;
@@ -78,60 +77,38 @@ class TheseController extends AbstractController implements
     private $timeoutRetraitement;
 
     /**
-     * Spécifie le timout à appliquer au lancement du script de retraitement.
-     *
-     * @param string $timeoutRetraitement Ex: '30s', '1m', cf. "man timout".
-     * @return self
-     */
-    public function setTimeoutRetraitement($timeoutRetraitement)
-    {
-        $this->timeoutRetraitement = $timeoutRetraitement;
-
-        return $this;
-    }
-
-    /**
      * @return ViewModel|Response
      */
     public function indexAction()
     {
-        /**
-         * L'utilisateur est un doctorant, redirection vers l'accueil.
-         */
+        /** L'utilisateur est un doctorant, redirection vers l'accueil. **/
         if ($this->userContextService->getSelectedRoleDoctorant()) {
             return $this->redirect()->toRoute('home');
         }
 
-        /**
-         * Application des filtres et tris par défaut.
-         */
-        $needsRedirect = false;
-        $queryParams = $this->params()->fromQuery();
-        // filtres
-        $etatThese = $this->params()->fromQuery($name = 'etatThese');
-//        var_dump($etatThese);
+        /** Application des filtres et tris par défaut.
+         * Si aucun état de thèse n'est spécifié alors état = These::ETAT_EN_COURS
+         **/
+        $needsRedirect  = false;
+        $queryParams    = $this->params()->fromQuery();
+        $etatThese      = $this->params()->fromQuery($name = 'etatThese');
         if ($etatThese === null) { // null <=> paramètre absent
-            // filtrage par défaut : thèse en préparation
             $queryParams = array_merge($queryParams, [$name => These::ETAT_EN_COURS]);
             $needsRedirect = true;
         }
-        // tris
         $sort = $this->params()->fromQuery('sort');
         if ($sort === null) { // null <=> paramètre absent
-            // tri par défaut : datePremiereInscription
             $queryParams = array_merge($queryParams, ['sort' => 't.datePremiereInscription', 'direction' => Sortable::ASC]);
             $needsRedirect = true;
         }
-        // redirection si nécessaire
         if ($needsRedirect) {
             return $this->redirect()->toRoute(null, [], ['query' => $queryParams], true);
         }
 
+        /** Configuration du paginator **/
+        $qb = $this->createQueryBuilder();
         $maxi = $this->params()->fromQuery('maxi', 50);
         $page = $this->params()->fromQuery('page', 1);
-
-        $qb = $this->createQueryBuilder();
-
         $paginator = new \Zend\Paginator\Paginator(new DoctrinePaginator(new Paginator($qb, true)));
         $paginator
             ->setPageRange(30)
@@ -174,13 +151,14 @@ class TheseController extends AbstractController implements
         $dir  = $this->params()->fromQuery('direction', Sortable::ASC);
 
         $qb = $this->theseService->getRepository()->createQueryBuilder('t')
+            ->addSelect('di')->leftJoin('th.individu', 'di')
             ->addSelect('ed')->leftJoin('t.ecoleDoctorale', 'ed')
             ->addSelect('ur')->leftJoin('t.uniteRecherche', 'ur')
             ->addSelect('a')->leftJoin('t.acteurs', 'a')
             ->addSelect('i')->leftJoin('a.individu', 'i')
-            ->addSelect('di')->leftJoin('th.individu', 'di')
             ->addSelect('r')->leftJoin('a.role', 'r')
             ->andWhere('1 = pasHistorise(t)');
+
         if ($etatThese) {
             $qb->andWhere('t.etatThese = :etat')->setParameter('etat', $etatThese);
         }
@@ -418,6 +396,8 @@ class TheseController extends AbstractController implements
         $estDoctorant = (bool) $this->userContextService->getSelectedRoleDoctorant();
         $these = $this->requestedThese();
 
+        $versionArchivable = $this->fichierService->getRepository()->getVersionArchivable($these);
+
         $view = new ViewModel([
             'these'        => $these,
             'estDoctorant' => $estDoctorant,
@@ -430,6 +410,7 @@ class TheseController extends AbstractController implements
                 WfEtape::CODE_RDV_BU_SAISIE_DOCTORANT,
                 WfEtape::CODE_RDV_BU_VALIDATION_BU,
             ]),
+            'versionArchivable' => $versionArchivable,
         ]);
 
         $view->setTemplate('application/these/rdv-bu' . ($estDoctorant ? '-doctorant' : null));
@@ -1365,5 +1346,18 @@ class TheseController extends AbstractController implements
         ]);
         $exporter->export('export.pdf');
         exit;
+    }
+
+    /**
+     * Spécifie le timout à appliquer au lancement du script de retraitement.
+     *
+     * @param string $timeoutRetraitement Ex: '30s', '1m', cf. "man timout".
+     * @return self
+     */
+    public function setTimeoutRetraitement($timeoutRetraitement)
+    {
+        $this->timeoutRetraitement = $timeoutRetraitement;
+
+        return $this;
     }
 }

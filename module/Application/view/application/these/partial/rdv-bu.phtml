@@ -3,11 +3,13 @@
  * Affichage des renseignements concernant le RDV BU.
  *
  * @var These $these
+ * @var Fichier $versionArchivable
  */
 
 use Application\Entity\Db\MetadonneeThese;
 use Application\Entity\Db\RdvBu;
 use Application\Entity\Db\These;
+use Application\Entity\Db\Fichier;
 use Application\Filter\MotsClesFormatter;
 
 $rdvBu = $these->getRdvBu();
@@ -22,7 +24,7 @@ $uncheck_icon   = '<span class="glyphicon glyphicon-unchecked"></span>';
 $checked        = $check_icon.' Oui';
 $unchecked      = $uncheck_icon.' Non';
 
-$fichier = $rdvBu->getThese()->getVersionArchivable();
+$fichier = $versionArchivable;
 $versionArchivableFournie = $rdvBu->isVersionArchivableFournie();
 if ($fichier && $versionArchivableFournie) {
     $ddVersionArchivage = sprintf('%s (%s)', $checked, (bool)$fichier->getRetraitement() ? 'version retraitée et validée' : 'version originale');
