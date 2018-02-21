@@ -1,29 +1,34 @@
-image: debian:jessie
+stages:
+  - test
+  - build
+  - deploy
 
-cache:
-  paths:
-  - vendor/
+test:
+  stage: test
+  script: echo "Running tests"
 
-before_script:
-- echo '10.14.129.44 svn.unicaen.fr' >> /etc/hosts # Pour passer par l'intranet
-# Mise à niveau de la distrib et installation des packages requis
-- echo 'deb http://debian.unicaen.fr/debian/ jessie main non-free contrib' > /etc/apt/sources.list
-- apt-get -qq update && apt-get -qq install -y wget php5-cli php5-gd php5-curl git subversion
-- echo "http_proxy = $HTTP_PROXY" >> /etc/wgetrc
-- echo "https_proxy = $HTTPS_PROXY" >> /etc/wgetrc
-# Téléchargement de composer.phar
-- wget -q https://composer.github.io/installer.sig
-- wget -q https://getcomposer.org/installer && mv installer composer-setup.php
-- php -r "if (hash_file('SHA384', 'composer-setup.php') != trim(file_get_contents('installer.sig'))) { echo 'Installer corrupted.' . PHP_EOL; unlink('composer-setup.php'); exit(1); }"
-- php composer-setup.php --quiet
-- php -r "unlink('composer-setup.php'); unlink('installer.sig');"
-# Installation des dépendances de l'appli
-- php composer.phar install --no-interaction # NB: La variable d'env COMPOSER_AUTH doit être renseignée
+build:
+  stage: build
+  script: echo "Building the app"
 
-test:filters:
+deploy_staging:
+  stage: deploy
   script:
-  - vendor/bin/phpunit --configuration phpunit.xml module/Application/tests/ApplicationUnitTest/Filter
+    - echo "Deploy to staging server"
+  environment:
+    name: staging
+    url: https://staging.example.com
+  only:
+  - master
 
-test:rules:
+deploy_prod:
+  stage: deploy
   script:
-  - vendor/bin/phpunit --configuration phpunit.xml module/Application/tests/ApplicationUnitTest/Rule
+    - echo "Deploy to production server"
+  environment:
+    name: production
+    url: https://example.com
+  when: manual
+  only:
+  - master
+
