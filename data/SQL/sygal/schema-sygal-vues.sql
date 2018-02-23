@@ -104,6 +104,7 @@ CREATE OR REPLACE VIEW SRC_VARIABLE AS
     tmp.SOURCE_CODE,
     src.ID                                   AS SOURCE_ID,
     e.id                                     AS ETABLISSEMENT_ID,
+    tmp.COD_VAP                              AS CODE,
     tmp.lib_vap                              AS DESCRIPTION,
     tmp.par_vap                              AS VALEUR,
     tmp.DATE_DEB_VALIDITE,
