@@ -4,8 +4,12 @@ namespace Import\Service;
 
 use Doctrine\ORM\EntityManager;
 use GuzzleHttp\Client;
+use Import\Controller\Factory\ImportControllerFactory;
+use Import\Controller\ImportController;
 use Zend\Http\Response;
 use DateTime;
+use Zend\Mvc\Controller\Plugin\FlashMessenger;
+use Zend\Mvc\Controller\Plugin\Redirect;
 
 /**
  * FetcherService est un service dédié à la récupération des données provenant du Web Service fournit par chaque
@@ -19,7 +23,6 @@ use DateTime;
  *
  * TODO mieux gérer les messages d'erreurs provenant de l'echec de récupération via le Web Service
  * TODO si l'accés à la base de donnée échoue comment mettre le log dans API_LOGS
- * TODO finir de factoriser le code commun entre fetchOne et fetchAll
  */
 class FetcherService
 {
@@ -38,16 +41,16 @@ class FetcherService
      * @var string $code : le code de l'établissement
      * @var string $user : l'identifiant pour l'authentification
      * @var string $password : le mot de passe pour l'authentification
+     * @var string|null $proxy : le champ proxy
+     * @var boolean|string $verify : le champ pour le mode https
      */
     protected $url;
     protected $code;
     protected $user;
     protected $password;
-
-    /**
-     * @var boolean|string
-     */
+    protected $proxy;
     protected $verify;
+
 
     /**
      * Constructor ...
@@ -60,12 +63,6 @@ class FetcherService
         $this->config = $config;
         $this->user = $config['users']['login'];
         $this->password = $config['users']['password'];
-        $this->url = $config['import-api']['etablissements'][0]['url'];
-        $this->code = $config['import-api']['etablissements'][0]['code'];
-
-        if (isset($config['import-api']['etablissements'][0]['verify'])) {
-            $this->verify = $config['import-api']['etablissements'][0]['verify'];
-        }
     }
 
     /**
@@ -101,24 +98,45 @@ class FetcherService
     public function setCode($code)    {
         $this->code = $code;
     }
+    public function getProxy()      {
+        return $this->proxy;
+    }
+    public function setProxy($proxy)    {
+        $this->proxy = $proxy;
+    }
+    public function getVerify()     {
+        return $this->verify;
+    }
+    public function setVerify($verify)   {
+        $this->verify = $verify;
+    }
 
-    /**
-     * Cette fonction recherche dans le fichier de config l'adresse du Web Service associé à un établissement
+    /** Cette fonction retourne la position d'un extablissement dans la table des établissements (voir config)
      * @param string $etablissement
+     * @return int
+     * @throws \Exception;
      */
-    public function setUrlWithEtablissement($etablissement)
+    public function getEtablissementKey($etablissement)
     {
-        $found_url = null;
+        $position = -1;
         $nbEtablissements = count($this->config['import-api']['etablissements']);
         for ($positionEtablissement = 0; $positionEtablissement < $nbEtablissements; ++$positionEtablissement) {
             if ($this->config['import-api']['etablissements'][$positionEtablissement]['code'] == $etablissement) {
-                $found_url = $this->config['import-api']['etablissements'][$positionEtablissement]['url'];
+                return $positionEtablissement;
             }
         }
-        if ($found_url === null) {
-            print "<span style='background-color:salmon;'> L'URL associé à l'établissement [" . $etablissement . "] n'a pas pu être trouvée.</span><br/>";
+        if ($position === -1) {
+            print "<span style='background-color:salmon;'> L'établissement [" . $etablissement . "] n'a pas pu être trouvée.</span><br/>";
+            throw new \Exception("L'établissement [" . $etablissement . "] n'a pas pu être trouvée.");
         }
-        $this->url = $found_url;
+        return $position;
+    }
+
+    public function setConfigWithPosition($positionEtablissement) {
+        $this->code = $this->config['import-api']['etablissements'][$positionEtablissement]['code'];
+        $this->url = $this->config['import-api']['etablissements'][$positionEtablissement]['url'];
+        $this->proxy = $this->config['import-api']['etablissements'][$positionEtablissement]['proxy'];
+        $this->verify = $this->config['import-api']['etablissements'][$positionEtablissement]['verify'];
     }
 
     /** Fonction chargée d'optenir la réponse d'un Web Service
@@ -128,7 +146,6 @@ class FetcherService
      *
      * RMQ le client est configuré en utilisant les propriétés du FetcherService
      *
-     * TODO mettre automatique le proxy
      * @throws \Exception
      */
     public function getResponse($uri)
@@ -138,9 +155,14 @@ class FetcherService
             'headers' => [
                 'Accept' => 'application/json',
             ],
-            'proxy' => ['no' => 'localhost'],
             'auth' => [$this->user, $this->password],
         ];
+
+        if ($this->proxy !== null) {
+            $options['proxy'] = [ $this->proxy ];
+        } else {
+            $options['proxy'] = ['no' => 'localhost'];
+        }
 
         if ($this->verify !== null) {
             $options['verify'] = $this->verify;
@@ -290,18 +312,30 @@ class FetcherService
     {
         $logs = [];
         if ($source_code !== null) {
-            $logs = $this->fetchOne($dataName, $entityClass, $source_code);
+            $logs = $this->fetchOne($dataName, $entityClass, $source_code,0);
         } else {
-            $logs = $this->fetchAll($dataName, $entityClass);
+            $logs = $this->fetchAll($dataName, $entityClass,0);
         }
         return $logs;
 
     }
 
+    /**
+     * @throws \Doctrine\DBAL\DBALException
+     */
     public function updateBDD() {
         $this->entityManager->getConnection()->executeQuery("begin APP_IMPORT.SYNCHRONISATION(); end;");
     }
 
+    /**
+     * @param $dataName
+     * @param $entityClass
+     * @param $sourceCode
+     * @param int $debug_level
+     * @return array
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Exception
+     */
     public function fetchOne($dataName, $entityClass, $sourceCode, $debug_level = 0)
     {
         $debut = microtime(true);
@@ -354,6 +388,15 @@ class FetcherService
         if ($debug_level > 0) print "<p><span style='background-color:lightgreen;'> ExecQueries: " . ($_fin - $_debut) . " secondes.</span></p>";
         return $this->doLog($start_date, new DateTime(), $this->url . "/" . $dataName . "/" . $sourceCode, "OK", "Récupération de ".$dataName.":".$sourceCode." de [" . $this->code . "] en " . ($_fin - $debut) . " seconde(s).");
     }
+
+    /**
+     * @param $dataName
+     * @param $entityClass
+     * @param int $debug_level
+     * @return array
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Exception
+     */
     public function fetchAll($dataName, $entityClass, $debug_level = 0)
     {
         $start_date = new DateTime();

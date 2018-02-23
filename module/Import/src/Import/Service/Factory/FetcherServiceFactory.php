@@ -12,6 +12,14 @@ class FetcherServiceFactory {
         /** @var EntityManager $entityManager */
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $config = $container->get('config');
+
+        if (!isset($config['users']['login'])) {
+            throw new \Exception("La clef <strong>login</strong> est manquante dans le fichier de configuration local de l'Import");
+        }
+        if (!isset($config['users']['password'])) {
+            throw new \Exception("La clef <strong>password</strong> est manquante dans le fichier de configuration local de l'Import");
+        }
+
         $service = new FetcherService($entityManager, $config);
         return $service;
     }
