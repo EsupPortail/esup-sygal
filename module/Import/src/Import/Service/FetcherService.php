@@ -45,6 +45,11 @@ class FetcherService
     protected $password;
 
     /**
+     * @var boolean|string
+     */
+    protected $verify;
+
+    /**
      * Constructor ...
      * @param EntityManager $entityManager
      * @param array $config
@@ -57,6 +62,10 @@ class FetcherService
         $this->password = $config['users']['password'];
         $this->url = $config['import-api']['etablissements'][0]['url'];
         $this->code = $config['import-api']['etablissements'][0]['code'];
+
+        if (isset($config['import-api']['etablissements'][0]['verify'])) {
+            $this->verify = $config['import-api']['etablissements'][0]['verify'];
+        }
     }
 
     /**
@@ -113,24 +122,32 @@ class FetcherService
     }
 
     /** Fonction chargée d'optenir la réponse d'un Web Service
+     *
      * @param string $uri : la "page" du Web Service à interroger
      * @return Response la réponse du Web Service
      *
      * RMQ le client est configuré en utilisant les propriétés du FetcherService
      *
      * TODO mettre automatique le proxy
+     * @throws \Exception
      */
     public function getResponse($uri)
     {
+        $options = [
+            'base_uri' => $this->url,
+            'headers' => [
+                'Accept' => 'application/json',
+            ],
+            'proxy' => ['no' => 'localhost'],
+            'auth' => [$this->user, $this->password],
+        ];
+
+        if ($this->verify !== null) {
+            $options['verify'] = $this->verify;
+        }
+
         try {
-            $client = new Client([
-                'base_uri' => $this->url,
-                'headers' => [
-                    'Accept' => 'application/json',
-                ],
-                'proxy' => ['no' => 'localhost'],
-                'auth' => [$this->user, $this->password],
-            ]);
+            $client = new Client($options);
             $response = $client->request('GET', $uri);
         } catch (\Exception $e) {
             $response = new Response();

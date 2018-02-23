@@ -1,11 +1,4 @@
 <?php
-/**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
- * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
- */
 
 use Zend\Mvc\Router\Http\Literal;
 use Zend\Mvc\Router\Http\Segment;
@@ -90,7 +83,7 @@ return array(
         'routes' => [
             'home-import' => [
                 'type' => 'Literal',
-                'may_terminate' => true,
+                'may_terminate' => false,
                 'options' => [
                     'route'    => '/fetch',
                     'defaults' => [
