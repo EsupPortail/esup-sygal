@@ -6,6 +6,7 @@ use Application\Assertion\Exception\FailedAssertionException;
 use Application\Assertion\Interfaces\ControllerAssertionInterface;
 use Application\Assertion\Interfaces\EntityAssertionInterface;
 use Application\Assertion\Interfaces\PageAssertionInterface;
+use Application\RouteMatch;
 use Application\Service\UserContextService;
 use Application\Service\UserContextServiceAwareInterface;
 use Application\Service\UserContextServiceAwareTrait;
@@ -55,6 +56,10 @@ abstract class BaseAssertion extends AbstractAssertion
      */
     private function assertPage(array $page)
     {
+        if ($this->getRouteMatch() === null) {
+            return false;
+        }
+
         if ($this->pageAssertion === null) {
             return true;
         }
@@ -87,6 +92,10 @@ abstract class BaseAssertion extends AbstractAssertion
             return true;
         }
 
+        if ($this->getRouteMatch() === null) {
+            return false;
+        }
+
         $this->initControllerAssertion();
 
         try {
@@ -113,6 +122,10 @@ abstract class BaseAssertion extends AbstractAssertion
 
         if ($this->entityAssertion === null) {
             return true;
+        }
+
+        if ($this->getRouteMatch() === null) {
+            return false;
         }
 
         $this->initEntityAssertion();
@@ -173,5 +186,16 @@ abstract class BaseAssertion extends AbstractAssertion
         $this->entityAssertion = $entityAssertion;
 
         return $this;
+    }
+
+    /**
+     * @return RouteMatch
+     */
+    protected function getRouteMatch()
+    {
+        /** @var RouteMatch $rm */
+        $rm = $this->getMvcEvent()->getRouteMatch();
+
+        return $rm;
     }
 }

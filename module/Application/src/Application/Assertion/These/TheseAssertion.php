@@ -8,7 +8,6 @@ use Application\Entity\Db\These;
 use Application\Entity\Db\WfEtape;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\Provider\Privilege\ValidationPrivileges;
-use Application\RouteMatch;
 use Application\Service\UserContextService;
 use Application\Service\Workflow\WorkflowServiceAwareInterface;
 use Application\Service\Workflow\WorkflowServiceAwareTrait;
@@ -51,10 +50,6 @@ class TheseAssertion extends BaseAssertion implements WorkflowServiceAwareInterf
         if (! parent::assertController($controller, $action, $privilege)) {
             return false;
         }
-
-//        if ($this->getRouteMatch() === null) {
-//            return false;
-//        }
 
         $these = $this->getRouteMatch()->getThese();
 
@@ -128,16 +123,5 @@ class TheseAssertion extends BaseAssertion implements WorkflowServiceAwareInterf
             ->setThese($this->getRouteMatch()->getThese());
 
         return $this;
-    }
-
-    /**
-     * @return RouteMatch
-     */
-    private function getRouteMatch()
-    {
-        /** @var RouteMatch $rm */
-        $rm = $this->getMvcEvent()->getRouteMatch();
-
-        return $rm;
     }
 }
