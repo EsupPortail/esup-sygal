@@ -105,8 +105,8 @@ return array(
                                 'source_code'   => 'non renseigné',
                             ],
                             'constraints' => [
-                                'service'       => implode ('|', ["all","source","these","doctorant","acteur","variable","individu","role"]),
-                                'etablissement' => implode ('|', ["UCN","fOO"]),
+                                'service'       => implode ('|', ["all","these","doctorant","acteur","variable","individu","role"]),
+                                'etablissement' => implode ('|', ["UCN","fOO","INSA"]),
                             ]
                         ],
                     ],

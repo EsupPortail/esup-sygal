@@ -29,6 +29,8 @@ class ImportController extends AbstractActionController
      *
      *  RMQ: 'service' et 'etablissement' sont pour le moment obligatoire.
      *  RMQ: si 'source_code' est non renseigné alors il faut récupérer toutes les données
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Exception
      */
     public function fetchAction() {
 
@@ -47,8 +49,9 @@ class ImportController extends AbstractActionController
         foreach ($services as $service) {
 
             /** Paramétrage du service de récupération */
-            $this->fetcherService->setCode($etablissement);
-            $this->fetcherService->setUrlWithEtablissement($etablissement);
+            $key = $this->fetcherService->getEtablissementKey($etablissement);
+            $this->fetcherService->setConfigWithPosition($key);
+
             $dataName = $service;
             $entityClass = "Import\Model\Tmp" . ucwords($service);
             $source_code = ($source_code != "non renseigné") ? $source_code : null;
@@ -72,6 +75,10 @@ class ImportController extends AbstractActionController
         ]);
     }
 
+    /**
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Exception
+     */
     public function fetchConsoleAction() {
 
         $service_para  = $this->params('service');
@@ -89,8 +96,9 @@ class ImportController extends AbstractActionController
         foreach ($services as $service) {
 
             /** Paramétrage du service de récupération */
-            $this->fetcherService->setCode($etablissement);
-            $this->fetcherService->setUrlWithEtablissement($etablissement);
+            $key = $this->fetcherService->getEtablissementKey($etablissement);
+            $this->fetcherService->setConfigWithPosition($key);
+
             $dataName = $service;
             $entityClass = "Import\Model\Tmp" . ucwords($service);
             $source_code = ($source_code != "non renseigné") ? $source_code : null;
