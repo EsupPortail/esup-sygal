@@ -5,24 +5,20 @@
         {
             "type": "composer",
             "url":  "https://dev.unicaen.fr/packagist"
-        },
-        {
-            "type": "vcs",
-            "url": "git@git.unicaen.fr:dsi/lib/unicaen-auth"
         }
     ],
     "require-dev": {
-        "unicaen/unicaen-test":                 "^1.0",
+        "unicaen/test":                         "^1.0",
         "zendframework/zend-developer-tools":   "1.0.0"
     },
     "require": {
-        "unicaen/unicaen-app":                  "^1.3",
-        "unicaen/unicaen-auth":                 "1.2.0",
-        "unicaen/unicaen-faq":                  "^1.0",
-        "unicaen/unicaen-ldap":                 "^2.1",
-        "unicaen/unicaen-import":               "1.0.10",
-        "unicaen/unicaen-leocarte":             "^1.0",
-        "unicaen/unicaen-code":                 "^1.0",
+        "unicaen/app":                          "^1.3",
+        "unicaen/auth":                         "^1.1",
+        "unicaen/faq":                          "^1.0",
+        "unicaen/ldap":                         "^2.1",
+        "unicaen/oracle-import":                "1.0.10",
+        "unicaen/leocarte":                     "^1.0",
+        "unicaen/code":                         "^1.0",
         "ramsey/uuid":                          "^3.3",
         "mpdf/mpdf":                            "v6.1.3",
         "bjyoungblood/bjy-authorize":           "dev-master",
