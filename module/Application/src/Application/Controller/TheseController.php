@@ -286,16 +286,13 @@ class TheseController extends AbstractController implements
         $codeVersion = $versionCorrigee ?
             VersionFichier::CODE_ORIG_CORR :
             VersionFichier::CODE_ORIG;
-        $codeVersionDiff = $versionCorrigee ?
-            VersionFichier::CODE_DIFF_CORR :
-            VersionFichier::CODE_DIFF;
 
         $view = new ViewModel([
             'these'            => $these,
             'theseUrl'         => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_THESE_PDF, $codeVersion),
             'annexesUrl'       => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_FICHIER_NON_PDF, $codeVersion),
             'attestationUrl'   => $this->urlThese()->attestationThese($these, $codeVersion),
-            'diffusionUrl'     => $this->urlThese()->diffusionThese($these, $codeVersionDiff),
+            'diffusionUrl'     => $this->urlThese()->diffusionThese($these, $codeVersion),
             'nextStepUrl'      => $this->urlWorkflow()->nextStepBox($these, null, [
                 WfEtape::CODE_DEPOT_VERSION_ORIGINALE,
                 WfEtape::CODE_DEPOT_VERSION_ORIGINALE_CORRIGEE,
@@ -1063,11 +1060,9 @@ class TheseController extends AbstractController implements
         /** @var DiffusionTheseForm $form */
         $form = $this->getServiceLocator()->get('formElementManager')->get('DiffusionTheseForm');
 
-        //$ff = FichierFilter::inst()->version($version);
-        //        $theseFichiersExpurges = $ff->annexe(false)->filter($these->getFichiers());
-        //        $annexesFichiersExpurges = $ff->annexe(true)->filter($these->getFichiers());
-        $theseFichiersExpurges = $this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF, $version, false);
-        $annexesFichiersExpurges = $this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_FICHIER_NON_PDF, $version, false);
+        $versionExpurgee = $version->estVersionCorrigee() ? VersionFichier::CODE_DIFF_CORR : VersionFichier::CODE_DIFF;
+        $theseFichiersExpurges = $this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF, $versionExpurgee, false);
+        $annexesFichiersExpurges = $this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_FICHIER_NON_PDF, $versionExpurgee, false);
 
         if ($diffusion = $these->getDiffusion()) {
             $form->bind($diffusion);
