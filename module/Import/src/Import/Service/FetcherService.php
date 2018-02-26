@@ -4,12 +4,9 @@ namespace Import\Service;
 
 use Doctrine\ORM\EntityManager;
 use GuzzleHttp\Client;
-use Import\Controller\Factory\ImportControllerFactory;
-use Import\Controller\ImportController;
 use Zend\Http\Response;
 use DateTime;
-use Zend\Mvc\Controller\Plugin\FlashMessenger;
-use Zend\Mvc\Controller\Plugin\Redirect;
+use UnicaenApp\Exception;
 
 /**
  * FetcherService est un service dédié à la récupération des données provenant du Web Service fournit par chaque
@@ -127,7 +124,7 @@ class FetcherService
         }
         if ($position === -1) {
             print "<span style='background-color:salmon;'> L'établissement [" . $etablissement . "] n'a pas pu être trouvée.</span><br/>";
-            throw new \Exception("L'établissement [" . $etablissement . "] n'a pas pu être trouvée.");
+            throw new Exception\RuntimeException("L'établissement [" . $etablissement . "] n'a pas pu être trouvée.");
         }
         return $position;
     }
