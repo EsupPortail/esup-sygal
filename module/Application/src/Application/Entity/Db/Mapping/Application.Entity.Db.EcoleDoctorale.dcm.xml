@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-  <entity name="Application\Entity\Db\EcoleDoctorale" table="ECOLE_DOCT">
+  <entity name="Application\Entity\Db\EcoleDoctorale" table="ECOLE_DOCT"
+          repository-class="Application\Entity\Db\Repository\EcoleDoctoraleRepository">
 
     <id name="id" type="integer" column="ID">
       <generator strategy="SEQUENCE"/>

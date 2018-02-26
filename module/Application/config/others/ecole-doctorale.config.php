@@ -145,6 +145,9 @@ return [
         ],
         'factories' => [
         ],
+        'aliases' => [
+            EcoleDoctoraleService::class => 'EcoleDoctoraleService',
+        ]
     ],
     'controllers'     => [
         'invokables' => [

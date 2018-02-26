@@ -1042,7 +1042,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function getDirecteursTheseEmails(array &$unknownMails = [])
     {
         $emails = [];
-        $directeurs = $this->getActeursByRoleSourceCode(Role::SOURCE_CODE_DIRECTEUR_THESE);
+        $directeurs = $this->getActeursByRoleSourceCode(Role::CODE_DIRECTEUR_THESE);
 
         /** @var Acteur $acteur */
         foreach ($directeurs as $acteur) {

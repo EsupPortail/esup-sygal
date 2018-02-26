@@ -4,25 +4,27 @@ namespace Application\Service\Doctorant;
 
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\DoctorantCompl;
+use Application\Entity\Db\Repository\DoctorantRepository;
 use Application\Service\BaseService;
-use Doctrine\DBAL\DBALException;
-use Application\Entity\Db\Repository\DefaultEntityRepository;
 
 class DoctorantService extends BaseService
 {
     /**
-     * @return DefaultEntityRepository
+     * @return DoctorantRepository
      */
     public function getRepository()
     {
-        return $this->entityManager->getRepository(Doctorant::class);
+        /** @var DoctorantRepository $repo */
+        $repo = $this->entityManager->getRepository(Doctorant::class);
+
+        return $repo;
     }
 
     /**
      * @param Doctorant $doctorant
      * @param array     $data
      * @return DoctorantCompl
-     * @throws DBALException Si un doctorant existe déjà avec le persopass spécifé
+     * @throws \Doctrine\ORM\OptimisticLockException
      */
     public function updateDoctorant(Doctorant $doctorant, $data)
     {

@@ -20,7 +20,7 @@ class UserContextService extends BaseUserContextService implements IndividuServi
     use IndividuServiceAwareTrait;
 
     /**
-     * @return RoleInterface|null
+     * @return Role|RoleInterface|null
      */
     public function getSelectedIdentityRole()
     {
@@ -90,9 +90,6 @@ class UserContextService extends BaseUserContextService implements IndividuServi
     }
 
     /**
-     * Si le rôle sélectionné correspond à celui de Bureau des doctorats,
-     * retourne le rôle en question, sinon retourne null.
-     *
      * @return RoleInterface|null
      */
     public function getSelectedRoleBU()
@@ -101,20 +98,14 @@ class UserContextService extends BaseUserContextService implements IndividuServi
     }
 
     /**
-     * Si le rôle sélectionné correspond à celui de directeur de thèse,
-     * retourne le rôle en question, sinon retourne null.
-     *
      * @return Role|null
      */
     public function getSelectedRoleDirecteurThese()
     {
-        return $this->_getSelectedRoleForSourceCode(Role::SOURCE_CODE_DIRECTEUR_THESE);
+        return $this->_getSelectedRoleForCode(Role::CODE_DIRECTEUR_THESE);
     }
 
     /**
-     * Si le rôle sélectionné correspond à celui de directeur d'ED,
-     * retourne le rôle en question, sinon retourne null.
-     *
      * @return RoleInterface|null
      */
     public function getSelectedRoleDirecteurEcoleDoctorale()
@@ -123,14 +114,19 @@ class UserContextService extends BaseUserContextService implements IndividuServi
     }
 
     /**
-     * Si le rôle sélectionné correspond à celui de directeur d'UR,
-     * retourne le rôle en question, sinon retourne null.
-     *
      * @return RoleInterface|null
      */
     public function getSelectedRoleDirecteurUniteRecherche()
     {
         return $this->_getSelectedRoleForRoleId(Role::ROLE_ID_UNITE_RECH);
+    }
+
+    /**
+     * @return Role|null
+     */
+    public function getSelectedRoleAdministrateur()
+    {
+        return $this->_getSelectedRoleForCode(Role::CODE_ADMIN);
     }
 
     /**
@@ -152,14 +148,14 @@ class UserContextService extends BaseUserContextService implements IndividuServi
      * Si le rôle sélectionné correspond à celui spécifié,
      * retourne le rôle en question, sinon retourne null.
      *
-     * @param string $sourceCode
-     * @return null|RoleInterface
+     * @param string $code
+     * @return null|Role
      */
-    protected function _getSelectedRoleForSourceCode($sourceCode)
+    protected function _getSelectedRoleForCode($code)
     {
         /** @var Role $role */
         $role = $this->getSelectedIdentityRole();
-        if (!$role || $role->getSourceCode() !== $sourceCode) {
+        if (!$role || $role->getCode() !== $code) {
             return null;
         }
         return $role;

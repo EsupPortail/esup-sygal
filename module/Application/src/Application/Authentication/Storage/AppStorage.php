@@ -2,15 +2,18 @@
 
 namespace Application\Authentication\Storage;
 
-use Application\Entity\Db\EcoleDoctoraleIndividu;
 use Application\Entity\Db\Doctorant;
+use Application\Entity\Db\EcoleDoctoraleIndividu;
 use Application\Entity\Db\UniteRechercheIndividu;
-use Doctrine\ORM\Query\Expr\Join;
-use UnicaenApp\Service\EntityManagerAwareInterface;
-use UnicaenApp\Service\EntityManagerAwareTrait;
+use Application\Service\Doctorant\DoctorantServiceAwareTrait;
+use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
+use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
+use Doctrine\ORM\NonUniqueResultException;
+use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Authentication\Storage\ChainableStorage;
 use UnicaenAuth\Authentication\Storage\ChainEvent;
 use UnicaenAuth\Entity\Ldap\People;
+use Zend\Authentication\Exception\ExceptionInterface;
 
 /**
  * Ajout de données utiles concernant l'utilisateur authentifié.
@@ -29,9 +32,11 @@ use UnicaenAuth\Entity\Ldap\People;
  *
  * @author Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>
  */
-class AppStorage implements ChainableStorage, EntityManagerAwareInterface
+class AppStorage implements ChainableStorage
 {
-    use EntityManagerAwareTrait;
+    use DoctorantServiceAwareTrait;
+    use EcoleDoctoraleServiceAwareTrait;
+    use UniteRechercheServiceAwareTrait;
 
     const KEY_DOCTORANT = 'doctorant';
     const KEY_ECOLE_DOCTORALE_INDIVIDU = 'ecoleDoctoraleIndividu';
@@ -65,6 +70,7 @@ class AppStorage implements ChainableStorage, EntityManagerAwareInterface
     /**
      * @param ChainEvent $e
      * @return void
+     * @throws \Zend\Authentication\Exception\ExceptionInterface
      */
     public function read(ChainEvent $e)
     {
@@ -93,9 +99,11 @@ class AppStorage implements ChainableStorage, EntityManagerAwareInterface
      */
     protected function addDoctorantContents(ChainEvent $e)
     {
-        $e->addContents(
-            self::KEY_DOCTORANT,
-            $this->fetchDoctorant());
+        try {
+            $e->addContents(self::KEY_DOCTORANT, $this->fetchDoctorant());
+        } catch (ExceptionInterface $e) {
+            throw new RuntimeException("Erreur imprévue rencontrée.", 0, $e);
+        }
 
         return $this;
     }
@@ -111,25 +119,23 @@ class AppStorage implements ChainableStorage, EntityManagerAwareInterface
          * - avec son numéro étudiant (Doctorant::sourceCode),
          * - avec son persopass (DoctorantCompl::persopass), seulement après qu'il l'a saisi sur la page d'identité de la thèse.
          */
-        $qb = $this->entityManager->getRepository(Doctorant::class)->createQueryBuilder('t');
-        $qb
-            ->leftJoin('t.complements', 'c')
-            ->andWhere('1 = pasHistorise(t)')
-            ->andWhere('t.sourceCode = :login OR c.persopass = :login')
-            ->setParameter('login', $this->people->getSupannAliasLogin());
-
-        $result = $qb->getQuery()->getResult();
-
-        $this->doctorant = current($result) ?: null;
+        $username = $this->people->getSupannAliasLogin();
+        try {
+            $this->doctorant = $this->doctorantService->getRepository()->findOneByUsername($username);
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Plusieurs doctorants ont été trouvés avec le même username: " . $username);
+        }
 
         return $this->doctorant;
     }
 
     private function addEcoleDoctoraleIndividuContents(ChainEvent $e)
     {
-        $e->addContents(
-            self::KEY_ECOLE_DOCTORALE_INDIVIDU,
-            $this->fetchEcoleDoctoraleIndividu());
+        try {
+            $e->addContents(self::KEY_ECOLE_DOCTORALE_INDIVIDU, $this->fetchEcoleDoctoraleIndividu());
+        } catch (ExceptionInterface $e) {
+            throw new RuntimeException("Erreur imprévue rencontrée.", 0, $e);
+        }
 
         return $this;
     }
@@ -140,24 +146,21 @@ class AppStorage implements ChainableStorage, EntityManagerAwareInterface
             return $this->ecoleDoctoraleIndividu;
         }
 
-        $qb = $this->entityManager->getRepository(EcoleDoctoraleIndividu::class)->createQueryBuilder('edi');
-        $qb
-            ->addSelect('ed, i, r')
-            ->join('edi.ecole', 'ed')
-            ->join('edi.individu', 'i', Join::WITH, 'i.sourceCode = :personnelId')
-            ->join('edi.role', 'r')
-            ->setParameter('personnelId', $this->people->getSupannEmpId())
-        ;
-        $this->ecoleDoctoraleIndividu = $qb->getQuery()->getResult();
+        $sourceCodeIndividu = $this->people->getSupannEmpId();
 
-        return $this->ecoleDoctoraleIndividu ?: [];
+        $this->ecoleDoctoraleIndividu =
+            $this->ecoleDoctoraleService->getRepository()->findMembresBySourceCodeIndividu($sourceCodeIndividu);
+
+        return $this->ecoleDoctoraleIndividu;
     }
 
     private function addUniteRechercheIndividuContents(ChainEvent $e)
     {
-        $e->addContents(
-            self::KEY_UNITE_RECHERCHE_INDIVIDU,
-            $this->fetchUniteRechercheIndividu());
+        try {
+            $e->addContents(self::KEY_UNITE_RECHERCHE_INDIVIDU, $this->fetchUniteRechercheIndividu());
+        } catch (ExceptionInterface $e) {
+            throw new RuntimeException("Erreur imprévue rencontrée.", 0, $e);
+        }
 
         return $this;
     }
@@ -168,21 +171,13 @@ class AppStorage implements ChainableStorage, EntityManagerAwareInterface
             return $this->uniteRechercheIndividu;
         }
 
-        $qb = $this->entityManager->getRepository(UniteRechercheIndividu::class)->createQueryBuilder('uri');
-        $qb
-            ->addSelect('ur, i, r')
-            ->join('uri.uniteRecherche', 'ur')
-            ->join('uri.individu', 'i', Join::WITH, 'i.sourceCode = :personnelId')
-            ->join('uri.role', 'r')
-            ->setParameter('personnelId', $this->people->getSupannEmpId())
-        ;
-        $this->uniteRechercheIndividu = $qb->getQuery()->getResult();
+        $sourceCodeIndividu = $this->people->getSupannEmpId();
 
-        return $this->uniteRechercheIndividu ?: [];
+        $this->uniteRechercheIndividu =
+            $this->uniteRechercheService->getRepository()->findMembresBySourceCodeIndividu($sourceCodeIndividu);
+
+        return $this->uniteRechercheIndividu;
     }
-
-
-
 
     public function write(ChainEvent $e)
     {

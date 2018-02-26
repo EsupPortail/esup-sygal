@@ -196,7 +196,7 @@ class ValidationController extends AbstractController
                     //MAIL BUREAU DES DOCTORANS
                     $mailViewModel->setVariables([
                         'subject' => "Validation des corrections de la thèse",
-                        'role' => $this->roleService->getRepository()->findOneBy(['sourceCode' => Role::SOURCE_CODE_DIRECTEUR_THESE]),
+                        'role' => $this->roleService->getRepository()->findOneBy(['sourceCode' => Role::CODE_DIRECTEUR_THESE]),
                         'url' => $this->url()->fromRoute('these/depot', ['these' => $these->getId()], ['force_canonical' => true]),
                     ]);
                     $this->notificationService->notifierValidationCorrectionThese($mailViewModel, $these);

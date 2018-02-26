@@ -145,6 +145,9 @@ return [
         ],
         'factories' => [
         ],
+        'aliases' => [
+            UniteRechercheService::class => 'UniteRechercheService',
+        ]
     ],
     'controllers'     => [
         'invokables' => [

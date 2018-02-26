@@ -58,16 +58,18 @@ class TheseService extends BaseService
      */
     public function decorateQbFromUserContext(QueryBuilder $qb, UserContextService $userContext)
     {
+        $role = $userContext->getSelectedIdentityRole();
+
         /**
          * Un doctorant ne peut voir que ses thèses.
          */
-        if ($role = $userContext->getSelectedRoleDoctorant()) {
+        if ($role->estRoleDoctorant()) {
             $qb
                 ->andWhere('t.doctorant = :doctorant')
                 ->setParameter('doctorant', $userContext->getIdentityDoctorant());
         }
         /**
-         * Un directeur d'ED ne voient que les thèses concernant son ED.
+         * Un directeur d'ED ne voit que les thèses concernant son ED.
          */
         elseif ($role = $userContext->getSelectedRoleDirecteurEcoleDoctorale()) {
             $ids = array_unique(array_map(function(EcoleDoctoraleIndividu $edi) {
@@ -78,7 +80,7 @@ class TheseService extends BaseService
                 ->setParameter('ids', $ids);
         }
         /**
-         * Un directeur d'UR ne voient que les thèses concernant son UR.
+         * Un directeur d'UR ne voit que les thèses concernant son UR.
          */
         elseif ($role = $userContext->getSelectedRoleDirecteurUniteRecherche()) {
             $ids = array_unique(array_map(function(UniteRechercheIndividu $uri) {
@@ -89,17 +91,23 @@ class TheseService extends BaseService
                 ->setParameter('ids', $ids);
         }
         /**
-         * Un directeur de thèse ne voient que les thèses qu'il dirige.
+         * Un directeur de thèse ne voit que les thèses qu'il dirige.
          */
         elseif ($role = $userContext->getSelectedRoleDirecteurThese()) {
             $people = $userContext->getIdentityLdap();
             $qb
-                ->join('t.acteurs', 'adt')
-                ->join('adt.individu', 'idt', Join::WITH, 'idt.sourceCode = :idtSourceCode')
-                ->join('adt.role', 'rdt', Join::WITH, 'rdt.sourceCode = :rdtSourceCode')
-                ->setParameter('idtSourceCode', $people->getSupannEmpId())
-                ->setParameter('rdtSourceCode', Role::SOURCE_CODE_DIRECTEUR_THESE);
-
+                ->join('t.acteurs', 'adt', Join::WITH, 'adt.role = :role')
+                ->join('adt.individu', 'idt', Join::WITH, 'idt.sourceCode like :idtSourceCode')
+                ->setParameter('idtSourceCode', '%::' . $people->getSupannEmpId())
+                ->setParameter('role', $role);
+        }
+        /**
+         * Un administrateur ne voit que les thèses de son établissement.
+         */
+        elseif ($role = $userContext->getSelectedRoleAdministrateur()) {
+            $qb
+                ->where('t.etablissement = :etab')
+                ->setParameter('etab', $role->getEtablissement());
         }
     }
 

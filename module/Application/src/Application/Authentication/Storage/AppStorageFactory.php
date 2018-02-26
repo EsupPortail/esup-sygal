@@ -1,30 +1,20 @@
 <?php
 
-namespace Application\Provider;
+namespace Application\Authentication\Storage;
 
-use Application\Service\Acteur\ActeurService;
 use Application\Service\Doctorant\DoctorantService;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
-use Application\Service\Role\RoleService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use ZfcUser\Service\User as UserService;
 
-/**
- * Application identity provider factory
- *
- * @author Bertrand GAUTHIER <bertrand.gauthier@unicaen.fr>
- */
-class IdentityProviderFactory
+class AppStorageFactory
 {
+    /**
+     * @param ServiceLocatorInterface $sl
+     * @return AppStorage
+     */
     public function __invoke(ServiceLocatorInterface $sl)
     {
-        /** @var UserService $userService */
-        $userService = $sl->get('zfcuser_user_service');
-
-        /** @var ActeurService $acteurService */
-        $acteurService = $sl->get(ActeurService::class);
-
         /** @var DoctorantService $doctorantService */
         $doctorantService = $sl->get(DoctorantService::class);
 
@@ -34,16 +24,10 @@ class IdentityProviderFactory
         /** @var UniteRechercheService $urService */
         $urService = $sl->get(UniteRechercheService::class);
 
-        /** @var RoleService $roleService */
-        $roleService = $sl->get(RoleService::class);
-
-        $service = new IdentityProvider();
-        $service->setAuthenticationService($userService->getAuthService());
-        $service->setActeurService($acteurService);
+        $service = new AppStorage();
         $service->setDoctorantService($doctorantService);
         $service->setEcoleDoctoraleService($edService);
         $service->setUniteRechercheService($urService);
-        $service->setRoleService($roleService);
 
         return $service;
     }

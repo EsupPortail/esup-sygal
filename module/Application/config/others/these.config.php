@@ -14,6 +14,7 @@ use Application\Form\Factory\MetadonneeTheseFormFactory;
 use Application\Form\Factory\RdvBuTheseDoctorantFormFactory;
 use Application\Form\Factory\RdvBuTheseFormFactory;
 use Application\Provider\Privilege\ThesePrivileges;
+use Application\Service\Acteur\ActeurService;
 use Application\Service\Message\DiffusionMessages;
 use Application\Service\ServiceAwareInitializer;
 use Application\Service\These\TheseObserverService;
@@ -861,11 +862,10 @@ return [
     'service_manager' => [
         'invokables' => array(
             'TheseService'                 => TheseService::class,
-//            'Assertion\\These'             => \Application\Assertion\These\TheseAssertion::class,
             'TheseObserverService' => TheseObserverService::class,
+            ActeurService::class => ActeurService::class,
         ),
         'factories' => [
-//            'Assertion\\These' => \Application\Assertion\These\TheseAssertionFactory::class,
         ],
         'abstract_factories' => [
             AssertionAbstractFactory::class,
