@@ -1,6 +1,6 @@
 <?php
 
-use Application\Controller\ExportController;
+use Application\Controller\Factory\ExportControllerFactory;
 use Application\Provider\Privilege\ThesePrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
 
@@ -50,8 +50,8 @@ return [
         ],
     ],
     'controllers'     => [
-        'invokables' => [
-            'Application\Controller\Export' => ExportController::class,
+        'factories' => [
+            'Application\Controller\Export' => ExportControllerFactory::class,
         ],
     ],
 ];
