@@ -9,14 +9,14 @@
     ],
     "require-dev": {
         "unicaen/test":                         "^1.0",
-        "zendframework/zend-developer-tools":   "1.0.0"
+        "zendframework/zend-developer-tools":   "^1.0"
     },
     "require": {
         "unicaen/app":                          "^1.3",
         "unicaen/auth":                         "^1.1",
         "unicaen/faq":                          "^1.0",
         "unicaen/ldap":                         "^2.1",
-        "unicaen/oracle-import":                "1.0.10",
+        "unicaen/oracle-import":                "1.0.11",
         "unicaen/leocarte":                     "^1.0",
         "unicaen/code":                         "^1.0",
         "ramsey/uuid":                          "^3.3",
