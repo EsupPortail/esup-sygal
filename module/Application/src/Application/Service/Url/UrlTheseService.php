@@ -187,7 +187,7 @@ class UrlTheseService extends UrlService
 
     public function diffusionThese(These $these, $version)
     {
-        if (!in_array($version, [VersionFichier::CODE_ORIG, VersionFichier::CODE_ORIG_CORR])) {
+        if (!in_array($version, [VersionFichier::CODE_DIFF, VersionFichier::CODE_DIFF_CORR])) {
             throw new LogicException("Version fichier spécifiée inattendue: " . $version);
         }
 
