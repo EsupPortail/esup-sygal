@@ -14,24 +14,6 @@ IS
 
 ---------------------- SOURCE ---------------------
 
---drop table TMP_SOURCE;
-create table TMP_SOURCE
-(
-  insert_date date default sysdate,
-
-  ID VARCHAR2(64),
-  ETABLISSEMENT_ID VARCHAR2(64 char) not null,
-  SOURCE_ID VARCHAR2(64 char),
-  SOURCE_CODE VARCHAR2(64),
-
-  CODE VARCHAR2(64 char) not null,
-  LIBELLE VARCHAR2(128 char) not null,
-  IMPORTABLE NUMBER(1) not null
-);
-
-create index TMP_SOURCE_SOURCE_CODE_IDX on TMP_SOURCE (SOURCE_CODE);
-create index TMP_SOURCE_SOURCE_ID_IDX on TMP_SOURCE (SOURCE_ID);
-
 create table SOURCE
 (
   ID NUMBER not null constraint SOURCE_PK primary key,

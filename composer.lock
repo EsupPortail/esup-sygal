@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "83f498ee107cca5244117ecfd04db301",
+    "content-hash": "3d90a017b9a7123fe892e13c4d71a3e8",
     "packages": [
         {
             "name": "bjyoungblood/bjy-authorize",
@@ -1806,12 +1806,12 @@
             "time": "2018-01-29T08:54:45+00:00"
         },
         {
-            "name": "unicaen/unicaen-app",
-            "version": "1.3.4",
+            "name": "unicaen/app",
+            "version": "1.3.5",
             "source": {
-                "type": "svn",
-                "url": "https://svn.unicaen.fr/svn/UnicaenApp",
-                "reference": "/tags/1.3.4/@861"
+                "type": "git",
+                "url": "https://git.unicaen.fr/lib/unicaen/app.git",
+                "reference": "a4cc83cab89b17c3aea1b3519dec961eb1b5af42"
             },
             "require": {
                 "doctrine/doctrine-orm-module": ">=0.7",
@@ -1854,24 +1854,24 @@
                 ]
             },
             "description": "Module commun aux applis ZF2 de l'UCBN",
-            "time": "2018-02-19T12:26:38+00:00"
+            "time": "2018-02-22T08:53:16+00:00"
         },
         {
-            "name": "unicaen/unicaen-auth",
-            "version": "1.2.0",
+            "name": "unicaen/auth",
+            "version": "1.1.10",
             "source": {
                 "type": "git",
-                "url": "git@git.unicaen.fr:dsi/lib/unicaen-auth",
-                "reference": "0a1c5f102a348aea1f950b7326f2e80141cdb3a8"
+                "url": "https://git.unicaen.fr/lib/unicaen/auth.git",
+                "reference": "2ae9bbb56197648dda4c2d3041354d4850168ae9"
             },
             "require": {
                 "bjyoungblood/bjy-authorize": ">=1.4",
                 "jasig/phpcas": ">=1.3.3",
-                "unicaen/unicaen-app": "^1.3",
+                "unicaen/app": "^1.3",
                 "zf-commons/zfc-user-doctrine-orm": ">=0.1"
             },
             "require-dev": {
-                "phpunit/phpunit": "^5.7"
+                "phpunit/phpunit": ">=3.7"
             },
             "type": "library",
             "autoload": {
@@ -1883,16 +1883,16 @@
                     "./Module.php"
                 ]
             },
-            "description": "Module d'authentification pour les applis ZF2 de l'UCBN",
-            "time": "2018-02-19T09:53:26+00:00"
+            "description": "Module d'authentification pour les applications Unicaen",
+            "time": "2018-02-26T10:42:53+00:00"
         },
         {
-            "name": "unicaen/unicaen-code",
-            "version": "1.1",
+            "name": "unicaen/code",
+            "version": "1.1.1",
             "source": {
-                "type": "svn",
-                "url": "https://svn.unicaen.fr/svn/UnicaenCode",
-                "reference": "/tags/1.1/@67"
+                "type": "git",
+                "url": "https://git.unicaen.fr/lib/unicaen/code.git",
+                "reference": "2bc844f982edbde7e6440da6d2a003f7646dc0d9"
             },
             "require": {
                 "doctrine/dbal": "^2.5",
@@ -1910,15 +1910,15 @@
                 ]
             },
             "description": "Boite à outils pour la programmation avec la bibliothèque Unicaen",
-            "time": "2018-01-31T16:41:13+00:00"
+            "time": "2018-01-31T15:41:01+00:00"
         },
         {
-            "name": "unicaen/unicaen-faq",
-            "version": "1.0.3",
+            "name": "unicaen/faq",
+            "version": "1.0.4",
             "source": {
-                "type": "svn",
-                "url": "https://svn.unicaen.fr/svn/UnicaenFaq",
-                "reference": "/tags/1.0.3/@12"
+                "type": "git",
+                "url": "https://git.unicaen.fr/lib/unicaen/faq.git",
+                "reference": "83b0fbc0617098a327060759b92f35c7c198a5c7"
             },
             "require": {
                 "unicaen/unicaen-app": "^1.2"
@@ -1939,43 +1939,15 @@
                 ]
             },
             "description": "Module de foire aux questions",
-            "time": "2017-04-25T17:21:22+00:00"
+            "time": "2017-04-25T15:20:48+00:00"
         },
         {
-            "name": "unicaen/unicaen-import",
-            "version": "1.0.10",
+            "name": "unicaen/ldap",
+            "version": "2.2.2",
             "source": {
-                "type": "svn",
-                "url": "https://svn.unicaen.fr/svn/UnicaenImport",
-                "reference": "/tags/1.0.10/@41"
-            },
-            "require": {
-                "unicaen/unicaen-auth": "1.*",
-                "unicaen/unicaen-oracle": "1.*"
-            },
-            "require-dev": {
-                "phpunit/phpunit": ">=3.7"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "UnicaenImport": "src/",
-                    "UnicaenImportTest": "tests/"
-                },
-                "classmap": [
-                    "./Module.php"
-                ]
-            },
-            "description": "Boite à outils pour la programmation avec la bibliothèque Unicaen",
-            "time": "2017-06-29T12:04:11+00:00"
-        },
-        {
-            "name": "unicaen/unicaen-ldap",
-            "version": "2.1.1",
-            "source": {
-                "type": "svn",
-                "url": "https://svn.unicaen.fr/svn/UnicaenLdap",
-                "reference": "/tags/2.1.1/@46"
+                "type": "git",
+                "url": "https://git.unicaen.fr/lib/unicaen/ldap.git",
+                "reference": "2dc7000839be21ffdcbbf97ccf0e3f78fe29f2a6"
             },
             "require": {
                 "php": "^5.6 || ^7.0",
@@ -2004,15 +1976,15 @@
                 ]
             },
             "description": "Module Ldap de l'UCBN",
-            "time": "2017-11-22T16:30:12+00:00"
+            "time": "2017-11-22T14:44:50+00:00"
         },
         {
-            "name": "unicaen/unicaen-leocarte",
-            "version": "1.0.6",
+            "name": "unicaen/leocarte",
+            "version": "1.0.7",
             "source": {
-                "type": "svn",
-                "url": "https://svn.unicaen.fr/svn/UnicaenLeocarte",
-                "reference": "/tags/1.0.6/@24"
+                "type": "git",
+                "url": "https://git.unicaen.fr/lib/unicaen/leocarte.git",
+                "reference": "bc887d475200ebe76eecc40f49b5b19a4413a4b4"
             },
             "require": {
                 "ext-gd": "*",
@@ -2033,7 +2005,116 @@
                 ]
             },
             "description": "Module de communication avec le web service des Leocartes",
-            "time": "2017-04-25T17:25:47+00:00"
+            "time": "2018-02-26T08:44:59+00:00"
+        },
+        {
+            "name": "unicaen/oracle-import",
+            "version": "1.0.10",
+            "source": {
+                "type": "git",
+                "url": "https://git.unicaen.fr/lib/unicaen/oracle-import.git",
+                "reference": "98895119997485df9e012233621146b3af2a04f2"
+            },
+            "require": {
+                "unicaen/unicaen-auth": "1.*",
+                "unicaen/unicaen-oracle": "1.*"
+            },
+            "require-dev": {
+                "phpunit/phpunit": ">=3.7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "UnicaenImport": "src/",
+                    "UnicaenImportTest": "tests/"
+                },
+                "classmap": [
+                    "./Module.php"
+                ]
+            },
+            "description": "Boite à outils pour la programmation avec la bibliothèque Unicaen",
+            "time": "2017-06-29T10:04:11+00:00"
+        },
+        {
+            "name": "unicaen/unicaen-app",
+            "version": "1.3.5",
+            "source": {
+                "type": "svn",
+                "url": "https://svn.unicaen.fr/svn/UnicaenApp",
+                "reference": "/tags/1.3.5/@863"
+            },
+            "require": {
+                "doctrine/doctrine-orm-module": ">=0.7",
+                "mpdf/mpdf": "v6.1.3",
+                "php": ">=5.6 || >=7.0",
+                "rwoverdijk/assetmanager": ">=1.3",
+                "zendframework/zend-config": "2.4.*",
+                "zendframework/zend-console": "2.4.*",
+                "zendframework/zend-eventmanager": "2.4.*",
+                "zendframework/zend-http": "2.4.*",
+                "zendframework/zend-i18n": "2.4.*",
+                "zendframework/zend-json": "2.4.*",
+                "zendframework/zend-ldap": "2.4.*",
+                "zendframework/zend-log": "2.4.*",
+                "zendframework/zend-mail": "2.4.*",
+                "zendframework/zend-mvc": "2.4.*",
+                "zendframework/zend-navigation": "2.4.*",
+                "zendframework/zend-serializer": "2.4.*",
+                "zendframework/zend-servicemanager": "2.4.*",
+                "zendframework/zend-session": "2.4.*",
+                "zendframework/zend-version": "2.4.*",
+                "zendframework/zend-view": "2.4.*"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^5.6",
+                "zendframework/zend-test": "^2.4"
+            },
+            "bin": [
+                "bin/deploy.sh",
+                "bin/doctrine-module-em"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "UnicaenApp": "src/",
+                    "UnicaenAppTest": "tests/"
+                },
+                "classmap": [
+                    "./Module.php"
+                ]
+            },
+            "description": "Module commun aux applis ZF2 de l'UCBN",
+            "time": "2018-02-22T09:53:16+00:00"
+        },
+        {
+            "name": "unicaen/unicaen-auth",
+            "version": "1.1.9",
+            "source": {
+                "type": "svn",
+                "url": "https://svn.unicaen.fr/svn/UnicaenAuth",
+                "reference": "/tags/1.1.9/@324"
+            },
+            "require": {
+                "bjyoungblood/bjy-authorize": ">=1.4",
+                "jasig/phpcas": ">=1.3.3",
+                "unicaen/unicaen-app": ">=1.2.2",
+                "zf-commons/zfc-user-doctrine-orm": ">=0.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": ">=3.7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "UnicaenAuth": "src/",
+                    "UnicaenAuthTest": "tests/"
+                },
+                "classmap": [
+                    "./Module.php"
+                ]
+            },
+            "description": "Module d'authentification pour les applis ZF2 de l'UCBN",
+            "time": "2018-01-08T14:10:35+00:00"
         },
         {
             "name": "unicaen/unicaen-oracle",
@@ -3700,12 +3781,12 @@
             "time": "2018-01-20T15:04:53+00:00"
         },
         {
-            "name": "unicaen/unicaen-test",
-            "version": "1.0.2",
+            "name": "unicaen/test",
+            "version": "1.0.3",
             "source": {
-                "type": "svn",
-                "url": "https://svn.unicaen.fr/svn/UnicaenTest",
-                "reference": "/tags/1.0.2/@9"
+                "type": "git",
+                "url": "https://git.unicaen.fr/lib/unicaen/test.git",
+                "reference": "b0ad32c6a1d733a5c90074d1ef3c7153f9cea7b8"
             },
             "require": {
                 "phpspec/prophecy": "^1.6",
@@ -3723,7 +3804,7 @@
                 ]
             },
             "description": "Module consacré aux tests",
-            "time": "2017-04-25T17:33:16+00:00"
+            "time": "2017-04-25T15:32:31+00:00"
         },
         {
             "name": "webmozart/assert",
