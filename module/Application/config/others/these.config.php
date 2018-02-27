@@ -11,8 +11,10 @@ use Application\Form\Factory\AttestationTheseFormFactory;
 use Application\Form\Factory\DiffusionHydratorFactory;
 use Application\Form\Factory\DiffusionTheseFormFactory;
 use Application\Form\Factory\MetadonneeTheseFormFactory;
+use Application\Form\Factory\RdvBuHydratorFactory;
 use Application\Form\Factory\RdvBuTheseDoctorantFormFactory;
 use Application\Form\Factory\RdvBuTheseFormFactory;
+use Application\Form\Hydrator\RdvBuHydrator;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\Service\Acteur\ActeurService;
 use Application\Service\Message\DiffusionMessages;
@@ -857,6 +859,7 @@ return [
         'factories' => array(
             'DiffusionHydrator' => DiffusionHydratorFactory::class,
             'AttestationHydrator' => AttestationHydratorFactory::class,
+            'RdvBuHydrator' => RdvBuHydratorFactory::class,
         )
     ),
     'service_manager' => [
