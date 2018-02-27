@@ -12,7 +12,8 @@ class RdvBuTheseFormFactory
     {
         $sl = $formElementManager->getServiceLocator();
 
-        $hydrator = new RdvBuHydrator($sl->get('doctrine.entitymanager.orm_default'));
+        /** @var RdvBuHydrator $hydrator */
+        $hydrator = $sl->get('HydratorManager')->get('RdvBuHydrator');
 
         $form = new RdvBuTheseForm();
         $form->setHydrator($hydrator);
