@@ -62,9 +62,9 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
     }
 
     /**
-     * Retrieve roles for the current identity.
+     * Collecte tous les rôles de l'utilisateur authentifié.
      *
-     * @return string[]
+     * @return Role[]
      */
     public function getIdentityRoles()
     {
