@@ -75,7 +75,7 @@ class UserContextService extends BaseUserContextService implements IndividuServi
      */
     public function getSelectedRoleDoctorant()
     {
-        return $this->_getSelectedRoleForRoleId(Role::ROLE_ID_DOCTORANT);
+        return $this->_getSelectedRoleForCode(Role::CODE_DOCTORANT);
     }
 
     /**
@@ -86,7 +86,7 @@ class UserContextService extends BaseUserContextService implements IndividuServi
      */
     public function getSelectedRoleBDD()
     {
-        return $this->_getSelectedRoleForRoleId(Role::ROLE_ID_BUREAU_DES_DOCTORATS);
+        return $this->_getSelectedRoleForCode(Role::CODE_BDD);
     }
 
     /**
@@ -94,7 +94,7 @@ class UserContextService extends BaseUserContextService implements IndividuServi
      */
     public function getSelectedRoleBU()
     {
-        return $this->_getSelectedRoleForRoleId(Role::ROLE_ID_BIBLIO_UNIV);
+        return $this->_getSelectedRoleForCode(Role::CODE_BU);
     }
 
     /**

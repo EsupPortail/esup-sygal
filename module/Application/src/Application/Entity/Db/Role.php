@@ -18,6 +18,8 @@ class Role extends AbstractRole
 
     const CODE_DOCTORANT = 'DOCTORANT';
     const CODE_ADMIN = 'ADMIN';
+    const CODE_BU = 'BU';
+    const CODE_BDD = 'BDD';
 
     const CODE_DIRECTEUR_THESE = 'D';
     const CODE_MEMBRE_JURY = 'M';
