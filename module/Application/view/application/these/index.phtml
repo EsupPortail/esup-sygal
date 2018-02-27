@@ -18,8 +18,6 @@ use Zend\Paginator\Paginator;
  */
 
 $canExport = $this->isAllowed(Privileges::getResourceId(ThesePrivileges::THESE_EXPORT_CSV));
-Locale::setDefault("fr_FR");
-
 $queryParams = $this->queryParams();
 
 $acteursFormatter = new ActeursFormatter();

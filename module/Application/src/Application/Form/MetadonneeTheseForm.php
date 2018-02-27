@@ -167,6 +167,8 @@ class MetadonneeTheseForm extends Form implements InputFilterProviderInterface
      */
     public function getInputFilterSpecification()
     {
+        \Locale::setDefault("fr_FR");
+
         return [
             'titre'          => [
                 'required' => false,
