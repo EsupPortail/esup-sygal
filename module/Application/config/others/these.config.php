@@ -1040,7 +1040,7 @@ return [
                             return $d->getAutorisMel() === null;
                         },
 
-                    "<p>La thèse est consultable sur internet via le portail national des thèses (<a href=\"www.theses.fr\">www.theses.fr</a>), " .
+                    "<p>La thèse est consultable sur internet via le portail national des thèses (<a href=\"http://www.theses.fr\">www.theses.fr</a>), " .
                     "sans authentification. La thèse peut également être accessible depuis des plateformes de diffusion choisies par " .
                     "Normandie Université dans le cadre de sa politique de valorisation scientifique " .
                     "(exemple : <a href=\"http://tel.archives-ouvertes.fr\">http://tel.archives-ouvertes.fr</a>). </p>" =>
@@ -1053,7 +1053,7 @@ return [
                     "Celle-ci est ensuite effectuée automatiquement le lendemain de l'expiration du délai, sans préavis. " .
                     "Une demande de prolongation de l'embargo auprès du service de documentation concerné esrt possible, " .
                     "mais doit anticiper le délai de traitement de la demande. </p>" .
-                    "<p>Dès la fin de l'embargo, la thèse est consultable sur internet via le portail national des thèses (<a href=\"www.theses.fr\">www.theses.fr</a>), " .
+                    "<p>Dès la fin de l'embargo, la thèse est consultable sur internet via le portail national des thèses (<a href=\"http://www.theses.fr\">www.theses.fr</a>), " .
                     "sans authentification. La thèse pourra également être accessible depuis des plateformes de diffusion choisies par " .
                     "Normandie Université dans le cadre de sa politique de valorisation scientifique " .
                     "(exemple : <a href=\"http://tel.archives-ouvertes.fr\">http://tel.archives-ouvertes.fr</a>). </p>" =>
