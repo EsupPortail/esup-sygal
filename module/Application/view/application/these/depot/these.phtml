@@ -19,6 +19,16 @@ use Application\View\Renderer\PhpRenderer;
  * @var Etablissement  $etabComue
  */
 
+
+
+$maintenant = new DateTime();
+$soutenance = $these->getDateSoutenance();
+$canDeposer = true;
+if (!$versionFichier->estVersionCorrigee() && $soutenance !== null && $maintenant > $soutenance) $canDeposer = false;
+
+
+
+
 $canEdit = $this->isAllowed($these, $p = ThesePrivileges::privilegeDeposerFor($nature, $versionFichier));
 
 $uploader = $this->uploader()->setUrl($uploadUrl);
@@ -56,13 +66,38 @@ $maxFileCountThese = 1;
     </div>
 </div>
 */ ?>
+
+<?php if ($debug === true) {
+        print "Debug depot these <br/>";
+        print "<table>";
+        print "<tr><th>canEdit</th><td>{$canEdit}</td></tr>";
+        print "<tr><th>canDeposer</th><td>{$canDeposer}</td></tr>";
+        print "</table>";
+    }
+?>
+
 <?php echo $this->partial('application/these/depot/partial/fichier', [
-    'canUpload'               => $canEdit,
+    'canUpload'               => ($canEdit && $canDeposer),
     'class'                   => 'these',
     'uploadUrl'               => $uploadUrl,
     'uploadedFilesListUrl'    => $theseListUrl,
     'maxUploadableFilesCount' => $maxFileCountThese,
 ]);
+?>
+
+<?php
+if (!$canDeposer) {
+print "<div class='alert alert-sm alert-warning'>";
+    print "<p>";
+        print "<span class=\"glyphicon glyphicon-warning-sign\"></span>";
+        print "La date de soutenance est dépassée, le dépôt initial est bloqué. ";
+//        print "</p>";
+//        print "<p>";
+        print "Pour déposer une version corrigée (seulement sur demande du jury), ";
+        print "utiliser le second dépôt.";
+        print "</p>";
+    print "</div>";
+}
 ?>
 
 <div class="alert alert-sm alert-warning">
@@ -80,6 +115,7 @@ $maxFileCountThese = 1;
            target="_blank">sur cette page</a>.
     </p>
 </div>
+
 
 <?php
 $msgCollector = $this->messageCollector(BaseAssertion::class);
