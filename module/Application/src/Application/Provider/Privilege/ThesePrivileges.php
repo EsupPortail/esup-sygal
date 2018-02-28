@@ -63,9 +63,9 @@ class ThesePrivileges extends Privileges
     const THESE_SAISIE_MOT_CLE_RAMEAU               = 'these-saisie-mot-cle-rameau';
 
     /**
-     * Validation de remise de la version corigée
+     * Remise de la version corigée
      */
-    const THESE_VERSION_PAPIER_CORRIGEE             = 'these-version-papier-corrigee';
+    const THESE_CONSULTATION_VERSION_PAPIER_CORRIGEE  = 'these-consultation-version-papier-corrigee';
 
     /**
      * Retourne le privilège correspondant au téléversement/suppression de fichier répondant aux critères spécifiés.

@@ -360,7 +360,7 @@ abstract class WorkflowServiceAbstractTest extends AbstractControllerTestCase
 
     protected function _franchir_etape_validation_depot_version_corrigee_directeurs()
     {
-        $directeurs = $this->these->getActeursByRoleSourceCode(Role::CODE_DIRECTEUR_THESE);
+        $directeurs = $this->these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE);
 
         // création d'une validation par directeur
         $validations = [];

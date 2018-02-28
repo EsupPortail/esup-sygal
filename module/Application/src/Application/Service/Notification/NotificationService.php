@@ -302,7 +302,7 @@ class NotificationService implements VariableServiceAwareInterface, MailerServic
      */
     public function notifierValidationCorrectionTheseEtudiant(ViewModel $viewModel, These $these)
     {
-        $to = $these->getDoctorant()->getEmail() ;
+        $to = $these->getDoctorant()->getEmailPro() ;
         $infoMessage = sprintf(
             "Un mail de notification vient d'être envoyé à votre doctorant (%s)",
             $to
@@ -371,6 +371,7 @@ class NotificationService implements VariableServiceAwareInterface, MailerServic
         $html = $this->renderer->render($viewModel);
 
         $subject = "[SyGAL] " . $viewModel->getVariable('subject');
+
         $to = $viewModel->getVariable('to');
         $cc = $viewModel->getVariable('cc');
         $bcc = $viewModel->getVariable('bcc');

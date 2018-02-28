@@ -54,7 +54,6 @@ return [
                             ThesePrivileges::THESE_SAISIE_RDV_BU,
                             ThesePrivileges::FICHIER_DIVERS_TELEVERSER,
                             ThesePrivileges::FICHIER_DIVERS_CONSULTER,
-                            ThesePrivileges::THESE_VERSION_PAPIER_CORRIGEE,
                         ],
                         'resources'  => ['These'],
                         'assertion'  => 'Assertion\\These',
@@ -236,7 +235,7 @@ return [
                         'depot-papier-final',
                     ],
                     'privileges' => [
-                        ThesePrivileges::THESE_VERSION_PAPIER_CORRIGEE,
+                        ThesePrivileges::THESE_CONSULTATION_VERSION_PAPIER_CORRIGEE,
                     ],
                     'assertion'  => 'Assertion\\These',
                 ],

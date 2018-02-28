@@ -59,6 +59,11 @@ class Role extends AbstractRole
     protected $code;
 
     /**
+     * @var string
+     */
+    protected $libelle;
+
+    /**
      * @return bool
      */
     public function estRoleDoctorant()
@@ -97,6 +102,25 @@ class Role extends AbstractRole
     public function setCode($code)
     {
         $this->code = $code;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLibelle()
+    {
+        return $this->libelle;
+    }
+
+    /**
+     * @param string $libelle
+     * @return Role
+     */
+    public function setLibelle($libelle)
+    {
+        $this->libelle = $libelle;
 
         return $this;
     }

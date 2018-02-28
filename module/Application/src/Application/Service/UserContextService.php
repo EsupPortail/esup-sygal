@@ -243,7 +243,9 @@ class UserContextService extends BaseUserContextService implements IndividuServi
         }
 
         /** @var Individu $individu */
-        $individu = $this->individuService->getRepository()->findOneBy(['sourceCode' => $identity->getSupannEmpId()]);
+        // todo: solution provisoire!
+        $etab = 'UCN';
+        $individu = $this->individuService->getRepository()->findOneByEmpId($identity->getSupannEmpId(), $etab);
 
         return $individu;
     }

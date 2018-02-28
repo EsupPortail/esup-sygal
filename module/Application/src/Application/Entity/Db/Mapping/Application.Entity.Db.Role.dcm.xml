@@ -9,6 +9,7 @@
         </id>
 
         <field name="code" type="string" column="CODE" length="64" nullable="false"/>
+        <field name="libelle" type="string" column="LIBELLE" length="128" nullable="false"/>
         <field name="roleId" type="string" column="ROLE_ID" length="64" nullable="false"/>
         <field name="isDefault" type="boolean" column="IS_DEFAULT" nullable="false"/>
         <field name="ldapFilter" type="string" column="LDAP_FILTER" length="255" nullable="true"/>
