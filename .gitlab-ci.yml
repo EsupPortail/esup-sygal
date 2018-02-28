@@ -9,7 +9,7 @@ test:
 
 build:
   stage: build
-  script: echo "Building the app"
+  script: aaa ; echo "Building the app"
 
 deploy_staging:
   stage: deploy
