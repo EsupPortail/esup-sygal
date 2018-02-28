@@ -1190,4 +1190,15 @@ class These implements HistoriqueAwareInterface, ResourceInterface
                 throw new RuntimeException("Interval rencontré non prévu: " . $spec);
         }
     }
+
+    /**
+     * Predicat testant si une thèse est soutenue en utilisant la date du système
+     * @return boolean
+     */
+    public function estSoutenue() {
+        $maintenant = new DateTime();
+        $soutenance = $this->getDateSoutenance();
+        if ($maintenant > $soutenance) return true;
+        return false;
+    }
 }
