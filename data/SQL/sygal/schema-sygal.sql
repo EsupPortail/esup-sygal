@@ -584,6 +584,9 @@ create table PRIVILEGE
   ORDRE NUMBER
 );
 
+
+create sequence privilege_id_seq;
+
 create index PRIVILEGE_CATEG_IDX on PRIVILEGE (CATEGORIE_ID);
 create unique index PRIVILEGE_UNIQUE on PRIVILEGE (CATEGORIE_ID, CODE);
 

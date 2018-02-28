@@ -45,7 +45,6 @@ INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (90, 24, '
 INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (93, 22, 'consultation', 'Consultation d''Unité de Recherche', 100);
 INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (94, 22, 'modification', 'Modification d''Unité de Recherche', 110);
 INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (95, 5, 'modification', 'Modification d''utilisateur', 110);
-INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (217, 3, 'version-papier-corrigee', 'Validation de la remise de la version papier corrigée', 3300);
 INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (137, 3, 'depot-version-corrigee', 'Dépôt de la version corrigée de la thèse', 3055);
 INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (127, 24, 'depot-these-corrigee', 'Validation du dépôt de la thèse corrigée', 4000);
 INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (128, 24, 'depot-these-corrigee-suppression', 'Suppression de la validation du dépôt de la thèse corrigée', 4120);
@@ -56,6 +55,12 @@ INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (197, 3, '
 INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (129, 24, 'correction-these', 'Validation des corrections de la thèse', 4100);
 INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (130, 24, 'correction-these-suppression', 'Suppression de la validation des corrections de la thèse', 4120);
 INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (198, 3, 'saisie-attestations', 'Modification des attestations', 3030);
+insert into PRIVILEGE(ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE)
+  select privilege_id_seq.nextval, cp.id, 'version-papier-corrigee', 'Validation du dépôt de la version papier corrigée', 3040
+  from CATEGORIE_PRIVILEGE cp where cp.CODE = 'validation';
+insert into PRIVILEGE(ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE)
+  select privilege_id_seq.nextval, cp.id, 'consultation-version-papier-corrigee', 'Consultation du dépôt de la version papier corrigée', 3030
+  from CATEGORIE_PRIVILEGE cp where cp.CODE = 'these';
 
 
 --delete from ROLE_PRIVILEGE;

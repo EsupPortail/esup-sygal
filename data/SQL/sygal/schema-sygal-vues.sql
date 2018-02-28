@@ -305,7 +305,7 @@ create view V_SITU_DEPOT_VC_VALID_DIR as
   WITH validations_attendues AS (
       SELECT a.THESE_ID, a.INDIVIDU_ID, tv.ID as TYPE_VALIDATION_ID
       FROM ACTEUR a
-        JOIN ROLE r on a.ROLE_ID = r.ID and r.SOURCE_CODE = 'D' -- directeur de thèse
+        JOIN ROLE r on a.ROLE_ID = r.ID and r.CODE = 'D' -- directeur de thèse
         JOIN TYPE_VALIDATION tv on tv.code = 'CORRECTION_THESE'
       where a.HISTO_DESTRUCTION is null
   )
