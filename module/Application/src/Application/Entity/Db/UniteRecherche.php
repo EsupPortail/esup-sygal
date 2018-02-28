@@ -15,12 +15,8 @@ use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
 /**
  * UniteRecherche
  */
-class UniteRecherche extends Structure implements HistoriqueAwareInterface, SourceAwareInterface
+class UniteRecherche extends Structure
 {
-    use HistoriqueAwareTrait;
-    use SourceAwareTrait;
-
-
     /**
      * @var string
      */
@@ -52,6 +48,16 @@ class UniteRecherche extends Structure implements HistoriqueAwareInterface, Sour
     public function __construct()
     {
         $this->uniteRechercheIndividus = new ArrayCollection();
+    }
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 
     /**
