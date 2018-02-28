@@ -121,7 +121,7 @@ class RdvBu implements HistoriqueAwareInterface
     }
 
     /**
-     * @param int $pageTitreConforme
+     * @param int $pageTitreConforme -1=indéterminé, 0=non conforme, 1=conforme
      * @return RdvBu
      */
     public function setPageTitreConforme($pageTitreConforme = 1)

@@ -91,7 +91,7 @@ class ValidationService extends BaseService
 
         // si la validation est annulée, on remet le témoin de page de couv conforme à faux
         if ($rdvBu = $these->getRdvBu()) {
-            $rdvBu->setPageTitreConforme(false);
+            $rdvBu->setPageTitreConforme(-1);
 
             $this->getEntityManager()->flush($rdvBu);
         }
