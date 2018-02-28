@@ -16,34 +16,58 @@ class Role extends AbstractRole
 
     // Memento: (&(eduPersonAffiliation=member)(eduPersonAffiliation=student)(eduPersonAffiliation=researcher))
 
-    const SOURCE_CODE_DIRECTEUR_THESE = 'D';
-    const SOURCE_CODE_MEMBRE_JURY = 'M';
-    const SOURCE_CODE_PRESIDENT_JURY = 'P';
-    const SOURCE_CODE_RAPPORTEUR_JURY = 'R';
-    const SOURCE_CODE_CO_ENCADRANT = 'B';
+    const CODE_DOCTORANT = 'DOCTORANT';
+    const CODE_ADMIN = 'ADMIN';
+    const CODE_BU = 'BU';
+    const CODE_BDD = 'BDD';
 
+    const CODE_DIRECTEUR_THESE = 'D';
+    const CODE_MEMBRE_JURY = 'M';
+    const CODE_PRESIDENT_JURY = 'P';
+    const CODE_RAPPORTEUR_JURY = 'R';
+    const CODE_CO_ENCADRANT = 'B';
+
+    // @todo NB: maintenant il y le code étab concaténé au "role_id"
     const ROLE_ID_DOCTORANT = "Doctorant";
     const ROLE_ID_BUREAU_DES_DOCTORATS = "Bureau des doctorats";
     const ROLE_ID_BIBLIO_UNIV = "Bibliothèque universitaire";
+
     const ROLE_ID_ECOLE_DOCT = "École doctorale";
     const ROLE_ID_UNITE_RECH = "Unité de recherche";
 
     static public $ordreSourcesCodes = [
-        self::SOURCE_CODE_DIRECTEUR_THESE => 'aa',
-        self::SOURCE_CODE_CO_ENCADRANT    => 'ab',
-        self::SOURCE_CODE_PRESIDENT_JURY  => 'b',
-        self::SOURCE_CODE_MEMBRE_JURY     => 'c',
-        self::SOURCE_CODE_RAPPORTEUR_JURY => 'd',
+        self::CODE_DIRECTEUR_THESE => 'aa',
+        self::CODE_CO_ENCADRANT    => 'ab',
+        self::CODE_PRESIDENT_JURY  => 'b',
+        self::CODE_MEMBRE_JURY     => 'c',
+        self::CODE_RAPPORTEUR_JURY => 'd',
     ];
 
     /**
      * @var string
      */
     protected $sourceCode;
+
+    /**
+     * @var Etablissement
+     */
     protected $etablissement;
 
     /**
-     * @return mixed
+     * @var string Code unique *au sein d'un établissement*.
+     */
+    protected $code;
+
+    /**
+     * @return bool
+     */
+    public function estRoleDoctorant()
+    {
+        return $this->getCode() === self::CODE_DOCTORANT;
+    }
+
+    /**
+     * @return Etablissement
      */
     public function getEtablissement()
     {
@@ -51,11 +75,30 @@ class Role extends AbstractRole
     }
 
     /**
-     * @param mixed $etablissement
+     * @param Etablissement $etablissement
      */
-    public function setEtablissement($etablissement)
+    public function setEtablissement(Etablissement $etablissement)
     {
         $this->etablissement = $etablissement;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCode()
+    {
+        return $this->code;
+    }
+
+    /**
+     * @param string $code
+     * @return Role
+     */
+    public function setCode($code)
+    {
+        $this->code = $code;
+
+        return $this;
     }
 
     /**

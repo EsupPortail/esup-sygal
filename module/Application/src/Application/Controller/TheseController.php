@@ -120,7 +120,7 @@ class TheseController extends AbstractController implements
         return new ViewModel([
             'theses' => $paginator,
             'text'   => $text,
-            'roleDirecteurThese' => $this->roleService->getRepository()->findOneBy(['sourceCode' => Role::SOURCE_CODE_DIRECTEUR_THESE]),
+            'roleDirecteurThese' => $this->roleService->getRepository()->findOneBy(['sourceCode' => Role::CODE_DIRECTEUR_THESE]),
         ]);
     }
 

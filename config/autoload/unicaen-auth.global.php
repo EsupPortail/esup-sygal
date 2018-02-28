@@ -6,7 +6,11 @@
  * drop this config file in it and change the values as you wish.
  */
 
+use Application\Authentication\Storage\AppStorage;
+use Application\Authentication\Storage\AppStorageFactory;
 use Application\Entity\Db\Utilisateur;
+use Application\Provider\IdentityProvider;
+use Application\Provider\IdentityProviderFactory;
 
 $settings = [
     /**
@@ -32,11 +36,11 @@ $settings = [
 $config = [
     'service_manager' => [
         'invokables' => [
-            'Application\Authentication\Storage\AppStorage' => 'Application\Authentication\Storage\AppStorage',
         ],
         'factories' => [
+            AppStorage::class => AppStorageFactory::class,
             'UnicaenAuth\Authentication\Storage\Chain' => 'Application\Authentication\Storage\ChainServiceFactory',
-            'Application\Provider\IdentityProvider' => 'Application\Provider\IdentityProviderFactory',
+            IdentityProvider::class => IdentityProviderFactory::class,
         ]
     ],
     

@@ -15,21 +15,8 @@ use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
 /**
  * UniteRecherche
  */
-class UniteRecherche implements HistoriqueAwareInterface, SourceAwareInterface
+class UniteRecherche extends Structure
 {
-    use HistoriqueAwareTrait;
-    use SourceAwareTrait;
-
-    /**
-     * @var string
-     */
-    protected $libelle;
-
-    /**
-     * @var string
-     */
-    protected $sigle;
-
     /**
      * @var string
      */
@@ -51,11 +38,6 @@ class UniteRecherche implements HistoriqueAwareInterface, SourceAwareInterface
     protected $sourceCode;
 
     /**
-     * @var string
-     */
-    protected $cheminLogo;
-
-    /**
      * @var Collection
      */
     protected $uniteRechercheIndividus;
@@ -68,62 +50,10 @@ class UniteRecherche implements HistoriqueAwareInterface, SourceAwareInterface
         $this->uniteRechercheIndividus = new ArrayCollection();
     }
 
-
-    public function __toString()
-    {
-        return $this->getLibelle();
-    }
-    
-    /**
-     * Set libelleCourt
-     *
-     * @param string $libelle
-     * @return UniteRecherche
-     */
-    public function setLibelle($libelle)
-    {
-        $this->libelle = $libelle;
-
-        return $this;
-    }
-
-    /**
-     * Get libelleCourt
-     *
-     * @return string 
-     */
-    public function getLibelle()
-    {
-        return $this->libelle;
-    }
-
-    /**
-     * Set libelleLong
-     *
-     * @param string $sigle
-     * @return UniteRecherche
-     */
-    public function setSigle($sigle)
-    {
-        $this->sigle = $sigle;
-
-        return $this;
-    }
-
-    /**
-     * Get libelleLong
-     *
-     * @return string 
-     */
-    public function getSigle()
-    {
-        return $this->sigle;
-    }
-
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -231,22 +161,4 @@ class UniteRecherche implements HistoriqueAwareInterface, SourceAwareInterface
         return file_get_contents(APPLICATION_DIR . $this->cheminLogo);
 
     }
-
-    /**
-     * @return string
-     */
-    public function getCheminLogo()
-    {
-        return $this->cheminLogo;
-    }
-
-    /**
-     * @param string $cheminLogo
-     */
-    public function setCheminLogo($cheminLogo)
-    {
-        $this->cheminLogo = $cheminLogo;
-    }
-
-
 }

@@ -5,30 +5,35 @@ namespace Application\Provider;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\EcoleDoctoraleIndividu;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\UniteRechercheIndividu;
+use Application\Service\Acteur\ActeurServiceAwareTrait;
+use Application\Service\Doctorant\DoctorantServiceAwareTrait;
+use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
+use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use BjyAuthorize\Provider\Identity\ProviderInterface;
-use Doctrine\ORM\Query\Expr\Join;
-use UnicaenApp\Service\EntityManagerAwareInterface;
-use UnicaenApp\Service\EntityManagerAwareTrait;
+use Doctrine\ORM\NonUniqueResultException;
+use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Entity\Ldap\People;
 use UnicaenAuth\Provider\Identity\ChainableProvider;
 use UnicaenAuth\Provider\Identity\ChainEvent;
 use Zend\Authentication\AuthenticationService;
-use Zend\Http\PhpEnvironment\Request;
-use Zend\Http\PhpEnvironment\Response;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 
 /**
- *
+ * Service chargé de fournir tous les rôles que possède l'identité authentifiée.
  *
  * @author Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>
  */
-class IdentityProvider implements ProviderInterface, ChainableProvider, EntityManagerAwareInterface, ServiceLocatorAwareInterface
+class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceLocatorAwareInterface
 {
-    use EntityManagerAwareTrait;
     use ServiceLocatorAwareTrait;
+    use ActeurServiceAwareTrait;
+    use DoctorantServiceAwareTrait;
+    use EcoleDoctoraleServiceAwareTrait;
+    use UniteRechercheServiceAwareTrait;
+    use RoleServiceAwareTrait;
 
     private $roles;
 
@@ -38,13 +43,14 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, EntityMa
     private $authenticationService;
 
     /**
-     * IdentityProvider constructor.
-     *
      * @param AuthenticationService $authenticationService
+     * @return IdentityProvider
      */
-    public function __construct(AuthenticationService $authenticationService)
+    public function setAuthenticationService(AuthenticationService $authenticationService)
     {
         $this->authenticationService = $authenticationService;
+
+        return $this;
     }
 
     /**
@@ -56,7 +62,9 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, EntityMa
     }
 
     /**
-     * {@inheritDoc}
+     * Collecte tous les rôles de l'utilisateur authentifié.
+     *
+     * @return Role[]
      */
     public function getIdentityRoles()
     {
@@ -77,7 +85,8 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, EntityMa
             $this->getRolesFromUniteRechercheIndividu($people),
             $this->getRolesFromDoctorant($people));
 
-        $this->roles = array_unique($roles);
+        // suppression des doublons en comparant le __toString() de chaque Role
+        $this->roles = array_unique($roles, SORT_STRING);
 
         return $this->roles;
     }
@@ -86,79 +95,57 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, EntityMa
      * Rôles découlant de la présence de l'utilisateur dans la table Acteur.
      *
      * @param People $people
-     * @return array
+     * @return Role[]
      */
     private function getRolesFromActeur(People $people)
     {
-        $qb = $this->entityManager->getRepository(Acteur::class)->createQueryBuilder('a');
-        $qb
-            ->addSelect('r')
-            ->join('a.individu', 'i', Join::WITH, 'i.sourceCode = :pid')
-            ->join('a.role', 'r')
-            ->setParameter('pid', $people->getSupannEmpId())
-        ;
+        $acteurs = $this->acteurService->getRepository()->findBySourceCodeIndividu($people->getSupannEmpId());
 
         // pour l'instant on ne considère pas tous les types d'acteur
-        $qb->andWhere($qb->expr()->in('r.sourceCode', [
-            Role::SOURCE_CODE_DIRECTEUR_THESE,
-        ]));
+        $acteurs = array_filter($acteurs, function(Acteur $a) {
+            return $a->getRole()->getCode() === Role::CODE_DIRECTEUR_THESE;
+        });
 
-        $acteurs = $qb->getQuery()->getResult();
-
-        return array_unique(array_map(function(Acteur $a) {
-            return $a->getRole()->getRoleId();
-        }, $acteurs));
+        return array_map(function(Acteur $a) {
+            return $a->getRole();
+        }, $acteurs);
     }
 
     /**
      * Rôle découlant de la présence de l'utilisateur dans EcoleDoctoraleIndividu.
      *
      * @param People $people
-     * @return array
+     * @return Role[]
      */
     private function getRolesFromEcoleDoctoraleIndividu(People $people)
     {
-        $qb = $this->entityManager->getRepository(EcoleDoctoraleIndividu::class)->createQueryBuilder('edi');
-        $qb
-            ->addSelect('r')
-            ->join('edi.individu', 'i', Join::WITH, 'i.sourceCode = :codePer')
-            ->join('edi.role', 'r')
-            ->setParameter('codePer', $people->getSupannEmpId())
-        ;
-        $result = $qb->getQuery()->getResult();
+        $result = $this->ecoleDoctoraleService->getRepository()->findMembresBySourceCodeIndividu($people->getSupannEmpId());
 
-        return array_unique(array_map(function(EcoleDoctoraleIndividu $edi) {
-            return $edi->getRole()->getRoleId();
-        }, $result));
+        return array_map(function(EcoleDoctoraleIndividu $edi) {
+            return $edi->getRole();
+        }, $result);
     }
 
     /**
      * Rôle découlant de la présence de l'utilisateur dans UniteRechercheIndividu.
      *
      * @param People $people
-     * @return array
+     * @return Role[]
      */
     private function getRolesFromUniteRechercheIndividu(People $people)
     {
-        $qb = $this->entityManager->getRepository(UniteRechercheIndividu::class)->createQueryBuilder('uri');
-        $qb
-            ->addSelect('r')
-            ->join('uri.individu', 'i', Join::WITH, 'i.sourceCode = :codePer')
-            ->join('uri.role', 'r')
-            ->setParameter('codePer', $people->getSupannEmpId())
-        ;
-        $result = $qb->getQuery()->getResult();
+        $result = $this->uniteRechercheService->getRepository()->findMembresBySourceCodeIndividu($people->getSupannEmpId());
 
-        return array_unique(array_map(function(UniteRechercheIndividu $uri) {
-            return $uri->getRole()->getRoleId();
-        }, $result));
+        return array_map(function(UniteRechercheIndividu $uri) {
+            return $uri->getRole();
+        }, $result);
     }
 
     /**
      * Rôle découlant de la présence de l'utilisateur dans la table Doctorant.
      *
      * @param People $people
-     * @return array
+     * @return Role[]
      */
     private function getRolesFromDoctorant(People $people)
     {
@@ -167,16 +154,20 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, EntityMa
          * - avec son numéro étudiant (Doctorant::sourceCode),
          * - avec son persopass (DoctorantCompl::persopass), seulement après qu'il l'a saisi sur la page d'identité de la thèse.
          */
-        $qb = $this->entityManager->getRepository(Doctorant::class)->createQueryBuilder('t');
-        $qb
-            ->select('COUNT(t)')
-            ->andWhere('1 = pasHistorise(t)')
-            ->leftJoin('t.complements', 'c')
-            ->andWhere('t.sourceCode = :login OR c.persopass = :login')
-            ->setParameter('login', $people->getSupannAliasLogin());
+        $username = $people->getSupannAliasLogin();
+        try {
+            $doctorant = $this->doctorantService->getRepository()->findOneByUsername($username);
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Plusieurs doctorants ont été trouvés avec le même username: " . $username);
+        }
 
-        $isDoctorant = (bool) (int) $qb->getQuery()->getSingleScalarResult();
+        if (! $doctorant) {
+            return [];
+        }
 
-        return $isDoctorant ? [Role::ROLE_ID_DOCTORANT] : [];
+        $role = $this->roleService->getRepository()->findRoleDoctorantForEtab($doctorant->getEtablissement());
+
+        return [$role];
+
     }
 }

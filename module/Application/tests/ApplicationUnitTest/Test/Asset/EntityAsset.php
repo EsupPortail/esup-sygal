@@ -213,7 +213,7 @@ class EntityAsset
     {
         $e = new Role();
         $e
-            ->setSourceCode(Role::SOURCE_CODE_DIRECTEUR_THESE)
+            ->setSourceCode(Role::CODE_DIRECTEUR_THESE)
             ->setSource($source)
             ->setRoleId(uniqid());
 

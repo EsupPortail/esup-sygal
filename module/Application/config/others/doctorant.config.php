@@ -102,6 +102,9 @@ return [
         'factories' => [
 
         ],
+        'aliases' => [
+            DoctorantService::class => 'DoctorantService',
+        ]
     ],
     'controllers'     => [
         'invokables' => [
