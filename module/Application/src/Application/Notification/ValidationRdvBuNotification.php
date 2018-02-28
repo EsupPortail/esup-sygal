@@ -22,8 +22,8 @@ class ValidationRdvBuNotification extends Notification
             Variable::CODE_EMAIL_BDD,
             Variable::CODE_EMAIL_BU,
         ], $this->getThese());
-        $emailBDD = $variables[Variable::CODE_EMAIL_BDD];
-        $emailBU = $variables[Variable::CODE_EMAIL_BU];
+        $emailBDD = $variables[Variable::CODE_EMAIL_BDD]->getValeur();
+        $emailBU = $variables[Variable::CODE_EMAIL_BU]->getValeur();
 
         $doctorant = $this->these->getDoctorant();
 
