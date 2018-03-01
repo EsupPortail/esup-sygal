@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="Application\Entity\Db\Structure" table="STRUCTURE">
+
+        <id name="id" type="integer" column="ID">
+            <generator strategy="SEQUENCE"/>
+        </id>
+        <field name="sigle"      type="string" column="SIGLE"       length="32"  nullable="true"/>
+        <field name="libelle"    type="string" column="LIBELLE"     length="128" nullable="false"/>
+        <field name="cheminLogo" type="string" column="CHEMIN_LOGO" length="200" nullable="true"/>
+
+        <one-to-one field="etablissement" target-entity="Application\Entity\Db\Etablissement" mapped-by="structure"/>
+        <one-to-one field="ecoleDoctorale" target-entity="Application\Entity\Db\EcoleDoctorale" mapped-by="structure"/>
+        <one-to-one field="uniteRecherche" target-entity="Application\Entity\Db\UniteRecherche" mapped-by="structure"/>
+
+    </entity>
+</doctrine-mapping>

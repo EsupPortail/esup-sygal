@@ -11,12 +11,14 @@ use UnicaenApp\Util;
 use UnicaenImport\Entity\Db\Interfaces\SourceAwareInterface;
 use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
 
-
 /**
  * UniteRecherche
  */
-class UniteRecherche extends Structure
+class UniteRecherche implements HistoriqueAwareInterface, SourceAwareInterface
 {
+    use HistoriqueAwareTrait;
+    use SourceAwareTrait;
+
     /**
      * @var string
      */
@@ -38,6 +40,11 @@ class UniteRecherche extends Structure
     protected $sourceCode;
 
     /**
+     * @var Structure
+     */
+    protected $structure;
+
+    /**
      * @var Collection
      */
     protected $uniteRechercheIndividus;
@@ -48,16 +55,6 @@ class UniteRecherche extends Structure
     public function __construct()
     {
         $this->uniteRechercheIndividus = new ArrayCollection();
-    }
-
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 
     /**
@@ -82,6 +79,54 @@ class UniteRecherche extends Structure
     public function getSourceCode()
     {
         return $this->sourceCode;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLibelle()
+    {
+        return $this->getStructure()->getLibelle();
+    }
+
+    /**
+     * @param string $libelle
+     */
+    public function setLibelle($libelle)
+    {
+        $this->getStructure()->setLibelle($libelle);
+    }
+
+    /**
+     * @return string
+     */
+    public function getCheminLogo()
+    {
+        return $this->getStructure()->getCheminLogo();
+    }
+
+    /**
+     * @param string $cheminLogo
+     */
+    public function setCheminLogo($cheminLogo)
+    {
+        $this->getStructure()->setCheminLogo($cheminLogo);
+    }
+
+    /**
+     * @return string
+     */
+    public function getSigle()
+    {
+        return $this->getStructure()->getSigle();
+    }
+
+    /**
+     * @param string $sigle
+     */
+    public function setSigle($sigle)
+    {
+        $this->getStructure()->setSigle($sigle);
     }
 
     /**
@@ -120,6 +165,25 @@ class UniteRecherche extends Structure
         $this->autresEtablissements = $autresEtablissements;
 
         return $this;
+    }
+
+    /**
+     * @param Structure $structure
+     * @return UniteRecherche
+     */
+    public function setStructure($structure)
+    {
+        $this->structure = $structure;
+
+        return $this;
+    }
+
+    /**
+     * @return Structure
+     */
+    public function getStructure()
+    {
+        return $this->structure;
     }
 
     /**

@@ -7,7 +7,7 @@ use UnicaenApp\Util;
 /**
  * Etablissement
  */
-class Etablissement extends Structure
+class Etablissement
 {
     const CODE_COMUE = 'COMUE';
 
@@ -18,20 +18,9 @@ class Etablissement extends Structure
     protected $roles;
 
     /**
-     * @return mixed
+     * @var Structure
      */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param mixed $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
+    protected $structure;
 
     /**
      * @return mixed
@@ -47,6 +36,57 @@ class Etablissement extends Structure
     public function setCode($code)
     {
         $this->code = $code;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLibelle()
+    {
+        return $this->getStructure()->getLibelle();
+    }
+
+    /**
+     * @param string $libelle
+     */
+    public function setLibelle($libelle)
+    {
+        $this->getStructure()->setLibelle($libelle);
+    }
+
+    /**
+     * @return string
+     */
+    public function getCheminLogo()
+    {
+        return $this->getStructure()->getCheminLogo();
+    }
+
+    /**
+     * @param string $cheminLogo
+     */
+    public function setCheminLogo($cheminLogo)
+    {
+        $this->getStructure()->setCheminLogo($cheminLogo);
+    }
+
+    /**
+     * @param Structure $structure
+     * @return self
+     */
+    public function setStructure($structure)
+    {
+        $this->structure = $structure;
+
+        return $this;
+    }
+
+    /**
+     * @return Structure
+     */
+    public function getStructure()
+    {
+        return $this->structure;
     }
 
     /**
