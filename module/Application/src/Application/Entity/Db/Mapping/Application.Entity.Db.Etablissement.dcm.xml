@@ -19,6 +19,9 @@
             <join-columns>
                 <join-column name="STRUCTURE_ID" referenced-column-name="ID"/>
             </join-columns>
+            <cascade>
+                <cascade-all/>
+            </cascade>
         </one-to-one>
 
     </entity>

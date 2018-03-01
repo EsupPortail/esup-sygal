@@ -42,6 +42,9 @@
       <join-columns>
         <join-column name="STRUCTURE_ID" referenced-column-name="ID"/>
       </join-columns>
+      <cascade>
+        <cascade-all/>
+      </cascade>
     </one-to-one>
 
     <one-to-many field="uniteRechercheIndividus" target-entity="Application\Entity\Db\UniteRechercheIndividu" mapped-by="uniteRecherche"/>

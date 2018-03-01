@@ -7,6 +7,7 @@ use Application\Entity\Db\EcoleDoctoraleIndividu;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Repository\EcoleDoctoraleRepository;
 use Application\Entity\Db\Role;
+use Application\Entity\Db\Structure;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\BaseService;
 

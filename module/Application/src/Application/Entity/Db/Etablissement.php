@@ -23,6 +23,22 @@ class Etablissement
     protected $structure;
 
     /**
+     * Etablissement prettyPrint
+     * @return string
+     */
+    public function __toString() {
+        return $this->structure->getLibelle();
+    }
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
      * @return mixed
      */
     public function getCode()

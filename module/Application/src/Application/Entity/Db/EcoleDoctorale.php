@@ -49,6 +49,22 @@ class EcoleDoctorale implements HistoriqueAwareInterface, SourceAwareInterface
     }
 
     /**
+     * EcoleDoctorale prettyPrint
+     * @return string
+     */
+    public function __toString() {
+        return $this->structure->getLibelle();
+    }
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
      * Set sourceCode
      *
      * @param string $sourceCode

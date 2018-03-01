@@ -56,6 +56,21 @@ class UniteRecherche implements HistoriqueAwareInterface, SourceAwareInterface
     {
         $this->uniteRechercheIndividus = new ArrayCollection();
     }
+    /**
+     * UniteRecherche prettyPrint
+     * @return string
+     */
+    public function __toString() {
+        return $this->structure->getLibelle();
+    }
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * Set sourceCode
