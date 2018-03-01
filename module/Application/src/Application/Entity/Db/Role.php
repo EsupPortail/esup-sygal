@@ -54,6 +54,16 @@ class Role extends AbstractRole
     protected $etablissement;
 
     /**
+     * @var TypeStructure
+     */
+    protected $typeStructureDependant;
+
+    /**
+     * @var Structure
+     */
+    protected $structure;
+
+    /**
      * @var string Code unique *au sein d'un établissement*.
      */
     protected $code;
@@ -64,11 +74,48 @@ class Role extends AbstractRole
     protected $libelle;
 
     /**
+     * @var bool
+     */
+    private $attributionAutomatique = false;
+
+    /**
+     * @var bool
+     */
+    private $theseDependant = false;
+
+    /**
      * @return bool
      */
-    public function estRoleDoctorant()
+    public function isDoctorant()
     {
         return $this->getCode() === self::CODE_DOCTORANT;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDirecteurThese()
+    {
+        return $this->getCode() === self::CODE_DIRECTEUR_THESE;
+    }
+
+    /**
+     * @return Structure
+     */
+    public function getStructure()
+    {
+        return $this->structure;
+    }
+
+    /**
+     * @param Structure $structure
+     * @return Role
+     */
+    public function setStructure($structure)
+    {
+        $this->structure = $structure;
+
+        return $this;
     }
 
     /**
@@ -150,11 +197,6 @@ class Role extends AbstractRole
     }
 
     /**
-     * @var bool
-     */
-    private $attributionAutomatique = false;
-
-    /**
      * @return bool
      */
     public function getAttributionAutomatique()
@@ -171,5 +213,75 @@ class Role extends AbstractRole
         $this->attributionAutomatique = $attributionAutomatique;
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTheseDependant()
+    {
+        return $this->theseDependant;
+    }
+
+    /**
+     * @param bool $theseDependant
+     * @return self
+     */
+    public function setTheseDependant($theseDependant = true)
+    {
+        $this->theseDependant = $theseDependant;
+
+        return $this;
+    }
+
+    /**
+     * @return TypeStructure
+     */
+    public function getTypeStructureDependant()
+    {
+        return $this->typeStructureDependant;
+    }
+
+    /**
+     * @param TypeStructure $typeStructureDependant
+     * @return self
+     */
+    public function setTypeStructureDependant(TypeStructure $typeStructureDependant)
+    {
+        $this->typeStructureDependant = $typeStructureDependant;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEtablissementDependant()
+    {
+        return ($tsd = $this->getTypeStructureDependant()) && $tsd->isEtablissement();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEcoleDoctoraleDependant()
+    {
+        return ($tsd = $this->getTypeStructureDependant()) && $tsd->isEcoleDoctorale();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isUniteRechercheDependant()
+    {
+        return ($tsd = $this->getTypeStructureDependant()) && $tsd->isUniteRecherche();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isStructureDependant()
+    {
+        return $this->getTypeStructureDependant() !== null;
     }
 }

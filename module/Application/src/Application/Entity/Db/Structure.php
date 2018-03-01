@@ -20,6 +20,11 @@ class Structure
     protected   $libelle;
     protected   $cheminLogo;
 
+    /**
+     * @var TypeStructure
+     */
+    protected $typeStructure;
+
     protected $etablissement;
     protected $ecoleDoctorale;
     protected $uniteRecherche;
@@ -95,7 +100,25 @@ class Structure
             return $image;
         }
         return file_get_contents(APPLICATION_DIR . $this->cheminLogo);
+    }
 
+    /**
+     * @return TypeStructure
+     */
+    public function getTypeStructure()
+    {
+        return $this->typeStructure;
+    }
+
+    /**
+     * @param TypeStructure $typeStructure
+     * @return self
+     */
+    public function setTypeStructure(TypeStructure $typeStructure)
+    {
+        $this->typeStructure = $typeStructure;
+
+        return $this;
     }
 
     /**
