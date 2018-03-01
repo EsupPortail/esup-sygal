@@ -9,6 +9,8 @@ use Application\Entity\Db\UniteRecherche;
 use Application\Entity\Db\UniteRechercheIndividu;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\BaseService;
+use Doctrine\ORM\OptimisticLockException;
+use UnicaenApp\Exception\RuntimeException;
 
 /**
  * @method UniteRecherche|null findOneBy(array $criteria, array $orderBy = null)
@@ -34,90 +36,90 @@ class UniteRechercheService extends BaseService
      */
     public function addIndividu(Individu $individu, UniteRecherche $unite, Role $role = null)
     {
-        /** @var UniteRechercheIndividu $edi */
-        $edi = $this->getEntityManager()->getRepository(UniteRechercheIndividu::class)->findOneBy(array_filter([
+        /** @var UniteRechercheIndividu $uri */
+        $uri = $this->getEntityManager()->getRepository(UniteRechercheIndividu::class)->findOneBy(array_filter([
             'individu'       => $individu,
             'uniteRecherche' => $unite,
             'role'           => $role,
         ]));
-        if (! $edi) {
-            $edi = new UniteRechercheIndividu();
-            $edi
+        if (! $uri) {
+            $uri = new UniteRechercheIndividu();
+            $uri
                 ->setIndividu($individu)
                 ->setUniteRecherche($unite);
 
-            $this->getEntityManager()->persist($edi);
+            $this->getEntityManager()->persist($uri);
         }
         if (! $role) {
             $role = $this->getEntityManager()->getRepository(Role::class)->findOneBy(['roleId' => Role::ROLE_ID_UNITE_RECH]);
         }
-        $edi->setRole($role);
+        $uri->setRole($role);
 
-        $this->getEntityManager()->flush($edi);
+        $this->getEntityManager()->flush($uri);
 
-        return $edi;
+        return $uri;
     }
 
     /**
-     * @param UniteRechercheIndividu|int $edi
+     * @param UniteRechercheIndividu|int $uri
      * @return UniteRechercheIndividu|null
      */
-    public function removeIndividu($edi)
+    public function removeIndividu($uri)
     {
-        if (! $edi instanceof UniteRechercheIndividu) {
-            $edi = $this->getEntityManager()->find(UniteRechercheIndividu::class, $edi);
-            if (! $edi) {
+        if (! $uri instanceof UniteRechercheIndividu) {
+            $uri = $this->getEntityManager()->find(UniteRechercheIndividu::class, $uri);
+            if (! $uri) {
                 return null;
             }
         }
 
-        $this->getEntityManager()->remove($edi);
-        $this->getEntityManager()->flush($edi);
+        $this->getEntityManager()->remove($uri);
+        $this->getEntityManager()->flush($uri);
 
-        return $edi;
+        return $uri;
     }
 
     /**
      * Historise une ED.
      *
-     * @param UniteRecherche $ecole
+     * @param UniteRecherche $ur
      * @param Utilisateur    $destructeur
      */
-    public function deleteSoftly(UniteRecherche $ecole, Utilisateur $destructeur)
+    public function deleteSoftly(UniteRecherche $ur, Utilisateur $destructeur)
     {
-        $ecole->historiser($destructeur);
+        $ur->historiser($destructeur);
 
-        $this->getEntityManager()->flush($ecole);
+        $this->flush($ur);
     }
 
-    public function undelete(UniteRecherche $ecole)
+    public function undelete(UniteRecherche $ur)
     {
-        $ecole->dehistoriser();
+        $ur->dehistoriser();
 
-        $this->getEntityManager()->flush($ecole);
+        $this->flush($ur);
     }
 
-    public function create(UniteRecherche $ecole, Utilisateur $createur)
+    public function create(UniteRecherche $ur, Utilisateur $createur)
     {
-        $ecole->setHistoCreateur($createur);
+        $ur->setHistoCreateur($createur);
 
-        $this->getEntityManager()->persist($ecole);
-        $this->getEntityManager()->flush($ecole);
+        $this->persist($ur);
+        $this->flush($ur);
 
-        return $ecole;
+        return $ur;
     }
 
-    public function update(UniteRecherche $ecole)
+    public function update(UniteRecherche $ur)
     {
-        $this->getEntityManager()->flush($ecole);
+        $this->flush($ur);
 
-        return $ecole;
+        return $ur;
     }
 
     public function setLogo(UniteRecherche $unite, $cheminLogo)
     {
         $unite->setCheminLogo($cheminLogo);
-        $this->getEntityManager()->flush($unite);
+        $this->flush($unite);
 
         return $unite;
     }
@@ -125,8 +127,24 @@ class UniteRechercheService extends BaseService
     public function deleteLogo(UniteRecherche $unite)
     {
         $unite->setCheminLogo(null);
-        $this->getEntityManager()->flush($unite);
+        $this->flush($unite);
 
         return $unite;
+    }
+
+    private function persist(UniteRecherche $ur)
+    {
+        $this->getEntityManager()->persist($ur);
+        $this->getEntityManager()->persist($ur->getStructure());
+    }
+
+    private function flush(UniteRecherche $ur)
+    {
+        try {
+            $this->getEntityManager()->flush($ur);
+            $this->getEntityManager()->flush($ur->getStructure());
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur lors de l'enregistrement de l'UR", null, $e);
+        }
     }
 }

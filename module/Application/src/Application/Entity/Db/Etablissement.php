@@ -23,10 +23,19 @@ class Etablissement
     protected $structure;
 
     /**
+     * Etablissement constructor.
+     */
+    public function __construct()
+    {
+        $this->structure = new Structure();
+    }
+
+    /**
      * Etablissement prettyPrint
      * @return string
      */
-    public function __toString() {
+    public function __toString()
+    {
         return $this->structure->getLibelle();
     }
 
@@ -84,6 +93,18 @@ class Etablissement
     public function setCheminLogo($cheminLogo)
     {
         $this->getStructure()->setCheminLogo($cheminLogo);
+    }
+
+    /**
+     * @return string
+     */
+    public function getLogoContent()
+    {
+        if ($this->getCheminLogo() === null) {
+            $image = Util::createImageWithText("Aucun logo pour l'Etab|" . $this->getCode() . "|" . $this->getLibelle(), 200, 200);
+            return $image;
+        }
+        return file_get_contents(APPLICATION_DIR . $this->getCheminLogo()) ?: null;
     }
 
     /**
@@ -151,16 +172,6 @@ class Etablissement
     public function setRoles($roles)
     {
         $this->roles = $roles;
-    }
-
-    public function getLogoContent()
-    {
-        if ($this->cheminLogo === null) {
-            $image = Util::createImageWithText("Aucun logo pour l'Etab|" . $this->getCode() . "|" . $this->getLibelle(), 200, 200);
-            return $image;
-        }
-        return file_get_contents(APPLICATION_DIR . $this->cheminLogo);
-
     }
 
 }

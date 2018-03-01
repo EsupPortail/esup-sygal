@@ -55,6 +55,7 @@ class UniteRecherche implements HistoriqueAwareInterface, SourceAwareInterface
     public function __construct()
     {
         $this->uniteRechercheIndividus = new ArrayCollection();
+        $this->structure = new Structure();
     }
     /**
      * UniteRecherche prettyPrint
@@ -126,6 +127,19 @@ class UniteRecherche implements HistoriqueAwareInterface, SourceAwareInterface
     public function setCheminLogo($cheminLogo)
     {
         $this->getStructure()->setCheminLogo($cheminLogo);
+    }
+
+    /**
+     * @return string
+     */
+    public function getLogoContent()
+    {
+        if ($this->getCheminLogo() === null) {
+            $image = Util::createImageWithText("Aucun logo pour l'UR|[".$this->getSourceCode()." - ".$this->getSigle()."]",200,200);
+            return $image;
+        }
+        return file_get_contents(APPLICATION_DIR . $this->getCheminLogo()) ?: null;
+
     }
 
     /**
@@ -229,15 +243,5 @@ class UniteRecherche implements HistoriqueAwareInterface, SourceAwareInterface
         $this->uniteRechercheIndividus->removeElement($edi);
 
         return $this;
-    }
-
-    public function getLogoContent()
-    {
-        if ($this->cheminLogo === null) {
-            $image = Util::createImageWithText("Aucun logo pour l'UR|[".$this->getSourceCode()." - ".$this->getSigle()."]",200,200);
-            return $image;
-        }
-        return file_get_contents(APPLICATION_DIR . $this->cheminLogo);
-
     }
 }

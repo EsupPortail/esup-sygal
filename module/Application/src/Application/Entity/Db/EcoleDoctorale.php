@@ -122,6 +122,18 @@ class EcoleDoctorale implements HistoriqueAwareInterface, SourceAwareInterface
     /**
      * @return string
      */
+    public function getLogoContent()
+    {
+        if ($this->getCheminLogo() === null) {
+            $image = Util::createImageWithText("Aucun logo pour l'ED|[".$this->getSourceCode()." - ".$this->getSigle()."]",200,200);
+            return $image;
+        }
+        return file_get_contents(APPLICATION_DIR . $this->getCheminLogo()) ?: null;
+    }
+
+    /**
+     * @return string
+     */
     public function getSigle()
     {
         return $this->getStructure()->getSigle();
@@ -182,16 +194,5 @@ class EcoleDoctorale implements HistoriqueAwareInterface, SourceAwareInterface
         $this->ecoleDoctoraleIndividus->removeElement($edi);
 
         return $this;
-    }
-
-
-    public function getLogoContent()
-    {
-        if ($this->cheminLogo === null) {
-            $image = Util::createImageWithText("Aucun logo pour l'ED|[".$this->getSourceCode()." - ".$this->getSigle()."]",200,200);
-            return $image;
-        }
-        return file_get_contents(APPLICATION_DIR . $this->cheminLogo);
-
     }
 }
