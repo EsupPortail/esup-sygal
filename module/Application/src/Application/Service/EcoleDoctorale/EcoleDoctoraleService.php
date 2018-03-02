@@ -7,8 +7,11 @@ use Application\Entity\Db\EcoleDoctoraleIndividu;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Repository\EcoleDoctoraleRepository;
 use Application\Entity\Db\Role;
+use Application\Entity\Db\Structure;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\BaseService;
+use Doctrine\ORM\OptimisticLockException;
+use UnicaenApp\Exception\RuntimeException;
 
 /**
  * @method EcoleDoctorale|null findOneBy(array $criteria, array $orderBy = null)
@@ -87,29 +90,29 @@ class EcoleDoctoraleService extends BaseService
     {
         $ecole->historiser($destructeur);
 
-        $this->getEntityManager()->flush($ecole);
+        $this->flush($ecole);
     }
 
     public function undelete(EcoleDoctorale $ecole)
     {
         $ecole->dehistoriser();
 
-        $this->getEntityManager()->flush($ecole);
+        $this->flush($ecole);
     }
 
     public function create(EcoleDoctorale $ecole, Utilisateur $createur)
     {
         $ecole->setHistoCreateur($createur);
 
-        $this->getEntityManager()->persist($ecole);
-        $this->getEntityManager()->flush($ecole);
+        $this->persist($ecole);
+        $this->flush($ecole);
 
         return $ecole;
     }
 
     public function update(EcoleDoctorale $ecole)
     {
-        $this->getEntityManager()->flush($ecole);
+        $this->flush($ecole);
 
         return $ecole;
     }
@@ -117,7 +120,7 @@ class EcoleDoctoraleService extends BaseService
     public function setLogo(EcoleDoctorale $ecole, $cheminLogo)
     {
         $ecole->setCheminLogo($cheminLogo);
-        $this->getEntityManager()->flush($ecole);
+        $this->flush($ecole);
 
         return $ecole;
     }
@@ -125,8 +128,24 @@ class EcoleDoctoraleService extends BaseService
     public function deleteLogo(EcoleDoctorale $ecole)
     {
         $ecole->setCheminLogo(null);
-        $this->getEntityManager()->flush($ecole);
+        $this->flush($ecole);
 
         return $ecole;
+    }
+
+    private function persist(EcoleDoctorale $ecole)
+    {
+        $this->getEntityManager()->persist($ecole);
+        $this->getEntityManager()->persist($ecole->getStructure());
+    }
+
+    private function flush(EcoleDoctorale $ecole)
+    {
+        try {
+            $this->getEntityManager()->flush($ecole);
+            $this->getEntityManager()->flush($ecole->getStructure());
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur lors de l'enregistrement de l'ED", null, $e);
+        }
     }
 }

@@ -7,7 +7,7 @@ use UnicaenApp\Util;
 /**
  * Etablissement
  */
-class Etablissement extends Structure
+class Etablissement
 {
     const CODE_COMUE = 'COMUE';
 
@@ -18,19 +18,33 @@ class Etablissement extends Structure
     protected $roles;
 
     /**
-     * @return mixed
+     * @var Structure
+     */
+    protected $structure;
+
+    /**
+     * Etablissement constructor.
+     */
+    public function __construct()
+    {
+        $this->structure = new Structure();
+    }
+
+    /**
+     * Etablissement prettyPrint
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->structure->getLibelle();
+    }
+
+    /**
+     * @return int
      */
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * @param mixed $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
     }
 
     /**
@@ -47,6 +61,69 @@ class Etablissement extends Structure
     public function setCode($code)
     {
         $this->code = $code;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLibelle()
+    {
+        return $this->getStructure()->getLibelle();
+    }
+
+    /**
+     * @param string $libelle
+     */
+    public function setLibelle($libelle)
+    {
+        $this->getStructure()->setLibelle($libelle);
+    }
+
+    /**
+     * @return string
+     */
+    public function getCheminLogo()
+    {
+        return $this->getStructure()->getCheminLogo();
+    }
+
+    /**
+     * @param string $cheminLogo
+     */
+    public function setCheminLogo($cheminLogo)
+    {
+        $this->getStructure()->setCheminLogo($cheminLogo);
+    }
+
+    /**
+     * @return string
+     */
+    public function getLogoContent()
+    {
+        if ($this->getCheminLogo() === null) {
+            $image = Util::createImageWithText("Aucun logo pour l'Etab|" . $this->getCode() . "|" . $this->getLibelle(), 200, 200);
+            return $image;
+        }
+        return file_get_contents(APPLICATION_DIR . $this->getCheminLogo()) ?: null;
+    }
+
+    /**
+     * @param Structure $structure
+     * @return self
+     */
+    public function setStructure($structure)
+    {
+        $this->structure = $structure;
+
+        return $this;
+    }
+
+    /**
+     * @return Structure
+     */
+    public function getStructure()
+    {
+        return $this->structure;
     }
 
     /**
@@ -95,16 +172,6 @@ class Etablissement extends Structure
     public function setRoles($roles)
     {
         $this->roles = $roles;
-    }
-
-    public function getLogoContent()
-    {
-        if ($this->cheminLogo === null) {
-            $image = Util::createImageWithText("Aucun logo pour l'Etab|" . $this->getCode() . "|" . $this->getLibelle(), 200, 200);
-            return $image;
-        }
-        return file_get_contents(APPLICATION_DIR . $this->cheminLogo);
-
     }
 
 }

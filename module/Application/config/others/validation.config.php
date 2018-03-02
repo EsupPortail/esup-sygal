@@ -26,6 +26,7 @@ return [
                             ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE_SUPPR,
                             ValidationPrivileges::VALIDATION_CORRECTION_THESE,
                             ValidationPrivileges::VALIDATION_CORRECTION_THESE_SUPPR,
+                            ValidationPrivileges::VALIDATION_VERSION_PAPIER_CORRIGEE,
                         ],
                         'resources'  => ['These'],
                         'assertion'  => 'Assertion\\These',

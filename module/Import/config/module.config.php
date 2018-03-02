@@ -1,12 +1,11 @@
 <?php
 
+use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
+use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
+use Doctrine\ORM\Mapping\Driver\XmlDriver;
+use Zend\Mvc\Router\Console\Simple;
 use Zend\Mvc\Router\Http\Literal;
 use Zend\Mvc\Router\Http\Segment;
-use Zend\Mvc\Router\Console\Simple;
-use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
-use Doctrine\ORM\Mapping\Driver\XmlDriver;
-use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 return array(
     'bjyauthorize'    => [
@@ -19,12 +18,7 @@ return array(
                         'fetch',
                     ],
                     'roles' => [
-                        'Administrateur technique COMUE', 'Administrateur technique UCN',
-                        'Administrateur technique URN', 'Administrateur technique ULHN',
-                        'Administrateur technique INSA',
-                        'Administrateur COMUE', 'Administrateur UCN',
-                        'Administrateur URN', 'Administrateur ULHN',
-                        'Administrateur INSA',
+                        'Administrateur technique',
                     ],
                 ],
                 [

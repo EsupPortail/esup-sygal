@@ -14,11 +14,10 @@ use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
 /**
  * EcoleDoctorale
  */
-class EcoleDoctorale extends Structure implements HistoriqueAwareInterface, SourceAwareInterface
+class EcoleDoctorale implements HistoriqueAwareInterface, SourceAwareInterface
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
-
 
     /**
      * @var integer
@@ -29,6 +28,11 @@ class EcoleDoctorale extends Structure implements HistoriqueAwareInterface, Sour
      * @var string
      */
     protected $sourceCode;
+
+    /**
+     * @var Structure
+     */
+    protected $structure;
 
         /**
      * @var Collection
@@ -41,12 +45,19 @@ class EcoleDoctorale extends Structure implements HistoriqueAwareInterface, Sour
     public function __construct()
     {
         $this->ecoleDoctoraleIndividus = new ArrayCollection();
+        $this->structure = new Structure();
     }
 
     /**
-     * Get id
-     *
-     * @return integer 
+     * EcoleDoctorale prettyPrint
+     * @return string
+     */
+    public function __toString() {
+        return $this->structure->getLibelle();
+    }
+
+    /**
+     * @return int
      */
     public function getId()
     {
@@ -77,6 +88,85 @@ class EcoleDoctorale extends Structure implements HistoriqueAwareInterface, Sour
     }
 
     /**
+     * @return string
+     */
+    public function getLibelle()
+    {
+        return $this->getStructure()->getLibelle();
+    }
+
+    /**
+     * @param string $libelle
+     */
+    public function setLibelle($libelle)
+    {
+        $this->getStructure()->setLibelle($libelle);
+    }
+
+    /**
+     * @return string
+     */
+    public function getCheminLogo()
+    {
+        return $this->getStructure()->getCheminLogo();
+    }
+
+    /**
+     * @param string $cheminLogo
+     */
+    public function setCheminLogo($cheminLogo)
+    {
+        $this->getStructure()->setCheminLogo($cheminLogo);
+    }
+
+    /**
+     * @return string
+     */
+    public function getLogoContent()
+    {
+        if ($this->getCheminLogo() === null) {
+            $image = Util::createImageWithText("Aucun logo pour l'ED|[".$this->getSourceCode()." - ".$this->getSigle()."]",200,200);
+            return $image;
+        }
+        return file_get_contents(APPLICATION_DIR . $this->getCheminLogo()) ?: null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSigle()
+    {
+        return $this->getStructure()->getSigle();
+    }
+
+    /**
+     * @param string $sigle
+     */
+    public function setSigle($sigle)
+    {
+        $this->getStructure()->setSigle($sigle);
+    }
+    
+    /**
+     * @param Structure $structure
+     * @return self
+     */
+    public function setStructure($structure)
+    {
+        $this->structure = $structure;
+
+        return $this;
+    }
+
+    /**
+     * @return Structure
+     */
+    public function getStructure()
+    {
+        return $this->structure;
+    }
+
+    /**
      * @return Collection
      */
     public function getEcoleDoctoraleIndividus()
@@ -104,16 +194,5 @@ class EcoleDoctorale extends Structure implements HistoriqueAwareInterface, Sour
         $this->ecoleDoctoraleIndividus->removeElement($edi);
 
         return $this;
-    }
-
-
-    public function getLogoContent()
-    {
-        if ($this->cheminLogo === null) {
-            $image = Util::createImageWithText("Aucun logo pour l'ED|[".$this->getSourceCode()." - ".$this->getSigle()."]",200,200);
-            return $image;
-        }
-        return file_get_contents(APPLICATION_DIR . $this->cheminLogo);
-
     }
 }

@@ -152,8 +152,6 @@ class TheseController extends AbstractController implements
 
         $qb = $this->theseService->getRepository()->createQueryBuilder('t')
             ->addSelect('di')->leftJoin('th.individu', 'di')
-            ->addSelect('ed')->leftJoin('t.ecoleDoctorale', 'ed')
-            ->addSelect('ur')->leftJoin('t.uniteRecherche', 'ur')
             ->addSelect('a')->leftJoin('t.acteurs', 'a')
             ->addSelect('i')->leftJoin('a.individu', 'i')
             ->addSelect('r')->leftJoin('a.role', 'r')
@@ -1316,18 +1314,19 @@ class TheseController extends AbstractController implements
 
         $request = $this->getRequest();
         if ($request->isPost()) {
-
-            $post = $request->getPost();
-
-            echo "Ajout de la validation<br/>";
             $this->validationService->validateVersionPapierCorrigee($these);
-            //pour sortir du post
+            $this->flashMessenger()->addSuccessMessage("Validation enregistrée avec succès.");
             return $this->redirect()->toRoute('these/version-papier', [], [], true);
-
         }
+
+        $validations = $this->validationService->getRepository()->findValidationByCodeAndThese(
+            TypeValidation::CODE_VERSION_PAPIER_CORRIGEE,
+            $these
+        );
 
         return new ViewModel(array(
             'these' => $these,
+            'validation' => empty($validations) ? null : $validations[0],
         ));
 
     }

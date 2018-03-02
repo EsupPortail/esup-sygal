@@ -2,8 +2,8 @@
 
 namespace Application\Form\Factory;
 
+use Application\Form\Hydrator\UniteRechercheHydrator;
 use Application\Form\UniteRechercheForm;
-use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 use Zend\Form\FormElementManager;
 
 class UniteRechercheFormFactory
@@ -12,8 +12,8 @@ class UniteRechercheFormFactory
     {
         $sl = $formElementManager->getServiceLocator();
 
-        /** @var DoctrineObject $hydrator */
-        $hydrator = $sl->get('HydratorManager')->get('DoctrineModule\Stdlib\Hydrator\DoctrineObject');
+        /** @var UniteRechercheHydrator $hydrator */
+        $hydrator = $sl->get('HydratorManager')->get('UniteRechercheHydrator');
 
         $form = new UniteRechercheForm();
         $form->setHydrator($hydrator);

@@ -13,16 +13,21 @@ use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareInterface;
 use Application\Service\Validation\ValidationServiceAwareTrait;
+use Application\Service\Variable\VariableServiceAwareInterface;
+use Application\Service\Variable\VariableServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\View\Model\ViewModel;
 
-class ValidationController extends AbstractController
-    implements ValidationServiceAwareInterface, NotificationServiceAwareInterface, RoleServiceAwareInterface
+class ValidationController extends AbstractController implements
+    ValidationServiceAwareInterface, NotificationServiceAwareInterface, RoleServiceAwareInterface,
+    VariableServiceAwareInterface
+
 {
     use TheseServiceAwareTrait;
     use ValidationServiceAwareTrait;
     use NotificationServiceAwareTrait;
     use RoleServiceAwareTrait;
+    use VariableServiceAwareTrait;
 
     public function rdvBuAction()
     {
@@ -33,6 +38,7 @@ class ValidationController extends AbstractController
         // si un tableau est retourné par le plugin, l'opération a été confirmée
         if (is_array($result)) {
             $notification = new ValidationRdvBuNotification();
+            $notification->setVariableService($this->variableService);
             $notification->setThese($these);
 
             if ($action === 'valider') {
@@ -196,7 +202,7 @@ class ValidationController extends AbstractController
                     //MAIL BUREAU DES DOCTORANS
                     $mailViewModel->setVariables([
                         'subject' => "Validation des corrections de la thèse",
-                        'role' => $this->roleService->getRepository()->findOneBy(['sourceCode' => Role::CODE_DIRECTEUR_THESE]),
+                        'role' => $this->roleService->getRepository()->findOneBy(['code' => Role::CODE_DIRECTEUR_THESE]),
                         'url' => $this->url()->fromRoute('these/depot', ['these' => $these->getId()], ['force_canonical' => true]),
                     ]);
                     $this->notificationService->notifierValidationCorrectionThese($mailViewModel, $these);

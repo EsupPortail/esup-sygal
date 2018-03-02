@@ -1,8 +1,8 @@
 <?php
 
 use Application\Controller\Factory\UniteRechercheControllerFactory;
-use Application\Controller\UniteRechercheController;
 use Application\Form\Factory\UniteRechercheFormFactory;
+use Application\Form\Factory\UniteRechercheHydratorFactory;
 use Application\Provider\Privilege\UniteRecherchePrivileges;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use UnicaenAuth\Guard\PrivilegeController;
@@ -163,4 +163,9 @@ return [
             'UniteRechercheForm' => UniteRechercheFormFactory::class,
         ],
     ],
+    'hydrators' => array(
+        'factories' => array(
+            'UniteRechercheHydrator' => UniteRechercheHydratorFactory::class,
+        )
+    ),
 ];

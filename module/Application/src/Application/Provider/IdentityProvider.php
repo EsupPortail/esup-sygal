@@ -155,8 +155,10 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
          * - avec son persopass (DoctorantCompl::persopass), seulement après qu'il l'a saisi sur la page d'identité de la thèse.
          */
         $username = $people->getSupannAliasLogin();
+        // todo: solution provisoire!
+        $etablissement = 'UCN';
         try {
-            $doctorant = $this->doctorantService->getRepository()->findOneByUsername($username);
+            $doctorant = $this->doctorantService->getRepository()->findOneByUsernameAndEtab($username, $etablissement);
         } catch (NonUniqueResultException $e) {
             throw new RuntimeException("Plusieurs doctorants ont été trouvés avec le même username: " . $username);
         }

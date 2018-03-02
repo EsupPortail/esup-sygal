@@ -747,13 +747,13 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
-     * @param string $sourceCode
+     * @param string $code
      * @return Collection
      */
-    public function getActeursByRoleSourceCode($sourceCode)
+    public function getActeursByRoleCode($code)
     {
-        $filter = function(Acteur $a) use ($sourceCode) {
-            return $a->getRole()->getSourceCode() === $sourceCode;
+        $filter = function(Acteur $a) use ($code) {
+            return $a->getRole()->getCode() === $code;
         };
 
         return $this->getActeurs()->filter($filter);
@@ -1042,7 +1042,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function getDirecteursTheseEmails(array &$unknownMails = [])
     {
         $emails = [];
-        $directeurs = $this->getActeursByRoleSourceCode(Role::CODE_DIRECTEUR_THESE);
+        $directeurs = $this->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE);
 
         /** @var Acteur $acteur */
         foreach ($directeurs as $acteur) {

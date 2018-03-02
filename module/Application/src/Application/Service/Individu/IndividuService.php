@@ -3,15 +3,15 @@
 namespace Application\Service\Individu;
 
 use Application\Entity\Db\Individu;
+use Application\Entity\Db\Repository\IndividuRepository;
 use Application\Service\BaseService;
-use Application\Entity\Db\Repository\DefaultEntityRepository;
 use UnicaenImport\Entity\Db\Source;
 use UnicaenLdap\Entity\People;
 
 class IndividuService extends BaseService
 {
     /**
-     * @return DefaultEntityRepository
+     * @return IndividuRepository
      */
     public function getRepository()
     {

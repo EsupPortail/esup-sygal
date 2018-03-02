@@ -3,6 +3,7 @@
 namespace Application\Form\Factory;
 
 use Application\Form\EcoleDoctoraleForm;
+use Application\Form\Hydrator\EcoleDoctoraleHydrator;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 use Zend\Form\FormElementManager;
 
@@ -12,8 +13,8 @@ class EcoleDoctoraleFormFactory
     {
         $sl = $formElementManager->getServiceLocator();
 
-        /** @var DoctrineObject $hydrator */
-        $hydrator = $sl->get('HydratorManager')->get('DoctrineModule\Stdlib\Hydrator\DoctrineObject');
+        /** @var EcoleDoctoraleHydrator $hydrator */
+        $hydrator = $sl->get('HydratorManager')->get('EcoleDoctoraleHydrator');
 
         $form = new EcoleDoctoraleForm();
         $form->setHydrator($hydrator);

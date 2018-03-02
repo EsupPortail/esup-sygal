@@ -82,7 +82,7 @@ class UserContextService extends BaseUserContextService implements IndividuServi
      * Si le rôle sélectionné correspond à celui de Bureau des doctorats,
      * retourne le rôle en question, sinon retourne null.
      *
-     * @return RoleInterface|null
+     * @return Role|null
      */
     public function getSelectedRoleBDD()
     {
@@ -90,7 +90,7 @@ class UserContextService extends BaseUserContextService implements IndividuServi
     }
 
     /**
-     * @return RoleInterface|null
+     * @return Role|null
      */
     public function getSelectedRoleBU()
     {
@@ -243,7 +243,9 @@ class UserContextService extends BaseUserContextService implements IndividuServi
         }
 
         /** @var Individu $individu */
-        $individu = $this->individuService->getRepository()->findOneBy(['sourceCode' => $identity->getSupannEmpId()]);
+        // todo: solution provisoire!
+        $etab = 'UCN';
+        $individu = $this->individuService->getRepository()->findOneByEmpId($identity->getSupannEmpId(), $etab);
 
         return $individu;
     }

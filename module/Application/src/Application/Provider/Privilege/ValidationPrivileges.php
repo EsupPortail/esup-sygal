@@ -15,4 +15,5 @@ class ValidationPrivileges extends Privileges
     const VALIDATION_DEPOT_THESE_CORRIGEE_SUPPR     = 'validation-depot-these-corrigee-suppression';
     const VALIDATION_CORRECTION_THESE               = 'validation-correction-these';
     const VALIDATION_CORRECTION_THESE_SUPPR         = 'validation-correction-these-suppression';
+    const VALIDATION_VERSION_PAPIER_CORRIGEE        = 'validation-version-papier-corrigee';
 }

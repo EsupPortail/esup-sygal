@@ -2,6 +2,7 @@
 
 use Application\Controller\Factory\EtablissementControllerFactory;
 use Application\Form\Factory\EtablissementFormFactory;
+use Application\Form\Factory\EtablissementHydratorFactory;
 use Application\Provider\Privilege\EcoleDoctoralePrivileges;
 use Application\Service\Etablissement\EtablissementService;
 use Application\View\Helper\EtablissementHelper;
@@ -160,6 +161,11 @@ return [
             'EtablissementForm' => EtablissementFormFactory::class,
         ],
     ],
+    'hydrators' => array(
+        'factories' => array(
+            'EtablissementHydrator' => EtablissementHydratorFactory::class,
+        )
+    ),
     'view_helpers' => [
         'invokables' => [
             'etab' => EtablissementHelper::class,

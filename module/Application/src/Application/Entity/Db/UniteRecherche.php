@@ -11,12 +11,14 @@ use UnicaenApp\Util;
 use UnicaenImport\Entity\Db\Interfaces\SourceAwareInterface;
 use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
 
-
 /**
  * UniteRecherche
  */
-class UniteRecherche extends Structure
+class UniteRecherche implements HistoriqueAwareInterface, SourceAwareInterface
 {
+    use HistoriqueAwareTrait;
+    use SourceAwareTrait;
+
     /**
      * @var string
      */
@@ -38,6 +40,11 @@ class UniteRecherche extends Structure
     protected $sourceCode;
 
     /**
+     * @var Structure
+     */
+    protected $structure;
+
+    /**
      * @var Collection
      */
     protected $uniteRechercheIndividus;
@@ -48,12 +55,18 @@ class UniteRecherche extends Structure
     public function __construct()
     {
         $this->uniteRechercheIndividus = new ArrayCollection();
+        $this->structure = new Structure();
+    }
+    /**
+     * UniteRecherche prettyPrint
+     * @return string
+     */
+    public function __toString() {
+        return $this->structure->getLibelle();
     }
 
     /**
-     * Get id
-     *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -82,6 +95,67 @@ class UniteRecherche extends Structure
     public function getSourceCode()
     {
         return $this->sourceCode;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLibelle()
+    {
+        return $this->getStructure()->getLibelle();
+    }
+
+    /**
+     * @param string $libelle
+     */
+    public function setLibelle($libelle)
+    {
+        $this->getStructure()->setLibelle($libelle);
+    }
+
+    /**
+     * @return string
+     */
+    public function getCheminLogo()
+    {
+        return $this->getStructure()->getCheminLogo();
+    }
+
+    /**
+     * @param string $cheminLogo
+     */
+    public function setCheminLogo($cheminLogo)
+    {
+        $this->getStructure()->setCheminLogo($cheminLogo);
+    }
+
+    /**
+     * @return string
+     */
+    public function getLogoContent()
+    {
+        if ($this->getCheminLogo() === null) {
+            $image = Util::createImageWithText("Aucun logo pour l'UR|[".$this->getSourceCode()." - ".$this->getSigle()."]",200,200);
+            return $image;
+        }
+        return file_get_contents(APPLICATION_DIR . $this->getCheminLogo()) ?: null;
+
+    }
+
+    /**
+     * @return string
+     */
+    public function getSigle()
+    {
+        return $this->getStructure()->getSigle();
+    }
+
+    /**
+     * @param string $sigle
+     */
+    public function setSigle($sigle)
+    {
+        $this->getStructure()->setSigle($sigle);
     }
 
     /**
@@ -123,6 +197,25 @@ class UniteRecherche extends Structure
     }
 
     /**
+     * @param Structure $structure
+     * @return UniteRecherche
+     */
+    public function setStructure($structure)
+    {
+        $this->structure = $structure;
+
+        return $this;
+    }
+
+    /**
+     * @return Structure
+     */
+    public function getStructure()
+    {
+        return $this->structure;
+    }
+
+    /**
      * @return Collection
      */
     public function getUniteRechercheIndividus()
@@ -150,15 +243,5 @@ class UniteRecherche extends Structure
         $this->uniteRechercheIndividus->removeElement($edi);
 
         return $this;
-    }
-
-    public function getLogoContent()
-    {
-        if ($this->cheminLogo === null) {
-            $image = Util::createImageWithText("Aucun logo pour l'UR|[".$this->getSourceCode()." - ".$this->getSigle()."]",200,200);
-            return $image;
-        }
-        return file_get_contents(APPLICATION_DIR . $this->cheminLogo);
-
     }
 }

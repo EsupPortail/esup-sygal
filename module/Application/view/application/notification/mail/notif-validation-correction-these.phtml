@@ -1,10 +1,11 @@
 <?php
 
+use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 
 /**
  * @var These  $these
- * @var string $role
+ * @var Role $role
  * @var string $url
  */
 ?>
@@ -16,7 +17,7 @@ use Application\Entity\Db\These;
     Ceci est un mail envoyé automatiquement par l'application <?php echo $this->appInfos()->nom ?>.
 </p>
 <p>
-    Vous êtes informé-e que toutes les personnes ayant le rôle &laquo; <?php echo $role ?> &raquo; sur la thèse de
+    Vous êtes informé-e que toutes les personnes ayant le rôle &laquo; <?php echo $role->getLibelle() ?> &raquo; sur la thèse de
     <?php echo $these->getDoctorant() ?> ont validé les correction de la thèse.
 </p>
 <p>

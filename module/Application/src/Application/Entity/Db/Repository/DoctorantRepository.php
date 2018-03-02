@@ -9,18 +9,19 @@ class DoctorantRepository extends DefaultEntityRepository
 {
     /**
      * @param $username
+     * @param string $etablissement
      * @return Doctorant
      * @throws NonUniqueResultException
      */
-    public function findOneByUsername($username)
+    public function findOneByUsernameAndEtab($username, $etablissement)
     {
         $qb = $this->createQueryBuilder('t');
         $qb
             ->leftJoin('t.complements', 'c')
             ->andWhere('1 = pasHistorise(t)')
-            ->andWhere('t.sourceCode like :sourceCode OR t.sourceCode = :login OR c.persopass = :login')
-            ->setParameter('sourceCode', '%::' . $username)
-            ->setParameter('login', $username);
+            // todo: ajouter le code étab au persopass enregistré dans la table DOCTORANT_COMPL
+            ->andWhere('t.sourceCode = :login OR c.persopass = :login')
+            ->setParameter('login', $etablissement . '::' . $username);
 
         return $qb->getQuery()->getOneOrNullResult();
     }

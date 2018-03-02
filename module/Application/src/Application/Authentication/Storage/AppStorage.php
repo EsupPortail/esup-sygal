@@ -120,8 +120,10 @@ class AppStorage implements ChainableStorage
          * - avec son persopass (DoctorantCompl::persopass), seulement après qu'il l'a saisi sur la page d'identité de la thèse.
          */
         $username = $this->people->getSupannAliasLogin();
+        // todo: solution provisoire!
+        $etablissement = 'UCN';
         try {
-            $this->doctorant = $this->doctorantService->getRepository()->findOneByUsername($username);
+            $this->doctorant = $this->doctorantService->getRepository()->findOneByUsernameAndEtab($username, $etablissement);
         } catch (NonUniqueResultException $e) {
             throw new RuntimeException("Plusieurs doctorants ont été trouvés avec le même username: " . $username);
         }
