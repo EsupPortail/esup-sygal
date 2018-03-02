@@ -2,10 +2,11 @@
 
 namespace Application\Service\Etablissement;
 
-use Application\Entity\Db\Repository\EtablissementRepository;
 use Application\Entity\Db\Etablissement;
-use Application\Form\EtablissementForm;
+use Application\Entity\Db\Repository\EtablissementRepository;
 use Application\Service\BaseService;
+use Doctrine\ORM\OptimisticLockException;
+use UnicaenApp\Exception\RuntimeException;
 
 class EtablissementService extends BaseService
 {
@@ -19,31 +20,30 @@ class EtablissementService extends BaseService
 
     public function create(Etablissement $etablissement)
     {
-        $this->getEntityManager()->persist($etablissement);
-        $this->getEntityManager()->flush($etablissement);
+        $this->persist($etablissement);
+        $this->flush($etablissement);
 
         return $etablissement;
     }
 
     public function update(Etablissement $etablissement)
     {
-        $this->getEntityManager()->flush($etablissement);
+        $this->flush($etablissement);
 
         return $etablissement;
     }
 
     public function delete(Etablissement $etablissement)
     {
-        if ($etablissement !== null) {
-            $this->entityManager->remove($etablissement);
-            $this->entityManager->flush();
-        }
+        $this->entityManager->remove($etablissement->getStructure());
+        $this->entityManager->remove($etablissement);
+        $this->flush($etablissement);
     }
 
     public function setLogo(Etablissement $etablissement, $cheminLogo)
     {
         $etablissement->setCheminLogo($cheminLogo);
-        $this->getEntityManager()->flush($etablissement);
+        $this->flush($etablissement);
 
         return $etablissement;
     }
@@ -51,9 +51,24 @@ class EtablissementService extends BaseService
     public function deleteLogo(Etablissement $etablissement)
     {
         $etablissement->setCheminLogo(null);
-        $this->getEntityManager()->flush($etablissement);
+        $this->flush($etablissement);
 
         return $etablissement;
     }
 
+    private function persist(Etablissement $etablissement)
+    {
+        $this->getEntityManager()->persist($etablissement);
+        $this->getEntityManager()->persist($etablissement->getStructure());
+    }
+
+    private function flush(Etablissement $etablissement)
+    {
+        try {
+            $this->getEntityManager()->flush($etablissement);
+            $this->getEntityManager()->flush($etablissement->getStructure());
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur lors de l'enregistrement de l'Etablissement", null, $e);
+        }
+    }
 }

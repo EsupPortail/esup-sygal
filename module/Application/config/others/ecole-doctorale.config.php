@@ -2,6 +2,7 @@
 
 use Application\Controller\Factory\EcoleDoctoraleControllerFactory;
 use Application\Form\Factory\EcoleDoctoraleFormFactory;
+use Application\Form\Factory\EcoleDoctoraleHydratorFactory;
 use Application\Provider\Privilege\EcoleDoctoralePrivileges;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\View\Helper\EcoleDoctoraleHelper;
@@ -163,6 +164,11 @@ return [
             'EcoleDoctoraleForm' => EcoleDoctoraleFormFactory::class,
         ],
     ],
+    'hydrators' => array(
+        'factories' => array(
+            'EcoleDoctoraleHydrator' => EcoleDoctoraleHydratorFactory::class,
+        )
+    ),
     'view_helpers' => [
         'invokables' => [
             'ed' => EcoleDoctoraleHelper::class,

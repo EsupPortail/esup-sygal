@@ -7,8 +7,6 @@
       <generator strategy="SEQUENCE"/>
     </id>
 
-    <field name="libelle" type="string" column="LIBELLE" length="200" nullable="false"/>
-    <field name="sigle" type="string" column="SIGLE" length="50" nullable="true"/>
     <field name="etablissementsSupport" type="string" column="ETAB_SUPPORT" length="500" nullable="true"/>
     <field name="autresEtablissements" type="string" column="AUTRES_ETAB" length="500" nullable="true"/>
 
@@ -17,7 +15,6 @@
     <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
 
     <field name="sourceCode" type="string" column="SOURCE_CODE" length="64" nullable="true"/>
-    <field name="cheminLogo" type="string" column="CHEMIN_LOGO" length="200" nullable="true"/>
 
     <many-to-one field="source" target-entity="UnicaenImport\Entity\Db\Source">
       <join-columns>
@@ -40,6 +37,15 @@
         <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
       </join-columns>
     </many-to-one>
+
+    <one-to-one field="structure" target-entity="Application\Entity\Db\Structure">
+      <join-columns>
+        <join-column name="STRUCTURE_ID" referenced-column-name="ID"/>
+      </join-columns>
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-one>
 
     <one-to-many field="uniteRechercheIndividus" target-entity="Application\Entity\Db\UniteRechercheIndividu" mapped-by="uniteRecherche"/>
 

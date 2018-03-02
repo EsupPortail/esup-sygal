@@ -14,6 +14,7 @@
         <field name="isDefault" type="boolean" column="IS_DEFAULT" nullable="false"/>
         <field name="ldapFilter" type="string" column="LDAP_FILTER" length="255" nullable="true"/>
         <field name="attributionAutomatique" type="boolean" column="ATTRIB_AUTO" nullable="false"/>
+        <field name="theseDependant" type="boolean" column="THESE_DEP" nullable="false"/>
         <field name="sourceCode" type="string" column="SOURCE_CODE" length="100" nullable="true"/>
 
         <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
@@ -23,6 +24,18 @@
         <many-to-one field="etablissement" target-entity="Application\Entity\Db\Etablissement" fetch="LAZY">
             <join-columns>
                 <join-column name="ETABLISSEMENT_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
+        <many-to-one field="typeStructureDependant" target-entity="Application\Entity\Db\TypeStructure">
+            <join-columns>
+                <join-column name="TYPE_STRUCTURE_DEPENDANT_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
+        <many-to-one field="structure" target-entity="Application\Entity\Db\Structure" fetch="LAZY">
+            <join-columns>
+                <join-column name="STRUCTURE_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
 

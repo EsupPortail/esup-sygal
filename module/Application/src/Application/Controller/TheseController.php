@@ -152,8 +152,6 @@ class TheseController extends AbstractController implements
 
         $qb = $this->theseService->getRepository()->createQueryBuilder('t')
             ->addSelect('di')->leftJoin('th.individu', 'di')
-            ->addSelect('ed')->leftJoin('t.ecoleDoctorale', 'ed')
-            ->addSelect('ur')->leftJoin('t.uniteRecherche', 'ur')
             ->addSelect('a')->leftJoin('t.acteurs', 'a')
             ->addSelect('i')->leftJoin('a.individu', 'i')
             ->addSelect('r')->leftJoin('a.role', 'r')

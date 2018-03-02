@@ -2,21 +2,13 @@
 
 namespace Application\Entity\Db;
 
-use UnicaenApp\Entity\HistoriqueAwareInterface;
-use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenApp\Util;
-use UnicaenImport\Entity\Db\Interfaces\SourceAwareInterface;
-use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
-
 
 /**
  * Structure
  */
-class Structure implements HistoriqueAwareInterface, SourceAwareInterface
+class Structure
 {
-    use HistoriqueAwareTrait;
-    use SourceAwareTrait;
-
     /**
      * @var string id
      * @var string sigle
@@ -29,19 +21,20 @@ class Structure implements HistoriqueAwareInterface, SourceAwareInterface
     protected   $cheminLogo;
 
     /**
+     * @var TypeStructure
+     */
+    protected $typeStructure;
+
+    protected $etablissement;
+    protected $ecoleDoctorale;
+    protected $uniteRecherche;
+
+    /**
      * @return string
      */
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * @param string $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
     }
 
     /**
@@ -107,7 +100,48 @@ class Structure implements HistoriqueAwareInterface, SourceAwareInterface
             return $image;
         }
         return file_get_contents(APPLICATION_DIR . $this->cheminLogo);
-
     }
 
+    /**
+     * @return TypeStructure
+     */
+    public function getTypeStructure()
+    {
+        return $this->typeStructure;
+    }
+
+    /**
+     * @param TypeStructure $typeStructure
+     * @return self
+     */
+    public function setTypeStructure(TypeStructure $typeStructure)
+    {
+        $this->typeStructure = $typeStructure;
+
+        return $this;
+    }
+
+    /**
+     * @return Etablissement
+     */
+    public function getEtablissement()
+    {
+        return $this->etablissement;
+    }
+
+    /**
+     * @return EcoleDoctorale
+     */
+    public function getEcoleDoctorale()
+    {
+        return $this->ecoleDoctorale;
+    }
+
+    /**
+     * @return UniteRecherche
+     */
+    public function getUniteRecherche()
+    {
+        return $this->uniteRecherche;
+    }
 }
