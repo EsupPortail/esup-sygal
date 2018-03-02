@@ -21,12 +21,6 @@
         <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
         <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
 
-        <many-to-one field="etablissement" target-entity="Application\Entity\Db\Etablissement" fetch="LAZY">
-            <join-columns>
-                <join-column name="ETABLISSEMENT_ID" referenced-column-name="ID"/>
-            </join-columns>
-        </many-to-one>
-
         <many-to-one field="typeStructureDependant" target-entity="Application\Entity\Db\TypeStructure">
             <join-columns>
                 <join-column name="TYPE_STRUCTURE_DEPENDANT_ID" referenced-column-name="ID"/>

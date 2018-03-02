@@ -49,11 +49,6 @@ class Role extends AbstractRole
     protected $sourceCode;
 
     /**
-     * @var Etablissement
-     */
-    protected $etablissement;
-
-    /**
      * @var TypeStructure
      */
     protected $typeStructureDependant;
@@ -116,22 +111,6 @@ class Role extends AbstractRole
         $this->structure = $structure;
 
         return $this;
-    }
-
-    /**
-     * @return Etablissement
-     */
-    public function getEtablissement()
-    {
-        return $this->etablissement;
-    }
-
-    /**
-     * @param Etablissement $etablissement
-     */
-    public function setEtablissement(Etablissement $etablissement)
-    {
-        $this->etablissement = $etablissement;
     }
 
     /**
