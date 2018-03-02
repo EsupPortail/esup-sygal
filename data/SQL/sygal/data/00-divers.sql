@@ -1,4 +1,10 @@
 
+---------------------- TYPE_STRUCTURE ---------------------
+
+insert into TYPE_STRUCTURE(ID, CODE, LIBELLE) values (1, 'etablissement',   'Établissement');
+insert into TYPE_STRUCTURE(ID, CODE, LIBELLE) values (2, 'ecole-doctorale', 'École doctorale');
+insert into TYPE_STRUCTURE(ID, CODE, LIBELLE) values (3, 'unite-recherche', 'Unité de recherche');
+
 ---------------------- ETABLISSEMENT ---------------------
 
 INSERT INTO ETABLISSEMENT (ID, CODE, LIBELLE) VALUES (1, 'COMUE', 'Normandie Université');

@@ -25,6 +25,37 @@ create table SOURCE
 comment on table SOURCE is 'Sources de données, importables ou non, ex: Apogée, Physalis.';
 
 
+---------------------- Type structure ---------------------
+
+create table TYPE_STRUCTURE
+(
+  ID NUMBER not null constraint TYPE_STRUCTURE_PK primary key,
+  CODE VARCHAR2(50 char) not null,
+  LIBELLE VARCHAR2(100 char)
+);
+
+create unique index TYPE_STRUCTURE_UN on TYPE_STRUCTURE (CODE);
+
+
+---------------------- structure ---------------------
+
+--drop table structure
+CREATE TABLE STRUCTURE
+(
+  ID NUMBER constraint STRUCTURE_PK primary key,
+  SIGLE VARCHAR2(40 char),
+  LIBELLE VARCHAR2(200 char) NOT NULL constraint STRUCTURE_LIBELLE_UN unique,
+  CHEMIN_LOGO VARCHAR2(200 char)
+);
+--drop sequence STRUCTURE_ID_SEQ;
+CREATE SEQUENCE STRUCTURE_ID_SEQ;
+
+ALTER TABLE STRUCTURE ADD TYPE_STRUCTURE_ID NUMBER NULL;
+ALTER TABLE STRUCTURE ADD CONSTRAINT STRUCTURE_TYPE_STRUCTURE_ID_fk FOREIGN KEY (TYPE_STRUCTURE_ID) REFERENCES TYPE_STRUCTURE (ID) ON DELETE CASCADE;
+
+create index STRUCTURE_TYPE_STRUCT_ID_IDX on STRUCTURE (TYPE_STRUCTURE_ID);
+
+
 ---------------------- ETABLISSEMENT ---------------------
 
 CREATE TABLE ETABLISSEMENT
@@ -35,6 +66,13 @@ CREATE TABLE ETABLISSEMENT
   CHEMIN_LOGO VARCHAR2(200) NOT NULL
 );
 CREATE SEQUENCE ETABLISSEMENT_ID_SEQ;
+
+alter table ETABLISSEMENT add structure_id NUMBER not null constraint ETAB_STRUCT_FK references STRUCTURE(id);
+alter table ETABLISSEMENT MODIFY structure_id not null;
+alter table ETABLISSEMENT drop COLUMN LIBELLE;
+alter table ETABLISSEMENT drop COLUMN CHEMIN_LOGO;
+
+create index ETABLISSEMENT_STRUCT_ID_IDX on ETABLISSEMENT (structure_id);
 
 
 --------------------------- API_LOG -----------------------
@@ -292,8 +330,6 @@ create table ROLE
 (
   ID NUMBER NOT NULL CONSTRAINT ROLE_PK PRIMARY KEY,
 
-  ETABLISSEMENT_ID NUMBER not null CONSTRAINT ROLE_ETAB_FK REFERENCES ETABLISSEMENT ON DELETE CASCADE,
-
   CODE VARCHAR2(50 char) not null,
   LIBELLE VARCHAR2(200 char) not null,
 
@@ -319,7 +355,6 @@ comment on table ROLE is 'Rôles au titre d''un établissement, ex: directeur de
 
 create unique index ROLE_SOURCE_CODE_UNIQ on ROLE (SOURCE_CODE);
 
-create index ROLE_ETABLISSEMENT_IDX on ROLE (ETABLISSEMENT_ID);
 create index ROLE_SOURCE_IDX on ROLE (SOURCE_ID);
 create index ROLE_HC_IDX on ROLE (HISTO_CREATEUR_ID);
 create index ROLE_HM_IDX on ROLE (HISTO_MODIFICATEUR_ID);
@@ -327,6 +362,15 @@ create index ROLE_HD_IDX on ROLE (HISTO_DESTRUCTEUR_ID);
 
 --drop sequence ROLE_ID_SEQ;
 create sequence ROLE_ID_SEQ;
+
+ALTER TABLE ROLE ADD STRUCTURE_ID NUMBER NULL;
+ALTER TABLE ROLE ADD CONSTRAINT ROLE_STRUCTURE_ID_fk FOREIGN KEY (STRUCTURE_ID) REFERENCES STRUCTURE (ID) ON DELETE CASCADE;
+
+ALTER TABLE ROLE ADD TYPE_STRUCTURE_DEPENDANT_ID NUMBER NULL;
+ALTER TABLE ROLE ADD CONSTRAINT ROLE_TYPE_STRUCT_ID_fk FOREIGN KEY (TYPE_STRUCTURE_DEPENDANT_ID) REFERENCES TYPE_STRUCTURE (ID) ON DELETE CASCADE;
+
+create index ROLE_STRUCTURE_ID_IDX on ROLE (STRUCTURE_ID);
+create index ROLE_TYPE_STRUCTURE_ID_IDX on ROLE (TYPE_STRUCTURE_DEPENDANT_ID);
 
 
 ---------------------- UTILISATEUR ---------------------
@@ -741,6 +785,14 @@ create index ECOLE_DOCT_HD_IDX on ECOLE_DOCT (HISTO_DESTRUCTEUR_ID);
 
 create sequence ECOLE_DOCT_ID_SEQ;
 
+alter table ECOLE_DOCT add structure_id NUMBER constraint ECOLE_DOCT_STRUCT_FK references STRUCTURE(id);
+alter table ECOLE_DOCT MODIFY structure_id not null;
+alter table ECOLE_DOCT drop COLUMN SIGLE;
+alter table ECOLE_DOCT drop COLUMN LIBELLE;
+alter table ECOLE_DOCT drop COLUMN CHEMIN_LOGO;
+
+create index ECOLE_DOCT_STRUCT_ID_IDX on ECOLE_DOCT (structure_id);
+
 ------
 
 create table ECOLE_DOCT_IND
@@ -886,6 +938,14 @@ create index UNITE_RECH_HM_IDX on UNITE_RECH (HISTO_MODIFICATEUR_ID);
 create index UNITE_RECH_HD_IDX on UNITE_RECH (HISTO_DESTRUCTEUR_ID);
 
 create sequence UNITE_RECH_ID_SEQ;
+
+alter table UNITE_RECH add structure_id NUMBER constraint UNITE_RECH_STRUCT_FK references STRUCTURE(id);
+alter table UNITE_RECH MODIFY structure_id not null;
+alter table UNITE_RECH drop COLUMN SIGLE;
+alter table UNITE_RECH drop COLUMN LIBELLE;
+alter table UNITE_RECH drop COLUMN CHEMIN_LOGO;
+
+create index UNITE_RECH_STRUCT_ID_IDX on UNITE_RECH (structure_id);
 
 -----
 
