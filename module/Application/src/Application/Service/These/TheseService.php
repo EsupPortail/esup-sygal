@@ -26,13 +26,12 @@ use Application\Service\Variable\VariableServiceAwareInterface;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Traits\MessageAwareInterface;
 use UnicaenApp\Util;
 use UnicaenAuth\Entity\Db\UserInterface;
 
-class TheseService extends BaseService
-    implements ValidationServiceAwareInterface, NotificationServiceAwareInterface, FichierServiceAwareInterface,
+class TheseService extends BaseService implements
+    ValidationServiceAwareInterface, NotificationServiceAwareInterface, FichierServiceAwareInterface,
     VariableServiceAwareInterface
 {
     use ValidationServiceAwareTrait;
@@ -83,7 +82,7 @@ class TheseService extends BaseService
                  * On ne voit que les thèses de son établissement.
                  */
                 $qb
-                    ->where('t.etablissement = :etab')
+                    ->andWhere('t.etablissement = :etab')
                     ->setParameter('etab', $role->getStructure()->getEtablissement());
             }
             elseif ($role->isEcoleDoctoraleDependant()) {
@@ -111,47 +110,6 @@ class TheseService extends BaseService
                     ->setParameter('ids', $ids);
             }
         }
-//        /**
-//         * Un directeur d'ED ne voit que les thèses concernant son ED.
-//         */
-//        elseif ($role = $userContext->getSelectedRoleDirecteurEcoleDoctorale()) {
-//            $ids = array_unique(array_map(function(EcoleDoctoraleIndividu $edi) {
-//                return $edi->getEcole()->getId();
-//            }, $userContext->getIdentityEcoleDoctoraleIndividu()));
-//            $qb
-//                ->andWhere($qb->expr()->in('ed.id', ':ids'))
-//                ->setParameter('ids', $ids);
-//        }
-//        /**
-//         * Un directeur d'UR ne voit que les thèses concernant son UR.
-//         */
-//        elseif ($role = $userContext->getSelectedRoleDirecteurUniteRecherche()) {
-//            $ids = array_unique(array_map(function(UniteRechercheIndividu $uri) {
-//                return $uri->getUniteRecherche()->getId();
-//            }, $userContext->getIdentityUniteRechercheIndividu()));
-//            $qb
-//                ->andWhere($qb->expr()->in('ur.id', ':ids'))
-//                ->setParameter('ids', $ids);
-//        }
-//        /**
-//         * Un directeur de thèse ne voit que les thèses qu'il dirige.
-//         */
-//        elseif ($role = $userContext->getSelectedRoleDirecteurThese()) {
-//            $people = $userContext->getIdentityLdap();
-//            $qb
-//                ->join('t.acteurs', 'adt', Join::WITH, 'adt.role = :role')
-//                ->join('adt.individu', 'idt', Join::WITH, 'idt.sourceCode like :idtSourceCode')
-//                ->setParameter('idtSourceCode', '%::' . $people->getSupannEmpId())
-//                ->setParameter('role', $role);
-//        }
-//        /**
-//         * Un administrateur ne voit que les thèses de son établissement.
-//         */
-//        elseif ($role = $userContext->getSelectedRoleAdministrateur()) {
-//            $qb
-//                ->where('t.etablissement = :etab')
-//                ->setParameter('etab', $role->getEtablissement());
-//        }
     }
 
     /**
