@@ -20,8 +20,9 @@ class DoctorantRepository extends DefaultEntityRepository
             ->leftJoin('t.complements', 'c')
             ->andWhere('1 = pasHistorise(t)')
             // todo: ajouter le code étab au persopass enregistré dans la table DOCTORANT_COMPL
-            ->andWhere('t.sourceCode = :login OR c.persopass = :login')
-            ->setParameter('login', $etablissement . '::' . $username);
+            ->andWhere('t.sourceCode = :sourceCode OR c.persopass = :persopass')
+            ->setParameter('sourceCode', $etablissement . '::' . $username)
+            ->setParameter('persopass', $username);
 
         return $qb->getQuery()->getOneOrNullResult();
     }
