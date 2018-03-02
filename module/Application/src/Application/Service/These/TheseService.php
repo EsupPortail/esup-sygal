@@ -4,14 +4,12 @@ namespace Application\Service\These;
 
 use Application\Entity\Db\Attestation;
 use Application\Entity\Db\Diffusion;
-use Application\Entity\Db\EcoleDoctoraleIndividu;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\MetadonneeThese;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\RdvBu;
 use Application\Entity\Db\Repository\TheseRepository;
 use Application\Entity\Db\These;
-use Application\Entity\Db\UniteRechercheIndividu;
 use Application\Entity\Db\VersionFichier;
 use Application\Notification\ValidationRdvBuNotification;
 use Application\Service\BaseService;
@@ -89,25 +87,19 @@ class TheseService extends BaseService implements
                 /**
                  * On ne voit que les thèses concernant son ED.
                  */
-                $ids = array_unique(array_map(function(EcoleDoctoraleIndividu $edi) {
-                    return $edi->getEcole()->getId();
-                }, $userContext->getIdentityEcoleDoctoraleIndividu()));
                 $qb
                     ->addSelect('ed')->join('t.ecoleDoctorale', 'ed')
-                    ->andWhere($qb->expr()->in('ed.id', ':ids'))
-                    ->setParameter('ids', $ids);
+                    ->andWhere('ed = :ed')
+                    ->setParameter('ed', $role->getStructure()->getEcoleDoctorale());
             }
             elseif ($role->isUniteRechercheDependant()) {
                 /**
                  * On ne voit que les thèses concernant son UR.
                  */
-                $ids = array_unique(array_map(function(UniteRechercheIndividu $uri) {
-                    return $uri->getUniteRecherche()->getId();
-                }, $userContext->getIdentityUniteRechercheIndividu()));
                 $qb
                     ->addSelect('ur')->join('t.uniteRecherche', 'ur')
-                    ->andWhere($qb->expr()->in('ur.id', ':ids'))
-                    ->setParameter('ids', $ids);
+                    ->andWhere('ur = :ur')
+                    ->setParameter('ur', $role->getStructure()->getUniteRecherche());
             }
         }
     }

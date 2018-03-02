@@ -883,6 +883,15 @@ ALTER TABLE ROLE_PRIVILEGE ADD CONSTRAINT ROLE_PRIVILEGE_PRIV_ID_fk FOREIGN KEY 
 
 ------
 
+create table ROLE_PRIVILEGE_MODELE
+(
+  ROLE_CODE VARCHAR2(100) not null,
+  PRIVILEGE_ID NUMBER not null constraint ROLE_PRIV_MOD_PRIV_ID_FK references PRIVILEGE on delete cascade,
+  constraint ROLE_PRIV_MOD_PK primary key (ROLE_CODE, PRIVILEGE_ID)
+);
+
+----
+
 create table DOCTORANT_COMPL
 (
   ID NUMBER not null constraint THESARD_COMPL_PK primary key,

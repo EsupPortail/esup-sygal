@@ -245,3 +245,159 @@ insert into role_privilege(role_id, privilege_id) select r.id, p.id from role r,
 insert into role_privilege(role_id, privilege_id) select r.id, p.id from role r, privilege p, categorie_privilege cp where p.categorie_id = cp.id and r.libelle = 'Unité de recherche' and p.code = 'edition-convention-mel' and cp.code = 'these';
 insert into role_privilege(role_id, privilege_id) select r.id, p.id from role r, privilege p, categorie_privilege cp where p.categorie_id = cp.id and r.libelle = 'Unité de recherche' and p.code = 'export-csv' and cp.code = 'these';
 insert into role_privilege(role_id, privilege_id) select r.id, p.id from role r, privilege p, categorie_privilege cp where p.categorie_id = cp.id and r.libelle = 'Unité de recherche' and p.code = 'recherche' and cp.code = 'these';
+
+
+-- 1	    Rôles - Visualisation
+-- 2	    Rôles - Édition
+-- 3	    Privilèges - Visualisation
+-- 4	    Privilèges - Édition
+
+-- 46	    Consultation des utilisateurs
+-- 14	    Attribution de rôle aux utilisateurs
+-- 95	    Modification d'utilisateur
+-- 6	    Écarts entre les données de l'application et ses sources
+-- 7	    Mise à jour des données à partir de leurs sources
+-- 8	    Tableau de bord principal
+-- 9	    Mise à jour des vues différentielles et des procédures de mise à jour
+
+-- 96	    Modification de la FAQ
+
+-- 47	    Recherche de thèses
+-- 177	    Export des thèses au format CSV
+-- 82	    Consultation de la fiche d'identité de la thèse
+-- 83	    Consultation du dépôt de la thèse
+-- 84	    Consultation de la description de la thèse
+-- 85	    Consultation de l'archivage de la thèse
+-- 197	    Modification des informations rendez-vous BU
+-- 86	    Consultation du rendez-vous BU
+-- 45	    Saisie des mots-clés RAMEAU
+-- 198	    Modification des attestations
+-- 5	    Consultation du dépôt de la version papier corrigée
+-- 41	    Saisie de la description
+-- 43	    Dépôt de la version initiale de la thèse
+-- 137	    Dépôt de la version corrigée de la thèse
+-- 81	    Téléchargement de fichier déposé
+-- 44	    Edition de la convention de mise en ligne
+-- 61	    Juger de la conformité de la thèse pour archivage
+-- 42	    Saisie du formulaire d'autorisation de diffusion
+-- 87	    Création de l'archive ZIP
+-- 88	    Validation suite au rendez-vous à la BU
+-- 90	    Suppression de la validation concernant le rendez-vous à la BU
+-- 127	    Validation du dépôt de la thèse corrigée
+-- 129	    Validation des corrections de la thèse
+-- 128	    Suppression de la validation du dépôt de la thèse corrigée
+-- 130	    Suppression de la validation des corrections de la thèse
+-- 217	    Validation de la remise de la version papier corrigée
+-- 11	    Modification du persopass
+-- 157	    Téléverser un fichier comme le PV ou le rapport de soutenance, la demande de confidentialité, etc.
+-- 160	    Télécharger/consulter un fichier comme le PV ou le rapport de soutenance, la demande de confidentialité, etc.
+
+-- 91	    Consultation d'école doctorale
+-- 92	    Modification d'école doctorale
+
+-- 93	    Consultation d'Unité de Recherche
+-- 94	    Modification d'Unité de Recherche
+
+insert into ROLE_PRIVILEGE(ROLE_ID, PRIVILEGE_ID)
+  select r.id, p.id
+  from role r, PRIVILEGE p
+  where p.id in ( 47, 177, 82, 83, 84, 85, 86, 5, 81, 91, 92	)
+        and r.CODE = 'ED'
+;
+
+insert into ROLE_PRIVILEGE(ROLE_ID, PRIVILEGE_ID)
+  select r.id, p.id
+  from role r, PRIVILEGE p
+  where p.id in ( 47, 177, 82, 83, 84, 85, 86, 5, 81, 93, 94	)
+        and r.CODE = 'UR'
+;
+
+--delete from ROLE_PRIVILEGE where ROLE_ID in (306,307,308,309,310);
+insert into ROLE_PRIVILEGE(ROLE_ID, PRIVILEGE_ID)
+  select r.id, p.id
+  from role r, PRIVILEGE p
+  where p.id in ( 1, 3, 46, 14, 95, 96, 47, 177, 82, 83, 84, 85, 197, 86, 45, 198, 5, 41, 43, 137, 81, 44, 61, 42, 87, 88, 90, 127, 129, 128, 130, 217, 11, 157, 160, 91, 92, 93, 94 )
+        and r.CODE = 'ADMIN'
+;
+
+--delete from ROLE_PRIVILEGE where ROLE_ID in (select id from role where CODE = 'ADMIN_TECH');
+insert into ROLE_PRIVILEGE(ROLE_ID, PRIVILEGE_ID)
+  select r.id, p.id
+  from role r, PRIVILEGE p
+  where r.CODE = 'ADMIN_TECH'
+;
+
+--delete from ROLE_PRIVILEGE where ROLE_ID in (316,317,318,319,320);
+insert into ROLE_PRIVILEGE(ROLE_ID, PRIVILEGE_ID)
+  select r.id, p.id
+  from role r, PRIVILEGE p
+  where p.id in ( 1, 3, 47, 177, 82, 83, 84, 85, 197, 86, 45, 198, 5, 41, 43, 137, 81, 44, 61, 42, 87, 88, 90, 127, 129, 128, 130, 217, 11, 157, 160, 91, 93 )
+        and r.CODE = 'BU'
+;
+
+--delete from ROLE_PRIVILEGE where ROLE_ID in (311,312,313,314,315);
+insert into ROLE_PRIVILEGE(ROLE_ID, PRIVILEGE_ID)
+  select r.id, p.id
+  from role r, PRIVILEGE p
+  where p.id in ( 1, 3, 47, 177, 82, 83, 84, 85, 86, 198, 5, 41, 43, 137, 81, 44, 61, 42, 87, 127, 129, 128, 130, 217, 11, 157, 160, 91, 93 )
+        and r.CODE = 'BDD'
+;
+
+--delete from ROLE_PRIVILEGE where ROLE_ID in (select id from role where CODE = 'DOCTORANT');
+insert into ROLE_PRIVILEGE(ROLE_ID, PRIVILEGE_ID)
+  select r.id, p.id
+  from role r, PRIVILEGE p
+  where p.id in ( 47, 82, 83, 84, 85, 197, 86, 198, 5, 41, 43, 137, 81, 44, 61, 42, 127, 128, 11, 160 )
+        and r.CODE = 'DOCTORANT'
+;
+
+--delete from ROLE_PRIVILEGE where ROLE_ID in (select id from role where CODE = 'D');
+insert into ROLE_PRIVILEGE(ROLE_ID, PRIVILEGE_ID)
+  select r.id, p.id
+  from role r, PRIVILEGE p
+  where p.id in ( 47, 82, 83, 84, 85, 197, 86, 81, 129, 160 )
+        and r.CODE = 'D'
+;
+
+
+
+
+insert into ROLE_PRIVILEGE_MODELE(ROLE_CODE, PRIVILEGE_ID)
+  select 'ED', p.id
+  from PRIVILEGE p where p.id in ( 47, 177, 82, 83, 84, 85, 86, 5, 81, 91, 92	)
+;
+
+insert into ROLE_PRIVILEGE_MODELE(ROLE_CODE, PRIVILEGE_ID)
+  select 'UR', p.id
+  from PRIVILEGE p where p.id in ( 47, 177, 82, 83, 84, 85, 86, 5, 81, 93, 94 )
+;
+
+insert into ROLE_PRIVILEGE_MODELE(ROLE_CODE, PRIVILEGE_ID)
+  select 'ADMIN', p.id
+  from PRIVILEGE p where p.id in ( 1, 3, 46, 14, 95, 96, 47, 177, 82, 83, 84, 85, 197, 86, 45, 198, 5, 41, 43, 137, 81, 44, 61, 42, 87, 88, 90, 127, 129, 128, 130, 217, 11, 157, 160, 91, 92, 93, 94 )
+;
+
+insert into ROLE_PRIVILEGE_MODELE(ROLE_CODE, PRIVILEGE_ID)
+  select 'ADMIN_TECH', p.id
+  from PRIVILEGE p
+;
+
+insert into ROLE_PRIVILEGE_MODELE(ROLE_CODE, PRIVILEGE_ID)
+  select 'BU', p.id
+  from PRIVILEGE p where p.id in ( 1, 3, 47, 177, 82, 83, 84, 85, 197, 86, 45, 198, 5, 41, 43, 137, 81, 44, 61, 42, 87, 88, 90, 127, 129, 128, 130, 217, 11, 157, 160, 91, 93 )
+;
+
+insert into ROLE_PRIVILEGE_MODELE(ROLE_CODE, PRIVILEGE_ID)
+  select 'BDD', p.id
+  from PRIVILEGE p where p.id in ( 1, 3, 47, 177, 82, 83, 84, 85, 86, 198, 5, 41, 43, 137, 81, 44, 61, 42, 87, 127, 129, 128, 130, 217, 11, 157, 160, 91, 93 )
+;
+
+insert into ROLE_PRIVILEGE_MODELE(ROLE_CODE, PRIVILEGE_ID)
+  select 'DOCTORANT', p.id
+  from PRIVILEGE p where p.id in ( 47, 82, 83, 84, 85, 197, 86, 198, 5, 41, 43, 137, 81, 44, 61, 42, 127, 128, 11, 160 )
+;
+
+insert into ROLE_PRIVILEGE_MODELE(ROLE_CODE, PRIVILEGE_ID)
+  select 'D', p.id
+  from PRIVILEGE p where p.id in ( 47, 82, 83, 84, 85, 197, 86, 81, 129, 160 )
+;
