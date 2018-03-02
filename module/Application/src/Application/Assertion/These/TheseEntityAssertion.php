@@ -220,6 +220,13 @@ class TheseEntityAssertion implements EntityAssertionInterface, ValidationServic
                 $this->existeFichierTheseVersionCorrigee(),
             "Aucune version corrigée n'a été fournie.");
         }
+
+        if (ThesePrivileges::THESE_DEPOT_VERSION_INITIALE) {
+            $this->assertFalse(
+                $this->these->estSoutenue(),
+                "Dépot initial bloqué car soutenance effectuée"
+            );
+        }
     }
 
     private function assertAucuneValidationBU($message = null)

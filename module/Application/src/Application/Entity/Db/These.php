@@ -1195,10 +1195,18 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      * Predicat testant si une thèse est soutenue en utilisant la date du système
      * @return boolean
      */
-    public function estSoutenue() {
-        $maintenant = new DateTime();
+    public function estSoutenue()
+    {
         $soutenance = $this->getDateSoutenance();
-        if ($maintenant > $soutenance) return true;
+        if ($soutenance === null)
+        {
+            return false;
+        }
+        $maintenant = new DateTime();
+        if ($maintenant > $soutenance)
+        {
+            return true;
+        }
         return false;
     }
 }
