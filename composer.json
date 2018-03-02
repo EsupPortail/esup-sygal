@@ -1,10 +1,10 @@
 {
-    "name": "unicaen/sodoct",
+    "name": "unicaen/sygal",
     "description": "Application de gestion des soutenances de thèse",
     "repositories": [
         {
             "type": "composer",
-            "url":  "https://dev.unicaen.fr/packagist"
+            "url":  "https://gest.unicaen.fr/packagist"
         }
     ],
     "require-dev": {
