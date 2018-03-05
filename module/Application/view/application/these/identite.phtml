@@ -135,10 +135,15 @@ $persopassModifiedEvent = 'persopass-modified-event';
             </dt>
             <dd>
                 <?php
-                    /** @var Etablissement $etablissement */
-                    if($etablissement === null) echo $this->translate("Non renseigné"); else echo $etablissement->getCode();
-                    echo " - ";
-                    if($etablissement === null) echo $this->translate("Non renseigné"); else echo $etablissement->getLibelle(); ?>
+                    if ($these->getEtablissement()) {
+                        echo $these->getEtablissement()->getCode() . " - " . $these->getEtablissement()->getLibelle();
+                    }
+                    else {
+                        echo "<div class='alert alert-sm alert-warning'>";
+                        echo "<span class='glyphicon glyphicon-warning-sign'></span> Aucun établissement n'est renseignée.";
+                        echo "</div>";
+                    }
+                ?>
             </dd>
 
 
@@ -146,16 +151,37 @@ $persopassModifiedEvent = 'persopass-modified-event';
                 <?php echo $this->translate("École doctorale"); ?>
             </dt>
             <dd>
-                <?php if($these->getEcoleDoctorale()): ?>
-                    <?php echo $these->getEcoleDoctorale()->getSourceCode() . " - " . $these->getEcoleDoctorale()->getLibelle() ?>
-                <?php endif ?>
+                <?php if ($these->getEcoleDoctorale()) {
+                    echo $these->getEcoleDoctorale()->getSourceCode() . " - " . $these->getEcoleDoctorale()->getLibelle();
+                } else {
+                    echo "<div class='alert alert-sm alert-warning'>";
+                    echo "<span class='glyphicon glyphicon-warning-sign'></span> Aucune école doctorale n'est renseignée.";
+                    echo "</div>";
+                }
+                ?>
             </dd>
 
             <dt>
                 <?php echo $this->translate("Unité de recherche"); ?>
             </dt>
             <dd>
-                <?php echo $these->getCodeUniteRecherche() . " - " . $these->getLibelleUniteRecherche() ?>
+                <?php
+                if ($these->getUniteRecherche()) {
+                    echo $these->getUniteRecherche()->getSourceCode() . " - " . $these->getUniteRecherche()->getLibelle();
+                }
+                elseif ($these->getCodeUniteRecherche() && $these->getLibelleUniteRecherche()) {
+                    echo $these->getCodeUniteRecherche() . " - " . $these->getLibelleUniteRecherche();
+                    echo "<div class='alert alert-sm alert-warning'>";
+                    echo "<span class='glyphicon glyphicon-warning-sign'></span> Utilisation du champs libre (unité de recherche mal renseignée).";
+                    echo "</div>";
+                }
+                else {
+                    echo "<div class='alert alert-sm alert-warning'>";
+                    echo "<span class='glyphicon glyphicon-warning-sign'></span> Aucune unité de recherche n'est renseignée";
+                    echo "</div>";
+                }
+                ?>
+
             </dd>
 
             <dt>
