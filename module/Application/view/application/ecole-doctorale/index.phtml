@@ -76,6 +76,21 @@ $selectedEcole = null;
         <?php if ($isSelected): ?>
             <tr>
                 <td colspan="3" class="bg-info">
+                    <h2 class="first"><?php echo $this->translate("Rôles");?> <small><?php echo $selectedEcole ?></small></h2>
+
+                    <?php
+                            $roles = $ecole->getStructure()->getStructureDependantRoles();
+                            echo "<table class='table table-condensed'>";
+                            echo "<tr><th>";
+                            echo $this->translate("Libellé");
+                            echo "</th><th>";
+                            echo $this->translate("Actions");
+                            echo "</th></tr>";
+                            foreach ($roles as $role) {
+                                echo "<tr><td>". $role->getLibelle() ."</td><td></td></tr>";
+                            }
+                            echo "</table>";
+                    ?>
                     <h2 class="first"><?php echo $this->translate("Membres");?> <small><?php echo $selectedEcole ?></small></h2>
                     <?php if (count($ecoleDoctoraleIndividus)): ?>
                         <table class="table table-condensed">
@@ -88,7 +103,7 @@ $selectedEcole = null;
                             foreach ($ecoleDoctoraleIndividus as $edi): ?>
                                 <tr>
                                     <td><?php echo $edi->getIndividu() ?></td>
-                                    <td><?php echo $edi->getRole() ?></td>
+                                    <td><?php echo $edi->getRole()->getLibelle() ?></td>
                                     <td>
                                         <?php if ($this->isAllowed(EcoleDoctoralePrivileges::getResourceId(EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION))): ?>
                                             <?php $url = $this->url('ecole-doctorale/retirer-individu', ['ecoleDoctorale' => $ecole->getId(), 'edi' => $edi->getId()], [], true) ?>

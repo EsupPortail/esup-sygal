@@ -10,10 +10,10 @@ use UnicaenApp\Util;
 class Structure
 {
     /**
-     * @var string id
-     * @var string sigle
-     * @var string libelle
-     * @var string cheminLogo
+     * @var string $id
+     * @var string $sigle
+     * @var string $libelle
+     * @var string $cheminLogo
      */
     private     $id;
     protected   $sigle;
@@ -28,6 +28,11 @@ class Structure
     protected $etablissement;
     protected $ecoleDoctorale;
     protected $uniteRecherche;
+
+    /**
+     * @var Role[] $roles
+     */
+    protected $roles;
 
     /**
      * @return string
@@ -85,6 +90,25 @@ class Structure
         $this->cheminLogo = $cheminLogo;
     }
 
+    /**
+     * @return Role[]
+     */
+    public function getRoles()
+    {
+        return $this->roles;
+    }
+
+    /**
+     * @return Role[]
+     */
+    public function getStructureDependantRoles()
+    {
+        $roles = [];
+        foreach($this->roles as $role) {
+            if ($role->isStructureDependant()) $roles[] = $role;
+        }
+        return $roles;
+    }
 
 
     public function __toString()

@@ -34,6 +34,7 @@ class EcoleDoctoraleController extends AbstractController
 
         // récupération de la liste des individus de l'école doctorale séléctionnée
         $ecoleDoctoraleIndividus = null;
+        $ecoleDoctoraleRoles = null;
         if ($selected) {
             /** @var EcoleDoctorale $ed */
             $ed = $this->ecoleDoctoraleService->getRepository()->find($selected);

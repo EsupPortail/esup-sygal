@@ -80,6 +80,21 @@ $selectedEcole = null;
                              src="data:image/png;base64,<?php echo base64_encode($etablissement->getLogoContent()); ?>"
                         />
                     </div>
+                    <h2 class="first"><?php echo $this->translate("Rôles");?> <small><?php echo $selectedEcole ?></small></h2>
+
+                    <?php
+                    $roles = $etablissement->getStructure()->getStructureDependantRoles();
+                    echo "<table class='table table-condensed'>";
+                    echo "<tr><th>";
+                    echo $this->translate("Libellé");
+                    echo "</th><th>";
+                    echo $this->translate("Actions");
+                    echo "</th></tr>";
+                    foreach ($roles as $role) {
+                        echo "<tr><td>". $role->getLibelle() ."</td><td></td></tr>";
+                    }
+                    echo "</table>";
+                    ?>
                     <h2 class="first"><?php echo $this->translate("Membres");?> <small><?php echo $selectedEtablissement ?></small></h2>
 <!--  INDIVIDU                  -->
 <!--                    --><?php //if (count($etablissementIndividus)): ?>
