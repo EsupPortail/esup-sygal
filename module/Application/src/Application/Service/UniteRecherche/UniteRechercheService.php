@@ -147,4 +147,9 @@ class UniteRechercheService extends BaseService
             throw new RuntimeException("Erreur lors de l'enregistrement de l'UR", null, $e);
         }
     }
+
+    public function getUniteRechercheById($id) {
+        $unite = $this->getRepository()->findOneBy(["id" => $id]);
+        return $unite;
+    }
 }

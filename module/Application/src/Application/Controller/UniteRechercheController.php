@@ -2,11 +2,15 @@
 
 namespace Application\Controller;
 
+use Application\Entity\Db\IndividuRole;
+use Application\Entity\Db\Role;
 use Application\Entity\Db\UniteRecherche;
 use Application\Form\UniteRechercheForm;
 use Application\RouteMatch;
 use Application\Service\Individu\IndividuServiceAwareInterface;
 use Application\Service\Individu\IndividuServiceAwareTrait;
+use Application\Service\Role\RoleServiceAwareInterface;
+use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareInterface;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -16,12 +20,18 @@ use UnicaenLdap\Service\LdapPeopleServiceAwareInterface;
 use UnicaenLdap\Service\LdapPeopleServiceAwareTrait;
 use Zend\View\Model\ViewModel;
 
-class UniteRechercheController extends AbstractController
-    implements UniteRechercheServiceAwareInterface, LdapPeopleServiceAwareInterface, IndividuServiceAwareInterface
+class UniteRechercheController extends AbstractController implements
+        UniteRechercheServiceAwareInterface,
+        IndividuServiceAwareInterface,
+        RoleServiceAwareInterface,
+        LdapPeopleServiceAwareInterface
+
 {
     use UniteRechercheServiceAwareTrait;
-    use LdapPeopleServiceAwareTrait;
     use IndividuServiceAwareTrait;
+    use RoleServiceAwareTrait;
+    use LdapPeopleServiceAwareTrait;
+
 
     /**
      * L'index récupére la liste des unités de recherche et la liste des individus associés à une unité
@@ -36,9 +46,20 @@ class UniteRechercheController extends AbstractController
 
         // récupération de la liste des individus de l'unité de recherche séléctionnée
         $uniteRechercheIndividus = null;
+        $roles = null;
+        $effectifs = null;
         if ($selected) {
+
             /** @var UniteRecherche ur */
-            $ur = $this->uniteRechercheService->getRepository()->find($selected);
+            $ur  = $this->uniteRechercheService->getRepository()->find($selected);
+            $roles = $this->roleService->getRolesByStructure($ur->getStructure());
+
+            $effectifs = [];
+            foreach ($roles as $role) {
+                $individus = $this->individuService->getIndividuByRole($role);
+                $effectifs[] = $individus;
+            }
+
             $uniteRechercheIndividus = $ur->getUniteRechercheIndividus();
         }
 
@@ -46,6 +67,8 @@ class UniteRechercheController extends AbstractController
             'unites'                  => $unites,
             'selected'                => $selected,
             'uniteRechercheIndividus' => $uniteRechercheIndividus,
+            'roles'                   => $roles,
+            'effectifs'               => $effectifs,
         ]);
     }
 
@@ -164,8 +187,11 @@ class UniteRechercheController extends AbstractController
 
     public function ajouterIndividuAction()
     {
-        $uniteId = $this->params()->fromRoute('uniteRecherche');
-        $data = $this->params()->fromPost('people');
+        $uniteId    = $this->params()->fromRoute('uniteRecherche');
+        $data       = $this->params()->fromPost('people');
+        $roleId     = $this->params()->fromPost('role');
+
+
 
         if (!empty($data['id'])) {
             /** @var People $people */
@@ -175,12 +201,21 @@ class UniteRechercheController extends AbstractController
                 if (! $individu) {
                     $individu = $this->individuService->createFromPeople($people);
                 }
-                /** @var UniteRecherche $unite */
+
+                /**
+                 * @var UniteRecherche $unite
+                 * @var Role $role
+                 * @var IndividuRole $individuRole
+                 */
+                //$edi = $this->uniteRechercheService->addIndividu($individu, $unite);
                 $unite = $this->uniteRechercheService->getRepository()->find($uniteId);
+                $role = $this->roleService->getRoleById($roleId);
+                $individuRole = $this->roleService->addIndividuRole($individu,$role);
 
-                $edi = $this->uniteRechercheService->addIndividu($individu, $unite);
-
-                $this->flashMessenger()->addSuccessMessage("$individu est désormais membre de '$unite' avec le rôle '{$edi->getRole()}'");
+                $this->flashMessenger()->addSuccessMessage(
+                    "<strong>{$individuRole->getIndividu()}</strong>". " est désormais " .
+                    "<strong>{$individuRole->getRole()}</strong>". " de l'unité de recherche ".
+                    "<strong>{$unite->getLibelle()}</strong>.");
             }
         }
 
@@ -189,14 +224,24 @@ class UniteRechercheController extends AbstractController
 
     public function retirerIndividuAction()
     {
-        $ediId = $this->params()->fromRoute('edi');
+        $urId = $this->params()->fromRoute('uniteRecherche');
+        $irId = $this->params()->fromRoute('edi');
 
-        if ($ediId) {
-            $edi = $this->uniteRechercheService->removeIndividu($ediId);
+        $unite = null;
+        if ($urId !== null) {
+            $unite = $this->uniteRechercheService->getUniteRechercheById($urId);
+        }
 
-            $this->flashMessenger()->addSuccessMessage("{$edi->getIndividu()} n'est plus membre de '{$edi->getUniteRecherche()}'");
+        if ($irId) {
+            //$individuRole = $this->roleService->getIndividuRoleById($irId);
+            $individuRole = $this->roleService->removeIndividuRoleById($irId);
 
-            return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $edi->getUniteRecherche()->getId()]], true);
+            $this->flashMessenger()->addSuccessMessage(
+                 "<strong>{$individuRole->getIndividu()}</strong>" . " n'est plus n'est plus "
+                ."<strong>{$individuRole->getRole()}</strong>" . " de l'unite de recherche "
+                ."<strong>{$unite->getLibelle()}</strong>"."</strong>");
+
+            return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $urId]], true);
         }
 
         return $this->redirect()->toRoute('unite-recherche', [], [], true);

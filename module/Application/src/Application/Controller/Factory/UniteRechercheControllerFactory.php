@@ -4,10 +4,14 @@ namespace Application\Controller\Factory;
 
 use Application\Controller\UniteRechercheController;
 use Application\Form\UniteRechercheForm;
+use Application\Service\Individu\IndividuServiceAwareInterface;
+use Application\Service\Individu\IndividuServiceAwareTrait;
 use Zend\Mvc\Controller\ControllerManager;
 
-class UniteRechercheControllerFactory
+class UniteRechercheControllerFactory implements IndividuServiceAwareInterface
 {
+    use IndividuServiceAwareTrait;
+
     /**
      * Create service
      *

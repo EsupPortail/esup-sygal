@@ -263,4 +263,9 @@ class Role extends AbstractRole
     {
         return $this->getTypeStructureDependant() !== null;
     }
+
+    public function __toString() {
+        $txt = "" . $this->getLibelle();
+        return $txt;
+    }
 }

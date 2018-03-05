@@ -76,11 +76,13 @@ $selectedEcole = null;
         <?php if ($isSelected): ?>
             <tr>
                 <td colspan="3" class="bg-info">
-                    <h2 class="first"><?php echo $this->translate("Rôles");?> <small><?php echo $selectedEcole ?></small></h2>
 
+                    <!-- AFFICHAGE DES ROLES POUR L'ED SELECTIONNÉE -->
+                    <h2 class="first"><?php echo $this->translate("Rôles");?> <small><?php echo $selectedEcole ?></small></h2>
+                    <table class='table table-condensed'>
                     <?php
                             $roles = $ecole->getStructure()->getStructureDependantRoles();
-                            echo "<table class='table table-condensed'>";
+
                             echo "<tr><th>";
                             echo $this->translate("Libellé");
                             echo "</th><th>";
@@ -89,8 +91,13 @@ $selectedEcole = null;
                             foreach ($roles as $role) {
                                 echo "<tr><td>". $role->getLibelle() ."</td><td></td></tr>";
                             }
-                            echo "</table>";
+
                     ?>
+                    </table>
+
+                    <h2 class="first"><?php echo $this->translate("Membres");?> <small><?php echo $selectedEcole ?></small></h2>
+
+
                     <h2 class="first"><?php echo $this->translate("Membres");?> <small><?php echo $selectedEcole ?></small></h2>
                     <?php if (count($ecoleDoctoraleIndividus)): ?>
                         <table class="table table-condensed">
