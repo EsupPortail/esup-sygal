@@ -24,7 +24,7 @@ return [
                     'action'     => [
                         'ajouter',
                         'supprimer',
-//                        'restaurer',
+                        'restaurer',
                         'modifier',
                         'ajouter-individu',
                         'retirer-individu',
@@ -70,18 +70,18 @@ return [
                             ],
                         ],
                     ],
-//                    'restaurer' => [
-//                        'type'          => 'Segment',
-//                        'options'       => [
-//                            'route'       => '/:ecoleDoctorale/restaurer',
-//                            'constraints' => [
-//                                'ecoleDoctorale' => '\d+',
-//                            ],
-//                            'defaults'    => [
-//                                'action' => 'restaurer',
-//                            ],
-//                        ],
-//                    ],
+                    'restaurer' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'       => '/:etablissement/restaurer',
+                            'constraints' => [
+                                'ecoleDoctorale' => '\d+',
+                            ],
+                            'defaults'    => [
+                                'action' => 'restaurer',
+                            ],
+                        ],
+                    ],
                     'modifier' => [
                         'type'          => 'Segment',
                         'options'       => [

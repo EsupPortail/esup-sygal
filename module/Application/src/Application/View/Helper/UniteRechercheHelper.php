@@ -2,24 +2,24 @@
 
 namespace Application\View\Helper;
 
-use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\UniteRecherche;
 
 /**
- * Class EcoleDoctoraleHelper
+ * Class UniteRechercheHelper
  *
  * @method string getLibelle()
  * @method string getSigle()
  * @method string getSourceCode()
  */
-class EtablissementHelper extends AbstractHelper
+class UniteRechercheHelper extends AbstractHelper
 {
     /**
-     * @var Etablissement
+     * @var UniteRecherche
      */
     protected $value;
 
     /**
-     * @param Etablissement $value
+     * @param UniteRecherche $value
      * @return $this
      */
     function __invoke($value = null)
@@ -42,12 +42,11 @@ class EtablissementHelper extends AbstractHelper
             return $text;
         }
 
-        return sprintf('<span title="Établissement supprimé (historisée)" class="historise">%s</span>', $text);
-        //return $text;
+        return sprintf('<span title="Unité de recherche supprimée (historisée)" class="historisee">%s</span>', $text);
     }
 
     /**
-     * @param Etablissement $value
+     * @param UniteRecherche $value
      * @return string
      */
     public function render($value = null)

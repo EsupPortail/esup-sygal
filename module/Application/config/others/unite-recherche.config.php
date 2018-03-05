@@ -6,6 +6,7 @@ use Application\Form\Factory\UniteRechercheHydratorFactory;
 use Application\Provider\Privilege\UniteRecherchePrivileges;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use UnicaenAuth\Guard\PrivilegeController;
+use Application\View\Helper\UniteRechercheHelper;
 
 return [
     'bjyauthorize'    => [
@@ -163,9 +164,14 @@ return [
             'UniteRechercheForm' => UniteRechercheFormFactory::class,
         ],
     ],
-    'hydrators' => array(
-        'factories' => array(
+    'hydrators' => [
+        'factories' => [
             'UniteRechercheHydrator' => UniteRechercheHydratorFactory::class,
-        )
-    ),
+        ]
+    ],
+    'view_helpers' => [
+        'invokables' => [
+            'ur' => UniteRechercheHelper::class,
+        ],
+    ],
 ];

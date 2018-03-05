@@ -81,9 +81,9 @@ class EtablissementController extends AbstractController
             if ($this->etablissementForm->isValid()) {
                 /** @var Etablissement $etablissement */
                 $etablissement = $this->etablissementForm->getData();
-                $this->etablissementService->create($etablissement);
+                $this->etablissementService->create($etablissement, $this->userContextService->getIdentityDb());
 
-                // sauvegarde du logo si fourni
+                    // sauvegarde du logo si fourni
                 if ($file['cheminLogo']['tmp_name'] !== '') {
                     $this->ajouterLogoEtablissement($file['cheminLogo']['tmp_name'], $etablissement);
                 }
@@ -107,7 +107,8 @@ class EtablissementController extends AbstractController
     public function supprimerAction()
     {
         $etablissement = $this->requestEtablissement();
-        $this->etablissementService->delete($etablissement);
+        $destructeur = $this->userContextService->getIdentityDb();
+        $this->etablissementService->deleteSoftly($etablissement, $destructeur);
         $this->flashMessenger()->addSuccessMessage("Établissement '$etablissement' supprimé avec succès");
 
         return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $etablissement->getId()]], true);
@@ -158,6 +159,17 @@ class EtablissementController extends AbstractController
         $viewModel->setTemplate('application/etablissement/modifier');
         return $viewModel;
 
+    }
+
+    public function restaurerAction()
+    {
+        $etablissement = $this->requestEtablissement();
+
+        $this->etablissementService->undelete($etablissement);
+
+        $this->flashMessenger()->addSuccessMessage("Établissement '$etablissement' restauré avec succès");
+
+        return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $etablissement->getId()]], true);
     }
 
     /**

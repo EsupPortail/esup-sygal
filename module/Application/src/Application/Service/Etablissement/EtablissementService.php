@@ -4,6 +4,7 @@ namespace Application\Service\Etablissement;
 
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Repository\EtablissementRepository;
+use Application\Entity\Db\Utilisateur;
 use Application\Service\BaseService;
 use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\RuntimeException;
@@ -18,14 +19,46 @@ class EtablissementService extends BaseService
         return $this->entityManager->getRepository(Etablissement::class);
     }
 
-    public function create(Etablissement $etablissement)
+    /**
+     * @param Etablissement $etablissement
+     * @param Utilisateur $createur
+     * @return Etablissement
+     */
+    public function create(Etablissement $etablissement, Utilisateur $createur)
     {
+        $etablissement->setHistoCreateur($createur);
+
         $this->persist($etablissement);
         $this->flush($etablissement);
 
         return $etablissement;
     }
 
+    /**
+     * @param Etablissement $etablissement
+     * @param Utilisateur $destructeur
+     */
+    public function deleteSoftly(Etablissement $etablissement, Utilisateur $destructeur)
+    {
+        $etablissement->historiser($destructeur);
+
+        $this->flush($etablissement);
+    }
+
+    /**
+     * @param Etablissement $etablissement
+     */
+    public function undelete(Etablissement $etablissement)
+    {
+        $etablissement->dehistoriser();
+
+        $this->flush($etablissement);
+    }
+
+    /**
+     * @param Etablissement $etablissement
+     * @return Etablissement
+     */
     public function update(Etablissement $etablissement)
     {
         $this->flush($etablissement);
@@ -33,12 +66,7 @@ class EtablissementService extends BaseService
         return $etablissement;
     }
 
-    public function delete(Etablissement $etablissement)
-    {
-        $this->entityManager->remove($etablissement->getStructure());
-        $this->entityManager->remove($etablissement);
-        $this->flush($etablissement);
-    }
+
 
     public function setLogo(Etablissement $etablissement, $cheminLogo)
     {

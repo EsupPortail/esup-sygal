@@ -44,7 +44,9 @@ $selectedUnite = null;
         ?>
         <tr class="unite-recherche <?php echo $trClass ?>">
             <td><a href="<?php echo $this->url(null, [], ['query' => $query], true) ?>"
-                   title="<?php echo $this->translate("Cliquez pour sélectionner cette unité de recherche"); ?> "><?php echo $unite->getLibelle() ?></a>
+                   title="<?php echo $this->translate("Cliquez pour sélectionner cette unité de recherche"); ?> ">
+                    <?php echo $this->ur($unite)->getLibelle() ?>
+                </a>
             </td>
             <td><?php echo $unite->getSigle() ?></td>
             <td><?php echo $unite->getSourceCode() ?></td>

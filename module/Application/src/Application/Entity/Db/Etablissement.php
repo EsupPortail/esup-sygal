@@ -2,13 +2,19 @@
 
 namespace Application\Entity\Db;
 
+use UnicaenApp\Entity\HistoriqueAwareInterface;
+use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenImport\Entity\Db\Interfaces\SourceAwareInterface;
+use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
 use UnicaenApp\Util;
 
 /**
  * Etablissement
  */
-class Etablissement
+class Etablissement implements HistoriqueAwareInterface, SourceAwareInterface
 {
+    use HistoriqueAwareTrait;
+    use SourceAwareTrait;
     const CODE_COMUE = 'COMUE';
 
     protected $id;
