@@ -49,15 +49,6 @@ class IndividuService extends BaseService
     }
 
     public function getIndividuByRole(Role $role) {
-//        $repo = $this->entityManager->getRepository(Individu::class);
-//        $qb = $repo->createQueryBuilder("in")
-//            -> join (IndividuRole::class, "ir", "WITH", "ir.individu = in.id")
-//            -> andWhere("ir.role = :role")
-//            ->setParameter("role", $role)
-//        ;
-//        $query = $qb->getQuery();
-//        $res = $query->execute();
-//        return $res;
         $repo = $this->entityManager->getRepository(IndividuRole::class);
         $qb = $repo->createQueryBuilder("ir")
             -> join (Individu::class, "in")

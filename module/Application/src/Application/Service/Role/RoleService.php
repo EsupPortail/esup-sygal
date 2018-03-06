@@ -32,6 +32,16 @@ class RoleService extends BaseService
         return $qb->getQuery()->execute();
     }
 
+    public function getIndividuRolesByIndividu(Individu $individu)
+    {
+        $repo = $this->entityManager->getRepository( IndividuRole::class);
+        $qb = $repo->createQueryBuilder("ro")
+            ->andWhere("ro.individu = :individu")
+        ;
+        $qb->setParameter('individu', $individu);
+        return $qb->getQuery()->execute();
+    }
+
 
     public function getRoleById($roleId) {
         $repo = $this->entityManager->getRepository(Role::class);

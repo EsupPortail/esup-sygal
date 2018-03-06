@@ -4,6 +4,7 @@ namespace Application\Provider;
 
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\EcoleDoctoraleIndividu;
+use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\UniteRechercheIndividu;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
@@ -81,8 +82,7 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
 
         $roles = array_merge([],
             $this->getRolesFromActeur($people),
-            $this->getRolesFromEcoleDoctoraleIndividu($people),
-            $this->getRolesFromUniteRechercheIndividu($people),
+            $this->getRolesFromIndividuRole($people),
             $this->getRolesFromDoctorant($people));
 
         // suppression des doublons en comparant le __toString() de chaque Role
@@ -111,34 +111,19 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
         }, $acteurs);
     }
 
-    /**
-     * Rôle découlant de la présence de l'utilisateur dans EcoleDoctoraleIndividu.
+    /** Rôle découlant de la présence dans IndividuRoles.
      *
-     * @param People $people
-     * @return Role[]
+     *  @param People $people
+     *  @return Role[]
      */
-    private function getRolesFromEcoleDoctoraleIndividu(People $people)
-    {
+    private function getRolesFromIndividuRole(People $people) {
         $result = $this->ecoleDoctoraleService->getRepository()->findMembresBySourceCodeIndividu($people->getSupannEmpId());
+        $individu = $result[0]->getIndividu();
+        $roles = $this->roleService->getIndividuRolesByIndividu($individu);
 
-        return array_map(function(EcoleDoctoraleIndividu $edi) {
-            return $edi->getRole();
-        }, $result);
-    }
-
-    /**
-     * Rôle découlant de la présence de l'utilisateur dans UniteRechercheIndividu.
-     *
-     * @param People $people
-     * @return Role[]
-     */
-    private function getRolesFromUniteRechercheIndividu(People $people)
-    {
-        $result = $this->uniteRechercheService->getRepository()->findMembresBySourceCodeIndividu($people->getSupannEmpId());
-
-        return array_map(function(UniteRechercheIndividu $uri) {
-            return $uri->getRole();
-        }, $result);
+        return array_map(function(IndividuRole $role) {
+            return $role->getRole();
+        }, $roles);
     }
 
     /**
