@@ -30,55 +30,24 @@ class EcoleDoctoraleService extends BaseService
     }
 
     /**
-     * @param Individu       $individu
-     * @param EcoleDoctorale $ecole
-     * @param Role           $role
-     * @return EcoleDoctoraleIndividu
+     * @return EcoleDoctorale[]
      */
-    public function addIndividu(Individu $individu, EcoleDoctorale $ecole, Role $role = null)
-    {
-        /** @var EcoleDoctoraleIndividu $edi */
-        $edi = $this->getEntityManager()->getRepository(EcoleDoctoraleIndividu::class)->findOneBy(array_filter([
-            'individu' => $individu,
-            'ecole'    => $ecole,
-            'role'     => $role,
-        ]));
-        if (! $edi) {
-            $edi = new EcoleDoctoraleIndividu();
-            $edi
-                ->setIndividu($individu)
-                ->setEcole($ecole);
-
-            $this->getEntityManager()->persist($edi);
-        }
-        if (! $role) {
-            $role = $this->getEntityManager()->getRepository(Role::class)->findOneBy(['roleId' => Role::ROLE_ID_ECOLE_DOCT]);
-        }
-        $edi->setRole($role);
-
-        $this->getEntityManager()->flush($edi);
-
-        return $edi;
+    public function getEcolesDoctorales() {
+        /** @var EcoleDoctorale[] $ecoles */
+        $ecoles = $this->getRepository()->findAll();
+        return $ecoles;
     }
 
     /**
-     * @param EcoleDoctoraleIndividu|int $edi
-     * @return EcoleDoctoraleIndividu|null
+     * @param int $id
+     * @return null|EcoleDoctorale
      */
-    public function removeIndividu($edi)
-    {
-        if (! $edi instanceof EcoleDoctoraleIndividu) {
-            $edi = $this->getEntityManager()->find(EcoleDoctoraleIndividu::class, $edi);
-            if (! $edi) {
-                return null;
-            }
-        }
-
-        $this->getEntityManager()->remove($edi);
-        $this->getEntityManager()->flush($edi);
-
-        return $edi;
+    public function getEcoleDoctoraleById($id) {
+        /** @var EcoleDoctorale $ecole */
+        $ecole = $this->getRepository()->findOneBy(["id" => $id]);
+        return $ecole;
     }
+
 
     /**
      * Historise une ED.
@@ -149,8 +118,5 @@ class EcoleDoctoraleService extends BaseService
         }
     }
 
-    public function getEcoleDoctoraleById($id) {
-        $unite = $this->getRepository()->findOneBy(["id" => $id]);
-        return $unite;
-    }
+
 }

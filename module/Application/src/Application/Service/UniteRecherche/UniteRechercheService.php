@@ -29,54 +29,22 @@ class UniteRechercheService extends BaseService
     }
 
     /**
-     * @param Individu       $individu
-     * @param UniteRecherche $unite
-     * @param Role           $role
-     * @return UniteRechercheIndividu
+     * @return UniteRecherche[]
      */
-    public function addIndividu(Individu $individu, UniteRecherche $unite, Role $role = null)
-    {
-        /** @var UniteRechercheIndividu $uri */
-        $uri = $this->getEntityManager()->getRepository(UniteRechercheIndividu::class)->findOneBy(array_filter([
-            'individu'       => $individu,
-            'uniteRecherche' => $unite,
-            'role'           => $role,
-        ]));
-        if (! $uri) {
-            $uri = new UniteRechercheIndividu();
-            $uri
-                ->setIndividu($individu)
-                ->setUniteRecherche($unite);
-
-            $this->getEntityManager()->persist($uri);
-        }
-        if (! $role) {
-            $role = $this->getEntityManager()->getRepository(Role::class)->findOneBy(['roleId' => Role::ROLE_ID_UNITE_RECH]);
-        }
-        $uri->setRole($role);
-
-        $this->getEntityManager()->flush($uri);
-
-        return $uri;
+    public function getUnitesRecherches() {
+        /** @var UniteRecherche[] $unites */
+        $unites = $this->getRepository()->findAll();
+        return $unites;
     }
 
     /**
-     * @param UniteRechercheIndividu|int $uri
-     * @return UniteRechercheIndividu|null
+     * @param int $id
+     * @return null|UniteRecherche
      */
-    public function removeIndividu($uri)
-    {
-        if (! $uri instanceof UniteRechercheIndividu) {
-            $uri = $this->getEntityManager()->find(UniteRechercheIndividu::class, $uri);
-            if (! $uri) {
-                return null;
-            }
-        }
-
-        $this->getEntityManager()->remove($uri);
-        $this->getEntityManager()->flush($uri);
-
-        return $uri;
+    public function getUniteRechercheById($id) {
+        /** @var UniteRecherche $unite */
+        $unite = $this->getRepository()->findOneBy(["id" => $id]);
+        return $unite;
     }
 
     /**
@@ -148,8 +116,5 @@ class UniteRechercheService extends BaseService
         }
     }
 
-    public function getUniteRechercheById($id) {
-        $unite = $this->getRepository()->findOneBy(["id" => $id]);
-        return $unite;
-    }
+
 }

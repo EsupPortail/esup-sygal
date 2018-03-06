@@ -32,15 +32,20 @@ class UniteRechercheController extends AbstractController implements
 
 
     /**
-     * L'index récupére la liste des unités de recherche et la liste des individus associés à une unité
-     * de recherche si celle-ci est selectionnée.
+     * L'index récupére :
+     * - la liste des unités de recherches
+     * - l'unité sélectionnée
+     * - la liste des rôles associées à l'unité
+     * - un tableau de tableaux des rôles associés à chaque rôle
      * @return \Zend\Http\Response|ViewModel
+     *
+     * TODO transformer effectifs en tableau associatif (rôle => liste de membres)
      */
     public function indexAction()
     {
         $selected = $this->params()->fromQuery('selected');
-        $unites = $this->uniteRechercheService->getRepository()->findAll();
-        usort($unites, function($a,$b) {return $a->getLibelle() > $b->getLibelle();});
+        $unites = $this->uniteRechercheService->getUnitesRecherches();
+        usort($unites, function(UniteRecherche $a,UniteRecherche $b) {return $a->getLibelle() > $b->getLibelle();});
 
         $roles = null;
         $effectifs = null;
@@ -49,7 +54,7 @@ class UniteRechercheController extends AbstractController implements
              * @var UniteRecherche $ur
              * @var Role[] $roles
              */
-            $ur  = $this->uniteRechercheService->getRepository()->find($selected);
+            $ur  = $this->uniteRechercheService->getUniteRechercheById($selected);
             $roles = $ur->getStructure()->getStructureDependantRoles();
 
             $effectifs = [];
@@ -180,6 +185,10 @@ class UniteRechercheController extends AbstractController implements
         return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $unite->getId()]], true);
     }
 
+    /**
+     * Ajout des individus et de leurs rôles dans la table INDIVIDU_ROLE
+     * @return \Zend\Http\Response
+     */
     public function ajouterIndividuAction()
     {
         $uniteId    = $this->params()->fromRoute('uniteRecherche');
@@ -200,7 +209,7 @@ class UniteRechercheController extends AbstractController implements
                  * @var Role $role
                  * @var IndividuRole $individuRole
                  */
-                $unite = $this->uniteRechercheService->getRepository()->find($uniteId);
+                $unite = $this->uniteRechercheService->getUniteRechercheById($uniteId);
                 $role = $this->roleService->getRoleById($roleId);
                 $individuRole = $this->roleService->addIndividuRole($individu,$role);
 
@@ -215,6 +224,7 @@ class UniteRechercheController extends AbstractController implements
     }
 
     /**
+     * Retrait des individus et de leurs rôles dans la table INDIVIDU_ROLE
      * @return \Zend\Http\Response
      * @throws \Doctrine\ORM\OptimisticLockException
      */

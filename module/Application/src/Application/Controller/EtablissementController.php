@@ -56,12 +56,21 @@ class EtablissementController extends AbstractController
         return $routeMatch->getEtablissement();
     }
 
-
+    /**
+     * L'index récupére :
+     * - la liste des établissements
+     * - l'établissement sélectionné
+     * - la liste des rôles associées à l'établissement
+     * - un tableau de tableaux des rôles associés à chaque rôle
+     * @return \Zend\Http\Response|ViewModel
+     *
+     * TODO transformer effectifs en tableau associatif (rôle => liste de membres)
+     */
     public function indexAction()
     {
         $selected = $this->params()->fromQuery('selected');
-        $etablissements = $this->etablissementService->getRepository()->findAll();
-        usort($etablissements, function($a,$b) {return $a->getLibelle() > $b->getLibelle();});
+        $etablissements = $this->etablissementService->getEtablissements();
+        usort($etablissements, function(Etablissement $a,Etablissement $b) {return $a->getLibelle() > $b->getLibelle();});
 
         $roles = null;
         $effectifs = null;
@@ -70,7 +79,7 @@ class EtablissementController extends AbstractController
              * @var Etablissement $etablissement
              * @var Role[] $roles
              */
-            $etablissement  = $this->etablissementService->getRepository()->find($selected);
+            $etablissement  = $this->etablissementService->getEtablissementById($selected);
             $roles = $etablissement->getStructure()->getStructureDependantRoles();
 
             $effectifs = [];
@@ -255,6 +264,10 @@ class EtablissementController extends AbstractController
         return $chemin;
     }
 
+    /**
+     * Ajout des individus et de leurs rôles dans la table INDIVIDU_ROLE
+     * @return \Zend\Http\Response
+     */
     public function ajouterIndividuAction()
     {
         $etabId     = $this->params()->fromRoute('etablissement');
@@ -275,7 +288,7 @@ class EtablissementController extends AbstractController
                  * @var Role $role
                  * @var IndividuRole $individuRole
                  */
-                $etablissement = $this->etablissementService->getRepository()->find($etabId);
+                $etablissement = $this->etablissementService->getEtablissementById($etabId);
                 $role = $this->roleService->getRoleById($roleId);
                 $individuRole = $this->roleService->addIndividuRole($individu,$role);
 
@@ -290,6 +303,7 @@ class EtablissementController extends AbstractController
     }
 
     /**
+     * Retrait des individus et de leurs rôles dans la table INDIVIDU_ROLE
      * @return \Zend\Http\Response
      * @throws \Doctrine\ORM\OptimisticLockException
      */

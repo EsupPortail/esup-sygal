@@ -20,6 +20,25 @@ class EtablissementService extends BaseService
     }
 
     /**
+     * @return Etablissement[]
+     */
+    public function getEtablissements() {
+        /** @var Etablissement[] $etablissments */
+        $etablissments = $this->getRepository()->findAll();
+        return $etablissments;
+    }
+
+    /**
+     * @param int $id
+     * @return null|Etablissement
+     */
+    public function getEtablissementById($id) {
+        /** @var Etablissement $etablissement */
+        $etablissement = $this->getRepository()->findOneBy(["id" => $id]);
+        return $etablissement;
+    }
+
+    /**
      * @param Etablissement $etablissement
      * @param Utilisateur $createur
      * @return Etablissement
@@ -100,8 +119,4 @@ class EtablissementService extends BaseService
         }
     }
 
-    public function getEtablissementById($id) {
-        $etablissement = $this->getRepository()->findOneBy(["id" => $id]);
-        return $etablissement;
-    }
 }

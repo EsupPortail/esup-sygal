@@ -27,25 +27,30 @@ class EcoleDoctoraleController extends AbstractController
     use RoleServiceAwareTrait;
 
     /**
-     * L'index récupére la liste des écoles doctorales et la liste des individus associés à une école
-     * doctorale si celle-ci est selectionnée.
+     * L'index récupére :
+     * - la liste des écoles doctorales
+     * - l'école doctorale sélectionnée
+     * - la liste des rôles associées à l'école
+     * - un tableau de tableaux des rôles associés à chaque rôle
      * @return \Zend\Http\Response|ViewModel
+     *
+     * TODO transformer effectifs en tableau associatif (rôle => liste de membres)
      */
     public function indexAction()
     {
         $selected = $this->params()->fromQuery('selected');
-        $ecoles = $this->ecoleDoctoraleService->getRepository()->findAll();
-        usort($ecoles, function($a,$b) {return $a->getLibelle() > $b->getLibelle();});
+        $ecoles = $this->ecoleDoctoraleService->getEcolesDoctorales();
+        usort($ecoles, function(EcoleDoctorale $a, EcoleDoctorale $b) {return $a->getLibelle() > $b->getLibelle();});
 
         $roles = null;
         $effectifs = null;
         if ($selected) {
             /**
-             * @var EcoleDoctorale $etablissement
+             * @var EcoleDoctorale $ecole
              * @var Role[] $roles
              */
-            $etablissement  = $this->ecoleDoctoraleService->getRepository()->find($selected);
-            $roles = $etablissement->getStructure()->getStructureDependantRoles();
+            $ecole  = $this->ecoleDoctoraleService->getEcoleDoctoraleById($selected);
+            $roles = $ecole->getStructure()->getStructureDependantRoles();
 
             $effectifs = [];
             foreach ($roles as $role) {
@@ -175,9 +180,13 @@ class EcoleDoctoraleController extends AbstractController
         return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecole->getId()]], true);
     }
 
+    /**
+     * Ajout des individus et de leurs rôles dans la table INDIVIDU_ROLE
+     * @return \Zend\Http\Response
+     */
     public function ajouterIndividuAction()
     {
-        $edId     = $this->params()->fromRoute('ecoleDoctorale');
+        $edId       = $this->params()->fromRoute('ecoleDoctorale');
         $data       = $this->params()->fromPost('people');
         $roleId     = $this->params()->fromPost('role');
 
@@ -195,7 +204,7 @@ class EcoleDoctoraleController extends AbstractController
                  * @var Role $role
                  * @var IndividuRole $individuRole
                  */
-                $ecole = $this->ecoleDoctoraleService->getRepository()->find($edId);
+                $ecole = $this->ecoleDoctoraleService->getEcoleDoctoraleById($edId);
                 $role = $this->roleService->getRoleById($roleId);
                 $individuRole = $this->roleService->addIndividuRole($individu,$role);
 
@@ -210,6 +219,7 @@ class EcoleDoctoraleController extends AbstractController
     }
 
     /**
+     * Retrait des individus et de leurs rôles dans la table INDIVIDU_ROLE
      * @return \Zend\Http\Response
      * @throws \Doctrine\ORM\OptimisticLockException
      */
