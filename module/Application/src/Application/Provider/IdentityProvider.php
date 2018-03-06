@@ -19,6 +19,7 @@ use UnicaenAuth\Entity\Ldap\People;
 use UnicaenAuth\Provider\Identity\ChainableProvider;
 use UnicaenAuth\Provider\Identity\ChainEvent;
 use Zend\Authentication\AuthenticationService;
+use Zend\Db\Sql\Predicate\In;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 
@@ -120,6 +121,16 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
         $result = $this->ecoleDoctoraleService->getRepository()->findMembresBySourceCodeIndividu($people->getSupannEmpId());
         $individu = $result[0]->getIndividu();
         $roles = $this->roleService->getIndividuRolesByIndividu($individu);
+
+        usort($roles, function (IndividuRole $a, IndividuRole $b) {
+            //filtre sur le type de structure
+            if ($a->getRole()->getTypeStructureDependant() !== $b->getRole()->getTypeStructureDependant()) {
+                return $a->getRole()->getTypeStructureDependant() > $b->getRole()->getTypeStructureDependant();
+            } elseif ($a->getRole()->getStructure()->getLibelle() !== $a->getRole()->getStructure()->getLibelle()) {
+                return $a->getRole()->getStructure()->getLibelle() > $b->getRole()->getStructure()->getLibelle();
+            }
+            return $a->getId() > $b->getId();
+        });
 
         return array_map(function(IndividuRole $role) {
             return $role->getRole();
