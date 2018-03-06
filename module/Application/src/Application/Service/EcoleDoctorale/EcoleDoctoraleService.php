@@ -148,4 +148,9 @@ class EcoleDoctoraleService extends BaseService
             throw new RuntimeException("Erreur lors de l'enregistrement de l'ED", null, $e);
         }
     }
+
+    public function getEcoleDoctoraleById($id) {
+        $unite = $this->getRepository()->findOneBy(["id" => $id]);
+        return $unite;
+    }
 }

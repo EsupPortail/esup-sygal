@@ -82,7 +82,7 @@ $selectedUnite = null;
 
                     <?php $nbRoles = count($roles); ?>
 
-                    <!-- AFFICHAGE DES ROLES POUR L'ED SELECTIONNÉE -->
+                    <!-- AFFICHAGE DES ROLES POUR L'UR SELECTIONNÉE -->
                     <h2 class="first"><?php echo $this->translate("Rôles");?> <small><?php echo $selectedUnite ?></small></h2>                    <table class='table table-condensed'>
                         <tr>
                             <th> <?php echo $this->translate("Libellé"); ?> </th>
@@ -95,15 +95,17 @@ $selectedUnite = null;
                                 echo  $roles[$position]->getLibelle();
                                 echo "</td><td>";
                                 echo  count($effectifs[$position]);
-                                echo "</td><td>";
+                                echo "</td><td> <span style='color:red; font-weight: bold;'>";
                                 echo "<span class='glyphicon glyphicon-eye-open'></span> ";
                                 echo "<span class='glyphicon glyphicon-pencil'></span> ";
                                 echo "<span class='glyphicon glyphicon-trash'></span>";
+                                echo " TODO </span>";
                                 echo "</td></tr>";
                             }
                         ?>
                     </table>
 
+                    <!-- AFFICHAGE DES MEMBRES POUR L'UR SELECTIONNÉE -->
                     <h2 class="first"><?php echo $this->translate("Membres");?> <small><?php echo $selectedUnite ?></small></h2>
                     <table class="table table-condensed">
                         <tr>
@@ -134,31 +136,32 @@ $selectedUnite = null;
                                 }
                             }
                         ?>
-
-
                     </table>
-                    <?php
-                    ?>
 
+                    <!-- AFFICHAGE DU LOGO DE L'UR SELECTIONNÉE -->
                     <div id="logo-div" class="pull-right">
                         <img style="max-width: 200px; max-height: 200px; border: 1px solid black; background-color: white;"
                              src="data:image/png;base64,<?php echo base64_encode($unite->getLogoContent()); ?>"
                         />
                     </div>
 
+                    <!-- AJOUT DE MEMBRE -->
                     <?php if ($this->isAllowed(UniteRecherchePrivileges::getResourceId(UniteRecherchePrivileges::UNITE_RECH_MODIFICATION))): ?>
                         <div class="row">
                             <div class="col-md-6">
                                 <?php $url = $this->url('unite-recherche/ajouter-individu', ['uniteRecherche' => $selected], [], true) ?>
                                 <form method="post" action="<?php echo $url ?>">
                                     <?php
-                                    generateSelect("role", $roles);
+
                                     $sas = new LdapPeople('people');
                                     $sas->setLabel($this->translate("Recherche d'un individu à ajouter :"));
                                     $sas->setAttribute('class', 'people-finder');
                                     $sas->setAutocompleteSource($this->url('utilisateur/rechercher-people',[],[],true));
                                     echo $this->formcontrolgroup($sas, 'formLdapPeople');
+
+                                    generateSelect("role", $roles);
                                     ?>
+                                    <br/>
                                     <input type="submit"
                                            value="<?php echo $this->translate("Ajouter cet individu");?>"
                                            style="margin-top: 0;"
@@ -202,7 +205,7 @@ $selectedUnite = null;
 
 <?php
     function generateSelect($id, $roles) {
-        echo "<select name='" .$id. "' >";
+        echo "<select name='" .$id. "' class='form-control' >";
         /** @var \Application\Entity\Db\Role $role */
         foreach ($roles as $role) {
             echo "<option value='". $role->getId() ."'>". $role->getLibelle() ."</option>";

@@ -3,21 +3,31 @@
 namespace Application\Controller;
 
 use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\IndividuRole;
+use Application\Entity\Db\Role;
 use Application\Form\EtablissementForm;
 use Application\Service\Etablissement\EtablissementServiceAwareInterface;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareInterface;
 use Application\Service\Individu\IndividuServiceAwareTrait;
+use Application\Service\Role\RoleServiceAwareInterface;
+use Application\Service\Role\RoleServiceAwareTrait;
+use UnicaenLdap\Entity\People;
 use UnicaenLdap\Service\LdapPeopleServiceAwareInterface;
 use UnicaenLdap\Service\LdapPeopleServiceAwareTrait;
 use Zend\View\Model\ViewModel;
 
+/**
+ * Class EtablissementController
+ * @package Application\Controller
+ */
 class EtablissementController extends AbstractController
-    implements EtablissementServiceAwareInterface, LdapPeopleServiceAwareInterface, IndividuServiceAwareInterface
+    implements EtablissementServiceAwareInterface, LdapPeopleServiceAwareInterface, IndividuServiceAwareInterface, RoleServiceAwareInterface
 {
     use EtablissementServiceAwareTrait;
     use LdapPeopleServiceAwareTrait;
     use IndividuServiceAwareTrait;
+    use RoleServiceAwareTrait;
 
     /**
      * @var EtablissementForm $etablissementForm
@@ -53,19 +63,28 @@ class EtablissementController extends AbstractController
         $etablissements = $this->etablissementService->getRepository()->findAll();
         usort($etablissements, function($a,$b) {return $a->getLibelle() > $b->getLibelle();});
 
-        /** les individus sont desactivés pour le moment */
-        $etablissementIndividus = null;
+        $roles = null;
+        $effectifs = null;
         if ($selected) {
-            /** @var Etablissement $etab */
-            $etab = $this->etablissementService->getRepository()->find($selected);
-            $etablissementIndividus = []; //$etab->getEtablissementIndividus();
+            /**
+             * @var Etablissement $etablissement
+             * @var Role[] $roles
+             */
+            $etablissement  = $this->etablissementService->getRepository()->find($selected);
+            $roles = $etablissement->getStructure()->getStructureDependantRoles();
+
+            $effectifs = [];
+            foreach ($roles as $role) {
+                $individus = $this->individuService->getIndividuByRole($role);
+                $effectifs[] = $individus;
+            }
         }
 
         return new ViewModel([
-            'etablissements' => $etablissements,
-            'selected' => $selected,
-            'etablissementIndividus' => $etablissementIndividus,
-
+            'etablissements'          => $etablissements,
+            'selected'                => $selected,
+            'roles'                   => $roles,
+            'effectifs'               => $effectifs,
         ]);
     }
 
@@ -236,23 +255,67 @@ class EtablissementController extends AbstractController
         return $chemin;
     }
 
+    public function ajouterIndividuAction()
+    {
+        $etabId     = $this->params()->fromRoute('etablissement');
+        $data       = $this->params()->fromPost('people');
+        $roleId     = $this->params()->fromPost('role');
 
-//    public function ajouterIndividuAction() {
-//        $viewModel = new ViewModel([
-//            'form' => $this->etablissementFormForm,
-//        ]);
-//        $viewModel->setTemplate('application/etablissement/index');
-//
-//        return $viewModel;
-//    }
+        if (!empty($data['id'])) {
+            /** @var People $people */
+            if ($people = $this->ldapPeopleService->get($data['id'])) {
+                $supannEmpId = $people->get('supannEmpId');
+                $individu = $this->individuService->getRepository()->findOneBy(['sourceCode' => $supannEmpId]);
+                if (! $individu) {
+                    $individu = $this->individuService->createFromPeople($people);
+                }
 
-//    public function retirerIndividuAction() {
-//        $viewModel = new ViewModel([
-//            'form' => $this->etablissementForm,
-//        ]);
-//        $viewModel->setTemplate('application/etablissement/index');
-//
-//        return $viewModel;
-//    }
+                /**
+                 * @var Etablissement $etablissement
+                 * @var Role $role
+                 * @var IndividuRole $individuRole
+                 */
+                $etablissement = $this->etablissementService->getRepository()->find($etabId);
+                $role = $this->roleService->getRoleById($roleId);
+                $individuRole = $this->roleService->addIndividuRole($individu,$role);
+
+                $this->flashMessenger()->addSuccessMessage(
+                    "<strong>{$individuRole->getIndividu()}</strong>". " est désormais " .
+                    "<strong>{$individuRole->getRole()}</strong>". " de l'etablissement ".
+                    "<strong>{$etablissement->getLibelle()}</strong>.");
+            }
+        }
+
+        return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $etabId]], true);
+    }
+
+    /**
+     * @return \Zend\Http\Response
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function retirerIndividuAction()
+    {
+        $etabId = $this->params()->fromRoute('etablissement');
+        $irId = $this->params()->fromRoute('etabi');
+
+        $etablissement = null;
+        if ($etabId !== null) {
+            $etablissement = $this->etablissementService->getEtablissementById($etabId);
+        }
+
+        if ($irId) {
+            $individuRole = $this->roleService->removeIndividuRoleById($irId);
+
+            $this->flashMessenger()->addSuccessMessage(
+                "<strong>{$individuRole->getIndividu()}</strong>" . " n'est plus n'est plus "
+                ."<strong>{$individuRole->getRole()}</strong>" . " de l'établissement "
+                ."<strong>{$etablissement->getLibelle()}</strong>"."</strong>");
+
+            return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $etabId]], true);
+        }
+
+        return $this->redirect()->toRoute('etablissement', [], [], true);
+    }
+
 
 }

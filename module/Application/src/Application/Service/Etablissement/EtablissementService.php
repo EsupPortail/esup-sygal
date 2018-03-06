@@ -99,4 +99,9 @@ class EtablissementService extends BaseService
             throw new RuntimeException("Erreur lors de l'enregistrement de l'Etablissement", null, $e);
         }
     }
+
+    public function getEtablissementById($id) {
+        $etablissement = $this->getRepository()->findOneBy(["id" => $id]);
+        return $etablissement;
+    }
 }

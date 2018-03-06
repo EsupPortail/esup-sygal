@@ -13,8 +13,6 @@ use Application\Service\Role\RoleServiceAwareInterface;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareInterface;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
-use Doctrine\ORM\Tools\Pagination\Paginator;
-use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
 use UnicaenLdap\Entity\People;
 use UnicaenLdap\Service\LdapPeopleServiceAwareInterface;
 use UnicaenLdap\Service\LdapPeopleServiceAwareTrait;
@@ -44,29 +42,26 @@ class UniteRechercheController extends AbstractController implements
         $unites = $this->uniteRechercheService->getRepository()->findAll();
         usort($unites, function($a,$b) {return $a->getLibelle() > $b->getLibelle();});
 
-        // récupération de la liste des individus de l'unité de recherche séléctionnée
-        $uniteRechercheIndividus = null;
         $roles = null;
         $effectifs = null;
         if ($selected) {
-
-            /** @var UniteRecherche ur */
+            /**
+             * @var UniteRecherche $ur
+             * @var Role[] $roles
+             */
             $ur  = $this->uniteRechercheService->getRepository()->find($selected);
-            $roles = $this->roleService->getRolesByStructure($ur->getStructure());
+            $roles = $ur->getStructure()->getStructureDependantRoles();
 
             $effectifs = [];
             foreach ($roles as $role) {
                 $individus = $this->individuService->getIndividuByRole($role);
                 $effectifs[] = $individus;
             }
-
-            $uniteRechercheIndividus = $ur->getUniteRechercheIndividus();
         }
 
         return new ViewModel([
             'unites'                  => $unites,
             'selected'                => $selected,
-            'uniteRechercheIndividus' => $uniteRechercheIndividus,
             'roles'                   => $roles,
             'effectifs'               => $effectifs,
         ]);
@@ -191,8 +186,6 @@ class UniteRechercheController extends AbstractController implements
         $data       = $this->params()->fromPost('people');
         $roleId     = $this->params()->fromPost('role');
 
-
-
         if (!empty($data['id'])) {
             /** @var People $people */
             if ($people = $this->ldapPeopleService->get($data['id'])) {
@@ -207,7 +200,6 @@ class UniteRechercheController extends AbstractController implements
                  * @var Role $role
                  * @var IndividuRole $individuRole
                  */
-                //$edi = $this->uniteRechercheService->addIndividu($individu, $unite);
                 $unite = $this->uniteRechercheService->getRepository()->find($uniteId);
                 $role = $this->roleService->getRoleById($roleId);
                 $individuRole = $this->roleService->addIndividuRole($individu,$role);
@@ -222,6 +214,10 @@ class UniteRechercheController extends AbstractController implements
         return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId]], true);
     }
 
+    /**
+     * @return \Zend\Http\Response
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
     public function retirerIndividuAction()
     {
         $urId = $this->params()->fromRoute('uniteRecherche');
@@ -233,7 +229,6 @@ class UniteRechercheController extends AbstractController implements
         }
 
         if ($irId) {
-            //$individuRole = $this->roleService->getIndividuRoleById($irId);
             $individuRole = $this->roleService->removeIndividuRoleById($irId);
 
             $this->flashMessenger()->addSuccessMessage(

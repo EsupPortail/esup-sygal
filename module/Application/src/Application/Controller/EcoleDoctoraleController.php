@@ -3,23 +3,28 @@
 namespace Application\Controller;
 
 use Application\Entity\Db\EcoleDoctorale;
+use Application\Entity\Db\IndividuRole;
+use Application\Entity\Db\Role;
 use Application\Form\EcoleDoctoraleForm;
 use Application\RouteMatch;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareInterface;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareInterface;
 use Application\Service\Individu\IndividuServiceAwareTrait;
+use Application\Service\Role\RoleServiceAwareInterface;
+use Application\Service\Role\RoleServiceAwareTrait;
 use UnicaenLdap\Entity\People;
 use UnicaenLdap\Service\LdapPeopleServiceAwareInterface;
 use UnicaenLdap\Service\LdapPeopleServiceAwareTrait;
 use Zend\View\Model\ViewModel;
 
 class EcoleDoctoraleController extends AbstractController
-    implements EcoleDoctoraleServiceAwareInterface, LdapPeopleServiceAwareInterface, IndividuServiceAwareInterface
+    implements EcoleDoctoraleServiceAwareInterface, LdapPeopleServiceAwareInterface, IndividuServiceAwareInterface, RoleServiceAwareInterface
 {
     use EcoleDoctoraleServiceAwareTrait;
     use LdapPeopleServiceAwareTrait;
     use IndividuServiceAwareTrait;
+    use RoleServiceAwareTrait;
 
     /**
      * L'index récupére la liste des écoles doctorales et la liste des individus associés à une école
@@ -32,19 +37,28 @@ class EcoleDoctoraleController extends AbstractController
         $ecoles = $this->ecoleDoctoraleService->getRepository()->findAll();
         usort($ecoles, function($a,$b) {return $a->getLibelle() > $b->getLibelle();});
 
-        // récupération de la liste des individus de l'école doctorale séléctionnée
-        $ecoleDoctoraleIndividus = null;
-        $ecoleDoctoraleRoles = null;
+        $roles = null;
+        $effectifs = null;
         if ($selected) {
-            /** @var EcoleDoctorale $ed */
-            $ed = $this->ecoleDoctoraleService->getRepository()->find($selected);
-            $ecoleDoctoraleIndividus = $ed->getEcoleDoctoraleIndividus();
+            /**
+             * @var EcoleDoctorale $etablissement
+             * @var Role[] $roles
+             */
+            $etablissement  = $this->ecoleDoctoraleService->getRepository()->find($selected);
+            $roles = $etablissement->getStructure()->getStructureDependantRoles();
+
+            $effectifs = [];
+            foreach ($roles as $role) {
+                $individus = $this->individuService->getIndividuByRole($role);
+                $effectifs[] = $individus;
+            }
         }
 
         return new ViewModel([
             'ecoles'                  => $ecoles,
             'selected'                => $selected,
-            'ecoleDoctoraleIndividus' => $ecoleDoctoraleIndividus,
+            'roles'                   => $roles,
+            'effectifs'               => $effectifs,
         ]);
     }
 
@@ -163,8 +177,9 @@ class EcoleDoctoraleController extends AbstractController
 
     public function ajouterIndividuAction()
     {
-        $ecoleId = $this->params()->fromRoute('ecoleDoctorale');
-        $data = $this->params()->fromPost('people');
+        $edId     = $this->params()->fromRoute('ecoleDoctorale');
+        $data       = $this->params()->fromPost('people');
+        $roleId     = $this->params()->fromPost('role');
 
         if (!empty($data['id'])) {
             /** @var People $people */
@@ -174,28 +189,49 @@ class EcoleDoctoraleController extends AbstractController
                 if (! $individu) {
                     $individu = $this->individuService->createFromPeople($people);
                 }
-                /** @var EcoleDoctorale $ecole */
-                $ecole = $this->ecoleDoctoraleService->getRepository()->find($ecoleId);
 
-                $edi = $this->ecoleDoctoraleService->addIndividu($individu, $ecole);
+                /**
+                 * @var EcoleDoctorale $ecole
+                 * @var Role $role
+                 * @var IndividuRole $individuRole
+                 */
+                $ecole = $this->ecoleDoctoraleService->getRepository()->find($edId);
+                $role = $this->roleService->getRoleById($roleId);
+                $individuRole = $this->roleService->addIndividuRole($individu,$role);
 
-                $this->flashMessenger()->addSuccessMessage("$individu est désormais membre de '$ecole' avec le rôle '{$edi->getRole()}'");
+                $this->flashMessenger()->addSuccessMessage(
+                    "<strong>{$individuRole->getIndividu()}</strong>". " est désormais " .
+                    "<strong>{$individuRole->getRole()}</strong>". " de l'école doctorale ".
+                    "<strong>{$ecole->getLibelle()}</strong>.");
             }
         }
 
-        return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecoleId]], true);
+        return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $edId]], true);
     }
 
+    /**
+     * @return \Zend\Http\Response
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
     public function retirerIndividuAction()
     {
-        $ediId = $this->params()->fromRoute('edi');
+        $edId = $this->params()->fromRoute('ecoleDoctorale');
+        $irId = $this->params()->fromRoute('edi');
 
-        if ($ediId) {
-            $edi = $this->ecoleDoctoraleService->removeIndividu($ediId);
+        $ecole = null;
+        if ($edId !== null) {
+            $ecole = $this->ecoleDoctoraleService->getEcoleDoctoraleById($edId);
+        }
 
-            $this->flashMessenger()->addSuccessMessage("{$edi->getIndividu()} n'est plus membre de '{$edi->getEcole()}'");
+        if ($irId) {
+            $individuRole = $this->roleService->removeIndividuRoleById($irId);
 
-            return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $edi->getEcole()->getId()]], true);
+            $this->flashMessenger()->addSuccessMessage(
+                "<strong>{$individuRole->getIndividu()}</strong>" . " n'est plus n'est plus "
+                ."<strong>{$individuRole->getRole()}</strong>" . " de l'école doctorale "
+                ."<strong>{$ecole->getLibelle()}</strong>"."</strong>");
+
+            return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $edId]], true);
         }
 
         return $this->redirect()->toRoute('ecole-doctorale', [], [], true);
