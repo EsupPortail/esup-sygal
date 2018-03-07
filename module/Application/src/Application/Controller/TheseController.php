@@ -9,6 +9,7 @@ use Application\Entity\Db\Fichier;
 use Application\Entity\Db\MetadonneeThese;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\RdvBu;
+use Application\Entity\Db\RecapBu;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
@@ -19,9 +20,11 @@ use Application\Filter\IdifyFilterAwareTrait;
 use Application\Form\AttestationTheseForm;
 use Application\Form\ConformiteFichierForm;
 use Application\Form\DiffusionTheseForm;
+use Application\Form\Hydrator\RecapBuHydrator;
 use Application\Form\MetadonneeTheseForm;
 use Application\Form\RdvBuTheseDoctorantForm;
 use Application\Form\RdvBuTheseForm;
+use Application\Form\RecapBuForm;
 use Application\Service\Etablissement\EtablissementServiceAwareInterface;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Fichier\Exception\ValidationImpossibleException;
@@ -47,6 +50,8 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
 use Retraitement\Exception\TimedOutCommandException;
 use UnicaenApp\Exception\RuntimeException;
+use UnicaenApp\Service\EntityManagerAwareInterface;
+use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenApp\Service\MessageCollectorAwareTrait;
 use UnicaenApp\Traits\MessageAwareInterface;
 use Zend\Form\Element\Hidden;
@@ -60,7 +65,7 @@ class TheseController extends AbstractController implements
     ValidationServiceAwareInterface, VersionFichierServiceAwareInterface,
     TheseServiceAwareInterface, RoleServiceAwareInterface, FichierServiceAwareInterface,
     WorkflowServiceAwareInterface, NotificationServiceAwareInterface,
-    EtablissementServiceAwareInterface
+    EtablissementServiceAwareInterface, EntityManagerAwareInterface
 {
     use VariableServiceAwareTrait;
     use TheseServiceAwareTrait;
@@ -73,6 +78,7 @@ class TheseController extends AbstractController implements
     use NotificationServiceAwareTrait;
     use IdifyFilterAwareTrait;
     use EtablissementServiceAwareTrait;
+    use EntityManagerAwareTrait;
 
     private $timeoutRetraitement;
 
@@ -1356,5 +1362,52 @@ class TheseController extends AbstractController implements
         $this->timeoutRetraitement = $timeoutRetraitement;
 
         return $this;
+    }
+
+
+    /**
+     * @return ViewModel
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function recapBuAction() {
+
+        $DEBUG = false;
+
+        /**
+         * @var These $these
+         * @var RecapBu $recap
+         */
+
+        //recuperation de l'objet ou création d'un nouveau si non existant
+        $repo = $this->entityManager->getRepository(RecapBu::class);
+        $these = $this->requestedThese();
+        $recap = $repo->findOneBy(["these" => $these]);
+        if ($recap === null) {
+            if ($DEBUG) echo "Creation d'un nouveau RecapBU <br/>";
+            $recap = new RecapBu();
+            $recap->setThese($these);
+        } else {
+            if ($DEBUG) echo "Récupération d'un RecapBU existant <br/>";
+            if ($DEBUG) echo $recap->getId() . "|" . $recap->getThese()->getId() . "|" .
+                             $recap->getOrcid() . "|" . $recap->getNNT() . "|" . $recap->getVigilance() . "<br/>";
+        }
+
+        //creation du formulaire via le service pour avoir appel de la factory (qui fera init et setHydrator)
+        $form = $this->getServiceLocator()->get('formElementManager')->get('RecapBuForm');
+        $form->bind($recap); // appel de Hydrator::extract
+
+        if ($this->getRequest()->isPost()) {
+            $form->setData($this->getRequest()->getPost()); // appel de Hydrator::hydrate
+
+            if ($form->isValid()) {
+                $this->entityManager->persist($recap);
+                $this->entityManager->flush($recap);
+            }
+        }
+
+        return new ViewModel([
+            'these' => $these,
+            'form' => $form,
+        ]);
     }
 }

@@ -3,7 +3,11 @@
 namespace Application\Form\Hydrator;
 
 use Application\Entity\Db\Diffusion;
+use Application\Entity\Db\RecapBu;
+use Doctrine\ORM\OptimisticLockException;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
+use UnicaenApp\Service\EntityManagerAwareInterface;
+use UnicaenApp\Service\EntityManagerAwareTrait;
 
 /**
  * Created by PhpStorm.
@@ -11,8 +15,10 @@ use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
  * Date: 20/05/16
  * Time: 17:08
  */
-class DiffusionHydrator extends DoctrineObject
+class DiffusionHydrator extends DoctrineObject implements EntityManagerAwareInterface
 {
+    use EntityManagerAwareTrait;
+
     /**
      * Extract values from an object
      *
@@ -35,6 +41,7 @@ class DiffusionHydrator extends DoctrineObject
      * @param  array     $data
      * @param  Diffusion $attestation
      * @return Diffusion
+     * @throws OptimisticLockException
      */
     public function hydrate(array $data, $attestation)
     {
@@ -60,6 +67,14 @@ class DiffusionHydrator extends DoctrineObject
             case false:
                 $diff->setDateFinConfidentialite(null);
                 break;
+        }
+
+        /** @var RecapBu $recap */
+        $repoRecapBu = $this->entityManager->getRepository(RecapBu::class);
+        $recap = $repoRecapBu->findOneBy(["these" => $diff->getThese()]);
+        if ($recap !== null) {
+            $recap->setOrcid($diff->getIdOrcid());
+            $this->entityManager->flush($recap);
         }
 
         return $diff;

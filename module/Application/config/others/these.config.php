@@ -14,7 +14,10 @@ use Application\Form\Factory\MetadonneeTheseFormFactory;
 use Application\Form\Factory\RdvBuHydratorFactory;
 use Application\Form\Factory\RdvBuTheseDoctorantFormFactory;
 use Application\Form\Factory\RdvBuTheseFormFactory;
+use Application\Form\Factory\RecapBuFormFactory;
+use Application\Form\Factory\RecapBuHydratorFactory;
 use Application\Form\Hydrator\RdvBuHydrator;
+use Application\Form\Hydrator\RecapBuHydrator;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\Service\Acteur\ActeurService;
 use Application\Service\Message\DiffusionMessages;
@@ -208,6 +211,7 @@ return [
                     'controller' => 'Application\Controller\These',
                     'action'     => [
                         'modifier-rdv-bu',
+                        'recap-bu',
                     ],
                     'privileges' => [
                         ThesePrivileges::THESE_SAISIE_RDV_BU,
@@ -612,6 +616,18 @@ return [
                             ],
                         ],
                     ],
+                    'recap-bu' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'       => '/recap-bu/:these',
+                            'constraints' => [
+                                'these' => '\d+',
+                            ],
+                            'defaults'    => [
+                                'action' => 'recap-bu',
+                            ],
+                        ],
+                    ],
                     'exporter-convention-mise-en-ligne' => [
                         'type'          => 'Segment',
                         'options'       => [
@@ -686,6 +702,18 @@ return [
                                 ],
                                 'icon' => 'glyphicon glyphicon-info-sign',
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'detail-identite'),
+                                'etape' => null,
+                                'visible' => 'Assertion\\These',
+                            ],
+                            'recapbu' => [
+                                'label'    => 'Récapitulatif BU',
+                                'route'    => 'these/recap-bu',
+                                'withtarget' => true,
+                                'paramsInject' => [
+                                    'these',
+                                ],
+                                'icon' => 'glyphicon glyphicon-exclamation-sign',
+                                'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'modifier-rdv-bu'),
                                 'etape' => null,
                                 'visible' => 'Assertion\\These',
                             ],
@@ -849,6 +877,7 @@ return [
             'DiffusionTheseForm' => DiffusionTheseFormFactory::class,
             'RdvBuTheseForm' => RdvBuTheseFormFactory::class,
             'RdvBuTheseDoctorantForm' => RdvBuTheseDoctorantFormFactory::class,
+            'RecapBuForm' => RecapBuFormFactory::class,
         ],
         'initializers' => [
             ServiceAwareInitializer::class,
@@ -859,6 +888,7 @@ return [
             'DiffusionHydrator' => DiffusionHydratorFactory::class,
             'AttestationHydrator' => AttestationHydratorFactory::class,
             'RdvBuHydrator' => RdvBuHydratorFactory::class,
+            'RecapBuHydrator' => RecapBuHydratorFactory::class,
         )
     ),
     'service_manager' => [
