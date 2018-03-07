@@ -10,7 +10,13 @@ use Application\Service\Notification\NotificationService;
 /**
  * @var PhpRenderer $this
  * @var These       $these
+ * @var NotificationService       $notifier
  */
+
+
+function decorateProbleme($texte) {
+    return "<span style='background-color:red;'>" . $texte . "</span>";
+}
 
 /**
  * Cette fonction retourne et formate la denomination d'un acteur
@@ -19,6 +25,7 @@ use Application\Service\Notification\NotificationService;
  * @return string       la denomination de l'acteur
  */
 function getActeurDenomination(Acteur $acteur, $civilite = false) {
+    if ($acteur === null) return decorateProbleme("acteur non renseigné");
    return getIndividuDenomination($acteur->getIndividu(), $civilite);
 }
 /**
@@ -28,6 +35,7 @@ function getActeurDenomination(Acteur $acteur, $civilite = false) {
  * @return string       la denomination du doctorant
  */
 function getDoctorantDenomination(Doctorant $doctorant, $civilite = false) {
+    if ($doctorant === null) return decorateProbleme("doctorant non renseigné");
     return getIndividuDenomination($doctorant->getIndividu(), $civilite);
 }
 /**
@@ -40,6 +48,9 @@ function getDoctorantDenomination(Doctorant $doctorant, $civilite = false) {
  * RMQ: elle est appellé par les autres fonctions getXXXDenomination
  */
 function getIndividuDenomination(Individu $individu, $civilite = false) {
+
+    if ($individu === null) return decorateProbleme("individu non renseigné");
+
     $texte = "";
     if ($civilite) $texte .= $individu->getCivilite(). " ";
     $texte .= ucwords(strtolower($individu->getPrenom1(). " "), " -");
@@ -83,6 +94,9 @@ function getActeurRole(Acteur $acteur, $inclusive) {
         case ($abrev == "M" && $inclusive && $femme):
             $role = "Examinatrice";
             break;
+        default:
+            $role = decorateProbleme("role non renseigné");
+            break;
     }
     return $role;
 
@@ -107,14 +121,35 @@ function generateLogoComue() {
  * @return string
  */
 function generateDiplomeInfos(These $these) {
-    $specialite = ucwords(mb_strtolower($these->getLibelleDiscipline()));
-    $etablissement = $these->getEtablissement()->getLibelle();
 
+    //Preparation des champs obligatoires ---
+    $specialite = null;
+    if ($these->getLibelleDiscipline() === null) {
+        $specialite = decorateProbleme("Spécialité non renseignée");
+    } else {
+        $specialite = ucwords(mb_strtolower($these->getLibelleDiscipline()));
+    }
+
+    $etablissement = null;
+    if ($these->getEtablissement() === null) {
+        $etablissement = decorateProbleme("Établissement non renseigné");
+    } else {
+        $etablissement = $these->getEtablissement()->getLibelle();
+    }
     $texte  = "<div class='bandeau-these'>THÈSE</div>";
     $texte .= "<div class='infos-diplome'>";
     $texte .= "<span class='larger-infos'>Pour obtenir le diplôme de doctorat" ."</span><br/>";
     $texte .= "Spécialité ". $specialite ."<br/>";
     $texte .= "Préparé au sein de l'". $etablissement ."<br/>";
+
+    //Preparation des champs associés à la cotutelle
+    if ($these->getLibelleEtabCotutelle() !== null && $these->getLibellePaysCotutelle() === null) {
+        $texte .= "En cotutelle avec " . $these->getLibelleEtabCotutelle() . "<br/>";
+    }
+    if ($these->getLibelleEtabCotutelle() !== null && $these->getLibellePaysCotutelle() !== null) {
+        $texte .= "En cotutelle internationale de thèse avec " . $these->getLibelleEtabCotutelle() .", ". $these->getLibellePaysCotutelle() . "<br/>";
+    }
+
     $texte .= "</div>";
     return $texte;
 }
@@ -125,7 +160,13 @@ function generateDiplomeInfos(These $these) {
  * @return string
  */
 function generateTitre(These $these) {
-    $titre = $these->getTitre();
+
+    $titre = null;
+    if ($these->getTitre() === null) {
+        $titre = decorateProbleme("Aucun titre de renseigné");
+    } else {
+        $titre = $these->getTitre();
+    }
 
     $texte  = "<div class='bandeau-titre'>".$titre."</div>";
     return $texte;
@@ -171,20 +212,30 @@ function estRapporteur(Acteur $var) {
  */
 function generateJuryInfos(These $these, $inclusive=false) {
 
-    $date = $these->getDateSoutenance()->format("d/m/Y");
+    $dateTxt = "<span style='background-color:red;'> JJ/MM/AAAA </span>";
+    if ($these->getDateSoutenance() !== null) {
+        $dateTxt = $these->getDateSoutenance()->format("d/m/Y");
+    }
     $publiquement = "publiquement";
     $jury = $these->getActeurs()->toArray();
 
     $texte  = "<table class='jury'>";
     $texte .= "<tr><th colspan='3'>";
-    $texte .= "Thèse soutenue ".$publiquement." le ".$date." <br/>";
+    $texte .= "Thèse soutenue ".$publiquement." le ".$dateTxt." <br/>";
     $texte .= "devant le jury composé de";
     $texte .= "</th></tr>";
+
 
     $rapporteurs = array_filter($jury, "estRapporteur");
     $directeurs = array_filter($jury, "estDirecteur");
     $membres =  array_diff(array_diff($jury, $rapporteurs), $directeurs);
     $roles = [$rapporteurs, $membres, $directeurs];
+
+    if (count($rapporteurs) === 0 || count($membres) === 0) {
+        $texte .= "<tr><td colspan='3'>";
+        $texte .= "<span style='background-color:red;'> Le jury doit être renseigné dans SyGAL pour que la page de couverture générée soit valide ! </span>";
+        $texte .= "</td></tr>";
+    }
 
     /** @var \Application\Entity\Db\Acteur $acteur */
     foreach ($roles as $subroles) {
@@ -192,8 +243,19 @@ function generateJuryInfos(These $these, $inclusive=false) {
 
             $nom  = getActeurDenomination($acteur, true);
 
-            $qualite = $acteur->getQualite();
-            $etablissement = $acteur->getEtablissement();
+            $qualite = null;
+            if ($acteur->getQualite() === null || $acteur->getQualite() === " ") {
+                $qualite = decorateProbleme("Aucune qualité renseignée");
+            } else {
+                $qualite = $acteur->getQualite();
+            }
+
+            $etablissement = null;
+            if ($acteur->getEtablissement() === null || $acteur->getEtablissement() === " ") {
+                $etablissement = decorateProbleme("Aucun établissement renseigné");
+            } else {
+                $etablissement = $acteur->getEtablissement();
+            }
 
             $role = getActeurRole($acteur, $inclusive);
 
@@ -212,7 +274,14 @@ function generateJuryInfos(These $these, $inclusive=false) {
  * @return string
  */
 function generateEncadrementInfos(These $these) {
-    $ur = $these->getUniteRecherche()->getLibelle();
+
+    $ur = null;
+    if ($these->getUniteRecherche() === null) {
+        $ur = decorateProbleme("unite de recherche non renseignée");
+    } else {
+        $ur = $these->getUniteRecherche()->getLibelle();
+    }
+
     $directeurs = array_filter($these->getActeurs()->toArray(), "estDirecteur");
     $texte  = "<div class='infos-encadrement'>";
     $texte .= "Thèse dirigée par ";
@@ -221,6 +290,9 @@ function generateEncadrementInfos(These $these) {
     foreach ($directeurs as $directeur) {
         $directeurs_array[] = getActeurDenomination($directeur);
     }
+
+
+
     $texte .= implode(" et ", $directeurs_array);
     $texte .= ", ";
     $texte .= $ur;
@@ -233,27 +305,62 @@ function generateEncadrementInfos(These $these) {
  * @param NotificationService $notifier
  * @return string
  */
-function generateLogos(These $these, NotificationService $notifier) {
+function generateLogos(These $these, NotificationService $notifier = null) {
 
-    if ($these->getEtablissement()->getCheminLogo() === null)
+    if ($notifier !== null && $these->getEtablissement()->getCheminLogo() === null)
         $notifier->notifierLogoAbsentEtablissement($these->getEtablissement());
-    if ($these->getEcoleDoctorale()->getCheminLogo() === null)
+    if ($notifier !== null && $these->getEcoleDoctorale()->getCheminLogo() === null)
         $notifier->notifierLogoAbsentEcoleDoctorale($these->getEcoleDoctorale());
-    if ($these->getUniteRecherche()->getCheminLogo() === null)
+    if ($notifier !== null && $these->getUniteRecherche()->getCheminLogo() === null)
         $notifier->notifierLogoAbsentUniteRecherche($these->getUniteRecherche());
-    $logouni = APPLICATION_DIR. $these->getEtablissement()->getCheminLogo();
-    $logoed  = APPLICATION_DIR. $these->getEcoleDoctorale()->getCheminLogo();
-    $logour  = APPLICATION_DIR. $these->getUniteRecherche()->getCheminLogo();
+
+
+
+    $logouni = null;
+    if ($these->getEtablissement() !== null) $logouni = $these->getEtablissement()->getCheminLogo();
+    $logoed  = null;    if ($these->getEcoleDoctorale() !== null) $logoed  = $these->getEcoleDoctorale()->getCheminLogo();
+    $logour  = null;    if ($these->getUniteRecherche() !== null) $logour  = $these->getUniteRecherche()->getCheminLogo();
 
     $texte = "";
     $texte  .= "<div class='logos'>";
     $texte .= "<table style='border:none;' class='logos'>";
     $texte .= "<tr><td>";
-    $texte .= "<img class='logo_small' src='".$logouni."'/>";
+    if ($logouni !== null) {
+        $texte .= "<img class='logo_small' src='" . APPLICATION_DIR . $logouni . "'/>";
+    } else {
+        $texte .= "<span style='background-color:red;'>";
+        $texte .= "Aucun logo de trouvé <br/>";
+        $texte .= "Établissement <br/>";
+        if ($these->getEtablissement() !== null) $texte .= $these->getEtablissement()->getLibelle();
+        $texte .= "</span>";
+    }
     $texte .= "</td><td>";
-    $texte .= "<img class='logo_small' src='".$logoed."'/>";
+    if ($these->getLibelleEtabCotutelle() !== null) {
+        $texte .= "<span style='background-color:red;'>";
+        $texte .= "Aucun logo de trouvé <br/>";
+        $texte .= "Co-tutelle <br/>";
+        $texte .= "</span>";
+        $texte .= "</td><td>";
+    }
+    if ($logoed !== null) {
+        $texte .= "<img class='logo_small' src='" . APPLICATION_DIR . $logoed . "'/>";
+    } else {
+        $texte .= "<span style='background-color:red;'>";
+        $texte .= "Aucun logo de trouvé <br/>";
+        $texte .= "École doctorale <br/>";
+        if ($these->getEcoleDoctorale() !== null) $texte .= $these->getEcoleDoctorale()->getSigle();
+        $texte .= "</span>";
+    }
     $texte .= "</td><td>";
-    $texte .= "<img class='logo_small' src='".$logour."'/>";
+    if ($logour !== null) {
+        $texte .= "<img class='logo_small' src='" . APPLICATION_DIR . $logour . "'/>";
+    } else {
+        $texte .= "<span style='background-color:red;'>";
+        $texte .= "Aucun logo de trouvé <br/>";
+        $texte .= "Unité de recherche <br/>";
+        if ($these->getUniteRecherche() !== null) $texte .= $these->getUniteRecherche()->getSigle();
+        $texte .= "</span>";
+    }
     $texte .= "</td></tr></table>";
     $texte .= "</div>";
 
@@ -275,4 +382,7 @@ function generateLogos(These $these, NotificationService $notifier) {
 <br/>
 <?php echo generateEncadrementInfos($these); ?>
 <?php echo generateLogos($these, $notifier); ?>
+<?php //echo generateLogos($these); ?>
 
+<!-- ATTENTION -->
+<!-- Can't open file /var/www/html/sygal/vendor/mpdf/mpdf/ttfontdata/ -->
