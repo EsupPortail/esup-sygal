@@ -1,0 +1,304 @@
+<?php
+
+
+use Application\View\Renderer\PhpRenderer;
+use Application\Entity\Db\These;
+
+/**
+ * @var PhpRenderer $this
+ * @var These[]     $theses
+ */
+
+const DEBUG = true;
+function display_debug($texte) {
+    if (DEBUG) {
+        echo "<span style='background-color: lightgoldenrodyellow; font-family: monospace;'>";
+        echo $texte;
+        echo "</span>";
+    }
+}
+?>
+
+<?php $this->headTitle($this->translate("Statistiques")) ?>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+
+<!--<script src="public/js/charts.js/chart/Chart.Bar.js"></script>-->
+<h1 class="page-header first"><?php echo $this->translate("Statistiques") ?> <span
+        class="badge"><?php echo count($theses) ?></span></h1>
+
+
+
+<?php
+
+$validInscriptionTheses = [];
+$validSoutenanceTheses = [];
+foreach($theses as $these) {
+    if ($these->getDatePremiereInscription() !== null) $validInscriptionTheses[] = $these;
+    if ($these->getDateSoutenance() !== null) $validSoutenanceTheses[] = $these;
+}
+
+?>
+
+<!--Nombre de thèses valides :-->
+<!--<ul>-->
+<!--    <li> Inscription : --><?php //echo count($validInscriptionTheses); ?><!-- </li>-->
+<!--    <li> Soutenance : --><?php //echo count($validSoutenanceTheses); ?><!-- </li>-->
+<!--</ul>-->
+
+<?php
+usort($validInscriptionTheses, function (These $a, These $b) {return $a->getDatePremiereInscription() > $b->getDatePremiereInscription();});
+usort($validSoutenanceTheses, function (These $a, These $b) {return $a->getDateSoutenance() > $b->getDateSoutenance();});
+?>
+
+<!--Etalement dans le temps :-->
+<!--<ul>-->
+<!--    <li> Inscription :-->
+<!--        --><?php //echo $validInscriptionTheses[0]->getDatePremiereInscription()->format("d/m/Y"); ?>
+<!--        &rarr;-->
+<!--        --><?php //echo end($validInscriptionTheses)->getDatePremiereInscription()->format("d/m/Y"); ?>
+<!--    </li>-->
+<!--    <li> Soutenance :-->
+<!--    --><?php //echo $validSoutenanceTheses[0]->getDateSoutenance()->format("d/m/Y"); ?>
+<!--    &rarr;-->
+<!--    --><?php //echo end($validSoutenanceTheses)->getDateSoutenance()->format("d/m/Y"); ?>
+<!--    </li>-->
+<!--</ul>-->
+
+
+
+
+<?php
+$end = (new DateTime())->format("Y");
+$start = $end - 20;
+
+$effectifsInscription = [];
+$effectifsSoutenance = [];
+
+$dateMinimum = min( $validInscriptionTheses[0]->getDatePremiereInscription()->format("Y"),
+                    $validSoutenanceTheses[0]->getDateSoutenance()->format("Y")
+                );
+$dateMaximum = max( end($validInscriptionTheses)->getDatePremiereInscription()->format("Y"),
+                    end($validSoutenanceTheses)->getDateSoutenance()->format("Y")
+                );
+
+
+for ($annee = $dateMinimum; $annee <= $dateMaximum ; $annee++) {
+    $effectifsInscription[$annee] = array();
+    $effectifsSoutenance[$annee] = array();
+}
+
+/** @var These $these */
+foreach ($theses as $these) {
+    if ($these->getDatePremiereInscription()) array_push($effectifsInscription[$these->getDatePremiereInscription()->format("Y")], $these);
+    if ($these->getDateSoutenance()) array_push($effectifsSoutenance[$these->getDateSoutenance()->format("Y")], $these);
+}
+
+?>
+
+<?php
+    $google_data = [];
+    for($current = $start ; $current <= $end ; $current++) {
+        $google_data[] = [$current , count($effectifsInscription[$current]), count($effectifsSoutenance[$current])];
+    }
+?>
+
+<script type="text/javascript">
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+            ['Année', '#Inscriptions', '#Soutenances'],
+            <?php
+                foreach($google_data as $row) {
+                    echo "[\"" . $row[0] .  "\"," . $row[1] . "," . $row[2] . "],";
+                }
+            ?>
+        ]);
+
+        var options = {
+            curveType: 'function',
+            legend: { position: 'bottom' },
+            pointSize: 5,
+            hAxis: {
+                slantedText:true,
+                slantedTextAngle:45
+            }
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('Inscriptions/Soutenances'));
+
+        chart.draw(data, options);
+    }
+</script>
+<div class="box panel panel-info">
+    <div class="panel-heading">
+        <h2 class="first">
+            Évolution du nombre d'inscriptions en thèses et du nombre de soutenances
+        </h2>
+    </div>
+<div id="Inscriptions/Soutenances" style="width: 925px; height: 500px"></div>
+</div>
+
+<?php
+$dureeTheses = [];
+for ($annee = $dateMinimum; $annee <= $dateMaximum ; $annee++) {
+    $dureeTheses[$annee] = array();
+}
+for ($annee = $dateMinimum; $annee <= $dateMaximum ; $annee++) {
+    foreach($effectifsSoutenance[$annee] as $these) {
+        if ($these->getDatePremiereInscription()) {
+            $duree = $these->getDateSoutenance()->diff($these->getDatePremiereInscription());
+            $dureeTheses[$annee][] = $duree->m + $duree->y*12;
+        }
+    }
+    sort($dureeTheses[$annee]);
+}
+$google_data = [];
+for ($annee = $start; $annee <= $end ; $annee++) {
+    if (! empty($dureeTheses[$annee])) {
+        $nb = count($dureeTheses[$annee]);
+        $position_q0 = $nb*0.00;
+        $position_q1 = $nb*0.25;
+        $position_q2 = $nb*0.50;
+        $position_q3 = $nb*0.75;
+        $position_q4 = $nb*1.00-1;
+
+        $row = [ $annee];
+        foreach ($dureeTheses[$annee] as $data) {
+            $row[] = $dureeTheses[$annee][$position_q0];
+            $row[] = $dureeTheses[$annee][$position_q1];
+            //$row[] = $dureeTheses[$annee][$position_q2]; //que faire de la mediane ???
+            $row[] = $dureeTheses[$annee][$position_q3];
+            $row[] = $dureeTheses[$annee][$position_q4];
+        }
+        $google_data[] = $row;
+    }
+}
+?>
+
+<script type="text/javascript">
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+            <?php
+            foreach($google_data as $row) {
+                echo "[\"" . $row[0] .  "\"," . $row[1] . "," . $row[2] . "," . $row[3] . "," . $row[4]. "],";
+            }
+            ?>
+        ], true);
+
+        var options = {
+            curveType: 'function',
+            legend: 'none',
+            pointSize: 5,
+            hAxis: {
+                slantedText:true,
+                slantedTextAngle:45
+            },
+            vAxis: {
+                title: 'Durée en mois'
+            }
+        };
+
+        var chart = new google.visualization.CandlestickChart(document.getElementById('duree'));
+
+        chart.draw(data, options);
+    }
+</script>
+
+<div class="box panel panel-info">
+    <div class="panel-heading">
+        <h2 class="first">
+            Évolution de la durée des thèses
+        </h2>
+    </div>
+    <div id="duree" style="width: 925px; height: 500px;"></div>
+</div>
+
+<?php
+$homme = 0;
+$femme = 0;
+$discipline = [];
+$discipline["Autres"] = 0;
+$threshold = 5;
+foreach($effectifsInscription[$end-2] as $these) {
+    if ($these->getDoctorant()->getIndividu()->estUneFemme()) {
+        $femme++;
+    } else {
+        $homme++;
+    }
+    $discipline[$these->getLibelleDiscipline()]++;
+}
+?>
+
+<script type="text/javascript">
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+
+        var data = google.visualization.arrayToDataTable([
+            ['Genre', 'Effectif'],
+            ['Femme',     <?php echo $femme; ?>],
+            ['Homme',     <?php echo $homme; ?>]
+        ]);
+
+        var options = {
+            title: 'Répartition en fonction du genre',
+            pieSliceText: 'label',
+            legend: 'none',
+
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('Repartition/Sexe'));
+
+        chart.draw(data, options);
+    }
+</script>
+
+<script type="text/javascript">
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+
+        var data = google.visualization.arrayToDataTable([
+            ['Discipline', 'Effectif'],
+
+            <?php
+            foreach ($discipline as $nom => $effectif) {
+               if ($effectif >= $threshold) echo "[\"".$nom ."\",".$effectif."],";
+               else $discipline["Autres"] += $effectif;
+            }
+            echo "[\"Autres\",". $discipline["Autres"]."],"
+            ?>
+        ]);
+
+        var options = {
+            title: 'Répartition en fonction des disciplines',
+            legend: 'none',
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('Repartition/Discipline'));
+
+        chart.draw(data, options);
+    }
+</script>
+
+
+<div class="box panel panel-info" style="height: 550px;">
+    <div class="panel-heading">
+        <h2 class="first">
+            Répartition des inscriptions en <?php echo ($end-1) ?>
+        </h2>
+    </div>
+    <div id="Repartition/Discipline" style="width: 420px; height: 500px; float:left;"></div>
+    <div id="Repartition/Sexe" style="width: 420px; height: 500px; float:left;"></div>
+
+</div>

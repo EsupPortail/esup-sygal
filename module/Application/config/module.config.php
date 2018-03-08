@@ -246,7 +246,6 @@ return array(
             '060_uploader' => "/js/jquery.ui.widget.js",
             '061_uploader' => "/js/jquery.iframe-transport.js",
             '062_uploader' => "/js/jquery.fileupload.js",
-            '063_uploader' => "/js/unicaen.uploader.widget.js",
         ],
         'inline_scripts'        => [
         ],
