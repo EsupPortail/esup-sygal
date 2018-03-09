@@ -4,6 +4,8 @@ namespace Application\Controller;
 
 use Application\Entity\Db\Privilege;
 use Application\Entity\Db\Role;
+use Application\Service\Role\RoleServiceAwareInterface;
+use Application\Service\Role\RoleServiceAwareTrait;
 use Doctrine\ORM\QueryBuilder;
 use UnicaenApp\Service\EntityManagerAwareInterface;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -11,13 +13,13 @@ use UnicaenAuth\Entity\Db\CategoriePrivilege;
 use Zend\View\Model\ViewModel;
 
 class RoleController extends AbstractController
-        implements EntityManagerAwareInterface
+        implements EntityManagerAwareInterface, RoleServiceAwareInterface
 {
     use EntityManagerAwareTrait;
+    use RoleServiceAwareTrait;
 
     public function indexAction()
     {
-
         $depend = $this->params()->fromQuery("depend");
         $categorie = $this->params()->fromQuery("categorie");
 
@@ -30,7 +32,33 @@ class RoleController extends AbstractController
         return new ViewModel([
             'roles' => $roles,
             'privileges' => $privileges,
+            'params' => $this->params()->fromQuery(),
         ]);
+    }
+
+    public function modifierAction()
+    {
+        $privilege_id = $this->params()->fromRoute("privilege");
+        $role_id = $this->params()->fromRoute("role");
+//        var_dump($privilege_id);
+//        var_dump($role_id);
+        $privilege = $this->entityManager->getRepository(Privilege::class)->findOneBy(["id" => $privilege_id]);
+        $role = $this->entityManager->getRepository(Role::class)->findOneBy(["id" => $role_id]);
+
+        if( array_search($role, $privilege->getRole()->toArray()) !== false) {
+            $privilege->removeRole($role);
+            $this->entityManager->flush($privilege);
+        } else {
+            $privilege->addRole($role);
+            $this->entityManager->flush($privilege);
+        }
+
+//        var_dump($privilege);
+        //$has = array_search($role_id, $privilege->getRoles());
+        //var_dump($has);
+        //die("Die die");
+        $queryParams = $this->params()->fromQuery();
+        $this->redirect()->toRoute("roles", [], ["query" => $queryParams], true);
     }
 
     private function decorateWithDepend(QueryBuilder $qb, $depend) {

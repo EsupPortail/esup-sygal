@@ -16,77 +16,145 @@
 
 <?php $this->headTitle($this->translate("Rôles/Privilèges")) ?>
 <h1 class="page-header first"><?php echo $this->translate("Rôles/Privilèges") ?>
-<!--    <span class="badge">--</span>-->
+
 </h1>
 
     <div class="pull-left">
         <?php echo $this->partial('partial/form-filtrage') ?>
     </div>
 
-<!--<form action="--><?php //echo $this->url('roles', [], ['query' => $queryParams], true);?><!--" method="post">-->
-<!--    Dépend de :-->
-<!--    <select>-->
-<!--        <option value="---"> --- </option>-->
-<!--        <option value="aucun"> Aucun </option>-->
-<!--        <option value="structure"> Structure </option>-->
-<!--        <option value="ecole-doctorale"> &nbsp;-&nbsp;École doctorale</option>-->
-<!--        <option value="etablissement"> &nbsp;-&nbsp;Établissement</option>-->
-<!--        <option value="unite-de-recherche"> &nbsp;-&nbsp;Unité de recherche</option>-->
-<!--        <option value="these"> These </option>-->
-<!--    </select>-->
-<!--    <input type="submit" value="Filtrer"/>-->
-<!--</form>-->
-
 
 <?php
-//foreach($roles as $role) {
-//    if ($role->isStructureDependant()) {
-//        switch($role->getTypeStructureDependant()) {
-//            case "Établissement" :
-//                echo "<span style='background-color: limegreen; font-family: monospace;'>ST_ET</span>";
-//                break;
-//            case "École doctorale" :
-//                echo "<span style='background-color: darkgreen; font-family: monospace;'>ST_ED</span>";
-//                break;
-//            case "Unité de recherche" :
-//                echo "<span style='background-color: greenyellow; font-family: monospace;'>ST_UR</span>";
-//                break;
-//            default:
-//                echo "<span style='background-color: #5cb85c; font-family: monospace;'>STRUC</span>";
-//                break;
-//        }
-//
-//    } elseif ($role->isTheseDependant()) {
-//        echo "<span style='background-color: salmon; font-family: monospace;'>THESE</span>";
-//    } else {
-//        echo "<span style='background-color: #9D9D9D; font-family: monospace;'>AUCUN</span>";
-//    }
-//    echo $role->getLibelle() . "<br/>";
-//}
-?>
 
-<?php
-echo "<table class='table-bordered'>";
+//$paramQuery = $this->params()->fromQuery();
+//echo $paramQuery;
+echo "<input type='submit' value='refresh' id='refresh'/>";
+echo "<table id='mytable' class='droits-tbl table table-hover table-bordered table-condensed table-extra-condensed table-header-rotated'>";
 echo "<tr><th></th>";
 
 foreach($roles as $role) {
-    echo "<th > <span style='text-orientation: upright;'> {$role->getLibelle()} </span></th>";
+    echo "<th class='rotate-45'> {$role->getLibelle()} </th>";
 }
 echo "</tr>";
-foreach($privileges as $privilege) {
 
+
+foreach($privileges as $privilege) {
     echo "<tr>";
     echo "<th> {$privilege->getLibelle()} </th>";
     foreach($roles as $role) {
+
         echo "<td>";
-        if( array_search($role, $privilege->getRole()->toArray())) {
+
+        echo "<a href='".$this->url("modifier-privilege", ['role' => $role->getId(), 'privilege'=> $privilege->getId()], ["query" => $params], true)."' />";
+//        echo "[" . $role->getId() . "|" . $privilege->getId() . "|";
+//        echo (array_search($role, $privilege->getRole()->toArray()) === false);
+//        echo "]";
+        if( array_search($role, $privilege->getRole()->toArray()) !== false) {
             echo "<span style='color: green'; class='glyphicon glyphicon-ok'></span>";
         } else {
             echo "<span style='color: red'; class='glyphicon glyphicon-remove'></span>";
         }
+        echo "</a>";
         echo "</td>";
+
     }
     echo "</tr>";
 }
 echo "</table>";
+?>
 
+<script>
+    $(document).ready(function() {
+
+        function RefreshTable() {
+            //alert("clicked !");
+            $("#mytable").innerHTML = "oups";
+        }
+
+        $("#refresh").on("click", RefreshTable);
+
+        // OR CAN THIS WAY
+        //
+        // $("#refresh-btn").on("click", function() {
+        //    $( "#mytable" ).load( "your-current-page.html #mytable" );
+        // });
+
+
+    });
+</script>
+
+
+<style>
+
+    .table-header-rotated th.row-header {
+        width: auto;
+
+    }
+
+    .table-header-rotated td {
+        width: 40px;
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    .table-header-rotated th.rotate-45 {
+        /*border: none;*/
+        /*height: 200px;*/
+        /*width: 40px;*/
+        /*min-width: 40px;*/
+        /*max-width: 40px;*/
+        /*position: relative;*/
+        /*vertical-align: bottom;*/
+        /*padding: 0;*/
+        /*line-height: 1;*/
+        /*white-space: nowrap;*/
+
+        /*position: relative;*/
+        /*top: 0px;*/
+        /*left: 83px;*/
+        /*height: 100%;*/
+        /*transform: skew(-40deg, 0deg);*/
+        /*overflow: hidden;*/
+        /*border-right: 1px solid #ddd;*/
+    }
+
+    .table-header-rotated th.rotate-45 > div {
+        position: relative;
+        top: 0px;
+        left: 83px;
+        height: 100%;
+        transform: skew(-40deg, 0deg);
+        overflow: hidden;
+        border-right: 1px solid #ddd;
+    }
+
+    .table-header-rotated th.rotate-45 > div.first {
+        border-left: 1px solid #ddd;
+    }
+
+    .table-header-rotated th.rotate-45 span {
+        transform: skew(40deg, 0deg) rotate(310deg);
+        position: absolute;
+        bottom: 40px;
+        left: -30px;
+        display: inline-block;
+        width: 100px;
+        text-align: left;
+    }
+
+    .table-header-rotated .separator {
+        border: none;
+    }
+
+    .droits-tbl th.privilege {
+        min-width: 200px;
+        max-width: 200px;
+        width: 200px;
+    }
+
+    .droits-tbl td span.refuse {
+        opacity: 0.5;
+    }
+
+
+</style>

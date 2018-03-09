@@ -5,6 +5,7 @@ use Application\Controller\AdminController;
 use Application\Provider\Privilege\UtilisateurPrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
 use Zend\Mvc\Router\Http\Literal;
+use Zend\Mvc\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [
@@ -21,6 +22,7 @@ return [
                     'controller' => 'Application\Controller\Role',
                     'action'     => [
                         'index',
+                        'modifier',
                     ],
                     'privileges' => UtilisateurPrivileges::UTILISATEUR_ATTRIBUTION_ROLE,
                 ],
@@ -55,6 +57,17 @@ return [
                         '__NAMESPACE__' => 'Application\Controller',
                         'controller'    => 'Role',
                         'action'        => 'index',
+                    ],
+                ],
+            ],
+            'modifier-privilege' => [
+                'type'          => Segment::class,
+                'options'       => [
+                    'route'    => '/modifier-privilege/:role/:privilege',
+                    'defaults' => [
+                        '__NAMESPACE__' => 'Application\Controller',
+                        'controller'    => 'Role',
+                        'action'        => 'modifier',
                     ],
                 ],
             ],
