@@ -1,8 +1,10 @@
 <?php
 
+use Application\Controller\Factory\RoleControllerFactory;
 use Application\Controller\AdminController;
 use Application\Provider\Privilege\UtilisateurPrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
+use Zend\Mvc\Router\Http\Literal;
 
 return [
     'bjyauthorize'    => [
@@ -10,6 +12,13 @@ return [
             PrivilegeController::class => [
                 [
                     'controller' => 'Application\Controller\Admin',
+                    'action'     => [
+                        'index',
+                    ],
+                    'privileges' => UtilisateurPrivileges::UTILISATEUR_ATTRIBUTION_ROLE,
+                ],
+                [
+                    'controller' => 'Application\Controller\Role',
                     'action'     => [
                         'index',
                     ],
@@ -34,6 +43,17 @@ return [
                     'defaults' => [
                         '__NAMESPACE__' => 'Application\Controller',
                         'controller'    => 'Admin',
+                        'action'        => 'index',
+                    ],
+                ],
+            ],
+            'roles' => [
+                'type'          => Literal::class,
+                'options'       => [
+                    'route'    => '/roles',
+                    'defaults' => [
+                        '__NAMESPACE__' => 'Application\Controller',
+                        'controller'    => 'Role',
                         'action'        => 'index',
                     ],
                 ],
@@ -89,6 +109,7 @@ return [
             'Application\Controller\Admin' => AdminController::class,
         ],
         'factories' => [
+            'Application\Controller\Role' => RoleControllerFactory::class,
         ],
     ],
 ];

@@ -21,7 +21,6 @@ function display_debug($texte) {
 
 <?php $this->headTitle($this->translate("Statistiques")) ?>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
 
@@ -302,3 +301,157 @@ foreach($effectifsInscription[$end-2] as $these) {
     <div id="Repartition/Sexe" style="width: 420px; height: 500px; float:left;"></div>
 
 </div>
+
+
+
+<?php
+
+$code = [];
+$code["ALGERIEN(NE)"] = "Algeria";
+$code["ALLEMAND(E)"] = "Germany";
+$code["AMERICAIN(E)"] = "United States";
+$code["ANGOLAIS(E)"] = "Angola";
+$code["APATRIDE"] = "";
+$code["ARGENTIN(E)"] = "Argentina";
+$code["ARMENIEN(E)"] = "Armenia";
+$code["AUTRICHIEN(NE)"] = "Austria";
+$code["BELGE"] = "Belgium";
+$code["BENINOIS(E)"] = "Benin";
+$code["BOSNIAQUE"] = "Bosnia";
+$code["BRESILIEN(NE)"] = "Brazil";
+$code["BRITANNIQUE"] = "United Kingdom";
+$code["BULGARE"] = "Bulgaria";
+$code["BURKINABE"] = "Burkina Faso";
+$code["BURUNDAIS(E)"] = "Burundi";
+$code["CAMBODGIEN(NE)"] = "Combodia";
+$code["CAMEROUNAIS(E)"] = "Cameroon";
+$code["CANADIEN(NE)"] = "Canada";
+$code["CAP VERDIEN(NE)"] = "Cabo Verde";
+$code["CHILIEN(NE)"] = "Chile";
+$code["CHINOIS(E)"] = "China";
+$code["CHINOIS(E) TAIWAN"] = "Taiwan";
+$code["COLOMBIEN(NE)"] = "Colombia";
+$code["COMORIEN(NE)"] = "Comoros";
+$code["CONGOLAIS(E)"] = "Congo";
+$code["CROATE"] = "Croatia";
+$code["DJIBOUTIEN(NE)"] = "Djibouti";
+$code["EGYPTIEN(NE)"] = "Egypt";
+$code["EQUATORIEN(NE)"] = "Equatorial Guinea";
+$code["ESPAGNOL(E)"] = "Spain";
+$code["FINLANDAIS(E)"] = "Finland";
+$code["FRANCAIS(E)"] = "France";
+$code["GABONAIS(E)"] = "Gabon";
+$code["GHANEEN(NE)"] = "Ghana";
+$code["GREC(QUE)"] = "Greece";
+$code["GUINEEN(NE)"] = "French Guiana";
+$code["HAITIEN(NE)"] = "Haiti";
+$code["HONGROIS(E)"] = "Hungary";
+$code["INDIEN(NE)"] = "India";
+$code["INDONESIEN(NE)"] = "Indonesia";
+$code["IRAKIEN(NE)"] = "Iraq";
+$code["IRANIEN(NE)"] = "Iran";
+$code["IRLANDAIS(E)"] = "Ireland";
+$code["ITALIEN(NE)"] = "Italia";
+$code["IVOIRIEN(NE)"] = "CI"; //----------------------------------
+$code["JAMAICAIN(E)"] = "Jamaica";
+$code["JAPONAIS(E)"] = "Japan";
+$code["JORDANIEN(NE)"] = "Jordan";
+$code["LIBANAIS(E)"] = "Lebanon";
+$code["LIBYEN(NE)"] = "Libya";
+$code["LITHUANIEN(NE)"] = "Lithuania";
+$code["LUXEMBOURGEOIS(E)"] = "Luxembourg";
+$code["MALAIS(E)"] = "Malaysia";
+$code["MALGACHE"] = "Madagascar";
+$code["MALIEN(NE)"] = "Mali";
+$code["MAROCAIN(E)"] = "Maroco";
+$code["MAURICIEN(NE)"] = "Mauritius";
+$code["MAURITANIEN(NE)"] = "Mauritania";
+$code["MEXICAIN(E)"] = "Mexico";
+$code["MONEGASQUE"] = "Monaco";
+$code["MOZAMBIQUOIS(E)"] = "Mozambique";
+$code["NEERLANDAIS(E)"] = "Netherlands";
+$code["NEPALAIS(E)"] = "Nepal";
+$code["NICARAGUAIS(E)"] = "Nicaragua";
+$code["NIGERIEN(NE)"] = "Nigeria";
+$code["NORVEGIEN(NE)"] = "Norway";
+$code["PAKISTANAIS(E)"] = "Pakistan";
+$code["PALESTINIEN(NE)"] = "Palestine";
+$code["PANAMEEN(NE)"] = "Panama";
+$code["PERUVIEN(NE)"] = "Peru";
+$code["POLONAIS(E)"] = "Poland";
+$code["PORTUGAIS(E)"] = "Portugal";
+$code["ROUMAIN(E)"] = "Romania";
+$code["RUANDAIS(E)"] = "Rwanda";
+$code["RUSSE"] = "Ruusia";
+$code["SAOUDIEN(NE)"] = "Saudi Arabia";
+$code["SENEGALAIS(E)"] = "Senegal";
+$code["SERBE"] = "Serbia";
+$code["SUD COREEN(NE)"] = "Korea, Republic of";
+$code["SUEDOIS(E)"] = "Sweden";
+$code["SUISSE"] = "Switzerland";
+$code["SYRIEN(NE)"] = "Syrian Arab Republic";
+$code["TCHADIEN(NE)"] = "Chad";
+$code["TCHEQUE"] = "Czechia";
+$code["THAILANDAIS(E)"] = "Thailand";
+$code["TOGOLAIS(E)"] = "Togo";
+$code["TUNISIEN(NE)"] = "Tunisia";
+$code["TURC (TURQUE)"] = "Turkey";
+$code["UKRAINIEN(NE)"] = "Ukraine";
+$code["VENEZUELIEN(NE)"] = "Venezuela";
+$code["VIETNAMIEN(NE)"] = " 	Viet Nam";
+$code["YEMENITE"] = "Yemen";
+$code["ZAIROIS(E)"] = "Zaire";
+
+
+    $effectifParPays = [];
+    $nope = 0;
+    for ($annee = $start ; $annee <= $end ; $annee++ ) {
+        foreach ($effectifsInscription[$annee] as $these) {
+            $nationalite = $these->getDoctorant()->getIndividu()->getNationalite();
+            if (isset($code[$nationalite])) {
+                $effectifParPays[$code[$nationalite]]++;
+            } else {
+                echo  $nationalite ." ";
+                $nope++;
+            }
+        }
+    }
+    if ($nope > 0) echo $nope;
+?>
+
+<script type="text/javascript">
+    google.charts.load('current', {
+        'packages':['geochart'],
+        // Note: you will need to get a mapsApiKey for your project.
+        // See: https://developers.google.com/chart/interactive/docs/basic_load_libs#load-settings
+        'mapsApiKey': 'AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY'
+    });
+    google.charts.setOnLoadCallback(drawRegionsMap);
+
+    function drawRegionsMap() {
+        var data = google.visualization.arrayToDataTable([
+            ['Country', 'Popularity'],
+            <?php foreach($effectifParPays as $country => $number) {
+               echo "[ '{$country}' , $number ],";
+            }?>
+        ]);
+
+        var options = {
+            colorAxis: { maxValue: 100 }
+        };
+
+        var chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
+
+        chart.draw(data, options);
+    }
+</script>
+
+<div class="box panel panel-info" style="height: 550px;">
+    <div class="panel-heading">
+        <h2 class="first">
+            Provenance des doctorants inscrits entre <?php echo ($start) ?> et <? echo $end?>
+        </h2>
+    </div>
+    <div id="regions_div" style="width: 900px; height: 500px;"></div>
+</div>
+

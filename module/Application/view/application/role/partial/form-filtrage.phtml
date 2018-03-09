@@ -1,0 +1,75 @@
+<?php
+
+use Application\Entity\Db\These;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var string      $text
+ */
+
+/**
+ * @param string $paramName
+ * @param string $paramValue
+ * @param array $queryParams
+ * @return string
+ */
+$urlFiltrer = function ($paramName, $paramValue, $queryParams) {
+    $queryParams[$paramName] = $paramValue;
+    return $this->url('roles', [], ['query' => $queryParams], true);
+};
+
+echo $this->filterPanel([
+    $this->translate("Depend") => [
+        'paramName' => 'depend',
+        'paramConfig' => [
+            ['value' => '',                             'label' => $this->translate(" - ") ],
+            ['value' => $v = "Aucune",                  'label' => $this->translate("Aucun") ],
+            ['value' => $v = "ED",                      'label' => $this->translate("École doctorale") ],
+            ['value' => $v = "UR",                      'label' => $this->translate("Unité de recherche") ],
+            ['value' => $v = "Etab",                    'label' => $this->translate("Établissement") ],
+            ['value' => $v = "These",                   'label' => $this->translate("Thèse") ],
+
+        ],
+        'filterUrl' => $urlFiltrer,
+        'titre' => "Filtrage en fonction de la dépendance du rôle",
+    ],
+]);
+
+
+echo $this->filterPanel([
+    $this->translate("Catégorie") => [
+        'paramName' => 'categorie',
+        'paramConfig' => [
+            ['value' => '',                             'label' => $this->translate(" - ") ],
+            ['value' => $v = "droit",                   'label' => $this->translate("Droit") ],
+            ['value' => $v = "import",                  'label' => $this->translate("Import") ],
+            ['value' => $v = "these",                  'label' => $this->translate("these") ],
+            ['value' => $v = "utilisateur",                  'label' => $this->translate("utilisateur") ],
+            ['value' => $v = "doctorant",                  'label' => $this->translate("doctorant") ],
+            ['value' => $v = "ecole-doctorale",                      'label' => $this->translate("École doctorale") ],
+            ['value' => $v = "unite-recherche",                      'label' => $this->translate("Unité de recherche") ],
+            ['value' => $v = "etablissement",                    'label' => $this->translate("Établissement") ],
+            ['value' => $v = "validation",                    'label' => $this->translate("validation") ],
+            ['value' => $v = "fichier-divers",                    'label' => $this->translate("fichier-divers") ],
+            ['value' => $v = "faq",                     'label' => $this->translate("FAQ") ],
+
+        ],
+        'filterUrl' => $urlFiltrer,
+        'titre' => "Filtrage en fonction de la catégorie du priviliège",
+    ],
+]);
+
+/*ecole-doctorale
+droit
+import
+these
+doctorant
+utilisateur
+unite-recherche
+validation
+fichier-divers*/
+
+?>
+
+

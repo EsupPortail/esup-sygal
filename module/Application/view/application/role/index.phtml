@@ -1,0 +1,92 @@
+<?php
+    use Application\Entity\Db\Role;
+    use Application\Entity\Db\Privilege;
+
+/**
+ * //Provenant du controleur
+ * @var Role[] $roles
+ * @var Privilege[] $privileges
+ *
+ * //Utilisée couramment
+ * @var Role $role
+ * @var Privilege $privilege
+ */
+?>
+
+
+<?php $this->headTitle($this->translate("Rôles/Privilèges")) ?>
+<h1 class="page-header first"><?php echo $this->translate("Rôles/Privilèges") ?>
+<!--    <span class="badge">--</span>-->
+</h1>
+
+    <div class="pull-left">
+        <?php echo $this->partial('partial/form-filtrage') ?>
+    </div>
+
+<!--<form action="--><?php //echo $this->url('roles', [], ['query' => $queryParams], true);?><!--" method="post">-->
+<!--    Dépend de :-->
+<!--    <select>-->
+<!--        <option value="---"> --- </option>-->
+<!--        <option value="aucun"> Aucun </option>-->
+<!--        <option value="structure"> Structure </option>-->
+<!--        <option value="ecole-doctorale"> &nbsp;-&nbsp;École doctorale</option>-->
+<!--        <option value="etablissement"> &nbsp;-&nbsp;Établissement</option>-->
+<!--        <option value="unite-de-recherche"> &nbsp;-&nbsp;Unité de recherche</option>-->
+<!--        <option value="these"> These </option>-->
+<!--    </select>-->
+<!--    <input type="submit" value="Filtrer"/>-->
+<!--</form>-->
+
+
+<?php
+//foreach($roles as $role) {
+//    if ($role->isStructureDependant()) {
+//        switch($role->getTypeStructureDependant()) {
+//            case "Établissement" :
+//                echo "<span style='background-color: limegreen; font-family: monospace;'>ST_ET</span>";
+//                break;
+//            case "École doctorale" :
+//                echo "<span style='background-color: darkgreen; font-family: monospace;'>ST_ED</span>";
+//                break;
+//            case "Unité de recherche" :
+//                echo "<span style='background-color: greenyellow; font-family: monospace;'>ST_UR</span>";
+//                break;
+//            default:
+//                echo "<span style='background-color: #5cb85c; font-family: monospace;'>STRUC</span>";
+//                break;
+//        }
+//
+//    } elseif ($role->isTheseDependant()) {
+//        echo "<span style='background-color: salmon; font-family: monospace;'>THESE</span>";
+//    } else {
+//        echo "<span style='background-color: #9D9D9D; font-family: monospace;'>AUCUN</span>";
+//    }
+//    echo $role->getLibelle() . "<br/>";
+//}
+?>
+
+<?php
+echo "<table class='table-bordered'>";
+echo "<tr><th></th>";
+
+foreach($roles as $role) {
+    echo "<th > <span style='text-orientation: upright;'> {$role->getLibelle()} </span></th>";
+}
+echo "</tr>";
+foreach($privileges as $privilege) {
+
+    echo "<tr>";
+    echo "<th> {$privilege->getLibelle()} </th>";
+    foreach($roles as $role) {
+        echo "<td>";
+        if( array_search($role, $privilege->getRole()->toArray())) {
+            echo "<span style='color: green'; class='glyphicon glyphicon-ok'></span>";
+        } else {
+            echo "<span style='color: red'; class='glyphicon glyphicon-remove'></span>";
+        }
+        echo "</td>";
+    }
+    echo "</tr>";
+}
+echo "</table>";
+
