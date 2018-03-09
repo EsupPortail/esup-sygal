@@ -139,6 +139,12 @@ $selectedUnite = null;
                     </table>
 
                     <!-- AFFICHAGE DU LOGO DE L'UR SELECTIONNÉE -->
+                    <?php
+                        $content = $unite->getLogoContent();
+                        if ($content === null) {
+                            $unite->setCheminLogo(null);
+                        }
+                    ?>
                     <div id="logo-div" class="pull-right">
                         <img style="max-width: 200px; max-height: 200px; border: 1px solid black; background-color: white;"
                              src="data:image/png;base64,<?php echo base64_encode($unite->getLogoContent()); ?>"

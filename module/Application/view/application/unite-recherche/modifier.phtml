@@ -27,6 +27,13 @@ $fcg = $this->formControlGroup();
     $logoFile = $form->get('cheminLogo');
     echo $this->formLabel($logoFile);
     ?>
+
+    <?php
+    $content = $form->getObject()->getLogoContent();
+    if ($content === null) {
+        $form->getObject()->setCheminLogo(null);
+    }
+    ?>
     <table>
         <tr>
             <td>
