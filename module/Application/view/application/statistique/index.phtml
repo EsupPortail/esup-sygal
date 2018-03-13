@@ -42,17 +42,28 @@ function display_debug($texte) {
     <input type="radio" id="structure_type" name="structure_type" value="ED">     Ecole doctorale
     <input type="radio" id="structure_type" name="structure_type" value="UR">     Unité de recherche
 <div id='structure_selector'>
-    <select id='structure_id'></select>;
+    <select id='structure_id'>
+<!--        <option value="a">a</option><option value="b">b</option>-->
+    </select>
 </div>
-<input id='filtrage' type='button' value='filter'/>
 </form>
-<div id="linku"> ... </div>
+<div id="linku">
+    <a  href='/statistique'>
+        <input type='button' class='btn btn-info' value='Remise à zéro du filtrage'/>
+    </a>
+</div>
 
 <script>
     $(document).ready(function(){
-        $('#structure_id').on('change', function() {
-            alert( this.value );
-        })
+        $('#structure_id').change(function() {
+            var selected_structure_type = document.querySelector('input[name="structure_type"]:checked').value;
+            var selected_structure_id = document.getElementById("structure_id").value;
+            document.getElementById("linku").innerHTML = "" +
+                "<a  href='/statistique?structure_type=" + selected_structure_type + "& structure_id=" + selected_structure_id + "'> " +
+                "<input type='button' class='btn btn-info' value='Filtrer les thèse'/>" +
+                "</a>";
+            //alert( this.value );
+        });
         $('input[type=radio][name=structure_type]').change(function() {
                 //alert(this.value);
                 if (this.value == "Aucun") {
@@ -64,26 +75,29 @@ function display_debug($texte) {
                 if (this.value == "ED") {
                     // var form = "ED";
                     var form = " <?php echo generateStructureSelector($ecoles); ?> ";
-                    document.getElementById('structure_selector').innerHTML = form;
+                    document.getElementById('structure_id').innerHTML = form;
                 }
                 if (this.value == "UR") {
                     // alert("UR");
                     var form = " <?php echo generateStructureSelector($unites); ?> ";
-                    document.getElementById('structure_selector').innerHTML = form;
+                    document.getElementById('structure_id').innerHTML = form;
                 }
                 if (this.value == "Etab") {
                     // alert("Etab");
                     var form = " <?php echo generateStructureSelector($etablissements); ?> ";
-                    document.getElementById('structure_selector').innerHTML = form;
+                    document.getElementById('structure_id').innerHTML = form;
                 }
         });
-        $('#filtrage').click(function() {
-            var selected_structure_type = document.querySelector('input[name="structure_type"]:checked').value;
-            var selected_structure_id = document.getElementById("structure_id").value;
-            alert("clicked! " + selected_structure_type + " " + selected_structure_id);
-            document.getElementById("linku").innerHTML = " <a  href='/statistique?structure_type=" + selected_structure_type + "& structure_id=" + selected_structure_id + "'>clique donc</a>";
-
-        });
+        // $('#filtrage').click(function() {
+        //     var selected_structure_type = document.querySelector('input[name="structure_type"]:checked').value;
+        //     var selected_structure_id = document.getElementById("structure_id").value;
+        //     alert("clicked! " + selected_structure_type + " " + selected_structure_id);
+        //     document.getElementById("linku").innerHTML = "" +
+        //         "<a  href='/statistique?structure_type=" + selected_structure_type + "& structure_id=" + selected_structure_id + "'> " +
+        //             "<input type='button' value='Filtrer les thèse'/>" +
+        //         "</a>";
+        //
+        // });
     });
     //document.getElementById('structure_selector').innerHTML = <?php //generateEDSelector($ecoles); ?>// ;
 </script>
