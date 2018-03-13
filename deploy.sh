@@ -30,7 +30,7 @@
 
 ################################################################################################################################
 
-excludeLocalConfig="--exclude config/autoload/*local.php --exlude public/.htaccess"
+excludeLocalConfig="--exclude=config/autoload/*local.php --exclude=public/.htaccess"
 N=5
 
 # Nom du répertoire de l'appli : c'est le nom du répertoire courant sans le chemin.
