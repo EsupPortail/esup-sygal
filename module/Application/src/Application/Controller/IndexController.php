@@ -2,6 +2,7 @@
 
 namespace Application\Controller;
 
+use Application\Authentication\Adapter\Shib;
 use Application\Entity\Db\These;
 use Application\Service\These\TheseServiceAwareInterface;
 use Application\Service\These\TheseServiceAwareTrait;
@@ -9,6 +10,7 @@ use UnicaenApp\Exception\RuntimeException;
 use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
+use ZfcUser\Authentication\Adapter\AdapterChainEvent;
 
 class IndexController extends AbstractController
     implements TheseServiceAwareInterface
@@ -71,6 +73,25 @@ EOS
         ]);
 
         return $vm;
+    }
+
+    public function secureAction()
+    {
+//        if (!isset($_SERVER['REMOTE_USER'])) {
+//            return $this->redirect()->toUrl('/');
+//        }
+//
+//        $eppn = $_SERVER['REMOTE_USER'];
+
+        $e = new AdapterChainEvent();
+        $e->setTarget($this);
+        $e->setRequest($this->getRequest());
+
+        /** @var Shib $shib */
+        $shib = $this->getServiceLocator()->get(Shib::class);
+        $shib->authenticate($e);
+
+        return $this->redirect()->toUrl($this->params()->fromQuery('redirect'));
     }
 
     /**

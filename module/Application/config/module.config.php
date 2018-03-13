@@ -1,5 +1,6 @@
 <?php
 
+use Application\Authentication\Adapter\AbstractFactory;
 use Application\Cache\MemcachedFactory;
 use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\Event\UserAuthenticatedEventListenerFactory;
@@ -173,6 +174,9 @@ return array(
             'NotificationService'            => NotificationServiceFactory::class,
             'Sygal\Memcached'                => MemcachedFactory::class,
         ),
+        'abstract_factories' => [
+            AbstractFactory::class,
+        ],
         'initializers' => [
             ServiceAwareInitializer::class,
             AuthorizeServiceAwareInitializer::class,
