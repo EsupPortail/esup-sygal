@@ -8,6 +8,7 @@ use Application\Entity\Db\Repository\RoleRepository;
 use Application\Entity\Db\Role;
 use Application\Service\BaseService;
 use Application\Entity\Db\Structure;
+use Doctrine\ORM\Query\Expr\Join;
 
 class RoleService extends BaseService
 {
@@ -32,13 +33,18 @@ class RoleService extends BaseService
         return $qb->getQuery()->execute();
     }
 
-    public function getIndividuRolesByIndividu(Individu $individu)
+    /**
+     * @param int $individuSourceCode
+     * @return IndividuRole[]
+     */
+    public function getIndividuRolesByIndividuSourceCode($individuSourceCode)
     {
-        $repo = $this->entityManager->getRepository( IndividuRole::class);
+        $repo = $this->entityManager->getRepository(IndividuRole::class);
         $qb = $repo->createQueryBuilder("ro")
-            ->andWhere("ro.individu = :individu")
-        ;
-        $qb->setParameter('individu', $individu);
+            ->addSelect('i, r')
+            ->join('ro.individu', 'i', Join::WITH, 'i.sourceCode = :sourceCode')
+            ->join('ro.role', 'r')
+            ->setParameter('sourceCode', $individuSourceCode);
         return $qb->getQuery()->execute();
     }
 

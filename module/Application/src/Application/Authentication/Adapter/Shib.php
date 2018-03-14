@@ -2,30 +2,20 @@
 
 namespace Application\Authentication\Adapter;
 
-use phpCAS;
-use UnicaenApp\Exception;
+use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Options\ModuleOptions;
-use Zend\Authentication\Exception\ExceptionInterface;
-use Zend\Authentication\Exception\UnexpectedValueException;
-use Zend\Authentication\Result as AuthenticationResult;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerInterface;
-use Zend\Http\Headers;
-use Zend\Http\Request;
 use Zend\ServiceManager\ServiceManager;
 use Zend\ServiceManager\ServiceManagerAwareInterface;
-use Zend\Http\Response;
-use ZfcUser\Authentication\Adapter\AbstractAdapter;
-use ZfcUser\Authentication\Adapter\AdapterChainEvent as AuthEvent;
-use ZfcUser\Authentication\Adapter\ChainableAdapter;
 
 /**
- * CAS authentication adpater
+ * Shibboleth authentication adpater
  *
- * @author Bertrand GAUTHIER <bertrand.gauthier@unicaen.fr>
+ * @author Unicaen
  */
-class Shib extends AbstractAdapter implements ServiceManagerAwareInterface, EventManagerAwareInterface
+class Shib implements ServiceManagerAwareInterface, EventManagerAwareInterface
 {
     /**
      * @var ServiceManager
@@ -48,71 +38,57 @@ class Shib extends AbstractAdapter implements ServiceManagerAwareInterface, Even
     protected $shibOptions;
 
     /**
-     * @var phpCAS
+     * @var ShibUser
      */
-    protected $casClient;
+    protected $authenticatedUser;
 
     /**
-     * Réalise l'authentification.
-     *
-     * @param AuthEvent $e
-     * @return Response|null
-     * @see ChainableAdapter
+     * @return ShibUser|null
      */
-    public function authenticate(AuthEvent $e)
+    public function getAuthenticatedUser()
     {
-	    if ($this->isSatisfied()) {
-            try {
-                $storage = $this->getStorage()->read();
-            } catch (ExceptionInterface $e) {
-                throw new Exception\RuntimeException("Erreur de lecture du storage");
+        if ($this->authenticatedUser === null) {
+            if (!isset($_SERVER['REMOTE_USER'])) {
+                return null;
             }
-            $e
-                ->setIdentity($storage['identity'])
-                ->setCode(AuthenticationResult::SUCCESS)
-                ->setMessages(['Authentication successful.']);
-            return null;
+            $this->authenticatedUser = $this->createShibUser();
         }
 
-        if (empty($_SERVER['REMOTE_USER'])) {
+        return $this->authenticatedUser;
+    }
 
-            /** @var Request $request */
-            $request = $e->getRequest();
-            $returnUrl = $request->getQuery('redirect', false);
-
-            $response = new Response();
-            $response->setStatusCode(Response::STATUS_CODE_302);
-            $response->getHeaders()->addHeaders([
-                'Location' => "/secure?redirect=" . urlencode($returnUrl),
-            ]);
-
-            return $response;
-        }
-
+    /**
+     * @return ShibUser
+     */
+    private function createShibUser()
+    {
         $eppn = $_SERVER['REMOTE_USER'];
 
-        $e->setIdentity($eppn);
-        $this->setSatisfied(true);
-        try {
-            $storage = $this->getStorage()->read();
-            $storage['identity'] = $e->getIdentity();
-            $this->getStorage()->write($storage);
-        } catch (ExceptionInterface $e) {
-            throw new Exception\RuntimeException("Erreur de concernant le storage");
+        if (isset($_SERVER['supannEtuId'])) {
+            $id = $_SERVER['supannEtuId'];
+        } elseif (isset($_SERVER['supannEmpId'])) {
+            $id = $_SERVER['supannEmpId'];
+        } else {
+            throw new RuntimeException('Un au moins des attributs suivants doivent exister dans $_SERVER : supannEtuId, supannEmpId.');
         }
-        $e
-            ->setCode(AuthenticationResult::SUCCESS)
-            ->setMessages(['Authentication successful.']);
 
-        $userData = new ShibUser();
-        $userData->setId($eppn);
-        $userData->setUsername($eppn);
-        $userData->setDisplayName($eppn);
-        $userData->setEmail($eppn);
+        $mail = null;
+        if (isset($_SERVER['mail'])) {
+            $mail = $_SERVER['mail'];
+        }
 
-        /* @var $userService \Application\Service\User */
-        $userService = $this->getServiceManager()->get('unicaen-auth_user_service');
-        $userService->userAuthenticated($e->getIdentity(), $userData);
+        $displayName = null;
+        if (isset($_SERVER['displayName'])) {
+            $displayName = $_SERVER['displayName'];
+        }
+
+        $shibUser = new ShibUser();
+        $shibUser->setId($id);
+        $shibUser->setUsername($eppn);
+        $shibUser->setDisplayName($displayName);
+        $shibUser->setEmail($mail);
+
+        return $shibUser;
     }
 
     /**

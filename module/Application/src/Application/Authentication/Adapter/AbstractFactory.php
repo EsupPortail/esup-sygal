@@ -42,6 +42,9 @@ class AbstractFactory implements AbstractFactoryInterface
             case __NAMESPACE__ . '\Shib':
                 $adapter = new Shib();
                 break;
+            case __NAMESPACE__ . '\Ldap':
+                $adapter = new Ldap();
+                break;
             default:
                 throw new Exception\RuntimeException("Service demandé inattendu : '$requestedName'!");
                 break;

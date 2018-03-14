@@ -6,20 +6,44 @@ use ZfcUser\Entity\UserInterface;
 
 class ShibUser implements UserInterface
 {
+    /**
+     * @var string
+     */
     protected $id;
 
+    /**
+     * @var string
+     */
     protected $username;
 
+    /**
+     * @var string
+     */
     protected $email;
 
+    /**
+     * @var string
+     */
     protected $displayName;
 
+    /**
+     * @var int
+     */
     protected $state = 1;
+
+
+    /**
+     * @return string
+     */
+    public function getEppn()
+    {
+        return $this->getUsername();
+    }
 
     /**
      * Get id.
      *
-     * @return int
+     * @return string
      */
     public function getId()
     {
@@ -29,13 +53,11 @@ class ShibUser implements UserInterface
     /**
      * Set id.
      *
-     * @param int $id
-     *
-     * @return void
+     * @param string $id
      */
     public function setId($id)
     {
-        $this->id = (int) $id;
+        $this->id = $id;
     }
 
     /**
@@ -52,8 +74,6 @@ class ShibUser implements UserInterface
      * Set username.
      *
      * @param string $username
-     *
-     * @return void
      */
     public function setUsername($username)
     {
@@ -74,8 +94,6 @@ class ShibUser implements UserInterface
      * Set email.
      *
      * @param string $email
-     *
-     * @return void
      */
     public function setEmail($email)
     {
@@ -96,8 +114,6 @@ class ShibUser implements UserInterface
      * Set displayName.
      *
      * @param string $displayName
-     *
-     * @return void
      */
     public function setDisplayName($displayName)
     {
@@ -138,8 +154,6 @@ class ShibUser implements UserInterface
      * Set state.
      *
      * @param int $state
-     *
-     * @return void
      */
     public function setState($state)
     {
@@ -152,6 +166,6 @@ class ShibUser implements UserInterface
      */
     public function __toString()
     {
-        return (string) $this->getDisplayName();
+        return $this->getDisplayName();
     }
 }

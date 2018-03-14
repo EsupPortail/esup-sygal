@@ -65,7 +65,27 @@ class User implements ServiceLocatorAwareInterface, EventManagerAwareInterface
         if (!$this->getOptions()->getSaveLdapUserInDatabase()) {
             return false;
         }
-        if (!($username = $identity/*$e->getIdentity()*/)) {
+
+        switch (true) {
+            case $userData instanceof People:
+                $username = $userData->getUsername();
+                $email = $userData->getMail();
+                $password = 'ldap';
+                $state = in_array('deactivated', ldap_explode_dn($userData->getDn(), 1)) ? 0 : 1;
+
+                break;
+            case $userData instanceof ShibUser:
+                $username = $userData->getUsername();
+                $email = $userData->getEmail();
+                $password = 'shib';
+                $state = 1;
+                break;
+            default:
+                throw new RuntimeException("A implémenter!!");
+                break;
+        }
+
+        if (!$username) {
             return false;
         }
 
@@ -77,10 +97,6 @@ class User implements ServiceLocatorAwareInterface, EventManagerAwareInterface
         if (!is_string($username)) {
             throw new RuntimeException("Identité rencontrée inattendue.");
         }
-
-        $email = $userData instanceof People ? $userData->getMail() : $userData->getEmail();
-        $password = $userData instanceof People ? 'ldap' : 'shib';
-        $state = $userData instanceof People ? (in_array('deactivated', ldap_explode_dn($userData->getDn(), 1)) ? 0 : 1) : 1;
 
         // update/insert de l'utilisateur dans la table de l'appli
         $mapper = $this->getServiceLocator()->get('zfcuser_user_mapper'); /* @var $mapper \ZfcUserDoctrineORM\Mapper\User */
@@ -104,16 +120,13 @@ class User implements ServiceLocatorAwareInterface, EventManagerAwareInterface
             // déclenche l'événement donnant aux applications clientes l'opportunité de modifier l'entité
             // utilisateur avant qu'elle ne soit persistée
             $event = new UserAuthenticatedEvent(UserAuthenticatedEvent::PRE_PERSIST);
-            $event
-                    ->setDbUser($entity)
-                    ->setTarget($this);
-
+            $event->setTarget($this);
+            $event->setDbUser($entity);
             if ($userData instanceof People) {
                 $event->setLdapUser($userData);
             } elseif ($userData instanceof ShibUser) {
                 $event->setShibUser($userData);
             }
-
             $this->getEventManager()->trigger($event);
 
             // persist
