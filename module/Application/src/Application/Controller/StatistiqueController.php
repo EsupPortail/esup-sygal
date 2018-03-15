@@ -2,22 +2,15 @@
 
 namespace Application\Controller;
 
-use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareInterface;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
-use Application\Service\Etablissement\EtablissementServiceAwareInterface;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
-use Application\Service\These\TheseServiceAwareInterface;
 use Application\Service\These\TheseServiceAwareTrait;
-use Application\Service\UniteRecherche\UniteRechercheServiceAwareInterface;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
-use Doctrine\ORM\QueryBuilder;
 use DateTime;
-use Zend\Validator\Date;
+use Doctrine\ORM\QueryBuilder;
 use Zend\View\Model\ViewModel;
 
 class StatistiqueController extends AbstractController
-    implements TheseServiceAwareInterface,
-        EcoleDoctoraleServiceAwareInterface, UniteRechercheServiceAwareInterface, EtablissementServiceAwareInterface
 {
     use TheseServiceAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
@@ -26,6 +19,12 @@ class StatistiqueController extends AbstractController
 
     public function indexAction()
     {
+
+        /**
+         * Certaines statistiques exploites le genre de la personne et nécessite de récupérer
+         * les données présentent dans la table Individu. Afin d'évite moultes requêtes, il
+         * faut faire les jointures qui vont biens (et aussi le select)
+         */
 
         $qb = $this->theseService->getRepository()->createQueryBuilder("t");
         $qb = $qb
@@ -55,23 +54,26 @@ class StatistiqueController extends AbstractController
         ]);
     }
 
+    /**
+     * @param QueryBuilder $qb
+     * @param string $type (parmi ED, UR, Etab)
+     * @param string $id l'identifiant d'une structure
+     * @return QueryBuilder
+     */
     private function decorateWithStructure(QueryBuilder $qb, $type = null, $id = null)
     {
         if ($type !== null && $id !== null) {
             switch($type) {
                 case "ED" :
                     $ecole = $this->ecoleDoctoraleService->getEcoleDoctoraleById($id);
-//                    var_dump($ecole->getLibelle());
                     return  $qb->andWhere("t.ecoleDoctorale = :ed")
                                 ->setParameter(":ed", $ecole);
                 case "UR" :
                     $unite = $this->uniteRechercheService->getUniteRechercheById($id);
-//                    var_dump($unite->getLibelle());
                     return $qb->andWhere("t.uniteRecherche = :ur")
                                 ->setParameter(":ur", $unite);
                 case "Etab" :
                     $etablissement = $this->etablissementService->getEtablissementById($id);
-//                    var_dump($etablissement->getLibelle());
                     return $qb->andWhere("t.etablissement = :etab")
                                 ->setParameter("etab", $etablissement);
             }
@@ -79,6 +81,13 @@ class StatistiqueController extends AbstractController
         return $qb;
     }
 
+    /**
+     * @param QueryBuilder $qb
+     * @param string $type (parmi soutenance, inscription)
+     * @param string $debut (YYYY)
+     * @param string $fin (YYYY)
+     * @return QueryBuilder
+     */
     private function decorateWithDate(QueryBuilder $qb, $type = null, $debut = null, $fin = null)
     {
         if ($debut !== null) $debut .= "-01-01";
