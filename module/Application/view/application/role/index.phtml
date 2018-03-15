@@ -26,12 +26,11 @@
 
 <?php
 
-echo "<input type='submit' value='refresh' id='refresh'/>";
-echo "<table id='mytable' class='table-bordered'>";
+echo "<table id='mytable' class='mytable table-bordered'>";
 echo "<tr><th></th>";
 
 foreach($roles as $role) {
-    echo generateTableHeaderRole($role);
+    echo generateTableHeaderRole($role, $etablissements);
 }
 echo "</tr>";
 
@@ -49,16 +48,12 @@ foreach($privileges as $privilege) {
         $id = "{$privilege->getId()}_{$role->getId()}";
         echo "<td class='droit' id='$id' title='{$id}'>";
 
-        echo "<a href='".$this->url("modifier-privilege", ['role' => $role->getId(), 'privilege'=> $privilege->getId()], ["query" => $params], true)."' />";
-//        echo "[" . $role->getId() . "|" . $privilege->getId() . "|";
-//        echo (array_search($role, $privilege->getRole()->toArray()) === false);
-//        echo "]";
         if( array_search($role, $privilege->getRole()->toArray()) !== false) {
             echo "<span class='glyphicon glyphicon-ok text-success'></span>";
         } else {
             echo "<span class='glyphicon glyphicon-remove text-danger'></span>";
         }
-        echo "</a>";
+
         echo "</td>";
 
     }
@@ -107,18 +102,31 @@ echo "</table>";
         return "KO";
     }
 
+
+    function getCode(Role $role, $etablissements) {
+
+        /** @var \Application\Entity\Db\Etablissement $etablissement */
+        foreach($etablissements as $etablissement) {
+            if ($etablissement->getId() == $role->getStructure()->getId()) {
+                return $etablissement->getCode();
+            }
+        }
+        return "missing";
+    }
+
+
     /**
      * @param Role $role
      * @return string
      */
-    function generateTableHeaderRole($role) {
+    function generateTableHeaderRole($role, $etablissements = null) {
 
         $premiere = $role->getLibelle();
-        $seconde  = "missing";
+        $seconde  = "";
         $de = "";
         switch(true) {
             case $role->isTheseDependant() :
-                //$seconde = "ETAB";
+                $seconde = getCode($role, $etablissements);
                 $de = "these";
                 break;
             case $role->isEcoleDoctoraleDependant() :
@@ -126,7 +134,7 @@ echo "</table>";
                 $de = "ed";
                 break;
             case $role->isEtablissementDependant() :
-                //$seconde = $role->getStructure()->getCode();
+                $seconde = getCode($role, $etablissements);
                 $de = "etab";
                 break;
             case $role->isUniteRechercheDependant() :
@@ -149,6 +157,11 @@ echo "</table>";
 
 
 <style>
+
+    table.mytable {
+        background-color: white;
+    }
+
     th.categorie {
         font-style: italic;
         font-size: 12pt;
@@ -157,7 +170,7 @@ echo "</table>";
     }
 
     th.privilege {
-        width:50px;
+        height:50px;
     }
 
     th.role {

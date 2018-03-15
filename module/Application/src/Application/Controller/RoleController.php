@@ -4,6 +4,8 @@ namespace Application\Controller;
 
 use Application\Entity\Db\Privilege;
 use Application\Entity\Db\Role;
+use Application\Service\Etablissement\EtablissementServiceAwareInterface;
+use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareInterface;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Doctrine\ORM\QueryBuilder;
@@ -13,10 +15,11 @@ use UnicaenAuth\Entity\Db\CategoriePrivilege;
 use Zend\View\Model\ViewModel;
 
 class RoleController extends AbstractController
-        implements EntityManagerAwareInterface, RoleServiceAwareInterface
+        implements EntityManagerAwareInterface, RoleServiceAwareInterface, EtablissementServiceAwareInterface
 {
     use EntityManagerAwareTrait;
     use RoleServiceAwareTrait;
+    use EtablissementServiceAwareTrait;
 
     public function indexAction()
     {
@@ -30,10 +33,14 @@ class RoleController extends AbstractController
         $qb_categorie = $this->decorateWithCategorie($qb_categorie, $categorie);
         $qb_categorie->orderBy("p.categorie, p.ordre","ASC");
         $privileges = $qb_categorie->getQuery()->execute();
+
+        $etablissements = $this->etablissementService->getEtablissements();
+
         return new ViewModel([
             'roles' => $roles,
             'privileges' => $privileges,
             'params' => $this->params()->fromQuery(),
+            'etablissements' => $etablissements,
         ]);
     }
 
