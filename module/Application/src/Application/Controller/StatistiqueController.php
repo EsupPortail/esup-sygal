@@ -28,11 +28,11 @@ class StatistiqueController extends AbstractController
     {
 
         $qb = $this->theseService->getRepository()->createQueryBuilder("t");
+        $qb = $qb
+            ->select("t,d,i")
+            ->join("t.doctorant", "d")
+            ->join("d.individu", "i");
 
-        //filtrer les thèses en fonction d'une structure
-        // --> dans la table thèse on peut utiliser les champs ETABLISSEMENT_ID, ECOLE_DOCT_ID, et UNITE_RECH_ID
-        //filtrer les thèses en fonction d'une période
-        // --> utiliser les dates d'inscriptions ou de soutenances ?
 
         $structureType = $this->params()->fromQuery("structure_type");
         $structureId = $this->params()->fromQuery("structure_id");
@@ -61,17 +61,17 @@ class StatistiqueController extends AbstractController
             switch($type) {
                 case "ED" :
                     $ecole = $this->ecoleDoctoraleService->getEcoleDoctoraleById($id);
-                    var_dump($ecole->getLibelle());
+//                    var_dump($ecole->getLibelle());
                     return  $qb->andWhere("t.ecoleDoctorale = :ed")
                                 ->setParameter(":ed", $ecole);
                 case "UR" :
                     $unite = $this->uniteRechercheService->getUniteRechercheById($id);
-                    var_dump($unite->getLibelle());
+//                    var_dump($unite->getLibelle());
                     return $qb->andWhere("t.uniteRecherche = :ur")
                                 ->setParameter(":ur", $unite);
                 case "Etab" :
                     $etablissement = $this->etablissementService->getEtablissementById($id);
-                    var_dump($etablissement->getLibelle());
+//                    var_dump($etablissement->getLibelle());
                     return $qb->andWhere("t.etablissement = :etab")
                                 ->setParameter("etab", $etablissement);
             }

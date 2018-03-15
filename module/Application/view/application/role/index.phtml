@@ -46,7 +46,10 @@ foreach($privileges as $privilege) {
     foreach($roles as $role) {
 
         $id = "{$privilege->getId()}_{$role->getId()}";
-        echo "<td class='droit' id='$id' title='{$id}'>";
+        $code = ($role->getStructure() !== null) ? $role->getStructure()->getSigle() : " ";
+        if ($code === null) $code = getCode($role, $etablissements);
+        $title = "{$role->getLibelle()} - {$code} \n{$privilege->getLibelle()}";
+        echo "<td class='droit' id='$id' title='{$title}'>";
 
         if( array_search($role, $privilege->getRole()->toArray()) !== false) {
             echo "<span class='glyphicon glyphicon-ok text-success'></span>";

@@ -27,7 +27,10 @@ class RoleController extends AbstractController
         $categorie = $this->params()->fromQuery("categorie");
 
         $qb_depend = $this->entityManager->getRepository(Role::class)->createQueryBuilder("r");
+//        $qb_depend = $qb_depend->select("r, s");
+//        $qb_depend = $qb_depend->join("r.structure", "s");
         $qb_depend = $this->decorateWithDepend($qb_depend, $depend);
+        $qb_depend = $qb_depend->orderBy("r.typeStructureDependant, r.libelle, r.structure", 'asc');
         $roles = $qb_depend->getQuery()->execute();
         $qb_categorie = $this->entityManager->getRepository(Privilege::class)->createQueryBuilder("p");
         $qb_categorie = $this->decorateWithCategorie($qb_categorie, $categorie);
