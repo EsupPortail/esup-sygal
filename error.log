@@ -1,0 +1,6 @@
+
+1 /var/www/html/sygal-versions/sygal-20180313-123330/vendor/unicaen/app/src/UnicaenApp/Exporter/Pdf.php(371): UnicaenApp\\Exporter\\Pdf->getMpdf()\n
+2 /var/www/html/sygal-versions/sygal-20180313-123330/vendor/unicaen/app/src/UnicaenApp/Exporter/Pdf.php(348): UnicaenApp\\Exporter\\Pdf->_addCss()\n
+3 /var/www/html/sygal-versions/sygal-20180313-123330/vendor/unicaen/app/src/UnicaenApp/Exporter/Pdf.php(287): UnicaenApp\\Exporter\\Pdf->_generate()\n
+4 /var/www/html/sygal-versions/sygal-20180313-123330/module/Application/src/Application/Service/These/PageDeGarde/PageDeCouverturePdfExporter.php(34): UnicaenApp\\Exporter\\Pdf->export('export.pdf', 'I', NULL)\n
+5 /var/www/html/sygal-versions/sygal-201803 in /var/www/html/sygal-versions/sygal-20180313-123330/vendor/mpdf/mpdf/mpdf.php on line 1232, referer: https://sygal-pp.unicaen.fr/these/identite/28072

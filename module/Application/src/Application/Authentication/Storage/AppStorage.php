@@ -4,11 +4,11 @@ namespace Application\Authentication\Storage;
 
 use Application\Authentication\Adapter\ShibUser;
 use Application\Entity\Db\Doctorant;
-use Application\Entity\Db\EcoleDoctoraleIndividu;
-use Application\Entity\Db\UniteRechercheIndividu;
+use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\Doctorant\DoctorantServiceAwareTrait;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
+use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
@@ -25,27 +25,21 @@ use Zend\Authentication\Exception\ExceptionInterface;
  * - entité Doctorant si l'utilisateur authentifié est trouvé parmi les thésards,
  * - null sinon.
  *
- * Valeur associée à la clé KEY_ECOLE_DOCTORALE_INDIVIDU :
- * - entités EcoleDoctoraleIndividu si l'utilisateur authentifié est trouvé dans EcoleDoctoraleIndividu,
+ * Valeur associée à la clé KEY_STRUCTURE_ROLE_INDIVIDU :
+ * - entités RoleServiceIndividu si l'utilisateur authentifié est trouvé dans IndividuRole,
  * - [] sinon.
  *
- * Valeur associée à la clé KEY_UNITE_RECHERCHE_INDIVIDU :
- * - entités UniteRechercheIndividu si l'utilisateur authentifié est trouvé dans UniteRechercheIndividu,
- * - [] sinon.
- *
- * @author Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>
+  * @author Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>
  */
 class AppStorage implements ChainableStorage
 {
     use UtilisateurServiceAwareTrait;
     use DoctorantServiceAwareTrait;
-    use EcoleDoctoraleServiceAwareTrait;
-    use UniteRechercheServiceAwareTrait;
+    use RoleServiceAwareTrait;
 
     const KEY_DB_UTILSATEUR = 'db';
     const KEY_DOCTORANT = 'doctorant';
-    const KEY_ECOLE_DOCTORALE_INDIVIDU = 'ecoleDoctoraleIndividu';
-    const KEY_UNITE_RECHERCHE_INDIVIDU = 'uniteRechercheIndividu';
+    const KEY_STRUCTURE_ROLE_INDIVIDU = 'structureIndividu';
 
     /**
      * @var mixed
@@ -68,14 +62,9 @@ class AppStorage implements ChainableStorage
     protected $doctorant;
 
     /**
-     * @var EcoleDoctoraleIndividu[]
+     * @var IndividuRole[]
      */
-    protected $ecoleDoctoraleIndividu;
-
-    /**
-     * @var UniteRechercheIndividu[]
-     */
-    protected $uniteRechercheIndividu;
+    protected $structureIndividu;
 
     /**
      * @param ChainEvent $e
@@ -103,15 +92,10 @@ class AppStorage implements ChainableStorage
          */
         $this->addDoctorantContents($e);
 
-//        /**
-//         * Collecte des données au cas où l'utilisateur connecté est trouvé dans la table EcoleDoctoraleIndividu.
-//         */
-//        $this->addEcoleDoctoraleIndividuContents($e);
-//
-//        /**
-//         * Collecte des données au cas où l'utilisateur connecté est trouvé dans la table UniteRechercheIndividu.
-//         */
-//        $this->addUniteRechercheIndividuContents($e);
+        /**
+         * Collecte des données au cas où l'utilisateur connecté est trouvé dans la table EcoleDoctoraleIndividu.
+         */
+         $this->addStructureRoleContents($e);
     }
 
     protected function addDbUtilisateurContents(ChainEvent $e)
@@ -184,55 +168,31 @@ class AppStorage implements ChainableStorage
         return $this->doctorant;
     }
 
-//    private function addEcoleDoctoraleIndividuContents(ChainEvent $e)
-//    {
-//        try {
-//            $e->addContents(self::KEY_ECOLE_DOCTORALE_INDIVIDU, $this->fetchEcoleDoctoraleIndividu());
-//        } catch (ExceptionInterface $e) {
-//            throw new RuntimeException("Erreur imprévue rencontrée.", 0, $e);
-//        }
-//
-//        return $this;
-//    }
-//
-//    private function fetchEcoleDoctoraleIndividu()
-//    {
-//        if (null !== $this->ecoleDoctoraleIndividu) {
-//            return $this->ecoleDoctoraleIndividu;
-//        }
-//
-//        $sourceCodeIndividu = $this->people->getSupannEmpId();
-//
-//        $this->ecoleDoctoraleIndividu =
-//            $this->ecoleDoctoraleService->getRepository()->findMembresBySourceCodeIndividu($sourceCodeIndividu);
-//
-//        return $this->ecoleDoctoraleIndividu;
-//    }
-//
-//    private function addUniteRechercheIndividuContents(ChainEvent $e)
-//    {
-//        try {
-//            $e->addContents(self::KEY_UNITE_RECHERCHE_INDIVIDU, $this->fetchUniteRechercheIndividu());
-//        } catch (ExceptionInterface $e) {
-//            throw new RuntimeException("Erreur imprévue rencontrée.", 0, $e);
-//        }
-//
-//        return $this;
-//    }
-//
-//    private function fetchUniteRechercheIndividu()
-//    {
-//        if (null !== $this->uniteRechercheIndividu) {
-//            return $this->uniteRechercheIndividu;
-//        }
-//
-//        $sourceCodeIndividu = $this->people->getSupannEmpId();
-//
-//        $this->uniteRechercheIndividu =
-//            $this->uniteRechercheService->getRepository()->findMembresBySourceCodeIndividu($sourceCodeIndividu);
-//
-//        return $this->uniteRechercheIndividu;
-//    }
+    private function fetchStructureRoleIndividu()
+    {
+        if (null !== $this->structureIndividu) {
+            return $this->structureIndividu;
+        }
+
+        //todo a changer une fois l'individu mieux identifié
+        $sourceCodeIndividu = $this->people->getSupannEmpId();
+
+        $this->structureIndividu =
+            $this->roleService->getIndividuRolesByIndividuSourceCode($sourceCodeIndividu);
+
+        return $this->structureIndividu;
+    }
+
+    private function addStructureRoleContents(ChainEvent $e)
+    {
+        try {
+            $e->addContents(self::KEY_STRUCTURE_ROLE_INDIVIDU, $this->fetchStructureRoleIndividu());
+        } catch (ExceptionInterface $e) {
+            throw new RuntimeException("Erreur imprévue rencontrée.", 0, $e);
+        }
+
+        return $this;
+    }
 
     public function write(ChainEvent $e)
     {
