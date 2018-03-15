@@ -28,6 +28,7 @@ class RoleController extends AbstractController
         $roles = $qb_depend->getQuery()->execute();
         $qb_categorie = $this->entityManager->getRepository(Privilege::class)->createQueryBuilder("p");
         $qb_categorie = $this->decorateWithCategorie($qb_categorie, $categorie);
+        $qb_categorie->orderBy("p.categorie, p.ordre","ASC");
         $privileges = $qb_categorie->getQuery()->execute();
         return new ViewModel([
             'roles' => $roles,
@@ -40,25 +41,26 @@ class RoleController extends AbstractController
     {
         $privilege_id = $this->params()->fromRoute("privilege");
         $role_id = $this->params()->fromRoute("role");
-//        var_dump($privilege_id);
-//        var_dump($role_id);
         $privilege = $this->entityManager->getRepository(Privilege::class)->findOneBy(["id" => $privilege_id]);
         $role = $this->entityManager->getRepository(Role::class)->findOneBy(["id" => $role_id]);
 
+
+        $value = null;
         if( array_search($role, $privilege->getRole()->toArray()) !== false) {
             $privilege->removeRole($role);
             $this->entityManager->flush($privilege);
+            $value = 0;
         } else {
             $privilege->addRole($role);
             $this->entityManager->flush($privilege);
+            $value = 1;
         }
 
-//        var_dump($privilege);
-        //$has = array_search($role_id, $privilege->getRoles());
-        //var_dump($has);
-        //die("Die die");
         $queryParams = $this->params()->fromQuery();
-        $this->redirect()->toRoute("roles", [], ["query" => $queryParams], true);
+        return new ViewModel([
+            'value' => $value,
+        ]);
+        //$this->redirect()->toRoute("roles", [], ["query" => $queryParams], true);
     }
 
     private function decorateWithDepend(QueryBuilder $qb, $depend) {
@@ -91,8 +93,9 @@ class RoleController extends AbstractController
 
     private function decorateWithCategorie(QueryBuilder $qb, $categorie)
     {
+        $qb->leftJoin(CategoriePrivilege::class, "cp", "WITH", "cp.id = p.categorie");
         if ($categorie !== null && $categorie !== "") {
-            $qb = $qb->leftJoin(CategoriePrivilege::class, "cp", "WITH", "cp.id = p.categorie")
+            $qb
                 ->andWhere("cp.code = :type")
                 ->setParameter("type", $categorie);
         }
