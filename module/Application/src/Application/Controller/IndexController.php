@@ -2,17 +2,13 @@
 
 namespace Application\Controller;
 
-use Application\Authentication\Adapter\Shib;
 use Application\Entity\Db\These;
 use Application\Service\These\TheseServiceAwareInterface;
 use Application\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\Authentication\AuthenticationService;
 use Zend\Authentication\AuthenticationServiceInterface;
-use Zend\Authentication\Exception\ExceptionInterface;
 use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
-use ZfcUser\Authentication\Adapter\AdapterChainEvent;
 
 class IndexController extends AbstractController
     implements TheseServiceAwareInterface
@@ -75,34 +71,6 @@ EOS
         ]);
 
         return $vm;
-    }
-
-    /**
-     * @return Response
-     */
-    public function shibbolethAction()
-    {
-        /** @var Shib $shib */
-        $shib = $this->getServiceLocator()->get(Shib::class);
-        $shibUser = $shib->getAuthenticatedUser();
-
-        if ($shibUser === null) {
-            return $this->redirect()->toUrl('/');
-        }
-
-        /** @var AuthenticationService $authService */
-        $authService = $this->getServiceLocator()->get('zfcuser_auth_service');
-        try {
-            $authService->getStorage()->write($shibUser->getId());
-        } catch (ExceptionInterface $e) {
-            throw new RuntimeException("Impossible d'écrire dans le storage");
-        }
-
-        /* @var $userService \Application\Service\User */
-        $userService = $this->getServiceLocator()->get('unicaen-auth_user_service');
-        $userService->userAuthenticated($shibUser->getId(), $shibUser);
-
-        return $this->redirect()->toUrl($this->params()->fromQuery('redirect'));
     }
 
     /**

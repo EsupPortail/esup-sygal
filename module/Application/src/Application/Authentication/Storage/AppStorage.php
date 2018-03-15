@@ -4,18 +4,14 @@ namespace Application\Authentication\Storage;
 
 use Application\Authentication\Adapter\ShibUser;
 use Application\Entity\Db\Doctorant;
-use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\Doctorant\DoctorantServiceAwareTrait;
-use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
-use Application\Service\Role\RoleServiceAwareTrait;
-use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
+use UnicaenApp\Entity\Ldap\People;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Authentication\Storage\ChainableStorage;
 use UnicaenAuth\Authentication\Storage\ChainEvent;
-use UnicaenAuth\Entity\Ldap\People;
 use Zend\Authentication\Exception\ExceptionInterface;
 
 /**
@@ -25,21 +21,15 @@ use Zend\Authentication\Exception\ExceptionInterface;
  * - entité Doctorant si l'utilisateur authentifié est trouvé parmi les thésards,
  * - null sinon.
  *
- * Valeur associée à la clé KEY_STRUCTURE_ROLE_INDIVIDU :
- * - entités RoleServiceIndividu si l'utilisateur authentifié est trouvé dans IndividuRole,
- * - [] sinon.
- *
-  * @author Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>
+  * @author Unicaen
  */
 class AppStorage implements ChainableStorage
 {
     use UtilisateurServiceAwareTrait;
     use DoctorantServiceAwareTrait;
-    use RoleServiceAwareTrait;
 
     const KEY_DB_UTILSATEUR = 'db';
     const KEY_DOCTORANT = 'doctorant';
-    const KEY_STRUCTURE_ROLE_INDIVIDU = 'structureIndividu';
 
     /**
      * @var mixed
@@ -60,11 +50,6 @@ class AppStorage implements ChainableStorage
      * @var Doctorant
      */
     protected $doctorant;
-
-    /**
-     * @var IndividuRole[]
-     */
-    protected $structureIndividu;
 
     /**
      * @param ChainEvent $e
@@ -91,11 +76,6 @@ class AppStorage implements ChainableStorage
          * Collecte des données au cas où l'utilisateur connecté est trouvé dans la table Doctorant.
          */
         $this->addDoctorantContents($e);
-
-        /**
-         * Collecte des données au cas où l'utilisateur connecté est trouvé dans la table EcoleDoctoraleIndividu.
-         */
-         $this->addStructureRoleContents($e);
     }
 
     protected function addDbUtilisateurContents(ChainEvent $e)
@@ -166,32 +146,6 @@ class AppStorage implements ChainableStorage
         }
 
         return $this->doctorant;
-    }
-
-    private function fetchStructureRoleIndividu()
-    {
-        if (null !== $this->structureIndividu) {
-            return $this->structureIndividu;
-        }
-
-        //todo a changer une fois l'individu mieux identifié
-        $sourceCodeIndividu = $this->people->getSupannEmpId();
-
-        $this->structureIndividu =
-            $this->roleService->getIndividuRolesByIndividuSourceCode($sourceCodeIndividu);
-
-        return $this->structureIndividu;
-    }
-
-    private function addStructureRoleContents(ChainEvent $e)
-    {
-        try {
-            $e->addContents(self::KEY_STRUCTURE_ROLE_INDIVIDU, $this->fetchStructureRoleIndividu());
-        } catch (ExceptionInterface $e) {
-            throw new RuntimeException("Erreur imprévue rencontrée.", 0, $e);
-        }
-
-        return $this;
     }
 
     public function write(ChainEvent $e)

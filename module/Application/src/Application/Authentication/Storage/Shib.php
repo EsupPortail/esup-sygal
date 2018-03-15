@@ -5,7 +5,6 @@ namespace Application\Authentication\Storage;
 use Application\Authentication\Adapter\ShibUser;
 use UnicaenAuth\Authentication\Storage\ChainableStorage;
 use UnicaenAuth\Authentication\Storage\ChainEvent;
-use UnicaenAuth\Entity\Ldap\People;
 use UnicaenAuth\Options\ModuleOptions;
 use Zend\Authentication\Storage\Session;
 use Zend\Authentication\Storage\StorageInterface;
@@ -34,7 +33,7 @@ class Shib implements ChainableStorage, ServiceLocatorAwareInterface
     protected $options;
 
     /**
-     * @var People
+     * @var ShibUser
      */
     protected $resolvedIdentity;
 

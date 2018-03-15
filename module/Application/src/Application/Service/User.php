@@ -56,11 +56,10 @@ class User implements ServiceLocatorAwareInterface, EventManagerAwareInterface
     /**
      * Save authenticated user in database from LDAP data.
      *
-     * @param string|int $identity
      * @param UserInterface|People $userData
      * @return bool
      */
-    public function userAuthenticated($identity, $userData)
+    public function userAuthenticated($userData)
     {
         if (!$this->getOptions()->getSaveLdapUserInDatabase()) {
             return false;
@@ -68,7 +67,7 @@ class User implements ServiceLocatorAwareInterface, EventManagerAwareInterface
 
         switch (true) {
             case $userData instanceof People:
-                $username = $userData->getUsername();
+                $username = $userData->getSupannAliasLogin();
                 $email = $userData->getMail();
                 $password = 'ldap';
                 $state = in_array('deactivated', ldap_explode_dn($userData->getDn(), 1)) ? 0 : 1;

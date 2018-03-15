@@ -6,15 +6,17 @@ use Application\Authentication\Adapter\ShibUser;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
+use Application\Entity\Db\Utilisateur;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Doctorant\DoctorantServiceAwareTrait;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
+use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use BjyAuthorize\Provider\Identity\ProviderInterface;
 use Doctrine\ORM\NonUniqueResultException;
+use UnicaenApp\Entity\Ldap\People;
 use UnicaenApp\Exception\RuntimeException;
-use UnicaenAuth\Entity\Ldap\People;
 use UnicaenAuth\Provider\Identity\ChainableProvider;
 use UnicaenAuth\Provider\Identity\ChainEvent;
 use Zend\Authentication\AuthenticationService;
@@ -34,6 +36,7 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
     use EcoleDoctoraleServiceAwareTrait;
     use UniteRechercheServiceAwareTrait;
     use RoleServiceAwareTrait;
+    use UtilisateurServiceAwareTrait;
 
     private $roles;
 
@@ -80,26 +83,48 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
             case isset($identity['ldap']):
                 /** @var People $userData */
                 $userData = $identity['ldap'];
+                $id = $userData->getSupannEmpId();
+                $username = $userData->getSupannAliasLogin();
+                $mail = $userData->getMail();
                 break;
             case isset($identity['shib']):
                 /** @var ShibUser $userData */
                 $userData = $identity['shib'];
+                $id = $userData->getId();
+                $username = $userData->getUsername();
+                $mail = $userData->getEmail();
                 break;
             default:
                 throw new RuntimeException("Aucune donnée d'identité LDAP ni Shibboleth disponible");
         }
 
-        $id = $userData->getId();
-
         $roles = array_merge([],
+            $this->getRolesFromAutreCompteUtilisateur($mail),
             $this->getRolesFromActeur($id),
             $this->getRolesFromIndividuRole($id),
-            $this->getRolesFromDoctorant($userData->getUsername()));
+            $this->getRolesFromDoctorant($username));
 
         // suppression des doublons en comparant le __toString() de chaque Role
         $this->roles = array_unique($roles, SORT_STRING);
 
         return $this->roles;
+    }
+
+    /**
+     * @param string $mail
+     * @return Role[]
+     */
+    private function getRolesFromAutreCompteUtilisateur($mail)
+    {
+        /** @var Utilisateur[] $utilisateurs */
+        $utilisateurs = $this->utilisateurService->getRepository()->findBy(['email' => $mail]);
+
+        $roles = [];
+        foreach ($utilisateurs as $utilisateur) {
+            $roles = array_merge($roles, $utilisateur->getRoles()->toArray());
+        }
+
+        return $roles;
     }
 
     /**
@@ -175,6 +200,5 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
         $role = $this->roleService->getRepository()->findRoleDoctorantForEtab($doctorant->getEtablissement());
 
         return [$role];
-
     }
 }

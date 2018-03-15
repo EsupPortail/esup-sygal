@@ -48,7 +48,7 @@ class Shib implements ServiceManagerAwareInterface, EventManagerAwareInterface
     public function getAuthenticatedUser()
     {
         if ($this->authenticatedUser === null) {
-            if (!isset($_SERVER['REMOTE_USER'])) {
+            if (empty($_SERVER['REMOTE_USER'])) {
                 return null;
             }
             $this->authenticatedUser = $this->createShibUser();

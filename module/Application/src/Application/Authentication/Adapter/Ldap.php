@@ -115,7 +115,7 @@ class Ldap extends AbstractAdapter implements ServiceManagerAwareInterface, Even
 
         /* @var $userService \Application\Service\User */
         $userService = $this->getServiceManager()->get('unicaen-auth_user_service');
-        $userService->userAuthenticated($e->getIdentity(), $ldapPeople);
+        $userService->userAuthenticated($ldapPeople);
     }
 
     /**
