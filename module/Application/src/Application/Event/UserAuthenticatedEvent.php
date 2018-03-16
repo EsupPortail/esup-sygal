@@ -2,9 +2,8 @@
 
 namespace Application\Event;
 
-use Application\Authentication\Adapter\ShibUser;
+use UnicaenAuth\Entity\Shibboleth\ShibUser;
 use UnicaenApp\Entity\Ldap\People;
-use Zend\EventManager\Event;
 use ZfcUser\Entity\UserInterface;
 
 /**
@@ -12,7 +11,7 @@ use ZfcUser\Entity\UserInterface;
  *
  * @author Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>
  */
-class UserAuthenticatedEvent extends Event
+class UserAuthenticatedEvent extends \UnicaenAuth\Event\UserAuthenticatedEvent
 {
     const PRE_PERSIST      = 'prePersist';
     const PARAM_DB_USER    = 'db_user';

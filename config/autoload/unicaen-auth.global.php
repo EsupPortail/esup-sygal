@@ -1,9 +1,6 @@
 <?php
 /**
  * UnicaenAuth Global Configuration
- *
- * If you have a ./config/autoload/ directory set up for your project, you can
- * drop this config file in it and change the values as you wish.
  */
 
 use Application\Authentication\Storage\AppStorage;
@@ -67,12 +64,12 @@ $config = [
              * NB: si la connexion à la base échoue, ce n'est pas bloquant!
              */
             'UnicaenAuth\Provider\Role\DbRole'   => [],
-            /**
-             * Fournit le rôle correspondant à l'identifiant de connexion de l'utilisateur.
-             * Cela est utile lorsque l'on veut gérer les habilitations d'un utilisateur unique
-             * sur des ressources.
-             */
-            'UnicaenAuth\Provider\Role\Username' => [],
+//            /**
+//             * Fournit le rôle correspondant à l'identifiant de connexion de l'utilisateur.
+//             * Cela est utile lorsque l'on veut gérer les habilitations d'un utilisateur unique
+//             * sur des ressources.
+//             */
+//            'UnicaenAuth\Provider\Role\Username' => [],
         ],
     ],
     'zfcuser'      => [

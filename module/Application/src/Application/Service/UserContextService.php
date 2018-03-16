@@ -2,7 +2,7 @@
 
 namespace Application\Service;
 
-use Application\Authentication\Adapter\ShibUser;
+use UnicaenAuth\Entity\Shibboleth\ShibUser;
 use Application\Authentication\Storage\AppStorage;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;

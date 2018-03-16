@@ -2,7 +2,7 @@
 
 namespace Application\Provider;
 
-use Application\Authentication\Adapter\ShibUser;
+use UnicaenAuth\Entity\Shibboleth\ShibUser;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
@@ -71,13 +71,15 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
      */
     public function getIdentityRoles()
     {
-        if (! ($identity = $this->authenticationService->getIdentity())) {
+        if (! $this->authenticationService->hasIdentity()) {
             return [];
         }
 
         if ($this->roles !== null) {
             return $this->roles;
         }
+
+        $identity = $this->authenticationService->getIdentity();
 
         switch (true) {
             case isset($identity['ldap']):
@@ -95,7 +97,8 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
                 $mail = $userData->getEmail();
                 break;
             default:
-                throw new RuntimeException("Aucune donnée d'identité LDAP ni Shibboleth disponible");
+//                throw new RuntimeException("Aucune donnée d'identité LDAP ni Shibboleth disponible");
+                return [];
         }
 
         $roles = array_merge([],

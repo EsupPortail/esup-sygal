@@ -2,7 +2,6 @@
 
 namespace Application\Authentication\Storage;
 
-use Application\Authentication\Adapter\ShibUser;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\Doctorant\DoctorantServiceAwareTrait;
@@ -12,6 +11,7 @@ use UnicaenApp\Entity\Ldap\People;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Authentication\Storage\ChainableStorage;
 use UnicaenAuth\Authentication\Storage\ChainEvent;
+use UnicaenAuth\Entity\Shibboleth\ShibUser;
 use Zend\Authentication\Exception\ExceptionInterface;
 
 /**
@@ -53,7 +53,6 @@ class AppStorage implements ChainableStorage
 
     /**
      * @param ChainEvent $e
-     * @return void
      * @throws \Zend\Authentication\Exception\ExceptionInterface
      */
     public function read(ChainEvent $e)
@@ -64,7 +63,8 @@ class AppStorage implements ChainableStorage
         $this->shibUser = $this->contents['shib'];
 
         if (null === $this->people && null === $this->shibUser) {
-            throw new RuntimeException("Aucune donnée d'authentification LDAP ni Shibboleth disponible");
+//            throw new RuntimeException("Aucune donnée d'authentification LDAP ni Shibboleth disponible");
+            return;
         }
 
         /**
@@ -78,6 +78,9 @@ class AppStorage implements ChainableStorage
         $this->addDoctorantContents($e);
     }
 
+    /**
+     * @param ChainEvent $e
+     */
     protected function addDbUtilisateurContents(ChainEvent $e)
     {
         try {
@@ -85,8 +88,6 @@ class AppStorage implements ChainableStorage
         } catch (ExceptionInterface $e) {
             throw new RuntimeException("Erreur imprévue rencontrée.", 0, $e);
         }
-
-        return $this;
     }
 
     /**
@@ -108,7 +109,6 @@ class AppStorage implements ChainableStorage
 
     /**
      * @param ChainEvent $e
-     * @return $this
      */
     protected function addDoctorantContents(ChainEvent $e)
     {
@@ -117,8 +117,6 @@ class AppStorage implements ChainableStorage
         } catch (ExceptionInterface $e) {
             throw new RuntimeException("Erreur imprévue rencontrée.", 0, $e);
         }
-
-        return $this;
     }
 
     protected function fetchDoctorant()
