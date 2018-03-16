@@ -26,35 +26,37 @@
 
 <?php
 
-//$paramQuery = $this->params()->fromQuery();
-//echo $paramQuery;
-echo "<input type='submit' value='refresh' id='refresh'/>";
-echo "<table id='mytable' class='droits-tbl table table-hover table-bordered table-condensed table-extra-condensed table-header-rotated'>";
+echo "<table id='mytable' class='mytable table-bordered'>";
 echo "<tr><th></th>";
 
 foreach($roles as $role) {
-    echo "<th class='rotate-45'> {$role->getLibelle()} </th>";
+    echo generateTableHeaderRole($role, $etablissements);
 }
 echo "</tr>";
 
 
+$previous_categorie = null;
 foreach($privileges as $privilege) {
+    if ($previous_categorie !== $privilege->getCategorie()) {
+        echo "<tr><th colspan='1000' class='categorie'>".$privilege->getCategorie()->getLibelle()."</th></tr>";
+        $previous_categorie = $privilege->getCategorie();
+    }
     echo "<tr>";
-    echo "<th> {$privilege->getLibelle()} </th>";
+    echo "<th class='privilege'> {$privilege->getLibelle()} </th>";
     foreach($roles as $role) {
 
-        echo "<td>";
+        $id = "{$privilege->getId()}_{$role->getId()}";
+        $code = ($role->getStructure() !== null) ? $role->getStructure()->getSigle() : " ";
+        if ($code === null) $code = getCode($role, $etablissements);
+        $title = "{$role->getLibelle()} - {$code} \n{$privilege->getLibelle()}";
+        echo "<td class='droit' id='$id' title='{$title}'>";
 
-        echo "<a href='".$this->url("modifier-privilege", ['role' => $role->getId(), 'privilege'=> $privilege->getId()], ["query" => $params], true)."' />";
-//        echo "[" . $role->getId() . "|" . $privilege->getId() . "|";
-//        echo (array_search($role, $privilege->getRole()->toArray()) === false);
-//        echo "]";
         if( array_search($role, $privilege->getRole()->toArray()) !== false) {
-            echo "<span style='color: green'; class='glyphicon glyphicon-ok'></span>";
+            echo "<span class='glyphicon glyphicon-ok text-success'></span>";
         } else {
-            echo "<span style='color: red'; class='glyphicon glyphicon-remove'></span>";
+            echo "<span class='glyphicon glyphicon-remove text-danger'></span>";
         }
-        echo "</a>";
+
         echo "</td>";
 
     }
@@ -65,96 +67,152 @@ echo "</table>";
 
 <script>
     $(document).ready(function() {
+        $("td").click(function() {
+            var id = $(this).attr("id");
+            var splits = id.split("_");
+            var role = splits[1];
+            var privilege = splits[0];
+            var url = "modifier-privilege/" + role + "/" + privilege;
 
-        function RefreshTable() {
-            //alert("clicked !");
-            $("#mytable").innerHTML = "oups";
-        }
+            $.ajax({
+                url : url,
+                beforeSend:
+                    function () {
+                        document.getElementById(id).innerHTML = "<img style='height:40px;' src='css/loading.gif'/>";
+                    },
+                success:
+                    function(retour){
+                        var texte = "";
+                        if (retour == 1) texte = "<span class='glyphicon glyphicon-ok text-success'></span>";
+                        else var texte = "<span class='glyphicon glyphicon-remove text-danger'></span>";
+                        document.getElementById(id).innerHTML = texte;
+                    }
+            });
 
-        $("#refresh").on("click", RefreshTable);
 
-        // OR CAN THIS WAY
-        //
-        // $("#refresh-btn").on("click", function() {
-        //    $( "#mytable" ).load( "your-current-page.html #mytable" );
-        // });
-
-
+        });
     });
 </script>
 
 
+<?php
+
+    function generateOK() {
+        return "OK";
+    }
+
+    function generateKO() {
+        return "KO";
+    }
+
+
+    function getCode(Role $role, $etablissements) {
+
+        /** @var \Application\Entity\Db\Etablissement $etablissement */
+        foreach($etablissements as $etablissement) {
+            if ($etablissement->getId() == $role->getStructure()->getId()) {
+                return $etablissement->getCode();
+            }
+        }
+        return "missing";
+    }
+
+
+    /**
+     * @param Role $role
+     * @return string
+     */
+    function generateTableHeaderRole($role, $etablissements = null) {
+
+        $premiere = $role->getLibelle();
+        $seconde  = "";
+        $de = "";
+        switch(true) {
+            case $role->isTheseDependant() :
+                $seconde = getCode($role, $etablissements);
+                $de = "these";
+                break;
+            case $role->isEcoleDoctoraleDependant() :
+                $seconde = $role->getStructure()->getSigle();
+                $de = "ed";
+                break;
+            case $role->isEtablissementDependant() :
+                $seconde = getCode($role, $etablissements);
+                $de = "etab";
+                break;
+            case $role->isUniteRechercheDependant() :
+                $seconde = $role->getStructure()->getSigle();
+                $de = "ur";
+                break;
+        }
+
+
+        $texte  = "<th class='role'>";
+        $texte .= $premiere;
+        $texte .= "<br/>";
+        $texte .= "<span class='depend ".$de."'>";
+        $texte .= $seconde;
+        $texte .= "</span>";
+        $texte .= "</th>";
+        return $texte;
+    }
+?>
+
+
 <style>
 
-    .table-header-rotated th.row-header {
-        width: auto;
-
+    table.mytable {
+        background-color: white;
     }
 
-    .table-header-rotated td {
-        width: 40px;
-        vertical-align: middle;
-        text-align: center;
+    th.categorie {
+        font-style: italic;
+        font-size: 12pt;
+        margin-left: 15px;
+        background-color: lightgoldenrodyellow;
     }
 
-    .table-header-rotated th.rotate-45 {
-        /*border: none;*/
-        /*height: 200px;*/
-        /*width: 40px;*/
-        /*min-width: 40px;*/
-        /*max-width: 40px;*/
-        /*position: relative;*/
-        /*vertical-align: bottom;*/
-        /*padding: 0;*/
-        /*line-height: 1;*/
-        /*white-space: nowrap;*/
-
-        /*position: relative;*/
-        /*top: 0px;*/
-        /*left: 83px;*/
-        /*height: 100%;*/
-        /*transform: skew(-40deg, 0deg);*/
-        /*overflow: hidden;*/
-        /*border-right: 1px solid #ddd;*/
+    th.privilege {
+        height:50px;
     }
 
-    .table-header-rotated th.rotate-45 > div {
-        position: relative;
-        top: 0px;
-        left: 83px;
-        height: 100%;
-        transform: skew(-40deg, 0deg);
-        overflow: hidden;
-        border-right: 1px solid #ddd;
-    }
-
-    .table-header-rotated th.rotate-45 > div.first {
-        border-left: 1px solid #ddd;
-    }
-
-    .table-header-rotated th.rotate-45 span {
-        transform: skew(40deg, 0deg) rotate(310deg);
-        position: absolute;
-        bottom: 40px;
-        left: -30px;
-        display: inline-block;
-        width: 100px;
+    th.role {
+        min-width:50px;
+        writing-mode: vertical-lr;
         text-align: left;
     }
-
-    .table-header-rotated .separator {
-        border: none;
+    .depend
+    {
+        text-orientation: upright;
     }
 
-    .droits-tbl th.privilege {
-        min-width: 200px;
-        max-width: 200px;
-        width: 200px;
+    .ed
+    {
+        color: #5B2268;
+        text-orientation: upright;
     }
 
-    .droits-tbl td span.refuse {
-        opacity: 0.5;
+    .ur
+    {
+        color: #0a3783;
+        text-orientation: upright;
     }
 
+    .etab
+    {
+        color: #870a0a;
+        text-orientation: upright;
+    }
+
+    .these
+    {
+        color: #004602;
+        text-orientation: upright;
+    }
+
+    td.droit {
+        vertical-align: center;
+        text-align: center;
+    }
 
 </style>

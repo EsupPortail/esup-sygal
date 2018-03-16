@@ -3,10 +3,18 @@
 
 use Application\View\Renderer\PhpRenderer;
 use Application\Entity\Db\These;
+use Application\Entity\Db\EcoleDoctorale;
+use Application\Entity\Db\UniteRecherche;
+use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\Structure;
+
 
 /**
  * @var PhpRenderer $this
  * @var These[]     $theses
+ * @var EcoleDoctorale[]     $ecoles
+ * @var UniteRecherche[]     $unites
+ * @var Etablissement[] $etablissements
  */
 
 const DEBUG = true;
@@ -19,19 +27,96 @@ function display_debug($texte) {
 }
 ?>
 
+
+
 <?php $this->headTitle($this->translate("Statistiques")) ?>
 
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-
-
-<!--<script src="public/js/charts.js/chart/Chart.Bar.js"></script>-->
 <h1 class="page-header first"><?php echo $this->translate("Statistiques") ?> <span
         class="badge"><?php echo count($theses) ?></span></h1>
 
 
+<form id="selection" method="post" action="">
+    <input type="radio" id="structure_type" name="structure_type" value="Aucun">  Aucun
+    <input type="radio" id="structure_type" name="structure_type" value="Etab">   Etablissement
+    <input type="radio" id="structure_type" name="structure_type" value="ED">     Ecole doctorale
+    <input type="radio" id="structure_type" name="structure_type" value="UR">     Unité de recherche
+<div id='structure_selector'>
+    <select id='structure_id'>
+<!--        <option value="a">a</option><option value="b">b</option>-->
+    </select>
+</div>
+</form>
+<div id="linku">
+    <a  href='/statistique'>
+        <input type='button' class='btn btn-info' value='Remise à zéro du filtrage'/>
+    </a>
+</div>
+
+<script>
+    $(document).ready(function(){
+        $('#structure_id').change(function() {
+            var selected_structure_type = document.querySelector('input[name="structure_type"]:checked').value;
+            var selected_structure_id = document.getElementById("structure_id").value;
+            document.getElementById("linku").innerHTML = "" +
+                "<a  href='/statistique?structure_type=" + selected_structure_type + "& structure_id=" + selected_structure_id + "'> " +
+                "<input type='button' class='btn btn-info' value='Filtrer les thèse'/>" +
+                "</a>";
+            //alert( this.value );
+        });
+        $('input[type=radio][name=structure_type]').change(function() {
+                //alert(this.value);
+                if (this.value == "Aucun") {
+                    // alert("Aucun");
+                    document.getElementById('structure_selector').innerHTML = "";
+                } else {
+                   // alert("Pas Aucun : " + this.value);
+                }
+                if (this.value == "ED") {
+                    // var form = "ED";
+                    var form = " <?php echo generateStructureSelector($ecoles); ?> ";
+                    document.getElementById('structure_id').innerHTML = form;
+                }
+                if (this.value == "UR") {
+                    // alert("UR");
+                    var form = " <?php echo generateStructureSelector($unites); ?> ";
+                    document.getElementById('structure_id').innerHTML = form;
+                }
+                if (this.value == "Etab") {
+                    // alert("Etab");
+                    var form = " <?php echo generateStructureSelector($etablissements); ?> ";
+                    document.getElementById('structure_id').innerHTML = form;
+                }
+        });
+        // $('#filtrage').click(function() {
+        //     var selected_structure_type = document.querySelector('input[name="structure_type"]:checked').value;
+        //     var selected_structure_id = document.getElementById("structure_id").value;
+        //     alert("clicked! " + selected_structure_type + " " + selected_structure_id);
+        //     document.getElementById("linku").innerHTML = "" +
+        //         "<a  href='/statistique?structure_type=" + selected_structure_type + "& structure_id=" + selected_structure_id + "'> " +
+        //             "<input type='button' value='Filtrer les thèse'/>" +
+        //         "</a>";
+        //
+        // });
+    });
+    //document.getElementById('structure_selector').innerHTML = <?php //generateEDSelector($ecoles); ?>// ;
+</script>
 
 <?php
+    function generateStructureSelector($structures) {
+        $texte = "";
+        $texte .= "<select id='structure_id'>";
+        $texte .= "<option value=''> Aucune </option>";
+        /** @var Structure $structure */
+        foreach ($structures as $structure) {
+            $texte .= "<option value='".$structure->getId()."'>". $structure->getLibelle() ."</option>";
+        }
+        $texte .= "</select>";
+        return $texte;
+    }
+?>
 
+<?php
 $validInscriptionTheses = [];
 $validSoutenanceTheses = [];
 foreach($theses as $these) {
@@ -39,37 +124,9 @@ foreach($theses as $these) {
     if ($these->getDateSoutenance() !== null) $validSoutenanceTheses[] = $these;
 }
 
-?>
-
-<!--Nombre de thèses valides :-->
-<!--<ul>-->
-<!--    <li> Inscription : --><?php //echo count($validInscriptionTheses); ?><!-- </li>-->
-<!--    <li> Soutenance : --><?php //echo count($validSoutenanceTheses); ?><!-- </li>-->
-<!--</ul>-->
-
-<?php
 usort($validInscriptionTheses, function (These $a, These $b) {return $a->getDatePremiereInscription() > $b->getDatePremiereInscription();});
 usort($validSoutenanceTheses, function (These $a, These $b) {return $a->getDateSoutenance() > $b->getDateSoutenance();});
-?>
 
-<!--Etalement dans le temps :-->
-<!--<ul>-->
-<!--    <li> Inscription :-->
-<!--        --><?php //echo $validInscriptionTheses[0]->getDatePremiereInscription()->format("d/m/Y"); ?>
-<!--        &rarr;-->
-<!--        --><?php //echo end($validInscriptionTheses)->getDatePremiereInscription()->format("d/m/Y"); ?>
-<!--    </li>-->
-<!--    <li> Soutenance :-->
-<!--    --><?php //echo $validSoutenanceTheses[0]->getDateSoutenance()->format("d/m/Y"); ?>
-<!--    &rarr;-->
-<!--    --><?php //echo end($validSoutenanceTheses)->getDateSoutenance()->format("d/m/Y"); ?>
-<!--    </li>-->
-<!--</ul>-->
-
-
-
-
-<?php
 $end = (new DateTime())->format("Y");
 $start = $end - 20;
 
@@ -95,54 +152,15 @@ foreach ($theses as $these) {
     if ($these->getDateSoutenance()) array_push($effectifsSoutenance[$these->getDateSoutenance()->format("Y")], $these);
 }
 
-?>
 
-<?php
-    $google_data = [];
+$data_insc_sout = [];
     for($current = $start ; $current <= $end ; $current++) {
-        $google_data[] = [$current , count($effectifsInscription[$current]), count($effectifsSoutenance[$current])];
+        $inscriptions = (empty($effectifsInscription[$current])) ? 0 : count($effectifsInscription[$current]);
+        $soutenances = (empty($effectifsSoutenance[$current])) ? 0 : count($effectifsSoutenance[$current]);
+
+        $data_insc_sout[] = [$current , $inscriptions, $soutenances];
     }
-?>
 
-<script type="text/javascript">
-    google.charts.load('current', {'packages':['corechart']});
-    google.charts.setOnLoadCallback(drawChart);
-
-    function drawChart() {
-        var data = google.visualization.arrayToDataTable([
-            ['Année', '#Inscriptions', '#Soutenances'],
-            <?php
-                foreach($google_data as $row) {
-                    echo "[\"" . $row[0] .  "\"," . $row[1] . "," . $row[2] . "],";
-                }
-            ?>
-        ]);
-
-        var options = {
-            curveType: 'function',
-            legend: { position: 'bottom' },
-            pointSize: 5,
-            hAxis: {
-                slantedText:true,
-                slantedTextAngle:45
-            }
-        };
-
-        var chart = new google.visualization.LineChart(document.getElementById('Inscriptions/Soutenances'));
-
-        chart.draw(data, options);
-    }
-</script>
-<div class="box panel panel-info">
-    <div class="panel-heading">
-        <h2 class="first">
-            Évolution du nombre d'inscriptions en thèses et du nombre de soutenances
-        </h2>
-    </div>
-<div id="Inscriptions/Soutenances" style="width: 925px; height: 500px"></div>
-</div>
-
-<?php
 $dureeTheses = [];
 for ($annee = $dateMinimum; $annee <= $dateMaximum ; $annee++) {
     $dureeTheses[$annee] = array();
@@ -170,14 +188,70 @@ for ($annee = $start; $annee <= $end ; $annee++) {
         foreach ($dureeTheses[$annee] as $data) {
             $row[] = $dureeTheses[$annee][$position_q0];
             $row[] = $dureeTheses[$annee][$position_q1];
-            //$row[] = $dureeTheses[$annee][$position_q2]; //que faire de la mediane ???
             $row[] = $dureeTheses[$annee][$position_q3];
             $row[] = $dureeTheses[$annee][$position_q4];
         }
         $google_data[] = $row;
     }
 }
+
+$homme = 0;
+$femme = 0;
+$discipline = [];
+$discipline["Autres"] = 0;
+$threshold = 5;
+foreach($effectifsInscription[$end-2] as $these) {
+    if ($these->getDoctorant()->getIndividu()->estUneFemme()) {
+        $femme++;
+    } else {
+        $homme++;
+    }
+    $discipline[$these->getLibelleDiscipline()]++;
+}
+
+$effectifParPays = generateEffectifParPays($effectifsInscription, $start, $end);
 ?>
+
+<script> var do_drawing = true; </script>
+
+<script type="text/javascript">
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+            ['Année', '#Inscriptions', '#Soutenances'],
+            <?php
+            foreach($data_insc_sout as $row) {
+                echo "[\"" . $row[0] .  "\"," . $row[1] . "," . $row[2] . "],";
+            }
+            ?>
+        ]);
+
+        var options = {
+            curveType: 'function',
+            legend: { position: 'bottom' },
+            pointSize: 5,
+            hAxis: {
+                slantedText:true,
+                slantedTextAngle:45
+            }
+        };
+
+        if (do_drawing) {
+            var chart = new google.visualization.LineChart(document.getElementById('Inscriptions/Soutenances'));
+            chart.draw(data, options);
+        }
+    }
+</script>
+<div class="box panel panel-info">
+        <div class="panel-heading">
+            <h2 class="first">
+                Évolution du nombre d'inscriptions en thèses et du nombre de soutenances
+            </h2>
+        </div>
+        <div id="Inscriptions/Soutenances" style="width: 925px; height: 500px"></div>
+    </div>
 
 <script type="text/javascript">
     google.charts.load('current', {'packages':['corechart']});
@@ -205,12 +279,12 @@ for ($annee = $start; $annee <= $end ; $annee++) {
             }
         };
 
-        var chart = new google.visualization.CandlestickChart(document.getElementById('duree'));
-
-        chart.draw(data, options);
+        if (do_drawing) {
+            var chart = new google.visualization.CandlestickChart(document.getElementById('duree'));
+            chart.draw(data, options);
+        }
     }
 </script>
-
 <div class="box panel panel-info">
     <div class="panel-heading">
         <h2 class="first">
@@ -219,22 +293,6 @@ for ($annee = $start; $annee <= $end ; $annee++) {
     </div>
     <div id="duree" style="width: 925px; height: 500px;"></div>
 </div>
-
-<?php
-$homme = 0;
-$femme = 0;
-$discipline = [];
-$discipline["Autres"] = 0;
-$threshold = 5;
-foreach($effectifsInscription[$end-2] as $these) {
-    if ($these->getDoctorant()->getIndividu()->estUneFemme()) {
-        $femme++;
-    } else {
-        $homme++;
-    }
-    $discipline[$these->getLibelleDiscipline()]++;
-}
-?>
 
 <script type="text/javascript">
     google.charts.load('current', {'packages':['corechart']});
@@ -255,12 +313,12 @@ foreach($effectifsInscription[$end-2] as $these) {
 
         };
 
-        var chart = new google.visualization.PieChart(document.getElementById('Repartition/Sexe'));
-
-        chart.draw(data, options);
+        if (do_drawing) {
+            var chart = new google.visualization.PieChart(document.getElementById('Repartition/Sexe'));
+            chart.draw(data, options);
+        }
     }
 </script>
-
 <script type="text/javascript">
     google.charts.load('current', {'packages':['corechart']});
     google.charts.setOnLoadCallback(drawChart);
@@ -284,13 +342,12 @@ foreach($effectifsInscription[$end-2] as $these) {
             legend: 'none',
         };
 
-        var chart = new google.visualization.PieChart(document.getElementById('Repartition/Discipline'));
-
-        chart.draw(data, options);
+        if (do_drawing) {
+            var chart = new google.visualization.PieChart(document.getElementById('Repartition/Discipline'));
+            chart.draw(data, options);
+        }
     }
 </script>
-
-
 <div class="box panel panel-info" style="height: 550px;">
     <div class="panel-heading">
         <h2 class="first">
@@ -302,128 +359,9 @@ foreach($effectifsInscription[$end-2] as $these) {
 
 </div>
 
-
-
-<?php
-
-$code = [];
-$code["ALGERIEN(NE)"] = "Algeria";
-$code["ALLEMAND(E)"] = "Germany";
-$code["AMERICAIN(E)"] = "United States";
-$code["ANGOLAIS(E)"] = "Angola";
-$code["APATRIDE"] = "";
-$code["ARGENTIN(E)"] = "Argentina";
-$code["ARMENIEN(E)"] = "Armenia";
-$code["AUTRICHIEN(NE)"] = "Austria";
-$code["BELGE"] = "Belgium";
-$code["BENINOIS(E)"] = "Benin";
-$code["BOSNIAQUE"] = "Bosnia";
-$code["BRESILIEN(NE)"] = "Brazil";
-$code["BRITANNIQUE"] = "United Kingdom";
-$code["BULGARE"] = "Bulgaria";
-$code["BURKINABE"] = "Burkina Faso";
-$code["BURUNDAIS(E)"] = "Burundi";
-$code["CAMBODGIEN(NE)"] = "Combodia";
-$code["CAMEROUNAIS(E)"] = "Cameroon";
-$code["CANADIEN(NE)"] = "Canada";
-$code["CAP VERDIEN(NE)"] = "Cabo Verde";
-$code["CHILIEN(NE)"] = "Chile";
-$code["CHINOIS(E)"] = "China";
-$code["CHINOIS(E) TAIWAN"] = "Taiwan";
-$code["COLOMBIEN(NE)"] = "Colombia";
-$code["COMORIEN(NE)"] = "Comoros";
-$code["CONGOLAIS(E)"] = "Congo";
-$code["CROATE"] = "Croatia";
-$code["DJIBOUTIEN(NE)"] = "Djibouti";
-$code["EGYPTIEN(NE)"] = "Egypt";
-$code["EQUATORIEN(NE)"] = "Equatorial Guinea";
-$code["ESPAGNOL(E)"] = "Spain";
-$code["FINLANDAIS(E)"] = "Finland";
-$code["FRANCAIS(E)"] = "France";
-$code["GABONAIS(E)"] = "Gabon";
-$code["GHANEEN(NE)"] = "Ghana";
-$code["GREC(QUE)"] = "Greece";
-$code["GUINEEN(NE)"] = "French Guiana";
-$code["HAITIEN(NE)"] = "Haiti";
-$code["HONGROIS(E)"] = "Hungary";
-$code["INDIEN(NE)"] = "India";
-$code["INDONESIEN(NE)"] = "Indonesia";
-$code["IRAKIEN(NE)"] = "Iraq";
-$code["IRANIEN(NE)"] = "Iran";
-$code["IRLANDAIS(E)"] = "Ireland";
-$code["ITALIEN(NE)"] = "Italia";
-$code["IVOIRIEN(NE)"] = "CI"; //----------------------------------
-$code["JAMAICAIN(E)"] = "Jamaica";
-$code["JAPONAIS(E)"] = "Japan";
-$code["JORDANIEN(NE)"] = "Jordan";
-$code["LIBANAIS(E)"] = "Lebanon";
-$code["LIBYEN(NE)"] = "Libya";
-$code["LITHUANIEN(NE)"] = "Lithuania";
-$code["LUXEMBOURGEOIS(E)"] = "Luxembourg";
-$code["MALAIS(E)"] = "Malaysia";
-$code["MALGACHE"] = "Madagascar";
-$code["MALIEN(NE)"] = "Mali";
-$code["MAROCAIN(E)"] = "Maroco";
-$code["MAURICIEN(NE)"] = "Mauritius";
-$code["MAURITANIEN(NE)"] = "Mauritania";
-$code["MEXICAIN(E)"] = "Mexico";
-$code["MONEGASQUE"] = "Monaco";
-$code["MOZAMBIQUOIS(E)"] = "Mozambique";
-$code["NEERLANDAIS(E)"] = "Netherlands";
-$code["NEPALAIS(E)"] = "Nepal";
-$code["NICARAGUAIS(E)"] = "Nicaragua";
-$code["NIGERIEN(NE)"] = "Nigeria";
-$code["NORVEGIEN(NE)"] = "Norway";
-$code["PAKISTANAIS(E)"] = "Pakistan";
-$code["PALESTINIEN(NE)"] = "Palestine";
-$code["PANAMEEN(NE)"] = "Panama";
-$code["PERUVIEN(NE)"] = "Peru";
-$code["POLONAIS(E)"] = "Poland";
-$code["PORTUGAIS(E)"] = "Portugal";
-$code["ROUMAIN(E)"] = "Romania";
-$code["RUANDAIS(E)"] = "Rwanda";
-$code["RUSSE"] = "Ruusia";
-$code["SAOUDIEN(NE)"] = "Saudi Arabia";
-$code["SENEGALAIS(E)"] = "Senegal";
-$code["SERBE"] = "Serbia";
-$code["SUD COREEN(NE)"] = "Korea, Republic of";
-$code["SUEDOIS(E)"] = "Sweden";
-$code["SUISSE"] = "Switzerland";
-$code["SYRIEN(NE)"] = "Syrian Arab Republic";
-$code["TCHADIEN(NE)"] = "Chad";
-$code["TCHEQUE"] = "Czechia";
-$code["THAILANDAIS(E)"] = "Thailand";
-$code["TOGOLAIS(E)"] = "Togo";
-$code["TUNISIEN(NE)"] = "Tunisia";
-$code["TURC (TURQUE)"] = "Turkey";
-$code["UKRAINIEN(NE)"] = "Ukraine";
-$code["VENEZUELIEN(NE)"] = "Venezuela";
-$code["VIETNAMIEN(NE)"] = " 	Viet Nam";
-$code["YEMENITE"] = "Yemen";
-$code["ZAIROIS(E)"] = "Zaire";
-
-
-    $effectifParPays = [];
-    $nope = 0;
-    for ($annee = $start ; $annee <= $end ; $annee++ ) {
-        foreach ($effectifsInscription[$annee] as $these) {
-            $nationalite = $these->getDoctorant()->getIndividu()->getNationalite();
-            if (isset($code[$nationalite])) {
-                $effectifParPays[$code[$nationalite]]++;
-            } else {
-                echo  $nationalite ." ";
-                $nope++;
-            }
-        }
-    }
-    if ($nope > 0) echo $nope;
-?>
-
 <script type="text/javascript">
     google.charts.load('current', {
         'packages':['geochart'],
-        // Note: you will need to get a mapsApiKey for your project.
-        // See: https://developers.google.com/chart/interactive/docs/basic_load_libs#load-settings
         'mapsApiKey': 'AIzaSyAZPWFm-VDkkiToc-s7Z982XQ6b6bDp428'
     });
     google.charts.setOnLoadCallback(drawRegionsMap);
@@ -435,17 +373,16 @@ $code["ZAIROIS(E)"] = "Zaire";
                echo "[ '{$country}' , $number ],";
             }?>
         ]);
-
         var options = {
             colorAxis: { maxValue: 100 }
         };
 
-        var chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
-
-        chart.draw(data, options);
+        if (do_drawing) {
+            var chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
+            chart.draw(data, options);
+        }
     }
 </script>
-
 <div class="box panel panel-info" style="height: 550px;">
     <div class="panel-heading">
         <h2 class="first">
@@ -455,3 +392,121 @@ $code["ZAIROIS(E)"] = "Zaire";
     <div id="regions_div" style="width: 900px; height: 500px;"></div>
 </div>
 
+<?php
+function generateEffectifParPays($effectifsInscription, $start , $end) {
+    $code = [];
+    $code["ALGERIEN(NE)"] = "Algeria";
+    $code["ALLEMAND(E)"] = "Germany";
+    $code["AMERICAIN(E)"] = "United States";
+    $code["ANGOLAIS(E)"] = "Angola";
+    $code["APATRIDE"] = "";
+    $code["ARGENTIN(E)"] = "Argentina";
+    $code["ARMENIEN(E)"] = "Armenia";
+    $code["AUTRICHIEN(NE)"] = "Austria";
+    $code["BELGE"] = "Belgium";
+    $code["BENINOIS(E)"] = "Benin";
+    $code["BOSNIAQUE"] = "Bosnia";
+    $code["BRESILIEN(NE)"] = "Brazil";
+    $code["BRITANNIQUE"] = "United Kingdom";
+    $code["BULGARE"] = "Bulgaria";
+    $code["BURKINABE"] = "Burkina Faso";
+    $code["BURUNDAIS(E)"] = "Burundi";
+    $code["CAMBODGIEN(NE)"] = "Combodia";
+    $code["CAMEROUNAIS(E)"] = "Cameroon";
+    $code["CANADIEN(NE)"] = "Canada";
+    $code["CAP VERDIEN(NE)"] = "Cabo Verde";
+    $code["CHILIEN(NE)"] = "Chile";
+    $code["CHINOIS(E)"] = "China";
+    $code["CHINOIS(E) TAIWAN"] = "Taiwan";
+    $code["COLOMBIEN(NE)"] = "Colombia";
+    $code["COMORIEN(NE)"] = "Comoros";
+    $code["CONGOLAIS(E)"] = "Congo";
+    $code["CROATE"] = "Croatia";
+    $code["DJIBOUTIEN(NE)"] = "Djibouti";
+    $code["EGYPTIEN(NE)"] = "Egypt";
+    $code["EQUATORIEN(NE)"] = "Equatorial Guinea";
+    $code["ESPAGNOL(E)"] = "Spain";
+    $code["FINLANDAIS(E)"] = "Finland";
+    $code["FRANCAIS(E)"] = "France";
+    $code["GABONAIS(E)"] = "Gabon";
+    $code["GHANEEN(NE)"] = "Ghana";
+    $code["GREC(QUE)"] = "Greece";
+    $code["GUINEEN(NE)"] = "French Guiana";
+    $code["HAITIEN(NE)"] = "Haiti";
+    $code["HONGROIS(E)"] = "Hungary";
+    $code["INDIEN(NE)"] = "India";
+    $code["INDONESIEN(NE)"] = "Indonesia";
+    $code["IRAKIEN(NE)"] = "Iraq";
+    $code["IRANIEN(NE)"] = "Iran";
+    $code["IRLANDAIS(E)"] = "Ireland";
+    $code["ITALIEN(NE)"] = "Italia";
+    $code["IVOIRIEN(NE)"] = "CI"; //----------------------------------
+    $code["JAMAICAIN(E)"] = "Jamaica";
+    $code["JAPONAIS(E)"] = "Japan";
+    $code["JORDANIEN(NE)"] = "Jordan";
+    $code["LIBANAIS(E)"] = "Lebanon";
+    $code["LIBYEN(NE)"] = "Libya";
+    $code["LITHUANIEN(NE)"] = "Lithuania";
+    $code["LUXEMBOURGEOIS(E)"] = "Luxembourg";
+    $code["MALAIS(E)"] = "Malaysia";
+    $code["MALGACHE"] = "Madagascar";
+    $code["MALIEN(NE)"] = "Mali";
+    $code["MAROCAIN(E)"] = "Maroco";
+    $code["MAURICIEN(NE)"] = "Mauritius";
+    $code["MAURITANIEN(NE)"] = "Mauritania";
+    $code["MEXICAIN(E)"] = "Mexico";
+    $code["MONEGASQUE"] = "Monaco";
+    $code["MOZAMBIQUOIS(E)"] = "Mozambique";
+    $code["NEERLANDAIS(E)"] = "Netherlands";
+    $code["NEPALAIS(E)"] = "Nepal";
+    $code["NICARAGUAIS(E)"] = "Nicaragua";
+    $code["NIGERIEN(NE)"] = "Nigeria";
+    $code["NORVEGIEN(NE)"] = "Norway";
+    $code["PAKISTANAIS(E)"] = "Pakistan";
+    $code["PALESTINIEN(NE)"] = "Palestine";
+    $code["PANAMEEN(NE)"] = "Panama";
+    $code["PERUVIEN(NE)"] = "Peru";
+    $code["POLONAIS(E)"] = "Poland";
+    $code["PORTUGAIS(E)"] = "Portugal";
+    $code["ROUMAIN(E)"] = "Romania";
+    $code["RUANDAIS(E)"] = "Rwanda";
+    $code["RUSSE"] = "Russia";
+    $code["SAOUDIEN(NE)"] = "Saudi Arabia";
+    $code["SENEGALAIS(E)"] = "Senegal";
+    $code["SERBE"] = "Serbia";
+    $code["SUD COREEN(NE)"] = "Korea, Republic of";
+    $code["SUEDOIS(E)"] = "Sweden";
+    $code["SUISSE"] = "Switzerland";
+    $code["SYRIEN(NE)"] = "Syrian Arab Republic";
+    $code["TCHADIEN(NE)"] = "Chad";
+    $code["TCHEQUE"] = "Czechia";
+    $code["THAILANDAIS(E)"] = "Thailand";
+    $code["TOGOLAIS(E)"] = "Togo";
+    $code["TUNISIEN(NE)"] = "Tunisia";
+    $code["TURC (TURQUE)"] = "Turkey";
+    $code["UKRAINIEN(NE)"] = "Ukraine";
+    $code["VENEZUELIEN(NE)"] = "Venezuela";
+    $code["VIETNAMIEN(NE)"] = " 	Viet Nam";
+    $code["YEMENITE"] = "Yemen";
+    $code["ZAIROIS(E)"] = "Zaire";
+
+
+    $effectifParPays = [];
+    $nope = 0;
+    for ($annee = $start ; $annee <= $end ; $annee++ ) {
+        if (!empty($effectifsInscription[$annee])) {
+            foreach ($effectifsInscription[$annee] as $these) {
+                $nationalite = $these->getDoctorant()->getIndividu()->getNationalite();
+                if (isset($code[$nationalite])) {
+                    $effectifParPays[$code[$nationalite]]++;
+                } else {
+                    echo $nationalite . " ";
+                    $nope++;
+                }
+            }
+        }
+    }
+    if ($nope > 0) echo $nope;
+    return $effectifParPays;
+}
+?>

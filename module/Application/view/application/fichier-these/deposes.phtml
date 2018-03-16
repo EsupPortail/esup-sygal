@@ -15,13 +15,22 @@ use Zend\Paginator\Paginator;
 
 ?>
 
+<?php $nombreFichiers = $fichiers->getTotalItemCount(); ?>
+
 <?php $this->headTitle($this->translate("Fichiers déposés")) ?>
 
-<h1 class="page-header"><?php echo $this->translate("Fichiers déposés"); ?> </h1>
+<h1 class="page-header">
+    <?php echo $this->translate("Fichiers déposés"); ?>
+    <span class="badge"><?php echo $nombreFichiers; ?></span>
+</h1>
 
-<p>
-    <?php echo $fichiers->getTotalItemCount() ." ". $this->translate("fichier(s) trouvé(s)"); ?>.
-</p>
+
+<div class="pull-left">
+    <?php echo $this->partial('partial/form-filtrage') ?>
+</div>
+<!--<div class="pull-right">-->
+<!--    --><?php //echo $this->partial('partial/form-recherche', ['text' => $text]) ?>
+<!--</div>-->
 
 <table class="table table-bordered table-hovered table-condensed">
     <thead>

@@ -90,7 +90,7 @@ return [
                             'privileges' => [
                                 'label'      => "Privilèges",
                                 'title'      => "Gestion des privilèges",
-                                'route'      => 'droits/privileges',
+                                'route'      => 'roles',
                                 'resource'   => PrivilegeController::getResourceId('UnicaenAuth\Controller\Droits', 'privileges'),
                                 'withtarget' => true,
                             ],

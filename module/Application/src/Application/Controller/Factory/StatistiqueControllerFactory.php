@@ -7,15 +7,19 @@ use Zend\Mvc\Controller\ControllerManager;
 
 class StatistiqueControllerFactory
 {
-    /**
-     * Create service
-     *
-     * @param ControllerManager $controllerManager
-     * @return StatistiqueController
-     */
     public function __invoke(ControllerManager $controllerManager)
     {
+        $sl = $controllerManager->getServiceLocator();
+        $theseService = $sl->get('TheseService');
+        $ecoleService = $sl->get('EcoleDoctoraleService');
+        $etabService  = $sl->get('EtablissementService');
+        $uniteService = $sl->get('UniteRechercheService');
+
         $controller = new StatistiqueController();
+        $controller->setTheseService($theseService);
+        $controller->setEcoleDoctoraleService($ecoleService);
+        $controller->setEtablissementService($etabService);
+        $controller->setUniteRechercheService($uniteService);
         return $controller;
     }
 }
