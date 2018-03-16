@@ -2,16 +2,15 @@
 
 namespace Application\Service;
 
+use UnicaenAuth\Entity\Shibboleth\ShibUser;
 use Application\Authentication\Storage\AppStorage;
-use Application\Entity\Db\EcoleDoctoraleIndividu;
+use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\Doctorant;
-use Application\Entity\Db\UniteRechercheIndividu;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\Individu\IndividuServiceAwareInterface;
 use Application\Service\Individu\IndividuServiceAwareTrait;
-use UnicaenAuth\Entity\Ldap\People;
+use UnicaenApp\Entity\Ldap\People;
 use UnicaenAuth\Service\UserContext as BaseUserContextService;
 use Zend\Permissions\Acl\Role\RoleInterface;
 
@@ -190,6 +189,20 @@ class UserContextService extends BaseUserContextService implements IndividuServi
     }
 
     /**
+     * Retourne les données concernant l'utilisateur Shibboleth connecté.
+     *
+     * @return ShibUser|null
+     */
+    public function getIdentityShib()
+    {
+        if (! $identity = $this->getIdentity()) {
+            return null;
+        }
+
+        return $identity['shib'];
+    }
+
+    /**
      * Retourne les données concernant l'utilisateur connecté, issues de la table des thésards, le cas échéant.
      *
      * @return Doctorant|null
@@ -204,48 +217,27 @@ class UserContextService extends BaseUserContextService implements IndividuServi
     }
 
     /**
-     * Retourne les données EcoleDoctoraleIndividu concernant l'utilisateur connecté..
-     *
-     * @return EcoleDoctoraleIndividu[]
-     */
-    public function getIdentityEcoleDoctoraleIndividu()
-    {
-        if (! $identity = $this->getIdentity()) {
-            return null;
-        }
-
-        return $identity[AppStorage::KEY_ECOLE_DOCTORALE_INDIVIDU];
-    }
-
-    /**
-     * Retourne les données UniteRechercheIndividu concernant l'utilisateur connecté..
-     *
-     * @return UniteRechercheIndividu[]
-     */
-    public function getIdentityUniteRechercheIndividu()
-    {
-        if (! $identity = $this->getIdentity()) {
-            return null;
-        }
-
-        return $identity[AppStorage::KEY_UNITE_RECHERCHE_INDIVIDU];
-    }
-
-    /**
      * Retourne l'individu correspondant à l'utilisateur connecté, le cas échéant.
      *
      * @return Individu|null
      */
     public function getIdentityIndividu()
     {
-        if (! $identity = $this->getIdentityLdap()) {
-            return null;
+        switch (true) {
+            case $identity = $this->getIdentityLdap():
+                $supannEmpId = $identity->getSupannEmpId();
+                break;
+            case $identity = $this->getIdentityShib():
+                $supannEmpId = $identity->getId();
+                break;
+            default:
+                return null;
         }
 
-        /** @var Individu $individu */
         // todo: solution provisoire!
         $etab = 'UCN';
-        $individu = $this->individuService->getRepository()->findOneByEmpId($identity->getSupannEmpId(), $etab);
+        /** @var Individu $individu */
+        $individu = $this->individuService->getRepository()->findOneByEmpId($supannEmpId, $etab);
 
         return $individu;
     }

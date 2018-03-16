@@ -7,6 +7,7 @@ use Application\Service\Doctorant\DoctorantService;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\Role\RoleService;
 use Application\Service\UniteRecherche\UniteRechercheService;
+use Application\Service\Utilisateur\UtilisateurService;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use ZfcUser\Service\User as UserService;
 
@@ -37,6 +38,9 @@ class IdentityProviderFactory
         /** @var RoleService $roleService */
         $roleService = $sl->get(RoleService::class);
 
+        /** @var UtilisateurService $utilisateurService */
+        $utilisateurService = $sl->get('UtilisateurService');
+
         $service = new IdentityProvider();
         $service->setAuthenticationService($userService->getAuthService());
         $service->setActeurService($acteurService);
@@ -44,6 +48,7 @@ class IdentityProviderFactory
         $service->setEcoleDoctoraleService($edService);
         $service->setUniteRechercheService($urService);
         $service->setRoleService($roleService);
+        $service->setUtilisateurService($utilisateurService);
 
         return $service;
     }

@@ -2,6 +2,7 @@
 
 use Application\Command\CheckWSValidationFichierCinesCommandFactory;
 use Application\Command\ValidationFichierCinesCommandFactory;
+use Application\Controller\Factory\FichierControllerFactory;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\Provider\Privilege\ValidationPrivileges;
 use Application\Service\Fichier\FichierServiceFactory;
@@ -198,9 +199,11 @@ return array(
     ),
     'controllers' => array(
         'invokables' => array(
-            'Application\Controller\Fichier' => 'Application\Controller\FichierController',
             'Application\Controller\FichierThese' => 'Application\Controller\FichierTheseController',
         ),
+        'factories' => [
+            'Application\Controller\Fichier' => FichierControllerFactory::class,
+        ]
     ),
     'controller_plugins' => [
         'invokables' => [

@@ -4,10 +4,13 @@ namespace Application\Controller;
 
 use Application\Entity\Db\Fichier;
 use Application\RouteMatch;
+use Application\Service\Fichier\FichierServiceAwareTrait;
 use Zend\View\Model\JsonModel;
 
 class FichierController extends AbstractController
 {
+    use FichierServiceAwareTrait;
+
     public function uploadAction()
     {
         $result = $this->uploader()->upload();
@@ -25,6 +28,10 @@ class FichierController extends AbstractController
     public function downloadAction()
     {
         $fichier = $this->requestFichier();
+
+        // injection préalable du contenu du fichier pour pouvoir utiliser le plugin Uploader
+        $contenuFichier = $this->fichierService->fetchContenuFichier($fichier);
+        $fichier->setContenuFichierData($contenuFichier->getData());
 
         $this->uploader()->download($fichier);
     }

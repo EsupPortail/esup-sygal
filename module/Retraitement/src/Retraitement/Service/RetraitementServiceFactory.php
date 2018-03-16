@@ -2,6 +2,7 @@
 
 namespace Retraitement\Service;
 
+use Application\Service\Fichier\FichierService;
 use Retraitement\Filter\Command\CommandInterface;
 use Zend\ServiceManager\Exception\InvalidArgumentException;
 use Zend\ServiceManager\FactoryInterface;

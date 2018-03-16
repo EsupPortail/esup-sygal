@@ -3,7 +3,6 @@
 namespace Application\Command;
 
 use Application\Command\Exception\CommandExecutionException;
-use Application\Entity\Db\Fichier;
 use Application\Validator\Exception\CinesErrorException;
 use DOMDocument;
 use UnicaenApp\Exception\RuntimeException;
@@ -59,27 +58,13 @@ class ValidationFichierCinesCommand
     }
 
     /**
-     * @param Fichier|string $fichier
-     * @param string         $url URL du web service, si différente de celle par défaut
-     * @param int            $maxExecutionTime
-     * @return bool
+     * @param string $filepath Chemin vers le fichier sur le disque
+     * @param string $url URL du web service, si différente de celle par défaut
+     * @param int    $maxExecutionTime
      */
-    public function execute($fichier, $url = null, $maxExecutionTime = null)
+    public function execute($filepath, $url = null, $maxExecutionTime = null)
     {
-        if ($fichier instanceof Fichier) {
-            // création du fichier temporaire sur le disque à partir de la bdd
-            $filePath = $fichier->writeFichierToDisk();
-        }
-        else {
-            $filePath = $fichier;
-        }
-
-        $this->execValidationRequest($filePath, $url, $maxExecutionTime);
-
-        if ($fichier instanceof Fichier) {
-            // suppression du fichier temporaire sur le disque
-            unlink($filePath);
-        }
+        $this->execValidationRequest($filepath, $url, $maxExecutionTime);
     }
 
     /**

@@ -2,7 +2,6 @@
 
 namespace Retraitement\Service;
 
-use Application\Entity\Db\Fichier;
 use Retraitement\Exception\TimedOutCommandException;
 use Retraitement\Filter\Command\CommandInterface;
 use RuntimeException;
@@ -43,7 +42,7 @@ class RetraitementService
      * @return string Chemin du fichier retraité généré
      * @throws TimedOutCommandException Le timout a été atteint
      */
-    public function retraiterFichierByPath($inputFilePath, $timeout = null)
+    private function retraiterFichierByPath($inputFilePath, $timeout = null)
     {
         $outputFilePath = $this->generateOutputFilePath($inputFilePath);
         $this->command->generate($outputFilePath, $inputFilePath, $errorFilePath);
@@ -83,16 +82,14 @@ class RetraitementService
     /**
      * Crée un fichier retraité à partir du Fichier spécifié.
      *
-     * @param Fichier $fichier Fichier à retraiter
-     * @param string  $timeout Timeout à appliquer au lancement du script de retraitement.
+     * @param string $inputFilePath Chemin sur le disque vers le fichier à retraiter
+     * @param string $timeout  Timeout à appliquer au lancement du script de retraitement.
      * @return string Chemin du fichier retraité généré
      * @throws TimedOutCommandException Le timout a été atteint
      */
-    public function retraiterFichier(Fichier $fichier, $timeout = null)
+    public function retraiterFichier($inputFilePath, $timeout = null)
     {
-        $inputFilePath = $fichier->writeFichierToDisk();
         $outputFilePath = $this->retraiterFichierByPath($inputFilePath, $timeout);
-        unlink($inputFilePath);
 
         return $outputFilePath;
     }

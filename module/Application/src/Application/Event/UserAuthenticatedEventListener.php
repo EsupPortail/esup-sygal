@@ -30,8 +30,19 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
         /** @var Utilisateur $utilisateur */
         $utilisateur = $e->getDbUser();
 
-        // NOM Prénom
-        $utilisateur->setDisplayName($e->getLdapUser()->getNomComplet(true));
+        // màj NOM Prénom
+        switch (true) {
+            case $user = $e->getLdapUser():
+                $displayName = $user->getNomComplet(true);
+                break;
+            case $user = $e->getShibUser():
+                $displayName = $user->getDisplayName();
+                break;
+            default:
+                $displayName = $utilisateur->getDisplayName();
+                break;
+        }
+        $utilisateur->setDisplayName($displayName);
 
         // Sélection du dernier rôle endossé.
         if ($role = $utilisateur->getLastRole()) {

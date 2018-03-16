@@ -89,7 +89,6 @@ class FichierTheseController extends AbstractController
             $qb->addOrderBy($sortProp, $dir);
         }
 
-
         $paginator = new \Zend\Paginator\Paginator(new DoctrinePaginator(new Paginator($qb, true)));
         $paginator
             ->setPageRange(20)
@@ -199,6 +198,10 @@ class FichierTheseController extends AbstractController
         if (!$fichier || $fichier->getThese() !== $these) {
             return;
         }
+
+        // injection préalable du contenu du fichier pour pouvoir utiliser le plugin Uploader
+        $contenuFichier = $this->fichierService->fetchContenuFichier($fichier);
+        $fichier->setContenuFichierData($contenuFichier->getData());
 
         // Envoi du fichier au client (navigateur)
         // NB: $fichier doit être de type \UnicaenApp\Controller\Plugin\Upload\UploadedFileInterface
