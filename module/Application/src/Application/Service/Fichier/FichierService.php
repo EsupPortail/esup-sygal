@@ -21,6 +21,7 @@ use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\Validator\Exception\CinesErrorException;
 use Application\Validator\FichierCinesValidator;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\NonUniqueResultException;
 use Retraitement\Service\RetraitementServiceAwareInterface;
 use Retraitement\Service\RetraitementServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
@@ -78,6 +79,32 @@ class FichierService extends BaseService
     public function fetchNatureFichierByEstAnnexe($estAnnexe)
     {
         return $this->fetchNatureFichier($estAnnexe ? NatureFichier::CODE_FICHIER_NON_PDF : NatureFichier::CODE_THESE_PDF);
+    }
+
+    /**
+     * Fetch le contenu d'un fichier.
+     *
+     * @param Fichier $fichier
+     * @return ContenuFichier
+     */
+    public function fetchContenuFichier(Fichier $fichier)
+    {
+        $qb = $this->getEntityManager()->getRepository(ContenuFichier::class)->createQueryBuilder('cf')
+            ->where('cf.fichier = :fichier')
+            ->setParameter('fichier', $fichier);
+
+        try {
+            /** @var ContenuFichier $contenuFichier */
+            $contenuFichier = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Plus d'un contenu fichier trouvé pour le fichier suivant: " . $fichier);
+        }
+
+        if ($contenuFichier === null) {
+            throw new RuntimeException("Aucun contenu fichier trouvé pour le fichier suivant: " . $fichier);
+        }
+
+        return $contenuFichier;
     }
 
     /**
@@ -141,7 +168,6 @@ class FichierService extends BaseService
 
             $contenuFichier = new ContenuFichier();
             $contenuFichier->setData(file_get_contents($path));
-            $fichier->setContenuFichier($contenuFichier);
             $contenuFichier->setFichier($fichier);
 
             $this->entityManager->persist($contenuFichier);
@@ -265,7 +291,6 @@ class FichierService extends BaseService
         $contenuFichierRetraite = new ContenuFichier();
         $contenuFichierRetraite->setData($outputFileContent);
         $contenuFichierRetraite->setFichier($fichierRetraite);
-        $fichierRetraite->setContenuFichier($contenuFichierRetraite);
 
         $this->entityManager->beginTransaction();
         try {
@@ -378,7 +403,7 @@ class FichierService extends BaseService
             return Util::createImageWithText("Erreur: extension PHP |'imagick' non chargée", 170, 100);
         }
 
-        $inputFilePath = $fichier->writeFichierToDisk();
+        $inputFilePath = $this->writeFichierToDisk($fichier);
         $outputFilePath = sys_get_temp_dir() . '/' . uniqid($fichier->getNom() . '-') . '.png';
 
         $im = new \Imagick();
@@ -396,6 +421,29 @@ class FichierService extends BaseService
         return $content;
     }
 
+    /**
+     * Ecriture (du contenu) d'un fichier sur le disque.
+     *
+     * @param Fichier $fichier Fichier concerné
+     * @param string  $filePath Eventuel chemin du fichier à créer
+     * @return string Chemin vers le fichier créé
+     */
+    public function writeFichierToDisk(Fichier $fichier, $filePath = null)
+    {
+        $contenuFichier = $this->fetchContenuFichier($fichier);
+
+        // création du fichier sur le disque à partir du contenu en bdd
+        $contenu = $contenuFichier->getData();
+        $content = is_resource($contenu) ? stream_get_contents($contenu) : $contenu;
+
+        $tmpDir = sys_get_temp_dir();
+        if (! $filePath) {
+            $filePath = $tmpDir . '/' . uniqid('sodoct-') . '-' . $fichier->getNom();
+        }
+        file_put_contents($filePath, $content);
+
+        return $filePath;
+    }
 
     /**
      * @var FichierCinesValidator

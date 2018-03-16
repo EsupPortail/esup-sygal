@@ -4,12 +4,15 @@ namespace Application\Command;
 
 use Application\Command\Exception\CommandExecutionException;
 use Application\Entity\Db\Fichier;
+use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Validator\Exception\CinesErrorException;
 use DOMDocument;
 use UnicaenApp\Exception\RuntimeException;
 
 class ValidationFichierCinesCommand
 {
+    use FichierServiceAwareTrait;
+
     const XML_TAG_VALIDATOR = 'validator';
 
     const XML_TAG_VALID = 'valid';
@@ -62,13 +65,12 @@ class ValidationFichierCinesCommand
      * @param Fichier|string $fichier
      * @param string         $url URL du web service, si différente de celle par défaut
      * @param int            $maxExecutionTime
-     * @return bool
      */
     public function execute($fichier, $url = null, $maxExecutionTime = null)
     {
         if ($fichier instanceof Fichier) {
             // création du fichier temporaire sur le disque à partir de la bdd
-            $filePath = $fichier->writeFichierToDisk();
+            $filePath = $this->fichierService->writeFichierToDisk($fichier);
         }
         else {
             $filePath = $fichier;
