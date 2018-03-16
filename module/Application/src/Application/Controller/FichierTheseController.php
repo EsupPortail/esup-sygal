@@ -48,14 +48,8 @@ class FichierTheseController extends AbstractController implements
          */
         $needsRedirect = false;
         $queryParams = $this->params()->fromQuery();
-//        // filtres
-//        $etatThese = $this->params()->fromQuery($name = 'etatThese');
-//        if ($etatThese === null) { // null <=> paramètre absent
-//            // filtrage par défaut : thèse en préparation
-//            $queryParams = array_merge($queryParams, [$name => These::ETAT_EN_COURS]);
-//            $needsRedirect = true;
-//        }
-        // tris
+
+        $version = $this->params()->fromQuery('version');
         $sort = $this->params()->fromQuery('sort');
         if ($sort === null) { // null <=> paramètre absent
             // tri par défaut : datePremiereInscription
@@ -78,6 +72,12 @@ class FichierTheseController extends AbstractController implements
             ->join('t.doctorant', 'd')
             ->leftJoin('f.validites', 'val')
             ->join('f.version', 'ver');
+        if (isset($version) && $version !== '')
+        {
+            $qb->andWhere('ver.code = :version')
+                ->setParameter("version" , $version);
+        }
+
 
         foreach (explode('+', $sort) as $sortProp) {
             if ($sortProp === 't.titre') {
