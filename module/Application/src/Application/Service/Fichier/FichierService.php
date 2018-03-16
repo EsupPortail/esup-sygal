@@ -196,8 +196,11 @@ class FichierService extends BaseService
     {
         $exceptionThrown = null;
 
+        // création du fichier temporaire sur le disque
+        $filePath = $this->writeFichierToDisk($fichier);
+
         try {
-            $estArchivable = $this->fichierCinesValidator->isValid($fichier);
+            $estArchivable = $this->fichierCinesValidator->isValid($filePath);
             $message = $estArchivable ? "Le fichier est archivable" : current($this->fichierCinesValidator->getMessages());
         }
         catch (CinesErrorException $cee) { // erreur possible à identifier
@@ -210,6 +213,9 @@ class FichierService extends BaseService
             $message = "Le test d'archivabilité a rencontré un problème : " . $re->getMessage();
             $exceptionThrown = $re;
         }
+
+        // suppression du fichier temporaire sur le disque
+        unlink($filePath);
 
         $resultat = [
             'estArchivable' => $estArchivable,
@@ -277,8 +283,11 @@ class FichierService extends BaseService
      */
     public function creerFichierRetraite(Fichier $fichier, $timeout = null)
     {
-        $outputFilePath = $this->retraitementService->retraiterFichier($fichier, $timeout);
+        $inputFilePath = $this->writeFichierToDisk($fichier);
+        $outputFilePath = $this->retraitementService->retraiterFichier($inputFilePath, $timeout);
         // Si le timout éventuel est atteint, une exception TimedOutCommandException est levée.
+
+        unlink($inputFilePath);
 
         $outputFileContent = file_get_contents($outputFilePath);
         unlink($outputFilePath);

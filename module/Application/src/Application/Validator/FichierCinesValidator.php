@@ -35,13 +35,13 @@ class FichierCinesValidator extends AbstractValidator
     }
 
     /**
-     * @param Fichier|string $fichier
+     * @param string $filepath Chemin vers le fichier sur le disque
      * @return bool
      * @throws CinesErrorException
      */
-    public function isValid($fichier)
+    public function isValid($filepath)
     {
-        $this->command->execute($fichier);
+        $this->command->execute($filepath);
 
         $result = $this->command->getArrayResult();
 
