@@ -41,20 +41,7 @@ class FichierCinesValidator extends AbstractValidator
      */
     public function isValid($fichier)
     {
-        if ($fichier instanceof Fichier) {
-            // création du fichier temporaire sur le disque à partir de la bdd
-            $filePath = $fichier->writeFichierToDisk();
-        }
-        else {
-            $filePath = $fichier;
-        }
-
-        $this->command->execute($filePath);
-
-        if ($fichier instanceof Fichier) {
-            // suppression du fichier temporaire sur le disque
-            unlink($filePath);
-        }
+        $this->command->execute($fichier);
 
         $result = $this->command->getArrayResult();
 

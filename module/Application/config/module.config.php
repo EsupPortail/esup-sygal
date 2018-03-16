@@ -14,6 +14,7 @@ use Application\Service\Role\RoleService;
 use Application\Service\ServiceAwareInitializer;
 use Application\Service\UserContextServiceAwareInitializer;
 use Application\View\Helper\EscapeTextHelper;
+use Application\View\Helper\QueryParamsHelperFactory;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use UnicaenApp\Service\EntityManagerAwareInitializer;
@@ -217,7 +218,6 @@ return array(
     ),
     'view_helpers' => array(
         'invokables' => array(
-            'queryParams' => 'Application\View\Helper\QueryParams',
             'sortable'    => 'Application\View\Helper\Sortable',
             'Uploader'    => 'Application\View\Helper\Uploader\UploaderHelper',
             'filterPanel' => 'Application\View\Helper\FilterPanel\FilterPanelHelper',

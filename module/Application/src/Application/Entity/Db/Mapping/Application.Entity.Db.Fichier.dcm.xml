@@ -18,7 +18,10 @@
     <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
     <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
 
+    <!-- ATTENTION ! Ne pas déclarer cette relation "contenuFichier" car un paginator l'interroge systématiquement! -->
+    <!--
     <one-to-one field="contenuFichier" target-entity="Application\Entity\Db\ContenuFichier" mapped-by="fichier"/>
+    -->
 
     <one-to-many field="validites" target-entity="Application\Entity\Db\ValiditeFichier" mapped-by="fichier" >
       <order-by>

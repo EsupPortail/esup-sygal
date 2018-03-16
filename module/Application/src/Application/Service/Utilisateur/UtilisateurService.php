@@ -7,9 +7,6 @@ use Application\Service\BaseService;
 use Application\Entity\Db\Repository\DefaultEntityRepository;
 use UnicaenLdap\Entity\People;
 
-/**
- * @method Utilisateur|null findOneBy(array $criteria, array $orderBy = null)
- */
 class UtilisateurService extends BaseService
 {
     /**

@@ -100,7 +100,6 @@ class ValidationController extends AbstractController implements
     public function validationCorrectionTheseAction()
     {
         $these = $this->requestedThese();
-        $this->userContextService->getIdentityEcoleDoctoraleIndividu();
 
         $view = new ViewModel([
             'these'          => $these,

@@ -2,6 +2,7 @@
 
 namespace Application\Command;
 
+use Application\Service\Fichier\FichierService;
 use Zend\ServiceManager\Exception\InvalidArgumentException;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -16,6 +17,12 @@ class ValidationFichierCinesCommandFactory
 
         $scriptPath = $config['sodoct']['archivabilite']['script_path'];
 
-        return new ValidationFichierCinesCommand($scriptPath);
+        /** @var FichierService $fichierService */
+        $fichierService = $serviceLocator->get(FichierService::class);
+
+        $command = new ValidationFichierCinesCommand($scriptPath);
+        $command->setFichierService($fichierService);
+
+        return $command;
     }
 }

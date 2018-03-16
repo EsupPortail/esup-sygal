@@ -67,8 +67,6 @@ class EntityAsset
             ->setTypeMime("image/png")
             ->setTaille(1024);
 
-        $e->setContenuFichier(self::newContenuFichier($e, "binary data"));
-
         return $e;
     }
 

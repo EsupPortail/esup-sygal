@@ -2,24 +2,24 @@
 
 namespace Application\Provider;
 
+use UnicaenAuth\Entity\Shibboleth\ShibUser;
 use Application\Entity\Db\Acteur;
-use Application\Entity\Db\EcoleDoctoraleIndividu;
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\UniteRechercheIndividu;
+use Application\Entity\Db\Utilisateur;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Doctorant\DoctorantServiceAwareTrait;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
+use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use BjyAuthorize\Provider\Identity\ProviderInterface;
 use Doctrine\ORM\NonUniqueResultException;
+use UnicaenApp\Entity\Ldap\People;
 use UnicaenApp\Exception\RuntimeException;
-use UnicaenAuth\Entity\Ldap\People;
 use UnicaenAuth\Provider\Identity\ChainableProvider;
 use UnicaenAuth\Provider\Identity\ChainEvent;
 use Zend\Authentication\AuthenticationService;
-use Zend\Db\Sql\Predicate\In;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 
@@ -36,6 +36,7 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
     use EcoleDoctoraleServiceAwareTrait;
     use UniteRechercheServiceAwareTrait;
     use RoleServiceAwareTrait;
+    use UtilisateurServiceAwareTrait;
 
     private $roles;
 
@@ -70,7 +71,7 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
      */
     public function getIdentityRoles()
     {
-        if (! ($identity = $this->authenticationService->getIdentity())) {
+        if (! $this->authenticationService->hasIdentity()) {
             return [];
         }
 
@@ -78,13 +79,33 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
             return $this->roles;
         }
 
-        /** @var People $people */
-        $people = $identity['ldap'];
+        $identity = $this->authenticationService->getIdentity();
+
+        switch (true) {
+            case isset($identity['ldap']):
+                /** @var People $userData */
+                $userData = $identity['ldap'];
+                $id = $userData->getSupannEmpId();
+                $username = $userData->getSupannAliasLogin();
+                $mail = $userData->getMail();
+                break;
+            case isset($identity['shib']):
+                /** @var ShibUser $userData */
+                $userData = $identity['shib'];
+                $id = $userData->getId();
+                $username = $userData->getUsername();
+                $mail = $userData->getEmail();
+                break;
+            default:
+//                throw new RuntimeException("Aucune donnée d'identité LDAP ni Shibboleth disponible");
+                return [];
+        }
 
         $roles = array_merge([],
-            $this->getRolesFromActeur($people),
-            $this->getRolesFromIndividuRole($people),
-            $this->getRolesFromDoctorant($people));
+            $this->getRolesFromAutreCompteUtilisateur($mail),
+            $this->getRolesFromActeur($id),
+            $this->getRolesFromIndividuRole($id),
+            $this->getRolesFromDoctorant($username));
 
         // suppression des doublons en comparant le __toString() de chaque Role
         $this->roles = array_unique($roles, SORT_STRING);
@@ -93,14 +114,31 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
     }
 
     /**
-     * Rôles découlant de la présence de l'utilisateur dans la table Acteur.
-     *
-     * @param People $people
+     * @param string $mail
      * @return Role[]
      */
-    private function getRolesFromActeur(People $people)
+    private function getRolesFromAutreCompteUtilisateur($mail)
     {
-        $acteurs = $this->acteurService->getRepository()->findBySourceCodeIndividu($people->getSupannEmpId());
+        /** @var Utilisateur[] $utilisateurs */
+        $utilisateurs = $this->utilisateurService->getRepository()->findBy(['email' => $mail]);
+
+        $roles = [];
+        foreach ($utilisateurs as $utilisateur) {
+            $roles = array_merge($roles, $utilisateur->getRoles()->toArray());
+        }
+
+        return $roles;
+    }
+
+    /**
+     * Rôles découlant de la présence de l'utilisateur dans la table Acteur.
+     *
+     * @param string $id
+     * @return Role[]
+     */
+    private function getRolesFromActeur($id)
+    {
+        $acteurs = $this->acteurService->getRepository()->findBySourceCodeIndividu($id);
 
         // pour l'instant on ne considère pas tous les types d'acteur
         $acteurs = array_filter($acteurs, function(Acteur $a) {
@@ -114,13 +152,12 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
 
     /** Rôle découlant de la présence dans IndividuRoles.
      *
-     *  @param People $people
-     *  @return Role[]
+     * @param string $id
+     * @return Role[]
      */
-    private function getRolesFromIndividuRole(People $people) {
-        $result = $this->ecoleDoctoraleService->getRepository()->findMembresBySourceCodeIndividu($people->getSupannEmpId());
-        $individu = $result[0]->getIndividu();
-        $roles = $this->roleService->getIndividuRolesByIndividu($individu);
+    private function getRolesFromIndividuRole($id)
+    {
+        $roles = $this->roleService->getIndividuRolesByIndividuSourceCode($id);
 
         usort($roles, function (IndividuRole $a, IndividuRole $b) {
             //filtre sur le type de structure
@@ -140,17 +177,17 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
     /**
      * Rôle découlant de la présence de l'utilisateur dans la table Doctorant.
      *
-     * @param People $people
+     * @param string $id
      * @return Role[]
      */
-    private function getRolesFromDoctorant(People $people)
+    private function getRolesFromDoctorant($id)
     {
         /**
          * NB: Un doctorant a la possibilité de s'authentifier :
          * - avec son numéro étudiant (Doctorant::sourceCode),
          * - avec son persopass (DoctorantCompl::persopass), seulement après qu'il l'a saisi sur la page d'identité de la thèse.
          */
-        $username = $people->getSupannAliasLogin();
+        $username = $id;
         // todo: solution provisoire!
         $etablissement = 'UCN';
         try {
@@ -166,6 +203,5 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
         $role = $this->roleService->getRepository()->findRoleDoctorantForEtab($doctorant->getEtablissement());
 
         return [$role];
-
     }
 }

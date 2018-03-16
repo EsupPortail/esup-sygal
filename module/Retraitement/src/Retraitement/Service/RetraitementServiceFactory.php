@@ -2,6 +2,7 @@
 
 namespace Retraitement\Service;
 
+use Application\Service\Fichier\FichierService;
 use Retraitement\Filter\Command\CommandInterface;
 use Zend\ServiceManager\Exception\InvalidArgumentException;
 use Zend\ServiceManager\FactoryInterface;
@@ -19,7 +20,11 @@ class RetraitementServiceFactory implements FactoryInterface
     {
         $command = $this->createCommand($serviceLocator);
 
+        /** @var FichierService $fichierService */
+        $fichierService = $serviceLocator->get(FichierService::class);
+
         $service = new RetraitementService($command);
+        $service->setFichierService($fichierService);
 
         return $service;
     }

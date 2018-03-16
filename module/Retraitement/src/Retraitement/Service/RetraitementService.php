@@ -3,12 +3,15 @@
 namespace Retraitement\Service;
 
 use Application\Entity\Db\Fichier;
+use Application\Service\Fichier\FichierServiceAwareTrait;
 use Retraitement\Exception\TimedOutCommandException;
 use Retraitement\Filter\Command\CommandInterface;
 use RuntimeException;
 
 class RetraitementService
 {
+    use FichierServiceAwareTrait;
+
     /**
      * FichierStarCorrector constructor.
      *
@@ -90,7 +93,7 @@ class RetraitementService
      */
     public function retraiterFichier(Fichier $fichier, $timeout = null)
     {
-        $inputFilePath = $fichier->writeFichierToDisk();
+        $inputFilePath = $this->fichierService->writeFichierToDisk($fichier);
         $outputFilePath = $this->retraiterFichierByPath($inputFilePath, $timeout);
         unlink($inputFilePath);
 

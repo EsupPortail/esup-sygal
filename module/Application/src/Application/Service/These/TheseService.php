@@ -24,6 +24,7 @@ use Application\Service\Variable\VariableServiceAwareInterface;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
+use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Traits\MessageAwareInterface;
 use UnicaenApp\Util;
 use UnicaenAuth\Entity\Db\UserInterface;
@@ -63,11 +64,21 @@ class TheseService extends BaseService implements
                     ->setParameter('doctorant', $userContext->getIdentityDoctorant());
             }
             elseif ($role->isDirecteurThese()) {
-                $people = $userContext->getIdentityLdap();
+//                $people = $userContext->getIdentityLdap();
+                switch (true) {
+                    case $identity = $userContext->getIdentityLdap():
+                        $supannEmpId = $identity->getSupannEmpId();
+                        break;
+                    case $identity = $userContext->getIdentityShib():
+                        $supannEmpId = $identity->getId();
+                        break;
+                    default:
+                        throw new RuntimeException("Cas imprévu!");
+                }
                 $qb
                     ->join('t.acteurs', 'adt', Join::WITH, 'adt.role = :role')
                     ->join('adt.individu', 'idt', Join::WITH, 'idt.sourceCode like :idtSourceCode')
-                    ->setParameter('idtSourceCode', '%::' . $people->getSupannEmpId())
+                    ->setParameter('idtSourceCode', '%::' . $supannEmpId)
                     ->setParameter('role', $role);
             }
             // sinon role = membre jury

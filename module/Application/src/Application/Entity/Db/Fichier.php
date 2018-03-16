@@ -97,9 +97,13 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     private $these;
 
     /**
-     * @var ContenuFichier
+     * Contenu binaire de ce fichier.
+     *
+     * NB: utile uniquement pour le plugin Uploader.
+     *
+     * @var string
      */
-    private $contenuFichier;
+    private $contenuFichierData;
 
     /**
      * @var NatureFichier
@@ -142,25 +146,6 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     }
 
     /**
-     *
-     *
-     * @param      $filePath
-     * @param bool $overwrite
-     */
-    public function exportToFile($filePath, $overwrite = false)
-    {
-        if (file_exists($filePath) && ! $overwrite) {
-            throw new \RuntimeException("Le fichier suivant existe déjà : " . $filePath);
-        }
-
-//        $contenu = $this->getContenu();
-        $contenu = $this->getContenuFichier()->getData();
-        $content = is_resource($contenu) ? stream_get_contents($contenu) : $contenu;
-
-        file_put_contents($filePath, $content);
-    }
-
-    /**
      * Détermine si ce fichier peut faire l'objet d'un test de validité (i.e. compatibilité STAR).
      *
      * @return bool
@@ -181,14 +166,29 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     }
 
     /**
-     * Get contenu
+     * Spécifie le contenu binaire de ce fichier.
+     *
+     * NB: utile uniquement pour le plugin Uploader.
+     *
+     * @param string $contenuFichierData
+     * @return string
+     */
+    public function setContenuFichierData($contenuFichierData)
+    {
+        return $this->contenuFichierData = $contenuFichierData;
+    }
+
+    /**
+     * Retourne le contenu binaire de ce fichier.
+     *
+     * NB: utile uniquement pour le plugin Uploader.
      *
      * @return string
      * @see UploadedFileInterface
      */
     public function getContenu()
     {
-        return $this->getContenuFichier()->getData();
+        return $this->contenuFichierData;
     }
 
     /**
@@ -480,25 +480,6 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     }
 
     /**
-     * @return ContenuFichier
-     */
-    public function getContenuFichier()
-    {
-        return $this->contenuFichier;
-    }
-
-    /**
-     * @param ContenuFichier $contenuFichier
-     * @return Fichier
-     */
-    public function setContenuFichier($contenuFichier)
-    {
-        $this->contenuFichier = $contenuFichier;
-
-        return $this;
-    }
-
-    /**
      * @return NatureFichier
      */
     public function getNature()
@@ -603,9 +584,6 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
         return $this;
     }
 
-
-
-
     /**
      * Retourne la date de dépôt du fichier.
      *
@@ -615,33 +593,6 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     {
         return $this->getHistoModification();
     }
-
-
-
-
-    /**
-     * Ecriture (du contenu) de ce fichier sur le disque.
-     *
-     * @param string  $filePath Eventuel chemin du fichier à créer
-     * @return string Chemin vers le fichier créé
-     */
-    public function writeFichierToDisk($filePath = null)
-    {
-        // création du fichier temporaire sur le disque à partir de la bdd
-//        $contenu = $this->getContenu();
-        $contenu = $this->getContenuFichier()->getData();
-        $content = is_resource($contenu) ? stream_get_contents($contenu) : $contenu;
-
-        $tmpDir = sys_get_temp_dir();
-        if (! $filePath) {
-            $filePath = $tmpDir . '/' . uniqid('sodoct-') . '-' . $this->getNom();
-        }
-        file_put_contents($filePath, $content);
-
-        return $filePath;
-    }
-
-
 
     /**
      * Returns the string identifier of the Resource
