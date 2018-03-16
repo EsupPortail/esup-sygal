@@ -11,7 +11,7 @@ use Application\Service\These\TheseServiceAwareTrait;
 use Application\View\Helper\Sortable;
 use UnicaenApp\View\Model\CsvModel;
 
-class ExportController extends AbstractController implements TheseServiceAwareInterface, FichierServiceAwareInterface
+class ExportController extends AbstractController
 {
     use TheseServiceAwareTrait;
     use FichierServiceAwareTrait;

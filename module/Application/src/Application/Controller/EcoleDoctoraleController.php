@@ -7,19 +7,14 @@ use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Form\EcoleDoctoraleForm;
 use Application\RouteMatch;
-use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareInterface;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
-use Application\Service\Individu\IndividuServiceAwareInterface;
 use Application\Service\Individu\IndividuServiceAwareTrait;
-use Application\Service\Role\RoleServiceAwareInterface;
 use Application\Service\Role\RoleServiceAwareTrait;
 use UnicaenLdap\Entity\People;
-use UnicaenLdap\Service\LdapPeopleServiceAwareInterface;
 use UnicaenLdap\Service\LdapPeopleServiceAwareTrait;
 use Zend\View\Model\ViewModel;
 
 class EcoleDoctoraleController extends AbstractController
-    implements EcoleDoctoraleServiceAwareInterface, LdapPeopleServiceAwareInterface, IndividuServiceAwareInterface, RoleServiceAwareInterface
 {
     use EcoleDoctoraleServiceAwareTrait;
     use LdapPeopleServiceAwareTrait;

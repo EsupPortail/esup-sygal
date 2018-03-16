@@ -2,32 +2,35 @@
 
 namespace Application\Controller\Factory;
 
-use Application\Controller\ExportController;
-use Application\Service\Fichier\FichierService;
+use Application\Controller\ImportController;
+use Application\Service\Notification\NotificationService;
 use Application\Service\These\TheseService;
 use Zend\Mvc\Controller\ControllerManager;
 
-class ExportControllerFactory
+
+class ImportControllerFactory
 {
     /**
      * Create service
      *
      * @param ControllerManager $controllerManager
-     * @return ExportController
+     * @return ImportController
      */
     public function __invoke(ControllerManager $controllerManager)
     {
         /**
-         * @var FichierService $fichierService
          * @var TheseService $theseService
+         * @var NotificationService $notificationService
          */
-        $fichierService = $controllerManager->getServiceLocator()->get('FichierService');
         $theseService = $controllerManager->getServiceLocator()->get('TheseService');
+        $notificationService = $controllerManager->getServiceLocator()->get('NotificationService');
 
-        $controller = new ExportController();
-        $controller->setFichierService($fichierService);
+        $controller = new ImportController();
         $controller->setTheseService($theseService);
+        $controller->setNotificationService($notificationService);
 
         return $controller;
     }
 }
+
+

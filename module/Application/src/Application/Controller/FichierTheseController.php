@@ -10,16 +10,11 @@ use Application\Filter\NomFichierFormatter;
 use Application\RouteMatch;
 use Application\Service\Fichier\Exception\DepotImpossibleException;
 use Application\Service\Fichier\Exception\ValidationImpossibleException;
-use Application\Service\Fichier\FichierServiceAwareInterface;
 use Application\Service\Fichier\FichierServiceAwareTrait;
-use Application\Service\Notification\NotificationServiceAwareInterface;
 use Application\Service\Notification\NotificationServiceAwareTrait;
-use Application\Service\These\TheseServiceAwareInterface;
 use Application\Service\These\TheseServiceAwareTrait;
-use Application\Service\VersionFichier\VersionFichierServiceAwareInterface;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\View\Helper\Sortable;
-use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
 use UnicaenApp\Exception\LogicException;
@@ -29,9 +24,7 @@ use Zend\Http\PhpEnvironment\Response;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
-class FichierTheseController extends AbstractController implements
-    TheseServiceAwareInterface, FichierServiceAwareInterface, VersionFichierServiceAwareInterface,
-    NotificationServiceAwareInterface
+class FichierTheseController extends AbstractController
 {
     use TheseServiceAwareTrait;
     use FichierServiceAwareTrait;
@@ -50,7 +43,9 @@ class FichierTheseController extends AbstractController implements
         $queryParams = $this->params()->fromQuery();
 
         $version = $this->params()->fromQuery('version');
+        $recherche = $this->params()->fromQuery('texte');
         $sort = $this->params()->fromQuery('sort');
+
         if ($sort === null) { // null <=> paramètre absent
             // tri par défaut : datePremiereInscription
             $queryParams = array_merge($queryParams, ['sort' => 'f.nom', 'direction' => Sortable::ASC]);
@@ -70,12 +65,19 @@ class FichierTheseController extends AbstractController implements
             ->addSelect('t, d, val, ver')
             ->join('f.these', 't')
             ->join('t.doctorant', 'd')
+            ->join('d.individu', 'i')
             ->leftJoin('f.validites', 'val')
             ->join('f.version', 'ver');
         if (isset($version) && $version !== '')
         {
             $qb->andWhere('ver.code = :version')
                 ->setParameter("version" , $version);
+        }
+
+        if (isset($recherche) && $recherche !== '') {
+//
+            $qb->andWhere("i.prenom1 like :recherche OR i.nomUsuel like :recherche OR t.titre like :recherche OR f.nomOriginal like :recherche")
+                ->setParameter("recherche", '%'.$recherche.'%');
         }
 
 

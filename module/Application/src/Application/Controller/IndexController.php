@@ -11,7 +11,6 @@ use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
 
 class IndexController extends AbstractController
-    implements TheseServiceAwareInterface
 {
     use TheseServiceAwareTrait;
 

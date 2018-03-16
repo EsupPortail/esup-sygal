@@ -22,7 +22,6 @@ use Zend\View\Model\ViewModel;
  * @author Unicaen
  */
 class ImportController extends \UnicaenImport\Controller\ImportController
-    implements TheseServiceAwareInterface, NotificationServiceAwareInterface
 {
     use TheseServiceAwareTrait;
     use ImportObservServiceAwareTrait;

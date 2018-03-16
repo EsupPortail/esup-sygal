@@ -2,30 +2,26 @@
 
 namespace Application\Controller\Factory;
 
-use Application\Controller\ExportController;
-use Application\Service\Fichier\FichierService;
-use Application\Service\These\TheseService;
+use Application\Controller\IndexController;
 use Zend\Mvc\Controller\ControllerManager;
+use Application\Service\These\TheseService;
 
-class ExportControllerFactory
+class IndexControllerFactory
 {
     /**
      * Create service
      *
      * @param ControllerManager $controllerManager
-     * @return ExportController
+     * @return IndexController
      */
     public function __invoke(ControllerManager $controllerManager)
     {
         /**
-         * @var FichierService $fichierService
          * @var TheseService $theseService
          */
-        $fichierService = $controllerManager->getServiceLocator()->get('FichierService');
         $theseService = $controllerManager->getServiceLocator()->get('TheseService');
 
-        $controller = new ExportController();
-        $controller->setFichierService($fichierService);
+        $controller = new IndexController();
         $controller->setTheseService($theseService);
 
         return $controller;

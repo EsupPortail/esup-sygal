@@ -6,14 +6,10 @@ use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Form\EtablissementForm;
-use Application\Service\Etablissement\EtablissementServiceAwareInterface;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
-use Application\Service\Individu\IndividuServiceAwareInterface;
 use Application\Service\Individu\IndividuServiceAwareTrait;
-use Application\Service\Role\RoleServiceAwareInterface;
 use Application\Service\Role\RoleServiceAwareTrait;
 use UnicaenLdap\Entity\People;
-use UnicaenLdap\Service\LdapPeopleServiceAwareInterface;
 use UnicaenLdap\Service\LdapPeopleServiceAwareTrait;
 use Zend\View\Model\ViewModel;
 
@@ -22,7 +18,7 @@ use Zend\View\Model\ViewModel;
  * @package Application\Controller
  */
 class EtablissementController extends AbstractController
-    implements EtablissementServiceAwareInterface, LdapPeopleServiceAwareInterface, IndividuServiceAwareInterface, RoleServiceAwareInterface
+
 {
     use EtablissementServiceAwareTrait;
     use LdapPeopleServiceAwareTrait;
