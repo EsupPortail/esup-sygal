@@ -32,7 +32,7 @@ RUN apt-get update && apt-get install -y \
         vim \
         wget \
         zlib1g-dev \
-    && docker-php-ext-install -j$(nproc) iconv gettext gd soap curl intl zip \
+    && docker-php-ext-install -j$(nproc) iconv gettext gd soap curl intl zip mbstring \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu && docker-php-ext-install ldap \
     && docker-php-ext-configure opcache --enable-opcache && docker-php-ext-install opcache \
     && rm -rf /var/lib/apt/lists/*
