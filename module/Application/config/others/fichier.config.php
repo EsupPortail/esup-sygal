@@ -199,13 +199,11 @@ return array(
         ),
     ),
     'controllers' => [
-        'invokables' => [
-            'Application\Controller\Fichier' => 'Application\Controller\FichierController',
-        ],
         'factories' => [
             'Application\Controller\Fichier' => FichierControllerFactory::class,
             'Application\Controller\FichierThese' => FichierTheseControllerFactory::class,
         ],
+    ],
     'controller_plugins' => [
         'invokables' => [
             'urlFichierThese'       => 'Application\Controller\Plugin\UrlFichierThese',
