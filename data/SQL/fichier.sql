@@ -47,3 +47,25 @@ select fichier_id_seq.nextval,
 from VERSION_FICHIER ver, UTILISATEUR u
 where ver.code = 'VA'
 and U.USERNAME = 'sodoct';
+
+
+--
+-- Remplacement d'un contenu fichier par celui d'un fichier sur DOCTTEST.
+--
+-- select * from sodoct.fichier@docttest where THESE_ID = 23171;
+-- select * from fichier where THESE_ID = 27871;
+-- select * from CONTENU_FICHIER where FICHIER_ID='571bcdb0-c7d4-4b72-8beb-efeccf85ba73';
+-- select * from VALIDITE_FICHIER where FICHIER_ID='571bcdb0-c7d4-4b72-8beb-efeccf85ba73';
+--
+DECLARE
+  testFichierId VARCHAR2(50) := '1a8703eb-1bdc-46f6-a5a0-ef08ad062440';
+  prodFichierId VARCHAR2(50) := '571bcdb0-c7d4-4b72-8beb-efeccf85ba73';
+BEGIN
+  -- suppression du contenu fichier existant
+  delete from CONTENU_FICHIER where FICHIER_ID = prodFichierId;
+  -- création d'un nouveau contenu à partir de celui sur DOCTTEST
+  insert into CONTENU_FICHIER(ID, FICHIER_ID, DATA)
+    select CONTENU_FICHIER_ID_SEQ.nextval, prodFichierId, cf.data
+    from sodoct.CONTENU_FICHIER@docttest cf
+    where cf.FICHIER_ID = testFichierId;
+END;
