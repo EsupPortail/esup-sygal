@@ -1,7 +1,7 @@
 <?php
 
+use Application\Controller\Factory\ImportControllerFactory;
 use Application\Controller\Factory\ImportObserverControllerFactory;
-use Application\Controller\ImportController;
 use Application\Service\Import\SchemaService;
 use Application\Service\ImportObserv\ImportObservService;
 use Application\Service\ImportObservResult\ImportObservResultServiceFactory;
@@ -135,11 +135,10 @@ return [
         ],
     ],
     'controllers'     => [
-        'invokables' => [
-            'Application\Controller\Import' => ImportController::class,
-        ],
+        'invokables' => [],
         'factories' => [
             'Application\Controller\ImportNotification' => ImportObserverControllerFactory::class,
+            'Application\Controller\Import' => ImportControllerFactory::class,
         ],
     ],
 ];

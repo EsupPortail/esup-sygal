@@ -1,6 +1,7 @@
 <?php
 
 use Application\Cache\MemcachedFactory;
+use Application\Controller\Factory\IndexControllerFactory;
 use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\Event\UserAuthenticatedEventListenerFactory;
 use Application\Event\UserRoleSelectedEventListener;
@@ -16,9 +17,9 @@ use Application\Service\UserContextServiceAwareInitializer;
 use Application\View\Helper\EscapeTextHelper;
 use Application\View\Helper\QueryParamsHelperFactory;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
+use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use UnicaenApp\Service\EntityManagerAwareInitializer;
-use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 
 return array(
     'doctrine'     => [
@@ -189,14 +190,14 @@ return array(
             ),
         ),
     ),
-    'controllers' => array(
-        'invokables' => array(
-            'Application\Controller\Index' => 'Application\Controller\IndexController',
-        ),
+    'controllers' => [
+        'factories' => [
+            'Application\Controller\Index' => IndexControllerFactory::class,
+        ],
         'initializers' => [
             ServiceAwareInitializer::class,
         ]
-    ),
+    ],
     'controller_plugins' => [
         'invokables' => [
             'uploader'              => 'Application\Controller\Plugin\Uploader\UploaderPlugin',

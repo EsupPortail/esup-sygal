@@ -1,13 +1,11 @@
 <?php
 
-
 use Application\View\Renderer\PhpRenderer;
 use Application\Entity\Db\These;
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\UniteRecherche;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Structure;
-
 
 /**
  * @var PhpRenderer $this
@@ -32,26 +30,98 @@ function display_debug($texte) {
 <?php $this->headTitle($this->translate("Statistiques")) ?>
 
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <h1 class="page-header first"><?php echo $this->translate("Statistiques") ?> <span
         class="badge"><?php echo count($theses) ?></span></h1>
 
+<div class='selector' style='border-radius: 5px;
+                             border:solid gray 2px;
+                             background-color: whitesmoke;
+                             padding: 5px;
+                             margin: 10px;
+                             width:415px;
+                             float:left;'>
+    <form id="selection" method="post" action="">
+        <div style="width:200px; padding: 5px; margin: 5px; float:left;">
+            <h4>Type de structure : </h4>
+            <input type="radio" name="structure_type" value="Aucun" checked>  Aucune <br/>
+            <input type="radio" name="structure_type" value="Etab">   Établissement <br/>
+            <input type="radio" name="structure_type" value="ED">     École doctorale <br/>
+            <input type="radio" name="structure_type" value="UR">     Unité de recherche
+        </div>
+        <div style='width:190px;
+                    height:150px;
+                    float:left;
+                    text-align:center;
+                    padding-top: 75px;'
+             id="linku">
+            <a  href='/statistique'>
+                <input type='button' class='btn btn-info' value='Remise à zéro du filtrage'/>
+            </a>
+        </div>
+        <div style="clear:both;"></div>
+    <div id='structure_selector' >
+        <h4>Libellé de la structure :</h4>
+        <select style='width: 400px; max-width:400px; ' id='structure_id'> </select>
+    </div>
+    </form>
 
-<form id="selection" method="post" action="">
-    <input type="radio" id="structure_type" name="structure_type" value="Aucun">  Aucun
-    <input type="radio" id="structure_type" name="structure_type" value="Etab">   Etablissement
-    <input type="radio" id="structure_type" name="structure_type" value="ED">     Ecole doctorale
-    <input type="radio" id="structure_type" name="structure_type" value="UR">     Unité de recherche
-<div id='structure_selector'>
-    <select id='structure_id'>
-<!--        <option value="a">a</option><option value="b">b</option>-->
-    </select>
 </div>
-</form>
-<div id="linku">
-    <a  href='/statistique'>
-        <input type='button' class='btn btn-info' value='Remise à zéro du filtrage'/>
-    </a>
+<div class='selector' style='border-radius: 5px;
+                             border:solid gray 2px;
+                             background-color: whitesmoke;
+                             padding: 5px;
+                             margin: 10px;
+                             width:415px;
+                             height:240px;
+                             float:left;'>
+    <div style="width:200px; padding: 5px; margin: 5px; float:left;">
+        <h4>Type de date :</h4>
+        <input type="radio" name="date_type" value="Inscription" checked>  Inscription <br/>
+        <input type="radio" name="date_type" value="Soutenance">   Soutenance <br/>
+    </div>
+    <div style='width:190px;
+                    height:100px;
+                    float:left;
+                    text-align:center;
+                    padding-top: 50px;'
+         id="linku">
+        <a  href='/statistique'>
+            <input type='button' class='btn btn-info' value='Filtrage selon date'/>
+        </a>
+    </div>
+    <div style="clear:both;"></div>
+    <div>
+        <h4>Sélection de la période :</h4>
+        <p>
+
+            <input type="text" id="amount" readonly >
+        </p>
+
+        <center>
+        <div id="slider-range" style="width:380px;"></div>
+        </center>
+    </div>
+
 </div>
+<div style="clear:both;"></div>
+
+
+<script>
+    $( function() {
+        $( "#slider-range" ).slider({
+            range: true,
+            min: 1998,
+            max: 2018,
+            values: [ 1998, 2018 ],
+            slide: function( event, ui ) {
+                $( "#amount" ).val( "" + ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+            }
+        });
+        $( "#amount" ).val( "" + $( "#slider-range" ).slider( "values", 0 ) +
+            " - " + $( "#slider-range" ).slider( "values", 1 ) );
+    } );
+</script>
 
 <script>
     $(document).ready(function(){
@@ -68,7 +138,7 @@ function display_debug($texte) {
                 //alert(this.value);
                 if (this.value == "Aucun") {
                     // alert("Aucun");
-                    document.getElementById('structure_selector').innerHTML = "";
+                    document.getElementById('structure_id').innerHTML = "";
                 } else {
                    // alert("Pas Aucun : " + this.value);
                 }
@@ -88,18 +158,7 @@ function display_debug($texte) {
                     document.getElementById('structure_id').innerHTML = form;
                 }
         });
-        // $('#filtrage').click(function() {
-        //     var selected_structure_type = document.querySelector('input[name="structure_type"]:checked').value;
-        //     var selected_structure_id = document.getElementById("structure_id").value;
-        //     alert("clicked! " + selected_structure_type + " " + selected_structure_id);
-        //     document.getElementById("linku").innerHTML = "" +
-        //         "<a  href='/statistique?structure_type=" + selected_structure_type + "& structure_id=" + selected_structure_id + "'> " +
-        //             "<input type='button' value='Filtrer les thèse'/>" +
-        //         "</a>";
-        //
-        // });
     });
-    //document.getElementById('structure_selector').innerHTML = <?php //generateEDSelector($ecoles); ?>// ;
 </script>
 
 <?php
@@ -235,6 +294,12 @@ $effectifParPays = generateEffectifParPays($effectifsInscription, $start, $end);
             hAxis: {
                 slantedText:true,
                 slantedTextAngle:45
+            },
+            vAxis: {
+                minValue: 0,
+                viewWindow: {
+                    min: 0
+                }
             }
         };
 
@@ -510,3 +575,11 @@ function generateEffectifParPays($effectifsInscription, $start , $end) {
     return $effectifParPays;
 }
 ?>
+
+<style>
+    div.selector  {
+        border: 2px gray solid;
+        background-color: whitesmoke;
+        border-radius: 5px;
+    }
+</style>

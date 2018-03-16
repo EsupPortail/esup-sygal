@@ -1,6 +1,6 @@
 <?php
 
-use Application\Controller\DoctorantController;
+use Application\Controller\Factory\DoctorantControllerFactory;
 use Application\Provider\Privilege\DoctorantPrivileges;
 use Application\Service\Doctorant\DoctorantService;
 use UnicaenAuth\Guard\PrivilegeController;
@@ -107,10 +107,9 @@ return [
         ]
     ],
     'controllers'     => [
-        'invokables' => [
-            'Application\Controller\Doctorant' => DoctorantController::class,
-        ],
+        'invokables' => [],
         'factories' => [
+            'Application\Controller\Doctorant' => DoctorantControllerFactory::class,
         ],
     ],
     'controller_plugins' => [

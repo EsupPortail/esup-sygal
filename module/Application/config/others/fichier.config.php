@@ -3,6 +3,7 @@
 use Application\Command\CheckWSValidationFichierCinesCommandFactory;
 use Application\Command\ValidationFichierCinesCommandFactory;
 use Application\Controller\Factory\FichierControllerFactory;
+use Application\Controller\Factory\FichierTheseControllerFactory;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\Provider\Privilege\ValidationPrivileges;
 use Application\Service\Fichier\FichierServiceFactory;
@@ -197,14 +198,14 @@ return array(
             'CheckWSValidationFichierCinesCommand' => CheckWSValidationFichierCinesCommandFactory::class,
         ),
     ),
-    'controllers' => array(
-        'invokables' => array(
-            'Application\Controller\FichierThese' => 'Application\Controller\FichierTheseController',
-        ),
+    'controllers' => [
+        'invokables' => [
+            'Application\Controller\Fichier' => 'Application\Controller\FichierController',
+        ],
         'factories' => [
             'Application\Controller\Fichier' => FichierControllerFactory::class,
-        ]
-    ),
+            'Application\Controller\FichierThese' => FichierTheseControllerFactory::class,
+        ],
     'controller_plugins' => [
         'invokables' => [
             'urlFichierThese'       => 'Application\Controller\Plugin\UrlFichierThese',
