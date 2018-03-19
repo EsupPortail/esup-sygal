@@ -941,23 +941,6 @@ create index UNITE_RECH_STRUCT_ID_IDX on UNITE_RECH (structure_id);
 
 -----
 
-create table UNITE_RECH_IND
-(
-  ID NUMBER not null constraint UNITE_RECH_IND_PK primary key,
-  UNITE_RECH_ID NUMBER not null constraint UNITE_RECH_IND_URFK references UNITE_RECH,
-  INDIVIDU_ID NUMBER not null constraint UNITE_RECH_IND_IFK references INDIVIDU,
-  ROLE_ID NUMBER not null constraint UNITE_RECH_IND_RFK references ROLE,
-  constraint UNITE_RECH_IND_UN unique (UNITE_RECH_ID, INDIVIDU_ID, ROLE_ID)
-);
-
-create index UNITE_RECH_IND_ECOLE_IDX on UNITE_RECH_IND (UNITE_RECH_ID);
-create index UNITE_RECH_IND_INDIVIDU_IDX on UNITE_RECH_IND (INDIVIDU_ID);
-create index UNITE_RECH_IND_ROLE_IDX on UNITE_RECH_IND (ROLE_ID);
-
-create sequence UNITE_RECH_IND_ID_SEQ;
-
------
-
 create table UTILISATEUR_ROLE
 (
   UTILISATEUR_ID NUMBER constraint UTILISATEUR_ROLE_U_FK references UTILISATEUR on delete cascade,

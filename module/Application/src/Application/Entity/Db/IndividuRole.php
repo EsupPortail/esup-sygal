@@ -2,11 +2,6 @@
 
 namespace Application\Entity\Db;
 
-use Doctrine\ORM\Mapping as ORM;
-
-/**
- * UniteRechercheIndividu
- */
 class IndividuRole
 {
     /**

@@ -8,7 +8,6 @@ use Application\Entity\Db\Fichier;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\These;
 use Application\Entity\Db\UniteRecherche;
-use Application\Entity\Db\UniteRechercheIndividu;
 use Application\Entity\Db\ValiditeFichier;
 use Application\Entity\Db\Variable;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
@@ -474,11 +473,10 @@ class NotificationService
             ]);
 
         $mails = [];
-        foreach ($unite->getUniteRechercheIndividus() as $individu) {
-            /** @var UniteRechercheIndividu $individu */
-            $email = $individu->getIndividu()->getEmail();
+        foreach ($this->uniteRechercheService->getIndividuByUniteRechercheId($unite->getId()) as $individu) {
+            /** @var Individu $individu */
+            $email = $individu->getEmail();
             if ($email !== null) $mails[] = $email;
-
         }
 
         $viewModel->setVariable('to', $mails);

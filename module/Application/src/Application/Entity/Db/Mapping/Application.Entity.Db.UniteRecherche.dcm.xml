@@ -47,7 +47,5 @@
       </cascade>
     </one-to-one>
 
-    <one-to-many field="uniteRechercheIndividus" target-entity="Application\Entity\Db\UniteRechercheIndividu" mapped-by="uniteRecherche"/>
-
   </entity>
 </doctrine-mapping>

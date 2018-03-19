@@ -2,9 +2,6 @@
 
 namespace Application\Entity\Db;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenApp\Util;
@@ -45,16 +42,10 @@ class UniteRecherche implements HistoriqueAwareInterface, SourceAwareInterface
     protected $structure;
 
     /**
-     * @var Collection
-     */
-    protected $uniteRechercheIndividus;
-
-    /**
      * UniteRecherche constructor.
      */
     public function __construct()
     {
-        $this->uniteRechercheIndividus = new ArrayCollection();
         $this->structure = new Structure();
     }
     /**
@@ -213,35 +204,5 @@ class UniteRecherche implements HistoriqueAwareInterface, SourceAwareInterface
     public function getStructure()
     {
         return $this->structure;
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getUniteRechercheIndividus()
-    {
-        return $this->uniteRechercheIndividus;
-    }
-
-    /**
-     * @param UniteRechercheIndividu $edi
-     * @return self
-     */
-    public function addUniteRechercheIndividu(UniteRechercheIndividu $edi)
-    {
-        $this->uniteRechercheIndividus->add($edi);
-
-        return $this;
-    }
-
-    /**
-     * @param UniteRechercheIndividu $edi
-     * @return self
-     */
-    public function removeUniteRechercheIndividu(UniteRechercheIndividu $edi)
-    {
-        $this->uniteRechercheIndividus->removeElement($edi);
-
-        return $this;
     }
 }
