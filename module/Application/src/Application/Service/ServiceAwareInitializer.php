@@ -41,7 +41,7 @@ class ServiceAwareInitializer implements InitializerInterface
 
         $services = [
             //'UtilisateurService'     => UtilisateurService::class,
-            //'RoleService'            => RoleService::class,
+            'RoleService'            => RoleService::class,
             //'ParametreService'       => ParametreService::class,
             //'VariableService'        => VariableService::class,
             //'TheseService'           => TheseService::class,

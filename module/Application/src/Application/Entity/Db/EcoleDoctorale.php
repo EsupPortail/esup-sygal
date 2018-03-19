@@ -2,9 +2,6 @@
 
 namespace Application\Entity\Db;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenApp\Util;
@@ -34,17 +31,11 @@ class EcoleDoctorale implements HistoriqueAwareInterface, SourceAwareInterface
      */
     protected $structure;
 
-        /**
-     * @var Collection
-     */
-    protected $ecoleDoctoraleIndividus;
-
     /**
      * EcoleDoctorale constructor.
      */
     public function __construct()
     {
-        $this->ecoleDoctoraleIndividus = new ArrayCollection();
         $this->structure = new Structure();
     }
 
@@ -52,7 +43,8 @@ class EcoleDoctorale implements HistoriqueAwareInterface, SourceAwareInterface
      * EcoleDoctorale prettyPrint
      * @return string
      */
-    public function __toString() {
+    public function __toString()
+    {
         return $this->structure->getLibelle();
     }
 
@@ -125,7 +117,7 @@ class EcoleDoctorale implements HistoriqueAwareInterface, SourceAwareInterface
     public function getLogoContent()
     {
         if ($this->getCheminLogo() === null) {
-            $image = Util::createImageWithText("Aucun logo pour l'ED|[".$this->getSourceCode()." - ".$this->getSigle()."]",200,200);
+            $image = Util::createImageWithText("Aucun logo pour l'ED|[" . $this->getSourceCode() . " - " . $this->getSigle() . "]", 200, 200);
             return $image;
         }
         return file_get_contents(APPLICATION_DIR . $this->getCheminLogo()) ?: null;
@@ -146,7 +138,7 @@ class EcoleDoctorale implements HistoriqueAwareInterface, SourceAwareInterface
     {
         $this->getStructure()->setSigle($sigle);
     }
-    
+
     /**
      * @param Structure $structure
      * @return self
@@ -164,35 +156,5 @@ class EcoleDoctorale implements HistoriqueAwareInterface, SourceAwareInterface
     public function getStructure()
     {
         return $this->structure;
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getEcoleDoctoraleIndividus()
-    {
-        return $this->ecoleDoctoraleIndividus;
-    }
-
-    /**
-     * @param EcoleDoctoraleIndividu $edi
-     * @return self
-     */
-    public function addEcoleDoctoraleIndividu(EcoleDoctoraleIndividu $edi)
-    {
-        $this->ecoleDoctoraleIndividus->add($edi);
-
-        return $this;
-    }
-
-    /**
-     * @param EcoleDoctoraleIndividu $edi
-     * @return self
-     */
-    public function removeEcoleDoctoraleIndividu(EcoleDoctoraleIndividu $edi)
-    {
-        $this->ecoleDoctoraleIndividus->removeElement($edi);
-
-        return $this;
     }
 }

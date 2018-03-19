@@ -795,23 +795,6 @@ create index ECOLE_DOCT_STRUCT_ID_IDX on ECOLE_DOCT (structure_id);
 
 ------
 
-create table ECOLE_DOCT_IND
-(
-  ID NUMBER not null constraint ECOLE_DOCT_IND_PK primary key,
-  ECOLE_DOCT_ID NUMBER not null constraint ECOLE_DOCT_IND_EDFK references ECOLE_DOCT,
-  INDIVIDU_ID NUMBER not null constraint ECOLE_DOCT_IND_IFK references INDIVIDU,
-  ROLE_ID NUMBER not null constraint ECOLE_DOCT_IND_RFK references ROLE,
-  constraint ECOLE_DOCT_IND_UN unique (ECOLE_DOCT_ID, INDIVIDU_ID, ROLE_ID)
-);
-
-create index ECOLE_DOCT_IND_ECOLE_IDX on ECOLE_DOCT_IND (ECOLE_DOCT_ID);
-create index ECOLE_DOCT_IND_INDIVIDU_IDX on ECOLE_DOCT_IND (INDIVIDU_ID);
-create index ECOLE_DOCT_IND_ROLE_IDX on ECOLE_DOCT_IND (ROLE_ID);
-
-create sequence ECOLE_DOCT_IND_ID_SEQ;
-
-------
-
 create table METADONNEE_THESE
 (
   ID NUMBER not null constraint METADONNEE_THESE_PK primary key,

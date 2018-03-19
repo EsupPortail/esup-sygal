@@ -3,21 +3,22 @@
 namespace Application\Service\EcoleDoctorale;
 
 use Application\Entity\Db\EcoleDoctorale;
-use Application\Entity\Db\EcoleDoctoraleIndividu;
 use Application\Entity\Db\Individu;
+use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Repository\EcoleDoctoraleRepository;
-use Application\Entity\Db\Role;
-use Application\Entity\Db\Structure;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\BaseService;
+use Application\Service\Role\RoleServiceAwareInterface;
+use Application\Service\Role\RoleServiceAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\RuntimeException;
 
 /**
  * @method EcoleDoctorale|null findOneBy(array $criteria, array $orderBy = null)
  */
-class EcoleDoctoraleService extends BaseService
+class EcoleDoctoraleService extends BaseService implements RoleServiceAwareInterface
 {
+    use RoleServiceAwareTrait;
     /**
      * @return EcoleDoctoraleRepository
      */
@@ -46,6 +47,16 @@ class EcoleDoctoraleService extends BaseService
         /** @var EcoleDoctorale $ecole */
         $ecole = $this->getRepository()->findOneBy(["id" => $id]);
         return $ecole;
+    }
+
+    /**
+     * @param int $id
+     * @return Individu[]
+     */
+    public function getIndividuByEcoleDoctoraleId($id) {
+        $ecole = $this->getEcoleDoctoraleById($id);
+        $individus = $this->roleService->getIndividuByStructure($ecole->getStructure());
+        return $individus;
     }
 
 

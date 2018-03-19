@@ -44,7 +44,5 @@
       </cascade>
     </one-to-one>
 
-    <one-to-many field="ecoleDoctoraleIndividus" target-entity="Application\Entity\Db\EcoleDoctoraleIndividu" mapped-by="ecole"/>
-
   </entity>
 </doctrine-mapping>

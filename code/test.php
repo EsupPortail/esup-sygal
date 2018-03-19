@@ -26,7 +26,6 @@ $doctrineMetadatas = array_filter($doctrineMetadatas, function(ClassMetadata $me
         'Privilege',
         'Role',
         'Utilisateur',
-        'EcoleDoctoraleIndividu',
         'UniteRechercheIndividu',
         'WfEtape',
         'Parametre',
