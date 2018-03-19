@@ -17,7 +17,6 @@ use Zend\View\Model\ViewModel;
  * @author Unicaen
  */
 class ImportObservResultService extends BaseService
-    implements TheseServiceAwareInterface, NotificationServiceAwareInterface
 {
     use TheseServiceAwareTrait;
     use NotificationServiceAwareTrait;

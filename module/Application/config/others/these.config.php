@@ -16,16 +16,13 @@ use Application\Form\Factory\RdvBuTheseDoctorantFormFactory;
 use Application\Form\Factory\RdvBuTheseFormFactory;
 use Application\Form\Factory\RecapBuFormFactory;
 use Application\Form\Factory\RecapBuHydratorFactory;
-use Application\Form\Hydrator\RdvBuHydrator;
-use Application\Form\Hydrator\RecapBuHydrator;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\Service\Acteur\ActeurService;
 use Application\Service\Message\DiffusionMessages;
 use Application\Service\ServiceAwareInitializer;
-use Application\Service\These\TheseObserverService;
-use Application\Service\These\TheseService;
+use Application\Service\These\Factory\TheseObserverServiceFactory;
+use Application\Service\These\Factory\TheseServiceFactory;
 use Application\Service\Url\UrlServiceFactory;
-use Application\Service\Url\UrlTheseService;
 use Application\Service\Url\UrlTheseServiceFactory;
 use Application\View\Helper\Url\UrlTheseHelperFactory;
 use UnicaenAuth\Guard\PrivilegeController;
@@ -893,11 +890,11 @@ return [
     ),
     'service_manager' => [
         'invokables' => array(
-            'TheseService'                 => TheseService::class,
-            'TheseObserverService' => TheseObserverService::class,
             ActeurService::class => ActeurService::class,
         ),
         'factories' => [
+            'TheseService'                 => TheseServiceFactory::class,
+            'TheseObserverService'         => TheseObserverServiceFactory::class,
         ],
         'abstract_factories' => [
             AssertionAbstractFactory::class,

@@ -40,12 +40,12 @@ class ServiceAwareInitializer implements InitializerInterface
         }
 
         $services = [
-            'UtilisateurService'     => UtilisateurService::class,
-            'RoleService'            => RoleService::class,
-            'ParametreService'       => ParametreService::class,
-            'VariableService'        => VariableService::class,
-            'TheseService'           => TheseService::class,
-            'DoctorantService'       => DoctorantService::class,
+            //'UtilisateurService'     => UtilisateurService::class,
+            //'RoleService'            => RoleService::class,
+            //'ParametreService'       => ParametreService::class,
+            //'VariableService'        => VariableService::class,
+            //'TheseService'           => TheseService::class,
+            //'DoctorantService'       => DoctorantService::class,
             'FichierService'         => FichierService::class,
             'VersionFichierService'  => VersionFichierService::class,
             'ValiditeFichierService' => ValiditeFichierService::class,

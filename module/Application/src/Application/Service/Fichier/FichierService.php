@@ -30,7 +30,6 @@ use UnicaenApp\Util;
 use Zend\Filter\FilterInterface;
 
 class FichierService extends BaseService
-    implements VersionFichierServiceAwareInterface, ValiditeFichierServiceAwareInterface, RetraitementServiceAwareInterface
 {
     use VersionFichierServiceAwareTrait;
     use ValiditeFichierServiceAwareTrait;

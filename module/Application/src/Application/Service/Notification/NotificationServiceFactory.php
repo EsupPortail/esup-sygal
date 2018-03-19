@@ -3,6 +3,7 @@
 namespace Application\Service\Notification;
 
 use Application\Service\MailerService;
+use Application\Service\Variable\VariableService;
 use Zend\Mvc\Router\Http\TreeRouteStack;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -21,10 +22,15 @@ class NotificationServiceFactory implements FactoryInterface
      * @param ServiceLocatorInterface $serviceLocator
      * @return NotificationService
      */
+
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        /* @var $mailerService MailerService */
+        /**
+         * @var MailerService $mailerService
+         * @var VariableService $variableService
+         */
         $mailerService = $serviceLocator->get('UnicaenApp\Service\Mailer');
+        $variableService = $serviceLocator->get('VariableService');
 
         /* @var $router TreeRouteStack */
         $router = $serviceLocator->get('router');
@@ -34,7 +40,9 @@ class NotificationServiceFactory implements FactoryInterface
 
         $options = $this->getOptions($serviceLocator);
 
-        $service = new NotificationService($mailerService, $renderer);
+        $service = new NotificationService($renderer);
+        $service->setMailerService($mailerService);
+        $service->setVariableService($variableService);
         $service->setOptions($options);
 
         return $service;
