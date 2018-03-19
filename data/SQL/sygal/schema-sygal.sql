@@ -795,23 +795,6 @@ create index ECOLE_DOCT_STRUCT_ID_IDX on ECOLE_DOCT (structure_id);
 
 ------
 
-create table ECOLE_DOCT_IND
-(
-  ID NUMBER not null constraint ECOLE_DOCT_IND_PK primary key,
-  ECOLE_DOCT_ID NUMBER not null constraint ECOLE_DOCT_IND_EDFK references ECOLE_DOCT,
-  INDIVIDU_ID NUMBER not null constraint ECOLE_DOCT_IND_IFK references INDIVIDU,
-  ROLE_ID NUMBER not null constraint ECOLE_DOCT_IND_RFK references ROLE,
-  constraint ECOLE_DOCT_IND_UN unique (ECOLE_DOCT_ID, INDIVIDU_ID, ROLE_ID)
-);
-
-create index ECOLE_DOCT_IND_ECOLE_IDX on ECOLE_DOCT_IND (ECOLE_DOCT_ID);
-create index ECOLE_DOCT_IND_INDIVIDU_IDX on ECOLE_DOCT_IND (INDIVIDU_ID);
-create index ECOLE_DOCT_IND_ROLE_IDX on ECOLE_DOCT_IND (ROLE_ID);
-
-create sequence ECOLE_DOCT_IND_ID_SEQ;
-
-------
-
 create table METADONNEE_THESE
 (
   ID NUMBER not null constraint METADONNEE_THESE_PK primary key,
@@ -955,23 +938,6 @@ alter table UNITE_RECH drop COLUMN LIBELLE;
 alter table UNITE_RECH drop COLUMN CHEMIN_LOGO;
 
 create index UNITE_RECH_STRUCT_ID_IDX on UNITE_RECH (structure_id);
-
------
-
-create table UNITE_RECH_IND
-(
-  ID NUMBER not null constraint UNITE_RECH_IND_PK primary key,
-  UNITE_RECH_ID NUMBER not null constraint UNITE_RECH_IND_URFK references UNITE_RECH,
-  INDIVIDU_ID NUMBER not null constraint UNITE_RECH_IND_IFK references INDIVIDU,
-  ROLE_ID NUMBER not null constraint UNITE_RECH_IND_RFK references ROLE,
-  constraint UNITE_RECH_IND_UN unique (UNITE_RECH_ID, INDIVIDU_ID, ROLE_ID)
-);
-
-create index UNITE_RECH_IND_ECOLE_IDX on UNITE_RECH_IND (UNITE_RECH_ID);
-create index UNITE_RECH_IND_INDIVIDU_IDX on UNITE_RECH_IND (INDIVIDU_ID);
-create index UNITE_RECH_IND_ROLE_IDX on UNITE_RECH_IND (ROLE_ID);
-
-create sequence UNITE_RECH_IND_ID_SEQ;
 
 -----
 

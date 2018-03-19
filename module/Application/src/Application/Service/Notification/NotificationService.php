@@ -3,7 +3,6 @@
 namespace Application\Service\Notification;
 
 use Application\Entity\Db\EcoleDoctorale;
-use Application\Entity\Db\EcoleDoctoraleIndividu;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\Individu;
@@ -11,15 +10,12 @@ use Application\Entity\Db\These;
 use Application\Entity\Db\UniteRecherche;
 use Application\Entity\Db\ValiditeFichier;
 use Application\Entity\Db\Variable;
-use Application\Service\Notification\Notification;
+use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\MailerService;
-use Application\Service\MailerServiceAwareInterface;
 use Application\Service\MailerServiceAwareTrait;
-use Application\Notification\ValidationRdvBuNotification;
-use Application\Service\Variable\VariableServiceAwareInterface;
+use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use UnicaenApp\Traits\MessageAwareTrait;
-use Zend\Db\Sql\Predicate\In;
 use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\RendererInterface;
 
@@ -33,6 +29,8 @@ class NotificationService
     use VariableServiceAwareTrait;
     use MailerServiceAwareTrait;
     use MessageAwareTrait;
+    use EcoleDoctoraleServiceAwareTrait;
+    use UniteRechercheServiceAwareTrait;
 
     /**
      * @var RendererInterface
@@ -453,11 +451,10 @@ class NotificationService
             ]);
 
         $mails = [];
-        foreach ($ecole->getEcoleDoctoraleIndividus() as $individu) {
-            /** @var EcoleDoctoraleIndividu $individu */
-            $email = $individu->getIndividu()->getEmail();
+        foreach ($this->ecoleDoctoraleService->getIndividuByEcoleDoctoraleId($ecole->getId()) as $individu) {
+            /** @var Individu $individu */
+            $email = $individu->getEmail();
             if ($email !== null) $mails[] = $email;
-
         }
 
         $viewModel->setVariable('to', $mails);
@@ -476,11 +473,10 @@ class NotificationService
             ]);
 
         $mails = [];
-        foreach ($unite->getUniteRechercheIndividus() as $individu) {
-            /** @var EcoleDoctoraleIndividu $individu */
-            $email = $individu->getIndividu()->getEmail();
+        foreach ($this->uniteRechercheService->getIndividuByUniteRechercheId($unite->getId()) as $individu) {
+            /** @var Individu $individu */
+            $email = $individu->getEmail();
             if ($email !== null) $mails[] = $email;
-
         }
 
         $viewModel->setVariable('to', $mails);

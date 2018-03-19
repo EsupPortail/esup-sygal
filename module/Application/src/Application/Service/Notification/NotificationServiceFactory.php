@@ -2,7 +2,9 @@
 
 namespace Application\Service\Notification;
 
+use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\MailerService;
+use Application\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\Variable\VariableService;
 use Zend\Mvc\Router\Http\TreeRouteStack;
 use Zend\ServiceManager\FactoryInterface;
@@ -28,9 +30,13 @@ class NotificationServiceFactory implements FactoryInterface
         /**
          * @var MailerService $mailerService
          * @var VariableService $variableService
+         * @var EcoleDoctoraleService $ecoleDoctoraleService
+         * @var UniteRechercheService $uniteRechercheService
          */
         $mailerService = $serviceLocator->get('UnicaenApp\Service\Mailer');
         $variableService = $serviceLocator->get('VariableService');
+        $ecoleDoctoraleService = $serviceLocator->get('EcoleDoctoraleService');
+        $uniteRechercheService = $serviceLocator->get('UniteRechercheService');
 
         /* @var $router TreeRouteStack */
         $router = $serviceLocator->get('router');
@@ -43,6 +49,8 @@ class NotificationServiceFactory implements FactoryInterface
         $service = new NotificationService($renderer);
         $service->setMailerService($mailerService);
         $service->setVariableService($variableService);
+        $service->setEcoleDoctoraleService($ecoleDoctoraleService);
+        $service->setUniteRechercheService($uniteRechercheService);
         $service->setOptions($options);
 
         return $service;
