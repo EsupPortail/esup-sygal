@@ -3,9 +3,9 @@
 namespace Application\Controller;
 
 use Application\Controller\Plugin\Uploader\UploaderPlugin;
+use Application\Controller\Plugin\Url\UrlThesePlugin;
 use Application\Controller\Plugin\UrlDoctorant;
 use Application\Controller\Plugin\UrlFichierThese;
-use Application\Controller\Plugin\Url\UrlThesePlugin;
 use Application\Controller\Plugin\UrlWorkflow;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;

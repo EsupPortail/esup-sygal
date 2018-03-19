@@ -4,9 +4,7 @@ namespace Application\Controller;
 
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
-use Application\Service\Fichier\FichierServiceAwareInterface;
 use Application\Service\Fichier\FichierServiceAwareTrait;
-use Application\Service\These\TheseServiceAwareInterface;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\View\Helper\Sortable;
 use UnicaenApp\View\Model\CsvModel;

@@ -30,8 +30,8 @@ class EcoleDoctoraleControllerFactory
          * @var RoleService $roleService
          */
         $ecoleDoctoralService = $controllerManager->getServiceLocator()->get('EcoleDoctoraleService');
-        $ldapPeopleService  = $controllerManager->getServiceLocator()->get('LdapPeopleService');
-        $individuService = $controllerManager->getServiceLocator()->get('EcoleDoctoraleService');
+        $ldapPeopleService  = $controllerManager->getServiceLocator()->get('LdapServicePeople');
+        $individuService = $controllerManager->getServiceLocator()->get('IndividuService');
         $roleService = $controllerManager->getServiceLocator()->get('RoleService');
 
         $controller = new EcoleDoctoraleController();

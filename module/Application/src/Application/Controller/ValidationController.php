@@ -4,23 +4,17 @@ namespace Application\Controller;
 
 use Application\Entity\Db\Role;
 use Application\Entity\Db\TypeValidation;
-use Application\Provider\Privilege\ValidationPrivileges;
 use Application\Notification\ValidationRdvBuNotification;
-use Application\Service\Notification\NotificationServiceAwareInterface;
+use Application\Provider\Privilege\ValidationPrivileges;
 use Application\Service\Notification\NotificationServiceAwareTrait;
-use Application\Service\Role\RoleServiceAwareInterface;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
-use Application\Service\Validation\ValidationServiceAwareInterface;
 use Application\Service\Validation\ValidationServiceAwareTrait;
-use Application\Service\Variable\VariableServiceAwareInterface;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\View\Model\ViewModel;
 
-class ValidationController extends AbstractController implements
-    ValidationServiceAwareInterface, NotificationServiceAwareInterface, RoleServiceAwareInterface,
-    VariableServiceAwareInterface
+class ValidationController extends AbstractController
 
 {
     use TheseServiceAwareTrait;

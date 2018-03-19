@@ -4,18 +4,14 @@ namespace Application\Controller;
 
 use Application\Entity\Db\Privilege;
 use Application\Entity\Db\Role;
-use Application\Service\Etablissement\EtablissementServiceAwareInterface;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
-use Application\Service\Role\RoleServiceAwareInterface;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Doctrine\ORM\QueryBuilder;
-use UnicaenApp\Service\EntityManagerAwareInterface;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenAuth\Entity\Db\CategoriePrivilege;
 use Zend\View\Model\ViewModel;
 
 class RoleController extends AbstractController
-        implements EntityManagerAwareInterface, RoleServiceAwareInterface, EtablissementServiceAwareInterface
 {
     use EntityManagerAwareTrait;
     use RoleServiceAwareTrait;

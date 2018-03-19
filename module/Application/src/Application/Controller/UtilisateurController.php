@@ -5,10 +5,8 @@ namespace Application\Controller;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
 use Application\RouteMatch;
-use Application\Service\Role\RoleServiceAwareInterface;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
-use Application\Service\Utilisateur\UtilisateurServiceAwareInterface;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\View\Helper\Sortable;
 use Doctrine\ORM\Query\Expr\Join;
@@ -17,14 +15,12 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
 use UnicaenLdap\Entity\People;
 use UnicaenLdap\Filter\People as LdapPeopleFilter;
-use UnicaenLdap\Service\LdapPeopleServiceAwareInterface;
 use UnicaenLdap\Service\LdapPeopleServiceAwareTrait;
 use UnicaenLdap\Service\People as LdapPeopleService;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
 class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurController
-    implements UtilisateurServiceAwareInterface, RoleServiceAwareInterface, LdapPeopleServiceAwareInterface
 {
     use UtilisateurServiceAwareTrait;
     use UserContextServiceAwareTrait;

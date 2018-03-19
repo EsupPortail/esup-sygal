@@ -24,26 +24,16 @@ class TheseObserverControllerFactory
         /** @var TreeRouteStack $httpRouter */
         $httpRouter = $sl->get('HttpRouter');
         $cliConfig = $this->getCliConfig($sl);
-
         $routerReplacer = new EventRouterReplacer($httpRouter, $cliConfig);
+
+        /** @var TheseObserverService $theseObserverService */
+        $theseObserverService = $controllerManager->getServiceLocator()->get('TheseObserverService');
 
         $controller = new TheseObserverController();
         $controller->setEventRouterReplacer($routerReplacer);
-        $controller->setTheseObserverService($this->getTheseObserverService($sl));
+        $controller->setTheseObserverService($theseObserverService);
 
         return $controller;
-    }
-
-    /**
-     * @param ServiceLocatorInterface $sl
-     * @return TheseObserverService
-     */
-    private function getTheseObserverService(ServiceLocatorInterface $sl)
-    {
-        /** @var TheseObserverService $service */
-        $service = $sl->get('TheseObserverService');
-
-        return $service;
     }
 
     /**
