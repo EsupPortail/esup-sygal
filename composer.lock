@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "5c1cbec05a8d7259eb2b180f8f981e5a",
+    "content-hash": "4b0b46293affec3e3b53426489dcffa9",
     "packages": [
         {
             "name": "bjyoungblood/bjy-authorize",
@@ -1643,7 +1643,7 @@
         },
         {
             "name": "symfony/debug",
-            "version": "v3.4.5",
+            "version": "v3.4.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/debug.git",
@@ -1758,7 +1758,7 @@
         },
         {
             "name": "symfony/process",
-            "version": "v2.8.35",
+            "version": "v2.8.36",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/process.git",
@@ -1858,11 +1858,11 @@
         },
         {
             "name": "unicaen/auth",
-            "version": "1.2.0.x-dev",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/auth.git",
-                "reference": "ffe7b2565be59069bfde0b0fe2991cc1323ac1e5"
+                "reference": "737a0402b9050f868c0ae1d920120fcba854c75c"
             },
             "require": {
                 "bjyoungblood/bjy-authorize": ">=1.4",
@@ -1883,16 +1883,16 @@
                     "./Module.php"
                 ]
             },
-            "description": "Module d'authentification pour les applis ZF2 de l'UCBN",
-            "time": "2018-02-26T16:13:17+00:00"
+            "description": "Module d'authentification pour les applications Unicaen",
+            "time": "2018-03-19T09:01:16+00:00"
         },
         {
             "name": "unicaen/code",
-            "version": "1.1.1",
+            "version": "1.1.2",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/code.git",
-                "reference": "5977d3c3bd1cf7ac98825eb460f6eeb6f85bb2e8"
+                "reference": "15d3713a278ede33e8ce3a00d760e804bec8e337"
             },
             "require": {
                 "doctrine/dbal": "^2.5",
@@ -1910,7 +1910,7 @@
                 ]
             },
             "description": "Boite à outils pour la programmation avec la bibliothèque Unicaen",
-            "time": "2018-02-26T09:08:51+00:00"
+            "time": "2018-03-16T08:25:28+00:00"
         },
         {
             "name": "unicaen/faq",
@@ -3779,7 +3779,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "unicaen/auth": 20,
         "bjyoungblood/bjy-authorize": 20
     },
     "prefer-stable": false,

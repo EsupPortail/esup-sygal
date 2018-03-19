@@ -13,7 +13,7 @@
     },
     "require": {
         "unicaen/app":                          "^1.3",
-        "unicaen/auth":                         "1.2.0.x-dev",
+        "unicaen/auth":                         "^1.2",
         "unicaen/faq":                          "^1.0",
         "unicaen/ldap":                         "^2.1",
         "unicaen/import":                       "1.0.11",
