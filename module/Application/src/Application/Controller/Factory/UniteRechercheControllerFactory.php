@@ -34,8 +34,8 @@ class UniteRechercheControllerFactory implements IndividuServiceAwareInterface
          * @var RoleService $roleService
          */
         $uniteRechercheService = $controllerManager->getServiceLocator()->get('UniteRechercheService');
-        $ldapPeopleService  = $controllerManager->getServiceLocator()->get('LdapPeopleService');
-        $individuService = $controllerManager->getServiceLocator()->get('EcoleDoctoraleService');
+        $ldapPeopleService  = $controllerManager->getServiceLocator()->get('LdapServicePeople');
+        $individuService = $controllerManager->getServiceLocator()->get('IndividuService');
         $roleService = $controllerManager->getServiceLocator()->get('RoleService');
 
         $controller = new UniteRechercheController();

@@ -6,7 +6,7 @@ use Application\Service\Notification\NotificationServiceAwareInterface;
 use Application\Service\Notification\NotificationServiceAwareTrait;
 use Zend\View\Model\ViewModel;
 
-class TheseObserverService implements TheseServiceAwareInterface, NotificationServiceAwareInterface
+class TheseObserverService
 {
     use TheseServiceAwareTrait;
     use NotificationServiceAwareTrait;

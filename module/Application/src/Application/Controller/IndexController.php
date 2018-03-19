@@ -3,7 +3,6 @@
 namespace Application\Controller;
 
 use Application\Entity\Db\These;
-use Application\Service\These\TheseServiceAwareInterface;
 use Application\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\Authentication\AuthenticationServiceInterface;

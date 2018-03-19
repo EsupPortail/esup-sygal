@@ -1,6 +1,6 @@
 <?php
 
-use Application\Controller\ValidationController;
+use Application\Controller\Factory\ValidationControllerFactory;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\Provider\Privilege\ValidationPrivileges;
 use Application\Service\Validation\ValidationService;
@@ -157,8 +157,8 @@ return [
         ],
     ],
     'controllers' => [
-        'invokables' => [
-            'Application\Controller\Validation' => ValidationController::class,
+        'factories' => [
+            'Application\Controller\Validation' => ValidationControllerFactory::class,
         ],
     ],
     'controller_plugins' => [

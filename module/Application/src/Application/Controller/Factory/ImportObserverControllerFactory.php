@@ -2,8 +2,8 @@
 
 namespace Application\Controller\Factory;
 
-use Application\EventRouterReplacer;
 use Application\Controller\ImportObserverController;
+use Application\EventRouterReplacer;
 use Application\Service\ImportObservResult\ImportObservResultService;
 use Zend\Mvc\Controller\ControllerManager;
 use Zend\Mvc\Router\Http\TreeRouteStack;

@@ -3,16 +3,11 @@
 namespace Application\Controller;
 
 use Application\Controller\Plugin\Url\UrlThesePlugin;
-use Application\Entity\Db\ImportObserv;
-use Application\Entity\Db\ImportObserv as ImportNotification;
 use Application\Service\Import\SchemaService;
 use Application\Service\ImportObserv\ImportObservServiceAwareTrait;
-use Application\Service\Notification\NotificationServiceAwareInterface;
 use Application\Service\Notification\NotificationServiceAwareTrait;
-use Application\Service\These\TheseServiceAwareInterface;
 use Application\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
-use UnicaenApp\Exception\RuntimeException;
 use UnicaenImport\Entity\Differentiel\Query;
 use Zend\View\Model\ViewModel;
 

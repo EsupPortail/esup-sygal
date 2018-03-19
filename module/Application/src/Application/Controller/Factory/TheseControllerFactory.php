@@ -3,6 +3,16 @@
 namespace Application\Controller\Factory;
 
 use Application\Controller\TheseController;
+use Application\Service\Etablissement\EtablissementService;
+use Application\Service\Fichier\FichierService;
+use Application\Service\Notification\NotificationService;
+use Application\Service\Role\RoleService;
+use Application\Service\These\TheseService;
+use Application\Service\Validation\ValidationService;
+use Application\Service\Variable\VariableService;
+use Application\Service\VersionFichier\VersionFichierService;
+use Application\Service\Workflow\WorkflowService;
+use Doctrine\ORM\EntityManager;
 use Zend\Mvc\Controller\ControllerManager;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -18,10 +28,41 @@ class TheseControllerFactory
     {
         $options = $this->getOptions($controllerManager->getServiceLocator());
 
-        $service = new TheseController();
-        $service->setTimeoutRetraitement($this->getTimeoutRetraitementFromOptions($options));
+        /**
+         * @var VariableService $variableService
+         * @var ValidationService $validationService
+         * @var VersionFichierService $versionFichierService
+         * @var TheseService $theseService
+         * @var RoleService $roleService
+         * @var FichierService $fichierService
+         * @var WorkflowService $workflowService
+         * @var NotificationService $notificationService
+         * @var EtablissementService $etablissementService
+         * @var EntityManager $entityManager
+         */
+        $variableService = $controllerManager->getServiceLocator()->get('VariableService');
+        $validationService = $controllerManager->getServiceLocator()->get('ValidationService');
+        $versionFichierService = $controllerManager->getServiceLocator()->get('VersionFichierService');
+        $theseService = $controllerManager->getServiceLocator()->get('TheseService');
+        $roleService = $controllerManager->getServiceLocator()->get('RoleService');
+        $fichierService = $controllerManager->getServiceLocator()->get('FichierService');
+        $workflowService = $controllerManager->getServiceLocator()->get('WorkflowService');
+        $etablissementService = $controllerManager->getServiceLocator()->get('EtablissementService');
+        $entityManager = $controllerManager->getServiceLocator()->get('doctrine.entitymanager.orm_default');
 
-        return $service;
+        $controller = new TheseController();
+        $controller->setTimeoutRetraitement($this->getTimeoutRetraitementFromOptions($options));
+        $controller->setVariableService($variableService);
+        $controller->setValidationService($validationService);
+        $controller->setVersionFichierService($versionFichierService);
+        $controller->setTheseService($theseService);
+        $controller->setRoleService($roleService);
+        $controller->setFichierService($fichierService);
+        $controller->setWorkflowService($workflowService);
+        $controller->setEtablissementService($etablissementService);
+        $controller->setEntityManager($entityManager);
+
+        return $controller;
     }
 
     private function getTimeoutRetraitementFromOptions(array $options)

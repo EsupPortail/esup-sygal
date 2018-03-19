@@ -13,14 +13,10 @@ use Application\Entity\Db\These;
 use Application\Entity\Db\VersionFichier;
 use Application\Notification\ValidationRdvBuNotification;
 use Application\Service\BaseService;
-use Application\Service\Fichier\FichierServiceAwareInterface;
 use Application\Service\Fichier\FichierServiceAwareTrait;
-use Application\Service\Notification\NotificationServiceAwareInterface;
 use Application\Service\Notification\NotificationServiceAwareTrait;
 use Application\Service\UserContextService;
-use Application\Service\Validation\ValidationServiceAwareInterface;
 use Application\Service\Validation\ValidationServiceAwareTrait;
-use Application\Service\Variable\VariableServiceAwareInterface;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
@@ -29,9 +25,7 @@ use UnicaenApp\Traits\MessageAwareInterface;
 use UnicaenApp\Util;
 use UnicaenAuth\Entity\Db\UserInterface;
 
-class TheseService extends BaseService implements
-    ValidationServiceAwareInterface, NotificationServiceAwareInterface, FichierServiceAwareInterface,
-    VariableServiceAwareInterface
+class TheseService extends BaseService
 {
     use ValidationServiceAwareTrait;
     use NotificationServiceAwareTrait;

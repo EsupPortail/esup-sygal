@@ -3,7 +3,6 @@
 namespace Application\Controller;
 
 use Application\EventRouterReplacerAwareTrait;
-use Application\Service\These\TheseObserverServiceAwareInterface;
 use Application\Service\These\TheseObserverServiceAwareTrait;
 
 /**
@@ -11,7 +10,7 @@ use Application\Service\These\TheseObserverServiceAwareTrait;
  *
  * @author Unicaen
  */
-class TheseObserverController extends AbstractController implements TheseObserverServiceAwareInterface
+class TheseObserverController extends AbstractController
 {
     use EventRouterReplacerAwareTrait;
     use TheseObserverServiceAwareTrait;

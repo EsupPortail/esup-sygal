@@ -28,7 +28,7 @@ use Zend\View\Renderer\RendererInterface;
  *
  * @author Unicaen
  */
-class NotificationService implements VariableServiceAwareInterface, MailerServiceAwareInterface
+class NotificationService
 {
     use VariableServiceAwareTrait;
     use MailerServiceAwareTrait;
@@ -50,9 +50,8 @@ class NotificationService implements VariableServiceAwareInterface, MailerServic
      * @param MailerService     $mailerService
      * @param RendererInterface $renderer
      */
-    public function __construct(MailerService $mailerService, RendererInterface $renderer)
+    public function __construct(RendererInterface $renderer)
     {
-        $this->setMailerService($mailerService);
         $this->renderer = $renderer;
     }
 

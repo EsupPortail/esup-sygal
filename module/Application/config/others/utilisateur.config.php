@@ -1,6 +1,6 @@
 <?php
 
-use Application\Controller\UtilisateurController;
+use Application\Controller\Factory\UtilisateurControllerFactory;
 use Application\Provider\Privilege\UtilisateurPrivileges;
 use Application\Service\Individu\IndividuService;
 use Application\Service\Utilisateur\UtilisateurService;
@@ -120,9 +120,9 @@ return [
     ],
     'controllers'     => [
         'invokables' => [
-            'Application\Controller\Utilisateur' => UtilisateurController::class,
         ],
         'factories' => [
+            'Application\Controller\Utilisateur' => UtilisateurControllerFactory::class,
         ],
     ],
 ];

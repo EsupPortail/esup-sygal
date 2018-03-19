@@ -20,37 +20,26 @@ use Application\Filter\IdifyFilterAwareTrait;
 use Application\Form\AttestationTheseForm;
 use Application\Form\ConformiteFichierForm;
 use Application\Form\DiffusionTheseForm;
-use Application\Form\Hydrator\RecapBuHydrator;
 use Application\Form\MetadonneeTheseForm;
 use Application\Form\RdvBuTheseDoctorantForm;
 use Application\Form\RdvBuTheseForm;
-use Application\Form\RecapBuForm;
-use Application\Service\Etablissement\EtablissementServiceAwareInterface;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Fichier\Exception\ValidationImpossibleException;
-use Application\Service\Fichier\FichierServiceAwareInterface;
 use Application\Service\Fichier\FichierServiceAwareTrait;
-use Application\Service\Notification\NotificationServiceAwareInterface;
 use Application\Service\Notification\NotificationServiceAwareTrait;
-use Application\Service\Role\RoleServiceAwareInterface;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\These\Convention\ConventionPdfExporter;
-use Application\Service\These\TheseServiceAwareInterface;
+use Application\Service\These\PageDeGarde\PageDeCouverturePdfExporter;
 use Application\Service\These\TheseServiceAwareTrait;
-use Application\Service\Validation\ValidationServiceAwareInterface;
 use Application\Service\Validation\ValidationServiceAwareTrait;
-use Application\Service\Variable\VariableServiceAwareInterface;
 use Application\Service\Variable\VariableServiceAwareTrait;
-use Application\Service\VersionFichier\VersionFichierServiceAwareInterface;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
-use Application\Service\Workflow\WorkflowServiceAwareInterface;
 use Application\Service\Workflow\WorkflowServiceAwareTrait;
 use Application\View\Helper\Sortable;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
 use Retraitement\Exception\TimedOutCommandException;
 use UnicaenApp\Exception\RuntimeException;
-use UnicaenApp\Service\EntityManagerAwareInterface;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenApp\Service\MessageCollectorAwareTrait;
 use UnicaenApp\Traits\MessageAwareInterface;
@@ -58,14 +47,8 @@ use Zend\Form\Element\Hidden;
 use Zend\Http\Response;
 use Zend\Stdlib\ParametersInterface;
 use Zend\View\Model\ViewModel;
-use Application\Service\These\PageDeGarde\PageDeCouverturePdfExporter;
 
-class TheseController extends AbstractController implements
-    VariableServiceAwareInterface ,
-    ValidationServiceAwareInterface, VersionFichierServiceAwareInterface,
-    TheseServiceAwareInterface, RoleServiceAwareInterface, FichierServiceAwareInterface,
-    WorkflowServiceAwareInterface, NotificationServiceAwareInterface,
-    EtablissementServiceAwareInterface, EntityManagerAwareInterface
+class TheseController extends AbstractController
 {
     use VariableServiceAwareTrait;
     use TheseServiceAwareTrait;

@@ -3,8 +3,8 @@
 namespace Application\Controller\Factory;
 
 use Application\Controller\IndexController;
-use Zend\Mvc\Controller\ControllerManager;
 use Application\Service\These\TheseService;
+use Zend\Mvc\Controller\ControllerManager;
 
 class IndexControllerFactory
 {
