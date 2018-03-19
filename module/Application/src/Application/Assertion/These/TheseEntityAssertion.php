@@ -55,10 +55,7 @@ class TheseEntityAssertion implements EntityAssertionInterface, ValidationServic
              * THESE_DEPOT_VERSION_INITIALE
              */
             case ThesePrivileges::THESE_DEPOT_VERSION_INITIALE:
-                $this->assertTrue(
-                    $this->these && !$this->these->getCorrectionAutorisee(),
-                    "Le dépôt d'une version initiale n'est plus possible dès lors qu'une version corrigée est attendue."
-                );
+                $this->assertAucuneCorrectionAttendue();
                 break;
 
             /**
@@ -94,17 +91,14 @@ class TheseEntityAssertion implements EntityAssertionInterface, ValidationServic
             case ValidationPrivileges::THESE_VALIDATION_RDV_BU:
                 $this->assertAucuneValidationBU("La validation par la BU a été faite.");
                 // ce qui suit a été ajouté lors de l'absorption de l'étape RDV_BU_SAISIE_BU par l'étape RDV_BU_VALIDATION_BU
-                $this->assertTrue(
-                    ($rdvBu = $this->these->getRdvBu()) && $rdvBu->isInfosBuSaisies(),
-                    "La BU n'a pas renseigné toutes informations requises."
-                );
+                $this->assertInfosBuSaisies();
                 break;
 
             /**
              * THESE_VALIDATION_RDV_BU_SUPPR
              */
             case ValidationPrivileges::THESE_VALIDATION_RDV_BU_SUPPR:
-                $this->assertTrue($this->these && $this->these->getValidation(TypeValidation::CODE_RDV_BU));
+                $this->assertExisteValidationRdvBu();
                 $this->assertFalse($this->existeFichierTheseVersionCorrigee());
                 break;
 
@@ -121,9 +115,7 @@ class TheseEntityAssertion implements EntityAssertionInterface, ValidationServic
              * VALIDATION_DEPOT_THESE_CORRIGEE_SUPPR
              */
             case ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE_SUPPR:
-                $this->assertTrue(
-                    $this->these->getValidations(TypeValidation::CODE_CORRECTION_THESE)->count() === 0
-                );
+                $this->assertAucuneValidationCorrectionThese();
                 break;
 
             /**
@@ -131,24 +123,9 @@ class TheseEntityAssertion implements EntityAssertionInterface, ValidationServic
              */
             case ValidationPrivileges::VALIDATION_CORRECTION_THESE:
                 // le dépôt de la version corrigée doit être validé
-                $this->assertTrue(
-                    $this->these->getValidations(TypeValidation::CODE_DEPOT_THESE_CORRIGEE)->count() > 0,
-                    "Le dépôt de la version corrigée n'a pas encore été validé par le doctorant."
-                );
-
+                $this->assertExisteValidationDepotThese();
                 // recherche de l'utilisateur parmi les validateurs attendus
-                $results = $this->validationService->getValidationsAttenduesPourCorrectionThese($this->these);
-                $individu = $this->userContextService->getIdentityIndividu();
-                $this->assertTrue($individu !== null);
-                $found = false;
-                /** @var DepotVersionCorrigeeValidationDirecteur $result */
-                foreach ($results as $result) {
-                    if ($result->getIndividu()->getId() === $individu->getId()) {
-                        $found = true;
-                        break;
-                    }
-                }
-                $this->assertTrue($found);
+                $this->assertUtilisateurExisteParmiValidateursAttendus();
                 break;
 
             /**
@@ -156,29 +133,14 @@ class TheseEntityAssertion implements EntityAssertionInterface, ValidationServic
              */
             case ValidationPrivileges::VALIDATION_CORRECTION_THESE_SUPPR:
                 // recherche de l'utilisateur parmi les personnes ayant validé
-                $individu = $this->userContextService->getIdentityIndividu();
-                $this->assertTrue($individu !== null);
-                $found = false;
-                $validations = $this->these->getValidations(TypeValidation::CODE_CORRECTION_THESE);
-                foreach ($validations as $validation) {
-                    if ($validation->getIndividu() && $validation->getIndividu()->getId() === $individu->getId()) {
-                        $found = true;
-                        break;
-                    }
-                }
-                $this->assertTrue($found);
+                $this->assertUtilisateurExisteParmiValidateursAyantValide();
                 break;
 
             /**
              * Validation de la remise de la version papier corrigée.
              */
             case ValidationPrivileges::VALIDATION_VERSION_PAPIER_CORRIGEE:
-                $res = $this->validationService->getRepository()->findValidationByCodeAndThese(
-                    TypeValidation::CODE_VERSION_PAPIER_CORRIGEE,
-                    $this->these
-                );
-                $pasEncoreValidee = empty($res);
-                $this->assertTrue($pasEncoreValidee);
+                $this->assertAucuneValidationVersionPapierCorrigee();
                 break;
         }
 
@@ -198,9 +160,7 @@ class TheseEntityAssertion implements EntityAssertionInterface, ValidationServic
      */
     private function assertEntityAsDoctorant($privilege = null)
     {
-        $this->assertTrue(
-            $this->these->getDoctorant()->getId() === $this->getIdentityDoctorant()->getId(),
-            "Cette thèse n'est pas la vôtre.");
+        $this->assertUtilisateurEstAuteurDeLaThese();
 
         switch ($privilege) {
             case ThesePrivileges::THESE_SAISIE_DESCRIPTION:
@@ -214,19 +174,28 @@ class TheseEntityAssertion implements EntityAssertionInterface, ValidationServic
                 }
                 break;
         }
-        //Une correction doit être apportée par le doctorant, celui-ci ne peut plus modifier son autorisation de diffusion
+
+        // Une correction doit être apportée par le doctorant, celui-ci ne peut plus modifier son autorisation de diffusion
         if ($privilege === ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION) {
-            $this->assertFalse(
-                $this->existeFichierTheseVersionCorrigee(),
-            "Aucune version corrigée n'a été fournie.");
+            $this->assertAucunDepotVersionCorrigee();
         }
 
-        if (ThesePrivileges::THESE_DEPOT_VERSION_INITIALE) {
-            $this->assertFalse(
-                $this->these->estSoutenue(),
-                "Dépot initial bloqué car soutenance effectuée"
-            );
+        if ($privilege === ThesePrivileges::THESE_DEPOT_VERSION_INITIALE) {
+            $this->assertTheseNonSoutenue();
         }
+    }
+
+    private function assertInfosBuSaisies()
+    {
+        $this->assertTrue(
+            ($rdvBu = $this->these->getRdvBu()) && $rdvBu->isInfosBuSaisies(),
+            "La BU n'a pas renseigné toutes informations requises."
+        );
+    }
+
+    private function assertExisteValidationRdvBu()
+    {
+        $this->assertTrue($this->these && $this->these->getValidation(TypeValidation::CODE_RDV_BU));
     }
 
     private function assertAucuneValidationBU($message = null)
@@ -238,6 +207,69 @@ class TheseEntityAssertion implements EntityAssertionInterface, ValidationServic
             $message ?: "Opération impossible dès lors que la BU a validé.");
     }
 
+    private function assertAucuneCorrectionAttendue()
+    {
+        $this->assertTrue(
+            !$this->these->getCorrectionAutorisee(),
+            "Le dépôt d'une version initiale n'est plus possible dès lors qu'une version corrigée est attendue."
+        );
+    }
+
+    private function assertAucuneValidationCorrectionThese()
+    {
+        $this->assertTrue($this->these->getValidations(TypeValidation::CODE_CORRECTION_THESE)->count() === 0);
+    }
+
+    private function assertExisteValidationDepotThese()
+    {
+        $this->assertTrue(
+            $this->these->getValidations(TypeValidation::CODE_DEPOT_THESE_CORRIGEE)->count() > 0,
+            "Le dépôt de la version corrigée n'a pas encore été validé par le doctorant."
+        );
+    }
+
+    private function assertUtilisateurExisteParmiValidateursAttendus()
+    {
+        // recherche de l'utilisateur parmi les validateurs attendus
+        $results = $this->validationService->getValidationsAttenduesPourCorrectionThese($this->these);
+        $individu = $this->userContextService->getIdentityIndividu();
+        $this->assertTrue($individu !== null);
+        $found = false;
+        /** @var DepotVersionCorrigeeValidationDirecteur $result */
+        foreach ($results as $result) {
+            if ($result->getIndividu()->getId() === $individu->getId()) {
+                $found = true;
+                break;
+            }
+        }
+        $this->assertTrue($found);
+    }
+
+    private function assertUtilisateurExisteParmiValidateursAyantValide()
+    {
+        // recherche de l'utilisateur parmi les personnes ayant validé
+        $individu = $this->userContextService->getIdentityIndividu();
+        $this->assertTrue($individu !== null);
+        $found = false;
+        $validations = $this->these->getValidations(TypeValidation::CODE_CORRECTION_THESE);
+        foreach ($validations as $validation) {
+            if ($validation->getIndividu() && $validation->getIndividu()->getId() === $individu->getId()) {
+                $found = true;
+                break;
+            }
+        }
+        $this->assertTrue($found);
+    }
+
+    private function assertAucuneValidationVersionPapierCorrigee()
+    {
+        $res = $this->validationService->getRepository()->findValidationByCodeAndThese(
+            TypeValidation::CODE_VERSION_PAPIER_CORRIGEE,
+            $this->these
+        );
+        $pasEncoreValidee = empty($res);
+        $this->assertTrue($pasEncoreValidee);
+    }
 
     private function assertCorrectionAttendue()
     {
@@ -278,6 +310,28 @@ class TheseEntityAssertion implements EntityAssertionInterface, ValidationServic
                 sprintf("La date butoir pour le dépôt de la version corrigée est dépassée (%s).",
                     $dateButoir->format(Constants::DATE_FORMAT)));
         }
+    }
+
+    private function assertUtilisateurEstAuteurDeLaThese()
+    {
+        $this->assertTrue(
+            $this->these->getDoctorant()->getId() === $this->getIdentityDoctorant()->getId(),
+            "Cette thèse n'est pas la vôtre.");
+    }
+
+    private function assertAucunDepotVersionCorrigee()
+    {
+        $this->assertFalse(
+            $this->existeFichierTheseVersionCorrigee(),
+            "Aucune version corrigée n'a été fournie.");
+    }
+
+    private function assertTheseNonSoutenue()
+    {
+        $this->assertFalse(
+            $this->these->estSoutenue(),
+            "Dépot initial bloqué car soutenance effectuée"
+        );
     }
 
     /**
