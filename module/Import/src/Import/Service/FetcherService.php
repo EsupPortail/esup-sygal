@@ -74,19 +74,19 @@ class FetcherService
     public function getUrl() {
         return $this->url;
     }
-    public function setUrl(string $url)     {
+    public function setUrl($url)     {
         $this->url = $url;
     }
     public function getUser()     {
         return $this->user;
     }
-    public function setUser(string $user)     {
+    public function setUser($user)     {
         $this->user = $user;
     }
     public function getPassword()     {
         return $this->password;
     }
-    public function setPassword(string $password)    {
+    public function setPassword($password)    {
         $this->password = $password;
     }
     public function getCode()    {
@@ -156,7 +156,7 @@ class FetcherService
         ];
 
         if ($this->proxy !== null) {
-            $options['proxy'] = [ $this->proxy ];
+            $options['proxy'] =  $this->proxy ;
         } else {
             $options['proxy'] = ['no' => 'localhost'];
         }
@@ -174,6 +174,7 @@ class FetcherService
             $response->setReasonPhrase($e->getCode()." - ".$e->getMessage());
             throw $e;
         }
+//        var_dump($response);
         return $response;
     }
 
