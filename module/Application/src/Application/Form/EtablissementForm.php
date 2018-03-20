@@ -23,8 +23,8 @@ class EtablissementForm extends Form
             ->add(new Hidden('id'));
 
         $this->add((
-            new Text('code'))
-                ->setLabel("Code :")
+            new Text('sigle'))
+                ->setLabel("Sigle :")
         );
 
         $this
@@ -54,8 +54,8 @@ class EtablissementForm extends Form
 
 
         $this->setInputFilter((new Factory())->createInputFilter([
-            'code' => [
-                'name' => 'code',
+            'sigle' => [
+                'name' => 'Sigle',
                 'required' => true,
             ],
             'libelle' => [

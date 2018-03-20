@@ -26,7 +26,7 @@ $selectedEcole = null;
     <thead>
     <tr>
         <th><?php echo $this->translate("Libellé") ?></th>
-        <th><?php echo $this->translate("Code") ?></th>
+        <th><?php echo $this->translate("Sigle") ?></th>
         <th><?php echo $this->translate("Actions") ?></th>
     </tr>
     </thead>
@@ -45,7 +45,7 @@ $selectedEcole = null;
                     <?php echo $this->etab($etablissement)->getLibelle() ?>
                 </a>
             </td>
-            <td><?php echo $etablissement->getCode() ?></td>
+            <td><?php echo $etablissement->getSigle() ?></td>
             <td>
                 <?php if ($this->isAllowed(EcoleDoctoralePrivileges::getResourceId(EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION))): ?>
                     <?php if ($etablissement->estNonHistorise()): ?>
