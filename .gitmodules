@@ -1,7 +1,7 @@
-[submodule "unicaen-app"]
+[submodule "vendor/unicaen/app"]
 	path = vendor/unicaen/app
 	url = git@git.unicaen.fr:lib/unicaen/app.git
 
-[submodule "unicaen-auth"]
+[submodule "vendor/unicaen/auth"]
 	path = vendor/unicaen/auth
 	url = git@git.unicaen.fr:lib/unicaen/auth.git
