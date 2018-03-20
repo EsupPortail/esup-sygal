@@ -19,6 +19,7 @@ class Etablissement implements HistoriqueAwareInterface, SourceAwareInterface
 
     protected $id;
     protected $code;
+    protected $domaine;
     protected $theses;
     protected $doctorants;
     protected $roles;
@@ -67,6 +68,22 @@ class Etablissement implements HistoriqueAwareInterface, SourceAwareInterface
     public function setCode($code)
     {
         $this->code = $code;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDomaine()
+    {
+        return $this->domaine;
+    }
+
+    /**
+     * @param string $domaine
+     */
+    public function setDomaine($domaine)
+    {
+        $this->domaine = $domaine;
     }
 
     /**

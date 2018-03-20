@@ -16,7 +16,10 @@ class EtablissementService extends BaseService
      */
     public function getRepository()
     {
-        return $this->entityManager->getRepository(Etablissement::class);
+        /** @var EtablissementRepository $repo */
+        $repo = $this->entityManager->getRepository(Etablissement::class);
+
+        return $repo;
     }
 
     /**

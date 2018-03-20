@@ -2,6 +2,7 @@
 
 namespace Application\Service\These;
 
+use Application\Entity\AuthUserWrapper;
 use Application\Entity\Db\Attestation;
 use Application\Entity\Db\Diffusion;
 use Application\Entity\Db\Fichier;
@@ -58,13 +59,10 @@ class TheseService extends BaseService
                     ->setParameter('doctorant', $userContext->getIdentityDoctorant());
             }
             elseif ($role->isDirecteurThese()) {
-//                $people = $userContext->getIdentityLdap();
                 switch (true) {
                     case $identity = $userContext->getIdentityLdap():
-                        $supannEmpId = $identity->getSupannEmpId();
-                        break;
                     case $identity = $userContext->getIdentityShib():
-                        $supannEmpId = $identity->getId();
+                        $userWrapper = AuthUserWrapper::inst($identity);
                         break;
                     default:
                         throw new RuntimeException("Cas imprévu!");
@@ -72,7 +70,7 @@ class TheseService extends BaseService
                 $qb
                     ->join('t.acteurs', 'adt', Join::WITH, 'adt.role = :role')
                     ->join('adt.individu', 'idt', Join::WITH, 'idt.sourceCode like :idtSourceCode')
-                    ->setParameter('idtSourceCode', '%::' . $supannEmpId)
+                    ->setParameter('idtSourceCode', '%::' . $userWrapper->getSupannEmpId())
                     ->setParameter('role', $role);
             }
             // sinon role = membre jury

@@ -3,17 +3,18 @@
 namespace Application\Entity\Db\Repository;
 
 use Application\Entity\Db\Doctorant;
+use Application\Entity\Db\Etablissement;
 use Doctrine\ORM\NonUniqueResultException;
 
 class DoctorantRepository extends DefaultEntityRepository
 {
     /**
-     * @param $username
-     * @param string $etablissement
+     * @param string        $username
+     * @param Etablissement $etablissement
      * @return Doctorant
      * @throws NonUniqueResultException
      */
-    public function findOneByUsernameAndEtab($username, $etablissement)
+    public function findOneByUsernameAndEtab($username, Etablissement $etablissement)
     {
         $qb = $this->createQueryBuilder('t');
         $qb
@@ -21,7 +22,7 @@ class DoctorantRepository extends DefaultEntityRepository
             ->andWhere('1 = pasHistorise(t)')
             // todo: ajouter le code étab au persopass enregistré dans la table DOCTORANT_COMPL
             ->andWhere('t.sourceCode = :sourceCode OR c.persopass = :persopass')
-            ->setParameter('sourceCode', $etablissement . '::' . $username)
+            ->setParameter('sourceCode', $etablissement->getCode() . '::' . $username)
             ->setParameter('persopass', $username);
 
         return $qb->getQuery()->getOneOrNullResult();

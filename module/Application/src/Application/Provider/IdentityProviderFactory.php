@@ -5,6 +5,7 @@ namespace Application\Provider;
 use Application\Service\Acteur\ActeurService;
 use Application\Service\Doctorant\DoctorantService;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
+use Application\Service\Etablissement\EtablissementServiceLocateTrait;
 use Application\Service\Role\RoleService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\Utilisateur\UtilisateurService;
@@ -18,6 +19,8 @@ use ZfcUser\Service\User as UserService;
  */
 class IdentityProviderFactory
 {
+    use EtablissementServiceLocateTrait;
+
     public function __invoke(ServiceLocatorInterface $sl)
     {
         /** @var UserService $userService */
@@ -41,6 +44,8 @@ class IdentityProviderFactory
         /** @var UtilisateurService $utilisateurService */
         $utilisateurService = $sl->get('UtilisateurService');
 
+        $etablissementService = $this->locateEtablissementService($sl);
+
         $service = new IdentityProvider();
         $service->setAuthenticationService($userService->getAuthService());
         $service->setActeurService($acteurService);
@@ -49,6 +54,7 @@ class IdentityProviderFactory
         $service->setUniteRechercheService($urService);
         $service->setRoleService($roleService);
         $service->setUtilisateurService($utilisateurService);
+        $service->setEtablissementService($etablissementService);
 
         return $service;
     }

@@ -2,6 +2,7 @@
 
 namespace Application\Event;
 
+use Application\Entity\AuthUserWrapper;
 use Application\Entity\Db\Utilisateur;
 use UnicaenAuth\Event\Listener\AuthenticatedUserSavedAbstractListener;
 use UnicaenAuth\Event\UserAuthenticatedEvent;
@@ -33,16 +34,11 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
         // màj NOM Prénom
         switch (true) {
             case $user = $e->getLdapUser():
-                $displayName = $user->getNomComplet(true);
-                break;
             case $user = $e->getShibUser():
-                $displayName = $user->getDisplayName();
-                break;
-            default:
-                $displayName = $utilisateur->getDisplayName();
-                break;
+            case $user = $e->getDbUser():
         }
-        $utilisateur->setDisplayName($displayName);
+        $userWrapper= AuthUserWrapper::inst($user);
+        $utilisateur->setDisplayName($userWrapper->getDisplayName());
 
         // Sélection du dernier rôle endossé.
         if ($role = $utilisateur->getLastRole()) {

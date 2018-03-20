@@ -7,11 +7,11 @@ insert into TYPE_STRUCTURE(ID, CODE, LIBELLE) values (3, 'unite-recherche', 'Uni
 
 ---------------------- ETABLISSEMENT ---------------------
 
-INSERT INTO ETABLISSEMENT (ID, CODE, LIBELLE) VALUES (1, 'COMUE', 'Normandie Université');
-INSERT INTO ETABLISSEMENT (ID, CODE, LIBELLE) VALUES (2, 'UCN',   'Université de Caen Normandie');
-INSERT INTO ETABLISSEMENT (ID, CODE, LIBELLE) VALUES (3, 'URN',   'Université de Rouen Normandie');
-INSERT INTO ETABLISSEMENT (ID, CODE, LIBELLE) VALUES (4, 'ULHN',  'Université Le Havre Normandie');
-INSERT INTO ETABLISSEMENT (ID, CODE, LIBELLE) VALUES (5, 'INSA',  'INSA de Rouen');
+INSERT INTO ETABLISSEMENT (ID, CODE, DOMAINE) VALUES (1, 'COMUE', null);
+INSERT INTO ETABLISSEMENT (ID, CODE, DOMAINE) VALUES (2, 'UCN',   'unicaen.fr');
+INSERT INTO ETABLISSEMENT (ID, CODE, DOMAINE) VALUES (3, 'URN',   'univ-rouen.fr');
+INSERT INTO ETABLISSEMENT (ID, CODE, DOMAINE) VALUES (4, 'ULHN',  'univ-lehavre.fr');
+INSERT INTO ETABLISSEMENT (ID, CODE, DOMAINE) VALUES (5, 'INSA',  'insa-rouen.fr');
 
 ---------------------- SOURCE ---------------------
 
