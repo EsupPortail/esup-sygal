@@ -31,6 +31,18 @@ echo $this->filterPanel([
         ],
         'filterUrl' => $urlFiltrer,
     ],
+
+    $this->translate("Établissement") => [
+        'paramName' => 'etablissement',
+        'paramConfig' => [
+            ['value' => '',                             'label' => $this->translate("Tous") ],
+            ['value' => $v = 'INSA',                    'label' => $this->translate("INSA Rouen") ],
+            ['value' => $v = 'UCN',                     'label' => $this->translate("UniCaen") ],
+            ['value' => $v = 'ULHN',                    'label' => $this->translate("Univ-LeHavre") ],
+            ['value' => $v = 'URN',                     'label' => $this->translate("Univ-Rouen") ],
+        ],
+        'filterUrl' => $urlFiltrer,
+    ],
 ]) ?>
 
 

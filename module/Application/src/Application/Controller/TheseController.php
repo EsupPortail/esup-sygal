@@ -81,6 +81,7 @@ class TheseController extends AbstractController
         $needsRedirect  = false;
         $queryParams    = $this->params()->fromQuery();
         $etatThese      = $this->params()->fromQuery($name = 'etatThese');
+        $etablissement  = $this->params()->fromQuery($name = 'etablissement');
         if ($etatThese === null) { // null <=> paramètre absent
             $queryParams = array_merge($queryParams, [$name => These::ETAT_EN_COURS]);
             $needsRedirect = true;
@@ -134,7 +135,8 @@ class TheseController extends AbstractController
 
 
     private function createQueryBuilder() {
-        $etatThese = $this->params()->fromQuery($name = 'etatThese');
+        $etatThese      = $this->params()->fromQuery($name = 'etatThese');
+        $etabCode  = $this->params()->fromQuery($name = 'etablissement');
         $sort = $this->params()->fromQuery('sort');
         $text = $this->params()->fromQuery('text');
         $dir  = $this->params()->fromQuery('direction', Sortable::ASC);
@@ -148,6 +150,10 @@ class TheseController extends AbstractController
 
         if ($etatThese) {
             $qb->andWhere('t.etatThese = :etat')->setParameter('etat', $etatThese);
+        }
+        if ($etabCode) {
+            $etablissement = $this->etablissementService->getRepository()->findOneBy(["code" =>$etabCode]);
+            $qb->andWhere('t.etablissement = :etablissement')->setParameter('etablissement', $etablissement);
         }
         $sortProps = $sort ? explode('+', $sort) : [];
         foreach ($sortProps as $sortProp) {
