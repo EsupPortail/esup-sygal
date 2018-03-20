@@ -14,6 +14,7 @@ use Application\Service\Notification\NotificationServiceFactory;
 use Application\Service\Role\RoleService;
 use Application\Service\ServiceAwareInitializer;
 use Application\Service\UserContextServiceAwareInitializer;
+use Application\Service\UserContextServiceFactory;
 use Application\View\Helper\EscapeTextHelper;
 use Application\View\Helper\QueryParamsHelperFactory;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
@@ -165,11 +166,11 @@ return array(
         'invokables' => array(
             'RouteMatchInjector' => RouteMatchInjector::class,
             'UserRoleSelectedEventListener' => UserRoleSelectedEventListener::class,
-            'UnicaenAuth\Service\UserContext' => 'Application\Service\UserContextService',
             'RoleService' => RoleService::class,
         ),
         'factories' => array(
             'navigation'                     => NavigationFactoryFactory::class,
+            'UnicaenAuth\Service\UserContext' => UserContextServiceFactory::class,
             'UserAuthenticatedEventListener' => UserAuthenticatedEventListenerFactory::class,
             'UnicaenApp\Service\Mailer'      => MailerServiceFactory::class,
             'NotificationService'            => NotificationServiceFactory::class,

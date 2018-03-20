@@ -2,21 +2,24 @@
 
 namespace Application\Service;
 
-use UnicaenAuth\Entity\Shibboleth\ShibUser;
 use Application\Authentication\Storage\AppStorage;
+use Application\Entity\AuthUserWrapper;
 use Application\Entity\Db\Doctorant;
+use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
-use Application\Service\Individu\IndividuServiceAwareInterface;
+use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use UnicaenApp\Entity\Ldap\People;
+use UnicaenAuth\Entity\Shibboleth\ShibUser;
 use UnicaenAuth\Service\UserContext as BaseUserContextService;
 use Zend\Permissions\Acl\Role\RoleInterface;
 
-class UserContextService extends BaseUserContextService implements IndividuServiceAwareInterface
+class UserContextService extends BaseUserContextService
 {
     use IndividuServiceAwareTrait;
+    use EtablissementServiceAwareTrait;
 
     /**
      * @return Role|RoleInterface|null
@@ -223,22 +226,35 @@ class UserContextService extends BaseUserContextService implements IndividuServi
      */
     public function getIdentityIndividu()
     {
-        switch (true) {
-            case $identity = $this->getIdentityLdap():
-                $supannEmpId = $identity->getSupannEmpId();
-                break;
-            case $identity = $this->getIdentityShib():
-                $supannEmpId = $identity->getId();
-                break;
-            default:
-                return null;
+        $userWrapper = $this->createIdentityUserWrapper();
+
+        if ($userWrapper === null) {
+            return null;
         }
 
-        // todo: solution provisoire!
-        $etab = 'UCN';
+        $supannEmpId = $userWrapper->getSupannEmpId();
+        $domaineEtab = $userWrapper->getDomainFromEppn();
+
+        /** @var Etablissement $etablissement */
+        $etablissement = $this->etablissementService->getRepository()->findOneByDomaine($domaineEtab);
+
         /** @var Individu $individu */
-        $individu = $this->individuService->getRepository()->findOneByEmpId($supannEmpId, $etab);
+        $individu = $this->individuService->getRepository()->findOneByEmpIdAndEtab($supannEmpId, $etablissement);
 
         return $individu;
+    }
+
+    /**
+     * @return AuthUserWrapper
+     */
+    private function createIdentityUserWrapper()
+    {
+        if ($this->getIdentityLdap() === null && $this->getIdentityShib() === null) {
+            return null;
+        }
+
+        $user = $this->getIdentityLdap() ?: $this->getIdentityShib();
+
+        return AuthUserWrapper::inst($user);
     }
 }

@@ -2,16 +2,17 @@
 
 namespace Application\Authentication\Storage;
 
+use Application\Entity\AuthUserWrapper;
 use Application\Entity\Db\Doctorant;
+use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\Doctorant\DoctorantServiceAwareTrait;
+use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
-use UnicaenApp\Entity\Ldap\People;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Authentication\Storage\ChainableStorage;
 use UnicaenAuth\Authentication\Storage\ChainEvent;
-use UnicaenAuth\Entity\Shibboleth\ShibUser;
 use Zend\Authentication\Exception\ExceptionInterface;
 
 /**
@@ -27,24 +28,20 @@ class AppStorage implements ChainableStorage
 {
     use UtilisateurServiceAwareTrait;
     use DoctorantServiceAwareTrait;
+    use EtablissementServiceAwareTrait;
 
     const KEY_DB_UTILSATEUR = 'db';
     const KEY_DOCTORANT = 'doctorant';
 
     /**
-     * @var mixed
+     * @var array
      */
     private $contents;
 
     /**
-     * @var People
+     * @var AuthUserWrapper
      */
-    private $people;
-
-    /**
-     * @var ShibUser
-     */
-    private $shibUser;
+    private $userWrapper;
 
     /**
      * @var Doctorant
@@ -59,13 +56,11 @@ class AppStorage implements ChainableStorage
     {
         $this->contents = $e->getContents();
 
-        $this->people = $this->contents['ldap'];
-        $this->shibUser = $this->contents['shib'];
-
-        if (null === $this->people && null === $this->shibUser) {
-//            throw new RuntimeException("Aucune donnée d'authentification LDAP ni Shibboleth disponible");
+        if (null === $this->contents['ldap'] && null === $this->contents['shib']) {
             return;
         }
+
+        $this->userWrapper = AuthUserWrapper::inst($this->contents['ldap'] ?: $this->contents['shib']);
 
         /**
          * Recherche de l'utilisateur connecté dans la table Utilisateur.
@@ -95,11 +90,7 @@ class AppStorage implements ChainableStorage
      */
     private function fetchUtilisateur()
     {
-        if (null !== $this->people) {
-            $username = $this->people->getSupannAliasLogin();
-        } else {
-            $username = $this->shibUser->getUsername();
-        }
+        $username = $this->userWrapper->getUsername();
 
         /** @var Utilisateur $utilisateur */
         $utilisateur = $this->utilisateurService->getRepository()->findOneBy(['username' => $username]);
@@ -130,13 +121,12 @@ class AppStorage implements ChainableStorage
          * - avec son numéro étudiant (Doctorant::sourceCode),
          * - avec son persopass (DoctorantCompl::persopass), seulement après qu'il l'a saisi sur la page d'identité de la thèse.
          */
-        if (null !== $this->people) {
-            $username = $this->people->getSupannAliasLogin();
-        } else {
-            $username = $this->shibUser->getUsername();
-        }
-        // todo: solution provisoire!
-        $etablissement = 'UCN';
+        $username = $this->userWrapper->getUsername();
+        $domaineEtab = $this->userWrapper->getDomainFromEppn();
+
+        /** @var Etablissement $etablissement */
+        $etablissement = $this->etablissementService->getRepository()->findOneByDomaine($domaineEtab);
+
         try {
             $this->doctorant = $this->doctorantService->getRepository()->findOneByUsernameAndEtab($username, $etablissement);
         } catch (NonUniqueResultException $e) {

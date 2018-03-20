@@ -2,6 +2,9 @@
 
 namespace Application\Provider;
 
+use Application\Entity\AuthUserWrapper;
+use Application\Entity\Db\Etablissement;
+use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use UnicaenAuth\Entity\Shibboleth\ShibUser;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\IndividuRole;
@@ -37,8 +40,14 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
     use UniteRechercheServiceAwareTrait;
     use RoleServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
+    use EtablissementServiceAwareTrait;
 
     private $roles;
+
+    /**
+     * @var AuthUserWrapper
+     */
+    private $userWrapper;
 
     /**
      * @var AuthenticationService
@@ -79,33 +88,38 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
             return $this->roles;
         }
 
+        /** @var array $identity */
         $identity = $this->authenticationService->getIdentity();
 
-        switch (true) {
-            case isset($identity['ldap']):
-                /** @var People $userData */
-                $userData = $identity['ldap'];
-                $id = $userData->getSupannEmpId();
-                $username = $userData->getSupannAliasLogin();
-                $mail = $userData->getMail();
-                break;
-            case isset($identity['shib']):
-                /** @var ShibUser $userData */
-                $userData = $identity['shib'];
-                $id = $userData->getId();
-                $username = $userData->getUsername();
-                $mail = $userData->getEmail();
-                break;
-            default:
-//                throw new RuntimeException("Aucune donnée d'identité LDAP ni Shibboleth disponible");
-                return [];
+//        switch (true) {
+//            case isset($identity['ldap']):
+//                /** @var People $userData */
+//                $userData = $identity['ldap'];
+//                $id = $userData->getSupannEmpId();
+//                $username = $userData->getSupannAliasLogin();
+//                $mail = $userData->getMail();
+//                break;
+//            case isset($identity['shib']):
+//                /** @var ShibUser $userData */
+//                $userData = $identity['shib'];
+//                $id = $userData->getId();
+//                $username = $userData->getUsername();
+//                $mail = $userData->getEmail();
+//                break;
+//            default:
+////                throw new RuntimeException("Aucune donnée d'identité LDAP ni Shibboleth disponible");
+//                return [];
+//        }
+        $this->userWrapper = AuthUserWrapper::instFromIdentity($identity);
+        if ($this->userWrapper === null) {
+            return [];
         }
 
         $roles = array_merge([],
-            $this->getRolesFromAutreCompteUtilisateur($mail),
-            $this->getRolesFromActeur($id),
-            $this->getRolesFromIndividuRole($id),
-            $this->getRolesFromDoctorant($username));
+            $this->getRolesFromAutreCompteUtilisateur(),
+            $this->getRolesFromActeur(),
+            $this->getRolesFromIndividuRole(),
+            $this->getRolesFromDoctorant());
 
         // suppression des doublons en comparant le __toString() de chaque Role
         $this->roles = array_unique($roles, SORT_STRING);
@@ -114,11 +128,12 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
     }
 
     /**
-     * @param string $mail
      * @return Role[]
      */
-    private function getRolesFromAutreCompteUtilisateur($mail)
+    private function getRolesFromAutreCompteUtilisateur()
     {
+        $mail = $this->userWrapper->getEmail();
+
         /** @var Utilisateur[] $utilisateurs */
         $utilisateurs = $this->utilisateurService->getRepository()->findBy(['email' => $mail]);
 
@@ -133,11 +148,12 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
     /**
      * Rôles découlant de la présence de l'utilisateur dans la table Acteur.
      *
-     * @param string $id
      * @return Role[]
      */
-    private function getRolesFromActeur($id)
+    private function getRolesFromActeur()
     {
+        $id = $this->userWrapper->getSupannEmpId();
+
         $acteurs = $this->acteurService->getRepository()->findBySourceCodeIndividu($id);
 
         // pour l'instant on ne considère pas tous les types d'acteur
@@ -152,11 +168,12 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
 
     /** Rôle découlant de la présence dans IndividuRoles.
      *
-     * @param string $id
      * @return Role[]
      */
-    private function getRolesFromIndividuRole($id)
+    private function getRolesFromIndividuRole()
     {
+        $id = $this->userWrapper->getSupannEmpId();
+
         $roles = $this->roleService->getIndividuRolesByIndividuSourceCode($id);
 
         usort($roles, function (IndividuRole $a, IndividuRole $b) {
@@ -177,19 +194,21 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
     /**
      * Rôle découlant de la présence de l'utilisateur dans la table Doctorant.
      *
-     * @param string $id
      * @return Role[]
      */
-    private function getRolesFromDoctorant($id)
+    private function getRolesFromDoctorant()
     {
+        $username = $this->userWrapper->getUsername();
+        $domaineEtab = $this->userWrapper->getDomainFromEppn();
+
+        /** @var Etablissement $etablissement */
+        $etablissement = $this->etablissementService->getRepository()->findOneByDomaine($domaineEtab);
+
         /**
          * NB: Un doctorant a la possibilité de s'authentifier :
          * - avec son numéro étudiant (Doctorant::sourceCode),
          * - avec son persopass (DoctorantCompl::persopass), seulement après qu'il l'a saisi sur la page d'identité de la thèse.
          */
-        $username = $id;
-        // todo: solution provisoire!
-        $etablissement = 'UCN';
         try {
             $doctorant = $this->doctorantService->getRepository()->findOneByUsernameAndEtab($username, $etablissement);
         } catch (NonUniqueResultException $e) {

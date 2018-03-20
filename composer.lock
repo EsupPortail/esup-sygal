@@ -1807,11 +1807,11 @@
         },
         {
             "name": "unicaen/app",
-            "version": "1.3.7",
+            "version": "1.3.8",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/app.git",
-                "reference": "fd95b9fbcd29660a265b9019c619d532ef6b2037"
+                "reference": "95d8e41b41b8f10ace5ab6ec98fa37aa7babb9a3"
             },
             "require": {
                 "doctrine/doctrine-orm-module": ">=0.7",
@@ -1854,15 +1854,15 @@
                 ]
             },
             "description": "Module de base des applications unicaen",
-            "time": "2018-03-15T15:14:58+00:00"
+            "time": "2018-03-20T09:08:06+00:00"
         },
         {
             "name": "unicaen/auth",
-            "version": "1.2.0",
+            "version": "1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/auth.git",
-                "reference": "737a0402b9050f868c0ae1d920120fcba854c75c"
+                "reference": "7abd386db52021383bc6dc9a84793bb59d8c3b2e"
             },
             "require": {
                 "bjyoungblood/bjy-authorize": ">=1.4",
@@ -1884,7 +1884,7 @@
                 ]
             },
             "description": "Module d'authentification pour les applications Unicaen",
-            "time": "2018-03-19T09:01:16+00:00"
+            "time": "2018-03-20T09:01:12+00:00"
         },
         {
             "name": "unicaen/code",
