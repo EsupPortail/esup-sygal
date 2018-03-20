@@ -88,6 +88,22 @@ class Etablissement implements HistoriqueAwareInterface, SourceAwareInterface
     /**
      * @return string
      */
+    public function getSigle()
+    {
+        return $this->getStructure()->getSigle();
+    }
+
+    /**
+     * @param string $sigle
+     */
+    public function setSigle($sigle)
+    {
+        $this->getStructure()->setSigle($sigle);
+    }
+
+    /**
+     * @return string
+     */
     public function getCheminLogo()
     {
         return $this->getStructure()->getCheminLogo();
@@ -107,7 +123,7 @@ class Etablissement implements HistoriqueAwareInterface, SourceAwareInterface
     public function getLogoContent()
     {
         if ($this->getCheminLogo() === null) {
-            $image = Util::createImageWithText("Aucun logo pour l'Etab|" . $this->getCode() . "|" . $this->getLibelle(), 200, 200);
+            $image = Util::createImageWithText("Aucun logo pour l'Etab|" . $this->getSigle(), 200, 200);
             return $image;
         }
         return file_get_contents(APPLICATION_DIR . $this->getCheminLogo()) ?: null;
