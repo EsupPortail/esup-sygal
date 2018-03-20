@@ -81,9 +81,13 @@ class TheseController extends AbstractController
         $needsRedirect  = false;
         $queryParams    = $this->params()->fromQuery();
         $etatThese      = $this->params()->fromQuery($name = 'etatThese');
-        $etablissement  = $this->params()->fromQuery($name = 'etablissement');
         if ($etatThese === null) { // null <=> paramètre absent
             $queryParams = array_merge($queryParams, [$name => These::ETAT_EN_COURS]);
+            $needsRedirect = true;
+        }
+        $etablissement  = $this->params()->fromQuery($name = 'etablissement');
+        if ($etablissement === null) { // null <=> paramètre absent
+            $queryParams = array_merge($queryParams, [$name => ""]);
             $needsRedirect = true;
         }
         $sort = $this->params()->fromQuery('sort');
@@ -136,7 +140,7 @@ class TheseController extends AbstractController
 
     private function createQueryBuilder() {
         $etatThese      = $this->params()->fromQuery($name = 'etatThese');
-        $etabCode  = $this->params()->fromQuery($name = 'etablissement');
+        $etabCode       = $this->params()->fromQuery($name = 'etablissement');
         $sort = $this->params()->fromQuery('sort');
         $text = $this->params()->fromQuery('text');
         $dir  = $this->params()->fromQuery('direction', Sortable::ASC);
