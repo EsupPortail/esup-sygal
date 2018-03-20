@@ -8,6 +8,7 @@ use Zend\View\Model\ViewModel;
 
 class ImportController extends AbstractActionController
 {
+    private $debug = false;
 
     /** @var $fetcherService FetcherService*/
     protected $fetcherService;
@@ -37,10 +38,15 @@ class ImportController extends AbstractActionController
         $service_para  = $this->params('service');
         $etablissement = $this->params('etablissement');
         $source_code   = $this->params('source_code');
+        if ($this->debug) {
+            echo "SERVICE: {$service_para}<br/>";
+            echo "ETABLISSEMENT: {$etablissement}<br/>";
+            echo "SOURCE_CODE: {$source_code}<br/>";
+        }
 
         /** is it all ? */
         if ($service_para === "all") {
-            $services = ['source', 'variable', 'role', 'doctorant', 'these', 'individu', 'acteur'];
+            $services = ['variable', 'role', 'doctorant', 'these', 'individu', 'acteur'];
         } else {
             $services = [ $service_para ];
         }
@@ -51,6 +57,19 @@ class ImportController extends AbstractActionController
             /** Paramétrage du service de récupération */
             $key = $this->fetcherService->getEtablissementKey($etablissement);
             $this->fetcherService->setConfigWithPosition($key);
+            if ($this->debug) {
+                echo "KEY: {$key}<br/>";
+                echo $this->fetcherService->getCode() . " | ";
+                echo $this->fetcherService->getUrl() . " | ";
+                echo $this->fetcherService->getProxy() . " | ";
+                echo (($this->fetcherService->getVerify())?"true":"false") . " <br/> ";
+
+                echo $this->fetcherService->getUser() . " | ";
+                echo $this->fetcherService->getPassword(). " | ";
+
+            }
+
+
 
             $dataName = $service;
             $entityClass = "Import\Model\Tmp" . ucwords($service);
@@ -87,7 +106,7 @@ class ImportController extends AbstractActionController
 
         /** is it all ? */
         if ($service_para === "all") {
-            $services = ['source', 'variable', 'role', 'doctorant', 'these', 'individu', 'acteur'];
+            $services = ['variable', 'role', 'doctorant', 'these', 'individu', 'acteur'];
         } else {
             $services = [ $service_para ];
         }
