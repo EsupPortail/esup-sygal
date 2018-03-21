@@ -6,7 +6,7 @@ use Application\Provider\Privilege\UtilisateurPrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
 use Zend\Mvc\Router\Http\Literal;
 use Zend\Mvc\Router\Http\Segment;
-
+use UnicaenAuth\Provider\Privilege\Privileges;
 return [
     'bjyauthorize'    => [
         'guards' => [
@@ -22,9 +22,20 @@ return [
                     'controller' => 'Application\Controller\Role',
                     'action'     => [
                         'index',
+                    ],
+                    'privileges' => [
+                        Privileges::DROIT_PRIVILEGE_VISUALISATION,
+                        Privileges::DROIT_PRIVILEGE_EDITION,
+                    ],
+                ],
+                [
+                    'controller' => 'Application\Controller\Role',
+                    'action'     => [
                         'modifier',
                     ],
-                    'privileges' => UtilisateurPrivileges::UTILISATEUR_ATTRIBUTION_ROLE,
+                    'privileges' => [
+                        Privileges::DROIT_PRIVILEGE_EDITION,
+                    ],
                 ],
                 [
                     'controller' => 'UnicaenApp\Controller\Application',

@@ -1,6 +1,14 @@
 <?php
     use Application\Entity\Db\Role;
     use Application\Entity\Db\Privilege;
+    use UnicaenAuth\Provider\Privilege\Privileges;
+
+
+    $canVisualiser = $this->isAllowed(Privileges::getResourceId(Privileges::DROIT_PRIVILEGE_VISUALISATION));
+    $canModifier = $this->isAllowed(Privileges::getResourceId(Privileges::DROIT_PRIVILEGE_EDITION));
+
+//    var_dump($canVisualiser);
+//    var_dump($canModifier);
 
 /**
  * //Provenant du controleur
@@ -14,6 +22,7 @@
 ?>
 
 
+
 <?php $this->headTitle($this->translate("Rôles/Privilèges")) ?>
 <h1 class="page-header first"><?php echo $this->translate("Rôles/Privilèges") ?>
 
@@ -23,25 +32,36 @@
         <?php echo $this->partial('partial/form-filtrage') ?>
     </div>
 
+    <div class="pull-right">
+        Structure
+        <select>
+            <option value = "AAA"> <span class="ur"> Ma petite UR</span></option>
+            <option value = "BBB"> <span class="ed"> Ma petite ED</span></option>
+            <option value = "EEE"> <span class="etab"> Mon Univ</span></option>
+        </select>
+    </div>
 
 <?php
 
+echo "<p>";
 echo "<table id='mytable' class='mytable table-bordered'>";
-echo "<tr><th></th>";
+echo "<thead>";
+echo "<tr class='ttt'><th></th>";
 
 foreach($roles as $role) {
     echo generateTableHeaderRole($role, $etablissements);
 }
 echo "</tr>";
-
+echo "</thead>";
+echo "<tbody>";
 
 $previous_categorie = null;
 foreach($privileges as $privilege) {
     if ($previous_categorie !== $privilege->getCategorie()) {
-        echo "<tr><th colspan='1000' class='categorie'>".$privilege->getCategorie()->getLibelle()."</th></tr>";
+        echo "<tr class='ttt'><th colspan='1000' class='categorie'>".$privilege->getCategorie()->getLibelle()."</th></tr>";
         $previous_categorie = $privilege->getCategorie();
     }
-    echo "<tr>";
+    echo "<tr class='ttt'>";
     echo "<th class='privilege'> {$privilege->getLibelle()} </th>";
     foreach($roles as $role) {
 
@@ -62,12 +82,21 @@ foreach($privileges as $privilege) {
     }
     echo "</tr>";
 }
+echo "</tbody>";
 echo "</table>";
+echo "</p>";
 ?>
 
 <script>
     $(document).ready(function() {
         $("td").click(function() {
+
+            var canModifier =  Boolean(<?php echo $canModifier; ?>);
+            if (!canModifier) {
+                alert("Vous n'êtes pas autorisé à modifier les privilèges associés à un rôle.");
+                return;
+            }
+
             var id = $(this).attr("id");
             var splits = id.split("_");
             var role = splits[1];
@@ -221,5 +250,4 @@ echo "</table>";
     td.droit :hover {
         cursor:pointer;
     }
-
 </style>
