@@ -17,6 +17,7 @@ class EtablissementHydrator extends DoctrineObject
     {
         $data = parent::extract($etablissement);
         $data['libelle'] = $etablissement->getLibelle();
+        $data['code'] = $etablissement->getCode();
         $data['sigle'] = $etablissement->getSigle();
         $data['cheminLogo'] = $etablissement->getCheminLogo();
 
@@ -37,6 +38,7 @@ class EtablissementHydrator extends DoctrineObject
 
         $object->setLibelle($data['libelle']);
         $object->setSigle($data['sigle']);
+        $object->setCode($data['code']);
         $object->setCheminLogo($data['cheminLogo']);
 
         return $object;

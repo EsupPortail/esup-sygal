@@ -27,6 +27,11 @@ class EtablissementForm extends Form
                 ->setLabel("Sigle :")
         );
 
+        $this->add((
+        new Text('code'))
+            ->setLabel("Code :")
+        );
+
         $this
             ->add((
                 new Text('libelle'))

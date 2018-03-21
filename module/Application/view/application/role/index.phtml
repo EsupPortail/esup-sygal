@@ -108,9 +108,11 @@ echo "</table>";
 
     function getCode(Role $role, $etablissements) {
 
+        //TODO changer se morceau de code maladroit
+
         /** @var \Application\Entity\Db\Etablissement $etablissement */
         foreach($etablissements as $etablissement) {
-            if ($etablissement->getId() == $role->getStructure()->getId()) {
+            if ($etablissement->getSigle() == $role->getStructure()->getSigle()) {
                 return $etablissement->getCode();
             }
         }
