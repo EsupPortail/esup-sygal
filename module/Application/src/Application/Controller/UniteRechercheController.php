@@ -4,6 +4,8 @@ namespace Application\Controller;
 
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
+use Application\Entity\Db\RoleModele;
+use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
 use Application\Form\UniteRechercheForm;
 use Application\RouteMatch;
@@ -119,6 +121,10 @@ class UniteRechercheController extends AbstractController
         return $viewModel;
     }
 
+    /**
+     * @return \Zend\Http\Response|ViewModel
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
     public function ajouterAction()
     {
         if ($data = $this->params()->fromPost()) {
@@ -137,6 +143,9 @@ class UniteRechercheController extends AbstractController
                 if ($file['cheminLogo']['tmp_name'] !== '') {
                     $this->ajouterLogoUniteRecherche($file['cheminLogo']['tmp_name'], $unite);
                 }
+
+                //creation automatique des roles associés à une unité de recherche
+                $this->roleService->addRoleUniteRecherche($unite);
 
                 $this->flashMessenger()->addSuccessMessage("Unité de recherche '$unite' créée avec succès");
 
