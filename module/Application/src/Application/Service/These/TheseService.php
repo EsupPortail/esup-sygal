@@ -19,6 +19,8 @@ use Application\Service\Notification\NotificationServiceAwareTrait;
 use Application\Service\UserContextService;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
+use Doctrine\DBAL\DBALException;
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use UnicaenApp\Exception\RuntimeException;
@@ -108,6 +110,8 @@ class TheseService extends BaseService
     }
 
     /**
+     * Recherche de thèses à l'aide de la vue matérialisée MV_RECHERCHE_THESE.
+     *
      * @param string  $text
      * @param integer $limit
      *
@@ -144,7 +148,11 @@ class TheseService extends BaseService
         $orc = implode(' OR ', $orc);
         $sql .= ' AND (' . $orc . ') ';
 
-        $stmt = $this->getEntityManager()->getConnection()->executeQuery($sql);
+        try {
+            $stmt = $this->getEntityManager()->getConnection()->executeQuery($sql);
+        } catch (DBALException $e) {
+            throw new RuntimeException("Erreur rencontrée lors de la requête", null, $e);
+        }
 
         $theses = [];
         while ($r = $stmt->fetch()) {
@@ -170,7 +178,11 @@ class TheseService extends BaseService
             $this->entityManager->persist($metadonnee);
         }
 
-        $this->entityManager->flush($metadonnee);
+        try {
+            $this->entityManager->flush($metadonnee);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement", null, $e);
+        }
     }
 
     /**
@@ -186,7 +198,11 @@ class TheseService extends BaseService
             $this->entityManager->persist($attestation);
         }
 
-        $this->entityManager->flush($attestation);
+        try {
+            $this->entityManager->flush($attestation);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement", null, $e);
+        }
     }
 
     /**
@@ -209,7 +225,11 @@ class TheseService extends BaseService
             $this->entityManager->remove($attestation);
         }
 
-        $this->entityManager->flush($attestation);
+        try {
+            $this->entityManager->flush($attestation);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement", null, $e);
+        }
     }
 
     /**
@@ -225,7 +245,11 @@ class TheseService extends BaseService
             $this->entityManager->persist($mel);
         }
 
-        $this->entityManager->flush($mel);
+        try {
+            $this->entityManager->flush($mel);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement", null, $e);
+        }
     }
 
     /**
@@ -248,7 +272,11 @@ class TheseService extends BaseService
             $this->entityManager->remove($diffusion);
         }
 
-        $this->entityManager->flush($diffusion);
+        try {
+            $this->entityManager->flush($diffusion);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement", null, $e);
+        }
     }
 
     /**
@@ -280,7 +308,11 @@ class TheseService extends BaseService
 
         $fichier->setEstConforme($conforme);
 
-        $this->entityManager->flush($fichier);
+        try {
+            $this->entityManager->flush($fichier);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement", null, $e);
+        }
     }
 
     /**
@@ -296,7 +328,11 @@ class TheseService extends BaseService
             $this->entityManager->persist($rdvBu);
         }
 
-        $this->entityManager->flush($rdvBu);
+        try {
+            $this->entityManager->flush($rdvBu);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement", null, $e);
+        }
 
         // si tout est renseigné, on valide automatiquement
         if ($rdvBu->isInfosBuSaisies()) {
