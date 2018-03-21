@@ -13,7 +13,6 @@ use ZfcUser\Entity\UserInterface;
  */
 class UserAuthenticatedEvent extends \UnicaenAuth\Event\UserAuthenticatedEvent
 {
-    const PRE_PERSIST      = 'prePersist';
     const PARAM_DB_USER    = 'db_user';
     const PARAM_LDAP_USER  = 'ldap_user';
     const PARAM_SHIB_USER  = 'shib_user';

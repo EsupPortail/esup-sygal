@@ -2,7 +2,7 @@
 
 namespace Application\Service\These;
 
-use Application\Entity\AuthUserWrapper;
+use Application\Entity\UserWrapper;
 use Application\Entity\Db\Attestation;
 use Application\Entity\Db\Diffusion;
 use Application\Entity\Db\Fichier;
@@ -62,7 +62,7 @@ class TheseService extends BaseService
                 switch (true) {
                     case $identity = $userContext->getIdentityLdap():
                     case $identity = $userContext->getIdentityShib():
-                        $userWrapper = AuthUserWrapper::inst($identity);
+                        $userWrapper = UserWrapper::inst($identity);
                         break;
                     default:
                         throw new RuntimeException("Cas imprévu!");

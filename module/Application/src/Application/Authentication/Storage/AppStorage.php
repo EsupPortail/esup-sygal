@@ -2,7 +2,7 @@
 
 namespace Application\Authentication\Storage;
 
-use Application\Entity\AuthUserWrapper;
+use Application\Entity\UserWrapper;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Utilisateur;
@@ -39,7 +39,7 @@ class AppStorage implements ChainableStorage
     private $contents;
 
     /**
-     * @var AuthUserWrapper
+     * @var UserWrapper
      */
     private $userWrapper;
 
@@ -60,7 +60,7 @@ class AppStorage implements ChainableStorage
             return;
         }
 
-        $this->userWrapper = AuthUserWrapper::inst($this->contents['ldap'] ?: $this->contents['shib']);
+        $this->userWrapper = UserWrapper::inst($this->contents['ldap'] ?: $this->contents['shib']);
 
         /**
          * Recherche de l'utilisateur connecté dans la table Utilisateur.

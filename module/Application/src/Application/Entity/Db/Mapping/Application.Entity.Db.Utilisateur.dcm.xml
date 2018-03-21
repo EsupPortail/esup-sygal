@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-  <entity name="Application\Entity\Db\Utilisateur" table="UTILISATEUR">
+  <entity name="Application\Entity\Db\Utilisateur" table="UTILISATEUR"
+          repository-class="Application\Entity\Db\Repository\UtilisateurRepository">
     <id name="id" type="integer" column="ID">
       <generator strategy="SEQUENCE"/>
     </id>

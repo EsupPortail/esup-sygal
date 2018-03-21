@@ -2,7 +2,7 @@
 
 namespace Application\Provider;
 
-use Application\Entity\AuthUserWrapper;
+use Application\Entity\UserWrapper;
 use Application\Entity\Db\Etablissement;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use UnicaenAuth\Entity\Shibboleth\ShibUser;
@@ -45,7 +45,7 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
     private $roles;
 
     /**
-     * @var AuthUserWrapper
+     * @var UserWrapper
      */
     private $userWrapper;
 
@@ -110,7 +110,7 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
 ////                throw new RuntimeException("Aucune donnée d'identité LDAP ni Shibboleth disponible");
 //                return [];
 //        }
-        $this->userWrapper = AuthUserWrapper::instFromIdentity($identity);
+        $this->userWrapper = UserWrapper::instFromIdentity($identity);
         if ($this->userWrapper === null) {
             return [];
         }

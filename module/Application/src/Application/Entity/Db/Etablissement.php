@@ -15,6 +15,9 @@ class Etablissement implements HistoriqueAwareInterface, SourceAwareInterface
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
+
+    const ETAB_PREFIX_SEP = '::';
+
     const CODE_COMUE = 'COMUE';
 
     protected $id;
@@ -28,6 +31,17 @@ class Etablissement implements HistoriqueAwareInterface, SourceAwareInterface
      * @var Structure
      */
     protected $structure;
+
+    /**
+     * Ajoute le préfixe établissement à la chaîne de caractères sépecifiée.
+     *
+     * @param string $string
+     * @return string
+     */
+    public function prependPrefixTo($string)
+    {
+        return $this->getCode() . self::ETAB_PREFIX_SEP . $string;
+    }
 
     /**
      * Etablissement constructor.

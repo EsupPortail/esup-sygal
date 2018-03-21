@@ -4,17 +4,16 @@ namespace Application\Controller\Factory;
 
 use Application\Controller\UniteRechercheController;
 use Application\Form\UniteRechercheForm;
+use Application\Service\Etablissement\EtablissementServiceLocateTrait;
 use Application\Service\Individu\IndividuService;
-use Application\Service\Individu\IndividuServiceAwareInterface;
-use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use UnicaenLdap\Service\People as LdapPeopleService;
 use Zend\Mvc\Controller\ControllerManager;
 
-class UniteRechercheControllerFactory implements IndividuServiceAwareInterface
+class UniteRechercheControllerFactory
 {
-    use IndividuServiceAwareTrait;
+    use EtablissementServiceLocateTrait;
 
     /**
      * Create service
@@ -24,8 +23,10 @@ class UniteRechercheControllerFactory implements IndividuServiceAwareInterface
      */
     public function __invoke(ControllerManager $controllerManager)
     {
+        $sl = $controllerManager->getServiceLocator();
+
         /** @var UniteRechercheForm $form */
-        $form = $controllerManager->getServiceLocator()->get('FormElementManager')->get('UniteRechercheForm');
+        $form = $sl->get('FormElementManager')->get('UniteRechercheForm');
 
         /**
          * @var UniteRechercheService $uniteRechercheService
@@ -33,16 +34,17 @@ class UniteRechercheControllerFactory implements IndividuServiceAwareInterface
          * @var IndividuService $individuService
          * @var RoleService $roleService
          */
-        $uniteRechercheService = $controllerManager->getServiceLocator()->get('UniteRechercheService');
-        $ldapPeopleService  = $controllerManager->getServiceLocator()->get('LdapServicePeople');
-        $individuService = $controllerManager->getServiceLocator()->get('IndividuService');
-        $roleService = $controllerManager->getServiceLocator()->get('RoleService');
+        $uniteRechercheService = $sl->get('UniteRechercheService');
+        $ldapPeopleService  = $sl->get('LdapServicePeople');
+        $individuService = $sl->get('IndividuService');
+        $roleService = $sl->get('RoleService');
 
         $controller = new UniteRechercheController();
         $controller->setUniteRechercheService($uniteRechercheService);
         $controller->setLdapPeopleService($ldapPeopleService);
         $controller->setIndividuService($individuService);
         $controller->setRoleService($roleService);
+        $controller->setEtablissementService($this->locateEtablissementService($sl));
         $controller->setUniteRechercheForm($form);
 
         return $controller;

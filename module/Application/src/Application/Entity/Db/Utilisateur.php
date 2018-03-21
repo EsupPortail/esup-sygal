@@ -13,7 +13,7 @@ use ZfcUser\Entity\UserInterface;
  */
 class Utilisateur extends AbstractUser implements UserInterface, ProviderInterface
 {
-    const APP_UTILISATEUR_ID = 1;
+    const APP_UTILISATEUR_USERNAME = 'sygal-app';
 
     /**
      * @var Role

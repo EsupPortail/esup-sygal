@@ -2,13 +2,16 @@
 
 namespace Application\Service\Individu;
 
+use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Repository\IndividuRepository;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\Structure;
+use Application\Entity\Db\Utilisateur;
+use Application\Entity\UserWrapper;
 use Application\Service\BaseService;
-use UnicaenImport\Entity\Db\Source;
+use Doctrine\ORM\OptimisticLockException;
+use UnicaenApp\Exception\RuntimeException;
 use UnicaenLdap\Entity\People;
 
 class IndividuService extends BaseService
@@ -18,14 +21,18 @@ class IndividuService extends BaseService
      */
     public function getRepository()
     {
-        return $this->entityManager->getRepository(Individu::class);
+        /** @var IndividuRepository $repo */
+        $repo = $this->entityManager->getRepository(Individu::class);
+
+        return $repo;
     }
 
     /**
-     * @param People $people
+     * @param People        $people
+     * @param Etablissement $etablissement
      * @return Individu
      */
-    public function createFromPeople(People $people)
+    public function createFromPeopleAndEtab(People $people, Etablissement $etablissement)
     {
         $sns = (array)$people->get('sn');
         $usuel = array_pop($sns);
@@ -39,16 +46,56 @@ class IndividuService extends BaseService
         $entity->setCivilite($people->get('supannCivilite'));
         $entity->setEmail($people->get('mail'));
 
-        /** @var Source $source */
-        $entity->setSourceCode($people->get('supannEmpId'));
+        $entity->setSourceCode($etablissement->prependPrefixTo($people->get('supannEmpId')));
 
         $this->getEntityManager()->persist($entity);
-        $this->getEntityManager()->flush($entity);
+        try {
+            $this->getEntityManager()->flush($entity);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Impossible d'enregistrer l'Individu", null, $e);
+        }
 
         return $entity;
     }
 
-    public function getIndividuByRole(Role $role) {
+    /**
+     * @param UserWrapper   $userWrapper
+     * @param Etablissement $etablissement
+     * @param Utilisateur   $utilisateur   Auteur éventuel de la création
+     * @return Individu
+     */
+    public function createFromUserWrapperAndEtab(UserWrapper $userWrapper,
+                                                 Etablissement $etablissement,
+                                                 Utilisateur $utilisateur = null)
+    {
+        $entity = new Individu();
+
+        $entity->setNomUsuel($userWrapper->getNom());
+        $entity->setNomPatronymique($userWrapper->getNom());
+        $entity->setPrenom($userWrapper->getPrenom());
+        $entity->setCivilite($userWrapper->getCivilite());
+        $entity->setEmail($userWrapper->getEmail());
+
+        $entity->setSourceCode($etablissement->prependPrefixTo($userWrapper->getSupannEmpId()));
+
+        $entity->setHistoCreateur($utilisateur);
+
+        $this->getEntityManager()->persist($entity);
+        try {
+            $this->getEntityManager()->flush($entity);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Impossible d'enregistrer l'Individu", null, $e);
+        }
+
+        return $entity;
+    }
+
+    /**
+     * @param Role $role
+     * @return IndividuRole[]
+     */
+    public function getIndividuByRole(Role $role)
+    {
         $repo = $this->entityManager->getRepository(IndividuRole::class);
         $qb = $repo->createQueryBuilder("ir")
             -> join (Individu::class, "in")
@@ -56,7 +103,9 @@ class IndividuService extends BaseService
             ->setParameter("role", $role)
         ;
         $query = $qb->getQuery();
+        /** @var IndividuRole[] $res */
         $res = $query->execute();
+
         return $res;
     }
 }
