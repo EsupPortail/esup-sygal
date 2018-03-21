@@ -5,14 +5,17 @@ namespace Application\Controller;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
 use Application\RouteMatch;
+use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\View\Helper\Sortable;
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
+use UnicaenApp\Exception\RuntimeException;
 use UnicaenLdap\Entity\People;
 use UnicaenLdap\Filter\People as LdapPeopleFilter;
 use UnicaenLdap\Service\LdapPeopleServiceAwareTrait;
@@ -26,7 +29,11 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     use UserContextServiceAwareTrait;
     use RoleServiceAwareTrait;
     use LdapPeopleServiceAwareTrait;
+    use IndividuServiceAwareTrait;
 
+    /**
+     * @return array|\Zend\Http\Response|ViewModel
+     */
     public function indexAction()
     {
         /**
@@ -173,11 +180,23 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             $message = "Le rôle '$role' a été accordé avec succès à l'utilisateur '$utilisateur'.";
         }
 
-        $this->utilisateurService->getEntityManager()->flush($utilisateur);
+        try {
+            $this->utilisateurService->getEntityManager()->flush($utilisateur);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement de l'utilisateur", null, $e);
+        }
 
         return new JsonModel(['status' => 'success', 'message' => $message]);
     }
 
+    /**
+     * AJAX.
+     *
+     * Recherche d'un compte LDAP.
+     *
+     * @return JsonModel
+     * @throws \UnicaenLdap\Exception
+     */
     public function rechercherPeopleAction()
     {
         if (($term = $this->params()->fromQuery('term'))) {
@@ -204,6 +223,38 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             });
 
             // todo: chercher pourquoi le tri est foutu en l'air par la conversion en JSON
+            return new JsonModel($result);
+        }
+        exit;
+    }
+
+    /**
+     * AJAX.
+     *
+     * Recherche d'un Individu.
+     *
+     * @return JsonModel
+     */
+    public function rechercherIndividuAction()
+    {
+        if (($term = $this->params()->fromQuery('term'))) {
+            $rows = $this->individuService->getRepository()->findByText($term);
+            $result = [];
+            foreach ($rows as $row) {
+                $prenoms = implode(' ', array_filter([$row['PRENOM1'], $row['PRENOM2'], $row['PRENOM3']]));
+                // mise en forme attendue par l'aide de vue FormSearchAndSelect
+                $label = $row['NOM_USUEL'] . ' ' . $prenoms;
+                $extra = $row['EMAIL'] ?: $row['SOURCE_CODE'];
+                $result[] = array(
+                    'id'    => $row['ID'], // identifiant unique de l'item
+                    'label' => $label,     // libellé de l'item
+                    'extra' => $extra,     // infos complémentaires (facultatives) sur l'item
+                );
+            }
+            usort($result, function($a, $b) {
+                return strcmp($a['label'], $b['label']);
+            });
+
             return new JsonModel($result);
         }
         exit;

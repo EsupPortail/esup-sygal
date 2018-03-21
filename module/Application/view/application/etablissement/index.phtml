@@ -2,7 +2,7 @@
 
 use Application\Provider\Privilege\EcoleDoctoralePrivileges;
 use Application\View\Renderer\PhpRenderer;
-use UnicaenApp\Form\Element\LdapPeople;
+use UnicaenApp\Form\Element\SearchAndSelect;
 use Zend\Paginator\Paginator;
 
 /**
@@ -152,11 +152,11 @@ $selectedEcole = null;
                         <form method="post" action="<?php echo $url ?>">
                             <?php
 
-                            $sas = new LdapPeople('people');
-                            $sas->setLabel($this->translate("Recherche d'un individu à ajouter :"));
-                            $sas->setAttribute('class', 'people-finder');
-                            $sas->setAutocompleteSource($this->url('utilisateur/rechercher-people',[],[],true));
-                            echo $this->formcontrolgroup($sas, 'formLdapPeople');
+                            $sas = new SearchAndSelect('individu');
+                            $sas->setLabel($this->translate("Recherche de l'individu à ajouter :"));
+                            $sas->setAttribute('class', 'individu-finder');
+                            $sas->setAutocompleteSource($this->url('utilisateur/rechercher-individu',[],[],true));
+                            echo $this->formcontrolgroup($sas, 'formSearchAndSelect');
 
                             generateSelect("role", $roles);
                             ?>
