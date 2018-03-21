@@ -2,6 +2,8 @@
 
 namespace Application\Service\Role;
 
+use Application\Entity\Db\EcoleDoctorale;
+use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Repository\RoleRepository;
@@ -119,31 +121,50 @@ class RoleService extends BaseService
     }
 
     /**
-     * @param UniteRecherche $unite
+     * @param UniteRecherche|EcoleDoctorale|Etablissement $structure
      * @throws \Doctrine\ORM\OptimisticLockException
      */
-    public function addRoleUniteRecherche($unite) {
-
-        //TODO ne pas utiliser UR pour chercher les roles modeles et l'ajout des privilèges
+    public function addRoleByStructure($structure) {
 
         /** @var TypeStructure $type */
-        $type = $this->entityManager->getRepository(TypeStructure::class)->findOneBy(["code" => TypeStructure::CODE_UNITE_RECHERCHE]);
+        $type = null;
+        switch(true) {
+            case ($structure instanceof UniteRecherche) :
+                $type = $this->entityManager->getRepository(TypeStructure::class)->findOneBy(["code" => TypeStructure::CODE_UNITE_RECHERCHE]);
+                break;
+            case ($structure instanceof EcoleDoctorale) :
+                $type = $this->entityManager->getRepository(TypeStructure::class)->findOneBy(["code" => TypeStructure::CODE_ECOLE_DOCTORALE]);
+                break;
+            case ($structure instanceof Etablissement) :
+                $type = $this->entityManager->getRepository(TypeStructure::class)->findOneBy(["code" => TypeStructure::CODE_ETABLISSEMENT]);
+                break;
+        }
 
         /** @var RoleModele[] $roleModeles */
         $qb = $this->entityManager->getRepository(RoleModele::class)->createQueryBuilder("rm")
-            ->andWhere("rm.roleCode = :ur")->setParameter("ur", "UR");
+            ->andWhere("rm.structureType = :stype")->setParameter("stype", $type);
         $roleModeles = $qb->getQuery()->execute();
 
         foreach ($roleModeles as $roleModele) {
+
+            $sourceCode = null;
+            $roleId = null;
+            if ($structure instanceof Etablissement) {
+                $sourceCode = $structure->getCode() ."::". $roleModele->getRoleCode();
+                $roleId = $roleModele->getLibelle()." ". $structure->getCode();
+            } else {
+                $sourceCode = "COMUE" . "::". $roleModele->getRoleCode()."_" . $structure->getSourceCode();
+                $roleId = $roleModele->getLibelle()." ". $structure->getSourceCode();
+            }
 
             //creation du role
             $role = $this->createRole();
             $role->setCode($roleModele->getRoleCode());
             $role->setLibelle($roleModele->getLibelle());
-            $role->setSourceCode("COMUE::".$roleModele->getRoleCode()."_" . $unite->getSourceCode());
-            $role->setRoleId($roleModele->getLibelle()." ". $unite->getSourceCode());
+            $role->setSourceCode($sourceCode);
+            $role->setRoleId($roleId);
             $role->setTypeStructureDependant($type);
-            $role->setStructure($unite->getStructure());
+            $role->setStructure($structure->getStructure());
             $this->entityManager->flush($role);
 
             //affectation du modèle de privilège
@@ -156,8 +177,6 @@ class RoleService extends BaseService
                 $privilege->addRole($role);
                 $this->entityManager->flush($privilege);
             }
-
-
         }
 
     }

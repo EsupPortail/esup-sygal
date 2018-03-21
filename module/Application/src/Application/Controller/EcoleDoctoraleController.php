@@ -117,6 +117,10 @@ class EcoleDoctoraleController extends AbstractController
         return $viewModel;
     }
 
+    /**
+     * @return \Zend\Http\Response|ViewModel
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
     public function ajouterAction()
     {
         if ($data = $this->params()->fromPost()) {
@@ -136,6 +140,9 @@ class EcoleDoctoraleController extends AbstractController
                 if ($file['cheminLogo']['tmp_name'] !== '') {
                     $this->ajouterLogoEcoleDoctorale($file['cheminLogo']['tmp_name'], $ecole);
                 }
+
+                //creation automatique des roles associés à une unité de recherche
+                $this->roleService->addRoleByStructure($ecole);
 
                 $this->flashMessenger()->addSuccessMessage("École doctorale '$ecole' créée avec succès");
 

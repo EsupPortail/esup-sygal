@@ -93,6 +93,10 @@ class EtablissementController extends AbstractController
         ]);
     }
 
+    /**
+     * @return \Zend\Http\Response|ViewModel
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
     public function ajouterAction() {
 
         if ($data = $this->params()->fromPost()) {
@@ -111,6 +115,9 @@ class EtablissementController extends AbstractController
                 if ($file['cheminLogo']['tmp_name'] !== '') {
                     $this->ajouterLogoEtablissement($file['cheminLogo']['tmp_name'], $etablissement);
                 }
+
+                //creation automatique des roles associés à une unité de recherche
+                $this->roleService->addRoleByStructure($etablissement);
 
                 $this->flashMessenger()->addSuccessMessage("Établissement '$etablissement' créée avec succès");
 

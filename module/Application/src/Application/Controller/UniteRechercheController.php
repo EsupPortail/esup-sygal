@@ -145,7 +145,7 @@ class UniteRechercheController extends AbstractController
                 }
 
                 //creation automatique des roles associés à une unité de recherche
-                $this->roleService->addRoleUniteRecherche($unite);
+                $this->roleService->addRoleByStructure($unite);
 
                 $this->flashMessenger()->addSuccessMessage("Unité de recherche '$unite' créée avec succès");
 
