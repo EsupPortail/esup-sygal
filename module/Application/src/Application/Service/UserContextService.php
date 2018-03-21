@@ -3,7 +3,7 @@
 namespace Application\Service;
 
 use Application\Authentication\Storage\AppStorage;
-use Application\Entity\AuthUserWrapper;
+use Application\Entity\UserWrapper;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
@@ -245,7 +245,7 @@ class UserContextService extends BaseUserContextService
     }
 
     /**
-     * @return AuthUserWrapper
+     * @return UserWrapper
      */
     private function createIdentityUserWrapper()
     {
@@ -255,6 +255,6 @@ class UserContextService extends BaseUserContextService
 
         $user = $this->getIdentityLdap() ?: $this->getIdentityShib();
 
-        return AuthUserWrapper::inst($user);
+        return UserWrapper::inst($user);
     }
 }

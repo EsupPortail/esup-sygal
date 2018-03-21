@@ -2,12 +2,14 @@
 
 namespace Application\Controller;
 
+use Application\Entity\UserWrapper;
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Form\EcoleDoctoraleForm;
 use Application\RouteMatch;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
+use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use UnicaenLdap\Entity\People;
@@ -20,6 +22,7 @@ class EcoleDoctoraleController extends AbstractController
     use LdapPeopleServiceAwareTrait;
     use IndividuServiceAwareTrait;
     use RoleServiceAwareTrait;
+    use EtablissementServiceAwareTrait;
 
     /**
      * L'index récupére :
@@ -188,10 +191,11 @@ class EcoleDoctoraleController extends AbstractController
         if (!empty($data['id'])) {
             /** @var People $people */
             if ($people = $this->ldapPeopleService->get($data['id'])) {
-                $supannEmpId = $people->get('supannEmpId');
-                $individu = $this->individuService->getRepository()->findOneBy(['sourceCode' => $supannEmpId]);
+                $userWrapper = UserWrapper::inst($people);
+                $etablissement = $this->etablissementService->getRepository()->findOneByDomaine($userWrapper->getDomainFromEppn());
+                $individu = $this->individuService->getRepository()->findOneByEmpIdAndEtab($userWrapper->getSupannEmpId(), $etablissement);
                 if (! $individu) {
-                    $individu = $this->individuService->createFromPeople($people);
+                    $individu = $this->individuService->createFromPeopleAndEtab($people, $etablissement);
                 }
 
                 /**

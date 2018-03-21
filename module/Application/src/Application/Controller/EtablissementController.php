@@ -5,7 +5,9 @@ namespace Application\Controller;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
+use Application\Entity\UserWrapper;
 use Application\Form\EtablissementForm;
+use Application\RouteMatch;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
@@ -15,10 +17,8 @@ use Zend\View\Model\ViewModel;
 
 /**
  * Class EtablissementController
- * @package Application\Controller
  */
 class EtablissementController extends AbstractController
-
 {
     use EtablissementServiceAwareTrait;
     use LdapPeopleServiceAwareTrait;
@@ -93,8 +93,8 @@ class EtablissementController extends AbstractController
         ]);
     }
 
-    public function ajouterAction() {
-
+    public function ajouterAction()
+    {
         if ($data = $this->params()->fromPost()) {
 
             $request = $this->getRequest();
@@ -138,7 +138,8 @@ class EtablissementController extends AbstractController
         return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $etablissement->getId()]], true);
     }
 
-    public function modifierAction() {
+    public function modifierAction()
+    {
         /** @var Etablissement $etablissement */
         $etablissement = $this->requestEtablissement();
         $this->etablissementForm->bind($etablissement);
@@ -273,10 +274,11 @@ class EtablissementController extends AbstractController
         if (!empty($data['id'])) {
             /** @var People $people */
             if ($people = $this->ldapPeopleService->get($data['id'])) {
-                $supannEmpId = $people->get('supannEmpId');
-                $individu = $this->individuService->getRepository()->findOneBy(['sourceCode' => $supannEmpId]);
+                $userWrapper = UserWrapper::inst($people);
+                $etablissement = $this->etablissementService->getRepository()->findOneByDomaine($userWrapper->getDomainFromEppn());
+                $individu = $this->individuService->getRepository()->findOneByEmpIdAndEtab($userWrapper->getSupannEmpId(), $etablissement);
                 if (! $individu) {
-                    $individu = $this->individuService->createFromPeople($people);
+                    $individu = $this->individuService->createFromPeopleAndEtab($people, $etablissement);
                 }
 
                 /**
@@ -326,6 +328,4 @@ class EtablissementController extends AbstractController
 
         return $this->redirect()->toRoute('etablissement', [], [], true);
     }
-
-
 }

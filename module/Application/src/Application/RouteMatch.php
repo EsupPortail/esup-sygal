@@ -3,6 +3,7 @@
 namespace Application;
 
 use Application\Entity\Db\EcoleDoctorale;
+use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Doctorant;
@@ -214,12 +215,12 @@ class RouteMatch extends BaseRouteMatch
     }
 
     /**
-     * @var EcoleDoctorale
+     * @var Etablissement
      */
     private $etablissement;
 
     /**
-     * @return EcoleDoctorale
+     * @return Etablissement
      */
     public function getEtablissement()
     {

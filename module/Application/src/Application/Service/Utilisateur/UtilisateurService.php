@@ -2,19 +2,24 @@
 
 namespace Application\Service\Utilisateur;
 
+use Application\Entity\Db\Repository\UtilisateurRepository;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\BaseService;
-use Application\Entity\Db\Repository\DefaultEntityRepository;
+use Doctrine\ORM\OptimisticLockException;
+use UnicaenApp\Exception\RuntimeException;
 use UnicaenLdap\Entity\People;
 
 class UtilisateurService extends BaseService
 {
     /**
-     * @return DefaultEntityRepository
+     * @return UtilisateurRepository
      */
     public function getRepository()
     {
-        return $this->entityManager->getRepository(Utilisateur::class);
+        /** @var UtilisateurRepository $repo */
+        $repo = $this->entityManager->getRepository(Utilisateur::class);
+
+        return $repo;
     }
 
     /**
@@ -31,7 +36,11 @@ class UtilisateurService extends BaseService
         $entity->setState(1);
 
         $this->getEntityManager()->persist($entity);
-        $this->getEntityManager()->flush($entity);
+        try {
+            $this->getEntityManager()->flush($entity);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Impossible d'enregistrer l'utilisateur", null, $e);
+        }
 
         return $entity;
     }

@@ -2,6 +2,7 @@
 
 namespace Retraitement\Controller;
 
+use Application\Entity\Db\Repository\UtilisateurRepository;
 use Application\Entity\Db\Utilisateur;
 use Application\EventRouterReplacer;
 use Doctrine\ORM\EntityManager;
@@ -43,19 +44,18 @@ class IndexControllerFactory
      *
      * @param ServiceLocatorInterface $sl
      * @return Utilisateur
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
-     * @throws \Doctrine\ORM\TransactionRequiredException
      */
     public function getUtilisateurApp(ServiceLocatorInterface $sl)
     {
         /** @var EntityManager $em */
         $em = $sl->get('doctrine.entitymanager.orm_default');
+        /** @var UtilisateurRepository $repo */
+        $repo = $em->getRepository(Utilisateur::class);
         /** @var Utilisateur $utilisateur */
-        $utilisateur = $em->find(Utilisateur::class, $id = Utilisateur::APP_UTILISATEUR_ID);
+        $utilisateur = $repo->fetchAppPseudoUser();
 
         if (!$utilisateur) {
-            throw new RuntimeException("Utilisateur-application introuvable: $id");
+            throw new RuntimeException("Pseudo-utilisateur application introuvable");
         }
 
         return $utilisateur;

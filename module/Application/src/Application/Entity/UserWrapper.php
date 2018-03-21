@@ -2,10 +2,13 @@
 
 namespace Application\Entity;
 
-use UnicaenApp\Entity\Ldap\People;
+use UnicaenApp\Entity\Ldap\People as UnicaenAppPeople;
+use UnicaenLdap\Entity\People as UnicaenLdapPeople;
 use UnicaenApp\Exception\LogicException;
+use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Entity\Db\AbstractUser;
 use UnicaenAuth\Entity\Shibboleth\ShibUser;
+use UnicaenAuth\Event\UserAuthenticatedEvent;
 use ZfcUser\Entity\UserInterface;
 
 /**
@@ -13,23 +16,26 @@ use ZfcUser\Entity\UserInterface;
  *
  * @author Unicaen
  */
-class AuthUserWrapper implements UserInterface
+class UserWrapper implements UserInterface
 {
     /**
-     * @var People|AbstractUser|ShibUser
+     * @var UnicaenLdapPeople|UnicaenAppPeople|AbstractUser|ShibUser
      */
     private $user;
 
     /**
+     * Factory method.
+     *
      * Instancie à partir d'une entité utilisateur.
      *
-     * @param $user People|AbstractUser|ShibUser
+     * @param $user UnicaenLdapPeople|UnicaenAppPeople|AbstractUser|ShibUser
      * @return self
      */
     static public function inst($user)
     {
         if (
-            !$user instanceof People &&
+            !$user instanceof UnicaenLdapPeople &&
+            !$user instanceof UnicaenAppPeople &&
             !$user instanceof AbstractUser &&
             !$user instanceof ShibUser
         ) {
@@ -40,21 +46,22 @@ class AuthUserWrapper implements UserInterface
     }
 
     /**
+     * Factory method.
+     *
      * Instancie à partir des données d'identité, si possible.
      *
      * @param array $identity ['ldap' => People|null, 'db' => Utilisateur|null, 'shib' => ShibUser|null]
-     * @return AuthUserWrapper|null
+     * @return UserWrapper|null
      */
     static public function instFromIdentity(array $identity)
     {
         if (isset($identity['ldap'])) {
-            /** @var People $userData */
+            /** @var UnicaenAppPeople $userData */
             $userData = $identity['ldap'];
         } elseif (isset($identity['shib'])) {
             /** @var ShibUser $userData */
             $userData = $identity['shib'];
         } else {
-//            throw new LogicException("Aucune donnée d'identité LDAP ni Shibboleth disponible");
             return null;
         }
 
@@ -62,9 +69,32 @@ class AuthUserWrapper implements UserInterface
     }
 
     /**
+     * Factory method.
+     *
+     * Instancie à partir d'un événement UserAuthenticatedEvent.
+     *
+     * @param UserAuthenticatedEvent $event
+     * @return UserWrapper
+     */
+    static public function instFromUserAuthenticatedEvent(UserAuthenticatedEvent $event)
+    {
+        if ($event->getLdapUser()) {
+            $user = $event->getLdapUser();
+        } elseif ($event->getShibUser()) {
+            $user = $event->getShibUser();
+        } elseif ($event->getDbUser()) {
+            $user = $event->getDbUser();
+        } else {
+            throw new LogicException("L'événement ne fournit aucune entité utilisateur!");
+        }
+
+        return new static($user);
+    }
+
+    /**
      * PRIVATE constructor.
      *
-     * @param $user People|AbstractUser|ShibUser
+     * @param $user UnicaenLdapPeople|UnicaenAppPeople|AbstractUser|ShibUser
      */
     private function __construct($user)
     {
@@ -93,7 +123,8 @@ class AuthUserWrapper implements UserInterface
     public function getEppn()
     {
         switch (true) {
-            case $this->user instanceof People:
+            case $this->user instanceof UnicaenLdapPeople:
+            case $this->user instanceof UnicaenAppPeople:
                 return $this->user->getEduPersonPrincipalName();
                 break;
             case $this->user instanceof AbstractUser:
@@ -111,7 +142,8 @@ class AuthUserWrapper implements UserInterface
     public function getSupannEmpId()
     {
         switch (true) {
-            case $this->user instanceof People:
+            case $this->user instanceof UnicaenLdapPeople:
+            case $this->user instanceof UnicaenAppPeople:
                 return $this->user->getSupannEmpId();
                 break;
             case $this->user instanceof AbstractUser:
@@ -124,6 +156,72 @@ class AuthUserWrapper implements UserInterface
     }
 
     /**
+     * Get nom.
+     *
+     * @return string
+     */
+    public function getNom()
+    {
+        switch (true) {
+            case $this->user instanceof UnicaenLdapPeople:
+            case $this->user instanceof UnicaenAppPeople:
+                return $this->user->getSn(true);
+                break;
+            case $this->user instanceof AbstractUser:
+                throw new RuntimeException("Cas non implementé car la classe AbstractUser n'a pas de propriété 'nom'");
+                break;
+            case $this->user instanceof ShibUser:
+                return $this->user->getNom();
+                break;
+        }
+    }
+
+    /**
+     * Get prenom.
+     *
+     * @return string
+     */
+    public function getPrenom()
+    {
+        switch (true) {
+            case $this->user instanceof UnicaenLdapPeople:
+            case $this->user instanceof UnicaenAppPeople:
+                return $this->user->getGivenName();
+                break;
+            case $this->user instanceof AbstractUser:
+                throw new RuntimeException("Cas non implementé car la classe AbstractUser n'a pas de propriété 'prenom'");
+                break;
+            case $this->user instanceof ShibUser:
+                return $this->user->getPrenom();
+                break;
+        }
+    }
+
+    /**
+     * Get civilite.
+     *
+     * @return string
+     */
+    public function getCivilite()
+    {
+        switch (true) {
+            case $this->user instanceof UnicaenLdapPeople:
+            case $this->user instanceof UnicaenAppPeople:
+                return $this->user->getSupannCivilite();
+                break;
+            case $this->user instanceof AbstractUser:
+                throw new RuntimeException("Cas non implementé car la classe AbstractUser n'a pas de propriété 'civilite'");
+                break;
+            case $this->user instanceof ShibUser:
+                return $this->user->getCivilite();
+                break;
+        }
+    }
+
+
+    ///////////////////////////////// Implémentation de UserInterface ////////////////////////////
+
+    /**
      * Get id.
      *
      * @return int|string
@@ -131,7 +229,8 @@ class AuthUserWrapper implements UserInterface
     public function getId()
     {
         switch (true) {
-            case $this->user instanceof People:
+            case $this->user instanceof UnicaenLdapPeople:
+            case $this->user instanceof UnicaenAppPeople:
                 return $this->user->getId();
                 break;
             case $this->user instanceof AbstractUser:
@@ -159,7 +258,8 @@ class AuthUserWrapper implements UserInterface
     public function getUsername()
     {
         switch (true) {
-            case $this->user instanceof People:
+            case $this->user instanceof UnicaenLdapPeople:
+            case $this->user instanceof UnicaenAppPeople:
                 return $this->user->getSupannAliasLogin();
                 break;
             case $this->user instanceof AbstractUser:
@@ -187,7 +287,8 @@ class AuthUserWrapper implements UserInterface
     public function getEmail()
     {
         switch (true) {
-            case $this->user instanceof People:
+            case $this->user instanceof UnicaenLdapPeople:
+            case $this->user instanceof UnicaenAppPeople:
                 return $this->user->getMail();
                 break;
             case $this->user instanceof AbstractUser:
@@ -215,7 +316,8 @@ class AuthUserWrapper implements UserInterface
     public function getDisplayName()
     {
         switch (true) {
-            case $this->user instanceof People:
+            case $this->user instanceof UnicaenLdapPeople:
+            case $this->user instanceof UnicaenAppPeople:
                 return $this->user->getNomComplet(true);
                 break;
             case $this->user instanceof AbstractUser:
@@ -243,7 +345,8 @@ class AuthUserWrapper implements UserInterface
     public function getPassword()
     {
         switch (true) {
-            case $this->user instanceof People:
+            case $this->user instanceof UnicaenLdapPeople:
+            case $this->user instanceof UnicaenAppPeople:
                 return 'ldap';
                 break;
             case $this->user instanceof AbstractUser:
@@ -273,7 +376,8 @@ class AuthUserWrapper implements UserInterface
     public function getState()
     {
         switch (true) {
-            case $this->user instanceof People:
+            case $this->user instanceof UnicaenLdapPeople:
+            case $this->user instanceof UnicaenAppPeople:
                 $parts = ldap_explode_dn($this->user->getDn(), 1);
                 $isDeactivated = in_array('deactivated', $parts);
                 return $isDeactivated ? 0 : 1;

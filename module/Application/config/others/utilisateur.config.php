@@ -2,7 +2,7 @@
 
 use Application\Controller\Factory\UtilisateurControllerFactory;
 use Application\Provider\Privilege\UtilisateurPrivileges;
-use Application\Service\Individu\IndividuService;
+use Application\Service\Individu\IndividuServiceFactory;
 use Application\Service\Utilisateur\UtilisateurService;
 use UnicaenAuth\Guard\PrivilegeController;
 
@@ -113,9 +113,9 @@ return [
     'service_manager' => [
         'invokables' => array(
             'UtilisateurService' => UtilisateurService::class,
-            'IndividuService' => IndividuService::class,
         ),
         'factories' => [
+            'IndividuService' => IndividuServiceFactory::class,
         ],
     ],
     'controllers'     => [
