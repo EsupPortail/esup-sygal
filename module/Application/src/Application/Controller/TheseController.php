@@ -156,6 +156,7 @@ class TheseController extends AbstractController
             $qb->andWhere('t.etatThese = :etat')->setParameter('etat', $etatThese);
         }
         if ($etabCode) {
+            // todo: utiliser le relation th.etablissement, voyons !!
             $etablissement = $this->etablissementService->getRepository()->findOneBy(["code" =>$etabCode]);
             $qb->andWhere('t.etablissement = :etablissement')->setParameter('etablissement', $etablissement);
         }

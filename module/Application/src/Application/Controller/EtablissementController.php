@@ -3,15 +3,14 @@
 namespace Application\Controller;
 
 use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\Individu;
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
-use Application\Entity\UserWrapper;
 use Application\Form\EtablissementForm;
 use Application\RouteMatch;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
-use UnicaenLdap\Entity\People;
 use UnicaenLdap\Service\LdapPeopleServiceAwareTrait;
 use Zend\View\Model\ViewModel;
 
@@ -275,19 +274,13 @@ class EtablissementController extends AbstractController
     public function ajouterIndividuAction()
     {
         $etabId     = $this->params()->fromRoute('etablissement');
-        $data       = $this->params()->fromPost('people');
+        $data       = $this->params()->fromPost('individu');
         $roleId     = $this->params()->fromPost('role');
 
         if (!empty($data['id'])) {
-            /** @var People $people */
-            if ($people = $this->ldapPeopleService->get($data['id'])) {
-                $userWrapper = UserWrapper::inst($people);
-                $etablissement = $this->etablissementService->getRepository()->findOneByDomaine($userWrapper->getDomainFromEppn());
-                $individu = $this->individuService->getRepository()->findOneByEmpIdAndEtab($userWrapper->getSupannEmpId(), $etablissement);
-                if (! $individu) {
-                    $individu = $this->individuService->createFromPeopleAndEtab($people, $etablissement);
-                }
-
+            /** @var Individu $individu */
+            $individu = $this->individuService->getRepository()->find($data['id']);
+            if ($individu) {
                 /**
                  * @var Etablissement $etablissement
                  * @var Role $role

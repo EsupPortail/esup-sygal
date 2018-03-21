@@ -2,8 +2,8 @@
 
 namespace Application\Controller;
 
-use Application\Entity\UserWrapper;
 use Application\Entity\Db\EcoleDoctorale;
+use Application\Entity\Db\Individu;
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Form\EcoleDoctoraleForm;
@@ -12,7 +12,6 @@ use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
-use UnicaenLdap\Entity\People;
 use UnicaenLdap\Service\LdapPeopleServiceAwareTrait;
 use Zend\View\Model\ViewModel;
 
@@ -192,19 +191,13 @@ class EcoleDoctoraleController extends AbstractController
     public function ajouterIndividuAction()
     {
         $edId       = $this->params()->fromRoute('ecoleDoctorale');
-        $data       = $this->params()->fromPost('people');
+        $data       = $this->params()->fromPost('individu');
         $roleId     = $this->params()->fromPost('role');
 
         if (!empty($data['id'])) {
-            /** @var People $people */
-            if ($people = $this->ldapPeopleService->get($data['id'])) {
-                $userWrapper = UserWrapper::inst($people);
-                $etablissement = $this->etablissementService->getRepository()->findOneByDomaine($userWrapper->getDomainFromEppn());
-                $individu = $this->individuService->getRepository()->findOneByEmpIdAndEtab($userWrapper->getSupannEmpId(), $etablissement);
-                if (! $individu) {
-                    $individu = $this->individuService->createFromPeopleAndEtab($people, $etablissement);
-                }
-
+            /** @var Individu $individu */
+            $individu = $this->individuService->getRepository()->find($data['id']);
+            if ($individu) {
                 /**
                  * @var EcoleDoctorale $ecole
                  * @var Role $role
@@ -212,7 +205,7 @@ class EcoleDoctoraleController extends AbstractController
                  */
                 $ecole = $this->ecoleDoctoraleService->getEcoleDoctoraleById($edId);
                 $role = $this->roleService->getRoleById($roleId);
-                $individuRole = $this->roleService->addIndividuRole($individu,$role);
+                $individuRole = $this->roleService->addIndividuRole($individu, $role);
 
                 $this->flashMessenger()->addSuccessMessage(
                     "<strong>{$individuRole->getIndividu()}</strong>". " est désormais " .

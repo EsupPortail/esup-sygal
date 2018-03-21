@@ -31,6 +31,7 @@ return [
                     'controller' => 'Application\Controller\Utilisateur',
                     'action'     => [
                         'rechercher-people',
+                        'rechercher-individu',
                     ],
                     'privileges' => UtilisateurPrivileges::UTILISATEUR_CONSULTATION,
                 ],
@@ -86,6 +87,15 @@ return [
                             'route'       => '/rechercher-people',
                             'defaults'    => [
                                 'action' => 'rechercher-people',
+                            ],
+                        ],
+                    ],
+                    'rechercher-individu' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'       => '/rechercher-individu',
+                            'defaults'    => [
+                                'action' => 'rechercher-individu',
                             ],
                         ],
                     ],
