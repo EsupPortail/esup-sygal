@@ -1,6 +1,8 @@
 <?php
 
 use Application\Assertion\AssertionAbstractFactory;
+use Application\Assertion\These\TheseEntityAssertion;
+use Application\Assertion\These\TheseEntityAssertionFactory;
 use Application\Controller\Factory\TheseControllerFactory;
 use Application\Controller\Factory\TheseObserverControllerFactory;
 use Application\Controller\Plugin\Url\UrlThesePluginFactory;
@@ -895,6 +897,7 @@ return [
         'factories' => [
             'TheseService'                 => TheseServiceFactory::class,
             'TheseObserverService'         => TheseObserverServiceFactory::class,
+            TheseEntityAssertion::class    => TheseEntityAssertionFactory::class
         ],
         'abstract_factories' => [
             AssertionAbstractFactory::class,

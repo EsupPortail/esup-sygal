@@ -358,12 +358,28 @@ class TheseEntityAssertion implements EntityAssertionInterface, ValidationServic
         return $this->identityDoctorant;
     }
 
+    /**
+     * @var bool
+     */
+    private $existeFichierTheseVersionCorrigee;
+
+    /**
+     * @param bool $existeFichierTheseVersionCorrigee
+     */
+    public function setExisteFichierTheseVersionCorrigee($existeFichierTheseVersionCorrigee = true)
+    {
+        $this->existeFichierTheseVersionCorrigee = $existeFichierTheseVersionCorrigee;
+    }
+
     private function existeFichierTheseVersionCorrigee()
     {
-//        if (! $this->getFichiersByNatureEtVersion(NatureFichier::CODE_THESE_PDF, VersionFichier::CODE_ORIG_CORR)->isEmpty()) {
-        if (! empty($this->fichierService->getRepository()->fetchFichiers($this->these, NatureFichier::CODE_THESE_PDF, VersionFichier::CODE_ORIG_CORR, false))) {
-            return true;
+        if (null === $this->existeFichierTheseVersionCorrigee) {
+            $this->existeFichierTheseVersionCorrigee = ! empty($this->fichierService->getRepository()->fetchFichiers(
+                $this->these,
+                NatureFichier::CODE_THESE_PDF,
+                VersionFichier::CODE_ORIG_CORR,
+                false));
         }
-        return false;
+        return $this->existeFichierTheseVersionCorrigee;
     }
 }
