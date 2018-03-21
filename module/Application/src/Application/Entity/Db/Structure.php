@@ -105,7 +105,7 @@ class Structure
     {
         $roles = [];
         foreach($this->roles as $role) {
-            if ($role->isStructureDependant()) $roles[] = $role;
+            if ($role->isStructureDependant() && !$role->isTheseDependant()) $roles[] = $role;
         }
         return $roles;
     }
