@@ -1,11 +1,21 @@
 <?php
     use Application\Entity\Db\Role;
     use Application\Entity\Db\Privilege;
+    use UnicaenAuth\Provider\Privilege\Privileges;
+    use Application\Entity\Db\Etablissement;
+
+
+    $canVisualiser = $this->isAllowed(Privileges::getResourceId(Privileges::DROIT_PRIVILEGE_VISUALISATION));
+    $canModifier = $this->isAllowed(Privileges::getResourceId(Privileges::DROIT_PRIVILEGE_EDITION));
+
+//    var_dump($canVisualiser);
+//    var_dump($canModifier);
 
 /**
  * //Provenant du controleur
  * @var Role[] $roles
  * @var Privilege[] $privileges
+ * @var Etablissement[] $etablissements
  *
  * //Utilisée couramment
  * @var Role $role
@@ -13,61 +23,34 @@
  */
 ?>
 
-
 <?php $this->headTitle($this->translate("Rôles/Privilèges")) ?>
-<h1 class="page-header first"><?php echo $this->translate("Rôles/Privilèges") ?>
-
+<h1 class="page-header first">
+    <?php echo $this->translate("Rôles/Privilèges") ?>
 </h1>
 
-    <div class="pull-left">
-        <?php echo $this->partial('partial/form-filtrage') ?>
-    </div>
-
+<div class="pull-left">
+    <?php echo $this->partial('partial/form-filtrage') ?>
+</div>
 
 <?php
 
 echo "<table id='mytable' class='mytable table-bordered'>";
-echo "<tr><th></th>";
-
-foreach($roles as $role) {
-    echo generateTableHeaderRole($role, $etablissements);
-}
-echo "</tr>";
-
-
-$previous_categorie = null;
-foreach($privileges as $privilege) {
-    if ($previous_categorie !== $privilege->getCategorie()) {
-        echo "<tr><th colspan='1000' class='categorie'>".$privilege->getCategorie()->getLibelle()."</th></tr>";
-        $previous_categorie = $privilege->getCategorie();
-    }
-    echo "<tr>";
-    echo "<th class='privilege'> {$privilege->getLibelle()} </th>";
-    foreach($roles as $role) {
-
-        $id = "{$privilege->getId()}_{$role->getId()}";
-        $code = ($role->getStructure() !== null) ? $role->getStructure()->getSigle() : " ";
-        if ($code === null) $code = getCode($role, $etablissements);
-        $title = "{$role->getLibelle()} - {$code} \n{$privilege->getLibelle()}";
-        echo "<td class='droit' id='$id' title='{$title}'>";
-
-        if( array_search($role, $privilege->getRole()->toArray()) !== false) {
-            echo "<span class='glyphicon glyphicon-ok text-success'></span>";
-        } else {
-            echo "<span class='glyphicon glyphicon-remove text-danger'></span>";
-        }
-
-        echo "</td>";
-
-    }
-    echo "</tr>";
-}
+echo generateTableHeader($roles, $etablissements);
+echo generateTableBody($roles, $etablissements, $privileges);
 echo "</table>";
+
 ?>
 
 <script>
     $(document).ready(function() {
         $("td").click(function() {
+
+            var canModifier =  Boolean(<?php echo $canModifier; ?>);
+            if (!canModifier) {
+                alert("Vous n'êtes pas autorisé à modifier les privilèges associés à un rôle.");
+                return;
+            }
+
             var id = $(this).attr("id");
             var splits = id.split("_");
             var role = splits[1];
@@ -97,13 +80,6 @@ echo "</table>";
 
 <?php
 
-    function generateOK() {
-        return "OK";
-    }
-
-    function generateKO() {
-        return "KO";
-    }
 
 
     function getCode(Role $role, $etablissements) {
@@ -119,6 +95,25 @@ echo "</table>";
         return "missing";
     }
 
+    /**
+     * @param Role[] $roles
+     * @param Etablissement[] $etablissements
+     * @return string
+     */
+    function generateTableHeader($roles, $etablissements)
+    {
+        $texte  = "";
+        $texte .= "<thead>";
+        $texte .= "<tr>";
+        $texte .= "<th></th>"; //empty first cell
+
+        foreach ($roles as $role) {
+            $texte .=  generateTableHeaderRole($role, $etablissements);
+        }
+        $texte .= "</tr>";
+        $texte .= "</thead>";
+        return $texte;
+    }
 
     /**
      * @param Role $role
@@ -148,7 +143,6 @@ echo "</table>";
                 break;
         }
 
-
         $texte  = "<th class='role'>";
         $texte .= $premiere;
         $texte .= "<br/>";
@@ -156,6 +150,82 @@ echo "</table>";
         $texte .= $seconde;
         $texte .= "</span>";
         $texte .= "</th>";
+        return $texte;
+    }
+
+    /**
+     * @param Role[] $roles
+     * @param Etablissement[] $etablissements
+     * @param Privilege[] $privileges
+     * @return string
+     */
+    function generateTableBody($roles, $etablissements, $privileges)
+    {
+        $texte = "";
+        $texte .= "<tbody>";
+
+        $previous_categorie = null;
+        foreach($privileges as $privilege) {
+            if ($previous_categorie !== $privilege->getCategorie()) {
+                $texte .= generateTableCategorieLine($privilege, $roles);
+                $previous_categorie = $privilege->getCategorie();
+            }
+            $texte .= generateTablePrivilegeLine($privilege, $roles, $etablissements);
+        }
+        $texte .=  "</tbody>";
+
+        return $texte;
+    }
+
+
+    /**
+     * @param Privilege $privilege
+     * @param Role[] $roles
+     * @return string
+     */
+    function generateTableCategorieLine($privilege, $roles)
+    {
+        $texte  = "";
+        $texte .= "<tr>";
+        $texte .= "<th colspan='";
+        $texte .= count($roles)+1;
+        $texte .= "' class='categorie'>";
+        $texte .= $privilege->getCategorie()->getLibelle();
+        $texte .= "</th></tr>";
+
+        return $texte;
+    }
+
+
+    /**
+     * @param Privilege $privilege
+     * @param Role[] $roles
+     * @param Etablissement[] $etablissements
+     * @return string
+     */
+    function generateTablePrivilegeLine($privilege, $roles, $etablissements)
+    {
+        $texte = "";
+        $texte .= "<tr>";
+        $texte .= "<th class='privilege'> {$privilege->getLibelle()} </th>";
+
+        foreach($roles as $role) {
+            $id = "{$privilege->getId()}_{$role->getId()}";
+            $code = ($role->getStructure() !== null) ? $role->getStructure()->getSigle() : " ";
+            if ($code === null) $code = getCode($role, $etablissements);
+            $title = "{$role->getLibelle()} - {$code} \n{$privilege->getLibelle()}";
+            $texte .= "<td class='droit' id='$id' title='{$title}'>";
+
+            if( array_search($role, $privilege->getRole()->toArray()) !== false) {
+                $texte .= "<span class='glyphicon glyphicon-ok text-success'></span>";
+            } else {
+                $texte .= "<span class='glyphicon glyphicon-remove text-danger'></span>";
+            }
+            $texte .= "</td>";
+        }
+
+        $texte.= "</tr>";
+
         return $texte;
     }
 ?>
@@ -221,5 +291,4 @@ echo "</table>";
     td.droit :hover {
         cursor:pointer;
     }
-
 </style>
