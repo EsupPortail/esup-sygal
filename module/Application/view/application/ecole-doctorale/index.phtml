@@ -81,7 +81,6 @@ $selectedEcole = null;
                         <tr>
                             <th> <?php echo $this->translate("Libellé"); ?> </th>
                             <th> <?php echo $this->translate("Effectifs"); ?> </th>
-                            <th> <?php echo $this->translate("Actions"); ?> </th>
                         </tr>
                         <?php
                         for ($position = 0 ; $position < $nbRoles ; $position++) {
@@ -89,11 +88,6 @@ $selectedEcole = null;
                             echo  $roles[$position]->getLibelle();
                             echo "</td><td>";
                             echo  count($effectifs[$position]);
-                            echo "</td><td> <span style='color:red; font-weight: bold;'>";
-                            echo "<span class='glyphicon glyphicon-eye-open'></span> ";
-                            echo "<span class='glyphicon glyphicon-pencil'></span> ";
-                            echo "<span class='glyphicon glyphicon-trash'></span>";
-                            echo " TODO </span>";
                             echo "</td></tr>";
                         }
                         ?>
