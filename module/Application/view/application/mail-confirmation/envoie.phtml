@@ -5,7 +5,9 @@ use Application\Entity\Db\MailConfirmation;
 
 /**
  * @var PhpRenderer            $this
- * @var MailConfirmation       $mailConfirmation
+ * @var string $destinataire
+ * @var string $titre
+ * @var string $corps
  */
 
 ?>
@@ -14,14 +16,6 @@ use Application\Entity\Db\MailConfirmation;
 
 <?php
 
-$confirm = $this->url('mail-confirmation-reception', ['id' => $mailConfirmation->getId(), 'code' => $mailConfirmation->getCode()], [] , true);
-$destinataire = $mailConfirmation->getIndividu()->getPrenom1() ." ". $mailConfirmation->getIndividu()->getNomUsuel() . " " . "&lt;<tt>".$mailConfirmation->getEmail()."</tt>&gt;";
-$titre = "[SyGAL] Confirmation de votre email";
-$corps = "<br/>"
-        ."&nbsp;&nbsp;&nbsp;&nbsp;Bonjour,<br/><br/>"
-        ."Pour finaliser l'enregistrement de votre email professionelle veuillez confirmer celui-ci en cliquant sur le liens suivant :<br/>"
-        ."<a href='".$confirm."'>".$confirm."</a><br/><br/>"
-        ."Une fois confirmé, cet email sera utilisé pour recevoir les notifications de SyGAL et vous permettera de vous connecter à SyGAL.";
 
 echo "<dl>";
 echo "<dt>";

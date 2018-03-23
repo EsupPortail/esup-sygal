@@ -87,15 +87,32 @@ class MailConfirmationController extends AbstractController {
     {
 
         $id = $this->params()->fromRoute('id');
+        //$this->mailConfirmationService->generateCode($id);
         $mailConfirmation = $this->mailConfirmationService->getDemandeById($id);
-        //if ($mailConfirmation->getCode() === null) {
-            $this->mailConfirmationService->generateCode($id);
-            $mailConfirmation = $this->mailConfirmationService->getDemandeById($id);
-       // }
+
+
+        $confirm = $this->url()->fromRoute('mail-confirmation-reception', ['id' => $mailConfirmation->getId(), 'code' => $mailConfirmation->getCode()], [] , true);
+        var_dump($confirm);
+        $destinataire = $mailConfirmation->getIndividu()->getPrenom1() ." ". $mailConfirmation->getIndividu()->getNomUsuel() . " " . "&lt;<tt>".$mailConfirmation->getEmail()."</tt>&gt;";
+        $titre = "[SyGAL] Confirmation de votre email";
+        $corps = "<br/>"
+            ."&nbsp;&nbsp;&nbsp;&nbsp;Bonjour,<br/><br/>"
+            ."Pour finaliser l'enregistrement de votre email professionelle veuillez confirmer celui-ci en cliquant sur le liens suivant :<br/>"
+            ."<a href='".$confirm."'>"
+            .$confirm
+            ."</a><br/><br/>"
+            ."Une fois confirmé, cet email sera utilisé pour recevoir les notifications de SyGAL et vous permettera de vous connecter à SyGAL.";
+
+
+        $this->notificationService->notifierMailConfirmation($mailConfirmation, $titre, $corps);
+
+        /** Branchement du mail mais peut être echanger avec une vue classique en
+         * décommentant le code si dessous*/
 
         return new ViewModel([
-            'mailConfirmation' => $mailConfirmation,
-            'notifier' => $this->notificationService,
+            'destinataire' => $destinataire,
+            'titre' => $titre,
+            'corps' => $corps,
         ]);
     }
 
