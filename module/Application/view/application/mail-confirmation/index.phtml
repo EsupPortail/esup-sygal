@@ -1,0 +1,141 @@
+<?php
+
+use Application\Entity\Db\MailConfirmation;
+use Application\Form\MailConfirmationForm;
+use Zend\View\Renderer\PhpRenderer;
+use UnicaenApp\Form\Element\SearchAndSelect;
+/**
+ * @var PhpRenderer            $this
+ * @var MailConfirmation[]     $encours;
+ * @var MailConfirmation[]     $confirmees;
+ * @var MailConfirmationForm   $form
+ *
+ * @method string formControlGroup()
+ */
+
+   /*
+
+    echo $this->form()->openTag($form->prepare()->setAttribute('class', 'mail-confirmation'));
+    echo $this->formHidden($form->get('id'));
+    echo $fcg($form->get('individu'));
+    echo $fcg($form->get('email'));
+    echo $this->form()->closeTag();*/
+    //echo $fcg($form->get('sourceCode'));
+?>
+<h1> Index </h1>
+
+
+<?php
+    if ($form !== null) {
+        $fcg = $this->formControlGroup();
+        echo $this->form()->openTag($form->prepare()->setAttribute('class', 'mail-confirmation'));
+        echo $fcg($form->get('id'));
+        echo $fcg($form->get('idIndividu'));
+        echo $fcg($form->get('individu'));
+        echo $fcg($form->get('email'));
+        echo $fcg($form->get('enregistrer'));
+        echo $this->form()->closeTag();
+    } else {
+        $fcg = $this->formControlGroup();
+        echo "<form method='post'>";
+        $sas = new SearchAndSelect('individu');
+        $sas->setLabel($this->translate("Recherche d'un individu à ajouter :"));
+        $sas->setAttribute('class', 'individu-finder');
+        $sas->setAutocompleteSource($this->url('utilisateur/rechercher-individu',[],[],true));
+        echo $this->formControlGroup($sas, 'formSearchAndSelect');
+        echo "<input type='submit' value='ajouter'/>";
+        echo "</form>";
+    }
+?>
+
+<div class='demande'>
+    <h3> Demandes en cours
+        <span class="badge"> <?php echo count($encours); ?></span>
+    </h3>
+
+    <table class="table">
+        <tr>
+            <th style="width:30%;"> Individu </th>
+            <th style="width:50%;"> Email </th>
+            <th style="width:20%;"> Action </th>
+        </tr>
+    <?php
+        foreach ($encours as $mailConfirmation) {
+            echo "<tr>";
+            echo "<td>".$mailConfirmation->getIndividu()->getPrenom1() . " ". $mailConfirmation->getIndividu()->getNomUsuel()."</td>";
+            echo "<td>". $mailConfirmation->getEmail()."</td>";
+            echo "<td>";
+            echo "<a style='color:mediumblue;' href='".$this->url('mail-confirmation-acceuil', ['id' => $mailConfirmation->getId()], [], true)."'>";
+            echo "<span class='glyphicon glyphicon-pencil'></span> &nbsp;";
+            echo "</a>";
+            echo "<a style='color:mediumblue;' href='".$this->url('mail-confirmation-envoie', ['id' => $mailConfirmation->getId()], [], true)."'>";
+            echo "<span class='glyphicon glyphicon-envelope'></span> &nbsp;";
+            echo "</a>";
+            echo "<a style='color:darkgreen;' href='".$this->url('mail-confirmation-swap', ['id' => $mailConfirmation->getId()], [], true)."'>";
+            echo "<span class='glyphicon glyphicon-refresh'></span> &nbsp;";
+            echo "</a>";
+            echo "<a style='color:darkred;' href='".$this->url('mail-confirmation-remove', ['id' => $mailConfirmation->getId()], [], true)."'>";
+            echo "<span class='glyphicon glyphicon-remove'></span>";
+            echo "</a>&nbsp;";
+            echo "<span class='glyphicon glyphicon-info-sign' title='".$mailConfirmation->getCode()."'></span>";
+            echo "</td>";
+            echo "</tr>";
+        }
+    ?>
+    </table>
+
+</div>
+
+<div class='demande'>
+    <h3> Demandes confirmées
+        <span class="badge"> <?php echo count($confirmees); ?></span>
+    </h3>
+
+    <table class="table">
+        <tr>
+            <th style="width:30%;"> Individu </th>
+            <th style="width:50%;"> Email </th>
+            <th style="width:20%;"> Action </th>
+        </tr>
+        <?php
+        foreach ($confirmees as $mailConfirmation) {
+            echo "<tr>";
+            echo "<td>".$mailConfirmation->getIndividu()->getPrenom1() . " ". $mailConfirmation->getIndividu()->getNomUsuel()."</td>";
+            echo "<td>". $mailConfirmation->getEmail()."</td>";
+            echo "<td>";
+            echo "<a style='color:mediumblue;' href='".$this->url('mail-confirmation-acceuil', ['id' => $mailConfirmation->getId()], [], true)."'>";
+            echo "<span class='glyphicon glyphicon-pencil'></span> &nbsp;";
+            echo "</a>";
+            echo "<a style='color:mediumblue;' href='".$this->url('mail-confirmation-envoie', ['id' => $mailConfirmation->getId()], [], true)."'>";
+            echo "<span class='glyphicon glyphicon-envelope'></span> &nbsp;";
+            echo "</a>";
+            echo "<a style='color:darkgreen;' href='".$this->url('mail-confirmation-swap', ['id' => $mailConfirmation->getId()], [], true)."'>";
+            echo "<span class='glyphicon glyphicon-refresh'></span> &nbsp;";
+            echo "</a>";
+            echo "<a style='color:darkred;' href='".$this->url('mail-confirmation-remove', ['id' => $mailConfirmation->getId()], [], true)."'>";
+            echo "<span class='glyphicon glyphicon-remove'></span>";
+            echo "</a>&nbsp;";
+            echo "<span class='glyphicon glyphicon-info-sign' title='".$mailConfirmation->getCode()."'></span>";
+            echo "</td>";
+            echo "</tr>";
+        }
+        ?>
+    </table>
+</div>
+
+<div class='reset'></div>
+
+<style>
+    div.demande {
+        float:left;
+        width:49%;
+        background-color: #f8efc0;
+        margin:5px;
+        padding: 5px;
+    }
+
+    div.reset {
+        clear: both;
+    }
+
+</style>

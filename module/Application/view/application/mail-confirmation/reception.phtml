@@ -1,0 +1,21 @@
+<?php
+
+use Zend\View\Renderer\PhpRenderer;
+use Application\Entity\Db\MailConfirmation;
+
+/**
+ * @var PhpRenderer            $this
+ * @var MailConfirmation       $mailConfirmation
+ */
+
+?>
+
+<h1> Confirmation de l'email professionnelle </h1>
+
+
+<?php if($mailConfirmation->isConfirmer()) {
+    echo "Votre email &lt;".$mailConfirmation->getEmail()."&gt; est maintenant confirmée.";
+} else {
+    echo "Votre email n'a pas pu être confirmée, êtes-vous sur d'avoir cliqué sur le bon lien ?";
+}
+?>
