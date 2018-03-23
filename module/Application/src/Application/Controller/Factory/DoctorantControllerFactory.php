@@ -6,6 +6,7 @@ use Application\Controller\DoctorantController;
 use Application\Service\Doctorant\DoctorantService;
 use Application\Service\Variable\VariableService;
 use Zend\Mvc\Controller\ControllerManager;
+use Application\Service\MailConfirmationService;
 
 class DoctorantControllerFactory
 {
@@ -23,10 +24,12 @@ class DoctorantControllerFactory
          */
         $variableService = $controllerManager->getServiceLocator()->get('VariableService');
         $doctorantService = $controllerManager->getServiceLocator()->get('DoctorantService');
+        $mailConfirmationService = $controllerManager->getServiceLocator()->get('MailConfirmationService');
 
         $controller = new DoctorantController();
         $controller->setVariableService($variableService);
         $controller->setDoctorantService($doctorantService);
+        $controller->setMailConfirmationService($mailConfirmationService);
 
         return $controller;
     }

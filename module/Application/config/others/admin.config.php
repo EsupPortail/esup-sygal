@@ -12,6 +12,9 @@ use Application\Form\Factory\MailConfirmationFormFactory;
 use Application\Form\Factory\MailConfirmationHydratorFactory;
 use Application\Service\MailConfirmationServiceFactory;
 use Application\Controller\Factory\MailConfirmationControllerFactory;
+use Application\Controller\CobayeController;
+use Application\Controller\Factory\CobayeControllerFactory;
+use Application\Provider\Privilege\ThesePrivileges;
 
 return [
     'bjyauthorize'    => [
@@ -58,6 +61,21 @@ return [
                         'reception',
                         'swap',
                         'remove'
+                    ],
+                    'privileges' => UtilisateurPrivileges::UTILISATEUR_ATTRIBUTION_ROLE,
+                ],
+                [
+                    'controller' => MailConfirmationController::class,
+                    'action'     => [
+                        'envoie',
+                        'reception',
+                    ],
+                    'privileges' => ThesePrivileges::THESE_CONSULTATION_FICHE,
+                ],
+                [
+                    'controller' => CobayeController::class,
+                    'action'     => [
+                        'index',
                     ],
                     'privileges' => UtilisateurPrivileges::UTILISATEUR_ATTRIBUTION_ROLE,
                 ],
@@ -150,6 +168,16 @@ return [
                     ],
                 ],
             ],
+            'cobaye' => [
+                'type'          => Literal::class,
+                'options'       => [
+                    'route'         => '/cobaye',
+                    'defaults'      => [
+                        'controller'    => CobayeController::class,
+                        'action'        => 'index',
+                    ],
+                ],
+            ],
             'test-envoi-mail' => [
                 'type'          => 'Segment',
                 'options'       => [
@@ -200,10 +228,12 @@ return [
     'controllers'     => [
         'invokables' => [
             'Application\Controller\Admin' => AdminController::class,
+
         ],
         'factories' => [
             'Application\Controller\Role' => RoleControllerFactory::class,
             MailConfirmationController::class => MailConfirmationControllerFactory::class,
+            CobayeController::class => CobayeControllerFactory::class,
 
         ],
     ],

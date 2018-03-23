@@ -4,7 +4,6 @@ namespace Application\Controller;
 
 use Application\Entity\Db\MailConfirmation;
 use Application\Form\MailConfirmationForm;
-use Application\Service\Individu\IndividuService;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\MailConfirmationService;
 use Application\Service\Notification\NotificationServiceAwareTrait;
@@ -53,11 +52,17 @@ class MailConfirmationController extends AbstractController {
                     if (isset($data['email']) && $data['email'] !== "") {
                         $mailConfirmation->setEmail($data['email']);
 
-                        //enresgistrement de la demande
-                        $id = $this->mailConfirmationService->save($mailConfirmation);
-                        $this->mailConfirmationService->generateCode($id);
-                        $this->redirect()->toRoute('mail-confirmation-envoie', ['id' => $id], [] , true);
-                        $form = null;
+                        if (filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+
+                            //enresgistrement de la demande
+                            $id = $this->mailConfirmationService->save($mailConfirmation);
+                            $this->mailConfirmationService->generateCode($id);
+
+                            $this->redirect()->toRoute('mail-confirmation-envoie', ['id' => $id], [], true);
+                            $form = null;
+                        } else {
+                            $this->flashMessenger()->addErrorMessage("MailConfirmation: Votre email n'est pas valide");
+                        }
                     } else {
                         //pas de mail on reste sur le formulaire
                     }
