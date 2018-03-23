@@ -201,7 +201,7 @@ class FichierTheseController extends AbstractController
 
         // injection préalable du contenu du fichier pour pouvoir utiliser le plugin Uploader
         $contenuFichier = $this->fichierService->fetchContenuFichier($fichier);
-        $fichier->setContenuFichierData($contenuFichier->getData());
+        $fichier->setContenuFichierData($contenuFichier);
 
         // Envoi du fichier au client (navigateur)
         // NB: $fichier doit être de type \UnicaenApp\Controller\Plugin\Upload\UploadedFileInterface
@@ -249,7 +249,6 @@ class FichierTheseController extends AbstractController
                 $versionASupprimer = $version->estVersionCorrigee() ?
                     VersionFichier::CODE_ARCHI_CORR :
                     VersionFichier::CODE_ARCHI;
-//                $fichiersTheseRetraites = $these->getFichiersBy(null, null, null, $versionASupprimer);
                 $fichiersThese = $this->fichierService->getRepository()->fetchFichiers($these, null, $versionASupprimer, null) ;
                 if (! empty($fichiersThese)) {
                     $this->fichierService->deleteFichiers($fichiersThese);

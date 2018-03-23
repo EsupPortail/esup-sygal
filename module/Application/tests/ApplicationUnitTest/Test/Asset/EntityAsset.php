@@ -4,7 +4,6 @@ namespace ApplicationUnitTest\Test\Asset;
 
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Attestation;
-use Application\Entity\Db\ContenuFichier;
 use Application\Entity\Db\Diffusion;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Fichier;
@@ -42,16 +41,6 @@ class EntityAsset
         $e->setUsername(uniqid());
 
         return $e;
-    }
-
-    static public function newContenuFichier(Fichier $fichier, $data)
-    {
-        $cf = new ContenuFichier();
-        $cf
-            ->setFichier($fichier)
-            ->setData($data);
-
-        return $cf;
     }
 
     static public function newFichier(These $these, NatureFichier $nature, VersionFichier $version)

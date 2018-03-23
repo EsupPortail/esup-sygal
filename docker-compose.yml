@@ -11,6 +11,7 @@ services:
      - "443:443"
     volumes:
      - .:/var/www/html/sygal
+     - /var/sygal-files:/var/sygal-files
     working_dir: /var/www/html/sygal
     network_mode: bridge
 
