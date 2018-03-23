@@ -10,21 +10,30 @@ create table INDIVIDU_RECH (
 );
 -- contenu initial
 insert into INDIVIDU_RECH(ID, HAYSTACK)
-  select
-    id,
-    trim(UNICAEN_ORACLE.str_reduce(NOM_USUEL || ' ' || NOM_PATRONYMIQUE || ' ' || PRENOM1 || ' ' || SOURCE_CODE))
+  select id, individu_haystack(NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, EMAIL, SOURCE_CODE)
   from INDIVIDU;
-
+-- ou màj contenu
+update INDIVIDU_RECH ir set HAYSTACK = (
+  SELECT individu_haystack(NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, EMAIL, SOURCE_CODE)
+  from individu i
+  where i.id = ir.id
+);
 
 -- fonction haystack
 create or replace function individu_haystack(
   NOM_USUEL varchar2,
   NOM_PATRONYMIQUE varchar2,
   PRENOM1 varchar2,
+  EMAIL varchar2,
   SOURCE_CODE varchar2) RETURN VARCHAR2
 AS
   BEGIN
-    return trim(UNICAEN_ORACLE.str_reduce(NOM_USUEL || ' ' || NOM_PATRONYMIQUE || ' ' || PRENOM1 || ' ' || SOURCE_CODE));
+    return trim(UNICAEN_ORACLE.str_reduce(
+      NOM_USUEL || ' ' || PRENOM1 || ' ' || NOM_PATRONYMIQUE || ' ' || PRENOM1 || ' ' ||
+      PRENOM1 || ' ' || NOM_USUEL || ' ' || PRENOM1 || ' ' || NOM_PATRONYMIQUE || ' ' ||
+      EMAIL || ' ' ||
+      SOURCE_CODE
+    ));
   END;
 
 
@@ -34,7 +43,7 @@ CREATE TRIGGER INDIVIDU_RECH_UPDATE
   AFTER DELETE OR INSERT OR UPDATE OF NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, SOURCE_CODE ON INDIVIDU
   FOR EACH ROW
   DECLARE
-    v_haystack CLOB := individu_haystack(:new.NOM_USUEL, :new.NOM_PATRONYMIQUE, :new.PRENOM1, :new.SOURCE_CODE);
+    v_haystack CLOB := individu_haystack(:new.NOM_USUEL, :new.NOM_PATRONYMIQUE, :new.PRENOM1, :new.EMAIL, :new.SOURCE_CODE);
   BEGIN
     IF INSERTING THEN
       insert into INDIVIDU_RECH(ID, HAYSTACK) values (:new.ID, v_haystack);
