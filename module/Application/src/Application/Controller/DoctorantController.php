@@ -33,47 +33,22 @@ class DoctorantController extends AbstractController
     public function modifierPersopassAction()
     {
         $doctorant = $this->requestDoctorant();
-//        $form = $this->getModifierPersopassForm();
-//        $form->setData([
-//            'identity' => $doctorant->getPersopass(),
-//            'credential' => '',
-//        ]);
-//
-//        $request = $this->getRequest();
-//        if ($request->isPost()) {
-//            /** @var ParametersInterface $post */
-//            $post = $this->getRequest()->getPost();
-//            $form->setData($post);
-//            if ($form->isValid()) {
-//                if ($result = $this->validatePersopass($post['identity'], $post['credential'])) {
-//                    try {
-//                        $this->doctorantService->updateDoctorant($doctorant, $result);
-//
-//                        // prise en compte du paramètre GET 'return' positionné par SaisiePersopassRouteDeflector :
-//                        if ($redirectUri = $this->params()->fromQuery('return')) {
-//                            return $this->redirect()->toUrl($redirectUri);
-//                        }
-//
-//                        if (!$request->isXmlHttpRequest()) {
-//                            return $this->redirect()->toRoute('home', [], [], true);
-//                        }
-//                    } catch (DBALException $e) {
-//                        $f = new DbExceptionFormatter();
-//                        $message = $f->filter($e);
-//                        $form->setMessages(['credential' => [$message]]);
-//                    }
-//                }
-//                else {
-//                    $form->setMessages(['credential' => ["Identifiant ou mot de passe incorrect"]]);
-//                }
-//            }
-//        }
-//
-//        $form->setAttribute('action', $request->getRequestUri());
-//
-//        $variable = $this->variableService->getRepository()->findByCodeAndEtab(
-//            Variable::CODE_EMAIL_BDD,
-//            $doctorant->getEtablissement());
+        $mailConfirmation = $this->mailConfirmationService->getDemandeConfirmeeByIndividu($doctorant->getIndividu());
+        if ($mailConfirmation !== null) {
+            $viewmodel = new ViewModel();
+            $viewmodel->setTemplate('application/doctorant/demande-ok');
+            return $viewmodel;
+        }
+
+
+        $mailConfirmation = $this->mailConfirmationService->getDemandeEnCoursByIndividu($doctorant->getIndividu());
+
+        //Si on a déjà une demande en attente
+        if ($mailConfirmation !== null) {
+            $viewmodel = new ViewModel();
+            $viewmodel->setTemplate('application/doctorant/demande-encours');
+            return $viewmodel;
+        }
 
         $mailConfirmation = new MailConfirmation();
         $mailConfirmation->setIndividu($doctorant->getIndividu());

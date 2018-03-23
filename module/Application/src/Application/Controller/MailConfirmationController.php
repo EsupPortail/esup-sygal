@@ -91,8 +91,7 @@ class MailConfirmationController extends AbstractController {
         $mailConfirmation = $this->mailConfirmationService->getDemandeById($id);
 
 
-        $confirm = $this->url()->fromRoute('mail-confirmation-reception', ['id' => $mailConfirmation->getId(), 'code' => $mailConfirmation->getCode()], [] , true);
-        var_dump($confirm);
+        $confirm = $this->url()->fromRoute('mail-confirmation-reception', ['id' => $mailConfirmation->getId(), 'code' => $mailConfirmation->getCode()], ['force_canonical' => true] , true);
         $destinataire = $mailConfirmation->getIndividu()->getPrenom1() ." ". $mailConfirmation->getIndividu()->getNomUsuel() . " " . "&lt;<tt>".$mailConfirmation->getEmail()."</tt>&gt;";
         $titre = "[SyGAL] Confirmation de votre email";
         $corps = "<br/>"
@@ -106,14 +105,15 @@ class MailConfirmationController extends AbstractController {
 
         $this->notificationService->notifierMailConfirmation($mailConfirmation, $titre, $corps);
 
+        return $this->redirect()->toRoute('these');
         /** Branchement du mail mais peut être echanger avec une vue classique en
          * décommentant le code si dessous*/
 
-        return new ViewModel([
-            'destinataire' => $destinataire,
-            'titre' => $titre,
-            'corps' => $corps,
-        ]);
+//        return new ViewModel([
+//            'destinataire' => $destinataire,
+//            'titre' => $titre,
+//            'corps' => $corps,
+//        ]);
     }
 
     /**

@@ -499,4 +499,18 @@ class NotificationService
         $viewModel->setVariable('to', $mails);
         $this->notifier($viewModel);
     }
+
+    public function notifierMailConfirmation($mailConfirmation, $titre, $corps)
+    {
+        $viewModel = (new ViewModel())
+            ->setTemplate('application/doctorant/empty-mail')
+            ->setVariables([
+                'destinataire' => $mailConfirmation->getIndividu()->getNomUsuel(),
+                'titre' => $titre,
+                'corps' => $corps,
+            ]);
+        $viewModel->setVariable('to', $mailConfirmation->getEmail());
+        $viewModel->setVariable('subject', $titre);
+        $this->notifier($viewModel);
+    }
 }

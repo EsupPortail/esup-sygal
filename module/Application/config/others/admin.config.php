@@ -12,8 +12,6 @@ use Application\Form\Factory\MailConfirmationFormFactory;
 use Application\Form\Factory\MailConfirmationHydratorFactory;
 use Application\Service\MailConfirmationServiceFactory;
 use Application\Controller\Factory\MailConfirmationControllerFactory;
-use Application\Controller\CobayeController;
-use Application\Controller\Factory\CobayeControllerFactory;
 use Application\Provider\Privilege\ThesePrivileges;
 
 return [
@@ -71,13 +69,6 @@ return [
                         'reception',
                     ],
                     'privileges' => ThesePrivileges::THESE_CONSULTATION_FICHE,
-                ],
-                [
-                    'controller' => CobayeController::class,
-                    'action'     => [
-                        'index',
-                    ],
-                    'privileges' => UtilisateurPrivileges::UTILISATEUR_ATTRIBUTION_ROLE,
                 ],
             ],
         ],
