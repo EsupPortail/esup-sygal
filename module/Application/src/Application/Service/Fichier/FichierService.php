@@ -44,6 +44,14 @@ class FichierService extends BaseService
     }
 
     /**
+     * @return string
+     */
+    public function getRootDirectoryPath()
+    {
+        return $this->rootDirectoryPath;
+    }
+
+    /**
      * @return FichierRepository
      */
     public function getRepository()
@@ -129,7 +137,7 @@ class FichierService extends BaseService
      */
     private function computeDestinationFilePathForFichier(Fichier $fichier)
     {
-        return $this->rootDirectoryPath . '/' . strtolower($fichier->getNature()->getCode()) . '/' . $fichier->getNom();
+        return $this->computeDestinationDirectoryPathForFichier($fichier) . '/' . $fichier->getNom();
     }
 
     /**

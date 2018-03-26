@@ -8,7 +8,7 @@ $modules = [
 
 if ('development' === (getenv('APPLICATION_ENV') ?: 'production')) {
     $modules = array_merge($modules, [
-//        'ZendDeveloperTools',
+        'ZendDeveloperTools',
         'UnicaenCode',
         'UnicaenTest',
     ]);
