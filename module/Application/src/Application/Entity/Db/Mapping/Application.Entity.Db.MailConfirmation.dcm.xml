@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="Application\Entity\Db\MailConfirmation" table="MAIL_CONFIRMATION">
+        <id name="id" type="integer" column="ID">
+            <generator strategy="SEQUENCE"/>
+        </id>
+
+        <field name="email"     column="EMAIL"      nullable="false"    type="string"   length="256"/>
+        <field name="etat"      column="ETAT"       nullable="false"    type="string"   length="1"/>
+        <field name="code"      column="CODE"       nullable="true"     type="string"   length="19"/>
+
+        <many-to-one field="individu" target-entity="Application\Entity\Db\Individu">
+            <join-columns>
+                <join-column name="INDIVIDU_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
+    </entity>
+</doctrine-mapping>
