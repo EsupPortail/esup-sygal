@@ -65,9 +65,9 @@ class RoleService extends BaseService
         $repo = $this->entityManager->getRepository(IndividuRole::class);
         $qb = $repo->createQueryBuilder("ro")
             ->addSelect('i, r')
-            ->join('ro.individu', 'i', Join::WITH, 'i.sourceCode = :sourceCode')
+            ->join('ro.individu', 'i', Join::WITH, "i.sourceCode LIKE :pattern")
             ->join('ro.role', 'r')
-            ->setParameter('sourceCode', $individuSourceCode);
+            ->setParameter('pattern', '%' . Etablissement::ETAB_PREFIX_SEP . $individuSourceCode);
         return $qb->getQuery()->execute();
     }
 
