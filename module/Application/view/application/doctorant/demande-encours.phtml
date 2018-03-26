@@ -1,5 +1,3 @@
-<?php $email = "testage"; ?>
-
 <h1 class="page-header"> Confirmation de votre mail de contact</h1>
 
 <p class="lead">
@@ -13,5 +11,7 @@
 </p>
 
     <center>
-    <a href=""><input class="btn btn-info" type="button" value="Retour au formulaire de mail de contact"/></a>
+    <a href="
+    <?php echo $this->url('doctorant/modifier-persopass',['back' => true], [], true); ?>
+    "><input class="btn btn-info" type="button" value="Retour au formulaire de mail de contact"/></a>
     </center>

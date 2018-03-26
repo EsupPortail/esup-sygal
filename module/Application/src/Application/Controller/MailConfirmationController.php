@@ -24,7 +24,6 @@ class MailConfirmationController extends AbstractController {
 
     public function indexAction()
     {
-
         $request = $this->getRequest();
         $id = $this->params()->fromRoute('id');
 
@@ -85,7 +84,6 @@ class MailConfirmationController extends AbstractController {
 
     public function envoieAction()
     {
-
         $id = $this->params()->fromRoute('id');
         //$this->mailConfirmationService->generateCode($id);
         $mailConfirmation = $this->mailConfirmationService->getDemandeById($id);
@@ -105,7 +103,7 @@ class MailConfirmationController extends AbstractController {
 
         $this->notificationService->notifierMailConfirmation($mailConfirmation, $titre, $corps);
 
-        return $this->redirect()->toRoute('these');
+        return $this->redirect()->toRoute("home");
         /** Branchement du mail mais peut être echanger avec une vue classique en
          * décommentant le code si dessous*/
 

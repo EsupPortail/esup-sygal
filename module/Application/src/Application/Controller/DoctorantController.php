@@ -35,7 +35,9 @@ class DoctorantController extends AbstractController
         $doctorant = $this->requestDoctorant();
         $mailConfirmation = $this->mailConfirmationService->getDemandeConfirmeeByIndividu($doctorant->getIndividu());
         if ($mailConfirmation !== null) {
-            $viewmodel = new ViewModel();
+            $viewmodel = new ViewModel([
+                'email' => $mailConfirmation->getEmail(),
+            ]);
             $viewmodel->setTemplate('application/doctorant/demande-ok');
             return $viewmodel;
         }
@@ -44,16 +46,26 @@ class DoctorantController extends AbstractController
         $mailConfirmation = $this->mailConfirmationService->getDemandeEnCoursByIndividu($doctorant->getIndividu());
 
         //Si on a déjà une demande en attente
-        if ($mailConfirmation !== null) {
-            $viewmodel = new ViewModel();
+        $back = $this->params()->fromRoute('back');
+
+//        var_dump($mailConfirmation->getIndividu()->__toString());
+//        var_dump($mailConfirmation->getEmail());
+//        var_dump($mailConfirmation->getCode());
+//        var_dump($mailConfirmation->getEtat());
+//        var_dump($back);
+        if ($mailConfirmation !== null && ($back == 0 || $back === null)) {
+            $viewmodel = new ViewModel([
+                'email' => $mailConfirmation->getEmail(),
+            ]);
             $viewmodel->setTemplate('application/doctorant/demande-encours');
             return $viewmodel;
         }
 
-        $mailConfirmation = new MailConfirmation();
-        $mailConfirmation->setIndividu($doctorant->getIndividu());
-        $mailConfirmation->setEtat(MailConfirmation::ENVOYER);
-
+        if ($mailConfirmation === null) {
+            $mailConfirmation = new MailConfirmation();
+            $mailConfirmation->setIndividu($doctorant->getIndividu());
+            $mailConfirmation->setEtat(MailConfirmation::ENVOYER);
+        }
         $request = $this->getRequest();
         if ($request->isPost()) {
 
@@ -63,7 +75,8 @@ class DoctorantController extends AbstractController
                 $mailConfirmation->setEmail($email);
                 $id = $this->mailConfirmationService->save($mailConfirmation);
                 $this->mailConfirmationService->generateCode($id);
-                $this->redirect()->toRoute('mail-confirmation-envoie', ['id' => $id], [], true);
+                return $this->redirect()->toRoute('mail-confirmation-envoie', ['id' => $id], [], true);
+                var_dump("here");
             } else {
                 $this->flashMessenger()->addErrorMessage("L'email fourni <strong>".$email."</strong> est non valide.");
             }

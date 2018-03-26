@@ -23,8 +23,14 @@ class MailConfirmationService {
         return $mailConfirmation;
     }
 
+
+    /**
+     * @param $individu
+     * @return null|MailConfirmation
+     */
     public function getDemandeConfirmeeByIndividu($individu)
     {
+        /** @var MailConfirmation $mailConfirmation */
         $mailConfirmation = $this->getEntityManager()->getRepository(MailConfirmation::class)->findOneBy(["individu"=>$individu, "etat" => MailConfirmation::CONFIRMER]);
         return $mailConfirmation;
     }

@@ -21,6 +21,7 @@ class DoctorantControllerFactory
         /**
          * @var VariableService $variableService
          * @var DoctorantService $doctorantService
+         * @var MailConfirmationService $mailConfirmationService
          */
         $variableService = $controllerManager->getServiceLocator()->get('VariableService');
         $doctorantService = $controllerManager->getServiceLocator()->get('DoctorantService');
