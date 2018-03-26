@@ -13,11 +13,7 @@ $subtitle = "SYstème de Gestion et d'Accompagnement doctoraL";
 
 <?php $this->headTitle($this->translate("Accueil")); ?>
 
-<?php
-$messenger = $this->messenger();
-echo $messenger->addMessagesFromFlashMessenger();
-echo $messenger->addMessagesFromFlashMessenger('UnicaenAuth/*');
-?>
+<?php echo  $this->messenger()->addMessagesFromFlashMessenger('UnicaenAuth/*') ?>
 
 <div class="jumbotron">
 
