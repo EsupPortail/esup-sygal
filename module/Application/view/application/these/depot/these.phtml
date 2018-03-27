@@ -19,8 +19,6 @@ use Application\View\Renderer\PhpRenderer;
  * @var Etablissement  $etabComue
  */
 
-
-
 $maintenant = new DateTime();
 $soutenance = $these->getDateSoutenance();
 $canDeposer = true;
@@ -67,14 +65,7 @@ $maxFileCountThese = 1;
 </div>
 */ ?>
 
-<?php if ($debug === true) {
-        print "Debug depot these <br/>";
-        print "<table>";
-        print "<tr><th>canEdit</th><td>{$canEdit}</td></tr>";
-        print "<tr><th>canDeposer</th><td>{$canDeposer}</td></tr>";
-        print "</table>";
-    }
-?>
+
 
 <?php echo $this->partial('application/these/depot/partial/fichier', [
     'canUpload'               => ($canEdit && $canDeposer),
