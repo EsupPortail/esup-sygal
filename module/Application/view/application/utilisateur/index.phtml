@@ -1,6 +1,7 @@
 <?php
 
 use Application\Entity\Db\Role;
+use Application\Entity\Db\RoleModele;
 use Application\Entity\Db\Utilisateur;
 use Application\Filter\RolesUtilisateurFormatter;
 use Application\Provider\Privilege\UtilisateurPrivileges;
@@ -15,6 +16,7 @@ use Zend\Paginator\Paginator;
  * @var Paginator   $utilisateurs
  * @var Role[]      $roles
  * @var Role[]      $rolesDynamiques
+ * @var array       $modeles
  */
 
 $rolesUtilisateurFormatter = new RolesUtilisateurFormatter();
@@ -30,61 +32,38 @@ $select = (new Select("roles"))
 
 <?php echo $this->messenger()->addCurrentMessagesFromFlashMessenger() ?>
 
-<div class="alert alert-info alert-md">
+<div class="alert alert-info alert-md pull-left" style="width:48%;">
     <span class="glyphicon glyphicon-info-sign"></span>
     <?php echo $this->translate("Sur cette page vous pouvez attribuer les rôles dépendant de structures."); ?>
 
     <ol>
-    <?php foreach($roles as $structure => $roleModeles){
+    <?php foreach($modeles as $structure => $roleModeles){
         echo "<li>" .$structure ."</li>";
         echo "<ul>";
-       foreach ($roleModeles as $roleModele) {
+        /** @var RoleModele $roleModele */
+        foreach ($roleModeles as $roleModele) {
            echo "<li>".$roleModele->getLibelle() . "</li>";
-       }
+        }
        echo "</ul>";
     }
     ?>
     </ol>
-
-<!--    <ul>-->
-<!--    --><?php //foreach ($roles as $r): ?>
-<!--        <li>--><?php //echo $this->translate($r->getRoleId()) ?><!--</li>-->
-<!--    --><?php //endforeach ?>
-<!--    </ul>-->
+</div>
+<div class="alert alert-danger alert-md pull-right" style="width:48%;">
+    <span class="glyphicon glyphicon-warning-sign"></span>
+    <?php echo $this->translate("Les rôles suivants sont attribués automatiquement à partir des données importées d'Apogée :"); ?>
+    <ul>
+        <?php
+        /** @var Role $r */
+        foreach ($rolesDynamiques as $r) {
+            echo "<li>";
+            echo $this->translate($r->getRoleId());
+        }
+        ?>
+    </ul>
 </div>
 
-<div class="row">
-    <div class="col-md-5">
-        <div class="alert alert-warning alert-sm">
-            <p>
-                <?php echo $this->translate("Si vous voulez attribuer le rôle &laquo;");?>
-                <?php echo $this->translate(Role::ROLE_ID_ECOLE_DOCT); ?>
-                <?php echo $this->translate("&raquo;, rendez-vous sur la page"); ?>
-                <a href="<?php echo $this->url('ecole-doctorale', [], [], true) ?>">
-                    <?php echo $this->translate("Écoles doctorales");?>
-                </a>.
-            </p>
-            <p>
-                <?php echo $this->translate("Si vous voulez attribuer le rôle &laquo;");?>
-                <?php echo $this->translate(Role::ROLE_ID_UNITE_RECH); ?>
-                <?php echo $this->translate("&raquo;, rendez-vous sur la page"); ?>
-                <a href="<?php echo $this->url('unite-recherche', [], [], true) ?>">
-                    <?php echo $this->translate("Unités de recherche");?>
-                </a>.
-            </p>
-        </div>
-    </div>
-    <div class="col-md-5">
-        <div class="alert alert-danger alert-sm">
-            <?php echo $this->translate("Les rôles suivants sont attribués automatiquement à partir des données importées d'Apogée :"); ?>
-            <ul>
-                <?php foreach ($rolesDynamiques as $r): ?>
-                    <li><?php echo $this->translate($r->getRoleId()) ?></li>
-                <?php endforeach ?>
-            </ul>
-        </div>
-    </div>
-</div>
+
 
 <div class="pull-left">
     <!-- Formulaire de filtrage -->

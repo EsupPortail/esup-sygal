@@ -100,7 +100,18 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             ->setItemCountPerPage((int)$maxi)
             ->setCurrentPageNumber((int)$page);
 
-        $rolesStatiques = $this->roleService->getRoleModeleByStructures();
+        $roleModeles = $this->roleService->getRoleModeleByStructures();
+
+        $qb = $this->roleService->getRepository()->createQueryBuilder('r');
+        $qb ->join('r.source', 's', Join::WITH, 's.importable = 0')
+            ->andWhere('r.attributionAutomatique = 0')
+            ->andWhere($qb->expr()->notIn('r.roleId', [
+                Role::ROLE_ID_ECOLE_DOCT,
+                Role::ROLE_ID_UNITE_RECH,
+            ]))
+            ->andWhere('1 = pasHistorise(r)')
+            ->orderBy('r.roleId');
+        $rolesStatiques = $qb->getQuery()->getResult();
 
         $qb = $this->roleService->getRepository()->createQueryBuilder('r')
             ->andWhere('r.attributionAutomatique = 1')
@@ -110,6 +121,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
 
         return new ViewModel([
             'utilisateurs'    => $paginator,
+            'modeles'         => $roleModeles,
             'roles'           => $rolesStatiques,
             'rolesDynamiques' => $rolesDynamiques,
             'text'            => $text,
