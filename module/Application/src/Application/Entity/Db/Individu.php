@@ -395,18 +395,4 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
     {
         return $this->id;
     }
-
-    /**
-     * @param bool $civilite
-     * @return string
-     */
-    public function getNomCivil($civilite = true)
-    {
-        $text = "";
-        if ($civilite) $text .= $this->getCivilite() . " ";
-        $text .= ucwords(mb_strtolower($this->getPrenom()), " -") . " ";
-        $text .= strtoupper($this->getNomUsuel());
-
-        return $text;
-    }
 }

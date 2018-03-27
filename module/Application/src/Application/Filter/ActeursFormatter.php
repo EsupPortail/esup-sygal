@@ -156,7 +156,7 @@ class ActeursFormatter extends AbstractFilter {
         /** @var Acteur $acteur */
         foreach ($acteurs as $acteur) {
             $result = [];
-            $result["nom"] = $acteur->getIndividu()->getNomCivil();
+            $result["nom"] = $acteur->getIndividu()->getNomComplet(true);
             if ($this->displayRole === true) $result["role"] = $acteur->getRole()->getRoleId();
             if ($this->displayRoleComplement === true) $result["complement"] = $acteur->getLibelleRoleComplement();
             if ($this->displayQualite === true) $result["qualite"] = $acteur->getQualite();
