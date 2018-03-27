@@ -52,8 +52,8 @@ class NomCompletFormatter extends AbstractFilter
         if ($value instanceof Individu) {
             /* @var $value Individu */
             $nomUsuel = $value->getNomUsuel();
-            $nomPatro = "";
-            $prenom   = $value->getPrenom();
+            $nomPatro = $value->getNomPatronymique();
+            $prenom   = $value->getPrenom($this->tousLesPrenoms);
             $civilite = $value->getCiviliteToString();
         }
         elseif ($value instanceof DoctorantInterface) {
@@ -108,7 +108,6 @@ class NomCompletFormatter extends AbstractFilter
 
         $nomUsuel = ucfirst($this->nomEnMajuscule ? mb_strtoupper($nomUsuel) : $nomUsuel);
         $nomPatro = ucfirst($this->nomEnMajuscule ? mb_strtoupper($nomPatro) : $nomPatro);
-        $prenom   = ucfirst(mb_strtolower($prenom));
         $civilite = $this->avecCivilite ? $civilite : null;
 
         $parts = [

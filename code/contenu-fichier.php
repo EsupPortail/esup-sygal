@@ -15,6 +15,8 @@ use UnicaenApp\Util;
 //
 //////////////////////////////////////////////////////////////////////////
 
+set_time_limit(120);
+
 /** @var FichierService $fs */
 $fs = $controller->getServiceLocator()->get('FichierService');
 $rootdir = $fs->getRootDirectoryPath();
@@ -30,7 +32,6 @@ $result = $qb/*->setMaxResults(50)*/->getQuery()->getArrayResult();
 $createdFiles = [];
 $existingFiles = [];
 $totalSize = 0;
-
 
 foreach ($result as $cf) {
     /** @var ContenuFichier $cf */
