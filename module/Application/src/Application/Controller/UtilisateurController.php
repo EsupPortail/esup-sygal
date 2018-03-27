@@ -4,6 +4,7 @@ namespace Application\Controller;
 
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
+use Application\Form\CreationUtilisateurForm;
 use Application\RouteMatch;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
@@ -288,5 +289,26 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         $role = $this->roleService->getRepository()->findOneBy([(is_numeric($roleId) ? 'id' : 'roleId') => $roleId]);
 
         return $role;
+    }
+
+    public function creationUtilisateurAction()
+    {
+        $form = $this->getServiceLocator()->get('FormElementManager')->get(CreationUtilisateurForm::class);
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $form->setData($request);
+            if ($form->isValid()) {
+                echo "go to action ajout utilisateur ...";
+            } else {
+                echo "KKKOOO";
+            }
+
+        }
+
+
+        return new ViewModel([
+            'form' => $form,
+        ]);
     }
 }

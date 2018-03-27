@@ -1,10 +1,15 @@
 <?php
 
 use Application\Controller\Factory\UtilisateurControllerFactory;
+use Application\Form\CreationUtilisateurForm;
+use Application\Form\Factory\CreationUtilisateurFormFactory;
+use Application\Form\Factory\CreationUtilisateurHydratorFactory;
+use Application\Form\Hydrator\CreationUtilisateurHydrator;
 use Application\Provider\Privilege\UtilisateurPrivileges;
 use Application\Service\Individu\IndividuServiceFactory;
 use Application\Service\Utilisateur\UtilisateurService;
 use UnicaenAuth\Guard\PrivilegeController;
+use Zend\Mvc\Router\Http\Literal;
 
 return [
     'bjyauthorize'    => [
@@ -42,11 +47,30 @@ return [
                     ],
                     'privileges' => UtilisateurPrivileges::UTILISATEUR_ATTRIBUTION_ROLE,
                 ],
+                [
+                    'controller' => 'Application\Controller\Utilisateur',
+                    'action'     => [
+                        'creation-utilisateur',
+                    ],
+                    'privileges' => UtilisateurPrivileges::UTILISATEUR_MODIFICATION,
+                ],
             ],
         ],
     ],
     'router'          => [
         'routes' => [
+            'creation-utilisateur' => [
+                'type'          => Literal::class,
+                'options'       => [
+                    '__NAMESPACE__' => 'Application\Controller',
+                    'controller'    => 'Utilisateur',
+                    'route'       => '/creation-utilisateur',
+                    'defaults'    => [
+                        'action' => 'creation-utilisateur',
+                    ],
+                ],
+                'may_terminate' => true,
+            ],
             'utilisateur' => [
                 'type'          => 'Segment',
                 'options'       => [
@@ -99,6 +123,7 @@ return [
                             ],
                         ],
                     ],
+
                 ],
             ],
         ],
@@ -135,4 +160,15 @@ return [
             'Application\Controller\Utilisateur' => UtilisateurControllerFactory::class,
         ],
     ],
+    'form_elements' => [
+        'factories' => [
+            CreationUtilisateurForm::class => CreationUtilisateurFormFactory::class
+        ]
+    ],
+    'hydrators' => [
+        'factories' => [
+            CreationUtilisateurHydrator::class => CreationUtilisateurHydratorFactory::class,
+        ]
+    ]
+
 ];
