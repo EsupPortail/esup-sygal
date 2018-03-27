@@ -16,6 +16,7 @@ use Application\Entity\Db\Utilisateur;
 use Application\Service\BaseService;
 use Application\Entity\Db\Structure;
 use Doctrine\ORM\Query\Expr\Join;
+use MongoDB\BSON\Type;
 use UnicaenImport\Entity\Db\Source;
 use ZfcUser\Entity\UserInterface;
 
@@ -118,6 +119,19 @@ class RoleService extends BaseService
         ;
         $roles = $qb->getQuery()->execute();
         return $roles;
+    }
+
+    public function getRoleModeleByStructures() {
+        $roleModele = [];
+        $structures = $this->entityManager->getRepository(TypeStructure::class)->findAll();
+
+        /** @var TypeStructure $structure */
+        foreach ($structures as $structure) {
+            $roles = $this->getRoleModeleByStructureType($structure->getId());
+            $roleModele[$structure->getLibelle()] = $roles;
+        }
+
+        return $roleModele;
     }
 
     /**

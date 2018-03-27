@@ -32,12 +32,25 @@ $select = (new Select("roles"))
 
 <div class="alert alert-info alert-md">
     <span class="glyphicon glyphicon-info-sign"></span>
-    <?php echo $this->translate("Sur cette page vous pouvez attribuer les rôles suivants :"); ?>
-    <ul>
-    <?php foreach ($roles as $r): ?>
-        <li><?php echo $this->translate($r->getRoleId()) ?></li>
-    <?php endforeach ?>
-    </ul>
+    <?php echo $this->translate("Sur cette page vous pouvez attribuer les rôles dépendant de structures."); ?>
+
+    <ol>
+    <?php foreach($roles as $structure => $roleModeles){
+        echo "<li>" .$structure ."</li>";
+        echo "<ul>";
+       foreach ($roleModeles as $roleModele) {
+           echo "<li>".$roleModele->getLibelle() . "</li>";
+       }
+       echo "</ul>";
+    }
+    ?>
+    </ol>
+
+<!--    <ul>-->
+<!--    --><?php //foreach ($roles as $r): ?>
+<!--        <li>--><?php //echo $this->translate($r->getRoleId()) ?><!--</li>-->
+<!--    --><?php //endforeach ?>
+<!--    </ul>-->
 </div>
 
 <div class="row">
