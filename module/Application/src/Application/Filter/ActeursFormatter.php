@@ -126,7 +126,7 @@ class ActeursFormatter extends AbstractFilter {
     }
 
     /** This function format an array of acteurs as a unordered list
-     * @param Acteurs[] $acteurs
+     * @param Acteur[] $acteurs
      * @return an unordered list
      */
     private function doFormatUnorderedList($acteurs) {
@@ -138,7 +138,7 @@ class ActeursFormatter extends AbstractFilter {
     }
 
     /** This function format an array of acteurs as Separated Values object
-     * @param  Acteurs[] $acteurs
+     * @param  Acteur[] $acteurs
      * @return Separated Values object
      */
     private function doFormatSeparated($acteurs) {
@@ -148,7 +148,7 @@ class ActeursFormatter extends AbstractFilter {
     }
 
     /** This function format an array of acteurs as Array
-     * @param Acteurs[] $acteurs
+     * @param Acteur[] $acteurs
      * @return array of array with key => value
      */
     private function doFormatArray($acteurs) {

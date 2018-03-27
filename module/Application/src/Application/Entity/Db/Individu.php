@@ -404,7 +404,7 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
     {
         $text = "";
         if ($civilite) $text .= $this->getCivilite() . " ";
-        $text .= ucwords(strtolower($this->getPrenom()), " -") . " ";
+        $text .= ucwords(mb_strtolower($this->getPrenom()), " -") . " ";
         $text .= strtoupper($this->getNomUsuel());
 
         return $text;
