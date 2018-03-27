@@ -1,12 +1,19 @@
 <?php
 
-use Application\Controller\Factory\RoleControllerFactory;
 use Application\Controller\AdminController;
+use Application\Controller\Factory\RoleControllerFactory;
+use Application\Controller\MailConfirmationController;
 use Application\Provider\Privilege\UtilisateurPrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenAuth\Provider\Privilege\Privileges;
 use Zend\Mvc\Router\Http\Literal;
 use Zend\Mvc\Router\Http\Segment;
-use UnicaenAuth\Provider\Privilege\Privileges;
+use Application\Form\Factory\MailConfirmationFormFactory;
+use Application\Form\Factory\MailConfirmationHydratorFactory;
+use Application\Service\MailConfirmationServiceFactory;
+use Application\Controller\Factory\MailConfirmationControllerFactory;
+use Application\Provider\Privilege\ThesePrivileges;
+
 return [
     'bjyauthorize'    => [
         'guards' => [
@@ -44,6 +51,25 @@ return [
                     ],
                     'privileges' => UtilisateurPrivileges::UTILISATEUR_ATTRIBUTION_ROLE,
                 ],
+                [
+                    'controller' => MailConfirmationController::class,
+                    'action'     => [
+                        'index',
+                        'envoie',
+                        'reception',
+                        'swap',
+                        'remove'
+                    ],
+                    'privileges' => UtilisateurPrivileges::UTILISATEUR_ATTRIBUTION_ROLE,
+                ],
+                [
+                    'controller' => MailConfirmationController::class,
+                    'action'     => [
+                        'envoie',
+                        'reception',
+                    ],
+                    'privileges' => ThesePrivileges::THESE_CONSULTATION_FICHE,
+                ],
             ],
         ],
     ],
@@ -71,6 +97,57 @@ return [
                     ],
                 ],
             ],
+            'mail-confirmation-acceuil' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/mail-confirmation-acceuil[/:id]',
+                    'defaults' =>[
+                        'controller' => MailConfirmationController::class,
+                        'action' => 'index',
+                    ],
+                ],
+            ],
+            'mail-confirmation-swap' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/mail-confirmation-swap/:id',
+                    'defaults' =>[
+                        'controller' => MailConfirmationController::class,
+                        'action' => 'swap',
+                    ],
+                ],
+            ],
+            'mail-confirmation-remove' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/mail-confirmation-remove/:id',
+                    'defaults' =>[
+                        'controller' => MailConfirmationController::class,
+                        'action' => 'remove',
+                    ],
+                ],
+            ],
+
+            'mail-confirmation-envoie' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/mail-confirmation-envoie/:id',
+                    'defaults' =>[
+                        'controller' => MailConfirmationController::class,
+                        'action' => 'envoie',
+                    ],
+                ],
+            ],
+            'mail-confirmation-reception' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/mail-confirmation-reception/:id/:code',
+                    'defaults' =>[
+                        'controller' => MailConfirmationController::class,
+                        'action' => 'reception',
+                    ],
+                ],
+            ],
             'modifier-privilege' => [
                 'type'          => Segment::class,
                 'options'       => [
@@ -79,6 +156,16 @@ return [
                         '__NAMESPACE__' => 'Application\Controller',
                         'controller'    => 'Role',
                         'action'        => 'modifier',
+                    ],
+                ],
+            ],
+            'cobaye' => [
+                'type'          => Literal::class,
+                'options'       => [
+                    'route'         => '/cobaye',
+                    'defaults'      => [
+                        'controller'    => CobayeController::class,
+                        'action'        => 'index',
                     ],
                 ],
             ],
@@ -122,18 +209,37 @@ return [
             ],
         ],
     ],
+
     'service_manager' => [
-        'invokables' => array(
-        ),
+        'invokables' => [],
         'factories' => [
+            'MailConfirmationService' => MailConfirmationServiceFactory::class,
         ],
     ],
     'controllers'     => [
         'invokables' => [
             'Application\Controller\Admin' => AdminController::class,
+
         ],
         'factories' => [
             'Application\Controller\Role' => RoleControllerFactory::class,
+            MailConfirmationController::class => MailConfirmationControllerFactory::class,
+            CobayeController::class => CobayeControllerFactory::class,
+
         ],
     ],
+
+    'form_elements'   => [
+        'invokables' => [
+        ],
+        'factories' => [
+            'MailConfirmationForm' => MailConfirmationFormFactory::class,
+        ],
+    ],
+    'hydrators' => [
+        'factories' => [
+            'MailConfirmationHydrator' => MailConfirmationHydratorFactory::class,
+        ]
+    ],
+
 ];

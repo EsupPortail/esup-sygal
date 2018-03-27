@@ -53,13 +53,10 @@ return [
                     'modifier-persopass' => [
                         'type'          => 'Segment',
                         'options'       => [
-                            'route'       => '/modifier-persopass[/:detournement]',
-                            'constraints' => [
-                                'detournement' => '\d',
-                            ],
+                            'route'       => '/modifier-persopass[/:back]',
                             'defaults'    => [
                                 'action' => 'modifier-persopass',
-                                'detournement' => 0
+                                'back' => 0
                             ],
                         ],
                     ],

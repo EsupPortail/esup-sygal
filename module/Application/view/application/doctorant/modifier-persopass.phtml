@@ -16,46 +16,63 @@ use Zend\Form\Form;
 
 <h1 class="page-header"><?php echo $title ?></h1>
 
-<?php if ($detournement): ?>
-    <p class="lead">
-        Avant de continuer, merci de saisir votre identifiant
-        <abbr title="Compte d'accès au système d'information de l'université">PersoP@ss</abbr>, svp. <br>
-        Il sera utile ultérieurement dans l'application pour faire le lien entre vos comptes étudiant et personnel.
-    </p>
-<?php else: ?>
-    <p class="lead">
-        L'identifiant <abbr title="Compte d'accès au système d'information de l'université">PersoP@ss</abbr>
-        sera utile ultérieurement dans l'application pour faire le lien entre vos comptes étudiant et personnel.
-    </p>
-<?php endif ?>
-<p class="alert alert-info">
-    <strong>NB:</strong> Si vous ne possédez pas encore d'identifiant
-    <abbr title="Compte d'accès au système d'information de l'université">PersoP@ss</abbr>, envoyez un mail à
-    <a href="mailto:<?php echo $email = $emailBdD ?>"><?php echo $email ?></a>.
+<?php //if ($detournement): ?>
+<!--    <p class="lead">-->
+<!--        Avant de continuer, merci de saisir votre identifiant-->
+<!--        <abbr title="Compte d'accès au système d'information de l'université">PersoP@ss</abbr>, svp. <br>-->
+<!--        Il sera utile ultérieurement dans l'application pour faire le lien entre vos comptes étudiant et personnel.-->
+<!--    </p>-->
+<?php //else: ?>
+<!--    <p class="lead">-->
+<!--        L'identifiant <abbr title="Compte d'accès au système d'information de l'université">PersoP@ss</abbr>-->
+<!--        sera utile ultérieurement dans l'application pour faire le lien entre vos comptes étudiant et personnel.-->
+<!--    </p>-->
+<?php //endif ?>
+
+<p class="lead">
+Avant de continer, merci de bien saissir une adresse mail de contact.
+Cette adresse sera utilisée par SyGAL pour vous communiquer les informations importantes associées à votre thèse.
+Cette adresse peut aussi être utilisée afin de vous identifier à SyGAL.
 </p>
 
-<?php //echo $this->messenger()->addCurrentMessagesFromFlashMessenger() ?>
+<p class="alert alert-info">
+    <strong>NB:</strong>
+    L'adresse mail de contact de vous saisez ici doit être une adresse durable (autre que vos adresses mails fornies
+    par votre établissement).
+</p>
 
-<?php echo $this->form()->openTag($form) ?>
 
-<?php if (($errors = $this->formErrors($form))): ?>
-    <p><?php echo $errors ?></p>
-<?php endif ?>
+
+<?php //echo $this->form()->openTag($form) ?>
+<!---->
+<?php //if (($errors = $this->formErrors($form))): ?>
+<!--    <p>--><?php //echo $errors ?><!--</p>-->
+<?php //endif ?>
+<!---->
+<?php
+//$identity = $form->get($name = 'identity');
+//$credential = $form->get($name = 'credential');
+//
+//$identity->setAttributes(['autocomplete' => 'off']);
+//$credential->setAttributes(['autocomplete' => 'off']);
+//
+//$fcg = $this->formControlGroup()->setIncludeErrors(false);
+//echo $fcg->render($identity);
+//echo $fcg->render($credential->setLabel("Mot de passe (permet d'authentifier l'identifiant)"));
+//?>
+<!---->
+<?php //echo $this->formElement($form->get('submit')) ?>
+<!---->
+<?php //echo $this->form()->closeTag() ?>
+<!---->
 
 <?php
-$identity = $form->get($name = 'identity');
-$credential = $form->get($name = 'credential');
-
-$identity->setAttributes(['autocomplete' => 'off']);
-$credential->setAttributes(['autocomplete' => 'off']);
-
-$fcg = $this->formControlGroup()->setIncludeErrors(false);
-echo $fcg->render($identity);
-echo $fcg->render($credential->setLabel("Mot de passe (permet d'authentifier l'identifiant)"));
+    $fcg = $this->formControlGroup();
+    echo $this->form()->openTag($form->prepare()->setAttribute('class', 'mail-confirmation'));
+    echo $fcg($form->get('id'));
+    echo $fcg($form->get('idIndividu'));
+    echo $fcg($form->get('individu'));
+    echo $fcg($form->get('email'));
+    echo $fcg($form->get('enregistrer'));
+    echo $this->form()->closeTag();
 ?>
-
-<?php echo $this->formElement($form->get('submit')) ?>
-
-<?php echo $this->form()->closeTag() ?>
-
-

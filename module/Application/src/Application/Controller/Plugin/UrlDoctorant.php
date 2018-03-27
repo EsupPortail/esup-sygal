@@ -16,7 +16,7 @@ class UrlDoctorant extends UrlPlugin
     public function modifierPersopassUrl(These $these)
     {
         return $this->fromRoute('doctorant/modifier-persopass',
-            ['doctorant' => $these->getDoctorant()->getId()]
+            ['doctorant' => $these->getDoctorant()->getId(), 'back' => 0],[], true
         );
     }
 }

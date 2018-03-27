@@ -108,4 +108,9 @@ class IndividuService extends BaseService
 
         return $res;
     }
+
+    public function getIndviduById($id) {
+        $individu = $this->getEntityManager()->getRepository(Individu::class)->findOneBy(["id"=>$id]);
+        return $individu;
+    }
 }
