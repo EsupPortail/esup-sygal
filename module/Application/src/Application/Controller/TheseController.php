@@ -6,6 +6,7 @@ use Application\Entity\Db\Attestation;
 use Application\Entity\Db\Diffusion;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Fichier;
+use Application\Entity\Db\MailConfirmation;
 use Application\Entity\Db\MetadonneeThese;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\RdvBu;
@@ -26,6 +27,7 @@ use Application\Form\RdvBuTheseForm;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Fichier\Exception\ValidationImpossibleException;
 use Application\Service\Fichier\FichierServiceAwareTrait;
+use Application\Service\MailConfirmationService;
 use Application\Service\Notification\NotificationServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\These\Convention\ConventionPdfExporter;
@@ -47,6 +49,8 @@ use Zend\Form\Element\Hidden;
 use Zend\Http\Response;
 use Zend\Stdlib\ParametersInterface;
 use Zend\View\Model\ViewModel;
+use Application\Entity\Db\Individu;
+use Application\Service\MailConfirmationServiceAwareTrait;
 
 class TheseController extends AbstractController
 {
@@ -62,6 +66,7 @@ class TheseController extends AbstractController
     use IdifyFilterAwareTrait;
     use EtablissementServiceAwareTrait;
     use EntityManagerAwareTrait;
+    use MailConfirmationServiceAwareTrait;
 
     private $timeoutRetraitement;
 
@@ -217,12 +222,39 @@ class TheseController extends AbstractController
             $these->getCorrectionAutorisee() &&
             count($this->validationService->getValidationsAttenduesPourCorrectionThese($these)) > 0;
 
+        /**
+         * @var Individu $individu
+         * @var MailConfirmation $enCours
+         * @var MailConfirmation $confirmee
+         */
+        $individu = $these->getDoctorant()->getIndividu();
+        $enCours = $this->mailConfirmationService->getDemandeEnCoursByIndividu($individu);
+        $confirmee = $this->mailConfirmationService->getDemandeConfirmeeByIndividu($individu);
+
+        $mailContact = null;
+        $etatMailContact = null;
+
+        switch(true) {
+            case($enCours !== null) :
+                $mailContact = $enCours->getEmail();
+                $etatMailContact = MailConfirmation::ENVOYER;
+                break;
+            case($confirmee !== null) :
+                $mailContact = $confirmee->getEmail();
+                $etatMailContact = MailConfirmation::CONFIRMER;
+                break;
+        }
+
+        //TODO JP remplacer dans modifierPersopassUrl();
+        $urlModification = $this->url()->fromRoute('doctorant/modifier-persopass',['back' => 1, 'doctorant' => $these->getDoctorant()->getId()], [], true);
+
         $view = new ViewModel([
             'these'                     => $these,
             'etablissement'             => $etablissement,
             'estDoctorant'              => (bool)$this->userContextService->getSelectedRoleDoctorant(),
             'showCorrecAttendue'        => $showCorrecAttendue,
-            'modifierPersopassUrl'      => $this->urlDoctorant()->modifierPersopassUrl($these),
+//            'modifierPersopassUrl'      => $this->urlDoctorant()->modifierPersopassUrl($these),
+            'modifierPersopassUrl'      => $urlModification,
             'pvSoutenanceUrl'           => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_PV_SOUTENANCE),
             'rapportSoutenanceUrl'      => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_RAPPORT_SOUTENANCE),
             'preRapportSoutenanceUrl'   => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE),
@@ -233,6 +265,8 @@ class TheseController extends AbstractController
             'nextStepUrl'               => $this->urlWorkflow()->nextStepBox($these, null, [
                 WfEtape::PSEUDO_ETAPE_FINALE,
             ]),
+            'mailContact'               => $mailContact,
+            'etatMailContact'           => $etatMailContact,
         ]);
         $view->setTemplate('application/these/identite');
 

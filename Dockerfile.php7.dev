@@ -10,7 +10,7 @@ FROM php:7-apache
 
 LABEL maintainer="Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>"
 
-# Mise à niveau de la distrib.
+# Mise à niveau de la distrib et installation des packages requis.
 RUN apt-get update && apt-get install -y \
         ghostscript \
         git \
@@ -31,11 +31,21 @@ RUN apt-get update && apt-get install -y \
         unzip \
         vim \
         wget \
-        zlib1g-dev \
-    && docker-php-ext-install -j$(nproc) iconv gettext gd soap curl intl zip mbstring \
-    && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu && docker-php-ext-install ldap \
-    && docker-php-ext-configure opcache --enable-opcache && docker-php-ext-install opcache \
-    && rm -rf /var/lib/apt/lists/*
+        zlib1g-dev
+RUN docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu && \
+    docker-php-ext-configure opcache --enable-opcache && \
+    docker-php-ext-install -j$(nproc) \
+        curl \
+        gd \
+        gettext \
+        iconv \
+        intl \
+        ldap \
+        mbstring \
+        opcache \
+        soap \
+        zip
+RUN rm -rf /var/lib/apt/lists/*
 
 # Installation d'extensions PECL
 RUN pear config-set http_proxy "$HTTP_PROXY" && \

@@ -21,10 +21,9 @@ $canExport = $this->isAllowed(Privileges::getResourceId(ThesePrivileges::THESE_E
 $queryParams = $this->queryParams();
 
 $acteursFormatter = new ActeursFormatter();
-//TODO (JP) faire quelque chose de plus robuste ...
 $acteursFormatter->asSeparated()
     ->paramDisplay(['role' => false, 'complement' => false, "qualite" => false, "etablissement" => false,])
-    ->paramFilter((['role' => "Directeur de thèse UCN"]));
+    ->paramFilter((['role' => Role::CODE_DIRECTEUR_THESE]));
 ?>
 
 <?php $this->headTitle($this->translate("Thèses")); ?>

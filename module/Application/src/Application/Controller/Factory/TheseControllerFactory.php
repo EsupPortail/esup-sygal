@@ -5,6 +5,7 @@ namespace Application\Controller\Factory;
 use Application\Controller\TheseController;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Fichier\FichierService;
+use Application\Service\MailConfirmationService;
 use Application\Service\Notification\NotificationService;
 use Application\Service\Role\RoleService;
 use Application\Service\These\TheseService;
@@ -38,6 +39,7 @@ class TheseControllerFactory
          * @var WorkflowService $workflowService
          * @var NotificationService $notificationService
          * @var EtablissementService $etablissementService
+         * @var MailConfirmationService $mailConfirmationService
          * @var EntityManager $entityManager
          */
         $variableService = $controllerManager->getServiceLocator()->get('VariableService');
@@ -48,6 +50,7 @@ class TheseControllerFactory
         $fichierService = $controllerManager->getServiceLocator()->get('FichierService');
         $workflowService = $controllerManager->getServiceLocator()->get('WorkflowService');
         $etablissementService = $controllerManager->getServiceLocator()->get('EtablissementService');
+        $mailConfirmationService = $controllerManager->getServiceLocator()->get('MailConfirmationService');
         $entityManager = $controllerManager->getServiceLocator()->get('doctrine.entitymanager.orm_default');
 
         $controller = new TheseController();
@@ -60,6 +63,7 @@ class TheseControllerFactory
         $controller->setFichierService($fichierService);
         $controller->setWorkflowService($workflowService);
         $controller->setEtablissementService($etablissementService);
+        $controller->setMailConfirmationService($mailConfirmationService);
         $controller->setEntityManager($entityManager);
 
         return $controller;
