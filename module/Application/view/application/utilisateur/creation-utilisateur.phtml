@@ -1,10 +1,32 @@
-CREATION INDIVIDU
-
 <?php
-    use Zend\Form\Form;
 
-    /** @var Form $form */
+use Zend\Form\Form;
+use Application\View\Renderer\PhpRenderer;
 
+/**
+ * @var Form $form
+ * @var PhpRenderer $this
+ */
+?>
+
+<?php $this->headTitle($this->translate("Création d'utilisateur")) ?>
+
+<h1 class="page-header"><?php echo $this->translate("Création d'utilisateur"); ?> </h1>
+
+<p>
+    Cette page permet de créer un utilisateur <i>manuellement</i>.
+    Cette création va aussi ajouter d'un individu en base à l'aide des informations remonter par le formulaire.
+</p>
+<p>
+    <strong>Remarque :</strong> l'addresse électronique donnée doit être unique pour permettre la création de l'utilisateur et de l'individu associé.
+</p>
+
+<h3> Formulaire de création </h3>
+<?php
+
+    if ($error !== null) {
+        echo $this->messenger()->addMessage($error, 'danger');
+    }
     echo $this->form($form);
 
 ?>
