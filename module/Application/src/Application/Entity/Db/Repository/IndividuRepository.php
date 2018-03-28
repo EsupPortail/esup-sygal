@@ -2,7 +2,6 @@
 
 namespace Application\Entity\Db\Repository;
 
-use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Doctrine\DBAL\DBALException;
 use UnicaenApp\Exception\RuntimeException;
@@ -11,14 +10,13 @@ use UnicaenApp\Util;
 class IndividuRepository extends DefaultEntityRepository
 {
     /**
-     * @param string $empId
-     * @param Etablissement $etablissement
+     * @param string $sourceCode
      * @return Individu
      */
-    public function findOneByEmpIdAndEtab($empId, Etablissement $etablissement)
+    public function findOneBySourceCode($sourceCode)
     {
         /** @var Individu $i */
-        $i = $this->findOneBy(['sourceCode' => $etablissement->getCode() . '::' . $empId]);
+        $i = $this->findOneBy(['sourceCode' => $sourceCode]);
 
         return $i;
     }

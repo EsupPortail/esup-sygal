@@ -68,16 +68,15 @@ class IndividuService extends BaseService
                                                  Etablissement $etablissement,
                                                  Utilisateur $utilisateur = null)
     {
-        $entity = new Individu();
+        $sourceCode = $etablissement->prependPrefixTo($userWrapper->getSupannId());
 
+        $entity = new Individu();
         $entity->setNomUsuel($userWrapper->getNom());
         $entity->setNomPatronymique($userWrapper->getNom());
         $entity->setPrenom($userWrapper->getPrenom());
         $entity->setCivilite($userWrapper->getCivilite());
         $entity->setEmail($userWrapper->getEmail());
-
-        $entity->setSourceCode($etablissement->prependPrefixTo($userWrapper->getSupannEmpId()));
-
+        $entity->setSourceCode($sourceCode);
         $entity->setHistoCreateur($utilisateur);
 
         $this->getEntityManager()->persist($entity);

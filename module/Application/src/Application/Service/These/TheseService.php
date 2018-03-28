@@ -13,6 +13,7 @@ use Application\Entity\Db\Repository\TheseRepository;
 use Application\Entity\Db\These;
 use Application\Entity\Db\VersionFichier;
 use Application\Notification\ValidationRdvBuNotification;
+use Application\QueryBuilder\TheseQueryBuilder;
 use Application\Service\BaseService;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\Notification\NotificationServiceAwareTrait;
@@ -47,10 +48,10 @@ class TheseService extends BaseService
     }
 
     /**
-     * @param QueryBuilder       $qb
+     * @param TheseQueryBuilder  $qb
      * @param UserContextService $userContext
      */
-    public function decorateQbFromUserContext(QueryBuilder $qb, UserContextService $userContext)
+    public function decorateQbFromUserContext(TheseQueryBuilder $qb, UserContextService $userContext)
     {
         $role = $userContext->getSelectedIdentityRole();
 
@@ -72,7 +73,7 @@ class TheseService extends BaseService
                 $qb
                     ->join('t.acteurs', 'adt', Join::WITH, 'adt.role = :role')
                     ->join('adt.individu', 'idt', Join::WITH, 'idt.sourceCode like :idtSourceCode')
-                    ->setParameter('idtSourceCode', '%::' . $userWrapper->getSupannEmpId())
+                    ->setParameter('idtSourceCode', '%::' . $userWrapper->getSupannId())
                     ->setParameter('role', $role);
             }
             // sinon role = membre jury
