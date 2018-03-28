@@ -100,7 +100,7 @@ return array(
                             ],
                             'constraints' => [
                                 'service'       => implode ('|', ["all","these","doctorant","acteur","variable","individu","role"]),
-                                'etablissement' => implode ('|', ["UCN","fOO","INSA","URN"]),
+                                'etablissement' => implode ('|', ["UCN","ULHN","INSA","URN"]),
                             ]
                         ],
                     ],
