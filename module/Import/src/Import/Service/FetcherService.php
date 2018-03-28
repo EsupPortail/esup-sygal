@@ -58,8 +58,8 @@ class FetcherService
     {
         $this->entityManager = $entityManager;
         $this->config = $config;
-        $this->user = $config['users']['login'];
-        $this->password = $config['users']['password'];
+//        $this->user = $config['users']['login'];
+//        $this->password = $config['users']['password'];
     }
 
     /**
@@ -134,6 +134,8 @@ class FetcherService
         $this->url = $this->config['import-api']['etablissements'][$positionEtablissement]['url'];
         $this->proxy = $this->config['import-api']['etablissements'][$positionEtablissement]['proxy'];
         $this->verify = $this->config['import-api']['etablissements'][$positionEtablissement]['verify'];
+        $this->user = $this->config['import-api']['etablissements'][$positionEtablissement]['user'];
+        $this->password = $this->config['import-api']['etablissements'][$positionEtablissement]['password'];
     }
 
     /** Fonction chargée d'optenir la réponse d'un Web Service
