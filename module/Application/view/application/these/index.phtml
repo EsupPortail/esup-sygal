@@ -33,7 +33,7 @@ $acteursFormatter->asSeparated()
 </h1>
 <!-- Formulaire de filtrage -->
 <div class="pull-left">
-    <?php echo $this->partial('partial/form-filtrage') ?>
+    <?php echo $this->partial('partial/form-filtrage', ['etablissements' => $etablissements]) ?>
 </div>
 <!-- Formulaire de recherche -->
 <div class="pull-right">

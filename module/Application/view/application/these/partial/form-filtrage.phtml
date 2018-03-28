@@ -1,5 +1,6 @@
 <?php
 
+use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\These;
 use Application\View\Renderer\PhpRenderer;
 
@@ -19,6 +20,16 @@ $urlFiltrer = function ($paramName, $paramValue, $queryParams) {
     return $this->url('these/rechercher', [], ['query' => $queryParams], true);
 };
 
+//preparation des etablissements
+$paramEtablissements = [];
+$paramEtablissements[] = ['value' => '',                             'label' => $this->translate("Tous") ];
+/** @var Etablissement $etablissement */
+foreach ($etablissements as $etablissement) {
+    $paramEtablissements[] = ['value' => $v = $etablissement->getCode(), 'label' => $etablissement->getSigle() ];
+}
+
+
+
 echo $this->filterPanel([
     $this->translate("État") => [
         'paramName' => 'etatThese',
@@ -34,13 +45,7 @@ echo $this->filterPanel([
 
     $this->translate("Établissement") => [
         'paramName' => 'etablissement',
-        'paramConfig' => [
-            ['value' => '',                             'label' => $this->translate("Tous") ],
-            ['value' => $v = 'INSA',                    'label' => $this->translate("INSA Rouen") ],
-            ['value' => $v = 'UCN',                     'label' => $this->translate("UniCaen") ],
-            ['value' => $v = 'ULHN',                    'label' => $this->translate("Univ-LeHavre") ],
-            ['value' => $v = 'URN',                     'label' => $this->translate("Univ-Rouen") ],
-        ],
+        'paramConfig' => $paramEtablissements,
         'filterUrl' => $urlFiltrer,
     ],
 ]) ?>
