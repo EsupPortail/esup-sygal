@@ -2,6 +2,7 @@
 
 namespace Application\Form;
 
+use Zend\Form\Element\Password;
 use Zend\Form\Element\Submit;
 use Zend\Form\Element\Text;
 use Zend\Form\Element\Hidden;
@@ -31,15 +32,17 @@ class CreationUtilisateurForm extends Form
             (new Text('nomPatronymique'))
             ->setLabel("Nom Patronymique :")
         );
-
         $this->add(
             (new Text('prenom'))
                 ->setLabel("Prénom :")
         );
-
         $this->add(
             (new Text('email'))
                 ->setLabel("Email :")
+        );
+        $this->add(
+            (new Password('password'))
+                ->setLabel("Mot de passe :")
         );
 
         $this->add((new Submit('submit'))
@@ -68,6 +71,10 @@ class CreationUtilisateurForm extends Form
                 'name' => 'email',
                 'required' => true,
             ],
+            'password' => [
+                'name' =>'password',
+                'required' => true,
+            ]
         ]));
     }
 }

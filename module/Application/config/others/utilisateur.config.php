@@ -62,10 +62,10 @@ return [
             'creation-utilisateur' => [
                 'type'          => Literal::class,
                 'options'       => [
-                    '__NAMESPACE__' => 'Application\Controller',
-                    'controller'    => 'Utilisateur',
                     'route'       => '/creation-utilisateur',
                     'defaults'    => [
+                        '__NAMESPACE__' => 'Application\Controller',
+                        'controller'    => 'Utilisateur',
                         'action' => 'creation-utilisateur',
                     ],
                 ],
@@ -138,6 +138,11 @@ return [
                                 'label'    => 'Utilisateurs',
                                 'route'    => 'utilisateur',
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\Utilisateur', 'index'),
+                            ],
+                            'creation' => [
+                                'label'    => 'Création d\'utilisateur',
+                                'route'    => 'creation-utilisateur',
+                                'resource' => PrivilegeController::getResourceId('Application\Controller\Utilisateur', 'creation-utilisateur'),
                             ],
                         ],
                     ],

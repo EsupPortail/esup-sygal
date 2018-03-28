@@ -2,10 +2,7 @@
 
 namespace Application\Form\Hydrator;
 
-use Application\Entity\Db\Individu;
-use Application\Entity\Db\Utilisateur;
-use Application\Entity\Db\Diffusion;
-use Application\Entity\Db\RecapBu;
+use Application\Entity\Db\CreationUtilisateurInfos;
 use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Service\EntityManagerAwareInterface;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -17,33 +14,35 @@ class CreationUtilisateurHydrator implements HydratorInterface, EntityManagerAwa
 
     /**
      * @param array $data
-     * @param Individu $individu
-     * @return Individu
+     * @param CreationUtilisateurInfos $infos
+     * @return CreationUtilisateurInfos
      * @throws OptimisticLockException
      */
-    public function hydrate(array $data, $individu) {
+    public function hydrate(array $data, $infos) {
 
-        $individu->setCivilite($data['civilite']);
-        $individu->setNomUsuel($data['nomUsuel']);
-        $individu->setNomPatronymique($data['nomPatronymique']);
-        $individu->setPrenom1($data['prenom']);
-        $individu->setEmail($data['email']);
+        $infos->setCivilite($data['civilite']);
+        $infos->setNomUsuel($data['nomUsuel']);
+        $infos->setNomPatronymique($data['nomPatronymique']);
+        $infos->setPrenom($data['prenom']);
+        $infos->setEmail($data['email']);
+        $infos->setPassword($data['password']);
 
-        return $individu;
+        return $infos;
     }
 
     /**
-     * @param Individu $individu
+     * @param CreationUtilisateurInfos $infos
      * @return array
      */
-    public function extract($individu) {
+    public function extract($infos) {
 
         $data = [];
-        $data['civilite']        = $individu->getCivilite();
-        $data['nomUsuel']        = $individu->getNomUsuel();
-        $data['nomPatronymique'] = $individu->getNomPatronymique();
-        $data['prenom']          = $individu->getPrenom1();
-        $data['email']           = $individu->getEmail();
+        $data['civilite']        = $infos->getCivilite();
+        $data['nomUsuel']        = $infos->getNomUsuel();
+        $data['nomPatronymique'] = $infos->getNomPatronymique();
+        $data['prenom']          = $infos->getPrenom();
+        $data['email']           = $infos->getEmail();
+        $data['password']        = $infos->getPassword();
 
         return $data;
     }

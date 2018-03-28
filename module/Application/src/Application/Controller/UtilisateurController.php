@@ -2,6 +2,7 @@
 
 namespace Application\Controller;
 
+use Application\Entity\Db\CreationUtilisateurInfos;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
 use Application\Form\CreationUtilisateurForm;
@@ -23,6 +24,7 @@ use UnicaenLdap\Entity\People;
 use UnicaenLdap\Filter\People as LdapPeopleFilter;
 use UnicaenLdap\Service\LdapPeopleServiceAwareTrait;
 use UnicaenLdap\Service\People as LdapPeopleService;
+use Zend\Db\Sql\Predicate\In;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 use Zend\Http\Request;
@@ -301,42 +303,48 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     {
         /** @var Form $form */
         $form = $this->getServiceLocator()->get('FormElementManager')->get(CreationUtilisateurForm::class);
-        $individu = null;
+        $infos = new CreationUtilisateurInfos();
+
+        $form->bind($infos);
 
         /** @var Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
             $form->setData($data);
+
             if ($form->isValid()) {
 
-                /** @var Source $source */
-                $source = $this->getEntityManager()->getRepository(Source::class)->findOneBy(["code" => 'COMUE::SYGAL']);
-                $user   = $this->getEntityManager()->getRepository(Utilisateur::class)->findOneBy(["username" => 'sygal-app']);
+                /** @var CreationUtilisateurInfos $info */
 
-                /** @var Individu $individu */
-                $individu = new Individu();
-                $individu->setCivilite($data['civilite']);
-                $individu->setNomUsuel($data['nomUsuel']);
-                $individu->setNomPatronymique($data['nomPatronymique']);
-                $individu->setPrenom1($data['prenom']);
-                $individu->setEmail($data['email']);
 
-                $individu->setSourceCode("COMUE::".$data['prenom'].".".$data['nomUsuel']);
-                $individu->setSource($source); //COMUE::SyGAL
-                $individu->setHistoCreateur($user); //sygal-app
-                $individu->setHistoModificateur($user); //sygal-app
+                // Le mail va servir de verification de la présence d'un utilisateur et d'un individu en db
+                // todo utiliser la fonction dédiée de doctrine après la POC
 
-                $this->getEntityManager()->persist($individu);
-                $this->getEntityManager()->flush($individu);
 
-                /** @var Utilisateur $utilisateur */
-                $utilisateur = new Utilisateur();
-                $utilisateur->setUsername($data['prenom'].".".$data['nomUsuel']);
-                $utilisateur->setPassword('db');
-                $utilisateur->setState(1);
-                $this->getEntityManager()->persist($utilisateur);
-                $this->getEntityManager()->flush($utilisateur);
+                if ($this->individuService->existIndividuUtilisateurByEmail($data['email'])) {
+                    var_dump("mail déjà en base");
+                    //die("Problème de présence de l'entité en base");
+                } else {
+
+                    /** @var Individu $individu */
+                    $individu = new Individu();
+                    $individu->setCivilite($data['civilite']);
+                    $individu->setNomUsuel($data['nomUsuel']);
+                    $individu->setNomPatronymique($data['nomPatronymique']);
+                    $individu->setPrenom1($data['prenom']);
+                    $individu->setEmail($data['email']);
+                    $individu->setSourceCode("COMUE::" . $data['email']);
+
+                    /** @var Utilisateur $utilisateur */
+                    $utilisateur = new Utilisateur();
+                    $utilisateur->setUsername($data['prenom'] . "." . $data['nomUsuel']);
+                    $utilisateur->setPassword(password_hash($data['password'], PASSWORD_DEFAULT));
+                    $utilisateur->setState(1);
+                    $utilisateur->setEmail($data['email']);
+
+                    $this->individuService->createFromForm($individu, $utilisateur);
+                }
             }
         }
 
