@@ -304,6 +304,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         /** @var Form $form */
         $form = $this->getServiceLocator()->get('FormElementManager')->get(CreationUtilisateurForm::class);
         $infos = new CreationUtilisateurInfos();
+        $error = null;
 
         $form->bind($infos);
 
@@ -314,17 +315,9 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             $form->setData($data);
 
             if ($form->isValid()) {
-
-                /** @var CreationUtilisateurInfos $info */
-
-
-                // Le mail va servir de verification de la présence d'un utilisateur et d'un individu en db
-                // todo utiliser la fonction dédiée de doctrine après la POC
-
-
                 if ($this->individuService->existIndividuUtilisateurByEmail($data['email'])) {
-                    var_dump("mail déjà en base");
-                    //die("Problème de présence de l'entité en base");
+                    $error = "Addresse électronique déjà renseignée dans SyGAL.";
+
                 } else {
 
                     /** @var Individu $individu */
@@ -344,6 +337,9 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
                     $utilisateur->setEmail($data['email']);
 
                     $this->individuService->createFromForm($individu, $utilisateur);
+
+                    $this->flashMessenger()->addSuccessMessage("Utilisateur <strong>{$utilisateur->getUsername()}</strong> crée avec succés.");
+                    $this->redirect()->toRoute('utilisateur');
                 }
             }
         }
@@ -351,6 +347,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
 
         return new ViewModel([
             'form' => $form,
+            'error' => $error,
         ]);
     }
 }

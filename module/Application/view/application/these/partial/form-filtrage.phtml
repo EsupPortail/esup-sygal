@@ -23,12 +23,10 @@ $urlFiltrer = function ($paramName, $paramValue, $queryParams) {
 //preparation des etablissements
 $paramEtablissements = [];
 $paramEtablissements[] = ['value' => '',                             'label' => $this->translate("Tous") ];
-/** @var Etablissement $etablissement */
+/** @var Etablissement[] $etablissements */
 foreach ($etablissements as $etablissement) {
     $paramEtablissements[] = ['value' => $v = $etablissement->getCode(), 'label' => $etablissement->getSigle() ];
 }
-
-
 
 echo $this->filterPanel([
     $this->translate("État") => [
