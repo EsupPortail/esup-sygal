@@ -78,6 +78,6 @@ class TheseControllerFactory
     {
         $options = $serviceLocator->get('config');
 
-        return isset($options['sodoct']) ? $options['sodoct'] : [];
+        return isset($options['sygal']) ? $options['sygal'] : [];
     }
 }

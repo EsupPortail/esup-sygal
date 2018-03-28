@@ -9,12 +9,12 @@ $forwarded = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDE
     <!-- Meta -->
     <meta charset="utf-8">
 
-    <title>Maintenance - SoDoct</title>
+    <title>Maintenance - SyGAL</title>
 </head>
 
 <body>
 <div id="navbar">
-    <h1 class="title">SoDoct</h1>
+    <h1 class="title">SyGAL</h1>
     <p class="info">
         REMOTE_ADDR=<?php echo $remoteAddr; ?>, HTTP_X_FORWARDED_FOR=<?php echo $forwarded; ?>
     </p>
@@ -22,7 +22,7 @@ $forwarded = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDE
 
 <div id="contenu">
 
-    <h1>SoDoct
+    <h1>SyGAL
         <small>(SOutenance, Doctorat et Organisation du Circuit des Thèses)</small>
     </h1>
     <p class="lead"><?php echo $maintenanceText ?></p>

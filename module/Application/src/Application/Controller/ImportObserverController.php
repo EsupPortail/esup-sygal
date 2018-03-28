@@ -27,7 +27,7 @@ class ImportObserverController extends AbstractController
      * php ./public/index.php process-observed-import-results
      *
      * Exemple de config CRON :
-     * 0 5-17 * * 1-5 root /usr/bin/php /home/gauthierb/workspace/sodoct/public/index.php process-observed-import-results 1> /tmp/sodoctlog.txt 2>&1
+     * 0 5-17 * * 1-5 root /usr/bin/php /home/gauthierb/workspace/sygal/public/index.php process-observed-import-results 1> /tmp/sodoctlog.txt 2>&1
      * i.e. du lundi au vendredi, à 05:00, 06:00 ... 17:00
      */
     public function processObservedImportResultsAction()

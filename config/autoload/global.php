@@ -4,7 +4,7 @@ use Application\Navigation\NavigationFactoryFactory;
 use Retraitement\Filter\Command\MinesCommand;
 
 return array(
-    'sodoct' => [
+    'sygal' => [
         'archivabilite' => [
             'check_ws_script_path' => __DIR__ . '/../../bin/from_cines/check_webservice_response.sh',
             'script_path'          => __DIR__ . '/../../bin/validation_cines.sh',

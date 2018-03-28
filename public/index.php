@@ -16,7 +16,7 @@ foreach( $whiteList as $ip ){
     if ($passed) break;
 }
 if (!$passed){
-    $maintenanceText = 'Suite à un problème matériel, SoDoct est inaccessible. La résolution est en cours. Veuillez nous excuser pour la gêne occasionnée.';
+    $maintenanceText = 'Suite à un problème matériel, SyGAL est inaccessible. La résolution est en cours. Veuillez nous excuser pour la gêne occasionnée.';
     include 'maintenance.php';
 }
 /* Fin de fermeture du service */

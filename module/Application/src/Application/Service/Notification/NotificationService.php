@@ -397,7 +397,7 @@ class NotificationService
         $notification->prepare();
         $html = $this->renderNotification($notification);
 
-        $subject = "[SoDoct] " . $notification->getSubject();
+        $subject = "[SyGAL] " . $notification->getSubject();
         $to = $notification->getTo();
         $cc = $notification->getCc();
         $bcc = $notification->getBcc();

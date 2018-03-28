@@ -1,6 +1,6 @@
-# Application SoDoct
+# Application SyGAL
 
-SOutenance, Doctorat et Organisation du Circuit des Thèses
+SYstème de Gestion et d'Accompagement doctoraL
 
 ## Utilisation de Docker
 
@@ -84,7 +84,7 @@ Build à partir du fichier *Dockerfile.php7.test* :
     --build-arg http_proxy="http://proxy.unicaen.fr:3128" \
     --build-arg https_proxy="http://proxy.unicaen.fr:3128" \
     --build-arg no_proxy=".unicaen.fr,localhost" \
-    -t unicaen/sodoct-php7-test \
+    -t unicaen/sygal-php7-test \
     -f Dockerfile.php7.test \
     .
 
@@ -94,8 +94,8 @@ Run :
     -p 8080:80 \
     --dns=10.14.128.125 \
     --dns-search=unicaen.fr \
-    --name sodoct-docker \
-    unicaen/sodoct-docker
+    --name sygal-docker \
+    unicaen/sygal-docker
 
 NB: pas possible de spécifier le serveur DNS par "proxy.unicaen.fr".
 

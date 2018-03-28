@@ -64,10 +64,10 @@ class NotificationServiceFactory implements FactoryInterface
     {
         $config = $serviceLocator->get('config');
 
-        if (! isset($config['sodoct']['notification'])) {
+        if (! isset($config['sygal']['notification'])) {
             return [];
         }
 
-        return $config['sodoct']['notification'];
+        return $config['sygal']['notification'];
     }
 }

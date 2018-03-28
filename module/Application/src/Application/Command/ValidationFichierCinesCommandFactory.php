@@ -10,11 +10,11 @@ class ValidationFichierCinesCommandFactory
     function __invoke(ServiceLocatorInterface $serviceLocator)
     {
         $config = $serviceLocator->get('config');
-        if (!isset($config['sodoct']['archivabilite']['script_path'])) {
-            throw new InvalidArgumentException("Option de config sodoct.archivabilite.script_path introuvable");
+        if (!isset($config['sygal']['archivabilite']['script_path'])) {
+            throw new InvalidArgumentException("Option de config sygal.archivabilite.script_path introuvable");
         }
 
-        $scriptPath = $config['sodoct']['archivabilite']['script_path'];
+        $scriptPath = $config['sygal']['archivabilite']['script_path'];
 
         return new ValidationFichierCinesCommand($scriptPath);
     }

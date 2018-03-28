@@ -31,7 +31,7 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     const MESSAGE_RETRAITEMENT_DUREE = "L'opération de retraitement automatique de fichier peut durer quelques minutes.";
     const MESSAGE_DEPOT_DUREE = "L'opération de téléversement de fichier peut durer quelques minutes.";
 
-    const RETRAITEMENT_AUTO = 'SoDoct';
+    const RETRAITEMENT_AUTO = 'sygal';
     const RETRAITEMENT_MANU = 'Inconnu';
 
     const MIME_TYPE_PDF = 'application/pdf';
