@@ -232,14 +232,11 @@ class UserContextService extends BaseUserContextService
             return null;
         }
 
-        $supannEmpId = $userWrapper->getSupannEmpId();
         $domaineEtab = $userWrapper->getDomainFromEppn();
-
-        /** @var Etablissement $etablissement */
         $etablissement = $this->etablissementService->getRepository()->findOneByDomaine($domaineEtab);
+        $sourceCode = $etablissement->prependPrefixTo($userWrapper->getSupannId());
 
-        /** @var Individu $individu */
-        $individu = $this->individuService->getRepository()->findOneByEmpIdAndEtab($supannEmpId, $etablissement);
+        $individu = $this->individuService->getRepository()->findOneBySourceCode($sourceCode);
 
         return $individu;
     }

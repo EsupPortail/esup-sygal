@@ -2,10 +2,9 @@
 
 namespace Application\Authentication\Storage;
 
-use Application\Entity\UserWrapper;
 use Application\Entity\Db\Doctorant;
-use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Utilisateur;
+use Application\Entity\UserWrapper;
 use Application\Service\Doctorant\DoctorantServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
@@ -30,13 +29,8 @@ class AppStorage implements ChainableStorage
     use DoctorantServiceAwareTrait;
     use EtablissementServiceAwareTrait;
 
-    const KEY_DB_UTILSATEUR = 'db';
+    const KEY_DB_UTILISATEUR = 'db';
     const KEY_DOCTORANT = 'doctorant';
-
-    /**
-     * @var array
-     */
-    private $contents;
 
     /**
      * @var UserWrapper
@@ -50,20 +44,16 @@ class AppStorage implements ChainableStorage
 
     /**
      * @param ChainEvent $e
-     * @throws \Zend\Authentication\Exception\ExceptionInterface
      */
     public function read(ChainEvent $e)
     {
-        $this->contents = $e->getContents();
-
-        if (null === $this->contents['ldap'] && null === $this->contents['shib']) {
+        $this->userWrapper = UserWrapper::instFromStorageChainEvent($e);
+        if ($this->userWrapper === null) {
             return;
         }
 
-        $this->userWrapper = UserWrapper::inst($this->contents['ldap'] ?: $this->contents['shib']);
-
         /**
-         * Recherche de l'utilisateur connecté dans la table Utilisateur.
+         * Collecte des données issues de la table Utilisateur.
          */
         $this->addDbUtilisateurContents($e);
 
@@ -79,7 +69,7 @@ class AppStorage implements ChainableStorage
     protected function addDbUtilisateurContents(ChainEvent $e)
     {
         try {
-            $e->addContents(self::KEY_DB_UTILSATEUR, $this->fetchUtilisateur());
+            $e->addContents(self::KEY_DB_UTILISATEUR, $this->fetchUtilisateur());
         } catch (ExceptionInterface $e) {
             throw new RuntimeException("Erreur imprévue rencontrée.", 0, $e);
         }
@@ -116,21 +106,15 @@ class AppStorage implements ChainableStorage
             return $this->doctorant;
         }
 
-        /**
-         * NB: Un doctorant a la possibilité de s'authentifier :
-         * - avec son numéro étudiant (Doctorant::sourceCode),
-         * - avec son persopass (DoctorantCompl::persopass), seulement après qu'il l'a saisi sur la page d'identité de la thèse.
-         */
-        $username = $this->userWrapper->getUsername();
+        $id = $this->userWrapper->getSupannId();
         $domaineEtab = $this->userWrapper->getDomainFromEppn();
-
-        /** @var Etablissement $etablissement */
         $etablissement = $this->etablissementService->getRepository()->findOneByDomaine($domaineEtab);
+        $sourceCode = $etablissement->prependPrefixTo($id);
 
         try {
-            $this->doctorant = $this->doctorantService->getRepository()->findOneByUsernameAndEtab($username, $etablissement);
+            $this->doctorant = $this->doctorantService->getRepository()->findOneBySourceCode($sourceCode);
         } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Plusieurs doctorants ont été trouvés avec le même username: " . $username);
+            throw new RuntimeException("Plusieurs doctorants ont été trouvés avec le même source code: " . $sourceCode);
         }
 
         return $this->doctorant;

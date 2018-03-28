@@ -284,11 +284,11 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
     /**
      * Set civilite
      *
-     * @param string $civilite
+     * @param string|null $civilite
      *
      * @return self
      */
-    public function setCivilite($civilite)
+    public function setCivilite($civilite = null)
     {
         $this->civilite = $civilite;
 
@@ -298,7 +298,7 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
     /**
      * Get civilite
      *
-     * @return string
+     * @return string|null
      */
     public function getCivilite()
     {
