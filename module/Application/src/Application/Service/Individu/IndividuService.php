@@ -12,6 +12,7 @@ use Application\Entity\UserWrapper;
 use Application\Service\BaseService;
 use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\RuntimeException;
+use UnicaenImport\Entity\Db\Source;
 use UnicaenLdap\Entity\People;
 
 class IndividuService extends BaseService
@@ -112,5 +113,34 @@ class IndividuService extends BaseService
     public function getIndviduById($id) {
         $individu = $this->getEntityManager()->getRepository(Individu::class)->findOneBy(["id"=>$id]);
         return $individu;
+    }
+
+    /**
+     * @param Individu $individu
+     * @param Utilisateur $utilisateur
+     * @throws OptimisticLockException
+     */
+    public function createFromForm(Individu $individu, Utilisateur $utilisateur)
+    {
+        $source = $this->getEntityManager()->getRepository(Source::class)->findOneBy(["code" => 'COMUE::SYGAL']);
+        $user = $this->getEntityManager()->getRepository(Utilisateur::class)->findOneBy(["username" => 'sygal-app']);
+        $individu->setSource($source); //COMUE::SyGAL
+        $individu->setHistoCreateur($user); //sygal-app
+        $individu->setHistoModificateur($user); //sygal-app
+
+        $this->getEntityManager()->persist($individu);
+        $this->getEntityManager()->flush($individu);
+        $this->getEntityManager()->persist($utilisateur);
+        $this->getEntityManager()->flush($utilisateur);
+
+        $individu->setSourceCode("COMUE::" . $individu->getId());
+        $this->getEntityManager()->flush($individu);
+    }
+
+    public function existIndividuUtilisateurByEmail($email) {
+        $exist_individu = $this->getEntityManager()->getRepository(Individu::class)->findOneBy(["email" => $email]);
+        $exist_utilisateur = $this->getEntityManager()->getRepository(Utilisateur::class)->findOneBy(["email" => $email]);
+
+        return ($exist_individu !== null || $exist_utilisateur !== null);
     }
 }

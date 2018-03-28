@@ -2,8 +2,10 @@
 
 namespace Application\Controller;
 
+use Application\Entity\Db\CreationUtilisateurInfos;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
+use Application\Form\CreationUtilisateurForm;
 use Application\RouteMatch;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
@@ -16,12 +18,18 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
 use UnicaenApp\Exception\RuntimeException;
+use UnicaenApp\Service\EntityManagerAwareTrait;
+use UnicaenImport\Entity\Db\Source;
 use UnicaenLdap\Entity\People;
 use UnicaenLdap\Filter\People as LdapPeopleFilter;
 use UnicaenLdap\Service\LdapPeopleServiceAwareTrait;
 use UnicaenLdap\Service\People as LdapPeopleService;
+use Zend\Db\Sql\Predicate\In;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
+use Zend\Http\Request;
+use Zend\Form\Form;
+use Application\Entity\Db\Individu;
 
 class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurController
 {
@@ -30,6 +38,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     use RoleServiceAwareTrait;
     use LdapPeopleServiceAwareTrait;
     use IndividuServiceAwareTrait;
+    use EntityManagerAwareTrait;
 
     /**
      * @return array|\Zend\Http\Response|ViewModel
@@ -288,5 +297,60 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         $role = $this->roleService->getRepository()->findOneBy([(is_numeric($roleId) ? 'id' : 'roleId') => $roleId]);
 
         return $role;
+    }
+
+    public function creationUtilisateurAction()
+    {
+        /** @var Form $form */
+        $form = $this->getServiceLocator()->get('FormElementManager')->get(CreationUtilisateurForm::class);
+        $infos = new CreationUtilisateurInfos();
+
+        $form->bind($infos);
+
+        /** @var Request $request */
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $form->setData($data);
+
+            if ($form->isValid()) {
+
+                /** @var CreationUtilisateurInfos $info */
+
+
+                // Le mail va servir de verification de la présence d'un utilisateur et d'un individu en db
+                // todo utiliser la fonction dédiée de doctrine après la POC
+
+
+                if ($this->individuService->existIndividuUtilisateurByEmail($data['email'])) {
+                    var_dump("mail déjà en base");
+                    //die("Problème de présence de l'entité en base");
+                } else {
+
+                    /** @var Individu $individu */
+                    $individu = new Individu();
+                    $individu->setCivilite($data['civilite']);
+                    $individu->setNomUsuel($data['nomUsuel']);
+                    $individu->setNomPatronymique($data['nomPatronymique']);
+                    $individu->setPrenom1($data['prenom']);
+                    $individu->setEmail($data['email']);
+                    $individu->setSourceCode("COMUE::" . $data['email']);
+
+                    /** @var Utilisateur $utilisateur */
+                    $utilisateur = new Utilisateur();
+                    $utilisateur->setUsername($data['prenom'] . "." . $data['nomUsuel']);
+                    $utilisateur->setPassword(password_hash($data['password'], PASSWORD_DEFAULT));
+                    $utilisateur->setState(1);
+                    $utilisateur->setEmail($data['email']);
+
+                    $this->individuService->createFromForm($individu, $utilisateur);
+                }
+            }
+        }
+
+
+        return new ViewModel([
+            'form' => $form,
+        ]);
     }
 }
