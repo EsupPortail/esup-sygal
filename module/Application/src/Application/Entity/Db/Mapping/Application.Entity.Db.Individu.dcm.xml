@@ -8,7 +8,7 @@
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <field name="civilite" type="string" column="CIVILITE" length="5" nullable="false"/>
+        <field name="civilite" type="string" column="CIVILITE" length="5" nullable="true"/>
         <field name="dateNaissance" type="datetime" column="DATE_NAISSANCE" nullable="false"/>
         <field name="nationalite" type="string" column="NATIONALITE" nullable="true"/>
         <field name="email" type="string" column="EMAIL" length="255" nullable="true"/>

@@ -3,12 +3,14 @@
 namespace Application\Entity;
 
 use UnicaenApp\Entity\Ldap\People as UnicaenAppPeople;
+use UnicaenAuth\Authentication\Storage\ChainEvent as StorageChainEvent;
 use UnicaenLdap\Entity\People as UnicaenLdapPeople;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Entity\Db\AbstractUser;
 use UnicaenAuth\Entity\Shibboleth\ShibUser;
 use UnicaenAuth\Event\UserAuthenticatedEvent;
+use Zend\Authentication\Exception\ExceptionInterface;
 use ZfcUser\Entity\UserInterface;
 
 /**
@@ -43,6 +45,29 @@ class UserWrapper implements UserInterface
         }
 
         return new static($user);
+    }
+
+    /**
+     * Factory method.
+     *
+     * Instancie à partir des données issues d'un StorageChainEvent, si possible.
+     *
+     * @param StorageChainEvent $event
+     * @return UserWrapper|null
+     */
+    static public function instFromStorageChainEvent(StorageChainEvent $event)
+    {
+        try {
+            $contents = $event->getContents();
+        } catch (ExceptionInterface $e) {
+            throw new RuntimeException("Impossible de lire le storage");
+        }
+
+        if (null === $contents['ldap'] && null === $contents['shib']) {
+            return null;
+        }
+
+        return new static($contents['ldap'] ?: $contents['shib']);
     }
 
     /**
@@ -139,7 +164,7 @@ class UserWrapper implements UserInterface
     /**
      * @return string
      */
-    public function getSupannEmpId()
+    protected function getSupannEmpId()
     {
         switch (true) {
             case $this->user instanceof UnicaenLdapPeople:
@@ -153,6 +178,35 @@ class UserWrapper implements UserInterface
                 return $this->user->getId();
                 break;
         }
+    }
+
+    /**
+     * @return string
+     */
+    protected function getSupannEtuId()
+    {
+        switch (true) {
+            case $this->user instanceof UnicaenLdapPeople:
+            case $this->user instanceof UnicaenAppPeople:
+                return $this->user->getSupannEtuId();
+                break;
+            case $this->user instanceof AbstractUser:
+                throw new LogicException("Non applicable!");
+                break;
+            case $this->user instanceof ShibUser:
+                return $this->user->getId();
+                break;
+        }
+    }
+
+    /**
+     * Retourne soit le supannEmpId soit le supannEtuId, car l'un ou l'autre est forcément null.
+     *
+     * @return string
+     */
+    public function getSupannId()
+    {
+        return $this->getSupannEmpId() ?: $this->getSupannEtuId();
     }
 
     /**

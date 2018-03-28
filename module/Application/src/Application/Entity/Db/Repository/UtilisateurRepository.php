@@ -26,4 +26,9 @@ class UtilisateurRepository extends DefaultEntityRepository
 
         return $utilisateur;
     }
+
+    public function findByEmail()
+    {
+        
+    }
 }
