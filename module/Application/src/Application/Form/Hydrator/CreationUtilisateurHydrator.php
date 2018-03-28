@@ -17,45 +17,34 @@ class CreationUtilisateurHydrator implements HydratorInterface, EntityManagerAwa
 
     /**
      * @param array $data
-     * @param RecapBu $recap
-     * @return RecapBu
+     * @param Individu $individu
+     * @return Individu
      * @throws OptimisticLockException
      */
-    public function hydrate(array $data, $recap) {
+    public function hydrate(array $data, $individu) {
 
-        /** @var Diffusion $diffusion */
-        $repoUtilisateur = $this->entityManager->getRepository(Utilisateur::class);
-        $repoIndividu = $this->entityManager->getRepository(Individu::class);
+        $individu->setCivilite($data['civilite']);
+        $individu->setNomUsuel($data['nomUsuel']);
+        $individu->setNomPatronymique($data['nomPatronymique']);
+        $individu->setPrenom1($data['prenom']);
+        $individu->setEmail($data['email']);
 
-//        $diffusion = $repoDiffusion->findOneBy(["these" => $recap->getThese()]);
-//
-//        $recap->setOrcid($data['orcid']);
-//        if ($diffusion !== null) {
-//            $diffusion->setIdOrcid($data['orcid']);
-//            $this->entityManager->flush($diffusion);
-//        }
-//        $recap->setNNT($data['nnt']);
-//        $recap->setVigilance($data['vigilance']);
-//        return $recap;
-          return null;
+        return $individu;
     }
 
     /**
-     * @param RecapBu $recap
+     * @param Individu $individu
      * @return array
      */
-    public function extract($recap) {
+    public function extract($individu) {
 
-//        /** @var Diffusion $diffusion */
-//        $repoDiffusion = $this->entityManager->getRepository(Diffusion::class);
-//        $diffusion = $repoDiffusion->findOneBy(["these" => $recap->getThese()]);
-//        $orcid = ($diffusion === null) ? null : $diffusion->getIdOrcid();
-//
-//        $data['orcid']      = $orcid;
-//        $data['nnt']        = $recap->getNNT();
-//        $data['vigilance']  = $recap->getVigilance();
-//
-//        return $data;
-        return [];
+        $data = [];
+        $data['civilite']        = $individu->getCivilite();
+        $data['nomUsuel']        = $individu->getNomUsuel();
+        $data['nomPatronymique'] = $individu->getNomPatronymique();
+        $data['prenom']          = $individu->getPrenom1();
+        $data['email']           = $individu->getEmail();
+
+        return $data;
     }
 }

@@ -4,6 +4,7 @@ namespace Application\Form;
 
 use Zend\Form\Element\Submit;
 use Zend\Form\Element\Text;
+use Zend\Form\Element\Hidden;
 use Zend\Form\Form;
 use Zend\InputFilter\Factory;
 
@@ -14,6 +15,9 @@ class CreationUtilisateurForm extends Form
     {
         //$this->setObject(new RdvBu());
 
+        $this->add(
+            (new Hidden('id'))
+        );
         $this->add(
             (new Text('civilite'))
                 ->setLabel("Civilité :")

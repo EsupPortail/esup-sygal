@@ -17,12 +17,17 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
 use UnicaenApp\Exception\RuntimeException;
+use UnicaenApp\Service\EntityManagerAwareTrait;
+use UnicaenImport\Entity\Db\Source;
 use UnicaenLdap\Entity\People;
 use UnicaenLdap\Filter\People as LdapPeopleFilter;
 use UnicaenLdap\Service\LdapPeopleServiceAwareTrait;
 use UnicaenLdap\Service\People as LdapPeopleService;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
+use Zend\Http\Request;
+use Zend\Form\Form;
+use Application\Entity\Db\Individu;
 
 class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurController
 {
@@ -31,6 +36,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     use RoleServiceAwareTrait;
     use LdapPeopleServiceAwareTrait;
     use IndividuServiceAwareTrait;
+    use EntityManagerAwareTrait;
 
     /**
      * @return array|\Zend\Http\Response|ViewModel
@@ -293,17 +299,45 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
 
     public function creationUtilisateurAction()
     {
+        /** @var Form $form */
         $form = $this->getServiceLocator()->get('FormElementManager')->get(CreationUtilisateurForm::class);
+        $individu = null;
 
+        /** @var Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $form->setData($request);
+            $data = $request->getPost();
+            $form->setData($data);
             if ($form->isValid()) {
-                echo "go to action ajout utilisateur ...";
-            } else {
-                echo "KKKOOO";
-            }
 
+                /** @var Source $source */
+                $source = $this->getEntityManager()->getRepository(Source::class)->findOneBy(["code" => 'COMUE::SYGAL']);
+                $user   = $this->getEntityManager()->getRepository(Utilisateur::class)->findOneBy(["username" => 'sygal-app']);
+
+                /** @var Individu $individu */
+                $individu = new Individu();
+                $individu->setCivilite($data['civilite']);
+                $individu->setNomUsuel($data['nomUsuel']);
+                $individu->setNomPatronymique($data['nomPatronymique']);
+                $individu->setPrenom1($data['prenom']);
+                $individu->setEmail($data['email']);
+
+                $individu->setSourceCode("COMUE::".$data['prenom'].".".$data['nomUsuel']);
+                $individu->setSource($source); //COMUE::SyGAL
+                $individu->setHistoCreateur($user); //sygal-app
+                $individu->setHistoModificateur($user); //sygal-app
+
+                $this->getEntityManager()->persist($individu);
+                $this->getEntityManager()->flush($individu);
+
+                /** @var Utilisateur $utilisateur */
+                $utilisateur = new Utilisateur();
+                $utilisateur->setUsername($data['prenom'].".".$data['nomUsuel']);
+                $utilisateur->setPassword('db');
+                $utilisateur->setState(1);
+                $this->getEntityManager()->persist($utilisateur);
+                $this->getEntityManager()->flush($utilisateur);
+            }
         }
 
 
