@@ -260,7 +260,7 @@ echo -ne "\e[34m"
 echo -e ""
 echo -e "> Conservation des $N dernières versions déployées seulement..."
 echo -ne "\e[0m"
-listDirCmd="ls -d /var/www/$name-versions/$name-* | sort --reverse"
+listDirCmd="ls -d $versionsdir/$name-* | sort --reverse"
 i=1
 dirsToRemove=''
 for f in `ssh "$host" "$listDirCmd"`; do
