@@ -328,10 +328,11 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
 
                 /** @var Utilisateur $utilisateur */
                 $utilisateur = new Utilisateur();
-                $utilisateur->setUsername($data['prenom'] . "." . $data['nomUsuel']);
+                $utilisateur->setUsername($data['email']);
                 $utilisateur->setPassword(password_hash($data['password'], PASSWORD_DEFAULT));
                 $utilisateur->setState(1);
                 $utilisateur->setEmail($data['email']);
+                $utilisateur->setDisplayName($data['nomUsuel']. " " .$data['prenom']);
 
                 $this->individuService->createFromForm($individu, $utilisateur);
 

@@ -4,31 +4,29 @@ namespace Application\Form;
 
 use Application\Form\Validator\NewEmailValidator;
 use Application\Form\Validator\PasswordValidator;
+use Zend\Form\Element\Hidden;
 use Zend\Form\Element\Password;
 use Zend\Form\Element\Submit;
 use Zend\Form\Element\Text;
-use Zend\Form\Element\Hidden;
+use Zend\Form\Element\Radio;
 use Zend\Form\Form;
-use Zend\InputFilter\Factory;
-use Zend\InputFilter\InputFilterAwareInterface;
 use Zend\InputFilter\InputFilterProviderInterface;
-use Zend\Mvc\Application;
 
 class CreationUtilisateurForm extends Form implements InputFilterProviderInterface
 {
 
-
-
     public function init()
     {
-        //$this->setObject(new RdvBu());
-
         $this->add(
             (new Hidden('id'))
         );
         $this->add(
-            (new Text('civilite'))
+            (new Radio('civilite'))
                 ->setLabel("Civilité :")
+                ->setValueOptions([
+                    'M.' => 'M.',
+                    'Mme' => 'Mme',
+                ])
         );
         $this->add(
             (new Text('nomUsuel'))
