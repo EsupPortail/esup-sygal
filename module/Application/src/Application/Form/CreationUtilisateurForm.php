@@ -10,10 +10,14 @@ use Zend\Form\Element\Text;
 use Zend\Form\Element\Hidden;
 use Zend\Form\Form;
 use Zend\InputFilter\Factory;
+use Zend\InputFilter\InputFilterAwareInterface;
+use Zend\InputFilter\InputFilterProviderInterface;
 use Zend\Mvc\Application;
 
-class CreationUtilisateurForm extends Form
+class CreationUtilisateurForm extends Form implements InputFilterProviderInterface
 {
+
+
 
     public function init()
     {
@@ -53,7 +57,18 @@ class CreationUtilisateurForm extends Form
             ->setAttribute('class', 'btn btn-primary')
         );
 
-        $this->setInputFilter((new Factory())->createInputFilter([
+        //$this->setInputFilter((new Factory())->createInputFilter());
+    }
+
+    /**
+     * Should return an array specification compatible with
+     * {@link Zend\InputFilter\Factory::createInputFilter()}.
+     *
+     * @return array
+     */
+    public function getInputFilterSpecification()
+    {
+        return [
             'civilite' => [
                 'name' => 'civilite',
                 'required' => true,
@@ -73,11 +88,11 @@ class CreationUtilisateurForm extends Form
             'email' => [
                 'name' => 'email',
                 'required' => true,
-//                'validators' => [
-//                    [
-//                        'name' => NewEmailValidator::class,
-//                    ],
-//                ],
+                'validators' => [
+                    [
+                        'name' => NewEmailValidator::class,
+                    ],
+                ],
             ],
             'password' => [
                 'name' =>'password',
@@ -88,6 +103,6 @@ class CreationUtilisateurForm extends Form
                     ],
                 ],
             ],
-        ]));
+        ];
     }
 }

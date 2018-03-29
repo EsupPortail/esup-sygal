@@ -315,41 +315,34 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             $form->setData($data);
 
             if ($form->isValid()) {
-                if ($this->individuService->existIndividuUtilisateurByEmail($data['email'])) {
-                    $error = "Addresse électronique déjà renseignée dans SyGAL.";
+                if ($data['nomPatronymique'] === '') $data['nomPatronymique'] = $data['nomUsuel'];
 
-                } else {
+                /** @var Individu $individu */
+                $individu = new Individu();
+                $individu->setCivilite($data['civilite']);
+                $individu->setNomUsuel($data['nomUsuel']);
+                $individu->setNomPatronymique($data['nomPatronymique']);
+                $individu->setPrenom1($data['prenom']);
+                $individu->setEmail($data['email']);
+                $individu->setSourceCode("COMUE::" . $data['email']);
 
-                    if ($data['nomPatronymique'] === '') $data['nomPatronymique'] = $data['nomUsuel'];
+                /** @var Utilisateur $utilisateur */
+                $utilisateur = new Utilisateur();
+                $utilisateur->setUsername($data['prenom'] . "." . $data['nomUsuel']);
+                $utilisateur->setPassword(password_hash($data['password'], PASSWORD_DEFAULT));
+                $utilisateur->setState(1);
+                $utilisateur->setEmail($data['email']);
 
-                    /** @var Individu $individu */
-                    $individu = new Individu();
-                    $individu->setCivilite($data['civilite']);
-                    $individu->setNomUsuel($data['nomUsuel']);
-                    $individu->setNomPatronymique($data['nomPatronymique']);
-                    $individu->setPrenom1($data['prenom']);
-                    $individu->setEmail($data['email']);
-                    $individu->setSourceCode("COMUE::" . $data['email']);
+                $this->individuService->createFromForm($individu, $utilisateur);
 
-                    /** @var Utilisateur $utilisateur */
-                    $utilisateur = new Utilisateur();
-                    $utilisateur->setUsername($data['prenom'] . "." . $data['nomUsuel']);
-                    $utilisateur->setPassword(password_hash($data['password'], PASSWORD_DEFAULT));
-                    $utilisateur->setState(1);
-                    $utilisateur->setEmail($data['email']);
-
-                    $this->individuService->createFromForm($individu, $utilisateur);
-
-                    $this->flashMessenger()->addSuccessMessage("Utilisateur <strong>{$utilisateur->getUsername()}</strong> crée avec succés.");
-                    $this->redirect()->toRoute('utilisateur');
-                }
+                $this->flashMessenger()->addSuccessMessage("Utilisateur <strong>{$utilisateur->getUsername()}</strong> crée avec succés.");
+                $this->redirect()->toRoute('utilisateur');
             }
         }
 
-
+        $form->prepare();
         return new ViewModel([
             'form' => $form,
-            'error' => $error,
         ]);
     }
 }
