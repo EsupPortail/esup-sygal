@@ -41,11 +41,7 @@
     "scripts": {
         "post-install-cmd": [
             "mkdir -p data/DoctrineModule/cache    && chmod -R 777 data/DoctrineModule/cache",
-            "mkdir -p data/DoctrineORMModule/Proxy && chmod -R 777 data/DoctrineORMModule/Proxy",
-            "vendor/bin/doctrine-module orm:clear-cache:query",
-            "vendor/bin/doctrine-module orm:clear-cache:metadata",
-            "vendor/bin/doctrine-module orm:clear-cache:result",
-            "vendor/bin/doctrine-module orm:generate-proxies"
+            "mkdir -p data/DoctrineORMModule/Proxy && chmod -R 777 data/DoctrineORMModule/Proxy"
         ]
     }
 }
