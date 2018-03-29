@@ -214,23 +214,27 @@ EOS;
      * Spécifie les adresses vers lesquelles rediriger les mails.
      * NB: elles sont substituées aux adresses originales.
      *
-     * @param array $redirectTo
+     * @param array|string $redirectTo Tableau d'emails, ou emails séparés par une virgule
      * @return self
      */
-    public function setRedirectTo(array $redirectTo = array())
+    public function setRedirectTo($redirectTo)
     {
-        $this->redirectTo = $redirectTo;
+        $this->redirectTo = [];
+        $this->addRedirectTo($redirectTo);
         return $this;
     }
 
     /**
      * Ajoute des adresses vers lesquelles rediriger les mails.
      *
-     * @param array $redirectTo
+     * @param array|string $redirectTo Tableau d'emails, ou emails séparés par une virgule
      * @return self
      */
-    public function addRedirectTo(array $redirectTo = array())
+    public function addRedirectTo($redirectTo)
     {
+        if (is_string($redirectTo)) {
+            $redirectTo = array_map('trim', explode(',', $redirectTo));
+        }
         $this->setRedirectTo(array_merge($this->getRedirectTo(), $redirectTo));
         return $this;
     }
