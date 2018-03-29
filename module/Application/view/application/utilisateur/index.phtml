@@ -28,42 +28,10 @@ $select = (new Select("roles"))
 
 <?php $this->headTitle($this->translate("Utilisateurs")) ?>
 
-<h1 class="page-header"><?php echo $this->translate("Utilisateurs"); ?> <span class="badge"><?php echo $utilisateurs->getTotalItemCount() ?></span></h1>
+<h1 class="page-header"><?php echo $this->translate("Utilisateurs"); ?> <span
+            class="badge"><?php echo $utilisateurs->getTotalItemCount() ?></span></h1>
 
 <?php echo $this->messenger()->addCurrentMessagesFromFlashMessenger() ?>
-
-<div class="alert alert-info alert-md pull-left" style="width:48%;">
-    <span class="glyphicon glyphicon-info-sign"></span>
-    <?php echo $this->translate("Sur cette page vous pouvez attribuer les rôles dépendant de structures."); ?>
-
-    <ol>
-    <?php foreach($modeles as $structure => $roleModeles){
-        echo "<li>" .$structure ."</li>";
-        echo "<ul>";
-        /** @var RoleModele $roleModele */
-        foreach ($roleModeles as $roleModele) {
-           echo "<li>".$roleModele->getLibelle() . "</li>";
-        }
-       echo "</ul>";
-    }
-    ?>
-    </ol>
-</div>
-<div class="alert alert-danger alert-md pull-right" style="width:48%;">
-    <span class="glyphicon glyphicon-warning-sign"></span>
-    <?php echo $this->translate("Les rôles suivants sont attribués automatiquement à partir des données importées d'Apogée :"); ?>
-    <ul>
-        <?php
-        /** @var Role $r */
-        foreach ($rolesDynamiques as $r) {
-            echo "<li>";
-            echo $this->translate($r->getRoleId());
-        }
-        ?>
-    </ul>
-</div>
-
-
 
 <div class="pull-left">
     <!-- Formulaire de filtrage -->
@@ -78,39 +46,48 @@ $select = (new Select("roles"))
 <table class="table table-condensed">
     <thead>
     <tr>
-        <th><a href="<?php echo $s = $this->sortable('u.displayName'); ?>">
-                <?php echo $this->translate("Nom"); ?>
-            </a> <?php echo $s->icon() ?></th>
-        <th><a href="<?php echo $s = $this->sortable('u.username'); ?>">
-                <?php echo $this->translate("Identifiant"); ?>
-            </a> <?php echo $s->icon() ?></th>
-        <th><a href="<?php echo $s = $this->sortable('u.email'); ?>">
-                <?php echo $this->translate("Email"); ?>
-            </a> <?php echo $s->icon() ?></th>
         <th>
-            <?php echo $this->translate("Rôles statiques"); ?>
+            <a href="<?php echo $s = $this->sortable('u.displayName'); ?>">
+                <?php echo $this->translate("Nom"); ?>
+            </a> <?php echo $s->icon() ?>
+        </th>
+        <th>
+            <a href="<?php echo $s = $this->sortable('u.username'); ?>">
+                <?php echo $this->translate("Identifiant"); ?>
+            </a> <?php echo $s->icon() ?>
+        </th>
+        <th>
+            <?php echo $this->translate("Origine"); ?>
+        </th>
+        <th>
+            <a href="<?php echo $s = $this->sortable('u.email'); ?>">
+                <?php echo $this->translate("Email"); ?>
+            </a> <?php echo $s->icon() ?>
         </th>
     </tr>
     </thead>
     <tbody>
-    <?php foreach ($utilisateurs as $u /** @var Utilisateur $u */): ?>
+    <?php foreach ($utilisateurs as $u/** @var Utilisateur $u */): ?>
         <tr>
-            <td><a href="<?php echo $this->url('utilisateur', ['utilisateur' => $u->getId()], [], true) ?>"><?php echo $u->getDisplayName() ?></a></td>
-            <td><?php echo $u->getUsername() ?></td>
-            <td><?php echo $u->getEmail() ?></td>
             <td>
-                <?php if ($this->isAllowed(UtilisateurPrivileges::getResourceId(UtilisateurPrivileges::UTILISATEUR_ATTRIBUTION_ROLE))): ?>
-                    <?php
-                    $url = $this->url('utilisateur/attribuer-role', ['utilisateur' => $u->getId()], [], true);
-                    $select
-                        ->setValue(array_keys(Util::collectionAsOptions($u->getRoles())))
-                        ->setAttribute('data-url', $url);
-                    echo (string) $this->formSelect($select);
-                    ?>
-                <?php else: ?>
-                <?php echo $rolesUtilisateurFormatter->asSeparated()->filter($u) ?>
-                <?php endif ?>
+                <a href="<?php echo $this->url('utilisateur', ['utilisateur' => $u->getId()], [], true) ?>"><?php echo $u->getDisplayName() ?></a>
             </td>
+            <td><?php echo $u->getUsername() ?></td>
+            <td>
+                <?php
+                switch ($u->getPassword()) {
+                    case 'ldap':
+                    case 'shib':
+                        $orig = $u->getPassword();
+                        break;
+                    default:
+                        $orig = 'local';
+                        break;
+                }
+                echo $orig;
+                ?>
+            </td>
+            <td><?php echo $u->getEmail() ?></td>
         </tr>
     <?php endforeach ?>
     </tbody>
@@ -136,7 +113,7 @@ $select = (new Select("roles"))
                 <input type="submit"
                        value="<?php echo $this->translate("Ajouter cet individu"); ?>"
                        style="margin-top: 0;"
-                       title="<?php echo $this->translate("Ajouter cet individu comme utilisateur");?>"
+                       title="<?php echo $this->translate("Ajouter cet individu comme utilisateur"); ?>"
                        class="btn btn-default btn-sm"/>
             </form>
         </div>
@@ -144,32 +121,31 @@ $select = (new Select("roles"))
 <?php endif ?>
 
 
+    <script type="text/javascript" src="<?php echo $this->basePath('/js/bootstrap-multiselect.js') ?>"></script>
+    <link rel="stylesheet" href="<?php echo $this->basePath('/css/bootstrap-multiselect.css') ?>" type="text/css"/>
 
-<script type="text/javascript" src="<?php echo $this->basePath('/js/bootstrap-multiselect.js') ?>"></script>
-<link rel="stylesheet" href="<?php echo $this->basePath('/css/bootstrap-multiselect.css') ?>" type="text/css"/>
-
-<script type="text/javascript">
-    $(document).ready(function() {
-        // utilisation du plugin Multiselect : https://github.com/davidstutz/bootstrap-multiselect
-        $("select.roles-select").multiselect({
-            inheritClass: true,
-            nonSelectedText: '<?php echo $this->translate("(Aucun)"); ?>',
-            delimiterText: ' | ',
-            numberDisplayed: 1,
-            nSelectedText: ' <?php echo $this->translate("rôles sélectionnés")?>',
-            buttonWidth: '150px',
-            onChange: function(option/*, checked*/) {
-                var url = $(this.$select).data('url');
-                $.post(url, {role: $(option).val()}, function(data) {
-                    console.log('done!', data);
-                    alertFlash(data.message, data.status, 5000);
-                });
-            }
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // utilisation du plugin Multiselect : https://github.com/davidstutz/bootstrap-multiselect
+            $("select.roles-select").multiselect({
+                inheritClass: true,
+                nonSelectedText: '<?php echo $this->translate("(Aucun)"); ?>',
+                delimiterText: ' | ',
+                numberDisplayed: 1,
+                nSelectedText: ' <?php echo $this->translate("rôles sélectionnés")?>',
+                buttonWidth: '150px',
+                onChange: function (option/*, checked*/) {
+                    var url = $(this.$select).data('url');
+                    $.post(url, {role: $(option).val()}, function (data) {
+                        console.log('done!', data);
+                        alertFlash(data.message, data.status, 5000);
+                    });
+                }
+            });
         });
-    });
-</script>
+    </script>
 
-<!-- for translation purpose -->
+    <!-- for translation purpose -->
 <?php
 $this->translate("Unité de recherche");
 $this->translate("École doctorale");
