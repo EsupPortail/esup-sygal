@@ -320,6 +320,8 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
 
                 } else {
 
+                    if ($data['nomPatronymique'] === '') $data['nomPatronymique'] = $data['nomUsuel'];
+
                     /** @var Individu $individu */
                     $individu = new Individu();
                     $individu->setCivilite($data['civilite']);

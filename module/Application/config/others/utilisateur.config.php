@@ -10,6 +10,9 @@ use Application\Service\Individu\IndividuServiceFactory;
 use Application\Service\Utilisateur\UtilisateurService;
 use UnicaenAuth\Guard\PrivilegeController;
 use Zend\Mvc\Router\Http\Literal;
+use Application\Form\Validator\PasswordValidator;
+use Application\Form\Validator\NewEmailValidator;
+use Application\Form\Validator\Factory\NewEmailValidatorFactory;
 
 return [
     'bjyauthorize'    => [
@@ -174,6 +177,13 @@ return [
         'factories' => [
             CreationUtilisateurHydrator::class => CreationUtilisateurHydratorFactory::class,
         ]
-    ]
-
+    ],
+    'validators' => [
+        'invokables' => [
+            PasswordValidator::class => PasswordValidator::class,
+        ],
+        'factories' => [
+            NewEmailValidator::class => NewEmailValidatorFactory::class,
+        ],
+    ],
 ];

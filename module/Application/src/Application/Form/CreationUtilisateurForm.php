@@ -2,12 +2,15 @@
 
 namespace Application\Form;
 
+use Application\Form\Validator\NewEmailValidator;
+use Application\Form\Validator\PasswordValidator;
 use Zend\Form\Element\Password;
 use Zend\Form\Element\Submit;
 use Zend\Form\Element\Text;
 use Zend\Form\Element\Hidden;
 use Zend\Form\Form;
 use Zend\InputFilter\Factory;
+use Zend\Mvc\Application;
 
 class CreationUtilisateurForm extends Form
 {
@@ -61,7 +64,7 @@ class CreationUtilisateurForm extends Form
             ],
             'nomPatronymique' => [
                 'name' => 'nomPatronymique',
-                'required' => true,
+                'required' => false,
             ],
             'prenom' => [
                 'name' => 'prenom',
@@ -70,11 +73,21 @@ class CreationUtilisateurForm extends Form
             'email' => [
                 'name' => 'email',
                 'required' => true,
+//                'validators' => [
+//                    [
+//                        'name' => NewEmailValidator::class,
+//                    ],
+//                ],
             ],
             'password' => [
                 'name' =>'password',
                 'required' => true,
-            ]
+                'validators' => [
+                    [
+                        'name' => PasswordValidator::class,
+                    ],
+                ],
+            ],
         ]));
     }
 }
