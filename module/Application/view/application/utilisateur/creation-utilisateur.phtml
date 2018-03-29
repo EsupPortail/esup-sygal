@@ -24,9 +24,9 @@ use Application\View\Renderer\PhpRenderer;
 <h3> Formulaire de création </h3>
 <?php
 
-//    if ($error !== null) {
-//        echo $this->messenger()->addMessage($error, 'danger');
-//    }
+    if ($error !== null) {
+        echo $this->messenger()->addMessage($error, 'danger');
+O
     echo $this->form($form);
 
 ?>
