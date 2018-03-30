@@ -35,7 +35,6 @@ else
     exit 0
 fi
 
-
 # Répertoire de l'appli servi par Apache/Nginx
 # (dépôt git dont l'origin pointe sur un dépôt intermédiaire)
 appdir="/var/www/sygal"
