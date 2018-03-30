@@ -8,7 +8,6 @@ $modules = [
     'DoctrineORMModule',
     'ZfcUser',
     'ZfcUserDoctrineORM',
-    'BjyAuthorize',
     'UnicaenApp',
     'UnicaenAuth',
     'UnicaenLdap',
@@ -21,6 +20,10 @@ $modules = [
     'Retraitement',
     'Notification',
 ];
+
+if (php_sapi_name() !== 'cli') {
+    $modules[] = 'BjyAuthorize';
+}
 
 $devModules =  [
     'ZendDeveloperTools',
