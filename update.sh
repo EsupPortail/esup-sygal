@@ -27,11 +27,11 @@ fi
 BRANCH="master"
 
 # only checking out the BRANCH branch
-if [[ "$newrev" = "refs/heads/$BRANCH" ]];
+if [[ "$refname" = "refs/heads/$BRANCH" ]];
 then
-    echo "Ref $newrev received. Deploying $BRANCH branch..."
+    echo "Ref $refname received. Deploying $BRANCH branch..."
 else
-    echo "Ref $newrev received. Doing nothing: only the $BRANCH branch may be deployed on this server."
+    echo "Ref $refname received. Doing nothing: only the $BRANCH branch may be deployed on this server."
     exit 0
 fi
 
