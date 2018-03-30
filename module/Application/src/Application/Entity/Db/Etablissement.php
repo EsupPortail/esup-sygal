@@ -33,7 +33,7 @@ class Etablissement implements HistoriqueAwareInterface, SourceAwareInterface
     protected $structure;
 
     /**
-     * Ajoute le préfixe établissement à la chaîne de caractères sépecifiée.
+     * Ajoute le préfixe établissement à la chaîne de caractères spécifiée.
      *
      * @param string $string
      * @return string
@@ -41,6 +41,20 @@ class Etablissement implements HistoriqueAwareInterface, SourceAwareInterface
     public function prependPrefixTo($string)
     {
         return $this->getCode() . self::ETAB_PREFIX_SEP . $string;
+    }
+
+    /**
+     * Supprime le préfixe établissement à la chaîne de caractères spécifiée.
+     *
+     * @param string $string
+     * @return string
+     */
+    public function removePrefixFrom($string)
+    {
+        return substr(
+            $string,
+            stripos($string, self::ETAB_PREFIX_SEP) + strlen(self::ETAB_PREFIX_SEP)
+        );
     }
 
     /**
