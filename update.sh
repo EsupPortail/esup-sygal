@@ -18,6 +18,24 @@ if [ -z "$GIT_DIR" ]; then
     exit 1
 fi
 
+if [ -z "$refname" -o -z "$oldrev" -o -z "$newrev" ]; then
+        echo "usage: $0 <ref> <oldrev> <newrev>" >&2
+        exit 1
+fi
+
+
+BRANCH="master"
+
+# only checking out the BRANCH branch
+if [[ "$newrev" = "refs/heads/$BRANCH" ]];
+then
+    echo "Ref $newrev received. Deploying $BRANCH branch..."
+else
+    echo "Ref $newrev received. Doing nothing: only the $BRANCH branch may be deployed on this server."
+    exit 0
+fi
+
+
 # Répertoire de l'appli servi par Apache/Nginx
 # (dépôt git dont l'origin pointe sur un dépôt intermédiaire)
 appdir="/var/www/sygal"
@@ -27,9 +45,8 @@ cd "$appdir"
 
 echo "-- Déploiement..."
 
-# Git pull
-git fetch
-git pull origin master
+# Checkout
+git checkout "$BRANCH" -f
 
 # Install config locale
 srclocalconfigfile="/root/.ssh/sygal.config.local.php"
