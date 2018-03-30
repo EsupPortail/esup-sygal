@@ -6,7 +6,7 @@ return [
         'app_infos' => [
             'nom'     => "SYGAL",
             'desc'    => "SYstème de Gestion et d'Accompagnement doctoraL",
-            'version' => "0.1.0",
+            'version' => "0.2.0",
             'date'    => "30/03/2018",
             'contact' => [
                 'mail' => "bertrand.gauthier@unicaen.fr",
