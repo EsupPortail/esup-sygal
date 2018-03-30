@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Script de déploiement destiné à être placé dans les hooks d'un dépôt intermediare git (--bare)
 # sous le nom "update".
@@ -27,7 +27,7 @@ fi
 BRANCH="master"
 
 # only checking out the BRANCH branch
-if [[ $refname = refs/heads/$BRANCH ]];
+if [[ "$refname" = "refs/heads/$BRANCH" ]];
 then
     echo "Ref $refname received. Deploying $BRANCH branch..."
 else
