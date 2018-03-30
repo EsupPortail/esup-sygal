@@ -27,7 +27,7 @@ fi
 BRANCH="master"
 
 # only checking out the BRANCH branch
-if [[ "$refname" = "refs/heads/$BRANCH" ]];
+if [[ $refname = refs/heads/$BRANCH ]];
 then
     echo "Ref $refname received. Deploying $BRANCH branch..."
 else
