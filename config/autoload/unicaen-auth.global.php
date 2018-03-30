@@ -6,7 +6,7 @@ use Application\Entity\Db\Utilisateur;
 use Application\Provider\IdentityProvider;
 use Application\Provider\IdentityProviderFactory;
 
-$config = [
+return [
     'unicaen-auth' => [
         // Identifiants de connexion LDAP autorisés à faire de l'usurpation d'identité.
         // NB: à réserver exclusivement aux tests.
@@ -75,12 +75,15 @@ $config = [
     ],
 ];
 
-if ($settings['enable_privileges']) {
-    $privileges = [
-        // ... déplacé dans module/Application/config/others/droits.config.php
-    ];
-} else {
-    $privileges = [];
-}
-
-return array_merge_recursive($config, $privileges);
+//
+// Config des privilèges déplacée dans module/Application/config/others/droits.config.php
+//
+//if ($settings['enable_privileges']) {
+//    $privileges = [
+//        // ... déplacé dans module/Application/config/others/droits.config.php
+//    ];
+//} else {
+//    $privileges = [];
+//}
+//
+//return array_merge_recursive($config, $privileges);
