@@ -10,6 +10,14 @@ refname="$1"
 oldrev="$2"
 newrev="$3"
 
+# --- Safety check
+if [ -z "$GIT_DIR" ]; then
+    echo "Don't run this script from the command line." >&2
+    echo " (if you want, you could supply GIT_DIR then run" >&2
+    echo "  $0 <ref> <oldrev> <newrev>)" >&2
+    exit 1
+fi
+
 # Répertoire de l'appli servi par Apache/Nginx
 # (dépôt git dont l'origin pointe sur un dépôt intermédiaire)
 appdir="/var/www/sygal"
