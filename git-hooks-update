@@ -1,0 +1,41 @@
+#!/bin/sh
+#
+# Script de déploiement destiné à être placé dans les hooks d'un dépôt intermediare git (--bare)
+# sous le nom "update".
+#
+# Called by "git receive-pack" with arguments: refname sha1-old sha1-new
+#
+
+refname="$1"
+oldrev="$2"
+newrev="$3"
+
+# Nom de l'appli
+appname="sygal"
+
+# Répertoire de l'appli servi par Apache/Nginx (dépôt git dont l'origin pointe sur le dépôt intermédiaire)
+appdir="/var/www/$appname"
+
+# Config locale qui sera copiée dans le répertoire de l'appli
+# > Fichier source
+srclocalconfigfile="/root/.ssh/$appname.config.local.php"
+# > Fichier destination
+dstlocalconfigfile="$appdir/config/autoload/local.php"
+
+unset GIT_DIR
+
+echo "-- Déploiement de $appname..."
+
+cd "$appdir"
+git fetch
+git pull origin master
+cp "$srclocalconfigfile" "$dstlocalconfigfile" && echo "Config locale déployée : $srclocalconfigfile => $dstlocalconfigfile"
+composer install --no-dev --optimize-autoloader
+vendor/bin/doctrine-module orm:clear-cache:query
+vendor/bin/doctrine-module orm:clear-cache:metadata
+vendor/bin/doctrine-module orm:clear-cache:result
+vendor/bin/doctrine-module orm:generate-proxies
+
+echo "-- Déploiement de $appname dans $appdir terminé."
+
+exit 0
