@@ -46,7 +46,7 @@ EOS;
     /**
      * @var array
      */
-    protected $redirectTo = array();
+    protected $redirectTo = [];
 
     /**
      * @var bool
@@ -123,9 +123,9 @@ EOS;
         }
 
         // collecte des destinataires originaux pour les afficher à la fin du mail
-        $to  = array();
-        $cc  = array();
-        $bcc = array();
+        $to  = [];
+        $cc  = [];
+        $bcc = [];
         foreach ($message->getTo() as $addr) { /* @var $addr \Zend\Mail\Address */
             $to[] = $addr->getEmail() . ($addr->getName() ? ' <' . $addr->getName() . '>' : null);
         }
@@ -169,8 +169,8 @@ EOS;
         $msg->setSubject($message->getSubject() . self::SUBJECT_SUFFIX)
             ->setFrom($message->getFrom())
             ->setTo($this->getRedirectTo())
-            ->setCc(array())
-            ->setBcc(array())
+            ->setCc([])
+            ->setBcc([])
             ->setBody($body)
             ->setEncoding($message->getEncoding());
 
@@ -207,7 +207,7 @@ EOS;
      */
     public function getRedirectTo()
     {
-        return $this->redirectTo ? (array)$this->redirectTo : array();
+        return $this->redirectTo ? (array)$this->redirectTo : [];
     }
 
     /**
@@ -235,7 +235,7 @@ EOS;
         if (is_string($redirectTo)) {
             $redirectTo = array_map('trim', explode(',', $redirectTo));
         }
-        $this->setRedirectTo(array_merge($this->getRedirectTo(), $redirectTo));
+        $this->redirectTo = array_merge($this->redirectTo, $redirectTo);
         return $this;
     }
 
