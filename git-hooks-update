@@ -10,32 +10,40 @@ refname="$1"
 oldrev="$2"
 newrev="$3"
 
-# Nom de l'appli
-appname="sygal"
-
-# Répertoire de l'appli servi par Apache/Nginx (dépôt git dont l'origin pointe sur le dépôt intermédiaire)
-appdir="/var/www/$appname"
-
-# Config locale qui sera copiée dans le répertoire de l'appli
-# > Fichier source
-srclocalconfigfile="/root/.ssh/$appname.config.local.php"
-# > Fichier destination
-dstlocalconfigfile="$appdir/config/autoload/local.php"
+# Répertoire de l'appli servi par Apache/Nginx
+# (dépôt git dont l'origin pointe sur un dépôt intermédiaire)
+appdir="/var/www/sygal"
 
 unset GIT_DIR
-
-echo "-- Déploiement de $appname..."
-
 cd "$appdir"
+
+echo "-- Déploiement..."
+
+# Git pull
 git fetch
 git pull origin master
-cp "$srclocalconfigfile" "$dstlocalconfigfile" && echo "Config locale déployée : $srclocalconfigfile => $dstlocalconfigfile"
+
+# Install config locale
+srclocalconfigfile="/root/.ssh/sygal.config.local.php"
+dstlocalconfigfile="$appdir/config/autoload/local.php"
+cp "$srclocalconfigfile" "$dstlocalconfigfile" && \
+echo "Config locale déployée : $srclocalconfigfile => $dstlocalconfigfile"
+
+# Composer install
 composer install --no-dev --optimize-autoloader
+
+# Commandes Doctrine
 vendor/bin/doctrine-module orm:clear-cache:query
 vendor/bin/doctrine-module orm:clear-cache:metadata
 vendor/bin/doctrine-module orm:clear-cache:result
 vendor/bin/doctrine-module orm:generate-proxies
 
-echo "-- Déploiement de $appname dans $appdir terminé."
+# Install config CRON
+srccronconfigfile="$appdir/data/cron/sygal.dist"
+dstcronconfigfile="/etc/cron.d/sygal"
+cp -f "$srccronconfigfile" "$dstcronconfigfile" && sed -i "s={APP_ROOT_DIR}=$appdir=" "$dstcronconfigfile" && \
+echo "Config CRON déployée : $srccronconfigfile => $dstcronconfigfile"
+
+echo "-- Déploiement dans $appdir terminé."
 
 exit 0
