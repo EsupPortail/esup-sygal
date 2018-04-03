@@ -23,7 +23,6 @@ if [ -z "$refname" -o -z "$oldrev" -o -z "$newrev" ]; then
         exit 1
 fi
 
-
 BRANCH="master"
 
 # only checking out the BRANCH branch
