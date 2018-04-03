@@ -23,9 +23,10 @@ if [ -z "$refname" -o -z "$oldrev" -o -z "$newrev" ]; then
         exit 1
 fi
 
+
 BRANCH="master"
 
-# only checking out the BRANCH branch
+# only checking out the BRANCH is allowed
 if [[ "$refname" = "refs/heads/$BRANCH" ]];
 then
     echo "Ref $refname received. Deploying $BRANCH branch..."
