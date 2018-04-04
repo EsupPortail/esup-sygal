@@ -1,0 +1,12 @@
+MAILTO=bertrand.gauthier@unicaen.fr
+
+#
+# Application SyGAL.
+#
+
+APP_DIR=/var/www/sygal
+
+# Du lundi au vendredi, chaque heure de 5h à 17h :
+0 5-17 * * 1-5 root /usr/bin/php $APP_DIR/public/index.php process-observed-import-results 1> /tmp/sygal-process-observed-import-results.log 2>&1
+0 *    * * *   root cd $APP_DIR/data/cron && bash ./test-cines-ws.bash 1> /tmp/sygal-test-cines-ws.log 2>&1
+*/15 * * * *   root /usr/bin/php $APP_DIR/public/index.php fetch --service=all --etablissement=UCN 1> /tmp/sygal-import-ws.log 2>&1
