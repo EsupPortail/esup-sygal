@@ -250,7 +250,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     public function rechercherIndividuAction()
     {
         if (($term = $this->params()->fromQuery('term'))) {
-            $rows = $this->individuService->getRepository()->findByText($term);
+            $rows = $this->individuService->getRepository()->findByText($term, 'doctorant');
             $result = [];
             foreach ($rows as $row) {
                 $prenoms = implode(' ', array_filter([$row['PRENOM1'], $row['PRENOM2'], $row['PRENOM3']]));
