@@ -32,7 +32,7 @@ function display_debug($texte) {
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <h1 class="page-header first"><?php echo $this->translate("Statistiques") ?> <span
-        class="badge"><?php echo count($theses) ?></span></h1>
+        class="badge"><?php echo count($theses) . " thèses"?></span></h1>
 
 <div class='selector' style='border-radius: 5px;
                              border:solid gray 2px;
@@ -77,8 +77,8 @@ function display_debug($texte) {
                              float:left;'>
     <div style="width:200px; padding: 5px; margin: 5px; float:left;">
         <h4>Type de date :</h4>
-        <input type="radio" name="date_type" value="Inscription" checked>  Inscription <br/>
-        <input type="radio" name="date_type" value="Soutenance">   Soutenance <br/>
+        <input type="radio" name="date_type" value="inscription" checked>  Inscription <br/>
+        <input type="radio" name="date_type" value="soutenance">   Soutenance <br/>
     </div>
     <div style='width:190px;
                     height:100px;
@@ -128,8 +128,11 @@ function display_debug($texte) {
         $('#structure_id').change(function() {
             var selected_structure_type = document.querySelector('input[name="structure_type"]:checked').value;
             var selected_structure_id = document.getElementById("structure_id").value;
+            var selected_date_type = document.querySelector('input[name="date_type"]:checked').value;
+            var selected_min = $( "#slider-range" ).slider( "values", 0 );
+            var selected_max = $( "#slider-range" ).slider( "values", 1 );
             document.getElementById("linku").innerHTML = "" +
-                "<a  href='/statistique?structure_type=" + selected_structure_type + "& structure_id=" + selected_structure_id + "'> " +
+                "<a  href='/statistique?structure_type=" + selected_structure_type + "& structure_id=" + selected_structure_id + "& date_type="+ selected_date_type + "& date_min="+ selected_min + "& date_max="+ selected_max +"'> " +
                 "<input type='button' class='btn btn-info' value='Filtrer les thèse'/>" +
                 "</a>";
             //alert( this.value );
@@ -475,6 +478,7 @@ function generateEffectifParPays($effectifsInscription, $start , $end) {
     $code["BIELORUSSE"] = "Belarus";
     $code["BIRMAN(E)"] = "Myanmar";
     $code["BELGE"] = "Belgium";
+    $code["BENGALI(E)"] = "Bengladesh";
     $code["BENINOIS(E)"] = "Benin";
     $code["BOLIVIEN(NE)"] = "Bolivia";
     $code["BOSNIAQUE"] = "Bosnia";
@@ -495,6 +499,7 @@ function generateEffectifParPays($effectifsInscription, $start , $end) {
     $code["COMORIEN(NE)"] = "Comoros";
     $code["CONGOLAIS(E)"] = "Congo";
     $code["CROATE"] = "Croatia";
+    $code["CUBAIN(E)"] = "Cuba";
     $code["DANOIS(E)"] = "Denmark";
     $code["DJIBOUTIEN(NE)"] = "Djibouti";
     $code["EGYPTIEN(NE)"] = "Egypt";
@@ -532,6 +537,7 @@ function generateEffectifParPays($effectifsInscription, $start , $end) {
     $code["LITHUANIEN(NE)"] = "Lithuania";
     $code["LUXEMBOURGEOIS(E)"] = "Luxembourg";
     $code["MALAIS(E)"] = "Malaysia";
+    $code["MALAWIEN(NE)"] = "Malawi";
     $code["MALGACHE"] = "Madagascar";
     $code["MALIEN(NE)"] = "Mali";
     $code["MALTAIS(E)"] = "Malta";
@@ -559,10 +565,12 @@ function generateEffectifParPays($effectifsInscription, $start , $end) {
     $code["PORTUGAIS(E)"] = "Portugal";
     $code["ROUMAIN(E)"] = "Romania";
     $code["RUANDAIS(E)"] = "Rwanda";
+    $code["RWANDAIS(E)"] = "Rwanda";
     $code["RUSSE"] = "Russia";
     $code["SAOUDIEN(NE)"] = "Saudi Arabia";
     $code["SENEGALAIS(E)"] = "Senegal";
     $code["SERBE"] = "Serbia";
+    $code["SLOVAQUE"] = "Slovakia";
     $code["SOUDANAIS(E)"] = "Sudan";
     $code["SUD COREEN(NE)"] = "Korea, Republic of";
     $code["SUEDOIS(E)"] = "Sweden";

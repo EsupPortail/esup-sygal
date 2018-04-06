@@ -37,9 +37,9 @@ class StatistiqueController extends AbstractController
         $structureId = $this->params()->fromQuery("structure_id");
         $qb = $this->decorateWithStructure($qb, $structureType, $structureId);
 
-        $dateType = $this->params()->fromQuery("date");
-        $dateDebut = $this->params()->fromQuery("debut");
-        $dateFin = $this->params()->fromQuery("fin");
+        $dateType = $this->params()->fromQuery("date_type");
+        $dateDebut = $this->params()->fromQuery("date_min");
+        $dateFin = $this->params()->fromQuery("date_max");
         $qb = $this->decorateWithDate($qb, $dateType, $dateDebut, $dateFin);
 
         $theses = $qb->getQuery()->execute();
