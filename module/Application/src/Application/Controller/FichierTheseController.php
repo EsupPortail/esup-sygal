@@ -3,6 +3,7 @@
 namespace Application\Controller;
 
 use Application\Entity\Db\Fichier;
+use Application\Entity\Db\Individu;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\VersionFichier;
 use Application\Filter\IdifyFilterAwareTrait;
@@ -11,6 +12,7 @@ use Application\RouteMatch;
 use Application\Service\Fichier\Exception\DepotImpossibleException;
 use Application\Service\Fichier\Exception\ValidationImpossibleException;
 use Application\Service\Fichier\FichierServiceAwareTrait;
+use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Notification\NotificationServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
@@ -31,6 +33,7 @@ class FichierTheseController extends AbstractController
     use VersionFichierServiceAwareTrait;
     use IdifyFilterAwareTrait;
     use NotificationServiceAwareTrait;
+    use IndividuServiceAwareTrait;
 
     const UPLOAD_MAX_FILESIZE = '500M';
 
@@ -41,10 +44,15 @@ class FichierTheseController extends AbstractController
          */
         $needsRedirect = false;
         $queryParams = $this->params()->fromQuery();
+        $data        = $this->params()->fromPost('individu');
 
         $version = $this->params()->fromQuery('version');
-        $recherche = $this->params()->fromQuery('texte');
         $sort = $this->params()->fromQuery('sort');
+
+        $individuId = null;
+        if (!empty($data['id'])) {
+            $individuId = $data['id'];
+        }
 
         if ($sort === null) { // null <=> paramètre absent
             // tri par défaut : datePremiereInscription
@@ -73,11 +81,9 @@ class FichierTheseController extends AbstractController
             $qb->andWhere('ver.code = :version')
                 ->setParameter("version" , $version);
         }
-
-        if (isset($recherche) && $recherche !== '') {
-//
-            $qb->andWhere("i.prenom1 like :recherche OR i.nomUsuel like :recherche OR t.titre like :recherche OR f.nomOriginal like :recherche")
-                ->setParameter("recherche", '%'.$recherche.'%');
+        if (isset($individuId) && $individuId !== '') {
+            $qb->andWhere('i.id = :individuId')
+                ->setParameter("individuId" , $individuId);
         }
 
 
