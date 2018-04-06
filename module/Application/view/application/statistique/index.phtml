@@ -34,77 +34,85 @@ function display_debug($texte) {
 <h1 class="page-header first"><?php echo $this->translate("Statistiques") ?> <span
         class="badge"><?php echo count($theses) . " thèses"?></span></h1>
 
-<div class='selector' style='border-radius: 5px;
+<div  id="filtrage_option"                style='border-radius: 5px;
                              border:solid gray 2px;
                              background-color: whitesmoke;
                              padding: 5px;
                              margin: 10px;
-                             width:415px;
-                             float:left;'>
-    <form id="selection" method="post" action="">
+                             '>
+    <div class='selector' style='border-radius: 0px;
+                                 border-left:solid gray 2px;
+                                 background-color: whitesmoke;
+                                 padding: 5px;
+                                 margin: 10px;
+                                 width:415px;
+                                 float:left;'>
+        <form id="selection" method="post" action="">
+            <div style="width:200px; padding: 5px; margin: 5px; float:left;">
+                <h4>Type de structure : </h4>
+                <input id="structure_aucun" type="radio" name="structure_type" value="Aucun">  Aucune <br/>
+                <input id="structure_etab" type="radio" name="structure_type" value="Etab">   Établissement <br/>
+                <input id="structure_ed" type="radio" name="structure_type" value="ED">     École doctorale <br/>
+                <input id="structure_ur" type="radio" name="structure_type" value="UR">     Unité de recherche
+            </div>
+
+            <div style="clear:both;"></div>
+        <div id='structure_selector' >
+            <h4>Libellé de la structure :</h4>
+            <select style='width: 400px; max-width:400px; ' id='structure_id'> </select>
+        </div>
+        </form>
+    </div>
+
+    <div class='selector' style='border-radius: 0px;
+                                 border-left:solid gray 2px;
+                                 background-color: whitesmoke;
+                                 padding: 5px;
+                                 margin: 10px;
+                                 width:415px;
+                                 height:240px;
+                                 float:left;'>
         <div style="width:200px; padding: 5px; margin: 5px; float:left;">
-            <h4>Type de structure : </h4>
-            <input type="radio" name="structure_type" value="Aucun" checked>  Aucune <br/>
-            <input type="radio" name="structure_type" value="Etab">   Établissement <br/>
-            <input type="radio" name="structure_type" value="ED">     École doctorale <br/>
-            <input type="radio" name="structure_type" value="UR">     Unité de recherche
+            <h4>Type de date :</h4>
+            <input id="date_inscription" type="radio" name="date_type" value="inscription">  Inscription <br/>
+            <input id="date_soutenance" type="radio" name="date_type" value="soutenance">   Soutenance <br/>
         </div>
-        <div style='width:190px;
-                    height:150px;
-                    float:left;
-                    text-align:center;
-                    padding-top: 75px;'
-             id="linku">
-            <a  href='/statistique'>
-                <input type='button' class='btn btn-info' value='Remise à zéro du filtrage'/>
-            </a>
-        </div>
+
         <div style="clear:both;"></div>
-    <div id='structure_selector' >
-        <h4>Libellé de la structure :</h4>
-        <select style='width: 400px; max-width:400px; ' id='structure_id'> </select>
-    </div>
-    </form>
+        <div>
+            <h4>Sélection de la période :</h4>
+            <p>
 
-</div>
-<div class='selector' style='border-radius: 5px;
-                             border:solid gray 2px;
-                             background-color: whitesmoke;
-                             padding: 5px;
-                             margin: 10px;
-                             width:415px;
-                             height:240px;
-                             float:left;'>
-    <div style="width:200px; padding: 5px; margin: 5px; float:left;">
-        <h4>Type de date :</h4>
-        <input type="radio" name="date_type" value="inscription" checked>  Inscription <br/>
-        <input type="radio" name="date_type" value="soutenance">   Soutenance <br/>
+                <input type="text" id="amount" readonly >
+            </p>
+
+            <center>
+            <div id="slider-range" style="width:380px;"></div>
+            </center>
+        </div>
+
     </div>
-    <div style='width:190px;
-                    height:100px;
-                    float:left;
-                    text-align:center;
-                    padding-top: 50px;'
-         id="linku">
-        <a  href='/statistique'>
-            <input type='button' class='btn btn-info' value='Filtrage selon date'/>
-        </a>
-    </div>
+
     <div style="clear:both;"></div>
-    <div>
-        <h4>Sélection de la période :</h4>
-        <p>
 
-            <input type="text" id="amount" readonly >
-        </p>
+            <div style=' float:right;
+                         text-align:center;
+                         padding:10px;'>
+                <a  href='/statistique'>
+                    <input type='button' class='btn btn-info' value='Remise à zéro'/>
+                </a>
+            </div>
+            <div style=' float:right;
+                         text-align:center;
+                         padding:10px; '
+                id = "linku">
+                <a  href='/statistique'>
+                    <input type='button' class='btn btn-info' value='Filtrer les thèses'/>
+                </a>
+            </div>
 
-        <center>
-        <div id="slider-range" style="width:380px;"></div>
-        </center>
-    </div>
-
+    <div style="clear:both;"></div>
 </div>
-<div style="clear:both;"></div>
 
 
 <script>
@@ -125,15 +133,24 @@ function display_debug($texte) {
 
 <script>
     $(document).ready(function(){
-        $('#structure_id').change(function() {
+
+        var date_type = $.urlParam('date_type');
+        var date_min = $.urlParam('date_min');
+        var date_max = $.urlParam('date_max');
+        var structure_type = $.urlParam('structure_type');
+        var structure_id = $.urlParam('structure_id');
+
+        $.resetForm(structure_type,structure_id,date_type,date_min,date_max);
+
+        $('#filtrage_option').change(function() {
             var selected_structure_type = document.querySelector('input[name="structure_type"]:checked').value;
             var selected_structure_id = document.getElementById("structure_id").value;
             var selected_date_type = document.querySelector('input[name="date_type"]:checked').value;
             var selected_min = $( "#slider-range" ).slider( "values", 0 );
             var selected_max = $( "#slider-range" ).slider( "values", 1 );
             document.getElementById("linku").innerHTML = "" +
-                "<a  href='/statistique?structure_type=" + selected_structure_type + "& structure_id=" + selected_structure_id + "& date_type="+ selected_date_type + "& date_min="+ selected_min + "& date_max="+ selected_max +"'> " +
-                "<input type='button' class='btn btn-info' value='Filtrer les thèse'/>" +
+                "<a  href='/statistique?structure_type=" + selected_structure_type + "&structure_id=" + selected_structure_id + "&date_type="+ selected_date_type + "&date_min="+ selected_min + "&date_max="+ selected_max +"'> " +
+                "<input type='button' class='btn btn-info' value='Filtrer les thèses'/>" +
                 "</a>";
             //alert( this.value );
         });
@@ -162,16 +179,71 @@ function display_debug($texte) {
                 }
         });
     });
+
+    $.urlParam = function(name){
+        var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+        if (results==null){
+            return null;
+        }
+        else{
+            return decodeURI(results[1]) || 0;
+        }
+    }
+
+    $.resetForm = function(structure_type, structure_id, date_type, date_min, date_max) {
+        // alert("Data \n" + structure_type + " = " + structure_id +"\n" + date_type + " = [" + date_min + "," + date_max + "]");
+
+        //Date
+        if (date_type == "soutenance") {
+            document.getElementById('date_soutenance').checked = true;
+        } else {
+            document.getElementById('date_inscription').checked = true;
+        }
+
+        if (date_min == null) date_min=1998;
+        if (date_max == null) date_max=2018;
+        $("#slider-range").slider('values',0,date_min);
+        $("#slider-range").slider('values',1,date_max);
+        $( "#amount" ).val( "" + date_min + " - " + date_max );
+
+
+        //structure
+        if (structure_type == "ED") {
+            document.getElementById('structure_ed').checked = true;
+            var form = " <?php echo generateStructureSelector($ecoles, $structure_id); ?> ";
+
+        } else {
+            if (structure_type == "UR") {
+                document.getElementById('structure_ur').checked = true;
+                var form = " <?php echo generateStructureSelector($unites, $structure_id); ?> ";
+            } else {
+                if (structure_type == "Etab") {
+                    document.getElementById('structure_etab').checked = true;
+                    var form = " <?php echo generateStructureSelector($etablissements, $structure_id); ?> ";
+                } else {
+                    document.getElementById('structure_aucun').checked = true;
+                    var form = "";
+                }
+            }
+        }
+        document.getElementById('structure_id').innerHTML = form;
+
+    }
 </script>
 
 <?php
-    function generateStructureSelector($structures) {
+    function generateStructureSelector($structures, $id = null) {
+        //var_dump($id);
+
         $texte = "";
         $texte .= "<select id='structure_id'>";
         $texte .= "<option value=''> Aucune </option>";
         /** @var Structure $structure */
         foreach ($structures as $structure) {
-            $texte .= "<option value='".$structure->getId()."'>". $structure->getLibelle() ."</option>";
+
+            $texte .= "<option value='".$structure->getId()."'";
+            if($structure->getId() == $id) $texte .= " selected ";
+            $texte .= ">".$structure->getLibelle() ."</option>";
         }
         $texte .= "</select>";
         return $texte;
@@ -195,12 +267,17 @@ $start = $end - 20;
 $effectifsInscription = [];
 $effectifsSoutenance = [];
 
-$dateMinimum = min( $validInscriptionTheses[0]->getDatePremiereInscription()->format("Y"),
-                    $validSoutenanceTheses[0]->getDateSoutenance()->format("Y")
-                );
-$dateMaximum = max( end($validInscriptionTheses)->getDatePremiereInscription()->format("Y"),
-                    end($validSoutenanceTheses)->getDateSoutenance()->format("Y")
-                );
+$dateMinimum = 2018;
+$dateMaximum = 2018;
+
+if (! empty($validInscriptionTheses)) {
+    $dateMinimum = min( $validInscriptionTheses[0]->getDatePremiereInscription()->format("Y"),
+                        $validSoutenanceTheses[0]->getDateSoutenance()->format("Y")
+                    );
+    $dateMaximum = max( end($validInscriptionTheses)->getDatePremiereInscription()->format("Y"),
+                        end($validSoutenanceTheses)->getDateSoutenance()->format("Y")
+                    );
+    }
 
 
 for ($annee = $dateMinimum; $annee <= $dateMaximum ; $annee++) {

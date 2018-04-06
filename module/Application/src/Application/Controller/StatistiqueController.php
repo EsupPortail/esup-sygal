@@ -51,6 +51,7 @@ class StatistiqueController extends AbstractController
             'ecoles' => $ecoles,
             'unites' => $unites,
             'etablissements' => $etablissements,
+            'structure_id' => $structureId,
         ]);
     }
 
