@@ -46,7 +46,7 @@ class ImportController extends AbstractActionController
 
         /** is it all ? */
         if ($service_para === "all") {
-            $services = ['variable', 'role', 'doctorant', 'these', 'individu', 'acteur'];
+            $services = ['variable', 'role', 'doctorant', 'these', 'individu', 'acteur', 'structure', 'etablissement', 'ecole-doctorale', 'unite-recherche'];
         } else {
             $services = [ $service_para ];
         }
@@ -72,10 +72,16 @@ class ImportController extends AbstractActionController
 
 
             $dataName = $service;
-            $entityClass = "Import\Model\Tmp" . ucwords($service);
+            $entityName = str_replace("-"," ", $service);
+            $entityName = ucwords($entityName);
+            $entityName = str_replace(" ","", $entityName);
+            $entityClass = "Import\Model\Tmp" . $entityName;
             $source_code = ($source_code != "non renseigné") ? $source_code : null;
 
             /** Execution de la récupération */
+//            var_dump($dataName);
+//            var_dump($entityClass);
+//            var_dump($source_code);
             try {
                 $logs[] = $this->fetcherService->fetch($dataName, $entityClass, $source_code);
             } catch (\Exception $e) {
@@ -106,7 +112,7 @@ class ImportController extends AbstractActionController
 
         /** is it all ? */
         if ($service_para === "all") {
-            $services = ['variable', 'role', 'doctorant', 'these', 'individu', 'acteur'];
+            $services = ['variable', 'role', 'doctorant', 'these', 'individu', 'acteur', 'structure', 'etablissement', 'ecole-doctorale', 'unite-recherche'];
         } else {
             $services = [ $service_para ];
         }
