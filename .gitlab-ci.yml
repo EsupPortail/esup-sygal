@@ -14,8 +14,7 @@ build:
 deploy_preprod:
   stage: deploy
   script:
-    #- git push root@sygal-pp.unicaen.fr:/var/www/sygal.git master
-    - echo $MON_TOKEN
+    - git push "$DEPLOY_USER:$DEPLOY_PASSWORD"@sygal-pp.unicaen.fr:/var/www/sygal.git master
   when: manual
   only:
   - master
