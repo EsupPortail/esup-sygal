@@ -32,7 +32,7 @@ function display_debug($texte) {
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <h1 class="page-header first"><?php echo $this->translate("Statistiques") ?> <span
-        class="badge"><?php echo count($theses) . " thèses"?></span></h1>
+            class="badge"><?php echo count($theses) . " thèses"?></span></h1>
 
 <div  id="filtrage_option"                style='border-radius: 5px;
                              border:solid gray 2px;
@@ -57,10 +57,10 @@ function display_debug($texte) {
             </div>
 
             <div style="clear:both;"></div>
-        <div id='structure_selector' >
-            <h4>Libellé de la structure :</h4>
-            <select style='width: 400px; max-width:400px; ' id='structure_id'> </select>
-        </div>
+            <div id='structure_selector' >
+                <h4>Libellé de la structure :</h4>
+                <select style='width: 400px; max-width:400px; ' id='structure_id'> </select>
+            </div>
         </form>
     </div>
 
@@ -87,7 +87,7 @@ function display_debug($texte) {
             </p>
 
             <center>
-            <div id="slider-range" style="width:380px;"></div>
+                <div id="slider-range" style="width:380px;"></div>
             </center>
         </div>
 
@@ -95,21 +95,21 @@ function display_debug($texte) {
 
     <div style="clear:both;"></div>
 
-            <div style=' float:right;
+    <div style=' float:right;
                          text-align:center;
                          padding:10px;'>
-                <a  href='/statistique'>
-                    <input type='button' class='btn btn-info' value='Remise à zéro'/>
-                </a>
-            </div>
-            <div style=' float:right;
+        <a  href='/statistique'>
+            <input type='button' class='btn btn-info' value='Remise à zéro'/>
+        </a>
+    </div>
+    <div style=' float:right;
                          text-align:center;
                          padding:10px; '
-                id = "linku">
-                <a  href='/statistique'>
-                    <input type='button' class='btn btn-info' value='Filtrer les thèses'/>
-                </a>
-            </div>
+         id = "linku">
+        <a  href='/statistique'>
+            <input type='button' class='btn btn-info' value='Filtrer les thèses'/>
+        </a>
+    </div>
 
     <div style="clear:both;"></div>
 </div>
@@ -124,6 +124,7 @@ function display_debug($texte) {
             values: [ 1998, 2018 ],
             slide: function( event, ui ) {
                 $( "#amount" ).val( "" + ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+                $.prepUrl();
             }
         });
         $( "#amount" ).val( "" + $( "#slider-range" ).slider( "values", 0 ) +
@@ -131,7 +132,7 @@ function display_debug($texte) {
     } );
 </script>
 
-<script>
+<script>SOURCE
     $(document).ready(function(){
 
         var date_type = $.urlParam('date_type');
@@ -142,41 +143,30 @@ function display_debug($texte) {
 
         $.resetForm(structure_type,structure_id,date_type,date_min,date_max);
 
-        $('#filtrage_option').change(function() {
-            var selected_structure_type = document.querySelector('input[name="structure_type"]:checked').value;
-            var selected_structure_id = document.getElementById("structure_id").value;
-            var selected_date_type = document.querySelector('input[name="date_type"]:checked').value;
-            var selected_min = $( "#slider-range" ).slider( "values", 0 );
-            var selected_max = $( "#slider-range" ).slider( "values", 1 );
-            document.getElementById("linku").innerHTML = "" +
-                "<a  href='/statistique?structure_type=" + selected_structure_type + "&structure_id=" + selected_structure_id + "&date_type="+ selected_date_type + "&date_min="+ selected_min + "&date_max="+ selected_max +"'> " +
-                "<input type='button' class='btn btn-info' value='Filtrer les thèses'/>" +
-                "</a>";
-            //alert( this.value );
-        });
+        $('#filtrage_option').change(function() {$.prepUrl();});
         $('input[type=radio][name=structure_type]').change(function() {
-                //alert(this.value);
-                if (this.value == "Aucun") {
-                    // alert("Aucun");
-                    document.getElementById('structure_id').innerHTML = "";
-                } else {
-                   // alert("Pas Aucun : " + this.value);
-                }
-                if (this.value == "ED") {
-                    // var form = "ED";
-                    var form = " <?php echo generateStructureSelector($ecoles); ?> ";
-                    document.getElementById('structure_id').innerHTML = form;
-                }
-                if (this.value == "UR") {
-                    // alert("UR");
-                    var form = " <?php echo generateStructureSelector($unites); ?> ";
-                    document.getElementById('structure_id').innerHTML = form;
-                }
-                if (this.value == "Etab") {
-                    // alert("Etab");
-                    var form = " <?php echo generateStructureSelector($etablissements); ?> ";
-                    document.getElementById('structure_id').innerHTML = form;
-                }
+            //alert(this.value);
+            if (this.value == "Aucun") {
+                // alert("Aucun");
+                document.getElementById('structure_id').innerHTML = "";
+            } else {
+                // alert("Pas Aucun : " + this.value);
+            }
+            if (this.value == "ED") {
+                // var form = "ED";
+                var form = " <?php echo generateStructureSelector($ecoles); ?> ";
+                document.getElementById('structure_id').innerHTML = form;
+            }
+            if (this.value == "UR") {
+                // alert("UR");
+                var form = " <?php echo generateStructureSelector($unites); ?> ";
+                document.getElementById('structure_id').innerHTML = form;
+            }
+            if (this.value == "Etab") {
+                // alert("Etab");
+                var form = " <?php echo generateStructureSelector($etablissements); ?> ";
+                document.getElementById('structure_id').innerHTML = form;
+            }
         });
     });
 
@@ -229,25 +219,38 @@ function display_debug($texte) {
         document.getElementById('structure_id').innerHTML = form;
 
     }
+
+    $.prepUrl = function() {
+        var selected_structure_type = document.querySelector('input[name="structure_type"]:checked').value;
+        var selected_structure_id = document.getElementById("structure_id").value;
+        var selected_date_type = document.querySelector('input[name="date_type"]:checked').value;
+        var selected_min = $( "#slider-range" ).slider( "values", 0 );
+        var selected_max = $( "#slider-range" ).slider( "values", 1 );
+        document.getElementById("linku").innerHTML = "" +
+            "<a  href='/statistique?structure_type=" + selected_structure_type + "&structure_id=" + selected_structure_id + "&date_type="+ selected_date_type + "&date_min="+ selected_min + "&date_max="+ selected_max +"'> " +
+            "<input type='button' class='btn btn-info' value='Filtrer les thèses'/>" +
+            "</a>";
+        //alert( this.value );
+    }
 </script>
 
 <?php
-    function generateStructureSelector($structures, $id = null) {
-        //var_dump($id);
+function generateStructureSelector($structures, $id = null) {
+    //var_dump($id);
 
-        $texte = "";
-        $texte .= "<select id='structure_id'>";
-        $texte .= "<option value=''> Aucune </option>";
-        /** @var Structure $structure */
-        foreach ($structures as $structure) {
+    $texte = "";
+    $texte .= "<select id='structure_id'>";
+    $texte .= "<option value=''> Aucune </option>";
+    /** @var Structure $structure */
+    foreach ($structures as $structure) {
 
-            $texte .= "<option value='".$structure->getId()."'";
-            if($structure->getId() == $id) $texte .= " selected ";
-            $texte .= ">".$structure->getLibelle() ."</option>";
-        }
-        $texte .= "</select>";
-        return $texte;
+        $texte .= "<option value='".$structure->getId()."'";
+        if($structure->getId() == $id) $texte .= " selected ";
+        $texte .= ">".$structure->getLibelle() ."</option>";
     }
+    $texte .= "</select>";
+    return $texte;
+}
 ?>
 
 <?php
@@ -272,12 +275,12 @@ $dateMaximum = 2018;
 
 if (! empty($validInscriptionTheses)) {
     $dateMinimum = min( $validInscriptionTheses[0]->getDatePremiereInscription()->format("Y"),
-                        $validSoutenanceTheses[0]->getDateSoutenance()->format("Y")
-                    );
+        $validSoutenanceTheses[0]->getDateSoutenance()->format("Y")
+    );
     $dateMaximum = max( end($validInscriptionTheses)->getDatePremiereInscription()->format("Y"),
-                        end($validSoutenanceTheses)->getDateSoutenance()->format("Y")
-                    );
-    }
+        end($validSoutenanceTheses)->getDateSoutenance()->format("Y")
+    );
+}
 
 
 for ($annee = $dateMinimum; $annee <= $dateMaximum ; $annee++) {
@@ -293,12 +296,12 @@ foreach ($theses as $these) {
 
 
 $data_insc_sout = [];
-    for($current = $start ; $current <= $end ; $current++) {
-        $inscriptions = (empty($effectifsInscription[$current])) ? 0 : count($effectifsInscription[$current]);
-        $soutenances = (empty($effectifsSoutenance[$current])) ? 0 : count($effectifsSoutenance[$current]);
+for($current = $start ; $current <= $end ; $current++) {
+    $inscriptions = (empty($effectifsInscription[$current])) ? 0 : count($effectifsInscription[$current]);
+    $soutenances = (empty($effectifsSoutenance[$current])) ? 0 : count($effectifsSoutenance[$current]);
 
-        $data_insc_sout[] = [$current , $inscriptions, $soutenances];
-    }
+    $data_insc_sout[] = [$current , $inscriptions, $soutenances];
+}
 
 $dureeTheses = [];
 for ($annee = $dateMinimum; $annee <= $dateMaximum ; $annee++) {
@@ -349,6 +352,7 @@ foreach($effectifsInscription[$end-2] as $these) {
 }
 
 $effectifParPays = generateEffectifParPays($effectifsInscription, $start, $end);
+echo "{$homme}/{$femme}";
 ?>
 
 <script> var do_drawing = true; </script>
@@ -373,7 +377,11 @@ $effectifParPays = generateEffectifParPays($effectifsInscription, $start, $end);
             pointSize: 5,
             hAxis: {
                 slantedText:true,
-                slantedTextAngle:45
+                slantedTextAngle:45,
+                //viewWindow: {
+                //min: 5,
+                //max: 2015
+                //}
             },
             vAxis: {
                 minValue: 0,
@@ -390,13 +398,13 @@ $effectifParPays = generateEffectifParPays($effectifsInscription, $start, $end);
     }
 </script>
 <div class="box panel panel-info">
-        <div class="panel-heading">
-            <h2 class="first">
-                Évolution du nombre d'inscriptions en thèses et du nombre de soutenances
-            </h2>
-        </div>
-        <div id="Inscriptions/Soutenances" style="width: 925px; height: 500px"></div>
+    <div class="panel-heading">
+        <h2 class="first">
+            Évolution du nombre d'inscriptions en thèses et du nombre de soutenances
+        </h2>
     </div>
+    <div id="Inscriptions/Soutenances" style="width: 925px; height: 500px"></div>
+</div>
 
 <script type="text/javascript">
     google.charts.load('current', {'packages':['corechart']});
@@ -447,8 +455,9 @@ $effectifParPays = generateEffectifParPays($effectifsInscription, $start, $end);
 
         var data = google.visualization.arrayToDataTable([
             ['Genre', 'Effectif'],
-            ['Femme',     <?php echo $femme; ?>],
-            ['Homme',     <?php echo $homme; ?>]
+            ['Homme',     <?php echo $homme; ?>],
+            ['Femme',     <?php echo $femme; ?>]
+
         ]);
 
         var options = {
@@ -475,8 +484,8 @@ $effectifParPays = generateEffectifParPays($effectifsInscription, $start, $end);
 
             <?php
             foreach ($discipline as $nom => $effectif) {
-               if ($effectif >= $threshold) echo "[\"".$nom ."\",".$effectif."],";
-               else $discipline["Autres"] += $effectif;
+                if ($effectif >= $threshold) echo "[\"".$nom ."\",".$effectif."],";
+                else $discipline["Autres"] += $effectif;
             }
             echo "[\"Autres\",". $discipline["Autres"]."],"
             ?>
@@ -515,8 +524,8 @@ $effectifParPays = generateEffectifParPays($effectifsInscription, $start, $end);
         var data = google.visualization.arrayToDataTable([
             ['Country', 'Popularity'],
             <?php foreach($effectifParPays as $country => $number) {
-               echo "[ '{$country}' , $number ],";
-            }?>
+            echo "[ '{$country}' , $number ],";
+        }?>
         ]);
         var options = {
             colorAxis: { maxValue: 100 }
