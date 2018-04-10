@@ -5,7 +5,7 @@ stages:
 
 test:
   stage: test
-  script: echo "Running tests"; apt update; apt install git
+  script: echo "Running tests"; cat /etc/apt/sources.list*; apt update; apt -y install git
 
 build:
   stage: build
