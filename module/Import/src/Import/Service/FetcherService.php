@@ -296,8 +296,8 @@ class FetcherService
             elseif ($propriete === "theseId")       $value = $this->code."::".$entity_json->{'theseId'};
             elseif ($propriete === "doctorantId")   $value = $this->code."::".$entity_json->{'doctorantId'};
             elseif ($propriete === "structureId")   $value = $this->code."::".$entity_json->{'structureId'};
-//            elseif ($propriete === "ecoleDoctoraleId")   $value = $this->code."::".$entity_json->{'ecoleDoctoraleId'};
-//            elseif ($propriete === "uniteRechercheId")   $value = $this->code."::".$entity_json->{'uniteRechercheId'};
+            elseif ($propriete === "ecoleDoctId")   $value = $this->code."::".$entity_json->{'ecoleDoctId'};
+            elseif ($propriete === "uniteRechId")   $value = $this->code."::".$entity_json->{'uniteRechId'};
             else $value = $entity_json->{$propriete};
             $valuesArray[] = $this->prepValue($value, $type);
         }
