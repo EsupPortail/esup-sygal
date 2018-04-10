@@ -32,6 +32,21 @@ class EtablissementService extends BaseService
     }
 
     /**
+     * @param string source
+     * @return Etablissement[]
+     */
+    public function getEtablissementsBySource($source) {
+        $qb = $this->entityManager->getRepository(Etablissement::class)->createQueryBuilder("e")
+            ->join("e.source", "s")
+            ->andWhere("s.code = :source")
+            ->setParameter("source", $source);
+
+        /** @var Etablissement[] $etablissments */
+        $etablissments = $qb->getQuery()->execute();
+        return $etablissments;
+    }
+
+    /**
      * @param int $id
      * @return null|Etablissement
      */
