@@ -289,11 +289,14 @@ class FetcherService
             //TODO (jp) nettoie moi çà
             if ($propriete === "etablissementId")   $value = $this->code;
             elseif ($propriete === "sourceCode")    $value = $this->code."::".$entity_json->{'id'};
+            elseif ($propriete === "code")          $value = $this->code."::".$entity_json->{'code'};
             elseif ($propriete === "sourceId")      $value = $this->code."::".$entity_json->{'sourceId'};
             elseif ($propriete === "individuId")    $value = $this->code."::".$entity_json->{'individuId'};
             elseif ($propriete === "roleId")        $value = $this->code."::".$entity_json->{'roleId'};
             elseif ($propriete === "theseId")       $value = $this->code."::".$entity_json->{'theseId'};
             elseif ($propriete === "doctorantId")   $value = $this->code."::".$entity_json->{'doctorantId'};
+//            elseif ($propriete === "ecoleDoctoraleId")   $value = $this->code."::".$entity_json->{'ecoleDoctoraleId'};
+//            elseif ($propriete === "uniteRechercheId")   $value = $this->code."::".$entity_json->{'uniteRechercheId'};
             else $value = $entity_json->{$propriete};
             $valuesArray[] = $this->prepValue($value, $type);
         }
@@ -431,7 +434,9 @@ class FetcherService
 
         /** Remplissage avec les données retournées par le Web Services */
         $json = json_decode($response->getBody());
-        $collection_json = $json->{'_embedded'}->{$dataName};
+        $jsonName = str_replace("-","_",$dataName);
+        $collection_json = $json->{'_embedded'}->{$jsonName};
+
         foreach ($collection_json as $entity_json) {
             $colonnes = implode(", ", $tableRelation);
             $values = implode(", ", $this->generateValueArray($entity_json, $metadata));
