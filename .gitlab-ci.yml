@@ -5,7 +5,7 @@ stages:
 
 test:
   stage: test
-  script: echo "Running tests"; apt install git
+  script: echo "Running tests"; apt update; apt install git
 
 build:
   stage: build
