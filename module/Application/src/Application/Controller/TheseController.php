@@ -643,7 +643,7 @@ class TheseController extends AbstractController
                     // erreur prévue
                 }
             }
-            return $this->redirect()->toRoute(null, [], [], true);
+            return $this->redirect()->toRoute(null, [], ['query'=>$this->params()->fromQuery()], true);
         }
 
         $theseRetraiteeAutoListUrl = $this->urlFichierThese()->listerFichiers(
