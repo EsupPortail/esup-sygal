@@ -643,7 +643,7 @@ class TheseController extends AbstractController
                     // erreur prévue
                 }
             }
-            return $this->redirect()->refresh();
+            return $this->redirect()->toRoute(null, [], [], true);
         }
 
         $theseRetraiteeAutoListUrl = $this->urlFichierThese()->listerFichiers(

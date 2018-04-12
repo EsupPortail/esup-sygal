@@ -66,9 +66,6 @@ class RetraitementService
             throw $toce;
         }
         catch (RuntimeException $rte) {
-            // suppression du fichier d'entrée sur le disque
-            unlink($inputFilePath);
-
             throw new RuntimeException(
                 "Une erreur est survenue lors de l'exécution de la commande de retraitement " . $this->command->getName(),
                 0,

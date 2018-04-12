@@ -494,17 +494,20 @@ class FichierService extends BaseService
         $inputFilePath = $this->computeDestinationFilePathForFichier($fichier);
         $outputFilePath = sys_get_temp_dir() . '/' . uniqid($fichier->getNom() . '-') . '.png';
 
-        $im = new \Imagick();
-        $im->setResolution(300, 300);
-        $im->readImage($inputFilePath . '[0]'); // 1ere page seulement
-        $im->setImageFormat('png');
-        $im->writeImage($outputFilePath);
-        $im->clear();
-        $im->destroy();
+        try {
+            $im = new \Imagick();
+            $im->setResolution(300, 300);
+            $im->readImage($inputFilePath . '[0]'); // 1ere page seulement
+            $im->setImageFormat('png');
+            $im->writeImage($outputFilePath);
+            $im->clear();
+            $im->destroy();
+        } catch (\ImagickException $ie) {
+            throw new RuntimeException(
+                "Erreur rencontrée lors de la création de l'aperçu", null, $ie);
+        }
 
         $content = file_get_contents($outputFilePath);
-
-        unlink($outputFilePath);
 
         return $content;
     }
