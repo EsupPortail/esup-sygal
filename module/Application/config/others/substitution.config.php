@@ -1,6 +1,6 @@
 <?php
 
-use Application\Controller\SubstitutionController;
+use Application\Controller\Factory\SubstitutionControllerFactory;
 use Application\Provider\Privilege\EcoleDoctoralePrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
 use Zend\Mvc\Router\Http\Segment;
@@ -70,10 +70,9 @@ return [
         'aliases' => []
     ],
     'controllers'     => [
-        'invokables' => [
-            'Application\Controller\Substitution' => SubstitutionController::class,
-            ],
-        'factories' => [],
+        'invokables' => [],
+        'factories' => [
+            'Application\Controller\Substitution' => SubstitutionControllerFactory::class,],
     ],
     'form_elements'   => [
         'invokables' => [],

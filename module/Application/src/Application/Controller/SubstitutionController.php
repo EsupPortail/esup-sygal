@@ -17,6 +17,7 @@ use Zend\View\Model\ViewModel;
 
 class SubstitutionController extends AbstractController
 {
+    use EtablissementServiceAwareTrait;
     public function indexAction()
     {
         return new ViewModel();
@@ -24,6 +25,18 @@ class SubstitutionController extends AbstractController
 
     public function selectionAction()
     {
-        return new ViewModel();
+
+        $etablissements = $this->etablissementService->getEtablissements();
+        $etablissement = $this->etablissementService->getEtablissementById(2);
+        $selection = [
+            $this->etablissementService->getEtablissementById(2),
+            $this->etablissementService->getEtablissementById(3),
+            $this->etablissementService->getEtablissementById(4)
+        ];
+        return new ViewModel([
+            'nouvelEtablissement' => $etablissement,
+            'selectedEtablissements' => $selection,
+            'etablissements' => $etablissements,
+        ]);
     }
 }

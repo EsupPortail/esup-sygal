@@ -1,1 +1,56 @@
-SUBSTITUTION SLECTION
+<?php
+
+use Application\Entity\Db\Etablissement;
+
+/**
+ * Variables remontant du controleur
+ * @var Etablissement   $nouvelEtablissement ==> l'etablissement qui va regrouper les établissements
+ * @var Etablissement[] $selectedEtablissements ==> la liste des établissements sélectionnés
+ * @var Etablissement[] $etablissements ==> la liste des établissements triés
+ */
+?>
+
+<?php $this->headTitle($this->translate("Substitution d'établissements")) ?>
+
+<h1 class="page-header first">
+    <?php echo $this->translate("Substitution d'établissements"); ?>
+    <span class="badge"><?php echo $nouvelEtablissement->getSigle(); ?></span>
+</h1>
+
+<div class="pull-left">
+<?php
+    foreach($selectedEtablissements as $selectedEtablissement) {
+        echo generateDivEtablissement($selectedEtablissement);
+    }
+?>
+</div>
+
+<div class="pull-right">
+    <?php
+    echo generateDivEtablissement($nouvelEtablissement);
+    ?>
+</div>
+
+<?php
+function generateDivEtablissement(Etablissement $etablissement) {
+    $texte =    "";
+    $texte .=   "<div class='etablissement bg-warning'>";
+    $texte .= $etablissement->getSigle();
+    $texte .=   "<br/>";
+    $texte .= $etablissement->getLibelle();
+    $texte .=   "<br/>";
+    $texte .= $etablissement->getCheminLogo();
+    $texte .=   "<br/>";
+    $texte .=   "</div>";
+    return $texte;
+}
+?>
+
+<style>
+    div.etablissement {
+        margin: 5px;
+        padding: 5px;
+        border: 2px gray solid;
+        border-radius: 5px;
+    }
+</style>
