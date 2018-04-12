@@ -87,8 +87,12 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
      *
      * @return string
      */
-    public function getSourceCode()
+    public function getSourceCode($no_prefix = false)
     {
+        if ($no_prefix) {
+            $res = explode("::", $this->sourceCode);
+            return end($res);
+        }
         return $this->sourceCode;
     }
 
