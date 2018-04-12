@@ -27,7 +27,7 @@ use Application\Entity\Db\Etablissement;
 
 <div class="pull-right">
     <?php
-    echo generateDivEtablissement($nouvelEtablissement);
+    echo generateDivSubstitution($nouvelEtablissement);
     ?>
 </div>
 
@@ -35,12 +35,49 @@ use Application\Entity\Db\Etablissement;
 function generateDivEtablissement(Etablissement $etablissement) {
     $texte =    "";
     $texte .=   "<div class='etablissement bg-warning'>";
-    $texte .= $etablissement->getSigle();
+
+    $texte .= "<div id='logo-div' class='pull-right'>";
+    if ($etablissement->getCheminLogo() !== null) {
+        $texte .= "<input id='Logo_" . $etablissement->getSigle() . "' type='radio' name='logo' /> &nbsp; ";
+    }
+    $texte .= "<img style='max-width: 125px; max-height: 125px; border: 1px solid black; background-color: white;' src='data:image/png;base64," . base64_encode($etablissement->getLogoContent()) ."'/>";
+    $texte .= "</div>";
+
+    $texte .= $etablissement->getSource() ."/". $etablissement->getId() . " " . $etablissement->getCode() ;
     $texte .=   "<br/>";
-    $texte .= $etablissement->getLibelle();
+
+    $texte .= "<span>";
+    $texte .= "<input id='Sigle_".$etablissement->getSigle()."' type='radio' name='sigle'/> &nbsp; ";
+    $texte .= "<span class='texte'>" . $etablissement->getSigle() ."</span>";
+    $texte .= "</span>";
+
     $texte .=   "<br/>";
-    $texte .= $etablissement->getCheminLogo();
+
+    $texte .= "<span>";
+    $texte .= "<input id='Libelle_".$etablissement->getSigle()."' type='radio' name='libelle'/> &nbsp; ";
+    $texte .= "<span class='texte'>" . $etablissement->getLibelle() . "</span>";
+    $texte .= "</span>";
+
+    $texte .=   "</div>";
+    return $texte;
+}
+
+function generateDivSubstitution($etablissement) {
+    $texte =    "";
+    $texte .=   "<div class='etablissement bg-info'>";
+
+    $texte .= "<div id='logo-div' class='pull-right'>";
+    $texte .= "<img style='max-width: 125px; max-height: 125px; border: 1px solid black; background-color: white;' src='data:image/png;base64," . base64_encode($etablissement->getLogoContent()) ."'/>";
+    $texte .= "</div>";
+
+    $texte .= $etablissement->getSource() ."/". $etablissement->getId() . " " . $etablissement->getCode() ;
     $texte .=   "<br/>";
+
+    $texte .= "<input type='text' id='Sigle'/>";
+    $texte .=   "<br/>";
+
+    $texte .= "<input type='text' id='Libelle'/>";
+
     $texte .=   "</div>";
     return $texte;
 }
@@ -52,5 +89,24 @@ function generateDivEtablissement(Etablissement $etablissement) {
         padding: 5px;
         border: 2px gray solid;
         border-radius: 5px;
+        width: 400px;
+        height: 150px;
     }
 </style>
+
+
+<script>
+    $(document).ready(function(){
+
+        $("input[type='radio']").click(function() {
+            var id = $(this).attr('id');
+            var type= id.split("_")[0];
+
+            //remplacement in the target
+            var texte =  ($(this).parent().find(".texte").text());
+             $('input[id='+type+']').val( texte );
+
+        });
+
+    });
+</script>
