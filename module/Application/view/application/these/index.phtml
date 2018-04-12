@@ -15,6 +15,7 @@ use Zend\Paginator\Paginator;
  * @var Paginator   $theses
  * @var string      $text
  * @var Role        $roleDirecteurThese
+ * @var string      $filtreEtablissement
  */
 
 $canExport = $this->isAllowed(Privileges::getResourceId(ThesePrivileges::THESE_EXPORT_CSV));
@@ -31,6 +32,9 @@ $acteursFormatter->asSeparated()
 <h1 class="page-header">
     <?php echo $this->translate("Thèses"); ?>
 </h1>
+
+<?php var_dump($filtreEtablissement); ?>
+
 <!-- Formulaire de filtrage -->
 <div class="pull-left">
     <?php echo $this->partial('partial/form-filtrage', ['etablissements' => $etablissements]) ?>
@@ -58,11 +62,19 @@ $acteursFormatter->asSeparated()
                     <?php echo $this->translate("Titre"); ?>
             </a> <?php echo $s->icon() ?>
         </th>
+        <?php if ($filtreEtablissement === '') { ?>
+        <th>
+            <a href="<?php echo $s = $this->sortable('t.etablissement'); ?>"
+               title="<?php echo $this->translate("Établissement");?> ">
+                <?php echo $this->translate("Étab."); ?>
+            </a> <?php echo $s->icon() ?>
+        </th>
+        <?php  } ?>
         <th>
             <a href="<?php echo $s = $this->sortable('t.etatThese'); ?>"
                title="<?php echo $this->translate("État de la thèse");?> ">
                 <?php echo $this->translate("État"); ?>
-            </a>
+            </a> <?php echo $s->icon() ?>
         </th>
         <th>
             <a href="<?php echo $s = $this->sortable('th.sourceCode'); ?>"
@@ -112,8 +124,19 @@ $acteursFormatter->asSeparated()
                     </a>
                 </span>
             </td>
+            <?php
+                if ($filtreEtablissement === '') {
+                    echo "<td>";
+                    echo "<abbr title='";
+                    echo $these->getEtablissement()->getLibelle();
+                    echo "'>";
+                    echo $these->getEtablissement()->getCode();
+                    echo "</abbr>";
+                    echo "</td>";
+                }
+            ?>
             <td><?php echo $these->getEtatThese() ?></td>
-            <td><?php echo $these->getDoctorant()->getSourceCode() ?></td>
+            <td><?php echo $these->getDoctorant()->getSourceCode(true) ?></td>
             <td><?php echo $these->getDoctorant()->getIndividu()->getNomComplet() ?></td>
             <td class="acteurs">
 
