@@ -5,19 +5,17 @@ stages:
 
 test:
   stage: test
-  script: echo "Running tests"
+  script: echo "Running tests"; cat /etc/apt/sources.list*; apt update; apt -y install git
 
 build:
   stage: build
   script: echo "Building the app"
 
-deploy_staging:
+deploy_preprod:
   stage: deploy
   script:
-    - echo "Deploy to staging server"
-  environment:
-    name: staging
-    url: https://staging.example.com
+    - git push "$DEPLOY_USER:$DEPLOY_PASSWORD"@sygal-pp.unicaen.fr:/var/www/sygal.git master
+  when: manual
   only:
   - master
 

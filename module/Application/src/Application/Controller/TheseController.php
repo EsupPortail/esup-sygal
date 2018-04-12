@@ -121,6 +121,7 @@ class TheseController extends AbstractController
             'text'   => $text,
             'roleDirecteurThese' => $this->roleService->getRepository()->findOneBy(['sourceCode' => Role::CODE_DIRECTEUR_THESE]),
             'etablissements' => $this->etablissementService->getEtablissementsBySource("COMUE::SYGAL"),
+            'filtreEtablissement' => $etablissement,
         ]);
     }
 
