@@ -2,26 +2,16 @@
 
 namespace Application\Entity\Db;
 
+use UnicaenApp\Entity\HistoriqueAwareInterface;
+use UnicaenApp\Entity\HistoriqueAwareTrait;
+use Webmozart\Assert\Assert;
+
 /**
  * StructureSubstit
  */
-class StructureSubstit
+class StructureSubstit implements HistoriqueAwareInterface
 {
-    /**
-     * @var \DateTime
-     */
-    private $histoCreation;
-
-    /**
-     * @var \DateTime
-     */
-    private $histoDestruction;
-
-    /**
-     * @var \DateTime
-     */
-    private $histoModification;
-
+    use HistoriqueAwareTrait;
     /**
      * @var integer
      */
@@ -38,91 +28,27 @@ class StructureSubstit
     private $toStructure;
 
     /**
-     * @var Utilisateur
-     */
-    private $histoModificateur;
-
-    /**
-     * @var Utilisateur
-     */
-    private $histoDestructeur;
-
-    /**
-     * @var Utilisateur
-     */
-    private $histoCreateur;
-
-
-    /**
-     * Set histoCreation
+     * StructureSubstit factory.
      *
-     * @param \DateTime $histoCreation
-     *
-     * @return StructureSubstit
+     * @param Structure[] $structuresSources
+     * @param Structure   $structureCible
+     * @return self[]
      */
-    public function setHistoCreation($histoCreation)
+    public static function fromStructures(array $structuresSources, Structure $structureCible)
     {
-        $this->histoCreation = $histoCreation;
+        return array_map(function($structureSource) use ($structureCible) {
+            if ($structureSource instanceof Etablissement ||
+                $structureSource instanceof EcoleDoctorale ||
+                $structureSource instanceof UniteRecherche) {
+                $structureSource = $structureSource->getStructure();
+            }
+            Assert::isInstanceOf($structureSource, Structure::class);
 
-        return $this;
-    }
-
-    /**
-     * Get histoCreation
-     *
-     * @return \DateTime
-     */
-    public function getHistoCreation()
-    {
-        return $this->histoCreation;
-    }
-
-    /**
-     * Set histoDestruction
-     *
-     * @param \DateTime $histoDestruction
-     *
-     * @return StructureSubstit
-     */
-    public function setHistoDestruction($histoDestruction)
-    {
-        $this->histoDestruction = $histoDestruction;
-
-        return $this;
-    }
-
-    /**
-     * Get histoDestruction
-     *
-     * @return \DateTime
-     */
-    public function getHistoDestruction()
-    {
-        return $this->histoDestruction;
-    }
-
-    /**
-     * Set histoModification
-     *
-     * @param \DateTime $histoModification
-     *
-     * @return StructureSubstit
-     */
-    public function setHistoModification($histoModification)
-    {
-        $this->histoModification = $histoModification;
-
-        return $this;
-    }
-
-    /**
-     * Get histoModification
-     *
-     * @return \DateTime
-     */
-    public function getHistoModification()
-    {
-        return $this->histoModification;
+            $ss = new StructureSubstit();
+            $ss->setFromStructure($structureSource);
+            $ss->setToStructure($structureCible);
+            return $ss;
+        }, $structuresSources);
     }
 
     /**
@@ -181,78 +107,6 @@ class StructureSubstit
     public function getToStructure()
     {
         return $this->toStructure;
-    }
-
-    /**
-     * Set histoModificateur
-     *
-     * @param Utilisateur $histoModificateur
-     *
-     * @return StructureSubstit
-     */
-    public function setHistoModificateur(Utilisateur $histoModificateur = null)
-    {
-        $this->histoModificateur = $histoModificateur;
-
-        return $this;
-    }
-
-    /**
-     * Get histoModificateur
-     *
-     * @return Utilisateur
-     */
-    public function getHistoModificateur()
-    {
-        return $this->histoModificateur;
-    }
-
-    /**
-     * Set histoDestructeur
-     *
-     * @param Utilisateur $histoDestructeur
-     *
-     * @return StructureSubstit
-     */
-    public function setHistoDestructeur(Utilisateur $histoDestructeur = null)
-    {
-        $this->histoDestructeur = $histoDestructeur;
-
-        return $this;
-    }
-
-    /**
-     * Get histoDestructeur
-     *
-     * @return Utilisateur
-     */
-    public function getHistoDestructeur()
-    {
-        return $this->histoDestructeur;
-    }
-
-    /**
-     * Set histoCreateur
-     *
-     * @param Utilisateur $histoCreateur
-     *
-     * @return StructureSubstit
-     */
-    public function setHistoCreateur(Utilisateur $histoCreateur = null)
-    {
-        $this->histoCreateur = $histoCreateur;
-
-        return $this;
-    }
-
-    /**
-     * Get histoCreateur
-     *
-     * @return Utilisateur
-     */
-    public function getHistoCreateur()
-    {
-        return $this->histoCreateur;
     }
 }
 

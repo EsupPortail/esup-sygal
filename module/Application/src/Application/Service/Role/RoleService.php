@@ -10,6 +10,7 @@ use Application\Entity\Db\Repository\RoleRepository;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\RoleModele;
 use Application\Entity\Db\RolePrivilegeModele;
+use Application\Entity\Db\SourceInterface;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
 use Application\Entity\Db\Utilisateur;
@@ -198,7 +199,7 @@ class RoleService extends BaseService
 
     public function createRole($libelle = "Aucun")
     {
-        $sourceSygal = $this->entityManager->getRepository(Source::class)->findOneBy(["code" => "COMUE::SYGAL"]);
+        $sourceSygal = $this->entityManager->getRepository(Source::class)->findOneBy(["code" => SourceInterface::CODE_SYGAL]);
         $userSygal = $this->entityManager->getRepository(Utilisateur::class)->findOneBy(["username" => "sygal-app"]);
 
         $role = new Role();
