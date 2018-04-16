@@ -12,6 +12,7 @@ use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\RdvBu;
 use Application\Entity\Db\RecapBu;
 use Application\Entity\Db\Role;
+use Application\Entity\Db\SourceInterface;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Variable;
@@ -120,7 +121,7 @@ class TheseController extends AbstractController
             'theses' => $paginator,
             'text'   => $text,
             'roleDirecteurThese' => $this->roleService->getRepository()->findOneBy(['sourceCode' => Role::CODE_DIRECTEUR_THESE]),
-            'etablissements' => $this->etablissementService->getEtablissementsBySource("COMUE::SYGAL"),
+            'etablissements' => $this->etablissementService->getEtablissementsBySource(SourceInterface::CODE_SYGAL),
             'filtreEtablissement' => $etablissement,
         ]);
     }
@@ -643,7 +644,7 @@ class TheseController extends AbstractController
                     // erreur prévue
                 }
             }
-            return $this->redirect()->refresh();
+            return $this->redirect()->toRoute(null, [], ['query'=>$this->params()->fromQuery()], true);
         }
 
         $theseRetraiteeAutoListUrl = $this->urlFichierThese()->listerFichiers(

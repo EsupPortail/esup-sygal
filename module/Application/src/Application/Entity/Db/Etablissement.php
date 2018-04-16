@@ -5,13 +5,15 @@ namespace Application\Entity\Db;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenImport\Entity\Db\Interfaces\SourceAwareInterface;
+use UnicaenImport\Entity\Db\Source;
 use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
 use UnicaenApp\Util;
+use Webmozart\Assert\Assert;
 
 /**
  * Etablissement
  */
-class Etablissement implements HistoriqueAwareInterface, SourceAwareInterface
+class Etablissement implements StructureEntityInterface, HistoriqueAwareInterface, SourceAwareInterface
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
@@ -31,6 +33,11 @@ class Etablissement implements HistoriqueAwareInterface, SourceAwareInterface
      * @var Structure
      */
     protected $structure;
+
+    /**
+     * @var string
+     */
+    private $sourceCode;
 
     /**
      * Ajoute le préfixe établissement à la chaîne de caractères spécifiée.
@@ -96,6 +103,29 @@ class Etablissement implements HistoriqueAwareInterface, SourceAwareInterface
     public function setCode($code)
     {
         $this->code = $code;
+    }
+
+    /**
+     * Set sourceCode
+     *
+     * @param string $sourceCode
+     * @return self
+     */
+    public function setSourceCode($sourceCode)
+    {
+        $this->sourceCode = $sourceCode;
+
+        return $this;
+    }
+
+    /**
+     * Get sourceCode
+     *
+     * @return string
+     */
+    public function getSourceCode()
+    {
+        return $this->sourceCode;
     }
 
     /**
@@ -202,27 +232,11 @@ class Etablissement implements HistoriqueAwareInterface, SourceAwareInterface
     }
 
     /**
-     * @param mixed $theses
-     */
-    public function setTheses($theses)
-    {
-        $this->theses = $theses;
-    }
-
-    /**
      * @return mixed
      */
     public function getDoctorants()
     {
         return $this->doctorants;
-    }
-
-    /**
-     * @param mixed $doctorants
-     */
-    public function setDoctorants($doctorants)
-    {
-        $this->doctorants = $doctorants;
     }
 
     /**
@@ -232,13 +246,4 @@ class Etablissement implements HistoriqueAwareInterface, SourceAwareInterface
     {
         return $this->roles;
     }
-
-    /**
-     * @param mixed $roles
-     */
-    public function setRoles($roles)
-    {
-        $this->roles = $roles;
-    }
-
 }

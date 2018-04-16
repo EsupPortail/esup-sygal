@@ -11,7 +11,7 @@ use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
 /**
  * UniteRecherche
  */
-class UniteRecherche implements HistoriqueAwareInterface, SourceAwareInterface
+class UniteRecherche implements StructureEntityInterface, HistoriqueAwareInterface, SourceAwareInterface
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
