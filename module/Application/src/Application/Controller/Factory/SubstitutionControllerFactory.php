@@ -4,13 +4,11 @@ namespace Application\Controller\Factory;
 
 use Application\Controller\SubstitutionController;
 use Application\Service\Etablissement\EtablissementService;
-use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Application\Service\Structure\StructureService;
 use Zend\Mvc\Controller\ControllerManager;
 
 class SubstitutionControllerFactory
 {
-    use EtablissementServiceAwareTrait;
-
     /**
      * Create service
      *
@@ -23,11 +21,14 @@ class SubstitutionControllerFactory
 
         /**
          * @var EtablissementService $etablissementService
+         * @var StructureService $structureService
          */
         $etablissementService = $sl->get('EtablissementService');
+        $structureService = $sl->get('StructureService');
 
         $controller = new SubstitutionController();
         $controller->setEtablissementService($etablissementService);
+        $controller->setStructureService($structureService);
 
         return $controller;
     }

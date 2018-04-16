@@ -10,7 +10,7 @@ trait StructureServiceAwareTrait
     /**
      * @var StructureService
      */
-    protected $serviceStructureStructure;
+    protected $structureService;
 
     /**
      * @param StructureService $structureService
@@ -18,7 +18,7 @@ trait StructureServiceAwareTrait
      */
     public function setStructureService(StructureService $structureService)
     {
-        $this->serviceStructureStructure = $structureService;
+        $this->structureService = $structureService;
 
         return $this;
     }
@@ -28,6 +28,6 @@ trait StructureServiceAwareTrait
      */
     public function getServiceStructureStructure()
     {
-        return $this->serviceStructureStructure;
+        return $this->structureService;
     }
 }

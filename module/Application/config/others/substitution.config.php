@@ -37,7 +37,7 @@ return [
             'substitution-selection' => [
                 'type'          => Segment::class,
                 'options'       => [
-                    'route'    => '/substitution/selection',
+                    'route'    => '/substitution/selection/:generalisation/:etablissements',
                     'defaults' => [
                         '__NAMESPACE__' => 'Application\Controller',
                         'controller'    => 'Substitution',

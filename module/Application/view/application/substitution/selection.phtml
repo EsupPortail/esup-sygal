@@ -1,26 +1,45 @@
 <?php
 
 use Application\Entity\Db\Etablissement;
-
+use Application\View\Renderer\PhpRenderer;
 /**
  * Variables remontant du controleur
  * @var Etablissement   $nouvelEtablissement ==> l'etablissement qui va regrouper les établissements
  * @var Etablissement[] $selectedEtablissements ==> la liste des établissements sélectionnés
  * @var Etablissement[] $etablissements ==> la liste des établissements triés
+ * @var PhpRenderer $this
  */
+
+    $idEtablissements = [];
+    foreach($selectedEtablissements as$etablissement) $idEtablissements[] = $etablissement->getId();
+    $substitues = implode(",", $idEtablissements);
 ?>
 
 <?php $this->headTitle($this->translate("Substitution d'établissements")) ?>
+
 
 <h1 class="page-header first">
     <?php echo $this->translate("Substitution d'établissements"); ?>
     <span class="badge"><?php echo $nouvelEtablissement->getSigle(); ?></span>
 </h1>
 
+<p>
+<!--<button class="btn btn-primary">Ajouter un établissement</button></a>-->
+    <form action="
+    <?php echo $this->url('substitution-selection',
+                            ['generalisation' => $nouvelEtablissement->getId(), 'etablissements' => $substitues]
+                ); ?>">
+    <?php echo generateSelect($etablissements); ?>
+    <input type="submit" value="Ajouter un établissement"/>
+    </form>
+</p>
+
+
 <div class="pull-left">
 <?php
     foreach($selectedEtablissements as $selectedEtablissement) {
-        echo generateDivEtablissement($selectedEtablissement);
+        $url = $this->url('substitution-selection', [], [ 'query' => ['retrait' => $selectedEtablissement->getId()]], true);
+        echo generateDivEtablissement($selectedEtablissement, $url);
     }
 ?>
 </div>
@@ -32,7 +51,7 @@ use Application\Entity\Db\Etablissement;
 </div>
 
 <?php
-function generateDivEtablissement(Etablissement $etablissement) {
+function generateDivEtablissement(Etablissement $etablissement, $url) {
     $texte =    "";
     $texte .=   "<div class='etablissement bg-warning'>";
 
@@ -58,6 +77,7 @@ function generateDivEtablissement(Etablissement $etablissement) {
     $texte .= "<span class='texte'>" . $etablissement->getLibelle() . "</span>";
     $texte .= "</span>";
 
+    $texte .= "<a href='".$url."'> Remove this </a>";
     $texte .=   "</div>";
     return $texte;
 }
@@ -80,6 +100,17 @@ function generateDivSubstitution($etablissement) {
 
     $texte .=   "</div>";
     return $texte;
+}
+
+function generateSelect($etablissements) {
+    $texte  = "";
+    $texte .= "<select id='nouveau'>";
+    foreach ($etablissements as $etablissement) {
+        $texte .= "<option value='".$etablissement->getId()."'>".$etablissement->getLibelle() ."</option>";
+    }
+    $texte .= "</select>";
+    return $texte;
+
 }
 ?>
 
