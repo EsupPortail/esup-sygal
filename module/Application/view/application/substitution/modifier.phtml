@@ -80,18 +80,17 @@ function generateSelect($etablissements, \Zend\View\Renderer\PhpRenderer $render
 </style>
 
 <script>
-    $(document).ready(function(){
+    $(document).ready(function() {
 
         //remplacement dans la structure cible
-        $("input[type='radio']").click(function() {
-            var type= $(this).attr('name');
-            var texte =  ($(this).parent().find(".texte").text());
-            $('input#' + type).val( texte );
-        });
-
+        $("div#sources").on("click", "input[type='radio']", function () {
+            var type = $(this).attr('name');
+            var texte = ($(this).parent().find(".texte").text());
+            $('input#' + type).val(texte);
+        })
         //suppression d'une structure
-        $("button.supprimer").click(function() {
-           $(this).parent().remove();
+        .on("click", "button.supprimer", function () {
+                $(this).parent().remove();
         });
 
         //ajout d'une structure

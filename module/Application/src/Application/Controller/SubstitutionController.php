@@ -49,20 +49,22 @@ class SubstitutionController extends AbstractController
         if ($request->isPost()) {
             $data = $request->getPost();
             $sources = [];
-            foreach($data['sources'] as $sourceId) {
-                $etablissement = $this->etablissementService->getEtablissementById($sourceId);
+            foreach($data['sourceIds'] as $sourceId) {
+                $etablissement = $this->etablissementService->findEtablissementByStructureId($sourceId);
+                if ($etablissement === null) {
+                    throw new RuntimeException("Etablissement cible non trouvé avec id=$sourceId.");
+                }
                 $sources[] = $etablissement;
             }
 
-            $structureCible = new Etablissement();
-            $structureCible->setCode(uniqid());
-            $this->etablissementService->updateFromPostData($structureCible, $data['cible']);
 
-//            $this->structureService->createStructureSubstitutions($sources, $structureCible);
-            return $this->redirect()->toRoute('substitution-index');
+            $structureCibleDataObject = new Etablissement();
+            $structureCibleDataObject->setCode(uniqid());
+            $this->etablissementService->updateFromPostData($structureCibleDataObject, $data['cible']);
 
-//            $id = $structureCible->getStructure()->getId();
-//            return $this->redirect()->toRoute('substitution-modifier', ['cible' => $id], [], true);
+            $structureCible = $this->structureService->createStructureSubstitutions($sources, $structureCibleDataObject);
+            $id = $structureCible->getStructure()->getId();
+            return $this->redirect()->toRoute('substitution-modifier', ['cible' => $id], [], true);
 
         } else {
             $cible = new Structure();

@@ -43,7 +43,7 @@ class StructureService extends BaseService
      * Structures à substituer (Etablissement|EcoleDoctorale|UniteRecherche
      * @param StructureConcreteInterface   $structureCibleDataObject
      * Objet contenant les attributs de la structure de substitution à créer
-     * @return StructureSubstit[] Entités créées (une par substitution)
+     * @return StructureConcreteInterface Entités créées (une par substitution)
      */
     public function createStructureSubstitutions(array $structuresSources, StructureConcreteInterface $structureCibleDataObject)
     {
@@ -76,8 +76,8 @@ class StructureService extends BaseService
         $structureCibleDataObject->setSourceCode($sourceCode);
 
         // instanciation du couple (Etab|ED|UR ; Structure) cible
-        $structureCible = Structure::constructFromDataObject($structureCibleDataObject, $typeStructure, $sourceSygal);
-        $structureRattachCible = $structureCible->getStructure(); // StructureSubstitution ne référence que des entités de type Structure
+        $structureConcreteCible = Structure::constructFromDataObject($structureCibleDataObject, $typeStructure, $sourceSygal);
+        $structureRattachCible = $structureConcreteCible->getStructure(); // StructureSubstitution ne référence que des entités de type Structure
 
         // instanciations des substitutions
         $substitutions = StructureSubstit::fromStructures($structuresSources, $structureRattachCible);
@@ -85,13 +85,13 @@ class StructureService extends BaseService
         // enregistrement en bdd
         $this->getEntityManager()->beginTransaction();
         try {
-            $this->getEntityManager()->persist($structureCible);
+            $this->getEntityManager()->persist($structureConcreteCible);
             $this->getEntityManager()->persist($structureRattachCible);
             array_map(function(StructureSubstit $ss) {
                 $this->getEntityManager()->persist($ss);
             }, $substitutions);
 
-            $this->getEntityManager()->flush($structureCible);
+            $this->getEntityManager()->flush($structureConcreteCible);
             $this->getEntityManager()->flush($structureRattachCible);
             $this->getEntityManager()->flush($substitutions);
 
@@ -101,7 +101,7 @@ class StructureService extends BaseService
             throw new RuntimeException("Erreur rencontrée lors de l'enregistrement des substitutions", null, $e);
         }
 
-        return $substitutions;
+        return $structureConcreteCible;
     }
 
     /**
