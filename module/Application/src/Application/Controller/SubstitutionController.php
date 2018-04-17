@@ -128,7 +128,14 @@ class SubstitutionController extends AbstractController
 
     public function detruireAction()
     {
-        return new ViewModel();
+        $idCible = $this->params()->fromRoute('cible');
+        $structure = $this->structureService->findStructureById($idCible);
+        $cible = $this->structureService->findStructureConcreteFromStructure($structure);
+
+        //retirer les substitions
+        $this->structureService->removeSubstitution($cible);
+
+        return $this->redirect()->toRoute('substitution-index', [],[], true);
     }
 
     public function generateSourceInputAction() {

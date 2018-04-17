@@ -11,6 +11,7 @@ use Application\Entity\Db\StructureSubstit;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
 use Application\Service\BaseService;
+use Application\Service\Source\SourceService;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
@@ -292,5 +293,33 @@ class StructureService extends BaseService
 
         $results = $qb->getQuery()->getResult();
         return $results;
+    }
+
+
+    /**
+     * @param $idCible
+     * @return Structure
+     */
+    public function findStructureById($idCible)
+    {
+        $result = $this->getRepository()->findOneBy(["id" => $idCible]);
+        return $result;
+    }
+
+    public function removeSubstitution(StructureConcreteInterface $cibleConcrete)
+    {
+        $qb = $this->getEntityManager()->getRepository(StructureSubstit::class)->createQueryBuilder("ss")
+            ->andWhere("ss.toStructure = :cible")
+            ->setParameter("cible", $cibleConcrete->getStructure());
+        $result = $qb->getQuery()->getResult();
+
+        foreach($result as $entry) {
+            $this->getEntityManager()->remove($entry);
+        }
+        $this->getEntityManager()->flush($result);
+
+        $this->getEntityManager()->remove($cibleConcrete);
+        $this->getEntityManager()->flush($cibleConcrete);
+
     }
 }
