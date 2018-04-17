@@ -64,7 +64,7 @@ $persopassModifiedEvent = 'persopass-modified-event';
             <dd>
                 <?php
                     echo $these->getDoctorant()->getNomComplet(true, true, true);
-                    echo "(".$these->getDoctorant()->getDateNaissanceToString().")";
+                    echo " (".$these->getDoctorant()->getDateNaissanceToString().")";
                 ?><br>
 
                 <strong>
@@ -147,7 +147,7 @@ $persopassModifiedEvent = 'persopass-modified-event';
             ?>
 
             <dt>
-                <?php echo $this->translate("Établissement"); ?>
+                <?php echo $this->translate("Établissement <br/> d'inscription"); ?>
             </dt>
             <dd>
                 <?php
