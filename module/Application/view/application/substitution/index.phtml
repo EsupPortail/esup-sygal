@@ -1,1 +1,98 @@
-SUBSTITUTION INDEX
+<?php
+
+use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\EcoleDoctorale;
+use Application\Entity\Db\UniteRecherche;
+
+/**
+ * @var Etablissement[] $etablissementsSubstitues
+ * @var EcoleDoctorale[] $ecolesSubstituees
+ * @var UniteRecherche[] $unitesSubstituees
+ */
+?>
+
+<?php $this->headTitle($this->translate("Substitution d'établissements")) ?>
+
+
+<h1 class="page-header first">
+    <?php echo $this->translate("Substitution d'établissements"); ?>
+        <span class="badge"><?php echo "TODO" ?></span>
+</h1>
+
+<div class="col-md-4" >
+    <h3> Établissements </h3>
+
+    <p>
+    <a href="<?php echo $this->url('substitution-creer');?>" title="Création d'un nouvel établissement de substitution">
+    <button class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Créer une substitution </button>
+    </a>
+    </p>
+
+    <p>
+        <?php echo generateInfos($etablissementsSubstitues, "établissement", "établissements", $this); ?>
+    </p>
+</div>
+
+<div class="col-md-4" >
+    <h3> Écoles doctorales </h3>
+
+    <p>
+        <a href="<?php echo $this->url('substitution-creer');?>" title="Création d'un nouvel établissement de substitution">
+            <button class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Créer une substitution </button>
+        </a>
+    </p>
+
+    <p>
+        <?php echo generateInfos($ecolesSubstituees, "école doctorale", "écoles doctorales", $this); ?>
+    </p>
+</div>
+
+<div class="col-md-4" >
+    <h3> Unités de recherche </h3>
+
+    <p>
+        <a href="<?php echo $this->url('substitution-creer');?>" title="Création d'un nouvel établissement de substitution">
+            <button class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Créer une substitution </button>
+        </a>
+    </p>
+
+    <p>
+        <?php echo generateInfos($unitesSubstituees, "unité de recherche", "unités de recherche", $this); ?>
+    </p>
+</div>
+
+<?php
+    function generateInfos($structuresSubstituees, $singulier, $pluriel, $view) {
+
+        $texte  = '';
+        $count = count($structuresSubstituees);
+        if ($count > 1) {
+            $texte .= count($structuresSubstituees) . " " . $pluriel . ".";
+        } else {
+            $texte .= count($structuresSubstituees) . " " . $singulier . ".";
+        }
+        if ($count > 0) {
+            $texte .= '<table class="table-bordered" style="width:100%">';
+            $texte .= '<thead>';
+            $texte .= '<tr>';
+            $texte .= '    <th> Libellé </th>';
+            $texte .= '    <th> Actions </th>';
+            $texte .= '</tr>';
+            $texte .= '</thead>';
+            $texte .= '<tbody>';
+            foreach ($structuresSubstituees as $structureSubstituee) {
+                $texte .= '<tr>';
+                $texte .= '    <td>' . $structureSubstituee->getLibelle() . '</td>';
+                $texte .= '    <td>';
+                $texte .= '      <a href="' . $view->url('substitution-modifier', ['cible' => $structureSubstituee->getStructure()->getId()], [], true) . '"><span class="glyphicon glyphicon-pencil"></span></a>';
+                $texte .= "&nbsp;";
+                $texte .= '      <a href="' . $view->url('substitution-detruire', ['cible' => $structureSubstituee->getStructure()->getId()], [], true) . '"><span class="glyphicon glyphicon-remove"></span></a>';
+                $texte .= '    </td>';
+                $texte .= '</tr>';
+            }
+            $texte .= '</tbody>';
+            $texte .= '</table>';
+        }
+        return $texte;
+    }
+

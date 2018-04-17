@@ -16,6 +16,7 @@ return [
                         'selection',
                         'creer',
                         'modifier',
+                        'detruire',
                         'generate-source-input',
                     ],
                     'privileges' => EcoleDoctoralePrivileges::ECOLE_DOCT_CONSULTATION,
@@ -78,6 +79,17 @@ return [
                         '__NAMESPACE__' => 'Application\Controller',
                         'controller'    => 'Substitution',
                         'action'        => 'generate-source-input',
+                    ],
+                ],
+            ],
+            'substitution-detruire' => [
+                'type'          => Segment::class,
+                'options'       => [
+                    'route'    => '/substitution/detruire/:cible',
+                    'defaults' => [
+                        '__NAMESPACE__' => 'Application\Controller',
+                        'controller'    => 'Substitution',
+                        'action'        => 'detruire',
                     ],
                 ],
             ],

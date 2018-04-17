@@ -285,5 +285,12 @@ class StructureService extends BaseService
         return $structureConcrete;
     }
 
+    public function getStructuresSubstituees()
+    {
+        $qb = $this->getEntityManager()->getRepository(Structure::class)->createQueryBuilder("s")
+            ->andWhere("s.structuresSubstituees IS NOT EMPTY");
 
+        $results = $qb->getQuery()->getResult();
+        return $results;
+    }
 }

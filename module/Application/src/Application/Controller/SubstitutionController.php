@@ -4,6 +4,7 @@ namespace Application\Controller;
 
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Structure;
+use Application\Entity\Db\StructureConcreteInterface;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Structure\StructureServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
@@ -16,32 +17,33 @@ class SubstitutionController extends AbstractController
 
     public function indexAction()
     {
-        $cibles = $this->structureService->findStructuresSubstitutions();
-        $etablissements = $this->etablissementService->getEtablissements();
+
+        $structuresSubstituees = $this->structureService->getStructuresSubstituees();
+        $etablissementsSubstitues = [];
+        $ecolesSubstituees = [];
+        $unitesSubstituees = [];
+        foreach($structuresSubstituees as $structureSubstituee) {
+            /** @var StructureConcreteInterface $structureConcrete */
+            $structureConcrete = $this->structureService->findStructureConcreteFromStructure($structureSubstituee);
+            switch(true) {
+                case $structureConcrete->getStructure()->getTypeStructure()->isEtablissement() :
+                    $etablissementsSubstitues[] = $structureConcrete;
+                break;
+                case $structureConcrete->getStructure()->getTypeStructure()->isEcoleDoctorale() :
+                    $ecolesSubstituees[] = $structureConcrete;
+                break;
+                case $structureConcrete->getStructure()->getTypeStructure()->isUniteRecherche() :
+                    $unitesSubstituees[] = $structureConcrete;
+                break;
+            }
+        }
 
         return new ViewModel([
-            'cibles' => $cibles,
-            'etablissements' => $etablissements,
+              'etablissementsSubstitues' => $etablissementsSubstitues,
+              'ecolesSubstituees' => $ecolesSubstituees,
+              'unitesSubstituees' => $unitesSubstituees,
         ]);
     }
-
-//    public function ajouterAction() {
-//        $idCible = $this->params()->fromRoute('cible');
-//        $idAjout = $this->params()->fromRoute('ajout');
-//
-//        $liste = $this->structure
-//
-//        $this->redirect()->toRoute('substitution-selection', ['cible' => $idCible]);
-//    }
-//
-//    public function retirerAction() {
-//        $idCible = $this->params()->fromRoute('cible');
-//        $idAjout = $this->params()->fromRoute('ajout');
-//
-//        //HERE DO THE STUFF
-//
-//        $this->redirect()->toRoute('substitution-selection', ['cible' => $idCible]);
-//    }
 
     public function creerAction()
     {
@@ -122,6 +124,11 @@ class SubstitutionController extends AbstractController
             'etablissements' => $etablissements,
             'structuresConcretesSubstituees' => $structuresConcretesSubstituees,
         ]);
+    }
+
+    public function detruireAction()
+    {
+        return new ViewModel();
     }
 
     public function generateSourceInputAction() {
