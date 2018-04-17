@@ -238,23 +238,9 @@ class StructureService extends BaseService
         return $result;
     }
 
-    /**
-     * @param StructureConcreteInterface $structureCible
-     * @return StructureConcreteInterface[]
-     */
-//    public function findStructuresConcretesSubstituees(StructureConcreteInterface $structureCible)
-//    {
-//        $qb = $this->getEntityManager()->getRepository(get_class($structureCible))->createQueryBuilder("sc")
-//            ->join("sc.structure", "s")
-//            ->join("s.structuresSubstituees", "ss")
-//            ->join("ss.toStructure", "scible")
-//            ->andWhere("ss.toStructure = :cible")
-//            ->setParameter("cible", $structureCible->getStructure());
-//        $structuresConcretes = $qb->getQuery()->getResult();
-//        return $structuresConcretes;
-//    }
 
     /**
+     * Retourne la structure concrete associé à une structure
      * @param Structure $cible
      * @return StructureConcreteInterface
      */
@@ -286,6 +272,10 @@ class StructureService extends BaseService
         return $structureConcrete;
     }
 
+    /**
+     * Retourne la liste des structures substituées (i.e. structures cibles)
+     * @return Structure[]
+     */
     public function getStructuresSubstituees()
     {
         $qb = $this->getEntityManager()->getRepository(Structure::class)->createQueryBuilder("s")
@@ -297,6 +287,7 @@ class StructureService extends BaseService
 
 
     /**
+     * Retourne la structure ayant un id donné
      * @param $idCible
      * @return Structure
      */
@@ -306,6 +297,11 @@ class StructureService extends BaseService
         return $result;
     }
 
+    /**
+     * Détruit les substitutions associées à une structure cible dans la table STRUCTURE_SUBSTIT et détruit cette structure cible
+     * @param StructureConcreteInterface $cibleConcrete
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
     public function removeSubstitution(StructureConcreteInterface $cibleConcrete)
     {
         $qb = $this->getEntityManager()->getRepository(StructureSubstit::class)->createQueryBuilder("ss")
