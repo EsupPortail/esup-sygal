@@ -9,10 +9,7 @@ use Application\Entity\Db\Utilisateur;
 use Application\Service\BaseService;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\QueryBuilder;
-use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\Feed\Reader\Feed\Atom\Source;
 
 class EtablissementService extends BaseService
 {
@@ -32,13 +29,9 @@ class EtablissementService extends BaseService
      */
     public function getEtablissements() {
         /** @var Etablissement[] $etablissments */
-        $etablissments = $this->getRepository()->findAll();
-//        /** @var QueryBuilder $qb */
-//        $qb = $this->getEntityManager()->getRepository(Etablissement::class)->createQueryBuilder("e")
-//            ->select("e,s")
-//            ->leftJoin("e.structure", "s");
-//        $etablissments = $qb->getQuery()->execute();
-        return $etablissments;
+        $etablissements = $this->getRepository()->findAll();
+        usort($etablissements, function ($a,$b) {return $a->getLibelle() > $b->getLibelle();});
+        return $etablissements;
     }
 
     /**
@@ -151,20 +144,6 @@ class EtablissementService extends BaseService
         } catch (OptimisticLockException $e) {
             throw new RuntimeException("Erreur lors de l'enregistrement de l'Etablissement", null, $e);
         }
-    }
-
-
-    public function createFromPostData($data) {
-        $etablissement = new Etablissement();
-        $hydrator = new DoctrineObject($this->getEntityManager());
-        $hydrator->hydrate($data, $etablissement);
-        return $etablissement;
-    }
-
-    public function updateFromPostData($structure, $data)
-    {
-        $hydrator = new DoctrineObject($this->getEntityManager());
-        $hydrator->hydrate($data, $structure);
     }
 
     public function findEtablissementByStructureId($structureId)

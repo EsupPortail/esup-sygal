@@ -17,6 +17,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use UnicaenApp\Exception\RuntimeException;
 use Webmozart\Assert\Assert;
+use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 
 /**
  * @author Unicaen
@@ -316,6 +317,35 @@ class StructureService extends BaseService
 
         $this->getEntityManager()->remove($cibleConcrete);
         $this->getEntityManager()->flush($cibleConcrete);
+    }
 
+    /**
+     * @param  TypeStructure $typeStructure
+     * @return StructureConcreteInterface|null
+     */
+    public function createStructureConcrete($typeStructure) {
+        $structureCibleDataObject = null;
+        switch($typeStructure) {
+            case TypeStructure::CODE_ETABLISSEMENT :
+                $structureCibleDataObject = new Etablissement();
+                $structureCibleDataObject->setCode(uniqid());
+                break;
+            case TypeStructure::CODE_ECOLE_DOCTORALE :
+                $structureCibleDataObject = new EcoleDoctorale();
+                break;
+            case TypeStructure::CODE_UNITE_RECHERCHE :
+                $structureCibleDataObject = new UniteRecherche();
+                break;
+            default:
+                throw new RuntimeException("Type de structure inconnu [".$typeStructure."]");
+        }
+        return $structureCibleDataObject;
+    }
+
+
+    public function updateFromPostData($structure, $data)
+    {
+        $hydrator = new DoctrineObject($this->getEntityManager());
+        $hydrator->hydrate($data, $structure);
     }
 }

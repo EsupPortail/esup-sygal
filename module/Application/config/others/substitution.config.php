@@ -52,7 +52,7 @@ return [
             'substitution-creer' => [
                 'type'          => Segment::class,
                 'options'       => [
-                    'route'    => '/substitution/creer',
+                    'route'    => '/substitution/creer/:type',
                     'defaults' => [
                         '__NAMESPACE__' => 'Application\Controller',
                         'controller'    => 'Substitution',

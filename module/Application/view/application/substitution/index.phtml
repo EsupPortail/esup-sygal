@@ -3,6 +3,7 @@
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\UniteRecherche;
+use Application\Entity\Db\TypeStructure;
 
 /**
  * @var Etablissement[] $etablissementsSubstitues
@@ -23,7 +24,7 @@ use Application\Entity\Db\UniteRecherche;
     <h3> Établissements </h3>
 
     <p>
-    <a href="<?php echo $this->url('substitution-creer');?>" title="Création d'un nouvel établissement de substitution">
+    <a href="<?php echo $this->url('substitution-creer', ['type' => TypeStructure::CODE_ETABLISSEMENT], [], true);?>" title="Création d'un nouvel établissement de substitution">
     <button class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Créer une substitution </button>
     </a>
     </p>
@@ -37,7 +38,7 @@ use Application\Entity\Db\UniteRecherche;
     <h3> Écoles doctorales </h3>
 
     <p>
-        <a href="<?php echo $this->url('substitution-creer');?>" title="Création d'un nouvel établissement de substitution">
+        <a href="<?php echo $this->url('substitution-creer', ['type' => TypeStructure::CODE_ECOLE_DOCTORALE], [], true);?>" title="Création d'un nouvel établissement de substitution">
             <button class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Créer une substitution </button>
         </a>
     </p>
@@ -51,7 +52,7 @@ use Application\Entity\Db\UniteRecherche;
     <h3> Unités de recherche </h3>
 
     <p>
-        <a href="<?php echo $this->url('substitution-creer');?>" title="Création d'un nouvel établissement de substitution">
+        <a href="<?php echo $this->url('substitution-creer', ['type' => TypeStructure::CODE_UNITE_RECHERCHE], [], true);?>" title="Création d'un nouvel établissement de substitution">
             <button class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Créer une substitution </button>
         </a>
     </p>

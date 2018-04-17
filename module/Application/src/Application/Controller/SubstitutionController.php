@@ -2,17 +2,24 @@
 
 namespace Application\Controller;
 
+use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Structure;
 use Application\Entity\Db\StructureConcreteInterface;
+use Application\Entity\Db\TypeStructure;
+use Application\Entity\Db\UniteRecherche;
+use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Structure\StructureServiceAwareTrait;
+use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\View\Model\ViewModel;
 
 class SubstitutionController extends AbstractController
 {
     use EtablissementServiceAwareTrait;
+    use EcoleDoctoraleServiceAwareTrait;
+    use UniteRechercheServiceAwareTrait;
     use StructureServiceAwareTrait;
 
     public function indexAction()
@@ -47,22 +54,37 @@ class SubstitutionController extends AbstractController
 
     public function creerAction()
     {
+        $type = $this->params()->fromRoute('type');
+        $structures = [];
+        switch($type) {
+            case TypeStructure::CODE_ETABLISSEMENT :
+                $structures = $this->etablissementService->getEtablissements();
+                break;
+            case TypeStructure::CODE_ECOLE_DOCTORALE :
+                $structures = $this->ecoleDoctoraleService->getEcolesDoctorales();
+                break;
+            case TypeStructure::CODE_UNITE_RECHERCHE :
+                $structures = $this->uniteRechercheService->getUnitesRecherches();
+                break;
+        }
+
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
             $sources = [];
             foreach($data['sourceIds'] as $sourceId) {
-                $etablissement = $this->etablissementService->findEtablissementByStructureId($sourceId);
-                if ($etablissement === null) {
-                    throw new RuntimeException("Etablissement cible non trouvé avec id=$sourceId.");
+                $structure = $this->structureService->findStructureById($sourceId);
+                $structureConcrete = $this->structureService->findStructureConcreteFromStructure($structure);
+                if ($structureConcrete === null) {
+                    throw new RuntimeException("Aucune structure concréte cible trouvée avec id=$sourceId.");
                 }
-                $sources[] = $etablissement;
+                $sources[] = $structureConcrete;
             }
 
-
-            $structureCibleDataObject = new Etablissement();
-            $structureCibleDataObject->setCode(uniqid());
-            $this->etablissementService->updateFromPostData($structureCibleDataObject, $data['cible']);
+            //creation de la structureCible adequate
+            $structureCibleDataObject = $this->structureService->createStructureConcrete($type);
+            //TODO bouger cela dans structureService ??
+            $this->structureService->updateFromPostData($structureCibleDataObject, $data['cible']);
 
             $structureCible = $this->structureService->createStructureSubstitutions($sources, $structureCibleDataObject);
             $id = $structureCible->getStructure()->getId();
@@ -77,7 +99,7 @@ class SubstitutionController extends AbstractController
         $vm = new ViewModel([
             'cible' => $cible,
             'structuresConcretesSubstituees' => $structuresConcretesSubstituees,
-            'etablissements' => $etablissements,
+            'structuresConcretes' => $structures,
         ]);
         $vm->setTemplate('application/substitution/modifier');
 
@@ -120,7 +142,7 @@ class SubstitutionController extends AbstractController
 
         return new ViewModel([
             'cible' => $structureCible,
-            'etablissements' => $etablissements,
+            'structuresConcretes' => $etablissements,
             'structuresConcretesSubstituees' => $structuresConcretesSubstituees,
         ]);
     }
@@ -137,10 +159,11 @@ class SubstitutionController extends AbstractController
 
     public function generateSourceInputAction() {
         $id = $this->params()->fromRoute('id');
-        $etablissement = $this->etablissementService->findEtablissementByStructureId($id);
+        $structure = $this->structureService->findStructureById($id);
+        $structureConcrete = $this->structureService->findStructureConcreteFromStructure($structure);
 
         return new ViewModel([
-            'structure' => $etablissement,
+            'structure' => $structureConcrete,
         ]);
     }
 }

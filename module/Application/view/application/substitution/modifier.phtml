@@ -11,13 +11,9 @@ use Application\View\Renderer\PhpRenderer;
  * @var PhpRenderer $this
  * @var Structure $cible
  * @var StructureConcreteInterface[] $structuresConcretesSubstituees
- * @var Etablissement[] $etablissements
+ * @var StructureConcreteInterface[] $structuresConcretes
   */
 ?>
-
-<!--<div id="prototype" style="display:none;">-->
-<!--    --><?php //echo $this->structureSubstitHelper()->structureSource(current($etablissements)); ?>
-<!--</div>-->
 
 <?php $this->headTitle($this->translate("Substitution d'établissements")) ?>
 
@@ -27,7 +23,7 @@ use Application\View\Renderer\PhpRenderer;
 <!--    <span class="badge">--><?php //echo $nouvelEtablissement->getSigle(); ?><!--</span>-->
 </h1>
 
-<?php echo generateSelect($etablissements, $this); ?>
+<?php echo generateSelect($structuresConcretes, $this); ?>
 <button name="ajouter" class="btn btn-success"> <span class='glyphicon glyphicon-plus'></span> Ajouter </button>
 
 <form action="" method="POST">
@@ -51,16 +47,16 @@ use Application\View\Renderer\PhpRenderer;
 <?php
 
 /**
- * @param $etablissements
+ * @param $structuresConcretes
  * @param \Zend\View\Renderer\PhpRenderer $renderer
  * @return string
  */
-function generateSelect($etablissements, \Zend\View\Renderer\PhpRenderer $renderer) {
+function generateSelect($structuresConcretes, \Zend\View\Renderer\PhpRenderer $renderer) {
     $texte  = "";
     $texte .= "<select name='nouveau'>";
-    foreach ($etablissements as $etablissement) {
-        $url = $renderer->url('substitution-generer', ['id' => $etablissement->getStructure()->getId()]);
-        $texte .= "<option value='".$url."'>".$etablissement->getLibelle() ."</option>";
+    foreach ($structuresConcretes as $structuresConcrete) {
+        $url = $renderer->url('substitution-generer', ['id' => $structuresConcrete->getStructure()->getId()]);
+        $texte .= "<option value='".$url."'>".$structuresConcrete->getLibelle() ."</option>";
     }
     $texte .= "</select>";
     return $texte;
