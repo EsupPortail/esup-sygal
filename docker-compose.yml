@@ -12,6 +12,7 @@ services:
     volumes:
      - .:/var/www/html/sygal
      - /var/sygal-files:/var/sygal-files
+     - /tmp:/tmp
     working_dir: /var/www/html/sygal
     network_mode: bridge
 
