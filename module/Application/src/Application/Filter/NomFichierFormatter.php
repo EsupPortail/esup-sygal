@@ -52,8 +52,7 @@ class NomFichierFormatter extends AbstractFilter
         }
 
         if ($fichier->getEstAnnexe()) {
-            unset($parts['id']);
-            $parts['annexe'] = uniqid('ANNEXE-');
+            $parts['annexe'] = 'ANNEXE';
         }
 
         $name = implode($this->separator, $parts);
