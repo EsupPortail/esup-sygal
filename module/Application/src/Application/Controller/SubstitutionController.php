@@ -24,7 +24,6 @@ class SubstitutionController extends AbstractController
 
     public function indexAction()
     {
-
         $structuresSubstituees = $this->structureService->getStructuresSubstituees();
         $etablissementsSubstitues = [];
         $ecolesSubstituees = [];
@@ -55,18 +54,7 @@ class SubstitutionController extends AbstractController
     public function creerAction()
     {
         $type = $this->params()->fromRoute('type');
-        $structures = [];
-        switch($type) {
-            case TypeStructure::CODE_ETABLISSEMENT :
-                $structures = $this->etablissementService->getEtablissements();
-                break;
-            case TypeStructure::CODE_ECOLE_DOCTORALE :
-                $structures = $this->ecoleDoctoraleService->getEcolesDoctorales();
-                break;
-            case TypeStructure::CODE_UNITE_RECHERCHE :
-                $structures = $this->uniteRechercheService->getUnitesRecherches();
-                break;
-        }
+        $structures = $this->structureService->getStructuresConcretesByType($type);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -76,14 +64,13 @@ class SubstitutionController extends AbstractController
                 $structure = $this->structureService->findStructureById($sourceId);
                 $structureConcrete = $this->structureService->findStructureConcreteFromStructure($structure);
                 if ($structureConcrete === null) {
-                    throw new RuntimeException("Aucune structure concréte cible trouvée avec id=$sourceId.");
+                    throw new RuntimeException("Aucune structure concrète cible trouvée avec id=$sourceId.");
                 }
                 $sources[] = $structureConcrete;
             }
 
             //creation de la structureCible adequate
             $structureCibleDataObject = $this->structureService->createStructureConcrete($type);
-            //TODO bouger cela dans structureService ??
             $this->structureService->updateFromPostData($structureCibleDataObject, $data['cible']);
 
             $structureCible = $this->structureService->createStructureSubstitutions($sources, $structureCibleDataObject);
@@ -93,7 +80,6 @@ class SubstitutionController extends AbstractController
         } else {
             $cible = new Structure();
             $structuresConcretesSubstituees = [];
-            $etablissements = $this->etablissementService->findEtablissementsNonSubstitues();
         }
 
         $vm = new ViewModel([
@@ -119,20 +105,21 @@ class SubstitutionController extends AbstractController
             $structuresConcretesSubstituees[] = $structureConcreteSubstituee;
         }
 
-        $etablissements = $this->etablissementService->findEtablissementsNonSubstitues();
+        $structures = $this->structureService->getStructuresConcretesByType($structureCible->getTypeStructure()->getCode());
 
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
             $sources = [];
             foreach ($data['sourceIds'] as $sourceId) {
-                $etablissement = $this->etablissementService->findEtablissementByStructureId($sourceId);
-                if ($etablissement === null) {
-                    throw new RuntimeException("Etablissement cible non trouvé avec id=$sourceId.");
+                $structure = $this->structureService->findStructureById($sourceId);
+                $structureConcrete = $this->structureService->findStructureConcreteFromStructure($structure);
+                if ($structureConcrete === null) {
+                    throw new RuntimeException("Aucune structure concrète cible trouvée avec id=$sourceId.");
                 }
-                $sources[] = $etablissement;
+                $sources[] = $structureConcrete;
             }
-            $this->etablissementService->updateFromPostData($structureCible,$data['cible']);
+            $this->structureService->updateFromPostData($structureCible,$data['cible']);
             $this->structureService->updateStructureSubstitutions($sources, $structureCible);
 
             return $this->redirect()->toRoute(null, [],[], true);
@@ -142,7 +129,7 @@ class SubstitutionController extends AbstractController
 
         return new ViewModel([
             'cible' => $structureCible,
-            'structuresConcretes' => $etablissements,
+            'structuresConcretes' => $structures,
             'structuresConcretesSubstituees' => $structuresConcretesSubstituees,
         ]);
     }

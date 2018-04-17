@@ -348,4 +348,24 @@ class StructureService extends BaseService
         $hydrator = new DoctrineObject($this->getEntityManager());
         $hydrator->hydrate($data, $structure);
     }
+
+    public function getStructuresConcretesByType($typeStructure) {
+        $structures = [];
+        switch($typeStructure) {
+            case TypeStructure::CODE_ETABLISSEMENT :
+                $structures = $this->getEntityManager()->getRepository(Etablissement::class)->findAll();
+                break;
+            case TypeStructure::CODE_ECOLE_DOCTORALE :
+                $structures = $this->getEntityManager()->getRepository(EcoleDoctorale::class)->findAll();
+                break;
+            case TypeStructure::CODE_UNITE_RECHERCHE :
+                $structures = $this->getEntityManager()->getRepository(UniteRecherche::class)->findAll();
+                break;
+            default:
+                throw new RuntimeException("Type de structure inconnu [".$typeStructure."]");
+        }
+
+        usort($structures, function ($a,$b) { return $a->getLibelle() > $b->getLibelle();});
+        return $structures;
+    }
 }
