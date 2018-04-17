@@ -283,6 +283,16 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     }
 
     /**
+     * Get first part of uuid4 hash id.
+     *
+     * @return string
+     */
+    public function getShortId()
+    {
+        return strstr($this->id, '-', true);
+    }
+
+    /**
      * Set type
      *
      * @param string $typeMime
