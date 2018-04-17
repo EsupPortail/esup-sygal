@@ -14,6 +14,9 @@ return [
                     'action'     => [
                         'index',
                         'selection',
+                        'creer',
+                        'modifier',
+                        'generate-source-input',
                     ],
                     'privileges' => EcoleDoctoralePrivileges::ECOLE_DOCT_CONSULTATION,
                 ],
@@ -45,6 +48,40 @@ return [
                     ],
                 ],
             ],
+            'substitution-creer' => [
+                'type'          => Segment::class,
+                'options'       => [
+                    'route'    => '/substitution/creer',
+                    'defaults' => [
+                        '__NAMESPACE__' => 'Application\Controller',
+                        'controller'    => 'Substitution',
+                        'action'        => 'creer',
+                    ],
+                ],
+            ],
+            'substitution-modifier' => [
+                'type'          => Segment::class,
+                'options'       => [
+                    'route'    => '/substitution/modifier/:cible',
+                    'defaults' => [
+                        '__NAMESPACE__' => 'Application\Controller',
+                        'controller'    => 'Substitution',
+                        'action'        => 'modifier',
+                    ],
+                ],
+            ],
+            'substitution-generer' => [
+                'type'          => Segment::class,
+                'options'       => [
+                    'route'    => '/substitution/generer/:id',
+                    'defaults' => [
+                        '__NAMESPACE__' => 'Application\Controller',
+                        'controller'    => 'Substitution',
+                        'action'        => 'generate-source-input',
+                    ],
+                ],
+            ],
+
         ],
     ],
     'navigation'      => [

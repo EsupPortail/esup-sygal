@@ -2,7 +2,9 @@
 
 namespace Application\Entity\Db;
 
-interface StructureEntityInterface
+use UnicaenImport\Entity\Db\Source;
+
+interface StructureConcreteInterface
 {
     /**
      * @return string
@@ -30,7 +32,21 @@ interface StructureEntityInterface
     public function getCheminLogo();
 
     /**
+     * @return Source
+     */
+    public function getSource();
+
+    /**
+     * @return Structure
+     */
+    public function getStructure();
+
+    /**
      * @return string
      */
     public function __toString();
+
+
+
+
 }

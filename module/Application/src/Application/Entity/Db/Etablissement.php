@@ -4,16 +4,14 @@ namespace Application\Entity\Db;
 
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
-use UnicaenImport\Entity\Db\Interfaces\SourceAwareInterface;
-use UnicaenImport\Entity\Db\Source;
-use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
 use UnicaenApp\Util;
-use Webmozart\Assert\Assert;
+use UnicaenImport\Entity\Db\Interfaces\SourceAwareInterface;
+use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
 
 /**
  * Etablissement
  */
-class Etablissement implements StructureEntityInterface, HistoriqueAwareInterface, SourceAwareInterface
+class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterface, SourceAwareInterface
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
@@ -38,6 +36,7 @@ class Etablissement implements StructureEntityInterface, HistoriqueAwareInterfac
      * @var string
      */
     private $sourceCode;
+
 
     /**
      * Ajoute le préfixe établissement à la chaîne de caractères spécifiée.

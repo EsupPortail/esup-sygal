@@ -2,8 +2,11 @@
 
 namespace Application\Controller;
 
+use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\Structure;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Structure\StructureServiceAwareTrait;
+use UnicaenApp\Exception\RuntimeException;
 use Zend\View\Model\ViewModel;
 
 class SubstitutionController extends AbstractController
@@ -40,35 +43,91 @@ class SubstitutionController extends AbstractController
 //        $this->redirect()->toRoute('substitution-selection', ['cible' => $idCible]);
 //    }
 
-    public function selectionAction()
+    public function creerAction()
     {
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $sources = [];
+            foreach($data['sources'] as $sourceId) {
+                $etablissement = $this->etablissementService->getEtablissementById($sourceId);
+                $sources[] = $etablissement;
+            }
 
-        $idGeneralisation = $this->params()->fromRoute('generalisation');
-        $idEtablissements = explode(",",$this->params()->fromRoute('etablissements'));
-        $idAjout = $this->params()->fromQuery('nouveau');
-        $idRetrait = $this->params()->fromQuery('retrait');
+            $structureCible = new Etablissement();
+            $structureCible->setCode(uniqid());
+            $this->etablissementService->updateFromPostData($structureCible, $data['cible']);
 
-        $etablissements = $this->etablissementService->getEtablissements();
-        $etablissement = $this->etablissementService->getEtablissementById($idGeneralisation);
-        $selection = [];
-        foreach($idEtablissements as $idEtablissement) {
-            $selection[] = $this->etablissementService->getEtablissementById($idEtablissement);
+//            $this->structureService->createStructureSubstitutions($sources, $structureCible);
+            return $this->redirect()->toRoute('substitution-index');
+
+//            $id = $structureCible->getStructure()->getId();
+//            return $this->redirect()->toRoute('substitution-modifier', ['cible' => $id], [], true);
+
+        } else {
+            $cible = new Structure();
+            $structuresConcretesSubstituees = [];
+            $etablissements = $this->etablissementService->findEtablissementsNonSubstitues();
         }
-        if($idAjout !== null && $idAjout !== '') {
-            $selection[] = $this->etablissementService->getEtablissementById($idAjout);
-        }
-        if($idRetrait !== null && $idRetrait !== '') {
-            $selection = array_filter($selection, function($a) use ($idRetrait) {return $a->getId() != $idRetrait;});
-//            $selection_bis = [];
-//            foreach ($selection as $s) {
-//                if ($s->getId() != ($idRetrait)) $selection_bis[] = $s;
-//            }
-//            $selection = $selection_bis;
-        }
-        return new ViewModel([
-            'nouvelEtablissement' => $etablissement,
-            'selectedEtablissements' => $selection,
+
+        $vm = new ViewModel([
+            'cible' => $cible,
+            'structuresConcretesSubstituees' => $structuresConcretesSubstituees,
             'etablissements' => $etablissements,
+        ]);
+        $vm->setTemplate('application/substitution/modifier');
+
+        return $vm;
+    }
+
+
+    public function modifierAction()
+    {
+        $idCible = $this->params()->fromRoute('cible');
+        $structureCible = $this->structureService->findStructureSubsitutionCibleById($idCible);
+        $structuresSubstituees = $structureCible->getStructuresSubstituees();
+
+        $structureConcreteCible = $this->structureService->findStructureConcreteFromStructure($structureCible);
+        $structuresConcretesSubstituees = [];
+        foreach($structuresSubstituees as $structureSubstituee) {
+            $structureConcreteSubstituee = $this->structureService->findStructureConcreteFromStructure($structureSubstituee);
+            $structuresConcretesSubstituees[] = $structureConcreteSubstituee;
+        }
+
+        $etablissements = $this->etablissementService->findEtablissementsNonSubstitues();
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $sources = [];
+            foreach ($data['sourceIds'] as $sourceId) {
+                $etablissement = $this->etablissementService->findEtablissementByStructureId($sourceId);
+                if ($etablissement === null) {
+                    throw new RuntimeException("Etablissement cible non trouvé avec id=$sourceId.");
+                }
+                $sources[] = $etablissement;
+            }
+            $this->etablissementService->updateFromPostData($structureCible,$data['cible']);
+            $this->structureService->updateStructureSubstitutions($sources, $structureCible);
+
+            return $this->redirect()->toRoute(null, [],[], true);
+        }
+
+
+
+        return new ViewModel([
+            'cible' => $structureCible,
+            'etablissements' => $etablissements,
+            'structuresConcretesSubstituees' => $structuresConcretesSubstituees,
+        ]);
+    }
+
+    public function generateSourceInputAction() {
+        $id = $this->params()->fromRoute('id');
+        $etablissement = $this->etablissementService->findEtablissementByStructureId($id);
+
+        return new ViewModel([
+            'structure' => $etablissement,
         ]);
     }
 }

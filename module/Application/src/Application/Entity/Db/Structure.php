@@ -57,12 +57,12 @@ class Structure implements HistoriqueAwareInterface, SourceAwareInterface
      * Instancie un Etablissement, une EcodeDoctorale ou une UniteRecherche à partir des données spécifiées.
      * NB: L'entité Structure de rattachement est également instanciée.
      *
-     * @param StructureEntityInterface $data
+     * @param StructureConcreteInterface $data
      * @param TypeStructure            $type
      * @param Source                   $source
      * @return Etablissement|EcoleDoctorale|UniteRecherche
      */
-    public static function constructFromDataObject(StructureEntityInterface $data, TypeStructure $type, Source $source)
+    public static function constructFromDataObject(StructureConcreteInterface $data, TypeStructure $type, Source $source)
     {
         // structure de rattachement
         $structureRattach = new Structure();

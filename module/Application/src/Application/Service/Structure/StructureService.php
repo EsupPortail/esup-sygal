@@ -6,13 +6,14 @@ use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\SourceInterface;
 use Application\Entity\Db\Structure;
-use Application\Entity\Db\StructureEntityInterface;
+use Application\Entity\Db\StructureConcreteInterface;
 use Application\Entity\Db\StructureSubstit;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
 use Application\Service\BaseService;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use UnicaenApp\Exception\RuntimeException;
 use Webmozart\Assert\Assert;
 
@@ -38,13 +39,13 @@ class StructureService extends BaseService
      * Enregistre en bdd la substitution de plusieurs structures par une autre structure.
      * NB: la structure de subsitition est créée et sa source est SYGAL.
      *
-     * @param StructureEntityInterface[] $structuresSources
+     * @param StructureConcreteInterface[] $structuresSources
      * Structures à substituer (Etablissement|EcoleDoctorale|UniteRecherche
-     * @param StructureEntityInterface   $structureCibleDataObject
+     * @param StructureConcreteInterface   $structureCibleDataObject
      * Objet contenant les attributs de la structure de substitution à créer
      * @return StructureSubstit[] Entités créées (une par substitution)
      */
-    public function createStructureSubstitutions(array $structuresSources, StructureEntityInterface $structureCibleDataObject)
+    public function createStructureSubstitutions(array $structuresSources, StructureConcreteInterface $structureCibleDataObject)
     {
         // todo: à améliorer si besoin de vérifier que toutes les structures à substituer sont de la même classe
         Assert::allIsInstanceOfAny($structuresSources, [
@@ -106,7 +107,7 @@ class StructureService extends BaseService
     /**
      * Met à jour en bdd la substitution existante de plusieurs structures par une autre structure.
      *
-     * @param StructureEntityInterface[] $structuresSources
+     * @param StructureConcreteInterface[] $structuresSources
      * Structures à substituer (Etablissement|EcoleDoctorale|UniteRecherche
      * @param Structure                  $structureCible Structure de subsitution existante
      */
@@ -159,7 +160,7 @@ class StructureService extends BaseService
                 $this->getEntityManager()->remove($ss);
                 $structureSubstits[] = $ss;
             }
-            $this->getEntityManager()->flush($structureSubstits);
+            $this->getEntityManager()->flush();
             $this->getEntityManager()->commit();
         } catch(\Exception $e) {
             $this->getEntityManager()->rollback();
@@ -216,4 +217,73 @@ class StructureService extends BaseService
 
         return $typeStructure;
     }
+
+    /**
+     * @param  int $idCible
+     * @return Structure
+     */
+    public function findStructureSubsitutionCibleById($idCible)
+    {
+        $qb = $this->getRepository()->createQueryBuilder("s")
+            ->addSelect("ss")
+            ->join("s.structuresSubstituees", "ss")
+            ->andWhere("s.id = :idCible")
+            ->setParameter("idCible", $idCible);
+        try {
+            $result = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Anomalie plusieurs structure cible trouvée.", 0, $e);
+        }
+        return $result;
+    }
+
+    /**
+     * @param StructureConcreteInterface $structureCible
+     * @return StructureConcreteInterface[]
+     */
+//    public function findStructuresConcretesSubstituees(StructureConcreteInterface $structureCible)
+//    {
+//        $qb = $this->getEntityManager()->getRepository(get_class($structureCible))->createQueryBuilder("sc")
+//            ->join("sc.structure", "s")
+//            ->join("s.structuresSubstituees", "ss")
+//            ->join("ss.toStructure", "scible")
+//            ->andWhere("ss.toStructure = :cible")
+//            ->setParameter("cible", $structureCible->getStructure());
+//        $structuresConcretes = $qb->getQuery()->getResult();
+//        return $structuresConcretes;
+//    }
+
+    /**
+     * @param Structure $cible
+     * @return StructureConcreteInterface
+     */
+    public function findStructureConcreteFromStructure(Structure $cible)
+    {
+        $repo = null;
+        switch(true) {
+            case $cible->getTypeStructure()->isEtablissement() :
+                $repo = $this->getEntityManager()->getRepository(Etablissement::class);
+                break;
+            case $cible->getTypeStructure()->isEcoleDoctorale() :
+                $repo = $this->getEntityManager()->getRepository(EcoleDoctorale::class);
+                break;
+            case $cible->getTypeStructure()->isUniteRecherche() :
+                $repo = $this->getEntityManager()->getRepository(UniteRecherche::class);
+                break;
+            default :
+                throw new RuntimeException("TypeStructure non reconnu [".$cible->getTypeStructure()."] .");
+
+        }
+        $qb = $repo->createQueryBuilder("sc")
+            ->andWhere("sc.structure =  :structure")
+            ->setParameter("structure", $cible);
+        try {
+            $structureConcrete = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Anomalie plusieurs structure cible trouvée.", 0, $e);
+        }
+        return $structureConcrete;
+    }
+
+
 }

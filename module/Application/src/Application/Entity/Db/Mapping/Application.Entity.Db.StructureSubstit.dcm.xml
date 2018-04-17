@@ -12,17 +12,11 @@
             <join-columns>
                 <join-column name="FROM_STRUCTURE_ID" referenced-column-name="ID"/>
             </join-columns>
-            <cascade>
-                <cascade-all/>
-            </cascade>
         </many-to-one>
         <many-to-one field="toStructure" target-entity="Application\Entity\Db\Structure">
             <join-columns>
                 <join-column name="TO_STRUCTURE_ID" referenced-column-name="ID"/>
             </join-columns>
-            <cascade>
-                <cascade-all/>
-            </cascade>
         </many-to-one>
 
         <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
