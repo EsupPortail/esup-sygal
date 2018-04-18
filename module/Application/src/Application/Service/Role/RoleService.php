@@ -85,6 +85,21 @@ class RoleService extends BaseService
         return $individuRole;
     }
 
+    public function getRoleByIndividu($individu)
+    {
+        $qb = $this->getEntityManager()->getRepository(IndividuRole::class)->createQueryBuilder("ir")
+            ->andWhere("ir.individu = :individu")
+            ->setParameter("individu", $individu);
+        $results = $qb->getQuery()->getResult();
+
+        /** @var IndividuRole $result */
+        $roles = [];
+        foreach($results as $result) {
+            $roles[] = $result->getRole();
+        }
+
+        return $roles;
+    }
 
     /**
      * @param int $individuRoleId
@@ -219,5 +234,20 @@ class RoleService extends BaseService
         return $role;
     }
 
+    public function removeRole($individuId, $roleId)
+    {
+        $qb = $this->getEntityManager()->getRepository(IndividuRole::class)->createQueryBuilder("ir")
+            ->leftJoin("ir.individu","i")
+            ->leftJoin("ir.role","r")
+            ->andWhere("i.id = :individuId")
+            ->andWhere("r.id = :roleId")
+            ->setParameter("individuId", $individuId)
+            ->setParameter("roleId", $roleId);
+        $result = $qb->getQuery()->getOneOrNullResult();
+        if ($result !== null) {
+            $this->getEntityManager()->remove($result);
+            $this->getEntityManager()->flush($result);
+        }
+    }
 
 }

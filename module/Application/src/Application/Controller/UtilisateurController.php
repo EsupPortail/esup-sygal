@@ -347,4 +347,36 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             'form' => $form,
         ]);
     }
+
+    /**
+     * NOTA BENE : il s'agit des individu et non des utilisateurs car ils sont ceux qui portent les rôles
+     */
+    public function indexBisAction()
+    {
+        $individu = null;
+        $roles = null;
+
+        /** @var Request $request */
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost()['individu'];
+            /** @var Individu $individu */
+            $individu = $this->individuService->getIndviduById($data['id']);
+            $roles = $this->roleService->getRoleByIndividu($individu);
+        }
+        return new ViewModel([
+            'individu' => $individu,
+            'roles' => $roles,
+        ]);
+    }
+
+    public function retirerRoleAction()
+    {
+        $individuId = $this->params()->fromRoute('individu');
+        $roleId = $this->params()->fromRoute('role');
+
+        $this->roleService->removeRole($individuId, $roleId);
+
+        return new ViewModel([]);
+    }
 }

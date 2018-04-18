@@ -13,6 +13,7 @@ use Zend\Mvc\Router\Http\Literal;
 use Application\Form\Validator\PasswordValidator;
 use Application\Form\Validator\NewEmailValidator;
 use Application\Form\Validator\Factory\NewEmailValidatorFactory;
+use Zend\Mvc\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [
@@ -25,6 +26,8 @@ return [
                     'controller' => 'Application\Controller\Utilisateur',
                     'action'     => [
                         'index',
+                        'index-bis',
+                        'retirer-role',
                     ],
                     'privileges' => UtilisateurPrivileges::UTILISATEUR_CONSULTATION,
                 ],
@@ -123,6 +126,24 @@ return [
                             'route'       => '/rechercher-individu',
                             'defaults'    => [
                                 'action' => 'rechercher-individu',
+                            ],
+                        ],
+                    ],
+                    'individu-index' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/index[/:id]',
+                            'defaults'    => [
+                                'action' => 'index-bis',
+                            ],
+                        ],
+                    ],
+                    'retirer-role' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/retirer-role/:individu/:role',
+                            'defaults'    => [
+                                'action' => 'retirer-role',
                             ],
                         ],
                     ],
