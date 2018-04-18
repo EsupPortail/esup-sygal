@@ -289,7 +289,7 @@ class FetcherService
             //TODO (jp) nettoie moi çà
             if ($propriete === "etablissementId")   $value = $this->code;
             elseif ($propriete === "sourceCode")    $value = $this->code."::".$entity_json->{'id'};
-            elseif ($propriete === "code")          $value = $this->code."::".$entity_json->{'code'};
+            //BG: elseif ($propriete === "code")          $value = $this->code."::".$entity_json->{'code'};
             elseif ($propriete === "sourceId")      $value = $this->code."::".$entity_json->{'sourceId'};
             elseif ($propriete === "individuId")    $value = $this->code."::".$entity_json->{'individuId'};
             elseif ($propriete === "roleId")        $value = $this->code."::".$entity_json->{'roleId'};
