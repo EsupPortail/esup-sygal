@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "4b0b46293affec3e3b53426489dcffa9",
+    "content-hash": "fc46fd7d121be3f38593d7765479eec0",
     "packages": [
         {
             "name": "bjyoungblood/bjy-authorize",
@@ -1240,16 +1240,16 @@
         },
         {
             "name": "paragonie/random_compat",
-            "version": "v2.0.11",
+            "version": "v2.0.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paragonie/random_compat.git",
-                "reference": "5da4d3c796c275c55f057af5a643ae297d96b4d8"
+                "reference": "258c89a6b97de7dfaf5b8c7607d0478e236b04fb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/5da4d3c796c275c55f057af5a643ae297d96b4d8",
-                "reference": "5da4d3c796c275c55f057af5a643ae297d96b4d8",
+                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/258c89a6b97de7dfaf5b8c7607d0478e236b04fb",
+                "reference": "258c89a6b97de7dfaf5b8c7607d0478e236b04fb",
                 "shasum": ""
             },
             "require": {
@@ -1284,7 +1284,7 @@
                 "pseudorandom",
                 "random"
             ],
-            "time": "2017-09-27T21:40:39+00:00"
+            "time": "2018-04-04T21:24:14+00:00"
         },
         {
             "name": "psr/http-message",
@@ -1643,7 +1643,7 @@
         },
         {
             "name": "symfony/debug",
-            "version": "v3.4.7",
+            "version": "v3.4.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/debug.git",
@@ -1758,16 +1758,16 @@
         },
         {
             "name": "symfony/process",
-            "version": "v2.8.37",
+            "version": "v2.8.38",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/process.git",
-                "reference": "c2fc900ee54e1e44aa956eae8ba041a5347ba93c"
+                "reference": "ee2c91470ff262b1a00aec27875d38594aa87629"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/process/zipball/c2fc900ee54e1e44aa956eae8ba041a5347ba93c",
-                "reference": "c2fc900ee54e1e44aa956eae8ba041a5347ba93c",
+                "url": "https://api.github.com/repos/symfony/process/zipball/ee2c91470ff262b1a00aec27875d38594aa87629",
+                "reference": "ee2c91470ff262b1a00aec27875d38594aa87629",
                 "shasum": ""
             },
             "require": {
@@ -1803,15 +1803,15 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "https://symfony.com",
-            "time": "2018-03-19T21:11:56+00:00"
+            "time": "2018-04-03T05:20:27+00:00"
         },
         {
             "name": "unicaen/app",
-            "version": "1.3.10",
+            "version": "1.3.11",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/app.git",
-                "reference": "845dd41da189fdd5e39f6d2d882e05b77a16c5dc"
+                "reference": "e6527137d036ac0fe17dd438059a92c03e8f01eb"
             },
             "require": {
                 "doctrine/doctrine-orm-module": ">=0.7",
@@ -1854,15 +1854,15 @@
                 ]
             },
             "description": "Module de base des applications unicaen",
-            "time": "2018-03-28T08:06:13+00:00"
+            "time": "2018-04-19T12:48:40+00:00"
         },
         {
             "name": "unicaen/auth",
-            "version": "1.2.5",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/auth.git",
-                "reference": "4f1a531c08b1474340e9d90e92a1ad7b18dda620"
+                "reference": "058ae8f84429104efe64a54c1445cebf6e9ead4b"
             },
             "require": {
                 "bjyoungblood/bjy-authorize": ">=1.4",
@@ -1884,15 +1884,15 @@
                 ]
             },
             "description": "Module d'authentification pour les applications Unicaen",
-            "time": "2018-03-28T08:19:16+00:00"
+            "time": "2018-04-09T07:41:56+00:00"
         },
         {
             "name": "unicaen/code",
-            "version": "1.1.4",
+            "version": "1.1.6",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/code.git",
-                "reference": "b31f1857684c45c78c60c8e14dc72ad73e363819"
+                "reference": "607fe27c60c3c90a6c953cf2b16bfdbdc8b54d17"
             },
             "require": {
                 "doctrine/dbal": "^2.5",
@@ -1910,7 +1910,7 @@
                 ]
             },
             "description": "Boite à outils pour la programmation avec la bibliothèque Unicaen",
-            "time": "2018-03-20T15:11:11+00:00"
+            "time": "2018-04-12T15:24:29+00:00"
         },
         {
             "name": "unicaen/faq",
@@ -2680,23 +2680,23 @@
         },
         {
             "name": "phpspec/prophecy",
-            "version": "1.7.5",
+            "version": "1.7.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
-                "reference": "dfd6be44111a7c41c2e884a336cc4f461b3b2401"
+                "reference": "33a7e3c4fda54e912ff6338c48823bd5c0f0b712"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/dfd6be44111a7c41c2e884a336cc4f461b3b2401",
-                "reference": "dfd6be44111a7c41c2e884a336cc4f461b3b2401",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/33a7e3c4fda54e912ff6338c48823bd5c0f0b712",
+                "reference": "33a7e3c4fda54e912ff6338c48823bd5c0f0b712",
                 "shasum": ""
             },
             "require": {
                 "doctrine/instantiator": "^1.0.2",
                 "php": "^5.3|^7.0",
                 "phpdocumentor/reflection-docblock": "^2.0|^3.0.2|^4.0",
-                "sebastian/comparator": "^1.1|^2.0",
+                "sebastian/comparator": "^1.1|^2.0|^3.0",
                 "sebastian/recursion-context": "^1.0|^2.0|^3.0"
             },
             "require-dev": {
@@ -2739,7 +2739,7 @@
                 "spy",
                 "stub"
             ],
-            "time": "2018-02-19T10:16:54+00:00"
+            "time": "2018-04-18T13:57:24+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -3776,9 +3776,17 @@
             "time": "2018-01-29T19:49:41+00:00"
         }
     ],
-    "aliases": [],
+    "aliases": [
+        {
+            "alias": "1.2.6",
+            "alias_normalized": "1.2.6.0",
+            "version": "9999999-dev",
+            "package": "unicaen/auth"
+        }
+    ],
     "minimum-stability": "stable",
     "stability-flags": {
+        "unicaen/auth": 20,
         "bjyoungblood/bjy-authorize": 20
     },
     "prefer-stable": false,
