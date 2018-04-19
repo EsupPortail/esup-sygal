@@ -26,22 +26,6 @@ return [
                     'controller' => 'Application\Controller\Utilisateur',
                     'action'     => [
                         'index',
-                        'index-bis',
-                        'retirer-role',
-                        'ajouter-role',
-                    ],
-                    'privileges' => UtilisateurPrivileges::UTILISATEUR_CONSULTATION,
-                ],
-                [
-                    'controller' => 'Application\Controller\Utilisateur',
-                    'action'     => [
-                        'ajouter',
-                    ],
-                    'privileges' => UtilisateurPrivileges::UTILISATEUR_MODIFICATION,
-                ],
-                [
-                    'controller' => 'Application\Controller\Utilisateur',
-                    'action'     => [
                         'rechercher-people',
                         'rechercher-individu',
                     ],
@@ -50,13 +34,8 @@ return [
                 [
                     'controller' => 'Application\Controller\Utilisateur',
                     'action'     => [
-                        'attribuer-role',
-                    ],
-                    'privileges' => UtilisateurPrivileges::UTILISATEUR_ATTRIBUTION_ROLE,
-                ],
-                [
-                    'controller' => 'Application\Controller\Utilisateur',
-                    'action'     => [
+                        'retirer-role',
+                        'ajouter-role',
                         'creation-utilisateur',
                     ],
                     'privileges' => UtilisateurPrivileges::UTILISATEUR_MODIFICATION,
@@ -91,27 +70,6 @@ return [
                 ],
                 'may_terminate' => true,
                 'child_routes'  => [
-                    'ajouter' => [
-                        'type'          => 'Segment',
-                        'options'       => [
-                            'route'       => '/ajouter',
-                            'defaults'    => [
-                                'action' => 'ajouter',
-                            ],
-                        ],
-                    ],
-                    'attribuer-role' => [
-                        'type'          => 'Segment',
-                        'options'       => [
-                            'route'       => '/attribuer-role/:utilisateur',
-                            'constraints' => [
-                                'utilisateur' => '\d+',
-                            ],
-                            'defaults'    => [
-                                'action' => 'attribuer-role',
-                            ],
-                        ],
-                    ],
                     'rechercher-people' => [
                         'type'          => 'Segment',
                         'options'       => [
@@ -127,15 +85,6 @@ return [
                             'route'       => '/rechercher-individu',
                             'defaults'    => [
                                 'action' => 'rechercher-individu',
-                            ],
-                        ],
-                    ],
-                    'individu-index' => [
-                        'type'          => Segment::class,
-                        'options'       => [
-                            'route'       => '/index[/:id]',
-                            'defaults'    => [
-                                'action' => 'index-bis',
                             ],
                         ],
                     ],
