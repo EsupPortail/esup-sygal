@@ -58,20 +58,21 @@ return [
                 'may_terminate' => true,
             ],
             'utilisateur' => [
-                'type'          => 'Segment',
+                'type'          => Segment::class,
                 'options'       => [
-                    'route'    => '/[:language/]utilisateur',
+                    'route'    => '/utilisateur',
+//                    'route'    => '/[:language/]utilisateur',
                     'defaults' => [
                         '__NAMESPACE__' => 'Application\Controller',
                         'controller'    => 'Utilisateur',
                         'action'        => 'index',
-                        'language'      => 'fr_FR',
+//                        'language'      => 'fr_FR',
                     ],
                 ],
                 'may_terminate' => true,
                 'child_routes'  => [
                     'rechercher-people' => [
-                        'type'          => 'Segment',
+                        'type'          => Segment::class,
                         'options'       => [
                             'route'       => '/rechercher-people',
                             'defaults'    => [
@@ -80,7 +81,7 @@ return [
                         ],
                     ],
                     'rechercher-individu' => [
-                        'type'          => 'Segment',
+                        'type'          => Segment::class,
                         'options'       => [
                             'route'       => '/rechercher-individu',
                             'defaults'    => [

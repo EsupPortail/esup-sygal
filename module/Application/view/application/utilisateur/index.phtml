@@ -7,7 +7,8 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\UniteRecherche;
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
-use Application\Entity\Db\TypeStructure;
+use UnicaenAuth\Provider\Privilege\Privileges;
+use Application\Provider\Privilege\UtilisateurPrivileges;
 
 /**
  * @var PhpRenderer $this
@@ -15,6 +16,8 @@ use Application\Entity\Db\TypeStructure;
  * @var EcoleDoctorale[] ecoles
  * @var UniteRecherche[] unites
  */
+
+$canModifier = $this->isAllowed(Privileges::getResourceId(UtilisateurPrivileges::UTILISATEUR_MODIFICATION));
 
 ?>
 
@@ -92,7 +95,7 @@ use Application\Entity\Db\TypeStructure;
                     <dd>
                         <?php
                         /** @var Role $role */
-                        echo generateRoleAffecte($individu, $roles, $rolesAffectes);
+                        echo generateRoleAffecte($individu, $roles, $rolesAffectes, $canModifier);
                         ?>
                     </dd>
                 </dl>
@@ -102,10 +105,10 @@ use Application\Entity\Db\TypeStructure;
 
                 <dl>
                     <?php
-                    echo generateRoleStatique($individu, $roles, $rolesAffectes);
-                    echo generateRoleEtablissement($individu, $roles, $rolesAffectes, $etablissements);
-                    echo generateRoleEcole($individu, $roles, $rolesAffectes, $ecoles);
-                    echo generateRoleUnite($individu, $roles, $rolesAffectes, $unites);
+                    echo generateRoleStatique($individu, $roles, $rolesAffectes, $canModifier);
+                    echo generateRoleEtablissement($individu, $roles, $rolesAffectes, $etablissements, $canModifier);
+                    echo generateRoleEcole($individu, $roles, $rolesAffectes, $ecoles, $canModifier);
+                    echo generateRoleUnite($individu, $roles, $rolesAffectes, $unites, $canModifier);
                     ?>
                 </dl>
 
@@ -156,16 +159,19 @@ function generateSelect($structures, $id, $roles = null)
  * @param Individu $individu
  * @param Role[] $roles
  * @param Role[] $rolesAffectes
+ * @param Boolean $canModifier
  * @return string
  */
-function generateRoleAffecte($individu, $roles, $rolesAffectes)
+function generateRoleAffecte($individu, $roles, $rolesAffectes, $canModifier=false)
 {
     $texte = "";
     foreach ($roles as $role) {
         $texte .= '<div id="affecte_' . $role->getId() . '"';
         if (array_search($role, $rolesAffectes) === false) $texte .= ' style="display:none;" ';
         $texte .= '>';
-        $texte .= '<span class="remove-role glyphicon glyphicon-remove text-danger" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
+        if ($canModifier) {
+            $texte .= '<span class="remove-role glyphicon glyphicon-remove text-danger" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
+        }
         $texte .= $role->getRoleId();
         $texte .= '</div>';
     }
@@ -178,7 +184,7 @@ function generateRoleAffecte($individu, $roles, $rolesAffectes)
  * @param Role[] $rolesAffectes
  * @return string
  */
-function generateRoleStatique($individu, $roles, $rolesAffectes)
+function generateRoleStatique($individu, $roles, $rolesAffectes, $canModifier=false)
 {
     $texte = "";
     $texte .= "<dt> Rôles Statiques </dt>";
@@ -188,7 +194,9 @@ function generateRoleStatique($individu, $roles, $rolesAffectes)
             $texte .= '<div id="disponible_' . $role->getId() . '"';
             if (array_search($role, $rolesAffectes) !== false) $texte .= ' style="display:none;" ';
             $texte .= '>';
-            $texte .= '<span class="add-role glyphicon glyphicon-plus text-success" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
+            if ($canModifier) {
+                $texte .= '<span class="add-role glyphicon glyphicon-plus text-success" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
+            }
             $texte .= $role->getRoleId();
             $texte .= '</div>';
         }
@@ -204,7 +212,7 @@ function generateRoleStatique($individu, $roles, $rolesAffectes)
  * @param Etablissement[] $etablissements
  * @return string
  */
-function generateRoleEtablissement($individu, $roles, $rolesAffectes, $etablissements)
+function generateRoleEtablissement($individu, $roles, $rolesAffectes, $etablissements,$canModifier=false)
 {
     $texte = "";
     $texte .= "<dt> Rôles liés aux établissements </dt>";
@@ -222,7 +230,9 @@ function generateRoleEtablissement($individu, $roles, $rolesAffectes, $etablisse
                 $texte .= '<div id="disponible_' . $role->getId() . '"';
                 if (array_search($role, $rolesAffectes) !== false) $texte .= ' style="display:none;" ';
                 $texte .= '>';
-                $texte .= '<span class="add-role glyphicon glyphicon-plus text-success" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
+                if ($canModifier) {
+                    $texte .= '<span class="add-role glyphicon glyphicon-plus text-success" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
+                }
                 $texte .= $role->getRoleId();
                 $texte .= '</div>';
             }
@@ -240,7 +250,7 @@ function generateRoleEtablissement($individu, $roles, $rolesAffectes, $etablisse
  * @param EcoleDoctorale[] $ecoles
  * @return string
  */
-function generateRoleEcole($individu, $roles, $rolesAffectes, $ecoles)
+function generateRoleEcole($individu, $roles, $rolesAffectes, $ecoles, $canModifier=false)
 {
     $texte = "";
     $texte .= "<dt> Rôles liés aux écoles doctorales </dt>";
@@ -258,7 +268,9 @@ function generateRoleEcole($individu, $roles, $rolesAffectes, $ecoles)
                 $texte .= '<div id="disponible_' . $role->getId() . '"';
                 if (array_search($role, $rolesAffectes) !== false) $texte .= ' style="display:none;" ';
                 $texte .= '>';
-                $texte .= '<span class="add-role glyphicon glyphicon-plus text-success" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
+                if ($canModifier) {
+                    $texte .= '<span class="add-role glyphicon glyphicon-plus text-success" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
+                }
                 $texte .= $role->getRoleId();
                 $texte .= '</div>';
             }
@@ -276,7 +288,7 @@ function generateRoleEcole($individu, $roles, $rolesAffectes, $ecoles)
  * @param UniteRecherche[] $unites
  * @return string
  */
-function generateRoleUnite($individu, $roles, $rolesAffectes, $unites)
+function generateRoleUnite($individu, $roles, $rolesAffectes, $unites, $canModifier=false)
 {
     $texte = "";
     $texte .= "<dt> Rôles liés aux unités de recherche </dt>";
@@ -294,7 +306,9 @@ function generateRoleUnite($individu, $roles, $rolesAffectes, $unites)
                 $texte .= '<div id="disponible_' . $role->getId() . '"';
                 if (array_search($role, $rolesAffectes) !== false) $texte .= ' style="display:none;" ';
                 $texte .= '>';
-                $texte .= '<span class="add-role glyphicon glyphicon-plus text-success" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
+                if ($canModifier) {
+                    $texte .= '<span class="add-role glyphicon glyphicon-plus text-success" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
+                }
                 $texte .= $role->getRoleId();
                 $texte .= '</div>';
             }
@@ -316,7 +330,7 @@ function generateRoleUnite($individu, $roles, $rolesAffectes, $unites)
             var role = splits[1];
             var individu = splits[0];
 
-            var url = "retirer-role/" + individu + "/" + role;
+            var url = "utilisateur/retirer-role/" + individu + "/" + role;
             $("#affecte_" + role).hide();
             $("#disponible_" + role).show();
 
@@ -332,7 +346,7 @@ function generateRoleUnite($individu, $roles, $rolesAffectes, $unites)
             var role = splits[1];
             var individu = splits[0];
 
-            var url = "ajouter-role/" + individu + "/" + role;
+            var url = "utilisateur/ajouter-role/" + individu + "/" + role;
             $("#affecte_" + role).show();
             $("#disponible_" + role).hide();
 
