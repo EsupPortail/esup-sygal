@@ -7,8 +7,11 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
 use Application\Form\CreationUtilisateurForm;
 use Application\RouteMatch;
+use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
+use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\View\Helper\Sortable;
@@ -39,166 +42,40 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     use LdapPeopleServiceAwareTrait;
     use IndividuServiceAwareTrait;
     use EntityManagerAwareTrait;
+    use EcoleDoctoraleServiceAwareTrait;
+    use UniteRechercheServiceAwareTrait;
+    use EtablissementServiceAwareTrait;
 
     /**
-     * @return array|\Zend\Http\Response|ViewModel
+     * NOTA BENE : il s'agit des individus et non des utilisateurs car ils sont ceux qui portent les rôles
      */
     public function indexAction()
     {
-        /**
-         * Application des filtres et tris par défaut.
-         */
-        $needsRedirect = false;
-        $queryParams = $this->params()->fromQuery();
-        // filtres
-//        $etatThese = $this->params()->fromQuery($name = 'etatThese');
-//        if ($etatThese === null) { // null <=> paramètre absent
-//            // filtrage par défaut : thèse en préparation
-//            $queryParams = array_merge($queryParams, [$name => Utilisateur::ETAT_EN_COURS]);
-//            $needsRedirect = true;
-//        }
-        // tris
-        $sort = $this->params()->fromQuery('sort');
-        if ($sort === null) { // null <=> paramètre absent
-            // tri par défaut : datePremiereInscription
-            $queryParams = array_merge($queryParams, ['sort' => 'u.displayName', 'direction' => Sortable::ASC]);
-            $needsRedirect = true;
-        }
-        // redirection si nécessaire
-        if ($needsRedirect) {
-            return $this->redirect()->toRoute(null, [], ['query' => $queryParams], true);
+        $individu = null;
+        $roles = null;
+
+        /** @var Request $request */
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost()['individu'];
+            /** @var Individu $individu */
+            $individu = $this->individuService->getIndviduById($data['id']);
+            $rolesAffectes = $this->roleService->getRoleByIndividu($individu);
         }
 
-        $text = $this->params()->fromQuery('text');
-        $dir  = $this->params()->fromQuery('direction', Sortable::ASC);
-        $maxi = $this->params()->fromQuery('maxi', 40);
-        $page = $this->params()->fromQuery('page', 1);
-
-        $qb = $this->utilisateurService->getRepository()->createQueryBuilder('u');
-//        if ($etatThese) {
-//            $qb->andWhere('t.etatThese = :etat')->setParameter('etat', $etatThese);
-//        }
-        foreach (explode('+', $sort) as $sortProp) {
-            $qb->addOrderBy($sortProp, $dir);
-        }
-
-        /**
-         * Filtres découlant du rôle de l'utilisateur.
-         */
-        $this->decorateQbFromSelectedRole($qb);
-
-        /**
-         * Prise en compte du champ de recherche textuelle.
-         */
-//        if (strlen($text) > 1) {
-//            $results = $this->theseService->rechercherThese($text);
-//            $sourceCodes = array_unique(array_keys($results));
-//            if ($sourceCodes) {
-//                $qb
-//                    ->andWhere($qb->expr()->in('t.sourceCode', ':sourceCodes'))
-//                    ->setParameter('sourceCodes', $sourceCodes);
-//            }
-//            else {
-//                $qb->andWhere("0 = 1"); // i.e. aucune thèse trouvée
-//            }
-//        }
-
-        $paginator = new \Zend\Paginator\Paginator(new DoctrinePaginator(new Paginator($qb, true)));
-        $paginator
-            ->setPageRange(30)
-            ->setItemCountPerPage((int)$maxi)
-            ->setCurrentPageNumber((int)$page);
-
-        $roleModeles = $this->roleService->getRoleModeleByStructures();
-
-        $qb = $this->roleService->getRepository()->createQueryBuilder('r');
-        $qb ->join('r.source', 's', Join::WITH, 's.importable = 0')
-            ->andWhere('r.attributionAutomatique = 0')
-            ->andWhere($qb->expr()->notIn('r.roleId', [
-                Role::ROLE_ID_ECOLE_DOCT,
-                Role::ROLE_ID_UNITE_RECH,
-            ]))
-            ->andWhere('1 = pasHistorise(r)')
-            ->orderBy('r.roleId');
-        $rolesStatiques = $qb->getQuery()->getResult();
-
-        $qb = $this->roleService->getRepository()->createQueryBuilder('r')
-            ->andWhere('r.attributionAutomatique = 1')
-            ->andWhere('1 = pasHistorise(r)')
-            ->orderBy('r.roleId');
-        $rolesDynamiques = $qb->getQuery()->getResult();
+        $roles = $this->roleService->getRoles();
+        $etablissements = $this->etablissementService->getEtablissements();
+        $unites = $this->uniteRechercheService->getUnitesRecherches();
+        $ecoles = $this->ecoleDoctoraleService->getEcolesDoctorales();
 
         return new ViewModel([
-            'utilisateurs'    => $paginator,
-            'modeles'         => $roleModeles,
-            'roles'           => $rolesStatiques,
-            'rolesDynamiques' => $rolesDynamiques,
-            'text'            => $text,
+            'individu' => $individu,
+            'roles' => $roles,
+            'rolesAffectes' => $rolesAffectes,
+            'etablissements' => $etablissements,
+            'ecoles' => $ecoles,
+            'unites' => $unites,
         ]);
-    }
-
-    private function decorateQbFromSelectedRole(QueryBuilder $qb)
-    {
-        return $qb;
-    }
-
-    public function ajouterAction()
-    {
-        $data = $this->params()->fromPost('people');
-
-        if (!empty($data['id'])) {
-            /** @var People $people */
-            if ($people = $this->ldapPeopleService->get($data['id'])) {
-                $username = $people->get('supannAliasLogin');
-                $utilisateur = $this->utilisateurService->getRepository()->findOneBy(['username' => $username]);
-                if (! $utilisateur) {
-                    $utilisateur = $this->utilisateurService->createFromPeople($people);
-
-                    $this->flashMessenger()->addSuccessMessage("$utilisateur a été ajouté-e avec succès à la liste des utilisateurs");
-                }
-                else {
-                    $this->flashMessenger()->addErrorMessage("$utilisateur existe déjà dans la liste des utilisateurs");
-                }
-            }
-        }
-
-        return $this->redirect()->toRoute('utilisateur');
-    }
-
-    public function attribuerRoleAction()
-    {
-        $utilisateur = $this->requestUtilisateur();
-        $role = $this->postRole();
-        if (! $role) {
-            exit;
-        }
-
-        $qb = $this->utilisateurService->getRepository()->createQueryBuilder('u')
-            ->addSelect('r')
-            ->join('u.roles', 'r', Join::WITH, 'r = :role')
-            ->andWhere('u = :user')
-            ->setParameter('role', $role)
-            ->setParameter('user', $utilisateur);
-        $result = $qb->getQuery()->getResult();
-        
-        // retrait du rôle
-        if (count($result) > 0) {
-            $utilisateur->removeRole($role);
-            $message = "Le rôle '$role' a été retiré avec succès à l'utilisateur '$utilisateur'.";
-        }
-        // accord du rôle
-        else {
-            $utilisateur->addRole($role);
-            $message = "Le rôle '$role' a été accordé avec succès à l'utilisateur '$utilisateur'.";
-        }
-
-        try {
-            $this->utilisateurService->getEntityManager()->flush($utilisateur);
-        } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement de l'utilisateur", null, $e);
-        }
-
-        return new JsonModel(['status' => 'success', 'message' => $message]);
     }
 
     /**
@@ -273,32 +150,6 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         exit;
     }
 
-    /**
-     * @return Utilisateur
-     */
-    private function requestUtilisateur()
-    {
-        /** @var RouteMatch $match */
-        $match = $this->getEvent()->getRouteMatch();
-
-        return $match->getUtilisateur();
-    }
-
-    /**
-     * @return Role
-     */
-    private function postRole()
-    {
-        $roleId = $this->params()->fromPost('role');
-        if (! $roleId) {
-            return null;
-        }
-
-        /** @var Role $role */
-        $role = $this->roleService->getRepository()->findOneBy([(is_numeric($roleId) ? 'id' : 'roleId') => $roleId]);
-
-        return $role;
-    }
 
     public function creationUtilisateurAction()
     {
@@ -346,5 +197,25 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         return new ViewModel([
             'form' => $form,
         ]);
+    }
+
+
+    public function retirerRoleAction()
+    {
+        $individuId = $this->params()->fromRoute('individu');
+        $roleId = $this->params()->fromRoute('role');
+
+        $this->roleService->removeRole($individuId, $roleId);
+
+        return new ViewModel([]);
+    }
+
+    public function ajouterRoleAction()
+    {
+        $individuId = $this->params()->fromRoute('individu');
+        $roleId = $this->params()->fromRoute('role');
+
+        $this->roleService->addRole($individuId, $roleId);
+        return new ViewModel([]);
     }
 }

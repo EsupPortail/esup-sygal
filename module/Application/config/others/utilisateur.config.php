@@ -13,6 +13,7 @@ use Zend\Mvc\Router\Http\Literal;
 use Application\Form\Validator\PasswordValidator;
 use Application\Form\Validator\NewEmailValidator;
 use Application\Form\Validator\Factory\NewEmailValidatorFactory;
+use Zend\Mvc\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [
@@ -25,19 +26,6 @@ return [
                     'controller' => 'Application\Controller\Utilisateur',
                     'action'     => [
                         'index',
-                    ],
-                    'privileges' => UtilisateurPrivileges::UTILISATEUR_CONSULTATION,
-                ],
-                [
-                    'controller' => 'Application\Controller\Utilisateur',
-                    'action'     => [
-                        'ajouter',
-                    ],
-                    'privileges' => UtilisateurPrivileges::UTILISATEUR_MODIFICATION,
-                ],
-                [
-                    'controller' => 'Application\Controller\Utilisateur',
-                    'action'     => [
                         'rechercher-people',
                         'rechercher-individu',
                     ],
@@ -46,13 +34,8 @@ return [
                 [
                     'controller' => 'Application\Controller\Utilisateur',
                     'action'     => [
-                        'attribuer-role',
-                    ],
-                    'privileges' => UtilisateurPrivileges::UTILISATEUR_ATTRIBUTION_ROLE,
-                ],
-                [
-                    'controller' => 'Application\Controller\Utilisateur',
-                    'action'     => [
+                        'retirer-role',
+                        'ajouter-role',
                         'creation-utilisateur',
                     ],
                     'privileges' => UtilisateurPrivileges::UTILISATEUR_MODIFICATION,
@@ -75,41 +58,21 @@ return [
                 'may_terminate' => true,
             ],
             'utilisateur' => [
-                'type'          => 'Segment',
+                'type'          => Segment::class,
                 'options'       => [
-                    'route'    => '/[:language/]utilisateur',
+                    'route'    => '/utilisateur',
+//                    'route'    => '/[:language/]utilisateur',
                     'defaults' => [
                         '__NAMESPACE__' => 'Application\Controller',
                         'controller'    => 'Utilisateur',
                         'action'        => 'index',
-                        'language'      => 'fr_FR',
+//                        'language'      => 'fr_FR',
                     ],
                 ],
                 'may_terminate' => true,
                 'child_routes'  => [
-                    'ajouter' => [
-                        'type'          => 'Segment',
-                        'options'       => [
-                            'route'       => '/ajouter',
-                            'defaults'    => [
-                                'action' => 'ajouter',
-                            ],
-                        ],
-                    ],
-                    'attribuer-role' => [
-                        'type'          => 'Segment',
-                        'options'       => [
-                            'route'       => '/attribuer-role/:utilisateur',
-                            'constraints' => [
-                                'utilisateur' => '\d+',
-                            ],
-                            'defaults'    => [
-                                'action' => 'attribuer-role',
-                            ],
-                        ],
-                    ],
                     'rechercher-people' => [
-                        'type'          => 'Segment',
+                        'type'          => Segment::class,
                         'options'       => [
                             'route'       => '/rechercher-people',
                             'defaults'    => [
@@ -118,11 +81,29 @@ return [
                         ],
                     ],
                     'rechercher-individu' => [
-                        'type'          => 'Segment',
+                        'type'          => Segment::class,
                         'options'       => [
                             'route'       => '/rechercher-individu',
                             'defaults'    => [
                                 'action' => 'rechercher-individu',
+                            ],
+                        ],
+                    ],
+                    'retirer-role' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/retirer-role/:individu/:role',
+                            'defaults'    => [
+                                'action' => 'retirer-role',
+                            ],
+                        ],
+                    ],
+                    'ajouter-role' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/ajouter-role/:individu/:role',
+                            'defaults'    => [
+                                'action' => 'ajouter-role',
                             ],
                         ],
                     ],
