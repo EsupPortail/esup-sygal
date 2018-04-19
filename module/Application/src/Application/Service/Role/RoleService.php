@@ -250,4 +250,23 @@ class RoleService extends BaseService
         }
     }
 
+    public function addRole($individuId, $roleId)
+    {
+        $individu = $this->getEntityManager()->getRepository(Individu::class)->findOneBy(["id"=>$individuId]);
+        $role = $this->getEntityManager()->getRepository(Role::class)->findOneBy(["id"=>$roleId]);
+
+        $ir = new IndividuRole();
+        $ir->setIndividu($individu);
+        $ir->setRole($role);
+
+        $this->getEntityManager()->persist($ir);
+        $this->getEntityManager()->flush($ir);
+    }
+
+    public function getRoles()
+    {
+        $result = $this->getEntityManager()->getRepository(Role::class)->findAll();
+        return $result;
+    }
+
 }

@@ -28,6 +28,7 @@ return [
                         'index',
                         'index-bis',
                         'retirer-role',
+                        'ajouter-role',
                     ],
                     'privileges' => UtilisateurPrivileges::UTILISATEUR_CONSULTATION,
                 ],
@@ -144,6 +145,15 @@ return [
                             'route'       => '/retirer-role/:individu/:role',
                             'defaults'    => [
                                 'action' => 'retirer-role',
+                            ],
+                        ],
+                    ],
+                    'ajouter-role' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/ajouter-role/:individu/:role',
+                            'defaults'    => [
+                                'action' => 'ajouter-role',
                             ],
                         ],
                     ],

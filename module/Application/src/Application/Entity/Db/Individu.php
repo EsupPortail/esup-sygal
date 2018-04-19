@@ -359,6 +359,7 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
      */
     public function getDateNaissanceToString()
     {
+        if ($this->dateNaissance === null) return "";
         return $this->dateNaissance->format(Constants::DATE_FORMAT);
     }
 

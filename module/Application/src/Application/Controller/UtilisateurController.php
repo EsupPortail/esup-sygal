@@ -7,8 +7,11 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
 use Application\Form\CreationUtilisateurForm;
 use Application\RouteMatch;
+use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
+use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\View\Helper\Sortable;
@@ -39,6 +42,9 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     use LdapPeopleServiceAwareTrait;
     use IndividuServiceAwareTrait;
     use EntityManagerAwareTrait;
+    use EcoleDoctoraleServiceAwareTrait;
+    use UniteRechercheServiceAwareTrait;
+    use EtablissementServiceAwareTrait;
 
     /**
      * @return array|\Zend\Http\Response|ViewModel
@@ -362,11 +368,21 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             $data = $request->getPost()['individu'];
             /** @var Individu $individu */
             $individu = $this->individuService->getIndviduById($data['id']);
-            $roles = $this->roleService->getRoleByIndividu($individu);
+            $rolesAffectes = $this->roleService->getRoleByIndividu($individu);
         }
+
+        $roles = $this->roleService->getRoles();
+        $etablissements = $this->etablissementService->getEtablissements();
+        $unites = $this->uniteRechercheService->getUnitesRecherches();
+        $ecoles = $this->ecoleDoctoraleService->getEcolesDoctorales();
+
         return new ViewModel([
             'individu' => $individu,
             'roles' => $roles,
+            'rolesAffectes' => $rolesAffectes,
+            'etablissements' => $etablissements,
+            'ecoles' => $ecoles,
+            'unites' => $unites,
         ]);
     }
 
@@ -377,6 +393,15 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
 
         $this->roleService->removeRole($individuId, $roleId);
 
+        return new ViewModel([]);
+    }
+
+    public function ajouterRoleAction()
+    {
+        $individuId = $this->params()->fromRoute('individu');
+        $roleId = $this->params()->fromRoute('role');
+
+        $this->roleService->addRole($individuId, $roleId);
         return new ViewModel([]);
     }
 }
