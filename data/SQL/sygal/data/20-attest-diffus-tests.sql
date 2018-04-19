@@ -1,0 +1,110 @@
+-- for tests
+drop table      ATTESTATION_XX ;
+drop sequence   ATTESTATION_XX_id_seq;
+create table    ATTESTATION_XX as select * from ATTESTATION where 1=0;
+create sequence ATTESTATION_XX_id_seq;
+
+drop table      DIFFUSION_XX ;
+drop sequence   DIFFUSION_XX_id_seq;
+create table    DIFFUSION_XX as select * from DIFFUSION where 1=0;
+create sequence DIFFUSION_XX_id_seq;
+-- en réel, remplacer ci-dessous '_XX' par ''.
+
+
+create table S_ATTESTATION as select * from sodoct.ATTESTATION@doctprod;
+create table S_DIFFUSION as select * from sodoct.DIFFUSION@doctprod;
+
+
+-- ATTESTATION
+
+INSERT INTO ATTESTATION_XX (
+  ID,
+  THESE_ID,
+  VER_DEPO_EST_VER_REF,
+  EX_IMPR_CONFORM_VER_DEPO,
+  HISTO_CREATION,
+  HISTO_CREATEUR_ID,
+  HISTO_MODIFICATION,
+  HISTO_MODIFICATEUR_ID,
+  HISTO_DESTRUCTION,
+  HISTO_DESTRUCTEUR_ID
+)
+select
+  ID,
+  THESE_ID,
+  VER_DEPO_EST_VER_REF,
+  EX_IMPR_CONFORM_VER_DEPO,
+  HISTO_CREATION,
+  HISTO_CREATEUR_ID,
+  HISTO_MODIFICATION,
+  HISTO_MODIFICATEUR_ID,
+  HISTO_DESTRUCTION,
+  HISTO_DESTRUCTEUR_ID
+from oth.S_ATTESTATION
+;
+
+DECLARE
+  maxid NUMBER;
+  nextval NUMBER;
+BEGIN
+  select max(id) into maxid from ATTESTATION_XX;
+  loop
+    select ATTESTATION_XX_ID_SEQ.nextval into nextval from dual;
+    EXIT WHEN maxid < nextval;
+  end loop;
+END;
+/
+
+
+-- DIFFUSION
+
+INSERT INTO DIFFUSION_XX (
+  ID,
+  THESE_ID ,
+  AUTORIS_EMBARGO_DUREE,
+  AUTORIS_MEL,
+  AUTORIS_MOTIF,
+  CERTIF_CHARTE_DIFF,
+  CONFIDENT,
+  CONFIDENT_DATE_FIN,
+  ID_HAL,
+  DROIT_AUTEUR_OK,
+  HISTO_CREATEUR_ID,
+  HISTO_CREATION,
+  HISTO_DESTRUCTEUR_ID,
+  HISTO_DESTRUCTION,
+  HISTO_MODIFICATEUR_ID,
+  HISTO_MODIFICATION
+)
+select
+  ID,
+  THESE_ID,
+  AUTORIS_EMBARGO_DUREE,
+  AUTORIS_MEL,
+  AUTORIS_MOTIF,
+  CERTIF_CHARTE_DIFF,
+  CONFIDENT,
+  CONFIDENT_DATE_FIN,
+  ID_HAL,
+  DROIT_AUTEUR_OK,
+  HISTO_CREATEUR_ID,
+  HISTO_CREATION,
+  HISTO_DESTRUCTEUR_ID,
+  HISTO_DESTRUCTION,
+  HISTO_MODIFICATEUR_ID,
+  HISTO_MODIFICATION
+from oth.S_DIFFUSION
+;
+
+
+DECLARE
+  maxid NUMBER;
+  nextval NUMBER;
+BEGIN
+  select max(id) into maxid from DIFFUSION_XX;
+  loop
+    select DIFFUSION_XX_ID_SEQ.nextval into nextval from dual;
+    EXIT WHEN maxid < nextval;
+  end loop;
+END;
+/

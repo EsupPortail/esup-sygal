@@ -1,60 +1,64 @@
 
+create table S_ACTEUR as
+  select
+    r.source_code as role_source_code,
+    a.ID,
+    a.SOURCE_ID,
+    a.SOURCE_CODE,
+    a.HISTO_CREATION,
+    a.HISTO_CREATEUR_ID,
+    a.HISTO_MODIFICATION,
+    a.HISTO_MODIFICATEUR_ID,
+    a.HISTO_DESTRUCTION,
+    a.HISTO_DESTRUCTEUR_ID,
+    a.INDIVIDU_ID,
+    a.ROLE_ID,
+    a.THESE_ID,
+    a.LIB_ROLE_COMPL,
+    a.QUALITE,
+    a.ETABLISSEMENT
+  from sodoct.ACTEUR@doctprod a
+    join sodoct.USER_ROLE@doctprod r on r.id = a.role_id;
 
-/**
- * Génération des requêtes à partir de DOCTPROD :
- */
-/*
-SELECT
-  'insert into ACTEUR(' ||
-  'ID, ' ||
-  'ETABLISSEMENT_ID, ' ||
-  'INDIVIDU_ID, ' ||
-  'THESE_ID, ' ||
-  'ROLE_ID, ' ||
-  'ETABLISSEMENT, ' ||
-  'QUALITE, ' ||
-  'LIB_ROLE_COMPL, ' ||
-  'SOURCE_CODE, ' ||
-  'SOURCE_ID, ' ||
-  'HISTO_CREATEUR_ID, ' ||
-  'HISTO_CREATION, ' ||
-  'HISTO_MODIFICATEUR_ID, ' ||
-  'HISTO_MODIFICATION, ' ||
-  'HISTO_DESTRUCTEUR_ID, ' ||
-  'HISTO_DESTRUCTION) values (' ||
-  a.ID ||
-  ', (select id from etablissement where code = ''UCN'')' ||
-  ', ' || a.INDIVIDU_ID ||
-  ', ' || a.THESE_ID ||
-  ', (select id from role where source_code = ''UCN::' || r.SOURCE_CODE || ''')' ||
-  ', ''' || decode(a.ETABLISSEMENT,null,'NULL',a.ETABLISSEMENT) || '''' ||
-  ', ''' || decode(a.QUALITE,null,'NULL',QUALITE) || '''' ||
-  ', ''' || decode(a.LIB_ROLE_COMPL,null,'NULL',a.LIB_ROLE_COMPL) || '''' ||
-  ', ''UCN::' || a.SOURCE_CODE || '''' ||
-  ', ' || a.SOURCE_ID ||
-  ', ' || a.HISTO_CREATEUR_ID ||
-  ', ' || dmf(a.HISTO_CREATION) ||
-  ', ' || a.HISTO_MODIFICATEUR_ID ||
-  ', ' || dmf(a.HISTO_MODIFICATION) ||
-  ', ' || decode(a.HISTO_DESTRUCTEUR_ID,null,'NULL',a.HISTO_DESTRUCTEUR_ID) ||
-  ', ' || dmf(a.HISTO_DESTRUCTION) ||
-  ');' sql
-FROM ACTEUR a
-  join USER_ROLE r on r.ID = a.ROLE_ID
+
+-- ACTEUR
+
+insert into ACTEUR (
+  ID,
+  ETABLISSEMENT,
+  HISTO_CREATEUR_ID,
+  HISTO_CREATION,
+  HISTO_DESTRUCTEUR_ID,
+  HISTO_DESTRUCTION,
+  HISTO_MODIFICATEUR_ID,
+  HISTO_MODIFICATION,
+  INDIVIDU_ID,
+  LIB_ROLE_COMPL,
+  QUALITE,
+  ROLE_ID,
+  SOURCE_CODE,
+  SOURCE_ID,
+  THESE_ID
+)
+  select
+    ID,
+    ETABLISSEMENT,
+    HISTO_CREATEUR_ID,
+    HISTO_CREATION,
+    HISTO_DESTRUCTEUR_ID,
+    HISTO_DESTRUCTION,
+    HISTO_MODIFICATEUR_ID,
+    HISTO_MODIFICATION,
+    INDIVIDU_ID, -- NB: on a repris texto les id SODOCT des individus acteurs
+    LIB_ROLE_COMPL,
+    QUALITE,
+    (select id from ROLE where SOURCE_CODE = 'UCN::' || s.ROLE_SOURCE_CODE) as ROLE_ID,
+    'UCN::' || SOURCE_CODE,
+    (select id from source where code = 'UCN::apogee') as SOURCE_ID,
+    THESE_ID -- NB: on a repris texto les id SODOCT des theses
+  from oth.S_ACTEUR s
 ;
-*/
 
-
-/**
- * 2/ Exécution des requêtes générées :
- */
-
--- trop de lignes!
-
-
-/**
- * 3/ Avancement de la sequence.
- */
 
 DECLARE
   maxid NUMBER;
