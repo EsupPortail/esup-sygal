@@ -1,176 +1,50 @@
 <?php
 
+use Application\Entity\Db\Etablissement;
 use Application\Provider\Privilege\EcoleDoctoralePrivileges;
 use Application\View\Renderer\PhpRenderer;
-use UnicaenApp\Form\Element\SearchAndSelect;
-use Zend\Paginator\Paginator;
+
 
 /**
  * @var PhpRenderer $this
- * @var Paginator   $etablissements
+ * @var Etablissement[] $structuresPrincipales
+ * @var Etablissement[] $structuresSecondaires
  * @var string      $selected
  * @var array|null  $etablissementIndividus
  */
 
 $selectedEcole = null;
+
+
+$canModifier = true;
+$canSupprimer = true;
+$canSubstituer = true;
 ?>
 
 <?php $this->headTitle($this->translate("Établissements")) ?>
 
-<h1 class="page-header first"><?php echo $this->translate("Établissements") ?> <span
-        class="badge"><?php echo count($etablissements) ?></span></h1>
+<h1 class="page-header first">
+    <?php echo $this->translate("Établissements") ?>
+    <span class="badge"><?php echo count($structuresPrincipales) + count($structuresSecondaires); ?></span>
+</h1>
 
 <?php echo $this->messenger()->addCurrentMessagesFromFlashMessenger() ?>
 
-<table class="table table-condensed">
-    <thead>
-    <tr>
-        <th><?php echo $this->translate("Libellé") ?></th>
-        <th><?php echo $this->translate("Sigle") ?></th>
-        <th><?php echo $this->translate("Actions") ?></th>
-    </tr>
-    </thead>
-    <tbody>
-    <?php /** @var \Application\Entity\Db\Etablissement $etablissement */
-    foreach ($etablissements as $etablissement): ?>
-        <?php
-        $isSelected = $selected !== null && $etablissement->getId() === (int)$selected;
-        $selectedEtablissement = $isSelected ? $etablissement : $selectedEtablissement;
-        $trClass = $isSelected ? 'selected' : '';
-        $query = $isSelected ? [] : ['selected' => $etablissement->getId()];
-        ?>
-        <tr class="ecole-doctorale <?php echo $trClass ?>">
-            <td><a href="<?php echo $this->url(null, [], ['query' => $query], true) ?>"
-                   title="<?php echo $this->translate("Cliquez pour sélectionner cet établissement");?>" >
-                    <?php echo $this->etab($etablissement)->getLibelle() ?>
-                </a>
-            </td>
-            <td><?php echo $etablissement->getSigle() ?></td>
-            <td>
-                <?php if ($this->isAllowed(EcoleDoctoralePrivileges::getResourceId(EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION))): ?>
-                    <?php if ($etablissement->estNonHistorise()): ?>
-                        <?php $url = $this->url('etablissement/modifier', ['etablissement' => $etablissement->getId()], [], true) ?>
-                        <a href="<?php echo $url ?>" title="<?php echo $this->translate("Modifier l'établissement "); ?>'<?php echo $etablissement ?>'"
-                           class="modifier-ecole" data-etablissement="<?php echo $etablissement ?>">
-                            <span class="glyphicon glyphicon-pencil"></span>
-                        </a>
-                        <?php $url = $this->url('etablissement/supprimer', ['etablissement' => $etablissement->getId()], [], true) ?>
-                        <a href="<?php echo $url ?>" title="<?php echo $this->translate("Supprimer l'établissement ");?> '<?php echo $etablissement ?>'"
-                           class="supprimer-etablissement" data-etablissement="<?php echo $etablissement ?>">
-                            <span class="glyphicon glyphicon-trash"></span>
-                        </a>
-                    <?php else: ?>
-<!-- RESTAURATION POUR LES SOFT DELETE               -->
-                        <?php $url = $this->url('etablissement/restaurer', ['etablissement' => $etablissement->getId()], [], true) ?>
-                        <a href="<?php echo $url ?>" title="<?php echo $this->translate("Restaurer l'établissement");?> '<?php echo $etablissement ?>'"
-                           class="restaurer-etablissement" data-etablissement="<?php echo $etablissement ?>">
-                            <?php echo $this->translate("Restaurer");?>
-                        </a>
-                    <?php endif ?>
-                <?php endif ?>
-            </td>
-        </tr>
-        <?php if ($isSelected): ?>
-        <tr>
-            <td colspan="3" class="bg-info">
-            <?php $nbRoles = count($roles); ?>
+<h2>
+    Établissements de la COMUE
+    <span class="badge"><?php echo count($structuresPrincipales); ?></span>
+</h2>
 
-            <!-- AFFICHAGE DES ROLES POUR L'ETAB SELECTIONNÉ -->
-            <h2 class="first"><?php echo $this->translate("Rôles");?> <small><?php echo $selectedUnite ?></small></h2>                    <table class='table table-condensed'>
-                <tr>
-                    <th> <?php echo $this->translate("Libellé"); ?> </th>
-                    <th> <?php echo $this->translate("Effectifs"); ?> </th>
-                </tr>
-                <?php
-                for ($position = 0 ; $position < $nbRoles ; $position++) {
-                    echo "<tr><td>";
-                    echo  $roles[$position]->getLibelle();
-                    echo "</td><td>";
-                    echo  count($effectifs[$position]);
-                    echo "</td></tr>";
-                }
-                ?>
-            </table>
+<?php echo $this->structureArrayHelper()->generateTable($structuresPrincipales, $roles, $effectifs, $selected, $this); ?>
 
-            <!-- AFFICHAGE DES MEMBRES POUR L'ETAB SELECTIONNÉ -->
-            <h2 class="first"><?php echo $this->translate("Membres");?> <small><?php echo $selectedUnite ?></small></h2>
-            <table class="table table-condensed">
-                <tr>
-                    <th><?php echo $this->translate("Individu");?></th>
-                    <th><?php echo $this->translate("Rôle");?></th>
-                    <th><?php echo $this->translate("Actions");?></th>
-                </tr>
-                <?php
-                for ($position = 0 ; $position < $nbRoles ; $position++) {
-                    foreach ($effectifs[$position] as $individuRole) {
-                        echo "<tr><td>";
-                        echo $individuRole->getIndividu();
-                        echo "</td><td>";
-                        echo $individuRole->getRole();
-                        echo "</td><td>";
+<h2>
+    Établissements importés
+    <span class="badge"><?php echo count($structuresSecondaires); ?></span>
+</h2>
 
-                        if ($this->isAllowed(EcoleDoctoralePrivileges::getResourceId(EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION))) {
-                            $url = $this->url('etablissement/retirer-individu', ["etablissement" => $etablissement->getId(), 'etabi' => $individuRole->getId(),], [], true);
-                            echo "<a href='" . $url ."' "
-                                . "title='" . $this->translate("Retirer") ."' "
-                                . "class='retirer-individu'"
-                                . "data-individu='" . $individuRole->getIndividu() . "'>";
-                            echo "<span class='glyphicon glyphicon-trash'></span>";
-                            echo "</a>";
-                        }
-
-                        echo "</td></tr>";
-                    }
-                }
-                ?>
-            </table>
-
-            <!-- AFFICHAGE DU LOGO DE L'UR SELECTIONNÉE -->
-                <?php
-                $content = $etablissement->getLogoContent();
-                if ($content === null) {
-                    $etablissement->setCheminLogo(null);
-                }
-                ?>
-            <div id="logo-div" class="pull-right">
-                <img style="max-width: 200px; max-height: 200px; border: 1px solid black; background-color: white;"
-                    src="data:image/png;base64,<?php echo base64_encode($etablissement->getLogoContent()); ?>"
-                />
-            </div>
-
-            <!-- AJOUT DE MEMBRE -->
-            <?php if ($this->isAllowed(EcoleDoctoralePrivileges::getResourceId(EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION))): ?>
-                <div class="row">
-                    <div class="col-md-6">
-                        <?php $url = $this->url('etablissement/ajouter-individu', ['etablissement' => $selected], [], true) ?>
-                        <form method="post" action="<?php echo $url ?>">
-                            <?php
-
-                            $sas = new SearchAndSelect('individu');
-                            $sas->setLabel($this->translate("Recherche de l'individu à ajouter :"));
-                            $sas->setAttribute('class', 'individu-finder');
-                            $sas->setAutocompleteSource($this->url('utilisateur/rechercher-individu',[],[],true));
-                            echo $this->formcontrolgroup($sas, 'formSearchAndSelect');
-
-                            generateSelect("role", $roles);
-                            ?>
-                            <br/>
-                            <input type="submit"
-                                   value="<?php echo $this->translate("Ajouter cet individu");?>"
-                                   style="margin-top: 0;"
-                                   title="<?php echo $this->translate("Ajouter cet individu comme membre");?>"
-                                   class="btn btn-default btn-sm"/>
-                        </form>
-                    </div>
-                </div>
-            <?php endif ?>
+<?php echo $this->structureArrayHelper()->generateTable($structuresSecondaires, $roles, $effectifs, $selected, $this); ?>
 
 
-            </td></tr>
-        <?php endif ?>
-    <?php endforeach ?>
-    </tbody>
-</table>
 
 <?php if ($this->isAllowed(EcoleDoctoralePrivileges::getResourceId(EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION))): ?>
     <?php $url = $this->url('etablissement/ajouter', [], [], true) ?>
@@ -196,13 +70,3 @@ $selectedEcole = null;
 </script>
 
 
-<?php
-function generateSelect($id, $roles) {
-    echo "<select name='" .$id. "' class='form-control' >";
-    /** @var \Application\Entity\Db\Role $role */
-    foreach ($roles as $role) {
-        echo "<option value='". $role->getId() ."'>". $role->getLibelle() ."</option>";
-    }
-    echo "</select>";
-}
-?>

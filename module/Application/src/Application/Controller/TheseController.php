@@ -117,11 +117,23 @@ class TheseController extends AbstractController
 
         $text = $this->params()->fromQuery('text');
 
+        /**
+         * @var Etablissement[] $etablissements
+         * $etablissements stocke la liste des établissements qui seront utilisés pour le filtrage
+         * les critères sont les suivants:
+         * - être un établissement crée par sygal (et ne pas liste les établissements de co-tutelles)
+         * - ne pas être des établissements provenant de substitutions
+         * - ne pas être la COMUE ... suite à l'interrogation obtenue en réunion
+         */
+        $etablissements = $this->etablissementService->getEtablissementsBySource(SourceInterface::CODE_SYGAL);
+        $etablissements = array_filter($etablissements, function (Etablissement $etablissement) { return count($etablissement->getStructure()->getStructuresSubstituees())==0; });
+        $etablissements = array_filter($etablissements, function (Etablissement $etablissement) { return $etablissement->getSigle() != "NU";});
+
         return new ViewModel([
             'theses' => $paginator,
             'text'   => $text,
             'roleDirecteurThese' => $this->roleService->getRepository()->findOneBy(['sourceCode' => Role::CODE_DIRECTEUR_THESE]),
-            'etablissements' => $this->etablissementService->getEtablissementsBySource(SourceInterface::CODE_SYGAL),
+            'etablissements' => $etablissements,
             'filtreEtablissement' => $etablissement,
         ]);
     }
