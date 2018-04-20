@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "540410fa9cf1a78b23e70bcbef00ce98",
+    "content-hash": "657afd9d943d439fc67d519141ea0a61",
     "packages": [
         {
             "name": "bjyoungblood/bjy-authorize",
@@ -1807,11 +1807,11 @@
         },
         {
             "name": "unicaen/app",
-            "version": "dev-master",
+            "version": "1.3.12",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/app.git",
-                "reference": "e6527137d036ac0fe17dd438059a92c03e8f01eb"
+                "reference": "9d190ad9a42d8d95d22cd5d016d8bbf8dd1b696c"
             },
             "require": {
                 "doctrine/doctrine-orm-module": ">=0.7",
@@ -1854,7 +1854,7 @@
                 ]
             },
             "description": "Module de base des applications unicaen",
-            "time": "2018-04-19T12:48:40+00:00"
+            "time": "2018-04-20T09:34:49+00:00"
         },
         {
             "name": "unicaen/auth",
@@ -3778,12 +3778,6 @@
     ],
     "aliases": [
         {
-            "alias": "1.3.11",
-            "alias_normalized": "1.3.11.0",
-            "version": "9999999-dev",
-            "package": "unicaen/app"
-        },
-        {
             "alias": "1.2.6",
             "alias_normalized": "1.2.6.0",
             "version": "dev-usurpation",
@@ -3792,7 +3786,6 @@
     ],
     "minimum-stability": "stable",
     "stability-flags": {
-        "unicaen/app": 20,
         "unicaen/auth": 20,
         "bjyoungblood/bjy-authorize": 20
     },
