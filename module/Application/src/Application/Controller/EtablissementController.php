@@ -13,7 +13,7 @@ use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use UnicaenLdap\Service\LdapPeopleServiceAwareTrait;
 use Zend\View\Model\ViewModel;
-
+use Application\Entity\Db\SourceInterface;
 /**
  * Class EtablissementController
  */
@@ -80,13 +80,25 @@ class EtablissementController extends AbstractController
             $effectifs = [];
             foreach ($roles as $role) {
                 $individus = $this->individuService->getIndividuByRole($role);
-                $effectifs[] = $individus;
+                $effectifs[$role->getLibelle()] = $individus;
             }
         }
 
+        $etablissementsSYGAL = $this->etablissementService->getEtablissementsBySource(SourceInterface::CODE_SYGAL);
+        $etablissementsPrincipaux = array_filter($etablissementsSYGAL, function (Etablissement $etablissement) { return count($etablissement->getStructure()->getStructuresSubstituees())==0; });
+        $etablissementsSecondaires = array_diff($etablissements, $etablissementsPrincipaux);
+        $toRemove = [];
+        foreach($etablissements as $etablissement) {
+            foreach ($etablissement->getStructure()->getStructuresSubstituees() as $sub) {
+                $toRemove[] = $sub;
+            }
+        }
+        $etablissementsSecondaires = array_diff($etablissementsSecondaires, $toRemove);
+
         return new ViewModel([
-            'etablissements'          => $etablissements,
-            'selected'                => $selected,
+            'structuresPrincipales'          => $etablissementsPrincipaux,
+            'structuresSecondaires'          => $etablissementsSecondaires,
+            'selected'                       => $selected,
             'roles'                   => $roles,
             'effectifs'               => $effectifs,
         ]);

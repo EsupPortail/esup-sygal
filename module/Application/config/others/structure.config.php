@@ -11,6 +11,7 @@ use Application\View\Helper\EcoleDoctoraleHelper;
 use UnicaenAuth\Guard\PrivilegeController;
 use Application\Entity\Db\StructureConcreteInterface;
 use Application\View\Helper\StructureSubstitHelper;
+use Application\View\Helper\StructureArrayHelper;
 return [
     'bjyauthorize'    => [
 //        'guards' => [
@@ -161,6 +162,7 @@ return [
     'view_helpers' => [
         'invokables' => array(
             'structureSubstitHelper' => StructureSubstitHelper::class,
+            'structureArrayHelper' => StructureArrayHelper::class,
         ),
         'factories' => [],
     ],
