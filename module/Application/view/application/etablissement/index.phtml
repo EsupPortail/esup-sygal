@@ -2,6 +2,7 @@
 
 use Application\Entity\Db\Etablissement;
 use Application\Provider\Privilege\EcoleDoctoralePrivileges;
+use Application\Provider\Privilege\EtablissementPrivileges;
 use Application\View\Renderer\PhpRenderer;
 
 /**
@@ -38,7 +39,7 @@ use Application\View\Renderer\PhpRenderer;
 </div>
 
 
-<?php if ($this->isAllowed(EcoleDoctoralePrivileges::getResourceId(EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION))): ?>
+<?php if ($this->isAllowed(EtablissementPrivileges::getResourceId(EtablissementPrivileges::ETABLISSEMENT_MODIFICATION))): ?>
     <?php $url = $this->url('etablissement/ajouter', [], [], true) ?>
     <a class="btn btn-default btn-sm" href="<?php echo $url ?>"
        title="<?php echo $this->translate("Créer un nouvel établissement");?>">
