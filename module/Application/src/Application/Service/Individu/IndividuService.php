@@ -7,6 +7,7 @@ use Application\Entity\Db\Individu;
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Repository\IndividuRepository;
 use Application\Entity\Db\Role;
+use Application\Entity\Db\SourceInterface;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\UserWrapper;
 use Application\Service\BaseService;
@@ -121,7 +122,7 @@ class IndividuService extends BaseService
      */
     public function createFromForm(Individu $individu, Utilisateur $utilisateur)
     {
-        $source = $this->getEntityManager()->getRepository(Source::class)->findOneBy(["code" => 'COMUE::SYGAL']);
+        $source = $this->getEntityManager()->getRepository(Source::class)->findOneBy(["code" => SourceInterface::CODE_SYGAL]);
         $user = $this->getEntityManager()->getRepository(Utilisateur::class)->findOneBy(["username" => 'sygal-app']);
         $individu->setSource($source); //COMUE::SyGAL
         $individu->setHistoCreateur($user); //sygal-app

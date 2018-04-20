@@ -1,0 +1,100 @@
+<?php
+
+namespace Application;
+
+use Application\Entity\Db\Structure;
+use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\StructureConcreteInterface;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var Structure $cible
+ * @var StructureConcreteInterface[] $structuresConcretesSubstituees
+ * @var StructureConcreteInterface[] $structuresConcretes
+  */
+?>
+
+<?php $this->headTitle($this->translate("Substitution d'établissements")) ?>
+
+
+<h1 class="page-header first">
+    <?php echo $this->translate("Substitution d'établissements"); ?>
+<!--    <span class="badge">--><?php //echo $nouvelEtablissement->getSigle(); ?><!--</span>-->
+</h1>
+
+<?php echo generateSelect($structuresConcretes, $this); ?>
+<button name="ajouter" class="btn btn-success"> <span class='glyphicon glyphicon-plus'></span> Ajouter </button>
+
+<form action="" method="POST">
+    <input type="submit" class="btn btn-primary" value="Enregistrer"/>
+
+<div>
+<div id="sources" class="col-md-6">
+    <?php
+        foreach($structuresConcretesSubstituees as $source) {
+            echo $this->structureSubstitHelper()->structureSource($source);
+        }
+    ?>
+</div>
+<div id="cible" class="col-md-6">
+    <?php
+        echo $this->structureSubstitHelper()->structureCible($cible);
+    ?>
+</div>
+</div>
+</form>
+<?php
+
+/**
+ * @param $structuresConcretes
+ * @param \Zend\View\Renderer\PhpRenderer $renderer
+ * @return string
+ */
+function generateSelect($structuresConcretes, \Zend\View\Renderer\PhpRenderer $renderer) {
+    $texte  = "";
+    $texte .= "<select name='nouveau'>";
+    foreach ($structuresConcretes as $structuresConcrete) {
+        $url = $renderer->url('substitution-generer', ['id' => $structuresConcrete->getStructure()->getId()]);
+        $texte .= "<option value='".$url."'>".$structuresConcrete->getLibelle() ."</option>";
+    }
+    $texte .= "</select>";
+    return $texte;
+
+}
+?>
+
+
+<style>
+    div.etablissement {
+        margin: 5px;
+        padding: 5px;
+        border: 2px gray solid;
+        border-radius: 5px;
+        height: 150px;
+    }
+</style>
+
+<script>
+    $(document).ready(function() {
+
+        //remplacement dans la structure cible
+        $("div#sources").on("click", "input[type='radio']", function () {
+            var type = $(this).attr('name');
+            var texte = ($(this).parent().find(".texte").text());
+            $('input#' + type).val(texte);
+        })
+        //suppression d'une structure
+        .on("click", "button.supprimer", function () {
+                $(this).parent().remove();
+        });
+
+        //ajout d'une structure
+        $("button[name='ajouter']").click(function() {
+            var url = $("select[name='nouveau']").val();
+            $.get(url, function (data) {
+                $("div#sources").append(data);
+            });
+        });
+    });
+</script>

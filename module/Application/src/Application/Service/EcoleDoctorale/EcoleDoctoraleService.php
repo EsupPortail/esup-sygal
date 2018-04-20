@@ -36,6 +36,7 @@ class EcoleDoctoraleService extends BaseService implements RoleServiceAwareInter
     public function getEcolesDoctorales() {
         /** @var EcoleDoctorale[] $ecoles */
         $ecoles = $this->getRepository()->findAll();
+        usort($ecoles, function ($a,$b) {return $a->getLibelle() > $b->getLibelle();});
         return $ecoles;
     }
 

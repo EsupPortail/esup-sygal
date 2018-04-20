@@ -36,6 +36,7 @@ class UniteRechercheService extends BaseService implements RoleServiceAwareInter
     public function getUnitesRecherches() {
         /** @var UniteRecherche[] $unites */
         $unites = $this->getRepository()->findAll();
+        usort($unites, function ($a,$b) {return $a->getLibelle() > $b->getLibelle();});
         return $unites;
     }
 

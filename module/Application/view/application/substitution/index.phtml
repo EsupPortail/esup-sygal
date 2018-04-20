@@ -1,0 +1,118 @@
+<?php
+
+use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\EcoleDoctorale;
+use Application\Entity\Db\UniteRecherche;
+use Application\Entity\Db\TypeStructure;
+use Application\Entity\Db\Structure;
+use Application\Entity\Db\StructureConcreteInterface;
+
+/**
+ * @var Etablissement[] $etablissementsSubstitues
+ * @var EcoleDoctorale[] $ecolesSubstituees
+ * @var UniteRecherche[] $unitesSubstituees
+ */
+?>
+
+<?php $this->headTitle($this->translate("Substitution de structures")) ?>
+
+
+<h1 class="page-header first">
+    <?php echo $this->translate("Substitution  de structures"); ?>
+        <span class="badge"><?php echo count($etablissementsSubstitues) + count($ecolesSubstituees) + count($unitesSubstituees); ?></span>
+</h1>
+
+<div class="box panel panel-info" >
+    <div class="panel-heading">
+        <h2 class="first"> Établissements </h2>
+    </div>
+
+    <div class="panel-body">
+
+    <p>
+    <a href="<?php echo $this->url('substitution-creer', ['type' => TypeStructure::CODE_ETABLISSEMENT], [], true);?>" title="Création d'un nouvel établissement de substitution">
+    <button class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Créer une substitution </button>
+    </a>
+    </p>
+
+    <p>
+        <?php echo generateInfos($etablissementsSubstitues, "établissement", "établissements", $this); ?>
+    </p>
+    </div>
+</div>
+
+<div class="box panel panel-info" >
+    <div class="panel-heading">
+        <h2 class="first"> Écoles doctorales </h2>
+    </div>
+    <div class="panel-body">
+
+    <p>
+        <a href="<?php echo $this->url('substitution-creer', ['type' => TypeStructure::CODE_ECOLE_DOCTORALE], [], true);?>" title="Création d'un nouvel établissement de substitution">
+            <button class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Créer une substitution </button>
+        </a>
+    </p>
+
+    <p>
+        <?php echo generateInfos($ecolesSubstituees, "école doctorale", "écoles doctorales", $this); ?>
+    </p>
+    </div>
+</div>
+
+<div class="box panel panel-info" >
+    <div class="panel-heading">
+        <h2 class="first"> Unités de recherche </h2>
+    </div>
+    <div class="panel-body">
+
+
+    <p>
+        <a href="<?php echo $this->url('substitution-creer', ['type' => TypeStructure::CODE_UNITE_RECHERCHE], [], true);?>" title="Création d'un nouvel établissement de substitution">
+            <button class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Créer une structure de substitution </button>
+        </a>
+    </p>
+
+    <p>
+        <?php echo generateInfos($unitesSubstituees, "unité de recherche", "unités de recherche", $this); ?>
+    </p>
+    </div>
+</div>
+
+<?php
+    function generateInfos($structuresSubstituees, $singulier, $pluriel, $view) {
+
+        $texte  = '';
+        $count = count($structuresSubstituees);
+        if ($count > 1) {
+            $texte .= count($structuresSubstituees) . " " . $pluriel . ".";
+        } else {
+            $texte .= count($structuresSubstituees) . " " . $singulier . ".";
+        }
+        if ($count > 0) {
+            $texte .= '<table class="table table-bordered">';
+            $texte .= '<thead>';
+            $texte .= '<tr>';
+            $texte .= '    <th> Libellé </th>';
+            $texte .= '    <th> #Structures </th>';
+            $texte .= '    <th> Actions </th>';
+            $texte .= '</tr>';
+            $texte .= '</thead>';
+            $texte .= '<tbody>';
+            foreach ($structuresSubstituees as $structureSubstituee) {
+                /** @var StructureConcreteInterface $structureSubstituee */
+                $texte .= '<tr>';
+                $texte .= '    <td>' . $structureSubstituee->getLibelle() . '</td>';
+                $texte .= '    <td>' . count($structureSubstituee->getStructure()->getStructuresSubstituees()) . '</td>';
+                $texte .= '    <td style="text-align:center;">';
+                $texte .= '      <a href="' . $view->url('substitution-modifier', ['cible' => $structureSubstituee->getStructure()->getId()], [], true) . '"><span class="glyphicon glyphicon-pencil"></span></a>';
+                $texte .= "&nbsp;";
+                $texte .= '      <a href="' . $view->url('substitution-detruire', ['cible' => $structureSubstituee->getStructure()->getId()], [], true) . '"><span class="glyphicon glyphicon-remove"></span></a>';
+                $texte .= '    </td>';
+                $texte .= '</tr>';
+            }
+            $texte .= '</tbody>';
+            $texte .= '</table>';
+        }
+        return $texte;
+    }
+

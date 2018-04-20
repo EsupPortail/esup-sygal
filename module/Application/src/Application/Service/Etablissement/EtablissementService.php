@@ -4,8 +4,10 @@ namespace Application\Service\Etablissement;
 
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Repository\EtablissementRepository;
+use Application\Entity\Db\SourceInterface;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\BaseService;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\RuntimeException;
 
@@ -27,19 +29,26 @@ class EtablissementService extends BaseService
      */
     public function getEtablissements() {
         /** @var Etablissement[] $etablissments */
-        $etablissments = $this->getRepository()->findAll();
-        return $etablissments;
+        $etablissements = $this->getRepository()->findAll();
+        usort($etablissements, function ($a,$b) {return $a->getLibelle() > $b->getLibelle();});
+        return $etablissements;
     }
 
     /**
      * @param string source
+     * @param boolean $include (si 'true' alors seulement la source sinon tous sauf la source)
      * @return Etablissement[]
      */
-    public function getEtablissementsBySource($source) {
+    public function getEtablissementsBySource($source , $include=true) {
         $qb = $this->entityManager->getRepository(Etablissement::class)->createQueryBuilder("e")
-            ->join("e.source", "s")
-            ->andWhere("s.code = :source")
-            ->setParameter("source", $source);
+            ->join("e.source", "s");
+
+        if ($include) {
+            $qb = $qb->andWhere("s.code = :source");
+        } else {
+            $qb = $qb->andWhere("s.code != :source");
+        }
+        $qb = $qb->setParameter("source", $source);
 
         /** @var Etablissement[] $etablissments */
         $etablissments = $qb->getQuery()->execute();
@@ -137,4 +146,33 @@ class EtablissementService extends BaseService
         }
     }
 
+    public function findEtablissementByStructureId($structureId)
+    {
+        $qb = $this->getRepository()->createQueryBuilder("e")
+            ->addSelect("s")
+            ->join("e.structure", "s")
+            ->andWhere("s.id = :structureId")
+            ->setParameter("structureId", $structureId);
+        try {
+            $etablissement = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Anomalie plusieurs établissements avec le même id.", 0, $e);
+        }
+        return $etablissement;
+    }
+
+    public function findEtablissementsNonSubstitues()
+    {
+        $qb = $this->getRepository()->createQueryBuilder("e")
+            ->join("e.structure", "s")
+            ->join("e.source", "src")
+            ->leftJoin("s.structuresSubstituees", "ss")
+            ->andWhere("s.structuresSubstituees IS EMPTY")
+            ->andWhere("src.code != :code")
+            ->orderBy("s.libelle")
+            ->setParameter("code", SourceInterface::CODE_SYGAL)
+        ;
+
+        return $qb->getQuery()->getResult();
+    }
 }

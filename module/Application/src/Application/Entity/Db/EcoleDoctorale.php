@@ -11,7 +11,7 @@ use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
 /**
  * EcoleDoctorale
  */
-class EcoleDoctorale implements HistoriqueAwareInterface, SourceAwareInterface
+class EcoleDoctorale implements StructureConcreteInterface, HistoriqueAwareInterface, SourceAwareInterface
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
