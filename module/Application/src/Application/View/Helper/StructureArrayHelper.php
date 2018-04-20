@@ -89,6 +89,9 @@ class StructureArrayHelper extends AbstractHelper
      */
     function generateSelectedStructure($structure, $roles, $effectifs, $view)
     {
+        //TODO adapter au type de structure concrete
+        $canModifier = $view->isAllowed(EcoleDoctoralePrivileges::getResourceId(EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION));
+
         $texte = '';
         $texte .= '    <tr class="ecole-doctorale selected">';
         $texte .= $this->generateLibelleCell($structure, $view);
@@ -100,7 +103,7 @@ class StructureArrayHelper extends AbstractHelper
         $texte .= $this->generateRoleSection($roles, $effectifs, $view);
         $texte .= $this->generateMembreSection($structure, $roles, $effectifs, $view);
         $texte .= $this->generateLogo($structure);
-        $texte .= $this->generateAjoutMembre($structure, $roles, $view);
+        if ($canModifier) $texte .= $this->generateAjoutMembre($structure, $roles, $view);
         $texte .= '    </td>';
         $texte .= '    </tr>';
 
@@ -147,6 +150,11 @@ class StructureArrayHelper extends AbstractHelper
     {
         $nombreSousStructure = count($structure->getStructure()->getStructuresSubstituees());
 
+        //TODO adapter au type de structure concrete
+        $canModifier = $view->isAllowed(EcoleDoctoralePrivileges::getResourceId(EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION));
+        $canSupprimer = $view->isAllowed(EcoleDoctoralePrivileges::getResourceId(EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION));
+        $canSubstituer = $view->isAllowed(EcoleDoctoralePrivileges::getResourceId(EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION));
+
         $urlModifier = $view->url('etablissement/modifier', ['etablissement' => $structure->getId()], [], true);
         $urlSupprimer = $view->url('etablissement/supprimer', ['etablissement' => $structure->getId()], [], true);
         $urlRestaurer = $view->url('etablissement/restaurer', ['etablissement' => $structure->getId()], [], true);
@@ -155,13 +163,15 @@ class StructureArrayHelper extends AbstractHelper
         $texte = '';
         $texte .= '         <td>';
         if ($structure->estNonHistorise()) {
-            $texte .= '             <a href="' . $urlModifier . '"><span class="glyphicon glyphicon-pencil"></span></a>';
-            $texte .= '             <a href="' . $urlSupprimer . '"><span class="glyphicon glyphicon-trash"></span></a>';
+            if ($canModifier)   $texte .= '             <a href="' . $urlModifier . '"><span class="glyphicon glyphicon-pencil"></span></a>';
+            if ($canSupprimer)  $texte .= '             <a href="' . $urlSupprimer . '"><span class="glyphicon glyphicon-trash"></span></a>';
             if ($nombreSousStructure > 0) {
-                $texte .= '                 <a href="' . $urlSubstituer . '"><span class="badge">' . $nombreSousStructure . '</span></a>';
+                if ($canSubstituer)  $texte .= '                 <a href="' . $urlSubstituer . '">';
+                $texte .= '<span class="badge">' .$nombreSousStructure. '</span>';
+                if ($canSubstituer)  $texte .= '</a>';
             }
         } else {
-            $texte .= '             <a href="' . $urlRestaurer . '"> Restaurer </a>';
+            if ($canSupprimer)   $texte .= '             <a href="' . $urlRestaurer . '"> Restaurer </a>';
         }
         $texte .= '         </td>';
         return $texte;
@@ -222,7 +232,8 @@ class StructureArrayHelper extends AbstractHelper
      */
     function generateMembreSection($structure, $roles, $effectifs, $view)
     {
-        $canModifierMembre = EcoleDoctoralePrivileges::getResourceId(EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION);
+        //TODO adapter au type de structure concrete
+        $canModifier = $view->isAllowed(EcoleDoctoralePrivileges::getResourceId(EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION));
 
         $membres = [];
         foreach ($effectifs as $effectif) {
@@ -250,7 +261,7 @@ class StructureArrayHelper extends AbstractHelper
                 $texte .= '             <td>' . $individuRole->getIndividu()->getNomComplet(false, false, false) . '</td>';
                 $texte .= '             <td>' . $role->getLibelle() . '</td>';
                 $texte .= '             <td>';
-                if ($canModifierMembre) {
+                if ($canModifier) {
                     $urlRetirer = $view->url('etablissement/retirer-individu', ["etablissement" => $structure->getId(), 'etabi' => $individuRole->getId(),], [], true);
                     $texte .= '                <a href="' . $urlRetirer . '">';
                     $texte .= '                <span class="glyphicon glyphicon-trash"></span>';
