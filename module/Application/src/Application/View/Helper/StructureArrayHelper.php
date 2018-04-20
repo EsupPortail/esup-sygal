@@ -6,6 +6,7 @@ use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\StructureConcreteInterface;
 use Application\Provider\Privilege\EcoleDoctoralePrivileges;
+use Application\Provider\Privilege\EtablissementPrivileges;
 use Application\View\Renderer\PhpRenderer;
 use UnicaenApp\Form\Element\SearchAndSelect;
 
@@ -89,6 +90,9 @@ class StructureArrayHelper extends AbstractHelper
      */
     function generateSelectedStructure($structure, $roles, $effectifs, $view)
     {
+        //TODO adapter au type de structure concrete
+        $canModifier = $view->isAllowed(EtablissementPrivileges::getResourceId(EtablissementPrivileges::ETABLISSEMENT_MODIFICATION));
+
         $texte = '';
         $texte .= '    <tr class="ecole-doctorale selected">';
         $texte .= $this->generateLibelleCell($structure, $view);
@@ -100,7 +104,7 @@ class StructureArrayHelper extends AbstractHelper
         $texte .= $this->generateRoleSection($roles, $effectifs, $view);
         $texte .= $this->generateMembreSection($structure, $roles, $effectifs, $view);
         $texte .= $this->generateLogo($structure);
-        $texte .= $this->generateAjoutMembre($structure, $roles, $view);
+        if ($canModifier) $texte .= $this->generateAjoutMembre($structure, $roles, $view);
         $texte .= '    </td>';
         $texte .= '    </tr>';
 
@@ -147,6 +151,11 @@ class StructureArrayHelper extends AbstractHelper
     {
         $nombreSousStructure = count($structure->getStructure()->getStructuresSubstituees());
 
+        //TODO adapter au type de structure concrete
+        $canModifier = $view->isAllowed(EtablissementPrivileges::getResourceId(EtablissementPrivileges::ETABLISSEMENT_MODIFICATION));
+        $canSupprimer = $view->isAllowed(EtablissementPrivileges::getResourceId(EtablissementPrivileges::ETABLISSEMENT_MODIFICATION));
+        $canSubstituer = $view->isAllowed(EtablissementPrivileges::getResourceId(EtablissementPrivileges::ETABLISSEMENT_MODIFICATION));
+
         $urlModifier = $view->url('etablissement/modifier', ['etablissement' => $structure->getId()], [], true);
         $urlSupprimer = $view->url('etablissement/supprimer', ['etablissement' => $structure->getId()], [], true);
         $urlRestaurer = $view->url('etablissement/restaurer', ['etablissement' => $structure->getId()], [], true);
@@ -155,13 +164,15 @@ class StructureArrayHelper extends AbstractHelper
         $texte = '';
         $texte .= '         <td>';
         if ($structure->estNonHistorise()) {
-            $texte .= '             <a href="' . $urlModifier . '"><span class="glyphicon glyphicon-pencil"></span></a>';
-            $texte .= '             <a href="' . $urlSupprimer . '"><span class="glyphicon glyphicon-trash"></span></a>';
+            if ($canModifier)   $texte .= '             <a href="' . $urlModifier . '"><span class="glyphicon glyphicon-pencil"></span></a>';
+            if ($canSupprimer)  $texte .= '             <a href="' . $urlSupprimer . '"><span class="glyphicon glyphicon-trash"></span></a>';
             if ($nombreSousStructure > 0) {
-                $texte .= '                 <a href="' . $urlSubstituer . '"><span class="badge">' . $nombreSousStructure . '</span></a>';
+                if ($canSubstituer)  $texte .= '                 <a href="' . $urlSubstituer . '">';
+                $texte .= '<span class="badge">' .$nombreSousStructure. '</span>';
+                if ($canSubstituer)  $texte .= '</a>';
             }
         } else {
-            $texte .= '             <a href="' . $urlRestaurer . '"> Restaurer </a>';
+            if ($canSupprimer)   $texte .= '             <a href="' . $urlRestaurer . '"> Restaurer </a>';
         }
         $texte .= '         </td>';
         return $texte;
@@ -222,7 +233,8 @@ class StructureArrayHelper extends AbstractHelper
      */
     function generateMembreSection($structure, $roles, $effectifs, $view)
     {
-        $canModifierMembre = EcoleDoctoralePrivileges::getResourceId(EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION);
+        //TODO adapter au type de structure concrete
+        $canModifier = $view->isAllowed(EtablissementPrivileges::getResourceId(EtablissementPrivileges::ETABLISSEMENT_MODIFICATION));
 
         $membres = [];
         foreach ($effectifs as $effectif) {
@@ -250,7 +262,7 @@ class StructureArrayHelper extends AbstractHelper
                 $texte .= '             <td>' . $individuRole->getIndividu()->getNomComplet(false, false, false) . '</td>';
                 $texte .= '             <td>' . $role->getLibelle() . '</td>';
                 $texte .= '             <td>';
-                if ($canModifierMembre) {
+                if ($canModifier) {
                     $urlRetirer = $view->url('etablissement/retirer-individu', ["etablissement" => $structure->getId(), 'etabi' => $individuRole->getId(),], [], true);
                     $texte .= '                <a href="' . $urlRetirer . '">';
                     $texte .= '                <span class="glyphicon glyphicon-trash"></span>';
@@ -273,28 +285,25 @@ class StructureArrayHelper extends AbstractHelper
      */
     function generateAjoutMembre($structure, $roles, $view)
     {
-        $canModifierMembre = EcoleDoctoralePrivileges::getResourceId(EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION);
-
         $texte = '';
-        if ($canModifierMembre) {
-            $texte .= '<div class="row">';
-            $texte .= '<div class="col-md-6">';
-            $urlAjouter = $view->url('etablissement/ajouter-individu', ['etablissement' => $structure->getId()], [], true);
-            $texte .= '<form method="post" action="' . $urlAjouter . '">';
+        $texte .= '<div class="row">';
+        $texte .= '<div class="col-md-6">';
+        $urlAjouter = $view->url('etablissement/ajouter-individu', ['etablissement' => $structure->getId()], [], true);
+        $texte .= '<form method="post" action="' . $urlAjouter . '">';
 
 
-            $sas = new SearchAndSelect('individu');
-            $sas->setLabel($view->translate("Recherche de l'individu à ajouter :"));
-            $sas->setAttribute('class', 'individu-finder');
-            $sas->setAutocompleteSource($view->url('utilisateur/rechercher-individu', [], [], true));
-            $texte .= $view->formcontrolgroup($sas, 'formSearchAndSelect');
-            $texte .= $this->generateSelect("role", $roles);
-            $texte .= '<br/>';
-            $texte .= '<input type="submit" value="' . $view->translate("Ajouter cet individu") . '" style="margin-top: 0;" title="' . $view->translate("Ajouter cet individu comme membre") . '" class="btn btn-default btn-sm" />';
-            $texte .= '</form>';
-            $texte .= '</div>';
-            $texte .= '</div>';
-        }
+        $sas = new SearchAndSelect('individu');
+        $sas->setLabel($view->translate("Recherche de l'individu à ajouter :"));
+        $sas->setAttribute('class', 'individu-finder');
+        $sas->setAutocompleteSource($view->url('utilisateur/rechercher-individu', [], [], true));
+        $texte .= $view->formcontrolgroup($sas, 'formSearchAndSelect');
+        $texte .= $this->generateSelect("role", $roles);
+        $texte .= '<br/>';
+        $texte .= '<input type="submit" value="' . $view->translate("Ajouter cet individu") . '" style="margin-top: 0;" title="' . $view->translate("Ajouter cet individu comme membre") . '" class="btn btn-default btn-sm" />';
+        $texte .= '</form>';
+        $texte .= '</div>';
+        $texte .= '</div>';
+
         return $texte;
     }
 

@@ -2,8 +2,8 @@
 
 use Application\Entity\Db\Etablissement;
 use Application\Provider\Privilege\EcoleDoctoralePrivileges;
+use Application\Provider\Privilege\EtablissementPrivileges;
 use Application\View\Renderer\PhpRenderer;
-
 
 /**
  * @var PhpRenderer $this
@@ -12,13 +12,6 @@ use Application\View\Renderer\PhpRenderer;
  * @var string      $selected
  * @var array|null  $etablissementIndividus
  */
-
-$selectedEcole = null;
-
-
-$canModifier = true;
-$canSupprimer = true;
-$canSubstituer = true;
 ?>
 
 <?php $this->headTitle($this->translate("Établissements")) ?>
@@ -27,26 +20,26 @@ $canSubstituer = true;
     <?php echo $this->translate("Établissements") ?>
     <span class="badge"><?php echo count($structuresPrincipales) + count($structuresSecondaires); ?></span>
 </h1>
-
 <?php echo $this->messenger()->addCurrentMessagesFromFlashMessenger() ?>
 
+<div>
 <h2>
     Établissements de la COMUE
     <span class="badge"><?php echo count($structuresPrincipales); ?></span>
 </h2>
-
 <?php echo $this->structureArrayHelper()->generateTable($structuresPrincipales, $roles, $effectifs, $selected, $this); ?>
+</div>
 
+<div>
 <h2>
     Établissements importés
     <span class="badge"><?php echo count($structuresSecondaires); ?></span>
 </h2>
-
 <?php echo $this->structureArrayHelper()->generateTable($structuresSecondaires, $roles, $effectifs, $selected, $this); ?>
+</div>
 
 
-
-<?php if ($this->isAllowed(EcoleDoctoralePrivileges::getResourceId(EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION))): ?>
+<?php if ($this->isAllowed(EtablissementPrivileges::getResourceId(EtablissementPrivileges::ETABLISSEMENT_MODIFICATION))): ?>
     <?php $url = $this->url('etablissement/ajouter', [], [], true) ?>
     <a class="btn btn-default btn-sm" href="<?php echo $url ?>"
        title="<?php echo $this->translate("Créer un nouvel établissement");?>">
