@@ -10,7 +10,7 @@ return [
     'unicaen-auth' => [
         // Identifiants de connexion LDAP autorisés à faire de l'usurpation d'identité.
         // NB: à réserver exclusivement aux tests.
-        'usurpation_allowed_usernames' => ['gauthierb', 'bernardb'],
+        'usurpation_allowed_usernames' => [],
 
         // Flag indiquant si l'utilisateur authenitifié avec succès via l'annuaire LDAP doit
         // être enregistré/mis à jour dans la table des utilisateurs de l'appli.

@@ -2,6 +2,7 @@
 
 namespace Application\Entity\Db;
 
+use Application\Filter\EtablissementPrefixFilter;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenImport\Entity\Db\Interfaces\SourceAwareInterface;
@@ -15,8 +16,6 @@ class Etablissement implements HistoriqueAwareInterface, SourceAwareInterface
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
-
-    const ETAB_PREFIX_SEP = '::';
 
     const CODE_COMUE = 'COMUE';
 
@@ -40,7 +39,9 @@ class Etablissement implements HistoriqueAwareInterface, SourceAwareInterface
      */
     public function prependPrefixTo($string)
     {
-        return $this->getCode() . self::ETAB_PREFIX_SEP . $string;
+        $filter = new EtablissementPrefixFilter();
+
+        return $filter->addPrefixTo($string, $this);
     }
 
     /**
@@ -51,10 +52,9 @@ class Etablissement implements HistoriqueAwareInterface, SourceAwareInterface
      */
     public function removePrefixFrom($string)
     {
-        return substr(
-            $string,
-            stripos($string, self::ETAB_PREFIX_SEP) + strlen(self::ETAB_PREFIX_SEP)
-        );
+        $filter = new EtablissementPrefixFilter();
+
+        return $filter->removePrefixFrom($string);
     }
 
     /**

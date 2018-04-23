@@ -13,6 +13,7 @@ use Application\Entity\Db\RolePrivilegeModele;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
 use Application\Entity\Db\Utilisateur;
+use Application\Filter\EtablissementPrefixFilter;
 use Application\Service\BaseService;
 use Application\Entity\Db\Structure;
 use Doctrine\ORM\Query\Expr\Join;
@@ -64,11 +65,15 @@ class RoleService extends BaseService
     public function getIndividuRolesByIndividuSourceCode($individuSourceCode)
     {
         $repo = $this->entityManager->getRepository(IndividuRole::class);
+
+        $filter = new EtablissementPrefixFilter();
+        $pattern = $filter->addSearchPatternPrefix($individuSourceCode);
+
         $qb = $repo->createQueryBuilder("ro")
             ->addSelect('i, r')
             ->join('ro.individu', 'i', Join::WITH, "i.sourceCode LIKE :pattern")
             ->join('ro.role', 'r')
-            ->setParameter('pattern', '%' . Etablissement::ETAB_PREFIX_SEP . $individuSourceCode);
+            ->setParameter('pattern', $pattern);
         return $qb->getQuery()->execute();
     }
 

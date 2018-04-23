@@ -16,9 +16,33 @@ class Utilisateur extends AbstractUser implements UserInterface, ProviderInterfa
     const APP_UTILISATEUR_USERNAME = 'sygal-app';
 
     /**
+     * @var Individu
+     */
+    protected $individu;
+
+    /**
      * @var Role
      */
     protected $lastRole;
+
+    /**
+     * @return Individu
+     */
+    public function getIndividu()
+    {
+        return $this->individu;
+    }
+
+    /**
+     * @param Individu $individu
+     * @return self
+     */
+    public function setIndividu(Individu $individu = null)
+    {
+        $this->individu = $individu;
+
+        return $this;
+    }
 
     /**
      * @return Role|null

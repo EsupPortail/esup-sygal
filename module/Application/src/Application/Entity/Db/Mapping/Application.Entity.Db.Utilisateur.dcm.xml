@@ -12,6 +12,12 @@
     <field name="email" type="string" column="EMAIL" length="255" nullable="true"/>
     <field name="state" type="integer" column="STATE" nullable="false"/>
 
+    <many-to-one field="individu" target-entity="Application\Entity\Db\Individu">
+      <join-columns>
+        <join-column name="INDIVIDU_ID" referenced-column-name="ID"/>
+      </join-columns>
+    </many-to-one>
+
     <many-to-one field="lastRole" target-entity="Application\Entity\Db\Role">
       <join-columns>
         <join-column name="LAST_ROLE_ID" referenced-column-name="ID"/>
