@@ -7,6 +7,7 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\StructureConcreteInterface;
 use Application\Provider\Privilege\EcoleDoctoralePrivileges;
 use Application\Provider\Privilege\EtablissementPrivileges;
+use Application\Provider\Privilege\UniteRecherchePrivileges;
 use Application\View\Renderer\PhpRenderer;
 use UnicaenApp\Form\Element\SearchAndSelect;
 
@@ -151,14 +152,34 @@ class StructureArrayHelper extends AbstractHelper
     {
         $nombreSousStructure = count($structure->getStructure()->getStructuresSubstituees());
 
-        //TODO adapter au type de structure concrete
-        $canModifier = $view->isAllowed(EtablissementPrivileges::getResourceId(EtablissementPrivileges::ETABLISSEMENT_MODIFICATION));
-        $canSupprimer = $view->isAllowed(EtablissementPrivileges::getResourceId(EtablissementPrivileges::ETABLISSEMENT_MODIFICATION));
-        $canSubstituer = $view->isAllowed(EtablissementPrivileges::getResourceId(EtablissementPrivileges::ETABLISSEMENT_MODIFICATION));
 
-        $urlModifier = $view->url('etablissement/modifier', ['etablissement' => $structure->getId()], [], true);
-        $urlSupprimer = $view->url('etablissement/supprimer', ['etablissement' => $structure->getId()], [], true);
-        $urlRestaurer = $view->url('etablissement/restaurer', ['etablissement' => $structure->getId()], [], true);
+        $prefix = '';
+        $type = '';
+        $privilege = null;
+        switch(true) {
+            case $structure->getStructure()->getTypeStructure()->isEtablissement() :
+                $prefix = 'etablissement';
+                $type = 'etablissement';
+                $privilege = EtablissementPrivileges::ETABLISSEMENT_MODIFICATION;
+                break;
+            case $structure->getStructure()->getTypeStructure()->isEcoleDoctorale() :
+                $prefix = 'ecole-doctorale';
+                $type = 'ecoleDoctorale';
+                $privilege = EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION;
+                break;
+            case $structure->getStructure()->getTypeStructure()->isUniteRecherche() :
+                $prefix = 'unite-recherche';
+                $type = 'uniteRecherche';
+                $privilege = UniteRecherchePrivileges::UNITE_RECH_MODIFICATION;
+                break;
+        }
+
+        $canModifier = $view->isAllowed(EtablissementPrivileges::getResourceId($privilege));
+        $canSupprimer = $view->isAllowed(EtablissementPrivileges::getResourceId($privilege));
+        $canSubstituer = $view->isAllowed(EtablissementPrivileges::getResourceId($privilege));
+        $urlModifier  = $view->url($prefix . '/modifier',  [$type => $structure->getId()], [], true);
+        $urlSupprimer = $view->url($prefix . '/supprimer', [$type => $structure->getId()], [], true);
+        $urlRestaurer = $view->url($prefix . '/restaurer', [$type => $structure->getId()], [], true);
         $urlSubstituer = $view->url('substitution-modifier', ['cible' => $structure->getStructure()->getId(), [], true]);
 
         $texte = '';
@@ -233,8 +254,32 @@ class StructureArrayHelper extends AbstractHelper
      */
     function generateMembreSection($structure, $roles, $effectifs, $view)
     {
-        //TODO adapter au type de structure concrete
-        $canModifier = $view->isAllowed(EtablissementPrivileges::getResourceId(EtablissementPrivileges::ETABLISSEMENT_MODIFICATION));
+        $prefix = '';
+        $type = '';
+        $privilege = null;
+        $people = '';
+        switch(true) {
+            case $structure->getStructure()->getTypeStructure()->isEtablissement() :
+                $prefix = 'etablissement';
+                $type = 'etablissement';
+                $people = 'etabi';
+                $privilege = EtablissementPrivileges::ETABLISSEMENT_MODIFICATION;
+                break;
+            case $structure->getStructure()->getTypeStructure()->isEcoleDoctorale() :
+                $prefix = 'ecole-doctorale';
+                $type = 'ecoleDoctorale';
+                $people = 'edi';
+                $privilege = EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION;
+                break;
+            case $structure->getStructure()->getTypeStructure()->isUniteRecherche() :
+                $prefix = 'unite-recherche';
+                $type = 'uniteRecherche';
+                $people = 'edi';
+                $privilege = UniteRecherchePrivileges::UNITE_RECH_MODIFICATION;
+                break;
+        }
+
+        $canModifier = $view->isAllowed(EtablissementPrivileges::getResourceId($privilege));
 
         $membres = [];
         foreach ($effectifs as $effectif) {
@@ -263,7 +308,7 @@ class StructureArrayHelper extends AbstractHelper
                 $texte .= '             <td>' . $role->getLibelle() . '</td>';
                 $texte .= '             <td>';
                 if ($canModifier) {
-                    $urlRetirer = $view->url('etablissement/retirer-individu', ["etablissement" => $structure->getId(), 'etabi' => $individuRole->getId(),], [], true);
+                    $urlRetirer = $view->url($prefix . '/retirer-individu', [$type => $structure->getId(), $people => $individuRole->getId(),$people], [], true);
                     $texte .= '                <a href="' . $urlRetirer . '">';
                     $texte .= '                <span class="glyphicon glyphicon-trash"></span>';
                     $texte .= '                </a>';
@@ -285,10 +330,31 @@ class StructureArrayHelper extends AbstractHelper
      */
     function generateAjoutMembre($structure, $roles, $view)
     {
+        $prefix = '';
+        $type = '';
+        $privilege = null;
+        switch(true) {
+            case $structure->getStructure()->getTypeStructure()->isEtablissement() :
+                $prefix = 'etablissement';
+                $type = 'etablissement';
+                $privilege = EtablissementPrivileges::ETABLISSEMENT_MODIFICATION;
+                break;
+            case $structure->getStructure()->getTypeStructure()->isEcoleDoctorale() :
+                $prefix = 'ecole-doctorale';
+                $type = 'ecoleDoctorale';
+                $privilege = EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION;
+                break;
+            case $structure->getStructure()->getTypeStructure()->isUniteRecherche() :
+                $prefix = 'unite-recherche';
+                $type = 'uniteRecherche';
+                $privilege = UniteRecherchePrivileges::UNITE_RECH_MODIFICATION;
+                break;
+        }
+
         $texte = '';
         $texte .= '<div class="row">';
         $texte .= '<div class="col-md-6">';
-        $urlAjouter = $view->url('etablissement/ajouter-individu', ['etablissement' => $structure->getId()], [], true);
+        $urlAjouter = $view->url($prefix . '/ajouter-individu', [$type => $structure->getId()], [], true);
         $texte .= '<form method="post" action="' . $urlAjouter . '">';
 
 
