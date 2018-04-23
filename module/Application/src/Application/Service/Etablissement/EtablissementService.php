@@ -10,6 +10,7 @@ use Application\Service\BaseService;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\RuntimeException;
+use Application\Entity\Db\TypeStructure;
 
 class EtablissementService extends BaseService
 {
@@ -73,6 +74,9 @@ class EtablissementService extends BaseService
     public function create(Etablissement $etablissement, Utilisateur $createur)
     {
         $etablissement->setHistoCreateur($createur);
+        /** @var TypeStructure $typeStructure */
+        $typeStructure = $this->getEntityManager()->getRepository(TypeStructure::class)->findOneBy(['code' => 'etablissement']);
+        $etablissement->getStructure()->setTypeStructure($typeStructure);
 
         $this->persist($etablissement);
         $this->flush($etablissement);

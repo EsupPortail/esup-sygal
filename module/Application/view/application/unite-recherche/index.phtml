@@ -1,190 +1,36 @@
 <?php
 
-use Application\Entity\Db\UniteRecherche;
+use Application\Entity\Db\StructureConcreteInterface;
 use Application\Provider\Privilege\UniteRecherchePrivileges;
 use Application\View\Renderer\PhpRenderer;
-use UnicaenApp\Form\Element\SearchAndSelect;
-use Zend\Paginator\Paginator;
 
 /**
  * @var PhpRenderer $this
- * @var Paginator   $unites
+ * @var StructureConcreteInterface[] $structuresPrincipales
  * @var string      $selected
+ * @var array|null  $etablissementIndividus
  */
-
-$selectedUnite = null;
 ?>
 
 <?php $this->headTitle($this->translate("Unités de recherche")) ?>
 
-<h1 class="page-header first"><?php echo $this->translate("Unités de recherche"); ?> <span
-        class="badge"><?php echo count($unites) ?></span></h1>
-
+<h1 class="page-header first">
+    <?php echo $this->translate("Unités de recherche") ?>
+    <span class="badge"><?php echo count($structuresPrincipales); ?></span>
+</h1>
 <?php echo $this->messenger()->addCurrentMessagesFromFlashMessenger() ?>
 
-<table class="table table-condensed">
-    <thead>
-    <tr>
-        <th><?php echo $this->translate("Libellé"); ?></th>
-        <th><?php echo $this->translate("Sigle"); ?></th>
-        <th><?php echo $this->translate("Code"); ?></th>
-        <th><?php echo $this->translate("Actions"); ?></th>
-    </tr>
-    </thead>
-    <tbody>
-    <?php /** @var UniteRecherche $unite */
-    foreach ($unites as $unite): ?>
-        <?php
-        $isSelected = $selected !== null && $unite->getId() === (int)$selected;
-        $selectedUnite = $isSelected ? $unite : $selectedUnite;
-        $trClass = $isSelected ? 'selected' : '';
-        $query = $isSelected ? [] : ['selected' => $unite->getId()];
-        ?>
-        <tr class="unite-recherche <?php echo $trClass ?>">
-            <td><a href="<?php echo $this->url(null, [], ['query' => $query], true) ?>"
-                   title="<?php echo $this->translate("Cliquez pour sélectionner cette unité de recherche"); ?> ">
-                    <?php echo $this->ur($unite)->getLibelle() ?>
-                </a>
-            </td>
-            <td><?php echo $unite->getSigle() ?></td>
-            <td><?php echo $unite->getSourceCode() ?></td>
-            <td>
-                <?php if ($this->isAllowed(UniteRecherchePrivileges::getResourceId(UniteRecherchePrivileges::UNITE_RECH_MODIFICATION))): ?>
-                    <?php if ($unite->estNonHistorise()): ?>
-                        <?php $url = $this->url('unite-recherche/modifier', ['uniteRecherche' => $unite->getId()], [], true) ?>
-                        <a href="<?php echo $url ?>"
-                           title="<?php echo $this->translate("Modifier l'unité de recherche");?> '<?php echo $unite ?>'"
-                           class="modifier-unite" data-unite="<?php echo $unite ?>">
-                            <span class="glyphicon glyphicon-pencil"></span>
-                        </a>
-                        <?php $url = $this->url('unite-recherche/supprimer', ['uniteRecherche' => $unite->getId()], [], true) ?>
-                        <a href="<?php echo $url ?>"
-                           title="<?php echo $this->translate("Supprimer l'unité de recherche"); ?> '<?php echo $unite ?>'"
-                           class="supprimer-unite" data-unite="<?php echo $unite ?>">
-                            <span class="glyphicon glyphicon-trash"></span>
-                        </a>
-                    <?php else: ?>
-                        <?php $url = $this->url('unite-recherche/restaurer', ['uniteRecherche' => $unite->getId()], [], true) ?>
-                        <a href="<?php echo $url ?>"
-                           title="<?php echo $this->translate("Restaurer l'unité de recherche"); ?> '<?php echo $unite ?>'"
-                           class="restaurer-unite" data-unite="<?php echo $unite ?>">
-                            <?php echo $this->translate("Restaurer"); ?>
-                        </a>
-                    <?php endif ?>
-                <?php endif ?>
-            </td>
-        </tr>
-        <?php if ($isSelected): ?>
-            <tr>
-                <td colspan="3" class="bg-info">
-
-                    <?php $nbRoles = count($roles); ?>
-
-                    <!-- AFFICHAGE DES ROLES POUR L'UR SELECTIONNÉE -->
-                    <h2 class="first"><?php echo $this->translate("Rôles");?> <small><?php echo $selectedUnite ?></small></h2>                    <table class='table table-condensed'>
-                        <tr>
-                            <th> <?php echo $this->translate("Libellé"); ?> </th>
-                            <th> <?php echo $this->translate("Effectifs"); ?> </th>
-                        </tr>
-                        <?php
-                            for ($position = 0 ; $position < $nbRoles ; $position++) {
-                                echo "<tr><td>";
-                                echo  $roles[$position]->getLibelle();
-                                echo "</td><td>";
-                                echo  count($effectifs[$position]);
-                                echo "</td></tr>";
-                            }
-                        ?>
-                    </table>
-
-                    <!-- AFFICHAGE DES MEMBRES POUR L'UR SELECTIONNÉE -->
-                    <h2 class="first"><?php echo $this->translate("Membres");?> <small><?php echo $selectedUnite ?></small></h2>
-                    <table class="table table-condensed">
-                        <tr>
-                            <th><?php echo $this->translate("Individu");?></th>
-                            <th><?php echo $this->translate("Rôle");?></th>
-                            <th><?php echo $this->translate("Actions");?></th>
-                        </tr>
-                        <?php
-                            for ($position = 0 ; $position < $nbRoles ; $position++) {
-                            foreach ($effectifs[$position] as $individuRole) {
-                                    echo "<tr><td>";
-                                    echo $individuRole->getIndividu();
-                                    echo "</td><td>";
-                                    echo $individuRole->getRole();
-                                    echo "</td><td>";
-
-                                    if ($this->isAllowed(UniteRecherchePrivileges::getResourceId(UniteRecherchePrivileges::UNITE_RECH_MODIFICATION))) {
-                                        $url = $this->url('unite-recherche/retirer-individu', ["uniteRecherche" => $unite->getId(), 'edi' => $individuRole->getId(),], [], true);
-                                         echo "<a href='" . $url ."' "
-                                               . "title='" . $this->translate("Retirer") ."' "
-                                               . "class='retirer-individu'"
-                                               . "data-individu='" . $individuRole->getIndividu() . "'>";
-                                         echo "<span class='glyphicon glyphicon-trash'></span>";
-                                         echo "</a>";
-                                    }
-
-                                    echo "</td></tr>";
-                                }
-                            }
-                        ?>
-                    </table>
-
-                    <!-- AFFICHAGE DU LOGO DE L'UR SELECTIONNÉE -->
-                    <?php
-                        $content = $unite->getLogoContent();
-                        if ($content === null) {
-                            $unite->setCheminLogo(null);
-                        }
-                    ?>
-                    <div id="logo-div" class="pull-right">
-                        <img style="max-width: 200px; max-height: 200px; border: 1px solid black; background-color: white;"
-                             src="data:image/png;base64,<?php echo base64_encode($unite->getLogoContent()); ?>"
-                        />
-                    </div>
-
-                    <!-- AJOUT DE MEMBRE -->
-                    <?php if ($this->isAllowed(UniteRecherchePrivileges::getResourceId(UniteRecherchePrivileges::UNITE_RECH_MODIFICATION))): ?>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <?php $url = $this->url('unite-recherche/ajouter-individu', ['uniteRecherche' => $selected], [], true) ?>
-                                <form method="post" action="<?php echo $url ?>">
-                                    <?php
-
-                                    $sas = new SearchAndSelect('individu');
-                                    $sas->setLabel($this->translate("Recherche de l'individu à ajouter :"));
-                                    $sas->setAttribute('class', 'individu-finder');
-                                    $sas->setAutocompleteSource($this->url('utilisateur/rechercher-individu',[],[],true));
-                                    echo $this->formcontrolgroup($sas, 'formSearchAndSelect');
-
-                                    generateSelect("role", $roles);
-                                    ?>
-                                    <br/>
-                                    <input type="submit"
-                                           value="<?php echo $this->translate("Ajouter cet individu");?>"
-                                           style="margin-top: 0;"
-                                           title="<?php echo $this->translate("Ajouter cet individu comme membre");?>"
-                                           class="btn btn-default btn-sm"/>
-                                </form>
-                            </div>
-                        </div>
-                    <?php endif ?>
-                </td>
-            </tr>
-        <?php endif ?>
-    <?php endforeach ?>
-    </tbody>
-</table>
+<div>
+    <?php echo $this->structureArrayHelper()->generateTable($structuresPrincipales, $roles, $effectifs, $selected, $this); ?>
+</div>
 
 <?php if ($this->isAllowed(UniteRecherchePrivileges::getResourceId(UniteRecherchePrivileges::UNITE_RECH_MODIFICATION))): ?>
     <?php $url = $this->url('unite-recherche/ajouter', [], [], true) ?>
-    <a class="btn btn-default btn-sm"
-       href="<?php echo $url ?>"
-       title="<?php echo $this->translate("Créer une nouvelle UR");?>">
-        <span class="glyphicon glyphicon-plus"></span> <?php echo $this->translate("Ajouter"); ?>
+    <a class="btn btn-default btn-sm" href="<?php echo $url ?>"
+       title="<?php echo $this->translate("Créer une nouvelle unité de recherche");?>">
+        <span class="glyphicon glyphicon-plus"></span> <?php echo $this->translate("Ajouter");?>
     </a>
 <?php endif ?>
-
 
 
 
@@ -192,22 +38,11 @@ $selectedUnite = null;
     $(function () {
         $(".retirer-individu").click(function() {
             var individu = $(this).data('individu');
-            return confirm("<?php echo $this->translate("Êtes-vous sûr-e de vouloir retirer ");?>" + individu + " " + "<?php echo $this->translate("de la liste des membres ?"); ?>");
+            return confirm("<?php echo $this->translate("Êtes-vous sûr-e de vouloir retirer ");?>" + "'" + individu + "'" + " " + "<?php echo $this->translate("de la liste des membres ?");?>");
         });
-        $(".supprimer-unite").click(function() {
-            var unite = $(this).data('unite');
-            return confirm("<?php echo $this->translate("Êtes-vous sûr-e de vouloir supprimer l'unité de recherche");?>" + " " + unite + " ?");
+        $(".supprimer-unite-recherche").click(function() {
+            var unite = $(this).data('unite-recherche');
+            return confirm("<?php echo $this->translate("Êtes-vous sûr-e de vouloir supprimer l'unite de recherche ");?>" + "'" + unite + "'" + " ? ");
         });
     });
 </script>
-
-<?php
-    function generateSelect($id, $roles) {
-        echo "<select name='" .$id. "' class='form-control' >";
-        /** @var \Application\Entity\Db\Role $role */
-        foreach ($roles as $role) {
-            echo "<option value='". $role->getId() ."'>". $role->getLibelle() ."</option>";
-        }
-        echo "</select>";
-    }
-?>

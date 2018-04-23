@@ -14,6 +14,8 @@ use Application\Service\Role\RoleServiceAwareTrait;
 use UnicaenLdap\Service\LdapPeopleServiceAwareTrait;
 use Zend\View\Model\ViewModel;
 use Application\Entity\Db\SourceInterface;
+use Application\Entity\Db\StructureConcreteInterface;
+
 /**
  * Class EtablissementController
  */
@@ -87,20 +89,31 @@ class EtablissementController extends AbstractController
         $etablissementsSYGAL = $this->etablissementService->getEtablissementsBySource(SourceInterface::CODE_SYGAL);
         $etablissementsPrincipaux = array_filter($etablissementsSYGAL, function (Etablissement $etablissement) { return count($etablissement->getStructure()->getStructuresSubstituees())==0; });
         $etablissementsSecondaires = array_diff($etablissements, $etablissementsPrincipaux);
+
+        /** retrait des structures substituées */
+        //TODO faire cela dans le service ???
+        $structuresSub = array_filter($etablissementsSYGAL, function (StructureConcreteInterface $structure) { return count($structure->getStructure()->getStructuresSubstituees())!=0; });
         $toRemove = [];
-        foreach($etablissements as $etablissement) {
-            foreach ($etablissement->getStructure()->getStructuresSubstituees() as $sub) {
+        foreach($structuresSub as $structure) {
+            foreach ($structure->getStructure()->getStructuresSubstituees() as $sub) {
                 $toRemove[] = $sub;
             }
         }
-        $etablissementsSecondaires = array_diff($etablissementsSecondaires, $toRemove);
+        $structures = [];
+        foreach ($etablissementsSecondaires as $structure) {
+            $found = false;
+            foreach ($toRemove as $remove) {
+                if($structure->getStructure()->getId() == $remove->getId()) $found = true;
+            }
+            if (!$found) $structures[] = $structure;
+        }
 
         return new ViewModel([
             'structuresPrincipales'          => $etablissementsPrincipaux,
-            'structuresSecondaires'          => $etablissementsSecondaires,
+            'structuresSecondaires'          => $structures,
             'selected'                       => $selected,
-            'roles'                   => $roles,
-            'effectifs'               => $effectifs,
+            'roles'                          => $roles,
+            'effectifs'                      => $effectifs,
         ]);
     }
 

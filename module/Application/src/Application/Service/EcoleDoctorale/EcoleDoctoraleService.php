@@ -4,8 +4,8 @@ namespace Application\Service\EcoleDoctorale;
 
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Individu;
-use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Repository\EcoleDoctoraleRepository;
+use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\BaseService;
 use Application\Service\Role\RoleServiceAwareInterface;
@@ -84,6 +84,9 @@ class EcoleDoctoraleService extends BaseService implements RoleServiceAwareInter
     public function create(EcoleDoctorale $ecole, Utilisateur $createur)
     {
         $ecole->setHistoCreateur($createur);
+        /** @var TypeStructure $typeStructure */
+        $typeStructure = $this->getEntityManager()->getRepository(TypeStructure::class)->findOneBy(['code' => 'ecole-doctorale']);
+        $ecole->getStructure()->setTypeStructure($typeStructure);
 
         $this->persist($ecole);
         $this->flush($ecole);
