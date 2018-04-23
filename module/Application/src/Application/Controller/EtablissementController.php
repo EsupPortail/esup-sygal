@@ -287,7 +287,8 @@ class EtablissementController extends AbstractController
     static public function getLogoFilename(Etablissement $etablissement, $fullpath=true)
     {
         $chemin = "";
-        if ($fullpath) $chemin .= APPLICATION_DIR;
+//        if ($fullpath) $chemin .= APPLICATION_DIR;
+        if ($fullpath) $chemin .= "/var/sygal-files";
         $chemin .= "/ressources/Logos/Etab/".$etablissement->getCode().".png";
         return $chemin;
     }

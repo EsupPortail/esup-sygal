@@ -349,7 +349,8 @@ class EcoleDoctoraleController extends AbstractController
     static public function getLogoFilename(EcoleDoctorale $ecole, $fullpath=true)
     {
         $chemin = "";
-        if ($fullpath) $chemin .= APPLICATION_DIR;
+//        if ($fullpath) $chemin .= APPLICATION_DIR;
+        if ($fullpath) $chemin .= "/var/sygal-files";
         $chemin .= "/ressources/Logos/ED/".$ecole->getSourceCode()."-".$ecole->getSigle().".png";
         return $chemin;
     }

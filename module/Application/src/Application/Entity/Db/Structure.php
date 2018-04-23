@@ -209,7 +209,8 @@ class Structure implements HistoriqueAwareInterface, SourceAwareInterface
             $image = Util::createImageWithText("Aucun logo pour la structure|[".$this->getId()." - ".$this->getSigle()."]",200,200);
             return $image;
         }
-        return file_get_contents(APPLICATION_DIR . $this->cheminLogo);
+//        return file_get_contents(APPLICATION_DIR . $this->cheminLogo);
+        return file_get_contents( "/var/sygal-files" . $this->cheminLogo);
     }
 
     /**

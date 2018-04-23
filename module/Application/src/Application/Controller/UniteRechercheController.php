@@ -349,7 +349,8 @@ class UniteRechercheController extends AbstractController
     static public function getLogoFilename(UniteRecherche $unite, $fullpath=true)
     {
         $chemin = "";
-        if ($fullpath) $chemin .= APPLICATION_DIR;
+//        if ($fullpath) $chemin .= APPLICATION_DIR;
+        if ($fullpath) $chemin .= "/var/sygal-files";
         $chemin .= "/ressources/Logos/UR/".$unite->getSourceCode()."-".$unite->getSigle().".png";
         return $chemin;
     }
