@@ -5,8 +5,7 @@ namespace Application\Controller;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\RoleModele;
-use Application\Entity\Db\TypeStructure;
+use Application\Entity\Db\StructureConcreteInterface;
 use Application\Entity\Db\UniteRecherche;
 use Application\Form\UniteRechercheForm;
 use Application\RouteMatch;
@@ -32,37 +31,53 @@ class UniteRechercheController extends AbstractController
      * - la liste des rôles associées à l'unité
      * - un tableau de tableaux des rôles associés à chaque rôle
      * @return \Zend\Http\Response|ViewModel
-     *
-     * TODO transformer effectifs en tableau associatif (rôle => liste de membres)
      */
     public function indexAction()
     {
         $selected = $this->params()->fromQuery('selected');
-        $unites = $this->uniteRechercheService->getUnitesRecherches();
-        usort($unites, function(UniteRecherche $a,UniteRecherche $b) {return $a->getLibelle() > $b->getLibelle();});
 
         $roles = null;
         $effectifs = null;
         if ($selected) {
             /**
-             * @var UniteRecherche $ur
+             * @var StructureConcreteInterface $structure
              * @var Role[] $roles
              */
-            $ur  = $this->uniteRechercheService->getUniteRechercheById($selected);
-            $roles = $ur->getStructure()->getStructureDependantRoles();
+            $structure  = $this->uniteRechercheService->getUniteRechercheById($selected);
+            $roles = $structure->getStructure()->getStructureDependantRoles();
 
             $effectifs = [];
             foreach ($roles as $role) {
                 $individus = $this->individuService->getIndividuByRole($role);
-                $effectifs[] = $individus;
+                $effectifs[$role->getLibelle()] = $individus;
             }
         }
 
+        $structuresAll = $this->uniteRechercheService->getUnitesRecherches();
+
+        /** retrait des structures substituées */
+        //TODO faire cela dans le service ???
+        $structuresSub = array_filter($structuresAll, function (StructureConcreteInterface $structure) { return count($structure->getStructure()->getStructuresSubstituees())!=0; });
+        $toRemove = [];
+        foreach($structuresSub as $structure) {
+            foreach ($structure->getStructure()->getStructuresSubstituees() as $sub) {
+                $toRemove[] = $sub;
+            }
+        }
+        $structures = [];
+        foreach ($structuresAll as $structure) {
+            $found = false;
+            foreach ($toRemove as $remove) {
+                if($structure->getStructure()->getId() == $remove->getId()) $found = true;
+            }
+            if (!$found) $structures[] = $structure;
+        }
+
         return new ViewModel([
-            'unites'                  => $unites,
-            'selected'                => $selected,
-            'roles'                   => $roles,
-            'effectifs'               => $effectifs,
+            'structuresPrincipales'          => $structures,
+            'selected'                       => $selected,
+            'roles'                          => $roles,
+            'effectifs'                      => $effectifs,
         ]);
     }
 

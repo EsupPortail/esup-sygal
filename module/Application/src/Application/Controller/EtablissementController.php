@@ -99,8 +99,8 @@ class EtablissementController extends AbstractController
             'structuresPrincipales'          => $etablissementsPrincipaux,
             'structuresSecondaires'          => $etablissementsSecondaires,
             'selected'                       => $selected,
-            'roles'                   => $roles,
-            'effectifs'               => $effectifs,
+            'roles'                          => $roles,
+            'effectifs'                      => $effectifs,
         ]);
     }
 

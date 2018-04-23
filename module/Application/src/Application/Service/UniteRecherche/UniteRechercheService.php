@@ -12,6 +12,7 @@ use Application\Service\Role\RoleServiceAwareInterface;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\RuntimeException;
+use Application\Entity\Db\TypeStructure;
 
 /**
  * @method UniteRecherche|null findOneBy(array $criteria, array $orderBy = null)
@@ -84,6 +85,10 @@ class UniteRechercheService extends BaseService implements RoleServiceAwareInter
     public function create(UniteRecherche $ur, Utilisateur $createur)
     {
         $ur->setHistoCreateur($createur);
+        /** @var TypeStructure $typeStructure */
+        $typeStructure = $this->getEntityManager()->getRepository(TypeStructure::class)->findOneBy(['code' => 'unite-recherche']);
+        $ur->getStructure()->setTypeStructure($typeStructure);
+
 
         $this->persist($ur);
         $this->flush($ur);
