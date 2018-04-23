@@ -31,7 +31,7 @@ class StructureSubstitHelper extends AbstractHelper {
         if ($structure->getCheminLogo() !== null) {
             $texte .= '<input champ="logo" id="logo_' . $structure->getSigle() .'" type="radio" name="logo" /> &nbsp; ';
         }
-        $texte .= "<img style='max-width: 125px; max-height: 125px; border: 1px solid black; background-color: white;' src='data:image/png;base64," . base64_encode($structure->getLogoContent()) ."'/>";
+        $texte .= "<img class='current' style='max-width: 125px; max-height: 125px; border: 1px solid black; background-color: white;' src='data:image/png;base64," . base64_encode($structure->getLogoContent()) ."'/>";
         $texte .= '<input class="path" type="hidden" champ="cheminLogo" name="cheminLogo" value="'.$structure->getStructure()->getCheminLogo().'"/>';
         $texte .= "</div>";
 
@@ -68,7 +68,7 @@ class StructureSubstitHelper extends AbstractHelper {
 
         $texte .= "<div id='logo-div' class='pull-right'>";
         $texte .= "<input type='hidden' name='cible[cheminLogo]' id='logo' value='".$structure->getCheminLogo()."'/>";
-        $texte .= "<img style='max-width: 125px; max-height: 125px; border: 1px solid black; background-color: white;' src='data:image/png;base64," . base64_encode($structure->getLogoContent()) ."'/>";
+        $texte .= "<img id='logo_tmp' style='max-width: 125px; max-height: 125px; border: 1px solid black; background-color: white;' src='data:image/png;base64," . base64_encode($structure->getLogoContent()) ."'/>";
         $texte .= "</div>";
 
         $texte .= $structure->getSource() ."/". $structure->getId() . " " . $structure->getId() ;

@@ -84,9 +84,10 @@ function generateSelect($structuresConcretes, \Zend\View\Renderer\PhpRenderer $r
             var type = $(this).attr('name');
             var texte = ($(this).parent().find(".texte").text());
             if (type === 'logo') {
-                 texte = ($(this).parent().find(".path").val());
+                texte = ($(this).parent().find(".path").val());
+                var src = ($(this).parent().find(".current").attr("src"));
+                $('#logo_tmp').attr("src",src);
             }
-            console.log("click on " + type + " " + texte);
             $('input#' + type).val(texte);
         })
         //suppression d'une structure
