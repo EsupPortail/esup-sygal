@@ -59,6 +59,9 @@ class SubstitutionController extends AbstractController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
+
+            var_dump($data['sourceIds']);
+
             $sources = [];
             foreach($data['sourceIds'] as $sourceId) {
                 $structure = $this->structureService->findStructureById($sourceId);
