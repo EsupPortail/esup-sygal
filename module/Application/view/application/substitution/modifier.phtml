@@ -13,6 +13,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var StructureConcreteInterface[] $structuresConcretesSubstituees
  * @var StructureConcreteInterface[] $structuresConcretes
   */
+
 ?>
 
 <?php $this->headTitle($this->translate("Substitution d'établissements")) ?>
@@ -82,6 +83,10 @@ function generateSelect($structuresConcretes, \Zend\View\Renderer\PhpRenderer $r
         $("div#sources").on("click", "input[type='radio']", function () {
             var type = $(this).attr('name');
             var texte = ($(this).parent().find(".texte").text());
+            if (type === 'logo') {
+                 texte = ($(this).parent().find(".path").val());
+            }
+            console.log("click on " + type + " " + texte);
             $('input#' + type).val(texte);
         })
         //suppression d'une structure
