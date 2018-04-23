@@ -11,7 +11,7 @@ INSERT INTO CATEGORIE_PRIVILEGE (ID, CODE, LIBELLE, ORDRE) VALUES (5, 'utilisate
 INSERT INTO CATEGORIE_PRIVILEGE (ID, CODE, LIBELLE, ORDRE) VALUES (22, 'unite-recherche', 'Unité de Recherche', 200);
 INSERT INTO CATEGORIE_PRIVILEGE (ID, CODE, LIBELLE, ORDRE) VALUES (24, 'validation', 'Validations', 25);
 INSERT INTO CATEGORIE_PRIVILEGE (ID, CODE, LIBELLE, ORDRE) VALUES (44, 'fichier-divers', 'Fichier divers', 40);
-
+INSERT INTO CATEGORIE_PRIVILEGE (ID, CODE, LIBELLE, ORDRE) VALUES (20, 'etablissement', 'Établissement', 90);
 
 -- PRIVILEGE
 
@@ -58,6 +58,9 @@ INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (197, 3, '
 INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (129, 24, 'correction-these', 'Validation des corrections de la thèse', 4100);
 INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (130, 24, 'correction-these-suppression', 'Suppression de la validation des corrections de la thèse', 4120);
 INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (198, 3, 'saisie-attestations', 'Modification des attestations', 3030);
+INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (12, 20, 'consultation', 'Consultation d''établissement', 100);
+INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (13, 20, 'modification', 'Modification d''établissement', 110);
+
 
 DECLARE
   maxid NUMBER;
