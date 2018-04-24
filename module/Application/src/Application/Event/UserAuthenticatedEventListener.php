@@ -68,7 +68,12 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
         $individu = $this->individuService->getRepository()->findOneBySourceCode($sourceCode);
         if (null === $individu) {
             $createur = $this->utilisateurService->getRepository()->fetchAppPseudoUser();
-            $this->individuService->createFromUserWrapperAndEtab($userWrapper, $etablissement, $createur);
+            $individu = $this->individuService->createFromUserWrapperAndEtab($userWrapper, $etablissement, $createur);
         }
+
+        // renseigne le lien utilisateur-->individu
+        /** @var Utilisateur $utilisateur */
+        $utilisateur = $e->getDbUser();
+        $this->utilisateurService->setIndividuForUtilisateur($individu, $utilisateur);
     }
 }

@@ -3,36 +3,39 @@
 namespace Application\Controller;
 
 use Application\Entity\Db\CreationUtilisateurInfos;
-use Application\Entity\Db\Role;
+use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\Individu;
 use Application\Entity\Db\Utilisateur;
+use Application\Filter\EtablissementPrefixFilter;
 use Application\Form\CreationUtilisateurForm;
-use Application\RouteMatch;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
+use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
-use Application\View\Helper\Sortable;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\Query\Expr\Join;
-use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\Tools\Pagination\Paginator;
-use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
+use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use UnicaenImport\Entity\Db\Source;
+use UnicaenAuth\Entity\Shibboleth\ShibUser;
+use UnicaenAuth\Options\ModuleOptions;
+use UnicaenAuth\Service\ShibService;
 use UnicaenLdap\Entity\People;
 use UnicaenLdap\Filter\People as LdapPeopleFilter;
 use UnicaenLdap\Service\LdapPeopleServiceAwareTrait;
 use UnicaenLdap\Service\People as LdapPeopleService;
-use Zend\Db\Sql\Predicate\In;
+use Zend\Authentication\AuthenticationService;
+use Zend\Cache\Storage\Adapter\Session;
+use Zend\Form\Form;
+use Zend\Http\Request;
+use Zend\Http\Response;
+use Zend\Session\Config\SessionConfig;
+use Zend\Session\Container;
+use Zend\Session\Storage\SessionStorage;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
-use Zend\Http\Request;
-use Zend\Form\Form;
-use Application\Entity\Db\Individu;
 
 class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurController
 {
@@ -198,7 +201,98 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             'form' => $form,
         ]);
     }
+    /**
+     * Usurpe l'identité d'un autre utilisateur.
+     *
+     * @return Response
+     */
+    public function usurperIdentiteAction()
+    {
+        $request = $this->getRequest();
+        if (! $request instanceof Request) {
+            exit(1);
+        }
 
+        $newIdentity = $request->getQuery('identity', $request->getPost('identity'));
+        if (! $newIdentity) {
+            return $this->redirect()->toRoute('home');
+        }
+
+        /** @var AuthenticationService $authenticationService */
+        $authenticationService = $this->getServiceLocator()->get(AuthenticationService::class);
+
+        $currentIdentity = $authenticationService->getIdentity();
+        if (! $currentIdentity || ! is_array($currentIdentity)) {
+            return $this->redirect()->toRoute('home');
+        }
+
+        if (isset($currentIdentity['shib'])) {
+            /** @var ShibUser $currentIdentity */
+            $currentIdentity = $currentIdentity['shib'];
+        }
+        elseif (isset($currentIdentity['ldap'])) {
+            /** @var People $currentIdentity */
+            $currentIdentity = $currentIdentity['ldap'];
+        } else {
+            return $this->redirect()->toRoute('home');
+        }
+
+        // seuls les logins spécifiés dans la config sont habilités à usurper des identités
+        /** @var ModuleOptions $options */
+        $options = $this->getServiceLocator()->get('unicaen-auth_module_options');
+        if (! in_array($currentIdentity->getUsername(), $options->getUsurpationAllowedUsernames())) {
+            throw new LogicException("Usurpation non autorisée");
+        }
+
+        // cuisine spéciale pour Shibboleth
+        if ($currentIdentity instanceof ShibUser) {
+            $fromShibUser = $currentIdentity;
+            $toShibUser = $this->createShibUserFromUtilisateurUsername($newIdentity);
+            /** @var ShibService $shibService */
+            $shibService = $this->getServiceLocator()->get(ShibService::class);
+            $shibService->activateUsurpation($fromShibUser, $toShibUser);
+        }
+
+        $authenticationService->getStorage()->write($newIdentity);
+
+        return $this->redirect()->toRoute('home');
+    }
+
+    /**
+     * Recherche l'utilisateur dont le login est spécifié puis instancie un ShibUser à partir
+     * des attibuts de cet utilisateur.
+     *
+     * @param string $username
+     * @return ShibUser
+     */
+    public function createShibUserFromUtilisateurUsername($username)
+    {
+        /** @var UtilisateurService $utilisateurService */
+        $utilisateurService = $this->getServiceLocator()->get('UtilisateurService');
+
+        /** @var Utilisateur $utilisateur */
+        $utilisateur = $utilisateurService->getRepository()->findOneBy(['username' => $username]);
+        if ($utilisateur === null) {
+            throw new RuntimeException("L'utilisateur '$username' introuvable");
+        }
+        $individu = $utilisateur->getIndividu();
+        if ($individu === null) {
+            throw new RuntimeException("L'utilisateur '$utilisateur' n'a aucun individu lié");
+        }
+
+        $filter = new EtablissementPrefixFilter();
+        $supannId = $filter->removePrefixFrom($individu->getSourceCode());
+
+        $toShibUser = new ShibUser();
+        $toShibUser->setEppn($utilisateur->getUsername());
+        $toShibUser->setId($supannId);
+        $toShibUser->setDisplayName($individu->getNomComplet());
+        $toShibUser->setEmail($utilisateur->getEmail());
+        $toShibUser->setNom($individu->getNomUsuel());
+        $toShibUser->setPrenom($individu->getPrenom());
+
+        return $toShibUser;
+    }
 
     public function retirerRoleAction()
     {

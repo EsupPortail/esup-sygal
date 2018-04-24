@@ -1,31 +1,30 @@
 <?php
 
 use Application\Controller\Factory\UtilisateurControllerFactory;
-use Application\Controller\UtilisateurController;
 use Application\Form\CreationUtilisateurForm;
 use Application\Form\Factory\CreationUtilisateurFormFactory;
 use Application\Form\Factory\CreationUtilisateurHydratorFactory;
 use Application\Form\Hydrator\CreationUtilisateurHydrator;
-use Application\Form\Validator\Factory\NewEmailValidatorFactory;
-use Application\Form\Validator\NewEmailValidator;
-use Application\Form\Validator\PasswordValidator;
 use Application\Provider\Privilege\UtilisateurPrivileges;
 use Application\Service\Individu\IndividuServiceFactory;
 use Application\Service\Utilisateur\UtilisateurService;
 use UnicaenAuth\Guard\PrivilegeController;
 use Zend\Mvc\Router\Http\Literal;
+use Application\Form\Validator\PasswordValidator;
+use Application\Form\Validator\NewEmailValidator;
+use Application\Form\Validator\Factory\NewEmailValidatorFactory;
 use Zend\Mvc\Router\Http\Segment;
-
 
 return [
     'bjyauthorize'    => [
         'guards' => [
             'BjyAuthorize\Guard\Controller' => [
-                ['controller' => UtilisateurController::class, 'action' => 'selectionner-profil', 'roles' => []],
+                ['controller' => 'Application\Controller\Utilisateur', 'action' => 'selectionner-profil', 'roles' => []],
+                ['controller' => 'Application\Controller\Utilisateur', 'action' => 'usurper-identite', 'roles' => []],
             ],
             PrivilegeController::class => [
                 [
-                    'controller' => UtilisateurController::class,
+                    'controller' => 'Application\Controller\Utilisateur',
                     'action'     => [
                         'index',
                         'rechercher-people',
@@ -34,7 +33,7 @@ return [
                     'privileges' => UtilisateurPrivileges::UTILISATEUR_CONSULTATION,
                 ],
                 [
-                    'controller' => UtilisateurController::class,
+                    'controller' => 'Application\Controller\Utilisateur',
                     'action'     => [
                         'retirer-role',
                         'ajouter-role',
@@ -53,7 +52,7 @@ return [
                     'route'       => '/creation-utilisateur',
                     'defaults'    => [
                         '__NAMESPACE__' => 'Application\Controller',
-                        'controller'    => UtilisateurController::class,
+                        'controller'    => 'Utilisateur',
                         'action' => 'creation-utilisateur',
                     ],
                 ],
@@ -63,10 +62,12 @@ return [
                 'type'          => Segment::class,
                 'options'       => [
                     'route'    => '/utilisateur',
+//                    'route'    => '/[:language/]utilisateur',
                     'defaults' => [
                         '__NAMESPACE__' => 'Application\Controller',
-                        'controller'    => UtilisateurController::class,
+                        'controller'    => 'Utilisateur',
                         'action'        => 'index',
+//                        'language'      => 'fr_FR',
                     ],
                 ],
                 'may_terminate' => true,
@@ -121,12 +122,12 @@ return [
                             'utilisateur' => [
                                 'label'    => 'Utilisateurs',
                                 'route'    => 'utilisateur',
-                                'resource' => PrivilegeController::getResourceId(UtilisateurController::class, 'index'),
+                                'resource' => PrivilegeController::getResourceId('Application\Controller\Utilisateur', 'index'),
                             ],
                             'creation' => [
                                 'label'    => 'Création d\'utilisateur',
                                 'route'    => 'creation-utilisateur',
-                                'resource' => PrivilegeController::getResourceId(UtilisateurController::class, 'creation-utilisateur'),
+                                'resource' => PrivilegeController::getResourceId('Application\Controller\Utilisateur', 'creation-utilisateur'),
                             ],
                         ],
                     ],
@@ -146,7 +147,7 @@ return [
         'invokables' => [
         ],
         'factories' => [
-            UtilisateurController::class => UtilisateurControllerFactory::class,
+            'Application\Controller\Utilisateur' => UtilisateurControllerFactory::class,
         ],
     ],
     'form_elements' => [

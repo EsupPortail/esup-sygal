@@ -463,4 +463,14 @@ dl.faq dt {
   font-weight: bold;
   font-size: 120%; }
 
+.user-usurpation-form {
+  margin-top: 30px;
+  padding-top: 10px;
+  border-top: 1px lightgrey dotted; }
+  .user-usurpation-form .form-group {
+    float: left;
+    margin-right: 5px; }
+  .user-usurpation-form .btn {
+    margin-top: 0; }
+
 /*# sourceMappingURL=app.css.map */
