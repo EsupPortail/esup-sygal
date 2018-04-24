@@ -2,6 +2,7 @@
 
 namespace Application\Service\Utilisateur;
 
+use Application\Entity\Db\Individu;
 use Application\Entity\Db\Repository\UtilisateurRepository;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\BaseService;
@@ -43,5 +44,22 @@ class UtilisateurService extends BaseService
         }
 
         return $entity;
+    }
+
+    /**
+     * Renseigne l'individu correspondant à un utilisateur en bdd.
+     *
+     * @param Individu    $individu
+     * @param Utilisateur $utilisateur
+     */
+    public function setIndividuForUtilisateur(Individu $individu, Utilisateur $utilisateur)
+    {
+        $utilisateur->setIndividu($individu);
+
+        try {
+            $this->getEntityManager()->flush($utilisateur);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Impossible d'enregistrer l'utilisateur", null, $e);
+        }
     }
 }
