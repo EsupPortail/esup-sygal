@@ -1913,11 +1913,11 @@
         },
         {
             "name": "unicaen/auth",
-            "version": "1.2.6",
+            "version": "1.2.7",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/auth.git",
-                "reference": "1f7658396139734e9d4c0dfd46bd14011e2b5e8d"
+                "reference": "d54f287f31328482685884c2bc7e30bc663d1e3a"
             },
             "require": {
                 "bjyoungblood/bjy-authorize": ">=1.4",
@@ -1939,7 +1939,7 @@
                 ]
             },
             "description": "Module d'authentification pour les applications Unicaen",
-            "time": "2018-04-09T07:41:56+00:00"
+            "time": "2018-04-24T12:54:14+00:00"
         },
         {
             "name": "unicaen/code",
