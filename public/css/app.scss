@@ -749,3 +749,21 @@ dl.faq {
     font-size: 120%;
   }
 }
+
+
+
+
+
+
+.user-usurpation-form {
+  margin-top: 30px;
+  padding-top: 10px;
+  border-top: 1px lightgrey dotted;
+  .form-group {
+    float: left;
+    margin-right: 5px;
+  }
+  .btn {
+    margin-top: 0;
+  }
+}
