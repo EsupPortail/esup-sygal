@@ -119,12 +119,15 @@ class StructureArrayHelper extends AbstractHelper
      */
     function generateLibelleCell($structure, $view)
     {
-        $query = ['selected' => $structure->getId()];
+        $id = $structure->getId();
+//        $libelle = $structure->getStructure()->getLibelle();
+        $query = ['selected' => $id];
         $texte = '';
         $texte .= '         <td>';
-        $texte .= '             <a name="' . $structure->getId() . '"></a>';
+        $texte .= '             <a name="' . $id . '"></a>';
         $texte .= '             <a href="' . $view->url(null, [], ['query' => $query], true) . '">';
         $texte .= $view->etab($structure)->getLibelle();
+
         $texte .= '             </a>';
         $texte .= '         </td>';
         return $texte;
@@ -136,9 +139,11 @@ class StructureArrayHelper extends AbstractHelper
      */
     function generateSigleCell($structure)
     {
+        $sigle = $structure->getStructure()->getSigle();
+
         $texte = '';
         $texte .= '         <td>';
-        $texte .= $structure->getSigle();
+        $texte .= $sigle;
         $texte .= '         </td>';
         return $texte;
     }
@@ -150,24 +155,28 @@ class StructureArrayHelper extends AbstractHelper
      */
     function generateActionCell($structure, $view)
     {
-        $nombreSousStructure = count($structure->getStructure()->getStructuresSubstituees());
 
+        $hasSousStructure = !($structure->getStructure()->getStructuresSubstituees()->isEmpty());
+//        $hasSousStructure = false;
+//        var_dump($hasSousStructure);
 
         $prefix = '';
         $type = '';
         $privilege = null;
+
+        $typeStructure = $structure->getStructure()->getTypeStructure();
         switch(true) {
-            case $structure->getStructure()->getTypeStructure()->isEtablissement() :
+            case $typeStructure->isEtablissement() :
                 $prefix = 'etablissement';
                 $type = 'etablissement';
                 $privilege = EtablissementPrivileges::ETABLISSEMENT_MODIFICATION;
                 break;
-            case $structure->getStructure()->getTypeStructure()->isEcoleDoctorale() :
+            case $typeStructure->isEcoleDoctorale() :
                 $prefix = 'ecole-doctorale';
                 $type = 'ecoleDoctorale';
                 $privilege = EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION;
                 break;
-            case $structure->getStructure()->getTypeStructure()->isUniteRecherche() :
+            case $typeStructure->isUniteRecherche() :
                 $prefix = 'unite-recherche';
                 $type = 'uniteRecherche';
                 $privilege = UniteRecherchePrivileges::UNITE_RECH_MODIFICATION;
@@ -185,11 +194,13 @@ class StructureArrayHelper extends AbstractHelper
         $texte = '';
         $texte .= '         <td>';
         if ($structure->estNonHistorise()) {
-            if ($canModifier)   $texte .= '             <a href="' . $urlModifier . '"><span class="glyphicon glyphicon-pencil"></span></a>';
-            if ($canSupprimer)  $texte .= '             <a href="' . $urlSupprimer . '"><span class="glyphicon glyphicon-trash"></span></a>';
-            if ($nombreSousStructure > 0) {
+            if ($canModifier)   $texte .= '             <a href="' . $urlModifier . '"><span class="glyphicon glyphicon-pencil" title="Éditer"></span></a>';
+            if ($canSupprimer)  $texte .= '             <a href="' . $urlSupprimer . '"><span class="glyphicon glyphicon-trash" title="Supprimer"></span></a>';
+//            if ($nombreSousStructure > 0) {
+            if ($hasSousStructure) {
                 if ($canSubstituer)  $texte .= '                 <a href="' . $urlSubstituer . '">';
-                $texte .= '<span class="badge">' .$nombreSousStructure. '</span>';
+//                $texte .= '<span class="badge">' .$nombreSousStructure. '</span>';
+                $texte .= '<span class="glyphicon glyphicon-link" title="Éditer la substituion"></span>';
                 if ($canSubstituer)  $texte .= '</a>';
             }
         } else {

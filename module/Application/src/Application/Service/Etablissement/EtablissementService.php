@@ -30,8 +30,14 @@ class EtablissementService extends BaseService
      */
     public function getEtablissements() {
         /** @var Etablissement[] $etablissments */
-        $etablissements = $this->getRepository()->findAll();
-        usort($etablissements, function ($a,$b) {return $a->getLibelle() > $b->getLibelle();});
+        $qb = $this->getEntityManager()->getRepository(Etablissement::class)->createQueryBuilder("et")
+            ->leftJoin("et.structure", "str", "WITH", "et.structure = str.id")
+            ->leftJoin("str.structuresSubstituees", "sub")
+            ->leftJoin("str.typeStructure", "typ")
+            ->addSelect("str, sub, typ")
+            ->orderBy("str.libelle")
+        ;
+        $etablissements = $qb->getQuery()->getResult();
         return $etablissements;
     }
 

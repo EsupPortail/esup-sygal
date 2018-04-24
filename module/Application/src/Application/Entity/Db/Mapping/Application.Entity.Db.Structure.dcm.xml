@@ -18,9 +18,9 @@
             </join-columns>
         </many-to-one>
 
-        <one-to-one field="etablissement" target-entity="Application\Entity\Db\Etablissement" mapped-by="structure"/>
-        <one-to-one field="ecoleDoctorale" target-entity="Application\Entity\Db\EcoleDoctorale" mapped-by="structure"/>
-        <one-to-one field="uniteRecherche" target-entity="Application\Entity\Db\UniteRecherche" mapped-by="structure"/>
+        <one-to-many field="etablissement" target-entity="Application\Entity\Db\Etablissement"  mapped-by="structure"/>
+        <one-to-many field="ecoleDoctorale" target-entity="Application\Entity\Db\EcoleDoctorale" mapped-by="structure"/>
+        <one-to-many field="uniteRecherche" target-entity="Application\Entity\Db\UniteRecherche" mapped-by="structure"/>
         <one-to-many field="roles" target-entity="Application\Entity\Db\Role" mapped-by="structure"/>
 
         <many-to-many field="structuresSubstituees" target-entity="Application\Entity\Db\Structure">
@@ -43,19 +43,20 @@
         </many-to-one>
 
         <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
-        <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
         <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
-        <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
+        <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
+
+        <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur" fetch="EXTRA_LAZY">
             <join-columns>
                 <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
-        <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur">
+        <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur" fetch="EXTRA_LAZY">
             <join-columns>
                 <join-column name="HISTO_DESTRUCTEUR_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
-        <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
+        <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur" fetch="EXTRA_LAZY">
             <join-columns>
                 <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
             </join-columns>
