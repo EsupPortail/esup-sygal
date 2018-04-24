@@ -23,7 +23,15 @@ class StructureSubstitHelper extends AbstractHelper {
     public function structureSource(StructureConcreteInterface $structure)
     {
         $texte =    "";
-        $texte .=   '<div class="etablissement bg-warning" id="structure_'.$structure->getId().'">';
+        $texte .=   '<div class="panel panel-warning">';
+
+        $texte .=   '    <div class="panel-heading">';
+        $texte .= $structure->getSource() ."/". $structure->getId() . " " . $structure->getId() ;
+
+        $texte .=   '    </div>';
+
+        $texte .=   '    <div class="panel-body">';
+        $texte .=   '   <div class="" id="structure_'.$structure->getId().'">';
         $texte .=   '<input type="hidden" name="sourceIds[]" value="'.$structure->getStructure()->getId().'"/>';
 
         $texte .= "<div id='logo-div' class='pull-right '>";
@@ -35,7 +43,7 @@ class StructureSubstitHelper extends AbstractHelper {
         $texte .= '<input class="path" type="hidden" champ="cheminLogo" name="cheminLogo" value="'.$structure->getStructure()->getCheminLogo().'"/>';
         $texte .= "</div>";
 
-        $texte .= $structure->getSource() ."/". $structure->getId() . " " . $structure->getId() ;
+
         $texte .=   "<br/>";
 
         $texte .= "<span>";
@@ -54,6 +62,8 @@ class StructureSubstitHelper extends AbstractHelper {
 
         $texte .=   "<button class='btn btn-danger supprimer'><span class='glyphicon glyphicon-remove'></span>Retirer de la substitution</button> ";
         $texte .=   "</div>";
+        $texte .=   "</div>";
+        $texte .=   "</div>";
         return $texte;
 
     }
@@ -64,14 +74,19 @@ class StructureSubstitHelper extends AbstractHelper {
      */
     function structureCible(Structure $structure) {
         $texte =    "";
-        $texte .=   "<div class='etablissement bg-info'>";
+        $texte .=   '<div class="panel panel-success">';
 
+        $texte .=   '    <div class="panel-heading">';
+        $texte .= $structure->getSource() ."/". $structure->getId() . " " . $structure->getId() ;
+        $texte .=   '    </div>';
+
+        $texte .=   '    <div class="panel-body">';
         $texte .= "<div id='logo-div' class='pull-right'>";
         $texte .= "<input type='hidden' name='cible[cheminLogo]' id='logo' value='".$structure->getCheminLogo()."'/>";
         $texte .= "<img id='logo_tmp' style='max-width: 125px; max-height: 125px; border: 1px solid black; background-color: white;' src='data:image/png;base64," . base64_encode($structure->getLogoContent()) ."'/>";
         $texte .= "</div>";
 
-        $texte .= $structure->getSource() ."/". $structure->getId() . " " . $structure->getId() ;
+
         $texte .=   "<br/>";
 
         $texte .= "<input type='text' name='cible[sigle]' id='sigle' value='".$structure->getSigle()."'/>";
@@ -79,6 +94,8 @@ class StructureSubstitHelper extends AbstractHelper {
 
         $texte .= "<input type='text' name='cible[libelle]' id='libelle' value='".$structure->getLibelle()."'/>";
 
+        $texte .=   "</div>";
+        $texte .=   "</div>";
         $texte .=   "</div>";
         return $texte;
     }

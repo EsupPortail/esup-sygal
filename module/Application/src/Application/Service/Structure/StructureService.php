@@ -351,21 +351,29 @@ class StructureService extends BaseService
 
     public function getStructuresConcretesByType($typeStructure) {
         $structures = [];
+        $repo = null;
         switch($typeStructure) {
             case TypeStructure::CODE_ETABLISSEMENT :
-                $structures = $this->getEntityManager()->getRepository(Etablissement::class)->findAll();
+                $repo = $this->getEntityManager()->getRepository(Etablissement::class);
                 break;
             case TypeStructure::CODE_ECOLE_DOCTORALE :
-                $structures = $this->getEntityManager()->getRepository(EcoleDoctorale::class)->findAll();
+                $repo = $this->getEntityManager()->getRepository(EcoleDoctorale::class);
                 break;
             case TypeStructure::CODE_UNITE_RECHERCHE :
-                $structures = $this->getEntityManager()->getRepository(UniteRecherche::class)->findAll();
+                $repo = $this->getEntityManager()->getRepository(UniteRecherche::class);
+
                 break;
             default:
                 throw new RuntimeException("Type de structure inconnu [".$typeStructure."]");
         }
-
-        usort($structures, function ($a,$b) { return $a->getLibelle() > $b->getLibelle();});
+        $qb = $repo->createQueryBuilder("s")
+            ->leftJoin("s.structure", "str", "WITH", "s.structure = str.id")
+            ->leftJoin("str.structuresSubstituees", "sub")
+            ->leftJoin("str.typeStructure", "typ")
+            ->addSelect("str, sub, typ")
+            ->orderBy("str.libelle")
+        ;
+        $structures = $qb->getQuery()->getResult();
         return $structures;
     }
 }
