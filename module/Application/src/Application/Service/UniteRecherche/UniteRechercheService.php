@@ -36,8 +36,14 @@ class UniteRechercheService extends BaseService implements RoleServiceAwareInter
      */
     public function getUnitesRecherches() {
         /** @var UniteRecherche[] $unites */
-        $unites = $this->getRepository()->findAll();
-        usort($unites, function ($a,$b) {return $a->getLibelle() > $b->getLibelle();});
+        $qb = $this->getEntityManager()->getRepository(UniteRecherche::class)->createQueryBuilder("ur")
+            ->leftJoin("ur.structure", "str", "WITH", "ur.structure = str.id")
+            ->leftJoin("str.structuresSubstituees", "sub")
+            ->leftJoin("str.typeStructure", "typ")
+            ->addSelect("str, sub, typ")
+            ->orderBy("str.libelle")
+        ;
+        $unites = $qb->getQuery()->getResult();
         return $unites;
     }
 

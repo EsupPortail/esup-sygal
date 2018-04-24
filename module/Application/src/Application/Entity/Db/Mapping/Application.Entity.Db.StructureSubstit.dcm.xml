@@ -8,7 +8,7 @@
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <many-to-one field="fromStructure" target-entity="Application\Entity\Db\Structure">
+        <many-to-one field="fromStructure" target-entity="Application\Entity\Db\Structure" >
             <join-columns>
                 <join-column name="FROM_STRUCTURE_ID" referenced-column-name="ID"/>
             </join-columns>
@@ -22,17 +22,17 @@
         <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
         <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
         <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
-        <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
+        <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur" fetch="EXTRA_LAZY">
             <join-columns>
                 <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
-        <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur">
+        <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur" fetch="EXTRA_LAZY">
             <join-columns>
                 <join-column name="HISTO_DESTRUCTEUR_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
-        <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
+        <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur" fetch="EXTRA_LAZY">
             <join-columns>
                 <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
             </join-columns>
