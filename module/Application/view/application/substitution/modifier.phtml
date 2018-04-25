@@ -16,12 +16,11 @@ use Application\View\Renderer\PhpRenderer;
 
 ?>
 
-<?php $this->headTitle($this->translate("Substitution d'établissements")) ?>
+<?php $this->headTitle($this->translate("Substitution de structures")) ?>
 
 
 <h1 class="page-header first">
-    <?php echo $this->translate("Substitution d'établissements"); ?>
-<!--    <span class="badge">--><?php //echo $nouvelEtablissement->getSigle(); ?><!--</span>-->
+    <?php echo $this->translate("Substitution de structures"); ?>
 </h1>
 
 <?php echo generateSelect($structuresConcretes, $this); ?>
@@ -30,7 +29,10 @@ use Application\View\Renderer\PhpRenderer;
 <form action="" method="POST">
     <input type="submit" class="btn btn-primary" value="Enregistrer"/>
 
+    <br/>
+    
 <div>
+
 <div id="sources" class="col-md-6">
     <?php
         foreach($structuresConcretesSubstituees as $source) {
@@ -43,6 +45,7 @@ use Application\View\Renderer\PhpRenderer;
         echo $this->structureSubstitHelper()->structureCible($cible);
     ?>
 </div>
+
 </div>
 </form>
 <?php
@@ -92,7 +95,22 @@ function generateSelect($structuresConcretes, \Zend\View\Renderer\PhpRenderer $r
         })
         //suppression d'une structure
         .on("click", "button.supprimer", function () {
-                $(this).parent().remove();
+                var id = $(this).parent().attr("id");
+                var label = $(this).parent().find("[name=txt]").text();
+                var selected = $("select[name='nouveau'] option:selected").val();
+                console.log(selected);
+
+                $(this).parents(".panel").remove();
+                //remise de l'option
+                $("select[name='nouveau']").append('<option value="'+id+'">'+label+'</option>');
+                var options = $("select[name='nouveau'] option");
+                options.detach().sort(function(a,b) {
+                    return ($(a).text() > $(b).text())?1:(($(a).text() < $(b).text())?-1:0);
+                });
+                options.appendTo("select[name='nouveau']");
+                $("select[name='nouveau'] option[value='"+ selected+"']").prop('selected', true);
+
+
         });
 
         //ajout d'une structure
@@ -100,6 +118,7 @@ function generateSelect($structuresConcretes, \Zend\View\Renderer\PhpRenderer $r
             var url = $("select[name='nouveau']").val();
             $.get(url, function (data) {
                 $("div#sources").append(data);
+                $("select[name='nouveau'] option:selected").remove();
             });
         });
     });

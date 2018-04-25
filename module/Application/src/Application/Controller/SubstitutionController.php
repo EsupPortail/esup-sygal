@@ -56,11 +56,28 @@ class SubstitutionController extends AbstractController
         $type = $this->params()->fromRoute('type');
         $structures = $this->structureService->getStructuresConcretesByType($type);
 
+        /** Retrait des structures soient substituées soient substitutantes */
+        $toRemove = [];
+        /** @var StructureConcreteInterface $structure */
+        foreach($structures as $structure) {
+            if (count($structure->getStructure()->getStructuresSubstituees()) != 0) {
+                $toRemove[] = $structure->getStructure();
+                foreach ($structure->getStructure()->getStructuresSubstituees() as $sub) {
+                    $toRemove[] = $sub;
+                }
+
+            }
+        }
+        /** @var Structure $remove */
+        foreach($toRemove as $remove) {
+            $structures = array_filter($structures, function (StructureConcreteInterface $structure) use ($remove) {
+                return  $structure->getStructure()->getId() !== $remove->getId();
+            });
+        }
+
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
-
-            var_dump($data['sourceIds']);
 
             $sources = [];
             foreach($data['sourceIds'] as $sourceId) {
@@ -109,6 +126,25 @@ class SubstitutionController extends AbstractController
         }
 
         $structures = $this->structureService->getStructuresConcretesByType($structureCible->getTypeStructure()->getCode());
+
+        /** Retrait des structures soient substituées soient substitutantes */
+        $toRemove = [];
+        /** @var StructureConcreteInterface $structure */
+        foreach($structures as $structure) {
+            if (count($structure->getStructure()->getStructuresSubstituees()) != 0) {
+                $toRemove[] = $structure->getStructure();
+                foreach ($structure->getStructure()->getStructuresSubstituees() as $sub) {
+                    $toRemove[] = $sub;
+                }
+
+            }
+        }
+        /** @var Structure $remove */
+        foreach($toRemove as $remove) {
+            $structures = array_filter($structures, function (StructureConcreteInterface $structure) use ($remove) {
+                return  $structure->getStructure()->getId() !== $remove->getId();
+            });
+        }
 
         $request = $this->getRequest();
         if ($request->isPost()) {

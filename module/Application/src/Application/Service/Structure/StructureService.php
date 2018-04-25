@@ -10,6 +10,7 @@ use Application\Entity\Db\StructureConcreteInterface;
 use Application\Entity\Db\StructureSubstit;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
+use Application\Filter\EtablissementPrefixFilter;
 use Application\Service\BaseService;
 use Application\Service\Source\SourceService;
 use Application\Service\Source\SourceServiceAwareTrait;
@@ -59,7 +60,7 @@ class StructureService extends BaseService
         Assert::null($structureCibleDataObject->getSourceCode(), "Le source code doit être null car il est calculé");
 
         // le source code d'une structure cible est calculé
-        $sourceCode = uniqid(Etablissement::CODE_COMUE . Etablissement::ETAB_PREFIX_SEP);
+        $sourceCode = uniqid(Etablissement::CODE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP);
 
         // la source d'une structure cible est forcément SYGAL
         $sourceSygal = $this->sourceService->fetchSourceSygal();

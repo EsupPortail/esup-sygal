@@ -22,45 +22,51 @@ class StructureSubstitHelper extends AbstractHelper {
      */
     public function structureSource(StructureConcreteInterface $structure)
     {
+        $htexte  =   '<div class="panel-heading">';
+        $htexte .=   $structure->getSource() ."/". $structure->getId() . " " . $structure->getId() ;
+        $htexte .=   '</div>';
+
+        $sygleTexte  = "<span>";
+        $sygleTexte .= "     <input champ='sigle' id='sigle_".$structure->getSigle()."' type='radio' name='sigle'/> &nbsp; ";
+        $sygleTexte .= "     <span class='texte'>" . $structure->getSigle() ."</span>";
+        $sygleTexte .= "</span>";
+
+        $libTexte  = "<span>";
+        $libTexte .= "     <input champ='libelle' id='libelle_".$structure->getSigle()."' type='radio' name='libelle'/> &nbsp; ";
+        $libTexte .= "     <span name='txt' class='texte'>" . $structure->getLibelle() . "</span>";
+        $libTexte .= "</span>";
+
+
+        $imgTexte  = "<div id='logo-div' class='pull-right '>";
+        if ($structure->getCheminLogo() !== null) $imgTexte .= '<input champ="logo" id="logo_' . $structure->getSigle() .'" type="radio" name="logo" /> &nbsp; ';
+        $imgTexte .= "      <img class='current' style='max-width: 125px; max-height: 125px; border: 1px solid black; background-color: white;' src='data:image/png;base64," . base64_encode($structure->getLogoContent()) ."'/>";
+        $imgTexte .= '      <input class="path" type="hidden" champ="cheminLogo" name="cheminLogo" value="'.$structure->getStructure()->getCheminLogo().'"/>';
+        $imgTexte .= "</div>";
+
+        $buttonTexte  = "<button class='btn btn-danger supprimer'>";
+        $buttonTexte .= "    <span class='glyphicon glyphicon-remove'></span>";
+        $buttonTexte .= "    Retirer de la substitution";
+        $buttonTexte .= "</button>";
+
         $texte =    "";
-        $texte .=   '<div class="panel panel-warning">';
-
-        $texte .=   '    <div class="panel-heading">';
-        $texte .= $structure->getSource() ."/". $structure->getId() . " " . $structure->getId() ;
-
-        $texte .=   '    </div>';
+        $texte .=   '<div class="panel panel-warning" id="panel_'.$structure->getId().'" >';
+        $texte .= $htexte;
 
         $texte .=   '    <div class="panel-body">';
-        $texte .=   '   <div class="" id="structure_'.$structure->getId().'">';
-        $texte .=   '<input type="hidden" name="sourceIds[]" value="'.$structure->getStructure()->getId().'"/>';
-
-        $texte .= "<div id='logo-div' class='pull-right '>";
-        $texte .= "<p>";
-        if ($structure->getCheminLogo() !== null) {
-            $texte .= '<input champ="logo" id="logo_' . $structure->getSigle() .'" type="radio" name="logo" /> &nbsp; ';
-        }
-        $texte .= "<img class='current' style='max-width: 125px; max-height: 125px; border: 1px solid black; background-color: white;' src='data:image/png;base64," . base64_encode($structure->getLogoContent()) ."'/>";
-        $texte .= '<input class="path" type="hidden" champ="cheminLogo" name="cheminLogo" value="'.$structure->getStructure()->getCheminLogo().'"/>';
-        $texte .= "</div>";
-
+        $texte .=   '       <div class="" id="structure_'.$structure->getId().'">';
+        $texte .=   '           <input type="hidden" name="sourceIds[]" value="'.$structure->getStructure()->getId().'"/>';
+        $texte .= $imgTexte;
 
         $texte .=   "<br/>";
 
-        $texte .= "<span>";
-        $texte .= "<input champ='sigle' id='sigle_".$structure->getSigle()."' type='radio' name='sigle'/> &nbsp; ";
-        $texte .= "<span class='texte'>" . $structure->getSigle() ."</span>";
-        $texte .= "</span>";
-
+        $texte .= $sygleTexte;
         $texte .=   "<br/>";
 
-        $texte .= "<span>";
-        $texte .= "<input champ='libelle' id='libelle_".$structure->getSigle()."' type='radio' name='libelle'/> &nbsp; ";
-        $texte .= "<span class='texte'>" . $structure->getLibelle() . "</span>";
-        $texte .= "</span>";
-        $texte .= "</p>";
+        $texte .= $libTexte;
+        $texte .=   "<br/>";
 
+        $texte .= $buttonTexte;
 
-        $texte .=   "<button class='btn btn-danger supprimer'><span class='glyphicon glyphicon-remove'></span>Retirer de la substitution</button> ";
         $texte .=   "</div>";
         $texte .=   "</div>";
         $texte .=   "</div>";
