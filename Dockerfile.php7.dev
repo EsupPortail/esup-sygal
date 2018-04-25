@@ -78,7 +78,7 @@ ADD docker/php.conf /usr/local/etc/php/conf.d/webapp.ini
 ADD docker/apache-ports.conf    /etc/apache2/ports.conf
 ADD docker/apache-site.conf     /etc/apache2/sites-available/webapp.conf
 ADD docker/apache-site-ssl.conf /etc/apache2/sites-available/webapp-ssl.conf
-RUN a2enmod rewrite ssl && \
+RUN a2enmod alias rewrite ssl && \
     a2ensite webapp && \
     a2ensite webapp-ssl
 
