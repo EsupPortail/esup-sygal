@@ -4,8 +4,63 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "4f660f69449c8f1de3b517246c2ee7f6",
+    "content-hash": "b0bc7c00b9101fa1eae43a9493ced5b3",
     "packages": [
+        {
+            "name": "beberlei/assert",
+            "version": "v2.9.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/beberlei/assert.git",
+                "reference": "c07fe163d6a3b3e4b1275981ec004397954afa89"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/beberlei/assert/zipball/c07fe163d6a3b3e4b1275981ec004397954afa89",
+                "reference": "c07fe163d6a3b3e4b1275981ec004397954afa89",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": ">=5.3"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.1.1",
+                "phpunit/phpunit": "^4.8.35|^5.7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Assert\\": "lib/Assert"
+                },
+                "files": [
+                    "lib/Assert/functions.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-2-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Benjamin Eberlei",
+                    "email": "kontakt@beberlei.de",
+                    "role": "Lead Developer"
+                },
+                {
+                    "name": "Richard Quadling",
+                    "email": "rquadling@gmail.com",
+                    "role": "Collaborator"
+                }
+            ],
+            "description": "Thin assertion library for input validation in business models.",
+            "keywords": [
+                "assert",
+                "assertion",
+                "validation"
+            ],
+            "time": "2018-04-16T11:18:27+00:00"
+        },
         {
             "name": "bjyoungblood/bjy-authorize",
             "version": "dev-master",
@@ -834,20 +889,20 @@
         },
         {
             "name": "easybook/geshi",
-            "version": "v1.0.8.18",
+            "version": "v1.0.8.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/easybook/geshi.git",
-                "reference": "4b06bfe8c6fbedd6aad0a0700d650f591386e287"
+                "reference": "b4df5fa84a44d4e12eff67263a701eac7e157241"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/easybook/geshi/zipball/4b06bfe8c6fbedd6aad0a0700d650f591386e287",
-                "reference": "4b06bfe8c6fbedd6aad0a0700d650f591386e287",
+                "url": "https://api.github.com/repos/easybook/geshi/zipball/b4df5fa84a44d4e12eff67263a701eac7e157241",
+                "reference": "b4df5fa84a44d4e12eff67263a701eac7e157241",
                 "shasum": ""
             },
             "require": {
-                "php": ">4.3.0"
+                "php": ">=5.0"
             },
             "type": "library",
             "autoload": {
@@ -876,20 +931,20 @@
                 "highlighter",
                 "syntax"
             ],
-            "time": "2016-10-05T07:15:42+00:00"
+            "time": "2018-04-20T18:19:44+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "6.3.2",
+            "version": "6.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "68d0ea14d5a3f42a20e87632a5f84931e2709c90"
+                "reference": "407b0cb880ace85c9b63c5f9551db498cb2d50ba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/68d0ea14d5a3f42a20e87632a5f84931e2709c90",
-                "reference": "68d0ea14d5a3f42a20e87632a5f84931e2709c90",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/407b0cb880ace85c9b63c5f9551db498cb2d50ba",
+                "reference": "407b0cb880ace85c9b63c5f9551db498cb2d50ba",
                 "shasum": ""
             },
             "require": {
@@ -899,7 +954,7 @@
             },
             "require-dev": {
                 "ext-curl": "*",
-                "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.4",
+                "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.4 || ^7.0",
                 "psr/log": "^1.0"
             },
             "suggest": {
@@ -941,7 +996,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2018-03-26T16:33:04+00:00"
+            "time": "2018-04-22T15:46:56+00:00"
         },
         {
             "name": "guzzlehttp/promises",
@@ -1858,11 +1913,11 @@
         },
         {
             "name": "unicaen/auth",
-            "version": "1.2.6",
+            "version": "1.2.7",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/auth.git",
-                "reference": "1f7658396139734e9d4c0dfd46bd14011e2b5e8d"
+                "reference": "d54f287f31328482685884c2bc7e30bc663d1e3a"
             },
             "require": {
                 "bjyoungblood/bjy-authorize": ">=1.4",
@@ -1884,7 +1939,7 @@
                 ]
             },
             "description": "Module d'authentification pour les applications Unicaen",
-            "time": "2018-04-09T07:41:56+00:00"
+            "time": "2018-04-24T12:54:14+00:00"
         },
         {
             "name": "unicaen/code",
