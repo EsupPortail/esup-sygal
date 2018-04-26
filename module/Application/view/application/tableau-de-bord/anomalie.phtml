@@ -1,0 +1,92 @@
+<?php
+
+use Application\Entity\Db\Anomalie;
+
+/**
+ * @var array(string => Anomalie[]) $anomaliesTables
+ */
+
+$all = 0;
+foreach ($anomaliesTables as $anomaliesTable) $all += count($anomaliesTable);
+
+?>
+
+
+
+<?php $this->headTitle($this->translate("Anomalies des données")); ?>
+
+
+<h1 class="page-header first">
+    <?php echo $this->translate("Anomalies des données"); ?>
+    <span class="badge"><?php echo $all; ?></span>
+</h1>
+
+<!-- Formulaire de filtrage -->
+<div class="pull-left">
+    <?php echo $this->partial('partial/form-filtrage', ['etablissements' => $etablissements]) ?>
+</div>
+
+
+
+<div class="pull-right">
+<?php
+    $nombreAnomalies = count($anomaliesTables);
+    switch($nombreAnomalies) {
+        case 0 : echo "Aucune anomelie détectée.";
+        break;
+        case 1 : echo "Anomalie détectée dans la table :";
+        break;
+        default : echo "Anomalies détectées dans les ".$nombreAnomalies." tables :";
+        break;
+    }
+?>
+
+<ul>
+    <?php
+        foreach ($anomaliesTables as $tableName => $anomalies) {
+            echo '<li><a href="#'.$tableName.'"> '.$tableName.'</a> <span class="badge">'.count($anomalies).'</span></li>';
+        }
+    ?>
+</ul>
+</div>
+
+<div style="clear: both;"></div>
+
+<div>
+<?php
+    foreach ($anomaliesTables as  $tableName => $anomalies) {
+
+        echo '<a name="'.$tableName.'"></a>';
+        echo '<h2> Anomalies associées à la table ['.$tableName.'] <span class="badge">'.count($anomalies).'</span></h2>';
+
+        echo '<table class="table table-extra-condensed">';
+        echo '<thead>';
+        echo '    <tr>';
+        echo '        <th>Identifiant</th>';
+        echo '        <th>Anomalie</th>';
+        echo '        <th>Valeur</th>';
+        echo '    </tr>';
+        echo '</thead>';
+
+        echo '<tbody>';
+        /** @var Anomalie $anomalie */
+        $previous = "";
+        foreach($anomalies as $anomalie) {
+            if ($previous === $anomalie->getSourceCode()) {
+                echo '<tr>';
+                echo '    <td style="border:white;"></td>';
+            } else {
+                $previous = $anomalie->getSourceCode();
+                echo '<tr>';
+                echo '    <td>' . $anomalie->getSourceCode() . '</td>';
+            }
+            echo '    <td>' . $anomalie->getDescription() . '</td>';
+            echo '    <td>' . $anomalie->getTableColumn() . ' => ' . $anomalie->getColumnValue() . '</td>';
+            echo '</tr>';
+
+        }
+        echo '</tbody>';
+        echo '</table>';
+    }
+?>
+</div>
