@@ -10,10 +10,23 @@ trait EtablissementServiceAwareTrait
     protected $etablissementService;
 
     /**
-     * @param EtablissementService $etablissementService
+     * @return EtablissementService
      */
-    public function setEtablissementService(EtablissementService $etablissementService)
+    public function getEtablissementService()
+    {
+        return $this->etablissementService;
+    }
+
+    /**
+     * @param EtablissementService $etablissementService
+     * @return EtablissementServiceAwareTrait
+     */
+    public function setEtablissementService($etablissementService)
     {
         $this->etablissementService = $etablissementService;
+        return $this;
     }
+
+
+
 }
