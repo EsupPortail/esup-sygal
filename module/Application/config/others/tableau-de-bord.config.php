@@ -1,6 +1,7 @@
 <?php
 
 use Application\Controller\Factory\TableauDeBordControllerFactory;
+use Application\Controller\TableauDeBordController;
 use Application\Provider\Privilege\EcoleDoctoralePrivileges;
 use Application\Service\AnomalieService;
 use UnicaenAuth\Guard\PrivilegeController;
@@ -12,7 +13,7 @@ return [
         'guards' => [
             PrivilegeController::class => [
                 [
-                    'controller' => 'Application\Controller\TableauDeBord',
+                    'controller' => TableauDeBordController::class,
                     'action'     => [
                         'index',
                         'anomalie',
@@ -29,8 +30,7 @@ return [
                 'options'       => [
                     'route'    => '/tableau-de-bord',
                     'defaults' => [
-                        '__NAMESPACE__' => 'Application\Controller',
-                        'controller'    => 'TableauDeBord',
+                        'controller'    => TableauDeBordController::class,
                         'action'        => 'index',
                     ],
                 ],
@@ -72,7 +72,7 @@ return [
         'invokables' => [
         ],
         'factories' => [
-            'Application\Controller\TableauDeBord' => TableauDeBordControllerFactory::class,
+            TableauDeBordController::class => TableauDeBordControllerFactory::class,
         ],
     ],
     'form_elements'   => [
