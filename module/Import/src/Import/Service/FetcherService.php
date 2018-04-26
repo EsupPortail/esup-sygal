@@ -2,6 +2,7 @@
 
 namespace Import\Service;
 
+use Application\Filter\EtablissementPrefixFilter;
 use DateTime;
 use Doctrine\ORM\EntityManager;
 use GuzzleHttp\Client;
@@ -346,20 +347,34 @@ class FetcherService
         $valuesArray = [];
         foreach ($metadata->columnNames as $propriete => $colonne) {
             $type = $metadata->fieldMappings[$propriete]["type"];
+            $f = new EtablissementPrefixFilter();
             $value = null;
-            //TODO (jp) nettoie moi çà
-            if ($propriete === "etablissementId") $value = $this->code;
-            elseif ($propriete === "sourceCode") $value = $this->code . "::" . $entity_json->{'id'};
-            //BG: elseif ($propriete === "code")          $value = $this->code."::".$entity_json->{'code'};
-            elseif ($propriete === "sourceId") $value = $this->code . "::" . $entity_json->{'sourceId'};
-            elseif ($propriete === "individuId") $value = $this->code . "::" . $entity_json->{'individuId'};
-            elseif ($propriete === "roleId") $value = $this->code . "::" . $entity_json->{'roleId'};
-            elseif ($propriete === "theseId") $value = $this->code . "::" . $entity_json->{'theseId'};
-            elseif ($propriete === "doctorantId") $value = $this->code . "::" . $entity_json->{'doctorantId'};
-            elseif ($propriete === "structureId") $value = $this->code . "::" . $entity_json->{'structureId'};
-            elseif ($propriete === "ecoleDoctId") $value = $this->code . "::" . $entity_json->{'ecoleDoctId'};
-            elseif ($propriete === "uniteRechId") $value = $this->code . "::" . $entity_json->{'uniteRechId'};
-            else $value = $entity_json->{$propriete};
+            switch ($propriete) {
+                case "etablissementId":
+                    $value = $this->code;
+                    break;
+                case "sourceCode":
+                    $value = $f->addPrefixTo($entity_json->id, $this->code);
+                    break;
+                case "sourceId":
+                case "individuId":
+                case "roleId":
+                case "theseId":
+                case "doctorantId":
+                case "structureId":
+                case "ecoleDoctId":
+                case "uniteRechId":
+                    if (isset($entity_json->{$propriete})) {
+                        $value = $f->addPrefixTo($entity_json->{$propriete}, $this->code);
+                    }
+                    break;
+                default:
+                    if (isset($entity_json->{$propriete})) {
+                        $value = $entity_json->{$propriete};
+                    }
+                    break;
+            }
+
             $valuesArray[] = $this->prepValue($value, $type);
         }
 
