@@ -2,21 +2,41 @@
 
 namespace Import\Model;
 
+/**
+ * TmpSource
+ */
 class TmpSource
 {
-    protected $id;
-    protected $code;
-    protected $libelle;
-    protected $importable;
-    protected $etablissementId;
-    protected $sourceCode;
+    /**
+     * @var string
+     */
+    private $etablissementId;
 
-    public function __construct($json)
-    {
-        $this->id = $json->{'id'};
-        $this->code = $json->{'code'};
-        $this->libelle = $json->{'libelle'};
-        $this->importable = $json->{'importable'};
-    }
+    /**
+     * @var string
+     */
+    private $code;
+
+    /**
+     * @var string
+     */
+    private $libelle;
+
+    /**
+     * @var integer
+     */
+    private $importable;
+
+    /**
+     * @var string
+     */
+    private $sourceCode;
+
+    /**
+     * @var string
+     */
+    private $id;
+
 
 }
+

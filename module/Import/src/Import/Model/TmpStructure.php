@@ -2,28 +2,56 @@
 
 namespace Import\Model;
 
-class TmpStructure {
+/**
+ * TmpStructure
+ */
+class TmpStructure
+{
+    /**
+     * @var string
+     */
+    private $etablissementId;
 
-    protected $id;
-    protected $etablissementId;
-    protected $sourceId;
-    protected $code;
-    protected $typeStructureId;
-    protected $sigle;
-    protected $libelle;
-    protected $codePays;
-    protected $libellePays;
+    /**
+     * @var string
+     */
+    private $sourceId;
 
-    public function __construct($json) {
-        $this->id                           = $json->{'id'};
-//        protected $etablissementId;
-        $this->sourceId                     = $json->{'sourceId'};
-        $this->code                         = $json->{'code'};
-        $this->typeStructureId              = $json->{'typeStructureId'};
-        $this->sigle                        = $json->{'sigle'};
-        $this->libelle                      = $json->{'libelle'};
-        $this->codePays                     = $json->{'codePays'};
-        $this->libellePays                  = $json->{'libellePays'};
-    }
+    /**
+     * @var string
+     */
+    private $sourceCode;
+
+    /**
+     * @var string
+     */
+    private $typeStructureId;
+
+    /**
+     * @var string
+     */
+    private $sigle;
+
+    /**
+     * @var string
+     */
+    private $libelle;
+
+    /**
+     * @var string
+     */
+    private $codePays;
+
+    /**
+     * @var string
+     */
+    private $libellePays;
+
+    /**
+     * @var string
+     */
+    private $id;
+
 
 }
+

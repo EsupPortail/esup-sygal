@@ -2,19 +2,41 @@
 
 namespace Import\Model;
 
-class TmpRole {
-    protected $id;
-    protected $sourceId;
-    protected $etablissementId;
-    protected $libLongRole;
-    protected $libCourtRole;
-    protected $sourceCode;
+/**
+ * TmpRole
+ */
+class TmpRole
+{
+    /**
+     * @var string
+     */
+    private $sourceId;
 
-    public function __construct($json) {
-        $this->id                           = $json->{'id'};
-        $this->sourceId                     = $json->{'sourceId'};
-        $this->libLongRole                  = $json->{'libLongRole'};
-        $this->libCourtRole                 = $json->{'libCourtRole'};
-    }
+    /**
+     * @var string
+     */
+    private $etablissementId;
+
+    /**
+     * @var string
+     */
+    private $libLongRole;
+
+    /**
+     * @var string
+     */
+    private $libCourtRole;
+
+    /**
+     * @var string
+     */
+    private $sourceCode;
+
+    /**
+     * @var string
+     */
+    private $id;
+
 
 }
+

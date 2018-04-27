@@ -2,26 +2,56 @@
 
 namespace Import\Model;
 
-class TmpVariable {
+/**
+ * TmpVariable
+ */
+class TmpVariable
+{
+    /**
+     * @var string
+     */
+    private $sourceId;
 
-    protected $id;
-    protected $sourceId;
-    protected $etablissementId;
-    protected $libEtablissement;
-    protected $libResponsable;
-    protected $libTitre;
-    protected $sourceCode;
-    protected $dateDebValidite;
-    protected $dateFinValidite;
+    /**
+     * @var string
+     */
+    private $etablissementId;
 
-    public function __construct($json) {
-        $this->id                           = $json->{'id'};
-        $this->sourceId                     = $json->{'sourceId'};
-        $this->libEtablissement             = $json->{'libEtablissement'};
-        $this->libResponsable               = $json->{'libResponsable'};
-        $this->libTitre                     = $json->{'libTitre'};
-        $this->dateDebValidite              = new \DateTime($json->{'dateDebValidite'}->{'date'});
-        $this->dateFinValidite              = new \DateTime($json->{'dateFinValidite'}->{'date'});
-    }
+    /**
+     * @var string
+     */
+    private $libEtablissement;
+
+    /**
+     * @var string
+     */
+    private $libResponsable;
+
+    /**
+     * @var string
+     */
+    private $libTitre;
+
+    /**
+     * @var \DateTime
+     */
+    private $dateDebValidite;
+
+    /**
+     * @var \DateTime
+     */
+    private $dateFinValidite;
+
+    /**
+     * @var string
+     */
+    private $sourceCode;
+
+    /**
+     * @var string
+     */
+    private $id;
+
 
 }
+
