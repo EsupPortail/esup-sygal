@@ -23,9 +23,6 @@ use Zend\Http\Response;
  * - fetchOne($dataName, $entityClass, source_code) qui récupére les données associés à une entité
  *
  * Chaque appel à ce service va insérer une ligne de log dans la table API_LOGS
- *
- * TODO mieux gérer les messages d'erreurs provenant de l'echec de récupération via le Web Service
- * TODO si l'accés à la base de donnée échoue comment mettre le log dans API_LOGS
  */
 class FetcherService
 {
@@ -68,8 +65,6 @@ class FetcherService
     {
         $this->entityManager = $entityManager;
         $this->config = $config;
-//        $this->user = $config['users']['login'];
-//        $this->password = $config['users']['password'];
     }
 
     /**
@@ -228,7 +223,6 @@ class FetcherService
         } catch (GuzzleException $e) {
             throw new RuntimeException("Erreur inattendue rencontrée lors de l'envoi de la requête au WS", null, $e);
         }
-
         return $response;
     }
 
@@ -288,7 +282,7 @@ class FetcherService
      * @param string status : le status du traitement
      * @param string   $response   : le message associé au traitement
      * @return array [DateTime, string] le log associé pour l'affichage ...
-     * @throws \Exception
+     * @throws RuntimeException
      * */
     public function doLog($start_date, $end_date, $route, $status, $response)
     {
@@ -309,7 +303,7 @@ class FetcherService
             $connection->executeQuery($log_query);
             $this->entityManager->getConnection()->commit();
         } catch (\Exception $e) {
-            return [$end_date, $e->getCode() . " - " . $e->getMessage()];
+            throw new RuntimeException("Problème lors de l'écriture du log en base.", null, $e);
         }
 
         return [$end_date, $response];
