@@ -26,6 +26,45 @@ use Zend\Http\Response;
  */
 class FetcherService
 {
+    /**
+     * Appels ORDONNÉS de procédures de synchronisation à lancer en fonction du service.
+     */
+    const APP_IMPORT_PROCEDURE_CALLS = [
+        'structure' => [
+            "UNICAEN_IMPORT.MAJ_STRUCTURE();",
+        ],
+        'etablissement' => [
+            "UNICAEN_IMPORT.MAJ_ETABLISSEMENT();",
+        ],
+        'ecole-doctorale' => [
+            "UNICAEN_IMPORT.MAJ_ECOLE_DOCT();",
+            "APP_IMPORT.REFRESH_MV('MV_RECHERCHE_THESE');",
+        ],
+        'unite-recherche' => [
+            "UNICAEN_IMPORT.MAJ_UNITE_RECH();",
+        ],
+        'individu' => [
+            "UNICAEN_IMPORT.MAJ_INDIVIDU();",
+        ],
+        'doctorant' => [
+            "UNICAEN_IMPORT.MAJ_DOCTORANT();",
+            "APP_IMPORT.REFRESH_MV('MV_RECHERCHE_THESE');",
+        ],
+        'these' => [
+            "UNICAEN_IMPORT.MAJ_THESE();",
+            "APP_IMPORT.REFRESH_MV('MV_RECHERCHE_THESE');",
+        ],
+        'role' => [
+            "UNICAEN_IMPORT.MAJ_ROLE();",
+        ],
+        'acteur' => [
+            "UNICAEN_IMPORT.MAJ_ACTEUR();",
+            "APP_IMPORT.REFRESH_MV('MV_RECHERCHE_THESE');",
+        ],
+        'variable' => [
+            "UNICAEN_IMPORT.MAJ_VARIABLE();",
+        ],
+    ];
 
     /**
      * $entityManager et $config sont fournis par la factory et permettent l'acces à la BD et à la config
@@ -398,11 +437,24 @@ class FetcherService
     }
 
     /**
+     * Lance la synchro des données par UnicaenImport pour les services spécifiés.
+     *
+     * @param array $services
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function updateBDD()
+    public function updateBDD(array $services)
     {
-        $this->entityManager->getConnection()->executeQuery("begin APP_IMPORT.SYNCHRONISATION(); end;");
+        // détermination des appels de procédures de synchro à faire
+        $calls = [];
+        foreach ($services as $service) {
+            $calls = array_merge($calls, self::APP_IMPORT_PROCEDURE_CALLS[$service]);
+        }
+        // suppression des appels en double EN CONSERVANT LE DERNIER appel et non le premier
+        $calls = array_reverse(array_unique(array_reverse($calls)));
+
+        $plsql = implode(PHP_EOL, array_merge(['BEGIN'], $calls, ['END;']));
+
+        $this->entityManager->getConnection()->executeQuery($plsql);
     }
 
     /**

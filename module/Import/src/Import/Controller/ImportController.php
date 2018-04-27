@@ -8,6 +8,22 @@ use Zend\View\Model\ViewModel;
 
 class ImportController extends AbstractActionController
 {
+    /**
+     * Liste ORDONNÉE de tous les services proposés.
+     */
+    const SERVICES = [
+        'individu',
+        'doctorant',
+        'these',
+        'role',
+        'acteur',
+        'variable',
+        'structure',
+        'etablissement',
+        'ecole-doctorale',
+        'unite-recherche',
+    ];
+
     private $debug = false;
 
     /** @var $fetcherService FetcherService*/
@@ -46,7 +62,7 @@ class ImportController extends AbstractActionController
 
         /** is it all ? */
         if ($service_para === "all") {
-            $services = ['variable', 'role', 'doctorant', 'these', 'individu', 'acteur', 'structure', 'etablissement', 'ecole-doctorale', 'unite-recherche'];
+            $services = static::SERVICES;
         } else {
             $services = [ $service_para ];
         }
@@ -69,8 +85,6 @@ class ImportController extends AbstractActionController
 
             }
 
-
-
             $dataName = $service;
             $entityName = str_replace("-"," ", $service);
             $entityName = ucwords($entityName);
@@ -90,7 +104,8 @@ class ImportController extends AbstractActionController
             }
         }
 
-        $this->fetcherService->updateBDD();
+        $this->fetcherService->updateBDD($services);
+
         return new ViewModel([
             'service' => $service_para,
             'etablissement' => $etablissement,
@@ -112,7 +127,7 @@ class ImportController extends AbstractActionController
 
         /** is it all ? */
         if ($service_para === "all") {
-            $services = ['variable', 'role', 'doctorant', 'these', 'individu', 'acteur', 'structure', 'etablissement', 'ecole-doctorale', 'unite-recherche'];
+            $services = static::SERVICES;
         } else {
             $services = [ $service_para ];
         }
@@ -137,8 +152,8 @@ class ImportController extends AbstractActionController
             }
         }
 
-        $this->fetcherService->updateBDD();
-        print "Importation des données réussie \n";
+        $this->fetcherService->updateBDD($services);
 
+        print "Importation des données réussie \n";
     }
 }
