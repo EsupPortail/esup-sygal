@@ -26,7 +26,7 @@ trait StructureServiceAwareTrait
     /**
      * @return StructureService
      */
-    public function getServiceStructureStructure()
+    public function getStructureService()
     {
         return $this->structureService;
     }

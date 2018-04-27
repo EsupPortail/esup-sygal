@@ -275,16 +275,34 @@ class StructureService extends BaseService
     }
 
     /**
-     * Retourne la liste des structures substituées (i.e. structures cibles)
+     * Cette fonction retourne la liste des structures qui substitue d'autres structures
      * @return Structure[]
      */
-    public function getStructuresSubstituees()
+    public function getStructuresSubstituantes()
     {
         $qb = $this->getEntityManager()->getRepository(Structure::class)->createQueryBuilder("s")
             ->andWhere("s.structuresSubstituees IS NOT EMPTY");
 
         $results = $qb->getQuery()->getResult();
         return $results;
+    }
+
+    public function getStructuresSubstituees() {
+        /** @var Structure[] $structuresSubstituantes */
+        $structuresSubstituantes = $this->getStructuresSubstituantes();
+
+        $dictionnaire = [];
+        foreach($structuresSubstituantes as $structureSubstituante) {
+            foreach ($structureSubstituante->getStructuresSubstituees() as $structure) {
+                $dictionnaire[$structure->getId()] = $structure;
+            }
+        }
+
+        $result = [];
+        foreach ($dictionnaire as $key => $structure) {
+            $result[] = $structure;
+        }
+        return $result;
     }
 
 

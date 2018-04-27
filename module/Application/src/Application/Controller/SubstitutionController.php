@@ -24,7 +24,7 @@ class SubstitutionController extends AbstractController
 
     public function indexAction()
     {
-        $structuresSubstituees = $this->structureService->getStructuresSubstituees();
+        $structuresSubstituees = $this->structureService->getStructuresSubstituantes();
         $etablissementsSubstitues = [];
         $ecolesSubstituees = [];
         $unitesSubstituees = [];

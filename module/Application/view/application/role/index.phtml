@@ -3,13 +3,9 @@
     use Application\Entity\Db\Privilege;
     use UnicaenAuth\Provider\Privilege\Privileges;
     use Application\Entity\Db\Etablissement;
-
-
     $canVisualiser = $this->isAllowed(Privileges::getResourceId(Privileges::DROIT_PRIVILEGE_VISUALISATION));
     $canModifier = $this->isAllowed(Privileges::getResourceId(Privileges::DROIT_PRIVILEGE_EDITION));
 
-//    var_dump($canVisualiser);
-//    var_dump($canModifier);
 
 /**
  * //Provenant du controleur
@@ -35,8 +31,8 @@
 <?php
 
 echo "<table id='mytable' class='mytable table-bordered'>";
-echo generateTableHeader($roles, $etablissements);
-echo generateTableBody($roles, $etablissements, $privileges);
+echo generateTableHeader($roles);
+echo generateTableBody($roles,$privileges);
 echo "</table>";
 
 ?>
@@ -79,153 +75,123 @@ echo "</table>";
 
 
 <?php
-
-
-
-    function getCode(Role $role, $etablissements) {
-
-        //TODO changer se morceau de code maladroit
-
-        /** @var \Application\Entity\Db\Etablissement $etablissement */
-        foreach($etablissements as $etablissement) {
-            if ($etablissement->getSigle() == $role->getStructure()->getSigle()) {
-                return $etablissement->getCode();
-            }
-        }
-        return "missing";
-    }
-
     /**
+     * Cette fonction génère le header du tableau des Rôles/Privilèges
      * @param Role[] $roles
-     * @param Etablissement[] $etablissements
      * @return string
      */
-    function generateTableHeader($roles, $etablissements)
+    function generateTableHeader($roles)
     {
-        $texte  = "";
-        $texte .= "<thead>";
-        $texte .= "<tr>";
-        $texte .= "<th></th>"; //empty first cell
-
+        $texte  = '';
+        $texte .= '<thead>';
+        $texte .= '<tr>';
+        $texte .= '<th></th>'; //empty first cell
         foreach ($roles as $role) {
-            $texte .=  generateTableHeaderRole($role, $etablissements);
+            $texte .=  generateTableHeaderRole($role);
         }
-        $texte .= "</tr>";
-        $texte .= "</thead>";
+        $texte .= '</tr>';
+        $texte .= '</thead>';
         return $texte;
     }
 
     /**
+     * Cette fonction est en charge de créer le header associé à un role avec sur :
+     * - la première ligne : le libelle du rôle (Adminstrateur, Doctorant, ...)
+     * - la seconde ligne : le sigle de la structure de rattachement (Unicaen, EA4285 CERMN, ...)
+     * Attention elle aussi en charge de donner les bonnes classes CSS
      * @param Role $role
      * @return string
      */
-    function generateTableHeaderRole($role, $etablissements = null) {
+    function generateTableHeaderRole($role) {
 
-        $premiere = $role->getLibelle();
-        $seconde  = "";
-        $de = "";
-        switch(true) {
-            case $role->isTheseDependant() :
-                $seconde = getCode($role, $etablissements);
-                $de = "these";
-                break;
-            case $role->isEcoleDoctoraleDependant() :
-                $seconde = $role->getStructure()->getSigle();
-                $de = "ed";
-                break;
-            case $role->isEtablissementDependant() :
-                $seconde = getCode($role, $etablissements);
-                $de = "etab";
-                break;
-            case $role->isUniteRechercheDependant() :
-                $seconde = $role->getStructure()->getSigle();
-                $de = "ur";
-                break;
+        $libelleRole = $role->getLibelle();
+        //Les rôles "Adminstrateur technique" et "Observateur" non pas de structure associée !!!
+        $sigleStructure = "";
+        $depend = "";
+        if ($role->isTheseDependant() || $role->isStructureDependant()) {
+            $sigleStructure = $role->getStructure()->getSigle();
+            if ($role->isTheseDependant()) {
+                $depend = "these";
+            } else {
+                $depend = $role->getStructure()->getTypeStructure()->getCode();
+            }
         }
-
-        $texte  = "<th class='role'>";
-        $texte .= $premiere;
-        $texte .= "<br/>";
-        $texte .= "<span class='depend ".$de."'>";
-        $texte .= $seconde;
-        $texte .= "</span>";
-        $texte .= "</th>";
+        $texte  = '<th class="role">';
+        $texte .= $libelleRole;
+        $texte .= '<br/>';
+        $texte .= '<span class="depend '.$depend.'">' .$sigleStructure . '</span>';
+        $texte .= '</th>';
         return $texte;
     }
 
     /**
+     * Cette fonction génère le body du tableau des Rôles/Privilèges
      * @param Role[] $roles
-     * @param Etablissement[] $etablissements
      * @param Privilege[] $privileges
      * @return string
      */
-    function generateTableBody($roles, $etablissements, $privileges)
+    function generateTableBody($roles, $privileges)
     {
-        $texte = "";
-        $texte .= "<tbody>";
-
+        $texte  = '';
+        $texte .= '<tbody>';
         $previous_categorie = null;
         foreach($privileges as $privilege) {
             if ($previous_categorie !== $privilege->getCategorie()) {
                 $texte .= generateTableCategorieLine($privilege, $roles);
                 $previous_categorie = $privilege->getCategorie();
             }
-            $texte .= generateTablePrivilegeLine($privilege, $roles, $etablissements);
+            $texte .= generateTablePrivilegeLine($privilege, $roles);
         }
-        $texte .=  "</tbody>";
-
+        $texte .=  '</tbody>';
         return $texte;
     }
 
-
     /**
+     * Cette fonction génére la ligne traversant le tableau la de l'affichage d'un catégorie
      * @param Privilege $privilege
      * @param Role[] $roles
      * @return string
      */
     function generateTableCategorieLine($privilege, $roles)
     {
-        $texte  = "";
-        $texte .= "<tr>";
-        $texte .= "<th colspan='";
-        $texte .= count($roles)+1;
-        $texte .= "' class='categorie'>";
+        $texte  = '';
+        $texte .= '<tr>';
+        $texte .= '<th colspan="'. (count($roles)+1) . '" class="categorie">';
         $texte .= $privilege->getCategorie()->getLibelle();
-        $texte .= "</th></tr>";
-
+        $texte .= '</th>';
+        $texte .= '</tr>';
         return $texte;
     }
 
 
     /**
+     * * Cette fonction génére la ligne associée à un privilège
      * @param Privilege $privilege
      * @param Role[] $roles
-     * @param Etablissement[] $etablissements
      * @return string
      */
-    function generateTablePrivilegeLine($privilege, $roles, $etablissements)
+    function generateTablePrivilegeLine($privilege, $roles)
     {
-        $texte = "";
-        $texte .= "<tr>";
-        $texte .= "<th class='privilege'> {$privilege->getLibelle()} </th>";
+        $texte  = '';
+        $texte .= '<tr>';
+        $texte .= '<th class="privilege">'.$privilege->getLibelle().'</th>';
 
         foreach($roles as $role) {
-            $id = "{$privilege->getId()}_{$role->getId()}";
-            $code = ($role->getStructure() !== null) ? $role->getStructure()->getSigle() : " ";
-            if ($code === null) $code = getCode($role, $etablissements);
-            $title = "{$role->getLibelle()} - {$code} \n{$privilege->getLibelle()}";
-            $texte .= "<td class='droit' id='$id' title='{$title}'>";
+            $code = ($role->getStructure() !== null) ? $role->getStructure()->getSigle() : '';
+            $title = $role->getLibelle(). ' - '.$code. " \n " .$privilege->getLibelle();
+
+            $id = $privilege->getId().'_'.$role->getId();
+            $texte .= '<td class="droit" id="'.$id.'" title="'.$title.'">';
 
             if( array_search($role, $privilege->getRole()->toArray()) !== false) {
-                $texte .= "<span class='glyphicon glyphicon-ok text-success'></span>";
+                $texte .= '<span class="glyphicon glyphicon-ok text-success"></span>';
             } else {
-                $texte .= "<span class='glyphicon glyphicon-remove text-danger'></span>";
+                $texte .= '<span class="glyphicon glyphicon-remove text-danger"></span>';
             }
-            $texte .= "</td>";
+
+            $texte .= '</td>';
         }
-
-        $texte.= "</tr>";
-
+        $texte.= '</tr>';
         return $texte;
     }
 ?>
@@ -256,31 +222,27 @@ echo "</table>";
     }
     .depend
     {
-        text-orientation: upright;
+        //text-orientation: upright;
     }
 
-    .ed
+    .ecole-doctorale
     {
         color: #5B2268;
-        text-orientation: upright;
     }
 
-    .ur
+    .unite-recherche
     {
         color: #0a3783;
-        text-orientation: upright;
     }
 
-    .etab
+    .etablissement
     {
         color: #870a0a;
-        text-orientation: upright;
     }
 
     .these
     {
         color: #004602;
-        text-orientation: upright;
     }
 
     td.droit {
