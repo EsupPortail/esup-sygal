@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "b0bc7c00b9101fa1eae43a9493ced5b3",
+    "content-hash": "bd8c3d3e91508f7df99c5680292ae9d2",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -2092,11 +2092,11 @@
         },
         {
             "name": "unicaen/oracle",
-            "version": "1.1.2",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/oracle.git",
-                "reference": "df0506113c7a21e91180dc2ffa63278c92bd4f88"
+                "reference": "42efd5f206ba5547a62ae48c79ce57706272d3be"
             },
             "require": {
                 "doctrine/dbal": "^2.5",
@@ -2116,7 +2116,7 @@
                 ]
             },
             "description": "Bibliothèque utile lorsqu'on utilise un base de données Oracle",
-            "time": "2018-02-26T10:03:19+00:00"
+            "time": "2018-04-27T08:31:56+00:00"
         },
         {
             "name": "webmozart/assert",
