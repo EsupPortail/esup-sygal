@@ -95,7 +95,7 @@ insert into FICHIER (
     THESE_ID,
     TYPE_MIME,
     VERSION_FICHIER_ID
-  from oth.S_FICHIER
+  from S_FICHIER
 ;
 
 
@@ -126,7 +126,7 @@ insert into VALIDITE_FICHIER (
     HISTO_MODIFICATION,
     LOG,
     MESSAGE
-  from oth.s_VALIDITE_FICHIER
+  from s_VALIDITE_FICHIER
 ;
 
 
@@ -142,3 +142,11 @@ BEGIN
 END;
 /
 
+
+
+--
+-- Une fois connecté à Sodoct, lancer 'check-nommage-fichier' (barre ZendDevTools) pour vérifier le nommage des fichiers en bdd.
+-- Lancer si besoin 'update-nommage-fichiers' pour renommer les manquants.
+-- Lancer 'create-files-from-contenu-fichiers' pour récupérer les CONTENU_FICHIER sous forme de fichiers sur disque.
+-- Copier les fichiers sur le serveur d'appli.
+--

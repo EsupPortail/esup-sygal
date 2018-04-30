@@ -1,10 +1,3 @@
--- for tests
-drop table      VALIDATION_XX ;
-drop sequence   VALIDATION_XX_id_seq;
-create table    VALIDATION_XX as select * from VALIDATION where 1=0;
-create sequence VALIDATION_XX_id_seq;
--- en réel, remplacer ci-dessous '_XX' par ''.
-
 
 create table S_VALIDATION as select * from sodoct.VALIDATION@doctprod;
 
@@ -20,7 +13,7 @@ INSERT INTO TYPE_VALIDATION (ID, CODE, LIBELLE) VALUES (4, 'VERSION_PAPIER_CORRI
 
 -- VALIDATION
  
-insert into VALIDATION_XX (
+insert into VALIDATION (
   ID,
   TYPE_VALIDATION_ID,
   THESE_ID,
@@ -50,10 +43,15 @@ DECLARE
   maxid NUMBER;
   nextval NUMBER;
 BEGIN
-  select max(id) into maxid from VALIDATION_XX;
+  select max(id) into maxid from VALIDATION;
   loop
-    select VALIDATION_XX_ID_SEQ.nextval into nextval from dual;
+    select VALIDATION_ID_SEQ.nextval into nextval from dual;
     EXIT WHEN maxid < nextval;
   end loop;
 END;
 /
+
+
+--
+
+drop table S_VALIDATION;
