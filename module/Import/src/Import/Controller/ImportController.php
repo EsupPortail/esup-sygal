@@ -34,6 +34,11 @@ class ImportController extends AbstractActionController
         $this->fetcherService    = $fetcherService;
     }
 
+    public function indexAction()
+    {
+        return new ViewModel();
+    }
+
     public function helpAction()
     {
         return new ViewModel();

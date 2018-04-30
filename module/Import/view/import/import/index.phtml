@@ -1,0 +1,210 @@
+<h1> Récupération des données des Web Services </h1>
+
+<div>
+    Établissement :
+        <input type="radio" name="etablissement" value="INSA"/> INSA Rouen
+        <input type="radio" name="etablissement" value="UCN" checked /> Université de Caen
+        <input type="radio" name="etablissement" value="ULHN"/> Université du Havre
+        <input type="radio" name="etablissement" value="URN" /> Université de Rouen
+
+
+
+    <div>
+        <div class="col-md-4">
+            <div class="panel panel-success">
+                <div class="panel-heading"> Structure </div>
+                <div class="panel-body">
+                    <img id="structure" src="css/red.png"/>
+                    <button class="btn btn-info" service="structure">Lancer ! </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-success">
+                <div class="panel-heading"> École Doctorale</div>
+                <div class="panel-body">
+                    <img id="ecole-doctorale" src="css/red.png"/>
+                    <button class="btn btn-info" service="ecole-doctorale">Lancer ! </button>
+                </div>
+            </div>
+            <div class="panel panel-success">
+                <div class="panel-heading"> Établissement </div>
+                <div class="panel-body">
+                    <img id="etablissement" src="css/red.png"/>
+                    <button class="btn btn-info" service="etablissement">Lancer ! </button>
+                </div>
+            </div>
+            <div class="panel panel-success">
+                <div class="panel-heading"> Unité de recherche</div>
+                <div class="panel-body">
+                    <img id="unite-recherche" src="css/red.png"/>
+                    <button class="btn btn-info" service="unite-recherche">Lancer ! </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="clear:both;"></div>
+
+
+    <div>
+        <div class="col-md-4">
+            <div class="panel panel-info">
+                <div class="panel-heading"> Individu </div>
+                <div class="panel-body">
+                    <img id="individu" src="css/red.png"/>
+                    <button class="btn btn-info" service="individu">Lancer ! </button>
+                </div>
+            </div>
+            <div class="panel panel-info">
+                <div class="panel-heading"> Rôle </div>
+                <div class="panel-body">
+                    <img id="role" src="css/red.png"/>
+                    <button class="btn btn-info" service="role">Lancer ! </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-info">
+                <div class="panel-heading"> Doctorant </div>
+                <div class="panel-body">
+                    <img id="doctorant" src="css/red.png"/>
+                    <button class="btn btn-info" service="doctorant">Lancer ! </button>
+                </div>
+            </div>
+            <div class="panel panel-info">
+                <div class="panel-heading"> Acteur </div>
+                <div class="panel-body">
+                    <img id="acteur" src="css/red.png"/>
+                    <button class="btn btn-info" service="acteur">Lancer ! </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-info">
+                <div class="panel-heading"> Thèse </div>
+                <div class="panel-body">
+                    <img id="these" src="css/red.png"/>
+                    <button class="btn btn-info" service="these">Lancer ! </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="clear:both;"></div>
+
+    <div>
+        <div class="col-md-4">
+            <div class="panel panel-warning">
+                <div class="panel-heading"> Variable </div>
+                <div class="panel-body">
+                    <img id="variable" src="css/red.png"/>
+                    <button class="btn btn-info" service="variable">Lancer ! </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div style="clear:both;"></div>
+
+<div id="current">Aucun message pour le moment.</div>
+
+<script>
+
+    var state = Array();
+    state["structure"] = false;
+    state["ecole-doctorale"] = false;
+    state["etablissement"] = false;
+    state["unite-recherche"] = false;
+    state["individu"] = false;
+    state["doctorant"] = false;
+    state["role"] = false;
+    state["acteur"] = false;
+    state["these"] = false;
+    state["variable"] = false;
+
+    var depend = Array();
+    depend["structure"] = [ ];
+    depend["ecole-doctorale"] = [ "structure"];
+    depend["etablissement"]   = [ "structure"];
+    depend["unite-recherche"] = [ "structure"];
+    depend["individu"] = [ ];
+    depend["doctorant"] = [ "individu" ];
+    depend["role"] = [ ];
+    depend["acteur"] = [ "individu", "role" ];
+    depend["these"] = [ "doctorant" ];
+    depend["variable"] = [ ];
+
+    $(document).ready(function() {
+        $("button").click( function() {
+
+            var etablissement = $("input[name=etablissement]:checked").val();
+            var service = $(this).attr("service");
+            var texte = "Récupération des données ["+service+"|"+etablissement+"]";
+
+
+
+            console.log(texte);
+
+            var dependance = Array();
+            toRun = [ service ];
+            current = [ service ];
+            // console.log(current);
+            var depth = 0;
+            while (current.length && depth < 10) {
+                currentService = current[0];
+                current = current.slice(1, 1000);
+                // console.log("current:" + current);
+                // console.log("services: " + currentService);
+
+                for (var i = 0; i < depend[currentService].length; i++) {
+                    var father = depend[currentService][i];
+                    if (state[father] !== true) {
+                        current.push(father);
+                        toRun.push(father);
+                    }
+                }
+                // console.log("next current:" + current);
+            }
+            console.log("Données à récupérer: " + toRun);
+            for( var i = 0 ; i < toRun.length ; i++) {
+                if (state[toRun[i]] === false) {
+                    $("#" + toRun[i]).attr("src", "css/orange.png");
+                }
+            }
+            $.fetch(toRun, etablissement);
+
+
+        });
+    });
+
+    $.fetch = function(services, etablissement) {
+
+        if (services.length > 0) {
+            var length = services.length;
+            var service = services[length-1];
+            if (state[service] === false) {
+                console.log("Fetching: " + service + "["+state[service] +"]");
+                state[service] = true;
+                var url = "fetch/" + service + "/" + etablissement;
+                $.ajax({
+                    url: url,
+                    beforeSend:
+                        function () {
+                            $("#" + service).attr("src", "css/yellow.png");
+                        },
+                    success:
+                        function (retour) {
+                            console.log(retour);
+                            $("#" + service).attr("src", "css/green.png");
+
+                            var next = services.slice(0, length-1);
+                            $.fetch(next, etablissement);
+                        }
+                });
+            }
+        }
+    }
+</script>
