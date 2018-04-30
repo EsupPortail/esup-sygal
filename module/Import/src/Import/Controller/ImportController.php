@@ -3,11 +3,14 @@
 namespace Import\Controller;
 
 use Import\Service\FetcherService;
+use UnicaenApp\Service\EntityManagerAwareTrait;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
 class ImportController extends AbstractActionController
 {
+    use EntityManagerAwareTrait;
+
     /**
      * Liste ORDONNÉE de tous les services proposés.
      */
@@ -36,6 +39,10 @@ class ImportController extends AbstractActionController
 
     public function indexAction()
     {
+        $connection = $this->entityManager->getConnection();
+        $connection->executeQuery("SELECT REQ_END_DATE FROM API_LOG WHERE REQ_ETABLISSEMENT='UCN' AND REQ_TABLE='variable' ORDER BY REQ_END_DATE DESC");
+
+
         return new ViewModel();
     }
 

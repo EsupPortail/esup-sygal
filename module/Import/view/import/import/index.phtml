@@ -8,13 +8,19 @@
         <input type="radio" name="etablissement" value="URN" /> Université de Rouen
 
 
+    <div>
+        <button class="btn btn-info" id="all"> Récupérer toutes les données </button>
+        <button class="btn btn-info" id="reset"> Remise à zéro de la récupération </button>
+    </div>
+
+    <br/>
 
     <div>
         <div class="col-md-4">
             <div class="panel panel-success">
                 <div class="panel-heading"> Structure </div>
                 <div class="panel-body">
-                    <img id="structure" src="css/red.png"/>
+                    <img id="structure" src="css/grey.png"/>
                     <button class="btn btn-info" service="structure">Lancer ! </button>
                 </div>
             </div>
@@ -23,21 +29,21 @@
             <div class="panel panel-success">
                 <div class="panel-heading"> École Doctorale</div>
                 <div class="panel-body">
-                    <img id="ecole-doctorale" src="css/red.png"/>
+                    <img id="ecole-doctorale" src="css/grey.png"/>
                     <button class="btn btn-info" service="ecole-doctorale">Lancer ! </button>
                 </div>
             </div>
             <div class="panel panel-success">
                 <div class="panel-heading"> Établissement </div>
                 <div class="panel-body">
-                    <img id="etablissement" src="css/red.png"/>
+                    <img id="etablissement" src="css/grey.png"/>
                     <button class="btn btn-info" service="etablissement">Lancer ! </button>
                 </div>
             </div>
             <div class="panel panel-success">
                 <div class="panel-heading"> Unité de recherche</div>
                 <div class="panel-body">
-                    <img id="unite-recherche" src="css/red.png"/>
+                    <img id="unite-recherche" src="css/grey.png"/>
                     <button class="btn btn-info" service="unite-recherche">Lancer ! </button>
                 </div>
             </div>
@@ -52,14 +58,14 @@
             <div class="panel panel-info">
                 <div class="panel-heading"> Individu </div>
                 <div class="panel-body">
-                    <img id="individu" src="css/red.png"/>
+                    <img id="individu" src="css/grey.png"/>
                     <button class="btn btn-info" service="individu">Lancer ! </button>
                 </div>
             </div>
             <div class="panel panel-info">
                 <div class="panel-heading"> Rôle </div>
                 <div class="panel-body">
-                    <img id="role" src="css/red.png"/>
+                    <img id="role" src="css/grey.png"/>
                     <button class="btn btn-info" service="role">Lancer ! </button>
                 </div>
             </div>
@@ -68,14 +74,14 @@
             <div class="panel panel-info">
                 <div class="panel-heading"> Doctorant </div>
                 <div class="panel-body">
-                    <img id="doctorant" src="css/red.png"/>
+                    <img id="doctorant" src="css/grey.png"/>
                     <button class="btn btn-info" service="doctorant">Lancer ! </button>
                 </div>
             </div>
             <div class="panel panel-info">
                 <div class="panel-heading"> Acteur </div>
                 <div class="panel-body">
-                    <img id="acteur" src="css/red.png"/>
+                    <img id="acteur" src="css/grey.png"/>
                     <button class="btn btn-info" service="acteur">Lancer ! </button>
                 </div>
             </div>
@@ -84,7 +90,7 @@
             <div class="panel panel-info">
                 <div class="panel-heading"> Thèse </div>
                 <div class="panel-body">
-                    <img id="these" src="css/red.png"/>
+                    <img id="these" src="css/grey.png"/>
                     <button class="btn btn-info" service="these">Lancer ! </button>
                 </div>
             </div>
@@ -98,7 +104,7 @@
             <div class="panel panel-warning">
                 <div class="panel-heading"> Variable </div>
                 <div class="panel-body">
-                    <img id="variable" src="css/red.png"/>
+                    <img id="variable" src="css/grey.png"/>
                     <button class="btn btn-info" service="variable">Lancer ! </button>
                 </div>
             </div>
@@ -137,15 +143,43 @@
     depend["these"] = [ "doctorant" ];
     depend["variable"] = [ ];
 
+    function getNodes(forest) {
+        var nodes = Object.keys(forest);
+        return nodes;
+    }
+
+    function findRoots(forest) {
+        var roots = [];
+        var nodes = getNodes(forest);
+        console.log(nodes);
+
+        for(var node in nodes) {
+            var successors = depend[nodes[node]];
+            for (var position in successors) {
+                console.log("depend[" + nodes[node] + "] @ " + position);
+            }
+        }
+        return roots;
+    }
+
+    console.log(findRoots(depend));
+
     $(document).ready(function() {
+        $("button#reset").click( function() {
+            $.reset()
+        });
+
+        $("button#all").click( function() {
+            $.fetchAll()
+        });
+
         $("button").click( function() {
 
             var etablissement = $("input[name=etablissement]:checked").val();
             var service = $(this).attr("service");
+            if (etablissement === undefined || service === undefined) return;
+
             var texte = "Récupération des données ["+service+"|"+etablissement+"]";
-
-
-
             console.log(texte);
 
             var dependance = Array();
@@ -180,6 +214,12 @@
         });
     });
 
+    $.fetchAll = function() {
+        var etablissement = $("input[name=etablissement]:checked").val();
+        var nodes = getNodes(depend).reverse();
+        $.fetch(nodes, etablissement);
+    };
+
     $.fetch = function(services, etablissement) {
 
         if (services.length > 0) {
@@ -197,14 +237,36 @@
                         },
                     success:
                         function (retour) {
-                            console.log(retour);
-                            $("#" + service).attr("src", "css/green.png");
-
-                            var next = services.slice(0, length-1);
-                            $.fetch(next, etablissement);
+                            if (retour.indexOf("Exception") >= 0) {
+                                $("#" + service).attr("src", "css/red.png");
+                                state[service] = false;
+                            } else {
+                                $("#" + service).attr("src", "css/green.png");
+                                var next = services.slice(0, length - 1);
+                                $.fetch(next, etablissement);
+                            }
                         }
                 });
             }
+        }
+    };
+
+    // ce predicat retourne si un service est terminal ou non (i.e. n'a pas de successeur)
+    $.hasSuccessors = function(depend) {
+        console.log("hasSuccessor");
+        console.log(depend);
+        depend.forEach(function(element) {
+            console.log(element);
+        });
+    };
+
+    //Reset les récupérations (remises de la variable à faux et remises des vignettes en gris
+    $.reset = function() {
+        var nodes = getNodes(depend);
+        for (var position in nodes) {
+            var service = nodes[position];
+            $("#" + service).attr("src", "css/grey.png");
+            state[service] = false;
         }
     }
 </script>
