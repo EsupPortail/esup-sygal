@@ -3,11 +3,14 @@
 namespace Import\Controller;
 
 use Import\Service\FetcherService;
+use UnicaenApp\Service\EntityManagerAwareTrait;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
 class ImportController extends AbstractActionController
 {
+    use EntityManagerAwareTrait;
+
     /**
      * Liste ORDONNÉE de tous les services proposés.
      */
@@ -32,6 +35,35 @@ class ImportController extends AbstractActionController
     public function __construct($fetcherService)
     {
         $this->fetcherService    = $fetcherService;
+    }
+
+    public function indexAction()
+    {
+        $connection = $this->entityManager->getConnection();
+        $result = $connection->executeQuery("SELECT REQ_END_DATE FROM API_LOG WHERE REQ_ETABLISSEMENT='UCN' AND REQ_TABLE='variable' ORDER BY REQ_END_DATE DESC");
+        $last = $result->fetch()["REQ_END_DATE"];
+
+        return new ViewModel([
+            'last' => $last,
+        ]);
+    }
+
+    public function infoLastUpdateAction() {
+        $etablissement = $this->params()->fromRoute("etablissement");
+        $table = $this->params()->fromRoute("table");
+
+        $connection = $this->entityManager->getConnection();
+        $result = $connection->executeQuery("SELECT REQ_END_DATE, REQ_RESPONSE FROM API_LOG WHERE REQ_ETABLISSEMENT='".$etablissement."' AND REQ_TABLE='".$table."' ORDER BY REQ_END_DATE DESC");
+        $data = $result->fetch();
+
+        $last_time = $data["REQ_END_DATE"];
+        $last_number = explode(" ",$data["REQ_RESPONSE"])[0];
+
+        return  new ViewModel([
+            'query' => $etablissement . '|' . $table,
+            "last_time" => $last_time,
+            "last_number" => $last_number,
+        ]);
     }
 
     public function helpAction()
