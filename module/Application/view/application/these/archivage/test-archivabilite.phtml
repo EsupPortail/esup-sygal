@@ -27,7 +27,7 @@ $estVersionCorrigee = $fichierThese->getVersion()->estVersionCorrigee();
 
             <form method="post" class="tester-archi" action="<?php echo $testArchivabiliteUrl ?>">
                 <input type="hidden" name="action" value="tester"/>
-                <input type="submit" class="btn btn-primary" value="Tester l'archivabilité"/>
+                <input type="submit" id="btn-tester-archivab" class="btn btn-primary" value="Tester l'archivabilité"/>
             </form>
 
         <?php elseif ($validiteFichierThese->getEstValide() === null): ?>
@@ -64,3 +64,13 @@ $estVersionCorrigee = $fichierThese->getVersion()->estVersionCorrigee();
     </div>
 </div>
 
+
+<script>
+    $(function() {
+        // Bouton "Tester l'archivabilité".
+        $("#btn-tester-archivab").click(function(event) {
+            $(this).data("loading-text", "Patientez, svp...").button('loading');
+            $("body").addClass("wait");
+        });
+    });
+</script>
