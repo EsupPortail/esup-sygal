@@ -5,9 +5,9 @@ namespace Notification\Service\Mailer;
 use UnicaenApp\Exception\LogicException;
 use Zend\Mail\Message;
 use Zend\Mail\Transport\TransportInterface;
+use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Mime;
 use Zend\Mime\Part;
-use Zend\Mime\Message as MimeMessage;
 
 /**
  * Service d'envoi de mail.
@@ -16,8 +16,7 @@ use Zend\Mime\Message as MimeMessage;
  */
 class MailerService
 {
-    const SUBJECT_SUFFIX = ' {REDIR}';
-    const CURRENT_USER = 'CURRENT_USER';
+    const SUBJECT_REDIR_SUFFIX = ' {REDIR}';
     const BODY_TEXT_TEMPLATE = <<<EOS
 
 -----------------------------------------------------------------------
@@ -36,7 +35,6 @@ Cc: %s<br />
 Bcc: %s
 </p>
 EOS;
-//    const CURRENT_USER = 'CURRENT_USER';
 
     /**
      * @var TransportInterface
@@ -95,33 +93,34 @@ EOS;
     }
 
     /**
-     * Envoit le message.
+     * Envoie le message.
      *
      * @param Message $message Message à envoyer
      * @return Message Message effectivement envoyé, différent de l'original si la redirection est activée
      */
     public function send(Message $message)
     {
-        $msg = $this->prepareMessage($message);
-
-        if (!$this->getDoNotSend()) {
-            $this->transport->send($msg);
+        if ($this->getRedirectTo()) {
+            $msg = $this->prepareMessageForRedirection($message);
+        } else {
+            $msg = $message;
         }
+
+        if ($this->getDoNotSend()) {
+            return $msg;
+        }
+
+        $this->transport->send($msg);
 
         return $msg;
     }
 
     /**
-     *
      * @param Message $message
      * @return Message
      */
-    protected function prepareMessage(Message $message)
+    protected function prepareMessageForRedirection(Message $message)
     {
-        if (!$this->getRedirectTo()) {
-            return $message;
-        }
-
         // collecte des destinataires originaux pour les afficher à la fin du mail
         $to  = [];
         $cc  = [];
@@ -160,13 +159,13 @@ EOS;
 
         // 'CURRENT_USER' dans les adresses de redirection n'est plus supportée
         foreach ($redirectTo = $this->getRedirectTo() as $key => $value) {
-            if (self::CURRENT_USER === $key || self::CURRENT_USER === $value) {
+            if ('CURRENT_USER' === $key || 'CURRENT_USER' === $value) {
                 throw new LogicException("La valeur 'CURRENT_USER' n'est plus supportée par le mécanisme de redirection de mail");
             }
         }
 
         $msg = new Message();
-        $msg->setSubject($message->getSubject() . self::SUBJECT_SUFFIX)
+        $msg->setSubject($message->getSubject() . self::SUBJECT_REDIR_SUFFIX)
             ->setFrom($message->getFrom())
             ->setTo($this->getRedirectTo())
             ->setCc([])

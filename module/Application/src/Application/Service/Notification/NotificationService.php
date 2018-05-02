@@ -24,7 +24,7 @@ use Application\Service\Variable\VariableServiceAwareTrait;
 use Notification\Notification;
 
 /**
- * Service d'envoi de notifications par mail.
+ * Service de construction et d'envoi de notifications par mail.
  *
  * @author Unicaen
  */
@@ -193,11 +193,11 @@ class NotificationService extends \Notification\Service\NotificationService
         $this->trigger($notif);
 
         $infoMessages = $notif->getInfoMessages();
-        $this->setMessages([
+        $this->messageContainer->setMessages([
             'info' => $infoMessages[0],
         ]);
         if ($errorMessages = $notif->getWarningMessages()) {
-            $this->addMessages([
+            $this->messageContainer->addMessages([
                 'danger' => $errorMessages[0],
             ]);
         }
@@ -219,7 +219,7 @@ class NotificationService extends \Notification\Service\NotificationService
         $this->trigger($notif);
 
         $infoMessage = sprintf("Un mail de notification vient d'être envoyé aux Bureau des Doctorats (%s)", $to);
-        $this->setMessage($infoMessage, 'info');
+        $this->messageContainer->setMessage($infoMessage, 'info');
     }
 
     /**
@@ -230,7 +230,7 @@ class NotificationService extends \Notification\Service\NotificationService
     {
         $to = $these->getDoctorant()->getEmailPro() ?: $these->getDoctorant()->getIndividu()->getEmail();
         if (!$to) {
-            $this->setMessage("Impossible d'envoyer un mail à {$these->getDoctorant()} car son adresse est inconnue", 'danger');
+            $this->messageContainer->setMessage("Impossible d'envoyer un mail à {$these->getDoctorant()} car son adresse est inconnue", 'danger');
 
             return;
         }
@@ -239,11 +239,11 @@ class NotificationService extends \Notification\Service\NotificationService
         $this->trigger($notif);
 
         $infoMessage = sprintf("Un mail de notification vient d'être envoyé à votre doctorant (%s)", $to);
-        if ($this->getMessage()) {
-            $new_message = "<ul><li>" . $this->getMessage() . "</li><li>" . $infoMessage . "</li></ul>";
-            $this->setMessage($new_message, 'info');
+        if ($this->messageContainer->getMessage()) {
+            $new_message = "<ul><li>" . $this->messageContainer->getMessage() . "</li><li>" . $infoMessage . "</li></ul>";
+            $this->messageContainer->setMessage($new_message, 'info');
         } else {
-            $this->setMessage($infoMessage, 'info');
+            $this->messageContainer->setMessage($infoMessage, 'info');
         }
     }
 
@@ -261,7 +261,7 @@ class NotificationService extends \Notification\Service\NotificationService
         $this->trigger($notif);
 
         $infoMessage = sprintf("Un mail de notification vient d'être envoyé à la BU (%s).", $to);
-        $this->setMessage($infoMessage, 'info');
+        $this->messageContainer->setMessage($infoMessage, 'info');
     }
 
     /**

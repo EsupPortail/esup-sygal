@@ -27,12 +27,14 @@ return [
             // Valeurs possibles: '30s', '1m', etc. (cf. "man timeout").
             'timeout' => '20s',
         ],
-        // Options pour le service de notification par mail
-        'notification' => [
-            // Destinataires à ajouter systématiquement lors de l'envoi d'une notification.
-            'cc' => ['suivi-mail-sodoct@unicaen.fr'],
-            //'bcc' => [],
-        ],
+    ],
+    // Options pour le service de notification par mail
+    'notification' => [
+        // préfixe à ajouter systématiquement devant le sujet des mails
+        'subject_prefix' => '[SyGAL]',
+        // destinataires à ajouter systématiquement en copie simple ou cachée de tous les mails
+        'cc' => ['suivi-mail-sodoct@unicaen.fr'],
+        //'bcc' => [],
     ],
     'module_listener_options' => [
         'config_cache_enabled'     => ($env === 'production'),

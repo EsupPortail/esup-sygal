@@ -2,40 +2,32 @@
 
 namespace Notification\Service;
 
-use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
-use Application\Service\MailerService;
-use Application\Service\UniteRecherche\UniteRechercheService;
-use Application\Service\Variable\VariableService;
-use Zend\View\Helper\Url;
+use Notification\Service\Mailer\MailerService;
+use UnicaenApp\Exception\LogicException;
 use Zend\Mvc\Router\RouteStackInterface;
-use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\View\Helper\Url;
 use Zend\View\Renderer\RendererInterface;
 
 /**
  * @author Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>
  */
-class NotificationServiceFactory implements FactoryInterface
+class NotificationServiceFactory
 {
+    protected $notificationServiceClass = NotificationService::class;
+
     /**
-     * Create service
+     * Create service.
      *
      * @param ServiceLocatorInterface $serviceLocator
      * @return NotificationService
      */
-
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ServiceLocatorInterface $serviceLocator)
     {
-        /**
-         * @var MailerService $mailerService
-         * @var VariableService $variableService
-         * @var EcoleDoctoraleService $ecoleDoctoraleService
-         * @var UniteRechercheService $uniteRechercheService
-         */
-        $mailerService = $serviceLocator->get('UnicaenApp\Service\Mailer');
-//        $variableService = $serviceLocator->get('VariableService');
-//        $ecoleDoctoraleService = $serviceLocator->get('EcoleDoctoraleService');
-//        $uniteRechercheService = $serviceLocator->get('UniteRechercheService');
+        $class = $this->notificationServiceClass;
+
+        /** @var MailerService $mailerService */
+        $mailerService = $serviceLocator->get(MailerService::class);
 
         /** @var RouteStackInterface $router */
         $router = $serviceLocator->get('router');
@@ -48,11 +40,9 @@ class NotificationServiceFactory implements FactoryInterface
 
         $options = $this->getOptions($serviceLocator);
 
-        $service = new NotificationService($renderer);
+        /** @var NotificationService $service */
+        $service = new $class($renderer);
         $service->setMailerService($mailerService);
-//        $service->setVariableService($variableService);
-//        $service->setEcoleDoctoraleService($ecoleDoctoraleService);
-//        $service->setUniteRechercheService($uniteRechercheService);
         $service->setOptions($options);
         $service->setUrlHelper($urlHelper);
 
@@ -67,10 +57,15 @@ class NotificationServiceFactory implements FactoryInterface
     {
         $config = $serviceLocator->get('config');
 
-        if (! isset($config['sygal']['notification'])) {
-            return [];
+        if (! array_key_exists($key = 'notification', $config)) {
+            throw new LogicException(
+                "Les options du module de notification doivent être specifiées via la clé '$key' à la racine de la configuration");
+        }
+        if (! is_array($config['notification'])) {
+            throw new LogicException(
+                "Les options du module de notification doivent être specifiées par un tableau");
         }
 
-        return $config['sygal']['notification'];
+        return $config['notification'];
     }
 }
