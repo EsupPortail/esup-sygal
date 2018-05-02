@@ -1,11 +1,19 @@
 <?php
-    var_dump($last);
-    $data_last = new DateTime($last);
-    var_dump($data_last);
-    echo $data_last->format("d/m/Y");
-    echo "<br/>";
-    echo $data_last->format("H:i:s");
 
+function generateDiv($tableName, $class) {
+    $texte = '';
+    $texte .= '<div class="panel '.$class.'">';
+    $texte .= '    <div class="panel-heading"> '.$tableName.' </div>';
+    $texte .= '    <div class="panel-body">';
+    $texte .= '        <div id="control-'.$tableName.'" class="pull-left">';
+    $texte .= '            <img id="'.$tableName.'" src="css/grey.png"/>';
+    $texte .= '            <button class="btn btn-info" service="'.$tableName.'">Lancer ! </button>';
+    $texte .= '        </div>';
+    $texte .= '        <div id="info-'.$tableName.'" class="pull-right"></div>';
+    $texte .= '    </div>';
+    $texte .= '</div>';
+    return $texte;
+}
 ?>
 
 <h1> Récupération des données des Web Services </h1>
@@ -27,114 +35,12 @@
 
     <div>
         <div class="col-md-4">
-
-            <div class="panel panel-success">
-                <div class="panel-heading"> Structure </div>
-                <div class="panel-body">
-                    <div id="control-structure" class="pull-left">
-                        <img id="structure" src="css/grey.png"/>
-                        <button class="btn btn-info" service="structure">Lancer ! </button>
-                    </div>
-                    <div id="info-structure" class="pull-right"></div>
-                </div>
-            </div>
-
+            <?php echo generateDiv("structure", "panel-success"); ?>
         </div>
         <div class="col-md-4">
-
-            <div class="panel panel-success">
-                <div class="panel-heading"> École Doctorale</div>
-                <div class="panel-body">
-                    <div id="control-ecole-doctorale" class="pull-left">
-                        <img id="ecole-doctorale" src="css/grey.png"/>
-                        <button class="btn btn-info" service="ecole-doctorale">Lancer ! </button>
-                    </div>
-                    <div id="info-ecole-doctorale" class="pull-right"></div>
-                </div>
-            </div>
-
-            <div class="panel panel-success">
-                <div class="panel-heading"> Établissement </div>
-                <div class="panel-body">
-                    <div id="control-etablissement" class="pull-left">
-                        <img id="etablissement" src="css/grey.png"/>
-                        <button class="btn btn-info" service="etablissement">Lancer ! </button>
-                    </div>
-                    <div id="info-etablissement" class="pull-right"></div>
-                </div>
-            </div>
-            <div class="panel panel-success">
-                <div class="panel-heading"> Unité de recherche</div>
-                <div class="panel-body">
-                    <div id="control-unite-recherche" class="pull-left">
-                        <img id="unite-recherche" src="css/grey.png"/>
-                        <button class="btn btn-info" service="unite-recherche">Lancer ! </button>
-                    </div>
-                    <div id="info-unite-recherche" class="pull-right"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div style="clear:both;"></div>
-
-
-    <div>
-        <div class="col-md-4">
-            <div class="panel panel-info">
-                <div class="panel-heading"> Individu </div>
-                <div class="panel-body">
-                    <div id="control-individu" class="pull-left">
-                        <img id="individu" src="css/grey.png"/>
-                        <button class="btn btn-info" service="individu">Lancer ! </button>
-                    </div>
-                    <div id="info-individu" class="pull-right"></div>
-                </div>
-            </div>
-            <div class="panel panel-info">
-                <div class="panel-heading"> Rôle </div>
-                <div class="panel-body">
-                    <div id="control-role" class="pull-left">
-                        <img id="role" src="css/grey.png"/>
-                        <button class="btn btn-info" service="role">Lancer ! </button>
-                    </div>
-                    <div id="info-role" class="pull-right"></div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="panel panel-info">
-                <div class="panel-heading"> Doctorant </div>
-                <div class="panel-body">
-                    <div id="control-doctorant" class="pull-left">
-                        <img id="doctorant" src="css/grey.png"/>
-                        <button class="btn btn-info" service="doctorant">Lancer ! </button>
-                    </div>
-                    <div id="info-doctorant" class="pull-right"></div>
-                </div>
-            </div>
-            <div class="panel panel-info">
-                <div class="panel-heading"> Acteur </div>
-                <div class="panel-body">
-                    <div id="control-acteur" class="pull-left">
-                        <img id="acteur" src="css/grey.png"/>
-                        <button class="btn btn-info" service="acteur">Lancer ! </button>
-                    </div>
-                    <div id="info-acteur" class="pull-right"></div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="panel panel-info">
-                <div class="panel-heading"> Thèse </div>
-                <div class="panel-body">
-                    <div id="control-these" class="pull-left">
-                        <img id="these" src="css/grey.png"/>
-                        <button class="btn btn-info" service="these">Lancer ! </button>
-                    </div>
-                    <div id="info-these" class="pull-right"></div>
-                </div>
-            </div>
+            <?php echo generateDiv("ecole-doctorale", "panel-success"); ?>
+            <?php echo generateDiv("etablissement", "panel-success"); ?>
+            <?php echo generateDiv("unite-recherche", "panel-success"); ?>
         </div>
     </div>
 
@@ -142,16 +48,23 @@
 
     <div>
         <div class="col-md-4">
-            <div class="panel panel-warning">
-                <div class="panel-heading"> Variable </div>
-                <div class="panel-body">
-                    <div id="control-variable" class="pull-left">
-                        <img id="variable" src="css/grey.png"/>
-                        <button class="btn btn-info" service="variable">Lancer ! </button>
-                    </div>
-                    <div id="info-variable" class="pull-right"></div>
-                </div>
-            </div>
+            <?php echo generateDiv("individu", "panel-info"); ?>
+            <?php echo generateDiv("role", "panel-info"); ?>
+        </div>
+        <div class="col-md-4">
+            <?php echo generateDiv("doctorant", "panel-info"); ?>
+            <?php echo generateDiv("acteur", "panel-info"); ?>
+        </div>
+        <div class="col-md-4">
+            <?php echo generateDiv("these", "panel-info"); ?>
+        </div>
+    </div>
+
+    <div style="clear:both;"></div>
+
+    <div>
+        <div class="col-md-4">
+            <?php echo generateDiv("variable", "panel-warning"); ?>
         </div>
     </div>
 
@@ -164,17 +77,6 @@
 <script>
 
     var state = Array();
-    state["structure"] = false;
-    state["ecole-doctorale"] = false;
-    state["etablissement"] = false;
-    state["unite-recherche"] = false;
-    state["individu"] = false;
-    state["doctorant"] = false;
-    state["role"] = false;
-    state["acteur"] = false;
-    state["these"] = false;
-    state["variable"] = false;
-
     var depend = Array();
     depend["structure"] = [ ];
     depend["ecole-doctorale"] = [ "structure"];
@@ -192,37 +94,20 @@
         return nodes;
     }
 
-    function findRoots(forest) {
-        var roots = [];
-        var nodes = getNodes(forest);
-        console.log(nodes);
-
-        for(var node in nodes) {
-            var successors = depend[nodes[node]];
-            for (var position in successors) {
-                console.log("depend[" + nodes[node] + "] @ " + position);
-            }
-        }
-        return roots;
-    }
-
-    console.log(findRoots(depend));
-
     $(document).ready(function() {
 
-        var nodes = getNodes(depend);
-        for (var position in nodes) {
-            var service = nodes[position];
-            var etablissement = "UCN";
-            $.fetchInfos(service,etablissement);
-        }
+        $.reset();
 
         $("button#reset").click( function() {
-            $.reset()
+            $.reset();
         });
 
         $("button#all").click( function() {
-            $.fetchAll()
+            $.fetchAll();
+        });
+
+        $("input[name=etablissement]").change( function() {
+            $.reset();
         });
 
         $("button").click( function() {
@@ -237,13 +122,10 @@
             var dependance = Array();
             toRun = [ service ];
             current = [ service ];
-            // console.log(current);
             var depth = 0;
             while (current.length && depth < 10) {
                 currentService = current[0];
                 current = current.slice(1, 1000);
-                // console.log("current:" + current);
-                // console.log("services: " + currentService);
 
                 for (var i = 0; i < depend[currentService].length; i++) {
                     var father = depend[currentService][i];
@@ -252,7 +134,7 @@
                         toRun.push(father);
                     }
                 }
-                // console.log("next current:" + current);
+
             }
             console.log("Données à récupérer: " + toRun);
             for( var i = 0 ; i < toRun.length ; i++) {
@@ -294,9 +176,10 @@
                                 state[service] = false;
                             } else {
                                 $("#" + service).attr("src", "css/green.png");
-                                var next = services.slice(0, length - 1);
-                                $.fetch(next, etablissement);
+                                $.fetchInfos(service, etablissement);
                             }
+                            var next = services.slice(0, length - 1);
+                            $.fetch(next, etablissement);
                         }
                 });
             }
@@ -314,22 +197,21 @@
         });
     };
 
-    // ce predicat retourne si un service est terminal ou non (i.e. n'a pas de successeur)
-    $.hasSuccessors = function(depend) {
-        console.log("hasSuccessor");
-        console.log(depend);
-        depend.forEach(function(element) {
-            console.log(element);
-        });
-    };
-
     //Reset les récupérations (remises de la variable à faux et remises des vignettes en gris
     $.reset = function() {
         var nodes = getNodes(depend);
+        var etablissement = $("input[name=etablissement]:checked").val();
+
         for (var position in nodes) {
             var service = nodes[position];
+
+            console.log("resetting " + service + " " + etablissement);
+
+            //reset state
             $("#" + service).attr("src", "css/grey.png");
             state[service] = false;
+            //reset info
+            $.fetchInfos(service, etablissement);
         }
     }
 </script>
