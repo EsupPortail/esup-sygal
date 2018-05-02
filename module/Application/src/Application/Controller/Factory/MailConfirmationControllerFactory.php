@@ -26,7 +26,7 @@ class MailConfirmationControllerFactory
          * @var IndividuService $individuService
          */
         $mailConfirmationService = $sl->get('MailConfirmationService');
-        $notificationService = $sl->get('NotificationService');
+        $notificationService = $sl->get(NotificationService::class);
         $individuService = $sl->get('IndividuService');
 
         $controller = new MailConfirmationController();

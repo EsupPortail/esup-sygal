@@ -10,13 +10,11 @@ use Application\Navigation\NavigationFactoryFactory;
 use Application\RouteMatchInjector;
 use Application\Service\AuthorizeServiceAwareInitializer;
 use Application\Service\MailerServiceFactory;
-use Application\Service\Notification\NotificationServiceFactory;
 use Application\Service\Role\RoleService;
 use Application\Service\ServiceAwareInitializer;
 use Application\Service\UserContextServiceAwareInitializer;
 use Application\Service\UserContextServiceFactory;
 use Application\View\Helper\EscapeTextHelper;
-use Application\View\Helper\QueryParamsHelperFactory;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
@@ -173,7 +171,6 @@ return array(
             'UnicaenAuth\Service\UserContext' => UserContextServiceFactory::class,
             'UserAuthenticatedEventListener' => UserAuthenticatedEventListenerFactory::class,
             'UnicaenApp\Service\Mailer'      => MailerServiceFactory::class,
-            'NotificationService'            => NotificationServiceFactory::class,
             'Sygal\Memcached'                => MemcachedFactory::class,
         ),
         'initializers' => [

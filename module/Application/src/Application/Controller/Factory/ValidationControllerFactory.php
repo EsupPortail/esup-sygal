@@ -26,7 +26,7 @@ class ValidationControllerFactory
          * @var VariableService $variableService
          */
         $validationService = $controllerManager->getServiceLocator()->get('ValidationService');
-        $notificationService = $controllerManager->getServiceLocator()->get('NotificationService');
+        $notificationService = $controllerManager->getServiceLocator()->get(NotificationService::class);
         $roleService = $controllerManager->getServiceLocator()->get('RoleService');
         $variableService = $controllerManager->getServiceLocator()->get('VariableService');
 

@@ -30,7 +30,7 @@ class FichierTheseControllerFactory
         $theseService = $controllerManager->getServiceLocator()->get('TheseService');
         $fichierService = $controllerManager->getServiceLocator()->get('FichierService');
         $versionFichierService = $controllerManager->getServiceLocator()->get('VersionFichierService');
-        $notificationService = $controllerManager->getServiceLocator()->get('NotificationService');
+        $notificationService = $controllerManager->getServiceLocator()->get(NotificationService::class);
         $individuService = $controllerManager->getServiceLocator()->get('IndividuService');
 
         $controller = new FichierTheseController();

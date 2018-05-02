@@ -20,7 +20,7 @@ class ImportObservResultServiceFactory
         $theseService = $sl->get('TheseService');
 
         /** @var NotificationService $notificationService */
-        $notificationService = $sl->get('NotificationService');
+        $notificationService = $sl->get(NotificationService::class);
 
         /** @var VariableService $variableService */
         $variableService = $sl->get('VariableService');

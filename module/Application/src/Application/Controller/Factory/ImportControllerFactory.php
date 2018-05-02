@@ -23,7 +23,7 @@ class ImportControllerFactory
          * @var NotificationService $notificationService
          */
         $theseService = $controllerManager->getServiceLocator()->get('TheseService');
-        $notificationService = $controllerManager->getServiceLocator()->get('NotificationService');
+        $notificationService = $controllerManager->getServiceLocator()->get(NotificationService::class);
 
         $controller = new ImportController();
         $controller->setTheseService($theseService);

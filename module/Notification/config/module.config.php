@@ -4,6 +4,8 @@ use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Notification\Service\Mailer\MailerService;
 use Notification\Service\Mailer\MailerServiceFactory;
+use Notification\Service\NotificationService;
+use Notification\Service\NotificationServiceFactory;
 
 return [
     'doctrine'     => [
@@ -38,6 +40,7 @@ return [
         'invokables' => [
         ],
         'factories' => [
+            NotificationService::class => NotificationServiceFactory::class,
             MailerService::class => MailerServiceFactory::class,
         ],
         'aliases' => [

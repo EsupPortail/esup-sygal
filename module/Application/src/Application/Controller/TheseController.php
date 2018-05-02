@@ -1377,15 +1377,18 @@ class TheseController extends AbstractController
 
     }
 
+    /**
+     * Génération de la page de couverture.
+     *
+     * todo: vérifier dans le contrôleur l'existence des logos et notifier en cas d'absence de logo.
+     */
     public function generateAction()
     {
         $these = $this->requestedThese();
         $renderer = $this->getServiceLocator()->get('view_renderer'); /* @var $renderer \Zend\View\Renderer\PhpRenderer */
-        $notifier = $this->getServiceLocator()->get('NotificationService');
         $exporter = new PageDeCouverturePdfExporter($renderer, 'A4');
         $exporter->setVars([
-            'these'              => $these,
-            'notifier'
+            'these' => $these,
         ]);
         $exporter->export('export.pdf');
         exit;

@@ -52,7 +52,7 @@ class TheseControllerFactory
         $etablissementService = $controllerManager->getServiceLocator()->get('EtablissementService');
         $mailConfirmationService = $controllerManager->getServiceLocator()->get('MailConfirmationService');
         $entityManager = $controllerManager->getServiceLocator()->get('doctrine.entitymanager.orm_default');
-        $notificationService = $controllerManager->getServiceLocator()->get('NotificationService');
+        $notificationService = $controllerManager->getServiceLocator()->get(NotificationService::class);
 
         $controller = new TheseController();
         $controller->setTimeoutRetraitement($this->getTimeoutRetraitementFromOptions($options));
