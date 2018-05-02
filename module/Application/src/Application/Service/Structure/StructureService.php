@@ -10,6 +10,7 @@ use Application\Entity\Db\StructureConcreteInterface;
 use Application\Entity\Db\StructureSubstit;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
+use Application\Entity\Db\Utilisateur;
 use Application\Filter\EtablissementPrefixFilter;
 use Application\Service\BaseService;
 use Application\Service\Source\SourceService;
@@ -84,6 +85,18 @@ class StructureService extends BaseService
 
         // instanciations des substitutions
         $substitutions = StructureSubstit::fromStructures($structuresSources, $structureRattachCible);
+
+        $utilisateur = $this->entityManager->getRepository(Utilisateur::class)->findOneBy(["username" => "sygal-app"]);
+        $structureConcreteCible->getStructure()->setHistoCreation(new \DateTime());
+        $structureConcreteCible->getStructure()->setHistoCreateur($utilisateur);
+        $structureConcreteCible->getStructure()->setHistoModification(new \DateTime());
+        $structureConcreteCible->getStructure()->setHistoModificateur($utilisateur);
+        $structureConcreteCible->setHistoCreation(new \DateTime());
+        $structureConcreteCible->setHistoCreateur($utilisateur);
+        $structureConcreteCible->setHistoModification(new \DateTime());
+        $structureConcreteCible->setHistoModificateur($utilisateur);
+
+        var_dump($structureConcreteCible);
 
         // enregistrement en bdd
         $this->getEntityManager()->beginTransaction();

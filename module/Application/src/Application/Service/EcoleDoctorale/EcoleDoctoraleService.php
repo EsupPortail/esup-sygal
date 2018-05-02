@@ -152,5 +152,28 @@ class EcoleDoctoraleService extends BaseService implements RoleServiceAwareInter
         }
     }
 
+    public function getSubstitutions()
+    {
+        $qb = $this->getEntityManager()->getRepository(EcoleDoctorale::class)->createQueryBuilder("ed")
+            ->join("ed.structure", "s")
+            ->orderBy("s.sigle");
+        $eds = $qb->getQuery()->getResult();
+
+        $ecoles = [];
+        $previous = "";
+        $collection = [];
+        foreach ($eds as $ed) {
+            if ($previous != $ed->getSigle()) {
+                $previous = $ed->getSigle();
+                if (count($collection) > 1) {
+                    $ecoles[] = $collection;
+                }
+                $collection = [];
+            }
+            $collection[] = $ed;
+        }
+
+        return $ecoles;
+    }
 
 }

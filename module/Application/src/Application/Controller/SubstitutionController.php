@@ -13,10 +13,13 @@ use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Structure\StructureServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
+use UnicaenApp\Service\EntityManagerAwareTrait;
+use Zend\Validator\Date;
 use Zend\View\Model\ViewModel;
 
 class SubstitutionController extends AbstractController
 {
+    use EntityManagerAwareTrait;
     use EtablissementServiceAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
     use UniteRechercheServiceAwareTrait;
@@ -112,7 +115,6 @@ class SubstitutionController extends AbstractController
         return $vm;
     }
 
-
     public function modifierAction()
     {
         $idCible = $this->params()->fromRoute('cible');
@@ -190,6 +192,30 @@ class SubstitutionController extends AbstractController
 
         return new ViewModel([
             'structure' => $structureConcrete,
+        ]);
+    }
+
+    public function substitutionAutomatiqueAction()
+    {
+        $ecoles = $this->ecoleDoctoraleService->getSubstitutions();
+        //creation de la structureCible adequate
+        foreach ($ecoles as $substitution) {
+
+
+            $data["sigle"] = "Nope";
+            $data["libelle"] = "Nope";
+            $data["cheminLogo"] = "";
+
+            $structureCibleDataObject = $this->structureService->createStructureConcrete(TypeStructure::CODE_ECOLE_DOCTORALE);
+            $this->structureService->updateFromPostData($structureCibleDataObject, $data);
+
+//            var_dump($structureCibleDataObject);
+
+            $this->structureService->createStructureSubstitutions($substitution, $structureCibleDataObject);
+        }
+
+        return new ViewModel([
+            "ecoles" => $ecoles,
         ]);
     }
 }
