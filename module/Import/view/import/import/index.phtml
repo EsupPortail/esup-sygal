@@ -89,6 +89,7 @@ function generateDiv($tableName, $class) {
     depend["these"] = [ "doctorant" ];
     depend["variable"] = [ ];
 
+    //Recupérer les clefs d'un tableau associatif
     function getNodes(forest) {
         var nodes = Object.keys(forest);
         return nodes;
@@ -98,17 +99,9 @@ function generateDiv($tableName, $class) {
 
         $.reset();
 
-        $("button#reset").click( function() {
-            $.reset();
-        });
-
-        $("button#all").click( function() {
-            $.fetchAll();
-        });
-
-        $("input[name=etablissement]").change( function() {
-            $.reset();
-        });
+        $("button#reset").click( function() { $.reset(); });
+        $("button#all").click( function() { $.fetchAll(); });
+        $("input[name=etablissement]").change( function() { $.reset(); });
 
         $("button").click( function() {
 
@@ -116,8 +109,8 @@ function generateDiv($tableName, $class) {
             var service = $(this).attr("service");
             if (etablissement === undefined || service === undefined) return;
 
-            var texte = "Récupération des données ["+service+"|"+etablissement+"]";
-            console.log(texte);
+            // var texte = "Récupération des données ["+service+"|"+etablissement+"]";
+            // console.log(texte);
 
             var dependance = Array();
             toRun = [ service ];
@@ -134,26 +127,30 @@ function generateDiv($tableName, $class) {
                         toRun.push(father);
                     }
                 }
-
             }
-            console.log("Données à récupérer: " + toRun);
+
             for( var i = 0 ; i < toRun.length ; i++) {
                 if (state[toRun[i]] === false) {
                     $("#" + toRun[i]).attr("src", "css/orange.png");
                 }
             }
             $.fetch(toRun, etablissement);
-
-
         });
     });
 
+    /**
+     * Cette fonction initialise la fonction de récupération des données et exécute celle-ci
+     */
     $.fetchAll = function() {
         var etablissement = $("input[name=etablissement]:checked").val();
         var nodes = getNodes(depend).reverse();
         $.fetch(nodes, etablissement);
     };
 
+    /**
+     * @param services          la liste des services à récupérer
+     * @param etablissement     l'établissement cible
+     */
     $.fetch = function(services, etablissement) {
 
         if (services.length > 0) {
@@ -186,6 +183,10 @@ function generateDiv($tableName, $class) {
         }
     };
 
+    /**
+     * @param services          la liste des services à récupérer
+     * @param etablissement     l'établissement cible
+     */
     $.fetchInfos = function(service,etablissement) {
         var url = "fetch/info-last-update/" + service + "/" + etablissement;
         $.ajax({
