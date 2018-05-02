@@ -86,18 +86,6 @@ class StructureService extends BaseService
         // instanciations des substitutions
         $substitutions = StructureSubstit::fromStructures($structuresSources, $structureRattachCible);
 
-        $utilisateur = $this->entityManager->getRepository(Utilisateur::class)->findOneBy(["username" => "sygal-app"]);
-        $structureConcreteCible->getStructure()->setHistoCreation(new \DateTime());
-        $structureConcreteCible->getStructure()->setHistoCreateur($utilisateur);
-        $structureConcreteCible->getStructure()->setHistoModification(new \DateTime());
-        $structureConcreteCible->getStructure()->setHistoModificateur($utilisateur);
-        $structureConcreteCible->setHistoCreation(new \DateTime());
-        $structureConcreteCible->setHistoCreateur($utilisateur);
-        $structureConcreteCible->setHistoModification(new \DateTime());
-        $structureConcreteCible->setHistoModificateur($utilisateur);
-
-        var_dump($structureConcreteCible);
-
         // enregistrement en bdd
         $this->getEntityManager()->beginTransaction();
         try {
@@ -407,5 +395,23 @@ class StructureService extends BaseService
         ;
         $structures = $qb->getQuery()->getResult();
         return $structures;
+    }
+
+    public function getSubstitutionsByType($type, $nonSubsitutees = true)
+    {
+        $structures = $this->getStructuresConcretesByType($type);
+
+        $sourceCodeDictionnary = [];
+        foreach ($structures as $structure) {
+            $sourceCode = explode("::", $structure->getSourceCode())[1];
+            $sourceCodeDictionnary[$sourceCode][] = $structure;
+        }
+
+        $subsitutions = [];
+        foreach ($sourceCodeDictionnary as $key => $collection) {
+            if (count($collection) > 1) $subsitutions[] = $collection;
+        }
+
+        return $subsitutions;
     }
 }

@@ -151,29 +151,4 @@ class EcoleDoctoraleService extends BaseService implements RoleServiceAwareInter
             throw new RuntimeException("Erreur lors de l'enregistrement de l'ED", null, $e);
         }
     }
-
-    public function getSubstitutions()
-    {
-        $qb = $this->getEntityManager()->getRepository(EcoleDoctorale::class)->createQueryBuilder("ed")
-            ->join("ed.structure", "s")
-            ->orderBy("s.sigle");
-        $eds = $qb->getQuery()->getResult();
-
-        $ecoles = [];
-        $previous = "";
-        $collection = [];
-        foreach ($eds as $ed) {
-            if ($previous != $ed->getSigle()) {
-                $previous = $ed->getSigle();
-                if (count($collection) > 1) {
-                    $ecoles[] = $collection;
-                }
-                $collection = [];
-            }
-            $collection[] = $ed;
-        }
-
-        return $ecoles;
-    }
-
 }
