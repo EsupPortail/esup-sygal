@@ -10,6 +10,7 @@ use Application\Entity\Db\StructureConcreteInterface;
 use Application\Entity\Db\StructureSubstit;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
+use Application\Entity\Db\Utilisateur;
 use Application\Filter\EtablissementPrefixFilter;
 use Application\Service\BaseService;
 use Application\Service\Source\SourceService;
@@ -394,5 +395,23 @@ class StructureService extends BaseService
         ;
         $structures = $qb->getQuery()->getResult();
         return $structures;
+    }
+
+    public function getSubstitutionsByType($type, $nonSubsitutees = true)
+    {
+        $structures = $this->getStructuresConcretesByType($type);
+
+        $sourceCodeDictionnary = [];
+        foreach ($structures as $structure) {
+            $sourceCode = explode("::", $structure->getSourceCode())[1];
+            $sourceCodeDictionnary[$sourceCode][] = $structure;
+        }
+
+        $subsitutions = [];
+        foreach ($sourceCodeDictionnary as $key => $collection) {
+            if (count($collection) > 1) $subsitutions[] = $collection;
+        }
+
+        return $subsitutions;
     }
 }

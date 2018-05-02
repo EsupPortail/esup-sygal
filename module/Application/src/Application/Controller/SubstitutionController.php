@@ -13,10 +13,13 @@ use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Structure\StructureServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
+use UnicaenApp\Service\EntityManagerAwareTrait;
+use Zend\Validator\Date;
 use Zend\View\Model\ViewModel;
 
 class SubstitutionController extends AbstractController
 {
+    use EntityManagerAwareTrait;
     use EtablissementServiceAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
     use UniteRechercheServiceAwareTrait;
@@ -112,7 +115,6 @@ class SubstitutionController extends AbstractController
         return $vm;
     }
 
-
     public function modifierAction()
     {
         $idCible = $this->params()->fromRoute('cible');
@@ -191,5 +193,73 @@ class SubstitutionController extends AbstractController
         return new ViewModel([
             'structure' => $structureConcrete,
         ]);
+    }
+
+    public function substitutionAutomatiqueAction()
+    {
+        $ecoles = $this->structureService->getSubstitutionsByType(TypeStructure::CODE_ECOLE_DOCTORALE);
+        $unites = $this->structureService->getSubstitutionsByType(TypeStructure::CODE_UNITE_RECHERCHE);
+        $etablissements = $this->structureService->getSubstitutionsByType(TypeStructure::CODE_ETABLISSEMENT);
+
+//        var_dump(count($ecoles). " substitutions d'écoles doctorales");
+//        var_dump(count($unites). " substitutions d'unités de recherche");
+//        var_dump(count($etablissements). " substitutions d'établissements");
+
+        $ecoles_substitutions = [];
+        /** @var EcoleDoctorale[] $substitution */
+        foreach ($ecoles as $substitution) {
+            $data["sigle"] = $substitution[0]->getSigle();
+            $data["libelle"] = $substitution[0]->getLibelle();
+            $data["cheminLogo"] = $substitution[0]->getCheminLogo();
+
+            $structureCibleDataObject = $this->structureService->createStructureConcrete(TypeStructure::CODE_ECOLE_DOCTORALE);
+            $this->structureService->updateFromPostData($structureCibleDataObject, $data);
+            $structureConcreteCible = $this->structureService->createStructureSubstitutions($substitution, $structureCibleDataObject);
+            $ecoles_substitution = [$substitution, $structureConcreteCible];
+            $ecoles_substitutions[] = $ecoles_substitution;
+        }
+
+        $unites_substitutions = [];
+        /** @var UniteRecherche[] $substitution */
+        foreach ($unites as $substitution) {
+            $data["sigle"] = $substitution[0]->getSigle();
+            $data["libelle"] = $substitution[0]->getLibelle();
+            $data["cheminLogo"] = $substitution[0]->getCheminLogo();
+            $data["etablissementsSupport"] = $substitution[0]->getEtablissementsSupport();
+            $data["autresEtablissements"] = $substitution[0]->getAutresEtablissements();
+
+            $structureCibleDataObject = $this->structureService->createStructureConcrete(TypeStructure::CODE_UNITE_RECHERCHE);
+            $this->structureService->updateFromPostData($structureCibleDataObject, $data);
+            $structureConcreteCible = $this->structureService->createStructureSubstitutions($substitution, $structureCibleDataObject);
+            $unites_substitution = [$substitution, $structureConcreteCible];
+            $unites_substitutions[] = $unites_substitution;
+        }
+
+        $etabs_substitutions = [];
+        /** @var Etablissement[] $substitution */
+        // TODO les theses, les doctorants et les rôles
+        foreach ($etablissements as $substitution) {
+            $data["sigle"] = $substitution[0]->getSigle();
+            $data["libelle"] = $substitution[0]->getLibelle();
+            $data["cheminLogo"] = $substitution[0]->getCheminLogo();
+            $data["code"] = $substitution[0]->getCode() . uniqid();
+            $data["domaine"] = $substitution[0]->getDomaine();
+//            $data["these"] = null;
+//            $data["doctorants"] = null;
+//            $data["roles"] = null;
+
+            $structureCibleDataObject = $this->structureService->createStructureConcrete(TypeStructure::CODE_ETABLISSEMENT);
+            $this->structureService->updateFromPostData($structureCibleDataObject, $data);
+            $structureConcreteCible = $this->structureService->createStructureSubstitutions($substitution, $structureCibleDataObject);
+            $etabs_substitution = [$substitution, $structureConcreteCible];
+            $etabs_substitutions[] = $etabs_substitution;
+        }
+
+        $this->redirect()->toRoute("substitution-index");
+//        return new ViewModel([
+//            "ecoles_substitutions" => $ecoles_substitutions,
+//            "unites_substitutions" => $unites_substitutions,
+//            "etablissements_substitutions" => $etabs_substitutions,
+//        ]);
     }
 }

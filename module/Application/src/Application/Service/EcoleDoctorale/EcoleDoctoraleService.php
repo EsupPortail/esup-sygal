@@ -151,6 +151,4 @@ class EcoleDoctoraleService extends BaseService implements RoleServiceAwareInter
             throw new RuntimeException("Erreur lors de l'enregistrement de l'ED", null, $e);
         }
     }
-
-
 }
