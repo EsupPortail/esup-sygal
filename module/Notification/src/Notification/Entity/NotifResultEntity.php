@@ -7,7 +7,7 @@ namespace Notification\Entity;
  *
  * @author Unicaen
  */
-class NotifResult
+class NotifResultEntity
 {
     /**
      * @var string
@@ -30,7 +30,7 @@ class NotifResult
     private $dateEnvoi;
 
     /**
-     * @var Notif
+     * @var NotifEntity
      */
     private $notif;
 
@@ -136,7 +136,7 @@ class NotifResult
     }
 
     /**
-     * @return Notif
+     * @return NotifEntity
      */
     public function getNotif()
     {
@@ -144,10 +144,10 @@ class NotifResult
     }
 
     /**
-     * @param Notif $notif
-     * @return NotifResult
+     * @param NotifEntity $notif
+     * @return static
      */
-    public function setNotif(Notif $notif)
+    public function setNotif(NotifEntity $notif)
     {
         $this->notif = $notif;
 

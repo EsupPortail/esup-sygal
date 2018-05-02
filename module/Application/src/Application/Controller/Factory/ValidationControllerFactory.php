@@ -3,7 +3,7 @@
 namespace Application\Controller\Factory;
 
 use Application\Controller\ValidationController;
-use Application\Service\Notification\NotificationService;
+use Application\Service\Notification\NotifierService;
 use Application\Service\Role\RoleService;
 use Application\Service\Validation\ValidationService;
 use Application\Service\Variable\VariableService;
@@ -21,12 +21,12 @@ class ValidationControllerFactory
     {
         /**
          * @var ValidationService $validationService
-         * @var NotificationService $notificationService
-         * @var RoleService $roleService
-         * @var VariableService $variableService
+         * @var NotifierService   $notificationService
+         * @var RoleService       $roleService
+         * @var VariableService   $variableService
          */
         $validationService = $controllerManager->getServiceLocator()->get('ValidationService');
-        $notificationService = $controllerManager->getServiceLocator()->get(NotificationService::class);
+        $notificationService = $controllerManager->getServiceLocator()->get(NotifierService::class);
         $roleService = $controllerManager->getServiceLocator()->get('RoleService');
         $variableService = $controllerManager->getServiceLocator()->get('VariableService');
 

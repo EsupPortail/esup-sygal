@@ -7,7 +7,7 @@ use Application\Service\Doctorant\DoctorantService;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\Fichier\FichierService;
 use Application\Service\Individu\IndividuService;
-use Application\Service\Notification\NotificationService;
+use Application\Service\Notification\NotifierService;
 use Application\Service\Parametre\ParametreService;
 use Application\Service\Role\RoleService;
 use Application\Service\These\TheseService;

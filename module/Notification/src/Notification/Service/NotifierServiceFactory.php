@@ -2,6 +2,7 @@
 
 namespace Notification\Service;
 
+use Notification\NotificationRenderer;
 use Notification\Service\Mailer\MailerService;
 use UnicaenApp\Exception\LogicException;
 use Zend\Mvc\Router\RouteStackInterface;
@@ -12,15 +13,15 @@ use Zend\View\Renderer\RendererInterface;
 /**
  * @author Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>
  */
-class NotificationServiceFactory
+class NotifierServiceFactory
 {
-    protected $notificationServiceClass = NotificationService::class;
+    protected $notificationServiceClass = NotifierService::class;
 
     /**
      * Create service.
      *
      * @param ServiceLocatorInterface $serviceLocator
-     * @return NotificationService
+     * @return NotifierService
      */
     public function __invoke(ServiceLocatorInterface $serviceLocator)
     {
@@ -35,12 +36,13 @@ class NotificationServiceFactory
         $urlHelper = $serviceLocator->get('ViewHelperManager')->get('Url');
         $urlHelper->setRouter($router);
 
-        /* @var $renderer RendererInterface */
-        $renderer = $serviceLocator->get('view_renderer');
+//        /* @var $renderer RendererInterface */
+//        $renderer = $serviceLocator->get('view_renderer');
+        $renderer = new NotificationRenderer();
 
         $options = $this->getOptions($serviceLocator);
 
-        /** @var NotificationService $service */
+        /** @var NotifierService $service */
         $service = new $class($renderer);
         $service->setMailerService($mailerService);
         $service->setOptions($options);

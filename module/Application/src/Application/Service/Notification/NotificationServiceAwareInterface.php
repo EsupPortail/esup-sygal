@@ -4,5 +4,5 @@ namespace Application\Service\Notification;
 
 interface NotificationServiceAwareInterface
 {
-    public function setNotificationService(NotificationService $notificationService);
+    public function setNotificationService(NotifierService $notificationService);
 }

@@ -5,7 +5,7 @@ namespace Application\Controller\Factory;
 use Application\Controller\MailConfirmationController;
 use Application\Service\Individu\IndividuService;
 use Application\Service\MailConfirmationService;
-use Application\Service\Notification\NotificationService;
+use Application\Service\Notification\NotifierService;
 use Zend\Mvc\Controller\ControllerManager;
 
 class MailConfirmationControllerFactory
@@ -22,11 +22,11 @@ class MailConfirmationControllerFactory
 
         /**
          * @var MailConfirmationService $mailConfirmationService
-         * @var NotificationService $notificationService
-         * @var IndividuService $individuService
+         * @var NotifierService         $notificationService
+         * @var IndividuService         $individuService
          */
         $mailConfirmationService = $sl->get('MailConfirmationService');
-        $notificationService = $sl->get(NotificationService::class);
+        $notificationService = $sl->get(NotifierService::class);
         $individuService = $sl->get('IndividuService');
 
         $controller = new MailConfirmationController();

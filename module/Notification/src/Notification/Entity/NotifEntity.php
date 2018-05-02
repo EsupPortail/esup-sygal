@@ -7,7 +7,7 @@ namespace Notification\Entity;
  *
  * @author Unicaen
  */
-class Notif
+class NotifEntity
 {
     /**
      * @var string
@@ -116,7 +116,7 @@ class Notif
 
     /**
      * @param string $destinataires
-     * @return Notif
+     * @return static
      */
     public function setDestinataires($destinataires)
     {
@@ -135,7 +135,7 @@ class Notif
 
     /**
      * @param string $template
-     * @return Notif
+     * @return static
      */
     public function setTemplate($template)
     {
@@ -154,7 +154,7 @@ class Notif
 
     /**
      * @param bool $enabled
-     * @return Notif
+     * @return static
      */
     public function setEnabled($enabled)
     {

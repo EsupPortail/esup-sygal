@@ -6,7 +6,7 @@ use Application\Controller\TheseController;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Fichier\FichierService;
 use Application\Service\MailConfirmationService;
-use Application\Service\Notification\NotificationService;
+use Application\Service\Notification\NotifierService;
 use Application\Service\Role\RoleService;
 use Application\Service\These\TheseService;
 use Application\Service\Validation\ValidationService;
@@ -30,17 +30,17 @@ class TheseControllerFactory
         $options = $this->getOptions($controllerManager->getServiceLocator());
 
         /**
-         * @var VariableService $variableService
-         * @var ValidationService $validationService
-         * @var VersionFichierService $versionFichierService
-         * @var TheseService $theseService
-         * @var RoleService $roleService
-         * @var FichierService $fichierService
-         * @var WorkflowService $workflowService
-         * @var NotificationService $notificationService
-         * @var EtablissementService $etablissementService
+         * @var VariableService         $variableService
+         * @var ValidationService       $validationService
+         * @var VersionFichierService   $versionFichierService
+         * @var TheseService            $theseService
+         * @var RoleService             $roleService
+         * @var FichierService          $fichierService
+         * @var WorkflowService         $workflowService
+         * @var NotifierService         $notificationService
+         * @var EtablissementService    $etablissementService
          * @var MailConfirmationService $mailConfirmationService
-         * @var EntityManager $entityManager
+         * @var EntityManager           $entityManager
          */
         $variableService = $controllerManager->getServiceLocator()->get('VariableService');
         $validationService = $controllerManager->getServiceLocator()->get('ValidationService');
@@ -52,7 +52,7 @@ class TheseControllerFactory
         $etablissementService = $controllerManager->getServiceLocator()->get('EtablissementService');
         $mailConfirmationService = $controllerManager->getServiceLocator()->get('MailConfirmationService');
         $entityManager = $controllerManager->getServiceLocator()->get('doctrine.entitymanager.orm_default');
-        $notificationService = $controllerManager->getServiceLocator()->get(NotificationService::class);
+        $notificationService = $controllerManager->getServiceLocator()->get(NotifierService::class);
 
         $controller = new TheseController();
         $controller->setTimeoutRetraitement($this->getTimeoutRetraitementFromOptions($options));

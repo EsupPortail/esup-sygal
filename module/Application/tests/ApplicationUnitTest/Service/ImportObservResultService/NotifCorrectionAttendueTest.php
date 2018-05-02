@@ -7,7 +7,7 @@ use Application\Entity\Db\Repository\ImportObservResultRepository;
 use Application\Entity\Db\These;
 use Application\Rule\NotificationDepotVersionCorrigeeAttenduRule;
 use Application\Service\ImportObservResult\ImportObservResultService;
-use Application\Service\Notification\NotificationService;
+use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
 use ApplicationUnitTest\Test\Asset\EntityAsset;
 use ApplicationUnitTest\Test\Provider\MockProviderAwareTrait;
@@ -29,7 +29,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
     protected $ruleMock;
 
     /**
-     * @var PHPUnit_Framework_MockObject_MockObject|NotificationService
+     * @var PHPUnit_Framework_MockObject_MockObject|NotifierService
      */
     protected $notificationServiceMock;
 

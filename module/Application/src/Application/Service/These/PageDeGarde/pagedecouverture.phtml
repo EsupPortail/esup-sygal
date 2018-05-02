@@ -5,12 +5,12 @@ use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
 use Application\View\Renderer\PhpRenderer;
-use Application\Service\Notification\NotificationService;
+use Application\Service\Notification\NotifierService;
 
 /**
- * @var PhpRenderer $this
- * @var These       $these
- * @var NotificationService       $notifier
+ * @var PhpRenderer     $this
+ * @var These           $these
+ * @var NotifierService $notifier
  */
 
 
@@ -301,11 +301,12 @@ function generateEncadrementInfos(These $these) {
 }
 
 /** Fonction générant le code HTML lié au encradrant
- * @param These         $these
- * @param NotificationService $notifier
+ *
+ * @param These           $these
+ * @param NotifierService $notifier
  * @return string
  */
-function generateLogos(These $these, NotificationService $notifier = null) {
+function generateLogos(These $these, NotifierService $notifier = null) {
 
     if ($notifier !== null && $these->getEtablissement()->getCheminLogo() === null)
         $notifier->triggerLogoAbsentEtablissement($these->getEtablissement());

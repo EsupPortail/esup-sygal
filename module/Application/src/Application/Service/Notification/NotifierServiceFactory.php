@@ -10,19 +10,19 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 /**
  * @author Unicaen
  */
-class NotificationServiceFactory extends \Notification\Service\NotificationServiceFactory
+class NotifierServiceFactory extends \Notification\Service\NotifierServiceFactory
 {
-    protected $notificationServiceClass = NotificationService::class;
+    protected $notificationServiceClass = NotifierService::class;
 
     /**
      * Create service.
      *
      * @param ServiceLocatorInterface $serviceLocator
-     * @return NotificationService
+     * @return NotifierService
      */
     public function __invoke(ServiceLocatorInterface $serviceLocator)
     {
-        /** @var NotificationService $service */
+        /** @var NotifierService $service */
         $service = parent::__invoke($serviceLocator);
 
         /**

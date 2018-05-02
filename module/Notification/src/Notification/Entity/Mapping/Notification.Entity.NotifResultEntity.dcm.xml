@@ -3,7 +3,7 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <entity name="Notification\Entity\NotifResult" table="NOTIF_RESULT">
+    <entity name="Notification\Entity\NotifResultEntity" table="NOTIF_RESULT">
         <id name="id" type="integer" column="ID"/>
 
         <field name="sujet" column="SUJET" length="255"/>
@@ -11,7 +11,7 @@
         <field name="erreur" column="ERREUR"/>
         <field name="dateEnvoi" type="datetime" column="DATE_ENVOI"/>
 
-        <many-to-one field="notif" target-entity="Notification\Entity\Notif">
+        <many-to-one field="notif" target-entity="Notification\Entity\NotifEntity">
             <join-columns>
                 <join-column name="NOTIF_ID" referenced-column-name="ID"/>
             </join-columns>

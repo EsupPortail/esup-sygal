@@ -13,7 +13,7 @@ use Zend\View\Renderer\RendererInterface;
  *
  * @author Unicaen
  */
-class NotificationService
+class NotifierService
 {
     use MailerServiceAwareTrait;
 

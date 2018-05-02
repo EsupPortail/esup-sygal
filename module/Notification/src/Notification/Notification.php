@@ -2,6 +2,7 @@
 
 namespace Notification;
 
+use Notification\Entity\NotifEntity;
 use Zend\View\Model\ViewModel;
 
 /**
@@ -11,6 +12,11 @@ use Zend\View\Model\ViewModel;
  */
 class Notification
 {
+    /**
+     * @var NotifEntity
+     */
+    protected $notifEntity;
+
     /**
      * @var string
      */
@@ -52,6 +58,16 @@ class Notification
     protected $infoMessages = [];
 
     /**
+     * Notification constructor.
+     *
+     * @param NotifEntity|null $notifEntity
+     */
+    public function __construct(NotifEntity $notifEntity = null)
+    {
+        $this->notifEntity = $notifEntity;
+    }
+
+    /**
      * Initialisation, préparation, etc. nécessaires avant de pouvoir envoyer la notification.
      *
      * @param array $context Toutes données utiles
@@ -78,6 +94,8 @@ class Notification
         $viewModel->setVariable('bcc', $this->bcc);
 
         $viewModel->setVariables($this->templateVariables, true);
+
+        $viewModel->setVariable('entity', $this->notifEntity);
 
         return $viewModel;
     }

@@ -19,6 +19,7 @@ use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\View\Helper\Sortable;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
+use Notification\Entity\NotifEntity;
 use Notification\Notification;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
@@ -299,7 +300,10 @@ class FichierTheseController extends AbstractController
 
             // si une thèse est déposée, on notifie de BdD
             if ($nature->estThesePdf()) {
-                $notif = new Notification();
+                /** @var NotifEntity $entity */
+                $entity = $this->theseService->getEntityManager()->getRepository(NotifEntity::class)
+                    ->findOneBy(['code' => 'notif-depot-these']);
+                $notif = new Notification($entity);
                 $notif
                     ->setSubject("Dépôt d'une thèse")
                     ->setTemplatePath('application/these/mail/notif-depot-these')

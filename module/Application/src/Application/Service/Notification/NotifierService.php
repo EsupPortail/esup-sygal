@@ -28,7 +28,7 @@ use Notification\Notification;
  *
  * @author Unicaen
  */
-class NotificationService extends \Notification\Service\NotificationService
+class NotifierService extends \Notification\Service\NotifierService
 {
     use VariableServiceAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;

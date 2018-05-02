@@ -1,13 +1,13 @@
 <?php
 
-use Application\Service\Notification\NotificationService;
-use Application\Service\Notification\NotificationServiceFactory;
+use Application\Service\Notification\NotifierService;
+use Application\Service\Notification\NotifierServiceFactory;
 
 return [
     'service_manager' => [
         'factories' => [
-            NotificationService::class => NotificationServiceFactory::class,
-            \Notification\Service\NotificationService::class => NotificationServiceFactory::class, // substitution
+            NotifierService::class                       => NotifierServiceFactory::class,
+            \Notification\Service\NotifierService::class => NotifierServiceFactory::class, // substitution
         ],
     ],
 ];

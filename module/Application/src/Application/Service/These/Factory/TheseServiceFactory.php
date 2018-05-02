@@ -3,7 +3,7 @@
 namespace Application\Service\These\Factory;
 
 use Application\Service\Fichier\FichierService;
-use Application\Service\Notification\NotificationService;
+use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
 use Application\Service\Validation\ValidationService;
 use Application\Service\Variable\VariableService;
@@ -21,12 +21,12 @@ class TheseServiceFactory
     {
         /**
          * @var ValidationService $validationService
-         * @var NotificationService $notificationService
-         * @var FichierService $fichierService
-         * @var VariableService $variableService
+         * @var NotifierService   $notificationService
+         * @var FichierService    $fichierService
+         * @var VariableService   $variableService
          */
         $validationService = $serviveManager->get('ValidationService');
-        $notificationService = $serviveManager->get(NotificationService::class);
+        $notificationService = $serviveManager->get(NotifierService::class);
         $fichierService = $serviveManager->get('FichierService');
         $variableService = $serviveManager->get('VariableService');
 

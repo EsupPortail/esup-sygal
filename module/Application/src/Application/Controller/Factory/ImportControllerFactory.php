@@ -3,7 +3,7 @@
 namespace Application\Controller\Factory;
 
 use Application\Controller\ImportController;
-use Application\Service\Notification\NotificationService;
+use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
 use Zend\Mvc\Controller\ControllerManager;
 
@@ -19,11 +19,11 @@ class ImportControllerFactory
     public function __invoke(ControllerManager $controllerManager)
     {
         /**
-         * @var TheseService $theseService
-         * @var NotificationService $notificationService
+         * @var TheseService    $theseService
+         * @var NotifierService $notificationService
          */
         $theseService = $controllerManager->getServiceLocator()->get('TheseService');
-        $notificationService = $controllerManager->getServiceLocator()->get(NotificationService::class);
+        $notificationService = $controllerManager->getServiceLocator()->get(NotifierService::class);
 
         $controller = new ImportController();
         $controller->setTheseService($theseService);
