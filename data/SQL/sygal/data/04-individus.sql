@@ -44,7 +44,7 @@ insert into INDIVIDU(
     HISTO_DESTRUCTION,
     HISTO_MODIFICATEUR_ID,
     HISTO_MODIFICATION
-  from oth.S_INDIVIDU i
+  from S_INDIVIDU i
 /
 
 DECLARE
@@ -99,7 +99,7 @@ insert into INDIVIDU(
     HISTO_DESTRUCTION,
     HISTO_MODIFICATEUR_ID,
     HISTO_MODIFICATION
-  from oth.S_THESARD t
+  from S_THESARD t
 /
 
 insert into DOCTORANT(
@@ -127,7 +127,7 @@ insert into DOCTORANT(
     HISTO_DESTRUCTION,
     HISTO_MODIFICATEUR_ID,
     HISTO_MODIFICATION
-  from oth.S_THESARD t
+  from S_THESARD t
 --where (select id from INDIVIDU i where i.SOURCE_CODE = ('UCN::' || t.SOURCE_CODE) and i.TYPE = 'doctorant') is not null
 /
 
@@ -142,10 +142,12 @@ BEGIN
   end loop;
 END;
 /
-/
 
 
 -- INDIVIDU_RECH : vérifier que le trigger l'a remplie automatiquement.
+--
+select count(*) from individu;
+select count(*) from individu_rech;
 
 
 -- DOCTORANT_COMPL
@@ -173,7 +175,7 @@ insert into DOCTORANT_COMPL(
     HISTO_MODIFICATEUR_ID,
     HISTO_DESTRUCTION,
     HISTO_DESTRUCTEUR_ID
-  from oth.S_THESARD_COMPL
+  from S_THESARD_COMPL
 /
 
 DECLARE
@@ -188,15 +190,15 @@ BEGIN
 END;
 /
 
-/*
 -- verif
 select i.NOM_USUEL, i.SOURCE_CODE, d.SOURCE_CODE, persopass, email_pro
   from DOCTORANT_COMPL dc
   join DOCTORANT d on d.id = dc.DOCTORANT_ID
   join INDIVIDU i on i.id = d.INDIVIDU_ID
 ;
-*/
 
+
+--
 
 drop table S_INDIVIDU ;
 drop table S_THESARD ;

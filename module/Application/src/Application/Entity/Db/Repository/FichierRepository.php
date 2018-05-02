@@ -93,7 +93,7 @@ class FichierRepository extends DefaultEntityRepository
     public function getVersionArchivable(These $these)
     {
 //        $theseFichiers = $this->getFichiersBy(false, false, false);
-        $theseFichiers = $this->fetchFichiers($these, NatureFichier::CODE_THESE_PDF , VersionFichier::CODE_ARCHI, false);
+        $theseFichiers = $this->fetchFichiers($these, NatureFichier::CODE_THESE_PDF , VersionFichier::CODE_ORIG, false);
         /** @var Fichier $fichierThese */
         $fichierThese = current($theseFichiers);
         /** @var ValiditeFichier $validiteFichierThese */

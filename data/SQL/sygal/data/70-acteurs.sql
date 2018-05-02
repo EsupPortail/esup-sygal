@@ -20,6 +20,9 @@ create table S_ACTEUR as
   from sodoct.ACTEUR@doctprod a
     join sodoct.USER_ROLE@doctprod r on r.id = a.role_id;
 
+truncate table acteur;
+drop sequence ACTEUR_ID_SEQ;
+create sequence ACTEUR_ID_SEQ;
 
 -- ACTEUR
 
@@ -56,7 +59,7 @@ insert into ACTEUR (
     'UCN::' || SOURCE_CODE,
     (select id from source where code = 'UCN::apogee') as SOURCE_ID,
     THESE_ID -- NB: on a repris texto les id SODOCT des theses
-  from oth.S_ACTEUR s
+  from S_ACTEUR s
 ;
 
 
@@ -71,3 +74,8 @@ BEGIN
   end loop;
 END;
 /
+
+
+--
+
+drop table S_ACTEUR;

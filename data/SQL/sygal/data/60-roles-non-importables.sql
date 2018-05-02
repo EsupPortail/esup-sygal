@@ -1,14 +1,7 @@
+--
+-- Création des rôles NON importables.
+--
 
-/**
- * 1/ Import des rôles importables.
- */
-
---> À faire via l'IHM.
-
-
-/**
- * 2/ Création des rôles non importables.
- */
 
 -- ROLE mutli établissement
 
@@ -48,7 +41,7 @@ join UTILISATEUR u on u.USERNAME = 'sygal-app';
 -- ROLE mono établissement
 
 INSERT INTO ROLE (
-  --ID,
+  ID,
   STRUCTURE_ID,
   TYPE_STRUCTURE_DEPENDANT_ID,
   LIBELLE,
@@ -66,7 +59,7 @@ INSERT INTO ROLE (
     SELECT 'Doctorant',                  'DOCTORANT'  , 1 from dual
   )
   SELECT
-    --ROLE_ID_SEQ.nextval,
+    ROLE_ID_SEQ.nextval,
     s.ID,
     s.TYPE_STRUCTURE_ID,
     ds.LIBELLE,
@@ -84,16 +77,8 @@ INSERT INTO ROLE (
     join UTILISATEUR u on u.USERNAME = 'sygal-app'
 ;
 
-update role set ATTRIB_AUTO = 1, THESE_DEP = 1, TYPE_STRUCTURE_DEPENDANT_ID = 0
+update role set ATTRIB_AUTO = 1, THESE_DEP = 1, TYPE_STRUCTURE_DEPENDANT_ID = null
 where code in (
-  'A',
-  'B',
-  'C',
-  'D',
-  'K',
-  'M',
-  'P',
-  'R',
   'DOCTORANT'
 );
 
@@ -175,7 +160,7 @@ from UNITE_RECH ur
 -- INDIVIDU_ROLE
 
 insert into INDIVIDU_ROLE (
-  --ID,
+  ID,
   INDIVIDU_ID,
   ROLE_ID
 )
@@ -185,7 +170,7 @@ insert into INDIVIDU_ROLE (
     select 'bruno.bernard@unicaen.fr',          'ADMIN_TECH' from dual
   )
   select
-    --INDIVIDU_ROLE_ID_SEQ.nextval,
+    INDIVIDU_ROLE_ID_SEQ.nextval,
     i.id,
     r.id
   from ds

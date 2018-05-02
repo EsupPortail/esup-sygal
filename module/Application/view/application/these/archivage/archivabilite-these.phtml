@@ -14,7 +14,6 @@ use Application\View\Renderer\PhpRenderer;
  * @var string      $contact
  */
 
-$canEdit = $this->isAllowed($these, ThesePrivileges::THESE_SAISIE_DESCRIPTION);
 $validiteFichier = $fichier ? $fichier->getValidite() : null;
 $originaleOuRetraitee = $retraite ? "retraitée" : "";
 ?>

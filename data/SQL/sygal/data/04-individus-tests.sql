@@ -61,7 +61,7 @@ select
   HISTO_DESTRUCTION,
   HISTO_MODIFICATEUR_ID,
   HISTO_MODIFICATION
-from oth.S_INDIVIDU i
+from S_INDIVIDU i
 /
 
 DECLARE
@@ -115,7 +115,7 @@ insert into INDIVIDU_XX(
     HISTO_DESTRUCTION,
     HISTO_MODIFICATEUR_ID,
     HISTO_MODIFICATION
-  from oth.S_THESARD t
+  from S_THESARD t
 /
 
 insert into DOCTORANT_XX(
@@ -143,7 +143,7 @@ insert into DOCTORANT_XX(
     HISTO_DESTRUCTION,
     HISTO_MODIFICATEUR_ID,
     HISTO_MODIFICATION
-  from oth.S_THESARD t
+  from S_THESARD t
   --where (select id from INDIVIDU i where i.SOURCE_CODE = ('UCN::' || t.SOURCE_CODE) and i.TYPE = 'doctorant') is not null
 /
 
@@ -188,7 +188,7 @@ select
   HISTO_MODIFICATEUR_ID,
   HISTO_DESTRUCTION,
   HISTO_DESTRUCTEUR_ID
-from oth.S_THESARD_COMPL
+from S_THESARD_COMPL
 /
 
 DECLARE

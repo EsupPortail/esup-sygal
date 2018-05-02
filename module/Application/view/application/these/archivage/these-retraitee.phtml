@@ -95,6 +95,9 @@ if ($validite === null || $validiteEstInconnue || $estValide) {
                             <div class="alert alert-md alert-success alert-strong">
                                 <span class="glyphicon glyphicon-info-sign"></span>
                                 Le retraitement du fichier est en cours, vous recevrez un courriel lorsqu'il sera terminé...
+                                <button class="btn btn-link btn-xs pull-right glyphicon glyphicon-refresh"
+                                        onclick="$('body').trigger('event-version-retraitee-creee'); return false;"
+                                        title="Cliquez pour recharger les informations..."></button>
                             </div>
                         <?php endif ?>
                     <?php endif ?>

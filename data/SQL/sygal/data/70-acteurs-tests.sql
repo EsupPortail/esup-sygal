@@ -65,7 +65,7 @@ insert into ACTEUR_XX (
     'UCN::' || SOURCE_CODE,
     (select id from source where code = 'UCN::apogee') as SOURCE_ID,
     THESE_ID -- NB: on a repris texto les id SODOCT des theses
-  from oth.S_ACTEUR s
+  from S_ACTEUR s
 ;
 
 

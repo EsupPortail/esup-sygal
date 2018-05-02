@@ -108,7 +108,7 @@ insert into FICHIER_XX (
     THESE_ID,
     TYPE_MIME,
     VERSION_FICHIER_ID
-  from oth.S_FICHIER
+  from S_FICHIER
 ;
 
 
@@ -139,7 +139,7 @@ insert into VALIDITE_FICHIER_XX (
     HISTO_MODIFICATION,
     LOG,
     MESSAGE
-  from oth.s_VALIDITE_FICHIER
+  from s_VALIDITE_FICHIER
 ;
 
 

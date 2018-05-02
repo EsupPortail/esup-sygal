@@ -47,11 +47,11 @@ return array(
                     __DIR__ . '/../src/Application/Entity/Db/Mapping/VSitu',
                 ],
             ],
-            'eventmanager'  => [
-                'orm_default' => [
-                    'subscribers' => [
-                        'UnicaenApp\HistoriqueListener',
-                    ],
+        ],
+        'eventmanager'  => [
+            'orm_default' => [
+                'subscribers' => [
+                    'UnicaenApp\HistoriqueListener',
                 ],
             ],
         ],

@@ -69,7 +69,7 @@ insert into THESE (
     TEM_AVENANT_COTUT,
     TITRE,
     UNITE_RECH_ID
-  from OTH.S_THESE
+  from S_THESE
 ;
 
 DECLARE
@@ -84,14 +84,16 @@ BEGIN
 END;
 /
 
-/*
+
+-- Vérif
+
 select * from THESE t
   join ETABLISSEMENT e on e.id = t.ETABLISSEMENT_ID
   join DOCTORANT d on d.id = t.DOCTORANT_ID
   left join ECOLE_DOCT ed on ed.id = t.ECOLE_DOCT_ID
   left join UNITE_RECH ur on ur.id = t.UNITE_RECH_ID
 ;
-*/
+
 
 
 -- METADONNEE_THESE
@@ -119,7 +121,7 @@ insert into METADONNEE_THESE (
     MOTS_CLES_RAMEAU,
     TITRE_AUTRE_LANGUE,
     MOTS_CLES_LIBRES_ANG
-  from oth.S_METADONNEE_THESE
+  from S_METADONNEE_THESE
 ;
 
 DECLARE
@@ -172,7 +174,7 @@ insert into RDV_BU (
     PAGE_TITRE_CONFORME,
     THESE_ID,
     VERSION_ARCHIVABLE_FOURNIE
-  from oth.S_RDV_BU
+  from S_RDV_BU
 ;
 
 DECLARE
@@ -186,3 +188,10 @@ BEGIN
   end loop;
 END;
 /
+
+
+--
+
+drop table S_THESE ;
+drop table S_METADONNEE_THESE ;
+drop table S_RDV_BU ;
