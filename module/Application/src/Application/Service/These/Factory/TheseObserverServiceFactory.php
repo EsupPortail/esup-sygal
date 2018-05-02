@@ -22,7 +22,7 @@ class TheseObserverServiceFactory
          * @var NotificationService $notificationService
          */
         $theseService = $serviveManager->get('TheseService');
-        $notificationService = $serviveManager->get('NotificationService');
+        $notificationService = $serviveManager->get(NotificationService::class);
 
         $service = new TheseObserverService();
         $service->setTheseService($theseService);

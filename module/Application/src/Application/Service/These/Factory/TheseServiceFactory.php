@@ -26,7 +26,7 @@ class TheseServiceFactory
          * @var VariableService $variableService
          */
         $validationService = $serviveManager->get('ValidationService');
-        $notificationService = $serviveManager->get('NotificationService');
+        $notificationService = $serviveManager->get(NotificationService::class);
         $fichierService = $serviveManager->get('FichierService');
         $variableService = $serviveManager->get('VariableService');
 

@@ -56,7 +56,7 @@ class ServiceAwareInitializer implements InitializerInterface
             'EcoleDoctoraleService'  => EcoleDoctoraleService::class,
             'UniteRechercheService'  => UniteRechercheService::class,
             'IndividuService'        => IndividuService::class,
-            'NotificationService'    => NotificationService::class,
+//            'NotificationService'    => NotificationService::class,
             'EtablissementService'   => EtablissementService::class,
         ];
 
