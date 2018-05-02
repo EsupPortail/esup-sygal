@@ -1,3 +1,13 @@
+<?php
+    var_dump($last);
+    $data_last = new DateTime($last);
+    var_dump($data_last);
+    echo $data_last->format("d/m/Y");
+    echo "<br/>";
+    echo $data_last->format("H:i:s");
+
+?>
+
 <h1> Récupération des données des Web Services </h1>
 
 <div>
@@ -17,34 +27,50 @@
 
     <div>
         <div class="col-md-4">
+
             <div class="panel panel-success">
                 <div class="panel-heading"> Structure </div>
                 <div class="panel-body">
-                    <img id="structure" src="css/grey.png"/>
-                    <button class="btn btn-info" service="structure">Lancer ! </button>
+                    <div id="control-structure" class="pull-left">
+                        <img id="structure" src="css/grey.png"/>
+                        <button class="btn btn-info" service="structure">Lancer ! </button>
+                    </div>
+                    <div id="info-structure" class="pull-right"></div>
                 </div>
             </div>
+
         </div>
         <div class="col-md-4">
+
             <div class="panel panel-success">
                 <div class="panel-heading"> École Doctorale</div>
                 <div class="panel-body">
-                    <img id="ecole-doctorale" src="css/grey.png"/>
-                    <button class="btn btn-info" service="ecole-doctorale">Lancer ! </button>
+                    <div id="control-ecole-doctorale" class="pull-left">
+                        <img id="ecole-doctorale" src="css/grey.png"/>
+                        <button class="btn btn-info" service="ecole-doctorale">Lancer ! </button>
+                    </div>
+                    <div id="info-ecole-doctorale" class="pull-right"></div>
                 </div>
             </div>
+
             <div class="panel panel-success">
                 <div class="panel-heading"> Établissement </div>
                 <div class="panel-body">
-                    <img id="etablissement" src="css/grey.png"/>
-                    <button class="btn btn-info" service="etablissement">Lancer ! </button>
+                    <div id="control-etablissement" class="pull-left">
+                        <img id="etablissement" src="css/grey.png"/>
+                        <button class="btn btn-info" service="etablissement">Lancer ! </button>
+                    </div>
+                    <div id="info-etablissement" class="pull-right"></div>
                 </div>
             </div>
             <div class="panel panel-success">
                 <div class="panel-heading"> Unité de recherche</div>
                 <div class="panel-body">
-                    <img id="unite-recherche" src="css/grey.png"/>
-                    <button class="btn btn-info" service="unite-recherche">Lancer ! </button>
+                    <div id="control-unite-recherche" class="pull-left">
+                        <img id="unite-recherche" src="css/grey.png"/>
+                        <button class="btn btn-info" service="unite-recherche">Lancer ! </button>
+                    </div>
+                    <div id="info-unite-recherche" class="pull-right"></div>
                 </div>
             </div>
         </div>
@@ -58,15 +84,21 @@
             <div class="panel panel-info">
                 <div class="panel-heading"> Individu </div>
                 <div class="panel-body">
-                    <img id="individu" src="css/grey.png"/>
-                    <button class="btn btn-info" service="individu">Lancer ! </button>
+                    <div id="control-individu" class="pull-left">
+                        <img id="individu" src="css/grey.png"/>
+                        <button class="btn btn-info" service="individu">Lancer ! </button>
+                    </div>
+                    <div id="info-individu" class="pull-right"></div>
                 </div>
             </div>
             <div class="panel panel-info">
                 <div class="panel-heading"> Rôle </div>
                 <div class="panel-body">
-                    <img id="role" src="css/grey.png"/>
-                    <button class="btn btn-info" service="role">Lancer ! </button>
+                    <div id="control-role" class="pull-left">
+                        <img id="role" src="css/grey.png"/>
+                        <button class="btn btn-info" service="role">Lancer ! </button>
+                    </div>
+                    <div id="info-role" class="pull-right"></div>
                 </div>
             </div>
         </div>
@@ -74,15 +106,21 @@
             <div class="panel panel-info">
                 <div class="panel-heading"> Doctorant </div>
                 <div class="panel-body">
-                    <img id="doctorant" src="css/grey.png"/>
-                    <button class="btn btn-info" service="doctorant">Lancer ! </button>
+                    <div id="control-doctorant" class="pull-left">
+                        <img id="doctorant" src="css/grey.png"/>
+                        <button class="btn btn-info" service="doctorant">Lancer ! </button>
+                    </div>
+                    <div id="info-doctorant" class="pull-right"></div>
                 </div>
             </div>
             <div class="panel panel-info">
                 <div class="panel-heading"> Acteur </div>
                 <div class="panel-body">
-                    <img id="acteur" src="css/grey.png"/>
-                    <button class="btn btn-info" service="acteur">Lancer ! </button>
+                    <div id="control-acteur" class="pull-left">
+                        <img id="acteur" src="css/grey.png"/>
+                        <button class="btn btn-info" service="acteur">Lancer ! </button>
+                    </div>
+                    <div id="info-acteur" class="pull-right"></div>
                 </div>
             </div>
         </div>
@@ -90,8 +128,11 @@
             <div class="panel panel-info">
                 <div class="panel-heading"> Thèse </div>
                 <div class="panel-body">
-                    <img id="these" src="css/grey.png"/>
-                    <button class="btn btn-info" service="these">Lancer ! </button>
+                    <div id="control-these" class="pull-left">
+                        <img id="these" src="css/grey.png"/>
+                        <button class="btn btn-info" service="these">Lancer ! </button>
+                    </div>
+                    <div id="info-these" class="pull-right"></div>
                 </div>
             </div>
         </div>
@@ -104,8 +145,11 @@
             <div class="panel panel-warning">
                 <div class="panel-heading"> Variable </div>
                 <div class="panel-body">
-                    <img id="variable" src="css/grey.png"/>
-                    <button class="btn btn-info" service="variable">Lancer ! </button>
+                    <div id="control-variable" class="pull-left">
+                        <img id="variable" src="css/grey.png"/>
+                        <button class="btn btn-info" service="variable">Lancer ! </button>
+                    </div>
+                    <div id="info-variable" class="pull-right"></div>
                 </div>
             </div>
         </div>
@@ -165,6 +209,14 @@
     console.log(findRoots(depend));
 
     $(document).ready(function() {
+
+        var nodes = getNodes(depend);
+        for (var position in nodes) {
+            var service = nodes[position];
+            var etablissement = "UCN";
+            $.fetchInfos(service,etablissement);
+        }
+
         $("button#reset").click( function() {
             $.reset()
         });
@@ -249,6 +301,17 @@
                 });
             }
         }
+    };
+
+    $.fetchInfos = function(service,etablissement) {
+        var url = "fetch/info-last-update/" + service + "/" + etablissement;
+        $.ajax({
+            url: url,
+            success:
+                function (retour) {
+                    $("div#info-"+service).html(retour);
+                }
+        });
     };
 
     // ce predicat retourne si un service est terminal ou non (i.e. n'a pas de successeur)
