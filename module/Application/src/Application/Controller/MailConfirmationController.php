@@ -101,7 +101,7 @@ class MailConfirmationController extends AbstractController {
             ."Une fois confirmé, cet email sera utilisé pour recevoir les notifications de SyGAL et vous permettera de vous connecter à SyGAL.";
 
 
-        $this->notificationService->notifierMailConfirmation($mailConfirmation, $titre, $corps);
+        $this->notificationService->triggerMailConfirmation($mailConfirmation, $titre, $corps);
 
         return $this->redirect()->toRoute("home");
         /** Branchement du mail mais peut être echanger avec une vue classique en

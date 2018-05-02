@@ -6,6 +6,7 @@ use Application\Entity\Db\Attestation;
 use Application\Entity\Db\Diffusion;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Fichier;
+use Application\Entity\Db\Individu;
 use Application\Entity\Db\MailConfirmation;
 use Application\Entity\Db\MetadonneeThese;
 use Application\Entity\Db\NatureFichier;
@@ -28,7 +29,7 @@ use Application\Form\RdvBuTheseForm;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Fichier\Exception\ValidationImpossibleException;
 use Application\Service\Fichier\FichierServiceAwareTrait;
-use Application\Service\MailConfirmationService;
+use Application\Service\MailConfirmationServiceAwareTrait;
 use Application\Service\Notification\NotificationServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\These\Convention\ConventionPdfExporter;
@@ -41,6 +42,7 @@ use Application\Service\Workflow\WorkflowServiceAwareTrait;
 use Application\View\Helper\Sortable;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
+use Notification\Notification;
 use Retraitement\Exception\TimedOutCommandException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -50,8 +52,6 @@ use Zend\Form\Element\Hidden;
 use Zend\Http\Response;
 use Zend\Stdlib\ParametersInterface;
 use Zend\View\Model\ViewModel;
-use Application\Entity\Db\Individu;
-use Application\Service\MailConfirmationServiceAwareTrait;
 
 class TheseController extends AbstractController
 {
@@ -492,16 +492,18 @@ class TheseController extends AbstractController
 
                 // notification par mail à la BU quand le doctorant saisit les infos pour la 1ere fois
                 if ($estDoctorant && $inserting) {
+
                     $subject = sprintf("%s Saisie des informations pour la prise de rendez-vous BU",
                         $these->getLibelleDiscipline());
-                    $mailViewModel = (new ViewModel())
-                        ->setTemplate('application/these/mail/notif-modif-rdv-bu-doctorant')
-                        ->setVariables([
+                    $notif = new Notification();
+                    $notif
+                        ->setSubject($subject)
+                        ->setTemplatePath('application/these/mail/notif-modif-rdv-bu-doctorant')
+                        ->setTemplateVariables([
                             'these'    => $these,
                             'updating' => !$inserting,
-                            'subject'  => $subject,
                         ]);
-                    $this->notificationService->notifierBU($mailViewModel, $these);
+                    $this->notificationService->triggerNotificationBU($notif, $these);
 
                     $notificationLog = $this->notificationService->getMessage('<br>', 'info');
                     $this->flashMessenger()->addInfoMessage($notificationLog);
@@ -880,21 +882,14 @@ class TheseController extends AbstractController
                     if ($validite->getEstValide() && $version->estVersionCorrigee()) {
                         $this->validationService->validateDepotTheseCorrigee($these);
 
-                        // todo: envoi de mail aux directeurs de thèse
-                        $mailViewModel = (new ViewModel())
-                            ->setTemplate('application/notification/mail/notif-validation-depot-these-corrigee')
-                            ->setVariables([
-                                'subject' => "Validation du dépôt de la thèse corrigée",
-                                'these'    => $these,
-                                'url' => $this->url()->fromRoute('these/validation-these-corrigee', ['these' => $these->getId()], ['force_canonical' => true]),
-                            ]);
-                        $this->notificationService->notifierValidationDepotTheseCorrigee($mailViewModel, $these);
-
+                        // envoi de mail aux directeurs de thèse
+                        $this->notificationService->triggerValidationDepotTheseCorrigee($these);
                     }
                 } catch (ValidationImpossibleException $vie) {
                     // Le test d'archivabilité du fichier '%s' a rencontré un problème indépendant de notre volonté
                 }
             }
+
             return $this->redirect()->toUrl($this->urlThese()->archivageThese($these, $version->getCode()));
         }
 
@@ -1340,6 +1335,8 @@ class TheseController extends AbstractController
                 if ($conforme && $versionArchivage->estVersionCorrigee()) {
                     $this->validationService->validateDepotTheseCorrigee($these);
 
+                    // notification des directeurs de thèse
+                    $this->notificationService->triggerValidationDepotTheseCorrigee($these);
                 }
             }
         }

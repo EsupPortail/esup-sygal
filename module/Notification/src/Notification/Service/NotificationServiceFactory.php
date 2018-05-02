@@ -1,20 +1,18 @@
 <?php
 
-namespace Application\Service\Notification;
+namespace Notification\Service;
 
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
+use Application\Service\MailerService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\Variable\VariableService;
-use Notification\Service\Mailer\MailerService;
+use Zend\View\Helper\Url;
 use Zend\Mvc\Router\RouteStackInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\View\Helper\Url;
 use Zend\View\Renderer\RendererInterface;
 
 /**
- *
- *
  * @author Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>
  */
 class NotificationServiceFactory implements FactoryInterface
@@ -34,10 +32,10 @@ class NotificationServiceFactory implements FactoryInterface
          * @var EcoleDoctoraleService $ecoleDoctoraleService
          * @var UniteRechercheService $uniteRechercheService
          */
-        $mailerService = $serviceLocator->get(MailerService::class);
-        $variableService = $serviceLocator->get('VariableService');
-        $ecoleDoctoraleService = $serviceLocator->get('EcoleDoctoraleService');
-        $uniteRechercheService = $serviceLocator->get('UniteRechercheService');
+        $mailerService = $serviceLocator->get('UnicaenApp\Service\Mailer');
+//        $variableService = $serviceLocator->get('VariableService');
+//        $ecoleDoctoraleService = $serviceLocator->get('EcoleDoctoraleService');
+//        $uniteRechercheService = $serviceLocator->get('UniteRechercheService');
 
         /** @var RouteStackInterface $router */
         $router = $serviceLocator->get('router');
@@ -52,11 +50,11 @@ class NotificationServiceFactory implements FactoryInterface
 
         $service = new NotificationService($renderer);
         $service->setMailerService($mailerService);
-        $service->setVariableService($variableService);
-        $service->setEcoleDoctoraleService($ecoleDoctoraleService);
-        $service->setUniteRechercheService($uniteRechercheService);
-        $service->setUrlHelper($urlHelper);
+//        $service->setVariableService($variableService);
+//        $service->setEcoleDoctoraleService($ecoleDoctoraleService);
+//        $service->setUniteRechercheService($uniteRechercheService);
         $service->setOptions($options);
+        $service->setUrlHelper($urlHelper);
 
         return $service;
     }

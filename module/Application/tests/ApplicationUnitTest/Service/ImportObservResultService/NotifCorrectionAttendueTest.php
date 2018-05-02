@@ -57,7 +57,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
             ->willReturn($aujourdhui);
         $this->notificationServiceMock
             ->expects($this->exactly(1)) // 1 fois par record
-            ->method('notifierCorrectionAttendue');
+            ->method('triggerCorrectionAttendue');
 
         if ($typeCorrectionAttendue === These::CORRECTION_MINEURE) {
             $this->service->handleImportObservResultsForCorrectionMineure();
@@ -85,7 +85,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
             ->willReturn($hier);
         $this->notificationServiceMock
             ->expects($this->never())
-            ->method('notifierCorrectionAttendue');
+            ->method('triggerCorrectionAttendue');
 
         if ($typeCorrectionAttendue === These::CORRECTION_MINEURE) {
             $this->service->handleImportObservResultsForCorrectionMineure();
@@ -112,7 +112,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
             ->willReturn(null);
         $this->notificationServiceMock
             ->expects($this->never())
-            ->method('notifierCorrectionAttendue');
+            ->method('triggerCorrectionAttendue');
 
         if ($typeCorrectionAttendue === These::CORRECTION_MINEURE) {
             $this->service->handleImportObservResultsForCorrectionMineure();
@@ -136,7 +136,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
             ->willReturn($aujourdhui);
         $this->notificationServiceMock
             ->expects($this->exactly(1)) // 1 fois par record
-            ->method('notifierCorrectionAttendue')
+            ->method('triggerCorrectionAttendue')
             ->with($this->anything(), $this->anything(), $directeursTheseEnCopie = $this->isFalse());
 
         $this->service->handleImportObservResultsForCorrectionMineure();
@@ -157,7 +157,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
         $this->notificationServiceMock
             ->expects($this->exactly(1)) // 1 fois par record
-            ->method('notifierCorrectionAttendue')
+            ->method('triggerCorrectionAttendue')
             ->with($this->anything(), $this->anything(), $directeursTheseEnCopie = $this->isFalse());
 
         $this->service->handleImportObservResultsForCorrectionMajeure();
@@ -178,7 +178,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
             ->willReturn(false);
         $this->notificationServiceMock
             ->expects($this->exactly(1)) // 1 fois par record
-            ->method('notifierCorrectionAttendue')
+            ->method('triggerCorrectionAttendue')
             ->with($this->anything(), $this->anything(), $directeursTheseEnCopie = $this->isTrue());
 
         $this->service->handleImportObservResultsForCorrectionMajeure();

@@ -2,16 +2,20 @@
 
 namespace Application\Service\ImportObservResult;
 
+use Application\Entity\Db\ImportObservResult;
 use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\Entity\Db\Repository\ImportObservResultRepository;
 use Application\Entity\Db\These;
+use Application\Entity\Db\Variable;
+use Application\Notification\ResultatTheseAdmisNotification;
+use Application\Notification\ResultatTheseModifieNotification;
 use Application\Rule\NotificationDepotVersionCorrigeeAttenduRule;
 use Application\Service\BaseService;
-use Application\Service\Notification\NotificationServiceAwareInterface;
 use Application\Service\Notification\NotificationServiceAwareTrait;
-use Application\Service\These\TheseServiceAwareInterface;
 use Application\Service\These\TheseServiceAwareTrait;
-use Zend\View\Model\ViewModel;
+use Application\Service\Variable\VariableServiceAwareTrait;
+use Doctrine\ORM\OptimisticLockException;
+use UnicaenApp\Exception\RuntimeException;
 
 /**
  * @author Unicaen
@@ -20,6 +24,7 @@ class ImportObservResultService extends BaseService
 {
     use TheseServiceAwareTrait;
     use NotificationServiceAwareTrait;
+    use VariableServiceAwareTrait;
 
     /**
      * @var ImportObservResultRepository
@@ -82,6 +87,35 @@ class ImportObservResultService extends BaseService
             return $this;
         }
 
+        // Mise en forme des données pour le template du mail
+        $data = $this->prepareDataForResultatAdmis($records);
+
+        // Notification :
+        // - du BDD concernant l'évolution des résultats de thèses.
+        // - des doctorants dont le résultat de la thèse est passé à Admis.
+        $this->notificationService->triggerBdDUpdateResultat($data);
+        $this->notificationService->triggerDoctorantResultatAdmis($data);
+
+        // Enregistrement de la date de notification sur chaque résultat d'observation
+        foreach ($records as $record) {
+            $record->setDateNotif(new \DateTime());
+        }
+        try {
+            $this->getEntityManager()->flush($records);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Enregistrement des ImportObservResult impossible", null, $e);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ImportObservResult[] $records
+     * @return array
+     */
+    private function prepareDataForResultatAdmis($records)
+    {
+        // Mise en forme des résultats d'observation
         $sourceCodes = [];
         $details = [];
         foreach ($records as $record) {
@@ -95,6 +129,7 @@ class ImportObservResultService extends BaseService
         /** @var These[] $theses */
         $theses = $qb->getQuery()->getResult();
 
+        // Mise en forme des données pour le template du mail
         $data = [];
         foreach ($theses as $index => $these) {
             $data[] = [
@@ -103,16 +138,7 @@ class ImportObservResultService extends BaseService
             ];
         }
 
-        $this->notificationService->notifierBdDUpdateResultat($data);
-        $this->notificationService->notifierDoctorantResultatAdmis($data);
-
-        // Enregistrement de la date de notification sur chaque résultat d'observation
-        foreach ($records as $record) {
-            $record->setDateNotif(new \DateTime());
-        }
-        $this->getEntityManager()->flush($records);
-
-        return $this;
+        return $data;
     }
 
     /**
@@ -145,7 +171,7 @@ class ImportObservResultService extends BaseService
      * Traitement des résultats d'observation des changements lors de la synchro :
      * notifications au sujet des thèses pour lesquelles le témoin "correction autorisée" a changé.
      *
-     * @param array $records
+     * @param ImportObservResult[] $records
      * @return static
      */
     private function _handleImportObservResultsForCorrection(array $records)
@@ -161,40 +187,23 @@ class ImportObservResultService extends BaseService
             $these = $this->theseService->getRepository()->findOneBy(['sourceCode' => $record->getSourceCode()]);
             $these->setCorrectionAutorisee($record->getImportObserv()->getToValue()); // anticipation nécessaire !
 
-            $rule = $this->notificationDepotVersionCorrigeeAttenduRule;
-            $rule
-                ->setThese($these)
-                ->setDateDerniereNotif($record->getDateNotif())
-                ->execute();
-            $estPremiereNotif = $rule->estPremiereNotif();
-            $dateProchaineNotif = $rule->getDateProchaineNotif();
-            if ($dateProchaineNotif === null) {
-                continue;
-            }
-
-            $dateProchaineNotif->setTime(0, 0, 0);
-            $now = (new \DateTime())->setTime(0, 0, 0);
-            if ($now != $dateProchaineNotif) {
-                continue;
-            }
-
             // notification
-            $viewModel = new ViewModel([
-                'subject' => "Dépôt de thèse, corrections " . lcfirst($these->getCorrectionAutoriseeToString()) . "s attendues",
-                'estPremiereNotif' => $estPremiereNotif,
-            ]);
-            $directeursTheseEnCopie = false;
-            if ($these->getCorrectionAutoriseeEstMajeure() && !$estPremiereNotif) {
-                $directeursTheseEnCopie = true;
+            $result = $this->notificationService->triggerCorrectionAttendue($record, $these);
+            if ($result === null) {
+                continue; // si le service de notif renvoie null, aucune notif n'était nécessaire, on passe au suivant
             }
-            $this->notificationService->notifierCorrectionAttendue($viewModel, $these, $directeursTheseEnCopie);
 
             // Enregistrement de la date de notification
             $record->setDateNotif(new \DateTime());
+
             $recordsToFlush[] = $record;
         }
 
-        $this->getEntityManager()->flush($recordsToFlush);
+        try {
+            $this->getEntityManager()->flush($recordsToFlush);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Enregistrement des ImportObservResult impossible", null, $e);
+        }
 
         return $this;
     }

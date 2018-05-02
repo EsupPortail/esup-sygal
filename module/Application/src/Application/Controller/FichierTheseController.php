@@ -19,6 +19,7 @@ use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\View\Helper\Sortable;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
+use Notification\Notification;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\Form\Element\Hidden;
@@ -298,27 +299,27 @@ class FichierTheseController extends AbstractController
 
             // si une thèse est déposée, on notifie de BdD
             if ($nature->estThesePdf()) {
-                $subject = "Dépôt d'une thèse";
-                $mailViewModel = (new ViewModel())
-                    ->setTemplate('application/these/mail/notif-depot-these')
-                    ->setVariables([
+                $notif = new Notification();
+                $notif
+                    ->setSubject("Dépôt d'une thèse")
+                    ->setTemplatePath('application/these/mail/notif-depot-these')
+                    ->setTemplateVariables([
                         'these'    => $these,
                         'version'  => $version,
-                        'subject'  => $subject,
                     ]);
-                $this->notificationService->notifierBdD($mailViewModel, $these);
+                $this->notificationService->triggerNotificationBdD($notif, $these);
             }
 
             // si un rapport de soutenance est déposé, on notifie de BdD
             if ($nature->estRapportSoutenance()) {
-                $subject = "Dépôt du rapport de soutenance";
-                $mailViewModel = (new ViewModel())
-                    ->setTemplate('application/these/mail/notif-depot-rapport-soutenance')
-                    ->setVariables([
-                        'these'    => $these,
-                        'subject'  => $subject,
+                $notif = new Notification();
+                $notif
+                    ->setSubject("Dépôt du rapport de soutenance")
+                    ->setTemplatePath('application/these/mail/notif-depot-rapport-soutenance')
+                    ->setTemplateVariables([
+                        'these' => $these,
                     ]);
-                $this->notificationService->notifierBdD($mailViewModel, $these);
+                $this->notificationService->triggerNotificationBdD($notif, $these);
             }
         }
 
