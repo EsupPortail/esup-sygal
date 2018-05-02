@@ -1,17 +1,16 @@
 <?php
 
-namespace Application\Service\Notification;
+namespace Notification;
 
-use Application\Entity\Db\Interfaces\TheseAwareTrait;
-use Application\Service\Variable\VariableServiceAwareInterface;
-use Application\Service\Variable\VariableServiceAwareTrait;
 use Zend\View\Model\ViewModel;
 
-abstract class Notification
+/**
+ * Classe représentant une notification.
+ *
+ * @author Unicaen
+ */
+class Notification
 {
-    use VariableServiceAwareTrait;
-    use TheseAwareTrait;
-
     /**
      * @var string
      */
@@ -43,19 +42,24 @@ abstract class Notification
     protected $bcc;
 
     /**
+     * @var string[]
+     */
+    protected $warningMessages = [];
+
+    /**
+     * @var string[]
+     */
+    protected $infoMessages = [];
+
+    /**
      * Initialisation, préparation, etc. nécessaires avant de pouvoir envoyer la notification.
      *
      * @param array $context Toutes données utiles
-     * @return static
      */
-    abstract public function prepare(array $context = []);
+    public function prepare(array $context = [])
+    {
 
-    /**
-     * Retourne un message d'information destiné à être affiché une fois la notification envoyée.
-     *
-     * @return string|null
-     */
-    abstract public function getResultMessage();
+    }
 
     /**
      * Instanciation du modèle de vue utilisé pour le rendu du corps HTML du mail.
@@ -72,7 +76,6 @@ abstract class Notification
         $viewModel->setVariable('to', $this->to);
         $viewModel->setVariable('cc', $this->cc);
         $viewModel->setVariable('bcc', $this->bcc);
-        $viewModel->setVariable('these', $this->these);
 
         $viewModel->setVariables($this->templateVariables, true);
 
@@ -188,8 +191,52 @@ abstract class Notification
      */
     public function setTemplateVariables(array $templateVariables = [])
     {
-        $this->templateVariables = $templateVariables;
+        $this->templateVariables = array_merge($this->templateVariables, $templateVariables);
 
         return $this;
+    }
+
+    /**
+     * @param string|string[] $warningMessages
+     * @return self
+     */
+    protected function setWarningMessages($warningMessages)
+    {
+        $this->warningMessages = (array) $warningMessages;
+
+        return $this;
+    }
+
+    /**
+     * @param string|string[] $infoMessages
+     * @return self
+     */
+    protected function setInfoMessages($infoMessages)
+    {
+        $this->infoMessages = (array) $infoMessages;
+
+        return $this;
+    }
+
+    /**
+     * Retourne les éventuels messages d'avertissements signalés par cette notification
+     * et pouvant être affichés une fois la notification envoyée.
+     *
+     * @return string[]
+     */
+    public function getWarningMessages()
+    {
+        return $this->warningMessages;
+    }
+
+    /**
+     * Retourne les éventuels messages d'information signalés par cette notification
+     * et pouvant être affichés une fois la notification envoyée.
+     *
+     * @return string[]
+     */
+    public function getInfoMessages()
+    {
+        return $this->infoMessages;
     }
 }

@@ -2,7 +2,6 @@
 
 namespace Application\Service\These;
 
-use Application\Entity\UserWrapper;
 use Application\Entity\Db\Attestation;
 use Application\Entity\Db\Diffusion;
 use Application\Entity\Db\Fichier;
@@ -12,6 +11,7 @@ use Application\Entity\Db\RdvBu;
 use Application\Entity\Db\Repository\TheseRepository;
 use Application\Entity\Db\These;
 use Application\Entity\Db\VersionFichier;
+use Application\Entity\UserWrapper;
 use Application\Notification\ValidationRdvBuNotification;
 use Application\QueryBuilder\TheseQueryBuilder;
 use Application\Service\BaseService;
@@ -23,7 +23,6 @@ use Application\Service\Variable\VariableServiceAwareTrait;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Query\Expr\Join;
-use Doctrine\ORM\QueryBuilder;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Traits\MessageAwareInterface;
 use UnicaenApp\Util;
@@ -340,12 +339,12 @@ class TheseService extends BaseService
             $this->validationService->validateRdvBu($these);
             $successMessage = "Validation enregistrée avec succès.";
 
-            // notification (doctorant: à la 1ere validation seulement)
+            // notification BDD et BU + doctorant (à la 1ere validation seulement)
+            $notifierDoctorant = ! $this->validationService->existsValidationRdvBuHistorisee($these);
             $notification = new ValidationRdvBuNotification();
-            $notification->setVariableService($this->variableService);
             $notification->setThese($these);
-            $notification->setNotifierDoctorant(! $this->validationService->existsValidationRdvBuHistorisee($these));
-            $this->notificationService->trigger($notification);
+            $notification->setNotifierDoctorant($notifierDoctorant);
+            $this->notificationService->triggerValidationRdvBu($notification);
             $notificationLog = $this->notificationService->getMessage('<br>', 'info');
 
             $this->addMessage($successMessage, MessageAwareInterface::SUCCESS);

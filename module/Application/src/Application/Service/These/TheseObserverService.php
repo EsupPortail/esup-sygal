@@ -2,7 +2,6 @@
 
 namespace Application\Service\These;
 
-use Application\Service\Notification\NotificationServiceAwareInterface;
 use Application\Service\Notification\NotificationServiceAwareTrait;
 use Zend\View\Model\ViewModel;
 
@@ -19,10 +18,10 @@ class TheseObserverService
         $theses = $this->theseService->getRepository()->fetchThesesWithDateButoirDepotVersionCorrigeeDepassee();
 
         foreach ($theses as $these) {
-            $viewModel = new ViewModel([
-                'subject' => "Corrections " . lcfirst($these->getCorrectionAutoriseeToString(true)) . " non faites",
-            ]);
-            $this->notificationService->notifierDateButoirCorrectionDepassee($viewModel, $these);
+//            $viewModel = new ViewModel([
+//                'subject' => "Corrections " . lcfirst($these->getCorrectionAutoriseeToString(true)) . " non faites",
+//            ]);
+            $this->notificationService->triggerDateButoirCorrectionDepassee($these);
         }
     }
 }

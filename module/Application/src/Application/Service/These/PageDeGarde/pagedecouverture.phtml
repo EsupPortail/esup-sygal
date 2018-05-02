@@ -308,11 +308,11 @@ function generateEncadrementInfos(These $these) {
 function generateLogos(These $these, NotificationService $notifier = null) {
 
     if ($notifier !== null && $these->getEtablissement()->getCheminLogo() === null)
-        $notifier->notifierLogoAbsentEtablissement($these->getEtablissement());
+        $notifier->triggerLogoAbsentEtablissement($these->getEtablissement());
     if ($notifier !== null && $these->getEcoleDoctorale()->getCheminLogo() === null)
-        $notifier->notifierLogoAbsentEcoleDoctorale($these->getEcoleDoctorale());
+        $notifier->triggerLogoAbsentEcoleDoctorale($these->getEcoleDoctorale());
     if ($notifier !== null && $these->getUniteRecherche()->getCheminLogo() === null)
-        $notifier->notifierLogoAbsentUniteRecherche($these->getUniteRecherche());
+        $notifier->triggerLogoAbsentUniteRecherche($these->getUniteRecherche());
 
 
 

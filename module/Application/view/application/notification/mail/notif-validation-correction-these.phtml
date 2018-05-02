@@ -18,7 +18,7 @@ use Application\Entity\Db\These;
 </p>
 <p>
     Vous êtes informé-e que toutes les personnes ayant le rôle &laquo; <?php echo $role->getLibelle() ?> &raquo; sur la thèse de
-    <?php echo $these->getDoctorant() ?> ont validé les correction de la thèse.
+    <?php echo $these->getDoctorant() ?> ont validé les corrections de la thèse.
 </p>
 <p>
     Cliquez <a href="<?php echo $this->url('these/validation-these-corrigee', ['these' => $these->getId()], ['force_canonical' => true]) ?>">ici</a>
