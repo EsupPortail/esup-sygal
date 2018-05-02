@@ -1,0 +1,218 @@
+<?php
+
+function generateDiv($tableName, $class) {
+    $texte = '';
+    $texte .= '<div class="panel '.$class.'">';
+    $texte .= '    <div class="panel-heading"> '.$tableName.' </div>';
+    $texte .= '    <div class="panel-body">';
+    $texte .= '        <div id="control-'.$tableName.'" class="pull-left">';
+    $texte .= '            <img id="'.$tableName.'" src="css/grey.png"/>';
+    $texte .= '            <button class="btn btn-info" service="'.$tableName.'">Lancer ! </button>';
+    $texte .= '        </div>';
+    $texte .= '        <div id="info-'.$tableName.'" class="pull-right"></div>';
+    $texte .= '    </div>';
+    $texte .= '</div>';
+    return $texte;
+}
+?>
+
+<h1> Récupération des données des Web Services </h1>
+
+<div>
+    Établissement :
+        <input type="radio" name="etablissement" value="INSA"/> INSA Rouen
+        <input type="radio" name="etablissement" value="UCN" checked /> Université de Caen
+        <input type="radio" name="etablissement" value="ULHN"/> Université du Havre
+        <input type="radio" name="etablissement" value="URN" /> Université de Rouen
+
+
+    <div>
+        <button class="btn btn-info" id="all"> Récupérer toutes les données </button>
+        <button class="btn btn-info" id="reset"> Remise à zéro de la récupération </button>
+    </div>
+
+    <br/>
+
+    <div>
+        <div class="col-md-4">
+            <?php echo generateDiv("structure", "panel-success"); ?>
+        </div>
+        <div class="col-md-4">
+            <?php echo generateDiv("ecole-doctorale", "panel-success"); ?>
+            <?php echo generateDiv("etablissement", "panel-success"); ?>
+            <?php echo generateDiv("unite-recherche", "panel-success"); ?>
+        </div>
+    </div>
+
+    <div style="clear:both;"></div>
+
+    <div>
+        <div class="col-md-4">
+            <?php echo generateDiv("individu", "panel-info"); ?>
+            <?php echo generateDiv("role", "panel-info"); ?>
+        </div>
+        <div class="col-md-4">
+            <?php echo generateDiv("doctorant", "panel-info"); ?>
+            <?php echo generateDiv("acteur", "panel-info"); ?>
+        </div>
+        <div class="col-md-4">
+            <?php echo generateDiv("these", "panel-info"); ?>
+        </div>
+    </div>
+
+    <div style="clear:both;"></div>
+
+    <div>
+        <div class="col-md-4">
+            <?php echo generateDiv("variable", "panel-warning"); ?>
+        </div>
+    </div>
+
+</div>
+
+<div style="clear:both;"></div>
+
+<div id="current">Aucun message pour le moment.</div>
+
+<script>
+
+    var state = Array();
+    var depend = Array();
+    depend["structure"] = [ ];
+    depend["ecole-doctorale"] = [ "structure"];
+    depend["etablissement"]   = [ "structure"];
+    depend["unite-recherche"] = [ "structure"];
+    depend["individu"] = [ ];
+    depend["doctorant"] = [ "individu" ];
+    depend["role"] = [ ];
+    depend["acteur"] = [ "individu", "role" ];
+    depend["these"] = [ "doctorant" ];
+    depend["variable"] = [ ];
+
+    //Recupérer les clefs d'un tableau associatif
+    function getNodes(forest) {
+        var nodes = Object.keys(forest);
+        return nodes;
+    }
+
+    $(document).ready(function() {
+
+        $.reset();
+
+        $("button#reset").click( function() { $.reset(); });
+        $("button#all").click( function() { $.fetchAll(); });
+        $("input[name=etablissement]").change( function() { $.reset(); });
+
+        $("button").click( function() {
+
+            var etablissement = $("input[name=etablissement]:checked").val();
+            var service = $(this).attr("service");
+            if (etablissement === undefined || service === undefined) return;
+
+            // var texte = "Récupération des données ["+service+"|"+etablissement+"]";
+            // console.log(texte);
+
+            var dependance = Array();
+            toRun = [ service ];
+            current = [ service ];
+            var depth = 0;
+            while (current.length && depth < 10) {
+                currentService = current[0];
+                current = current.slice(1, 1000);
+
+                for (var i = 0; i < depend[currentService].length; i++) {
+                    var father = depend[currentService][i];
+                    if (state[father] !== true) {
+                        current.push(father);
+                        toRun.push(father);
+                    }
+                }
+            }
+
+            for( var i = 0 ; i < toRun.length ; i++) {
+                if (state[toRun[i]] === false) {
+                    $("#" + toRun[i]).attr("src", "css/orange.png");
+                }
+            }
+            $.fetch(toRun, etablissement);
+        });
+    });
+
+    /**
+     * Cette fonction initialise la fonction de récupération des données et exécute celle-ci
+     */
+    $.fetchAll = function() {
+        var etablissement = $("input[name=etablissement]:checked").val();
+        var nodes = getNodes(depend).reverse();
+        $.fetch(nodes, etablissement);
+    };
+
+    /**
+     * @param services          la liste des services à récupérer
+     * @param etablissement     l'établissement cible
+     */
+    $.fetch = function(services, etablissement) {
+
+        if (services.length > 0) {
+            var length = services.length;
+            var service = services[length-1];
+            if (state[service] === false) {
+                console.log("Fetching: " + service + "["+state[service] +"]");
+                state[service] = true;
+                var url = "fetch/" + service + "/" + etablissement;
+                $.ajax({
+                    url: url,
+                    beforeSend:
+                        function () {
+                            $("#" + service).attr("src", "css/yellow.png");
+                        },
+                    success:
+                        function (retour) {
+                            if (retour.indexOf("Exception") >= 0) {
+                                $("#" + service).attr("src", "css/red.png");
+                                state[service] = false;
+                            } else {
+                                $("#" + service).attr("src", "css/green.png");
+                                $.fetchInfos(service, etablissement);
+                            }
+                            var next = services.slice(0, length - 1);
+                            $.fetch(next, etablissement);
+                        }
+                });
+            }
+        }
+    };
+
+    /**
+     * @param services          la liste des services à récupérer
+     * @param etablissement     l'établissement cible
+     */
+    $.fetchInfos = function(service,etablissement) {
+        var url = "fetch/info-last-update/" + service + "/" + etablissement;
+        $.ajax({
+            url: url,
+            success:
+                function (retour) {
+                    $("div#info-"+service).html(retour);
+                }
+        });
+    };
+
+    //Reset les récupérations (remises de la variable à faux et remises des vignettes en gris
+    $.reset = function() {
+        var nodes = getNodes(depend);
+        var etablissement = $("input[name=etablissement]:checked").val();
+
+        for (var position in nodes) {
+            var service = nodes[position];
+
+            console.log("resetting " + service + " " + etablissement);
+
+            //reset state
+            $("#" + service).attr("src", "css/grey.png");
+            state[service] = false;
+            //reset info
+            $.fetchInfos(service, etablissement);
+        }
+    }
+</script>

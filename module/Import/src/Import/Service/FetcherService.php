@@ -323,17 +323,19 @@ class FetcherService
      * @return array [DateTime, string] le log associé pour l'affichage ...
      * @throws RuntimeException
      * */
-    public function doLog($start_date, $end_date, $route, $status, $response)
+    public function doLog($start_date, $end_date, $route, $status, $response, $etablissement, $table)
     {
         $log_query = "INSERT INTO API_LOG ";
-        $log_query .= "(ID, REQ_URI, REQ_START_DATE, REQ_END_DATE, REQ_STATUS, REQ_RESPONSE)";
+        $log_query .= "(ID, REQ_URI, REQ_START_DATE, REQ_END_DATE, REQ_STATUS, REQ_RESPONSE, REQ_ETABLISSEMENT, REQ_TABLE)";
         $log_query .= " values (";
         $log_query .= "API_LOG_ID_SEQ.nextval ,";
         $log_query .= "'" . $route . "' , ";
         $log_query .= "to_date('" . $start_date->format('y-m-d H:i:s') . "','YY-MM-DD HH24:MI:SS') , ";
         $log_query .= "to_date('" . $end_date->format('y-m-d H:i:s') . "','YY-MM-DD HH24:MI:SS') , ";
         $log_query .= "'" . $status . "' , ";
-        $log_query .= "'" . $response . "'";
+        $log_query .= "'" . $response . "', ";
+        $log_query .= "'" . $etablissement . "',";
+        $log_query .= "'" . $table . "'";
         $log_query .= ")";
 
         try {
@@ -517,7 +519,13 @@ class FetcherService
         $_fin = microtime(true);
         if ($debug_level > 0) print "<p><span style='background-color:lightgreen;'> ExecQueries: " . ($_fin - $_debut) . " secondes.</span></p>";
 
-        return $this->doLog($start_date, new DateTime(), $this->url . "/" . $dataName . "/" . $sourceCode, "OK", "Récupération de " . $dataName . ":" . $sourceCode . " de [" . $this->code . "] en " . ($_fin - $debut) . " seconde(s).");
+        return $this->doLog(
+            $start_date, new DateTime(),
+            $this->url . "/" . $dataName . "/" . $sourceCode,
+            "OK",
+            "Récupération de " . $dataName . ":" . $sourceCode . " de [" . $this->code . "] en " . ($_fin - $debut) . " seconde(s).",
+            $this->code,
+            "variable");
     }
 
     /**
@@ -591,7 +599,9 @@ class FetcherService
         if ($debug_level > 0) print "<p><span style='background-color:lightgreen;'> ExecQueries: " . ($_fin - $_debut) . " secondes.</span></p>";
         $fin = microtime(true);
 
-        return $this->doLog($start_date, new DateTime(), $this->url . "/" . $dataName, "OK", count($collection_json) . " " . $dataName . "(s) ont été récupéré(es) de [" . $this->code . "] en " . ($fin - $debut) . " seconde(s).");
+        return $this->doLog($start_date, new DateTime(), $this->url . "/" . $dataName, "OK", count($collection_json) . " " . $dataName . "(s) ont été récupéré(es) de [" . $this->code . "] en " . ($fin - $debut) . " seconde(s).",
+            $this->code,
+            $dataName        );
     }
 
 }
