@@ -397,7 +397,7 @@ class StructureService extends BaseService
         return $structures;
     }
 
-    public function getSubstitutionsByType($type, $nonSubsitutees = true)
+    public function getSubstitutionsByType($type)
     {
         $structures = $this->getStructuresConcretesByType($type);
 
@@ -414,4 +414,31 @@ class StructureService extends BaseService
 
         return $subsitutions;
     }
+
+
+
+    /**
+     * les structures qui sont subsitutées sont présentent une seule fois dans la table StructureSubstit
+     * la récupération de la structure substituante peut passé par une requête de cette table.
+     * @param StructureConcreteInterface $structureConcrete
+     * @return StructureConcreteInterface|null
+     * @throws NonUniqueResultException
+     */
+    public function findStructureSubstituante(StructureConcreteInterface $structureConcrete)
+    {
+        $qb = $this->getEntityManager()->getRepository(StructureSubstit::class)->createQueryBuilder("ss")
+            ->andWhere("ss.fromStructure = :structure")
+            ->setParameter("structure", $structureConcrete->getStructure());
+        /** @var StructureSubstit $result */
+        $result = $qb->getQuery()->getOneOrNullResult();
+
+        if ($result !== null) {
+            $structureCible = $result->getToStructure();
+            $structureConcreteCible = $this->findStructureConcreteFromStructure($structureCible);
+            return $structureConcreteCible;
+        }
+
+        return null;
+    }
+
 }
