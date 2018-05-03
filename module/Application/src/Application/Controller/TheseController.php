@@ -1456,11 +1456,8 @@ class TheseController extends AbstractController
             $form->setData($this->getRequest()->getPost()); // appel de Hydrator::hydrate
 
             if ($form->isValid()) {
-                $this->entityManager->persist($recapBu->getRdvBu());
                 $this->entityManager->flush($recapBu->getRdvBu());
-                $this->entityManager->persist($recapBu->getDiffusion());
                 $this->entityManager->flush($recapBu->getDiffusion());
-                $this->entityManager->persist($recapBu);
                 $this->entityManager->flush($recapBu);
             }
         }
