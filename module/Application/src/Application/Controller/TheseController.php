@@ -26,6 +26,7 @@ use Application\Form\DiffusionTheseForm;
 use Application\Form\MetadonneeTheseForm;
 use Application\Form\RdvBuTheseDoctorantForm;
 use Application\Form\RdvBuTheseForm;
+use Application\Form\RecapBuForm;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Fichier\Exception\ValidationImpossibleException;
 use Application\Service\Fichier\FichierServiceAwareTrait;
@@ -1414,40 +1415,51 @@ class TheseController extends AbstractController
      */
     public function recapBuAction() {
 
-        $DEBUG = false;
-
-        /**
-         * @var These $these
-         * @var RecapBu $recap
-         */
-
-        //recuperation de l'objet ou création d'un nouveau si non existant
-        $repo = $this->entityManager->getRepository(RecapBu::class);
         $these = $this->requestedThese();
-        $recap = $repo->findOneBy(["these" => $these]);
-        if ($recap === null) {
-            if ($DEBUG) echo "Creation d'un nouveau RecapBU <br/>";
-            $recap = new RecapBu();
-            $recap->setThese($these);
-        } else {
-            if ($DEBUG) echo "Récupération d'un RecapBU existant <br/>";
-            if ($DEBUG) echo $recap->getId() . "|" . $recap->getThese()->getId() . "|" .
-                             $recap->getOrcid() . "|" . $recap->getNNT() . "|" . $recap->getVigilance() . "<br/>";
+        /** @var RecapBu $recapBu */
+        $recapBu = $this->entityManager->getRepository(RecapBu::class)->findOneBy(["these" => $these]);
+
+        // RecapBu n'existe pas :: il faut vérifier l'existence de Diffusion et de RdvBU et crée en fonction
+        if ($recapBu === null) {
+            $diffusion = $this->entityManager->getRepository(Diffusion::class)->findOneBy(["these" => $these]);
+            if ($diffusion === null) {
+                $diffusion = new Diffusion();
+                $diffusion->setThese($these);
+                $diffusion->setDroitAuteurOk(false);
+                $diffusion->setAutorisMel(0);
+                $diffusion->setCertifCharteDiff(false);
+                $diffusion->setConfidentielle(false);
+                $this->entityManager->persist($diffusion);
+                $this->entityManager->flush($diffusion);
+            }
+            $rdvBu = $this->entityManager->getRepository(RdvBu::class)->findOneBy(["these" => $these]);
+            if ($rdvBu === null) {
+                $rdvBu = new RdvBu();
+                $rdvBu->setThese($these);
+                $this->entityManager->persist($rdvBu);
+                $this->entityManager->flush($rdvBu);
+            }
+            $recapBu = new RecapBu();
+            $recapBu->setThese($these);
+            $recapBu->setDiffusion($diffusion);
+            $recapBu->setRdvBu($rdvBu);
+            $this->entityManager->persist($recapBu);
+            $this->entityManager->flush($recapBu);
         }
 
-        //creation du formulaire via le service pour avoir appel de la factory (qui fera init et setHydrator)
+        /** @var RecapBuForm $form */
         $form = $this->getServiceLocator()->get('formElementManager')->get('RecapBuForm');
-        $form->bind($recap); // appel de Hydrator::extract
+/*        $form->bind($recapBu);
 
         if ($this->getRequest()->isPost()) {
             $form->setData($this->getRequest()->getPost()); // appel de Hydrator::hydrate
 
             if ($form->isValid()) {
-                $this->entityManager->persist($recap);
-                $this->entityManager->flush($recap);
+                $this->entityManager->persist($recapBu);
+                $this->entityManager->flush($recapBu);
             }
         }
-
+*/
         return new ViewModel([
             'these' => $these,
             'form' => $form,

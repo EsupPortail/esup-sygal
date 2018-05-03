@@ -72,6 +72,11 @@ class Diffusion implements HistoriqueAwareInterface
     private $idOrcid;
 
     /**
+     * @var string
+     */
+    private $nnt;
+
+    /**
      * @var integer
      */
     private $id;
@@ -302,5 +307,25 @@ class Diffusion implements HistoriqueAwareInterface
     {
         return $this->these;
     }
+
+    /**
+     * @return string
+     */
+    public function getNNT()
+    {
+        return $this->nnt;
+    }
+
+    /**
+     * @param string $nnt
+     * @return Diffusion
+     */
+    public function setNNT($nnt)
+    {
+        $this->nnt = $nnt;
+        return $this;
+    }
+
+
 }
 
