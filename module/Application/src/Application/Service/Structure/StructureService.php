@@ -369,8 +369,22 @@ class StructureService extends BaseService
         $hydrator->hydrate($data, $structure);
     }
 
-    public function getStructuresConcretesByType($typeStructure) {
+    /**
+     * @param TypeStructure $typeStructure
+     * @return StructureConcreteInterface[]
+     */
+    public function getStructuresConcretes($typeStructure = null) {
         $structures = [];
+
+        if ($typeStructure === null) {
+            $ecoles = $this->getStructuresConcretes(TypeStructure::CODE_ECOLE_DOCTORALE);
+            $etablissements = $this->getStructuresConcretes(TypeStructure::CODE_ETABLISSEMENT);
+            $unites = $this->getStructuresConcretes(TypeStructure::CODE_UNITE_RECHERCHE);
+
+            $structures = array_merge($ecoles, $etablissements, $unites);
+            return $structures;
+        }
+
         $repo = null;
         switch($typeStructure) {
             case TypeStructure::CODE_ETABLISSEMENT :
@@ -381,7 +395,6 @@ class StructureService extends BaseService
                 break;
             case TypeStructure::CODE_UNITE_RECHERCHE :
                 $repo = $this->getEntityManager()->getRepository(UniteRecherche::class);
-
                 break;
             default:
                 throw new RuntimeException("Type de structure inconnu [".$typeStructure."]");
@@ -397,9 +410,17 @@ class StructureService extends BaseService
         return $structures;
     }
 
-    public function getSubstitutionsByType($type)
+    /**
+     * Cette fonction retourne un tableau de tableaux contenants des structures concrete ayant le
+     * même sourceCode au préfixe près
+     * @param TypeStructure $type
+     * @return array(StructureConcreteInterface[])
+     */
+    public function getSubstitutions($type = null)
     {
-        $structures = $this->getStructuresConcretesByType($type);
+        $structures = null;
+        if ($type === null) $structures = $this->getStructuresConcretes();
+        else                $structures = $this->getStructuresConcretes($type);
 
         $sourceCodeDictionnary = [];
         foreach ($structures as $structure) {

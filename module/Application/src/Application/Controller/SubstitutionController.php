@@ -57,7 +57,7 @@ class SubstitutionController extends AbstractController
     public function creerAction()
     {
         $type = $this->params()->fromRoute('type');
-        $structures = $this->structureService->getStructuresConcretesByType($type);
+        $structures = $this->structureService->getStructuresConcretes($type);
 
         /** Retrait des structures soient substituées soient substitutantes */
         $toRemove = [];
@@ -127,7 +127,7 @@ class SubstitutionController extends AbstractController
             $structuresConcretesSubstituees[] = $structureConcreteSubstituee;
         }
 
-        $structures = $this->structureService->getStructuresConcretesByType($structureCible->getTypeStructure()->getCode());
+        $structures = $this->structureService->getStructuresConcretes($structureCible->getTypeStructure()->getCode());
 
         /** Retrait des structures soient substituées soient substitutantes */
         $toRemove = [];
@@ -198,10 +198,10 @@ class SubstitutionController extends AbstractController
     public function substitutionAutomatiqueAction()
     {
         $structures = [];
-        $ecoles = $this->structureService->getSubstitutionsByType(TypeStructure::CODE_ECOLE_DOCTORALE);
+        $ecoles = $this->structureService->getSubstitutions(TypeStructure::CODE_ECOLE_DOCTORALE);
         foreach($ecoles as $ecole) $structures[] = $ecole;
-        $unites = $this->structureService->getSubstitutionsByType(TypeStructure::CODE_UNITE_RECHERCHE);
-        $etablissements = $this->structureService->getSubstitutionsByType(TypeStructure::CODE_ETABLISSEMENT);
+        $unites = $this->structureService->getSubstitutions(TypeStructure::CODE_UNITE_RECHERCHE);
+        $etablissements = $this->structureService->getSubstitutions(TypeStructure::CODE_ETABLISSEMENT);
 
 
 //        var_dump(count($ecoles). " substitutions d'écoles doctorales");
