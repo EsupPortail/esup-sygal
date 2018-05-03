@@ -1449,17 +1449,22 @@ class TheseController extends AbstractController
 
         /** @var RecapBuForm $form */
         $form = $this->getServiceLocator()->get('formElementManager')->get('RecapBuForm');
-/*        $form->bind($recapBu);
+        $form->bind($recapBu);
 
         if ($this->getRequest()->isPost()) {
+            $data = $this->getRequest()->getPost();
             $form->setData($this->getRequest()->getPost()); // appel de Hydrator::hydrate
 
             if ($form->isValid()) {
+                $this->entityManager->persist($recapBu->getRdvBu());
+                $this->entityManager->flush($recapBu->getRdvBu());
+                $this->entityManager->persist($recapBu->getDiffusion());
+                $this->entityManager->flush($recapBu->getDiffusion());
                 $this->entityManager->persist($recapBu);
                 $this->entityManager->flush($recapBu);
             }
         }
-*/
+
         return new ViewModel([
             'these' => $these,
             'form' => $form,
