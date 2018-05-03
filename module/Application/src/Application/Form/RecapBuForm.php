@@ -24,7 +24,7 @@ class RecapBuForm extends Form
         );
         $this->add(
             (new Text('nnt'))
-            ->setLabel("Numéro national de these :")
+            ->setLabel("Numéro national de thèse :")
         );
 
         $this->add((new Textarea('vigilance'))

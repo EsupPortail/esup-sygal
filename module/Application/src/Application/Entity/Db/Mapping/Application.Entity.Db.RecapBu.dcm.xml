@@ -5,13 +5,21 @@
       <generator strategy="SEQUENCE"/>
     </id>
 
-    <field name="orcid"       type="string" column="ORCID" length="19" nullable="true"/>
-    <field name="nnt"         type="string" column="NNT" length="15" nullable="true"/>
-    <field name="vigilance"   type="string" column="VIGILANCE" length="2048" nullable="true"/>
-
     <one-to-one field="these" target-entity="Application\Entity\Db\These">
       <join-columns>
         <join-column name="THESE_ID" referenced-column-name="ID"/>
+      </join-columns>
+    </one-to-one>
+
+    <one-to-one field="diffusion" target-entity="Application\Entity\Db\Diffusion">
+      <join-columns>
+        <join-column name="DIFFUSION_ID" referenced-column-name="ID"/>
+      </join-columns>
+    </one-to-one>
+
+    <one-to-one field="rdvBu" target-entity="Application\Entity\Db\RdvBu">
+      <join-columns>
+        <join-column name="RDV_BU_ID" referenced-column-name="ID"/>
       </join-columns>
     </one-to-one>
 

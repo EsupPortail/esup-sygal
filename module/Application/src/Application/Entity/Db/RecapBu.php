@@ -2,20 +2,27 @@
 
 namespace Application\Entity\Db;
 
-class RecapBu {
-
+class RecapBu
+{
+    /** @var integer $id */
     private $id;
+    /** @var These $these */
     protected $these;
-    protected $orcid;
-    protected $nnt;
-    protected $vigilance;
+    /** @var Diffusion $diffusion */
+    protected $diffusion;
+    /** @var RdvBu $rdvBu */
+    protected $rdvBu;
 
-    public function getId() {
+    /**
+     * @return int
+     */
+    public function getId()
+    {
         return $this->id;
     }
 
     /**
-     * @return mixed
+     * @return These
      */
     public function getThese()
     {
@@ -23,77 +30,76 @@ class RecapBu {
     }
 
     /**
-     * @param mixed $these
+     * @param These $these
+     * @return RecapBu
      */
     public function setThese($these)
     {
         $this->these = $these;
+        return $this;
     }
 
 
     /**
-     * @return mixed
+     * @return Diffusion
      */
-    public function getOrcid()
+    public function getDiffusion()
     {
-        return $this->orcid;
+        return $this->diffusion;
     }
 
     /**
-     * @param mixed $orcid
+     * @param Diffusion $diffusion
+     * @return RecapBu
      */
-    public function setOrcid($orcid)
+    public function setDiffusion($diffusion)
     {
-        $this->orcid = $orcid;
+        $this->diffusion = $diffusion;
+        return $this;
     }
 
     /**
-     * @return mixed
+     * @return RdvBu
      */
-    public function getNNT()
+    public function getRdvBu()
     {
-        return $this->nnt;
+        return $this->rdvBu;
     }
 
     /**
-     * @param mixed $nnt
+     * @param RdvBu $rdvBu
+     * @return RecapBu
      */
-    public function setNNT($nnt)
+    public function setRdvBu($rdvBu)
     {
-        $this->nnt = $nnt;
+        $this->rdvBu = $rdvBu;
+        return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getVigilance()
-    {
-        return $this->vigilance;
+    public function getIdOrcid() {
+        return $this->getDiffusion()->getIdOrcid();
     }
 
-    /**
-     * @param mixed $vigilance
-     */
-    public function setVigilance($vigilance)
-    {
-        $this->vigilance = $vigilance;
+    public function setIdOrcid($orcid) {
+        $this->getDiffusion()->setIdOrcid($orcid);
+        return $this;
     }
 
-//    public function getArrayCopy() {
-//        $data = array();
-//        $data['id'] = $this->id;
-//        $data['orcid'] = $this->orcid;
-//        $data['nnt'] = $this->nnt;
-//        $data['vigilance'] = $this->vigilance;
-//        return $data;
-//    }
-//
-//    public function exchangeArray($recap) {
-//        $data = array();
-//        $data['id'] = $recap->id;
-//        $data['orcid'] = $recap->orcid;
-//        $data['nnt'] = $recap->nnt;
-//        $data['vigilance'] = $recap->vigilance;
-//        return $data;
-//    }
+    public function getNNT() {
+        return $this->getDiffusion()->getNNT();
+    }
+
+    public function setNNT($nnt) {
+        $this->getDiffusion()->setNNT($nnt);
+        return $this;
+    }
+
+    public function getVigilance () {
+        return $this->getRdvBu()->getDivers();
+    }
+
+    public function setVigilance($divers) {
+        $this->getRdvBu()->setDivers($divers);
+        return $this;
+    }
 }
