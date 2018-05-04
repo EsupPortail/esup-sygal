@@ -53,6 +53,9 @@ class Structure implements HistoriqueAwareInterface, SourceAwareInterface
      */
     private $structuresSubstituees;
 
+    /** @var Structure */
+    private $structureSubstituante;
+
     /**
      * Instancie un Etablissement, une EcodeDoctorale ou une UniteRecherche à partir des données spécifiées.
      * NB: L'entité Structure de rattachement est également instanciée.
@@ -263,4 +266,24 @@ class Structure implements HistoriqueAwareInterface, SourceAwareInterface
     {
         return $this->structuresSubstituees;
     }
+
+    /**
+     * @return Structure
+     */
+    public function getStructureSubstituante()
+    {
+        return $this->structureSubstituante;
+    }
+
+    /**
+     * @param Structure $structureSubstituante
+     * @return Structure
+     */
+    public function setStructureSubstituante($structureSubstituante)
+    {
+        $this->structureSubstituante = $structureSubstituante;
+        return $this;
+    }
+
+
 }

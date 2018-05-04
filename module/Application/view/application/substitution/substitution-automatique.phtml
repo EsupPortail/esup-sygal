@@ -2,86 +2,51 @@
 
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\StructureConcreteInterface;
 
 /**
  * @var [EcoleDoctorale, EcoleDoctorale[]] $ecoles_substitutions
  * @var [Etablissement, Etablissement[]] $etablissements_substitutions
  */
 
-/** @var EcoleDoctorale $ecole */
-echo count($ecoles_substitutions) . " substitutions d'écoles doctorales <br/>";
+echo '<div>';
+displaySubstitutions($ecoles_substitutions, $type = "EcoleDoctorale");
+echo '</div>';
+echo '<div>';
+displaySubstitutions($unites_substitutions, $type = "UniteRecherche");
+echo '</div>';
+echo '<div>';
+displaySubstitutions($etablissements_substitutions, $type = "Etablissement");
+echo '</div>';
 
-foreach ($ecoles_substitutions as $ecoles_substitution) {
-    /** @var EcoleDoctorale $substituante */
-    $substituante = $ecoles_substitution[1];
-    /** @var EcoleDoctorale[] $substituees */
-    $substituees = $ecoles_substitution[0];
+function displaySubstitutions($substitutions, $type = "structures") {
 
-    echo "-- Subsitutante -- <br/>";
-    echo "Sigle: " . $substituante->getSigle() . "<br/>";
-    echo "Libelle: " . $substituante->getLibelle() . "<br/>";
-    echo "Logo: " . $substituante->getCheminLogo() . "<br/>";
+    echo '<h3>'.count($substitutions) . ' substitutions de ' . $type . '</h3>';
+    foreach ($substitutions as $substitution) {
 
-    echo "-- Substituées (" .count($substituees). ") -- <br/>";
+        /** @var StructureConcreteInterface $substituante */
+        $substituante = $substitution[1];
+        /** @var StructureConcreteInterface[] $substituees */
+        $substituees = $substitution[0];
 
-    foreach ($substituees as $substituee) {
-        /** @var EcoleDoctorale $substituee */
-        echo "Sigle: " . $substituee->getSigle() . "<br/>";
-        echo "Libelle: " . $substituee->getLibelle() . "<br/>";
-        echo "Logo: " . $substituee->getCheminLogo() . "<br/>";
-        echo "--- <br/>";
-
-    }
-}
-
-/** @var EcoleDoctorale $ecole */
-echo count($etablissements_substitutions) . " substitutions d'etablissements <br/>";
-
-foreach ($etablissements_substitutions as $etablissements_substitution) {
-    /** @var EcoleDoctorale $substituante */
-    $substituante = $etablissements_substitution[1];
-    /** @var EcoleDoctorale[] $substituees */
-    $substituees = $etablissements_substitution[0];
-
-    echo "-- Subsitutante -- <br/>";
-    echo "Sigle: " . $substituante->getSigle() . "<br/>";
-    echo "Libelle: " . $substituante->getLibelle() . "<br/>";
-    echo "Logo: " . $substituante->getCheminLogo() . "<br/>";
-
-    echo "-- Substituées (" . count($substituees) . ") -- <br/>";
-
-    foreach ($substituees as $substituee) {
-        /** @var EcoleDoctorale $substituee */
-        echo "Sigle: " . $substituee->getSigle() . "<br/>";
-        echo "Libelle: " . $substituee->getLibelle() . "<br/>";
-        echo "Logo: " . $substituee->getCheminLogo() . "<br/>";
-        echo "--- <br/>";
-
-    }
-}
-
-/** @var EcoleDoctorale $ecole */
-echo count($unites_substitutions) . " substitutions d'unités de recherche <br/>";
-
-foreach ($unites_substitutions as $unites_substitution) {
-    /** @var EcoleDoctorale $substituante */
-    $substituante = $unites_substitution[1];
-    /** @var EcoleDoctorale[] $substituees */
-    $substituees = $unites_substitution[0];
-
-    echo "-- Subsitutante -- <br/>";
-    echo "Sigle: " . $substituante->getSigle() . "<br/>";
-    echo "Libelle: " . $substituante->getLibelle() . "<br/>";
-    echo "Logo: " . $substituante->getCheminLogo() . "<br/>";
-
-    echo "-- Substituées (" . count($substituees) . ") -- <br/>";
-
-    foreach ($substituees as $substituee) {
-        /** @var EcoleDoctorale $substituee */
-        echo "Sigle: " . $substituee->getSigle() . "<br/>";
-        echo "Libelle: " . $substituee->getLibelle() . "<br/>";
-        echo "Logo: " . $substituee->getCheminLogo() . "<br/>";
-        echo "--- <br/>";
-
+        echo '<table class="table table-extra-condensed">';
+        echo '<tr> <th> Substituées (' . count($substituees) . ') </th><th> Substituante </th></tr>';
+        for ($position = 0; $position < count($substituees); $position++) {
+            echo '<tr>';
+            echo '<td>';
+            echo $substituees[$position]->getSourceCode() . "<br/>";
+            echo $substituees[$position]->getSigle() . "<br/>";
+            echo $substituees[$position]->getLibelle();
+            echo '</td>';
+            echo '<td>';
+            if ($position === 0) {
+                echo $substituante->getSourceCode() . "<br/>";
+                echo $substituante->getSigle() . "<br/>";
+                echo $substituante->getLibelle();
+            }
+            echo '</td>';
+            echo '</tr>';
+        }
+        echo '</table>';
     }
 }
