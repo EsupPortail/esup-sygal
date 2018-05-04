@@ -38,13 +38,14 @@ class UniteRechercheController extends AbstractController
 
         $roles = null;
         $effectifs = null;
+        $structure = null;
         if ($selected) {
             /**
              * @var StructureConcreteInterface $structure
              * @var Role[] $roles
              */
-            $structure  = $this->uniteRechercheService->getUniteRechercheById($selected);
-            $roles = $structure->getStructure()->getStructureDependantRoles();
+            $selectedStructure  = $this->uniteRechercheService->getUniteRechercheById($selected);
+            $roles = $selectedStructure->getStructure()->getStructureDependantRoles();
 
             $effectifs = [];
             foreach ($roles as $role) {
@@ -72,12 +73,14 @@ class UniteRechercheController extends AbstractController
             }
             if (!$found) $structures[] = $structure;
         }
+        $rattachements = $this->uniteRechercheService->findEtablissementRattachement($selectedStructure);
 
         return new ViewModel([
             'structuresPrincipales'          => $structures,
             'selected'                       => $selected,
             'roles'                          => $roles,
             'effectifs'                      => $effectifs,
+            'rattachements'                  => $rattachements,
         ]);
     }
 

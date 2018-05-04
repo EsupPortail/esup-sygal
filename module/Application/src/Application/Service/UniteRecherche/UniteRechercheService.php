@@ -2,6 +2,7 @@
 
 namespace Application\Service\UniteRecherche;
 
+use Application\Entity\Db\EtablissementRattachement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Repository\UniteRechercheRepository;
 use Application\Entity\Db\Role;
@@ -141,5 +142,14 @@ class UniteRechercheService extends BaseService implements RoleServiceAwareInter
         }
     }
 
+    public function findEtablissementRattachement(UniteRecherche $unite)
+    {
+        $qb = $this->getEntityManager()->getRepository(EtablissementRattachement::class)->createQueryBuilder("er")
+            ->andWhere("er.unite = :unite")
+            ->setParameter("unite", $unite);
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
 
 }

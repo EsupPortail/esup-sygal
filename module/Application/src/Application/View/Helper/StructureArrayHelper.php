@@ -35,7 +35,7 @@ class StructureArrayHelper extends AbstractHelper
      * @param $view
      * @return string
      */
-    function generateTable($structures, $roles, $effectifs, $selected, $view)
+    function generateTable($structures, $roles, $effectifs, $selected, $view, $rattachement = null)
     {
         $texte = '';
 
@@ -53,7 +53,7 @@ class StructureArrayHelper extends AbstractHelper
         foreach ($structures as $structure) {
             $isSelected = $selected !== null && $structure->getId() === (int)$selected;
             if ($isSelected) {
-                $texte .= $this->generateSelectedStructure($structure, $roles, $effectifs, $view);
+                $texte .= $this->generateSelectedStructure($structure, $roles, $effectifs, $view, $rattachement);
             } else {
                 $texte .= $this->generateUnselectedStructure($structure, $view);
             }
@@ -89,7 +89,7 @@ class StructureArrayHelper extends AbstractHelper
      * @param PhpRenderer $view
      * @return string
      */
-    function generateSelectedStructure($structure, $roles, $effectifs, $view)
+    function generateSelectedStructure($structure, $roles, $effectifs, $view, $rattachement=null)
     {
         //TODO adapter au type de structure concrete
         $canModifier = $view->isAllowed(EtablissementPrivileges::getResourceId(EtablissementPrivileges::ETABLISSEMENT_MODIFICATION));
@@ -102,6 +102,7 @@ class StructureArrayHelper extends AbstractHelper
         $texte .= '    </tr>';
         $texte .= '    <tr class="selected">';
         $texte .= '    <td colspan="3" class="bg-info">';
+        $texte .= $this->generateEtablissementRattachement($rattachement, $view);
         $texte .= $this->generateRoleSection($roles, $effectifs, $view);
         $texte .= $this->generateMembreSection($structure, $roles, $effectifs, $view);
         $texte .= $this->generateLogo($structure);
@@ -393,6 +394,24 @@ class StructureArrayHelper extends AbstractHelper
             $texte .= '<option value="' . $role->getId() . '">' . $role->getLibelle() . '</option>';
         }
         $texte .= '</select>';
+        return $texte;
+    }
+
+    function generateEtablissementRattachement($rattachements, $view) {
+        $texte = '';
+        if ($rattachements === null) {
+            $texte .= "Aucun établissement de rattachement de renseigné.";
+        } else {
+            $texte .= '<table class="table table-extra-condensed">';
+            $texte .= '<theader><tr><th>Établissement</th><th>Principal</th></tr></theader>';
+            $texte .= '<tbody>';
+            foreach($rattachements as $rattachement) {
+                $texte .= '<tr><td>'.$rattachement->getEtablissement()->getLibelle().'</td><td>'.$rattachement->isPrincipal().'</td></tr>';
+            }
+            $texte .= '</tbody>';
+            $texte .= '</table>';
+        }
+
         return $texte;
     }
 }

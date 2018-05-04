@@ -21,7 +21,7 @@ use Application\View\Renderer\PhpRenderer;
 <?php echo $this->messenger()->addCurrentMessagesFromFlashMessenger() ?>
 
 <div>
-    <?php echo $this->structureArrayHelper()->generateTable($structuresPrincipales, $roles, $effectifs, $selected, $this); ?>
+    <?php echo $this->structureArrayHelper()->generateTable($structuresPrincipales, $roles, $effectifs, $selected, $this, $rattachements); ?>
 </div>
 
 <?php if ($this->isAllowed(UniteRecherchePrivileges::getResourceId(UniteRecherchePrivileges::UNITE_RECH_MODIFICATION))): ?>
