@@ -447,6 +447,7 @@ class StructureService extends BaseService
      */
     public function findStructureSubstituante(StructureConcreteInterface $structureConcrete)
     {
+//        var_dump("from:" . $structureConcrete->getId() . " << ". $structureConcrete->getStructure()->getId());
         $qb = $this->getEntityManager()->getRepository(StructureSubstit::class)->createQueryBuilder("ss")
             ->andWhere("ss.fromStructure = :structure")
             ->setParameter("structure", $structureConcrete->getStructure());
