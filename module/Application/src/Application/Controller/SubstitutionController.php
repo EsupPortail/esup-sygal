@@ -234,6 +234,17 @@ class SubstitutionController extends AbstractController
                 $structureCibleDataObject = $this->structureService->createStructureConcrete($elements[0]->getStructure()->getTypeStructure()->getCode());
                 $this->structureService->updateFromPostData($structureCibleDataObject, $data);
                 $this->structureService->createStructureSubstitutions($elements, $structureCibleDataObject);
+
+                $message = "Création de la substitution <strong>".$data["libelle"]."</strong> regroupant les <strong>".count($first_elements)."</strong> structures suivantes&nbsp;: ";
+                $first = true;
+                foreach ($first_elements as $element) {
+                    if (!$first) $message .= ", ";
+                    $first = false;
+                    $message .= "<i>".$element->getLibelle()."</i>";
+                }
+                $message .= ".";
+                $this->flashMessenger()->addSuccessMessage($message);
+
             } elseif(count($keys) == 1 || count($keys) == 2 && array_search(-1, $keys) !== false) {
                 /** --------- UPDATE D'UNE SUBSTITUTION -------
                  * Deux clefs avec une à -1 ou une clef différente de -1
@@ -252,17 +263,28 @@ class SubstitutionController extends AbstractController
                     $elements = array_merge($elements, $element);
                 }
                 $cible = $this->structureService->findStructureSubstituante($first_element);
-                $this->structureService->updateStructureSubstitutions($elements, $cible->getStructure());
+
+                if (count($elements) != count($cible->getStructure()->getStructuresSubstituees())) {
+
+                    $this->structureService->updateStructureSubstitutions($elements, $cible->getStructure());
+
+                    $message = "Mise à jour de la substitution <strong>" . $cible->getLibelle() . "</strong> regroupant maintenant les <strong>" . count($elements) . "</strong> structures suivantes&nbsp;: ";
+                    $first = true;
+                    foreach ($elements as $element) {
+                        if (!$first) $message .= ", ";
+                        $first = false;
+                        $message .= "<i>" . $element->getLibelle() . "</i>";
+                    }
+                    $message .= ".";
+                    $this->flashMessenger()->addSuccessMessage($message);
+                }
+
             } else {
                 return new RuntimeException("Erreur cas de substitution imprévue");
             }
         }
 
-//        $this->redirect()->toRoute("substitution-index");
-        return new ViewModel([
-            "ecoles_substitutions" => [],
-            "unites_substitutions" => [],
-            "etablissements_substitutions" => [],
-        ]);
+        $this->flashMessenger()->addInfoMessage("Substitution automatique effectuée.");
+        $this->redirect()->toRoute("substitution-index");
     }
 }

@@ -22,6 +22,18 @@ use Application\Entity\Db\StructureConcreteInterface;
         <span class="badge"><?php echo count($etablissementsSubstitues) + count($ecolesSubstituees) + count($unitesSubstituees); ?></span>
 </h1>
 
+<?php
+    $messenger = $this->messenger();
+    echo $messenger->addMessagesFromFlashMessenger();
+?>
+
+    <p>
+        <a href="<?php echo $this->url('substitution-automatique', [], [], true);?>" title="Recherche automatique de substitution">
+            <button class="btn btn-primary"><span class="glyphicon glyphicon-cog"></span> Recherche automatique de substitutions </button>
+        </a>
+    </p>
+
+
 <div class="box panel panel-info" >
     <div class="panel-heading">
         <h2 class="first"> Établissements </h2>
