@@ -73,7 +73,8 @@ class UniteRechercheController extends AbstractController
             }
             if (!$found) $structures[] = $structure;
         }
-        $rattachements = $this->uniteRechercheService->findEtablissementRattachement($selectedStructure);
+        $rattachements = null;
+        if ($selectedStructure !== null) $rattachements = $this->uniteRechercheService->findEtablissementRattachement($selectedStructure);
 
         return new ViewModel([
             'structuresPrincipales'          => $structures,

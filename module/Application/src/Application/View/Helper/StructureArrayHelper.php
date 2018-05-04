@@ -400,8 +400,9 @@ class StructureArrayHelper extends AbstractHelper
     function generateEtablissementRattachement($rattachements, $view) {
         $texte = '';
         if ($rattachements === null) {
-            $texte .= "Aucun établissement de rattachement de renseigné.";
+            $texte .= "";
         } else {
+            $texte .= '<h3> Établissements de rattachement <span class="badge">' . count($rattachements) . '</span></h3>';
             $texte .= '<table class="table table-extra-condensed">';
             $texte .= '<theader><tr><th>Établissement</th><th>Principal</th></tr></theader>';
             $texte .= '<tbody>';

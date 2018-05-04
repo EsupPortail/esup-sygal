@@ -36,6 +36,7 @@ use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\These\Convention\ConventionPdfExporter;
 use Application\Service\These\PageDeGarde\PageDeCouverturePdfExporter;
 use Application\Service\These\TheseServiceAwareTrait;
+use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
@@ -69,6 +70,7 @@ class TheseController extends AbstractController
     use EtablissementServiceAwareTrait;
     use EntityManagerAwareTrait;
     use MailConfirmationServiceAwareTrait;
+    use UniteRechercheServiceAwareTrait;
 
     private $timeoutRetraitement;
 
@@ -261,6 +263,10 @@ class TheseController extends AbstractController
                 break;
         }
 
+        $unite = $these->getUniteRecherche();
+        $rattachements = null;
+        if ($unite !== null) $rattachements = $this->uniteRechercheService->findEtablissementRattachement($unite);
+
         //TODO JP remplacer dans modifierPersopassUrl();
         $urlModification = $this->url()->fromRoute('doctorant/modifier-persopass',['back' => 1, 'doctorant' => $these->getDoctorant()->getId()], [], true);
 
@@ -283,6 +289,7 @@ class TheseController extends AbstractController
             ]),
             'mailContact'               => $mailContact,
             'etatMailContact'           => $etatMailContact,
+            'rattachements'             => $rattachements,
         ]);
         $view->setTemplate('application/these/identite');
 

@@ -9,6 +9,7 @@ use Application\Service\MailConfirmationService;
 use Application\Service\Notification\NotificationService;
 use Application\Service\Role\RoleService;
 use Application\Service\These\TheseService;
+use Application\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\Validation\ValidationService;
 use Application\Service\Variable\VariableService;
 use Application\Service\VersionFichier\VersionFichierService;
@@ -39,6 +40,7 @@ class TheseControllerFactory
          * @var WorkflowService $workflowService
          * @var NotificationService $notificationService
          * @var EtablissementService $etablissementService
+         * @var UniteRechercheService $uniteService
          * @var MailConfirmationService $mailConfirmationService
          * @var EntityManager $entityManager
          */
@@ -47,6 +49,7 @@ class TheseControllerFactory
         $versionFichierService = $controllerManager->getServiceLocator()->get('VersionFichierService');
         $theseService = $controllerManager->getServiceLocator()->get('TheseService');
         $roleService = $controllerManager->getServiceLocator()->get('RoleService');
+        $uniteService = $controllerManager->getServiceLocator()->get('UniteRechercheService');
         $fichierService = $controllerManager->getServiceLocator()->get('FichierService');
         $workflowService = $controllerManager->getServiceLocator()->get('WorkflowService');
         $etablissementService = $controllerManager->getServiceLocator()->get('EtablissementService');
@@ -64,6 +67,7 @@ class TheseControllerFactory
         $controller->setFichierService($fichierService);
         $controller->setWorkflowService($workflowService);
         $controller->setEtablissementService($etablissementService);
+        $controller->setUniteRechercheService($uniteService);
         $controller->setMailConfirmationService($mailConfirmationService);
         $controller->setEntityManager($entityManager);
         $controller->setNotificationService($notificationService);
