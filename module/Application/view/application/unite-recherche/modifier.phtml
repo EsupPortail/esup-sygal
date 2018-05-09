@@ -15,13 +15,25 @@ use Application\View\Renderer\PhpRenderer;
 $fcg = $this->formControlGroup();
 ?>
 
+<div>
+    <h1> Modification d'unité de recherche :  </h1>
+
+    <?php
+    $messenger = $this->messenger();
+    echo $messenger->addMessagesFromFlashMessenger();
+    ?>
+
+    <div>
+    <h2> Informations générales </h2>
+    <div class="col-md-6">
 <?php echo $this->form()->openTag($form->prepare()->setAttribute('class', 'unite-recherche')) ?>
 <?php echo $this->formHidden($form->get('id')) ?>
 <?php echo $fcg($form->get('libelle')) ?>
 <?php echo $fcg($form->get('sigle')) ?>
 <?php echo $fcg($form->get('sourceCode')) ?>
+    </div>
 
-<div id="logo-div">
+    <div class="col-md-6" id="logo-div">
     <?php
     /** @var \Zend\Form\Element\File $logoFile */
     $logoFile = $form->get('cheminLogo');
@@ -53,6 +65,57 @@ $fcg = $this->formControlGroup();
         </tr>
     </table>
 </div>
+
+        <div style="clear:both;"></div>
+
+<div>
+    <h2> Établissements de ratachement </h2>
+    <div class="col-md-6">
+        <table class="table table-extra-condensed">
+            <thead>
+                <tr><th> Libellé</th> <th> Principal</th> <th> Action </th></tr>
+            </thead>
+            <tbody>
+                <?php
+                    /** @var \Application\Entity\Db\EtablissementRattachement $etablissementRattachement */
+                foreach ($etablissementsRattachements as $etablissementRattachement) {
+                        echo '<tr>';
+                        echo '<td>'.$etablissementRattachement->getEtablissement()->getLibelle().'</td>';
+                        echo '<td>';
+                        if ($etablissementRattachement->isPrincipal()) {
+                            echo '<span class="glyphicon glyphicon-star"></span>';
+                        } else {
+                            echo '<span class="glyphicon glyphicon-star-empty"></span>';
+                        }
+                        echo '</td>';
+                        echo '<td>';
+                            echo '<a href="'.$this->url("unite-recherche/retirer-etablissement-rattachement",
+                                    ["etablissement"=>$etablissementRattachement->getEtablissement()->getId()],[],true).'">';
+                            echo '<span class="glyphicon glyphicon-trash"></span>';
+                            echo '</a>';
+                            echo '<a href="'.$this->url("unite-recherche/principal-etablissement-rattachement",
+                                    ["etablissement"=>$etablissementRattachement->getEtablissement()->getId()],[],true).'">';
+                            echo '<span class="glyphicon glyphicon-star"></span>';
+                            echo '</a>';
+                        echo '</td>';
+                        echo '</tr>';
+                    }
+                ?>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-6">
+        <select id="etablissements">
+            <option value="UCN">UCN</option>
+            <option value="UCN">UCN</option>
+            <option value="UCN">UCN</option>
+        </select>
+
+        <a href="<?php echo $this->url("unite-recherche/ajouter-etablissement-rattachement", ["etablissement" => 389], [], true);?>"> Ajouter </a>
+    </div>
+</div>
+
+        <div style="clear:both;"></div>
 <?php echo $this->formElement($form->get('submit')) ?>
 <?php echo $this->form()->closeTag() ?>
 
@@ -81,5 +144,7 @@ $this->translate("Logo de l'unité de recherche :");
             };
             fr.readAsDataURL( myFile[0] );
         });
+
+
     });
 </script>

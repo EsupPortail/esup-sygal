@@ -28,6 +28,9 @@ return [
                         'modifier',
                         'ajouter-individu',
                         'retirer-individu',
+                        'ajouter-etablissement-rattachement',
+                        'retirer-etablissement-rattachement',
+                        'principal-etablissement-rattachement',
                     ],
                     'privileges' => UniteRecherchePrivileges::UNITE_RECH_MODIFICATION,
                 ],
@@ -91,6 +94,45 @@ return [
                             ],
                             'defaults'    => [
                                 'action' => 'modifier',
+                            ],
+                        ],
+                    ],
+                    'ajouter-etablissement-rattachement' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'       => '/:uniteRecherche/ajouter-etablissement-rattachement/:etablissement',
+                            'constraints' => [
+                                'uniteRecherche' => '\d+',
+                                'etablissement' => '\d+',
+                            ],
+                            'defaults'    => [
+                                'action' => 'ajouter-etablissement-rattachement',
+                            ],
+                        ],
+                    ],
+                    'retirer-etablissement-rattachement' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'       => '/:uniteRecherche/retirer-etablissement-rattachement/:etablissement',
+                            'constraints' => [
+                                'uniteRecherche' => '\d+',
+                                'etablissement' => '\d+',
+                            ],
+                            'defaults'    => [
+                                'action' => 'retirer-etablissement-rattachement',
+                            ],
+                        ],
+                    ],
+                    'principal-etablissement-rattachement' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'       => '/:uniteRecherche/principal-etablissement-rattachement/:etablissement',
+                            'constraints' => [
+                                'uniteRecherche' => '\d+',
+                                'etablissement' => '\d+',
+                            ],
+                            'defaults'    => [
+                                'action' => 'principal-etablissement-rattachement',
                             ],
                         ],
                     ],
