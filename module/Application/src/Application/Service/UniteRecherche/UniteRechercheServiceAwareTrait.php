@@ -10,6 +10,14 @@ trait UniteRechercheServiceAwareTrait
     protected $uniteRechercheService;
 
     /**
+     * @return UniteRechercheService
+     */
+    public function getUniteRechercheService()
+    {
+        return $this->uniteRechercheService;
+    }
+
+    /**
      * @param UniteRechercheService $uniteRechercheService
      */
     public function setUniteRechercheService(UniteRechercheService $uniteRechercheService)

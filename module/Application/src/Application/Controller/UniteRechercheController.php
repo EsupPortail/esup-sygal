@@ -38,13 +38,14 @@ class UniteRechercheController extends AbstractController
 
         $roles = null;
         $effectifs = null;
+        $structure = null;
         if ($selected) {
             /**
              * @var StructureConcreteInterface $structure
              * @var Role[] $roles
              */
-            $structure  = $this->uniteRechercheService->getUniteRechercheById($selected);
-            $roles = $structure->getStructure()->getStructureDependantRoles();
+            $selectedStructure  = $this->uniteRechercheService->getUniteRechercheById($selected);
+            $roles = $selectedStructure->getStructure()->getStructureDependantRoles();
 
             $effectifs = [];
             foreach ($roles as $role) {
@@ -72,12 +73,15 @@ class UniteRechercheController extends AbstractController
             }
             if (!$found) $structures[] = $structure;
         }
+        $rattachements = null;
+        if ($selectedStructure !== null) $rattachements = $this->uniteRechercheService->findEtablissementRattachement($selectedStructure);
 
         return new ViewModel([
             'structuresPrincipales'          => $structures,
             'selected'                       => $selected,
             'roles'                          => $roles,
             'effectifs'                      => $effectifs,
+            'rattachements'                  => $rattachements,
         ]);
     }
 
@@ -128,9 +132,14 @@ class UniteRechercheController extends AbstractController
             return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $unite->getId()]], true);
         }
 
+        $etablissements = $this->getEtablissementService()->getEtablissements();
+        $etablissementsRattachements = $this->getUniteRechercheService()->findEtablissementRattachement($unite);
+
         // envoie vers le formulaire de modification
         $viewModel = new ViewModel([
             'form' => $this->uniteRechercheForm,
+            'etablissements' => $etablissements,
+            'etablissementsRattachements' => $etablissementsRattachements,
         ]);
         $viewModel->setTemplate('application/unite-recherche/modifier');
 
@@ -353,5 +362,48 @@ class UniteRechercheController extends AbstractController
         if ($fullpath) $chemin .= "/var/sygal-files";
         $chemin .= "/ressources/Logos/UR/".$unite->getSourceCode()."-".$unite->getSigle().".png";
         return $chemin;
+    }
+
+    public function ajouterEtablissementRattachementAction()
+    {
+        $uniteId = $this->params()->fromRoute("uniteRecherche");
+        $unite = $this->getUniteRechercheService()->getUniteRechercheById($uniteId);
+        $etablissementId = $this->params()->fromRoute("etablissement");
+        $etablissement = $this->getEtablissementService()->getEtablissementById($etablissementId);
+
+        if ($this->getUniteRechercheService()->existEtablissementRattachement($unite,$etablissement)) {
+            $this->flashMessenger()->addErrorMessage("L'établissement de rattachement <strong>".$etablissement->getLibelle()."</strong> n'a pas pu être ajouter car déjà enregistré comme établissement de rattachement de l'unité de recherche <strong>".$unite->getLibelle()."</strong>.");
+        } else {
+            $this->getUniteRechercheService()->addEtablissementRattachement($unite, $etablissement);
+            $this->flashMessenger()->addSuccessMessage("L'établissement <strong>".$etablissement->getLibelle()."</strong> vient d'être ajouter comme établissement de rattachement de l'unité de recherche <strong>".$unite->getLibelle()."</strong>.");
+        }
+
+        $this->redirect()->toRoute("unite-recherche/modifier",[],[], true);
+    }
+
+    public function retirerEtablissementRattachementAction()
+    {
+        $uniteId = $this->params()->fromRoute("uniteRecherche");
+        $unite = $this->getUniteRechercheService()->getUniteRechercheById($uniteId);
+        $etablissementId = $this->params()->fromRoute("etablissement");
+        $etablissement = $this->getEtablissementService()->getEtablissementById($etablissementId);
+
+        $this->getUniteRechercheService()->removeEtablissementRattachement($unite, $etablissement);
+        $this->flashMessenger()->addSuccessMessage("L'établissement <strong>".$etablissement->getLibelle()."</strong> n'est plus un établissement de rattachement de l'unité de recherche <strong>".$unite->getLibelle()."</strong>.");
+
+        $this->redirect()->toRoute("unite-recherche/modifier",[],[], true);
+    }
+
+    public function principalEtablissementRattachementAction()
+    {
+        $uniteId = $this->params()->fromRoute("uniteRecherche");
+        $unite = $this->getUniteRechercheService()->getUniteRechercheById($uniteId);
+        $etablissementId = $this->params()->fromRoute("etablissement");
+        $etablissement = $this->getEtablissementService()->getEtablissementById($etablissementId);
+
+        $this->getUniteRechercheService()->setEtablissementRattachementPrincipal($unite, $etablissement);
+        $this->flashMessenger()->addSuccessMessage("L'établissement <strong>".$etablissement->getLibelle()."</strong> est maintenant l'établissement de rattachement principal de l'unité de recherche <strong>".$unite->getLibelle()."</strong>.");
+
+        $this->redirect()->toRoute("unite-recherche/modifier",[],[], true);
     }
 }
