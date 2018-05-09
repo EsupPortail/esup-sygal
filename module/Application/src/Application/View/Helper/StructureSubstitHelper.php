@@ -9,12 +9,7 @@ class StructureSubstitHelper extends AbstractHelper {
     /**
      * @return string
      */
-    public function render()
-    {
-        // TODO: Implement render() method.
-    }
-
-    //TODO ajouter les different cas i.e. Etab, UR et ED
+    public function render()     {    }
 
     /**
      * @param StructureConcreteInterface $structure

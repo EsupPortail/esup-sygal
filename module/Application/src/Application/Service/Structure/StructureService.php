@@ -51,12 +51,21 @@ class StructureService extends BaseService
      */
     public function createStructureSubstitutions(array $structuresSources, StructureConcreteInterface $structureCibleDataObject)
     {
-        // todo: à améliorer si besoin de vérifier que toutes les structures à substituer sont de la même classe
-        Assert::allIsInstanceOfAny($structuresSources, [
-            Etablissement::class,
-            EcoleDoctorale::class,
-            UniteRecherche::class,
-        ]);
+
+        switch (true) {
+            case ($structuresSources[0] instanceOf Etablissement):
+                Assert::allIsInstanceOf($structuresSources, Etablissement::class);
+                break;
+            case ($structuresSources[0] instanceOf EcoleDoctorale):
+                Assert::allIsInstanceOf($structuresSources, EcoleDoctorale::class);
+                break;
+            case ($structuresSources[0] instanceOf UniteRecherche):
+                Assert::allIsInstanceOf($structuresSources, UniteRecherche::class);
+                break;
+            default:
+                new RuntimeException("La première structure est de type non connu.");
+                break;
+        }
 
         Assert::null($structureCibleDataObject->getSourceCode(), "Le source code doit être null car il est calculé");
 
@@ -125,12 +134,21 @@ class StructureService extends BaseService
             $structureCible->getSource()->getCode(),
             "La source de la structure de substitution doit être $code");
 
-        // todo: à améliorer si besoin de vérifier que toutes les structures à substituer sont de la même classe
-        Assert::allIsInstanceOfAny($structuresSources, [
-            Etablissement::class,
-            EcoleDoctorale::class,
-            UniteRecherche::class,
-        ]);
+
+        switch (true) {
+            case ($structuresSources[0] instanceOf Etablissement):
+                Assert::allIsInstanceOf($structuresSources, Etablissement::class);
+                break;
+            case ($structuresSources[0] instanceOf EcoleDoctorale):
+                Assert::allIsInstanceOf($structuresSources, EcoleDoctorale::class);
+                break;
+            case ($structuresSources[0] instanceOf UniteRecherche):
+                Assert::allIsInstanceOf($structuresSources, UniteRecherche::class);
+                break;
+            default:
+                new RuntimeException("La première structure est de type non connu.");
+                break;
+        }
 
         // recherche des substitutions existantes
         $structureSubstitsExistantes =

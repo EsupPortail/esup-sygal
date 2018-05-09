@@ -12,7 +12,7 @@ $class = $these->estConfidentielle() ? 'text-danger' : '';
 
 <?php if (isset($useTitreThese) && $useTitreThese): ?>
     <span class="<?php echo $class ?>"
-          title="<?php echo $titre = $these->getTitre() ?>"><?php echo trim($titre) ? Util::truncatedString($titre, 50) : "(Aucun titre)" ?></span>
+          title="<?php echo $titre = $these->getTitre() ?>"><?php echo trim($titre) ? Util::truncatedString($titre, 40) : "(Aucun titre)" ?></span>
 <?php else: ?>
     <span class="<?php echo $class ?>"><?php echo $these->getDoctorant()->getNomComplet() ?></span>
 <?php endif ?>

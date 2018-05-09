@@ -5,10 +5,12 @@ namespace Application\View\Helper;
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\StructureConcreteInterface;
+use Application\Entity\Db\TypeStructure;
 use Application\Provider\Privilege\EcoleDoctoralePrivileges;
 use Application\Provider\Privilege\EtablissementPrivileges;
 use Application\Provider\Privilege\UniteRecherchePrivileges;
 use Application\View\Renderer\PhpRenderer;
+use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Form\Element\SearchAndSelect;
 
 class StructureArrayHelper extends AbstractHelper
@@ -91,8 +93,21 @@ class StructureArrayHelper extends AbstractHelper
      */
     function generateSelectedStructure($structure, $roles, $effectifs, $view, $rattachement=null)
     {
-        //TODO adapter au type de structure concrete
-        $canModifier = $view->isAllowed(EtablissementPrivileges::getResourceId(EtablissementPrivileges::ETABLISSEMENT_MODIFICATION));
+        $canModifier = false;
+        switch($structure->getStructure()->getTypeStructure()->getCode()) {
+            case TypeStructure::CODE_ECOLE_DOCTORALE :
+                $canModifier = $view->isAllowed(EtablissementPrivileges::getResourceId(EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION));
+                break;
+            case TypeStructure::CODE_ETABLISSEMENT :
+                $canModifier = $view->isAllowed(EtablissementPrivileges::getResourceId(EtablissementPrivileges::ETABLISSEMENT_MODIFICATION));
+                break;
+            case TypeStructure::CODE_UNITE_RECHERCHE :
+                $canModifier = $view->isAllowed(EtablissementPrivileges::getResourceId(UniteRecherchePrivileges::UNITE_RECH_MODIFICATION));
+                break;
+            default :
+                throw new RuntimeException("StructureArrayHelper::generateSelectedStructure : type de structure concrete inconnu [".$structure->getStructure()->getTypeStructure()->getCode()."]");
+                break;
+        }
 
         $texte = '';
         $texte .= '    <tr class="ecole-doctorale selected">';
@@ -109,8 +124,8 @@ class StructureArrayHelper extends AbstractHelper
         if ($canModifier) $texte .= $this->generateAjoutMembre($structure, $roles, $view);
         $texte .= '    </td>';
         $texte .= '    </tr>';
-
         return $texte;
+
     }
 
     /**

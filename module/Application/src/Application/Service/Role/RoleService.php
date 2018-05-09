@@ -85,6 +85,13 @@ class RoleService extends BaseService
         return $individuRole;
     }
 
+
+    public function getRoleByCode($roleCode) {
+        $repo = $this->entityManager->getRepository(Role::class);
+        $role = $repo->findOneBy(["code" => $roleCode]);
+        return $role;
+    }
+
     public function getIndividuRoleById($individuRoleId) {
         $repo = $this->entityManager->getRepository(IndividuRole::class);
         $individuRole = $repo->findOneBy(["id" => $individuRoleId]);

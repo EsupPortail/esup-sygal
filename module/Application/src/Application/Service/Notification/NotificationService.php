@@ -8,6 +8,7 @@ use Application\Entity\Db\Fichier;
 use Application\Entity\Db\ImportObservResult;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\MailConfirmation;
+use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\UniteRecherche;
 use Application\Entity\Db\ValiditeFichier;
@@ -19,9 +20,12 @@ use Application\Notification\ValidationDepotTheseCorrigeeNotification;
 use Application\Notification\ValidationRdvBuNotification;
 use Application\Rule\NotificationDepotVersionCorrigeeAttenduRule;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
+use Application\Service\Individu\IndividuServiceAwareTrait;
+use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Notification\Notification;
+use UnicaenApp\Service\EntityManagerAwareTrait;
 
 /**
  * Service de construction et d'envoi de notifications par mail.
@@ -33,6 +37,8 @@ class NotificationService extends \Notification\Service\NotificationService
     use VariableServiceAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
     use UniteRechercheServiceAwareTrait;
+    use RoleServiceAwareTrait;
+    use IndividuServiceAwareTrait;
 
     /**
      * Notification concernant la validation à l'issue du RDV BU.
@@ -325,8 +331,14 @@ class NotificationService extends \Notification\Service\NotificationService
      */
     public function triggerLogoAbsentEtablissement(Etablissement $etablissement)
     {
-        //TODO ne pas laisser en dur ... (mail les administrateurs techniques de l'établissement)
-        $mails = ["jean-philippe.metivier@unicaen.fr", "bertrand.gauthier@unicaen.fr"];
+
+        //Récupération des mails des personnes ayant le rôle d'administrateur technique
+        $mails = [];
+        $role = $this->getRoleService()->getRoleByCode(Role::CODE_ADMIN_TECH);
+        $irs = $this->getIndividuService()->getIndividuByRole($role);
+        foreach($irs as $ir) {
+            $mails[] = $ir->getIndividu()->getEmail();
+        }
 
         $libelle = $etablissement->getLibelle();
 
