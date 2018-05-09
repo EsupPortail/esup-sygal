@@ -1,5 +1,6 @@
 <?php
 
+use Application\Entity\Db\Etablissement;
 use Application\Form\EcoleDoctoraleForm;
 use Application\Form\UniteRechercheForm;
 use Application\View\Renderer\PhpRenderer;
@@ -69,25 +70,23 @@ $fcg = $this->formControlGroup();
         <div style="clear:both;"></div>
 
 <div>
-    <h2> Établissements de ratachement </h2>
+    <h2> Établissements de rattachement </h2>
     <div class="col-md-6">
         <table class="table table-extra-condensed">
             <thead>
-                <tr><th> Libellé</th> <th> Principal</th> <th> Action </th></tr>
+                <tr><th> Libellé</th>  <th> Action </th></tr>
             </thead>
             <tbody>
                 <?php
                     /** @var \Application\Entity\Db\EtablissementRattachement $etablissementRattachement */
                 foreach ($etablissementsRattachements as $etablissementRattachement) {
                         echo '<tr>';
-                        echo '<td>'.$etablissementRattachement->getEtablissement()->getLibelle().'</td>';
                         echo '<td>';
-                        if ($etablissementRattachement->isPrincipal()) {
-                            echo '<span class="glyphicon glyphicon-star"></span>';
-                        } else {
-                            echo '<span class="glyphicon glyphicon-star-empty"></span>';
-                        }
+                        if ($etablissementRattachement->isPrincipal()) echo '<strong>';
+                        echo $etablissementRattachement->getEtablissement()->getLibelle();
+                        if ($etablissementRattachement->isPrincipal()) echo '</strong>';
                         echo '</td>';
+
                         echo '<td>';
                             echo '<a href="'.$this->url("unite-recherche/retirer-etablissement-rattachement",
                                     ["etablissement"=>$etablissementRattachement->getEtablissement()->getId()],[],true).'">';
@@ -105,13 +104,9 @@ $fcg = $this->formControlGroup();
         </table>
     </div>
     <div class="col-md-6">
-        <select id="etablissements">
-            <option value="UCN">UCN</option>
-            <option value="UCN">UCN</option>
-            <option value="UCN">UCN</option>
-        </select>
+        <?php echo generateSelect($etablissements); ?>
 
-        <a href="<?php echo $this->url("unite-recherche/ajouter-etablissement-rattachement", ["etablissement" => 389], [], true);?>"> Ajouter </a>
+        <a id="ajout" href="<?php echo $this->url("unite-recherche/ajouter-etablissement-rattachement", ["etablissement" => 389], [], true);?>"> Ajouter </a>
     </div>
 </div>
 
@@ -126,6 +121,19 @@ $this->translate("Code :");
 $this->translate("Enregistrer");
 $this->translate("Supprimer le logo");
 $this->translate("Logo de l'unité de recherche :");
+
+
+function generateSelect($etablissements) {
+    $texte = '';
+    $texte .= '<select id="etablissements">';
+    $texte .= '<option> Choisissez un établissement de rattachement ...</option>';
+    foreach ($etablissements as $etablissement) {
+        /** @var Etablissement $etablissement */
+        $texte .= '<option value="'.$etablissement->getId().'">'.$etablissement->getLibelle().'</option>';
+    }
+    $texte .= '</select>';
+    return $texte;
+}
 ?>
 
 <script>
@@ -145,6 +153,10 @@ $this->translate("Logo de l'unité de recherche :");
             fr.readAsDataURL( myFile[0] );
         });
 
-
+        $("#etablissements").on("change", function () {
+           var etablissementId = $("#etablissements").val();
+           $("a#ajout").attr("href", "ajouter-etablissement-rattachement/" + etablissementId);
+           //alert($("#etablissements").val());
+        });
     });
 </script>
