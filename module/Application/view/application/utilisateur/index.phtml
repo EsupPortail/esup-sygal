@@ -364,14 +364,14 @@ function generateRoleUnite($individu, $roles, $rolesAffectes, $unites, $canModif
     });
     $(document).ready(function () {
         $("#ecoles").change(function () {
-            $("div[id^=etablissement]").hide();
+            $("div[id^=ecole]").hide();
             var val = $("#ecoles").val();
             $("#ecole_" + val).show();
         });
     });
     $(document).ready(function () {
         $("#unites").change(function () {
-            $("div[id^=etablissement]").hide();
+            $("div[id^=unite]").hide();
             var val = $("#unites").val();
             $("#unite_" + val).show();
         });
