@@ -187,7 +187,7 @@ function generateRoleAffecte($individu, $roles, $rolesAffectes, $canModifier=fal
 function generateRoleStatique($individu, $roles, $rolesAffectes, $canModifier=false)
 {
     $texte = "";
-    $texte .= "<dt> Rôles Statiques </dt>";
+    $texte .= "<dt> Rôles non liés à une structure </dt>";
     $texte .= "<dd>";
     foreach ($roles as $role) {
         if ($role->getTypeStructureDependant() === null && $role->isTheseDependant() === false) {
