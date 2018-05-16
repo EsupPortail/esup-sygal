@@ -119,6 +119,7 @@ class SubstitutionController extends AbstractController
             'cible' => $cible,
             'structuresConcretesSubstituees' => $structuresConcretesSubstituees,
             'structuresConcretes' => $structures,
+            'type' => $type,
         ]);
         $vm->setTemplate('application/substitution/modifier');
 

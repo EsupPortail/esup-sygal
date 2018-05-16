@@ -5,6 +5,7 @@ namespace Application;
 use Application\Entity\Db\Structure;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\StructureConcreteInterface;
+use Application\Entity\Db\TypeStructure;
 use Application\Provider\Privilege\SubstitutionPrivileges;
 use Application\View\Renderer\PhpRenderer;
 
@@ -16,9 +17,10 @@ use Application\View\Renderer\PhpRenderer;
   */
 
 $canEdit = false;
-if ($cible->getTypeStructure()->isEcoleDoctorale()) $canEdit = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_MODIFICATION_ECOLE));
-if ($cible->getTypeStructure()->isEtablissement())  $canEdit = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_MODIFICATION_ETABLISSEMENT));
-if ($cible->getTypeStructure()->isUniteRecherche()) $canEdit = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_MODIFICATION_UNITE));
+if ($type === null && $cible !== null) $type = $cible->getTypeStructure()->getCode();
+if ( $type === TypeStructure::CODE_ECOLE_DOCTORALE )    $canEdit = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_MODIFICATION_ECOLE));
+if ( $type === TypeStructure::CODE_ETABLISSEMENT )    $canEdit = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_MODIFICATION_ETABLISSEMENT));
+if ( $type === TypeStructure::CODE_UNITE_RECHERCHE )    $canEdit = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_MODIFICATION_UNITE));
 
 ?>
 
