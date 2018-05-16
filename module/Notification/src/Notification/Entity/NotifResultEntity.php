@@ -2,32 +2,34 @@
 
 namespace Notification\Entity;
 
+use DateTime;
+
 /**
  *
  *
  * @author Unicaen
  */
-class NotifResult
+class NotifResultEntity
 {
     /**
      * @var string
      */
-    private $sujet;
+    private $subject;
 
     /**
      * @var string
      */
-    private $corps;
+    private $body;
 
     /**
      * @var string
      */
-    private $erreur;
+    private $error;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
-    private $dateEnvoi;
+    private $sentOn;
 
     /**
      * @var Notif
@@ -42,13 +44,13 @@ class NotifResult
     /**
      * Set code
      *
-     * @param string $sujet
+     * @param string $subject
      *
      * @return static
      */
-    public function setSujet($sujet)
+    public function setSubject($subject)
     {
-        $this->sujet = $sujet;
+        $this->subject = $subject;
 
         return $this;
     }
@@ -58,21 +60,21 @@ class NotifResult
      *
      * @return string
      */
-    public function getSujet()
+    public function getSubject()
     {
-        return $this->sujet;
+        return $this->subject;
     }
 
     /**
      * Set libelle
      *
-     * @param string $corps
+     * @param string $body
      *
      * @return static
      */
-    public function setCorps($corps)
+    public function setBody($body)
     {
-        $this->corps = $corps;
+        $this->body = $body;
 
         return $this;
     }
@@ -82,9 +84,9 @@ class NotifResult
      *
      * @return string
      */
-    public function getCorps()
+    public function getBody()
     {
-        return $this->corps;
+        return $this->body;
     }
 
     /**
@@ -100,37 +102,37 @@ class NotifResult
     /**
      * @return string
      */
-    public function getErreur()
+    public function getError()
     {
-        return $this->erreur;
+        return $this->error;
     }
 
     /**
-     * @param string $erreur
+     * @param string $error
      * @return self
      */
-    public function setErreur($erreur)
+    public function setError($error)
     {
-        $this->erreur = $erreur;
+        $this->error = $error;
 
         return $this;
     }
 
     /**
-     * @return string
+     * @return DateTime
      */
-    public function getDateEnvoi()
+    public function getSentOn()
     {
-        return $this->dateEnvoi;
+        return $this->sentOn;
     }
 
     /**
-     * @param string $dateEnvoi
+     * @param DateTime $sentOn
      * @return self
      */
-    public function setDateEnvoi($dateEnvoi)
+    public function setSentOn(DateTime $sentOn)
     {
-        $this->dateEnvoi = $dateEnvoi;
+        $this->sentOn = $sentOn;
 
         return $this;
     }

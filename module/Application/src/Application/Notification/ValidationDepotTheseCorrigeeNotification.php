@@ -13,10 +13,9 @@ class ValidationDepotTheseCorrigeeNotification extends Notification
     protected $templatePath = 'application/notification/mail/notif-validation-depot-these-corrigee';
 
     /**
-     * @param array $context
      * @return static
      */
-    public function prepare(array $context = [])
+    public function prepare()
     {
         /** @var Individu[] $unknownMails */
         $unknownMails = [];

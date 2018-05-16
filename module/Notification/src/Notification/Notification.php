@@ -2,6 +2,7 @@
 
 namespace Notification;
 
+use Notification\Entity\NotifEntity;
 use Zend\View\Model\ViewModel;
 
 /**
@@ -11,6 +12,16 @@ use Zend\View\Model\ViewModel;
  */
 class Notification
 {
+    /**
+     * @var string
+     */
+    protected $code;
+
+    /**
+     * @var NotifEntity
+     */
+    protected $notifEntity;
+
     /**
      * @var string
      */
@@ -52,13 +63,53 @@ class Notification
     protected $infoMessages = [];
 
     /**
-     * Initialisation, préparation, etc. nécessaires avant de pouvoir envoyer la notification.
+     * Notification constructor.
      *
-     * @param array $context Toutes données utiles
+     * @param string|null $code
      */
-    public function prepare(array $context = [])
+    public function __construct($code = null)
     {
+        $this->code = $code;
+    }
 
+    /**
+     * Éventuelle initialisation, préparation, etc. nécessaires avant de pouvoir envoyer la notification.
+     */
+    public function prepare()
+    {
+        $this->mergeFromNotifEntity();
+    }
+
+    private function mergeFromNotifEntity()
+    {
+        $to = $this->getTo();
+
+        if ($this->notifEntity !== null) {
+            $toFromEntity = [];
+            if ($recipients = $this->notifEntity->getRecipients()) {
+                $toFromEntity = array_map('trim', explode(',', $recipients));
+            }
+            $to = array_merge($toFromEntity, $to);
+        }
+
+        $this->setTo($to);
+    }
+
+    /**
+     * @return array
+     */
+    private function createTemplateVariables()
+    {
+        $variables = [];
+
+        $variables['subject'] = $this->getSubject();
+        $variables['to'] = $this->getTo();
+        $variables['cc'] = $this->getCc();
+        $variables['bcc'] = $this->getBcc();
+
+        $variables = array_merge($variables, $this->getTemplateVariables());
+
+        return $variables;
     }
 
     /**
@@ -68,18 +119,50 @@ class Notification
      */
     public function createViewModel()
     {
+        $variables = $this->createTemplateVariables();
+
         $viewModel = new ViewModel();
-
         $viewModel->setTemplate($this->templatePath);
-
-        $viewModel->setVariable('subject', $this->subject);
-        $viewModel->setVariable('to', $this->to);
-        $viewModel->setVariable('cc', $this->cc);
-        $viewModel->setVariable('bcc', $this->bcc);
-
-        $viewModel->setVariables($this->templateVariables, true);
+        $viewModel->setVariables($variables, true);
 
         return $viewModel;
+    }
+
+    /**
+     * @param string $code
+     * @return static
+     */
+    public function setCode($code)
+    {
+        $this->code = $code;
+        $this->notifEntity = null;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCode()
+    {
+        return $this->code;
+    }
+
+    /**
+     * @param NotifEntity $notifEntity
+     */
+    public function setNotifEntity(NotifEntity $notifEntity = null)
+    {
+        $this->notifEntity = $notifEntity;
+        $this->code = $notifEntity ? $notifEntity->getCode() : null;
+    }
+
+    /**
+     * @return NotifEntity
+     */
+    public function getNotifEntity()
+    {
+        return $this->notifEntity;
     }
 
     /**
@@ -99,7 +182,7 @@ class Notification
      */
     public function setTo($to)
     {
-        $this->to = $to;
+        $this->to = (array) $to;
 
         return $this;
     }
@@ -110,7 +193,7 @@ class Notification
      */
     public function setCc($cc)
     {
-        $this->cc = $cc;
+        $this->cc = (array) $cc;
 
         return $this;
     }
@@ -121,7 +204,7 @@ class Notification
      */
     public function setBcc($bcc)
     {
-        $this->bcc = $bcc;
+        $this->bcc = (array) $bcc;
 
         return $this;
     }

@@ -7,7 +7,8 @@ use UnicaenApp\Traits\MessageAwareTrait;
 
 /**
  * @author Unicaen
- * @deprecated Devrait être déplacé dans UnicaenApp.
+ *
+ * TODO : Devrait être déplacé dans UnicaenApp ou alors utiliser à la place MessageCollector.
  */
 class MessageContainer implements MessageAwareInterface
 {

@@ -15,10 +15,9 @@ class CorrectionAttendueUpdatedNotification extends Notification
     /**
      * Initialisation, préparation, etc. nécessaires avant de pouvoir envoyer la notification.
      *
-     * @param array $context Toutes données utiles
      * @return static
      */
-    public function prepare(array $context = [])
+    public function prepare()
     {
         if ($this->estPremiereNotif === null) {
             throw new LogicException("Attribut estPremiereNotif non sp avant l'appel de prepare()");

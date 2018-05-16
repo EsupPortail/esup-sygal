@@ -12,7 +12,7 @@
                 <join-column name="IMPORT_OBSERV_RESULT_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
-        <many-to-one field="notifResult" target-entity="Notification\Entity\NotifResult">
+        <many-to-one field="notifResult" target-entity="Notification\Entity\NotifResultEntity">
             <join-columns>
                 <join-column name="NOTIF_RESULT_ID" referenced-column-name="ID"/>
             </join-columns>
