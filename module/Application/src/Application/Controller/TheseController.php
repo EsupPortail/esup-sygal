@@ -138,6 +138,7 @@ class TheseController extends AbstractController
             'roleDirecteurThese' => $this->roleService->getRepository()->findOneBy(['sourceCode' => Role::CODE_DIRECTEUR_THESE]),
             'etablissements' => $etablissements,
             'filtreEtablissement' => $etablissement,
+            'etatThese' => $etatThese,
         ]);
     }
 

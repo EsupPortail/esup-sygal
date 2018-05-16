@@ -109,12 +109,20 @@ $acteursFormatter->asSeparated()
                 <?php echo $this->translate("Date 1ère<br>inscr."); ?>
             </a> <?php echo $s->icon() ?>
         </th>
-        <th>
-            <a href="<?php echo $s = $this->sortable('t.dateSoutenance'); ?>"
-               title="<?php echo $this->translate("Date de soutenance");?>">
-                <?php echo $this->translate("Date de<br>sout."); ?>
-            </a> <?php echo $s->icon() ?>
-        </th>
+
+        <?php
+            //Affichage de la date de soutenace ssi l'etat est à soutenue ou à tous
+            if($etatThese === These::ETAT_SOUTENUE || $etatThese === "") {
+                $s = $this->sortable('t.dateSoutenance');
+                echo '<th>';
+                echo '    <a    href="'. $s .'"';
+                echo '          title="'. $this->translate("Date de soutenance"). '">';
+                echo $this->translate("Date de<br>sout.");
+                echo '    </a>';
+                echo $s->icon() ;
+                echo '</th>';
+            }
+        ?>
     </tr>
     </thead>
 
@@ -167,11 +175,13 @@ $acteursFormatter->asSeparated()
                 if ($these->getDatePremiereInscription()) echo $these->getDatePremiereInscription()->format("d/m/Y");
                 ?>
             </td>
-            <td><?php
-//                echo $this->dateFormat($these->getDateSoutenance(),IntlDateFormatter::SHORT);
+            <?php
+            //Affichage de la date de soutenace ssi l'etat est à soutenue ou à tous
+            if($etatThese === These::ETAT_SOUTENUE || $etatThese === "") {
+                echo '<td>';
                 if ($these->getDateSoutenance()) echo $these->getDateSoutenance()->format("d/m/Y");
-                ?>
-            </td>
+                echo '</td>';
+            } ?>
         </tr>
     <?php endforeach ?>
     </tbody>
