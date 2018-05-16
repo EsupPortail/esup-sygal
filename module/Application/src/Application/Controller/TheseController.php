@@ -2,6 +2,7 @@
 
 namespace Application\Controller;
 
+use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Attestation;
 use Application\Entity\Db\Diffusion;
 use Application\Entity\Db\Etablissement;
@@ -1394,10 +1395,150 @@ class TheseController extends AbstractController
     public function generateAction()
     {
         $these = $this->requestedThese();
+
+        /**
+         * Les infos générales de la these sont
+         * - La spécialité "specialite"
+         * - L'établissement délivrant le diplome "etablissement"
+         * - Le titre de la thèse "titre"
+         * - La dénomination du doctarant "doctorant"
+         * - La date de soutenance "date"
+         */
+        $infos = [];
+        if ($these !== null && $these->getLibelleDiscipline() !== null) {
+            $infos["specialite"] = $these->getLibelleDiscipline();
+        } else {
+            //TODO NOTIFIER l'absence de spécialité
+        }
+        if ($these !== null && $these->getEtablissement() !== null) {
+            $infos["etablissement"] = $these->getEtablissement()->getLibelle();
+        } else {
+            //TODO NOTIFIER l'établissement d'inscription est absent (au admin tech)
+        }
+        if ($these !== null && $these->getTitre() !== null) {
+            $infos["titre"] = $these->getTitre();
+        } else {
+            //TODO NOTIFIER le titre est vide (BDD UNIV)
+        }
+        if ($these !== null && $these->getDoctorant() !== null) {
+            //TODO utiliser un formater
+            $infos["doctorant"] = $these->getDoctorant()->getPrenom() . " ";
+            $infos["doctorant"] .= $these->getDoctorant()->getNomUsuel();
+            if ($these->getDoctorant()->getNomPatronymique() != $these->getDoctorant()->getNomUsuel()) $infos["doctorant"] .= "-".$these->getDoctorant()->getNomPatronymique();
+        } else {
+            //TODO NOTIFIER le doctorant est manquant  (BDD UNIV)
+        }
+        if ($these !== null && $these->getDateSoutenance() !== null) {
+            $infos["date"] = $these->getDateSoutenance()->format("d/m/Y");
+        } else {
+            //TODO NOTIFIER la date est vide (BDD UNIV)
+        }
+
+        /**
+         * Les logos à afficher sur la première page sont les suivants :
+         * - COMUE  en tête de page "comue",
+         * - etablissement principal (en bas à gauche) "etablissement",
+         * - etablissement co-tutelle (à droite de l'établissement principale) "cotutelle",
+         * - ecole doctorale (en bas au centre) "ecole",
+         * - unite de recherche (en bas à droite) "unite"
+         **/
+
+        $logos = [];
+        $comue = $this->etablissementService->getEtablissementById(1);
+        if ($comue !== null && $comue->getCheminLogo() !== null) {
+            $logos["comue"] = $comue->getCheminLogo();
+        } else {
+            if ($comue === null) {
+                //TODO NOTIFIER l'établissement representant la COMUE est absent (au admin tech)
+            } else {
+                //TODO NOTIFIER le logo de la COMUE est non renseigné (au admin tech)
+            }
+        }
+        $etablissement = $these->getEtablissement();
+        if ($etablissement !== null && $etablissement->getCheminLogo() !== null) {
+            $logos["etablissement"] = $etablissement->getCheminLogo();
+        } else {
+            if ($etablissement === null) {
+                //TODO NOTIFIER l'établissement d'inscription est absent (au admin tech)
+            } else {
+                //TODO $notifier->triggerLogoAbsentEtablissement($these->getEtablissement());
+            }
+        }
+        // =========> TODO CO-TUTELLE
+        $ecole = $these->getEcoleDoctorale();
+        if ($ecole !== null && $ecole->getCheminLogo() !== null) {
+            $logos["ecole"] = $ecole->getCheminLogo();
+        } else {
+            if ($ecole === null) {
+                //TODO NOTIFIER l'école doctorale est absente (au BDD UNIV)
+            } else {
+                //TODO $notifier->triggerLogoAbsentEcoleDoctorale($these->getEcoleDoctorale());
+            }
+        }
+        $unite = $these->getUniteRecherche();
+        if ($unite !== null && $unite->getCheminLogo() !== null) {
+            $logos["unite"] = $unite->getCheminLogo();
+        } else {
+            if ($unite === null) {
+                //TODO NOTIFIER l'unite de recherche est absente (au BDD UNIV)
+            } else {
+                //TODO $notifier->triggerLogoAbsentUniteRecherche($these->getUniteRecherche());
+            }
+        }
+
+        /** JURY **/
+        $jury = [];
+        $acteurs = $these->getActeurs()->toArray();
+
+        $rapporteurs =  array_filter($these->getActeurs()->toArray(), function($a) {return TheseController::estRapporteur($a); });
+        $directeurs =  array_filter($these->getActeurs()->toArray(), function($a) {return TheseController::estDirecteur($a); });
+        $membres = array_diff($these->getActeurs()->toArray(), $rapporteurs, $directeurs);
+
+        $acteurs = array_merge($rapporteurs, $membres, $directeurs);
+        /** @var Acteur $acteur */
+        foreach ($acteurs as $acteur) {
+            $membre = [];
+            $membre["nom"]  = $acteur->getIndividu()->getCivilite();
+            $membre["nom"] .= " " .$acteur->getIndividu()->getPrenom();
+            $membre["nom"] .= " " .$acteur->getIndividu()->getNomUsuel();
+            if($acteur->getIndividu()->getNomUsuel() != $acteur->getIndividu()->getNomPatronymique()) $membre["nom"] .= "-".$acteur->getIndividu()->getNomPatronymique();
+
+            $membre["qualite"] = $acteur->getQualite();
+            $membre["rattachement"] = $acteur->getEtablissement();
+            $membre["role"] = $acteur->getRole()->getLibelle();
+            $jury[] = $membre;
+        }
+
+        /**
+         * L'endrement est composée :
+         * d'une unite de recherche "unite"
+         * d'une liste de directeur "directeurs"
+         */
+        $encradrements = [];
+        if ($these->getUniteRecherche() && $these->getUniteRecherche()->getLibelle()) {
+            $encadrements["unite"] = $these->getUniteRecherche()->getLibelle();
+        } else {
+            //TODO NOTIFIER l'unite de recherche est absente (au BDD univ)
+        }
+        $directeurs = array_filter($these->getActeurs()->toArray(), function($a) {return TheseController::estDirecteur($a); });
+        $directeurs_array = [];
+        foreach ($directeurs as $directeur) {
+            $directeur_str  = $directeur->getIndividu()->getPrenom() . " ";
+            $directeur_str .= $directeur->getIndividu()->getNomUsuel();
+            if ($directeur->getIndividu()->getNomPatronymique() != $directeur->getIndividu()->getNomUsuel()) $directeur_str .= "-".$directeur->getIndividu()->getNomPatronymique();
+            $directeurs_array[] = $directeur_str;
+        }
+        $encadrements["directeurs"] = implode(" et ", $directeurs_array);
+
+
         $renderer = $this->getServiceLocator()->get('view_renderer'); /* @var $renderer \Zend\View\Renderer\PhpRenderer */
         $exporter = new PageDeCouverturePdfExporter($renderer, 'A4');
         $exporter->setVars([
             'these' => $these,
+            'infos' => $infos,
+            'encadrements' => $encadrements,
+            'jury' => $jury,
+            'logos' => $logos,
         ]);
         $exporter->export('export.pdf');
         exit;
@@ -1474,5 +1615,25 @@ class TheseController extends AbstractController
             'these' => $these,
             'form' => $form,
         ]);
+    }
+
+    /**
+     * Prédicat testant si un acteur est un directeur de thèse
+     * @param Acteur $var
+     * @return bool
+     */
+    public static function estDirecteur(Acteur $var) {
+        $role = $var->getRole()->getSourceCode();
+        return  (explode("::", $role)[1] == "D");
+    }
+
+    /**
+     * Prédicat testant si un acteur est un rapporteur de thèse
+     * @param Acteur $var
+     * @return bool
+     */
+public static function estRapporteur(Acteur $var) {
+        $role = $var->getRole()->getSourceCode();
+        return  (explode("::", $role)[1] == "R");
     }
 }
