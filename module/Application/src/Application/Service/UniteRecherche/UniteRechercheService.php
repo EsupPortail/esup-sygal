@@ -152,7 +152,11 @@ class UniteRechercheService extends BaseService implements RoleServiceAwareInter
     public function findEtablissementRattachement(UniteRecherche $unite)
     {
         $qb = $this->getEntityManager()->getRepository(EtablissementRattachement::class)->createQueryBuilder("er")
+            ->addSelect("e, s")
+            ->join("er.etablissement", "e" )
+            ->join( "e.structure", "s")
             ->andWhere("er.unite = :unite")
+            ->orderBy("s.libelle")
             ->setParameter("unite", $unite);
 
         $result = $qb->getQuery()->getResult();
@@ -169,7 +173,6 @@ class UniteRechercheService extends BaseService implements RoleServiceAwareInter
         $er = new EtablissementRattachement();
         $er->setUnite($unite);
         $er->setEtablissement($etablissement);
-        $er->setPrincipal(false);
         $this->getEntityManager()->persist($er);
         $this->getEntityManager()->flush($er);
     }

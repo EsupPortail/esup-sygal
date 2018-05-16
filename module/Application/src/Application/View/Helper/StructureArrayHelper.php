@@ -419,10 +419,10 @@ class StructureArrayHelper extends AbstractHelper
         } else {
             $texte .= '<h3> Établissements de rattachement <span class="badge">' . count($rattachements) . '</span></h3>';
             $texte .= '<table class="table table-extra-condensed">';
-            $texte .= '<theader><tr><th>Établissement</th><th>Principal</th></tr></theader>';
+            $texte .= '<theader><tr><th>Établissement</th></tr></theader>';
             $texte .= '<tbody>';
             foreach($rattachements as $rattachement) {
-                $texte .= '<tr><td>'.$rattachement->getEtablissement()->getLibelle().'</td><td>'.$rattachement->isPrincipal().'</td></tr>';
+                $texte .= '<tr><td>'.$rattachement->getEtablissement()->getLibelle().'</td></tr>';
             }
             $texte .= '</tbody>';
             $texte .= '</table>';

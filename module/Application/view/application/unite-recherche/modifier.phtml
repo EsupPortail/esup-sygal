@@ -82,19 +82,13 @@ $fcg = $this->formControlGroup();
                 foreach ($etablissementsRattachements as $etablissementRattachement) {
                         echo '<tr>';
                         echo '<td>';
-                        if ($etablissementRattachement->isPrincipal()) echo '<strong>';
                         echo $etablissementRattachement->getEtablissement()->getLibelle();
-                        if ($etablissementRattachement->isPrincipal()) echo '</strong>';
                         echo '</td>';
 
                         echo '<td>';
                             echo '<a href="'.$this->url("unite-recherche/retirer-etablissement-rattachement",
                                     ["etablissement"=>$etablissementRattachement->getEtablissement()->getId()],[],true).'">';
                             echo '<span class="glyphicon glyphicon-trash"></span>';
-                            echo '</a>';
-                            echo '<a href="'.$this->url("unite-recherche/principal-etablissement-rattachement",
-                                    ["etablissement"=>$etablissementRattachement->getEtablissement()->getId()],[],true).'">';
-                            echo '<span class="glyphicon glyphicon-star"></span>';
                             echo '</a>';
                         echo '</td>';
                         echo '</tr>';

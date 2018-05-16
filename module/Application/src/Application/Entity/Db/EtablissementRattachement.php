@@ -10,8 +10,6 @@ class EtablissementRattachement {
     protected $unite;
     /** @var Etablissement $etablissement **/
     protected $etablissement;
-    /** @var boolean $principal */
-    protected $principal;
 
     /**
      * @return int
@@ -54,24 +52,6 @@ class EtablissementRattachement {
     public function setEtablissement($etablissement)
     {
         $this->etablissement = $etablissement;
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isPrincipal()
-    {
-        return $this->principal;
-    }
-
-    /**
-     * @param bool $principal
-     * @return EtablissementRattachement
-     */
-    public function setPrincipal($principal)
-    {
-        $this->principal = $principal;
         return $this;
     }
 }

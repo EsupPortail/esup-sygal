@@ -198,7 +198,6 @@ $persopassModifiedEvent = 'persopass-modified-event';
                     /** @var \Application\Entity\Db\EtablissementRattachement $rattachement */
                     foreach ($rattachements as $rattachement) {
                         echo $rattachement->getEtablissement()->getLibelle();
-                        /*if ($rattachement->isPrincipal()) echo " (principal)";*/
                         echo "<br/>";
                     }
                 }

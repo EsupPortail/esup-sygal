@@ -18,7 +18,5 @@
             </join-columns>
         </many-to-one>
 
-        <field name="principal" type="boolean" column="PRINCIPAL" nullable="true"/>
-
     </entity>
 </doctrine-mapping>
