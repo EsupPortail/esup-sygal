@@ -5,6 +5,8 @@ namespace Application;
 use Application\Entity\Db\Structure;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\StructureConcreteInterface;
+use Application\Entity\Db\TypeStructure;
+use Application\Provider\Privilege\SubstitutionPrivileges;
 use Application\View\Renderer\PhpRenderer;
 
 /**
@@ -13,6 +15,12 @@ use Application\View\Renderer\PhpRenderer;
  * @var StructureConcreteInterface[] $structuresConcretesSubstituees
  * @var StructureConcreteInterface[] $structuresConcretes
   */
+
+$canEdit = false;
+if ($type === null && $cible !== null) $type = $cible->getTypeStructure()->getCode();
+if ( $type === TypeStructure::CODE_ECOLE_DOCTORALE )    $canEdit = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_MODIFICATION_ECOLE));
+if ( $type === TypeStructure::CODE_ETABLISSEMENT )    $canEdit = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_MODIFICATION_ETABLISSEMENT));
+if ( $type === TypeStructure::CODE_UNITE_RECHERCHE )    $canEdit = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_MODIFICATION_UNITE));
 
 ?>
 
@@ -23,14 +31,25 @@ use Application\View\Renderer\PhpRenderer;
     <?php echo $this->translate("Substitution de structures"); ?>
 </h1>
 
-<?php echo generateSelect($structuresConcretes, $this); ?>
-<button name="ajouter" class="btn btn-success"> <span class='glyphicon glyphicon-plus'></span> Ajouter </button>
+<?php
+$messenger = $this->messenger();
+echo $messenger->addMessagesFromFlashMessenger();
+?>
+
+
+<p>
+<a href="<?php echo $this->url('substitution-index'); ?>"><button class="btn btn-info">Retour à  l'index des substitutions</button></a>
+</p>
+
+<?php if($canEdit): ?>
+    <?php echo generateSelect($structuresConcretes, $this); ?>
+    <button name="ajouter" class="btn btn-success"> <span class='glyphicon glyphicon-plus'></span> Ajouter </button>
+<?php endif; ?>
 
 <form action="" method="POST">
-    <input type="submit" class="btn btn-primary" value="Enregistrer"/>
-
-    <br/>
-    
+    <?php if($canEdit): ?>
+        <input type="submit" class="btn btn-primary" value="Enregistrer"/>
+    <?php endif; ?>
 <div>
 
 <div id="sources" class="col-md-6">
