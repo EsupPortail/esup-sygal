@@ -5,7 +5,7 @@ namespace Application\Controller;
 use Application\Controller\Plugin\Url\UrlThesePlugin;
 use Application\Service\Import\SchemaService;
 use Application\Service\ImportObserv\ImportObservServiceAwareTrait;
-use Application\Service\Notification\NotificationServiceAwareTrait;
+use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenImport\Entity\Differentiel\Query;
@@ -20,7 +20,7 @@ class ImportController extends \UnicaenImport\Controller\ImportController
 {
     use TheseServiceAwareTrait;
     use ImportObservServiceAwareTrait;
-    use NotificationServiceAwareTrait;
+    use NotifierServiceAwareTrait;
 
     const NOTIF_UPDATE_THESE_RESULTAT = 'UPDATE--THESE--RESULTAT'; // format 'UPDATE--{NOM_DE_TABLE}--{NOM_DE_COLONNE}'
 

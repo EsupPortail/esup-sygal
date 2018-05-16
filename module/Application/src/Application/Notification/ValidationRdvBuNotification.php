@@ -15,10 +15,9 @@ class ValidationRdvBuNotification extends Notification
     protected $notifierDoctorantImpossibleMessage;
 
     /**
-     * @param array $context
      * @return static
      */
-    public function prepare(array $context = [])
+    public function prepare()
     {
         $emailBDD = $this->emailBdd;
         $emailBU = $this->emailBu;
@@ -71,20 +70,20 @@ class ValidationRdvBuNotification extends Notification
     public function createMessages()
     {
         if ($this->estDevalidation) {
-            $this->successMessages[] = sprintf(
+            $this->infoMessages[] = sprintf(
                 "Un mail de notification vient d'être envoyé à la BU (%s) avec copie au Bureau des Doctorats (%s).",
                 $this->getTo(),
                 $this->getCc()
             );
         } else {
             if ($this->notifierDoctorant) {
-                $this->successMessages[] = sprintf(
+                $this->infoMessages[] = sprintf(
                     "Un mail de notification vient d'être envoyé à %s avec copie au Bureau des Doctorats (%s)",
                     $this->these->getDoctorant(),
                     $this->getCc()
                 );
             } else {
-                $this->successMessages[] = sprintf(
+                $this->infoMessages[] = sprintf(
                     "Un mail de notification vient d'être envoyé au Bureau des Doctorats (%s).",
                     $this->getTo()
                 );

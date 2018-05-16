@@ -31,7 +31,7 @@ use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Fichier\Exception\ValidationImpossibleException;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\MailConfirmationServiceAwareTrait;
-use Application\Service\Notification\NotificationServiceAwareTrait;
+use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\These\Convention\ConventionPdfExporter;
 use Application\Service\These\PageDeGarde\PageDeCouverturePdfExporter;
@@ -65,7 +65,7 @@ class TheseController extends AbstractController
     use MessageCollectorAwareTrait;
     use VersionFichierServiceAwareTrait;
     use WorkflowServiceAwareTrait;
-    use NotificationServiceAwareTrait;
+    use NotifierServiceAwareTrait;
     use IdifyFilterAwareTrait;
     use EtablissementServiceAwareTrait;
     use EntityManagerAwareTrait;
@@ -511,9 +511,9 @@ class TheseController extends AbstractController
                             'these'    => $these,
                             'updating' => !$inserting,
                         ]);
-                    $this->notificationService->triggerNotificationBU($notif, $these);
+                    $this->notifierService->triggerRdvBuSaisiParDoctorant($notif, $these);
 
-                    $notificationLog = $this->notificationService->getMessage('<br>', 'info');
+                    $notificationLog = $this->notifierService->getMessage('<br>', 'info');
                     $this->flashMessenger()->addInfoMessage($notificationLog);
                 }
 
@@ -891,7 +891,7 @@ class TheseController extends AbstractController
                         $this->validationService->validateDepotTheseCorrigee($these);
 
                         // envoi de mail aux directeurs de thèse
-                        $this->notificationService->triggerValidationDepotTheseCorrigee($these);
+                        $this->notifierService->triggerValidationDepotTheseCorrigee($these);
                     }
                 } catch (ValidationImpossibleException $vie) {
                     // Le test d'archivabilité du fichier '%s' a rencontré un problème indépendant de notre volonté
@@ -1344,7 +1344,7 @@ class TheseController extends AbstractController
                     $this->validationService->validateDepotTheseCorrigee($these);
 
                     // notification des directeurs de thèse
-                    $this->notificationService->triggerValidationDepotTheseCorrigee($these);
+                    $this->notifierService->triggerValidationDepotTheseCorrigee($these);
                 }
             }
         }

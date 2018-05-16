@@ -2,7 +2,7 @@
 
 namespace ApplicationUnitTest\Test\Provider;
 
-use Application\Service\Notification\NotificationService;
+use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
@@ -72,12 +72,12 @@ class MockProvider
     }
 
     /**
-     * @return NotificationService|PHPUnit_Framework_MockObject_MockObject
+     * @return NotifierService|PHPUnit_Framework_MockObject_MockObject
      */
     public function notificationServiceMock()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|NotificationService $service */
-        $service = $this->testCase->getMockBuilder(NotificationService::class)
+        /** @var \PHPUnit_Framework_MockObject_MockObject|NotifierService $service */
+        $service = $this->testCase->getMockBuilder(NotifierService::class)
             ->disableOriginalConstructor()
             ->getMock();
 

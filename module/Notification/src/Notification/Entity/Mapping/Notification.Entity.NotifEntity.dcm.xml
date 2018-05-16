@@ -3,12 +3,12 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <entity name="Notification\Entity\Notif" table="NOTIF">
+    <entity name="Notification\Entity\NotifEntity" table="NOTIF" repository-class="Notification\Entity\Repository\NotifEntityRepository">
         <id name="id" type="integer" column="ID"/>
 
         <field name="code" column="CODE" length="100"/>
         <field name="description" column="DESCRIPTION" length="255"/>
-        <field name="destinataires" column="DESTINATAIRES" length="500"/>
+        <field name="recipients" column="RECIPIENTS" length="500"/>
         <field name="template" column="TEMPLATE"/>
         <field name="enabled" type="boolean" column="ENABLED"/>
     </entity>

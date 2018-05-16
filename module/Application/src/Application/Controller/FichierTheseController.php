@@ -13,7 +13,8 @@ use Application\Service\Fichier\Exception\DepotImpossibleException;
 use Application\Service\Fichier\Exception\ValidationImpossibleException;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
-use Application\Service\Notification\NotificationServiceAwareTrait;
+use Application\Service\Notification\NotificationFactoryAwareTrait;
+use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\View\Helper\Sortable;
@@ -33,8 +34,9 @@ class FichierTheseController extends AbstractController
     use FichierServiceAwareTrait;
     use VersionFichierServiceAwareTrait;
     use IdifyFilterAwareTrait;
-    use NotificationServiceAwareTrait;
+    use NotifierServiceAwareTrait;
     use IndividuServiceAwareTrait;
+    use NotificationFactoryAwareTrait;
 
     const UPLOAD_MAX_FILESIZE = '500M';
 
@@ -299,15 +301,8 @@ class FichierTheseController extends AbstractController
 
             // si une thèse est déposée, on notifie de BdD
             if ($nature->estThesePdf()) {
-                $notif = new Notification();
-                $notif
-                    ->setSubject("Dépôt d'une thèse")
-                    ->setTemplatePath('application/these/mail/notif-depot-these')
-                    ->setTemplateVariables([
-                        'these'    => $these,
-                        'version'  => $version,
-                    ]);
-                $this->notificationService->triggerNotificationBdD($notif, $these);
+                $notif = $this->notificationFactory->createNotificationForTheseTeleversee($these, $version);
+                $this->notifierService->trigger($notif);
             }
 
             // si un rapport de soutenance est déposé, on notifie de BdD
@@ -319,7 +314,7 @@ class FichierTheseController extends AbstractController
                     ->setTemplateVariables([
                         'these' => $these,
                     ]);
-                $this->notificationService->triggerNotificationBdD($notif, $these);
+                $this->notifierService->triggerFichierTeleverse($notif, $these);
             }
         }
 

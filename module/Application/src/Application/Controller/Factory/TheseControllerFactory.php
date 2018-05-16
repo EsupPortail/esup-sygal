@@ -6,7 +6,7 @@ use Application\Controller\TheseController;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Fichier\FichierService;
 use Application\Service\MailConfirmationService;
-use Application\Service\Notification\NotificationService;
+use Application\Service\Notification\NotifierService;
 use Application\Service\Role\RoleService;
 use Application\Service\These\TheseService;
 use Application\Service\UniteRecherche\UniteRechercheService;
@@ -38,7 +38,7 @@ class TheseControllerFactory
          * @var RoleService $roleService
          * @var FichierService $fichierService
          * @var WorkflowService $workflowService
-         * @var NotificationService $notificationService
+         * @var NotifierService $notifierService
          * @var EtablissementService $etablissementService
          * @var UniteRechercheService $uniteService
          * @var MailConfirmationService $mailConfirmationService
@@ -55,7 +55,7 @@ class TheseControllerFactory
         $etablissementService = $controllerManager->getServiceLocator()->get('EtablissementService');
         $mailConfirmationService = $controllerManager->getServiceLocator()->get('MailConfirmationService');
         $entityManager = $controllerManager->getServiceLocator()->get('doctrine.entitymanager.orm_default');
-        $notificationService = $controllerManager->getServiceLocator()->get(NotificationService::class);
+        $notifierService = $controllerManager->getServiceLocator()->get(NotifierService::class);
 
         $controller = new TheseController();
         $controller->setTimeoutRetraitement($this->getTimeoutRetraitementFromOptions($options));
@@ -70,7 +70,7 @@ class TheseControllerFactory
         $controller->setUniteRechercheService($uniteService);
         $controller->setMailConfirmationService($mailConfirmationService);
         $controller->setEntityManager($entityManager);
-        $controller->setNotificationService($notificationService);
+        $controller->setNotifierService($notifierService);
 
         return $controller;
     }
