@@ -32,7 +32,7 @@ class NotifResultEntity
     private $sentOn;
 
     /**
-     * @var Notif
+     * @var NotifEntity
      */
     private $notif;
 
@@ -138,7 +138,7 @@ class NotifResultEntity
     }
 
     /**
-     * @return Notif
+     * @return NotifEntity
      */
     public function getNotif()
     {
@@ -146,10 +146,10 @@ class NotifResultEntity
     }
 
     /**
-     * @param Notif $notif
-     * @return NotifResult
+     * @param NotifEntity $notif
+     * @return static
      */
-    public function setNotif(Notif $notif)
+    public function setNotif(NotifEntity $notif)
     {
         $this->notif = $notif;
 
