@@ -152,47 +152,13 @@ $persopassModifiedEvent = 'persopass-modified-event';
             <dd>
                 <?php
                     if ($these->getEtablissement()) {
-                        echo $these->getEtablissement()->getCode() . " - " . $these->getEtablissement()->getLibelle();
+                        echo /*$these->getEtablissement()->getCode() . " - " .*/ $these->getEtablissement()->getLibelle();
                     }
                     else {
                         echo "<div class='alert alert-sm alert-warning'>";
                         echo "<span class='glyphicon glyphicon-warning-sign'></span> Aucun établissement n'est renseignée.";
                         echo "</div>";
                     }
-                ?>
-            </dd>
-            <dt>
-                Établissements<br/>
-                de rattachement<br/>
-                du laboratoire
-            </dt>
-            <dd>
-                <?php
-                if ($rattachements === null) {
-                    echo "Aucun établissement de rattachements de renseigné.";
-                } else {
-                    /** @var \Application\Entity\Db\EtablissementRattachement $rattachement */
-                    foreach ($rattachements as $rattachement) {
-                        echo $rattachement->getEtablissement()->getLibelle();
-                        if ($rattachement->isPrincipal()) echo " (principal)";
-                        echo "<br/>";
-                    }
-                }
-                ?>
-            </dd>
-
-
-            <dt>
-                <?php echo $this->translate("École doctorale"); ?>
-            </dt>
-            <dd>
-                <?php if ($these->getEcoleDoctorale()) {
-                    echo $these->getEcoleDoctorale()->getSourceCode() . " - " . $these->getEcoleDoctorale()->getLibelle();
-                } else {
-                    echo "<div class='alert alert-sm alert-warning'>";
-                    echo "<span class='glyphicon glyphicon-warning-sign'></span> Aucune école doctorale n'est renseignée.";
-                    echo "</div>";
-                }
                 ?>
             </dd>
 
@@ -202,7 +168,7 @@ $persopassModifiedEvent = 'persopass-modified-event';
             <dd>
                 <?php
                 if ($these->getUniteRecherche()) {
-                    echo $these->getUniteRecherche()->getSourceCode() . " - " . $these->getUniteRecherche()->getLibelle();
+                    echo /*$these->getUniteRecherche()->getSourceCode() . " - " .*/ $these->getUniteRecherche()->getLibelle();
                 }
                 elseif ($these->getCodeUniteRecherche() && $these->getLibelleUniteRecherche()) {
                     echo $these->getCodeUniteRecherche() . " - " . $these->getLibelleUniteRecherche();
@@ -217,6 +183,41 @@ $persopassModifiedEvent = 'persopass-modified-event';
                 }
                 ?>
 
+            </dd>
+
+            <dt>
+                Établissements de <br/>
+                rattachement de <br/>
+                l'unité de recherche
+            </dt>
+            <dd>
+                <?php
+                if ($rattachements === null) {
+                    echo "Aucun établissement de rattachements de renseigné.";
+                } else {
+                    /** @var \Application\Entity\Db\EtablissementRattachement $rattachement */
+                    foreach ($rattachements as $rattachement) {
+                        echo $rattachement->getEtablissement()->getLibelle();
+                        /*if ($rattachement->isPrincipal()) echo " (principal)";*/
+                        echo "<br/>";
+                    }
+                }
+                ?>
+            </dd>
+
+
+            <dt>
+                <?php echo $this->translate("École doctorale"); ?>
+            </dt>
+            <dd>
+                <?php if ($these->getEcoleDoctorale()) {
+                    echo /*$these->getEcoleDoctorale()->getSourceCode() . " - " .*/ $these->getEcoleDoctorale()->getLibelle();
+                } else {
+                    echo "<div class='alert alert-sm alert-warning'>";
+                    echo "<span class='glyphicon glyphicon-warning-sign'></span> Aucune école doctorale n'est renseignée.";
+                    echo "</div>";
+                }
+                ?>
             </dd>
 
             <dt>
