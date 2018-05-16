@@ -6,12 +6,22 @@ use Application\Entity\Db\UniteRecherche;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\Structure;
 use Application\Entity\Db\StructureConcreteInterface;
+use Application\Provider\Privilege\SubstitutionPrivileges;
 
 /**
  * @var Etablissement[] $etablissementsSubstitues
  * @var EcoleDoctorale[] $ecolesSubstituees
  * @var UniteRecherche[] $unitesSubstituees
  */
+
+$canSubstitutionAutomatique         = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_AUTOMATIQUE));
+$canViewEtablissement = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_CONSULTATION_ETABLISSEMENT));
+$canViewEcole         = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_CONSULTATION_ECOLE));
+$canViewUnite         = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_CONSULTATION_UNITE));
+$canEditEtablissement = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_MODIFICATION_ETABLISSEMENT));
+$canEditEcole         = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_MODIFICATION_ECOLE));
+$canEditUnite         = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_MODIFICATION_UNITE));
+
 ?>
 
 <?php $this->headTitle($this->translate("Substitution de structures")) ?>
@@ -27,13 +37,16 @@ use Application\Entity\Db\StructureConcreteInterface;
     echo $messenger->addMessagesFromFlashMessenger();
 ?>
 
+    <?php if($canSubstitutionAutomatique): ?>
     <p>
         <a href="<?php echo $this->url('substitution-automatique', [], [], true);?>" title="Recherche automatique de substitution">
             <button class="btn btn-primary"><span class="glyphicon glyphicon-cog"></span> Recherche automatique de substitutions </button>
         </a>
     </p>
+    <?php endif; ?>
 
 
+<?php if($canViewEtablissement): ?>
 <div class="box panel panel-info" >
     <div class="panel-heading">
         <h2 class="first"> Établissements </h2>
@@ -41,57 +54,66 @@ use Application\Entity\Db\StructureConcreteInterface;
 
     <div class="panel-body">
 
+    <?php if($canEditEtablissement): ?>
     <p>
-    <a href="<?php echo $this->url('substitution-creer', ['type' => TypeStructure::CODE_ETABLISSEMENT], [], true);?>" title="Création d'un nouvel établissement de substitution">
-    <button class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Créer une substitution </button>
-    </a>
+        <a href="<?php echo $this->url('substitution-creer', ['type' => TypeStructure::CODE_ETABLISSEMENT], [], true);?>" title="Création d'un nouvel établissement de substitution">
+            <button class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Créer une substitution </button>
+        </a>
     </p>
+    <?php endif; ?>
 
     <p>
-        <?php echo generateInfos($etablissementsSubstitues, "établissement", "établissements", $this); ?>
+        <?php echo generateInfos($etablissementsSubstitues, "établissement", "établissements", $canEditEtablissement, $this); ?>
     </p>
     </div>
 </div>
+<?php endif; ?>
 
+<?php if($canViewEcole): ?>
 <div class="box panel panel-info" >
     <div class="panel-heading">
         <h2 class="first"> Écoles doctorales </h2>
     </div>
     <div class="panel-body">
 
+    <?php if($canEditEcole): ?>
     <p>
         <a href="<?php echo $this->url('substitution-creer', ['type' => TypeStructure::CODE_ECOLE_DOCTORALE], [], true);?>" title="Création d'un nouvel établissement de substitution">
             <button class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Créer une substitution </button>
         </a>
     </p>
+    <?php endif; ?>
 
     <p>
-        <?php echo generateInfos($ecolesSubstituees, "école doctorale", "écoles doctorales", $this); ?>
+        <?php echo generateInfos($ecolesSubstituees, "école doctorale", "écoles doctorales", $canEditEcole, $this); ?>
     </p>
     </div>
 </div>
+<?php endif; ?>
 
+<?php if($canViewUnite): ?>
 <div class="box panel panel-info" >
     <div class="panel-heading">
         <h2 class="first"> Unités de recherche </h2>
     </div>
     <div class="panel-body">
 
-
+    <?php if($canEditUnite): ?>
     <p>
         <a href="<?php echo $this->url('substitution-creer', ['type' => TypeStructure::CODE_UNITE_RECHERCHE], [], true);?>" title="Création d'un nouvel établissement de substitution">
             <button class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Créer une structure de substitution </button>
         </a>
     </p>
-
+    <?php endif; ?>
     <p>
-        <?php echo generateInfos($unitesSubstituees, "unité de recherche", "unités de recherche", $this); ?>
+        <?php echo generateInfos($unitesSubstituees, "unité de recherche", "unités de recherche", $canEditUnite, $this); ?>
     </p>
     </div>
 </div>
+<?php endif; ?>
 
 <?php
-    function generateInfos($structuresSubstituees, $singulier, $pluriel, $view) {
+    function generateInfos($structuresSubstituees, $singulier, $pluriel, $canEdit, $view) {
 
         $texte  = '';
         $count = count($structuresSubstituees);
@@ -118,7 +140,7 @@ use Application\Entity\Db\StructureConcreteInterface;
                 $texte .= '    <td style="text-align:center;">';
                 $texte .= '      <a href="' . $view->url('substitution-modifier', ['cible' => $structureSubstituee->getStructure()->getId()], [], true) . '"><span class="glyphicon glyphicon-pencil"></span></a>';
                 $texte .= "&nbsp;";
-                $texte .= '      <a href="' . $view->url('substitution-detruire', ['cible' => $structureSubstituee->getStructure()->getId()], [], true) . '"><span class="glyphicon glyphicon-remove"></span></a>';
+                if ($canEdit) $texte .= '      <a href="' . $view->url('substitution-detruire', ['cible' => $structureSubstituee->getStructure()->getId()], [], true) . '"><span class="glyphicon glyphicon-remove"></span></a>';
                 $texte .= '    </td>';
                 $texte .= '</tr>';
             }

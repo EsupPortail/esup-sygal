@@ -5,6 +5,7 @@ namespace Application;
 use Application\Entity\Db\Structure;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\StructureConcreteInterface;
+use Application\Provider\Privilege\SubstitutionPrivileges;
 use Application\View\Renderer\PhpRenderer;
 
 /**
@@ -13,6 +14,11 @@ use Application\View\Renderer\PhpRenderer;
  * @var StructureConcreteInterface[] $structuresConcretesSubstituees
  * @var StructureConcreteInterface[] $structuresConcretes
   */
+
+$canEdit = false;
+if ($cible->getTypeStructure()->isEcoleDoctorale()) $canEdit = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_MODIFICATION_ECOLE));
+if ($cible->getTypeStructure()->isEtablissement())  $canEdit = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_MODIFICATION_ETABLISSEMENT));
+if ($cible->getTypeStructure()->isUniteRecherche()) $canEdit = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_MODIFICATION_UNITE));
 
 ?>
 
@@ -33,12 +39,15 @@ echo $messenger->addMessagesFromFlashMessenger();
 <a href="<?php echo $this->url('substitution-index'); ?>"><button class="btn btn-info">Retour à  l'index des substitutions</button></a>
 </p>
 
-<?php echo generateSelect($structuresConcretes, $this); ?>
-<button name="ajouter" class="btn btn-success"> <span class='glyphicon glyphicon-plus'></span> Ajouter </button>
+<?php if($canEdit): ?>
+    <?php echo generateSelect($structuresConcretes, $this); ?>
+    <button name="ajouter" class="btn btn-success"> <span class='glyphicon glyphicon-plus'></span> Ajouter </button>
+<?php endif; ?>
 
 <form action="" method="POST">
-    <input type="submit" class="btn btn-primary" value="Enregistrer"/>
-    <br/>
+    <?php if($canEdit): ?>
+        <input type="submit" class="btn btn-primary" value="Enregistrer"/>
+    <?php endif; ?>
 <div>
 
 <div id="sources" class="col-md-6">
