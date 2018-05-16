@@ -23,14 +23,22 @@ use Application\View\Renderer\PhpRenderer;
     <?php echo $this->translate("Substitution de structures"); ?>
 </h1>
 
+<?php
+$messenger = $this->messenger();
+echo $messenger->addMessagesFromFlashMessenger();
+?>
+
+
+<p>
+<a href="<?php echo $this->url('substitution-index'); ?>"><button class="btn btn-info">Retour à  l'index des substitutions</button></a>
+</p>
+
 <?php echo generateSelect($structuresConcretes, $this); ?>
 <button name="ajouter" class="btn btn-success"> <span class='glyphicon glyphicon-plus'></span> Ajouter </button>
 
 <form action="" method="POST">
     <input type="submit" class="btn btn-primary" value="Enregistrer"/>
-
     <br/>
-    
 <div>
 
 <div id="sources" class="col-md-6">

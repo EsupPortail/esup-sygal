@@ -98,6 +98,16 @@ class SubstitutionController extends AbstractController
 
             $structureCible = $this->structureService->createStructureSubstitutions($sources, $structureCibleDataObject);
             $id = $structureCible->getStructure()->getId();
+
+            $message = "La substitution <strong>".$structureCible->getLibelle()."</strong> vient d'être créée. Elle regroupe les structures : ";
+            $first = true;
+            foreach($sources as $source) {
+                if (!$first) $message .= ", ";
+                $message .= "<i>".$source->getLibelle()."</i>";
+                $first = false;
+            }
+            $this->flashMessenger()->addSuccessMessage($message);
+
             return $this->redirect()->toRoute('substitution-modifier', ['cible' => $id], [], true);
 
         } else {
@@ -163,6 +173,15 @@ class SubstitutionController extends AbstractController
             $this->structureService->updateFromPostData($structureCible,$data['cible']);
             $this->structureService->updateStructureSubstitutions($sources, $structureCible);
 
+            $message = "La substitution <strong>".$structureCible->getLibelle()."</strong> vient d'être mise à jour. Elle regroupe les structures : ";
+            $first = true;
+            foreach($sources as $source) {
+                if (!$first) $message .= ", ";
+                $message .= "<i>".$source->getLibelle()."</i>";
+                $first = false;
+            }
+            $this->flashMessenger()->addSuccessMessage($message);
+
             return $this->redirect()->toRoute(null, [],[], true);
         }
 
@@ -181,6 +200,9 @@ class SubstitutionController extends AbstractController
         $structure = $this->structureService->findStructureById($idCible);
         $cible = $this->structureService->findStructureConcreteFromStructure($structure);
         $this->structureService->removeSubstitution($cible);
+
+        $message = "La substitution <strong>".$cible->getLibelle()."</strong> vient d'être détruite.";
+        $this->flashMessenger()->addSuccessMessage($message);
 
         return $this->redirect()->toRoute('substitution-index', [],[], true);
     }
