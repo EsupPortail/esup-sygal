@@ -1430,43 +1430,48 @@ class TheseController extends AbstractController
         // RecapBu n'existe pas :: il faut vérifier l'existence de Diffusion et de RdvBU et crée en fonction
         if ($recapBu === null) {
             $diffusion = $this->entityManager->getRepository(Diffusion::class)->findOneBy(["these" => $these]);
-            if ($diffusion === null) {
-                $diffusion = new Diffusion();
-                $diffusion->setThese($these);
-                $diffusion->setDroitAuteurOk(false);
-                $diffusion->setAutorisMel(0);
-                $diffusion->setCertifCharteDiff(false);
-                $diffusion->setConfidentielle(false);
-                $this->entityManager->persist($diffusion);
-                $this->entityManager->flush($diffusion);
-            }
+//            if ($diffusion === null) {
+//                $diffusion = new Diffusion();
+//                $diffusion->setThese($these);
+//                $diffusion->setDroitAuteurOk(false);
+//                $diffusion->setAutorisMel(0);
+//                $diffusion->setCertifCharteDiff(false);
+//                $diffusion->setConfidentielle(false);
+//                $this->entityManager->persist($diffusion);
+//                $this->entityManager->flush($diffusion);
+//            }
             $rdvBu = $this->entityManager->getRepository(RdvBu::class)->findOneBy(["these" => $these]);
-            if ($rdvBu === null) {
-                $rdvBu = new RdvBu();
-                $rdvBu->setThese($these);
-                $this->entityManager->persist($rdvBu);
-                $this->entityManager->flush($rdvBu);
+//            if ($rdvBu === null) {
+//                $rdvBu = new RdvBu();
+//                $rdvBu->setThese($these);
+//                $this->entityManager->persist($rdvBu);
+//                $this->entityManager->flush($rdvBu);
+//            }
+            if ($diffusion !== null && $rdvBu !== null) {
+                $recapBu = new RecapBu();
+                $recapBu->setThese($these);
+                $recapBu->setDiffusion($diffusion);
+                $recapBu->setRdvBu($rdvBu);
+                $this->entityManager->persist($recapBu);
+                $this->entityManager->flush($recapBu);
             }
-            $recapBu = new RecapBu();
-            $recapBu->setThese($these);
-            $recapBu->setDiffusion($diffusion);
-            $recapBu->setRdvBu($rdvBu);
-            $this->entityManager->persist($recapBu);
-            $this->entityManager->flush($recapBu);
         }
 
-        /** @var RecapBuForm $form */
-        $form = $this->getServiceLocator()->get('formElementManager')->get('RecapBuForm');
-        $form->bind($recapBu);
+        $form = null;
+        if ($recapBu !== null) {
+            /** @var RecapBuForm $form */
+            $form = $this->getServiceLocator()->get('formElementManager')->get('RecapBuForm');
+            $form->bind($recapBu);
 
-        if ($this->getRequest()->isPost()) {
-            $data = $this->getRequest()->getPost();
-            $form->setData($this->getRequest()->getPost()); // appel de Hydrator::hydrate
+            if ($this->getRequest()->isPost()) {
+                $data = $this->getRequest()->getPost();
+                $form->setData($this->getRequest()->getPost()); // appel de Hydrator::hydrate
 
-            if ($form->isValid()) {
-                $this->entityManager->flush($recapBu->getRdvBu());
-                $this->entityManager->flush($recapBu->getDiffusion());
-                $this->entityManager->flush($recapBu);
+                if ($form->isValid()) {
+                    $this->entityManager->flush($recapBu->getRdvBu());
+                    $this->entityManager->flush($recapBu->getDiffusion());
+                    $this->entityManager->flush($recapBu);
+                }
             }
         }
 

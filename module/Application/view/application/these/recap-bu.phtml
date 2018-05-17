@@ -27,15 +27,21 @@ $recap = new \Application\Form\RecapBuForm();
     <small><?php echo $this->partial('application/these/partial/titre') ?></small>
 </h1>
 
-<?php
-$fcg = $this->formControlGroup();
-$form->prepare();
+<?php if ($form !== null): ?>
+    <?php
+    $fcg = $this->formControlGroup();
+    $form->prepare();
 
-echo $this->form()->openTag($form->setAttribute('class', 'attestations'));
-echo $fcg->render($form->get('orcid'));
-echo $fcg->render($form->get('nnt'));
-echo $fcg->render($form->get('vigilance'));
-echo $fcg->render($form->get('submit'));
-echo $this->form()->closeTag()
+    echo $this->form()->openTag($form->setAttribute('class', 'attestations'));
+    echo $fcg->render($form->get('orcid'));
+    echo $fcg->render($form->get('nnt'));
+    echo $fcg->render($form->get('vigilance'));
+    echo $fcg->render($form->get('submit'));
+    echo $this->form()->closeTag()
+    ?>
+<?php else:?>
+<p>
+    L'accés au récapitulatif est disponible une fois les informations de diffusion et du rendez-vous bu saisies.
+</p>
+<?php endif; ?>
 
-?>
