@@ -514,8 +514,8 @@ class TheseController extends AbstractController
                         ]);
                     $this->notificationService->triggerNotificationBU($notif, $these);
 
-                    $notificationLog = $this->notificationService->getMessage('<br>', 'info');
-                    $this->flashMessenger()->addInfoMessage($notificationLog);
+//                    $notificationLog = $this->notificationService->getMessage('<br>', 'info');
+//                    $this->flashMessenger()->addInfoMessage($notificationLog);
                 }
 
                 if (! $this->getRequest()->isXmlHttpRequest()) {

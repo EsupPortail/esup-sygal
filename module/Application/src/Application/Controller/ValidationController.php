@@ -58,10 +58,10 @@ class ValidationController extends AbstractController
                 throw new RuntimeException("Action inattendue!");
             }
 
-            $notificationLog = $this->notificationService->getMessage('<br>', 'info');
+//            $notificationLog = $this->notificationService->getMessage('<br>', 'info');
 
             $this->flashMessenger()->addSuccessMessage($successMessage);
-            $this->flashMessenger()->addInfoMessage($notificationLog);
+//            $this->flashMessenger()->addInfoMessage($notificationLog);
         }
 
         // récupération du modèle de vue auprès du plugin et passage de variables classique

@@ -346,9 +346,9 @@ class TheseService extends BaseService
             $notification->setNotifierDoctorant($notifierDoctorant);
             $this->notificationService->triggerValidationRdvBu($notification);
             $notificationLog = $this->notificationService->getMessage('<br>', 'info');
-
+//
             $this->addMessage($successMessage, MessageAwareInterface::SUCCESS);
-            $this->addMessage($notificationLog, MessageAwareInterface::INFO);
+//            $this->addMessage($notificationLog, MessageAwareInterface::INFO);
         }
     }
 }
