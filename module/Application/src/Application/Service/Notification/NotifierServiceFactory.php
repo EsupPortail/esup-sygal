@@ -36,7 +36,6 @@ class NotifierServiceFactory extends \Notification\Service\NotifierServiceFactor
          * @var IndividuService         $individuService
          * @var RoleService             $roleService
          */
-
         $variableService = $serviceLocator->get('VariableService');
         $ecoleDoctoraleService = $serviceLocator->get('EcoleDoctoraleService');
         $uniteRechercheService = $serviceLocator->get('UniteRechercheService');
@@ -50,6 +49,10 @@ class NotifierServiceFactory extends \Notification\Service\NotifierServiceFactor
         $urlHelper = $viewHelperManager->get('Url');
         $urlHelper->setRouter($router);
 
+        /** @var NotificationFactory $notificationFactory */
+        $notificationFactory = $serviceLocator->get(NotificationFactory::class);
+
+        $service->setNotificationFactory($notificationFactory);
         $service->setVariableService($variableService);
         $service->setEcoleDoctoraleService($ecoleDoctoraleService);
         $service->setUniteRechercheService($uniteRechercheService);

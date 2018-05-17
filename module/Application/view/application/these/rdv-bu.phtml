@@ -35,6 +35,9 @@ $rdvBu = $these->getRdvBu();
     <small><?php echo $this->partial('application/these/partial/titre') ?></small>
 </h1>
 
+<?php echo $this->messenger()->setMessagesFromFlashMessenger('success') ?>
+<?php echo $this->messenger()->setMessagesFromFlashMessenger('rdv_bu') ?>
+
 <div class="panel panel-info box">
     <div class="panel-heading">
         <h2 class="first">Rendez-vous BU</h2>

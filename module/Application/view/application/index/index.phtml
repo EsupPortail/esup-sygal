@@ -15,8 +15,8 @@ $subtitle = "SYstème de Gestion et d'Accompagnement doctoraL";
 
 <?php
 $messenger = $this->messenger();
-echo $messenger->addMessagesFromFlashMessenger();
-echo $messenger->addMessagesFromFlashMessenger('UnicaenAuth/*');
+//echo $messenger->addMessagesFromFlashMessenger(); // todo: ne plus appeler addMessagesFromFlashMessenger() sans argument
+echo $messenger->addMessagesFromFlashMessenger('UnicaenAuth');
 ?>
 
 <div class="jumbotron">

@@ -5,7 +5,6 @@ namespace Application\Controller\Factory;
 use Application\Controller\FichierTheseController;
 use Application\Service\Fichier\FichierService;
 use Application\Service\Individu\IndividuService;
-use Application\Service\Notification\NotificationFactory;
 use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
 use Application\Service\VersionFichier\VersionFichierService;
@@ -27,14 +26,12 @@ class FichierTheseControllerFactory
          * @var VersionFichierService $versionFichierService
          * @var NotifierService       $notificationService
          * @var IndividuService       $individuService
-         * @var NotificationFactory   $notificationFactory
          */
         $theseService = $controllerManager->getServiceLocator()->get('TheseService');
         $fichierService = $controllerManager->getServiceLocator()->get('FichierService');
         $versionFichierService = $controllerManager->getServiceLocator()->get('VersionFichierService');
         $notificationService = $controllerManager->getServiceLocator()->get(NotifierService::class);
         $individuService = $controllerManager->getServiceLocator()->get('IndividuService');
-        $notificationFactory = $controllerManager->getServiceLocator()->get(NotificationFactory::class);
 
         $controller = new FichierTheseController();
         $controller->setTheseService($theseService);
@@ -42,7 +39,6 @@ class FichierTheseControllerFactory
         $controller->setVersionFichierService($versionFichierService);
         $controller->setNotifierService($notificationService);
         $controller->setIndividuService($individuService);
-        $controller->setNotificationFactory($notificationFactory);
 
         return $controller;
     }

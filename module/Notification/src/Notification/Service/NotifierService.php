@@ -29,6 +29,11 @@ class NotifierService
     protected $renderer;
 
     /**
+     * @var NotificationFactory
+     */
+    protected $notificationFactory;
+
+    /**
      * @var array
      */
     protected $defaultOptions = [
@@ -133,11 +138,31 @@ class NotifierService
     /**
      * Retourne les éventuels messages exposés lors de la notification.
      *
-     * @return array
      * @see MessageContainer::getMessages()
+     *
+     * @return array
      */
     public function getLogs()
     {
         return $this->messageContainer->getMessages();
+    }
+
+    /**
+     * @param NotificationFactory $notificationFactory
+     * @return self
+     */
+    public function setNotificationFactory(NotificationFactory $notificationFactory)
+    {
+        $this->notificationFactory = $notificationFactory;
+
+        return $this;
+    }
+
+    /**
+     * @return NotificationFactory
+     */
+    public function getNotificationFactory()
+    {
+        return $this->notificationFactory;
     }
 }

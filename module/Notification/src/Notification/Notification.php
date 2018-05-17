@@ -283,7 +283,7 @@ class Notification
      * @param string|string[] $warningMessages
      * @return self
      */
-    protected function setWarningMessages($warningMessages)
+    public function setWarningMessages($warningMessages)
     {
         $this->warningMessages = (array) $warningMessages;
 
@@ -294,7 +294,7 @@ class Notification
      * @param string|string[] $infoMessages
      * @return self
      */
-    protected function setInfoMessages($infoMessages)
+    public function setInfoMessages($infoMessages)
     {
         $this->infoMessages = (array) $infoMessages;
 

@@ -2,7 +2,6 @@
 
 namespace Notification;
 
-use Notification\Entity\NotifEntity;
 use Zend\View\Renderer\PhpRenderer;
 use Zend\View\Resolver\TemplatePathStack;
 
@@ -20,10 +19,12 @@ class NotificationRenderer
 
     /**
      * NotificationRenderer constructor.
+     *
+     * @param PhpRenderer $renderer
      */
-    public function __construct()
+    public function __construct(PhpRenderer $renderer)
     {
-        $this->renderer = new PhpRenderer();
+        $this->renderer = $renderer;
     }
 
     /**
@@ -45,7 +46,7 @@ class NotificationRenderer
         $entity = $this->notification->getNotifEntity();
 
         if ($entity !== null) {
-            return $this->renderUsingNotifEntity($entity);
+            return $this->renderUsingTemplateContent($entity->getTemplate());
         }
 
         $template = $this->notification->getTemplatePath();
@@ -57,17 +58,17 @@ class NotificationRenderer
     }
 
     /**
-     * @param NotifEntity $entity
+     * @param String $templateContent
      * @return string
      */
-    private function renderUsingNotifEntity(NotifEntity $entity)
+    private function renderUsingTemplateContent($templateContent)
     {
         $model = $this->notification->createViewModel();
 
         $templateDir = sys_get_temp_dir();
         $templatePath = tempnam($templateDir, 'sygal_notif_template_') . '.phtml';
         $template = substr($templatePath, strlen($templateDir) + 1/*slash*/);
-        file_put_contents($templatePath, $entity->getTemplate());
+        file_put_contents($templatePath, $templateContent);
 
         /** @var TemplatePathStack $resolver */
         $resolver = $this->renderer->resolver();

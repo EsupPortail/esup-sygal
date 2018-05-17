@@ -4,16 +4,13 @@ namespace Application\Service\Notification;
 
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
-use Application\Entity\Db\Fichier;
 use Application\Entity\Db\ImportObservResult;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\MailConfirmation;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\UniteRecherche;
-use Application\Entity\Db\ValiditeFichier;
 use Application\Entity\Db\Variable;
-use Application\Entity\Db\VersionFichier;
 use Application\Notification\CorrectionAttendueUpdatedNotification;
 use Application\Notification\ResultatTheseAdmisNotification;
 use Application\Notification\ResultatTheseModifieNotification;
@@ -26,10 +23,13 @@ use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Notification\Notification;
+use Zend\Mvc\Controller\Plugin\FlashMessenger;
 use Zend\View\Helper\Url as UrlHelper;
 
 /**
  * Service d'envoi de notifications par mail.
+ *
+ * @method NotificationFactory getNotificationFactory()
  *
  * @author Unicaen
  */
@@ -58,9 +58,7 @@ class NotifierService extends \Notification\Service\NotifierService
         $notification->setEmailBdd($this->fetchEmailBdd($these));
         $notification->setEmailBu($this->fetchEmailBu($these));
 
-        $this
-            //->prepareNotification($notification)
-            ->trigger($notification);
+        $this->trigger($notification);
     }
 
     /**
@@ -76,9 +74,7 @@ class NotifierService extends \Notification\Service\NotifierService
         $notif->setData($data);
         $notif->setEmailBdd($emailBdd);
 
-        $this
-            //->prepareNotification($notif)
-            ->trigger($notif);
+        $this->trigger($notif);
     }
 
     /**
@@ -98,40 +94,8 @@ class NotifierService extends \Notification\Service\NotifierService
             $notif->setThese($these);
             $notif->setEmailBdd($emailBdd);
 
-            $this
-                //->prepareNotification($notif)
-                ->trigger($notif);
+            $this->trigger($notif);
         }
-    }
-
-    /**
-     * Notifie que le retraitement automatique du fichier PDF est terminé.
-     *
-     * @param string               $destinataires   Emails séparés par une virgule
-     * @param Fichier              $fichierRetraite Fichier retraité concerné
-     * @param ValiditeFichier|null $validite        Résultat du test d'archivabilité éventuel
-     * @return Notification
-     */
-    public function triggerRetraitementFini($destinataires, Fichier $fichierRetraite, ValiditeFichier $validite = null)
-    {
-        $to = array_map('trim', explode(',', $destinataires));
-
-        $notif = new Notification();
-        $notif
-            ->setSubject("Retraitement terminé")
-            ->setTo($to)
-            ->setTemplatePath('application/these/mail/notif-retraitement-fini')
-            ->setTemplateVariables([
-                'fichierRetraite' => $fichierRetraite,
-                'validite'        => $validite,
-                'url'             => '',
-            ]);
-
-        $this
-            //->prepareNotification($notif)
-            ->trigger($notif);
-
-        return $notif;
     }
 
     /**
@@ -166,9 +130,7 @@ class NotifierService extends \Notification\Service\NotifierService
             ->setThese($these)
             ->setEstPremiereNotif($estPremiereNotif);
 
-        $this
-            //->prepareNotification($notif)
-            ->trigger($notif);
+        $this->trigger($notif);
 
         return $record;
     }
@@ -189,9 +151,7 @@ class NotifierService extends \Notification\Service\NotifierService
                 'these' => $these,
             ]);
 
-        $this
-            //->prepareNotification($notif)
-            ->trigger($notif);
+        $this->trigger($notif);
     }
 
     /**
@@ -214,9 +174,7 @@ class NotifierService extends \Notification\Service\NotifierService
                     ['force_canonical' => true]),
             ]);
 
-        $this
-            //->prepareNotification($notif)
-            ->trigger($notif);
+        $this->trigger($notif);
 
         $infoMessages = $notif->getInfoMessages();
         $this->messageContainer->setMessages([
@@ -242,9 +200,7 @@ class NotifierService extends \Notification\Service\NotifierService
                 'these' => $these,
             ]);
 
-        $this
-            //->prepareNotification($notif)
-            ->trigger($notif);
+        $this->trigger($notif);
 
         $infoMessage = sprintf("Un mail de notification vient d'être envoyé aux Bureau des Doctorats (%s)", $to);
         $this->messageContainer->setMessage($infoMessage, 'info');
@@ -264,9 +220,7 @@ class NotifierService extends \Notification\Service\NotifierService
         }
         $notif->setTo($to);
 
-        $this
-            //->prepareNotification($notif)
-            ->trigger($notif);
+        $this->trigger($notif);
 
         $infoMessage = sprintf("Un mail de notification vient d'être envoyé à votre doctorant (%s)", $to);
         if ($this->messageContainer->getMessage()) {
@@ -288,61 +242,10 @@ class NotifierService extends \Notification\Service\NotifierService
         $to = $this->fetchEmailBu($these);
         $notif->setTo($to);
 
-        $this
-            //->prepareNotification($notif)
-            ->trigger($notif);
+        $this->trigger($notif);
 
         $infoMessage = sprintf("Un mail de notification vient d'être envoyé à la BU (%s).", $to);
         $this->messageContainer->setMessage($infoMessage, 'info');
-    }
-
-    /**
-     * Notification à l'issue du dépôt d'un fichier de thèse.
-     *
-     * @param These          $these
-     * @param VersionFichier $version
-     */
-    public function triggerTheseTeleversee(These $these, VersionFichier $version)
-    {
-        $notif = new Notification('notif-depot-these');
-        $notif
-            ->setSubject("Dépôt d'une thèse")
-            ->setTemplatePath('application/these/mail/notif-depot-these')
-            ->setTemplateVariables([
-                'these'   => $these,
-                'version' => $version,
-            ]);
-
-        $to = $this->fetchEmailBdd($these);
-        $notif
-            ->setTo($to)
-            ->setTemplateVariables([
-                'these' => $these,
-            ]);
-
-        $this
-            //->prepareNotification($notif)
-            ->trigger($notif);
-    }
-
-    /**
-     * Notification à l'issue du dépôt d'un fichier.
-     *
-     * @param Notification $notif
-     * @param These        $these
-     */
-    public function triggerFichierTeleverse(Notification $notif, These $these)
-    {
-        $to = $this->fetchEmailBdd($these);
-        $notif
-            ->setTo($to)
-            ->setTemplateVariables([
-                'these' => $these,
-            ]);
-
-        $this
-            //->prepareNotification($notif)
-            ->trigger($notif);
     }
 
     /**
@@ -361,9 +264,7 @@ class NotifierService extends \Notification\Service\NotifierService
 
         $notif = $this->createNotificationForLogoStructureAbsent("l'école doctorale", $libelle, $mails);
 
-        $this
-            //->prepareNotification($notif)
-            ->trigger($notif);
+        $this->trigger($notif);
     }
 
     /**
@@ -382,9 +283,7 @@ class NotifierService extends \Notification\Service\NotifierService
 
         $notif = $this->createNotificationForLogoStructureAbsent("l'unité de recherche", $libelle, $mails);
 
-        $this
-            //->prepareNotification($notif)
-            ->trigger($notif);
+        $this->trigger($notif);
     }
 
     /**
@@ -405,9 +304,7 @@ class NotifierService extends \Notification\Service\NotifierService
 
         $notif = $this->createNotificationForLogoStructureAbsent("l'établissement", $libelle, $mails);
 
-        $this
-            //->prepareNotification($notif)
-            ->trigger($notif);
+        $this->trigger($notif);
     }
 
     /**
@@ -427,9 +324,7 @@ class NotifierService extends \Notification\Service\NotifierService
                 'titre'        => $titre,
                 'corps'        => $corps,
             ]);
-        $this
-            //->prepareNotification($notif)
-            ->trigger($notif);
+        $this->trigger($notif);
     }
 
     /**
@@ -481,5 +376,21 @@ class NotifierService extends \Notification\Service\NotifierService
     public function setUrlHelper(UrlHelper $urlHelper)
     {
         $this->urlHelper = $urlHelper;
+    }
+
+    /**
+     * @param FlashMessenger $flashMessenger
+     * @param string         $namespacePrefix
+     */
+    public function feedFlashMessenger(FlashMessenger $flashMessenger, $namespacePrefix = '')
+    {
+        $notificationLogs = $this->getLogs();
+
+        if (! empty($notificationLogs['info'])) {
+            $flashMessenger->addMessage($notificationLogs['info'], $namespacePrefix . 'info');
+        }
+        if (! empty($notificationLogs['danger'])) {
+            $flashMessenger->addMessage($notificationLogs['danger'], $namespacePrefix . 'danger');
+        }
     }
 }

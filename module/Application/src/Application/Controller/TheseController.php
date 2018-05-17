@@ -495,27 +495,19 @@ class TheseController extends AbstractController
                 $inserting = $formRdvBu->getId() === null;
                 $this->theseService->updateRdvBu($these, $formRdvBu);
 
-                $this->flashMessenger()->addSuccessMessage("Informations enregistrées avec succès.");
-                $this->flashMessenger()->addSuccessMessage($this->theseService->getMessage('<br>', MessageAwareInterface::SUCCESS));
-                $this->flashMessenger()->addInfoMessage($this->theseService->getMessage('<br>', MessageAwareInterface::INFO));
+                $this->flashMessenger()->addMessage("Informations enregistrées avec succès.", 'success');
+                if ($message = $this->theseService->getMessage('<br>', MessageAwareInterface::SUCCESS)) {
+                    $this->flashMessenger()->addMessage($message, 'rdv_bu/success');
+                }
+                if ($message = $this->theseService->getMessage('<br>', MessageAwareInterface::INFO)) {
+                    $this->flashMessenger()->addMessage($message, 'rdv_bu/info');
+                }
 
                 // notification par mail à la BU quand le doctorant saisit les infos pour la 1ere fois
                 if ($estDoctorant && $inserting) {
-
-                    $subject = sprintf("%s Saisie des informations pour la prise de rendez-vous BU",
-                        $these->getLibelleDiscipline());
-                    $notif = new Notification();
-                    $notif
-                        ->setSubject($subject)
-                        ->setTemplatePath('application/these/mail/notif-modif-rdv-bu-doctorant')
-                        ->setTemplateVariables([
-                            'these'    => $these,
-                            'updating' => !$inserting,
-                        ]);
-                    $this->notifierService->triggerRdvBuSaisiParDoctorant($notif, $these);
-
-                    $notificationLog = $this->notifierService->getMessage('<br>', 'info');
-                    $this->flashMessenger()->addInfoMessage($notificationLog);
+                    $notif = $this->notifierService->getNotificationFactory()->createNotificationForRdvBuSaisiParDoctorant($these, $inserting);
+                    $this->notifierService->trigger($notif);
+                    $this->notifierService->feedFlashMessenger($this->flashMessenger(), 'rdv_bu/');
                 }
 
                 if (! $this->getRequest()->isXmlHttpRequest()) {

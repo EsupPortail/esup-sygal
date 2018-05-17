@@ -7,11 +7,11 @@ use Notification\Entity\Service\NotifEntityServiceAwareTrait;
 use Notification\Notification;
 
 /**
- * Classe abstraite de construction de notifications par mail.
+ * Classe de construction de notifications par mail.
  *
  * @author Unicaen
  */
-abstract class NotificationFactory
+class NotificationFactory
 {
     use NotifEntityServiceAwareTrait;
 
@@ -19,7 +19,7 @@ abstract class NotificationFactory
      * @param string $code
      * @return Notification
      */
-    protected function createNotification($code = null)
+    public function createNotification($code = null)
     {
         /** @var Notification $notification */
         $notification = new Notification($code);
@@ -34,7 +34,7 @@ abstract class NotificationFactory
      *
      * @param Notification $notification
      */
-    protected function initNotification(Notification $notification)
+    public function initNotification(Notification $notification)
     {
         $this->injectNotifEntity($notification);
     }

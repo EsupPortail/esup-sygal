@@ -50,7 +50,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
     /**
      * {@inheritdoc}
      */
-    protected function initNotification(Notification $notification)
+    public function initNotification(Notification $notification)
     {
         parent::initNotification($notification);
 
@@ -133,7 +133,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
     {
         $to = array_map('trim', explode(',', $destinataires));
 
-        $notif = new Notification();
+        $notif = $this->createNotification();
         $notif
             ->setSubject("Retraitement terminé")
             ->setTo($to)
@@ -143,9 +143,6 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
                 'validite'        => $validite,
                 'url'             => '',
             ]);
-
-        //$this->trigger($notif);
-//        return $notif;
 
         return $notif;
     }
@@ -296,21 +293,29 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
     }
 
     /**
-     * Notification générique de la BU.
+     * Notification à l'issu du remplissage du formulaire RDV BU par le doctorant.
      *
-     * @param Notification $notif
-     * @param These        $these
+     * @param These $these
+     * @param bool  $estLaPremiereSaisie
      * @return Notification
      */
-    public function createNotificationForRdvBuSaisiParDoctorant(Notification $notif, These $these)
+    public function createNotificationForRdvBuSaisiParDoctorant(These $these, $estLaPremiereSaisie)
     {
+        $subject = sprintf("%s Saisie des informations pour la prise de rendez-vous BU", $these->getLibelleDiscipline());
         $to = $this->fetchEmailBu($these);
-        $notif->setTo($to);
 
-        //$this->trigger($notif);
+        $notif = $this->createNotification();
+        $notif
+            ->setTo($to)
+            ->setSubject($subject)
+            ->setTemplatePath('application/these/mail/notif-modif-rdv-bu-doctorant')
+            ->setTemplateVariables([
+                'these'    => $these,
+                'updating' => !$estLaPremiereSaisie,
+            ]);
 
-//        $infoMessage = sprintf("Un mail de notification vient d'être envoyé à la BU (%s).", $to);
-//        $this->messageContainer->setMessage($infoMessage, 'info');
+        $infoMessage = sprintf("Un mail de notification vient d'être envoyé à la BU (%s).", $to);
+        $notif->setInfoMessages($infoMessage);
 
         return $notif;
     }
@@ -324,8 +329,11 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
      */
     public function createNotificationForTheseTeleversee(These $these, VersionFichier $version)
     {
+        $to = $this->fetchEmailBdd($these);
+
         $notif = $this->createNotification('notif-depot-these');
         $notif
+            ->setTo($to)
             ->setSubject("Dépôt d'une thèse")
 //            ->setTemplatePath('application/these/mail/notif-depot-these') // le template est dans la NotifEntity
             ->setTemplateVariables([
@@ -333,35 +341,26 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
                 'version' => $version,
             ]);
 
-        $to = $this->fetchEmailBdd($these);
-
-        $notif
-            ->setTo($to)
-            ->setTemplateVariables([
-                'these' => $these,
-            ]);
-
-        //$this->trigger($notif);
         return $notif;
     }
 
     /**
      * Notification à l'issue du dépôt d'un fichier.
      *
-     * @param Notification $notif
-     * @param These        $these
+     * @param These $these
      * @return Notification
      */
-    public function createNotificationForFichierTeleverse(Notification $notif, These $these)
+    public function createNotificationForFichierTeleverse(These $these)
     {
         $to = $this->fetchEmailBdd($these);
+
+        $notif = $this->createNotification();
         $notif
             ->setTo($to)
             ->setTemplateVariables([
                 'these' => $these,
             ]);
 
-        //$this->trigger($notif);
         return $notif;
     }
 
