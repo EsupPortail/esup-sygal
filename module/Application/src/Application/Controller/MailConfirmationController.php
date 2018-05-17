@@ -94,7 +94,7 @@ class MailConfirmationController extends AbstractController {
         $titre = "[SyGAL] Confirmation de votre email";
         $corps = "<br/>"
             ."&nbsp;&nbsp;&nbsp;&nbsp;Bonjour,<br/><br/>"
-            ."Pour finaliser l'enregistrement de votre email professionelle veuillez confirmer celui-ci en cliquant sur le liens suivant :<br/>"
+            ."Pour finaliser l'enregistrement de votre email de contact veuillez confirmer celui-ci en cliquant sur le liens suivant :<br/>"
             ."<a href='".$confirm."'>"
             .$confirm
             ."</a><br/><br/>"
