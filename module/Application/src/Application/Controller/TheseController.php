@@ -1154,7 +1154,6 @@ class TheseController extends AbstractController
         $these = $this->requestedThese();
 
         // si le fichier de la thèse originale est une version corrigée, la version de diffusion est aussi en version corrigée
-        //$existeVersionOrigCorrig = $these->getFichiersByVersion(VersionFichier::CODE_ORIG_CORR, false)->count() > 0;
         $existeVersionOrigCorrig = ! empty($this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF , VersionFichier::CODE_ORIG_CORR));
         $version = $existeVersionOrigCorrig ? VersionFichier::CODE_DIFF_CORR : VersionFichier::CODE_DIFF;
 
@@ -1166,13 +1165,13 @@ class TheseController extends AbstractController
             $form->setData($post);
             $isValid = $form->isValid();
             if ($isValid) {
+                /** @var Diffusion $diffusion */
                 $diffusion = $form->getData();
                 $this->theseService->updateDiffusion($these, $diffusion);
                 $this->flashMessenger()->addSuccessMessage("Réponses au questionnaire enregistrées avec succès.");
 
                 // suppression des fichiers expurgés éventuellement déposés en l'absence de pb de droit d'auteur
                 $besoinVersionExpurgee = ! $diffusion->getDroitAuteurOk();
-//                $fichiersExpurgesDeposes = $these->getFichiersBy(null, true, false, $version);
                 $fichiersExpurgesDeposes = $this->fichierService->getRepository()->fetchFichiers($these, null , $version, false);
                 if (! $besoinVersionExpurgee && !empty($fichiersExpurgesDeposes)) {
                     $this->fichierService->deleteFichiers($fichiersExpurgesDeposes);
@@ -1180,7 +1179,8 @@ class TheseController extends AbstractController
                 }
 
                 if (! $this->getRequest()->isXmlHttpRequest()) {
-                    return $this->redirect()->toRoute('these/depot', [], [], true);
+                    $url = $this->urlThese()->depotThese($these, $version);
+                    return $this->redirect()->toUrl($url);
                 }
             }
         }

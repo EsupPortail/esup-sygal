@@ -68,9 +68,13 @@ class UrlTheseService extends UrlService
         );
     }
 
-    public function depotThese(These $these)
+    public function depotThese(These $these, $version = null)
     {
-        return $this->fromRoute('these/depot',
+        $route = VersionFichier::codeEstVersionCorrigee($version) ?
+            'these/depot-version-corrigee' :
+            'these/depot';
+
+        return $this->fromRoute($route,
             ['these' => $this->idify($these)],
             $this->options
         );
