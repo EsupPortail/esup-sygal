@@ -1471,6 +1471,10 @@ class TheseController extends AbstractController
                     $this->entityManager->flush($recapBu->getRdvBu());
                     $this->entityManager->flush($recapBu->getDiffusion());
                     $this->entityManager->flush($recapBu);
+
+                    //message de notification dans la page
+                    $message = "Le récapitulatif BU vient d'être enregistré.";
+                    $this->flashMessenger()->addSuccessMessage($message);
                 }
             }
         }

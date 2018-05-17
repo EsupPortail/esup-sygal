@@ -27,6 +27,11 @@ $recap = new \Application\Form\RecapBuForm();
     <small><?php echo $this->partial('application/these/partial/titre') ?></small>
 </h1>
 
+<?php
+$messenger = $this->messenger();
+echo $messenger->addMessagesFromFlashMessenger();
+?>
+
 <?php if ($form !== null): ?>
     <?php
     $fcg = $this->formControlGroup();
