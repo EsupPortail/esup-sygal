@@ -26,9 +26,7 @@ $PATH = "/var/sygal-files";
 <div style="text-align: center; margin-bottom: 30px;">
     <div class='logo-comue'>
         <?php if ($logos["comue"] !== null): ?>
-            <?php $content = file_get_contents($PATH . $logos["comue"]) ?: null; ?>
-            <img src="data:image/png;base64,<?php echo base64_encode($content); ?>" />
-<!--            <img src="--><?php //echo $PATH . $logos["comue"]; ?><!--"/>-->
+            <img src="<?php echo $PATH . $logos["comue"]; ?>"/>
         <?php else: ?>
             <span style='background-color:red;'> COMUE ou logo de la COMUE non renseigné. </span>
         <?php endif; ?>
