@@ -27,6 +27,30 @@ $rdvBu = $these->getRdvBu();
 
 <div class="panel panel-info box">
     <div class="panel-heading">
+        <h2 class="first">Téléchargement de la version imprimable de votre thèse </h2>
+    </div>
+    <div class="panel-body">
+
+        <p>
+        Avant de vous rendre au rendez-vous à la BU, vous devez imprimer un exemplaire papier de votre thèse.<br/>
+        Pour obtenir la version imprimable de votre thèse (avec page de couverture), veuillez cliquer sur le bouton ci-dessous.
+        </p>
+
+<!--        <div class="pull-right">-->
+            <a href="<?php echo $this->url("these/fusion", ["these" => $these->getId()], [], true); ?>" target="_blank">
+                <button class="btn btn-primary">
+                    <span class="glyphicon glyphicon-download"></span>
+                    Obtenir la version imprimable de votre thèse
+                </button>
+            </a>
+<!--        </div>-->
+
+    </div>
+</div>
+
+
+<div class="panel panel-info box">
+    <div class="panel-heading">
         <h2 class="first">Doctorant</h2>
     </div>
     <div class="panel-body">

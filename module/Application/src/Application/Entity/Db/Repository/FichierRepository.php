@@ -117,4 +117,11 @@ class FichierRepository extends DefaultEntityRepository
 
         return null;
     }
+
+
+    public function hasVersion(These $these,  $version)
+    {
+        $fichiers = $this->fetchFichiers($these, NatureFichier::CODE_THESE_PDF , $version);
+        return !empty($fichiers);
+    }
 }
