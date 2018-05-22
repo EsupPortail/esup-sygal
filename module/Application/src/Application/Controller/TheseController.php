@@ -550,7 +550,7 @@ class TheseController extends AbstractController
                 WfEtape::CODE_DEPOT_VERSION_CORRIGEE_VALIDATION_DOCTORANT,
                 WfEtape::CODE_DEPOT_VERSION_CORRIGEE_VALIDATION_DIRECTEUR,
             ], [
-                'message' => "Il vous reste encore à fournir à la BU un exemplaire imprimé de la version corrigée pour valider le dépôt.",
+                'message' => "Il ne reste plus qu'à fournir à la BU un exemplaire imprimé de la version corrigée pour valider le dépôt.",
             ]),
         ]);
 
