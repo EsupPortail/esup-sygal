@@ -551,6 +551,9 @@ class TheseController extends AbstractController
     {
         $these = $this->requestedThese();
 
+        $hasVAC = $this->fichierService->getRepository()->hasVersion($these, VersionFichier::CODE_ARCHI_CORR);
+        $hasVDC = $this->fichierService->getRepository()->hasVersion($these, VersionFichier::CODE_DIFF_CORR);
+
         $view = new ViewModel([
             'these'                           => $these,
             'validationDepotTheseCorrigeeUrl' => $this->urlThese()->validationDepotTheseCorrigeeUrl($these),
@@ -561,6 +564,10 @@ class TheseController extends AbstractController
             ], [
                 'message' => "Il vous reste encore à fournir à la BU un exemplaire imprimé de la version corrigée pour valider le dépôt.",
             ]),
+            'hasVAC' => $hasVAC,
+            'hasVDC' => $hasVDC,
+            'isDoctorant' => ($this->userContextService->getSelectedRoleDoctorant()),
+
         ]);
 
         return $view;
@@ -1710,9 +1717,6 @@ class TheseController extends AbstractController
         }
 
 
-
-
-
         // GENERATION DE LA COUVERTURE
         $filename = "COUVERTURE_".$these->getId()/*."_".uniqid()*/.".pdf";
         $this->generateCouverture($these,$filename);
@@ -1726,8 +1730,8 @@ class TheseController extends AbstractController
         $merged->SetTitle($these->getTitre());
         $merged->SetAuthor($these->getDoctorant()->getIndividu()->getPrenom(). " " . $these->getDoctorant()->getIndividu()->getNomUsuel());
         $merged->SetCreator("SyGAL");
-        $merged->SetSubject( "TODO");
-        $merged->SetKeywords( "TODO");
+        $merged->SetSubject( $these->getMetadonnee()->getResume());
+        $merged->SetKeywords( $these->getMetadonnee()->getMotsClesLibresFrancais());
 
         $merged->SetImportUse();    //allows the usage of pages stored as template
         $filenames = [$couvertureChemin, $manuscritChemin];
