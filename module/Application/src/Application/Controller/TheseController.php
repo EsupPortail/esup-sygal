@@ -44,15 +44,19 @@ use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\Service\Workflow\WorkflowServiceAwareTrait;
 use Application\View\Helper\Sortable;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Doctrine\ORM\Version;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
+use mPDF;
 use Notification\Notification;
 use Retraitement\Exception\TimedOutCommandException;
 use UnicaenApp\Exception\RuntimeException;
+use UnicaenApp\Exporter\Pdf;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenApp\Service\MessageCollectorAwareTrait;
 use UnicaenApp\Traits\MessageAwareInterface;
 use Zend\Form\Element\Hidden;
 use Zend\Http\Response;
+use Zend\Http\Response\Stream;
 use Zend\Stdlib\ParametersInterface;
 use Zend\View\Model\ViewModel;
 
@@ -454,6 +458,8 @@ class TheseController extends AbstractController
         $these = $this->requestedThese();
 
         $versionArchivable = $this->fichierService->getRepository()->getVersionArchivable($these);
+        $hasVA = $this->fichierService->getRepository()->hasVersion($these, VersionFichier::CODE_ARCHI);
+        $hasVD = $this->fichierService->getRepository()->hasVersion($these, VersionFichier::CODE_DIFF);
 
         $view = new ViewModel([
             'these'        => $these,
@@ -468,6 +474,9 @@ class TheseController extends AbstractController
                 WfEtape::CODE_RDV_BU_VALIDATION_BU,
             ]),
             'versionArchivable' => $versionArchivable,
+            'hasVA' => $hasVA,
+            'hasVD' => $hasVD,
+
         ]);
 
         $view->setTemplate('application/these/rdv-bu' . ($estDoctorant ? '-doctorant' : null));
@@ -542,6 +551,9 @@ class TheseController extends AbstractController
     {
         $these = $this->requestedThese();
 
+        $hasVAC = $this->fichierService->getRepository()->hasVersion($these, VersionFichier::CODE_ARCHI_CORR);
+        $hasVDC = $this->fichierService->getRepository()->hasVersion($these, VersionFichier::CODE_DIFF_CORR);
+
         $view = new ViewModel([
             'these'                           => $these,
             'validationDepotTheseCorrigeeUrl' => $this->urlThese()->validationDepotTheseCorrigeeUrl($these),
@@ -552,6 +564,10 @@ class TheseController extends AbstractController
             ], [
                 'message' => "Il ne reste plus qu'à fournir à la BU un exemplaire imprimé de la version corrigée pour valider le dépôt.",
             ]),
+            'hasVAC' => $hasVAC,
+            'hasVDC' => $hasVDC,
+            'isDoctorant' => ($this->userContextService->getSelectedRoleDoctorant()),
+
         ]);
 
         return $view;
@@ -1395,7 +1411,10 @@ class TheseController extends AbstractController
     public function generateAction()
     {
         $these = $this->requestedThese();
+        $this->generateCouverture($these);
+    }
 
+    public function generateCouverture(These $these, $filename = null) {
         /**
          * Les infos générales de la these sont
          * - La spécialité "specialite"
@@ -1540,8 +1559,13 @@ class TheseController extends AbstractController
             'jury' => $jury,
             'logos' => $logos,
         ]);
-        $exporter->export('export.pdf');
-        exit;
+        if ($filename !== null) {
+            $exporter->export($filename, Pdf::DESTINATION_FILE);
+        } else {
+            $exporter->export('export.pdf');
+            exit;
+        }
+
     }
 
     /**
@@ -1641,8 +1665,94 @@ class TheseController extends AbstractController
      * @param Acteur $var
      * @return bool
      */
-public static function estRapporteur(Acteur $var) {
+    public static function estRapporteur(Acteur $var)
+    {
         $role = $var->getRole()->getSourceCode();
-        return  (explode("::", $role)[1] == "R");
+        return (explode("::", $role)[1] == "R");
+
     }
+
+    public function fusionAction()
+    {
+
+        /** @var These $these */
+        $these          = $this->requestedThese();
+        $corrigee       = $this->params()->fromRoute("corrigee");
+        $versionName    = $this->params()->fromRoute("version");
+
+        $version = null;
+        if ($versionName !== null) {
+            switch($versionName) {
+                case "VO" : $version = VersionFichier::CODE_ORIG;
+                    break;
+                case "VA" : $version = VersionFichier::CODE_ARCHI;
+                    break;
+                case "VD" : $version = VersionFichier::CODE_DIFF;
+                    break;
+                case "VOC" : $version = VersionFichier::CODE_ORIG_CORR;
+                    break;
+                case "VAC" : $version = VersionFichier::CODE_ARCHI_CORR;
+                    break;
+                case "VDC" : $version = VersionFichier::CODE_DIFF_CORR;
+                    break;
+                default : throw  new RuntimeException("Version [".$versionName."] inconnue.");
+            }
+        } else {
+            //doctorant
+            if ($corrigee === null) {
+                //tester si il existe une VA
+                if ($this->fichierService->getRepository()->hasVersion($these, VersionFichier::CODE_ARCHI)) {
+                    $version = VersionFichier::CODE_ARCHI;
+                } else {
+                    $version = VersionFichier::CODE_ORIG;
+                }
+            } else {
+                //tester si il existe une VAC
+                if ($this->fichierService->getRepository()->hasVersion($these, VersionFichier::CODE_ARCHI_CORR)) {
+                    $version = VersionFichier::CODE_ARCHI_CORR;
+                } else {
+                    $version = VersionFichier::CODE_ORIG_CORR;
+                }
+            }
+        }
+
+
+        // GENERATION DE LA COUVERTURE
+        $filename = "COUVERTURE_".$these->getId()/*."_".uniqid()*/.".pdf";
+        $this->generateCouverture($these,$filename);
+        $couvertureChemin = "/tmp/". $filename;
+
+        // RECUPERATION DE LA BONNE VERSION DU MANUSCRIPT
+        $manuscritFichier = current($this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF,$version));
+        $manuscritChemin = $this->fichierService->computeDestinationFilePathForFichier($manuscritFichier);
+
+        $merged = new mPDF();
+        $merged->SetTitle($these->getTitre());
+        $merged->SetAuthor($these->getDoctorant()->getIndividu()->getPrenom(). " " . $these->getDoctorant()->getIndividu()->getNomUsuel());
+        $merged->SetCreator("SyGAL");
+        $merged->SetSubject( $these->getMetadonnee()->getResume());
+        $merged->SetKeywords( $these->getMetadonnee()->getMotsClesLibresFrancais());
+
+        $merged->SetImportUse();    //allows the usage of pages stored as template
+        $filenames = [$couvertureChemin, $manuscritChemin];
+
+        $first = true;
+        foreach ($filenames as $filename) {
+            if (file_exists($filename)) {
+                $pageCount = $merged->SetSourceFile($filename);
+                for ($i = 1; $i <= $pageCount; $i++) {
+                    if (!$first) $merged->WriteHTML('<pagebreak />');
+                    $first = false;
+                    $tplId = $merged->ImportPage($i);
+                    $merged->UseTemplate ($tplId);
+                }
+            }
+        }
+
+        //unlink pour effacer la couv temp
+
+        $merged->Output("/var/sygal-files/merged.pdf", 'D');
+//        $merged->Output("/var/sygal-files/merged.pdf", 'D');
+    }
+
 }

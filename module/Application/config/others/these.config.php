@@ -84,6 +84,7 @@ return [
                         'roadmap',
                         'detail-identite',
                         'generate',
+                        'fusion',
                     ],
                     'privileges' => ThesePrivileges::THESE_CONSULTATION_FICHE,
                     'assertion'  => 'Assertion\\These',
@@ -300,6 +301,18 @@ return [
                             ],
                             'defaults'    => [
                                 'action' => 'generate',
+                            ],
+                        ],
+                    ],
+                    'fusion' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'       => '/fusion/:these[/:corrigee[/:version]]',
+                            'constraints' => [
+                                'these' => '\d+',
+                            ],
+                            'defaults'    => [
+                                'action' => 'fusion',
                             ],
                         ],
                     ],

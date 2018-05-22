@@ -35,6 +35,34 @@ $rdvBu = $these->getRdvBu();
     <small><?php echo $this->partial('application/these/partial/titre') ?></small>
 </h1>
 
+
+<div class="panel panel-info box">
+    <div class="panel-heading">
+        <h2 class="first">Ajout de la page de couverture</h2>
+    </div>
+    <div class="panel-body">
+        <p>
+        Avant d'aller au rendez-vous BU, le corps du mémoire et la page de couverture générée automatiquement doivent être fusionnés.
+        Une fois la fusion réalisée, assurez vous que toutes les informations sur la page de couverture sont présentes et que la fusion n'a pas endommagé le mémoire.
+        </p>
+
+        <div class="btn-group">
+            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Version à récupérer <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 0, 'version' => 'VO'], [], true); ?>">Version original</a></li>
+                <?php if ($hasVD): ?>
+                    <li><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 0, 'version' => 'VD'], [], true); ?>">Version diffusion</a></li>
+                <?php endif; ?>
+                <?php if ($hasVA): ?>
+                    <li><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 0, 'version' => 'VA'], [], true); ?>">Version archivable</a></li>
+                <?php endif; ?>
+            </ul>
+        </div>
+    </div>
+</div>
+
 <div class="panel panel-info box">
     <div class="panel-heading">
         <h2 class="first">Rendez-vous BU</h2>
