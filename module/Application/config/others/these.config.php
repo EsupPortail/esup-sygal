@@ -716,7 +716,7 @@ return [
                                 'visible' => 'Assertion\\These',
                             ],
                             'recapbu' => [
-                                'label'    => 'Récapitulatif BU',
+                                'label'    => 'Points de vigilance',
                                 'route'    => 'these/recap-bu',
                                 'withtarget' => true,
                                 'paramsInject' => [

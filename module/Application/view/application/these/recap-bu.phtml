@@ -23,7 +23,7 @@ $recap = new \Application\Form\RecapBuForm();
 
 <?php $this->headTitle("Récapitulatif BU")->prepend($these->getDoctorant()->getNomUsuel()) ?>
 
-<h1 class="page-header">Récapitulatif BU
+<h1 class="page-header">Points de vigilance
     <small><?php echo $this->partial('application/these/partial/titre') ?></small>
 </h1>
 
@@ -38,8 +38,8 @@ echo $messenger->addMessagesFromFlashMessenger();
     $form->prepare();
 
     echo $this->form()->openTag($form->setAttribute('class', 'attestations'));
-    echo $fcg->render($form->get('orcid'));
-    echo $fcg->render($form->get('nnt'));
+//    echo $fcg->render($form->get('orcid'));
+//    echo $fcg->render($form->get('nnt'));
     echo $fcg->render($form->get('vigilance'));
     echo $fcg->render($form->get('submit'));
     echo $this->form()->closeTag()
