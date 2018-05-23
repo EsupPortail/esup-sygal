@@ -8,7 +8,7 @@ use Zend\Form\Element\Textarea;
 use Zend\Form\Element\Submit;
 use Zend\InputFilter\Factory;
 
-class RecapBuForm extends Form
+class PointsDeVigilanceForm extends Form
 {
 
     /**
@@ -16,21 +16,9 @@ class RecapBuForm extends Form
      */
     public function init()
     {
-        //$this->setObject(new RdvBu());
-
-        $this->add(
-            (new Text('orcid'))
-            ->setLabel("Identifiant ORCID :")
-        );
-        $this->add(
-            (new Text('nnt'))
-            ->setLabel("Numéro national de thèse :")
-        );
-
         $this->add((new Textarea('vigilance'))
             ->setLabel("Points de vigilance :")
         );
-
 
         $this->add((new Submit('submit'))
             ->setValue("Enregistrer")
@@ -38,14 +26,6 @@ class RecapBuForm extends Form
         );
 
         $this->setInputFilter((new Factory())->createInputFilter([
-            'orcid' => [
-                'name' => 'orcid',
-                'required' => false,
-            ],
-            'nnt' => [
-                'name' => 'nnt',
-                'required' => false,
-            ],
             'vigilance' => [
                 'name' => 'vigilance',
                 'required' => false,

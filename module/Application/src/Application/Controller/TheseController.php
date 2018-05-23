@@ -27,7 +27,7 @@ use Application\Form\DiffusionTheseForm;
 use Application\Form\MetadonneeTheseForm;
 use Application\Form\RdvBuTheseDoctorantForm;
 use Application\Form\RdvBuTheseForm;
-use Application\Form\RecapBuForm;
+use Application\Form\PointsDeVigilanceForm;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Fichier\Exception\ValidationImpossibleException;
 use Application\Service\Fichier\FichierServiceAwareTrait;
@@ -1586,59 +1586,27 @@ class TheseController extends AbstractController
      * @return ViewModel
      * @throws \Doctrine\ORM\OptimisticLockException
      */
-    public function recapBuAction() {
+    public function pointsDeVigilanceAction() {
 
         $these = $this->requestedThese();
-        /** @var RecapBu $recapBu */
-        $recapBu = $this->entityManager->getRepository(RecapBu::class)->findOneBy(["these" => $these]);
 
-        // RecapBu n'existe pas :: il faut vérifier l'existence de Diffusion et de RdvBU et crée en fonction
-        if ($recapBu === null) {
-            $diffusion = $this->entityManager->getRepository(Diffusion::class)->findOneBy(["these" => $these]);
-//            if ($diffusion === null) {
-//                $diffusion = new Diffusion();
-//                $diffusion->setThese($these);
-//                $diffusion->setDroitAuteurOk(false);
-//                $diffusion->setAutorisMel(0);
-//                $diffusion->setCertifCharteDiff(false);
-//                $diffusion->setConfidentielle(false);
-//                $this->entityManager->persist($diffusion);
-//                $this->entityManager->flush($diffusion);
-//            }
-            $rdvBu = $this->entityManager->getRepository(RdvBu::class)->findOneBy(["these" => $these]);
-//            if ($rdvBu === null) {
-//                $rdvBu = new RdvBu();
-//                $rdvBu->setThese($these);
-//                $this->entityManager->persist($rdvBu);
-//                $this->entityManager->flush($rdvBu);
-//            }
-            if ($diffusion !== null && $rdvBu !== null) {
-                $recapBu = new RecapBu();
-                $recapBu->setThese($these);
-                $recapBu->setDiffusion($diffusion);
-                $recapBu->setRdvBu($rdvBu);
-                $this->entityManager->persist($recapBu);
-                $this->entityManager->flush($recapBu);
-            }
-        }
+        $rdvBu = $this->entityManager->getRepository(RdvBu::class)->findOneBy(["these" => $these]);
 
         $form = null;
-        if ($recapBu !== null) {
-            /** @var RecapBuForm $form */
-            $form = $this->getServiceLocator()->get('formElementManager')->get('RecapBuForm');
-            $form->bind($recapBu);
+        if ($rdvBu !== null) {
+            /** @var PointsDeVigilanceForm $form */
+            $form = $this->getServiceLocator()->get('formElementManager')->get('PointsDeVigilanceForm');
+            $form->bind($rdvBu);
 
             if ($this->getRequest()->isPost()) {
                 $data = $this->getRequest()->getPost();
                 $form->setData($this->getRequest()->getPost()); // appel de Hydrator::hydrate
 
                 if ($form->isValid()) {
-                    $this->entityManager->flush($recapBu->getRdvBu());
-                    $this->entityManager->flush($recapBu->getDiffusion());
-                    $this->entityManager->flush($recapBu);
+                    $this->entityManager->flush($rdvBu);
 
                     //message de notification dans la page
-                    $message = "Le récapitulatif BU vient d'être enregistré.";
+                    $message = "Les points de vigilance viennent d'être sauvegardés.";
                     $this->flashMessenger()->addSuccessMessage($message);
                 }
             }

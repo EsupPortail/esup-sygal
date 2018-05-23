@@ -3,18 +3,18 @@
 
 namespace Application\Form\Factory;
 
-use Application\Form\Hydrator\RecapBuHydrator;
+use Application\Form\Hydrator\PointsDeVigilanceHydrator;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Stdlib\Hydrator\HydratorPluginManager;
 
-class RecapBuHydratorFactory
+class PointsDeVigilanceHydratorFactory
 {
 
     public function __invoke(HydratorPluginManager $serviceLocator)
     {
         $parentLocator = $serviceLocator->getServiceLocator();
-        $recapBuHydrator = new RecapBuHydrator($parentLocator->get('doctrine.entitymanager.orm_default'));
+        $recapBuHydrator = new PointsDeVigilanceHydrator($parentLocator->get('doctrine.entitymanager.orm_default'));
         return $recapBuHydrator;
     }
 }
