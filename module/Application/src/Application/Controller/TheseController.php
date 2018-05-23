@@ -1686,7 +1686,7 @@ class TheseController extends AbstractController
 
 
         // GENERATION DE LA COUVERTURE
-        $filename = "COUVERTURE_".$these->getId()/*."_".uniqid()*/.".pdf";
+        $filename = "COUVERTURE_".$these->getId()."_".uniqid().".pdf";
         $this->generateCouverture($these,$filename);
         $couvertureChemin = "/tmp/". $filename;
 
@@ -1718,6 +1718,7 @@ class TheseController extends AbstractController
         }
 
         //unlink pour effacer la couv temp
+        unlink($filename);
 
         $merged->Output("/var/sygal-files/merged.pdf", 'D');
 //        $merged->Output("/var/sygal-files/merged.pdf", 'D');
