@@ -220,8 +220,8 @@ function generateRoleEtablissement($individu, $roles, $rolesAffectes, $etablisse
     $texte .= generateSelect($etablissements, "etablissements", $roles);
     foreach ($etablissements as $structureConcrete) {
         $structureId = $structureConcrete->getStructure()->getId();
-        $rolesFiltres = array_filter($roles, function ($role) use ($structureId) {
-            return $role->getStructure() !== null && $role->getStructure()->getId() === $structureId;
+        $rolesFiltres = array_filter($roles, function (Role $role) use ($structureId) {
+            return $role->getStructure() !== null && $role->getStructure()->getId() === $structureId && !$role->isTheseDependant();
         });
 
         if (!empty($rolesFiltres)) {
