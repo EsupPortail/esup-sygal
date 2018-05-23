@@ -85,6 +85,17 @@ class RdvBuTheseForm extends Form
             ],
         ]);
 
+        $this->add([
+            'type'       => 'Text',
+            'name'       => 'idOrcid',
+            'options'    => [
+                'label' => 'Identifiant ORCID (facultatif)',
+            ],
+            'attributes' => [
+                'title' => "",
+            ],
+        ]);
+
         $this->add((new Submit('submit'))
             ->setValue("Enregistrer")
             ->setAttribute('class', 'btn btn-primary')
