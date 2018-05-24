@@ -11,6 +11,7 @@ use Application\Form\UniteRechercheForm;
 use Application\RouteMatch;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
+use Application\Service\Notification\NotificationServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use UnicaenLdap\Service\LdapPeopleServiceAwareTrait;
@@ -23,6 +24,7 @@ class UniteRechercheController extends AbstractController
     use RoleServiceAwareTrait;
     use LdapPeopleServiceAwareTrait;
     use EtablissementServiceAwareTrait;
+    use NotificationServiceAwareTrait;
 
     /**
      * L'index récupére :
@@ -233,6 +235,8 @@ class UniteRechercheController extends AbstractController
                 $role = $this->roleService->getRoleById($roleId);
                 $individuRole = $this->roleService->addIndividuRole($individu,$role);
 
+                $this->notificationService->triggerChangementRole("ajout", $individuRole->getRole(), $individuRole->getIndividu());
+
                 $this->flashMessenger()->addSuccessMessage(
                     "<strong>{$individuRole->getIndividu()}</strong>". " est désormais " .
                     "<strong>{$individuRole->getRole()}</strong>". " de l'unité de recherche ".
@@ -261,8 +265,10 @@ class UniteRechercheController extends AbstractController
         if ($irId) {
             $individuRole = $this->roleService->removeIndividuRoleById($irId);
 
+            $this->notificationService->triggerChangementRole("retrait", $individuRole->getRole(), $individuRole->getIndividu());
+
             $this->flashMessenger()->addSuccessMessage(
-                 "<strong>{$individuRole->getIndividu()}</strong>" . " n'est plus n'est plus "
+                 "<strong>{$individuRole->getIndividu()}</strong>" . " n'est plus "
                 ."<strong>{$individuRole->getRole()}</strong>" . " de l'unite de recherche "
                 ."<strong>{$unite->getLibelle()}</strong>"."</strong>");
 

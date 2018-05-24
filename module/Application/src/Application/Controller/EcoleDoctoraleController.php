@@ -12,6 +12,7 @@ use Application\RouteMatch;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
+use Application\Service\Notification\NotificationServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use UnicaenLdap\Service\LdapPeopleServiceAwareTrait;
 use Zend\View\Model\ViewModel;
@@ -23,6 +24,7 @@ class EcoleDoctoraleController extends AbstractController
     use IndividuServiceAwareTrait;
     use RoleServiceAwareTrait;
     use EtablissementServiceAwareTrait;
+    use NotificationServiceAwareTrait;
 
     /**
      * L'index récupére :
@@ -224,6 +226,8 @@ class EcoleDoctoraleController extends AbstractController
                 $role = $this->roleService->getRoleById($roleId);
                 $individuRole = $this->roleService->addIndividuRole($individu, $role);
 
+                $this->notificationService->triggerChangementRole("ajout", $individuRole->getRole(), $individuRole->getIndividu());
+
                 $this->flashMessenger()->addSuccessMessage(
                     "<strong>{$individuRole->getIndividu()}</strong>". " est désormais " .
                     "<strong>{$individuRole->getRole()}</strong>". " de l'école doctorale ".
@@ -252,8 +256,10 @@ class EcoleDoctoraleController extends AbstractController
         if ($irId) {
             $individuRole = $this->roleService->removeIndividuRoleById($irId);
 
+            $this->notificationService->triggerChangementRole("retrait", $individuRole->getRole(), $individuRole->getIndividu());
+
             $this->flashMessenger()->addSuccessMessage(
-                "<strong>{$individuRole->getIndividu()}</strong>" . " n'est plus n'est plus "
+                "<strong>{$individuRole->getIndividu()}</strong>" . " n'est plus "
                 ."<strong>{$individuRole->getRole()}</strong>" . " de l'école doctorale "
                 ."<strong>{$ecole->getLibelle()}</strong>"."</strong>");
 
