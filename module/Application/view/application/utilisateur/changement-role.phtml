@@ -1,0 +1,32 @@
+<?php
+
+use Application\Entity\Db\Individu;
+use Application\Entity\Db\Role;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var string $type
+ * @var Role $role
+ * @var Individu $individu
+ */
+?>
+
+<p>
+    Bonjour,
+</p>
+<p>
+    Ceci est un mail envoyé automatiquement par l'application SyGAL.
+</p>
+
+<?php if ($type === "ajout"): ?>
+    <p>
+        Vous venez de recevoir le rôle <?php echo $role->getRoleId(); ?> dans l'application SyGAL.
+    </p>
+<?php endif; ?>
+
+<?php if ($type === "retrait"): ?>
+    <p>
+        Vous venez de perdre le rôle <?php echo $role->getRoleId(); ?> dans l'application SyGAL.
+    </p>
+<?php endif; ?>

@@ -462,5 +462,27 @@ class NotificationService extends \Notification\Service\NotificationService
         return $variable->getValeur();
     }
 
+    /**
+     * @var string $type
+     * @var Role $role
+     * @var Individu $individu
+     */
+    public function triggerChangementRole($type, $role, $individu)
+    {
+        $mail = $individu->getEmail();
+
+        $notif = new Notification();
+        $notif
+            ->setSubject("Changement dans vos rôle SyGAL")
+            ->setTo($mail)
+            ->setTemplatePath('application/utilisateur/changement-role')
+            ->setTemplateVariables([
+                'type'         => $type,
+                'role'         => $role,
+                'individu'     => $individu,
+            ]);
+        $this->trigger($notif);
+    }
+
 
 }
