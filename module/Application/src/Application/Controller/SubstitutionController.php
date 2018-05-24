@@ -82,6 +82,16 @@ class SubstitutionController extends AbstractController
         if ($request->isPost()) {
             $data = $request->getPost();
 
+            // gestion des cas d'erreurs
+            if (empty($data['sourceIds'])) {
+                $this->flashMessenger()->addErrorMessage("Impossible de créer une substitution sans structure source !");
+                return $this->redirect()->toRoute(null, [],[], true);
+            }
+            if (empty($data['cible']['libelle'])) {
+                $this->flashMessenger()->addErrorMessage("Impossible de créer une substitution sans renseigner le libellé de la structure cible !");
+                return $this->redirect()->toRoute(null, [],[], true);
+            }
+
             $sources = [];
             foreach($data['sourceIds'] as $sourceId) {
                 $structure = $this->structureService->findStructureById($sourceId);
