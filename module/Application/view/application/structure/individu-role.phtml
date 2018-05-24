@@ -1,0 +1,81 @@
+<?php
+
+use Application\Entity\Db\Individu;
+use Application\Entity\Db\Role;
+
+/**
+ * @var Role[]                          $roles              (la liste des roles associés à la structure)
+ * @var Individu[]                      membres             (la liste des individus associés à la structure)
+ * @var array(string => Individu[])     $repartition        (la liste des roles avec les individus associés)
+ */
+?>
+
+<h3 xmlns="http://www.w3.org/1999/html">
+    Rôles
+    <span class="badge"> <?php echo count($roles); ?> </span>
+</h3>
+
+<table class="table table-extra-condensed">
+    <thead>
+        <tr>
+            <th>
+                Libellé du rôle
+            </th>
+            <th>
+                Effectif
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach($roles as $role): ?>
+        <tr>
+            <td>
+                <?php echo $role->getLibelle(); ?>
+            </td>
+            <td>
+                <?php echo count($repartition[$role->getId()]); ?>
+            </td>
+        </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+
+<h3>
+    Membres
+    <span class="badge"> <?php echo count($membres); ?> </span>
+</h3>
+
+<table class="table table-extra-condensed">
+    <thead>
+    <tr>
+        <th>
+            Utilisateur
+        </th>
+        <th>
+            Rôle
+        </th>
+        <th>
+            Actions
+        </th>
+    </tr>
+    </thead>
+    <tbody
+        <?php foreach($roles as $role): ?>
+            <?php
+                /** @var Individu $membre */
+            foreach($repartition[$role->getId()] as $membre): ?>
+                <tr>
+                    <td>
+                        <?php echo $membre->getPrenom() . " " . $membre->getNomUsuel(); ?>
+                    </td>
+                    <td>
+                        <?php echo $role->getLibelle(); ?>
+                    </td>
+                    <td>
+
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        <?php endforeach; ?>
+    </tbody>
+</table>
