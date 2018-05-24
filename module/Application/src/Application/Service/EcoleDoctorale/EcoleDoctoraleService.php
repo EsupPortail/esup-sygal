@@ -4,6 +4,7 @@ namespace Application\Service\EcoleDoctorale;
 
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Individu;
+use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Repository\EcoleDoctoraleRepository;
 use Application\Entity\Db\Structure;
 use Application\Entity\Db\TypeStructure;

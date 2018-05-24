@@ -1423,21 +1423,23 @@ class TheseController extends AbstractController
          * - La dénomination du doctarant "doctorant"
          * - La date de soutenance "date"
          */
+        $manques = [];
         $infos = [];
         if ($these !== null && $these->getLibelleDiscipline() !== null) {
             $infos["specialite"] = $these->getLibelleDiscipline();
         } else {
-            //TODO NOTIFIER l'absence de spécialité
+            $manques[] = "la spécialité";
         }
         if ($these !== null && $these->getEtablissement() !== null) {
             $infos["etablissement"] = $these->getEtablissement()->getLibelle();
         } else {
-            //TODO NOTIFIER l'établissement d'inscription est absent (au admin tech)
+            // /!\ Ce cas ne doit jamais se produire !!!
+            //NOTIFIER l'établissement d'inscription est absent (au admin tech)
         }
         if ($these !== null && $these->getTitre() !== null) {
             $infos["titre"] = $these->getTitre();
         } else {
-            //TODO NOTIFIER le titre est vide (BDD UNIV)
+            $manques[] = "le titre";
         }
         if ($these !== null && $these->getDoctorant() !== null) {
             //TODO utiliser un formater
@@ -1445,13 +1447,14 @@ class TheseController extends AbstractController
             $infos["doctorant"] .= $these->getDoctorant()->getNomUsuel();
             if ($these->getDoctorant()->getNomPatronymique() != $these->getDoctorant()->getNomUsuel()) $infos["doctorant"] .= "-".$these->getDoctorant()->getNomPatronymique();
         } else {
-            //TODO NOTIFIER le doctorant est manquant  (BDD UNIV)
+            $manques[] = "le doctorant";
         }
         if ($these !== null && $these->getDateSoutenance() !== null) {
             $infos["date"] = $these->getDateSoutenance()->format("d/m/Y");
         } else {
-            //TODO NOTIFIER la date est vide (BDD UNIV)
+            $manques[] = "la date de soutenance";
         }
+        if (!empty($manques)) $this->notificationService->triggerInformationManquante($these, $manques);
 
         /**
          * Les logos à afficher sur la première page sont les suivants :
@@ -1468,9 +1471,10 @@ class TheseController extends AbstractController
             $logos["comue"] = $comue->getCheminLogo();
         } else {
             if ($comue === null) {
-                //TODO NOTIFIER l'établissement representant la COMUE est absent (au admin tech)
+                // /!\ Ce cas ne doit jamais se produire !!!
+                // NOTIFIER l'établissement representant la COMUE est absent (au admin tech)
             } else {
-                //TODO NOTIFIER le logo de la COMUE est non renseigné (au admin tech)
+                $this->notificationService->triggerLogoAbsentEtablissement($comue);
             }
         }
         $etablissement = $these->getEtablissement();
@@ -1478,9 +1482,10 @@ class TheseController extends AbstractController
             $logos["etablissement"] = $etablissement->getCheminLogo();
         } else {
             if ($etablissement === null) {
-                //TODO NOTIFIER l'établissement d'inscription est absent (au admin tech)
+                // /!\ Ce cas ne doit jamais se produire !!!
+                //NOTIFIER l'établissement d'inscription est absent (au admin tech)
             } else {
-                //TODO $notifier->triggerLogoAbsentEtablissement($these->getEtablissement());
+                $this->notificationService->triggerLogoAbsentEtablissement($these->getEtablissement());
             }
         }
         // =========> TODO CO-TUTELLE
@@ -1489,9 +1494,10 @@ class TheseController extends AbstractController
             $logos["ecole"] = $ecole->getCheminLogo();
         } else {
             if ($ecole === null) {
-                //TODO NOTIFIER l'école doctorale est absente (au BDD UNIV)
+                $this->notificationService->triggerEcoleDoctoraleAbsente($these);
             } else {
-                //TODO $notifier->triggerLogoAbsentEcoleDoctorale($these->getEcoleDoctorale());
+                $this->notificationService->triggerLogoAbsentEcoleDoctorale($ecole);
+
             }
         }
         $unite = $these->getUniteRecherche();
@@ -1499,9 +1505,9 @@ class TheseController extends AbstractController
             $logos["unite"] = $unite->getCheminLogo();
         } else {
             if ($unite === null) {
-                //TODO NOTIFIER l'unite de recherche est absente (au BDD UNIV)
+                $this->notificationService->triggerUniteRechercheAbsente($these);
             } else {
-                //TODO $notifier->triggerLogoAbsentUniteRecherche($these->getUniteRecherche());
+                $this->notificationService->triggerLogoAbsentUniteRecherche($unite);
             }
         }
 
@@ -1537,7 +1543,8 @@ class TheseController extends AbstractController
         if ($these->getUniteRecherche() && $these->getUniteRecherche()->getLibelle()) {
             $encadrements["unite"] = $these->getUniteRecherche()->getLibelle();
         } else {
-            //TODO NOTIFIER l'unite de recherche est absente (au BDD univ)
+            // /!\ déjà notifier au moment du logo !!!
+            //NOTIFIER l'unite de recherche est absente (au BDD univ)
         }
         $directeurs = array_filter($these->getActeurs()->toArray(), function($a) {return TheseController::estDirecteur($a); });
         $directeurs_array = [];

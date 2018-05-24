@@ -50,11 +50,20 @@ class RoleService extends BaseService
     }
 
     public function getIndividuByStructure(Structure $structure) {
+       $individuRoles = $this->getIndividuRoleByStructure($structure);
+        $individus = [];
+        /** @var IndividuRole $individuRole */
+        foreach ($individuRoles as $individuRole) {
+            $individus[] = $individuRole->getIndividu();
+        }
+        return $individus;
+    }
+
+    public function getIndividuRoleByStructure(Structure $structure) {
         $repo = $this->entityManager->getRepository( IndividuRole::class);
         $qb = $repo->createQueryBuilder("ir")
-            ->select("i")
-            ->leftJoin("individu", "i", "WITH", "ir.individu_id = i.id")
-            ->andWhere('ir.structure = structure')
+            ->leftJoin("ir.role","r")
+            ->andWhere('r.structure = :structure')
             ->setParameter("structure", $structure);
         return $qb->getQuery()->execute();
     }
