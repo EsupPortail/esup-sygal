@@ -13,52 +13,126 @@ use Application\View\Renderer\PhpRenderer;
  */
 ?>
 
+
 <?php $this->headTitle($this->translate("Établissements")) ?>
 
 <h1 class="page-header first">
     <?php echo $this->translate("Établissements") ?>
     <span class="badge"><?php echo count($structuresPrincipales) + count($structuresSecondaires); ?></span>
 </h1>
-<?php echo $this->messenger()->addCurrentMessagesFromFlashMessenger() ?>
+<?php //echo $this->messenger()->addCurrentMessagesFromFlashMessenger() ?>
 
 <div>
 <h2>
     Établissements de la COMUE
     <span class="badge"><?php echo count($structuresPrincipales); ?></span>
 </h2>
-<?php echo $this->structureArrayHelper()->generateTable($structuresPrincipales, $roles, $effectifs, $selected, $this); ?>
-</div>
 
-<div>
-<h2>
-    Établissements importés
-    <span class="badge"><?php echo count($structuresSecondaires); ?></span>
-</h2>
-<?php echo $this->structureArrayHelper()->generateTable($structuresSecondaires, $roles, $effectifs, $selected, $this); ?>
-</div>
+<table class="table table-condensed">
+    <thead>
+        <tr>
+            <th> Libellé </th>
+            <th> Sigle </th>
+            <th> Actions </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+        <?php foreach($structuresPrincipales as $structure): ?>
+            <td> <?php echo $structure->getLibelle(); ?> </td>
+            <td> <?php echo $structure->getSigle(); ?></td>
+            <td> TODO </td>
+        </tr>
+        <?php if ($selected == $structure->getStructure()->getId()): ?>
+        <tr class="ecole-doctorale selected" style="color:black;">
+            <td colspan="3">
+                    <div id="selected">
+                        test
+                    </div>
+            </td>
+        </tr>
+        <?php endif; ?>
+        <?php endforeach; ?>
+
+    </tbody>
+</table>
+
+    <?php //echo $this->structureArrayHelper()->generateTable($structuresPrincipales, $roles, $effectifs, $selected, $this); ?>
+<!--</div>-->
+<!---->
+<!--<div>-->
+<!--<h2>-->
+<!--    Établissements importés-->
+<!--    <span class="badge">--><?php //echo count($structuresSecondaires); ?><!--</span>-->
+<!--</h2>-->
+<?php //echo $this->structureArrayHelper()->generateTable($structuresSecondaires, $roles, $effectifs, $selected, $this); ?>
+<!--</div>-->
+<!---->
+<!---->
+<?php //if ($this->isAllowed(EtablissementPrivileges::getResourceId(EtablissementPrivileges::ETABLISSEMENT_MODIFICATION))): ?>
+<!--    --><?php //$url = $this->url('etablissement/ajouter', [], [], true) ?>
+<!--    <a class="btn btn-default btn-sm" href="--><?php //echo $url ?><!--"-->
+<!--       title="--><?php //echo $this->translate("Créer un nouvel établissement");?><!--">-->
+<!--        <span class="glyphicon glyphicon-plus"></span> --><?php //echo $this->translate("Ajouter");?>
+<!--    </a>-->
+<?php //endif ?>
+<!---->
+<!---->
+<!---->
+<!--<script type="text/javascript">-->
+<!--    $(function () {-->
+<!--        $(".retirer-individu").click(function() {-->
+<!--            var individu = $(this).data('individu');-->
+<!--            return confirm("--><?php //echo $this->translate("Êtes-vous sûr-e de vouloir retirer ");?><!--" + "'" + individu + "'" + " " + "--><?php //echo $this->translate("de la liste des membres ?");?><!--");-->
+<!--        }); -->
+<!--        $(".supprimer-etablissement").click(function() {-->
+<!--            var etablissement = $(this).data('etablissement');-->
+<!--            return confirm("--><?php ////echo $this->translate("Êtes-vous sûr-e de vouloir supprimer l'établissement ");?><!--//" + "'" + etablissement + "'" + " ? ");-->
+<!--        });-->
+<!--    });-->
+<!--</script>-->
 
 
-<?php if ($this->isAllowed(EtablissementPrivileges::getResourceId(EtablissementPrivileges::ETABLISSEMENT_MODIFICATION))): ?>
-    <?php $url = $this->url('etablissement/ajouter', [], [], true) ?>
-    <a class="btn btn-default btn-sm" href="<?php echo $url ?>"
-       title="<?php echo $this->translate("Créer un nouvel établissement");?>">
-        <span class="glyphicon glyphicon-plus"></span> <?php echo $this->translate("Ajouter");?>
-    </a>
-<?php endif ?>
+
+<script>
+    $(document).ready(function () {
+        $.loadIndividu();
 
 
+        $("div#selected").on("click", ".remove-role", function () {
+            var id = $(this).attr("id");
+            var splits = id.split("_");
+            var role = splits[1];
+            var individu = splits[0];
 
-<script type="text/javascript">
-    $(function () {
-        $(".retirer-individu").click(function() {
-            var individu = $(this).data('individu');
-            return confirm("<?php echo $this->translate("Êtes-vous sûr-e de vouloir retirer ");?>" + "'" + individu + "'" + " " + "<?php echo $this->translate("de la liste des membres ?");?>");
-        });
-        $(".supprimer-etablissement").click(function() {
-            var etablissement = $(this).data('etablissement');
-            return confirm("<?php echo $this->translate("Êtes-vous sûr-e de vouloir supprimer l'établissement ");?>" + "'" + etablissement + "'" + " ? ");
+            var url = "../../utilisateur/retirer-role/" + individu + "/" + role;
+
+            $.ajax({
+                url: url,
+                beforeSend:
+                    function () {
+                        document.getElementById("selected").innerHTML = "<em> Chargement des individus associé à la structure ...</em>";
+                    },
+                success:
+                    $.loadIndividu(),
+            });
         });
     });
+
+
+    $.loadIndividu = function() {
+        var url = "../structure/individu-role/" + <?php echo $selected; ?>;
+        $.ajax({
+            url : url,
+            beforeSend:
+                function () {
+                    document.getElementById("selected").innerHTML = "Chargement des individus associé à la structure ...";
+                },
+            success:
+                function(retour){
+                    document.getElementById("selected").innerHTML = retour;
+                }
+        });
+    }
+
 </script>
-
-

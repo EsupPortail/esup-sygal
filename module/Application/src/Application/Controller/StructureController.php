@@ -21,7 +21,7 @@ class StructureController extends AbstractController {
         $structureId = $this->params()->fromRoute("structure");
         $structure = $this->structureService->findStructureById($structureId);
 
-        var_dump($structure->getLibelle());
+//        var_dump($structure->getLibelle());
 
         $roles_tmp = $this->roleService->getRolesByStructure($structure);
         $roles = [];

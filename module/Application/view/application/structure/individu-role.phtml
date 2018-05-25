@@ -72,10 +72,33 @@ use Application\Entity\Db\Role;
                         <?php echo $role->getLibelle(); ?>
                     </td>
                     <td>
-
+                        <span id="<?php echo $membre->getId();?>_<?php echo $role->getId();?>" class="remove-role glyphicon glyphicon-trash"> </span>
                     </td>
                 </tr>
             <?php endforeach; ?>
         <?php endforeach; ?>
     </tbody>
 </table>
+
+<script>
+    // $(document).ready(function () {
+    //     $(".remove-role").click(function () {
+    //         var id = $(this).attr("id");
+    //         var splits = id.split("_");
+    //         var role = splits[1];
+    //         var individu = splits[0];
+    //
+    //         var url = "../../utilisateur/retirer-role/" + individu + "/" + role;
+    //
+    //         $.ajax({
+    //             url: url
+    //         });
+    //     });
+    // });
+</script>
+
+<style>
+    .remove-role:hover {
+        cursor: pointer;
+    }
+</style>
