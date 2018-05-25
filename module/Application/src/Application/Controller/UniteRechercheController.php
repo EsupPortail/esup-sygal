@@ -177,7 +177,7 @@ class UniteRechercheController extends AbstractController
 
                 $this->flashMessenger()->addSuccessMessage("Unité de recherche '$unite' créée avec succès");
 
-                return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $unite->getId()]], true);
+                return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $unite->getStructure()->getId()]], true);
             }
         }
 

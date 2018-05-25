@@ -168,7 +168,7 @@ class EcoleDoctoraleController extends AbstractController
 
                 $this->flashMessenger()->addSuccessMessage("École doctorale '$ecole' créée avec succès");
 
-                return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecole->getId()]], true);
+                return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecole->getStructure()->getId()]], true);
             }
         }
 

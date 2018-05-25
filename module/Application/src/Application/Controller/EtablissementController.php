@@ -134,7 +134,7 @@ class EtablissementController extends AbstractController
 
                 $this->flashMessenger()->addSuccessMessage("Établissement '$etablissement' créée avec succès");
 
-                return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $etablissement->getId()]], true);
+                return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $etablissement->getStructure()->getId()]], true);
             }
         }
 

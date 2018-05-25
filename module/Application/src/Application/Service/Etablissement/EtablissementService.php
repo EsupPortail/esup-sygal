@@ -94,6 +94,7 @@ class EtablissementService extends BaseService
         /** @var TypeStructure $typeStructure */
         $typeStructure = $this->getEntityManager()->getRepository(TypeStructure::class)->findOneBy(['code' => 'etablissement']);
         $etablissement->getStructure()->setTypeStructure($typeStructure);
+        $etablissement->setSourceCode("SyGAL::" . uniqid());
 
         $this->persist($etablissement);
         $this->flush($etablissement);
