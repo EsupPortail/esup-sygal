@@ -79,7 +79,6 @@ return [
     'view_helpers' => [
         'invokables' => array(
             'structureSubstitHelper' => StructureSubstitHelper::class,
-            'structureArrayHelper' => StructureArrayHelper::class,
         ),
         'factories' => [],
     ],
