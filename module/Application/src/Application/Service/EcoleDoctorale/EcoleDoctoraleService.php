@@ -70,6 +70,17 @@ class EcoleDoctoraleService extends BaseService implements RoleServiceAwareInter
         return $ecole;
     }
 
+    public function getEcoleDoctoraleByStructureId($id) {
+        /** @var EcoleDoctorale $ecole */
+        $qb = $this->getRepository()->createQueryBuilder("ed")
+            ->addSelect("s")
+            ->leftJoin("ed.structure", "s")
+            ->andWhere("s.id = :id")
+            ->setParameter("id", $id);
+        $ecole = $qb->getQuery()->getOneOrNullResult();
+        return $ecole;
+    }
+
     /**
      * @param int $id
      * @return Individu[]

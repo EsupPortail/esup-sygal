@@ -45,25 +45,12 @@ class EtablissementController extends AbstractController
     }
 
     /**
-     * @return Etablissement
-     */
-    private function requestEtablissement()
-    {
-        /** @var RouteMatch $routeMatch */
-        $routeMatch = $this->getEvent()->getRouteMatch();
-
-        return $routeMatch->getEtablissement();
-    }
-
-    /**
      * L'index récupére :
      * - la liste des établissements
      * - l'établissement sélectionné
      * - la liste des rôles associées à l'établissement
      * - un tableau de tableaux des rôles associés à chaque rôle
      * @return \Zend\Http\Response|ViewModel
-     *
-     * TODO transformer effectifs en tableau associatif (rôle => liste de membres)
      */
     public function indexAction()
     {
@@ -78,7 +65,7 @@ class EtablissementController extends AbstractController
              * @var Etablissement $etablissement
              * @var Role[] $roles
              */
-            $etablissement  = $this->etablissementService->getEtablissementById($selected);
+            $etablissement  = $this->etablissementService->getEtablissementByStructureId($selected);
             $roles = $etablissement->getStructure()->getStructureDependantRoles();
 
             $effectifs = [];
@@ -163,18 +150,21 @@ class EtablissementController extends AbstractController
 
     public function supprimerAction()
     {
-        $etablissement = $this->requestEtablissement();
+        $structureId = $this->params()->fromRoute("etablissement");
+        $etablissement = $this->getEtablissementService()->getEtablissementByStructureId($structureId);
+
         $destructeur = $this->userContextService->getIdentityDb();
         $this->etablissementService->deleteSoftly($etablissement, $destructeur);
         $this->flashMessenger()->addSuccessMessage("Établissement '$etablissement' supprimé avec succès");
 
-        return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $etablissement->getId()]], true);
+        return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $structureId]], true);
     }
 
     public function modifierAction()
     {
         /** @var Etablissement $etablissement */
-        $etablissement = $this->requestEtablissement();
+        $structureId = $this->params()->fromRoute("etablissement");
+        $etablissement = $this->getEtablissementService()->getEtablissementByStructureId($structureId);
         $this->etablissementForm->bind($etablissement);
 
         // si POST alors on revient du formulaire
@@ -188,7 +178,7 @@ class EtablissementController extends AbstractController
             // action d'affacement du logo
             if (isset($data['supprimer-logo'])) {
                 $this->supprimerLogoEtablissement();
-                return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $etablissement->getId()]], true);
+                return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $structureId]], true);
             }
 
             // action de modification
@@ -204,10 +194,10 @@ class EtablissementController extends AbstractController
                 $this->etablissementService->update($etablissement);
 
                 $this->flashMessenger()->addSuccessMessage("Établissement '$etablissement' modifiée avec succès");
-                return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $etablissement->getId()]], true);
+                return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $structureId]], true);
             }
             $this->flashMessenger()->addErrorMessage("Echec de la mise à jour : données incorrectes saissie");
-            return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $etablissement->getId()]], true);
+            return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $structureId]], true);
         }
 
         // envoie vers le formulaire de modification
@@ -221,13 +211,14 @@ class EtablissementController extends AbstractController
 
     public function restaurerAction()
     {
-        $etablissement = $this->requestEtablissement();
+        $structureId = $this->params()->fromRoute("etablissement");
+        $etablissement = $this->getEtablissementService()->getEtablissementByStructureId($structureId);
 
         $this->etablissementService->undelete($etablissement);
 
         $this->flashMessenger()->addSuccessMessage("Établissement '$etablissement' restauré avec succès");
 
-        return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $etablissement->getId()]], true);
+        return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $structureId]], true);
     }
 
     /**
@@ -237,7 +228,8 @@ class EtablissementController extends AbstractController
      */
     public function supprimerLogoEtablissement()
     {
-        $etablissement = $this->requestEtablissement();
+        $structureId = $this->params()->fromRoute("etablissement");
+        $etablissement = $this->getEtablissementService()->getEtablissementByStructureId($structureId);
 
         $this->etablissementService->deleteLogo($etablissement);
         $filename   = EtablissementController::getLogoFilename($etablissement, true);
@@ -268,7 +260,10 @@ class EtablissementController extends AbstractController
             return;
         }
 
-        if ($etablissement === null) $etablissement  = $this->requestEtablissement();
+        if ($etablissement === null) {
+            $structureId = $this->params()->fromRoute("etablissement");
+            $etablissement = $this->getEtablissementService()->getEtablissementByStructureId($structureId);
+        }
         $chemin         = EtablissementController::getLogoFilename($etablissement, false);
         $filename       = EtablissementController::getLogoFilename($etablissement, true);
         $result = rename($cheminLogoUploade, $filename);
@@ -276,7 +271,7 @@ class EtablissementController extends AbstractController
             $this->flashMessenger()->addSuccessMessage("Le logo de l'établissement {$etablissement->getLibelle()} vient d'être ajouté.");
             $this->etablissementService->setLogo($etablissement,$chemin);
         } else {
-            $this->flashMessenger()->addErrorMessage("Erreur lors de l'enregistrement du logo de l'établissement <strong>{$etablissement->getLibelle()}.</strong>");
+            $this->flashMessenger()->addErrorMessage("Erreur lors de l'enregistrement du logo de l'établissement <strong>{$etablissement->getLibelle()}.</strong> ");
         }
     }
 
@@ -293,71 +288,5 @@ class EtablissementController extends AbstractController
         if ($fullpath) $chemin .= "/var/sygal-files";
         $chemin .= "/ressources/Logos/Etab/".$etablissement->getCode().".png";
         return $chemin;
-    }
-
-    /**
-     * Ajout des individus et de leurs rôles dans la table INDIVIDU_ROLE
-     * @return \Zend\Http\Response
-     */
-    public function ajouterIndividuAction()
-    {
-        $etabId     = $this->params()->fromRoute('etablissement');
-        $data       = $this->params()->fromPost('individu');
-        $roleId     = $this->params()->fromPost('role');
-
-        if (!empty($data['id'])) {
-            /** @var Individu $individu */
-            $individu = $this->individuService->getRepository()->find($data['id']);
-            if ($individu) {
-                /**
-                 * @var Etablissement $etablissement
-                 * @var Role $role
-                 * @var IndividuRole $individuRole
-                 */
-                $etablissement = $this->etablissementService->getEtablissementById($etabId);
-                $role = $this->roleService->getRoleById($roleId);
-                $individuRole = $this->roleService->addIndividuRole($individu,$role);
-
-                $this->notificationService->triggerChangementRole("ajout", $individuRole->getRole(), $individuRole->getIndividu());
-
-                $this->flashMessenger()->addSuccessMessage(
-                    "<strong>{$individuRole->getIndividu()}</strong>". " est désormais " .
-                    "<strong>{$individuRole->getRole()}</strong>". " de l'etablissement ".
-                    "<strong>{$etablissement->getLibelle()}</strong>.");
-            }
-        }
-
-        return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $etabId]], true);
-    }
-
-    /**
-     * Retrait des individus et de leurs rôles dans la table INDIVIDU_ROLE
-     * @return \Zend\Http\Response
-     * @throws \Doctrine\ORM\OptimisticLockException
-     */
-    public function retirerIndividuAction()
-    {
-        $etabId = $this->params()->fromRoute('etablissement');
-        $irId = $this->params()->fromRoute('etabi');
-
-        $etablissement = null;
-        if ($etabId !== null) {
-            $etablissement = $this->etablissementService->getEtablissementById($etabId);
-        }
-
-        if ($irId) {
-            $individuRole = $this->roleService->removeIndividuRoleById($irId);
-
-            $this->notificationService->triggerChangementRole("retrait", $individuRole->getRole(), $individuRole->getIndividu());
-
-            $this->flashMessenger()->addSuccessMessage(
-                "<strong>{$individuRole->getIndividu()}</strong>" . " n'est plus "
-                ."<strong>{$individuRole->getRole()}</strong>" . " de l'établissement "
-                ."<strong>{$etablissement->getLibelle()}</strong>"."</strong>");
-
-            return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $etabId]], true);
-        }
-
-        return $this->redirect()->toRoute('etablissement', [], [], true);
     }
 }

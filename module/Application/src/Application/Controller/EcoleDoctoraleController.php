@@ -45,7 +45,7 @@ class EcoleDoctoraleController extends AbstractController
              * @var StructureConcreteInterface $structure
              * @var Role[] $roles
              */
-            $structure  = $this->ecoleDoctoraleService->getEcoleDoctoraleById($selected);
+            $structure  = $this->ecoleDoctoraleService->getEcoleDoctoraleByStructureId($selected);
             $roles = $structure->getStructure()->getStructureDependantRoles();
 
             $effectifs = [];
@@ -94,7 +94,8 @@ class EcoleDoctoraleController extends AbstractController
     public function modifierAction()
     {
         /** @var EcoleDoctorale $ecole */
-        $ecole = $this->requestEcoleDoctorale();
+        $ecoleId = $this->params()->fromRoute("ecoleDoctorale");
+        $ecole  = $this->ecoleDoctoraleService->getEcoleDoctoraleByStructureId($ecoleId);
         $this->ecoleDoctoraleForm->bind($ecole);
 
         // si POST alors on revient du formulaire
@@ -108,7 +109,7 @@ class EcoleDoctoraleController extends AbstractController
             // action d'affacement du logo
             if (isset($data['supprimer-logo'])) {
                 $this->supprimerLogoEcoleDoctorale();
-                return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecole->getId()]], true);
+                return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecoleId]], true);
             }
 
             // action de modification
@@ -124,10 +125,10 @@ class EcoleDoctoraleController extends AbstractController
                 $this->ecoleDoctoraleService->update($ecole);
 
                 $this->flashMessenger()->addSuccessMessage("École doctorale '$ecole' modifiée avec succès");
-                return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecole->getId()]], true);
+                return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecoleId]], true);
             }
             $this->flashMessenger()->addErrorMessage("Echec de la mise à jour : données incorrectes saissie");
-            return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecole->getId()]], true);
+            return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecoleId]], true);
         }
 
         // envoie vers le formulaire de modification
@@ -183,101 +184,26 @@ class EcoleDoctoraleController extends AbstractController
 
     public function supprimerAction()
     {
-        $ecole = $this->requestEcoleDoctorale();
+        $ecoleId = $this->params()->fromRoute("ecoleDoctorale");
+        $ecole  = $this->ecoleDoctoraleService->getEcoleDoctoraleByStructureId($ecoleId);
 
         $this->ecoleDoctoraleService->deleteSoftly($ecole, $this->userContextService->getIdentityDb());
 
         $this->flashMessenger()->addSuccessMessage("École doctorale '$ecole' supprimée avec succès");
 
-        return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecole->getId()]], true);
+        return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecoleId]], true);
     }
 
     public function restaurerAction()
     {
-        $ecole = $this->requestEcoleDoctorale();
+        $ecoleId = $this->params()->fromRoute("ecoleDoctorale");
+        $ecole  = $this->ecoleDoctoraleService->getEcoleDoctoraleByStructureId($ecoleId);
 
         $this->ecoleDoctoraleService->undelete($ecole);
 
         $this->flashMessenger()->addSuccessMessage("École doctorale '$ecole' restaurée avec succès");
 
-        return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecole->getId()]], true);
-    }
-
-    /**
-     * Ajout des individus et de leurs rôles dans la table INDIVIDU_ROLE
-     * @return \Zend\Http\Response
-     */
-    public function ajouterIndividuAction()
-    {
-        $edId       = $this->params()->fromRoute('ecoleDoctorale');
-        $data       = $this->params()->fromPost('individu');
-        $roleId     = $this->params()->fromPost('role');
-
-        if (!empty($data['id'])) {
-            /** @var Individu $individu */
-            $individu = $this->individuService->getRepository()->find($data['id']);
-            if ($individu) {
-                /**
-                 * @var EcoleDoctorale $ecole
-                 * @var Role $role
-                 * @var IndividuRole $individuRole
-                 */
-                $ecole = $this->ecoleDoctoraleService->getEcoleDoctoraleById($edId);
-                $role = $this->roleService->getRoleById($roleId);
-                $individuRole = $this->roleService->addIndividuRole($individu, $role);
-
-                $this->notificationService->triggerChangementRole("ajout", $individuRole->getRole(), $individuRole->getIndividu());
-
-                $this->flashMessenger()->addSuccessMessage(
-                    "<strong>{$individuRole->getIndividu()}</strong>". " est désormais " .
-                    "<strong>{$individuRole->getRole()}</strong>". " de l'école doctorale ".
-                    "<strong>{$ecole->getLibelle()}</strong>.");
-            }
-        }
-
-        return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $edId]], true);
-    }
-
-    /**
-     * Retrait des individus et de leurs rôles dans la table INDIVIDU_ROLE
-     * @return \Zend\Http\Response
-     * @throws \Doctrine\ORM\OptimisticLockException
-     */
-    public function retirerIndividuAction()
-    {
-        $edId = $this->params()->fromRoute('ecoleDoctorale');
-        $irId = $this->params()->fromRoute('edi');
-
-        $ecole = null;
-        if ($edId !== null) {
-            $ecole = $this->ecoleDoctoraleService->getEcoleDoctoraleById($edId);
-        }
-
-        if ($irId) {
-            $individuRole = $this->roleService->removeIndividuRoleById($irId);
-
-            $this->notificationService->triggerChangementRole("retrait", $individuRole->getRole(), $individuRole->getIndividu());
-
-            $this->flashMessenger()->addSuccessMessage(
-                "<strong>{$individuRole->getIndividu()}</strong>" . " n'est plus "
-                ."<strong>{$individuRole->getRole()}</strong>" . " de l'école doctorale "
-                ."<strong>{$ecole->getLibelle()}</strong>"."</strong>");
-
-            return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $edId]], true);
-        }
-
-        return $this->redirect()->toRoute('ecole-doctorale', [], [], true);
-    }
-
-    /**
-     * @return EcoleDoctorale
-     */
-    private function requestEcoleDoctorale()
-    {
-        /** @var RouteMatch $routeMatch */
-        $routeMatch = $this->getEvent()->getRouteMatch();
-
-        return $routeMatch->getEcoleDoctorale();
+        return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecoleId]], true);
     }
 
     /**
@@ -303,7 +229,8 @@ class EcoleDoctoraleController extends AbstractController
      */
     public function supprimerLogoEcoleDoctorale()
     {
-        $ecole = $this->requestEcoleDoctorale();
+        $ecoleId = $this->params()->fromRoute("ecoleDoctorale");
+        $ecole  = $this->ecoleDoctoraleService->getEcoleDoctoraleByStructureId($ecoleId);
 
         $this->ecoleDoctoraleService->deleteLogo($ecole);
         $filename   = EcoleDoctoraleController::getLogoFilename($ecole, true);
@@ -334,7 +261,10 @@ class EcoleDoctoraleController extends AbstractController
             return;
         }
 
-        if ($ecole === null) $ecole      = $this->requestEcoleDoctorale();
+        if ($ecole === null) {
+            $ecoleId = $this->params()->fromRoute("ecoleDoctorale");
+            $ecole  = $this->ecoleDoctoraleService->getEcoleDoctoraleByStructureId($ecoleId);
+        }
         $chemin     = EcoleDoctoraleController::getLogoFilename($ecole, false);
         $filename   = EcoleDoctoraleController::getLogoFilename($ecole, true);
         $result = rename($cheminLogoUploade, $filename);

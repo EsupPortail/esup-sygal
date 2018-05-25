@@ -3,6 +3,7 @@
 use Application\Entity\Db\Etablissement;
 use Application\Provider\Privilege\EtablissementPrivileges;
 use Application\View\Renderer\PhpRenderer;
+use UnicaenApp\Form\Element\SearchAndSelect;
 
 /**
  * @var PhpRenderer $this
@@ -11,6 +12,9 @@ use Application\View\Renderer\PhpRenderer;
  * @var string      $selected
  * @var array|null  $etablissementIndividus
  */
+
+$canModifier = $this->isAllowed(EtablissementPrivileges::getResourceId(EtablissementPrivileges::ETABLISSEMENT_MODIFICATION));
+
 ?>
 
 
@@ -20,7 +24,19 @@ use Application\View\Renderer\PhpRenderer;
     <?php echo $this->translate("Établissements") ?>
     <span class="badge"><?php echo count($structuresPrincipales) + count($structuresSecondaires); ?></span>
 </h1>
-<?php //echo $this->messenger()->addCurrentMessagesFromFlashMessenger() ?>
+
+<?php echo $this->messenger()->addCurrentMessagesFromFlashMessenger() ?>
+
+<?php if ($canModifier): ?>
+
+    <a href="<?php echo $this->url('etablissement/ajouter', [], [], true) ?>"
+       class="btn btn-default btn-sm"
+       title="<?php echo $this->translate("Créer un nouvel établissement");?>">
+        <span class="glyphicon glyphicon-plus"></span>
+        <?php echo $this->translate("Ajouter un nouvel établissement");?>
+    </a>
+<?php endif ?>
+
 
 <div>
 <h2>
@@ -37,18 +53,88 @@ use Application\View\Renderer\PhpRenderer;
         </tr>
     </thead>
     <tbody>
-        <tr>
-        <?php foreach($structuresPrincipales as $structure): ?>
-            <td> <?php echo $structure->getLibelle(); ?> </td>
+    <?php foreach($structuresPrincipales as $structure): ?>
+        <?php
+            $historisee = (!$structure->estNonHistorise());
+            $hasSousStructure = !($structure->getStructure()->getStructuresSubstituees()->isEmpty());
+        ?>
+
+        <tr <?php if($selected == $structure->getStructure()->getId()) echo 'class="ecole-doctorale selected" style="color:black;"';?> >
+
+            <td>
+                <a href="<?php echo $this->url(null, [], ['query' => ['selected' => $structure->getStructure()->getId()]], true); ?>">
+                    <?php echo $structure->getLibelle(); ?>
+                </a>
+            </td>
             <td> <?php echo $structure->getSigle(); ?></td>
-            <td> TODO </td>
+            <td>
+                <?php if ($canModifier && !$historisee) : ?>
+                    <a href="<?php echo $this->url('etablissement/modifier', ["etablissement" => $structure->getStructure()->getId()], [], true); ?>"
+                       title="Modifier l'établissement">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </a>
+                <?php endif; ?>
+
+                <?php if ($canModifier && !$historisee) : ?>
+                    <a href="<?php echo $this->url('etablissement/supprimer', ["etablissement" => $structure->getStructure()->getId()], [], true); ?>"
+                       title="Historiser l'établissement">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </a>
+                <?endif; ?>
+
+                <?php if ($canModifier && !$historisee && $hasSousStructure) : ?>
+                    <a href="<?php echo $this->url('substitution-modifier', ['cible' => $structure->getStructure()->getId(), [], true]); ?>"
+                       title="Historiser l'établissement">
+                        <span class="glyphicon glyphicon-link" title="Éditer la substitution"></span>
+                    </a>
+                <?endif; ?>
+
+
+
+                <?php if ($canModifier && $historisee) : ?>
+                    <a href="<?php echo $this->url('etablissement/restaurer', ["etablissement" => $structure->getStructure()->getId()], [], true); ?>"
+                       title="Restaurer l'établissement">
+                        Restaurer
+                    </a>
+                <?endif; ?>
+            </td>
         </tr>
-        <?php if ($selected == $structure->getStructure()->getId()): ?>
+        <?php if ($selected == $structure->getStructure()->getId() && !$historisee): ?>
         <tr class="ecole-doctorale selected" style="color:black;">
             <td colspan="3">
-                    <div id="selected">
-                        test
-                    </div>
+                <div id="selected">
+                        Zone contenant les individus associé à la structure.
+                </div>
+
+                <div>
+                <div id="people" class="col-md-8">
+                    <?php if ($canModifier): ?>
+                        <div>
+<!--                            $urlAjouter = $view->url($prefix . '/ajouter-individu', [$type => $structure->getId()], [], true);-->
+                            <form method="post" action="">
+                                <?php
+                                    $sas = new SearchAndSelect('individu');
+                                    $sas->setLabel($this->translate("Recherche de l'individu à ajouter :"));
+                                    $sas->setAttribute('class', 'individu-finder');
+                                    $sas->setAutocompleteSource($this->url('utilisateur/rechercher-individu', [], [], true));
+                                    echo $this->formcontrolgroup($sas, 'formSearchAndSelect');
+                                    echo generateSelect("role", $roles);
+                                ?>
+                                <br/>
+<!--                                <input type="submit" value="Ajouter cet individu" style="margin-top: 0;" title="Ajouter cet individu comme membre" class="btn btn-default btn-sm" />-->
+                            </form>
+                                <button id="add-role" class="add-role btn btn-default">
+                                    <span class="glyphicon glyphicon-plus"></span><span class="glyphicon glyphicon-user"></span>
+                                    Ajouter un membre
+                                </button>
+
+                        </div>
+                    <?php endif;?>
+                </div>
+                <div id="logo-div" class="col-md-4">
+                    <img style="max-width: 200px; max-height: 200px; border: 1px solid black; background-color: white;" src="data:image/png;base64,<?php echo base64_encode($structure->getLogoContent()); ?>" />
+                </div>
+                </div>
             </td>
         </tr>
         <?php endif; ?>
@@ -57,46 +143,115 @@ use Application\View\Renderer\PhpRenderer;
     </tbody>
 </table>
 
-    <?php //echo $this->structureArrayHelper()->generateTable($structuresPrincipales, $roles, $effectifs, $selected, $this); ?>
-<!--</div>-->
-<!---->
-<!--<div>-->
-<!--<h2>-->
-<!--    Établissements importés-->
-<!--    <span class="badge">--><?php //echo count($structuresSecondaires); ?><!--</span>-->
-<!--</h2>-->
-<?php //echo $this->structureArrayHelper()->generateTable($structuresSecondaires, $roles, $effectifs, $selected, $this); ?>
-<!--</div>-->
-<!---->
-<!---->
-<?php //if ($this->isAllowed(EtablissementPrivileges::getResourceId(EtablissementPrivileges::ETABLISSEMENT_MODIFICATION))): ?>
-<!--    --><?php //$url = $this->url('etablissement/ajouter', [], [], true) ?>
-<!--    <a class="btn btn-default btn-sm" href="--><?php //echo $url ?><!--"-->
-<!--       title="--><?php //echo $this->translate("Créer un nouvel établissement");?><!--">-->
-<!--        <span class="glyphicon glyphicon-plus"></span> --><?php //echo $this->translate("Ajouter");?>
-<!--    </a>-->
-<?php //endif ?>
-<!---->
-<!---->
-<!---->
-<!--<script type="text/javascript">-->
-<!--    $(function () {-->
-<!--        $(".retirer-individu").click(function() {-->
-<!--            var individu = $(this).data('individu');-->
-<!--            return confirm("--><?php //echo $this->translate("Êtes-vous sûr-e de vouloir retirer ");?><!--" + "'" + individu + "'" + " " + "--><?php //echo $this->translate("de la liste des membres ?");?><!--");-->
-<!--        }); -->
-<!--        $(".supprimer-etablissement").click(function() {-->
-<!--            var etablissement = $(this).data('etablissement');-->
-<!--            return confirm("--><?php ////echo $this->translate("Êtes-vous sûr-e de vouloir supprimer l'établissement ");?><!--//" + "'" + etablissement + "'" + " ? ");-->
-<!--        });-->
-<!--    });-->
-<!--</script>-->
+<h2>
+    Établissements importés
+    <span class="badge"><?php echo count($structuresSecondaires); ?></span>
+</h2>
+
+    <table class="table table-condensed">
+        <thead>
+        <tr>
+            <th> Libellé </th>
+            <th> Sigle </th>
+            <th> Actions </th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach($structuresSecondaires as $structure): ?>
+            <?php
+            $historisee = (!$structure->estNonHistorise());
+            $hasSousStructure = !($structure->getStructure()->getStructuresSubstituees()->isEmpty());
+            ?>
+
+            <tr <?php if($selected == $structure->getStructure()->getId()) echo 'class="ecole-doctorale selected" style="color:black;"';?> >
+
+                <td>
+                    <a href="<?php echo $this->url(null, [], ['query' => ['selected' => $structure->getStructure()->getId()]], true); ?>">
+                        <?php echo $structure->getLibelle(); ?>
+                    </a>
+                </td>
+                <td> <?php echo $structure->getSigle(); ?></td>
+                <td>
+                    <?php if ($canModifier && !$historisee) : ?>
+                        <a href="<?php echo $this->url('etablissement/modifier', ["etablissement" => $structure->getStructure()->getId()], [], true); ?>"
+                           title="Modifier l'établissement">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </a>
+                    <?php endif; ?>
+
+                    <?php if ($canModifier && !$historisee) : ?>
+                        <a href="<?php echo $this->url('etablissement/supprimer', ["etablissement" => $structure->getStructure()->getId()], [], true); ?>"
+                           title="Historiser l'établissement">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </a>
+                    <?endif; ?>
+
+                    <?php if ($canModifier && !$historisee && $hasSousStructure) : ?>
+                        <a href="<?php echo $this->url('substitution-modifier', ['cible' => $structure->getStructure()->getId(), [], true]); ?>"
+                           title="Historiser l'établissement">
+                            <span class="glyphicon glyphicon-link" title="Éditer la substitution"></span>
+                        </a>
+                    <?endif; ?>
 
 
 
-<script>
+                    <?php if ($canModifier && $historisee) : ?>
+                        <a href="<?php echo $this->url('etablissement/restaurer', ["etablissement" => $structure->getStructure()->getId()], [], true); ?>"
+                           title="Restaurer l'établissement">
+                            Restaurer
+                        </a>
+                    <?endif; ?>
+                </td>
+            </tr>
+            <?php if ($selected == $structure->getStructure()->getId() && !$historisee): ?>
+                <tr class="ecole-doctorale selected" style="color:black;">
+                    <td colspan="3">
+                        <div id="selected">
+                            Zone contenant les individus associé à la structure.
+                        </div>
+
+                        <div>
+                            <div id="people" class="col-md-8">
+                                <?php if ($canModifier): ?>
+                                    <div>
+                                        <!--                            $urlAjouter = $view->url($prefix . '/ajouter-individu', [$type => $structure->getId()], [], true);-->
+                                        <form method="post" action="">
+                                            <?php
+                                            $sas = new SearchAndSelect('individu');
+                                            $sas->setLabel($this->translate("Recherche de l'individu à ajouter :"));
+                                            $sas->setAttribute('class', 'individu-finder');
+                                            $sas->setAutocompleteSource($this->url('utilisateur/rechercher-individu', [], [], true));
+                                            echo $this->formcontrolgroup($sas, 'formSearchAndSelect');
+                                            echo generateSelect("role", $roles);
+                                            ?>
+                                            <br/>
+                                            <!--                                <input type="submit" value="Ajouter cet individu" style="margin-top: 0;" title="Ajouter cet individu comme membre" class="btn btn-default btn-sm" />-->
+                                        </form>
+                                        <button id="add-role" class="add-role btn btn-default">
+                                            <span class="glyphicon glyphicon-plus"></span><span class="glyphicon glyphicon-user"></span>
+                                            Ajouter un membre
+                                        </button>
+
+                                    </div>
+                                <?php endif;?>
+                            </div>
+                            <div id="logo-div" class="col-md-4">
+                                <img style="max-width: 200px; max-height: 200px; border: 1px solid black; background-color: white;" src="data:image/png;base64,<?php echo base64_encode($structure->getLogoContent()); ?>" />
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            <?php endif; ?>
+        <?php endforeach; ?>
+
+        </tbody>
+    </table>
+
+
+
+    <script>
     $(document).ready(function () {
-        $.loadIndividu();
+        loadIndividu();
 
 
         $("div#selected").on("click", ".remove-role", function () {
@@ -111,28 +266,84 @@ use Application\View\Renderer\PhpRenderer;
                 url: url,
                 beforeSend:
                     function () {
-                        document.getElementById("selected").innerHTML = "<em> Chargement des individus associé à la structure ...</em>";
+                        $("#selected").html('<span class="waiting">Chargement des individus associé à la structure ...</span>');
                     },
                 success:
-                    $.loadIndividu(),
+                    function(retour) {
+                        loadIndividu();
+                    }
+            });
+        });
+
+        $("div#people").on("click", ".add-role", function () {
+            var individu = $("[name='individu[id]']").val();
+            var role = $("select[name='role'] option:selected").val();
+            var url = "../../utilisateur/ajouter-role/" + individu + "/" + role;
+
+            $.ajax({
+                url: url,
+                beforeSend:
+                    function () {
+                        $("#selected").html('<span class="waiting">Chargement des individus associé à la structure ...</span>');
+                    },
+                success:
+                    function(retour) {
+                        loadIndividu();
+                    }
             });
         });
     });
 
 
-    $.loadIndividu = function() {
-        var url = "../structure/individu-role/" + <?php echo $selected; ?>;
+    function loadIndividu() {
+        var url = "../structure/individu-role/" + <?php echo $selected; ?> + "/etablissement";
         $.ajax({
             url : url,
             beforeSend:
                 function () {
-                    document.getElementById("selected").innerHTML = "Chargement des individus associé à la structure ...";
+                    $("#selected").html('<span class="waiting">Chargement des individus associé à la structure ...</span>');
                 },
             success:
                 function(retour){
-                    document.getElementById("selected").innerHTML = retour;
+                    $("#selected").html(retour);
                 }
         });
     }
 
 </script>
+
+<style>
+    span.waiting {
+        color: DarkBlue;
+        font-style: italic;
+        font-weight: bold;
+    }
+</style>
+
+<?php
+function generateSelect($id, $roles)
+{
+    $texte = '';
+    $texte .= '<select name="' . $id . '" class="form-control" >';
+    /** @var \Application\Entity\Db\Role $role */
+    foreach ($roles as $role) {
+        $texte .= '<option value="' . $role->getId() . '">' . $role->getLibelle() . '</option>';
+    }
+    $texte .= '</select>';
+    return $texte;
+}
+?>
+
+    <!--<script type="text/javascript">-->
+    <!--    $(function () {-->
+    <!--        $(".retirer-individu").click(function() {-->
+    <!--            var individu = $(this).data('individu');-->
+    <!--            return confirm("--><?php //echo $this->translate("Êtes-vous sûr-e de vouloir retirer ");?><!--" + "'" + individu + "'" + " " + "--><?php //echo $this->translate("de la liste des membres ?");?><!--");-->
+    <!--        }); -->
+    <!--        $(".supprimer-etablissement").click(function() {-->
+    <!--            var etablissement = $(this).data('etablissement');-->
+    <!--            return confirm("--><?php ////echo $this->translate("Êtes-vous sûr-e de vouloir supprimer l'établissement ");?><!--//" + "'" + etablissement + "'" + " ? ");-->
+    <!--        });-->
+    <!--    });-->
+    <!--</script>-->
+

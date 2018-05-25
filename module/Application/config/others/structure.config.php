@@ -47,7 +47,7 @@ return [
                     'individu-role' => [
                         'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/individu-role/:structure',
+                            'route'       => '/individu-role/:structure[/:type]',
                             'defaults'    => [
                                 'action' => 'individu-role',
                             ],

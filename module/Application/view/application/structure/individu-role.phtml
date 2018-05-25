@@ -2,13 +2,33 @@
 
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
+use Application\Provider\Privilege\EcoleDoctoralePrivileges;
+use Application\Provider\Privilege\EtablissementPrivileges;
+use Application\Provider\Privilege\UniteRecherchePrivileges;
 
 /**
+ * @var string                          $type                  (etablissment|ecole-doctorale|unite-recherche)
  * @var Role[]                          $roles              (la liste des roles associés à la structure)
- * @var Individu[]                      membres             (la liste des individus associés à la structure)
+ * @var Individu[]                      $membres             (la liste des individus associés à la structure)
  * @var array(string => Individu[])     $repartition        (la liste des roles avec les individus associés)
  */
+
+$canModifier = false;
+switch($type) {
+    case "etablissement":
+        $canModifier = $this->isAllowed(EtablissementPrivileges::getResourceId(EtablissementPrivileges::ETABLISSEMENT_MODIFICATION));
+        break;
+    case "ecole-doctorale":
+        $canModifier = $this->isAllowed(EcoleDoctoralePrivileges::getResourceId(EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION));
+        break;
+    case "unite-recherche":
+        $canModifier = $this->isAllowed(UniteRecherchePrivileges::getResourceId(UniteRecherchePrivileges::UNITE_RECH_MODIFICATION));
+        break;
+}
+
 ?>
+
+<?php //echo $this->messenger()->addCurrentMessagesFromFlashMessenger() ?>
 
 <h3 xmlns="http://www.w3.org/1999/html">
     Rôles
@@ -72,7 +92,9 @@ use Application\Entity\Db\Role;
                         <?php echo $role->getLibelle(); ?>
                     </td>
                     <td>
-                        <span id="<?php echo $membre->getId();?>_<?php echo $role->getId();?>" class="remove-role glyphicon glyphicon-trash"> </span>
+                        <?php if ($canModifier): ?>
+                            <span id="<?php echo $membre->getId();?>_<?php echo $role->getId();?>" class="remove-role glyphicon glyphicon-trash"> </span>
+                        <?php endif; ?>
                     </td>
                 </tr>
             <?php endforeach; ?>

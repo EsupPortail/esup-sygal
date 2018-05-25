@@ -20,6 +20,7 @@ class StructureController extends AbstractController {
     {
         $structureId = $this->params()->fromRoute("structure");
         $structure = $this->structureService->findStructureById($structureId);
+        $type = $this->params()->fromRoute("type");
 
 //        var_dump($structure->getLibelle());
 
@@ -54,6 +55,7 @@ class StructureController extends AbstractController {
             'roles' => $roles,
             'membres' => $membres,
             'repartition' => $repartition,
+            'type' => $type,
         ]);
     }
 }
