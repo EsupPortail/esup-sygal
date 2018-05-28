@@ -286,7 +286,8 @@ class EtablissementController extends AbstractController
         $chemin = "";
 //        if ($fullpath) $chemin .= APPLICATION_DIR;
         if ($fullpath) $chemin .= "/var/sygal-files";
-        $chemin .= "/ressources/Logos/Etab/".$etablissement->getCode().".png";
+        if ($etablissement->getCode()) $chemin .= "/ressources/Logos/Etab/".$etablissement->getCode().".png";
+        else $chemin .= "/ressources/Logos/Etab/". uniqid().".png";
         return $chemin;
     }
 }
