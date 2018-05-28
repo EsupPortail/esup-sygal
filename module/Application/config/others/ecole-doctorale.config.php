@@ -133,6 +133,8 @@ return [
                                 'label'    => 'Écoles doctorales',
                                 'route'    => 'ecole-doctorale',
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\EcoleDoctorale', 'index'),
+
+                                'order'    => 10,
                             ],
                         ],
                     ],

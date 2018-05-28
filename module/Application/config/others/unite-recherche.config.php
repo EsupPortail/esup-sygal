@@ -175,6 +175,8 @@ return [
                                 'label'    => 'Unités de recherche',
                                 'route'    => 'unite-recherche',
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\UniteRecherche', 'index'),
+
+                                'order'    => 20,
                             ],
                         ],
                     ],

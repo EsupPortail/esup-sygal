@@ -133,6 +133,8 @@ return [
                                 'label'    => 'Établissement',
                                 'route'    => 'etablissement',
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\Etablissement', 'index'),
+
+                                'order'    => 5,
                             ],
                         ],
                     ],

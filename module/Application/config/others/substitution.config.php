@@ -114,10 +114,12 @@ return [
                 'pages' => [
                     'admin' => [
                         'pages' => [
-                            'ecole-doctorale' => [
+                            'substitution' => [
                                 'label'    => 'Substitutions',
                                 'route'    => 'substitution-index',
-                                'resource' => PrivilegeController::getResourceId('Application\Controller\EcoleDoctorale', 'index'),
+                                'resource' => PrivilegeController::getResourceId('Application\Controller\Admin', 'index'),
+
+                                'order'    => 50,
                             ],
                         ],
                     ],
