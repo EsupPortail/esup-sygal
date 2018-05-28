@@ -6,6 +6,9 @@ use Retraitement\Filter\Command\MinesCommand;
 $env = getenv('APPLICATION_ENV') ?: 'production';
 
 return [
+    'translator' => [
+        'locale' => 'fr_FR',
+    ],
     'sygal' => [
         // Options pour le test d'archivabilité
         'archivabilite' => [
