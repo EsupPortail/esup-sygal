@@ -1,5 +1,6 @@
 <?php
 
+use Application\Entity\Db\EtablissementRattachement;
 use Application\Entity\Db\StructureConcreteInterface;
 use Application\Provider\Privilege\UniteRecherchePrivileges;
 use Application\View\Renderer\PhpRenderer;
@@ -93,6 +94,32 @@ $canModifier = $this->isAllowed(UniteRecherchePrivileges::getResourceId(UniteRec
             <?php if ($selected == $structure->getStructure()->getId() && !$historisee): ?>
                 <tr class="ecole-doctorale selected" style="color:black;">
                     <td colspan="3">
+
+                        <h3>
+                            Établissements de rattachement
+                            <span class="badge"> <?php echo count($rattachements); ?> </span>
+                        </h3>
+
+                        <table class="table table-extra-condensed">
+                            <thead>
+                                <tr>
+                                    <th> Libellé de l'établissement de rattachement </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach($rattachements as $rattachement): ?>
+                                    <tr>
+                                        <td>
+                                            <?php
+                                                /** @var EtablissementRattachement $rattachement */
+                                                echo $rattachement->getEtablissement()->getLibelle();
+                                            ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+
                         <div id="selected">
                             Zone contenant les individus associé à la structure.
                         </div>

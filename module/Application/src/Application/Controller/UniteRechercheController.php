@@ -304,15 +304,18 @@ class UniteRechercheController extends AbstractController
     {
         $uniteId = $this->params()->fromRoute("uniteRecherche");
         $unite = $this->getUniteRechercheService()->getUniteRechercheByStructureId($uniteId);
-
         $etablissementId = $this->params()->fromRoute("etablissement");
-        $etablissement = $this->getEtablissementService()->getEtablissementById($etablissementId);
 
-        if ($this->getUniteRechercheService()->existEtablissementRattachement($unite,$etablissement)) {
-            $this->flashMessenger()->addErrorMessage("L'établissement de rattachement <strong>".$etablissement->getLibelle()."</strong> n'a pas pu être ajouter car déjà enregistré comme établissement de rattachement de l'unité de recherche <strong>".$unite->getLibelle()."</strong>.");
+        if ($etablissementId == 0) {
+            $this->flashMessenger()->addErrorMessage("Pour ajouter un établissement de rattachement, veuillez sélectionner un établissement.");
         } else {
-            $this->getUniteRechercheService()->addEtablissementRattachement($unite, $etablissement);
-            $this->flashMessenger()->addSuccessMessage("L'établissement <strong>".$etablissement->getLibelle()."</strong> vient d'être ajouter comme établissement de rattachement de l'unité de recherche <strong>".$unite->getLibelle()."</strong>.");
+            $etablissement = $this->getEtablissementService()->getEtablissementById($etablissementId);
+            if ($this->getUniteRechercheService()->existEtablissementRattachement($unite, $etablissement)) {
+                $this->flashMessenger()->addErrorMessage("L'établissement de rattachement <strong>" . $etablissement->getLibelle() . "</strong> n'a pas pu être ajouter car déjà enregistré comme établissement de rattachement de l'unité de recherche <strong>" . $unite->getLibelle() . "</strong>.");
+            } else {
+                $this->getUniteRechercheService()->addEtablissementRattachement($unite, $etablissement);
+                $this->flashMessenger()->addSuccessMessage("L'établissement <strong>" . $etablissement->getLibelle() . "</strong> vient d'être ajouter comme établissement de rattachement de l'unité de recherche <strong>" . $unite->getLibelle() . "</strong>.");
+            }
         }
 
         $this->redirect()->toRoute("unite-recherche/modifier",[],[], true);
