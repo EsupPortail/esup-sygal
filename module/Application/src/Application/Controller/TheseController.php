@@ -2,6 +2,7 @@
 
 namespace Application\Controller;
 
+use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Attestation;
 use Application\Entity\Db\Diffusion;
 use Application\Entity\Db\Etablissement;
@@ -26,7 +27,7 @@ use Application\Form\DiffusionTheseForm;
 use Application\Form\MetadonneeTheseForm;
 use Application\Form\RdvBuTheseDoctorantForm;
 use Application\Form\RdvBuTheseForm;
-use Application\Form\RecapBuForm;
+use Application\Form\PointsDeVigilanceForm;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Fichier\Exception\ValidationImpossibleException;
 use Application\Service\Fichier\FichierServiceAwareTrait;
@@ -43,15 +44,19 @@ use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\Service\Workflow\WorkflowServiceAwareTrait;
 use Application\View\Helper\Sortable;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Doctrine\ORM\Version;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
+use mPDF;
 use Notification\Notification;
 use Retraitement\Exception\TimedOutCommandException;
 use UnicaenApp\Exception\RuntimeException;
+use UnicaenApp\Exporter\Pdf;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenApp\Service\MessageCollectorAwareTrait;
 use UnicaenApp\Traits\MessageAwareInterface;
 use Zend\Form\Element\Hidden;
 use Zend\Http\Response;
+use Zend\Http\Response\Stream;
 use Zend\Stdlib\ParametersInterface;
 use Zend\View\Model\ViewModel;
 
@@ -453,6 +458,8 @@ class TheseController extends AbstractController
         $these = $this->requestedThese();
 
         $versionArchivable = $this->fichierService->getRepository()->getVersionArchivable($these);
+        $hasVA = $this->fichierService->getRepository()->hasVersion($these, VersionFichier::CODE_ARCHI);
+        $hasVD = $this->fichierService->getRepository()->hasVersion($these, VersionFichier::CODE_DIFF);
 
         $view = new ViewModel([
             'these'        => $these,
@@ -467,6 +474,9 @@ class TheseController extends AbstractController
                 WfEtape::CODE_RDV_BU_VALIDATION_BU,
             ]),
             'versionArchivable' => $versionArchivable,
+            'hasVA' => $hasVA,
+            'hasVD' => $hasVD,
+
         ]);
 
         $view->setTemplate('application/these/rdv-bu' . ($estDoctorant ? '-doctorant' : null));
@@ -541,6 +551,9 @@ class TheseController extends AbstractController
     {
         $these = $this->requestedThese();
 
+        $hasVAC = $this->fichierService->getRepository()->hasVersion($these, VersionFichier::CODE_ARCHI_CORR);
+        $hasVDC = $this->fichierService->getRepository()->hasVersion($these, VersionFichier::CODE_DIFF_CORR);
+
         $view = new ViewModel([
             'these'                           => $these,
             'validationDepotTheseCorrigeeUrl' => $this->urlThese()->validationDepotTheseCorrigeeUrl($these),
@@ -549,8 +562,12 @@ class TheseController extends AbstractController
                 WfEtape::CODE_DEPOT_VERSION_CORRIGEE_VALIDATION_DOCTORANT,
                 WfEtape::CODE_DEPOT_VERSION_CORRIGEE_VALIDATION_DIRECTEUR,
             ], [
-                'message' => "Il vous reste encore à fournir à la BU un exemplaire imprimé de la version corrigée pour valider le dépôt.",
+                'message' => "Il ne reste plus qu'à fournir à la BU un exemplaire imprimé de la version corrigée pour valider le dépôt.",
             ]),
+            'hasVAC' => $hasVAC,
+            'hasVDC' => $hasVDC,
+            'isDoctorant' => ($this->userContextService->getSelectedRoleDoctorant()),
+
         ]);
 
         return $view;
@@ -1394,13 +1411,168 @@ class TheseController extends AbstractController
     public function generateAction()
     {
         $these = $this->requestedThese();
+        $this->generateCouverture($these);
+    }
+
+    public function generateCouverture(These $these, $filename = null) {
+        /**
+         * Les infos générales de la these sont
+         * - La spécialité "specialite"
+         * - L'établissement délivrant le diplome "etablissement"
+         * - Le titre de la thèse "titre"
+         * - La dénomination du doctarant "doctorant"
+         * - La date de soutenance "date"
+         */
+        $manques = [];
+        $infos = [];
+        if ($these !== null && $these->getLibelleDiscipline() !== null) {
+            $infos["specialite"] = $these->getLibelleDiscipline();
+        } else {
+            $manques[] = "la spécialité";
+        }
+        if ($these !== null && $these->getEtablissement() !== null) {
+            $infos["etablissement"] = $these->getEtablissement()->getLibelle();
+        } else {
+            // /!\ Ce cas ne doit jamais se produire !!!
+            //NOTIFIER l'établissement d'inscription est absent (au admin tech)
+        }
+        if ($these !== null && $these->getTitre() !== null) {
+            $infos["titre"] = $these->getTitre();
+        } else {
+            $manques[] = "le titre";
+        }
+        if ($these !== null && $these->getDoctorant() !== null) {
+            //TODO utiliser un formater
+            $infos["doctorant"] = $these->getDoctorant()->getPrenom() . " ";
+            $infos["doctorant"] .= $these->getDoctorant()->getNomUsuel();
+            if ($these->getDoctorant()->getNomPatronymique() != $these->getDoctorant()->getNomUsuel()) $infos["doctorant"] .= "-".$these->getDoctorant()->getNomPatronymique();
+        } else {
+            $manques[] = "le doctorant";
+        }
+        if ($these !== null && $these->getDateSoutenance() !== null) {
+            $infos["date"] = $these->getDateSoutenance()->format("d/m/Y");
+        } else {
+            $manques[] = "la date de soutenance";
+        }
+        if (!empty($manques)) $this->notificationService->triggerInformationManquante($these, $manques);
+
+        /**
+         * Les logos à afficher sur la première page sont les suivants :
+         * - COMUE  en tête de page "comue",
+         * - etablissement principal (en bas à gauche) "etablissement",
+         * - etablissement co-tutelle (à droite de l'établissement principale) "cotutelle",
+         * - ecole doctorale (en bas au centre) "ecole",
+         * - unite de recherche (en bas à droite) "unite"
+         **/
+
+        $logos = [];
+        $comue = $this->etablissementService->getEtablissementById(1);
+        if ($comue !== null && $comue->getCheminLogo() !== null) {
+            $logos["comue"] = $comue->getCheminLogo();
+        } else {
+            if ($comue === null) {
+                // /!\ Ce cas ne doit jamais se produire !!!
+                // NOTIFIER l'établissement representant la COMUE est absent (au admin tech)
+            } else {
+                $this->notificationService->triggerLogoAbsentEtablissement($comue);
+            }
+        }
+        $etablissement = $these->getEtablissement();
+        if ($etablissement !== null && $etablissement->getCheminLogo() !== null) {
+            $logos["etablissement"] = $etablissement->getCheminLogo();
+        } else {
+            if ($etablissement === null) {
+                // /!\ Ce cas ne doit jamais se produire !!!
+                //NOTIFIER l'établissement d'inscription est absent (au admin tech)
+            } else {
+                $this->notificationService->triggerLogoAbsentEtablissement($these->getEtablissement());
+            }
+        }
+        // =========> TODO CO-TUTELLE
+        $ecole = $these->getEcoleDoctorale();
+        if ($ecole !== null && $ecole->getCheminLogo() !== null) {
+            $logos["ecole"] = $ecole->getCheminLogo();
+        } else {
+            if ($ecole === null) {
+                $this->notificationService->triggerEcoleDoctoraleAbsente($these);
+            } else {
+                $this->notificationService->triggerLogoAbsentEcoleDoctorale($ecole);
+
+            }
+        }
+        $unite = $these->getUniteRecherche();
+        if ($unite !== null && $unite->getCheminLogo() !== null) {
+            $logos["unite"] = $unite->getCheminLogo();
+        } else {
+            if ($unite === null) {
+                $this->notificationService->triggerUniteRechercheAbsente($these);
+            } else {
+                $this->notificationService->triggerLogoAbsentUniteRecherche($unite);
+            }
+        }
+
+        /** JURY **/
+        $jury = [];
+        $acteurs = $these->getActeurs()->toArray();
+
+        $rapporteurs =  array_filter($these->getActeurs()->toArray(), function($a) {return TheseController::estRapporteur($a); });
+        $directeurs =  array_filter($these->getActeurs()->toArray(), function($a) {return TheseController::estDirecteur($a); });
+        $membres = array_diff($these->getActeurs()->toArray(), $rapporteurs, $directeurs);
+
+        $acteurs = array_merge($rapporteurs, $membres, $directeurs);
+        /** @var Acteur $acteur */
+        foreach ($acteurs as $acteur) {
+            $membre = [];
+            $membre["nom"]  = $acteur->getIndividu()->getCivilite();
+            $membre["nom"] .= " " .$acteur->getIndividu()->getPrenom();
+            $membre["nom"] .= " " .$acteur->getIndividu()->getNomUsuel();
+            if($acteur->getIndividu()->getNomUsuel() != $acteur->getIndividu()->getNomPatronymique()) $membre["nom"] .= "-".$acteur->getIndividu()->getNomPatronymique();
+
+            $membre["qualite"] = $acteur->getQualite();
+            $membre["rattachement"] = $acteur->getEtablissement();
+            $membre["role"] = $acteur->getRole()->getLibelle();
+            $jury[] = $membre;
+        }
+
+        /**
+         * L'endrement est composée :
+         * d'une unite de recherche "unite"
+         * d'une liste de directeur "directeurs"
+         */
+        $encradrements = [];
+        if ($these->getUniteRecherche() && $these->getUniteRecherche()->getLibelle()) {
+            $encadrements["unite"] = $these->getUniteRecherche()->getLibelle();
+        } else {
+            // /!\ déjà notifier au moment du logo !!!
+            //NOTIFIER l'unite de recherche est absente (au BDD univ)
+        }
+        $directeurs = array_filter($these->getActeurs()->toArray(), function($a) {return TheseController::estDirecteur($a); });
+        $directeurs_array = [];
+        foreach ($directeurs as $directeur) {
+            $directeur_str  = $directeur->getIndividu()->getPrenom() . " ";
+            $directeur_str .= $directeur->getIndividu()->getNomUsuel();
+            if ($directeur->getIndividu()->getNomPatronymique() != $directeur->getIndividu()->getNomUsuel()) $directeur_str .= "-".$directeur->getIndividu()->getNomPatronymique();
+            $directeurs_array[] = $directeur_str;
+        }
+        $encadrements["directeurs"] = implode(" et ", $directeurs_array);
+
+
         $renderer = $this->getServiceLocator()->get('view_renderer'); /* @var $renderer \Zend\View\Renderer\PhpRenderer */
         $exporter = new PageDeCouverturePdfExporter($renderer, 'A4');
         $exporter->setVars([
             'these' => $these,
+            'infos' => $infos,
+            'encadrements' => $encadrements,
+            'jury' => $jury,
+            'logos' => $logos,
         ]);
-        $exporter->export('export.pdf');
-        exit;
+        if ($filename !== null) {
+            $exporter->export($filename, Pdf::DESTINATION_FILE);
+        } else {
+            $exporter->export('export.pdf');
+            exit;
+        }
+
     }
 
     /**
@@ -1421,59 +1593,27 @@ class TheseController extends AbstractController
      * @return ViewModel
      * @throws \Doctrine\ORM\OptimisticLockException
      */
-    public function recapBuAction() {
+    public function pointsDeVigilanceAction() {
 
         $these = $this->requestedThese();
-        /** @var RecapBu $recapBu */
-        $recapBu = $this->entityManager->getRepository(RecapBu::class)->findOneBy(["these" => $these]);
 
-        // RecapBu n'existe pas :: il faut vérifier l'existence de Diffusion et de RdvBU et crée en fonction
-        if ($recapBu === null) {
-            $diffusion = $this->entityManager->getRepository(Diffusion::class)->findOneBy(["these" => $these]);
-//            if ($diffusion === null) {
-//                $diffusion = new Diffusion();
-//                $diffusion->setThese($these);
-//                $diffusion->setDroitAuteurOk(false);
-//                $diffusion->setAutorisMel(0);
-//                $diffusion->setCertifCharteDiff(false);
-//                $diffusion->setConfidentielle(false);
-//                $this->entityManager->persist($diffusion);
-//                $this->entityManager->flush($diffusion);
-//            }
-            $rdvBu = $this->entityManager->getRepository(RdvBu::class)->findOneBy(["these" => $these]);
-//            if ($rdvBu === null) {
-//                $rdvBu = new RdvBu();
-//                $rdvBu->setThese($these);
-//                $this->entityManager->persist($rdvBu);
-//                $this->entityManager->flush($rdvBu);
-//            }
-            if ($diffusion !== null && $rdvBu !== null) {
-                $recapBu = new RecapBu();
-                $recapBu->setThese($these);
-                $recapBu->setDiffusion($diffusion);
-                $recapBu->setRdvBu($rdvBu);
-                $this->entityManager->persist($recapBu);
-                $this->entityManager->flush($recapBu);
-            }
-        }
+        $rdvBu = $this->entityManager->getRepository(RdvBu::class)->findOneBy(["these" => $these]);
 
         $form = null;
-        if ($recapBu !== null) {
-            /** @var RecapBuForm $form */
-            $form = $this->getServiceLocator()->get('formElementManager')->get('RecapBuForm');
-            $form->bind($recapBu);
+        if ($rdvBu !== null) {
+            /** @var PointsDeVigilanceForm $form */
+            $form = $this->getServiceLocator()->get('formElementManager')->get('PointsDeVigilanceForm');
+            $form->bind($rdvBu);
 
             if ($this->getRequest()->isPost()) {
                 $data = $this->getRequest()->getPost();
                 $form->setData($this->getRequest()->getPost()); // appel de Hydrator::hydrate
 
                 if ($form->isValid()) {
-                    $this->entityManager->flush($recapBu->getRdvBu());
-                    $this->entityManager->flush($recapBu->getDiffusion());
-                    $this->entityManager->flush($recapBu);
+                    $this->entityManager->flush($rdvBu);
 
                     //message de notification dans la page
-                    $message = "Le récapitulatif BU vient d'être enregistré.";
+                    $message = "Les points de vigilance viennent d'être sauvegardés.";
                     $this->flashMessenger()->addSuccessMessage($message);
                 }
             }
@@ -1484,4 +1624,111 @@ class TheseController extends AbstractController
             'form' => $form,
         ]);
     }
+
+    /**
+     * Prédicat testant si un acteur est un directeur de thèse
+     * @param Acteur $var
+     * @return bool
+     */
+    public static function estDirecteur(Acteur $var) {
+        $role = $var->getRole()->getSourceCode();
+        return  (explode("::", $role)[1] == "D");
+    }
+
+    /**
+     * Prédicat testant si un acteur est un rapporteur de thèse
+     * @param Acteur $var
+     * @return bool
+     */
+    public static function estRapporteur(Acteur $var)
+    {
+        $role = $var->getRole()->getSourceCode();
+        return (explode("::", $role)[1] == "R");
+
+    }
+
+    public function fusionAction()
+    {
+
+        /** @var These $these */
+        $these          = $this->requestedThese();
+        $corrigee       = $this->params()->fromRoute("corrigee");
+        $versionName    = $this->params()->fromRoute("version");
+
+        $version = null;
+        if ($versionName !== null) {
+            switch($versionName) {
+                case "VO" : $version = VersionFichier::CODE_ORIG;
+                    break;
+                case "VA" : $version = VersionFichier::CODE_ARCHI;
+                    break;
+                case "VD" : $version = VersionFichier::CODE_DIFF;
+                    break;
+                case "VOC" : $version = VersionFichier::CODE_ORIG_CORR;
+                    break;
+                case "VAC" : $version = VersionFichier::CODE_ARCHI_CORR;
+                    break;
+                case "VDC" : $version = VersionFichier::CODE_DIFF_CORR;
+                    break;
+                default : throw  new RuntimeException("Version [".$versionName."] inconnue.");
+            }
+        } else {
+            //doctorant
+            if ($corrigee === null) {
+                //tester si il existe une VA
+                if ($this->fichierService->getRepository()->hasVersion($these, VersionFichier::CODE_ARCHI)) {
+                    $version = VersionFichier::CODE_ARCHI;
+                } else {
+                    $version = VersionFichier::CODE_ORIG;
+                }
+            } else {
+                //tester si il existe une VAC
+                if ($this->fichierService->getRepository()->hasVersion($these, VersionFichier::CODE_ARCHI_CORR)) {
+                    $version = VersionFichier::CODE_ARCHI_CORR;
+                } else {
+                    $version = VersionFichier::CODE_ORIG_CORR;
+                }
+            }
+        }
+
+
+        // GENERATION DE LA COUVERTURE
+        $filename = "COUVERTURE_".$these->getId()."_".uniqid().".pdf";
+        $this->generateCouverture($these,$filename);
+        $couvertureChemin = "/tmp/". $filename;
+
+        // RECUPERATION DE LA BONNE VERSION DU MANUSCRIPT
+        $manuscritFichier = current($this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF,$version));
+        $manuscritChemin = $this->fichierService->computeDestinationFilePathForFichier($manuscritFichier);
+
+        $merged = new mPDF();
+        $merged->SetTitle($these->getTitre());
+        $merged->SetAuthor($these->getDoctorant()->getIndividu()->getPrenom(). " " . $these->getDoctorant()->getIndividu()->getNomUsuel());
+        $merged->SetCreator("SyGAL");
+        $merged->SetSubject( $these->getMetadonnee()->getResume());
+        $merged->SetKeywords( $these->getMetadonnee()->getMotsClesLibresFrancais());
+
+        $merged->SetImportUse();    //allows the usage of pages stored as template
+        $filenames = [$couvertureChemin, $manuscritChemin];
+
+        $first = true;
+        foreach ($filenames as $filename) {
+            if (file_exists($filename)) {
+                $pageCount = $merged->SetSourceFile($filename);
+                for ($i = 1; $i <= $pageCount; $i++) {
+                    if (!$first) $merged->WriteHTML('<pagebreak />');
+                    $first = false;
+                    $tplId = $merged->ImportPage($i);
+                    $merged->UseTemplate ($tplId);
+                }
+            }
+        }
+
+        //unlink pour effacer la couv temp
+        unlink($filename);
+
+        $merged->Output("/var/sygal-files/merged.pdf", 'D');
+//        $merged->Output("/var/sygal-files/merged.pdf", 'D');
+    }
+
 }

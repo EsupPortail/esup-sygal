@@ -4,6 +4,7 @@ namespace Application\Service\EcoleDoctorale;
 
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Individu;
+use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Repository\EcoleDoctoraleRepository;
 use Application\Entity\Db\Structure;
 use Application\Entity\Db\TypeStructure;
@@ -66,6 +67,17 @@ class EcoleDoctoraleService extends BaseService implements RoleServiceAwareInter
     public function getEcoleDoctoraleById($id) {
         /** @var EcoleDoctorale $ecole */
         $ecole = $this->getRepository()->findOneBy(["id" => $id]);
+        return $ecole;
+    }
+
+    public function getEcoleDoctoraleByStructureId($id) {
+        /** @var EcoleDoctorale $ecole */
+        $qb = $this->getRepository()->createQueryBuilder("ed")
+            ->addSelect("s")
+            ->leftJoin("ed.structure", "s")
+            ->andWhere("s.id = :id")
+            ->setParameter("id", $id);
+        $ecole = $qb->getQuery()->getOneOrNullResult();
         return $ecole;
     }
 

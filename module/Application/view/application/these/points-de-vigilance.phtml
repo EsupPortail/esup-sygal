@@ -1,9 +1,9 @@
 <?php
 
-use Application\Form\Factory\RecapBuFormFactory;
+use Application\Form\Factory\PointsDeVigilanceFormFactory;
 
 use Application\Entity\Db\These;
-use Application\Form\RecapBuForm;
+use Application\Form\PointsDeVigilanceForm;
 use Application\Entity\Db\Validation;
 use Application\Entity\Db\WfEtape;
 use Application\Provider\Privilege\ThesePrivileges;
@@ -14,16 +14,16 @@ use Application\Entity\Db\Repository\FichierRepository;
 
 /**
  * @var These               $these
- * @var RecapBuForm         $form
+ * @var PointsDeVigilanceForm         $form
  */
 
 
-$recap = new \Application\Form\RecapBuForm();
+$recap = new \Application\Form\PointsDeVigilanceForm();
 ?>
 
 <?php $this->headTitle("Récapitulatif BU")->prepend($these->getDoctorant()->getNomUsuel()) ?>
 
-<h1 class="page-header">Récapitulatif BU
+<h1 class="page-header">Points de vigilance
     <small><?php echo $this->partial('application/these/partial/titre') ?></small>
 </h1>
 
@@ -38,8 +38,8 @@ echo $messenger->addMessagesFromFlashMessenger();
     $form->prepare();
 
     echo $this->form()->openTag($form->setAttribute('class', 'attestations'));
-    echo $fcg->render($form->get('orcid'));
-    echo $fcg->render($form->get('nnt'));
+//    echo $fcg->render($form->get('orcid'));
+//    echo $fcg->render($form->get('nnt'));
     echo $fcg->render($form->get('vigilance'));
     echo $fcg->render($form->get('submit'));
     echo $this->form()->closeTag()

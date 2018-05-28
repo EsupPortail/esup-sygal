@@ -11,6 +11,7 @@ use Application\Form\UniteRechercheForm;
 use Application\RouteMatch;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
+use Application\Service\Notification\NotificationServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use UnicaenLdap\Service\LdapPeopleServiceAwareTrait;
@@ -23,6 +24,7 @@ class UniteRechercheController extends AbstractController
     use RoleServiceAwareTrait;
     use LdapPeopleServiceAwareTrait;
     use EtablissementServiceAwareTrait;
+    use NotificationServiceAwareTrait;
 
     /**
      * L'index récupére :
@@ -44,7 +46,7 @@ class UniteRechercheController extends AbstractController
              * @var StructureConcreteInterface $structure
              * @var Role[] $roles
              */
-            $selectedStructure  = $this->uniteRechercheService->getUniteRechercheById($selected);
+            $selectedStructure  = $this->uniteRechercheService->getUniteRechercheByStructureId($selected);
             $roles = $selectedStructure->getStructure()->getStructureDependantRoles();
 
             $effectifs = [];
@@ -96,7 +98,8 @@ class UniteRechercheController extends AbstractController
     public function modifierAction()
     {
         /** @var UniteRecherche $unite */
-        $unite = $this->requestUniteRecherche();
+        $uniteId = $this->params()->fromRoute("uniteRecherche");
+        $unite  = $this->getUniteRechercheService()->getUniteRechercheByStructureId($uniteId);
         $this->uniteRechercheForm->bind($unite);
 
         // si POST alors on revient du formulaire
@@ -110,7 +113,7 @@ class UniteRechercheController extends AbstractController
             // action d'affacement du logo
             if (isset($data['supprimer-logo'])) {
                 $this->supprimerLogoUniteRecherche();
-                return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $unite->getId()]], true);
+                return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId]], true);
             }
 
             // action de modification
@@ -126,10 +129,10 @@ class UniteRechercheController extends AbstractController
                 $this->uniteRechercheService->update($unite);
 
                 $this->flashMessenger()->addSuccessMessage("Unité de recherche '$unite' modifiée avec succès");
-                return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $unite->getId()]], true);
+                return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId]], true);
             }
             $this->flashMessenger()->addErrorMessage("Echec de la mise à jour : données incorrectes saissie");
-            return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $unite->getId()]], true);
+            return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId]], true);
         }
 
         $etablissements = $this->getEtablissementService()->getEtablissements();
@@ -174,7 +177,7 @@ class UniteRechercheController extends AbstractController
 
                 $this->flashMessenger()->addSuccessMessage("Unité de recherche '$unite' créée avec succès");
 
-                return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $unite->getId()]], true);
+                return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $unite->getStructure()->getId()]], true);
             }
         }
 
@@ -190,97 +193,26 @@ class UniteRechercheController extends AbstractController
 
     public function supprimerAction()
     {
-        $unite = $this->requestUniteRecherche();
+        $uniteId = $this->params()->fromRoute("uniteRecherche");
+        $unite  = $this->getUniteRechercheService()->getUniteRechercheByStructureId($uniteId);
 
         $this->uniteRechercheService->deleteSoftly($unite, $this->userContextService->getIdentityDb());
 
         $this->flashMessenger()->addSuccessMessage("Unité de recherche '$unite' supprimée avec succès");
 
-        return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $unite->getId()]], true);
+        return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId]], true);
     }
 
     public function restaurerAction()
     {
-        $unite = $this->requestUniteRecherche();
+        $uniteId = $this->params()->fromRoute("uniteRecherche");
+        $unite  = $this->getUniteRechercheService()->getUniteRechercheByStructureId($uniteId);
 
         $this->uniteRechercheService->undelete($unite);
 
         $this->flashMessenger()->addSuccessMessage("Unité de recherche '$unite' restaurée avec succès");
 
-        return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $unite->getId()]], true);
-    }
-
-    /**
-     * Ajout des individus et de leurs rôles dans la table INDIVIDU_ROLE
-     * @return \Zend\Http\Response
-     */
-    public function ajouterIndividuAction()
-    {
-        $uniteId    = $this->params()->fromRoute('uniteRecherche');
-        $data       = $this->params()->fromPost('individu');
-        $roleId     = $this->params()->fromPost('role');
-
-        if (!empty($data['id'])) {
-            /** @var Individu $individu */
-            $individu = $this->individuService->getRepository()->find($data['id']);
-            if ($individu) {
-                /**
-                 * @var UniteRecherche $unite
-                 * @var Role $role
-                 * @var IndividuRole $individuRole
-                 */
-                $unite = $this->uniteRechercheService->getUniteRechercheById($uniteId);
-                $role = $this->roleService->getRoleById($roleId);
-                $individuRole = $this->roleService->addIndividuRole($individu,$role);
-
-                $this->flashMessenger()->addSuccessMessage(
-                    "<strong>{$individuRole->getIndividu()}</strong>". " est désormais " .
-                    "<strong>{$individuRole->getRole()}</strong>". " de l'unité de recherche ".
-                    "<strong>{$unite->getLibelle()}</strong>.");
-            }
-        }
-
         return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId]], true);
-    }
-
-    /**
-     * Retrait des individus et de leurs rôles dans la table INDIVIDU_ROLE
-     * @return \Zend\Http\Response
-     * @throws \Doctrine\ORM\OptimisticLockException
-     */
-    public function retirerIndividuAction()
-    {
-        $urId = $this->params()->fromRoute('uniteRecherche');
-        $irId = $this->params()->fromRoute('edi');
-
-        $unite = null;
-        if ($urId !== null) {
-            $unite = $this->uniteRechercheService->getUniteRechercheById($urId);
-        }
-
-        if ($irId) {
-            $individuRole = $this->roleService->removeIndividuRoleById($irId);
-
-            $this->flashMessenger()->addSuccessMessage(
-                 "<strong>{$individuRole->getIndividu()}</strong>" . " n'est plus n'est plus "
-                ."<strong>{$individuRole->getRole()}</strong>" . " de l'unite de recherche "
-                ."<strong>{$unite->getLibelle()}</strong>"."</strong>");
-
-            return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $urId]], true);
-        }
-
-        return $this->redirect()->toRoute('unite-recherche', [], [], true);
-    }
-
-    /**
-     * @return UniteRecherche
-     */
-    private function requestUniteRecherche()
-    {
-        /** @var RouteMatch $routeMatch */
-        $routeMatch = $this->getEvent()->getRouteMatch();
-
-        return $routeMatch->getUniteRecherche();
     }
 
     /**
@@ -306,7 +238,8 @@ class UniteRechercheController extends AbstractController
      */
     public function supprimerLogoUniteRecherche()
     {
-        $unite = $this->requestUniteRecherche();
+        $uniteId = $this->params()->fromRoute("uniteRecherche");
+        $unite  = $this->getUniteRechercheService()->getUniteRechercheByStructureId($uniteId);
 
         $this->uniteRechercheService->deleteLogo($unite);
         $filename   = UniteRechercheController::getLogoFilename($unite, true);
@@ -337,7 +270,10 @@ class UniteRechercheController extends AbstractController
             return;
         }
 
-        if ($unite === null) $unite      = $this->requestUniteRecherche();
+        if ($unite === null) {
+            $uniteId = $this->params()->fromRoute("uniteRecherche");
+            $unite  = $this->getUniteRechercheService()->getUniteRechercheByStructureId($uniteId);
+        }
         $chemin     = UniteRechercheController::getLogoFilename($unite, false);
         $filename   = UniteRechercheController::getLogoFilename($unite, true);
         $result = rename($cheminLogoUploade, $filename);
@@ -367,15 +303,19 @@ class UniteRechercheController extends AbstractController
     public function ajouterEtablissementRattachementAction()
     {
         $uniteId = $this->params()->fromRoute("uniteRecherche");
-        $unite = $this->getUniteRechercheService()->getUniteRechercheById($uniteId);
+        $unite = $this->getUniteRechercheService()->getUniteRechercheByStructureId($uniteId);
         $etablissementId = $this->params()->fromRoute("etablissement");
-        $etablissement = $this->getEtablissementService()->getEtablissementById($etablissementId);
 
-        if ($this->getUniteRechercheService()->existEtablissementRattachement($unite,$etablissement)) {
-            $this->flashMessenger()->addErrorMessage("L'établissement de rattachement <strong>".$etablissement->getLibelle()."</strong> n'a pas pu être ajouter car déjà enregistré comme établissement de rattachement de l'unité de recherche <strong>".$unite->getLibelle()."</strong>.");
+        if ($etablissementId == 0) {
+            $this->flashMessenger()->addErrorMessage("Pour ajouter un établissement de rattachement, veuillez sélectionner un établissement.");
         } else {
-            $this->getUniteRechercheService()->addEtablissementRattachement($unite, $etablissement);
-            $this->flashMessenger()->addSuccessMessage("L'établissement <strong>".$etablissement->getLibelle()."</strong> vient d'être ajouter comme établissement de rattachement de l'unité de recherche <strong>".$unite->getLibelle()."</strong>.");
+            $etablissement = $this->getEtablissementService()->getEtablissementById($etablissementId);
+            if ($this->getUniteRechercheService()->existEtablissementRattachement($unite, $etablissement)) {
+                $this->flashMessenger()->addErrorMessage("L'établissement de rattachement <strong>" . $etablissement->getLibelle() . "</strong> n'a pas pu être ajouter car déjà enregistré comme établissement de rattachement de l'unité de recherche <strong>" . $unite->getLibelle() . "</strong>.");
+            } else {
+                $this->getUniteRechercheService()->addEtablissementRattachement($unite, $etablissement);
+                $this->flashMessenger()->addSuccessMessage("L'établissement <strong>" . $etablissement->getLibelle() . "</strong> vient d'être ajouter comme établissement de rattachement de l'unité de recherche <strong>" . $unite->getLibelle() . "</strong>.");
+            }
         }
 
         $this->redirect()->toRoute("unite-recherche/modifier",[],[], true);
@@ -384,7 +324,7 @@ class UniteRechercheController extends AbstractController
     public function retirerEtablissementRattachementAction()
     {
         $uniteId = $this->params()->fromRoute("uniteRecherche");
-        $unite = $this->getUniteRechercheService()->getUniteRechercheById($uniteId);
+        $unite = $this->getUniteRechercheService()->getUniteRechercheByStructureId($uniteId);
         $etablissementId = $this->params()->fromRoute("etablissement");
         $etablissement = $this->getEtablissementService()->getEtablissementById($etablissementId);
 
@@ -394,16 +334,4 @@ class UniteRechercheController extends AbstractController
         $this->redirect()->toRoute("unite-recherche/modifier",[],[], true);
     }
 
-    public function principalEtablissementRattachementAction()
-    {
-        $uniteId = $this->params()->fromRoute("uniteRecherche");
-        $unite = $this->getUniteRechercheService()->getUniteRechercheById($uniteId);
-        $etablissementId = $this->params()->fromRoute("etablissement");
-        $etablissement = $this->getEtablissementService()->getEtablissementById($etablissementId);
-
-        $this->getUniteRechercheService()->setEtablissementRattachementPrincipal($unite, $etablissement);
-        $this->flashMessenger()->addSuccessMessage("L'établissement <strong>".$etablissement->getLibelle()."</strong> est maintenant l'établissement de rattachement principal de l'unité de recherche <strong>".$unite->getLibelle()."</strong>.");
-
-        $this->redirect()->toRoute("unite-recherche/modifier",[],[], true);
-    }
 }

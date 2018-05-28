@@ -6,6 +6,7 @@ use Application\Controller\UtilisateurController;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Individu\IndividuServiceLocateTrait;
+use Application\Service\Notification\NotificationService;
 use Application\Service\Role\RoleService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\Utilisateur\UtilisateurService;
@@ -29,6 +30,7 @@ class UtilisateurControllerFactory
          * @var EcoleDoctoraleService $ecoleService
          * @var UniteRechercheService $uniteService
          * @var EntityManager $entityManager;
+         * @var NotificationService $notificationService;
          */
         $roleService = $sl->get('RoleService');
         $ldapPeopleService  = $sl->get('LdapServicePeople');
@@ -36,6 +38,7 @@ class UtilisateurControllerFactory
         $etablissementService = $sl->get('EtablissementService');
         $ecoleService = $sl->get('EcoleDoctoraleService');
         $uniteService = $sl->get('UniteRechercheService');
+        $notificationService = $controllerManager->getServiceLocator()->get(NotificationService::class);
         $entityManager = $sl->get('doctrine.entitymanager.orm_default');
 
         $controller = new UtilisateurController();
@@ -46,6 +49,7 @@ class UtilisateurControllerFactory
         $controller->setUniteRechercheService($uniteService);
         $controller->setEcoleDoctoraleService($ecoleService);
         $controller->setEtablissementService($etablissementService);
+        $controller->setNotificationService($notificationService);
         $controller->setEntityManager($entityManager);
 
         return $controller;

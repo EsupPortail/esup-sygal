@@ -123,11 +123,15 @@ return [
                                 'label'    => 'Utilisateurs',
                                 'route'    => 'utilisateur',
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\Utilisateur', 'index'),
+
+                                'order'    => 60,
                             ],
                             'creation' => [
                                 'label'    => 'Création d\'utilisateur',
                                 'route'    => 'creation-utilisateur',
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\Utilisateur', 'creation-utilisateur'),
+
+                                'order'    => 50,
                             ],
                         ],
                     ],

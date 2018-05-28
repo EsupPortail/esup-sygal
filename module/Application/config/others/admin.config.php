@@ -159,16 +159,6 @@ return [
                     ],
                 ],
             ],
-            'cobaye' => [
-                'type'          => Literal::class,
-                'options'       => [
-                    'route'         => '/cobaye',
-                    'defaults'      => [
-                        'controller'    => CobayeController::class,
-                        'action'        => 'index',
-                    ],
-                ],
-            ],
             'test-envoi-mail' => [
                 'type'          => 'Segment',
                 'options'       => [

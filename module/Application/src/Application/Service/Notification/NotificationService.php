@@ -288,6 +288,30 @@ class NotificationService extends \Notification\Service\NotificationService
         $this->trigger($notif);
     }
 
+    public function triggerInformationManquante(These $these, $manques)
+    {
+        $mails = $this->fetchEmailBdd($these);
+
+        $notif = new Notification();
+        $notif
+            ->setSubject("Informations manquantes pour la thèse [" . $these->getTitre() . "]")
+            ->setTo($mails)
+            ->setTemplatePath('application/these/mail/notif-informations-manquantes')
+            ->setTemplateVariables([
+                'manques'      => $manques,
+                'these'        => $these,
+            ]);
+        $this->trigger($notif);
+    }
+
+
+
+    public function triggerEcoleDoctoraleAbsente(These $these) {
+        $mails = $this->fetchEmailBdd($these);
+        $notif = $this->createNotificationForStructureAbsente("l'école doctorale", $these, $mails);
+        $this->trigger($notif);
+    }
+
     /**
      * @param EcoleDoctorale $ecole
      */
@@ -301,9 +325,14 @@ class NotificationService extends \Notification\Service\NotificationService
         }
 
         $libelle = $ecole->getLibelle();
-
         $notif = $this->createNotificationForLogoStructureAbsent("l'école doctorale", $libelle, $mails);
+        $this->trigger($notif);
+    }
 
+
+    public function triggerUniteRechercheAbsente(These $these) {
+        $mails = $this->fetchEmailBdd($these);
+        $notif = $this->createNotificationForStructureAbsente("l'unité de recherche", $these, $mails);
         $this->trigger($notif);
     }
 
@@ -367,7 +396,7 @@ class NotificationService extends \Notification\Service\NotificationService
         $this->trigger($notif);
     }
 
-    /**
+     /**
      * @param string   $type
      * @param string   $libelle
      * @param string[] $to
@@ -387,6 +416,29 @@ class NotificationService extends \Notification\Service\NotificationService
 
         return $notif;
     }
+
+    /**
+     * @param string   $type
+     * @param These   $these
+     * @param string[] $to
+     * @return Notification
+     */
+    private function createNotificationForStructureAbsente($type, $these, $to)
+    {
+        $notif = new Notification();
+        $notif
+            ->setSubject("$type manquante pour la thèse [" . $these->getTitre() . "]")
+            ->setTo($to)
+            ->setTemplatePath('application/these/mail/notif-structure-absente')
+            ->setTemplateVariables([
+                'type'      => $type,
+                'these'     => $these,
+            ]);
+
+        return $notif;
+    }
+
+
 
     /**
      * @param These $these
@@ -409,4 +461,28 @@ class NotificationService extends \Notification\Service\NotificationService
 
         return $variable->getValeur();
     }
+
+    /**
+     * @var string $type
+     * @var Role $role
+     * @var Individu $individu
+     */
+    public function triggerChangementRole($type, $role, $individu)
+    {
+        $mail = $individu->getEmail();
+
+        $notif = new Notification();
+        $notif
+            ->setSubject("Changement dans vos rôle SyGAL")
+            ->setTo($mail)
+            ->setTemplatePath('application/utilisateur/changement-role')
+            ->setTemplateVariables([
+                'type'         => $type,
+                'role'         => $role,
+                'individu'     => $individu,
+            ]);
+        $this->trigger($notif);
+    }
+
+
 }

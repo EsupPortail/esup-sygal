@@ -72,6 +72,17 @@ class EtablissementService extends BaseService
         return $etablissement;
     }
 
+    public function getEtablissementByStructureId($id) {
+        /** @var Etablissement $etablissement */
+        $qb = $this->getRepository()->createQueryBuilder("e")
+            ->addSelect("s")
+            ->leftJoin("e.structure", "s")
+            ->andWhere("s.id = :id")
+            ->setParameter("id", $id);
+        $etablissement = $qb->getQuery()->getOneOrNullResult();
+        return $etablissement;
+    }
+
     /**
      * @param Etablissement $etablissement
      * @param Utilisateur $createur
@@ -83,6 +94,7 @@ class EtablissementService extends BaseService
         /** @var TypeStructure $typeStructure */
         $typeStructure = $this->getEntityManager()->getRepository(TypeStructure::class)->findOneBy(['code' => 'etablissement']);
         $etablissement->getStructure()->setTypeStructure($typeStructure);
+        $etablissement->setSourceCode("SyGAL::" . uniqid());
 
         $this->persist($etablissement);
         $this->flush($etablissement);
