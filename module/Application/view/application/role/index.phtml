@@ -109,11 +109,24 @@ echo "</table>";
         $sigleStructure = "";
         $depend = "";
         if ($role->isTheseDependant() || $role->isStructureDependant()) {
-            $sigleStructure = $role->getStructure()->getSigle();
+//            var_dump($role->getId(). " -> " .$role->getCode(). " --- ". $role->getRoleId());
+            $sigleStructure = "";
+            if ($role->getStructure() === null) {
+                $sigleStructure = "structure manquante";
+            }  elseif ($role->getStructure()->getSigle() === null || $role->getStructure()->getSigle() === "") {
+                $sigleStructure = "sigle manquant";
+            } else {
+                $sigleStructure = $role->getStructure()->getSigle();
+            }
+
             if ($role->isTheseDependant()) {
                 $depend = "these";
             } else {
-                $depend = $role->getStructure()->getTypeStructure()->getCode();
+                if ($role->getStructure() === null) {
+                    $sigleStructure = "structure manquante";
+                } else {
+                    $depend = $role->getStructure()->getTypeStructure()->getCode();
+                }
             }
         }
         $texte  = '<th class="role">';

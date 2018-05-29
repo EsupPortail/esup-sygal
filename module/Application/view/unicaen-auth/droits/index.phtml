@@ -1,0 +1,34 @@
+<?php
+
+use UnicaenAuth\Provider\Privilege\Privileges;
+
+$canViewRoles      = $this->isAllowed(Privileges::getResourceId(Privileges::DROIT_ROLE_VISUALISATION));
+$canViewPrivileges = $this->isAllowed(Privileges::getResourceId(Privileges::DROIT_PRIVILEGE_VISUALISATION));
+
+?>
+<h1 class="page-header">Gestion des droits d'accès</h1>
+
+<dl>
+    <?php if ($canViewRoles): ?>
+        <dt><a href="<?php echo $this->url('droits/roles') ?>">Gestion des rôles</a></dt>
+        <dd>
+            Permet de visualiser les rôles existants. Permet également de les modifier,
+            d'en ajouter ou d'en supprimer si vous avez les droits requis pour cela.
+        </dd>
+    <?php endif; ?>
+
+    <?php if ($canViewPrivileges): ?>
+        <dt><a href="<?php echo $this->url('roles') ?>">Gestion des privilèges</a></dt>
+        <dd>
+            Tableau de bord listant, par rôle, les privilèges qui lui sont accordés.
+            Le tableau permet également, si vous en avez le droit, de modifier les privilèges accordés par rôle.
+        </dd>
+    <?php endif; ?>
+</dl>
+<style>
+
+    dt {
+        padding-top: 2em;
+    }
+
+</style>
