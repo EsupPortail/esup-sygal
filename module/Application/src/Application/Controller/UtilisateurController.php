@@ -3,7 +3,6 @@
 namespace Application\Controller;
 
 use Application\Entity\Db\CreationUtilisateurInfos;
-use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Utilisateur;
 use Application\Filter\EtablissementPrefixFilter;
@@ -28,13 +27,9 @@ use UnicaenLdap\Filter\People as LdapPeopleFilter;
 use UnicaenLdap\Service\LdapPeopleServiceAwareTrait;
 use UnicaenLdap\Service\People as LdapPeopleService;
 use Zend\Authentication\AuthenticationService;
-use Zend\Cache\Storage\Adapter\Session;
 use Zend\Form\Form;
 use Zend\Http\Request;
 use Zend\Http\Response;
-use Zend\Session\Config\SessionConfig;
-use Zend\Session\Container;
-use Zend\Session\Storage\SessionStorage;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
@@ -63,8 +58,15 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost()['individu'];
-            /** @var Individu $individu */
             $individu = $this->individuService->getIndviduById($data['id']);
+            $params = [];
+            if ($individu !== null) $params = ["query" => ["id" => $data['id']]];
+            $this->redirect()->toRoute(null, [], $params, true);
+        }
+
+        $individuId = $this->params()->fromQuery("id");
+        if ($individuId !== null) {
+            $individu = $this->individuService->getIndviduById($individuId);
             $rolesAffectes = $this->roleService->getRoleByIndividu($individu);
         }
 
