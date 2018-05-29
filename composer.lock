@@ -1918,7 +1918,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/auth.git",
-                "reference": "2ae91084359f8e104bb40a1295e4441025a0b152"
+                "reference": "c9540c9bc2779215913b75f8a54cefe4121483c2"
             },
             "require": {
                 "bjyoungblood/bjy-authorize": ">=1.4",
@@ -1940,7 +1940,7 @@
                 ]
             },
             "description": "Module d'authentification pour les applications Unicaen",
-            "time": "2018-05-23T11:47:27+00:00"
+            "time": "2018-05-23T12:36:42+00:00"
         },
         {
             "name": "unicaen/code",
@@ -2097,7 +2097,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/oracle.git",
-                "reference": "42efd5f206ba5547a62ae48c79ce57706272d3be"
+                "reference": "859f408b39cd446b4ea87705f93cdd9eeddb9e11"
             },
             "require": {
                 "doctrine/dbal": "^2.5",
@@ -2117,7 +2117,7 @@
                 ]
             },
             "description": "Bibliothèque utile lorsqu'on utilise un base de données Oracle",
-            "time": "2018-04-27T08:31:56+00:00"
+            "time": "2018-04-27T08:59:00+00:00"
         },
         {
             "name": "webmozart/assert",
