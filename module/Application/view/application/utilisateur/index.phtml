@@ -335,6 +335,7 @@ function generateRoleUnite($individu, $roles, $rolesAffectes, $unites, $canModif
             $("#disponible_" + role).show();
 
             $.ajax({
+                type: "POST",
                 url: url
             });
         });
@@ -351,6 +352,7 @@ function generateRoleUnite($individu, $roles, $rolesAffectes, $unites, $canModif
             $("#disponible_" + role).hide();
 
             $.ajax({
+                type: "POST",
                 url: url
             });
         });

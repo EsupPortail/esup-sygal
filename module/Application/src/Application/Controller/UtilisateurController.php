@@ -300,26 +300,38 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
 
     public function retirerRoleAction()
     {
-        $individuId = $this->params()->fromRoute('individu');
-        $individu = $this->getIndividuService()->getIndviduById($individuId);
-        $roleId = $this->params()->fromRoute('role');
-        $role = $this->getRoleService()->getRoleById($roleId);
+        /**
+         * @var Request $request
+         */
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $individuId = $this->params()->fromRoute('individu');
+            $individu = $this->getIndividuService()->getIndviduById($individuId);
+            $roleId = $this->params()->fromRoute('role');
+            $role = $this->getRoleService()->getRoleById($roleId);
 
-        $this->roleService->removeRole($individuId, $roleId);
-        $this->notificationService->triggerChangementRole("retrait", $role, $individu);
+            $this->roleService->removeRole($individuId, $roleId);
+            $this->notificationService->triggerChangementRole("retrait", $role, $individu);
+        }
 
         return new ViewModel([]);
     }
 
     public function ajouterRoleAction()
     {
-        $individuId = $this->params()->fromRoute('individu');
-        $individu = $this->getIndividuService()->getIndviduById($individuId);
-        $roleId = $this->params()->fromRoute('role');
-        $role = $this->getRoleService()->getRoleById($roleId);
+        /**
+         * @var Request $request
+         */
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $individuId = $this->params()->fromRoute('individu');
+            $individu = $this->getIndividuService()->getIndviduById($individuId);
+            $roleId = $this->params()->fromRoute('role');
+            $role = $this->getRoleService()->getRoleById($roleId);
 
-        $this->roleService->addRole($individuId, $roleId);
-        $this->notificationService->triggerChangementRole("ajout", $role, $individu);
+            $this->roleService->addRole($individuId, $roleId);
+            $this->notificationService->triggerChangementRole("ajout", $role, $individu);
+        }
         return new ViewModel([]);
     }
 }

@@ -54,6 +54,7 @@ echo "</table>";
             var url = "modifier-privilege/" + role + "/" + privilege;
 
             $.ajax({
+                type: "POST",
                 url : url,
                 beforeSend:
                     function () {
