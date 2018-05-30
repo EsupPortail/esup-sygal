@@ -48,6 +48,7 @@ $canModifier = $this->isAllowed(EtablissementPrivileges::getResourceId(Etablisse
     <thead>
         <tr>
             <th> Libellé </th>
+            <th> Source </th>
             <th> Sigle </th>
             <th> Actions </th>
         </tr>
@@ -66,6 +67,7 @@ $canModifier = $this->isAllowed(EtablissementPrivileges::getResourceId(Etablisse
                     <?php echo $structure->getLibelle(); ?>
                 </a>
             </td>
+            <td> <?php echo explode("::",$structure->getSource()->getCode())[0]; ?></td>
             <td> <?php echo $structure->getSigle(); ?></td>
             <td>
                 <?php if ($canModifier && !$historisee) : ?>
@@ -152,6 +154,7 @@ $canModifier = $this->isAllowed(EtablissementPrivileges::getResourceId(Etablisse
         <thead>
         <tr>
             <th> Libellé </th>
+            <th> Source </th>
             <th> Sigle </th>
             <th> Actions </th>
         </tr>
@@ -170,6 +173,7 @@ $canModifier = $this->isAllowed(EtablissementPrivileges::getResourceId(Etablisse
                         <?php echo $structure->getLibelle(); ?>
                     </a>
                 </td>
+                <td> <?php echo explode("::",$structure->getSource()->getCode())[0]; ?></td>
                 <td> <?php echo $structure->getSigle(); ?></td>
                 <td>
                     <?php if ($canModifier && !$historisee) : ?>

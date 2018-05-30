@@ -40,6 +40,7 @@ $canModifier = $this->isAllowed(UniteRecherchePrivileges::getResourceId(UniteRec
         <thead>
         <tr>
             <th> Libellé </th>
+            <th> Source </th>
             <th> Sigle </th>
             <th> Actions </th>
         </tr>
@@ -58,6 +59,7 @@ $canModifier = $this->isAllowed(UniteRecherchePrivileges::getResourceId(UniteRec
                         <?php echo $structure->getLibelle(); ?>
                     </a>
                 </td>
+                <td> <?php echo explode("::",$structure->getSource()->getCode())[0]; ?></td>
                 <td> <?php echo $structure->getSigle(); ?></td>
                 <td>
                     <?php if ($canModifier && !$historisee) : ?>

@@ -4,5 +4,5 @@ namespace Application\Entity\Db;
 
 interface SourceInterface
 {
-    const CODE_SYGAL = 'COMUE::SYGAL';
+    const CODE_SYGAL = 'SYGAL::sygal';
 }
