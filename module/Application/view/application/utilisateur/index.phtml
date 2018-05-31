@@ -27,6 +27,8 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(UtilisateurPrivileges:
 <h1 class="page-header"><?php echo $this->translate("Utilisateurs"); ?>
 </h1>
 
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
+
 <form method='post' class="form-inline " style="margin-bottom:10px;">
     <?php
         $sas = new SearchAndSelect('individu');

@@ -505,10 +505,6 @@ class TheseController extends AbstractController
                 $inserting = $formRdvBu->getId() === null;
                 $this->theseService->updateRdvBu($these, $formRdvBu);
 
-                $this->flashMessenger()->addSuccessMessage("Informations enregistrées avec succès.");
-                $this->flashMessenger()->addSuccessMessage($this->theseService->getMessage('<br>', MessageAwareInterface::SUCCESS));
-                $this->flashMessenger()->addInfoMessage($this->theseService->getMessage('<br>', MessageAwareInterface::INFO));
-
                 // notification par mail à la BU quand le doctorant saisit les infos pour la 1ere fois
                 if ($estDoctorant && $inserting) {
 
@@ -525,7 +521,7 @@ class TheseController extends AbstractController
                     $this->notificationService->triggerNotificationBU($notif, $these);
 
 //                    $notificationLog = $this->notificationService->getMessage('<br>', 'info');
-//                    $this->flashMessenger()->addInfoMessage($notificationLog);
+//                    $fm->addInfoMessage($notificationLog);
                 }
 
                 if (! $this->getRequest()->isXmlHttpRequest()) {
@@ -1030,7 +1026,6 @@ class TheseController extends AbstractController
                 /** @var Attestation $attestation */
                 $attestation = $form->getData();
                 $this->theseService->updateAttestation($these, $attestation);
-                $this->flashMessenger()->addSuccessMessage("Réponses au questionnaire enregistrées avec succès.");
 
                 if (! $this->getRequest()->isXmlHttpRequest()) {
                     return $this->redirect()->toRoute('these/depot', [], [], true);
@@ -1185,14 +1180,13 @@ class TheseController extends AbstractController
                 /** @var Diffusion $diffusion */
                 $diffusion = $form->getData();
                 $this->theseService->updateDiffusion($these, $diffusion);
-                $this->flashMessenger()->addSuccessMessage("Réponses au questionnaire enregistrées avec succès.");
 
                 // suppression des fichiers expurgés éventuellement déposés en l'absence de pb de droit d'auteur
                 $besoinVersionExpurgee = ! $diffusion->getDroitAuteurOk();
                 $fichiersExpurgesDeposes = $this->fichierService->getRepository()->fetchFichiers($these, null , $version, false);
                 if (! $besoinVersionExpurgee && !empty($fichiersExpurgesDeposes)) {
                     $this->fichierService->deleteFichiers($fichiersExpurgesDeposes);
-                    $this->flashMessenger()->addSuccessMessage("Les fichiers expurgés fournis devenus inutiles ont été supprimés.");
+//                    $this->flashMessenger()->addSuccessMessage("Les fichiers expurgés fournis devenus inutiles ont été supprimés.");
                 }
 
                 if (! $this->getRequest()->isXmlHttpRequest()) {
@@ -1301,8 +1295,6 @@ class TheseController extends AbstractController
                 /** @var MetadonneeThese $metadonnee */
                 $metadonnee = $form->getData();
                 $this->theseService->updateMetadonnees($these, $metadonnee);
-
-                $this->flashMessenger()->addSuccessMessage("Informations enregistrées avec succès.");
 
                 if (! $this->getRequest()->isXmlHttpRequest()) {
                     return $this->redirect()->toRoute('these/description', [], [], true);
