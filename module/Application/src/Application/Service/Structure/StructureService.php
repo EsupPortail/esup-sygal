@@ -67,10 +67,10 @@ class StructureService extends BaseService
                 break;
         }
 
-        Assert::null($structureCibleDataObject->getSourceCode(), "Le source code doit être null car il est calculé");
+        //Assert::null($structureCibleDataObject->getSourceCode(), "Le source code doit être null car il est calculé");
 
         // le source code d'une structure cible est calculé
-        $sourceCode = uniqid(Etablissement::CODE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP);
+        if ($structureCibleDataObject->getSourceCode() === null) $sourceCode = uniqid(Etablissement::CODE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP);
 
         // la source d'une structure cible est forcément SYGAL
         $sourceSygal = $this->sourceService->fetchSourceSygal();
@@ -362,6 +362,9 @@ class StructureService extends BaseService
      * @return StructureConcreteInterface|null
      */
     public function createStructureConcrete($typeStructure) {
+        $sourceSygal = $this->sourceService->fetchSourceSygal();
+        $type = $this->fetchTypeStructure($typeStructure);
+
         $structureCibleDataObject = null;
         switch($typeStructure) {
             case TypeStructure::CODE_ETABLISSEMENT :
@@ -377,6 +380,10 @@ class StructureService extends BaseService
             default:
                 throw new RuntimeException("Type de structure inconnu [".$typeStructure."]");
         }
+        $structureCibleDataObject->getStructure()->setSourceCode("SyGAL". "::" . uniqid());
+        $structureCibleDataObject->getStructure()->setTypeStructure($type);
+        $structureCibleDataObject->setSource($sourceSygal);
+        $structureCibleDataObject->getStructure()->setSource($sourceSygal);
         return $structureCibleDataObject;
     }
 
@@ -479,6 +486,30 @@ class StructureService extends BaseService
         }
 
         return null;
+    }
+
+    public function getStructuresBySuffixe($identifiant, $type)
+    {
+        $repo = null;
+        switch($type) {
+            case TypeStructure::CODE_ECOLE_DOCTORALE:
+                $repo = $this->getEntityManager()->getRepository(EcoleDoctorale::class);
+                break;
+            case TypeStructure::CODE_UNITE_RECHERCHE:
+                $repo = $this->getEntityManager()->getRepository(UniteRecherche::class);
+                break;
+            case TypeStructure::CODE_ETABLISSEMENT:
+                $repo = $this->getEntityManager()->getRepository(Etablissement::class);
+                break;
+        }
+
+        $qb = $repo->createQueryBuilder("structureConcrete")
+            ->andWhere("structureConcrete.sourceCode LIKE :criteria")
+            ->setParameter("criteria", "%::".$identifiant);
+
+        $result = $qb->getQuery()->getResult();
+
+        return $result;
     }
 
 }
