@@ -214,7 +214,6 @@ return [
         'factories' => [
             'Application\Controller\Role' => RoleControllerFactory::class,
             MailConfirmationController::class => MailConfirmationControllerFactory::class,
-            CobayeController::class => CobayeControllerFactory::class,
 
         ],
     ],
