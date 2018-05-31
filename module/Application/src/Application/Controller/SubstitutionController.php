@@ -375,6 +375,30 @@ class SubstitutionController extends AbstractController
     }
 
 
+    public function enregistrerAutomatiqueAction()
+    {
+        $type = $this->params()->fromRoute('type');
+        $identifiant = $this->params()->fromRoute('identifiant');
+
+        $structures = $this->getStructureService()->getStructuresBySuffixe($identifiant, $type);
+        $sources = [];
+        $cible = null;
+
+        /** @var StructureConcreteInterface $structure */
+        foreach ($structures as $structure) {
+            $prefix = explode("::", $structure->getSourceCode())[0];
+            if ($prefix === "SyGAL") {
+                $cible = $structure;
+            } else {
+                $sources[] = $structure;
+            }
+        }
+
+        if ($cible != null) $this->structureService->updateStructureSubstitutions($sources, $cible->getStructure());
+
+        return new ViewModel();
+    }
+
     public function modifierAutomatiqueAction()
     {
         $type           = $this->params()->fromRoute('type');

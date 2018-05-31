@@ -20,6 +20,7 @@ return [
                         'generate-source-input',
                         'substitution-automatique',
                         'modifier-automatique',
+                        'enregistrer-automatique',
                     ],
                     'privileges' => EcoleDoctoralePrivileges::ECOLE_DOCT_CONSULTATION,
                 ],
@@ -113,6 +114,15 @@ return [
                             'route'       => '/modifier/:type/:identifiant',
                             'defaults'    => [
                                 'action' => 'modifier-automatique',
+                            ],
+                        ],
+                    ],
+                    'enregistrer' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/enregistrer/:type/:identifiant',
+                            'defaults'    => [
+                                'action' => 'enregistrer-automatique',
                             ],
                         ],
                     ],

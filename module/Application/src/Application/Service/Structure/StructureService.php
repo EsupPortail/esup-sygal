@@ -363,6 +363,8 @@ class StructureService extends BaseService
      */
     public function createStructureConcrete($typeStructure) {
         $sourceSygal = $this->sourceService->fetchSourceSygal();
+        $type = $this->fetchTypeStructure($typeStructure);
+
         $structureCibleDataObject = null;
         switch($typeStructure) {
             case TypeStructure::CODE_ETABLISSEMENT :
@@ -379,6 +381,7 @@ class StructureService extends BaseService
                 throw new RuntimeException("Type de structure inconnu [".$typeStructure."]");
         }
         $structureCibleDataObject->getStructure()->setSourceCode("SyGAL". "::" . uniqid());
+        $structureCibleDataObject->getStructure()->setTypeStructure($type);
         $structureCibleDataObject->setSource($sourceSygal);
         $structureCibleDataObject->getStructure()->setSource($sourceSygal);
         return $structureCibleDataObject;
