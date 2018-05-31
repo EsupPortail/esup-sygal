@@ -6,10 +6,14 @@ stages:
 test:
   stage: test
   script: echo "Running tests"
+  only:
+  - master
 
 build:
   stage: build
   script: echo "Building the app"
+  only:
+  - master
 
 deploy_preprod:
   stage: deploy
