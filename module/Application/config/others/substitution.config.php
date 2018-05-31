@@ -19,6 +19,7 @@ return [
                         'detruire',
                         'generate-source-input',
                         'substitution-automatique',
+                        'modifier-automatique',
                     ],
                     'privileges' => EcoleDoctoralePrivileges::ECOLE_DOCT_CONSULTATION,
                 ],
@@ -102,6 +103,18 @@ return [
                         '__NAMESPACE__' => 'Application\Controller',
                         'controller'    => 'Substitution',
                         'action'        => 'substitution-automatique',
+                    ],
+                ],
+                'may_terminate' => true,
+                'child_routes'  => [
+                    'modifier' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/modifier/:type/:identifiant',
+                            'defaults'    => [
+                                'action' => 'modifier-automatique',
+                            ],
+                        ],
                     ],
                 ],
             ],

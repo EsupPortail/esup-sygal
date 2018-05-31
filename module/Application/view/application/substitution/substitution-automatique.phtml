@@ -1,52 +1,182 @@
 <?php
 
-use Application\Entity\Db\EcoleDoctorale;
-use Application\Entity\Db\Etablissement;
-use Application\Entity\Db\StructureConcreteInterface;
-
 /**
- * @var [EcoleDoctorale, EcoleDoctorale[]] $ecoles_substitutions
- * @var [Etablissement, Etablissement[]] $etablissements_substitutions
+ * Array(identifiant => EcoleDoctorale[]) $substitutionsEcolesDoctorales
+ * Array(identifiant => Etablissement[]) $substitutionsEtablissements
+ * Array(identifiant => UniteRecherche[]) $substitutionsUnitesRecherches
  */
 
-echo '<div>';
-displaySubstitutions($ecoles_substitutions, $type = "EcoleDoctorale");
-echo '</div>';
-echo '<div>';
-displaySubstitutions($unites_substitutions, $type = "UniteRecherche");
-echo '</div>';
-echo '<div>';
-displaySubstitutions($etablissements_substitutions, $type = "Etablissement");
-echo '</div>';
+use Application\Entity\Db\TypeStructure;
 
-function displaySubstitutions($substitutions, $type = "structures") {
+?>
 
-    echo '<h3>'.count($substitutions) . ' substitutions de ' . $type . '</h3>';
-    foreach ($substitutions as $substitution) {
+<?php $this->headTitle($this->translate("Substitutions automatiques")) ?>
 
-        /** @var StructureConcreteInterface $substituante */
-        $substituante = $substitution[1];
-        /** @var StructureConcreteInterface[] $substituees */
-        $substituees = $substitution[0];
 
-        echo '<table class="table table-extra-condensed">';
-        echo '<tr> <th> Substituées (' . count($substituees) . ') </th><th> Substituante </th></tr>';
-        for ($position = 0; $position < count($substituees); $position++) {
-            echo '<tr>';
-            echo '<td>';
-            echo $substituees[$position]->getSourceCode() . "<br/>";
-            echo $substituees[$position]->getSigle() . "<br/>";
-            echo $substituees[$position]->getLibelle();
-            echo '</td>';
-            echo '<td>';
-            if ($position === 0) {
-                echo $substituante->getSourceCode() . "<br/>";
-                echo $substituante->getSigle() . "<br/>";
-                echo $substituante->getLibelle();
-            }
-            echo '</td>';
-            echo '</tr>';
-        }
-        echo '</table>';
-    }
-}
+<h1 class="page-header first">
+    Substitutions automatiques
+</h1>
+
+<h2>
+    Substitutions d'écoles doctorales
+    <span class="badge"><?php count($substitutionsEcolesDoctorales); ?></span>
+</h2>
+
+<?php foreach ($substitutionsEcolesDoctorales as $identifier => $substitution) : ?>
+
+    <div id="div_<?php echo $identifier; ?>" class="panel panel-info">
+        <div class="panel-heading">
+            Substitution basé sur l'identitfiant <?php echo $identifier; ?>
+        </div>
+        <div class="panel-body">
+
+            <div class="col-md-5">
+                Substituées :
+                <ol>
+                    <?php foreach($substitution[0] as $structure): ?>
+                        <li>
+                            <?php echo $structure->getSourceCode(); ?>
+                            -
+                            <?php echo $structure->getLibelle(); ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ol>
+            </div>
+            <div class="col-md-5">
+                Substituante :
+                <?php if ($substitution[1] !== null): ?>
+                <ul>
+                    <li>
+                        <?php echo $substitution[1]->getSourceCode(); ?>
+                        -
+                        <?php echo $substitution[1]->getLibelle(); ?>
+                    </li>
+                </ul>
+                <?php endif ?>
+            </div>
+            <div class="col-md-2">
+                <a href="<?php echo $this->url('substitution-automatique/modifier', ['type' => TypeStructure::CODE_ECOLE_DOCTORALE, 'identifiant' => $identifier], [], true); ?>">
+                <button id="editer_<?php echo $identifier; ?>" class="btn btn-info" style="width:80%;margin:2px;">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                    Éditer
+                </button>
+                </a>
+                <br/>
+                <button id="valider_<?php echo $identifier; ?>" class="btn btn-success" style="width:80%;margin:2px;">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    Valider
+                </button>
+                <br/>
+                <button id="annuler_<?php echo $identifier; ?>" class="btn btn-danger" style="width:80%;margin:2px;">
+                    <span class="glyphicon glyphicon-remove"></span>
+                    Annuler
+                </button> <br/>
+            </div>
+        </div>
+    </div>
+
+<?php endforeach; ?>
+
+<!--<h2>-->
+<!--    Substitutions d'établissements-->
+<!--</h2>-->
+<!---->
+<?php //foreach ($substitutionsEtablissements as $identifier => $structures) : ?>
+<!---->
+<!--    --><?php //if(count($structures) >= 2): ?>
+<!--        <div class="panel panel-info">-->
+<!--            <div class="panel-heading">-->
+<!--                Substitution basé sur l'identitfiant --><?php //echo $identifier; ?>
+<!--            </div>-->
+<!--            <div class="panel-body">-->
+<!---->
+<!--                <div class="col-md-4">-->
+<!--                    Substituées :-->
+<!--                    <ol>-->
+<!--                        --><?php //foreach($structures as $structure): ?>
+<!--                            <li>-->
+<!--                                --><?php //echo $structure->getSourceCode(); ?>
+<!--                                --->
+<!--                                --><?php //echo $structure->getLibelle(); ?>
+<!--                            </li>-->
+<!--                        --><?php //endforeach; ?>
+<!--                    </ol>-->
+<!--                </div>-->
+<!--                <div class="col-md-4">-->
+<!--                    Substituante :-->
+<!--                    <ul>-->
+<!--                        <li> ??? </li>-->
+<!--                    </ul>-->
+<!--                </div>-->
+<!--                <div class="col-md-4">-->
+<!--                    <div class="col-md-2">-->
+<!--                        <button> Éditer </button> <br/>-->
+<!--                        <button> Valider </button> <br/>-->
+<!--                        <button> Annuler </button> <br/>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    --><?php //endif; ?>
+<?php //endforeach; ?>
+<!---->
+<!--<h2>-->
+<!--    Substitutions d'unités de recherche-->
+<!--</h2>-->
+<!---->
+<?php //foreach ($substitutionsUnitesRecherches as $identifier => $structures) : ?>
+<!---->
+<!--    --><?php //if(count($structures) >= 2): ?>
+<!--        <div class="panel panel-info">-->
+<!--            <div class="panel-heading">-->
+<!--                Substitution basé sur l'identitfiant --><?php //echo $identifier; ?>
+<!--            </div>-->
+<!--            <div class="panel-body">-->
+<!---->
+<!--                <div class="col-md-5">-->
+<!--                    Substituées :-->
+<!--                    <ol>-->
+<!--                        --><?php //foreach($structures as $structure): ?>
+<!--                            <li>-->
+<!--                                --><?php //echo $structure->getSourceCode(); ?>
+<!--                                --->
+<!--                                --><?php //echo $structure->getLibelle(); ?>
+<!--                            </li>-->
+<!--                        --><?php //endforeach; ?>
+<!--                    </ol>-->
+<!--                </div>-->
+<!--                <div class="col-md-5">-->
+<!--                    Substituante :-->
+<!--                    <ul>-->
+<!--                        <li> ??? </li>-->
+<!--                    </ul>-->
+<!--                </div>-->
+<!--                <div class="col-md-2">-->
+<!--                    <button> Éditer </button> <br/>-->
+<!--                    <button> Valider </button> <br/>-->
+<!--                    <button> Annuler </button> <br/>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    --><?php //endif; ?>
+<?php //endforeach; ?>
+
+<script>
+    $(document).ready(function() {
+       $("button.btn-danger").click(function() {
+           var id = $(this).attr("id");
+           var splits = id.split("_");
+           var number = splits[1];
+          //alert("Click sur le bouton annuler ["+id+"]");
+          $("div[id='div_"+number+"']").hide();
+       });
+        $("button.btn-success").click(function() {
+            var id = $(this).attr("id");
+            alert("Click sur le bouton valider ["+id+"]");
+        });
+        $("button.btn-info").click(function() {
+            var id = $(this).attr("id");
+            alert("Click sur le bouton editer ["+id+"]");
+        });
+    });
+</script>
