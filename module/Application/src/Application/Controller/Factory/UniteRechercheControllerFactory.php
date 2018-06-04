@@ -9,7 +9,6 @@ use Application\Service\Individu\IndividuService;
 use Application\Service\Notification\NotificationService;
 use Application\Service\Role\RoleService;
 use Application\Service\UniteRecherche\UniteRechercheService;
-use UnicaenLdap\Service\People as LdapPeopleService;
 use Zend\Mvc\Controller\ControllerManager;
 
 class UniteRechercheControllerFactory
@@ -31,20 +30,17 @@ class UniteRechercheControllerFactory
 
         /**
          * @var UniteRechercheService $uniteRechercheService
-         * @var LdapPeopleService $ldapPeopleService
          * @var IndividuService $individuService
          * @var RoleService $roleService
          * @var NotificationService $notificationService
          */
         $uniteRechercheService = $sl->get('UniteRechercheService');
-        $ldapPeopleService  = $sl->get('LdapServicePeople');
         $individuService = $sl->get('IndividuService');
         $roleService = $sl->get('RoleService');
         $notificationService = $controllerManager->getServiceLocator()->get(NotificationService::class);
 
         $controller = new UniteRechercheController();
         $controller->setUniteRechercheService($uniteRechercheService);
-        $controller->setLdapPeopleService($ldapPeopleService);
         $controller->setIndividuService($individuService);
         $controller->setRoleService($roleService);
         $controller->setEtablissementService($this->locateEtablissementService($sl));
