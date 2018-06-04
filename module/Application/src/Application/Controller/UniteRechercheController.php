@@ -2,19 +2,15 @@
 
 namespace Application\Controller;
 
-use Application\Entity\Db\Individu;
-use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\StructureConcreteInterface;
 use Application\Entity\Db\UniteRecherche;
 use Application\Form\UniteRechercheForm;
-use Application\RouteMatch;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Notification\NotificationServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
-use UnicaenLdap\Service\LdapPeopleServiceAwareTrait;
 use Zend\View\Model\ViewModel;
 
 class UniteRechercheController extends AbstractController
@@ -22,7 +18,6 @@ class UniteRechercheController extends AbstractController
     use UniteRechercheServiceAwareTrait;
     use IndividuServiceAwareTrait;
     use RoleServiceAwareTrait;
-    use LdapPeopleServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use NotificationServiceAwareTrait;
 

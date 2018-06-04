@@ -3,24 +3,19 @@
 namespace Application\Controller;
 
 use Application\Entity\Db\EcoleDoctorale;
-use Application\Entity\Db\Individu;
-use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\StructureConcreteInterface;
 use Application\Form\EcoleDoctoraleForm;
-use Application\RouteMatch;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Notification\NotificationServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
-use UnicaenLdap\Service\LdapPeopleServiceAwareTrait;
 use Zend\View\Model\ViewModel;
 
 class EcoleDoctoraleController extends AbstractController
 {
     use EcoleDoctoraleServiceAwareTrait;
-    use LdapPeopleServiceAwareTrait;
     use IndividuServiceAwareTrait;
     use RoleServiceAwareTrait;
     use EtablissementServiceAwareTrait;

@@ -23,9 +23,6 @@ use UnicaenAuth\Entity\Shibboleth\ShibUser;
 use UnicaenAuth\Options\ModuleOptions;
 use UnicaenAuth\Service\ShibService;
 use UnicaenLdap\Entity\People;
-use UnicaenLdap\Filter\People as LdapPeopleFilter;
-use UnicaenLdap\Service\LdapPeopleServiceAwareTrait;
-use UnicaenLdap\Service\People as LdapPeopleService;
 use Zend\Authentication\AuthenticationService;
 use Zend\Form\Form;
 use Zend\Http\Request;
@@ -38,7 +35,6 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     use UtilisateurServiceAwareTrait;
     use UserContextServiceAwareTrait;
     use RoleServiceAwareTrait;
-    use LdapPeopleServiceAwareTrait;
     use IndividuServiceAwareTrait;
     use EntityManagerAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
@@ -83,45 +79,6 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             'ecoles' => $ecoles,
             'unites' => $unites,
         ]);
-    }
-
-    /**
-     * AJAX.
-     *
-     * Recherche d'un compte LDAP.
-     *
-     * @return JsonModel
-     * @throws \UnicaenLdap\Exception
-     */
-    public function rechercherPeopleAction()
-    {
-        if (($term = $this->params()->fromQuery('term'))) {
-            $filter = LdapPeopleFilter::orFilter(
-                LdapPeopleFilter::username($term),
-                LdapPeopleFilter::nameContains($term)
-            );
-            /** @var LdapPeopleService $ldapService */
-            $ldapService = $this->getServiceLocator()->get('LdapServicePeople');
-            $collection = $ldapService->search($filter);
-            $result = [];
-            /** @var People $people */
-            foreach ($collection as $people) {
-                // mise en forme attendue par l'aide de vue FormSearchAndSelect
-                $label = strtoupper(implode(', ', (array)$people->get('sn'))) . ' ' . $people->get('givenName');
-                $result[] = array(
-                    'id'    => $people->getId(),     // identifiant unique de l'item
-                    'label' => $label,               // libellé de l'item
-                    'extra' => $people->get('mail'), // infos complémentaires (facultatives) sur l'item
-                );
-            }
-            uasort($result, function($a, $b) {
-                return strcmp($a['label'], $b['label']);
-            });
-
-            // todo: chercher pourquoi le tri est foutu en l'air par la conversion en JSON
-            return new JsonModel($result);
-        }
-        exit;
     }
 
     /**

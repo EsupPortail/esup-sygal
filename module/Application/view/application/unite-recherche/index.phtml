@@ -74,14 +74,14 @@ $canModifier = $this->isAllowed(UniteRecherchePrivileges::getResourceId(UniteRec
                            title="Historiser l'établissement">
                             <span class="glyphicon glyphicon-trash"></span>
                         </a>
-                    <?endif; ?>
+                    <?php endif; ?>
 
                     <?php if ($canModifier && !$historisee && $hasSousStructure) : ?>
                         <a href="<?php echo $this->url('substitution-modifier', ['cible' => $structure->getStructure()->getId(), [], true]); ?>"
                            title="Historiser l'établissement">
                             <span class="glyphicon glyphicon-link" title="Éditer la substitution"></span>
                         </a>
-                    <?endif; ?>
+                    <?php endif; ?>
 
 
 
@@ -90,7 +90,7 @@ $canModifier = $this->isAllowed(UniteRecherchePrivileges::getResourceId(UniteRec
                            title="Restaurer l'établissement">
                             Restaurer
                         </a>
-                    <?endif; ?>
+                    <?php endif; ?>
                 </td>
             </tr>
             <?php if ($selected == $structure->getStructure()->getId() && !$historisee): ?>
