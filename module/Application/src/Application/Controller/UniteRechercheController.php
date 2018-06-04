@@ -231,6 +231,13 @@ class UniteRechercheController extends AbstractController
         return $this;
     }
 
+    public function supprimerLogoAction()
+    {
+        $structureId = $this->params()->fromRoute("uniteRecherche");
+        $this->supprimerLogoUniteRecherche();
+        return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $structureId]], true);
+    }
+
     /**
      * Retire le logo associé à une unite de recherche:
      * - modification base de donnée (champ CHEMIN_LOG <- null)

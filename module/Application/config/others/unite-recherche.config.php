@@ -28,6 +28,7 @@ return [
                         'modifier',
                         'ajouter-individu',
                         'retirer-individu',
+                        'supprimer-logo',
                         'ajouter-etablissement-rattachement',
                         'retirer-etablissement-rattachement',
                         'principal-etablissement-rattachement',
@@ -158,6 +159,18 @@ return [
                             ],
                             'defaults'    => [
                                 'action' => 'retirer-individu',
+                            ],
+                        ],
+                    ],
+                    'supprimer-logo' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'       => '/supprimer-logo/:uniteRecherche',
+                            'constraints' => [
+                                'uniteRecherche' => '\d+',
+                            ],
+                            'defaults'    => [
+                                'action' => 'supprimer-logo',
                             ],
                         ],
                     ],

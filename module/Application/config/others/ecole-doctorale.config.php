@@ -28,6 +28,7 @@ return [
                         'modifier',
                         'ajouter-individu',
                         'retirer-individu',
+                        'supprimer-logo',
                     ],
                     'privileges' => EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION,
                 ],
@@ -116,6 +117,18 @@ return [
                             ],
                             'defaults'    => [
                                 'action' => 'retirer-individu',
+                            ],
+                        ],
+                    ],
+                    'supprimer-logo' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'       => '/supprimer-logo/:ecoleDoctorale',
+                            'constraints' => [
+                                'ecoleDoctorale' => '\d+',
+                            ],
+                            'defaults'    => [
+                                'action' => 'supprimer-logo',
                             ],
                         ],
                     ],
