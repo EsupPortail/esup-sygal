@@ -25,7 +25,7 @@ $canModifier = $this->isAllowed(EtablissementPrivileges::getResourceId(Etablisse
     <span class="badge"><?php echo count($structuresPrincipales) + count($structuresSecondaires); ?></span>
 </h1>
 
-<?php echo $this->messenger()->addCurrentMessagesFromFlashMessenger() ?>
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
 
 <?php if ($canModifier): ?>
 

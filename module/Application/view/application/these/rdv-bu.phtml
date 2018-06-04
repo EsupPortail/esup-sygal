@@ -68,6 +68,7 @@ $rdvBu = $these->getRdvBu();
         <h2 class="first">Rendez-vous BU</h2>
     </div>
     <div class="panel-body">
+        <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNamespace('RdvBu/*'); ?>
         <?php if ($rdvBu): ?>
             <div class="row">
                 <div class="col-md-4">

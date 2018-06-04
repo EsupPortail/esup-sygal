@@ -16,6 +16,8 @@ use Zend\Form\Form;
 
 <h1 class="page-header"><?php echo $title ?></h1>
 
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
+
 <?php //if ($detournement): ?>
 <!--    <p class="lead">-->
 <!--        Avant de continuer, merci de saisir votre identifiant-->
