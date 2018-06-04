@@ -11,6 +11,7 @@ use Application\View\Renderer\PhpRenderer;
 
 /**
  * @var PhpRenderer $this
+ * @var string $identifiant
  * @var Structure $cible
  * @var StructureConcreteInterface[] $structuresConcretesSubstituees
  * @var StructureConcreteInterface[] $structuresConcretes
@@ -50,6 +51,7 @@ echo $messenger->addMessagesFromFlashMessenger();
 
 <form action="<?php echo $this->url(null, [], [],true); ?>" method="POST">
     <input type="hidden" name="type" id="type" value="<?php echo $type; ?>">
+    <input type="hidden" name="identifiant" id="identifiant" value="<?php echo $identifiant; ?>">
     <?php if($canEdit): ?>
         <input type="submit" class="btn btn-primary" value="Enregistrer"/>
     <?php endif; ?>

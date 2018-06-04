@@ -20,6 +20,7 @@ return [
                         'detruire',
                         'generate-source-input',
                         'substitution-automatique',
+                        'afficher-automatique',
                         'modifier-automatique',
                         'enregistrer-automatique',
                     ],
@@ -136,6 +137,15 @@ return [
                             'route'       => '/enregistrer/:type/:identifiant',
                             'defaults'    => [
                                 'action' => 'enregistrer-automatique',
+                            ],
+                        ],
+                    ],
+                    'afficher' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/afficher/:type/:identifiant',
+                            'defaults'    => [
+                                'action' => 'afficher-automatique',
                             ],
                         ],
                     ],

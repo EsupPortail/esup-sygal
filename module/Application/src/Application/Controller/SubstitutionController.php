@@ -499,11 +499,39 @@ class SubstitutionController extends AbstractController
             'title' => "Substitution de structures",
             'type' => $type,
             'cible' => $cible->getStructure(),
+            'identifiant' => $identifiant,
             'structuresConcretes' => $structures,
             'structuresConcretesSubstituees' => $sources,
         ]);
         $vm->setTemplate('application/substitution/modifier');
         return $vm;
 
+    }
+
+    public function afficherAutomatiqueAction()
+    {
+        $type           = $this->params()->fromRoute('type');
+        $identifiant    = $this->params()->fromRoute('identifiant');
+
+        $structures = $this->getStructureService()->getStructuresBySuffixe($identifiant, $type);
+        $sources = [];
+        $cible = null;
+
+        /** @var StructureConcreteInterface $structure */
+        foreach ($structures as $structure) {
+            $prefix = explode("::",$structure->getSourceCode())[0];
+            if ($prefix === "SyGAL") {
+                $cible = $structure;
+            } else {
+                $sources[] = $structure;
+            }
+        }
+
+        return new ViewModel([
+            'substituees' => $sources,
+            'substituante' => $cible,
+            'type' => $type,
+            'identifiant' => $identifiant,
+        ]);
     }
 }

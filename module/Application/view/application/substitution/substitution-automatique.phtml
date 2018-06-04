@@ -23,59 +23,10 @@ use Application\Entity\Db\TypeStructure;
 </h2>
 
 <?php foreach ($substitutionsEcolesDoctorales as $identifier => $substitution) : ?>
-
-    <div id="div_ed_<?php echo $identifier; ?>" class="panel panel-info">
-        <div class="panel-heading">
-            Substitution basé sur l'identitfiant <?php echo $identifier; ?>
-        </div>
-        <div class="panel-body">
-
-            <div class="col-md-5">
-                Substituées :
-                <ol>
-                    <?php foreach($substitution[0] as $structure): ?>
-                        <li>
-                            <?php echo $structure->getSourceCode(); ?>
-                            -
-                            <?php echo $structure->getLibelle(); ?>
-                        </li>
-                    <?php endforeach; ?>
-                </ol>
-            </div>
-            <div class="col-md-5">
-                Substituante :
-                <?php if ($substitution[1] !== null): ?>
-                <ul>
-                    <li>
-                        <?php echo $substitution[1]->getSourceCode(); ?>
-                        -
-                        <?php echo $substitution[1]->getLibelle(); ?>
-                    </li>
-                </ul>
-                <?php endif ?>
-            </div>
-            <div class="col-md-2">
-                <a href="<?php echo $this->url('substitution-automatique/modifier', ['type' => TypeStructure::CODE_ECOLE_DOCTORALE, 'identifiant' => $identifier], [], true); ?>">
-                <button id="editer_ed_<?php echo $identifier; ?>" class="btn btn-info" style="width:95%;margin:2px;">
-                    <span class="glyphicon glyphicon-pencil"></span>
-                    Personnaliser
-                </button>
-                </a>
-                <br/>
-                <button id="valider_ed_<?php echo $identifier; ?>" class="btn btn-success" style="width:95%;margin:2px;">
-                    <span class="glyphicon glyphicon-ok"></span>
-                    Enregistrer
-                </button>
-                <br/>
-                <button id="annuler_ed_<?php echo $identifier; ?>" class="btn btn-danger" style="width:95%;margin:2px;">
-                    <span class="glyphicon glyphicon-remove"></span>
-                    Masquer
-                </button> <br/>
-            </div>
-        </div>
+    <div id="<?php echo TypeStructure::CODE_ECOLE_DOCTORALE; ?>_<?php echo $identifier; ?>">
     </div>
-
 <?php endforeach; ?>
+
 
 <h2>
     Substitutions d'établissements
@@ -83,62 +34,8 @@ use Application\Entity\Db\TypeStructure;
 </h2>
 
 <?php foreach ($substitutionsEtablissements as $identifier => $substitution) : ?>
-
-    <div id="div_et_<?php echo $identifier; ?>" class="panel panel-info">
-        <div class="panel-heading">
-            Substitution basé sur l'identitfiant <?php echo $identifier; ?>
-        </div>
-        <div class="panel-body">
-
-            <div class="col-md-5">
-                Substituées :
-                <ol>
-                    <?php foreach($substitution[0] as $structure): ?>
-                        <li>
-                            <?php echo $structure->getSourceCode(); ?>
-                            -
-                            <?php echo $structure->getLibelle(); ?>
-                        </li>
-                    <?php endforeach; ?>
-                </ol>
-            </div>
-            <div class="col-md-5">
-                Substituante :
-                <?php if ($substitution[1] !== null): ?>
-                    <ul>
-                        <li>
-                            <?php echo $substitution[1]->getSourceCode(); ?>
-                            -
-                            <?php echo $substitution[1]->getLibelle(); ?>
-                        </li>
-                    </ul>
-                <?php endif ?>
-            </div>
-            <div class="col-md-2">
-                <a
-                   data-event="edition-substitution"
-                   href="<?php echo $this->url('substitution-automatique/modifier', ['type' => TypeStructure::CODE_ETABLISSEMENT, 'identifiant' => $identifier], [], true); ?>"
-                   class="ajax-modal"
-                >
-                    <button id="editer_et_<?php echo $identifier; ?>" class="btn btn-info" style="width:95%;margin:2px;">
-                        <span class="glyphicon glyphicon-pencil"></span>
-                        Personnaliser
-                    </button>
-                </a>
-                <br/>
-                <button id="valider_et_<?php echo $identifier; ?>" class="btn btn-success" style="width:95%;margin:2px;">
-                    <span class="glyphicon glyphicon-ok"></span>
-                    Enregistrer
-                </button>
-                <br/>
-                <button id="annuler_et_<?php echo $identifier; ?>" class="btn btn-danger" style="width:95%;margin:2px;">
-                    <span class="glyphicon glyphicon-remove"></span>
-                    Masquer
-                </button> <br/>
-            </div>
-        </div>
+    <div id="<?php echo TypeStructure::CODE_ETABLISSEMENT; ?>_<?php echo $identifier; ?>">
     </div>
-
 <?php endforeach; ?>
 
 
@@ -148,113 +45,71 @@ use Application\Entity\Db\TypeStructure;
 </h2>
 
 <?php foreach ($substitutionsUnitesRecherches as $identifier => $substitution) : ?>
-
-    <div id="div_ur_<?php echo $identifier; ?>" class="panel panel-info">
-        <div class="panel-heading">
-            Substitution basé sur l'identitfiant <?php echo $identifier; ?>
-        </div>
-        <div class="panel-body">
-
-            <div class="col-md-5">
-                Substituées :
-                <ol>
-                    <?php foreach($substitution[0] as $structure): ?>
-                        <li>
-                            <?php echo $structure->getSourceCode(); ?>
-                            -
-                            <?php echo $structure->getLibelle(); ?>
-                        </li>
-                    <?php endforeach; ?>
-                </ol>
-            </div>
-            <div class="col-md-5">
-                Substituante :
-                <?php if ($substitution[1] !== null): ?>
-                    <ul>
-                        <li>
-                            <?php echo $substitution[1]->getSourceCode(); ?>
-                            -
-                            <?php echo $substitution[1]->getLibelle(); ?>
-                        </li>
-                    </ul>
-                <?php endif ?>
-            </div>
-            <div class="col-md-2">
-                <a href="<?php echo $this->url('substitution-automatique/modifier', ['type' => TypeStructure::CODE_UNITE_RECHERCHE, 'identifiant' => $identifier], [], true); ?>">
-                    <button id="editer_ur_<?php echo $identifier; ?>" class="btn btn-info" style="width:95%;margin:2px;">
-                        <span class="glyphicon glyphicon-pencil"></span>
-                        Personnaliser
-                    </button>
-                </a>
-                <br/>
-                <button id="valider_ur_<?php echo $identifier; ?>" class="btn btn-success" style="width:95%;margin:2px;">
-                    <span class="glyphicon glyphicon-ok"></span>
-                    Enregistrer
-                </button>
-                <br/>
-                <button id="annuler_ur_<?php echo $identifier; ?>" class="btn btn-danger" style="width:95%;margin:2px;">
-                    <span class="glyphicon glyphicon-remove"></span>
-                    Masquer
-                </button> <br/>
-            </div>
-        </div>
+    <div id="<?php echo TypeStructure::CODE_UNITE_RECHERCHE; ?>_<?php echo $identifier; ?>">
     </div>
-
 <?php endforeach; ?>
+
+
 <script>
     $(document).ready(function() {
+        <?php foreach ($substitutionsEcolesDoctorales as $identifier => $substitution) : ?>
+            loadSubstitutionByIdentifiant("ecole-doctorale", "<?php echo $identifier; ?>");
+        <?php endforeach; ?>
+        <?php foreach ($substitutionsEtablissements as $identifier => $substitution) : ?>
+            loadSubstitutionByIdentifiant("etablissement", "<?php echo $identifier; ?>");
+        <?php endforeach; ?>
+        <?php foreach ($substitutionsUnitesRecherches as $identifier => $substitution) : ?>
+            //loadSubstitutionByIdentifiant("unite-recherche", "<?php //echo $identifier; ?>//");
+        <?php endforeach; ?>
 
+        $("body")
+            .on("click","button.btn-danger", function() {
+                var id = $(this).attr("id").split("_");
+                var type = id[1];
+                var identifiant = id[2];
+                $("div[id='div_"+type+ "_" + identifiant +"']").hide();
+        });
 
-       $("button.btn-danger").click(function() {
-           var id = $(this).attr("id");
-           var splits = id.split("_");
-           var type = splits[1];
-           var number = splits[2];
-          //alert("Click sur le bouton annuler ["+id+"]");
-          $("div[id='div_"+type+ "_" +number+"']").hide();
-       });
+        $("body")
+            .on("click","button.btn-success", function() {
+                var id = $(this).attr("id").split("_");
+                var type = id[1];
+                var identifiant = id[2];
 
-
-        $("button.btn-success").click(function() {
-            var id = $(this).attr("id");
-            var splits = id.split("_");
-            var type = splits[1];
-            var number = splits[2];
-            // alert("Click sur le bouton valider ["+id+"]");
-
-            if (type === "ed") type_c = "ecole-doctorale";
-            if (type === "et") type_c = "etablissement";
-            if (type === "ur") type_c = "unite-recherche";
-
-            var url = "automatique/enregistrer/" + type_c + "/" + number;
-
-            $.ajax({
-                type: "POST",
-                url : url,
-                success:
-                    function(retour){
-                        $("div[id='div_"+type+ "_" +number+"']").hide();
-                    }
+                var url = "automatique/enregistrer/" + type + "/" + identifiant;
+                $.ajax({
+                    type: "POST",
+                    url : url,
+                    success:
+                        function(retour){
+                            $("div[id='div_"+type+ "_" + identifiant +"']").hide();
+                        }
+                });
             });
 
-        });
-        $("button.btn-info").click(function() {
-            //var id = $(this).attr("id");
-            // alert("Click sur le bouton editer ["+id+"]");
+        $("body").on("edition-substitution", function(event, data) {
+                // console.log("Event received : ", event);
+                console.log("With args : ", data);
+                event.div.modal('hide'); // ferme la fenêtre modale
+
+                var type = data[0].value;
+                var identifiant = data[1].value;
+                console.log("FAIRE UN REFRESH " + type + " " + identifiant);
+                loadSubstitutionByIdentifiant(type,identifiant);
+            });
+    });
+
+    function loadSubstitutionByIdentifiant(type, identifiant) {
+        var url = "automatique/afficher/" + type + "/" + identifiant;
+        // console.log(url);
+        $.ajax({
+            type: "POST",
+            url : url,
+            success:
+                function(retour){
+                    $("div[id='"+type+ "_" +identifiant+"']").html(retour);
+                }
         });
 
-        $("body").on("edition-substitution", function(event, data) {
-            /**
-             * event          : événement jQuery (cf. http://api.jquery.com/category/events/event-object/)
-             *   event.type   : nom de l'événement ("save-message" dans cet exemple)
-             *   event.div    : DIV correspondant à la fenêtre modale (objet jQuery)
-             *   event.a      : lien hypertexte cliqué
-             * data           : formulaire sérialisé en tableau à l'aide de jQuery.serializeArray()
-             */
-            console.log("Event received : ", event);
-            console.log("With args : ", data);
-            // ...
-            event.div.modal('hide'); // ferme la fenêtre modale
-        });
-    });
+    }
 </script>

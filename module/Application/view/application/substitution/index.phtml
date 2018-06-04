@@ -59,7 +59,6 @@ echo $messenger->addMessagesFromFlashMessenger();
         .on("click", "span#detruire", function() {
             var id = $(this).attr("ref");
             var type = $(this).attr("type");
-            alert("c'est çà clique sur la " + type + " identifiée " + id);
             var url = "detruire/" + id;
             $.ajax({
                 url : url,

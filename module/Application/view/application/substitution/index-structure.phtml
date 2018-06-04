@@ -84,12 +84,12 @@ use Application\Provider\Privilege\SubstitutionPrivileges;
                                 </a>
                                 &nbsp;
                                 <?php if ($canEdit): ?>
-<!--                                    <a href="--><?php //echo $this->url('substitution-detruire', ['cible' => $structure->getId()], [], true); ?><!--">-->
                                         <span id="detruire"
                                               ref="<?php echo $structure->getId(); ?>"
                                               type="<?php echo $type; ?>"
-                                              class="glyphicon glyphicon-remove"></span>
-<!--                                    </a>-->
+                                              class="text-danger glyphicon glyphicon-remove"
+
+                                        ></span>
                                 <?php endif; ?>
                             </td>
                         </tr>
@@ -99,3 +99,9 @@ use Application\Provider\Privilege\SubstitutionPrivileges;
         </div>
     </div>
 <?php endif; ?>
+
+<style>
+    span#detruire:hover{
+        cursor: pointer;
+    }
+</style>
