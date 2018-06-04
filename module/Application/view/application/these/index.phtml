@@ -162,12 +162,27 @@ $acteursFormatter->asSeparated()
             </td>
             <td>
                 <?php if($these->getEcoleDoctorale()): ?>
-                <abbr title="<?php echo $these->getEcoleDoctorale()->getLibelle() ?>"><?php echo $these->getEcoleDoctorale()->getSourceCode() ?></abbr>
+                    <abbr title="<?php echo $these->getEcoleDoctorale()->getLibelle() ?>">
+                        <?php
+                        $sigle = $these->getEcoleDoctorale()->getSigle();
+                        $code = explode("::",$these->getEcoleDoctorale()->getSourceCode())[1];
+                        if ($sigle && $sigle !== "") {
+                            echo $sigle;
+                        } else {
+                            echo $code;
+                        }
+                        ?>
+                    </abbr>
                 <?php endif ?>
             </td>
             <td>
                 <?php if($these->getUniteRecherche()): ?>
-                    <abbr title="<?php echo $these->getUniteRecherche()->getLibelle() ?>"><?php echo $these->getUniteRecherche()->getSourceCode() ?></abbr>
+                    <abbr title="<?php echo $these->getUniteRecherche()->getLibelle() ?>">
+                        <?php
+                            $code = explode("::",$these->getUniteRecherche()->getSourceCode())[1];
+                            echo $code;
+                        ?>
+                    </abbr>
                 <?php endif ?>
             </td>
             <td><?php
