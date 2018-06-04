@@ -115,7 +115,11 @@ use Application\Entity\Db\TypeStructure;
                 <?php endif ?>
             </div>
             <div class="col-md-2">
-                <a href="<?php echo $this->url('substitution-automatique/modifier', ['type' => TypeStructure::CODE_ETABLISSEMENT, 'identifiant' => $identifier], [], true); ?>">
+                <a
+                   data-event="edition-substitution"
+                   href="<?php echo $this->url('substitution-automatique/modifier', ['type' => TypeStructure::CODE_ETABLISSEMENT, 'identifiant' => $identifier], [], true); ?>"
+                   class="ajax-modal"
+                >
                     <button id="editer_et_<?php echo $identifier; ?>" class="btn btn-info" style="width:95%;margin:2px;">
                         <span class="glyphicon glyphicon-pencil"></span>
                         Personnaliser
