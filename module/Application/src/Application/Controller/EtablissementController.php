@@ -178,7 +178,7 @@ class EtablissementController extends AbstractController
             // action d'affacement du logo
             if (isset($data['supprimer-logo'])) {
                 $this->supprimerLogoEtablissement();
-                return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $structureId]], true);
+                return $this->redirect()->toRoute(null, [], [], true);
             }
 
             // action de modification
@@ -218,6 +218,13 @@ class EtablissementController extends AbstractController
 
         $this->flashMessenger()->addSuccessMessage("Établissement '$etablissement' restauré avec succès");
 
+        return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $structureId]], true);
+    }
+
+    public function supprimerLogoAction()
+    {
+        $structureId = $this->params()->fromRoute("etablissement");
+        $this->supprimerLogoEtablissement();
         return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $structureId]], true);
     }
 

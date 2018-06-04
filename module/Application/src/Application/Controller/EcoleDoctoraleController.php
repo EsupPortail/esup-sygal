@@ -222,6 +222,13 @@ class EcoleDoctoraleController extends AbstractController
         return $this;
     }
 
+    public function supprimerLogoAction()
+    {
+        $structureId = $this->params()->fromRoute("ecoleDoctorale");
+        $this->supprimerLogoEcoleDoctorale();
+        return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $structureId]], true);
+    }
+
     /**
      * Retire le logo associé à une école doctorale:
      * - modification base de donnée (champ CHEMIN_LOG <- null)

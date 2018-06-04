@@ -46,8 +46,12 @@ $fcg = $this->formControlGroup();
                <?php
                 echo $this->formFile($logoFile);
                 echo $this->formElementErrors($logoFile);
-                echo $this->formElement($form->get('supprimer-logo'));
                 ?>
+            <br/>
+            <a id="supprimer-logo" class="btn btn-danger" href="<?php echo $this->url('ecole-doctorale/supprimer-logo', ["ecoleDoctorale" => $form->getObject()->getStructure()->getId()]); ?>">
+                <span class="glyphicon glyphicon-trash"></span>
+                Supprimer le logo
+            </a>
         </td>
     </tr>
 </table>
