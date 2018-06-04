@@ -13,6 +13,7 @@ return [
                     'controller' => 'Application\Controller\Substitution',
                     'action'     => [
                         'index',
+                        'index-structure',
                         'selection',
                         'creer',
                         'modifier',
@@ -37,6 +38,18 @@ return [
                         '__NAMESPACE__' => 'Application\Controller',
                         'controller'    => 'Substitution',
                         'action'        => 'index',
+                        'language'        => 'fr_FR',
+                    ],
+                ],
+            ],
+            'substitution-index-structure' => [
+                'type'          => Segment::class,
+                'options'       => [
+                    'route'    => '/[:language/]substitution/index-structure/:type',
+                    'defaults' => [
+                        '__NAMESPACE__' => 'Application\Controller',
+                        'controller'    => 'Substitution',
+                        'action'        => 'index-structure',
                         'language'        => 'fr_FR',
                     ],
                 ],

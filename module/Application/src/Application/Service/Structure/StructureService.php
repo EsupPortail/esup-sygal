@@ -297,10 +297,15 @@ class StructureService extends BaseService
      * Cette fonction retourne la liste des structures qui substitue d'autres structures
      * @return Structure[]
      */
-    public function getStructuresSubstituantes()
+    public function getStructuresSubstituantes($type = null)
     {
         $qb = $this->getEntityManager()->getRepository(Structure::class)->createQueryBuilder("s")
             ->andWhere("s.structuresSubstituees IS NOT EMPTY");
+        if ($type) {
+            $typeStructure = $this->fetchTypeStructure($type);
+            $qb->andWhere("s.typeStructure = :type")
+                ->setParameter("type", $typeStructure);
+        }
 
         $results = $qb->getQuery()->getResult();
         return $results;

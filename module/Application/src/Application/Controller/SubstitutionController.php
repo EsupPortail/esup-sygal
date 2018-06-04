@@ -54,6 +54,16 @@ class SubstitutionController extends AbstractController
         ]);
     }
 
+    public function indexStructureAction() {
+        $type = $this->params()->fromRoute("type");
+        $structures = $this->getStructureService()->getStructuresSubstituantes($type);
+
+        return new ViewModel([
+            'type' => $type,
+            'structures' => $structures,
+        ]);
+    }
+
     public function creerAction()
     {
         $type = $this->params()->fromRoute('type');
@@ -126,6 +136,7 @@ class SubstitutionController extends AbstractController
         }
 
         $vm = new ViewModel([
+            'title' => "Création d'une substitution",
             'cible' => $cible,
             'structuresConcretesSubstituees' => $structuresConcretesSubstituees,
             'structuresConcretes' => $structures,
@@ -199,6 +210,7 @@ class SubstitutionController extends AbstractController
 
 
         return new ViewModel([
+            'title' => "Modification d'une substitution",
             'cible' => $structureCible,
             'structuresConcretes' => $structures,
             'structuresConcretesSubstituees' => $structuresConcretesSubstituees,

@@ -242,5 +242,19 @@ use Application\Entity\Db\TypeStructure;
             //var id = $(this).attr("id");
             // alert("Click sur le bouton editer ["+id+"]");
         });
+
+        $("body").on("edition-substitution", function(event, data) {
+            /**
+             * event          : événement jQuery (cf. http://api.jquery.com/category/events/event-object/)
+             *   event.type   : nom de l'événement ("save-message" dans cet exemple)
+             *   event.div    : DIV correspondant à la fenêtre modale (objet jQuery)
+             *   event.a      : lien hypertexte cliqué
+             * data           : formulaire sérialisé en tableau à l'aide de jQuery.serializeArray()
+             */
+            console.log("Event received : ", event);
+            console.log("With args : ", data);
+            // ...
+            event.div.modal('hide'); // ferme la fenêtre modale
+        });
     });
 </script>
