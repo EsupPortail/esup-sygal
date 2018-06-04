@@ -3,19 +3,15 @@
 namespace Application\Controller;
 
 use Application\Entity\Db\Etablissement;
-use Application\Entity\Db\Individu;
-use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
+use Application\Entity\Db\SourceInterface;
+use Application\Entity\Db\StructureConcreteInterface;
 use Application\Form\EtablissementForm;
-use Application\RouteMatch;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Notification\NotificationServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
-use UnicaenLdap\Service\LdapPeopleServiceAwareTrait;
 use Zend\View\Model\ViewModel;
-use Application\Entity\Db\SourceInterface;
-use Application\Entity\Db\StructureConcreteInterface;
 
 /**
  * Class EtablissementController
@@ -23,7 +19,6 @@ use Application\Entity\Db\StructureConcreteInterface;
 class EtablissementController extends AbstractController
 {
     use EtablissementServiceAwareTrait;
-    use LdapPeopleServiceAwareTrait;
     use IndividuServiceAwareTrait;
     use RoleServiceAwareTrait;
     use NotificationServiceAwareTrait;
