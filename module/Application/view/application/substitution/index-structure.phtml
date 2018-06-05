@@ -1,0 +1,107 @@
+<?php
+
+use Application\Entity\Db\StructureConcreteInterface;
+use Application\Entity\Db\TypeStructure;
+use Application\Provider\Privilege\SubstitutionPrivileges;
+
+/**
+  * @var string $type
+  * @var StructureConcreteInterface[] $structures
+  */
+
+ $libelle = 'Structure';
+ $canEdit = false;
+ $canView = false;
+  switch($type) {
+     case TypeStructure::CODE_ECOLE_DOCTORALE :
+         $libelle   = 'École doctorale';
+         $canView   = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_CONSULTATION_ECOLE));
+         $canEdit   = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_MODIFICATION_ECOLE));
+         break;
+     case TypeStructure::CODE_UNITE_RECHERCHE :
+         $libelle   = 'Unité de recherche';
+         $canView   = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_CONSULTATION_UNITE));
+         $canEdit   = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_MODIFICATION_UNITE));
+         break;
+     case TypeStructure::CODE_ETABLISSEMENT :
+         $libelle   = 'Établissement';
+         $canView   = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_CONSULTATION_ETABLISSEMENT));
+         $canEdit   = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_MODIFICATION_ETABLISSEMENT));
+         break;
+ }
+
+
+?>
+
+<?php if ($canView): ?>
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3>
+                <?php echo $libelle; ?>
+                <span class="badge">
+                    <?php echo count($structures); ?>
+                </span>
+            </h3>
+
+        </div>
+        <div class="panel-body">
+
+            <?php if($canEdit): ?>
+                <p>
+                    <a
+                        data-event="edition-substitution"
+                        href="<?php echo $this->url('substitution-creer', ['type' => $type], [], true); ?>"
+                        class="ajax-modal"
+                    >
+                        <button class="btn btn-primary">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            Créer une structure de substitution
+                        </button>
+                    </a>
+                </p>
+            <?php endif; ?>
+
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th> Libellé </th>
+                        <th> #Structures </th>
+                        <th> Actions </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach($structures as $structure): ?>
+                        <tr>
+                            <td> <?php echo $structure->getLibelle(); ?> </td>
+                            <td> <?php echo count($structure->getStructuresSubstituees()); ?> </td>
+                            <td style="text-align:center;">
+                                <a
+                                    data-event="edition-substitution"
+                                    href="<?php echo $this->url('substitution-modifier', ['cible' => $structure->getId()], [], true); ?>"
+                                    class="ajax-modal"
+                                >
+                                    <span class="glyphicon glyphicon-pencil"></span>
+                                </a>
+                                &nbsp;
+                                <?php if ($canEdit): ?>
+                                        <span id="detruire"
+                                              ref="<?php echo $structure->getId(); ?>"
+                                              type="<?php echo $type; ?>"
+                                              class="text-danger glyphicon glyphicon-remove"
+
+                                        ></span>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+<?php endif; ?>
+
+<style>
+    span#detruire:hover{
+        cursor: pointer;
+    }
+</style>

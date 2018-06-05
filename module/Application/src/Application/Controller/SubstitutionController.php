@@ -54,6 +54,16 @@ class SubstitutionController extends AbstractController
         ]);
     }
 
+    public function indexStructureAction() {
+        $type = $this->params()->fromRoute("type");
+        $structures = $this->getStructureService()->getStructuresSubstituantes($type);
+
+        return new ViewModel([
+            'type' => $type,
+            'structures' => $structures,
+        ]);
+    }
+
     public function creerAction()
     {
         $type = $this->params()->fromRoute('type');
@@ -126,6 +136,7 @@ class SubstitutionController extends AbstractController
         }
 
         $vm = new ViewModel([
+            'title' => "Création d'une substitution",
             'cible' => $cible,
             'structuresConcretesSubstituees' => $structuresConcretesSubstituees,
             'structuresConcretes' => $structures,
@@ -199,6 +210,7 @@ class SubstitutionController extends AbstractController
 
 
         return new ViewModel([
+            'title' => "Modification d'une substitution",
             'cible' => $structureCible,
             'structuresConcretes' => $structures,
             'structuresConcretesSubstituees' => $structuresConcretesSubstituees,
@@ -418,10 +430,6 @@ class SubstitutionController extends AbstractController
             }
         }
 
-//        if ($cible === null) {
-//            $cible = $this->getStructureService()->createStructureConcrete($type);
-//            $cible->setSourceCode("SyGAL" . "::" . $identifiant);
-//        }
 
         $structures = $this->structureService->getStructuresConcretes($type);
         /** Retrait des structures soient substituées soient substitutantes */
@@ -488,78 +496,42 @@ class SubstitutionController extends AbstractController
 
         $vm = new ViewModel();
         $vm->setVariables([
+            'title' => "Substitution de structures",
             'type' => $type,
             'cible' => $cible->getStructure(),
+            'identifiant' => $identifiant,
             'structuresConcretes' => $structures,
             'structuresConcretesSubstituees' => $sources,
         ]);
         $vm->setTemplate('application/substitution/modifier');
         return $vm;
 
+    }
 
-//        $structureCible = $this->structureService->findStructureSubsitutionCibleById($idCible);
-//        $structuresSubstituees = $structureCible->getStructuresSubstituees();
-//
-//        $structuresConcretesSubstituees = [];
-//        foreach($structuresSubstituees as $structureSubstituee) {
-//            $structureConcreteSubstituee = $this->structureService->findStructureConcreteFromStructure($structureSubstituee);
-//            $structuresConcretesSubstituees[] = $structureConcreteSubstituee;
-//        }
-//
-//        $structures = $this->structureService->getStructuresConcretes($structureCible->getTypeStructure()->getCode());
-//
-//        /** Retrait des structures soient substituées soient substitutantes */
-//        $toRemove = [];
-//        /** @var StructureConcreteInterface $structure */
-//        foreach($structures as $structure) {
-//            if (count($structure->getStructure()->getStructuresSubstituees()) != 0) {
-//                $toRemove[] = $structure->getStructure();
-//                foreach ($structure->getStructure()->getStructuresSubstituees() as $sub) {
-//                    $toRemove[] = $sub;
-//                }
-//
-//            }
-//        }
-//        /** @var Structure $remove */
-//        foreach($toRemove as $remove) {
-//            $structures = array_filter($structures, function (StructureConcreteInterface $structure) use ($remove) {
-//                return  $structure->getStructure()->getId() !== $remove->getId();
-//            });
-//        }
-//
-//        $request = $this->getRequest();
-//        if ($request->isPost()) {
-//            $data = $request->getPost();
-//            $sources = [];
-//            foreach ($data['sourceIds'] as $sourceId) {
-//                $structure = $this->structureService->findStructureById($sourceId);
-//                $structureConcrete = $this->structureService->findStructureConcreteFromStructure($structure);
-//                if ($structureConcrete === null) {
-//                    throw new RuntimeException("Aucune structure concrète cible trouvée avec id=$sourceId.");
-//                }
-//                $sources[] = $structureConcrete;
-//            }
-//            $this->structureService->updateFromPostData($structureCible,$data['cible']);
-//            $this->structureService->updateStructureSubstitutions($sources, $structureCible);
-//
-//            $message = "La substitution <strong>".$structureCible->getLibelle()."</strong> vient d'être mise à jour. Elle regroupe les structures : ";
-//            $first = true;
-//            foreach($sources as $source) {
-//                if (!$first) $message .= ", ";
-//                $message .= "<i>".$source->getLibelle()."</i>";
-//                $first = false;
-//            }
-//            $this->flashMessenger()->addSuccessMessage($message);
-//
-//            return $this->redirect()->toRoute(null, [],[], true);
-//        }
-//
-//
-//
-//        return new ViewModel([
-//            'cible' => $structureCible,
-//            'structuresConcretes' => $structures,
-//            'structuresConcretesSubstituees' => $structuresConcretesSubstituees,
-//        ]);
+    public function afficherAutomatiqueAction()
+    {
+        $type           = $this->params()->fromRoute('type');
+        $identifiant    = $this->params()->fromRoute('identifiant');
+
+        $structures = $this->getStructureService()->getStructuresBySuffixe($identifiant, $type);
+        $sources = [];
+        $cible = null;
+
+        /** @var StructureConcreteInterface $structure */
+        foreach ($structures as $structure) {
+            $prefix = explode("::",$structure->getSourceCode())[0];
+            if ($prefix === "SyGAL") {
+                $cible = $structure;
+            } else {
+                $sources[] = $structure;
+            }
+        }
+
+        return new ViewModel([
+            'substituees' => $sources,
+            'substituante' => $cible,
+            'type' => $type,
+            'identifiant' => $identifiant,
+        ]);
     }
 }

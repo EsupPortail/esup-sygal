@@ -13,12 +13,14 @@ return [
                     'controller' => 'Application\Controller\Substitution',
                     'action'     => [
                         'index',
+                        'index-structure',
                         'selection',
                         'creer',
                         'modifier',
                         'detruire',
                         'generate-source-input',
                         'substitution-automatique',
+                        'afficher-automatique',
                         'modifier-automatique',
                         'enregistrer-automatique',
                     ],
@@ -37,6 +39,18 @@ return [
                         '__NAMESPACE__' => 'Application\Controller',
                         'controller'    => 'Substitution',
                         'action'        => 'index',
+                        'language'        => 'fr_FR',
+                    ],
+                ],
+            ],
+            'substitution-index-structure' => [
+                'type'          => Segment::class,
+                'options'       => [
+                    'route'    => '/[:language/]substitution/index-structure/:type',
+                    'defaults' => [
+                        '__NAMESPACE__' => 'Application\Controller',
+                        'controller'    => 'Substitution',
+                        'action'        => 'index-structure',
                         'language'        => 'fr_FR',
                     ],
                 ],
@@ -123,6 +137,15 @@ return [
                             'route'       => '/enregistrer/:type/:identifiant',
                             'defaults'    => [
                                 'action' => 'enregistrer-automatique',
+                            ],
+                        ],
+                    ],
+                    'afficher' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/afficher/:type/:identifiant',
+                            'defaults'    => [
+                                'action' => 'afficher-automatique',
                             ],
                         ],
                     ],

@@ -1,0 +1,16 @@
+<?php
+
+/**
+ * @var string  $identifiant
+ * @var string  $type
+ * @var StructureConcreteInterface[] $substituees
+ * @var StructureConcreteInterface   $substituante
+ */
+
+use Application\Entity\Db\StructureConcreteInterface;
+use Application\Entity\Db\TypeStructure;
+
+?>
+
+<?php echo $this->partial('application/substitution/partial/substitution-automatique',
+    ['type' => TypeStructure::CODE_ECOLE_DOCTORALE, 'identifiant' => $identifiant, 'substituees' => $substituees, 'substituante' => $substituante]); ?>
