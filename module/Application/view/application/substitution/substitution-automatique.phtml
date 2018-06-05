@@ -17,6 +17,11 @@ use Application\Entity\Db\TypeStructure;
     Substitutions automatiques
 </h1>
 
+<?php
+$messenger = $this->messenger();
+echo $messenger->addMessagesFromFlashMessenger();
+?>
+
 <h2>
     Substitutions d'écoles doctorales
     <span class="badge"><?php echo count($substitutionsEcolesDoctorales); ?></span>
