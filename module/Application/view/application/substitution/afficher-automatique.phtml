@@ -8,60 +8,9 @@
  */
 
 use Application\Entity\Db\StructureConcreteInterface;
+use Application\Entity\Db\TypeStructure;
 
 ?>
 
-<div id="div_<?php echo $type; ?>_<?php echo $identifiant; ?>" class="panel panel-info">
-    <div class="panel-heading">
-        Substitution basé sur l'identitfiant <?php echo $identifiant; ?>
-    </div>
-    <div class="panel-body">
-
-        <div class="col-md-5">
-            Substituées :
-            <ol>
-                <?php foreach($substituees as $structure): ?>
-                    <li>
-                        <?php echo $structure->getSourceCode(); ?>
-                        -
-                        <?php echo $structure->getLibelle(); ?>
-                    </li>
-                <?php endforeach; ?>
-            </ol>
-        </div>
-        <div class="col-md-5">
-            Substituante :
-            <?php if ($substituante !== null): ?>
-                <ul>
-                    <li>
-                        <?php echo $substituante->getSourceCode(); ?>
-                        -
-                        <?php echo $substituante->getLibelle(); ?>
-                    </li>
-                </ul>
-            <?php endif ?>
-        </div>
-        <div class="col-md-2">
-                <a
-                   data-event="edition-substitution"
-                   href="<?php echo $this->url('substitution-automatique/modifier', ['type' => $type, 'identifiant' => $identifiant], [], true); ?>"
-                   class="ajax-modal"
-                >
-                <button id="editer_<?php echo $type; ?>_<?php echo $identifiant; ?>" class="btn btn-info" style="width:95%;margin:2px;">
-                    <span class="glyphicon glyphicon-pencil"></span>
-                    Personnaliser
-                </button>
-            </a>
-            <br/>
-            <button id="valider_<?php echo $type; ?>_<?php echo $identifiant; ?>" class="btn btn-success" style="width:95%;margin:2px;">
-                <span class="glyphicon glyphicon-ok"></span>
-                Enregistrer
-            </button>
-            <br/>
-            <button id="annuler_<?php echo $type; ?>_<?php echo $identifiant; ?>" class="btn btn-danger" style="width:95%;margin:2px;">
-                <span class="glyphicon glyphicon-remove"></span>
-                Masquer
-            </button> <br/>
-        </div>
-    </div>
-</div>
+<?php echo $this->partial('application/substitution/partial/substitution-automatique',
+    ['type' => TypeStructure::CODE_ECOLE_DOCTORALE, 'identifiant' => $identifiant, 'substituees' => $substituees, 'substituante' => $substituante]); ?>

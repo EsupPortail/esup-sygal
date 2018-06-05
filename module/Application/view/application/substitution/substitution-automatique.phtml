@@ -24,6 +24,8 @@ use Application\Entity\Db\TypeStructure;
 
 <?php foreach ($substitutionsEcolesDoctorales as $identifier => $substitution) : ?>
     <div id="<?php echo TypeStructure::CODE_ECOLE_DOCTORALE; ?>_<?php echo $identifier; ?>">
+        <?php echo $this->partial('application/substitution/partial/substitution-automatique',
+            ['type' => TypeStructure::CODE_ECOLE_DOCTORALE, 'identifiant' => $identifier, 'substituees' => $substitution[0], 'substituante' => $substitution[1]]); ?>
     </div>
 <?php endforeach; ?>
 
@@ -35,6 +37,8 @@ use Application\Entity\Db\TypeStructure;
 
 <?php foreach ($substitutionsEtablissements as $identifier => $substitution) : ?>
     <div id="<?php echo TypeStructure::CODE_ETABLISSEMENT; ?>_<?php echo $identifier; ?>">
+        <?php echo $this->partial('application/substitution/partial/substitution-automatique',
+            ['type' => TypeStructure::CODE_ETABLISSEMENT, 'identifiant' => $identifier, 'substituees' => $substitution[0], 'substituante' => $substitution[1]]); ?>
     </div>
 <?php endforeach; ?>
 
@@ -46,22 +50,14 @@ use Application\Entity\Db\TypeStructure;
 
 <?php foreach ($substitutionsUnitesRecherches as $identifier => $substitution) : ?>
     <div id="<?php echo TypeStructure::CODE_UNITE_RECHERCHE; ?>_<?php echo $identifier; ?>">
+        <?php echo $this->partial('application/substitution/partial/substitution-automatique',
+            ['type' => TypeStructure::CODE_UNITE_RECHERCHE, 'identifiant' => $identifier, 'substituees' => $substitution[0], 'substituante' => $substitution[1]]); ?>
     </div>
 <?php endforeach; ?>
 
 
 <script>
     $(document).ready(function() {
-        <?php foreach ($substitutionsEcolesDoctorales as $identifier => $substitution) : ?>
-            loadSubstitutionByIdentifiant("ecole-doctorale", "<?php echo $identifier; ?>");
-        <?php endforeach; ?>
-        <?php foreach ($substitutionsEtablissements as $identifier => $substitution) : ?>
-            loadSubstitutionByIdentifiant("etablissement", "<?php echo $identifier; ?>");
-        <?php endforeach; ?>
-        <?php foreach ($substitutionsUnitesRecherches as $identifier => $substitution) : ?>
-            //loadSubstitutionByIdentifiant("unite-recherche", "<?php //echo $identifier; ?>//");
-        <?php endforeach; ?>
-
         $("body")
             .on("click","button.btn-danger", function() {
                 var id = $(this).attr("id").split("_");
@@ -88,13 +84,9 @@ use Application\Entity\Db\TypeStructure;
             });
 
         $("body").on("edition-substitution", function(event, data) {
-                // console.log("Event received : ", event);
-                console.log("With args : ", data);
                 event.div.modal('hide'); // ferme la fenêtre modale
-
                 var type = data[0].value;
                 var identifiant = data[1].value;
-                console.log("FAIRE UN REFRESH " + type + " " + identifiant);
                 loadSubstitutionByIdentifiant(type,identifiant);
             });
     });
