@@ -57,10 +57,12 @@ fi
 if [ ! "$url" ]; then
     url="$DEFAULT_URL"
 fi
-maxtime=""
+
 if [ -n "$maxtime" ]; then
     maxtime="--max-time $maxtime"
 fi
+
+set -x
 
 # "-k"             : désactive la vérification du certificat SSL
 # "--max-time 600" : spécifie un temps maximum d'exécution de 5 minutes
