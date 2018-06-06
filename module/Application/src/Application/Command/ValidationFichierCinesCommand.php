@@ -58,13 +58,17 @@ class ValidationFichierCinesCommand
     }
 
     /**
-     * @param string $filepath Chemin vers le fichier sur le disque
-     * @param string $url URL du web service, si différente de celle par défaut
-     * @param int    $maxExecutionTime
+     * @param string $filepath         Chemin vers le fichier sur le disque
+     * @param string $url              URL du web service, si différente de celle par défaut
+     * @param int    $maxExecutionTime En secondes
      */
     public function execute($filepath, $url = null, $maxExecutionTime = null)
     {
-        $this->execValidationRequest($filepath, $url, $maxExecutionTime);
+        try {
+            $this->execValidationRequest($filepath, $url, $maxExecutionTime);
+        } catch (CommandExecutionException $cee) {
+            throw new RuntimeException("La ligne de commande a échoué.", null, $cee);
+        }
     }
 
     /**
@@ -182,11 +186,7 @@ class ValidationFichierCinesCommand
         // exécution de la commande
         exec($command, $output, $returnCode);
 
-        try {
-            $this->detectErrorFromCommandExecutionResults($command, $output, $returnCode);
-        } catch (CommandExecutionException $cee) {
-            throw new RuntimeException(sprintf("La ligne de commande '%s' a échoué. %s", $command, $cee->getMessage()));
-        }
+        $this->detectErrorFromCommandExecutionResults($output, $returnCode);
 
         $this->xml = trim(implode(PHP_EOL, $output));
 
@@ -202,11 +202,10 @@ class ValidationFichierCinesCommand
     }
 
     /**
-     * @param string $command
      * @param array  $output
      * @param int    $returnCode
      */
-    private function detectErrorFromCommandExecutionResults($command, $output, $returnCode)
+    private function detectErrorFromCommandExecutionResults($output, $returnCode)
     {
         if ($returnCode !== 0) {
             if ($returnCode === CURLE_OPERATION_TIMEOUTED) {
