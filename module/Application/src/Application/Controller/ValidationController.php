@@ -7,7 +7,7 @@ use Application\Entity\Db\TypeValidation;
 use Application\Notification\ValidationDepotTheseCorrigeeNotification;
 use Application\Notification\ValidationRdvBuNotification;
 use Application\Provider\Privilege\ValidationPrivileges;
-use Application\Service\Notification\NotificationServiceAwareTrait;
+use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
@@ -21,7 +21,7 @@ class ValidationController extends AbstractController
 {
     use TheseServiceAwareTrait;
     use ValidationServiceAwareTrait;
-    use NotificationServiceAwareTrait;
+    use NotifierServiceAwareTrait;
     use RoleServiceAwareTrait;
     use VariableServiceAwareTrait;
 
@@ -43,7 +43,7 @@ class ValidationController extends AbstractController
                 // notification (doctorant: à la 1ere validation seulement)
                 $notifierDoctorant = ! $this->validationService->existsValidationRdvBuHistorisee($these);
                 $notification->setNotifierDoctorant($notifierDoctorant);
-                $this->notificationService->triggerValidationRdvBu($notification);
+                $this->notifierService->triggerValidationRdvBu($notification);
             }
             elseif ($action === 'devalider') {
                 $this->validationService->unvalidateRdvBu($these);
@@ -52,13 +52,13 @@ class ValidationController extends AbstractController
                 // notification
                 $notification->setEstDevalidation(true);
                 $notification->setNotifierDoctorant(false);
-                $this->notificationService->triggerValidationRdvBu($notification);
+                $this->notifierService->triggerValidationRdvBu($notification);
             }
             else {
                 throw new RuntimeException("Action inattendue!");
             }
 
-//            $notificationLog = $this->notificationService->getMessage('<br>', 'info');
+//            $notificationLog = $this->notifierService->getMessage('<br>', 'info');
 
             $this->flashMessenger()->addSuccessMessage($successMessage);
 //            $this->flashMessenger()->addInfoMessage($notificationLog);
@@ -124,7 +124,7 @@ class ValidationController extends AbstractController
                 $successMessage = "Validation enregistrée avec succès.";
 
                 // notification des directeurs de thèse
-                $this->notificationService->triggerValidationDepotTheseCorrigee($these);
+                $this->notifierService->triggerValidationDepotTheseCorrigee($these);
             }
             elseif ($action === 'devalider') {
                 $validation = $this->validationService->unvalidateDepotTheseCorrigee($these);
@@ -136,7 +136,7 @@ class ValidationController extends AbstractController
                 throw new RuntimeException("Action inattendue!");
             }
 
-            $notificationLogs = $this->notificationService->getLogs();
+            $notificationLogs = $this->notifierService->getLogs();
 
             $tvCode = $validation->getTypeValidation()->getCode();
             $this->flashMessenger()->addMessage($successMessage, "$tvCode/success");
@@ -189,9 +189,9 @@ class ValidationController extends AbstractController
                             'url' => $this->url()->fromRoute('these/depot', ['these' => $these->getId()], ['force_canonical' => true]),
                         ]);
                     // notification du BDD
-                    $this->notificationService->triggerValidationCorrectionThese($notif, $these);
+                    $this->notifierService->triggerValidationCorrectionThese($notif, $these);
                     // notification du doctorant
-                    $this->notificationService->triggerValidationCorrectionTheseEtudiant($notif, $these);
+                    $this->notifierService->triggerValidationCorrectionTheseEtudiant($notif, $these);
 
                     //todo mail pour etudiant
                 }
@@ -208,7 +208,7 @@ class ValidationController extends AbstractController
                 throw new RuntimeException("Action inattendue!");
             }
 
-            $notificationLogs = $this->notificationService->getLogs();
+            $notificationLogs = $this->notifierService->getLogs();
 
             $tvCode = $validation->getTypeValidation()->getCode();
             $this->flashMessenger()->addMessage($successMessage, "$tvCode/success");

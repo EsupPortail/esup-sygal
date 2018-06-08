@@ -4,14 +4,12 @@ namespace Application\Service\Notification;
 
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
-use Application\Entity\Db\Fichier;
 use Application\Entity\Db\ImportObservResult;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\MailConfirmation;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\UniteRecherche;
-use Application\Entity\Db\ValiditeFichier;
 use Application\Entity\Db\Variable;
 use Application\Notification\CorrectionAttendueUpdatedNotification;
 use Application\Notification\ResultatTheseAdmisNotification;
@@ -25,20 +23,28 @@ use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Notification\Notification;
-use UnicaenApp\Service\EntityManagerAwareTrait;
+use Zend\Mvc\Controller\Plugin\FlashMessenger;
+use Zend\View\Helper\Url as UrlHelper;
 
 /**
- * Service de construction et d'envoi de notifications par mail.
+ * Service d'envoi de notifications par mail.
+ *
+ * @method NotificationFactory getNotificationFactory()
  *
  * @author Unicaen
  */
-class NotificationService extends \Notification\Service\NotificationService
+class NotifierService extends \Notification\Service\NotifierService
 {
     use VariableServiceAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
     use UniteRechercheServiceAwareTrait;
     use RoleServiceAwareTrait;
     use IndividuServiceAwareTrait;
+
+    /**
+     * @var UrlHelper
+     */
+    protected $urlHelper;
 
     /**
      * Notification concernant la validation à l'issue du RDV BU.
@@ -259,7 +265,7 @@ class NotificationService extends \Notification\Service\NotificationService
      * @param Notification $notif
      * @param These        $these
      */
-    public function triggerNotificationBU(Notification $notif, These $these)
+    public function triggerRdvBuSaisiParDoctorant(Notification $notif, These $these)
     {
         $to = $this->fetchEmailBu($these);
         $notif->setTo($to);
@@ -268,24 +274,6 @@ class NotificationService extends \Notification\Service\NotificationService
 
         $infoMessage = sprintf("Un mail de notification vient d'être envoyé à la BU (%s).", $to);
         $this->messageContainer->setMessage($infoMessage, 'info');
-    }
-
-    /**
-     * Notification générique de la BU.
-     *
-     * @param Notification $notif
-     * @param These        $these
-     */
-    public function triggerNotificationBdD(Notification $notif, These $these)
-    {
-        $to = $this->fetchEmailBdd($these);
-        $notif
-            ->setTo($to)
-            ->setTemplateVariables([
-                'these' => $these,
-            ]);
-
-        $this->trigger($notif);
     }
 
     public function triggerInformationManquante(These $these, $manques)
@@ -396,7 +384,7 @@ class NotificationService extends \Notification\Service\NotificationService
         $this->trigger($notif);
     }
 
-     /**
+    /**
      * @param string   $type
      * @param string   $libelle
      * @param string[] $to
@@ -460,6 +448,30 @@ class NotificationService extends \Notification\Service\NotificationService
         $variable = $this->variableService->getRepository()->findByCodeAndThese(Variable::CODE_EMAIL_BU, $these);
 
         return $variable->getValeur();
+    }
+
+    /**
+     * @param UrlHelper $urlHelper
+     */
+    public function setUrlHelper(UrlHelper $urlHelper)
+    {
+        $this->urlHelper = $urlHelper;
+    }
+
+    /**
+     * @param FlashMessenger $flashMessenger
+     * @param string         $namespacePrefix
+     */
+    public function feedFlashMessenger(FlashMessenger $flashMessenger, $namespacePrefix = '')
+    {
+        $notificationLogs = $this->getLogs();
+
+        if (! empty($notificationLogs['info'])) {
+            $flashMessenger->addMessage($notificationLogs['info'], $namespacePrefix . 'info');
+        }
+        if (! empty($notificationLogs['danger'])) {
+            $flashMessenger->addMessage($notificationLogs['danger'], $namespacePrefix . 'danger');
+        }
     }
 
     /**

@@ -4,7 +4,7 @@ namespace Application\Service\ImportObservResult;
 
 use Application\Entity\Db\ImportObservResult;
 use Application\Entity\Db\Repository\ImportObservResultRepository;
-use Application\Service\Notification\NotificationService;
+use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
 use Application\Service\Variable\VariableService;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -19,8 +19,8 @@ class ImportObservResultServiceFactory
         /** @var TheseService $theseService */
         $theseService = $sl->get('TheseService');
 
-        /** @var NotificationService $notificationService */
-        $notificationService = $sl->get(NotificationService::class);
+        /** @var NotifierService $notifierService */
+        $notifierService = $sl->get(NotifierService::class);
 
         /** @var VariableService $variableService */
         $variableService = $sl->get('VariableService');
@@ -28,7 +28,7 @@ class ImportObservResultServiceFactory
         $service = new ImportObservResultService();
         $service->setRepository($repo);
         $service->setTheseService($theseService);
-        $service->setNotificationService($notificationService);
+        $service->setNotifierService($notifierService);
         $service->setVariableService($variableService);
 
         return $service;

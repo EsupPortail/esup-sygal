@@ -12,10 +12,9 @@ class ResultatTheseModifieNotification extends Notification
     protected $templatePath = 'application/these/mail/notif-resultat-these-modifie';
 
     /**
-     * @param array $context
      * @return static
      */
-    public function prepare(array $context = [])
+    public function prepare()
     {
         $this->setTo($this->emailBdd);
         $this->setSubject("Résultats de thèses modifiés");

@@ -2,7 +2,7 @@
 
 namespace Application\Service\Notification;
 
-trait NotificationServiceAwareTrait
+trait NotifierServiceAwareTrait
 {
     /**
      * @var NotifierService

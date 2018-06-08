@@ -7,24 +7,26 @@ use Application\Service\Individu\IndividuService;
 use Application\Service\Role\RoleService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\Variable\VariableService;
+use Zend\Mvc\Router\RouteStackInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\View\Helper\Url as UrlHelper;
 
 /**
  * @author Unicaen
  */
-class NotificationServiceFactory extends \Notification\Service\NotificationServiceFactory
+class NotifierServiceFactory extends \Notification\Service\NotifierServiceFactory
 {
-    protected $notificationServiceClass = NotificationService::class;
+    protected $notifierServiceClass = NotifierService::class;
 
     /**
      * Create service.
      *
      * @param ServiceLocatorInterface $serviceLocator
-     * @return NotificationService
+     * @return NotifierService
      */
     public function __invoke(ServiceLocatorInterface $serviceLocator)
     {
-        /** @var NotificationService $service */
+        /** @var NotifierService $service */
         $service = parent::__invoke($serviceLocator);
 
         /**
@@ -34,16 +36,27 @@ class NotificationServiceFactory extends \Notification\Service\NotificationServi
          * @var IndividuService         $individuService
          * @var RoleService             $roleService
          */
-
         $variableService = $serviceLocator->get('VariableService');
         $ecoleDoctoraleService = $serviceLocator->get('EcoleDoctoraleService');
         $uniteRechercheService = $serviceLocator->get('UniteRechercheService');
         $individuService = $serviceLocator->get('IndividuService');
         $roleService = $serviceLocator->get('RoleService');
 
+        /** @var RouteStackInterface $router */
+        $router = $serviceLocator->get('router');
+        $viewHelperManager = $serviceLocator->get('ViewHelperManager');
+        /* @var UrlHelper $urlHelper */
+        $urlHelper = $viewHelperManager->get('Url');
+        $urlHelper->setRouter($router);
+
+        /** @var NotificationFactory $notificationFactory */
+        $notificationFactory = $serviceLocator->get(NotificationFactory::class);
+
+        $service->setNotificationFactory($notificationFactory);
         $service->setVariableService($variableService);
         $service->setEcoleDoctoraleService($ecoleDoctoraleService);
         $service->setUniteRechercheService($uniteRechercheService);
+        $service->setUrlHelper($urlHelper);
         $service->setIndividuService($individuService);
         $service->setRoleService($roleService);
 

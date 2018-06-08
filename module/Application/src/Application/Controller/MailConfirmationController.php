@@ -6,11 +6,11 @@ use Application\Entity\Db\MailConfirmation;
 use Application\Form\MailConfirmationForm;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\MailConfirmationService;
-use Application\Service\Notification\NotificationServiceAwareTrait;
+use Application\Service\Notification\NotifierServiceAwareTrait;
 use Zend\View\Model\ViewModel;
 
 class MailConfirmationController extends AbstractController {
-    use NotificationServiceAwareTrait;
+    use NotifierServiceAwareTrait;
     use IndividuServiceAwareTrait;
 
     /** @var MailConfirmationService $mailConfirmationService */
@@ -101,7 +101,7 @@ class MailConfirmationController extends AbstractController {
             ."Une fois confirmé, cet email sera utilisé pour recevoir les notifications de SyGAL et vous permettera de vous connecter à SyGAL.";
 
 
-        $this->notificationService->triggerMailConfirmation($mailConfirmation, $titre, $corps);
+        $this->notifierService->triggerMailConfirmation($mailConfirmation, $titre, $corps);
 
         return $this->redirect()->toRoute("home");
         /** Branchement du mail mais peut être echanger avec une vue classique en

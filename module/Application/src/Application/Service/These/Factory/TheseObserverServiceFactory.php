@@ -2,7 +2,7 @@
 
 namespace Application\Service\These\Factory;
 
-use Application\Service\Notification\NotificationService;
+use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseObserverService;
 use Application\Service\These\TheseService;
 use Zend\ServiceManager\ServiceManager;
@@ -19,15 +19,14 @@ class TheseObserverServiceFactory
     {
         /**
          * @var TheseService $theseService
-         * @var NotificationService $notificationService
+         * @var NotifierService $notifierService
          */
         $theseService = $serviveManager->get('TheseService');
-        $notificationService = $serviveManager->get(NotificationService::class);
+        $notifierService = $serviveManager->get(NotifierService::class);
 
         $service = new TheseObserverService();
         $service->setTheseService($theseService);
-        $service->setNotificationService($notificationService);
-
+        $service->setNotifierService($notifierService);
 
         return $service;
     }

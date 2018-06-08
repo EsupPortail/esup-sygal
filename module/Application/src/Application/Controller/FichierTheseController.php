@@ -3,7 +3,6 @@
 namespace Application\Controller;
 
 use Application\Entity\Db\Fichier;
-use Application\Entity\Db\Individu;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\VersionFichier;
 use Application\Filter\IdifyFilterAwareTrait;
@@ -13,13 +12,12 @@ use Application\Service\Fichier\Exception\DepotImpossibleException;
 use Application\Service\Fichier\Exception\ValidationImpossibleException;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
-use Application\Service\Notification\NotificationServiceAwareTrait;
+use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\View\Helper\Sortable;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
-use Notification\Notification;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\Form\Element\Hidden;
@@ -33,7 +31,7 @@ class FichierTheseController extends AbstractController
     use FichierServiceAwareTrait;
     use VersionFichierServiceAwareTrait;
     use IdifyFilterAwareTrait;
-    use NotificationServiceAwareTrait;
+    use NotifierServiceAwareTrait;
     use IndividuServiceAwareTrait;
 
     const UPLOAD_MAX_FILESIZE = '500M';
@@ -299,27 +297,17 @@ class FichierTheseController extends AbstractController
 
             // si une thèse est déposée, on notifie de BdD
             if ($nature->estThesePdf()) {
-                $notif = new Notification();
-                $notif
-                    ->setSubject("Dépôt d'une thèse")
-                    ->setTemplatePath('application/these/mail/notif-depot-these')
-                    ->setTemplateVariables([
-                        'these'    => $these,
-                        'version'  => $version,
-                    ]);
-                $this->notificationService->triggerNotificationBdD($notif, $these);
+                $notif = $this->notifierService->getNotificationFactory()->createNotificationForTheseTeleversee($these, $version);
+                $this->notifierService->trigger($notif);
             }
 
             // si un rapport de soutenance est déposé, on notifie de BdD
             if ($nature->estRapportSoutenance()) {
-                $notif = new Notification();
+                $notif = $this->notifierService->getNotificationFactory()->createNotificationForFichierTeleverse($these);
                 $notif
                     ->setSubject("Dépôt du rapport de soutenance")
-                    ->setTemplatePath('application/these/mail/notif-depot-rapport-soutenance')
-                    ->setTemplateVariables([
-                        'these' => $these,
-                    ]);
-                $this->notificationService->triggerNotificationBdD($notif, $these);
+                    ->setTemplatePath('application/these/mail/notif-depot-rapport-soutenance');
+                $this->notifierService->trigger($notif);
             }
         }
 

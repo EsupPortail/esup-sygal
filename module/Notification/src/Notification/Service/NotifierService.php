@@ -2,19 +2,20 @@
 
 namespace Notification\Service;
 
+use Notification\Entity\Service\NotifEntityServiceAwareTrait;
 use Notification\MessageContainer;
 use Notification\Notification;
+use Notification\NotificationRenderer;
 use Notification\Service\Mailer\MailerServiceAwareTrait;
-use Zend\View\Helper\Url as UrlHelper;
-use Zend\View\Renderer\RendererInterface;
 
 /**
- * Service de construction et d'envoi de notifications par mail.
+ * Service d'envoi de notification par mail.
  *
  * @author Unicaen
  */
-class NotificationService
+class NotifierService
 {
+    use NotifEntityServiceAwareTrait;
     use MailerServiceAwareTrait;
 
     /**
@@ -23,14 +24,14 @@ class NotificationService
     protected $messageContainer;
 
     /**
-     * @var RendererInterface
+     * @var NotificationRenderer
      */
     protected $renderer;
 
     /**
-     * @var UrlHelper
+     * @var NotificationFactory
      */
-    protected $urlHelper;
+    protected $notificationFactory;
 
     /**
      * @var array
@@ -50,11 +51,11 @@ class NotificationService
     protected $options = [];
 
     /**
-     * NotificationService constructor.
+     * NotifierService constructor.
      *
-     * @param RendererInterface $renderer
+     * @param NotificationRenderer $renderer
      */
-    public function __construct(RendererInterface $renderer)
+    public function __construct(NotificationRenderer $renderer)
     {
         $this->renderer = $renderer;
         $this->messageContainer = new MessageContainer();
@@ -68,11 +69,40 @@ class NotificationService
         $this->options = array_merge($this->defaultOptions, $options);
     }
 
+    /**
+     * @param Notification $notification
+     */
     public function trigger(Notification $notification)
     {
         $notification->prepare();
-        $html = $this->renderNotification($notification);
 
+        $this->sendNotification($notification);
+
+        // collecte des éventuels messages exposés par la notification
+        foreach ($notification->getInfoMessages() as $message) {
+            $this->messageContainer->setMessage($message, 'info');
+        }
+        foreach ($notification->getWarningMessages() as $message) {
+            $this->messageContainer->setMessage($message, 'warning');
+        }
+    }
+
+    /**
+     * @param Notification $notification
+     */
+    protected function sendNotification(Notification $notification)
+    {
+        $mail = $this->createMailForNotification($notification);
+
+        $this->mailerService->send($mail);
+    }
+
+    /**
+     * @param Notification $notification
+     * @return \Zend\Mail\Message
+     */
+    protected function createMailForNotification(Notification $notification)
+    {
         $subjectPrefix = '';
         if (isset($this->options['subject_prefix'])) {
             $subjectPrefix = $this->options['subject_prefix'];
@@ -82,6 +112,8 @@ class NotificationService
         $to = $notification->getTo();
         $cc = $notification->getCc();
         $bcc = $notification->getBcc();
+
+        $html = $this->renderer->setNotification($notification)->render();
 
         $mail = $this->mailerService->createNewMessage($html, $subject);
         $mail->setTo($to);
@@ -100,35 +132,15 @@ class NotificationService
             $mail->addBcc($this->options['bcc']);
         }
 
-        $this->mailerService->send($mail);
-
-        // collecte des éventuels messages exposés par la notification
-        foreach ($notification->getInfoMessages() as $message) {
-            $this->messageContainer->setMessage($message, 'info');
-        }
-        foreach ($notification->getWarningMessages() as $message) {
-            $this->messageContainer->setMessage($message, 'warning');
-        }
-    }
-
-    /**
-     * @param Notification $notification
-     * @return string
-     */
-    private function renderNotification(Notification $notification)
-    {
-        $viewModel = $notification->createViewModel();
-
-        $html = $this->renderer->render($viewModel);
-
-        return $html;
+        return $mail;
     }
 
     /**
      * Retourne les éventuels messages exposés lors de la notification.
      *
-     * @return array
      * @see MessageContainer::getMessages()
+     *
+     * @return array
      */
     public function getLogs()
     {
@@ -136,10 +148,21 @@ class NotificationService
     }
 
     /**
-     * @param UrlHelper $urlHelper
+     * @param NotificationFactory $notificationFactory
+     * @return self
      */
-    public function setUrlHelper(UrlHelper $urlHelper)
+    public function setNotificationFactory(NotificationFactory $notificationFactory)
     {
-        $this->urlHelper = $urlHelper;
+        $this->notificationFactory = $notificationFactory;
+
+        return $this;
+    }
+
+    /**
+     * @return NotificationFactory
+     */
+    public function getNotificationFactory()
+    {
+        return $this->notificationFactory;
     }
 }

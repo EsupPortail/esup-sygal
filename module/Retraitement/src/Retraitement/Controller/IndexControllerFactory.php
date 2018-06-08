@@ -5,7 +5,7 @@ namespace Retraitement\Controller;
 use Application\Entity\Db\Repository\UtilisateurRepository;
 use Application\Entity\Db\Utilisateur;
 use Application\EventRouterReplacer;
-use Application\Service\Notification\NotificationService;
+use Application\Service\Notification\NotifierService;
 use Doctrine\ORM\EntityManager;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\Mvc\Controller\ControllerManager;
@@ -28,15 +28,15 @@ class IndexControllerFactory
         $httpRouter = $sl->get('HttpRouter');
         $cliConfig = $this->getCliConfig($sl);
 
-        /** @var NotificationService $notificationService */
-        $notificationService = $sl->get(NotificationService::class);
+        /** @var NotifierService $notifierService */
+        $notifierService = $sl->get(NotifierService::class);
 
         $routerReplacer = new EventRouterReplacer($httpRouter, $cliConfig);
 
         $controller = new IndexController();
         $controller->setUtilisateurApplication($this->getUtilisateurApp($sl));
         $controller->setEventRouterReplacer($routerReplacer);
-        $controller->setNotificationService($notificationService);
+        $controller->setNotifierService($notifierService);
 
         return $controller;
     }

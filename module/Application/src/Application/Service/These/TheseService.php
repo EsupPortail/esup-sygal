@@ -16,7 +16,7 @@ use Application\Notification\ValidationRdvBuNotification;
 use Application\QueryBuilder\TheseQueryBuilder;
 use Application\Service\BaseService;
 use Application\Service\Fichier\FichierServiceAwareTrait;
-use Application\Service\Notification\NotificationServiceAwareTrait;
+use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\UserContextService;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
@@ -31,7 +31,7 @@ use UnicaenAuth\Entity\Db\UserInterface;
 class TheseService extends BaseService
 {
     use ValidationServiceAwareTrait;
-    use NotificationServiceAwareTrait;
+    use NotifierServiceAwareTrait;
     use FichierServiceAwareTrait;
     use VariableServiceAwareTrait;
 
@@ -344,8 +344,8 @@ class TheseService extends BaseService
             $notification = new ValidationRdvBuNotification();
             $notification->setThese($these);
             $notification->setNotifierDoctorant($notifierDoctorant);
-            $this->notificationService->triggerValidationRdvBu($notification);
-//            $notificationLog = $this->notificationService->getMessage('<br>', 'info');
+            $this->notifierService->triggerValidationRdvBu($notification);
+//            $notificationLog = $this->notifierService->getMessage('<br>', 'info');
 
             $this->addMessage($successMessage, MessageAwareInterface::SUCCESS);
 //            $this->addMessage($notificationLog, MessageAwareInterface::INFO);

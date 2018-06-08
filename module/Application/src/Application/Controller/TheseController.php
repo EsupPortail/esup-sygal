@@ -32,7 +32,7 @@ use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Fichier\Exception\ValidationImpossibleException;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\MailConfirmationServiceAwareTrait;
-use Application\Service\Notification\NotificationServiceAwareTrait;
+use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\These\Convention\ConventionPdfExporter;
 use Application\Service\These\PageDeGarde\PageDeCouverturePdfExporter;
@@ -70,7 +70,7 @@ class TheseController extends AbstractController
     use MessageCollectorAwareTrait;
     use VersionFichierServiceAwareTrait;
     use WorkflowServiceAwareTrait;
-    use NotificationServiceAwareTrait;
+    use NotifierServiceAwareTrait;
     use IdifyFilterAwareTrait;
     use EtablissementServiceAwareTrait;
     use EntityManagerAwareTrait;
@@ -505,23 +505,19 @@ class TheseController extends AbstractController
                 $inserting = $formRdvBu->getId() === null;
                 $this->theseService->updateRdvBu($these, $formRdvBu);
 
+                $this->flashMessenger()->addMessage("Informations enregistrées avec succès.", 'success');
+                if ($message = $this->theseService->getMessage('<br>', MessageAwareInterface::SUCCESS)) {
+                    $this->flashMessenger()->addMessage($message, 'rdv_bu/success');
+                }
+                if ($message = $this->theseService->getMessage('<br>', MessageAwareInterface::INFO)) {
+                    $this->flashMessenger()->addMessage($message, 'rdv_bu/info');
+                }
+
                 // notification par mail à la BU quand le doctorant saisit les infos pour la 1ere fois
                 if ($estDoctorant && $inserting) {
-
-                    $subject = sprintf("%s Saisie des informations pour la prise de rendez-vous BU",
-                        $these->getLibelleDiscipline());
-                    $notif = new Notification();
-                    $notif
-                        ->setSubject($subject)
-                        ->setTemplatePath('application/these/mail/notif-modif-rdv-bu-doctorant')
-                        ->setTemplateVariables([
-                            'these'    => $these,
-                            'updating' => !$inserting,
-                        ]);
-                    $this->notificationService->triggerNotificationBU($notif, $these);
-
-//                    $notificationLog = $this->notificationService->getMessage('<br>', 'info');
-//                    $fm->addInfoMessage($notificationLog);
+                    $notif = $this->notifierService->getNotificationFactory()->createNotificationForRdvBuSaisiParDoctorant($these, $inserting);
+                    $this->notifierService->trigger($notif);
+                    $this->notifierService->feedFlashMessenger($this->flashMessenger(), 'rdv_bu/');
                 }
 
                 if (! $this->getRequest()->isXmlHttpRequest()) {
@@ -905,7 +901,7 @@ class TheseController extends AbstractController
                         $this->validationService->validateDepotTheseCorrigee($these);
 
                         // envoi de mail aux directeurs de thèse
-                        $this->notificationService->triggerValidationDepotTheseCorrigee($these);
+                        $this->notifierService->triggerValidationDepotTheseCorrigee($these);
                     }
                 } catch (ValidationImpossibleException $vie) {
                     // Le test d'archivabilité du fichier '%s' a rencontré un problème indépendant de notre volonté
@@ -1354,7 +1350,7 @@ class TheseController extends AbstractController
                     $this->validationService->validateDepotTheseCorrigee($these);
 
                     // notification des directeurs de thèse
-                    $this->notificationService->triggerValidationDepotTheseCorrigee($these);
+                    $this->notifierService->triggerValidationDepotTheseCorrigee($these);
                 }
             }
         }
@@ -1446,7 +1442,7 @@ class TheseController extends AbstractController
         } else {
             $manques[] = "la date de soutenance";
         }
-        if (!empty($manques)) $this->notificationService->triggerInformationManquante($these, $manques);
+        if (!empty($manques)) $this->notifierService->triggerInformationManquante($these, $manques);
 
         /**
          * Les logos à afficher sur la première page sont les suivants :
@@ -1466,7 +1462,7 @@ class TheseController extends AbstractController
                 // /!\ Ce cas ne doit jamais se produire !!!
                 // NOTIFIER l'établissement representant la COMUE est absent (au admin tech)
             } else {
-                $this->notificationService->triggerLogoAbsentEtablissement($comue);
+                $this->notifierService->triggerLogoAbsentEtablissement($comue);
             }
         }
         $etablissement = $these->getEtablissement();
@@ -1477,7 +1473,7 @@ class TheseController extends AbstractController
                 // /!\ Ce cas ne doit jamais se produire !!!
                 //NOTIFIER l'établissement d'inscription est absent (au admin tech)
             } else {
-                $this->notificationService->triggerLogoAbsentEtablissement($these->getEtablissement());
+                $this->notifierService->triggerLogoAbsentEtablissement($these->getEtablissement());
             }
         }
         // =========> TODO CO-TUTELLE
@@ -1486,9 +1482,9 @@ class TheseController extends AbstractController
             $logos["ecole"] = $ecole->getCheminLogo();
         } else {
             if ($ecole === null) {
-                $this->notificationService->triggerEcoleDoctoraleAbsente($these);
+                $this->notifierService->triggerEcoleDoctoraleAbsente($these);
             } else {
-                $this->notificationService->triggerLogoAbsentEcoleDoctorale($ecole);
+                $this->notifierService->triggerLogoAbsentEcoleDoctorale($ecole);
 
             }
         }
@@ -1497,9 +1493,9 @@ class TheseController extends AbstractController
             $logos["unite"] = $unite->getCheminLogo();
         } else {
             if ($unite === null) {
-                $this->notificationService->triggerUniteRechercheAbsente($these);
+                $this->notifierService->triggerUniteRechercheAbsente($these);
             } else {
-                $this->notificationService->triggerLogoAbsentUniteRecherche($unite);
+                $this->notifierService->triggerLogoAbsentUniteRecherche($unite);
             }
         }
 

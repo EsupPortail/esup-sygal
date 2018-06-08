@@ -12,10 +12,9 @@ class ResultatTheseAdmisNotification extends Notification
     protected $templatePath = 'application/these/mail/notif-resultat-these-modifie';
 
     /**
-     * @param array $context
      * @return static
      */
-    public function prepare(array $context = [])
+    public function prepare()
     {
         $to = $this->these->getDoctorant()->getEmailPro() ?: $this->these->getDoctorant()->getEmail();
         $this->setTo($to);

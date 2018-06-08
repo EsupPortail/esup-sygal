@@ -1,8 +1,8 @@
 <?php
 
-namespace Application\Service\Notification;
+namespace Notification\Service;
 
-trait NotificationServiceAwareTrait
+trait NotifierServiceAwareTrait
 {
     /**
      * @var NotifierService

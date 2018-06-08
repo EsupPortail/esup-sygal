@@ -2,49 +2,51 @@
 
 namespace Notification\Service;
 
+use Notification\Entity\Service\NotifEntityService;
+use Notification\NotificationRenderer;
 use Notification\Service\Mailer\MailerService;
 use UnicaenApp\Exception\LogicException;
-use Zend\Mvc\Router\RouteStackInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\View\Helper\Url;
-use Zend\View\Renderer\RendererInterface;
+use Zend\View\Renderer\PhpRenderer;
 
 /**
  * @author Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>
  */
-class NotificationServiceFactory
+class NotifierServiceFactory
 {
-    protected $notificationServiceClass = NotificationService::class;
+    protected $notifierServiceClass = NotifierService::class;
 
     /**
      * Create service.
      *
      * @param ServiceLocatorInterface $serviceLocator
-     * @return NotificationService
+     * @return NotifierService
      */
     public function __invoke(ServiceLocatorInterface $serviceLocator)
     {
-        $class = $this->notificationServiceClass;
+        $notifierServiceClass = $this->notifierServiceClass;
+
+        $notificationFactory = new NotificationFactory();
 
         /** @var MailerService $mailerService */
         $mailerService = $serviceLocator->get(MailerService::class);
 
-        /** @var RouteStackInterface $router */
-        $router = $serviceLocator->get('router');
-        /* @var Url $urlHelper */
-        $urlHelper = $serviceLocator->get('ViewHelperManager')->get('Url');
-        $urlHelper->setRouter($router);
+        /** @var NotifEntityService $notifEntityService */
+        $notifEntityService = $serviceLocator->get(NotifEntityService::class);
 
-        /* @var $renderer RendererInterface */
-        $renderer = $serviceLocator->get('view_renderer');
+        /** @var PhpRenderer $viewRenderer */
+        $viewRenderer = $serviceLocator->get('view_renderer');
+
+        $renderer = new NotificationRenderer($viewRenderer);
 
         $options = $this->getOptions($serviceLocator);
 
-        /** @var NotificationService $service */
-        $service = new $class($renderer);
+        /** @var NotifierService $service */
+        $service = new $notifierServiceClass($renderer);
+        $service->setNotificationFactory($notificationFactory);
+        $service->setNotifEntityService($notifEntityService);
         $service->setMailerService($mailerService);
         $service->setOptions($options);
-        $service->setUrlHelper($urlHelper);
 
         return $service;
     }

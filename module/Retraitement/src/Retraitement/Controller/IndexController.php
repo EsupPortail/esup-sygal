@@ -7,7 +7,7 @@ use Application\Entity\Db\Fichier;
 use Application\EventRouterReplacerAwareTrait;
 use Application\Service\Fichier\FichierServiceAwareInterface;
 use Application\Service\Fichier\FichierServiceAwareTrait;
-use Application\Service\Notification\NotificationServiceAwareTrait;
+use Application\Service\Notification\NotifierServiceAwareTrait;
 use Retraitement\Form\Retraitement;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Filter\BytesFormatter;
@@ -19,7 +19,7 @@ class IndexController extends AbstractController
 {
     use EventRouterReplacerAwareTrait;
     use FichierServiceAwareTrait;
-    use NotificationServiceAwareTrait;
+    use NotifierServiceAwareTrait;
 
     public function indexAction()
     {
@@ -113,7 +113,8 @@ class IndexController extends AbstractController
 
         if ($notifier) {
             $destinataires = $notifier;
-            $notif = $this->notificationService->triggerRetraitementFini($destinataires, $fichierRetraite, $validite);
+            $notif = $this->notifierService->getNotificationFactory()->createNotificationForRetraitementFini($destinataires, $fichierRetraite, $validite);
+            $this->notifierService->trigger($notif);
             echo "Destinataires du courriel envoyé: " . $notif->getTo();
             echo PHP_EOL;
         }

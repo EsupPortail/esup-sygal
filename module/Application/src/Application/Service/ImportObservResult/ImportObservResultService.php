@@ -11,7 +11,7 @@ use Application\Notification\ResultatTheseAdmisNotification;
 use Application\Notification\ResultatTheseModifieNotification;
 use Application\Rule\NotificationDepotVersionCorrigeeAttenduRule;
 use Application\Service\BaseService;
-use Application\Service\Notification\NotificationServiceAwareTrait;
+use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
@@ -23,7 +23,7 @@ use UnicaenApp\Exception\RuntimeException;
 class ImportObservResultService extends BaseService
 {
     use TheseServiceAwareTrait;
-    use NotificationServiceAwareTrait;
+    use NotifierServiceAwareTrait;
     use VariableServiceAwareTrait;
 
     /**
@@ -93,8 +93,8 @@ class ImportObservResultService extends BaseService
         // Notification :
         // - du BDD concernant l'évolution des résultats de thèses.
         // - des doctorants dont le résultat de la thèse est passé à Admis.
-        $this->notificationService->triggerBdDUpdateResultat($data);
-        $this->notificationService->triggerDoctorantResultatAdmis($data);
+        $this->notifierService->triggerBdDUpdateResultat($data);
+        $this->notifierService->triggerDoctorantResultatAdmis($data);
 
         // Enregistrement de la date de notification sur chaque résultat d'observation
         foreach ($records as $record) {
@@ -188,7 +188,7 @@ class ImportObservResultService extends BaseService
             $these->setCorrectionAutorisee($record->getImportObserv()->getToValue()); // anticipation nécessaire !
 
             // notification
-            $result = $this->notificationService->triggerCorrectionAttendue($record, $these);
+            $result = $this->notifierService->triggerCorrectionAttendue($record, $these);
             if ($result === null) {
                 continue; // si le service de notif renvoie null, aucune notif n'était nécessaire, on passe au suivant
             }
