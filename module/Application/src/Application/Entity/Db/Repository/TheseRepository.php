@@ -3,6 +3,7 @@
 namespace Application\Entity\Db\Repository;
 
 use Application\Entity\Db\These;
+use Application\ORM\Query\Functions\Year;
 use Application\QueryBuilder\TheseQueryBuilder;
 
 /**
@@ -31,5 +32,24 @@ class TheseRepository extends DefaultEntityRepository
         });
 
         return $theses;
+    }
+
+    /**
+     * @return array
+     * @see Year
+     */
+    public function fetchDistinctAnneesPremiereInscription()
+    {
+        $qb = $this->createQueryBuilder('t');
+        $qb
+            ->distinct()
+            ->select("year(t.datePremiereInscription)")
+            ->orderBy("year(t.datePremiereInscription)");
+
+        $results = array_map(function($value) {
+            return current($value);
+        }, $qb->getQuery()->getScalarResult());
+
+        return $results;
     }
 }

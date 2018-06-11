@@ -2,6 +2,7 @@
 
 use Application\Assertion\AssertionAbstractFactory;
 use Application\Controller\Factory\TheseControllerFactory;
+use Application\Controller\Factory\TheseFiltersControllerFactory;
 use Application\Controller\Factory\TheseObserverControllerFactory;
 use Application\Controller\Plugin\Url\UrlThesePluginFactory;
 use Application\Entity\Db\Diffusion;
@@ -70,6 +71,13 @@ return [
                         'depot-papier-final',
                     ],
                     'privileges' => ThesePrivileges::THESE_RECHERCHE,
+                ],
+                [
+                    'controller' => 'Application\Controller\TheseFilters',
+                    'action'     => [
+                        'filters',
+                    ],
+                    'roles' => 'guest',
                 ],
                 [
                     'controller' => 'Application\Controller\These',
@@ -259,6 +267,17 @@ return [
                 ],
                 'may_terminate' => true,
                 'child_routes'  => [
+                    'filters' => [
+                        'type'          => 'Literal',
+                        'options'       => [
+                            'route'       => '/filters',
+                            'defaults'    => [
+                                '__NAMESPACE__' => 'Application\Controller',
+                                'controller'    => 'TheseFilters',
+                                'action' => 'filters',
+                            ],
+                        ],
+                    ],
                     'rechercher' => [
                         'type'          => 'Literal',
                         'options'       => [
@@ -920,6 +939,7 @@ return [
         'factories' => [
             'Application\Controller\These' => TheseControllerFactory::class,
             'Application\Controller\TheseObserver' => TheseObserverControllerFactory::class,
+            'Application\Controller\TheseFilters' => TheseFiltersControllerFactory::class,
         ],
         'aliases' => [
             'TheseController' => 'Application\Controller\These',

@@ -5,6 +5,7 @@ use Application\Assertion\WorkflowAssertion;
 use Application\Controller\Plugin\UrlWorkflow;
 use Application\Controller\WorkflowController;
 use Application\ORM\Query\Functions\Atteignable;
+use Application\ORM\Query\Functions\Year;
 use Application\Service\Workflow\WorkflowService;
 use Application\View\Helper\Workflow\RoadmapHelper;
 use Application\View\Helper\Workflow\WorkflowHelper;
@@ -18,6 +19,7 @@ return [
             'orm_default' => [
                 'string_functions' => [
                     'atteignable' => Atteignable::class,
+                    'year' => Year::class,
                 ],
             ],
         ],

@@ -36,7 +36,10 @@ $acteursFormatter->asSeparated()
 
 <!-- Formulaire de filtrage -->
 <div class="pull-left">
-    <?php echo $this->partial('partial/form-filtrage', ['etablissements' => $etablissements]) ?>
+    <?php $loadFiltersUrl = $this->url('these/filters', [], ['query' => $this->queryParams()], true); ?>
+    <div id="these-filters" data-url="<?php echo $loadFiltersUrl ?>">
+        <!-- Contenu chargé en AJAX -->
+    </div>
 </div>
 <!-- Formulaire de recherche -->
 <div class="pull-right">
@@ -226,3 +229,17 @@ $acteursFormatter->asSeparated()
     $this->translate("Entrez 2 caractères au moins...");
     $this->translate("Recherche possible sur<ul><li>le titre de la thèse</li><li>le numéro étudiant de l'auteur</li><li>le nom de l'auteur</li><li>le nom du directeur ou co-directeur de thèse</li><li>le code national de l'école doctorale concernée (ex: 181)</li><li>l'unité de recherche concernée (ex: umr6211)</li></ul>");
 ?>
+
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.min.css">
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+<!-- (Optional) Latest compiled and minified JavaScript translation files -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/i18n/defaults-fr_FR.min.js"></script>
+
+<script>
+    $(function() {
+        $("#these-filters").refresh();
+    });
+</script>
