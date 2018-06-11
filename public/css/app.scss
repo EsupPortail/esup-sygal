@@ -580,6 +580,18 @@ form.form-retraiter {
   }
 }
 
+@media (min-width: 1250px) {
+  .container {
+    width: 1220px;
+  }
+}
+
+@media (min-width: 1500px) {
+  .container {
+    width: 1470px;
+  }
+}
+
 form {
   input[type='submit'] {
     margin-top: 20px;
