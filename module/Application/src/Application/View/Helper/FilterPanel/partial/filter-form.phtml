@@ -24,9 +24,12 @@ use Application\View\Renderer\PhpRenderer;
  *
  */
 
-$titre = current($config)['titre'];
-if (!isset($titre) || $titre == null) $titre = "Filtres";
-
+$titre = "Filtres";
+if (isset($config)) {
+    $value = null;
+    if (isset(current($config)['titre'])) $value = current($config)['titre'];
+    if ($value) $titre = $value;
+}
 ?>
 
 
