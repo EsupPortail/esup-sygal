@@ -42,11 +42,17 @@ class UniteRecherche implements StructureConcreteInterface, HistoriqueAwareInter
     protected $structure;
 
     /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    protected $domaines;
+
+    /**
      * UniteRecherche constructor.
      */
     public function __construct()
     {
         $this->structure = new Structure();
+        $this->domaines = new \Doctrine\Common\Collections\ArrayCollection();
     }
     /**
      * UniteRecherche prettyPrint
@@ -205,5 +211,33 @@ class UniteRecherche implements StructureConcreteInterface, HistoriqueAwareInter
     public function getStructure()
     {
         return $this->structure;
+    }
+
+    /**
+     * @return DomaineScientifique[]
+     */
+    public function getDomaines()
+    {
+        return $this->domaines->toArray();
+    }
+
+    /**
+     * @param DomaineScientifique $domaine
+     * @return DomaineScientifique[]
+     */
+    public function addDomaine($domaine)
+    {
+        $this->domaines[] = $domaine;
+        return $this->getDomaines();
+    }
+
+    /**
+     * @param UniteRecherche $unite
+     * @return DomaineScientifique[]
+     */
+    public function removeUnite($domaine)
+    {
+        $this->domaines->removeElement($domaine);
+        return $this->getDomaines();
     }
 }

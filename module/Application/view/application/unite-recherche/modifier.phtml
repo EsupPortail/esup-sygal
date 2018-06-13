@@ -1,5 +1,6 @@
 <?php
 
+use Application\Entity\Db\DomaineScientifique;
 use Application\Entity\Db\Etablissement;
 use Application\Form\EcoleDoctoraleForm;
 use Application\Form\UniteRechercheForm;
@@ -110,8 +111,43 @@ $fcg = $this->formControlGroup();
 </div>
 
         <div style="clear:both;"></div>
-<?php echo $this->formElement($form->get('submit')) ?>
-<?php echo $this->form()->closeTag() ?>
+
+
+<div>
+    <h2> Domaines Scientifiques</h2>
+
+    <div class="col-md-6">
+    <table class="table table-extra-condensed">
+        <thead>
+            <tr>
+                <th>Libellé</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php
+        /** @var DomaineScientifique $domaineScientifique */
+            foreach ($domainesAssocies as $domaineScientifique) :
+        ?>
+            <tr>
+                <td><?php echo $domaineScientifique->getLibelle(); ?> </td>
+                <td> TODO </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+    </div>
+
+    <div class="col-md-6">
+        <?php echo generateSelect($domainesScientifiques); ?>
+    </div>
+
+</div>
+
+        <div style="clear:both;"></div>
+        <?php echo $this->formElement($form->get('submit')) ?>
+        <?php echo $this->form()->closeTag() ?>
+
 
 <?php
 $this->translate("Libellé :");

@@ -4,6 +4,7 @@ use Application\Controller\Factory\UniteRechercheControllerFactory;
 use Application\Form\Factory\UniteRechercheFormFactory;
 use Application\Form\Factory\UniteRechercheHydratorFactory;
 use Application\Provider\Privilege\UniteRecherchePrivileges;
+use Application\Service\DomaineScientifiqueService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use UnicaenAuth\Guard\PrivilegeController;
 use Application\View\Helper\UniteRechercheHelper;
@@ -200,6 +201,7 @@ return [
     'service_manager' => [
         'invokables' => [
             'UniteRechercheService' => UniteRechercheService::class,
+            DomaineScientifiqueService::class => DomaineScientifiqueService::class,
         ],
         'factories' => [
         ],

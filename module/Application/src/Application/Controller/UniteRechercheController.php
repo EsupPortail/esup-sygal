@@ -6,6 +6,7 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\StructureConcreteInterface;
 use Application\Entity\Db\UniteRecherche;
 use Application\Form\UniteRechercheForm;
+use Application\Service\DomaineScientifiqueServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
@@ -18,6 +19,7 @@ class UniteRechercheController extends AbstractController
     use IndividuServiceAwareTrait;
     use RoleServiceAwareTrait;
     use EtablissementServiceAwareTrait;
+    use DomaineScientifiqueServiceAwareTrait;
 
     /**
      * L'index récupére :
@@ -130,12 +132,15 @@ class UniteRechercheController extends AbstractController
 
         $etablissements = $this->getEtablissementService()->getEtablissements();
         $etablissementsRattachements = $this->getUniteRechercheService()->findEtablissementRattachement($unite);
+        $domaineScientifiques = $this->getDomaineScientifiqueService()->getDomainesScientifiques();
 
         // envoie vers le formulaire de modification
         $viewModel = new ViewModel([
             'form' => $this->uniteRechercheForm,
             'etablissements' => $etablissements,
             'etablissementsRattachements' => $etablissementsRattachements,
+            'domainesAssocies' => $unite->getDomaines(),
+            'domainesScientifiques' => $domaineScientifiques,
         ]);
         $viewModel->setTemplate('application/unite-recherche/modifier');
 
