@@ -9,7 +9,6 @@ use Application\Entity\Db\StructureConcreteInterface;
 use Application\Form\EtablissementForm;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
-use Application\Service\Notification\NotificationServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Zend\View\Model\ViewModel;
 
@@ -21,7 +20,6 @@ class EtablissementController extends AbstractController
     use EtablissementServiceAwareTrait;
     use IndividuServiceAwareTrait;
     use RoleServiceAwareTrait;
-    use NotificationServiceAwareTrait;
 
     /**
      * @var EtablissementForm $etablissementForm

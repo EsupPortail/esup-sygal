@@ -6,7 +6,6 @@ use Application\Controller\EtablissementController;
 use Application\Form\EtablissementForm;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Individu\IndividuService;
-use Application\Service\Notification\NotificationService;
 use Application\Service\Role\RoleService;
 use Zend\Mvc\Controller\ControllerManager;
 
@@ -27,20 +26,16 @@ class EtablissementControllerFactory
          * @var EtablissementService $etablissmentService
          * @var IndividuService $individuService
          * @var RoleService $roleService
-         * @var NotificationService $notificationService
          */
         $etablissmentService = $controllerManager->getServiceLocator()->get('EtablissementService');
         $individuService = $controllerManager->getServiceLocator()->get('IndividuService');
         $roleService = $controllerManager->getServiceLocator()->get('RoleService');
-        $notificationService = $controllerManager->getServiceLocator()->get(NotificationService::class);
 
         $controller = new EtablissementController();
         $controller->setEtablissementService($etablissmentService);
         $controller->setIndividuService($individuService);
         $controller->setRoleService($roleService);
         $controller->setEtablissementForm($form);
-        $controller->setNotificationService($notificationService);
-
 
         return $controller;
     }

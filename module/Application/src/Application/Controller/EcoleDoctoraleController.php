@@ -9,7 +9,6 @@ use Application\Form\EcoleDoctoraleForm;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
-use Application\Service\Notification\NotificationServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Zend\View\Model\ViewModel;
 
@@ -19,7 +18,6 @@ class EcoleDoctoraleController extends AbstractController
     use IndividuServiceAwareTrait;
     use RoleServiceAwareTrait;
     use EtablissementServiceAwareTrait;
-    use NotificationServiceAwareTrait;
 
     /**
      * L'index récupére :

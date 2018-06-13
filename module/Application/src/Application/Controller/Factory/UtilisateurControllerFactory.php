@@ -6,7 +6,7 @@ use Application\Controller\UtilisateurController;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Individu\IndividuServiceLocateTrait;
-use Application\Service\Notification\NotificationService;
+use Application\Service\Notification\NotifierService;
 use Application\Service\Role\RoleService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\Utilisateur\UtilisateurService;
@@ -27,15 +27,15 @@ class UtilisateurControllerFactory
          * @var EtablissementService $etablissementService
          * @var EcoleDoctoraleService $ecoleService
          * @var UniteRechercheService $uniteService
-         * @var EntityManager $entityManager;
-         * @var NotificationService $notificationService;
+         * @var EntityManager $entityManager
+         * @var NotifierService $notifierService
          */
         $roleService = $sl->get('RoleService');
         $utilisateurService = $sl->get('UtilisateurService');
         $etablissementService = $sl->get('EtablissementService');
         $ecoleService = $sl->get('EcoleDoctoraleService');
         $uniteService = $sl->get('UniteRechercheService');
-        $notificationService = $controllerManager->getServiceLocator()->get(NotificationService::class);
+        $notifierService = $controllerManager->getServiceLocator()->get(NotifierService::class);
         $entityManager = $sl->get('doctrine.entitymanager.orm_default');
 
         $controller = new UtilisateurController();
@@ -45,7 +45,7 @@ class UtilisateurControllerFactory
         $controller->setUniteRechercheService($uniteService);
         $controller->setEcoleDoctoraleService($ecoleService);
         $controller->setEtablissementService($etablissementService);
-        $controller->setNotificationService($notificationService);
+        $controller->setNotifierService($notifierService);
         $controller->setEntityManager($entityManager);
 
         return $controller;

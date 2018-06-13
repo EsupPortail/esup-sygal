@@ -8,7 +8,6 @@ use Application\Entity\Db\UniteRecherche;
 use Application\Form\UniteRechercheForm;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
-use Application\Service\Notification\NotificationServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Zend\View\Model\ViewModel;
@@ -19,7 +18,6 @@ class UniteRechercheController extends AbstractController
     use IndividuServiceAwareTrait;
     use RoleServiceAwareTrait;
     use EtablissementServiceAwareTrait;
-    use NotificationServiceAwareTrait;
 
     /**
      * L'index récupére :

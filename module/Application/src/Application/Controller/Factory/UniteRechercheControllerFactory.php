@@ -6,7 +6,6 @@ use Application\Controller\UniteRechercheController;
 use Application\Form\UniteRechercheForm;
 use Application\Service\Etablissement\EtablissementServiceLocateTrait;
 use Application\Service\Individu\IndividuService;
-use Application\Service\Notification\NotificationService;
 use Application\Service\Role\RoleService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use Zend\Mvc\Controller\ControllerManager;
@@ -32,12 +31,10 @@ class UniteRechercheControllerFactory
          * @var UniteRechercheService $uniteRechercheService
          * @var IndividuService $individuService
          * @var RoleService $roleService
-         * @var NotificationService $notificationService
          */
         $uniteRechercheService = $sl->get('UniteRechercheService');
         $individuService = $sl->get('IndividuService');
         $roleService = $sl->get('RoleService');
-        $notificationService = $controllerManager->getServiceLocator()->get(NotificationService::class);
 
         $controller = new UniteRechercheController();
         $controller->setUniteRechercheService($uniteRechercheService);
@@ -45,7 +42,6 @@ class UniteRechercheControllerFactory
         $controller->setRoleService($roleService);
         $controller->setEtablissementService($this->locateEtablissementService($sl));
         $controller->setUniteRechercheForm($form);
-        $controller->setNotificationService($notificationService);
 
         return $controller;
     }

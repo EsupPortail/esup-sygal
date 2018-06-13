@@ -10,7 +10,7 @@ use Application\Form\CreationUtilisateurForm;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
-use Application\Service\Notification\NotificationServiceAwareTrait;
+use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
@@ -40,7 +40,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     use EcoleDoctoraleServiceAwareTrait;
     use UniteRechercheServiceAwareTrait;
     use EtablissementServiceAwareTrait;
-    use NotificationServiceAwareTrait;
+    use NotifierServiceAwareTrait;
 
     /**
      * NOTA BENE : il s'agit des individus et non des utilisateurs car ils sont ceux qui portent les rôles
@@ -268,7 +268,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             $role = $this->getRoleService()->getRoleById($roleId);
 
             $this->roleService->removeRole($individuId, $roleId);
-            $this->notificationService->triggerChangementRole("retrait", $role, $individu);
+            $this->notifierService->triggerChangementRole("retrait", $role, $individu);
         }
 
         return new ViewModel([]);
@@ -287,7 +287,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             $role = $this->getRoleService()->getRoleById($roleId);
 
             $this->roleService->addRole($individuId, $roleId);
-            $this->notificationService->triggerChangementRole("ajout", $role, $individu);
+            $this->notifierService->triggerChangementRole("ajout", $role, $individu);
         }
         return new ViewModel([]);
     }

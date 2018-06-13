@@ -5,16 +5,15 @@ namespace Application\Controller;
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Service\Individu\IndividuServiceAwareTrait;
-use Application\Service\Notification\NotificationServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Structure\StructureServiceAwareTrait;
 use Zend\View\Model\ViewModel;
 
-class StructureController extends AbstractController {
+class StructureController extends AbstractController
+{
     use RoleServiceAwareTrait;
     use IndividuServiceAwareTrait;
     use StructureServiceAwareTrait;
-    use NotificationServiceAwareTrait;
 
     public function individuRoleAction()
     {
