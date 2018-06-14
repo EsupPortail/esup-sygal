@@ -35,7 +35,7 @@ class TheseRepository extends DefaultEntityRepository
     }
 
     /**
-     * @return array
+     * @return int[]
      * @see Year
      */
     public function fetchDistinctAnneesPremiereInscription()
@@ -45,6 +45,24 @@ class TheseRepository extends DefaultEntityRepository
             ->distinct()
             ->select("year(t.datePremiereInscription)")
             ->orderBy("year(t.datePremiereInscription)");
+
+        $results = array_map(function($value) {
+            return current($value);
+        }, $qb->getQuery()->getScalarResult());
+
+        return $results;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function fetchDistinctDisciplines()
+    {
+        $qb = $this->createQueryBuilder('t');
+        $qb
+            ->distinct()
+            ->select("t.libelleDiscipline")
+            ->orderBy("t.libelleDiscipline");
 
         $results = array_map(function($value) {
             return current($value);

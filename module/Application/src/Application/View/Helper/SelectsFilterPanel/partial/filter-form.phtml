@@ -1,27 +1,28 @@
 <?php
 
+use Application\Service\These\Filter\TheseSelectFilter;
 use Application\View\Renderer\PhpRenderer;
 
 /**
- * @var PhpRenderer $this
- * @var string      $formAction
- * @var array       $config
+ * @var PhpRenderer                                           $this
+ * @var string                                                $formAction
+ * @var \Application\Service\These\Filter\TheseSelectFilter[] $filters
  * Exemple :
- [
-    "État" => [
-        'paramName' => 'etatThese',
-        'paramConfig' => [
-            ['value' => '', 'label' => "Tous"],
-            ['value' => $v = These::ETAT_EN_COURS, 'label' => These::$etatsLibelles[$v]],
-            ['value' => $v = These::ETAT_ABANDONNEE, 'label' => These::$etatsLibelles[$v]],
-            ['value' => $v = These::ETAT_SOUTENUE, 'label' => These::$etatsLibelles[$v]],
-        ],
-        'filterUrl' => function ($param, $value, $queryParams) {
-            $queryParams[$param] = $value;
-            return $this->url('these/rechercher', [], ['query' => $queryParams], true);
-        },
-    ],
- ]
+ * [
+ * "État" => [
+        * 'paramName' => 'etatThese',
+        * 'paramConfig' => [
+            * ['value' => '', 'label' => "Tous"],
+            * ['value' => $v = These::ETAT_EN_COURS, 'label' => These::$etatsLibelles[$v]],
+            * ['value' => $v = These::ETAT_ABANDONNEE, 'label' => These::$etatsLibelles[$v]],
+            * ['value' => $v = These::ETAT_SOUTENUE, 'label' => These::$etatsLibelles[$v]],
+        * ],
+        * 'paramAttributes' => [
+            * 'width' => '200px',
+            * 'liveSearch' => true,
+        * ],
+    * ],
+ * ]
  *
  */
 
@@ -32,18 +33,34 @@ $queryParams = $this->queryParams();
     <div class="panel-heading">
         <span class="glyphicon glyphicon-filter"></span> Filtres
     </div>
-    <form class="panel-body form-inline" method="GET" action="<?php echo $formAction ?>">
-        <?php foreach ($config as $label => $data): ?>
+    <form class="panel-body form-inline filters" method="GET" action="<?php echo $formAction ?>">
+        <?php foreach ($filters as $filter): ?>
         <div class="form-group">
-            <label for="<?php echo $data['paramName'] ?>">
-                <?php echo $label ?>
+            <label for="<?php echo $filter->getName() ?>">
+                <?php echo $filter->getLabel() ?>
             </label>
             <div class="input-group">
-                <?php $data['queryParams'] = $queryParams; ?>
-                <?php echo $this->partial('filter-form-item', $data) ?>
+                <?php
+                echo $this->partial('filter-form-item', [
+                    'filter' => $filter,
+                    'queryParams' => $queryParams,
+                ]);
+                ?>
             </div>
         </div>
         <?php endforeach ?>
+        <div class="form-group">
+            <label for="reset">Vider</label>
+            <div class="input-group">
+                <button type="button"
+                        name="reset"
+                        class="btn btn-default"
+                        onclick="$('form :input.filter').val(''); $('form .selectpicker.filter').selectpicker('deselectAll').selectpicker('render');"
+                        title="<?php echo $this->translate("Vider le formulaire");?>" >
+                    <span class="glyphicon glyphicon-erase"></span>
+                </button>
+            </div>
+        </div>
         <div class="form-group">
             <div class="input-group">
                 <input type="submit" class="btn btn-info btn-sm" value="Appliquer"/>
@@ -55,9 +72,8 @@ $queryParams = $this->queryParams();
 
 
 <script>
-    $(".selectpicker").selectpicker({
-        size: 15
-    });
+    $(".selectpicker").selectpicker();
+
     $(".filters form").submit(function() {
         $("body").addClass('wait');
     })

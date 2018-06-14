@@ -12,9 +12,7 @@ use Application\Entity\Db\MailConfirmation;
 use Application\Entity\Db\MetadonneeThese;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\RdvBu;
-use Application\Entity\Db\RecapBu;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\SourceInterface;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Variable;
@@ -25,9 +23,9 @@ use Application\Form\AttestationTheseForm;
 use Application\Form\ConformiteFichierForm;
 use Application\Form\DiffusionTheseForm;
 use Application\Form\MetadonneeTheseForm;
+use Application\Form\PointsDeVigilanceForm;
 use Application\Form\RdvBuTheseDoctorantForm;
 use Application\Form\RdvBuTheseForm;
-use Application\Form\PointsDeVigilanceForm;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Fichier\Exception\ValidationImpossibleException;
 use Application\Service\Fichier\FichierServiceAwareTrait;
@@ -36,7 +34,11 @@ use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\These\Convention\ConventionPdfExporter;
 use Application\Service\These\PageDeGarde\PageDeCouverturePdfExporter;
+use Application\Service\These\Filter\TheseSelectFilter;
+use Application\Service\These\TheseRechercheService;
+use Application\Service\These\TheseRechercheServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
+use Application\Service\These\TheseSorter;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
@@ -44,10 +46,8 @@ use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\Service\Workflow\WorkflowServiceAwareTrait;
 use Application\View\Helper\Sortable;
 use Doctrine\ORM\Tools\Pagination\Paginator;
-use Doctrine\ORM\Version;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
 use mPDF;
-use Notification\Notification;
 use Retraitement\Exception\TimedOutCommandException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Exporter\Pdf;
@@ -56,7 +56,6 @@ use UnicaenApp\Service\MessageCollectorAwareTrait;
 use UnicaenApp\Traits\MessageAwareInterface;
 use Zend\Form\Element\Hidden;
 use Zend\Http\Response;
-use Zend\Http\Response\Stream;
 use Zend\Stdlib\ParametersInterface;
 use Zend\View\Model\ViewModel;
 
@@ -64,6 +63,7 @@ class TheseController extends AbstractController
 {
     use VariableServiceAwareTrait;
     use TheseServiceAwareTrait;
+    use TheseRechercheServiceAwareTrait;
     use RoleServiceAwareTrait;
     use FichierServiceAwareTrait;
     use ValidationServiceAwareTrait;
@@ -89,32 +89,26 @@ class TheseController extends AbstractController
             return $this->redirect()->toRoute('home');
         }
 
-        /** Application des filtres et tris par défaut.
-         * Si aucun état de thèse n'est spécifié alors état = These::ETAT_EN_COURS
-         **/
-        $needsRedirect  = false;
-        $queryParams    = $this->params()->fromQuery();
-        $etatThese      = $this->params()->fromQuery($name = 'etatThese');
-        if ($etatThese === null) { // null <=> paramètre absent
-            $queryParams = array_merge($queryParams, [$name => These::ETAT_EN_COURS]);
-            $needsRedirect = true;
-        }
-        $etablissement  = $this->params()->fromQuery($name = 'etablissement');
-        if ($etablissement === null) { // null <=> paramètre absent
-            $queryParams = array_merge($queryParams, [$name => ""]);
-            $needsRedirect = true;
-        }
-        $sort = $this->params()->fromQuery('sort');
-        if ($sort === null) { // null <=> paramètre absent
-            $queryParams = array_merge($queryParams, ['sort' => 't.datePremiereInscription', 'direction' => Sortable::ASC]);
-            $needsRedirect = true;
-        }
-        if ($needsRedirect) {
+        $queryParams = $this->params()->fromQuery();
+        $text = $this->params()->fromQuery('text');
+
+        // Application des filtres et tris par défaut, puis redirection éventuelle
+        $filtersUpdated = $this->theseRechercheService->updateQueryParamsWithDefaultFilters($queryParams);
+        $sortersUpdated = $this->theseRechercheService->updateQueryParamsWithDefaultSorters($queryParams);
+        if ($filtersUpdated || $sortersUpdated) {
             return $this->redirect()->toRoute(null, [], ['query' => $queryParams], true);
         }
 
+        $this->theseRechercheService
+            ->createFilters()
+            ->createSorters()
+            ->processQueryParams($queryParams);
+
+        $etablissement = $this->theseRechercheService->getFilterValueByName(TheseSelectFilter::NAME_etablissement);
+        $etatThese = $this->theseRechercheService->getFilterValueByName(TheseSelectFilter::NAME_etatThese);
+
         /** Configuration du paginator **/
-        $qb = $this->createQueryBuilder();
+        $qb = $this->theseRechercheService->createQueryBuilder();
         $maxi = $this->params()->fromQuery('maxi', 50);
         $page = $this->params()->fromQuery('page', 1);
         $paginator = new \Zend\Paginator\Paginator(new DoctrinePaginator(new Paginator($qb, true)));
@@ -123,27 +117,29 @@ class TheseController extends AbstractController
             ->setItemCountPerPage((int)$maxi)
             ->setCurrentPageNumber((int)$page);
 
-        $text = $this->params()->fromQuery('text');
+        return new ViewModel([
+            'theses'                => $paginator,
+            'text'                  => $text,
+            'roleDirecteurThese'    => $this->roleService->getRepository()->findOneBy(['sourceCode' => Role::CODE_DIRECTEUR_THESE]),
+            'displayEtablissement'  => !$etablissement,
+            'displayDateSoutenance' => $etatThese === These::ETAT_SOUTENUE || !$etatThese,
+            'etatThese'             => $etatThese,
+        ]);
+    }
 
-        /**
-         * @var Etablissement[] $etablissements
-         * $etablissements stocke la liste des établissements qui seront utilisés pour le filtrage
-         * les critères sont les suivants:
-         * - être un établissement crée par sygal (et ne pas liste les établissements de co-tutelles)
-         * - ne pas être des établissements provenant de substitutions
-         * - ne pas être la COMUE ... suite à l'interrogation obtenue en réunion
-         */
-        $etablissements = $this->etablissementService->getEtablissementsBySource(SourceInterface::CODE_SYGAL);
-        $etablissements = array_filter($etablissements, function (Etablissement $etablissement) { return count($etablissement->getStructure()->getStructuresSubstituees())==0; });
-        $etablissements = array_filter($etablissements, function (Etablissement $etablissement) { return $etablissement->getSigle() != "NU";});
+    /**
+     * @return Response|ViewModel
+     */
+    public function filtersAction()
+    {
+        $queryParams = $this->params()->fromQuery();
+
+        $this->theseRechercheService
+            ->createFilters()
+            ->processQueryParams($queryParams);
 
         return new ViewModel([
-            'theses' => $paginator,
-            'text'   => $text,
-            'roleDirecteurThese' => $this->roleService->getRepository()->findOneBy(['sourceCode' => Role::CODE_DIRECTEUR_THESE]),
-            'etablissements' => $etablissements,
-            'filtreEtablissement' => $etablissement,
-            'etatThese' => $etatThese,
+            'filters' => $this->theseRechercheService->getFilters(),
         ]);
     }
 
@@ -165,63 +161,6 @@ class TheseController extends AbstractController
 
         return $this->redirect()->toRoute('these', [], ['query' => $queryParams]);
     }
-
-
-    private function createQueryBuilder() {
-        $etatThese      = $this->params()->fromQuery($name = 'etatThese');
-        $etabCode       = $this->params()->fromQuery($name = 'etablissement');
-        $sort = $this->params()->fromQuery('sort');
-        $text = $this->params()->fromQuery('text');
-        $dir  = $this->params()->fromQuery('direction', Sortable::ASC);
-
-        $qb = $this->theseService->getRepository()->createQueryBuilder('t')
-            ->addSelect('di')->leftJoin('th.individu', 'di')
-            ->addSelect('a')->leftJoin('t.acteurs', 'a')
-            ->addSelect('i')->leftJoin('a.individu', 'i')
-            ->addSelect('r')->leftJoin('a.role', 'r')
-            ->andWhere('1 = pasHistorise(t)');
-
-        if ($etatThese) {
-            $qb->andWhere('t.etatThese = :etat')->setParameter('etat', $etatThese);
-        }
-        if ($etabCode) {
-            // todo: utiliser le relation th.etablissement, voyons !!
-            $etablissement = $this->etablissementService->getRepository()->findOneBy(["code" =>$etabCode]);
-            $qb->andWhere('t.etablissement = :etablissement')->setParameter('etablissement', $etablissement);
-        }
-        $sortProps = $sort ? explode('+', $sort) : [];
-        foreach ($sortProps as $sortProp) {
-            if ($sortProp === 't.titre') {
-                // trim et suppression des guillemets
-                $sortProp = "TRIM(REPLACE($sortProp, CHR(34), ''))"; // CHR(34) <=> "
-            }
-            $qb->addOrderBy($sortProp, $dir);
-        }
-
-        /**
-         * Filtres découlant du rôle de l'utilisateur.
-         */
-        $this->theseService->decorateQbFromUserContext($qb, $this->userContextService);
-
-        /**
-         * Prise en compte du champ de recherche textuelle.
-         */
-        if (strlen($text) > 1) {
-            $results = $this->theseService->rechercherThese($text);
-            $sourceCodes = array_unique(array_keys($results));
-            if ($sourceCodes) {
-                $qb
-                    ->andWhere($qb->expr()->in('t.sourceCode', ':sourceCodes'))
-                    ->setParameter('sourceCodes', $sourceCodes);
-            }
-            else {
-                $qb->andWhere("0 = 1"); // i.e. aucune thèse trouvée
-            }
-        }
-
-        return $qb;
-    }
-
 
     public function roadmapAction()
     {

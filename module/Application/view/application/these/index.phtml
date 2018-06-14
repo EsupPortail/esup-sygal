@@ -5,6 +5,7 @@ use Application\Entity\Db\These;
 use Application\Filter\ActeursFormatter;
 use Application\Provider\Privilege\ExportPrivileges;
 use Application\Provider\Privilege\ThesePrivileges;
+use Application\Service\These\TheseSorter;
 use Application\View\Renderer\PhpRenderer;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Privilege\Privileges;
@@ -15,7 +16,8 @@ use Zend\Paginator\Paginator;
  * @var Paginator   $theses
  * @var string      $text
  * @var Role        $roleDirecteurThese
- * @var string      $filtreEtablissement
+ * @var bool        $displayEtablissement
+ * @var bool        $displayDateSoutenance
  */
 
 $canExport = $this->isAllowed(Privileges::getResourceId(ThesePrivileges::THESE_EXPORT_CSV));
@@ -37,14 +39,14 @@ $acteursFormatter->asSeparated()
 <!-- Formulaire de filtrage -->
 <div class="pull-left">
     <?php $loadFiltersUrl = $this->url('these/filters', [], ['query' => $this->queryParams()], true); ?>
-    <div id="these-filters" data-url="<?php echo $loadFiltersUrl ?>">
+    <div id="these-filters" data-url="<?php echo $loadFiltersUrl ?>" style="min-height: 130px">
         <!-- Contenu chargé en AJAX -->
     </div>
 </div>
 <!-- Formulaire de recherche -->
-<div class="pull-right">
-    <?php echo $this->partial('partial/form-recherche', ['text' => $text]) ?>
-</div>
+<!--<div class="pull-right">-->
+<!--    --><?php //echo $this->partial('partial/form-recherche', ['text' => $text]) ?>
+<!--</div>-->
 <div class="clearfix"></div>
 
 <p>
@@ -59,33 +61,33 @@ $acteursFormatter->asSeparated()
     <thead>
     <tr>
         <th>
-            <a href="<?php echo $s = $this->sortable('t.titre'); ?>"
+            <a href="<?php echo $s = $this->sortable(TheseSorter::NAME_titre); ?>"
                title="<?php echo $this->translate("Titre de la thèse");?> ">
                     <?php echo $this->translate("Titre"); ?>
             </a> <?php echo $s->icon() ?>
         </th>
-        <?php if ($filtreEtablissement === '') { ?>
+        <?php if ($displayEtablissement): ?>
         <th>
-            <a href="<?php echo $s = $this->sortable('t.etablissement'); ?>"
+            <a href="<?php echo $s = $this->sortable(TheseSorter::NAME_etablissement); ?>"
                title="<?php echo $this->translate("Établissement");?> ">
                 <?php echo $this->translate("Étab."); ?>
             </a> <?php echo $s->icon() ?>
         </th>
-        <?php  } ?>
+        <?php endif ?>
         <th>
-            <a href="<?php echo $s = $this->sortable('t.etatThese'); ?>"
+            <a href="<?php echo $s = $this->sortable(TheseSorter::NAME_etatThese); ?>"
                title="<?php echo $this->translate("État de la thèse");?> ">
                 <?php echo $this->translate("État"); ?>
             </a> <?php echo $s->icon() ?>
         </th>
         <th>
-            <a href="<?php echo $s = $this->sortable('th.sourceCode'); ?>"
+            <a href="<?php echo $s = $this->sortable(TheseSorter::NAME_numeroEtudiant); ?>"
                title="<?php echo $this->translate("Numéro étudiant"); ?>">
                     <?php echo $this->translate("N°étud."); ?>
             </a> <?php echo $s->icon() ?>
         </th>
         <th>
-            <a href="<?php echo $s = $this->sortable('di.nomUsuel+di.prenom1'); ?>"
+            <a href="<?php echo $s = $this->sortable(TheseSorter::NAME_doctorant); ?>"
                title="<?php echo $this->translate("Nom du doctorant"); ?>">
                 <?php echo $this->translate("Doctorant"); ?>
             </a> <?php echo $s->icon() ?>
@@ -96,36 +98,30 @@ $acteursFormatter->asSeparated()
             </span>
         </th>
         <th>
-            <a href="<?php echo $s = $this->sortable('ed.sourceCode'); ?>"
+            <a href="<?php echo $s = $this->sortable(TheseSorter::NAME_ecoleDoctorale); ?>"
                title="<?php echo $this->translate("École doctorale");?>">
                 <?php echo $this->translate("École<br>doct.");?>
             </a> <?php echo $s->icon() ?>
         </th>
         <th>
-            <a href="<?php echo $s = $this->sortable('ur.sourceCode'); ?>"
+            <a href="<?php echo $s = $this->sortable(TheseSorter::NAME_uniteRecherche); ?>"
                title="<?php echo $this->translate("Unité de recherche"); ?>">
                 <?php echo $this->translate("Unité<br>rech."); ?>
             </a> <?php echo $s->icon() ?></th>
         <th>
-            <a href="<?php echo $s = $this->sortable('t.datePremiereInscription'); ?>"
+            <a href="<?php echo $s = $this->sortable(TheseSorter::NAME_datePremiereInscription); ?>"
                title="<?php echo $this->translate("Date de première inscription");?>">
                 <?php echo $this->translate("Date 1ère<br>inscr."); ?>
             </a> <?php echo $s->icon() ?>
         </th>
-
-        <?php
-            //Affichage de la date de soutenace ssi l'etat est à soutenue ou à tous
-            if($etatThese === These::ETAT_SOUTENUE || $etatThese === "") {
-                $s = $this->sortable('t.dateSoutenance');
-                echo '<th>';
-                echo '    <a    href="'. $s .'"';
-                echo '          title="'. $this->translate("Date de soutenance"). '">';
-                echo $this->translate("Date de<br>sout.");
-                echo '    </a>';
-                echo $s->icon() ;
-                echo '</th>';
-            }
-        ?>
+        <?php if ($displayDateSoutenance): ?>
+            <th>
+                <a href="<?php echo $s = $this->sortable(TheseSorter::NAME_dateSoutenance); ?>"
+                   title="<?php echo $this->translate("Date de soutenance");?> ">
+                    <?php echo $this->translate("Date de<br>sout."); ?>
+                </a> <?php echo $s->icon() ?>
+            </th>
+        <?php endif ?>
     </tr>
     </thead>
 
@@ -141,7 +137,7 @@ $acteursFormatter->asSeparated()
                 </span>
             </td>
             <?php
-                if ($filtreEtablissement === '') {
+                if ($displayEtablissement) {
                     echo "<td>";
                     echo "<abbr title='";
                     echo $these->getEtablissement()->getLibelle();
@@ -195,7 +191,7 @@ $acteursFormatter->asSeparated()
             </td>
             <?php
             //Affichage de la date de soutenace ssi l'etat est à soutenue ou à tous
-            if($etatThese === These::ETAT_SOUTENUE || $etatThese === "") {
+            if ($displayDateSoutenance) {
                 echo '<td>';
                 if ($these->getDateSoutenance()) echo $these->getDateSoutenance()->format("d/m/Y");
                 echo '</td>';

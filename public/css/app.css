@@ -289,7 +289,7 @@ div.filters form {
     margin-bottom: 0; }
   div.filters form button.dropdown-toggle {
     padding: 3px 25px 3px 10px; }
-  div.filters form .filter-option {
+  div.filters form .filter-option, div.filters form #search-input {
     font-size: 90%; }
 
 table.these-fiche {

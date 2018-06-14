@@ -1,37 +1,21 @@
 <?php
 
+use Application\Service\These\Filter\TheseSelectFilter;
+use Application\Service\These\Filter\TheseTextFilter;
 use Application\View\Renderer\PhpRenderer;
 
 /**
- * @var PhpRenderer $this
- * @var string      $paramName
- * @var array       $paramConfig Format : ['label' => "", 'value' => ""]
- * @var string      $filterUrl
- * @var array       $queryParams
- * Exemple :
- *      $filterUrl = function ($param, $value, &$queryParams) use ($queryParams) {
- *          $queryParams[$param] = $value;
- *          return $this->url('these/rechercher', [], ['query' => $queryParams], true);
- *      };
- *
+ * @var PhpRenderer                                         $this
+ * @var \Application\Service\These\Filter\TheseSelectFilter $filter
+ * @var array                                               $queryParams
  */
 
 ?>
 
-<select title="" class="filter selectpicker show-menu-arrow" data-width="fit" name="<?php echo $paramName ?>">
-<?php foreach ($paramConfig as $data): ?>
-
-    <?php
-    $value = $data['value'];
-    $label = $data['label'];
-    $subtext = isset($data['subtext']) ? $data['subtext'] : '';
-    $isActive =
-        ($value !== '' && ((isset($queryParams[$paramName]) && $queryParams[$paramName] === $value))) ||
-        ($value === '' && (!isset($queryParams[$paramName]) || !isset($queryParams[$paramName]) || $queryParams[$paramName] === ''));
-    ?>
-    <option value="<?php echo $value ?>" <?php echo $isActive ? 'selected' : '' ?> data-subtext="<?php echo $subtext ?>">
-        <?php echo $label ?>
-    </option>
-
-<?php endforeach ?>
-</select>
+<?php if ($filter instanceof TheseSelectFilter): ?>
+    <?php echo $this->partial('filter-form-item-select') ?>
+<?php elseif ($filter instanceof TheseTextFilter): ?>
+    <?php echo $this->partial('filter-form-item-text') ?>
+<?php else: ?>
+    Filtre rencontré inattendu!
+<?php endif ?>

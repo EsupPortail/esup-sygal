@@ -1,0 +1,48 @@
+<?php
+
+use Application\Controller\TheseRechercheController;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var array       $etatsThese
+ * @var array       $etablissements
+ * @var array       $ecolesDoctorales
+ * @var array       $unitesRecherches
+ * @var array       $anneesPremiereInscription
+ * @var array       $disciplines
+ * @var array       $filters
+ */
+
+//$data = [
+//    $this->translate("État") => [
+//        'paramName' => TheseFiltersController::PARAM_etatThese,
+//        'paramConfig' => $etatsThese,
+//    ],
+//    $this->translate("Établissement") => [
+//        'paramName' => TheseFiltersController::PARAM_etablissement,
+//        'paramConfig' => $etablissements,
+//    ],
+//    $this->translate("ED") => [
+//        'paramName' => TheseFiltersController::PARAM_ecoleDoctorale,
+//        'paramConfig' => $ecolesDoctorales,
+//    ],
+//    $this->translate("UR") => [
+//        'paramName' => TheseFiltersController::PARAM_uniteRecherche,
+//        'paramConfig' => $unitesRecherches,
+//    ],
+//    $this->translate("1ère inscr.") => [
+//        'paramName' => TheseFiltersController::PARAM_anneePremiereInscription,
+//        'paramConfig' => $anneesPremiereInscription,
+//    ],
+//    $this->translate("Discipline") => [
+//        'paramName' => TheseFiltersController::PARAM_discipline,
+//        'paramConfig' => $disciplines,
+//        'paramAttributes' => [
+//            'width' => '200px',
+//            'liveSearch' => true,
+//        ],
+//    ],
+//];
+
+echo $this->selectsFilterPanel($filters);

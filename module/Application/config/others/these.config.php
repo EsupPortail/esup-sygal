@@ -2,7 +2,6 @@
 
 use Application\Assertion\AssertionAbstractFactory;
 use Application\Controller\Factory\TheseControllerFactory;
-use Application\Controller\Factory\TheseFiltersControllerFactory;
 use Application\Controller\Factory\TheseObserverControllerFactory;
 use Application\Controller\Plugin\Url\UrlThesePluginFactory;
 use Application\Entity\Db\Diffusion;
@@ -22,9 +21,9 @@ use Application\Service\Acteur\ActeurService;
 use Application\Service\Message\DiffusionMessages;
 use Application\Service\ServiceAwareInitializer;
 use Application\Service\These\Factory\TheseObserverServiceFactory;
+use Application\Service\These\Factory\TheseRechercheServiceFactory;
 use Application\Service\These\Factory\TheseServiceFactory;
 use Application\Service\Url\UrlServiceFactory;
-use Application\Service\Url\UrlTheseServiceFactory;
 use Application\View\Helper\Url\UrlTheseHelperFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
@@ -73,7 +72,7 @@ return [
                     'privileges' => ThesePrivileges::THESE_RECHERCHE,
                 ],
                 [
-                    'controller' => 'Application\Controller\TheseFilters',
+                    'controller' => 'Application\Controller\These',
                     'action'     => [
                         'filters',
                     ],
@@ -272,8 +271,6 @@ return [
                         'options'       => [
                             'route'       => '/filters',
                             'defaults'    => [
-                                '__NAMESPACE__' => 'Application\Controller',
-                                'controller'    => 'TheseFilters',
                                 'action' => 'filters',
                             ],
                         ],
@@ -926,6 +923,7 @@ return [
         ),
         'factories' => [
             'TheseService'                 => TheseServiceFactory::class,
+            'TheseRechercheService'        => TheseRechercheServiceFactory::class,
             'TheseObserverService'         => TheseObserverServiceFactory::class,
         ],
         'abstract_factories' => [
@@ -939,7 +937,6 @@ return [
         'factories' => [
             'Application\Controller\These' => TheseControllerFactory::class,
             'Application\Controller\TheseObserver' => TheseObserverControllerFactory::class,
-            'Application\Controller\TheseFilters' => TheseFiltersControllerFactory::class,
         ],
         'aliases' => [
             'TheseController' => 'Application\Controller\These',
