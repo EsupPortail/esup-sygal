@@ -4,6 +4,7 @@ use Application\Entity\Db\DomaineScientifique;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\EtablissementRattachement;
 use Application\Form\UniteRechercheForm;
+use Application\View\Helper\SelectHelper;
 use Application\View\Renderer\PhpRenderer;
 
 /**
@@ -113,7 +114,10 @@ $fcg = $this->formControlGroup();
         </div>
 
         <div class="col-md-6">
-            <?php echo generateSelect("etablissements", $etablissements, "Choisissez un établissement de rattachement ..."); ?>
+            <?php
+                $selectDomaine = new SelectHelper("etablissements", $etablissements, "Choisissez un établissement de rattachement ...");
+                echo $selectDomaine;
+            ?>
             <br/> <br/>
             <a
                 class="btn btn-success"
@@ -159,7 +163,10 @@ $fcg = $this->formControlGroup();
         </div>
 
         <div class="col-md-6">
-            <?php echo generateSelect("domaines", $domainesScientifiques, 'Choisissez un domaine scientifique ...'); ?>
+            <?php
+                $selectDomaine = new SelectHelper("domaines", $domainesScientifiques, 'Choisissez un domaine scientifique ...');
+                echo $selectDomaine;
+            ?>
             <br/>
             <br/>
             <a class="btn btn-success"
@@ -170,20 +177,6 @@ $fcg = $this->formControlGroup();
             </a>
         </div>
     </div>
-
-<?php
-    function generateSelect($id, $liste, $description) {
-        $texte = '';
-        $texte .= '<select id="'.$id.'">';
-        $texte .= '<option> '.$description.' </option>';
-        foreach ($liste as $element) {
-            /** @var Etablissement $etablissement */
-            $texte .= '<option value="'.$element->getId().'">'.$element->getLibelle().'</option>';
-        }
-        $texte .= '</select>';
-        return $texte;
-    }
-?>
 
 <script>
     $(document).ready(function() {
