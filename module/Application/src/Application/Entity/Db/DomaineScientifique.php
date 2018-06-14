@@ -53,22 +53,22 @@ class DomaineScientifique {
 
     /**
      * @param UniteRecherche $unite
-     * @return UniteRecherche[]
+     * @return DomaineScientifique
      */
     public function addUnite($unite)
     {
         $this->unites[] = $unite;
-        return $this->getUnites();
+        return $this;
     }
 
     /**
      * @param UniteRecherche $unite
-     * @return UniteRecherche[]
+     * @return DomaineScientifique
      */
     public function removeUnite($unite)
     {
         $this->unites->removeElement($unite);
-        return $this->getUnites();
+        return $this;
     }
 
 }

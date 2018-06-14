@@ -223,21 +223,21 @@ class UniteRecherche implements StructureConcreteInterface, HistoriqueAwareInter
 
     /**
      * @param DomaineScientifique $domaine
-     * @return DomaineScientifique[]
+     * @return UniteRecherche
      */
     public function addDomaine($domaine)
     {
         $this->domaines[] = $domaine;
-        return $this->getDomaines();
+        return $this;
     }
 
     /**
      * @param UniteRecherche $unite
-     * @return DomaineScientifique[]
+     * @return UniteRecherche
      */
-    public function removeUnite($domaine)
+    public function removeDomaine($domaine)
     {
         $this->domaines->removeElement($domaine);
-        return $this->getDomaines();
+        return $this;
     }
 }

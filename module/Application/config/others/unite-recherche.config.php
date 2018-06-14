@@ -32,6 +32,8 @@ return [
                         'supprimer-logo',
                         'ajouter-etablissement-rattachement',
                         'retirer-etablissement-rattachement',
+                        'ajouter-domaine-scientifique',
+                        'retirer-domaine-scientifique',
                         'principal-etablissement-rattachement',
                     ],
                     'privileges' => UniteRecherchePrivileges::UNITE_RECH_MODIFICATION,
@@ -135,6 +137,32 @@ return [
                             ],
                             'defaults'    => [
                                 'action' => 'principal-etablissement-rattachement',
+                            ],
+                        ],
+                    ],
+                    'ajouter-domaine-scientifique' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'       => '/:uniteRecherche/ajouter-domaine-scientifique/:domaineScientifique',
+                            'constraints' => [
+                                'uniteRecherche' => '\d+',
+                                'domaineScientifique' => '\d+',
+                            ],
+                            'defaults'    => [
+                                'action' => 'ajouter-domaine-scientifique',
+                            ],
+                        ],
+                    ],
+                    'retirer-domaine-scientifique' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'       => '/:uniteRecherche/retirer-domaine-scientifique/:domaineScientifique',
+                            'constraints' => [
+                                'uniteRecherche' => '\d+',
+                                'domaineScientifique' => '\d+',
+                            ],
+                            'defaults'    => [
+                                'action' => 'retirer-domaine-scientifique',
                             ],
                         ],
                     ],

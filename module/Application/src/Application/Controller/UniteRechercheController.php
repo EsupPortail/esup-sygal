@@ -339,4 +339,45 @@ class UniteRechercheController extends AbstractController
         $this->redirect()->toRoute("unite-recherche/modifier",[],[], true);
     }
 
+
+    /**
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function ajouterDomaineScientifiqueAction() {
+        $uniteId = $this->params()->fromRoute("uniteRecherche");
+        $domaineId = $this->params()->fromRoute("domaineScientifique");
+        $unite = $this->getUniteRechercheService()->getUniteRechercheByStructureId($uniteId);
+        $domaine = $this->getDomaineScientifiqueService()->getDomaineScientifiqueById($domaineId);
+
+        if ($domaine !== null) {
+            $domaine = $domaine->addUnite($unite);
+            $unite = $unite->addDomaine($domaine);
+
+            $this->getDomaineScientifiqueService()->updateDomaineScientifique($domaine);
+
+            $this->flashMessenger()->addSuccessMessage("Le domaine scientifique <strong>".$domaine->getLibelle()."</strong> est maintenant un des domaines scientifiques de l'unité de recherche <strong>".$unite->getLibelle()."</strong>.");
+        }
+        $this->redirect()->toRoute("unite-recherche/modifier",[],[], true);
+    }
+
+    /**
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function retirerDomaineScientifiqueAction() {
+        $uniteId = $this->params()->fromRoute("uniteRecherche");
+        $domaineId = $this->params()->fromRoute("domaineScientifique");
+        $unite = $this->getUniteRechercheService()->getUniteRechercheByStructureId($uniteId);
+        $domaine = $this->getDomaineScientifiqueService()->getDomaineScientifiqueById($domaineId);
+
+        $domaine = $domaine->removeUnite($unite);
+        $unite = $unite->removeDomaine($domaine);
+
+        $this->getDomaineScientifiqueService()->updateDomaineScientifique($domaine);
+
+        $this->flashMessenger()->addSuccessMessage("Le domaine scientifique <strong>".$domaine->getLibelle()."</strong> ne fait plus parti des domaines scientifiques de l'unité de recherche <strong>".$unite->getLibelle()."</strong>.");
+
+        return $this->redirect()->toRoute("unite-recherche/modifier",[],[], true);
+    }
 }
