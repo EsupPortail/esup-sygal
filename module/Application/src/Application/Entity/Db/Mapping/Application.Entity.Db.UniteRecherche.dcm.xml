@@ -47,5 +47,16 @@
       </cascade>
     </one-to-one>
 
+    <many-to-many field="domaines" target-entity="Application\Entity\Db\DomaineScientifique" inversed-by="unites" fetch="LAZY">
+      <join-table name="UNITE_DOMAINE_LINKER">
+        <join-columns>
+          <join-column name="UNITE_ID" referenced-column-name="ID"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="DOMAINE_ID" referenced-column-name="ID"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
+
   </entity>
 </doctrine-mapping>

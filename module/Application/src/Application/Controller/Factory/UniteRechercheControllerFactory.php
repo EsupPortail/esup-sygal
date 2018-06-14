@@ -4,6 +4,7 @@ namespace Application\Controller\Factory;
 
 use Application\Controller\UniteRechercheController;
 use Application\Form\UniteRechercheForm;
+use Application\Service\DomaineScientifiqueService;
 use Application\Service\Etablissement\EtablissementServiceLocateTrait;
 use Application\Service\Individu\IndividuService;
 use Application\Service\Role\RoleService;
@@ -31,16 +32,19 @@ class UniteRechercheControllerFactory
          * @var UniteRechercheService $uniteRechercheService
          * @var IndividuService $individuService
          * @var RoleService $roleService
+         * @var DomaineScientifiqueService $domaineService
          */
         $uniteRechercheService = $sl->get('UniteRechercheService');
         $individuService = $sl->get('IndividuService');
         $roleService = $sl->get('RoleService');
+        $domaineService = $sl->get(DomaineScientifiqueService::class);
 
         $controller = new UniteRechercheController();
         $controller->setUniteRechercheService($uniteRechercheService);
         $controller->setIndividuService($individuService);
         $controller->setRoleService($roleService);
         $controller->setEtablissementService($this->locateEtablissementService($sl));
+        $controller->setDomaineScientifiqueService($domaineService);
         $controller->setUniteRechercheForm($form);
 
         return $controller;

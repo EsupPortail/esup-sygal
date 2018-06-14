@@ -6,6 +6,7 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\StructureConcreteInterface;
 use Application\Entity\Db\UniteRecherche;
 use Application\Form\UniteRechercheForm;
+use Application\Service\DomaineScientifiqueServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
@@ -18,6 +19,7 @@ class UniteRechercheController extends AbstractController
     use IndividuServiceAwareTrait;
     use RoleServiceAwareTrait;
     use EtablissementServiceAwareTrait;
+    use DomaineScientifiqueServiceAwareTrait;
 
     /**
      * L'index récupére :
@@ -130,12 +132,15 @@ class UniteRechercheController extends AbstractController
 
         $etablissements = $this->getEtablissementService()->getEtablissements();
         $etablissementsRattachements = $this->getUniteRechercheService()->findEtablissementRattachement($unite);
+        $domaineScientifiques = $this->getDomaineScientifiqueService()->getDomainesScientifiques();
 
         // envoie vers le formulaire de modification
         $viewModel = new ViewModel([
             'form' => $this->uniteRechercheForm,
             'etablissements' => $etablissements,
             'etablissementsRattachements' => $etablissementsRattachements,
+            'domainesAssocies' => $unite->getDomaines(),
+            'domainesScientifiques' => $domaineScientifiques,
         ]);
         $viewModel->setTemplate('application/unite-recherche/modifier');
 
@@ -334,4 +339,45 @@ class UniteRechercheController extends AbstractController
         $this->redirect()->toRoute("unite-recherche/modifier",[],[], true);
     }
 
+
+    /**
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function ajouterDomaineScientifiqueAction() {
+        $uniteId = $this->params()->fromRoute("uniteRecherche");
+        $domaineId = $this->params()->fromRoute("domaineScientifique");
+        $unite = $this->getUniteRechercheService()->getUniteRechercheByStructureId($uniteId);
+        $domaine = $this->getDomaineScientifiqueService()->getDomaineScientifiqueById($domaineId);
+
+        if ($domaine !== null) {
+            $domaine = $domaine->addUnite($unite);
+            $unite = $unite->addDomaine($domaine);
+
+            $this->getDomaineScientifiqueService()->updateDomaineScientifique($domaine);
+
+            $this->flashMessenger()->addSuccessMessage("Le domaine scientifique <strong>".$domaine->getLibelle()."</strong> est maintenant un des domaines scientifiques de l'unité de recherche <strong>".$unite->getLibelle()."</strong>.");
+        }
+        $this->redirect()->toRoute("unite-recherche/modifier",[],[], true);
+    }
+
+    /**
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function retirerDomaineScientifiqueAction() {
+        $uniteId = $this->params()->fromRoute("uniteRecherche");
+        $domaineId = $this->params()->fromRoute("domaineScientifique");
+        $unite = $this->getUniteRechercheService()->getUniteRechercheByStructureId($uniteId);
+        $domaine = $this->getDomaineScientifiqueService()->getDomaineScientifiqueById($domaineId);
+
+        $domaine = $domaine->removeUnite($unite);
+        $unite = $unite->removeDomaine($domaine);
+
+        $this->getDomaineScientifiqueService()->updateDomaineScientifique($domaine);
+
+        $this->flashMessenger()->addSuccessMessage("Le domaine scientifique <strong>".$domaine->getLibelle()."</strong> ne fait plus parti des domaines scientifiques de l'unité de recherche <strong>".$unite->getLibelle()."</strong>.");
+
+        return $this->redirect()->toRoute("unite-recherche/modifier",[],[], true);
+    }
 }

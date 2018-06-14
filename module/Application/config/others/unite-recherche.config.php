@@ -4,6 +4,7 @@ use Application\Controller\Factory\UniteRechercheControllerFactory;
 use Application\Form\Factory\UniteRechercheFormFactory;
 use Application\Form\Factory\UniteRechercheHydratorFactory;
 use Application\Provider\Privilege\UniteRecherchePrivileges;
+use Application\Service\DomaineScientifiqueService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use UnicaenAuth\Guard\PrivilegeController;
 use Application\View\Helper\UniteRechercheHelper;
@@ -31,6 +32,8 @@ return [
                         'supprimer-logo',
                         'ajouter-etablissement-rattachement',
                         'retirer-etablissement-rattachement',
+                        'ajouter-domaine-scientifique',
+                        'retirer-domaine-scientifique',
                         'principal-etablissement-rattachement',
                     ],
                     'privileges' => UniteRecherchePrivileges::UNITE_RECH_MODIFICATION,
@@ -137,6 +140,32 @@ return [
                             ],
                         ],
                     ],
+                    'ajouter-domaine-scientifique' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'       => '/:uniteRecherche/ajouter-domaine-scientifique/:domaineScientifique',
+                            'constraints' => [
+                                'uniteRecherche' => '\d+',
+                                'domaineScientifique' => '\d+',
+                            ],
+                            'defaults'    => [
+                                'action' => 'ajouter-domaine-scientifique',
+                            ],
+                        ],
+                    ],
+                    'retirer-domaine-scientifique' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'       => '/:uniteRecherche/retirer-domaine-scientifique/:domaineScientifique',
+                            'constraints' => [
+                                'uniteRecherche' => '\d+',
+                                'domaineScientifique' => '\d+',
+                            ],
+                            'defaults'    => [
+                                'action' => 'retirer-domaine-scientifique',
+                            ],
+                        ],
+                    ],
                     'ajouter-individu' => [
                         'type'          => 'Segment',
                         'options'       => [
@@ -200,6 +229,7 @@ return [
     'service_manager' => [
         'invokables' => [
             'UniteRechercheService' => UniteRechercheService::class,
+            DomaineScientifiqueService::class => DomaineScientifiqueService::class,
         ],
         'factories' => [
         ],

@@ -1,5 +1,6 @@
 <?php
 
+use Application\Entity\Db\DomaineScientifique;
 use Application\Entity\Db\Etablissement;
 use Application\Form\EcoleDoctoraleForm;
 use Application\Form\UniteRechercheForm;
@@ -79,7 +80,7 @@ $fcg = $this->formControlGroup();
     <div class="col-md-6">
         <table class="table table-extra-condensed">
             <thead>
-                <tr><th> Libellé</th>  <th> Action </th></tr>
+                <tr><th> Libellé</th>  <th style="width:15%;"> Action </th></tr>
             </thead>
             <tbody>
                 <?php
@@ -103,15 +104,68 @@ $fcg = $this->formControlGroup();
         </table>
     </div>
     <div class="col-md-6">
-        <?php echo generateSelect($etablissements); ?>
-
-        <a id="ajout" href="<?php echo $this->url("unite-recherche/ajouter-etablissement-rattachement", ["etablissement" => 0], [], true);?>"> Ajouter </a>
+        <?php echo generateSelect("etablissements", $etablissements, "Choisissez un établissement de rattachement ..."); ?>
+        <br/>
+        <br/>
+        <a class="btn btn-success"
+           id="ajout-rattachement"
+           href="<?php echo $this->url("unite-recherche/ajouter-etablissement-rattachement", ["etablissement" => 0], [], true);?>">
+            <span class="glyphicon glyphicon-plus"></span> Ajouter
+        </a>
     </div>
 </div>
 
         <div style="clear:both;"></div>
-<?php echo $this->formElement($form->get('submit')) ?>
-<?php echo $this->form()->closeTag() ?>
+
+
+<div>
+    <h2> Domaines scientifiques</h2>
+
+    <div class="col-md-6">
+    <table class="table table-extra-condensed">
+        <thead>
+            <tr>
+                <th>Libellé</th>
+                <th style="width:15%;">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php
+        /** @var DomaineScientifique $domaineScientifique */
+            foreach ($domainesAssocies as $domaineScientifique) :
+        ?>
+            <tr>
+                <td>
+                    <?php echo $domaineScientifique->getLibelle(); ?>
+                </td>
+                <td>
+                    <a href="<?php echo $this->url('unite-recherche/retirer-domaine-scientifique', ['domaineScientifique' => $domaineScientifique->getId()],[],true); ?>">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+    </div>
+
+    <div class="col-md-6">
+        <?php echo generateSelect("domaines", $domainesScientifiques, 'Choisissez un domaine scientifique ...'); ?>
+        <br/>
+        <br/>
+        <a class="btn btn-success"
+           id="ajout-domaine"
+           href="<?php echo $this->url("unite-recherche/ajouter-domaine-scientifique", ["domaineScientifique" => 0], [], true);?>">
+            <span class="glyphicon glyphicon-plus"></span> Ajouter
+        </a>
+    </div>
+
+</div>
+
+        <div style="clear:both;"></div>
+        <?php echo $this->formElement($form->get('submit')) ?>
+        <?php echo $this->form()->closeTag() ?>
+
 
 <?php
 $this->translate("Libellé :");
@@ -122,13 +176,13 @@ $this->translate("Supprimer le logo");
 $this->translate("Logo de l'unité de recherche :");
 
 
-function generateSelect($etablissements) {
+function generateSelect($id, $liste, $description) {
     $texte = '';
-    $texte .= '<select id="etablissements">';
-    $texte .= '<option> Choisissez un établissement de rattachement ...</option>';
-    foreach ($etablissements as $etablissement) {
+    $texte .= '<select id="'.$id.'">';
+    $texte .= '<option> '.$description.' </option>';
+    foreach ($liste as $element) {
         /** @var Etablissement $etablissement */
-        $texte .= '<option value="'.$etablissement->getId().'">'.$etablissement->getLibelle().'</option>';
+        $texte .= '<option value="'.$element->getId().'">'.$element->getLibelle().'</option>';
     }
     $texte .= '</select>';
     return $texte;
@@ -154,8 +208,12 @@ function generateSelect($etablissements) {
 
         $("#etablissements").on("change", function () {
            var etablissementId = $("#etablissements").val();
-           $("a#ajout").attr("href", "ajouter-etablissement-rattachement/" + etablissementId);
-           //alert($("#etablissements").val());
+           $("a#ajout-rattachement").attr("href", "ajouter-etablissement-rattachement/" + etablissementId);
+        });
+
+        $("#domaines").on("change", function () {
+            var domaineId = $("#domaines").val();
+            $("a#ajout-domaine").attr("href", "ajouter-domaine-scientifique/" + domaineId);
         });
     });
 </script>
