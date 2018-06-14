@@ -350,7 +350,7 @@ class UniteRechercheController extends AbstractController
         $unite = $this->getUniteRechercheService()->getUniteRechercheByStructureId($uniteId);
         $domaine = $this->getDomaineScientifiqueService()->getDomaineScientifiqueById($domaineId);
 
-        if ($domaine !== null) {
+        if ($domaine !== null && !array_search($domaine, $unite->getDomaines())) {
             $domaine = $domaine->addUnite($unite);
             $unite = $unite->addDomaine($domaine);
 
