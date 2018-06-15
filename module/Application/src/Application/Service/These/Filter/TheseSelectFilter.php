@@ -65,7 +65,7 @@ class TheseSelectFilter extends TheseFilter
             case self::NAME_etatThese:
                 $qb
                     ->andWhere('t.etatThese = :etat')->setParameter('etat', $filterValue);
-                break;SRC_STRUCTURE
+                break;
 
             case self::NAME_ecoleDoctorale:
                 if ($filterValue === 'NULL') {
