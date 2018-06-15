@@ -1,0 +1,40 @@
+<?php
+
+use Application\Service\These\Filter\TheseSelectFilter;
+use Application\View\Helper\SelectsFilterPanel\SelectsFilterPanelHelper;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer       $this
+ * @var TheseSelectFilter $filter
+ * @var array             $queryParams
+ */
+
+$paramAttributes = $filter->getAttributes();
+$paramName = $filter->getName();
+
+$width = isset($paramAttributes['width']) ? $paramAttributes['width'] : 'fit';
+$liveSearch = isset($paramAttributes['liveSearch']) ? (bool)$paramAttributes['liveSearch'] : false;
+?>
+
+<select title=""
+        class="filter selectpicker show-menu-arrow"
+        name="<?php echo $paramName ?>"
+        data-live-search="<?php echo $liveSearch ? 'true' : 'false' ?>"
+        data-width="<?php echo $width ?>">
+
+<?php foreach ($filter->getOptions() as $data): ?>
+
+    <?php
+    $value = $data['value'];
+    $label = $data['label'];
+    $subtext = isset($data['subtext']) ? $data['subtext'] : '';
+    $isActive = SelectsFilterPanelHelper::isSelectOptionActive($paramName, $value, $queryParams);
+    ?>
+    <option value="<?php echo $value ?>" <?php echo $isActive ? 'selected' : '' ?> data-subtext="<?php echo $subtext ?>">
+        <?php echo $label ?>
+    </option>
+
+<?php endforeach ?>
+
+</select>

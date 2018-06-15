@@ -279,6 +279,18 @@ div.filters span.filter {
   div.filters span.filter span,
   div.filters span.filter a {
     font-size: 90%; }
+div.filters form {
+  padding: 10px; }
+  div.filters form .form-group {
+    margin-right: 5px; }
+  div.filters form label {
+    display: block;
+    font-size: 93%;
+    margin-bottom: 0; }
+  div.filters form button.dropdown-toggle {
+    padding: 3px 25px 3px 10px; }
+  div.filters form .filter-option, div.filters form #search-input {
+    font-size: 90%; }
 
 table.these-fiche {
   max-width: 400px;

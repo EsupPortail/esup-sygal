@@ -21,9 +21,9 @@ use Application\Service\Acteur\ActeurService;
 use Application\Service\Message\DiffusionMessages;
 use Application\Service\ServiceAwareInitializer;
 use Application\Service\These\Factory\TheseObserverServiceFactory;
+use Application\Service\These\Factory\TheseRechercheServiceFactory;
 use Application\Service\These\Factory\TheseServiceFactory;
 use Application\Service\Url\UrlServiceFactory;
-use Application\Service\Url\UrlTheseServiceFactory;
 use Application\View\Helper\Url\UrlTheseHelperFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
@@ -70,6 +70,13 @@ return [
                         'depot-papier-final',
                     ],
                     'privileges' => ThesePrivileges::THESE_RECHERCHE,
+                ],
+                [
+                    'controller' => 'Application\Controller\These',
+                    'action'     => [
+                        'filters',
+                    ],
+                    'roles' => 'guest',
                 ],
                 [
                     'controller' => 'Application\Controller\These',
@@ -259,6 +266,15 @@ return [
                 ],
                 'may_terminate' => true,
                 'child_routes'  => [
+                    'filters' => [
+                        'type'          => 'Literal',
+                        'options'       => [
+                            'route'       => '/filters',
+                            'defaults'    => [
+                                'action' => 'filters',
+                            ],
+                        ],
+                    ],
                     'rechercher' => [
                         'type'          => 'Literal',
                         'options'       => [
@@ -907,6 +923,7 @@ return [
         ),
         'factories' => [
             'TheseService'                 => TheseServiceFactory::class,
+            'TheseRechercheService'        => TheseRechercheServiceFactory::class,
             'TheseObserverService'         => TheseObserverServiceFactory::class,
         ],
         'abstract_factories' => [

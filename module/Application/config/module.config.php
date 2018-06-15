@@ -220,6 +220,7 @@ return array(
             'sortable'    => 'Application\View\Helper\Sortable',
             'Uploader'    => 'Application\View\Helper\Uploader\UploaderHelper',
             'filterPanel' => 'Application\View\Helper\FilterPanel\FilterPanelHelper',
+            'selectsFilterPanel' => \Application\View\Helper\SelectsFilterPanel\SelectsFilterPanelHelper::class,
             'escapeText'  => EscapeTextHelper::class,
         ),
         'factories' => array(

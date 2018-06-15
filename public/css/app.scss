@@ -454,6 +454,24 @@ div.filters {
       font-size: 90%;
     }
   }
+
+  form {
+    padding: 10px;
+    .form-group {
+      margin-right: 5px;
+    }
+    label {
+      display: block;
+      font-size: 93%;
+      margin-bottom: 0;
+    }
+    button.dropdown-toggle {
+      padding: 3px 25px 3px 10px;
+    }
+    .filter-option, #search-input {
+      font-size: 90%;
+    }
+  }
 }
 
 table.these-fiche {

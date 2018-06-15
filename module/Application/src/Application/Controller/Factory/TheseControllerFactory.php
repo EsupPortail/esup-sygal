@@ -8,6 +8,7 @@ use Application\Service\Fichier\FichierService;
 use Application\Service\MailConfirmationService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\Role\RoleService;
+use Application\Service\These\TheseRechercheService;
 use Application\Service\These\TheseService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\Validation\ValidationService;
@@ -35,6 +36,7 @@ class TheseControllerFactory
          * @var ValidationService $validationService
          * @var VersionFichierService $versionFichierService
          * @var TheseService $theseService
+         * @var TheseRechercheService $theseRechercheService
          * @var RoleService $roleService
          * @var FichierService $fichierService
          * @var WorkflowService $workflowService
@@ -48,6 +50,7 @@ class TheseControllerFactory
         $validationService = $controllerManager->getServiceLocator()->get('ValidationService');
         $versionFichierService = $controllerManager->getServiceLocator()->get('VersionFichierService');
         $theseService = $controllerManager->getServiceLocator()->get('TheseService');
+        $theseRechercheService = $controllerManager->getServiceLocator()->get('TheseRechercheService');
         $roleService = $controllerManager->getServiceLocator()->get('RoleService');
         $uniteService = $controllerManager->getServiceLocator()->get('UniteRechercheService');
         $fichierService = $controllerManager->getServiceLocator()->get('FichierService');
@@ -63,6 +66,7 @@ class TheseControllerFactory
         $controller->setValidationService($validationService);
         $controller->setVersionFichierService($versionFichierService);
         $controller->setTheseService($theseService);
+        $controller->setTheseRechercheService($theseRechercheService);
         $controller->setRoleService($roleService);
         $controller->setFichierService($fichierService);
         $controller->setWorkflowService($workflowService);
