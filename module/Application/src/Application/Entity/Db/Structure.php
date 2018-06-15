@@ -155,7 +155,13 @@ class Structure implements HistoriqueAwareInterface, SourceAwareInterface
      */
     public function getCode()
     {
-        return $this->code;
+        if ($this->code !== null) return $this->code;
+        if ($this->sourceCode !== null) {
+            $code = explode("::", $this->sourceCode)[1];
+            return $code;
+        }
+
+        return null;
     }
 
     /**

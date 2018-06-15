@@ -97,6 +97,13 @@ class UniteRecherche implements StructureConcreteInterface, HistoriqueAwareInter
     /**
      * @return string
      */
+    public function getCode() {
+        return $this->structure->getCode();
+    }
+
+    /**
+     * @return string
+     */
     public function getLibelle()
     {
         return $this->getStructure()->getLibelle();
