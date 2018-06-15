@@ -165,11 +165,10 @@ $acteursFormatter->asSeparated()
                     <abbr title="<?php echo $these->getEcoleDoctorale()->getLibelle() ?>">
                         <?php
                         $sigle = $these->getEcoleDoctorale()->getSigle();
-                        $code = explode("::",$these->getEcoleDoctorale()->getSourceCode())[1];
                         if ($sigle && $sigle !== "") {
                             echo $sigle;
                         } else {
-                            echo $code;
+                            echo $these->getEcoleDoctorale()->getCode();;
                         }
                         ?>
                     </abbr>
@@ -179,8 +178,7 @@ $acteursFormatter->asSeparated()
                 <?php if($these->getUniteRecherche()): ?>
                     <abbr title="<?php echo $these->getUniteRecherche()->getLibelle() ?>">
                         <?php
-                            $code = explode("::",$these->getUniteRecherche()->getSourceCode())[1];
-                            echo $code;
+                            echo $these->getUniteRecherche()->getCode();
                         ?>
                     </abbr>
                 <?php endif ?>

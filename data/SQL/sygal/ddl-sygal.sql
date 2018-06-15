@@ -686,7 +686,8 @@ create table STRUCTURE
   SOURCE_ID NUMBER not null
     constraint STRUCTURE_SOURCE_FK
     references SOURCE,
-  SOURCE_CODE VARCHAR2(64 char)
+  SOURCE_CODE VARCHAR2(64 char),
+  CODE VARCHAR2(64 char),
 )
 /
 
