@@ -696,9 +696,6 @@ create table ETABLISSEMENT
   ID NUMBER not null
     constraint ETAB_PK
     primary key,
-  CODE VARCHAR2(32 char) not null
-    constraint ETAB_CODE_UN
-    unique,
   STRUCTURE_ID NUMBER not null
     constraint ETAB_STRUCT_FK
     references STRUCTURE,
@@ -1834,8 +1831,7 @@ create table TMP_ETABLISSEMENT
   ETABLISSEMENT_ID VARCHAR2(64) not null,
   STRUCTURE_ID VARCHAR2(64 char) not null,
   SOURCE_ID VARCHAR2(64 char) not null,
-  SOURCE_CODE VARCHAR2(64) not null,
-  CODE VARCHAR2(64) not null
+  SOURCE_CODE VARCHAR2(64) not null
 )
 /
 
@@ -3306,6 +3302,7 @@ create view SRC_STRUCTURE as
   SELECT
     NULL              AS id,
     tmp.SOURCE_CODE   as SOURCE_CODE,
+    tmp.SOURCE_CODE   as CODE,
     src.id            AS SOURCE_ID,
     ts.id             as TYPE_STRUCTURE_ID,
     tmp.SIGLE,
@@ -3383,7 +3380,6 @@ create view SRC_ETABLISSEMENT as
   SELECT
     NULL              AS id,
     tmp.SOURCE_CODE   as SOURCE_CODE,
-    tmp.CODE          as CODE,
     src.id            AS SOURCE_ID,
     s.ID              as STRUCTURE_ID
   FROM TMP_ETABLISSEMENT tmp

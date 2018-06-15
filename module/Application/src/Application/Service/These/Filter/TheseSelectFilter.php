@@ -57,14 +57,15 @@ class TheseSelectFilter extends TheseFilter
         switch ($name) {
             case self::NAME_etablissement:
                 $qb
-                    ->join('t.etablissement', 'e', Join::WITH, 'e.code = :etabCode')
+                    ->join('t.etablissement', 'e')
+                    ->join('e.structure' , 's',Join::WITH, 's.code = :etabCode')
                     ->setParameter('etabCode', $filterValue);
                 break;
 
             case self::NAME_etatThese:
                 $qb
                     ->andWhere('t.etatThese = :etat')->setParameter('etat', $filterValue);
-                break;
+                break;SRC_STRUCTURE
 
             case self::NAME_ecoleDoctorale:
                 if ($filterValue === 'NULL') {

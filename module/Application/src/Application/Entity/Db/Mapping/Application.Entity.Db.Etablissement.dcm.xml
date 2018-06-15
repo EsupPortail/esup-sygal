@@ -9,7 +9,6 @@
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <field name="code"      type="string"   length="32"  column="CODE"      nullable="false"/>
         <field name="domaine"   type="string"   length="50"  column="DOMAINE"   nullable="true"/>
 
         <one-to-many field="theses"         target-entity="Application\Entity\Db\These"     mapped-by="etablissement"/>

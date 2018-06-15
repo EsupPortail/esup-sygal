@@ -25,11 +25,6 @@ class TmpEtablissement
     /**
      * @var string
      */
-    private $code;
-
-    /**
-     * @var string
-     */
     private $structureId;
 
     /**

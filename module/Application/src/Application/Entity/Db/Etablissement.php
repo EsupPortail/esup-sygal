@@ -20,7 +20,6 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
     const CODE_COMUE = 'COMUE';
 
     protected $id;
-    protected $code;
     protected $domaine;
     protected $theses;
     protected $doctorants;
@@ -89,19 +88,21 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
     }
 
     /**
+     * @deprecated
      * @return mixed
      */
     public function getCode()
     {
-        return $this->code;
+        return $this->getStructure()->getCode();
     }
 
     /**
      * @param mixed $code
+     * @deprecated
      */
     public function setCode($code)
     {
-        $this->code = $code;
+        $this->getStructure()->setCode($code);
     }
 
     /**

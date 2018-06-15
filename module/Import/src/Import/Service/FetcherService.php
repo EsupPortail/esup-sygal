@@ -411,7 +411,6 @@ class FetcherService
             }
 
             $valuesArray[] = $this->prepValue($value, $type);
-            $valuesArray["code"] = $this->code;
         }
 
         return $valuesArray;
