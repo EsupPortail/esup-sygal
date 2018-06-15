@@ -33,6 +33,10 @@ class Structure implements HistoriqueAwareInterface, SourceAwareInterface
      * @var string
      */
     protected $sourceCode;
+    /**
+     * @var string
+     */
+    protected $code;
 
     /**
      * @var TypeStructure
@@ -129,6 +133,29 @@ class Structure implements HistoriqueAwareInterface, SourceAwareInterface
     public function getSourceCode()
     {
         return $this->sourceCode;
+    }
+
+    /**
+     * Set code
+     *
+     * @param string $code
+     * @return self
+     */
+    public function setCode($code)
+    {
+        $this->code = $code;
+
+        return $this;
+    }
+
+    /**
+     * Get Code
+     *
+     * @return string
+     */
+    public function getCode()
+    {
+        return $this->code;
     }
 
     /**
