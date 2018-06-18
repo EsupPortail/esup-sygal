@@ -12,9 +12,10 @@ $ajoutUrl = $this->url( 'droits/roles/edition' );
 ?>
 <table class="table table-condensed table-bordered">
     <tr>
-        <th>Nom</th>
-        <th>Parent</th>
-        <th>Filtre LDAP</th>
+        <th>Role (ROLE_ID)</th>
+        <th>Code</th>
+        <th>Source code</th>
+        <th>Type structure</th>
         <?php if ($canEdit): ?><th>Action</th><?php endif; ?>
     </tr>
 <?php foreach( $roles as $role ):
@@ -32,8 +33,9 @@ $ajoutUrl = $this->url( 'droits/roles/edition' );
 ?>
     <tr>
         <td><span class="<?php echo $class ?>"><?php echo $role->getRoleId(); ?></span></td>
-        <td><?php echo $role->getParent(); ?></td>
-        <td><?php echo $role->getLdapFilter(); ?></td>
+        <td><?php echo $role->getCode(); ?></td>
+        <td><?php echo $role->getSourceCode(); ?></td>
+        <td><?php echo $role->getTypeStructureDependant(); ?></td>
         <td style="width:1%;white-space: nowrap;text-align: center">
             <?php if ($canEditThisRole): ?>
             <a href="<?php echo $editionUrl; ?>" class="ajax-modal" data-event="role-edition"><span class="glyphicon glyphicon-edit"></span></a>

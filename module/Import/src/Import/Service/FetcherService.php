@@ -2,11 +2,17 @@
 
 namespace Import\Service;
 
+use Application\Filter\EtablissementPrefixFilter;
+use DateTime;
 use Doctrine\ORM\EntityManager;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Exception\ServerException;
+use GuzzleHttp\Psr7;
+use UnicaenApp\Exception\RuntimeException;
 use Zend\Http\Response;
-use DateTime;
-use UnicaenApp\Exception;
 
 /**
  * FetcherService est un service dédié à la récupération des données provenant du Web Service fournit par chaque
@@ -17,29 +23,68 @@ use UnicaenApp\Exception;
  * - fetchOne($dataName, $entityClass, source_code) qui récupére les données associés à une entité
  *
  * Chaque appel à ce service va insérer une ligne de log dans la table API_LOGS
- *
- * TODO mieux gérer les messages d'erreurs provenant de l'echec de récupération via le Web Service
- * TODO si l'accés à la base de donnée échoue comment mettre le log dans API_LOGS
  */
 class FetcherService
 {
+    /**
+     * Appels ORDONNÉS de procédures de synchronisation à lancer en fonction du service.
+     */
+    const APP_IMPORT_PROCEDURE_CALLS = [
+        'structure' => [
+            "UNICAEN_IMPORT.MAJ_STRUCTURE();",
+        ],
+        'etablissement' => [
+            "UNICAEN_IMPORT.MAJ_ETABLISSEMENT();",
+        ],
+        'ecole-doctorale' => [
+            "UNICAEN_IMPORT.MAJ_ECOLE_DOCT();",
+            "APP_IMPORT.REFRESH_MV('MV_RECHERCHE_THESE');",
+        ],
+        'unite-recherche' => [
+            "UNICAEN_IMPORT.MAJ_UNITE_RECH();",
+        ],
+        'individu' => [
+            "UNICAEN_IMPORT.MAJ_INDIVIDU();",
+        ],
+        'doctorant' => [
+            "UNICAEN_IMPORT.MAJ_DOCTORANT();",
+            "APP_IMPORT.REFRESH_MV('MV_RECHERCHE_THESE');",
+        ],
+        'these' => [
+            "UNICAEN_IMPORT.MAJ_THESE();",
+            "APP_IMPORT.REFRESH_MV('MV_RECHERCHE_THESE');",
+        ],
+        'role' => [
+            "UNICAEN_IMPORT.MAJ_ROLE();",
+        ],
+        'acteur' => [
+            "UNICAEN_IMPORT.MAJ_ACTEUR();",
+            "APP_IMPORT.REFRESH_MV('MV_RECHERCHE_THESE');",
+        ],
+        'variable' => [
+            "UNICAEN_IMPORT.MAJ_VARIABLE();",
+        ],
+    ];
 
     /**
      * $entityManager et $config sont fournis par la factory et permettent l'acces à la BD et à la config
+     *
      * @var EntityManager $entityManager
-     * @var array $config
+     * @var array         $config
      */
     protected $entityManager;
     protected $config;
 
     /**
-     * les quatres variables $url, $code, $user et $password sont des données de configuration pour l'acces au Web Service
-     * @var string $url : le chemin d'acces au web service
-     * @var string $code : le code de l'établissement
-     * @var string $user : l'identifiant pour l'authentification
-     * @var string $password : le mot de passe pour l'authentification
-     * @var string|null $proxy : le champ proxy
-     * @var boolean|string $verify : le champ pour le mode https
+     * les quatres variables $url, $code, $user et $password sont des données de configuration pour l'acces au Web
+     * Service
+     *
+     * @var string         $url      : le chemin d'acces au web service
+     * @var string         $code     : le code de l'établissement
+     * @var string         $user     : l'identifiant pour l'authentification
+     * @var string         $password : le mot de passe pour l'authentification
+     * @var string|null    $proxy    : le champ proxy
+     * @var boolean|string $verify   : le champ pour le mode https
      */
     protected $url;
     protected $code;
@@ -51,64 +96,91 @@ class FetcherService
 
     /**
      * Constructor ...
+     *
      * @param EntityManager $entityManager
-     * @param array $config
+     * @param array         $config
      */
     public function __construct(EntityManager $entityManager, $config)
     {
         $this->entityManager = $entityManager;
         $this->config = $config;
-        $this->user = $config['users']['login'];
-        $this->password = $config['users']['password'];
     }
 
     /**
      * Accessors ...
      */
-    public function getEntityManager()    {
+    public function getEntityManager()
+    {
         return $this->entityManager;
     }
-    public function setEntityManager(EntityManager $entityManager) {
+
+    public function setEntityManager(EntityManager $entityManager)
+    {
         $this->entityManager = $entityManager;
     }
-    public function getUrl() {
+
+    public function getUrl()
+    {
         return $this->url;
     }
-    public function setUrl($url)     {
+
+    public function setUrl($url)
+    {
         $this->url = $url;
     }
-    public function getUser()     {
+
+    public function getUser()
+    {
         return $this->user;
     }
-    public function setUser($user)     {
+
+    public function setUser($user)
+    {
         $this->user = $user;
     }
-    public function getPassword()     {
+
+    public function getPassword()
+    {
         return $this->password;
     }
-    public function setPassword($password)    {
+
+    public function setPassword($password)
+    {
         $this->password = $password;
     }
-    public function getCode()    {
+
+    public function getCode()
+    {
         return $this->code;
     }
-    public function setCode($code)    {
+
+    public function setCode($code)
+    {
         $this->code = $code;
     }
-    public function getProxy()      {
+
+    public function getProxy()
+    {
         return $this->proxy;
     }
-    public function setProxy($proxy)    {
+
+    public function setProxy($proxy)
+    {
         $this->proxy = $proxy;
     }
-    public function getVerify()     {
+
+    public function getVerify()
+    {
         return $this->verify;
     }
-    public function setVerify($verify)   {
+
+    public function setVerify($verify)
+    {
         $this->verify = $verify;
     }
 
     /** Cette fonction retourne la position d'un extablissement dans la table des établissements (voir config)
+     *
      * @param string $etablissement
      * @return int
      * @throws \Exception;
@@ -124,16 +196,20 @@ class FetcherService
         }
         if ($position === -1) {
             print "<span style='background-color:salmon;'> L'établissement [" . $etablissement . "] n'a pas pu être trouvée.</span><br/>";
-            throw new Exception\RuntimeException("L'établissement [" . $etablissement . "] n'a pas pu être trouvée.");
+            throw new RuntimeException("L'établissement [" . $etablissement . "] n'a pas pu être trouvée.");
         }
+
         return $position;
     }
 
-    public function setConfigWithPosition($positionEtablissement) {
+    public function setConfigWithPosition($positionEtablissement)
+    {
         $this->code = $this->config['import-api']['etablissements'][$positionEtablissement]['code'];
         $this->url = $this->config['import-api']['etablissements'][$positionEtablissement]['url'];
         $this->proxy = $this->config['import-api']['etablissements'][$positionEtablissement]['proxy'];
         $this->verify = $this->config['import-api']['etablissements'][$positionEtablissement]['verify'];
+        $this->user = $this->config['import-api']['etablissements'][$positionEtablissement]['user'];
+        $this->password = $this->config['import-api']['etablissements'][$positionEtablissement]['password'];
     }
 
     /** Fonction chargée d'optenir la réponse d'un Web Service
@@ -149,14 +225,14 @@ class FetcherService
     {
         $options = [
             'base_uri' => $this->url,
-            'headers' => [
+            'headers'  => [
                 'Accept' => 'application/json',
             ],
-            'auth' => [$this->user, $this->password],
+            'auth'     => [$this->user, $this->password],
         ];
 
         if ($this->proxy !== null) {
-            $options['proxy'] =  $this->proxy ;
+            $options['proxy'] = $this->proxy;
         } else {
             $options['proxy'] = ['no' => 'localhost'];
         }
@@ -165,26 +241,39 @@ class FetcherService
             $options['verify'] = $this->verify;
         }
 
+        $client = new Client($options);
         try {
-            $client = new Client($options);
             $response = $client->request('GET', $uri);
-        } catch (\Exception $e) {
-            $response = new Response();
-            $response->setStatusCode(500);
-            $response->setReasonPhrase($e->getCode()." - ".$e->getMessage());
-            throw $e;
+        } catch (ClientException $e) {
+            throw new RuntimeException("Erreur ClientException rencontrée lors de l'envoi de la requête au WS", null, $e);
+        } catch (ServerException $e) {
+            $message = "Erreur distante rencontrée par le serveur du WS";
+            $previous = null;
+            if ($e->hasResponse()) {
+                $previous = new RuntimeException($e->getResponse()->getBody());
+            }
+            throw new RuntimeException($message, null, $previous);
+        } catch (RequestException $e) {
+            $message = "Erreur réseau rencontrée lors de l'envoi de la requête au WS";
+            if ($e->hasResponse()) {
+                $message .= " : " . Psr7\str($e->getResponse());
+            }
+            throw new RuntimeException($message, null, $e);
+        } catch (GuzzleException $e) {
+            throw new RuntimeException("Erreur inattendue rencontrée lors de l'envoi de la requête au WS", null, $e);
         }
-//        var_dump($response);
         return $response;
     }
 
     /**
      * Fonction de mise en forme des données typées pour les requêtes Oracle
-     * @param mixed $value : la value à formater
-     * @param string $type : le type de la donnée à formater
+     *
+     * @param mixed  $value : la value à formater
+     * @param string $type  : le type de la donnée à formater
      * @return string la donnée formatée
      *
-     * RMQ si un format n'est pas prévu par le traitement la valeur est retournée sans traitement et un message est affiché
+     * RMQ si un format n'est pas prévu par le traitement la valeur est retournée sans traitement et un message est
+     * affiché
      */
     protected function prepValue($value, $type)
     {
@@ -204,42 +293,49 @@ class FetcherService
                 $nvalue = $value;
                 break;
         }
+
         return $nvalue;
     }
+
     protected function prepString($value)
     {
         return ("'" . str_replace("'", "''", $value) . "'");
     }
+
     protected function prepDate($value)
     {
         if ($value === null) {
             return "null";
         }
         $date = explode(' ', $value->{'date'})[0];
+
         return "to_date('" . $date . "','YYYY-MM-DD')";
     }
 
     /**
      * Fonction écrivant dans la table des logs API_LOGS
+     *
      * @param DateTime $start_date : date de début du traitement
-     * @param DateTime $end_date : date de fin (avec succés ou échec) du traitement
-     * @param string $route : la route du traitement
+     * @param DateTime $end_date   : date de fin (avec succés ou échec) du traitement
+     * @param string   $route      : la route du traitement
      * @param string status : le status du traitement
-     * @param string $response : le message associé au traitement
+     * @param string   $response   : le message associé au traitement
      * @return array [DateTime, string] le log associé pour l'affichage ...
-     * @throws \Exception
+     * @throws RuntimeException
      * */
-    public function doLog($start_date, $end_date, $route, $status, $response)
+    public function doLog($start_date, $end_date, $route, $status, $response, $etablissement, $table)
     {
         $log_query = "INSERT INTO API_LOG ";
-        $log_query .= "(ID, REQ_URI, REQ_START_DATE, REQ_END_DATE, REQ_STATUS, REQ_RESPONSE)";
+        $log_query .= "(ID, REQ_URI, REQ_START_DATE, REQ_END_DATE, REQ_STATUS, REQ_RESPONSE, REQ_ETABLISSEMENT, REQ_TABLE)";
         $log_query .= " values (";
         $log_query .= "API_LOG_ID_SEQ.nextval ,";
         $log_query .= "'" . $route . "' , ";
         $log_query .= "to_date('" . $start_date->format('y-m-d H:i:s') . "','YY-MM-DD HH24:MI:SS') , ";
         $log_query .= "to_date('" . $end_date->format('y-m-d H:i:s') . "','YY-MM-DD HH24:MI:SS') , ";
         $log_query .= "'" . $status . "' , ";
-        $log_query .= "'" . $response . "'";
+        $log_query .= "'" . $response . "', ";
+        $log_query .= "'" . $etablissement . "',";
+        $log_query .= "'" . $table . "'";
         $log_query .= ")";
 
         try {
@@ -248,7 +344,7 @@ class FetcherService
             $connection->executeQuery($log_query);
             $this->entityManager->getConnection()->commit();
         } catch (\Exception $e) {
-            return [$end_date, $e->getCode()." - ".$e->getMessage() ];
+            throw new RuntimeException("Problème lors de l'écriture du log en base.", null, $e);
         }
 
         return [$end_date, $response];
@@ -256,10 +352,12 @@ class FetcherService
 
     /**
      * Fonction en charge de l'affichage des metadonnées associées à une entity
-     * @param string $dataName : le nom de l'entité
+     *
+     * @param string $dataName    : le nom de l'entité
      * @param string $entityClass : le chemin vers l'entité (namespace)
      */
-    public function displayMetadata($dataName, $entityClass) {
+    public function displayMetadata($dataName, $entityClass)
+    {
         $metadata = $this->entityManager->getClassMetadata($entityClass);
         $tableName = $metadata->table['name'];
         $tableRelation = $metadata->columnNames;
@@ -274,6 +372,7 @@ class FetcherService
 
     /**
      * Mise sous forme de table des données appartenant à une entité
+     *
      * @param mixed $entity_json : le json associé à une entité
      * @param mixed metadata : les metadonnées associées à lentité
      * @return array les données mises sous forme d'un tableau
@@ -283,26 +382,46 @@ class FetcherService
         $valuesArray = [];
         foreach ($metadata->columnNames as $propriete => $colonne) {
             $type = $metadata->fieldMappings[$propriete]["type"];
+            $f = new EtablissementPrefixFilter();
             $value = null;
-            //TODO (jp) nettoie moi çà
-            if ($propriete === "etablissementId")   $value = $this->code;
-            elseif ($propriete === "sourceCode")    $value = $this->code."::".$entity_json->{'id'};
-            elseif ($propriete === "sourceId")      $value = $this->code."::".$entity_json->{'sourceId'};
-            elseif ($propriete === "individuId")    $value = $this->code."::".$entity_json->{'individuId'};
-            elseif ($propriete === "roleId")        $value = $this->code."::".$entity_json->{'roleId'};
-            elseif ($propriete === "theseId")       $value = $this->code."::".$entity_json->{'theseId'};
-            elseif ($propriete === "doctorantId")   $value = $this->code."::".$entity_json->{'doctorantId'};
-            else $value = $entity_json->{$propriete};
+            switch ($propriete) {
+                case "etablissementId":
+                    $value = $this->code;
+                    break;
+                case "sourceCode":
+                    $value = $f->addPrefixTo($entity_json->id, $this->code);
+                    break;
+                case "sourceId":
+                case "individuId":
+                case "roleId":
+                case "theseId":
+                case "doctorantId":
+                case "structureId":
+                case "ecoleDoctId":
+                case "uniteRechId":
+                    if (isset($entity_json->{$propriete})) {
+                        $value = $f->addPrefixTo($entity_json->{$propriete}, $this->code);
+                    }
+                    break;
+                default:
+                    if (isset($entity_json->{$propriete})) {
+                        $value = $entity_json->{$propriete};
+                    }
+                    break;
+            }
+
             $valuesArray[] = $this->prepValue($value, $type);
         }
+
         return $valuesArray;
     }
 
     /**
      * Fonction en charge de préparer et d'appelé fetchOne ou fetchAll
+     *
      * @param string $dataName
      * @param string $entityClass
-     * @param mixed $source_code
+     * @param mixed  $source_code
      * @return array [DateTime, string] le log associé pour l'affichage ...
      * @throws \Exception
      */
@@ -310,25 +429,40 @@ class FetcherService
     {
         $logs = [];
         if ($source_code !== null) {
-            $logs = $this->fetchOne($dataName, $entityClass, $source_code,0);
+            $logs = $this->fetchOne($dataName, $entityClass, $source_code, 0);
         } else {
-            $logs = $this->fetchAll($dataName, $entityClass,0);
+            $logs = $this->fetchAll($dataName, $entityClass, 0);
         }
+
         return $logs;
 
     }
 
     /**
+     * Lance la synchro des données par UnicaenImport pour les services spécifiés.
+     *
+     * @param array $services
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function updateBDD() {
-        $this->entityManager->getConnection()->executeQuery("begin APP_IMPORT.SYNCHRONISATION(); end;");
+    public function updateBDD(array $services)
+    {
+        // détermination des appels de procédures de synchro à faire
+        $calls = [];
+        foreach ($services as $service) {
+            $calls = array_merge($calls, self::APP_IMPORT_PROCEDURE_CALLS[$service]);
+        }
+        // suppression des appels en double EN CONSERVANT LE DERNIER appel et non le premier
+        $calls = array_reverse(array_unique(array_reverse($calls)));
+
+        $plsql = implode(PHP_EOL, array_merge(['BEGIN'], $calls, ['END;']));
+
+        $this->entityManager->getConnection()->executeQuery($plsql);
     }
 
     /**
-     * @param $dataName
-     * @param $entityClass
-     * @param $sourceCode
+     * @param     $dataName
+     * @param     $entityClass
+     * @param     $sourceCode
      * @param int $debug_level
      * @return array
      * @throws \Doctrine\DBAL\DBALException
@@ -384,12 +518,19 @@ class FetcherService
         }
         $_fin = microtime(true);
         if ($debug_level > 0) print "<p><span style='background-color:lightgreen;'> ExecQueries: " . ($_fin - $_debut) . " secondes.</span></p>";
-        return $this->doLog($start_date, new DateTime(), $this->url . "/" . $dataName . "/" . $sourceCode, "OK", "Récupération de ".$dataName.":".$sourceCode." de [" . $this->code . "] en " . ($_fin - $debut) . " seconde(s).");
+
+        return $this->doLog(
+            $start_date, new DateTime(),
+            $this->url . "/" . $dataName . "/" . $sourceCode,
+            "OK",
+            "Récupération de " . $dataName . ":" . $sourceCode . " de [" . $this->code . "] en " . ($_fin - $debut) . " seconde(s).",
+            $this->code,
+            "variable");
     }
 
     /**
-     * @param $dataName
-     * @param $entityClass
+     * @param     $dataName
+     * @param     $entityClass
      * @param int $debug_level
      * @return array
      * @throws \Doctrine\DBAL\DBALException
@@ -429,7 +570,9 @@ class FetcherService
 
         /** Remplissage avec les données retournées par le Web Services */
         $json = json_decode($response->getBody());
-        $collection_json = $json->{'_embedded'}->{$dataName};
+        $jsonName = str_replace("-", "_", $dataName);
+        $collection_json = $json->{'_embedded'}->{$jsonName};
+
         foreach ($collection_json as $entity_json) {
             $colonnes = implode(", ", $tableRelation);
             $values = implode(", ", $this->generateValueArray($entity_json, $metadata));
@@ -456,7 +599,9 @@ class FetcherService
         if ($debug_level > 0) print "<p><span style='background-color:lightgreen;'> ExecQueries: " . ($_fin - $_debut) . " secondes.</span></p>";
         $fin = microtime(true);
 
-        return $this->doLog($start_date, new DateTime(), $this->url . "/" . $dataName, "OK", count($collection_json) . " " . $dataName . "(s) ont été récupéré(es) de [" . $this->code . "] en " . ($fin - $debut) . " seconde(s).");
+        return $this->doLog($start_date, new DateTime(), $this->url . "/" . $dataName, "OK", count($collection_json) . " " . $dataName . "(s) ont été récupéré(es) de [" . $this->code . "] en " . ($fin - $debut) . " seconde(s).",
+            $this->code,
+            $dataName        );
     }
 
 }

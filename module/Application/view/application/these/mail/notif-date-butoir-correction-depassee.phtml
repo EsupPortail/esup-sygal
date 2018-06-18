@@ -13,7 +13,7 @@ use Application\View\Renderer\PhpRenderer;
 <?php $url = $this->url('these/depot', ['these' => $these->getId()], ['force_canonical' => true]) ?>
 
 <p>Bonjour,</p>
-<p>Ceci est un mail envoyé automatiquement par l'application SoDoct.</p>
+<p>Ceci est un mail envoyé automatiquement par l'application <?php echo $this->appInfos()->nom ?>.</p>
 
 <?php if ($these->getCorrectionAutoriseeEstMineure()): ?>
 

@@ -454,6 +454,24 @@ div.filters {
       font-size: 90%;
     }
   }
+
+  form {
+    padding: 10px;
+    .form-group {
+      margin-right: 5px;
+    }
+    label {
+      display: block;
+      font-size: 93%;
+      margin-bottom: 0;
+    }
+    button.dropdown-toggle {
+      padding: 3px 25px 3px 10px;
+    }
+    .filter-option, #search-input {
+      font-size: 90%;
+    }
+  }
 }
 
 table.these-fiche {
@@ -556,29 +574,39 @@ form.form-retraiter {
 }
 
 @media (min-width: 768px) {
-  .dl-horizontal.dl-horizontal-md dt {
-    width: 200px;
+  .dl-horizontal.dl-horizontal-md {
+    dt {
+      width: 200px;
+    }
+    dd {
+      margin-left: 220px;
+    }
   }
-}
-
-@media (min-width: 768px) {
-  .dl-horizontal.dl-horizontal-md dd {
-    margin-left: 220px;
-  }
-}
-
-@media (min-width: 768px) {
-  .dl-horizontal.dl-horizontal-lg dt {
-    width: 260px;
-  }
-  .dl-horizontal.dl-horizontal-lg dd {
-    margin-left: 280px;
+  .dl-horizontal.dl-horizontal-lg {
+    dt {
+      width: 260px;
+    }
+    dd {
+      margin-left: 280px;
+    }
   }
 }
 
 @media (min-width: 1100px) {
   .modal-dialog {
     width: 1000px;
+  }
+}
+
+@media (min-width: 1250px) {
+  .container {
+    width: 1220px;
+  }
+}
+
+@media (min-width: 1500px) {
+  .container {
+    width: 1470px;
   }
 }
 
@@ -747,5 +775,23 @@ dl.faq {
   dt {
     font-weight: bold;
     font-size: 120%;
+  }
+}
+
+
+
+
+
+
+.user-usurpation-form {
+  margin-top: 30px;
+  padding-top: 10px;
+  border-top: 1px lightgrey dotted;
+  .form-group {
+    float: left;
+    margin-right: 5px;
+  }
+  .btn {
+    margin-top: 0;
   }
 }

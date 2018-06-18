@@ -73,7 +73,15 @@ from role_privilege rp
 order by r.role_id, p.code;
 
 
+INSERT INTO "OTH"."CATEGORIE_PRIVILEGE" ("ID", "CODE", "LIBELLE", "ORDRE") VALUES (19, 'substitution', 'Substitution de structures', 300)
 
+INSERT INTO "OTH"."PRIVILEGE" ("ID", "CATEGORIE_ID", "CODE", "LIBELLE", "ORDRE") VALUES (250, 19, 'automatique', 'Substitution automatique de structures', 100)
+INSERT INTO "OTH"."PRIVILEGE" ("ID", "CATEGORIE_ID", "CODE", "LIBELLE", "ORDRE") VALUES (251, 19, 'consultation-etablissement', 'Consultation des substitutions d''établissement', 200)
+INSERT INTO "OTH"."PRIVILEGE" ("ID", "CATEGORIE_ID", "CODE", "LIBELLE", "ORDRE") VALUES (252, 19, 'consultation-ecole', 'Consultation des substitutions d''école doctorale', 300)
+INSERT INTO "OTH"."PRIVILEGE" ("ID", "CATEGORIE_ID", "CODE", "LIBELLE", "ORDRE") VALUES (253, 19, 'consultation-unite', 'Consultation des substitutions d''unité de recherche', 400)
+INSERT INTO "OTH"."PRIVILEGE" ("ID", "CATEGORIE_ID", "CODE", "LIBELLE", "ORDRE") VALUES (254, 19, 'modification-etablissement', 'Modification des substitutions d''établissement', 220)
+INSERT INTO "OTH"."PRIVILEGE" ("ID", "CATEGORIE_ID", "CODE", "LIBELLE", "ORDRE") VALUES (255, 19, 'modification-ecole', 'Modification des substitutions d''école doctorale', 320)
+INSERT INTO "OTH"."PRIVILEGE" ("ID", "CATEGORIE_ID", "CODE", "LIBELLE", "ORDRE") VALUES (256, 19, 'modification-unite', 'Modification des substitutions d''unité de recherche', 420)
 
 
 

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="Notification\Entity\NotifResultEntity" table="NOTIF_RESULT">
+        <id name="id" type="integer" column="ID"/>
+
+        <field name="subject" column="SUBJECT" length="255"/>
+        <field name="body" column="BODY"/>
+        <field name="error" column="ERROR"/>
+        <field name="sentOn" type="datetime" column="SENT_ON"/>
+
+        <many-to-one field="notif" target-entity="Notification\Entity\NotifEntity">
+            <join-columns>
+                <join-column name="NOTIF_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
+    </entity>
+</doctrine-mapping>

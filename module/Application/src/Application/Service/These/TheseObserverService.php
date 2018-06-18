@@ -2,14 +2,13 @@
 
 namespace Application\Service\These;
 
-use Application\Service\Notification\NotificationServiceAwareInterface;
-use Application\Service\Notification\NotificationServiceAwareTrait;
+use Application\Service\Notification\NotifierServiceAwareTrait;
 use Zend\View\Model\ViewModel;
 
 class TheseObserverService
 {
     use TheseServiceAwareTrait;
-    use NotificationServiceAwareTrait;
+    use NotifierServiceAwareTrait;
 
     /**
      * Notification systématique à propos des thèses dont la date butoir pour le dépôt de la version corrigée est dépassée.
@@ -19,10 +18,10 @@ class TheseObserverService
         $theses = $this->theseService->getRepository()->fetchThesesWithDateButoirDepotVersionCorrigeeDepassee();
 
         foreach ($theses as $these) {
-            $viewModel = new ViewModel([
-                'subject' => "Corrections " . lcfirst($these->getCorrectionAutoriseeToString(true)) . " non faites",
-            ]);
-            $this->notificationService->notifierDateButoirCorrectionDepassee($viewModel, $these);
+//            $viewModel = new ViewModel([
+//                'subject' => "Corrections " . lcfirst($these->getCorrectionAutoriseeToString(true)) . " non faites",
+//            ]);
+            $this->notifierService->triggerDateButoirCorrectionDepassee($these);
         }
     }
 }

@@ -2,9 +2,8 @@
 
 namespace Application\Event;
 
-use Application\Entity\UserWrapper;
-use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Utilisateur;
+use Application\Entity\UserWrapper;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
@@ -53,22 +52,28 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
     /**
      * Méthode appelée juste après que l'entité utilisateur soit persistée.
      *
+     * Un Individu est créé/màj à partir de l'utilisateur qui vient de s'authentifier.
+     *
      * @param UserAuthenticatedEvent $e
      */
     public function onUserAuthenticatedPostPersist(UserAuthenticatedEvent $e)
     {
         $userWrapper = UserWrapper::instFromUserAuthenticatedEvent($e);
 
-        $empId = $userWrapper->getSupannEmpId();
         $domaineEtab = $userWrapper->getDomainFromEppn();
-
         $etablissement = $this->etablissementService->getRepository()->findOneByDomaine($domaineEtab);
 
         // création de l'Individu si besoin
-        $individu = $this->individuService->getRepository()->findOneByEmpIdAndEtab($empId, $etablissement);
+        $sourceCode = $etablissement->prependPrefixTo($userWrapper->getSupannId());
+        $individu = $this->individuService->getRepository()->findOneBySourceCode($sourceCode);
         if (null === $individu) {
             $createur = $this->utilisateurService->getRepository()->fetchAppPseudoUser();
-            $this->individuService->createFromUserWrapperAndEtab($userWrapper, $etablissement, $createur);
+            $individu = $this->individuService->createFromUserWrapperAndEtab($userWrapper, $etablissement, $createur);
         }
+
+        // renseigne le lien utilisateur-->individu
+        /** @var Utilisateur $utilisateur */
+        $utilisateur = $e->getDbUser();
+        $this->utilisateurService->setIndividuForUtilisateur($individu, $utilisateur);
     }
 }

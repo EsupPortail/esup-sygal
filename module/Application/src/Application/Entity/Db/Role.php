@@ -18,6 +18,7 @@ class Role extends AbstractRole
 
     const CODE_DOCTORANT = 'DOCTORANT';
     const CODE_ADMIN = 'ADMIN';
+    const CODE_ADMIN_TECH = 'ADMIN_TECH';
     const CODE_BU = 'BU';
     const CODE_BDD = 'BDD';
 

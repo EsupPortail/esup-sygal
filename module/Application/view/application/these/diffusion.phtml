@@ -34,13 +34,13 @@ $canEdit = $this->isAllowed($these, ThesePrivileges::THESE_SAISIE_AUTORISATION_D
                 <?php echo $this->partial('application/these/partial/diffusion') ?>
                 <?php if ($canEdit): ?>
                     <p><a href="<?php echo $modifierDiffusionUrl ?>"
-                          class="btn btn-default ajax-modal"
+                          class="btn btn-default zajax-modal"
                           data-event="event-diffusion-modified"><span class="glyphicon glyphicon-pencil"></span> Modifier</a></p>
                 <?php endif ?>
             <?php else: ?>
                 <?php if ($canEdit): ?>
                     <p><a href="<?php echo $modifierDiffusionUrl ?>"
-                          class="btn btn-primary ajax-modal"
+                          class="btn btn-primary zajax-modal"
                           data-event="event-diffusion-modified"><span class="glyphicon glyphicon-pencil"></span> Compléter</a></p>
                 <?php endif ?>
             <?php endif ?>
@@ -52,7 +52,7 @@ $canEdit = $this->isAllowed($these, ThesePrivileges::THESE_SAISIE_AUTORISATION_D
                 <h2>Convention de mise en ligne</h2>
                 <p><a href="<?php echo $exporterConventionMelUrl ?>" target="_blank"
                       class="btn btn-primary"><span class="glyphicon glyphicon-export"></span>
-                        Éditer la convention de mise en ligne en 2 exemplaires</a></p>
+                        Éditer la convention de mise en ligne</a></p>
             <?php endif ?>
 
         <?php else: ?>

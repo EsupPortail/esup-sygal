@@ -29,19 +29,19 @@ class RetraitementServiceFactory implements FactoryInterface
     {
         $config = $serviceLocator->get('config');
 
-        if (!isset($config['sodoct']['retraitement']['command']['class'])) {
-            throw new InvalidArgumentException("Option de config 'sodoct.retraitement.command.class' introuvable");
+        if (!isset($config['sygal']['retraitement']['command']['class'])) {
+            throw new InvalidArgumentException("Option de config 'sygal.retraitement.command.class' introuvable");
         }
-        $commandClass = $config['sodoct']['retraitement']['command']['class'];
+        $commandClass = $config['sygal']['retraitement']['command']['class'];
         if (!class_exists($commandClass)) {
-            throw new InvalidArgumentException("La classe spécifiée dans l'option de 'config sodoct.retraitement.command.class' n'existe pas");
+            throw new InvalidArgumentException("La classe spécifiée dans l'option de 'config sygal.retraitement.command.class' n'existe pas");
         }
 
         /** @var CommandInterface $command */
         $command = new $commandClass;
 
-        if (isset($config['sodoct']['retraitement']['command']['options'])) {
-            $command->setOptions($config['sodoct']['retraitement']['command']['options']);
+        if (isset($config['sygal']['retraitement']['command']['options'])) {
+            $command->setOptions($config['sygal']['retraitement']['command']['options']);
         }
 
         return $command;

@@ -3,11 +3,14 @@
 namespace Application\View\Renderer;
 
 use Application\Entity\Db\EcoleDoctorale;
+use Application\Entity\Db\StructureConcreteInterface;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
 use Application\Entity\Db\VWorkflow;
 use Application\View\Helper\EcoleDoctoraleHelper;
 use Application\View\Helper\EscapeTextHelper;
+use Application\View\Helper\StructureArrayHelper;
+use Application\View\Helper\StructureSubstitHelper;
 use Application\View\Helper\Url\UrlTheseHelper;
 use Application\View\Helper\ValidationViewHelper;
 use Application\View\Helper\Workflow\RoadmapHelper;
@@ -133,6 +136,7 @@ use UnicaenApp\View\Helper\AppInfos;
  * @method \Application\View\Helper\Uploader\UploaderHelper   uploader()
  * @method \Application\View\Helper\Sortable                  sortable($sort)
  * @method string                                             filterPanel($config)
+ * @method string                                             selectsFilterPanel($config)
  * @method EscapeTextHelper                                   escapeText($value = null)
  *
  * @method WorkflowHelper        wf(These $these = null)
@@ -142,6 +146,8 @@ use UnicaenApp\View\Helper\AppInfos;
  * @method EcoleDoctoraleHelper  ed(EcoleDoctorale $ecole)
  *
  * @method UrlTheseHelper urlThese()
+ * @method StructureSubstitHelper structureSubstitHelper()
+ * @method StructureArrayHelper structureArrayHelper()
  *
  * @author UnicaenCode
  */

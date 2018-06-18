@@ -6,6 +6,8 @@ use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Repository\EcoleDoctoraleRepository;
+use Application\Entity\Db\Structure;
+use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\BaseService;
 use Application\Service\Role\RoleServiceAwareInterface;
@@ -35,7 +37,26 @@ class EcoleDoctoraleService extends BaseService implements RoleServiceAwareInter
      */
     public function getEcolesDoctorales() {
         /** @var EcoleDoctorale[] $ecoles */
-        $ecoles = $this->getRepository()->findAll();
+//        $ecoles = $this->getRepository()->findAll();
+//        usort($ecoles, function ($a,$b) {return $a->getLibelle() > $b->getLibelle();});
+//        return $ecoles;
+
+        $qb = $this->getEntityManager()->getRepository(EcoleDoctorale::class)->createQueryBuilder("ur")
+            ->leftJoin("ur.structure", "str", "WITH", "ur.structure = str.id")
+            ->leftJoin("str.structuresSubstituees", "sub")
+            ->leftJoin("str.typeStructure", "typ")
+            ->addSelect("str, sub, typ")
+            ->orderBy("str.libelle")
+        ;
+
+
+//        $ecoleDoctorale = $this->getEntityManager()->getRepository("TypeStructure")->findOneBy(["code" => TypeStructure::CODE_ECOLE_DOCTORALE]);
+//        $qb = $this->getEntityManager()->getRepository(Structure::class)->createQueryBuilder("str")
+//            ->leftJoin("str.ecoleDoctorale", "ed")
+//            ->setParameter("ecoleDoctorale", $ecoleDoctorale)
+//        ;
+        $ecoles = $qb->getQuery()->getResult();
+
         return $ecoles;
     }
 
@@ -46,6 +67,17 @@ class EcoleDoctoraleService extends BaseService implements RoleServiceAwareInter
     public function getEcoleDoctoraleById($id) {
         /** @var EcoleDoctorale $ecole */
         $ecole = $this->getRepository()->findOneBy(["id" => $id]);
+        return $ecole;
+    }
+
+    public function getEcoleDoctoraleByStructureId($id) {
+        /** @var EcoleDoctorale $ecole */
+        $qb = $this->getRepository()->createQueryBuilder("ed")
+            ->addSelect("s")
+            ->leftJoin("ed.structure", "s")
+            ->andWhere("s.id = :id")
+            ->setParameter("id", $id);
+        $ecole = $qb->getQuery()->getOneOrNullResult();
         return $ecole;
     }
 
@@ -83,6 +115,9 @@ class EcoleDoctoraleService extends BaseService implements RoleServiceAwareInter
     public function create(EcoleDoctorale $ecole, Utilisateur $createur)
     {
         $ecole->setHistoCreateur($createur);
+        /** @var TypeStructure $typeStructure */
+        $typeStructure = $this->getEntityManager()->getRepository(TypeStructure::class)->findOneBy(['code' => 'ecole-doctorale']);
+        $ecole->getStructure()->setTypeStructure($typeStructure);
 
         $this->persist($ecole);
         $this->flush($ecole);
@@ -128,6 +163,4 @@ class EcoleDoctoraleService extends BaseService implements RoleServiceAwareInter
             throw new RuntimeException("Erreur lors de l'enregistrement de l'ED", null, $e);
         }
     }
-
-
 }

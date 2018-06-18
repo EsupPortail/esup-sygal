@@ -11,7 +11,7 @@ use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
 /**
  * EcoleDoctorale
  */
-class EcoleDoctorale implements HistoriqueAwareInterface, SourceAwareInterface
+class EcoleDoctorale implements StructureConcreteInterface, HistoriqueAwareInterface, SourceAwareInterface
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
@@ -82,6 +82,13 @@ class EcoleDoctorale implements HistoriqueAwareInterface, SourceAwareInterface
     /**
      * @return string
      */
+    public function getCode() {
+        return $this->structure->getCode();
+    }
+
+    /**
+     * @return string
+     */
     public function getLibelle()
     {
         return $this->getStructure()->getLibelle();
@@ -120,7 +127,8 @@ class EcoleDoctorale implements HistoriqueAwareInterface, SourceAwareInterface
             $image = Util::createImageWithText("Aucun logo pour l'ED|[" . $this->getSourceCode() . " - " . $this->getSigle() . "]", 200, 200);
             return $image;
         }
-        return file_get_contents(APPLICATION_DIR . $this->getCheminLogo()) ?: null;
+        //        return file_get_contents(APPLICATION_DIR . $this->getCheminLogo()) ?: null;
+        return file_get_contents( "/var/sygal-files/" . $this->getCheminLogo()) ?: null;
     }
 
     /**

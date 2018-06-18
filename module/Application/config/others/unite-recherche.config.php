@@ -4,6 +4,7 @@ use Application\Controller\Factory\UniteRechercheControllerFactory;
 use Application\Form\Factory\UniteRechercheFormFactory;
 use Application\Form\Factory\UniteRechercheHydratorFactory;
 use Application\Provider\Privilege\UniteRecherchePrivileges;
+use Application\Service\DomaineScientifiqueService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use UnicaenAuth\Guard\PrivilegeController;
 use Application\View\Helper\UniteRechercheHelper;
@@ -28,6 +29,12 @@ return [
                         'modifier',
                         'ajouter-individu',
                         'retirer-individu',
+                        'supprimer-logo',
+                        'ajouter-etablissement-rattachement',
+                        'retirer-etablissement-rattachement',
+                        'ajouter-domaine-scientifique',
+                        'retirer-domaine-scientifique',
+                        'principal-etablissement-rattachement',
                     ],
                     'privileges' => UniteRecherchePrivileges::UNITE_RECH_MODIFICATION,
                 ],
@@ -94,6 +101,71 @@ return [
                             ],
                         ],
                     ],
+                    'ajouter-etablissement-rattachement' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'       => '/:uniteRecherche/ajouter-etablissement-rattachement/:etablissement',
+                            'constraints' => [
+                                'uniteRecherche' => '\d+',
+                                'etablissement' => '\d+',
+                            ],
+                            'defaults'    => [
+                                'action' => 'ajouter-etablissement-rattachement',
+                            ],
+                        ],
+                    ],
+                    'retirer-etablissement-rattachement' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'       => '/:uniteRecherche/retirer-etablissement-rattachement/:etablissement',
+                            'constraints' => [
+                                'uniteRecherche' => '\d+',
+                                'etablissement' => '\d+',
+                            ],
+                            'defaults'    => [
+                                'action' => 'retirer-etablissement-rattachement',
+                            ],
+                        ],
+                    ],
+                    'principal-etablissement-rattachement' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'       => '/:uniteRecherche/principal-etablissement-rattachement/:etablissement',
+                            'constraints' => [
+                                'uniteRecherche' => '\d+',
+                                'etablissement' => '\d+',
+                            ],
+                            'defaults'    => [
+                                'action' => 'principal-etablissement-rattachement',
+                            ],
+                        ],
+                    ],
+                    'ajouter-domaine-scientifique' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'       => '/:uniteRecherche/ajouter-domaine-scientifique/:domaineScientifique',
+                            'constraints' => [
+                                'uniteRecherche' => '\d+',
+                                'domaineScientifique' => '\d+',
+                            ],
+                            'defaults'    => [
+                                'action' => 'ajouter-domaine-scientifique',
+                            ],
+                        ],
+                    ],
+                    'retirer-domaine-scientifique' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'       => '/:uniteRecherche/retirer-domaine-scientifique/:domaineScientifique',
+                            'constraints' => [
+                                'uniteRecherche' => '\d+',
+                                'domaineScientifique' => '\d+',
+                            ],
+                            'defaults'    => [
+                                'action' => 'retirer-domaine-scientifique',
+                            ],
+                        ],
+                    ],
                     'ajouter-individu' => [
                         'type'          => 'Segment',
                         'options'       => [
@@ -119,6 +191,18 @@ return [
                             ],
                         ],
                     ],
+                    'supprimer-logo' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'       => '/supprimer-logo/:uniteRecherche',
+                            'constraints' => [
+                                'uniteRecherche' => '\d+',
+                            ],
+                            'defaults'    => [
+                                'action' => 'supprimer-logo',
+                            ],
+                        ],
+                    ],
                 ],
             ],
         ],
@@ -133,6 +217,8 @@ return [
                                 'label'    => 'Unités de recherche',
                                 'route'    => 'unite-recherche',
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\UniteRecherche', 'index'),
+
+                                'order'    => 20,
                             ],
                         ],
                     ],
@@ -143,6 +229,7 @@ return [
     'service_manager' => [
         'invokables' => [
             'UniteRechercheService' => UniteRechercheService::class,
+            DomaineScientifiqueService::class => DomaineScientifiqueService::class,
         ],
         'factories' => [
         ],

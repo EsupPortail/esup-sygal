@@ -5,18 +5,16 @@
  */
 
 use Application\View\Renderer\PhpRenderer;
-
-$subtitle = "SOutenance, Doctorat et Organisation du Circuit des Thèses";
 ?>
 
 <?php $this->headTitle("Accueil") ?>
 
 <div class="jumbotron">
 
-    <h1 class="page-header">SoDoct</h1>
+    <h1 class="page-header"><?php echo $this->appInfos()->nom ?></h1>
 
     <p class="appname-subtitle">
-        <strong><?php echo $subtitle ?></strong>
+        <strong><?php echo $this->appInfos()->desc ?></strong>
     </p>
 
     <?php echo $this->messenger()->setMessages($messages); ?>

@@ -10,12 +10,15 @@ use Application\Entity\Db\Repository\RoleRepository;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\RoleModele;
 use Application\Entity\Db\RolePrivilegeModele;
+use Application\Entity\Db\SourceInterface;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
 use Application\Entity\Db\Utilisateur;
+use Application\Filter\EtablissementPrefixFilter;
 use Application\Service\BaseService;
 use Application\Entity\Db\Structure;
 use Doctrine\ORM\Query\Expr\Join;
+use MongoDB\BSON\Type;
 use UnicaenImport\Entity\Db\Source;
 use ZfcUser\Entity\UserInterface;
 
@@ -47,11 +50,20 @@ class RoleService extends BaseService
     }
 
     public function getIndividuByStructure(Structure $structure) {
+       $individuRoles = $this->getIndividuRoleByStructure($structure);
+        $individus = [];
+        /** @var IndividuRole $individuRole */
+        foreach ($individuRoles as $individuRole) {
+            $individus[] = $individuRole->getIndividu();
+        }
+        return $individus;
+    }
+
+    public function getIndividuRoleByStructure(Structure $structure) {
         $repo = $this->entityManager->getRepository( IndividuRole::class);
         $qb = $repo->createQueryBuilder("ir")
-            ->select("i")
-            ->leftJoin("individu", "i", "WITH", "ir.individu_id = i.id")
-            ->andWhere('ir.structure = structure')
+            ->leftJoin("ir.role","r")
+            ->andWhere('r.structure = :structure')
             ->setParameter("structure", $structure);
         return $qb->getQuery()->execute();
     }
@@ -63,11 +75,15 @@ class RoleService extends BaseService
     public function getIndividuRolesByIndividuSourceCode($individuSourceCode)
     {
         $repo = $this->entityManager->getRepository(IndividuRole::class);
+
+        $filter = new EtablissementPrefixFilter();
+        $pattern = $filter->addSearchPatternPrefix($individuSourceCode);
+
         $qb = $repo->createQueryBuilder("ro")
             ->addSelect('i, r')
-            ->join('ro.individu', 'i', Join::WITH, 'i.sourceCode = :sourceCode')
+            ->join('ro.individu', 'i', Join::WITH, "i.sourceCode LIKE :pattern")
             ->join('ro.role', 'r')
-            ->setParameter('sourceCode', $individuSourceCode);
+            ->setParameter('pattern', $pattern);
         return $qb->getQuery()->execute();
     }
 
@@ -78,12 +94,34 @@ class RoleService extends BaseService
         return $individuRole;
     }
 
+
+    public function getRoleByCode($roleCode) {
+        $repo = $this->entityManager->getRepository(Role::class);
+        $role = $repo->findOneBy(["code" => $roleCode]);
+        return $role;
+    }
+
     public function getIndividuRoleById($individuRoleId) {
         $repo = $this->entityManager->getRepository(IndividuRole::class);
         $individuRole = $repo->findOneBy(["id" => $individuRoleId]);
         return $individuRole;
     }
 
+    public function getRoleByIndividu($individu)
+    {
+        $qb = $this->getEntityManager()->getRepository(IndividuRole::class)->createQueryBuilder("ir")
+            ->andWhere("ir.individu = :individu")
+            ->setParameter("individu", $individu);
+        $results = $qb->getQuery()->getResult();
+
+        /** @var IndividuRole $result */
+        $roles = [];
+        foreach($results as $result) {
+            $roles[] = $result->getRole();
+        }
+
+        return $roles;
+    }
 
     /**
      * @param int $individuRoleId
@@ -118,6 +156,19 @@ class RoleService extends BaseService
         ;
         $roles = $qb->getQuery()->execute();
         return $roles;
+    }
+
+    public function getRoleModeleByStructures() {
+        $roleModele = [];
+        $structures = $this->entityManager->getRepository(TypeStructure::class)->findAll();
+
+        /** @var TypeStructure $structure */
+        foreach ($structures as $structure) {
+            $roles = $this->getRoleModeleByStructureType($structure->getId());
+            $roleModele[$structure->getLibelle()] = $roles;
+        }
+
+        return $roleModele;
     }
 
     /**
@@ -184,7 +235,7 @@ class RoleService extends BaseService
 
     public function createRole($libelle = "Aucun")
     {
-        $sourceSygal = $this->entityManager->getRepository(Source::class)->findOneBy(["code" => "COMUE::SYGAL"]);
+        $sourceSygal = $this->entityManager->getRepository(Source::class)->findOneBy(["code" => SourceInterface::CODE_SYGAL]);
         $userSygal = $this->entityManager->getRepository(Utilisateur::class)->findOneBy(["username" => "sygal-app"]);
 
         $role = new Role();
@@ -205,5 +256,39 @@ class RoleService extends BaseService
         return $role;
     }
 
+    public function removeRole($individuId, $roleId)
+    {
+        $qb = $this->getEntityManager()->getRepository(IndividuRole::class)->createQueryBuilder("ir")
+            ->leftJoin("ir.individu","i")
+            ->leftJoin("ir.role","r")
+            ->andWhere("i.id = :individuId")
+            ->andWhere("r.id = :roleId")
+            ->setParameter("individuId", $individuId)
+            ->setParameter("roleId", $roleId);
+        $result = $qb->getQuery()->getOneOrNullResult();
+        if ($result !== null) {
+            $this->getEntityManager()->remove($result);
+            $this->getEntityManager()->flush($result);
+        }
+    }
+
+    public function addRole($individuId, $roleId)
+    {
+        $individu = $this->getEntityManager()->getRepository(Individu::class)->findOneBy(["id"=>$individuId]);
+        $role = $this->getEntityManager()->getRepository(Role::class)->findOneBy(["id"=>$roleId]);
+
+        $ir = new IndividuRole();
+        $ir->setIndividu($individu);
+        $ir->setRole($role);
+
+        $this->getEntityManager()->persist($ir);
+        $this->getEntityManager()->flush($ir);
+    }
+
+    public function getRoles()
+    {
+        $result = $this->getEntityManager()->getRepository(Role::class)->findAll();
+        return $result;
+    }
 
 }

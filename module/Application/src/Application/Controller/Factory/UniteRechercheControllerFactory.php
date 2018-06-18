@@ -4,11 +4,11 @@ namespace Application\Controller\Factory;
 
 use Application\Controller\UniteRechercheController;
 use Application\Form\UniteRechercheForm;
+use Application\Service\DomaineScientifiqueService;
 use Application\Service\Etablissement\EtablissementServiceLocateTrait;
 use Application\Service\Individu\IndividuService;
 use Application\Service\Role\RoleService;
 use Application\Service\UniteRecherche\UniteRechercheService;
-use UnicaenLdap\Service\People as LdapPeopleService;
 use Zend\Mvc\Controller\ControllerManager;
 
 class UniteRechercheControllerFactory
@@ -30,21 +30,21 @@ class UniteRechercheControllerFactory
 
         /**
          * @var UniteRechercheService $uniteRechercheService
-         * @var LdapPeopleService $ldapPeopleService
          * @var IndividuService $individuService
          * @var RoleService $roleService
+         * @var DomaineScientifiqueService $domaineService
          */
         $uniteRechercheService = $sl->get('UniteRechercheService');
-        $ldapPeopleService  = $sl->get('LdapServicePeople');
         $individuService = $sl->get('IndividuService');
         $roleService = $sl->get('RoleService');
+        $domaineService = $sl->get(DomaineScientifiqueService::class);
 
         $controller = new UniteRechercheController();
         $controller->setUniteRechercheService($uniteRechercheService);
-        $controller->setLdapPeopleService($ldapPeopleService);
         $controller->setIndividuService($individuService);
         $controller->setRoleService($roleService);
         $controller->setEtablissementService($this->locateEtablissementService($sl));
+        $controller->setDomaineScientifiqueService($domaineService);
         $controller->setUniteRechercheForm($form);
 
         return $controller;

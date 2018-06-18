@@ -1,5 +1,13 @@
 <?php
 
+// todo: virer ce die provisoire
+die("Ne plus utiliser la vue " . __FILE__);
+
+
+
+
+
+use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\These;
 use Application\View\Renderer\PhpRenderer;
 
@@ -19,7 +27,15 @@ $urlFiltrer = function ($paramName, $paramValue, $queryParams) {
     return $this->url('these/rechercher', [], ['query' => $queryParams], true);
 };
 
-echo $this->filterPanel([
+//preparation des etablissements
+$paramEtablissements = [];
+$paramEtablissements[] = ['value' => '', 'label' => $this->translate("Tous") ];
+/** @var Etablissement[] $etablissements */
+foreach ($etablissements as $etablissement) {
+    $paramEtablissements[] = ['value' => $etablissement->getCode(), 'label' => $etablissement->getSigle() ];
+}
+
+echo $this->selectsFilterPanel([
     $this->translate("État") => [
         'paramName' => 'etatThese',
         'paramConfig' => [
@@ -34,15 +50,9 @@ echo $this->filterPanel([
 
     $this->translate("Établissement") => [
         'paramName' => 'etablissement',
-        'paramConfig' => [
-            ['value' => '',                             'label' => $this->translate("Tous") ],
-            ['value' => $v = 'INSA',                    'label' => $this->translate("INSA Rouen") ],
-            ['value' => $v = 'UCN',                     'label' => $this->translate("UniCaen") ],
-            ['value' => $v = 'ULHN',                    'label' => $this->translate("Univ-LeHavre") ],
-            ['value' => $v = 'URN',                     'label' => $this->translate("Univ-Rouen") ],
-        ],
+        'paramConfig' => $paramEtablissements,
         'filterUrl' => $urlFiltrer,
     ],
-]) ?>
+]);
 
 

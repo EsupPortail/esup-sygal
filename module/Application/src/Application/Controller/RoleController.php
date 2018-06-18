@@ -6,6 +6,7 @@ use Application\Entity\Db\Privilege;
 use Application\Entity\Db\Role;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Structure\StructureServiceAwareTrait;
 use Doctrine\ORM\QueryBuilder;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenAuth\Entity\Db\CategoriePrivilege;
@@ -15,6 +16,7 @@ class RoleController extends AbstractController
 {
     use EntityManagerAwareTrait;
     use RoleServiceAwareTrait;
+    use StructureServiceAwareTrait;
     use EtablissementServiceAwareTrait;
 
     public function indexAction()
@@ -23,8 +25,6 @@ class RoleController extends AbstractController
         $categorie = $this->params()->fromQuery("categorie");
 
         $qb_depend = $this->entityManager->getRepository(Role::class)->createQueryBuilder("r");
-//        $qb_depend = $qb_depend->select("r, s");
-//        $qb_depend = $qb_depend->join("r.structure", "s");
         $qb_depend = $this->decorateWithDepend($qb_depend, $depend);
         $qb_depend = $qb_depend->orderBy("r.typeStructureDependant, r.libelle, r.structure", 'asc');
         $roles = $qb_depend->getQuery()->execute();
@@ -33,13 +33,22 @@ class RoleController extends AbstractController
         $qb_categorie->orderBy("p.categorie, p.ordre","ASC");
         $privileges = $qb_categorie->getQuery()->execute();
 
-        $etablissements = $this->etablissementService->getEtablissements();
+        $substituees = $this->getStructureService()->getStructuresSubstituees();
+
+        //Retrait des rôles associés à des structures historisées ou substituées
+        $roles = array_filter($roles, function (Role $role) use ($substituees) {
+            $structure = $role->getStructure();
+            if (array_search($structure, $substituees))  return false;
+            if ($structure === null) return true;
+            $structureConcrete = $this->getStructureService()->findStructureConcreteFromStructure($structure);
+            if ($structureConcrete === null) return true;
+            return  $structureConcrete->estNonHistorise();
+        });
 
         return new ViewModel([
             'roles' => $roles,
             'privileges' => $privileges,
             'params' => $this->params()->fromQuery(),
-            'etablissements' => $etablissements,
         ]);
     }
 

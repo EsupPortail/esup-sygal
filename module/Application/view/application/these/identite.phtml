@@ -8,6 +8,7 @@ use Application\Filter\ActeursFormatter;
 use Application\Entity\Db\WfEtape;
 use Application\Provider\Privilege\DoctorantPrivileges;
 use Application\View\Renderer\PhpRenderer;
+use Application\Entity\Db\MailConfirmation;
 
 /**
  * @var        $this PhpRenderer
@@ -23,6 +24,8 @@ use Application\View\Renderer\PhpRenderer;
  * @var string $convMiseEnLigneUrl
  * @var string $avenantConvMiseEnLigneUrl
  * @var string $nextStepUrl
+ * @var string $mailContact
+ * @var string $etatMailContact
  */
 
 $canEditPersopass = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_MODIFICATION_PERSOPASS);
@@ -49,7 +52,8 @@ $persopassModifiedEvent = 'persopass-modified-event';
     <div class="panel-body">
 
         <div id="photo-div" class="pull-right">
-            <div class="photo-placeholder loading" data-src="<?php echo $this->url('leocarte/photo', ['id' => $these->getDoctorant()->getSourceCode()]) ?>"></div>
+<!--            <div class="photo-placeholder loading"-->
+<!--                 data-src="--><?php //echo $this->url('leocarte/photo', ['id' => $these->getDoctorant()->getSourceCodeSansPrefix()]) ?><!--"></div>-->
         </div>
 
         <dl class="dl-horizontal">
@@ -60,7 +64,7 @@ $persopassModifiedEvent = 'persopass-modified-event';
             <dd>
                 <?php
                     echo $these->getDoctorant()->getNomComplet(true, true, true);
-                    echo "(".$these->getDoctorant()->getDateNaissanceToString().")";
+                    echo " (".$these->getDoctorant()->getDateNaissanceToString().")";
                 ?><br>
 
                 <strong>
@@ -74,19 +78,6 @@ $persopassModifiedEvent = 'persopass-modified-event';
                 <?php echo $these->getDoctorant()->getSourceCode() ?> <br>
 
                 <strong>
-                    <?php echo $this->translate("PersoP@ss :"); ?>
-                </strong>
-                <?php echo $these->getDoctorant()->getPersopass() ?: "(Non renseigné)" ?>
-                <?php if ($canEditPersopass): ?>
-                    <a href="<?php echo $modifierPersopassUrl ?>"
-                       data-event="<?php echo $persopassModifiedEvent ?>"
-                       class="btn btn-default btn-xs ajax-modal">
-                        <span class="glyphicon glyphicon-pencil"></span>
-                        <?php echo $this->translate("Modifier"); ?>
-                    </a>
-                <?php endif ?> <br>
-
-                <strong>
                     <?php echo $this->translate("Mail :"); ?>
                 </strong>
                 <?php if ($email = $these->getDoctorant()->getEmailPro() ?: $these->getDoctorant()->getEmail()): ?>
@@ -94,6 +85,31 @@ $persopassModifiedEvent = 'persopass-modified-event';
                 <?php else: ?>
                     <?php echo $this->translate("(Inconnu)"); ?>
                 <?php endif ?>
+                <br/>
+
+                <strong>
+                    <?php echo $this->translate("Mail de contact :"); ?>
+                </strong>
+                <?php
+                    if ($mailContact === null) {
+                        echo "(Non renseigné) ";
+                    } else {
+                        echo $mailContact;
+                        if ($etatMailContact === MailConfirmation::ENVOYER) {
+                            echo " (en attente) ";
+                        }
+                    }
+                ?>
+                <?php if ($canEditPersopass): ?>
+                    <a href="<?php echo $modifierPersopassUrl ?>"
+                       data-event="<?php echo $persopassModifiedEvent ?>"
+                       class="btn btn-default btn-xs ajax-modal">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                        <?php echo $this->translate("Modifier"); ?>
+                    </a>
+                <?php endif ?>
+                <br/>
+
             </dd>
 
             <?php
@@ -131,12 +147,12 @@ $persopassModifiedEvent = 'persopass-modified-event';
             ?>
 
             <dt>
-                <?php echo $this->translate("Établissement"); ?>
+                <?php echo $this->translate("Établissement <br/> d'inscription"); ?>
             </dt>
             <dd>
                 <?php
                     if ($these->getEtablissement()) {
-                        echo $these->getEtablissement()->getCode() . " - " . $these->getEtablissement()->getLibelle();
+                        echo /*$these->getEtablissement()->getCode() . " - " .*/ $these->getEtablissement()->getLibelle();
                     }
                     else {
                         echo "<div class='alert alert-sm alert-warning'>";
@@ -146,28 +162,13 @@ $persopassModifiedEvent = 'persopass-modified-event';
                 ?>
             </dd>
 
-
-            <dt>
-                <?php echo $this->translate("École doctorale"); ?>
-            </dt>
-            <dd>
-                <?php if ($these->getEcoleDoctorale()) {
-                    echo $these->getEcoleDoctorale()->getSourceCode() . " - " . $these->getEcoleDoctorale()->getLibelle();
-                } else {
-                    echo "<div class='alert alert-sm alert-warning'>";
-                    echo "<span class='glyphicon glyphicon-warning-sign'></span> Aucune école doctorale n'est renseignée.";
-                    echo "</div>";
-                }
-                ?>
-            </dd>
-
             <dt>
                 <?php echo $this->translate("Unité de recherche"); ?>
             </dt>
             <dd>
                 <?php
                 if ($these->getUniteRecherche()) {
-                    echo $these->getUniteRecherche()->getSourceCode() . " - " . $these->getUniteRecherche()->getLibelle();
+                    echo /*$these->getUniteRecherche()->getSourceCode() . " - " .*/ $these->getUniteRecherche()->getLibelle();
                 }
                 elseif ($these->getCodeUniteRecherche() && $these->getLibelleUniteRecherche()) {
                     echo $these->getCodeUniteRecherche() . " - " . $these->getLibelleUniteRecherche();
@@ -182,6 +183,40 @@ $persopassModifiedEvent = 'persopass-modified-event';
                 }
                 ?>
 
+            </dd>
+
+            <dt>
+                Établissements de <br/>
+                rattachement de <br/>
+                l'unité de recherche
+            </dt>
+            <dd>
+                <?php
+                if ($rattachements === null) {
+                    echo "Aucun établissement de rattachements de renseigné.";
+                } else {
+                    /** @var \Application\Entity\Db\EtablissementRattachement $rattachement */
+                    foreach ($rattachements as $rattachement) {
+                        echo $rattachement->getEtablissement()->getLibelle();
+                        echo "<br/>";
+                    }
+                }
+                ?>
+            </dd>
+
+
+            <dt>
+                <?php echo $this->translate("École doctorale"); ?>
+            </dt>
+            <dd>
+                <?php if ($these->getEcoleDoctorale()) {
+                    echo /*$these->getEcoleDoctorale()->getSourceCode() . " - " .*/ $these->getEcoleDoctorale()->getLibelle();
+                } else {
+                    echo "<div class='alert alert-sm alert-warning'>";
+                    echo "<span class='glyphicon glyphicon-warning-sign'></span> Aucune école doctorale n'est renseignée.";
+                    echo "</div>";
+                }
+                ?>
             </dd>
 
             <dt>
@@ -384,6 +419,7 @@ $persopassModifiedEvent = 'persopass-modified-event';
 
     function loadPhoto(photoPlaceholder)
     {
+        debugger;
         var photoUrl = $(photoPlaceholder).data('src');
 
         //create image to preload:

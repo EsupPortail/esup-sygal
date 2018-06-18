@@ -38,10 +38,14 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
      * @var Collection
      */
     private $complements;
+
+    /**
+     * @var Etablissement
+     */
     protected $etablissement;
 
     /**
-     * @return mixed
+     * @return Etablissement
      */
     public function getEtablissement()
     {
@@ -49,9 +53,9 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
     }
 
     /**
-     * @param mixed $etablissement
+     * @param Etablissement $etablissement
      */
-    public function setEtablissement($etablissement)
+    public function setEtablissement(Etablissement $etablissement)
     {
         $this->etablissement = $etablissement;
     }
@@ -83,9 +87,23 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
      *
      * @return string
      */
-    public function getSourceCode()
+    public function getSourceCode($no_prefix = false)
     {
+        if ($no_prefix) {
+            $res = explode("::", $this->sourceCode);
+            return end($res);
+        }
         return $this->sourceCode;
+    }
+
+    /**
+     * Get sourceCode
+     *
+     * @return string
+     */
+    public function getSourceCodeSansPrefix()
+    {
+        return $this->getEtablissement()->removePrefixFrom($this->sourceCode);
     }
 
     /**

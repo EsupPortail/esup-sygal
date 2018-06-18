@@ -3,6 +3,7 @@
 namespace Application\Controller\Plugin\Url;
 
 use Application\Entity\Db\These;
+use Application\Entity\Db\VersionFichier;
 use Application\Service\Url\UrlTheseService;
 use Zend\Mvc\Controller\Plugin\AbstractPlugin;
 
@@ -11,7 +12,7 @@ use Zend\Mvc\Controller\Plugin\AbstractPlugin;
  *
  * @method depotFichiers(These $these, $nature, $version = null, $retraite = false, array $queryParams = [])
  * @method identiteThese(These $these)
- * @method depotThese(These $these)
+ * @method depotThese(These $these, $version = null)
  * @method archivageThese(These $these, $version)
  * @method testArchivabilite(These $these, $version)
  * @method creerVersionRetraitee(These $these, $version)

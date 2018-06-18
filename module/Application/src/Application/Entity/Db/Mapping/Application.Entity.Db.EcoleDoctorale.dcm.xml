@@ -15,27 +15,27 @@
 
     <many-to-one field="source" target-entity="UnicaenImport\Entity\Db\Source">
       <join-columns>
-        <join-column name="SOURCE_ID" referenced-column-name="ID"/>
+        <join-column name="SOURCE_ID" referenced-column-name="ID" />
       </join-columns>
     </many-to-one>
 
-    <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
+    <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur" fetch="EXTRA_LAZY">
       <join-columns>
         <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>
       </join-columns>
     </many-to-one>
-    <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur">
+    <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur" fetch="EXTRA_LAZY">
       <join-columns>
         <join-column name="HISTO_DESTRUCTEUR_ID" referenced-column-name="ID"/>
       </join-columns>
     </many-to-one>
-    <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
+    <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur" fetch="EXTRA_LAZY">
       <join-columns>
         <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
       </join-columns>
     </many-to-one>
 
-    <one-to-one field="structure" target-entity="Application\Entity\Db\Structure">
+    <one-to-one field="structure" target-entity="Application\Entity\Db\Structure" >
       <join-columns>
         <join-column name="STRUCTURE_ID" referenced-column-name="ID"/>
       </join-columns>

@@ -9,7 +9,6 @@
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <field name="code"      type="string"   length="32"  column="CODE"      nullable="false"/>
         <field name="domaine"   type="string"   length="50"  column="DOMAINE"   nullable="true"/>
 
         <one-to-many field="theses"         target-entity="Application\Entity\Db\These"     mapped-by="etablissement"/>
@@ -25,20 +24,29 @@
             </cascade>
         </one-to-one>
 
+        <field name="sourceCode" type="string" column="SOURCE_CODE" length="64" nullable="true"/>
+
+        <many-to-one field="source" target-entity="UnicaenImport\Entity\Db\Source">
+            <join-columns>
+                <join-column name="SOURCE_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
+
         <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
         <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
         <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
-        <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
+        <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur"  fetch="EXTRA_LAZY">
             <join-columns>
                 <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
-        <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur">
+        <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur"  fetch="EXTRA_LAZY">
             <join-columns>
                 <join-column name="HISTO_DESTRUCTEUR_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
-        <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
+        <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur"  fetch="EXTRA_LAZY">
             <join-columns>
                 <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
             </join-columns>

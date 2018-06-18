@@ -691,7 +691,7 @@ function ajaxPopoverInit()
         div.data('a').popover('hide');
     });
 
-    $("body").on("submit", "div.popover div.popover-content form", function (e)
+    $("body").on("submit", "div.popover div.popover-content form.intercept-submit", function (e)
     {
         var form = $(e.target);
         var div = $(e.target).parents('div.popover');

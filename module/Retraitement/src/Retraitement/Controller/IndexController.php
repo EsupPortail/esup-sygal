@@ -7,23 +7,19 @@ use Application\Entity\Db\Fichier;
 use Application\EventRouterReplacerAwareTrait;
 use Application\Service\Fichier\FichierServiceAwareInterface;
 use Application\Service\Fichier\FichierServiceAwareTrait;
-use Application\Service\Notification\NotificationServiceAwareInterface;
-use Application\Service\Notification\NotificationServiceAwareTrait;
+use Application\Service\Notification\NotifierServiceAwareTrait;
 use Retraitement\Form\Retraitement;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Filter\BytesFormatter;
 use UnicaenApp\ORM\Event\Listeners\HistoriqueListener;
 use Zend\Console\Request as ConsoleRequest;
-use Zend\Log\Logger;
-use Zend\Log\Writer\Stream;
-use Zend\Log\Writer\Syslog;
 
 class IndexController extends AbstractController
-    implements FichierServiceAwareInterface, NotificationServiceAwareInterface
+    implements FichierServiceAwareInterface
 {
     use EventRouterReplacerAwareTrait;
     use FichierServiceAwareTrait;
-    use NotificationServiceAwareTrait;
+    use NotifierServiceAwareTrait;
 
     public function indexAction()
     {
@@ -117,8 +113,9 @@ class IndexController extends AbstractController
 
         if ($notifier) {
             $destinataires = $notifier;
-            $viewModel = $this->notificationService->notifierRetraitementFini($destinataires, $fichierRetraite, $validite);
-            echo "Destinataires du courriel envoyé: " . $viewModel->getVariable('to');
+            $notif = $this->notifierService->getNotificationFactory()->createNotificationForRetraitementFini($destinataires, $fichierRetraite, $validite);
+            $this->notifierService->trigger($notif);
+            echo "Destinataires du courriel envoyé: " . $notif->getTo();
             echo PHP_EOL;
         }
 

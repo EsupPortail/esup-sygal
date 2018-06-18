@@ -22,7 +22,10 @@
         "ramsey/uuid":                          "^3.3",
         "mpdf/mpdf":                            "v6.1.3",
         "bjyoungblood/bjy-authorize":           "dev-master",
-        "guzzlehttp/guzzle":                    "^6.3"
+        "guzzlehttp/guzzle":                    "^6.3",
+        "webmozart/assert":                     "^1.3",
+        "beberlei/assert":                      "^2.9",
+        "unicaen/oracle":                       "^1.2"
     },
     "autoload": {
         "psr-0": {
@@ -37,15 +40,5 @@
             "ApplicationFunctionalTest\\":  "module/Application/tests/ApplicationFunctionalTest",
             "RetraitementTest\\":           "module/Retraitement/test/RetraitementTest"
         }
-    },
-    "scripts": {
-        "post-install-cmd": [
-            "mkdir -p data/DoctrineModule/cache    && chmod -R 777 data/DoctrineModule/cache",
-            "mkdir -p data/DoctrineORMModule/Proxy && chmod -R 777 data/DoctrineORMModule/Proxy",
-            "vendor/bin/doctrine-module orm:clear-cache:query",
-            "vendor/bin/doctrine-module orm:clear-cache:metadata",
-            "vendor/bin/doctrine-module orm:clear-cache:result",
-            "vendor/bin/doctrine-module orm:generate-proxies"
-        ]
     }
 }

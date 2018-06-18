@@ -22,17 +22,17 @@
       </join-columns>
     </many-to-one>
 
-    <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
+    <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur"  fetch="EXTRA_LAZY">
       <join-columns>
         <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>
       </join-columns>
     </many-to-one>
-    <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur">
+    <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur"  fetch="EXTRA_LAZY">
       <join-columns>
         <join-column name="HISTO_DESTRUCTEUR_ID" referenced-column-name="ID"/>
       </join-columns>
     </many-to-one>
-    <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
+    <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur"  fetch="EXTRA_LAZY">
       <join-columns>
         <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
       </join-columns>
@@ -46,6 +46,17 @@
         <cascade-all/>
       </cascade>
     </one-to-one>
+
+    <many-to-many field="domaines" target-entity="Application\Entity\Db\DomaineScientifique" inversed-by="unites" fetch="LAZY">
+      <join-table name="UNITE_DOMAINE_LINKER">
+        <join-columns>
+          <join-column name="UNITE_ID" referenced-column-name="ID"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="DOMAINE_ID" referenced-column-name="ID"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
 
   </entity>
 </doctrine-mapping>

@@ -43,7 +43,8 @@ $acteursFormatter = new ActeursFormatter();
         <th>Établissement</th>
         <td>
             <?php
-                if ($etablissement === null) echo "Non renseigné"; else echo $etablissement->getCode();
+                $etablissement = $these->getEtablissement();
+                if ($etablissement === null) echo "Non renseigné"; else echo $etablissement->getSigle();
                 echo " - ";
                 if ($etablissement === null) echo "Non renseigné"; else echo $etablissement->getLibelle();
             ?>

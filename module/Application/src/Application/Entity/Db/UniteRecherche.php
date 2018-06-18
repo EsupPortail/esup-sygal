@@ -11,7 +11,7 @@ use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
 /**
  * UniteRecherche
  */
-class UniteRecherche implements HistoriqueAwareInterface, SourceAwareInterface
+class UniteRecherche implements StructureConcreteInterface, HistoriqueAwareInterface, SourceAwareInterface
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
@@ -42,11 +42,17 @@ class UniteRecherche implements HistoriqueAwareInterface, SourceAwareInterface
     protected $structure;
 
     /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    protected $domaines;
+
+    /**
      * UniteRecherche constructor.
      */
     public function __construct()
     {
         $this->structure = new Structure();
+        $this->domaines = new \Doctrine\Common\Collections\ArrayCollection();
     }
     /**
      * UniteRecherche prettyPrint
@@ -91,6 +97,13 @@ class UniteRecherche implements HistoriqueAwareInterface, SourceAwareInterface
     /**
      * @return string
      */
+    public function getCode() {
+        return $this->structure->getCode();
+    }
+
+    /**
+     * @return string
+     */
     public function getLibelle()
     {
         return $this->getStructure()->getLibelle();
@@ -129,7 +142,8 @@ class UniteRecherche implements HistoriqueAwareInterface, SourceAwareInterface
             $image = Util::createImageWithText("Aucun logo pour l'UR|[".$this->getSourceCode()." - ".$this->getSigle()."]",200,200);
             return $image;
         }
-        return file_get_contents(APPLICATION_DIR . $this->getCheminLogo()) ?: null;
+//        return file_get_contents(APPLICATION_DIR . $this->getCheminLogo()) ?: null;
+        return file_get_contents( "/var/sygal-files/" . $this->getCheminLogo()) ?: null;
 
     }
 
@@ -204,5 +218,33 @@ class UniteRecherche implements HistoriqueAwareInterface, SourceAwareInterface
     public function getStructure()
     {
         return $this->structure;
+    }
+
+    /**
+     * @return DomaineScientifique[]
+     */
+    public function getDomaines()
+    {
+        return $this->domaines->toArray();
+    }
+
+    /**
+     * @param DomaineScientifique $domaine
+     * @return UniteRecherche
+     */
+    public function addDomaine($domaine)
+    {
+        $this->domaines[] = $domaine;
+        return $this;
+    }
+
+    /**
+     * @param UniteRecherche $unite
+     * @return UniteRecherche
+     */
+    public function removeDomaine($domaine)
+    {
+        $this->domaines->removeElement($domaine);
+        return $this;
     }
 }

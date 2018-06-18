@@ -1,13 +1,20 @@
 <?php
 
-use Application\Form\EcoleDoctoraleForm;
+use Application\Entity\Db\DomaineScientifique;
+use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\EtablissementRattachement;
 use Application\Form\UniteRechercheForm;
+use Application\View\Helper\SelectHelper;
 use Application\View\Renderer\PhpRenderer;
 
 /**
  * @var PhpRenderer        $this
  * @var string             $title
  * @var UniteRechercheForm $form
+ * @var EtablissementRattachement[] $etablissementsRattachements
+ * @var Etablissement[] $etablissements
+ * @var DomaineScientifique[] $domainesAssocies
+ * @var DomaineScientifique[] $domainesScientifiques
  *
 * @method string formControlGroup()
 */
@@ -15,51 +22,187 @@ use Application\View\Renderer\PhpRenderer;
 $fcg = $this->formControlGroup();
 ?>
 
-<?php echo $this->form()->openTag($form->prepare()->setAttribute('class', 'unite-recherche')) ?>
-<?php echo $this->formHidden($form->get('id')) ?>
-<?php echo $fcg($form->get('libelle')) ?>
-<?php echo $fcg($form->get('sigle')) ?>
-<?php echo $fcg($form->get('sourceCode')) ?>
+<div>
+    <h1> Modification d'unité de recherche </h1>
 
-<div id="logo-div">
-    <?php
-    /** @var \Zend\Form\Element\File $logoFile */
-    $logoFile = $form->get('cheminLogo');
-    echo $this->formLabel($logoFile);
-    ?>
+    <?php echo $this->messenger()->addMessagesFromFlashMessenger(); ?>
 
-    <?php
-    $content = $form->getObject()->getLogoContent();
-    if ($content === null) {
-        $form->getObject()->setCheminLogo(null);
-    }
-    ?>
-    <table>
-        <tr>
-            <td>
-                <img
-                    style="max-width: 200px; max-height: 200px; border: 1px solid black; background-color: white;"
-                    src="data:image/png;base64,<?php echo base64_encode($form->getObject()->getLogoContent()); ?>"
-                />
-            </td>
-            <td style="padding:20px;">
-                <?php
-                echo $this->formFile($logoFile);
-                echo $this->formElementErrors($logoFile);
-                echo $this->formElement($form->get('supprimer-logo'));
-                ?>
-            </td>
-        </tr>
-    </table>
-</div>
-<?php echo $this->formElement($form->get('submit')) ?>
-<?php echo $this->form()->closeTag() ?>
+<!-- BLOC DES INFORMATIONS GENERALES ---------------------------------------------------------------------------------->
+    <div class="row">
+        <h2> Informations générales </h2>
 
-<?php
-$this->translate("Libellé :");
-$this->translate("Sigle :");
-$this->translate("Code :");
-$this->translate("Enregistrer");
-$this->translate("Supprimer le logo");
-$this->translate("Logo de l'unité de recherche :");
-?>
+        <div class="col-md-6">
+            <?php echo $this->form()->openTag($form->prepare()->setAttribute('class', 'unite-recherche')) ?>
+            <?php echo $this->formHidden($form->get('id')) ?>
+            <?php echo $fcg($form->get('libelle')) ?>
+            <?php echo $fcg($form->get('sigle')) ?>
+            <?php echo $fcg($form->get('sourceCode')) ?>
+        </div>
+
+        <div class="col-md-6" id="logo-div">
+        <?php
+            /** @var \Zend\Form\Element\File $logoFile */
+            $logoFile = $form->get('cheminLogo');
+            echo $this->formLabel($logoFile);
+
+            $content = $form->getObject()->getLogoContent();
+            if ($content === null) {
+                $form->getObject()->setCheminLogo(null);
+            }
+        ?>
+
+            <table>
+                <tr>
+                    <td>
+                        <img
+                            id="logo"
+                            style="max-width: 200px; max-height: 200px; border: 1px solid black; background-color: white;"
+                            src="data:image/png;base64,<?php echo base64_encode($form->getObject()->getLogoContent()); ?>"
+                        />
+                    </td>
+                    <td style="padding:20px;">
+                        <?php
+                            echo $this->formFile($logoFile);
+                            echo $this->formElementErrors($logoFile);
+                        ?>
+                        <br/>
+                        <a
+                            id="supprimer-logo"
+                            class="btn btn-danger"
+                            href="<?php echo $this->url('unite-recherche/supprimer-logo', ["uniteRecherche" => $form->getObject()->getStructure()->getId()]); ?>"
+                        >
+                                <span class="glyphicon glyphicon-trash"></span>
+                                Supprimer le logo
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <?php echo $this->formElement($form->get('submit')) ?>
+        <?php echo $this->form()->closeTag() ?>
+
+    </div>
+
+<!-- BLOC DES ETABLISSEMENT DE RATTACHEMENT --------------------------------------------------------------------------->
+    <div class="row">
+        <h2> Établissements de rattachement </h2>
+
+        <div class="col-md-6">
+            <table class="table table-extra-condensed">
+                <thead>
+                    <tr>
+                        <th> Libellé</th>
+                        <th style="width:15%;"> Action </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($etablissementsRattachements as $etablissementRattachement): ?>
+                        <tr>
+                            <td> <?php echo $etablissementRattachement->getEtablissement()->getLibelle(); ?> </td>
+                            <td>
+                                <a
+                                    href="<?php echo $this->url("unite-recherche/retirer-etablissement-rattachement", ["etablissement"=>$etablissementRattachement->getEtablissement()->getId()],[],true); ?>"
+                                    title ="Retirer l'établissement de rattachement"
+                                >
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-md-6">
+            <?php
+                $selectDomaine = new SelectHelper("etablissements", $etablissements, "Choisissez un établissement de rattachement ...");
+                echo $selectDomaine;
+            ?>
+            <br/> <br/>
+            <a
+                class="btn btn-success"
+                id="ajout-rattachement"
+                href="<?php echo $this->url("unite-recherche/ajouter-etablissement-rattachement", ["etablissement" => 0], [], true);?>"
+            >
+                <span class="glyphicon glyphicon-plus"></span>
+                Ajouter un établissement de rattachement
+            </a>
+        </div>
+    </div>
+
+<!-- BLOC DES DOMAINES SCIENTIFIQUES ---------------------------------------------------------------------------------->
+    <div class="row">
+        <h2> Domaines scientifiques</h2>
+
+        <div class="col-md-6">
+            <table class="table table-extra-condensed">
+                <thead>
+                    <tr>
+                        <th>Libellé</th>
+                        <th style="width:15%;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($domainesAssocies as $domaineScientifique) : ?>
+                        <tr>
+                            <td>
+                                <?php echo $domaineScientifique->getLibelle(); ?>
+                            </td>
+                            <td>
+                                <a
+                                    href="<?php echo $this->url('unite-recherche/retirer-domaine-scientifique', ['domaineScientifique' => $domaineScientifique->getId()],[],true); ?>"
+                                    title ="Retirer le domaine scientifique"
+                                >
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-md-6">
+            <?php
+                $selectDomaine = new SelectHelper("domaines", $domainesScientifiques, 'Choisissez un domaine scientifique ...');
+                echo $selectDomaine;
+            ?>
+            <br/>
+            <br/>
+            <a class="btn btn-success"
+               id="ajout-domaine"
+               href="<?php echo $this->url("unite-recherche/ajouter-domaine-scientifique", ["domaineScientifique" => 0], [], true);?>">
+                <span class="glyphicon glyphicon-plus"></span>
+                Ajouter un domaine scientifique
+            </a>
+        </div>
+    </div>
+
+<script>
+    $(document).ready(function() {
+
+        //remplacement dans la structure cible
+        $("input[name='cheminLogo']").on("change", function () {
+
+            var myFile = $("input[name='cheminLogo']").prop('files');
+            console.log(myFile[0]);
+            fr = new FileReader();
+            fr.onload = function () {
+                var content = fr.result;
+                console.log(content);
+                $('#logo').attr("src", content);
+            };
+            fr.readAsDataURL( myFile[0] );
+        });
+
+        $("#etablissements").on("change", function () {
+           var etablissementId = $("#etablissements").val();
+           $("a#ajout-rattachement").attr("href", "ajouter-etablissement-rattachement/" + etablissementId);
+        });
+
+        $("#domaines").on("change", function () {
+            var domaineId = $("#domaines").val();
+            $("a#ajout-domaine").attr("href", "ajouter-domaine-scientifique/" + domaineId);
+        });
+    });
+</script>

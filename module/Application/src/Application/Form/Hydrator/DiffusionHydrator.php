@@ -69,14 +69,6 @@ class DiffusionHydrator extends DoctrineObject implements EntityManagerAwareInte
                 break;
         }
 
-        /** @var RecapBu $recap */
-        $repoRecapBu = $this->entityManager->getRepository(RecapBu::class);
-        $recap = $repoRecapBu->findOneBy(["these" => $diff->getThese()]);
-        if ($recap !== null) {
-            $recap->setOrcid($diff->getIdOrcid());
-            $this->entityManager->flush($recap);
-        }
-
         return $diff;
     }
 }

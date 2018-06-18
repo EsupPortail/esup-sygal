@@ -3,10 +3,12 @@
 namespace Application\Controller;
 
 use Application\Entity\Db\Doctorant;
+use Application\Entity\Db\MailConfirmation;
 use Application\Entity\Db\Variable;
 use Application\Filter\DbExceptionFormatter;
 use Application\RouteMatch;
 use Application\Service\Doctorant\DoctorantServiceAwareTrait;
+use Application\Service\MailConfirmationService;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Doctrine\DBAL\DBALException;
 use UnicaenAuth\Authentication\Adapter\Ldap as LdapAuthAdapter;
@@ -20,58 +22,76 @@ class DoctorantController extends AbstractController
     use VariableServiceAwareTrait;
     use DoctorantServiceAwareTrait;
 
+    /** @var MailConfirmationService $mailConfirmationService */
+    private $mailConfirmationService;
+
+    public function setMailConfirmationService(MailConfirmationService $mailConfirmationService)
+    {
+        $this->mailConfirmationService = $mailConfirmationService;
+    }
+
     public function modifierPersopassAction()
     {
         $doctorant = $this->requestDoctorant();
-        $form = $this->getModifierPersopassForm();
+        $mailConfirmation = $this->mailConfirmationService->getDemandeConfirmeeByIndividu($doctorant->getIndividu());
+        if ($mailConfirmation !== null) {
+            $viewmodel = new ViewModel([
+                'email' => $mailConfirmation->getEmail(),
+            ]);
+            $viewmodel->setTemplate('application/doctorant/demande-ok');
+            return $viewmodel;
+        }
 
-        $form->setData([
-            'identity' => $doctorant->getPersopass(),
-            'credential' => '',
-        ]);
 
+        $mailConfirmation = $this->mailConfirmationService->getDemandeEnCoursByIndividu($doctorant->getIndividu());
+
+        //Si on a déjà une demande en attente
+        $back = $this->params()->fromRoute('back');
+
+//        var_dump($mailConfirmation->getIndividu()->__toString());
+//        var_dump($mailConfirmation->getEmail());
+//        var_dump($mailConfirmation->getCode());
+//        var_dump($mailConfirmation->getEtat());
+//        var_dump($back);
+        if ($mailConfirmation !== null && ($back == 0 || $back === null)) {
+            $viewmodel = new ViewModel([
+                'email' => $mailConfirmation->getEmail(),
+            ]);
+            $viewmodel->setTemplate('application/doctorant/demande-encours');
+            return $viewmodel;
+        }
+
+        if ($mailConfirmation === null) {
+            $mailConfirmation = new MailConfirmation();
+            $mailConfirmation->setIndividu($doctorant->getIndividu());
+            $mailConfirmation->setEtat(MailConfirmation::ENVOYER);
+        }
         $request = $this->getRequest();
         if ($request->isPost()) {
-            /** @var ParametersInterface $post */
-            $post = $this->getRequest()->getPost();
-            $form->setData($post);
-            if ($form->isValid()) {
-                if ($result = $this->validatePersopass($post['identity'], $post['credential'])) {
-                    try {
-                        $this->doctorantService->updateDoctorant($doctorant, $result);
 
-                        // prise en compte du paramètre GET 'return' positionné par SaisiePersopassRouteDeflector :
-                        if ($redirectUri = $this->params()->fromQuery('return')) {
-                            return $this->redirect()->toUrl($redirectUri);
-                        }
-
-                        if (!$request->isXmlHttpRequest()) {
-                            return $this->redirect()->toRoute('home', [], [], true);
-                        }
-                    } catch (DBALException $e) {
-                        $f = new DbExceptionFormatter();
-                        $message = $f->filter($e);
-                        $form->setMessages(['credential' => [$message]]);
-                    }
-                }
-                else {
-                    $form->setMessages(['credential' => ["Identifiant ou mot de passe incorrect"]]);
-                }
+            $data = $request->getPost();
+            $email = $data['email'];
+            if (filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+                $mailConfirmation->setEmail($email);
+                $id = $this->mailConfirmationService->save($mailConfirmation);
+                $this->mailConfirmationService->generateCode($id);
+                return $this->redirect()->toRoute('mail-confirmation-envoie', ['id' => $id], [], true);
+                var_dump("here");
+            } else {
+                $this->flashMessenger()->addErrorMessage("L'email fourni <strong>".$email."</strong> est non valide.");
             }
         }
 
-        $form->setAttribute('action', $request->getRequestUri());
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('MailConfirmationForm');
 
-        $variable = $this->variableService->getRepository()->findByCodeAndEtab(
-            Variable::CODE_EMAIL_BDD,
-            $doctorant->getEtablissement());
+        $form->bind($mailConfirmation);
 
         return new ViewModel([
             'doctorant' => $doctorant,
             'form' => $form,
-            'title' => "Saisie du Persopass",
-            'detournement' => (bool) $this->params('detournement'),
-            'emailBdD' => $variable->getValeur(),
+            'title' => "Saisie du mail de contact",
+            //'detournement' => (bool) $this->params('detournement'),
+            //'emailBdD' => $variable->getValeur(),
         ]);
     }
 

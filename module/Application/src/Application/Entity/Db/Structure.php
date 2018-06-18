@@ -2,13 +2,22 @@
 
 namespace Application\Entity\Db;
 
+use UnicaenApp\Entity\HistoriqueAwareInterface;
+use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Util;
+use UnicaenImport\Entity\Db\Interfaces\SourceAwareInterface;
+use UnicaenImport\Entity\Db\Source;
+use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
 
 /**
  * Structure
  */
-class Structure
+class Structure implements HistoriqueAwareInterface, SourceAwareInterface
 {
+    use SourceAwareTrait;
+    use HistoriqueAwareTrait;
+
     /**
      * @var string $id
      * @var string $sigle
@@ -19,6 +28,15 @@ class Structure
     protected   $sigle;
     protected   $libelle;
     protected   $cheminLogo;
+
+    /**
+     * @var string
+     */
+    protected $sourceCode;
+    /**
+     * @var string
+     */
+    protected $code;
 
     /**
      * @var TypeStructure
@@ -35,11 +53,115 @@ class Structure
     protected $roles;
 
     /**
+     * @var Structure[]
+     */
+    private $structuresSubstituees;
+
+    /** @var Structure */
+    private $structureSubstituante;
+
+    /**
+     * Instancie un Etablissement, une EcodeDoctorale ou une UniteRecherche à partir des données spécifiées.
+     * NB: L'entité Structure de rattachement est également instanciée.
+     *
+     * @param StructureConcreteInterface $data
+     * @param TypeStructure            $type
+     * @param Source                   $source
+     * @return Etablissement|EcoleDoctorale|UniteRecherche
+     */
+    public static function constructFromDataObject(StructureConcreteInterface $data, TypeStructure $type, Source $source)
+    {
+        // structure de rattachement
+        $structureRattach = new Structure();
+        $structureRattach->setTypeStructure($type);
+        $structureRattach->setSource($source);
+        $structureRattach->setCheminLogo($data->getCheminLogo());
+        $structureRattach->setLibelle($data->getLibelle());
+        $structureRattach->setSigle($data->getSigle());
+        $structureRattach->setSourceCode($data->getSourceCode());
+
+        // structure concrète
+        switch (true) {
+            case $data instanceof Etablissement:
+                $structure = new Etablissement();
+                $structure->setCode($data->getCode());
+                $structure->setDomaine($data->getDomaine());
+                break;
+            case $data instanceof EcoleDoctorale:
+                $structure = new EcoleDoctorale();
+                break;
+            case $data instanceof UniteRecherche:
+                $structure = new UniteRecherche();
+                break;
+            default:
+                throw new LogicException("Type d'entité Structure spécifiée inattendu : " . get_class($data));
+                break;
+        }
+        $structure->setSource($source);
+        $structure->setSourceCode($data->getSourceCode());
+        $structure->setStructure($structureRattach);
+
+        return $structure;
+    }
+
+    /**
      * @return string
      */
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set sourceCode
+     *
+     * @param string $sourceCode
+     * @return self
+     */
+    public function setSourceCode($sourceCode)
+    {
+        $this->sourceCode = $sourceCode;
+
+        return $this;
+    }
+
+    /**
+     * Get sourceCode
+     *
+     * @return string
+     */
+    public function getSourceCode()
+    {
+        return $this->sourceCode;
+    }
+
+    /**
+     * Set code
+     *
+     * @param string $code
+     * @return self
+     */
+    public function setCode($code)
+    {
+        $this->code = $code;
+
+        return $this;
+    }
+
+    /**
+     * Get Code
+     *
+     * @return string
+     */
+    public function getCode()
+    {
+        if ($this->code !== null) return $this->code;
+        if ($this->sourceCode !== null) {
+            $code = explode("::", $this->sourceCode)[1];
+            return $code;
+        }
+
+        return null;
     }
 
     /**
@@ -123,7 +245,8 @@ class Structure
             $image = Util::createImageWithText("Aucun logo pour la structure|[".$this->getId()." - ".$this->getSigle()."]",200,200);
             return $image;
         }
-        return file_get_contents(APPLICATION_DIR . $this->cheminLogo);
+//        return file_get_contents(APPLICATION_DIR . $this->cheminLogo);
+        return file_get_contents( "/var/sygal-files" . $this->cheminLogo);
     }
 
     /**
@@ -168,4 +291,32 @@ class Structure
     {
         return $this->uniteRecherche;
     }
+
+    /**
+     * @return Structure[]
+     */
+    public function getStructuresSubstituees()
+    {
+        return $this->structuresSubstituees;
+    }
+
+    /**
+     * @return Structure
+     */
+    public function getStructureSubstituante()
+    {
+        return $this->structureSubstituante;
+    }
+
+    /**
+     * @param Structure $structureSubstituante
+     * @return Structure
+     */
+    public function setStructureSubstituante($structureSubstituante)
+    {
+        $this->structureSubstituante = $structureSubstituante;
+        return $this;
+    }
+
+
 }

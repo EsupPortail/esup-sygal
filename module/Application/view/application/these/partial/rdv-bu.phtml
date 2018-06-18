@@ -47,7 +47,6 @@ else {
     <dt>Page de couverture conforme :</dt>
     <dd class="<?php echo '' ?>">
         <?php
-            //TODO JP 05/12/2017 créer une fonction ou un ViewHelper ?
             $ok = $rdvBu->getPageTitreConforme();
             switch($ok) {
                 case 1:

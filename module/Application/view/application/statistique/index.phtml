@@ -32,79 +32,87 @@ function display_debug($texte) {
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <h1 class="page-header first"><?php echo $this->translate("Statistiques") ?> <span
-        class="badge"><?php echo count($theses) ?></span></h1>
+            class="badge"><?php echo count($theses) . " thèses"?></span></h1>
 
-<div class='selector' style='border-radius: 5px;
+<div  id="filtrage_option"                style='border-radius: 5px;
                              border:solid gray 2px;
                              background-color: whitesmoke;
                              padding: 5px;
                              margin: 10px;
-                             width:415px;
-                             float:left;'>
-    <form id="selection" method="post" action="">
+                             '>
+    <div class='selector' style='border-radius: 0px;
+                                 border-left:solid gray 2px;
+                                 background-color: whitesmoke;
+                                 padding: 5px;
+                                 margin: 10px;
+                                 width:415px;
+                                 float:left;'>
+        <form id="selection" method="post" action="">
+            <div style="width:200px; padding: 5px; margin: 5px; float:left;">
+                <h4>Type de structure : </h4>
+                <input id="structure_aucun" type="radio" name="structure_type" value="Aucun">  Aucune <br/>
+                <input id="structure_etab" type="radio" name="structure_type" value="Etab">   Établissement <br/>
+                <input id="structure_ed" type="radio" name="structure_type" value="ED">     École doctorale <br/>
+                <input id="structure_ur" type="radio" name="structure_type" value="UR">     Unité de recherche
+            </div>
+
+            <div style="clear:both;"></div>
+            <div id='structure_selector' >
+                <h4>Libellé de la structure :</h4>
+                <select style='width: 400px; max-width:400px; ' id='structure_id'> </select>
+            </div>
+        </form>
+    </div>
+
+    <div class='selector' style='border-radius: 0px;
+                                 border-left:solid gray 2px;
+                                 background-color: whitesmoke;
+                                 padding: 5px;
+                                 margin: 10px;
+                                 width:415px;
+                                 height:240px;
+                                 float:left;'>
         <div style="width:200px; padding: 5px; margin: 5px; float:left;">
-            <h4>Type de structure : </h4>
-            <input type="radio" name="structure_type" value="Aucun" checked>  Aucune <br/>
-            <input type="radio" name="structure_type" value="Etab">   Établissement <br/>
-            <input type="radio" name="structure_type" value="ED">     École doctorale <br/>
-            <input type="radio" name="structure_type" value="UR">     Unité de recherche
+            <h4>Type de date :</h4>
+            <input id="date_inscription" type="radio" name="date_type" value="inscription">  Inscription <br/>
+            <input id="date_soutenance" type="radio" name="date_type" value="soutenance">   Soutenance <br/>
         </div>
-        <div style='width:190px;
-                    height:150px;
-                    float:left;
-                    text-align:center;
-                    padding-top: 75px;'
-             id="linku">
-            <a  href='/statistique'>
-                <input type='button' class='btn btn-info' value='Remise à zéro du filtrage'/>
-            </a>
-        </div>
-        <div style="clear:both;"></div>
-    <div id='structure_selector' >
-        <h4>Libellé de la structure :</h4>
-        <select style='width: 400px; max-width:400px; ' id='structure_id'> </select>
-    </div>
-    </form>
 
-</div>
-<div class='selector' style='border-radius: 5px;
-                             border:solid gray 2px;
-                             background-color: whitesmoke;
-                             padding: 5px;
-                             margin: 10px;
-                             width:415px;
-                             height:240px;
-                             float:left;'>
-    <div style="width:200px; padding: 5px; margin: 5px; float:left;">
-        <h4>Type de date :</h4>
-        <input type="radio" name="date_type" value="Inscription" checked>  Inscription <br/>
-        <input type="radio" name="date_type" value="Soutenance">   Soutenance <br/>
+        <div style="clear:both;"></div>
+        <div>
+            <h4>Sélection de la période :</h4>
+            <p>
+
+                <input type="text" id="amount" readonly >
+            </p>
+
+            <center>
+                <div id="slider-range" style="width:380px;"></div>
+            </center>
+        </div>
+
     </div>
-    <div style='width:190px;
-                    height:100px;
-                    float:left;
-                    text-align:center;
-                    padding-top: 50px;'
-         id="linku">
+
+    <div style="clear:both;"></div>
+
+    <div style=' float:right;
+                         text-align:center;
+                         padding:10px;'>
         <a  href='/statistique'>
-            <input type='button' class='btn btn-info' value='Filtrage selon date'/>
+            <input type='button' class='btn btn-info' value='Remise à zéro'/>
         </a>
     </div>
-    <div style="clear:both;"></div>
-    <div>
-        <h4>Sélection de la période :</h4>
-        <p>
-
-            <input type="text" id="amount" readonly >
-        </p>
-
-        <center>
-        <div id="slider-range" style="width:380px;"></div>
-        </center>
+    <div style=' float:right;
+                         text-align:center;
+                         padding:10px; '
+         id = "linku">
+        <a  href='/statistique'>
+            <input type='button' class='btn btn-info' value='Filtrer les thèses'/>
+        </a>
     </div>
 
+    <div style="clear:both;"></div>
 </div>
-<div style="clear:both;"></div>
 
 
 <script>
@@ -116,6 +124,7 @@ function display_debug($texte) {
             values: [ 1998, 2018 ],
             slide: function( event, ui ) {
                 $( "#amount" ).val( "" + ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+                $.prepUrl();
             }
         });
         $( "#amount" ).val( "" + $( "#slider-range" ).slider( "values", 0 ) +
@@ -123,56 +132,125 @@ function display_debug($texte) {
     } );
 </script>
 
-<script>
+<script>SOURCE
     $(document).ready(function(){
-        $('#structure_id').change(function() {
-            var selected_structure_type = document.querySelector('input[name="structure_type"]:checked').value;
-            var selected_structure_id = document.getElementById("structure_id").value;
-            document.getElementById("linku").innerHTML = "" +
-                "<a  href='/statistique?structure_type=" + selected_structure_type + "& structure_id=" + selected_structure_id + "'> " +
-                "<input type='button' class='btn btn-info' value='Filtrer les thèse'/>" +
-                "</a>";
-            //alert( this.value );
-        });
+
+        var date_type = $.urlParam('date_type');
+        var date_min = $.urlParam('date_min');
+        var date_max = $.urlParam('date_max');
+        var structure_type = $.urlParam('structure_type');
+        var structure_id = $.urlParam('structure_id');
+
+        $.resetForm(structure_type,structure_id,date_type,date_min,date_max);
+
+        $('#filtrage_option').change(function() {$.prepUrl();});
         $('input[type=radio][name=structure_type]').change(function() {
-                //alert(this.value);
-                if (this.value == "Aucun") {
-                    // alert("Aucun");
-                    document.getElementById('structure_id').innerHTML = "";
-                } else {
-                   // alert("Pas Aucun : " + this.value);
-                }
-                if (this.value == "ED") {
-                    // var form = "ED";
-                    var form = " <?php echo generateStructureSelector($ecoles); ?> ";
-                    document.getElementById('structure_id').innerHTML = form;
-                }
-                if (this.value == "UR") {
-                    // alert("UR");
-                    var form = " <?php echo generateStructureSelector($unites); ?> ";
-                    document.getElementById('structure_id').innerHTML = form;
-                }
-                if (this.value == "Etab") {
-                    // alert("Etab");
-                    var form = " <?php echo generateStructureSelector($etablissements); ?> ";
-                    document.getElementById('structure_id').innerHTML = form;
-                }
+            //alert(this.value);
+            if (this.value == "Aucun") {
+                // alert("Aucun");
+                document.getElementById('structure_id').innerHTML = "";
+            } else {
+                // alert("Pas Aucun : " + this.value);
+            }
+            if (this.value == "ED") {
+                // var form = "ED";
+                var form = " <?php echo generateStructureSelector($ecoles); ?> ";
+                document.getElementById('structure_id').innerHTML = form;
+            }
+            if (this.value == "UR") {
+                // alert("UR");
+                var form = " <?php echo generateStructureSelector($unites); ?> ";
+                document.getElementById('structure_id').innerHTML = form;
+            }
+            if (this.value == "Etab") {
+                // alert("Etab");
+                var form = " <?php echo generateStructureSelector($etablissements); ?> ";
+                document.getElementById('structure_id').innerHTML = form;
+            }
         });
     });
+
+    $.urlParam = function(name){
+        var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+        if (results==null){
+            return null;
+        }
+        else{
+            return decodeURI(results[1]) || 0;
+        }
+    }
+
+    $.resetForm = function(structure_type, structure_id, date_type, date_min, date_max) {
+        // alert("Data \n" + structure_type + " = " + structure_id +"\n" + date_type + " = [" + date_min + "," + date_max + "]");
+
+        //Date
+        if (date_type == "soutenance") {
+            document.getElementById('date_soutenance').checked = true;
+        } else {
+            document.getElementById('date_inscription').checked = true;
+        }
+
+        if (date_min == null) date_min=1998;
+        if (date_max == null) date_max=2018;
+        $("#slider-range").slider('values',0,date_min);
+        $("#slider-range").slider('values',1,date_max);
+        $( "#amount" ).val( "" + date_min + " - " + date_max );
+
+
+        //structure
+        if (structure_type == "ED") {
+            document.getElementById('structure_ed').checked = true;
+            var form = " <?php echo generateStructureSelector($ecoles, $structure_id); ?> ";
+
+        } else {
+            if (structure_type == "UR") {
+                document.getElementById('structure_ur').checked = true;
+                var form = " <?php echo generateStructureSelector($unites, $structure_id); ?> ";
+            } else {
+                if (structure_type == "Etab") {
+                    document.getElementById('structure_etab').checked = true;
+                    var form = " <?php echo generateStructureSelector($etablissements, $structure_id); ?> ";
+                } else {
+                    document.getElementById('structure_aucun').checked = true;
+                    var form = "";
+                }
+            }
+        }
+        document.getElementById('structure_id').innerHTML = form;
+
+    }
+
+    $.prepUrl = function() {
+        var selected_structure_type = document.querySelector('input[name="structure_type"]:checked').value;
+        var selected_structure_id = document.getElementById("structure_id").value;
+        var selected_date_type = document.querySelector('input[name="date_type"]:checked').value;
+        var selected_min = $( "#slider-range" ).slider( "values", 0 );
+        var selected_max = $( "#slider-range" ).slider( "values", 1 );
+        document.getElementById("linku").innerHTML = "" +
+            "<a  href='/statistique?structure_type=" + selected_structure_type + "&structure_id=" + selected_structure_id + "&date_type="+ selected_date_type + "&date_min="+ selected_min + "&date_max="+ selected_max +"'> " +
+            "<input type='button' class='btn btn-info' value='Filtrer les thèses'/>" +
+            "</a>";
+        //alert( this.value );
+    }
 </script>
 
 <?php
-    function generateStructureSelector($structures) {
-        $texte = "";
-        $texte .= "<select id='structure_id'>";
-        $texte .= "<option value=''> Aucune </option>";
-        /** @var Structure $structure */
-        foreach ($structures as $structure) {
-            $texte .= "<option value='".$structure->getId()."'>". $structure->getLibelle() ."</option>";
-        }
-        $texte .= "</select>";
-        return $texte;
+function generateStructureSelector($structures, $id = null) {
+    //var_dump($id);
+
+    $texte = "";
+    $texte .= "<select id='structure_id'>";
+    $texte .= "<option value=''> Aucune </option>";
+    /** @var Structure $structure */
+    foreach ($structures as $structure) {
+
+        $texte .= "<option value='".$structure->getId()."'";
+        if($structure->getId() == $id) $texte .= " selected ";
+        $texte .= ">".$structure->getLibelle() ."</option>";
     }
+    $texte .= "</select>";
+    return $texte;
+}
 ?>
 
 <?php
@@ -192,12 +270,17 @@ $start = $end - 20;
 $effectifsInscription = [];
 $effectifsSoutenance = [];
 
-$dateMinimum = min( $validInscriptionTheses[0]->getDatePremiereInscription()->format("Y"),
-                    $validSoutenanceTheses[0]->getDateSoutenance()->format("Y")
-                );
-$dateMaximum = max( end($validInscriptionTheses)->getDatePremiereInscription()->format("Y"),
-                    end($validSoutenanceTheses)->getDateSoutenance()->format("Y")
-                );
+$dateMinimum = 2018;
+$dateMaximum = 2018;
+
+if (! empty($validInscriptionTheses)) {
+    $dateMinimum = min( $validInscriptionTheses[0]->getDatePremiereInscription()->format("Y"),
+        $validSoutenanceTheses[0]->getDateSoutenance()->format("Y")
+    );
+    $dateMaximum = max( end($validInscriptionTheses)->getDatePremiereInscription()->format("Y"),
+        end($validSoutenanceTheses)->getDateSoutenance()->format("Y")
+    );
+}
 
 
 for ($annee = $dateMinimum; $annee <= $dateMaximum ; $annee++) {
@@ -213,12 +296,12 @@ foreach ($theses as $these) {
 
 
 $data_insc_sout = [];
-    for($current = $start ; $current <= $end ; $current++) {
-        $inscriptions = (empty($effectifsInscription[$current])) ? 0 : count($effectifsInscription[$current]);
-        $soutenances = (empty($effectifsSoutenance[$current])) ? 0 : count($effectifsSoutenance[$current]);
+for($current = $start ; $current <= $end ; $current++) {
+    $inscriptions = (empty($effectifsInscription[$current])) ? 0 : count($effectifsInscription[$current]);
+    $soutenances = (empty($effectifsSoutenance[$current])) ? 0 : count($effectifsSoutenance[$current]);
 
-        $data_insc_sout[] = [$current , $inscriptions, $soutenances];
-    }
+    $data_insc_sout[] = [$current , $inscriptions, $soutenances];
+}
 
 $dureeTheses = [];
 for ($annee = $dateMinimum; $annee <= $dateMaximum ; $annee++) {
@@ -269,6 +352,7 @@ foreach($effectifsInscription[$end-2] as $these) {
 }
 
 $effectifParPays = generateEffectifParPays($effectifsInscription, $start, $end);
+echo "{$homme}/{$femme}";
 ?>
 
 <script> var do_drawing = true; </script>
@@ -293,7 +377,11 @@ $effectifParPays = generateEffectifParPays($effectifsInscription, $start, $end);
             pointSize: 5,
             hAxis: {
                 slantedText:true,
-                slantedTextAngle:45
+                slantedTextAngle:45,
+                //viewWindow: {
+                //min: 5,
+                //max: 2015
+                //}
             },
             vAxis: {
                 minValue: 0,
@@ -310,13 +398,13 @@ $effectifParPays = generateEffectifParPays($effectifsInscription, $start, $end);
     }
 </script>
 <div class="box panel panel-info">
-        <div class="panel-heading">
-            <h2 class="first">
-                Évolution du nombre d'inscriptions en thèses et du nombre de soutenances
-            </h2>
-        </div>
-        <div id="Inscriptions/Soutenances" style="width: 925px; height: 500px"></div>
+    <div class="panel-heading">
+        <h2 class="first">
+            Évolution du nombre d'inscriptions en thèses et du nombre de soutenances
+        </h2>
     </div>
+    <div id="Inscriptions/Soutenances" style="width: 925px; height: 500px"></div>
+</div>
 
 <script type="text/javascript">
     google.charts.load('current', {'packages':['corechart']});
@@ -367,8 +455,9 @@ $effectifParPays = generateEffectifParPays($effectifsInscription, $start, $end);
 
         var data = google.visualization.arrayToDataTable([
             ['Genre', 'Effectif'],
-            ['Femme',     <?php echo $femme; ?>],
-            ['Homme',     <?php echo $homme; ?>]
+            ['Homme',     <?php echo $homme; ?>],
+            ['Femme',     <?php echo $femme; ?>]
+
         ]);
 
         var options = {
@@ -395,8 +484,8 @@ $effectifParPays = generateEffectifParPays($effectifsInscription, $start, $end);
 
             <?php
             foreach ($discipline as $nom => $effectif) {
-               if ($effectif >= $threshold) echo "[\"".$nom ."\",".$effectif."],";
-               else $discipline["Autres"] += $effectif;
+                if ($effectif >= $threshold) echo "[\"".$nom ."\",".$effectif."],";
+                else $discipline["Autres"] += $effectif;
             }
             echo "[\"Autres\",". $discipline["Autres"]."],"
             ?>
@@ -435,8 +524,8 @@ $effectifParPays = generateEffectifParPays($effectifsInscription, $start, $end);
         var data = google.visualization.arrayToDataTable([
             ['Country', 'Popularity'],
             <?php foreach($effectifParPays as $country => $number) {
-               echo "[ '{$country}' , $number ],";
-            }?>
+            echo "[ '{$country}' , $number ],";
+        }?>
         ]);
         var options = {
             colorAxis: { maxValue: 100 }
@@ -460,16 +549,24 @@ $effectifParPays = generateEffectifParPays($effectifsInscription, $start, $end);
 <?php
 function generateEffectifParPays($effectifsInscription, $start , $end) {
     $code = [];
+    $code["AFGHAN(E)"] = "Afghanistan";
     $code["ALGERIEN(NE)"] = "Algeria";
     $code["ALLEMAND(E)"] = "Germany";
     $code["AMERICAIN(E)"] = "United States";
+    $code["ANDORRAN(NE)"] = "Andorra";
     $code["ANGOLAIS(E)"] = "Angola";
     $code["APATRIDE"] = "";
     $code["ARGENTIN(E)"] = "Argentina";
     $code["ARMENIEN(E)"] = "Armenia";
+    $code["AZERI(E)"] = "Azerbaijan";
+    $code["AUSTRALIEN(NE)"] = "Australia";
     $code["AUTRICHIEN(NE)"] = "Austria";
+    $code["BIELORUSSE"] = "Belarus";
+    $code["BIRMAN(E)"] = "Myanmar";
     $code["BELGE"] = "Belgium";
+    $code["BENGALI(E)"] = "Bengladesh";
     $code["BENINOIS(E)"] = "Benin";
+    $code["BOLIVIEN(NE)"] = "Bolivia";
     $code["BOSNIAQUE"] = "Bosnia";
     $code["BRESILIEN(NE)"] = "Brazil";
     $code["BRITANNIQUE"] = "United Kingdom";
@@ -480,6 +577,7 @@ function generateEffectifParPays($effectifsInscription, $start , $end) {
     $code["CAMEROUNAIS(E)"] = "Cameroon";
     $code["CANADIEN(NE)"] = "Canada";
     $code["CAP VERDIEN(NE)"] = "Cabo Verde";
+    $code["CENTRAFRICAIN(E)"] = "Central African Republic";
     $code["CHILIEN(NE)"] = "Chile";
     $code["CHINOIS(E)"] = "China";
     $code["CHINOIS(E) TAIWAN"] = "Taiwan";
@@ -487,15 +585,20 @@ function generateEffectifParPays($effectifsInscription, $start , $end) {
     $code["COMORIEN(NE)"] = "Comoros";
     $code["CONGOLAIS(E)"] = "Congo";
     $code["CROATE"] = "Croatia";
+    $code["CUBAIN(E)"] = "Cuba";
+    $code["DANOIS(E)"] = "Denmark";
     $code["DJIBOUTIEN(NE)"] = "Djibouti";
     $code["EGYPTIEN(NE)"] = "Egypt";
+    $code["EL SALVADORIEN(NE)"] = "El Salvador";
     $code["EQUATORIEN(NE)"] = "Equatorial Guinea";
     $code["ESPAGNOL(E)"] = "Spain";
     $code["FINLANDAIS(E)"] = "Finland";
     $code["FRANCAIS(E)"] = "France";
     $code["GABONAIS(E)"] = "Gabon";
+    $code["GEORGIEN(NE)"] = "Georgia";
     $code["GHANEEN(NE)"] = "Ghana";
     $code["GREC(QUE)"] = "Greece";
+    $code["GUATEMALTEQUE"] = "Guatemala";
     $code["GUINEEN(NE)"] = "French Guiana";
     $code["HAITIEN(NE)"] = "Haiti";
     $code["HONGROIS(E)"] = "Hungary";
@@ -504,41 +607,57 @@ function generateEffectifParPays($effectifsInscription, $start , $end) {
     $code["IRAKIEN(NE)"] = "Iraq";
     $code["IRANIEN(NE)"] = "Iran";
     $code["IRLANDAIS(E)"] = "Ireland";
+    $code["ISRAELIEN(NE)"] = "Israel";
     $code["ITALIEN(NE)"] = "Italia";
     $code["IVOIRIEN(NE)"] = "CI"; //----------------------------------
     $code["JAMAICAIN(E)"] = "Jamaica";
     $code["JAPONAIS(E)"] = "Japan";
     $code["JORDANIEN(NE)"] = "Jordan";
+    $code["KAZAKH"] = "Kazakhstan";
+    $code["KENYAN(NE)"] = "Kenya";
+    $code["KOWEITIEN(NE)"] = "Kuwait";
+    $code["LAOTIEN(NE)"] = "Laos";
+    $code["LETTONIEN(NE)"] = "Latvia";
     $code["LIBANAIS(E)"] = "Lebanon";
     $code["LIBYEN(NE)"] = "Libya";
     $code["LITHUANIEN(NE)"] = "Lithuania";
     $code["LUXEMBOURGEOIS(E)"] = "Luxembourg";
     $code["MALAIS(E)"] = "Malaysia";
+    $code["MALAWIEN(NE)"] = "Malawi";
     $code["MALGACHE"] = "Madagascar";
     $code["MALIEN(NE)"] = "Mali";
+    $code["MALTAIS(E)"] = "Malta";
     $code["MAROCAIN(E)"] = "Maroco";
     $code["MAURICIEN(NE)"] = "Mauritius";
     $code["MAURITANIEN(NE)"] = "Mauritania";
     $code["MEXICAIN(E)"] = "Mexico";
     $code["MONEGASQUE"] = "Monaco";
+    $code["MONGOL(E)"] = "Mongolia";
+    $code["MOLDAVE"] = "Moldova";
     $code["MOZAMBIQUOIS(E)"] = "Mozambique";
     $code["NEERLANDAIS(E)"] = "Netherlands";
     $code["NEPALAIS(E)"] = "Nepal";
     $code["NICARAGUAIS(E)"] = "Nicaragua";
     $code["NIGERIEN(NE)"] = "Nigeria";
+    $code["NIGERIAN(E)"] = "Nigeria";
     $code["NORVEGIEN(NE)"] = "Norway";
+    $code["OUGANDAIS(E)"] = "Uganda";
     $code["PAKISTANAIS(E)"] = "Pakistan";
     $code["PALESTINIEN(NE)"] = "Palestine";
     $code["PANAMEEN(NE)"] = "Panama";
     $code["PERUVIEN(NE)"] = "Peru";
+    $code["PHILIPPIN(NE)"] = "Philippines";
     $code["POLONAIS(E)"] = "Poland";
     $code["PORTUGAIS(E)"] = "Portugal";
     $code["ROUMAIN(E)"] = "Romania";
     $code["RUANDAIS(E)"] = "Rwanda";
+    $code["RWANDAIS(E)"] = "Rwanda";
     $code["RUSSE"] = "Russia";
     $code["SAOUDIEN(NE)"] = "Saudi Arabia";
     $code["SENEGALAIS(E)"] = "Senegal";
     $code["SERBE"] = "Serbia";
+    $code["SLOVAQUE"] = "Slovakia";
+    $code["SOUDANAIS(E)"] = "Sudan";
     $code["SUD COREEN(NE)"] = "Korea, Republic of";
     $code["SUEDOIS(E)"] = "Sweden";
     $code["SUISSE"] = "Switzerland";
@@ -550,9 +669,11 @@ function generateEffectifParPays($effectifsInscription, $start , $end) {
     $code["TUNISIEN(NE)"] = "Tunisia";
     $code["TURC (TURQUE)"] = "Turkey";
     $code["UKRAINIEN(NE)"] = "Ukraine";
+    $code["EMIRATS ARABES UNIS"] = "United Arab Emirates";
     $code["VENEZUELIEN(NE)"] = "Venezuela";
     $code["VIETNAMIEN(NE)"] = " 	Viet Nam";
     $code["YEMENITE"] = "Yemen";
+    $code["YOUGOSLAVE"] = "";
     $code["ZAIROIS(E)"] = "Zaire";
 
 

@@ -2,7 +2,7 @@
 
 namespace Application\Entity\Db;
 
-use Notification\Entity\Notif;
+use Notification\Entity\NotifEntity;
 
 class ImportObservNotif
 {
@@ -17,7 +17,7 @@ class ImportObservNotif
     private $importObserv;
 
     /**
-     * @var Notif
+     * @var NotifEntity
      */
     private $notif;
 
@@ -49,7 +49,7 @@ class ImportObservNotif
     }
 
     /**
-     * @return Notif
+     * @return NotifEntity
      */
     public function getNotif()
     {
@@ -57,10 +57,10 @@ class ImportObservNotif
     }
 
     /**
-     * @param Notif $notif
+     * @param NotifEntity $notif
      * @return ImportObservNotif
      */
-    public function setNotif(Notif $notif)
+    public function setNotif(NotifEntity $notif)
     {
         $this->notif = $notif;
 

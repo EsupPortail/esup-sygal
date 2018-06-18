@@ -5,9 +5,12 @@ namespace Application\Controller\Factory;
 use Application\Controller\TheseController;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Fichier\FichierService;
-use Application\Service\Notification\NotificationService;
+use Application\Service\MailConfirmationService;
+use Application\Service\Notification\NotifierService;
 use Application\Service\Role\RoleService;
+use Application\Service\These\TheseRechercheService;
 use Application\Service\These\TheseService;
+use Application\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\Validation\ValidationService;
 use Application\Service\Variable\VariableService;
 use Application\Service\VersionFichier\VersionFichierService;
@@ -33,22 +36,29 @@ class TheseControllerFactory
          * @var ValidationService $validationService
          * @var VersionFichierService $versionFichierService
          * @var TheseService $theseService
+         * @var TheseRechercheService $theseRechercheService
          * @var RoleService $roleService
          * @var FichierService $fichierService
          * @var WorkflowService $workflowService
-         * @var NotificationService $notificationService
+         * @var NotifierService $notifierService
          * @var EtablissementService $etablissementService
+         * @var UniteRechercheService $uniteService
+         * @var MailConfirmationService $mailConfirmationService
          * @var EntityManager $entityManager
          */
         $variableService = $controllerManager->getServiceLocator()->get('VariableService');
         $validationService = $controllerManager->getServiceLocator()->get('ValidationService');
         $versionFichierService = $controllerManager->getServiceLocator()->get('VersionFichierService');
         $theseService = $controllerManager->getServiceLocator()->get('TheseService');
+        $theseRechercheService = $controllerManager->getServiceLocator()->get('TheseRechercheService');
         $roleService = $controllerManager->getServiceLocator()->get('RoleService');
+        $uniteService = $controllerManager->getServiceLocator()->get('UniteRechercheService');
         $fichierService = $controllerManager->getServiceLocator()->get('FichierService');
         $workflowService = $controllerManager->getServiceLocator()->get('WorkflowService');
         $etablissementService = $controllerManager->getServiceLocator()->get('EtablissementService');
+        $mailConfirmationService = $controllerManager->getServiceLocator()->get('MailConfirmationService');
         $entityManager = $controllerManager->getServiceLocator()->get('doctrine.entitymanager.orm_default');
+        $notifierService = $controllerManager->getServiceLocator()->get(NotifierService::class);
 
         $controller = new TheseController();
         $controller->setTimeoutRetraitement($this->getTimeoutRetraitementFromOptions($options));
@@ -56,11 +66,15 @@ class TheseControllerFactory
         $controller->setValidationService($validationService);
         $controller->setVersionFichierService($versionFichierService);
         $controller->setTheseService($theseService);
+        $controller->setTheseRechercheService($theseRechercheService);
         $controller->setRoleService($roleService);
         $controller->setFichierService($fichierService);
         $controller->setWorkflowService($workflowService);
         $controller->setEtablissementService($etablissementService);
+        $controller->setUniteRechercheService($uniteService);
+        $controller->setMailConfirmationService($mailConfirmationService);
         $controller->setEntityManager($entityManager);
+        $controller->setNotifierService($notifierService);
 
         return $controller;
     }
@@ -74,6 +88,6 @@ class TheseControllerFactory
     {
         $options = $serviceLocator->get('config');
 
-        return isset($options['sodoct']) ? $options['sodoct'] : [];
+        return isset($options['sygal']) ? $options['sygal'] : [];
     }
 }

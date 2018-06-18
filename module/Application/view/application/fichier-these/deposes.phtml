@@ -12,6 +12,8 @@ use Application\Entity\Db\Fichier;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\View\Renderer\PhpRenderer;
 use Zend\Paginator\Paginator;
+use UnicaenApp\Form\Element\SearchAndSelect;
+
 
 ?>
 
@@ -28,6 +30,23 @@ use Zend\Paginator\Paginator;
 <div class="pull-left">
     <?php echo $this->partial('partial/form-filtrage') ?>
 </div>
+<form method="post" action="<?php echo $url ?>">
+    <div class="pull-right">
+        &nbsp;
+        <input type='submit' class='btn btn-default btn-sm' value='Filtrer' />
+    </div>
+    <div class="pull-right">
+    <?php
+        $sas = new SearchAndSelect('individu');
+        $sas->setLabel($this->translate("Filtrage selon un doctorant :"));
+        $sas->setAttribute('class', 'individu-finder');
+        $sas->setAutocompleteSource($this->url('utilisateur/rechercher-individu',[],[],true));
+        echo $this->formControlGroup($sas, 'formSearchAndSelect');
+    ?>
+    </div>
+
+</form>
+
 <!--<div class="pull-right">-->
 <!--    --><?php //echo $this->partial('partial/form-recherche', ['text' => $text]) ?>
 <!--</div>-->

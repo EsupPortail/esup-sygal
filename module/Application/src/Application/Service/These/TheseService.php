@@ -2,7 +2,6 @@
 
 namespace Application\Service\These;
 
-use Application\Entity\UserWrapper;
 use Application\Entity\Db\Attestation;
 use Application\Entity\Db\Diffusion;
 use Application\Entity\Db\Fichier;
@@ -15,25 +14,22 @@ use Application\Entity\Db\VersionFichier;
 use Application\Notification\ValidationRdvBuNotification;
 use Application\Service\BaseService;
 use Application\Service\Fichier\FichierServiceAwareTrait;
-use Application\Service\Notification\NotificationServiceAwareTrait;
-use Application\Service\UserContextService;
+use Application\Service\Notification\NotifierServiceAwareTrait;
+use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
-use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\Query\Expr\Join;
-use Doctrine\ORM\QueryBuilder;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Traits\MessageAwareInterface;
-use UnicaenApp\Util;
 use UnicaenAuth\Entity\Db\UserInterface;
 
 class TheseService extends BaseService
 {
     use ValidationServiceAwareTrait;
-    use NotificationServiceAwareTrait;
+    use NotifierServiceAwareTrait;
     use FichierServiceAwareTrait;
     use VariableServiceAwareTrait;
+    use UserContextServiceAwareTrait;
 
     /**
      * @return TheseRepository
@@ -46,124 +42,6 @@ class TheseService extends BaseService
         return $repo;
     }
 
-    /**
-     * @param QueryBuilder       $qb
-     * @param UserContextService $userContext
-     */
-    public function decorateQbFromUserContext(QueryBuilder $qb, UserContextService $userContext)
-    {
-        $role = $userContext->getSelectedIdentityRole();
-
-        if ($role->isTheseDependant()) {
-            if ($role->isDoctorant()) {
-                $qb
-                    ->andWhere('t.doctorant = :doctorant')
-                    ->setParameter('doctorant', $userContext->getIdentityDoctorant());
-            }
-            elseif ($role->isDirecteurThese()) {
-                switch (true) {
-                    case $identity = $userContext->getIdentityLdap():
-                    case $identity = $userContext->getIdentityShib():
-                        $userWrapper = UserWrapper::inst($identity);
-                        break;
-                    default:
-                        throw new RuntimeException("Cas imprévu!");
-                }
-                $qb
-                    ->join('t.acteurs', 'adt', Join::WITH, 'adt.role = :role')
-                    ->join('adt.individu', 'idt', Join::WITH, 'idt.sourceCode like :idtSourceCode')
-                    ->setParameter('idtSourceCode', '%::' . $userWrapper->getSupannEmpId())
-                    ->setParameter('role', $role);
-            }
-            // sinon role = membre jury
-            // ...
-        }
-
-        elseif ($role->isStructureDependant()) {
-            if ($role->isEtablissementDependant()) {
-                /**
-                 * On ne voit que les thèses de son établissement.
-                 */
-                $qb
-                    ->andWhere('t.etablissement = :etab')
-                    ->setParameter('etab', $role->getStructure()->getEtablissement());
-            }
-            elseif ($role->isEcoleDoctoraleDependant()) {
-                /**
-                 * On ne voit que les thèses concernant son ED.
-                 */
-                $qb
-                    ->addSelect('ed')->join('t.ecoleDoctorale', 'ed')
-                    ->andWhere('ed = :ed')
-                    ->setParameter('ed', $role->getStructure()->getEcoleDoctorale());
-            }
-            elseif ($role->isUniteRechercheDependant()) {
-                /**
-                 * On ne voit que les thèses concernant son UR.
-                 */
-                $qb
-                    ->addSelect('ur')->join('t.uniteRecherche', 'ur')
-                    ->andWhere('ur = :ur')
-                    ->setParameter('ur', $role->getStructure()->getUniteRecherche());
-            }
-        }
-    }
-
-    /**
-     * Recherche de thèses à l'aide de la vue matérialisée MV_RECHERCHE_THESE.
-     *
-     * @param string  $text
-     * @param integer $limit
-     *
-     * @return array
-     */
-    public function rechercherThese($text, $limit = 100)
-    {
-        if (strlen($text) < 2) return [];
-
-        $text = Util::reduce($text);
-        $criteres = explode(' ', $text);
-
-        $sql     = sprintf('SELECT * FROM MV_RECHERCHE_THESE MV WHERE rownum <= %s ', (int)$limit);
-        $sqlCri  = '';
-        $criCode = 0;
-
-        foreach ($criteres as $c) {
-            if (! is_numeric($c)) {
-                if ($sqlCri != '') {
-                    $sqlCri .= ' AND ';
-                }
-                $sqlCri .= "haystack LIKE LOWER(q'[%" . $c . "%]')"; // q'[] : double les quotes
-            } else {
-                $criCode = (int) $c;
-            }
-        }
-        $orc = [];
-        if ($sqlCri != '') {
-            $orc[] = '(' . $sqlCri . ')';
-        }
-        if ($criCode) {
-            $orc[] = "(code_doctorant = '" . $criCode . "' OR code_ecole_doct = '" . $criCode . "')";
-        }
-        $orc = implode(' OR ', $orc);
-        $sql .= ' AND (' . $orc . ') ';
-
-        try {
-            $stmt = $this->getEntityManager()->getConnection()->executeQuery($sql);
-        } catch (DBALException $e) {
-            throw new RuntimeException("Erreur rencontrée lors de la requête", null, $e);
-        }
-
-        $theses = [];
-        while ($r = $stmt->fetch()) {
-            $theses[$r['CODE_THESE']] = [
-                'code'           => $r['CODE_THESE'],
-                'code-doctorant' => $r['CODE_DOCTORANT'],
-            ];
-        }
-
-        return $theses;
-    }
 
     /**
      * @param These           $these
@@ -339,16 +217,16 @@ class TheseService extends BaseService
             $this->validationService->validateRdvBu($these);
             $successMessage = "Validation enregistrée avec succès.";
 
-            // notification (doctorant: à la 1ere validation seulement)
+            // notification BDD et BU + doctorant (à la 1ere validation seulement)
+            $notifierDoctorant = ! $this->validationService->existsValidationRdvBuHistorisee($these);
             $notification = new ValidationRdvBuNotification();
-            $notification->setVariableService($this->variableService);
             $notification->setThese($these);
-            $notification->setNotifierDoctorant(! $this->validationService->existsValidationRdvBuHistorisee($these));
-            $this->notificationService->trigger($notification);
-            $notificationLog = $this->notificationService->getMessage('<br>', 'info');
+            $notification->setNotifierDoctorant($notifierDoctorant);
+            $this->notifierService->triggerValidationRdvBu($notification);
+//            $notificationLog = $this->notifierService->getMessage('<br>', 'info');
 
             $this->addMessage($successMessage, MessageAwareInterface::SUCCESS);
-            $this->addMessage($notificationLog, MessageAwareInterface::INFO);
+//            $this->addMessage($notificationLog, MessageAwareInterface::INFO);
         }
     }
 }

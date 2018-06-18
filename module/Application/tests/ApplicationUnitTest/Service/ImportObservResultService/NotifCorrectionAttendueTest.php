@@ -7,7 +7,7 @@ use Application\Entity\Db\Repository\ImportObservResultRepository;
 use Application\Entity\Db\These;
 use Application\Rule\NotificationDepotVersionCorrigeeAttenduRule;
 use Application\Service\ImportObservResult\ImportObservResultService;
-use Application\Service\Notification\NotificationService;
+use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
 use ApplicationUnitTest\Test\Asset\EntityAsset;
 use ApplicationUnitTest\Test\Provider\MockProviderAwareTrait;
@@ -29,7 +29,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
     protected $ruleMock;
 
     /**
-     * @var PHPUnit_Framework_MockObject_MockObject|NotificationService
+     * @var PHPUnit_Framework_MockObject_MockObject|NotifierService
      */
     protected $notificationServiceMock;
 
@@ -57,7 +57,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
             ->willReturn($aujourdhui);
         $this->notificationServiceMock
             ->expects($this->exactly(1)) // 1 fois par record
-            ->method('notifierCorrectionAttendue');
+            ->method('triggerCorrectionAttendue');
 
         if ($typeCorrectionAttendue === These::CORRECTION_MINEURE) {
             $this->service->handleImportObservResultsForCorrectionMineure();
@@ -85,7 +85,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
             ->willReturn($hier);
         $this->notificationServiceMock
             ->expects($this->never())
-            ->method('notifierCorrectionAttendue');
+            ->method('triggerCorrectionAttendue');
 
         if ($typeCorrectionAttendue === These::CORRECTION_MINEURE) {
             $this->service->handleImportObservResultsForCorrectionMineure();
@@ -112,7 +112,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
             ->willReturn(null);
         $this->notificationServiceMock
             ->expects($this->never())
-            ->method('notifierCorrectionAttendue');
+            ->method('triggerCorrectionAttendue');
 
         if ($typeCorrectionAttendue === These::CORRECTION_MINEURE) {
             $this->service->handleImportObservResultsForCorrectionMineure();
@@ -136,7 +136,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
             ->willReturn($aujourdhui);
         $this->notificationServiceMock
             ->expects($this->exactly(1)) // 1 fois par record
-            ->method('notifierCorrectionAttendue')
+            ->method('triggerCorrectionAttendue')
             ->with($this->anything(), $this->anything(), $directeursTheseEnCopie = $this->isFalse());
 
         $this->service->handleImportObservResultsForCorrectionMineure();
@@ -157,7 +157,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
         $this->notificationServiceMock
             ->expects($this->exactly(1)) // 1 fois par record
-            ->method('notifierCorrectionAttendue')
+            ->method('triggerCorrectionAttendue')
             ->with($this->anything(), $this->anything(), $directeursTheseEnCopie = $this->isFalse());
 
         $this->service->handleImportObservResultsForCorrectionMajeure();
@@ -178,7 +178,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
             ->willReturn(false);
         $this->notificationServiceMock
             ->expects($this->exactly(1)) // 1 fois par record
-            ->method('notifierCorrectionAttendue')
+            ->method('triggerCorrectionAttendue')
             ->with($this->anything(), $this->anything(), $directeursTheseEnCopie = $this->isTrue());
 
         $this->service->handleImportObservResultsForCorrectionMajeure();
@@ -204,7 +204,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
     {
         $em = $this->mp()->entityManagerMock();
         $theseService = $this->createTheseServiceMock();
-        $this->notificationServiceMock = $this->createNotificationServiceMock();
+        $this->notificationServiceMock = $this->createNotifierServiceMock();
 
         /** @var PHPUnit_Framework_MockObject_MockObject|ImportObservResultRepository $repository */
         $repository = $this->mp()->entityRepositoryMock(ImportObservResultRepository::class);
@@ -223,7 +223,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
         $this->service = new ImportObservResultService();
         $this->service->setEntityManager($em);
         $this->service->setTheseService($theseService);
-        $this->service->setNotificationService($this->notificationServiceMock);
+        $this->service->setNotifierService($this->notificationServiceMock);
         $this->service->setRepository($repository);
         $this->service->setNotificationDepotVersionCorrigeeAttenduRule($this->ruleMock);
     }
@@ -247,7 +247,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
         return $theseService;
     }
 
-    private function createNotificationServiceMock()
+    private function createNotifierServiceMock()
     {
         return $this->mp()->notificationServiceMock();
     }

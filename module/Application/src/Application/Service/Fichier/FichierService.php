@@ -3,7 +3,6 @@
 namespace Application\Service\Fichier;
 
 use Application\Command\ShellScriptRunner;
-use Application\Entity\Db\ContenuFichier;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\Repository\FichierRepository;
@@ -14,15 +13,11 @@ use Application\Filter\NomFichierFormatter;
 use Application\Service\BaseService;
 use Application\Service\Fichier\Exception\DepotImpossibleException;
 use Application\Service\Fichier\Exception\ValidationImpossibleException;
-use Application\Service\ValiditeFichier\ValiditeFichierServiceAwareInterface;
 use Application\Service\ValiditeFichier\ValiditeFichierServiceAwareTrait;
-use Application\Service\VersionFichier\VersionFichierServiceAwareInterface;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\Validator\Exception\CinesErrorException;
 use Application\Validator\FichierCinesValidator;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\NonUniqueResultException;
-use Retraitement\Service\RetraitementServiceAwareInterface;
+use Doctrine\ORM\OptimisticLockException;
 use Retraitement\Service\RetraitementServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
@@ -34,6 +29,27 @@ class FichierService extends BaseService
     use VersionFichierServiceAwareTrait;
     use ValiditeFichierServiceAwareTrait;
     use RetraitementServiceAwareTrait;
+
+    /**
+     * @var string
+     */
+    private $rootDirectoryPath;
+
+    /**
+     * @param string $rootDirectoryPath
+     */
+    public function setRootDirectoryPath($rootDirectoryPath)
+    {
+        $this->rootDirectoryPath = $rootDirectoryPath;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRootDirectoryPath()
+    {
+        return $this->rootDirectoryPath;
+    }
 
     /**
      * @return FichierRepository
@@ -52,7 +68,7 @@ class FichierService extends BaseService
      */
     public function fetchVersionFichier($code)
     {
-        /** @var VersionFichier $nature */
+        /** @var VersionFichier $version */
         $version = $this->getEntityManager()->getRepository(VersionFichier::class)->findOneBy(['code' => $code]);
 
         return $version;
@@ -81,29 +97,75 @@ class FichierService extends BaseService
     }
 
     /**
-     * Fetch le contenu d'un fichier.
+     * Retourne le contenu d'un Fichier sous la forme d'une chaîne de caractères.
      *
      * @param Fichier $fichier
-     * @return ContenuFichier
+     * @return string
      */
     public function fetchContenuFichier(Fichier $fichier)
     {
-        $qb = $this->getEntityManager()->getRepository(ContenuFichier::class)->createQueryBuilder('cf')
-            ->where('cf.fichier = :fichier')
-            ->setParameter('fichier', $fichier);
+        $filePath = $this->computeDestinationFilePathForFichier($fichier);
 
-        try {
-            /** @var ContenuFichier $contenuFichier */
-            $contenuFichier = $qb->getQuery()->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Plus d'un contenu fichier trouvé pour le fichier suivant: " . $fichier);
+        if (! is_readable($filePath)) {
+            throw new RuntimeException(
+                "Le fichier suivant n'existe pas ou n'est pas accessible sur le serveur : " . $filePath);
         }
 
-        if ($contenuFichier === null) {
-            throw new RuntimeException("Aucun contenu fichier trouvé pour le fichier suivant: " . $fichier);
-        }
+        $contenuFichier = file_get_contents($filePath);
 
         return $contenuFichier;
+    }
+
+    /**
+     * Retourne le chemin sur le disque (du serveur) du dossier parent du fichier physique associé à un Fichier.
+     *
+     * @param Fichier $fichier Entité Fichier dont on veut connaître le chemin du fichier physique associé
+     *                         stocké sur disque
+     * @return string
+     */
+    private function computeDestinationDirectoryPathForFichier(Fichier $fichier)
+    {
+        return $this->rootDirectoryPath . '/' . strtolower($fichier->getNature()->getCode());
+    }
+
+    /**
+     * Retourne le chemin sur le disque (du serveur) du fichier physique associé à un Fichier.
+     *
+     * @param Fichier $fichier Entité Fichier dont on veut connaître le chemin du fichier physique associé
+     *                         stocké sur disque
+     * @return string
+     */
+    public function computeDestinationFilePathForFichier(Fichier $fichier)
+    {
+        return $this->computeDestinationDirectoryPathForFichier($fichier) . '/' . $fichier->getNom();
+    }
+
+    /**
+     * Création si besoin du dossier destination du Fichier spécifié.
+     *
+     * @param Fichier $fichier
+     */
+    private function createDestinationDirectoryPathForFichier(Fichier $fichier)
+    {
+        $parentDir = $this->computeDestinationDirectoryPathForFichier($fichier);
+        $ok = \Application\Util::createWritableFolder($parentDir, 0770);
+        if (!$ok) {
+            throw new RuntimeException(
+                "Le répertoire suivant n'a pas pu être créé sur le serveur : " . $parentDir);
+        }
+    }
+
+    private function moveUploadedFileForFichier(Fichier $fichier, $fromPath)
+    {
+        // création si bseoin du dossier destination
+        $this->createDestinationDirectoryPathForFichier($fichier);
+
+        $newPath = $this->computeDestinationFilePathForFichier($fichier);
+        $res = move_uploaded_file($fromPath, $newPath);
+
+        if ($res === false) {
+            throw new RuntimeException("Impossible de déplacer le fichier temporaire uploadé de $fromPath vers $newPath");
+        }
     }
 
     /**
@@ -143,6 +205,10 @@ class FichierService extends BaseService
             $typeFichier = $file['type'];
             $tailleFichier = $file['size'];
 
+            if (! is_uploaded_file($path)) {
+                throw new RuntimeException("Possible file upload attack: " . $path);
+            }
+
             // validation du format de fichier
             if ($nature->estFichierNonPdf() && $typeFichier === Fichier::MIME_TYPE_PDF) {
                 throw new DepotImpossibleException("Le format de fichier PDF n'est pas accepté pour les annexes");
@@ -150,7 +216,6 @@ class FichierService extends BaseService
             if ($nature->estThesePdf() && $typeFichier !== Fichier::MIME_TYPE_PDF) {
                 throw new DepotImpossibleException("Seul le format de fichier PDF est accepté pour la thèse");
             }
-
 
             $fichier = new Fichier();
             $fichier
@@ -165,16 +230,14 @@ class FichierService extends BaseService
             // à faire en dernier car le formatter exploite des propriétés du Fichier
             $fichier->setNom($nomFichierFormatter ? $nomFichierFormatter->filter($fichier) : $nomFichier);
 
-            $contenuFichier = new ContenuFichier();
-            $contenuFichier->setData(file_get_contents($path));
-            $contenuFichier->setFichier($fichier);
+            $this->moveUploadedFileForFichier($fichier, $path);
 
-            $this->entityManager->persist($contenuFichier);
             $this->entityManager->persist($fichier);
-            $this->entityManager->flush($contenuFichier);
-            $this->entityManager->flush($fichier);
-
-            unlink($path);
+            try {
+                $this->entityManager->flush($fichier);
+            } catch (OptimisticLockException $e) {
+                throw new RuntimeException("Erreur rencontrée lors de l'enregistrement du Fichier", null, $e);
+            }
 
             $fichiers[] = $fichier;
 
@@ -195,8 +258,7 @@ class FichierService extends BaseService
     {
         $exceptionThrown = null;
 
-        // création du fichier temporaire sur le disque
-        $filePath = $this->writeFichierToDisk($fichier);
+        $filePath = $this->computeDestinationFilePathForFichier($fichier);
 
         try {
             $estArchivable = $this->fichierCinesValidator->isValid($filePath);
@@ -212,9 +274,6 @@ class FichierService extends BaseService
             $message = "Le test d'archivabilité a rencontré un problème : " . $re->getMessage();
             $exceptionThrown = $re;
         }
-
-        // suppression du fichier temporaire sur le disque
-        unlink($filePath);
 
         $resultat = [
             'estArchivable' => $estArchivable,
@@ -282,30 +341,32 @@ class FichierService extends BaseService
      */
     public function creerFichierRetraite(Fichier $fichier, $timeout = null)
     {
-        $inputFilePath = $this->writeFichierToDisk($fichier);
-        $outputFilePath = $this->retraitementService->retraiterFichier($inputFilePath, $timeout);
-        // Si le timout éventuel est atteint, une exception TimedOutCommandException est levée.
-
-        unlink($inputFilePath);
-
-        $outputFileContent = file_get_contents($outputFilePath);
-        unlink($outputFilePath);
+        $inputFilePath  = $this->computeDestinationFilePathForFichier($fichier);
 
         $fichierRetraite = $this->preparerFichierRetraite($fichier);
+        $outputFilePath = $this->computeDestinationFilePathForFichier($fichierRetraite);
+
+        $this->createDestinationDirectoryPathForFichier($fichierRetraite);
+        $this->retraitementService->retraiterFichier($inputFilePath, $outputFilePath, $timeout);
+        //
+        // NB: Si un timout est spécifié et qu'il est atteint, une exception TimedOutCommandException est levée.
+        //
+
         $fichierRetraite
             ->setEstPartiel(false)
-            ->setTaille(strlen($outputFileContent));
+            ->setTaille(strlen(file_get_contents($outputFilePath))); // TODO: utiliser filesize() plutôt ?
 
-        $contenuFichierRetraite = new ContenuFichier();
-        $contenuFichierRetraite->setData($outputFileContent);
-        $contenuFichierRetraite->setFichier($fichierRetraite);
+        $this->entityManager->persist($fichier);
+        try {
+            $this->entityManager->flush($fichier);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement du Fichier", null, $e);
+        }
 
         $this->entityManager->beginTransaction();
         try {
             $this->entityManager->persist($fichierRetraite);
-            $this->entityManager->persist($contenuFichierRetraite);
             $this->entityManager->flush($fichierRetraite);
-            $this->entityManager->flush($contenuFichierRetraite);
             $this->entityManager->commit();
         } catch (\Exception $e) {
             $this->entityManager->rollback();
@@ -342,6 +403,7 @@ class FichierService extends BaseService
         $runner = new ShellScriptRunner($scriptPath);
         $runner->setAsync();
         $runner->run($args);
+        // /var/www/html/sygal/bin/fichier-retraiter.sh --tester-archivabilite --notifier="bertrand.gauthier@unicaen.fr" 25f8f498-23d0-44a0-b1b7-f889720ec4f8
     }
 
     /**
@@ -353,7 +415,6 @@ class FichierService extends BaseService
     public function supprimerFichier(Fichier $fichier)
     {
         $version = $fichier->getVersion();
-        $these = $fichier->getThese();
 
         // si c'est le fichier de thèse original qui est supprimé, suppression aussi du fichier retraité éventuel
         $supprimerAussiTheseRetraite = ! $fichier->getEstAnnexe() && $version->estVersionOriginale();
@@ -368,9 +429,8 @@ class FichierService extends BaseService
             $versionASupprimer = $version->estVersionCorrigee() ?
                 VersionFichier::CODE_ARCHI_CORR :
                 VersionFichier::CODE_ARCHI;
-//            $fichierTheseRetraite = $these->getFichiersBy(false, null, true, $versionASupprimer)->first() ?: null;
             $fichierTheseRetraite = current($this->getRepository()->fetchFichiers($fichier->getThese(), NatureFichier::CODE_THESE_PDF, $versionASupprimer, true));
-            if ($fichierTheseRetraite !== null) {
+            if ($fichierTheseRetraite !== false) {
                 $this->deleteFichiers([$fichierTheseRetraite]);
             }
         }
@@ -379,17 +439,37 @@ class FichierService extends BaseService
     /**
      * Supprime définitivement des fichiers liés à une thèse.
      *
-     * @param array|Collection $fichiers
+     * @param Fichier[] $fichiers
      */
     public function deleteFichiers($fichiers)
     {
-        /** @var Fichier $fichier */
-        foreach ($fichiers as $fichier) {
-            $these = $fichier->getThese();
+        $filePaths = [];
+        $this->entityManager->beginTransaction();
+        try {
+            foreach ($fichiers as $fichier) {
+                $filePaths[] = $this->computeDestinationFilePathForFichier($fichier);
+                $these = $fichier->getThese();
+                $these->removeFichier($fichier);
+                $this->entityManager->remove($fichier);
+                $this->entityManager->flush($fichier);
+            }
+            $this->entityManager->commit();
+        } catch (\Exception $e) {
+            $this->entityManager->rollback();
+            throw new RuntimeException("Erreur survenue lors de la suppression des Fichiers en bdd, rollback!", 0, $e);
+        }
 
-            $these->removeFichier($fichier);
-            $this->entityManager->remove($fichier);
-            $this->entityManager->flush($fichier);
+        // suppression des fichiers physiques sur le disque
+        $notDeletedFiles = [];
+        foreach ($filePaths as $filePath) {
+            $success = unlink($filePath);
+            if ($success === false) {
+                $notDeletedFiles[] = $filePath;
+            }
+        }
+        if ($notDeletedFiles) {
+            throw new RuntimeException(
+                "Les fichiers suivants n'ont pas pu être supprimés sur le disque : " . implode(', ', $notDeletedFiles));
         }
     }
 
@@ -411,46 +491,25 @@ class FichierService extends BaseService
             return Util::createImageWithText("Erreur: extension PHP |'imagick' non chargée", 170, 100);
         }
 
-        $inputFilePath = $this->writeFichierToDisk($fichier);
+        $inputFilePath = $this->computeDestinationFilePathForFichier($fichier);
         $outputFilePath = sys_get_temp_dir() . '/' . uniqid($fichier->getNom() . '-') . '.png';
 
-        $im = new \Imagick();
-        $im->setResolution(300, 300);
-        $im->readImage($inputFilePath . '[0]'); // 1ere page seulement
-        $im->setImageFormat('png');
-        $im->writeImage($outputFilePath);
-        $im->clear();
-        $im->destroy();
+        try {
+            $im = new \Imagick();
+            $im->setResolution(300, 300);
+            $im->readImage($inputFilePath . '[0]'); // 1ere page seulement
+            $im->setImageFormat('png');
+            $im->writeImage($outputFilePath);
+            $im->clear();
+            $im->destroy();
+        } catch (\ImagickException $ie) {
+            throw new RuntimeException(
+                "Erreur rencontrée lors de la création de l'aperçu", null, $ie);
+        }
 
         $content = file_get_contents($outputFilePath);
 
-        unlink($outputFilePath);
-
         return $content;
-    }
-
-    /**
-     * Ecriture (du contenu) d'un fichier sur le disque.
-     *
-     * @param Fichier $fichier Fichier concerné
-     * @param string  $filePath Eventuel chemin du fichier à créer
-     * @return string Chemin vers le fichier créé
-     */
-    public function writeFichierToDisk(Fichier $fichier, $filePath = null)
-    {
-        $contenuFichier = $this->fetchContenuFichier($fichier);
-
-        // création du fichier sur le disque à partir du contenu en bdd
-        $contenu = $contenuFichier->getData();
-        $content = is_resource($contenu) ? stream_get_contents($contenu) : $contenu;
-
-        $tmpDir = sys_get_temp_dir();
-        if (! $filePath) {
-            $filePath = $tmpDir . '/' . uniqid('sodoct-') . '-' . $fichier->getNom();
-        }
-        file_put_contents($filePath, $content);
-
-        return $filePath;
     }
 
     /**

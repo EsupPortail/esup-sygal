@@ -2,7 +2,6 @@
 
 namespace Application\Entity\Db\Repository;
 
-use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Doctrine\DBAL\DBALException;
 use UnicaenApp\Exception\RuntimeException;
@@ -11,14 +10,13 @@ use UnicaenApp\Util;
 class IndividuRepository extends DefaultEntityRepository
 {
     /**
-     * @param string $empId
-     * @param Etablissement $etablissement
+     * @param string $sourceCode
      * @return Individu
      */
-    public function findOneByEmpIdAndEtab($empId, Etablissement $etablissement)
+    public function findOneBySourceCode($sourceCode)
     {
         /** @var Individu $i */
-        $i = $this->findOneBy(['sourceCode' => $etablissement->getCode() . '::' . $empId]);
+        $i = $this->findOneBy(['sourceCode' => $sourceCode]);
 
         return $i;
     }
@@ -27,11 +25,12 @@ class IndividuRepository extends DefaultEntityRepository
      * Recherche d'individu, en SQL pure.
      *
      * @param string  $text
+     * @param string  $type (doctorant, acteur, ...)
      * @param integer $limit
      *
      * @return array
      */
-    public function findByText($text, $limit = 100)
+    public function findByText($text, $type = null, $limit = 100)
     {
         if (strlen($text) < 2) return [];
 
@@ -39,6 +38,10 @@ class IndividuRepository extends DefaultEntityRepository
         $criteres = explode(' ', $text);
 
         $sql = sprintf('SELECT * FROM INDIVIDU i JOIN INDIVIDU_RECH ir on ir.id = i.id WHERE rownum <= %s ', (int)$limit);
+        if ($type !== null) {
+            $sql = sprintf('SELECT * FROM INDIVIDU i JOIN INDIVIDU_RECH ir on ir.id = i.id WHERE i.type = \'%s\' AND  rownum <= %s ', $type, (int)$limit);
+            $tmp = null;
+        }
         $sqlCri  = [];
 
         foreach ($criteres as $c) {

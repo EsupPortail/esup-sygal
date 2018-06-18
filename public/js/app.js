@@ -443,7 +443,7 @@ $(function () {
 //  *
 //  * @constructor
 //  */
-// $.widget("sodoct.theseRecherche", {
+// $.widget("sygal.theseRecherche", {
 //
 //     rechercher: function (text) {
 //         var self = this;

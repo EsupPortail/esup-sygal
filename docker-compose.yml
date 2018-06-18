@@ -5,12 +5,13 @@ services:
     container_name: sygal-container
     build:
       context: .
-      dockerfile: Dockerfile.php7.dev
     ports:
      - "8000:80"
      - "443:443"
     volumes:
      - .:/var/www/html/sygal
+     - /var/sygal-files:/var/sygal-files
+     - /tmp:/tmp
     working_dir: /var/www/html/sygal
     network_mode: bridge
 
@@ -18,7 +19,6 @@ services:
     container_name: sygal-import-ws-container
     build:
       context: ../sygal-import-ws
-      dockerfile: Dockerfile.php7.dev
     ports:
      - "8080:8080"
      - "8443:8443"

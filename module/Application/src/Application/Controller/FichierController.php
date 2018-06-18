@@ -31,7 +31,7 @@ class FichierController extends AbstractController
 
         // injection préalable du contenu du fichier pour pouvoir utiliser le plugin Uploader
         $contenuFichier = $this->fichierService->fetchContenuFichier($fichier);
-        $fichier->setContenuFichierData($contenuFichier->getData());
+        $fichier->setContenuFichierData($contenuFichier);
 
         $this->uploader()->download($fichier);
     }

@@ -16,6 +16,8 @@ return array(
                     'action'     => [
                         'help',
                         'fetch',
+                        'index',
+                        'info-last-update',
                     ],
                     'roles' => [
                         'Administrateur technique',
@@ -77,15 +79,26 @@ return array(
         'routes' => [
             'home-import' => [
                 'type' => 'Literal',
-                'may_terminate' => false,
+                'may_terminate' => true,
                 'options' => [
                     'route'    => '/fetch',
                     'defaults' => [
                         'controller' => Import\Controller\ImportController::class,
-                        'action'     => 'help',
+                        'action'     => 'index',
                     ],
                 ],
                 'child_routes' => [
+                    'info-last-update' => [
+                        'type' => Segment::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/info-last-update/:table/:etablissement',
+                            'defaults' => [
+                                'controller' => Import\Controller\ImportController::class,
+                                'action'     => 'info-last-update',
+                            ],
+                        ],
+                    ],
                     'import' => [
                         'type' => Segment::class,
                         'may_terminate' => true,
@@ -99,8 +112,8 @@ return array(
                                 'source_code'   => 'non renseigné',
                             ],
                             'constraints' => [
-                                'service'       => implode ('|', ["all","these","doctorant","acteur","variable","individu","role"]),
-                                'etablissement' => implode ('|', ["UCN","fOO","INSA","URN"]),
+                                'service'       => implode ('|', ["all","these","doctorant","acteur","variable","individu","role", "structure", "etablissement", "unite-recherche", "ecole-doctorale"]),
+                                'etablissement' => implode ('|', ["UCN","ULHN","INSA","URN"]),
                             ]
                         ],
                     ],

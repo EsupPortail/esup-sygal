@@ -2,24 +2,17 @@
 
 namespace Application\Service;
 
-use Application\Service\Etablissement\EtablissementService;
-use Application\Service\Doctorant\DoctorantService;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
+use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Fichier\FichierService;
 use Application\Service\Individu\IndividuService;
-use Application\Service\Notification\NotificationService;
-use Application\Service\Parametre\ParametreService;
 use Application\Service\Role\RoleService;
-use Application\Service\These\TheseService;
 use Application\Service\UniteRecherche\UniteRechercheService;
-use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Validation\ValidationService;
 use Application\Service\ValiditeFichier\ValiditeFichierService;
-use Application\Service\Variable\VariableService;
 use Application\Service\VersionFichier\VersionFichierService;
 use Application\Service\Workflow\WorkflowService;
 use Retraitement\Service\RetraitementService;
-use UnicaenLdap\Service\LdapPeopleServiceAwareInterface;
 use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\InitializerInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -56,7 +49,6 @@ class ServiceAwareInitializer implements InitializerInterface
             'EcoleDoctoraleService'  => EcoleDoctoraleService::class,
             'UniteRechercheService'  => UniteRechercheService::class,
             'IndividuService'        => IndividuService::class,
-            'NotificationService'    => NotificationService::class,
             'EtablissementService'   => EtablissementService::class,
         ];
 
@@ -67,10 +59,6 @@ class ServiceAwareInitializer implements InitializerInterface
                 $method = 'set' . $name;
                 $instance->{$method}($service);
             }
-        }
-
-        if ($instance instanceof LdapPeopleServiceAwareInterface) {
-            $instance->setLdapPeopleService($serviceLocator->get('LdapServicePeople'));
         }
 
         return $instance;

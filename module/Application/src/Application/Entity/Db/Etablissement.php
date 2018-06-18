@@ -2,26 +2,24 @@
 
 namespace Application\Entity\Db;
 
+use Application\Filter\EtablissementPrefixFilter;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenApp\Util;
 use UnicaenImport\Entity\Db\Interfaces\SourceAwareInterface;
 use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
-use UnicaenApp\Util;
 
 /**
  * Etablissement
  */
-class Etablissement implements HistoriqueAwareInterface, SourceAwareInterface
+class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterface, SourceAwareInterface
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
 
-    const ETAB_PREFIX_SEP = '::';
-
     const CODE_COMUE = 'COMUE';
 
     protected $id;
-    protected $code;
     protected $domaine;
     protected $theses;
     protected $doctorants;
@@ -33,14 +31,35 @@ class Etablissement implements HistoriqueAwareInterface, SourceAwareInterface
     protected $structure;
 
     /**
-     * Ajoute le préfixe établissement à la chaîne de caractères sépecifiée.
+     * @var string
+     */
+    private $sourceCode;
+
+
+    /**
+     * Ajoute le préfixe établissement à la chaîne de caractères spécifiée.
      *
      * @param string $string
      * @return string
      */
     public function prependPrefixTo($string)
     {
-        return $this->getCode() . self::ETAB_PREFIX_SEP . $string;
+        $filter = new EtablissementPrefixFilter();
+
+        return $filter->addPrefixTo($string, $this);
+    }
+
+    /**
+     * Supprime le préfixe établissement à la chaîne de caractères spécifiée.
+     *
+     * @param string $string
+     * @return string
+     */
+    public function removePrefixFrom($string)
+    {
+        $filter = new EtablissementPrefixFilter();
+
+        return $filter->removePrefixFrom($string);
     }
 
     /**
@@ -69,19 +88,44 @@ class Etablissement implements HistoriqueAwareInterface, SourceAwareInterface
     }
 
     /**
+     * @deprecated
      * @return mixed
      */
     public function getCode()
     {
-        return $this->code;
+        return $this->getStructure()->getCode();
     }
 
     /**
      * @param mixed $code
+     * @deprecated
      */
     public function setCode($code)
     {
-        $this->code = $code;
+        $this->getStructure()->setCode($code);
+    }
+
+    /**
+     * Set sourceCode
+     *
+     * @param string $sourceCode
+     * @return self
+     */
+    public function setSourceCode($sourceCode)
+    {
+        $this->sourceCode = $sourceCode;
+
+        return $this;
+    }
+
+    /**
+     * Get sourceCode
+     *
+     * @return string
+     */
+    public function getSourceCode()
+    {
+        return $this->sourceCode;
     }
 
     /**
@@ -157,7 +201,8 @@ class Etablissement implements HistoriqueAwareInterface, SourceAwareInterface
             $image = Util::createImageWithText("Aucun logo pour l'Etab|" . $this->getSigle(), 200, 200);
             return $image;
         }
-        return file_get_contents(APPLICATION_DIR . $this->getCheminLogo()) ?: null;
+//        return file_get_contents(APPLICATION_DIR . $this->getCheminLogo()) ?: null;
+        return file_get_contents( "/var/sygal-files/" . $this->getCheminLogo()) ?: null;
     }
 
     /**
@@ -188,27 +233,11 @@ class Etablissement implements HistoriqueAwareInterface, SourceAwareInterface
     }
 
     /**
-     * @param mixed $theses
-     */
-    public function setTheses($theses)
-    {
-        $this->theses = $theses;
-    }
-
-    /**
      * @return mixed
      */
     public function getDoctorants()
     {
         return $this->doctorants;
-    }
-
-    /**
-     * @param mixed $doctorants
-     */
-    public function setDoctorants($doctorants)
-    {
-        $this->doctorants = $doctorants;
     }
 
     /**
@@ -218,13 +247,4 @@ class Etablissement implements HistoriqueAwareInterface, SourceAwareInterface
     {
         return $this->roles;
     }
-
-    /**
-     * @param mixed $roles
-     */
-    public function setRoles($roles)
-    {
-        $this->roles = $roles;
-    }
-
 }

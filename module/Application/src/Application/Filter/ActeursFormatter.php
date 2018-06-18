@@ -126,7 +126,7 @@ class ActeursFormatter extends AbstractFilter {
     }
 
     /** This function format an array of acteurs as a unordered list
-     * @param Acteurs[] $acteurs
+     * @param Acteur[] $acteurs
      * @return an unordered list
      */
     private function doFormatUnorderedList($acteurs) {
@@ -138,7 +138,7 @@ class ActeursFormatter extends AbstractFilter {
     }
 
     /** This function format an array of acteurs as Separated Values object
-     * @param  Acteurs[] $acteurs
+     * @param  Acteur[] $acteurs
      * @return Separated Values object
      */
     private function doFormatSeparated($acteurs) {
@@ -148,7 +148,7 @@ class ActeursFormatter extends AbstractFilter {
     }
 
     /** This function format an array of acteurs as Array
-     * @param Acteurs[] $acteurs
+     * @param Acteur[] $acteurs
      * @return array of array with key => value
      */
     private function doFormatArray($acteurs) {
@@ -156,7 +156,7 @@ class ActeursFormatter extends AbstractFilter {
         /** @var Acteur $acteur */
         foreach ($acteurs as $acteur) {
             $result = [];
-            $result["nom"] = $acteur->getIndividu()->getNomCivil();
+            $result["nom"] = $acteur->getIndividu()->getNomComplet(true);
             if ($this->displayRole === true) $result["role"] = $acteur->getRole()->getRoleId();
             if ($this->displayRoleComplement === true) $result["complement"] = $acteur->getLibelleRoleComplement();
             if ($this->displayQualite === true) $result["qualite"] = $acteur->getQualite();
@@ -208,7 +208,7 @@ class ActeursFormatter extends AbstractFilter {
         /** @var Acteur $acteur */
         foreach($acteurs as $acteur) {
             $keep = true;
-            if ($keep && $this->contrainteRole != null && $acteur->getRole()->getRoleId() != $this->contrainteRole) $keep = false;
+            if ($keep && $this->contrainteRole != null && $acteur->getRole()->getCode() != $this->contrainteRole) $keep = false;
             if ($keep && $this->contrainteRoleComplement != null && $acteur->getLibelleRoleComplement() != $this->contrainteRoleComplement) $keep = false;
             if ($keep && $this->contrainteQualite != null && $acteur->getQualite() != $this->contrainteQualite) $keep = false;
             if ($keep && $this->contrainteEtablissement != null && $acteur->getEtablissement() != $this->contrainteEtablissement) $keep = false;

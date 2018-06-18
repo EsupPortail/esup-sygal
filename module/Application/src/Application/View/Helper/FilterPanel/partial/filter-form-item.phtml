@@ -1,5 +1,5 @@
 <?php
-use Application\Entity\Db\These;
+
 use Application\View\Renderer\PhpRenderer;
 
 /**
@@ -7,6 +7,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var string      $paramName
  * @var array       $paramConfig Format : ['label' => "", 'value' => ""]
  * @var string      $filterUrl
+ * @var array       $queryParams
  * Exemple :
  *      $filterUrl = function ($param, $value, &$queryParams) use ($queryParams) {
  *          $queryParams[$param] = $value;
@@ -15,7 +16,6 @@ use Application\View\Renderer\PhpRenderer;
  *
  */
 
-$queryParams = $this->queryParams();
 ?>
 
 <?php foreach ($paramConfig as $data): ?>
@@ -29,7 +29,8 @@ $queryParams = $this->queryParams();
         $isActive =
             ($value !== '' && ((isset($queryParams[$paramName]) && $queryParams[$paramName] === $value))) ||
             ($value === '' && (!isset($queryParams[$paramName]) || !isset($queryParams[$paramName]) || $queryParams[$paramName] === ''));
-        if ($isActive): ?>
+        ?>
+        <?php if ($isActive): ?>
             <span class="label label-info"><?php echo $label ?></span>
         <?php else: ?>
             <a href="<?php echo $filterUrl($paramName, $value, $queryParams) ?>"><?php echo $label ?></a>

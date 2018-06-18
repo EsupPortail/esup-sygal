@@ -279,6 +279,18 @@ div.filters span.filter {
   div.filters span.filter span,
   div.filters span.filter a {
     font-size: 90%; }
+div.filters form {
+  padding: 10px; }
+  div.filters form .form-group {
+    margin-right: 5px; }
+  div.filters form label {
+    display: block;
+    font-size: 93%;
+    margin-bottom: 0; }
+  div.filters form button.dropdown-toggle {
+    padding: 3px 25px 3px 10px; }
+  div.filters form .filter-option, div.filters form #search-input {
+    font-size: 90%; }
 
 table.these-fiche {
   max-width: 400px;
@@ -352,19 +364,23 @@ form.form-retraiter {
 
 @media (min-width: 768px) {
   .dl-horizontal.dl-horizontal-md dt {
-    width: 200px; } }
-@media (min-width: 768px) {
+    width: 200px; }
   .dl-horizontal.dl-horizontal-md dd {
-    margin-left: 220px; } }
-@media (min-width: 768px) {
+    margin-left: 220px; }
+
   .dl-horizontal.dl-horizontal-lg dt {
     width: 260px; }
-
   .dl-horizontal.dl-horizontal-lg dd {
     margin-left: 280px; } }
 @media (min-width: 1100px) {
   .modal-dialog {
     width: 1000px; } }
+@media (min-width: 1250px) {
+  .container {
+    width: 1220px; } }
+@media (min-width: 1500px) {
+  .container {
+    width: 1470px; } }
 form input[type='submit'] {
   margin-top: 20px; }
 
@@ -462,5 +478,15 @@ div.photo-placeholder.loading {
 dl.faq dt {
   font-weight: bold;
   font-size: 120%; }
+
+.user-usurpation-form {
+  margin-top: 30px;
+  padding-top: 10px;
+  border-top: 1px lightgrey dotted; }
+  .user-usurpation-form .form-group {
+    float: left;
+    margin-right: 5px; }
+  .user-usurpation-form .btn {
+    margin-top: 0; }
 
 /*# sourceMappingURL=app.css.map */

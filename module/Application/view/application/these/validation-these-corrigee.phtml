@@ -28,6 +28,44 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_DEPOT
     <small><?php echo $this->partial('application/these/partial/titre') ?></small>
 </h1>
 
+<div>
+    <div class="panel panel-info">
+        <div class="panel-heading"> <h2 class="first">Téléchargement de la thèse corrigée complète </h2></div>
+        <div class="panel-body">
+
+        <p>
+            Vous pouvez télécharger ici la version finale du manuscrit de thèse.
+        </p>
+
+        <!-- if doctorant -->
+            <?php if ($isDoctorant): ?>
+            <a href="<?php echo $this->url("these/fusion", ["these" => $these->getId(), "corrigee" => 1], [], true); ?>" target="_blank">
+                <button class="btn btn-primary">
+                    <span class="glyphicon glyphicon-download"></span>
+                    Obtenir la version imprimable de votre thèse
+                </button>
+            </a>
+        <!-- else -->
+            <?php else: ?>
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Version à récupérer <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 1, 'version' => 'VOC'], [], true); ?>">Version original</a></li>
+                    <?php if ($hasVDC): ?>
+                        <li><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 1, 'version' => 'VDC'], [], true); ?>">Version diffusion</a></li>
+                    <?php endif; ?>
+                    <?php if ($hasVAC): ?>
+                        <li><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 1, 'version' => 'VAC'], [], true); ?>">Version archivable</a></li>
+                    <?php endif; ?>
+                </ul>
+            </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+
 <!-------------------------------------- Validation dépôt thèse corrigée --------------------------------------->
 <div id="validationDepotTheseCorrigeeDiv" data-url="<?php echo $validationDepotTheseCorrigeeUrl ?>">
     <!-- màj via ajax -->

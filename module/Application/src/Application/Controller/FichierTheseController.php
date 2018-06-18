@@ -11,7 +11,8 @@ use Application\RouteMatch;
 use Application\Service\Fichier\Exception\DepotImpossibleException;
 use Application\Service\Fichier\Exception\ValidationImpossibleException;
 use Application\Service\Fichier\FichierServiceAwareTrait;
-use Application\Service\Notification\NotificationServiceAwareTrait;
+use Application\Service\Individu\IndividuServiceAwareTrait;
+use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\View\Helper\Sortable;
@@ -30,7 +31,8 @@ class FichierTheseController extends AbstractController
     use FichierServiceAwareTrait;
     use VersionFichierServiceAwareTrait;
     use IdifyFilterAwareTrait;
-    use NotificationServiceAwareTrait;
+    use NotifierServiceAwareTrait;
+    use IndividuServiceAwareTrait;
 
     const UPLOAD_MAX_FILESIZE = '500M';
 
@@ -41,10 +43,15 @@ class FichierTheseController extends AbstractController
          */
         $needsRedirect = false;
         $queryParams = $this->params()->fromQuery();
+        $data        = $this->params()->fromPost('individu');
 
         $version = $this->params()->fromQuery('version');
-        $recherche = $this->params()->fromQuery('texte');
         $sort = $this->params()->fromQuery('sort');
+
+        $individuId = null;
+        if (!empty($data['id'])) {
+            $individuId = $data['id'];
+        }
 
         if ($sort === null) { // null <=> paramètre absent
             // tri par défaut : datePremiereInscription
@@ -73,11 +80,9 @@ class FichierTheseController extends AbstractController
             $qb->andWhere('ver.code = :version')
                 ->setParameter("version" , $version);
         }
-
-        if (isset($recherche) && $recherche !== '') {
-//
-            $qb->andWhere("i.prenom1 like :recherche OR i.nomUsuel like :recherche OR t.titre like :recherche OR f.nomOriginal like :recherche")
-                ->setParameter("recherche", '%'.$recherche.'%');
+        if (isset($individuId) && $individuId !== '') {
+            $qb->andWhere('i.id = :individuId')
+                ->setParameter("individuId" , $individuId);
         }
 
 
@@ -201,7 +206,7 @@ class FichierTheseController extends AbstractController
 
         // injection préalable du contenu du fichier pour pouvoir utiliser le plugin Uploader
         $contenuFichier = $this->fichierService->fetchContenuFichier($fichier);
-        $fichier->setContenuFichierData($contenuFichier->getData());
+        $fichier->setContenuFichierData($contenuFichier);
 
         // Envoi du fichier au client (navigateur)
         // NB: $fichier doit être de type \UnicaenApp\Controller\Plugin\Upload\UploadedFileInterface
@@ -249,7 +254,6 @@ class FichierTheseController extends AbstractController
                 $versionASupprimer = $version->estVersionCorrigee() ?
                     VersionFichier::CODE_ARCHI_CORR :
                     VersionFichier::CODE_ARCHI;
-//                $fichiersTheseRetraites = $these->getFichiersBy(null, null, null, $versionASupprimer);
                 $fichiersThese = $this->fichierService->getRepository()->fetchFichiers($these, null, $versionASupprimer, null) ;
                 if (! empty($fichiersThese)) {
                     $this->fichierService->deleteFichiers($fichiersThese);
@@ -293,27 +297,17 @@ class FichierTheseController extends AbstractController
 
             // si une thèse est déposée, on notifie de BdD
             if ($nature->estThesePdf()) {
-                $subject = "Dépôt d'une thèse";
-                $mailViewModel = (new ViewModel())
-                    ->setTemplate('application/these/mail/notif-depot-these')
-                    ->setVariables([
-                        'these'    => $these,
-                        'version'  => $version,
-                        'subject'  => $subject,
-                    ]);
-                $this->notificationService->notifierBdD($mailViewModel, $these);
+                $notif = $this->notifierService->getNotificationFactory()->createNotificationForTheseTeleversee($these, $version);
+                $this->notifierService->trigger($notif);
             }
 
             // si un rapport de soutenance est déposé, on notifie de BdD
             if ($nature->estRapportSoutenance()) {
-                $subject = "Dépôt du rapport de soutenance";
-                $mailViewModel = (new ViewModel())
-                    ->setTemplate('application/these/mail/notif-depot-rapport-soutenance')
-                    ->setVariables([
-                        'these'    => $these,
-                        'subject'  => $subject,
-                    ]);
-                $this->notificationService->notifierBdD($mailViewModel, $these);
+                $notif = $this->notifierService->getNotificationFactory()->createNotificationForFichierTeleverse($these);
+                $notif
+                    ->setSubject("Dépôt du rapport de soutenance")
+                    ->setTemplatePath('application/these/mail/notif-depot-rapport-soutenance');
+                $this->notifierService->trigger($notif);
             }
         }
 

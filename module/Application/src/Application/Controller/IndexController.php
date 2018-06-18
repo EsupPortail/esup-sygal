@@ -61,9 +61,7 @@ class IndexController extends AbstractController
             'messages' => [
                 'danger' => "<strong>Il semblerait que vous n'êtes pas habilité&middot;e à utiliser cette application.</strong>",
                 'info'  => <<<EOS
-<strong>NB: </strong>Si vous êtes doctorant&middot;e, vous devez vous déconnecter puis vous reconnecter avec votre ÉtuPass. <br><br>
-<small>À votre première connexion à SoDoct avec votre ÉtuPass, l'application vous demandera votre PersoPass. 
-Et une fois votre PersoPass connu de SoDoct, vous pourrez vous y connecter indifféremment avec votre ÉtuPass ou votre PersoPass.</small>
+<strong>NB : </strong>Si vous êtes doctorant&middot;e, vous devez vous connecter avec votre compte étudiant.
 EOS
             ],
         ]);

@@ -284,11 +284,11 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
     /**
      * Set civilite
      *
-     * @param string $civilite
+     * @param string|null $civilite
      *
      * @return self
      */
-    public function setCivilite($civilite)
+    public function setCivilite($civilite = null)
     {
         $this->civilite = $civilite;
 
@@ -298,7 +298,7 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
     /**
      * Get civilite
      *
-     * @return string
+     * @return string|null
      */
     public function getCivilite()
     {
@@ -359,6 +359,7 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
      */
     public function getDateNaissanceToString()
     {
+        if ($this->dateNaissance === null) return "";
         return $this->dateNaissance->format(Constants::DATE_FORMAT);
     }
 
@@ -394,19 +395,5 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * @param bool $civilite
-     * @return string
-     */
-    public function getNomCivil($civilite = true)
-    {
-        $text = "";
-        if ($civilite) $text .= $this->getCivilite() . " ";
-        $text .= ucwords(strtolower($this->getPrenom()), " -") . " ";
-        $text .= strtoupper($this->getNomUsuel());
-
-        return $text;
     }
 }

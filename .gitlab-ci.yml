@@ -6,18 +6,20 @@ stages:
 test:
   stage: test
   script: echo "Running tests"
+  only:
+  - master
 
 build:
   stage: build
-  script: aaa ; echo "Building the app"
+  script: echo "Building the app"
+  only:
+  - master
 
-deploy_staging:
+deploy_preprod:
   stage: deploy
   script:
-    - echo "Deploy to staging server"
-  environment:
-    name: staging
-    url: https://staging.example.com
+    - git push "$DEPLOY_USER:$DEPLOY_PASSWORD"@sygal-pp.unicaen.fr:/var/www/sygal.git master
+  when: manual
   only:
   - master
 

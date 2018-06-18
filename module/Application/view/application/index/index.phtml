@@ -13,11 +13,14 @@ $subtitle = "SYstème de Gestion et d'Accompagnement doctoraL";
 
 <?php $this->headTitle($this->translate("Accueil")); ?>
 
-<?php echo $this->messenger()->addMessagesFromFlashMessenger(); ?>
+<?php
+echo $this->messenger()
+    ->addMessagesFromFlashMessengerWithNoNamespace()
+    ->addMessagesFromFlashMessengerWithNamespace('UnicaenAuth/*'); ?>
 
 <div class="jumbotron">
 
-    <h1 class="page-header">SyGAL</h1>
+    <h1 class="page-header"><?php echo $this->appInfos()->nom ?></h1>
 
     <p class="appname-subtitle">
         <strong><?php echo $subtitle ?></strong>

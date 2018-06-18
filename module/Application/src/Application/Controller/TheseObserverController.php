@@ -24,7 +24,7 @@ class TheseObserverController extends AbstractController
      * php ./public/index.php notify-date-butoir-correction-depassee
      *
      * Exemple de config CRON :
-     * 0 8 * * 1-5 root /usr/bin/php /home/gauthierb/workspace/sodoct/public/index.php notify-date-butoir-correction-depassee 1> /tmp/sodoctlog.txt 2>&1
+     * 0 8 * * 1-5 root /usr/bin/php /home/gauthierb/workspace/sygal/public/index.php notify-date-butoir-correction-depassee 1> /tmp/sodoctlog.txt 2>&1
      * i.e. du lundi au vendredi, à 8:00.
      */
     public function notifyDateButoirCorrectionDepasseeAction()

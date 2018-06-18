@@ -5,6 +5,7 @@ namespace Retraitement\Controller;
 use Application\Entity\Db\Repository\UtilisateurRepository;
 use Application\Entity\Db\Utilisateur;
 use Application\EventRouterReplacer;
+use Application\Service\Notification\NotifierService;
 use Doctrine\ORM\EntityManager;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\Mvc\Controller\ControllerManager;
@@ -18,9 +19,6 @@ class IndexControllerFactory
      *
      * @param ControllerManager $controllerManager
      * @return IndexController
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
-     * @throws \Doctrine\ORM\TransactionRequiredException
      */
     public function __invoke(ControllerManager $controllerManager)
     {
@@ -30,11 +28,15 @@ class IndexControllerFactory
         $httpRouter = $sl->get('HttpRouter');
         $cliConfig = $this->getCliConfig($sl);
 
+        /** @var NotifierService $notifierService */
+        $notifierService = $sl->get(NotifierService::class);
+
         $routerReplacer = new EventRouterReplacer($httpRouter, $cliConfig);
 
         $controller = new IndexController();
         $controller->setUtilisateurApplication($this->getUtilisateurApp($sl));
         $controller->setEventRouterReplacer($routerReplacer);
+        $controller->setNotifierService($notifierService);
 
         return $controller;
     }

@@ -28,6 +28,7 @@ return [
                         'modifier',
                         'ajouter-individu',
                         'retirer-individu',
+                        'supprimer-logo',
                     ],
                     'privileges' => EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION,
                 ],
@@ -119,6 +120,18 @@ return [
                             ],
                         ],
                     ],
+                    'supprimer-logo' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'       => '/supprimer-logo/:ecoleDoctorale',
+                            'constraints' => [
+                                'ecoleDoctorale' => '\d+',
+                            ],
+                            'defaults'    => [
+                                'action' => 'supprimer-logo',
+                            ],
+                        ],
+                    ],
                 ],
             ],
         ],
@@ -133,6 +146,8 @@ return [
                                 'label'    => 'Écoles doctorales',
                                 'route'    => 'ecole-doctorale',
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\EcoleDoctorale', 'index'),
+
+                                'order'    => 10,
                             ],
                         ],
                     ],

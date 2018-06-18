@@ -2,28 +2,25 @@
 
 namespace Application\Notification;
 
-use Application\Entity\Db\Variable;
-use Application\Service\Notification\Notification;
+use Application\Entity\Db\Interfaces\TheseAwareTrait;
+use Notification\Notification;
 
 class ValidationRdvBuNotification extends Notification
 {
+    use TheseAwareTrait;
+
     protected $templatePath = 'application/these/mail/notif-validation-rdv-bu';
     protected $estDevalidation = false;
     protected $notifierDoctorant = false;
     protected $notifierDoctorantImpossibleMessage;
 
     /**
-     * @param array $context
      * @return static
      */
-    public function prepare(array $context = [])
+    public function prepare()
     {
-        $variables = $this->variableService->getRepository()->findByCodeAndThese([
-            Variable::CODE_EMAIL_BDD,
-            Variable::CODE_EMAIL_BU,
-        ], $this->getThese());
-        $emailBDD = $variables[Variable::CODE_EMAIL_BDD]->getValeur();
-        $emailBU = $variables[Variable::CODE_EMAIL_BU]->getValeur();
+        $emailBDD = $this->emailBdd;
+        $emailBU = $this->emailBu;
 
         $doctorant = $this->these->getDoctorant();
 
@@ -50,46 +47,50 @@ class ValidationRdvBuNotification extends Notification
         $this->setTo($to);
         $this->setCc($cc);
 
-        if ($this->estDevalidation) {
-            $this->setSubject("Annulation de la validation effectuée à l'issue du rendez-vous avec la BU");
-        } else {
-            $this->setSubject("Validation à l'issue du rendez-vous avec la BU");
-        }
+        $this->setSubject($this->estDevalidation ?
+            "Annulation de la validation effectuée à l'issue du rendez-vous avec la BU" :
+            "Validation à l'issue du rendez-vous avec la BU"
+        );
 
         $this->setTemplateVariables([
+            'these' => $this->these,
             'doctorant' => $doctorant,
             'estDevalidation' => $this->estDevalidation,
             'notifierDoctorantImpossibleMessage' => $this->notifierDoctorantImpossibleMessage,
         ]);
 
+        $this->createMessages();
+
         return $this;
     }
 
     /**
-     * @return string
+     * @return self
      */
-    public function getResultMessage()
+    public function createMessages()
     {
         if ($this->estDevalidation) {
-            return sprintf(
+            $this->infoMessages[] = sprintf(
                 "Un mail de notification vient d'être envoyé à la BU (%s) avec copie au Bureau des Doctorats (%s).",
                 $this->getTo(),
                 $this->getCc()
             );
         } else {
             if ($this->notifierDoctorant) {
-                return sprintf(
+                $this->infoMessages[] = sprintf(
                     "Un mail de notification vient d'être envoyé à %s avec copie au Bureau des Doctorats (%s)",
                     $this->these->getDoctorant(),
                     $this->getCc()
                 );
             } else {
-                return sprintf(
+                $this->infoMessages[] = sprintf(
                     "Un mail de notification vient d'être envoyé au Bureau des Doctorats (%s).",
                     $this->getTo()
                 );
             }
         }
+
+        return $this;
     }
 
     /**
@@ -110,6 +111,38 @@ class ValidationRdvBuNotification extends Notification
     public function setNotifierDoctorant($notifierDoctorant = true)
     {
         $this->notifierDoctorant = $notifierDoctorant;
+
+        return $this;
+    }
+
+    /**
+     * @var string
+     */
+    private $emailBdd;
+
+    /**
+     * @param string $emailBdd
+     * @return self
+     */
+    public function setEmailBdd($emailBdd)
+    {
+        $this->emailBdd = $emailBdd;
+
+        return $this;
+    }
+
+    /**
+     * @var string
+     */
+    private $emailBu;
+
+    /**
+     * @param string $emailBu
+     * @return self
+     */
+    public function setEmailBu($emailBu)
+    {
+        $this->emailBu = $emailBu;
 
         return $this;
     }

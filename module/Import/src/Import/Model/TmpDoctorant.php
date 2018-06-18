@@ -3,25 +3,35 @@
 namespace Import\Model;
 
 /**
- * Class TmpDoctorant
- * @package Application\Model
- * Cette classe sert de tampon entre le Web Service de chaque établissement et
- * le SGBD de l'application.
- * /!\ $etablissementId doit être ajouter 'manuellement'
+ * TmpDoctorant
  */
+class TmpDoctorant
+{
+    /**
+     * @var string
+     */
+    private $sourceId;
 
+    /**
+     * @var string
+     */
+    private $etablissementId;
 
-class TmpDoctorant {
-    protected $id;
-    protected $sourceId;
-    protected $etablissementId;
-    protected $individuId;
-    protected $sourceCode;
+    /**
+     * @var string
+     */
+    private $individuId;
 
-    public function __construct($json) {
-        $this->id                           = $json->{'id'};
-        $this->sourceId                     = $json->{'sourceId'};
-        $this->individuId                   = $json->{'individuId'};
-    }
+    /**
+     * @var string
+     */
+    private $sourceCode;
+
+    /**
+     * @var string
+     */
+    private $id;
+
 
 }
+

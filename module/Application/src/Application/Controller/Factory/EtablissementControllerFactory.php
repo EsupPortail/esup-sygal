@@ -7,7 +7,6 @@ use Application\Form\EtablissementForm;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Individu\IndividuService;
 use Application\Service\Role\RoleService;
-use UnicaenLdap\Service\People as LdapPeopleService;
 use Zend\Mvc\Controller\ControllerManager;
 
 class EtablissementControllerFactory
@@ -25,22 +24,18 @@ class EtablissementControllerFactory
 
         /**
          * @var EtablissementService $etablissmentService
-         * @var LdapPeopleService $ldapPeopleService
          * @var IndividuService $individuService
          * @var RoleService $roleService
          */
         $etablissmentService = $controllerManager->getServiceLocator()->get('EtablissementService');
-        $ldapPeopleService  = $controllerManager->getServiceLocator()->get('LdapServicePeople');
         $individuService = $controllerManager->getServiceLocator()->get('IndividuService');
         $roleService = $controllerManager->getServiceLocator()->get('RoleService');
 
         $controller = new EtablissementController();
         $controller->setEtablissementService($etablissmentService);
-        $controller->setLdapPeopleService($ldapPeopleService);
         $controller->setIndividuService($individuService);
         $controller->setRoleService($roleService);
         $controller->setEtablissementForm($form);
-
 
         return $controller;
     }

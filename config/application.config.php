@@ -1,17 +1,38 @@
 <?php
 
+$env = getenv('APPLICATION_ENV') ?: 'production';
+
 $modules = [
-    'ZfcBase', 'DoctrineModule', 'DoctrineORMModule', 'ZfcUser', 'ZfcUserDoctrineORM', 'BjyAuthorize',
-    'UnicaenApp', 'UnicaenAuth', 'UnicaenLdap', 'UnicaenOracle', 'UnicaenImport', 'UnicaenFaq', 'UnicaenLeocarte',
-    'Application', 'Import', 'Retraitement', 'Notification',
+    'ZfcBase',
+    'DoctrineModule',
+    'DoctrineORMModule',
+    'ZfcUser',
+    'ZfcUserDoctrineORM',
+    'BjyAuthorize' => 'BjyAuthorize',
+    'UnicaenApp',
+    'UnicaenAuth',
+    'UnicaenLdap',
+    'UnicaenOracle',
+    'UnicaenImport',
+    'UnicaenFaq',
+    'UnicaenLeocarte',
+    'Application',
+    'Import',
+    'Retraitement',
+    'Notification',
+];
+if (php_sapi_name() === 'cli') {
+    unset($modules['BjyAuthorize']);
+}
+
+$devModules =  [
+    'ZendDeveloperTools',
+    'UnicaenCode',
+    'UnicaenTest',
 ];
 
-if ('development' === (getenv('APPLICATION_ENV') ?: 'production')) {
-    $modules = array_merge($modules, [
-//        'ZendDeveloperTools',
-        'UnicaenCode',
-        'UnicaenTest',
-    ]);
+if ('development' === $env) {
+    $modules = array_merge($modules, $devModules);
 }
 
 $moduleListenerOptions = [

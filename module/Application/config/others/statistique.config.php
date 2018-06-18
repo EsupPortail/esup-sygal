@@ -42,7 +42,7 @@ return [
                     'admin' => [
                         'pages' => [
                             'statistique' => [
-                                'label'    => 'Statistique',
+                                'label'    => 'Statistiques',
                                 'route'    => 'statistique',
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\EcoleDoctorale', 'index'),
                                 'order'    => 90,

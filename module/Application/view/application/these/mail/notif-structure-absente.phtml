@@ -1,0 +1,24 @@
+<?php
+
+use Application\Entity\Db\These;
+use Application\Entity\Db\VersionFichier;
+use Application\Filter\IdifyFilter;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var string $type
+ * @var These $these
+ */
+?>
+
+<p>
+    Bonjour,
+</p>
+<p>
+    Ceci est un mail envoyé automatiquement par l'application SyGAL.
+</p>
+<p>
+    Vous êtes informé-e que <?php echo $type; ?> associé à la thèse [<?php echo $these->getId() ?> | <?php echo $these->getTitre() ?>] est manquante.<br/>
+    Il est nécessaire de compléter cette information dans le système d'information de votre établissement.
+</p>

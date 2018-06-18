@@ -209,7 +209,6 @@ $toggleDetailsDepotInitial = clone $this->toggleDetails('div-depot-initial');
 
         // Diffusion enregistrée dans la modale
         body.on("event-diffusion-modified", function (event) {
-            // Les métadonnées viennent d'être modifiées.
             event.div.modal('hide'); // ferme la fenêtre modale
             runInCascade([
                 { func: diffusionLoader, effect: false },

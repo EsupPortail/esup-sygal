@@ -2,37 +2,86 @@
 
 namespace Import\Model;
 
-class TmpActeur {
-    protected $id;
-    protected $sourceId;
-    protected $etablissementId;
-    protected $individuId;
-    protected $theseId;
-    protected $roleId;
-    protected $libQualite;
-    protected $codeQualite;
-    protected $libEtablissement;
-    protected $codeEtablissement;
-    protected $codeRoleJury;
-    protected $libRoleJury;
-    protected $temoinHDR;
-    protected $temoinRapport;
-    protected $sourceCode;
+/**
+ * TmpActeur
+ */
+class TmpActeur
+{
+    /**
+     * @var string
+     */
+    private $sourceId;
 
-    public function __construct($json) {
-        $this->id                           = $json->{'id'};
-        $this->sourceId                     = $json->{'sourceId'};
-        $this->individuId                   = $json->{'individuId'};
-        $this->theseId                      = $json->{'theseId'};
-        $this->roleId                       = $json->{'roleId'};
-        $this->libQualite                   = $json->{'libQualite'};
-        $this->codeQualite                  = $json->{'codeQualite'};
-        $this->libEtablissement             = $json->{'libEtablissement'};
-        $this->codeEtablissement            = $json->{'codeEtablissement'};
-        $this->codeRoleJury                 = $json->{'codeRoleJury'};
-        $this->libRoleJury                  = $json->{'libRoleJury'};
-        $this->temoinHDR                    = $json->{'temoinHDR'};
-        $this->temoinRapport                = $json->{'temoinRapport'};
-    }
+    /**
+     * @var string
+     */
+    private $etablissementId;
+
+    /**
+     * @var string
+     */
+    private $individuId;
+
+    /**
+     * @var string
+     */
+    private $theseId;
+
+    /**
+     * @var string
+     */
+    private $roleId;
+
+    /**
+     * @var string
+     */
+    private $libQualite;
+
+    /**
+     * @var string
+     */
+    private $libEtablissement;
+
+    /**
+     * @var string
+     */
+    private $codeQualite;
+
+    /**
+     * @var string
+     */
+    private $codeEtablissement;
+
+    /**
+     * @var string
+     */
+    private $codeRoleJury;
+
+    /**
+     * @var string
+     */
+    private $libRoleJury;
+
+    /**
+     * @var string
+     */
+    private $temoinHDR;
+
+    /**
+     * @var string
+     */
+    private $temoinRapport;
+
+    /**
+     * @var string
+     */
+    private $sourceCode;
+
+    /**
+     * @var string
+     */
+    private $id;
+
 
 }
+

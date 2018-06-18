@@ -2,14 +2,17 @@
 
 namespace Application\Form\Hydrator;
 
+use Application\Entity\Db\Diffusion;
 use Application\Entity\Db\RdvBu;
 use Application\Service\Fichier\FichierServiceAwareTrait;
+use Doctrine\ORM\QueryBuilder;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
+use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class RdvBuHydrator extends DoctrineObject
 {
     use FichierServiceAwareTrait;
-
+//    use EntityManagerAwareTrait;
 
     private function existeVersionArchivable(RdvBu $rdvBu)
     {
@@ -26,6 +29,19 @@ class RdvBuHydrator extends DoctrineObject
     {
         $data = parent::extract($rdvBu);
         $data['versionArchivableFournie'] = $this->existeVersionArchivable($rdvBu);
+
+//        /** @var QueryBuilder $qb */
+//        $qb = $this->objectManager->getRepository(Diffusion::class)->createQueryBuilder("d")
+//            ->andWhere("d.theseId = :theseId")
+//            ->setParameter("theseId", $rdvBu->getThese()->getId());
+//        /** @var Diffusion $result */
+//        $result = $qb->getQuery()->getOneOrNullResult();
+
+        /** @var Diffusion $result */
+        $result = $this->objectManager->getRepository(Diffusion::class)->findOneBy(["these" => $rdvBu->getThese()]);
+
+
+        if ($result) $data['idOrcid'] = $result->getIdOrcid();
 
         return $data;
     }
@@ -47,6 +63,12 @@ class RdvBuHydrator extends DoctrineObject
 
         /** @var RdvBu $object */
         $object = parent::hydrate($data, $rdvBu);
+        /** @var Diffusion $result */
+        $result = $this->objectManager->getRepository(Diffusion::class)->findOneBy(["these" => $rdvBu->getThese()]);
+        if ($result) {
+            $result->setIdOrcid($data['idOrcid']);
+            $this->objectManager->flush();
+        }
 
         return $object;
     }

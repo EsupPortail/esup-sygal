@@ -16,16 +16,16 @@ use Application\Form\Factory\MetadonneeTheseFormFactory;
 use Application\Form\Factory\RdvBuHydratorFactory;
 use Application\Form\Factory\RdvBuTheseDoctorantFormFactory;
 use Application\Form\Factory\RdvBuTheseFormFactory;
-use Application\Form\Factory\RecapBuFormFactory;
-use Application\Form\Factory\RecapBuHydratorFactory;
+use Application\Form\Factory\PointsDeVigilanceFormFactory;
+use Application\Form\Factory\PointsDeVigilanceHydratorFactory;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\Service\Acteur\ActeurService;
 use Application\Service\Message\DiffusionMessages;
 use Application\Service\ServiceAwareInitializer;
 use Application\Service\These\Factory\TheseObserverServiceFactory;
+use Application\Service\These\Factory\TheseRechercheServiceFactory;
 use Application\Service\These\Factory\TheseServiceFactory;
 use Application\Service\Url\UrlServiceFactory;
-use Application\Service\Url\UrlTheseServiceFactory;
 use Application\View\Helper\Url\UrlTheseHelperFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
@@ -76,6 +76,13 @@ return [
                 [
                     'controller' => 'Application\Controller\These',
                     'action'     => [
+                        'filters',
+                    ],
+                    'roles' => 'guest',
+                ],
+                [
+                    'controller' => 'Application\Controller\These',
+                    'action'     => [
                         'index',
                     ],
                     'privileges' => ThesePrivileges::THESE_CONSULTATION_FICHE,
@@ -86,6 +93,7 @@ return [
                         'roadmap',
                         'detail-identite',
                         'generate',
+                        'fusion',
                     ],
                     'privileges' => ThesePrivileges::THESE_CONSULTATION_FICHE,
                     'assertion'  => 'Assertion\\These',
@@ -210,7 +218,7 @@ return [
                     'controller' => 'Application\Controller\These',
                     'action'     => [
                         'modifier-rdv-bu',
-                        'recap-bu',
+                        'points-de-vigilance',
                     ],
                     'privileges' => [
                         ThesePrivileges::THESE_SAISIE_RDV_BU,
@@ -260,6 +268,15 @@ return [
                 ],
                 'may_terminate' => true,
                 'child_routes'  => [
+                    'filters' => [
+                        'type'          => 'Literal',
+                        'options'       => [
+                            'route'       => '/filters',
+                            'defaults'    => [
+                                'action' => 'filters',
+                            ],
+                        ],
+                    ],
                     'rechercher' => [
                         'type'          => 'Literal',
                         'options'       => [
@@ -302,6 +319,18 @@ return [
                             ],
                             'defaults'    => [
                                 'action' => 'generate',
+                            ],
+                        ],
+                    ],
+                    'fusion' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'       => '/fusion/:these[/:corrigee[/:version]]',
+                            'constraints' => [
+                                'these' => '\d+',
+                            ],
+                            'defaults'    => [
+                                'action' => 'fusion',
                             ],
                         ],
                     ],
@@ -615,15 +644,15 @@ return [
                             ],
                         ],
                     ],
-                    'recap-bu' => [
+                    'points-de-vigilance' => [
                         'type'          => 'Segment',
                         'options'       => [
-                            'route'       => '/recap-bu/:these',
+                            'route'       => '/points-de-vigilance/:these',
                             'constraints' => [
                                 'these' => '\d+',
                             ],
                             'defaults'    => [
-                                'action' => 'recap-bu',
+                                'action' => 'points-de-vigilance',
                             ],
                         ],
                     ],
@@ -704,9 +733,9 @@ return [
                                 'etape' => null,
                                 'visible' => 'Assertion\\These',
                             ],
-                            'recapbu' => [
-                                'label'    => 'Récapitulatif BU',
-                                'route'    => 'these/recap-bu',
+                            'points-de-vigilance' => [
+                                'label'    => 'Points de vigilance',
+                                'route'    => 'these/points-de-vigilance',
                                 'withtarget' => true,
                                 'paramsInject' => [
                                     'these',
@@ -876,7 +905,7 @@ return [
             'DiffusionTheseForm' => DiffusionTheseFormFactory::class,
             'RdvBuTheseForm' => RdvBuTheseFormFactory::class,
             'RdvBuTheseDoctorantForm' => RdvBuTheseDoctorantFormFactory::class,
-            'RecapBuForm' => RecapBuFormFactory::class,
+            'PointsDeVigilanceForm' => PointsDeVigilanceFormFactory::class,
         ],
         'initializers' => [
             ServiceAwareInitializer::class,
@@ -887,7 +916,7 @@ return [
             'DiffusionHydrator' => DiffusionHydratorFactory::class,
             'AttestationHydrator' => AttestationHydratorFactory::class,
             'RdvBuHydrator' => RdvBuHydratorFactory::class,
-            'RecapBuHydrator' => RecapBuHydratorFactory::class,
+            'PointsDeVigilanceHydrator' => PointsDeVigilanceHydratorFactory::class,
         )
     ),
     'service_manager' => [
@@ -896,6 +925,7 @@ return [
         ),
         'factories' => [
             'TheseService'                 => TheseServiceFactory::class,
+            'TheseRechercheService'        => TheseRechercheServiceFactory::class,
             'TheseObserverService'         => TheseObserverServiceFactory::class,
             TheseEntityAssertion::class    => TheseEntityAssertionFactory::class
         ],
