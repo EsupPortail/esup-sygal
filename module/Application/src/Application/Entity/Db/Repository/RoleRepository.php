@@ -22,12 +22,12 @@ class RoleRepository extends DefaultEntityRepository
 
         $qb = $this->createQueryBuilder('r');
         $qb
-            ->addSelect('s, e')
-            ->join('r.structure', 's')
-            ->join('s.etablissement', 'e', Join::WITH, 'e.code = :etablissement')
+            ->addSelect('s')
+            ->join('r.structure', 's', Join::WITH, 's.code = :etablissement')
             ->where('r.code = :code')
             ->setParameter('code', Role::CODE_DOCTORANT)
-            ->setParameter('etablissement', $etablissement);
+            ->setParameter('etablissement', $etablissement)
+            ;
 
         try {
             $role = $qb->getQuery()->getOneOrNullResult();
