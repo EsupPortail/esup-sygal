@@ -52,7 +52,8 @@ class VariableRepository extends DefaultEntityRepository
             ->andWhere(':dateObservation BETWEEN v.dateDebutValidite AND v.dateFinValidite')
             ->orderBy('v.dateFinValidite', 'ASC') // tri chronologique important!
             ->setParameter('etab', $etab)
-            ->setParameter('dateObservation', $dateObservation);
+            ->setParameter('dateObservation', $dateObservation)
+            ;
 
         /** @var Variable[] $results */
         $results = $qb->getQuery()->getResult();

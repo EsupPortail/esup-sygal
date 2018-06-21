@@ -119,7 +119,8 @@ class TheseSorter
             case self::NAME_etablissement:
                 $qb
                     ->leftJoin('t.etablissement', 'e_sort')
-                    ->addOrderBy('e_sort.code', $direction);
+                    ->leftJoin('e_sort.structure', 's_sort')
+                    ->addOrderBy('s_sort.code', $direction);
                 break;
 
             case self::NAME_etatThese:

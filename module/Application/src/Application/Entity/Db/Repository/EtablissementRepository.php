@@ -15,11 +15,17 @@ class EtablissementRepository extends DefaultEntityRepository
      * Cette fonction retourne le libellé associé au code d'un établissement
      * @param $code
      * @return string|null
+     * @throws NonUniqueResultException
      */
     public function libelle($code)
     {
+        $qb = $this->getEntityManager()->getRepository(Etablissement::class)->createQueryBuilder("etablissement")
+            ->leftJoin("etablissement.structure","structure")
+            ->andWhere("structure.code = :code")
+            ->setParameter("code", $code)
+            ;
         /** @var Etablissement $entity */
-        $entity = $this->findOneBy(['code' => $code]);
+        $entity = $qb->getQuery()->getOneOrNullResult();
 
         return $entity ? $entity->getLibelle() : null;
     }
