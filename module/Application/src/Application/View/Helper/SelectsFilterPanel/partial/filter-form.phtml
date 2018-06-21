@@ -1,11 +1,9 @@
 <?php
 
-use Application\Service\These\Filter\TheseSelectFilter;
 use Application\View\Renderer\PhpRenderer;
 
 /**
  * @var PhpRenderer                                           $this
- * @var string                                                $formAction
  * @var \Application\Service\These\Filter\TheseSelectFilter[] $filters
  * Exemple :
  * [
@@ -33,7 +31,7 @@ $queryParams = $this->queryParams();
     <div class="panel-heading">
         <span class="glyphicon glyphicon-filter"></span> Filtres
     </div>
-    <form class="panel-body form-inline filters" method="GET" action="<?php echo $formAction ?>">
+    <form class="panel-body form-inline filters" method="GET" action="">
         <?php foreach ($filters as $filter): ?>
         <div class="form-group">
             <label for="<?php echo $filter->getName() ?>">
