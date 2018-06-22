@@ -11,6 +11,9 @@
         <testsuite name="Rule">
             <directory>./module/Application/test/ApplicationTest/Rule</directory>
         </testsuite>
+        <testsuite name="Assertions">
+            <directory>./module/Application/tests/ApplicationUnitTest/Assertion</directory>
+        </testsuite>
     </testsuites>
 
     <logging>

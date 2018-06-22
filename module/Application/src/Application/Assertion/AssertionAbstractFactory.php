@@ -7,6 +7,7 @@ use Application\Assertion\Interfaces\EntityAssertionInterface;
 use Application\Assertion\Interfaces\PageAssertionInterface;
 use Application\Service\UserContextService;
 use UnicaenAuth\Service\AuthorizeService;
+use Zend\Log\Logger;
 use Zend\ServiceManager\AbstractFactoryInterface;
 use Zend\ServiceManager\Exception\InvalidServiceNameException;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -102,6 +103,10 @@ class AssertionAbstractFactory implements AbstractFactoryInterface
         $baseAssertion->setEntityAssertion($entityAssertion);
         $baseAssertion->setControllerAssertion($controllerAssertion);
         $baseAssertion->setPageAssertion($pageAssertion);
+
+//        $logger = new Logger();
+//        $logger->addWriter(new \Zend\Log\Writer\Stream('/tmp/TheseEntityAssertion.log'));
+//        $entityAssertion->setLogger($logger);
 
         return $baseAssertion;
     }
