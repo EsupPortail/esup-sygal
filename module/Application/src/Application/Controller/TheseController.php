@@ -1652,7 +1652,7 @@ class TheseController extends AbstractController
         }
 
         //unlink pour effacer la couv temp
-        unlink($filename);
+        //unlink($filename);
 
         $merged->Output("/var/sygal-files/merged.pdf", 'D');
 //        $merged->Output("/var/sygal-files/merged.pdf", 'D');

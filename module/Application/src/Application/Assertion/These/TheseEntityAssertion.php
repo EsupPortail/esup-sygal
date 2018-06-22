@@ -4,28 +4,29 @@ namespace Application\Assertion\These;
 
 use Application\Assertion\Exception\FailedAssertionException;
 use Application\Assertion\Interfaces\EntityAssertionInterface;
+use Application\Assertion\These\GeneratedTheseEntityAssertion;
 use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
-use Application\Constants;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\VersionFichier;
 use Application\Entity\Db\VSitu\DepotVersionCorrigeeValidationDirecteur;
-use Application\Provider\Privilege\ThesePrivileges;
-use Application\Provider\Privilege\ValidationPrivileges;
 use Application\Service\Fichier\FichierServiceAwareInterface;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareInterface;
 use Application\Service\Validation\ValidationServiceAwareTrait;
+use Zend\Log\LoggerAwareTrait;
 
-class TheseEntityAssertion implements EntityAssertionInterface, ValidationServiceAwareInterface, FichierServiceAwareInterface
+class TheseEntityAssertion extends GeneratedTheseEntityAssertion
+    implements EntityAssertionInterface, ValidationServiceAwareInterface, FichierServiceAwareInterface
 {
     use UserContextServiceAwareTrait;
     use ValidationServiceAwareTrait;
     use ThrowsFailedAssertionExceptionTrait;
     use FichierServiceAwareTrait;
+    use LoggerAwareTrait;
 
     /**
      * @var These
@@ -50,185 +51,56 @@ class TheseEntityAssertion implements EntityAssertionInterface, ValidationServic
      */
     public function assert($privilege = null)
     {
-        switch ($privilege) {
-            /**
-             * THESE_DEPOT_VERSION_INITIALE
-             */
-            case ThesePrivileges::THESE_DEPOT_VERSION_INITIALE:
-                $this->assertAucuneCorrectionAttendue();
-                break;
+        $allowed = $this->assertAsBoolean($privilege);
 
-            /**
-             * THESE_SAISIE_CONFORMITE_ARCHIVAGE
-             */
-            case ThesePrivileges::THESE_SAISIE_CONFORMITE_ARCHIVAGE:
-                if ($this->existeFichierTheseVersionCorrigee()) {
-                    $this->assertDepotVersionCorrigeeNonEncoreValide();
-                } else {
-                    $this->assertAucuneValidationBU();
-                }
-                break;
+//        $this->logger->debug(
+//            $_SERVER['REQUEST_URI'] . PHP_EOL .
+//            "assert(" . $privilege . ') : ' . ($allowed ? 'true' : 'false') . ' [' . $this->failureMessage . ']' . PHP_EOL
+//        );
 
-            /**
-             * THESE_DEPOT_VERSION_CORRIGEE
-             */
-            case ThesePrivileges::THESE_DEPOT_VERSION_CORRIGEE:
-                $this->assertCorrectionAttendue();
-                $this->assertCorrectionNonEncoreValideNiveauDirecteur();
-                $this->assertDateButoirDepotVersionCorrigeeNonDepasse();
-                break;
-
-            /**
-             * THESE_SAISIE_RDV_BU
-             */
-            case ThesePrivileges::THESE_SAISIE_RDV_BU:
-                $this->assertAucuneValidationBU("La validation par la BU a été faite.");
-                break;
-
-            /**
-             * THESE_VALIDATION_RDV_BU
-             */
-            case ValidationPrivileges::THESE_VALIDATION_RDV_BU:
-                $this->assertAucuneValidationBU("La validation par la BU a été faite.");
-                // ce qui suit a été ajouté lors de l'absorption de l'étape RDV_BU_SAISIE_BU par l'étape RDV_BU_VALIDATION_BU
-                $this->assertInfosBuSaisies();
-                break;
-
-            /**
-             * THESE_VALIDATION_RDV_BU_SUPPR
-             */
-            case ValidationPrivileges::THESE_VALIDATION_RDV_BU_SUPPR:
-                $this->assertExisteValidationRdvBu();
-                $this->assertFalse($this->existeFichierTheseVersionCorrigee());
-                break;
-
-            /**
-             * VALIDATION_DEPOT_THESE_CORRIGEE
-             */
-            case ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE:
-                $this->assertCorrectionAttendue();
-                $this->assertDepotVersionCorrigeeNonEncoreValide();
-                $this->assertDateButoirDepotVersionCorrigeeNonDepasse();
-                break;
-
-            /**
-             * VALIDATION_DEPOT_THESE_CORRIGEE_SUPPR
-             */
-            case ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE_SUPPR:
-                $this->assertAucuneValidationCorrectionThese();
-                break;
-
-            /**
-             * VALIDATION_CORRECTION_THESE
-             */
-            case ValidationPrivileges::VALIDATION_CORRECTION_THESE:
-                // le dépôt de la version corrigée doit être validé
-                $this->assertExisteValidationDepotThese();
-                // recherche de l'utilisateur parmi les validateurs attendus
-                $this->assertUtilisateurExisteParmiValidateursAttendus();
-                break;
-
-            /**
-             * VALIDATION_CORRECTION_THESE_SUPPR
-             */
-            case ValidationPrivileges::VALIDATION_CORRECTION_THESE_SUPPR:
-                // recherche de l'utilisateur parmi les personnes ayant validé
-                $this->assertUtilisateurExisteParmiValidateursAyantValide();
-                break;
-
-            /**
-             * Validation de la remise de la version papier corrigée.
-             */
-            case ValidationPrivileges::VALIDATION_VERSION_PAPIER_CORRIGEE:
-                $this->assertAucuneValidationVersionPapierCorrigee();
-                break;
-        }
-
-        /**
-         * Spécificités du rôle Doctorant.
-         */
-        if ($this->selectedRoleIsDoctorant()) {
-            $this->assertEntityAsDoctorant($privilege);
-        }
+        $this->assertTrue($allowed, $this->failureMessage);
 
         return true;
     }
 
+
+
+
+    protected function isInfosBuSaisies()
+    {
+        return ($rdvBu = $this->these->getRdvBu()) && $rdvBu->isInfosBuSaisies();
+    }
+
+    protected function isExisteValidationRdvBu()
+    {
+        return $this->these && $this->these->getValidation(TypeValidation::CODE_RDV_BU);
+    }
+
+    protected function isExisteValidationBU()
+    {
+        return $this->these->getValidation(TypeValidation::CODE_RDV_BU) !== null;
+    }
+
     /**
-     * @param string $privilege
-     * @throws FailedAssertionException
+     * @return bool
+     * @deprecated Utiliser isCorrectionAttendue
      */
-    private function assertEntityAsDoctorant($privilege = null)
+    protected function isAucuneCorrectionAttendue()
     {
-        $this->assertUtilisateurEstAuteurDeLaThese();
-
-        switch ($privilege) {
-            case ThesePrivileges::THESE_SAISIE_DESCRIPTION:
-            case ThesePrivileges::THESE_SAISIE_ATTESTATIONS:
-            case ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION:
-            case ThesePrivileges::THESE_DEPOT_VERSION_INITIALE:
-                if ($this->existeFichierTheseVersionCorrigee()) {
-                    $this->assertDepotVersionCorrigeeNonEncoreValide();
-                } else {
-                    $this->assertAucuneValidationBU();
-                }
-                break;
-        }
-
-        // Une correction doit être apportée par le doctorant, celui-ci ne peut plus modifier son autorisation de diffusion
-        if ($privilege === ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION) {
-            $this->assertAucunDepotVersionCorrigee();
-        }
-
-        if ($privilege === ThesePrivileges::THESE_DEPOT_VERSION_INITIALE) {
-            $this->assertTheseNonSoutenue();
-        }
+        return !$this->these->getCorrectionAutorisee();
     }
 
-    private function assertInfosBuSaisies()
+    protected function isExisteValidationCorrectionsThese()
     {
-        $this->assertTrue(
-            ($rdvBu = $this->these->getRdvBu()) && $rdvBu->isInfosBuSaisies(),
-            "La BU n'a pas renseigné toutes informations requises."
-        );
+        return $this->these->getValidations(TypeValidation::CODE_CORRECTION_THESE)->count() > 0;
     }
 
-    private function assertExisteValidationRdvBu()
+    protected function isExisteValidationDepotVersionCorrigee()
     {
-        $this->assertTrue($this->these && $this->these->getValidation(TypeValidation::CODE_RDV_BU));
+        return $this->these->getValidations(TypeValidation::CODE_DEPOT_THESE_CORRIGEE)->count() > 0;
     }
 
-    private function assertAucuneValidationBU($message = null)
-    {
-        // la BU ne doit pas avoir validé
-        $rdvBuPasValide = ! $this->these->getValidation(TypeValidation::CODE_RDV_BU);
-        $this->assertTrue(
-            $rdvBuPasValide,
-            $message ?: "Opération impossible dès lors que la BU a validé.");
-    }
-
-    private function assertAucuneCorrectionAttendue()
-    {
-        $this->assertTrue(
-            !$this->these->getCorrectionAutorisee(),
-            "Le dépôt d'une version initiale n'est plus possible dès lors qu'une version corrigée est attendue."
-        );
-    }
-
-    private function assertAucuneValidationCorrectionThese()
-    {
-        $this->assertTrue($this->these->getValidations(TypeValidation::CODE_CORRECTION_THESE)->count() === 0);
-    }
-
-    private function assertExisteValidationDepotThese()
-    {
-        $this->assertTrue(
-            $this->these->getValidations(TypeValidation::CODE_DEPOT_THESE_CORRIGEE)->count() > 0,
-            "Le dépôt de la version corrigée n'a pas encore été validé par le doctorant."
-        );
-    }
-
-    private function assertUtilisateurExisteParmiValidateursAttendus()
+    protected function isUtilisateurExisteParmiValidateursAttendus()
     {
         // recherche de l'utilisateur parmi les validateurs attendus
         $results = $this->validationService->getValidationsAttenduesPourCorrectionThese($this->these);
@@ -242,10 +114,11 @@ class TheseEntityAssertion implements EntityAssertionInterface, ValidationServic
                 break;
             }
         }
-        $this->assertTrue($found);
+
+        return $found;
     }
 
-    private function assertUtilisateurExisteParmiValidateursAyantValide()
+    protected function isUtilisateurExisteParmiValidateursAyantValide()
     {
         // recherche de l'utilisateur parmi les personnes ayant validé
         $individu = $this->userContextService->getIdentityIndividu();
@@ -258,89 +131,107 @@ class TheseEntityAssertion implements EntityAssertionInterface, ValidationServic
                 break;
             }
         }
-        $this->assertTrue($found);
+
+        return $found;
     }
 
-    private function assertAucuneValidationVersionPapierCorrigee()
+    protected function isExisteValidationVersionPapierCorrigee()
     {
-        $res = $this->validationService->getRepository()->findValidationByCodeAndThese(
+        $validations = $this->validationService->getRepository()->findValidationByCodeAndThese(
             TypeValidation::CODE_VERSION_PAPIER_CORRIGEE,
             $this->these
         );
-        $pasEncoreValidee = empty($res);
-        $this->assertTrue($pasEncoreValidee);
+
+        return count($validations) > 0;
     }
 
-    private function assertCorrectionAttendue()
+    protected function isCorrectionAttendue()
     {
-        // des corrections doivent être attendues
-        $this->assertTrue(
-            $this->these->getCorrectionAutorisee(),
-            "Aucune correction n'est attendue pour cette thèse");
+        return $this->these->getCorrectionAutorisee();
     }
 
-    private function assertDepotVersionCorrigeeNonEncoreValide()
+    protected function isDepotVersionCorrigeeValide()
     {
-        // le dépôt de la version corrigée ne doit pas avoir été validé
-        $depotTheseCorrigeePasValide = ! $this->these->getValidation(TypeValidation::CODE_DEPOT_THESE_CORRIGEE);
-        $this->assertTrue(
-            $depotTheseCorrigeePasValide,
-            "Opération impossible dès lors que le dépôt de la version corrigée a été validé.");
+        return $this->these->getValidation(TypeValidation::CODE_DEPOT_THESE_CORRIGEE) !== null;
     }
 
-    private function assertCorrectionNonEncoreValideNiveauDirecteur()
-    {
-        // le dépôt de la version corrigée ne doit pas avoir été validé
-        $collection = $this->these->getValidations(TypeValidation::CODE_CORRECTION_THESE);
-        $nbValidation = $collection->count();
-        $correctionPasValideeParDirecteur =  ($nbValidation === 0);
-        $this->assertTrue(
-            $correctionPasValideeParDirecteur,
-            "Opération impossible dès lors que le dépôt de la version corrigée a été validé par au moins un directeur.");
-    }
-
-    private function assertDateButoirDepotVersionCorrigeeNonDepasse()
+    protected function isDateButoirDepotVersionCorrigeeDepassee()
     {
         // il y a une date butoir pour déposer la version corrigée et valider son dépôt
         $dateButoir = $this->these->getDateButoirDepotVersionCorrigee();
         if ($dateButoir !== null) {
             $now = new \DateTime('today'); // The time is set to 00:00:00
-            $this->assertTrue(
-                $now <= $dateButoir,
-                sprintf("La date butoir pour le dépôt de la version corrigée est dépassée (%s).",
-                    $dateButoir->format(Constants::DATE_FORMAT)));
+
+            return $now <= $dateButoir;
         }
+
+        return true;
     }
 
-    private function assertUtilisateurEstAuteurDeLaThese()
+    protected function isUtilisateurEstAuteurDeLaThese()
     {
-        $this->assertTrue(
-            $this->these->getDoctorant()->getId() === $this->getIdentityDoctorant()->getId(),
-            "Cette thèse n'est pas la vôtre.");
+        return $this->these->getDoctorant()->getId() === $this->getIdentityDoctorant()->getId();
     }
 
-    private function assertAucunDepotVersionCorrigee()
+    protected function isTheseSoutenue()
     {
-        $this->assertFalse(
-            $this->existeFichierTheseVersionCorrigee(),
-            "Aucune version corrigée n'a été fournie.");
-    }
-
-    private function assertTheseNonSoutenue()
-    {
-        $this->assertFalse(
-            $this->these->estSoutenue(),
-            "Dépot initial bloqué car soutenance effectuée"
-        );
+        return $this->these->estSoutenue();
     }
 
     /**
      * @return bool
      */
-    private function selectedRoleIsDoctorant()
+    protected function isRoleDoctorantSelected()
     {
         return (bool) $this->userContextService->getSelectedRoleDoctorant();
     }
+
+    /**
+     * @return bool
+     */
+    protected function isExisteFichierTheseVersionOriginale()
+    {
+        if (null === $this->existeFichierTheseVersionOriginale) {
+            $this->existeFichierTheseVersionOriginale = ! empty($this->fichierService->getRepository()->fetchFichiers(
+                $this->these,
+                NatureFichier::CODE_THESE_PDF,
+                VersionFichier::CODE_ORIG,
+                false));
+        }
+
+        return $this->existeFichierTheseVersionOriginale;
+    }
+
+    /**
+     * @var bool
+     */
+    private $existeFichierTheseVersionOriginale;
+
+    /**
+     * @return bool
+     */
+    protected function isExisteFichierTheseVersionCorrigee()
+    {
+        if (null === $this->existeFichierTheseVersionCorrigee) {
+            $this->existeFichierTheseVersionCorrigee = ! empty($this->fichierService->getRepository()->fetchFichiers(
+                $this->these,
+                NatureFichier::CODE_THESE_PDF,
+                VersionFichier::CODE_ORIG_CORR,
+                false));
+        }
+
+        return $this->existeFichierTheseVersionCorrigee;
+    }
+
+    /**
+     * @var bool
+     */
+    private $existeFichierTheseVersionCorrigee;
+
+
+
+
+
     /**
      * @var Doctorant
      */
@@ -356,30 +247,5 @@ class TheseEntityAssertion implements EntityAssertionInterface, ValidationServic
         }
 
         return $this->identityDoctorant;
-    }
-
-    /**
-     * @var bool
-     */
-    private $existeFichierTheseVersionCorrigee;
-
-    /**
-     * @param bool $existeFichierTheseVersionCorrigee
-     */
-    public function setExisteFichierTheseVersionCorrigee($existeFichierTheseVersionCorrigee = true)
-    {
-        $this->existeFichierTheseVersionCorrigee = $existeFichierTheseVersionCorrigee;
-    }
-
-    private function existeFichierTheseVersionCorrigee()
-    {
-        if (null === $this->existeFichierTheseVersionCorrigee) {
-            $this->existeFichierTheseVersionCorrigee = ! empty($this->fichierService->getRepository()->fetchFichiers(
-                $this->these,
-                NatureFichier::CODE_THESE_PDF,
-                VersionFichier::CODE_ORIG_CORR,
-                false));
-        }
-        return $this->existeFichierTheseVersionCorrigee;
     }
 }

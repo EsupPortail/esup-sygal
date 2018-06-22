@@ -53,7 +53,9 @@ class ThesePrivileges extends Privileges
      * Archivage
      */
     const THESE_CONSULTATION_ARCHIVAGE              = 'these-consultation-archivage';
-    const THESE_SAISIE_CONFORMITE_ARCHIVAGE         = 'these-saisie-conformite-archivage';
+    // todo: renommer 'these-saisie-conformite-archivage' en 'these-saisie-conformite-version-archivage-initiale'
+    const THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_INITIALE = 'these-saisie-conformite-archivage'; // todo: renommer en 'these-saisie-conformite-version-archivage-initiale' (+ BDD!)
+    const THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE = 'these-saisie-conformite-version-archivage-corrigee';
 
     /**
      * Rendez-vous BU

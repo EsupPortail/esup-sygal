@@ -1,8 +1,6 @@
 <?php
 
 use Application\Assertion\AssertionAbstractFactory;
-use Application\Assertion\These\TheseEntityAssertion;
-use Application\Assertion\These\TheseEntityAssertionFactory;
 use Application\Controller\Factory\TheseControllerFactory;
 use Application\Controller\Factory\TheseObserverControllerFactory;
 use Application\Controller\Plugin\Url\UrlThesePluginFactory;
@@ -13,11 +11,11 @@ use Application\Form\Factory\AttestationTheseFormFactory;
 use Application\Form\Factory\DiffusionHydratorFactory;
 use Application\Form\Factory\DiffusionTheseFormFactory;
 use Application\Form\Factory\MetadonneeTheseFormFactory;
+use Application\Form\Factory\PointsDeVigilanceFormFactory;
+use Application\Form\Factory\PointsDeVigilanceHydratorFactory;
 use Application\Form\Factory\RdvBuHydratorFactory;
 use Application\Form\Factory\RdvBuTheseDoctorantFormFactory;
 use Application\Form\Factory\RdvBuTheseFormFactory;
-use Application\Form\Factory\PointsDeVigilanceFormFactory;
-use Application\Form\Factory\PointsDeVigilanceHydratorFactory;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\Service\Acteur\ActeurService;
 use Application\Service\Message\DiffusionMessages;
@@ -42,20 +40,15 @@ return [
                 'allow' => [
                     [
                         'privileges' => [
-                            ThesePrivileges::THESE_CONSULTATION_FICHE,
-                            ThesePrivileges::THESE_CONSULTATION_DESCRIPTION,
-                            ThesePrivileges::THESE_CONSULTATION_DEPOT,
-                            ThesePrivileges::THESE_CONSULTATION_ARCHIVAGE,
                             ThesePrivileges::THESE_SAISIE_DESCRIPTION,
                             ThesePrivileges::THESE_SAISIE_ATTESTATIONS,
                             ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION,
                             ThesePrivileges::THESE_DEPOT_VERSION_INITIALE,
                             ThesePrivileges::THESE_DEPOT_VERSION_CORRIGEE,
                             ThesePrivileges::THESE_TELECHARGEMENT_FICHIER,
-                            ThesePrivileges::THESE_SAISIE_CONFORMITE_ARCHIVAGE,
+                            ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_INITIALE,
+                            ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE,
                             ThesePrivileges::THESE_SAISIE_RDV_BU,
-                            ThesePrivileges::FICHIER_DIVERS_TELEVERSER,
-                            ThesePrivileges::FICHIER_DIVERS_CONSULTER,
                         ],
                         'resources'  => ['These'],
                         'assertion'  => 'Assertion\\These',
@@ -210,7 +203,8 @@ return [
                         'modifier-certif-conformite',
                     ],
                     'privileges' => [
-                        ThesePrivileges::THESE_SAISIE_CONFORMITE_ARCHIVAGE,
+                        ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_INITIALE,
+                        ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE,
                     ],
                     'assertion'  => 'Assertion\\These',
                 ],
@@ -927,7 +921,6 @@ return [
             'TheseService'                 => TheseServiceFactory::class,
             'TheseRechercheService'        => TheseRechercheServiceFactory::class,
             'TheseObserverService'         => TheseObserverServiceFactory::class,
-            TheseEntityAssertion::class    => TheseEntityAssertionFactory::class
         ],
         'abstract_factories' => [
             AssertionAbstractFactory::class,
