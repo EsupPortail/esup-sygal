@@ -229,4 +229,16 @@ class TheseService extends BaseService
 //            $this->addMessage($notificationLog, MessageAwareInterface::INFO);
         }
     }
+
+    public function getTheseEnCoursPostSoutenance()
+    {
+        $qb = $this->getEntityManager()->getRepository(These::class)->createQueryBuilder("these")
+            ->andWhere("these.etatThese = :encours")
+            ->andWhere("these.dateSoutenance < :today")
+            ->setParameter("encours", These::ETAT_EN_COURS)
+            ->setParameter("today", new \DateTime())
+            ;
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
 }

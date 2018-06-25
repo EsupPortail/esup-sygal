@@ -18,6 +18,7 @@ $modules = [
     'UnicaenLeocarte',
     'Application',
     'Import',
+    'Indicateur',
     'Retraitement',
     'Notification',
 ];
