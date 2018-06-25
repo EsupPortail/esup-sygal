@@ -2,16 +2,14 @@
 
 namespace Application\Assertion\These;
 
-use Application\Provider\Privilege\ThesePrivileges;
-use Application\Provider\Privilege\ValidationPrivileges;
-
 /**
- * Classe mère pour Application\Assertion\These\TheseEntityAssertion.
+ * Classe mère d'Assertion.
  *
- * Générée le 22/06/2018 15:52:19 par
- * Application\Assertion\These\Generator\TheseEntityAssertionGenerator
- *  à partir du fichier
- * /home/gauthierb/workspace/sygal/data/assertions/assertion-rules.csv.
+ * Générée à partir du fichier
+ * /home/gauthierb/workspace/sygal/data/assertions/TheseEntityAssertion.csv.
+ *
+ * @author Application\Assertion\Generator\AssertionGenerator
+ * @date 25/06/2018 15:52:35
  */
 abstract class GeneratedTheseEntityAssertion
 {
@@ -32,7 +30,7 @@ abstract class GeneratedTheseEntityAssertion
     {
         $this->failureMessage = null;
 
-        if ($privilege === ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_INITIALE) {
+        if ($privilege === \Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_INITIALE) {
         //--------------------------------------------------------------------------------------
             /* line 1 */
             $this->linesTrace[] = '/* line 1 */';
@@ -47,7 +45,7 @@ abstract class GeneratedTheseEntityAssertion
             }
         }
 
-        if ($privilege === ThesePrivileges::THESE_DEPOT_VERSION_CORRIGEE) {
+        if ($privilege === \Application\Provider\Privilege\ThesePrivileges::THESE_DEPOT_VERSION_CORRIGEE) {
         //--------------------------------------------------------------------------------------
             /* line 3 */
             $this->linesTrace[] = '/* line 3 */';
@@ -76,7 +74,7 @@ abstract class GeneratedTheseEntityAssertion
             }
         }
 
-        if ($privilege === ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE) {
+        if ($privilege === \Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE) {
         //--------------------------------------------------------------------------------------
             /* line 7 */
             $this->linesTrace[] = '/* line 7 */';
@@ -91,7 +89,7 @@ abstract class GeneratedTheseEntityAssertion
             }
         }
 
-        if ($privilege === ThesePrivileges::THESE_SAISIE_RDV_BU) {
+        if ($privilege === \Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_RDV_BU) {
         //--------------------------------------------------------------------------------------
             /* line 9 */
             $this->linesTrace[] = '/* line 9 */';
@@ -106,7 +104,7 @@ abstract class GeneratedTheseEntityAssertion
             }
         }
 
-        if ($privilege === ValidationPrivileges::THESE_VALIDATION_RDV_BU) {
+        if ($privilege === \Application\Provider\Privilege\ValidationPrivileges::THESE_VALIDATION_RDV_BU) {
         //--------------------------------------------------------------------------------------
             /* line 11 */
             $this->linesTrace[] = '/* line 11 */';
@@ -128,7 +126,7 @@ abstract class GeneratedTheseEntityAssertion
             }
         }
 
-        if ($privilege === ValidationPrivileges::THESE_VALIDATION_RDV_BU_SUPPR) {
+        if ($privilege === \Application\Provider\Privilege\ValidationPrivileges::THESE_VALIDATION_RDV_BU_SUPPR) {
         //--------------------------------------------------------------------------------------
             /* line 14 */
             $this->linesTrace[] = '/* line 14 */';
@@ -149,7 +147,7 @@ abstract class GeneratedTheseEntityAssertion
             }
         }
 
-        if ($privilege === ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE) {
+        if ($privilege === \Application\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE) {
         //--------------------------------------------------------------------------------------
             /* line 17 */
             $this->linesTrace[] = '/* line 17 */';
@@ -178,7 +176,7 @@ abstract class GeneratedTheseEntityAssertion
             }
         }
 
-        if ($privilege === ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE_SUPPR) {
+        if ($privilege === \Application\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE_SUPPR) {
         //--------------------------------------------------------------------------------------
             /* line 21 */
             $this->linesTrace[] = '/* line 21 */';
@@ -192,7 +190,7 @@ abstract class GeneratedTheseEntityAssertion
             }
         }
 
-        if ($privilege === ValidationPrivileges::VALIDATION_CORRECTION_THESE) {
+        if ($privilege === \Application\Provider\Privilege\ValidationPrivileges::VALIDATION_CORRECTION_THESE) {
         //--------------------------------------------------------------------------------------
             /* line 23 */
             $this->linesTrace[] = '/* line 23 */';
@@ -213,7 +211,7 @@ abstract class GeneratedTheseEntityAssertion
             }
         }
 
-        if ($privilege === ValidationPrivileges::VALIDATION_CORRECTION_THESE_SUPPR) {
+        if ($privilege === \Application\Provider\Privilege\ValidationPrivileges::VALIDATION_CORRECTION_THESE_SUPPR) {
         //--------------------------------------------------------------------------------------
             /* line 26 */
             $this->linesTrace[] = '/* line 26 */';
@@ -227,7 +225,7 @@ abstract class GeneratedTheseEntityAssertion
             }
         }
 
-        if ($privilege === ValidationPrivileges::VALIDATION_VERSION_PAPIER_CORRIGEE) {
+        if ($privilege === \Application\Provider\Privilege\ValidationPrivileges::VALIDATION_VERSION_PAPIER_CORRIGEE) {
         //--------------------------------------------------------------------------------------
             /* line 28 */
             $this->linesTrace[] = '/* line 28 */';
@@ -252,7 +250,7 @@ abstract class GeneratedTheseEntityAssertion
             }
         }
 
-        if ($privilege === ThesePrivileges::THESE_SAISIE_DESCRIPTION) {
+        if ($privilege === \Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_DESCRIPTION) {
         //--------------------------------------------------------------------------------------
             /* line 31 */
             $this->linesTrace[] = '/* line 31 */';
@@ -286,7 +284,7 @@ abstract class GeneratedTheseEntityAssertion
             }
         }
 
-        if ($privilege === ThesePrivileges::THESE_SAISIE_ATTESTATIONS) {
+        if ($privilege === \Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_ATTESTATIONS) {
         //--------------------------------------------------------------------------------------
             /* line 35 */
             $this->linesTrace[] = '/* line 35 */';
@@ -326,7 +324,7 @@ abstract class GeneratedTheseEntityAssertion
             }
         }
 
-        if ($privilege === ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION) {
+        if ($privilege === \Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION) {
         //--------------------------------------------------------------------------------------
             /* line 40 */
             $this->linesTrace[] = '/* line 40 */';
@@ -373,7 +371,7 @@ abstract class GeneratedTheseEntityAssertion
             }
         }
 
-        if ($privilege === ThesePrivileges::THESE_DEPOT_VERSION_INITIALE) {
+        if ($privilege === \Application\Provider\Privilege\ThesePrivileges::THESE_DEPOT_VERSION_INITIALE) {
         //--------------------------------------------------------------------------------------
             /* line 44 */
             $this->linesTrace[] = '/* line 44 */';
@@ -431,28 +429,28 @@ abstract class GeneratedTheseEntityAssertion
             }
         }
 
-        if ($privilege === ThesePrivileges::THESE_SAISIE_ATTESTATIONS /* évite UnexpectedPrivilegeException */) {
+        if ($privilege === \Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_ATTESTATIONS /* évite UnexpectedPrivilegeException */) {
         //--------------------------------------------------------------------------------------
             /* line 54 */
             $this->linesTrace[] = '/* line 54 */';
             return true;
         }
 
-        if ($privilege === ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION /* évite UnexpectedPrivilegeException */) {
+        if ($privilege === \Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION /* évite UnexpectedPrivilegeException */) {
         //--------------------------------------------------------------------------------------
             /* line 55 */
             $this->linesTrace[] = '/* line 55 */';
             return true;
         }
 
-        if ($privilege === ThesePrivileges::THESE_TELECHARGEMENT_FICHIER /* évite UnexpectedPrivilegeException */) {
+        if ($privilege === \Application\Provider\Privilege\ThesePrivileges::THESE_TELECHARGEMENT_FICHIER /* évite UnexpectedPrivilegeException */) {
         //--------------------------------------------------------------------------------------
             /* line 56 */
             $this->linesTrace[] = '/* line 56 */';
             return true;
         }
 
-        if ($privilege === ThesePrivileges::THESE_SAISIE_DESCRIPTION /* évite UnexpectedPrivilegeException */) {
+        if ($privilege === \Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_DESCRIPTION /* évite UnexpectedPrivilegeException */) {
         //--------------------------------------------------------------------------------------
             /* line 57 */
             $this->linesTrace[] = '/* line 57 */';
@@ -536,65 +534,65 @@ abstract class GeneratedTheseEntityAssertion
     public function loadedFileContent()
     {
         return <<<'EOT'
-        ;;1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;;
+class;Application\Assertion\These\GeneratedTheseEntityAssertion;1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;;
 line;privilege;isRoleDoctorantSelected;isCorrectionAttendue;isDateButoirDepotVersionCorrigeeDepassee;isDepotVersionCorrigeeValide;isExisteFichierTheseVersionCorrigee;isExisteFichierTheseVersionOriginale;isExisteValidationBU;isExisteValidationCorrectionsThese;isExisteValidationDepotVersionCorrigee;isExisteValidationRdvBu;isExisteValidationVersionPapierCorrigee;isInfosBuSaisies;isTheseSoutenue;isUtilisateurEstAuteurDeLaThese;isUtilisateurExisteParmiValidateursAttendus;isUtilisateurExisteParmiValidateursAyantValide;return;message
-1;ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_INITIALE;;;;;;;1:1;;;;;;;;;;0;Opération impossible dès lors que la BU a validé.
-2;ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_INITIALE;;;;;;;1:0;;;;;;;;;;1;
-3;ThesePrivileges::THESE_DEPOT_VERSION_CORRIGEE;;1:1;;;;;;;;;;;;;;;0;Aucune correction n'est attendue pour cette thèse
-4;ThesePrivileges::THESE_DEPOT_VERSION_CORRIGEE;;;;;;;;1:1;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé par au moins un directeur.
-5;ThesePrivileges::THESE_DEPOT_VERSION_CORRIGEE;;;1:1;;;;;;;;;;;;;;0;La date butoir pour le dépôt de la version corrigée est dépassée (%s).
-6;ThesePrivileges::THESE_DEPOT_VERSION_CORRIGEE;;1:0;3:0;;;;;2:0;;;;;;;;;1;
-7;ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE;;;;1:1;;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé.
-8;ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE;;;;1:0;;;;;;;;;;;;;1;
-9;ThesePrivileges::THESE_SAISIE_RDV_BU;;;;;;;1:1;;;;;;;;;;0;La validation par la BU a été faite.
-10;ThesePrivileges::THESE_SAISIE_RDV_BU;;;;;;;1:0;;;;;;;;;;1;
-11;ValidationPrivileges::THESE_VALIDATION_RDV_BU;;;;;;;1:1;;;;;;;;;;0;La validation par la BU a été faite.
-12;ValidationPrivileges::THESE_VALIDATION_RDV_BU;;;;;;;;;;;;1:0;;;;;0;La BU n'a pas renseigné toutes informations requises.
-13;ValidationPrivileges::THESE_VALIDATION_RDV_BU;;;;;;;1:0;;;;;2:1;;;;;1;
-14;ValidationPrivileges::THESE_VALIDATION_RDV_BU_SUPPR;;;;;;;;;;1:0;;;;;;;0;
-15;ValidationPrivileges::THESE_VALIDATION_RDV_BU_SUPPR;;;;;1:1;;;;;2:1;;;;;;;0;
-16;ValidationPrivileges::THESE_VALIDATION_RDV_BU_SUPPR;;;;;1:0;;;;;2:1;;;;;;;1;
-17;ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE;;1:0;;;;;;;;;;;;;;;0;Aucune correction n'est attendue pour cette thèse.
-18;ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE;;;;1:1;;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé.
-19;ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE;;;1:1;;;;;;;;;;;;;;0;La date butoir pour le dépôt de la version corrigée est dépassée (%s).
-20;ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE;;1:1;3:0;2:0;;;;;;;;;;;;;1;
-21;ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE_SUPPR;;;;;;;;1:1;;;;;;;;;0;
-22;ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE_SUPPR;;;;;;;;1:0;;;;;;;;;1;
-23;ValidationPrivileges::VALIDATION_CORRECTION_THESE;;;;;;;;;1:0;;;;;;;;0;Le dépôt de la version corrigée n'a pas encore été validé par le doctorant.
-24;ValidationPrivileges::VALIDATION_CORRECTION_THESE;;;;;;;;;;;;;;;1:0;;0;
-25;ValidationPrivileges::VALIDATION_CORRECTION_THESE;;;;;;;;;1:1;;;;;;2:1;;1;
-26;ValidationPrivileges::VALIDATION_CORRECTION_THESE_SUPPR;;;;;;;;;;;;;;;;1:0;0;
-27;ValidationPrivileges::VALIDATION_CORRECTION_THESE_SUPPR;;;;;;;;;;;;;;;;1:1;1;
-28;ValidationPrivileges::VALIDATION_VERSION_PAPIER_CORRIGEE;;;;;;;;;;;1:1;;;;;;0;
-29;ValidationPrivileges::VALIDATION_VERSION_PAPIER_CORRIGEE;;;;;;;;;;;1:0;;;;;;1;
+1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_INITIALE;;;;;;;1:1;;;;;;;;;;0;Opération impossible dès lors que la BU a validé.
+2;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_INITIALE;;;;;;;1:0;;;;;;;;;;1;
+3;\Application\Provider\Privilege\ThesePrivileges::THESE_DEPOT_VERSION_CORRIGEE;;1:1;;;;;;;;;;;;;;;0;Aucune correction n'est attendue pour cette thèse
+4;\Application\Provider\Privilege\ThesePrivileges::THESE_DEPOT_VERSION_CORRIGEE;;;;;;;;1:1;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé par au moins un directeur.
+5;\Application\Provider\Privilege\ThesePrivileges::THESE_DEPOT_VERSION_CORRIGEE;;;1:1;;;;;;;;;;;;;;0;La date butoir pour le dépôt de la version corrigée est dépassée (%s).
+6;\Application\Provider\Privilege\ThesePrivileges::THESE_DEPOT_VERSION_CORRIGEE;;1:0;3:0;;;;;2:0;;;;;;;;;1;
+7;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE;;;;1:1;;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé.
+8;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE;;;;1:0;;;;;;;;;;;;;1;
+9;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_RDV_BU;;;;;;;1:1;;;;;;;;;;0;La validation par la BU a été faite.
+10;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_RDV_BU;;;;;;;1:0;;;;;;;;;;1;
+11;\Application\Provider\Privilege\ValidationPrivileges::THESE_VALIDATION_RDV_BU;;;;;;;1:1;;;;;;;;;;0;La validation par la BU a été faite.
+12;\Application\Provider\Privilege\ValidationPrivileges::THESE_VALIDATION_RDV_BU;;;;;;;;;;;;1:0;;;;;0;La BU n'a pas renseigné toutes informations requises.
+13;\Application\Provider\Privilege\ValidationPrivileges::THESE_VALIDATION_RDV_BU;;;;;;;1:0;;;;;2:1;;;;;1;
+14;\Application\Provider\Privilege\ValidationPrivileges::THESE_VALIDATION_RDV_BU_SUPPR;;;;;;;;;;1:0;;;;;;;0;
+15;\Application\Provider\Privilege\ValidationPrivileges::THESE_VALIDATION_RDV_BU_SUPPR;;;;;1:1;;;;;2:1;;;;;;;0;
+16;\Application\Provider\Privilege\ValidationPrivileges::THESE_VALIDATION_RDV_BU_SUPPR;;;;;1:0;;;;;2:1;;;;;;;1;
+17;\Application\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE;;1:0;;;;;;;;;;;;;;;0;Aucune correction n'est attendue pour cette thèse.
+18;\Application\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE;;;;1:1;;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé.
+19;\Application\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE;;;1:1;;;;;;;;;;;;;;0;La date butoir pour le dépôt de la version corrigée est dépassée (%s).
+20;\Application\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE;;1:1;3:0;2:0;;;;;;;;;;;;;1;
+21;\Application\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE_SUPPR;;;;;;;;1:1;;;;;;;;;0;
+22;\Application\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE_SUPPR;;;;;;;;1:0;;;;;;;;;1;
+23;\Application\Provider\Privilege\ValidationPrivileges::VALIDATION_CORRECTION_THESE;;;;;;;;;1:0;;;;;;;;0;Le dépôt de la version corrigée n'a pas encore été validé par le doctorant.
+24;\Application\Provider\Privilege\ValidationPrivileges::VALIDATION_CORRECTION_THESE;;;;;;;;;;;;;;;1:0;;0;
+25;\Application\Provider\Privilege\ValidationPrivileges::VALIDATION_CORRECTION_THESE;;;;;;;;;1:1;;;;;;2:1;;1;
+26;\Application\Provider\Privilege\ValidationPrivileges::VALIDATION_CORRECTION_THESE_SUPPR;;;;;;;;;;;;;;;;1:0;0;
+27;\Application\Provider\Privilege\ValidationPrivileges::VALIDATION_CORRECTION_THESE_SUPPR;;;;;;;;;;;;;;;;1:1;1;
+28;\Application\Provider\Privilege\ValidationPrivileges::VALIDATION_VERSION_PAPIER_CORRIGEE;;;;;;;;;;;1:1;;;;;;0;
+29;\Application\Provider\Privilege\ValidationPrivileges::VALIDATION_VERSION_PAPIER_CORRIGEE;;;;;;;;;;;1:0;;;;;;1;
 30;*;1:1;;;;;;;;;;;;;2:0;;;0;Cette thèse n'est pas la vôtre.
-31;ThesePrivileges::THESE_SAISIE_DESCRIPTION;1:1;;;3:1;2:1;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé.
-32;ThesePrivileges::THESE_SAISIE_DESCRIPTION;1:1;;;;2:0;;3:1;;;;;;;;;;0;Opération impossible dès lors que la BU a validé.
-33;ThesePrivileges::THESE_SAISIE_DESCRIPTION;1:1;;;3:0;2:1;;;;;;;;;;;;1;
-34;ThesePrivileges::THESE_SAISIE_DESCRIPTION;1:1;;;;2:0;;3:0;;;;;;;;;;1;
-35;ThesePrivileges::THESE_SAISIE_ATTESTATIONS;;;;;;1:0;;;;;;;;;;;0;Le dépôt d'une version initiale doit être fait au préalable.
-36;ThesePrivileges::THESE_SAISIE_ATTESTATIONS;1:1;;;3:1;2:1;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé.
-37;ThesePrivileges::THESE_SAISIE_ATTESTATIONS;1:1;;;;2:0;;3:1;;;;;;;;;;0;Opération impossible dès lors que la BU a validé.
-38;ThesePrivileges::THESE_SAISIE_ATTESTATIONS;1:1;;;3:0;2:1;;;;;;;;;;;;1;
-39;ThesePrivileges::THESE_SAISIE_ATTESTATIONS;1:1;;;;2:0;;3:0;;;;;;;;;;1;
-40;ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION;1:1;;;3:1;2:1;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé.
-41;ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION;1:1;;;;2:0;;3:1;;;;;;;;;;0;Opération impossible dès lors que la BU a validé.
-42;ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION;1:1;;;3:0;2:1;;;;;;;;;;;;1;
-43;ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION;1:1;;;;2:0;;3:0;;;;;;;;;;1;
-44;ThesePrivileges::THESE_DEPOT_VERSION_INITIALE;1:1;;;3:1;2:1;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé.
-45;ThesePrivileges::THESE_DEPOT_VERSION_INITIALE;1:1;;;;2:0;;3:1;;;;;;;;;;0;Opération impossible dès lors que la BU a validé.
-46;ThesePrivileges::THESE_DEPOT_VERSION_INITIALE;1:1;;;3:0;2:1;;;;;;;;;;;;1;
-47;ThesePrivileges::THESE_DEPOT_VERSION_INITIALE;1:1;;;;2:0;;3:0;;;;;;;;;;1;
-48;ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION;1:1;;;;2:1;;;;;;;;;;;;0;Aucune version corrigée n'a été fournie.
-49;ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION;1:1;;;;2:0;;;;;;;;;;;;1;
-50;ThesePrivileges::THESE_DEPOT_VERSION_INITIALE;1:1;;;;;;;;;;;;2:1;;;;0;Le dépôt initial n'est plus autorisé car la date de soutenance est passée.
-51;ThesePrivileges::THESE_DEPOT_VERSION_INITIALE;1:1;;;;;;;;;;;;2:0;;;;1;
-52;ThesePrivileges::THESE_DEPOT_VERSION_INITIALE;;1:1;;;;;;;;;;;;;;;0;Le dépôt d'une version initiale n'est plus possible dès lors qu'une version corrigée est attendue.
-53;ThesePrivileges::THESE_DEPOT_VERSION_INITIALE;;1:0;;;;;;;;;;;;;;;1;
-54;ThesePrivileges::THESE_SAISIE_ATTESTATIONS /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;1;
-55;ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;1;
-56;ThesePrivileges::THESE_TELECHARGEMENT_FICHIER /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;1;
-57;ThesePrivileges::THESE_SAISIE_DESCRIPTION /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;1;
+31;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_DESCRIPTION;1:1;;;3:1;2:1;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé.
+32;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_DESCRIPTION;1:1;;;;2:0;;3:1;;;;;;;;;;0;Opération impossible dès lors que la BU a validé.
+33;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_DESCRIPTION;1:1;;;3:0;2:1;;;;;;;;;;;;1;
+34;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_DESCRIPTION;1:1;;;;2:0;;3:0;;;;;;;;;;1;
+35;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_ATTESTATIONS;;;;;;1:0;;;;;;;;;;;0;Le dépôt d'une version initiale doit être fait au préalable.
+36;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_ATTESTATIONS;1:1;;;3:1;2:1;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé.
+37;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_ATTESTATIONS;1:1;;;;2:0;;3:1;;;;;;;;;;0;Opération impossible dès lors que la BU a validé.
+38;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_ATTESTATIONS;1:1;;;3:0;2:1;;;;;;;;;;;;1;
+39;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_ATTESTATIONS;1:1;;;;2:0;;3:0;;;;;;;;;;1;
+40;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION;1:1;;;3:1;2:1;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé.
+41;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION;1:1;;;;2:0;;3:1;;;;;;;;;;0;Opération impossible dès lors que la BU a validé.
+42;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION;1:1;;;3:0;2:1;;;;;;;;;;;;1;
+43;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION;1:1;;;;2:0;;3:0;;;;;;;;;;1;
+44;\Application\Provider\Privilege\ThesePrivileges::THESE_DEPOT_VERSION_INITIALE;1:1;;;3:1;2:1;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé.
+45;\Application\Provider\Privilege\ThesePrivileges::THESE_DEPOT_VERSION_INITIALE;1:1;;;;2:0;;3:1;;;;;;;;;;0;Opération impossible dès lors que la BU a validé.
+46;\Application\Provider\Privilege\ThesePrivileges::THESE_DEPOT_VERSION_INITIALE;1:1;;;3:0;2:1;;;;;;;;;;;;1;
+47;\Application\Provider\Privilege\ThesePrivileges::THESE_DEPOT_VERSION_INITIALE;1:1;;;;2:0;;3:0;;;;;;;;;;1;
+48;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION;1:1;;;;2:1;;;;;;;;;;;;0;Aucune version corrigée n'a été fournie.
+49;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION;1:1;;;;2:0;;;;;;;;;;;;1;
+50;\Application\Provider\Privilege\ThesePrivileges::THESE_DEPOT_VERSION_INITIALE;1:1;;;;;;;;;;;;2:1;;;;0;Le dépôt initial n'est plus autorisé car la date de soutenance est passée.
+51;\Application\Provider\Privilege\ThesePrivileges::THESE_DEPOT_VERSION_INITIALE;1:1;;;;;;;;;;;;2:0;;;;1;
+52;\Application\Provider\Privilege\ThesePrivileges::THESE_DEPOT_VERSION_INITIALE;;1:1;;;;;;;;;;;;;;;0;Le dépôt d'une version initiale n'est plus possible dès lors qu'une version corrigée est attendue.
+53;\Application\Provider\Privilege\ThesePrivileges::THESE_DEPOT_VERSION_INITIALE;;1:0;;;;;;;;;;;;;;;1;
+54;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_ATTESTATIONS /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;1;
+55;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;1;
+56;\Application\Provider\Privilege\ThesePrivileges::THESE_TELECHARGEMENT_FICHIER /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;1;
+57;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_DESCRIPTION /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;1;
 EOT;
     }
 
