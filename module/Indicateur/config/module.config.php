@@ -13,6 +13,7 @@ return array(
                     'action'     => [
                         'index',
                         'soutenance-depassee',
+                        'acteurs-sans-mail',
                 ],
                     'roles' => [
                         'Administrateur technique',
@@ -43,6 +44,16 @@ return array(
                             'route'       => '/soutenance-depassee',
                             'defaults'    => [
                                 'action' => 'soutenance-depassee',
+                            ],
+                        ],
+                    ],
+                    'acteurs-sans-mail' => [
+                        'type'          => Segment::class,
+                        'may_terminate' => true,
+                        'options'       => [
+                            'route'       => '/acteurs-sans-mail',
+                            'defaults'    => [
+                                'action' => 'acteurs-sans-mail',
                             ],
                         ],
                     ],

@@ -1,0 +1,43 @@
+<?php
+
+use Application\Entity\Db\Acteur;
+
+/**
+ * @var Acteur[] $sansMail
+ */
+?>
+
+<h1>
+    Acteurs sans mail
+    <span class="badge"> <?php echo count($sansMail); ?> </span>
+</h1>
+
+<table class="table table-extra-condensed">
+    <thead>
+    <tr>
+        <th> These SourceCode </th>
+        <th> These Titre </th>
+        <th> Acteur </th>
+        <th> Rôle </th>
+        <th> État</th>
+        <th> Établissement </th>
+        <th> École doctorale </th>
+        <th> Unité de recherche </th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($sansMail as $acteur) : ?>
+        <?php $these = $acteur->getThese(); ?>
+        <tr>
+            <td> <?php echo $these->getSourceCode(); ?>  </td>
+            <td> <?php echo $these->getTitre(); ?>  </td>
+            <td> <?php echo $acteur->getIndividu()->getNomComplet(); ?>  </td>
+            <td> <?php echo $acteur->getRole()->getLibelle(); ?>  </td>
+            <td> <?php echo $these->getEtatThese(); ?>  </td>
+            <td> <?php if($these->getEtablissement()) echo $these->getEtablissement()->getStructure()->getCode(); ?> </td>
+            <td> <?php if($these->getEcoleDoctorale()) echo $these->getEcoleDoctorale()->getStructure()->getSigle(); ?> </td>
+            <td> <?php if($these->getUniteRecherche())echo $these->getUniteRecherche()->getStructure()->getSigle(); ?> </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>

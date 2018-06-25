@@ -56,10 +56,12 @@ class IndicateurController extends AbstractActionController {
         );
     }
 
-    public function acteurSansMailAction()
+    public function acteursSansMailAction()
     {
+        $acteursSansMail = $this->getIndividuService()->getActeurSansMail();
+
         return new ViewModel([
-                "sansMail" => null,
+                "sansMail" => $acteursSansMail,
             ]
         );
     }
