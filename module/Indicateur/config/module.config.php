@@ -2,6 +2,7 @@
 
 use Indicateur\Controller\Factory\IndicateurControllerFactory;
 use Indicateur\Controller\IndicateurController;
+use Zend\Mvc\Router\Http\Segment;
 
 return array(
     'bjyauthorize'    => [
@@ -11,6 +12,7 @@ return array(
                     'controller' => IndicateurController::class,
                     'action'     => [
                         'index',
+                        'soutenance-depassee',
                 ],
                     'roles' => [
                         'Administrateur technique',
@@ -24,13 +26,25 @@ return array(
     'router' => [
         'routes' => [
             'indicateur' => [
-                'type' => 'Literal',
+                'type' => Segment::class,
                 'may_terminate' => true,
                 'options' => [
                     'route'    => '/indicateur',
                     'defaults' => [
                         'controller' => IndicateurController::class,
                         'action'     => 'index',
+                    ],
+                ],
+                'child_routes'  => [
+                    'soutenance-depassee' => [
+                        'type'          => Segment::class,
+                        'may_terminate' => true,
+                        'options'       => [
+                            'route'       => '/soutenance-depassee',
+                            'defaults'    => [
+                                'action' => 'soutenance-depassee',
+                            ],
+                        ],
                     ],
                 ],
             ],

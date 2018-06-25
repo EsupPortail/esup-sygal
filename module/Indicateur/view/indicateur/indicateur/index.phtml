@@ -6,6 +6,7 @@ use Application\Entity\Db\These;
 
 /**
  * @see \Indicateur\Controller\IndicateurController::indexAction()
+ * @var array $effectifs
  * @var Acteur[] $sansMail
  * @var These[] $theses
  * @var Anomalie[] $anomalies
@@ -19,7 +20,42 @@ use Application\Entity\Db\These;
 
 <div>
     <div class="col-md-4">
-        <div class="panel panel-danger">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <?php
+                    $date = new \DateTime();
+                    $annee= $date->format("Y");
+                    ?>
+                <h4>
+                    Thèses par établissements pour l'année <?php echo $annee; ?>
+                </h4>
+            </div>
+            <div class="panel-body">
+                <table class="table table-extra-condensed">
+                    <thead>
+                        <tr>
+                            <th> Etablissement</th>
+                            <th> En cours </th>
+                            <th> Inscription </th>
+                            <th> Soutenance </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($effectifs as $etablissement => $effectif): ?>
+                        <tr>
+                            <td> <?php echo $etablissement; ?> </td>
+                            <td> <?php echo $effectif[0]; ?> </td>
+                            <td> <?php echo $effectif[1]; ?> </td>
+                            <td> <?php echo $effectif[2]; ?> </td>
+                        </tr>
+                        <?php endforeach;?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-warning">
             <div class="panel-heading">
                 <h4>
                     Thèses en cours malgré soutenance dépassée
@@ -51,7 +87,7 @@ use Application\Entity\Db\These;
                     </tbody>
                 </table>
                 <div class="pull-right">
-                <a class="btn btn-success" href="">
+                <a class="btn btn-success" href="<?php echo $this->url('indicateur/soutenance-depassee', [], [], true);?>">
                     <span class="glyphicon glyphicon-eye-open"></span> Visualiser les données
                 </a>
                 </div>
@@ -62,7 +98,7 @@ use Application\Entity\Db\These;
 
 <div>
     <div class="col-md-4">
-        <div class="panel panel-danger">
+        <div class="panel panel-warning">
             <div class="panel-heading">
                 <h4>
                     Acteurs sans adresse électronique

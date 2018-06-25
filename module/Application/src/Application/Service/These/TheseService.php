@@ -241,4 +241,37 @@ class TheseService extends BaseService
         $result = $qb->getQuery()->getResult();
         return $result;
     }
+
+    public function getEffectifs($etablissement = null) {
+
+        $date = new \DateTime();
+        $annee= $date->format("Y");
+
+        $qb_enCours = $this->getEntityManager()->getRepository(These::class)->createQueryBuilder("these")
+            ->andWhere("these.etatThese = :encours")
+            ->setParameter("encours", These::ETAT_EN_COURS)
+            ;
+        if ($etablissement) $qb_enCours = $qb_enCours->andWhere("these.etablissement = :etablissement")->setParameter("etablissement", $etablissement);
+        $result_enCours = $qb_enCours->getQuery()->getResult();
+
+        $qb_inscriptions = $this->getEntityManager()->getRepository(These::class)->createQueryBuilder("these")
+            ->andWhere("these.datePremiereInscription >= :debut")
+            ->andWhere("these.datePremiereInscription <= :fin")
+            ->setParameter("debut", \DateTime::createFromFormat('d/m/Y', "01/01/".$annee))
+            ->setParameter("fin", \DateTime::createFromFormat('d/m/Y', "31/12/".$annee))
+        ;
+        if ($etablissement) $qb_inscriptions = $qb_inscriptions->andWhere("these.etablissement = :etablissement")->setParameter("etablissement", $etablissement);
+        $result_inscriptions = $qb_inscriptions->getQuery()->getResult();
+
+        $qb_soutenues = $this->getEntityManager()->getRepository(These::class)->createQueryBuilder("these")
+            ->andWhere("these.dateSoutenance >= :debut")
+            ->andWhere("these.dateSoutenance <= :fin")
+            ->setParameter("debut", \DateTime::createFromFormat('d/m/Y', '01/01/'.$annee))
+            ->setParameter("fin", \DateTime::createFromFormat('d/m/Y', "31/12/".$annee))
+        ;
+        if ($etablissement) $qb_soutenues = $qb_soutenues->andWhere("these.etablissement = :etablissement")->setParameter("etablissement", $etablissement);
+        $result_soutenues = $qb_soutenues->getQuery()->getResult();
+
+        return [count($result_enCours), count($result_inscriptions), count($result_soutenues)];
+    }
 }
