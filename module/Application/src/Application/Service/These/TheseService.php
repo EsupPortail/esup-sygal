@@ -286,7 +286,9 @@ class TheseService extends BaseService
             ->andWhere("these.etatThese = :encours")
             ->andWhere("these.datePremiereInscription <= :date")
             ->setParameter("encours", These::ETAT_EN_COURS)
-            ->setParameter("date", $dateLimite);
+            ->setParameter("date", $dateLimite)
+            ->orderBy("these.datePremiereInscription")
+        ;
         $result = $qb->getQuery()->getResult();
 
         return $result;
