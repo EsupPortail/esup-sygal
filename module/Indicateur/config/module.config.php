@@ -13,7 +13,9 @@ return array(
                     'action'     => [
                         'index',
                         'soutenance-depassee',
+                        'export-soutenance-depassee',
                         'acteurs-sans-mail',
+                        'export-acteurs-sans-mail',
                 ],
                     'roles' => [
                         'Administrateur technique',
@@ -46,6 +48,18 @@ return array(
                                 'action' => 'soutenance-depassee',
                             ],
                         ],
+                        'child_routes'  => [
+                            'export' => [
+                                'type'          => Segment::class,
+                                'may_terminate' => true,
+                                'options'       => [
+                                    'route'       => '/export',
+                                    'defaults'    => [
+                                        'action' => 'export-soutenance-depassee',
+                                    ],
+                                ],
+                            ],
+                        ],
                     ],
                     'acteurs-sans-mail' => [
                         'type'          => Segment::class,
@@ -54,6 +68,18 @@ return array(
                             'route'       => '/acteurs-sans-mail',
                             'defaults'    => [
                                 'action' => 'acteurs-sans-mail',
+                            ],
+                        ],
+                        'child_routes'  => [
+                            'export' => [
+                                'type'          => Segment::class,
+                                'may_terminate' => true,
+                                'options'       => [
+                                    'route'       => '/export',
+                                    'defaults'    => [
+                                        'action' => 'export-acteurs-sans-mail',
+                                    ],
+                                ],
                             ],
                         ],
                     ],

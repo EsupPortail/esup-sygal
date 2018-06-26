@@ -12,6 +12,10 @@ use Application\Entity\Db\These;
     <span class="badge"> <?php echo count($theses); ?> </span>
 </h1>
 
+<a class="btn btn-success" href="<?php echo $this->url('indicateur/soutenance-depassee/export',[],[], true); ?>">
+    <span class="glyphicon glyphicon-download-alt"></span> Exporter au format CSV
+</a>
+
 <table class="table table-extra-condensed">
     <thead>
         <tr>
@@ -28,7 +32,11 @@ use Application\Entity\Db\These;
     <tbody>
     <?php foreach ($theses as $these) : ?>
     <tr>
-        <td> <?php echo $these->getSourceCode(); ?>  </td>
+        <td>
+            <a href="<?php echo $this->url('these/identite', ['these'=>$these->getId()], [], true); ?>">
+                <?php echo $these->getSourceCode(); ?>
+            </a>
+        </td>
         <td> <?php echo $these->getTitre(); ?>  </td>
         <td> <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?>  </td>
         <td> <?php echo $these->getEtatThese(); ?>  </td>
