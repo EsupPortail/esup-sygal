@@ -19,6 +19,7 @@ $modules = [
     'Application',
     'Import',
     'Indicateur',
+    'Soutenance',
     'Retraitement',
     'Notification',
 ];
