@@ -274,4 +274,21 @@ class TheseService extends BaseService
 
         return [count($result_enCours), count($result_inscriptions), count($result_soutenues)];
     }
+
+    public function getThesesAnciennes($age)
+    {
+        $date = new \DateTime();
+        $mois = $date->format("m") - $age;
+        $annee = $date->format("Y") - $age;
+        $dateLimite = \DateTime::createFromFormat('d/m/Y', "01/".$mois."/".$annee);
+
+        $qb = $this->getEntityManager()->getRepository(These::class)->createQueryBuilder("these")
+            ->andWhere("these.etatThese = :encours")
+            ->andWhere("these.datePremiereInscription <= :date")
+            ->setParameter("encours", These::ETAT_EN_COURS)
+            ->setParameter("date", $dateLimite);
+        $result = $qb->getQuery()->getResult();
+
+        return $result;
+    }
 }

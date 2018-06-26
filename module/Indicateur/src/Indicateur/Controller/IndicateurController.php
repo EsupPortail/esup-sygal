@@ -22,6 +22,7 @@ class IndicateurController extends AbstractActionController {
     {
         $acteursSansMail = $this->getIndividuService()->getActeurSansMail();
         $theses = $this->getTheseService()->getTheseEnCoursPostSoutenance();
+        $thesesAnciennes = $this->getTheseService()->getThesesAnciennes(6);
         $anomalies = $this->getAnomalieService()->getAnomalies();
 
         $etablissements = [];
@@ -40,6 +41,7 @@ class IndicateurController extends AbstractActionController {
         return new ViewModel([
                 "effectifs" => $effectifs,
                 "theses" => $theses,
+                "anciennes" => $thesesAnciennes,
                 "sansMail" => $acteursSansMail,
                 "anomalies" => $anomalies,
             ]
@@ -68,7 +70,7 @@ class IndicateurController extends AbstractActionController {
             'Titre'                           => function(These $these) {return $these->getTitre();},
             'Doctorant'                       => function(These $these) {return $these->getDoctorant()->getIndividu()->getNomComplet();},
             'État'                            => function(These $these) {return $these->getEtatThese();},
-            'Date de soutenace'               => function(These $these) {return $these->getDateSoutenance()->format("d//m/Y");},
+            'Date de soutenace'               => function(These $these) {return $these->getDateSoutenance()->format("d/m/Y");},
             'Établissement'                   => function(These $these) {return ($these->getEtablissement())?$these->getEtablissement()->getStructure()->getCode():"";},
             'École doctorale'                 => function(These $these) {return ($these->getEcoleDoctorale())?$these->getEcoleDoctorale()->getStructure()->getCode():"";},
             'Unité de recherche'              => function(These $these) {return ($these->getUniteRecherche())?$these->getUniteRecherche()->getStructure()->getCode():"";},
@@ -135,6 +137,55 @@ class IndicateurController extends AbstractActionController {
         $CSV->setHeader(array_keys($headers));
         $CSV->setData($records);
         $CSV->setFilename('export_sansMail.csv');
+
+        return $CSV;
+    }
+
+    /**
+     * faire remonter les thèses ayant plus de 6 ans
+     * @return ViewModel
+     */
+    public function thesesAnciennesAction()
+    {
+        $theses = $this->getTheseService()->getThesesAnciennes(6);
+        return new ViewModel([
+                'theses' => $theses,
+            ]
+        );
+    }
+
+    public function exportThesesAnciennesAction()
+    {
+        $data = $this->getTheseService()->getTheseEnCoursPostSoutenance();
+        $headers = [
+            'Identitfiant'                    => function(These $these) {return $these->getId();},
+            'SourceCode'                      => function(These $these) {return $these->getSourceCode();},
+            'Titre'                           => function(These $these) {return $these->getTitre();},
+            'Doctorant'                       => function(These $these) {return $these->getDoctorant()->getIndividu()->getNomComplet();},
+            'État'                            => function(These $these) {return $these->getEtatThese();},
+            'Date de première inscription'    => function(These $these) {return ($these->getDatePremiereInscription())?$these->getDatePremiereInscription()->format("d/m/Y"):"";},
+            'Date de soutenace'               => function(These $these) {return ($these->getDateSoutenance())?$these->getDateSoutenance()->format("d/m/Y"):"";},
+            'Établissement'                   => function(These $these) {return ($these->getEtablissement())?$these->getEtablissement()->getStructure()->getCode():"";},
+            'École doctorale'                 => function(These $these) {return ($these->getEcoleDoctorale())?$these->getEcoleDoctorale()->getStructure()->getCode():"";},
+            'Unité de recherche'              => function(These $these) {return ($these->getUniteRecherche())?$these->getUniteRecherche()->getStructure()->getCode():"";},
+
+        ];
+
+        $records = [];
+        foreach ($data as $entry) {
+            $record = [];
+            foreach($headers as $key => $fct) {
+                $record[] = $fct($entry);
+            }
+            $records[] = $record;
+        }
+
+        $CSV = new CsvModel();
+        $CSV->setDelimiter(';');
+        $CSV->setEnclosure('"');
+        $CSV->setHeader(array_keys($headers));
+        $CSV->setData($records);
+        $CSV->setFilename('export_thesesAnciennes.csv');
 
         return $CSV;
     }
