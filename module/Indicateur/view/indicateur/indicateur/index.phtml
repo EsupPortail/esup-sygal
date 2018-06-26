@@ -7,7 +7,8 @@ use Application\Entity\Db\These;
 /**
  * @see \Indicateur\Controller\IndicateurController::indexAction()
  * @var array $effectifs
- * @var Acteur[] $sansMail
+ * @var Acteur[] $acteursSansMail
+ * @var These[] $doctorantsSansMail
  * @var These[] $theses
  * @var These[] $anciennes
  * @var Anomalie[] $anomalies
@@ -140,6 +141,50 @@ use Application\Entity\Db\These;
     </div>
 </div>
 
+<div>
+    <div class="col-md-4">
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                <h4>
+                    Doctorants sans adresse électronique
+                    <span class="badge"> <?echo count($doctorantsSansMail); ?> </span>
+                </h4>
+            </div>
+            <div class="panel-body">
+                <table class="table table-extra-condensed">
+                    <thead>
+                    <tr>
+                        <th> Thèse </th>
+                        <th> Identifiant</th>
+                        <th> Nom </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php for($i = 0; $i < 5 && $i < count($doctorantsSansMail); $i++): ?>
+                        <tr>
+                            <td> <?php echo $doctorantsSansMail[$i]->getSourceCode(); ?></td>
+                            <td> <?php echo $doctorantsSansMail[$i]->getDoctorant()->getSourceCode(); ?></td>
+                            <td> <?php echo $doctorantsSansMail[$i]->getDoctorant()->getIndividu()->getNomComplet(); ?></td>
+
+
+                        </tr>
+                    <?php endfor; ?>
+                    <?php if(count($doctorantsSansMail) >= 5): ?>
+                        <tr>
+                            <td colspan="3"> ... </td>
+                        </tr>
+                    <?php endif; ?>
+                    </tbody>
+                </table>
+                <div class="pull-right">
+                    <a class="btn btn-success" href="<?php echo $this->url('indicateur/doctorants-sans-mail', [], [], true);?>">
+                        <span class="glyphicon glyphicon-eye-open"></span> Visualiser les données
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <div>
@@ -148,7 +193,7 @@ use Application\Entity\Db\These;
             <div class="panel-heading">
                 <h4>
                     Acteurs sans adresse électronique
-                    <span class="badge"> <?echo count($sansMail); ?> </span>
+                    <span class="badge"> <?echo count($acteursSansMail); ?> </span>
                 </h4>
             </div>
             <div class="panel-body">
@@ -161,16 +206,16 @@ use Application\Entity\Db\These;
                     </tr>
                     </thead>
                     <tbody>
-                    <?php for($i = 0; $i < 5 && $i < count($sansMail); $i++): ?>
+                    <?php for($i = 0; $i < 5 && $i < count($acteursSansMail); $i++): ?>
                         <tr>
-                            <td> <?php echo $sansMail[$i]->getThese()->getSourceCode(); ?></td>
-                            <td> <?php echo $sansMail[$i]->getSourceCode(); ?></td>
-                            <td> <?php echo $sansMail[$i]->getRole()->getLibelle(); ?></td>
+                            <td> <?php echo $acteursSansMail[$i]->getThese()->getSourceCode(); ?></td>
+                            <td> <?php echo $acteursSansMail[$i]->getSourceCode(); ?></td>
+                            <td> <?php echo $acteursSansMail[$i]->getRole()->getLibelle(); ?></td>
 
 
                         </tr>
                     <?php endfor; ?>
-                    <?php if(count($theses) >= 5): ?>
+                    <?php if(count($acteursSansMail) >= 5): ?>
                         <tr>
                             <td colspan="3"> ... </td>
                         </tr>
@@ -206,7 +251,7 @@ use Application\Entity\Db\These;
                     </tr>
                     </thead>
                     <tbody>
-                    <?php for($i = 0; $i < 5 && $i < count($sansMail); $i++): ?>
+                    <?php for($i = 0; $i < 5 && $i < count($anomalies); $i++): ?>
                         <tr>
                             <td> <?php echo $anomalies[$i]->getTableName(); ?></td>
                             <td> <?php echo $anomalies[$i]->getTableColumn(); ?></td>
@@ -215,7 +260,7 @@ use Application\Entity\Db\These;
 
                         </tr>
                     <?php endfor; ?>
-                    <?php if(count($theses) >= 5): ?>
+                    <?php if(count($anomalies) >= 5): ?>
                         <tr>
                             <td colspan="3"> ... </td>
                         </tr>

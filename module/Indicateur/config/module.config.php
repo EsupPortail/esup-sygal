@@ -16,6 +16,8 @@ return array(
                         'export-soutenance-depassee',
                         'acteurs-sans-mail',
                         'export-acteurs-sans-mail',
+                        'doctorants-sans-mail',
+                        'export-doctorants-sans-mail',
                         'theses-anciennes',
                         'export-theses-anciennes',
                 ],
@@ -80,6 +82,28 @@ return array(
                                     'route'       => '/export',
                                     'defaults'    => [
                                         'action' => 'export-acteurs-sans-mail',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'doctorants-sans-mail' => [
+                        'type'          => Segment::class,
+                        'may_terminate' => true,
+                        'options'       => [
+                            'route'       => '/doctorants-sans-mail',
+                            'defaults'    => [
+                                'action' => 'doctorants-sans-mail',
+                            ],
+                        ],
+                        'child_routes'  => [
+                            'export' => [
+                                'type'          => Segment::class,
+                                'may_terminate' => true,
+                                'options'       => [
+                                    'route'       => '/export',
+                                    'defaults'    => [
+                                        'action' => 'export-doctorants-sans-mail',
                                     ],
                                 ],
                             ],

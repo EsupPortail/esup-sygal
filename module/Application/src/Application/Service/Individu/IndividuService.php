@@ -3,12 +3,14 @@
 namespace Application\Service\Individu;
 
 use Application\Entity\Db\Acteur;
+use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Repository\IndividuRepository;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\SourceInterface;
+use Application\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\UserWrapper;
 use Application\Service\BaseService;
@@ -154,6 +156,20 @@ class IndividuService extends BaseService
             ->andWhere("these.etatThese = 'E'")
             ->orderBy("these.sourceCode")
             ;
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
+
+    public function getDoctorantSansMail()
+    {
+        $qb = $this->getEntityManager()->getRepository(These::class)->createQueryBuilder("these")
+            ->leftJoin("these.doctorant", "doctorant")
+            ->leftJoin("doctorant.individu", "individu")
+            ->andWhere("individu.email is NULL")
+            ->andWhere("these.etatThese = 'E'")
+            ->orderBy("these.sourceCode")
+        ;
 
         $result = $qb->getQuery()->getResult();
         return $result;
