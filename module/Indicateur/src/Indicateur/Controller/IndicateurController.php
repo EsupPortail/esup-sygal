@@ -21,6 +21,7 @@ class IndicateurController extends AbstractActionController {
     public function indexAction()
     {
         $acteursSansMail = $this->getIndividuService()->getActeurSansMail();
+        $doctorantsSansMail = $this->getIndividuService()->getDoctorantSansMail();
         $theses = $this->getTheseService()->getTheseEnCoursPostSoutenance();
         $thesesAnciennes = $this->getTheseService()->getThesesAnciennes(6);
         $anomalies = $this->getAnomalieService()->getAnomalies();
@@ -42,7 +43,8 @@ class IndicateurController extends AbstractActionController {
                 "effectifs" => $effectifs,
                 "theses" => $theses,
                 "anciennes" => $thesesAnciennes,
-                "sansMail" => $acteursSansMail,
+                "acteursSansMail" => $acteursSansMail,
+                "doctorantsSansMail" => $doctorantsSansMail,
                 "anomalies" => $anomalies,
             ]
         );
@@ -92,6 +94,51 @@ class IndicateurController extends AbstractActionController {
         $CSV->setHeader(array_keys($headers));
         $CSV->setData($records);
         $CSV->setFilename('export_soutenanceDepassee.csv');
+
+        return $CSV;
+    }
+
+    public function doctorantsSansMailAction()
+    {
+        $doctorantsSansMail = $this->getIndividuService()->getDoctorantSansMail();
+
+        return new ViewModel([
+                "sansMail" => $doctorantsSansMail,
+            ]
+        );
+    }
+
+    public function exportDoctorantsSansMailAction()
+    {
+        $doctorantsSansMail = $this->getIndividuService()->getDoctorantSansMail();
+
+        $headers = [
+            'Thèse Identitfiant'                    => function(These $these) {return $these->getId();},
+            'Thèse SourceCode'                      => function(These $these) {return $these->getSourceCode();},
+            'Thèse Titre'                           => function(These $these) {return $these->getTitre();},
+            'Thèse Établissement'                   => function(These $these) {return ($these->getEtablissement())?$these->getEtablissement()->getStructure()->getCode():"";},
+            'Thèse École doctorale'                 => function(These $these) {return ($these->getEcoleDoctorale())?$these->getEcoleDoctorale()->getStructure()->getCode():"";},
+            'Thèse Unité de recherche'              => function(These $these) {return ($these->getUniteRecherche())?$these->getUniteRecherche()->getStructure()->getCode():"";},
+            'Doctorant Identifiant'                 => function(These $these) {return $these->getDoctorant()->getId();},
+            'Doctorant Nom'                         => function(These $these) {return $these->getDoctorant()->getIndividu()->getNomComplet();},
+            'Première inscription'                  => function(These $these) {return ($these->getDatePremiereInscription())?$these->getDatePremiereInscription()->format("d/m/Y"):"";},
+        ];
+
+        $records = [];
+        foreach ($doctorantsSansMail as $these) {
+            $record = [];
+            foreach($headers as $key => $fct) {
+                $record[] = $fct($these);
+            }
+            $records[] = $record;
+        }
+
+        $CSV = new CsvModel();
+        $CSV->setDelimiter(';');
+        $CSV->setEnclosure('"');
+        $CSV->setHeader(array_keys($headers));
+        $CSV->setData($records);
+        $CSV->setFilename('export_sansMail.csv');
 
         return $CSV;
     }
