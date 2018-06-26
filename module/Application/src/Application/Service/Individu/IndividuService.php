@@ -2,6 +2,7 @@
 
 namespace Application\Service\Individu;
 
+use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\IndividuRole;
@@ -142,5 +143,19 @@ class IndividuService extends BaseService
         $exist_utilisateur = $this->getEntityManager()->getRepository(Utilisateur::class)->findOneBy(["email" => $email]);
 
         return ($exist_individu !== null || $exist_utilisateur !== null);
+    }
+
+    public function getActeurSansMail()
+    {
+        $qb = $this->getEntityManager()->getRepository(Acteur::class)->createQueryBuilder("acteur")
+            ->leftJoin("acteur.individu", "individu")
+            ->leftJoin("acteur.these", "these")
+            ->andWhere("individu.email is NULL")
+            ->andWhere("these.etatThese = 'E'")
+            ->orderBy("these.sourceCode")
+            ;
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
     }
 }

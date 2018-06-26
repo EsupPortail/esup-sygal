@@ -16,4 +16,9 @@ trait TheseServiceAwareTrait
     {
         $this->theseService = $theseService;
     }
+
+    public function getTheseService()
+    {
+        return $this->theseService;
+    }
 }
