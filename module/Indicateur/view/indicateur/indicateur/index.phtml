@@ -9,6 +9,7 @@ use Application\Entity\Db\These;
  * @var array $effectifs
  * @var Acteur[] $sansMail
  * @var These[] $theses
+ * @var These[] $anciennes
  * @var Anomalie[] $anomalies
  */
 ?>
@@ -95,6 +96,51 @@ use Application\Entity\Db\These;
         </div>
     </div>
 </div>
+
+<div class="col-md-4">
+    <div class="panel panel-warning">
+        <div class="panel-heading">
+            <h4>
+                Thèses anciennes (plus de 6 ans)
+                <span class="badge"> <?echo count($anciennes); ?> </span>
+            </h4>
+        </div>
+        <div class="panel-body">
+            <table class="table table-extra-condensed">
+                <thead>
+                <tr>
+                    <th> These</th>
+                    <th> État </th>
+                    <th> Première inscription </th>
+                    <th> Soutenance </th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php for($i = 0; $i < 5 && $i < count($anciennes); $i++): ?>
+                    <tr>
+                        <td> <?php echo $anciennes[$i]->getSourceCode(); ?></td>
+                        <td> <?php echo $anciennes[$i]->getEtatThese(); ?></td>
+                        <td> <?php echo $anciennes[$i]->getDatePremiereInscription()->format("d/m/Y"); ?></td>
+                        <td> <?php echo ($anciennes[$i]->getDateSoutenance())?$anciennes[$i]->getDateSoutenance()->format("d/m/Y"):""; ?></td>
+                    </tr>
+                <?php endfor; ?>
+                <?php if(count($anciennes) >= 5): ?>
+                    <tr>
+                        <td colspan="4"> ... </td>
+                    </tr>
+                <?php endif; ?>
+                </tbody>
+            </table>
+            <div class="pull-right">
+                <a class="btn btn-success" href="<?php echo $this->url('indicateur/theses-anciennes', [], [], true);?>">
+                    <span class="glyphicon glyphicon-eye-open"></span> Visualiser les données
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 <div>
     <div class="col-md-4">

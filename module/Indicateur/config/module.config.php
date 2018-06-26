@@ -16,6 +16,8 @@ return array(
                         'export-soutenance-depassee',
                         'acteurs-sans-mail',
                         'export-acteurs-sans-mail',
+                        'theses-anciennes',
+                        'export-theses-anciennes',
                 ],
                     'roles' => [
                         'Administrateur technique',
@@ -78,6 +80,28 @@ return array(
                                     'route'       => '/export',
                                     'defaults'    => [
                                         'action' => 'export-acteurs-sans-mail',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'theses-anciennes' => [
+                        'type'          => Segment::class,
+                        'may_terminate' => true,
+                        'options'       => [
+                            'route'       => '/theses-anciennes',
+                            'defaults'    => [
+                                'action' => 'theses-anciennes',
+                            ],
+                        ],
+                        'child_routes'  => [
+                            'export' => [
+                                'type'          => Segment::class,
+                                'may_terminate' => true,
+                                'options'       => [
+                                    'route'       => '/export',
+                                    'defaults'    => [
+                                        'action' => 'export-theses-anciennes',
                                     ],
                                 ],
                             ],
