@@ -1044,13 +1044,18 @@ class TheseController extends AbstractController
         $version = $this->fichierService->fetchVersionFichier($this->params()->fromQuery('version'));
         $hasFichierThese = ! empty($this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF, $version, false));
 
-        $versionInitialeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_AUTORISATION_DIFFUSION_THESE)->getAtteignable();
-        $versionCorrigeeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_AUTORISATION_DIFFUSION_THESE_VERSION_CORRIGEE)->getAtteignable();
-        $visible =
-            $version->estVersionCorrigee() && $versionCorrigeeAtteignable ||
-            !$version->estVersionCorrigee() && $versionInitialeAtteignable && !$versionCorrigeeAtteignable;
-
-        if (! $visible) {
+// Est-ce vraiment indispensable d'interroger le moteur du WF ?
+// Mis en commentaire pour accélerer l'affichage...
+//        $versionInitialeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_AUTORISATION_DIFFUSION_THESE)->getAtteignable();
+//        $versionCorrigeeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_AUTORISATION_DIFFUSION_THESE_VERSION_CORRIGEE)->getAtteignable();
+//        $visible =
+//            $version->estVersionCorrigee() && $versionCorrigeeAtteignable ||
+//            !$version->estVersionCorrigee() && $versionInitialeAtteignable && !$versionCorrigeeAtteignable;
+//
+//        if (! $visible) {
+//            return false;
+//        }
+        if (! $hasFichierThese) {
             return false;
         }
 
