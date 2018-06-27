@@ -30,6 +30,29 @@ return array(
     ],
     'doctrine'     => [],
 
+    'navigation'      => [
+        'default' => [
+            'home' => [
+                'pages' => [
+                    'admin' => [
+                        'pages' => [
+                            'indicateur' => [
+                                'label'    => 'Indicateurs',
+                                'route'    => 'indicateur',
+                                //'resource' => PrivilegeController::getResourceId('Application\Controller\EcoleDoctorale', 'index'),
+                                'roles' => [
+                                    'Administrateur technique',
+                                ],
+
+                                'order'    => 1,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
+
     'router' => [
         'routes' => [
             'indicateur' => [
