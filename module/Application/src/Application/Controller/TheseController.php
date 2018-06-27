@@ -261,18 +261,12 @@ class TheseController extends AbstractController
 
     public function detailDepotAction()
     {
-        $view = $this->detailDepotActionViewModel(false);
-        $view->setTemplate('application/these/depot');
-
-        return $view;
+        return $this->detailDepotActionViewModel(false);
     }
 
     public function detailDepotVersionCorrigeeAction()
     {
-        $view = $this->detailDepotActionViewModel(true);
-        $view->setTemplate('application/these/depot-version-corrigee');
-
-        return $view;
+        return $this->detailDepotActionViewModel(true);
     }
 
     /**
@@ -289,6 +283,7 @@ class TheseController extends AbstractController
 
         $view = new ViewModel([
             'these'            => $these,
+            'versionCorrigee'  => $versionCorrigee,
             'theseUrl'         => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_THESE_PDF, $codeVersion),
             'annexesUrl'       => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_FICHIER_NON_PDF, $codeVersion),
             'attestationUrl'   => $this->urlThese()->attestationThese($these, $codeVersion),
@@ -301,6 +296,8 @@ class TheseController extends AbstractController
                 WfEtape::PSEUDO_ETAPE_FINALE,
             ]),
         ]);
+
+        $view->setTemplate('application/these/depot');
 
         return $view;
     }
@@ -919,20 +916,22 @@ class TheseController extends AbstractController
         $version = $this->fichierService->fetchVersionFichier($this->params()->fromQuery('version'));
         $hasFichierThese = ! empty($this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF, $version, false));
 
-        $versionInitialeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_ATTESTATIONS)->getAtteignable();
-        $versionCorrigeeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_ATTESTATIONS_VERSION_CORRIGEE)->getAtteignable();
-        $visible =
-            $version->estVersionCorrigee() && $versionCorrigeeAtteignable ||
-            !$version->estVersionCorrigee() && $versionInitialeAtteignable && !$versionCorrigeeAtteignable;
-
-        if (! $visible) {
+// Est-ce vraiment indispensable d'interroger le moteur du WF ?
+// Mis en commentaire pour accélerer l'affichage...
+//        $versionInitialeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_ATTESTATIONS)->getAtteignable();
+//        $versionCorrigeeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_ATTESTATIONS_VERSION_CORRIGEE)->getAtteignable();
+//        $visible =
+//            $version->estVersionCorrigee() && $versionCorrigeeAtteignable ||
+//            !$version->estVersionCorrigee() && $versionInitialeAtteignable && !$versionCorrigeeAtteignable;
+//
+//        if (! $visible) {
+//            return false;
+//        }
+        if (! $hasFichierThese) {
             return false;
         }
 
         $form = $this->getAttestationTheseForm();
-
-
-
 
         $view = new ViewModel([
             'these'                  => $these,
