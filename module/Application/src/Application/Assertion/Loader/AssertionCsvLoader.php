@@ -8,8 +8,9 @@ use UnicaenApp\Exception\LogicException;
 class AssertionCsvLoader
 {
     const SEPARATOR = ';';
-    const COLUMN_LINE = 0;
-    const COLUMN_PRIVILEGE = 1;
+    const COLUMN_FOR_LINE = 0;
+    const COLUMN_FOR_ENABLED = 1;
+    const COLUMN_FOR_PRIVILEGE = 2;
 
     /**
      * @var string
@@ -75,20 +76,25 @@ class AssertionCsvLoader
                             "Erreur de format sur la ligne $row : la 1ere colonne doit contenir 'class' et la 2e la classe (FQCN) d'assertion à générer.");
                     }
                     $assertionClass = $data[1];
-                    $testNumbers = array_slice($data, self::COLUMN_PRIVILEGE + 1, -2);
+                    $testNumbers = array_slice($data, self::COLUMN_FOR_PRIVILEGE + 1, -2);
                     continue;
                 }
                 if ($row === 2) {
-                    $testNames = array_slice($data, self::COLUMN_PRIVILEGE + 1, -2);
+                    $testNames = array_slice($data, self::COLUMN_FOR_PRIVILEGE + 1, -2);
                     $testNumbers = array_combine($testNames, $testNumbers);
                     continue;
                 }
 
-                $line = $data[self::COLUMN_LINE];
-                $privilege = $data[self::COLUMN_PRIVILEGE];
+                $line = $data[self::COLUMN_FOR_LINE];
+                $enabled = (int) $data[self::COLUMN_FOR_ENABLED];
+                $privilege = $data[self::COLUMN_FOR_PRIVILEGE];
                 $message = $data[count($data) - 1];
                 $return = $data[count($data) - 2];
-                $data = array_slice($data, self::COLUMN_PRIVILEGE + 1, -2);
+                $data = array_slice($data, self::COLUMN_FOR_PRIVILEGE + 1, -2);
+
+                if (! (bool)$enabled) {
+                    continue;
+                }
 
                 $tmp = [];
                 foreach ($data as $testIndex => $datum) {

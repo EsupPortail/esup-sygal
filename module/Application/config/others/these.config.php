@@ -40,9 +40,12 @@ return [
                 'allow' => [
                     [
                         'privileges' => [
-                            ThesePrivileges::THESE_SAISIE_DESCRIPTION,
-                            ThesePrivileges::THESE_SAISIE_ATTESTATIONS,
-                            ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION,
+                            ThesePrivileges::THESE_SAISIE_DESCRIPTION_VERSION_INITIALE,
+                            ThesePrivileges::THESE_SAISIE_DESCRIPTION_VERSION_CORRIGEE,
+                            ThesePrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_INITIALE,
+                            ThesePrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_CORRIGEE,
+                            ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_INITIALE,
+                            ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_CORRIGEE,
                             ThesePrivileges::THESE_DEPOT_VERSION_INITIALE,
                             ThesePrivileges::THESE_DEPOT_VERSION_CORRIGEE,
                             ThesePrivileges::THESE_TELECHARGEMENT_FICHIER,
@@ -173,7 +176,8 @@ return [
                         'modifier-description',
                     ],
                     'privileges' => [
-                        ThesePrivileges::THESE_SAISIE_DESCRIPTION,
+                        ThesePrivileges::THESE_SAISIE_DESCRIPTION_VERSION_INITIALE,
+                        ThesePrivileges::THESE_SAISIE_DESCRIPTION_VERSION_CORRIGEE,
                     ],
                     'assertion'  => 'Assertion\\These',
                 ],
@@ -183,7 +187,8 @@ return [
                         'modifier-attestation',
                     ],
                     'privileges' => [
-                        ThesePrivileges::THESE_SAISIE_ATTESTATIONS,
+                        ThesePrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_INITIALE,
+                        ThesePrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_CORRIGEE,
                     ],
                     'assertion'  => 'Assertion\\These',
                 ],
@@ -193,7 +198,8 @@ return [
                         'modifier-diffusion',
                     ],
                     'privileges' => [
-                        ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION,
+                        ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_INITIALE,
+                        ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_CORRIGEE,
                     ],
                     'assertion'  => 'Assertion\\These',
                 ],

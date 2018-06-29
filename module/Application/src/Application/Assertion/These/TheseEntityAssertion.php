@@ -162,10 +162,10 @@ class TheseEntityAssertion extends GeneratedTheseEntityAssertion
         if ($dateButoir !== null) {
             $now = new \DateTime('today'); // The time is set to 00:00:00
 
-            return $now <= $dateButoir;
+            return $now > $dateButoir;
         }
 
-        return true;
+        return false;
     }
 
     protected function isUtilisateurEstAuteurDeLaThese()
