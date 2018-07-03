@@ -15,14 +15,14 @@ services:
     working_dir: /var/www/html/sygal
     network_mode: bridge
 
-  sygal-import-ws:
-    container_name: sygal-import-ws-container
-    build:
-      context: ../sygal-import-ws
-    ports:
-     - "8080:8080"
-     - "8443:8443"
-    volumes:
-     - ../sygal-import-ws:/var/www/html/sygal-import-ws
-    working_dir: /var/www/html/sygal-import-ws
-    network_mode: bridge
+#  sygal-import-ws:
+#    container_name: sygal-import-ws-container
+#    build:
+#      context: ../sygal-import-ws
+#    ports:
+#     - "8080:8080"
+#     - "8443:8443"
+#    volumes:
+#     - ../sygal-import-ws:/var/www/html/sygal-import-ws
+#    working_dir: /var/www/html/sygal-import-ws
+#    network_mode: bridge
