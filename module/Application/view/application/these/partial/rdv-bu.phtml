@@ -4,6 +4,7 @@
  *
  * @var These $these
  * @var Fichier $versionArchivable
+ * @var bool $pageCouvValidee
  */
 
 use Application\Entity\Db\MetadonneeThese;
@@ -32,6 +33,7 @@ if ($fichier && $versionArchivableFournie) {
 else {
     $ddVersionArchivage = $unchecked;
 }
+$ddPageCouv = $pageCouvValidee ? $checked : $unchecked;
 ?>
 
 <dl class="rdv-bu">
@@ -45,23 +47,8 @@ else {
     <dd class="<?php echo $class ?>"><?php echo $motsClesRameauFormatter->filter($rdvBu->getMotsClesRameau()) ?: "(Non renseignés)" ?></dd>
 
     <dt>Page de couverture conforme :</dt>
-    <dd class="<?php echo '' ?>">
-        <?php
-            $ok = $rdvBu->getPageTitreConforme();
-            switch($ok) {
-                case 1:
-                    echo "<span style='color:green;'>" . $check_icon . " Oui</span>" . "&nbsp;&nbsp;&nbsp;&nbsp;" . $uncheck_icon." Non";
-                    break;
-                case 0:
-                    echo $uncheck_icon ." Oui". "&nbsp;&nbsp;&nbsp;&nbsp;" . "<span style='color:crimson;'>" . $uncheck_icon ." Non". "</span>";
-                    break;
-                default:
-                    echo $uncheck_icon ." Oui". "&nbsp;&nbsp;&nbsp;&nbsp;" . $uncheck_icon ." Non". "&nbsp;" . "(Validité de la page de titre non évalée)";
-                    break;
-            }
-        ?>
-
-    </dd>
+    <?php $class = $pageCouvValidee ? '' : 'text-danger' ?>
+    <dd class="<?php echo $class ?>"><?php echo $ddPageCouv ?></dd>
 
     <dt>Version archivable fournie :</dt>
     <?php $class = $versionArchivableFournie ? '' : 'text-danger' ?>

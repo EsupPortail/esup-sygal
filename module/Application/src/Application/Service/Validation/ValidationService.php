@@ -12,6 +12,8 @@ use Application\Service\Individu\IndividuServiceAwareInterface;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\UserContextServiceAwareInterface;
 use Application\Service\UserContextServiceAwareTrait;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Query\Expr\Join;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
@@ -88,13 +90,6 @@ class ValidationService extends BaseService
         $v->historiser();
 
         $this->getEntityManager()->flush($v);
-
-        // si la validation est annulée, on remet le témoin de page de couv conforme à faux
-        if ($rdvBu = $these->getRdvBu()) {
-            $rdvBu->setPageTitreConforme(-1);
-
-            $this->getEntityManager()->flush($rdvBu);
-        }
     }
 
     /**
@@ -223,5 +218,53 @@ class ValidationService extends BaseService
         $results = $qb->getQuery()->getResult();
 
         return $results;
+    }
+
+    public function validatePageDeCouverture($these)
+    {
+        // l'individu sera enregistré dans la validation pour faire le lien entre Utilisateur et Individu.
+        $individu = $this->userContextService->getIdentityIndividu();
+
+        $v = new Validation(
+            $this->getTypeValidation(TypeValidation::CODE_PAGE_DE_COUVERTURE),
+            $these,
+            $individu);
+
+        $this->entityManager->persist($v);
+        try {
+            $this->entityManager->flush($v);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur lors de l'enregistrement de la validation en bdd", null, $e);
+        }
+    }
+
+    public function unvalidatePageDeCouverture($these)
+    {
+        $qb = $this->getRepository()->createQueryBuilder('v')
+            ->andWhereTheseIs($these)
+            ->andWhereTypeIs($type = TypeValidation::CODE_PAGE_DE_COUVERTURE)
+            ->andWhereNotHistorise();
+        /** @var Validation $v */
+        try {
+            $v = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException(
+                sprintf("Anomalie: plus d'une validation de type '%s' trouvée pour la thèse %s", $type, $these));
+        }
+
+        if (!$v) {
+            throw new RuntimeException(
+                sprintf("Aucune validation de type '%s' trouvée pour la thèse %s", $type, $these));
+        }
+
+        $v->historiser();
+
+        try {
+            $this->getEntityManager()->flush($v);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur lors de l'historisation de la validation en bdd", null, $e);
+        }
+
+        return $v;
     }
 }

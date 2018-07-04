@@ -31,12 +31,12 @@ class RdvBuTheseForm extends Form
             ->setLabel("Disponibilités :")
         );
 
-        $this->add((new Radio('pageTitreConforme'))
-            ->setValueOptions([
-                1 => "Page de couverture conforme",
-                0 => "Page de couverture non conforme",
-                -1 => "Page de couverture à valider"
+        $this->add((new Checkbox('pageTitreConforme'))
+            ->setLabel("Page de couverture validée")
+            ->setLabelOptions([
+                'disable_html_escape' => true,
             ])
+            ->setAttribute('disabled', 'disabled')
         );
 
         $this->add((new Checkbox('versionArchivableFournie'))

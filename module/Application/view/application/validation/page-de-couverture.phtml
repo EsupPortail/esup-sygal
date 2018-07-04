@@ -1,0 +1,23 @@
+<?php
+
+use Application\Entity\Db\These;
+use Application\Provider\Privilege\ValidationPrivileges;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var These       $these
+ * @var string      $action
+ */
+?>
+
+<?php
+
+$allowed = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_DE_COUVERTURE);
+
+$libs = [
+    'valider'   => "la validation",
+    'devalider' => "l'annulation de la validation",
+];
+
+echo $this->confirm(sprintf("Confirmez-vous %s de la page de couverture, svp ?", $libs[$action]));

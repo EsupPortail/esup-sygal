@@ -10,6 +10,9 @@ INSERT INTO TYPE_VALIDATION (ID, CODE, LIBELLE) VALUES (2, 'DEPOT_THESE_CORRIGEE
 INSERT INTO TYPE_VALIDATION (ID, CODE, LIBELLE) VALUES (3, 'CORRECTION_THESE', 'Validation par le(s) directeur(s) de thèse des corrections de la thèse');
 INSERT INTO TYPE_VALIDATION (ID, CODE, LIBELLE) VALUES (4, 'VERSION_PAPIER_CORRIGEE', 'Confirmation dépot de la version papier corrigée');
 
+insert into TYPE_VALIDATION(ID, CODE, LIBELLE) values
+  (5, 'PDC_CONFORME', 'Validation de la page de couverture');
+
 
 -- VALIDATION
  

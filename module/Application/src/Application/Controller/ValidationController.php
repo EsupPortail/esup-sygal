@@ -25,6 +25,71 @@ class ValidationController extends AbstractController
     use RoleServiceAwareTrait;
     use VariableServiceAwareTrait;
 
+    public function pageDeCouvertureAction()
+    {
+        $these = $this->requestedThese();
+        $result = $this->confirm()->execute();
+        $action = $this->params()->fromQuery('action');
+
+        // si un tableau est retourné par le plugin, l'opération a été confirmée
+        if (is_array($result)) {
+//            $notification = new ValidationRdvBuNotification();
+//            $notification->setThese($these);
+
+            if ($action === 'valider') {
+                $this->validationService->validatePageDeCouverture($these);
+                $successMessage = "Validation de la page de couverture enregistrée avec succès.";
+
+//                // notification (doctorant: à la 1ere validation seulement)
+//                $notifierDoctorant = ! $this->validationService->existsValidationRdvBuHistorisee($these);
+//                $notification->setNotifierDoctorant($notifierDoctorant);
+//                $this->notifierService->triggerValidationRdvBu($notification);
+            }
+            elseif ($action === 'devalider') {
+                $this->validationService->unvalidatePageDeCouverture($these);
+                $successMessage ="Validation de la page de couverture annulée avec succès.";
+
+//                // notification
+//                $notification->setEstDevalidation(true);
+//                $notification->setNotifierDoctorant(false);
+//                $this->notifierService->triggerValidationRdvBu($notification);
+            }
+            else {
+                throw new RuntimeException("Action inattendue!");
+            }
+
+            $this->flashMessenger()->addSuccessMessage($successMessage);
+        }
+
+        // récupération du modèle de vue auprès du plugin et passage de variables classique
+        $viewModel = $this->confirm()->getViewModel();
+
+        $viewModel->setVariables([
+            'title'  => "Validation de la page de couverture",
+            'these'  => $these,
+            'action' => $action,
+        ]);
+
+        return $viewModel;
+    }
+
+    public function validationPageDeCouvertureAction()
+    {
+        $these = $this->requestedThese();
+
+        $view = new ViewModel([
+            'these'          => $these,
+            'validerUrl'     => $this->urlThese()->validerPageDeCouvertureUrl($these),
+            'devaliderUrl'   => $this->urlThese()->devaliderPageDeCouvertureUrl($these),
+            'typeValidation' => $this->validationService->getTypeValidation($type = TypeValidation::CODE_PAGE_DE_COUVERTURE),
+            'validation'     => $these->getValidation($type),
+        ]);
+
+        $view->setTemplate('application/validation/page-de-couverture');
+
+        return $view;
+    }
+
     public function rdvBuAction()
     {
         $these = $this->requestedThese();

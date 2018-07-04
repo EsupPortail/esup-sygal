@@ -258,6 +258,22 @@ class TheseController extends AbstractController
         return $view;
     }
 
+    public function validationPageDeCouvertureAction()
+    {
+        $these = $this->requestedThese();
+        $validations = $this->validationService->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PAGE_DE_COUVERTURE, $these);
+
+        $view = new ViewModel([
+            'these'      => $these,
+            'validation' => !empty($validations) ? current($validations) : null,
+            'nextStepUrl'      => $this->urlWorkflow()->nextStepBox($these, null, [
+                WfEtape::CODE_VALIDATION_PAGE_DE_COUVERTURE,
+            ]),
+        ]);
+
+        return $view;
+
+    }
 
     public function detailDepotAction()
     {
@@ -397,6 +413,9 @@ class TheseController extends AbstractController
         $hasVA = $this->fichierService->getRepository()->hasVersion($these, VersionFichier::CODE_ARCHI);
         $hasVD = $this->fichierService->getRepository()->hasVersion($these, VersionFichier::CODE_DIFF);
 
+        $validationsPdc = $this->validationService->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PAGE_DE_COUVERTURE, $these);
+        $pageCouvValidee = !empty($validationsPdc);
+
         $view = new ViewModel([
             'these'        => $these,
             'estDoctorant' => $estDoctorant,
@@ -412,6 +431,7 @@ class TheseController extends AbstractController
             'versionArchivable' => $versionArchivable,
             'hasVA' => $hasVA,
             'hasVD' => $hasVD,
+            'pageCouvValidee' => $pageCouvValidee,
 
         ]);
 
@@ -424,6 +444,9 @@ class TheseController extends AbstractController
     {
         $these = $this->requestedThese();
         $estDoctorant = (bool) $this->userContextService->getSelectedRoleDoctorant();
+
+        $validationsPdc = $this->validationService->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PAGE_DE_COUVERTURE, $these);
+        $pageCouvValidee = !empty($validationsPdc);
 
         $rdvBu = $these->getRdvBu() ?: new RdvBu($these);
         $rdvBu->setVersionArchivableFournie($this->fichierService->getRepository()->existeVersionArchivable($these));
@@ -467,7 +490,8 @@ class TheseController extends AbstractController
         $vm = new ViewModel([
             'these' => $these,
             'form'  => $form,
-            'title' => "Rendez-vous BU"
+            'title' => "Rendez-vous BU",
+            'pageCouvValidee' => $pageCouvValidee,
         ]);
 
         $vm->setTemplate('application/these/modifier-rdv-bu' . ($estDoctorant ? '-doctorant' : null));
