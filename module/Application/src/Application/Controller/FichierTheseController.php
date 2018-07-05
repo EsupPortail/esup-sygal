@@ -34,7 +34,7 @@ class FichierTheseController extends AbstractController
     use NotifierServiceAwareTrait;
     use IndividuServiceAwareTrait;
 
-    const UPLOAD_MAX_FILESIZE = '500M';
+    const UPLOAD_MAX_FILESIZE = '5M';
 
     public function deposesAction()
     {
