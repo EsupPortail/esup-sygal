@@ -15,6 +15,7 @@ use Application\Notification\CorrectionAttendueUpdatedNotification;
 use Application\Notification\ResultatTheseAdmisNotification;
 use Application\Notification\ResultatTheseModifieNotification;
 use Application\Notification\ValidationDepotTheseCorrigeeNotification;
+use Application\Notification\ValidationPageDeCouvertureNotification;
 use Application\Notification\ValidationRdvBuNotification;
 use Application\Rule\NotificationDepotVersionCorrigeeAttenduRule;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;

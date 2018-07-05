@@ -77,11 +77,24 @@ class AssertionCsvLoader
                     }
                     $assertionClass = $data[1];
                     $testNumbers = array_slice($data, self::COLUMN_FOR_PRIVILEGE + 1, -2);
+
                     continue;
                 }
                 if ($row === 2) {
                     $testNames = array_slice($data, self::COLUMN_FOR_PRIVILEGE + 1, -2);
+
+                    // Il peut y avoir des colonnes vides donc des noms de tests vides :
+                    // on supprime les numéros de colonnes correspondant aux noms de tests vides...
+                    foreach ($testNames as $index => $testName) {
+                        if ($testName === '') {
+                            unset($testNumbers[$index]);
+                        }
+                    }
+                    // puis on oublie les noms de test vides.
+                    $testNames = array_filter($testNames);
+
                     $testNumbers = array_combine($testNames, $testNumbers);
+
                     continue;
                 }
 

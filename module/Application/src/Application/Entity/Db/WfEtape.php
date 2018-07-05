@@ -12,6 +12,8 @@ class WfEtape implements EtapeEtatAwareInterface
 {
     use EtapeEtatAwareTrait;
 
+    const CODE_VALIDATION_PAGE_DE_COUVERTURE                    = 'VALIDATION_PAGE_DE_COUVERTURE';
+
     const CODE_DEPOT_VERSION_ORIGINALE                          = 'DEPOT_VERSION_ORIGINALE';
     const CODE_DEPOT_VERSION_ORIGINALE_CORRIGEE                 = 'DEPOT_VERSION_ORIGINALE_CORRIGEE';
 

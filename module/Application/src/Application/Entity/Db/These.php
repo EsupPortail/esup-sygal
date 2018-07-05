@@ -1036,10 +1036,10 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * Retourne les mails des directeurs de thèse.
      *
-     * @param Individu[] $unknownMails Liste des individus sans mail, format: "Paul Hochon" => Individu
+     * @param Individu[] $individusSansMail Liste des individus sans mail, format: "Paul Hochon" => Individu
      * @return array
      */
-    public function getDirecteursTheseEmails(array &$unknownMails = [])
+    public function getDirecteursTheseEmails(array &$individusSansMail = [])
     {
         $emails = [];
         $directeurs = $this->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE);
@@ -1049,7 +1049,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
             $email = $acteur->getIndividu()->getEmail();
             $name = (string) $acteur->getIndividu();
             if (! $email) {
-                $unknownMails[$name] = $acteur->getIndividu();
+                $individusSansMail[$name] = $acteur->getIndividu();
             } else {
                 $emails[$email] = $name;
             }

@@ -254,6 +254,22 @@ class UrlTheseService extends UrlService
         );
     }
 
+    public function validerPageDeCouvertureUrl(These $these)
+    {
+        return $this->fromRoute('validation/page-de-couverture',
+            ['these' => $this->idify($these)],
+            ['query' => ['action' => 'valider']]
+        );
+    }
+
+    public function devaliderPageDeCouvertureUrl(These $these)
+    {
+        return $this->fromRoute('validation/page-de-couverture',
+            ['these' => $this->idify($these)],
+            ['query' => ['action' => 'devalider']]
+        );
+    }
+
     public function validerRdvBuUrl(These $these)
     {
         return $this->fromRoute('validation/rdv-bu',
