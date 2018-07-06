@@ -40,7 +40,16 @@ class UrlFichierThese extends UrlPlugin
             'fichierNom' => $fichier->getNom(),
         ], [
             'query' => $queryParams,
-        ], [], true);
+        ], true);
+    }
+
+    public function apercevoirPageDeCouverture(These $these, array $queryParams = [])
+    {
+        return $this->fromRoute('fichier/these/apercevoir-page-de-couverture', [
+            'these'      => $this->idify($these),
+        ], [
+            'query' => $queryParams,
+        ], true);
     }
 
     public function supprimerFichierThese(These $these, Fichier $fichier)

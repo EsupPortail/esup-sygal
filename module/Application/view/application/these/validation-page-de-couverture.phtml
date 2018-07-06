@@ -10,6 +10,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var PhpRenderer $this
  * @var These       $these
  * @var Validation  $validation
+ * @var string      $apercevoirPdcUrl
  * @var string      $validerUrl
  * @var string      $devaliderUrl
  * @var string      $nextStepUrl
@@ -42,7 +43,9 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_
             en mesure de générer automatiquement en l'état actuel des informations dont elle dispose.
         </p>
         <p>
-            <a class="btn btn-info" href="<?php echo $this->url("these/generate", [], [], true) ?>"
+            <a class="btn btn-info ajax-modal"
+               href="<?php echo $apercevoirPdcUrl ?>"
+               title="Cliquez pour afficher un aperçu de la page de couverture"
             ><span class="glyphicon glyphicon-eye-open"></span> Visualiser la page de couverture</a>
         </p>
     </div>

@@ -41,6 +41,13 @@ return array(
                 [
                     'controller' => 'Application\Controller\FichierThese',
                     'action'     => [
+                        'apercevoir-page-de-couverture',
+                    ],
+                    'role' => ThesePrivileges::THESE_TELECHARGEMENT_FICHIER,
+                ],
+                [
+                    'controller' => 'Application\Controller\FichierThese',
+                    'action'     => [
                         'televerser-fichier',
                         'supprimer-fichier',
                     ],
@@ -136,6 +143,15 @@ return array(
                                     ],
                                     'defaults'    => [
                                         'action' => 'apercevoir-fichier',
+                                    ],
+                                ],
+                            ],
+                            'apercevoir-page-de-couverture' => [
+                                'type'        => 'Segment',
+                                'options'     => [
+                                    'route' => '/apercevoir-page-de-couverture',
+                                    'defaults'    => [
+                                        'action' => 'apercevoir-page-de-couverture',
                                     ],
                                 ],
                             ],
