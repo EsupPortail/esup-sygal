@@ -63,7 +63,12 @@ class TheseEntityAssertion extends GeneratedTheseEntityAssertion
         return true;
     }
 
+    protected function isExisteValidationPageDeCouverture()
+    {
+        $validations = $this->validationService->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PAGE_DE_COUVERTURE, $this->these);
 
+        return !empty($validations);
+    }
 
 
     protected function isInfosBuSaisies()

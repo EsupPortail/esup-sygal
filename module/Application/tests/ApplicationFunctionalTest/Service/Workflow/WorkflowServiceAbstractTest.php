@@ -339,7 +339,6 @@ abstract class WorkflowServiceAbstractTest extends AbstractControllerTestCase
     {
         $rdvBu = $this->these->getRdvBu();
         $rdvBu
-            ->setPageTitreConforme(true)
             ->setConventionMelSignee(true)
             ->setExemplPapierFourni(true)
             ->setMotsClesRameau("mot clé")

@@ -35,6 +35,8 @@ use Zend\Mvc\Controller\Plugin\AbstractPlugin;
  * @method devaliderDepotTheseCorrigeeUrl(These $these)
  * @method validerCorrectionTheseUrl(These $these)
  * @method devaliderCorrectionTheseUrl(These $these)
+ * @method validerPageDeCouvertureUrl(These $these)
+ * @method devaliderPageDeCouvertureUrl(These $these)
  *
  * @see UrlTheseService
  *

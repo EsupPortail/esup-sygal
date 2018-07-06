@@ -1,0 +1,118 @@
+<?php
+
+use Application\Controller\TheseController;
+use Application\Entity\Db\These;
+use Application\Entity\Db\Validation;
+use Application\Provider\Privilege\ValidationPrivileges;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var These       $these
+ * @var Validation  $validation
+ * @var string      $apercevoirPdcUrl
+ * @var string      $validerUrl
+ * @var string      $devaliderUrl
+ * @var string      $nextStepUrl
+ *
+ * @see TheseController::validationPageDeCouvertureAction()
+ */
+
+$canValidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_DE_COUVERTURE);
+$canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_DE_COUVERTURE_SUPPR);
+?>
+
+<?php $this->headTitle($this->translate("Page de couverture"))->prepend($these->getDoctorant()->getNomUsuel()) ?>
+
+<h1 class="page-header">
+    <?php echo $this->translate("Page de couverture"); ?>
+    <small><?php echo $this->partial('application/these/partial/titre') ?></small>
+</h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNamespace('PageDeCouverture/*'); ?>
+
+<div class="box panel panel-info">
+    <div class="panel-heading">
+        <h2 class="first">
+            <?php echo $this->translate("Visualisation"); ?>
+        </h2>
+    </div>
+    <div class="panel-body">
+        <p>
+            En cliquant sur le bouton ci-dessous, vous visualiserez la page de couverture que l'application est
+            en mesure de générer automatiquement en l'état actuel des informations dont elle dispose.
+        </p>
+        <p>
+            <a class="btn btn-info ajax-modal"
+               href="<?php echo $apercevoirPdcUrl ?>"
+               title="Cliquez pour afficher un aperçu de la page de couverture"
+            ><span class="glyphicon glyphicon-eye-open"></span> Visualiser la page de couverture</a>
+        </p>
+    </div>
+</div>
+
+<div class="box panel panel-info">
+    <div class="panel-heading">
+        <h2 class="first">
+            <?php echo $this->translate("Validation"); ?>
+        </h2>
+    </div>
+    <div class="panel-body">
+        <?php if ($validation): ?>
+            <?php echo $this->validation($validation) ?>
+            <?php if ($canUnvalidate): ?>
+                <a href="<?php echo $devaliderUrl ?>"
+                   class="btn btn-danger ajax-modal"
+                   data-event="event-page-de-couverture-validated-or-not"><span
+                            class="glyphicon glyphicon-trash"></span>
+                    Annuler la validation la page de couverture</a>
+            <?php endif ?>
+        <?php else: ?>
+            <?php if ($canValidate): ?>
+                <p>
+                    Après avoir visualisé la page de couverture générée par l'application, si vous jugez qu'elle est
+                    conforme, vous pouvez la valider en cliquant sur le bouton ci-dessous.
+                </p>
+                <p>
+                    <a href="<?php echo $validerUrl ?>"
+                       class="btn btn-success ajax-modal"
+                       data-event="event-page-de-couverture-validated-or-not"><span
+                                class="glyphicon glyphicon-thumbs-up"></span> Valider la page de couverture</a>
+                </p>
+                <p>
+                    Une fois la page de couverture validée, le doctorant aura la main pour procéder au dépôt de sa thèse.
+                </p>
+            <?php endif ?>
+        <?php endif ?>
+    </div>
+</div>
+
+<!-------------------------------------- Next step --------------------------------------->
+<div id="nextStepDiv" data-url="<?php echo $nextStepUrl ?>" style="display: none">
+    <!-- màj via ajax -->
+</div>
+
+
+<script>
+    $(function () {
+        var refreshingNextStep = function (done, effect) {
+            return function () {
+                $("#nextStepDiv").addClass("loading").refresh(null, function () {
+                    $(this).removeClass("loading").show();
+                    if (done) done();
+                });
+            };
+        };
+
+        // au chargement de la page, on actualise toutes les div en cascade.
+        runInCascade([
+            refreshingNextStep
+        ], self);
+
+        $("body").one("event-page-de-couverture-validated-or-not", function (event, data) {
+            // La validation vient d'être saisie.
+            event.div.modal('hide'); // ferme la fenêtre modale
+            window.location.reload();
+        });
+    });
+</script>

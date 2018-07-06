@@ -90,6 +90,7 @@ return [
                         'detail-identite',
                         'generate',
                         'fusion',
+                        'validation-page-de-couverture',
                     ],
                     'privileges' => ThesePrivileges::THESE_CONSULTATION_FICHE,
                     'assertion'  => 'Assertion\\These',
@@ -355,6 +356,18 @@ return [
                             ],
                             'defaults'    => [
                                 'action' => 'depot-papier-final',
+                            ],
+                        ],
+                    ],
+                    'validation-page-de-couverture' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'       => '/validation-page-de-couverture/:these',
+                            'constraints' => [
+                                'these' => '\d+',
+                            ],
+                            'defaults'    => [
+                                'action' => 'validation-page-de-couverture',
                             ],
                         ],
                     ],
@@ -756,6 +769,20 @@ return [
                                 'class' => 'divider',
                             ],
 
+                            'validation-page-de-couverture' => [
+                                'id'       => 'validation-page-de-couverture',
+                                'label'    => 'Page de couverture',
+                                'route'    => 'these/validation-page-de-couverture',
+                                'withtarget' => true,
+                                'paramsInject' => [
+                                    'these',
+                                ],
+                                'class' => 'version-initiale correction-attendue-{correctionAutorisee}',
+                                'icon' => 'glyphicon glyphicon-file',
+                                'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'validation-page-de-couverture'),
+//                                'etape' => WfEtape::CODE_DEPOT_VERSION_ORIGINALE,
+//                                'visible' => 'Assertion\\These',
+                            ],
                             'depot' => [
                                 'id'       => 'depot',
                                 'label'    => 'Dépôt de la thèse',
