@@ -16,12 +16,13 @@ use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\View\Helper\Sortable;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\Form\Element\Hidden;
-use Zend\Http\PhpEnvironment\Response;
+use Zend\Http\Response;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
@@ -440,6 +441,73 @@ class FichierTheseController extends AbstractController
         }
 
         return $response;
+    }
+
+    /**
+     * @return Response|ViewModel
+     */
+    public function apercevoirPageDeCouvertureAction()
+    {
+        $these = $this->requestedThese();
+        $imageContentRequested = (bool) (int) $this->params()->fromQuery('content');
+
+        if ($imageContentRequested) {
+            return $this->apercuPageDeCouverture();
+        }
+
+        $apercuUrl = $this->urlFichierThese()->apercevoirPageDeCouverture($these, [
+            'content' => 1,
+            'nocache' => 1,
+            'ts' => time(), // ajouter un ts garantit que le navigateur ne mettra pas en cache l'image
+        ]);
+
+        $vm = new ViewModel([
+            'title'     => "Aperçu de la page de couverture",
+            'apercuUrl' => $apercuUrl,
+        ]);
+
+        return $vm;
+    }
+
+    /**
+     * @return Response
+     */
+    protected function apercuPageDeCouverture()
+    {
+//        $these = $this->requestedThese();
+        $theseId = $this->params('these');
+
+        $qb = $this->theseService->getRepository()->createQueryBuilder('t');
+        $qb
+            ->addSelect('etab, etabstr, doct, doctind')
+            ->join('t.etablissement', 'etab')
+            ->join('etab.structure', 'etabstr')
+            ->join('t.doctorant', 'doct')
+            ->join('doct.individu', 'doctind')
+            ->andWhere('t = :these')
+            ->setParameter('these', $theseId);
+        try {
+            $these = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Anomalie: plusieurs thèses trouvées avec l'id $theseId");
+        }
+
+        $filename = uniqid() . '.pdf';
+        $renderer = $this->getServiceLocator()->get('view_renderer'); /* @var $renderer \Zend\View\Renderer\PhpRenderer */
+        $this->fichierService->generatePageDeCouverture($these, $renderer, $filename);
+
+        $filepath = sys_get_temp_dir() . '/' . $filename; // NB: l'exporter PDF stocke dans sys_get_temp_dir()
+        try {
+            $content = $this->fichierService->generateFirstPagePreview($filepath);
+        } catch (RuntimeException $e) {
+            $content = "";
+        }
+        unlink($filepath);
+
+        /** @var \Zend\Http\Response $response */
+        $response = $this->getResponse();
+
+        return $this->fichierService->createResponseForFileContent($response, $content);
     }
 
     /**
