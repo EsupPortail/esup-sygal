@@ -406,16 +406,21 @@ class FichierTheseController extends AbstractController
      */
     protected function apercuPageDeCouverture()
     {
-//        $these = $this->requestedThese();
+        // fetch de la thèse AVEC les jointures parcourues dans la génération de la PDC
         $theseId = $this->params('these');
-
         $qb = $this->theseService->getRepository()->createQueryBuilder('t');
         $qb
-            ->addSelect('etab, etabstr, doct, doctind')
+            ->addSelect('etab, etabstr, doct, doctind, ed, ur, edstr, urstr, act, actind')
             ->join('t.etablissement', 'etab')
             ->join('etab.structure', 'etabstr')
             ->join('t.doctorant', 'doct')
             ->join('doct.individu', 'doctind')
+            ->leftJoin('t.ecoleDoctorale', 'ed')
+            ->leftJoin('t.uniteRecherche', 'ur')
+            ->leftJoin('ed.structure', 'edstr')
+            ->leftJoin('ur.structure', 'urstr')
+            ->leftJoin('t.acteurs', 'act')
+            ->leftJoin('act.individu', 'actind')
             ->andWhere('t = :these')
             ->setParameter('these', $theseId);
         try {
