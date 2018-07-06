@@ -484,45 +484,6 @@ class FichierService extends BaseService
     }
 
     /**
-     * Génère un fichier PNG temporaire pour aperçu de la première page de ce fichier,
-     * et retourne son contenu binaire.
-     *
-     * @param Fichier $fichier
-     * @return string Contenu binaire du fichier PNG généré
-     * @throws LogicException Format de fichier incorrect
-     */
-    public function apercuPremierePage(Fichier $fichier)
-    {
-        if ($fichier->getTypeMime() !== Fichier::MIME_TYPE_PDF) {
-            return Util::createImageWithText("Erreur: Seul le format |de fichier PDF est accepté", 200, 100);
-        }
-
-        if (! extension_loaded('imagick')) {
-            return Util::createImageWithText("Erreur: extension PHP |'imagick' non chargée", 170, 100);
-        }
-
-        $inputFilePath = $this->computeDestinationFilePathForFichier($fichier);
-        $outputFilePath = sys_get_temp_dir() . '/' . uniqid($fichier->getNom() . '-') . '.png';
-
-        try {
-            $im = new \Imagick();
-            $im->setResolution(300, 300);
-            $im->readImage($inputFilePath . '[0]'); // 1ere page seulement
-            $im->setImageFormat('png');
-            $im->writeImage($outputFilePath);
-            $im->clear();
-            $im->destroy();
-        } catch (\ImagickException $ie) {
-            throw new RuntimeException(
-                "Erreur rencontrée lors de la création de l'aperçu", null, $ie);
-        }
-
-        $content = file_get_contents($outputFilePath);
-
-        return $content;
-    }
-
-    /**
      * Génère un fichier PNG temporaire pour aperçu de la première page d'un fichier PDF,
      * et retourne son contenu binaire.
      *
@@ -666,9 +627,9 @@ class FichierService extends BaseService
         $jury = [];
         $acteurs = $these->getActeurs()->toArray();
 
-        $rapporteurs =  array_filter($these->getActeurs()->toArray(), function($a) {return TheseController::estRapporteur($a); });
-        $directeurs =  array_filter($these->getActeurs()->toArray(), function($a) {return TheseController::estDirecteur($a); });
-        $membres = array_diff($these->getActeurs()->toArray(), $rapporteurs, $directeurs);
+        $rapporteurs =  array_filter($acteurs, function($a) {return TheseController::estRapporteur($a); });
+        $directeurs =  array_filter($acteurs, function($a) {return TheseController::estDirecteur($a); });
+        $membres = array_diff($acteurs, $rapporteurs, $directeurs);
 
         $acteurs = array_merge($rapporteurs, $membres, $directeurs);
         /** @var Acteur $acteur */

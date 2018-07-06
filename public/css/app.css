@@ -344,11 +344,6 @@ div.apercu-fichier img {
   box-shadow: 1px 1px 12px #555;
   display: block; }
 
-a.apercu {
-  font-size: 120%; }
-  a.apercu span.glyphicon-eye-open {
-    margin: 0 3px; }
-
 p.autoris-diffusion-motif {
   font-size: 90%; }
 
