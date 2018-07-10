@@ -345,9 +345,9 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
      * @param bool $prenoms
      * @return string
      */
-    public function getNomComplet($avecCivilite = false, $avecNomPatro = false, $prenoms = false)
+    public function getNomComplet($avecCivilite = false, $avecNomPatro = false, $prenoms = false, $prenomfirst = false, $court = false)
     {
-        $f = new NomCompletFormatter(true, $avecCivilite, $avecNomPatro, false, $prenoms);
+        $f = new NomCompletFormatter(true, $avecCivilite, $avecNomPatro, $prenomfirst, $prenoms, $court);
 
         return $f->filter($this);
     }

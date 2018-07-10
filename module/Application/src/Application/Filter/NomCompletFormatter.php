@@ -20,6 +20,7 @@ class NomCompletFormatter extends AbstractFilter
     protected $avecNomPatro   = false;
     protected $prenomDabord   = false;
     protected $tousLesPrenoms = false;
+    protected $court = false;
 
     /**
      * Constructeur.
@@ -30,13 +31,15 @@ class NomCompletFormatter extends AbstractFilter
      * @param bool $prenomDabord
      * @param bool $tousLesPrenoms
      */
-    public function __construct($nomEnMajuscule = true, $avecCivilite = false, $avecNomPatro = false, $prenomDabord = false, $tousLesPrenoms = false)
+    public function __construct($nomEnMajuscule = true, $avecCivilite = false, $avecNomPatro = false, $prenomDabord = false, $tousLesPrenoms = false, $court = false)
     {
         $this->nomEnMajuscule = $nomEnMajuscule;
         $this->avecCivilite   = $avecCivilite;
         $this->avecNomPatro   = $avecNomPatro;
         $this->prenomDabord   = $prenomDabord;
         $this->tousLesPrenoms = $tousLesPrenoms;
+        $this->court          = $court;
+
     }
 
     /**
@@ -118,7 +121,11 @@ class NomCompletFormatter extends AbstractFilter
         $result = implode(' ', array_filter($parts));
 
         if ($this->avecNomPatro && $nomPatro !== $nomUsuel) {
-            $result .= ", née $nomPatro";
+            if ($this->court) {
+                $result .= "-$nomPatro";
+            } else {
+                $result .= ", née $nomPatro";
+            }
         }
 
 	    return $result;

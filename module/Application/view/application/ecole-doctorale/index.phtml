@@ -58,7 +58,7 @@ $canModifier = $this->isAllowed(EcoleDoctoralePrivileges::getResourceId(EcoleDoc
             <tr <?php if($selected == $structure->getStructure()->getId()) echo 'class="ecole-doctorale selected" style="color:black;"';?> >
 
                 <td>
-                    <a href="<?php echo $this->url(null, [], ['query' => ['selected' => $structure->getStructure()->getId()]], true); ?>">
+                    <a href="<?php echo $this->url('ecole-doctorale', [], ['query' => ['selected' => $structure->getStructure()->getId()]], true); ?>">
                         <?php echo $structure->getLibelle(); ?>
                     </a>
                 </td>

@@ -1,10 +1,12 @@
 <?php
 
+use Application\Assertion\BaseAssertion;
 use Application\Controller\TheseController;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
 use Application\Provider\Privilege\ValidationPrivileges;
 use Application\View\Renderer\PhpRenderer;
+use UnicaenApp\Service\MessageCollector;
 
 /**
  * @var PhpRenderer $this
@@ -14,6 +16,8 @@ use Application\View\Renderer\PhpRenderer;
  * @var string      $validerUrl
  * @var string      $devaliderUrl
  * @var string      $nextStepUrl
+ * @var MessageCollector    $msgCollector
+ * @var []          $informations
  *
  * @see TheseController::validationPageDeCouvertureAction()
  */
@@ -51,6 +55,34 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_
     </div>
 </div>
 
+<?php
+    $problemes = [];
+    foreach ($informations as $clef => $information) {
+        if ($information == "") {
+            $problemes[] = $clef;
+        }
+    }
+?>
+
+<?php if(!empty($problemes)): ?>
+    <div class="box panel panel-warning">
+        <div class="panel-heading">
+            <h2 class="first">
+                Données manquantes pour la génération de la page de couverture
+            </h2>
+        </div>
+        <div class="panel-body">
+            Liste des informations manquantes :
+            <ul>
+            <?php foreach ($problemes as $probleme): ?>
+                <li> <?php echo $probleme; ?> </li>
+            <?php endforeach; ?>
+            </ul>
+        </div>
+    </div>
+<?php endif; ?>
+
+
 <div class="box panel panel-info">
     <div class="panel-heading">
         <h2 class="first">
@@ -82,6 +114,12 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_
                 <p>
                     Une fois la page de couverture validée, le doctorant aura la main pour procéder au dépôt de sa thèse.
                 </p>
+            <?php else: ?>
+                <?php
+                $msgCollector = $this->messageCollector(BaseAssertion::class);
+                $msgCollector->getMessengerHelper()->setContainerClassesToAdd('alert-danger');
+                echo $msgCollector->render();
+                ?>
             <?php endif ?>
         <?php endif ?>
     </div>
