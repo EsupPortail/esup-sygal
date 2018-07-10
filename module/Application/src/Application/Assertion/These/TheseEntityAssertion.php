@@ -253,4 +253,20 @@ class TheseEntityAssertion extends GeneratedTheseEntityAssertion
 
         return $this->identityDoctorant;
     }
+
+    /**
+     * @return bool
+     */
+    protected function isPageDeCouvertureGenerable()
+    {
+        $informations = $this->fichierService->fetchInformationsPageDeCouverture($this->these);
+
+        $problemes = [];
+        foreach ($informations as $clef => $information) {
+            if ($information == "") {
+                return false;
+            }
+        }
+        return true;
+    }
 }

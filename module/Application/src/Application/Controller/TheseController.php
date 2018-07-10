@@ -272,6 +272,7 @@ class TheseController extends AbstractController
             'devaliderUrl'     => $this->urlThese()->devaliderPageDeCouvertureUrl($these),
             'nextStepUrl'      => $this->urlWorkflow()->nextStepBox($these, null, [WfEtape::CODE_VALIDATION_PAGE_DE_COUVERTURE]),
             'informations'     => $informations,
+            'msgCollector'     => $this->getServiceMessageCollector(),
         ]);
 
         return $view;
@@ -1479,7 +1480,7 @@ class TheseController extends AbstractController
 
         // GENERATION DE LA COUVERTURE
         $filename = "COUVERTURE_".$these->getId()."_".uniqid().".pdf";
-        $this->generatePageDeCouverture($these,$filename);
+        $this->fichierService->generatePageDeCouverture($these,$filename);
         $couvertureChemin = "/tmp/". $filename;
 
         // RECUPERATION DE LA BONNE VERSION DU MANUSCRIPT

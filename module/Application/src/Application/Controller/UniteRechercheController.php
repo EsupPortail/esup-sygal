@@ -72,6 +72,8 @@ class UniteRechercheController extends AbstractController
         }
         $rattachements = null;
         if ($selectedStructure !== null) $rattachements = $this->uniteRechercheService->findEtablissementRattachement($selectedStructure);
+        $domaines = null;
+        if ($selectedStructure !== null) $domaines = $selectedStructure->getDomaines();
 
         return new ViewModel([
             'structuresPrincipales'          => $structures,
@@ -79,6 +81,7 @@ class UniteRechercheController extends AbstractController
             'roles'                          => $roles,
             'effectifs'                      => $effectifs,
             'rattachements'                  => $rattachements,
+            'domaines'                       => $domaines,
         ]);
     }
 

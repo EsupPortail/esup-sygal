@@ -523,6 +523,7 @@ class FichierService extends BaseService
 
     /**
      * Cette fonction a pour vocation de récupérer les informations utile pour la génération de la page de couverture.
+     * Si une clef est vide cela indique un problème associé à la thèse
      * @param These $these
      * @return []
      */
@@ -538,7 +539,7 @@ class FichierService extends BaseService
         $informations["titre"]                  = ($these->getTitre())?$these->getTitre():"";
         $informations["specialité"]             = ($these->getLibelleDiscipline())?$these->getLibelleDiscipline():"";
         $informations["etablissement"]          = ($these->getEtablissement())?$these->getEtablissement()->getLibelle():"";
-        $informations["doctorant"]              = ($these->getDoctorant())?$these->getDoctorant()->getIndividu()->getNomComplet():"";
+        $informations["doctorant"]              = ($these->getDoctorant())?$these->getDoctorant()->getIndividu()->getNomComplet(false, true, false, true, true):"";
         $informations["date de soutenance"]     = ($these->getDateSoutenance())?$these->getDateSoutenance()->format("d/m/Y"):"";
 
         /** Jury de thèses */
@@ -564,7 +565,7 @@ class FichierService extends BaseService
         $position = 1;
         /** @var Acteur $rapporteur */
         foreach ($rapporteurs as $rapporteur) {
-            $informations["nom ".$position]             = $rapporteur->getIndividu()->getNomComplet(true,true,false);
+            $informations["nom ".$position]             = $rapporteur->getIndividu()->getNomComplet(true,true,false, true, true);
             $informations["qualité ".$position]         = $rapporteur->getQualite();
             $informations["etablissement ".$position]   = $rapporteur->getEtablissement();
             $informations["role ".$position]            = "Rapporteur du jury";
@@ -573,7 +574,7 @@ class FichierService extends BaseService
 
         /** @var Acteur $membre */
         foreach ($membres as $membre) {
-            $informations["nom ".$position]             = $membre->getIndividu()->getNomComplet(true,true,false);
+            $informations["nom ".$position]             = $membre->getIndividu()->getNomComplet(true,true,false, true, true);
             $informations["qualité ".$position]         = $membre->getQualite();
             $informations["etablissement ".$position]   = $membre->getEtablissement();
             $informations["role ".$position]            = "Membre du jury";
@@ -582,7 +583,7 @@ class FichierService extends BaseService
 
         /** @var Acteur $directeur */
         foreach ($directeurs as $directeur) {
-            $informations["nom ".$position]             = $directeur->getIndividu()->getNomComplet(true,true,false);
+            $informations["nom ".$position]             = $directeur->getIndividu()->getNomComplet(true,true,false, true, true);
             $informations["qualité ".$position]         = $directeur->getQualite();
             $informations["etablissement ".$position]   = $directeur->getEtablissement();
             $informations["role ".$position]            = "Directeur de thèse";
@@ -594,12 +595,12 @@ class FichierService extends BaseService
         foreach ($informationsGenerales as $informationGenerale) $informations[$informationGenerale] = "";
         $nomination = [];
         /** @var Acteur $directeur */
-        foreach ($directeurs as $directeur) $nomination[] = $directeur->getIndividu()->getNomComplet(false, true, false);
+        foreach ($directeurs as $directeur) $nomination[] = $directeur->getIndividu()->getNomComplet(false, true, false, true, true);
         $informations["liste des directeurs"]          = implode(" et ", $nomination);
         $informations["Unité de recherche"]            = ($these->getUniteRecherche())?$these->getUniteRecherche()->getStructure()->getLibelle():"";
 
         /** Logos à afficher */
-        $logos = ["logo-comue", "logo-etablissement", "logo-ecoleDoctorale", "logo-UniteRecherche"];
+        $logos = ["logo-comue", "logo-etablissement", "logo-ecoleDoctorale", "logo-uniteRecherche"];
         foreach ($logos as $logo) $informations[$logo] = "";
 
         $comue = $this->etablissementService->getEtablissementById(1);
@@ -619,157 +620,12 @@ class FichierService extends BaseService
      */
     public function generatePageDeCouverture(These $these, RendererInterface $renderer, $filepath = null)
     {
-        /**
-         * Les infos générales de la these sont
-         * - La spécialité "specialite"
-         * - L'établissement délivrant le diplome "etablissement"
-         * - Le titre de la thèse "titre"
-         * - La dénomination du doctarant "doctorant"
-         * - La date de soutenance "date"
-         */
-        $manques = [];
-        $infos = [];
-        if ($these !== null && $these->getLibelleDiscipline() !== null) {
-            $infos["specialite"] = $these->getLibelleDiscipline();
-        } else {
-            $manques[] = "la spécialité";
-        }
-        if ($these !== null && $these->getEtablissement() !== null) {
-            $infos["etablissement"] = $these->getEtablissement()->getLibelle();
-        } else {
-            throw new LogicException("Oups, ce cas ne devait pas se produire!");
-            //NOTIFIER l'établissement d'inscription est absent (au admin tech)
-        }
-        if ($these !== null && $these->getTitre() !== null) {
-            $infos["titre"] = $these->getTitre();
-        } else {
-            $manques[] = "le titre";
-        }
-        if ($these !== null && $these->getDoctorant() !== null) {
-            //TODO utiliser un formater
-            $infos["doctorant"] = $these->getDoctorant()->getPrenom() . " ";
-            $infos["doctorant"] .= $these->getDoctorant()->getNomUsuel();
-            if ($these->getDoctorant()->getNomPatronymique() != $these->getDoctorant()->getNomUsuel()) $infos["doctorant"] .= "-".$these->getDoctorant()->getNomPatronymique();
-        } else {
-            $manques[] = "le doctorant";
-        }
-        if ($these !== null && $these->getDateSoutenance() !== null) {
-            $infos["date"] = $these->getDateSoutenance()->format("d/m/Y");
-        } else {
-            $manques[] = "la date de soutenance";
-        }
-        //if (!empty($manques)) $this->notifierService->triggerInformationManquante($these, $manques);
 
-        /**
-         * Les logos à afficher sur la première page sont les suivants :
-         * - COMUE  en tête de page "comue",
-         * - etablissement principal (en bas à gauche) "etablissement",
-         * - etablissement co-tutelle (à droite de l'établissement principale) "cotutelle",
-         * - ecole doctorale (en bas au centre) "ecole",
-         * - unite de recherche (en bas à droite) "unite"
-         **/
-
-        $logos = [];
-        $comue = $this->etablissementService->getEtablissementById(1);
-        if ($comue !== null && $comue->getCheminLogo() !== null) {
-            $logos["comue"] = $comue->getCheminLogo();
-        } else {
-            if ($comue === null) {
-                // /!\ Ce cas ne doit jamais se produire !!!
-                // NOTIFIER l'établissement representant la COMUE est absent (au admin tech)
-            } else {
-//                $this->notifierService->triggerLogoAbsentEtablissement($comue);
-            }
-        }
-        $etablissement = $these->getEtablissement();
-        if ($etablissement !== null && $etablissement->getCheminLogo() !== null) {
-            $logos["etablissement"] = $etablissement->getCheminLogo();
-        } else {
-            if ($etablissement === null) {
-                // /!\ Ce cas ne doit jamais se produire !!!
-                //NOTIFIER l'établissement d'inscription est absent (au admin tech)
-            } else {
-//                $this->notifierService->triggerLogoAbsentEtablissement($these->getEtablissement());
-            }
-        }
-        // =========> TODO CO-TUTELLE
-        $ecole = $these->getEcoleDoctorale();
-        if ($ecole !== null && $ecole->getCheminLogo() !== null) {
-            $logos["ecole"] = $ecole->getCheminLogo();
-        } else {
-//            if ($ecole === null) {
-//                $this->notifierService->triggerEcoleDoctoraleAbsente($these);
-//            } else {
-//                $this->notifierService->triggerLogoAbsentEcoleDoctorale($ecole);
-//            }
-        }
-        $unite = $these->getUniteRecherche();
-        if ($unite !== null && $unite->getCheminLogo() !== null) {
-            $logos["unite"] = $unite->getCheminLogo();
-        } else {
-//            if ($unite === null) {
-//                $this->notifierService->triggerUniteRechercheAbsente($these);
-//            } else {
-//                $this->notifierService->triggerLogoAbsentUniteRecherche($unite);
-//            }
-        }
-
-        /** JURY **/
-        $jury = [];
-        $acteurs = $these->getActeurs()->toArray();
-
-        $rapporteurs =  array_filter($acteurs, function($a) {return TheseController::estRapporteur($a); });
-        $directeurs =  array_filter($acteurs, function($a) {return TheseController::estDirecteur($a); });
-        $membres = array_diff($acteurs, $rapporteurs, $directeurs);
-
-        $acteurs = array_merge($rapporteurs, $membres, $directeurs);
-        /** @var Acteur $acteur */
-        foreach ($acteurs as $acteur) {
-            $individuActeur = $acteur->getIndividu();
-            $membre = [];
-            $membre["nom"]  = $individuActeur->getCivilite();
-            $membre["nom"] .= " " .$individuActeur->getPrenom();
-            $membre["nom"] .= " " .$individuActeur->getNomUsuel();
-            if($individuActeur->getNomUsuel() != $individuActeur->getNomPatronymique()) $membre["nom"] .= "-".$individuActeur->getNomPatronymique();
-
-            $membre["qualite"] = $acteur->getQualite();
-            $membre["rattachement"] = $acteur->getEtablissement();
-            $membre["role"] = $acteur->getRole()->getLibelle();
-            $jury[] = $membre;
-        }
-
-        /**
-         * L'endrement est composée :
-         * d'une unite de recherche "unite"
-         * d'une liste de directeur "directeurs"
-         */
-        $encadrements = [];
-        if ($these->getUniteRecherche() && $these->getUniteRecherche()->getLibelle()) {
-            $encadrements["unite"] = $these->getUniteRecherche()->getLibelle();
-        } else {
-            // /!\ déjà notifier au moment du logo !!!
-            //NOTIFIER l'unite de recherche est absente (au BDD univ)
-        }
-        $directeurs = array_filter($these->getActeurs()->toArray(), function($a) {return TheseController::estDirecteur($a); });
-        $directeurs_array = [];
-        /** @var Acteur $directeur */
-        foreach ($directeurs as $directeur) {
-            $individuDirecteur = $directeur->getIndividu();
-            $directeur_str  = $individuDirecteur->getPrenom() . " ";
-            $directeur_str .= $individuDirecteur->getNomUsuel();
-            if ($individuDirecteur->getNomPatronymique() != $individuDirecteur->getNomUsuel()) $directeur_str .= "-".$individuDirecteur->getNomPatronymique();
-            $directeurs_array[] = $directeur_str;
-        }
-        $encadrements["directeurs"] = implode(" et ", $directeurs_array);
-
+        $informations = $this->fetchInformationsPageDeCouverture($these);
 
         $exporter = new PageDeCouverturePdfExporter($renderer, 'A4');
         $exporter->setVars([
-            'these' => $these,
-            'infos' => $infos,
-            'encadrements' => $encadrements,
-            'jury' => $jury,
-            'logos' => $logos,
+            'informations' => $informations,
         ]);
         if ($filepath !== null) {
             $exporter->export($filepath, Pdf::DESTINATION_FILE);
@@ -777,6 +633,165 @@ class FichierService extends BaseService
             $exporter->export('export.pdf');
             exit;
         }
+
+//        /**
+//         * Les infos générales de la these sont
+//         * - La spécialité "specialite"
+//         * - L'établissement délivrant le diplome "etablissement"
+//         * - Le titre de la thèse "titre"
+//         * - La dénomination du doctarant "doctorant"
+//         * - La date de soutenance "date"
+//         */
+//        $manques = [];
+//        $infos = [];
+//        if ($these !== null && $these->getLibelleDiscipline() !== null) {
+//            $infos["specialite"] = $these->getLibelleDiscipline();
+//        } else {
+//            $manques[] = "la spécialité";
+//        }
+//        if ($these !== null && $these->getEtablissement() !== null) {
+//            $infos["etablissement"] = $these->getEtablissement()->getLibelle();
+//        } else {
+//            throw new LogicException("Oups, ce cas ne devait pas se produire!");
+//            //NOTIFIER l'établissement d'inscription est absent (au admin tech)
+//        }
+//        if ($these !== null && $these->getTitre() !== null) {
+//            $infos["titre"] = $these->getTitre();
+//        } else {
+//            $manques[] = "le titre";
+//        }
+//        if ($these !== null && $these->getDoctorant() !== null) {
+//            //TODO utiliser un formater
+//            $infos["doctorant"] = $these->getDoctorant()->getPrenom() . " ";
+//            $infos["doctorant"] .= $these->getDoctorant()->getNomUsuel();
+//            if ($these->getDoctorant()->getNomPatronymique() != $these->getDoctorant()->getNomUsuel()) $infos["doctorant"] .= "-".$these->getDoctorant()->getNomPatronymique();
+//        } else {
+//            $manques[] = "le doctorant";
+//        }
+//        if ($these !== null && $these->getDateSoutenance() !== null) {
+//            $infos["date"] = $these->getDateSoutenance()->format("d/m/Y");
+//        } else {
+//            $manques[] = "la date de soutenance";
+//        }
+//        //if (!empty($manques)) $this->notifierService->triggerInformationManquante($these, $manques);
+//
+//        /**
+//         * Les logos à afficher sur la première page sont les suivants :
+//         * - COMUE  en tête de page "comue",
+//         * - etablissement principal (en bas à gauche) "etablissement",
+//         * - etablissement co-tutelle (à droite de l'établissement principale) "cotutelle",
+//         * - ecole doctorale (en bas au centre) "ecole",
+//         * - unite de recherche (en bas à droite) "unite"
+//         **/
+//
+//        $logos = [];
+//        $comue = $this->etablissementService->getEtablissementById(1);
+//        if ($comue !== null && $comue->getCheminLogo() !== null) {
+//            $logos["comue"] = $comue->getCheminLogo();
+//        } else {
+//            if ($comue === null) {
+//                // /!\ Ce cas ne doit jamais se produire !!!
+//                // NOTIFIER l'établissement representant la COMUE est absent (au admin tech)
+//            } else {
+////                $this->notifierService->triggerLogoAbsentEtablissement($comue);
+//            }
+//        }
+//        $etablissement = $these->getEtablissement();
+//        if ($etablissement !== null && $etablissement->getCheminLogo() !== null) {
+//            $logos["etablissement"] = $etablissement->getCheminLogo();
+//        } else {
+//            if ($etablissement === null) {
+//                // /!\ Ce cas ne doit jamais se produire !!!
+//                //NOTIFIER l'établissement d'inscription est absent (au admin tech)
+//            } else {
+////                $this->notifierService->triggerLogoAbsentEtablissement($these->getEtablissement());
+//            }
+//        }
+//        // =========> TODO CO-TUTELLE
+//        $ecole = $these->getEcoleDoctorale();
+//        if ($ecole !== null && $ecole->getCheminLogo() !== null) {
+//            $logos["ecole"] = $ecole->getCheminLogo();
+//        } else {
+////            if ($ecole === null) {
+////                $this->notifierService->triggerEcoleDoctoraleAbsente($these);
+////            } else {
+////                $this->notifierService->triggerLogoAbsentEcoleDoctorale($ecole);
+////            }
+//        }
+//        $unite = $these->getUniteRecherche();
+//        if ($unite !== null && $unite->getCheminLogo() !== null) {
+//            $logos["unite"] = $unite->getCheminLogo();
+//        } else {
+////            if ($unite === null) {
+////                $this->notifierService->triggerUniteRechercheAbsente($these);
+////            } else {
+////                $this->notifierService->triggerLogoAbsentUniteRecherche($unite);
+////            }
+//        }
+//
+//        /** JURY **/
+//        $jury = [];
+//        $acteurs = $these->getActeurs()->toArray();
+//
+//        $rapporteurs =  array_filter($acteurs, function($a) {return TheseController::estRapporteur($a); });
+//        $directeurs =  array_filter($acteurs, function($a) {return TheseController::estDirecteur($a); });
+//        $membres = array_diff($acteurs, $rapporteurs, $directeurs);
+//
+//        $acteurs = array_merge($rapporteurs, $membres, $directeurs);
+//        /** @var Acteur $acteur */
+//        foreach ($acteurs as $acteur) {
+//            $individuActeur = $acteur->getIndividu();
+//            $membre = [];
+//            $membre["nom"]  = $individuActeur->getCivilite();
+//            $membre["nom"] .= " " .$individuActeur->getPrenom();
+//            $membre["nom"] .= " " .$individuActeur->getNomUsuel();
+//            if($individuActeur->getNomUsuel() != $individuActeur->getNomPatronymique()) $membre["nom"] .= "-".$individuActeur->getNomPatronymique();
+//
+//            $membre["qualite"] = $acteur->getQualite();
+//            $membre["rattachement"] = $acteur->getEtablissement();
+//            $membre["role"] = $acteur->getRole()->getLibelle();
+//            $jury[] = $membre;
+//        }
+//
+//        /**
+//         * L'endrement est composée :
+//         * d'une unite de recherche "unite"
+//         * d'une liste de directeur "directeurs"
+//         */
+//        $encadrements = [];
+//        if ($these->getUniteRecherche() && $these->getUniteRecherche()->getLibelle()) {
+//            $encadrements["unite"] = $these->getUniteRecherche()->getLibelle();
+//        } else {
+//            // /!\ déjà notifier au moment du logo !!!
+//            //NOTIFIER l'unite de recherche est absente (au BDD univ)
+//        }
+//        $directeurs = array_filter($these->getActeurs()->toArray(), function($a) {return TheseController::estDirecteur($a); });
+//        $directeurs_array = [];
+//        /** @var Acteur $directeur */
+//        foreach ($directeurs as $directeur) {
+//            $individuDirecteur = $directeur->getIndividu();
+//            $directeur_str  = $individuDirecteur->getPrenom() . " ";
+//            $directeur_str .= $individuDirecteur->getNomUsuel();
+//            if ($individuDirecteur->getNomPatronymique() != $individuDirecteur->getNomUsuel()) $directeur_str .= "-".$individuDirecteur->getNomPatronymique();
+//            $directeurs_array[] = $directeur_str;
+//        }
+//        $encadrements["directeurs"] = implode(" et ", $directeurs_array);
+//
+//
+//        $exporter = new PageDeCouverturePdfExporter($renderer, 'A4');
+//        $exporter->setVars([
+//            'these' => $these,
+//            'infos' => $infos,
+//            'encadrements' => $encadrements,
+//            'jury' => $jury,
+//            'logos' => $logos,
+//        ]);
+//        if ($filepath !== null) {
+//            $exporter->export($filepath, Pdf::DESTINATION_FILE);
+//        } else {
+//            $exporter->export('export.pdf');
+//            exit;
+//        }
 
     }
 
