@@ -3,6 +3,7 @@
 namespace Application\Filter;
 
 use Application\Entity\Db\Etablissement;
+use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\Filter\FilterInterface;
 
@@ -15,14 +16,14 @@ class EtablissementPrefixFilter implements FilterInterface
      * (i.e. le code établissement + un séparateur).
      *
      * @param  string $value Ex: "UCN::ABC123"
-     * @throws RuntimeException If filtering $value is impossible
+     * @throws LogicException La chaîne de caractère spécifiée n'est pas préfixée
      * @return string Ex: "ABC123"
      */
     public function filter($value)
     {
         $pos = stripos($value, self::ETAB_PREFIX_SEP);
         if ($pos === false) {
-            throw new RuntimeException("La chaîne de caractère spécifiée n'est pas préfixée par l'établissement");
+            throw new LogicException("La chaîne de caractère spécifiée n'est pas préfixée par l'établissement");
         }
 
         return substr($value, $pos + strlen(self::ETAB_PREFIX_SEP));

@@ -1,0 +1,30 @@
+<h1> Récupération paramétrée </h1>
+
+
+<?php
+    print "<h3>Paramètres</h3>";
+
+    $parameterList = [ "service","etablissement", "source_code" ];
+
+    print "<table class='table table-bordered'>";
+    print "<tr><th>name</th><th>value</th></tr>";
+
+    foreach($parameterList as $parameter) {
+        print "<tr><td>". $parameter ."</td><td>". $$parameter ."</td></tr>";
+    }
+
+    print "</table>";
+?>
+
+<?php
+    print "<h3>Logs</h3>";
+
+    print "<table class='table table-bordered'>";
+    print "<tr><th>date</th><th>message</th></tr>";
+
+    foreach($logs as $log) {
+        print "<tr><td>". $log[0]->format("Y/m/d H:i:s ") ."</td><td>". $log[1] ."</td></tr>";
+    }
+
+    print "</table>";
+?>
