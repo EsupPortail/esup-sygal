@@ -14,6 +14,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var string      $validerUrl
  * @var string      $devaliderUrl
  * @var string      $nextStepUrl
+ * @var []          $informations
  *
  * @see TheseController::validationPageDeCouvertureAction()
  */
@@ -48,6 +49,22 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_
                title="Cliquez pour afficher un aperçu de la page de couverture"
             ><span class="glyphicon glyphicon-eye-open"></span> Visualiser la page de couverture</a>
         </p>
+    </div>
+</div>
+
+<div class="box panel panel-info">
+    <div class="panel-heading">
+        <h2 class="first">
+            Informations remontées pour la générations
+        </h2>
+    </div>
+    <div class="panel-body">
+        <dl>
+        <?php foreach ($informations as $clef => $contenu): ?>
+            <dt> <?php echo $clef; ?> </dt>
+            <dd> <?php echo $contenu; ?></dd>
+        <?php endforeach; ?>
+        </dl>
     </div>
 </div>
 

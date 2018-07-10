@@ -262,6 +262,8 @@ class TheseController extends AbstractController
             $these
         ));
 
+        $informations = $this->fichierService->fetchInformationsPageDeCouverture($these);
+
         $view = new ViewModel([
             'these'            => $these,
             'validation'       => $validation ?: null,
@@ -269,6 +271,7 @@ class TheseController extends AbstractController
             'validerUrl'       => $this->urlThese()->validerPageDeCouvertureUrl($these),
             'devaliderUrl'     => $this->urlThese()->devaliderPageDeCouvertureUrl($these),
             'nextStepUrl'      => $this->urlWorkflow()->nextStepBox($these, null, [WfEtape::CODE_VALIDATION_PAGE_DE_COUVERTURE]),
+            'informations'     => $informations,
         ]);
 
         return $view;

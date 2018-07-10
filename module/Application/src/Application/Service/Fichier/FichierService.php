@@ -522,6 +522,97 @@ class FichierService extends BaseService
     }
 
     /**
+     * Cette fonction a pour vocation de récupérer les informations utile pour la génération de la page de couverture.
+     * @param These $these
+     * @return []
+     */
+    public function fetchInformationsPageDeCouverture(These $these) {
+        $informations = [];
+
+        if ($these === null) throw new LogicException("Une these doit être fournie pour pouvoir effectuer la récupération de ces données.");
+
+        /**  informations générales */
+        $informationsGenerales = ["titre", "etablissement", "specialité", "doctorant", "date de soutenance"];
+        foreach ($informationsGenerales as $informationGenerale) $informations[$informationGenerale] = "";
+
+        $informations["titre"]                  = ($these->getTitre())?$these->getTitre():"";
+        $informations["specialité"]             = ($these->getLibelleDiscipline())?$these->getLibelleDiscipline():"";
+        $informations["etablissement"]          = ($these->getEtablissement())?$these->getEtablissement()->getLibelle():"";
+        $informations["doctorant"]              = ($these->getDoctorant())?$these->getDoctorant()->getIndividu()->getNomComplet():"";
+        $informations["date de soutenance"]     = ($these->getDateSoutenance())?$these->getDateSoutenance()->format("d/m/Y"):"";
+
+        /** Jury de thèses */
+        // TODO chercher les libellés des rôles dans des constantes
+        $jury = [];
+        $acteurs = $these->getActeurs()->toArray();
+        $rapporteurs =  array_filter($acteurs, function($a) {return TheseController::estRapporteur($a); });
+        $directeurs =  array_filter($acteurs, function($a) {return TheseController::estDirecteur($a); });
+        $membres = array_diff($acteurs, $rapporteurs, $directeurs);
+
+        $informations["nombre de membres"] = count($membres)?count($membres):"";
+        $informations["nombre de rapporteurs"] = count($rapporteurs)?count($rapporteurs):"";
+        $informations["nombre de directeurs"] = count($directeurs)?count($directeurs):"";
+        $position = 1;
+        foreach ($membres as $membre) {
+            $informations["nom ".$position] = "";
+            $informations["qualité ".$position] = "";
+            $informations["etablissement ".$position] = "";
+            $informations["role ".$position] = "";
+            $position++;
+        }
+
+        $position = 1;
+        /** @var Acteur $rapporteur */
+        foreach ($rapporteurs as $rapporteur) {
+            $informations["nom ".$position]             = $rapporteur->getIndividu()->getNomComplet(true,true,false);
+            $informations["qualité ".$position]         = $rapporteur->getQualite();
+            $informations["etablissement ".$position]   = $rapporteur->getEtablissement();
+            $informations["role ".$position]            = "Rapporteur du jury";
+            $position++;
+        }
+
+        /** @var Acteur $membre */
+        foreach ($membres as $membre) {
+            $informations["nom ".$position]             = $membre->getIndividu()->getNomComplet(true,true,false);
+            $informations["qualité ".$position]         = $membre->getQualite();
+            $informations["etablissement ".$position]   = $membre->getEtablissement();
+            $informations["role ".$position]            = "Membre du jury";
+            $position++;
+        }
+
+        /** @var Acteur $directeur */
+        foreach ($directeurs as $directeur) {
+            $informations["nom ".$position]             = $directeur->getIndividu()->getNomComplet(true,true,false);
+            $informations["qualité ".$position]         = $directeur->getQualite();
+            $informations["etablissement ".$position]   = $directeur->getEtablissement();
+            $informations["role ".$position]            = "Directeur de thèse";
+            $position++;
+        }
+
+        /** Directeurs de thèses */
+        $informationsGenerales = ["liste des directeurs", "Unité de recherche"];
+        foreach ($informationsGenerales as $informationGenerale) $informations[$informationGenerale] = "";
+        $nomination = [];
+        /** @var Acteur $directeur */
+        foreach ($directeurs as $directeur) $nomination[] = $directeur->getIndividu()->getNomComplet(false, true, false);
+        $informations["liste des directeurs"]          = implode(" et ", $nomination);
+        $informations["Unité de recherche"]            = ($these->getUniteRecherche())?$these->getUniteRecherche()->getStructure()->getLibelle():"";
+
+        /** Logos à afficher */
+        $logos = ["logo-comue", "logo-etablissement", "logo-ecoleDoctorale", "logo-UniteRecherche"];
+        foreach ($logos as $logo) $informations[$logo] = "";
+
+        $comue = $this->etablissementService->getEtablissementById(1);
+        $informations["logo-comue"]             = ($comue)?$comue->getCheminLogo():"";
+        $informations["logo-etablissement"]     = ($these->getEtablissement())?$these->getEtablissement()->getCheminLogo():"";
+        $informations["logo-ecoleDoctorale"]    = ($these->getEcoleDoctorale())?$these->getEcoleDoctorale()->getCheminLogo():"";
+        $informations["logo-uniteRecherche"]    = ($these->getUniteRecherche())?$these->getUniteRecherche()->getCheminLogo():"";
+
+
+        return $informations;
+    }
+
+    /**
      * @param These             $these
      * @param RendererInterface $renderer
      * @param string            $filepath
