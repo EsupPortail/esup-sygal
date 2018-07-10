@@ -2,7 +2,6 @@
 
 namespace Application\Entity\Db;
 
-use Application\Entity\Db\These;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
@@ -15,11 +14,6 @@ class RdvBu implements HistoriqueAwareInterface
 
     const SEPARATEUR_MOTS_CLES_RAMEAU = '*';
     const SEPARATEUR_MOTS_CLES_RAMEAU_LIB = 'astérisque';
-
-    /**
-     * @var boolean
-     */
-    private $pageTitreConforme = -1;
 
     /**
      * @var boolean
@@ -107,28 +101,8 @@ class RdvBu implements HistoriqueAwareInterface
     public function isInfosBuSaisies()
     {
         return
-            ($this->getPageTitreConforme() === 1) &&
             $this->getExemplPapierFourni() && $this->getConventionMelSignee() && $this->getMotsClesRameau() &&
             $this->isVersionArchivableFournie();
-    }
-
-    /**
-     * @return int
-     */
-    public function getPageTitreConforme()
-    {
-        return $this->pageTitreConforme;
-    }
-
-    /**
-     * @param int $pageTitreConforme -1=indéterminé, 0=non conforme, 1=conforme
-     * @return RdvBu
-     */
-    public function setPageTitreConforme($pageTitreConforme = 1)
-    {
-        $this->pageTitreConforme = $pageTitreConforme;
-
-        return $this;
     }
 
     /**

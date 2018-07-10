@@ -22,6 +22,8 @@ return [
                         'privileges' => [
                             ValidationPrivileges::THESE_VALIDATION_RDV_BU,
                             ValidationPrivileges::THESE_VALIDATION_RDV_BU_SUPPR,
+                            ValidationPrivileges::VALIDATION_PAGE_DE_COUVERTURE,
+                            ValidationPrivileges::VALIDATION_PAGE_DE_COUVERTURE_SUPPR,
                             ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE,
                             ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE_SUPPR,
                             ValidationPrivileges::VALIDATION_CORRECTION_THESE,
@@ -36,6 +38,14 @@ return [
         ],
         'guards' => [
             PrivilegeController::class => [
+                [
+                    'controller' => 'Application\Controller\Validation',
+                    'action'     => [
+                        'page-de-couverture',
+                    ],
+                    'privileges' => ValidationPrivileges::VALIDATION_PAGE_DE_COUVERTURE,
+//                    'assertion'  => 'Assertion\\These',
+                ],
                 [
                     'controller' => 'Application\Controller\Validation',
                     'action'     => [
@@ -85,6 +95,18 @@ return [
                 ],
                 'may_terminate' => false,
                 'child_routes'  => [
+                    'page-de-couverture' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'       => '/page-de-couverture/:these',
+                            'constraints' => [
+                                'these' => '\d+',
+                            ],
+                            'defaults'    => [
+                                'action' => 'page-de-couverture',
+                            ],
+                        ],
+                    ],
                     'rdv-bu' => [
                         'type'          => 'Segment',
                         'options'       => [

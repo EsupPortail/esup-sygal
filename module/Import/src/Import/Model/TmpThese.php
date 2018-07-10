@@ -112,6 +112,36 @@ class TmpThese
      */
     private $id;
 
+    /**
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
+    /**
+     * @return string
+     */
+    public function getDoctorantId()
+    {
+        return $this->doctorantId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEcoleDoctId()
+    {
+        return $this->ecoleDoctId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUniteRechId()
+    {
+        return $this->uniteRechId;
+    }
 }
 

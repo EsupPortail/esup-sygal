@@ -21,12 +21,16 @@ use Application\View\Renderer\PhpRenderer;
 
 const CERTIF_CONFORME_MODIFIED_EVENT = "CERTIF_CONFORME_MODIFIED_EVENT";
 
-$canEdit = $this->isAllowed($these, ThesePrivileges::THESE_SAISIE_DESCRIPTION);
+$estVersionCorrigee = $fichierThese->getVersion()->estVersionCorrigee();
+
+$privilege = ThesePrivileges::THESE_SAISIE_DESCRIPTION_($estVersionCorrigee);
+$canEdit = $this->isAllowed($these, $privilege);
+
 $pageDepotThese = $this->navigation('navigation')->getContainer()->findOneBy('id', 'depot');
+
 //$validiteFichierThese = $fichierThese ? $fichierThese->getValidite() : null;
 //$validiteFichierTheseRetraite = $fichierTheseRetraite ? $fichierTheseRetraite->getValidite() : null;
 //$originaleOuRetraitee = $fichierTheseRetraite ? "retraitée" : "";
-$estVersionCorrigee = $fichierThese->getVersion()->estVersionCorrigee();
 ?>
 
 <?php $this->headTitle("Archivage")->prepend($these->getDoctorant()->getNomUsuel()) ?>

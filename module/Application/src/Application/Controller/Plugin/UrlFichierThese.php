@@ -32,15 +32,13 @@ class UrlFichierThese extends UrlPlugin
         ], [], true);
     }
 
-    public function apercevoirFichierThese(These $these, Fichier $fichier, array $queryParams = [])
+    public function apercevoirPageDeCouverture(These $these, array $queryParams = [])
     {
-        return $this->fromRoute('fichier/these/apercevoir', [
+        return $this->fromRoute('fichier/these/apercevoir-page-de-couverture', [
             'these'      => $this->idify($these),
-            'fichier'    => $this->idify($fichier),
-            'fichierNom' => $fichier->getNom(),
         ], [
             'query' => $queryParams,
-        ], [], true);
+        ], true);
     }
 
     public function supprimerFichierThese(These $these, Fichier $fichier)

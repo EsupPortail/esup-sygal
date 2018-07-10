@@ -34,7 +34,7 @@ class TheseAssertion extends BaseAssertion implements WorkflowServiceAwareInterf
         /** @var These $these */
 
         switch (true) {
-            case $privilege === ThesePrivileges::THESE_SAISIE_DESCRIPTION:
+            case $privilege === ThesePrivileges::THESE_SAISIE_DESCRIPTION_VERSION_INITIALE:
                 return ! $this->isAllowed(new WfEtapeResource(WfEtape::CODE_DEPOT_VERSION_ORIGINALE_CORRIGEE, $these));
                 break;
             case $privilege === ValidationPrivileges::THESE_VALIDATION_RDV_BU:

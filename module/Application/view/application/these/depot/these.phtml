@@ -21,13 +21,9 @@ use Application\View\Renderer\PhpRenderer;
 
 $maintenant = new DateTime();
 $soutenance = $these->getDateSoutenance();
-$canDeposer = true;
-if (!$versionFichier->estVersionCorrigee() && $soutenance !== null && $maintenant > $soutenance) $canDeposer = false;
 
-
-
-
-$canEdit = $this->isAllowed($these, $p = ThesePrivileges::privilegeDeposerFor($nature, $versionFichier));
+$privilege = ThesePrivileges::privilegeDeposerFor($nature, $versionFichier);
+$canEdit = $this->isAllowed($these, $privilege);
 
 $uploader = $this->uploader()->setUrl($uploadUrl);
 
@@ -42,53 +38,14 @@ $maxFileCountThese = 1;
 </div>
 <?php endif ?>
 
-<?php /*
-<div class="these widget-uploader" id="uploader-div-these">
-    <div>
-        <!-- Liste des fichiers déposés -->
-        <?php echo $uploader->renderUploadedFiles($theseListUrl, "Fichier téléversé :") ?>
-    </div>
-    <div class="upload-form" style="display: none">
-        <!-- formulaire de dépôt -->
-        <?php if ($canEdit): ?>
-            <?php
-            $form = $uploader->getForm();
-            $form->get('files')->setLabel("")->setAttribute('multiple', false)->setAttribute('accept', '.pdf');
-            echo $uploader->renderForm();
-            ?>
-            <div class="clearfix"></div>
-            <div class="text-sm text-info" style="margin-top: 8px; max-width: 250px">
-                <strong>NB: </strong> <?php echo Fichier::MESSAGE_DEPOT_DUREE ?>
-            </div>
-        <?php endif ?>
-    </div>
-</div>
-*/ ?>
-
-
 
 <?php echo $this->partial('application/these/depot/partial/fichier', [
-    'canUpload'               => ($canEdit && $canDeposer),
+    'canUpload'               => $canEdit,
     'class'                   => 'these',
     'uploadUrl'               => $uploadUrl,
     'uploadedFilesListUrl'    => $theseListUrl,
     'maxUploadableFilesCount' => $maxFileCountThese,
 ]);
-?>
-
-<?php
-if (!$canDeposer) {
-print "<div class='alert alert-sm alert-warning'>";
-    print "<p>";
-        print "<span class=\"glyphicon glyphicon-warning-sign\"></span>";
-        print "La date de soutenance est dépassée, le dépôt initial est bloqué. ";
-//        print "</p>";
-//        print "<p>";
-        print "Pour déposer une version corrigée (seulement sur demande du jury), ";
-        print "utiliser le second dépôt.";
-        print "</p>";
-    print "</div>";
-}
 ?>
 
 <div class="alert alert-sm alert-warning">
@@ -113,43 +70,3 @@ $msgCollector = $this->messageCollector(BaseAssertion::class);
 $msgCollector->getMessengerHelper()->setContainerClassesToAdd('alert-sm');
 echo $msgCollector->render();
 ?>
-
-
-<script>
-
-//    $(function () {
-//        var maxFileCountThese = <?php //echo $maxFileCountThese ?>//;
-//        var eventNames = "upload-event-files-listed upload-event-file-deleted upload-event-file-uploaded";
-//        var body = $("body");
-//
-//        // Un upload de fichier vient de commencer.
-//        body.on("upload-event-files-added", ".these.widget-uploader", function(event, data) {
-//            var uploadContainer = $(data[0]);
-//            // masque le formulaire pour éviter un dépôt de thèse pendant qu'un upload est déjà en cours
-//            uploadContainer.find(".upload-form").hide();
-//        });
-//
-//        // Un fichier vient d'être déposé ou supprimé, ou la liste des fichiers a été actualisée.
-//        body.on(eventNames, ".these.widget-uploader", function(event, data) {
-//            var uploadContainer = $(data[0]);
-//            updateUploadForm(uploadContainer);
-//        });
-//
-//        /**
-//         * Compte le nombre de fichiers déjà déposés et masque le formulaire de dépôt si le maximum est atteint.
-//         *
-//         * @param uploadContainer
-//         */
-//        function updateUploadForm(uploadContainer) {
-//            var fichiersCount = uploadContainer.find(".uploaded-files-div ul li").length;
-//            var div = uploadContainer.find("div.upload-form");
-//
-//            if (fichiersCount >= maxFileCountThese) {
-//                div.hide('fade');
-//            }
-//            else {
-//                div.show('fade');
-//            }
-//        }
-//    });
-</script>

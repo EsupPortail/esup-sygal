@@ -1,7 +1,6 @@
 <?php
 
 use Application\Entity\Db\These;
-use Application\Entity\Db\WfEtape;
 use Application\View\Renderer\PhpRenderer;
 
 /**
@@ -9,6 +8,7 @@ use Application\View\Renderer\PhpRenderer;
  *
  * @var PhpRenderer $this
  * @var These       $these
+ * @var bool        $versionCorrigee
  * @var string      $theseUrl
  * @var string      $annexesUrl
  * @var string      $attestationUrl
@@ -19,14 +19,15 @@ use Application\View\Renderer\PhpRenderer;
 $maxFileCountThese = 1;
 $maxFileCountAutres = 50;
 
-$toggleDetailsDepotInitial = clone $this->toggleDetails('div-depot-initial');
+$divId = $versionCorrigee ? 'div-depot-corrige' : 'div-depot-initial';
+$h1 = $versionCorrigee ? "Dépôt version corrigée" : "Dépôt de la thèse";
 ?>
 
-<?php $this->headTitle("Dépôt thèse")->prepend($these->getDoctorant()->getNomUsuel()) ?>
+<?php $this->headTitle("Dépôt thèse")->prepend($these->getDoctorant()->getIndividu()->getNomUsuel()) ?>
 
 <div class="no-intranavigation">
 
-    <h1 class="page-header">Dépôt de la thèse <small><?php echo $this->partial('application/these/partial/titre') ?></small></h1>
+    <h1 class="page-header"><?php echo $h1 ?> <small><?php echo $this->partial('application/these/partial/titre') ?></small></h1>
 
     <p class="lead">
         Le dépôt est obligatoire pour toutes les thèses, y compris confidentielles.
@@ -35,14 +36,11 @@ $toggleDetailsDepotInitial = clone $this->toggleDetails('div-depot-initial');
     </p>
 
     <div class="box panel panel-info">
-
         <div class="panel-heading">
-            <?php $toggleDetailsDepotInitial->setShowDetailsLabel(' <small>Afficher</small>')->setHideDetailsLabel(' <small>Masquer</small>') ?>
-            <h2 class="first">Téléversement <?php echo $toggleDetailsDepotInitial ?></h2>
+            <h2 class="first">Téléversement</h2>
         </div>
-
         <div class="panel-body">
-            <div class="row" id="div-depot-initial">
+            <div class="row" id="<?php echo $divId ?>">
                 <div class="col-md-6">
                     <!-------------------------------------- Thèse PDF --------------------------------------->
                     <div id="theseDiv" class="" data-url="<?php echo $theseUrl ?>" style="display: none">
@@ -80,8 +78,6 @@ $toggleDetailsDepotInitial = clone $this->toggleDetails('div-depot-initial');
 
 <script>
     // Evénements déclenchés par le widget Uploader (cf. app.js)
-    var uploadEventFilesListed    = "upload-event-files-listed";
-    var uploadEventFilePreDeleted = "upload-event-file-pre-deleted";
     var uploadEventFileDeleted    = "upload-event-file-deleted";
     var uploadEventFileUploaded   = "upload-event-file-uploaded";
     var uploadEventFilesAdded     = "upload-event-files-added";
@@ -90,11 +86,14 @@ $toggleDetailsDepotInitial = clone $this->toggleDetails('div-depot-initial');
         var body = $("body");
         var self = this;
 
+        var depotDivId = "<?php echo $divId ?>";
         var theseDiv = $("#theseDiv");
         var annexesDiv = $("#annexesDiv");
 
         var attestationDiv = $("#attestationDiv");
         var diffusionDiv = $("#diffusionDiv");
+
+        var nextStepDiv = $("#nextStepDiv");
 
         var theseLoader = function(done, effect) {
             return function() {
@@ -112,16 +111,12 @@ $toggleDetailsDepotInitial = clone $this->toggleDetails('div-depot-initial');
                 });
             };
         };
-        var fichiersVersionInitialeLoader = function(done, effect) {
+        var fichiersLoader = function(done, effect) {
             return function() {
-                // Le refresh de la div n'est plus déclenché automatiquement mais seulement lorsque
-                // le lien 'toggle details' est cliqué.
-                body.on("<?php echo $toggleDetailsDepotInitial->getJsEventNameWhenVisible() ?>", function (event) {
-                    runInCascade([
-                        theseLoader,
-                        annexesLoader
-                    ], self);
-                });
+                runInCascade([
+                    theseLoader,
+                    annexesLoader
+                ], self);
                 if (done) done();
             };
         };
@@ -153,7 +148,7 @@ $toggleDetailsDepotInitial = clone $this->toggleDetails('div-depot-initial');
         };
         var refreshingNextStep = function(done, effect) {
             return function() {
-                $("#nextStepDiv").addClass("loading").refresh(null, function () {
+                nextStepDiv.addClass("loading").refresh(null, function () {
                     $(this).removeClass("loading").show();
                     if (done) done();
                 });
@@ -162,7 +157,7 @@ $toggleDetailsDepotInitial = clone $this->toggleDetails('div-depot-initial');
 
         // Au chargement de la page, on actualise les div
         runInCascade([
-            fichiersVersionInitialeLoader,
+            fichiersLoader,
             { func: attestationsLoader, effect: true },
             { func: diffusionLoader, effect: true },
             refreshingNextStep
@@ -175,10 +170,8 @@ $toggleDetailsDepotInitial = clone $this->toggleDetails('div-depot-initial');
             uploadContainer.find(".upload-form").hide();
         });
 
-        var events;
-        // Un fichier de thèse en version initiale vient d'être déposé ou supprimé.
-        events =  uploadEventFileDeleted + ' ' + uploadEventFileUploaded;
-        body.on(events, "#div-depot-initial .these.widget-uploader", function() {
+        // Un fichier de thèse vient d'être déposé.
+        body.on(uploadEventFileUploaded, "#" + depotDivId + " .these.widget-uploader", function() {
             runInCascade([
                 annexesLoader,
                 { func: attestationsLoader, effect: true },
@@ -186,13 +179,18 @@ $toggleDetailsDepotInitial = clone $this->toggleDetails('div-depot-initial');
                 refreshingNextStep
             ], self);
         });
-        // Un fichier de thèse en version corrigée vient d'être déposé ou supprimé.
-        events =  uploadEventFileDeleted + ' ' + uploadEventFileUploaded;
-        body.on(events, "#div-depot-corrige .these.widget-uploader", function() {
+        // Un fichier de thèse vient d'être supprimé : on économise les 'refresh' en masquant les div puisqu'il n'y a plus aucune thèse déposée
+        body.on(uploadEventFileDeleted, "#" + depotDivId + " .these.widget-uploader", function() {
             runInCascade([
-                { func: attestationsLoader, effect: true },
-                { func: diffusionLoader, effect: true },
-                refreshingNextStep
+                annexesLoader,
+                function(done, effect) {
+                    return function() {
+                        attestationDiv.hide();
+                        diffusionDiv.hide();
+                        nextStepDiv.hide();
+                        if (done) done();
+                    };
+                }
             ], self);
         });
 

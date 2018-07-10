@@ -394,30 +394,30 @@ $.widget("unicaen.widgetImageLoader", {
         var self = this;
 
         self.getImagePlaceholders().each(function() {
-            self.loadPhoto(this);
+            self.loadPhoto($(this));
         });
-
     },
 
     loadPhoto: function (imagePlaceholder) {
-        var url = $(imagePlaceholder).data('src');
+        var url = imagePlaceholder.data('src');
 
         //create image to preload:
-        var imgPreload = new Image();
-        $(imgPreload).load(function (response, status, xhr) {
-            if (status == 'error') {
-                imgPreload = null;
+        var image = new Image();
+        $(image).load(function (response, status, xhr) {
+            if (status === 'error') {
+                image = null;
             }
             insertResult();
+            $("body").trigger('image-loaded-event', { imagePlaceholder: imagePlaceholder });
         });
-        $(imgPreload).attr({
+        $(image).attr({
             src: url,
-            width: $(imagePlaceholder).css('width')
+            width: imagePlaceholder.css('width')
         });
 
         function insertResult() {
-            var content = imgPreload ? $(imgPreload) : $("<span />").html("Erreur!");
-            $(imagePlaceholder).removeClass('loading').replaceWith(content);
+            var content = image ? $(image) : $("<span />").html("Erreur!");
+            imagePlaceholder.removeClass('loading').replaceWith(content);
         }
     },
 

@@ -33,24 +33,19 @@ use Application\Service\MailConfirmationServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\These\Convention\ConventionPdfExporter;
-use Application\Service\These\PageDeGarde\PageDeCouverturePdfExporter;
 use Application\Service\These\Filter\TheseSelectFilter;
-use Application\Service\These\TheseRechercheService;
 use Application\Service\These\TheseRechercheServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
-use Application\Service\These\TheseSorter;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\Service\Workflow\WorkflowServiceAwareTrait;
-use Application\View\Helper\Sortable;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
 use mPDF;
 use Retraitement\Exception\TimedOutCommandException;
 use UnicaenApp\Exception\RuntimeException;
-use UnicaenApp\Exporter\Pdf;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenApp\Service\MessageCollectorAwareTrait;
 use UnicaenApp\Traits\MessageAwareInterface;
@@ -258,21 +253,39 @@ class TheseController extends AbstractController
         return $view;
     }
 
-
-    public function detailDepotAction()
+    public function validationPageDeCouvertureAction()
     {
-        $view = $this->detailDepotActionViewModel(false);
-        $view->setTemplate('application/these/depot');
+        $these = $this->requestedThese();
+
+        $validation = current($this->validationService->getRepository()->findValidationByCodeAndThese(
+            TypeValidation::CODE_PAGE_DE_COUVERTURE,
+            $these
+        ));
+
+        $informations = $this->fichierService->fetchInformationsPageDeCouverture($these);
+
+        $view = new ViewModel([
+            'these'            => $these,
+            'validation'       => $validation ?: null,
+            'apercevoirPdcUrl' => $this->urlFichierThese()->apercevoirPageDeCouverture($these),
+            'validerUrl'       => $this->urlThese()->validerPageDeCouvertureUrl($these),
+            'devaliderUrl'     => $this->urlThese()->devaliderPageDeCouvertureUrl($these),
+            'nextStepUrl'      => $this->urlWorkflow()->nextStepBox($these, null, [WfEtape::CODE_VALIDATION_PAGE_DE_COUVERTURE]),
+            'informations'     => $informations,
+            'msgCollector'     => $this->getServiceMessageCollector(),
+        ]);
 
         return $view;
     }
 
+    public function detailDepotAction()
+    {
+        return $this->detailDepotActionViewModel(false);
+    }
+
     public function detailDepotVersionCorrigeeAction()
     {
-        $view = $this->detailDepotActionViewModel(true);
-        $view->setTemplate('application/these/depot-version-corrigee');
-
-        return $view;
+        return $this->detailDepotActionViewModel(true);
     }
 
     /**
@@ -289,6 +302,7 @@ class TheseController extends AbstractController
 
         $view = new ViewModel([
             'these'            => $these,
+            'versionCorrigee'  => $versionCorrigee,
             'theseUrl'         => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_THESE_PDF, $codeVersion),
             'annexesUrl'       => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_FICHIER_NON_PDF, $codeVersion),
             'attestationUrl'   => $this->urlThese()->attestationThese($these, $codeVersion),
@@ -301,6 +315,8 @@ class TheseController extends AbstractController
                 WfEtape::PSEUDO_ETAPE_FINALE,
             ]),
         ]);
+
+        $view->setTemplate('application/these/depot');
 
         return $view;
     }
@@ -400,6 +416,9 @@ class TheseController extends AbstractController
         $hasVA = $this->fichierService->getRepository()->hasVersion($these, VersionFichier::CODE_ARCHI);
         $hasVD = $this->fichierService->getRepository()->hasVersion($these, VersionFichier::CODE_DIFF);
 
+        $validationsPdc = $this->validationService->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PAGE_DE_COUVERTURE, $these);
+        $pageCouvValidee = !empty($validationsPdc);
+
         $view = new ViewModel([
             'these'        => $these,
             'estDoctorant' => $estDoctorant,
@@ -415,6 +434,7 @@ class TheseController extends AbstractController
             'versionArchivable' => $versionArchivable,
             'hasVA' => $hasVA,
             'hasVD' => $hasVD,
+            'pageCouvValidee' => $pageCouvValidee,
 
         ]);
 
@@ -427,6 +447,9 @@ class TheseController extends AbstractController
     {
         $these = $this->requestedThese();
         $estDoctorant = (bool) $this->userContextService->getSelectedRoleDoctorant();
+
+        $validationsPdc = $this->validationService->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PAGE_DE_COUVERTURE, $these);
+        $pageCouvValidee = !empty($validationsPdc);
 
         $rdvBu = $these->getRdvBu() ?: new RdvBu($these);
         $rdvBu->setVersionArchivableFournie($this->fichierService->getRepository()->existeVersionArchivable($these));
@@ -470,7 +493,8 @@ class TheseController extends AbstractController
         $vm = new ViewModel([
             'these' => $these,
             'form'  => $form,
-            'title' => "Rendez-vous BU"
+            'title' => "Rendez-vous BU",
+            'pageCouvValidee' => $pageCouvValidee,
         ]);
 
         $vm->setTemplate('application/these/modifier-rdv-bu' . ($estDoctorant ? '-doctorant' : null));
@@ -919,20 +943,22 @@ class TheseController extends AbstractController
         $version = $this->fichierService->fetchVersionFichier($this->params()->fromQuery('version'));
         $hasFichierThese = ! empty($this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF, $version, false));
 
-        $versionInitialeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_ATTESTATIONS)->getAtteignable();
-        $versionCorrigeeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_ATTESTATIONS_VERSION_CORRIGEE)->getAtteignable();
-        $visible =
-            $version->estVersionCorrigee() && $versionCorrigeeAtteignable ||
-            !$version->estVersionCorrigee() && $versionInitialeAtteignable && !$versionCorrigeeAtteignable;
-
-        if (! $visible) {
+// Est-ce vraiment indispensable d'interroger le moteur du WF ?
+// Mis en commentaire pour accélerer l'affichage...
+//        $versionInitialeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_ATTESTATIONS)->getAtteignable();
+//        $versionCorrigeeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_ATTESTATIONS_VERSION_CORRIGEE)->getAtteignable();
+//        $visible =
+//            $version->estVersionCorrigee() && $versionCorrigeeAtteignable ||
+//            !$version->estVersionCorrigee() && $versionInitialeAtteignable && !$versionCorrigeeAtteignable;
+//
+//        if (! $visible) {
+//            return false;
+//        }
+        if (! $hasFichierThese) {
             return false;
         }
 
         $form = $this->getAttestationTheseForm();
-
-
-
 
         $view = new ViewModel([
             'these'                  => $these,
@@ -1045,13 +1071,18 @@ class TheseController extends AbstractController
         $version = $this->fichierService->fetchVersionFichier($this->params()->fromQuery('version'));
         $hasFichierThese = ! empty($this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF, $version, false));
 
-        $versionInitialeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_AUTORISATION_DIFFUSION_THESE)->getAtteignable();
-        $versionCorrigeeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_AUTORISATION_DIFFUSION_THESE_VERSION_CORRIGEE)->getAtteignable();
-        $visible =
-            $version->estVersionCorrigee() && $versionCorrigeeAtteignable ||
-            !$version->estVersionCorrigee() && $versionInitialeAtteignable && !$versionCorrigeeAtteignable;
-
-        if (! $visible) {
+// Est-ce vraiment indispensable d'interroger le moteur du WF ?
+// Mis en commentaire pour accélerer l'affichage...
+//        $versionInitialeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_AUTORISATION_DIFFUSION_THESE)->getAtteignable();
+//        $versionCorrigeeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_AUTORISATION_DIFFUSION_THESE_VERSION_CORRIGEE)->getAtteignable();
+//        $visible =
+//            $version->estVersionCorrigee() && $versionCorrigeeAtteignable ||
+//            !$version->estVersionCorrigee() && $versionInitialeAtteignable && !$versionCorrigeeAtteignable;
+//
+//        if (! $visible) {
+//            return false;
+//        }
+        if (! $hasFichierThese) {
             return false;
         }
 
@@ -1331,178 +1362,6 @@ class TheseController extends AbstractController
     }
 
     /**
-     * Génération de la page de couverture.
-     *
-     * todo: vérifier dans le contrôleur l'existence des logos et notifier en cas d'absence de logo.
-     */
-    public function generateAction()
-    {
-        $these = $this->requestedThese();
-        $this->generateCouverture($these);
-    }
-
-    public function generateCouverture(These $these, $filename = null) {
-        /**
-         * Les infos générales de la these sont
-         * - La spécialité "specialite"
-         * - L'établissement délivrant le diplome "etablissement"
-         * - Le titre de la thèse "titre"
-         * - La dénomination du doctarant "doctorant"
-         * - La date de soutenance "date"
-         */
-        $manques = [];
-        $infos = [];
-        if ($these !== null && $these->getLibelleDiscipline() !== null) {
-            $infos["specialite"] = $these->getLibelleDiscipline();
-        } else {
-            $manques[] = "la spécialité";
-        }
-        if ($these !== null && $these->getEtablissement() !== null) {
-            $infos["etablissement"] = $these->getEtablissement()->getLibelle();
-        } else {
-            // /!\ Ce cas ne doit jamais se produire !!!
-            //NOTIFIER l'établissement d'inscription est absent (au admin tech)
-        }
-        if ($these !== null && $these->getTitre() !== null) {
-            $infos["titre"] = $these->getTitre();
-        } else {
-            $manques[] = "le titre";
-        }
-        if ($these !== null && $these->getDoctorant() !== null) {
-            //TODO utiliser un formater
-            $infos["doctorant"] = $these->getDoctorant()->getPrenom() . " ";
-            $infos["doctorant"] .= $these->getDoctorant()->getNomUsuel();
-            if ($these->getDoctorant()->getNomPatronymique() != $these->getDoctorant()->getNomUsuel()) $infos["doctorant"] .= "-".$these->getDoctorant()->getNomPatronymique();
-        } else {
-            $manques[] = "le doctorant";
-        }
-        if ($these !== null && $these->getDateSoutenance() !== null) {
-            $infos["date"] = $these->getDateSoutenance()->format("d/m/Y");
-        } else {
-            $manques[] = "la date de soutenance";
-        }
-        if (!empty($manques)) $this->notifierService->triggerInformationManquante($these, $manques);
-
-        /**
-         * Les logos à afficher sur la première page sont les suivants :
-         * - COMUE  en tête de page "comue",
-         * - etablissement principal (en bas à gauche) "etablissement",
-         * - etablissement co-tutelle (à droite de l'établissement principale) "cotutelle",
-         * - ecole doctorale (en bas au centre) "ecole",
-         * - unite de recherche (en bas à droite) "unite"
-         **/
-
-        $logos = [];
-        $comue = $this->etablissementService->getEtablissementById(1);
-        if ($comue !== null && $comue->getCheminLogo() !== null) {
-            $logos["comue"] = $comue->getCheminLogo();
-        } else {
-            if ($comue === null) {
-                // /!\ Ce cas ne doit jamais se produire !!!
-                // NOTIFIER l'établissement representant la COMUE est absent (au admin tech)
-            } else {
-                $this->notifierService->triggerLogoAbsentEtablissement($comue);
-            }
-        }
-        $etablissement = $these->getEtablissement();
-        if ($etablissement !== null && $etablissement->getCheminLogo() !== null) {
-            $logos["etablissement"] = $etablissement->getCheminLogo();
-        } else {
-            if ($etablissement === null) {
-                // /!\ Ce cas ne doit jamais se produire !!!
-                //NOTIFIER l'établissement d'inscription est absent (au admin tech)
-            } else {
-                $this->notifierService->triggerLogoAbsentEtablissement($these->getEtablissement());
-            }
-        }
-        // =========> TODO CO-TUTELLE
-        $ecole = $these->getEcoleDoctorale();
-        if ($ecole !== null && $ecole->getCheminLogo() !== null) {
-            $logos["ecole"] = $ecole->getCheminLogo();
-        } else {
-            if ($ecole === null) {
-                $this->notifierService->triggerEcoleDoctoraleAbsente($these);
-            } else {
-                $this->notifierService->triggerLogoAbsentEcoleDoctorale($ecole);
-
-            }
-        }
-        $unite = $these->getUniteRecherche();
-        if ($unite !== null && $unite->getCheminLogo() !== null) {
-            $logos["unite"] = $unite->getCheminLogo();
-        } else {
-            if ($unite === null) {
-                $this->notifierService->triggerUniteRechercheAbsente($these);
-            } else {
-                $this->notifierService->triggerLogoAbsentUniteRecherche($unite);
-            }
-        }
-
-        /** JURY **/
-        $jury = [];
-        $acteurs = $these->getActeurs()->toArray();
-
-        $rapporteurs =  array_filter($these->getActeurs()->toArray(), function($a) {return TheseController::estRapporteur($a); });
-        $directeurs =  array_filter($these->getActeurs()->toArray(), function($a) {return TheseController::estDirecteur($a); });
-        $membres = array_diff($these->getActeurs()->toArray(), $rapporteurs, $directeurs);
-
-        $acteurs = array_merge($rapporteurs, $membres, $directeurs);
-        /** @var Acteur $acteur */
-        foreach ($acteurs as $acteur) {
-            $membre = [];
-            $membre["nom"]  = $acteur->getIndividu()->getCivilite();
-            $membre["nom"] .= " " .$acteur->getIndividu()->getPrenom();
-            $membre["nom"] .= " " .$acteur->getIndividu()->getNomUsuel();
-            if($acteur->getIndividu()->getNomUsuel() != $acteur->getIndividu()->getNomPatronymique()) $membre["nom"] .= "-".$acteur->getIndividu()->getNomPatronymique();
-
-            $membre["qualite"] = $acteur->getQualite();
-            $membre["rattachement"] = $acteur->getEtablissement();
-            $membre["role"] = $acteur->getRole()->getLibelle();
-            $jury[] = $membre;
-        }
-
-        /**
-         * L'endrement est composée :
-         * d'une unite de recherche "unite"
-         * d'une liste de directeur "directeurs"
-         */
-        $encradrements = [];
-        if ($these->getUniteRecherche() && $these->getUniteRecherche()->getLibelle()) {
-            $encadrements["unite"] = $these->getUniteRecherche()->getLibelle();
-        } else {
-            // /!\ déjà notifier au moment du logo !!!
-            //NOTIFIER l'unite de recherche est absente (au BDD univ)
-        }
-        $directeurs = array_filter($these->getActeurs()->toArray(), function($a) {return TheseController::estDirecteur($a); });
-        $directeurs_array = [];
-        foreach ($directeurs as $directeur) {
-            $directeur_str  = $directeur->getIndividu()->getPrenom() . " ";
-            $directeur_str .= $directeur->getIndividu()->getNomUsuel();
-            if ($directeur->getIndividu()->getNomPatronymique() != $directeur->getIndividu()->getNomUsuel()) $directeur_str .= "-".$directeur->getIndividu()->getNomPatronymique();
-            $directeurs_array[] = $directeur_str;
-        }
-        $encadrements["directeurs"] = implode(" et ", $directeurs_array);
-
-
-        $renderer = $this->getServiceLocator()->get('view_renderer'); /* @var $renderer \Zend\View\Renderer\PhpRenderer */
-        $exporter = new PageDeCouverturePdfExporter($renderer, 'A4');
-        $exporter->setVars([
-            'these' => $these,
-            'infos' => $infos,
-            'encadrements' => $encadrements,
-            'jury' => $jury,
-            'logos' => $logos,
-        ]);
-        if ($filename !== null) {
-            $exporter->export($filename, Pdf::DESTINATION_FILE);
-        } else {
-            $exporter->export('export.pdf');
-            exit;
-        }
-
-    }
-
-    /**
      * Spécifie le timout à appliquer au lancement du script de retraitement.
      *
      * @param string $timeoutRetraitement Ex: '30s', '1m', cf. "man timout".
@@ -1621,7 +1480,7 @@ class TheseController extends AbstractController
 
         // GENERATION DE LA COUVERTURE
         $filename = "COUVERTURE_".$these->getId()."_".uniqid().".pdf";
-        $this->generateCouverture($these,$filename);
+        $this->fichierService->generatePageDeCouverture($these,$filename);
         $couvertureChemin = "/tmp/". $filename;
 
         // RECUPERATION DE LA BONNE VERSION DU MANUSCRIPT

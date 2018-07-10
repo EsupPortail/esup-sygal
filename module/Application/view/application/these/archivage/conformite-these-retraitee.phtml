@@ -14,8 +14,6 @@ use Application\View\Renderer\PhpRenderer;
  */
 
 const CERTIF_CONFORME_MODIFIED_EVENT = "CERTIF_CONFORME_MODIFIED_EVENT";
-
-$canEdit = $this->isAllowed($these, ThesePrivileges::THESE_SAISIE_CONFORMITE_ARCHIVAGE);
 ?>
 
 <?php if ($fichierTheseRetraite && ($v = $fichierTheseRetraite->getValidite()) && $v->getEstValide() === true): ?>
@@ -26,6 +24,9 @@ $canEdit = $this->isAllowed($these, ThesePrivileges::THESE_SAISIE_CONFORMITE_ARC
             <?php
             $estVersionCorrigee = $fichierTheseRetraite->getVersion()->estVersionCorrigee();
             $heading = $estVersionCorrigee ? "Vérification de la thèse corrigée retraitée" : "Vérification de la thèse retraitée";
+
+            $privilege = ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_($estVersionCorrigee);
+            $canEdit = $this->isAllowed($these, $privilege);
             ?>
             <h2 class="first"><?php echo $heading ?></h2>
         </div>

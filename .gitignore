@@ -6,3 +6,5 @@ data/DoctrineORMModule/
 ressources/Logos
 
 vendor/
+
+.~*

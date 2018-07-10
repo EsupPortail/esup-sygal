@@ -1,0 +1,56 @@
+<?php
+
+use Application\Entity\Db\These;
+use Application\Notification\ValidationPageDeCouvertureNotification;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var These       $these
+ * @var bool        $isValidation
+ *
+ * @see ValidationPageDeCouvertureNotification
+ */
+
+$appli = $this->appInfos()->nom;
+?>
+
+<p>
+    <?php echo $these->getDoctorant() ?>,
+</p>
+<p>
+    <em>Ceci est un mail envoyé automatiquement par l'application <?php echo $appli ?>.</em>
+</p>
+
+<?php if ($isValidation): ?>
+<p>
+    Vous êtes informé-e que l'application <?php echo $appli ?> est à présent en mesure de produire la page
+    de couverture de votre thèse automatiquement à partir des informations dont elle dispose.
+</p>
+<p>
+    Par conséquent, vous pouvez désormais procéder au dépôt de votre thèse dans l'application.
+</p>
+<p>
+    NB: la page de couverture étant produite automatiquement par <?php echo $appli ?>,
+    vous n'aurez pas à concevoir et inclure cette page de couverture dans le fichier de thèse que vous déposerez
+    dans l'application.
+</p>
+<?php else: ?>
+<p>
+    Vous êtes informé-e que l'application <?php echo $appli ?> n'est plus en mesure de produire la page
+    de couverture de votre thèse automatiquement à partir des informations de scolarité.
+</p>
+<p>
+    Par conséquent, le processus de dépôt de votre thèse dans l'application est temporairement bloqué. <br>
+    Vous recevrez un mail lorsque <?php echo $appli ?> sera de nouveau en mesure de produire la page de couverture
+    de manière satisfaisante.
+</p>
+<?php endif ?>
+
+<p>
+    Votre directeur de thèse est en copie de ce mail.
+</p>
+<p>
+    <a href="<?php echo $this->url('home', [], ['force_canonical' => true]) ?>"
+    >Accéder à l'application <?php echo $appli ?></a>.
+</p>

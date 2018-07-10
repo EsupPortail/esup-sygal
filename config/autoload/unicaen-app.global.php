@@ -4,7 +4,7 @@ return [
     'unicaen-app' => [
         // Informations concernant l'application.
         'app_infos' => [
-            'nom'     => "SYGAL",
+            'nom'     => "SyGAL",
             'desc'    => "SYstème de Gestion et d'Accompagnement doctoraL",
             'version' => "0.3.0",
             'date'    => "20/04/2018",

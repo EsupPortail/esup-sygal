@@ -12,6 +12,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var These          $these
  * @var string         $title
  * @var RdvBuTheseForm $form
+ * @var bool           $pageCouvValidee
  *
  * @method string formControlGroup()
  */
@@ -47,7 +48,7 @@ $fcg = $this->formControlGroup();
     <div class="row">
         <div class="col-md-6">
             <label for="">Conformité de la page de couverture</label><br/>
-            <?php echo $fcg($form->get('pageTitreConforme')) ?>
+            <?php echo $fcg($form->get('pageTitreConforme')->setValue($pageCouvValidee)) ?>
             <label for="">Version en ligne et papier</label><br/>
             <?php echo $fcg($form->get('versionArchivableFournie')) ?>
             <?php echo $fcg($form->get('conventionMelSignee')) ?>

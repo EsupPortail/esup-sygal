@@ -1,5 +1,6 @@
 <?php
 
+use Application\Entity\Db\DomaineScientifique;
 use Application\Entity\Db\EtablissementRattachement;
 use Application\Entity\Db\StructureConcreteInterface;
 use Application\Provider\Privilege\UniteRecherchePrivileges;
@@ -56,7 +57,7 @@ $canModifier = $this->isAllowed(UniteRecherchePrivileges::getResourceId(UniteRec
             <tr <?php if($selected == $structure->getStructure()->getId()) echo 'class="ecole-doctorale selected" style="color:black;"';?> >
 
                 <td>
-                    <a href="<?php echo $this->url(null, [], ['query' => ['selected' => $structure->getStructure()->getId()]], true); ?>">
+                    <a href="<?php echo $this->url('unite-recherche', [], ['query' => ['selected' => $structure->getStructure()->getId()]], true); ?>">
                         <?php echo $structure->getLibelle(); ?>
                     </a>
                 </td>
@@ -103,7 +104,6 @@ $canModifier = $this->isAllowed(UniteRecherchePrivileges::getResourceId(UniteRec
                             Établissements de rattachement
                             <span class="badge"> <?php echo count($rattachements); ?> </span>
                         </h3>
-
                         <table class="table table-extra-condensed">
                             <thead>
                                 <tr>
@@ -121,6 +121,30 @@ $canModifier = $this->isAllowed(UniteRecherchePrivileges::getResourceId(UniteRec
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
+                            </tbody>
+                        </table>
+
+                        <h3>
+                            Domaines scientifiques
+                            <span class="badge"> <?php echo count($domaines); ?> </span>
+                        </h3>
+                        <table class="table table-extra-condensed">
+                            <thead>
+                            <tr>
+                                <th> Libellé des domaines scientifiques associés </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php foreach($domaines as $domaine): ?>
+                                <tr>
+                                    <td>
+                                        <?php
+                                        /** @var DomaineScientifique $domaine */
+                                        echo $domaine->getLibelle();
+                                        ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
                             </tbody>
                         </table>
 

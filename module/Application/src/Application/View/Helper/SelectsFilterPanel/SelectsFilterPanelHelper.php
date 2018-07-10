@@ -2,8 +2,6 @@
 
 namespace Application\View\Helper\SelectsFilterPanel;
 
-use Application\Controller\SelectFilter;
-use Application\Service\These\Filter\TheseSelectFilter;
 use Application\View\Renderer\PhpRenderer;
 use Zend\View\Helper\AbstractHelper;
 use Zend\View\Resolver\TemplatePathStack;

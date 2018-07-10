@@ -1,10 +1,7 @@
 <?php
 
 use Application\Entity\Db\Attestation;
-use Application\Entity\Db\Privilege;
 use Application\Entity\Db\These;
-use Application\Entity\Db\VersionFichier;
-use Application\Entity\Db\WfEtape;
 use Application\Form\AttestationTheseForm;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\View\Renderer\PhpRenderer;
@@ -17,7 +14,8 @@ use Application\View\Renderer\PhpRenderer;
  * @var string               $modifierAttestationUrl
  */
 
-$canEdit = $this->isAllowed($these, ThesePrivileges::THESE_SAISIE_ATTESTATIONS);
+$privilege = ThesePrivileges::THESE_SAISIE_ATTESTATIONS_($these->getCorrectionAutorisee());
+$canEdit = $this->isAllowed($these, $privilege);
 ?>
 
 <div class="box panel panel-info">

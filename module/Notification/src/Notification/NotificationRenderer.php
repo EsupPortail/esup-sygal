@@ -2,7 +2,9 @@
 
 namespace Notification;
 
+use UnicaenApp\Exception\RuntimeException;
 use Zend\View\Renderer\PhpRenderer;
+use Zend\View\Resolver\AggregateResolver;
 use Zend\View\Resolver\TemplatePathStack;
 
 class NotificationRenderer
@@ -70,9 +72,17 @@ class NotificationRenderer
         $template = substr($templatePath, strlen($templateDir) + 1/*slash*/);
         file_put_contents($templatePath, $templateContent);
 
-        /** @var TemplatePathStack $resolver */
         $resolver = $this->renderer->resolver();
-        $resolver->addPath($templateDir);
+        if ($resolver instanceof TemplatePathStack) {
+            $resolver->addPath($templateDir);
+        } elseif ($resolver instanceof AggregateResolver) {
+            $stack = new TemplatePathStack();
+            $stack->addPath($templateDir);
+            $resolver->attach($stack);
+        } else {
+            throw new RuntimeException(
+                sprintf("Resolver rencontré inattendu (%s), impossible de générer le corps du mail", get_class($resolver)));
+        }
         $this->renderer->setResolver($resolver);
 
         $model->setTemplate($template);

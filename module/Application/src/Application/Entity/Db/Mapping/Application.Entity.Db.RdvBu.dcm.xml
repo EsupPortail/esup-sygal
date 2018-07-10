@@ -24,12 +24,6 @@
         <option name="fixed"/>
       </options>
     </field>
-    <field name="pageTitreConforme" type="integer" column="PAGE_TITRE_CONFORME" nullable="false">
-      <options>
-        <option name="comment">Témoin indiquant si la page de couverture est conforme</option>
-        <option name="default">0</option>
-      </options>
-    </field>
     <field name="versionArchivableFournie" type="boolean" column="VERSION_ARCHIVABLE_FOURNIE" nullable="false">
       <options>
         <option name="comment">Témoin indiquant si une version archivable de la thèse existe</option>

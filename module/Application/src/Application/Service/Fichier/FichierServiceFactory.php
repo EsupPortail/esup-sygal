@@ -3,6 +3,8 @@
 namespace Application\Service\Fichier;
 
 use Application\Command\ValidationFichierCinesCommand;
+use Application\Service\Etablissement\EtablissementService;
+use Application\Service\Notification\NotifierService;
 use Application\Service\ValiditeFichier\ValiditeFichierService;
 use Application\Service\VersionFichier\VersionFichierService;
 use Application\Validator\FichierCinesValidator;
@@ -27,10 +29,14 @@ class FichierServiceFactory implements FactoryInterface
          * @var VersionFichierService $versionFichierService
          * @var ValiditeFichierService $validiteFichierService
          * @var RetraitementService $retraitementService
+         * @var EtablissementService $etablissementService
+         * @var NotifierService $notifierService
          */
         $versionFichierService = $serviceLocator->get('VersionFichierService');
         $validiteFichierService = $serviceLocator->get('ValiditeFichierService');
         $retraitementService = $serviceLocator->get('RetraitementService');
+        $etablissementService = $serviceLocator->get('EtablissementService');
+        $notifierService = $serviceLocator->get(NotifierService::class);
 
         $service = new FichierService();
 
@@ -38,6 +44,8 @@ class FichierServiceFactory implements FactoryInterface
         $service->setVersionFichierService($versionFichierService);
         $service->setValiditeFichierService($validiteFichierService);
         $service->setRetraitementService($retraitementService);
+        $service->setEtablissementService($etablissementService);
+        $service->setNotifierService($notifierService);
 
         $service->setRootDirectoryPath($this->getRootDirectoryPath($serviceLocator));
 

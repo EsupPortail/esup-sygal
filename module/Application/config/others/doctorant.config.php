@@ -8,19 +8,18 @@ use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 
 return [
     'bjyauthorize'    => [
-        'rule_providers'     => [
-            PrivilegeRuleProvider::class => [
-                'allow' => [
-                    [
-                        'privileges' => [
-                            DoctorantPrivileges::DOCTORANT_MODIFICATION_PERSOPASS,
-                        ],
-                        'resources'  => ['These'],
-                        'assertion'  => 'Assertion\\These',
-                    ],
-                ],
-            ],
-        ],
+//        'rule_providers'     => [
+//            PrivilegeRuleProvider::class => [
+//                'allow' => [
+//                    [
+//                        'privileges' => [
+//                        ],
+//                        'resources'  => ['These'],
+//                        'assertion'  => 'Assertion\\These',
+//                    ],
+//                ],
+//            ],
+//        ],
         'guards' => [
             PrivilegeController::class => [
                 [

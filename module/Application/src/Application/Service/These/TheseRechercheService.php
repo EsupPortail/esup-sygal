@@ -435,7 +435,7 @@ class TheseRechercheService
 
         $options = [];
         foreach ($urs as $ur) {
-            $options[] = ['value' => $ur->getSourceCode(), 'label' => $ur->getSigle(), 'subtext' => $ur->getLibelle()];
+            $options[] = ['value' => $ur->getSourceCode(), 'label' => $ur->getCode(), 'subtext' => $ur->getLibelle()];
         }
         usort($options, function($a, $b) {
             return strcmp($a['label'], $b['label']);

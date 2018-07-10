@@ -12,6 +12,11 @@ use UnicaenAuth\Provider\Privilege\Privileges;
 class ThesePrivileges extends Privileges
 {
     /**
+     * Tout faire !
+     */
+    const THESE_TOUT_FAIRE                          = 'these-tout-faire';
+
+    /**
      * Recherche
      */
     const THESE_RECHERCHE                           = 'these-recherche';
@@ -35,25 +40,29 @@ class ThesePrivileges extends Privileges
     /**
      * Attestations
      */
-    const THESE_SAISIE_ATTESTATIONS                 = 'these-saisie-attestations';
+    const THESE_SAISIE_ATTESTATIONS_VERSION_INITIALE = 'these-saisie-attestations-version-initiale';
+    const THESE_SAISIE_ATTESTATIONS_VERSION_CORRIGEE = 'these-saisie-attestations-version-corrigee';
 
     /**
      * Diffusion
      */
-    const THESE_SAISIE_AUTORISATION_DIFFUSION       = 'these-saisie-autorisation-diffusion';
+    const THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_INITIALE = 'these-saisie-autorisation-diffusion-version-initiale';
+    const THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_CORRIGEE = 'these-saisie-autorisation-diffusion-version-corrigee';
     const THESE_EDITION_CONVENTION_MEL              = 'these-edition-convention-mel';
 
     /**
      * Description ("Signalement")
      */
     const THESE_CONSULTATION_DESCRIPTION            = 'these-consultation-description';
-    const THESE_SAISIE_DESCRIPTION                  = 'these-saisie-description';
+    const THESE_SAISIE_DESCRIPTION_VERSION_INITIALE = 'these-saisie-description-version-initiale';
+    const THESE_SAISIE_DESCRIPTION_VERSION_CORRIGEE = 'these-saisie-description-version-corrigee';
 
     /**
      * Archivage
      */
     const THESE_CONSULTATION_ARCHIVAGE              = 'these-consultation-archivage';
-    const THESE_SAISIE_CONFORMITE_ARCHIVAGE         = 'these-saisie-conformite-archivage';
+    const THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_INITIALE = 'these-saisie-conformite-version-archivage-initiale';
+    const THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE = 'these-saisie-conformite-version-archivage-corrigee';
 
     /**
      * Rendez-vous BU
@@ -66,6 +75,50 @@ class ThesePrivileges extends Privileges
      * Remise de la version corigée
      */
     const THESE_CONSULTATION_VERSION_PAPIER_CORRIGEE  = 'these-consultation-version-papier-corrigee';
+
+    /**
+     * @param bool $correctionAttendue
+     * @return string
+     */
+    static public function THESE_SAISIE_DESCRIPTION_($correctionAttendue)
+    {
+        return (bool) $correctionAttendue ?
+            ThesePrivileges::THESE_SAISIE_DESCRIPTION_VERSION_CORRIGEE :
+            ThesePrivileges::THESE_SAISIE_DESCRIPTION_VERSION_INITIALE;
+    }
+
+    /**
+     * @param bool $correctionAttendue
+     * @return string
+     */
+    static public function THESE_SAISIE_ATTESTATIONS_($correctionAttendue)
+    {
+        return (bool) $correctionAttendue ?
+            ThesePrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_CORRIGEE :
+            ThesePrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_INITIALE;
+    }
+
+    /**
+     * @param bool $correctionAttendue
+     * @return string
+     */
+    static public function THESE_SAISIE_AUTORISATION_DIFFUSION_($correctionAttendue)
+    {
+        return (bool) $correctionAttendue ?
+            ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_CORRIGEE :
+            ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_INITIALE;
+    }
+
+    /**
+     * @param bool $correctionAttendue
+     * @return string
+     */
+    static public function THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_($correctionAttendue)
+    {
+        return $correctionAttendue ?
+            ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE :
+            ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_INITIALE;
+    }
 
     /**
      * Retourne le privilège correspondant au téléversement/suppression de fichier répondant aux critères spécifiés.
