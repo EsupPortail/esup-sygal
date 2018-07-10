@@ -3,18 +3,18 @@
 namespace Import\Service\Factory;
 
 use Doctrine\ORM\EntityManager;
-use Import\Service\FetcherService;
+use Import\Service\SynchroService;
 use Zend\ServiceManager\ServiceLocatorInterface as ContainerInterface;
 
-class FetcherServiceFactory
+class SynchroServiceFactory
 {
     public function __invoke(ContainerInterface $container, $requestedName, $options = null)
     {
         /** @var EntityManager $entityManager */
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
-        $config = $container->get('config');
 
-        $service = new FetcherService($entityManager, $config);
+        $service = new SynchroService();
+        $service->setEntityManager($entityManager);
 
         return $service;
     }

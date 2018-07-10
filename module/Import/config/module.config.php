@@ -15,7 +15,9 @@ return array(
                     'controller' => Import\Controller\ImportController::class,
                     'action'     => [
                         'help',
-                        'fetch',
+                        'import',
+                        'import-all',
+                        'update-these',
                         'index',
                         'info-last-update',
                     ],
@@ -26,7 +28,8 @@ return array(
                 [
                     'controller' => Import\Controller\ImportController::class,
                     'action'     => [
-                        'fetch-console',
+                        'import-console',
+                        'import-all-console',
                     ],
                     'roles' => [],
                 ],
@@ -62,13 +65,20 @@ return array(
                 'import-console' => [
                     'type' => Simple::class,
                     'options' => [
-                        'route'    => 'fetch --service=  --etablissement= [--source-code=]',
+                        'route'    => 'import --service=  --etablissement= [--source-code=]',
                         'defaults' => [
                             'controller' => Import\Controller\ImportController::class,
-                            'action'     => 'fetch-console',
-                            'service'       => 'non renseigné',
-                            'etablissement' => 'non renseigné',
-                            'source_code'   => 'non renseigné',
+                            'action'     => 'import-console',
+                        ],
+                    ],
+                ],
+                'import-all-console' => [
+                    'type' => Simple::class,
+                    'options' => [
+                        'route'    => 'import-all --etablissement=',
+                        'defaults' => [
+                            'controller' => Import\Controller\ImportController::class,
+                            'action'     => 'import-all-console',
                         ],
                     ],
                 ],
@@ -81,7 +91,7 @@ return array(
                 'type' => 'Literal',
                 'may_terminate' => true,
                 'options' => [
-                    'route'    => '/fetch',
+                    'route'    => '/ws-import',
                     'defaults' => [
                         'controller' => Import\Controller\ImportController::class,
                         'action'     => 'index',
@@ -103,18 +113,48 @@ return array(
                         'type' => Segment::class,
                         'may_terminate' => true,
                         'options' => [
-                            'route'    => '/:service/:etablissement[/:source_code]',
+                            'route'    => '/import/:service/:etablissement[/:source_code]',
                             'defaults' => [
-                                'controller'    => Import\Controller\ImportController::class,
-                                'action'        => 'fetch',
-                                'service'       => 'non renseigné',
-                                'etablissement' => 'non renseigné',
-                                'source_code'   => 'non renseigné',
+                                'controller' => Import\Controller\ImportController::class,
+                                'action'     => 'import',
                             ],
                             'constraints' => [
-                                'service'       => implode ('|', ["all","these","doctorant","acteur","variable","individu","role", "structure", "etablissement", "unite-recherche", "ecole-doctorale"]),
-                                'etablissement' => implode ('|', ["UCN","ULHN","INSA","URN"]),
+                                'service' => implode('|', [
+                                    "these",
+                                    "doctorant",
+                                    "acteur",
+                                    "variable",
+                                    "individu",
+                                    "role",
+                                    "structure",
+                                    "etablissement",
+                                    "unite-recherche",
+                                    "ecole-doctorale",
+                                ]),
                             ]
+                        ],
+                    ],
+                    'import-all' => [
+                        'type' => Segment::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/import-all/:etablissement',
+                            'defaults' => [
+                                'controller'    => Import\Controller\ImportController::class,
+                                'action'        => 'import-all',
+                                'etablissement' => 'non renseigné',
+                            ],
+                        ],
+                    ],
+                    'update-these' => [
+                        'type' => Segment::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/update-these/:etablissement[/:source_code]',
+                            'defaults' => [
+                                'controller' => Import\Controller\ImportController::class,
+                                'action'     => 'update-these',
+                            ],
                         ],
                     ],
                     'help' => [
@@ -138,7 +178,9 @@ return array(
             'Zend\Log\LoggerAbstractServiceFactory',
         ],
         'factories' => [
+            Import\Service\ImportService::class  => Import\Service\Factory\ImportServiceFactory::class,
             Import\Service\FetcherService::class => Import\Service\Factory\FetcherServiceFactory::class,
+            Import\Service\SynchroService::class => Import\Service\Factory\SynchroServiceFactory::class,
         ],
 
     ],
