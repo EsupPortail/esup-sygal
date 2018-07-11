@@ -778,6 +778,24 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
+     * Teste si un individu fait partie des acteurs au titre d'un rôle particulier.
+     *
+     * @param Individu    $individu
+     * @param string|Role $role
+     * @return bool
+     */
+    public function hasActeurWithRole(Individu $individu, $role)
+    {
+        if ($role instanceof Role) {
+            $role = $role->getCode();
+        }
+
+        $individus = $this->getActeursByRoleCode($role)->map(function(Acteur $a) { return $a->getIndividu(); });
+
+        return $individus->contains($individu);
+    }
+
+    /**
      * @param Acteur $acteur
      * @return $this
      */

@@ -75,8 +75,6 @@ class TheseEntityAssertion extends GeneratedTheseEntityAssertion
                 // TODO
                 return false;
             }
-            // sinon role = membre jury
-            // ...
         }
 
         elseif ($role->isStructureDependant()) {

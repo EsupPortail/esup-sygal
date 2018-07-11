@@ -3,7 +3,9 @@
 namespace Application\Assertion\These;
 
 use Application\Assertion\Interfaces\ControllerAssertionInterface;
+use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Doctorant;
+use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Service\UserContextServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
@@ -55,6 +57,14 @@ class TheseControllerAssertion implements ControllerAssertionInterface
      */
     public function assert($controller, $action = null, $privilege = null)
     {
+        if (! $this->these) {
+            return false;
+        }
+
+        if (! $this->isStructureDuRoleRespectee()) {
+            return false;
+        }
+
         switch (true) {
             case $this->selectedRoleIsDoctorant():
                 return $this->assertAsDoctorant($controller, $action);
@@ -83,6 +93,57 @@ class TheseControllerAssertion implements ControllerAssertionInterface
         }
 
         return $this->these && $this->these->getDoctorant()->getId() === $this->getIdentityDoctorant()->getId();
+    }
+
+    /**
+     * TODO : éviter cette duplication de code avec TheseEntityAssertion::isStructureDuRoleRespectee()
+     * @see TheseEntityAssertion::isStructureDuRoleRespectee()
+     *
+     * @return bool
+     */
+    protected function isStructureDuRoleRespectee()
+    {
+        $role = $this->userContextService->getSelectedIdentityRole();
+
+        if ($role->isTheseDependant()) {
+            if ($role->isDoctorant()) {
+                return $this->isUtilisateurEstAuteurDeLaThese();
+            }
+            elseif ($role->isDirecteurThese()) {
+                if ($individu = $this->userContextService->getIdentityIndividu()) {
+                    return $this->these->hasActeurWithRole($individu, Role::CODE_DIRECTEUR_THESE);
+                }
+                return false;
+            }
+        }
+
+        elseif ($role->isStructureDependant()) {
+            if ($role->isEtablissementDependant()) {
+                // On ne voit que les thèses de son établissement.
+                return $this->these->getEtablissement()->getStructure() === $role->getStructure();
+            }
+            elseif ($role->isEcoleDoctoraleDependant()) {
+                // On ne voit que les thèses concernant son ED.
+                return $this->these->getEcoleDoctorale()->getStructure() === $role->getStructure();
+            }
+            elseif ($role->isUniteRechercheDependant()) {
+                // On ne voit que les thèses concernant son UR.
+                return $this->these->getEcoleDoctorale()->getStructure() === $role->getStructure();
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * TODO : éviter cette duplication de code avec TheseEntityAssertion::isUtilisateurEstAuteurDeLaThese()
+     * @see TheseEntityAssertion::isUtilisateurEstAuteurDeLaThese()
+     *
+     * @return bool
+     */
+    protected function isUtilisateurEstAuteurDeLaThese()
+    {
+        return $this->these->getDoctorant()->getId() === $this->getIdentityDoctorant()->getId();
     }
 
     private function actionIs($controller, $action, $expectedController, $expectedAction) {
