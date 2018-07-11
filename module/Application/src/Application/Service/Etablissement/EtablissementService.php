@@ -182,19 +182,4 @@ class EtablissementService extends BaseService
         }
         return $etablissement;
     }
-
-    public function findEtablissementsNonSubstitues()
-    {
-        $qb = $this->getRepository()->createQueryBuilder("e")
-            ->join("e.structure", "s")
-            ->join("e.source", "src")
-            ->leftJoin("s.structuresSubstituees", "ss")
-            ->andWhere("s.structuresSubstituees IS EMPTY")
-            ->andWhere("src.code != :code")
-            ->orderBy("s.libelle")
-            ->setParameter("code", SourceInterface::CODE_SYGAL)
-        ;
-
-        return $qb->getQuery()->getResult();
-    }
 }
