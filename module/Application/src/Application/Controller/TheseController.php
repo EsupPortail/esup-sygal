@@ -1399,6 +1399,7 @@ class TheseController extends AbstractController
                     //message de notification dans la page
                     $message = "Les points de vigilance viennent d'être sauvegardés.";
                     $this->flashMessenger()->addSuccessMessage($message);
+                    $this->redirect()->toRoute('these/points-de-vigilance', ["these" => $these->getId()]);
                 }
             }
         }

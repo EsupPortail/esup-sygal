@@ -16,4 +16,8 @@ trait EcoleDoctoraleServiceAwareTrait
     {
         $this->ecoleDoctoraleService = $ecoleDoctoraleService;
     }
+
+    public function getEcoleDoctoraleService() {
+        return $this->ecoleDoctoraleService;
+    }
 }
