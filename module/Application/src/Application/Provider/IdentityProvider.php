@@ -92,13 +92,15 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
             return [];
         }
 
-        $roles = array_merge([],
+        $this->roles = array_merge([],
             $this->getRolesFromActeur(),
             $this->getRolesFromIndividuRole(),
             $this->getRolesFromDoctorant());
 
-        // suppression des doublons en comparant le __toString() de chaque Role
-        $this->roles = array_unique($roles, SORT_STRING);
+// Lignes mises en commentaire car revient à considérer le rôle "BdD UCN" identique au rôle "BdD URN" !
+// La question est: pourquoi avoir fait ça ?
+//        // suppression des doublons en comparant le __toString() de chaque Role
+//        $this->roles = array_unique($this->roles, SORT_STRING);
 
         return $this->roles;
     }
