@@ -19,6 +19,7 @@ use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
+use DateInterval;
 use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Traits\MessageAwareInterface;
@@ -327,22 +328,6 @@ class TheseService extends BaseService
         return $result;
     }
 
-    public function getThesesAvecSoutenanceSansCouverture()
-    {
-
-        $qb = $this->getEntityManager()->getRepository(These::class)->createQueryBuilder("these")
-            ->join("these.validations", "validation")
-            ->join("validation.typeValidation", "typeValidation")
-            ->andWhere("these.dateSoutenance IS NOT NULL")
-            ->andWhere("typeValidation.code = :typeValidation")
-            //->andWhere("these.validations IS NULL")
-            ->setParameter("typeValidation", TypeValidation::CODE_VERSION_PAPIER_CORRIGEE);
-        ;
-        $result = $qb->getQuery()->getResult();
-
-        return $result;
-    }
-
     public function getTheseASoutenir()
     {
         $aujourdhui = new \DateTime();
@@ -379,6 +364,41 @@ class TheseService extends BaseService
             ;
 
         $result = $qb->getQuery()->getResult();
+        return $result;
+    }
+
+    /** these à un moi de la soutenance sans aucun dépot
+     * @throws \Exception
+     */
+    public function getThesesAvantSoutenanceSansDepot() {
+
+        $interval = new DateInterval('P1M');
+        $minusOneMonth = (new \DateTime())->sub($interval);
+
+        $qb = $this->getEntityManager()->getRepository(These::class)->createQueryBuilder("these")
+            ->andWhere("t.dateSoutenance >= :minusOneMonth")
+            ->andWhere("these.etatThese = :encours")
+            ->setParameter("minusOneMonth", $minusOneMonth)
+            ->setParameter("encours",These::ETAT_EN_COURS)
+        ;
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
+
+    public function getThesesAvecSoutenanceSansCouverture()
+    {
+
+        $qb = $this->getEntityManager()->getRepository(These::class)->createQueryBuilder("these")
+            ->join("these.validations", "validation")
+            ->join("validation.typeValidation", "typeValidation")
+            ->andWhere("these.dateSoutenance IS NOT NULL")
+            ->andWhere("typeValidation.code = :typeValidation")
+            //->andWhere("these.validations IS NULL")
+            ->setParameter("typeValidation", TypeValidation::CODE_VERSION_PAPIER_CORRIGEE);
+        ;
+        $result = $qb->getQuery()->getResult();
+
         return $result;
     }
 }
