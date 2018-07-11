@@ -63,7 +63,21 @@ END;
 -- IMPORT_OBS_RESULT_NOTIF : vide
 
 
--- NOTIF : vide
+-- NOTIF
+
+INSERT INTO NOTIF (ID, CODE, DESCRIPTION, RECIPIENTS, TEMPLATE, ENABLED) VALUES (21, 'notif-depot-these', 'Notification lorsqu''un fichier de thèse est téléversé', null, '<p>
+    Bonjour,
+</p>
+<p>
+    Ceci est un mail envoyé automatiquement par l''application <?php echo $appName ?>.
+</p>
+<p>
+    Vous êtes informé-e que <em><?php echo $version->toString() ?></em> de la thèse de <?php echo $these->getDoctorant() ?> vient d''être déposée.
+</p>
+<p>
+    Cliquez sur <a href="<?php echo $url ?>">ce lien</a> pour accéder à la page correspondante de l''application.
+</p>
+', 1);
 
 
 -- NOTIF_RESULT : vide
