@@ -11,4 +11,4 @@ and sequence_name like '%\_XX%' ESCAPE '\';
 --
 select 'drop table ' || table_name || ';' from all_tables
 where owner = 'OTH'
-and table_name like 'S\_%' or table_name like '%\_XX' ESCAPE '\';
+and table_name like 'S\_%' ESCAPE '\' or table_name like '%\_XX' ESCAPE '\';
