@@ -63,6 +63,38 @@ class TheseEntityAssertion extends GeneratedTheseEntityAssertion
         return true;
     }
 
+    protected function isStructureDuRoleRespectee()
+    {
+        $role = $this->userContextService->getSelectedIdentityRole();
+
+        if ($role->isTheseDependant()) {
+            if ($role->isDoctorant()) {
+                return $this->isUtilisateurEstAuteurDeLaThese();
+            }
+            elseif ($role->isDirecteurThese()) {
+                // TODO
+                return false;
+            }
+        }
+
+        elseif ($role->isStructureDependant()) {
+            if ($role->isEtablissementDependant()) {
+                // On ne voit que les thèses de son établissement.
+                return $this->these->getEtablissement()->getStructure() === $role->getStructure();
+            }
+            elseif ($role->isEcoleDoctoraleDependant()) {
+                // On ne voit que les thèses concernant son ED.
+                return $this->these->getEcoleDoctorale()->getStructure() === $role->getStructure();
+            }
+            elseif ($role->isUniteRechercheDependant()) {
+                // On ne voit que les thèses concernant son UR.
+                return $this->these->getEcoleDoctorale()->getStructure() === $role->getStructure();
+            }
+        }
+
+        return true;
+    }
+
     protected function isExisteValidationPageDeCouverture()
     {
         $validations = $this->validationService->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PAGE_DE_COUVERTURE, $this->these);
