@@ -1100,14 +1100,12 @@ class TheseController extends AbstractController
         $theseFichiersExpurgesItems = array_map(function (Fichier $fichier) use ($these) {
             return [
                 'file'          => $fichier,
-                'apercevoirUrl' => $this->urlFichierThese()->apercevoirFichierThese($these, $fichier),
                 'downloadUrl'   => $this->urlFichierThese()->telechargerFichierThese($these, $fichier),
             ];
         }, $theseFichiersExpurges);
         $annexesFichiersExpurgesItems = array_map(function (Fichier $fichier) use ($these) {
             return [
                 'file'          => $fichier,
-                'apercevoirUrl' => $this->urlFichierThese()->apercevoirFichierThese($these, $fichier),
                 'downloadUrl'   => $this->urlFichierThese()->telechargerFichierThese($these, $fichier),
             ];
         }, $annexesFichiersExpurges);

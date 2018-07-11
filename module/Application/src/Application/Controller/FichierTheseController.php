@@ -133,7 +133,6 @@ class FichierTheseController extends AbstractController
             return [
                 'file'          => $fichier,
                 'downloadUrl'   => $this->urlFichierThese()->telechargerFichierThese($these, $fichier),
-                'apercevoirUrl' => $this->urlFichierThese()->apercevoirFichierThese($these, $fichier),
                 'deleteUrl'     => $this->urlFichierThese()->supprimerFichierThese($these, $fichier),
             ];
         }, $fichiers);
@@ -181,7 +180,6 @@ class FichierTheseController extends AbstractController
             return [
                 'file'          => $fichier,
                 'downloadUrl'   => $this->urlFichierThese()->telechargerFichierThese($these, $fichier),
-                'apercevoirUrl' => $this->urlFichierThese()->apercevoirFichierThese($these, $fichier),
                 'deleteUrl'     => $this->urlFichierThese()->supprimerFichierThese($these, $fichier),
             ];
         }, $fichiers);
