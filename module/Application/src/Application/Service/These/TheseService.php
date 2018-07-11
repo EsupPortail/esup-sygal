@@ -10,6 +10,7 @@ use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\RdvBu;
 use Application\Entity\Db\Repository\TheseRepository;
 use Application\Entity\Db\These;
+use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\VersionFichier;
 use Application\Notification\ValidationRdvBuNotification;
 use Application\Service\BaseService;
@@ -323,6 +324,61 @@ class TheseService extends BaseService
         ;
         $result = $qb->getQuery()->getResult();
 
+        return $result;
+    }
+
+    public function getThesesAvecSoutenanceSansCouverture()
+    {
+
+        $qb = $this->getEntityManager()->getRepository(These::class)->createQueryBuilder("these")
+            ->join("these.validations", "validation")
+            ->join("validation.typeValidation", "typeValidation")
+            ->andWhere("these.dateSoutenance IS NOT NULL")
+            ->andWhere("typeValidation.code = :typeValidation")
+            //->andWhere("these.validations IS NULL")
+            ->setParameter("typeValidation", TypeValidation::CODE_VERSION_PAPIER_CORRIGEE);
+        ;
+        $result = $qb->getQuery()->getResult();
+
+        return $result;
+    }
+
+    public function getTheseASoutenir()
+    {
+        $aujourdhui = new \DateTime();
+        $anneeCourante = ((int) (new \DateTime())->format("Y"));
+        $anneeProchaine = $anneeCourante + 1;
+        $dateMin = \DateTime::createFromFormat("d/m/Y", "01/01/".$anneeCourante);
+        $dateMax = \DateTime::createFromFormat("d/m/Y", "01/01/".$anneeProchaine);
+        $qb = $this->getEntityManager()->getRepository(These::class)->createQueryBuilder("these")
+                ->addSelect("doctorant")
+                ->addSelect("individu")
+                ->leftJoin("these.doctorant", "doctorant")
+                ->leftJoin("doctorant.individu", "individu")
+                ->addSelect("etablissement")
+                ->addSelect("ecoleDoctorale")
+                ->addSelect("uniteRecherche")
+                ->addSelect("structure_etab")
+                ->addSelect("structure_ed")
+                ->addSelect("structure_ur")
+                ->leftJoin("these.etablissement", "etablissement")
+                ->leftJoin("etablissement.structure", "structure_etab")
+                ->leftJoin("these.ecoleDoctorale", "ecoleDoctorale")
+                ->leftJoin("ecoleDoctorale.structure", "structure_ed")
+                ->leftJoin("these.uniteRecherche", "uniteRecherche")
+                ->leftJoin("uniteRecherche.structure", "structure_ur")
+            ->andWhere("these.dateSoutenance IS NOT NULL")
+            ->andWhere("these.dateSoutenance < :dateN")
+            ->andWhere("these.dateSoutenance >= :dateC")
+            ->andWhere("these.etatThese = :encours")
+            ->setParameter("dateN", $dateMax)
+//            ->setParameter("dateC", $dateMin)
+            ->setParameter("dateC", $aujourdhui)
+            ->setParameter("encours",These::ETAT_EN_COURS)
+            ->orderBy("these.dateSoutenance", "ASC");
+            ;
+
+        $result = $qb->getQuery()->getResult();
         return $result;
     }
 }

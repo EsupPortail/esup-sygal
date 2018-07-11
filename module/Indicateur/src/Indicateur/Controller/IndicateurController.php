@@ -4,6 +4,7 @@ namespace Indicateur\Controller;
 
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\These;
+use Application\Entity\Db\TypeValidation;
 use Application\Service\AnomalieServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
@@ -24,7 +25,17 @@ class IndicateurController extends AbstractActionController {
         $doctorantsSansMail = $this->getIndividuService()->getDoctorantSansMail();
         $theses = $this->getTheseService()->getTheseEnCoursPostSoutenance();
         $thesesAnciennes = $this->getTheseService()->getThesesAnciennes(6);
+        $thesesASoutenir = $this->getTheseService()->getTheseASoutenir();
+
+//        $thesesSansCouverture = $this->getTheseService()->getThesesAvecSoutenanceSansCouverture();
+//        /** @var These $these */
+//        var_dump(count($thesesSansCouverture));
+//        foreach ($thesesSansCouverture as $these) {
+//            var_dump($these->getValidations(TypeValidation::CODE_PAGE_DE_COUVERTURE));
+//        }
+
         $anomalies = $this->getAnomalieService()->getAnomalies();
+
 
         $etablissements = [];
         $etablissements[] = $this->getEtablissementService()->getEtablissementById(2);
@@ -42,12 +53,61 @@ class IndicateurController extends AbstractActionController {
         return new ViewModel([
                 "effectifs" => $effectifs,
                 "theses" => $theses,
+                "thesesASoutenir" => $thesesASoutenir,
                 "anciennes" => $thesesAnciennes,
                 "acteursSansMail" => $acteursSansMail,
                 "doctorantsSansMail" => $doctorantsSansMail,
                 "anomalies" => $anomalies,
             ]
         );
+    }
+
+    /**
+     * faire remonter les thèses ayant en cours ayant une date de soutenance dépassée
+     * @return ViewModel
+     */
+    public function thesesASoutenirAction()
+    {
+        $theses = $this->getTheseService()->getTheseASoutenir();
+        return new ViewModel([
+                'theses' => $theses,
+            ]
+        );
+    }
+
+    public function exportThesesASoutenirAction()
+    {
+        $data = $this->getTheseService()->getTheseASoutenir();
+        $headers = [
+            'Identitfiant'                    => function(These $these) {return $these->getId();},
+            'SourceCode'                      => function(These $these) {return $these->getSourceCode();},
+            'Titre'                           => function(These $these) {return $these->getTitre();},
+            'Doctorant'                       => function(These $these) {return $these->getDoctorant()->getIndividu()->getNomComplet();},
+            'État'                            => function(These $these) {return $these->getEtatThese();},
+            'Date de soutenace'               => function(These $these) {return $these->getDateSoutenance()->format("d/m/Y");},
+            'Établissement'                   => function(These $these) {return ($these->getEtablissement())?$these->getEtablissement()->getStructure()->getCode():"";},
+            'École doctorale'                 => function(These $these) {return ($these->getEcoleDoctorale())?$these->getEcoleDoctorale()->getStructure()->getCode():"";},
+            'Unité de recherche'              => function(These $these) {return ($these->getUniteRecherche())?$these->getUniteRecherche()->getStructure()->getCode():"";},
+
+        ];
+
+        $records = [];
+        foreach ($data as $entry) {
+            $record = [];
+            foreach($headers as $key => $fct) {
+                $record[] = $fct($entry);
+            }
+            $records[] = $record;
+        }
+
+        $CSV = new CsvModel();
+        $CSV->setDelimiter(';');
+        $CSV->setEnclosure('"');
+        $CSV->setHeader(array_keys($headers));
+        $CSV->setData($records);
+        $CSV->setFilename('export_soutenanceDepassee.csv');
+
+        return $CSV;
     }
 
     /**

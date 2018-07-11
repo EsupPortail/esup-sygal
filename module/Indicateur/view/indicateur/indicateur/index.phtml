@@ -11,6 +11,8 @@ use Application\Entity\Db\These;
  * @var These[] $doctorantsSansMail
  * @var These[] $theses
  * @var These[] $anciennes
+ * @var These[] $soutenancesSansCouverture
+ * @var These[] $thesesASoutenir
  * @var Anomalie[] $anomalies
  */
 ?>
@@ -65,7 +67,7 @@ use Application\Entity\Db\These;
                 <div class="panel-heading">
                     <h4>
                         Thèses avec soutenance dépassée
-                        <span class="badge"> <?echo count($theses); ?> </span>
+                        <span class="badge"> <?php echo count($theses); ?> </span>
                     </h4>
                 </div>
                 <div class="panel-body">
@@ -106,7 +108,7 @@ use Application\Entity\Db\These;
                 <div class="panel-heading">
                     <h4>
                         Thèses anciennes (plus de 6 ans)
-                        <span class="badge"> <?echo count($anciennes); ?> </span>
+                        <span class="badge"> <?php echo count($anciennes); ?> </span>
                     </h4>
                 </div>
                 <div class="panel-body">
@@ -147,13 +149,58 @@ use Application\Entity\Db\These;
     </div>
 
     <div class="row">
+        <div class="col-md-4">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h4>
+                        Thèse en cours à soutenir
+                        <span class="badge"> <?php echo count($thesesASoutenir); ?> </span>
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-extra-condensed">
+                        <thead>
+                        <tr>
+                            <th> Thèse </th>
+                            <th> Nom </th>
+                            <th> Date de soutenance</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php for($i = 0; $i < 5 && $i < count($thesesASoutenir); $i++): ?>
+                            <tr>
+                                <td> <?php echo $thesesASoutenir[$i]->getSourceCode(); ?></td>
+                                <td> <?php echo $thesesASoutenir[$i]->getDoctorant()->getIndividu()->getNomComplet(); ?></td>
+                                <td> <?php echo $thesesASoutenir[$i]->getDateSoutenance()->format("d/m/Y"); ?></td>
+
+
+                            </tr>
+                        <?php endfor; ?>
+                        <?php if(count($thesesASoutenir) >= 5): ?>
+                            <tr>
+                                <td colspan="3"> ... </td>
+                            </tr>
+                        <?php endif; ?>
+                        </tbody>
+                    </table>
+                    <div class="pull-right">
+                        <a class="btn btn-success" href="<?php echo $this->url('indicateur/theses-a-soutenir', [], [], true);?>">
+                            <span class="glyphicon glyphicon-eye-open"></span> Visualiser les données
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
 
         <div class="col-md-4">
             <div class="panel panel-warning">
                 <div class="panel-heading">
                     <h4>
                         Doctorants sans eMail
-                        <span class="badge"> <?echo count($doctorantsSansMail); ?> </span>
+                        <span class="badge"> <?php echo count($doctorantsSansMail); ?> </span>
                     </h4>
                 </div>
                 <div class="panel-body">
@@ -196,7 +243,7 @@ use Application\Entity\Db\These;
                 <div class="panel-heading">
                     <h4>
                         Acteurs sans eMail
-                        <span class="badge"> <?echo count($acteursSansMail); ?> </span>
+                        <span class="badge"> <?php echo count($acteursSansMail); ?> </span>
                     </h4>
                 </div>
                 <div class="panel-body">
@@ -239,7 +286,7 @@ use Application\Entity\Db\These;
                 <div class="panel-heading">
                     <h4>
                         Anomalie de clefs étrangères
-                        <span class="badge"> <?echo count($anomalies); ?> </span>
+                        <span class="badge"> <?php echo count($anomalies); ?> </span>
                     </h4>
                 </div>
                 <div class="panel-body">

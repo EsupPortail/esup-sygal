@@ -20,6 +20,8 @@ return array(
                         'export-doctorants-sans-mail',
                         'theses-anciennes',
                         'export-theses-anciennes',
+                        'theses-a-soutenir',
+                        'export-theses-a-soutenir',
                 ],
                     'roles' => [
                         'Administrateur technique',
@@ -105,6 +107,28 @@ return array(
                                     'route'       => '/export',
                                     'defaults'    => [
                                         'action' => 'export-acteurs-sans-mail',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'theses-a-soutenir' => [
+                        'type'          => Segment::class,
+                        'may_terminate' => true,
+                        'options'       => [
+                            'route'       => '/theses-a-soutenir',
+                            'defaults'    => [
+                                'action' => 'theses-a-soutenir',
+                            ],
+                        ],
+                        'child_routes'  => [
+                            'export' => [
+                                'type'          => Segment::class,
+                                'may_terminate' => true,
+                                'options'       => [
+                                    'route'       => '/export',
+                                    'defaults'    => [
+                                        'action' => 'export-theses-a-soutenir',
                                     ],
                                 ],
                             ],
