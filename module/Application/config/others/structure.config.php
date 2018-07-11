@@ -25,6 +25,7 @@ return [
                     'controller' => StructureController::class,
                     'action'     => [
                         'individu-role',
+                        'generer-roles-defauts',
                     ],
                     'privileges' => EtablissementPrivileges::ETABLISSEMENT_CONSULTATION,
                 ],
@@ -50,6 +51,15 @@ return [
                             'route'       => '/individu-role/:structure[/:type]',
                             'defaults'    => [
                                 'action' => 'individu-role',
+                            ],
+                        ],
+                    ],
+                    'generer-roles-defauts' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/generer-roles-defauts/:id/:type',
+                            'defaults'    => [
+                                'action' => 'generer-roles-defauts',
                             ],
                         ],
                     ],
