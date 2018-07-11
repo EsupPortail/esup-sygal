@@ -26,7 +26,7 @@ RUN ln -sf /dev/stdout /var/log/apache2/other_vhosts_access.log
 RUN ln -sf /dev/stderr /var/log/apache2/error.log
 
 # Config PHP.
-ADD docker/php.conf ${PHP_CONF_DIR}/fpm/conf.d/30-php-sygal.ini
+ADD docker/php.conf ${PHP_CONF_DIR}/fpm/conf.d/sygal.ini
 
 # Configuration Apache et FPM
 ADD docker/apache-ports.conf    ${APACHE_CONF_DIR}/ports.conf
