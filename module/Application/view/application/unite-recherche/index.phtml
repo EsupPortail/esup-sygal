@@ -3,6 +3,7 @@
 use Application\Entity\Db\DomaineScientifique;
 use Application\Entity\Db\EtablissementRattachement;
 use Application\Entity\Db\StructureConcreteInterface;
+use Application\Filter\EtablissementPrefixFilter;
 use Application\Provider\Privilege\UniteRecherchePrivileges;
 use Application\View\Renderer\PhpRenderer;
 use UnicaenApp\Form\Element\SearchAndSelect;
@@ -62,7 +63,16 @@ $canModifier = $this->isAllowed(UniteRecherchePrivileges::getResourceId(UniteRec
                     </a>
                 </td>
                 <td> <?php echo explode("::",$structure->getSource()->getCode())[0]; ?></td>
-                <td> <?php echo $structure->getCode(); ?></td>
+                <td>
+                    <?php
+                        $result = $structure->getCode();
+                        try {
+                            $filter = new EtablissementPrefixFilter();
+                            $result = $filter->removePrefixFrom($result);
+                        } catch (LogicException $e) {}
+                        echo $result;
+                    ?>
+                </td>
                 <td> <?php echo $structure->getSigle(); ?></td>
                 <td>
                     <?php if ($canModifier && !$historisee) : ?>
