@@ -19,7 +19,7 @@ line;enabled;privilege;isRoleDoctorantSelected;;isTheseSoutenue;isCorrectionAtte
 17;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE;;;;;;;;;;;;;;;;;;;;;;;;1;
 18;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_RDV_BU;;;;;;;;;;;;1:1;;;;;;;;;;;;0;La validation par la BU a été faite.
 19;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_RDV_BU;;;;;;;;;;;;;;;;;;;;;;;;1;
-20;1;\Application\Provider\Privilege\ValidationPrivileges::VALIDATION_PAGE_DE_COUVERTURE;;;;;;;;;;;;;;;;;;;;;;;01:00:00;0;Des informations sont manquantes pour pouvoir générer la page de couverture.
+20;1;\Application\Provider\Privilege\ValidationPrivileges::VALIDATION_PAGE_DE_COUVERTURE;;;;;;;;;;;;;;;;;;;;;;;1:0;0;Des informations sont manquantes pour pouvoir générer la page de couverture.
 21;1;\Application\Provider\Privilege\ValidationPrivileges::VALIDATION_PAGE_DE_COUVERTURE;;;;;;;;;;;;;;;;;;;;;;;;1;
 22;1;\Application\Provider\Privilege\ValidationPrivileges::VALIDATION_PAGE_DE_COUVERTURE_SUPPR;;;;;;;;;;;;;;;;;1:0;;;;;;;0;La page de couverture n’a pas été validée.
 23;1;\Application\Provider\Privilege\ValidationPrivileges::VALIDATION_PAGE_DE_COUVERTURE_SUPPR;;;;;;;;;;;;;;;;;;;;;;;;1;

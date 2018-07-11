@@ -357,7 +357,7 @@ class TheseRechercheService
             $orc[] = '(' . $sqlCri . ')';
         }
         if ($criCode) {
-            $orc[] = "(code_doctorant = '" . $criCode . "' OR code_ecole_doct = '" . $criCode . "')";
+            $orc[] = "(code_doctorant like '%" . $criCode . "%' OR code_ecole_doct = '" . $criCode . "')";
         }
         $orc = implode(' OR ', $orc);
         $sql .= ' AND (' . $orc . ') ';
