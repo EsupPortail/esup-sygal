@@ -103,7 +103,7 @@ class ImportService
         $logs = $this->fetcherService->fetch($service, $sourceCode, $this->filters);
 
         // synchro UnicaenImport
-        $this->synchroService->addService($service, $this->sqlFilters);
+        $this->synchroService->addService($service, ['sql_filter' => $this->sqlFilters]);
         $this->synchroService->synchronize();
 
         return $logs;
@@ -247,7 +247,7 @@ class ImportService
     }
 
     /**
-     * Préparation des filtres utiles à...
+     * Préparation des filtres éventuels, utiles à...
      *  - l'interrogation du web service.
      *  - la synchro UnicaenImport.
      *
@@ -260,7 +260,11 @@ class ImportService
         $this->filters = [];
         $this->sqlFilters = null;
 
-        if ($sourceCode !== null && ! empty($this->filters)) {
+        if (empty($queryParams)) {
+            return;
+        }
+
+        if ($sourceCode !== null && ! empty($queryParams)) {
             throw new LogicException("Aucun filtre ne peut être appliqué lorsqu'un source code est spécifié");
         }
 
