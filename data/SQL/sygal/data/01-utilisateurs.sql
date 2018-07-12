@@ -1,6 +1,9 @@
 
 ---------------------- UTILISATEUR ---------------------
 
+INSERT INTO UTILISATEUR (ID, USERNAME, EMAIL, DISPLAY_NAME, PASSWORD, STATE, LAST_ROLE_ID, INDIVIDU_ID) VALUES
+  (1, 'sygal-app', 'ne_pas_repondre@normandie-univ.fr', 'Application SyGAL', 'ldap', 1, null, null);
+
 insert into UTILISATEUR(
   ID, USERNAME, EMAIL, DISPLAY_NAME, PASSWORD
 )
@@ -9,8 +12,6 @@ SELECT
 from sodoct.utilisateur@doctprod st
 where not exists ( select * from UTILISATEUR u where u.id = st.ID )
 ;
-
-update UTILISATEUR set id = 1, username = 'sygal-app', DISPLAY_NAME = 'Application SYGAL' where username = 'sodoct-app';
 
 
 DECLARE

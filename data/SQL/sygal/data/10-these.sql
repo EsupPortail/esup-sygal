@@ -50,7 +50,7 @@ insert into THESE (
     DATE_SOUTENANCE,
     THESARD_ID as DOCTORANT_ID,
     ECOLE_DOCT_ID,
-    (select id from etablissement where CODE = 'UCN') as ETABLISSEMENT_ID,
+    (select e.id from etablissement e join structure s on s.id = e.STRUCTURE_ID where s.CODE = 'UCN') as ETABLISSEMENT_ID,
     ETAT_THESE,
     HISTO_CREATEUR_ID,
     HISTO_CREATION,
@@ -85,13 +85,14 @@ END;
 /
 
 
+update these set ECOLE_DOCT_ID = null, UNITE_RECH_ID = null;
+
+
 -- Vérif
 
 select * from THESE t
   join ETABLISSEMENT e on e.id = t.ETABLISSEMENT_ID
   join DOCTORANT d on d.id = t.DOCTORANT_ID
-  left join ECOLE_DOCT ed on ed.id = t.ECOLE_DOCT_ID
-  left join UNITE_RECH ur on ur.id = t.UNITE_RECH_ID
 ;
 
 
@@ -153,7 +154,6 @@ insert into RDV_BU (
   HISTO_MODIFICATEUR_ID,
   HISTO_MODIFICATION,
   MOTS_CLES_RAMEAU,
-  PAGE_TITRE_CONFORME,
   THESE_ID,
   VERSION_ARCHIVABLE_FOURNIE
 )
@@ -171,7 +171,6 @@ insert into RDV_BU (
     HISTO_MODIFICATEUR_ID,
     HISTO_MODIFICATION,
     MOTS_CLES_RAMEAU,
-    PAGE_TITRE_CONFORME,
     THESE_ID,
     VERSION_ARCHIVABLE_FOURNIE
   from S_RDV_BU
@@ -194,4 +193,3 @@ END;
 
 drop table S_THESE ;
 drop table S_METADONNEE_THESE ;
-drop table S_RDV_BU ;

@@ -11,11 +11,11 @@ INSERT INTO TYPE_VALIDATION (ID, CODE, LIBELLE) VALUES (3, 'CORRECTION_THESE', '
 INSERT INTO TYPE_VALIDATION (ID, CODE, LIBELLE) VALUES (4, 'VERSION_PAPIER_CORRIGEE', 'Confirmation dépot de la version papier corrigée');
 
 insert into TYPE_VALIDATION(ID, CODE, LIBELLE) values
-  (5, 'PDC_CONFORME', 'Validation de la page de couverture');
+  (5, 'PAGE_DE_COUVERTURE', 'Validation de la page de couverture');
 
 
 -- VALIDATION
- 
+
 insert into VALIDATION (
   ID,
   TYPE_VALIDATION_ID,
@@ -53,6 +53,36 @@ BEGIN
   end loop;
 END;
 /
+
+
+
+insert into validation(
+  ID,
+  TYPE_VALIDATION_ID,
+  THESE_ID,
+  INDIVIDU_ID,
+  HISTO_CREATION,
+  HISTO_CREATEUR_ID,
+  HISTO_MODIFICATION,
+  HISTO_MODIFICATEUR_ID,
+  HISTO_DESTRUCTION,
+  HISTO_DESTRUCTEUR_ID)
+  select
+    VALIDATION_ID_SEQ.nextval,
+    5,
+    THESE_ID,
+    null,
+    HISTO_CREATION,
+    HISTO_CREATEUR_ID,
+    HISTO_MODIFICATION,
+    HISTO_MODIFICATEUR_ID,
+    HISTO_DESTRUCTION,
+    HISTO_DESTRUCTEUR_ID
+  from S_RDV_BU
+  where PAGE_TITRE_CONFORME = 1
+;
+
+drop table S_RDV_BU ;
 
 
 --

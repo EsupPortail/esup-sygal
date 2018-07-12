@@ -18,7 +18,7 @@ INSERT INTO ROLE (
   HISTO_CREATEUR_ID,
   HISTO_MODIFICATEUR_ID)
 with ds (LIBELLE, CODE, THESE_DEP) as (
-  SELECT 'Administrateur technique',   'ADMIN_TECH' , 0 from dual union all
+  SELECT 'Administrateur technique',   'ADMIN_TECH' , 0 from dual
 --   SELECT 'Observateur',                'OBSERV'     , 0 from dual
 )
 SELECT
@@ -64,9 +64,9 @@ INSERT INTO ROLE (
     s.TYPE_STRUCTURE_ID,
     ds.LIBELLE,
     ds.CODE,
-    ds.LIBELLE||' '||etab.CODE,
+    ds.LIBELLE||' '||s.CODE,
     ds.THESE_DEP,
-    etab.CODE||'::'||ds.CODE,
+    s.CODE||'::'||ds.CODE,
     src.id,
     u.id,
     u.id
