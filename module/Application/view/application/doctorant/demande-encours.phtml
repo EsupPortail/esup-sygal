@@ -1,3 +1,12 @@
+<?php
+
+use Application\Entity\Db\Doctorant;
+
+/**
+ * @var Doctorant $doctorant
+ */
+?>
+
 <h1 class="page-header"> Confirmation de votre mail de contact</h1>
 
 <p class="lead">
@@ -10,8 +19,6 @@
     veuillez cliquer sur le bouton ci-dessous.
 </p>
 
-    <center>
-    <a href="
-    <?php echo $this->url('doctorant/modifier-persopass',['back' => true], [], true); ?>
-    "><input class="btn btn-info" type="button" value="Retour au formulaire de mail de contact"/></a>
-    </center>
+<a href="
+<?php echo $this->url('doctorant/modifier-persopass',['back' => true, 'doctorant' => $doctorant->getId()], [], true) ?>
+"><input class="btn btn-info" type="button" value="Retour au formulaire de mail de contact"/></a>
