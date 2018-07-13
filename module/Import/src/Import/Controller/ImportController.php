@@ -116,7 +116,7 @@ class ImportController extends AbstractActionController
         ]);
     }
 
-    public function fetchConsoleAction()
+    public function importConsoleAction()
     {
         $service = $this->params('service');
         $etablissement = $this->params('etablissement');
@@ -127,7 +127,7 @@ class ImportController extends AbstractActionController
         echo "Importation des données du service '$service' de l'établissement '$etablissement' réussie." . PHP_EOL;
     }
 
-    public function fetchAllConsoleAction()
+    public function importAllConsoleAction()
     {
         $etablissement = $this->params('etablissement');
 
