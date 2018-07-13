@@ -3,6 +3,7 @@
 namespace Application\Controller;
 
 use Application\Entity\Db\Role;
+use Application\Entity\Db\Structure;
 use Application\Entity\Db\StructureConcreteInterface;
 use Application\Entity\Db\UniteRecherche;
 use Application\Form\UniteRechercheForm;
@@ -302,8 +303,7 @@ class UniteRechercheController extends AbstractController
     static public function getLogoFilename(UniteRecherche $unite, $fullpath=true)
     {
         $chemin = "";
-//        if ($fullpath) $chemin .= APPLICATION_DIR;
-        if ($fullpath) $chemin .= "/var/sygal-files";
+        if ($fullpath) $chemin .= Structure::PATH;
         $chemin .= "/ressources/Logos/UR/".$unite->getSourceCode()."-".$unite->getSigle().".png";
         return $chemin;
     }

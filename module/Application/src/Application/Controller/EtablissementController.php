@@ -5,6 +5,7 @@ namespace Application\Controller;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\SourceInterface;
+use Application\Entity\Db\Structure;
 use Application\Entity\Db\StructureConcreteInterface;
 use Application\Form\EtablissementForm;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
@@ -284,8 +285,7 @@ class EtablissementController extends AbstractController
     static public function getLogoFilename(Etablissement $etablissement, $fullpath=true)
     {
         $chemin = "";
-//        if ($fullpath) $chemin .= APPLICATION_DIR;
-        if ($fullpath) $chemin .= "/var/sygal-files";
+        if ($fullpath) $chemin .= Structure::PATH;
         if ($etablissement->getCode()) $chemin .= "/ressources/Logos/Etab/".$etablissement->getCode().".png";
         else $chemin .= "/ressources/Logos/Etab/". uniqid().".png";
         return $chemin;

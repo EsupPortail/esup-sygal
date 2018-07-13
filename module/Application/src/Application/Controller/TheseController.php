@@ -13,6 +13,7 @@ use Application\Entity\Db\MetadonneeThese;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\RdvBu;
 use Application\Entity\Db\Role;
+use Application\Entity\Db\Structure;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Variable;
@@ -1432,6 +1433,9 @@ class TheseController extends AbstractController
 
     }
 
+    /**
+     * @throws \MpdfException
+     */
     public function fusionAction()
     {
 
@@ -1512,8 +1516,8 @@ class TheseController extends AbstractController
         //unlink pour effacer la couv temp
         //unlink($filename);
 
-        $merged->Output("/var/sygal-files/merged.pdf", 'D');
-//        $merged->Output("/var/sygal-files/merged.pdf", 'D');
+        $merged->Output(Structure::PATH. "merged.pdf", 'D');
+
     }
 
 }

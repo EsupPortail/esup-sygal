@@ -128,7 +128,7 @@ class EcoleDoctorale implements StructureConcreteInterface, HistoriqueAwareInter
             return $image;
         }
         //        return file_get_contents(APPLICATION_DIR . $this->getCheminLogo()) ?: null;
-        return file_get_contents( "/var/sygal-files/" . $this->getCheminLogo()) ?: null;
+        return file_get_contents( Structure::PATH . $this->getCheminLogo()) ?: null;
     }
 
     /**

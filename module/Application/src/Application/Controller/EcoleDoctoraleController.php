@@ -4,6 +4,7 @@ namespace Application\Controller;
 
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Role;
+use Application\Entity\Db\Structure;
 use Application\Entity\Db\StructureConcreteInterface;
 use Application\Form\EcoleDoctoraleForm;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
@@ -285,8 +286,7 @@ class EcoleDoctoraleController extends AbstractController
     static public function getLogoFilename(EcoleDoctorale $ecole, $fullpath=true)
     {
         $chemin = "";
-//        if ($fullpath) $chemin .= APPLICATION_DIR;
-        if ($fullpath) $chemin .= "/var/sygal-files";
+        if ($fullpath) $chemin .= Structure::PATH;
         $chemin .= "/ressources/Logos/ED/".$ecole->getSourceCode()."-".$ecole->getSigle().".png";
         return $chemin;
     }
