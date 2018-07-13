@@ -72,10 +72,10 @@ EOS;
      *
      * @param string $htmlBody HTML du corps de mail
      * @param string $subject  Sujet du mail
-     * @param string $from Adresse de l'expéditeur, 'ne_pas_repondre@unicaen.fr' par défaut
+     * @param string $from Adresse de l'expéditeur, 'ne_pas_repondre@normandie-univ.fr' par défaut
      * @return Message
      */
-    public function createNewMessage($htmlBody, $subject, $from = 'ne_pas_repondre@unicaen.fr')
+    public function createNewMessage($htmlBody, $subject, $from = 'ne_pas_repondre@normandie-univ.fr')
     {
         // corps au format HTML
         $html = $htmlBody;
