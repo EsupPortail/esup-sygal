@@ -62,6 +62,10 @@ class TheseControllerAssertion implements ControllerAssertionInterface
                 return $this->assertAsDoctorant($controller, $action);
         }
 
+        if ($this->these === null) {
+            return false;
+        }
+
         if (! $this->isStructureDuRoleRespectee()) {
             return false;
         }
