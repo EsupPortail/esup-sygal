@@ -497,7 +497,7 @@ class TheseRechercheService
 
     private function fetchEcolesDoctoralesOptions()
     {
-        $eds = $this->ecoleDoctoraleService->getEcolesDoctorales();
+        $eds = $this->getEcoleDoctoraleService()->getRepository()->findAll();
 
         $options = [];
         foreach ($eds as $ed) {

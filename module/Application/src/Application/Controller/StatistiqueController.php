@@ -43,7 +43,7 @@ class StatistiqueController extends AbstractController
         $qb = $this->decorateWithDate($qb, $dateType, $dateDebut, $dateFin);
 
         $theses = $qb->getQuery()->execute();
-        $ecoles = $this->ecoleDoctoraleService->getEcolesDoctorales();
+        $ecoles = $this->getEcoleDoctoraleService()->getRepository()->findAll();
         $unites = $this->uniteRechercheService->getUnitesRecherches();
         $etablissements = $this->getEtablissementService()->getRepository()->findAll();
         return new ViewModel([
@@ -66,7 +66,7 @@ class StatistiqueController extends AbstractController
         if ($type !== null && $id !== null) {
             switch($type) {
                 case "ED" :
-                    $ecole = $this->ecoleDoctoraleService->getEcoleDoctoraleById($id);
+                    $ecole = $this->getEcoleDoctoraleService()->getRepository()->find($id);
                     return  $qb->andWhere("t.ecoleDoctorale = :ed")
                                 ->setParameter(":ed", $ecole);
                 case "UR" :

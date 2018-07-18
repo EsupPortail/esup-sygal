@@ -75,7 +75,7 @@ class StructureController extends AbstractController
 
         switch($type) {
             case TypeStructure::CODE_ECOLE_DOCTORALE :
-                $ecole = $this->getEcoleDoctoraleService()->getEcoleDoctoraleByStructureId($id);
+                $ecole = $this->getEcoleDoctoraleService()->getRepository()->findByStructureId($id);
                 $this->getRoleService()->addRoleByStructure($ecole);
                 $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $id]]);
                 break;

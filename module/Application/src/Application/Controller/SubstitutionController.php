@@ -349,7 +349,7 @@ class SubstitutionController extends AbstractController
         $structures = [];
         switch($type) {
             case (TypeStructure::CODE_ECOLE_DOCTORALE):
-                $structures = $this->ecoleDoctoraleService->getEcolesDoctorales();
+                $structures = $this->getEcoleDoctoraleService()->getRepository()->findAll();
                 break;
             case (TypeStructure::CODE_ETABLISSEMENT):
                 $structures = $this->getEtablissementService()->getRepository()->findAll();

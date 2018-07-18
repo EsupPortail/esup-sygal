@@ -39,7 +39,7 @@ class EcoleDoctoraleController extends AbstractController
              * @var StructureConcreteInterface $structure
              * @var Role[] $roles
              */
-            $structure  = $this->ecoleDoctoraleService->getEcoleDoctoraleByStructureId($selected);
+            $structure  = $this->getEcoleDoctoraleService()->getRepository()->findByStructureId($selected);
             $roles = $structure->getStructure()->getStructureDependantRoles();
 
             $effectifs = [];
@@ -49,7 +49,7 @@ class EcoleDoctoraleController extends AbstractController
             }
         }
 
-        $structuresAll = $this->ecoleDoctoraleService->getEcolesDoctorales();
+        $structuresAll = $this->getEcoleDoctoraleService()->getRepository()->findAll();
 
         /** retrait des structures substituées */
         //TODO faire cela dans le service ???
@@ -89,7 +89,7 @@ class EcoleDoctoraleController extends AbstractController
     {
         /** @var EcoleDoctorale $ecole */
         $ecoleId = $this->params()->fromRoute("ecoleDoctorale");
-        $ecole  = $this->ecoleDoctoraleService->getEcoleDoctoraleByStructureId($ecoleId);
+        $ecole  = $this->getEcoleDoctoraleService()->getRepository()->findByStructureId($ecoleId);
         $this->ecoleDoctoraleForm->bind($ecole);
 
         // si POST alors on revient du formulaire
@@ -116,7 +116,7 @@ class EcoleDoctoraleController extends AbstractController
                 }
                 // mise à jour des données relatives aux écoles doctorales
                 $ecole = $this->ecoleDoctoraleForm->getData();
-                $this->ecoleDoctoraleService->update($ecole);
+                $this->getEcoleDoctoraleService()->update($ecole);
 
                 $this->flashMessenger()->addSuccessMessage("École doctorale '$ecole' modifiée avec succès");
                 return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecoleId]], true);
@@ -150,7 +150,7 @@ class EcoleDoctoraleController extends AbstractController
             if ($this->ecoleDoctoraleForm->isValid()) {
                 /** @var EcoleDoctorale $ecole */
                 $ecole = $this->ecoleDoctoraleForm->getData();
-                $ecole = $this->ecoleDoctoraleService->create($ecole, $this->userContextService->getIdentityDb());
+                $ecole = $this->getEcoleDoctoraleService()->create($ecole, $this->userContextService->getIdentityDb());
 
                 // sauvegarde du logo si fourni
                 if ($file['cheminLogo']['tmp_name'] !== '') {
@@ -179,9 +179,9 @@ class EcoleDoctoraleController extends AbstractController
     public function supprimerAction()
     {
         $ecoleId = $this->params()->fromRoute("ecoleDoctorale");
-        $ecole  = $this->ecoleDoctoraleService->getEcoleDoctoraleByStructureId($ecoleId);
+        $ecole  = $this->getEcoleDoctoraleService()->getRepository()->findByStructureId($ecoleId);
 
-        $this->ecoleDoctoraleService->deleteSoftly($ecole, $this->userContextService->getIdentityDb());
+        $this->getEcoleDoctoraleService()->deleteSoftly($ecole, $this->userContextService->getIdentityDb());
 
         $this->flashMessenger()->addSuccessMessage("École doctorale '$ecole' supprimée avec succès");
 
@@ -191,9 +191,9 @@ class EcoleDoctoraleController extends AbstractController
     public function restaurerAction()
     {
         $ecoleId = $this->params()->fromRoute("ecoleDoctorale");
-        $ecole  = $this->ecoleDoctoraleService->getEcoleDoctoraleByStructureId($ecoleId);
+        $ecole  = $this->getEcoleDoctoraleService()->getRepository()->findByStructureId($ecoleId);
 
-        $this->ecoleDoctoraleService->undelete($ecole);
+        $this->getEcoleDoctoraleService()->undelete($ecole);
 
         $this->flashMessenger()->addSuccessMessage("École doctorale '$ecole' restaurée avec succès");
 
@@ -231,9 +231,9 @@ class EcoleDoctoraleController extends AbstractController
     public function supprimerLogoEcoleDoctorale()
     {
         $ecoleId = $this->params()->fromRoute("ecoleDoctorale");
-        $ecole  = $this->ecoleDoctoraleService->getEcoleDoctoraleByStructureId($ecoleId);
+        $ecole  = $this->getEcoleDoctoraleService()->getRepository()->findByStructureId($ecoleId);
 
-        $this->ecoleDoctoraleService->deleteLogo($ecole);
+        $this->getEcoleDoctoraleService()->deleteLogo($ecole);
         $filename   = EcoleDoctoraleController::getLogoFilename($ecole, true);
         if (file_exists($filename)) {
             $result = unlink($filename);
@@ -264,14 +264,14 @@ class EcoleDoctoraleController extends AbstractController
 
         if ($ecole === null) {
             $ecoleId = $this->params()->fromRoute("ecoleDoctorale");
-            $ecole  = $this->ecoleDoctoraleService->getEcoleDoctoraleByStructureId($ecoleId);
+            $ecole  = $this->getEcoleDoctoraleService()->getRepository()->findByStructureId($ecoleId);
         }
         $chemin     = EcoleDoctoraleController::getLogoFilename($ecole, false);
         $filename   = EcoleDoctoraleController::getLogoFilename($ecole, true);
         $result = rename($cheminLogoUploade, $filename);
         if ($result) {
             $this->flashMessenger()->addSuccessMessage("Le logo de l'école doctorale {$ecole->getLibelle()} vient d'être ajouté.");
-            $this->ecoleDoctoraleService->setLogo($ecole,$chemin);
+            $this->getEcoleDoctoraleService()->setLogo($ecole,$chemin);
         } else {
             $this->flashMessenger()->addErrorMessage("Erreur lors de l'enregistrement du logo de l'école doctorale <strong>{$ecole->getLibelle()}.</strong>");
         }

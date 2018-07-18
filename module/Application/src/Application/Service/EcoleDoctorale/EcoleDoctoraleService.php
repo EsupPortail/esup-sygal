@@ -33,55 +33,6 @@ class EcoleDoctoraleService extends BaseService implements RoleServiceAwareInter
         return $repo;
     }
 
-    /**
-     * @param Source|null $source
-     * @return EcoleDoctorale[]
-     */
-    public function getEcolesDoctorales(Source $source = null)
-    {
-        $qb = $this->getEntityManager()->getRepository(EcoleDoctorale::class)->createQueryBuilder("ed");
-        $qb
-            ->leftJoin("ed.structure", "str", "WITH", "ed.structure = str.id")
-            ->leftJoin("str.structuresSubstituees", "sub")
-            ->leftJoin("str.typeStructure", "typ")
-            ->addSelect("str, sub, typ")
-            ->orderBy("str.libelle");
-
-        if ($source !== null) {
-            $qb
-                ->join('ed.source', 'src', Join::WITH, 'src = :source')
-                ->setParameter('source', $source);
-        }
-
-        $ecoles = $qb->getQuery()->getResult();
-
-        return $ecoles;
-    }
-
-    /**
-     * @param int $id
-     * @return null|EcoleDoctorale
-     */
-    public function getEcoleDoctoraleById($id)
-    {
-        /** @var EcoleDoctorale $ecole */
-        $ecole = $this->getRepository()->findOneBy(["id" => $id]);
-
-        return $ecole;
-    }
-
-    public function getEcoleDoctoraleByStructureId($id)
-    {
-        /** @var EcoleDoctorale $ecole */
-        $qb = $this->getRepository()->createQueryBuilder("ed")
-            ->addSelect("s")
-            ->leftJoin("ed.structure", "s")
-            ->andWhere("s.id = :id")
-            ->setParameter("id", $id);
-        $ecole = $qb->getQuery()->getOneOrNullResult();
-
-        return $ecole;
-    }
 
     /**
      * @param int $id
@@ -89,7 +40,7 @@ class EcoleDoctoraleService extends BaseService implements RoleServiceAwareInter
      */
     public function getIndividuByEcoleDoctoraleId($id)
     {
-        $ecole = $this->getEcoleDoctoraleById($id);
+        $ecole = $this->getRepository()->find($id);
         $individus = $this->roleService->getIndividuByStructure($ecole->getStructure());
 
         return $individus;

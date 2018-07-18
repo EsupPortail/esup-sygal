@@ -371,7 +371,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
     public function createNotificationForLogoAbsentEcoleDoctorale(EcoleDoctorale $ecole)
     {
         $mails = [];
-        foreach ($this->ecoleDoctoraleService->getIndividuByEcoleDoctoraleId($ecole->getId()) as $individu) {
+        foreach ($this->getEcoleDoctoraleService()->getIndividuByEcoleDoctoraleId($ecole->getId()) as $individu) {
             /** @var Individu $individu */
             $email = $individu->getEmail();
             if ($email !== null) $mails[] = $email;
