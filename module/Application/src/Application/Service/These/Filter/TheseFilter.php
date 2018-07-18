@@ -49,20 +49,19 @@ abstract class TheseFilter
      */
     public function processQueryParams(array $queryParams)
     {
-        $name = $this->getName();
-
-        $filterValue = $this->paramFromQueryParams($name, $queryParams);
+        $filterValue = $this->paramFromQueryParams($queryParams);
 
         $this->setValue($filterValue);
     }
 
     /**
-     * @param string $name
      * @param array  $queryParams
      * @return string
      */
-    private function paramFromQueryParams($name, array $queryParams)
+    private function paramFromQueryParams(array $queryParams)
     {
+        $name = $this->getName();
+
         if (! array_key_exists($name, $queryParams)) {
             // null <=> paramètre absent
             return null;
