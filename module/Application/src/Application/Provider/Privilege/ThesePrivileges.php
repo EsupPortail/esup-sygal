@@ -23,6 +23,11 @@ class ThesePrivileges extends Privileges
     const THESE_EXPORT_CSV                          = 'these-export-csv';
 
     /**
+     * Import
+     */
+    const THESE_REFRESH                             = 'these-refresh-these';
+
+    /**
      * Fiche ("Thèse")
      */
     const THESE_CONSULTATION_FICHE                  = 'these-consultation-fiche';

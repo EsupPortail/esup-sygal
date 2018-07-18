@@ -51,4 +51,27 @@ class EtablissementRepository extends DefaultEntityRepository
 
         return $etab;
     }
+
+    /**
+     * Recherche un établissement par son code.
+     *
+     * @param string $code Ex: 'UCN'
+     * @return Etablissement|null
+     */
+    public function findOneByCode($code)
+    {
+        $qb = $this->createQueryBuilder('e')
+            ->join('e.structure', 's')
+            ->where('s.code = :code')
+            ->setParameter('code', $code);
+
+        try {
+            /** @var Etablissement $etab */
+            $etab = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Plusieurs établissements trouvés avec ce code: " . $code);
+        }
+
+        return $etab;
+    }
 }
