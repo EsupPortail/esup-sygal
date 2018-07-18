@@ -37,10 +37,10 @@ class IndicateurController extends AbstractActionController {
 
 
         $etablissements = [];
-        $etablissements[] = $this->getEtablissementService()->getEtablissementById(2);
-        $etablissements[] = $this->getEtablissementService()->getEtablissementById(3);
-        $etablissements[] = $this->getEtablissementService()->getEtablissementById(4);
-        $etablissements[] = $this->getEtablissementService()->getEtablissementById(5);
+        $etablissements[] = $this->getEtablissementService()->getRepository()->find(2);
+        $etablissements[] = $this->getEtablissementService()->getRepository()->find(3);
+        $etablissements[] = $this->getEtablissementService()->getRepository()->find(4);
+        $etablissements[] = $this->getEtablissementService()->getRepository()->find(5);
 
         $effectifs = [];
         $effectifs["COMUE"] = $this->getTheseService()->getEffectifs();

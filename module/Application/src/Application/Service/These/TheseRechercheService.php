@@ -483,7 +483,7 @@ class TheseRechercheService
          * - ne pas être des établissements provenant de substitutions
          * - ne pas être la COMUE ... suite à l'interrogation obtenue en réunion
          */
-        $etablissements = $this->etablissementService->getEtablissementsBySource(SourceInterface::CODE_SYGAL);
+        $etablissements = $this->getEtablissementService()->getRepository()->findAllBySource(SourceInterface::CODE_SYGAL);
         $etablissements = array_filter($etablissements, function (Etablissement $etablissement) { return count($etablissement->getStructure()->getStructuresSubstituees())==0; });
         $etablissements = array_filter($etablissements, function (Etablissement $etablissement) { return $etablissement->getSigle() != "NU";});
 

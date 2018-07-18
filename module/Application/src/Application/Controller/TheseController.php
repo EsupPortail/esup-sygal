@@ -575,7 +575,7 @@ class TheseController extends AbstractController
             'theseListUrl'   => $this->urlFichierThese()->listerFichiers($these, $nature, $version, false, ['inclureValidite' => $inclureValidite]),
             'nature'         => $nature,
             'versionFichier' => $version,
-            'etabComue'      => $this->etablissementService->getRepository()->libelle(Etablissement::CODE_COMUE),
+            'etabComue'      => $this->getEtablissementService()->getRepository()->libelle(Etablissement::CODE_COMUE),
         ]);
         $view->setTemplate('application/these/depot/these');
 

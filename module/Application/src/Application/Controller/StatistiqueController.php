@@ -45,7 +45,7 @@ class StatistiqueController extends AbstractController
         $theses = $qb->getQuery()->execute();
         $ecoles = $this->ecoleDoctoraleService->getEcolesDoctorales();
         $unites = $this->uniteRechercheService->getUnitesRecherches();
-        $etablissements = $this->etablissementService->getEtablissements();
+        $etablissements = $this->getEtablissementService()->getRepository()->findAll();
         return new ViewModel([
             'theses' => $theses,
             'ecoles' => $ecoles,
@@ -74,7 +74,7 @@ class StatistiqueController extends AbstractController
                     return $qb->andWhere("t.uniteRecherche = :ur")
                                 ->setParameter(":ur", $unite);
                 case "Etab" :
-                    $etablissement = $this->etablissementService->getEtablissementById($id);
+                    $etablissement = $this->getEtablissementService()->getRepository()->find($id);
                     return $qb->andWhere("t.etablissement = :etab")
                                 ->setParameter("etab", $etablissement);
             }

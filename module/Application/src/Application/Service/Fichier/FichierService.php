@@ -603,7 +603,7 @@ class FichierService extends BaseService
         $logos = ["logo-comue", "logo-etablissement", "logo-ecoleDoctorale", "logo-uniteRecherche"];
         foreach ($logos as $logo) $informations[$logo] = "";
 
-        $comue = $this->etablissementService->getEtablissementById(1);
+        $comue = $this->getEtablissementService()->getRepository()->find(1);
         $informations["logo-comue"]             = ($comue)?$comue->getCheminLogo():"";
         $informations["logo-etablissement"]     = ($these->getEtablissement())?$these->getEtablissement()->getCheminLogo():"";
         $informations["logo-ecoleDoctorale"]    = ($these->getEcoleDoctorale())?$these->getEcoleDoctorale()->getCheminLogo():"";

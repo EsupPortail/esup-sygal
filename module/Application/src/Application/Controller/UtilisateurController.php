@@ -67,7 +67,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         }
 
         $roles = $this->roleService->getRoles();
-        $etablissements = $this->etablissementService->getEtablissements();
+        $etablissements = $this->getEtablissementService()->getRepository()->findAll();
         $unites = $this->uniteRechercheService->getUnitesRecherches();
         $ecoles = $this->ecoleDoctoraleService->getEcolesDoctorales();
 

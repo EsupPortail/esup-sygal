@@ -30,6 +30,56 @@ class EtablissementRepository extends DefaultEntityRepository
         return $entity ? $entity->getLibelle() : null;
     }
 
+
+
+
+    /**
+     * @param int $id
+     * @return null|Etablissement
+     */
+    public function find($id) {
+        /** @var Etablissement $etablissement */
+        $etablissement = $this->findOneBy(["id" => $id]);
+        return $etablissement;
+    }
+
+    /**
+     * @return Etablissement[]
+     */
+    public function findAll() {
+        /** @var Etablissement[] $etablissments */
+        $qb = $this->createQueryBuilder("et")
+            ->leftJoin("et.structure", "str", "WITH", "et.structure = str.id")
+            ->leftJoin("str.structuresSubstituees", "sub")
+            ->leftJoin("str.typeStructure", "typ")
+            ->addSelect("str, sub, typ")
+            ->orderBy("str.libelle")
+        ;
+        $etablissements = $qb->getQuery()->getResult();
+        return $etablissements;
+    }
+
+    /**
+     * @param string source
+     * @param boolean $include (si 'true' alors seulement la source sinon tous sauf la source)
+     * @return Etablissement[]
+     */
+    public function findAllBySource($source , $include=true) {
+        $qb = $this->createQueryBuilder("e")
+            ->join("e.source", "s");
+
+        if ($include) {
+            $qb = $qb->andWhere("s.code = :source");
+        } else {
+            $qb = $qb->andWhere("s.code != :source");
+        }
+        $qb = $qb->setParameter("source", $source);
+
+        /** @var Etablissement[] $etablissments */
+        $etablissments = $qb->getQuery()->execute();
+        return $etablissments;
+    }
+
     /**
      * Recherche un établissement par son domaine DNS.
      *
@@ -50,5 +100,20 @@ class EtablissementRepository extends DefaultEntityRepository
         }
 
         return $etab;
+    }
+
+    public function findByStructureId($id) {
+        /** @var Etablissement $etablissement */
+        $qb = $this->createQueryBuilder("e")
+            ->addSelect("s")
+            ->leftJoin("e.structure", "s")
+            ->andWhere("s.id = :id")
+            ->setParameter("id", $id);
+        try {
+            $etablissement = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("EtablissementRepository::findByStructureId(".$id.") retourne de multiples établissements !");
+        }
+        return $etablissement;
     }
 }

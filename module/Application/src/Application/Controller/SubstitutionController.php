@@ -352,7 +352,7 @@ class SubstitutionController extends AbstractController
                 $structures = $this->ecoleDoctoraleService->getEcolesDoctorales();
                 break;
             case (TypeStructure::CODE_ETABLISSEMENT):
-                $structures = $this->getEtablissementService()->getEtablissements();
+                $structures = $this->getEtablissementService()->getRepository()->findAll();
                 break;
             case (TypeStructure::CODE_UNITE_RECHERCHE):
                 $structures = $this->getUniteRechercheService()->getUnitesRecherches();

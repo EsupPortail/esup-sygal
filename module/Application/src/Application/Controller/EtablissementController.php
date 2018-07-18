@@ -49,7 +49,7 @@ class EtablissementController extends AbstractController
     public function indexAction()
     {
         $selected = $this->params()->fromQuery('selected');
-        $etablissements = $this->etablissementService->getEtablissements();
+        $etablissements = $this->getEtablissementService()->getRepository()->findAll();
         usort($etablissements, function(Etablissement $a,Etablissement $b) {return $a->getLibelle() > $b->getLibelle();});
 
         $roles = null;
@@ -59,7 +59,7 @@ class EtablissementController extends AbstractController
              * @var Etablissement $etablissement
              * @var Role[] $roles
              */
-            $etablissement  = $this->etablissementService->getEtablissementByStructureId($selected);
+            $etablissement  = $this->getEtablissementService()->getRepository()->findByStructureId($selected);
             $roles = $etablissement->getStructure()->getStructureDependantRoles();
 
             $effectifs = [];
@@ -69,7 +69,7 @@ class EtablissementController extends AbstractController
             }
         }
 
-        $etablissementsSYGAL = $this->etablissementService->getEtablissementsBySource(SourceInterface::CODE_SYGAL);
+        $etablissementsSYGAL = $this->getEtablissementService()->getRepository()->findAllBySource(SourceInterface::CODE_SYGAL);
         $etablissementsPrincipaux = array_filter($etablissementsSYGAL, function (Etablissement $etablissement) { return count($etablissement->getStructure()->getStructuresSubstituees())==0; });
         $etablissementsSecondaires = array_diff($etablissements, $etablissementsPrincipaux);
 
@@ -116,7 +116,7 @@ class EtablissementController extends AbstractController
             if ($this->etablissementForm->isValid()) {
                 /** @var Etablissement $etablissement */
                 $etablissement = $this->etablissementForm->getData();
-                $this->etablissementService->create($etablissement, $this->userContextService->getIdentityDb());
+                $this->getEtablissementService()->create($etablissement, $this->userContextService->getIdentityDb());
 
                     // sauvegarde du logo si fourni
                 if ($file['cheminLogo']['tmp_name'] !== '') {
@@ -145,10 +145,10 @@ class EtablissementController extends AbstractController
     public function supprimerAction()
     {
         $structureId = $this->params()->fromRoute("etablissement");
-        $etablissement = $this->getEtablissementService()->getEtablissementByStructureId($structureId);
+        $etablissement = $this->getEtablissementService()->getRepository()->findByStructureId($structureId);
 
         $destructeur = $this->userContextService->getIdentityDb();
-        $this->etablissementService->deleteSoftly($etablissement, $destructeur);
+        $this->getEtablissementService()->deleteSoftly($etablissement, $destructeur);
         $this->flashMessenger()->addSuccessMessage("Établissement '$etablissement' supprimé avec succès");
 
         return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $structureId]], true);
@@ -158,7 +158,7 @@ class EtablissementController extends AbstractController
     {
         /** @var Etablissement $etablissement */
         $structureId = $this->params()->fromRoute("etablissement");
-        $etablissement = $this->getEtablissementService()->getEtablissementByStructureId($structureId);
+        $etablissement = $this->getEtablissementService()->getRepository()->findByStructureId($structureId);
         $this->etablissementForm->bind($etablissement);
 
         // si POST alors on revient du formulaire
@@ -185,7 +185,7 @@ class EtablissementController extends AbstractController
                 }
                 // mise à jour des données relatives aux écoles doctorales
                 $etablissement = $this->etablissementForm->getData();
-                $this->etablissementService->update($etablissement);
+                $this->getEtablissementService()->update($etablissement);
 
                 $this->flashMessenger()->addSuccessMessage("Établissement '$etablissement' modifiée avec succès");
                 return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $structureId]], true);
@@ -206,9 +206,9 @@ class EtablissementController extends AbstractController
     public function restaurerAction()
     {
         $structureId = $this->params()->fromRoute("etablissement");
-        $etablissement = $this->getEtablissementService()->getEtablissementByStructureId($structureId);
+        $etablissement = $this->getEtablissementService()->getRepository()->findByStructureId($structureId);
 
-        $this->etablissementService->undelete($etablissement);
+        $this->getEtablissementService()->undelete($etablissement);
 
         $this->flashMessenger()->addSuccessMessage("Établissement '$etablissement' restauré avec succès");
 
@@ -230,9 +230,9 @@ class EtablissementController extends AbstractController
     public function supprimerLogoEtablissement()
     {
         $structureId = $this->params()->fromRoute("etablissement");
-        $etablissement = $this->getEtablissementService()->getEtablissementByStructureId($structureId);
+        $etablissement = $this->getEtablissementService()->getRepository()->findByStructureId($structureId);
 
-        $this->etablissementService->deleteLogo($etablissement);
+        $this->getEtablissementService()->deleteLogo($etablissement);
         $filename   = EtablissementController::getLogoFilename($etablissement, true);
         if (file_exists($filename)) {
             $result = unlink($filename);
@@ -263,14 +263,14 @@ class EtablissementController extends AbstractController
 
         if ($etablissement === null) {
             $structureId = $this->params()->fromRoute("etablissement");
-            $etablissement = $this->getEtablissementService()->getEtablissementByStructureId($structureId);
+            $etablissement = $this->getEtablissementService()->getRepository()->findByStructureId($structureId);
         }
         $chemin         = EtablissementController::getLogoFilename($etablissement, false);
         $filename       = EtablissementController::getLogoFilename($etablissement, true);
         $result = rename($cheminLogoUploade, $filename);
         if ($result) {
             $this->flashMessenger()->addSuccessMessage("Le logo de l'établissement {$etablissement->getLibelle()} vient d'être ajouté.");
-            $this->etablissementService->setLogo($etablissement,$chemin);
+            $this->getEtablissementService()->setLogo($etablissement,$chemin);
         } else {
             $this->flashMessenger()->addErrorMessage("Erreur lors de l'enregistrement du logo de l'établissement <strong>{$etablissement->getLibelle()}.</strong> ");
         }

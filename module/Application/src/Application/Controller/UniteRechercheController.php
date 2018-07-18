@@ -134,7 +134,7 @@ class UniteRechercheController extends AbstractController
             return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId]], true);
         }
 
-        $etablissements = $this->getEtablissementService()->getEtablissements();
+        $etablissements = $this->getEtablissementService()->getRepository()->findAll();
         $etablissementsRattachements = $this->getUniteRechercheService()->findEtablissementRattachement($unite);
         $domaineScientifiques = $this->getDomaineScientifiqueService()->getDomainesScientifiques();
 
@@ -317,7 +317,7 @@ class UniteRechercheController extends AbstractController
         if ($etablissementId == 0) {
             $this->flashMessenger()->addErrorMessage("Pour ajouter un établissement de rattachement, veuillez sélectionner un établissement.");
         } else {
-            $etablissement = $this->getEtablissementService()->getEtablissementById($etablissementId);
+            $etablissement = $this->getEtablissementService()->getRepository()->find($etablissementId);
             if ($this->getUniteRechercheService()->existEtablissementRattachement($unite, $etablissement)) {
                 $this->flashMessenger()->addErrorMessage("L'établissement de rattachement <strong>" . $etablissement->getLibelle() . "</strong> n'a pas pu être ajouter car déjà enregistré comme établissement de rattachement de l'unité de recherche <strong>" . $unite->getLibelle() . "</strong>.");
             } else {
@@ -334,7 +334,7 @@ class UniteRechercheController extends AbstractController
         $uniteId = $this->params()->fromRoute("uniteRecherche");
         $unite = $this->getUniteRechercheService()->getUniteRechercheByStructureId($uniteId);
         $etablissementId = $this->params()->fromRoute("etablissement");
-        $etablissement = $this->getEtablissementService()->getEtablissementById($etablissementId);
+        $etablissement = $this->getEtablissementService()->getRepository()->find($etablissementId);
 
         $this->getUniteRechercheService()->removeEtablissementRattachement($unite, $etablissement);
         $this->flashMessenger()->addSuccessMessage("L'établissement <strong>".$etablissement->getLibelle()."</strong> n'est plus un établissement de rattachement de l'unité de recherche <strong>".$unite->getLibelle()."</strong>.");
