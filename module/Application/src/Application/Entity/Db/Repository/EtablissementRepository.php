@@ -102,18 +102,26 @@ class EtablissementRepository extends DefaultEntityRepository
         return $etab;
     }
 
-    public function findByStructureId($id) {
-        /** @var Etablissement $etablissement */
-        $qb = $this->createQueryBuilder("e")
-            ->addSelect("s")
-            ->leftJoin("e.structure", "s")
-            ->andWhere("s.id = :id")
-            ->setParameter("id", $id);
+    /**
+     * Recherche un établissement par son code.
+     *
+     * @param string $code Ex: 'UCN'
+     * @return Etablissement|null
+     */
+    public function findOneByCode($code)
+    {
+        $qb = $this->createQueryBuilder('e')
+            ->join('e.structure', 's')
+            ->where('s.code = :code')
+            ->setParameter('code', $code);
+
         try {
-            $etablissement = $qb->getQuery()->getOneOrNullResult();
+            /** @var Etablissement $etab */
+            $etab = $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("EtablissementRepository::findByStructureId(".$id.") retourne de multiples établissements !");
+            throw new RuntimeException("Plusieurs établissements trouvés avec ce code: " . $code);
         }
-        return $etablissement;
+
+        return $etab;
     }
 }

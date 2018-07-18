@@ -1,7 +1,7 @@
 <?php
 
 use Application\Assertion\BaseAssertion;
-use Application\Controller\TheseController;
+use Application\Constants;use Application\Controller\TheseController;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
 use Application\Provider\Privilege\ValidationPrivileges;
@@ -13,6 +13,7 @@ use UnicaenApp\Service\MessageCollector;
  * @var These       $these
  * @var Validation  $validation
  * @var string      $apercevoirPdcUrl
+ * @var string      $refreshTheseUrl
  * @var string      $validerUrl
  * @var string      $devaliderUrl
  * @var string      $nextStepUrl
@@ -72,17 +73,36 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_
             </h2>
         </div>
         <div class="panel-body">
-            Liste des informations manquantes :
-            <ul>
-            <?php foreach ($problemes as $probleme): ?>
-                <li> <?php echo $probleme; ?> </li>
-            <?php endforeach; ?>
-            </ul>
+            <div class="col-md-6">
+                Liste des informations manquantes :
+                <ul>
+                <?php foreach ($problemes as $probleme): ?>
+                    <li> <?php echo $probleme; ?> </li>
+                <?php endforeach; ?>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <p>
+                    Cliquez sur ce bouton pour importer tout de suite à partir de <?php echo $these->getSource() ?>
+                    les informations nécessaires à la génération de la page de couverture :
+                </p>
+                <p>
+                    <a class="btn btn-default btn-sm"
+                       id="refresh-these-button"
+                       href="<?php echo $refreshTheseUrl ?>"
+                    ><span class="glyphicon glyphicon-import"></span> <strong>Mettre à jour</strong> la thèse à partir de
+                        <?php echo $these->getSource() ?></a>
+                </p>
+                <p class="small">
+                    Dernière mise à jour : <?php echo $these->getHistoModification()->format(Constants::DATETIME_FORMAT) ?>.
+                </p>
+            </div>
         </div>
     </div>
 <?php endif; ?>
 
 
+<?php if ($validation || $canValidate || $canUnvalidate): ?>
 <div class="box panel panel-info">
     <div class="panel-heading">
         <h2 class="first">
@@ -124,6 +144,8 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_
         <?php endif ?>
     </div>
 </div>
+<?php endif ?>
+
 
 <!-------------------------------------- Next step --------------------------------------->
 <div id="nextStepDiv" data-url="<?php echo $nextStepUrl ?>" style="display: none">
@@ -133,6 +155,11 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_
 
 <script>
     $(function () {
+        $("#refresh-these-button").click(function() {
+            $(this).css('min-width', $(this).width()).data("loading-text", "Patientez, svp...").button('loading');
+            $("body").addClass("wait");
+        });
+
         var refreshingNextStep = function (done, effect) {
             return function () {
                 $("#nextStepDiv").addClass("loading").refresh(null, function () {

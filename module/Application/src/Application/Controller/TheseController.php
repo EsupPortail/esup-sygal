@@ -44,6 +44,7 @@ use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\Service\Workflow\WorkflowServiceAwareTrait;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
+use Import\Service\Traits\ImportServiceAwareTrait;
 use mPDF;
 use Retraitement\Exception\TimedOutCommandException;
 use UnicaenApp\Exception\RuntimeException;
@@ -72,6 +73,7 @@ class TheseController extends AbstractController
     use EntityManagerAwareTrait;
     use MailConfirmationServiceAwareTrait;
     use UniteRechercheServiceAwareTrait;
+    use ImportServiceAwareTrait;
 
     private $timeoutRetraitement;
 
@@ -255,6 +257,25 @@ class TheseController extends AbstractController
         return $view;
     }
 
+    /**
+     * Import forcé d'une thèse et des inf.
+     *
+     * @return Response
+     */
+    public function refreshTheseAction()
+    {
+        $these = $this->requestedThese();
+
+        $this->importService->updateThese($these);
+
+        $redirect = $this->params()->fromQuery('redirect', '/');
+
+        return $this->redirect()->toUrl($redirect);
+    }
+
+    /**
+     * @return ViewModel
+     */
     public function validationPageDeCouvertureAction()
     {
         $these = $this->requestedThese();
@@ -270,6 +291,7 @@ class TheseController extends AbstractController
             'these'            => $these,
             'validation'       => $validation ?: null,
             'apercevoirPdcUrl' => $this->urlFichierThese()->apercevoirPageDeCouverture($these),
+            'refreshTheseUrl'  => $this->urlThese()->refreshTheseUrl($these, $this->urlThese()->validationPageDeCouvertureUrl($these)),
             'validerUrl'       => $this->urlThese()->validerPageDeCouvertureUrl($these),
             'devaliderUrl'     => $this->urlThese()->devaliderPageDeCouvertureUrl($these),
             'nextStepUrl'      => $this->urlWorkflow()->nextStepBox($these, null, [WfEtape::CODE_VALIDATION_PAGE_DE_COUVERTURE]),

@@ -10,6 +10,37 @@ use UnicaenApp\Exception\LogicException;
 class UrlTheseService extends UrlService
 {
     /**
+     * @param These  $these
+     * @param string $redirect URL éventuelle où rediriger ensuite
+     * @return string
+     */
+    public function refreshTheseUrl(These $these, $redirect = null)
+    {
+        $options = $this->options;
+
+        if ($redirect !== null) {
+            $options = array_merge_recursive($options, ['query' => ['redirect' => $redirect] ]);
+        }
+
+        return $this->fromRoute('these/refresh-these',
+            ['these' => $this->idify($these)],
+            $options
+        );
+    }
+
+    /**
+     * @param These $these
+     * @return string
+     */
+    public function validationPageDeCouvertureUrl(These $these)
+    {
+        return $this->fromRoute('these/validation-page-de-couverture',
+            ['these' => $this->idify($these)],
+            $this->options
+        );
+    }
+
+    /**
      * @param These                 $these
      * @param NatureFichier|string  $nature
      * @param VersionFichier|string $version
