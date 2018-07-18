@@ -96,12 +96,12 @@ class TheseController extends AbstractController
         }
 
         $this->theseRechercheService
-            ->createFilters()
+            ->createFiltersWithUnpopulatedOptions()
             ->createSorters()
             ->processQueryParams($queryParams);
 
         $etablissement = $this->theseRechercheService->getFilterValueByName(TheseSelectFilter::NAME_etablissement);
-        $etatThese = $this->theseRechercheService->getFilterValueByName(TheseSelectFilter::NAME_etatThese);
+        $etatThese     = $this->theseRechercheService->getFilterValueByName(TheseSelectFilter::NAME_etatThese);
 
         /** Configuration du paginator **/
         $qb = $this->theseRechercheService->createQueryBuilder();
