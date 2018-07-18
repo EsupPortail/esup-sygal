@@ -1441,7 +1441,19 @@ class TheseController extends AbstractController
      */
     public static function estDirecteur(Acteur $var) {
         $role = $var->getRole()->getSourceCode();
-        return  (explode("::", $role)[1] == "D");
+        return  (explode("::", $role)[1] == "D" || explode("::", $role)[1] == "K");
+    }
+
+    /** Vrai si un des acteurs à pour etablissement : '14 ENSI de Caen' ou 'ENSI DE CAEN'
+     * @param Acteur[] $acteurs
+     */
+    public static function estENSI($acteurs) {
+        foreach ($acteurs as $acteur) {
+            if ($acteur->getEtablissement() == 'ENSI DE CAEN' || $acteur->getEtablissement() == '14 ENSI de Caen') {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

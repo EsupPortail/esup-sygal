@@ -146,6 +146,12 @@ $PATH = Structure::PATH;
                 <span style='background-color:red;'> Établissement d'inscription ou logo d'établissement non renseigné. </span>
             <?php endif; ?>
         </td>
+        <!-- TODO ENSI -->
+        <?php if ($informations["ENSI"]): ?>
+        <td>
+            <img class="logo_small" src="public/logo_ensi.jpg"/>
+        </td>
+        <?php endif; ?>
         <!-- TODO COTUTELLE -->
         <td>
             <?php if ($informations["logo-ecoleDoctorale"]): ?>
