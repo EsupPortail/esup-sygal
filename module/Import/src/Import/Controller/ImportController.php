@@ -2,8 +2,13 @@
 
 namespace Import\Controller;
 
+use Application\Entity\Db\These;
+use Application\Filter\EtablissementPrefixFilter;
+use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Application\Service\These\TheseServiceAwareTrait;
 use Import\Service\Traits\ImportServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
+use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
@@ -12,6 +17,8 @@ class ImportController extends AbstractActionController
 {
     use EntityManagerAwareTrait;
     use ImportServiceAwareTrait;
+    use TheseServiceAwareTrait;
+    use EtablissementServiceAwareTrait;
 
     public function indexAction()
     {
@@ -99,18 +106,27 @@ class ImportController extends AbstractActionController
      */
     public function updateTheseAction()
     {
-        $etablissement = $this->params('etablissement');
+        $codeEtablissement = $this->params('etablissement');
         $sourceCodeThese = $this->params('source_code');
 
         if (! $sourceCodeThese) {
             throw new LogicException("Le source code de la thèse est requis");
         }
 
-        $logs = $this->importService->updateThese($etablissement, $sourceCodeThese);
+        $f = new EtablissementPrefixFilter();
+        $sourceCodeThese = $f->addPrefixTo($sourceCodeThese, $codeEtablissement);
+
+        /** @var These $these */
+        $these = $this->theseService->getRepository()->findOneBy(['sourceCode' => $sourceCodeThese]);
+        if ($these === null) {
+            throw new RuntimeException("Aucune thèse trouvée avec ce source code: " . $sourceCodeThese);
+        }
+
+        $logs = $this->importService->updateThese($these);
 
         return new ViewModel([
             'service'       => "these + dépendances",
-            'etablissement' => $etablissement,
+            'etablissement' => $codeEtablissement,
             'source_code'   => $sourceCodeThese,
             'logs'          => $logs,
         ]);

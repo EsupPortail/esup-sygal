@@ -182,6 +182,9 @@ return array(
             Import\Service\FetcherService::class => Import\Service\Factory\FetcherServiceFactory::class,
             Import\Service\SynchroService::class => Import\Service\Factory\SynchroServiceFactory::class,
         ],
+        'aliases' => [
+            'ImportService' => Import\Service\ImportService::class,
+        ]
 
     ],
     'controllers' => [

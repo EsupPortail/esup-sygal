@@ -4,13 +4,12 @@ namespace Application\Service\Etablissement;
 
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Repository\EtablissementRepository;
-use Application\Entity\Db\SourceInterface;
+use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\BaseService;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\RuntimeException;
-use Application\Entity\Db\TypeStructure;
 
 class EtablissementService extends BaseService
 {
@@ -28,16 +27,17 @@ class EtablissementService extends BaseService
     /**
      * @return Etablissement[]
      */
-    public function getEtablissements() {
+    public function getEtablissements()
+    {
         /** @var Etablissement[] $etablissments */
         $qb = $this->getEntityManager()->getRepository(Etablissement::class)->createQueryBuilder("et")
             ->leftJoin("et.structure", "str", "WITH", "et.structure = str.id")
             ->leftJoin("str.structuresSubstituees", "sub")
             ->leftJoin("str.typeStructure", "typ")
             ->addSelect("str, sub, typ")
-            ->orderBy("str.libelle")
-        ;
+            ->orderBy("str.libelle");
         $etablissements = $qb->getQuery()->getResult();
+
         return $etablissements;
     }
 
@@ -46,7 +46,8 @@ class EtablissementService extends BaseService
      * @param boolean $include (si 'true' alors seulement la source sinon tous sauf la source)
      * @return Etablissement[]
      */
-    public function getEtablissementsBySource($source , $include=true) {
+    public function getEtablissementsBySource($source, $include = true)
+    {
         $qb = $this->entityManager->getRepository(Etablissement::class)->createQueryBuilder("e")
             ->join("e.source", "s");
 
@@ -59,6 +60,7 @@ class EtablissementService extends BaseService
 
         /** @var Etablissement[] $etablissments */
         $etablissments = $qb->getQuery()->execute();
+
         return $etablissments;
     }
 
@@ -66,13 +68,16 @@ class EtablissementService extends BaseService
      * @param int $id
      * @return null|Etablissement
      */
-    public function getEtablissementById($id) {
+    public function getEtablissementById($id)
+    {
         /** @var Etablissement $etablissement */
         $etablissement = $this->getRepository()->findOneBy(["id" => $id]);
+
         return $etablissement;
     }
 
-    public function getEtablissementByStructureId($id) {
+    public function getEtablissementByStructureId($id)
+    {
         /** @var Etablissement $etablissement */
         $qb = $this->getRepository()->createQueryBuilder("e")
             ->addSelect("s")
@@ -80,12 +85,13 @@ class EtablissementService extends BaseService
             ->andWhere("s.id = :id")
             ->setParameter("id", $id);
         $etablissement = $qb->getQuery()->getOneOrNullResult();
+
         return $etablissement;
     }
 
     /**
      * @param Etablissement $etablissement
-     * @param Utilisateur $createur
+     * @param Utilisateur   $createur
      * @return Etablissement
      */
     public function create(Etablissement $etablissement, Utilisateur $createur)
@@ -104,7 +110,7 @@ class EtablissementService extends BaseService
 
     /**
      * @param Etablissement $etablissement
-     * @param Utilisateur $destructeur
+     * @param Utilisateur   $destructeur
      */
     public function deleteSoftly(Etablissement $etablissement, Utilisateur $destructeur)
     {
@@ -133,7 +139,6 @@ class EtablissementService extends BaseService
 
         return $etablissement;
     }
-
 
 
     public function setLogo(Etablissement $etablissement, $cheminLogo)
@@ -180,6 +185,7 @@ class EtablissementService extends BaseService
         } catch (NonUniqueResultException $e) {
             throw new RuntimeException("Anomalie plusieurs établissements avec le même id.", 0, $e);
         }
+
         return $etablissement;
     }
 }

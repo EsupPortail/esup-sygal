@@ -4,6 +4,7 @@ namespace Import\Service;
 
 use Application\Entity\Db\These;
 use Application\Filter\EtablissementPrefixFilter;
+use Doctrine\ORM\OptimisticLockException;
 use Import\Model\TmpActeur;
 use Import\Model\TmpDoctorant;
 use Import\Model\TmpThese;
@@ -152,32 +153,14 @@ class ImportService
      *
      * Pour l'instant, les données liées se limitent à celles concernées par la génération de la page de couverture.
      *
-     * @param string $etablissement Code de l'établissement que l'on souhaite interroger (p.e. UCN, UCR, ...)
-     * @param string $sourceCodeThese Source code de la thèse à mettre à jour
-     * @return array
+     * @param These $these
+     * @return array Logs
      */
-    public function updateThese($etablissement, $sourceCodeThese)
+    public function updateThese(These $these)
     {
-        $f = new EtablissementPrefixFilter();
-        $sourceCodeThese = $f->addPrefixTo($sourceCodeThese, $etablissement);
-        /** @var These $these */
-        $these = $this->entityManager->getRepository(These::class)->findOneBy(['sourceCode' => $sourceCodeThese]);
-        if (! $these) {
-            throw new RuntimeException("Aucune thèse trouvée avec ce source code: $sourceCodeThese");
-        }
-
-        if ($this->debug) {
-            echo "SERVICE: these + dépendances<br/>";
-            echo "ETABLISSEMENT: {$etablissement}<br/>";
-            echo "SOURCE_CODE: {$sourceCodeThese}<br/>";
-        }
-
         /** Paramétrage du service de récupération */
-        $key = $this->fetcherService->getEtablissementKey($etablissement);
+        $key = $this->fetcherService->getEtablissementKey($these->getEtablissement()->getStructure()->getCode());
         $this->fetcherService->setConfigWithPosition($key);
-        if ($this->debug) {
-            $this->printDebug($key);
-        }
 
         $logs = [];
 
@@ -242,6 +225,15 @@ class ImportService
             ['sql_filter' => "SOURCE_CODE = '$sourceCodeUniteRech'"]
         );
         $this->synchroService->synchronize();
+
+        // On met à jour le HISTO_MODIFICATION de la thèse pour mémoriser la date de l'import forcé qu'on vient de faire.
+        // Pas super parce que normalement HISTO_MODIFICATION n'est modifiée que si l'import a mis à jour la thèse).
+        $these->setHistoModification(new \DateTime());
+        try {
+            $this->getEntityManager()->flush($these);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement en base de données", null, $e);
+        }
 
         return $logs;
     }

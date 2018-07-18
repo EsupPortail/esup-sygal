@@ -52,6 +52,7 @@ return [
                             ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_INITIALE,
                             ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE,
                             ThesePrivileges::THESE_SAISIE_RDV_BU,
+//                            ThesePrivileges::THESE_REFRESH,
                         ],
                         'resources'  => ['These'],
                         'assertion'  => 'Assertion\\These',
@@ -94,6 +95,13 @@ return [
                     ],
                     'privileges' => ThesePrivileges::THESE_CONSULTATION_FICHE,
                     'assertion'  => 'Assertion\\These',
+                ],
+                [
+                    'controller' => 'Application\Controller\These',
+                    'action'     => [
+                        'refresh-these',
+                    ],
+                    'privileges' => ThesePrivileges::THESE_REFRESH,
                 ],
                 [
                     'controller' => 'Application\Controller\These',
@@ -344,6 +352,18 @@ return [
                             ],
                             'defaults'    => [
                                 'action' => 'detail-description',
+                            ],
+                        ],
+                    ],
+                    'refresh-these' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'       => '/refresh/:these',
+                            'constraints' => [
+                                'these' => '\d+',
+                            ],
+                            'defaults'    => [
+                                'action' => 'refresh-these',
                             ],
                         ],
                     ],
