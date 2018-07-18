@@ -9,7 +9,6 @@ use Application\Form\Factory\EcoleDoctoraleFormFactory;
 use Application\Navigation\NavigationFactoryFactory;
 use Application\RouteMatchInjector;
 use Application\Service\AuthorizeServiceAwareInitializer;
-use Application\Service\MailerServiceFactory;
 use Application\Service\Role\RoleService;
 use Application\Service\ServiceAwareInitializer;
 use Application\Service\UserContextServiceAwareInitializer;
@@ -170,7 +169,6 @@ return array(
             'navigation'                     => NavigationFactoryFactory::class,
             'UnicaenAuth\Service\UserContext' => UserContextServiceFactory::class,
             'UserAuthenticatedEventListener' => UserAuthenticatedEventListenerFactory::class,
-            'UnicaenApp\Service\Mailer'      => MailerServiceFactory::class,
             'Sygal\Memcached'                => MemcachedFactory::class,
         ),
         'initializers' => [

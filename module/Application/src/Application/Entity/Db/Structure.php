@@ -2,6 +2,7 @@
 
 namespace Application\Entity\Db;
 
+use Doctrine\Common\Collections\Collection;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenApp\Exception\LogicException;
@@ -45,8 +46,19 @@ class Structure implements HistoriqueAwareInterface, SourceAwareInterface
      */
     protected $typeStructure;
 
+    /**
+     * @var Collection
+     */
     protected $etablissement;
+
+    /**
+     * @var Collection
+     */
     protected $ecoleDoctorale;
+
+    /**
+     * @var Collection
+     */
     protected $uniteRecherche;
 
     /**
@@ -270,27 +282,27 @@ class Structure implements HistoriqueAwareInterface, SourceAwareInterface
     }
 
     /**
-     * @return Etablissement
+     * @return Etablissement|null
      */
     public function getEtablissement()
     {
-        return $this->etablissement;
+        return $this->etablissement->first();
     }
 
     /**
-     * @return EcoleDoctorale
+     * @return EcoleDoctorale|null
      */
     public function getEcoleDoctorale()
     {
-        return $this->ecoleDoctorale;
+        return $this->ecoleDoctorale->first();
     }
 
     /**
-     * @return UniteRecherche
+     * @return UniteRecherche|null
      */
     public function getUniteRecherche()
     {
-        return $this->uniteRecherche;
+        return $this->uniteRecherche->first();
     }
 
     /**

@@ -57,17 +57,17 @@ class TheseControllerAssertion implements ControllerAssertionInterface
      */
     public function assert($controller, $action = null, $privilege = null)
     {
-        if (! $this->these) {
+        switch (true) {
+            case $this->selectedRoleIsDoctorant():
+                return $this->assertAsDoctorant($controller, $action);
+        }
+
+        if ($this->these === null) {
             return false;
         }
 
         if (! $this->isStructureDuRoleRespectee()) {
             return false;
-        }
-
-        switch (true) {
-            case $this->selectedRoleIsDoctorant():
-                return $this->assertAsDoctorant($controller, $action);
         }
 
 //        switch (true) {
@@ -143,7 +143,7 @@ class TheseControllerAssertion implements ControllerAssertionInterface
      */
     protected function isUtilisateurEstAuteurDeLaThese()
     {
-        return $this->these->getDoctorant()->getId() === $this->getIdentityDoctorant()->getId();
+        return $this->these && $this->these->getDoctorant()->getId() === $this->getIdentityDoctorant()->getId();
     }
 
     private function actionIs($controller, $action, $expectedController, $expectedAction) {

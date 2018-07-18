@@ -73,7 +73,7 @@ class WorkflowStepHelper extends AbstractHelper
             return $e->getLibelleActeur();
         }
 
-        $url = $this->getView()->url($e->getRoute(), [], ['force_canonical' => true], true);
+        $url = $this->getView()->url($e->getRoute(), ['these' => $this->step->getThese()->getId() ], ['force_canonical' => true], true);
 
         $tpl = <<<EOS
 <a class="roadmap-step-link %s" href="%s" title="Cliquez pour accéder à cette étape"

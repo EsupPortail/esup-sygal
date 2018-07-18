@@ -9,7 +9,7 @@ return [
             'version' => "0.3.0",
             'date'    => "20/04/2018",
             'contact' => [
-                'mail' => "bertrand.gauthier@unicaen.fr",
+                'mail' => "assistance-sygal@unicaen.fr",
                 //'tel' => "01 02 03 04 05",
             ],
             'mentionsLegales'        => "http://www.unicaen.fr/acces-direct/mentions-legales/",

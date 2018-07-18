@@ -83,8 +83,46 @@ where code in (
 );
 
 
+-- ROLE_MODELE
 
--- INDIVIDU_ROLE
+INSERT INTO ROLE_MODELE (ID, LIBELLE, ROLE_ID, STRUCTURE_TYPE) VALUES (1, 'Unité de recherche', 'UR', 3);
+INSERT INTO ROLE_MODELE (ID, LIBELLE, ROLE_ID, STRUCTURE_TYPE) VALUES (2, 'École doctorale', 'ED', 2);
+INSERT INTO ROLE_MODELE (ID, LIBELLE, ROLE_ID, STRUCTURE_TYPE) VALUES (3, 'Administrateur', 'ADMIN', 1);
+INSERT INTO ROLE_MODELE (ID, LIBELLE, ROLE_ID, STRUCTURE_TYPE) VALUES (4, 'Bureau des doctorats', 'BDD', 1);
+INSERT INTO ROLE_MODELE (ID, LIBELLE, ROLE_ID, STRUCTURE_TYPE) VALUES (5, 'Bibliothèque universitaire', 'BU', 1);
+
+
+
+-- INDIVIDU_ROLE pour les développeurs
+
+delete from INDIVIDU where SOURCE_CODE = 'UCN::00021237';
+delete from INDIVIDU where SOURCE_CODE = 'UCN::00017566';
+
+insert into INDIVIDU(
+  ID, TYPE,
+  NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, EMAIL, NATIONALITE,
+  SOURCE_ID, SOURCE_CODE,
+  HISTO_CREATEUR_ID, HISTO_MODIFICATEUR_ID
+)
+  select
+    INDIVIDU_ID_SEQ.nextval, null,
+    'GAUTHIER', 'GAUTHIER', 'Bertrand', 'bertrand.gauthier@unicaen.fr', 'Française',
+    (select id from source where code = 'SYGAL::sygal'), 'UCN::00021237',
+    1, 1
+  from dual;
+
+insert into INDIVIDU(
+  ID, TYPE,
+  NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, EMAIL, NATIONALITE,
+  SOURCE_ID, SOURCE_CODE,
+  HISTO_CREATEUR_ID, HISTO_MODIFICATEUR_ID
+)
+  select
+    INDIVIDU_ID_SEQ.nextval, null,
+    'METIVIER', 'METIVIER', 'Jean-Philippe', 'jean-philippe.metivier@unicaen.fr', 'Française',
+    (select id from source where code = 'SYGAL::sygal'), 'UCN::00017566',
+    1, 1
+  from dual;
 
 insert into INDIVIDU_ROLE (
   ID,
@@ -104,12 +142,3 @@ insert into INDIVIDU_ROLE (
     join INDIVIDU i on i.EMAIL = ds.email
     join ROLE r on r.CODE = ds.code_role
 ;
-
-
--- ROLE_MODELE
-
-INSERT INTO ROLE_MODELE (ID, LIBELLE, ROLE_ID, STRUCTURE_TYPE) VALUES (1, 'Unité de recherche', 'UR', 3);
-INSERT INTO ROLE_MODELE (ID, LIBELLE, ROLE_ID, STRUCTURE_TYPE) VALUES (2, 'École doctorale', 'ED', 2);
-INSERT INTO ROLE_MODELE (ID, LIBELLE, ROLE_ID, STRUCTURE_TYPE) VALUES (3, 'Administrateur', 'ADMIN', 1);
-INSERT INTO ROLE_MODELE (ID, LIBELLE, ROLE_ID, STRUCTURE_TYPE) VALUES (4, 'Bureau des doctorats', 'BDD', 1);
-INSERT INTO ROLE_MODELE (ID, LIBELLE, ROLE_ID, STRUCTURE_TYPE) VALUES (5, 'Bibliothèque universitaire', 'BU', 1);
