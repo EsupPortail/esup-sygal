@@ -1,0 +1,50 @@
+<?php
+
+use Application\Entity\Db\These;
+
+/**
+ * @var These[] $theses
+ */
+?>
+
+<h1>
+    Thèses sans dépôt sans SyGAL à 1 mois de la soutenance
+    <span class="badge"> <?php echo count($theses); ?> </span>
+</h1>
+
+<a class="btn btn-success" href="<?php echo $this->url('indicateur/theses-sans-depot/export',[],[], true); ?>">
+    <span class="glyphicon glyphicon-download-alt"></span> Exporter au format CSV
+</a>
+
+<table class="table table-extra-condensed">
+    <thead>
+        <tr>
+            <th> SourceCode </th>
+            <th> Titre </th>
+            <th> Doctorant </th>
+            <th> État</th>
+            <th> Date de soutenance </th>
+            <th> Établissement </th>
+            <th> École doctorale </th>
+            <th> Unité de recherche </th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($theses as $these) : ?>
+    <tr>
+        <td>
+            <a href="<?php echo $this->url('these/identite', ['these'=>$these->getId()], [], true); ?>">
+                <?php echo $these->getSourceCode(); ?>
+            </a>
+        </td>
+        <td> <?php echo $these->getTitre(); ?>  </td>
+        <td> <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?>  </td>
+        <td> <?php echo $these->getEtatThese(); ?>  </td>
+        <td> <?php echo $these->getDateSoutenance()->format("d/m/Y"); ?>  </td>
+        <td> <?php if($these->getEtablissement()) echo $these->getEtablissement()->getStructure()->getCode(); ?> </td>
+        <td> <?php if($these->getEcoleDoctorale()) echo $these->getEcoleDoctorale()->getStructure()->getSigle(); ?> </td>
+        <td> <?php if($these->getUniteRecherche())echo $these->getUniteRecherche()->getStructure()->getSigle(); ?> </td>
+    </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
