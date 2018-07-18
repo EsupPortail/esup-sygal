@@ -191,6 +191,88 @@ use Application\Entity\Db\These;
                 </div>
             </div>
         </div>
+
+        <div class="col-md-4">
+            <div class="panel panel-warning">
+                <div class="panel-heading">
+                    <h4>
+                        Pas de PdC à 2 mois de la soutenance
+                        <span class="badge"> <?php echo count($pasPDC); ?> </span>
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-extra-condensed">
+                        <thead>
+                        <tr>
+                            <th> These</th>
+                            <th> Nom </th>
+                            <th> Date de soutenance </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php for($i = 0; $i < 5 && $i < count($pasPDC); $i++): ?>
+                            <tr>
+                                <td> <?php echo $pasPDC[$i]->getSourceCode(); ?></td>
+                                <td> <?php echo $pasPDC[$i]->getDoctorant()->getIndividu()->getNomComplet(); ?></td>
+                                <td> <?php echo $pasPDC[$i]->getDateSoutenance()->format("d/m/Y"); ?></td>
+                            </tr>
+                        <?php endfor; ?>
+                        <?php if(count($pasPDC) >= 5): ?>
+                            <tr>
+                                <td colspan="4"> ... </td>
+                            </tr>
+                        <?php endif; ?>
+                        </tbody>
+                    </table>
+                    <div class="pull-right">
+                        <a class="btn btn-success" href="<?php echo $this->url('indicateur/theses-sans-pdc', [], [], true);?>">
+                            <span class="glyphicon glyphicon-eye-open"></span> Visualiser les données
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="panel panel-warning">
+                <div class="panel-heading">
+                    <h4>
+                        Pas de dépôt à 1 mois de la soutenance
+                        <span class="badge"> <?php echo count($pasDepot); ?> </span>
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-extra-condensed">
+                        <thead>
+                        <tr>
+                            <th> These</th>
+                            <th> Nom </th>
+                            <th> Date de soutenance </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php for($i = 0; $i < 5 && $i < count($pasDepot); $i++): ?>
+                            <tr>
+                                <td> <?php echo $pasDepot[$i]->getSourceCode(); ?></td>
+                                <td> <?php echo $pasDepot[$i]->getDoctorant()->getIndividu()->getNomComplet(); ?></td>
+                                <td> <?php echo $pasDepot[$i]->getDateSoutenance()->format("d/m/Y"); ?></td>
+                            </tr>
+                        <?php endfor; ?>
+                        <?php if(count($pasDepot) >= 5): ?>
+                            <tr>
+                                <td colspan="4"> ... </td>
+                            </tr>
+                        <?php endif; ?>
+                        </tbody>
+                    </table>
+                    <div class="pull-right">
+                        <a class="btn btn-success" href="<?php echo $this->url('indicateur/theses-sans-depot', [], [], true);?>">
+                            <span class="glyphicon glyphicon-eye-open"></span> Visualiser les données
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="row">

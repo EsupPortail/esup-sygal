@@ -19,6 +19,10 @@ class IndicateurController extends AbstractActionController {
     use EtablissementServiceAwareTrait;
     use AnomalieServiceAwareTrait;
 
+    /**
+     * @return array|ViewModel
+     * @throws \Exception
+     */
     public function indexAction()
     {
         $acteursSansMail = $this->getIndividuService()->getActeurSansMail();
@@ -26,13 +30,8 @@ class IndicateurController extends AbstractActionController {
         $theses = $this->getTheseService()->getTheseEnCoursPostSoutenance();
         $thesesAnciennes = $this->getTheseService()->getThesesAnciennes(6);
         $thesesASoutenir = $this->getTheseService()->getTheseASoutenir();
-
-//        $thesesSansCouverture = $this->getTheseService()->getThesesAvecSoutenanceSansCouverture();
-//        /** @var These $these */
-//        var_dump(count($thesesSansCouverture));
-//        foreach ($thesesSansCouverture as $these) {
-//            var_dump($these->getValidations(TypeValidation::CODE_PAGE_DE_COUVERTURE));
-//        }
+        $pasPDC = $this->getTheseService()->getTheseSansCouverture(2);
+        $pasDepot = $this->getTheseService()->getTheseSansDepot(1);
 
         $anomalies = $this->getAnomalieService()->getAnomalies();
 
@@ -58,6 +57,8 @@ class IndicateurController extends AbstractActionController {
                 "acteursSansMail" => $acteursSansMail,
                 "doctorantsSansMail" => $doctorantsSansMail,
                 "anomalies" => $anomalies,
+                "pasPDC" => $pasPDC,
+                "pasDepot" => $pasDepot,
             ]
         );
     }
@@ -110,6 +111,51 @@ class IndicateurController extends AbstractActionController {
         return $CSV;
     }
 
+    public function thesesSansPdcAction()
+    {
+        $theses = $this->getTheseService()->getTheseSansDepot(2);
+        return new ViewModel([
+                'theses' => $theses,
+            ]
+        );
+    }
+
+    public function exportThesesSansPdcAction()
+    {
+        $data = $this->getTheseService()->getTheseASoutenir();
+        $headers = [
+            'Identitfiant'                    => function(These $these) {return $these->getId();},
+            'SourceCode'                      => function(These $these) {return $these->getSourceCode();},
+            'Titre'                           => function(These $these) {return $these->getTitre();},
+            'Doctorant'                       => function(These $these) {return $these->getDoctorant()->getIndividu()->getNomComplet();},
+            'État'                            => function(These $these) {return $these->getEtatThese();},
+            'Date de soutenace'               => function(These $these) {return $these->getDateSoutenance()->format("d/m/Y");},
+            'Établissement'                   => function(These $these) {return ($these->getEtablissement())?$these->getEtablissement()->getStructure()->getCode():"";},
+            'École doctorale'                 => function(These $these) {return ($these->getEcoleDoctorale())?$these->getEcoleDoctorale()->getStructure()->getCode():"";},
+            'Unité de recherche'              => function(These $these) {return ($these->getUniteRecherche())?$these->getUniteRecherche()->getStructure()->getCode():"";},
+
+        ];
+
+        $records = [];
+        foreach ($data as $entry) {
+            $record = [];
+            foreach($headers as $key => $fct) {
+                $record[] = $fct($entry);
+            }
+            $records[] = $record;
+        }
+
+        $CSV = new CsvModel();
+        $CSV->setDelimiter(';');
+        $CSV->setEnclosure('"');
+        $CSV->setHeader(array_keys($headers));
+        $CSV->setData($records);
+        $CSV->setFilename('export_pasPDC.csv');
+
+        return $CSV;
+    }
+
+
     /**
      * faire remonter les thèses ayant en cours ayant une date de soutenance dépassée
      * @return ViewModel
@@ -157,6 +203,55 @@ class IndicateurController extends AbstractActionController {
 
         return $CSV;
     }
+
+    /**
+     * faire remonter les thèses ayant en cours ayant une date de soutenance dépassée
+     * @return ViewModel
+     */
+    public function thesesSansDepotAction()
+    {
+        $theses = $this->getTheseService()->getTheseSansDepot(1);
+        return new ViewModel([
+                'theses' => $theses,
+            ]
+        );
+    }
+
+    public function exportThesesSansDepotAction()
+    {
+        $data = $this->getTheseService()->getTheseSansDepot(1);
+        $headers = [
+            'Identitfiant'                    => function(These $these) {return $these->getId();},
+            'SourceCode'                      => function(These $these) {return $these->getSourceCode();},
+            'Titre'                           => function(These $these) {return $these->getTitre();},
+            'Doctorant'                       => function(These $these) {return $these->getDoctorant()->getIndividu()->getNomComplet();},
+            'État'                            => function(These $these) {return $these->getEtatThese();},
+            'Date de soutenace'               => function(These $these) {return $these->getDateSoutenance()->format("d/m/Y");},
+            'Établissement'                   => function(These $these) {return ($these->getEtablissement())?$these->getEtablissement()->getStructure()->getCode():"";},
+            'École doctorale'                 => function(These $these) {return ($these->getEcoleDoctorale())?$these->getEcoleDoctorale()->getStructure()->getCode():"";},
+            'Unité de recherche'              => function(These $these) {return ($these->getUniteRecherche())?$these->getUniteRecherche()->getStructure()->getCode():"";},
+
+        ];
+
+        $records = [];
+        foreach ($data as $entry) {
+            $record = [];
+            foreach($headers as $key => $fct) {
+                $record[] = $fct($entry);
+            }
+            $records[] = $record;
+        }
+
+        $CSV = new CsvModel();
+        $CSV->setDelimiter(';');
+        $CSV->setEnclosure('"');
+        $CSV->setHeader(array_keys($headers));
+        $CSV->setData($records);
+        $CSV->setFilename('export_sansDepot.csv');
+
+        return $CSV;
+    }
+
 
     public function doctorantsSansMailAction()
     {

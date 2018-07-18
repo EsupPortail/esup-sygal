@@ -11,6 +11,7 @@ use Application\Entity\Db\RdvBu;
 use Application\Entity\Db\Repository\TheseRepository;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
+use Application\Entity\Db\Validation;
 use Application\Entity\Db\VersionFichier;
 use Application\Notification\ValidationRdvBuNotification;
 use Application\Service\BaseService;
@@ -24,6 +25,7 @@ use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Traits\MessageAwareInterface;
 use UnicaenAuth\Entity\Db\UserInterface;
+use Zend\Validator\Date;
 
 class TheseService extends BaseService
 {
@@ -357,7 +359,6 @@ class TheseService extends BaseService
             ->andWhere("these.dateSoutenance >= :dateC")
             ->andWhere("these.etatThese = :encours")
             ->setParameter("dateN", $dateMax)
-//            ->setParameter("dateC", $dateMin)
             ->setParameter("dateC", $aujourdhui)
             ->setParameter("encours",These::ETAT_EN_COURS)
             ->orderBy("these.dateSoutenance", "ASC");
@@ -367,38 +368,90 @@ class TheseService extends BaseService
         return $result;
     }
 
-    /** these à un moi de la soutenance sans aucun dépot
+    /**
+     * @param $nbMois
+     * @return array
      * @throws \Exception
      */
-    public function getThesesAvantSoutenanceSansDepot() {
-
-        $interval = new DateInterval('P1M');
-        $minusOneMonth = (new \DateTime())->sub($interval);
+    public function getTheseSansCouverture($nbMois)
+    {
+        $dateCourante = new \DateTime();
+        $dateLimite = (new \DateTime())->add(new DateInterval("P".$nbMois."M"));
 
         $qb = $this->getEntityManager()->getRepository(These::class)->createQueryBuilder("these")
-            ->andWhere("t.dateSoutenance >= :minusOneMonth")
+            ->addSelect("doctorant")
+            ->addSelect("individu")
+            ->leftJoin("these.doctorant", "doctorant")
+            ->leftJoin("doctorant.individu", "individu")
+            ->addSelect("etablissement")
+            ->addSelect("ecoleDoctorale")
+            ->addSelect("uniteRecherche")
+            ->addSelect("structure_etab")
+            ->addSelect("structure_ed")
+            ->addSelect("structure_ur")
+            ->leftJoin("these.etablissement", "etablissement")
+            ->leftJoin("etablissement.structure", "structure_etab")
+            ->leftJoin("these.ecoleDoctorale", "ecoleDoctorale")
+            ->leftJoin("ecoleDoctorale.structure", "structure_ed")
+            ->leftJoin("these.uniteRecherche", "uniteRecherche")
+            ->leftJoin("uniteRecherche.structure", "structure_ur")
             ->andWhere("these.etatThese = :encours")
-            ->setParameter("minusOneMonth", $minusOneMonth)
-            ->setParameter("encours",These::ETAT_EN_COURS)
-        ;
+            ->andWhere("these.dateSoutenance IS NOT NULL")
+            ->andWhere("these.dateSoutenance >= :dateCourante")
+            ->andWhere("these.dateSoutenance < :dateLimite")
+            ->setParameter("encours", These::ETAT_EN_COURS)
+            ->setParameter("dateCourante", $dateCourante)
+            ->setParameter("dateLimite", $dateLimite)
 
+            ->leftJoin("these.validations", "validation")
+            ->andWhere("validation.id IS NULL")
+
+            ->leftjoin("validation.typeValidation", "typeValidation", "WITH", "typeValidation.code = :PDC")
+            ->setParameter("PDC", TypeValidation::CODE_PAGE_DE_COUVERTURE)
+
+        ;
         $result = $qb->getQuery()->getResult();
         return $result;
     }
 
-    public function getThesesAvecSoutenanceSansCouverture()
+    public function getTheseSansDepot($nbMois)
     {
+        $dateCourante = new \DateTime();
+        $dateLimite = (new \DateTime())->add(new DateInterval("P".$nbMois."M"));
 
         $qb = $this->getEntityManager()->getRepository(These::class)->createQueryBuilder("these")
-            ->join("these.validations", "validation")
-            ->join("validation.typeValidation", "typeValidation")
+            ->addSelect("doctorant")
+            ->addSelect("individu")
+            ->leftJoin("these.doctorant", "doctorant")
+            ->leftJoin("doctorant.individu", "individu")
+            ->addSelect("etablissement")
+            ->addSelect("ecoleDoctorale")
+            ->addSelect("uniteRecherche")
+            ->addSelect("structure_etab")
+            ->addSelect("structure_ed")
+            ->addSelect("structure_ur")
+            ->leftJoin("these.etablissement", "etablissement")
+            ->leftJoin("etablissement.structure", "structure_etab")
+            ->leftJoin("these.ecoleDoctorale", "ecoleDoctorale")
+            ->leftJoin("ecoleDoctorale.structure", "structure_ed")
+            ->leftJoin("these.uniteRecherche", "uniteRecherche")
+            ->leftJoin("uniteRecherche.structure", "structure_ur")
+            ->andWhere("these.etatThese = :encours")
             ->andWhere("these.dateSoutenance IS NOT NULL")
-            ->andWhere("typeValidation.code = :typeValidation")
-            //->andWhere("these.validations IS NULL")
-            ->setParameter("typeValidation", TypeValidation::CODE_VERSION_PAPIER_CORRIGEE);
-        ;
-        $result = $qb->getQuery()->getResult();
+            ->andWhere("these.dateSoutenance >= :dateCourante")
+            ->andWhere("these.dateSoutenance < :dateLimite")
+            ->setParameter("encours", These::ETAT_EN_COURS)
+            ->setParameter("dateCourante", $dateCourante)
+            ->setParameter("dateLimite", $dateLimite)
 
+            ->leftJoin("these.fichiers", "fichier")
+            ->andWhere("fichier.id IS NULL")
+
+            ->leftJoin("fichier.nature", "nature", "WITH", "nature.code = :nature")
+            ->setParameter("nature", NatureFichier::CODE_THESE_PDF)
+        ;
+
+        $result = $qb->getQuery()->getResult();
         return $result;
     }
 }
