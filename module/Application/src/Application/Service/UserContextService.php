@@ -233,7 +233,7 @@ class UserContextService extends BaseUserContextService
         }
 
         $domaineEtab = $userWrapper->getDomainFromEppn();
-        $etablissement = $this->etablissementService->getRepository()->findOneByDomaine($domaineEtab);
+        $etablissement = $this->getEtablissementService()->getRepository()->findOneByDomaine($domaineEtab);
         $sourceCode = $etablissement->prependPrefixTo($userWrapper->getSupannId());
 
         $individu = $this->individuService->getRepository()->findOneBySourceCode($sourceCode);

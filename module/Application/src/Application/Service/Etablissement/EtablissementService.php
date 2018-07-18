@@ -4,12 +4,13 @@ namespace Application\Service\Etablissement;
 
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Repository\EtablissementRepository;
-use Application\Entity\Db\TypeStructure;
+use Application\Entity\Db\SourceInterface;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\BaseService;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\RuntimeException;
+use Application\Entity\Db\TypeStructure;
 
 class EtablissementService extends BaseService
 {
@@ -91,7 +92,7 @@ class EtablissementService extends BaseService
 
     /**
      * @param Etablissement $etablissement
-     * @param Utilisateur   $createur
+     * @param Utilisateur $createur
      * @return Etablissement
      */
     public function create(Etablissement $etablissement, Utilisateur $createur)
@@ -110,7 +111,7 @@ class EtablissementService extends BaseService
 
     /**
      * @param Etablissement $etablissement
-     * @param Utilisateur   $destructeur
+     * @param Utilisateur $destructeur
      */
     public function deleteSoftly(Etablissement $etablissement, Utilisateur $destructeur)
     {
@@ -139,6 +140,7 @@ class EtablissementService extends BaseService
 
         return $etablissement;
     }
+
 
 
     public function setLogo(Etablissement $etablissement, $cheminLogo)

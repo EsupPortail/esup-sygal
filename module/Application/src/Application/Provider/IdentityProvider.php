@@ -161,7 +161,7 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
     {
         $id = $this->userWrapper->getSupannId();
         $domaineEtab = $this->userWrapper->getDomainFromEppn();
-        $etablissement = $this->etablissementService->getRepository()->findOneByDomaine($domaineEtab);
+        $etablissement = $this->getEtablissementService()->getRepository()->findOneByDomaine($domaineEtab);
         $sourceCode = $etablissement->prependPrefixTo($id);
 
         try {

@@ -61,7 +61,7 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
         $userWrapper = UserWrapper::instFromUserAuthenticatedEvent($e);
 
         $domaineEtab = $userWrapper->getDomainFromEppn();
-        $etablissement = $this->etablissementService->getRepository()->findOneByDomaine($domaineEtab);
+        $etablissement = $this->getEtablissementService()->getRepository()->findOneByDomaine($domaineEtab);
 
         // création de l'Individu si besoin
         $sourceCode = $etablissement->prependPrefixTo($userWrapper->getSupannId());

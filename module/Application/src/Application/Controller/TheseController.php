@@ -208,7 +208,8 @@ class TheseController extends AbstractController
 
         $unite = $these->getUniteRecherche();
         $rattachements = null;
-        if ($unite !== null) $rattachements = $this->uniteRechercheService->findEtablissementRattachement($unite);
+        if ($unite !== null) $rattachements = $this->getUniteRechercheService()->findEtablissementRattachement($unite);
+
 
         //TODO JP remplacer dans modifierPersopassUrl();
         $urlModification = $this->url()->fromRoute('doctorant/modifier-persopass',['back' => 1, 'doctorant' => $these->getDoctorant()->getId()], [], true);
@@ -597,7 +598,7 @@ class TheseController extends AbstractController
             'theseListUrl'   => $this->urlFichierThese()->listerFichiers($these, $nature, $version, false, ['inclureValidite' => $inclureValidite]),
             'nature'         => $nature,
             'versionFichier' => $version,
-            'etabComue'      => $this->etablissementService->getRepository()->libelle(Etablissement::CODE_COMUE),
+            'etabComue'      => $this->getEtablissementService()->getRepository()->libelle(Etablissement::CODE_COMUE),
         ]);
         $view->setTemplate('application/these/depot/these');
 
