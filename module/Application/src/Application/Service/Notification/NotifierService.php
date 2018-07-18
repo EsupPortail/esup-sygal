@@ -331,7 +331,7 @@ class NotifierService extends \Notification\Service\NotifierService
     public function triggerLogoAbsentUniteRecherche(UniteRecherche $unite)
     {
         $mails = [];
-        foreach ($this->uniteRechercheService->getIndividuByUniteRechercheId($unite->getId()) as $individu) {
+        foreach ($this->getUniteRechercheService()->getIndividuByUniteRechercheId($unite->getId()) as $individu) {
             /** @var Individu $individu */
             $email = $individu->getEmail();
             if ($email !== null) $mails[] = $email;

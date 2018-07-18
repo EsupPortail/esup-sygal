@@ -37,56 +37,35 @@ class UniteRechercheService extends BaseService implements RoleServiceAwareInter
     }
 
     /**
-     * @param Source|null $source
-     * @return UniteRecherche[]
+     * @param UniteRecherche $unite
+     * @return EtablissementRattachement[]
      */
-    public function getUnitesRecherches(Source $source = null)
+    public function findEtablissementRattachement(UniteRecherche $unite)
     {
-        /** @var UniteRecherche[] $unites */
-        $qb = $this->getEntityManager()->getRepository(UniteRecherche::class)->createQueryBuilder("ur");
-        $qb
-            ->leftJoin("ur.structure", "str", "WITH", "ur.structure = str.id")
-            ->leftJoin("str.structuresSubstituees", "sub")
-            ->leftJoin("str.typeStructure", "typ")
-            ->addSelect("str, sub, typ")
-            ->orderBy("str.libelle");
+        $qb = $this->getEntityManager()->getRepository(EtablissementRattachement::class)->createQueryBuilder("er")
+            ->addSelect("e, s")
+            ->join("er.etablissement", "e")
+            ->join("e.structure", "s")
+            ->andWhere("er.unite = :unite")
+            ->orderBy("s.libelle")
+            ->setParameter("unite", $unite);
 
-        if ($source !== null) {
-            $qb
-                ->join('ur.source', 'src', Join::WITH, 'src = :source')
-                ->setParameter('source', $source);
-        }
+        $result = $qb->getQuery()->getResult();
 
-        $unites = $qb->getQuery()->getResult();
-
-        return $unites;
+        return $result;
     }
 
-    /**
-     * @param int $id
-     * @return null|UniteRecherche
-     */
-    public function getUniteRechercheById($id)
+    public function existEtablissementRattachement($unite, $etablissement)
     {
-        /** @var UniteRecherche $unite */
-        $unite = $this->getRepository()->findOneBy(["id" => $id]);
+        $qb = $this->getEntityManager()->getRepository(EtablissementRattachement::class)->createQueryBuilder("er")
+            ->andWhere("er.unite = :unite")
+            ->andWhere("er.etablissement = :etablissement")
+            ->setParameter("unite", $unite)
+            ->setParameter("etablissement", $etablissement);
+        $result = $qb->getQuery()->getOneOrNullResult();
 
-        return $unite;
+        return $result;
     }
-
-    public function getUniteRechercheByStructureId($id)
-    {
-        /** @var UniteRecherche $unite */
-        $qb = $this->getRepository()->createQueryBuilder("u")
-            ->addSelect("s")
-            ->leftJoin("u.structure", "s")
-            ->andWhere("s.id = :id")
-            ->setParameter("id", $id);
-        $unite = $qb->getQuery()->getOneOrNullResult();
-
-        return $unite;
-    }
-
 
     /**
      * @param int $id
@@ -94,12 +73,11 @@ class UniteRechercheService extends BaseService implements RoleServiceAwareInter
      */
     public function getIndividuByUniteRechercheId($id)
     {
-        $unite = $this->getUniteRechercheById($id);
+        $unite = $this->getRepository()->find($id);
         $individus = $this->roleService->getIndividuByStructure($unite->getStructure());
 
         return $individus;
     }
-
 
     /**
      * Historise une ED.
@@ -178,25 +156,6 @@ class UniteRechercheService extends BaseService implements RoleServiceAwareInter
 
     /**
      * @param UniteRecherche $unite
-     * @return EtablissementRattachement[]
-     */
-    public function findEtablissementRattachement(UniteRecherche $unite)
-    {
-        $qb = $this->getEntityManager()->getRepository(EtablissementRattachement::class)->createQueryBuilder("er")
-            ->addSelect("e, s")
-            ->join("er.etablissement", "e")
-            ->join("e.structure", "s")
-            ->andWhere("er.unite = :unite")
-            ->orderBy("s.libelle")
-            ->setParameter("unite", $unite);
-
-        $result = $qb->getQuery()->getResult();
-
-        return $result;
-    }
-
-    /**
-     * @param UniteRecherche $unite
      * @param Etablissement  $etablissement
      * @throws OptimisticLockException
      */
@@ -229,32 +188,4 @@ class UniteRechercheService extends BaseService implements RoleServiceAwareInter
             $this->getEntityManager()->flush($result);
         }
     }
-
-    public function setEtablissementRattachementPrincipal(UniteRecherche $unite, Etablissement $etablissement)
-    {
-        $ers = $this->findEtablissementRattachement($unite);
-
-        foreach ($ers as $er) {
-            if ($er->getEtablissement()->getId() === $etablissement->getId()) {
-                $er->setPrincipal(true);
-            } else {
-                $er->setPrincipal(false);
-            }
-            $this->getEntityManager()->flush($er);
-        }
-    }
-
-    public function existEtablissementRattachement($unite, $etablissement)
-    {
-        $qb = $this->getEntityManager()->getRepository(EtablissementRattachement::class)->createQueryBuilder("er")
-            ->andWhere("er.unite = :unite")
-            ->andWhere("er.etablissement = :etablissement")
-            ->setParameter("unite", $unite)
-            ->setParameter("etablissement", $etablissement);
-        $result = $qb->getQuery()->getOneOrNullResult();
-
-        return $result;
-    }
-
-
 }

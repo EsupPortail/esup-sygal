@@ -512,7 +512,7 @@ class TheseRechercheService
 
     private function fetchUnitesRecherchesOptions()
     {
-        $urs = $this->uniteRechercheService->getUnitesRecherches();
+        $urs = $this->getUniteRechercheService()->getRepository()->findAll();
 
         $options = [];
         foreach ($urs as $ur) {

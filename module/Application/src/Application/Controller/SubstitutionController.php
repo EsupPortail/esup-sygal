@@ -355,7 +355,7 @@ class SubstitutionController extends AbstractController
                 $structures = $this->getEtablissementService()->getRepository()->findAll();
                 break;
             case (TypeStructure::CODE_UNITE_RECHERCHE):
-                $structures = $this->getUniteRechercheService()->getUnitesRecherches();
+                $structures = $this->getUniteRechercheService()->getRepository()->findAll();
                 break;
         }
 

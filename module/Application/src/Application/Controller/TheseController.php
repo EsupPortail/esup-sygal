@@ -206,7 +206,8 @@ class TheseController extends AbstractController
 
         $unite = $these->getUniteRecherche();
         $rattachements = null;
-        if ($unite !== null) $rattachements = $this->uniteRechercheService->findEtablissementRattachement($unite);
+        if ($unite !== null) $rattachements = $this->getUniteRechercheService()->findEtablissementRattachement($unite);
+
 
         //TODO JP remplacer dans modifierPersopassUrl();
         $urlModification = $this->url()->fromRoute('doctorant/modifier-persopass',['back' => 1, 'doctorant' => $these->getDoctorant()->getId()], [], true);
