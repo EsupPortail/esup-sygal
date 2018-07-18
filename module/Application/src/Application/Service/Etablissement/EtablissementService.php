@@ -174,20 +174,4 @@ class EtablissementService extends BaseService
             throw new RuntimeException("Erreur lors de l'enregistrement de l'Etablissement", null, $e);
         }
     }
-
-    public function findEtablissementByStructureId($structureId)
-    {
-        $qb = $this->getRepository()->createQueryBuilder("e")
-            ->addSelect("s")
-            ->join("e.structure", "s")
-            ->andWhere("s.id = :structureId")
-            ->setParameter("structureId", $structureId);
-        try {
-            $etablissement = $qb->getQuery()->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Anomalie plusieurs établissements avec le même id.", 0, $e);
-        }
-
-        return $etablissement;
-    }
 }

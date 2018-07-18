@@ -133,6 +133,7 @@ class EtablissementController extends AbstractController
         }
 
         $this->etablissementForm->setAttribute('action', $this->url()->fromRoute('etablissement/ajouter'));
+        $this->etablissementForm->bind(new Etablissement());
 
         $viewModel = new ViewModel([
             'form' => $this->etablissementForm,
@@ -158,7 +159,12 @@ class EtablissementController extends AbstractController
     {
         /** @var Etablissement $etablissement */
         $structureId = $this->params()->fromRoute("etablissement");
-        $etablissement = $this->getEtablissementService()->getRepository()->findByStructureId($structureId);
+        $etablissement = null;
+        if ($structureId) {
+            $etablissement = $this->getEtablissementService()->getRepository()->findByStructureId($structureId);
+        } else {
+            $etablissement = new Etablissement();
+        }
         $this->etablissementForm->bind($etablissement);
 
         // si POST alors on revient du formulaire

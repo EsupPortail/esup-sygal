@@ -124,4 +124,20 @@ class EtablissementRepository extends DefaultEntityRepository
 
         return $etab;
     }
+
+    public function findByStructureId($structureId)
+    {
+        $qb = $this->createQueryBuilder("e")
+            ->addSelect("s")
+            ->join("e.structure", "s")
+            ->andWhere("s.id = :structureId")
+            ->setParameter("structureId", $structureId);
+        try {
+            $etablissement = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Anomalie plusieurs établissements avec le même id.", 0, $e);
+        }
+
+        return $etablissement;
+    }
 }
