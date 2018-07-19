@@ -119,7 +119,7 @@ use UnicaenApp\View\Helper\AppInfos;
  * @method \UnicaenApp\Form\View\Helper\FormLdapPeople               formLdapPeople(\Zend\Form\ElementInterface $element = null)
  * @method \UnicaenApp\Form\View\Helper\FormErrors|string            formErrors(\Zend\Form\Form $form = null, $message = null)
  * @method \UnicaenApp\Form\View\Helper\Form                         form(\Zend\Form\FormInterface $form = null)
- * @method \UnicaenApp\View\Helper\MessageCollectorHelper            messagecollector()
+ * @method \UnicaenApp\View\Helper\MessageCollectorHelper            messagecollector($namespace = null)
  * @method \UnicaenApp\View\Helper\HeadScript                        headScript($mode = 'FILE', $spec = null, $placement = 'APPEND', array $attrs = [], $type = 'text/javascript')
  * @method \UnicaenApp\View\Helper\InlineScript                      inlineScript($mode = 'FILE', $spec = null, $placement = 'APPEND', array $attrs = [], $type = 'text/javascript')
  * @method \UnicaenApp\View\Helper\HeadLink                          headLink(array $attributes = null, $placement = 'APPEND')
