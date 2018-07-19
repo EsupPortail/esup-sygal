@@ -140,4 +140,20 @@ class EtablissementRepository extends DefaultEntityRepository
 
         return $etablissement;
     }
+
+    public function findOneByLibelle($libelle)
+    {
+        $qb = $this->createQueryBuilder("e")
+            ->addSelect("s")
+            ->join("e.structure", "s")
+            ->andWhere("s.libelle = :structureId")
+            ->setParameter("structureId", $libelle);
+        try {
+            $etablissement = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Anomalie plusieurs établissements avec le même id.", 0, $e);
+        }
+
+        return $etablissement;
+    }
 }

@@ -5,6 +5,7 @@ namespace Application\Service\Fichier;
 use Application\Command\ShellScriptRunner;
 use Application\Controller\TheseController;
 use Application\Entity\Db\Acteur;
+use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\Repository\FichierRepository;
@@ -549,7 +550,19 @@ class FichierService extends BaseService
         $rapporteurs =  array_filter($acteurs, function($a) {return TheseController::estRapporteur($a); });
         $directeurs =  array_filter($acteurs, function($a) {return TheseController::estDirecteur($a); });
         $membres = array_diff($acteurs, $rapporteurs, $directeurs);
-        $informations["ENSI"] = (TheseController::estENSI($directeurs))?"oui":"non";
+        $informations["cotut-libelle"] = ($these->getLibelleEtabCotutelle())?($these->getLibelleEtabCotutelle()):"non";
+        $informations["cotut-pays"]    = ($these->getLibellePaysCotutelle())?($these->getLibellePaysCotutelle()):"non";
+//        $informations["logo-cotutelle"]    = ($these->getLibelleEtabCotutelle())?"":"non";
+//        /** @var Etablissement $etabCotut */
+//        $etabCotut = $this->getEtablissementService()->getRepository()->findOneByLibelle($informations["cotut-libelle"]);
+//        if ($etabCotut) {
+//            $logo = $etabCotut->getCheminLogo();
+//            if ($logo) $informations["logo-cotutelle"] = $logo;
+//        }
+
+        $informations["logo-associe"] = "non";
+        if (TheseController::estENSI($directeurs))      $informations["logo-associe"] = "public/logo_ensi.jpg";
+        if (TheseController::estESITC ($directeurs))    $informations["logo-associe"] = "public/logo_esitc.jpg";
 
         $informations["nombre de membres"] = count($membres)?count($membres):"";
         $informations["nombre de rapporteurs"] = count($rapporteurs)?count($rapporteurs):"";

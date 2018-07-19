@@ -60,14 +60,17 @@ $PATH = Structure::PATH;
     <?php endif; ?>
     <br/>
 
-<!-- TODO COTUTELLE -->
-<!--    //Preparation des champs associés à la cotutelle-->
-<!--    if ($these->getLibelleEtabCotutelle() !== null && $these->getLibellePaysCotutelle() === null) {-->
-<!--    $texte .= "En cotutelle avec " . $these->getLibelleEtabCotutelle() . "<br/>";-->
-<!--    }-->
-<!--    if ($these->getLibelleEtabCotutelle() !== null && $these->getLibellePaysCotutelle() !== null) {-->
-<!--    $texte .= "En cotutelle internationale de thèse avec " . $these->getLibelleEtabCotutelle() .", ". $these->getLibellePaysCotutelle() . "<br/>";-->
-<!--    }-->
+    <?php if ($informations["cotut-libelle"] !== "non"): ?>
+        En cotutelle
+        <?php if ($informations["cotut-pays"] !== "non"): ?>
+            internationnale
+        <?php endif; ?>
+        avec
+        <?php echo $informations["cotut-libelle"]; ?>
+        <?php if ($informations["cotut-pays"] !== "non"): ?>
+            , <?php echo ($informations["cotut-pays"]); ?>
+        <?php endif; ?>
+    <?php endif; ?>
 </div>
 
 
@@ -146,13 +149,25 @@ $PATH = Structure::PATH;
                 <span style='background-color:red;'> Établissement d'inscription ou logo d'établissement non renseigné. </span>
             <?php endif; ?>
         </td>
-        <!-- TODO ENSI -->
-        <?php if ($informations["ENSI"] == "oui"): ?>
-        <td>
-            <img class="logo_small" src="public/logo_ensi.jpg"/>
-        </td>
+        <!-- TODO ASSOCIE -->
+        <?php if ($informations["logo-associe"] == "oui"): ?>
+            <td>
+                <?php if ($informations["logo-cotutelle"]): ?>
+                    <img class="logo_small" src="<?php echo $PATH . $informations["logo-associe"]; ?>"/>
+                <?php else: ?>
+                    <span style='background-color:red;'> Établissement associé ou logo d'établissement non renseigné. </span>
+                <?php endif; ?>
+            </td>
         <?php endif; ?>
-        <!-- TODO COTUTELLE -->
+<!--        --><?php //if ($informations["cotut-libelle"] != "non"): ?>
+<!--            <td>-->
+<!--                --><?php //if ($informations["logo-cotutelle"]): ?>
+<!--                    <img class="logo_small" src="--><?php //echo $PATH . $informations["logo-cotutelle"]; ?><!--"/>-->
+<!--                --><?php //else: ?>
+<!--                    <span style='background-color:red;'> Établissement de cotutelle ou logo d'établissement non renseigné. </span>-->
+<!--                --><?php //endif; ?>
+<!--            </td>-->
+<!--        --><?php //endif; ?>
         <td>
             <?php if ($informations["logo-ecoleDoctorale"]): ?>
                 <img class="logo_small" src="<?php echo $PATH . ($informations["logo-ecoleDoctorale"]); ?>"/>

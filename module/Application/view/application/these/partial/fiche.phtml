@@ -24,17 +24,21 @@ $acteursFormatter = new ActeursFormatter();
     </tr>
 
     <?php if ($these->getActeurs()->count()) {
-            $roles = ["Directeur de thèse", "Membre du jury", "Rapporteur du jury"];
+            $roles = ["Directeur de thèse", "Co-directeur de thèse", "Membre du jury", "Rapporteur du jury"];
+//            $roles = ["D", "K", "M", "R"];
             foreach ($roles as $role) {
-                echo "<tr>";
-                echo "<th>" . $role . "</th>";
-                $acteursFormatter->asArray()->paramFilter(["role" => $role,]);
+                $acteursFormatter->asArray()->paramFilter(["roleLibelle" => $role,]);
                 $acteurs = $acteursFormatter->filter($these->getActeurs());
-                echo "<td>";
-                if (count($acteurs) == 0) echo "(Inconnus)";
-                else echo implode("<br>", $acteurs);
-                echo "</td>";
-                echo "</tr>";
+
+                if (count($acteurs) != 0) {
+                    echo "<tr>";
+                    echo "<th>" . $role . "</th>";
+                    echo "<td>";
+                    if (count($acteurs) == 0) echo "(Inconnus)";
+                    else echo implode("<br>", $acteurs);
+                    echo "</td>";
+                    echo "</tr>";
+                }
             }
         }
     ?>
@@ -56,7 +60,7 @@ $acteursFormatter = new ActeursFormatter();
         <th>École doct.</th>
         <td>
             <?php if ($these->getEcoleDoctorale()): ?>
-                <?php echo $these->getEcoleDoctorale()->getSourceCode() . " - " . $these->getEcoleDoctorale()->getLibelle() ?>
+                <?php echo $these->getEcoleDoctorale()->getSigle() . " - " . $these->getEcoleDoctorale()->getLibelle() ?>
             <?php endif ?>
         </td>
     </tr>
