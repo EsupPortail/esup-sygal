@@ -8,6 +8,7 @@ use Application\Assertion\These\GeneratedTheseEntityAssertion;
 use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\NatureFichier;
+use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\VersionFichier;
@@ -72,8 +73,8 @@ class TheseEntityAssertion extends GeneratedTheseEntityAssertion
                 return $this->isUtilisateurEstAuteurDeLaThese();
             }
             elseif ($role->isDirecteurThese()) {
-                // TODO
-                return false;
+                $individu = $this->userContextService->getIdentityIndividu();
+                return $this->these->hasActeurWithRole($individu, Role::CODE_DIRECTEUR_THESE);
             }
         }
 
