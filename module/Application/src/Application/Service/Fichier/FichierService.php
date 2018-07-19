@@ -5,6 +5,7 @@ namespace Application\Service\Fichier;
 use Application\Command\ShellScriptRunner;
 use Application\Controller\TheseController;
 use Application\Entity\Db\Acteur;
+use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\Repository\FichierRepository;
@@ -550,6 +551,17 @@ class FichierService extends BaseService
         $directeurs =  array_filter($acteurs, function($a) {return TheseController::estDirecteur($a); });
         $membres = array_diff($acteurs, $rapporteurs, $directeurs);
         $informations["ENSI"] = (TheseController::estENSI($directeurs))?"oui":"non";
+        $informations["cotut-libelle"] = ($these->getLibelleEtabCotutelle())?($these->getLibelleEtabCotutelle()):"non";
+        $informations["cotut-pays"]    = ($these->getLibellePaysCotutelle())?($these->getLibellePaysCotutelle()):"non";
+        $informations["logo-cotutelle"]    = ($these->getLibelleEtabCotutelle())?"":"non";
+
+        //fetch logo cotut
+        /** @var Etablissement $etabCotut */
+        $etabCotut = $this->getEtablissementService()->getRepository()->findOneByLibelle($informations["cotut-libelle"]);
+        if ($etabCotut) {
+            $logo = $etabCotut->getCheminLogo();
+            if ($logo) $informations["logo-cotutelle"] = $logo;
+        }
 
         $informations["nombre de membres"] = count($membres)?count($membres):"";
         $informations["nombre de rapporteurs"] = count($rapporteurs)?count($rapporteurs):"";
