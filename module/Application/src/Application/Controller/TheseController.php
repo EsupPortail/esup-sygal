@@ -855,29 +855,11 @@ class TheseController extends AbstractController
         $these = $this->requestedThese();
         $version = $this->fichierService->fetchVersionFichier($this->params()->fromQuery('version'));
 
-//        $theseFichiers = $these->getFichiersByNatureEtVersion(NatureFichier::CODE_THESE_PDF, $version);
         $theseFichiers = $this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF, $version, false);
         /** @var Fichier $fichierThese */
         $fichierThese = current($theseFichiers);
 
         if ($this->getRequest()->isPost()) {
-
-            //TODO move this to the suppr action
-            // retrait de la validation précédente si le fichier est identique afin de pouvoir retester l'archivabilité après effacement
-            $qb = $this->validationService->getRepository()->createQueryBuilder('v')
-                ->where("t.id = :theseid")
-                ->andWhere("tv.code = :type");
-            $qb->setParameter(":theseid", $these->getId());
-            $qb->setParameter(":type", TypeValidation::CODE_DEPOT_THESE_CORRIGEE);
-            $res = $qb->getQuery()->getResult();
-
-            if(isset($res) && count($res) > 0) {
-                //echo "something is here !"."<br/>";
-                $validation = $res[0];
-                $this->validationService->getEntityManager()->remove($validation);
-                $this->validationService->getEntityManager()->flush();
-            }
-
             $action = $this->params()->fromPost('action', $this->params()->fromQuery('action'));
             if ('tester' === $action) {
                 try {

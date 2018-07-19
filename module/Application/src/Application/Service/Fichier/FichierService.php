@@ -426,9 +426,10 @@ class FichierService extends BaseService
     public function supprimerFichier(Fichier $fichier)
     {
         $version = $fichier->getVersion();
+        $nature = $fichier->getNature();
 
         // si c'est le fichier de thèse original qui est supprimé, suppression aussi du fichier retraité éventuel
-        $supprimerAussiTheseRetraite = ! $fichier->getEstAnnexe() && $version->estVersionOriginale();
+        $supprimerAussiTheseRetraite = $nature->estThesePdf() && $version->estVersionOriginale();
 
         // suppression du fichier
         // NB: "validites" supprimés en cascade
