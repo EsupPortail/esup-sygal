@@ -159,15 +159,15 @@ $PATH = Structure::PATH;
                 <?php endif; ?>
             </td>
         <?php endif; ?>
-        <?php if ($informations["cotut-libelle"] != "non"): ?>
-            <td>
-                <?php if ($informations["logo-cotutelle"]): ?>
-                    <img class="logo_small" src="<?php echo $PATH . $informations["logo-cotutelle"]; ?>"/>
-                <?php else: ?>
-                    <span style='background-color:red;'> Établissement de cotutelle ou logo d'établissement non renseigné. </span>
-                <?php endif; ?>
-            </td>
-        <?php endif; ?>
+<!--        --><?php //if ($informations["cotut-libelle"] != "non"): ?>
+<!--            <td>-->
+<!--                --><?php //if ($informations["logo-cotutelle"]): ?>
+<!--                    <img class="logo_small" src="--><?php //echo $PATH . $informations["logo-cotutelle"]; ?><!--"/>-->
+<!--                --><?php //else: ?>
+<!--                    <span style='background-color:red;'> Établissement de cotutelle ou logo d'établissement non renseigné. </span>-->
+<!--                --><?php //endif; ?>
+<!--            </td>-->
+<!--        --><?php //endif; ?>
         <td>
             <?php if ($informations["logo-ecoleDoctorale"]): ?>
                 <img class="logo_small" src="<?php echo $PATH . ($informations["logo-ecoleDoctorale"]); ?>"/>

@@ -552,15 +552,13 @@ class FichierService extends BaseService
         $membres = array_diff($acteurs, $rapporteurs, $directeurs);
         $informations["cotut-libelle"] = ($these->getLibelleEtabCotutelle())?($these->getLibelleEtabCotutelle()):"non";
         $informations["cotut-pays"]    = ($these->getLibellePaysCotutelle())?($these->getLibellePaysCotutelle()):"non";
-        $informations["logo-cotutelle"]    = ($these->getLibelleEtabCotutelle())?"":"non";
-
-        //fetch logo cotut
-        /** @var Etablissement $etabCotut */
-        $etabCotut = $this->getEtablissementService()->getRepository()->findOneByLibelle($informations["cotut-libelle"]);
-        if ($etabCotut) {
-            $logo = $etabCotut->getCheminLogo();
-            if ($logo) $informations["logo-cotutelle"] = $logo;
-        }
+//        $informations["logo-cotutelle"]    = ($these->getLibelleEtabCotutelle())?"":"non";
+//        /** @var Etablissement $etabCotut */
+//        $etabCotut = $this->getEtablissementService()->getRepository()->findOneByLibelle($informations["cotut-libelle"]);
+//        if ($etabCotut) {
+//            $logo = $etabCotut->getCheminLogo();
+//            if ($logo) $informations["logo-cotutelle"] = $logo;
+//        }
 
         $informations["logo-associe"] = "non";
         if (TheseController::estENSI($directeurs))      $informations["logo-associe"] = "public/logo_ensi.jpg";
