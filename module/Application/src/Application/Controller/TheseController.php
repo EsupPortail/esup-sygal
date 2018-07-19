@@ -1446,6 +1446,7 @@ class TheseController extends AbstractController
 
     /** Vrai si un des acteurs à pour etablissement : '14 ENSI de Caen' ou 'ENSI DE CAEN'
      * @param Acteur[] $acteurs
+     * @return bool
      */
     public static function estENSI($acteurs) {
         foreach ($acteurs as $acteur) {
@@ -1458,6 +1459,7 @@ class TheseController extends AbstractController
 
     /** Vrai si un des acteurs à pour etablissement : '14 ENSI de Caen' ou 'ENSI DE CAEN'
      * @param Acteur[] $acteurs
+     * @return bool
      */
     public static function estESITC($acteurs) {
         foreach ($acteurs as $acteur) {
