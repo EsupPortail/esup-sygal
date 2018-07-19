@@ -549,7 +549,7 @@ class FichierService extends BaseService
         $rapporteurs =  array_filter($acteurs, function($a) {return TheseController::estRapporteur($a); });
         $directeurs =  array_filter($acteurs, function($a) {return TheseController::estDirecteur($a); });
         $membres = array_diff($acteurs, $rapporteurs, $directeurs);
-        $informations["ENSI"] = TheseController::estENSI($directeurs);
+        $informations["ENSI"] = (TheseController::estENSI($directeurs))?"oui":"non";
 
         $informations["nombre de membres"] = count($membres)?count($membres):"";
         $informations["nombre de rapporteurs"] = count($rapporteurs)?count($rapporteurs):"";
