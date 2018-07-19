@@ -4,7 +4,7 @@ data/DoctrineModule/
 data/DoctrineORMModule/
 .DS_Store
 ressources/Logos
-
+upload/*
 vendor/
 
 .~*

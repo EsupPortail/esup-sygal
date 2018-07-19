@@ -7,6 +7,7 @@ use Application\Service\Fichier\FichierService;
 use Application\Service\Individu\IndividuService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
+use Application\Service\Validation\ValidationService;
 use Application\Service\VersionFichier\VersionFichierService;
 use Zend\Mvc\Controller\ControllerManager;
 
@@ -20,18 +21,22 @@ class FichierTheseControllerFactory
      */
     public function __invoke(ControllerManager $controllerManager)
     {
+        $serviceLocator = $controllerManager->getServiceLocator();
+
         /**
          * @var TheseService          $theseService
          * @var FichierService        $fichierService
          * @var VersionFichierService $versionFichierService
          * @var NotifierService       $notificationService
          * @var IndividuService       $individuService
+         * @var ValidationService     $validationService
          */
-        $theseService = $controllerManager->getServiceLocator()->get('TheseService');
-        $fichierService = $controllerManager->getServiceLocator()->get('FichierService');
-        $versionFichierService = $controllerManager->getServiceLocator()->get('VersionFichierService');
-        $notificationService = $controllerManager->getServiceLocator()->get(NotifierService::class);
-        $individuService = $controllerManager->getServiceLocator()->get('IndividuService');
+        $theseService = $serviceLocator->get('TheseService');
+        $fichierService = $serviceLocator->get('FichierService');
+        $versionFichierService = $serviceLocator->get('VersionFichierService');
+        $notificationService = $serviceLocator->get(NotifierService::class);
+        $individuService = $serviceLocator->get('IndividuService');
+        $validationService = $serviceLocator->get('ValidationService');
 
         $controller = new FichierTheseController();
         $controller->setTheseService($theseService);
@@ -39,6 +44,7 @@ class FichierTheseControllerFactory
         $controller->setVersionFichierService($versionFichierService);
         $controller->setNotifierService($notificationService);
         $controller->setIndividuService($individuService);
+        $controller->setValidationService($validationService);
 
         return $controller;
     }

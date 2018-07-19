@@ -4,6 +4,7 @@ namespace Application\Controller;
 
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\NatureFichier;
+use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\VersionFichier;
 use Application\Filter\IdifyFilterAwareTrait;
 use Application\Filter\NomFichierFormatter;
@@ -14,6 +15,7 @@ use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
+use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\View\Helper\Sortable;
 use Doctrine\ORM\NonUniqueResultException;
@@ -34,6 +36,7 @@ class FichierTheseController extends AbstractController
     use IdifyFilterAwareTrait;
     use NotifierServiceAwareTrait;
     use IndividuServiceAwareTrait;
+    use ValidationServiceAwareTrait;
 
     const UPLOAD_MAX_FILESIZE = '5M';
 
@@ -359,6 +362,8 @@ class FichierTheseController extends AbstractController
     {
         $fichier = $this->requestFichier();
         $these = $this->requestedThese();
+        $version = $fichier->getVersion();
+        $nature = $fichier->getNature();
 
         if (!$fichier || $fichier->getThese() !== $these) {
             // NB: il a fallu abandonner l'exception car faisait planter la suppression
@@ -368,7 +373,15 @@ class FichierTheseController extends AbstractController
             return [];
         }
 
+        // s'il s'agit de la thèse corrigée, il faudra supprimer l'éventuelle validation du dépôt
+        $supprimerValidationDepotTheseCorrigee = $nature->estThesePdf() && $version->estVersionCorrigee();
+
         $this->fichierService->supprimerFichier($fichier);
+
+        // suppression de l'éventuelle validation du dépôt
+        if ($supprimerValidationDepotTheseCorrigee) {
+            $this->validationService->unvalidateDepotTheseCorrigee($these);
+        }
 
         return false;
     }
