@@ -550,7 +550,6 @@ class FichierService extends BaseService
         $rapporteurs =  array_filter($acteurs, function($a) {return TheseController::estRapporteur($a); });
         $directeurs =  array_filter($acteurs, function($a) {return TheseController::estDirecteur($a); });
         $membres = array_diff($acteurs, $rapporteurs, $directeurs);
-        $informations["ENSI"] = (TheseController::estENSI($directeurs))?"oui":"non";
         $informations["cotut-libelle"] = ($these->getLibelleEtabCotutelle())?($these->getLibelleEtabCotutelle()):"non";
         $informations["cotut-pays"]    = ($these->getLibellePaysCotutelle())?($these->getLibellePaysCotutelle()):"non";
         $informations["logo-cotutelle"]    = ($these->getLibelleEtabCotutelle())?"":"non";
@@ -562,6 +561,10 @@ class FichierService extends BaseService
             $logo = $etabCotut->getCheminLogo();
             if ($logo) $informations["logo-cotutelle"] = $logo;
         }
+
+        $informations["logo-associe"] = "non";
+        if (TheseController::estENSI($directeurs))      $informations["logo-associe"] = "public/logo_ensi.jpg";
+        if (TheseController::estESITC ($directeurs))    $informations["logo-associe"] = "public/logo_esitc.jpg";
 
         $informations["nombre de membres"] = count($membres)?count($membres):"";
         $informations["nombre de rapporteurs"] = count($rapporteurs)?count($rapporteurs):"";

@@ -1456,6 +1456,18 @@ class TheseController extends AbstractController
         return false;
     }
 
+    /** Vrai si un des acteurs à pour etablissement : '14 ENSI de Caen' ou 'ENSI DE CAEN'
+     * @param Acteur[] $acteurs
+     */
+    public static function estESITC($acteurs) {
+        foreach ($acteurs as $acteur) {
+            if ($acteur->getEtablissement() == 'ESITC' || $acteur->getEtablissement() == 'ESITC Caen') {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Prédicat testant si un acteur est un rapporteur de thèse
      * @param Acteur $var
