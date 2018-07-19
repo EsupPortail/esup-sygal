@@ -28,16 +28,17 @@ class EtablissementService extends BaseService
     /**
      * @return Etablissement[]
      */
-    public function getEtablissements() {
+    public function getEtablissements()
+    {
         /** @var Etablissement[] $etablissments */
         $qb = $this->getEntityManager()->getRepository(Etablissement::class)->createQueryBuilder("et")
             ->leftJoin("et.structure", "str", "WITH", "et.structure = str.id")
             ->leftJoin("str.structuresSubstituees", "sub")
             ->leftJoin("str.typeStructure", "typ")
             ->addSelect("str, sub, typ")
-            ->orderBy("str.libelle")
-        ;
+            ->orderBy("str.libelle");
         $etablissements = $qb->getQuery()->getResult();
+
         return $etablissements;
     }
 
@@ -46,7 +47,8 @@ class EtablissementService extends BaseService
      * @param boolean $include (si 'true' alors seulement la source sinon tous sauf la source)
      * @return Etablissement[]
      */
-    public function getEtablissementsBySource($source , $include=true) {
+    public function getEtablissementsBySource($source, $include = true)
+    {
         $qb = $this->entityManager->getRepository(Etablissement::class)->createQueryBuilder("e")
             ->join("e.source", "s");
 
@@ -59,6 +61,7 @@ class EtablissementService extends BaseService
 
         /** @var Etablissement[] $etablissments */
         $etablissments = $qb->getQuery()->execute();
+
         return $etablissments;
     }
 
@@ -66,13 +69,16 @@ class EtablissementService extends BaseService
      * @param int $id
      * @return null|Etablissement
      */
-    public function getEtablissementById($id) {
+    public function getEtablissementById($id)
+    {
         /** @var Etablissement $etablissement */
         $etablissement = $this->getRepository()->findOneBy(["id" => $id]);
+
         return $etablissement;
     }
 
-    public function getEtablissementByStructureId($id) {
+    public function getEtablissementByStructureId($id)
+    {
         /** @var Etablissement $etablissement */
         $qb = $this->getRepository()->createQueryBuilder("e")
             ->addSelect("s")
@@ -80,6 +86,7 @@ class EtablissementService extends BaseService
             ->andWhere("s.id = :id")
             ->setParameter("id", $id);
         $etablissement = $qb->getQuery()->getOneOrNullResult();
+
         return $etablissement;
     }
 
@@ -166,35 +173,5 @@ class EtablissementService extends BaseService
         } catch (OptimisticLockException $e) {
             throw new RuntimeException("Erreur lors de l'enregistrement de l'Etablissement", null, $e);
         }
-    }
-
-    public function findEtablissementByStructureId($structureId)
-    {
-        $qb = $this->getRepository()->createQueryBuilder("e")
-            ->addSelect("s")
-            ->join("e.structure", "s")
-            ->andWhere("s.id = :structureId")
-            ->setParameter("structureId", $structureId);
-        try {
-            $etablissement = $qb->getQuery()->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Anomalie plusieurs établissements avec le même id.", 0, $e);
-        }
-        return $etablissement;
-    }
-
-    public function findEtablissementsNonSubstitues()
-    {
-        $qb = $this->getRepository()->createQueryBuilder("e")
-            ->join("e.structure", "s")
-            ->join("e.source", "src")
-            ->leftJoin("s.structuresSubstituees", "ss")
-            ->andWhere("s.structuresSubstituees IS EMPTY")
-            ->andWhere("src.code != :code")
-            ->orderBy("s.libelle")
-            ->setParameter("code", SourceInterface::CODE_SYGAL)
-        ;
-
-        return $qb->getQuery()->getResult();
     }
 }

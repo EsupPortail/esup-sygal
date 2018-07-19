@@ -2,13 +2,16 @@
 
 namespace Application\Service\These;
 
+use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\SourceInterface;
 use Application\Entity\Db\These;
+use Application\Entity\Db\UniteRecherche;
 use Application\Entity\UserWrapper;
 use Application\QueryBuilder\TheseQueryBuilder;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Application\Service\Source\SourceServiceAwareTrait;
 use Application\Service\These\Filter\TheseSelectFilter;
 use Application\Service\These\Filter\TheseTextFilter;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
@@ -26,6 +29,12 @@ class TheseRechercheService
     use EtablissementServiceAwareTrait;
     use UniteRechercheServiceAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
+    use SourceServiceAwareTrait;
+
+    /**
+     * @var bool
+     */
+    private $unpopulatedOptions = false;
 
     /**
      * @var TheseSelectFilter[]
@@ -38,11 +47,73 @@ class TheseRechercheService
     private $sorters = [];
 
     /**
+     * @var
+     */
+    private $role;
+
+    /**
+     * @return self
+     */
+    public function createFiltersWithUnpopulatedOptions()
+    {
+        $etatsThese = [];
+        $etablissements = [];
+        $ecolesDoctorales = [];
+        $unitesRecherches = [];
+        $anneesPremiereInscription = [];
+        $disciplines = [];
+
+        $this->filters = [
+            TheseSelectFilter::NAME_etatThese                => new TheseSelectFilter(
+                "État",
+                TheseSelectFilter::NAME_etatThese,
+                $etatsThese
+            ),
+            TheseSelectFilter::NAME_etablissement            => new TheseSelectFilter(
+                "Établissement",
+                TheseSelectFilter::NAME_etablissement,
+                $etablissements
+            ),
+            TheseSelectFilter::NAME_ecoleDoctorale           => new TheseSelectFilter(
+                "ED",
+                TheseSelectFilter::NAME_ecoleDoctorale,
+                $ecolesDoctorales,
+                ['liveSearch' => true]
+            ),
+            TheseSelectFilter::NAME_uniteRecherche           => new TheseSelectFilter(
+                "UR",
+                TheseSelectFilter::NAME_uniteRecherche,
+                $unitesRecherches,
+                ['liveSearch' => true]
+            ),
+            TheseSelectFilter::NAME_anneePremiereInscription => new TheseSelectFilter(
+                "1ère inscr.",
+                TheseSelectFilter::NAME_anneePremiereInscription,
+                $anneesPremiereInscription
+            ),
+            TheseSelectFilter::NAME_discipline               => new TheseSelectFilter(
+                "Discipline",
+                TheseSelectFilter::NAME_discipline,
+                $disciplines,
+                ['width' => '200px', 'liveSearch' => true]
+            ),
+            TheseTextFilter::NAME_text                       => new TheseTextFilter(
+                "Recherche de texte",
+                TheseTextFilter::NAME_text
+            ),
+        ];
+
+        $this->unpopulatedOptions = true;
+
+        return $this;
+    }
+
+    /**
      * @return self
      */
     public function createFilters()
     {
-        if (! empty($this->filters)) {
+        if (! $this->unpopulatedOptions && ! empty($this->filters)) {
             return $this;
         }
 
@@ -92,6 +163,8 @@ class TheseRechercheService
                 TheseTextFilter::NAME_text
             ),
         ];
+
+        $this->unpopulatedOptions = false;
 
         return $this;
     }
@@ -266,7 +339,7 @@ class TheseRechercheService
      */
     public function decorateQbFromUserContext(TheseQueryBuilder $qb)
     {
-        $role = $this->userContextService->getSelectedIdentityRole();
+        $role = $this->getSelectedIdentityRole();
 
         if ($role->isTheseDependant()) {
             if ($role->isDoctorant()) {
@@ -357,7 +430,7 @@ class TheseRechercheService
             $orc[] = '(' . $sqlCri . ')';
         }
         if ($criCode) {
-            $orc[] = "(code_doctorant = '" . $criCode . "' OR code_ecole_doct = '" . $criCode . "')";
+            $orc[] = "(code_doctorant like '%" . $criCode . "%' OR code_ecole_doct = '" . $criCode . "')";
         }
         $orc = implode(' OR ', $orc);
         $sql .= ' AND (' . $orc . ') ';
@@ -382,11 +455,11 @@ class TheseRechercheService
     private function fetchEtatsTheseOptions()
     {
         $etatsThese = [
-            ['value' => '',                          'label' => "Tous"],
-            ['value' => $v = These::ETAT_EN_COURS,   'label' => These::$etatsLibelles[$v]],
-            ['value' => $v = These::ETAT_ABANDONNEE, 'label' => These::$etatsLibelles[$v]],
-            ['value' => $v = These::ETAT_SOUTENUE,   'label' => These::$etatsLibelles[$v]],
-            ['value' => $v = These::ETAT_TRANSFEREE, 'label' => These::$etatsLibelles[$v]],
+            $this->optionify('',                          "Tous"),
+            $this->optionify($v = These::ETAT_EN_COURS,   These::$etatsLibelles[$v]),
+            $this->optionify($v = These::ETAT_ABANDONNEE, These::$etatsLibelles[$v]),
+            $this->optionify($v = These::ETAT_SOUTENUE,   These::$etatsLibelles[$v]),
+            $this->optionify($v = These::ETAT_TRANSFEREE, These::$etatsLibelles[$v]),
         ];
 
         return $etatsThese;
@@ -394,6 +467,14 @@ class TheseRechercheService
 
     private function fetchEtablissementsOptions()
     {
+        $role = $this->getSelectedIdentityRole();
+
+        if ($role->isEtablissementDependant()) {
+            return [
+                $this->optionify($role->getStructure()->getEtablissement())
+            ];
+        }
+
         /**
          * @var Etablissement[] $etablissements
          * $etablissements stocke la liste des établissements qui seront utilisés pour le filtrage
@@ -402,82 +483,132 @@ class TheseRechercheService
          * - ne pas être des établissements provenant de substitutions
          * - ne pas être la COMUE ... suite à l'interrogation obtenue en réunion
          */
-        $etablissements = $this->etablissementService->getEtablissementsBySource(SourceInterface::CODE_SYGAL);
+        $etablissements = $this->getEtablissementService()->getRepository()->findAllBySource(SourceInterface::CODE_SYGAL);
         $etablissements = array_filter($etablissements, function (Etablissement $etablissement) { return count($etablissement->getStructure()->getStructuresSubstituees())==0; });
         $etablissements = array_filter($etablissements, function (Etablissement $etablissement) { return $etablissement->getSigle() != "NU";});
 
         $options = [];
         foreach ($etablissements as $etablissement) {
-            $options[] = ['value' => $etablissement->getCode(), 'label' => $etablissement->getSigle()];
+            $options[] = $this->optionify($etablissement);
         }
 
-        return self::addEmptyOption($options, 'Tous');
+        return $this->addEmptyOption($options, 'Tous');
     }
 
     private function fetchEcolesDoctoralesOptions()
     {
-        $eds = $this->ecoleDoctoraleService->getEcolesDoctorales();
+        $eds = $this->getEcoleDoctoraleService()->getRepository()->findAll();
 
         $options = [];
         foreach ($eds as $ed) {
-            $options[] = ['value' => $ed->getSourceCode(), 'label' => $ed->getSigle(), 'subtext' => $ed->getLibelle()];
+            $options[] = $this->optionify($ed);
         }
         usort($options, function($a, $b) {
             return strcmp($a['label'], $b['label']);
         });
 
-        return self::addEmptyOption($options, "Toutes");
+        return $this->addEmptyOption($options, "Toutes");
     }
 
     private function fetchUnitesRecherchesOptions()
     {
-        $urs = $this->uniteRechercheService->getUnitesRecherches();
+        $urs = $this->getUniteRechercheService()->getRepository()->findAll();
 
         $options = [];
         foreach ($urs as $ur) {
-            $options[] = ['value' => $ur->getSourceCode(), 'label' => $ur->getCode(), 'subtext' => $ur->getLibelle()];
+            $options[] = $this->optionify($ur);
         }
         usort($options, function($a, $b) {
             return strcmp($a['label'], $b['label']);
         });
 
-        return self::addEmptyOption($options, "Toutes");
+        return $this->addEmptyOption($options, "Toutes");
     }
 
     private function fetchAnneesInscriptionOptions()
     {
-        $annees = $this->theseService->getRepository()->fetchDistinctAnneesPremiereInscription();
+        $role = $this->getSelectedIdentityRole();
+
+        if ($role->isEtablissementDependant()) {
+            $etablissement = $role->getStructure()->getEtablissement();
+            $annees = $this->theseService->getRepository()->fetchDistinctAnneesPremiereInscription($etablissement);
+        } else {
+            $annees = $this->theseService->getRepository()->fetchDistinctAnneesPremiereInscription();
+        }
+
         $annees = array_reverse(array_filter($annees));
 
         $options = [];
-        $options[] = ['value' => 'NULL', 'label' => "Inconnue"]; // option spéciale pour valeur === null
+        $options[] = $this->optionify(null); // option spéciale pour valeur === null
         foreach ($annees as $annee) {
-            $options[] = ['value' => $annee, 'label' => $annee];
+            $options[] = $this->optionify($annee);
         }
 
-        return self::addEmptyOption($options, "Toutes");
+        return $this->addEmptyOption($options, "Toutes");
     }
 
     private function fetchDisciplinesOptions()
     {
-        $disciplines = $this->theseService->getRepository()->fetchDistinctDisciplines();
+        $role = $this->getSelectedIdentityRole();
+
+        if ($role->isEtablissementDependant()) {
+            $etablissement = $role->getStructure()->getEtablissement();
+            $disciplines = $this->theseService->getRepository()->fetchDistinctDisciplines($etablissement);
+        } else {
+            $disciplines = $this->theseService->getRepository()->fetchDistinctDisciplines();
+        }
+
         $disciplines = array_filter($disciplines);
 
         sort($disciplines);
 
         $options = [];
-        $options[] = ['value' => 'NULL', 'label' => "Inconnue"]; // option spéciale pour valeur === null
+        $options[] = $this->optionify(null); // option spéciale pour valeur === null
         foreach ($disciplines as $discipline) {
-            $options[] = ['value' => $discipline, 'label' => $discipline];
+            $options[] = $this->optionify($discipline);
         }
 
-        return self::addEmptyOption($options, "Toutes");
+        return $this->addEmptyOption($options, "Toutes");
     }
 
-    static private function addEmptyOption(array $options, $label = "Tous")
+    /**
+     * @return \Application\Entity\Db\Role|null|\Zend\Permissions\Acl\Role\RoleInterface
+     */
+    private function getSelectedIdentityRole()
     {
-        $emptyOption = ['value' => '', 'label' => $label];
+        if ($this->role === null) {
+            $this->role = $this->userContextService->getSelectedIdentityRole();
+        }
+
+        return $this->role;
+    }
+
+    private function addEmptyOption(array $options, $label = "Tous")
+    {
+        $emptyOption = $this->optionify('', $label);
 
         return array_merge([$emptyOption], $options);
+    }
+
+    /**
+     * @param Etablissement|EcoleDoctorale|UniteRecherche|string|null $value
+     * @param string                                                  $label
+     * @return array
+     */
+    private function optionify($value = null, $label = null)
+    {
+        if ($value instanceof Etablissement) {
+            return ['value' => $value->getStructure()->getCode(), 'label' => $value->getSigle()];
+        } elseif ($value instanceof EcoleDoctorale) {
+            return ['value' => $value->getSourceCode(), 'label' => $value->getSigle(), 'subtext' => $value->getLibelle()];
+        } elseif ($value instanceof UniteRecherche) {
+            return ['value' => $value->getSourceCode(), 'label' => $value->getCode(), 'subtext' => $value->getLibelle()];
+        } elseif ($value === null) {
+            return ['value' => 'NULL', 'label' => $label ?: "Inconnue"];
+        } elseif ($value === '') {
+            return ['value' => '', 'label' => $label];
+        } else {
+            return ['value' => $value, 'label' => $label ?: $value];
+        }
     }
 }

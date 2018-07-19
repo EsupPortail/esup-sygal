@@ -9,10 +9,9 @@ services:
      - "8000:80"
      - "443:443"
     volumes:
-     - .:/var/www/html/sygal
-     - /var/sygal-files:/var/sygal-files
+     - .:/var/www/sygal
      - /tmp:/tmp
-    working_dir: /var/www/html/sygal
+    working_dir: /var/www/sygal
     network_mode: bridge
 
   sygal-import-ws:

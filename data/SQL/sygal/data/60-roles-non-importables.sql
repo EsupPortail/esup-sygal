@@ -3,7 +3,7 @@
 --
 
 
--- ROLE mutli établissement
+-- ROLE multi établissement
 
 INSERT INTO ROLE (
   ID,
@@ -18,8 +18,8 @@ INSERT INTO ROLE (
   HISTO_CREATEUR_ID,
   HISTO_MODIFICATEUR_ID)
 with ds (LIBELLE, CODE, THESE_DEP) as (
-  SELECT 'Administrateur technique',   'ADMIN_TECH' , 0 from dual union all
-  SELECT 'Observateur',                'OBSERV'     , 0 from dual
+  SELECT 'Administrateur technique',   'ADMIN_TECH' , 0 from dual
+--   SELECT 'Observateur',                'OBSERV'     , 0 from dual
 )
 SELECT
   ROLE_ID_SEQ.nextval,
@@ -34,7 +34,7 @@ SELECT
   u.id,
   u.id
 FROM ds
-join SOURCE src on src.CODE = 'COMUE::SYGAL'
+join SOURCE src on src.CODE = 'SYGAL::sygal'
 join UTILISATEUR u on u.USERNAME = 'sygal-app';
 
 
@@ -64,16 +64,16 @@ INSERT INTO ROLE (
     s.TYPE_STRUCTURE_ID,
     ds.LIBELLE,
     ds.CODE,
-    ds.LIBELLE||' '||etab.CODE,
+    ds.LIBELLE||' '||s.CODE,
     ds.THESE_DEP,
-    etab.CODE||'::'||ds.CODE,
+    s.CODE||'::'||ds.CODE,
     src.id,
     u.id,
     u.id
   FROM ds
     join ETABLISSEMENT etab on etab.DOMAINE is not null -- i.e. établissements COMUE
     join STRUCTURE s on s.id = etab.STRUCTURE_ID
-    join SOURCE src on src.CODE = 'COMUE::SYGAL'
+    join SOURCE src on src.CODE = 'SYGAL::sygal'
     join UTILISATEUR u on u.USERNAME = 'sygal-app'
 ;
 
@@ -83,81 +83,46 @@ where code in (
 );
 
 
--- ROLE ED
+-- ROLE_MODELE
 
-insert into role(
-  ID,
-  CODE,
-  LIBELLE,
-  SOURCE_CODE,
-  SOURCE_ID,
-  ROLE_ID,
-  THESE_DEP,
-  HISTO_CREATEUR_ID,
-  HISTO_MODIFICATEUR_ID,
-  STRUCTURE_ID,
-  TYPE_STRUCTURE_DEPENDANT_ID)
-select
-  ROLE_ID_SEQ.nextval,
-  'ED',
-  'École doctorale ' || nvl(s.sigle, '(aucun sigle trouvé)'),
-  'COMUE::ED_' || ed.SOURCE_CODE,
-  src.id,
-  'École doctorale ' || nvl(s.sigle, '(aucun sigle trouvé)'),
-  0,
-  u.id,
-  u.id,
-  s.id,
-  ts.id
-from ECOLE_DOCT ed
-  join STRUCTURE s on s.id = ed.STRUCTURE_ID
-  join TYPE_STRUCTURE ts on ts.id = s.TYPE_STRUCTURE_ID
-  join source src on src.CODE = 'COMUE::SYGAL'
-  join UTILISATEUR u on u.USERNAME = 'sygal-app'
-;
+INSERT INTO ROLE_MODELE (ID, LIBELLE, ROLE_ID, STRUCTURE_TYPE) VALUES (1, 'Unité de recherche', 'UR', 3);
+INSERT INTO ROLE_MODELE (ID, LIBELLE, ROLE_ID, STRUCTURE_TYPE) VALUES (2, 'École doctorale', 'ED', 2);
+INSERT INTO ROLE_MODELE (ID, LIBELLE, ROLE_ID, STRUCTURE_TYPE) VALUES (3, 'Administrateur', 'ADMIN', 1);
+INSERT INTO ROLE_MODELE (ID, LIBELLE, ROLE_ID, STRUCTURE_TYPE) VALUES (4, 'Bureau des doctorats', 'BDD', 1);
+INSERT INTO ROLE_MODELE (ID, LIBELLE, ROLE_ID, STRUCTURE_TYPE) VALUES (5, 'Bibliothèque universitaire', 'BU', 1);
 
 
--- ROLE UR
 
-insert into role(
-  ID,
-  CODE,
-  LIBELLE,
-  SOURCE_CODE,
-  SOURCE_ID,
-  ROLE_ID,
-  IS_DEFAULT,
-  LDAP_FILTER,
-  ATTRIB_AUTO,
-  THESE_DEP,
-  HISTO_CREATEUR_ID,
-  HISTO_MODIFICATEUR_ID,
-  STRUCTURE_ID,
-  TYPE_STRUCTURE_DEPENDANT_ID)
-select
-  ROLE_ID_SEQ.nextval,
-  'UR',
-  'Unité de recherche ' || nvl(s.sigle, '(aucun sigle trouvé)'),
-  'COMUE::UR_' || ur.SOURCE_CODE,
-  src.id,
-  'Unité de recherche ' || nvl(s.sigle, '(aucun sigle trouvé)'),
-  0,
-  null,
-  0,
-  0,
-  u.id,
-  u.id,
-  s.id,
-  ts.id
-from UNITE_RECH ur
-  join STRUCTURE s on s.id = ur.STRUCTURE_ID
-  join TYPE_STRUCTURE ts on ts.id = s.TYPE_STRUCTURE_ID
-  join source src on src.CODE = 'COMUE::SYGAL'
-  join UTILISATEUR u on u.USERNAME = 'sygal-app'
-;
+-- INDIVIDU_ROLE pour les développeurs
 
+delete from INDIVIDU where SOURCE_CODE = 'UCN::00021237';
+delete from INDIVIDU where SOURCE_CODE = 'UCN::00017566';
 
--- INDIVIDU_ROLE
+insert into INDIVIDU(
+  ID, TYPE,
+  NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, EMAIL, NATIONALITE,
+  SOURCE_ID, SOURCE_CODE,
+  HISTO_CREATEUR_ID, HISTO_MODIFICATEUR_ID
+)
+  select
+    INDIVIDU_ID_SEQ.nextval, null,
+    'GAUTHIER', 'GAUTHIER', 'Bertrand', 'bertrand.gauthier@unicaen.fr', 'Française',
+    (select id from source where code = 'SYGAL::sygal'), 'UCN::00021237',
+    1, 1
+  from dual;
+
+insert into INDIVIDU(
+  ID, TYPE,
+  NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, EMAIL, NATIONALITE,
+  SOURCE_ID, SOURCE_CODE,
+  HISTO_CREATEUR_ID, HISTO_MODIFICATEUR_ID
+)
+  select
+    INDIVIDU_ID_SEQ.nextval, null,
+    'METIVIER', 'METIVIER', 'Jean-Philippe', 'jean-philippe.metivier@unicaen.fr', 'Française',
+    (select id from source where code = 'SYGAL::sygal'), 'UCN::00017566',
+    1, 1
+  from dual;
 
 insert into INDIVIDU_ROLE (
   ID,
@@ -177,12 +142,3 @@ insert into INDIVIDU_ROLE (
     join INDIVIDU i on i.EMAIL = ds.email
     join ROLE r on r.CODE = ds.code_role
 ;
-
-
--- ROLE_MODELE
-
-INSERT INTO ROLE_MODELE (ID, LIBELLE, ROLE_ID, STRUCTURE_TYPE) VALUES (1, 'Unité de recherche', 'UR', 3);
-INSERT INTO ROLE_MODELE (ID, LIBELLE, ROLE_ID, STRUCTURE_TYPE) VALUES (2, 'École doctorale', 'ED', 2);
-INSERT INTO ROLE_MODELE (ID, LIBELLE, ROLE_ID, STRUCTURE_TYPE) VALUES (3, 'Administrateur', 'ADMIN', 1);
-INSERT INTO ROLE_MODELE (ID, LIBELLE, ROLE_ID, STRUCTURE_TYPE) VALUES (4, 'Bureau des doctorats', 'BDD', 1);
-INSERT INTO ROLE_MODELE (ID, LIBELLE, ROLE_ID, STRUCTURE_TYPE) VALUES (5, 'Bibliothèque universitaire', 'BU', 1);

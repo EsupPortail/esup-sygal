@@ -41,15 +41,6 @@ if (!empty($items)): ?>
                 <small><abbr title="Nom original du fichier déposé"><?php echo $fichier->getNomOriginal() ?></abbr></small>
                 <?php endif ?>
 
-                <!-- lien d'affichage de l'aperçu du fichier -->
-                <?php
-                $urlApercevoir = isset($item['apercevoirUrl']) ? $item['apercevoirUrl'] : null;
-                if ($fichier->supporteApercu() && $urlApercevoir): ?>
-                    <a class="apercu ajax-modal"
-                       href="<?php echo $urlApercevoir ?>"
-                       title="Cliquez pour afficher un aperçu du fichier"><span class="glyphicon glyphicon-eye-open"></span></a>
-                <?php endif ?>
-
                 <!-- lien de suppression du fichier -->
                 <?php
                 $urlSupprimer = isset($item['deleteUrl']) ? $item['deleteUrl'] : null;

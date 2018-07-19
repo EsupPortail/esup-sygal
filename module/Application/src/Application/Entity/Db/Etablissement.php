@@ -201,8 +201,7 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
             $image = Util::createImageWithText("Aucun logo pour l'Etab|" . $this->getSigle(), 200, 200);
             return $image;
         }
-//        return file_get_contents(APPLICATION_DIR . $this->getCheminLogo()) ?: null;
-        return file_get_contents( "/var/sygal-files/" . $this->getCheminLogo()) ?: null;
+        return file_get_contents( Structure::PATH . $this->getCheminLogo()) ?: null;
     }
 
     /**

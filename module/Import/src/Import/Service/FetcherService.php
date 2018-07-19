@@ -2,8 +2,10 @@
 
 namespace Import\Service;
 
+use Application\Entity\Db\These;
 use Application\Filter\EtablissementPrefixFilter;
 use DateTime;
+use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
@@ -11,7 +13,9 @@ use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Psr7;
+use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
+use UnicaenApp\Service\EntityManagerAwareTrait;
 use Zend\Http\Response;
 
 /**
@@ -19,60 +23,20 @@ use Zend\Http\Response;
  * établissement.
  *
  * Il est interrogable par le biais de deux fonctions :
- * - fetchAll($dataName, $entityClass) qui récupére toutes les données associés à une table
- * - fetchOne($dataName, $entityClass, source_code) qui récupére les données associés à une entité
+ * - fetchAllRows($dataName, $entityClass) qui récupére toutes les données associés à une table
+ * - fetchRow($dataName, $entityClass, source_code) qui récupére les données associés à une entité
  *
  * Chaque appel à ce service va insérer une ligne de log dans la table API_LOGS
  */
 class FetcherService
 {
-    /**
-     * Appels ORDONNÉS de procédures de synchronisation à lancer en fonction du service.
-     */
-    const APP_IMPORT_PROCEDURE_CALLS = [
-        'structure' => [
-            "UNICAEN_IMPORT.MAJ_STRUCTURE();",
-        ],
-        'etablissement' => [
-            "UNICAEN_IMPORT.MAJ_ETABLISSEMENT();",
-        ],
-        'ecole-doctorale' => [
-            "UNICAEN_IMPORT.MAJ_ECOLE_DOCT();",
-            "APP_IMPORT.REFRESH_MV('MV_RECHERCHE_THESE');",
-        ],
-        'unite-recherche' => [
-            "UNICAEN_IMPORT.MAJ_UNITE_RECH();",
-        ],
-        'individu' => [
-            "UNICAEN_IMPORT.MAJ_INDIVIDU();",
-        ],
-        'doctorant' => [
-            "UNICAEN_IMPORT.MAJ_DOCTORANT();",
-            "APP_IMPORT.REFRESH_MV('MV_RECHERCHE_THESE');",
-        ],
-        'these' => [
-            "UNICAEN_IMPORT.MAJ_THESE();",
-            "APP_IMPORT.REFRESH_MV('MV_RECHERCHE_THESE');",
-        ],
-        'role' => [
-            "UNICAEN_IMPORT.MAJ_ROLE();",
-        ],
-        'acteur' => [
-            "UNICAEN_IMPORT.MAJ_ACTEUR();",
-            "APP_IMPORT.REFRESH_MV('MV_RECHERCHE_THESE');",
-        ],
-        'variable' => [
-            "UNICAEN_IMPORT.MAJ_VARIABLE();",
-        ],
-    ];
+    use EntityManagerAwareTrait;
 
     /**
-     * $entityManager et $config sont fournis par la factory et permettent l'acces à la BD et à la config
+     * $config est fourni par la factory et permet l'acces à la config
      *
-     * @var EntityManager $entityManager
-     * @var array         $config
+     * @var array $config
      */
-    protected $entityManager;
     protected $config;
 
     /**
@@ -87,12 +51,11 @@ class FetcherService
      * @var boolean|string $verify   : le champ pour le mode https
      */
     protected $url;
-    protected $code;
+    protected $codeEtablissement;
     protected $user;
     protected $password;
     protected $proxy;
     protected $verify;
-
 
     /**
      * Constructor ...
@@ -104,19 +67,6 @@ class FetcherService
     {
         $this->entityManager = $entityManager;
         $this->config = $config;
-    }
-
-    /**
-     * Accessors ...
-     */
-    public function getEntityManager()
-    {
-        return $this->entityManager;
-    }
-
-    public function setEntityManager(EntityManager $entityManager)
-    {
-        $this->entityManager = $entityManager;
     }
 
     public function getUrl()
@@ -149,14 +99,14 @@ class FetcherService
         $this->password = $password;
     }
 
-    public function getCode()
+    public function getCodeEtablissement()
     {
-        return $this->code;
+        return $this->codeEtablissement;
     }
 
-    public function setCode($code)
+    public function setCodeEtablissement($codeEtablissement)
     {
-        $this->code = $code;
+        $this->codeEtablissement = $codeEtablissement;
     }
 
     public function getProxy()
@@ -179,11 +129,229 @@ class FetcherService
         $this->verify = $verify;
     }
 
+    /**
+     * Point d'entrée pour l'interrogation du web service d'import de données d'un établissement.
+     *
+     * @param string $serviceName
+     * @param mixed  $sourceCode Source code avec ou sans préfixe
+     * @param array  $filters
+     * @return array [DateTime, string] le log associé pour l'affichage ...
+     */
+    public function fetch($serviceName, $sourceCode = null, array $filters = [])
+    {
+        $sourceCode = $this->normalizeSourceCode($sourceCode);
+        $entityClass = $this->entityNameForService($serviceName);
+
+        if ($sourceCode !== null) {
+            $logs = $this->fetchRow($serviceName, $entityClass, $sourceCode);
+        } else {
+            $logs = $this->fetchRows($serviceName, $entityClass, $filters);
+        }
+
+        return $logs;
+    }
+
+    /**
+     * @param string service
+     * @return string
+     */
+    private function entityNameForService($service)
+    {
+        $entityName = str_replace("-", " ", $service);
+        $entityName = ucwords($entityName);
+        $entityName = str_replace(" ", "", $entityName);
+        $entityClass = "Import\Model\Tmp" . $entityName;
+
+        return $entityClass;
+    }
+
+    /**
+     * @param string $sourceCode
+     * @return string
+     */
+    private function normalizeSourceCode($sourceCode)
+    {
+        if (! $sourceCode) {
+            return $sourceCode;
+        }
+
+        $f = new EtablissementPrefixFilter();
+        try {
+            $sourceCode = $f->removePrefixFrom($sourceCode);
+        } catch (LogicException $e) {
+        }
+
+        return $sourceCode;
+    }
+
+    /**
+     * @param string $serviceName
+     * @param string $entityClass
+     * @param string $sourceCode
+     * @param int    $debugLevel
+     * @return array
+     */
+    private function fetchRow($serviceName, $entityClass, $sourceCode, $debugLevel = 0)
+    {
+        $debut = microtime(true);
+        $start_date = new DateTime();
+
+        /** Récupération des infos et des champs (i.e. propriétés/colonnes) */
+        $metadata = $this->entityManager->getClassMetadata($entityClass);
+        $tableName = $metadata->table['name'];
+        $tableRelation = $metadata->columnNames;
+        if ($debugLevel > 1) $this->displayMetadata($serviceName, $entityClass);
+
+        /** Appel du web service */
+        $_debut = microtime(true);
+        $uri = $serviceName . "/" . $sourceCode;
+        try {
+            $response = $this->sendRequest($uri);
+        } catch (\Exception $e) {
+            throw new RuntimeException("Erreur lors de l'interrogation du WS", null, $e);
+        }
+        if ($response->getStatusCode() != 200) return $this->doLog($start_date, new DateTime(), $this->url . "/" . $uri, "ERROR_WS", $response->getReasonPhrase());
+        $_fin = microtime(true);
+        if ($debugLevel > 0) print "<p><span style='background-color:lightgreen;'> WebService: " . ($_fin - $_debut) . " secondes.</span></p>";
+
+        /** Etablissement de la transaction Oracle */
+        $connection = $this->entityManager->getConnection();
+        $connection->beginTransaction();
+        $statement = null;
+
+        $_debut = microtime(true);
+        /** Vidage des données de la table */
+        $queries = [];
+        $queries[] = "DELETE FROM " . $tableName . " WHERE ETABLISSEMENT_ID='" . $this->codeEtablissement . "' AND ID='" . $sourceCode . "'";
+
+        /** Remplissage avec les données retournées par le Web Services */
+        $json = json_decode($response->getBody());
+        $colonnes = implode(", ", $tableRelation);
+        $values = implode(", ", $this->generateValueArray($json, $metadata));
+        $query = "INSERT INTO " . $tableName . " (" . $colonnes . ") VALUES (" . $values . ")";
+        $queries[] = $query;
+        $_fin = microtime(true);
+        if ($debugLevel > 0) print "<p><span style='background-color:lightgreen;'> PrepQueries: " . ($_fin - $_debut) . " secondes.</span></p>";
+
+        /** Execution des requetes */
+        $_debut = microtime(true);
+        foreach ($queries as $query) {
+            if ($debugLevel > 1) print "Execution de la requête [<tt>" . $query . "</tt>] <br/>";
+            try {
+                $connection->executeQuery($query);
+            } catch (DBALException $e) {
+                throw new RuntimeException("Erreur lors de la mise à jour de la table $tableName en BDD", null, $e);
+            }
+        }
+        try {
+            $this->entityManager->getConnection()->commit();
+        } catch (\Exception $e) {
+            return $this->doLog($start_date, new DateTime(), $this->url . "/" . $uri, "ERROR_DB", $e->getMessage());
+        }
+        $_fin = microtime(true);
+        if ($debugLevel > 0) print "<p><span style='background-color:lightgreen;'> ExecQueries: " . ($_fin - $_debut) . " secondes.</span></p>";
+
+        return $this->doLog(
+            $start_date, new DateTime(),
+            $this->url . "/" . $uri,
+            "OK",
+            "Récupération de " . $serviceName . ":" . $sourceCode . " de [" . $this->codeEtablissement . "] en " . ($_fin - $debut) . " seconde(s).",
+            $this->codeEtablissement,
+            "variable");
+    }
+
+    /**
+     * @param string $service
+     * @param string $entityClass
+     * @param array  $filters
+     * @param int    $debugLevel
+     * @return array
+     */
+    public function fetchRows($service, $entityClass, array $filters = [], $debugLevel = 0)
+    {
+        $debut = microtime(true);
+        $start_date = new DateTime();
+
+        /** Récupération des infos et des champs (i.e. propriétés/colonnes) */
+        $metadata = $this->entityManager->getClassMetadata($entityClass);
+        $tableName = $metadata->table['name'];
+        $tableRelation = $metadata->columnNames;
+        if ($debugLevel > 1) $this->displayMetadata($service, $entityClass);
+
+        /** Appel du web service */
+        $_debut = microtime(true);
+        $filtersForWebService = $this->prepareFiltersForWebServiceRequest($filters);
+        $uri = $service . '?' . http_build_query($filtersForWebService);
+        try {
+            $response = $this->sendRequest($uri);
+        } catch (\Exception $e) {
+            throw new RuntimeException("Erreur lors de l'interrogation du WS", null, $e);
+        }
+        if ($response->getStatusCode() != 200) {
+            return $this->doLog($start_date, new DateTime(), $this->url . "/" . $uri, "ERROR_WS", $response->getReasonPhrase());
+        }
+        $_fin = microtime(true);
+        if ($debugLevel > 0) print "<p><span style='background-color:lightgreen;'> WebService: " . ($_fin - $_debut) . " secondes.</span></p>";
+
+        /** Etablissement de la transaction Oracle */
+        $connection = $this->entityManager->getConnection();
+        $connection->beginTransaction();
+        $statement = null;
+
+        $_debut = microtime(true);
+        $queries = [];
+
+        /** Requête de suppression des données existantes */
+        $query = $this->generateSQLSnippetForDelete($tableName, $filters);
+        $queries[] = $query;
+
+        /** Remplissage avec les données retournées par le Web Services */
+        $json = json_decode($response->getBody());
+        $jsonName = str_replace("-", "_", $service);
+        $collection_json = $json->{'_embedded'}->{$jsonName};
+
+        foreach ($collection_json as $entity_json) {
+            $colonnes = implode(", ", $tableRelation);
+            $values = implode(", ", $this->generateValueArray($entity_json, $metadata));
+            $query = "INSERT INTO " . $tableName . " (" . $colonnes . ") VALUES (" . $values . ")";
+            $queries[] = $query;
+        }
+        $_fin = microtime(true);
+        if ($debugLevel > 0) print "<p><span style='background-color:lightgreen;'> PrepQueries: " . ($_fin - $_debut) . " secondes.</span></p>";
+
+        /** Execution des requetes */
+        $_debut = microtime(true);
+        foreach ($queries as $query) {
+            if ($debugLevel > 1) print "Execution de la requête [<tt>" . $query . "</tt>] <br/>";
+            try {
+                $connection->executeQuery($query);
+            } catch (DBALException $e) {
+                throw new RuntimeException("Erreur lors de la mise à jour de la table $tableName en BDD", null, $e);
+            }
+        }
+        try {
+            $this->entityManager->getConnection()->commit();
+        } catch (\Exception $e) {
+            return $this->doLog($start_date, new DateTime(), $this->url . "/" . $uri, "ERROR_DB", $e->getMessage());
+        }
+
+        $_fin = microtime(true);
+        if ($debugLevel > 0) print "<p><span style='background-color:lightgreen;'> ExecQueries: " . ($_fin - $_debut) . " secondes.</span></p>";
+        $fin = microtime(true);
+
+        return $this->doLog(
+            $start_date,
+            new DateTime(),
+            $this->url . "/" . $uri, "OK", count($collection_json) . " " . $service . "(s) ont été récupéré(es) de [" . $this->codeEtablissement . "] en " . ($fin - $debut) . " seconde(s).",
+            $this->codeEtablissement,
+            $uri
+        );
+    }
+
     /** Cette fonction retourne la position d'un extablissement dans la table des établissements (voir config)
      *
      * @param string $etablissement
      * @return int
-     * @throws \Exception;
      */
     public function getEtablissementKey($etablissement)
     {
@@ -204,7 +372,7 @@ class FetcherService
 
     public function setConfigWithPosition($positionEtablissement)
     {
-        $this->code = $this->config['import-api']['etablissements'][$positionEtablissement]['code'];
+        $this->codeEtablissement = $this->config['import-api']['etablissements'][$positionEtablissement]['code'];
         $this->url = $this->config['import-api']['etablissements'][$positionEtablissement]['url'];
         $this->proxy = $this->config['import-api']['etablissements'][$positionEtablissement]['proxy'];
         $this->verify = $this->config['import-api']['etablissements'][$positionEtablissement]['verify'];
@@ -212,16 +380,15 @@ class FetcherService
         $this->password = $this->config['import-api']['etablissements'][$positionEtablissement]['password'];
     }
 
-    /** Fonction chargée d'optenir la réponse d'un Web Service
+    /**
+     * Appel du Web Service d'import de données.
      *
      * @param string $uri : la "page" du Web Service à interroger
      * @return Response la réponse du Web Service
      *
      * RMQ le client est configuré en utilisant les propriétés du FetcherService
-     *
-     * @throws \Exception
      */
-    public function getResponse($uri)
+    private function sendRequest($uri)
     {
         $options = [
             'base_uri' => $this->url,
@@ -262,6 +429,7 @@ class FetcherService
         } catch (GuzzleException $e) {
             throw new RuntimeException("Erreur inattendue rencontrée lors de l'envoi de la requête au WS", null, $e);
         }
+
         return $response;
     }
 
@@ -323,7 +491,7 @@ class FetcherService
      * @return array [DateTime, string] le log associé pour l'affichage ...
      * @throws RuntimeException
      * */
-    public function doLog($start_date, $end_date, $route, $status, $response, $etablissement, $table)
+    public function doLog($start_date, $end_date, $route, $status, $response, $etablissement = null, $table = null)
     {
         $log_query = "INSERT INTO API_LOG ";
         $log_query .= "(ID, REQ_URI, REQ_START_DATE, REQ_END_DATE, REQ_STATUS, REQ_RESPONSE, REQ_ETABLISSEMENT, REQ_TABLE)";
@@ -386,10 +554,10 @@ class FetcherService
             $value = null;
             switch ($propriete) {
                 case "etablissementId":
-                    $value = $this->code;
+                    $value = $this->codeEtablissement;
                     break;
                 case "sourceCode":
-                    $value = $f->addPrefixTo($entity_json->id, $this->code);
+                    $value = $f->addPrefixTo($entity_json->id, $this->codeEtablissement);
                     break;
                 case "sourceId":
                 case "individuId":
@@ -400,7 +568,7 @@ class FetcherService
                 case "ecoleDoctId":
                 case "uniteRechId":
                     if (isset($entity_json->{$propriete})) {
-                        $value = $f->addPrefixTo($entity_json->{$propriete}, $this->code);
+                        $value = $f->addPrefixTo($entity_json->{$propriete}, $this->codeEtablissement);
                     }
                     break;
                 default:
@@ -417,191 +585,91 @@ class FetcherService
     }
 
     /**
-     * Fonction en charge de préparer et d'appelé fetchOne ou fetchAll
+     * Génère le code SQL de la requête de suppression des données existantes.
      *
-     * @param string $dataName
-     * @param string $entityClass
-     * @param mixed  $source_code
-     * @return array [DateTime, string] le log associé pour l'affichage ...
-     * @throws \Exception
+     * @param string $tableName
+     * @param array  $filters
+     * @return string
      */
-    public function fetch($dataName, $entityClass, $source_code = null)
+    private function generateSQLSnippetForDelete($tableName, array $filters = [])
     {
-        $logs = [];
-        if ($source_code !== null) {
-            $logs = $this->fetchOne($dataName, $entityClass, $source_code, 0);
-        } else {
-            $logs = $this->fetchAll($dataName, $entityClass, 0);
+        $filters = $this->prepareFiltersForTmpTableUpdate($filters);
+
+        $query = "DELETE FROM " . $tableName . " WHERE ETABLISSEMENT_ID='" . $this->codeEtablissement . "'";
+
+        if (count($filters) > 0) {
+            $wheres = $filters;
+            // NB: préfixage par le code établissement doit être fait en amont
+            array_walk($wheres, function (&$v, $k) {
+                $v = strtoupper($k) . " = '$v'";
+            });
+            $wheres = implode(' AND ', $wheres);
+            $query .= ' AND ' . $wheres;
         }
 
-        return $logs;
-
+        return $query;
     }
 
     /**
-     * Lance la synchro des données par UnicaenImport pour les services spécifiés.
-     *
-     * @param array $services
-     * @throws \Doctrine\DBAL\DBALException
-     */
-    public function updateBDD(array $services)
-    {
-        // détermination des appels de procédures de synchro à faire
-        $calls = [];
-        foreach ($services as $service) {
-            $calls = array_merge($calls, self::APP_IMPORT_PROCEDURE_CALLS[$service]);
-        }
-        // suppression des appels en double EN CONSERVANT LE DERNIER appel et non le premier
-        $calls = array_reverse(array_unique(array_reverse($calls)));
-
-        $plsql = implode(PHP_EOL, array_merge(['BEGIN'], $calls, ['END;']));
-
-        $this->entityManager->getConnection()->executeQuery($plsql);
-    }
-
-    /**
-     * @param     $dataName
-     * @param     $entityClass
-     * @param     $sourceCode
-     * @param int $debug_level
+     * @param array $filters
      * @return array
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Exception
      */
-    public function fetchOne($dataName, $entityClass, $sourceCode, $debug_level = 0)
+    private function prepareFiltersForWebServiceRequest(array $filters)
     {
-        $debut = microtime(true);
-        $start_date = new DateTime();
-
-        /** Récupération des infos et des champs (i.e. propriétés/colonnes) */
-        $metadata = $this->entityManager->getClassMetadata($entityClass);
-        $tableName = $metadata->table['name'];
-        $tableRelation = $metadata->columnNames;
-        if ($debug_level > 1) $this->displayMetadata($dataName, $entityClass);
-
-        /** Appel du web service */
-        $_debut = microtime(true);
-        $response = $this->getResponse($dataName . "/" . $sourceCode);
-        if ($response->getStatusCode() != 200) return $this->doLog($start_date, new DateTime(), $this->url . "/" . $dataName . "/" . $sourceCode, "ERROR_WS", $response->getReasonPhrase());
-        $_fin = microtime(true);
-        if ($debug_level > 0) print "<p><span style='background-color:lightgreen;'> WebService: " . ($_fin - $_debut) . " secondes.</span></p>";
-
-        /** Etablissement de la transaction Oracle */
-        $connection = $this->entityManager->getConnection();
-        $connection->beginTransaction();
-        $statement = null;
-
-        $_debut = microtime(true);
-        /** Vidage des données de la table */
-        $queries = [];
-        $queries[] = "DELETE FROM " . $tableName . " WHERE ETABLISSEMENT_ID='" . $this->code . "' AND ID='" . $sourceCode . "'";
-
-        /** Remplissage avec les données retournées par le Web Services */
-        $json = json_decode($response->getBody());
-        $colonnes = implode(", ", $tableRelation);
-        $values = implode(", ", $this->generateValueArray($json, $metadata));
-        $query = "INSERT INTO " . $tableName . " (" . $colonnes . ") VALUES (" . $values . ")";
-        $queries[] = $query;
-        $_fin = microtime(true);
-        if ($debug_level > 0) print "<p><span style='background-color:lightgreen;'> PrepQueries: " . ($_fin - $_debut) . " secondes.</span></p>";
-
-        /** Execution des requetes */
-        $_debut = microtime(true);
-        foreach ($queries as $query) {
-            if ($debug_level > 1) print "Execution de la requête [<tt>" . $query . "</tt>] <br/>";
-            $statement = $connection->executeQuery($query);
+        if (empty($filters)) {
+            return $filters;
         }
-        try {
-            $this->entityManager->getConnection()->commit();
-        } catch (\Exception $e) {
-            return $this->doLog($start_date, new DateTime(), $this->url . "/" . $dataName . "/" . $sourceCode, "ERROR_DB", $e->getMessage());
-        }
-        $_fin = microtime(true);
-        if ($debug_level > 0) print "<p><span style='background-color:lightgreen;'> ExecQueries: " . ($_fin - $_debut) . " secondes.</span></p>";
 
-        return $this->doLog(
-            $start_date, new DateTime(),
-            $this->url . "/" . $dataName . "/" . $sourceCode,
-            "OK",
-            "Récupération de " . $dataName . ":" . $sourceCode . " de [" . $this->code . "] en " . ($_fin - $debut) . " seconde(s).",
-            $this->code,
-            "variable");
+        $filtersToMerge = [];
+
+        foreach ($filters as $name => $value) {
+            switch ($name) {
+                case 'these_id':
+                    // on remplace l'id par le source code car les WS ne traitent que des sources codes.
+                    /** @var These $these */
+                    $these = $this->entityManager->getRepository(These::class)->find($value);
+                    if ($these === null) {
+                        throw new RuntimeException("Aucune thèse trouvée avec cet id: $value");
+                    }
+                    $f = new EtablissementPrefixFilter();
+                    $filtersToMerge['these_id'] = $f->removePrefixFrom($these->getSourceCode());
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        return array_merge($filters, $filtersToMerge);
     }
 
     /**
-     * @param     $dataName
-     * @param     $entityClass
-     * @param int $debug_level
+     * @param array $filters
      * @return array
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Exception
      */
-    public function fetchAll($dataName, $entityClass, $debug_level = 0)
+    private function prepareFiltersForTmpTableUpdate(array $filters)
     {
-        $start_date = new DateTime();
-        $debut = microtime(true);
-
-        if ($debug_level > 0) print "<hr/><h2>" . $dataName . "</h2>";
-
-        /** Récupération des infos et des champs (i.e. propriétés/colonnes) */
-        $metadata = $this->entityManager->getClassMetadata($entityClass);
-        $tableName = $metadata->table['name'];
-        $tableRelation = $metadata->columnNames;
-        if ($debug_level > 1) $this->displayMetadata($dataName, $entityClass);
-
-        /** Appel du web service */
-        $_debut = microtime(true);
-        $response = $this->getResponse($dataName);
-        if ($response->getStatusCode() != 200) {
-            return $this->doLog($start_date, new DateTime(), $this->url . "/" . $dataName, "ERROR_WS", $response->getReasonPhrase());
-        }
-        $_fin = microtime(true);
-        if ($debug_level > 0) print "<p><span style='background-color:lightgreen;'> WebService: " . ($_fin - $_debut) . " secondes.</span></p>";
-
-        /** Etablissement de la transaction Oracle */
-        $connection = $this->entityManager->getConnection();
-        $connection->beginTransaction();
-        $statement = null;
-
-        $_debut = microtime(true);
-        /** Vidage des données de la table */
-        $queries = [];
-        $queries[] = "DELETE FROM " . $tableName . " WHERE ETABLISSEMENT_ID='" . $this->code . "'";
-
-        /** Remplissage avec les données retournées par le Web Services */
-        $json = json_decode($response->getBody());
-        $jsonName = str_replace("-", "_", $dataName);
-        $collection_json = $json->{'_embedded'}->{$jsonName};
-
-        foreach ($collection_json as $entity_json) {
-            $colonnes = implode(", ", $tableRelation);
-            $values = implode(", ", $this->generateValueArray($entity_json, $metadata));
-            $query = "INSERT INTO " . $tableName . " (" . $colonnes . ") VALUES (" . $values . ")";
-            $queries[] = $query;
-        }
-        $_fin = microtime(true);
-        if ($debug_level > 0) print "<p><span style='background-color:lightgreen;'> PrepQueries: " . ($_fin - $_debut) . " secondes.</span></p>";
-
-        /** Execution des requetes */
-        $_debut = microtime(true);
-        foreach ($queries as $query) {
-            if ($debug_level > 1) print "Execution de la requête [<tt>" . $query . "</tt>] <br/>";
-            $statement = $connection->executeQuery($query);
+        if (empty($filters)) {
+            return $filters;
         }
 
-        try {
-            $this->entityManager->getConnection()->commit();
-        } catch (\Exception $e) {
-            return $this->doLog($start_date, new DateTime(), $this->url . "/" . $dataName, "ERROR_DB", $e->getMessage());
+        $filtersToMerge = [];
+
+        foreach ($filters as $name => $value) {
+            switch ($name) {
+                case 'these_id':
+                    // on remplace l'id par le source code car les WS ne traitent que des sources codes.
+                    /** @var These $these */
+                    $these = $this->entityManager->getRepository(These::class)->find($value);
+                    if ($these === null) {
+                        throw new RuntimeException("Aucune thèse trouvée avec cet id: $value");
+                    }
+                    $filtersToMerge['these_id'] = $these->getSourceCode();
+                    break;
+                default:
+                    break;
+            }
         }
 
-        $_fin = microtime(true);
-        if ($debug_level > 0) print "<p><span style='background-color:lightgreen;'> ExecQueries: " . ($_fin - $_debut) . " secondes.</span></p>";
-        $fin = microtime(true);
-
-        return $this->doLog($start_date, new DateTime(), $this->url . "/" . $dataName, "OK", count($collection_json) . " " . $dataName . "(s) ont été récupéré(es) de [" . $this->code . "] en " . ($fin - $debut) . " seconde(s).",
-            $this->code,
-            $dataName        );
+        return array_merge($filters, $filtersToMerge);
     }
-
 }

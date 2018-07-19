@@ -16,6 +16,7 @@ use Application\Service\Variable\VariableService;
 use Application\Service\VersionFichier\VersionFichierService;
 use Application\Service\Workflow\WorkflowService;
 use Doctrine\ORM\EntityManager;
+use Import\Service\ImportService;
 use Zend\Mvc\Controller\ControllerManager;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -45,6 +46,7 @@ class TheseControllerFactory
          * @var UniteRechercheService $uniteService
          * @var MailConfirmationService $mailConfirmationService
          * @var EntityManager $entityManager
+         * @var ImportService $importService
          */
         $variableService = $controllerManager->getServiceLocator()->get('VariableService');
         $validationService = $controllerManager->getServiceLocator()->get('ValidationService');
@@ -59,6 +61,7 @@ class TheseControllerFactory
         $mailConfirmationService = $controllerManager->getServiceLocator()->get('MailConfirmationService');
         $entityManager = $controllerManager->getServiceLocator()->get('doctrine.entitymanager.orm_default');
         $notifierService = $controllerManager->getServiceLocator()->get(NotifierService::class);
+        $importService = $controllerManager->getServiceLocator()->get('ImportService');
 
         $controller = new TheseController();
         $controller->setTimeoutRetraitement($this->getTimeoutRetraitementFromOptions($options));
@@ -75,6 +78,7 @@ class TheseControllerFactory
         $controller->setMailConfirmationService($mailConfirmationService);
         $controller->setEntityManager($entityManager);
         $controller->setNotifierService($notifierService);
+        $controller->setImportService($importService);
 
         return $controller;
     }

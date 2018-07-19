@@ -1,5 +1,6 @@
 <?php
 
+use Application\Entity\Db\Structure;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Doctorant;
@@ -13,16 +14,21 @@ use Application\View\Renderer\PhpRenderer;
  * @var array(string=>string)   $infos
  * @var array(string=>string)   $encadrements
  * @var array(array)            $jury
+ * @var []                      $informations
+ *
+ * @see \Application\Service\Fichier\FichierService::fetchInformationsPageDeCouverture() pour la génération de $informations
  */
 
-$PATH = "/var/sygal-files";
+
+
+$PATH = Structure::PATH;
 ?>
 
 <!-- SECTION DU LOGO DE LA COMUE -------------------------------------------------------------------------------------->
 <div style="text-align: center; margin-bottom: 30px;">
     <div class='logo-comue'>
-        <?php if ($logos["comue"] !== null): ?>
-            <img src="<?php echo $PATH . $logos["comue"]; ?>"/>
+        <?php if ($informations["logo-comue"] !== null): ?>
+            <img src="<?php echo $PATH . $informations["logo-comue"]; ?>"/>
         <?php else: ?>
             <span style='background-color:red;'> COMUE ou logo de la COMUE non renseigné. </span>
         <?php endif; ?>
@@ -39,16 +45,16 @@ $PATH = "/var/sygal-files";
     <br/>
 
     Spécialité
-    <?php if ($infos["specialite"] !== null): ?>
-        <?php echo $infos["specialite"]; ?>
+    <?php if ($informations["specialité"] !== null): ?>
+        <?php echo $informations["specialité"]; ?>
     <?php else: ?>
         <span style='background-color:red;'> non renseignée </span>
     <?php endif; ?>
     <br/>
 
     Préparé au sein de l'
-    <?php if ($infos["etablissement"] !== null): ?>
-        <?php echo $infos["etablissement"]; ?>
+    <?php if ($informations["etablissement"] !== null): ?>
+        <?php echo $informations["etablissement"]; ?>
     <?php else: ?>
         <span style='background-color:red;'> non renseigné </span>
     <?php endif; ?>
@@ -66,8 +72,8 @@ $PATH = "/var/sygal-files";
 
 
 <div class='bandeau-titre'>
-    <?php if ($infos["titre"] !== null): ?>
-        <?php echo $infos["titre"]; ?>
+    <?php if ($informations["titre"] !== null): ?>
+        <?php echo $informations["titre"]; ?>
     <?php else: ?>
         <span style='background-color:red;'> Aucun titre </span>
     <?php endif; ?>
@@ -76,8 +82,8 @@ $PATH = "/var/sygal-files";
 
 <div class='infos-doctorant' style=''>
     Présentée et soutenue par <br/>
-    <?php if ($infos["doctorant"] !== null): ?>
-        <?php echo $infos["doctorant"]; ?>
+    <?php if ($informations["doctorant"] !== null): ?>
+        <?php echo $informations["doctorant"]; ?>
     <?php else: ?>
         <span style='background-color:red;'> Aucun doctorant </span>
     <?php endif; ?>
@@ -89,8 +95,8 @@ $PATH = "/var/sygal-files";
     <tr>
         <th colspan='3'>
             Thèse soutenue publiquement le
-            <?php if ($infos["date"] !== null): ?>
-                <?php echo $infos["date"]; ?>
+            <?php if ($informations["date de soutenance"] !== null): ?>
+                <?php echo $informations["date de soutenance"]; ?>
             <?php else: ?>
                 <span style='background-color:red;'> Aucune date </span>
             <?php endif; ?>
@@ -98,27 +104,32 @@ $PATH = "/var/sygal-files";
             devant le jury composé de
         </th>
     </tr>
-    <?php foreach($jury as $membre): ?>
-    <tr>
-        <td> <?php echo $membre["nom"]; ?> </td>
-        <td> <?php echo $membre["qualite"]; ?>, <?php echo $membre["rattachement"]; ?> </td>
-        <td> <?php echo $membre["role"]; ?> </td>
-    </tr>
-    <?php endforeach; ?>
+
+    <?php
+        $nbMembres = $informations["nombre de membres"] + $informations["nombre de rapporteurs"] + $informations["nombre de directeurs"];
+        for($position = 1 ; $position <= $nbMembres; $position++):
+    ?>
+            <tr>
+                <td> <?php echo $informations["nom ".$position]; ?> </td>
+                <td> <?php echo $informations["qualité ".$position]; ?>, <?php echo $informations["etablissement ".$position]; ?> </td>
+                <td> <?php echo $informations["role ".$position]; ?> </td>
+            </tr>
+    <?php endfor; ?>
+
 </table>
 
 
 <!-- SECTION ENCADREMENT ---------------------------------------------------------------------------------------------->
 <div class='infos-encadrement'>
     Thèse dirigée par
-    <?php if ($encadrements["directeurs"] !== null): ?>
-        <?php echo $encadrements["directeurs"]; ?>
+    <?php if ($informations["liste des directeurs"] !== null): ?>
+        <?php echo $informations["liste des directeurs"]; ?>
     <?php else: ?>
         <span style='background-color:red;'> non renseigné </span>
     <?php endif; ?>
 ,
-    <?php if ($encadrements["unite"] !== null): ?>
-        <?php echo $encadrements["unite"]; ?>
+    <?php if ($informations["Unité de recherche"] !== null): ?>
+        <?php echo $informations["Unité de recherche"]; ?>
     <?php else: ?>
         <span style='background-color:red;'> unité de recherche non renseignée </span>
     <?php endif; ?>
@@ -129,23 +140,29 @@ $PATH = "/var/sygal-files";
 <table style="border:none;" class="logos">
     <tr>
         <td>
-            <?php if ($logos["etablissement"]): ?>
-                <img class="logo_small" src="<?php echo $PATH . $logos["etablissement"]; ?>"/>
+            <?php if ($informations["logo-etablissement"]): ?>
+                <img class="logo_small" src="<?php echo $PATH . $informations["logo-etablissement"]; ?>"/>
             <?php else: ?>
                 <span style='background-color:red;'> Établissement d'inscription ou logo d'établissement non renseigné. </span>
             <?php endif; ?>
         </td>
+        <!-- TODO ENSI -->
+        <?php if ($informations["ENSI"] == "oui"): ?>
+        <td>
+            <img class="logo_small" src="public/logo_ensi.jpg"/>
+        </td>
+        <?php endif; ?>
         <!-- TODO COTUTELLE -->
         <td>
-            <?php if ($logos["ecole"]): ?>
-                <img class="logo_small" src="<?php echo $PATH . $logos["ecole"]; ?>"/>
+            <?php if ($informations["logo-ecoleDoctorale"]): ?>
+                <img class="logo_small" src="<?php echo $PATH . ($informations["logo-ecoleDoctorale"]); ?>"/>
             <?php else: ?>
                 <span style='background-color:red;'> École doctorale ou logo d'école doctorale non renseigné </span>
             <?php endif; ?>
         </td>
         <td>
-            <?php if ($logos["unite"]): ?>
-                <img class="logo_small" src="<?php echo $PATH . $logos["unite"]; ?>"/>
+            <?php if ($informations["logo-uniteRecherche"]): ?>
+                <img class="logo_small" src="<?php echo $PATH . ($informations["logo-uniteRecherche"]); ?>"/>
             <?php else: ?>
                 <span style='background-color:red;'> Unité de recherche ou logo d'unité de recherche non renseigné </span>
             <?php endif; ?>

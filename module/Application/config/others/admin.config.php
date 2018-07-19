@@ -186,12 +186,8 @@ return [
                             'test-envoi-mail' => [
                                 'label'    => 'Test envoi mail',
                                 'route'    => 'test-envoi-mail',
-                                //'icon'     => 'glyphicon glyphicon-send',
+                                'icon'     => 'glyphicon glyphicon-send',
                                 'resource' => PrivilegeController::getResourceId('UnicaenApp\Controller\Application', 'test-envoi-mail'),
-                                'withtarget' => true,
-                                'paramsInject' => [
-                                    'language',
-                                ],
                             ],
                         ],
                     ],

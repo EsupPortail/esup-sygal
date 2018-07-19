@@ -25,10 +25,8 @@ const CERTIF_CONFORME_MODIFIED_EVENT = "CERTIF_CONFORME_MODIFIED_EVENT";
             $estVersionCorrigee = $fichierTheseRetraite->getVersion()->estVersionCorrigee();
             $heading = $estVersionCorrigee ? "Vérification de la thèse corrigée retraitée" : "Vérification de la thèse retraitée";
 
-            $privilege = $estVersionCorrigee ?
-                ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE :
-                ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_INITIALE;
-            $canEdit = $this->isAllowed($these, $estVersionCorrigee);
+            $privilege = ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_($estVersionCorrigee);
+            $canEdit = $this->isAllowed($these, $privilege);
             ?>
             <h2 class="first"><?php echo $heading ?></h2>
         </div>

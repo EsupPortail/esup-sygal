@@ -49,7 +49,7 @@ echo $messenger->addMessagesFromFlashMessenger();
     <button name="ajouter" class="btn btn-success"> <span class='glyphicon glyphicon-plus'></span> Ajouter </button>
 <?php endif; ?>
 
-<form action="<?php echo $this->url(null, [], [],true); ?>" method="POST">
+<form action="<?php echo $this->url('substitution-modifier', ['cible' => $cible->getId()], [],true); ?>" method="POST">
     <input type="hidden" name="type" id="type" value="<?php echo $type; ?>">
     <input type="hidden" name="identifiant" id="identifiant" value="<?php echo $identifiant; ?>">
     <?php if($canEdit): ?>

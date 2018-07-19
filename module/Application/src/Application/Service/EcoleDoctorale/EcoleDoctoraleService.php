@@ -4,16 +4,16 @@ namespace Application\Service\EcoleDoctorale;
 
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Individu;
-use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Repository\EcoleDoctoraleRepository;
-use Application\Entity\Db\Structure;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\BaseService;
 use Application\Service\Role\RoleServiceAwareInterface;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\Query\Expr\Join;
 use UnicaenApp\Exception\RuntimeException;
+use UnicaenImport\Entity\Db\Source;
 
 /**
  * @method EcoleDoctorale|null findOneBy(array $criteria, array $orderBy = null)
@@ -21,6 +21,7 @@ use UnicaenApp\Exception\RuntimeException;
 class EcoleDoctoraleService extends BaseService implements RoleServiceAwareInterface
 {
     use RoleServiceAwareTrait;
+
     /**
      * @return EcoleDoctoraleRepository
      */
@@ -32,62 +33,16 @@ class EcoleDoctoraleService extends BaseService implements RoleServiceAwareInter
         return $repo;
     }
 
-    /**
-     * @return EcoleDoctorale[]
-     */
-    public function getEcolesDoctorales() {
-        /** @var EcoleDoctorale[] $ecoles */
-//        $ecoles = $this->getRepository()->findAll();
-//        usort($ecoles, function ($a,$b) {return $a->getLibelle() > $b->getLibelle();});
-//        return $ecoles;
-
-        $qb = $this->getEntityManager()->getRepository(EcoleDoctorale::class)->createQueryBuilder("ur")
-            ->leftJoin("ur.structure", "str", "WITH", "ur.structure = str.id")
-            ->leftJoin("str.structuresSubstituees", "sub")
-            ->leftJoin("str.typeStructure", "typ")
-            ->addSelect("str, sub, typ")
-            ->orderBy("str.libelle")
-        ;
-
-
-//        $ecoleDoctorale = $this->getEntityManager()->getRepository("TypeStructure")->findOneBy(["code" => TypeStructure::CODE_ECOLE_DOCTORALE]);
-//        $qb = $this->getEntityManager()->getRepository(Structure::class)->createQueryBuilder("str")
-//            ->leftJoin("str.ecoleDoctorale", "ed")
-//            ->setParameter("ecoleDoctorale", $ecoleDoctorale)
-//        ;
-        $ecoles = $qb->getQuery()->getResult();
-
-        return $ecoles;
-    }
-
-    /**
-     * @param int $id
-     * @return null|EcoleDoctorale
-     */
-    public function getEcoleDoctoraleById($id) {
-        /** @var EcoleDoctorale $ecole */
-        $ecole = $this->getRepository()->findOneBy(["id" => $id]);
-        return $ecole;
-    }
-
-    public function getEcoleDoctoraleByStructureId($id) {
-        /** @var EcoleDoctorale $ecole */
-        $qb = $this->getRepository()->createQueryBuilder("ed")
-            ->addSelect("s")
-            ->leftJoin("ed.structure", "s")
-            ->andWhere("s.id = :id")
-            ->setParameter("id", $id);
-        $ecole = $qb->getQuery()->getOneOrNullResult();
-        return $ecole;
-    }
 
     /**
      * @param int $id
      * @return Individu[]
      */
-    public function getIndividuByEcoleDoctoraleId($id) {
-        $ecole = $this->getEcoleDoctoraleById($id);
+    public function getIndividuByEcoleDoctoraleId($id)
+    {
+        $ecole = $this->getRepository()->find($id);
         $individus = $this->roleService->getIndividuByStructure($ecole->getStructure());
+
         return $individus;
     }
 

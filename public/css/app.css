@@ -342,14 +342,7 @@ div.fichier-retraitement {
 
 div.apercu-fichier img {
   box-shadow: 1px 1px 12px #555;
-  display: block;
-  margin-left: auto;
-  margin-right: auto; }
-
-a.apercu {
-  font-size: 120%; }
-  a.apercu span.glyphicon-eye-open {
-    margin: 0 3px; }
+  display: block; }
 
 p.autoris-diffusion-motif {
   font-size: 90%; }
@@ -478,6 +471,11 @@ div.photo-placeholder.loading {
 dl.faq dt {
   font-weight: bold;
   font-size: 120%; }
+
+/*********** Utilisateurs *********************/
+span.sas-highlight {
+  font-weight: bold;
+  margin: 0; }
 
 .user-usurpation-form {
   margin-top: 30px;

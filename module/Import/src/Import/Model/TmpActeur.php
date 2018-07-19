@@ -82,6 +82,12 @@ class TmpActeur
      */
     private $id;
 
-
+    /**
+     * @return string
+     */
+    public function getIndividuId()
+    {
+        return $this->individuId;
+    }
 }
 

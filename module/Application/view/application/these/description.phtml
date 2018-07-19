@@ -1,7 +1,6 @@
 <?php
 
 use Application\Entity\Db\These;
-use Application\Entity\Db\WfEtape;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\View\Renderer\PhpRenderer;
 
@@ -12,7 +11,8 @@ use Application\View\Renderer\PhpRenderer;
  * @var string $nextStepUrl
  */
 
-$canEdit = $this->isAllowed($these, ThesePrivileges::THESE_SAISIE_DESCRIPTION);
+$privilege = ThesePrivileges::THESE_SAISIE_DESCRIPTION_($these->getCorrectionAutorisee());
+$canEdit = $this->isAllowed($these, $privilege);
 ?>
 
 <?php $this->headTitle("Signalement")->prepend($these->getDoctorant()->getNomUsuel()) ?>

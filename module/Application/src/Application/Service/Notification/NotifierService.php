@@ -15,6 +15,7 @@ use Application\Notification\CorrectionAttendueUpdatedNotification;
 use Application\Notification\ResultatTheseAdmisNotification;
 use Application\Notification\ResultatTheseModifieNotification;
 use Application\Notification\ValidationDepotTheseCorrigeeNotification;
+use Application\Notification\ValidationPageDeCouvertureNotification;
 use Application\Notification\ValidationRdvBuNotification;
 use Application\Rule\NotificationDepotVersionCorrigeeAttenduRule;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
@@ -306,7 +307,7 @@ class NotifierService extends \Notification\Service\NotifierService
     public function triggerLogoAbsentEcoleDoctorale(EcoleDoctorale $ecole)
     {
         $mails = [];
-        foreach ($this->ecoleDoctoraleService->getIndividuByEcoleDoctoraleId($ecole->getId()) as $individu) {
+        foreach ($this->getEcoleDoctoraleService()->getIndividuByEcoleDoctoraleId($ecole->getId()) as $individu) {
             /** @var Individu $individu */
             $email = $individu->getEmail();
             if ($email !== null) $mails[] = $email;
@@ -330,7 +331,7 @@ class NotifierService extends \Notification\Service\NotifierService
     public function triggerLogoAbsentUniteRecherche(UniteRecherche $unite)
     {
         $mails = [];
-        foreach ($this->uniteRechercheService->getIndividuByUniteRechercheId($unite->getId()) as $individu) {
+        foreach ($this->getUniteRechercheService()->getIndividuByUniteRechercheId($unite->getId()) as $individu) {
             /** @var Individu $individu */
             $email = $individu->getEmail();
             if ($email !== null) $mails[] = $email;

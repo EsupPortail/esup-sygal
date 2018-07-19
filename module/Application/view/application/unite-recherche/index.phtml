@@ -1,7 +1,9 @@
 <?php
 
+use Application\Entity\Db\DomaineScientifique;
 use Application\Entity\Db\EtablissementRattachement;
 use Application\Entity\Db\StructureConcreteInterface;
+use Application\Filter\EtablissementPrefixFilter;
 use Application\Provider\Privilege\UniteRecherchePrivileges;
 use Application\View\Renderer\PhpRenderer;
 use UnicaenApp\Form\Element\SearchAndSelect;
@@ -56,12 +58,21 @@ $canModifier = $this->isAllowed(UniteRecherchePrivileges::getResourceId(UniteRec
             <tr <?php if($selected == $structure->getStructure()->getId()) echo 'class="ecole-doctorale selected" style="color:black;"';?> >
 
                 <td>
-                    <a href="<?php echo $this->url(null, [], ['query' => ['selected' => $structure->getStructure()->getId()]], true); ?>">
+                    <a href="<?php echo $this->url('unite-recherche', [], ['query' => ['selected' => $structure->getStructure()->getId()]], true); ?>">
                         <?php echo $structure->getLibelle(); ?>
                     </a>
                 </td>
                 <td> <?php echo explode("::",$structure->getSource()->getCode())[0]; ?></td>
-                <td> <?php echo $structure->getCode(); ?></td>
+                <td>
+                    <?php
+                        $result = $structure->getCode();
+                        try {
+                            $filter = new EtablissementPrefixFilter();
+                            $result = $filter->removePrefixFrom($result);
+                        } catch (LogicException $e) {}
+                        echo $result;
+                    ?>
+                </td>
                 <td> <?php echo $structure->getSigle(); ?></td>
                 <td>
                     <?php if ($canModifier && !$historisee) : ?>
@@ -103,7 +114,6 @@ $canModifier = $this->isAllowed(UniteRecherchePrivileges::getResourceId(UniteRec
                             Établissements de rattachement
                             <span class="badge"> <?php echo count($rattachements); ?> </span>
                         </h3>
-
                         <table class="table table-extra-condensed">
                             <thead>
                                 <tr>
@@ -121,6 +131,30 @@ $canModifier = $this->isAllowed(UniteRecherchePrivileges::getResourceId(UniteRec
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
+                            </tbody>
+                        </table>
+
+                        <h3>
+                            Domaines scientifiques
+                            <span class="badge"> <?php echo count($domaines); ?> </span>
+                        </h3>
+                        <table class="table table-extra-condensed">
+                            <thead>
+                            <tr>
+                                <th> Libellé des domaines scientifiques associés </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php foreach($domaines as $domaine): ?>
+                                <tr>
+                                    <td>
+                                        <?php
+                                        /** @var DomaineScientifique $domaine */
+                                        echo $domaine->getLibelle();
+                                        ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
                             </tbody>
                         </table>
 
@@ -149,6 +183,16 @@ $canModifier = $this->isAllowed(UniteRecherchePrivileges::getResourceId(UniteRec
                                             <span class="glyphicon glyphicon-plus"></span><span class="glyphicon glyphicon-user"></span>
                                             Ajouter un membre
                                         </button>
+                                        <?php if (empty($roles)): ?>
+                                            <a
+                                                    href="<?php echo $this->url('structure/generer-roles-defauts',
+                                                        ['id' => $structure->getStructure()->getId(), 'type' => \Application\Entity\Db\TypeStructure::CODE_UNITE_RECHERCHE], [], true);?>"
+                                                    class="btn btn-warning"
+                                            >
+                                                <span class="glyphicon glyphicon-refresh"></span>
+                                                Générer rôles par défaut
+                                            </a>
+                                        <?php endif; ?>
 
                                     </div>
                                 <?php endif;?>

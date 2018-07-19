@@ -5,6 +5,7 @@ namespace Application\Controller;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\TypeValidation;
 use Application\Notification\ValidationDepotTheseCorrigeeNotification;
+use Application\Notification\ValidationPageDeCouvertureNotification;
 use Application\Notification\ValidationRdvBuNotification;
 use Application\Provider\Privilege\ValidationPrivileges;
 use Application\Service\Notification\NotifierServiceAwareTrait;
@@ -24,6 +25,64 @@ class ValidationController extends AbstractController
     use NotifierServiceAwareTrait;
     use RoleServiceAwareTrait;
     use VariableServiceAwareTrait;
+
+    public function pageDeCouvertureAction()
+    {
+        $these = $this->requestedThese();
+        $result = $this->confirm()->execute();
+        $action = $this->params()->fromQuery('action');
+
+        // si un tableau est retourné par le plugin, l'opération a été confirmée
+        if (is_array($result)) {
+            $notification = new ValidationPageDeCouvertureNotification();
+            $notification->setThese($these);
+            $notification->setAction($action);
+
+            if ($action === 'valider') {
+                $this->validationService->validatePageDeCouverture($these);
+                $successMessage = "Validation de la page de couverture enregistrée avec succès.";
+
+                // notification
+                $this->notifierService->trigger($notification);
+            }
+            elseif ($action === 'devalider') {
+                $this->validationService->unvalidatePageDeCouverture($these);
+                $successMessage ="Validation de la page de couverture annulée avec succès.";
+
+                // notification
+//                $this->notifierService->trigger($notification);
+            }
+            else {
+                throw new RuntimeException("Action inattendue!");
+            }
+
+            $this->flashMessenger()->addMessage($successMessage, 'PageDeCouverture/success');
+        }
+
+        // récupération du modèle de vue auprès du plugin et passage de variables classique
+        $viewModel = $this->confirm()->getViewModel();
+
+        $viewModel->setVariables([
+            'title'  => "Validation de la page de couverture",
+            'these'  => $these,
+            'action' => $action,
+        ]);
+
+        return $viewModel;
+    }
+
+    public function validationPageDeCouvertureAction()
+    {
+        $these = $this->requestedThese();
+
+        $view = new ViewModel([
+            'these' => $these,
+        ]);
+
+        $view->setTemplate('application/validation/page-de-couverture');
+
+        return $view;
+    }
 
     public function rdvBuAction()
     {

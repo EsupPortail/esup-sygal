@@ -16,12 +16,13 @@ use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\View\Helper\Sortable;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\Form\Element\Hidden;
-use Zend\Http\PhpEnvironment\Response;
+use Zend\Http\Response;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
@@ -34,7 +35,7 @@ class FichierTheseController extends AbstractController
     use NotifierServiceAwareTrait;
     use IndividuServiceAwareTrait;
 
-    const UPLOAD_MAX_FILESIZE = '500M';
+    const UPLOAD_MAX_FILESIZE = '5M';
 
     public function deposesAction()
     {
@@ -132,7 +133,6 @@ class FichierTheseController extends AbstractController
             return [
                 'file'          => $fichier,
                 'downloadUrl'   => $this->urlFichierThese()->telechargerFichierThese($these, $fichier),
-                'apercevoirUrl' => $this->urlFichierThese()->apercevoirFichierThese($these, $fichier),
                 'deleteUrl'     => $this->urlFichierThese()->supprimerFichierThese($these, $fichier),
             ];
         }, $fichiers);
@@ -180,7 +180,6 @@ class FichierTheseController extends AbstractController
             return [
                 'file'          => $fichier,
                 'downloadUrl'   => $this->urlFichierThese()->telechargerFichierThese($these, $fichier),
-                'apercevoirUrl' => $this->urlFichierThese()->apercevoirFichierThese($these, $fichier),
                 'deleteUrl'     => $this->urlFichierThese()->supprimerFichierThese($these, $fichier),
             ];
         }, $fichiers);
@@ -377,22 +376,25 @@ class FichierTheseController extends AbstractController
     /**
      * @return Response|ViewModel
      */
-    public function apercevoirFichierAction()
+    public function apercevoirPageDeCouvertureAction()
     {
-        $fichier = $this->requestFichier();
         $these = $this->requestedThese();
         $imageContentRequested = (bool) (int) $this->params()->fromQuery('content');
 
         if ($imageContentRequested) {
-            return $this->apercuFichier();
+            return $this->apercuPageDeCouverture();
         }
 
-        $vm = new ViewModel([
-            'fichier' => $fichier,
-            'title' => "Aperçu du fichier",
-            'apercuUrl' => $this->urlFichierThese()->apercevoirFichierThese($these, $fichier, ['content' => 1]),
+        $apercuUrl = $this->urlFichierThese()->apercevoirPageDeCouverture($these, [
+            'content' => 1,
+            'nocache' => 1,
+            'ts' => time(), // ajouter un ts garantit que le navigateur ne mettra pas en cache l'image
         ]);
-//        $vm->setTemplate('application/fichier-these/apercevoir-fichier');
+
+        $vm = new ViewModel([
+            'title'     => "Aperçu de la page de couverture",
+            'apercuUrl' => $apercuUrl,
+        ]);
 
         return $vm;
     }
@@ -400,46 +402,47 @@ class FichierTheseController extends AbstractController
     /**
      * @return Response
      */
-    protected function apercuFichier()
+    protected function apercuPageDeCouverture()
     {
-        $fichier = $this->requestFichier();
-        $nocache = (bool) (int) $this->params()->fromQuery('nocache', '0');
-
-        if (! $fichier->supporteApercu()) {
-            throw new LogicException("L'aperçu n'est pas disponible pour le fichier $fichier");
+        // fetch de la thèse AVEC les jointures parcourues dans la génération de la PDC
+        $theseId = $this->params('these');
+        $qb = $this->theseService->getRepository()->createQueryBuilder('t');
+        $qb
+            ->addSelect('etab, etabstr, doct, doctind, ed, ur, edstr, urstr, act, actind')
+            ->join('t.etablissement', 'etab')
+            ->join('etab.structure', 'etabstr')
+            ->join('t.doctorant', 'doct')
+            ->join('doct.individu', 'doctind')
+            ->leftJoin('t.ecoleDoctorale', 'ed')
+            ->leftJoin('t.uniteRecherche', 'ur')
+            ->leftJoin('ed.structure', 'edstr')
+            ->leftJoin('ur.structure', 'urstr')
+            ->leftJoin('t.acteurs', 'act')
+            ->leftJoin('act.individu', 'actind')
+            ->andWhere('t = :these')
+            ->setParameter('these', $theseId);
+        try {
+            $these = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Anomalie: plusieurs thèses trouvées avec l'id $theseId");
         }
 
+        $filename = uniqid() . '.pdf';
+        $renderer = $this->getServiceLocator()->get('view_renderer'); /* @var $renderer \Zend\View\Renderer\PhpRenderer */
+        $this->fichierService->generatePageDeCouverture($these, $renderer, $filename);
+
+        $filepath = sys_get_temp_dir() . '/' . $filename; // NB: l'exporter PDF stocke dans sys_get_temp_dir()
         try {
-            $content = $this->fichierService->apercuPremierePage($fichier);
+            $content = $this->fichierService->generateFirstPagePreview($filepath);
         } catch (RuntimeException $e) {
             $content = "";
         }
+        unlink($filepath);
 
-        /** @var Response $response */
+        /** @var \Zend\Http\Response $response */
         $response = $this->getResponse();
-        $response->setContent($content);
 
-        $headers = $response->getHeaders();
-        $headers
-            ->addHeaderLine('Content-Transfer-Encoding', "binary")
-            ->addHeaderLine('Content-Type', "image/png")
-            ->addHeaderLine('Content-length', strlen($content));
-
-        if ($nocache /*|| $failure*/) {
-            $headers
-                ->addHeaderLine('Cache-Control', "no-cache")
-                ->addHeaderLine('Pragma', 'no-cache');
-        }
-        else {
-            // autorisation de la mise en cache de l'image par le client
-            $maxAge = 60 * 60 * 24; // 86400 secondes = 1 jour
-            $headers
-                ->addHeaderLine('Cache-Control', "private, max-age=$maxAge")
-                ->addHeaderLine('Pragma', 'private')// tout sauf 'no-cache'
-                ->addHeaderLine('Expires', gmdate('D, d M Y H:i:s \G\M\T', time() + $maxAge));
-        }
-
-        return $response;
+        return $this->fichierService->createResponseForFileContent($response, $content);
     }
 
     /**

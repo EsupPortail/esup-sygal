@@ -16,6 +16,16 @@ return array(
                         'export-soutenance-depassee',
                         'acteurs-sans-mail',
                         'export-acteurs-sans-mail',
+                        'doctorants-sans-mail',
+                        'export-doctorants-sans-mail',
+                        'theses-anciennes',
+                        'export-theses-anciennes',
+                        'theses-a-soutenir',
+                        'export-theses-a-soutenir',
+                        'theses-sans-pdc',
+                        'export-theses-sans-pdc',
+                        'theses-sans-depot',
+                        'export-theses-sans-depot',
                 ],
                     'roles' => [
                         'Administrateur technique',
@@ -25,6 +35,29 @@ return array(
         ],
     ],
     'doctrine'     => [],
+
+    'navigation'      => [
+        'default' => [
+            'home' => [
+                'pages' => [
+                    'admin' => [
+                        'pages' => [
+                            'indicateur' => [
+                                'label'    => 'Indicateurs',
+                                'route'    => 'indicateur',
+                                //'resource' => PrivilegeController::getResourceId('Application\Controller\EcoleDoctorale', 'index'),
+                                'roles' => [
+                                    'Administrateur technique',
+                                ],
+
+                                'order'    => 1,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
 
     'router' => [
         'routes' => [
@@ -78,6 +111,116 @@ return array(
                                     'route'       => '/export',
                                     'defaults'    => [
                                         'action' => 'export-acteurs-sans-mail',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'theses-a-soutenir' => [
+                        'type'          => Segment::class,
+                        'may_terminate' => true,
+                        'options'       => [
+                            'route'       => '/theses-a-soutenir',
+                            'defaults'    => [
+                                'action' => 'theses-a-soutenir',
+                            ],
+                        ],
+                        'child_routes'  => [
+                            'export' => [
+                                'type'          => Segment::class,
+                                'may_terminate' => true,
+                                'options'       => [
+                                    'route'       => '/export',
+                                    'defaults'    => [
+                                        'action' => 'export-theses-a-soutenir',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'theses-sans-pdc' => [
+                        'type'          => Segment::class,
+                        'may_terminate' => true,
+                        'options'       => [
+                            'route'       => '/theses-sans-pdc',
+                            'defaults'    => [
+                                'action' => 'theses-sans-pdc',
+                            ],
+                        ],
+                        'child_routes'  => [
+                            'export' => [
+                                'type'          => Segment::class,
+                                'may_terminate' => true,
+                                'options'       => [
+                                    'route'       => '/export',
+                                    'defaults'    => [
+                                        'action' => 'export-theses-sans-pdc',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'theses-sans-depot' => [
+                        'type'          => Segment::class,
+                        'may_terminate' => true,
+                        'options'       => [
+                            'route'       => '/theses-sans-depot',
+                            'defaults'    => [
+                                'action' => 'theses-sans-depot',
+                            ],
+                        ],
+                        'child_routes'  => [
+                            'export' => [
+                                'type'          => Segment::class,
+                                'may_terminate' => true,
+                                'options'       => [
+                                    'route'       => '/export',
+                                    'defaults'    => [
+                                        'action' => 'export-theses-sans-depot',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'doctorants-sans-mail' => [
+                        'type'          => Segment::class,
+                        'may_terminate' => true,
+                        'options'       => [
+                            'route'       => '/doctorants-sans-mail',
+                            'defaults'    => [
+                                'action' => 'doctorants-sans-mail',
+                            ],
+                        ],
+                        'child_routes'  => [
+                            'export' => [
+                                'type'          => Segment::class,
+                                'may_terminate' => true,
+                                'options'       => [
+                                    'route'       => '/export',
+                                    'defaults'    => [
+                                        'action' => 'export-doctorants-sans-mail',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'theses-anciennes' => [
+                        'type'          => Segment::class,
+                        'may_terminate' => true,
+                        'options'       => [
+                            'route'       => '/theses-anciennes',
+                            'defaults'    => [
+                                'action' => 'theses-anciennes',
+                            ],
+                        ],
+                        'child_routes'  => [
+                            'export' => [
+                                'type'          => Segment::class,
+                                'may_terminate' => true,
+                                'options'       => [
+                                    'route'       => '/export',
+                                    'defaults'    => [
+                                        'action' => 'export-theses-anciennes',
                                     ],
                                 ],
                             ],

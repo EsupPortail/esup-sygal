@@ -15,6 +15,8 @@ use Application\Entity\Db\Repository\FichierRepository;
 /**
  * @var These               $these
  * @var PointsDeVigilanceForm         $form
+ *
+ * @see
  */
 
 
@@ -33,20 +35,28 @@ echo $messenger->addMessagesFromFlashMessenger();
 ?>
 
 <?php if ($form !== null): ?>
-    <?php
-    $fcg = $this->formControlGroup();
-    $form->prepare();
-
-    echo $this->form()->openTag($form->setAttribute('class', 'attestations'));
-//    echo $fcg->render($form->get('orcid'));
-//    echo $fcg->render($form->get('nnt'));
-    echo $fcg->render($form->get('vigilance'));
-    echo $fcg->render($form->get('submit'));
-    echo $this->form()->closeTag()
-    ?>
+<!--    <div class="row">-->
+<!--        <div class="col-md-6">-->
+<fieldset>
+    <legend>Points de vigilance</legend>
+    <div class="row">
+        <div class="col-md-6">
+            <?php
+            $fcg = $this->formControlGroup();
+            $form->prepare();
+            echo $this->form()->openTag($form->setAttribute('class', 'attestations'));
+            echo $fcg($form->get('vigilance'));
+            echo $this->formElement($form->get('submit'));
+            echo $this->form()->closeTag()
+            ?>
+        </div>
+    </div>
+</fieldset>
 <?php else:?>
 <p>
     L'accés au récapitulatif est disponible une fois les informations de diffusion et du rendez-vous bu saisies.
 </p>
 <?php endif; ?>
+
+
 

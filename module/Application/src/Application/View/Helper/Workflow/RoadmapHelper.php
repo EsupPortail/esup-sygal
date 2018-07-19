@@ -101,7 +101,7 @@ class RoadmapHelper extends AbstractHelper implements WorkflowServiceAwareInterf
             return $e->getLibelleActeur();
         }
 
-        $url = $this->getView()->url($e->getRoute(), [], ['force_canonical' => true], true);
+        $url = $this->getView()->url($e->getRoute(), ['these' => $this->these->getId()], ['force_canonical' => true], true);
 
         return sprintf('<a class="%s" href="%s">%s</a>', $class, $url, $e->getLibelleActeur());
     }

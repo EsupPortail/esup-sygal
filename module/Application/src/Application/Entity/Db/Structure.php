@@ -2,6 +2,7 @@
 
 namespace Application\Entity\Db;
 
+use Doctrine\Common\Collections\Collection;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenApp\Exception\LogicException;
@@ -17,6 +18,8 @@ class Structure implements HistoriqueAwareInterface, SourceAwareInterface
 {
     use SourceAwareTrait;
     use HistoriqueAwareTrait;
+
+    const PATH = "/var/www/sygal/upload";
 
     /**
      * @var string $id
@@ -43,8 +46,19 @@ class Structure implements HistoriqueAwareInterface, SourceAwareInterface
      */
     protected $typeStructure;
 
+    /**
+     * @var Collection
+     */
     protected $etablissement;
+
+    /**
+     * @var Collection
+     */
     protected $ecoleDoctorale;
+
+    /**
+     * @var Collection
+     */
     protected $uniteRecherche;
 
     /**
@@ -245,8 +259,7 @@ class Structure implements HistoriqueAwareInterface, SourceAwareInterface
             $image = Util::createImageWithText("Aucun logo pour la structure|[".$this->getId()." - ".$this->getSigle()."]",200,200);
             return $image;
         }
-//        return file_get_contents(APPLICATION_DIR . $this->cheminLogo);
-        return file_get_contents( "/var/sygal-files" . $this->cheminLogo);
+        return file_get_contents( Structure::PATH . $this->cheminLogo);
     }
 
     /**
@@ -269,27 +282,27 @@ class Structure implements HistoriqueAwareInterface, SourceAwareInterface
     }
 
     /**
-     * @return Etablissement
+     * @return Etablissement|null
      */
     public function getEtablissement()
     {
-        return $this->etablissement;
+        return $this->etablissement->first();
     }
 
     /**
-     * @return EcoleDoctorale
+     * @return EcoleDoctorale|null
      */
     public function getEcoleDoctorale()
     {
-        return $this->ecoleDoctorale;
+        return $this->ecoleDoctorale->first();
     }
 
     /**
-     * @return UniteRecherche
+     * @return UniteRecherche|null
      */
     public function getUniteRecherche()
     {
-        return $this->uniteRecherche;
+        return $this->uniteRecherche->first();
     }
 
     /**

@@ -4,7 +4,6 @@ create table S_THESARD as select * from sodoct.THESARD@doctprod;
 create table S_THESARD_COMPL as select * from sodoct.THESARD_COMPL@doctprod;
 
 
-
 -- INDIVIDU ACTEUR
 
 insert into INDIVIDU(
@@ -117,7 +116,7 @@ insert into DOCTORANT(
 )
   select
     ID, -- NB: même id que SODOCT
-    (select id from ETABLISSEMENT where CODE = 'UCN'),
+    (select e.id from ETABLISSEMENT e join structure s on s.id = e.STRUCTURE_ID where s.CODE = 'UCN'),
     (select id from INDIVIDU i where i.SOURCE_CODE = ('UCN::' || t.SOURCE_CODE) and i.TYPE = 'doctorant'),
     (select id from source where code = 'UCN::apogee') as SOURCE_ID,
     'UCN::' || t.SOURCE_CODE as SOURCE_CODE,
@@ -191,7 +190,7 @@ END;
 /
 
 -- verif
-select i.NOM_USUEL, i.SOURCE_CODE, d.SOURCE_CODE, persopass, email_pro
+select i.NOM_USUEL, case when i.SOURCE_CODE = d.SOURCE_CODE then 'sources codes ok' else 'pb' end test, i.SOURCE_CODE, d.SOURCE_CODE, persopass, email_pro
   from DOCTORANT_COMPL dc
   join DOCTORANT d on d.id = dc.DOCTORANT_ID
   join INDIVIDU i on i.id = d.INDIVIDU_ID

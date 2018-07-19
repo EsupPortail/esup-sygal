@@ -63,7 +63,7 @@ $canModifier = $this->isAllowed(EtablissementPrivileges::getResourceId(Etablisse
         <tr <?php if($selected == $structure->getStructure()->getId()) echo 'class="ecole-doctorale selected" style="color:black;"';?> >
 
             <td>
-                <a href="<?php echo $this->url(null, [], ['query' => ['selected' => $structure->getStructure()->getId()]], true); ?>">
+                <a href="<?php echo $this->url('etablissement', [], ['query' => ['selected' => $structure->getStructure()->getId()]], true); ?>">
                     <?php echo $structure->getLibelle(); ?>
                 </a>
             </td>
@@ -129,6 +129,16 @@ $canModifier = $this->isAllowed(EtablissementPrivileges::getResourceId(Etablisse
                                     <span class="glyphicon glyphicon-plus"></span><span class="glyphicon glyphicon-user"></span>
                                     Ajouter un membre
                                 </button>
+                            <?php if (empty($roles)): ?>
+                                <a
+                                        href="<?php echo $this->url('structure/generer-roles-defauts',
+                                            ['id' => $structure->getStructure()->getId(), 'type' => \Application\Entity\Db\TypeStructure::CODE_ETABLISSEMENT], [], true);?>"
+                                        class="btn btn-warning"
+                                >
+                                    <span class="glyphicon glyphicon-refresh"></span>
+                                    Générer rôles par défaut
+                                </a>
+                            <?php endif; ?>
 
                         </div>
                     <?php endif;?>
@@ -169,7 +179,7 @@ $canModifier = $this->isAllowed(EtablissementPrivileges::getResourceId(Etablisse
             <tr <?php if($selected == $structure->getStructure()->getId()) echo 'class="ecole-doctorale selected" style="color:black;"';?> >
 
                 <td>
-                    <a href="<?php echo $this->url(null, [], ['query' => ['selected' => $structure->getStructure()->getId()]], true); ?>">
+                    <a href="<?php echo $this->url('etablissement', [], ['query' => ['selected' => $structure->getStructure()->getId()]], true); ?>">
                         <?php echo $structure->getLibelle(); ?>
                     </a>
                 </td>

@@ -55,6 +55,7 @@ class DoctorantController extends AbstractController
 //        var_dump($back);
         if ($mailConfirmation !== null && ($back == 0 || $back === null)) {
             $viewmodel = new ViewModel([
+                'doctorant' => $doctorant,
                 'email' => $mailConfirmation->getEmail(),
             ]);
             $viewmodel->setTemplate('application/doctorant/demande-encours');

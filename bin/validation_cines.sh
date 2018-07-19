@@ -8,8 +8,8 @@
 #   2/ l'URL du web service, FACULTATIF ("https://facile.cines.fr/xml", par défaut).
 ##########################################################################################
 
-export http_proxy=proxy.unicaen.fr:3128
-export https_proxy=proxy.unicaen.fr:3128
+#export http_proxy=proxy.unicaen.fr:3128
+#export https_proxy=proxy.unicaen.fr:3128
 
 DEFAULT_URL="https://facile.cines.fr/xml"
 

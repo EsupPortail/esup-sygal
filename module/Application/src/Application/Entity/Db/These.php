@@ -778,6 +778,24 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
+     * Teste si un individu fait partie des acteurs au titre d'un rôle particulier.
+     *
+     * @param Individu    $individu
+     * @param string|Role $role
+     * @return bool
+     */
+    public function hasActeurWithRole(Individu $individu, $role)
+    {
+        if ($role instanceof Role) {
+            $role = $role->getCode();
+        }
+
+        $individus = $this->getActeursByRoleCode($role)->map(function(Acteur $a) { return $a->getIndividu(); });
+
+        return $individus->contains($individu);
+    }
+
+    /**
      * @param Acteur $acteur
      * @return $this
      */
@@ -1036,10 +1054,10 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * Retourne les mails des directeurs de thèse.
      *
-     * @param Individu[] $unknownMails Liste des individus sans mail, format: "Paul Hochon" => Individu
+     * @param Individu[] $individusSansMail Liste des individus sans mail, format: "Paul Hochon" => Individu
      * @return array
      */
-    public function getDirecteursTheseEmails(array &$unknownMails = [])
+    public function getDirecteursTheseEmails(array &$individusSansMail = [])
     {
         $emails = [];
         $directeurs = $this->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE);
@@ -1049,7 +1067,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
             $email = $acteur->getIndividu()->getEmail();
             $name = (string) $acteur->getIndividu();
             if (! $email) {
-                $unknownMails[$name] = $acteur->getIndividu();
+                $individusSansMail[$name] = $acteur->getIndividu();
             } else {
                 $emails[$email] = $name;
             }

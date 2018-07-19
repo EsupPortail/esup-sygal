@@ -4,8 +4,8 @@ namespace Notification\Service;
 
 use Notification\Entity\Service\NotifEntityService;
 use Notification\NotificationRenderer;
-use Notification\Service\Mailer\MailerService;
 use UnicaenApp\Exception\LogicException;
+use UnicaenApp\Service\Mailer\MailerService;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\View\Renderer\PhpRenderer;
 

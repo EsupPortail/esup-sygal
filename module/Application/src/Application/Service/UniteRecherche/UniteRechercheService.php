@@ -13,8 +13,10 @@ use Application\Service\BaseService;
 use Application\Service\Role\RoleServiceAwareInterface;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\Query\Expr\Join;
 use UnicaenApp\Exception\RuntimeException;
 use Application\Entity\Db\TypeStructure;
+use UnicaenImport\Entity\Db\Source;
 
 /**
  * @method UniteRecherche|null findOneBy(array $criteria, array $orderBy = null)
@@ -22,6 +24,7 @@ use Application\Entity\Db\TypeStructure;
 class UniteRechercheService extends BaseService implements RoleServiceAwareInterface
 {
     use RoleServiceAwareTrait;
+
     /**
      * @return UniteRechercheRepository
      */
@@ -34,53 +37,47 @@ class UniteRechercheService extends BaseService implements RoleServiceAwareInter
     }
 
     /**
-     * @return UniteRecherche[]
+     * @param UniteRecherche $unite
+     * @return EtablissementRattachement[]
      */
-    public function getUnitesRecherches() {
-        /** @var UniteRecherche[] $unites */
-        $qb = $this->getEntityManager()->getRepository(UniteRecherche::class)->createQueryBuilder("ur")
-            ->leftJoin("ur.structure", "str", "WITH", "ur.structure = str.id")
-            ->leftJoin("str.structuresSubstituees", "sub")
-            ->leftJoin("str.typeStructure", "typ")
-            ->addSelect("str, sub, typ")
-            ->orderBy("str.libelle")
-        ;
-        $unites = $qb->getQuery()->getResult();
-        return $unites;
+    public function findEtablissementRattachement(UniteRecherche $unite)
+    {
+        $qb = $this->getEntityManager()->getRepository(EtablissementRattachement::class)->createQueryBuilder("er")
+            ->addSelect("e, s")
+            ->join("er.etablissement", "e")
+            ->join("e.structure", "s")
+            ->andWhere("er.unite = :unite")
+            ->orderBy("s.libelle")
+            ->setParameter("unite", $unite);
+
+        $result = $qb->getQuery()->getResult();
+
+        return $result;
     }
 
-    /**
-     * @param int $id
-     * @return null|UniteRecherche
-     */
-    public function getUniteRechercheById($id) {
-        /** @var UniteRecherche $unite */
-        $unite = $this->getRepository()->findOneBy(["id" => $id]);
-        return $unite;
-    }
+    public function existEtablissementRattachement($unite, $etablissement)
+    {
+        $qb = $this->getEntityManager()->getRepository(EtablissementRattachement::class)->createQueryBuilder("er")
+            ->andWhere("er.unite = :unite")
+            ->andWhere("er.etablissement = :etablissement")
+            ->setParameter("unite", $unite)
+            ->setParameter("etablissement", $etablissement);
+        $result = $qb->getQuery()->getOneOrNullResult();
 
-    public function getUniteRechercheByStructureId($id) {
-        /** @var UniteRecherche $unite */
-        $qb = $this->getRepository()->createQueryBuilder("u")
-            ->addSelect("s")
-            ->leftJoin("u.structure", "s")
-            ->andWhere("s.id = :id")
-            ->setParameter("id", $id);
-        $unite = $qb->getQuery()->getOneOrNullResult();
-        return $unite;
+        return $result;
     }
-
 
     /**
      * @param int $id
      * @return Individu[]
      */
-    public function getIndividuByUniteRechercheId($id) {
-        $unite = $this->getUniteRechercheById($id);
+    public function getIndividuByUniteRechercheId($id)
+    {
+        $unite = $this->getRepository()->find($id);
         $individus = $this->roleService->getIndividuByStructure($unite->getStructure());
+
         return $individus;
     }
-
 
     /**
      * Historise une ED.
@@ -159,25 +156,7 @@ class UniteRechercheService extends BaseService implements RoleServiceAwareInter
 
     /**
      * @param UniteRecherche $unite
-     * @return EtablissementRattachement[]
-     */
-    public function findEtablissementRattachement(UniteRecherche $unite)
-    {
-        $qb = $this->getEntityManager()->getRepository(EtablissementRattachement::class)->createQueryBuilder("er")
-            ->addSelect("e, s")
-            ->join("er.etablissement", "e" )
-            ->join( "e.structure", "s")
-            ->andWhere("er.unite = :unite")
-            ->orderBy("s.libelle")
-            ->setParameter("unite", $unite);
-
-        $result = $qb->getQuery()->getResult();
-        return $result;
-    }
-
-    /**
-     * @param UniteRecherche $unite
-     * @param Etablissement $etablissement
+     * @param Etablissement  $etablissement
      * @throws OptimisticLockException
      */
     public function addEtablissementRattachement(UniteRecherche $unite, Etablissement $etablissement)
@@ -191,7 +170,7 @@ class UniteRechercheService extends BaseService implements RoleServiceAwareInter
 
     /**
      * @param UniteRecherche $unite
-     * @param Etablissement $etablissement
+     * @param Etablissement  $etablissement
      * @throws OptimisticLockException
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
@@ -209,30 +188,4 @@ class UniteRechercheService extends BaseService implements RoleServiceAwareInter
             $this->getEntityManager()->flush($result);
         }
     }
-
-    public function setEtablissementRattachementPrincipal(UniteRecherche $unite, Etablissement $etablissement) {
-        $ers = $this->findEtablissementRattachement($unite);
-
-        foreach($ers as $er) {
-            if ($er->getEtablissement()->getId() === $etablissement->getId()) {
-                $er->setPrincipal(true);
-            } else {
-                $er->setPrincipal(false);
-            }
-            $this->getEntityManager()->flush($er);
-        }
-    }
-
-    public function existEtablissementRattachement($unite, $etablissement)
-    {
-        $qb = $this->getEntityManager()->getRepository(EtablissementRattachement::class)->createQueryBuilder("er")
-            ->andWhere("er.unite = :unite")
-            ->andWhere("er.etablissement = :etablissement")
-            ->setParameter("unite", $unite)
-            ->setParameter("etablissement", $etablissement);
-        $result = $qb->getQuery()->getOneOrNullResult();
-        return $result;
-    }
-
-
 }

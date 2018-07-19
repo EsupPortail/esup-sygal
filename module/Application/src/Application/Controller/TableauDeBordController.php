@@ -27,7 +27,7 @@ class TableauDeBordController extends AbstractController
             $anomaliesTables[$anomalie->getTableName()][] = $anomalie;
         }
 
-        $etablissements = $this->getEtablissementService()->getEtablissementsBySource(SourceInterface::CODE_SYGAL);
+        $etablissements = $this->getEtablissementService()->getRepository()->findAllBySource(SourceInterface::CODE_SYGAL);
         $etablissements = array_filter($etablissements, function (Etablissement $etablissement) { return count($etablissement->getStructure()->getStructuresSubstituees())==0; });
         $etablissements = array_filter($etablissements, function (Etablissement $etablissement) { return $etablissement->getSigle() != "NU";});
 

@@ -1,5 +1,7 @@
 
 create table S_VALIDITE_FICHIER as select * from sodoct.VALIDITE_FICHIER@doctprod;
+
+
 create table S_FICHIER as
   select
     ID,

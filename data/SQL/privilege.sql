@@ -25,6 +25,36 @@ insert into ROLE_PRIVILEGE(ROLE_ID, PRIVILEGE_ID)
 
 
 --
+-- Ajout de ROLE_PRIVILEGE_MODELE.
+--
+
+INSERT INTO ROLE_PRIVILEGE_MODELE (ROLE_CODE, PRIVILEGE_ID)
+  with data(role, priv) as (
+    select 'ADMIN',       'refresh-these' from dual union
+    select 'ADMIN_TECH',  'refresh-these' from dual union
+    select 'BU',          'refresh-these' from dual union
+    select 'BDD',         'refresh-these' from dual
+  )
+    select role, p.id
+    from data
+    join PRIVILEGE p on p.code = data.priv
+;
+
+--
+-- Application des modèles (ceux pas déjà appliqués).
+--
+
+insert into ROLE_PRIVILEGE (ROLE_ID, PRIVILEGE_ID)
+  SELECT r.id, p.ID
+  from ROLE_PRIVILEGE_MODELE rpm
+    join role r on r.CODE = rpm.ROLE_CODE
+    join PRIVILEGE p on p.id = rpm.PRIVILEGE_ID
+  where not exists (
+      select * from ROLE_PRIVILEGE rp where rp.ROLE_ID = r.id and rp.PRIVILEGE_ID = p.id
+  );
+
+
+--
 -- Mise en conformité brutale entre 2 bdd des CATEGORIE_PRIVILEGE, PRIVILEGE, ROLE_PRIVILEGE.
 --
 select 'delete from ROLE_PRIVILEGE;' from dual

@@ -5,9 +5,7 @@ namespace Application\Form\Hydrator;
 use Application\Entity\Db\Diffusion;
 use Application\Entity\Db\RdvBu;
 use Application\Service\Fichier\FichierServiceAwareTrait;
-use Doctrine\ORM\QueryBuilder;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
-use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class RdvBuHydrator extends DoctrineObject
 {
@@ -59,7 +57,6 @@ class RdvBuHydrator extends DoctrineObject
         if (!isset($data['versionArchivableFournie'])) {
             $data['versionArchivableFournie'] = $this->existeVersionArchivable($rdvBu);
         }
-        $data['pageTitreConforme'] = (int) $data['pageTitreConforme'];
 
         /** @var RdvBu $object */
         $object = parent::hydrate($data, $rdvBu);

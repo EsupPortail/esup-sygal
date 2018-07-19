@@ -6,7 +6,7 @@ use Notification\Entity\Service\NotifEntityServiceAwareTrait;
 use Notification\MessageContainer;
 use Notification\Notification;
 use Notification\NotificationRenderer;
-use Notification\Service\Mailer\MailerServiceAwareTrait;
+use UnicaenApp\Service\Mailer\MailerServiceAwareTrait;
 
 /**
  * Service d'envoi de notification par mail.

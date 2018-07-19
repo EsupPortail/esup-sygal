@@ -13,10 +13,3 @@ RewriteRule ^.*$ - [NC,L]
 RewriteCond %{REQUEST_URI}::$1 ^(/.+)(.+)::\2$
 RewriteRule ^(.*) - [E=BASE:%1]
 RewriteRule ^(.*)$ %{ENV:BASE}index.php [NC,L]
-
-# NB: ne peut-être supérieur au memory_limit du php.ini
-php_value memory_limit 2048M
-
-# NB: post_max_size > upload_max_filesize
-php_value upload_max_filesize 501M
-php_value post_max_size       502M

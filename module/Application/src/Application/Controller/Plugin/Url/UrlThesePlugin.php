@@ -10,6 +10,8 @@ use Zend\Mvc\Controller\Plugin\AbstractPlugin;
 /**
  * Aide de vue de génération d'URL.
  *
+ * @method string refreshTheseUrl(These $these, $redirect = null)
+ * @method validationPageDeCouvertureUrl(These $these)
  * @method depotFichiers(These $these, $nature, $version = null, $retraite = false, array $queryParams = [])
  * @method identiteThese(These $these)
  * @method depotThese(These $these, $version = null)
@@ -35,6 +37,8 @@ use Zend\Mvc\Controller\Plugin\AbstractPlugin;
  * @method devaliderDepotTheseCorrigeeUrl(These $these)
  * @method validerCorrectionTheseUrl(These $these)
  * @method devaliderCorrectionTheseUrl(These $these)
+ * @method validerPageDeCouvertureUrl(These $these)
+ * @method devaliderPageDeCouvertureUrl(These $these)
  *
  * @see UrlTheseService
  *

@@ -40,15 +40,19 @@ return [
                 'allow' => [
                     [
                         'privileges' => [
-                            ThesePrivileges::THESE_SAISIE_DESCRIPTION,
-                            ThesePrivileges::THESE_SAISIE_ATTESTATIONS,
-                            ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION,
+                            ThesePrivileges::THESE_SAISIE_DESCRIPTION_VERSION_INITIALE,
+                            ThesePrivileges::THESE_SAISIE_DESCRIPTION_VERSION_CORRIGEE,
+                            ThesePrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_INITIALE,
+                            ThesePrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_CORRIGEE,
+                            ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_INITIALE,
+                            ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_CORRIGEE,
                             ThesePrivileges::THESE_DEPOT_VERSION_INITIALE,
                             ThesePrivileges::THESE_DEPOT_VERSION_CORRIGEE,
                             ThesePrivileges::THESE_TELECHARGEMENT_FICHIER,
                             ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_INITIALE,
                             ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE,
                             ThesePrivileges::THESE_SAISIE_RDV_BU,
+//                            ThesePrivileges::THESE_REFRESH,
                         ],
                         'resources'  => ['These'],
                         'assertion'  => 'Assertion\\These',
@@ -87,9 +91,17 @@ return [
                         'detail-identite',
                         'generate',
                         'fusion',
+                        'validation-page-de-couverture',
                     ],
                     'privileges' => ThesePrivileges::THESE_CONSULTATION_FICHE,
                     'assertion'  => 'Assertion\\These',
+                ],
+                [
+                    'controller' => 'Application\Controller\These',
+                    'action'     => [
+                        'refresh-these',
+                    ],
+                    'privileges' => ThesePrivileges::THESE_REFRESH,
                 ],
                 [
                     'controller' => 'Application\Controller\These',
@@ -173,7 +185,8 @@ return [
                         'modifier-description',
                     ],
                     'privileges' => [
-                        ThesePrivileges::THESE_SAISIE_DESCRIPTION,
+                        ThesePrivileges::THESE_SAISIE_DESCRIPTION_VERSION_INITIALE,
+                        ThesePrivileges::THESE_SAISIE_DESCRIPTION_VERSION_CORRIGEE,
                     ],
                     'assertion'  => 'Assertion\\These',
                 ],
@@ -183,7 +196,8 @@ return [
                         'modifier-attestation',
                     ],
                     'privileges' => [
-                        ThesePrivileges::THESE_SAISIE_ATTESTATIONS,
+                        ThesePrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_INITIALE,
+                        ThesePrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_CORRIGEE,
                     ],
                     'assertion'  => 'Assertion\\These',
                 ],
@@ -193,7 +207,8 @@ return [
                         'modifier-diffusion',
                     ],
                     'privileges' => [
-                        ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION,
+                        ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_INITIALE,
+                        ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_CORRIGEE,
                     ],
                     'assertion'  => 'Assertion\\These',
                 ],
@@ -340,6 +355,18 @@ return [
                             ],
                         ],
                     ],
+                    'refresh-these' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'       => '/refresh/:these',
+                            'constraints' => [
+                                'these' => '\d+',
+                            ],
+                            'defaults'    => [
+                                'action' => 'refresh-these',
+                            ],
+                        ],
+                    ],
                     'version-papier' => [
                         'type'          => 'Segment',
                         'options'       => [
@@ -349,6 +376,18 @@ return [
                             ],
                             'defaults'    => [
                                 'action' => 'depot-papier-final',
+                            ],
+                        ],
+                    ],
+                    'validation-page-de-couverture' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'       => '/validation-page-de-couverture/:these',
+                            'constraints' => [
+                                'these' => '\d+',
+                            ],
+                            'defaults'    => [
+                                'action' => 'validation-page-de-couverture',
                             ],
                         ],
                     ],
@@ -750,6 +789,20 @@ return [
                                 'class' => 'divider',
                             ],
 
+                            'validation-page-de-couverture' => [
+                                'id'       => 'validation-page-de-couverture',
+                                'label'    => 'Page de couverture',
+                                'route'    => 'these/validation-page-de-couverture',
+                                'withtarget' => true,
+                                'paramsInject' => [
+                                    'these',
+                                ],
+                                'class' => 'version-initiale correction-attendue-{correctionAutorisee}',
+                                'icon' => 'glyphicon glyphicon-file',
+                                'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'validation-page-de-couverture'),
+//                                'etape' => WfEtape::CODE_DEPOT_VERSION_ORIGINALE,
+//                                'visible' => 'Assertion\\These',
+                            ],
                             'depot' => [
                                 'id'       => 'depot',
                                 'label'    => 'Dépôt de la thèse',

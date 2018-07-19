@@ -1,0 +1,15 @@
+<?php
+
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var string      $action
+ */
+
+$libs = [
+    'valider'   => "la validation",
+    'devalider' => "l'annulation de la validation",
+];
+
+echo $this->confirm(sprintf("Confirmez-vous %s de la page de couverture, svp ?", $libs[$action]));

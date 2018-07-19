@@ -48,10 +48,12 @@ $fcg = $this->formControlGroup();
                 echo $this->formElementErrors($logoFile);
                 ?>
             <br/>
+            <?php if($form->getObject()->getId()): ?>
             <a id="supprimer-logo" class="btn btn-danger" href="<?php echo $this->url('ecole-doctorale/supprimer-logo', ["ecoleDoctorale" => $form->getObject()->getStructure()->getId()]); ?>">
                 <span class="glyphicon glyphicon-trash"></span>
                 Supprimer le logo
             </a>
+            <?php endif; ?>
         </td>
     </tr>
 </table>

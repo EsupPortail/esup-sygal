@@ -7,181 +7,404 @@ use Application\Entity\Db\These;
 /**
  * @see \Indicateur\Controller\IndicateurController::indexAction()
  * @var array $effectifs
- * @var Acteur[] $sansMail
+ * @var Acteur[] $acteursSansMail
+ * @var These[] $doctorantsSansMail
  * @var These[] $theses
+ * @var These[] $anciennes
+ * @var These[] $soutenancesSansCouverture
+ * @var These[] $thesesASoutenir
  * @var Anomalie[] $anomalies
  */
 ?>
 
 
-<h1>
+<h1 class="page-header first">
     Indicateurs de SyGAL
 </h1>
 
 <div>
-    <div class="col-md-4">
-        <div class="panel panel-info">
-            <div class="panel-heading">
-                <?php
-                    $date = new \DateTime();
-                    $annee= $date->format("Y");
-                    ?>
-                <h4>
-                    Thèses par établissements pour l'année <?php echo $annee; ?>
-                </h4>
+
+    <div class="row">
+
+        <div class="col-md-4">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <?php
+                        $date = new \DateTime();
+                        $annee= $date->format("Y");
+                        ?>
+                    <h4>
+                        État des thèses pour l'année <?php echo $annee; ?>
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-extra-condensed">
+                        <thead>
+                            <tr>
+                                <th> Etablissement</th>
+                                <th> En cours </th>
+                                <th> Inscription </th>
+                                <th> Soutenance </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($effectifs as $etablissement => $effectif): ?>
+                            <tr>
+                                <td> <?php echo $etablissement; ?> </td>
+                                <td> <?php echo $effectif[0]; ?> </td>
+                                <td> <?php echo $effectif[1]; ?> </td>
+                                <td> <?php echo $effectif[2]; ?> </td>
+                            </tr>
+                            <?php endforeach;?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <div class="panel-body">
-                <table class="table table-extra-condensed">
-                    <thead>
+        </div>
+
+        <div class="col-md-4">
+            <div class="panel panel-warning">
+                <div class="panel-heading">
+                    <h4>
+                        Thèses avec soutenance dépassée
+                        <span class="badge"> <?php echo count($theses); ?> </span>
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-extra-condensed">
+                        <thead>
                         <tr>
-                            <th> Etablissement</th>
-                            <th> En cours </th>
-                            <th> Inscription </th>
+                            <th> These</th>
+                            <th> État </th>
+                            <th> Date de soutenance </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php for($i = 0; $i < 5 && $i < count($theses); $i++): ?>
+                        <tr>
+                            <td> <?php echo $theses[$i]->getSourceCode(); ?></td>
+                            <td> <?php echo $theses[$i]->getEtatThese(); ?></td>
+                            <td> <?php echo $theses[$i]->getDateSoutenance()->format("d/m/Y"); ?></td>
+                        </tr>
+                        <?php endfor; ?>
+                        <?php if(count($theses) >= 5): ?>
+                        <tr>
+                            <td colspan="3"> ... </td>
+                        </tr>
+                        <?php endif; ?>
+                        </tbody>
+                    </table>
+                    <div class="pull-right">
+                    <a class="btn btn-success" href="<?php echo $this->url('indicateur/soutenance-depassee', [], [], true);?>">
+                        <span class="glyphicon glyphicon-eye-open"></span> Visualiser les données
+                    </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="panel panel-warning">
+                <div class="panel-heading">
+                    <h4>
+                        Thèses anciennes (plus de 6 ans)
+                        <span class="badge"> <?php echo count($anciennes); ?> </span>
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-extra-condensed">
+                        <thead>
+                        <tr>
+                            <th> These</th>
+                            <th> État </th>
+                            <th> Première inscription </th>
                             <th> Soutenance </th>
                         </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($effectifs as $etablissement => $effectif): ?>
-                        <tr>
-                            <td> <?php echo $etablissement; ?> </td>
-                            <td> <?php echo $effectif[0]; ?> </td>
-                            <td> <?php echo $effectif[1]; ?> </td>
-                            <td> <?php echo $effectif[2]; ?> </td>
-                        </tr>
-                        <?php endforeach;?>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                        <?php for($i = 0; $i < 5 && $i < count($anciennes); $i++): ?>
+                            <tr>
+                                <td> <?php echo $anciennes[$i]->getSourceCode(); ?></td>
+                                <td> <?php echo $anciennes[$i]->getEtatThese(); ?></td>
+                                <td> <?php echo $anciennes[$i]->getDatePremiereInscription()->format("d/m/Y"); ?></td>
+                                <td> <?php echo ($anciennes[$i]->getDateSoutenance())?$anciennes[$i]->getDateSoutenance()->format("d/m/Y"):""; ?></td>
+                            </tr>
+                        <?php endfor; ?>
+                        <?php if(count($anciennes) >= 5): ?>
+                            <tr>
+                                <td colspan="4"> ... </td>
+                            </tr>
+                        <?php endif; ?>
+                        </tbody>
+                    </table>
+                    <div class="pull-right">
+                        <a class="btn btn-success" href="<?php echo $this->url('indicateur/theses-anciennes', [], [], true);?>">
+                            <span class="glyphicon glyphicon-eye-open"></span> Visualiser les données
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
+
     </div>
-    <div class="col-md-4">
-        <div class="panel panel-warning">
-            <div class="panel-heading">
-                <h4>
-                    Thèses en cours malgré soutenance dépassée
-                    <span class="badge"> <?echo count($theses); ?> </span>
-                </h4>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h4>
+                        Thèse en cours à soutenir
+                        <span class="badge"> <?php echo count($thesesASoutenir); ?> </span>
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-extra-condensed">
+                        <thead>
+                        <tr>
+                            <th> Thèse </th>
+                            <th> Nom </th>
+                            <th> Date de soutenance</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php for($i = 0; $i < 5 && $i < count($thesesASoutenir); $i++): ?>
+                            <tr>
+                                <td> <?php echo $thesesASoutenir[$i]->getSourceCode(); ?></td>
+                                <td> <?php echo $thesesASoutenir[$i]->getDoctorant()->getIndividu()->getNomComplet(); ?></td>
+                                <td> <?php echo $thesesASoutenir[$i]->getDateSoutenance()->format("d/m/Y"); ?></td>
+
+
+                            </tr>
+                        <?php endfor; ?>
+                        <?php if(count($thesesASoutenir) >= 5): ?>
+                            <tr>
+                                <td colspan="3"> ... </td>
+                            </tr>
+                        <?php endif; ?>
+                        </tbody>
+                    </table>
+                    <div class="pull-right">
+                        <a class="btn btn-success" href="<?php echo $this->url('indicateur/theses-a-soutenir', [], [], true);?>">
+                            <span class="glyphicon glyphicon-eye-open"></span> Visualiser les données
+                        </a>
+                    </div>
+                </div>
             </div>
-            <div class="panel-body">
-                <table class="table table-extra-condensed">
-                    <thead>
-                    <tr>
-                        <th> These</th>
-                        <th> État </th>
-                        <th> Date de soutenance </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php for($i = 0; $i < 5 && $i < count($theses); $i++): ?>
-                    <tr>
-                        <td> <?php echo $theses[$i]->getSourceCode(); ?></td>
-                        <td> <?php echo $theses[$i]->getEtatThese(); ?></td>
-                        <td> <?php echo $theses[$i]->getDateSoutenance()->format("d/m/Y"); ?></td>
-                    </tr>
-                    <?php endfor; ?>
-                    <?php if(count($theses) >= 5): ?>
-                    <tr>
-                        <td colspan="3"> ... </td>
-                    </tr>
-                    <?php endif; ?>
-                    </tbody>
-                </table>
-                <div class="pull-right">
-                <a class="btn btn-success" href="<?php echo $this->url('indicateur/soutenance-depassee', [], [], true);?>">
-                    <span class="glyphicon glyphicon-eye-open"></span> Visualiser les données
-                </a>
+        </div>
+
+        <div class="col-md-4">
+            <div class="panel panel-warning">
+                <div class="panel-heading">
+                    <h4>
+                        Pas de PdC à 2 mois de la soutenance
+                        <span class="badge"> <?php echo count($pasPDC); ?> </span>
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-extra-condensed">
+                        <thead>
+                        <tr>
+                            <th> These</th>
+                            <th> Nom </th>
+                            <th> Date de soutenance </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php for($i = 0; $i < 5 && $i < count($pasPDC); $i++): ?>
+                            <tr>
+                                <td> <?php echo $pasPDC[$i]->getSourceCode(); ?></td>
+                                <td> <?php echo $pasPDC[$i]->getDoctorant()->getIndividu()->getNomComplet(); ?></td>
+                                <td> <?php echo $pasPDC[$i]->getDateSoutenance()->format("d/m/Y"); ?></td>
+                            </tr>
+                        <?php endfor; ?>
+                        <?php if(count($pasPDC) >= 5): ?>
+                            <tr>
+                                <td colspan="4"> ... </td>
+                            </tr>
+                        <?php endif; ?>
+                        </tbody>
+                    </table>
+                    <div class="pull-right">
+                        <a class="btn btn-success" href="<?php echo $this->url('indicateur/theses-sans-pdc', [], [], true);?>">
+                            <span class="glyphicon glyphicon-eye-open"></span> Visualiser les données
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="panel panel-warning">
+                <div class="panel-heading">
+                    <h4>
+                        Pas de dépôt à 1 mois de la soutenance
+                        <span class="badge"> <?php echo count($pasDepot); ?> </span>
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-extra-condensed">
+                        <thead>
+                        <tr>
+                            <th> These</th>
+                            <th> Nom </th>
+                            <th> Date de soutenance </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php for($i = 0; $i < 5 && $i < count($pasDepot); $i++): ?>
+                            <tr>
+                                <td> <?php echo $pasDepot[$i]->getSourceCode(); ?></td>
+                                <td> <?php echo $pasDepot[$i]->getDoctorant()->getIndividu()->getNomComplet(); ?></td>
+                                <td> <?php echo $pasDepot[$i]->getDateSoutenance()->format("d/m/Y"); ?></td>
+                            </tr>
+                        <?php endfor; ?>
+                        <?php if(count($pasDepot) >= 5): ?>
+                            <tr>
+                                <td colspan="4"> ... </td>
+                            </tr>
+                        <?php endif; ?>
+                        </tbody>
+                    </table>
+                    <div class="pull-right">
+                        <a class="btn btn-success" href="<?php echo $this->url('indicateur/theses-sans-depot', [], [], true);?>">
+                            <span class="glyphicon glyphicon-eye-open"></span> Visualiser les données
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<div>
-    <div class="col-md-4">
-        <div class="panel panel-warning">
-            <div class="panel-heading">
-                <h4>
-                    Acteurs sans adresse électronique
-                    <span class="badge"> <?echo count($sansMail); ?> </span>
-                </h4>
+    <div class="row">
+
+        <div class="col-md-4">
+            <div class="panel panel-warning">
+                <div class="panel-heading">
+                    <h4>
+                        Doctorants sans eMail
+                        <span class="badge"> <?php echo count($doctorantsSansMail); ?> </span>
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-extra-condensed">
+                        <thead>
+                        <tr>
+                            <th> Thèse </th>
+                            <th> Identifiant</th>
+                            <th> Nom </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php for($i = 0; $i < 5 && $i < count($doctorantsSansMail); $i++): ?>
+                            <tr>
+                                <td> <?php echo $doctorantsSansMail[$i]->getSourceCode(); ?></td>
+                                <td> <?php echo $doctorantsSansMail[$i]->getDoctorant()->getSourceCode(); ?></td>
+                                <td> <?php echo $doctorantsSansMail[$i]->getDoctorant()->getIndividu()->getNomComplet(); ?></td>
+
+
+                            </tr>
+                        <?php endfor; ?>
+                        <?php if(count($doctorantsSansMail) >= 5): ?>
+                            <tr>
+                                <td colspan="3"> ... </td>
+                            </tr>
+                        <?php endif; ?>
+                        </tbody>
+                    </table>
+                    <div class="pull-right">
+                        <a class="btn btn-success" href="<?php echo $this->url('indicateur/doctorants-sans-mail', [], [], true);?>">
+                            <span class="glyphicon glyphicon-eye-open"></span> Visualiser les données
+                        </a>
+                    </div>
+                </div>
             </div>
-            <div class="panel-body">
-                <table class="table table-extra-condensed">
-                    <thead>
-                    <tr>
-                        <th> Thèse </th>
-                        <th> Identifiant</th>
-                        <th> Rôle </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php for($i = 0; $i < 5 && $i < count($sansMail); $i++): ?>
+        </div>
+
+        <div class="col-md-4">
+            <div class="panel panel-warning">
+                <div class="panel-heading">
+                    <h4>
+                        Acteurs sans eMail
+                        <span class="badge"> <?php echo count($acteursSansMail); ?> </span>
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-extra-condensed">
+                        <thead>
                         <tr>
-                            <td> <?php echo $sansMail[$i]->getThese()->getSourceCode(); ?></td>
-                            <td> <?php echo $sansMail[$i]->getSourceCode(); ?></td>
-                            <td> <?php echo $sansMail[$i]->getRole()->getLibelle(); ?></td>
+                            <th> Thèse </th>
+                            <th> Identifiant</th>
+                            <th> Rôle </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php for($i = 0; $i < 5 && $i < count($acteursSansMail); $i++): ?>
+                            <tr>
+                                <td> <?php echo $acteursSansMail[$i]->getThese()->getSourceCode(); ?></td>
+                                <td> <?php echo $acteursSansMail[$i]->getSourceCode(); ?></td>
+                                <td> <?php echo $acteursSansMail[$i]->getRole()->getLibelle(); ?></td>
 
 
-                        </tr>
-                    <?php endfor; ?>
-                    <?php if(count($theses) >= 5): ?>
+                            </tr>
+                        <?php endfor; ?>
+                        <?php if(count($acteursSansMail) >= 5): ?>
+                            <tr>
+                                <td colspan="3"> ... </td>
+                            </tr>
+                        <?php endif; ?>
+                        </tbody>
+                    </table>
+                    <div class="pull-right">
+                        <a class="btn btn-success" href="<?php echo $this->url('indicateur/acteurs-sans-mail', [], [], true);?>">
+                            <span class="glyphicon glyphicon-eye-open"></span> Visualiser les données
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="panel panel-danger">
+                <div class="panel-heading">
+                    <h4>
+                        Anomalie de clefs étrangères
+                        <span class="badge"> <?php echo count($anomalies); ?> </span>
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-extra-condensed">
+                        <thead>
                         <tr>
-                            <td colspan="3"> ... </td>
+                            <th> Nom de la table </th>
+                            <th> Attribut</th>
+                            <th> Valeur </th>
                         </tr>
-                    <?php endif; ?>
-                    </tbody>
-                </table>
-                <div class="pull-right">
-                    <a class="btn btn-success" href="<?php echo $this->url('indicateur/acteurs-sans-mail', [], [], true);?>">
-                        <span class="glyphicon glyphicon-eye-open"></span> Visualiser les données
-                    </a>
+                        </thead>
+                        <tbody>
+                        <?php for($i = 0; $i < 5 && $i < count($anomalies); $i++): ?>
+                            <tr>
+                                <td> <?php echo $anomalies[$i]->getTableName(); ?></td>
+                                <td> <?php echo $anomalies[$i]->getTableColumn(); ?></td>
+                                <td> <?php echo $anomalies[$i]->getColumnValue(); ?></td>
+
+
+                            </tr>
+                        <?php endfor; ?>
+                        <?php if(count($anomalies) >= 5): ?>
+                            <tr>
+                                <td colspan="3"> ... </td>
+                            </tr>
+                        <?php endif; ?>
+                        </tbody>
+                    </table>
+                    <div class="pull-right">
+                        <a class="btn btn-success" href="<?php echo $this->url('tableau-de-bord/anomalie', [], [], true);?>">
+                            <span class="glyphicon glyphicon-eye-open"></span> Visualiser les données
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<div>
-    <div class="col-md-4">
-        <div class="panel panel-danger">
-            <div class="panel-heading">
-                <h4>
-                    Anomalie de clefs étrangères
-                    <span class="badge"> <?echo count($anomalies); ?> </span>
-                </h4>
-            </div>
-            <div class="panel-body">
-                <table class="table table-extra-condensed">
-                    <thead>
-                    <tr>
-                        <th> Nom de la table </th>
-                        <th> Attribut</th>
-                        <th> Valeur </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php for($i = 0; $i < 5 && $i < count($sansMail); $i++): ?>
-                        <tr>
-                            <td> <?php echo $anomalies[$i]->getTableName(); ?></td>
-                            <td> <?php echo $anomalies[$i]->getTableColumn(); ?></td>
-                            <td> <?php echo $anomalies[$i]->getColumnValue(); ?></td>
-
-
-                        </tr>
-                    <?php endfor; ?>
-                    <?php if(count($theses) >= 5): ?>
-                        <tr>
-                            <td colspan="3"> ... </td>
-                        </tr>
-                    <?php endif; ?>
-                    </tbody>
-                </table>
-                <div class="pull-right">
-                    <a class="btn btn-success" href="<?php echo $this->url('tableau-de-bord/anomalie', [], [], true);?>">
-                        <span class="glyphicon glyphicon-eye-open"></span> Visualiser les données
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
