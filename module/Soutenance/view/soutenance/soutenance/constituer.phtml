@@ -5,17 +5,20 @@
 ?>
 
 <style>
-    .badge-error {
-        background-color: #b94a48;
-    }
-
     .badge-success {
         background-color: #468847;
     }
+
+    .action {
+        width: 20em;
+        margin:1ex;
+    }
+
 </style>
 
+<?php $this->headTitle($this->translate("Proposition de soutenance")); ?>
 <h1 class="page-header">
-    Préparation de la soutenance et constution du jury
+    Proposition de soutenance
 </h1>
 
 <div class="panel panel-danger">
@@ -25,16 +28,20 @@
         </h4>
     </div>
     <div class="panel-body">
-<!--        <span class="badge badge-error">Non valide</span>-->
-        <ul>
-            <li> Date de la soutenance : non communiquée</li>
-            <li> Heure de la soutenance : non communiquée </li>
-            <li> Lieu de la Soutenance : non communiqué</li>
-        </ul>
+        <div class="pull-left">
+            <ul>
+                <li> Date de la soutenance : non communiquée</li>
+                <li> Heure de la soutenance : non communiquée </li>
+                <li> Lieu de la Soutenance : non communiqué</li>
+            </ul>
+        </div>
+        <div class="pull-right">
+            <a href="" class="btn btn-primary action"><span class="glyphicon glyphicon-pencil"></span> Éditer lieu et date de la soutenace </a>
+        </div>
     </div>
 </div>
 
-<div class="panel panel-info">
+<div class="panel panel-success">
     <div class="panel-heading">
         <h4>
             Indicateurs liés à la validité du jury de thèse
@@ -42,40 +49,171 @@
     </div>
     <div class="panel-body">
 <!--        <span class="badge badge-success">Valide</span>-->
-        <div class="col-md-4">
-            <h3>
+        <div class="col-md-3">
+            <h4>
                 Parité de genre :
 <!--                <span class="glyphicon glyphicon-info-sign"></span>-->
-            </h3>
+            </h4>
 
             <div class="progress">
-                <div class="progress-bar progress-bar-success" style="width:55%;"> Femme </div>
-                <div class="progress-bar progress-bar-danger"  style="width:45%;"> Homme</div>
+                <div class="progress-bar progress-bar-success" style="width:40%;"> Femme </div>
+                <div class="progress-bar progress-bar-danger"  style="width:60%;"> Homme</div>
             </div>
 
         </div>
-        <div class="col-md-4">
-            <h3>
+        <div class="col-md-3">
+            <h4>
+                Nombre de rapporteurs :
+            </h4>
+
+            <div class="progress">
+                <div class="progress-bar progress-bar-info" style="width:40%;"> 2 </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <h4>
             Nombre de membres de rang A :
-            </h3>
+            </h4>
 
             <div class="progress">
                 <div class="progress-bar progress-bar-info" style="width:60%;"> Rang A </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <h3>
+        <div class="col-md-3">
+            <h4>
             Nombre de membres extérieurs :
-            </h3>
+            </h4>
             <div class="progress">
-                <div class="progress-bar progress-bar-info" style="width:50%;"> Extérieurs </div>
+                <div class="progress-bar progress-bar-info" style="width:60%;"> Extérieurs </div>
             </div>
         </div>
     </div>
 </div>
 
-<div>
-    Liste des membres
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h4>
+            Composition du jury
+        </h4>
+    </div>
+    <div class="panel-body">
+        <div class="col-md-9 pull-left">
+            <table class="table table-extra-condensed">
+                <thead>
+                <tr>
+                    <th>Dénomination</th>
+                    <th>Genre</th>
+                    <th>Qualité</th>
+                    <th>Rang</th>
+                    <th>Etablissement</th>
+                    <th>Rôle</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td> Paule HOCHON </td>
+                    <td> Femme </td>
+                    <td> Professeur des universités </td>
+                    <td> A </td>
+                    <td> Université de Brest </td>
+                    <td> Rapporteur </td>
+                    <td>
+                        <span class="glyphicon glyphicon-pencil"></span>
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td> Akira KOBAYASHI</td>
+                    <td> Homme </td>
+                    <td> Directeur de recherches </td>
+                    <td> A </td>
+                    <td> Institut de Neo-Tokyo </td>
+                    <td> Rapporteur </td>
+                    <td>
+                        <span class="glyphicon glyphicon-pencil"></span>
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td> Joan DOE</td>
+                    <td> Femme </td>
+                    <td> Chargé de recherches </td>
+                    <td> B </td>
+                    <td> Univerité d'Oxford </td>
+                    <td> Membre </td>
+                    <td>
+                        <span class="glyphicon glyphicon-pencil"></span>
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td> Jean DUPONT</td>
+                    <td> Homme </td>
+                    <td> Professeur des univeristés </td>
+                    <td> A </td>
+                    <td> Univerité de Caen Normandie </td>
+                    <td> Membre </td>
+                    <td>
+                        <span class="glyphicon glyphicon-pencil"></span>
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td> Alain LEFEBVRE</td>
+                    <td> Homme </td>
+                    <td> Maître de conférences </td>
+                    <td> B </td>
+                    <td> Univerité de Caen Normandie </td>
+                    <td> Membre </td>
+                    <td>
+                        <span class="glyphicon glyphicon-pencil"></span>
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="pull-right">
+            <a href="" class="btn btn-primary action"><span class="glyphicon glyphicon-plus"></span> Ajouter un membre de jury</a>
+        </div>
+
+    </div>
+</div>
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h4>
+            Validation de la proposition de soutenance
+        </h4>
+    </div>
+    <div class="panel-body">
+        <div class="col-md-8">
+            <h4>
+                Liste des validations
+            </h4>
+
+            <ul>
+                <li>
+                    Billy BOB (Doctorant) <br/>
+                    <span class="badge badge-default"> Aucune validation</span>
+
+                </li>
+                <li>
+                    Jack WHITE (Directeur) <br/>
+                    <span class="badge badge-success"> Valider </span> 32/13/2112 16:54:00
+                </li>
+                <li>
+                    Frank BLACK (Co-directeur) <br/>
+                    <span class="badge badge-default"> Aucune validation</span>
+                </li>
+            </ul>
+        </div>
+        <div class="pull-right">
+            <a href="" class="btn btn-success action "><span class="glyphicon glyphicon-ok"></span> Valider la proposition de soutenance</a> <br/>
+            <a href="" class="btn btn-danger action"><span class="glyphicon glyphicon-remove"></span> Rejeter la proposition de soutenance</a>
+        </div>
+    </div>
 </div>
 
 
