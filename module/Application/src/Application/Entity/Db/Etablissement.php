@@ -38,12 +38,12 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
     /**
      * @var bool
      */
-    private $estMembre = false;
+    protected $estMembre = false;
 
     /**
      * @var bool
      */
-    private $estAssocie = false;
+    protected $estAssocie = false;
 
 
     /**
