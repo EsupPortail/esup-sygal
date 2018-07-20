@@ -548,8 +548,8 @@ class FichierService extends BaseService
         // TODO chercher les libellés des rôles dans des constantes
         $jury = [];
         $acteurs = $these->getActeurs()->toArray();
-        $rapporteurs =  array_filter($acteurs, function($a) {return TheseController::estRapporteur($a); });
-        $directeurs =  array_filter($acteurs, function($a) {return TheseController::estDirecteur($a); });
+        $rapporteurs =  array_filter($acteurs, function(Acteur $a) { return $a->estRapporteur(); });
+        $directeurs =  array_filter($acteurs, function(Acteur $a) { return $a->estDirecteur(); });
         $membres = array_diff($acteurs, $rapporteurs, $directeurs);
         $informations["cotut-libelle"] = ($these->getLibelleEtabCotutelle())?($these->getLibelleEtabCotutelle()):"non";
         $informations["cotut-pays"]    = ($these->getLibellePaysCotutelle())?($these->getLibellePaysCotutelle()):"non";
@@ -562,8 +562,8 @@ class FichierService extends BaseService
 //        }
 
         $informations["logo-associe"] = "non";
-        if (TheseController::estENSI($directeurs))      $informations["logo-associe"] = "public/logo_ensi.jpg";
-        if (TheseController::estESITC ($directeurs))    $informations["logo-associe"] = "public/logo_esitc.jpg";
+        if (Acteur::estENSI($directeurs))      $informations["logo-associe"] = "public/logo_ensi.jpg";
+        if (Acteur::estESITC ($directeurs))    $informations["logo-associe"] = "public/logo_esitc.jpg";
 
         $informations["nombre de membres"] = count($membres)?count($membres):"";
         $informations["nombre de rapporteurs"] = count($rapporteurs)?count($rapporteurs):"";
@@ -582,7 +582,7 @@ class FichierService extends BaseService
         foreach ($rapporteurs as $rapporteur) {
             $informations["nom ".$position]             = $rapporteur->getIndividu()->getNomComplet(true,true,false, true, true);
             $informations["qualité ".$position]         = $rapporteur->getQualite();
-            $informations["etablissement ".$position]   = $rapporteur->getEtablissement();
+            $informations["etablissement ".$position]   = ($etab = $rapporteur->getEtablissement()) ? $etab->getStructure()->getLibelle() : null;
             $informations["role ".$position]            = "Rapporteur du jury";
             $position++;
         }
@@ -591,7 +591,7 @@ class FichierService extends BaseService
         foreach ($membres as $membre) {
             $informations["nom ".$position]             = $membre->getIndividu()->getNomComplet(true,true,false, true, true);
             $informations["qualité ".$position]         = $membre->getQualite();
-            $informations["etablissement ".$position]   = $membre->getEtablissement();
+            $informations["etablissement ".$position]   = ($etab = $membre->getEtablissement()) ? $etab->getStructure()->getLibelle() : null;
             $informations["role ".$position]            = "Membre du jury";
             $position++;
         }
@@ -600,7 +600,7 @@ class FichierService extends BaseService
         foreach ($directeurs as $directeur) {
             $informations["nom ".$position]             = $directeur->getIndividu()->getNomComplet(true,true,false, true, true);
             $informations["qualité ".$position]         = $directeur->getQualite();
-            $informations["etablissement ".$position]   = $directeur->getEtablissement();
+            $informations["etablissement ".$position]   = ($etab = $directeur->getEtablissement()) ? $etab->getStructure()->getLibelle() : null;
             $informations["role ".$position]            = "Directeur de thèse";
             $position++;
         }

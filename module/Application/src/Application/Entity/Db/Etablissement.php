@@ -35,6 +35,16 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
      */
     private $sourceCode;
 
+    /**
+     * @var bool
+     */
+    private $estMembre = false;
+
+    /**
+     * @var bool
+     */
+    private $estAssocie = false;
+
 
     /**
      * Ajoute le préfixe établissement à la chaîne de caractères spécifiée.
@@ -174,6 +184,44 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
     public function setSigle($sigle)
     {
         $this->getStructure()->setSigle($sigle);
+    }
+
+    /**
+     * @return bool
+     */
+    public function estMembre()
+    {
+        return $this->estMembre;
+    }
+
+    /**
+     * @param bool $estMembre
+     * @return Etablissement
+     */
+    public function setEstMembre($estMembre)
+    {
+        $this->estMembre = $estMembre;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function estAssocie()
+    {
+        return $this->estAssocie;
+    }
+
+    /**
+     * @param bool $estAssocie
+     * @return Etablissement
+     */
+    public function setEstAssocie($estAssocie)
+    {
+        $this->estAssocie = $estAssocie;
+
+        return $this;
     }
 
     /**
