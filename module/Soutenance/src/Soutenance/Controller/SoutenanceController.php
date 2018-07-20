@@ -13,5 +13,13 @@ class SoutenanceController extends AbstractActionController {
             ]
         );
     }
+
+    public function constituerAction()
+    {
+        return new ViewModel([
+            ]
+        );
+    }
+
 }
 

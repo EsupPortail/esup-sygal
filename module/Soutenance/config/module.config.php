@@ -2,6 +2,7 @@
 
 use Soutenance\Controller\Factory\SoutenanceControllerFactory;
 use Soutenance\Controller\SoutenanceController;
+use Zend\Mvc\Router\Http\Literal;
 use Zend\Mvc\Router\Http\Segment;
 
 return array(
@@ -12,6 +13,7 @@ return array(
                     'controller' => SoutenanceController::class,
                     'action'     => [
                         'index',
+                        'constituer',
                     ],
                     'roles' => [
                         'Administrateur technique',
@@ -25,13 +27,26 @@ return array(
     'router' => [
         'routes' => [
             'soutenance' => [
-                'type' => Segment::class,
+                'type' => Literal::class,
                 'may_terminate' => true,
                 'options' => [
                     'route'    => '/soutenance',
                     'defaults' => [
                         'controller' => SoutenanceController::class,
                         'action'     => 'index',
+                    ],
+                ],
+                'child_routes' => [
+                    'constituer' => [
+                        'type' => Segment::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/constituer/:these',
+                            'defaults' => [
+                                'controller' => SoutenanceController::class,
+                                'action'     => 'constituer',
+                            ],
+                        ],
                     ],
                 ],
             ],
