@@ -128,7 +128,8 @@ class EtablissementController extends AbstractController
 
                 $this->flashMessenger()->addSuccessMessage("Établissement '$etablissement' créée avec succès");
 
-                return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $etablissement->getStructure()->getId()]], true);
+                $structureId = $etablissement->getStructure()->getId();
+                return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $structureId], 'fragment' => $structureId], true);
             }
         }
 
@@ -152,7 +153,7 @@ class EtablissementController extends AbstractController
         $this->getEtablissementService()->deleteSoftly($etablissement, $destructeur);
         $this->flashMessenger()->addSuccessMessage("Établissement '$etablissement' supprimé avec succès");
 
-        return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $structureId]], true);
+        return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $structureId], "fragment" => $structureId], true);
     }
 
     public function modifierAction()
@@ -194,10 +195,10 @@ class EtablissementController extends AbstractController
                 $this->getEtablissementService()->update($etablissement);
 
                 $this->flashMessenger()->addSuccessMessage("Établissement '$etablissement' modifiée avec succès");
-                return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $structureId]], true);
+                return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $structureId], "fragment" => $structureId], true);
             }
             $this->flashMessenger()->addErrorMessage("Echec de la mise à jour : données incorrectes saissie");
-            return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $structureId]], true);
+            return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $structureId], "fragment" => $structureId], true);
         }
 
         // envoie vers le formulaire de modification
@@ -218,14 +219,14 @@ class EtablissementController extends AbstractController
 
         $this->flashMessenger()->addSuccessMessage("Établissement '$etablissement' restauré avec succès");
 
-        return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $structureId]], true);
+        return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $structureId], "fragment" => $structureId], true);
     }
 
     public function supprimerLogoAction()
     {
         $structureId = $this->params()->fromRoute("etablissement");
         $this->supprimerLogoEtablissement();
-        return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $structureId]], true);
+        return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $structureId], "fragment" => $structureId], true);
     }
 
     /**
