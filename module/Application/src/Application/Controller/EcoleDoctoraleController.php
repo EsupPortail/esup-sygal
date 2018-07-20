@@ -103,7 +103,7 @@ class EcoleDoctoraleController extends AbstractController
             // action d'affacement du logo
             if (isset($data['supprimer-logo'])) {
                 $this->supprimerLogoEcoleDoctorale();
-                return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecoleId]], true);
+                return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecoleId], "fragment" => $ecoleId], true);
             }
 
             // action de modification
@@ -119,10 +119,10 @@ class EcoleDoctoraleController extends AbstractController
                 $this->getEcoleDoctoraleService()->update($ecole);
 
                 $this->flashMessenger()->addSuccessMessage("École doctorale '$ecole' modifiée avec succès");
-                return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecoleId]], true);
+                return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecoleId], "fragment" => $ecoleId], true);
             }
             $this->flashMessenger()->addErrorMessage("Echec de la mise à jour : données incorrectes saissie");
-            return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecoleId]], true);
+            return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecoleId], "fragment" => $ecoleId], true);
         }
 
         // envoie vers le formulaire de modification
@@ -162,7 +162,8 @@ class EcoleDoctoraleController extends AbstractController
 
                 $this->flashMessenger()->addSuccessMessage("École doctorale '$ecole' créée avec succès");
 
-                return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecole->getStructure()->getId()]], true);
+                $ecoleId = $ecole->getStructure()->getId();
+                return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecoleId], "fragment" => $ecoleId], true);
             }
         }
 
@@ -185,7 +186,7 @@ class EcoleDoctoraleController extends AbstractController
 
         $this->flashMessenger()->addSuccessMessage("École doctorale '$ecole' supprimée avec succès");
 
-        return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecoleId]], true);
+        return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecoleId], "fragment" => $ecoleId], true);
     }
 
     public function restaurerAction()
@@ -197,7 +198,7 @@ class EcoleDoctoraleController extends AbstractController
 
         $this->flashMessenger()->addSuccessMessage("École doctorale '$ecole' restaurée avec succès");
 
-        return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecoleId]], true);
+        return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecoleId], "fragment" => $ecoleId], true);
     }
 
     /**
@@ -220,7 +221,7 @@ class EcoleDoctoraleController extends AbstractController
     {
         $structureId = $this->params()->fromRoute("ecoleDoctorale");
         $this->supprimerLogoEcoleDoctorale();
-        return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $structureId]], true);
+        return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $structureId], "fragment" => $structureId], true);
     }
 
     /**
