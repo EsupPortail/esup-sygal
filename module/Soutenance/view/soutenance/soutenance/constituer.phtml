@@ -1,7 +1,12 @@
 <?php
     /**
-     *
+     * @var These $these
+     * @var Proposition $proposition
      */
+
+use Application\Entity\Db\These;
+use Soutenance\Entity\Proposition;
+
 ?>
 
 <style>
@@ -21,7 +26,13 @@
     Proposition de soutenance
 </h1>
 
-<div class="panel panel-danger">
+
+<?php
+    $datelieu = false;
+    if ($proposition->getDate() && $proposition->getLieu()) $datelieu = true;
+?>
+
+<div class="panel <?php echo ($datelieu)?'panel-success':'panel-danger'; ?>">
     <div class="panel-heading">
         <h4>
             Date/Heure et lieu de la soutenance
@@ -30,13 +41,29 @@
     <div class="panel-body">
         <div class="pull-left">
             <ul>
-                <li> Date de la soutenance : non communiquée</li>
-                <li> Heure de la soutenance : non communiquée </li>
-                <li> Lieu de la Soutenance : non communiqué</li>
+                <li>
+                    Date de la soutenance :
+                    <?php echo ($proposition->getDate())?$proposition->getDate()->format("d/m/Y"):'<strong>non communiquée</strong>'; ?>
+                </li>
+                <li>
+                    Heure de la soutenance :
+                    <?php echo ($proposition->getDate())?$proposition->getDate()->format("H:i:s"):'<strong>non communiquée</strong>'; ?>
+                </li>
+                <li>
+                    Lieu de la Soutenance :
+                    <?php echo ($proposition->getLieu())?$proposition->getLieu():'<strong>non communiqué</strong>'; ?>
+                </li>
             </ul>
         </div>
         <div class="pull-right">
-            <a href="" class="btn btn-primary action"><span class="glyphicon glyphicon-pencil"></span> Éditer lieu et date de la soutenace </a>
+            <!-- TODO remettre la modale -->
+            <a
+                href="<?php echo $this->url('soutenance/constituer/modifier-date-lieu', ['these' => $these->getId()], [], true); ?>"
+                class="btn btn-primary action zajax-modal"
+                data-event="edition-datelieu"
+            >
+                <span class="glyphicon glyphicon-pencil"></span> Éditer lieu et date de la soutenace
+            </a>
         </div>
     </div>
 </div>
@@ -175,7 +202,12 @@
             </table>
         </div>
         <div class="pull-right">
-            <a href="" class="btn btn-primary action"><span class="glyphicon glyphicon-plus"></span> Ajouter un membre de jury</a>
+            <a
+                href="<?php echo $this->url('soutenance/constituer/modifier-membre', ['these' => $these->getId()], [], true); ?>"
+                class="btn btn-primary action zajax-modal"
+                data-event="edition-membre">
+                    <span class="glyphicon glyphicon-plus"></span> Ajouter un membre de jury
+            </a>
         </div>
 
     </div>
@@ -217,3 +249,26 @@
 </div>
 
 
+
+<script>
+    // $(document).ready(function () {
+    //     $(".remove-role").click(function () {
+    //         var id = $(this).attr("id");
+    //         var splits = id.split("_");
+    //         var role = splits[1];
+    //         var individu = splits[0];
+    //
+    //         var url = "../../utilisateur/retirer-role/" + individu + "/" + role;
+    //
+    //         $.ajax({
+    //             url: url
+    //         });
+    //     });
+    // });
+    $(function() {
+        $("body").on("edition-datelieu", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+</script>

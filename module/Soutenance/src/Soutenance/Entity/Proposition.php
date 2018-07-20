@@ -17,19 +17,19 @@ class Proposition {
     /** @var string */
     private $lieu;
 
-    /** @var ArrayCollection */
-    private $membres;
-    /** @var ArrayCollection */
-    private $validations;
+//    /** @var ArrayCollection */
+//    private $membres;
+//    /** @var ArrayCollection */
+//    private $validations;
 
     /**
      * Proposition constructor.
      */
-    public function __construct()
-    {
-        $this->membres = new ArrayCollection();
-        $this->validations = new ArrayCollection();
-    }
+//    public function __construct()
+//    {
+//        $this->membres = new ArrayCollection();
+//        $this->validations = new ArrayCollection();
+//    }
 
     /**
      * @return int

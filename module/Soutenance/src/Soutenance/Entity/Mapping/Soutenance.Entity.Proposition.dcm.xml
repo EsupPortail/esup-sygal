@@ -2,7 +2,7 @@
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-    <entity name="Soutenance\Entity\Proposition" table="PROPOSITION">
+    <entity name="Soutenance\Entity\Proposition" table="SOUTENANCE_PROPOSITION">
         <id name="id" type="integer" column="ID">
             <generator strategy="SEQUENCE"/>
         </id>
@@ -12,9 +12,7 @@
                 <join-column name="THESE_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
-
-
-        <field name="date"                      type="datetime"                         column="DATE"       nullable="true"/>
+        <field name="date"                      type="datetime"                         column="DATEPREV"   nullable="true"/>
         <field name="lieu"                      type="string"        length="256"       column="LIEU"       nullable="true"/>
 
         <!--<many-to-one field="membre" target-entity="Application\Entity\Db\Individu">-->
