@@ -179,7 +179,7 @@ use Soutenance\Entity\Proposition;
                         <tr>
                             <td> <?php echo $membre->getDenomination(); ?> </td>
                             <td> <?php echo $membre->getGenre(); ?> </td>
-                            <td> <?php echo $membre->getQualite(); ?> </td>
+                            <td> <?php echo $membre->getQualite()->getLibelle(); ?> </td>
                             <td> <?php echo $membre->getRang(); ?> </td>
                             <td> <?php echo $membre->getEtablissement(); ?> </td>
                             <td> <?php echo $membre->getRole(); ?> </td>

@@ -19,7 +19,6 @@ class SoutenanceMembreHydrator implements HydratorInterface
         $membre->setGenre($data['sexe']);
         $membre->setDenomination($data['denomination']);
         $membre->setQualite($data['qualite']);
-        $membre->setRang($data['rang']);
         $membre->setEtablissement($data['etablissement']);
         $membre->setExterieur($data['exterieur']);
         $membre->setRole($data['role']);
@@ -37,7 +36,6 @@ class SoutenanceMembreHydrator implements HydratorInterface
         $data['sexe']               = $membre->getGenre();
         $data['denomination']       = $membre->getDenomination();
         $data['qualite']            = $membre->getQualite();
-        $data['rang']               = $membre->getRang();
         $data['etablissement']      = $membre->getEtablissement();
         $data['exterieur']          = $membre->getExterieur();
         $data['role']               = $membre->getRole();

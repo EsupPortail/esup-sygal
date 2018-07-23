@@ -12,10 +12,9 @@ class Membre {
     private $genre;
     /** @var string */
     private $denomination;
-    /** @var string */
+    /** @var Qualite */
     private $qualite;
-    /** @var string */
-    private $rang;
+
     /** @var string */
     private $etablissement;
     /** @var string */
@@ -86,7 +85,7 @@ class Membre {
     }
 
     /**
-     * @return string
+     * @return Qualite
      */
     public function getQualite()
     {
@@ -94,7 +93,7 @@ class Membre {
     }
 
     /**
-     * @param string $qualite
+     * @param Qualite $qualite
      * @return Membre
      */
     public function setQualite($qualite)
@@ -108,19 +107,9 @@ class Membre {
      */
     public function getRang()
     {
-        return $this->rang;
+        return $this->getQualite()->getRang();
     }
-
-    /**
-     * @param string $rang
-     * @return Membre
-     */
-    public function setRang($rang)
-    {
-        $this->rang = $rang;
-        return $this;
-    }
-
+    
     /**
      * @return string
      */
