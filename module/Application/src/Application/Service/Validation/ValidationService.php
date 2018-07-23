@@ -2,6 +2,7 @@
 
 namespace Application\Service\Validation;
 
+use Application\Entity\Db\Individu;
 use Application\Entity\Db\Repository\ValidationRepository;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
@@ -267,4 +268,74 @@ class ValidationService extends BaseService
 
         return $v;
     }
+
+    public function validatePropositionSoutenance($these)
+    {
+        // l'individu sera enregistré dans la validation pour faire le lien entre Utilisateur et Individu.
+        $individu = $this->userContextService->getIdentityIndividu();
+
+        $v = new Validation(
+            $this->getTypeValidation(TypeValidation::CODE_PROPOSITION_SOUTENANCE),
+            $these,
+            $individu);
+
+        $this->entityManager->persist($v);
+        try {
+            $this->entityManager->flush($v);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur lors de l'enregistrement de la validation en bdd", null, $e);
+        }
+    }
+
+    public function unvalidatePropositionSoutenance($these)
+    {
+        $qb = $this->getRepository()->createQueryBuilder('v')
+            ->andWhereTheseIs($these)
+            ->andWhereTypeIs($type = TypeValidation::CODE_PROPOSITION_SOUTENANCE)
+            ->andWhereNotHistorise();
+        /** @var Validation $v */
+        try {
+            $v = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException(
+                sprintf("Anomalie: plus d'une validation de type '%s' trouvée pour la thèse %s", $type, $these));
+        }
+
+        if (!$v) {
+            throw new RuntimeException(
+                sprintf("Aucune validation de type '%s' trouvée pour la thèse %s", $type, $these));
+        }
+
+        $v->historiser();
+
+        try {
+            $this->getEntityManager()->flush($v);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur lors de l'historisation de la validation en bdd", null, $e);
+        }
+
+        return $v;
+    }
+
+    /**
+     * @var These $these
+     * @var Individu $individu
+     * @return Validation
+     */
+    public function findValidationPropositionSoutenance($these, $individu) {
+        $qb = $this->getRepository()->createQueryBuilder("v")
+            ->andWhereTheseIs($these)
+            ->andWhereTypeIs($type = TypeValidation::CODE_PROPOSITION_SOUTENANCE)
+            ->andWhereNotHistorise()
+            ->andWhere("v.individu = :individu")
+            ->setParameter("individu", $individu);
+
+        try {
+            $result = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Plusieurs validations pour un même acteur et une même thèse.");
+        }
+        return $result;
+    }
+
 }

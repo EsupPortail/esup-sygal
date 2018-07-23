@@ -2,8 +2,12 @@
 
 namespace Soutenance\Controller;
 
+use Application\Entity\Db\Acteur;
+use Application\Entity\Db\Doctorant;
+use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Service\These\TheseServiceAwareTrait;
+use Application\Service\Validation\ValidationServiceAwareTrait;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Form\SoutenanceDateLieu\SoutenanceDateLieuForm;
@@ -18,6 +22,7 @@ class SoutenanceController extends AbstractActionController {
     use TheseServiceAwareTrait;
     use PropositionServiceAwareTrait;
     use MembreServiceAwareTrait;
+    use ValidationServiceAwareTrait;
 
 
     public function indexAction()
@@ -120,12 +125,40 @@ class SoutenanceController extends AbstractActionController {
         $these = $this->getTheseService()->getRepository()->find($idThese);
         /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
+        /** @var Doctorant $doctorant */
+        $doctorant = $these->getDoctorant();
+        /** @var Acteur[] $directeurs */
+        $dirs = $these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE);
+        $codirs = $these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE);
+        $directeurs = array_merge($dirs->toArray(), $codirs->toArray());
 
+        $validations = [];
+        $validations[$doctorant->getIndividu()->getId()] = $this->getValidationService()->findValidationPropositionSoutenance($these, $doctorant->getIndividu());
+        foreach ($directeurs as $directeur) {
+            $validations[$directeur->getIndividu()->getId()] = $this->getValidationService()->findValidationPropositionSoutenance($these, $directeur->getIndividu());
+        }
         return new ViewModel([
                 'these' => $these,
                 'proposition' => $proposition,
+                'doctorant' => $doctorant,
+                'directeurs' => $directeurs,
+                'validations' => $validations,
             ]
         );
+    }
+
+    public function validerAction() {
+        /** @var These $these */
+        $idThese = $this->params()->fromRoute('these');
+        $these = $this->getTheseService()->getRepository()->find($idThese);
+
+        $this->getValidationService()->validatePropositionSoutenance($these);
+        $this->redirect()->toRoute('soutenance/constituer',['these' => $idThese],[],true);
+
+    }
+
+    public function refuserAction() {
+
     }
 
 }

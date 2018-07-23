@@ -2,8 +2,12 @@
     /**
      * @var These $these
      * @var Proposition $proposition
+     * @var Doctorant $doctorant
+     * @var Acteur[] $directeurs
      */
 
+use Application\Entity\Db\Acteur;
+use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\These;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
@@ -222,26 +226,39 @@ use Soutenance\Entity\Proposition;
 
             <ul>
                 <li>
-                    Billy BOB (Doctorant) <br/>
-                    <span class="badge badge-default"> Aucune validation</span>
+                    <?php echo $doctorant->getIndividu()->getNomComplet(false, false, false, true); ?> (Doctorant)
+                    <br/>
+                    <?php if ($validations[$doctorant->getIndividu()->getId()]) : ?>
+                        <span class="badge badge-success"> Validée</span>
+                    <?php else: ?>
+                        <span class="badge badge-default"> Aucune validation</span>
+                    <?php endif; ?>
 
                 </li>
+                <?php foreach ($directeurs as $directeur): ?>
                 <li>
-                    Jack WHITE (Directeur) <br/>
-                    <span class="badge badge-success"> Valider </span> 32/13/2112 16:54:00
+                    <?php echo $directeur->getIndividu()->getNomComplet(false,false,false, true); ?> (Directeur)
+                    <br/>
+                    <?php if ($validations[$directeur->getIndividu()->getId()]) : ?>
+                        <span class="badge badge-success"> Validée</span>
+                    <?php else: ?>
+                        <span class="badge badge-default"> Aucune validation</span>
+                    <?php endif; ?>
                 </li>
-                <li>
-                    Frank BLACK (Co-directeur) <br/>
-                    <span class="badge badge-default"> Aucune validation</span>
-                </li>
+                <?php endforeach; ?>
             </ul>
         </div>
         <div class="pull-right">
-            <a href="" class="btn btn-success action "><span class="glyphicon glyphicon-ok"></span> Valider la proposition de soutenance</a> <br/>
-            <a href="" class="btn btn-danger action"><span class="glyphicon glyphicon-remove"></span> Rejeter la proposition de soutenance</a>
+            <a
+                    href="<?php echo $this->url('soutenance/constituer/valider', ['these' => $these->getId()], [], true); ?>"
+                    class="btn btn-success action ">
+                <span class="glyphicon glyphicon-ok"></span> Valider la proposition de soutenance
+            </a> <br/>
+            <a href="<?php echo $this->url('soutenance/constituer/refuser', ['these' => $these->getId()], [], true); ?>" class="btn btn-danger action"><span class="glyphicon glyphicon-remove"></span> Rejeter la proposition de soutenance</a>
         </div>
     </div>
 </div>
+
 
 
 

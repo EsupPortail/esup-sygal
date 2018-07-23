@@ -3,6 +3,7 @@
 namespace Soutenance\Controller\Factory;
 
 use Application\Service\These\TheseService;
+use Application\Service\Validation\ValidationService;
 use Soutenance\Controller\SoutenanceController;
 use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Proposition\PropositionService;
@@ -21,16 +22,19 @@ class SoutenanceControllerFactory
          * @var PropositionService $propositionService
          * @var MembreService $membreService
          * @var TheseService $theseService
+         * @var ValidationService $validationService
          */
         $propositionService = $controllerManager->getServiceLocator()->get(PropositionService::class);
         $membreService = $controllerManager->getServiceLocator()->get(MembreService::class);
         $theseService = $controllerManager->getServiceLocator()->get('TheseService');
+        $validationService = $controllerManager->getServiceLocator()->get('ValidationService');
 
         /** @var SoutenanceController $controller */
         $controller = new SoutenanceController();
         $controller->setPropositionService($propositionService);
         $controller->setMembreService($membreService);
         $controller->setTheseService($theseService);
+        $controller->setValidationService($validationService);
 
         return $controller;
     }

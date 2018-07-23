@@ -12,6 +12,7 @@ use Soutenance\Form\SoutenanceDateLieu\SoutenanceDateLieuHydrator;
 use Soutenance\Form\SoutenanceMembre\SoutenanceMembreForm;
 use Soutenance\Form\SoutenanceMembre\SoutenanceMembreFormFactory;
 use Soutenance\Form\SoutenanceMembre\SoutenanceMembreHydrator;
+use Soutenance\Form\SoutenanceMembre\SoutenanceMembreHydratorFactory;
 use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Membre\MembreServiceFactory;
 use Soutenance\Service\Proposition\PropositionService;
@@ -32,9 +33,11 @@ return array(
                         'modifier-date-lieu',
                         'modifier-membre',
                         'effacer-membre',
+                        'valider',
+                        'refuser',
                     ],
                     'roles' => [
-                        'Administrateur technique',
+
                     ],
                 ],
             ],
@@ -121,6 +124,28 @@ return array(
                                     ],
                                 ],
                             ],
+                            'valider' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/valider',
+                                    'defaults' => [
+                                        'controller' => SoutenanceController::class,
+                                        'action'     => 'valider',
+                                    ],
+                                ],
+                            ],
+                            'refuser' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/refuser',
+                                    'defaults' => [
+                                        'controller' => SoutenanceController::class,
+                                        'action'     => 'refuser',
+                                    ],
+                                ],
+                            ],
                         ],
                     ],
                 ],
@@ -151,7 +176,9 @@ return array(
     'hydrators' => [
         'invokables' => [
             SoutenanceDateLieuHydrator::class => SoutenanceDateLieuHydrator::class,
-            SoutenanceMembreHydrator::class => SoutenanceMembreHydrator::class,
+        ],
+        'factories' => [
+            SoutenanceMembreHydrator::class => SoutenanceMembreHydratorFactory::class,
         ],
     ],
     'view_manager' => [

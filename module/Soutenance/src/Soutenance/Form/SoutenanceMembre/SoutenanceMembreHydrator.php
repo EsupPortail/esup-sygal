@@ -5,10 +5,12 @@ namespace Soutenance\Form\SoutenanceMembre;
 use DateTime;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
+use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Zend\Stdlib\Hydrator\HydratorInterface;
 
 class SoutenanceMembreHydrator implements HydratorInterface
 {
+    use MembreServiceAwareTrait;
     /**
      * @param array $data
      * @param Membre $membre
@@ -18,7 +20,7 @@ class SoutenanceMembreHydrator implements HydratorInterface
 
         $membre->setGenre($data['sexe']);
         $membre->setDenomination($data['denomination']);
-        $membre->setQualite($data['qualite']);
+        $membre->setQualite($this->getMembreService()->getQualiteById($data['qualite']));
         $membre->setEtablissement($data['etablissement']);
         $membre->setExterieur($data['exterieur']);
         $membre->setRole($data['role']);
