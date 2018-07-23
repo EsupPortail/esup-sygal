@@ -38,8 +38,6 @@ class FichierTheseController extends AbstractController
     use IndividuServiceAwareTrait;
     use ValidationServiceAwareTrait;
 
-    const UPLOAD_MAX_FILESIZE = '5M';
-
     public function deposesAction()
     {
         /**
@@ -239,7 +237,6 @@ class FichierTheseController extends AbstractController
         }
 
         $uploader = $this->uploader();
-        $uploader->getForm()->setUploadMaxFilesize(self::UPLOAD_MAX_FILESIZE);
         $result = $uploader->upload();
 
         // Si le plugin retourne du JSON, c'est qu'il y a un problème
@@ -339,7 +336,6 @@ class FichierTheseController extends AbstractController
 
         $form = $this->uploader()->getForm();
         $form->setAttribute('id', uniqid('form-'));
-        $form->setUploadMaxFilesize(static::UPLOAD_MAX_FILESIZE);
         $form->addElement((new Hidden('nature'))->setValue($this->idify($nature)));
         $form->addElement((new Hidden('version'))->setValue($this->idify($version)));
 
