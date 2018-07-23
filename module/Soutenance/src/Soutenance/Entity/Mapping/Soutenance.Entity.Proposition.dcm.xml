@@ -15,11 +15,8 @@
         <field name="date"                      type="datetime"                         column="DATEPREV"   nullable="true"/>
         <field name="lieu"                      type="string"        length="256"       column="LIEU"       nullable="true"/>
 
-        <!--<many-to-one field="membre" target-entity="Application\Entity\Db\Individu">-->
-            <!--<join-columns>-->
-                <!--<join-column name="INDIVIDU_ID" referenced-column-name="ID"/>-->
-            <!--</join-columns>-->
-        <!--</many-to-one>-->
+        <one-to-many field="membres" target-entity="Soutenance\Entity\Membre" mapped-by="proposition"/>
+
         <!--<many-to-one field="source" target-entity="UnicaenImport\Entity\Db\Source">-->
             <!--<join-columns>-->
                 <!--<join-column name="SOURCE_ID" referenced-column-name="ID"/>-->
