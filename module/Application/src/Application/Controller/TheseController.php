@@ -1466,7 +1466,8 @@ class TheseController extends AbstractController
 
         // GENERATION DE LA COUVERTURE
         $filename = "COUVERTURE_".$these->getId()."_".uniqid().".pdf";
-        $this->fichierService->generatePageDeCouverture($these,$filename);
+        $renderer = $this->getServiceLocator()->get('view_renderer'); /* @var $renderer \Zend\View\Renderer\PhpRenderer */
+        $this->fichierService->generatePageDeCouverture($these,$renderer,$filename);
         $couvertureChemin = "/tmp/". $filename;
 
         // RECUPERATION DE LA BONNE VERSION DU MANUSCRIPT
