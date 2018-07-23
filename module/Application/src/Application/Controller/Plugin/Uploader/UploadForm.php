@@ -2,7 +2,6 @@
 
 namespace Application\Controller\Plugin\Uploader;
 
-use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Filter\BytesFormatter;
 use UnicaenApp\Util;
 use Zend\Form\Element\Hidden;
@@ -41,7 +40,7 @@ class UploadForm extends Form
      */
     public function init()
     {
-        $this->setUploadMaxFilesize($this->iniGetUploadMaxFilesize() - 1);
+//        $this->setUploadMaxFilesize($this->iniGetUploadMaxFilesize() - 1);
 
         $this
             ->addElements()
@@ -160,13 +159,6 @@ class UploadForm extends Form
             $this->fileSizeValidator = new FileSizeValidator();
         }
 
-//        $fileSizeTooBigMessage = sprintf("Vous ne pouvez pas déposer de fichier dont la taille excède %s",
-//            $this->getUploadMaxFilesizeFormatted());
-//
-//        $this->fileSizeValidator
-//            ->setMax($this->getUploadMaxFilesize())
-//            ->setMessage($fileSizeTooBigMessage, FileSizeValidator::TOO_BIG);
-
         return $this->fileSizeValidator;
     }
 
@@ -175,87 +167,37 @@ class UploadForm extends Form
      */
     private function updateFileSizeValidator()
     {
-        $uploadMaxFilesize    = $this->getUploadMaxFilesize();
         $uploadMaxFilesizeIni = $this->iniGetUploadMaxFilesize();
 
-        if ($uploadMaxFilesizeIni && $uploadMaxFilesizeIni <= $uploadMaxFilesize) {
-            throw new LogicException(sprintf(
-                "La taille max spécifiée (%s) doit être inférieure STRICTEMENT à %s "
-                . "(valeur du paramètre de config 'upload_max_filesize' ou 'post_max_size') sinon le validateur ne peut entrer en action.",
-                $uploadMaxFilesize,
-                $uploadMaxFilesizeIni));
-        }
-
         $fileSizeTooBigMessage = sprintf("Vous ne pouvez pas déposer de fichier dont la taille excède %s",
-            $this->getUploadMaxFilesizeFormatted());
+            $this->formatUploadMaxFilesize($uploadMaxFilesizeIni));
 
         $this->fileSizeValidator
-            ->setMax($uploadMaxFilesize)
+            ->setMax($uploadMaxFilesizeIni)
             ->setMessage($fileSizeTooBigMessage, FileSizeValidator::TOO_BIG);
 
         return $this;
     }
 
     /**
-     * @var integer
-     */
-    private $uploadMaxFilesize;
-
-    /**
-     * Spécifie la taille maxi de chaque fichier uploadable.
-     *
-     * @param integer $uploadMaxFilesize Taille max en octets
-     * @return self
-     * @throws LogicException Si la taille max spécifiée dépasse OU ÉGALE la valeur du paramètre de config 'upload_max_filesize'
-     */
-    public function _setUploadMaxFilesize($uploadMaxFilesize)
-    {
-        $uploadMaxFilesize    = Util::convertAsBytes($uploadMaxFilesize);
-        $uploadMaxFilesizeIni = $this->iniGetUploadMaxFilesize();
-
-        if ($uploadMaxFilesizeIni && $uploadMaxFilesizeIni <= $uploadMaxFilesize) {
-            throw new LogicException(sprintf(
-                "La taille max spécifiée (%s) doit être inférieure STRICTEMENT à %s "
-                . "(valeur du paramètre de config 'upload_max_filesize' ou 'post_max_size') sinon le validateur ne peut entrer en action.",
-                $uploadMaxFilesize,
-                $uploadMaxFilesizeIni));
-        }
-
-        $this->uploadMaxFilesize = $uploadMaxFilesize;
-
-        $this->getFileSizeValidator();
-
-        return $this;
-    }
-    public function setUploadMaxFilesize($uploadMaxFilesize)
-    {
-        $uploadMaxFilesize    = Util::convertAsBytes($uploadMaxFilesize);
-
-        $this->uploadMaxFilesize = $uploadMaxFilesize;
-
-        return $this;
-    }
-
-    /**
-     * Retourne la taille maxi de chaque fichier uploadable.
+     * Retourne la taille maxi de chaque fichier uploadable, d'après la config PHP.
      *
      * @return integer
      */
     public function getUploadMaxFilesize()
     {
-        return $this->uploadMaxFilesize;
+        return $this->iniGetUploadMaxFilesize();
     }
 
     /**
-     * Retourne la taille maxi de chaque fichier uploadable.
-     *
-     * @return integer
+     * @param string $maxFilesize
+     * @return string
      */
-    public function getUploadMaxFilesizeFormatted()
+    private function formatUploadMaxFilesize($maxFilesize)
     {
         $f = new BytesFormatter();
 
-        return $f->filter($this->getUploadMaxFilesize());
+        return $f->filter($maxFilesize);
     }
 
     /**

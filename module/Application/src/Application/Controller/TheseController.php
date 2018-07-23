@@ -582,7 +582,6 @@ class TheseController extends AbstractController
 
         $form = $this->uploader()->getForm();
         $form->setAttribute('id', uniqid('form-'));
-        $form->setUploadMaxFilesize(FichierTheseController::UPLOAD_MAX_FILESIZE);
 //        $form->addElement((new Hidden('annexe'))->setValue(0));
         $form->addElement((new Hidden('nature'))->setValue($this->idify($nature)));
         $form->addElement((new Hidden('version'))->setValue($this->idify($version)));
@@ -637,7 +636,6 @@ class TheseController extends AbstractController
 
         $form = $this->uploader()->getForm();
         $form->setAttribute('id', uniqid('form-'));
-        $form->setUploadMaxFilesize(FichierTheseController::UPLOAD_MAX_FILESIZE);
         $form->addElement((new Hidden('validerAuto'))->setValue(1));
         $form->addElement((new Hidden('retraitement'))->setValue(Fichier::RETRAITEMENT_MANU));
         $form->addElement((new Hidden('nature'))->setValue($this->idify($nature)));
@@ -708,7 +706,6 @@ class TheseController extends AbstractController
 
         $form = $this->uploader()->getForm();
         $form->setAttribute('id', uniqid('form-'));
-        $form->setUploadMaxFilesize(FichierTheseController::UPLOAD_MAX_FILESIZE);
         $form->addElement((new Hidden('annexe'))->setValue(1));
         $form->addElement((new Hidden('nature'))->setValue($this->idify($nature)));
         $form->addElement((new Hidden('version'))->setValue($this->idify($version)));
@@ -834,7 +831,7 @@ class TheseController extends AbstractController
 
         $form = $this->uploader()->getForm();
         $form->setAttribute('id', uniqid('form-'));
-        $form->setUploadMaxFilesize('10M');
+//        $form->setUploadMaxFilesize('50M');
         $form->addElement((new Hidden('nature'))->setValue($this->idify($nature)));
         $form->addElement((new Hidden('version'))->setValue($this->idify($version)));
         $form->get('files')->setLabel("")->setAttribute('multiple', false)/*->setAttribute('accept', '.pdf')*/;
