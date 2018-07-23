@@ -184,8 +184,12 @@ use Soutenance\Entity\Proposition;
                             <td> <?php echo $membre->getEtablissement(); ?> </td>
                             <td> <?php echo $membre->getRole(); ?> </td>
                             <td>
-                                <span class="glyphicon glyphicon-pencil"></span>
-                                <span class="glyphicon glyphicon-trash"></span>
+                                <a href="<?php echo $this->url('soutenance/constituer/modifier-membre', ['these' => $these->getId(), 'membre' => $membre->getId()], [] ,true); ?>">
+                                    <span class="glyphicon glyphicon-pencil"></span>
+                                </a>
+                                <a href="<?php echo $this->url('soutenance/constituer/effacer-membre', ['these' => $these->getId(), 'membre' => $membre->getId()], [] ,true); ?>">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </a>
                             </td>
                         </tr>
                     <?php endforeach; ?>

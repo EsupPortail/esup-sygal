@@ -1,19 +1,19 @@
 <?php
 
-namespace  Soutenance\Service;
+namespace  Soutenance\Service\Membre;
 
 use Doctrine\ORM\EntityManager;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class PropositionServiceFactory
+class MembreServiceFactory
 {
     public function __invoke(ServiceLocatorInterface $servicelocator)
     {
         /** @var EntityManager $entityManager */
         $entityManager = $servicelocator->get('doctrine.entitymanager.orm_default');
 
-        /** @var PropositionService $service */
-        $service = new PropositionService();
+        /** @var MembreService $service */
+        $service = new MembreService();
         $service->setEntityManager($entityManager);
 
         return $service;

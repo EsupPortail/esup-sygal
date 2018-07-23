@@ -1,0 +1,1 @@
+create sequence SOUTENANCE_MEMBRE_ID_seq;

@@ -1,20 +1,22 @@
 <?php
 
 
+use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
+use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
+use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Soutenance\Controller\Factory\SoutenanceControllerFactory;
 use Soutenance\Controller\SoutenanceController;
 use Soutenance\Form\SoutenanceDateLieu\SoutenanceDateLieuForm;
 use Soutenance\Form\SoutenanceDateLieu\SoutenanceDateLieuFormFactory;
 use Soutenance\Form\SoutenanceDateLieu\SoutenanceDateLieuHydrator;
-use Soutenance\Form\SoutenanceDateLieu\SoutenanceMembreHydrator;
 use Soutenance\Form\SoutenanceMembre\SoutenanceMembreForm;
 use Soutenance\Form\SoutenanceMembre\SoutenanceMembreFormFactory;
-use Soutenance\Service\PropositionService;
-use Soutenance\Service\PropositionServiceFactory;
+use Soutenance\Form\SoutenanceMembre\SoutenanceMembreHydrator;
+use Soutenance\Service\Membre\MembreService;
+use Soutenance\Service\Membre\MembreServiceFactory;
+use Soutenance\Service\Proposition\PropositionService;
+use Soutenance\Service\Proposition\PropositionServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
-use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
-use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
-use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Zend\Mvc\Router\Http\Literal;
 use Zend\Mvc\Router\Http\Segment;
 
@@ -29,6 +31,7 @@ return array(
                         'constituer',
                         'modifier-date-lieu',
                         'modifier-membre',
+                        'effacer-membre',
                     ],
                     'roles' => [
                         'Administrateur technique',
@@ -107,6 +110,17 @@ return array(
                                     ],
                                 ],
                             ],
+                            'effacer-membre' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/effacer-membre/:membre',
+                                    'defaults' => [
+                                        'controller' => SoutenanceController::class,
+                                        'action'     => 'effacer-membre',
+                                    ],
+                                ],
+                            ],
                         ],
                     ],
                 ],
@@ -117,6 +131,7 @@ return array(
     'service_manager' => [
         'factories' => [
             PropositionService::class => PropositionServiceFactory::class,
+            MembreService::class => MembreServiceFactory::class,
         ],
 
     ],

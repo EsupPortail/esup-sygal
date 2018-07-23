@@ -1,6 +1,6 @@
 <?php
 
-namespace  Soutenance\Service;
+namespace  Soutenance\Service\Proposition;
 
 trait PropositionServiceAwareTrait {
 

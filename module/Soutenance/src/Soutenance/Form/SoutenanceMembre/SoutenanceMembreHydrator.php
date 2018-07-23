@@ -3,6 +3,7 @@
 namespace Soutenance\Form\SoutenanceMembre;
 
 use DateTime;
+use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Zend\Stdlib\Hydrator\HydratorInterface;
 
@@ -10,37 +11,36 @@ class SoutenanceMembreHydrator implements HydratorInterface
 {
     /**
      * @param array $data
-     * @param Proposition $proposition
-     * @return Proposition
+     * @param Membre $membre
+     * @return Membre
      */
-    public function hydrate(array $data, $proposition) {
+    public function hydrate(array $data, $membre) {
 
-//        $date = DateTime::createFromFormat("d/m/Y H:i:s", $data['date'].' '.$data['heure']);
-//        $proposition->setDate($date);
-//        $proposition->setLieu($data['lieu']);
+        $membre->setGenre($data['sexe']);
+        $membre->setDenomination($data['denomination']);
+        $membre->setQualite($data['qualite']);
+        $membre->setRang($data['rang']);
+        $membre->setEtablissement($data['etablissement']);
+        $membre->setExterieur($data['exterieur']);
+        $membre->setRole($data['role']);
 
-        return $proposition;
+        return $membre;
     }
 
     /**
-     * @param Proposition $proposition
+     * @param Membre $membre
      * @return array
      */
-    public function extract($proposition) {
+    public function extract($membre) {
 
-        /** @var DateTime $datetime */
-//        $datetime = $proposition->getDate();
-//        $date = '';
-//        $heure = '';
-//        if ($datetime) {
-//            $date = $datetime->format("d/m/Y");
-//            $heure = $datetime->format("H:i:s");
-//        }
-//
         $data = [];
-//        $data['date']       = $date;
-//        $data['heure']      = $heure;
-//        $data['lieu']       = $proposition->getLieu();
+        $data['sexe']               = $membre->getGenre();
+        $data['denomination']       = $membre->getDenomination();
+        $data['qualite']            = $membre->getQualite();
+        $data['rang']               = $membre->getRang();
+        $data['etablissement']      = $membre->getEtablissement();
+        $data['exterieur']          = $membre->getExterieur();
+        $data['role']               = $membre->getRole();
 
         return $data;
     }

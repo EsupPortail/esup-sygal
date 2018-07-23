@@ -180,7 +180,7 @@ class Proposition {
         /** Au moins la motié du jury exterieur*/
         $ratioExterieur = $nbExterieur / $nbMembre;
         $indicateurs["exterieur"]      = ["Nombre" => $nbExterieur, "Ratio" => $ratioExterieur];
-        if ($ratioRangA < 0.5)  {
+        if ($ratioExterieur < 0.5)  {
             $indicateurs["exterieur"]["valide"]    = false;
         } else {
             $indicateurs["exterieur"]["valide"]    = true;

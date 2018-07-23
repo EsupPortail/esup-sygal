@@ -1,11 +1,12 @@
 <?php
 
-namespace Soutenance\Service;
+namespace Soutenance\Service\Proposition;
 
 //TODO faire le repo aussi
 use Application\Entity\Db\These;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
+use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -68,5 +69,19 @@ class PropositionService {
         } catch (OptimisticLockException $e) {
             throw new RuntimeException("Une erreur s'est produite lors de la mise à jour de la proposition de soutenance !");
         }
+    }
+
+    public function findMembre($idMembre)
+    {
+        $qb = $this->getEntityManager()->getRepository(Membre::class)->createQueryBuilder("membre")
+            ->andWhere("membre.id = :id")
+            ->setParameter("id", $idMembre)
+        ;
+        try {
+            $result = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("De multiple membres sont associés à l'identifiant [".$idMembre."] !");
+        }
+        return $result;
     }
 }
