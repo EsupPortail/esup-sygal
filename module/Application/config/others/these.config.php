@@ -53,6 +53,7 @@ return [
                             ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE,
                             ThesePrivileges::THESE_SAISIE_RDV_BU,
                             ThesePrivileges::FICHIER_DIVERS_TELEVERSER,
+                            ThesePrivileges::FICHIER_DIVERS_CONSULTER,
 //                            ThesePrivileges::THESE_REFRESH,
                         ],
                         'resources'  => ['These'],

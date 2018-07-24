@@ -9,7 +9,7 @@ namespace Application\Assertion\These;
  * /home/metivier/MyWeb/sygal/data/assertions/TheseEntityAssertion.csv.
  *
  * @author Application\Assertion\Generator\AssertionGenerator
- * @date 24/07/2018 08:57:51
+ * @date 24/07/2018 10:06:33
  */
 abstract class GeneratedTheseEntityAssertion
 {
@@ -89,6 +89,13 @@ abstract class GeneratedTheseEntityAssertion
         //--------------------------------------------------------------------------------------
             /* line 9 */
             $this->linesTrace[] = '/* line 9 */';
+            return true;
+        }
+
+        if ($privilege === \Application\Provider\Privilege\ThesePrivileges::FICHIER_DIVERS_CONSULTER) {
+        //--------------------------------------------------------------------------------------
+            /* line 0 */
+            $this->linesTrace[] = '/* line 0 */';
             return true;
         }
 
@@ -544,6 +551,7 @@ line;enabled;privilege;isRoleDoctorantSelected;;isStructureDuRoleRespectee;;isTh
 7;1;\Application\Provider\Privilege\ThesePrivileges::THESE_DEPOT_VERSION_INITIALE;;;;;;;;;;;;;;1:1;;;;;;;;;;;;;0;Opération impossible dès lors que la BU a validé.
 8;1;\Application\Provider\Privilege\ThesePrivileges::THESE_DEPOT_VERSION_INITIALE;;;;;;;;;;;;;;;;;;;;;;;;;;;1;
 9;1;\Application\Provider\Privilege\ThesePrivileges::FICHIER_DIVERS_TELEVERSER;;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+        ;1;\Application\Provider\Privilege\ThesePrivileges::FICHIER_DIVERS_CONSULTER;;;;;;;;;;;;;;;;;;;;;;;;;;;1;
 10;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_INITIALE;;;;;;1:1;;;;;;;;;;;;;;;;;;;;;0;Opération impossible dès lors qu’une version corrigée est attendue.
 11;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_INITIALE;;;;;;;;;;;;;;1:1;;;;;;;;;;;;;0;Opération impossible dès lors que la BU a validé.
 12;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_INITIALE;;;;;;;;;;;;;;;;;;;;;;;;;;;1;
