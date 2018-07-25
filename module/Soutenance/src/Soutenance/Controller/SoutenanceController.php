@@ -13,6 +13,7 @@ use Soutenance\Entity\Proposition;
 use Soutenance\Form\SoutenanceDateLieu\SoutenanceDateLieuForm;
 use Soutenance\Form\SoutenanceMembre\SoutenanceMembreForm;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
+use Soutenance\Service\Proposition\PropositionService;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
@@ -34,8 +35,6 @@ class SoutenanceController extends AbstractActionController {
         );
     }
 
-    //TODO attention au format de la date ==> utiliser datepicker et timepicker ...
-    //TODO ajouter la creation d'une nouvelle proposition
     public function modifierDateLieuAction() {
 
         /** @var SoutenanceDateLieuForm $form */
@@ -55,6 +54,7 @@ class SoutenanceController extends AbstractActionController {
             $form->setData($data);
             if ($form->isValid()) {
                 $this->getPropositionService()->update($proposition);
+                //TODO unvalidate
                 $this->redirect()->toRoute('soutenance/constituer',['these' => $these->getId()],[],true);
             }
         }
@@ -91,8 +91,13 @@ class SoutenanceController extends AbstractActionController {
             $data = $request->getPost();
             $form->setData($data);
             if ($form->isValid()) {
-                if ($idMembre)  $this->getMembreService()->update($membre);
-                else            $this->getMembreService()->create($membre);
+                if ($idMembre)  {
+                    $this->getMembreService()->update($membre);
+                }
+                else {
+                    $this->getMembreService()->create($membre);
+                }
+                //TODO unvalidate
                 $this->redirect()->toRoute('soutenance/constituer',['these' => $these->getId()],[],true);
             }
         }
@@ -111,10 +116,12 @@ class SoutenanceController extends AbstractActionController {
         $idMembre = $this->params()->fromRoute('membre');
         $membre = $this->getMembreService()->find($idMembre);
 
-        $this->getMembreService()->delete($membre);
+        if ($membre) {
+            $this->getMembreService()->delete($membre);
+            //TODO unvalidate
+        }
         $this->redirect()->toRoute('soutenance/constituer',['these' => $idThese],[],true);
     }
-
 
     //TODO utiliser la proposition et recup la these via ->getThese() ?
     //TODO creer si aucune proposition existe
@@ -125,6 +132,11 @@ class SoutenanceController extends AbstractActionController {
         $these = $this->getTheseService()->getRepository()->find($idThese);
         /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
+        if (!$proposition) {
+            $proposition = new Proposition();
+            $proposition->setThese($these);
+            $this->getPropositionService()->create($proposition);
+        }
         /** @var Doctorant $doctorant */
         $doctorant = $these->getDoctorant();
         /** @var Acteur[] $directeurs */
@@ -153,6 +165,10 @@ class SoutenanceController extends AbstractActionController {
         $these = $this->getTheseService()->getRepository()->find($idThese);
 
         $this->getValidationService()->validatePropositionSoutenance($these);
+        //TODO notifier Dir CoDir(s) Doct
+
+        //TODO si tout le monde à valider : 1) bloquer les modifications 2) Notifier ED
+
         $this->redirect()->toRoute('soutenance/constituer',['these' => $idThese],[],true);
 
     }

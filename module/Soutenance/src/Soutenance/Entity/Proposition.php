@@ -151,8 +151,8 @@ class Proposition {
         $indicateurs = [];
 
         /**  Il faut essayer de maintenir la parité Homme/Femme*/
-        $ratioFemme = $nbFemme / $nbMembre;
-        $ratioHomme = 1 - $ratioFemme;
+        $ratioFemme = ($nbMembre)?$nbFemme / $nbMembre:0;
+        $ratioHomme = ($nbMembre)?(1 - $ratioFemme):0;
         $indicateurs["parité"]      = ["Femme" => $ratioFemme, "Homme" => $ratioHomme];
         if ($ratioFemme < 0.2 OR $ratioHomme < 0.2) {
             $indicateurs["parité"]["valide"]    = false;
@@ -161,7 +161,7 @@ class Proposition {
         }
 
         /** Au moins deux rapporteurs */
-        $indicateurs["rapporteur"]      = ["Nombre" => $nbRapporteur, "Ratio" => $nbRapporteur/$nbMembre];
+        $indicateurs["rapporteur"]      = ["Nombre" => $nbRapporteur, "Ratio" => ($nbMembre)?$nbRapporteur/$nbMembre:0];
         if ($nbRapporteur < 2) {
             $indicateurs["rapporteur"]["valide"]    = false;
         } else {
@@ -169,16 +169,16 @@ class Proposition {
         }
 
         /** Au moins la motié du jury de rang A */
-        $ratioRangA = $nbRangA / $nbMembre;
+        $ratioRangA = ($nbMembre)?($nbRangA / $nbMembre):0;
         $indicateurs["rang A"]      = ["Nombre" => $nbRangA, "Ratio" => $ratioRangA];
-        if ($ratioRangA < 0.5)  {
+        if ($ratioRangA < 0.5 && $nbMembre)  {
             $indicateurs["rang A"]["valide"]    = false;
         } else {
             $indicateurs["rang A"]["valide"]    = true;
         }
 
         /** Au moins la motié du jury exterieur*/
-        $ratioExterieur = $nbExterieur / $nbMembre;
+        $ratioExterieur = ($nbMembre)?($nbExterieur / $nbMembre):0;
         $indicateurs["exterieur"]      = ["Nombre" => $nbExterieur, "Ratio" => $ratioExterieur];
         if ($ratioExterieur < 0.5)  {
             $indicateurs["exterieur"]["valide"]    = false;

@@ -84,4 +84,14 @@ class PropositionService {
         }
         return $result;
     }
+
+    public function create($proposition)
+    {
+        $this->getEntityManager()->persist($proposition);
+        try {
+            $this->getEntityManager()->flush($proposition);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Un erreur s'est produite lors de l'enregistrment en BD de la proposition de thèse !");
+        }
+    }
 }

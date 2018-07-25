@@ -2,8 +2,10 @@
 
 namespace Soutenance\Form\SoutenanceDateLieu;
 
+use UnicaenApp\Form\Element\Date;
 use Zend\Form\Element\Submit;
 use Zend\Form\Element\Text;
+use Zend\Form\Element\Time;
 use Zend\Form\Form;
 
 class SoutenanceDateLieuForm extends Form {
@@ -11,12 +13,12 @@ class SoutenanceDateLieuForm extends Form {
     public function init()
     {
         $this->add(
-            (new Text('date'))
+            (new Date('date'))
                 ->setLabel("Date de la soutenance :")
         );
 
         $this->add(
-            (new Text('heure'))
+            (new Time('heure'))
                 ->setLabel("Heure de la soutance :")
         );
 
