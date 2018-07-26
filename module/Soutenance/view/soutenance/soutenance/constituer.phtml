@@ -93,7 +93,7 @@ $canValidate = ($proposition->isOk())
             <!-- TODO remettre la modale -->
             <a
                 href="<?php echo $this->url('soutenance/constituer/modifier-date-lieu', ['these' => $these->getId()], [], true); ?>"
-                class="btn btn-primary action zajax-modal"
+                class="btn btn-primary action ajax-modal"
                 data-event="edition-datelieu"
             >
                 <span class="glyphicon glyphicon-pencil"></span> Éditer lieu et date de la soutenace
@@ -215,7 +215,10 @@ $canValidate = ($proposition->isOk())
                             <td> <?php echo $membre->getEtablissement(); ?> </td>
                             <td> <?php echo $membre->getRole(); ?> </td>
                             <td>
-                                <a href="<?php echo $this->url('soutenance/constituer/modifier-membre', ['these' => $these->getId(), 'membre' => $membre->getId()], [] ,true); ?>">
+                                <a
+                                        href="<?php echo $this->url('soutenance/constituer/modifier-membre', ['these' => $these->getId(), 'membre' => $membre->getId()], [] ,true); ?>"
+                                        class="ajax-modal"
+                                        data-event="edition-membre">
                                     <span class="glyphicon glyphicon-pencil"></span>
                                 </a>
                                 <a href="<?php echo $this->url('soutenance/constituer/effacer-membre', ['these' => $these->getId(), 'membre' => $membre->getId()], [] ,true); ?>">
@@ -230,7 +233,7 @@ $canValidate = ($proposition->isOk())
         <div class="pull-right">
             <a
                 href="<?php echo $this->url('soutenance/constituer/modifier-membre', ['these' => $these->getId()], [], true); ?>"
-                class="btn btn-primary action zajax-modal"
+                class="btn btn-primary action ajax-modal"
                 data-event="edition-membre">
                     <span class="glyphicon glyphicon-plus"></span> Ajouter un membre de jury
             </a>
@@ -303,6 +306,12 @@ $canValidate = ($proposition->isOk())
 <script>
     $(function() {
         $("body").on("edition-datelieu", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+    $(function() {
+        $("body").on("edition-membre", function (event) {
             event.div.modal('hide');
             window.location.reload();
         });

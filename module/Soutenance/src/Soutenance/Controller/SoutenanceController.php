@@ -42,9 +42,13 @@ class SoutenanceController extends AbstractActionController {
     }
 
     public function modifierDateLieuAction() {
+        /** @var These $these */
+        $idThese = $this->params()->fromRoute('these');
+        $these = $this->getTheseService()->getRepository()->find($idThese);
 
         /** @var SoutenanceDateLieuForm $form */
         $form = $this->getServiceLocator()->get('FormElementManager')->get(SoutenanceDateLieuForm::class);
+        $form->setAttribute('action', $this->url()->fromRoute('soutenance/constituer/modifier-date-lieu', ['these' => $these->getId()], [], true));
 
         /** @var These $these */
         $idThese = $this->params()->fromRoute('these');
@@ -61,7 +65,7 @@ class SoutenanceController extends AbstractActionController {
             if ($form->isValid()) {
                 $this->getPropositionService()->update($proposition);
                 $this->unvalidate($these);
-                $this->redirect()->toRoute('soutenance/constituer',['these' => $these->getId()],[],true);
+//                $this->redirect()->toRoute('soutenance/constituer',['these' => $these->getId()],[],true);
             }
         }
 
@@ -72,12 +76,15 @@ class SoutenanceController extends AbstractActionController {
     }
 
     public function modifierMembreAction() {
-        /** @var SoutenanceDateLieuForm $form */
-        $form = $this->getServiceLocator()->get('FormElementManager')->get(SoutenanceMembreForm::class);
-
         /** @var These $these */
         $idThese = $this->params()->fromRoute('these');
         $these = $this->getTheseService()->getRepository()->find($idThese);
+
+
+        /** @var SoutenanceDateLieuForm $form */
+        $form = $this->getServiceLocator()->get('FormElementManager')->get(SoutenanceMembreForm::class);
+        $form->setAttribute('action', $this->url()->fromRoute('soutenance/constituer/modifier-membre', ['these' => $these->getId()], [], true));
+
         /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
 
@@ -104,7 +111,7 @@ class SoutenanceController extends AbstractActionController {
                     $this->getMembreService()->create($membre);
                 }
                 $this->unvalidate($these);
-                $this->redirect()->toRoute('soutenance/constituer',['these' => $these->getId()],[],true);
+//                $this->redirect()->toRoute('soutenance/constituer',['these' => $these->getId()],[],true);
             }
         }
 
