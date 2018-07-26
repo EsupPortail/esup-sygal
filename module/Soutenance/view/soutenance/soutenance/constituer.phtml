@@ -24,13 +24,11 @@ use Soutenance\Entity\Proposition;
  * 3 - ne pas avoir déjà validé
  */
 
+$alreadyValidated = ($validations[$currentIndividu->getId()] !== null);
 $canValidate = ($proposition->isOk())
-    && (($currentIndividu === $doctorant->getIndividu()) || (array_search($currentIndividu, $directeurs)))
+    && (($currentIndividu === $doctorant->getIndividu()) || (array_search($currentIndividu, $directeurs) !== false))
     && ($validations[$currentIndividu->getId()] === null)
 ;
-
-
-var_dump($canValidate);
 ?>
 
 <style>
@@ -278,7 +276,7 @@ var_dump($canValidate);
             </ul>
         </div>
         <div class="pull-right">
-<!--            --><?php //if (!$validations[$currentIndividu->getId()]) : ?>
+            <?php if (!$alreadyValidated) : ?>
                 <?php if ($canValidate) : ?>
                     <a
                             href="<?php echo $this->url('soutenance/constituer/valider', ['these' => $these->getId()], [], true); ?>"
@@ -291,7 +289,7 @@ var_dump($canValidate);
                     Pour pouvoir être valider la proposition de soutenance doit être recevable : date et lieu, composition du jury, ...
                 </div>
                 <?php endif; ?>
-<!--            --><?php //endif; ?>
+            <?php endif; ?>
 
 <!--            <br/>-->
 <!--            <a href="--><?php //echo $this->url('soutenance/constituer/refuser', ['these' => $these->getId()], [], true); ?><!--" class="btn btn-danger action"><span class="glyphicon glyphicon-remove"></span> Rejeter la proposition de soutenance</a>-->
