@@ -195,4 +195,12 @@ class Proposition {
 
     }
 
+
+    public function isOk()
+    {
+        $indicateurs = $this->computeIndicateur();
+        if (!$indicateurs["valide"]) return false;
+        if(! $this->getDate() || ! $this->getLieu()) return false;
+        return true;
+    }
 }

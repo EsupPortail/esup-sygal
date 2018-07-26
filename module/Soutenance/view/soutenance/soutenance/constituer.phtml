@@ -3,15 +3,34 @@
      * @var These $these
      * @var Proposition $proposition
      * @var Doctorant $doctorant
-     * @var Acteur[] $directeurs
+     * @var Individu[] $directeurs
+     * @var $acteurs
+     * @var Individu $currentIndividu
+     * @var Validation[] $validations
      */
 
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Doctorant;
+use Application\Entity\Db\Individu;
 use Application\Entity\Db\These;
+use Application\Entity\Db\Validation;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 
+/**
+ * canValidate : on peut valider une proposition si :
+ * 1 - tous les indicateurs sont ok date/lieu et constitution du jury
+ * 2 - être un des intervenants directs de la thèse (doctorant, directeur, co-directeurs)
+ * 3 - ne pas avoir déjà validé
+ */
+
+$canValidate = ($proposition->isOk())
+    && (($currentIndividu === $doctorant->getIndividu()) || (array_search($currentIndividu, $directeurs)))
+    && ($validations[$currentIndividu->getId()] === null)
+;
+
+
+var_dump($canValidate);
 ?>
 
 <style>
@@ -247,9 +266,9 @@ use Soutenance\Entity\Proposition;
                 </li>
                 <?php foreach ($directeurs as $directeur): ?>
                 <li>
-                    <?php echo $directeur->getIndividu()->getNomComplet(false,false,false, true); ?> (Directeur)
+                    <?php echo $directeur->getNomComplet(false,false,false, true); ?> (Directeur)
                     <br/>
-                    <?php if ($validations[$directeur->getIndividu()->getId()]) : ?>
+                    <?php if ($validations[$directeur->getId()]) : ?>
                         <span class="badge badge-success"> Validée</span>
                     <?php else: ?>
                         <span class="badge badge-default"> Aucune validation</span>
@@ -259,11 +278,22 @@ use Soutenance\Entity\Proposition;
             </ul>
         </div>
         <div class="pull-right">
-            <a
-                    href="<?php echo $this->url('soutenance/constituer/valider', ['these' => $these->getId()], [], true); ?>"
-                    class="btn btn-success action ">
-                <span class="glyphicon glyphicon-ok"></span> Valider la proposition de soutenance
-            </a> <br/>
+<!--            --><?php //if (!$validations[$currentIndividu->getId()]) : ?>
+                <?php if ($canValidate) : ?>
+                    <a
+                            href="<?php echo $this->url('soutenance/constituer/valider', ['these' => $these->getId()], [], true); ?>"
+                            class="btn btn-success action ">
+                        <span class="glyphicon glyphicon-ok"></span> Valider la proposition de soutenance
+                    </a>
+                <?php else : ?>
+                <div class="alert alert-sm alert-warning">
+                    <span class="glyphicon glyphicon-warning-sign"></span>
+                    Pour pouvoir être valider la proposition de soutenance doit être recevable : date et lieu, composition du jury, ...
+                </div>
+                <?php endif; ?>
+<!--            --><?php //endif; ?>
+
+<!--            <br/>-->
 <!--            <a href="--><?php //echo $this->url('soutenance/constituer/refuser', ['these' => $these->getId()], [], true); ?><!--" class="btn btn-danger action"><span class="glyphicon glyphicon-remove"></span> Rejeter la proposition de soutenance</a>-->
         </div>
     </div>
