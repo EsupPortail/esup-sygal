@@ -6,6 +6,7 @@ use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\ImportObservResult;
 use Application\Entity\Db\Individu;
+use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\MailConfirmation;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
@@ -22,6 +23,7 @@ use Application\Rule\NotificationDepotVersionCorrigeeAttenduRule;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Notification\Notification;
@@ -503,6 +505,7 @@ class NotifierService extends \Notification\Service\NotifierService
      */
     public function triggerDevalidationProposition($validation) {
         $mail = $validation->getIndividu()->getEmail();
+        $these = $validation->getThese();
 
         $notif = new Notification();
         $notif
@@ -510,7 +513,8 @@ class NotifierService extends \Notification\Service\NotifierService
             ->setTo($mail)
             ->setTemplatePath('soutenance/notification/devalidation')
             ->setTemplateVariables([
-               'validation'     => $validation,
+                'validation'     => $validation,
+                'these'          => $these,
             ]);
         $this->trigger($notif);
     }
@@ -531,6 +535,28 @@ class NotifierService extends \Notification\Service\NotifierService
             ->setTemplatePath('soutenance/notification/validation-acteur')
             ->setTemplateVariables([
                 'validation'     => $validation,
+            ]);
+        $this->trigger($notif);
+    }
+
+    /** @param These $these */
+    public function triggerNotificationUniteRechercheProposition($these)
+    {
+        /** @var IndividuRole[] $individuRoles */
+        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
+
+        $emails = [];
+        foreach ($individuRoles as $individuRole) {
+            $emails = $individuRole->getIndividu()->getEmail();
+        }
+
+        $notif = new Notification();
+        $notif
+            ->setSubject("Demande de validation d'une proposition de soutenance")
+            ->setTo($emails)
+            ->setTemplatePath('soutenance/notification/validation-unite')
+            ->setTemplateVariables([
+                'these'     => $these,
             ]);
         $this->trigger($notif);
     }

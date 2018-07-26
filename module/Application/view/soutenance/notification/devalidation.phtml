@@ -2,13 +2,19 @@
 
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
+use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
 use Application\View\Renderer\PhpRenderer;
 
 /**
  * @var PhpRenderer $this
  * @var Validation $validation
+ * @var These $these
  */
+?>
+
+<?php
+    $urlRetour = $this->url('soutenance/constituer', ['these' => $these->getId()], ['force_canonical'=>true], true);
 ?>
 
     <p>
@@ -23,6 +29,11 @@ use Application\View\Renderer\PhpRenderer;
         <?php echo $validation->getHistoCreation()->format("d/m/Y") ?> à
         <?php echo $validation->getHistoCreation()->format("H:i") ?>) a été annulée.
         Si la nouvelle proposition vous convient, veuillez valider la proposition de soutenance à nouveau.
+    </p>
+
+    <p>
+        Pour consulter, les modifications faites connectez-vous à SyGAL et visualisez la proposition de soutenance en
+        utilisant le lien suivant : <a href="<?php echo $urlRetour; ?>">proposition de soutenance</a>.
     </p>
 
     <p>
