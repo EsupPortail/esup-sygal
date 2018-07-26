@@ -177,6 +177,7 @@ use Soutenance\Entity\Proposition;
                 <thead>
                 <tr>
                     <th>Dénomination</th>
+                    <th>Adresse électronique</th>
                     <th>Genre</th>
                     <th>Qualité</th>
                     <th>Rang</th>
@@ -190,6 +191,7 @@ use Soutenance\Entity\Proposition;
                     <?php foreach($proposition->getMembres() as $membre): ?>
                         <tr>
                             <td> <?php echo $membre->getDenomination(); ?> </td>
+                            <td> <?php echo $membre->getEmail(); ?> </td>
                             <td> <?php echo $membre->getGenre(); ?> </td>
                             <td> <?php echo $membre->getQualite()->getLibelle(); ?> </td>
                             <td> <?php echo $membre->getRang(); ?> </td>

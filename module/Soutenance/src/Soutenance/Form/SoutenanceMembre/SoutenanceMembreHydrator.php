@@ -24,7 +24,7 @@ class SoutenanceMembreHydrator implements HydratorInterface
         $membre->setEtablissement($data['etablissement']);
         $membre->setExterieur($data['exterieur']);
         $membre->setRole($data['role']);
-
+        $membre->setEmail($data['email']);
         return $membre;
     }
 
@@ -41,6 +41,7 @@ class SoutenanceMembreHydrator implements HydratorInterface
         $data['etablissement']      = $membre->getEtablissement();
         $data['exterieur']          = $membre->getExterieur();
         $data['role']               = $membre->getRole();
+        $data['email']              = $membre->getEmail();
 
         return $data;
     }

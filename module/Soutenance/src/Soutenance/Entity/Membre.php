@@ -12,6 +12,8 @@ class Membre {
     private $genre;
     /** @var string */
     private $denomination;
+    /** @var string */
+    private $email;
     /** @var Qualite */
     private $qualite;
 
@@ -163,6 +165,26 @@ class Membre {
         $this->role = $role;
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param string $email
+     * @return Membre
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+        return $this;
+    }
+
+
 }
 
 ?>

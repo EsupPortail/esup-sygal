@@ -5,6 +5,7 @@ namespace Soutenance\Form\SoutenanceMembre;
 use DoctrineModule\Form\Element\ObjectSelect;
 use Soutenance\Entity\Qualite;
 use UnicaenApp\Service\EntityManagerAwareTrait;
+use Zend\Form\Element\Email;
 use Zend\Form\Element\Radio;
 use Zend\Form\Element\Submit;
 use Zend\Form\Element\Text;
@@ -24,6 +25,11 @@ class SoutenanceMembreForm extends Form {
         $this->add(
             (new Text('denomination'))
                 ->setLabel("Denomination du membre de jury :")
+        );
+
+        $this->add(
+            (new Email('email'))
+                ->setLabel("Adresse électronique :")
         );
 
         $this->add(
