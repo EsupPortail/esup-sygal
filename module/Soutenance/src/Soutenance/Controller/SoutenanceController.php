@@ -168,7 +168,8 @@ class SoutenanceController extends AbstractActionController {
         $idThese = $this->params()->fromRoute('these');
         $these = $this->getTheseService()->getRepository()->find($idThese);
 
-        $this->getValidationService()->validatePropositionSoutenance($these);
+        $validation = $this->getValidationService()->validatePropositionSoutenance($these);
+        $this->getNotifierService()->triggerValidationProposition($these, $validation);
         //TODO notifier Dir CoDir(s) Doct
 
         //TODO si tout le monde à valider : 1) bloquer les modifications 2) Notifier ED

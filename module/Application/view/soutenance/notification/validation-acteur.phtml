@@ -1,0 +1,28 @@
+<?php
+
+use Application\Entity\Db\Individu;
+use Application\Entity\Db\Role;
+use Application\Entity\Db\Validation;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var Validation $validation
+ */
+?>
+
+<p>
+    Bonjour,
+</p>
+<p>
+    Ceci est un mail envoyé automatiquement par l'application SyGAL.
+</p>
+
+<p>
+    <?php echo $validation->getIndividu()->getNomComplet(false, false, false, true); ?> vient de valider la proposition de thèse.
+</p>
+
+<p>
+    NB : La proposition de soutenance sera envoyée automatiquement à votre unité de recherche puis à votre école doctorale,
+    une fois que tous les intervenants directs auront validé celle-ci (c.-à-d. doctorant, directeur et co-directeur(s)).
+</p>

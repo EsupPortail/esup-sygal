@@ -515,5 +515,25 @@ class NotifierService extends \Notification\Service\NotifierService
         $this->trigger($notif);
     }
 
+    /**
+     * @param These $these
+     * @param Validation $validation
+     */
+    public function triggerValidationProposition($these, $validation)
+    {
+        $emails   = $these->getDirecteursTheseEmails();
+        $emails[] = $these->getDoctorant()->getIndividu()->getEmail();
+
+        $notif = new Notification();
+        $notif
+            ->setSubject("Une validation de votre proposition de soutenance vient d'être faite")
+            ->setTo($emails)
+            ->setTemplatePath('soutenance/notification/validation-acteur')
+            ->setTemplateVariables([
+                'validation'     => $validation,
+            ]);
+        $this->trigger($notif);
+    }
+
 
 }

@@ -269,6 +269,10 @@ class ValidationService extends BaseService
         return $v;
     }
 
+    /**
+     * @param These $these
+     * @return Validation
+     */
     public function validatePropositionSoutenance($these)
     {
         // l'individu sera enregistré dans la validation pour faire le lien entre Utilisateur et Individu.
@@ -285,6 +289,8 @@ class ValidationService extends BaseService
         } catch (OptimisticLockException $e) {
             throw new RuntimeException("Erreur lors de l'enregistrement de la validation en bdd", null, $e);
         }
+
+        return $v;
     }
 
     public function unvalidatePropositionSoutenance($these)
