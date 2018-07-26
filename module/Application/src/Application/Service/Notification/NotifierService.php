@@ -10,6 +10,7 @@ use Application\Entity\Db\MailConfirmation;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\UniteRecherche;
+use Application\Entity\Db\Validation;
 use Application\Entity\Db\Variable;
 use Application\Notification\CorrectionAttendueUpdatedNotification;
 use Application\Notification\ResultatTheseAdmisNotification;
@@ -493,6 +494,23 @@ class NotifierService extends \Notification\Service\NotifierService
                 'type'         => $type,
                 'role'         => $role,
                 'individu'     => $individu,
+            ]);
+        $this->trigger($notif);
+    }
+
+    /**
+     * @param Validation $validation
+     */
+    public function triggerDevalidationProposition($validation) {
+        $mail = $validation->getIndividu()->getEmail();
+
+        $notif = new Notification();
+        $notif
+            ->setSubject("Votre validation de la proposition de soutenance a été annulée")
+            ->setTo($mail)
+            ->setTemplatePath('soutenance/notification/devalidation')
+            ->setTemplateVariables([
+               'validation'     => $validation,
             ]);
         $this->trigger($notif);
     }

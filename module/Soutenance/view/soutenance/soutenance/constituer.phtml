@@ -264,7 +264,7 @@ use Soutenance\Entity\Proposition;
                     class="btn btn-success action ">
                 <span class="glyphicon glyphicon-ok"></span> Valider la proposition de soutenance
             </a> <br/>
-            <a href="<?php echo $this->url('soutenance/constituer/refuser', ['these' => $these->getId()], [], true); ?>" class="btn btn-danger action"><span class="glyphicon glyphicon-remove"></span> Rejeter la proposition de soutenance</a>
+<!--            <a href="--><?php //echo $this->url('soutenance/constituer/refuser', ['these' => $these->getId()], [], true); ?><!--" class="btn btn-danger action"><span class="glyphicon glyphicon-remove"></span> Rejeter la proposition de soutenance</a>-->
         </div>
     </div>
 </div>
@@ -273,20 +273,6 @@ use Soutenance\Entity\Proposition;
 
 
 <script>
-    // $(document).ready(function () {
-    //     $(".remove-role").click(function () {
-    //         var id = $(this).attr("id");
-    //         var splits = id.split("_");
-    //         var role = splits[1];
-    //         var individu = splits[0];
-    //
-    //         var url = "../../utilisateur/retirer-role/" + individu + "/" + role;
-    //
-    //         $.ajax({
-    //             url: url
-    //         });
-    //     });
-    // });
     $(function() {
         $("body").on("edition-datelieu", function (event) {
             event.div.modal('hide');

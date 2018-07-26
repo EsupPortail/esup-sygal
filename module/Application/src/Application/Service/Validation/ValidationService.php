@@ -322,7 +322,7 @@ class ValidationService extends BaseService
      * @var Individu $individu
      * @return Validation
      */
-    public function findValidationPropositionSoutenance($these, $individu) {
+    public function findValidationPropositionSoutenanceByTheseAndIndividu($these, $individu) {
         $qb = $this->getRepository()->createQueryBuilder("v")
             ->andWhereTheseIs($these)
             ->andWhereTypeIs($type = TypeValidation::CODE_PROPOSITION_SOUTENANCE)
@@ -337,5 +337,32 @@ class ValidationService extends BaseService
         }
         return $result;
     }
+
+    /**
+     * @var These $these
+     * @return Validation[]
+     */
+    public function findValidationPropositionSoutenanceByThese($these) {
+        $qb = $this->getRepository()->createQueryBuilder("v")
+            ->andWhereTheseIs($these)
+            ->andWhereTypeIs($type = TypeValidation::CODE_PROPOSITION_SOUTENANCE)
+            ->andWhereNotHistorise()
+            ;
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
+
+    /**
+     * @param Validation $validation
+     */
+    public function historise($validation) {
+        $validation->historiser();
+        try {
+            $this->getEntityManager()->flush($validation);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Un problème est survenu lors de l'historisation");
+        }
+    }
+
 
 }

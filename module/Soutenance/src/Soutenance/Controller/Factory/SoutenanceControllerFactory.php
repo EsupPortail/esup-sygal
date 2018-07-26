@@ -2,6 +2,7 @@
 
 namespace Soutenance\Controller\Factory;
 
+use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
 use Application\Service\Validation\ValidationService;
 use Soutenance\Controller\SoutenanceController;
@@ -23,11 +24,13 @@ class SoutenanceControllerFactory
          * @var MembreService $membreService
          * @var TheseService $theseService
          * @var ValidationService $validationService
+         * @var NotifierService $notifierService
          */
         $propositionService = $controllerManager->getServiceLocator()->get(PropositionService::class);
         $membreService = $controllerManager->getServiceLocator()->get(MembreService::class);
         $theseService = $controllerManager->getServiceLocator()->get('TheseService');
         $validationService = $controllerManager->getServiceLocator()->get('ValidationService');
+        $notifierService = $controllerManager->getServiceLocator()->get(NotifierService::class);
 
         /** @var SoutenanceController $controller */
         $controller = new SoutenanceController();
@@ -35,6 +38,7 @@ class SoutenanceControllerFactory
         $controller->setMembreService($membreService);
         $controller->setTheseService($theseService);
         $controller->setValidationService($validationService);
+        $controller->setNotifierService($notifierService);
 
         return $controller;
     }

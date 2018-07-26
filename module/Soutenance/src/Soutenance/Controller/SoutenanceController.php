@@ -6,6 +6,8 @@ use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
+use Application\Entity\Db\Validation;
+use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Soutenance\Entity\Membre;
@@ -13,7 +15,6 @@ use Soutenance\Entity\Proposition;
 use Soutenance\Form\SoutenanceDateLieu\SoutenanceDateLieuForm;
 use Soutenance\Form\SoutenanceMembre\SoutenanceMembreForm;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
-use Soutenance\Service\Proposition\PropositionService;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
@@ -24,6 +25,7 @@ class SoutenanceController extends AbstractActionController {
     use PropositionServiceAwareTrait;
     use MembreServiceAwareTrait;
     use ValidationServiceAwareTrait;
+    use NotifierServiceAwareTrait;
 
 
     public function indexAction()
@@ -54,7 +56,7 @@ class SoutenanceController extends AbstractActionController {
             $form->setData($data);
             if ($form->isValid()) {
                 $this->getPropositionService()->update($proposition);
-                //TODO unvalidate
+                $this->unvalidate($these);
                 $this->redirect()->toRoute('soutenance/constituer',['these' => $these->getId()],[],true);
             }
         }
@@ -97,7 +99,7 @@ class SoutenanceController extends AbstractActionController {
                 else {
                     $this->getMembreService()->create($membre);
                 }
-                //TODO unvalidate
+                $this->unvalidate($these);
                 $this->redirect()->toRoute('soutenance/constituer',['these' => $these->getId()],[],true);
             }
         }
@@ -110,7 +112,9 @@ class SoutenanceController extends AbstractActionController {
 
     public function effacerMembreAction() {
 
+        /** @var These $these */
         $idThese = $this->params()->fromRoute('these');
+        $these = $this->getTheseService()->getRepository()->find($idThese);
 
         /** @var Membre $membre */
         $idMembre = $this->params()->fromRoute('membre');
@@ -118,7 +122,7 @@ class SoutenanceController extends AbstractActionController {
 
         if ($membre) {
             $this->getMembreService()->delete($membre);
-            //TODO unvalidate
+            $this->unvalidate($these);
         }
         $this->redirect()->toRoute('soutenance/constituer',['these' => $idThese],[],true);
     }
@@ -145,9 +149,9 @@ class SoutenanceController extends AbstractActionController {
         $directeurs = array_merge($dirs->toArray(), $codirs->toArray());
 
         $validations = [];
-        $validations[$doctorant->getIndividu()->getId()] = $this->getValidationService()->findValidationPropositionSoutenance($these, $doctorant->getIndividu());
+        $validations[$doctorant->getIndividu()->getId()] = $this->getValidationService()->findValidationPropositionSoutenanceByTheseAndIndividu($these, $doctorant->getIndividu());
         foreach ($directeurs as $directeur) {
-            $validations[$directeur->getIndividu()->getId()] = $this->getValidationService()->findValidationPropositionSoutenance($these, $directeur->getIndividu());
+            $validations[$directeur->getIndividu()->getId()] = $this->getValidationService()->findValidationPropositionSoutenanceByTheseAndIndividu($these, $directeur->getIndividu());
         }
         return new ViewModel([
                 'these' => $these,
@@ -177,5 +181,16 @@ class SoutenanceController extends AbstractActionController {
 
     }
 
+    /**
+     * @param These $these
+     */
+    public function unvalidate($these) {
+        /** @var Validation[] $validations */
+        $validations = $this->getValidationService()->findValidationPropositionSoutenanceByThese($these);
+        foreach ($validations as $validation) {
+            $this->getValidationService()->historise($validation);
+            $this->getNotifierService()->triggerDevalidationProposition($validation);
+        }
+    }
 }
 
