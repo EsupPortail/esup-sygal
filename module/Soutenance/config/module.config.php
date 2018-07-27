@@ -13,6 +13,8 @@ use Soutenance\Form\SoutenanceMembre\SoutenanceMembreForm;
 use Soutenance\Form\SoutenanceMembre\SoutenanceMembreFormFactory;
 use Soutenance\Form\SoutenanceMembre\SoutenanceMembreHydrator;
 use Soutenance\Form\SoutenanceMembre\SoutenanceMembreHydratorFactory;
+use Soutenance\Form\SoutenanceRefus\SoutenanceRefusForm;
+use Soutenance\Form\SoutenanceRefus\SoutenanceRefusFormFactory;
 use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Membre\MembreServiceFactory;
 use Soutenance\Service\Proposition\PropositionService;
@@ -35,6 +37,12 @@ return array(
                         'effacer-membre',
                         'valider',
                         'refuser',
+                        'valider-ur',
+                        'valider-ur-validation',
+                        'valider-ur-refus',
+                        'valider-ed',
+                        'valider-ed-validation',
+                        'valider-ed-refus',
                     ],
                     'roles' => [
 
@@ -148,6 +156,76 @@ return array(
                             ],
                         ],
                     ],
+                    'valider-ur' => [
+                        'type' => Segment::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/valider-ur/:these',
+                            'defaults' => [
+                                'controller' => SoutenanceController::class,
+                                'action'     => 'valider-ur',
+                            ],
+                        ],
+                        'child_routes' => [
+                            'valider' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/valider',
+                                    'defaults' => [
+                                        'controller' => SoutenanceController::class,
+                                        'action'     => 'valider-ur-validation',
+                                    ],
+                                ],
+                            ],
+                            'refuser' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/refuser',
+                                    'defaults' => [
+                                        'controller' => SoutenanceController::class,
+                                        'action'     => 'valider-ur-refus',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'valider-ed' => [
+                        'type' => Segment::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/valider-ed/:these',
+                            'defaults' => [
+                                'controller' => SoutenanceController::class,
+                                'action'     => 'valider-ed',
+                            ],
+                        ],
+                        'child_routes' => [
+                            'valider' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/valider',
+                                    'defaults' => [
+                                        'controller' => SoutenanceController::class,
+                                        'action'     => 'valider-ed-validation',
+                                    ],
+                                ],
+                            ],
+                            'refuser' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/refuser',
+                                    'defaults' => [
+                                        'controller' => SoutenanceController::class,
+                                        'action'     => 'valider-ed-refus',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
                 ],
             ],
         ],
@@ -170,6 +248,7 @@ return array(
         'factories' => [
             SoutenanceDateLieuForm::class => SoutenanceDateLieuFormFactory::class,
             SoutenanceMembreForm::class => SoutenanceMembreFormFactory::class,
+            SoutenanceRefusForm::class => SoutenanceRefusFormFactory::class,
         ],
     ],
 

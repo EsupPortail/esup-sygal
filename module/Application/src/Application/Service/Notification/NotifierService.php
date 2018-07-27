@@ -562,4 +562,28 @@ class NotifierService extends \Notification\Service\NotifierService
     }
 
 
+    /**
+     * @param These $these
+     * @param Individu $currentUser
+     * @param string $motif
+     */
+    public function triggerRefusPropositionSoutenance($these, $currentUser, $motif)
+    {
+        $emails   = $these->getDirecteursTheseEmails();
+        $emails[] = $these->getDoctorant()->getIndividu()->getEmail();
+
+        $notif = new Notification();
+        $notif
+            ->setSubject("Votre proposistion de soutenance a été réfusé")
+            ->setTo($emails)
+            ->setTemplatePath('soutenance/notification/refus')
+            ->setTemplateVariables([
+                'acteur' => $currentUser,
+                'motif' => $motif,
+                'these' => $these,
+            ]);
+        $this->trigger($notif);
+    }
+
+
 }

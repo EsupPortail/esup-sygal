@@ -17,6 +17,7 @@ use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Form\SoutenanceDateLieu\SoutenanceDateLieuForm;
 use Soutenance\Form\SoutenanceMembre\SoutenanceMembreForm;
+use Soutenance\Form\SoutenanceRefus\SoutenanceRefusForm;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Zend\Http\Request;
@@ -138,8 +139,6 @@ class SoutenanceController extends AbstractActionController {
         $this->redirect()->toRoute('soutenance/constituer',['these' => $idThese],[],true);
     }
 
-    //TODO utiliser la proposition et recup la these via ->getThese() ?
-    //TODO creer si aucune proposition existe
     public function constituerAction()
     {
         /** @var These $these */
@@ -156,8 +155,6 @@ class SoutenanceController extends AbstractActionController {
         /** @var Utilisateur $currentUser */
         $currentUser = $this->userContextService->getDbUser();
         $currentIndividu = $currentUser->getIndividu();
-
-
 
         /** @var Doctorant $doctorant */
         $doctorant = $these->getDoctorant();
@@ -192,15 +189,28 @@ class SoutenanceController extends AbstractActionController {
 
         $validation = $this->getValidationService()->validatePropositionSoutenance($these);
         $this->getNotifierService()->triggerValidationProposition($these, $validation);
-        //TODO notifier Dir CoDir(s) Doct
 
-        //TODO si tout le monde à valider : 1) bloquer les modifications 2) Notifier ED
+        /** @var Doctorant $doctorant */
+        $doctorant = $these->getDoctorant();
+        /** @var Individu[] $directeurs */
+        $dirs = $these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE);
+        $codirs = $these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE);
+        $acteurs = array_merge($dirs->toArray(), $codirs->toArray());
+        $acteurs[] = $doctorant;
+
+        $allValidated = true;
+        foreach ($acteurs as $acteur) {
+            if ($this->getValidationService()->findValidationPropositionSoutenanceByTheseAndIndividu($these, $acteur->getIndividu()) === null) {
+                $allValidated = false;
+                break;
+            }
+        }
+
+        if ($allValidated) $this->getNotifierService()->triggerNotificationUniteRechercheProposition($these);
+
+
 
         $this->redirect()->toRoute('soutenance/constituer',['these' => $idThese],[],true);
-
-    }
-
-    public function refuserAction() {
 
     }
 
@@ -214,6 +224,62 @@ class SoutenanceController extends AbstractActionController {
             $this->getValidationService()->historise($validation);
             $this->getNotifierService()->triggerDevalidationProposition($validation);
         }
+    }
+
+    public function validerUrAction() {
+        /** @var These $these */
+        $idThese = $this->params()->fromRoute('these');
+        $these = $this->getTheseService()->getRepository()->find($idThese);
+
+        /** @var Proposition $proposition */
+        $proposition = $this->getPropositionService()->findByThese($these);
+
+        /** @var Validation[] $validations*/
+        $validations = [];
+
+        $doctorant = $these->getDoctorant()->getIndividu();
+        $validations[$doctorant->getId()] = $this->getValidationService()->findValidationPropositionSoutenanceByTheseAndIndividu($these, $doctorant);
+        /** @var Acteur[] $directeurs */
+        $dirs = $these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE);
+        $codirs = $these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE);
+        $directeurs = array_merge($dirs->toArray(), $codirs->toArray());
+        foreach ($directeurs as $directeur) {
+            $validations[$directeur->getIndividu()->getId()] = $this->getValidationService()->findValidationPropositionSoutenanceByTheseAndIndividu($these, $directeur->getIndividu());
+        }
+
+
+        return new ViewModel([
+            'proposition' => $proposition,
+            'validation' => $validations,
+        ]);
+    }
+
+    public function validerUrRefusAction() {
+        /** @var These $these */
+        $idThese = $this->params()->fromRoute('these');
+        $these = $this->getTheseService()->getRepository()->find($idThese);
+
+        /** @var SoutenanceRefusForm $form */
+        $form = $this->getServiceLocator()->get('FormElementManager')->get(SoutenanceRefusForm::class);
+        $form->setAttribute('action', $this->url()->fromRoute('soutenance/valider-ur/refuser', ['these' => $these->getId()], [], true));
+
+        /** @var Request $request */
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            if ($data['motif'] !== null) {
+                $this->unvalidate($these);
+                $currentUser = $this->userContextService->getIdentityIndividu();
+                $this->getNotifierService()->triggerRefusPropositionSoutenance($these, $currentUser, $data['motif']);
+//                $this->redirect()->toRoute('soutenance/constituer',['these' => $these->getId()],[],true);
+            }
+        }
+
+        return new ViewModel([
+                'form' => $form,
+                'these' => $these,
+            ]
+        );
     }
 }
 

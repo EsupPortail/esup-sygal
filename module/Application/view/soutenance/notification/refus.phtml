@@ -1,0 +1,34 @@
+<?php
+
+use Application\Entity\Db\Individu;
+use Application\Entity\Db\Role;
+use Application\Entity\Db\These;
+use Application\Entity\Db\Validation;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var These $these
+ * @var Individu $acteur
+ * @var string $motif
+ */
+?>
+
+<p>
+    Bonjour,
+</p>
+<p>
+    <?php echo $acteur->getNomComplet(false, false, false, true); ?> a refus votre proposition de soutenance.
+    Le motif du refus est le suivant :
+</p>
+
+<p>
+"
+<?php echo $motif; ?>
+"
+</p>
+
+<p>
+    Suite à ce refus toutes les validations associées à cette proposition ont été annulées.
+</p>
+

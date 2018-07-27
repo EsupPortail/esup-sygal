@@ -1,0 +1,19 @@
+<?php
+
+/**
+ * @var PhpRenderer $this
+ * @var These $these
+ * @var SoutenanceRefusForm $form
+ */
+
+use Application\Entity\Db\These;
+use Soutenance\Form\SoutenanceRefus\SoutenanceRefusForm;
+use Zend\View\Renderer\PhpRenderer;
+?>
+
+<h1> Motivation du refus de la proposition de soutenance </h1>
+
+<?php
+    echo $this->form($form);
+?>
+
