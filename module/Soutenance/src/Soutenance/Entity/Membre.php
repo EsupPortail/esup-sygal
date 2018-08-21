@@ -24,6 +24,12 @@ class Membre {
     /** @var string */
     private $role;
 
+
+    /** @var string */
+    private $persopass;
+    /** @var boolean */
+    private $nouveau;
+
     /**
      * @return int
      */
@@ -181,6 +187,42 @@ class Membre {
     public function setEmail($email)
     {
         $this->email = $email;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPersopass()
+    {
+        return $this->persopass;
+    }
+
+    /**
+     * @param string $persopass
+     * @return Membre
+     */
+    public function setPersopass($persopass)
+    {
+        $this->persopass = $persopass;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNouveau()
+    {
+        return $this->nouveau;
+    }
+
+    /**
+     * @param bool $nouveau
+     * @return Membre
+     */
+    public function setNouveau($nouveau)
+    {
+        $this->nouveau = $nouveau;
         return $this;
     }
 

@@ -4,8 +4,12 @@
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
+use Soutenance\Controller\Factory\PersopassControllerFactory;
 use Soutenance\Controller\Factory\SoutenanceControllerFactory;
+use Soutenance\Controller\PersopassController;
 use Soutenance\Controller\SoutenanceController;
+use Soutenance\Form\PersopassModifier\PersopassModifierForm;
+use Soutenance\Form\PersopassModifier\PersopassModifierFormFactory;
 use Soutenance\Form\SoutenanceDateLieu\SoutenanceDateLieuForm;
 use Soutenance\Form\SoutenanceDateLieu\SoutenanceDateLieuFormFactory;
 use Soutenance\Form\SoutenanceDateLieu\SoutenanceDateLieuHydrator;
@@ -45,9 +49,18 @@ return array(
                         'valider-ed-refus',
                     ],
                     'roles' => [
-
                     ],
                 ],
+                [
+                    'controller' => PersopassController::class,
+                    'action'     => [
+                        'afficher',
+                        'modifier',
+                    ],
+                    'roles' => [
+
+                    ],
+                ]
             ],
         ],
     ],
@@ -88,6 +101,30 @@ return array(
                     ],
                 ],
                 'child_routes' => [
+                    'persopass' => [
+                        'type' => Segment::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/persopass/:these',
+                            'defaults' => [
+                                'controller' => PersopassController::class,
+                                'action'     => 'afficher',
+                            ],
+                        ],
+                        'child_routes' => [
+                            'modifier' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/modifier/:membre',
+                                    'defaults' => [
+                                        'controller' => PersopassController::class,
+                                        'action'     => 'modifier',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
                     'constituer' => [
                         'type' => Segment::class,
                         'may_terminate' => true,
@@ -241,6 +278,7 @@ return array(
     'controllers' => [
         'factories' => [
             SoutenanceController::class => SoutenanceControllerFactory::class,
+            PersopassController::class => PersopassControllerFactory::class,
         ],
     ],
 
@@ -249,6 +287,7 @@ return array(
             SoutenanceDateLieuForm::class => SoutenanceDateLieuFormFactory::class,
             SoutenanceMembreForm::class => SoutenanceMembreFormFactory::class,
             SoutenanceRefusForm::class => SoutenanceRefusFormFactory::class,
+            PersopassModifierForm::class => PersopassModifierFormFactory::class,
         ],
     ],
 
