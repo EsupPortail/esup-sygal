@@ -13,6 +13,9 @@ use Soutenance\Form\PersopassModifier\PersopassModifierFormFactory;
 use Soutenance\Form\SoutenanceDateLieu\SoutenanceDateLieuForm;
 use Soutenance\Form\SoutenanceDateLieu\SoutenanceDateLieuFormFactory;
 use Soutenance\Form\SoutenanceDateLieu\SoutenanceDateLieuHydrator;
+use Soutenance\Form\SoutenanceDateRenduRapport\SoutenanceDateRenduRapportForm;
+use Soutenance\Form\SoutenanceDateRenduRapport\SoutenanceDateRenduRapportFormFactory;
+use Soutenance\Form\SoutenanceDateRenduRapport\SoutenanceDateRenduRapportHydrator;
 use Soutenance\Form\SoutenanceMembre\SoutenanceMembreForm;
 use Soutenance\Form\SoutenanceMembre\SoutenanceMembreFormFactory;
 use Soutenance\Form\SoutenanceMembre\SoutenanceMembreHydrator;
@@ -34,6 +37,8 @@ return array(
                 [
                     'controller' => SoutenanceController::class,
                     'action'     => [
+                        'presoutenance',
+                        'date-rendu-rapport',
                         'index',
                         'constituer',
                         'modifier-date-lieu',
@@ -101,6 +106,30 @@ return array(
                     ],
                 ],
                 'child_routes' => [
+                    'presoutenance' => [
+                        'type' => Segment::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/presoutenance/:these',
+                            'defaults' => [
+                                'controller' => SoutenanceController::class,
+                                'action'     => 'presoutenance',
+                            ],
+                        ],
+                        'child_routes' => [
+                            'date-rendu-rapport' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/date-rendu-rapport',
+                                    'defaults' => [
+                                        'controller' => SoutenanceController::class,
+                                        'action'     => 'date-rendu-rapport',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
                     'persopass' => [
                         'type' => Segment::class,
                         'may_terminate' => true,
@@ -284,6 +313,7 @@ return array(
 
     'form_elements' => [
         'factories' => [
+            SoutenanceDateRenduRapportForm::class => SoutenanceDateRenduRapportFormFactory::class,
             SoutenanceDateLieuForm::class => SoutenanceDateLieuFormFactory::class,
             SoutenanceMembreForm::class => SoutenanceMembreFormFactory::class,
             SoutenanceRefusForm::class => SoutenanceRefusFormFactory::class,
@@ -294,6 +324,7 @@ return array(
     'hydrators' => [
         'invokables' => [
             SoutenanceDateLieuHydrator::class => SoutenanceDateLieuHydrator::class,
+            SoutenanceDateRenduRapportHydrator::class => SoutenanceDateRenduRapportHydrator::class,
         ],
         'factories' => [
             SoutenanceMembreHydrator::class => SoutenanceMembreHydratorFactory::class,

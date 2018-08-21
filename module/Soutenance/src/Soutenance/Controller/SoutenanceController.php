@@ -13,13 +13,17 @@ use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
+use DateInterval;
+use Exception;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Form\SoutenanceDateLieu\SoutenanceDateLieuForm;
+use Soutenance\Form\SoutenanceDateRenduRapport\SoutenanceDateRenduRapportForm;
 use Soutenance\Form\SoutenanceMembre\SoutenanceMembreForm;
 use Soutenance\Form\SoutenanceRefus\SoutenanceRefusForm;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
+use UnicaenApp\Exception\RuntimeException;
 use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
@@ -51,9 +55,6 @@ class SoutenanceController extends AbstractActionController {
         $form = $this->getServiceLocator()->get('FormElementManager')->get(SoutenanceDateLieuForm::class);
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/constituer/modifier-date-lieu', ['these' => $these->getId()], [], true));
 
-        /** @var These $these */
-        $idThese = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($idThese);
         /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
         $form->bind($proposition);
@@ -278,6 +279,70 @@ class SoutenanceController extends AbstractActionController {
         return new ViewModel([
                 'form' => $form,
                 'these' => $these,
+            ]
+        );
+    }
+
+    /**
+     * Cette fonction est dédiée aux opérations réalisées par la maison des doctorats post-validation :
+     * - adaptation des date de rendu des rapports ;
+     * - Rensignement des persopass des membres du jury
+     * - Envoie des demandes d'expertise
+     * @return ViewModel
+     */
+    public function presoutenanceAction()
+    {
+        /** @var These $these */
+        $idThese = $this->params()->fromRoute('these');
+        $these = $this->getTheseService()->getRepository()->find($idThese);
+
+        /** @var Proposition $proposition */
+        $proposition = $this->getPropositionService()->findByThese($these);
+
+        $renduRapport = $proposition->getRenduRapport();
+        if (!$renduRapport) {
+            try {
+                $renduRapport = $proposition->getDate();
+                $renduRapport = $renduRapport->sub(new DateInterval('P1M'));
+            } catch (Exception $e) {
+                throw new RuntimeException("Un problème a été rencontré lors du calcul de la date de rendu des rapport.");
+            }
+            $proposition->setRenduRapport($renduRapport);
+            $this->getPropositionService()->update($proposition);
+        }
+
+        return new ViewModel([
+            'these' => $these,
+            'proposition' => $proposition,
+        ]);
+    }
+
+    public function dateRenduRapportAction()
+    {
+        /** @var These $these */
+        $idThese = $this->params()->fromRoute('these');
+        $these = $this->getTheseService()->getRepository()->find($idThese);
+
+        /** @var Proposition $proposition */
+        $proposition = $this->getPropositionService()->findByThese($these);
+
+        /** @var SoutenanceDateLieuForm $form */
+        $form = $this->getServiceLocator()->get('FormElementManager')->get(SoutenanceDateRenduRapportForm::class);
+        $form->setAttribute('action', $this->url()->fromRoute('soutenance/presoutenance/date-rendu-rapport', ['these' => $these->getId()], [], true));
+        $form->bind($proposition);
+
+        /** @var Request $request */
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $form->setData($data);
+            if ($form->isValid()) {
+                $this->getPropositionService()->update($proposition);
+            }
+        }
+
+        return new ViewModel([
+                'form' => $form,
             ]
         );
     }

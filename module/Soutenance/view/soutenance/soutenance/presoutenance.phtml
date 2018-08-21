@@ -1,0 +1,134 @@
+<?php
+
+/**
+ * @var These $these
+ * @var Proposition $proposition
+ */
+
+use Application\Entity\Db\These;
+use Soutenance\Entity\Proposition;
+?>
+
+<div class="row">
+    <div class="pull-right panel panel-warning" role="alert">
+        <div class="panel-heading">
+            <strong>Note:</strong> Accessible après que toutes les validations ont été effectuées :
+            <ol>
+                <li> Doctorant,</li>
+                <li> Directeurs et Co-directeurs, </li>
+                <li> Unité de recherche, </li>
+                <li> École doctorale,</li>
+                <li> Maison des doctorats.</li>
+            </ol>
+        </div>
+    </div>
+
+    <h1> Préparation de la soutenance </h1>
+</div>
+
+<div class=" panel panel-info">
+    <div class="panel-heading">
+        <h2> Date de retour des rapports </h2>
+    </div>
+    <div class="panel-body">
+        <p class="lead">
+            Les rapports doivent être reçu un mois avant la date de soutenance.
+        </p>
+
+        <div class="pull-left">
+            Date de retour :
+            <strong><?php echo $proposition->getRenduRapport()->format('d/m/Y'); ?> </strong>
+        </div>
+        <div class="pull-right">
+            <a
+                href="<?php echo $this->url('soutenance/presoutenance/date-rendu-rapport', ['these' => $these->getId()], [] , true); ?>"
+                class="btn btn-primary action ajax-modal"
+                data-event="modification-date-rendu-rapport"
+            >
+                <span class="glyphicon glyphicon-pencil"></span> Modifier
+            </a>
+        </div>
+    </div>
+</div>
+
+
+<div class=" panel panel-info">
+    <div class="panel-heading">
+        <h2> PersoP@ss </h2>
+    </div>
+    <div class="panel-body">
+        <p class="lead">
+            Tous les membres du jury doivent possèder un PersoP@ss afin de pouvoir se connecter à l'application.
+        </p>
+
+        <table class="table table-extra-condensed">
+            <thead>
+            <tr>
+                <th> Dénomination </th>
+                <th> Qualité </th>
+                <th> PersoP@ss </th>
+                <th> Création </th>
+                <th> Action </th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($proposition->getMembres() as $membre): ?>
+                <tr>
+                    <td>
+                        <?php echo $membre->getDenomination(); ?>
+                    </td>
+                    <td>
+                        <?php echo $membre->getQualite()->getLibelle(); ?>
+                    </td>
+                    <td>
+                        <?php echo $membre->getPersopass(); ?>
+                    </td>
+                    <td>
+                        <?php echo ($membre->isNouveau())?'<span class="glyphicon glyphicon-ok"></span>':''; ?>
+                    </td>
+                    <td>
+                        <a
+                            href="<?php echo $this->url('soutenance/persopass/modifier', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true); ?>"
+                            class="ajax-modal"
+                            data-event="modifier-persopass">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class=" panel panel-info">
+    <div class="panel-heading">
+        <h2> Demande d'expertise aux rapporteur </h2>
+    </div>
+    <div class="panel-body">
+        <p class="lead">L'envoi de la demande d'expertise démarre le processus de relecture et notifier les rapporteurs de la bonne conduite à suivre. </p>
+
+        <a class="btn btn-info">
+            <span class="glyphicon glyphicon-eye-open"></span> Visualiser la demande </a>
+        <a class="btn btn-primary">
+            <span class="glyphicon glyphicon-send"></span> Envoyer la demande
+        </a>
+    </div>
+</div>
+
+
+
+<script>
+    $(function() {
+        $("body").on("modifier-persopass", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+    $(function() {
+        $("body").on("modification-date-rendu-rapport", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+</script>

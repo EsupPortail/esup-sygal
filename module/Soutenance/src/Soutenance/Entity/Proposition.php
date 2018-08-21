@@ -19,6 +19,10 @@ class Proposition {
 
     /** @var ArrayCollection */
     private $membres;
+
+    /** @var DateTime */
+    private $renduRapport;
+
 //    /** @var ArrayCollection */
 //    private $validations;
 
@@ -194,6 +198,25 @@ class Proposition {
         return $indicateurs;
 
     }
+
+    /**
+     * @return DateTime
+     */
+    public function getRenduRapport()
+    {
+        return $this->renduRapport;
+    }
+
+    /**
+     * @param DateTime $renduRapport
+     * @return Proposition
+     */
+    public function setRenduRapport($renduRapport)
+    {
+        $this->renduRapport = $renduRapport;
+        return $this;
+    }
+
 
 
     public function isOk()
