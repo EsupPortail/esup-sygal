@@ -3,9 +3,12 @@
 /**
  * @var These $these
  * @var Proposition $proposition
+ * @var Membre[] $rapporteurs
  */
 
+use Application\Entity\Db\Acteur;
 use Application\Entity\Db\These;
+use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 ?>
 
@@ -103,15 +106,42 @@ use Soutenance\Entity\Proposition;
 
 <div class=" panel panel-info">
     <div class="panel-heading">
-        <h2> Demande d'expertise aux rapporteur </h2>
+        <h2> Demande d'expertise aux rapporteurs </h2>
     </div>
     <div class="panel-body">
         <p class="lead">L'envoi de la demande d'expertise démarre le processus de relecture et notifier les rapporteurs de la bonne conduite à suivre. </p>
 
-        <a class="btn btn-info">
-            <span class="glyphicon glyphicon-eye-open"></span> Visualiser la demande </a>
-        <a class="btn btn-primary">
-            <span class="glyphicon glyphicon-send"></span> Envoyer la demande
+        <table class="table table-extra-condensed">
+            <thead>
+            <tr>
+                <th> Rapporteur </th>
+                <th> Signé </th>
+                <th> Actions </th>
+            </tr>
+            </thead>
+            <tbody>
+                <?php
+                    /** @var Membre $rapporteur */
+                foreach ($rapporteurs as $rapporteur) : ?>
+                <tr>
+                    <td> <?php echo $rapporteur->getDenomination(); ?> </td>
+                    <td> TODO <?php  ?> </td>
+                    <td>
+                        <a href="<?php echo $this->url('soutenance/presoutenance/demande-expertise', ['these' => $these->getId(), 'proposition' => $proposition->getId(), 'membre' => $rapporteur->getId()], [], true);?>">
+                            <span class="glyphicon glyphicon-eye-open" title="Visualiser la demande"></span>
+                        </a>
+                        <a href="<?php echo $this->url('soutenance/presoutenance/notifier-demande-expertise', ['these' => $these->getId(), 'proposition' => $proposition->getId(), 'membre' => $rapporteur->getId()], [], true);?>">
+                            <span class="glyphicon glyphicon-send" title="Envoyer la demande"></span>
+                        </a>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+
+        <a href="<?php echo $this->url('soutenance/presoutenance/notifier-demandes-expertise', ['these' => $these->getId(), 'proposition' => $proposition->getId()], [], true);?>"
+           class="btn btn-info">
+            <span class="glyphicon glyphicon-send"></span> Envoyer la demande aux rapporteurs
         </a>
     </div>
 </div>

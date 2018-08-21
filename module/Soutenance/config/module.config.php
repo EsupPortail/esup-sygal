@@ -39,6 +39,9 @@ return array(
                     'action'     => [
                         'presoutenance',
                         'date-rendu-rapport',
+                        'demande-expertise',
+                        'notifier-demande-expertise',
+                        'notifier-demandes-expertise',
                         'index',
                         'constituer',
                         'modifier-date-lieu',
@@ -125,6 +128,39 @@ return array(
                                     'defaults' => [
                                         'controller' => SoutenanceController::class,
                                         'action'     => 'date-rendu-rapport',
+                                    ],
+                                ],
+                            ],
+                            'demande-expertise' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/demande-expertise/:membre',
+                                    'defaults' => [
+                                        'controller' => SoutenanceController::class,
+                                        'action'     => 'demande-expertise',
+                                    ],
+                                ],
+                            ],
+                            'notifier-demande-expertise' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/notifier-demande-expertise/:membre',
+                                    'defaults' => [
+                                        'controller' => SoutenanceController::class,
+                                        'action'     => 'notifier-demande-expertise',
+                                    ],
+                                ],
+                            ],
+                            'notifier-demandes-expertise' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/notifier-demandes-expertise',
+                                    'defaults' => [
+                                        'controller' => SoutenanceController::class,
+                                        'action'     => 'notifier-demandes-expertise',
                                     ],
                                 ],
                             ],

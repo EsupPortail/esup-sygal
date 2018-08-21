@@ -299,6 +299,15 @@ class SoutenanceController extends AbstractActionController {
         /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
 
+        /** @var Membre[] $rapporteurs */
+        $rapporteurs = [];
+        foreach ($proposition->getMembres() as $membre) {
+            /** @var Membre $membre */
+            if ($membre->getRole() === 'Rapporteur') {
+                $rapporteurs[] = $membre;
+            }
+        }
+
         $renduRapport = $proposition->getRenduRapport();
         if (!$renduRapport) {
             try {
@@ -314,6 +323,7 @@ class SoutenanceController extends AbstractActionController {
         return new ViewModel([
             'these' => $these,
             'proposition' => $proposition,
+            'rapporteurs' => $rapporteurs,
         ]);
     }
 
@@ -345,6 +355,60 @@ class SoutenanceController extends AbstractActionController {
                 'form' => $form,
             ]
         );
+    }
+
+    public function demandeExpertiseAction()
+    {
+        /** @var These $these */
+        $idThese = $this->params()->fromRoute('these');
+        $these = $this->getTheseService()->getRepository()->find($idThese);
+
+        /** @var Proposition $proposition */
+        $proposition = $this->getPropositionService()->findByThese($these);
+
+        /** @var Membre $membre  */
+        $idMembre = $this->params()->fromRoute('membre');
+        $membre = $this->getMembreService()->find($idMembre);
+
+        return new ViewModel([
+            'these' => $these,
+            'proposition' => $proposition,
+            'rapporteur' => $membre,
+        ]);
+    }
+
+    public function notifierDemandeExpertiseAction() {
+
+        /** @var These $these */
+        $idThese = $this->params()->fromRoute('these');
+        $these = $this->getTheseService()->getRepository()->find($idThese);
+
+        /** @var Proposition $proposition */
+        $proposition = $this->getPropositionService()->findByThese($these);
+
+        /** @var Membre $membre  */
+        $idMembre = $this->params()->fromRoute('membre');
+        $membre = $this->getMembreService()->find($idMembre);
+
+        $this->getNotifierService()->triggerDemandeExpertise($these, $proposition, $membre);
+        $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
+    }
+
+    public function notifierDemandesExpertiseAction() {
+
+        /** @var These $these */
+        $idThese = $this->params()->fromRoute('these');
+        $these = $this->getTheseService()->getRepository()->find($idThese);
+
+        /** @var Proposition $proposition */
+        $proposition = $this->getPropositionService()->findByThese($these);
+
+        /** @var Membre $membre */
+        foreach ($proposition->getMembres() as $membre) {
+            if ($membre->getRole() === 'Rapporteur') $this->getNotifierService()->triggerDemandeExpertise($these, $proposition, $membre);
+        }
+
+        $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 }
 

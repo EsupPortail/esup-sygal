@@ -27,6 +27,8 @@ use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Notification\Notification;
+use Soutenance\Entity\Membre;
+use Soutenance\Entity\Proposition;
 use Zend\Mvc\Controller\Plugin\FlashMessenger;
 use Zend\View\Helper\Url as UrlHelper;
 
@@ -585,5 +587,25 @@ class NotifierService extends \Notification\Service\NotifierService
         $this->trigger($notif);
     }
 
+    /**
+     * @param These $these
+     * @param Proposition $proposition
+     * @param Membre $membre
+     */
+    public function triggerDemandeExpertise($these, $proposition, $membre)
+    {
+        $email   = $membre->getEmail();
 
+        $notif = new Notification();
+        $notif
+            ->setSubject("Signature de la demande d'expertise de la thèse de ".$these->getDoctorant()->getNomComplet())
+            ->setTo($email)
+            ->setTemplatePath('soutenance/notification/demande-expertise')
+            ->setTemplateVariables([
+                'these' => $these,
+                'proposition' => $proposition,
+                'membre' => $membre,
+            ]);
+        $this->trigger($notif);
+    }
 }
