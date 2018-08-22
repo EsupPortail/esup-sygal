@@ -94,4 +94,17 @@ class PropositionService {
             throw new RuntimeException("Un erreur s'est produite lors de l'enregistrment en BD de la proposition de thèse !");
         }
     }
+
+    /**
+     * @param Proposition $proposition
+     * @return Membre[]
+     */
+    public function getRapporteurs($proposition) {
+        $rapporteurs = [];
+        /** @var Membre $membre */
+        foreach ($proposition->getMembres() as $membre) {
+            if($membre->getRole() === 'Rapporteur') $rapporteurs[] = $membre;
+        }
+        return $rapporteurs;
+    }
 }

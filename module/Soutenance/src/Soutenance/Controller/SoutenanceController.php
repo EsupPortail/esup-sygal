@@ -14,6 +14,7 @@ use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use DateInterval;
+use DateTime;
 use Exception;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
@@ -27,6 +28,13 @@ use UnicaenApp\Exception\RuntimeException;
 use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+
+/**
+ * Class SoutenanceController
+ * @package Soutenance\Controller
+ *
+ * Controlleur principale du module de gestion de la soutenance
+ */
 
 class SoutenanceController extends AbstractActionController {
     use TheseServiceAwareTrait;
@@ -298,16 +306,9 @@ class SoutenanceController extends AbstractActionController {
 
         /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
+        $rapporteurs = $this->getPropositionService()->getRapporteurs($proposition);
 
-        /** @var Membre[] $rapporteurs */
-        $rapporteurs = [];
-        foreach ($proposition->getMembres() as $membre) {
-            /** @var Membre $membre */
-            if ($membre->getRole() === 'Rapporteur') {
-                $rapporteurs[] = $membre;
-            }
-        }
-
+        /** Si la proposition ne possède pas encore de date de rendu de rapport alors la valeur par défaut est donnée */
         $renduRapport = $proposition->getRenduRapport();
         if (!$renduRapport) {
             try {
@@ -369,6 +370,15 @@ class SoutenanceController extends AbstractActionController {
         /** @var Membre $membre  */
         $idMembre = $this->params()->fromRoute('membre');
         $membre = $this->getMembreService()->find($idMembre);
+
+        /** @var Request $request */
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $date = new DateTime();
+            $membre->setExpertise($date);
+            $this->getMembreService()->update($membre);
+            $this->getNotifierService()->triggerDemandeExpertiseNotifierBDD($these, $proposition, $membre);
+        }
 
         return new ViewModel([
             'these' => $these,

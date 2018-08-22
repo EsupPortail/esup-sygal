@@ -80,4 +80,57 @@ class MembreService {
         return $result;
     }
 
+    public function findAllQualites()
+    {
+        $qb = $this->getEntityManager()->getRepository(Qualite::class)->createQueryBuilder('qualite')
+            ->orderBy('qualite.rang');
+        $result = $qb->getQuery()->getResult();
+
+        return $result;
+    }
+
+    /**
+     * @param Qualite $qualite
+     * @return Qualite
+     */
+    public function createQualite($qualite)
+    {
+        $this->getEntityManager()->persist($qualite);
+        try {
+            $this->getEntityManager()->flush($qualite);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Un problème s'est produit lors de l'enregistrement en BD d'une nouvelle qualité.");
+        }
+
+        return $qualite;
+    }
+
+    /**
+     * @param Qualite $qualite
+     * @return Qualite
+     */
+    public function updateQualite($qualite)
+    {
+        try {
+            $this->getEntityManager()->flush($qualite);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Un problème s'est produit lors de la mise à jour en BD d'une qualité.");
+        }
+
+        return $qualite;
+    }
+
+    /**
+     * @param Qualite $qualite
+     */
+    public function removeQualite($qualite)
+    {
+        $this->getEntityManager()->remove($qualite);
+        try {
+            $this->getEntityManager()->flush($qualite);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Un problème s'est produit lors de l'effacement en BD d'une nouvelle qualité.");
+        }
+    }
+
 }

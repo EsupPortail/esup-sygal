@@ -24,5 +24,4 @@ trait PropositionServiceAwareTrait {
         $this->propositionService = $propositionService;
         return $this->propositionService;
     }
-
 }

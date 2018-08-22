@@ -2,6 +2,8 @@
 
 namespace Soutenance\Entity;
 
+use DateTime;
+
 class Membre {
 
     /** @var int */
@@ -29,6 +31,8 @@ class Membre {
     private $persopass;
     /** @var boolean */
     private $nouveau;
+    /** @var DateTime */
+    private $expertise;
 
     /**
      * @return int
@@ -225,6 +229,25 @@ class Membre {
         $this->nouveau = $nouveau;
         return $this;
     }
+
+    /**
+     * @return DateTime
+     */
+    public function getExpertise()
+    {
+        return $this->expertise;
+    }
+
+    /**
+     * @param DateTime $expertise
+     * @return Membre
+     */
+    public function setExpertise($expertise)
+    {
+        $this->expertise = $expertise;
+        return $this;
+    }
+
 
 
 }

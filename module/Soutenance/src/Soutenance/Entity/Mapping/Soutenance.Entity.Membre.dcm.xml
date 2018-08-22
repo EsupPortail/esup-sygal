@@ -29,6 +29,7 @@
 
         <field name="persopass"         type="string"       length="32"         column="PERSOPASS"      nullable="true"/>
         <field name="nouveau"           type="boolean"                          column="NOUVEAU"        nullable="true"/>
+        <field name="expertise"         type="datetime"                         column="EXPERTISE"      nullable="true"/>
 
     </entity>
 </doctrine-mapping>

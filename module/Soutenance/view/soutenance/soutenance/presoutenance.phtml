@@ -6,15 +6,27 @@
  * @var Membre[] $rapporteurs
  */
 
-use Application\Entity\Db\Acteur;
 use Application\Entity\Db\These;
+use Application\Provider\Privilege\SoutenancePrivileges;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
+
+$canEditDateRenduRapport        = $this->isAllowed(SoutenancePrivileges::getResourceId(SoutenancePrivileges::SOUTENANCE_MODIFICATION_DATE_RENDU_RAPPORT));
+$canEditPersopass               = $this->isAllowed(SoutenancePrivileges::getResourceId(SoutenancePrivileges::SOUTENANCE_MODIFICATION_PERSOPASS));
+$canNotifierDemandeExpertise    = $this->isAllowed(SoutenancePrivileges::getResourceId(SoutenancePrivileges::SOUTENANCE_NOTIFICATION_DEMANDE_EXPERTISE));
 ?>
+
+<!-- TITRE ET NOTE ---------------------------------------------------------------------------------------------------->
 
 <div class="row">
     <div class="pull-right panel panel-warning" role="alert">
         <div class="panel-heading">
+            <div class="panel panel-success" role="alert">
+                <div class="panel-heading">
+                    Accessible par le BDD et les admins.
+                </div>
+            </div>
+
             <strong>Note:</strong> Accessible après que toutes les validations ont été effectuées :
             <ol>
                 <li> Doctorant,</li>
@@ -26,14 +38,19 @@ use Soutenance\Entity\Proposition;
         </div>
     </div>
 
-    <h1> Préparation de la soutenance </h1>
+    <h1 class="page-header"> Préparation de la soutenance </h1>
 </div>
 
+<!-- DATE DE RENDU DE RAPPORT ----------------------------------------------------------------------------------------->
+
 <div class=" panel panel-info">
+
     <div class="panel-heading">
         <h2> Date de retour des rapports </h2>
     </div>
+
     <div class="panel-body">
+
         <p class="lead">
             Les rapports doivent être reçu un mois avant la date de soutenance.
         </p>
@@ -42,6 +59,8 @@ use Soutenance\Entity\Proposition;
             Date de retour :
             <strong><?php echo $proposition->getRenduRapport()->format('d/m/Y'); ?> </strong>
         </div>
+
+        <?php if($canEditDateRenduRapport): ?>
         <div class="pull-right">
             <a
                 href="<?php echo $this->url('soutenance/presoutenance/date-rendu-rapport', ['these' => $these->getId()], [] , true); ?>"
@@ -51,15 +70,22 @@ use Soutenance\Entity\Proposition;
                 <span class="glyphicon glyphicon-pencil"></span> Modifier
             </a>
         </div>
+        <?php endif; ?>
+
     </div>
+
 </div>
 
+<!-- MEMBRES DU JURY ET PERSOPASS ------------------------------------------------------------------------------------->
 
 <div class=" panel panel-info">
+
     <div class="panel-heading">
         <h2> PersoP@ss </h2>
     </div>
+
     <div class="panel-body">
+
         <p class="lead">
             Tous les membres du jury doivent possèder un PersoP@ss afin de pouvoir se connecter à l'application.
         </p>
@@ -77,32 +103,30 @@ use Soutenance\Entity\Proposition;
             <tbody>
             <?php foreach ($proposition->getMembres() as $membre): ?>
                 <tr>
+                    <td>    <?php echo $membre->getDenomination(); ?>                                                   </td>
+                    <td>    <?php echo $membre->getQualite()->getLibelle(); ?>                                          </td>
+                    <td>    <?php echo $membre->getPersopass(); ?>                                                      </td>
+                    <td>    <?php echo ($membre->isNouveau())?'<span class="glyphicon glyphicon-ok"></span>':''; ?>     </td>
                     <td>
-                        <?php echo $membre->getDenomination(); ?>
-                    </td>
-                    <td>
-                        <?php echo $membre->getQualite()->getLibelle(); ?>
-                    </td>
-                    <td>
-                        <?php echo $membre->getPersopass(); ?>
-                    </td>
-                    <td>
-                        <?php echo ($membre->isNouveau())?'<span class="glyphicon glyphicon-ok"></span>':''; ?>
-                    </td>
-                    <td>
+                        <?php if($canEditPersopass): ?>
                         <a
                             href="<?php echo $this->url('soutenance/persopass/modifier', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true); ?>"
                             class="ajax-modal"
                             data-event="modifier-persopass">
                             <span class="glyphicon glyphicon-pencil"></span>
                         </a>
+                        <?php endif; ?>
                     </td>
                 </tr>
             <?php endforeach; ?>
             </tbody>
         </table>
+
     </div>
+
 </div>
+
+<!-- DEMANDE D'EXPERTISE ---------------------------------------------------------------------------------------------->
 
 <div class=" panel panel-info">
     <div class="panel-heading">
@@ -125,24 +149,28 @@ use Soutenance\Entity\Proposition;
                 foreach ($rapporteurs as $rapporteur) : ?>
                 <tr>
                     <td> <?php echo $rapporteur->getDenomination(); ?> </td>
-                    <td> TODO <?php  ?> </td>
+                    <td> <?php echo ($rapporteur->getExpertise())?$rapporteur->getExpertise()->format("d/m/Y H:i:s"):"";  ?> </td>
                     <td>
+                        <?php if($canNotifierDemandeExpertise): ?>
                         <a href="<?php echo $this->url('soutenance/presoutenance/demande-expertise', ['these' => $these->getId(), 'proposition' => $proposition->getId(), 'membre' => $rapporteur->getId()], [], true);?>">
                             <span class="glyphicon glyphicon-eye-open" title="Visualiser la demande"></span>
                         </a>
                         <a href="<?php echo $this->url('soutenance/presoutenance/notifier-demande-expertise', ['these' => $these->getId(), 'proposition' => $proposition->getId(), 'membre' => $rapporteur->getId()], [], true);?>">
                             <span class="glyphicon glyphicon-send" title="Envoyer la demande"></span>
                         </a>
+                        <?php endif; ?>
                     </td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
 
-        <a href="<?php echo $this->url('soutenance/presoutenance/notifier-demandes-expertise', ['these' => $these->getId(), 'proposition' => $proposition->getId()], [], true);?>"
-           class="btn btn-info">
-            <span class="glyphicon glyphicon-send"></span> Envoyer la demande aux rapporteurs
-        </a>
+        <?php if($canNotifierDemandeExpertise): ?>
+            <a href="<?php echo $this->url('soutenance/presoutenance/notifier-demandes-expertise', ['these' => $these->getId(), 'proposition' => $proposition->getId()], [], true);?>"
+               class="btn btn-info">
+                <span class="glyphicon glyphicon-send"></span> Envoyer la demande aux rapporteurs
+            </a>
+        <?php endif; ?>
     </div>
 </div>
 

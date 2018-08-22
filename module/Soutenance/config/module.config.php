@@ -5,11 +5,16 @@ use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Soutenance\Controller\Factory\PersopassControllerFactory;
+use Soutenance\Controller\Factory\QualiteControllerFactory;
 use Soutenance\Controller\Factory\SoutenanceControllerFactory;
 use Soutenance\Controller\PersopassController;
+use Soutenance\Controller\QualiteController;
 use Soutenance\Controller\SoutenanceController;
 use Soutenance\Form\PersopassModifier\PersopassModifierForm;
 use Soutenance\Form\PersopassModifier\PersopassModifierFormFactory;
+use Soutenance\Form\QualiteEdition\QualiteEditionForm;
+use Soutenance\Form\QualiteEdition\QualiteEditionFormFactory;
+use Soutenance\Form\QualiteEdition\QualiteEditiontHydrator;
 use Soutenance\Form\SoutenanceDateLieu\SoutenanceDateLieuForm;
 use Soutenance\Form\SoutenanceDateLieu\SoutenanceDateLieuFormFactory;
 use Soutenance\Form\SoutenanceDateLieu\SoutenanceDateLieuHydrator;
@@ -35,9 +40,30 @@ return array(
         'guards' => [
             PrivilegeController::class => [
                 [
+                    'controller' => QualiteController::class,
+                    'action'     => [
+                        'index',
+                        'editer',
+                        'effacer',
+                    ],
+                    'roles'      => [
+                        'Administrateur technique',
+                    ],
+                ],
+                [
                     'controller' => SoutenanceController::class,
                     'action'     => [
                         'presoutenance',
+                    ],
+                    'roles'      => [
+                        'Administrateur technique',
+                        'Observateur COMUE',
+                        'Bureau des doctorats UCN',
+                    ],
+                ],
+                [
+                    'controller' => SoutenanceController::class,
+                    'action'     => [
                         'date-rendu-rapport',
                         'demande-expertise',
                         'notifier-demande-expertise',
@@ -109,6 +135,41 @@ return array(
                     ],
                 ],
                 'child_routes' => [
+                    'qualite' => [
+                        'type' => Literal::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/qualite',
+                            'defaults' => [
+                                'controller' => QualiteController::class,
+                                'action'     => 'index',
+                            ],
+                        ],
+                        'child_routes' => [
+                            'editer' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/editer[/:qualite]',
+                                    'defaults' => [
+                                        'controller' => QualiteController::class,
+                                        'action'     => 'editer',
+                                    ],
+                                ],
+                            ],
+                            'effacer' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/effacer/:qualite',
+                                'defaults' => [
+                                    'controller' => QualiteController::class,
+                                    'action'     => 'effacer',
+                                ],
+                            ],
+                        ],
+                    ],
+                    ],
                     'presoutenance' => [
                         'type' => Segment::class,
                         'may_terminate' => true,
@@ -344,6 +405,7 @@ return array(
         'factories' => [
             SoutenanceController::class => SoutenanceControllerFactory::class,
             PersopassController::class => PersopassControllerFactory::class,
+            QualiteController::class => QualiteControllerFactory::class,
         ],
     ],
 
@@ -354,6 +416,7 @@ return array(
             SoutenanceMembreForm::class => SoutenanceMembreFormFactory::class,
             SoutenanceRefusForm::class => SoutenanceRefusFormFactory::class,
             PersopassModifierForm::class => PersopassModifierFormFactory::class,
+            QualiteEditionForm::class => QualiteEditionFormFactory::class,
         ],
     ],
 
@@ -361,6 +424,7 @@ return array(
         'invokables' => [
             SoutenanceDateLieuHydrator::class => SoutenanceDateLieuHydrator::class,
             SoutenanceDateRenduRapportHydrator::class => SoutenanceDateRenduRapportHydrator::class,
+            QualiteEditiontHydrator::class => QualiteEditiontHydrator::class,
         ],
         'factories' => [
             SoutenanceMembreHydrator::class => SoutenanceMembreHydratorFactory::class,
