@@ -57,13 +57,13 @@ class PersopassController extends AbstractActionController
             $membre->setPersopass($data['persopass']);
             $membre->setNouveau($data['nouveau']);
             $this->getMembreService()->update($membre);
-//            $this->redirect()->toRoute('soutenance/persopass',['these' => $these->getId()],[],true);
         }
 
         return new ViewModel([
             'these' => $these,
             'membre' => $membre,
             'form' => $form,
+            'title' => 'Modification du persopass de '.$membre->getDenomination(),
         ]);
     }
 

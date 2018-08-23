@@ -44,16 +44,10 @@ class SoutenanceController extends AbstractActionController {
     use NotifierServiceAwareTrait;
     use UserContextServiceAwareTrait;
 
-
-    public function indexAction()
-    {
-        $propositions = $this->getPropositionService()->findAll();
-        return new ViewModel([
-            'propositions' => $propositions,
-            ]
-        );
-    }
-
+    /**
+     * Modification de la date et lieu de la soutenance
+     * => se fait dans une fenêtre modale
+     */
     public function modifierDateLieuAction() {
         /** @var These $these */
         $idThese = $this->params()->fromRoute('these');
@@ -61,7 +55,7 @@ class SoutenanceController extends AbstractActionController {
 
         /** @var SoutenanceDateLieuForm $form */
         $form = $this->getServiceLocator()->get('FormElementManager')->get(SoutenanceDateLieuForm::class);
-        $form->setAttribute('action', $this->url()->fromRoute('soutenance/constituer/modifier-date-lieu', ['these' => $these->getId()], [], true));
+        $form->setAttribute('action', $this->url()->fromRoute('soutenance/constituer/modifier-date-lieu', ['these' => $idThese], [], true));
 
         /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
@@ -75,12 +69,12 @@ class SoutenanceController extends AbstractActionController {
             if ($form->isValid()) {
                 $this->getPropositionService()->update($proposition);
                 $this->unvalidate($these);
-//                $this->redirect()->toRoute('soutenance/constituer',['these' => $these->getId()],[],true);
             }
         }
 
         return new ViewModel([
                 'form' => $form,
+                'title' => 'Renseigner la date et le lieu de la soutenance',
             ]
         );
     }
@@ -121,12 +115,12 @@ class SoutenanceController extends AbstractActionController {
                     $this->getMembreService()->create($membre);
                 }
                 $this->unvalidate($these);
-//                $this->redirect()->toRoute('soutenance/constituer',['these' => $these->getId()],[],true);
             }
         }
 
                return new ViewModel([
                 'form' => $form,
+                'title' => 'Renseigner les informations sur un membre du jury',
             ]
         );
     }
@@ -354,6 +348,7 @@ class SoutenanceController extends AbstractActionController {
 
         return new ViewModel([
                 'form' => $form,
+                'title' => 'Modification de la date de rendu des rapports',
             ]
         );
     }
