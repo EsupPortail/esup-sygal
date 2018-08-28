@@ -14,8 +14,6 @@ use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use BjyAuthorize\Provider\Identity\ProviderInterface;
-use Doctrine\ORM\NonUniqueResultException;
-use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Provider\Identity\ChainableProvider;
 use UnicaenAuth\Provider\Identity\ChainEvent;
 use Zend\Authentication\AuthenticationService;
@@ -159,16 +157,7 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
      */
     private function getRolesFromDoctorant()
     {
-        $id = $this->userWrapper->getSupannId();
-        $domaineEtab = $this->userWrapper->getDomainFromEppn();
-        $etablissement = $this->getEtablissementService()->getRepository()->findOneByDomaine($domaineEtab);
-        $sourceCode = $etablissement->prependPrefixTo($id);
-
-        try {
-            $doctorant = $this->doctorantService->getRepository()->findOneBySourceCode($sourceCode);
-        } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Plusieurs doctorants ont été trouvés avec le même source code: " . $sourceCode);
-        }
+        $doctorant = $this->doctorantService->findOneByUserWrapper($this->userWrapper);
 
         if (! $doctorant) {
             return [];
