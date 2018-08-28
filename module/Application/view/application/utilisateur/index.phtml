@@ -169,7 +169,7 @@ function generateRoleAffecte($individu, $roles, $rolesAffectes, $canModifier=fal
     $texte = "";
     foreach ($roles as $role) {
         $texte .= '<div id="affecte_' . $role->getId() . '"';
-        if (array_search($role, $rolesAffectes) === false) $texte .= ' style="display:none;" ';
+        if (is_array($rolesAffectes) && array_search($role, $rolesAffectes) === false) $texte .= ' style="display:none;" ';
         $texte .= '>';
         if ($canModifier) {
             $texte .= '<span class="remove-role glyphicon glyphicon-remove text-danger" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
@@ -194,7 +194,7 @@ function generateRoleStatique($individu, $roles, $rolesAffectes, $canModifier=fa
     foreach ($roles as $role) {
         if ($role->getTypeStructureDependant() === null && $role->isTheseDependant() === false) {
             $texte .= '<div id="disponible_' . $role->getId() . '"';
-            if (array_search($role, $rolesAffectes) !== false) $texte .= ' style="display:none;" ';
+            if (is_array($rolesAffectes) && array_search($role, $rolesAffectes) !== false) $texte .= ' style="display:none;" ';
             $texte .= '>';
             if ($canModifier) {
                 $texte .= '<span class="add-role glyphicon glyphicon-plus text-success" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
@@ -230,7 +230,7 @@ function generateRoleEtablissement($individu, $roles, $rolesAffectes, $etablisse
             $texte .= '<div id="etablissement_' . $structureId . '" style="display:none;">';
             foreach ($rolesFiltres as $role) {
                 $texte .= '<div id="disponible_' . $role->getId() . '"';
-                if (array_search($role, $rolesAffectes) !== false) $texte .= ' style="display:none;" ';
+                if (is_array($rolesAffectes) && array_search($role, $rolesAffectes) !== false) $texte .= ' style="display:none;" ';
                 $texte .= '>';
                 if ($canModifier) {
                     $texte .= '<span class="add-role glyphicon glyphicon-plus text-success" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
@@ -268,7 +268,7 @@ function generateRoleEcole($individu, $roles, $rolesAffectes, $ecoles, $canModif
             $texte .= '<div id="ecole_' . $structureId . '" style="display:none;">';
             foreach ($rolesFiltres as $role) {
                 $texte .= '<div id="disponible_' . $role->getId() . '"';
-                if (array_search($role, $rolesAffectes) !== false) $texte .= ' style="display:none;" ';
+                if (is_array($rolesAffectes) && array_search($role, $rolesAffectes) !== false) $texte .= ' style="display:none;" ';
                 $texte .= '>';
                 if ($canModifier) {
                     $texte .= '<span class="add-role glyphicon glyphicon-plus text-success" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
@@ -290,7 +290,7 @@ function generateRoleEcole($individu, $roles, $rolesAffectes, $ecoles, $canModif
  * @param UniteRecherche[] $unites
  * @return string
  */
-function generateRoleUnite($individu, $roles, $rolesAffectes, $unites, $canModifier=false)
+function generateRoleUnite( $individu,  $roles,  $rolesAffectes,  $unites, $canModifier=false)
 {
     $texte = "";
     $texte .= "<dt> Rôles liés aux unités de recherche </dt>";
@@ -306,7 +306,7 @@ function generateRoleUnite($individu, $roles, $rolesAffectes, $unites, $canModif
             $texte .= '<div id="unite_' . $structureId . '" style="display:none;">';
             foreach ($rolesFiltres as $role) {
                 $texte .= '<div id="disponible_' . $role->getId() . '"';
-                if (array_search($role, $rolesAffectes) !== false) $texte .= ' style="display:none;" ';
+                if (is_array($rolesAffectes) && array_search($role, $rolesAffectes) !== false) $texte .= ' style="display:none;" ';
                 $texte .= '>';
                 if ($canModifier) {
                     $texte .= '<span class="add-role glyphicon glyphicon-plus text-success" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
