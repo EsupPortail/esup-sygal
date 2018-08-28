@@ -8,7 +8,6 @@ use Application\Entity\UserWrapper;
 use Application\Service\Doctorant\DoctorantServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
-use Doctrine\ORM\NonUniqueResultException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Authentication\Storage\ChainableStorage;
 use UnicaenAuth\Authentication\Storage\ChainEvent;
@@ -106,16 +105,7 @@ class AppStorage implements ChainableStorage
             return $this->doctorant;
         }
 
-        $id = $this->userWrapper->getSupannId();
-        $domaineEtab = $this->userWrapper->getDomainFromEppn();
-        $etablissement = $this->getEtablissementService()->getRepository()->findOneByDomaine($domaineEtab);
-        $sourceCode = $etablissement->prependPrefixTo($id);
-
-        try {
-            $this->doctorant = $this->doctorantService->getRepository()->findOneBySourceCode($sourceCode);
-        } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Plusieurs doctorants ont été trouvés avec le même source code: " . $sourceCode);
-        }
+        $this->doctorant = $this->doctorantService->findOneByUserWrapper($this->userWrapper);
 
         return $this->doctorant;
     }

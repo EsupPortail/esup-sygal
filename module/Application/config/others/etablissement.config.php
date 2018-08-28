@@ -161,6 +161,9 @@ return [
         ],
         'factories' => [
         ],
+        'aliases' => [
+            EtablissementService::class => 'EtablissementService',
+        ]
     ],
     'controllers'     => [
         'invokables' => [

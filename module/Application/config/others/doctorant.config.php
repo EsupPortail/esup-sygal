@@ -3,8 +3,8 @@
 use Application\Controller\Factory\DoctorantControllerFactory;
 use Application\Provider\Privilege\DoctorantPrivileges;
 use Application\Service\Doctorant\DoctorantService;
+use Application\Service\Doctorant\DoctorantServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
-use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 
 return [
     'bjyauthorize'    => [
@@ -93,10 +93,9 @@ return [
     ),
     'service_manager' => [
         'invokables' => array(
-            'DoctorantService' => DoctorantService::class,
         ),
         'factories' => [
-
+            'DoctorantService' => DoctorantServiceFactory::class,
         ],
         'aliases' => [
             DoctorantService::class => 'DoctorantService',
