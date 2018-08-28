@@ -36,6 +36,11 @@ class IndexController extends AbstractController
 
 
         if ($this->identity() && count($this->userContextService->getSelectableIdentityRoles()) === 0) {
+            // déconnexion applicative
+            $this->zfcUserAuthentication()->getAuthAdapter()->resetAdapters();
+            $this->zfcUserAuthentication()->getAuthAdapter()->logoutAdapters();
+            $this->zfcUserAuthentication()->getAuthService()->clearIdentity();
+
             return $this->redirect()->toRoute('not-allowed');
         }
 
