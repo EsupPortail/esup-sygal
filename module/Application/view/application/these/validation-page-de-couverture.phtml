@@ -65,7 +65,7 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_
     }
 ?>
 
-<?php if(!empty($problemes)): ?>
+<?php if (!empty($problemes)): ?>
     <div class="box panel panel-warning">
         <div class="panel-heading">
             <h2 class="first">
@@ -73,30 +73,39 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_
             </h2>
         </div>
         <div class="panel-body">
-            <div class="col-md-6">
-                Liste des informations manquantes :
-                <ul>
-                <?php foreach ($problemes as $probleme): ?>
-                    <li> <?php echo $probleme; ?> </li>
-                <?php endforeach; ?>
-                </ul>
-            </div>
-            <div class="col-md-6">
-                <p>
-                    Cliquez sur ce bouton pour importer tout de suite à partir de <?php echo $these->getSource() ?>
-                    les informations nécessaires à la génération de la page de couverture :
-                </p>
-                <p>
-                    <a class="btn btn-default btn-sm"
-                       id="refresh-these-button"
-                       href="<?php echo $refreshTheseUrl ?>"
-                    ><span class="glyphicon glyphicon-import"></span> <strong>Mettre à jour</strong> la thèse à partir de
-                        <?php echo $these->getSource() ?></a>
-                </p>
-                <p class="small">
-                    Dernière mise à jour : <?php echo $these->getHistoModification()->format(Constants::DATETIME_FORMAT) ?>.
-                </p>
-            </div>
+            Liste des informations manquantes :
+            <ul>
+            <?php foreach ($problemes as $probleme): ?>
+                <li> <?php echo informationManquante($probleme, $informations); ?> </li>
+            <?php endforeach; ?>
+            </ul>
+        </div>
+    </div>
+<?php endif; ?>
+
+<!-- La mise à jour des données peut être faite tant que la page de couverture n'est pas validée -->
+<?php if (!$validation): ?>
+    <div class="box panel panel-info">
+        <div class="panel-heading">
+            <h2 class="first">
+                Mise à jour des données relatives à la thèse
+            </h2>
+        </div>
+        <div class="panel-body">
+            <p>
+                Cliquez sur ce bouton pour importer tout de suite à partir de <?php echo $these->getSource() ?>
+                les informations nécessaires à la génération de la page de couverture :
+            </p>
+            <p>
+                <a class="btn btn-default btn-sm"
+                   id="refresh-these-button"
+                   href="<?php echo $refreshTheseUrl ?>"
+                ><span class="glyphicon glyphicon-import"></span> <strong>Mettre à jour</strong> la thèse à partir de
+                    <?php echo $these->getSource() ?></a>
+            </p>
+            <p class="small">
+                Dernière mise à jour : <?php echo $these->getHistoModification()->format(Constants::DATETIME_FORMAT) ?>.
+            </p>
         </div>
     </div>
 <?php endif; ?>
@@ -181,3 +190,29 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_
         });
     });
 </script>
+
+<?php
+function informationManquante($clef, $informations) {
+
+    //justification des logos
+    $splits = explode("-",$clef);
+    if($splits[0] === "logo") {
+        switch($splits[1]) {
+            case "comue" : return "le logo de la structure de 'Normandie Université' est manquant";
+            case "ecoleDoctorale" : return "le logo de l'école doctorale est manquant";
+            case "uniteRecherche" : return "le logo de l'unité de recherche est manquant";
+            case "etablissement" : return "le logo de l'établissement de rattachement est manquant";
+        }
+
+    }
+    $splits = explode(" ",$clef);
+    $acteur = "nom ". $splits[1];
+    switch($splits[0]) {
+        case "etablissement" : return "l'établissement du membre ".$splits[1]." (".$informations[$acteur].") n'est pas renseigné";
+        case "qualite" : return "la qualité du membre ".$splits[1]." (".$informations[$acteur].") n'est pas renseignée";
+        case "nom": return "le nom du membre ".$splits[1]." (".$informations[$acteur].") n'est pas renseigné";
+        case "role": return "le rôle du membre ".$splits[1]." (".$informations[$acteur].") n'est pas renseigné";
+    }
+    return $clef;
+}
+?>

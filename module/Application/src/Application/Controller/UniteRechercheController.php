@@ -112,7 +112,7 @@ class UniteRechercheController extends AbstractController
             // action d'affacement du logo
             if (isset($data['supprimer-logo'])) {
                 $this->supprimerLogoUniteRecherche();
-                return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId]], true);
+                return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId], "fragment" => $uniteId], true);
             }
 
             // action de modification
@@ -128,10 +128,10 @@ class UniteRechercheController extends AbstractController
                 $this->getUniteRechercheService()->update($unite);
 
                 $this->flashMessenger()->addSuccessMessage("Unité de recherche '$unite' modifiée avec succès");
-                return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId]], true);
+                return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId], "fragment" => "".$uniteId], true);
             }
             $this->flashMessenger()->addErrorMessage("Echec de la mise à jour : données incorrectes saissie");
-            return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId]], true);
+            return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId], "fragment" => "".$uniteId], true);
         }
 
         $etablissements = $this->getEtablissementService()->getRepository()->findAll();
@@ -179,7 +179,8 @@ class UniteRechercheController extends AbstractController
 
                 $this->flashMessenger()->addSuccessMessage("Unité de recherche '$unite' créée avec succès");
 
-                return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $unite->getStructure()->getId()]], true);
+                $uniteId = $unite->getStructure()->getId();
+                return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId], "fragment" => $uniteId], true);
             }
         }
 
@@ -202,7 +203,7 @@ class UniteRechercheController extends AbstractController
 
         $this->flashMessenger()->addSuccessMessage("Unité de recherche '$unite' supprimée avec succès");
 
-        return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId]], true);
+        return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId], "fragment" => $uniteId], true);
     }
 
     public function restaurerAction()
@@ -214,7 +215,7 @@ class UniteRechercheController extends AbstractController
 
         $this->flashMessenger()->addSuccessMessage("Unité de recherche '$unite' restaurée avec succès");
 
-        return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId]], true);
+        return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId], "fragment" => $uniteId], true);
     }
 
     /**
@@ -237,7 +238,7 @@ class UniteRechercheController extends AbstractController
     {
         $structureId = $this->params()->fromRoute("uniteRecherche");
         $this->supprimerLogoUniteRecherche();
-        return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $structureId]], true);
+        return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $structureId], "fragment" => $structureId], true);
     }
 
     /**

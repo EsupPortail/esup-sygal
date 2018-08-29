@@ -49,6 +49,7 @@ $canModifier = $this->isAllowed(EtablissementPrivileges::getResourceId(Etablisse
         <tr>
             <th> Libellé </th>
             <th> Source </th>
+            <th> Code </th>
             <th> Sigle </th>
             <th> Actions </th>
         </tr>
@@ -63,11 +64,19 @@ $canModifier = $this->isAllowed(EtablissementPrivileges::getResourceId(Etablisse
         <tr <?php if($selected == $structure->getStructure()->getId()) echo 'class="ecole-doctorale selected" style="color:black;"';?> >
 
             <td>
-                <a href="<?php echo $this->url('etablissement', [], ['query' => ['selected' => $structure->getStructure()->getId()]], true); ?>">
+                <a name="<?php echo $structure->getStructure()->getId();?>">
+                <a href="<?php echo $this->url('etablissement', [], ['query' => ['selected' => $structure->getStructure()->getId()], "fragment" => "".$structure->getStructure()->getId()], true); ?>">
                     <?php echo $structure->getLibelle(); ?>
                 </a>
+                <?php if ($structure->estMembre()): ?>
+                    <span class="label label-primary">Membre</span>
+                <?php endif ?>
+                <?php if ($structure->estAssocie()): ?>
+                    <span class="label label-info">Associé</span>
+                <?php endif ?>
             </td>
-            <td> <?php echo explode("::",$structure->getSource()->getCode())[0]; ?></td>
+            <td> <?php echo $structure->getSource() ?></td>
+            <td> <?php echo $structure->getStructure()->getCode(); ?></td>
             <td> <?php echo $structure->getSigle(); ?></td>
             <td>
                 <?php if ($canModifier && !$historisee) : ?>
@@ -165,6 +174,7 @@ $canModifier = $this->isAllowed(EtablissementPrivileges::getResourceId(Etablisse
         <tr>
             <th> Libellé </th>
             <th> Source </th>
+            <th> Code </th>
             <th> Sigle </th>
             <th> Actions </th>
         </tr>
@@ -179,11 +189,19 @@ $canModifier = $this->isAllowed(EtablissementPrivileges::getResourceId(Etablisse
             <tr <?php if($selected == $structure->getStructure()->getId()) echo 'class="ecole-doctorale selected" style="color:black;"';?> >
 
                 <td>
-                    <a href="<?php echo $this->url('etablissement', [], ['query' => ['selected' => $structure->getStructure()->getId()]], true); ?>">
+                    <a name="<?php echo $structure->getStructure()->getId();?>">
+                    <a href="<?php echo $this->url('etablissement', [], ['query' => ['selected' => $structure->getStructure()->getId()], "fragment" => "".$structure->getStructure()->getId()], true); ?>">
                         <?php echo $structure->getLibelle(); ?>
                     </a>
+                    <?php if ($structure->estMembre()): ?>
+                    <span class="label label-primary">Membre</span>
+                    <?php endif ?>
+                    <?php if ($structure->estAssocie()): ?>
+                        <span class="label label-info">Associé</span>
+                    <?php endif ?>
                 </td>
-                <td> <?php echo explode("::",$structure->getSource()->getCode())[0]; ?></td>
+                <td> <?php echo $structure->getSource() ?></td>
+                <td> <?php echo $structure->getStructure()->getCode(); ?></td>
                 <td> <?php echo $structure->getSigle(); ?></td>
                 <td>
                     <?php if ($canModifier && !$historisee) : ?>

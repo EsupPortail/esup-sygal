@@ -143,7 +143,7 @@ return [
                     'admin' => [
                         'pages' => [
                             'etablissement' => [
-                                'label'    => 'Établissement',
+                                'label'    => 'Établissements',
                                 'route'    => 'etablissement',
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\Etablissement', 'index'),
 
@@ -161,6 +161,9 @@ return [
         ],
         'factories' => [
         ],
+        'aliases' => [
+            EtablissementService::class => 'EtablissementService',
+        ]
     ],
     'controllers'     => [
         'invokables' => [

@@ -25,38 +25,44 @@ $qb
     ->join('f.nature', 'nf')
     ->join('f.these', 't')
     ->where('1 = pasHistorise(f)')
-//    ->andWhere($qb->expr()->in('nf.code', [NatureFichier::CODE_THESE_PDF, NatureFichier::CODE_FICHIER_NON_PDF]))
+    //->andWhere($qb->expr()->in('nf.code', [NatureFichier::CODE_THESE_PDF, NatureFichier::CODE_FICHIER_NON_PDF]))
     ->orderBy('nf.code');
 /** @var Fichier[] $fichiers */
 $fichiers = $qb/*->setMaxResults(50)*/->getQuery()->getResult();
 
 $nomFichierFormatter = new NomFichierFormatter();
 
+$updatedFichiers = [];
 foreach ($fichiers as $fichier) {
     $newNom = $nomFichierFormatter->filter($fichier);
-    $fichier->setNom($newNom);
+    $updateRequired = $newNom !== $fichier->getNom();
+
+    if ($updateRequired) {
+        $fichier->setNom($newNom);
+        $updatedFichiers[] = $fichier;
+    }
 }
 
 /** @var EntityManager $em */
 $em = $controller->getServiceLocator()->get('doctrine.entitymanager.orm_default');
-$em->flush($fichiers);
+$em->flush($updatedFichiers);
 ?>
 
 <table>
     <thead>
-        <tr>
-            <th>Nature</th>
-            <th>Nom</th>
-            <th>Nom original</th>
-        </tr>
+    <tr>
+        <th>Nature</th>
+        <th>Nom</th>
+        <th>Nom original</th>
+    </tr>
     </thead>
     <tbody>
-        <?php foreach ($fichiers as $fichier): ?>
+    <?php foreach ($updatedFichiers as $fichier): ?>
         <tr>
             <td><?php echo $fichier->getNature()->getCode() ?></td>
             <td><?php echo $fichier->getNom() ?></td>
             <td><?php echo $fichier->getNomOriginal() ?></td>
         </tr>
-        <?php endforeach ?>
+    <?php endforeach ?>
     </tbody>
 </table>

@@ -11,7 +11,6 @@
         <field name="sourceCode" type="string" column="SOURCE_CODE" length="100" nullable="true"/>
         <field name="libelleRoleComplement" type="string" column="LIB_ROLE_COMPL" length="50" nullable="true"/>
         <field name="qualite" type="string" column="QUALITE" length="50" nullable="true"/>
-        <field name="etablissement" type="string" column="ETABLISSEMENT" length="50" nullable="true"/>
 
         <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
         <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
@@ -30,6 +29,11 @@
         <many-to-one field="role" target-entity="Application\Entity\Db\Role">
             <join-columns>
                 <join-column name="ROLE_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="etablissement" target-entity="Application\Entity\Db\Etablissement">
+            <join-columns>
+                <join-column name="ACTEUR_ETABLISSEMENT_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
 

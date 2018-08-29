@@ -54,11 +54,10 @@ $canModifier = $this->isAllowed(UniteRecherchePrivileges::getResourceId(UniteRec
             $historisee = (!$structure->estNonHistorise());
             $hasSousStructure = !($structure->getStructure()->getStructuresSubstituees()->isEmpty());
             ?>
-
             <tr <?php if($selected == $structure->getStructure()->getId()) echo 'class="ecole-doctorale selected" style="color:black;"';?> >
-
                 <td>
-                    <a href="<?php echo $this->url('unite-recherche', [], ['query' => ['selected' => $structure->getStructure()->getId()]], true); ?>">
+                    <a name="<?php echo $structure->getStructure()->getId();?>">
+                    <a href="<?php echo $this->url('unite-recherche', [], ['query' => ['selected' => $structure->getStructure()->getId()], "fragment" => "".$structure->getStructure()->getId()], true); ?>">
                         <?php echo $structure->getLibelle(); ?>
                     </a>
                 </td>

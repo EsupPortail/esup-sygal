@@ -18,6 +18,7 @@ use Application\View\Renderer\PhpRenderer;
  */
 
 $canEdit = $this->isAllowed($these, $p = ThesePrivileges::privilegeDeposerFor($nature, $version));
+//$canEdit = $this->isAllowed(ThesePrivileges::getResourceId(ThesePrivileges::FICHIER_DIVERS_TELEVERSER));
 $maxUploadableFilesCount = isset($maxUploadableFilesCount) ? $maxUploadableFilesCount : 1;
 $isVisible = isset($isVisible) ? $isVisible : true;
 ?>

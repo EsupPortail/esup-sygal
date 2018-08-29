@@ -3,6 +3,7 @@
 namespace Application\Form;
 
 use Application\Entity\Db\Etablissement;
+use Zend\Form\Element\Checkbox;
 use Zend\Form\Element\Hidden;
 use Zend\Form\Element\File;
 use Zend\Form\Element\Submit;
@@ -36,6 +37,16 @@ class EtablissementForm extends Form
             ->add((
                 new Text('libelle'))
                     ->setLabel("Libellé :")
+        );
+
+        $this->add(
+            (new Checkbox('estMembre'))
+                ->setLabel("Établissement membre")
+        );
+
+        $this->add(
+            (new Checkbox('estAssocie'))
+                ->setLabel("Établissement associé")
         );
 
         $this

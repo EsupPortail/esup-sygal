@@ -5,10 +5,16 @@ namespace Application\Service\Doctorant;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\DoctorantCompl;
 use Application\Entity\Db\Repository\DoctorantRepository;
+use Application\Entity\UserWrapper;
 use Application\Service\BaseService;
+use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Doctrine\ORM\NonUniqueResultException;
+use UnicaenApp\Exception\RuntimeException;
 
 class DoctorantService extends BaseService
 {
+    use EtablissementServiceAwareTrait;
+
     /**
      * @return DoctorantRepository
      */
@@ -46,5 +52,37 @@ class DoctorantService extends BaseService
         $this->entityManager->flush($complement);
 
         return $complement;
+    }
+
+    /**
+     * @param UserWrapper $user
+     * @return Doctorant|null
+     */
+    public function findOneByUserWrapper(UserWrapper $user)
+    {
+        $id = $user->getSupannId();
+        if (! $id) {
+            throw new RuntimeException("Aucun id supann disponible.");
+        }
+
+        $domaineEtab = $user->getDomainFromEppn();
+        if (! $domaineEtab) {
+            return null;
+        }
+
+        $etablissement = $this->getEtablissementService()->getRepository()->findOneByDomaine($domaineEtab);
+        if (! $etablissement) {
+            throw new RuntimeException("Aucun établissement trouvé avec ce domaine: " . $domaineEtab);
+        }
+
+        $sourceCode = $etablissement->prependPrefixTo($id);
+
+        try {
+            $doctorant = $this->getRepository()->findOneBySourceCode($sourceCode);
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Anomalie: plusieurs doctorants ont été trouvés avec le même source code: " . $sourceCode);
+        }
+
+        return $doctorant;
     }
 }
