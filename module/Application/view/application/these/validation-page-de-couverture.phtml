@@ -64,39 +64,48 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_
         }
     }
 ?>
-<!-- La mise à jour des données peut être faite tant que la page de couverture n'est pas validée -->
-<?php if (!$validation): ?>
+
+<?php if (!empty($problemes)): ?>
     <div class="box panel panel-warning">
         <div class="panel-heading">
             <h2 class="first">
-                Données manquantes pour la génération de la page de couverture et mise à jour des données
+                Données manquantes pour la génération de la page de couverture
             </h2>
         </div>
         <div class="panel-body">
-            <div class="col-md-6">
-                Liste des informations manquantes :
-                <ul>
-                <?php foreach ($problemes as $probleme): ?>
-                    <li> <?php echo informationManquante($probleme, $informations); ?> </li>
-                <?php endforeach; ?>
-                </ul>
-            </div>
-            <div class="col-md-6">
-                <p>
-                    Cliquez sur ce bouton pour importer tout de suite à partir de <?php echo $these->getSource() ?>
-                    les informations nécessaires à la génération de la page de couverture :
-                </p>
-                <p>
-                    <a class="btn btn-default btn-sm"
-                       id="refresh-these-button"
-                       href="<?php echo $refreshTheseUrl ?>"
-                    ><span class="glyphicon glyphicon-import"></span> <strong>Mettre à jour</strong> la thèse à partir de
-                        <?php echo $these->getSource() ?></a>
-                </p>
-                <p class="small">
-                    Dernière mise à jour : <?php echo $these->getHistoModification()->format(Constants::DATETIME_FORMAT) ?>.
-                </p>
-            </div>
+            Liste des informations manquantes :
+            <ul>
+            <?php foreach ($problemes as $probleme): ?>
+                <li> <?php echo informationManquante($probleme, $informations); ?> </li>
+            <?php endforeach; ?>
+            </ul>
+        </div>
+    </div>
+<?php endif; ?>
+
+<!-- La mise à jour des données peut être faite tant que la page de couverture n'est pas validée -->
+<?php if (!$validation): ?>
+    <div class="box panel panel-info">
+        <div class="panel-heading">
+            <h2 class="first">
+                Mise à jour des données relatives à la thèse
+            </h2>
+        </div>
+        <div class="panel-body">
+            <p>
+                Cliquez sur ce bouton pour importer tout de suite à partir de <?php echo $these->getSource() ?>
+                les informations nécessaires à la génération de la page de couverture :
+            </p>
+            <p>
+                <a class="btn btn-default btn-sm"
+                   id="refresh-these-button"
+                   href="<?php echo $refreshTheseUrl ?>"
+                ><span class="glyphicon glyphicon-import"></span> <strong>Mettre à jour</strong> la thèse à partir de
+                    <?php echo $these->getSource() ?></a>
+            </p>
+            <p class="small">
+                Dernière mise à jour : <?php echo $these->getHistoModification()->format(Constants::DATETIME_FORMAT) ?>.
+            </p>
         </div>
     </div>
 <?php endif; ?>
