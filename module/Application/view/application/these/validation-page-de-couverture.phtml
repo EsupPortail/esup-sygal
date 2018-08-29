@@ -64,12 +64,12 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_
         }
     }
 ?>
-
-<?php if(!empty($problemes)): ?>
+<!-- La mise à jour des données peut être faite tant que la page de couverture n'est pas validée -->
+<?php if (!$validation): ?>
     <div class="box panel panel-warning">
         <div class="panel-heading">
             <h2 class="first">
-                Données manquantes pour la génération de la page de couverture
+                Données manquantes pour la génération de la page de couverture et mise à jour des données
             </h2>
         </div>
         <div class="panel-body">
