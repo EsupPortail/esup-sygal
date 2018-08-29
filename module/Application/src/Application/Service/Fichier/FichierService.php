@@ -565,9 +565,9 @@ class FichierService extends BaseService
         if (Acteur::estENSI($directeurs))      $informations["logo-associe"] = "public/logo_ensi.jpg";
         if (Acteur::estESITC ($directeurs))    $informations["logo-associe"] = "public/logo_esitc.jpg";
 
-//        $informations["nombre de membres"] = count($membres)?count($membres):"";
-        $informations["nombre de rapporteurs"] = count($rapporteurs)?count($rapporteurs):"";
-        $informations["nombre de directeurs"] = count($directeurs)?count($directeurs):"";
+        $informations["nombre de membres"]      = count($membres);
+        $informations["nombre de rapporteurs"]  = count($rapporteurs)?count($rapporteurs):"";
+        $informations["nombre de directeurs"]   = count($directeurs)?count($directeurs):"";
         $position = 1;
         foreach ($membres as $membre) {
             $informations["nom ".$position] = "";
