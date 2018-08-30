@@ -50,7 +50,7 @@ $rdvBu = $these->getRdvBu();
                 Version à récupérer <span class="caret"></span>
             </button>
             <ul class="dropdown-menu">
-                <li><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 0, 'version' => 'VO'], [], true); ?>">Version original</a></li>
+                <li><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 0, 'version' => 'VO'], [], true); ?>">Version originale</a></li>
                 <?php if ($hasVD): ?>
                     <li><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 0, 'version' => 'VD'], [], true); ?>">Version diffusion</a></li>
                 <?php endif; ?>
