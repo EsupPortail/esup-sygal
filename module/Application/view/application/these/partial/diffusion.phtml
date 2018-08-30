@@ -44,7 +44,7 @@ $diffusion = $these->getDiffusion();
         </div>
     </li>
 
-    <?php if ($idOrcid = $diffusion->getIdOrcid()): ?>
+    <?php if ($idOrcid = $diffusion->getOrcid()): ?>
         <li>Identifiant ORCID : <code class="text-muted"><?php echo $idOrcid ?></code></li>
     <?php endif ?>
 </ul>
