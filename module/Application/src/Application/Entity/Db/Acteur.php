@@ -116,46 +116,6 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
-     * @param Acteur[] $acteurs
-     * @return bool
-     * @deprecated
-     */
-    public static function estENSI($acteurs)
-    {
-        foreach ($acteurs as $acteur) {
-            if (! $acteur->getEtablissement()) {
-                continue;
-            }
-            $libelle = $acteur->getEtablissement()->getStructure()->getLibelle();
-            if ($libelle === 'ENSI DE CAEN' || $libelle === '14 ENSI de Caen') {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * @param Acteur[] $acteurs
-     * @return bool
-     * @deprecated
-     */
-    public static function estESITC($acteurs)
-    {
-        foreach ($acteurs as $acteur) {
-            if (! $acteur->getEtablissement()) {
-                continue;
-            }
-            $libelle = $acteur->getEtablissement()->getStructure()->getLibelle();
-            if ($libelle === 'ESITC' || $libelle === 'ESITC Caen') {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * @return string
      */
     public function __toString()

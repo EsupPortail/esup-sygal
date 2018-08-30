@@ -150,9 +150,9 @@ $PATH = Structure::PATH;
             <?php endif; ?>
         </td>
         <!-- TODO ASSOCIE -->
-        <?php if ($informations["logo-associe"] == "oui"): ?>
+        <?php if ($informations["avec-associe"] == "oui"): ?>
             <td>
-                <?php if ($informations["logo-cotutelle"]): ?>
+                <?php if ($informations["logo-associe"]): ?>
                     <img class="logo_small" src="<?php echo $PATH . $informations["logo-associe"]; ?>"/>
                 <?php else: ?>
                     <span style='background-color:red;'> Établissement associé ou logo d'établissement non renseigné. </span>

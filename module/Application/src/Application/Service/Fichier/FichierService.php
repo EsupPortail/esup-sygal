@@ -553,17 +553,16 @@ class FichierService extends BaseService
         $membres = array_diff($acteurs, $rapporteurs, $directeurs);
         $informations["cotut-libelle"] = ($these->getLibelleEtabCotutelle())?($these->getLibelleEtabCotutelle()):"non";
         $informations["cotut-pays"]    = ($these->getLibellePaysCotutelle())?($these->getLibellePaysCotutelle()):"non";
-//        $informations["logo-cotutelle"]    = ($these->getLibelleEtabCotutelle())?"":"non";
-//        /** @var Etablissement $etabCotut */
-//        $etabCotut = $this->getEtablissementService()->getRepository()->findOneByLibelle($informations["cotut-libelle"]);
-//        if ($etabCotut) {
-//            $logo = $etabCotut->getCheminLogo();
-//            if ($logo) $informations["logo-cotutelle"] = $logo;
-//        }
 
-        $informations["logo-associe"] = "non";
-        if (Acteur::estENSI($directeurs))      $informations["logo-associe"] = "public/logo_ensi.jpg";
-        if (Acteur::estESITC ($directeurs))    $informations["logo-associe"] = "public/logo_esitc.jpg";
+        $informations["avec-associe"] = "non";
+        /** @var Acteur $directeur */
+        foreach ($directeurs as $directeur) {
+            if ($directeur->getEtablissement()->estAssocie()) {
+                $informations["avec-associe"] = "oui";
+                $informations["logo-associe"] = $directeur->getEtablissement()->getCheminLogo();
+                $informations["titre"] .= $informations["logo-associe"];
+            }
+        }
 
         $informations["nombre de membres"]      = count($membres);
         $informations["nombre de rapporteurs"]  = count($rapporteurs)?count($rapporteurs):"";
