@@ -39,7 +39,7 @@ class RdvBuHydrator extends DoctrineObject
         $result = $this->objectManager->getRepository(Diffusion::class)->findOneBy(["these" => $rdvBu->getThese()]);
 
 
-        if ($result) $data['idOrcid'] = $result->getIdOrcid();
+        if ($result) $data['idOrcid'] = $result->getOrcid();
 
         return $data;
     }
@@ -63,7 +63,7 @@ class RdvBuHydrator extends DoctrineObject
         /** @var Diffusion $result */
         $result = $this->objectManager->getRepository(Diffusion::class)->findOneBy(["these" => $rdvBu->getThese()]);
         if ($result) {
-            $result->setIdOrcid($data['idOrcid']);
+            $result->setOrcid($data['idOrcid']);
             $this->objectManager->flush();
         }
 
