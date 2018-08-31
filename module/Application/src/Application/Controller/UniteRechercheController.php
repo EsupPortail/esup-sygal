@@ -47,7 +47,7 @@ class UniteRechercheController extends AbstractController
 
             $effectifs = [];
             foreach ($roles as $role) {
-                $individus = $this->individuService->getIndividuByRole($role);
+                $individus = $this->individuService->getRepository()->findByRole($role);
                 $effectifs[$role->getLibelle()] = $individus;
             }
         }
@@ -136,7 +136,7 @@ class UniteRechercheController extends AbstractController
 
         $etablissements = $this->getEtablissementService()->getRepository()->findAll();
         $etablissementsRattachements = $this->getUniteRechercheService()->findEtablissementRattachement($unite);
-        $domaineScientifiques = $this->getDomaineScientifiqueService()->getDomainesScientifiques();
+        $domaineScientifiques = $this->getDomaineScientifiqueService()->getRepository()->findAll();
 
         // envoie vers le formulaire de modification
         $viewModel = new ViewModel([
@@ -352,7 +352,7 @@ class UniteRechercheController extends AbstractController
         $uniteId = $this->params()->fromRoute("uniteRecherche");
         $domaineId = $this->params()->fromRoute("domaineScientifique");
         $unite = $this->getUniteRechercheService()->getRepository()->findByStructureId($uniteId);
-        $domaine = $this->getDomaineScientifiqueService()->getDomaineScientifiqueById($domaineId);
+        $domaine = $this->getDomaineScientifiqueService()->getRepository()->find($domaineId);
 
         if ($domaine !== null && !array_search($domaine, $unite->getDomaines())) {
             $domaine = $domaine->addUnite($unite);
@@ -373,7 +373,7 @@ class UniteRechercheController extends AbstractController
         $uniteId = $this->params()->fromRoute("uniteRecherche");
         $domaineId = $this->params()->fromRoute("domaineScientifique");
         $unite = $this->getUniteRechercheService()->getRepository()->findByStructureId($uniteId);
-        $domaine = $this->getDomaineScientifiqueService()->getDomaineScientifiqueById($domaineId);
+        $domaine = $this->getDomaineScientifiqueService()->getRepository()->find($domaineId);
 
         $domaine = $domaine->removeUnite($unite);
         $unite = $unite->removeDomaine($domaine);

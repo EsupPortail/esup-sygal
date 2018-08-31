@@ -3,6 +3,7 @@
 namespace Application\Entity\Db\Repository;
 
 use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
@@ -10,6 +11,29 @@ use UnicaenApp\Exception\RuntimeException;
 
 class RoleRepository extends DefaultEntityRepository
 {
+
+    /**
+     * @param int $id
+     * @return Role
+     */
+    public function find($id) {
+
+        /** @var Role $role */
+        $role = $this->findOneBy(["id" => $id]);
+        return $role;
+    }
+
+    /**
+     * @param string $roleCode
+     * @return Role
+     */
+    public function findByCode($roleCode) {
+
+        /** @var Role $role */
+        $role = $this->findOneBy(["code" => $roleCode]);
+        return $role;
+    }
+
     /**
      * @param string|Etablissement $etablissement
      * @return Role
@@ -36,5 +60,21 @@ class RoleRepository extends DefaultEntityRepository
         }
 
         return $role;
+    }
+
+    public function findAllByIndividu($individu)
+    {
+        $qb = $this->getEntityManager()->getRepository(IndividuRole::class)->createQueryBuilder("ir")
+            ->andWhere("ir.individu = :individu")
+            ->setParameter("individu", $individu);
+        $results = $qb->getQuery()->getResult();
+
+        /** @var IndividuRole $result */
+        $roles = [];
+        foreach($results as $result) {
+            $roles[] = $result->getRole();
+        }
+
+        return $roles;
     }
 }

@@ -39,7 +39,7 @@ class MailConfirmationHydrator extends DoctrineObject
     public function hydrate(array $data, $object)
     {
         /** @var Individu $individu */
-        $individu = $this->individuService->getIndviduById($data['idIndividu']);
+        $individu = $this->individuService->getRepository()->find($data['idIndividu']);
         $object->setIndividu($individu);
         $object->setEmail($data['email']);
         $object->setCode($data['code']);

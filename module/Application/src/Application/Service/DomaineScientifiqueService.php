@@ -3,6 +3,7 @@
 namespace Application\Service;
 
 use Application\Entity\Db\DomaineScientifique;
+use Application\Entity\Db\Repository\DomaineScientifiqueRepository;
 use Doctrine\ORM\EntityRepository;
 use UnicaenApp\Exception\RuntimeException;
 
@@ -19,54 +20,15 @@ class DomaineScientifiqueService extends BaseService
     }
 
     /**
-     * @return DomaineScientifique[]
-     */
-    public function getDomainesScientifiques()
-    {
-        $qb = $this->getRepository()->createQueryBuilder("domaine");
-        $result = $qb->getQuery()->getResult();
-        return $result;
-    }
-
-    /**
-     * @param int $id
-     * @return DomaineScientifique
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     */
-    public function getDomaineScientifiqueById($id)
-    {
-        $qb = $this->getRepository()->createQueryBuilder("domaine")
-            ->andWhere("domaine.id = :id")
-            ->setParameter("id", $id)
-        ;
-        $result = $qb->getQuery()->getOneOrNullResult();
-        return $result;
-    }
-
-    /**
-     * @param string $libelle
-     * @return DomaineScientifique
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     */
-    public function getDomaineScientifiqueByLibelle($libelle)
-    {
-        $qb = $this->getRepository()->createQueryBuilder("domaine")
-            ->andWhere("domaine.libelle = :libelle")
-            ->setParameter("libelle", $libelle)
-        ;
-        $result = $qb->getQuery()->getOneOrNullResult();
-        return $result;
-    }
-
-    /**
      * @param string $libelle
      * @return DomaineScientifique
      * @throws \Doctrine\ORM\OptimisticLockException
-     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function createDomaineScientifique($libelle)
     {
-        $result = $this->getDomaineScientifiqueByLibelle($libelle);
+        /** @var DomaineScientifiqueRepository $repo */
+        $repo = $this->getRepository();
+        $result = $repo->findByLibelle($libelle);
         if ($result !== null) {
             throw new RuntimeException("Il existe déjà un domaine scientifique libellé [".$libelle."]");
         }

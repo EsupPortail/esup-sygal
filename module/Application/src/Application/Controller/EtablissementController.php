@@ -64,7 +64,7 @@ class EtablissementController extends AbstractController
 
             $effectifs = [];
             foreach ($roles as $role) {
-                $individus = $this->individuService->getIndividuByRole($role);
+                $individus = $this->individuService->getRepository()->findByRole($role);
                 $effectifs[$role->getLibelle()] = $individus;
             }
         }

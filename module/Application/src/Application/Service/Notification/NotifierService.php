@@ -352,8 +352,8 @@ class NotifierService extends \Notification\Service\NotifierService
 
         //Récupération des mails des personnes ayant le rôle d'administrateur technique
         $mails = [];
-        $role = $this->getRoleService()->getRoleByCode(Role::CODE_ADMIN_TECH);
-        $irs = $this->getIndividuService()->getIndividuByRole($role);
+        $role = $this->getRoleService()->getRepository()->findByCode(Role::CODE_ADMIN_TECH);
+        $irs = $this->getIndividuService()->getRepository()->findByRole($role);
         foreach($irs as $ir) {
             $mails[] = $ir->getIndividu()->getEmail();
         }
