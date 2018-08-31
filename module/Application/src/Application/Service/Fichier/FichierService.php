@@ -605,10 +605,6 @@ class FichierService extends BaseService
         $pdcData->setListing(implode(" et ", $nomination).", ");
         if ($these->getUniteRecherche()) $pdcData->setUniteRecherche($these->getUniteRecherche()->getStructure()->getLibelle());
 
-        /** Logos à afficher */
-        $logos = ["logo-comue", "logo-etablissement", "logo-ecoleDoctorale", "logo-uniteRecherche"];
-        foreach ($logos as $logo) $informations[$logo] = "";
-
         $comue = $this->getEtablissementService()->getRepository()->find(1);
         $pdcData->setLogoCOMUE( ($comue)?$comue->getCheminLogo():null);
         $pdcData->setLogoEtablissement($these->getEtablissement()?$these->getEtablissement()->getCheminLogo():null);
