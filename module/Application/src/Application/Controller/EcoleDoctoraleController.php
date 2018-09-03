@@ -3,6 +3,8 @@
 namespace Application\Controller;
 
 use Application\Entity\Db\EcoleDoctorale;
+use Application\Entity\Db\Individu;
+use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Structure;
 use Application\Entity\Db\StructureConcreteInterface;
@@ -11,6 +13,7 @@ use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
+use UnicaenApp\Exception\RuntimeException;
 use Zend\View\Model\ViewModel;
 
 class EcoleDoctoraleController extends AbstractController
@@ -30,25 +33,6 @@ class EcoleDoctoraleController extends AbstractController
      */
     public function indexAction()
     {
-        $selected = $this->params()->fromQuery('selected');
-
-        $roles = null;
-        $effectifs = null;
-        if ($selected) {
-            /**
-             * @var StructureConcreteInterface $structure
-             * @var Role[] $roles
-             */
-            $structure  = $this->getEcoleDoctoraleService()->getRepository()->findByStructureId($selected);
-            $roles = $structure->getStructure()->getStructureDependantRoles();
-
-            $effectifs = [];
-            foreach ($roles as $role) {
-                $individus = $this->individuService->getRepository()->findByRole($role);
-                $effectifs[$role->getLibelle()] = $individus;
-            }
-        }
-
         $structuresAll = $this->getEcoleDoctoraleService()->getRepository()->findAll();
 
         /** retrait des structures substituées */
@@ -70,11 +54,49 @@ class EcoleDoctoraleController extends AbstractController
         }
 
         return new ViewModel([
-            'structuresPrincipales'          => $structures,
-            'selected'                       => $selected,
-            'roles'                          => $roles,
-            'effectifs'                      => $effectifs,
+            'ecoles'                         => $structures,
         ]);
+    }
+
+    public function informationAction()
+    {
+        $id = $this->params()->fromRoute('ecoleDoctorale');
+        $ecole = $this->getEcoleDoctoraleService()->getRepository()->findByStructureId($id);
+        if ($ecole === null) {
+            throw new RuntimeException("Aucune école doctorale ne possède l'identifiant renseigné.");
+        }
+
+        $roleListings = [];
+        $individuListings = [];
+        $roles = $this->getRoleService()->getRolesByStructure($ecole->getStructure());
+        $individus = $this->getRoleService()->getIndividuByStructure($ecole->getStructure());
+        $individuRoles = $this->getRoleService()->getIndividuRoleByStructure($ecole->getStructure());
+
+        /** @var Role $role */
+        foreach ($roles as $role) {
+            $roleListings [$role->getLibelle()] = 0;
+        }
+
+        /** @var Individu $individu */
+        foreach ($individus as $individu) {
+            $denomination = $individu->getNomComplet(false, false, false, true, false);
+            $individuListings[$denomination] = [];
+        }
+
+        /** @var IndividuRole $individuRole */
+        foreach ($individuRoles as $individuRole) {
+            $denomination = $individuRole->getIndividu()->getNomComplet(false, false, false, true, false);
+            $role = $individuRole->getRole()->getLibelle();
+            $individuListings[$denomination][] = $role;
+            $roleListings[$role]++;
+        }
+
+        return new ViewModel([
+            'ecole' => $ecole,
+            'roleListing' => $roleListings,
+            'individuListing' => $individuListings,
+        ]);
+
     }
 
     /**

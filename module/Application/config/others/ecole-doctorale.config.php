@@ -7,6 +7,7 @@ use Application\Provider\Privilege\EcoleDoctoralePrivileges;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\View\Helper\EcoleDoctoraleHelper;
 use UnicaenAuth\Guard\PrivilegeController;
+use Zend\Mvc\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [
@@ -16,6 +17,7 @@ return [
                     'controller' => 'Application\Controller\EcoleDoctorale',
                     'action'     => [
                         'index',
+                        'information'
                     ],
                     'privileges' => EcoleDoctoralePrivileges::ECOLE_DOCT_CONSULTATION,
                 ],
@@ -50,6 +52,16 @@ return [
                 ],
                 'may_terminate' => true,
                 'child_routes'  => [
+                    'information' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/information/:ecoleDoctorale',
+                            'defaults'    => [
+                                'action' => 'information',
+                            ],
+                        ],
+
+                    ],
                     'ajouter' => [
                         'type'          => 'Segment',
                         'options'       => [
@@ -148,6 +160,18 @@ return [
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\EcoleDoctorale', 'index'),
 
                                 'order'    => 10,
+                                'pages' => [
+                                    'modification' => [
+                                        'label'    => 'Modification',
+                                        'route'    => 'ecole-doctorale/modifier',
+                                        'resource' => PrivilegeController::getResourceId('Application\Controller\EcoleDoctorale', 'index'),
+
+                                        'withtarget' => true,
+                                        'paramsInject' => [
+                                            'ecoleDoctorale',
+                                        ],
+                                    ],
+                                ],
                             ],
                         ],
                     ],
