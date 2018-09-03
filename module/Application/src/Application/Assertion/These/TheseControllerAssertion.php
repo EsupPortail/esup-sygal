@@ -128,7 +128,7 @@ class TheseControllerAssertion implements ControllerAssertionInterface
             }
             elseif ($role->isUniteRechercheDependant()) {
                 // On ne voit que les thèses concernant son UR.
-                return $this->these->getEcoleDoctorale()->getStructure() === $role->getStructure();
+                return $this->these->getUniteRecherche()->getStructure() === $role->getStructure();
             }
         }
 
