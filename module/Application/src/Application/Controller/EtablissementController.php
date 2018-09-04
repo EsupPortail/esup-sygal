@@ -97,7 +97,9 @@ class EtablissementController extends AbstractController
 
         /** @var Role $role */
         foreach ($roles as $role) {
-            $roleListings [$role->getLibelle()] = 0;
+            if (! $role->isTheseDependant()) {
+                $roleListings [$role->getLibelle()] = 0;
+            }
         }
 
         /** @var Individu $individu */
@@ -108,10 +110,12 @@ class EtablissementController extends AbstractController
 
         /** @var IndividuRole $individuRole */
         foreach ($individuRoles as $individuRole) {
-            $denomination = $individuRole->getIndividu()->getNomComplet(false, false, false, true, false);
-            $role = $individuRole->getRole()->getLibelle();
-            $individuListings[$denomination][] = $role;
-            $roleListings[$role]++;
+            if (! $individuRole->getRole()->isTheseDependant()) {
+                $denomination = $individuRole->getIndividu()->getNomComplet(false, false, false, true, false);
+                $role = $individuRole->getRole()->getLibelle();
+                $individuListings[$denomination][] = $role;
+                $roleListings[$role]++;
+            }
         }
 
         return new ViewModel([
