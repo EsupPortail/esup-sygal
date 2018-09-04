@@ -1,30 +1,51 @@
-<h1> Récupération paramétrée </h1>
-
-
 <?php
-    print "<h3>Paramètres</h3>";
-
-    $parameterList = [ "service","etablissement", "source_code" ];
-
-    print "<table class='table table-bordered'>";
-    print "<tr><th>name</th><th>value</th></tr>";
-
-    foreach($parameterList as $parameter) {
-        print "<tr><td>". $parameter ."</td><td>". $$parameter ."</td></tr>";
-    }
-
-    print "</table>";
+/**
+ * @var array $logs
+ */
 ?>
 
-<?php
-    print "<h3>Logs</h3>";
+<h1 class="page-header">
+    Récupération paramétrée
+</h1>
 
-    print "<table class='table table-bordered'>";
-    print "<tr><th>date</th><th>message</th></tr>";
+<h2>
+    Paramètres
+</h2>
 
-    foreach($logs as $log) {
-        print "<tr><td>". $log[0]->format("Y/m/d H:i:s ") ."</td><td>". $log[1] ."</td></tr>";
-    }
+<?php $parameterList = [ "service","etablissement", "source_code" ]; ?>
 
-    print "</table>";
-?>
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th> name </th>
+        <th> value </th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach($parameterList as $parameter) : ?>
+        <tr>
+            <td> <?php echo $parameter; ?> </td>
+            <td> <?php echo $$parameter; ?> </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+<h2>Logs</h2>
+
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th>date</th>
+        <th>message</th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach($logs as $log) : ?>
+        <tr>
+            <td> <?php echo $log[0]->format('Y/m/d H:i:s '); ?> </td>
+            <td> <?php echo $log[1]; ?> </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
