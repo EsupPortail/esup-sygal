@@ -12,7 +12,7 @@ use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenAuth\Entity\Db\CategoriePrivilege;
 use Zend\View\Model\ViewModel;
 
-class RoleController extends AbstractController
+class PrivilegeController extends AbstractController
 {
     use EntityManagerAwareTrait;
     use RoleServiceAwareTrait;

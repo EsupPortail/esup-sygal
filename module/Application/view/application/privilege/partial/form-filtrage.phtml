@@ -16,7 +16,7 @@ use Application\View\Renderer\PhpRenderer;
  */
 $urlFiltrer = function ($paramName, $paramValue, $queryParams) {
     $queryParams[$paramName] = $paramValue;
-    return $this->url('roles', [], ['query' => $queryParams], true);
+    return $this->url('gestion-privilege', [], ['query' => $queryParams], true);
 };
 
 echo $this->filterPanel([
