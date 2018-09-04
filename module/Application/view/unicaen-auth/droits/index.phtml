@@ -18,7 +18,7 @@ $canViewPrivileges = $this->isAllowed(Privileges::getResourceId(Privileges::DROI
     <?php endif; ?>
 
     <?php if ($canViewPrivileges): ?>
-        <dt><a href="<?php echo $this->url('roles') ?>">Gestion des privilèges</a></dt>
+        <dt><a href="<?php echo $this->url('gestion-privilege') ?>">Gestion des privilèges</a></dt>
         <dd>
             Tableau de bord listant, par rôle, les privilèges qui lui sont accordés.
             Le tableau permet également, si vous en avez le droit, de modifier les privilèges accordés par rôle.
