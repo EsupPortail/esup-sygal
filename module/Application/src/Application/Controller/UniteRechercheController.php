@@ -35,32 +35,12 @@ class UniteRechercheController extends AbstractController
      */
     public function indexAction()
     {
-        $selected = $this->params()->fromQuery('selected');
-
-        $roles = null;
-        $effectifs = null;
-        $structure = null;
-        if ($selected) {
-            /**
-             * @var StructureConcreteInterface $structure
-             * @var Role[] $roles
-             */
-            $selectedStructure  = $this->getUniteRechercheService()->getRepository()->findByStructureId($selected);
-            $roles = $selectedStructure->getStructure()->getStructureDependantRoles();
-
-            $effectifs = [];
-            foreach ($roles as $role) {
-                $individus = $this->individuService->getRepository()->findByRole($role);
-                $effectifs[$role->getLibelle()] = $individus;
-            }
-        }
-
         $structuresAll = $this->getUniteRechercheService()->getRepository()->findAll();
 
         /** retrait des structures substituées */
-        //TODO faire cela dans le service ???
         $structuresSub = array_filter($structuresAll, function (StructureConcreteInterface $structure) { return count($structure->getStructure()->getStructuresSubstituees())!=0; });
         $toRemove = [];
+        /** @var UniteRecherche $structure */
         foreach($structuresSub as $structure) {
             foreach ($structure->getStructure()->getStructuresSubstituees() as $sub) {
                 $toRemove[] = $sub;
@@ -74,18 +54,9 @@ class UniteRechercheController extends AbstractController
             }
             if (!$found) $structures[] = $structure;
         }
-        $rattachements = null;
-        if ($selectedStructure !== null) $rattachements = $this->getUniteRechercheService()->findEtablissementRattachement($selectedStructure);
-        $domaines = null;
-        if ($selectedStructure !== null) $domaines = $selectedStructure->getDomaines();
 
         return new ViewModel([
-            'structuresPrincipales'          => $structures,
-            'selected'                       => $selected,
-            'roles'                          => $roles,
-            'effectifs'                      => $effectifs,
-            'rattachements'                  => $rattachements,
-            'domaines'                       => $domaines,
+            'unites'                         => $structures,
         ]);
     }
 
