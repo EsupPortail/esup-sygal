@@ -3,7 +3,7 @@
 /**
  * @see \Application\Controller\Etablissement::informationAction()
  * @var Etablissement $etablissement
- * @var array(string => Role[]) $roleListing
+ * @var array $roleListing (string => int)
  * @var array(string => string[]) $individuListing
  */
 
@@ -76,10 +76,10 @@ $canEdit = true;
                     </tr>
                     </thead>
                     <tbody>
-                    <?php foreach($roleListing as $libelle => $individus): ?>
+                    <?php foreach($roleListing as $libelle => $count): ?>
                         <tr>
                             <td> <?php echo $libelle; ?> </td>
-                            <td> <?php echo ($individus)?count($individus):0; ?> </td>
+                            <td> <?php echo $count; ?> </td>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>
