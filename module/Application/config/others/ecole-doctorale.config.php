@@ -171,6 +171,16 @@ return [
                                             'ecoleDoctorale',
                                         ],
                                     ],
+                                    'information' => [
+                                        'label'    => 'Détails',
+                                        'route'    => 'ecole-doctorale/information',
+                                        'resource' => PrivilegeController::getResourceId('Application\Controller\EcoleDoctorale', 'index'),
+
+                                        'withtarget' => true,
+                                        'paramsInject' => [
+                                            'ecoleDoctorale',
+                                        ],
+                                    ],
                                 ],
                             ],
                         ],

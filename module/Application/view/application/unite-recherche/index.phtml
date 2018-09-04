@@ -95,8 +95,6 @@ $canModifier = $this->isAllowed(UniteRecherchePrivileges::getResourceId(UniteRec
                         </a>
                     <?php endif; ?>
 
-
-
                     <?php if ($canModifier && $historisee) : ?>
                         <a href="<?php echo $this->url('unite-recherche/restaurer', ["uniteRecherche" => $structure->getStructure()->getId()], [], true); ?>"
                            title="Restaurer l'établissement">

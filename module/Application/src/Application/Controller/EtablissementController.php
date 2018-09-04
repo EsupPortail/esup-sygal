@@ -3,6 +3,8 @@
 namespace Application\Controller;
 
 use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\Individu;
+use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\SourceInterface;
 use Application\Entity\Db\Structure;
@@ -11,6 +13,7 @@ use Application\Form\EtablissementForm;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
+use UnicaenApp\Exception\RuntimeException;
 use Zend\View\Model\ViewModel;
 
 /**
@@ -48,35 +51,16 @@ class EtablissementController extends AbstractController
      */
     public function indexAction()
     {
-        $selected = $this->params()->fromQuery('selected');
         $etablissements = $this->getEtablissementService()->getRepository()->findAll();
-        usort($etablissements, function(Etablissement $a,Etablissement $b) {return $a->getLibelle() > $b->getLibelle();});
-
-        $roles = null;
-        $effectifs = null;
-        if ($selected) {
-            /**
-             * @var Etablissement $etablissement
-             * @var Role[] $roles
-             */
-            $etablissement  = $this->getEtablissementService()->getRepository()->findByStructureId($selected);
-            $roles = $etablissement->getStructure()->getStructureDependantRoles();
-
-            $effectifs = [];
-            foreach ($roles as $role) {
-                $individus = $this->individuService->getRepository()->findByRole($role);
-                $effectifs[$role->getLibelle()] = $individus;
-            }
-        }
 
         $etablissementsSYGAL = $this->getEtablissementService()->getRepository()->findAllBySource(SourceInterface::CODE_SYGAL);
         $etablissementsPrincipaux = array_filter($etablissementsSYGAL, function (Etablissement $etablissement) { return count($etablissement->getStructure()->getStructuresSubstituees())==0; });
         $etablissementsSecondaires = array_diff($etablissements, $etablissementsPrincipaux);
 
         /** retrait des structures substituées */
-        //TODO faire cela dans le service ???
         $structuresSub = array_filter($etablissementsSYGAL, function (StructureConcreteInterface $structure) { return count($structure->getStructure()->getStructuresSubstituees())!=0; });
         $toRemove = [];
+        /** @var Etablissement $structure */
         foreach($structuresSub as $structure) {
             foreach ($structure->getStructure()->getStructuresSubstituees() as $sub) {
                 $toRemove[] = $sub;
@@ -92,12 +76,50 @@ class EtablissementController extends AbstractController
         }
 
         return new ViewModel([
-            'structuresPrincipales'          => $etablissementsPrincipaux,
-            'structuresSecondaires'          => $structures,
-            'selected'                       => $selected,
-            'roles'                          => $roles,
-            'effectifs'                      => $effectifs,
+            'etablissementsSygal'          => $etablissementsPrincipaux,
+            'etablissementsExternes'       => $structures,
         ]);
+    }
+
+    public function informationAction()
+    {
+        $id = $this->params()->fromRoute('etablissement');
+        $etablissement = $this->getEtablissementService()->getRepository()->findByStructureId($id);
+        if ($etablissement === null) {
+            throw new RuntimeException("Aucun établissement ne possède l'identifiant renseigné.");
+        }
+
+        $roleListings = [];
+        $individuListings = [];
+        $roles = $this->getRoleService()->getRolesByStructure($etablissement->getStructure());
+        $individus = $this->getRoleService()->getIndividuByStructure($etablissement->getStructure());
+        $individuRoles = $this->getRoleService()->getIndividuRoleByStructure($etablissement->getStructure());
+
+        /** @var Role $role */
+        foreach ($roles as $role) {
+            $roleListings [$role->getLibelle()] = 0;
+        }
+
+        /** @var Individu $individu */
+        foreach ($individus as $individu) {
+            $denomination = $individu->getNomComplet(false, false, false, true, false);
+            $individuListings[$denomination] = [];
+        }
+
+        /** @var IndividuRole $individuRole */
+        foreach ($individuRoles as $individuRole) {
+            $denomination = $individuRole->getIndividu()->getNomComplet(false, false, false, true, false);
+            $role = $individuRole->getRole()->getLibelle();
+            $individuListings[$denomination][] = $role;
+            $roleListings[$role]++;
+        }
+
+        return new ViewModel([
+            'etablissement' => $etablissement,
+            'roleListing' => $roleListings,
+            'individuListing' => $individuListings,
+        ]);
+
     }
 
     /**

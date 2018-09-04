@@ -36,9 +36,9 @@ class EcoleDoctoraleController extends AbstractController
         $structuresAll = $this->getEcoleDoctoraleService()->getRepository()->findAll();
 
         /** retrait des structures substituées */
-        //TODO faire cela dans le service ???
         $structuresSub = array_filter($structuresAll, function (StructureConcreteInterface $structure) { return count($structure->getStructure()->getStructuresSubstituees())!=0; });
         $toRemove = [];
+        /** @var EcoleDoctorale $structure */
         foreach($structuresSub as $structure) {
             foreach ($structure->getStructure()->getStructuresSubstituees() as $sub) {
                 $toRemove[] = $sub;

@@ -7,6 +7,7 @@ use Application\Provider\Privilege\EcoleDoctoralePrivileges;
 use Application\Service\Etablissement\EtablissementService;
 use Application\View\Helper\EtablissementHelper;
 use UnicaenAuth\Guard\PrivilegeController;
+use Zend\Mvc\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [
@@ -16,6 +17,7 @@ return [
                     'controller' => 'Application\Controller\Etablissement',
                     'action'     => [
                         'index',
+                        'information',
                     ],
                     'privileges' => EcoleDoctoralePrivileges::ECOLE_DOCT_CONSULTATION,
                 ],
@@ -50,6 +52,15 @@ return [
                 ],
                 'may_terminate' => true,
                 'child_routes'  => [
+                    'information' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/information/:etablissement',
+                            'defaults'    => [
+                                'action' => 'information',
+                            ],
+                        ],
+                    ],
                     'ajouter' => [
                         'type'          => 'Segment',
                         'options'       => [
@@ -146,8 +157,29 @@ return [
                                 'label'    => 'Établissements',
                                 'route'    => 'etablissement',
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\Etablissement', 'index'),
-
                                 'order'    => 5,
+                                'pages' => [
+                                    'modification' => [
+                                        'label'    => 'Modification',
+                                        'route'    => 'etablissement/modifier',
+                                        'resource' => PrivilegeController::getResourceId('Application\Controller\Etablissement', 'index'),
+
+                                        'withtarget' => true,
+                                        'paramsInject' => [
+                                            'etablissement',
+                                        ],
+                                    ],
+                                    'information' => [
+                                        'label'    => 'Détails',
+                                        'route'    => 'etablissement/information',
+                                        'resource' => PrivilegeController::getResourceId('Application\Controller\Etablissement', 'index'),
+
+                                        'withtarget' => true,
+                                        'paramsInject' => [
+                                            'etablissement',
+                                        ],
+                                    ],
+                                ],
                             ],
                         ],
                     ],
