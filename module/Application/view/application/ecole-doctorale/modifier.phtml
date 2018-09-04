@@ -12,13 +12,20 @@ use Application\View\Renderer\PhpRenderer;
 */
 
 $fcg = $this->formControlGroup();
+
+$this->headTitle('Modification de l\'école doctorale '.$form->getObject()->getLibelle());
 ?>
+
+<h1 class="page-header">
+    Modification de l'école doctorale <?php echo $form->getObject()->getLibelle(); ?>
+</h1>
 
 <?php echo $this->form()->openTag($form->prepare()->setAttribute('class', 'ecole-doctorale')) ?>
 <?php echo $this->formHidden($form->get('id')) ?>
 <?php echo $fcg($form->get('libelle')) ?>
 <?php echo $fcg($form->get('sigle')) ?>
 <?php echo $fcg($form->get('sourceCode')) ?>
+
 
 <div id="logo-div">
  <?php
