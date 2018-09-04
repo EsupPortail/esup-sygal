@@ -127,7 +127,10 @@ class EcoleDoctorale implements StructureConcreteInterface, HistoriqueAwareInter
             $image = Util::createImageWithText("Aucun logo pour l'ED|[" . $this->getSourceCode() . " - " . $this->getSigle() . "]", 200, 200);
             return $image;
         }
-        //        return file_get_contents(APPLICATION_DIR . $this->getCheminLogo()) ?: null;
+        if (!file_exists(Structure::PATH . $this->getCheminLogo())) {
+            $image = Util::createImageWithText("Fichier absent sur le HD",200,200);
+            return $image;
+        }
         return file_get_contents( Structure::PATH . $this->getCheminLogo()) ?: null;
     }
 
