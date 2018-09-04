@@ -8,10 +8,13 @@
  */
 
 use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\TypeStructure;
 
 $this->headTitle('Details de l\'établissement ['.$etablissement->getLibelle().']');
 
 $canEdit = true;
+$canAddRole = true;
+
 ?>
 
 <h1 class="page-header">
@@ -32,6 +35,16 @@ $canEdit = true;
     </a>
 <?php endif; ?>
 
+<?php if ($canAddRole && empty($roleListing)): ?>
+    <a
+            href="<?php echo $this->url('structure/generer-roles-defauts',
+                ['id' => $etablissement->getStructure()->getId(), 'type' => TypeStructure::CODE_ETABLISSEMENT], [], true);?>"
+            class="btn btn-warning"
+    >
+        <span class="glyphicon glyphicon-refresh"></span>
+        Générer rôles par défaut
+    </a>
+<?php endif; ?>
 
 <div>
     <h2>

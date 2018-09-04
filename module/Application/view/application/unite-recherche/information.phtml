@@ -9,11 +9,13 @@
  */
 
 use Application\Entity\Db\EtablissementRattachement;
+use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
 
 $this->headTitle('Details de l\'unité de recherche ['.$unite->getLibelle().']');
 
 $canEdit = true;
+$canAddRole =true;
 ?>
 
 <h1 class="page-header">
@@ -31,6 +33,17 @@ $canEdit = true;
        class="btn btn-primary action"
     >
         <span class="glyphicon glyphicon-pencil"></span> Modifier l'unité de recherche
+    </a>
+<?php endif; ?>
+
+<?php if ($canAddRole && empty($roleListing)): ?>
+    <a
+            href="<?php echo $this->url('structure/generer-roles-defauts',
+                ['id' => $unite->getStructure()->getId(), 'type' => TypeStructure::CODE_UNITE_RECHERCHE], [], true);?>"
+            class="btn btn-warning"
+    >
+        <span class="glyphicon glyphicon-refresh"></span>
+        Générer rôles par défaut
     </a>
 <?php endif; ?>
 
