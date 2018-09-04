@@ -1,5 +1,6 @@
 <?php
 
+use Application\Provider\Privilege\IndicateurPrivileges;
 use Indicateur\Controller\Factory\IndicateurControllerFactory;
 use Indicateur\Controller\IndicateurController;
 use Zend\Mvc\Router\Http\Segment;
@@ -13,22 +14,31 @@ return array(
                     'action'     => [
                         'index',
                         'soutenance-depassee',
-                        'export-soutenance-depassee',
                         'acteurs-sans-mail',
-                        'export-acteurs-sans-mail',
                         'doctorants-sans-mail',
-                        'export-doctorants-sans-mail',
                         'theses-anciennes',
-                        'export-theses-anciennes',
                         'theses-a-soutenir',
-                        'export-theses-a-soutenir',
                         'theses-sans-pdc',
-                        'export-theses-sans-pdc',
                         'theses-sans-depot',
-                        'export-theses-sans-depot',
                 ],
-                    'roles' => [
-                        'Administrateur technique',
+                    'privileges' => [
+                        IndicateurPrivileges::INDICATEUR_CONSULTATION,
+
+                    ],
+                ],
+                [
+                    'controller' => IndicateurController::class,
+                    'action'     => [
+                        'export-soutenance-depassee',
+                        'export-acteurs-sans-mail',
+                        'export-doctorants-sans-mail',
+                        'export-theses-anciennes',
+                        'export-theses-a-soutenir',
+                        'export-theses-sans-pdc',
+                        'export-theses-sans-depot',
+                    ],
+                    'privileges' => [
+                        IndicateurPrivileges::INDICATEUR_EXPORTATION,
                     ],
                 ],
             ],
@@ -45,11 +55,7 @@ return array(
                             'indicateur' => [
                                 'label'    => 'Indicateurs',
                                 'route'    => 'indicateur',
-                                //'resource' => PrivilegeController::getResourceId('Application\Controller\EcoleDoctorale', 'index'),
-                                'roles' => [
-                                    'Administrateur technique',
-                                ],
-
+                                'resource' => IndicateurPrivileges::getResourceId(IndicateurPrivileges::INDICATEUR_CONSULTATION),
                                 'order'    => 1,
                             ],
                         ],
