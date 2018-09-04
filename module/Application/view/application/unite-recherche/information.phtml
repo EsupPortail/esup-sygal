@@ -1,0 +1,127 @@
+<?php
+
+/**
+ * @see \Application\Controller\UniteRechercheController::informationAction()
+ * @var UniteRecherche $unite
+ * @var array(string => Role[]) $roleListing
+ * @var array(string => string[]) $individuListing
+ * @var EtablissementRattachement[] $etablissementsRattachements
+ */
+
+use Application\Entity\Db\EtablissementRattachement;
+use Application\Entity\Db\UniteRecherche;
+
+$this->headTitle('Details de l\'unité de recherche ['.$unite->getLibelle().']');
+
+$canEdit = true;
+?>
+
+<h1 class="page-header">
+    Details de l'unité de recherche [  <?php echo $unite->getLibelle(); ?> ]
+</h1>
+
+<a href="<?php echo $this->url('unite-recherche', [], [], true); ?>"
+   class="btn btn-primary action"
+   >
+    <span class="glyphicon glyphicon-th-list"></span> Index des unités de recherche
+</a>
+
+<?php if($canEdit): ?>
+    <a href="<?php echo $this->url('unite-recherche/modifier', ['uniteRecherche'=> $unite->getStructure()->getId()], [], true); ?>"
+       class="btn btn-primary action"
+    >
+        <span class="glyphicon glyphicon-pencil"></span> Modifier l'unité de recherche
+    </a>
+<?php endif; ?>
+
+
+<div>
+    <h2>
+        Informations générales
+    </h2>
+    <div class="row">
+        <div class="col-md-4">
+            <img
+                    id="logo"
+                    style="max-width: 200px; max-height: 200px; border: 1px solid black; background-color: white;"
+                    src="data:image/png;base64,<?php echo base64_encode($unite->getLogoContent()); ?>"
+            />
+        </div>
+        <div class="col-md-6">
+            <dl>
+                <dt> Libelle : </dt>    <dd>    <?php echo $unite->getLibelle(); ?>     </dd>
+                <dt> Sigle : </dt>      <dd>    <?php echo $unite->getSigle(); ?>       </dd>
+                <dt> Code : </dt>       <dd>    <?php echo $unite->getCode(); ?>        </dd>
+                <dt> Établissement(s) de rattachement : </dt>
+                <dd>
+                    <ul>
+                        <?php foreach ($etablissementsRattachements as $etablissementRattachement) : ?>
+                            <li> <?php echo $etablissementRattachement->getEtablissement()->getLibelle(); ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </dd>
+                <dt> Domaine(s) scientifique(s) : </dt>
+                <dd>
+                    <ul>
+                    <?php foreach ($unite->getDomaines() as $domaineScientifique) : ?>
+                        <li> <?php echo $domaineScientifique->getLibelle(); ?></li>
+                    <?php endforeach; ?>
+                    </ul>
+                </dd>
+            </dl>
+        </div>
+</div>
+
+
+<div>
+    <h2>
+        Rôles et membres
+    </h2>
+        <div class="row">
+            <div class="col-md-6">
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <th> Libellé du rôles </th> <th> Effectifs </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach($roleListing as $libelle => $individus): ?>
+                        <tr>
+                            <td> <?php echo $libelle; ?> </td>
+                            <td> <?php echo ($individus)?count($individus):0; ?> </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+
+                </table>
+            </div>
+
+
+            <div class="col-md-6">
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <th> Dénomination </th> <th> Rôle </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach($individuListing as $denomination => $roles): ?>
+                        <?php foreach($roles as $role): ?>
+                            <tr>
+                                <td> <?php echo $denomination; ?> </td>
+                                <td> <?php echo $role; ?> </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+</div>
+
+<style>
+    .action {
+        width: 20em;
+    }
+</style>

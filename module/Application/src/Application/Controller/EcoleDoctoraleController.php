@@ -96,7 +96,6 @@ class EcoleDoctoraleController extends AbstractController
             'roleListing' => $roleListings,
             'individuListing' => $individuListings,
         ]);
-
     }
 
     /**

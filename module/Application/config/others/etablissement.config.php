@@ -4,6 +4,7 @@ use Application\Controller\Factory\EtablissementControllerFactory;
 use Application\Form\Factory\EtablissementFormFactory;
 use Application\Form\Factory\EtablissementHydratorFactory;
 use Application\Provider\Privilege\EcoleDoctoralePrivileges;
+use Application\Provider\Privilege\EtablissementPrivileges;
 use Application\Service\Etablissement\EtablissementService;
 use Application\View\Helper\EtablissementHelper;
 use UnicaenAuth\Guard\PrivilegeController;
@@ -19,7 +20,7 @@ return [
                         'index',
                         'information',
                     ],
-                    'privileges' => EcoleDoctoralePrivileges::ECOLE_DOCT_CONSULTATION,
+                    'privileges' => EtablissementPrivileges::ETABLISSEMENT_CONSULTATION,
                 ],
                 [
                     'controller' => 'Application\Controller\Etablissement',
@@ -32,7 +33,7 @@ return [
                         'retirer-individu',
                         'supprimer-logo',
                     ],
-                    'privileges' => EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION,
+                    'privileges' => EtablissementPrivileges::ETABLISSEMENT_MODIFICATION,
                 ],
             ],
         ],

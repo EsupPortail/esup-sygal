@@ -8,6 +8,7 @@ use Application\Service\DomaineScientifiqueService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use UnicaenAuth\Guard\PrivilegeController;
 use Application\View\Helper\UniteRechercheHelper;
+use Zend\Mvc\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [
@@ -17,6 +18,7 @@ return [
                     'controller' => 'Application\Controller\UniteRecherche',
                     'action'     => [
                         'index',
+                        'information',
                     ],
                     'privileges' => UniteRecherchePrivileges::UNITE_RECH_CONSULTATION,
                 ],
@@ -56,6 +58,15 @@ return [
                 ],
                 'may_terminate' => true,
                 'child_routes'  => [
+                    'information' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/information/:uniteRecherche',
+                            'defaults'    => [
+                                'action' => 'information',
+                            ],
+                        ],
+                    ],
                     'ajouter' => [
                         'type'          => 'Segment',
                         'options'       => [
@@ -219,6 +230,28 @@ return [
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\UniteRecherche', 'index'),
 
                                 'order'    => 20,
+                                'pages' => [
+                                    'modification' => [
+                                        'label'    => 'Modification',
+                                        'route'    => 'unite-recherche/modifier',
+                                        'resource' => PrivilegeController::getResourceId('Application\Controller\UniteRecherche', 'index'),
+
+                                        'withtarget' => true,
+                                        'paramsInject' => [
+                                            'uniteRecherche',
+                                        ],
+                                    ],
+                                    'information' => [
+                                        'label'    => 'Détails',
+                                        'route'    => 'unite-recherche/information',
+                                        'resource' => PrivilegeController::getResourceId('Application\Controller\UniteRecherche', 'index'),
+
+                                        'withtarget' => true,
+                                        'paramsInject' => [
+                                            'uniteRecherche',
+                                        ],
+                                    ],
+                                ],
                             ],
                         ],
                     ],

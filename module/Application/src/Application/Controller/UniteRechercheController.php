@@ -2,6 +2,8 @@
 
 namespace Application\Controller;
 
+use Application\Entity\Db\Individu;
+use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Structure;
 use Application\Entity\Db\StructureConcreteInterface;
@@ -12,6 +14,7 @@ use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
+use UnicaenApp\Exception\RuntimeException;
 use Zend\View\Model\ViewModel;
 
 class UniteRechercheController extends AbstractController
@@ -83,6 +86,49 @@ class UniteRechercheController extends AbstractController
             'effectifs'                      => $effectifs,
             'rattachements'                  => $rattachements,
             'domaines'                       => $domaines,
+        ]);
+    }
+
+    public function informationAction()
+    {
+        $id = $this->params()->fromRoute('uniteRecherche');
+        $unite = $this->getUniteRechercheService()->getRepository()->findByStructureId($id);
+        if ($unite === null) {
+            throw new RuntimeException("Aucune unité de recherche ne possède l'identifiant renseigné.");
+        }
+
+        $roleListings = [];
+        $individuListings = [];
+        $roles = $this->getRoleService()->getRolesByStructure($unite->getStructure());
+        $individus = $this->getRoleService()->getIndividuByStructure($unite->getStructure());
+        $individuRoles = $this->getRoleService()->getIndividuRoleByStructure($unite->getStructure());
+
+        /** @var Role $role */
+        foreach ($roles as $role) {
+            $roleListings [$role->getLibelle()] = 0;
+        }
+
+        /** @var Individu $individu */
+        foreach ($individus as $individu) {
+            $denomination = $individu->getNomComplet(false, false, false, true, false);
+            $individuListings[$denomination] = [];
+        }
+
+        /** @var IndividuRole $individuRole */
+        foreach ($individuRoles as $individuRole) {
+            $denomination = $individuRole->getIndividu()->getNomComplet(false, false, false, true, false);
+            $role = $individuRole->getRole()->getLibelle();
+            $individuListings[$denomination][] = $role;
+            $roleListings[$role]++;
+        }
+
+        $etablissementsRattachements = $this->getUniteRechercheService()->findEtablissementRattachement($unite);
+
+        return new ViewModel([
+            'unite' => $unite,
+            'roleListing' => $roleListings,
+            'individuListing' => $individuListings,
+            'etablissementsRattachements' => $etablissementsRattachements,
         ]);
     }
 
