@@ -4,11 +4,11 @@ namespace Indicateur\Controller;
 
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\These;
-use Application\Entity\Db\TypeValidation;
 use Application\Service\AnomalieServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
+use Indicateur\Service\IndicateurServiceAwareTrait;
 use UnicaenApp\View\Model\CsvModel;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
@@ -18,6 +18,7 @@ class IndicateurController extends AbstractActionController {
     use TheseServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use AnomalieServiceAwareTrait;
+    use IndicateurServiceAwareTrait;
 
     /**
      * @return array|ViewModel
@@ -25,40 +26,55 @@ class IndicateurController extends AbstractActionController {
      */
     public function indexAction()
     {
-        $acteursSansMail = $this->getIndividuService()->getActeurSansMail();
-        $doctorantsSansMail = $this->getIndividuService()->getDoctorantSansMail();
-        $theses = $this->getTheseService()->getTheseEnCoursPostSoutenance();
-        $thesesAnciennes = $this->getTheseService()->getThesesAnciennes(6);
-        $thesesASoutenir = $this->getTheseService()->getTheseASoutenir();
-        $pasPDC = $this->getTheseService()->getTheseSansCouverture(2);
-        $pasDepot = $this->getTheseService()->getTheseSansDepot(1);
+//        $acteursSansMail = $this->getIndividuService()->getActeurSansMail();
+//        $doctorantsSansMail = $this->getIndividuService()->getDoctorantSansMail();
+//        $theses = $this->getTheseService()->getTheseEnCoursPostSoutenance();
+//        $thesesAnciennes = $this->getTheseService()->getThesesAnciennes(6);
+//        $thesesASoutenir = $this->getTheseService()->getTheseASoutenir();
+//        $pasPDC = $this->getTheseService()->getTheseSansCouverture(2);
+//        $pasDepot = $this->getTheseService()->getTheseSansDepot(1);
+//
+//        $anomalies = $this->getAnomalieService()->getAnomalies();
+//
+//
+//        $etablissements = [];
+//        $etablissements[] = $this->getEtablissementService()->getRepository()->find(2);
+//        $etablissements[] = $this->getEtablissementService()->getRepository()->find(3);
+//        $etablissements[] = $this->getEtablissementService()->getRepository()->find(4);
+//        $etablissements[] = $this->getEtablissementService()->getRepository()->find(5);
+//
+//        $effectifs = [];
+//        $effectifs["COMUE"] = $this->getTheseService()->getEffectifs();
+//        foreach($etablissements as $etablissement) {
+//            $result = $this->getTheseService()->getEffectifs($etablissement);
+//            $effectifs[$etablissement->getStructure()->getCode()] = $result;
+//        }
 
-        $anomalies = $this->getAnomalieService()->getAnomalies();
+        $indicateurs = $this->getIndicateurService()->findAll();
+        $result_ind0 = $this->getIndicateurService()->fetch(1);
+        $result_ind1 = $this->getIndicateurService()->fetch(2);
+        $result_ind2 = $this->getIndicateurService()->fetch(3);
+        $result_ind3 = $this->getIndicateurService()->fetch(4);
+        $result_ind4 = $this->getIndicateurService()->fetch(5);
 
-
-        $etablissements = [];
-        $etablissements[] = $this->getEtablissementService()->getRepository()->find(2);
-        $etablissements[] = $this->getEtablissementService()->getRepository()->find(3);
-        $etablissements[] = $this->getEtablissementService()->getRepository()->find(4);
-        $etablissements[] = $this->getEtablissementService()->getRepository()->find(5);
-
-        $effectifs = [];
-        $effectifs["COMUE"] = $this->getTheseService()->getEffectifs();
-        foreach($etablissements as $etablissement) {
-            $result = $this->getTheseService()->getEffectifs($etablissement);
-            $effectifs[$etablissement->getStructure()->getCode()] = $result;
-        }
 
         return new ViewModel([
-                "effectifs" => $effectifs,
-                "theses" => $theses,
-                "thesesASoutenir" => $thesesASoutenir,
-                "anciennes" => $thesesAnciennes,
-                "acteursSansMail" => $acteursSansMail,
-                "doctorantsSansMail" => $doctorantsSansMail,
-                "anomalies" => $anomalies,
-                "pasPDC" => $pasPDC,
-                "pasDepot" => $pasDepot,
+                'indicateurs' => $indicateurs,
+                'result_ind0' => $result_ind0,
+                'result_ind1' => $result_ind1,
+                'result_ind2' => $result_ind2,
+                'result_ind3' => $result_ind3,
+                'result_ind4' => $result_ind4,
+
+
+//                "effectifs" => $effectifs,
+
+//                "thesesASoutenir" => $thesesASoutenir,
+//                "acteursSansMail" => $acteursSansMail,
+//                "doctorantsSansMail" => $doctorantsSansMail,
+//                "anomalies" => $anomalies,
+//                "pasPDC" => $pasPDC,
+//                "pasDepot" => $pasDepot,
             ]
         );
     }

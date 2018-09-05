@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="Indicateur\Model\Indicateur" table="INDICATEUR">
+        <id name="id" type="integer" column="ID"/>
+
+        <field name="libelle"                   type="string"   column="LIBELLE"                    length="128"    nullable="false"/>
+        <field name="description"               type="string"   column="DESCRIPTION"                length="1024"   nullable="true"/>
+        <field name="requete"                   type="string"   column="REQUETE"                    length="1024"   nullable="true"/>
+        <field name="actif"                     type="integer"  column="ACTIF"                                      nullable="false"/>
+        <field name="displayAs"                 type="string"   column="DISPLAY_AS"                 length="128"    nullable="true"/>
+        <field name="class"                     type="string"   column="CLASS"                      length="128"    nullable="true"/>
+
+    </entity>
+</doctrine-mapping>

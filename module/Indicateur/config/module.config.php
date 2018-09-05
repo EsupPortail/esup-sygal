@@ -1,8 +1,15 @@
 <?php
 
 use Application\Provider\Privilege\IndicateurPrivileges;
+use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
+use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
+use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Indicateur\Controller\Factory\IndicateurControllerFactory;
 use Indicateur\Controller\IndicateurController;
+use Indicateur\Service\Factory\IndicateurServiceFactory;
+use Indicateur\Service\IndicateurService;
+use Indicateur\View\Helper\ResumeIndicateurIndividuHelper;
+use Indicateur\View\Helper\ResumeIndicateurTheseHelper;
 use Zend\Mvc\Router\Http\Segment;
 
 return array(
@@ -44,7 +51,28 @@ return array(
             ],
         ],
     ],
-    'doctrine'     => [],
+    'doctrine'     => [
+        'driver'     => [
+            'orm_default'        => [
+                'class'   => MappingDriverChain::class,
+                'drivers' => [
+                    'Indicateur\Model' => 'orm_default_xml_driver',
+                ],
+            ],
+            'orm_default_xml_driver' => [
+                'class' => XmlDriver::class,
+                'cache' => 'array',
+                'paths' => [
+                    __DIR__ . '/../src/Indicateur/Model/Mapping',
+                ],
+            ],
+        ],
+        'connection'    => [
+            'orm_default' => [
+                'driver_class' => OCI8::class,
+            ],
+        ],
+    ],
 
     'navigation'      => [
         'default' => [
@@ -237,12 +265,20 @@ return array(
         ],
     ],
     'service_manager' => [
-        'factories' => [],
+        'factories' => [
+            IndicateurService::class => IndicateurServiceFactory::class,
+        ],
 
     ],
     'controllers' => [
         'factories' => [
             IndicateurController::class => IndicateurControllerFactory::class,
+        ],
+    ],
+    'view_helpers' => [
+        'invokables' => [
+            'resumeIndicateurThese' => ResumeIndicateurTheseHelper::class,
+            'resumeIndicateurIndividu' => ResumeIndicateurIndividuHelper::class,
         ],
     ],
     'view_manager' => [
