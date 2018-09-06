@@ -4,6 +4,9 @@ namespace Indicateur\Model;
 
 class Indicateur {
 
+    const THESE = 'THESE';
+    const INDIVIDU = 'INDIVIDU';
+
     /** @var int */
     private $id;
     /** @var string */

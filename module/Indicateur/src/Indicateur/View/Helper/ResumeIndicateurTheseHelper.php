@@ -14,6 +14,8 @@ class ResumeIndicateurTheseHelper extends AbstractHelper
      */
     public function render($indicateur, $data, $route = null, $limite = 5)
     {
+        $url = $this->getView()->url('indicateur/view', ['indicateur' => $indicateur->getId()], [], true);
+
         $html  = '';
         $html .= '<div class="col-md-4">';
         $html .= '<div class="panel panel-'.$indicateur->getClass().'">';
@@ -45,7 +47,7 @@ class ResumeIndicateurTheseHelper extends AbstractHelper
                     $html .= '</tbody>';
                 $html .= '</table>';
 
-                $html .= '<a href="" class="btn btn-primary"> <span class="glyphicon glyphicon-eye-open"></span> Visualiser les données </a>';
+                $html .= '<a href="'.$url.'" class="btn btn-primary"> <span class="glyphicon glyphicon-eye-open"></span> Visualiser les données </a>';
 
             $html .= '</div>';
 

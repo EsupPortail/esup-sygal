@@ -1,0 +1,35 @@
+<?php
+
+use Application\Provider\Privilege\IndicateurPrivileges;use Indicateur\Model\Indicateur;
+
+/**
+ * @var Indicateur $indicateur
+ * @var array $data
+ */
+
+?>
+
+<?php $canExport = IndicateurPrivileges::getResourceId(IndicateurPrivileges::INDICATEUR_EXPORTATION); ?>
+
+<h1 class="page-header">
+    <?php echo $indicateur->getLibelle(); ?>
+    <span class="badge">
+        <?php echo count($data); ?>
+    </span>
+</h1>
+
+<?php if($canExport): ?>
+    <a href="<?php echo $this->url('indicateur/export', ['indicateur' => $indicateur->getId()], [] , true);?>" class="btn btn-primary">
+        <span class="glyphicon glyphicon-export"></span>
+        Export les données au format CSV
+    </a>
+<?php endif; ?>
+
+<?php if ($indicateur->getDisplayAs() === Indicateur::THESE): ?>
+    <?php echo $this->completIndicateurThese()->render($indicateur, $data); ?>
+<?php endif; ?>
+
+<?php if ($indicateur->getDisplayAs() === Indicateur::INDIVIDU): ?>
+    <?php echo $this->completIndicateurIndividu()->render($indicateur, $data); ?>
+<?php endif; ?>
+

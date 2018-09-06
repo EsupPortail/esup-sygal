@@ -8,6 +8,8 @@ use Application\Service\AnomalieServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
+use DateTime;
+use Indicateur\Model\Indicateur;
 use Indicateur\Service\IndicateurServiceAwareTrait;
 use UnicaenApp\View\Model\CsvModel;
 use Zend\Mvc\Controller\AbstractActionController;
@@ -26,36 +28,14 @@ class IndicateurController extends AbstractActionController {
      */
     public function indexAction()
     {
-//        $acteursSansMail = $this->getIndividuService()->getActeurSansMail();
-//        $doctorantsSansMail = $this->getIndividuService()->getDoctorantSansMail();
-//        $theses = $this->getTheseService()->getTheseEnCoursPostSoutenance();
-//        $thesesAnciennes = $this->getTheseService()->getThesesAnciennes(6);
-//        $thesesASoutenir = $this->getTheseService()->getTheseASoutenir();
-//        $pasPDC = $this->getTheseService()->getTheseSansCouverture(2);
-//        $pasDepot = $this->getTheseService()->getTheseSansDepot(1);
-//
-//        $anomalies = $this->getAnomalieService()->getAnomalies();
-//
-//
-//        $etablissements = [];
-//        $etablissements[] = $this->getEtablissementService()->getRepository()->find(2);
-//        $etablissements[] = $this->getEtablissementService()->getRepository()->find(3);
-//        $etablissements[] = $this->getEtablissementService()->getRepository()->find(4);
-//        $etablissements[] = $this->getEtablissementService()->getRepository()->find(5);
-//
-//        $effectifs = [];
-//        $effectifs["COMUE"] = $this->getTheseService()->getEffectifs();
-//        foreach($etablissements as $etablissement) {
-//            $result = $this->getTheseService()->getEffectifs($etablissement);
-//            $effectifs[$etablissement->getStructure()->getCode()] = $result;
-//        }
-
         $indicateurs = $this->getIndicateurService()->findAll();
         $result_ind0 = $this->getIndicateurService()->fetch(1);
         $result_ind1 = $this->getIndicateurService()->fetch(2);
         $result_ind2 = $this->getIndicateurService()->fetch(3);
         $result_ind3 = $this->getIndicateurService()->fetch(4);
         $result_ind4 = $this->getIndicateurService()->fetch(5);
+        $result_ind5 = $this->getIndicateurService()->fetch(6);
+        $result_ind6 = $this->getIndicateurService()->fetch(7);
 
 
         return new ViewModel([
@@ -65,112 +45,75 @@ class IndicateurController extends AbstractActionController {
                 'result_ind2' => $result_ind2,
                 'result_ind3' => $result_ind3,
                 'result_ind4' => $result_ind4,
+                'result_ind5' => $result_ind5,
+                'result_ind6' => $result_ind6,
 
-
-//                "effectifs" => $effectifs,
-
-//                "thesesASoutenir" => $thesesASoutenir,
-//                "acteursSansMail" => $acteursSansMail,
-//                "doctorantsSansMail" => $doctorantsSansMail,
-//                "anomalies" => $anomalies,
-//                "pasPDC" => $pasPDC,
-//                "pasDepot" => $pasDepot,
             ]
         );
     }
 
-    /**
-     * faire remonter les thèses ayant en cours ayant une date de soutenance dépassée
-     * @return ViewModel
-     */
-    public function thesesASoutenirAction()
+    public function viewAction()
     {
-        $theses = $this->getTheseService()->getTheseASoutenir();
+        $idIndicateur = $this->params()->fromRoute('indicateur');
+        $indicateur = $this->getIndicateurService()->find($idIndicateur);
+        $data = $this->getIndicateurService()->fetch($idIndicateur);
+
         return new ViewModel([
-                'theses' => $theses,
-            ]
-        );
+            'indicateur' => $indicateur,
+            'data' => $data,
+        ]);
     }
 
-    public function exportThesesASoutenirAction()
+    public function exportAction()
     {
-        $data = $this->getTheseService()->getTheseASoutenir();
-        $headers = [
-            'Identitfiant'                    => function(These $these) {return $these->getId();},
-            'SourceCode'                      => function(These $these) {return $these->getSourceCode();},
-            'Titre'                           => function(These $these) {return $these->getTitre();},
-            'Doctorant'                       => function(These $these) {return $these->getDoctorant()->getIndividu()->getNomComplet();},
-            'État'                            => function(These $these) {return $these->getEtatThese();},
-            'Date de soutenace'               => function(These $these) {return $these->getDateSoutenance()->format("d/m/Y");},
-            'Établissement'                   => function(These $these) {return ($these->getEtablissement())?$these->getEtablissement()->getStructure()->getCode():"";},
-            'École doctorale'                 => function(These $these) {return ($these->getEcoleDoctorale())?$these->getEcoleDoctorale()->getStructure()->getCode():"";},
-            'Unité de recherche'              => function(These $these) {return ($these->getUniteRecherche())?$these->getUniteRecherche()->getStructure()->getCode():"";},
+        $idIndicateur = $this->params()->fromRoute('indicateur');
+        $indicateur = $this->getIndicateurService()->find($idIndicateur);
+        $data = $this->getIndicateurService()->fetch($idIndicateur);
 
-        ];
+        $headers = [];
+        if ($indicateur->getDisplayAs() == Indicateur::THESE) {
+            $headers = [
+                'id'                    => 'ID',
+                'Source Code'           => 'SOURCE_CODE',
+                'Titre'                 => 'TITRE',
+                'Première inscription'  => 'DATE_PREM_INSC',
+                'Date de soutenance'    => 'DATE_SOUTENANCE',
+            ];
+        }
+        if ($indicateur->getDisplayAs() == Indicateur::INDIVIDU) {
+            $headers = [
+                'id'                    => 'ID',
+                'Source Code'           => 'SOURCE_CODE',
+                'Nom usuel'             => 'NOM_USUEL',
+                'Nom Patronymique'      => 'NOM_PATRONYMIQUE',
+                'Prénom 1'              => 'PRENOM1',
+                'Prénom 2'              => 'PRENOM2',
+                'Prénom 3'              => 'PRENOM3',
+                'Email'                 => 'EMAIL',
+            ];
+        }
+
 
         $records = [];
         foreach ($data as $entry) {
             $record = [];
             foreach($headers as $key => $fct) {
-                $record[] = $fct($entry);
+                $record[] = $entry[$fct];
             }
             $records[] = $record;
         }
+
+        $filename = (new DateTime('now'))->format("Ymd-His").'_'.str_replace(" ","-",$indicateur->getLibelle()).'.csv';
 
         $CSV = new CsvModel();
         $CSV->setDelimiter(';');
         $CSV->setEnclosure('"');
         $CSV->setHeader(array_keys($headers));
         $CSV->setData($records);
-        $CSV->setFilename('export_soutenanceDepassee.csv');
+        $CSV->setFilename($filename);
 
         return $CSV;
     }
-
-    public function thesesSansPdcAction()
-    {
-        $theses = $this->getTheseService()->getTheseSansDepot(2);
-        return new ViewModel([
-                'theses' => $theses,
-            ]
-        );
-    }
-
-    public function exportThesesSansPdcAction()
-    {
-        $data = $this->getTheseService()->getTheseASoutenir();
-        $headers = [
-            'Identitfiant'                    => function(These $these) {return $these->getId();},
-            'SourceCode'                      => function(These $these) {return $these->getSourceCode();},
-            'Titre'                           => function(These $these) {return $these->getTitre();},
-            'Doctorant'                       => function(These $these) {return $these->getDoctorant()->getIndividu()->getNomComplet();},
-            'État'                            => function(These $these) {return $these->getEtatThese();},
-            'Date de soutenace'               => function(These $these) {return $these->getDateSoutenance()->format("d/m/Y");},
-            'Établissement'                   => function(These $these) {return ($these->getEtablissement())?$these->getEtablissement()->getStructure()->getCode():"";},
-            'École doctorale'                 => function(These $these) {return ($these->getEcoleDoctorale())?$these->getEcoleDoctorale()->getStructure()->getCode():"";},
-            'Unité de recherche'              => function(These $these) {return ($these->getUniteRecherche())?$these->getUniteRecherche()->getStructure()->getCode():"";},
-
-        ];
-
-        $records = [];
-        foreach ($data as $entry) {
-            $record = [];
-            foreach($headers as $key => $fct) {
-                $record[] = $fct($entry);
-            }
-            $records[] = $record;
-        }
-
-        $CSV = new CsvModel();
-        $CSV->setDelimiter(';');
-        $CSV->setEnclosure('"');
-        $CSV->setHeader(array_keys($headers));
-        $CSV->setData($records);
-        $CSV->setFilename('export_pasPDC.csv');
-
-        return $CSV;
-    }
-
 
     /**
      * faire remonter les thèses ayant en cours ayant une date de soutenance dépassée
