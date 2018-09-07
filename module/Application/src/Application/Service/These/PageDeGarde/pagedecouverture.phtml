@@ -54,8 +54,8 @@ $PATH = Structure::PATH;
     <br/>
 
     Préparé au sein de
-    l'<?php if ($informations->getEtablissement() !== null): ?>
-        <?php echo $informations->getEtablissement(); ?>
+    <?php if ($informations->getEtablissement() !== null): ?>
+        l'<?php echo $informations->getEtablissement(); ?>
     <?php else: ?>
         <span style='background-color:red;'> non renseigné </span>
     <?php endif; ?>
