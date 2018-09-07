@@ -53,8 +53,8 @@ $PATH = Structure::PATH;
     <?php endif; ?>
     <br/>
 
-    Préparé au sein de l'
-    <?php if ($informations->getEtablissement() !== null): ?>
+    Préparé au sein de
+    l'<?php if ($informations->getEtablissement() !== null): ?>
         <?php echo $informations->getSpecialite(); ?>
     <?php else: ?>
         <span style='background-color:red;'> non renseigné </span>
@@ -112,21 +112,21 @@ $PATH = Structure::PATH;
     <?php foreach ($informations->getRapporteurs() as $rapporteur) : ?>
         <tr>
             <td> <?php echo $rapporteur->getDenomination(); ?> </td>
-            <td> <?php echo $rapporteur->getQualite(); ?>,  <?php echo $rapporteur->getEtablissement(); ?></td>
+            <td> <?php echo trim($rapporteur->getQualite()); ?>,  <?php echo $rapporteur->getEtablissement(); ?></td>
             <td> <?php echo $rapporteur->getRole(); ?> </td>
         </tr>
     <?php endforeach; ?>
     <?php foreach ($informations->getMembres() as $membre) : ?>
         <tr>
             <td> <?php echo $membre->getDenomination(); ?> </td>
-            <td> <?php echo $membre->getQualite(); ?>,  <?php echo $membre->getEtablissement(); ?></td>
+            <td> <?php echo trim($membre->getQualite()); ?>,  <?php echo $membre->getEtablissement(); ?></td>
             <td> <?php echo $membre->getRole(); ?> </td>
         </tr>
     <?php endforeach; ?>
     <?php foreach ($informations->getDirecteurs() as $directeur) : ?>
         <tr>
             <td> <?php echo $directeur->getDenomination(); ?> </td>
-            <td> <?php echo $directeur->getQualite(); ?>,  <?php echo $directeur->getEtablissement(); ?></td>
+            <td> <?php echo trim($directeur->getQualite()); ?>,  <?php echo $directeur->getEtablissement(); ?></td>
             <td> <?php echo $directeur->getRole(); ?> </td>
         </tr>
     <?php endforeach; ?>
