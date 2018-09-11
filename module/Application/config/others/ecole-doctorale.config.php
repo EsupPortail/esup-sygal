@@ -7,10 +7,29 @@ use Application\Provider\Privilege\EcoleDoctoralePrivileges;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\View\Helper\EcoleDoctoraleHelper;
 use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 use Zend\Mvc\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [
+        'resource_providers' => [
+            'BjyAuthorize\Provider\Resource\Config' => [
+                'EcoleDoctorale' => [],
+            ],
+        ],
+        'rule_providers'     => [
+            PrivilegeRuleProvider::class => [
+                'allow' => [
+                    [
+                        'privileges' => [
+                            EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION,
+                        ],
+                        'resources'  => ['EcoleDoctorale'],
+                        'assertion'  => 'Assertion\\EcoleDoctorale',
+                    ],
+                ],
+            ],
+        ],
         'guards' => [
             PrivilegeController::class => [
                 [
@@ -27,6 +46,12 @@ return [
                         'ajouter',
                         'supprimer',
                         'restaurer',
+                    ],
+                    'privileges' => EcoleDoctoralePrivileges::ECOLE_DOCT_CREATION,
+                ],
+                [
+                    'controller' => 'Application\Controller\EcoleDoctorale',
+                    'action'     => [
                         'modifier',
                         'ajouter-individu',
                         'retirer-individu',
@@ -213,11 +238,11 @@ return [
             'EcoleDoctoraleForm' => EcoleDoctoraleFormFactory::class,
         ],
     ],
-    'hydrators' => array(
-        'factories' => array(
+    'hydrators' => [
+        'factories' => [
             'EcoleDoctoraleHydrator' => EcoleDoctoraleHydratorFactory::class,
-        )
-    ),
+        ]
+    ],
     'view_helpers' => [
         'invokables' => [
             'ed' => EcoleDoctoraleHelper::class,

@@ -3,6 +3,8 @@
 use Application\Controller\AdminController;
 use Application\Controller\Factory\PrivilegeControllerFactory;
 use Application\Controller\MailConfirmationController;
+use Application\Provider\Privilege\EcoleDoctoralePrivileges;
+use Application\Provider\Privilege\UniteRecherchePrivileges;
 use Application\Provider\Privilege\UtilisateurPrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Privilege\Privileges;
@@ -23,7 +25,11 @@ return [
                     'action'     => [
                         'index',
                     ],
-                    'privileges' => UtilisateurPrivileges::UTILISATEUR_ATTRIBUTION_ROLE,
+                    'privileges' => [
+                        UtilisateurPrivileges::UTILISATEUR_ATTRIBUTION_ROLE,
+                        EcoleDoctoralePrivileges::ECOLE_DOCT_CONSULTATION,
+                        UniteRecherchePrivileges::UNITE_RECH_CONSULTATION,
+                     ],
                 ],
                 [
                     'controller' => \Application\Controller\PrivilegeController::class,

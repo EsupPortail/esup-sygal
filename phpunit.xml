@@ -9,7 +9,7 @@
             <directory>./module/Retraitement/test</directory>
         </testsuite>
         <testsuite name="Rule">
-            <directory>./module/Application/test/ApplicationTest/Rule</directory>
+            <directory>./module/Application/tests/ApplicationUnitTest/Rule</directory>
         </testsuite>
         <testsuite name="Assertions">
             <directory>./module/Application/tests/ApplicationUnitTest/Assertion</directory>

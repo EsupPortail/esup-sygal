@@ -4,7 +4,6 @@ namespace Application\Assertion\These;
 
 use Application\Acl\WfEtapeResource;
 use Application\Assertion\Interfaces\PageAssertionInterface;
-use Application\Entity\Db\These;
 use Application\Service\AuthorizeServiceAwareTrait;
 use Application\Service\UserContextService;
 
@@ -21,14 +20,11 @@ class ThesePageAssertion implements PageAssertionInterface
     protected $these;
 
     /**
-     * @param These $these
-     * @return ThesePageAssertion
+     * @param array $context
      */
-    public function setThese($these)
+    public function setContext(array $context)
     {
-        $this->these = $these;
-
-        return $this;
+        $this->these = isset($context['these']) ? $context['these'] : null;
     }
 
     /**

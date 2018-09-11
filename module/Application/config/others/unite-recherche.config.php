@@ -8,10 +8,29 @@ use Application\Service\DomaineScientifiqueService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use UnicaenAuth\Guard\PrivilegeController;
 use Application\View\Helper\UniteRechercheHelper;
+use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 use Zend\Mvc\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [
+        'resource_providers' => [
+            'BjyAuthorize\Provider\Resource\Config' => [
+                'UniteRecherche' => [],
+            ],
+        ],
+        'rule_providers'     => [
+            PrivilegeRuleProvider::class => [
+                'allow' => [
+                    [
+                        'privileges' => [
+                            UniteRecherchePrivileges::UNITE_RECH_MODIFICATION,
+                        ],
+                        'resources'  => ['UniteRecherche'],
+                        'assertion'  => 'Assertion\\UniteRecherche',
+                    ],
+                ],
+            ],
+        ],
         'guards' => [
             PrivilegeController::class => [
                 [
@@ -28,6 +47,12 @@ return [
                         'ajouter',
                         'supprimer',
                         'restaurer',
+                    ],
+                    'privileges' => UniteRecherchePrivileges::UNITE_RECH_CREATION,
+                ],
+                [
+                    'controller' => 'Application\Controller\UniteRecherche',
+                    'action'     => [
                         'modifier',
                         'ajouter-individu',
                         'retirer-individu',

@@ -977,10 +977,6 @@ return [
             'TheseRechercheService'        => TheseRechercheServiceFactory::class,
             'TheseObserverService'         => TheseObserverServiceFactory::class,
         ],
-        'abstract_factories' => [
-            AssertionAbstractFactory::class,
-            UrlServiceFactory::class, // construit: 'urlTheseService'
-        ],
     ],
     'controllers'     => [
         'invokables' => [
