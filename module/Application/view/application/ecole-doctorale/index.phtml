@@ -6,12 +6,12 @@ use Application\View\Renderer\PhpRenderer;
 
 /**
  * @see \Application\Controller\EcoleDoctoraleController::indexAction()
- * @var PhpRenderer $this
+ * @var PhpRenderer      $this
  * @var EcoleDoctorale[] $ecoles
  */
 
 $canModifier = $this->isAllowed(EcoleDoctoralePrivileges::getResourceId(EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION));
-
+$canAjouter = $this->isAllowed(EcoleDoctoralePrivileges::getResourceId(EcoleDoctoralePrivileges::ECOLE_DOCT_CREATION));
 ?>
 
 
@@ -24,13 +24,13 @@ $canModifier = $this->isAllowed(EcoleDoctoralePrivileges::getResourceId(EcoleDoc
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
 
-<?php if ($canModifier): ?>
+<?php if ($canAjouter): ?>
 
     <a href="<?php echo $this->url('ecole-doctorale/ajouter', [], [], true) ?>"
        class="btn btn-primary"
-       title="<?php echo $this->translate("Créer une nouvelle école doctorale");?>">
+       title="<?php echo $this->translate("Créer une nouvelle école doctorale"); ?>">
         <span class="glyphicon glyphicon-plus"></span>
-        <?php echo $this->translate("Ajouter une nouvelle école doctorale");?>
+        <?php echo $this->translate("Ajouter une nouvelle école doctorale"); ?>
     </a>
 <?php endif ?>
 
@@ -38,57 +38,57 @@ $canModifier = $this->isAllowed(EcoleDoctoralePrivileges::getResourceId(EcoleDoc
     <table class="table table-condensed">
         <thead>
         <tr>
-            <th> Libellé </th>
-            <th> Source </th>
-            <th> Code </th>
-            <th> Sigle </th>
-            <th> Actions </th>
+            <th> Libellé</th>
+            <th> Source</th>
+            <th> Code</th>
+            <th> Sigle</th>
+            <th> Actions</th>
         </tr>
         </thead>
         <tbody>
-        <?php foreach($ecoles as $ecole): ?>
+        <?php foreach ($ecoles as $ecole): ?>
 
-        <?php
-        $historisee = (!$ecole->estNonHistorise());
-        $hasSousStructure = !($ecole->getStructure()->getStructuresSubstituees()->isEmpty());
-        ?>
+            <?php
+            $historisee = (!$ecole->estNonHistorise());
+            $hasSousStructure = !($ecole->getStructure()->getStructuresSubstituees()->isEmpty());
+            ?>
 
-        <tr>
-            <td>
-                <a href="<?php echo $this->url('ecole-doctorale/information', ['ecoleDoctorale' => $ecole->getStructure()->getId()], [], true); ?>">
-                            <?php echo $ecole->getLibelle(); ?>
-                </a>
-            </td>
-            <td>
-                <?php echo explode("::",$ecole->getSource()->getCode())[0]; ?>
-            </td>
-            <td>
-                <?php echo $ecole->getCode(); ?>
-            </td>
-            <td> <?php echo $ecole->getSigle(); ?> </td>
-            <td>
-                <?php if ($canModifier && !$historisee) : ?>
-                    <a href="<?php echo $this->url('ecole-doctorale/supprimer', ["ecoleDoctorale" => $ecole->getStructure()->getId()], [], true); ?>"
-                       title="Historiser l'établissement">
-                        <span class="glyphicon glyphicon-trash"></span>
+            <tr>
+                <td>
+                    <a href="<?php echo $this->url('ecole-doctorale/information', ['ecoleDoctorale' => $ecole->getStructure()->getId()], [], true); ?>">
+                        <?php echo $ecole->getLibelle(); ?>
                     </a>
-                <?php endif; ?>
+                </td>
+                <td>
+                    <?php echo explode("::", $ecole->getSource()->getCode())[0]; ?>
+                </td>
+                <td>
+                    <?php echo $ecole->getCode(); ?>
+                </td>
+                <td> <?php echo $ecole->getSigle(); ?> </td>
+                <td>
+                    <?php if ($canAjouter && !$historisee) : ?>
+                        <a href="<?php echo $this->url('ecole-doctorale/supprimer', ["ecoleDoctorale" => $ecole->getStructure()->getId()], [], true); ?>"
+                           title="Historiser l'établissement">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </a>
+                    <?php endif; ?>
 
-                <?php if ($canModifier && !$historisee && $hasSousStructure) : ?>
-                    <a href="<?php echo $this->url('substitution-modifier', ['cible' => $ecole->getStructure()->getId(), [], true]); ?>"
-                       title="Historiser l'établissement">
-                        <span class="glyphicon glyphicon-link" title="Éditer la substitution"></span>
-                    </a>
-                <?php endif; ?>
+                    <?php if ($canModifier && !$historisee && $hasSousStructure) : ?>
+                        <a href="<?php echo $this->url('substitution-modifier', ['cible' => $ecole->getStructure()->getId(), [], true]); ?>"
+                           title="Historiser l'établissement">
+                            <span class="glyphicon glyphicon-link" title="Éditer la substitution"></span>
+                        </a>
+                    <?php endif; ?>
 
-                <?php if ($canModifier && $historisee) : ?>
-                    <a href="<?php echo $this->url('ecole-doctorale/restaurer', ["ecoleDoctorale" => $ecole->getStructure()->getId()], [], true); ?>"
-                       title="Restaurer l'établissement">
-                        Restaurer
-                    </a>
-                <?php endif; ?>
-            </td>
-        </tr>
+                    <?php if ($canAjouter && $historisee) : ?>
+                        <a href="<?php echo $this->url('ecole-doctorale/restaurer', ["ecoleDoctorale" => $ecole->getStructure()->getId()], [], true); ?>"
+                           title="Restaurer l'établissement">
+                            Restaurer
+                        </a>
+                    <?php endif; ?>
+                </td>
+            </tr>
 
         <?php endforeach; ?>
 

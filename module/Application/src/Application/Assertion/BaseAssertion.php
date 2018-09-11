@@ -96,10 +96,14 @@ abstract class BaseAssertion extends AbstractAssertion
             return false;
         }
 
+        $this->controllerAssertion->setContext([
+            'controller' => $controller,
+            'action' => $action,
+        ]);
         $this->initControllerAssertion();
 
         try {
-            return $this->controllerAssertion->assert($controller, $action, $privilege);
+            return $this->controllerAssertion->assert(/*$controller, $action, */$privilege);
         } catch (FailedAssertionException $e) {
             if ($e->getMessage()) {
                 $this->getServiceMessageCollector()->addMessage($e->getMessage(), __CLASS__);
@@ -109,14 +113,14 @@ abstract class BaseAssertion extends AbstractAssertion
     }
 
     /**
-     * @param ResourceInterface  $these
-     * @param string $privilege
+     * @param ResourceInterface $entity
+     * @param string            $privilege
      *
      * @return boolean
      */
-    protected function assertEntity(ResourceInterface $these, $privilege = null)
+    protected function assertEntity(ResourceInterface $entity, $privilege = null)
     {
-        if (! parent::assertEntity($these, $privilege)) {
+        if (! parent::assertEntity($entity, $privilege)) {
             return false;
         }
 
@@ -128,7 +132,7 @@ abstract class BaseAssertion extends AbstractAssertion
             return false;
         }
 
-        $this->initEntityAssertion();
+        $this->initEntityAssertion($entity);
 
         try {
             return $this->entityAssertion->assert($privilege);
@@ -151,9 +155,10 @@ abstract class BaseAssertion extends AbstractAssertion
     abstract protected function initPageAssertion();
 
     /**
+     * @param ResourceInterface $entity
      * @return static
      */
-    abstract protected function initEntityAssertion();
+    abstract protected function initEntityAssertion(ResourceInterface $entity);
 
     /**
      * @param ControllerAssertionInterface $controllerAssertion

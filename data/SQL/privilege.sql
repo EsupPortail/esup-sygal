@@ -8,42 +8,33 @@ insert into CATEGORIE_PRIVILEGE(ID, CODE, LIBELLE, ORDRE) values (CATEGORIE_PRIV
 -- Nouveau privilège.
 --
 insert into PRIVILEGE(ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE)
-  select privilege_id_seq.nextval, cp.id, 'saisie-attestations', 'Modification des attestations', 3030
-  from CATEGORIE_PRIVILEGE cp where cp.CODE = 'these';
-commit;
-
-
---
--- Ajout d'un nouveau  privilège à des rôles.
---
-insert into ROLE_PRIVILEGE(ROLE_ID, PRIVILEGE_ID)
-  select r.id, p.id
-    from USER_ROLE r, PRIVILEGE p
-  where r.ROLE_ID in ('Bureau des doctorats', 'Bibliothèque universitaire', 'Administrateur', 'Doctorant', 'Administrateur technique')
-    and p.CODE in ('saisie-attestations')
-;
-
+  select privilege_id_seq.nextval, cp.id, 'creation', 'Création d''école doctorale', 105
+  from CATEGORIE_PRIVILEGE cp where cp.CODE = 'ecole-doctorale';
 
 --
 -- Ajout de ROLE_PRIVILEGE_MODELE.
 --
-
 INSERT INTO ROLE_PRIVILEGE_MODELE (ROLE_CODE, PRIVILEGE_ID)
-  with data(role, priv) as (
-    select 'ADMIN',       'refresh-these' from dual union
-    select 'ADMIN_TECH',  'refresh-these' from dual union
-    select 'BU',          'refresh-these' from dual union
-    select 'BDD',         'refresh-these' from dual
+  with data(role, categ, priv) as (
+    select 'ADMIN',       'ecole-doctorale',  'creation' from dual union
+    select 'ADMIN_TECH',  'ecole-doctorale',  'creation' from dual union
+    select 'BU',          'ecole-doctorale',  'creation' from dual union
+    select 'BDD',         'ecole-doctorale',  'creation' from dual union
+
+    select 'ADMIN',       'unite-recherche',  'creation' from dual union
+    select 'ADMIN_TECH',  'unite-recherche',  'creation' from dual union
+    select 'BU',          'unite-recherche',  'creation' from dual union
+    select 'BDD',         'unite-recherche',  'creation' from dual
   )
     select role, p.id
     from data
-    join PRIVILEGE p on p.code = data.priv
+      join CATEGORIE_PRIVILEGE cp on cp.CODE = data.categ
+      join PRIVILEGE p on p.CATEGORIE_ID = cp.id and p.code = data.priv
 ;
 
 --
 -- Application des modèles (ceux pas déjà appliqués).
 --
-
 insert into ROLE_PRIVILEGE (ROLE_ID, PRIVILEGE_ID)
   SELECT r.id, p.ID
   from ROLE_PRIVILEGE_MODELE rpm

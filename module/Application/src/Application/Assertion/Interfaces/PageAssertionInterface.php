@@ -7,6 +7,11 @@ use Application\Service\AuthorizeServiceAwareInterface;
 interface PageAssertionInterface extends AuthorizeServiceAwareInterface
 {
     /**
+     * @param array $context
+     */
+    public function setContext(array $context);
+
+    /**
      * @param array $page
      * @return bool
      */

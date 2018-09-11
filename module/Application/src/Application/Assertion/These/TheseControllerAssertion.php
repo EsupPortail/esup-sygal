@@ -2,15 +2,13 @@
 
 namespace Application\Assertion\These;
 
-use Application\Assertion\Interfaces\ControllerAssertionInterface;
-use Application\Entity\Db\Acteur;
+use Application\Assertion\ControllerAssertion;
 use Application\Entity\Db\Doctorant;
-use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Service\UserContextServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 
-class TheseControllerAssertion implements ControllerAssertionInterface
+class TheseControllerAssertion extends ControllerAssertion
 {
     use UserContextServiceAwareTrait;
 
@@ -28,66 +26,46 @@ class TheseControllerAssertion implements ControllerAssertionInterface
     private $these;
 
     /**
-     * @param Doctorant $doctorant
-     * @return TheseControllerAssertion
+     * @param array $context
      */
-    public function setDoctorant($doctorant)
+    public function setContext(array $context)
     {
-        $this->doctorant = $doctorant;
+        parent::setContext($context);
 
-        return $this;
+        $this->these     = isset($context['these']) ?     $context['these'] :     null;
+        $this->doctorant = isset($context['doctorant']) ? $context['doctorant'] : null;
     }
 
     /**
-     * @param These $these
-     * @return TheseControllerAssertion
-     */
-    public function setThese($these)
-    {
-        $this->these = $these;
-
-        return $this;
-    }
-
-    /**
-     * @param string $controller
-     * @param null   $action
-     * @param null   $privilege
+     * @param string $privilege
      * @return bool
      */
-    public function assert($controller, $action = null, $privilege = null)
+    public function assert($privilege = null)
     {
         switch (true) {
             case $this->selectedRoleIsDoctorant():
-                return $this->assertAsDoctorant($controller, $action);
+                return $this->assertAsDoctorant();
         }
 
         if ($this->these === null) {
             return false;
         }
 
-        if (! $this->isStructureDuRoleRespectee()) {
+        if (! $this->userContextService->isStructureDuRoleRespecteeForThese($this->these)) {
             return false;
         }
-
-//        switch (true) {
-//            case $this->actionIs($controller, $action, self::THESE_CONTROLLER, 'valider-rdv-bu'):
-//                // aucune validation ne doit exister
-//                return $this->these && ! $this->these->getValidation(TypeValidation::CODE_RDV_BU);
-//                break;
-//        }
 
         return true;
     }
 
-    protected function assertAsDoctorant($controller, $action = null)
+    protected function assertAsDoctorant()
     {
         if ($this->getIdentityDoctorant() === null) {
             throw new RuntimeException("Anomalie: le role doctorant est sélectionné mais aucune donnée d'identité doctorant n'est disponible");
         }
 
         switch (true) {
-            case $this->actionIs($controller, $action, self::DOCTORANT_CONTROLLER, 'modifier-persopass'):
+            case $this->actionIs(self::DOCTORANT_CONTROLLER, 'modifier-persopass'):
                 return $this->doctorant && $this->doctorant->getId() === $this->getIdentityDoctorant()->getId();
                 break;
         }
@@ -96,80 +74,14 @@ class TheseControllerAssertion implements ControllerAssertionInterface
     }
 
     /**
-     * TODO : éviter cette duplication de code avec TheseEntityAssertion::isStructureDuRoleRespectee()
-     * @see TheseEntityAssertion::isStructureDuRoleRespectee()
-     *
+     * @param string $expectedController
+     * @param string $expectedAction
      * @return bool
      */
-    protected function isStructureDuRoleRespectee()
+    private function actionIs($expectedController, $expectedAction)
     {
-        $role = $this->userContextService->getSelectedIdentityRole();
-
-        if ($role->isTheseDependant()) {
-            if ($role->isDoctorant()) {
-                return $this->isUtilisateurEstAuteurDeLaThese();
-            }
-            elseif ($role->isDirecteurThese()) {
-                if ($individu = $this->userContextService->getIdentityIndividu()) {
-                    return $this->these->hasActeurWithRole($individu, Role::CODE_DIRECTEUR_THESE);
-                }
-                return false;
-            }
-        }
-
-        elseif ($role->isStructureDependant()) {
-            if ($role->isEtablissementDependant()) {
-                // On ne voit que les thèses de son établissement.
-                return $this->these->getEtablissement()->getStructure() === $role->getStructure();
-            }
-            elseif ($role->isEcoleDoctoraleDependant()) {
-                // On ne voit que les thèses concernant son ED.
-                return $this->these->getEcoleDoctorale()->getStructure() === $role->getStructure();
-            }
-            elseif ($role->isUniteRechercheDependant()) {
-                // On ne voit que les thèses concernant son UR.
-                return $this->these->getUniteRecherche()->getStructure() === $role->getStructure();
-            }
-        }
-
-        return true;
+        return $this->controller === $expectedController && $this->action === $expectedAction;
     }
-
-    /**
-     * TODO : éviter cette duplication de code avec TheseEntityAssertion::isUtilisateurEstAuteurDeLaThese()
-     * @see TheseEntityAssertion::isUtilisateurEstAuteurDeLaThese()
-     *
-     * @return bool
-     */
-    protected function isUtilisateurEstAuteurDeLaThese()
-    {
-        return $this->these && $this->these->getDoctorant()->getId() === $this->getIdentityDoctorant()->getId();
-    }
-
-    private function actionIs($controller, $action, $expectedController, $expectedAction) {
-        return $controller === $expectedController && $action === $expectedAction;
-    }
-
-    private function actionBegins($controller, $action, $expectedController, $expectedAction) {
-        return $controller === $expectedController && substr($action, 0, strlen($expectedAction)) === $expectedAction;
-    }
-
-
-
-//    /**
-//     * @var UserContextService
-//     */
-//    protected $userContextService;
-//
-//    /**
-//     * @param UserContextService $service
-//     * @return $this
-//     */
-//    public function setUserContextService(UserContextService $service)
-//    {
-//        $this->userContextService = $service;
-//        return $this;
-//    }
 
     /**
      * @return bool
@@ -178,6 +90,7 @@ class TheseControllerAssertion implements ControllerAssertionInterface
     {
         return (bool) $this->userContextService->getSelectedRoleDoctorant();
     }
+
     /**
      * @var Doctorant
      */

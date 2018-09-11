@@ -7,11 +7,12 @@ use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenApp\Util;
 use UnicaenImport\Entity\Db\Interfaces\SourceAwareInterface;
 use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
+use Zend\Permissions\Acl\Resource\ResourceInterface;
 
 /**
  * EcoleDoctorale
  */
-class EcoleDoctorale implements StructureConcreteInterface, HistoriqueAwareInterface, SourceAwareInterface
+class EcoleDoctorale implements StructureConcreteInterface, HistoriqueAwareInterface, SourceAwareInterface, ResourceInterface
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
@@ -37,6 +38,16 @@ class EcoleDoctorale implements StructureConcreteInterface, HistoriqueAwareInter
     public function __construct()
     {
         $this->structure = new Structure();
+    }
+
+    /**
+     * Returns the string identifier of the Resource
+     *
+     * @return string
+     */
+    public function getResourceId()
+    {
+        return 'EcoleDoctorale';
     }
 
     /**
