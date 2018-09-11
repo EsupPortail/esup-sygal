@@ -26,10 +26,10 @@ $form->get('sourceCode')->setAttribute('readonly', !$editable);
 ?>
 
 <h1 class="page-header">
-    <?php if ($isUpdating): ?>
-    Modification de l'ED &laquo; <?php echo $ecole->getLibelle(); ?> &raquo;
+    <?php if ($isNew): ?>
+        Création d'une nouvelle ED
     <?php else: ?>
-    Création d'une nouvelle ED
+        Modification de l'ED &laquo; <?php echo $ecole->getLibelle(); ?> &raquo;
     <?php endif ?>
 </h1>
 

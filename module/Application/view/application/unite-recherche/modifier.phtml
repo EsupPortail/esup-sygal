@@ -23,7 +23,7 @@ use Application\View\Renderer\PhpRenderer;
 /** @var UniteRecherche $unite */
 $unite = $form->getObject();
 $idUniteRecherche = $unite->getStructure()->getId();
-$isUpdating = $unite->getId() !== null;
+$isNew = $unite->getId() === null;
 $estSubstituante = $unite->getStructure()->estStructureSubstituante();
 $fcg = $this->formControlGroup();
 $this->headTitle("Modification de l'UR " . $unite->getCode());
@@ -36,10 +36,10 @@ $form->get('sourceCode')->setAttribute('readonly', !$editable);
 
 <h1 class="page-header">
     Modification de l'UR &laquo; <?php echo $unite->getLibelle(); ?> &raquo;
-    <?php if ($isUpdating): ?>
-        Modification de l'UR &laquo; <?php echo $unite->getLibelle(); ?> &raquo;
-    <?php else: ?>
+    <?php if ($isNew): ?>
         Création d'une nouvelle UR
+    <?php else: ?>
+        Modification de l'UR &laquo; <?php echo $unite->getLibelle(); ?> &raquo;
     <?php endif ?>
 </h1>
 
