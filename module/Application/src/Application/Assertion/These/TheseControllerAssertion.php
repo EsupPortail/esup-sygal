@@ -70,7 +70,8 @@ class TheseControllerAssertion extends ControllerAssertion
                 break;
         }
 
-        return $this->these && $this->these->getDoctorant()->getId() === $this->getIdentityDoctorant()->getId();
+//        return $this->these && $this->these->getDoctorant()->getId() === $this->getIdentityDoctorant()->getId();
+        return $this->doctorant->getId() === $this->getIdentityDoctorant()->getId();
     }
 
     /**
