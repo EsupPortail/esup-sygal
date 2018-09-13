@@ -32,8 +32,12 @@ class TheseControllerAssertion extends ControllerAssertion
     {
         parent::setContext($context);
 
-        $this->these     = isset($context['these']) ?     $context['these'] :     null;
-        $this->doctorant = isset($context['doctorant']) ? $context['doctorant'] : null;
+        if (array_key_exists('these', $context)) {
+            $this->these = $context['these'];
+        }
+        if (array_key_exists('doctorant', $context)) {
+            $this->doctorant = $context['doctorant'];
+        }
     }
 
     /**
@@ -71,7 +75,6 @@ class TheseControllerAssertion extends ControllerAssertion
         }
 
         return $this->these && $this->these->getDoctorant()->getId() === $this->getIdentityDoctorant()->getId();
-//        return $this->doctorant->getId() === $this->getIdentityDoctorant()->getId();
     }
 
     /**

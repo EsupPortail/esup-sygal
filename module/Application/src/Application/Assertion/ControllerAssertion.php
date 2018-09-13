@@ -21,7 +21,11 @@ abstract class ControllerAssertion implements ControllerAssertionInterface
      */
     public function setContext(array $context)
     {
-        $this->controller = isset($context['controller']) ? $context['controller'] : null;
-        $this->action     = isset($context['action']) ? $context['action'] : null;
+        if (array_key_exists('controller', $context)) {
+            $this->controller = $context['controller'];
+        }
+        if (array_key_exists('action', $context)) {
+            $this->action = $context['action'];
+        }
     }
 }
