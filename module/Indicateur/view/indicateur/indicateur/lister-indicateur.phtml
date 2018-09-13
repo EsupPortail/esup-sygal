@@ -58,7 +58,11 @@ $canDelete = true;
                         <span class="glyphicon glyphicon-pencil"></span>
                     </a>
                 <?php endif; ?>
-                <span class="glyphicon glyphicon-refresh"></span>
+                <?php if($canRefresh):?>
+                    <a href="<?php echo $this->url('indicateur/rafraichir',['indicateur'=>$indicateur->getId()],[], true); ?>">
+                        <span class="glyphicon glyphicon-refresh"></span>
+                    </a>
+                <?php endif; ?>
                 <?php if($canToggle):?>
                     <a href="<?php echo $this->url('indicateur/toggle',['indicateur'=>$indicateur->getId()],[], true); ?>">
                         <span class="glyphicon glyphicon-off" title="Activer/Désactiver un indicateur"></span>

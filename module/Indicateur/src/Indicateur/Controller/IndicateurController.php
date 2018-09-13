@@ -99,6 +99,14 @@ class IndicateurController extends AbstractActionController {
     }
 
     public function rafraichirIndicateurAction() {
+        $idIndicateur = $this->params()->fromRoute('indicateur');
+        $indicateur = $this->getIndicateurService()->find($idIndicateur);
+
+        if (!$indicateur) throw new RuntimeException("Aucun indicateur identifié [".$idIndicateur."] n'as pu être récupéré.");
+
+        $this->getIndicateurService()->refreshMaterializedView($indicateur);
+
+        $this->redirect()->toRoute('indicateur/lister', [], [], true);
     }
 
     /**

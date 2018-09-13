@@ -122,6 +122,17 @@ class IndicateurService {
         $stmt = $this->entityManager->getConnection()->prepare($SQL);
         $stmt->execute(null);
     }
+    /**
+     * @param Indicateur $indicateur
+     */
+    public function refreshMaterializedView($indicateur) {
+
+        $SQL  = "BEGIN ";
+        $SQL .= "   DBMS_MVIEW.REFRESH('MV_INDICATEUR_".$indicateur->getId()."', 'C'); ";
+        $SQL .= "END";
+        $stmt = $this->entityManager->getConnection()->prepare($SQL);
+        $stmt->execute(null);
+    }
 
     /**
      * @param Indicateur $indicateur

@@ -31,6 +31,7 @@ return array(
                         'lister-indicateur',
                         'editer-indicateur',
                         'effacer-indicateur',
+                        'rafraichir-indicateur',
                     ],
                     'privileges' => [
                         IndicateurPrivileges::INDICATEUR_CONSULTATION,
@@ -145,6 +146,17 @@ return array(
                             'defaults' => [
                                 'controller' => IndicateurController::class,
                                 'action'     => 'toggle-indicateur',
+                            ],
+                        ],
+                    ],
+                    'rafraichir' => [
+                        'type' => Segment::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/rafraichir/:indicateur',
+                            'defaults' => [
+                                'controller' => IndicateurController::class,
+                                'action'     => 'rafraichir-indicateur',
                             ],
                         ],
                     ],
