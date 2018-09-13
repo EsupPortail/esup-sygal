@@ -1,0 +1,21 @@
+<?php
+
+/**
+ * @var \Indicateur\Form\IndicateurForm $form
+ */
+
+use Indicateur\Model\Indicateur;
+
+
+$canEdit = true;
+
+?>
+
+<h1 class="page-header">
+    Ajouter/Modifier un indicateur
+<!--    <span class="badge">--><?php //echo count($indicateurs); ?><!--</span>-->
+</h1>
+
+<?php
+    echo $this->form($form);
+?>

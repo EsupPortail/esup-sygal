@@ -6,12 +6,16 @@ use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Indicateur\Controller\Factory\IndicateurControllerFactory;
 use Indicateur\Controller\IndicateurController;
+use Indicateur\Form\IndicateurForm;
+use Indicateur\Form\IndicateurFormFactory;
+use Indicateur\Form\IndicateurHydrator;
 use Indicateur\Service\Factory\IndicateurServiceFactory;
 use Indicateur\Service\IndicateurService;
 use Indicateur\View\Helper\CompletIndicateurIndividuHelper;
 use Indicateur\View\Helper\CompletIndicateurTheseHelper;
 use Indicateur\View\Helper\ResumeIndicateurIndividuHelper;
 use Indicateur\View\Helper\ResumeIndicateurTheseHelper;
+use Zend\Mvc\Router\Http\Literal;
 use Zend\Mvc\Router\Http\Segment;
 
 return array(
@@ -23,6 +27,10 @@ return array(
                     'action'     => [
                         'index',
                         'view',
+                        'toggle-indicateur',
+                        'lister-indicateur',
+                        'editer-indicateur',
+                        'effacer-indicateur',
                     ],
                     'privileges' => [
                         IndicateurPrivileges::INDICATEUR_CONSULTATION,
@@ -107,6 +115,50 @@ return array(
                             ],
                         ],
                     ],
+                    'editer' => [
+                        'type' => Segment::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/editer[/:indicateur]',
+                            'defaults' => [
+                                'controller' => IndicateurController::class,
+                                'action'     => 'editer-indicateur',
+                            ],
+                        ],
+                    ],
+                    'lister' => [
+                        'type' => Literal::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/lister',
+                            'defaults' => [
+                                'controller' => IndicateurController::class,
+                                'action'     => 'lister-indicateur',
+                            ],
+                        ],
+                    ],
+                    'toggle' => [
+                        'type' => Segment::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/toggle/:indicateur',
+                            'defaults' => [
+                                'controller' => IndicateurController::class,
+                                'action'     => 'toggle-indicateur',
+                            ],
+                        ],
+                    ],
+                    'effacer' => [
+                        'type' => Segment::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/effacer/:indicateur',
+                            'defaults' => [
+                                'controller' => IndicateurController::class,
+                                'action'     => 'effacer-indicateur',
+                            ],
+                        ],
+                    ],
                     'export' => [
                         'type' => Segment::class,
                         'may_terminate' => true,
@@ -123,6 +175,16 @@ return array(
         ],
     ],
 
+    'form_elements' => [
+        'factories' => [
+            IndicateurForm::class => IndicateurFormFactory::class,
+        ],
+    ],
+    'hydrators' => [
+        'invokables' => [
+            IndicateurHydrator::class => IndicateurHydrator::class,
+        ],
+    ],
     'service_manager' => [
         'factories' => [
             IndicateurService::class => IndicateurServiceFactory::class,

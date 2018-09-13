@@ -1,0 +1,76 @@
+<?php
+
+/**
+ * @var Indicateur[] $indicateurs
+ */
+
+use Indicateur\Model\Indicateur;
+
+
+$canEdit = true;
+$canRefresh = true;
+$canToggle = true;
+$canDelete = true;
+
+?>
+
+<h1 class="page-header">
+    Liste des indicateurs enregistrés en base
+    <span class="badge"><?php echo count($indicateurs); ?></span>
+</h1>
+
+<a href="<?php echo $this->url('indicateur', [], [], true); ?>"
+   class="btn btn-primary"
+>
+    <span class="glyphicon glyphicon-th"></span> Retourner à la liste des indicateurs
+</a>
+
+<?php if($canEdit):?>
+    <a href="<?php echo $this->url('indicateur/editer', [], [], true); ?>"
+       class="btn btn-primary"
+    >
+        <span class="glyphicon glyphicon-plus"></span> Ajouter un nouvel indicateur
+    </a>
+<?php endif; ?>
+
+<br/><br/>
+
+<table class="table table-condensed">
+    <thead>
+    <tr>
+<!--        <th> Id </th>-->
+        <th> Libelle </th>
+        <th> Description </th>
+        <th> Actif </th>
+        <th> Action </th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach($indicateurs as $indicateur): ?>
+        <tr>
+<!--            <td> --><?php //echo $indicateur->getId(); ?><!-- </td>-->
+            <td> <?php echo $indicateur->getLibelle(); ?> </td>
+            <td> <?php echo $indicateur->getDescription(); ?> </td>
+            <td> <?php echo $indicateur->isActif(); ?> </td>
+            <td>
+                <?php if($canEdit):?>
+                    <a href="<?php echo $this->url('indicateur/editer',['indicateur'=>$indicateur->getId()],[], true); ?>">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </a>
+                <?php endif; ?>
+                <span class="glyphicon glyphicon-refresh"></span>
+                <?php if($canToggle):?>
+                    <a href="<?php echo $this->url('indicateur/toggle',['indicateur'=>$indicateur->getId()],[], true); ?>">
+                        <span class="glyphicon glyphicon-off" title="Activer/Désactiver un indicateur"></span>
+                    </a>
+                <?php endif;?>
+                <?php if($canDelete):?>
+                    <a href="<?php echo $this->url('indicateur/effacer',['indicateur'=>$indicateur->getId()],[], true); ?>">
+                        <span class="glyphicon glyphicon-trash" title="Effacer définitivement un indicateur"></span>
+                    </a>
+                <?php endif;?>
+            </td>
+        </tr>
+    <?php endforeach;?>
+    </tbody>
+</table>

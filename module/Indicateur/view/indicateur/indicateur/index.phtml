@@ -16,50 +16,48 @@ use Application\Entity\Db\These;use Indicateur\Model\Indicateur;
  * @var Anomalie[] $anomalies
  *
  * @var Indicateur[] $indicateurs
+ * @var Indicateur[] $resultats
  */
 ?>
 
 
-<h1 class="page-header first">
+<h1 class="page-header">
     Indicateurs de SyGAL
 </h1>
 
-<h2>
-    Liste des indicateurs enregistrés en base
-</h2>
+<div class="row">
+    <a
+            href="<?php echo $this->url('indicateur/lister', [], [], true); ?>"
+            class="btn btn-primary"
+    >
+        <span class="glyphicon glyphicon-cog"></span>
+        Paramétrer les indicateurs
+    </a>
+</div>
 
-<table class="table table-extra-condensed">
-    <thead>
-        <tr>
-            <th> Libelle </th>
-            <th> Description </th>
-            <th> Actif </th>
-            <th> Action </th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php foreach($indicateurs as $indicateur): ?>
-            <tr>
-                <td> <?php echo $indicateur->getLibelle(); ?> </td>
-                <td> <?php echo $indicateur->getDescription(); ?> </td>
-                <td> <?php echo $indicateur->isActif(); ?> </td>
-                <td>
-                    <span class="glyphicon glyphicon-pencil"></span>
-                    <span class="glyphicon glyphicon-refresh"></span>
-                    <span class="glyphicon glyphicon-off"></span>
-                    <span class="glyphicon glyphicon-trash"></span>
-                </td>
-            </tr>
-        <?php endforeach;?>
-    </tbody>
-</table>
+<br/>
 
-<?php echo $this->resumeIndicateurThese()->render($indicateurs[0], $result_ind0); ?>
-<?php echo $this->resumeIndicateurThese()->render($indicateurs[1], $result_ind1); ?>
-<?php echo $this->resumeIndicateurThese()->render($indicateurs[2], $result_ind2); ?>
-<?php echo $this->resumeIndicateurIndividu()->render($indicateurs[3], $result_ind3); ?>
-<?php echo $this->resumeIndicateurIndividu()->render($indicateurs[4], $result_ind4); ?>
-<?php echo $this->resumeIndicateurThese()->render($indicateurs[5], $result_ind5); ?>
-<?php echo $this->resumeIndicateurThese()->render($indicateurs[6], $result_ind6); ?>
+<?php foreach ($resultats as $id => $resultat) : ?>
+
+    <?php
+        // rustine dégueulasse pour corriger problème d'ordre TODO fix it!
+        $indicateur = null;
+        foreach ($indicateurs as $tmp) {
+            if($tmp->getId() === $id) {
+                $indicateur = $tmp;
+                break;
+            }
+        }
+    ?>
+
+    <?php if($indicateur): ?>
+        <?php if ($indicateur->getDisplayAs() === Indicateur::THESE) : ?>
+            <?php echo $this->resumeIndicateurThese()->render($indicateur, $resultat); ?>
+        <?php endif; ?>
+        <?php if ($indicateur->getDisplayAs() === Indicateur::INDIVIDU) : ?>
+            <?php echo $this->resumeIndicateurIndividu()->render($indicateur, $resultat); ?>
+        <?php endif; ?>
+    <?php endif; ?>
+<?php endforeach; ?>
 
 </div>
