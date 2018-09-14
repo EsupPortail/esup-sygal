@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Provider\Privilege;
+namespace Indicateur\Provider\Privilege;
 
 use UnicaenAuth\Provider\Privilege\Privileges;
 

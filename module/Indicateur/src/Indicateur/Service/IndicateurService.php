@@ -2,6 +2,7 @@
 
 namespace Indicateur\Service;
 
+use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Indicateur\Model\Indicateur;
@@ -109,7 +110,11 @@ class IndicateurService {
         $SQL .= 'START WITH SYSDATE NEXT SYSDATE + 1 as ';
         $SQL .= $indicateur->getRequete();
 
-        $stmt = $this->entityManager->getConnection()->prepare($SQL);
+        try {
+            $stmt = $this->entityManager->getConnection()->prepare($SQL);
+        } catch (DBALException $e) {
+            throw new RuntimeException("Un problème s'est produit lors de création de la vue matérialisée.");
+        }
         $stmt->execute(null);
     }
 
@@ -119,7 +124,11 @@ class IndicateurService {
     public function dropMaterialzedView($indicateur) {
 
         $SQL = 'DROP MATERIALIZED VIEW  MV_INDICATEUR_'.$indicateur->getId();
-        $stmt = $this->entityManager->getConnection()->prepare($SQL);
+        try {
+            $stmt = $this->entityManager->getConnection()->prepare($SQL);
+        } catch (DBALException $e) {
+            throw new RuntimeException("Un problème s'est produit lors de destruction de la vue matérialisée.");
+        }
         $stmt->execute(null);
     }
     /**
@@ -128,9 +137,13 @@ class IndicateurService {
     public function refreshMaterializedView($indicateur) {
 
         $SQL  = "BEGIN ";
-        $SQL .= "   DBMS_MVIEW.REFRESH('MV_INDICATEUR_".$indicateur->getId()."', 'C'); ";
+        $SQL .= "   DBMS_MVIEW.REFRESH('MV_INDICATEUR_1', 'C'); ";
         $SQL .= "END";
-        $stmt = $this->entityManager->getConnection()->prepare($SQL);
+        try {
+            $stmt = $this->entityManager->getConnection()->prepare($SQL);
+        } catch (DBALException $e) {
+            throw new RuntimeException("Un problème s'est produit lors du rafraichissement de la vue matérialisée.");
+        }
         $stmt->execute(null);
     }
 
