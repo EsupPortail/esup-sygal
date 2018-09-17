@@ -564,6 +564,7 @@ class FichierService extends BaseService
             if ($directeur->getEtablissement()->estAssocie()) {
                 $pdcData->setAssocie(true);
                 $pdcData->setLogoAssocie($directeur->getEtablissement()->getCheminLogo());
+                $pdcData->setLibelleAssocie($directeur->getEtablissement()->getLibelle());
             }
         }
 

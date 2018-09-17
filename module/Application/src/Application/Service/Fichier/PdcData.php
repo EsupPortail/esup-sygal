@@ -106,6 +106,8 @@ class PdcData {
     private $associe;
     /** @var string */
     private $logoAssocie;
+    /** @var string */
+    private $libelleAssocie;
 
 
     /** @var MembreData[] */
@@ -326,6 +328,26 @@ class PdcData {
         $this->logoAssocie = $logoAssocie;
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getLibelleAssocie()
+    {
+        return $this->libelleAssocie;
+    }
+
+    /**
+     * @param string $libelleAssocie
+     * @return PdcData
+     */
+    public function setLibelleAssocie($libelleAssocie)
+    {
+        $this->libelleAssocie = $libelleAssocie;
+        return $this;
+    }
+
+
 
     /**
      * @return MembreData[]
