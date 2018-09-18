@@ -136,15 +136,17 @@ class IndicateurService {
      */
     public function refreshMaterializedView($indicateur) {
 
-        $SQL  = "BEGIN ";
-        $SQL .= "   DBMS_MVIEW.REFRESH('MV_INDICATEUR_1', 'C'); ";
-        $SQL .= "END";
-        try {
-            $stmt = $this->entityManager->getConnection()->prepare($SQL);
-        } catch (DBALException $e) {
-            throw new RuntimeException("Un problème s'est produit lors du rafraichissement de la vue matérialisée.");
-        }
-        $stmt->execute(null);
+//        $SQL  = "BEGIN ";
+//        $SQL .= "   DBMS_MVIEW.REFRESH('MV_INDICATEUR_1', 'C'); ";
+//        $SQL .= "END";
+//        try {
+//            $stmt = $this->entityManager->getConnection()->prepare($SQL);
+//        } catch (DBALException $e) {
+//            throw new RuntimeException("Un problème s'est produit lors du rafraichissement de la vue matérialisée.");
+//        }
+//        $stmt->execute(null);
+        $this->dropMaterialzedView($indicateur);
+        $this->createMaterialzedView($indicateur);
     }
 
     /**
