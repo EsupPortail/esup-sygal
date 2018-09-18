@@ -7,11 +7,12 @@ use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenApp\Util;
 use UnicaenImport\Entity\Db\Interfaces\SourceAwareInterface;
 use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
+use Zend\Permissions\Acl\Resource\ResourceInterface;
 
 /**
  * EcoleDoctorale
  */
-class EcoleDoctorale implements StructureConcreteInterface, HistoriqueAwareInterface, SourceAwareInterface
+class EcoleDoctorale implements StructureConcreteInterface, HistoriqueAwareInterface, SourceAwareInterface, ResourceInterface
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
@@ -37,6 +38,16 @@ class EcoleDoctorale implements StructureConcreteInterface, HistoriqueAwareInter
     public function __construct()
     {
         $this->structure = new Structure();
+    }
+
+    /**
+     * Returns the string identifier of the Resource
+     *
+     * @return string
+     */
+    public function getResourceId()
+    {
+        return 'EcoleDoctorale';
     }
 
     /**
@@ -127,7 +138,10 @@ class EcoleDoctorale implements StructureConcreteInterface, HistoriqueAwareInter
             $image = Util::createImageWithText("Aucun logo pour l'ED|[" . $this->getSourceCode() . " - " . $this->getSigle() . "]", 200, 200);
             return $image;
         }
-        //        return file_get_contents(APPLICATION_DIR . $this->getCheminLogo()) ?: null;
+        if (!file_exists(Structure::PATH . $this->getCheminLogo())) {
+            $image = Util::createImageWithText("Fichier absent sur le HD",200,200);
+            return $image;
+        }
         return file_get_contents( Structure::PATH . $this->getCheminLogo()) ?: null;
     }
 

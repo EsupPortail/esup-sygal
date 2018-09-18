@@ -1,8 +1,10 @@
 <?php
 
 use Application\Controller\AdminController;
-use Application\Controller\Factory\RoleControllerFactory;
+use Application\Controller\Factory\PrivilegeControllerFactory;
 use Application\Controller\MailConfirmationController;
+use Application\Provider\Privilege\EcoleDoctoralePrivileges;
+use Application\Provider\Privilege\UniteRecherchePrivileges;
 use Application\Provider\Privilege\UtilisateurPrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Privilege\Privileges;
@@ -23,10 +25,14 @@ return [
                     'action'     => [
                         'index',
                     ],
-                    'privileges' => UtilisateurPrivileges::UTILISATEUR_ATTRIBUTION_ROLE,
+                    'privileges' => [
+                        UtilisateurPrivileges::UTILISATEUR_ATTRIBUTION_ROLE,
+                        EcoleDoctoralePrivileges::ECOLE_DOCT_CONSULTATION,
+                        UniteRecherchePrivileges::UNITE_RECH_CONSULTATION,
+                     ],
                 ],
                 [
-                    'controller' => 'Application\Controller\Role',
+                    'controller' => \Application\Controller\PrivilegeController::class,
                     'action'     => [
                         'index',
                     ],
@@ -36,7 +42,7 @@ return [
                     ],
                 ],
                 [
-                    'controller' => 'Application\Controller\Role',
+                    'controller' => \Application\Controller\PrivilegeController::class,
                     'action'     => [
                         'modifier',
                     ],
@@ -86,13 +92,12 @@ return [
                     ],
                 ],
             ],
-            'roles' => [
+            'gestion-privilege' => [
                 'type'          => Literal::class,
                 'options'       => [
-                    'route'    => '/roles',
+                    'route'    => '/gestion-privilege',
                     'defaults' => [
-                        '__NAMESPACE__' => 'Application\Controller',
-                        'controller'    => 'Role',
+                        'controller'    => \Application\Controller\PrivilegeController::class,
                         'action'        => 'index',
                     ],
                 ],
@@ -153,8 +158,7 @@ return [
                 'options'       => [
                     'route'    => '/modifier-privilege/:role/:privilege',
                     'defaults' => [
-                        '__NAMESPACE__' => 'Application\Controller',
-                        'controller'    => 'Role',
+                        'controller'    => \Application\Controller\PrivilegeController::class,
                         'action'        => 'modifier',
                     ],
                 ],
@@ -208,9 +212,8 @@ return [
 
         ],
         'factories' => [
-            'Application\Controller\Role' => RoleControllerFactory::class,
+            \Application\Controller\PrivilegeController::class =>  \Application\Controller\Factory\PrivilegeControllerFactory::class,
             MailConfirmationController::class => MailConfirmationControllerFactory::class,
-
         ],
     ],
 

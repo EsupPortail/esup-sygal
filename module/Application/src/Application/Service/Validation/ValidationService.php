@@ -108,7 +108,11 @@ class ValidationService extends BaseService
             $individu);
 
         $this->entityManager->persist($v);
-        $this->entityManager->flush($v);
+        try {
+            $this->entityManager->flush($v);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement en bdd", null, $e);
+        }
 
         return $v;
     }
@@ -143,17 +147,22 @@ class ValidationService extends BaseService
             ->andWhereTheseIs($these)
             ->andWhereTypeIs($type = TypeValidation::CODE_DEPOT_THESE_CORRIGEE)
             ->andWhereNotHistorise();
-        /** @var Validation $v */
-        $v = $qb->getQuery()->getOneOrNullResult();
-
-        if (!$v) {
+        try {
+            /** @var Validation $v */
+            $v = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
             throw new RuntimeException(
-                sprintf("Aucune validation de type '%s' trouvée pour la thèse %s", $type, $these));
+                sprintf("Plusieures validations non historisées de type '%s' trouvées pour la thèse '%s'", $type, $these));
         }
 
-        $v->historiser();
-
-        $this->getEntityManager()->flush($v);
+        if ($v !== null) {
+            $v->historiser();
+            try {
+                $this->getEntityManager()->flush($v);
+            } catch (OptimisticLockException $e) {
+                throw new RuntimeException("Erreur rencontrée lors de l'enregistrement en bdd", null, $e);
+            }
+        }
 
         return $v;
     }

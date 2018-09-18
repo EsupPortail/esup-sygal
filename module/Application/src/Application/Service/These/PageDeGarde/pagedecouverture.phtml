@@ -5,6 +5,7 @@ use Application\Entity\Db\These;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
+use Application\Service\Fichier\PdcData;
 use Application\View\Renderer\PhpRenderer;
 
 /**
@@ -14,7 +15,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var array(string=>string)   $infos
  * @var array(string=>string)   $encadrements
  * @var array(array)            $jury
- * @var []                      $informations
+ * @var PdcData                      $informations
  *
  * @see \Application\Service\Fichier\FichierService::fetchInformationsPageDeCouverture() pour la génération de $informations
  */
@@ -27,8 +28,8 @@ $PATH = Structure::PATH;
 <!-- SECTION DU LOGO DE LA COMUE -------------------------------------------------------------------------------------->
 <div style="text-align: center; margin-bottom: 30px;">
     <div class='logo-comue'>
-        <?php if ($informations["logo-comue"] !== null): ?>
-            <img src="<?php echo $PATH . $informations["logo-comue"]; ?>"/>
+        <?php if ($informations->getLogoCOMUE() !== null): ?>
+            <img src="<?php echo $PATH . $informations->getLogoCOMUE(); ?>"/>
         <?php else: ?>
             <span style='background-color:red;'> COMUE ou logo de la COMUE non renseigné. </span>
         <?php endif; ?>
@@ -45,38 +46,38 @@ $PATH = Structure::PATH;
     <br/>
 
     Spécialité
-    <?php if ($informations["specialité"] !== null): ?>
-        <?php echo $informations["specialité"]; ?>
+    <?php if ($informations->getSpecialite() !== null): ?>
+        <?php echo $informations->getSpecialite(); ?>
     <?php else: ?>
         <span style='background-color:red;'> non renseignée </span>
     <?php endif; ?>
     <br/>
 
-    Préparé au sein de l'
-    <?php if ($informations["etablissement"] !== null): ?>
-        <?php echo $informations["etablissement"]; ?>
+    Préparé au sein de
+    <?php if ($informations->getEtablissement() !== null): ?>
+        l'<?php echo $informations->getEtablissement(); ?>
     <?php else: ?>
         <span style='background-color:red;'> non renseigné </span>
     <?php endif; ?>
     <br/>
 
-    <?php if ($informations["cotut-libelle"] !== "non"): ?>
+    <?php if ($informations->isCotutuelle()): ?>
         En cotutelle
-        <?php if ($informations["cotut-pays"] !== "non"): ?>
-            internationnale
+        <?php if ($informations->getCotutuellePays() !== null): ?>
+            internationale
         <?php endif; ?>
         avec
-        <?php echo $informations["cotut-libelle"]; ?>
-        <?php if ($informations["cotut-pays"] !== "non"): ?>
-            , <?php echo ($informations["cotut-pays"]); ?>
+        <?php echo $informations->getCotutuelleLibelle(); ?>
+        <?php if ($informations->getCotutuellePays() !== null): ?>
+            , <?php echo ($informations->getCotutuellePays()); ?>
         <?php endif; ?>
     <?php endif; ?>
 </div>
 
 
 <div class='bandeau-titre'>
-    <?php if ($informations["titre"] !== null): ?>
-        <?php echo $informations["titre"]; ?>
+    <?php if ($informations->getTitre() !== null): ?>
+        <?php echo $informations->getTitre(); ?>
     <?php else: ?>
         <span style='background-color:red;'> Aucun titre </span>
     <?php endif; ?>
@@ -85,8 +86,8 @@ $PATH = Structure::PATH;
 
 <div class='infos-doctorant' style=''>
     Présentée et soutenue par <br/>
-    <?php if ($informations["doctorant"] !== null): ?>
-        <?php echo $informations["doctorant"]; ?>
+    <?php if ($informations->getDoctorant() !== null): ?>
+        <?php echo $informations->getDoctorant(); ?>
     <?php else: ?>
         <span style='background-color:red;'> Aucun doctorant </span>
     <?php endif; ?>
@@ -98,8 +99,8 @@ $PATH = Structure::PATH;
     <tr>
         <th colspan='3'>
             Thèse soutenue publiquement le
-            <?php if ($informations["date de soutenance"] !== null): ?>
-                <?php echo $informations["date de soutenance"]; ?>
+            <?php if ($informations->getDate() !== null): ?>
+                <?php echo $informations->getDate(); ?>
             <?php else: ?>
                 <span style='background-color:red;'> Aucune date </span>
             <?php endif; ?>
@@ -108,16 +109,27 @@ $PATH = Structure::PATH;
         </th>
     </tr>
 
-    <?php
-        $nbMembres = $informations["nombre de membres"] + $informations["nombre de rapporteurs"] + $informations["nombre de directeurs"];
-        for($position = 1 ; $position <= $nbMembres; $position++):
-    ?>
-            <tr>
-                <td> <?php echo $informations["nom ".$position]; ?> </td>
-                <td> <?php echo $informations["qualité ".$position]; ?>, <?php echo $informations["etablissement ".$position]; ?> </td>
-                <td> <?php echo $informations["role ".$position]; ?> </td>
-            </tr>
-    <?php endfor; ?>
+    <?php foreach ($informations->getRapporteurs() as $rapporteur) : ?>
+        <tr>
+            <td> <?php echo $rapporteur->getDenomination(); ?> </td>
+            <td> <?php echo trim($rapporteur->getQualite()); ?>,  <?php echo $rapporteur->getEtablissement(); ?></td>
+            <td> <?php echo $rapporteur->getRole(); ?> </td>
+        </tr>
+    <?php endforeach; ?>
+    <?php foreach ($informations->getMembres() as $membre) : ?>
+        <tr>
+            <td> <?php echo $membre->getDenomination(); ?> </td>
+            <td> <?php echo trim($membre->getQualite()); ?>,  <?php echo $membre->getEtablissement(); ?></td>
+            <td> <?php echo $membre->getRole(); ?> </td>
+        </tr>
+    <?php endforeach; ?>
+    <?php foreach ($informations->getDirecteurs() as $directeur) : ?>
+        <tr>
+            <td> <?php echo $directeur->getDenomination(); ?> </td>
+            <td> <?php echo trim($directeur->getQualite()); ?>,  <?php echo $directeur->getEtablissement(); ?></td>
+            <td> <?php echo $directeur->getRole(); ?> </td>
+        </tr>
+    <?php endforeach; ?>
 
 </table>
 
@@ -125,16 +137,15 @@ $PATH = Structure::PATH;
 <!-- SECTION ENCADREMENT ---------------------------------------------------------------------------------------------->
 <div class='infos-encadrement'>
     Thèse dirigée par
-    <?php if ($informations["liste des directeurs"] !== null): ?>
-        <?php echo $informations["liste des directeurs"]; ?>
-    <?php else: ?>
+    <?php if ($informations->getListing()): ?>
+        <?php echo $informations->getListing() ?>
+    <?php else : ?>
         <span style='background-color:red;'> non renseigné </span>
     <?php endif; ?>
-,
-    <?php if ($informations["Unité de recherche"] !== null): ?>
-        <?php echo $informations["Unité de recherche"]; ?>
-    <?php else: ?>
-        <span style='background-color:red;'> unité de recherche non renseignée </span>
+    <?php if ($informations->getUniteRecherche()): ?>
+        <?php echo $informations->getUniteRecherche() ?>
+    <?php else : ?>
+        <span style='background-color:red;'> non renseigné </span>
     <?php endif; ?>
 </div>
 
@@ -143,41 +154,31 @@ $PATH = Structure::PATH;
 <table style="border:none;" class="logos">
     <tr>
         <td>
-            <?php if ($informations["logo-etablissement"]): ?>
-                <img class="logo_small" src="<?php echo $PATH . $informations["logo-etablissement"]; ?>"/>
+            <?php if ($informations->getLogoEtablissement()): ?>
+                <img class="logo_small" src="<?php echo $PATH . $informations->getLogoEtablissement(); ?>"/>
             <?php else: ?>
                 <span style='background-color:red;'> Établissement d'inscription ou logo d'établissement non renseigné. </span>
             <?php endif; ?>
         </td>
-        <!-- TODO ASSOCIE -->
-        <?php if ($informations["logo-associe"] == "oui"): ?>
+        <?php if ($informations->isAssocie()): ?>
             <td>
-                <?php if ($informations["logo-cotutelle"]): ?>
-                    <img class="logo_small" src="<?php echo $PATH . $informations["logo-associe"]; ?>"/>
+                <?php if ($informations->getLogoAssocie()): ?>
+                    <img class="logo_small" src="<?php echo $PATH . $informations->getLogoAssocie(); ?>"/>
                 <?php else: ?>
                     <span style='background-color:red;'> Établissement associé ou logo d'établissement non renseigné. </span>
                 <?php endif; ?>
             </td>
         <?php endif; ?>
-<!--        --><?php //if ($informations["cotut-libelle"] != "non"): ?>
-<!--            <td>-->
-<!--                --><?php //if ($informations["logo-cotutelle"]): ?>
-<!--                    <img class="logo_small" src="--><?php //echo $PATH . $informations["logo-cotutelle"]; ?><!--"/>-->
-<!--                --><?php //else: ?>
-<!--                    <span style='background-color:red;'> Établissement de cotutelle ou logo d'établissement non renseigné. </span>-->
-<!--                --><?php //endif; ?>
-<!--            </td>-->
-<!--        --><?php //endif; ?>
         <td>
-            <?php if ($informations["logo-ecoleDoctorale"]): ?>
-                <img class="logo_small" src="<?php echo $PATH . ($informations["logo-ecoleDoctorale"]); ?>"/>
+            <?php if ($informations->getLogoEcoleDoctorale()): ?>
+                <img class="logo_small" src="<?php echo $PATH . ($informations->getLogoEcoleDoctorale()); ?>"/>
             <?php else: ?>
                 <span style='background-color:red;'> École doctorale ou logo d'école doctorale non renseigné </span>
             <?php endif; ?>
         </td>
         <td>
-            <?php if ($informations["logo-uniteRecherche"]): ?>
-                <img class="logo_small" src="<?php echo $PATH . ($informations["logo-uniteRecherche"]); ?>"/>
+            <?php if ($informations->getLogoUniteRecherche()): ?>
+                <img class="logo_small" src="<?php echo $PATH . ($informations->getLogoUniteRecherche()); ?>"/>
             <?php else: ?>
                 <span style='background-color:red;'> Unité de recherche ou logo d'unité de recherche non renseigné </span>
             <?php endif; ?>

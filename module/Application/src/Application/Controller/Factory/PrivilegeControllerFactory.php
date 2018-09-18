@@ -2,7 +2,7 @@
 
 namespace Application\Controller\Factory;
 
-use Application\Controller\RoleController;
+use Application\Controller\PrivilegeController;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Role\RoleService;
 use Application\Service\Structure\StructureService;
@@ -10,7 +10,7 @@ use Doctrine\ORM\EntityManager;
 use Zend\Mvc\Controller\ControllerManager;
 
 
-class RoleControllerFactory
+class PrivilegeControllerFactory
 {
     public function __invoke(ControllerManager $controllerManager)
     {
@@ -26,7 +26,7 @@ class RoleControllerFactory
         $etablissementService = $controllerManager->getServiceLocator()->get('EtablissementService');
         $structureService = $controllerManager->getServiceLocator()->get('StructureService');
 
-        $controller = new RoleController();
+        $controller = new PrivilegeController();
         $controller->setEntityManager($entityManager);
         $controller->setRoleService($roleService);
         $controller->setEtablissementService($etablissementService);

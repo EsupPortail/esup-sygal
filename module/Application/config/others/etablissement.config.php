@@ -4,9 +4,11 @@ use Application\Controller\Factory\EtablissementControllerFactory;
 use Application\Form\Factory\EtablissementFormFactory;
 use Application\Form\Factory\EtablissementHydratorFactory;
 use Application\Provider\Privilege\EcoleDoctoralePrivileges;
+use Application\Provider\Privilege\EtablissementPrivileges;
 use Application\Service\Etablissement\EtablissementService;
 use Application\View\Helper\EtablissementHelper;
 use UnicaenAuth\Guard\PrivilegeController;
+use Zend\Mvc\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [
@@ -16,8 +18,9 @@ return [
                     'controller' => 'Application\Controller\Etablissement',
                     'action'     => [
                         'index',
+                        'information',
                     ],
-                    'privileges' => EcoleDoctoralePrivileges::ECOLE_DOCT_CONSULTATION,
+                    'privileges' => EtablissementPrivileges::ETABLISSEMENT_CONSULTATION,
                 ],
                 [
                     'controller' => 'Application\Controller\Etablissement',
@@ -30,7 +33,7 @@ return [
                         'retirer-individu',
                         'supprimer-logo',
                     ],
-                    'privileges' => EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION,
+                    'privileges' => EtablissementPrivileges::ETABLISSEMENT_MODIFICATION,
                 ],
             ],
         ],
@@ -50,6 +53,15 @@ return [
                 ],
                 'may_terminate' => true,
                 'child_routes'  => [
+                    'information' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/information/:etablissement',
+                            'defaults'    => [
+                                'action' => 'information',
+                            ],
+                        ],
+                    ],
                     'ajouter' => [
                         'type'          => 'Segment',
                         'options'       => [
@@ -143,11 +155,32 @@ return [
                     'admin' => [
                         'pages' => [
                             'etablissement' => [
-                                'label'    => 'Établissement',
+                                'label'    => 'Établissements',
                                 'route'    => 'etablissement',
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\Etablissement', 'index'),
-
                                 'order'    => 5,
+                                'pages' => [
+                                    'modification' => [
+                                        'label'    => 'Modification',
+                                        'route'    => 'etablissement/modifier',
+                                        'resource' => PrivilegeController::getResourceId('Application\Controller\Etablissement', 'index'),
+
+                                        'withtarget' => true,
+                                        'paramsInject' => [
+                                            'etablissement',
+                                        ],
+                                    ],
+                                    'information' => [
+                                        'label'    => 'Détails',
+                                        'route'    => 'etablissement/information',
+                                        'resource' => PrivilegeController::getResourceId('Application\Controller\Etablissement', 'index'),
+
+                                        'withtarget' => true,
+                                        'paramsInject' => [
+                                            'etablissement',
+                                        ],
+                                    ],
+                                ],
                             ],
                         ],
                     ],
@@ -161,6 +194,9 @@ return [
         ],
         'factories' => [
         ],
+        'aliases' => [
+            EtablissementService::class => 'EtablissementService',
+        ]
     ],
     'controllers'     => [
         'invokables' => [

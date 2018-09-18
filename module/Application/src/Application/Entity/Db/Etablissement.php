@@ -35,6 +35,16 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
      */
     private $sourceCode;
 
+    /**
+     * @var bool
+     */
+    protected $estMembre = false;
+
+    /**
+     * @var bool
+     */
+    protected $estAssocie = false;
+
 
     /**
      * Ajoute le préfixe établissement à la chaîne de caractères spécifiée.
@@ -177,6 +187,44 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
     }
 
     /**
+     * @return bool
+     */
+    public function estMembre()
+    {
+        return $this->estMembre;
+    }
+
+    /**
+     * @param bool $estMembre
+     * @return Etablissement
+     */
+    public function setEstMembre($estMembre)
+    {
+        $this->estMembre = $estMembre;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function estAssocie()
+    {
+        return $this->estAssocie;
+    }
+
+    /**
+     * @param bool $estAssocie
+     * @return Etablissement
+     */
+    public function setEstAssocie($estAssocie)
+    {
+        $this->estAssocie = $estAssocie;
+
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getCheminLogo()
@@ -199,6 +247,10 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
     {
         if ($this->getCheminLogo() === null) {
             $image = Util::createImageWithText("Aucun logo pour l'Etab|" . $this->getSigle(), 200, 200);
+            return $image;
+        }
+        if (!file_exists(Structure::PATH . $this->getCheminLogo())) {
+            $image = Util::createImageWithText("Fichier absent sur le HD",200,200);
             return $image;
         }
         return file_get_contents( Structure::PATH . $this->getCheminLogo()) ?: null;

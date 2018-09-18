@@ -25,15 +25,24 @@ $appli = $this->appInfos()->nom;
 <?php if ($isValidation): ?>
 <p>
     Vous êtes informé-e que l'application <?php echo $appli ?> est à présent en mesure de produire la page
-    de couverture de votre thèse automatiquement à partir des informations dont elle dispose.
+    de couverture de votre thèse automatiquement à partir des informations liées à votre dossier de soutenance
+    validé par le Président de l'Université.
 </p>
 <p>
-    Par conséquent, vous pouvez désormais procéder au dépôt de votre thèse dans l'application.
+    Par conséquent, en tant que doctorant, vous pouvez désormais procéder au dépôt de votre thèse dans l'application.
+    <strong><u> Ce dépôt numérique 1 mois avant la date de soutenance, est un préalable obligatoire </u> à l'autorisation
+    de soutenance qui sera accordée par le Président de l'Université au vu des rapports de pré soutenance. </strong>
 </p>
 <p>
-    NB: la page de couverture étant produite automatiquement par <?php echo $appli ?>,
-    vous n'aurez pas à concevoir et inclure cette page de couverture dans le fichier de thèse que vous déposerez
-    dans l'application.
+    La page de couverture (page recto) étant produite automatiquement par l'application <?php echo $appli ?>, vous
+    n'aurez pas à concevoir et inclure cette page de couverture dans le fichier de thèse que vous déposerez dans l'application.
+</p>
+<p>
+    IMPORTANT :
+    Vous pouvez envoyer votre manuscrit de thèse à vos rapporteurs et membres de votre jury de soutenance. Votre directeur
+    doit contacter les rapporteurs pour leur indiquer la date de retour de leur rapport, au plus tard 3 semaines avant
+    la date de soutenance, accompagné de leur engagement d'impartialité signé.(téléchargeable sur le portail de la recherche -
+    <a href="http://recherche.unicaen.fr/etudes-doctorales/soutenir-sa-these/">http://recherche.unicaen.fr/etudes-doctorales/soutenir-sa-these/</a>).
 </p>
 <?php else: ?>
 <p>

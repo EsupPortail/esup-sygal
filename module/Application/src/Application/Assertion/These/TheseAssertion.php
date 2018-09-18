@@ -87,12 +87,10 @@ class TheseAssertion extends BaseAssertion implements WorkflowServiceAwareInterf
      */
     protected function initControllerAssertion()
     {
-        /** @var TheseControllerAssertion $assertion */
-        $assertion = $this->controllerAssertion;
-
-        $assertion
-            ->setThese($this->getRouteMatch()->getThese())
-            ->setDoctorant($this->getRouteMatch()->getDoctorant());
+        $this->controllerAssertion->setContext([
+            'these'     => $this->getRouteMatch()->getThese(),
+            'doctorant' => $this->getRouteMatch()->getDoctorant(),
+        ]);
 
         return $this;
     }
@@ -102,25 +100,18 @@ class TheseAssertion extends BaseAssertion implements WorkflowServiceAwareInterf
      */
     protected function initPageAssertion()
     {
-        /** @var ThesePageAssertion $assertion */
-        $assertion = $this->pageAssertion;
-
-        $assertion
-            ->setThese($this->getRouteMatch()->getThese());
+        $this->pageAssertion->setContext(['these' => $this->getRouteMatch()->getThese()]);
 
         return $this;
     }
 
     /**
+     * @param ResourceInterface $entity
      * @return static
      */
-    protected function initEntityAssertion()
+    protected function initEntityAssertion(ResourceInterface $entity)
     {
-        /** @var TheseEntityAssertion $assertion */
-        $assertion = $this->entityAssertion;
-
-        $assertion
-            ->setThese($this->getRouteMatch()->getThese());
+        $this->entityAssertion->setContext(['these' => $entity]);
 
         return $this;
     }

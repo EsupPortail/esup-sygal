@@ -43,7 +43,7 @@ if (isset($config)) {
                 <?php if ($titre === "Filtres") echo $label; ?>
             </th>
             <td>
-                <?php $data['queryParams'] = $queryParams; ?>
+                <?php $data['queryParams'] = $this->queryParams(); ?>
                 <?php echo $this->partial('filter-form-item', $data) ?>
             </td>
         </tr>

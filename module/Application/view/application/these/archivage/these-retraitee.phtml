@@ -1,5 +1,6 @@
 <?php
 
+use Application\Assertion\BaseAssertion;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
@@ -21,7 +22,8 @@ use Application\View\Renderer\PhpRenderer;
  * @var VersionFichier $versionFichier
  */
 
-$canEdit = $this->isAllowed($these, ThesePrivileges::privilegeDeposerFor($nature, $versionFichier));
+$privilege = ThesePrivileges::privilegeDeposerFor($nature, $versionFichier);
+$canEdit = $this->isAllowed($these, $privilege);
 
 $uploader = $this->uploader()->setUrl($uploadUrl);
 
@@ -84,9 +86,11 @@ if ($validite === null || $validiteEstInconnue || $estValide) {
                             L'application peut générer une version retraitée de votre thèse à l'aide d'un
                             retraitement automatique permettant dans la plupart des cas de la rendre archivable.
                         </p>
+                        <?php if ($canEdit): ?>
                         <p>
                             Cliquez sur le bouton ci-dessous pour générer une version retraitée de votre thèse...
                         </p>
+                        <?php endif ?>
                     <?php else: ?>
                         <p>
                             Vous avez opté pour le retraitement automatique.
@@ -109,6 +113,12 @@ if ($validite === null || $validiteEstInconnue || $estValide) {
                             <div class="text-sm text-info" style="margin-top: 8px; margin-bottom: 12px; max-width: 250px">
                                 <strong>NB: </strong> <?php echo Fichier::MESSAGE_RETRAITEMENT_DUREE ?>
                             </div>
+                        <?php else: ?>
+                            <?php
+                            $msgCollector = $this->messageCollector(BaseAssertion::class);
+                            $msgCollector->getMessengerHelper()->setContainerClassesToAdd('alert-sm');
+                            echo $msgCollector->render();
+                            ?>
                         <?php endif ?>
                     <?php endif ?>
 
@@ -180,6 +190,12 @@ if ($validite === null || $validiteEstInconnue || $estValide) {
                                         <strong>NB: </strong> <?php echo Fichier::MESSAGE_DEPOT_DUREE ?>
                                     </div>
                                 </div>
+                            <?php else: ?>
+                                <?php
+                                $msgCollector = $this->messageCollector(BaseAssertion::class);
+                                $msgCollector->getMessengerHelper()->setContainerClassesToAdd('alert-sm');
+                                echo $msgCollector->render();
+                                ?>
                             <?php endif ?>
                         <?php endif ?>
 

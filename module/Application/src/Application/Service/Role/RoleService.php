@@ -87,40 +87,10 @@ class RoleService extends BaseService
         return $qb->getQuery()->execute();
     }
 
-
-    public function getRoleById($roleId) {
-        $repo = $this->entityManager->getRepository(Role::class);
-        $individuRole = $repo->findOneBy(["id" => $roleId]);
-        return $individuRole;
-    }
-
-
-    public function getRoleByCode($roleCode) {
-        $repo = $this->entityManager->getRepository(Role::class);
-        $role = $repo->findOneBy(["code" => $roleCode]);
-        return $role;
-    }
-
     public function getIndividuRoleById($individuRoleId) {
         $repo = $this->entityManager->getRepository(IndividuRole::class);
         $individuRole = $repo->findOneBy(["id" => $individuRoleId]);
         return $individuRole;
-    }
-
-    public function getRoleByIndividu($individu)
-    {
-        $qb = $this->getEntityManager()->getRepository(IndividuRole::class)->createQueryBuilder("ir")
-            ->andWhere("ir.individu = :individu")
-            ->setParameter("individu", $individu);
-        $results = $qb->getQuery()->getResult();
-
-        /** @var IndividuRole $result */
-        $roles = [];
-        foreach($results as $result) {
-            $roles[] = $result->getRole();
-        }
-
-        return $roles;
     }
 
     /**

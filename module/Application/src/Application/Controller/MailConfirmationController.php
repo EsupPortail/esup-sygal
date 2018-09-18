@@ -46,7 +46,7 @@ class MailConfirmationController extends AbstractController {
                 $data = $request->getPost();
 
                 if (isset($data['idIndividu'])) {
-                    $individu = $this->individuService->getIndviduById($data['idIndividu']);
+                    $individu = $this->individuService->getRepository()->find($data['idIndividu']);
                     $mailConfirmation->setIndividu($individu);
                     if (isset($data['email']) && $data['email'] !== "") {
                         $mailConfirmation->setEmail($data['email']);
@@ -66,7 +66,7 @@ class MailConfirmationController extends AbstractController {
                         //pas de mail on reste sur le formulaire
                     }
                 } else {
-                    $individu = $this->individuService->getIndviduById($data['individu']['id']);
+                    $individu = $this->individuService->getRepository()->find($data['individu']['id']);
                     $mailConfirmation->setIndividu($individu);
                 }
 

@@ -46,16 +46,18 @@ class EtablissementRepository extends DefaultEntityRepository
     /**
      * @return Etablissement[]
      */
-    public function findAll() {
+    public function findAll()
+    {
         /** @var Etablissement[] $etablissments */
         $qb = $this->createQueryBuilder("et")
-            ->leftJoin("et.structure", "str", "WITH", "et.structure = str.id")
+            ->join("et.structure", "str")
             ->leftJoin("str.structuresSubstituees", "sub")
             ->leftJoin("str.typeStructure", "typ")
             ->addSelect("str, sub, typ")
-            ->orderBy("str.libelle")
-        ;
+            ->orderBy("str.libelle");
+
         $etablissements = $qb->getQuery()->getResult();
+
         return $etablissements;
     }
 
@@ -64,19 +66,26 @@ class EtablissementRepository extends DefaultEntityRepository
      * @param boolean $include (si 'true' alors seulement la source sinon tous sauf la source)
      * @return Etablissement[]
      */
-    public function findAllBySource($source , $include=true) {
+    public function findAllBySource($source, $include = true)
+    {
         $qb = $this->createQueryBuilder("e")
-            ->join("e.source", "s");
+            ->join("e.source", "s")
+            ->join("e.structure", "str")
+            ->leftJoin("str.structuresSubstituees", "sub")
+            ->leftJoin("str.typeStructure", "typ")
+            ->addSelect("str, sub, typ")
+            ->orderBy("str.libelle");
 
         if ($include) {
-            $qb = $qb->andWhere("s.code = :source");
+            $qb->andWhere("s.code = :source");
         } else {
-            $qb = $qb->andWhere("s.code != :source");
+            $qb->andWhere("s.code != :source");
         }
-        $qb = $qb->setParameter("source", $source);
+        $qb->setParameter("source", $source);
 
         /** @var Etablissement[] $etablissments */
         $etablissments = $qb->getQuery()->execute();
+
         return $etablissments;
     }
 

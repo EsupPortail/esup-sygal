@@ -7,11 +7,12 @@ use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenApp\Util;
 use UnicaenImport\Entity\Db\Interfaces\SourceAwareInterface;
 use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
+use Zend\Permissions\Acl\Resource\ResourceInterface;
 
 /**
  * UniteRecherche
  */
-class UniteRecherche implements StructureConcreteInterface, HistoriqueAwareInterface, SourceAwareInterface
+class UniteRecherche implements StructureConcreteInterface, HistoriqueAwareInterface, SourceAwareInterface, ResourceInterface
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
@@ -54,6 +55,17 @@ class UniteRecherche implements StructureConcreteInterface, HistoriqueAwareInter
         $this->structure = new Structure();
         $this->domaines = new \Doctrine\Common\Collections\ArrayCollection();
     }
+
+    /**
+     * Returns the string identifier of the Resource
+     *
+     * @return string
+     */
+    public function getResourceId()
+    {
+        return 'UniteRecherche';
+    }
+
     /**
      * UniteRecherche prettyPrint
      * @return string
@@ -140,6 +152,10 @@ class UniteRecherche implements StructureConcreteInterface, HistoriqueAwareInter
     {
         if ($this->getCheminLogo() === null) {
             $image = Util::createImageWithText("Aucun logo pour l'UR|[".$this->getSourceCode()." - ".$this->getSigle()."]",200,200);
+            return $image;
+        }
+        if (!file_exists(Structure::PATH . $this->getCheminLogo())) {
+            $image = Util::createImageWithText("Fichier absent sur le HD",200,200);
             return $image;
         }
         return file_get_contents( Structure::PATH . $this->getCheminLogo()) ?: null;

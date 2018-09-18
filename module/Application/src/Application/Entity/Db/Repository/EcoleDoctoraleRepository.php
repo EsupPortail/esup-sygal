@@ -64,5 +64,4 @@ class EcoleDoctoraleRepository extends DefaultEntityRepository
 
         return $ecole;
     }
-
 }

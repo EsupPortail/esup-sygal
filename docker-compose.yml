@@ -19,9 +19,9 @@ services:
     build:
       context: ../sygal-import-ws
     ports:
-     - "8080:8080"
-     - "8443:8443"
+     - "8080:80"
+     - "8443:443"
     volumes:
-     - ../sygal-import-ws:/var/www/html/sygal-import-ws
-    working_dir: /var/www/html/sygal-import-ws
+     - ../sygal-import-ws:/var/www/sygal-import-ws
+    working_dir: /var/www/sygal-import-ws
     network_mode: bridge

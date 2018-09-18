@@ -69,7 +69,7 @@ class Diffusion implements HistoriqueAwareInterface
     /**
      * @var string
      */
-    private $idOrcid;
+    private $orcid;
 
     /**
      * @var string
@@ -258,18 +258,18 @@ class Diffusion implements HistoriqueAwareInterface
     /**
      * @return string
      */
-    public function getIdOrcid()
+    public function getOrcid()
     {
-        return $this->idOrcid;
+        return $this->orcid;
     }
 
     /**
-     * @param string $idOrcid
+     * @param string $orcid
      * @return self
      */
-    public function setIdOrcid($idOrcid)
+    public function setOrcid($orcid)
     {
-        $this->idOrcid = $idOrcid;
+        $this->orcid = $orcid;
 
         return $this;
     }

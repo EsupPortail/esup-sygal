@@ -3,186 +3,220 @@
 use Application\Entity\Db\DomaineScientifique;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\EtablissementRattachement;
+use Application\Entity\Db\UniteRecherche;
 use Application\Form\UniteRechercheForm;
 use Application\View\Helper\SelectHelper;
 use Application\View\Renderer\PhpRenderer;
 
 /**
- * @var PhpRenderer        $this
- * @var string             $title
- * @var UniteRechercheForm $form
+ * @var PhpRenderer                 $this
+ * @var string                      $title
+ * @var UniteRechercheForm          $form
  * @var EtablissementRattachement[] $etablissementsRattachements
- * @var Etablissement[] $etablissements
- * @var DomaineScientifique[] $domainesAssocies
- * @var DomaineScientifique[] $domainesScientifiques
+ * @var Etablissement[]             $etablissements
+ * @var DomaineScientifique[]       $domainesAssocies
+ * @var DomaineScientifique[]       $domainesScientifiques
  *
-* @method string formControlGroup()
-*/
+ * @method string formControlGroup()
+ */
 
+/** @var UniteRecherche $unite */
+$unite = $form->getObject();
+$idUniteRecherche = $unite->getStructure()->getId();
+$isNew = $unite->getId() === null;
+$estSubstituante = $unite->getStructure()->estStructureSubstituante();
 $fcg = $this->formControlGroup();
-$idUniteRecherche = $form->getObject()->getStructure()->getId();
+$this->headTitle("Modification de l'UR " . $unite->getCode());
+
+$editable = $isNew || $estSubstituante;
+$form->get('libelle')->setAttribute('readonly', !$editable);
+$form->get('sigle')->setAttribute('readonly', !$editable);
+$form->get('sourceCode')->setAttribute('readonly', !$editable);
 ?>
 
-<div>
-    <h1> Modification d'unité de recherche </h1>
+<h1 class="page-header">
+    Modification de l'UR &laquo; <?php echo $unite->getLibelle(); ?> &raquo;
+    <?php if ($isNew): ?>
+        Création d'une nouvelle UR
+    <?php else: ?>
+        Modification de l'UR &laquo; <?php echo $unite->getLibelle(); ?> &raquo;
+    <?php endif ?>
+</h1>
 
-    <?php echo $this->messenger()->addMessagesFromFlashMessenger(); ?>
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
+
+
 
 <!-- BLOC DES INFORMATIONS GENERALES ---------------------------------------------------------------------------------->
-    <div class="row">
-        <h2> Informations générales </h2>
 
-        <div class="col-md-6">
-            <?php echo $this->form()->openTag($form->prepare()->setAttribute('class', 'unite-recherche')) ?>
-            <?php echo $this->formHidden($form->get('id')) ?>
-            <?php echo $fcg($form->get('libelle')) ?>
-            <?php echo $fcg($form->get('sigle')) ?>
-            <?php echo $fcg($form->get('sourceCode')) ?>
-        </div>
+<h2> Informations générales </h2>
 
-        <div class="col-md-6" id="logo-div">
+<div class="row">
+
+    <div class="col-md-6">
+        <?php echo $this->form()->openTag($form->prepare()->setAttribute('class', 'unite-recherche')) ?>
+        <?php echo $this->formHidden($form->get('id')) ?>
+        <?php echo $fcg($form->get('libelle')) ?>
+        <?php echo $fcg($form->get('sigle')) ?>
+        <?php echo $fcg($form->get('sourceCode')) ?>
+    </div>
+
+    <div class="col-md-6" id="logo-div">
         <?php
-            /** @var \Zend\Form\Element\File $logoFile */
-            $logoFile = $form->get('cheminLogo');
-            echo $this->formLabel($logoFile);
+        /** @var \Zend\Form\Element\File $logoFile */
+        $logoFile = $form->get('cheminLogo');
+        echo $this->formLabel($logoFile);
 
-            $content = $form->getObject()->getLogoContent();
-            if ($content === null) {
-                $form->getObject()->setCheminLogo(null);
-            }
+        $content = $unite->getLogoContent();
+        if ($content === null) {
+            $unite->setCheminLogo(null);
+        }
         ?>
 
-            <table>
-                <tr>
-                    <td>
-                        <img
+        <table>
+            <tr>
+                <td>
+                    <img
                             id="logo"
                             style="max-width: 200px; max-height: 200px; border: 1px solid black; background-color: white;"
-                            src="data:image/png;base64,<?php echo base64_encode($form->getObject()->getLogoContent()); ?>"
-                        />
-                    </td>
-                    <td style="padding:20px;">
-                        <?php
-                            echo $this->formFile($logoFile);
-                            echo $this->formElementErrors($logoFile);
-                        ?>
-                        <br/>
-                        <?php if($form->getObject()->getId()): ?>
+                            src="data:image/png;base64,<?php echo base64_encode($unite->getLogoContent()); ?>"
+                    />
+                </td>
+                <td style="padding:20px;">
+                    <?php
+                    echo $this->formFile($logoFile);
+                    echo $this->formElementErrors($logoFile);
+                    ?>
+                    <br/>
+                    <?php if ($unite->getId()): ?>
                         <a
-                            id="supprimer-logo"
-                            class="btn btn-danger"
-                            href="<?php echo $this->url('unite-recherche/supprimer-logo', ["uniteRecherche" => $idUniteRecherche]); ?>"
+                                id="supprimer-logo"
+                                class="btn btn-danger"
+                                href="<?php echo $this->url('unite-recherche/supprimer-logo', ["uniteRecherche" => $idUniteRecherche]); ?>"
                         >
-                                <span class="glyphicon glyphicon-trash"></span>
-                                Supprimer le logo
+                            <span class="glyphicon glyphicon-trash"></span>
+                            Supprimer le logo
                         </a>
-                        <?php endif; ?>
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <?php echo $this->formElement($form->get('submit')) ?>
-        <?php echo $this->form()->closeTag() ?>
-
+                    <?php endif; ?>
+                </td>
+            </tr>
+        </table>
     </div>
+
+</div>
+
+<?php echo $this->formElement($form->get('submit')) ?>
+<?php echo $this->form()->closeTag() ?>
+
+
+<hr>
 
 <!-- BLOC DES ETABLISSEMENT DE RATTACHEMENT --------------------------------------------------------------------------->
-    <div class="row">
-        <h2> Établissements de rattachement </h2>
 
-        <div class="col-md-6">
-            <table class="table table-extra-condensed">
-                <thead>
-                    <tr>
-                        <th> Libellé</th>
-                        <th style="width:15%;"> Action </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($etablissementsRattachements as $etablissementRattachement): ?>
-                        <tr>
-                            <td> <?php echo $etablissementRattachement->getEtablissement()->getLibelle(); ?> </td>
-                            <td>
-                                <a
-                                    href="<?php echo $this->url("unite-recherche/retirer-etablissement-rattachement", ["uniteRecherche" => $idUniteRecherche, "etablissement"=>$etablissementRattachement->getEtablissement()->getId()],[],true); ?>"
-                                    title ="Retirer l'établissement de rattachement"
-                                >
-                                    <span class="glyphicon glyphicon-trash"></span>
-                                </a>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
+<h2> Établissements de rattachement </h2>
 
-        <div class="col-md-6">
-            <?php
-                $selectDomaine = new SelectHelper("etablissements", $etablissements, "Choisissez un établissement de rattachement ...");
-                echo $selectDomaine;
-            ?>
-            <br/> <br/>
-            <a
+<div class="row">
+
+    <div class="col-md-6">
+        <table class="table table-extra-condensed">
+            <thead>
+            <tr>
+                <th> Libellé</th>
+                <th style="width:15%;"> Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($etablissementsRattachements as $etablissementRattachement): ?>
+                <tr>
+                    <td> <?php echo $etablissementRattachement->getEtablissement()->getLibelle(); ?> </td>
+                    <td>
+                        <a
+                                href="<?php echo $this->url("unite-recherche/retirer-etablissement-rattachement", ["uniteRecherche" => $idUniteRecherche, "etablissement" => $etablissementRattachement->getEtablissement()->getId()], [], true); ?>"
+                                title="Retirer l'établissement de rattachement"
+                        >
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="col-md-6">
+        <?php
+        $selectDomaine = new SelectHelper("etablissements", $etablissements, "Choisissez un établissement de rattachement ...");
+        echo $selectDomaine;
+        ?>
+        <br/> <br/>
+        <a
                 class="btn btn-success"
                 id="ajout-rattachement"
-                href="<?php echo $this->url("unite-recherche/ajouter-etablissement-rattachement", ["uniteRecherche" => $idUniteRecherche ,"etablissement" => 0], [], true);?>"
-            >
-                <span class="glyphicon glyphicon-plus"></span>
-                Ajouter un établissement de rattachement
-            </a>
-        </div>
+                href="<?php echo $this->url("unite-recherche/ajouter-etablissement-rattachement", ["uniteRecherche" => $idUniteRecherche, "etablissement" => 0], [], true); ?>"
+        >
+            <span class="glyphicon glyphicon-plus"></span>
+            Ajouter un établissement de rattachement
+        </a>
     </div>
+</div>
+
+
+<hr>
 
 <!-- BLOC DES DOMAINES SCIENTIFIQUES ---------------------------------------------------------------------------------->
-    <div class="row">
-        <h2> Domaines scientifiques</h2>
 
-        <div class="col-md-6">
-            <table class="table table-extra-condensed">
-                <thead>
-                    <tr>
-                        <th>Libellé</th>
-                        <th style="width:15%;">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($domainesAssocies as $domaineScientifique) : ?>
-                        <tr>
-                            <td>
-                                <?php echo $domaineScientifique->getLibelle(); ?>
-                            </td>
-                            <td>
-                                <a
-                                    href="<?php echo $this->url('unite-recherche/retirer-domaine-scientifique', ["uniteRecherche" => $idUniteRecherche, 'domaineScientifique' => $domaineScientifique->getId()],[],true); ?>"
-                                    title ="Retirer le domaine scientifique"
-                                >
-                                    <span class="glyphicon glyphicon-trash"></span>
-                                </a>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
 
-        <div class="col-md-6">
-            <?php
-                $selectDomaine = new SelectHelper("domaines", $domainesScientifiques, 'Choisissez un domaine scientifique ...');
-                echo $selectDomaine;
-            ?>
-            <br/>
-            <br/>
-            <a class="btn btn-success"
-               id="ajout-domaine"
-               href="<?php echo $this->url("unite-recherche/ajouter-domaine-scientifique", ["uniteRecherche" => $idUniteRecherche, "domaineScientifique" => 0], [], true);?>">
-                <span class="glyphicon glyphicon-plus"></span>
-                Ajouter un domaine scientifique
-            </a>
-        </div>
+<h2> Domaines scientifiques</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <table class="table table-extra-condensed">
+            <thead>
+            <tr>
+                <th>Libellé</th>
+                <th style="width:15%;">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($domainesAssocies as $domaineScientifique) : ?>
+                <tr>
+                    <td>
+                        <?php echo $domaineScientifique->getLibelle(); ?>
+                    </td>
+                    <td>
+                        <a
+                                href="<?php echo $this->url('unite-recherche/retirer-domaine-scientifique', ["uniteRecherche" => $idUniteRecherche, 'domaineScientifique' => $domaineScientifique->getId()], [], true); ?>"
+                                title="Retirer le domaine scientifique"
+                        >
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
     </div>
 
+    <div class="col-md-6">
+        <?php
+        $selectDomaine = new SelectHelper("domaines", $domainesScientifiques, 'Choisissez un domaine scientifique ...');
+        echo $selectDomaine;
+        ?>
+        <br/>
+        <br/>
+        <a class="btn btn-success"
+           id="ajout-domaine"
+           href="<?php echo $this->url("unite-recherche/ajouter-domaine-scientifique", ["uniteRecherche" => $idUniteRecherche, "domaineScientifique" => 0], [], true); ?>">
+            <span class="glyphicon glyphicon-plus"></span>
+            Ajouter un domaine scientifique
+        </a>
+    </div>
+</div>
+
+
+
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
 
         //remplacement dans la structure cible
         $("input[name='cheminLogo']").on("change", function () {
@@ -195,12 +229,12 @@ $idUniteRecherche = $form->getObject()->getStructure()->getId();
                 console.log(content);
                 $('#logo').attr("src", content);
             };
-            fr.readAsDataURL( myFile[0] );
+            fr.readAsDataURL(myFile[0]);
         });
 
         $("#etablissements").on("change", function () {
-           var etablissementId = $("#etablissements").val();
-           $("a#ajout-rattachement").attr("href", "ajouter-etablissement-rattachement/" + etablissementId);
+            var etablissementId = $("#etablissements").val();
+            $("a#ajout-rattachement").attr("href", "ajouter-etablissement-rattachement/" + etablissementId);
         });
 
         $("#domaines").on("change", function () {

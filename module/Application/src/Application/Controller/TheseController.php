@@ -582,7 +582,6 @@ class TheseController extends AbstractController
 
         $form = $this->uploader()->getForm();
         $form->setAttribute('id', uniqid('form-'));
-        $form->setUploadMaxFilesize(FichierTheseController::UPLOAD_MAX_FILESIZE);
 //        $form->addElement((new Hidden('annexe'))->setValue(0));
         $form->addElement((new Hidden('nature'))->setValue($this->idify($nature)));
         $form->addElement((new Hidden('version'))->setValue($this->idify($version)));
@@ -637,7 +636,6 @@ class TheseController extends AbstractController
 
         $form = $this->uploader()->getForm();
         $form->setAttribute('id', uniqid('form-'));
-        $form->setUploadMaxFilesize(FichierTheseController::UPLOAD_MAX_FILESIZE);
         $form->addElement((new Hidden('validerAuto'))->setValue(1));
         $form->addElement((new Hidden('retraitement'))->setValue(Fichier::RETRAITEMENT_MANU));
         $form->addElement((new Hidden('nature'))->setValue($this->idify($nature)));
@@ -708,7 +706,6 @@ class TheseController extends AbstractController
 
         $form = $this->uploader()->getForm();
         $form->setAttribute('id', uniqid('form-'));
-        $form->setUploadMaxFilesize(FichierTheseController::UPLOAD_MAX_FILESIZE);
         $form->addElement((new Hidden('annexe'))->setValue(1));
         $form->addElement((new Hidden('nature'))->setValue($this->idify($nature)));
         $form->addElement((new Hidden('version'))->setValue($this->idify($version)));
@@ -834,7 +831,7 @@ class TheseController extends AbstractController
 
         $form = $this->uploader()->getForm();
         $form->setAttribute('id', uniqid('form-'));
-        $form->setUploadMaxFilesize('10M');
+//        $form->setUploadMaxFilesize('50M');
         $form->addElement((new Hidden('nature'))->setValue($this->idify($nature)));
         $form->addElement((new Hidden('version'))->setValue($this->idify($version)));
         $form->get('files')->setLabel("")->setAttribute('multiple', false)/*->setAttribute('accept', '.pdf')*/;
@@ -855,29 +852,11 @@ class TheseController extends AbstractController
         $these = $this->requestedThese();
         $version = $this->fichierService->fetchVersionFichier($this->params()->fromQuery('version'));
 
-//        $theseFichiers = $these->getFichiersByNatureEtVersion(NatureFichier::CODE_THESE_PDF, $version);
         $theseFichiers = $this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF, $version, false);
         /** @var Fichier $fichierThese */
         $fichierThese = current($theseFichiers);
 
         if ($this->getRequest()->isPost()) {
-
-            //TODO move this to the suppr action
-            // retrait de la validation précédente si le fichier est identique afin de pouvoir retester l'archivabilité après effacement
-            $qb = $this->validationService->getRepository()->createQueryBuilder('v')
-                ->where("t.id = :theseid")
-                ->andWhere("tv.code = :type");
-            $qb->setParameter(":theseid", $these->getId());
-            $qb->setParameter(":type", TypeValidation::CODE_DEPOT_THESE_CORRIGEE);
-            $res = $qb->getQuery()->getResult();
-
-            if(isset($res) && count($res) > 0) {
-                //echo "something is here !"."<br/>";
-                $validation = $res[0];
-                $this->validationService->getEntityManager()->remove($validation);
-                $this->validationService->getEntityManager()->flush();
-            }
-
             $action = $this->params()->fromPost('action', $this->params()->fromQuery('action'));
             if ('tester' === $action) {
                 try {
@@ -1435,54 +1414,6 @@ class TheseController extends AbstractController
     }
 
     /**
-     * Prédicat testant si un acteur est un directeur de thèse
-     * @param Acteur $var
-     * @return bool
-     */
-    public static function estDirecteur(Acteur $var) {
-        $role = $var->getRole()->getSourceCode();
-        return  (explode("::", $role)[1] == "D" || explode("::", $role)[1] == "K");
-    }
-
-    /** Vrai si un des acteurs à pour etablissement : '14 ENSI de Caen' ou 'ENSI DE CAEN'
-     * @param Acteur[] $acteurs
-     * @return bool
-     */
-    public static function estENSI($acteurs) {
-        foreach ($acteurs as $acteur) {
-            if ($acteur->getEtablissement() == 'ENSI DE CAEN' || $acteur->getEtablissement() == '14 ENSI de Caen') {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /** Vrai si un des acteurs à pour etablissement : '14 ENSI de Caen' ou 'ENSI DE CAEN'
-     * @param Acteur[] $acteurs
-     * @return bool
-     */
-    public static function estESITC($acteurs) {
-        foreach ($acteurs as $acteur) {
-            if ($acteur->getEtablissement() == 'ESITC' || $acteur->getEtablissement() == 'ESITC Caen') {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Prédicat testant si un acteur est un rapporteur de thèse
-     * @param Acteur $var
-     * @return bool
-     */
-    public static function estRapporteur(Acteur $var)
-    {
-        $role = $var->getRole()->getSourceCode();
-        return (explode("::", $role)[1] == "R");
-
-    }
-
-    /**
      * @throws \MpdfException
      */
     public function fusionAction()
@@ -1532,7 +1463,8 @@ class TheseController extends AbstractController
 
         // GENERATION DE LA COUVERTURE
         $filename = "COUVERTURE_".$these->getId()."_".uniqid().".pdf";
-        $this->fichierService->generatePageDeCouverture($these,$filename);
+        $renderer = $this->getServiceLocator()->get('view_renderer'); /* @var $renderer \Zend\View\Renderer\PhpRenderer */
+        $this->fichierService->generatePageDeCouverture($these,$renderer,$filename);
         $couvertureChemin = "/tmp/". $filename;
 
         // RECUPERATION DE LA BONNE VERSION DU MANUSCRIPT

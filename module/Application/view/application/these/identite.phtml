@@ -7,6 +7,7 @@ use Application\Entity\Db\Etablissement;
 use Application\Filter\ActeursFormatter;
 use Application\Entity\Db\WfEtape;
 use Application\Provider\Privilege\DoctorantPrivileges;
+use Application\Provider\Privilege\ThesePrivileges;
 use Application\View\Renderer\PhpRenderer;
 use Application\Entity\Db\MailConfirmation;
 
@@ -307,6 +308,11 @@ $persopassModifiedEvent = 'persopass-modified-event';
 
 </div>
 
+
+
+<!-------------------------------------- Fichiers divers --------------------------------------->
+
+<?php if ($this->isAllowed($these, ThesePrivileges::FICHIER_DIVERS_CONSULTER)): ?>
 <div class="row">
     <div class="col-md-4">
         <div id="pvSoutenanceDiv" class="" data-url="<?php echo $pvSoutenanceUrl ?>">
@@ -354,6 +360,9 @@ $persopassModifiedEvent = 'persopass-modified-event';
         </div>
     </div>
 </div>
+<?php endif ?>
+
+
 
 <!-------------------------------------- Next step --------------------------------------->
 <div id="nextStepDiv" data-url="<?php echo $nextStepUrl ?>" style="display: none">

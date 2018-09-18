@@ -13,6 +13,8 @@ use Application\Provider\Privilege\SubstitutionPrivileges;
  * @var EcoleDoctorale[] $ecolesSubstituees
  * @var UniteRecherche[] $unitesSubstituees
  */
+
+$canSubstitutionAutomatique = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_AUTOMATIQUE));
 ?>
 
 <?php $this->headTitle($this->translate("Substitution de structures")) ?>

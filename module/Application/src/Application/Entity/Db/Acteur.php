@@ -5,19 +5,20 @@ namespace Application\Entity\Db;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
-use Zend\Form\Annotation;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 
 /**
  * --- Class Acteur ---
- * @var integer $id                     un identifiant unique servant de clef
- * @var string $sourceCode              liens vers apogée
- * @var string $libelleRoleComplement   Complément de rôle (p.e. Co-encadrement, Président de Jury ...)
- * @var These $these                    Information sur l'etat de la thèse et des acteurs de la thèse
+ *
+ * @var integer  $id                    un identifiant unique servant de clef
+ * @var string   $sourceCode            liens vers apogée
+ * @var string   $libelleRoleComplement Complément de rôle (p.e. Co-encadrement, Président de Jury ...)
+ * @var These    $these                 Information sur l'etat de la thèse et des acteurs de la thèse
  * @var Individu $individu              Information sur la personne (p.e. Nom, Mail, ...)
- * @var Role $role                      Role de l'acteur (p.e. directeur de thèse)
- * @var string $qualite                 la qualité de l'acteur (p.e. chargé de recherche, ...)
- * @var string $etalissement            l'étabilissement d'attachement de l'acteur (p.e. Université de Caen Normandie, ...)
+ * @var Role     $role                  Role de l'acteur (p.e. directeur de thèse)
+ * @var string   $qualite               la qualité de l'acteur (p.e. chargé de recherche, ...)
+ * @var string   $etalissement          l'étabilissement d'attachement de l'acteur (p.e. Université de Caen Normandie,
+ *      ...)
  */
 class Acteur implements HistoriqueAwareInterface, ResourceInterface
 {
@@ -55,7 +56,12 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface
     private $role;
     /** @var string $qualite */
     private $qualite;
-    /** @var string $etablissement */
+
+    /**
+     * Etablissement auquel appartient l'individu.
+     *
+     * @var Etablissement
+     */
     private $etablissement;
 
     /**
@@ -85,13 +91,36 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface
         return strcmp($x, $y);
     }
 
+    /**
+     * Prédicat testant si cet acteur est un directeur OU co-directeur de thèse.
+     *
+     * @return bool
+     */
+    public function estDirecteur()
+    {
+        return in_array($this->getRole()->getCode(), [
+            Role::CODE_DIRECTEUR_THESE,
+            Role::CODE_CODIRECTEUR_THESE]
+        );
+    }
+
+    /**
+     * Prédicat testant cet un acteur est un rapporteur de thèse.
+     *
+     * @return bool
+     */
+    public function estRapporteur()
+    {
+        return $this->getRole()->getCode() === "R";
+
+    }
 
     /**
      * @return string
      */
     public function __toString()
     {
-        return (string) $this->getIndividu();
+        return (string)$this->getIndividu();
     }
 
     /**
@@ -204,6 +233,7 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface
 
         return $this;
     }
+
     /**
      * @return string qualite
      */
@@ -218,26 +248,24 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
-     * @param string $etablissemnt
+     * @param Etablissement|null $etablissement
      * @return self
      */
-    public function setEtablissement($etablissement)
+    public function setEtablissement(Etablissement $etablissement = null)
     {
         $this->etablissement = $etablissement;
 
         return $this;
     }
+
     /**
-     * @return string $etablissement
+     * Retourne l'établissement ÉVENTUEL auquel appartient l'individu.
+     *
+     * @return Etablissement|null
      */
     public function getEtablissement()
     {
-        if ($this->etablissement === null) {
-            return " ";
-//            return "Etablissement non indiquée";
-        } else {
-            return $this->etablissement;
-        }
+        return $this->etablissement;
     }
 
     /**
@@ -250,9 +278,6 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface
 
         return $this;
     }
-
-
-
 
     /**
      * Returns the string identifier of the Resource

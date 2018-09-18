@@ -3,6 +3,8 @@
 namespace Application\Controller;
 
 use Application\Entity\Db\EcoleDoctorale;
+use Application\Entity\Db\Individu;
+use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Structure;
 use Application\Entity\Db\StructureConcreteInterface;
@@ -11,6 +13,7 @@ use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
+use UnicaenApp\Exception\RuntimeException;
 use Zend\View\Model\ViewModel;
 
 class EcoleDoctoraleController extends AbstractController
@@ -30,31 +33,12 @@ class EcoleDoctoraleController extends AbstractController
      */
     public function indexAction()
     {
-        $selected = $this->params()->fromQuery('selected');
-
-        $roles = null;
-        $effectifs = null;
-        if ($selected) {
-            /**
-             * @var StructureConcreteInterface $structure
-             * @var Role[] $roles
-             */
-            $structure  = $this->getEcoleDoctoraleService()->getRepository()->findByStructureId($selected);
-            $roles = $structure->getStructure()->getStructureDependantRoles();
-
-            $effectifs = [];
-            foreach ($roles as $role) {
-                $individus = $this->individuService->getIndividuByRole($role);
-                $effectifs[$role->getLibelle()] = $individus;
-            }
-        }
-
         $structuresAll = $this->getEcoleDoctoraleService()->getRepository()->findAll();
 
         /** retrait des structures substituées */
-        //TODO faire cela dans le service ???
         $structuresSub = array_filter($structuresAll, function (StructureConcreteInterface $structure) { return count($structure->getStructure()->getStructuresSubstituees())!=0; });
         $toRemove = [];
+        /** @var EcoleDoctorale $structure */
         foreach($structuresSub as $structure) {
             foreach ($structure->getStructure()->getStructuresSubstituees() as $sub) {
                 $toRemove[] = $sub;
@@ -70,10 +54,47 @@ class EcoleDoctoraleController extends AbstractController
         }
 
         return new ViewModel([
-            'structuresPrincipales'          => $structures,
-            'selected'                       => $selected,
-            'roles'                          => $roles,
-            'effectifs'                      => $effectifs,
+            'ecoles'                         => $structures,
+        ]);
+    }
+
+    public function informationAction()
+    {
+        $id = $this->params()->fromRoute('ecoleDoctorale');
+        $ecole = $this->getEcoleDoctoraleService()->getRepository()->findByStructureId($id);
+        if ($ecole === null) {
+            throw new RuntimeException("Aucune école doctorale ne possède l'identifiant renseigné.");
+        }
+
+        $roleListings = [];
+        $individuListings = [];
+        $roles = $this->getRoleService()->getRolesByStructure($ecole->getStructure());
+        $individus = $this->getRoleService()->getIndividuByStructure($ecole->getStructure());
+        $individuRoles = $this->getRoleService()->getIndividuRoleByStructure($ecole->getStructure());
+
+        /** @var Role $role */
+        foreach ($roles as $role) {
+            $roleListings [$role->getLibelle()] = 0;
+        }
+
+        /** @var Individu $individu */
+        foreach ($individus as $individu) {
+            $denomination = $individu->getNomComplet(false, false, false, true, false);
+            $individuListings[$denomination] = [];
+        }
+
+        /** @var IndividuRole $individuRole */
+        foreach ($individuRoles as $individuRole) {
+            $denomination = $individuRole->getIndividu()->getNomComplet(false, false, false, true, false);
+            $role = $individuRole->getRole()->getLibelle();
+            $individuListings[$denomination][] = $role;
+            $roleListings[$role]++;
+        }
+
+        return new ViewModel([
+            'ecole' => $ecole,
+            'roleListing' => $roleListings,
+            'individuListing' => $individuListings,
         ]);
     }
 
@@ -103,7 +124,7 @@ class EcoleDoctoraleController extends AbstractController
             // action d'affacement du logo
             if (isset($data['supprimer-logo'])) {
                 $this->supprimerLogoEcoleDoctorale();
-                return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecoleId]], true);
+                return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecoleId], "fragment" => $ecoleId], true);
             }
 
             // action de modification
@@ -119,10 +140,10 @@ class EcoleDoctoraleController extends AbstractController
                 $this->getEcoleDoctoraleService()->update($ecole);
 
                 $this->flashMessenger()->addSuccessMessage("École doctorale '$ecole' modifiée avec succès");
-                return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecoleId]], true);
+                return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecoleId], "fragment" => $ecoleId], true);
             }
             $this->flashMessenger()->addErrorMessage("Echec de la mise à jour : données incorrectes saissie");
-            return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecoleId]], true);
+            return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecoleId], "fragment" => $ecoleId], true);
         }
 
         // envoie vers le formulaire de modification
@@ -162,7 +183,8 @@ class EcoleDoctoraleController extends AbstractController
 
                 $this->flashMessenger()->addSuccessMessage("École doctorale '$ecole' créée avec succès");
 
-                return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecole->getStructure()->getId()]], true);
+                $ecoleId = $ecole->getStructure()->getId();
+                return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecoleId], "fragment" => $ecoleId], true);
             }
         }
 
@@ -185,7 +207,7 @@ class EcoleDoctoraleController extends AbstractController
 
         $this->flashMessenger()->addSuccessMessage("École doctorale '$ecole' supprimée avec succès");
 
-        return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecoleId]], true);
+        return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecoleId], "fragment" => $ecoleId], true);
     }
 
     public function restaurerAction()
@@ -197,7 +219,7 @@ class EcoleDoctoraleController extends AbstractController
 
         $this->flashMessenger()->addSuccessMessage("École doctorale '$ecole' restaurée avec succès");
 
-        return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecoleId]], true);
+        return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecoleId], "fragment" => $ecoleId], true);
     }
 
     /**
@@ -220,7 +242,7 @@ class EcoleDoctoraleController extends AbstractController
     {
         $structureId = $this->params()->fromRoute("ecoleDoctorale");
         $this->supprimerLogoEcoleDoctorale();
-        return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $structureId]], true);
+        return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $structureId], "fragment" => $structureId], true);
     }
 
     /**

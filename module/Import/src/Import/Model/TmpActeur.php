@@ -35,22 +35,17 @@ class TmpActeur
     /**
      * @var string
      */
+    private $acteurEtablissementId;
+
+    /**
+     * @var string
+     */
     private $libQualite;
 
     /**
      * @var string
      */
-    private $libEtablissement;
-
-    /**
-     * @var string
-     */
     private $codeQualite;
-
-    /**
-     * @var string
-     */
-    private $codeEtablissement;
 
     /**
      * @var string

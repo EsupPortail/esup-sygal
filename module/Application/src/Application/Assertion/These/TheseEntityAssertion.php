@@ -4,7 +4,6 @@ namespace Application\Assertion\These;
 
 use Application\Assertion\Exception\FailedAssertionException;
 use Application\Assertion\Interfaces\EntityAssertionInterface;
-use Application\Assertion\These\GeneratedTheseEntityAssertion;
 use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\NatureFichier;
@@ -34,14 +33,11 @@ class TheseEntityAssertion extends GeneratedTheseEntityAssertion
     private $these;
 
     /**
-     * @param These $these
-     * @return TheseEntityAssertion
+     * @param array $context
      */
-    public function setThese($these)
+    public function setContext(array $context)
     {
-        $this->these = $these;
-
-        return $this;
+        $this->these = $context['these'];
     }
 
     /**
@@ -53,11 +49,6 @@ class TheseEntityAssertion extends GeneratedTheseEntityAssertion
     {
         $allowed = $this->assertAsBoolean($privilege);
 
-//        $this->logger->debug(
-//            $_SERVER['REQUEST_URI'] . PHP_EOL .
-//            "assert(" . $privilege . ') : ' . ($allowed ? 'true' : 'false') . ' [' . $this->failureMessage . ']' . PHP_EOL
-//        );
-
         $this->assertTrue($allowed, $this->failureMessage);
 
         return true;
@@ -65,34 +56,7 @@ class TheseEntityAssertion extends GeneratedTheseEntityAssertion
 
     protected function isStructureDuRoleRespectee()
     {
-        $role = $this->userContextService->getSelectedIdentityRole();
-
-        if ($role->isTheseDependant()) {
-            if ($role->isDoctorant()) {
-                return $this->isUtilisateurEstAuteurDeLaThese();
-            }
-            elseif ($role->isDirecteurThese()) {
-                // TODO
-                return false;
-            }
-        }
-
-        elseif ($role->isStructureDependant()) {
-            if ($role->isEtablissementDependant()) {
-                // On ne voit que les thèses de son établissement.
-                return $this->these->getEtablissement()->getStructure() === $role->getStructure();
-            }
-            elseif ($role->isEcoleDoctoraleDependant()) {
-                // On ne voit que les thèses concernant son ED.
-                return $this->these->getEcoleDoctorale()->getStructure() === $role->getStructure();
-            }
-            elseif ($role->isUniteRechercheDependant()) {
-                // On ne voit que les thèses concernant son UR.
-                return $this->these->getEcoleDoctorale()->getStructure() === $role->getStructure();
-            }
-        }
-
-        return true;
+        return $this->userContextService->isStructureDuRoleRespecteeForThese($this->these);
     }
 
     protected function isExisteValidationPageDeCouverture()
@@ -264,10 +228,6 @@ class TheseEntityAssertion extends GeneratedTheseEntityAssertion
      * @var bool
      */
     private $existeFichierTheseVersionCorrigee;
-
-
-
-
 
     /**
      * @var Doctorant

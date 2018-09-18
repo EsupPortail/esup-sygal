@@ -2,6 +2,8 @@
 
 namespace Application\Controller;
 
+use Application\Entity\Db\Individu;
+use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Structure;
 use Application\Entity\Db\StructureConcreteInterface;
@@ -12,6 +14,7 @@ use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
+use UnicaenApp\Exception\RuntimeException;
 use Zend\View\Model\ViewModel;
 
 class UniteRechercheController extends AbstractController
@@ -32,32 +35,12 @@ class UniteRechercheController extends AbstractController
      */
     public function indexAction()
     {
-        $selected = $this->params()->fromQuery('selected');
-
-        $roles = null;
-        $effectifs = null;
-        $structure = null;
-        if ($selected) {
-            /**
-             * @var StructureConcreteInterface $structure
-             * @var Role[] $roles
-             */
-            $selectedStructure  = $this->getUniteRechercheService()->getRepository()->findByStructureId($selected);
-            $roles = $selectedStructure->getStructure()->getStructureDependantRoles();
-
-            $effectifs = [];
-            foreach ($roles as $role) {
-                $individus = $this->individuService->getIndividuByRole($role);
-                $effectifs[$role->getLibelle()] = $individus;
-            }
-        }
-
         $structuresAll = $this->getUniteRechercheService()->getRepository()->findAll();
 
         /** retrait des structures substituées */
-        //TODO faire cela dans le service ???
         $structuresSub = array_filter($structuresAll, function (StructureConcreteInterface $structure) { return count($structure->getStructure()->getStructuresSubstituees())!=0; });
         $toRemove = [];
+        /** @var UniteRecherche $structure */
         foreach($structuresSub as $structure) {
             foreach ($structure->getStructure()->getStructuresSubstituees() as $sub) {
                 $toRemove[] = $sub;
@@ -71,18 +54,52 @@ class UniteRechercheController extends AbstractController
             }
             if (!$found) $structures[] = $structure;
         }
-        $rattachements = null;
-        if ($selectedStructure !== null) $rattachements = $this->getUniteRechercheService()->findEtablissementRattachement($selectedStructure);
-        $domaines = null;
-        if ($selectedStructure !== null) $domaines = $selectedStructure->getDomaines();
 
         return new ViewModel([
-            'structuresPrincipales'          => $structures,
-            'selected'                       => $selected,
-            'roles'                          => $roles,
-            'effectifs'                      => $effectifs,
-            'rattachements'                  => $rattachements,
-            'domaines'                       => $domaines,
+            'unites'                         => $structures,
+        ]);
+    }
+
+    public function informationAction()
+    {
+        $id = $this->params()->fromRoute('uniteRecherche');
+        $unite = $this->getUniteRechercheService()->getRepository()->findByStructureId($id);
+        if ($unite === null) {
+            throw new RuntimeException("Aucune unité de recherche ne possède l'identifiant renseigné.");
+        }
+
+        $roleListings = [];
+        $individuListings = [];
+        $roles = $this->getRoleService()->getRolesByStructure($unite->getStructure());
+        $individus = $this->getRoleService()->getIndividuByStructure($unite->getStructure());
+        $individuRoles = $this->getRoleService()->getIndividuRoleByStructure($unite->getStructure());
+
+        /** @var Role $role */
+        foreach ($roles as $role) {
+            $roleListings [$role->getLibelle()] = 0;
+        }
+
+        /** @var Individu $individu */
+        foreach ($individus as $individu) {
+            $denomination = $individu->getNomComplet(false, false, false, true, false);
+            $individuListings[$denomination] = [];
+        }
+
+        /** @var IndividuRole $individuRole */
+        foreach ($individuRoles as $individuRole) {
+            $denomination = $individuRole->getIndividu()->getNomComplet(false, false, false, true, false);
+            $role = $individuRole->getRole()->getLibelle();
+            $individuListings[$denomination][] = $role;
+            $roleListings[$role]++;
+        }
+
+        $etablissementsRattachements = $this->getUniteRechercheService()->findEtablissementRattachement($unite);
+
+        return new ViewModel([
+            'unite' => $unite,
+            'roleListing' => $roleListings,
+            'individuListing' => $individuListings,
+            'etablissementsRattachements' => $etablissementsRattachements,
         ]);
     }
 
@@ -112,7 +129,7 @@ class UniteRechercheController extends AbstractController
             // action d'affacement du logo
             if (isset($data['supprimer-logo'])) {
                 $this->supprimerLogoUniteRecherche();
-                return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId]], true);
+                return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId], "fragment" => $uniteId], true);
             }
 
             // action de modification
@@ -128,15 +145,15 @@ class UniteRechercheController extends AbstractController
                 $this->getUniteRechercheService()->update($unite);
 
                 $this->flashMessenger()->addSuccessMessage("Unité de recherche '$unite' modifiée avec succès");
-                return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId]], true);
+                return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId], "fragment" => "".$uniteId], true);
             }
             $this->flashMessenger()->addErrorMessage("Echec de la mise à jour : données incorrectes saissie");
-            return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId]], true);
+            return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId], "fragment" => "".$uniteId], true);
         }
 
         $etablissements = $this->getEtablissementService()->getRepository()->findAll();
         $etablissementsRattachements = $this->getUniteRechercheService()->findEtablissementRattachement($unite);
-        $domaineScientifiques = $this->getDomaineScientifiqueService()->getDomainesScientifiques();
+        $domaineScientifiques = $this->getDomaineScientifiqueService()->getRepository()->findAll();
 
         // envoie vers le formulaire de modification
         $viewModel = new ViewModel([
@@ -179,7 +196,8 @@ class UniteRechercheController extends AbstractController
 
                 $this->flashMessenger()->addSuccessMessage("Unité de recherche '$unite' créée avec succès");
 
-                return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $unite->getStructure()->getId()]], true);
+                $uniteId = $unite->getStructure()->getId();
+                return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId], "fragment" => $uniteId], true);
             }
         }
 
@@ -202,7 +220,7 @@ class UniteRechercheController extends AbstractController
 
         $this->flashMessenger()->addSuccessMessage("Unité de recherche '$unite' supprimée avec succès");
 
-        return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId]], true);
+        return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId], "fragment" => $uniteId], true);
     }
 
     public function restaurerAction()
@@ -214,7 +232,7 @@ class UniteRechercheController extends AbstractController
 
         $this->flashMessenger()->addSuccessMessage("Unité de recherche '$unite' restaurée avec succès");
 
-        return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId]], true);
+        return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId], "fragment" => $uniteId], true);
     }
 
     /**
@@ -237,7 +255,7 @@ class UniteRechercheController extends AbstractController
     {
         $structureId = $this->params()->fromRoute("uniteRecherche");
         $this->supprimerLogoUniteRecherche();
-        return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $structureId]], true);
+        return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $structureId], "fragment" => $structureId], true);
     }
 
     /**
@@ -351,7 +369,7 @@ class UniteRechercheController extends AbstractController
         $uniteId = $this->params()->fromRoute("uniteRecherche");
         $domaineId = $this->params()->fromRoute("domaineScientifique");
         $unite = $this->getUniteRechercheService()->getRepository()->findByStructureId($uniteId);
-        $domaine = $this->getDomaineScientifiqueService()->getDomaineScientifiqueById($domaineId);
+        $domaine = $this->getDomaineScientifiqueService()->getRepository()->find($domaineId);
 
         if ($domaine !== null && !array_search($domaine, $unite->getDomaines())) {
             $domaine = $domaine->addUnite($unite);
@@ -372,7 +390,7 @@ class UniteRechercheController extends AbstractController
         $uniteId = $this->params()->fromRoute("uniteRecherche");
         $domaineId = $this->params()->fromRoute("domaineScientifique");
         $unite = $this->getUniteRechercheService()->getRepository()->findByStructureId($uniteId);
-        $domaine = $this->getDomaineScientifiqueService()->getDomaineScientifiqueById($domaineId);
+        $domaine = $this->getDomaineScientifiqueService()->getRepository()->find($domaineId);
 
         $domaine = $domaine->removeUnite($unite);
         $unite = $unite->removeDomaine($domaine);
