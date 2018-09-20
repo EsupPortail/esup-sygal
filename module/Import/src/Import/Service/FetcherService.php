@@ -5,6 +5,7 @@ namespace Import\Service;
 use Application\Entity\Db\These;
 use Application\Filter\EtablissementPrefixFilter;
 use DateTime;
+use Doctrine\DBAL\ConnectionException;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
 use GuzzleHttp\Client;
@@ -278,71 +279,103 @@ class FetcherService
         $tableRelation = $metadata->columnNames;
         if ($debugLevel > 1) $this->displayMetadata($service, $entityClass);
 
-        /** Appel du web service */
-        $_debut = microtime(true);
-        $filtersForWebService = $this->prepareFiltersForWebServiceRequest($filters);
-        $uri = $service . '?' . http_build_query($filtersForWebService);
-        try {
-            $response = $this->sendRequest($uri);
-        } catch (\Exception $e) {
-            throw new RuntimeException("Erreur lors de l'interrogation du WS", null, $e);
-        }
-        if ($response->getStatusCode() != 200) {
-            return $this->doLog($start_date, new DateTime(), $this->url . "/" . $uri, "ERROR_WS", $response->getReasonPhrase());
-        }
-        $_fin = microtime(true);
-        if ($debugLevel > 0) print "<p><span style='background-color:lightgreen;'> WebService: " . ($_fin - $_debut) . " secondes.</span></p>";
-
         /** Etablissement de la transaction Oracle */
         $connection = $this->entityManager->getConnection();
         $connection->beginTransaction();
         $statement = null;
 
-        $_debut = microtime(true);
-        $queries = [];
-
-        /** Requête de suppression des données existantes */
+        /** Suppression des données existantes en BDD */
         $query = $this->generateSQLSnippetForDelete($tableName, $filters);
-        $queries[] = $query;
-
-        /** Remplissage avec les données retournées par le Web Services */
-        $json = json_decode($response->getBody());
-        $jsonName = str_replace("-", "_", $service);
-        $collection_json = $json->{'_embedded'}->{$jsonName};
-
-        foreach ($collection_json as $entity_json) {
-            $colonnes = implode(", ", $tableRelation);
-            $values = implode(", ", $this->generateValueArray($entity_json, $metadata));
-            $query = "INSERT INTO " . $tableName . " (" . $colonnes . ") VALUES (" . $values . ")";
-            $queries[] = $query;
-        }
-        $_fin = microtime(true);
-        if ($debugLevel > 0) print "<p><span style='background-color:lightgreen;'> PrepQueries: " . ($_fin - $_debut) . " secondes.</span></p>";
-
-        /** Execution des requetes */
-        $_debut = microtime(true);
-        foreach ($queries as $query) {
-            if ($debugLevel > 1) print "Execution de la requête [<tt>" . $query . "</tt>] <br/>";
+        try {
+            $connection->executeQuery($query);
+        } catch (DBALException $e) {
+            $message = "Erreur lors du vidage de la table $tableName en BDD";
             try {
-                $connection->executeQuery($query);
-            } catch (DBALException $e) {
-                throw new RuntimeException("Erreur lors de la mise à jour de la table $tableName en BDD", null, $e);
+                $connection->rollBack();
+            } catch (ConnectionException $e) {
+                throw new RuntimeException($message . " et le rollback a échoué", null, $e);
             }
+            throw new RuntimeException($message, null, $e);
         }
+
+        /** Appels du web service */
+        $entries = [];
+        $filtersForWebService = $this->prepareFiltersForWebServiceRequest($filters);
+        $page = 1;
+        do {
+            $params = array_merge($filtersForWebService, ['page' => $page]);
+            $uri = $service;
+            if (count($params) > 0) {
+                $uri .= '?' . http_build_query($params);
+            }
+
+            $_debut = microtime(true);
+            try {
+                $response = $this->sendRequest($uri);
+            } catch (\Exception $e) {
+                throw new RuntimeException("Erreur lors de l'interrogation du WS ($uri)", null, $e);
+            }
+            if ($response->getStatusCode() != 200) {
+                return $this->doLog($start_date, new DateTime(), $this->url . "/" . $uri, "ERROR_WS", $response->getReasonPhrase());
+            }
+            $_fin = microtime(true);
+            if ($debugLevel > 0) print "<p><span style='background-color:lightgreen;'> WS call: " . ($_fin - $_debut) . " secondes.</span></p>";
+
+            $json = json_decode($response->getBody());
+            $pageCount = $json->page_count; // NB: même valeur retournée à chaque requête (nombre total de pages)
+            $jsonName = str_replace("-", "_", $service);
+            $collection = $json->{'_embedded'}->{$jsonName};
+            $entries = array_merge($entries, $collection);
+            $page++;
+
+            /** Construction des requêtes d'INSERTion **/
+            $queries = [];
+            foreach ($collection as $entry) {
+                $colonnes = implode(", ", $tableRelation);
+                $values = implode(", ", $this->generateValueArray($entry, $metadata));
+                $query = "INSERT INTO " . $tableName . " (" . $colonnes . ") VALUES (" . $values . ")";
+                $queries[] = $query;
+            }
+
+            /** Execution des requetes d'INSERTion */
+            $_debut = microtime(true);
+            foreach ($queries as $query) {
+                if ($debugLevel > 1) print "Execution de la requête [<tt>" . $query . "</tt>] <br/>";
+                try {
+                    $connection->executeQuery($query);
+                } catch (DBALException $e) {
+                    $message = "Erreur lors de la mise à jour de la table $tableName en BDD";
+                    try {
+                        $connection->rollBack();
+                    } catch (ConnectionException $e) {
+                        throw new RuntimeException($message . " et le rollback a échoué", null, $e);
+                    }
+                    throw new RuntimeException($message, null, $e);
+                }
+            }
+            $_fin = microtime(true);
+            if ($debugLevel > 0) print "<p><span style='background-color:lightgreen;'> Inserts: " . ($_fin - $_debut) . " secondes.</span></p>";
+        }
+        while ($page <= $pageCount);
+
+        /** Commit **/
+        $_debut = microtime(true);
         try {
             $this->entityManager->getConnection()->commit();
+        } catch (ConnectionException $e) {
+            throw new RuntimeException("Le commit a échoué", null, $e);
         } catch (\Exception $e) {
-            return $this->doLog($start_date, new DateTime(), $this->url . "/" . $uri, "ERROR_DB", $e->getMessage());
+            throw new RuntimeException("Erreur inattendue", null, $e);
         }
-
         $_fin = microtime(true);
-        if ($debugLevel > 0) print "<p><span style='background-color:lightgreen;'> ExecQueries: " . ($_fin - $_debut) . " secondes.</span></p>";
+        if ($debugLevel > 0) print "<p><span style='background-color:lightgreen;'> Commit: " . ($_fin - $_debut) . " secondes.</span></p>";
+
         $fin = microtime(true);
 
         return $this->doLog(
             $start_date,
             new DateTime(),
-            $this->url . "/" . $uri, "OK", count($collection_json) . " " . $service . "(s) ont été récupéré(es) de [" . $this->codeEtablissement . "] en " . ($fin - $debut) . " seconde(s).",
+            $this->url . "/" . $uri, "OK", count($entries) . " " . $service . "(s) ont été récupéré(es) de [" . $this->codeEtablissement . "] en " . ($fin - $debut) . " seconde(s).",
             $this->codeEtablissement,
             $uri
         );
@@ -363,8 +396,7 @@ class FetcherService
             }
         }
         if ($position === -1) {
-            print "<span style='background-color:salmon;'> L'établissement [" . $etablissement . "] n'a pas pu être trouvée.</span><br/>";
-            throw new RuntimeException("L'établissement [" . $etablissement . "] n'a pas pu être trouvée.");
+            throw new RuntimeException("L'établissement [" . $etablissement . "] n'a pas pu être trouvé.");
         }
 
         return $position;
