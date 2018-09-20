@@ -45,19 +45,26 @@ $rdvBu = $these->getRdvBu();
             Une fois la fusion réalisée, assurez vous que toutes les informations sur la page de couverture sont présentes et que la fusion n'a pas endommagé le mémoire.
         </p>
 
+
         <div class="btn-group">
             <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Version à récupérer <span class="caret"></span>
             </button>
             <ul class="dropdown-menu">
-                <li><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 0, 'version' => 'VO'], [], true); ?>">Version originale</a></li>
+                <li class="complete"><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 0, 'version' => 'VO'], [], true); ?>">Version originale</a></li>
+                <li class="removal"><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 0, 'version' => 'VO', 'removal' => true], [], true); ?>">Version originale</a></li>
                 <?php if ($hasVD): ?>
-                    <li><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 0, 'version' => 'VD'], [], true); ?>">Version diffusion</a></li>
+                    <li class="complete"><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 0, 'version' => 'VD'], [], true); ?>">Version diffusion</a></li>
+                    <li class="removal"><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 0, 'version' => 'VD', 'removal' => true], [], true); ?>">Version diffusion</a></li>
                 <?php endif; ?>
                 <?php if ($hasVA): ?>
-                    <li><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 0, 'version' => 'VA'], [], true); ?>">Version archivable</a></li>
+                    <li class="complete"><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 0, 'version' => 'VA' ], [], true); ?>">Version archivable</a></li>
+                    <li class="removal"><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 0, 'version' => 'VA', 'removal' => true ], [], true); ?>">Version archivable</a></li>
                 <?php endif; ?>
             </ul>
+        </div>
+        <div>
+            <input type="checkbox" id="removal" /> Retrait de la page de couverture fournie par le doctorant.
         </div>
     </div>
 </div>
@@ -138,6 +145,8 @@ $rdvBu = $these->getRdvBu();
 
 
 <script>
+    $(".removal").hide();
+
     $(function () {
         var refreshingNextStep = function(done, effect) {
             return function() {
@@ -154,6 +163,17 @@ $rdvBu = $these->getRdvBu();
             refreshingNextStep
         ], self);
 
+        $("input#removal").on("change", function(event, data) {
+            var test = $(this).is(':checked');
+            if (test) {
+                $(".removal").show();
+                $(".complete").hide();
+            } else {
+                $(".removal").hide();
+                $(".complete").show();
+
+            }
+        });
 
         $("body").one("event-rdv-bu-modified", function (event, data) {
             // Les données viennent d'être modifiées.

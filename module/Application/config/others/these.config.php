@@ -336,7 +336,7 @@ return [
                     'fusion' => [
                         'type'          => 'Segment',
                         'options'       => [
-                            'route'       => '/fusion/:these[/:corrigee[/:version]]',
+                            'route'       => '/fusion/:these[/:corrigee[/:version[/:removal]]]',
                             'constraints' => [
                                 'these' => '\d+',
                             ],
