@@ -358,6 +358,7 @@ class FetcherService
         }
         while ($page <= $pageCount);
 
+
         /** Commit **/
         $_debut = microtime(true);
         try {
