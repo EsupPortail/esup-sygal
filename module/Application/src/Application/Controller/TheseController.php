@@ -1423,6 +1423,7 @@ class TheseController extends AbstractController
         $these          = $this->requestedThese();
         $corrigee       = $this->params()->fromRoute("corrigee");
         $versionName    = $this->params()->fromRoute("version");
+        $removal        = $this->params()->fromRoute("removal");
 
         $version = null;
         if ($versionName !== null) {
@@ -1479,20 +1480,20 @@ class TheseController extends AbstractController
         $merged->SetKeywords( $these->getMetadonnee()->getMotsClesLibresFrancais());
 
         $merged->SetImportUse();    //allows the usage of pages stored as template
-        $filenames = [$couvertureChemin, $manuscritChemin];
 
-        $first = true;
-        foreach ($filenames as $filename) {
-            if (file_exists($filename)) {
-                $pageCount = $merged->SetSourceFile($filename);
-                for ($i = 1; $i <= $pageCount; $i++) {
-                    if (!$first) $merged->WriteHTML('<pagebreak />');
-                    $first = false;
-                    $tplId = $merged->ImportPage($i);
-                    $merged->UseTemplate ($tplId);
-                }
-            }
+        $merged->setSourceFile($couvertureChemin);
+        $tplId = $merged->ImportPage(1);
+        $merged->UseTemplate ($tplId);
+
+        $pageCount = $merged->SetSourceFile($manuscritChemin);
+        $start_at = 1;
+        if ($removal) $start_at = 2;
+        for ($i = $start_at; $i <= $pageCount; $i++) {
+            $merged->WriteHTML('<pagebreak />');
+            $tplId = $merged->ImportPage($i);
+            $merged->UseTemplate ($tplId);
         }
+
 
         //unlink pour effacer la couv temp
         //unlink($filename);
