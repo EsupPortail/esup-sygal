@@ -1471,35 +1471,59 @@ class TheseController extends AbstractController
         // RECUPERATION DE LA BONNE VERSION DU MANUSCRIPT
         $manuscritFichier = current($this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF,$version));
         $manuscritChemin = $this->fichierService->computeDestinationFilePathForFichier($manuscritFichier);
+        $corpsChemin = $manuscritChemin;
 
-        $merged = new mPDF();
-        $merged->SetTitle($these->getTitre());
-        $merged->SetAuthor($these->getDoctorant()->getIndividu()->getPrenom(). " " . $these->getDoctorant()->getIndividu()->getNomUsuel());
-        $merged->SetCreator("SyGAL");
-        $merged->SetSubject( $these->getMetadonnee()->getResume());
-        $merged->SetKeywords( $these->getMetadonnee()->getMotsClesLibresFrancais());
+        $filename_output = $these->getId().'-'.$these->getDoctorant()->getNomUsuel().'-'.$these->getDoctorant()->getPrenom().'-merged.pdf';
 
-        $merged->SetImportUse();    //allows the usage of pages stored as template
 
-        $merged->setSourceFile($couvertureChemin);
-        $tplId = $merged->ImportPage(1);
-        $merged->UseTemplate ($tplId);
-
-        $pageCount = $merged->SetSourceFile($manuscritChemin);
-        $start_at = 1;
-        if ($removal) $start_at = 2;
-        for ($i = $start_at; $i <= $pageCount; $i++) {
-            $merged->WriteHTML('<pagebreak />');
-            $tplId = $merged->ImportPage($i);
-            $merged->UseTemplate ($tplId);
+        //RETRAIT DE LA PREMIER PAGE SI NECESSAIRE
+        if ($removal) {
+            $this->removeFirst($manuscritChemin, "/tmp/truncated.pdf");
+            $corpsChemin = "/tmp/truncated.pdf";
         }
+        //CONCATENATION
+        $this->mergePDF($couvertureChemin, $corpsChemin, "/tmp/" . $filename_output);
 
 
-        //unlink pour effacer la couv temp
-        //unlink($filename);
+        /** Retourner un PDF ...  */
+        $contenu     = file_get_contents("/tmp/".$filename_output);
+        $content     = is_resource($contenu) ? stream_get_contents($contenu) : $contenu;
 
-        $merged->Output(Structure::PATH. "merged.pdf", 'D');
+        header('Content-Description: File Transfer');
+        header('Content-Type: ' . 'application/pdf');
+        header('Content-Disposition: attachment; filename=' . $filename_output);
+        header('Content-Transfer-Encoding: binary');
+        header('Content-Length: ' . strlen($content));
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Expires: 0');
+        header('Pragma: public');
+
+        echo $content;
+        exit;
+
 
     }
 
+    //TODO si plus de retraitement sont requis faire un service associé au retraitement de pdf
+    public function mergePDF($inputFile1, $inputFile2, $outputFile) {
+        $GS_PATH = $this->getServiceLocator()->get('config')->get('ghostscript');
+        $cmd = $GS_PATH ." -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=".$outputFile." -dBATCH ".$inputFile1." ".$inputFile2;
+        $output = [];
+        $return = null;
+        exec($cmd, $output, $return);
+        if ($return !== 0) {
+            throw new RuntimeException("Un problème s'est produit lrs de la concaténation de la page de couverture et du manuscrit.");
+        }
+    }
+
+    public function removeFirst($inputFile, $outputFile) {
+        $GS_PATH = $this->getServiceLocator()->get('config')->get('ghostscript');
+        $cmd = $GS_PATH." -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=".$outputFile." -dFirstPage=2 -dBATCH ".$inputFile;
+        $output = [];
+        $return = null;
+        exec($cmd, $output, $return);
+        if ($return !== 0) {
+            throw new RuntimeException("Un problème s'est produit lors du retrait de la premier page du manuscrit.");
+        }
+    }
 }
