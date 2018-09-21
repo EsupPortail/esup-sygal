@@ -1413,9 +1413,6 @@ class TheseController extends AbstractController
         ]);
     }
 
-    /**
-     * @throws \MpdfException
-     */
     public function fusionAction()
     {
 
@@ -1478,7 +1475,7 @@ class TheseController extends AbstractController
 
         //RETRAIT DE LA PREMIER PAGE SI NECESSAIRE
         if ($removal) {
-            $this->removeFirst($manuscritChemin, "/tmp/truncated.pdf");
+            $this->removePremierePage($manuscritChemin, "/tmp/truncated.pdf");
             $corpsChemin = "/tmp/truncated.pdf";
         }
         //CONCATENATION
@@ -1506,7 +1503,7 @@ class TheseController extends AbstractController
 
     //TODO si plus de retraitement sont requis faire un service associé au retraitement de pdf
     public function mergePDF($inputFile1, $inputFile2, $outputFile) {
-        $GS_PATH = $this->getServiceLocator()->get('config')->get('ghostscript');
+        $GS_PATH = 'gs';
         $cmd = $GS_PATH ." -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=".$outputFile." -dBATCH ".$inputFile1." ".$inputFile2;
         $output = [];
         $return = null;
@@ -1516,8 +1513,8 @@ class TheseController extends AbstractController
         }
     }
 
-    public function removeFirst($inputFile, $outputFile) {
-        $GS_PATH = $this->getServiceLocator()->get('config')->get('ghostscript');
+    public function removePremierePage($inputFile, $outputFile) {
+        $GS_PATH = 'gs';
         $cmd = $GS_PATH." -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=".$outputFile." -dFirstPage=2 -dBATCH ".$inputFile;
         $output = [];
         $return = null;
