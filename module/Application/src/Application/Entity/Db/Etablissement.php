@@ -98,8 +98,7 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
     }
 
     /**
-     * @deprecated
-     * @return mixed
+     * @return string
      */
     public function getCode()
     {

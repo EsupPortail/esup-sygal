@@ -3,6 +3,7 @@
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
+use Import\Service\CallService;
 use Zend\Mvc\Router\Console\Simple;
 use Zend\Mvc\Router\Http\Literal;
 use Zend\Mvc\Router\Http\Segment;
@@ -58,7 +59,6 @@ return array(
             ],
         ],
     ],
-
     'console' => [
         'router' => [
             'routes' => [
@@ -84,6 +84,10 @@ return array(
                 ],
             ],
         ],
+        'view_manager' => [
+            'display_not_found_reason' => true,
+            'display_exceptions'       => true,
+        ]
     ],
     'router' => [
         'routes' => [
@@ -173,6 +177,9 @@ return array(
         ],
     ],
     'service_manager' => [
+        'invokables' => [
+            CallService::class => CallService::class,
+        ],
         'abstract_factories' => [
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
             'Zend\Log\LoggerAbstractServiceFactory',
