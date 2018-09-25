@@ -434,6 +434,10 @@ class SoutenanceController extends AbstractActionController {
         /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
 
+        /** @var Membre $membre */
+        $idMembre = $this->params()->fromRoute('membre');
+        $membre = $this->getMembreService()->find($idMembre);
+
         /** @var Individu $individu */
         $individu = $this->getIndividuService()->getRepository()->find(102444);
 
@@ -449,6 +453,7 @@ class SoutenanceController extends AbstractActionController {
         return new ViewModel([
            'these' => $these,
            'proposition' => $proposition,
+           'membre' => $membre,
            'validation' => $validation,
            'urlSigner' => $this->url()->fromRoute('soutenance/presoutenance/engagement-impartialite/signer',
                ['these' => $these->getId(), 'membre' => $individu->getId()],
