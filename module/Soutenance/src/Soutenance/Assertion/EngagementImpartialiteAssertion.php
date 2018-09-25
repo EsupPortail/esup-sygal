@@ -2,26 +2,52 @@
 
 namespace Soutenance\Assertion;
 
-use Application\Assertion\BaseAssertion;
+use Application\Entity\Db\Acteur;
+use Application\Entity\Db\Role;
+use Application\Entity\Db\These;
+use Application\Service\UserContextServiceAwareTrait;
+use Doctrine\Common\Collections\Collection;
 use Soutenance\Provider\Privilege\SoutenancePrivileges;
+use Zend\Permissions\Acl\Acl;
+use Zend\Permissions\Acl\Assertion\AssertionInterface;
+use Zend\Permissions\Acl\Resource\ResourceInterface;
+use Zend\Permissions\Acl\Role\RoleInterface;
 
-class EngagementImpartialiteAssertion extends BaseAssertion {
+class EngagementImpartialiteAssertion implements  AssertionInterface {
+    use UserContextServiceAwareTrait;
 
-
-    protected function initControllerAssertion()
+    /**
+     * !!!! Pour éviter l'erreur "Serialization of 'Closure' is not allowed"... !!!!
+     *
+     * @return array
+     */
+    public function __sleep()
     {
-        // TODO: Implement initControllerAssertion() method.
+        return [];
     }
 
-    protected function initPageAssertion()
+    public function __invoke($page)
     {
-        // TODO: Implement initPageAssertion() method.
+        return true;
     }
 
-    protected function initEntityAssertion()
+    public function assert(Acl $acl, RoleInterface $role = null, ResourceInterface $resource = null, $privilege = null)
     {
-        // TODO: Implement initEntityAssertion() method.
+        /** @var These $these */
+        $these = $resource;
+
+        switch ($privilege) {
+            case SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_SIGNER:
+                $utilisateur = $this->userContextService->getIdentityDb();
+                /** @var Collection $rapporteurs */
+                $rapporteurs = $these->getActeursByRoleCode(Role::CODE_RAPPORTEUR_JURY);
+                return $rapporteurs->map(function(Acteur $acteur) { return $acteur->getIndividu(); })->contains($utilisateur);
+                break;
+            case SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_ANNULER:
+                $role = $this->userContextService->getSelectedIdentityRole();
+                return ($role->getCode() === Role::CODE_BDD && $role->getStructure() === $these->getEtablissement()->getStructure());
+                break;
+        }
+        return true;
     }
-
-
 }

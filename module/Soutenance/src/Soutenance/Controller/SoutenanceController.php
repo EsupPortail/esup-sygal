@@ -15,6 +15,7 @@ use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
+use BjyAuthorize\Exception\UnAuthorizedException;
 use DateInterval;
 use DateTime;
 use Exception;
@@ -24,6 +25,7 @@ use Soutenance\Form\SoutenanceDateLieu\SoutenanceDateLieuForm;
 use Soutenance\Form\SoutenanceDateRenduRapport\SoutenanceDateRenduRapportForm;
 use Soutenance\Form\SoutenanceMembre\SoutenanceMembreForm;
 use Soutenance\Form\SoutenanceRefus\SoutenanceRefusForm;
+use Soutenance\Provider\Privilege\SoutenancePrivileges;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
@@ -463,9 +465,18 @@ class SoutenanceController extends AbstractActionController {
 
     // TODO replacer membre par individu (accesseur de soutenance_membre)
     public function signerEngagementImpartialiteAction() {
+
+
+
         /** @var These $these */
         $idThese = $this->params()->fromRoute('these');
         $these = $this->getTheseService()->getRepository()->find($idThese);
+
+        $isAllowed = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_SIGNER);
+        if (!$isAllowed) {
+            throw new UnAuthorizedException("pas de bol");
+        }
+
 
         /** @var Individu $individu */
         $idIndividu = $this->params()->fromRoute('membre');

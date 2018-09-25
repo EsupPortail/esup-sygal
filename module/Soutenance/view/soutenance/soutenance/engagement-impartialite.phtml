@@ -21,9 +21,10 @@ use Soutenance\Provider\Privilege\SoutenancePrivileges;
  *  - seul le rapporteur connecté peut valider ce formulaire car elle l'engage lui personnellement ;
  *  - seule la maison du doctorat de l'établissement d'encadrement peut invalider cette signature.
  */
-$canSign    = $this->isAllowed(SoutenancePrivileges::getResourceId(SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_SIGNER));
-$canUnsign  = $this->isAllowed(SoutenancePrivileges::getResourceId(SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_ANNULER));
-
+//$canSign    = $this->isAllowed(SoutenancePrivileges::getResourceId(SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_SIGNER));
+//$canUnsign  = $this->isAllowed(SoutenancePrivileges::getResourceId(SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_ANNULER));
+$canSign = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_SIGNER);
+$canUnsign = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_ANNULER);
 ?>
 
 <h1 class="page-header">
@@ -74,6 +75,7 @@ $canUnsign  = $this->isAllowed(SoutenancePrivileges::getResourceId(SoutenancePri
 
 <?php if ($validation): ?>
     <?php echo $this->validation($validation) ?>
+    UNSIGN=[<?php echo $canUnsign; ?>]<br/>
     <?php if ($canUnsign): ?>
         <p>
             <a href="<?php echo $urlUnsigner ?>" class="btn btn-danger">
