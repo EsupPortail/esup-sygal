@@ -2,6 +2,7 @@
 
 namespace Soutenance\Entity;
 
+use Application\Entity\Db\Individu;
 use DateTime;
 
 class Membre {
@@ -25,6 +26,9 @@ class Membre {
     private $exterieur;
     /** @var string */
     private $role;
+
+    /** @var Individu */
+    private  $individu;
 
 
     /** @var string */
@@ -246,6 +250,22 @@ class Membre {
     {
         $this->expertise = $expertise;
         return $this;
+    }
+
+    /**
+     * @return Individu
+     */
+    public function getIndividu()
+    {
+        return $this->individu;
+    }
+
+    /**
+     * @param Individu $individu
+     */
+    public function setIndividu($individu)
+    {
+        $this->individu = $individu;
     }
 
 

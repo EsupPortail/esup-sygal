@@ -285,6 +285,17 @@ return array(
                                             ],
                                         ],
                                     ],
+                                    'annuler' => [
+                                        'type' => Segment::class,
+                                        'may_terminate' => true,
+                                        'options' => [
+                                            'route'    => '/annuler',
+                                            'defaults' => [
+                                                'controller' => SoutenanceController::class,
+                                                'action'     => 'annuler-engagement-impartialite',
+                                            ],
+                                        ],
+                                    ],
                                 ],
                             ],
                             'notifier-demande-expertise' => [
@@ -485,7 +496,6 @@ return array(
 
             EngagementImpartialiteAssertion::class => EngagementImpartialiteAssertionFactory::class,
         ],
-
     ],
     'controllers' => [
         'factories' => [

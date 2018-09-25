@@ -426,8 +426,6 @@ class SoutenanceController extends AbstractActionController {
 
     // TODO necessiterai un plugging d'url comme pour les theses
     // TODO refaire le routing /soutenance/engagement-impartialite/signer
-    // TODO ajouter dans la table membre un lien vers l'individu en BD
-    // TODO assertion de qui à le droit de pousser le bouton ...
     public function engagementImpartialiteAction() {
         /** @var These $these */
         $idThese = $this->params()->fromRoute('these');
@@ -441,7 +439,7 @@ class SoutenanceController extends AbstractActionController {
         $membre = $this->getMembreService()->find($idMembre);
 
         /** @var Individu $individu */
-        $individu = $this->getIndividuService()->getRepository()->find(102444);
+        $individu = $membre->getIndividu();
 
         /** @var Validation $validation */
         $validation = current($this->validationService->getRepository()->findValidationByCodeAndIndividu(
@@ -449,24 +447,18 @@ class SoutenanceController extends AbstractActionController {
             $individu
         ));
 
-        /** @var string $urlSigner */
-//        $urlSigner = $this->urlThese()->signerEngagementImpartialite($these, $individu);
-
         return new ViewModel([
            'these' => $these,
            'proposition' => $proposition,
            'membre' => $membre,
            'validation' => $validation,
-           'urlSigner' => $this->url()->fromRoute('soutenance/presoutenance/engagement-impartialite/signer',
-               ['these' => $these->getId(), 'membre' => $individu->getId()],
-               [], true),
+           'urlSigner' => $this->url()->fromRoute('soutenance/presoutenance/engagement-impartialite/signer', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true),
+           'urlAnnuler' => $this->url()->fromRoute('soutenance/presoutenance/engagement-impartialite/annuler', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true),
         ]);
     }
 
     // TODO replacer membre par individu (accesseur de soutenance_membre)
     public function signerEngagementImpartialiteAction() {
-
-
 
         /** @var These $these */
         $idThese = $this->params()->fromRoute('these');
@@ -474,17 +466,18 @@ class SoutenanceController extends AbstractActionController {
 
         $isAllowed = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_SIGNER);
         if (!$isAllowed) {
-            throw new UnAuthorizedException("pas de bol");
+            throw new UnAuthorizedException("Vous êtes non authorisé(e) à signer cet engagement d'impartialité.");
         }
 
-
+        /** @var Membre $membre */
+        $idMembre = $this->params()->fromRoute('membre');
+        $membre = $this->getMembreService()->find($idMembre);
         /** @var Individu $individu */
-        $idIndividu = $this->params()->fromRoute('membre');
-        $individu = $this->getIndividuService()->getRepository()->find($idIndividu);
+        $individu = $membre->getIndividu();
 
         $this->getValidationService()->signEngagementImpartialite($these, $individu);
 
-        $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
+        $this->redirect()->toRoute('soutenance/presoutenance/engagement-impartialite', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true);
     }
 
     // TODO replacer membre par individu (accesseur de soutenance_membre)
@@ -493,13 +486,22 @@ class SoutenanceController extends AbstractActionController {
         $idThese = $this->params()->fromRoute('these');
         $these = $this->getTheseService()->getRepository()->find($idThese);
 
+        $isAllowed = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_ANNULER);
+        if (!$isAllowed) {
+            throw new UnAuthorizedException("Vous êtes non authorisé(e) à annuler la signature de cet engagement d'impartialité.");
+        }
+
+        /** @var Membre $membre */
+        $idMembre = $this->params()->fromRoute('membre');
+        $membre = $this->getMembreService()->find($idMembre);
         /** @var Individu $individu */
-        $idIndividu = $this->params()->fromRoute('membre');
-        $individu = $this->getIndividuService()->getRepository()->find($idIndividu);
+        $individu = $membre->getIndividu();
 
-        $this->getValidationService()->unsignEngagementImpartialite($these, $individu);
+        /** @var Validation[] $validations */
+        $validations = $this->getValidationService()->getRepository()->findValidationByCodeAndIndividu(TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $individu);
+        $this->getValidationService()->unsignEngagementImpartialite(current($validations));
 
-        $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
+        $this->redirect()->toRoute('soutenance/presoutenance/engagement-impartialite', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true);;
     }
 }
 

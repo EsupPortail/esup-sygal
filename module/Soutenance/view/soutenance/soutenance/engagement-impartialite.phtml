@@ -5,7 +5,7 @@
  * @var Membre $membre
  * @var Validation $validation
  * @var string $urlSigner
- * @var string $urlUnsigner
+ * @var string $urlAnnuler
  */
 
 use Application\Entity\Db\Acteur;
@@ -21,10 +21,9 @@ use Soutenance\Provider\Privilege\SoutenancePrivileges;
  *  - seul le rapporteur connecté peut valider ce formulaire car elle l'engage lui personnellement ;
  *  - seule la maison du doctorat de l'établissement d'encadrement peut invalider cette signature.
  */
-//$canSign    = $this->isAllowed(SoutenancePrivileges::getResourceId(SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_SIGNER));
-//$canUnsign  = $this->isAllowed(SoutenancePrivileges::getResourceId(SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_ANNULER));
 $canSign = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_SIGNER);
-$canUnsign = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_ANNULER);
+$canAnnuler = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_ANNULER);
+
 ?>
 
 <h1 class="page-header">
@@ -68,27 +67,43 @@ $canUnsign = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ENGAGEMEN
 </div>
 
 <p>
-    En signant cet engagment d'impartialité, je, sous-signé <strong><?php echo $membre->getDenomination(); ?></strong>, atteste ne pas avoir de lien personnel ou familial avec le doctorant ou son directeur de thèse et ne pas
+    En signant cet engagment d'impartialité, je, sous-signé <strong><?php echo $membre->getDenomination(); ?></strong>,
+    atteste ne pas avoir de lien personnel ou familial avec le doctorant ou son directeur de thèse et ne pas
     avoir pris part aux travaux de la thèse et ne pas avoir de publication cosignée avec le doctorant dans les cinq
     dernières années.
 </p>
 
-<?php if ($validation): ?>
-    <?php echo $this->validation($validation) ?>
-    UNSIGN=[<?php echo $canUnsign; ?>]<br/>
-    <?php if ($canUnsign): ?>
+<div class="row">
+    <div class="col-md-4">
+    <?php if ($validation): ?>
+        <?php if ($canAnnuler): ?>
+            <p>
+                <a href="<?php echo $urlAnnuler; ?>" class="btn btn-danger">
+                    <span class="glyphicon glyphicon-thumbs-up"></span>
+                    Annulation de la signature</a>
+            </p>
+        <?php else: ?>
+            Vous n'êtes pas habilité à annuler une signature d'engagement d'impartialité.
+        <?php endif; ?>
+    <?php else: ?>
+        <?php if ($canSign): ?>
         <p>
-            <a href="<?php echo $urlUnsigner ?>" class="btn btn-danger">
+            <a href="<?php echo $urlSigner;  ?>" class="btn btn-success">
                 <span class="glyphicon glyphicon-thumbs-up"></span>
-                Annulation de la signature</a>
-        </p>
-    <?php endif; ?>
-<?php else: ?>
-    <?php if ($canSign): ?>
-        <p>
-            <a href="<?php echo $urlSigner ?>" class="btn btn-success">
-               <span class="glyphicon glyphicon-thumbs-up"></span>
                 Je signe l'engagement d'impartialité</a>
         </p>
-    <?php endif ?>
-<?php endif ?>
+        <?php else: ?>
+            Vous n'êtes pas habilité à signer cet engagement d'impartialité.
+        <?php endif; ?>
+    <?php endif; ?>
+    </div>
+    <div class="col-md-8">
+        <!-- affichage -->
+        <?php if ($validation): ?>
+            <?php echo $this->validation($validation) ?>
+        <?php else: ?>
+            Aucune signature.
+        <?php endif; ?>
+    </div>
+
+</div>

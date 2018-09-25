@@ -18,6 +18,7 @@ use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Query\Expr\Join;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
+use Zend\Validator\Date;
 
 class ValidationService extends BaseService
     implements UserContextServiceAwareInterface, IndividuServiceAwareInterface
@@ -386,6 +387,7 @@ class ValidationService extends BaseService
      */
     public function signEngagementImpartialite($these, $individu)
     {
+        var_dump($individu->getId());
         $v = new Validation(
             $this->getTypeValidation(TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE),
             $these,
@@ -399,6 +401,22 @@ class ValidationService extends BaseService
         }
 
         return $v;
+    }
+
+    /**
+     * @param Validation $validation
+     * @return  Validation
+     */
+    public function unsignEngagementImpartialite($validation)
+    {
+        $validation->historiser();
+
+        try {
+            $this->entityManager->flush($validation);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur lors de l'historisation de la validation en bdd", null, $e);
+        }
+        return $validation;
     }
 
 
