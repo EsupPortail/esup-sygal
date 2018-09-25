@@ -51,6 +51,7 @@ use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenApp\Service\MessageCollectorAwareTrait;
 use UnicaenApp\Traits\MessageAwareInterface;
+use UnicaenApp\Util;
 use Zend\Form\Element\Hidden;
 use Zend\Http\Response;
 use Zend\Stdlib\ParametersInterface;
@@ -1471,6 +1472,7 @@ class TheseController extends AbstractController
         $corpsChemin = $manuscritChemin;
 
         $filename_output = $these->getId().'-'.$these->getDoctorant()->getNomUsuel().'-'.$these->getDoctorant()->getPrenom().'-merged.pdf';
+        $filename_output = Util::reduce($filename_output);
 
 
         //RETRAIT DE LA PREMIER PAGE SI NECESSAIRE
@@ -1509,7 +1511,12 @@ class TheseController extends AbstractController
         $return = null;
         exec($cmd, $output, $return);
         if ($return !== 0) {
-            throw new RuntimeException("Un problème s'est produit lrs de la concaténation de la page de couverture et du manuscrit.");
+            $msg  = 'valuer de retour : '. $return . '<br>';
+            $msg .= 'sortie : <br/>';
+            foreach ($output as $line) {
+                $msg .= $line . '<br/>';
+            }
+            throw new RuntimeException("Un problème s'est produit lors de la concaténation de la page de couverture et du manuscrit. <br/>" . $msg);
         }
     }
 
