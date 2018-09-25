@@ -27,79 +27,96 @@ use Soutenance\Form\SoutenanceMembre\SoutenanceMembreHydrator;
 use Soutenance\Form\SoutenanceMembre\SoutenanceMembreHydratorFactory;
 use Soutenance\Form\SoutenanceRefus\SoutenanceRefusForm;
 use Soutenance\Form\SoutenanceRefus\SoutenanceRefusFormFactory;
+use Soutenance\Provider\Privilege\SoutenancePrivileges;
 use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Membre\MembreServiceFactory;
 use Soutenance\Service\Proposition\PropositionService;
 use Soutenance\Service\Proposition\PropositionServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 use Zend\Mvc\Router\Http\Literal;
 use Zend\Mvc\Router\Http\Segment;
 
 return array(
-    'bjyauthorize'    => [
-        'guards' => [
-            PrivilegeController::class => [
-                [
-                    'controller' => QualiteController::class,
-                    'action'     => [
-                        'index',
-                        'editer',
-                        'effacer',
-                    ],
-                    'roles'      => [
-                        'Administrateur technique',
-                    ],
-                ],
-                [
-                    'controller' => SoutenanceController::class,
-                    'action'     => [
-                        'presoutenance',
-                    ],
-                    'roles'      => [
-                        'Administrateur technique',
-                        'Observateur COMUE',
-                        'Bureau des doctorats UCN',
-                    ],
-                ],
-                [
-                    'controller' => SoutenanceController::class,
-                    'action'     => [
-                        'date-rendu-rapport',
-                        'demande-expertise',
-                        'notifier-demande-expertise',
-                        'notifier-demandes-expertise',
-                        'index',
-                        'constituer',
-                        'modifier-date-lieu',
-                        'modifier-membre',
-                        'effacer-membre',
-                        'valider',
-                        'refuser',
-                        'valider-ur',
-                        'valider-ur-validation',
-                        'valider-ur-refus',
-                        'valider-ed',
-                        'valider-ed-validation',
-                        'valider-ed-refus',
-                        'engagement-impartialite',
-                        'signer-engagement-impartialite',
-                    ],
-                    'roles' => [
-                    ],
-                ],
-                [
-                    'controller' => PersopassController::class,
-                    'action'     => [
-                        'afficher',
-                        'modifier',
-                    ],
-                    'roles' => [
-
-                    ],
-                ]
-            ],
-        ],
-    ],
+//    'bjyauthorize'    => [
+//        'rule_providers'     => [
+//            PrivilegeRuleProvider::class => [
+//                'allow' => [
+//                    [
+//                        'privileges' => [
+//                            SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_SIGNER,
+//                            SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_ANNULER,
+//
+//                        ],
+//                        'resources'  => ['These'],
+//                        'assertion'  => 'Assertion\\EngagementImpartialite',
+//                    ],
+//                ],
+//            ],
+//        ],
+//        'guards' => [
+//            PrivilegeController::class => [
+//                [
+//                    'controller' => QualiteController::class,
+//                    'action'     => [
+//                        'index',
+//                        'editer',
+//                        'effacer',
+//                    ],
+//                    'roles'      => [
+//                        'Administrateur technique',
+//                    ],
+//                ],
+//                [
+//                    'controller' => SoutenanceController::class,
+//                    'action'     => [
+//                        'presoutenance',
+//                    ],
+//                    'roles'      => [
+//                        'Administrateur technique',
+//                        'Observateur COMUE',
+//                        'Bureau des doctorats UCN',
+//                    ],
+//                ],
+//                [
+//                    'controller' => SoutenanceController::class,
+//                    'action'     => [
+//                        'date-rendu-rapport',
+//                        'demande-expertise',
+//                        'notifier-demande-expertise',
+//                        'notifier-demandes-expertise',
+//                        'index',
+//                        'constituer',
+//                        'modifier-date-lieu',
+//                        'modifier-membre',
+//                        'effacer-membre',
+//                        'valider',
+//                        'refuser',
+//                        'valider-ur',
+//                        'valider-ur-validation',
+//                        'valider-ur-refus',
+//                        'valider-ed',
+//                        'valider-ed-validation',
+//                        'valider-ed-refus',
+//                        'engagement-impartialite',
+//                        'signer-engagement-impartialite',
+//                    ],
+//                    'roles' => [
+//                    ],
+//                ],
+//                [
+//                    'controller' => PersopassController::class,
+//                    'action'     => [
+//                        'afficher',
+//                        'modifier',
+//                    ],
+//                    'roles' => [
+//
+//                    ],
+//                ]
+//            ],
+//        ],
+//    ],
 
     'doctrine'     => [
         'driver'     => [

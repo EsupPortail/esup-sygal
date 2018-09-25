@@ -20,6 +20,9 @@ class SoutenancePrivileges extends Privileges
     const SOUTENANCE_NOTIFICATION_DEMANDE_EXPERTISE              = 'soutenance-notification-demande-expertise';
     const SOUTENANCE_VALIDATION_DEMANDE_EXPERTISE                = 'soutenance-validation-demande-expertise';
 
+    const SOUTENANCE_ENGAGEMENT_IMPARTIALITE_SIGNER              = 'soutenance-engagement-impartialite-signer';
+    const SOUTENANCE_ENGAGEMENT_IMPARTIALITE_ANNULER             = 'soutenance-engagement-impartialite-annuler';
+
 
 
 }

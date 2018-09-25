@@ -5,6 +5,7 @@
  * @var Membre $membre
  * @var Validation $validation
  * @var string $urlSigner
+ * @var string $urlUnsigner
  */
 
 use Application\Entity\Db\Acteur;
@@ -12,8 +13,16 @@ use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
+use Soutenance\Provider\Privilege\SoutenancePrivileges;
 
-$canValidate = true;
+/**
+ * La validation CODE_ENGAGEMENT_IMPARTIALITE fait office de signature électronique de l'engagement d'impartilité. Par
+ * conséquent :
+ *  - seul le rapporteur connecté peut valider ce formulaire car elle l'engage lui personnellement ;
+ *  - seule la maison du doctorat de l'établissement d'encadrement peut invalider cette signature.
+ */
+$canSign    = $this->isAllowed(SoutenancePrivileges::getResourceId(SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_SIGNER));
+$canUnsign  = $this->isAllowed(SoutenancePrivileges::getResourceId(SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_ANNULER));
 
 ?>
 
@@ -65,13 +74,19 @@ $canValidate = true;
 
 <?php if ($validation): ?>
     <?php echo $this->validation($validation) ?>
-<?php else: ?>
-    <?php if ($canValidate): ?>
+    <?php if ($canUnsign): ?>
         <p>
-            <a href="<?php echo $urlSigner ?>"
-               class="btn btn-success ajax-modal"
-               data-event="event-page-de-couverture-validated-or-not"><span
-                    class="glyphicon glyphicon-thumbs-up"></span> Je signe l'engagement d'impartialité</a>
+            <a href="<?php echo $urlUnsigner ?>" class="btn btn-danger">
+                <span class="glyphicon glyphicon-thumbs-up"></span>
+                Annulation de la signature</a>
+        </p>
+    <?php endif; ?>
+<?php else: ?>
+    <?php if ($canSign): ?>
+        <p>
+            <a href="<?php echo $urlSigner ?>" class="btn btn-success">
+               <span class="glyphicon glyphicon-thumbs-up"></span>
+                Je signe l'engagement d'impartialité</a>
         </p>
     <?php endif ?>
 <?php endif ?>

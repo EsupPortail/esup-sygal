@@ -461,7 +461,7 @@ class SoutenanceController extends AbstractActionController {
         ]);
     }
 
-    // TODO replacer membre par individu
+    // TODO replacer membre par individu (accesseur de soutenance_membre)
     public function signerEngagementImpartialiteAction() {
         /** @var These $these */
         $idThese = $this->params()->fromRoute('these');
@@ -474,7 +474,21 @@ class SoutenanceController extends AbstractActionController {
         $this->getValidationService()->signEngagementImpartialite($these, $individu);
 
         $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
+    }
 
+    // TODO replacer membre par individu (accesseur de soutenance_membre)
+    public function annulerEngagementImpartialiteAction() {
+        /** @var These $these */
+        $idThese = $this->params()->fromRoute('these');
+        $these = $this->getTheseService()->getRepository()->find($idThese);
+
+        /** @var Individu $individu */
+        $idIndividu = $this->params()->fromRoute('membre');
+        $individu = $this->getIndividuService()->getRepository()->find($idIndividu);
+
+        $this->getValidationService()->unsignEngagementImpartialite($these, $individu);
+
+        $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 }
 

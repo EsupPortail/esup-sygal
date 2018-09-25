@@ -3,10 +3,10 @@
 namespace Soutenance\Assertion;
 
 use Application\Assertion\BaseAssertion;
+use Soutenance\Provider\Privilege\SoutenancePrivileges;
 
 class EngagementImpartialiteAssertion extends BaseAssertion {
 
-    //DEUX PRIVILEGES ? SIGNE ET 'DESIGNE'
 
     protected function initControllerAssertion()
     {
