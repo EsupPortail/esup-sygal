@@ -1,0 +1,71 @@
+<?php
+/**
+ * @var These $these
+ * @var Proposition $proposition
+ * @var Validation $validation
+ * @var string $urlSigner
+ */
+
+use Application\Entity\Db\Acteur;
+use Application\Entity\Db\These;
+use Application\Entity\Db\Validation;
+use Soutenance\Entity\Proposition;
+
+$canValidate = true;
+
+?>
+
+<h1 class="page-header">
+    Engagement d’impartialité
+</h1>
+
+<p>
+    Engagement en rapport à la thèse :
+    <table class="table table-condensed">
+        <tr>
+            <th> Doctorant </th>
+            <td> <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(false, true, false, true, true); ?> </td>
+        </tr>
+        <tr>
+            <th> Intitulé </th>
+            <td> <?php echo $these->getTitre(); ?> </td>
+        </tr>
+        <tr>
+            <th> Date et lieu de la soutenance </th>
+            <td>
+                <?php echo $proposition->getDate()->format("d/m/Y"); ?> <br/>
+                <?php echo $proposition->getLieu(); ?>
+            </td>
+        </tr>
+        <tr>
+            <th> Encadrement </th>
+            <td>
+                <?php foreach ($these->getEncadrements() as $directeur): ?>
+                <?php
+                    /** @var Acteur $directeur */
+                    echo $directeur->getIndividu()->getNomComplet(false, true, false, true, true);
+                ?>
+                <br/>
+                <?php endforeach; ?>
+            </td>
+        </tr>
+    </table>
+</p>
+<p>
+    En signant, j’atteste ne pas avoir de lien personnel ou familial avec le doctorant ou son directeur de thèse et ne pas
+    avoir pris part aux travaux de la thèse et ne pas avoir de publication cosignée avec le doctorant dans les cinq
+    dernières années.
+</p>
+
+<?php if ($validation): ?>
+    <?php echo $this->validation($validation) ?>
+<?php else: ?>
+    <?php if ($canValidate): ?>
+        <p>
+            <a href="<?php echo $urlSigner ?>"
+               class="btn btn-success ajax-modal"
+               data-event="event-page-de-couverture-validated-or-not"><span
+                    class="glyphicon glyphicon-thumbs-up"></span> Je signe l'engagement d'impartialité</a>
+        </p>
+    <?php endif ?>
+<?php endif ?>

@@ -18,6 +18,7 @@ class TypeValidation implements HistoriqueAwareInterface
     const CODE_VERSION_PAPIER_CORRIGEE      = 'VERSION_PAPIER_CORRIGEE';
     const CODE_PAGE_DE_COUVERTURE           = 'PAGE_DE_COUVERTURE';
     const CODE_PROPOSITION_SOUTENANCE       = 'PROPOSITION_SOUTENANCE';
+    const CODE_ENGAGEMENT_IMPARTIALITE      = 'ENGAGEMENT_IMPARTIALITE';
 
     /**
      * @var string

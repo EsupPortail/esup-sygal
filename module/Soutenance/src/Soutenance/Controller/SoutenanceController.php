@@ -7,8 +7,10 @@ use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
+use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Validation;
+use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
@@ -40,6 +42,7 @@ class SoutenanceController extends AbstractActionController {
     use TheseServiceAwareTrait;
     use PropositionServiceAwareTrait;
     use MembreServiceAwareTrait;
+    use IndividuServiceAwareTrait;
     use ValidationServiceAwareTrait;
     use NotifierServiceAwareTrait;
     use UserContextServiceAwareTrait;
@@ -307,7 +310,7 @@ class SoutenanceController extends AbstractActionController {
         if (!$renduRapport) {
             try {
                 $renduRapport = $proposition->getDate();
-                $renduRapport = $renduRapport->sub(new DateInterval('P1M'));
+                $renduRapport = $renduRapport->sub(new DateInterval('P21D'));
             } catch (Exception $e) {
                 throw new RuntimeException("Un problème a été rencontré lors du calcul de la date de rendu des rapport.");
             }
@@ -353,6 +356,7 @@ class SoutenanceController extends AbstractActionController {
         );
     }
 
+    // TODO adapter au changement de terme
     public function demandeExpertiseAction()
     {
         /** @var These $these */
@@ -382,6 +386,7 @@ class SoutenanceController extends AbstractActionController {
         ]);
     }
 
+    // TODO adapter au changement de terme
     public function notifierDemandeExpertiseAction() {
 
         /** @var These $these */
@@ -399,6 +404,7 @@ class SoutenanceController extends AbstractActionController {
         $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 
+    // TODO détruire
     public function notifierDemandesExpertiseAction() {
 
         /** @var These $these */
@@ -414,6 +420,56 @@ class SoutenanceController extends AbstractActionController {
         }
 
         $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
+    }
+
+    // TODO necessiterai un plugging d'url comme pour les theses
+    // TODO refaire le routing /soutenance/engagement-impartialite/signer
+    // TODO ajouter dans la table membre un lien vers l'individu en BD
+    // TODO assertion de qui à le droit de pousser le bouton ...
+    public function engagementImpartialiteAction() {
+        /** @var These $these */
+        $idThese = $this->params()->fromRoute('these');
+        $these = $this->getTheseService()->getRepository()->find($idThese);
+
+        /** @var Proposition $proposition */
+        $proposition = $this->getPropositionService()->findByThese($these);
+
+        /** @var Individu $individu */
+        $individu = $this->getIndividuService()->getRepository()->find(102444);
+
+        /** @var Validation $validation */
+        $validation = current($this->validationService->getRepository()->findValidationByCodeAndIndividu(
+            TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE,
+            $individu
+        ));
+
+        /** @var string $urlSigner */
+//        $urlSigner = $this->urlThese()->signerEngagementImpartialite($these, $individu);
+
+        return new ViewModel([
+           'these' => $these,
+           'proposition' => $proposition,
+           'validation' => $validation,
+           'urlSigner' => $this->url()->fromRoute('soutenance/presoutenance/engagement-impartialite/signer',
+               ['these' => $these->getId(), 'membre' => $individu->getId()],
+               [], true),
+        ]);
+    }
+
+    // TODO replacer membre par individu
+    public function signerEngagementImpartialiteAction() {
+        /** @var These $these */
+        $idThese = $this->params()->fromRoute('these');
+        $these = $this->getTheseService()->getRepository()->find($idThese);
+
+        /** @var Individu $individu */
+        $idIndividu = $this->params()->fromRoute('membre');
+        $individu = $this->getIndividuService()->getRepository()->find($idIndividu);
+
+        $this->getValidationService()->signEngagementImpartialite($these, $individu);
+
+        $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
+
     }
 }
 

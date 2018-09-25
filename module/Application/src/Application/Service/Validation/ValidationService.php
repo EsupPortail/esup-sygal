@@ -379,5 +379,27 @@ class ValidationService extends BaseService
         }
     }
 
+    /**
+     * @param These $these
+     * @param Individu $individu
+     * @return Validation
+     */
+    public function signEngagementImpartialite($these, $individu)
+    {
+        $v = new Validation(
+            $this->getTypeValidation(TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE),
+            $these,
+            $individu);
+
+        $this->entityManager->persist($v);
+        try {
+            $this->entityManager->flush($v);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur lors de l'enregistrement de la validation en bdd", null, $e);
+        }
+
+        return $v;
+    }
+
 
 }

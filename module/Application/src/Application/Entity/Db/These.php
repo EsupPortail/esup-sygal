@@ -2,6 +2,7 @@
 
 namespace Application\Entity\Db;
 
+use Application\Controller\RoleController;
 use Application\Filter\FichierFilter;
 use Application\Filter\TitreApogeeFilter;
 use DateTime;
@@ -1226,5 +1227,20 @@ class These implements HistoriqueAwareInterface, ResourceInterface
             return true;
         }
         return false;
+    }
+
+    /**
+     * @return Acteur[]
+     */
+    public function getEncadrements()
+    {
+        $encadrants = [];
+
+        $directeurs     = $this->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE);
+        foreach ($directeurs as $directeur) $encadrants[] = $directeur;
+        $codirecteurs   = $this->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE);
+        foreach ($codirecteurs as $codirecteur) $encadrants[] = $codirecteur;
+
+        return $encadrants;
     }
 }

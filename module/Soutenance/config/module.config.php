@@ -81,6 +81,8 @@ return array(
                         'valider-ed',
                         'valider-ed-validation',
                         'valider-ed-refus',
+                        'engagement-impartialite',
+                        'signer-engagement-impartialite',
                     ],
                     'roles' => [
                     ],
@@ -168,7 +170,7 @@ return array(
                                 ],
                             ],
                         ],
-                    ],
+                        ],
                     ],
                     'presoutenance' => [
                         'type' => Segment::class,
@@ -200,6 +202,30 @@ return array(
                                     'defaults' => [
                                         'controller' => SoutenanceController::class,
                                         'action'     => 'demande-expertise',
+                                    ],
+                                ],
+                            ],
+                            'engagement-impartialite' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/engagement-impartialite/:membre',
+                                    'defaults' => [
+                                        'controller' => SoutenanceController::class,
+                                        'action'     => 'engagement-impartialite',
+                                    ],
+                                ],
+                                'child_routes' => [
+                                    'signer' => [
+                                        'type' => Segment::class,
+                                        'may_terminate' => true,
+                                        'options' => [
+                                            'route'    => '/signer',
+                                            'defaults' => [
+                                                'controller' => SoutenanceController::class,
+                                                'action'     => 'signer-engagement-impartialite',
+                                            ],
+                                        ],
                                     ],
                                 ],
                             ],
