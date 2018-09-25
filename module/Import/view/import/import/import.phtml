@@ -43,8 +43,8 @@
     <tbody>
     <?php foreach($logs as $log) : ?>
         <tr>
-            <td> <?php echo $log[0]->format('Y/m/d H:i:s '); ?> </td>
-            <td> <?php echo $log[1]; ?> </td>
+            <td> <?php echo $log['date']->format('Y/m/d H:i:s '); ?> </td>
+            <td> <?php echo $log['message']; ?> </td>
         </tr>
     <?php endforeach; ?>
     </tbody>

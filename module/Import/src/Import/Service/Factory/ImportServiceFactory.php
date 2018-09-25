@@ -2,6 +2,7 @@
 
 namespace Import\Service\Factory;
 
+use Application\Service\Etablissement\EtablissementService;
 use Doctrine\ORM\EntityManager;
 use Import\Service\FetcherService;
 use Import\Service\ImportService;
@@ -21,10 +22,14 @@ class ImportServiceFactory
         /** @var FetcherService $fetcherService */
         $fetcherService = $container->get(FetcherService::class);
 
+        /** @var EtablissementService $etbalissementService */
+        $etbalissementService = $container->get(EtablissementService::class);
+
         $service = new ImportService();
         $service->setFetcherService($fetcherService);
         $service->setEntityManager($entityManager);
         $service->setSynchroService($synchroService);
+        $service->setEtablissementService($etbalissementService);
 
         return $service;
     }

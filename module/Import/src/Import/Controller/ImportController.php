@@ -69,8 +69,8 @@ class ImportController extends AbstractActionController
 
         $queryParams = $this->params()->fromQuery();
 
-        $logs = [];
-        $logs[] = $this->importService->import($service, $etablissement, $sourceCode, $queryParams);
+        $this->importService->import($service, $etablissement, $sourceCode, $queryParams);
+        $logs = $this->importService->getLogs();
 
         return new ViewModel([
             'service'       => $service,
@@ -89,9 +89,9 @@ class ImportController extends AbstractActionController
     public function importAllAction()
     {
         $etablissement = $this->params('etablissement');
-        $logs = [];
 
-        $logs[] = $this->importService->importAll($etablissement);
+        $this->importService->importAll($etablissement);
+        $logs = $this->importService->getLogs();
 
         return new ViewModel([
             'service'       => 'Tous',
@@ -138,17 +138,21 @@ class ImportController extends AbstractActionController
         $etablissement = $this->params('etablissement');
         $sourceCode = $this->params('source_code');
 
+        $this->importService->setDebugLevel(1);
         $this->importService->import($service, $etablissement, $sourceCode);
 
-        echo "Importation des données du service '$service' de l'établissement '$etablissement' réussie." . PHP_EOL;
+        echo $this->importService->getFormattedLogs() . PHP_EOL;
+        echo "Importation des données du service '$service' de l'établissement '$etablissement' effectuée." . PHP_EOL;
     }
 
     public function importAllConsoleAction()
     {
         $etablissement = $this->params('etablissement');
 
+        $this->importService->setDebugLevel(1);
         $this->importService->importAll($etablissement);
 
-        echo "Importation de toutes les données de l'établissement '$etablissement' réussie" . PHP_EOL;
+        echo $this->importService->getFormattedLogs() . PHP_EOL;
+        echo "Importation de toutes les données de l'établissement '$etablissement' effectuée." . PHP_EOL;
     }
 }
