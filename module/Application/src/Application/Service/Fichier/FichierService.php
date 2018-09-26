@@ -552,9 +552,12 @@ class FichierService extends BaseService
         $jury = [];
         $acteurs = $these->getActeurs()->toArray();
         $rapporteurs =  array_filter($acteurs, function(Acteur $a) { return $a->estRapporteur(); });
+        $pdcData->setRapporteurs($rapporteurs);
         $directeurs =  array_filter($acteurs, function(Acteur $a) { return $a->estDirecteur(); });
+        $pdcData->setDirecteurs($directeurs);
         $president =  array_filter($acteurs, function(Acteur $a) { return $a->estPresidentJury(); });
         $membres = array_diff($acteurs, $rapporteurs, $directeurs, $president);
+        $pdcData->setMembres($membres);
 
         /** associée */
         $pdcData->setAssocie(false);
@@ -570,39 +573,9 @@ class FichierService extends BaseService
             }
         }
 
-        $acteursEnCouverture = $acteurs;
+        $acteursEnCouverture = array_merge($rapporteurs, $directeurs, $president, $membres);
         usort($acteursEnCouverture, Acteur::getComparisonFunction());
         $acteursEnCouverture = array_unique($acteursEnCouverture);
-
-        /** @var Acteur $rapporteur */
-        foreach ($rapporteurs as $rapporteur) {
-            $rapporteurData = new MembreData();
-            $rapporteurData->setDenomination($rapporteur->getIndividu()->getNomComplet(true,false,false, true, true));
-            $rapporteurData->setQualite($rapporteur->getQualite());
-            $rapporteurData->setRole("Rapporteur du jury");
-            if ($rapporteur->getEtablissement()) $rapporteurData->setEtablissement($rapporteur->getEtablissement()->getStructure()->getLibelle());
-            $pdcData->addRapporteur($rapporteurData);
-        }
-
-        /** @var Acteur $membre */
-        foreach ($membres as $membre) {
-            $membreData = new MembreData();
-            $membreData->setDenomination($membre->getIndividu()->getNomComplet(true,false,false, true, true));
-            $membreData->setQualite($membre->getQualite());
-            $membreData->setRole("Membre du jury");
-            if ($membre->getEtablissement()) $membreData->setEtablissement($membre->getEtablissement()->getStructure()->getLibelle());
-            $pdcData->addMembre($membreData);
-        }
-
-        /** @var Acteur $directeur */
-        foreach ($directeurs as $directeur) {
-            $directeurData = new MembreData();
-            $directeurData->setDenomination($directeur->getIndividu()->getNomComplet(true,false,false, true, true));
-            $directeurData->setQualite($directeur->getQualite());
-            $directeurData->setRole("Directeur de thèse");
-            if ($directeur->getEtablissement()) $directeurData->setEtablissement($directeur->getEtablissement()->getStructure()->getLibelle());
-            $pdcData->addDirecteur($directeurData);
-        }
 
         /** @var Acteur $acteur */
         foreach ($acteursEnCouverture as $acteur) {
