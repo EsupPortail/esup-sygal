@@ -67,7 +67,7 @@ $canAnnuler = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ENGAGEME
 </div>
 
 <p>
-    En signant cet engagment d'impartialité, je, sous-signé <strong><?php echo $membre->getDenomination(); ?></strong>,
+    En signant cet engagment d'impartialité, je, sous-signé <strong><?php echo $membre->getIndividu()->getNomComplet(false, false, false, true, false); ?></strong>,
     atteste ne pas avoir de lien personnel ou familial avec le doctorant ou son directeur de thèse et ne pas
     avoir pris part aux travaux de la thèse et ne pas avoir de publication cosignée avec le doctorant dans les cinq
     dernières années.
@@ -83,7 +83,11 @@ $canAnnuler = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ENGAGEME
                     Annulation de la signature</a>
             </p>
         <?php else: ?>
-            Vous n'êtes pas habilité à annuler une signature d'engagement d'impartialité.
+        <div class="panel panel-danger">
+            <div class="panel-heading">
+                Vous n'êtes pas habilité à annuler une signature d'engagement d'impartialité.
+            </div>
+        </div>
         <?php endif; ?>
     <?php else: ?>
         <?php if ($canSign): ?>
@@ -93,16 +97,28 @@ $canAnnuler = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ENGAGEME
                 Je signe l'engagement d'impartialité</a>
         </p>
         <?php else: ?>
-            Vous n'êtes pas habilité à signer cet engagement d'impartialité.
+        <div class="panel panel-danger">
+            <div class="panel-heading">
+                Vous n'êtes pas habilité à signer cet engagement d'impartialité.
+            </div>
+        </div>
         <?php endif; ?>
     <?php endif; ?>
     </div>
     <div class="col-md-8">
         <!-- affichage -->
         <?php if ($validation): ?>
-            <?php echo $this->validation($validation) ?>
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <?php echo $this->validation($validation) ?>
+            </div>
+        </div>
         <?php else: ?>
-            Aucune signature.
+            <div class="panel panel-warning">
+                <div class="panel-heading">
+                    Aucune signature.
+                </div>
+            </div>
         <?php endif; ?>
     </div>
 

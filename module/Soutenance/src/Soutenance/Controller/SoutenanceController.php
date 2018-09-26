@@ -402,7 +402,7 @@ class SoutenanceController extends AbstractActionController {
         $idMembre = $this->params()->fromRoute('membre');
         $membre = $this->getMembreService()->find($idMembre);
 
-        $this->getNotifierService()->triggerDemandeExpertise($these, $proposition, $membre);
+        $this->getNotifierService()->triggerSignatureEngagementImpartialite($these, $proposition, $membre);
         $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 
@@ -418,7 +418,7 @@ class SoutenanceController extends AbstractActionController {
 
         /** @var Membre $membre */
         foreach ($proposition->getMembres() as $membre) {
-            if ($membre->getRole() === 'Rapporteur') $this->getNotifierService()->triggerDemandeExpertise($these, $proposition, $membre);
+            if ($membre->getRole() === 'Rapporteur') $this->getNotifierService()->triggerSignatureEngagementImpartialite($these, $proposition, $membre);
         }
 
         $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);

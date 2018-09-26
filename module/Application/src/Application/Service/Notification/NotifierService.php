@@ -592,7 +592,7 @@ class NotifierService extends \Notification\Service\NotifierService
      * @param Proposition $proposition
      * @param Membre $membre
      */
-    public function triggerDemandeExpertise($these, $proposition, $membre)
+    public function triggerSignatureEngagementImpartialite($these, $proposition, $membre)
     {
         $email   = $membre->getEmail();
 
