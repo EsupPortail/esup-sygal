@@ -165,4 +165,18 @@ class EtablissementRepository extends DefaultEntityRepository
 
         return $etablissement;
     }
+
+    /**
+     * @return Etablissement[]
+     */
+    public function findAllEtablissementsMembres()
+    {
+        $qb = $this->createQueryBuilder("etablissement")
+            ->addSelect("structure")
+            ->join("etablissement.structure", "structure")
+            ->andWhere("etablissement.estMembre = 1")
+        ;
+
+        return  $qb->getQuery()->getResult();
+    }
 }

@@ -2,7 +2,9 @@
 
 use Application\Controller\AdminController;
 use Application\Controller\Factory\PrivilegeControllerFactory;
+use Application\Controller\Factory\RoleControllerFactory;
 use Application\Controller\MailConfirmationController;
+use Application\Controller\RoleController;
 use Application\Provider\Privilege\EcoleDoctoralePrivileges;
 use Application\Provider\Privilege\UniteRecherchePrivileges;
 use Application\Provider\Privilege\UtilisateurPrivileges;
@@ -20,6 +22,17 @@ return [
     'bjyauthorize'    => [
         'guards' => [
             PrivilegeController::class => [
+                [
+                    'controller' => RoleController::class,
+                    'action' => [
+                        'index',
+                        'incrementer-ordre',
+                        'decrementer-ordre',
+                    ],
+                    'roles' => [
+                        'Administrateur technique'
+                    ],
+                ],
                 [
                     'controller' => 'Application\Controller\Admin',
                     'action'     => [
@@ -101,6 +114,39 @@ return [
                         'action'        => 'index',
                     ],
                 ],
+            ],
+            'role-ordre' => [
+                'type'          => Literal::class,
+                'options'       => [
+                    'route'    => '/role-ordre',
+                    'defaults' => [
+                        'controller'    => RoleController::class,
+                        'action'        => 'index',
+                    ],
+                ],
+                'may_terminate' => true,
+                'child_routes' => [
+                    'incrementer' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'    => '/incrementer/:role',
+                            'defaults' => [
+                                'controller'    => RoleController::class,
+                                'action'        => 'incrementer-ordre',
+                            ],
+                        ],
+                    ],
+                    'decrementer' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'    => '/decrementer/:role',
+                            'defaults' => [
+                                'controller'    => RoleController::class,
+                                'action'        => 'decrementer-ordre',
+                            ],
+                        ],
+                    ],
+                ]
             ],
             'mail-confirmation-acceuil' => [
                 'type' => Segment::class,
@@ -214,6 +260,7 @@ return [
         'factories' => [
             \Application\Controller\PrivilegeController::class =>  \Application\Controller\Factory\PrivilegeControllerFactory::class,
             MailConfirmationController::class => MailConfirmationControllerFactory::class,
+            RoleController::class => RoleControllerFactory::class,
         ],
     ],
 

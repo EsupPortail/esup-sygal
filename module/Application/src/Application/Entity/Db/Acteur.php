@@ -111,8 +111,18 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface
      */
     public function estRapporteur()
     {
-        return $this->getRole()->getCode() === "R";
+        return $this->getRole()->getCode() === Role::CODE_RAPPORTEUR_JURY;
+    }
 
+
+    /**
+     * Prédicat testant cet un acteur est un rapporteur de thèse.
+     *
+     * @return bool
+     */
+    public function estPresidentJury()
+    {
+        return $this->getRole()->getCode() === Role::CODE_PRESIDENT_JURY;
     }
 
     /**
