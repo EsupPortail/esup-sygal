@@ -117,6 +117,9 @@ class PdcData {
     /** @var MembreData[] */
     private $membres;
 
+    /** @var MembreData[] */
+    private $acteursEnCouverture;
+
     /** @var string */
     private $logoCOMUE;
     /** @var string */
@@ -543,6 +546,24 @@ class PdcData {
 
 
         return $warnings;
+    }
+
+    /**
+     * @return MembreData[]
+     */
+    public function getActeursEnCouverture()
+    {
+        return $this->acteursEnCouverture;
+    }
+
+    /**
+     * @param MembreData $acteur
+     * @return PdcData
+     */
+    public function addActeurEnCouverture($acteur)
+    {
+        $this->acteursEnCouverture[] = $acteur;
+        return $this;
     }
 
 }

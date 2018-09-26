@@ -112,25 +112,11 @@ $PATH = Structure::PATH;
         </th>
     </tr>
 
-    <?php foreach ($informations->getRapporteurs() as $rapporteur) : ?>
+    <?php foreach ($informations->getActeursEnCouverture() as $acteur) : ?>
         <tr>
-            <td> <?php echo $rapporteur->getDenomination(); ?> </td>
-            <td> <?php echo trim($rapporteur->getQualite()); ?>,  <?php echo $rapporteur->getEtablissement(); ?></td>
-            <td> <?php echo $rapporteur->getRole(); ?> </td>
-        </tr>
-    <?php endforeach; ?>
-    <?php foreach ($informations->getMembres() as $membre) : ?>
-        <tr>
-            <td> <?php echo $membre->getDenomination(); ?> </td>
-            <td> <?php echo trim($membre->getQualite()); ?>,  <?php echo $membre->getEtablissement(); ?></td>
-            <td> <?php echo $membre->getRole(); ?> </td>
-        </tr>
-    <?php endforeach; ?>
-    <?php foreach ($informations->getDirecteurs() as $directeur) : ?>
-        <tr>
-            <td> <?php echo $directeur->getDenomination(); ?> </td>
-            <td> <?php echo trim($directeur->getQualite()); ?>,  <?php echo $directeur->getEtablissement(); ?></td>
-            <td> <?php echo $directeur->getRole(); ?> </td>
+            <td> <?php echo $acteur->getDenomination(); ?> </td>
+            <td> <?php echo trim($acteur->getQualite()); ?>,  <?php echo $acteur->getEtablissement(); ?></td>
+            <td> <?php echo $acteur->getRole(); ?> </td>
         </tr>
     <?php endforeach; ?>
 

@@ -119,10 +119,8 @@ $persopassModifiedEvent = 'persopass-modified-event';
             $acteursFormatter->paramDisplay(["role" => true,"complement" => false, "qualite" => true, "etablissement" => true]);
             $acteursFormatter->asArray();
 
-            $acteurs = $these->getActeurs()->toArray();
-            //usort($acteurs, [Acteur::class, 'cmp']);
-            usort($acteurs, function ($a,$b) {return $a->getRole() < $b->getRole();});
-            $results = $acteursFormatter->doFormat($acteurs);
+            $acteurs = $these->getActeursSorted();
+            $results = $acteursFormatter->doFormat($acteurs->toArray());
 
             $previous = "";
 

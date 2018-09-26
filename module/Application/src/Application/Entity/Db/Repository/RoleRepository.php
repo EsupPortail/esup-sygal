@@ -77,4 +77,20 @@ class RoleRepository extends DefaultEntityRepository
 
         return $roles;
     }
+
+    /**
+     * @param Etablissement $etablissement
+     * @return Role[]
+     */
+    public function findAllRolesTheseDependantByEtablissement($etablissement)
+    {
+        $qb = $this->createQueryBuilder("role")
+            ->andWhere("role.theseDependant = 1")
+            ->andWhere("role.structure = :etablissement")
+            ->setParameter("etablissement", $etablissement)
+            ->orderBy("role.ordreAffichage", "DESC")
+        ;
+
+        return $qb->getQuery()->getResult();
+    }
 }

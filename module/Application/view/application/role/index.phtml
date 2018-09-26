@@ -1,0 +1,48 @@
+<?php
+
+/**
+ * @var Etablissement[] $etablissements
+ * @var array $mappedRoles
+ */
+
+use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\Role;
+
+?>
+
+<h1 class="page-header">
+    Ordre d'affichage des rôles
+</h1>
+
+
+<?php foreach ($etablissements as $etablissement): ?>
+    <?php $roles = $mappedRoles[$etablissement->getCode()]; ?>
+    <h2>
+        <?php echo $etablissement->getLibelle(); ?>
+        <span class="badge">
+            <?php echo count($roles); ?>
+        </span>
+    </h2>
+
+    <table class="table table-extra-condensed">
+        <thead>
+            <tr>
+                <th> Code </th>
+                <th> Libelle </th>
+                <th> Ordre </th>
+                <th> Actions </th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($roles as $role) : ?>
+            <?php /** @var Role $role */ ?>
+                <tr>
+                    <td> <?php echo $role->getCode(); ?> </td>
+                    <td> <?php echo $role->getLibelle(); ?> </td>
+                    <td> <?php echo $role->getOrdreAffichage(); ?> </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+   </table>
+
+<?php endforeach; ?>

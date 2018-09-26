@@ -17,8 +17,10 @@ use Application\Entity\Db\Utilisateur;
 use Application\Filter\EtablissementPrefixFilter;
 use Application\Service\BaseService;
 use Application\Entity\Db\Structure;
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Query\Expr\Join;
 use MongoDB\BSON\Type;
+use UnicaenApp\Exception\RuntimeException;
 use UnicaenImport\Entity\Db\Source;
 use ZfcUser\Entity\UserInterface;
 
@@ -261,4 +263,17 @@ class RoleService extends BaseService
         return $result;
     }
 
+//    /**
+//     * @param Role $role
+//     * @return Role
+//     */
+//    public function updateRole($role)
+//    {
+//        try {
+//            $this->getEntityManager()->flush($role);
+//        } catch (OptimisticLockException $e) {
+//            throw new RuntimeException("Problème lors du change de l'ordre d'affichage du rôle [".$role->getId()."]");
+//        }
+//        return $role;
+//    }
 }
