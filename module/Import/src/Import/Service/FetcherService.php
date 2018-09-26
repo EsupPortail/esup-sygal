@@ -517,8 +517,13 @@ EOS;
             $f = new EtablissementPrefixFilter();
             $value = null;
             switch ($propriete) {
-                case "etablissementId":
+                case "etablissementId": // UCN, URN, ULHN, INSA, rien d'autre
                     $value = $this->etablissement->getCode();
+                    break;
+                case "acteurEtablissementId":
+                    if (isset($entity_json->{$propriete})) {
+                        $value = $f->addPrefixTo($entity_json->{$propriete}, $this->etablissement);
+                    }
                     break;
                 case "sourceCode":
                     $value = $f->addPrefixTo($entity_json->id, $this->etablissement);
