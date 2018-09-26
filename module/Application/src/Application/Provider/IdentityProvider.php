@@ -133,21 +133,15 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
     {
         $id = $this->userWrapper->getSupannId();
 
-        $roles = $this->roleService->getIndividuRolesByIndividuSourceCode($id);
+        $individuRoles = $this->roleService->getIndividuRolesByIndividuSourceCode($id);
 
-        usort($roles, function (IndividuRole $a, IndividuRole $b) {
-            //filtre sur le type de structure
-            if ($a->getRole()->getTypeStructureDependant() !== $b->getRole()->getTypeStructureDependant()) {
-                return $a->getRole()->getTypeStructureDependant() > $b->getRole()->getTypeStructureDependant();
-            } elseif ($a->getRole()->getStructure()->getLibelle() !== $a->getRole()->getStructure()->getLibelle()) {
-                return $a->getRole()->getStructure()->getLibelle() > $b->getRole()->getStructure()->getLibelle();
-            }
-            return $a->getId() > $b->getId();
-        });
+        usort($individuRoles, IndividuRole::getComparisonFunction());
 
-        return array_map(function(IndividuRole $role) {
+        $roles = array_map(function(IndividuRole $role) {
             return $role->getRole();
-        }, $roles);
+        }, $individuRoles);
+
+        return $roles;
     }
 
     /**

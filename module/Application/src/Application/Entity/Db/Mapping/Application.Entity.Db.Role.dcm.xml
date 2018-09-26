@@ -16,11 +16,11 @@
         <field name="attributionAutomatique" type="boolean" column="ATTRIB_AUTO" nullable="false"/>
         <field name="theseDependant" type="boolean" column="THESE_DEP" nullable="false"/>
         <field name="sourceCode" type="string" column="SOURCE_CODE" length="100" nullable="true"/>
+        <field name="ordreAffichage" type="string" column="ORDRE_AFFICHAGE" length="32" nullable="false"/>
 
         <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
         <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
         <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
-        <field name="ordreAffichage" type="integer" column="ORDRE_AFFICHAGE" nullable="false"/>
 
         <many-to-one field="typeStructureDependant" target-entity="Application\Entity\Db\TypeStructure">
             <join-columns>

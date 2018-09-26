@@ -51,4 +51,19 @@ class IndividuRole
         return $this;
     }
 
+    /**
+     * Retourne la fonction de callback à utiliser pour trier une collection d'entités IndividuRole selon le rôle.
+     * @see usort()
+     *
+     * @return callable
+     */
+    static public function getComparisonFunction()
+    {
+        return function(IndividuRole $a1, IndividuRole $a2) {
+            return strcmp(
+                $a1->getRole()->getOrdreAffichage() . $a1->getIndividu()->getNomUsuel() . $a1->getIndividu()->getPrenom(),
+                $a2->getRole()->getOrdreAffichage() . $a2->getIndividu()->getNomUsuel() . $a2->getIndividu()->getPrenom()
+            );
+        };
+    }
 }

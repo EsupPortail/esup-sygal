@@ -65,30 +65,19 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface
     private $etablissement;
 
     /**
-     * Fonction de callback à utiliser pour trier une collection d'acteurs
-     * selon leur rôle.
+     * Retourne la fonction de callback à utiliser pour trier une collection d'entités Acteur selon leur rôle.
+     * @see usort()
      *
-     * @param Acteur $a1
-     * @param Acteur $a2
-     * @return int
+     * @return callable
      */
-    static public function cmp(Acteur $a1, Acteur $a2)
+    static public function getComparisonFunction()
     {
-        $ordres = Role::$ordreSourcesCodes;
-        $ordre1 = array_key_exists($a1->getRole()->getSourceCode(), $ordres) ? $ordres[$a1->getRole()->getSourceCode()] : 'zzz';
-        $ordre2 = array_key_exists($a2->getRole()->getSourceCode(), $ordres) ? $ordres[$a2->getRole()->getSourceCode()] : 'zzz';
-
-        $nom1 = ($i1 = $a1->getIndividu()) ? $i1->getNomUsuel() . $i1->getPrenom() : '';
-        $nom2 = ($i2 = $a2->getIndividu()) ? $i2->getNomUsuel() . $i2->getPrenom() : '';
-
-        $x = $ordre1 . $nom1;
-        $y = $ordre2 . $nom2;
-
-        if ($x === $y) {
-            return 0;
-        }
-
-        return strcmp($x, $y);
+        return function(Acteur $a1, Acteur $a2) {
+            return strcmp(
+                $a1->getRole()->getOrdreAffichage() . $a1->getIndividu()->getNomUsuel() . $a1->getIndividu()->getPrenom(),
+                $a2->getRole()->getOrdreAffichage() . $a2->getIndividu()->getNomUsuel() . $a2->getIndividu()->getPrenom()
+            );
+        };
     }
 
     /**
