@@ -49,6 +49,14 @@ class EngagementImpartialiteAssertion implements  AssertionInterface {
                 $role = $this->userContextService->getSelectedIdentityRole();
                 return ($role->getCode() === Role::CODE_BDD && $role->getStructure() === $these->getEtablissement()->getStructure());
                 break;
+            case SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_NOTIFIER:
+                $role = $this->userContextService->getSelectedIdentityRole();
+                return ($role->getCode() === Role::CODE_BDD && $role->getStructure() === $these->getEtablissement()->getStructure());
+                break;
+            case SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_VISUALISER:
+                $role = $this->userContextService->getSelectedIdentityRole();
+                return ($role->getStructure() === $these->getEtablissement()->getStructure());
+                break;
         }
         return true;
     }

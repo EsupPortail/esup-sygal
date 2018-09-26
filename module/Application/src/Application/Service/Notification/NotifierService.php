@@ -587,6 +587,30 @@ class NotifierService extends \Notification\Service\NotifierService
         $this->trigger($notif);
     }
 
+    /** ENGAGEMENT IMPARTIALITE ***************************************************************************************/
+
+    /**
+     * @param These $these
+     * @param Proposition $proposition
+     * @param Membre $membre
+     */
+    public function triggerDemandeSignatureEngagementImpartialite($these, $proposition, $membre)
+    {
+        $email   = $membre->getIndividu()->getEmail();
+
+        $notif = new Notification();
+        $notif
+            ->setSubject("Demande de signature de l'engagement d'impartialité de la thèse de ".$these->getDoctorant()->getNomComplet())
+            ->setTo($email)
+            ->setTemplatePath('soutenance/notification/engagement-impartialite-demande')
+            ->setTemplateVariables([
+                'these' => $these,
+                'proposition' => $proposition,
+                'membre' => $membre,
+            ]);
+        $this->trigger($notif);
+    }
+
     /**
      * @param These $these
      * @param Proposition $proposition
@@ -594,13 +618,35 @@ class NotifierService extends \Notification\Service\NotifierService
      */
     public function triggerSignatureEngagementImpartialite($these, $proposition, $membre)
     {
-        $email   = $membre->getEmail();
+        $email   = $this->fetchEmailBdd($these);
 
         $notif = new Notification();
         $notif
-            ->setSubject("Signature de la demande d'expertise de la thèse de ".$these->getDoctorant()->getNomComplet())
+            ->setSubject("Signature de l'engagement d'impartialité de la thèse de ".$these->getDoctorant()->getNomComplet())
             ->setTo($email)
-            ->setTemplatePath('soutenance/notification/demande-expertise')
+            ->setTemplatePath('soutenance/notification/engagement-impartialite-signature')
+            ->setTemplateVariables([
+                'these' => $these,
+                'proposition' => $proposition,
+                'membre' => $membre,
+            ]);
+        $this->trigger($notif);
+    }
+
+    /**
+     * @param These $these
+     * @param Proposition $proposition
+     * @param Membre $membre
+     */
+    public function triggerAnnulationEngagementImpartialite($these, $proposition, $membre)
+    {
+        $email   = $membre->getIndividu()->getEmail();
+
+        $notif = new Notification();
+        $notif
+            ->setSubject("Annulation de l'engagement d'impartialité de la thèse de ".$these->getDoctorant()->getNomComplet())
+            ->setTo($email)
+            ->setTemplatePath('soutenance/notification/engagement-impartialite-annulation')
             ->setTemplateVariables([
                 'these' => $these,
                 'proposition' => $proposition,

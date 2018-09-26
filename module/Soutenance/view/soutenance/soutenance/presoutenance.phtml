@@ -152,10 +152,10 @@ $canNotifierDemandeExpertise    = $this->isAllowed(SoutenancePrivileges::getReso
                     <td> <?php echo ($rapporteur->getExpertise())?$rapporteur->getExpertise()->format("d/m/Y H:i:s"):"";  ?> </td>
                     <td>
                         <?php if($canNotifierDemandeExpertise): ?>
-                        <a href="<?php echo $this->url('soutenance/presoutenance/demande-expertise', ['these' => $these->getId(), 'proposition' => $proposition->getId(), 'membre' => $rapporteur->getId()], [], true);?>">
+                        <a href="<?php echo $this->url('soutenance/presoutenance/engagement-impartialite', ['these' => $these->getId(), 'proposition' => $proposition->getId(), 'membre' => $rapporteur->getId()], [], true);?>">
                             <span class="glyphicon glyphicon-eye-open" title="Visualiser la demande"></span>
                         </a>
-                        <a href="<?php echo $this->url('soutenance/presoutenance/notifier-demande-expertise', ['these' => $these->getId(), 'proposition' => $proposition->getId(), 'membre' => $rapporteur->getId()], [], true);?>">
+                        <a href="<?php echo $this->url('soutenance/presoutenance/engagement-impartialite/notifier', ['these' => $these->getId(), 'proposition' => $proposition->getId(), 'membre' => $rapporteur->getId()], [], true);?>">
                             <span class="glyphicon glyphicon-send" title="Envoyer la demande"></span>
                         </a>
                         <?php endif; ?>
@@ -166,7 +166,7 @@ $canNotifierDemandeExpertise    = $this->isAllowed(SoutenancePrivileges::getReso
         </table>
 
         <?php if($canNotifierDemandeExpertise): ?>
-            <a href="<?php echo $this->url('soutenance/presoutenance/notifier-demandes-expertise', ['these' => $these->getId(), 'proposition' => $proposition->getId()], [], true);?>"
+            <a href="<?php echo $this->url('soutenance/presoutenance/notifier-engagement-impartialite', ['these' => $these->getId(), 'proposition' => $proposition->getId()], [], true);?>"
                class="btn btn-info">
                 <span class="glyphicon glyphicon-send"></span> Envoyer la demande aux rapporteurs
             </a>

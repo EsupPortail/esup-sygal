@@ -7,6 +7,8 @@ use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Soutenance\Assertion\EngagementImpartialiteAssertion;
 use Soutenance\Assertion\EngagementImpartialiteAssertionFactory;
+use Soutenance\Controller\EngagementImpartialiteController;
+use Soutenance\Controller\Factory\EngagementImpartialiteControllerFactory;
 use Soutenance\Controller\Factory\PersopassControllerFactory;
 use Soutenance\Controller\Factory\QualiteControllerFactory;
 use Soutenance\Controller\Factory\SoutenanceControllerFactory;
@@ -49,6 +51,8 @@ return array(
                         'privileges' => [
                             SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_SIGNER,
                             SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_ANNULER,
+                            SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_NOTIFIER,
+                            SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_VISUALISER,
                         ],
                         'resources'  => ['These'],
                         'assertion'  => EngagementImpartialiteAssertion::class,
@@ -75,18 +79,12 @@ return array(
                         'presoutenance',
                     ],
                     'roles'      => [
-                        'Administrateur technique',
-                        'Observateur COMUE',
-                        'Bureau des doctorats UCN',
                     ],
                 ],
                 [
                     'controller' => SoutenanceController::class,
                     'action'     => [
                         'date-rendu-rapport',
-                        'demande-expertise',
-                        'notifier-demande-expertise',
-                        'notifier-demandes-expertise',
                         'index',
                         'constituer',
                         'modifier-date-lieu',
@@ -106,14 +104,33 @@ return array(
                     ],
                 ],
                 [
-                    'controller' => SoutenanceController::class,
+                    'controller' => EngagementImpartialiteController::class,
                     'action'     => [
                         'engagement-impartialite',
+                    ],
+                    'privileges' => SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_VISUALISER,
+                ],
+                [
+                    'controller' => EngagementImpartialiteController::class,
+                    'action'     => [
+                        'notifier-rapporteurs-engagement-impartialite',
+                        'notifier-engagement-impartialite',
+                    ],
+                    'privileges' => SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_NOTIFIER,
+                ],
+                [
+                    'controller' => EngagementImpartialiteController::class,
+                    'action'     => [
                         'signer-engagement-impartialite',
+                    ],
+                    'privileges' => SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_SIGNER,
+                ],
+                [
+                    'controller' => EngagementImpartialiteController::class,
+                    'action'     => [
                         'annuler-engagement-impartialite',
                     ],
-                    'roles' => []
-
+                    'privileges' => SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_ANNULER,
                 ],
                 [
                     'controller' => PersopassController::class,
@@ -169,11 +186,6 @@ return array(
                                 'paramsInject' => [
                                     'these',
                                 ],
-//                                'class' => 'roadmap',
-//                                'icon' => 'glyphicon glyphicon-road',
-//                                'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'roadmap'),
-//                                'etape' => null,
-//                                'visible' => EngagementImpartialiteAssertion::class,
                             ],
                         ],
                     ],
@@ -252,14 +264,14 @@ return array(
                                     ],
                                 ],
                             ],
-                            'demande-expertise' => [
+                            'notifier-engagement-impartialite' => [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/demande-expertise/:membre',
+                                    'route'    => '/notifier-engagement-impartialite',
                                     'defaults' => [
-                                        'controller' => SoutenanceController::class,
-                                        'action'     => 'demande-expertise',
+                                        'controller' => EngagementImpartialiteController::class,
+                                        'action'     => 'notifier-rapporteurs-engagement-impartialite',
                                     ],
                                 ],
                             ],
@@ -269,18 +281,29 @@ return array(
                                 'options' => [
                                     'route'    => '/engagement-impartialite/:membre',
                                     'defaults' => [
-                                        'controller' => SoutenanceController::class,
+                                        'controller' => EngagementImpartialiteController::class,
                                         'action'     => 'engagement-impartialite',
                                     ],
                                 ],
                                 'child_routes' => [
+                                    'notifier' => [
+                                        'type' => Segment::class,
+                                        'may_terminate' => true,
+                                        'options' => [
+                                            'route'    => '/notifier',
+                                            'defaults' => [
+                                                'controller' => EngagementImpartialiteController::class,
+                                                'action'     => 'notifier-engagement-impartialite',
+                                            ],
+                                        ],
+                                    ],
                                     'signer' => [
                                         'type' => Segment::class,
                                         'may_terminate' => true,
                                         'options' => [
                                             'route'    => '/signer',
                                             'defaults' => [
-                                                'controller' => SoutenanceController::class,
+                                                'controller' => EngagementImpartialiteController::class,
                                                 'action'     => 'signer-engagement-impartialite',
                                             ],
                                         ],
@@ -291,32 +314,10 @@ return array(
                                         'options' => [
                                             'route'    => '/annuler',
                                             'defaults' => [
-                                                'controller' => SoutenanceController::class,
+                                                'controller' => EngagementImpartialiteController::class,
                                                 'action'     => 'annuler-engagement-impartialite',
                                             ],
                                         ],
-                                    ],
-                                ],
-                            ],
-                            'notifier-demande-expertise' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route'    => '/notifier-demande-expertise/:membre',
-                                    'defaults' => [
-                                        'controller' => SoutenanceController::class,
-                                        'action'     => 'notifier-demande-expertise',
-                                    ],
-                                ],
-                            ],
-                            'notifier-demandes-expertise' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route'    => '/notifier-demandes-expertise',
-                                    'defaults' => [
-                                        'controller' => SoutenanceController::class,
-                                        'action'     => 'notifier-demandes-expertise',
                                     ],
                                 ],
                             ],
@@ -502,6 +503,7 @@ return array(
             SoutenanceController::class => SoutenanceControllerFactory::class,
             PersopassController::class => PersopassControllerFactory::class,
             QualiteController::class => QualiteControllerFactory::class,
+            EngagementImpartialiteController::class => EngagementImpartialiteControllerFactory::class,
         ],
     ],
 

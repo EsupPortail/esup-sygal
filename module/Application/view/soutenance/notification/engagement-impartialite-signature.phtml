@@ -1,15 +1,10 @@
 <?php
 
-use Application\Entity\Db\Individu;
-use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
-use Application\Entity\Db\Validation;
-use Application\View\Renderer\PhpRenderer;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 
 /**
- * @var PhpRenderer $this
  * @var These $these
  * @var Proposition $proposition
  * @var Membre $membre
@@ -20,7 +15,7 @@ use Soutenance\Entity\Proposition;
     Bonjour,
 </p>
 <p>
-    <strong><?php echo $membre->getDenomination(); ?></strong> vient de signer la demande d'expertise de la thèse de
+    <strong><?php echo $membre->getIndividu()->getNomComplet(); ?></strong> vient de signer l'engagement d'impartialité de la thèse de
     <strong><?php echo $these->getDoctorant()->getNomComplet(); ?></strong> intitulée
     <strong><?php echo $these->getTitre(); ?></strong>.
 </p>
