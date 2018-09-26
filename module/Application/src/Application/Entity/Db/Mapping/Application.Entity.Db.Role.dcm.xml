@@ -20,6 +20,7 @@
         <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
         <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
         <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
+        <field name="ordreAffichage" type="integer" column="ORDRE_AFFICHAGE" nullable="false"/>
 
         <many-to-one field="typeStructureDependant" target-entity="Application\Entity\Db\TypeStructure">
             <join-columns>

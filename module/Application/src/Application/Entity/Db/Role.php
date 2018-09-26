@@ -81,6 +81,11 @@ class Role extends AbstractRole
     private $theseDependant = false;
 
     /**
+     * @var int
+     */
+    private $ordreAffichage;
+
+    /**
      * @return bool
      */
     public function isDoctorant()
@@ -265,6 +270,26 @@ class Role extends AbstractRole
     {
         return $this->getTypeStructureDependant() !== null;
     }
+
+    /**
+     * @return int
+     */
+    public function getOrdreAffichage()
+    {
+        return $this->ordreAffichage;
+    }
+
+    /**
+     * @param int $ordreAffichage
+     * @return Role
+     */
+    public function setOrdreAffichage($ordreAffichage)
+    {
+        $this->ordreAffichage = $ordreAffichage;
+        return $this;
+    }
+
+
 
     public function __toString() {
         $txt = "" . $this->getLibelle();
