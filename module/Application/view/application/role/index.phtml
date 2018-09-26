@@ -40,14 +40,6 @@ use Application\Entity\Db\Role;
                     <td> <?php echo $role->getCode(); ?> </td>
                     <td> <?php echo $role->getLibelle(); ?> </td>
                     <td> <?php echo $role->getOrdreAffichage(); ?> </td>
-                    <td>
-                        <a href="<?php echo $this->url('role-ordre/incrementer', ['role' => $role->getId()], [], true); ?>">
-                            <span class="glyphicon glyphicon-arrow-up"></span>
-                        </a>
-                        <a href="<?php echo $this->url('role-ordre/decrementer', ['role' => $role->getId()], [], true); ?>">
-                            <span class="glyphicon glyphicon-arrow-down"></span>
-                        </a>
-                    </td>
                 </tr>
             <?php endforeach; ?>
         </tbody>

@@ -263,34 +263,17 @@ class RoleService extends BaseService
         return $result;
     }
 
-    /**
-     * @param Role $role
-     * @return Role
-     */
-    public function incrementerOrdre($role)
-    {
-        $role->setOrdreAffichage($role->getOrdreAffichage() + 1);
-        try {
-            $this->getEntityManager()->flush($role);
-        } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Problème lors du change de l'ordre d'affichage du rôle [".$role->getId()."]");
-        }
-        return $role;
-    }
-
-    /**
-     * @param Role $role
-     * @return Role
-     */
-    public function decrementerOrdre($role)
-    {
-        $role->setOrdreAffichage(max($role->getOrdreAffichage() -1, 0));
-        try {
-            $this->getEntityManager()->flush($role);
-        } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Problème lors du change de l'ordre d'affichage du rôle [".$role->getId()."]");
-        }
-        return $role;
-    }
-
+//    /**
+//     * @param Role $role
+//     * @return Role
+//     */
+//    public function updateRole($role)
+//    {
+//        try {
+//            $this->getEntityManager()->flush($role);
+//        } catch (OptimisticLockException $e) {
+//            throw new RuntimeException("Problème lors du change de l'ordre d'affichage du rôle [".$role->getId()."]");
+//        }
+//        return $role;
+//    }
 }

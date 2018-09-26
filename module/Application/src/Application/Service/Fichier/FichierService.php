@@ -568,7 +568,7 @@ class FichierService extends BaseService
         }
 
         $acteursEnCouverture = $acteurs;
-        usort($acteursEnCouverture, function(Acteur $a1, Acteur $a2) {return $a1->getRole()->getOrdreAffichage() < $a2->getRole()->getOrdreAffichage();});
+        usort($acteursEnCouverture, Acteur::getComparisonFunction());
         $acteursEnCouverture = array_unique($acteursEnCouverture);
 
         /** @var Acteur $rapporteur */

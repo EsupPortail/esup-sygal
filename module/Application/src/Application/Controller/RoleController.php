@@ -25,19 +25,19 @@ class RoleController  extends AbstractController {
         ]);
     }
 
-    public function incrementerOrdreAction() {
-        $idRole = $this->params()->fromRoute('role');
-        $role = $this->getRoleService()->getRepository()->find($idRole);
-        $this->getRoleService()->incrementerOrdre($role);
-
-        $this->redirect()->toRoute('role-ordre');
-    }
-
-    public function decrementerOrdreAction() {
-        $idRole = $this->params()->fromRoute('role');
-        $role = $this->getRoleService()->getRepository()->find($idRole);
-        $this->getRoleService()->decrementerOrdre($role);
-
-        $this->redirect()->toRoute('role-ordre');
-    }
+//    public function incrementerOrdreAction() {
+//        $idRole = $this->params()->fromRoute('role');
+//        $role = $this->getRoleService()->getRepository()->find($idRole);
+//        $this->getRoleService()->incrementerOrdre($role);
+//
+//        $this->redirect()->toRoute('role-ordre');
+//    }
+//
+//    public function decrementerOrdreAction() {
+//        $idRole = $this->params()->fromRoute('role');
+//        $role = $this->getRoleService()->getRepository()->find($idRole);
+//        $this->getRoleService()->decrementerOrdre($role);
+//
+//        $this->redirect()->toRoute('role-ordre');
+//    }
 }
