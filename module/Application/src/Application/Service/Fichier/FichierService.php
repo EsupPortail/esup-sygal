@@ -560,6 +560,9 @@ class FichierService extends BaseService
         $pdcData->setAssocie(false);
         /** @var Acteur $directeur */
         foreach ($directeurs as $directeur) {
+            if ($directeur->getEtablissement()) {
+                throw new RuntimeException("Anomalie: le directeur de thèse '{$directeur}' n'a pas d'établissement.");
+            }
             if ($directeur->getEtablissement()->estAssocie()) {
                 $pdcData->setAssocie(true);
                 $pdcData->setLogoAssocie($directeur->getEtablissement()->getCheminLogo());
