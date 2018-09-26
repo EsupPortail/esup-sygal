@@ -553,7 +553,8 @@ class FichierService extends BaseService
         $acteurs = $these->getActeurs()->toArray();
         $rapporteurs =  array_filter($acteurs, function(Acteur $a) { return $a->estRapporteur(); });
         $directeurs =  array_filter($acteurs, function(Acteur $a) { return $a->estDirecteur(); });
-        $membres = array_diff($acteurs, $rapporteurs, $directeurs);
+        $president =  array_filter($acteurs, function(Acteur $a) { return $a->estPresidentJury(); });
+        $membres = array_diff($acteurs, $rapporteurs, $directeurs, $president);
 
         /** associée */
         $pdcData->setAssocie(false);
@@ -565,6 +566,10 @@ class FichierService extends BaseService
                 $pdcData->setLibelleAssocie($directeur->getEtablissement()->getLibelle());
             }
         }
+
+        $acteursEnCouverture = $acteurs;
+        usort($acteursEnCouverture, function(Acteur $a1, Acteur $a2) {return $a1->getRole()->getOrdreAffichage() < $a2->getRole()->getOrdreAffichage();});
+        $acteursEnCouverture = array_unique($acteursEnCouverture);
 
         /** @var Acteur $rapporteur */
         foreach ($rapporteurs as $rapporteur) {
@@ -594,6 +599,16 @@ class FichierService extends BaseService
             $directeurData->setRole("Directeur de thèse");
             if ($directeur->getEtablissement()) $directeurData->setEtablissement($directeur->getEtablissement()->getStructure()->getLibelle());
             $pdcData->addDirecteur($directeurData);
+        }
+
+        /** @var Acteur $acteur */
+        foreach ($acteursEnCouverture as $acteur) {
+            $acteurData = new MembreData();
+            $acteurData->setDenomination($acteur->getIndividu()->getNomComplet(true,false,false, true, true));
+            $acteurData->setQualite($acteur->getQualite());
+            $acteurData->setRole($acteur->getRole()->getLibelle());
+            if ($acteur->getEtablissement()) $acteurData->setEtablissement($acteur->getEtablissement()->getStructure()->getLibelle());
+            $pdcData->addActeurEnCouverture($acteurData);
         }
 
         /** Directeurs de thèses */

@@ -291,7 +291,7 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
     }
 
     /**
-     * @return mixed
+     * @return Role[]
      */
     public function getRoles()
     {
