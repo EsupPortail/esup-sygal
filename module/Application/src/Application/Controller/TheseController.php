@@ -292,7 +292,7 @@ class TheseController extends AbstractController
             'validation'       => $validation ?: null,
             'apercevoirPdcUrl' => $this->urlFichierThese()->apercevoirPageDeCouverture($these),
             'refreshTheseUrl'  => $this->urlThese()->refreshTheseUrl($these, $this->urlThese()->validationPageDeCouvertureUrl($these)),
-            'validerUrl'       => $this->urlThese()->$this->urlThese()->validerPageDeCouvertureUrl($these),($these),
+            'validerUrl'       => $this->urlThese()->validerPageDeCouvertureUrl($these),
             'devaliderUrl'     => $this->urlThese()->devaliderPageDeCouvertureUrl($these),
             'nextStepUrl'      => $this->urlWorkflow()->nextStepBox($these, null, [WfEtape::CODE_VALIDATION_PAGE_DE_COUVERTURE]),
             'informations'     => $informations,
