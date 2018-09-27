@@ -25,6 +25,7 @@ class SoutenancePrivileges extends Privileges
     const SOUTENANCE_ENGAGEMENT_IMPARTIALITE_NOTIFIER            = 'soutenance-engagement-impartialite-notifier';
     const SOUTENANCE_ENGAGEMENT_IMPARTIALITE_VISUALISER          = 'soutenance-engagement-impartialite-visualiser';
 
+    const SOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU                 = 'soutenance-association-membre-individu';
 
 
 }

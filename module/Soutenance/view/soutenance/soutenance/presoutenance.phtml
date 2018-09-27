@@ -14,10 +14,10 @@ use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 
 $canEditDateRenduRapport        = $this->isAllowed(SoutenancePrivileges::getResourceId(SoutenancePrivileges::SOUTENANCE_MODIFICATION_DATE_RENDU_RAPPORT));
-$canEditPersopass               = $this->isAllowed(SoutenancePrivileges::getResourceId(SoutenancePrivileges::SOUTENANCE_MODIFICATION_PERSOPASS));
 
-$canVisualiserEngagementImpartialite = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_VISUALISER);
-$canNotifierEngagementImpartialite = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_NOTIFIER);
+$canAssocierMembreIndividu              = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU);
+$canVisualiserEngagementImpartialite    = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_VISUALISER);
+$canNotifierEngagementImpartialite      = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_NOTIFIER);
 ?>
 
 <!-- TITRE ET NOTE ---------------------------------------------------------------------------------------------------->
@@ -112,7 +112,7 @@ $canNotifierEngagementImpartialite = $this->isAllowed($these, SoutenancePrivileg
                     <td>    <?php echo $membre->getEtablissement(); ?>                                                  </td>
                     <td>    <?php echo ($membre->getIndividu())?$membre->getIndividu()->getId() .' '. $membre->getIndividu()->getNomComplet():''; ?>                  </td>
                     <td>
-                        <?php if($canEditPersopass): ?>
+                        <?php if($canAssocierMembreIndividu): ?>
                         <a
                             href="<?php echo $this->url('soutenance/presoutenance/associer-membre-individu', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true); ?>"
                             <span class="glyphicon glyphicon-link" title="Associer un individu SyGAL à un membre de jury"></span>

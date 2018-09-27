@@ -10,7 +10,9 @@ use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
+use BjyAuthorize\Exception\UnAuthorizedException;
 use Soutenance\Entity\Membre;
+use Soutenance\Provider\Privilege\SoutenancePrivileges;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Zend\Http\Request;
@@ -31,6 +33,11 @@ class PresoutenanceController extends AbstractController
         /** @var These $these */
         $idThese = $this->params()->fromRoute('these');
         $these = $this->getTheseService()->getRepository()->find($idThese);
+
+        $isAllowed = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU);
+        if (!$isAllowed) {
+            throw new UnAuthorizedException("Vous êtes non authorisé(e) à associer des individus aux membres de jury de cette thèse.");
+        }
 
         /** @var Membre $membre */
         $idMembre = $this->params()->fromRoute('membre');
@@ -62,11 +69,18 @@ class PresoutenanceController extends AbstractController
 
     public function enregistrerAssociationMembreIndividuAction() {
 
+        /** @var These $these */
         $idThese = $this->params()->fromRoute('these');
+        $these = $this->getTheseService()->getRepository()->find($idThese);
 
         /** @var Membre $membre */
         $idMembre = $this->params()->fromRoute('membre');
         $membre = $this->getMembreService()->find($idMembre);
+
+        $isAllowed = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU);
+        if (!$isAllowed) {
+            throw new UnAuthorizedException("Vous êtes non authorisé(e) à associer des individus aux membres de jury de cette thèse.");
+        }
 
         /** @var Acteur $acteur */
         $idActeur = $this->params()->fromRoute('acteur');
@@ -75,16 +89,10 @@ class PresoutenanceController extends AbstractController
         $membre->setIndividu($acteur->getIndividu());
         $this->getMembreService()->update($membre);
 
-        $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $idThese], [], true);
+        $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 
-
     /**
-     * AJAX.
-     *
-     * Recherche d'un Individu.
-     *
-     * @param string $type => permet de spécifier un type d'acteur ...
      * @return JsonModel
      */
     public function rechercherActeurAction()

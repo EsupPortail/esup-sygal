@@ -5,6 +5,8 @@ namespace Soutenance;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
+use Soutenance\Assertion\AssociationMembreIndividuAssertion;
+use Soutenance\Assertion\AssociationMembreIndividuAssertionFactory;
 use Soutenance\Assertion\EngagementImpartialiteAssertion;
 use Soutenance\Assertion\EngagementImpartialiteAssertionFactory;
 use Soutenance\Controller\EngagementImpartialiteController;
@@ -59,6 +61,13 @@ return array(
                         'resources'  => ['These'],
                         'assertion'  => EngagementImpartialiteAssertion::class,
                     ],
+                    [
+                        'privileges' => [
+                            SoutenancePrivileges::SOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU,
+                        ],
+                        'resources'  => ['These'],
+                        'assertion'  => AssociationMembreIndividuAssertion::class,
+                    ],
                 ],
             ],
         ],
@@ -89,7 +98,7 @@ return array(
                     'enregistrer-association-membre-individu',
                     'rechercher-acteur',
                      ],
-                'roles'      => [],
+                    'privileges' => SoutenancePrivileges::SOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU,
                 ],
                 [
                     'controller' => SoutenanceController::class,
@@ -539,6 +548,7 @@ return array(
             MembreService::class => MembreServiceFactory::class,
 
             EngagementImpartialiteAssertion::class => EngagementImpartialiteAssertionFactory::class,
+            AssociationMembreIndividuAssertion::class => AssociationMembreIndividuAssertionFactory::class,
         ],
     ],
     'controllers' => [

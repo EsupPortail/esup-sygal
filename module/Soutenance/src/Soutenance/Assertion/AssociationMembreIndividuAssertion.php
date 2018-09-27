@@ -13,7 +13,7 @@ use Zend\Permissions\Acl\Assertion\AssertionInterface;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 use Zend\Permissions\Acl\Role\RoleInterface;
 
-class EngagementImpartialiteAssertion implements  AssertionInterface {
+class AssociationMembreIndividuAssertion implements  AssertionInterface {
     use UserContextServiceAwareTrait;
 
     /**
@@ -39,23 +39,9 @@ class EngagementImpartialiteAssertion implements  AssertionInterface {
         if ($this->userContextService->getSelectedIdentityRole()->getCode() === Role::CODE_ADMIN_TECH) return true;
 
         switch ($privilege) {
-            case SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_SIGNER:
-                $utilisateur = $this->userContextService->getIdentityDb();
-                /** @var Collection $rapporteurs */
-                $rapporteurs = $these->getActeursByRoleCode(Role::CODE_RAPPORTEUR_JURY);
-                return $rapporteurs->map(function(Acteur $acteur) { return $acteur->getIndividu(); })->contains($utilisateur);
-                break;
-            case SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_ANNULER:
+            case SoutenancePrivileges::SOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU:
                 $role = $this->userContextService->getSelectedIdentityRole();
                 return ($role->getCode() === Role::CODE_BDD && $role->getStructure() === $these->getEtablissement()->getStructure());
-                break;
-            case SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_NOTIFIER:
-                $role = $this->userContextService->getSelectedIdentityRole();
-                return ($role->getCode() === Role::CODE_BDD && $role->getStructure() === $these->getEtablissement()->getStructure());
-                break;
-            case SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_VISUALISER:
-                $role = $this->userContextService->getSelectedIdentityRole();
-                return ($role->getStructure() === $these->getEtablissement()->getStructure() || $role->getCode() === Role::CODE_OBSERVATEUR);
                 break;
         }
         return false;
