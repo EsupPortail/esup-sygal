@@ -2,6 +2,8 @@
 
 namespace Application\Service\Fichier;
 
+use Application\Entity\Db\Acteur;
+
 class MembreData {
     private $denomination;
     private $qualite;
@@ -110,11 +112,11 @@ class PdcData {
     private $libelleAssocie;
 
 
-    /** @var MembreData[] */
+    /** @var Acteur[] */
     private $directeurs;
-    /** @var MembreData[] */
+    /** @var Acteur[] */
     private $rapporteurs;
-    /** @var MembreData[] */
+    /** @var Acteur[] */
     private $membres;
 
     /** @var MembreData[] */
@@ -353,7 +355,7 @@ class PdcData {
 
 
     /**
-     * @return MembreData[]
+     * @return Acteur[]
      */
     public function getDirecteurs()
     {
@@ -361,17 +363,17 @@ class PdcData {
     }
 
     /**
-     * @param MembreData $directeur
+     * @param Acteur[] $directeurs
      * @return PdcData
      */
-    public function addDirecteur($directeur)
+    public function setDirecteurs($directeurs)
     {
-        $this->directeurs[] = $directeur;
+        $this->directeurs = $directeurs;
         return $this;
     }
 
     /**
-     * @return MembreData[]
+     * @return Acteur[]
      */
     public function getRapporteurs()
     {
@@ -379,17 +381,17 @@ class PdcData {
     }
 
     /**
-     * @param MembreData $rapporteur
+     * @param Acteur[] $rapporteurs
      * @return PdcData
      */
-    public function addRapporteur($rapporteur)
+    public function setRapporteurs($rapporteurs)
     {
-        $this->rapporteurs[] = $rapporteur;
+        $this->rapporteurs = $rapporteurs;
         return $this;
     }
 
     /**
-     * @return MembreData[]
+     * @return Acteur[]
      */
     public function getMembres()
     {
@@ -397,12 +399,12 @@ class PdcData {
     }
 
     /**
-     * @param MembreData $membre
+     * @param Acteur[] $membres
      * @return PdcData
      */
-    public function addMembre($membre)
+    public function setMembres($membres)
     {
-        $this->membres[] = $membre;
+        $this->membres = $membres;
         return $this;
     }
 
@@ -518,33 +520,14 @@ class PdcData {
         if(count($this->getDirecteurs())<1)         $warnings[] = "Nombre de directeurs trop faible (".count($this->getDirecteurs()).")";
 
         //membres du jury
-        if ($this->getRapporteurs()) {
-            /** @var MembreData $rapporteur */
-            foreach($this->getRapporteurs() as $rapporteur) {
-                if (!$rapporteur->getDenomination())    $warnings[] = "Un rapporteur ne possèdent pas de nom.";
-                if (!$rapporteur->getEtablissement())   $warnings[] = "Établissement absent pour le rapporteur (".$rapporteur->getDenomination().").";
-                if (!$rapporteur->getQualite())         $warnings[] = "Qualité absente pour le rapporteur (".$rapporteur->getDenomination().").";
+        if ($this->getActeursEnCouverture()) {
+            /** @var MembreData $acteur */
+            foreach($this->getActeursEnCouverture() as $acteur) {
+                if (!$acteur->getDenomination())    $warnings[] = "Un ".$acteur->getRole()." ne possèdent pas de nom.";
+                if (!$acteur->getEtablissement())   $warnings[] = "Établissement absent pour le ".$acteur->getRole()." (".$acteur->getDenomination().").";
+                if (!$acteur->getQualite())         $warnings[] = "Qualité absente pour le ".$acteur->getRole()." (".$acteur->getDenomination().").";
             }
         }
-        /** @var MembreData $membre */
-        if ($this->getMembres()) {
-            foreach ($this->getMembres() as $membre) {
-                if (!$membre->getDenomination()) $warnings[] = "Un membre ne possèdent pas de nom.";
-                if (!$membre->getEtablissement()) $warnings[] = "Établissement absent pour le membre (" . $membre->getDenomination() . ").";
-                if (!$membre->getQualite()) $warnings[] = "Qualité absente pour le membre (" . $membre->getDenomination() . ").";
-            }
-        }
-        /** @var MembreData $directeur */
-        if ($this->getDirecteurs()) {
-            foreach ($this->getDirecteurs() as $directeur) {
-                if (!$directeur->getDenomination()) $warnings[] = "Un directeur ne possèdent pas de nom.";
-                if (!$directeur->getEtablissement()) $warnings[] = "Établissement absent pour le directeur (" . $directeur->getDenomination() . ").";
-                if (!$directeur->getQualite()) $warnings[] = "Qualité absente pour le directeur (" . $directeur->getDenomination() . ").";
-            }
-        }
-        //cotutuelle :: aucun warning ca l'info sert à détecter la cotutelle
-
-
         return $warnings;
     }
 
