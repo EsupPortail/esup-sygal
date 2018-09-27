@@ -40,9 +40,9 @@ class CallException extends RuntimeException
     static public function serverError(ServerException $error)
     {
         $message = "Erreur distante rencontrée par le serveur du WS";
-        $previous = null;
-        if ($error->hasResponse()) {
-            $previous = new RuntimeException($error->getResponse()->getBody());
+        $previous = $error;
+        if ($error->hasResponse() && $error->getResponse()->getBody()->getSize() > 0) {
+            $previous = new RuntimeException($error->getResponse()->getBody(), null, $error);
         }
 
         return new self($message, null, $previous);

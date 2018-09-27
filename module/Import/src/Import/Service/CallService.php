@@ -11,12 +11,15 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ServerException;
 use Import\Exception\CallException;
 use Zend\Http\Response;
+use Zend\Log\LoggerAwareTrait;
 
 /**
  * Service dédié à l'envoi de requêtes au Web Service.
  */
 class CallService
 {
+    use LoggerAwareTrait;
+
     /**
      * $config est fourni par la factory et permet l'acces à la config
      *
@@ -40,8 +43,6 @@ class CallService
     protected $proxy;
     protected $verify = true;
 
-    protected $debugLevel = 0;
-
     /**
      * @var array
      */
@@ -54,17 +55,6 @@ class CallService
     public function setConfig(array $config)
     {
         $this->config = $config;
-
-        return $this;
-    }
-
-    /**
-     * @param int $debugLevel
-     * @return self
-     */
-    public function setDebugLevel($debugLevel)
-    {
-        $this->debugLevel = $debugLevel;
 
         return $this;
     }
@@ -179,7 +169,10 @@ class CallService
 
         $client = new Client($options);
         try {
+            $_debut = microtime(true);
             $response = $client->request('GET', $uri);
+            $_fin = microtime(true);
+            $this->logger->debug("Interrogation du WS : " . ($_fin - $_debut) . " secondes.");
         } catch (ClientException $e) {
             throw CallException::clientError($e);
         } catch (ServerException $e) {

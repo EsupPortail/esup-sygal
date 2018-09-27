@@ -34,19 +34,4 @@
 
 <h2>Logs</h2>
 
-<table class="table table-bordered">
-    <thead>
-    <tr>
-        <th>date</th>
-        <th>message</th>
-    </tr>
-    </thead>
-    <tbody>
-    <?php foreach($logs as $log) : ?>
-        <tr>
-            <td> <?php echo $log[0]->format('Y/m/d H:i:s '); ?> </td>
-            <td> <?php echo $log[1]; ?> </td>
-        </tr>
-    <?php endforeach; ?>
-    </tbody>
-</table>
+<pre><?php echo $logs ?></pre>

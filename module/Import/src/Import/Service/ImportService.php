@@ -6,7 +6,6 @@ use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\These;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
-use Import\Exception\ImportRuntimeException;
 use Import\Model\TmpActeur;
 use Import\Model\TmpDoctorant;
 use Import\Model\TmpThese;
@@ -15,6 +14,8 @@ use Import\Service\Traits\SynchroServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
+use Zend\Log\LoggerAwareTrait;
+use Zend\Log\LoggerInterface;
 
 /**
  * Service d'import des données provenant d'un établissement.
@@ -33,6 +34,7 @@ class ImportService
     use FetcherServiceAwareTrait;
     use EntityManagerAwareTrait;
     use SynchroServiceAwareTrait;
+    use LoggerAwareTrait;
 
     /**
      * Liste ORDONNÉE de tous les services proposés.
@@ -73,17 +75,16 @@ class ImportService
     private $sqlFilters;
 
     /**
-     * @var array
-     */
-    private $logs = [];
-
-    /**
-     * @param int $debugLevel
+     * Set logger object
+     *
+     * @param LoggerInterface $logger
      * @return self
      */
-    public function setDebugLevel($debugLevel)
+    public function setLogger(LoggerInterface $logger)
     {
-        $this->fetcherService->setDebugLevel($debugLevel);
+        $this->logger = $logger;
+
+        $this->fetcherService->setLogger($this->logger);
 
         return $this;
     }
@@ -115,8 +116,6 @@ class ImportService
      */
     public function import($service, $etablissement, $sourceCode, array $queryParams = [])
     {
-        $this->logs = [];
-
         if (! $etablissement instanceof Etablissement) {
             $etablissement = $this->etablissementService->getRepository()->findOneByCode($etablissement);
             if ($etablissement === null) {
@@ -128,7 +127,6 @@ class ImportService
 
         $this->fetcherService->setEtablissement($etablissement);
         $this->fetcherService->fetch($service, $sourceCode, $this->filters);
-        $this->logs = array_merge($this->logs, $this->fetcherService->getLogs());
 
         // synchro UnicaenImport
         $this->synchroService->addService($service, ['sql_filter' => $this->sqlFilters]);
@@ -144,8 +142,6 @@ class ImportService
      */
     public function importAll($etablissement)
     {
-        $this->logs = [];
-
         if (! $etablissement instanceof Etablissement) {
             $etablissement = $this->etablissementService->getRepository()->findOneByCode($etablissement);
             if ($etablissement === null) {
@@ -157,7 +153,6 @@ class ImportService
         foreach ($services as $service) {
             $this->fetcherService->setEtablissement($etablissement);
             $this->fetcherService->fetch($service);
-            $this->logs = array_merge($this->logs, $this->fetcherService->getLogs());
 
             $this->synchroService->addService($service);
         }
@@ -172,13 +167,10 @@ class ImportService
      * Pour l'instant, les données liées se limitent à celles concernées par la génération de la page de couverture.
      *
      * @param These $these
-     * @return array Logs
      */
     public function updateThese(These $these)
     {
         $this->fetcherService->setEtablissement($these->getEtablissement());
-
-        $logs = [];
 
         /**
          * Appel du WS pour mettre à jour les tables TMP_*.
@@ -186,23 +178,19 @@ class ImportService
         // these
         $sourceCodeThese = $these->getSourceCode();
         $this->fetcherService->fetch('these', $sourceCodeThese);
-        $logs[] = $this->fetcherService->getLogs();
         /** @var TmpThese $tmpThese */
         $tmpThese = $this->entityManager->getRepository(TmpThese::class)->findOneBy(['sourceCode' => $sourceCodeThese]);
         // doctorant
         $sourceCodeDoctorant = $tmpThese->getDoctorantId();
         $this->fetcherService->fetch('doctorant', $sourceCodeDoctorant);
-        $logs[] = $this->fetcherService->getLogs();
         /** @var TmpDoctorant $tmpDoctorant */
         $tmpDoctorant = $this->entityManager->getRepository(TmpDoctorant::class)->findOneBy(['sourceCode' => $sourceCodeDoctorant]);
         // individu doctorant
         $sourceCodeIndividu = $tmpDoctorant->getIndividuId();
         $this->fetcherService->fetch('individu', $sourceCodeIndividu);
-        $logs[] = $this->fetcherService->getLogs();
         // acteurs
         $theseId = $these->getId();
         $this->fetcherService->fetch('acteur', null, ['these_id' => $theseId]);
-        $logs[] = $this->fetcherService->getLogs();
         /** @var TmpActeur[] $tmpActeurs */
         $tmpActeurs = $this->entityManager->getRepository(TmpActeur::class)->findBy(['theseId' => $sourceCodeThese]);
         // individus acteurs
@@ -210,16 +198,13 @@ class ImportService
         foreach ($tmpActeurs as $tmpActeur) {
             $sourceCodeIndividus[] = $sourceCodeIndividu = $tmpActeur->getIndividuId();
             $this->fetcherService->fetch('individu', $sourceCodeIndividu);
-            $logs[] = $this->fetcherService->getLogs();
         }
         // ed
         $sourceCodeEcoleDoct = $tmpThese->getEcoleDoctId();
         $this->fetcherService->fetch('ecole-doctorale', $sourceCodeEcoleDoct);
-        $logs[] = $this->fetcherService->getLogs();
         // ur
         $sourceCodeUniteRech = $tmpThese->getUniteRechId();
         $this->fetcherService->fetch('unite-recherche', $sourceCodeUniteRech);
-        $logs[] = $this->fetcherService->getLogs();
 
         /**
          * Synchro UnicaenImport pour mettre à jour les tables finales.
@@ -257,8 +242,6 @@ class ImportService
         } catch (OptimisticLockException $e) {
             throw new RuntimeException("Erreur rencontrée lors de l'enregistrement en base de données", null, $e);
         }
-
-        return $logs;
     }
 
     /**
@@ -330,28 +313,5 @@ class ImportService
 
         $this->filters = $filters;
         $this->sqlFilters = $sqlFilters ?: null;
-    }
-
-    /**
-     * @return array
-     */
-    public function getLogs()
-    {
-        return $this->logs;
-    }
-
-    /**
-     * @return string
-     */
-    public function getFormattedLogs()
-    {
-        return implode(PHP_EOL, array_map(function($row) {
-            if (is_string($row)) {
-                return $row;
-            }
-            /** @var \DateTime $date */
-            $date = $row['date'];
-            return sprintf('%s : %s', $date->format('d/m/Y H:i:s'), $row['message']);
-        }, $this->logs));
     }
 }
