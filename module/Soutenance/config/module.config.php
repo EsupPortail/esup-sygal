@@ -10,9 +10,11 @@ use Soutenance\Assertion\EngagementImpartialiteAssertionFactory;
 use Soutenance\Controller\EngagementImpartialiteController;
 use Soutenance\Controller\Factory\EngagementImpartialiteControllerFactory;
 use Soutenance\Controller\Factory\PersopassControllerFactory;
+use Soutenance\Controller\Factory\PresoutenanceControllerFactory;
 use Soutenance\Controller\Factory\QualiteControllerFactory;
 use Soutenance\Controller\Factory\SoutenanceControllerFactory;
 use Soutenance\Controller\PersopassController;
+use Soutenance\Controller\PresoutenanceController;
 use Soutenance\Controller\QualiteController;
 use Soutenance\Controller\SoutenanceController;
 use Soutenance\Form\PersopassModifier\PersopassModifierForm;
@@ -78,8 +80,16 @@ return array(
                     'action'     => [
                         'presoutenance',
                     ],
-                    'roles'      => [
-                    ],
+                    'roles'      => [],
+                ],
+                [
+                'controller' => PresoutenanceController::class,
+                'action'     => [
+                    'associer-membre-individu',
+                    'enregistrer-association-membre-individu',
+                    'rechercher-acteur',
+                     ],
+                'roles'      => [],
                 ],
                 [
                     'controller' => SoutenanceController::class,
@@ -321,6 +331,39 @@ return array(
                                     ],
                                 ],
                             ],
+                            'associer-membre-individu' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/associer-membre-individu/:membre',
+                                    'defaults' => [
+                                        'controller' => PresoutenanceController::class,
+                                        'action'     => 'associer-membre-individu',
+                                    ],
+                                ],
+                                'child_routes' => [
+                                    'rechercher-acteur' => [
+                                        'type'          => Segment::class,
+                                        'options'       => [
+                                            'route'       => '/rechercher-acteur',
+                                            'defaults'    => [
+                                                'action' => 'rechercher-acteur',
+                                            ],
+                                        ],
+                                    ],
+                                    'enregistrer' => [
+                                        'type' => Segment::class,
+                                        'may_terminate' => true,
+                                        'options' => [
+                                            'route'    => '/enregistrer/:acteur',
+                                            'defaults' => [
+                                                'controller' => PresoutenanceController::class,
+                                                'action'     => 'enregistrer-association-membre-individu',
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
                         ],
                     ],
                     'persopass' => [
@@ -504,6 +547,7 @@ return array(
             PersopassController::class => PersopassControllerFactory::class,
             QualiteController::class => QualiteControllerFactory::class,
             EngagementImpartialiteController::class => EngagementImpartialiteControllerFactory::class,
+            PresoutenanceController::class => PresoutenanceControllerFactory::class,
         ],
     ],
 

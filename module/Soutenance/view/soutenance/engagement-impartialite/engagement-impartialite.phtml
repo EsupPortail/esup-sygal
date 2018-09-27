@@ -24,10 +24,13 @@ use Soutenance\Provider\Privilege\SoutenancePrivileges;
 $canSign = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_SIGNER);
 $canAnnuler = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_ANNULER);
 
+$doctorantNom = $these->getDoctorant()->getIndividu()->getNomComplet(false, true, false, true, true);;
+
+$this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctorantNom);
 ?>
 
 <h1 class="page-header">
-    Engagement d’impartialité
+    Engagement d'impartialité portant sur la thèse de  <?php echo $doctorantNom; ?>
 </h1>
 
 <p>
@@ -44,7 +47,7 @@ $canAnnuler = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ENGAGEME
                 <dt> Titre </dt>
                 <dd> <?php echo $these->getTitre(); ?> </dd>
                 <dt> Doctorant </dt>
-                <dd> <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(false, true, false, true, true); ?> </dd>
+                <dd> <?php echo $doctorantNom; ?> </dd>
                 <dt> Encadrement </dt>
                 <dd>
                     <?php foreach ($these->getEncadrements() as $directeur): ?>
