@@ -36,6 +36,7 @@ class Role extends AbstractRole
 
     const ROLE_ID_ECOLE_DOCT = "École doctorale";
     const ROLE_ID_UNITE_RECH = "Unité de recherche";
+    const LIBELLE_PRESIDENT = "Président du jury";
 
     /**
      * @var string

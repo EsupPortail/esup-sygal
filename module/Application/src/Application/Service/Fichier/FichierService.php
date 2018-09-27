@@ -7,6 +7,7 @@ use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\Repository\FichierRepository;
+use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\ValiditeFichier;
 use Application\Entity\Db\VersionFichier;
@@ -556,6 +557,7 @@ class FichierService extends BaseService
         $directeurs =  array_filter($acteurs, function(Acteur $a) { return $a->estDirecteur(); });
         $pdcData->setDirecteurs($directeurs);
         $president =  array_filter($acteurs, function(Acteur $a) { return $a->estPresidentJury(); });
+
         $membres = array_diff($acteurs, $rapporteurs, $directeurs, $president);
         $pdcData->setMembres($membres);
 
@@ -582,7 +584,12 @@ class FichierService extends BaseService
             $acteurData = new MembreData();
             $acteurData->setDenomination($acteur->getIndividu()->getNomComplet(true,false,false, true, true));
             $acteurData->setQualite($acteur->getQualite());
-            $acteurData->setRole($acteur->getRole()->getLibelle());
+
+            if (!$acteur->estPresidentJury()) {
+                $acteurData->setRole($acteur->getRole()->getLibelle());
+            } else {
+                $acteurData->setRole(Role::LIBELLE_PRESIDENT);
+            }
             if ($acteur->getEtablissement()) $acteurData->setEtablissement($acteur->getEtablissement()->getStructure()->getLibelle());
             $pdcData->addActeurEnCouverture($acteurData);
         }

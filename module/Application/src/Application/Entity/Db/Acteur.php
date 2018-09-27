@@ -111,7 +111,7 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface
      */
     public function estPresidentJury()
     {
-        return $this->getRole()->getCode() === Role::CODE_PRESIDENT_JURY;
+        return ($this->getRole()->getCode() === Role::CODE_PRESIDENT_JURY || $this->getLibelleRoleComplement() === Role::LIBELLE_PRESIDENT);
     }
 
     /**
