@@ -2,6 +2,7 @@
 
 namespace Import\Controller\Factory;
 
+use Application\Service\These\TheseService;
 use Doctrine\ORM\EntityManager;
 use Import\Controller\ImportController;
 use Import\Service\ImportService;
@@ -21,9 +22,13 @@ class ImportControllerFactory
         /** @var ImportService $importService */
         $importService = $parentLocator->get(ImportService::class);
 
+        /** @var TheseService $theseService */
+        $theseService = $parentLocator->get('TheseService');
+
         $controller = new ImportController();
         $controller->setEntityManager($entityManager);
         $controller->setImportService($importService);
+        $controller->setTheseService($theseService);
 
         return $controller;
     }

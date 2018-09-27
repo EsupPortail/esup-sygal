@@ -15,6 +15,8 @@ use Import\Service\Traits\CallServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
+use Zend\Log\LoggerAwareTrait;
+use Zend\Log\LoggerInterface;
 
 /**
  * FetcherService est un service dédié à la récupération des données provenant du Web Service fourni par chaque
@@ -26,6 +28,7 @@ class FetcherService
 {
     use CallServiceAwareTrait;
     use EntityManagerAwareTrait;
+    use LoggerAwareTrait;
 
     /**
      * @var array $config [ 'CODE_ETABLISSEMENT' => [...] ]
@@ -38,16 +41,6 @@ class FetcherService
     protected $etablissement;
 
     /**
-     * @var array
-     */
-    protected $logs = [];
-
-    /**
-     * @var int
-     */
-    protected $debugLevel = 0;
-
-    /**
      * Constructor
      *
      * @param EntityManager $entityManager
@@ -57,6 +50,21 @@ class FetcherService
     {
         $this->setEntityManager($entityManager);
         $this->config = $config;
+    }
+
+    /**
+     * Set logger object
+     *
+     * @param LoggerInterface $logger
+     * @return mixed
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+
+        $this->callService->setLogger($this->logger);
+
+        return $this;
     }
 
     /**
@@ -77,17 +85,6 @@ class FetcherService
     public function setEtablissement(Etablissement $etablissement)
     {
         $this->etablissement = $etablissement;
-
-        return $this;
-    }
-
-    /**
-     * @param int $debugLevel
-     * @return self
-     */
-    public function setDebugLevel($debugLevel)
-    {
-        $this->debugLevel = $debugLevel;
 
         return $this;
     }
@@ -128,35 +125,25 @@ class FetcherService
      */
     private function fetchRow($serviceName, $entityClass, $sourceCode)
     {
-        $this->logs = [];
-
         $debut = microtime(true);
-        $start_date = new DateTime();
+        $startDate = new DateTime();
 
         /** Récupération des infos et des champs (i.e. propriétés/colonnes) */
         $metadata = $this->entityManager->getClassMetadata($entityClass);
         $tableName = $metadata->table['name'];
         $tableRelation = $metadata->columnNames;
-        if ($this->debugLevel > 1) {
-            $this->logMetadata($serviceName, $entityClass);
-        }
+        $this->logMetadata($serviceName, $entityClass);
 
         /** Appel du web service */
-        $_debut = microtime(true);
         $uri = $serviceName . "/" . $sourceCode;
         $this->callService->setConfig($this->getConfigForEtablissement());
         $json = $this->callService->get($uri);
-        $_fin = microtime(true);
-        if ($this->debugLevel > 0) {
-            $this->log("WebService: " . ($_fin - $_debut) . " secondes.");
-        }
 
         /** Etablissement de la transaction Oracle */
         $connection = $this->entityManager->getConnection();
         $connection->beginTransaction();
         $statement = null;
 
-        $_debut = microtime(true);
         /** Vidage des données de la table */
         $queries = [];
         $queries[] = "DELETE FROM " . $tableName . " WHERE ETABLISSEMENT_ID='" . $this->etablissement->getCode() . "' AND ID='" . $sourceCode . "'";
@@ -166,17 +153,11 @@ class FetcherService
         $values = implode(", ", $this->generateValueArray($json, $metadata));
         $query = "INSERT INTO " . $tableName . " (" . $colonnes . ") VALUES (" . $values . ")";
         $queries[] = $query;
-        $_fin = microtime(true);
-        if ($this->debugLevel > 0) {
-            $this->log("PrepQueries: " . ($_fin - $_debut) . " secondes.");
-        }
 
         /** Execution des requetes */
         $_debut = microtime(true);
         foreach ($queries as $query) {
-            if ($this->debugLevel > 1) {
-                $this->log("Execution de la requête [" . $query . "]");
-            }
+            $this->logger->debug("Execution de la requête : " . $query);
             try {
                 $connection->executeQuery($query);
             } catch (DBALException $e) {
@@ -186,16 +167,14 @@ class FetcherService
         try {
             $this->entityManager->getConnection()->commit();
         } catch (\Exception $e) {
-            $this->insertLog($start_date, new DateTime(), $uri, "ERROR_DB", $e->getMessage());
+            $this->insertLog($debut, $uri, "ERROR_DB", $e->getMessage());
             return;
         }
         $_fin = microtime(true);
-        if ($this->debugLevel > 0) {
-            $this->log("ExecQueries: " . ($_fin - $_debut) . " secondes.");
-        }
+        $this->logger->info(sprintf("Exécution des %d requêtes INSERT : %s secondes.", count($queries), $_fin - $_debut));
 
         $this->insertLog(
-            $start_date, new DateTime(),
+            $startDate,
             $uri,
             "OK",
             "Récupération de " . $serviceName . ":" . $sourceCode . " de [" . $this->etablissement->getCode() . "] en " . ($_fin - $debut) . " seconde(s).",
@@ -210,37 +189,19 @@ class FetcherService
      */
     public function fetchRows($service, $entityClass, array $filters = [])
     {
-        $this->logs = [];
-
         $debut = microtime(true);
-        $start_date = new DateTime();
+        $startDate = new DateTime();
 
         /** Récupération des infos et des champs (i.e. propriétés/colonnes) */
         $metadata = $this->entityManager->getClassMetadata($entityClass);
         $tableName = $metadata->table['name'];
         $tableRelation = $metadata->columnNames;
-        if ($this->debugLevel > 1) {
-            $this->logMetadata($service, $entityClass);
-        }
+        $this->logMetadata($service, $entityClass);
 
         /** Etablissement de la transaction Oracle */
         $connection = $this->entityManager->getConnection();
         $connection->beginTransaction();
         $statement = null;
-
-        /** Suppression des données existantes en BDD */
-        $query = $this->generateSQLSnippetForDelete($tableName, $filters);
-        try {
-            $connection->executeQuery($query);
-        } catch (DBALException $e) {
-            $message = "Erreur lors du vidage de la table $tableName en BDD";
-            try {
-                $connection->rollBack();
-            } catch (ConnectionException $e) {
-                throw new RuntimeException($message . " et le rollback a échoué", null, $e);
-            }
-            throw new RuntimeException($message, null, $e);
-        }
 
         /** Appels du web service */
         $this->callService->setConfig($this->getConfigForEtablissement());
@@ -254,6 +215,11 @@ class FetcherService
                 $uri .= '?' . http_build_query($params);
             }
             $json = $this->callService->get($uri);
+
+            if ($page === 1) {
+                /** Arrivé ici, la 1ere interrogation du WS s'est bien passée, on peut supprimer les données existantes en BDD */
+                $this->deleteExistingTableData($tableName, $filters);
+            }
 
             $pageCount = $json->page_count; // NB: même valeur retournée à chaque requête (nombre total de pages)
             $jsonName = str_replace("-", "_", $service);
@@ -273,9 +239,7 @@ class FetcherService
             /** Execution des requetes d'INSERTion */
             $_debut = microtime(true);
             foreach ($queries as $query) {
-                if ($this->debugLevel > 1) {
-                    $this->log("Execution de la requête [" . $query . "]");
-                }
+                $this->logger->debug("Execution de la requête [" . $query . "]");
                 try {
                     $connection->executeQuery($query);
                 } catch (DBALException $e) {
@@ -289,9 +253,7 @@ class FetcherService
                 }
             }
             $_fin = microtime(true);
-            if ($this->debugLevel > 0) {
-                $this->log("Inserts: " . ($_fin - $_debut) . " secondes.");
-            }
+            $this->logger->info(sprintf("Exécution des %d requêtes INSERT : %s secondes.", count($queries), $_fin - $_debut));
         }
         while ($page <= $pageCount);
 
@@ -305,42 +267,37 @@ class FetcherService
             throw new RuntimeException("Erreur inattendue", null, $e);
         }
         $_fin = microtime(true);
-        if ($this->debugLevel > 0) {
-            $this->log("Commit: " . ($_fin - $_debut) . " secondes.");
-        }
+        $this->logger->info("Commit : " . ($_fin - $_debut) . " secondes.");
 
         $fin = microtime(true);
 
         $this->insertLog(
-            $start_date,
-            new DateTime(),
-            $uri, "OK", count($entries) . " " . $service . "(s) ont été récupéré(es) de [" . $this->etablissement->getCode() . "] en " . ($fin - $debut) . " seconde(s).",
+            $startDate,
+            $uri,
+            "OK",
+            count($entries) . " " . $service . "(s) ont été récupéré(es) de [" . $this->etablissement->getCode() . "] en " . ($fin - $debut) . " seconde(s).",
             $this->etablissement->getCode(),
             $uri
         );
     }
 
-    /**
-     * @param string        $message
-     * @param DateTime|null $date
-     * @return self
-     */
-    private function log($message, \DateTime $date = null)
+    private function deleteExistingTableData($tableName, $filters)
     {
-        $this->logs[] = [
-            'date'    => $date ?: new DateTime(),
-            'message' => $message,
-        ];
+        $connection = $this->entityManager->getConnection();
 
-        return $this;
-    }
-
-    /**
-     * @return array [[DateTime, string]] le log associé pour l'affichage
-     */
-    public function getLogs()
-    {
-        return $this->logs;
+        /** Suppression des données existantes en BDD */
+        $query = $this->generateSQLSnippetForDelete($tableName, $filters);
+        try {
+            $connection->executeQuery($query);
+        } catch (DBALException $e) {
+            $message = "Erreur lors du vidage de la table $tableName en BDD";
+            try {
+                $connection->rollBack();
+            } catch (ConnectionException $e) {
+                throw new RuntimeException($message . " et le rollback a échoué", null, $e);
+            }
+            throw new RuntimeException($message, null, $e);
+        }
     }
 
     /**
@@ -445,15 +402,16 @@ class FetcherService
      * Fonction écrivant dans la table des logs API_LOGS
      *
      * @param DateTime $start_date : date de début du traitement
-     * @param DateTime $end_date   : date de fin (avec succés ou échec) du traitement
      * @param string   $route      : la route du traitement
      * @param          $status
      * @param string   $response   : le message associé au traitement
      * @param string   $etablissement
      * @param string   $table
      */
-    public function insertLog(DateTime $start_date, DateTime $end_date, $route, $status, $response, $etablissement = null, $table = null)
+    public function insertLog(DateTime $start_date, $route, $status, $response, $etablissement = null, $table = null)
     {
+        $end_date = new DateTime();
+
         $log_query = "INSERT INTO API_LOG ";
         $log_query .= "(ID, REQ_URI, REQ_START_DATE, REQ_END_DATE, REQ_STATUS, REQ_RESPONSE, REQ_ETABLISSEMENT, REQ_TABLE)";
         $log_query .= " values (";
@@ -476,7 +434,7 @@ class FetcherService
             throw new RuntimeException("Problème lors de l'écriture du log en base.", null, $e);
         }
 
-        $this->log($response, $end_date);
+        $this->logger->info($response);
     }
 
     /**
@@ -499,7 +457,7 @@ EOS;
             $str .= "  - " . $propriete . " => " . $colonne . " [" . $metadata->fieldMappings[$propriete]["type"] . "]" . PHP_EOL;
         }
 
-        $this->log($str);
+        $this->logger->debug($str);
     }
 
     /**
