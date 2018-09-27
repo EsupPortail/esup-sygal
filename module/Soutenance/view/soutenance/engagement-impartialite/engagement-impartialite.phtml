@@ -78,9 +78,11 @@ $canAnnuler = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ENGAGEME
     <?php if ($validation): ?>
         <?php if ($canAnnuler): ?>
             <p>
+                <center>
                 <a href="<?php echo $urlAnnuler; ?>" class="btn btn-danger">
                     <span class="glyphicon glyphicon-thumbs-up"></span>
                     Annulation de la signature</a>
+                </center>
             </p>
         <?php else: ?>
         <div class="panel panel-danger">
@@ -92,9 +94,12 @@ $canAnnuler = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ENGAGEME
     <?php else: ?>
         <?php if ($canSign): ?>
         <p>
+            <center>
             <a href="<?php echo $urlSigner;  ?>" class="btn btn-success">
                 <span class="glyphicon glyphicon-thumbs-up"></span>
                 Je signe l'engagement d'impartialité</a>
+            </center>
+
         </p>
         <?php else: ?>
         <div class="panel panel-danger">

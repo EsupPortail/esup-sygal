@@ -320,10 +320,19 @@ class SoutenanceController extends AbstractActionController {
             $this->getPropositionService()->update($proposition);
         }
 
+        $engagements = [];
+        foreach ($rapporteurs as $rapporteur) {
+            if ($rapporteur->getIndividu()) {
+                $validations = $this->getValidationService()->getRepository()->findValidationByCodeAndIndividu(TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $rapporteur->getIndividu());
+                if ($validations) $engagements[$rapporteur->getIndividu()->getId()] = current($validations);
+            }
+        }
+
         return new ViewModel([
             'these' => $these,
             'proposition' => $proposition,
             'rapporteurs' => $rapporteurs,
+            'engagements' => $engagements,
         ]);
     }
 

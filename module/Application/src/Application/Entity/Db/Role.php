@@ -21,6 +21,7 @@ class Role extends AbstractRole
     const CODE_ADMIN_TECH = 'ADMIN_TECH';
     const CODE_BU = 'BU';
     const CODE_BDD = 'BDD';
+    const CODE_OBSERVATEUR = 'OBSERV';
 
     const CODE_DIRECTEUR_THESE = 'D';
     const CODE_CODIRECTEUR_THESE = 'K';

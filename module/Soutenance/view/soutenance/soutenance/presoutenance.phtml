@@ -4,16 +4,20 @@
  * @var These $these
  * @var Proposition $proposition
  * @var Membre[] $rapporteurs
+ * @var array $engagements
  */
 
 use Application\Entity\Db\These;
+use Application\Entity\Db\Validation;
 use Soutenance\Provider\Privilege\SoutenancePrivileges;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 
 $canEditDateRenduRapport        = $this->isAllowed(SoutenancePrivileges::getResourceId(SoutenancePrivileges::SOUTENANCE_MODIFICATION_DATE_RENDU_RAPPORT));
 $canEditPersopass               = $this->isAllowed(SoutenancePrivileges::getResourceId(SoutenancePrivileges::SOUTENANCE_MODIFICATION_PERSOPASS));
-$canNotifierDemandeExpertise    = $this->isAllowed(SoutenancePrivileges::getResourceId(SoutenancePrivileges::SOUTENANCE_NOTIFICATION_DEMANDE_EXPERTISE));
+
+$canVisualiserEngagementImpartialite = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_VISUALISER);
+$canNotifierEngagementImpartialite = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_NOTIFIER);
 ?>
 
 <!-- TITRE ET NOTE ---------------------------------------------------------------------------------------------------->
@@ -130,10 +134,13 @@ $canNotifierDemandeExpertise    = $this->isAllowed(SoutenancePrivileges::getReso
 
 <div class=" panel panel-info">
     <div class="panel-heading">
-        <h2> Demande d'expertise aux rapporteurs </h2>
+        <h2> Engagements d'impartialité</h2>
     </div>
     <div class="panel-body">
-        <p class="lead">L'envoi de la demande d'expertise démarre le processus de relecture et notifier les rapporteurs de la bonne conduite à suivre. </p>
+        <p class="lead">
+            Afin de devenir officiellement rapporteur de cette thèse les futurs rapporteurs doivent signer un engagement
+            d'impartialité.
+        </p>
 
         <table class="table table-extra-condensed">
             <thead>
@@ -149,14 +156,30 @@ $canNotifierDemandeExpertise    = $this->isAllowed(SoutenancePrivileges::getReso
                 foreach ($rapporteurs as $rapporteur) : ?>
                 <tr>
                     <td> <?php echo $rapporteur->getDenomination(); ?> </td>
-                    <td> <?php echo ($rapporteur->getExpertise())?$rapporteur->getExpertise()->format("d/m/Y H:i:s"):"";  ?> </td>
                     <td>
-                        <?php if($canNotifierDemandeExpertise): ?>
-                        <a href="<?php echo $this->url('soutenance/presoutenance/engagement-impartialite', ['these' => $these->getId(), 'proposition' => $proposition->getId(), 'membre' => $rapporteur->getId()], [], true);?>">
-                            <span class="glyphicon glyphicon-eye-open" title="Visualiser la demande"></span>
-                        </a>
+                        <?php if ($rapporteur->getIndividu()) : ?>
+                            <?php if (isset($engagements[$rapporteur->getIndividu()->getId()])): ?>
+                                <?php
+                                    /** @var Validation $validation */
+                                    $validation = $engagements[$rapporteur->getIndividu()->getId()];
+                                    echo $validation->getHistoCreation()->format("d/m/Y à H:i");
+                                ?>
+                            <?php else: ?>
+                                <i> Non signé </i>
+                            <?php endif; ?>
+                        <?php else: ?>
+                            <i> N'est pas un individu SyGAL</i>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <?php if($canVisualiserEngagementImpartialite): ?>
+                            <a href="<?php echo $this->url('soutenance/presoutenance/engagement-impartialite', ['these' => $these->getId(), 'proposition' => $proposition->getId(), 'membre' => $rapporteur->getId()], [], true);?>">
+                                <span class="glyphicon glyphicon-eye-open" title="Visualiser l'engagement d'impartialité"></span>
+                            </a>
+                        <?php endif; ?>
+                        <?php if($canNotifierEngagementImpartialite): ?>
                         <a href="<?php echo $this->url('soutenance/presoutenance/engagement-impartialite/notifier', ['these' => $these->getId(), 'proposition' => $proposition->getId(), 'membre' => $rapporteur->getId()], [], true);?>">
-                            <span class="glyphicon glyphicon-send" title="Envoyer la demande"></span>
+                            <span class="glyphicon glyphicon-send" title="Notifier le rapporteur"></span>
                         </a>
                         <?php endif; ?>
                     </td>
@@ -165,10 +188,10 @@ $canNotifierDemandeExpertise    = $this->isAllowed(SoutenancePrivileges::getReso
             </tbody>
         </table>
 
-        <?php if($canNotifierDemandeExpertise): ?>
+        <?php if($canNotifierEngagementImpartialite): ?>
             <a href="<?php echo $this->url('soutenance/presoutenance/notifier-engagement-impartialite', ['these' => $these->getId(), 'proposition' => $proposition->getId()], [], true);?>"
                class="btn btn-info">
-                <span class="glyphicon glyphicon-send"></span> Envoyer la demande aux rapporteurs
+                <span class="glyphicon glyphicon-send"></span> Envoyer les notifications aux rapporteurs
             </a>
         <?php endif; ?>
     </div>

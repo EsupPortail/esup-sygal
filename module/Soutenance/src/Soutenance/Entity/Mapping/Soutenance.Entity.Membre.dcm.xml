@@ -28,8 +28,7 @@
         <field name="role"              type="string"       length="64"         column="ROLE"           nullable="false"/>
 
         <field name="persopass"         type="string"       length="32"         column="PERSOPASS"      nullable="true"/>
-        <field name="nouveau"           type="boolean"                          column="NOUVEAU"        nullable="true"/>
-        <field name="expertise"         type="datetime"                         column="EXPERTISE"      nullable="true"/>
+        <field name="nouveau"           type="boolean"                          column="NOUVEAU"                      nullable="true"/>
 
         <many-to-one field="individu" target-entity="Application\Entity\Db\Individu">
             <join-columns>
