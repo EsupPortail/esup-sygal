@@ -116,7 +116,7 @@ $persopassModifiedEvent = 'persopass-modified-event';
             <?php
             //AFFICHAGE DES ACTEURS DE LA THESE
             $acteursFormatter = new ActeursFormatter();
-            $acteursFormatter->paramDisplay(["role" => true,"complement" => false, "qualite" => true, "etablissement" => true]);
+            $acteursFormatter->paramDisplay(["role" => true,"complement" => true, "qualite" => true, "etablissement" => true]);
             $acteursFormatter->asArray();
 
             $acteurs = $these->getActeursSorted();
@@ -133,11 +133,14 @@ $persopassModifiedEvent = 'persopass-modified-event';
                         echo "<dd>";
                         $previous = $result["role"];
                     }
-                    if (isset($result["nom"])           )              echo $result["nom"];
-                    if (isset($result["qualite"])           && trim($result["qualite"]) != "")          echo ", ".$result["qualite"];
-                    if (isset($result["etablissement"])     && trim($result["etablissement"]) != "")    echo ", ".$result["etablissement"];
-                    if (isset($result["complement"]))       echo ", (" . $result["complement"] . ")";
-                    echo "<br/>";
+                    $ligne = [];
+                    if (isset($result["nom"]))              $ligne[] = $result["nom"];
+                    if (isset($result["complement"]))       $ligne[] = "<strong>".$result["complement"]."</strong>";
+                    if (isset($result["qualite"])           && trim($result["qualite"]) != "")          $ligne[] = $result["qualite"];
+                    if (isset($result["etablissement"])     && trim($result["etablissement"]) != "")    $ligne[] = $result["etablissement"];
+
+                    $ligne = implode(", ", $ligne);
+                    echo $ligne . "<br/>";
 
             }
             echo "<br/>";
