@@ -5,8 +5,8 @@ namespace Soutenance;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
-use Soutenance\Assertion\AssociationMembreIndividuAssertion;
-use Soutenance\Assertion\AssociationMembreIndividuAssertionFactory;
+use Soutenance\Assertion\PresoutenanceIndividuAssertion;
+use Soutenance\Assertion\PresoutenanceAssertionFactory;
 use Soutenance\Assertion\EngagementImpartialiteAssertion;
 use Soutenance\Assertion\EngagementImpartialiteAssertionFactory;
 use Soutenance\Controller\EngagementImpartialiteController;
@@ -68,7 +68,7 @@ return array(
                             SoutenancePrivileges::SOUTENANCE_PRESOUTENANCE_VISUALISATION,
                         ],
                         'resources'  => ['These'],
-                        'assertion'  => AssociationMembreIndividuAssertion::class,
+                        'assertion'  => PresoutenanceIndividuAssertion::class,
                     ],
                 ],
             ],
@@ -82,7 +82,7 @@ return array(
                     'action'     => [
                         'presoutenance',
                     ],
-                    'privileges'      => SoutenancePrivileges::SOUTENANCE_PRESOUTENANCE_VISUALISATION,
+                    'privileges' => SoutenancePrivileges::SOUTENANCE_PRESOUTENANCE_VISUALISATION,
                 ],
                 [
                     'controller' => PresoutenanceController::class,
@@ -218,56 +218,21 @@ return array(
     'router' => [
         'routes' => [
             'soutenance' => [
-                'type' => Literal::class,
-                'may_terminate' => true,
+                'type' => Segment::class,
+                'may_terminate' => false,
                 'options' => [
-                    'route'    => '/soutenance',
-                    'defaults' => [
-                        'controller' => SoutenanceController::class,
-                        'action'     => 'index',
-                    ],
+                    'route'    => '/soutenance/:these',
+//                    'defaults' => [
+//                        'controller' => SoutenanceController::class,
+//                        'action'     => 'index',
+//                    ],
                 ],
                 'child_routes' => [
-                    'qualite' => [
-                        'type' => Literal::class,
-                        'may_terminate' => true,
-                        'options' => [
-                            'route'    => '/qualite',
-                            'defaults' => [
-                                'controller' => QualiteController::class,
-                                'action'     => 'index',
-                            ],
-                        ],
-                        'child_routes' => [
-                            'editer' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route'    => '/editer[/:qualite]',
-                                    'defaults' => [
-                                        'controller' => QualiteController::class,
-                                        'action'     => 'editer',
-                                    ],
-                                ],
-                            ],
-                            'effacer' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route'    => '/effacer/:qualite',
-                                'defaults' => [
-                                    'controller' => QualiteController::class,
-                                    'action'     => 'effacer',
-                                ],
-                            ],
-                        ],
-                        ],
-                    ],
                     'presoutenance' => [
                         'type' => Segment::class,
                         'may_terminate' => true,
                         'options' => [
-                            'route'    => '/presoutenance/:these',
+                            'route'    => '/presoutenance',
                             'defaults' => [
                                 'controller' => PresoutenanceController::class,
                                 'action'     => 'presoutenance',
@@ -517,6 +482,41 @@ return array(
                     ],
                 ],
             ],
+            'qualite' => [
+                'type' => Literal::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route'    => '/qualite',
+                    'defaults' => [
+                        'controller' => QualiteController::class,
+                        'action'     => 'index',
+                    ],
+                ],
+                'child_routes' => [
+                    'editer' => [
+                        'type' => Segment::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/editer[/:qualite]',
+                            'defaults' => [
+                                'controller' => QualiteController::class,
+                                'action'     => 'editer',
+                            ],
+                        ],
+                    ],
+                    'effacer' => [
+                        'type' => Segment::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/effacer/:qualite',
+                            'defaults' => [
+                                'controller' => QualiteController::class,
+                                'action'     => 'effacer',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ],
     ],
 
@@ -527,7 +527,7 @@ return array(
             MembreService::class => MembreServiceFactory::class,
             //assertion
             EngagementImpartialiteAssertion::class => EngagementImpartialiteAssertionFactory::class,
-            AssociationMembreIndividuAssertion::class => AssociationMembreIndividuAssertionFactory::class,
+            PresoutenanceIndividuAssertion::class => PresoutenanceAssertionFactory::class,
         ],
     ],
     'controllers' => [

@@ -156,7 +156,7 @@ $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->get
                                 <span class="glyphicon glyphicon-eye-open" title="Visualiser l'engagement d'impartialité"></span>
                             </a>
                         <?php endif; ?>
-                        <?php if($canNotifierEngagementImpartialite): ?>
+                        <?php if($canNotifierEngagementImpartialite AND  !isset($engagements[$rapporteur->getIndividu()->getId()])): ?>
                         <a href="<?php echo $this->url('soutenance/presoutenance/engagement-impartialite/notifier', ['these' => $these->getId(), 'proposition' => $proposition->getId(), 'membre' => $rapporteur->getId()], [], true);?>">
                             <span class="glyphicon glyphicon-send" title="Notifier le rapporteur"></span>
                         </a>

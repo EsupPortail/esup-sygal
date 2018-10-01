@@ -28,6 +28,7 @@ class PresoutenanceControllerFactory
          * @var IndividuService $individuService
          * @var NotifierService $notifierService
          * @var ActeurService $acteurService
+         * @var ValidationService $validationService
          */
         $propositionService = $controllerManager->getServiceLocator()->get(PropositionService::class);
         $membreService = $controllerManager->getServiceLocator()->get(MembreService::class);
@@ -35,6 +36,7 @@ class PresoutenanceControllerFactory
         $individuService = $controllerManager->getServiceLocator()->get('IndividuService');
         $acteurService = $controllerManager->getServiceLocator()->get(ActeurService::class);
         $notifierService = $controllerManager->getServiceLocator()->get(NotifierService::class);
+        $validationService = $controllerManager->getServiceLocator()->get('ValidationService');
 
         /** @var PresoutenanceController $controller */
         $controller = new PresoutenanceController();
@@ -44,6 +46,7 @@ class PresoutenanceControllerFactory
         $controller->setIndividuService($individuService);
         $controller->setActeurService($acteurService);
         $controller->setNotifierService($notifierService);
+        $controller->setValidationService($validationService);
 
         return $controller;
     }

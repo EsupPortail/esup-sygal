@@ -5,7 +5,7 @@ namespace Soutenance\Assertion;
 use Application\Service\UserContextService;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class AssociationMembreIndividuAssertionFactory {
+class PresoutenanceAssertionFactory {
 
     public function __invoke(ServiceLocatorInterface $serviceLocator)
     {
@@ -15,7 +15,7 @@ class AssociationMembreIndividuAssertionFactory {
         $userContext = $serviceLocator->get('UnicaenAuth\Service\UserContext');
 
         /** @var  $assertion */
-        $assertion = new AssociationMembreIndividuAssertion();
+        $assertion = new PresoutenanceIndividuAssertion();
         $assertion->setUserContextService($userContext);
 
         return $assertion;

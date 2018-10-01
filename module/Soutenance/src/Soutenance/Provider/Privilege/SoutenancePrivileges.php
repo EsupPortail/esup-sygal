@@ -15,7 +15,6 @@ class SoutenancePrivileges extends Privileges
     const SOUTENANCE_MODIFICATION_DATE_LIEU                      = 'soutenance-modification-date-lieu';
     const SOUTENANCE_MODIFICATION_MEMBRE_JURY                    = 'soutenance-modification-membre-jury';
     const SOUTENANCE_VALIDATION_JURY                             = 'soutenance-validation-soutenance';
-    const SOUTENANCE_MODIFICATION_DATE_RENDU_RAPPORT             = 'soutenance-modification-date-rapport';
     const SOUTENANCE_MODIFICATION_PERSOPASS                      = 'soutenance-modification-persopass';
     const SOUTENANCE_NOTIFICATION_DEMANDE_EXPERTISE              = 'soutenance-notification-demande-expertise';
     const SOUTENANCE_VALIDATION_DEMANDE_EXPERTISE                = 'soutenance-validation-demande-expertise';
@@ -26,7 +25,7 @@ class SoutenancePrivileges extends Privileges
     const SOUTENANCE_ENGAGEMENT_IMPARTIALITE_VISUALISER          = 'soutenance-engagement-impartialite-visualiser';
 
     const SOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU                 = 'soutenance-association-membre-individu';
-    const SOUTENANCE_DATE_RETOUR_MODIFICATION                    = 'soutenance-date-retour-modification';
+    const SOUTENANCE_DATE_RETOUR_MODIFICATION                    = 'soutenance-modification-date-rapport';
     const SOUTENANCE_PRESOUTENANCE_VISUALISATION                 = 'soutenance-presoutenance-visualisation';
 
 

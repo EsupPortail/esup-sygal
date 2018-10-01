@@ -2,18 +2,16 @@
 
 namespace Soutenance\Assertion;
 
-use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Service\UserContextServiceAwareTrait;
-use Doctrine\Common\Collections\Collection;
 use Soutenance\Provider\Privilege\SoutenancePrivileges;
 use Zend\Permissions\Acl\Acl;
 use Zend\Permissions\Acl\Assertion\AssertionInterface;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 use Zend\Permissions\Acl\Role\RoleInterface;
 
-class AssociationMembreIndividuAssertion implements  AssertionInterface {
+class PresoutenanceIndividuAssertion implements  AssertionInterface {
     use UserContextServiceAwareTrait;
 
     /**

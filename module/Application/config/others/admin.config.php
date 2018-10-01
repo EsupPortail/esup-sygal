@@ -127,7 +127,6 @@ return [
                     ],
                 ],
             ],
-
             'mail-confirmation-envoie' => [
                 'type' => Segment::class,
                 'options' => [

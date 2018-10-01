@@ -6,10 +6,12 @@ namespace Soutenance\Controller;
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\These;
+use Application\Entity\Db\TypeValidation;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
+use Application\Service\Validation\ValidationServiceAwareTrait;
 use BjyAuthorize\Exception\UnAuthorizedException;
 use DateInterval;
 use Exception;
@@ -32,12 +34,18 @@ class PresoutenanceController extends AbstractController
     use NotifierServiceAwareTrait;
     use PropositionServiceAwareTrait;
     use ActeurServiceAwareTrait;
+    use ValidationServiceAwareTrait;
 
     public function presoutenanceAction()
     {
         /** @var These $these */
         $idThese = $this->params()->fromRoute('these');
         $these = $this->getTheseService()->getRepository()->find($idThese);
+
+        $isAllowed = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PRESOUTENANCE_VISUALISATION);
+        if (!$isAllowed) {
+            throw new UnAuthorizedException("Vous êtes non authorisé(e) à visualiser les informations de ces soutenances.");
+        }
 
         /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
@@ -56,19 +64,19 @@ class PresoutenanceController extends AbstractController
             $this->getPropositionService()->update($proposition);
         }
 
-//        $engagements = [];
-//        foreach ($rapporteurs as $rapporteur) {
-//            if ($rapporteur->getIndividu()) {
-//                $validations = $this->getValidationService()->getRepository()->findValidationByCodeAndIndividu(TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $rapporteur->getIndividu());
-//                if ($validations) $engagements[$rapporteur->getIndividu()->getId()] = current($validations);
-//            }
-//        }
+        $engagements = [];
+        foreach ($rapporteurs as $rapporteur) {
+            if ($rapporteur->getIndividu()) {
+                $validations = $this->getValidationService()->getRepository()->findValidationByCodeAndIndividu(TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $rapporteur->getIndividu());
+                if ($validations) $engagements[$rapporteur->getIndividu()->getId()] = current($validations);
+            }
+        }
 
         return new ViewModel([
             'these' => $these,
             'proposition' => $proposition,
             'rapporteurs' => $rapporteurs,
-//            'engagements' => $engagements,
+            'engagements' => $engagements,
         ]);
     }
 
@@ -78,6 +86,11 @@ class PresoutenanceController extends AbstractController
         /** @var These $these */
         $idThese = $this->params()->fromRoute('these');
         $these = $this->getTheseService()->getRepository()->find($idThese);
+
+        $isAllowed = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_DATE_RETOUR_MODIFICATION);
+        if (!$isAllowed) {
+            throw new UnAuthorizedException("Vous êtes non authorisé(e) à modifier la date de retour des rapports.");
+        }
 
         /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
@@ -103,7 +116,6 @@ class PresoutenanceController extends AbstractController
             ]
         );
     }
-
 
     /**
      * @return ViewModel
@@ -149,14 +161,14 @@ class PresoutenanceController extends AbstractController
         $idThese = $this->params()->fromRoute('these');
         $these = $this->getTheseService()->getRepository()->find($idThese);
 
-        /** @var Membre $membre */
-        $idMembre = $this->params()->fromRoute('membre');
-        $membre = $this->getMembreService()->find($idMembre);
-
         $isAllowed = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU);
         if (!$isAllowed) {
             throw new UnAuthorizedException("Vous êtes non authorisé(e) à associer des individus aux membres de jury de cette thèse.");
         }
+
+        /** @var Membre $membre */
+        $idMembre = $this->params()->fromRoute('membre');
+        $membre = $this->getMembreService()->find($idMembre);
 
         /** @var Acteur $acteur */
         $idActeur = $this->params()->fromRoute('acteur');

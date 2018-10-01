@@ -49,7 +49,6 @@ class EngagementImpartialiteController extends AbstractActionController
     use ValidationServiceAwareTrait;
     use NotifierServiceAwareTrait;
 
-    // TODO refaire le routing /soutenance/engagement-impartialite/signer
     public function engagementImpartialiteAction()
     {
         /** @var These $these */
@@ -104,7 +103,10 @@ class EngagementImpartialiteController extends AbstractActionController
 
         /** @var Membre $membre */
         foreach ($proposition->getMembres() as $membre) {
-            if ($membre->getRole() === 'Rapporteur') $this->getNotifierService()->triggerDemandeSignatureEngagementImpartialite($these, $proposition, $membre);
+            if ($membre->getIndividu()) {
+                $validations = $this->getValidationService()->getRepository()->findValidationByCodeAndIndividu(TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $membre->getIndividu());
+                if (!$validations) $this->getNotifierService()->triggerDemandeSignatureEngagementImpartialite($these, $proposition, $membre);
+            }
         }
 
         $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
