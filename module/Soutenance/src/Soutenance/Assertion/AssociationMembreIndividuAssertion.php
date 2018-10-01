@@ -43,7 +43,12 @@ class AssociationMembreIndividuAssertion implements  AssertionInterface {
                 $role = $this->userContextService->getSelectedIdentityRole();
                 return ($role->getCode() === Role::CODE_BDD && $role->getStructure() === $these->getEtablissement()->getStructure());
                 break;
+            case SoutenancePrivileges::SOUTENANCE_DATE_RETOUR_MODIFICATION:
+                $role = $this->userContextService->getSelectedIdentityRole();
+                return ($role->getCode() === Role::CODE_BDD && $role->getStructure() === $these->getEtablissement()->getStructure());
+                break;
         }
+
         return false;
     }
 }

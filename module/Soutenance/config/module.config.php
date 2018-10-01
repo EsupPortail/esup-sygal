@@ -64,6 +64,8 @@ return array(
                     [
                         'privileges' => [
                             SoutenancePrivileges::SOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU,
+                            SoutenancePrivileges::SOUTENANCE_DATE_RETOUR_MODIFICATION,
+                            SoutenancePrivileges::SOUTENANCE_PRESOUTENANCE_VISUALISATION,
                         ],
                         'resources'  => ['These'],
                         'assertion'  => AssociationMembreIndividuAssertion::class,
@@ -72,55 +74,31 @@ return array(
             ],
         ],
         'guards' => [
-            PrivilegeController::class => [
+                PrivilegeController::class => [
+
+                // Présoutenance et pages connexes
                 [
-                    'controller' => QualiteController::class,
-                    'action'     => [
-                        'index',
-                        'editer',
-                        'effacer',
-                    ],
-                    'roles'      => [
-                        'Administrateur technique',
-                    ],
-                ],
-                [
-                    'controller' => SoutenanceController::class,
+                    'controller' => PresoutenanceController::class,
                     'action'     => [
                         'presoutenance',
                     ],
-                    'roles'      => [],
+                    'privileges'      => SoutenancePrivileges::SOUTENANCE_PRESOUTENANCE_VISUALISATION,
                 ],
                 [
-                'controller' => PresoutenanceController::class,
-                'action'     => [
-                    'associer-membre-individu',
-                    'enregistrer-association-membre-individu',
-                    'rechercher-acteur',
-                     ],
-                    'privileges' => SoutenancePrivileges::SOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU,
-                ],
-                [
-                    'controller' => SoutenanceController::class,
+                    'controller' => PresoutenanceController::class,
                     'action'     => [
                         'date-rendu-rapport',
-                        'index',
-                        'constituer',
-                        'modifier-date-lieu',
-                        'modifier-membre',
-                        'effacer-membre',
-                        'valider',
-                        'refuser',
-                        'valider-ur',
-                        'valider-ur-validation',
-                        'valider-ur-refus',
-                        'valider-ed',
-                        'valider-ed-validation',
-                        'valider-ed-refus',
-
                     ],
-                    'roles' => [
+                    'privileges' => SoutenancePrivileges::SOUTENANCE_DATE_RETOUR_MODIFICATION,
+                ],
+                [
+                    'controller' => PresoutenanceController::class,
+                    'action'     => [
+                        'associer-membre-individu',
+                        'enregistrer-association-membre-individu',
+                        'rechercher-acteur',
                     ],
+                    'privileges' => SoutenancePrivileges::SOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU,
                 ],
                 [
                     'controller' => EngagementImpartialiteController::class,
@@ -151,16 +129,40 @@ return array(
                     ],
                     'privileges' => SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_ANNULER,
                 ],
+                // autres bazars
                 [
-                    'controller' => PersopassController::class,
+                    'controller' => SoutenanceController::class,
                     'action'     => [
-                        'afficher',
-                        'modifier',
-                    ],
-                    'roles' => [
+                        'index',
+                        'constituer',
+                        'modifier-date-lieu',
+                        'modifier-membre',
+                        'effacer-membre',
+                        'valider',
+                        'refuser',
+                        'valider-ur',
+                        'valider-ur-validation',
+                        'valider-ur-refus',
+                        'valider-ed',
+                        'valider-ed-validation',
+                        'valider-ed-refus',
 
                     ],
-                ]
+                    'roles' => [
+                    ],
+                ],
+                [
+                    'controller' => QualiteController::class,
+                    'action'     => [
+                        'index',
+                        'editer',
+                        'effacer',
+                    ],
+                    'roles'      => [
+                        'Administrateur technique',
+                    ],
+                ],
+
             ],
         ],
     ],
@@ -267,7 +269,7 @@ return array(
                         'options' => [
                             'route'    => '/presoutenance/:these',
                             'defaults' => [
-                                'controller' => SoutenanceController::class,
+                                'controller' => PresoutenanceController::class,
                                 'action'     => 'presoutenance',
                             ],
                         ],
@@ -278,7 +280,7 @@ return array(
                                 'options' => [
                                     'route'    => '/date-rendu-rapport',
                                     'defaults' => [
-                                        'controller' => SoutenanceController::class,
+                                        'controller' => PresoutenanceController::class,
                                         'action'     => 'date-rendu-rapport',
                                     ],
                                 ],
@@ -370,30 +372,6 @@ return array(
                                                 'action'     => 'enregistrer-association-membre-individu',
                                             ],
                                         ],
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                    'persopass' => [
-                        'type' => Segment::class,
-                        'may_terminate' => true,
-                        'options' => [
-                            'route'    => '/persopass/:these',
-                            'defaults' => [
-                                'controller' => PersopassController::class,
-                                'action'     => 'afficher',
-                            ],
-                        ],
-                        'child_routes' => [
-                            'modifier' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route'    => '/modifier/:membre',
-                                    'defaults' => [
-                                        'controller' => PersopassController::class,
-                                        'action'     => 'modifier',
                                     ],
                                 ],
                             ],
@@ -544,9 +522,10 @@ return array(
 
     'service_manager' => [
         'factories' => [
+            //service
             PropositionService::class => PropositionServiceFactory::class,
             MembreService::class => MembreServiceFactory::class,
-
+            //assertion
             EngagementImpartialiteAssertion::class => EngagementImpartialiteAssertionFactory::class,
             AssociationMembreIndividuAssertion::class => AssociationMembreIndividuAssertionFactory::class,
         ],
@@ -554,7 +533,6 @@ return array(
     'controllers' => [
         'factories' => [
             SoutenanceController::class => SoutenanceControllerFactory::class,
-            PersopassController::class => PersopassControllerFactory::class,
             QualiteController::class => QualiteControllerFactory::class,
             EngagementImpartialiteController::class => EngagementImpartialiteControllerFactory::class,
             PresoutenanceController::class => PresoutenanceControllerFactory::class,
@@ -567,7 +545,6 @@ return array(
             SoutenanceDateLieuForm::class => SoutenanceDateLieuFormFactory::class,
             SoutenanceMembreForm::class => SoutenanceMembreFormFactory::class,
             SoutenanceRefusForm::class => SoutenanceRefusFormFactory::class,
-            PersopassModifierForm::class => PersopassModifierFormFactory::class,
             QualiteEditionForm::class => QualiteEditionFormFactory::class,
         ],
     ],

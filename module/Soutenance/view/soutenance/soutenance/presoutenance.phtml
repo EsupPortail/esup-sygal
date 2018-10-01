@@ -13,37 +13,18 @@ use Soutenance\Provider\Privilege\SoutenancePrivileges;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 
-$canEditDateRenduRapport        = $this->isAllowed(SoutenancePrivileges::getResourceId(SoutenancePrivileges::SOUTENANCE_MODIFICATION_DATE_RENDU_RAPPORT));
-
+$canEditDateRenduRapport                = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_DATE_RETOUR_MODIFICATION);
 $canAssocierMembreIndividu              = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU);
 $canVisualiserEngagementImpartialite    = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_VISUALISER);
 $canNotifierEngagementImpartialite      = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_NOTIFIER);
+
+$this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->getNomComplet());
 ?>
 
-<!-- TITRE ET NOTE ---------------------------------------------------------------------------------------------------->
-
-<div class="row">
-    <div class="pull-right panel panel-warning" role="alert">
-        <div class="panel-heading">
-            <div class="panel panel-success" role="alert">
-                <div class="panel-heading">
-                    Accessible par le BDD et les admins.
-                </div>
-            </div>
-
-            <strong>Note:</strong> Accessible après que toutes les validations ont été effectuées :
-            <ol>
-                <li> Doctorant,</li>
-                <li> Directeurs et Co-directeurs, </li>
-                <li> Unité de recherche, </li>
-                <li> École doctorale,</li>
-                <li> Maison des doctorats.</li>
-            </ol>
-        </div>
-    </div>
-
-    <h1 class="page-header"> Préparation de la soutenance </h1>
-</div>
+<h1 class="page-header">
+    Préparation de la soutenance
+    <small><?php echo $this->partial('application/these/partial/titre') ?></small>
+</h1>
 
 <!-- DATE DE RENDU DE RAPPORT ----------------------------------------------------------------------------------------->
 
