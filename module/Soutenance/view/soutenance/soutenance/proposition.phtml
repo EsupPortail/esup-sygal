@@ -16,6 +16,7 @@ use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
+use Soutenance\Provider\Privilege\SoutenancePrivileges;
 
 /**
  * canValidate : on peut valider une proposition si :
@@ -25,10 +26,14 @@ use Soutenance\Entity\Proposition;
  */
 
 $alreadyValidated = ($validations[$currentIndividu->getId()] !== null);
-$canValidate = ($proposition->isOk())
-    && (($currentIndividu === $doctorant->getIndividu()) || (array_search($currentIndividu, $directeurs) !== false))
-    && ($validations[$currentIndividu->getId()] === null)
-;
+//$canValidate = ($proposition->isOk())
+//    && (($currentIndividu === $doctorant->getIndividu()) || (array_search($currentIndividu, $directeurs) !== false))
+//    && ($validations[$currentIndividu->getId()] === null)
+//;
+
+$canModifier = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_MODIFIER);
+$canValider = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_ACTEUR);
+
 ?>
 
 <style>
@@ -90,14 +95,15 @@ $canValidate = ($proposition->isOk())
             </ul>
         </div>
         <div class="pull-right">
-            <!-- TODO remettre la modale -->
+            <?php if ($canModifier): ?>
             <a
-                href="<?php echo $this->url('soutenance/constituer/modifier-date-lieu', ['these' => $these->getId()], [], true); ?>"
+                href="<?php echo $this->url('soutenance/proposition/modifier-date-lieu', ['these' => $these->getId()], [], true); ?>"
                 class="btn btn-primary action ajax-modal"
                 data-event="edition-datelieu"
             >
                 <span class="glyphicon glyphicon-pencil"></span> Éditer lieu et date de la soutenace
             </a>
+            <?php endif; ?>
         </div>
     </div>
 </div>
@@ -215,15 +221,17 @@ $canValidate = ($proposition->isOk())
                             <td> <?php echo $membre->getEtablissement(); ?> </td>
                             <td> <?php echo $membre->getRole(); ?> </td>
                             <td>
+                                <?php if ($canModifier): ?>
                                 <a
-                                        href="<?php echo $this->url('soutenance/constituer/modifier-membre', ['these' => $these->getId(), 'membre' => $membre->getId()], [] ,true); ?>"
+                                        href="<?php echo $this->url('soutenance/proposition/modifier-membre', ['these' => $these->getId(), 'membre' => $membre->getId()], [] ,true); ?>"
                                         class="ajax-modal"
                                         data-event="edition-membre">
                                     <span class="glyphicon glyphicon-pencil"></span>
                                 </a>
-                                <a href="<?php echo $this->url('soutenance/constituer/effacer-membre', ['these' => $these->getId(), 'membre' => $membre->getId()], [] ,true); ?>">
+                                <a href="<?php echo $this->url('soutenance/proposition/effacer-membre', ['these' => $these->getId(), 'membre' => $membre->getId()], [] ,true); ?>">
                                     <span class="glyphicon glyphicon-trash"></span>
                                 </a>
+                                <?php endif; ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -231,12 +239,14 @@ $canValidate = ($proposition->isOk())
             </table>
         </div>
         <div class="pull-right">
+            <?php if ($canModifier): ?>
             <a
-                href="<?php echo $this->url('soutenance/constituer/modifier-membre', ['these' => $these->getId()], [], true); ?>"
+                href="<?php echo $this->url('soutenance/proposition/modifier-membre', ['these' => $these->getId()], [], true); ?>"
                 class="btn btn-primary action ajax-modal"
                 data-event="edition-membre">
                     <span class="glyphicon glyphicon-plus"></span> Ajouter un membre de jury
             </a>
+            <?php endif; ?>
         </div>
 
     </div>
@@ -282,7 +292,7 @@ $canValidate = ($proposition->isOk())
             <?php if (!$alreadyValidated) : ?>
                 <?php if ($canValidate) : ?>
                     <a
-                            href="<?php echo $this->url('soutenance/constituer/valider', ['these' => $these->getId()], [], true); ?>"
+                            href="<?php echo $this->url('soutenance/proposition/valider', ['these' => $these->getId()], [], true); ?>"
                             class="btn btn-success action ">
                         <span class="glyphicon glyphicon-ok"></span> Valider la proposition de soutenance
                     </a>

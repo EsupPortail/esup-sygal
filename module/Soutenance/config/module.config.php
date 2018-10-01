@@ -9,6 +9,8 @@ use Soutenance\Assertion\PresoutenanceIndividuAssertion;
 use Soutenance\Assertion\PresoutenanceAssertionFactory;
 use Soutenance\Assertion\EngagementImpartialiteAssertion;
 use Soutenance\Assertion\EngagementImpartialiteAssertionFactory;
+use Soutenance\Assertion\PropositionAssertion;
+use Soutenance\Assertion\PropositionAssertionFactory;
 use Soutenance\Controller\EngagementImpartialiteController;
 use Soutenance\Controller\Factory\EngagementImpartialiteControllerFactory;
 use Soutenance\Controller\Factory\PersopassControllerFactory;
@@ -70,12 +72,48 @@ return array(
                         'resources'  => ['These'],
                         'assertion'  => PresoutenanceIndividuAssertion::class,
                     ],
+                    [
+                        'privileges' => [
+                            SoutenancePrivileges::SOUTENANCE_PROPOSITION_VISUALISER,
+                            SoutenancePrivileges::SOUTENANCE_PROPOSITION_MODIFIER,
+                            SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_ACTEUR,
+                            SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_ED,
+                            SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_UR,
+                            SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_BDD,
+                        ],
+                        'resources'  => ['These'],
+                        'assertion'  => PropositionAssertion::class,
+                    ]
                 ],
             ],
         ],
         'guards' => [
                 PrivilegeController::class => [
-
+                // Consitution et validations du jury
+                [
+                    'controller' => SoutenanceController::class,
+                        'action'     => [
+                        'proposition',
+                    ],
+                    'privileges' => SoutenancePrivileges::SOUTENANCE_PROPOSITION_VISUALISER,
+                ],
+                [
+                    'controller' => SoutenanceController::class,
+                    'action'     => [
+                        'modifier-date-lieu',
+                        'modifier-membre',
+                        'effacer-membre',
+                    ],
+                    'privileges' => SoutenancePrivileges::SOUTENANCE_PROPOSITION_MODIFIER,
+                ],
+                [
+                    'controller' => SoutenanceController::class,
+                    'action'     => [
+                            'valider',
+                            'refuser',
+                    ],
+                    'privileges' => SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_ACTEUR,
+                ],
                 // Présoutenance et pages connexes
                 [
                     'controller' => PresoutenanceController::class,
@@ -133,13 +171,6 @@ return array(
                 [
                     'controller' => SoutenanceController::class,
                     'action'     => [
-                        'index',
-                        'constituer',
-                        'modifier-date-lieu',
-                        'modifier-membre',
-                        'effacer-membre',
-                        'valider',
-                        'refuser',
                         'valider-ur',
                         'valider-ur-validation',
                         'valider-ur-refus',
@@ -195,18 +226,18 @@ return array(
             'home' => [
                 'pages' => [
                     'soutenance' => [
-                        'order'    => -100,
+                        'order'    => 100,
                         'label'    => 'Soutenance',
                         'route'    => 'soutenance',
                         'privilege' => SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_SIGNER,
                         'pages' => [
                             'signer' => [
-                                'label'    => 'Signer le ererze',
-                                'route'    => 'soutenance/presoutenance/engagement-impartialite',
-                                'withtarget' => true,
-                                'paramsInject' => [
-                                    'these',
-                                ],
+                                'label'    => 'Qualités de membres de jury',
+                                'route'    => 'qualite',
+//                                'withtarget' => true,
+//                                'paramsInject' => [
+//                                    'these',
+//                                ],
                             ],
                         ],
                     ],
@@ -342,14 +373,14 @@ return array(
                             ],
                         ],
                     ],
-                    'constituer' => [
+                    'proposition' => [
                         'type' => Segment::class,
                         'may_terminate' => true,
                         'options' => [
-                            'route'    => '/constituer/:these',
+                            'route'    => '/proposition',
                             'defaults' => [
                                 'controller' => SoutenanceController::class,
-                                'action'     => 'constituer',
+                                'action'     => 'proposition',
                             ],
                         ],
                         'child_routes' => [
@@ -528,6 +559,7 @@ return array(
             //assertion
             EngagementImpartialiteAssertion::class => EngagementImpartialiteAssertionFactory::class,
             PresoutenanceIndividuAssertion::class => PresoutenanceAssertionFactory::class,
+            PropositionAssertion::class => PropositionAssertionFactory::class,
         ],
     ],
     'controllers' => [

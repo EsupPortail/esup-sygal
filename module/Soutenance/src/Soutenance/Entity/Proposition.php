@@ -158,7 +158,7 @@ class Proposition {
         $ratioFemme = ($nbMembre)?$nbFemme / $nbMembre:0;
         $ratioHomme = ($nbMembre)?(1 - $ratioFemme):0;
         $indicateurs["parité"]      = ["Femme" => $ratioFemme, "Homme" => $ratioHomme];
-        if ($ratioFemme < 0.2 OR $ratioHomme < 0.2) {
+        if ($ratioFemme < 0 OR $ratioHomme < 0) {
             $indicateurs["parité"]["valide"]    = false;
         } else {
             $indicateurs["parité"]["valide"]    = true;

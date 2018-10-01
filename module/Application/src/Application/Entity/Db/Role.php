@@ -23,6 +23,10 @@ class Role extends AbstractRole
     const CODE_BDD = 'BDD';
     const CODE_OBSERVATEUR = 'OBSERV';
 
+    const CODE_ED = 'ED';
+    const CODE_UR = 'UR';
+
+
     const CODE_DIRECTEUR_THESE = 'D';
     const CODE_CODIRECTEUR_THESE = 'K';
     const CODE_MEMBRE_JURY = 'M';
