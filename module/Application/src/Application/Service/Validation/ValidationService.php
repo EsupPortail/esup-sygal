@@ -387,7 +387,6 @@ class ValidationService extends BaseService
      */
     public function signEngagementImpartialite($these, $individu)
     {
-        var_dump($individu->getId());
         $v = new Validation(
             $this->getTypeValidation(TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE),
             $these,
@@ -419,5 +418,58 @@ class ValidationService extends BaseService
         return $validation;
     }
 
+    public function validateValidationUR($these, $individu)
+    {
+        $v = new Validation(
+            $this->getTypeValidation(TypeValidation::CODE_VALIDATION_PROPOSITION_UR),
+            $these,
+            $individu);
+
+        $this->entityManager->persist($v);
+        try {
+            $this->entityManager->flush($v);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur lors de l'enregistrement de la validation en bdd", null, $e);
+        }
+
+        return $v;
+
+    }
+
+    public function validateValidationED($these, $individu)
+    {
+        $v = new Validation(
+            $this->getTypeValidation(TypeValidation::CODE_VALIDATION_PROPOSITION_ED),
+            $these,
+            $individu);
+
+        $this->entityManager->persist($v);
+        try {
+            $this->entityManager->flush($v);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur lors de l'enregistrement de la validation en bdd", null, $e);
+        }
+
+        return $v;
+
+    }
+
+    public function validateValidationBDD($these, $individu)
+    {
+        $v = new Validation(
+            $this->getTypeValidation(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD),
+            $these,
+            $individu);
+
+        $this->entityManager->persist($v);
+        try {
+            $this->entityManager->flush($v);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur lors de l'enregistrement de la validation en bdd", null, $e);
+        }
+
+        return $v;
+
+    }
 
 }

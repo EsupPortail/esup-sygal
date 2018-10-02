@@ -5,7 +5,9 @@ namespace Soutenance\Assertion;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
+use Application\Entity\Db\TypeValidation;
 use Application\Service\UserContextServiceAwareTrait;
+use Application\Service\Validation\ValidationServiceAwareTrait;
 use Soutenance\Provider\Privilege\SoutenancePrivileges;
 use Zend\Permissions\Acl\Acl;
 use Zend\Permissions\Acl\Assertion\AssertionInterface;
@@ -14,6 +16,7 @@ use Zend\Permissions\Acl\Role\RoleInterface;
 
 class PropositionAssertion implements  AssertionInterface {
     use UserContextServiceAwareTrait;
+    use ValidationServiceAwareTrait;
 
     /**
      * !!!! Pour éviter l'erreur "Serialization of 'Closure' is not allowed"... !!!!
@@ -98,19 +101,24 @@ class PropositionAssertion implements  AssertionInterface {
                         return false;
                         break;
                 }
-            case SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_ED;
+            case SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_UR;
                 switch ($role) {
-                    case Role::CODE_ED :
-                        return $structure === $these->getEcoleDoctorale()->getStructure();
+                    case Role::CODE_UR :
+                        $validations = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PROPOSITION_SOUTENANCE, $these);
+                        $nbDirs = count($these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE));
+                        $nbCoDirs = count($these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE));
+                        $nbActeur = 1 + $nbDirs + $nbCoDirs;
+                        return count($validations) === $nbActeur && $structure === $these->getUniteRecherche()->getStructure();
                         break;
                     default:
                         return false;
                         break;
                 }
-            case SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_UR;
+            case SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_ED;
                 switch ($role) {
                     case Role::CODE_ED :
-                        return $structure === $these->getUniteRecherche()->getStructure();
+                        $validations = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these);
+                        return $validations && $structure === $these->getEcoleDoctorale()->getStructure();
                         break;
                     default:
                         return false;
@@ -119,7 +127,8 @@ class PropositionAssertion implements  AssertionInterface {
             case SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_BDD;
                 switch ($role) {
                     case Role::CODE_BDD :
-                        return $structure === $these->getEtablissement()->getStructure();
+                        $validations = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_ED, $these);
+                        return $validations && $structure === $these->getEtablissement()->getStructure();
                         break;
                     default:
                         return false;

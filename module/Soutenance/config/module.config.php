@@ -110,9 +110,20 @@ return array(
                     'controller' => SoutenanceController::class,
                     'action'     => [
                             'valider',
-                            'refuser',
                     ],
                     'privileges' => SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_ACTEUR,
+                ],
+                [
+                    'controller' => SoutenanceController::class,
+                    'action'     => [
+                        'valider-structure',
+                        'refuser',
+                    ],
+                    'privileges' => [
+                        SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_UR,
+                        SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_ED,
+                        SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_BDD,
+                    ],
                 ],
                 // Présoutenance et pages connexes
                 [
@@ -428,84 +439,25 @@ return array(
                                     ],
                                 ],
                             ],
-                            'refuser' => [
+                            'valider-structure' => [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/refuser',
+                                    'route'    => '/valider-structure',
                                     'defaults' => [
                                         'controller' => SoutenanceController::class,
-                                        'action'     => 'refuser',
+                                        'action'     => 'valider-structure',
                                     ],
                                 ],
                             ],
-                        ],
-                    ],
-                    'valider-ur' => [
-                        'type' => Segment::class,
-                        'may_terminate' => true,
-                        'options' => [
-                            'route'    => '/valider-ur/:these',
-                            'defaults' => [
-                                'controller' => SoutenanceController::class,
-                                'action'     => 'valider-ur',
-                            ],
-                        ],
-                        'child_routes' => [
-                            'valider' => [
+                            'refuser-structure' => [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/valider',
+                                    'route'    => '/refuser-structure',
                                     'defaults' => [
                                         'controller' => SoutenanceController::class,
-                                        'action'     => 'valider-ur-validation',
-                                    ],
-                                ],
-                            ],
-                            'refuser' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route'    => '/refuser',
-                                    'defaults' => [
-                                        'controller' => SoutenanceController::class,
-                                        'action'     => 'valider-ur-refus',
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                    'valider-ed' => [
-                        'type' => Segment::class,
-                        'may_terminate' => true,
-                        'options' => [
-                            'route'    => '/valider-ed/:these',
-                            'defaults' => [
-                                'controller' => SoutenanceController::class,
-                                'action'     => 'valider-ed',
-                            ],
-                        ],
-                        'child_routes' => [
-                            'valider' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route'    => '/valider',
-                                    'defaults' => [
-                                        'controller' => SoutenanceController::class,
-                                        'action'     => 'valider-ed-validation',
-                                    ],
-                                ],
-                            ],
-                            'refuser' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route'    => '/refuser',
-                                    'defaults' => [
-                                        'controller' => SoutenanceController::class,
-                                        'action'     => 'valider-ed-refus',
+                                        'action'     => 'refuser-structure',
                                     ],
                                 ],
                             ],

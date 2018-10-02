@@ -27,7 +27,4 @@ class SoutenancePrivileges extends Privileges
     const SOUTENANCE_ENGAGEMENT_IMPARTIALITE_ANNULER             = 'soutenance-engagement-impartialite-annuler';
     const SOUTENANCE_ENGAGEMENT_IMPARTIALITE_NOTIFIER            = 'soutenance-engagement-impartialite-notifier';
     const SOUTENANCE_ENGAGEMENT_IMPARTIALITE_VISUALISER          = 'soutenance-engagement-impartialite-visualiser';
-
-
-
 }

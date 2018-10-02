@@ -32,8 +32,8 @@ $alreadyValidated = ($validations[$currentIndividu->getId()] !== null);
 //;
 
 $canModifier = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_MODIFIER);
-$canValider = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_ACTEUR);
-
+$canValider = ($proposition->isOk()) && $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_ACTEUR);
+$canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_UR) || $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_ED) || $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_BDD);
 ?>
 
 <style>
@@ -49,7 +49,6 @@ $canValider = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSIT
         width: 20em;
         margin:1ex;
     }
-
 </style>
 
 <?php $this->headTitle($this->translate("Proposition de soutenance")); ?>
@@ -58,13 +57,11 @@ $canValider = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSIT
 </h1>
 
 <p class="">
-    Afin d'être validée et traitée par l'école doctorale, la proposition de soutenance doit être validée par tous les intervenants immédiats de la thèse (c.-à-d. doctorant, directeur et co-directeur(s)).
+    Afin d'être validée et traitée par l'école doctorale, la proposition de soutenance doit être validée par tous les
+    intervenants immédiats de la thèse (c.-à-d. doctorant, directeur et co-directeur(s)). <br/>
+    <span class="glyphicon glyphicon-warning-sign"></span> En cas de modifications de la proposition, toutes validations
+    (ou refus) seront annulées et la proposition devra être à nouveau être validée.
 </p>
-
-<p class="">
-    <span class="glyphicon glyphicon-warning-sign"></span> En cas de modifications de la proposition, toutes validations (ou refus) seront annulées et la proposition devra être à nouveau être validée.
-</p>
-
 
 <?php
     $datelieu = false;
@@ -290,7 +287,7 @@ $canValider = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSIT
         </div>
         <div class="pull-right">
             <?php if (!$alreadyValidated) : ?>
-                <?php if ($canValidate) : ?>
+                <?php if ($canValider) : ?>
                     <a
                             href="<?php echo $this->url('soutenance/proposition/valider', ['these' => $these->getId()], [], true); ?>"
                             class="btn btn-success action ">
@@ -303,13 +300,67 @@ $canValider = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSIT
                 </div>
                 <?php endif; ?>
             <?php endif; ?>
-
-<!--            <br/>-->
-<!--            <a href="--><?php //echo $this->url('soutenance/constituer/refuser', ['these' => $these->getId()], [], true); ?><!--" class="btn btn-danger action"><span class="glyphicon glyphicon-remove"></span> Rejeter la proposition de soutenance</a>-->
         </div>
     </div>
 </div>
 
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h4> Validation par les structures encadrant la thèse </h4>
+    </div>
+    <div class="panel-body">
+        <div class="pull-left">
+        <h4>
+            Liste des validations
+        </h4>
+        <ul>
+            <li>
+                <?php echo $these->getUniteRecherche()->getLibelle(); ?>  (Unité de recherche) <br/>
+                <?php if ($validations['unite-recherche']) : ?>
+                    <span class="badge badge-success"> Validée</span>
+                <?php else: ?>
+                    <span class="badge badge-default"> Aucune validation</span>
+                <?php endif; ?>
+            </li>
+            <li>
+                <?php echo $these->getEcoleDoctorale()->getLibelle(); ?>  (École doctorale) <br/>
+                <?php if ($validations['ecole-doctorale']) : ?>
+                    <span class="badge badge-success"> Validée</span>
+                <?php else: ?>
+                    <span class="badge badge-default"> Aucune validation</span>
+                <?php endif; ?>
+            </li>
+            <li>
+                <?php echo $these->getEtablissement()->getLibelle(); ?>  (Bureau des doctorats) <br/>
+                <?php if ($validations['bureau-doctorats']) : ?>
+                    <span class="badge badge-success"> Validée</span>
+                <?php else: ?>
+                    <span class="badge badge-default"> Aucune validation</span>
+                <?php endif; ?>
+            </li>
+        </ul>
+        </div>
+        <div class="pull-right">
+            <?php if ($canStructureValider): ?>
+            <p>
+                <a href="<?php echo $this->url('soutenance/proposition/valider-structure', ['these' => $these->getId()], [], true); ?>"
+                   class="btn btn-success action">
+                    <span class="glyphicon glyphicon-ok"></span> Valider la proposition de soutenance
+                </a>
+            </p>
+            <p>
+                <a
+                        href="<?php echo $this->url('soutenance/proposition/refuser-structure', ['these' => $these->getId()], [], true); ?>"
+                        class="btn btn-danger action ajax-modal"
+                        data-event="refus-proposition">
+                    <span class="glyphicon glyphicon-remove"></span> Refuser la proposition de soutenance
+                </a>
+            </p>
+            <?php endif; ?>
+        </div>
+    </div>
+ </div>
 
 
 
@@ -322,6 +373,12 @@ $canValider = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSIT
     });
     $(function() {
         $("body").on("edition-membre", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+    $(function() {
+        $("body").on("refus-proposition", function (event) {
             event.div.modal('hide');
             window.location.reload();
         });
