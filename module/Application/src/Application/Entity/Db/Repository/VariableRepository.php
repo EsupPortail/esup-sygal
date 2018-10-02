@@ -5,6 +5,7 @@ namespace Application\Entity\Db\Repository;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Variable;
+use UnicaenApp\Exception\RuntimeException;
 
 class VariableRepository extends DefaultEntityRepository
 {
@@ -59,12 +60,17 @@ class VariableRepository extends DefaultEntityRepository
         $results = $qb->getQuery()->getResult();
 
         if (! is_array($code)) {
-            return current($results) ?: null;
+            $variable =  current($results) ?: null;
+            if ($variable === null) throw new RuntimeException("La valeur pour le variable [".$code."] est manquante pour l'établissement [".$etab->getCode()."].");
+            return $variable;
         }
 
         $variables = [];
         foreach ($results as $v) {
             $variables[$v->getCode()] = $v;
+        }
+        foreach ($code as $c) {
+            if (!isset($variables[$c])) throw new RuntimeException("La valeur pour le variable [".$c."] est manquante pour l'établissement [".$etab->getCode()."].");
         }
 
         return $variables;

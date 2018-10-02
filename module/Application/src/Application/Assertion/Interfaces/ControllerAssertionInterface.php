@@ -7,10 +7,13 @@ use Application\Service\UserContextServiceAwareInterface;
 interface ControllerAssertionInterface extends UserContextServiceAwareInterface
 {
     /**
-     * @param string $controller
-     * @param null   $action
-     * @param null   $privilege
+     * @param array $context
+     */
+    public function setContext(array $context);
+
+    /**
+     * @param string $privilege
      * @return bool
      */
-    public function assert($controller, $action = null, $privilege = null);
+    public function assert($privilege = null);
 }

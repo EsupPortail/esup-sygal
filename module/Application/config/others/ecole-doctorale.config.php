@@ -7,15 +7,36 @@ use Application\Provider\Privilege\EcoleDoctoralePrivileges;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\View\Helper\EcoleDoctoraleHelper;
 use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use Zend\Mvc\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [
+        'resource_providers' => [
+            'BjyAuthorize\Provider\Resource\Config' => [
+                'EcoleDoctorale' => [],
+            ],
+        ],
+        'rule_providers'     => [
+            PrivilegeRuleProvider::class => [
+                'allow' => [
+                    [
+                        'privileges' => [
+                            EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION,
+                        ],
+                        'resources'  => ['EcoleDoctorale'],
+                        'assertion'  => 'Assertion\\EcoleDoctorale',
+                    ],
+                ],
+            ],
+        ],
         'guards' => [
             PrivilegeController::class => [
                 [
                     'controller' => 'Application\Controller\EcoleDoctorale',
                     'action'     => [
                         'index',
+                        'information'
                     ],
                     'privileges' => EcoleDoctoralePrivileges::ECOLE_DOCT_CONSULTATION,
                 ],
@@ -25,6 +46,12 @@ return [
                         'ajouter',
                         'supprimer',
                         'restaurer',
+                    ],
+                    'privileges' => EcoleDoctoralePrivileges::ECOLE_DOCT_CREATION,
+                ],
+                [
+                    'controller' => 'Application\Controller\EcoleDoctorale',
+                    'action'     => [
                         'modifier',
                         'ajouter-individu',
                         'retirer-individu',
@@ -50,6 +77,16 @@ return [
                 ],
                 'may_terminate' => true,
                 'child_routes'  => [
+                    'information' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/information/:ecoleDoctorale',
+                            'defaults'    => [
+                                'action' => 'information',
+                            ],
+                        ],
+
+                    ],
                     'ajouter' => [
                         'type'          => 'Segment',
                         'options'       => [
@@ -148,6 +185,28 @@ return [
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\EcoleDoctorale', 'index'),
 
                                 'order'    => 10,
+                                'pages' => [
+                                    'modification' => [
+                                        'label'    => 'Modification',
+                                        'route'    => 'ecole-doctorale/modifier',
+                                        'resource' => PrivilegeController::getResourceId('Application\Controller\EcoleDoctorale', 'index'),
+
+                                        'withtarget' => true,
+                                        'paramsInject' => [
+                                            'ecoleDoctorale',
+                                        ],
+                                    ],
+                                    'information' => [
+                                        'label'    => 'Détails',
+                                        'route'    => 'ecole-doctorale/information',
+                                        'resource' => PrivilegeController::getResourceId('Application\Controller\EcoleDoctorale', 'index'),
+
+                                        'withtarget' => true,
+                                        'paramsInject' => [
+                                            'ecoleDoctorale',
+                                        ],
+                                    ],
+                                ],
                             ],
                         ],
                     ],
@@ -179,11 +238,11 @@ return [
             'EcoleDoctoraleForm' => EcoleDoctoraleFormFactory::class,
         ],
     ],
-    'hydrators' => array(
-        'factories' => array(
+    'hydrators' => [
+        'factories' => [
             'EcoleDoctoraleHydrator' => EcoleDoctoraleHydratorFactory::class,
-        )
-    ),
+        ]
+    ],
     'view_helpers' => [
         'invokables' => [
             'ed' => EcoleDoctoraleHelper::class,

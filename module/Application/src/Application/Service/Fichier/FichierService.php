@@ -3,12 +3,11 @@
 namespace Application\Service\Fichier;
 
 use Application\Command\ShellScriptRunner;
-use Application\Controller\TheseController;
 use Application\Entity\Db\Acteur;
-use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\Repository\FichierRepository;
+use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\ValiditeFichier;
 use Application\Entity\Db\VersionFichier;
@@ -527,105 +526,90 @@ class FichierService extends BaseService
      * Cette fonction a pour vocation de récupérer les informations utile pour la génération de la page de couverture.
      * Si une clef est vide cela indique un problème associé à la thèse
      * @param These $these
-     * @return []
+     * @return PdcData
      */
     public function fetchInformationsPageDeCouverture(These $these) {
+        $pdcData = new PdcData();
         $informations = [];
 
         if ($these === null) throw new LogicException("Une these doit être fournie pour pouvoir effectuer la récupération de ces données.");
 
         /**  informations générales */
-        $informationsGenerales = ["titre", "etablissement", "specialité", "doctorant", "date de soutenance"];
-        foreach ($informationsGenerales as $informationGenerale) $informations[$informationGenerale] = "";
+        $pdcData->setTitre($these->getTitre());
+        $pdcData->setSpecialite($these->getLibelleDiscipline());
+        if ($these->getEtablissement()) $pdcData->setEtablissement($these->getEtablissement()->getLibelle());
+        if ($these->getDoctorant()) $pdcData->setDoctorant($these->getDoctorant()->getIndividu()->getNomComplet(false, false, false, true, true));
+        if ($these->getDateSoutenance()) $pdcData->setDate($these->getDateSoutenance()->format("d/m/Y"));
 
-        $informations["titre"]                  = ($these->getTitre())?$these->getTitre():"";
-        $informations["specialité"]             = ($these->getLibelleDiscipline())?$these->getLibelleDiscipline():"";
-        $informations["etablissement"]          = ($these->getEtablissement())?$these->getEtablissement()->getLibelle():"";
-        $informations["doctorant"]              = ($these->getDoctorant())?$these->getDoctorant()->getIndividu()->getNomComplet(false, true, false, true, true):"";
-        $informations["date de soutenance"]     = ($these->getDateSoutenance())?$these->getDateSoutenance()->format("d/m/Y"):"";
+        /** cotutelle */
+        $pdcData->setCotutuelle(false);
+        if($these->getLibelleEtabCotutelle() !== null && $these->getLibelleEtabCotutelle() !== "") {
+            $pdcData->setCotutuelle(true);
+            $pdcData->setCotutuelleLibelle($these->getLibelleEtabCotutelle());
+            if ($these->getLibellePaysCotutelle()) $pdcData->setCotutuellePays($these->getLibellePaysCotutelle());
+        }
 
         /** Jury de thèses */
-        // TODO chercher les libellés des rôles dans des constantes
         $jury = [];
         $acteurs = $these->getActeurs()->toArray();
         $rapporteurs =  array_filter($acteurs, function(Acteur $a) { return $a->estRapporteur(); });
+        $pdcData->setRapporteurs($rapporteurs);
         $directeurs =  array_filter($acteurs, function(Acteur $a) { return $a->estDirecteur(); });
-        $membres = array_diff($acteurs, $rapporteurs, $directeurs);
-        $informations["cotut-libelle"] = ($these->getLibelleEtabCotutelle())?($these->getLibelleEtabCotutelle()):"non";
-        $informations["cotut-pays"]    = ($these->getLibellePaysCotutelle())?($these->getLibellePaysCotutelle()):"non";
-//        $informations["logo-cotutelle"]    = ($these->getLibelleEtabCotutelle())?"":"non";
-//        /** @var Etablissement $etabCotut */
-//        $etabCotut = $this->getEtablissementService()->getRepository()->findOneByLibelle($informations["cotut-libelle"]);
-//        if ($etabCotut) {
-//            $logo = $etabCotut->getCheminLogo();
-//            if ($logo) $informations["logo-cotutelle"] = $logo;
-//        }
+        $pdcData->setDirecteurs($directeurs);
+        $president =  array_filter($acteurs, function(Acteur $a) { return $a->estPresidentJury(); });
 
-        $informations["logo-associe"] = "non";
-        if (Acteur::estENSI($directeurs))      $informations["logo-associe"] = "public/logo_ensi.jpg";
-        if (Acteur::estESITC ($directeurs))    $informations["logo-associe"] = "public/logo_esitc.jpg";
+        $membres = array_diff($acteurs, $rapporteurs, $directeurs, $president);
+        $pdcData->setMembres($membres);
 
-        $informations["nombre de membres"]      = count($membres);
-        $informations["nombre de rapporteurs"]  = count($rapporteurs)?count($rapporteurs):"";
-        $informations["nombre de directeurs"]   = count($directeurs)?count($directeurs):"";
-        $position = 1;
-        foreach ($membres as $membre) {
-            $informations["nom ".$position] = "";
-            $informations["qualité ".$position] = "";
-            $informations["etablissement ".$position] = "";
-            $informations["role ".$position] = "";
-            $position++;
-        }
-
-        $position = 1;
-        /** @var Acteur $rapporteur */
-        foreach ($rapporteurs as $rapporteur) {
-            $informations["nom ".$position]             = $rapporteur->getIndividu()->getNomComplet(true,true,false, true, true);
-            $informations["qualité ".$position]         = $rapporteur->getQualite();
-            $informations["etablissement ".$position]   = ($etab = $rapporteur->getEtablissement()) ? $etab->getStructure()->getLibelle() : null;
-            $informations["role ".$position]            = "Rapporteur du jury";
-            $position++;
-        }
-
-        /** @var Acteur $membre */
-        foreach ($membres as $membre) {
-            $informations["nom ".$position]             = $membre->getIndividu()->getNomComplet(true,true,false, true, true);
-            $informations["qualité ".$position]         = $membre->getQualite();
-            $informations["etablissement ".$position]   = ($etab = $membre->getEtablissement()) ? $etab->getStructure()->getLibelle() : null;
-            $informations["role ".$position]            = "Membre du jury";
-            $position++;
-        }
-
+        /** associée */
+        $pdcData->setAssocie(false);
         /** @var Acteur $directeur */
         foreach ($directeurs as $directeur) {
-            $informations["nom ".$position]             = $directeur->getIndividu()->getNomComplet(true,true,false, true, true);
-            $informations["qualité ".$position]         = $directeur->getQualite();
-            $informations["etablissement ".$position]   = ($etab = $directeur->getEtablissement()) ? $etab->getStructure()->getLibelle() : null;
-            $informations["role ".$position]            = "Directeur de thèse";
-            $position++;
+            if (! $directeur->getEtablissement()) {
+                throw new RuntimeException("Anomalie: le directeur de thèse '{$directeur}' n'a pas d'établissement.");
+            }
+            if ($directeur->getEtablissement()->estAssocie()) {
+                $pdcData->setAssocie(true);
+                $pdcData->setLogoAssocie($directeur->getEtablissement()->getCheminLogo());
+                $pdcData->setLibelleAssocie($directeur->getEtablissement()->getLibelle());
+            }
+        }
+
+        $acteursEnCouverture = array_merge($rapporteurs, $directeurs, $president, $membres);
+        usort($acteursEnCouverture, Acteur::getComparisonFunction());
+        $acteursEnCouverture = array_unique($acteursEnCouverture);
+
+        /** @var Acteur $acteur */
+        foreach ($acteursEnCouverture as $acteur) {
+            $acteurData = new MembreData();
+            $acteurData->setDenomination($acteur->getIndividu()->getNomComplet(true,false,false, true, true));
+            $acteurData->setQualite($acteur->getQualite());
+
+            if (!$acteur->estPresidentJury()) {
+                $acteurData->setRole($acteur->getRole()->getLibelle());
+            } else {
+                $acteurData->setRole(Role::LIBELLE_PRESIDENT);
+            }
+            if ($acteur->getEtablissement()) $acteurData->setEtablissement($acteur->getEtablissement()->getStructure()->getLibelle());
+            $pdcData->addActeurEnCouverture($acteurData);
         }
 
         /** Directeurs de thèses */
-        $informationsGenerales = ["liste des directeurs", "Unité de recherche"];
-        foreach ($informationsGenerales as $informationGenerale) $informations[$informationGenerale] = "";
         $nomination = [];
-        /** @var Acteur $directeur */
-        foreach ($directeurs as $directeur) $nomination[] = $directeur->getIndividu()->getNomComplet(false, true, false, true, true);
-        $informations["liste des directeurs"]          = implode(" et ", $nomination);
-        $informations["Unité de recherche"]            = ($these->getUniteRecherche())?$these->getUniteRecherche()->getStructure()->getLibelle():"";
-
-        /** Logos à afficher */
-        $logos = ["logo-comue", "logo-etablissement", "logo-ecoleDoctorale", "logo-uniteRecherche"];
-        foreach ($logos as $logo) $informations[$logo] = "";
+        foreach ($directeurs as $directeur) {
+            $nomination[] = $directeur->getIndividu()->getNomComplet(false, false, false, true, true);
+        }
+        $pdcData->setListing(implode(" et ", $nomination).", ");
+        if ($these->getUniteRecherche()) $pdcData->setUniteRecherche($these->getUniteRecherche()->getStructure()->getLibelle());
 
         $comue = $this->getEtablissementService()->getRepository()->find(1);
-        $informations["logo-comue"]             = ($comue)?$comue->getCheminLogo():"";
-        $informations["logo-etablissement"]     = ($these->getEtablissement())?$these->getEtablissement()->getCheminLogo():"";
-        $informations["logo-ecoleDoctorale"]    = ($these->getEcoleDoctorale())?$these->getEcoleDoctorale()->getCheminLogo():"";
-        $informations["logo-uniteRecherche"]    = ($these->getUniteRecherche())?$these->getUniteRecherche()->getCheminLogo():"";
+        $pdcData->setLogoCOMUE( ($comue)?$comue->getCheminLogo():null);
+        $pdcData->setLogoEtablissement($these->getEtablissement()?$these->getEtablissement()->getCheminLogo():null);
+        $pdcData->setLogoEcoleDoctorale($these->getEcoleDoctorale()?$these->getEcoleDoctorale()->getCheminLogo():null);
+        $pdcData->setLogoUniteRecherche($these->getUniteRecherche()?$these->getUniteRecherche()->getCheminLogo():null);
 
 
-        return $informations;
+        return $pdcData;
     }
 
     /**
@@ -636,11 +620,11 @@ class FichierService extends BaseService
     public function generatePageDeCouverture(These $these, RendererInterface $renderer, $filepath = null)
     {
 
-        $informations = $this->fetchInformationsPageDeCouverture($these);
+        $pdcData = $this->fetchInformationsPageDeCouverture($these);
 
         $exporter = new PageDeCouverturePdfExporter($renderer, 'A4');
         $exporter->setVars([
-            'informations' => $informations,
+            'informations' => $pdcData,
         ]);
         if ($filepath !== null) {
             $exporter->export($filepath, Pdf::DESTINATION_FILE);

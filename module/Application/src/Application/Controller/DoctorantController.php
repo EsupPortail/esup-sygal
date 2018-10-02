@@ -77,13 +77,13 @@ class DoctorantController extends AbstractController
                 $id = $this->mailConfirmationService->save($mailConfirmation);
                 $this->mailConfirmationService->generateCode($id);
                 return $this->redirect()->toRoute('mail-confirmation-envoie', ['id' => $id], [], true);
-                var_dump("here");
             } else {
                 $this->flashMessenger()->addErrorMessage("L'email fourni <strong>".$email."</strong> est non valide.");
             }
         }
 
         $form = $this->getServiceLocator()->get('FormElementManager')->get('MailConfirmationForm');
+        $form->setAttribute('action', $this->url()->fromRoute('doctorant/modifier-persopass', [], [], true));
 
         $form->bind($mailConfirmation);
 

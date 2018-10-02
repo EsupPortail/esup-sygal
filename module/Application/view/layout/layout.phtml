@@ -63,7 +63,7 @@
         </div>
         
         <div id="contenu-principal" class="container">
-            <?php if (($menuSecondaire = $this->navigation()->menuSecondaire('navigation')->render())): ?>
+            <?php if (($menuSecondaire = $this->navigation()->menuSecondaire('navigation')->setMaxDepth(1)->render())): ?>
                 <div class="row">
                     <div id="sidebar" class="col-xs-6 col-md-2" role="navigation">
                         <?php echo $menuSecondaire; ?>

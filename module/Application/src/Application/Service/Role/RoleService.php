@@ -17,8 +17,10 @@ use Application\Entity\Db\Utilisateur;
 use Application\Filter\EtablissementPrefixFilter;
 use Application\Service\BaseService;
 use Application\Entity\Db\Structure;
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Query\Expr\Join;
 use MongoDB\BSON\Type;
+use UnicaenApp\Exception\RuntimeException;
 use UnicaenImport\Entity\Db\Source;
 use ZfcUser\Entity\UserInterface;
 
@@ -87,40 +89,10 @@ class RoleService extends BaseService
         return $qb->getQuery()->execute();
     }
 
-
-    public function getRoleById($roleId) {
-        $repo = $this->entityManager->getRepository(Role::class);
-        $individuRole = $repo->findOneBy(["id" => $roleId]);
-        return $individuRole;
-    }
-
-
-    public function getRoleByCode($roleCode) {
-        $repo = $this->entityManager->getRepository(Role::class);
-        $role = $repo->findOneBy(["code" => $roleCode]);
-        return $role;
-    }
-
     public function getIndividuRoleById($individuRoleId) {
         $repo = $this->entityManager->getRepository(IndividuRole::class);
         $individuRole = $repo->findOneBy(["id" => $individuRoleId]);
         return $individuRole;
-    }
-
-    public function getRoleByIndividu($individu)
-    {
-        $qb = $this->getEntityManager()->getRepository(IndividuRole::class)->createQueryBuilder("ir")
-            ->andWhere("ir.individu = :individu")
-            ->setParameter("individu", $individu);
-        $results = $qb->getQuery()->getResult();
-
-        /** @var IndividuRole $result */
-        $roles = [];
-        foreach($results as $result) {
-            $roles[] = $result->getRole();
-        }
-
-        return $roles;
     }
 
     /**
@@ -291,4 +263,17 @@ class RoleService extends BaseService
         return $result;
     }
 
+//    /**
+//     * @param Role $role
+//     * @return Role
+//     */
+//    public function updateRole($role)
+//    {
+//        try {
+//            $this->getEntityManager()->flush($role);
+//        } catch (OptimisticLockException $e) {
+//            throw new RuntimeException("Problème lors du change de l'ordre d'affichage du rôle [".$role->getId()."]");
+//        }
+//        return $role;
+//    }
 }

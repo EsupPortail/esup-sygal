@@ -1,0 +1,19 @@
+<?php
+
+/**
+ * @var \Indicateur\Form\IndicateurForm $form
+ */
+
+use Indicateur\Provider\Privilege\IndicateurPrivileges;
+
+$canEdit    = $this->isAllowed(IndicateurPrivileges::getResourceId(IndicateurPrivileges::INDICATEUR_EDITION));
+
+?>
+
+<h1 class="page-header">
+    Ajouter/Modifier un indicateur
+</h1>
+
+<?php
+    echo $this->form($form);
+?>

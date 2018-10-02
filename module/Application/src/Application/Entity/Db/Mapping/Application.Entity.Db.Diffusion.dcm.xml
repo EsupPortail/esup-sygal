@@ -14,7 +14,7 @@
         <field name="autorisMel" type="integer" column="AUTORIS_MEL" nullable="false"/>
         <field name="autorisEmbargoDuree" type="string" column="AUTORIS_EMBARGO_DUREE" length="20" nullable="true"/>
         <field name="autorisMotif" type="string" column="AUTORIS_MOTIF" length="2000" nullable="true"/>
-        <field name="idOrcid" type="string" column="ID_HAL" length="200" nullable="true"/>
+        <field name="orcid" type="string" column="ORCID" length="200" nullable="true"/>
         <field name="nnt" type="string" column="NNT" length="200" nullable="true"/>
 
         <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>

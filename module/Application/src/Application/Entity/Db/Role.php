@@ -41,14 +41,7 @@ class Role extends AbstractRole
 
     const ROLE_ID_ECOLE_DOCT = "École doctorale";
     const ROLE_ID_UNITE_RECH = "Unité de recherche";
-
-    static public $ordreSourcesCodes = [
-        self::CODE_DIRECTEUR_THESE => 'aa',
-        self::CODE_CO_ENCADRANT    => 'ab',
-        self::CODE_PRESIDENT_JURY  => 'b',
-        self::CODE_MEMBRE_JURY     => 'c',
-        self::CODE_RAPPORTEUR_JURY => 'd',
-    ];
+    const LIBELLE_PRESIDENT = "Président du jury";
 
     /**
      * @var string
@@ -84,6 +77,11 @@ class Role extends AbstractRole
      * @var bool
      */
     private $theseDependant = false;
+
+    /**
+     * @var int
+     */
+    private $ordreAffichage;
 
     /**
      * @return bool
@@ -271,8 +269,33 @@ class Role extends AbstractRole
         return $this->getTypeStructureDependant() !== null;
     }
 
-    public function __toString() {
-        $txt = "" . $this->getLibelle();
-        return $txt;
+    /**
+     * Retourne une chaîne de caractères utilisée pour trier les rôles ;
+     * l'astuce consiste à concaténer cette valeur aux autres critères de tri.
+     *
+     * @return string
+     */
+    public function getOrdreAffichage()
+    {
+        return $this->ordreAffichage;
+    }
+
+    /**
+     * @param string $ordreAffichage
+     * @return self
+     */
+    public function setOrdreAffichage($ordreAffichage)
+    {
+        $this->ordreAffichage = (string) $ordreAffichage;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->getLibelle();
     }
 }

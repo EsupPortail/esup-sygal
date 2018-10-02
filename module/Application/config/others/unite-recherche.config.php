@@ -8,15 +8,36 @@ use Application\Service\DomaineScientifiqueService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use UnicaenAuth\Guard\PrivilegeController;
 use Application\View\Helper\UniteRechercheHelper;
+use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use Zend\Mvc\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [
+        'resource_providers' => [
+            'BjyAuthorize\Provider\Resource\Config' => [
+                'UniteRecherche' => [],
+            ],
+        ],
+        'rule_providers'     => [
+            PrivilegeRuleProvider::class => [
+                'allow' => [
+                    [
+                        'privileges' => [
+                            UniteRecherchePrivileges::UNITE_RECH_MODIFICATION,
+                        ],
+                        'resources'  => ['UniteRecherche'],
+                        'assertion'  => 'Assertion\\UniteRecherche',
+                    ],
+                ],
+            ],
+        ],
         'guards' => [
             PrivilegeController::class => [
                 [
                     'controller' => 'Application\Controller\UniteRecherche',
                     'action'     => [
                         'index',
+                        'information',
                     ],
                     'privileges' => UniteRecherchePrivileges::UNITE_RECH_CONSULTATION,
                 ],
@@ -26,6 +47,12 @@ return [
                         'ajouter',
                         'supprimer',
                         'restaurer',
+                    ],
+                    'privileges' => UniteRecherchePrivileges::UNITE_RECH_CREATION,
+                ],
+                [
+                    'controller' => 'Application\Controller\UniteRecherche',
+                    'action'     => [
                         'modifier',
                         'ajouter-individu',
                         'retirer-individu',
@@ -56,6 +83,15 @@ return [
                 ],
                 'may_terminate' => true,
                 'child_routes'  => [
+                    'information' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/information/:uniteRecherche',
+                            'defaults'    => [
+                                'action' => 'information',
+                            ],
+                        ],
+                    ],
                     'ajouter' => [
                         'type'          => 'Segment',
                         'options'       => [
@@ -219,6 +255,28 @@ return [
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\UniteRecherche', 'index'),
 
                                 'order'    => 20,
+                                'pages' => [
+                                    'modification' => [
+                                        'label'    => 'Modification',
+                                        'route'    => 'unite-recherche/modifier',
+                                        'resource' => PrivilegeController::getResourceId('Application\Controller\UniteRecherche', 'index'),
+
+                                        'withtarget' => true,
+                                        'paramsInject' => [
+                                            'uniteRecherche',
+                                        ],
+                                    ],
+                                    'information' => [
+                                        'label'    => 'Détails',
+                                        'route'    => 'unite-recherche/information',
+                                        'resource' => PrivilegeController::getResourceId('Application\Controller\UniteRecherche', 'index'),
+
+                                        'withtarget' => true,
+                                        'paramsInject' => [
+                                            'uniteRecherche',
+                                        ],
+                                    ],
+                                ],
                             ],
                         ],
                     ],

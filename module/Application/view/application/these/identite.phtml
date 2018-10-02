@@ -7,6 +7,7 @@ use Application\Entity\Db\Etablissement;
 use Application\Filter\ActeursFormatter;
 use Application\Entity\Db\WfEtape;
 use Application\Provider\Privilege\DoctorantPrivileges;
+use Application\Provider\Privilege\ThesePrivileges;
 use Application\View\Renderer\PhpRenderer;
 use Application\Entity\Db\MailConfirmation;
 
@@ -115,13 +116,11 @@ $persopassModifiedEvent = 'persopass-modified-event';
             <?php
             //AFFICHAGE DES ACTEURS DE LA THESE
             $acteursFormatter = new ActeursFormatter();
-            $acteursFormatter->paramDisplay(["role" => true,"complement" => false, "qualite" => true, "etablissement" => true]);
+            $acteursFormatter->paramDisplay(["role" => true,"complement" => true, "qualite" => true, "etablissement" => true]);
             $acteursFormatter->asArray();
 
-            $acteurs = $these->getActeurs()->toArray();
-            //usort($acteurs, [Acteur::class, 'cmp']);
-            usort($acteurs, function ($a,$b) {return $a->getRole() < $b->getRole();});
-            $results = $acteursFormatter->doFormat($acteurs);
+            $acteurs = $these->getActeursSorted();
+            $results = $acteursFormatter->doFormat($acteurs->toArray());
 
             $previous = "";
 
@@ -134,11 +133,14 @@ $persopassModifiedEvent = 'persopass-modified-event';
                         echo "<dd>";
                         $previous = $result["role"];
                     }
-                    if (isset($result["nom"])           )              echo $result["nom"];
-                    if (isset($result["qualite"])           && trim($result["qualite"]) != "")          echo ", ".$result["qualite"];
-                    if (isset($result["etablissement"])     && trim($result["etablissement"]) != "")    echo ", ".$result["etablissement"];
-                    if (isset($result["complement"]))       echo ", (" . $result["complement"] . ")";
-                    echo "<br/>";
+                    $ligne = [];
+                    if (isset($result["nom"]))              $ligne[] = $result["nom"];
+                    if (isset($result["complement"]))       $ligne[] = "<strong>".$result["complement"]."</strong>";
+                    if (isset($result["qualite"])           && trim($result["qualite"]) != "")          $ligne[] = $result["qualite"];
+                    if (isset($result["etablissement"])     && trim($result["etablissement"]) != "")    $ligne[] = $result["etablissement"];
+
+                    $ligne = implode(", ", $ligne);
+                    echo $ligne . "<br/>";
 
             }
             echo "<br/>";
@@ -307,6 +309,11 @@ $persopassModifiedEvent = 'persopass-modified-event';
 
 </div>
 
+
+
+<!-------------------------------------- Fichiers divers --------------------------------------->
+
+<?php if ($this->isAllowed($these, ThesePrivileges::FICHIER_DIVERS_CONSULTER)): ?>
 <div class="row">
     <div class="col-md-4">
         <div id="pvSoutenanceDiv" class="" data-url="<?php echo $pvSoutenanceUrl ?>">
@@ -354,6 +361,9 @@ $persopassModifiedEvent = 'persopass-modified-event';
         </div>
     </div>
 </div>
+<?php endif ?>
+
+
 
 <!-------------------------------------- Next step --------------------------------------->
 <div id="nextStepDiv" data-url="<?php echo $nextStepUrl ?>" style="display: none">

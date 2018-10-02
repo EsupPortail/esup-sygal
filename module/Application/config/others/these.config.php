@@ -336,7 +336,7 @@ return [
                     'fusion' => [
                         'type'          => 'Segment',
                         'options'       => [
-                            'route'       => '/fusion/:these[/:corrigee[/:version]]',
+                            'route'       => '/fusion/:these[/:corrigee[/:version[/:removal]]]',
                             'constraints' => [
                                 'these' => '\d+',
                             ],
@@ -976,10 +976,6 @@ return [
             'TheseService'                 => TheseServiceFactory::class,
             'TheseRechercheService'        => TheseRechercheServiceFactory::class,
             'TheseObserverService'         => TheseObserverServiceFactory::class,
-        ],
-        'abstract_factories' => [
-            AssertionAbstractFactory::class,
-            UrlServiceFactory::class, // construit: 'urlTheseService'
         ],
     ],
     'controllers'     => [

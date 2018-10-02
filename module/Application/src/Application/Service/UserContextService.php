@@ -3,6 +3,7 @@
 namespace Application\Service;
 
 use Application\Authentication\Storage\AppStorage;
+use Application\Entity\Db\These;
 use Application\Entity\UserWrapper;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Etablissement;
@@ -253,5 +254,46 @@ class UserContextService extends BaseUserContextService
         $user = $this->getIdentityLdap() ?: $this->getIdentityShib();
 
         return UserWrapper::inst($user);
+    }
+
+    /**
+     * Teste si la structure sur laquelle porte le profil courant de l'utilisateur est compatible avec la thèse spécifiée.
+     *
+     * @param These $these
+     * @return bool
+     */
+    public function isStructureDuRoleRespecteeForThese(These $these)
+    {
+        $role = $this->getSelectedIdentityRole();
+
+        if ($role->isTheseDependant()) {
+            if ($role->isDoctorant()) {
+                $utilisateurEstAuteurDeLaThese = $these->getDoctorant()->getId() === $this->getIdentityDoctorant()->getId();
+                return $utilisateurEstAuteurDeLaThese;
+            }
+            elseif ($role->isDirecteurThese()) {
+                if ($individu = $this->getIdentityIndividu()) {
+                    return $these->hasActeurWithRole($individu, Role::CODE_DIRECTEUR_THESE);
+                }
+                return false;
+            }
+        }
+
+        elseif ($role->isStructureDependant()) {
+            if ($role->isEtablissementDependant()) {
+                // On ne voit que les thèses de son établissement.
+                return $these->getEtablissement()->getStructure() === $role->getStructure();
+            }
+            elseif ($role->isEcoleDoctoraleDependant()) {
+                // On ne voit que les thèses concernant son ED.
+                return $these->getEcoleDoctorale()->getStructure() === $role->getStructure();
+            }
+            elseif ($role->isUniteRechercheDependant()) {
+                // On ne voit que les thèses concernant son UR.
+                return $these->getUniteRecherche()->getStructure() === $role->getStructure();
+            }
+        }
+
+        return true;
     }
 }

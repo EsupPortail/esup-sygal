@@ -98,8 +98,7 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
     }
 
     /**
-     * @deprecated
-     * @return mixed
+     * @return string
      */
     public function getCode()
     {
@@ -249,6 +248,10 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
             $image = Util::createImageWithText("Aucun logo pour l'Etab|" . $this->getSigle(), 200, 200);
             return $image;
         }
+        if (!file_exists(Structure::PATH . $this->getCheminLogo())) {
+            $image = Util::createImageWithText("Fichier absent sur le HD",200,200);
+            return $image;
+        }
         return file_get_contents( Structure::PATH . $this->getCheminLogo()) ?: null;
     }
 
@@ -288,7 +291,7 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
     }
 
     /**
-     * @return mixed
+     * @return Role[]
      */
     public function getRoles()
     {

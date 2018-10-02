@@ -77,17 +77,17 @@ class StructureController extends AbstractController
             case TypeStructure::CODE_ECOLE_DOCTORALE :
                 $ecole = $this->getEcoleDoctoraleService()->getRepository()->findByStructureId($id);
                 $this->getRoleService()->addRoleByStructure($ecole);
-                $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $id]]);
+                $this->redirect()->toRoute('ecole-doctorale/information', ['ecoleDoctorale' => $id], [], true);
                 break;
             case TypeStructure::CODE_UNITE_RECHERCHE :
                 $unite = $this->getUniteRechercheService()->getRepository()->findByStructureId($id);
                 $this->getRoleService()->addRoleByStructure($unite);
-                $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $id]]);
+                $this->redirect()->toRoute('unite-recherche/information', ['uniteRecherche' => $id], [], true);
                 break;
             case TypeStructure::CODE_ETABLISSEMENT :
                 $unite = $this->getEtablissementService()->getRepository()->findByStructureId($id);
                 $this->getRoleService()->addRoleByStructure($unite);
-                $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $id]]);
+                $this->redirect()->toRoute('etablissement/information', ['etablissement' => $id], [], true);
                 break;
         }
     }

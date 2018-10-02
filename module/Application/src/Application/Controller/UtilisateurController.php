@@ -54,7 +54,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost()['individu'];
-            $individu = $this->individuService->getIndviduById($data['id']);
+            $individu = $this->individuService->getRepository()->find($data['id']);
             $params = [];
             if ($individu !== null) $params = ["query" => ["id" => $data['id']]];
             $this->redirect()->toRoute(null, [], $params, true);
@@ -62,8 +62,8 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
 
         $individuId = $this->params()->fromQuery("id");
         if ($individuId !== null) {
-            $individu = $this->individuService->getIndviduById($individuId);
-            $rolesAffectes = $this->roleService->getRoleByIndividu($individu);
+            $individu = $this->individuService->getRepository()->find($individuId);
+            $rolesAffectes = $this->roleService->getRepository()->findAllByIndividu($individu);
         }
 
         $roles = $this->roleService->getRoles();
@@ -263,9 +263,9 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         $request = $this->getRequest();
         if ($request->isPost()) {
             $individuId = $this->params()->fromRoute('individu');
-            $individu = $this->getIndividuService()->getIndviduById($individuId);
+            $individu = $this->getIndividuService()->getRepository()->find($individuId);
             $roleId = $this->params()->fromRoute('role');
-            $role = $this->getRoleService()->getRoleById($roleId);
+            $role = $this->getRoleService()->getRepository()->find($roleId);
 
             $this->roleService->removeRole($individuId, $roleId);
             $this->notifierService->triggerChangementRole("retrait", $role, $individu);
@@ -282,9 +282,9 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         $request = $this->getRequest();
         if ($request->isPost()) {
             $individuId = $this->params()->fromRoute('individu');
-            $individu = $this->getIndividuService()->getIndviduById($individuId);
+            $individu = $this->getIndividuService()->getRepository()->find($individuId);
             $roleId = $this->params()->fromRoute('role');
-            $role = $this->getRoleService()->getRoleById($roleId);
+            $role = $this->getRoleService()->getRepository()->find($roleId);
 
             $this->roleService->addRole($individuId, $roleId);
             $this->notifierService->triggerChangementRole("ajout", $role, $individu);

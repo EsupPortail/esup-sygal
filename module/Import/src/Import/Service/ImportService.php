@@ -2,8 +2,9 @@
 
 namespace Import\Service;
 
+use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\These;
-use Application\Filter\EtablissementPrefixFilter;
+use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
 use Import\Model\TmpActeur;
 use Import\Model\TmpDoctorant;
@@ -13,6 +14,8 @@ use Import\Service\Traits\SynchroServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
+use Zend\Log\LoggerAwareTrait;
+use Zend\Log\LoggerInterface;
 
 /**
  * Service d'import des données provenant d'un établissement.
@@ -27,9 +30,11 @@ use UnicaenApp\Service\EntityManagerAwareTrait;
  */
 class ImportService
 {
+    use EtablissementServiceAwareTrait;
     use FetcherServiceAwareTrait;
     use EntityManagerAwareTrait;
     use SynchroServiceAwareTrait;
+    use LoggerAwareTrait;
 
     /**
      * Liste ORDONNÉE de tous les services proposés.
@@ -59,8 +64,6 @@ class ImportService
         ],
     ];
 
-    private $debug = false;
-
     /**
      * @var string[]
      */
@@ -72,42 +75,62 @@ class ImportService
     private $sqlFilters;
 
     /**
+     * Set logger object
+     *
+     * @param LoggerInterface $logger
+     * @return self
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+
+        $this->fetcherService->setLogger($this->logger);
+
+        return $this;
+    }
+
+    /**
+     * Interroge le WS pour obtenir sa version courante.
+     *
+     * @param string|Etablissement $etablissement Code de l'établissement que l'on souhaite interroger (p.e. UCN)
+     * @return string Ex: '1.1.0'
+     */
+    public function getApiVersion($etablissement)
+    {
+        $this->fetcherService->setEtablissement($etablissement);
+        $json = $this->fetcherService->version();
+
+        return $json->id;
+    }
+
+    /**
      * Lance l'import de données en provenance d'un seul service d'un établissement.
      *
      *  RMQ: 'service' et 'etablissement' sont pour le moment obligatoire.
      *  RMQ: si 'source_code' est non renseigné alors il faut récupérer toutes les données
      *
-     * @param string $service Nom du web service qui sera appelé (p.e. these, doctorant, ...)
-     * @param string $etablissement Code de l'établissement que l'on souhaite interroger (p.e. UCN, UCR, ...)
-     * @param string $sourceCode Source code éventuel de l'entité à récupérer (p.e. '12047')
-     * @param array  $queryParams Filtres éventuels à appliquer
-     * @return array
+     * @param string               $service       Nom du web service qui sera appelé (p.e. these, doctorant, ...)
+     * @param string|Etablissement $etablissement Code de l'établissement que l'on souhaite interroger (p.e. UCN)
+     * @param string               $sourceCode    Source code éventuel de l'entité à récupérer (p.e. '12047')
+     * @param array                $queryParams   Filtres éventuels à appliquer
      */
     public function import($service, $etablissement, $sourceCode, array $queryParams = [])
     {
+        if (! $etablissement instanceof Etablissement) {
+            $etablissement = $this->etablissementService->getRepository()->findOneByCode($etablissement);
+            if ($etablissement === null) {
+                throw new RuntimeException("Aucun établissement trouvé avec le code " . $etablissement);
+            }
+        }
+
         $this->computeFilters($service, $sourceCode, $queryParams);
 
-        if ($this->debug) {
-            echo "SERVICE: {$service}<br/>";
-            echo "ETABLISSEMENT: {$etablissement}<br/>";
-            echo "SOURCE_CODE: {$sourceCode}<br/>";
-        }
-
-        /** Paramétrage du service de récupération */
-        $key = $this->fetcherService->getEtablissementKey($etablissement);
-        $this->fetcherService->setConfigWithPosition($key);
-        if ($this->debug) {
-            $this->printDebug($key);
-        }
-
-        // appel du ws
-        $logs = $this->fetcherService->fetch($service, $sourceCode, $this->filters);
+        $this->fetcherService->setEtablissement($etablissement);
+        $this->fetcherService->fetch($service, $sourceCode, $this->filters);
 
         // synchro UnicaenImport
         $this->synchroService->addService($service, ['sql_filter' => $this->sqlFilters]);
         $this->synchroService->synchronize();
-
-        return $logs;
     }
 
     /**
@@ -115,37 +138,27 @@ class ImportService
      *
      *  RMQ: 'etablissement' est pour le moment obligatoire.
      *
-     * @param string $etablissement Code de l'établissement que l'on souhaite interroger (p.e. UCN, UCR, ...)
-     * @return array
+     * @param string|Etablissement $etablissement Etablissement ou code de l'établissement que l'on souhaite interroger (p.e. UCN, UCR, ...)
      */
     public function importAll($etablissement)
     {
+        if (! $etablissement instanceof Etablissement) {
+            $etablissement = $this->etablissementService->getRepository()->findOneByCode($etablissement);
+            if ($etablissement === null) {
+                throw new RuntimeException("Aucun établissement trouvé avec le code " . $etablissement);
+            }
+        }
+
         $services = static::SERVICES;
-
-        if ($this->debug) {
-            echo "SERVICE: Tous<br/>";
-            echo "ETABLISSEMENT: {$etablissement}<br/>";
-        }
-
-        /** Paramétrage du service de récupération */
-        $key = $this->fetcherService->getEtablissementKey($etablissement);
-        $this->fetcherService->setConfigWithPosition($key);
-        if ($this->debug) {
-            $this->printDebug($key);
-        }
-
-        $logs = [];
         foreach ($services as $service) {
-            // appel du ws
-            $logs[] = $this->fetcherService->fetch($service);
+            $this->fetcherService->setEtablissement($etablissement);
+            $this->fetcherService->fetch($service);
 
             $this->synchroService->addService($service);
         }
 
         // synchro UnicaenImport
         $this->synchroService->synchronize();
-
-        return $logs;
     }
 
     /**
@@ -154,49 +167,44 @@ class ImportService
      * Pour l'instant, les données liées se limitent à celles concernées par la génération de la page de couverture.
      *
      * @param These $these
-     * @return array Logs
      */
     public function updateThese(These $these)
     {
-        /** Paramétrage du service de récupération */
-        $key = $this->fetcherService->getEtablissementKey($these->getEtablissement()->getStructure()->getCode());
-        $this->fetcherService->setConfigWithPosition($key);
-
-        $logs = [];
+        $this->fetcherService->setEtablissement($these->getEtablissement());
 
         /**
          * Appel du WS pour mettre à jour les tables TMP_*.
          */
         // these
         $sourceCodeThese = $these->getSourceCode();
-        $logs[] = $this->fetcherService->fetch('these', $sourceCodeThese);
+        $this->fetcherService->fetch('these', $sourceCodeThese);
         /** @var TmpThese $tmpThese */
         $tmpThese = $this->entityManager->getRepository(TmpThese::class)->findOneBy(['sourceCode' => $sourceCodeThese]);
         // doctorant
         $sourceCodeDoctorant = $tmpThese->getDoctorantId();
-        $logs[] = $this->fetcherService->fetch('doctorant', $sourceCodeDoctorant);
+        $this->fetcherService->fetch('doctorant', $sourceCodeDoctorant);
         /** @var TmpDoctorant $tmpDoctorant */
         $tmpDoctorant = $this->entityManager->getRepository(TmpDoctorant::class)->findOneBy(['sourceCode' => $sourceCodeDoctorant]);
         // individu doctorant
         $sourceCodeIndividu = $tmpDoctorant->getIndividuId();
-        $logs[] = $this->fetcherService->fetch('individu', $sourceCodeIndividu);
+        $this->fetcherService->fetch('individu', $sourceCodeIndividu);
         // acteurs
         $theseId = $these->getId();
-        $logs[] = $this->fetcherService->fetch('acteur', null, ['these_id' => $theseId]);
+        $this->fetcherService->fetch('acteur', null, ['these_id' => $theseId]);
         /** @var TmpActeur[] $tmpActeurs */
         $tmpActeurs = $this->entityManager->getRepository(TmpActeur::class)->findBy(['theseId' => $sourceCodeThese]);
         // individus acteurs
         $sourceCodeIndividus = [];
         foreach ($tmpActeurs as $tmpActeur) {
             $sourceCodeIndividus[] = $sourceCodeIndividu = $tmpActeur->getIndividuId();
-            $logs[] = $this->fetcherService->fetch('individu', $sourceCodeIndividu);
+            $this->fetcherService->fetch('individu', $sourceCodeIndividu);
         }
         // ed
         $sourceCodeEcoleDoct = $tmpThese->getEcoleDoctId();
-        $logs[] = $this->fetcherService->fetch('ecole-doctorale', $sourceCodeEcoleDoct);
+        $this->fetcherService->fetch('ecole-doctorale', $sourceCodeEcoleDoct);
         // ur
         $sourceCodeUniteRech = $tmpThese->getUniteRechId();
-        $logs[] = $this->fetcherService->fetch('unite-recherche', $sourceCodeUniteRech);
+        $this->fetcherService->fetch('unite-recherche', $sourceCodeUniteRech);
 
         /**
          * Synchro UnicaenImport pour mettre à jour les tables finales.
@@ -234,8 +242,6 @@ class ImportService
         } catch (OptimisticLockException $e) {
             throw new RuntimeException("Erreur rencontrée lors de l'enregistrement en base de données", null, $e);
         }
-
-        return $logs;
     }
 
     /**
@@ -307,16 +313,5 @@ class ImportService
 
         $this->filters = $filters;
         $this->sqlFilters = $sqlFilters ?: null;
-    }
-
-    private function printDebug($key)
-    {
-        echo "KEY: {$key}<br/>";
-        echo $this->fetcherService->getCodeEtablissement() . " | ";
-        echo $this->fetcherService->getUrl() . " | ";
-        echo $this->fetcherService->getProxy() . " | ";
-        echo (($this->fetcherService->getVerify()) ? "true" : "false") . " <br/> ";
-        echo $this->fetcherService->getUser() . " | ";
-        echo $this->fetcherService->getPassword() . " | ";
     }
 }

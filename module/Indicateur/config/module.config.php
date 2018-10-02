@@ -1,7 +1,21 @@
 <?php
 
+use Indicateur\Provider\Privilege\IndicateurPrivileges;
+use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
+use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
+use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Indicateur\Controller\Factory\IndicateurControllerFactory;
 use Indicateur\Controller\IndicateurController;
+use Indicateur\Form\IndicateurForm;
+use Indicateur\Form\IndicateurFormFactory;
+use Indicateur\Form\IndicateurHydrator;
+use Indicateur\Service\Factory\IndicateurServiceFactory;
+use Indicateur\Service\IndicateurService;
+use Indicateur\View\Helper\CompletIndicateurIndividuHelper;
+use Indicateur\View\Helper\CompletIndicateurTheseHelper;
+use Indicateur\View\Helper\ResumeIndicateurIndividuHelper;
+use Indicateur\View\Helper\ResumeIndicateurTheseHelper;
+use Zend\Mvc\Router\Http\Literal;
 use Zend\Mvc\Router\Http\Segment;
 
 return array(
@@ -12,29 +26,52 @@ return array(
                     'controller' => IndicateurController::class,
                     'action'     => [
                         'index',
-                        'soutenance-depassee',
-                        'export-soutenance-depassee',
-                        'acteurs-sans-mail',
-                        'export-acteurs-sans-mail',
-                        'doctorants-sans-mail',
-                        'export-doctorants-sans-mail',
-                        'theses-anciennes',
-                        'export-theses-anciennes',
-                        'theses-a-soutenir',
-                        'export-theses-a-soutenir',
-                        'theses-sans-pdc',
-                        'export-theses-sans-pdc',
-                        'theses-sans-depot',
-                        'export-theses-sans-depot',
+                        'view',
+                        'toggle-indicateur',
+                        'lister-indicateur',
+                        'editer-indicateur',
+                        'effacer-indicateur',
+                        'rafraichir-indicateur',
+                    ],
+                    'privileges' => [
+                        IndicateurPrivileges::INDICATEUR_CONSULTATION,
+
+                    ],
                 ],
-                    'roles' => [
-                        'Administrateur technique',
+                [
+                    'controller' => IndicateurController::class,
+                    'action'     => [
+                        'export',
+                    ],
+                    'privileges' => [
+                        IndicateurPrivileges::INDICATEUR_EXPORTATION,
                     ],
                 ],
             ],
         ],
     ],
-    'doctrine'     => [],
+    'doctrine'     => [
+        'driver'     => [
+            'orm_default'        => [
+                'class'   => MappingDriverChain::class,
+                'drivers' => [
+                    'Indicateur\Model' => 'orm_default_xml_driver',
+                ],
+            ],
+            'orm_default_xml_driver' => [
+                'class' => XmlDriver::class,
+                'cache' => 'array',
+                'paths' => [
+                    __DIR__ . '/../src/Indicateur/Model/Mapping',
+                ],
+            ],
+        ],
+        'connection'    => [
+            'orm_default' => [
+                'driver_class' => OCI8::class,
+            ],
+        ],
+    ],
 
     'navigation'      => [
         'default' => [
@@ -45,11 +82,7 @@ return array(
                             'indicateur' => [
                                 'label'    => 'Indicateurs',
                                 'route'    => 'indicateur',
-                                //'resource' => PrivilegeController::getResourceId('Application\Controller\EcoleDoctorale', 'index'),
-                                'roles' => [
-                                    'Administrateur technique',
-                                ],
-
+                                'resource' => IndicateurPrivileges::getResourceId(IndicateurPrivileges::INDICATEUR_CONSULTATION),
                                 'order'    => 1,
                             ],
                         ],
@@ -72,157 +105,80 @@ return array(
                     ],
                 ],
                 'child_routes'  => [
-                    'soutenance-depassee' => [
-                        'type'          => Segment::class,
+                    'view' => [
+                        'type' => Segment::class,
                         'may_terminate' => true,
-                        'options'       => [
-                            'route'       => '/soutenance-depassee',
-                            'defaults'    => [
-                                'action' => 'soutenance-depassee',
-                            ],
-                        ],
-                        'child_routes'  => [
-                            'export' => [
-                                'type'          => Segment::class,
-                                'may_terminate' => true,
-                                'options'       => [
-                                    'route'       => '/export',
-                                    'defaults'    => [
-                                        'action' => 'export-soutenance-depassee',
-                                    ],
-                                ],
+                        'options' => [
+                            'route'    => '/view/:indicateur',
+                            'defaults' => [
+                                'controller' => IndicateurController::class,
+                                'action'     => 'view',
                             ],
                         ],
                     ],
-                    'acteurs-sans-mail' => [
-                        'type'          => Segment::class,
+                    'editer' => [
+                        'type' => Segment::class,
                         'may_terminate' => true,
-                        'options'       => [
-                            'route'       => '/acteurs-sans-mail',
-                            'defaults'    => [
-                                'action' => 'acteurs-sans-mail',
-                            ],
-                        ],
-                        'child_routes'  => [
-                            'export' => [
-                                'type'          => Segment::class,
-                                'may_terminate' => true,
-                                'options'       => [
-                                    'route'       => '/export',
-                                    'defaults'    => [
-                                        'action' => 'export-acteurs-sans-mail',
-                                    ],
-                                ],
+                        'options' => [
+                            'route'    => '/editer[/:indicateur]',
+                            'defaults' => [
+                                'controller' => IndicateurController::class,
+                                'action'     => 'editer-indicateur',
                             ],
                         ],
                     ],
-                    'theses-a-soutenir' => [
-                        'type'          => Segment::class,
+                    'lister' => [
+                        'type' => Literal::class,
                         'may_terminate' => true,
-                        'options'       => [
-                            'route'       => '/theses-a-soutenir',
-                            'defaults'    => [
-                                'action' => 'theses-a-soutenir',
-                            ],
-                        ],
-                        'child_routes'  => [
-                            'export' => [
-                                'type'          => Segment::class,
-                                'may_terminate' => true,
-                                'options'       => [
-                                    'route'       => '/export',
-                                    'defaults'    => [
-                                        'action' => 'export-theses-a-soutenir',
-                                    ],
-                                ],
+                        'options' => [
+                            'route'    => '/lister',
+                            'defaults' => [
+                                'controller' => IndicateurController::class,
+                                'action'     => 'lister-indicateur',
                             ],
                         ],
                     ],
-                    'theses-sans-pdc' => [
-                        'type'          => Segment::class,
+                    'toggle' => [
+                        'type' => Segment::class,
                         'may_terminate' => true,
-                        'options'       => [
-                            'route'       => '/theses-sans-pdc',
-                            'defaults'    => [
-                                'action' => 'theses-sans-pdc',
-                            ],
-                        ],
-                        'child_routes'  => [
-                            'export' => [
-                                'type'          => Segment::class,
-                                'may_terminate' => true,
-                                'options'       => [
-                                    'route'       => '/export',
-                                    'defaults'    => [
-                                        'action' => 'export-theses-sans-pdc',
-                                    ],
-                                ],
+                        'options' => [
+                            'route'    => '/toggle/:indicateur',
+                            'defaults' => [
+                                'controller' => IndicateurController::class,
+                                'action'     => 'toggle-indicateur',
                             ],
                         ],
                     ],
-                    'theses-sans-depot' => [
-                        'type'          => Segment::class,
+                    'rafraichir' => [
+                        'type' => Segment::class,
                         'may_terminate' => true,
-                        'options'       => [
-                            'route'       => '/theses-sans-depot',
-                            'defaults'    => [
-                                'action' => 'theses-sans-depot',
-                            ],
-                        ],
-                        'child_routes'  => [
-                            'export' => [
-                                'type'          => Segment::class,
-                                'may_terminate' => true,
-                                'options'       => [
-                                    'route'       => '/export',
-                                    'defaults'    => [
-                                        'action' => 'export-theses-sans-depot',
-                                    ],
-                                ],
+                        'options' => [
+                            'route'    => '/rafraichir/:indicateur',
+                            'defaults' => [
+                                'controller' => IndicateurController::class,
+                                'action'     => 'rafraichir-indicateur',
                             ],
                         ],
                     ],
-                    'doctorants-sans-mail' => [
-                        'type'          => Segment::class,
+                    'effacer' => [
+                        'type' => Segment::class,
                         'may_terminate' => true,
-                        'options'       => [
-                            'route'       => '/doctorants-sans-mail',
-                            'defaults'    => [
-                                'action' => 'doctorants-sans-mail',
-                            ],
-                        ],
-                        'child_routes'  => [
-                            'export' => [
-                                'type'          => Segment::class,
-                                'may_terminate' => true,
-                                'options'       => [
-                                    'route'       => '/export',
-                                    'defaults'    => [
-                                        'action' => 'export-doctorants-sans-mail',
-                                    ],
-                                ],
+                        'options' => [
+                            'route'    => '/effacer/:indicateur',
+                            'defaults' => [
+                                'controller' => IndicateurController::class,
+                                'action'     => 'effacer-indicateur',
                             ],
                         ],
                     ],
-                    'theses-anciennes' => [
-                        'type'          => Segment::class,
+                    'export' => [
+                        'type' => Segment::class,
                         'may_terminate' => true,
-                        'options'       => [
-                            'route'       => '/theses-anciennes',
-                            'defaults'    => [
-                                'action' => 'theses-anciennes',
-                            ],
-                        ],
-                        'child_routes'  => [
-                            'export' => [
-                                'type'          => Segment::class,
-                                'may_terminate' => true,
-                                'options'       => [
-                                    'route'       => '/export',
-                                    'defaults'    => [
-                                        'action' => 'export-theses-anciennes',
-                                    ],
-                                ],
+                        'options' => [
+                            'route'    => '/export/:indicateur',
+                            'defaults' => [
+                                'controller' => IndicateurController::class,
+                                'action'     => 'export',
                             ],
                         ],
                     ],
@@ -230,13 +186,34 @@ return array(
             ],
         ],
     ],
+
+    'form_elements' => [
+        'factories' => [
+            IndicateurForm::class => IndicateurFormFactory::class,
+        ],
+    ],
+    'hydrators' => [
+        'invokables' => [
+            IndicateurHydrator::class => IndicateurHydrator::class,
+        ],
+    ],
     'service_manager' => [
-        'factories' => [],
+        'factories' => [
+            IndicateurService::class => IndicateurServiceFactory::class,
+        ],
 
     ],
     'controllers' => [
         'factories' => [
             IndicateurController::class => IndicateurControllerFactory::class,
+        ],
+    ],
+    'view_helpers' => [
+        'invokables' => [
+            'completIndicateurThese'    => CompletIndicateurTheseHelper::class,
+            'completIndicateurIndividu' => CompletIndicateurIndividuHelper::class,
+            'resumeIndicateurThese'     => ResumeIndicateurTheseHelper::class,
+            'resumeIndicateurIndividu'  => ResumeIndicateurIndividuHelper::class,
         ],
     ],
     'view_manager' => [

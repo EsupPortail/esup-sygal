@@ -1,5 +1,6 @@
 <?php
 
+use Application\Assertion\AssertionAbstractFactory;
 use Application\Cache\MemcachedFactory;
 use Application\Controller\Factory\IndexControllerFactory;
 use Application\Entity\Db\Repository\DefaultEntityRepository;
@@ -11,6 +12,7 @@ use Application\RouteMatchInjector;
 use Application\Service\AuthorizeServiceAwareInitializer;
 use Application\Service\Role\RoleService;
 use Application\Service\ServiceAwareInitializer;
+use Application\Service\Url\UrlServiceFactory;
 use Application\Service\UserContextServiceAwareInitializer;
 use Application\Service\UserContextServiceFactory;
 use Application\View\Helper\EscapeTextHelper;
@@ -171,6 +173,10 @@ return array(
             'UserAuthenticatedEventListener' => UserAuthenticatedEventListenerFactory::class,
             'Sygal\Memcached'                => MemcachedFactory::class,
         ),
+        'abstract_factories' => [
+            AssertionAbstractFactory::class,
+            UrlServiceFactory::class, // construit: 'urlTheseService'
+        ],
         'initializers' => [
             ServiceAwareInitializer::class,
             AuthorizeServiceAwareInitializer::class,

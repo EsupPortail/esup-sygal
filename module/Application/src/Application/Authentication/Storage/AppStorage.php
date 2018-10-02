@@ -51,6 +51,15 @@ class AppStorage implements ChainableStorage
             return;
         }
 
+        // pas la peine d'aller plus loin si l'établissement correspondant au domaine n'existe pas
+        $domaineEtab = $this->userWrapper->getDomainFromEppn();
+        $etablissement = $this->getEtablissementService()->getRepository()->findOneByDomaine($domaineEtab);
+        if (! $etablissement) {
+            throw new RuntimeException(
+                "Les données concernant l'utilisateur authentifié font référence au domaine '$domaineEtab' " .
+                "mais aucun établissement n'a été trouvé avec ce domaine.");
+        }
+
         /**
          * Collecte des données issues de la table Utilisateur.
          */

@@ -2,10 +2,12 @@
 
 namespace Import\Service\Factory;
 
+use Application\Service\Etablissement\EtablissementService;
 use Doctrine\ORM\EntityManager;
 use Import\Service\FetcherService;
 use Import\Service\ImportService;
 use Import\Service\SynchroService;
+use Zend\Log\Logger;
 use Zend\ServiceManager\ServiceLocatorInterface as ContainerInterface;
 
 class ImportServiceFactory
@@ -21,10 +23,17 @@ class ImportServiceFactory
         /** @var FetcherService $fetcherService */
         $fetcherService = $container->get(FetcherService::class);
 
+        /** @var EtablissementService $etbalissementService */
+        $etbalissementService = $container->get(EtablissementService::class);
+
+        $logger = new Logger();
+
         $service = new ImportService();
         $service->setFetcherService($fetcherService);
         $service->setEntityManager($entityManager);
         $service->setSynchroService($synchroService);
+        $service->setEtablissementService($etbalissementService);
+        $service->setLogger($logger);
 
         return $service;
     }

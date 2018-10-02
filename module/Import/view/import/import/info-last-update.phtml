@@ -2,17 +2,23 @@
 
 
  /**
+  * @var string $query
   * @var string $last_time
-  * @var string $last_number
+  * @var string $message
   */
 
  $date = new DateTime($last_time);
 
- echo "<table>";
-// echo "<tr><td>".$query . "</td></tr>";
- echo "<tr><td>".$date->format("d/m/Y") . "</td></tr>";
- echo "<tr><td>".$date->format("H:i:s") . "</td></tr>";
- echo "<tr><td>".$last_number." entrées" . "</td></tr>";
- echo "</table>";
-
  ?>
+
+<table class="table">
+    <tbody>
+    <tr>
+        <td> <?php echo $query ; ?></td>
+        <td> <?php echo $date->format("d/m/Y"); ?></td>
+        <td> <?php echo $date->format("H:i:s"); ?></td>
+        <td> <?php echo $message; ?></td>
+    </tr>
+    </tbody>
+
+</table>

@@ -5,6 +5,7 @@ use Application\Constants;use Application\Controller\TheseController;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
 use Application\Provider\Privilege\ValidationPrivileges;
+use Application\Service\Fichier\PdcData;
 use Application\View\Renderer\PhpRenderer;
 use UnicaenApp\Service\MessageCollector;
 
@@ -18,7 +19,7 @@ use UnicaenApp\Service\MessageCollector;
  * @var string      $devaliderUrl
  * @var string      $nextStepUrl
  * @var MessageCollector    $msgCollector
- * @var []          $informations
+ * @var PdcData          $informations
  *
  * @see TheseController::validationPageDeCouvertureAction()
  */
@@ -57,12 +58,7 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_
 </div>
 
 <?php
-    $problemes = [];
-    foreach ($informations as $clef => $information) {
-        if ($information == "") {
-            $problemes[] = $clef;
-        }
-    }
+    $problemes = $informations->getWarnings()
 ?>
 
 <?php if (!empty($problemes)): ?>
@@ -76,7 +72,7 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_
             Liste des informations manquantes :
             <ul>
             <?php foreach ($problemes as $probleme): ?>
-                <li> <?php echo informationManquante($probleme, $informations); ?> </li>
+                <li> <?php echo $probleme; ?> </li>
             <?php endforeach; ?>
             </ul>
         </div>
@@ -190,29 +186,3 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_
         });
     });
 </script>
-
-<?php
-function informationManquante($clef, $informations) {
-
-    //justification des logos
-    $splits = explode("-",$clef);
-    if($splits[0] === "logo") {
-        switch($splits[1]) {
-            case "comue" : return "le logo de la structure de 'Normandie Université' est manquant";
-            case "ecoleDoctorale" : return "le logo de l'école doctorale est manquant";
-            case "uniteRecherche" : return "le logo de l'unité de recherche est manquant";
-            case "etablissement" : return "le logo de l'établissement de rattachement est manquant";
-        }
-
-    }
-    $splits = explode(" ",$clef);
-    $acteur = "nom ". $splits[1];
-    switch($splits[0]) {
-        case "etablissement" : return "l'établissement du membre ".$splits[1]." (".$informations[$acteur].") n'est pas renseigné";
-        case "qualite" : return "la qualité du membre ".$splits[1]." (".$informations[$acteur].") n'est pas renseignée";
-        case "nom": return "le nom du membre ".$splits[1]." (".$informations[$acteur].") n'est pas renseigné";
-        case "role": return "le rôle du membre ".$splits[1]." (".$informations[$acteur].") n'est pas renseigné";
-    }
-    return $clef;
-}
-?>

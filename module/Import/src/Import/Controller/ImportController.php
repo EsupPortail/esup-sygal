@@ -10,6 +10,9 @@ use Import\Service\Traits\ImportServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
+use Zend\Log\Filter\Priority;
+use Zend\Log\Logger;
+use Zend\Log\Writer\Stream;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
@@ -41,12 +44,12 @@ class ImportController extends AbstractActionController
         $data = $result->fetch();
 
         $last_time = $data["REQ_END_DATE"];
-        $last_number = explode(" ", $data["REQ_RESPONSE"])[0];
+        $message = $data["REQ_RESPONSE"];
 
         return new ViewModel([
-            'query'       => $etablissement . '|' . $table,
-            "last_time"   => $last_time,
-            "last_number" => $last_number,
+            'query'     => $etablissement . ' | ' . $table,
+            "last_time" => $last_time,
+            "message"   => $message,
         ]);
     }
 
@@ -69,8 +72,14 @@ class ImportController extends AbstractActionController
 
         $queryParams = $this->params()->fromQuery();
 
-        $logs = [];
-        $logs[] = $this->importService->import($service, $etablissement, $sourceCode, $queryParams);
+        $stream = fopen('php://memory','r+');
+        $this->setLoggerStream($stream);
+
+        $this->importService->import($service, $etablissement, $sourceCode, $queryParams);
+
+        rewind($stream);
+        $logs = stream_get_contents($stream);
+        fclose($stream);
 
         return new ViewModel([
             'service'       => $service,
@@ -89,9 +98,15 @@ class ImportController extends AbstractActionController
     public function importAllAction()
     {
         $etablissement = $this->params('etablissement');
-        $logs = [];
 
-        $logs[] = $this->importService->importAll($etablissement);
+        $stream = fopen('php://memory','r+');
+        $this->setLoggerStream($stream);
+
+        $this->importService->importAll($etablissement);
+
+        rewind($stream);
+        $logs = stream_get_contents($stream);
+        fclose($stream);
 
         return new ViewModel([
             'service'       => 'Tous',
@@ -122,7 +137,14 @@ class ImportController extends AbstractActionController
             throw new RuntimeException("Aucune thèse trouvée avec ce source code: " . $sourceCodeThese);
         }
 
-        $logs = $this->importService->updateThese($these);
+        $stream = fopen('php://memory','r+');
+        $this->setLoggerStream($stream);
+
+        $this->importService->updateThese($these);
+
+        rewind($stream);
+        $logs = stream_get_contents($stream);
+        fclose($stream);
 
         return new ViewModel([
             'service'       => "these + dépendances",
@@ -138,17 +160,36 @@ class ImportController extends AbstractActionController
         $etablissement = $this->params('etablissement');
         $sourceCode = $this->params('source_code');
 
+        $this->setLoggerStream('php://output');
+
         $this->importService->import($service, $etablissement, $sourceCode);
 
-        echo "Importation des données du service '$service' de l'établissement '$etablissement' réussie." . PHP_EOL;
+        echo "Importation des données du service '$service' de l'établissement '$etablissement' effectuée." . PHP_EOL;
     }
 
     public function importAllConsoleAction()
     {
         $etablissement = $this->params('etablissement');
 
+        $this->setLoggerStream('php://output');
+
         $this->importService->importAll($etablissement);
 
-        echo "Importation de toutes les données de l'établissement '$etablissement' réussie" . PHP_EOL;
+        echo "Importation de toutes les données de l'établissement '$etablissement' effectuée." . PHP_EOL;
+    }
+
+    /**
+     * @param string|resource $stream
+     */
+    private function setLoggerStream($stream)
+    {
+        $filter = new Priority(Logger::INFO);
+
+        $writer = new Stream($stream);
+        $writer->addFilter($filter);
+
+        /** @var Logger $logger */
+        $logger = $this->importService->getLogger();
+        $logger->addWriter($writer);
     }
 }

@@ -3,12 +3,24 @@
 namespace Application\Entity\Db\Repository;
 
 use Application\Entity\Db\Individu;
+use Application\Entity\Db\IndividuRole;
 use Doctrine\DBAL\DBALException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
 
 class IndividuRepository extends DefaultEntityRepository
 {
+    /**
+     * @param int $id
+     * @return Individu
+     */
+    public function find($id) {
+
+        /** @var Individu $individu */
+        $individu = $this->findOneBy(["id"=>$id]);
+        return $individu;
+    }
+
     /**
      * @param string $sourceCode
      * @return Individu
@@ -64,5 +76,20 @@ class IndividuRepository extends DefaultEntityRepository
         }
 
         return $stmt->fetchAll();
+    }
+
+    public function findByRole($role)
+    {
+        $repo = $this->getEntityManager()->getRepository(IndividuRole::class);
+        $qb = $repo->createQueryBuilder("ir")
+            -> join (Individu::class, "in")
+            -> andWhere("ir.role = :role")
+            ->setParameter("role", $role)
+        ;
+        $query = $qb->getQuery();
+        /** @var IndividuRole[] $res */
+        $res = $query->execute();
+
+        return $res;
     }
 }

@@ -742,7 +742,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     {
         $acteurs = $this->getActeurs()->toArray();
 
-        usort($acteurs, $callable ?: [Acteur::class, 'cmp']);
+        usort($acteurs, $callable ?: Acteur::getComparisonFunction());
 
         return new ArrayCollection($acteurs);
     }

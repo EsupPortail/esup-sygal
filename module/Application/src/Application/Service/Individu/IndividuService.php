@@ -95,30 +95,6 @@ class IndividuService extends BaseService
     }
 
     /**
-     * @param Role $role
-     * @return IndividuRole[]
-     */
-    public function getIndividuByRole(Role $role)
-    {
-        $repo = $this->entityManager->getRepository(IndividuRole::class);
-        $qb = $repo->createQueryBuilder("ir")
-            -> join (Individu::class, "in")
-            -> andWhere("ir.role = :role")
-            ->setParameter("role", $role)
-        ;
-        $query = $qb->getQuery();
-        /** @var IndividuRole[] $res */
-        $res = $query->execute();
-
-        return $res;
-    }
-
-    public function getIndviduById($id) {
-        $individu = $this->getEntityManager()->getRepository(Individu::class)->findOneBy(["id"=>$id]);
-        return $individu;
-    }
-
-    /**
      * @param Individu $individu
      * @param Utilisateur $utilisateur
      * @throws OptimisticLockException

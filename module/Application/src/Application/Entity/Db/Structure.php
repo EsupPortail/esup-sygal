@@ -119,6 +119,16 @@ class Structure implements HistoriqueAwareInterface, SourceAwareInterface
     }
 
     /**
+     * Indique si cette structure se substitue à d'autres structures.
+     *
+     * @return bool
+     */
+    public function estStructureSubstituante()
+    {
+        return count($this->getStructuresSubstituees()) > 0;
+    }
+
+    /**
      * @return string
      */
     public function getId()
