@@ -40,16 +40,16 @@ class ImportService
      * Liste ORDONNÉE de tous les services proposés.
      */
     const SERVICES = [
+        'structure',
+        'etablissement',
+        'ecole-doctorale',
+        'unite-recherche',
         'individu',
         'doctorant',
         'these',
         'role',
         'acteur',
         'variable',
-        'structure',
-        'etablissement',
-        'ecole-doctorale',
-        'unite-recherche',
     ];
 
     /**
