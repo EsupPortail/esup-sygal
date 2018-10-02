@@ -70,6 +70,7 @@ class StructureService extends BaseService
         //Assert::null($structureCibleDataObject->getSourceCode(), "Le source code doit être null car il est calculé");
 
         // le source code d'une structure cible est calculé
+        $sourceCode = $structureCibleDataObject->getSourceCode();
         if ($structureCibleDataObject->getSourceCode() === null) $sourceCode = uniqid(Etablissement::CODE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP);
 
         // la source d'une structure cible est forcément SYGAL
@@ -90,7 +91,11 @@ class StructureService extends BaseService
 
         // instanciation du couple (Etab|ED|UR ; Structure) cible
         $structureConcreteCible = Structure::constructFromDataObject($structureCibleDataObject, $typeStructure, $sourceSygal);
+        $structureConcreteCible->setSourceCode(uniqid(Etablissement::CODE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP));
+//        $structureConcreteCible->getStructure()->setSourceCode(uniqid(Etablissement::CODE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP));
+        $structureConcreteCible->getStructure()->setCode("tmp");
         $structureRattachCible = $structureConcreteCible->getStructure(); // StructureSubstitution ne référence que des entités de type Structure
+//        $structureRattachCible->setSourceCode(uniqid(Etablissement::CODE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP));
 
         // instanciations des substitutions
         $substitutions = StructureSubstit::fromStructures($structuresSources, $structureRattachCible);
