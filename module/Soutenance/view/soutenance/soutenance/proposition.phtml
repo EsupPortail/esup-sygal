@@ -11,7 +11,6 @@
      * @var int $individuId
      */
 
-use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
@@ -66,12 +65,9 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
     (ou refus) seront annulées et la proposition devra être à nouveau être validée.
 </p>
 
-<?php
-    $datelieu = false;
-    if ($proposition->getDate() && $proposition->getLieu()) $datelieu = true;
-?>
+<!-- PANNEAU DATE ET HEURE -------------------------------------------------------------------------------------------->
 
-<div class="panel <?php echo ($datelieu)?'panel-success':'panel-danger'; ?>">
+<div class="panel <?php echo ($proposition->hasDateEtLieu())?'panel-success':'panel-danger'; ?>">
     <div class="panel-heading">
         <h4>
             Date/Heure et lieu de la soutenance
@@ -79,20 +75,14 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
     </div>
     <div class="panel-body">
         <div class="pull-left">
-            <ul>
-                <li>
-                    Date de la soutenance :
-                    <?php echo ($proposition->getDate())?$proposition->getDate()->format("d/m/Y"):'<strong>non communiquée</strong>'; ?>
-                </li>
-                <li>
-                    Heure de la soutenance :
-                    <?php echo ($proposition->getDate())?$proposition->getDate()->format("H:i:s"):'<strong>non communiquée</strong>'; ?>
-                </li>
-                <li>
-                    Lieu de la Soutenance :
-                    <?php echo ($proposition->getLieu())?$proposition->getLieu():'<strong>non communiqué</strong>'; ?>
-                </li>
-            </ul>
+            <dl class="dl-horizontal">
+                <dt> Date de la soutenance </dt>
+                <dd> <?php echo ($proposition->getDate())?$proposition->getDate()->format("d/m/Y"):'<strong>non communiquée</strong>'; ?> </dd>
+                <dt> Heure de la soutenance </dt>
+                <dd> <?php echo ($proposition->getDate())?$proposition->getDate()->format("H:i:s"):'<strong>non communiquée</strong>'; ?> </dd>
+                <dt> Lieu de la Soutenance </dt>
+                <dd> <?php echo ($proposition->getLieu())?$proposition->getLieu():'<strong>non communiqué</strong>'; ?> </dd>
+            </dl>
         </div>
         <div class="pull-right">
             <?php if ($canModifier): ?>
@@ -107,6 +97,8 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
         </div>
     </div>
 </div>
+
+<!-- PANNEAU INDICATEURS----------------------------------------------------------------------------------------------->
 
 <?php
     $indicateurs = $proposition->computeIndicateur();
@@ -188,6 +180,8 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
     </div>
 </div>
 
+<!-- PANNEAU COMPOSITION DU JURY -------------------------------------------------------------------------------------->
+
 <div class="panel panel-info">
     <div class="panel-heading">
         <h4>
@@ -251,6 +245,8 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
 
     </div>
 </div>
+
+<!-- PANNEAU VALIDATION ACTEUR ---------------------------------------------------------------------------------------->
 
 <div class="panel panel-info">
     <div class="panel-heading">
@@ -317,6 +313,7 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
     </div>
 </div>
 
+<!-- PANNEAU VALIDATION STRUCTURE ------------------------------------------------------------------------------------->
 
 <div class="panel panel-info">
     <div class="panel-heading">

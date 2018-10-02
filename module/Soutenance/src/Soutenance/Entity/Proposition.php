@@ -226,4 +226,10 @@ class Proposition {
         if(! $this->getDate() || ! $this->getLieu()) return false;
         return true;
     }
+
+    /** @return boolean */
+    public function hasDateEtLieu()
+    {
+        return ($this->getDate() && $this->getLieu());
+    }
 }
