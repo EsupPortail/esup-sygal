@@ -151,7 +151,7 @@ $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->get
                         <?php endif; ?>
                     </td>
                     <td>
-                        <?php if($canVisualiserEngagementImpartialite): ?>
+                        <?php if($canVisualiserEngagementImpartialite AND  $rapporteur->getIndividu()): ?>
                             <a href="<?php echo $this->url('soutenance/presoutenance/engagement-impartialite', ['these' => $these->getId(), 'proposition' => $proposition->getId(), 'membre' => $rapporteur->getId()], [], true);?>">
                                 <span class="glyphicon glyphicon-eye-open" title="Visualiser l'engagement d'impartialité"></span>
                             </a>
