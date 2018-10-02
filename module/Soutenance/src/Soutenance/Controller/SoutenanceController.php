@@ -7,6 +7,7 @@ use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
+use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Validation;
 use Application\Service\Individu\IndividuServiceAwareTrait;
@@ -82,6 +83,16 @@ class SoutenanceController extends AbstractActionController {
         foreach ($directeurs as $directeur) {
             $validations[$directeur->getId()] = $this->getValidationService()->findValidationPropositionSoutenanceByTheseAndIndividu($these, $directeur);
         }
+
+        $validationUR = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these);
+        if ($validationUR) $validations["unite-recherche"] = current($validationUR);
+        $validationED = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_ED, $these);
+        if ($validationED) $validations["ecole-doctorale"] = current($validationED);
+        $validationBDD = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
+        if ($validationBDD) $validations["bureau-doctorat"] = current($validationBDD);
+
+
+
         return new ViewModel([
                 'these' => $these,
                 'proposition' => $proposition,
@@ -89,6 +100,8 @@ class SoutenanceController extends AbstractActionController {
                 'directeurs' => $directeurs,
                 'validations' => $validations,
                 'currentIndividu' => $currentIndividu,
+                'roleCode' => $this->userContextService->getSelectedIdentityRole()->getCode(),
+                'individuId' => $this->userContextService->getIdentityDb()->getIndividu()->getId(),
             ]
         );
     }

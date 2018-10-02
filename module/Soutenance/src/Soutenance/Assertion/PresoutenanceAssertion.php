@@ -11,7 +11,7 @@ use Zend\Permissions\Acl\Assertion\AssertionInterface;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 use Zend\Permissions\Acl\Role\RoleInterface;
 
-class PresoutenanceIndividuAssertion implements  AssertionInterface {
+class PresoutenanceAssertion implements  AssertionInterface {
     use UserContextServiceAwareTrait;
 
     /**

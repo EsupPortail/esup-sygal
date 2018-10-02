@@ -53,7 +53,7 @@ class PropositionAssertion implements  AssertionInterface {
         if ($role === Role::CODE_ADMIN_TECH) return true;
 
         switch ($privilege) {
-            case SoutenancePrivileges::SOUTENANCE_PROPOSITION_VISUALISER;
+            case SoutenancePrivileges::SOUTENANCE_PROPOSITION_VISUALISER:
                 switch ($role) {
                     case Role::CODE_BDD :
                         return $structure === $these->getEtablissement()->getStructure();
@@ -75,7 +75,7 @@ class PropositionAssertion implements  AssertionInterface {
                         return false;
                         break;
                 }
-            case SoutenancePrivileges::SOUTENANCE_PROPOSITION_MODIFIER;
+            case SoutenancePrivileges::SOUTENANCE_PROPOSITION_MODIFIER:
                 switch ($role) {
                     case Role::CODE_DOCTORANT :
                         return $doctorant->getId() === $individu->getId();
@@ -88,7 +88,7 @@ class PropositionAssertion implements  AssertionInterface {
                         return false;
                         break;
                 }
-            case SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_ACTEUR;
+            case SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_ACTEUR:
                 switch ($role) {
                     case Role::CODE_DOCTORANT :
                         return $doctorant->getId() === $individu->getId();
@@ -101,34 +101,39 @@ class PropositionAssertion implements  AssertionInterface {
                         return false;
                         break;
                 }
-            case SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_UR;
+            case SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_UR:
                 switch ($role) {
                     case Role::CODE_UR :
-                        $validations = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PROPOSITION_SOUTENANCE, $these);
+                        $validations_ACTEUR = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PROPOSITION_SOUTENANCE, $these);
+                        $validations_UNITE  = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these);
                         $nbDirs = count($these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE));
                         $nbCoDirs = count($these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE));
                         $nbActeur = 1 + $nbDirs + $nbCoDirs;
-                        return count($validations) === $nbActeur && $structure === $these->getUniteRecherche()->getStructure();
+                        return !$validations_UNITE && count($validations_ACTEUR) === $nbActeur && $structure === $these->getUniteRecherche()->getStructure();
                         break;
                     default:
                         return false;
                         break;
                 }
-            case SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_ED;
+            case SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_ED:
                 switch ($role) {
                     case Role::CODE_ED :
-                        $validations = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these);
-                        return $validations && $structure === $these->getEcoleDoctorale()->getStructure();
+                        $validations_UNITE  = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these);
+                        $validations_ECOLE  = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_ED, $these);
+                        return !$validations_ECOLE && $validations_UNITE && $structure === $these->getEcoleDoctorale()->getStructure();
                         break;
                     default:
                         return false;
                         break;
                 }
-            case SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_BDD;
+            case SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_BDD:
+
                 switch ($role) {
                     case Role::CODE_BDD :
-                        $validations = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_ED, $these);
-                        return $validations && $structure === $these->getEtablissement()->getStructure();
+                        $validations_UNITE  = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these);
+                        $validations_ECOLE  = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_ED, $these);
+                        $validations_BDD    = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
+                        return !$validations_BDD && $validations_UNITE && $validations_ECOLE && $structure === $these->getEtablissement()->getStructure();
                         break;
                     default:
                         return false;

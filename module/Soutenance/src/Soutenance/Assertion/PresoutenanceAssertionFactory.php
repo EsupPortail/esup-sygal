@@ -15,7 +15,7 @@ class PresoutenanceAssertionFactory {
         $userContext = $serviceLocator->get('UnicaenAuth\Service\UserContext');
 
         /** @var  $assertion */
-        $assertion = new PresoutenanceIndividuAssertion();
+        $assertion = new PresoutenanceAssertion();
         $assertion->setUserContextService($userContext);
 
         return $assertion;

@@ -5,7 +5,7 @@ namespace Soutenance;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
-use Soutenance\Assertion\PresoutenanceIndividuAssertion;
+use Soutenance\Assertion\PresoutenanceAssertion;
 use Soutenance\Assertion\PresoutenanceAssertionFactory;
 use Soutenance\Assertion\EngagementImpartialiteAssertion;
 use Soutenance\Assertion\EngagementImpartialiteAssertionFactory;
@@ -70,7 +70,7 @@ return array(
                             SoutenancePrivileges::SOUTENANCE_PRESOUTENANCE_VISUALISATION,
                         ],
                         'resources'  => ['These'],
-                        'assertion'  => PresoutenanceIndividuAssertion::class,
+                        'assertion'  => PresoutenanceAssertion::class,
                     ],
                     [
                         'privileges' => [
@@ -510,7 +510,7 @@ return array(
             MembreService::class => MembreServiceFactory::class,
             //assertion
             EngagementImpartialiteAssertion::class => EngagementImpartialiteAssertionFactory::class,
-            PresoutenanceIndividuAssertion::class => PresoutenanceAssertionFactory::class,
+            PresoutenanceAssertion::class => PresoutenanceAssertionFactory::class,
             PropositionAssertion::class => PropositionAssertionFactory::class,
         ],
     ],
