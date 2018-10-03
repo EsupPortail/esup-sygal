@@ -17,6 +17,7 @@ use Application\Service\Source\SourceService;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\RuntimeException;
 use Webmozart\Assert\Assert;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
@@ -349,7 +350,7 @@ class StructureService extends BaseService
     /**
      * Détruit les substitutions associées à une structure cible dans la table STRUCTURE_SUBSTIT et détruit cette structure cible
      * @param StructureConcreteInterface $cibleConcrete
-     * @throws \Doctrine\ORM\OptimisticLockException
+
      */
     public function removeSubstitution(StructureConcreteInterface $cibleConcrete)
     {
@@ -361,10 +362,13 @@ class StructureService extends BaseService
         foreach($result as $entry) {
             $this->getEntityManager()->remove($entry);
         }
-        $this->getEntityManager()->flush($result);
-
         $this->getEntityManager()->remove($cibleConcrete);
-        $this->getEntityManager()->flush($cibleConcrete);
+
+        try {
+            $this->getEntityManager()->flush();
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Problème lors de l'effacement des structures");
+        }
     }
 
     /**
