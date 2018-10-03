@@ -90,9 +90,21 @@ class StructureService extends BaseService
 
         $structureCibleDataObject->setSourceCode($sourceCode);
 
+        /** si toutes les sources ont le même sourcecode (au préfixe près) alors sourcecode => CODE_COMUE::source */
+        $unique = explode(EtablissementPrefixFilter::ETAB_PREFIX_SEP, $structuresSources[0]->getSourceCode())[1];
+        foreach ($structuresSources as $structureSource) {
+            $code = explode(EtablissementPrefixFilter::ETAB_PREFIX_SEP, $structureSource->getSourceCode());
+            if ($code[1] != $unique) {
+                $unique = uniqid();
+                break;
+            }
+        }
+        var_dump(Etablissement::CODE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP . $unique);
+
         // instanciation du couple (Etab|ED|UR ; Structure) cible
         $structureConcreteCible = Structure::constructFromDataObject($structureCibleDataObject, $typeStructure, $sourceSygal);
-        $structureConcreteCible->setSourceCode(uniqid(Etablissement::CODE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP));
+        $structureConcreteCible->setSourceCode(Etablissement::CODE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP . $unique);
+        $structureConcreteCible->getStructure()->setSourceCode(Etablissement::CODE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP . $unique);
 //        $structureConcreteCible->getStructure()->setSourceCode(uniqid(Etablissement::CODE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP));
         $structureConcreteCible->getStructure()->setCode("tmp");
         $structureRattachCible = $structureConcreteCible->getStructure(); // StructureSubstitution ne référence que des entités de type Structure

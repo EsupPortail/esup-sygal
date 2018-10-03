@@ -206,12 +206,22 @@ class SubstitutionController extends AbstractController
             $dictionnaire[$identifiant][] = $structure;
         }
 
+//        /** @var StructureConcreteInterface $structure */
+//        $tmpres = [];
+//        foreach ($dictionnaire as $key => $structures) {
+//            foreach ($structures as $structure) {
+//                $tmpres[$key][] = $structure->getId() . " " . $structure->getSourceCode();
+//            }
+//        }
+//        var_dump($tmpres);
+
         $substitutions = [];
         foreach ($dictionnaire as $identifiant => $structures) {
             if (count($structures) >= 2) {
                 $sources = [];
                 $cible = null;
 
+                /** @var StructureConcreteInterface $structure */
                 foreach ($structures as $structure) {
                     $prefix = explode("::",$structure->getSourceCode())[0];
                     if ($prefix === "SyGAL" || $prefix === "COMUE") {
@@ -240,7 +250,7 @@ class SubstitutionController extends AbstractController
         /** @var StructureConcreteInterface $structure */
         foreach ($structures as $structure) {
             $prefix = explode("::", $structure->getSourceCode())[0];
-            if ($prefix === "SyGAL") {
+            if ($prefix === "SyGAL" || $prefix === "COMUE") {
                 $cible = $structure;
             } else {
                 $sources[] = $structure;
@@ -264,7 +274,7 @@ class SubstitutionController extends AbstractController
         /** @var StructureConcreteInterface $structure */
         foreach ($structures as $structure) {
             $prefix = explode("::",$structure->getSourceCode())[0];
-            if ($prefix === "SyGAL") {
+            if ($prefix === "SyGAL" || $prefix === "COMUE") {
                 $cible = $structure;
             } else {
                 $sources[] = $structure;
@@ -361,7 +371,7 @@ class SubstitutionController extends AbstractController
         /** @var StructureConcreteInterface $structure */
         foreach ($structures as $structure) {
             $prefix = explode("::",$structure->getSourceCode())[0];
-            if ($prefix === "SyGAL") {
+            if ($prefix === "SyGAL" || $prefix === "COMUE") {
                 $cible = $structure;
             } else {
                 $sources[] = $structure;
