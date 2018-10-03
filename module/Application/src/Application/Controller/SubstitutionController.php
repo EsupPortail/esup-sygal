@@ -127,12 +127,12 @@ class SubstitutionController extends AbstractController
     public function modifierAction()
     {
         $idCible = $this->params()->fromRoute('cible');
-        $structureCible = $this->structureService->findStructureSubsitutionCibleById($idCible);
+        $structureCible = $this->getStructureService()->findStructureSubsitutionCibleById($idCible);
         $structuresSubstituees = $structureCible->getStructuresSubstituees();
 
         $structuresConcretesSubstituees = [];
         foreach($structuresSubstituees as $structureSubstituee) {
-            $structureConcreteSubstituee = $this->structureService->findStructureConcreteFromStructure($structureSubstituee);
+            $structureConcreteSubstituee = $this->getStructureService()->findStructureConcreteFromStructure($structureSubstituee);
             $structuresConcretesSubstituees[] = $structureConcreteSubstituee;
         }
 
@@ -144,8 +144,7 @@ class SubstitutionController extends AbstractController
             $data = $request->getPost();
             $sources = [];
             foreach ($data['sourceIds'] as $sourceId) {
-                $structure = $this->structureService->findStructureById($sourceId);
-                $structureConcrete = $this->structureService->findStructureConcreteFromStructure($structure);
+                $structureConcrete = $this->getStructureService()->getStructuresConcreteByTypeAndStructureId($type, $sourceId);
                 if ($structureConcrete === null) {
                     throw new RuntimeException("Aucune structure concrète cible trouvée avec id=$sourceId.");
                 }
