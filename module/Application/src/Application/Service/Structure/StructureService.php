@@ -522,4 +522,66 @@ class StructureService extends BaseService
         return $result;
     }
 
+    public function getEntityByType($type) {
+        $entity = null;
+        switch($type) {
+            case TypeStructure::CODE_ECOLE_DOCTORALE :
+            case 'École doctorale':
+                $entity = EcoleDoctorale::class;
+                break;
+            case TypeStructure::CODE_UNITE_RECHERCHE :
+            case 'Unité de recherche':
+                $entity = UniteRecherche::class;
+                break;
+            case TypeStructure::CODE_ETABLISSEMENT :
+            case 'Établissement':
+                $entity = Etablissement::class;
+                break;
+            default :
+                throw new RuntimeException('Type de structure inconnu ['.$type.']');
+        }
+        return $entity;
+    }
+
+    /**
+     * @param TypeStructure $type
+     * @return StructureConcreteInterface[]
+     */
+    public function getStructuresSubstituableByType($type)
+    {
+        $qb = $this->getEntityManager()->getRepository($this->getEntityByType($type))->createQueryBuilder('structureConcrete')
+            ->join('structureConcrete.structure', 'structure')
+            ->leftJoin('structure.structuresSubstituees', 'substitutionFrom')
+            ->leftJoin('structure.structureSubstituante', 'substitutionTo')
+            ->andWhere('substitutionFrom.id IS NULL')
+            ->andWhere('substitutionTo.id IS NULL')
+        ;
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
+
+    /**
+     * @param TypeStructure $type
+     * @param int $structureId
+     * @return StructureConcreteInterface
+     */
+    public function getStructuresConcreteByTypeAndStructureId($type, $structureId)
+    {
+        $qb = $this->getEntityManager()->getRepository($this->getEntityByType($type))->createQueryBuilder('structureConcrete')
+            ->join('structureConcrete.structure', 'structure')
+            ->andWhere('structure.id = :structureId')
+            ->setParameter('structureId', $structureId)
+        ;
+
+        try {
+            $result = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Plusieurs ".$type." partagent le même identifiant de structure [".$structureId."]");
+        }
+
+        if (!$result) throw new RuntimeException("Aucun(e) ".$type." de trouvé(e).");
+        return $result;
+    }
+
 }
