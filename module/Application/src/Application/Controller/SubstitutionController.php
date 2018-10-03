@@ -67,26 +67,7 @@ class SubstitutionController extends AbstractController
     public function creerAction()
     {
         $type = $this->params()->fromRoute('type');
-        $structures = $this->structureService->getStructuresConcretes($type);
-
-        /** Retrait des structures soient substituées soient substitutantes */
-        $toRemove = [];
-        /** @var StructureConcreteInterface $structure */
-        foreach($structures as $structure) {
-            if (count($structure->getStructure()->getStructuresSubstituees()) != 0) {
-                $toRemove[] = $structure->getStructure();
-                foreach ($structure->getStructure()->getStructuresSubstituees() as $sub) {
-                    $toRemove[] = $sub;
-                }
-
-            }
-        }
-        /** @var Structure $remove */
-        foreach($toRemove as $remove) {
-            $structures = array_filter($structures, function (StructureConcreteInterface $structure) use ($remove) {
-                return  $structure->getStructure()->getId() !== $remove->getId();
-            });
-        }
+        $structures = $this->getStructureService()->getStructuresSubstituableByType($type);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -104,16 +85,12 @@ class SubstitutionController extends AbstractController
 
             $sources = [];
             foreach($data['sourceIds'] as $sourceId) {
-                $structure = $this->structureService->findStructureById($sourceId);
-                $structureConcrete = $this->structureService->findStructureConcreteFromStructure($structure);
-                if ($structureConcrete === null) {
-                    throw new RuntimeException("Aucune structure concrète cible trouvée avec id=$sourceId.");
-                }
+                $structureConcrete = $this->getStructureService()->getStructuresConcreteByTypeAndStructureId($type, $sourceId);
                 $sources[] = $structureConcrete;
             }
 
             //creation de la structureCible adequate
-            $structureCibleDataObject = $this->structureService->createStructureConcrete($type);
+            $structureCibleDataObject = $this->getStructureService()->createStructureConcrete($type);
             $this->structureService->updateFromPostData($structureCibleDataObject, $data['cible']);
 
             $structureCible = $this->structureService->createStructureSubstitutions($sources, $structureCibleDataObject);
@@ -136,7 +113,7 @@ class SubstitutionController extends AbstractController
         }
 
         $vm = new ViewModel([
-            'title' => "Création d'une substitution",
+            'title' => "Création d'une substitution (".$type.")",
             'cible' => $cible,
             'structuresConcretesSubstituees' => $structuresConcretesSubstituees,
             'structuresConcretes' => $structures,
@@ -159,26 +136,8 @@ class SubstitutionController extends AbstractController
             $structuresConcretesSubstituees[] = $structureConcreteSubstituee;
         }
 
-        $structures = $this->structureService->getStructuresConcretes($structureCible->getTypeStructure()->getCode());
-
-        /** Retrait des structures soient substituées soient substitutantes */
-        $toRemove = [];
-        /** @var StructureConcreteInterface $structure */
-        foreach($structures as $structure) {
-            if (count($structure->getStructure()->getStructuresSubstituees()) != 0) {
-                $toRemove[] = $structure->getStructure();
-                foreach ($structure->getStructure()->getStructuresSubstituees() as $sub) {
-                    $toRemove[] = $sub;
-                }
-
-            }
-        }
-        /** @var Structure $remove */
-        foreach($toRemove as $remove) {
-            $structures = array_filter($structures, function (StructureConcreteInterface $structure) use ($remove) {
-                return  $structure->getStructure()->getId() !== $remove->getId();
-            });
-        }
+        $type=$structureCible->getTypeStructure();
+        $structures = $this->getStructureService()->getStructuresSubstituableByType($type);
 
         $request = $this->getRequest();
         if ($request->isPost()) {

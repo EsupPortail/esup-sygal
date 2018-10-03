@@ -34,6 +34,17 @@
             </join-table>
         </many-to-many>
 
+        <many-to-many field="structureSubstituante" target-entity="Application\Entity\Db\Structure">
+            <join-table name="STRUCTURE_SUBSTIT">
+                <join-columns>
+                    <join-column name="FROM_STRUCTURE_ID" referenced-column-name="ID" />
+                </join-columns>
+                <inverse-join-columns>
+                    <join-column name="TO_STRUCTURE_ID" referenced-column-name="ID" />
+                </inverse-join-columns>
+            </join-table>
+        </many-to-many>
+
         <field name="sourceCode"    type="string" column="SOURCE_CODE" length="64" nullable="true"/>
         <field name="code"          type="string" column="CODE" length="64" nullable="true"/>
 
