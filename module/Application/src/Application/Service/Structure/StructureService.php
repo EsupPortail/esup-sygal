@@ -106,10 +106,8 @@ class StructureService extends BaseService
         $structureConcreteCible = Structure::constructFromDataObject($structureCibleDataObject, $typeStructure, $sourceSygal);
         $structureConcreteCible->setSourceCode(Etablissement::CODE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP . $unique);
         $structureConcreteCible->getStructure()->setSourceCode(Etablissement::CODE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP . $unique);
-//        $structureConcreteCible->getStructure()->setSourceCode(uniqid(Etablissement::CODE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP));
         $structureConcreteCible->getStructure()->setCode($unique);
         $structureRattachCible = $structureConcreteCible->getStructure(); // StructureSubstitution ne référence que des entités de type Structure
-//        $structureRattachCible->setSourceCode(uniqid(Etablissement::CODE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP));
 
         // instanciations des substitutions
         $substitutions = StructureSubstit::fromStructures($structuresSources, $structureRattachCible);
@@ -574,6 +572,18 @@ class StructureService extends BaseService
             ->leftJoin('structure.structuresSubstituees', 'substitutionFrom')
             ->leftJoin('structure.structureSubstituante', 'substitutionTo')
             ->andWhere('substitutionFrom.id IS NULL')
+            ->andWhere('substitutionTo.id IS NULL')
+        ;
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
+
+    /** Les structures non substituées */
+    public function getStructuresUtilisablesByType($type) {
+        $qb = $this->getEntityManager()->getRepository($this->getEntityByType($type))->createQueryBuilder('structureConcrete')
+            ->join('structureConcrete.structure', 'structure')
+            ->leftJoin('structure.structureSubstituante', 'substitutionTo')
             ->andWhere('substitutionTo.id IS NULL')
         ;
 
