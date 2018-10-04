@@ -66,11 +66,11 @@ class StatistiqueController extends AbstractController
         if ($type !== null && $id !== null) {
             switch($type) {
                 case "ED" :
-                    $ecole = $this->getEcoleDoctoraleService()->getRepository()->find($id);
+                    $ecole = $this->getEcoleDoctoraleService()->getRepository()->findOneBy(['id'=>$id]);
                     return  $qb->andWhere("t.ecoleDoctorale = :ed")
                                 ->setParameter(":ed", $ecole);
                 case "UR" :
-                    $unite = $this->getUniteRechercheService()->getRepository()->find($id);
+                    $unite = $this->getUniteRechercheService()->getRepository()->findOneBy(['id'=>$id]);
                     return $qb->andWhere("t.uniteRecherche = :ur")
                                 ->setParameter(":ur", $unite);
                 case "Etab" :
