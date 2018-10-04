@@ -18,6 +18,7 @@ use Application\Service\Source\SourceServiceAwareTrait;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
+use Import\Service\Traits\SynchroServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use Webmozart\Assert\Assert;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
@@ -28,6 +29,7 @@ use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 class StructureService extends BaseService
 {
     use SourceServiceAwareTrait;
+    use SynchroServiceAwareTrait;
 
     /**
      * @return EntityRepository
@@ -130,6 +132,9 @@ class StructureService extends BaseService
             $this->getEntityManager()->rollback();
             throw new RuntimeException("Erreur rencontrée lors de l'enregistrement des substitutions", null, $e);
         }
+
+        $this->synchroService->addService('these');
+        $this->synchroService->synchronize();
 
         return $structureConcreteCible;
     }
