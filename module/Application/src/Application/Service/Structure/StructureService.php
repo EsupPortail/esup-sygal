@@ -99,14 +99,13 @@ class StructureService extends BaseService
                 break;
             }
         }
-        var_dump(Etablissement::CODE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP . $unique);
 
         // instanciation du couple (Etab|ED|UR ; Structure) cible
         $structureConcreteCible = Structure::constructFromDataObject($structureCibleDataObject, $typeStructure, $sourceSygal);
         $structureConcreteCible->setSourceCode(Etablissement::CODE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP . $unique);
         $structureConcreteCible->getStructure()->setSourceCode(Etablissement::CODE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP . $unique);
 //        $structureConcreteCible->getStructure()->setSourceCode(uniqid(Etablissement::CODE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP));
-        $structureConcreteCible->getStructure()->setCode("tmp");
+        $structureConcreteCible->getStructure()->setCode($unique);
         $structureRattachCible = $structureConcreteCible->getStructure(); // StructureSubstitution ne référence que des entités de type Structure
 //        $structureRattachCible->setSourceCode(uniqid(Etablissement::CODE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP));
 
