@@ -8,6 +8,7 @@ use Application\Service\DomaineScientifiqueService;
 use Application\Service\Etablissement\EtablissementServiceLocateTrait;
 use Application\Service\Individu\IndividuService;
 use Application\Service\Role\RoleService;
+use Application\Service\Structure\StructureService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use Zend\Mvc\Controller\ControllerManager;
 
@@ -32,11 +33,13 @@ class UniteRechercheControllerFactory
          * @var UniteRechercheService $uniteRechercheService
          * @var IndividuService $individuService
          * @var RoleService $roleService
+         * @var StructureService $structureService
          * @var DomaineScientifiqueService $domaineService
          */
         $uniteRechercheService = $sl->get('UniteRechercheService');
         $individuService = $sl->get('IndividuService');
         $roleService = $sl->get('RoleService');
+        $structureService = $sl->get(StructureService::class);
         $domaineService = $sl->get(DomaineScientifiqueService::class);
 
         $controller = new UniteRechercheController();
@@ -45,6 +48,7 @@ class UniteRechercheControllerFactory
         $controller->setRoleService($roleService);
         $controller->setEtablissementService($this->locateEtablissementService($sl));
         $controller->setDomaineScientifiqueService($domaineService);
+        $controller->setStructureService($structureService);
         $controller->setUniteRechercheForm($form);
 
         return $controller;

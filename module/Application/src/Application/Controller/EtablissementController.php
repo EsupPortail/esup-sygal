@@ -13,6 +13,7 @@ use Application\Form\EtablissementForm;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Structure\StructureServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\View\Model\ViewModel;
 
@@ -24,6 +25,7 @@ class EtablissementController extends AbstractController
     use EtablissementServiceAwareTrait;
     use IndividuServiceAwareTrait;
     use RoleServiceAwareTrait;
+    use StructureServiceAwareTrait;
 
     /**
      * @var EtablissementForm $etablissementForm

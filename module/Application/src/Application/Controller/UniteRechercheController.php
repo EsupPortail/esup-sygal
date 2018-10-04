@@ -7,12 +7,14 @@ use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Structure;
 use Application\Entity\Db\StructureConcreteInterface;
+use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
 use Application\Form\UniteRechercheForm;
 use Application\Service\DomaineScientifiqueServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Structure\StructureServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\View\Model\ViewModel;
@@ -23,6 +25,7 @@ class UniteRechercheController extends AbstractController
     use IndividuServiceAwareTrait;
     use RoleServiceAwareTrait;
     use EtablissementServiceAwareTrait;
+    use StructureServiceAwareTrait;
     use DomaineScientifiqueServiceAwareTrait;
 
     /**
@@ -35,28 +38,10 @@ class UniteRechercheController extends AbstractController
      */
     public function indexAction()
     {
-        $structuresAll = $this->getUniteRechercheService()->getRepository()->findAll();
-
-        /** retrait des structures substituées */
-        $structuresSub = array_filter($structuresAll, function (StructureConcreteInterface $structure) { return count($structure->getStructure()->getStructuresSubstituees())!=0; });
-        $toRemove = [];
-        /** @var UniteRecherche $structure */
-        foreach($structuresSub as $structure) {
-            foreach ($structure->getStructure()->getStructuresSubstituees() as $sub) {
-                $toRemove[] = $sub;
-            }
-        }
-        $structures = [];
-        foreach ($structuresAll as $structure) {
-            $found = false;
-            foreach ($toRemove as $remove) {
-                if($structure->getStructure()->getId() == $remove->getId()) $found = true;
-            }
-            if (!$found) $structures[] = $structure;
-        }
+        $urs = $this->getStructureService()->getStructuresNonSubstitueesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'libelle');
 
         return new ViewModel([
-            'unites'                         => $structures,
+            'unites'                         => $urs,
         ]);
     }
 

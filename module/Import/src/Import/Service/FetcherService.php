@@ -125,6 +125,8 @@ class FetcherService
      */
     private function fetchRow($serviceName, $entityClass, $sourceCode)
     {
+        $this->logger->info(sprintf("Import: service %s[%s]", $serviceName, $sourceCode));
+
         $debut = microtime(true);
         $startDate = new DateTime();
 
@@ -164,14 +166,19 @@ class FetcherService
                 throw new RuntimeException("Erreur lors de la mise à jour de la table $tableName en BDD", null, $e);
             }
         }
-        try {
-            $this->entityManager->getConnection()->commit();
-        } catch (\Exception $e) {
-            $this->insertLog($debut, $uri, "ERROR_DB", $e->getMessage());
-            return;
-        }
         $_fin = microtime(true);
         $this->logger->info(sprintf("Exécution des %d requêtes INSERT : %s secondes.", count($queries), $_fin - $_debut));
+
+        /** Commit **/
+        try {
+            $this->entityManager->getConnection()->commit();
+        } catch (ConnectionException $e) {
+            throw new RuntimeException("Le commit a échoué", null, $e);
+        } catch (\Exception $e) {
+            throw new RuntimeException("Erreur inattendue", null, $e);
+        }
+        $_fin = microtime(true);
+        $this->logger->debug("Commit : " . ($_fin - $_debut) . " secondes.");
 
         $this->insertLog(
             $startDate,
@@ -189,6 +196,8 @@ class FetcherService
      */
     public function fetchRows($service, $entityClass, array $filters = [])
     {
+        $this->logger->info(sprintf("Import: service '%s'", $service));
+
         $debut = microtime(true);
         $startDate = new DateTime();
 
@@ -267,7 +276,7 @@ class FetcherService
             throw new RuntimeException("Erreur inattendue", null, $e);
         }
         $_fin = microtime(true);
-        $this->logger->info("Commit : " . ($_fin - $_debut) . " secondes.");
+        $this->logger->debug("Commit : " . ($_fin - $_debut) . " secondes.");
 
         $fin = microtime(true);
 

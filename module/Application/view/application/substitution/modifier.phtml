@@ -35,6 +35,7 @@ echo $messenger->addMessagesFromFlashMessenger();
     <?php echo generateSelect($structuresConcretes, $this); ?>
     <button name="ajouter" class="btn btn-success"> <span class='glyphicon glyphicon-plus'></span> Ajouter </button>
 <?php endif; ?>
+    <a href="<?php echo $this->url('substitution-index', [], [], null); ?>" class="btn btn-primary">Retour à l'index des substitution</a>
 
 <form action="<?php echo ($cible->getId())?$this->url('substitution-modifier', ['cible' => $cible->getId()], [],true):$this->url('substitution-creer', ['type' => $type], [],true); ?>" method="POST">
     <input type="hidden" name="type" id="type" value="<?php echo $type; ?>">

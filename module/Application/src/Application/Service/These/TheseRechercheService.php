@@ -6,12 +6,14 @@ use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\SourceInterface;
 use Application\Entity\Db\These;
+use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
 use Application\Entity\UserWrapper;
 use Application\QueryBuilder\TheseQueryBuilder;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
+use Application\Service\Structure\StructureServiceAwareTrait;
 use Application\Service\These\Filter\TheseSelectFilter;
 use Application\Service\These\Filter\TheseTextFilter;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
@@ -19,6 +21,7 @@ use Application\Service\UserContextServiceAwareTrait;
 use Application\View\Helper\Sortable;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\Query\Expr\Join;
+use MongoDB\BSON\Type;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
 
@@ -29,6 +32,7 @@ class TheseRechercheService
     use EtablissementServiceAwareTrait;
     use UniteRechercheServiceAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
+    use StructureServiceAwareTrait;
     use SourceServiceAwareTrait;
 
     /**
@@ -497,7 +501,7 @@ class TheseRechercheService
 
     private function fetchEcolesDoctoralesOptions()
     {
-        $eds = $this->getEcoleDoctoraleService()->getRepository()->findAll();
+        $eds = $this->getStructureService()->getStructuresNonSubstitueesByType(TypeStructure::CODE_ECOLE_DOCTORALE);
 
         $options = [];
         foreach ($eds as $ed) {
@@ -512,7 +516,7 @@ class TheseRechercheService
 
     private function fetchUnitesRecherchesOptions()
     {
-        $urs = $this->getUniteRechercheService()->getRepository()->findAll();
+        $urs = $this->getStructureService()->getStructuresNonSubstitueesByType(TypeStructure::CODE_UNITE_RECHERCHE);
 
         $options = [];
         foreach ($urs as $ur) {
