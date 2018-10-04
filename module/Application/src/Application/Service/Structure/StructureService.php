@@ -208,6 +208,9 @@ class StructureService extends BaseService
             $this->getEntityManager()->rollback();
             throw new RuntimeException("Erreur rencontrée lors de l'enregistrement des substitutions", null, $e);
         }
+
+        $this->synchroService->addService('these');
+        $this->synchroService->synchronize();
     }
 
     /**
@@ -243,6 +246,8 @@ class StructureService extends BaseService
             throw new RuntimeException("Erreur rencontrée lors de la supression des substitutions", null, $e);
         }
 
+        $this->synchroService->addService('these');
+        $this->synchroService->synchronize();
         return $structureSubstits;
     }
 
