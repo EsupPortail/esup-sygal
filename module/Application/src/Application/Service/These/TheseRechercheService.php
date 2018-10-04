@@ -501,7 +501,7 @@ class TheseRechercheService
 
     private function fetchEcolesDoctoralesOptions()
     {
-        $eds = $this->getStructureService()->getStructuresUtilisablesByType(TypeStructure::CODE_ECOLE_DOCTORALE);
+        $eds = $this->getStructureService()->getStructuresNonSubstitueesUtilisablesByType(TypeStructure::CODE_ECOLE_DOCTORALE);
 
         $options = [];
         foreach ($eds as $ed) {
@@ -516,7 +516,7 @@ class TheseRechercheService
 
     private function fetchUnitesRecherchesOptions()
     {
-        $urs = $this->getStructureService()->getStructuresUtilisablesByType(TypeStructure::CODE_UNITE_RECHERCHE);
+        $urs = $this->getStructureService()->getStructuresNonSubstitueesUtilisablesByType(TypeStructure::CODE_UNITE_RECHERCHE);
 
         $options = [];
         foreach ($urs as $ur) {

@@ -561,11 +561,11 @@ class StructureService extends BaseService
         return $entity;
     }
 
-    /**
+    /** Les structures qui peuvent être substituées
      * @param TypeStructure $type
      * @return StructureConcreteInterface[]
      */
-    public function getStructuresSubstituableByType($type)
+    public function getStructuresSubstituablesByType($type)
     {
         $qb = $this->getEntityManager()->getRepository($this->getEntityByType($type))->createQueryBuilder('structureConcrete')
             ->join('structureConcrete.structure', 'structure')
@@ -579,12 +579,30 @@ class StructureService extends BaseService
         return $result;
     }
 
-    /** Les structures non substituées */
-    public function getStructuresUtilisablesByType($type) {
+    /** Les structures non substituées
+     * @param TypeStructure $type
+     * @return StructureConcreteInterface[]
+     */
+    public function getStructuresNonSubstitueesUtilisablesByType($type) {
         $qb = $this->getEntityManager()->getRepository($this->getEntityByType($type))->createQueryBuilder('structureConcrete')
             ->join('structureConcrete.structure', 'structure')
             ->leftJoin('structure.structureSubstituante', 'substitutionTo')
             ->andWhere('substitutionTo.id IS NULL')
+        ;
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
+
+    /** Les structures non substituées
+     * @param TypeStructure $type
+     * @return StructureConcreteInterface[]
+     */
+    public function getStructuresSubstitueesUtilisablesByType($type) {
+        $qb = $this->getEntityManager()->getRepository($this->getEntityByType($type))->createQueryBuilder('structureConcrete')
+            ->join('structureConcrete.structure', 'structure')
+            ->leftJoin('structure.structuresSubstituees', 'substitutionFrom')
+            ->andWhere('substitutionFrom.id IS NULL')
         ;
 
         $result = $qb->getQuery()->getResult();

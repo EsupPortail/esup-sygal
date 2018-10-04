@@ -44,7 +44,7 @@ class SubstitutionController extends AbstractController
 
     public function creerAction() {
         $type = $this->params()->fromRoute('type');
-        $structures = $this->getStructureService()->getStructuresSubstituableByType($type);
+        $structures = $this->getStructureService()->getStructuresSubstituablesByType($type);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -114,7 +114,7 @@ class SubstitutionController extends AbstractController
         }
 
         $type=$structureCible->getTypeStructure();
-        $structures = $this->getStructureService()->getStructuresSubstituableByType($type);
+        $structures = $this->getStructureService()->getStructuresSubstituablesByType($type);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
