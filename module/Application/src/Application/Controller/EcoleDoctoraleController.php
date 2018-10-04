@@ -7,12 +7,13 @@ use Application\Entity\Db\Individu;
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Structure;
-use Application\Entity\Db\StructureConcreteInterface;
+use Application\Entity\Db\TypeStructure;
 use Application\Form\EcoleDoctoraleForm;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Structure\StructureServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\View\Model\ViewModel;
 
@@ -22,39 +23,14 @@ class EcoleDoctoraleController extends AbstractController
     use IndividuServiceAwareTrait;
     use RoleServiceAwareTrait;
     use EtablissementServiceAwareTrait;
+    use StructureServiceAwareTrait;
 
-    /**
-     * L'index récupére :
-     * - la liste des écoles doctorales
-     * - l'école doctorale sélectionnée
-     * - la liste des rôles associées à l'école
-     * - un tableau de tableaux des rôles associés à chaque rôle
-     * @return \Zend\Http\Response|ViewModel
-     */
     public function indexAction()
     {
-        $structuresAll = $this->getEcoleDoctoraleService()->getRepository()->findAll();
-
-        /** retrait des structures substituées */
-        $structuresSub = array_filter($structuresAll, function (StructureConcreteInterface $structure) { return count($structure->getStructure()->getStructuresSubstituees())!=0; });
-        $toRemove = [];
-        /** @var EcoleDoctorale $structure */
-        foreach($structuresSub as $structure) {
-            foreach ($structure->getStructure()->getStructuresSubstituees() as $sub) {
-                $toRemove[] = $sub;
-            }
-        }
-        $structures = [];
-        foreach ($structuresAll as $structure) {
-            $found = false;
-            foreach ($toRemove as $remove) {
-                if($structure->getStructure()->getId() == $remove->getId()) $found = true;
-            }
-            if (!$found) $structures[] = $structure;
-        }
+        $eds = $this->getStructureService()->getStructuresNonSubstitueesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle');
 
         return new ViewModel([
-            'ecoles'                         => $structures,
+            'ecoles'                         => $eds,
         ]);
     }
 

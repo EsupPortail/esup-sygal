@@ -8,6 +8,7 @@ use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\Etablissement\EtablissementServiceLocateTrait;
 use Application\Service\Individu\IndividuService;
 use Application\Service\Role\RoleService;
+use Application\Service\Structure\StructureService;
 use Zend\Mvc\Controller\ControllerManager;
 
 class EcoleDoctoraleControllerFactory
@@ -31,9 +32,11 @@ class EcoleDoctoraleControllerFactory
          * @var EcoleDoctoraleService $ecoleDoctoralService
          * @var IndividuService $individuService
          * @var RoleService $roleService
+         * @var StructureService $structureService
          */
         $ecoleDoctoralService = $sl->get('EcoleDoctoraleService');
         $individuService = $sl->get('IndividuService');
+        $structureService = $sl->get(StructureService::class);
         $roleService = $sl->get('RoleService');
 
         $controller = new EcoleDoctoraleController();
@@ -42,6 +45,7 @@ class EcoleDoctoraleControllerFactory
         $controller->setRoleService($roleService);
         $controller->setEtablissementService($this->locateEtablissementService($sl));
         $controller->setEcoleDoctoraleForm($form);
+        $controller->setStructureService($structureService);
 
         return $controller;
     }

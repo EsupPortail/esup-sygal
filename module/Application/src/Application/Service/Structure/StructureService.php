@@ -540,6 +540,7 @@ class StructureService extends BaseService
         return $result;
     }
 
+
     public function getEntityByType($type) {
         $entity = null;
         switch($type) {
@@ -580,22 +581,24 @@ class StructureService extends BaseService
     }
 
     /** Les structures non substituées
-     * @param TypeStructure $type
+     * @param string $type
+     * @param string order
      * @return StructureConcreteInterface[]
      */
-    public function getStructuresNonSubstitueesUtilisablesByType($type) {
+    public function getStructuresNonSubstitueesByType($type, $order=null) {
         $qb = $this->getEntityManager()->getRepository($this->getEntityByType($type))->createQueryBuilder('structureConcrete')
             ->join('structureConcrete.structure', 'structure')
             ->leftJoin('structure.structureSubstituante', 'substitutionTo')
             ->andWhere('substitutionTo.id IS NULL')
         ;
+        if ($order) $qb->orderBy('structure.'.$order);
 
         $result = $qb->getQuery()->getResult();
         return $result;
     }
 
     /** Les structures non substituées
-     * @param TypeStructure $type
+     * @param string $type
      * @return StructureConcreteInterface[]
      */
     public function getStructuresSubstitueesUtilisablesByType($type) {
@@ -610,7 +613,7 @@ class StructureService extends BaseService
     }
 
     /**
-     * @param TypeStructure $type
+     * @param string $type
      * @param int $structureId
      * @return StructureConcreteInterface
      */
