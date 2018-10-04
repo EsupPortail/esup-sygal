@@ -19,12 +19,18 @@ use Indicateur\Provider\Privilege\IndicateurPrivileges;
     </span>
 </h1>
 
+<p>
 <?php if($canExport): ?>
     <a href="<?php echo $this->url('indicateur/export', ['indicateur' => $indicateur->getId()], [] , true);?>" class="btn btn-primary">
         <span class="glyphicon glyphicon-export"></span>
         Export les données au format CSV
     </a>
 <?php endif; ?>
+<!--    <a href="--><?php //echo $this->url('indicateur/rafraichir', ['indicateur' => $indicateur->getId()], [] , true);?><!--" class="btn btn-primary">-->
+<!--        <span class="glyphicon glyphicon-refresh"></span>-->
+<!--        Forcer le rafraîchissement de l'indicateur-->
+<!--    </a>-->
+</p>
 
 <?php if ($indicateur->getDisplayAs() === Indicateur::THESE): ?>
     <?php echo $this->completIndicateurThese()->render($indicateur, $data); ?>

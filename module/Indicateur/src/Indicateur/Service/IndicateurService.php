@@ -105,10 +105,14 @@ class IndicateurService {
      */
     public function createMaterialzedView($indicateur) {
 
+        $requete = $indicateur->getRequete();
+        $requete = str_replace(';',' ', $requete);
+        $requete = str_replace('/',' ', $requete);
+
         $SQL  = 'CREATE MATERIALIZED VIEW MV_INDICATEUR_'.$indicateur->getId(). ' ';
         $SQL .= 'REFRESH ON DEMAND ';
         $SQL .= 'START WITH SYSDATE NEXT SYSDATE + 1 as ';
-        $SQL .= $indicateur->getRequete();
+        $SQL .= $requete;
 
         try {
             $stmt = $this->entityManager->getConnection()->prepare($SQL);
