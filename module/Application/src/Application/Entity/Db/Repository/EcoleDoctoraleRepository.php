@@ -2,20 +2,16 @@
 
 namespace Application\Entity\Db\Repository;
 
-
 use Application\Entity\Db\EcoleDoctorale;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\Query\Expr\Join;
 use UnicaenApp\Exception\RuntimeException;
-use UnicaenImport\Entity\Db\Source;
 
 class EcoleDoctoraleRepository extends DefaultEntityRepository
 {
     /**
-     * @param Source|null $source
      * @return EcoleDoctorale[]
      */
-    public function findAll(Source $source = null)
+    public function findAll()
     {
         $qb = $this->createQueryBuilder("ed");
         $qb
@@ -25,27 +21,9 @@ class EcoleDoctoraleRepository extends DefaultEntityRepository
             ->addSelect("str, sub, typ")
             ->orderBy("str.libelle");
 
-        if ($source !== null) {
-            $qb
-                ->join('ed.source', 'src', Join::WITH, 'src = :source')
-                ->setParameter('source', $source);
-        }
-
         $ecoles = $qb->getQuery()->getResult();
 
         return $ecoles;
-    }
-
-    /**
-     * @param int $id
-     * @return null|EcoleDoctorale
-     */
-    public function find($id)
-    {
-        /** @var EcoleDoctorale $ecole */
-        $ecole = $this->findOneBy(["id" => $id]);
-
-        return $ecole;
     }
 
     public function findByStructureId($id)

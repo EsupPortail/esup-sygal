@@ -40,7 +40,7 @@ class EcoleDoctoraleService extends BaseService implements RoleServiceAwareInter
      */
     public function getIndividuByEcoleDoctoraleId($id)
     {
-        $ecole = $this->getRepository()->find($id);
+        $ecole = $this->getRepository()->findOneBy(['id'=>$id]);
         $individus = $this->roleService->getIndividuByStructure($ecole->getStructure());
 
         return $individus;

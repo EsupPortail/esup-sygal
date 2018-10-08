@@ -73,7 +73,7 @@ class UniteRechercheService extends BaseService implements RoleServiceAwareInter
      */
     public function getIndividuByUniteRechercheId($id)
     {
-        $unite = $this->getRepository()->find($id);
+        $unite = $this->getRepository()->findOneBy(['id'=>$id]);
         $individus = $this->roleService->getIndividuByStructure($unite->getStructure());
 
         return $individus;

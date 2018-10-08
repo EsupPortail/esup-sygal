@@ -2,7 +2,9 @@
 
 namespace Application\Controller;
 
+use Application\Entity\Db\Acteur;
 use Application\Entity\Db\NatureFichier;
+use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\These\TheseRechercheServiceAwareTrait;
@@ -30,6 +32,21 @@ class ExportController extends AbstractController
             'Identifiant de la thèse'               => function (These $these) { return $these->getSourceCode(); },
             'Titre'                                 => function (These $these) { return $these->getTitre(); },
             'Discipline'                            => function (These $these) { return $these->getLibelleDiscipline(); },
+            //Encadrements
+            'Directeurs'                            => function (These $these) {
+                $directeurs = $these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE);
+                $noms = [];
+                /** @var Acteur $directeur */
+                foreach ($directeurs as $directeur) $noms[] = $directeur->getIndividu()->getNomComplet();
+                return implode(",", $noms);
+            },
+            'Co-directeurs'                            => function (These $these) {
+                $directeurs = $these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE);
+                $noms = [];
+                /** @var Acteur $directeur */
+                foreach ($directeurs as $directeur) $noms[] = $directeur->getIndividu()->getNomComplet();
+                return implode(",", $noms);
+            },
             //Structures
             'Etablissement'                         => function (These $these) { return $these->getEtablissement()->getLibelle(); },
             'Ecole Doctorale Code'                  => function (These $these) { if($these->getEcoleDoctorale() !== null)return $these->getEcoleDoctorale()->getSourceCode(); else return null; },
