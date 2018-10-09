@@ -11,18 +11,16 @@ use Soutenance\Assertion\EngagementImpartialiteAssertion;
 use Soutenance\Assertion\EngagementImpartialiteAssertionFactory;
 use Soutenance\Assertion\PropositionAssertion;
 use Soutenance\Assertion\PropositionAssertionFactory;
+use Soutenance\Controller\AvisSoutenanceController;
 use Soutenance\Controller\EngagementImpartialiteController;
+use Soutenance\Controller\Factory\AvisSoutenanceControllerFactory;
 use Soutenance\Controller\Factory\EngagementImpartialiteControllerFactory;
-use Soutenance\Controller\Factory\PersopassControllerFactory;
 use Soutenance\Controller\Factory\PresoutenanceControllerFactory;
 use Soutenance\Controller\Factory\QualiteControllerFactory;
 use Soutenance\Controller\Factory\SoutenanceControllerFactory;
-use Soutenance\Controller\PersopassController;
 use Soutenance\Controller\PresoutenanceController;
 use Soutenance\Controller\QualiteController;
 use Soutenance\Controller\SoutenanceController;
-use Soutenance\Form\PersopassModifier\PersopassModifierForm;
-use Soutenance\Form\PersopassModifier\PersopassModifierFormFactory;
 use Soutenance\Form\QualiteEdition\QualiteEditionForm;
 use Soutenance\Form\QualiteEdition\QualiteEditionFormFactory;
 use Soutenance\Form\QualiteEdition\QualiteEditiontHydrator;
@@ -178,22 +176,15 @@ return array(
                     ],
                     'privileges' => SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_ANNULER,
                 ],
-                // autres bazars
                 [
-                    'controller' => SoutenanceController::class,
+                    'controller' => AvisSoutenanceController::class,
                     'action'     => [
-                        'valider-ur',
-                        'valider-ur-validation',
-                        'valider-ur-refus',
-                        'valider-ed',
-                        'valider-ed-validation',
-                        'valider-ed-refus',
-
+                        'index',
                     ],
-                    'roles' => [
-                    ],
+                    'roles' => [],
                 ],
-                [
+
+                    [
                     'controller' => QualiteController::class,
                     'action'     => [
                         'index',
@@ -463,6 +454,17 @@ return array(
                             ],
                         ],
                     ],
+                    'avis-soutenance' => [
+                        'type' => Segment::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/avis-soutenance/:rapporteur',
+                            'defaults' => [
+                                'controller' => AvisSoutenanceController::class,
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
                 ],
             ],
             'qualite' => [
@@ -520,6 +522,7 @@ return array(
             QualiteController::class => QualiteControllerFactory::class,
             EngagementImpartialiteController::class => EngagementImpartialiteControllerFactory::class,
             PresoutenanceController::class => PresoutenanceControllerFactory::class,
+            AvisSoutenanceController::class => AvisSoutenanceControllerFactory::class
         ],
     ],
 
