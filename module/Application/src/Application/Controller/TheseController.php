@@ -1506,7 +1506,9 @@ class TheseController extends AbstractController
     //TODO si plus de retraitement sont requis faire un service associé au retraitement de pdf
     public function mergePDF($inputFile1, $inputFile2, $outputFile) {
         $GS_PATH = 'gs';
-        $cmd = $GS_PATH ." -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=".$outputFile." -dBATCH ".$inputFile1." ".$inputFile2;
+        $options  = " -dColorConversionStrategy=/LeaveColorUnchanged -dDownsampleMonoImages=false -dDownsampleGrayImages=false";
+        $options .= " -dDownsampleColorImages=false -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode ";
+        $cmd = $GS_PATH .$options." -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=".$outputFile." -dBATCH ".$inputFile1." ".$inputFile2;
         $output = [];
         $return = null;
         exec($cmd, $output, $return);
@@ -1522,7 +1524,9 @@ class TheseController extends AbstractController
 
     public function removePremierePage($inputFile, $outputFile) {
         $GS_PATH = 'gs';
-        $cmd = $GS_PATH." -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=".$outputFile." -dFirstPage=2 -dBATCH ".$inputFile;
+        $options  = " -dColorConversionStrategy=/LeaveColorUnchanged -dDownsampleMonoImages=false -dDownsampleGrayImages=false";
+        $options .= " -dDownsampleColorImages=false -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode ";
+        $cmd = $GS_PATH .$options." -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=".$outputFile." -dFirstPage=2 -dBATCH ".$inputFile;
         $output = [];
         $return = null;
         exec($cmd, $output, $return);
