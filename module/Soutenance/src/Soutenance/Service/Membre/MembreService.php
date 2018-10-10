@@ -83,7 +83,7 @@ class MembreService {
     public function findAllQualites()
     {
         $qb = $this->getEntityManager()->getRepository(Qualite::class)->createQueryBuilder('qualite')
-            ->orderBy('qualite.rang');
+            ->orderBy('qualite.rang, qualite.libelle');
         $result = $qb->getQuery()->getResult();
 
         return $result;

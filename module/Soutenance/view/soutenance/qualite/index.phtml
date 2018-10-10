@@ -5,11 +5,11 @@
  */
 
 use Soutenance\Entity\Qualite;
+use Soutenance\Provider\Privilege\QualitePrivileges;
 
 
-$canAdd = true;
-$canEdit = true;
-$canDelete = true;
+$canEdit = $this->isAllowed(QualitePrivileges::getResourceId(QualitePrivileges::SOUTENANCE_QUALITE_MODIFIER));;
+$canDelete = $this->isAllowed(QualitePrivileges::getResourceId(QualitePrivileges::SOUTENANCE_QUALITE_MODIFIER));;
 ?>
 
 <?php $this->headTitle("Qualités des membres de jury"); ?>

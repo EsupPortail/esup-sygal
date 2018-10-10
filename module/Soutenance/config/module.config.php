@@ -36,6 +36,7 @@ use Soutenance\Form\SoutenanceMembre\SoutenanceMembreHydrator;
 use Soutenance\Form\SoutenanceMembre\SoutenanceMembreHydratorFactory;
 use Soutenance\Form\SoutenanceRefus\SoutenanceRefusForm;
 use Soutenance\Form\SoutenanceRefus\SoutenanceRefusFormFactory;
+use Soutenance\Provider\Privilege\QualitePrivileges;
 use Soutenance\Provider\Privilege\SoutenancePrivileges;
 use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Membre\MembreServiceFactory;
@@ -184,16 +185,21 @@ return array(
                     'roles' => [],
                 ],
 
-                    [
+                [
                     'controller' => QualiteController::class,
                     'action'     => [
                         'index',
+                    ],
+                    'privileges' => QualitePrivileges::SOUTENANCE_QUALITE_VISUALISER,
+                ],
+                [
+                    'controller' => QualiteController::class,
+                    'action'     => [
                         'editer',
                         'effacer',
                     ],
-                    'roles'      => [],
+                    'privileges' => QualitePrivileges::SOUTENANCE_QUALITE_MODIFIER,
                 ],
-
             ],
         ],
     ],
