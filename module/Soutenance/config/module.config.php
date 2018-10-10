@@ -36,6 +36,7 @@ use Soutenance\Form\SoutenanceMembre\SoutenanceMembreHydrator;
 use Soutenance\Form\SoutenanceMembre\SoutenanceMembreHydratorFactory;
 use Soutenance\Form\SoutenanceRefus\SoutenanceRefusForm;
 use Soutenance\Form\SoutenanceRefus\SoutenanceRefusFormFactory;
+use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
 use Soutenance\Provider\Privilege\QualitePrivileges;
 use Soutenance\Provider\Privilege\SoutenancePrivileges;
 use Soutenance\Service\Membre\MembreService;
@@ -232,18 +233,83 @@ return array(
             'home' => [
                 'pages' => [
                     'soutenance' => [
-                        'order'    => 100,
+                        'order'    => -90,
                         'label'    => 'Soutenance',
                         'route'    => 'soutenance',
-                        'privilege' => SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_SIGNER,
+                        'roles' => [],
                         'pages' => [
-                            'signer' => [
-                                'label'    => 'Qualités de membres de jury',
+                            'proposition' => [
+                                'label'    => 'Proposition de soutenance',
+                                'route'    => 'soutenance/proposition',
+//                                'icon'     => 'glyphicon glyphicon-briefcase',
+                                'withtarget' => true,
+                                'paramsInject' => [
+                                    'these',
+                                ],
+                                'privileges' => [
+                                    SoutenancePrivileges::SOUTENANCE_PROPOSITION_VISUALISER,
+                                ],
+                            ],
+                            'presoutenance' => [
+                                'label'    => 'Finalisation de la soutenance',
+                                'route'    => 'soutenance/presoutenance',
+//                                'icon'     => 'glyphicon glyphicon-briefcase',
+                                'withtarget' => true,
+                                'paramsInject' => [
+                                    'these',
+                                ],
+                                'privileges' => [
+                                    SoutenancePrivileges::SOUTENANCE_PRESOUTENANCE_VISUALISATION,
+                                ],
+                                'pages' => [
+                                    'association' => [
+                                        'label'    => 'Association d\'un acteur SyGAL',
+                                        'route'    => 'soutenance/presoutenance/associer-membre-individu',
+//                                        'icon'     => 'glyphicon glyphicon-briefcase',
+                                        'withtarget' => true,
+                                        'paramsInject' => [
+                                            'these',
+                                            'membre',
+                                        ],
+                                        'privileges' => [
+                                            SoutenancePrivileges::SOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU,
+                                        ],
+                                    ],
+                                    'engagement' => [
+                                        'label'    => 'Engagement d\'impartialité',
+                                        'route'    => 'soutenance/presoutenance/engagement-impartialite',
+//                                        'icon'     => 'glyphicon glyphicon-briefcase',
+                                        'withtarget' => true,
+                                        'paramsInject' => [
+                                            'these',
+                                            'membre',
+                                        ],
+                                        'privileges' => [
+                                            SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_VISUALISER,
+                                        ],
+                                    ],
+                                    'avis' => [
+                                        'label'    => 'Avis de soutenance',
+                                        'route'    => 'soutenance/avis-soutenance',
+//                                        'icon'     => 'glyphicon glyphicon-briefcase',
+                                        'withtarget' => true,
+                                        'paramsInject' => [
+                                            'these',
+                                            'rapporteur',
+                                        ],
+                                        'privileges' => [
+                                            AvisSoutenancePrivileges::SOUTENANCE_AVIS_VISUALISER,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            'qualite' => [
+                                'label'    => 'Qualités des membres',
                                 'route'    => 'qualite',
-//                                'withtarget' => true,
-//                                'paramsInject' => [
-//                                    'these',
-//                                ],
+//                                'icon'     => 'glyphicon glyphicon-briefcase',
+                                'privileges' => [
+                                    QualitePrivileges::SOUTENANCE_QUALITE_VISUALISER,
+                                ],
                             ],
                         ],
                     ],
@@ -256,9 +322,9 @@ return array(
         'routes' => [
             'soutenance' => [
                 'type' => Segment::class,
-                'may_terminate' => false,
+                'may_terminate' => true,
                 'options' => [
-                    'route'    => '/soutenance/:these',
+                    'route'    => '/soutenance[/:these]',
 //                    'defaults' => [
 //                        'controller' => SoutenanceController::class,
 //                        'action'     => 'index',
