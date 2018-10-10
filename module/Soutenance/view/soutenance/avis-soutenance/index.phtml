@@ -29,12 +29,14 @@ $canEdit = true;
     transmises au jury qui peut demander à l’issu de la soutenance l'introduction de corrections dans la thèse.
 </p>
 
+<form method="post" action="" >
+
 <div class="panel panel-info">
     <div class="panel-heading">
         <h2> Dépot du prérapport de soutenace et avis de soutenance </h2>
     </div>
     <div class="panel-body">
-        <form method="post" action="" >
+
         <div class="row">
             <div class="col-md-4">
 
@@ -58,11 +60,11 @@ $canEdit = true;
                 <div class="form-group">
                     <div class="radio">
                     <label>
-                    <input type="radio" name="avis" value="favorable"> <strong>favorable</strong> à la soutenance
+                    <input type="radio" name="avis" id="favorable" value="favorable"> <strong>favorable</strong> à la soutenance
                     </label>
                         <br/>
                     <label>
-                    <input type="radio" name="avis" value="défavorable"> <strong>défavorable</strong> à la soutenance
+                    <input type="radio" name="avis" id="defavorable" value="défavorable"> <strong>défavorable</strong> à la soutenance
                     </label>
                     </div>
                 </div>
@@ -72,7 +74,27 @@ $canEdit = true;
                 <input type="submit" class="btn btn-primary" value="Signature de l'avis de soutenance"/>
             </div>
         </div>
-        </form>
+
     </div>
 </div>
+    <div class="col-md-12" id="justification">
+    <label>
+        Justification de l'avis défavorable de soutenance :
+    </label>
+        <textarea id="justification" rows="15" style="width:100%;">
+        </textarea>
 
+    </div>
+
+</form>
+
+<script>
+    $("div#justification").hide();
+
+    $("input#defavorable").click(function() {
+        $("div#justification").show();
+    })
+    $("input#favorable").click(function() {
+        $("div#justification").hide();
+    })
+</script>
