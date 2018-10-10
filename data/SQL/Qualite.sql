@@ -1,0 +1,2 @@
+INSERT INTO OTH.PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (280, 101, 'qualite-visualisation', 'Visualiser la liste des qualités affectables aux membres du jury', 200);
+INSERT INTO OTH.PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (281, 101, 'qualite-modification', 'Modifier la liste les qualités affectables aux membres du jury ', 210);
