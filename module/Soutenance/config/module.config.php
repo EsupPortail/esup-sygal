@@ -191,9 +191,7 @@ return array(
                         'editer',
                         'effacer',
                     ],
-                    'roles'      => [
-                        'Administrateur technique',
-                    ],
+                    'roles'      => [],
                 ],
 
             ],

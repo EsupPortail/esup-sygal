@@ -21,7 +21,7 @@ $canDelete = true;
 
 <a class="ajax-modal btn btn-primary"
    data-event="edition-qualite"
-   href="<?php echo $this->url('soutenance/qualite/editer', [], [], true); ?>">
+   href="<?php echo $this->url('qualite/editer', [], [], true); ?>">
         <span class="glyphicon glyphicon-plus"></span>
         Ajouter une qualité
 </a>
@@ -45,12 +45,12 @@ $canDelete = true;
                 <?php if($canEdit): ?>
                     <a class="ajax-modal"
                        data-event="edition-qualite"
-                       href="<?php echo $this->url('soutenance/qualite/editer', ['qualite' => $qualite->getId()], [], true); ?>">
+                       href="<?php echo $this->url('qualite/editer', ['qualite' => $qualite->getId()], [], true); ?>">
                         <span class="glyphicon glyphicon-pencil"></span>
                     </a>
                 <?php endif; ?>
                 <?php if($canDelete): ?>
-                    <a href="<?php echo $this->url('soutenance/qualite/effacer', ['qualite' => $qualite->getId()], [], true); ?>">
+                    <a href="<?php echo $this->url('qualite/effacer', ['qualite' => $qualite->getId()], [], true); ?>">
                         <span class="glyphicon glyphicon-trash"></span>
                     </a>
                 <?php endif; ?>
