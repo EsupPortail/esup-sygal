@@ -54,7 +54,7 @@ class EtablissementPrefixFilter implements FilterInterface
     public function addPrefixTo($value, $etablissement)
     {
         if ($etablissement instanceof Etablissement) {
-            $etablissement = $etablissement->getCode();
+            $etablissement = $etablissement->getStructure()->getCode();
         }
 
         return $etablissement . self::ETAB_PREFIX_SEP . $value;

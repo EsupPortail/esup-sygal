@@ -16,7 +16,7 @@ use Application\Entity\Db\Role;
 
 
 <?php foreach ($etablissements as $etablissement): ?>
-    <?php $roles = $mappedRoles[$etablissement->getCode()]; ?>
+    <?php $roles = $mappedRoles[$etablissement->getStructure()->getCode()]; ?>
     <h2>
         <?php echo $etablissement->getLibelle(); ?>
         <span class="badge">

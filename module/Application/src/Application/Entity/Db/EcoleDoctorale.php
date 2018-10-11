@@ -92,6 +92,8 @@ class EcoleDoctorale implements StructureConcreteInterface, HistoriqueAwareInter
 
     /**
      * @return string
+     * @deprecated mais encore nécessaire à cause de StructureConcreteInterface
+     * @see StructureConcreteInterface
      */
     public function getCode() {
         return $this->structure->getCode();

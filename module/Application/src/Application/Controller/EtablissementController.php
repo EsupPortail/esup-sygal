@@ -321,7 +321,7 @@ class EtablissementController extends AbstractController
     {
         $chemin = "";
         if ($fullpath) $chemin .= Structure::PATH;
-        if ($etablissement->getCode()) $chemin .= "/ressources/Logos/Etab/".$etablissement->getCode().".png";
+        if ($etablissement->getStructure()->getCode()) $chemin .= "/ressources/Logos/Etab/".$etablissement->getStructure()->getCode().".png";
         else $chemin .= "/ressources/Logos/Etab/". uniqid().".png";
         return $chemin;
     }

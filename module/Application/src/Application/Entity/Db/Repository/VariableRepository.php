@@ -61,7 +61,7 @@ class VariableRepository extends DefaultEntityRepository
 
         if (! is_array($code)) {
             $variable =  current($results) ?: null;
-            if ($variable === null) throw new RuntimeException("La valeur pour le variable [".$code."] est manquante pour l'établissement [".$etab->getCode()."].");
+            if ($variable === null) throw new RuntimeException("La valeur pour le variable [".$code."] est manquante pour l'établissement [".$etab->getStructure()->getCode()."].");
             return $variable;
         }
 
@@ -70,7 +70,7 @@ class VariableRepository extends DefaultEntityRepository
             $variables[$v->getCode()] = $v;
         }
         foreach ($code as $c) {
-            if (!isset($variables[$c])) throw new RuntimeException("La valeur pour le variable [".$c."] est manquante pour l'établissement [".$etab->getCode()."].");
+            if (!isset($variables[$c])) throw new RuntimeException("La valeur pour le variable [".$c."] est manquante pour l'établissement [".$etab->getStructure()->getCode()."].");
         }
 
         return $variables;

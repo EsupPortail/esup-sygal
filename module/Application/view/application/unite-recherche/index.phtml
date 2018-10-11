@@ -63,7 +63,7 @@ $canAjouter = $this->isAllowed(UniteRecherchePrivileges::getResourceId(UniteRech
                     <?php echo explode("::", $unite->getSource()->getCode())[0]; ?>
                 </td>
                 <td>
-                    <?php echo $unite->getCode(); ?>
+                    <?php echo $unite->getStructure()->getCode(); ?>
                 </td>
                 <td> <?php echo $unite->getSigle(); ?> </td>
                 <td>

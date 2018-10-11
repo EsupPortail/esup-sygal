@@ -41,7 +41,7 @@ class RoleRepository extends DefaultEntityRepository
     public function findRoleDoctorantForEtab($etablissement)
     {
         if ($etablissement instanceof Etablissement) {
-            $etablissement = $etablissement->getCode();
+            $etablissement = $etablissement->getStructure()->getCode();
         }
 
         $qb = $this->createQueryBuilder('r');

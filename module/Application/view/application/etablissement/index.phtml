@@ -79,7 +79,7 @@ $canModifier = $this->isAllowed(EtablissementPrivileges::getResourceId(Etablisse
                     <?php echo explode("::",$etablissement->getSource()->getCode())[0]; ?>
                 </td>
                 <td>
-                    <?php echo $etablissement->getCode(); ?>
+                    <?php echo $etablissement->getStructure()->getCode(); ?>
                 </td>
                 <td> <?php echo $etablissement->getSigle(); ?> </td>
                 <td>
@@ -154,7 +154,7 @@ $canModifier = $this->isAllowed(EtablissementPrivileges::getResourceId(Etablisse
                     <?php echo explode("::",$etablissement->getSource()->getCode())[0]; ?>
                 </td>
                 <td>
-                    <?php echo $etablissement->getCode(); ?>
+                    <?php echo $etablissement->getStructure()->getCode(); ?>
                 </td>
                 <td> <?php echo $etablissement->getSigle(); ?> </td>
                 <td>

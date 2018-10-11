@@ -63,7 +63,7 @@ $canAjouter = $this->isAllowed(EcoleDoctoralePrivileges::getResourceId(EcoleDoct
                     <?php echo explode("::", $ecole->getSource()->getCode())[0]; ?>
                 </td>
                 <td>
-                    <?php echo $ecole->getCode(); ?>
+                    <?php echo $ecole->getStructure()->getCode(); ?>
                 </td>
                 <td> <?php echo $ecole->getSigle(); ?> </td>
                 <td>

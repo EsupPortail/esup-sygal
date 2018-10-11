@@ -402,7 +402,6 @@ class StructureService extends BaseService
         switch($typeStructure) {
             case TypeStructure::CODE_ETABLISSEMENT :
                 $structureCibleDataObject = new Etablissement();
-                $structureCibleDataObject->setCode(uniqid());
                 break;
             case TypeStructure::CODE_ECOLE_DOCTORALE :
                 $structureCibleDataObject = new EcoleDoctorale();
@@ -413,6 +412,7 @@ class StructureService extends BaseService
             default:
                 throw new RuntimeException("Type de structure inconnu [".$typeStructure."]");
         }
+//        $structureCibleDataObject->getStructure()->setCode(uniqid());
         $structureCibleDataObject->getStructure()->setSourceCode("SyGAL". "::" . uniqid());
         $structureCibleDataObject->getStructure()->setTypeStructure($type);
         $structureCibleDataObject->setSource($sourceSygal);

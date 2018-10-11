@@ -143,7 +143,7 @@ $acteursFormatter->asSeparated()
                         echo "<abbr title='";
                         echo $these->getEtablissement()->getLibelle();
                         echo "'>";
-                        echo $these->getEtablissement()->getCode();
+                        echo $these->getEtablissement()->getStructure()->getCode();
                         echo "</abbr>";
                         echo "</td>";
                     }
@@ -168,7 +168,7 @@ $acteursFormatter->asSeparated()
                             if ($sigle && $sigle !== "") {
                                 echo $sigle;
                             } else {
-                                echo $these->getEcoleDoctorale()->getCode();;
+                                echo $these->getEcoleDoctorale()->getStructure()->getCode();;
                             }
                             ?>
                         </abbr>
@@ -178,7 +178,7 @@ $acteursFormatter->asSeparated()
                     <?php if($these->getUniteRecherche()): ?>
                         <abbr title="<?php echo $these->getUniteRecherche()->getLibelle() ?>">
                             <?php
-                            $result = $these->getUniteRecherche()->getCode();
+                            $result = $these->getUniteRecherche()->getStructure()->getCode();
                             try {
                                 $filter = new EtablissementPrefixFilter();
                                 $result = $filter->removePrefixFrom($result);
