@@ -56,7 +56,7 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
     {
         $filter = new EtablissementPrefixFilter();
 
-        return $filter->addPrefixTo($string, $this);
+        return $filter->addPrefixEtablissementTo($string, $this);
     }
 
     /**

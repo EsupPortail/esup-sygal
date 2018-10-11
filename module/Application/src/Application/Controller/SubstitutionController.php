@@ -2,19 +2,17 @@
 
 namespace Application\Controller;
 
-use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Structure;
 use Application\Entity\Db\StructureConcreteInterface;
 use Application\Entity\Db\TypeStructure;
-use Application\Entity\Db\UniteRecherche;
+use Application\Filter\EtablissementPrefixFilterAwareTrait;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Structure\StructureServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\Validator\Date;
 use Zend\View\Model\ViewModel;
 
 class SubstitutionController extends AbstractController
@@ -24,6 +22,9 @@ class SubstitutionController extends AbstractController
     use EcoleDoctoraleServiceAwareTrait;
     use UniteRechercheServiceAwareTrait;
     use StructureServiceAwareTrait;
+    use EtablissementPrefixFilterAwareTrait;
+
+    const CODE_SYGAL = 'SyGAL';
 
     /** Affiche l'index générale */
     public function indexAction() {
@@ -202,7 +203,7 @@ class SubstitutionController extends AbstractController
 
         $dictionnaire = [];
         foreach ($structures as $structure) {
-            $identifiant = explode("::", $structure->getSourceCode())[1];
+            $identifiant = $this->getEtablissementPrefixFilter()->removePrefixFrom($structure->getSourceCode());
             $dictionnaire[$identifiant][] = $structure;
         }
 
@@ -223,8 +224,8 @@ class SubstitutionController extends AbstractController
 
                 /** @var StructureConcreteInterface $structure */
                 foreach ($structures as $structure) {
-                    $prefix = explode("::",$structure->getSourceCode())[0];
-                    if ($prefix === "SyGAL" || $prefix === "COMUE") {
+                    $prefix = $this->getEtablissementPrefixFilter()->extractCodeEtablissementFrom($structure->getSourceCode());
+                    if ($prefix === self::CODE_SYGAL || $prefix === Etablissement::CODE_COMUE) {
                         $cible = $structure;
                     } else {
                         $sources[] = $structure;
@@ -249,8 +250,8 @@ class SubstitutionController extends AbstractController
 
         /** @var StructureConcreteInterface $structure */
         foreach ($structures as $structure) {
-            $prefix = explode("::", $structure->getSourceCode())[0];
-            if ($prefix === "SyGAL" || $prefix === "COMUE") {
+            $prefix = $this->getEtablissementPrefixFilter()->extractCodeEtablissementFrom($structure->getSourceCode());
+            if ($prefix === self::CODE_SYGAL || $prefix === Etablissement::CODE_COMUE) {
                 $cible = $structure;
             } else {
                 $sources[] = $structure;
@@ -273,8 +274,8 @@ class SubstitutionController extends AbstractController
 
         /** @var StructureConcreteInterface $structure */
         foreach ($structures as $structure) {
-            $prefix = explode("::",$structure->getSourceCode())[0];
-            if ($prefix === "SyGAL" || $prefix === "COMUE") {
+            $prefix = $this->getEtablissementPrefixFilter()->extractCodeEtablissementFrom($structure->getSourceCode());
+            if ($prefix === self::CODE_SYGAL || $prefix === Etablissement::CODE_COMUE) {
                 $cible = $structure;
             } else {
                 $sources[] = $structure;
@@ -318,7 +319,7 @@ class SubstitutionController extends AbstractController
             if ($cible === null) {
                 $cible = $this->getStructureService()->createStructureConcrete($type);
                 $this->structureService->updateFromPostData($cible,$data['cible']);
-                $cible->setSourceCode("SyGAL" . "::" . $identifiant);
+                $cible->setSourceCode($this->getEtablissementPrefixFilter()->addPrefixEtablissementTo($identifiant));
                 $this->getEntityManager()->persist($cible);
                 $this->getEntityManager()->flush($cible);
             } else {
@@ -342,7 +343,7 @@ class SubstitutionController extends AbstractController
 
         if ($cible === null) {
             $cible = $this->getStructureService()->createStructureConcrete($type);
-            $cible->setSourceCode("SyGAL" . "::" . $identifiant);
+            $cible->setSourceCode($this->getEtablissementPrefixFilter()->addPrefixEtablissementTo($identifiant));
         }
 
         $vm = new ViewModel();
@@ -370,8 +371,8 @@ class SubstitutionController extends AbstractController
 
         /** @var StructureConcreteInterface $structure */
         foreach ($structures as $structure) {
-            $prefix = explode("::",$structure->getSourceCode())[0];
-            if ($prefix === "SyGAL" || $prefix === "COMUE") {
+            $prefix = $this->getEtablissementPrefixFilter()->extractCodeEtablissementFrom($structure->getSourceCode());
+            if ($prefix === self::CODE_SYGAL || $prefix === Etablissement::CODE_COMUE) {
                 $cible = $structure;
             } else {
                 $sources[] = $structure;

@@ -12,6 +12,7 @@ use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
 use Application\Entity\Db\Utilisateur;
 use Application\Filter\EtablissementPrefixFilter;
+use Application\Filter\EtablissementPrefixFilterAwareTrait;
 use Application\Service\BaseService;
 use Application\Service\Source\SourceService;
 use Application\Service\Source\SourceServiceAwareTrait;
@@ -30,6 +31,7 @@ class StructureService extends BaseService
 {
     use SourceServiceAwareTrait;
     use SynchroServiceAwareTrait;
+    use EtablissementPrefixFilterAwareTrait;
 
     /**
      * @return EntityRepository
@@ -394,7 +396,8 @@ class StructureService extends BaseService
      * @param  TypeStructure $typeStructure
      * @return StructureConcreteInterface|null
      */
-    public function createStructureConcrete($typeStructure) {
+    public function createStructureConcrete($typeStructure)
+    {
         $sourceSygal = $this->sourceService->fetchSourceSygal();
         $type = $this->fetchTypeStructure($typeStructure);
 
@@ -413,7 +416,8 @@ class StructureService extends BaseService
             default:
                 throw new RuntimeException("Type de structure inconnu [".$typeStructure."]");
         }
-        $structureCibleDataObject->getStructure()->setSourceCode("SyGAL". "::" . uniqid());
+        $sourceCode = $this->getEtablissementPrefixFilter()->addPrefixTo(uniqid());
+        $structureCibleDataObject->getStructure()->setSourceCode($sourceCode);
         $structureCibleDataObject->getStructure()->setTypeStructure($type);
         $structureCibleDataObject->setSource($sourceSygal);
         $structureCibleDataObject->getStructure()->setSource($sourceSygal);
@@ -482,7 +486,7 @@ class StructureService extends BaseService
 
         $sourceCodeDictionnary = [];
         foreach ($structures as $structure) {
-            $sourceCode = explode("::", $structure->getSourceCode())[1];
+            $sourceCode = $this->getEtablissementPrefixFilter()->removePrefixFrom($structure->getSourceCode());
             $sourceCodeDictionnary[$sourceCode][] = $structure;
         }
 
