@@ -489,11 +489,11 @@ EOS;
                     break;
                 case "acteurEtablissementId":
                     if (isset($entity_json->{$propriete})) {
-                        $value = $f->addPrefixTo($entity_json->{$propriete}, $this->etablissement);
+                        $value = $f->addPrefixEtablissementTo($entity_json->{$propriete}, $this->etablissement);
                     }
                     break;
                 case "sourceCode":
-                    $value = $f->addPrefixTo($entity_json->id, $this->etablissement);
+                    $value = $f->addPrefixEtablissementTo($entity_json->id, $this->etablissement);
                     break;
                 case "sourceId":
                 case "individuId":
@@ -504,7 +504,7 @@ EOS;
                 case "ecoleDoctId":
                 case "uniteRechId":
                     if (isset($entity_json->{$propriete})) {
-                        $value = $f->addPrefixTo($entity_json->{$propriete}, $this->etablissement);
+                        $value = $f->addPrefixEtablissementTo($entity_json->{$propriete}, $this->etablissement);
                     }
                     break;
                 default:
