@@ -1,14 +1,11 @@
 <?php
 
-namespace Application\Service\ImportObservResult;
+namespace Import\Service\ImportObservResult;
 
 use Application\Entity\Db\ImportObservResult;
 use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\Entity\Db\Repository\ImportObservResultRepository;
 use Application\Entity\Db\These;
-use Application\Entity\Db\Variable;
-use Application\Notification\ResultatTheseAdmisNotification;
-use Application\Notification\ResultatTheseModifieNotification;
 use Application\Rule\NotificationDepotVersionCorrigeeAttenduRule;
 use Application\Service\BaseService;
 use Application\Service\Notification\NotifierServiceAwareTrait;

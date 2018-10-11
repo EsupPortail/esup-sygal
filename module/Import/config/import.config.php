@@ -8,7 +8,7 @@ use Zend\Mvc\Router\Console\Simple;
 use Zend\Mvc\Router\Http\Literal;
 use Zend\Mvc\Router\Http\Segment;
 
-return array(
+return [
     'bjyauthorize'    => [
         'guards' => [
             \UnicaenAuth\Guard\PrivilegeController::class => [
@@ -176,6 +176,26 @@ return array(
             ],
         ],
     ],
+    'navigation' => [
+        'default' => [
+            'home' => [
+                'pages' => [
+                    'ws' => [
+                        'label' => "Import",
+                        'order' => 0,
+                        'route'    => 'home-import',
+                        'pages' => [
+                            'problems'               => [
+                                'label' => "Lancement",
+                                'route' => 'home-import',
+                                'resource'    => \UnicaenAuth\Guard\PrivilegeController::getResourceId('Import\Controller\Import', 'index'),
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
     'service_manager' => [
         'invokables' => [
             CallService::class => CallService::class,
@@ -199,9 +219,9 @@ return array(
             Import\Controller\ImportController::class => Import\Controller\Factory\ImportControllerFactory::class,
         ],
     ],
-    'view_manager' => array(
-        'template_path_stack' => array(
+    'view_manager' => [
+        'template_path_stack' => [
             __DIR__ . '/../view',
-        ),
-    ),
-);
+        ],
+    ],
+];

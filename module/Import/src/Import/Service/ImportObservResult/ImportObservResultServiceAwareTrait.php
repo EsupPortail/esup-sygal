@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Service\ImportObservResult;
+namespace Import\Service\ImportObservResult;
 
 /**
  * @author Unicaen

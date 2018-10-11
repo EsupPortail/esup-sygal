@@ -1,9 +1,10 @@
 <?php
 
-namespace Application\Controller;
+namespace Import\Controller;
 
+use Application\Controller\AbstractController;
 use Application\EventRouterReplacerAwareTrait;
-use Application\Service\ImportObservResult\ImportObservResultServiceAwareTrait;
+use Import\Service\ImportObservResult\ImportObservResultServiceAwareTrait;
 
 /**
  *
