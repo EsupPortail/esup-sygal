@@ -143,7 +143,7 @@ class SubstitutionController extends AbstractController
         ]);
     }
 
-    //TODO verifier le comportement
+    /** Fonction de destruction */
     public function detruireAction() {
         $idCible = $this->params()->fromRoute('cible');
         $structure = $this->structureService->findStructureById($idCible);
@@ -167,9 +167,9 @@ class SubstitutionController extends AbstractController
     /** Fonction principale des substitutions (appelle checkStructure) */
     public function substitutionAutomatiqueAction()
     {
-        $substitutionsEcolesDoctorales  = $this->checkStructure(TypeStructure::CODE_ECOLE_DOCTORALE);
-        $substitutionsEtablissements    = $this->checkStructure(TypeStructure::CODE_ETABLISSEMENT);
-        $substitutionsUnitesRecherches  = $this->checkStructure(TypeStructure::CODE_UNITE_RECHERCHE);
+        $substitutionsEcolesDoctorales  = $this->getStructureService()->checkStructure(TypeStructure::CODE_ECOLE_DOCTORALE);
+        $substitutionsEtablissements    = $this->getStructureService()->checkStructure(TypeStructure::CODE_ETABLISSEMENT);
+        $substitutionsUnitesRecherches  = $this->getStructureService()->checkStructure(TypeStructure::CODE_UNITE_RECHERCHE);
 
         return new ViewModel([
             'substitutionsEcolesDoctorales' => $substitutionsEcolesDoctorales,
@@ -178,72 +178,29 @@ class SubstitutionController extends AbstractController
         ]);
     }
 
-    // TODO mettre dans le service ...
-    /** Identifie les structures substituables en utilisant le sourceCode */
-    public function checkStructure($type)
-    {
-        $structures = [];
-        switch($type) {
-            case (TypeStructure::CODE_ECOLE_DOCTORALE):
-                $structures = $this->getEcoleDoctoraleService()->getRepository()->findAll();
-                break;
-            case (TypeStructure::CODE_ETABLISSEMENT):
-                $structures = $this->getEtablissementService()->getRepository()->findAll();
-                break;
-            case (TypeStructure::CODE_UNITE_RECHERCHE):
-                $structures = $this->getUniteRechercheService()->getRepository()->findAll();
-                break;
-        }
-
-        $dictionnaire = [];
-        foreach ($structures as $structure) {
-            $identifiant = explode("::", $structure->getSourceCode())[1];
-            $dictionnaire[$identifiant][] = $structure;
-        }
-
-        $substitutions = [];
-        foreach ($dictionnaire as $identifiant => $structures) {
-            if (count($structures) >= 2) {
-                $sources = [];
-                $cible = null;
-
-                /** @var StructureConcreteInterface $structure */
-                foreach ($structures as $structure) {
-                    $prefix = explode("::",$structure->getSourceCode())[0];
-                    if ($prefix === "SyGAL" || $prefix === "COMUE") {
-                        $cible = $structure;
-                    } else {
-                        $sources[] = $structure;
-                    }
-                }
-                $substitutions[$identifiant] = [$sources, $cible];
-            }
-        }
-
-        return $substitutions;
-    }
-
-
+    /** Enregistrer une substitution automatique (! créer une structure cible si aucune n'existe */
     public function enregistrerAutomatiqueAction()
     {
         $type = $this->params()->fromRoute('type');
         $identifiant = $this->params()->fromRoute('identifiant');
 
         $structures = $this->getStructureService()->getStructuresBySuffixe($identifiant, $type);
-        $sources = [];
-        $cible = null;
 
-        /** @var StructureConcreteInterface $structure */
-        foreach ($structures as $structure) {
-            $prefix = explode("::", $structure->getSourceCode())[0];
-            if ($prefix === "SyGAL" || $prefix === "COMUE") {
-                $cible = $structure;
-            } else {
-                $sources[] = $structure;
-            }
+        $dictionnary = $this->getStructureService()->getSubstitutionDictionnary($identifiant, $type);
+        $sources = $dictionnary["sources"];
+        $cible = $dictionnary["cible"];
+
+        if ($cible != null) {
+            $this->structureService->updateStructureSubstitutions($sources, $cible);
         }
-
-        if ($cible != null) $this->structureService->updateStructureSubstitutions($sources, $cible->getStructure());
+        else {
+            /** @var StructureConcreteInterface $cible */
+            $cible = $this->getStructureService()->createStructureConcrete($type);
+            $cible->getStructure()->setLibelle($sources[0]->getLibelle());
+            $cible->getStructure()->setSigle($sources[0]->getSigle());
+            $cible->getStructure()->setCode($sources[0]->getCode());
+            $this->getStructureService()->createStructureSubstitutions($sources, $cible);
+        }
 
         return new ViewModel();
     }
@@ -253,40 +210,11 @@ class SubstitutionController extends AbstractController
         $type           = $this->params()->fromRoute('type');
         $identifiant    = $this->params()->fromRoute('identifiant');
 
-        $structures = $this->getStructureService()->getStructuresBySuffixe($identifiant, $type);
-        $sources = [];
-        $cible = null;
+        $dictionnary = $this->getStructureService()->getSubstitutionDictionnary($identifiant, $type);
+        $sources = $dictionnary["sources"];
+        $cible = $dictionnary["cible"];
 
-        /** @var StructureConcreteInterface $structure */
-        foreach ($structures as $structure) {
-            $prefix = explode("::",$structure->getSourceCode())[0];
-            if ($prefix === "SyGAL" || $prefix === "COMUE") {
-                $cible = $structure;
-            } else {
-                $sources[] = $structure;
-            }
-        }
-
-
-        $structures = $this->structureService->getStructuresConcretes($type);
-        /** Retrait des structures soient substituées soient substitutantes */
-        $toRemove = [];
-        /** @var StructureConcreteInterface $structure */
-        foreach($structures as $structure) {
-            if (count($structure->getStructure()->getStructuresSubstituees()) != 0) {
-                $toRemove[] = $structure->getStructure();
-                foreach ($structure->getStructure()->getStructuresSubstituees() as $sub) {
-                    $toRemove[] = $sub;
-                }
-
-            }
-        }
-        /** @var Structure $remove */
-        foreach($toRemove as $remove) {
-            $structures = array_filter($structures, function (StructureConcreteInterface $structure) use ($remove) {
-                return  $structure->getStructure()->getId() !== $remove->getId();
-            });
-        }
+        $structures = $this->getStructureService()->getStructuresNonSubstitueesByType($type);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -295,32 +223,23 @@ class SubstitutionController extends AbstractController
             foreach ($data['sourceIds'] as $sourceId) {
                 $structure = $this->structureService->findStructureById($sourceId);
                 $structureConcrete = $this->structureService->findStructureConcreteFromStructure($structure);
-                if ($structureConcrete === null) {
-                    throw new RuntimeException("Aucune structure concrète cible trouvée avec id=$sourceId.");
-                }
                 $sources[] = $structureConcrete;
             }
 
             if ($cible === null) {
+                /** @var StructureConcreteInterface $cible */
                 $cible = $this->getStructureService()->createStructureConcrete($type);
-                $this->structureService->updateFromPostData($cible,$data['cible']);
-                $cible->setSourceCode("SyGAL" . "::" . $identifiant);
-                $this->getEntityManager()->persist($cible);
-                $this->getEntityManager()->flush($cible);
+                $cible->getStructure()->setLibelle($sources[0]->getLibelle());
+                $cible->getStructure()->setSigle($sources[0]->getSigle());
+                $cible->getStructure()->setCode($sources[0]->getCode());
+                $this->getStructureService()->createStructureSubstitutions($sources, $cible);
             } else {
                 $this->structureService->updateFromPostData($cible,$data['cible']);
+                $this->structureService->updateStructureSubstitutions($sources, $cible->getStructure());
             }
-            $this->structureService->updateStructureSubstitutions($sources, $cible->getStructure());
-
-
 
             $message = "La substitution <strong>".$cible->getLibelle()."</strong> vient d'être mise à jour. Elle regroupe les structures : ";
-            $first = true;
-            foreach($sources as $source) {
-                if (!$first) $message .= ", ";
-                $message .= "<i>".$source->getLibelle()."</i>";
-                $first = false;
-            }
+            $message .= implode(", ", array_map(function(StructureConcreteInterface $s) { return "<i>".$s->getLibelle()."</i>";}, $sources));
             $this->flashMessenger()->addSuccessMessage($message);
 
             return $this->redirect()->toRoute(null, [],[], true);
@@ -328,7 +247,6 @@ class SubstitutionController extends AbstractController
 
         if ($cible === null) {
             $cible = $this->getStructureService()->createStructureConcrete($type);
-            $cible->setSourceCode("SyGAL" . "::" . $identifiant);
         }
 
         $vm = new ViewModel();
@@ -343,32 +261,5 @@ class SubstitutionController extends AbstractController
         $vm->setTemplate('application/substitution/modifier');
         return $vm;
 
-    }
-
-    public function afficherAutomatiqueAction()
-    {
-        $type           = $this->params()->fromRoute('type');
-        $identifiant    = $this->params()->fromRoute('identifiant');
-
-        $structures = $this->getStructureService()->getStructuresBySuffixe($identifiant, $type);
-        $sources = [];
-        $cible = null;
-
-        /** @var StructureConcreteInterface $structure */
-        foreach ($structures as $structure) {
-            $prefix = explode("::",$structure->getSourceCode())[0];
-            if ($prefix === "SyGAL" || $prefix === "COMUE") {
-                $cible = $structure;
-            } else {
-                $sources[] = $structure;
-            }
-        }
-
-        return new ViewModel([
-            'substituees' => $sources,
-            'substituante' => $cible,
-            'type' => $type,
-            'identifiant' => $identifiant,
-        ]);
     }
 }

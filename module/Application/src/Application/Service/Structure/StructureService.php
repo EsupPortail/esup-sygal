@@ -13,8 +13,11 @@ use Application\Entity\Db\UniteRecherche;
 use Application\Entity\Db\Utilisateur;
 use Application\Filter\EtablissementPrefixFilter;
 use Application\Service\BaseService;
+use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
+use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Source\SourceService;
 use Application\Service\Source\SourceServiceAwareTrait;
+use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
@@ -30,6 +33,9 @@ class StructureService extends BaseService
 {
     use SourceServiceAwareTrait;
     use SynchroServiceAwareTrait;
+    use EcoleDoctoraleServiceAwareTrait;
+    use EtablissementServiceAwareTrait;
+    use UniteRechercheServiceAwareTrait;
 
     /**
      * @return EntityRepository
@@ -526,12 +532,15 @@ class StructureService extends BaseService
         $repo = null;
         switch($type) {
             case TypeStructure::CODE_ECOLE_DOCTORALE:
+            case 'ecole-doctorale':
                 $repo = $this->getEntityManager()->getRepository(EcoleDoctorale::class);
                 break;
             case TypeStructure::CODE_UNITE_RECHERCHE:
+            case 'unite-recherche':
                 $repo = $this->getEntityManager()->getRepository(UniteRecherche::class);
                 break;
             case TypeStructure::CODE_ETABLISSEMENT:
+            case 'etablissement':
                 $repo = $this->getEntityManager()->getRepository(Etablissement::class);
                 break;
         }
@@ -640,4 +649,71 @@ class StructureService extends BaseService
         return $result;
     }
 
+    // TODO mettre dans le service ...
+    /** Identifie les structures substituables en utilisant le sourceCode */
+    public function checkStructure($type)
+    {
+        $structures = [];
+        switch($type) {
+            case (TypeStructure::CODE_ECOLE_DOCTORALE):
+                $structures = $this->getEcoleDoctoraleService()->getRepository()->findAll();
+                break;
+            case (TypeStructure::CODE_ETABLISSEMENT):
+                $structures = $this->getEtablissementService()->getRepository()->findAll();
+                break;
+            case (TypeStructure::CODE_UNITE_RECHERCHE):
+                $structures = $this->getUniteRechercheService()->getRepository()->findAll();
+                break;
+        }
+
+        $dictionnaire = [];
+        foreach ($structures as $structure) {
+            $identifiant = explode("::", $structure->getSourceCode())[1];
+            $dictionnaire[$identifiant][] = $structure;
+        }
+
+        $substitutions = [];
+        foreach ($dictionnaire as $identifiant => $structures) {
+            if (count($structures) >= 2) {
+                $sources = [];
+                $cible = null;
+
+                /** @var StructureConcreteInterface $structure */
+                foreach ($structures as $structure) {
+                    $prefix = explode("::",$structure->getSourceCode())[0];
+                    if ($prefix === "SyGAL" || $prefix === "COMUE") {
+                        $cible = $structure;
+                    } else {
+                        $sources[] = $structure;
+                    }
+                }
+                $substitutions[$identifiant] = [$sources, $cible];
+            }
+        }
+
+        return $substitutions;
+    }
+
+
+    public function getSubstitutionDictionnary($identifiant, $type)
+    {
+        $structures = $this->getStructuresBySuffixe($identifiant, $type);
+
+        $sources = [];
+        $cible = null;
+        /** @var StructureConcreteInterface $structure */
+        foreach ($structures as $structure) {
+            $prefix = explode("::",$structure->getSourceCode())[0];
+            if ($prefix === "SyGAL" || $prefix === "COMUE") {
+                $cible = $structure;
+            } else {
+                $sources[] = $structure;
+            }
+        }
+
+        return [
+            "cible" => $cible,
+            "sources" => $sources
+        ];
+    }
 }
