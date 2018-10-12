@@ -88,8 +88,15 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface
     public function estDirecteur()
     {
         return in_array($this->getRole()->getCode(), [
-            Role::CODE_DIRECTEUR_THESE,
-            Role::CODE_CODIRECTEUR_THESE]
+                Role::CODE_DIRECTEUR_THESE,
+            ]
+        );
+    }
+    public function estCodirecteur()
+    {
+        return in_array($this->getRole()->getCode(), [
+                Role::CODE_CODIRECTEUR_THESE,
+            ]
         );
     }
 

@@ -115,6 +115,8 @@ class PdcData {
     /** @var Acteur[] */
     private $directeurs;
     /** @var Acteur[] */
+    private $codirecteurs;
+    /** @var Acteur[] */
     private $rapporteurs;
     /** @var Acteur[] */
     private $membres;
@@ -352,8 +354,6 @@ class PdcData {
         return $this;
     }
 
-
-
     /**
      * @return Acteur[]
      */
@@ -371,6 +371,26 @@ class PdcData {
         $this->directeurs = $directeurs;
         return $this;
     }
+
+    /**
+     * @return Acteur[]
+     */
+    public function getCodirecteurs()
+    {
+        return $this->codirecteurs;
+    }
+
+    /**
+     * @param Acteur[] $codirecteurs
+     * @return PdcData
+     */
+    public function setCodirecteurs($codirecteurs)
+    {
+        $this->codirecteurs = $codirecteurs;
+        return $this;
+    }
+
+
 
     /**
      * @return Acteur[]
@@ -548,5 +568,6 @@ class PdcData {
         $this->acteursEnCouverture[] = $acteur;
         return $this;
     }
+
 
 }
