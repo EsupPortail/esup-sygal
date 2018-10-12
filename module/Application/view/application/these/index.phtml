@@ -8,7 +8,6 @@ use Application\Provider\Privilege\ExportPrivileges;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\Service\These\TheseSorter;
 use Application\View\Renderer\PhpRenderer;
-use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Privilege\Privileges;
 use Zend\Paginator\Paginator;
 
@@ -149,7 +148,7 @@ $acteursFormatter->asSeparated()
                     }
                 ?>
                 <td><?php echo $these->getEtatThese() ?></td>
-                <td><?php echo $these->getDoctorant()->getSourceCode(true) ?></td>
+                <td><?php echo $these->getDoctorant()->getSourceCodeSansPrefix() ?></td>
                 <td><?php echo $these->getDoctorant()->getIndividu()->getNomComplet() ?></td>
                 <td class="acteurs">
 
@@ -177,14 +176,7 @@ $acteursFormatter->asSeparated()
                 <td>
                     <?php if($these->getUniteRecherche()): ?>
                         <abbr title="<?php echo $these->getUniteRecherche()->getLibelle() ?>">
-                            <?php
-                            $result = $these->getUniteRecherche()->getCode();
-                            try {
-                                $filter = new EtablissementPrefixFilter();
-                                $result = $filter->removePrefixFrom($result);
-                            } catch (LogicException $e) {}
-                                echo $result;
-                            ?>
+                            <?php echo $these->getUniteRecherche()->getCode(); ?>
                         </abbr>
                     <?php endif ?>
                 </td>
