@@ -560,7 +560,7 @@ class FichierService extends BaseService
         $pdcData->setCodirecteurs($codirecteurs);
         $president =  array_filter($acteurs, function(Acteur $a) { return $a->estPresidentJury(); });
 
-        $membres = array_diff($acteurs, $rapporteurs, $directeurs, $president);
+        $membres = array_diff($acteurs, $rapporteurs, $directeurs, $codirecteurs, $president);
         $pdcData->setMembres($membres);
 
         /** associée */
