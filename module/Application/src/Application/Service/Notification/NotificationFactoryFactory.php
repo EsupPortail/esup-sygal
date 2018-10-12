@@ -6,9 +6,10 @@ use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\Variable\VariableService;
 use UnicaenApp\Options\ModuleOptions;
-use Zend\Mvc\Router\RouteStackInterface;
+use Zend\Mvc\View\Console\ViewManager as ConsoleViewManager;
+use Zend\Mvc\View\Http\ViewManager as HttpViewManager;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\View\Helper\Url;
+use Zend\View\Helper\Url as UrlHelper;
 
 /**
  * @author Unicaen
@@ -40,11 +41,10 @@ class NotificationFactoryFactory extends \Notification\Service\NotificationFacto
         $ecoleDoctoraleService = $serviceLocator->get('EcoleDoctoraleService');
         $uniteRechercheService = $serviceLocator->get('UniteRechercheService');
 
-        /** @var RouteStackInterface $router */
-        $router = $serviceLocator->get('router');
-        /* @var Url $urlHelper */
-        $urlHelper = $serviceLocator->get('ViewHelperManager')->get('Url');
-        $urlHelper->setRouter($router);
+        /** @var HttpViewManager|ConsoleViewManager $vm */
+        $vm = $serviceLocator->get('ViewManager');
+        /** @var UrlHelper $urlHelper */
+        $urlHelper = $vm->getHelperManager()->get('Url');
 
         /* @var ModuleOptions $moduleOptions */
         $moduleOptions = $serviceLocator->get('unicaen-app_module_options');

@@ -5,7 +5,6 @@ namespace Notification\Service;
 use Notification\Entity\Service\NotifEntityServiceAwareTrait;
 use Notification\MessageContainer;
 use Notification\Notification;
-use Notification\NotificationRenderer;
 use UnicaenApp\Service\Mailer\MailerServiceAwareTrait;
 
 /**
@@ -24,9 +23,9 @@ class NotifierService
     protected $messageContainer;
 
     /**
-     * @var NotificationRenderer
+     * @var NotificationRenderingService
      */
-    protected $renderer;
+    protected $renderingService;
 
     /**
      * @var NotificationFactory
@@ -53,11 +52,11 @@ class NotifierService
     /**
      * NotifierService constructor.
      *
-     * @param NotificationRenderer $renderer
+     * @param NotificationRenderingService $renderingService
      */
-    public function __construct(NotificationRenderer $renderer)
+    public function __construct(NotificationRenderingService $renderingService)
     {
-        $this->renderer = $renderer;
+        $this->renderingService = $renderingService;
         $this->messageContainer = new MessageContainer();
     }
 
@@ -113,7 +112,7 @@ class NotifierService
         $cc = $notification->getCc();
         $bcc = $notification->getBcc();
 
-        $html = $this->renderer->setNotification($notification)->render();
+        $html = $this->renderingService->setNotification($notification)->render();
 
         $mail = $this->mailerService->createNewMessage($html, $subject);
         $mail->setTo($to);
