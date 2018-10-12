@@ -3,13 +3,9 @@
 namespace Notification\Service;
 
 use Notification\Entity\Service\NotifEntityService;
-use Notification\NotificationRenderer;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Service\Mailer\MailerService;
-use Zend\Http\Request as HttpRequest;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\View\Renderer\PhpRenderer;
-use Zend\View\Resolver\AggregateResolver;
 
 /**
  * @author Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>
@@ -36,14 +32,13 @@ class NotifierServiceFactory
         /** @var NotifEntityService $notifEntityService */
         $notifEntityService = $serviceLocator->get(NotifEntityService::class);
 
-        $viewRenderer = $this->getViewRenderer($serviceLocator);
-
-        $renderer = new NotificationRenderer($viewRenderer);
+        /** @var NotificationRenderingService $notificationRenderer */
+        $notificationRenderer = $serviceLocator->get(NotificationRenderingService::class);
 
         $options = $this->getOptions($serviceLocator);
 
         /** @var NotifierService $service */
-        $service = new $notifierServiceClass($renderer);
+        $service = new $notifierServiceClass($notificationRenderer);
         $service->setNotificationFactory($notificationFactory);
         $service->setNotifEntityService($notifEntityService);
         $service->setMailerService($mailerService);
@@ -70,34 +65,5 @@ class NotifierServiceFactory
         }
 
         return $config['notification'];
-    }
-
-    /**
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return PhpRenderer
-     */
-    private function getViewRenderer(ServiceLocatorInterface $serviceLocator)
-    {
-        if ($this->isHttpRequest($serviceLocator)) {
-            /** @var PhpRenderer $viewRenderer */
-            $viewRenderer = $serviceLocator->get('view_renderer');
-        } else {
-            $viewRenderer = new PhpRenderer();
-            $resolver = new AggregateResolver();
-            $viewRenderer->setResolver($resolver);
-        }
-
-        return $viewRenderer;
-    }
-
-    /**
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return bool
-     */
-    private function isHttpRequest(ServiceLocatorInterface $serviceLocator)
-    {
-        $request = $serviceLocator->get('request');
-
-        return $request instanceof HttpRequest;
     }
 }
