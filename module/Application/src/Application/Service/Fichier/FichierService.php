@@ -556,9 +556,11 @@ class FichierService extends BaseService
         $pdcData->setRapporteurs($rapporteurs);
         $directeurs =  array_filter($acteurs, function(Acteur $a) { return $a->estDirecteur(); });
         $pdcData->setDirecteurs($directeurs);
+        $codirecteurs =  array_filter($acteurs, function(Acteur $a) { return $a->estCodirecteur(); });
+        $pdcData->setCodirecteurs($codirecteurs);
         $president =  array_filter($acteurs, function(Acteur $a) { return $a->estPresidentJury(); });
 
-        $membres = array_diff($acteurs, $rapporteurs, $directeurs, $president);
+        $membres = array_diff($acteurs, $rapporteurs, $directeurs, $codirecteurs, $president);
         $pdcData->setMembres($membres);
 
         /** associée */
@@ -575,7 +577,7 @@ class FichierService extends BaseService
             }
         }
 
-        $acteursEnCouverture = array_merge($rapporteurs, $directeurs, $president, $membres);
+        $acteursEnCouverture = array_merge($rapporteurs, $directeurs, $codirecteurs, $president, $membres);
         usort($acteursEnCouverture, Acteur::getComparisonFunction());
         $acteursEnCouverture = array_unique($acteursEnCouverture);
 
@@ -597,6 +599,9 @@ class FichierService extends BaseService
         /** Directeurs de thèses */
         $nomination = [];
         foreach ($directeurs as $directeur) {
+            $nomination[] = $directeur->getIndividu()->getNomComplet(false, false, false, true, true);
+        }
+        foreach ($codirecteurs as $directeur) {
             $nomination[] = $directeur->getIndividu()->getNomComplet(false, false, false, true, true);
         }
         $pdcData->setListing(implode(" et ", $nomination).", ");
