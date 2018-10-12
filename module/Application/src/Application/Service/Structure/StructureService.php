@@ -587,7 +587,7 @@ class StructureService extends BaseService
             ->leftJoin('structure.structuresSubstituees', 'substitutionFrom')
             ->leftJoin('structure.structureSubstituante', 'substitutionTo')
             ->andWhere('substitutionFrom.id IS NULL')
-            ->andWhere('substitutionTo.id IS NULL')
+            ->andWhere('substitutionTo.id IS NULL OR pasHistorise(substitutionTo) != 1')
         ;
 
         $result = $qb->getQuery()->getResult();

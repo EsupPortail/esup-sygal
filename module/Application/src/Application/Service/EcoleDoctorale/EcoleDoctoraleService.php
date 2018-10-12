@@ -56,6 +56,7 @@ class EcoleDoctoraleService extends BaseService implements RoleServiceAwareInter
     public function deleteSoftly(EcoleDoctorale $ecole, Utilisateur $destructeur)
     {
         $ecole->historiser($destructeur);
+        $ecole->getStructure()->historiser($destructeur);
 
         $this->flush($ecole);
     }
@@ -63,6 +64,7 @@ class EcoleDoctoraleService extends BaseService implements RoleServiceAwareInter
     public function undelete(EcoleDoctorale $ecole)
     {
         $ecole->dehistoriser();
+        $ecole->getStructure()->dehistoriser();
 
         $this->flush($ecole);
     }
