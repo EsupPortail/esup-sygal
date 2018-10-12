@@ -601,6 +601,9 @@ class FichierService extends BaseService
         foreach ($directeurs as $directeur) {
             $nomination[] = $directeur->getIndividu()->getNomComplet(false, false, false, true, true);
         }
+        foreach ($codirecteurs as $directeur) {
+            $nomination[] = $directeur->getIndividu()->getNomComplet(false, false, false, true, true);
+        }
         $pdcData->setListing(implode(" et ", $nomination).", ");
         if ($these->getUniteRecherche()) $pdcData->setUniteRecherche($these->getUniteRecherche()->getStructure()->getLibelle());
 
