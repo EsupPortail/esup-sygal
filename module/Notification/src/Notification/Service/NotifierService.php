@@ -7,6 +7,7 @@ use Notification\MessageContainer;
 use Notification\Notification;
 use Notification\NotificationRenderer;
 use UnicaenApp\Service\Mailer\MailerServiceAwareTrait;
+use Zend\Mail\Message;
 
 /**
  * Service d'envoi de notification par mail.
@@ -94,7 +95,25 @@ class NotifierService
     {
         $mail = $this->createMailForNotification($notification);
 
-        $this->mailerService->send($mail);
+        $message = $this->mailerService->send($mail);
+
+        $sendDate = $this->extractDateFromMessage($message) ?: new \DateTime();
+        $notification->setSendDate($sendDate);
+    }
+
+    /**
+     * @param Message $message
+     * @return \DateTime|null
+     */
+    private function extractDateFromMessage(Message $message)
+    {
+        if ($message->getHeaders()->has('Date')) {
+            $messageDate = $message->getHeaders()->get('Date')->getFieldValue();
+
+            return date_create_from_format($messageDate, 'r');
+        }
+
+        return null;
     }
 
     /**

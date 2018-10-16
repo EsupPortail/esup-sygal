@@ -4,18 +4,19 @@ namespace Application\Service\Notification;
 
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\Fichier;
 use Application\Entity\Db\ImportObservResult;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\MailConfirmation;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\UniteRecherche;
+use Application\Entity\Db\ValiditeFichier;
 use Application\Entity\Db\Variable;
 use Application\Notification\CorrectionAttendueUpdatedNotification;
 use Application\Notification\ResultatTheseAdmisNotification;
 use Application\Notification\ResultatTheseModifieNotification;
 use Application\Notification\ValidationDepotTheseCorrigeeNotification;
-use Application\Notification\ValidationPageDeCouvertureNotification;
 use Application\Notification\ValidationRdvBuNotification;
 use Application\Rule\NotificationDepotVersionCorrigeeAttenduRule;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
@@ -140,7 +141,7 @@ class NotifierService extends \Notification\Service\NotifierService
     /**
      * @param ImportObservResult $record
      * @param These              $these
-     * @return ImportObservResult|null
+     * @return CorrectionAttendueUpdatedNotification|null
      */
     public function triggerCorrectionAttendue(ImportObservResult $record, These $these)
     {
@@ -171,7 +172,7 @@ class NotifierService extends \Notification\Service\NotifierService
 
         $this->trigger($notif);
 
-        return $record;
+        return $notif;
     }
 
     /**
