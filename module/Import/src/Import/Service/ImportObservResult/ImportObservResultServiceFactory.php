@@ -7,6 +7,10 @@ use Application\Entity\Db\Repository\ImportObservResultRepository;
 use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
 use Application\Service\Variable\VariableService;
+use Zend\Console\Request as ConsoleRequest;
+use Zend\Log\Logger;
+use Zend\Log\Writer\Noop;
+use Zend\Log\Writer\Stream;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 class ImportObservResultServiceFactory
@@ -31,6 +35,25 @@ class ImportObservResultServiceFactory
         $service->setNotifierService($notifierService);
         $service->setVariableService($variableService);
 
+        if ($logger = $this->getLogger($sl)) {
+            $service->setLogger($logger);
+        }
+
         return $service;
+    }
+
+    /**
+     * @param ServiceLocatorInterface $sl
+     * @return Logger
+     */
+    private function getLogger(ServiceLocatorInterface $sl)
+    {
+        if ($sl->get('request') instanceof ConsoleRequest) {
+            $writer = new Stream('php://output');
+        } else {
+            $writer = new Noop();
+        }
+
+        return (new Logger())->addWriter($writer);
     }
 }
