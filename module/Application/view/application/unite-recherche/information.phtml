@@ -13,7 +13,7 @@ use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
 use Application\Provider\Privilege\UniteRecherchePrivileges;
 
-$this->headTitle("UR '{$unite->getCode()}'");
+$this->headTitle("UR '{$unite->getStructure()->getCode()}'");
 
 $canEdit = $this->isAllowed($unite, UniteRecherchePrivileges::UNITE_RECH_MODIFICATION);
 $canAddRole = $canEdit;
@@ -35,7 +35,7 @@ $canAddRole = $canEdit;
             <dt> Sigle :</dt>
             <dd>    <?php echo $unite->getSigle(); ?>       </dd>
             <dt> Code :</dt>
-            <dd>    <?php echo $unite->getCode(); ?>        </dd>
+            <dd>    <?php echo $unite->getStructure()->getCode(); ?>        </dd>
             <dt> Établissement(s) de rattachement :</dt>
             <dd>
                 <ul>

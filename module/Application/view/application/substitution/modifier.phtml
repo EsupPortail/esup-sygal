@@ -2,7 +2,8 @@
 
 namespace Application;
 
-use Application\Entity\Db\EcoleDoctorale;use Application\Entity\Db\Structure;
+use Application\Entity\Db\EcoleDoctorale;
+use Application\Entity\Db\Structure;
 use Application\Entity\Db\StructureConcreteInterface;
 use Application\Entity\Db\TypeStructure;
 use Application\Provider\Privilege\SubstitutionPrivileges;
@@ -104,7 +105,9 @@ function generateSelect($structuresConcretes, \Zend\View\Renderer\PhpRenderer $r
         //remplacement dans la structure cible
         $("div#sources").on("click", "input[type='radio']", function () {
             var type = $(this).attr('name');
-            var texte = ($(this).parent().find(".texte").text());
+
+            // var texte = ($(this).parent().find(".texte").text());
+            var texte = ($(this).parent().parent().children(":last-child").text());
             if (type === 'logo') {
                 texte = ($(this).parent().find(".path").val());
                 var src = ($(this).parent().find(".current").attr("src"));

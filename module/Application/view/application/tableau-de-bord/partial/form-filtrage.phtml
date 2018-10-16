@@ -25,7 +25,7 @@ $paramEtablissements = [];
 $paramEtablissements[] = ['value' => '',                             'label' => $this->translate("Tous") ];
 /** @var Etablissement[] $etablissements */
 foreach ($etablissements as $etablissement) {
-    $paramEtablissements[] = ['value' => $v = $etablissement->getCode(), 'label' => $etablissement->getSigle() ];
+    $paramEtablissements[] = ['value' => $v = $etablissement->getStructure()->getCode(), 'label' => $etablissement->getSigle() ];
 }
 
 echo $this->filterPanel([

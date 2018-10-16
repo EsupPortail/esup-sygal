@@ -1,6 +1,7 @@
 <?php
 
 use Application\Entity\Db\Etablissement;
+use Application\Filter\EtablissementPrefixFilter;
 use Application\Provider\Privilege\EtablissementPrivileges;
 use Application\View\Renderer\PhpRenderer;
 
@@ -13,6 +14,7 @@ use Application\View\Renderer\PhpRenderer;
 
 $canModifier = $this->isAllowed(EtablissementPrivileges::getResourceId(EtablissementPrivileges::ETABLISSEMENT_MODIFICATION));
 
+$prefixFilter = new EtablissementPrefixFilter();
 ?>
 
 
@@ -76,10 +78,10 @@ $canModifier = $this->isAllowed(EtablissementPrivileges::getResourceId(Etablisse
                     <?php endif ?>
                 </td>
                 <td>
-                    <?php echo $etablissement->getSource()->getCode(); ?>
+                    <?php echo $prefixFilter->extractCodeEtablissementFrom($etablissement->getSource()->getCode()); ?>
                 </td>
                 <td>
-                    <?php echo $etablissement->getCode(); ?>
+                    <?php echo $etablissement->getStructure()->getCode(); ?>
                 </td>
                 <td> <?php echo $etablissement->getSigle(); ?> </td>
                 <td>
@@ -151,10 +153,10 @@ $canModifier = $this->isAllowed(EtablissementPrivileges::getResourceId(Etablisse
                     <?php endif ?>
                 </td>
                 <td>
-                    <?php echo $etablissement->getSource()->getCode(); ?>
+                    <?php echo $prefixFilter->extractCodeEtablissementFrom($etablissement->getSource()->getCode()); ?>
                 </td>
                 <td>
-                    <?php echo $etablissement->getCode(); ?>
+                    <?php echo $etablissement->getStructure()->getCode(); ?>
                 </td>
                 <td> <?php echo $etablissement->getSigle(); ?> </td>
                 <td>
