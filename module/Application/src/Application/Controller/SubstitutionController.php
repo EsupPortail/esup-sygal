@@ -214,7 +214,7 @@ class SubstitutionController extends AbstractController
         $sources = $dictionnary["sources"];
         $cible = $dictionnary["cible"];
 
-        $structures = $this->getStructureService()->getStructuresNonSubstitueesByType($type);
+        $structures = $this->getStructureService()->getAllStructuresAffichablesByType($type);
 
         $request = $this->getRequest();
         if ($request->isPost()) {

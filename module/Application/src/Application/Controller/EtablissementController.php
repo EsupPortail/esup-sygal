@@ -9,6 +9,7 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\SourceInterface;
 use Application\Entity\Db\Structure;
 use Application\Entity\Db\StructureConcreteInterface;
+use Application\Entity\Db\TypeStructure;
 use Application\Form\EtablissementForm;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
@@ -53,33 +54,14 @@ class EtablissementController extends AbstractController
      */
     public function indexAction()
     {
-        $etablissements = $this->getEtablissementService()->getRepository()->findAll();
+        $etablissements = $this->getStructureService()->getAllStructuresAffichablesByType(TypeStructure::CODE_ETABLISSEMENT);
 
-        $etablissementsSYGAL = $this->getEtablissementService()->getRepository()->findAllBySource(SourceInterface::CODE_SYGAL);
-        $etablissementsPrincipaux = array_filter($etablissementsSYGAL, function (Etablissement $etablissement) { return count($etablissement->getStructure()->getStructuresSubstituees())==0; });
-        $etablissementsSecondaires = array_diff($etablissements, $etablissementsPrincipaux);
-
-        /** retrait des structures substituées */
-        $structuresSub = array_filter($etablissementsSYGAL, function (StructureConcreteInterface $structure) { return count($structure->getStructure()->getStructuresSubstituees())!=0; });
-        $toRemove = [];
-        /** @var Etablissement $structure */
-        foreach($structuresSub as $structure) {
-            foreach ($structure->getStructure()->getStructuresSubstituees() as $sub) {
-                $toRemove[] = $sub;
-            }
-        }
-        $structures = [];
-        foreach ($etablissementsSecondaires as $structure) {
-            $found = false;
-            foreach ($toRemove as $remove) {
-                if($structure->getStructure()->getId() == $remove->getId()) $found = true;
-            }
-            if (!$found) $structures[] = $structure;
-        }
+        $etablissementsPrincipaux = array_filter($etablissements, function(Etablissement $e) { return $e->estMembre(); });
+        $etablissementsExternes = array_filter($etablissements, function(Etablissement $e) { return !$e->estMembre(); });
 
         return new ViewModel([
             'etablissementsSygal'          => $etablissementsPrincipaux,
-            'etablissementsExternes'       => $structures,
+            'etablissementsExternes'       => $etablissementsExternes,
         ]);
     }
 

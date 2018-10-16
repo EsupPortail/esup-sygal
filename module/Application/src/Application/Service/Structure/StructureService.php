@@ -599,12 +599,12 @@ class StructureService extends BaseService
      * @param string order
      * @return StructureConcreteInterface[]
      */
-    public function getStructuresNonSubstitueesByType($type, $order=null) {
+    public function getAllStructuresAffichablesByType($type, $order=null) {
         $qb = $this->getEntityManager()->getRepository($this->getEntityByType($type))->createQueryBuilder('structureConcrete')
             ->join('structureConcrete.structure', 'structure')
             ->leftJoin('structure.structureSubstituante', 'substitutionTo')
-            ->andWhere('substitutionTo.id IS NULL')
-        ;
+            ->andWhere('substitutionTo.id IS NULL OR pasHistorise(substitutionTo) != 1' )
+            ;
         if ($order) $qb->orderBy('structure.'.$order);
 
         $result = $qb->getQuery()->getResult();
