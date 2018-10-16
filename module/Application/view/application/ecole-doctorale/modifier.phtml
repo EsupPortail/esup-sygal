@@ -17,7 +17,7 @@ $ecole = $form->getObject();
 $isNew = $ecole->getId() === null;
 $estSubstituante = $ecole->getStructure()->estStructureSubstituante();
 $fcg = $this->formControlGroup();
-$this->headTitle("Modification de l'ED ".$ecole->getCode());
+$this->headTitle("Modification de l'ED ".$ecole->getStructure()->getCode());
 
 $editable = $isNew || $estSubstituante;
 $form->get('libelle')->setAttribute('readonly', !$editable);

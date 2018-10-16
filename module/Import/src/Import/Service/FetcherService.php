@@ -148,7 +148,7 @@ class FetcherService
 
         /** Vidage des données de la table */
         $queries = [];
-        $queries[] = "DELETE FROM " . $tableName . " WHERE ETABLISSEMENT_ID='" . $this->etablissement->getCode() . "' AND ID='" . $sourceCode . "'";
+        $queries[] = "DELETE FROM " . $tableName . " WHERE ETABLISSEMENT_ID='" . $this->etablissement->getStructure()->getCode() . "' AND ID='" . $sourceCode . "'";
 
         /** Remplissage avec les données retournées par le Web Services */
         $colonnes = implode(", ", $tableRelation);
@@ -184,8 +184,8 @@ class FetcherService
             $startDate,
             $uri,
             "OK",
-            "Récupération de " . $serviceName . ":" . $sourceCode . " de [" . $this->etablissement->getCode() . "] en " . ($_fin - $debut) . " seconde(s).",
-            $this->etablissement->getCode(),
+            "Récupération de " . $serviceName . ":" . $sourceCode . " de [" . $this->etablissement->getStructure()->getCode() . "] en " . ($_fin - $debut) . " seconde(s).",
+            $this->etablissement->getStructure()->getCode(),
             "variable");
     }
 
@@ -284,8 +284,8 @@ class FetcherService
             $startDate,
             $uri,
             "OK",
-            count($entries) . " " . $service . "(s) ont été récupéré(es) de [" . $this->etablissement->getCode() . "] en " . ($fin - $debut) . " seconde(s).",
-            $this->etablissement->getCode(),
+            count($entries) . " " . $service . "(s) ont été récupéré(es) de [" . $this->etablissement->getStructure()->getCode() . "] en " . ($fin - $debut) . " seconde(s).",
+            $this->etablissement->getStructure()->getCode(),
             $uri
         );
     }
@@ -353,7 +353,7 @@ class FetcherService
             throw new LogicException("Le code établissement courant est null.");
         }
 
-        $codeEtablissement = $this->etablissement->getCode();
+        $codeEtablissement = $this->etablissement->getStructure()->getCode();
 
         try {
             Assertion::keyIsset($this->config, $codeEtablissement);
@@ -485,7 +485,7 @@ EOS;
             $value = null;
             switch ($propriete) {
                 case "etablissementId": // UCN, URN, ULHN, INSA, rien d'autre
-                    $value = $this->etablissement->getCode();
+                    $value = $this->etablissement->getStructure()->getCode();
                     break;
                 case "acteurEtablissementId":
                     if (isset($entity_json->{$propriete})) {
@@ -531,7 +531,7 @@ EOS;
     {
         $filters = $this->prepareFiltersForTmpTableUpdate($filters);
 
-        $query = "DELETE FROM " . $tableName . " WHERE ETABLISSEMENT_ID='" . $this->etablissement->getCode() . "'";
+        $query = "DELETE FROM " . $tableName . " WHERE ETABLISSEMENT_ID='" . $this->etablissement->getStructure()->getCode() . "'";
 
         if (count($filters) > 0) {
             $wheres = $filters;

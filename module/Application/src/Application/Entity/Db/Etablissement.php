@@ -99,19 +99,12 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
 
     /**
      * @return string
+     * @deprecated mais encore nécessaire à cause de StructureConcreteInterface
+     * @see StructureConcreteInterface
      */
     public function getCode()
     {
         return $this->getStructure()->getCode();
-    }
-
-    /**
-     * @param mixed $code
-     * @deprecated
-     */
-    public function setCode($code)
-    {
-        $this->getStructure()->setCode($code);
     }
 
     /**

@@ -38,7 +38,7 @@ class UniteRechercheController extends AbstractController
      */
     public function indexAction()
     {
-        $urs = $this->getStructureService()->getStructuresNonSubstitueesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'libelle');
+        $urs = $this->getStructureService()->getAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'libelle');
 
         return new ViewModel([
             'unites'                         => $urs,

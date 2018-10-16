@@ -96,12 +96,12 @@ class Structure implements HistoriqueAwareInterface, SourceAwareInterface
         $structureRattach->setLibelle($data->getLibelle());
         $structureRattach->setSigle($data->getSigle());
         $structureRattach->setSourceCode($data->getSourceCode());
+        $structureRattach->setCode($data->getCode());
 
         // structure concrète
         switch (true) {
             case $data instanceof Etablissement:
                 $structure = new Etablissement();
-                $structure->setCode($data->getCode());
                 $structure->setDomaine($data->getDomaine());
                 break;
             case $data instanceof EcoleDoctorale:

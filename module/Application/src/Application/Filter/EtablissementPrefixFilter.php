@@ -3,6 +3,7 @@
 namespace Application\Filter;
 
 use Application\Entity\Db\Etablissement;
+use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\Filter\FilterInterface;
 

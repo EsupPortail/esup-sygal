@@ -88,6 +88,7 @@ class UniteRechercheService extends BaseService implements RoleServiceAwareInter
     public function deleteSoftly(UniteRecherche $ur, Utilisateur $destructeur)
     {
         $ur->historiser($destructeur);
+        $ur->getStructure()->historiser($destructeur);
 
         $this->flush($ur);
     }
@@ -95,6 +96,7 @@ class UniteRechercheService extends BaseService implements RoleServiceAwareInter
     public function undelete(UniteRecherche $ur)
     {
         $ur->dehistoriser();
+        $ur->getStructure()->dehistoriser();
 
         $this->flush($ur);
     }

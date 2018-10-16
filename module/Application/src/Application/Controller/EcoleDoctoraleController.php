@@ -27,7 +27,7 @@ class EcoleDoctoraleController extends AbstractController
 
     public function indexAction()
     {
-        $eds = $this->getStructureService()->getStructuresNonSubstitueesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle');
+        $eds = $this->getStructureService()->getAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle');
 
         return new ViewModel([
             'ecoles'                         => $eds,
