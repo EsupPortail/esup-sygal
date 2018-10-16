@@ -7,7 +7,8 @@ use Application\Service\Individu\IndividuService;
 use Application\Service\Role\RoleService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\Variable\VariableService;
-use Zend\Mvc\Router\RouteStackInterface;
+use Zend\Mvc\View\Http\ViewManager as HttpViewManager;
+use Zend\Mvc\View\Console\ViewManager as ConsoleViewManager;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\View\Helper\Url as UrlHelper;
 
@@ -42,12 +43,10 @@ class NotifierServiceFactory extends \Notification\Service\NotifierServiceFactor
         $individuService = $serviceLocator->get('IndividuService');
         $roleService = $serviceLocator->get('RoleService');
 
-        /** @var RouteStackInterface $router */
-        $router = $serviceLocator->get('router');
-        $viewHelperManager = $serviceLocator->get('ViewHelperManager');
-        /* @var UrlHelper $urlHelper */
-        $urlHelper = $viewHelperManager->get('Url');
-        $urlHelper->setRouter($router);
+        /** @var HttpViewManager|ConsoleViewManager $vm */
+        $vm = $serviceLocator->get('ViewManager');
+        /** @var UrlHelper $urlHelper */
+        $urlHelper = $vm->getHelperManager()->get('Url');
 
         /** @var NotificationFactory $notificationFactory */
         $notificationFactory = $serviceLocator->get(NotificationFactory::class);

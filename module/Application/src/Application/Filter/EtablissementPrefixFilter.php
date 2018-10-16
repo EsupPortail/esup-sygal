@@ -16,14 +16,14 @@ class EtablissementPrefixFilter implements FilterInterface
      * (i.e. le code établissement + un séparateur).
      *
      * @param  string $value Ex: "UCN::ABC123"
-     * @throws LogicException La chaîne de caractère spécifiée n'est pas préfixée
+     * @throws RuntimeException La chaîne de caractère spécifiée n'est pas préfixée
      * @return string Ex: "ABC123"
      */
     public function filter($value)
     {
         $pos = stripos($value, self::ETAB_PREFIX_SEP);
         if ($pos === false) {
-            throw new LogicException("La chaîne de caractère spécifiée n'est pas préfixée par l'établissement");
+            throw new RuntimeException("La chaîne de caractère spécifiée n'est pas préfixée par l'établissement");
         }
 
         return substr($value, $pos + strlen(self::ETAB_PREFIX_SEP));
@@ -33,7 +33,7 @@ class EtablissementPrefixFilter implements FilterInterface
      * Proxy de la méthode filter().
      *
      * @param  string $value Ex: "UCN::ABC123"
-     * @throws RuntimeException If filtering $value is impossible
+     * @throws RuntimeException La chaîne de caractère spécifiée n'est pas préfixée
      * @return string Ex: "ABC123"
      *
      * @see filter()
@@ -44,20 +44,60 @@ class EtablissementPrefixFilter implements FilterInterface
     }
 
     /**
+     * Retourne le code établissement présent dans le "préfixe établissement" de la chaîne de caractères spécifiée.
+     *
+     * @param  string $value Ex: "UCN::ABC123"
+     * @throws RuntimeException La chaîne de caractère spécifiée n'est pas préfixée
+     * @return string Ex: "UCN"
+     */
+    public function extractCodeEtablissementFrom($value)
+    {
+        $pos = stripos($value, self::ETAB_PREFIX_SEP);
+        if ($pos === false) {
+            throw new RuntimeException("La chaîne de caractère spécifiée n'est pas préfixée par l'établissement");
+        }
+
+        return substr($value, 0, $pos);
+    }
+
+    /**
+     * Ajoute devant une chaîne de caractères le préfixe spécifié puis le séparateur.
+     *
+     * @param  string $value  Ex: "ABC123"
+     * @param  string $prefix Préfixe éventuel, ex: 'UCN'.
+     *                        Si aucun préfixe n'est spécifié, le préfixe par défaut est utilisé.
+     * @return string Ex: "UCN::ABC123"
+     */
+    public function addPrefixTo($value, $prefix = null)
+    {
+        if ($prefix === null) {
+            $prefix = Etablissement::CODE_COMUE;
+        }
+
+        return $prefix . self::ETAB_PREFIX_SEP . $value;
+    }
+
+    /**
      * Ajoute devant une chaîne de caractères le "préfixe établissement"
      * (i.e. le code établissement + un séparateur) spécifié.
      *
-     * @param  string               $value         Ex: "ABC123"
-     * @param  Etablissement|string $etablissement Instance d'Etablissement, ou code établissement
+     * @param  string        $value         Ex: "ABC123"
+     * @param  Etablissement $etablissement Etablissement dont le code sera utilisé comme préfixe.
+     *                                      Si aucun établissement n'est spécifié, le préfixe par défaut est utilisé.
      * @return string Ex: "UCN::ABC123"
      */
-    public function addPrefixTo($value, $etablissement)
+    public function addPrefixEtablissementTo($value, Etablissement $etablissement = null)
     {
-        if ($etablissement instanceof Etablissement) {
-            $etablissement = $etablissement->getCode();
+        if ($etablissement === null) {
+            return $this->addPrefixTo($value);
         }
 
-        return $etablissement . self::ETAB_PREFIX_SEP . $value;
+        if (! $etablissement->getCode()) {
+            throw new RuntimeException(
+                "Impossible de préfixer car l'établissement dont l'id est {$etablissement->getId()} n'a pas de code");
+        }
+
+        return $etablissement->getCode() . self::ETAB_PREFIX_SEP . $value;
     }
 
     /**

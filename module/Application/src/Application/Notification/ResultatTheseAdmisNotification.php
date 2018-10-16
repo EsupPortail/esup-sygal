@@ -9,7 +9,7 @@ class ResultatTheseAdmisNotification extends Notification
 {
     use TheseAwareTrait;
 
-    protected $templatePath = 'application/these/mail/notif-resultat-these-modifie';
+    protected $templatePath = 'application/import/mail/notif-resultat-admis-doctorant';
 
     /**
      * @return static

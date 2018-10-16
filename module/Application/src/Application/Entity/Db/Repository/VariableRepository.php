@@ -2,6 +2,7 @@
 
 namespace Application\Entity\Db\Repository;
 
+use Application\Constants;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Variable;
@@ -18,10 +19,12 @@ class VariableRepository extends DefaultEntityRepository
      */
     public function findByCodeAndThese($code, These $these)
     {
+        $dateObservation = $these->getDateSoutenance() ?: $these->getDatePrevisionSoutenance();
+
         return $this->findByCodeAndEtab(
             $code,
             $these->getEtablissement(),
-            $these->getDateSoutenance() ?: $these->getDatePrevisionSoutenance());
+            $dateObservation ?: new \DateTime());
     }
 
     /**
@@ -61,7 +64,13 @@ class VariableRepository extends DefaultEntityRepository
 
         if (! is_array($code)) {
             $variable =  current($results) ?: null;
-            if ($variable === null) throw new RuntimeException("La valeur pour le variable [".$code."] est manquante pour l'établissement [".$etab->getCode()."].");
+            if ($variable === null) {
+                throw new RuntimeException(sprintf(
+                    "La valeur de la variable '%s' est manquante pour l'établissement '%s' " .
+                    "à la date d'observation %s.",
+                    $code, $etab->getCode(), $dateObservation->format(Constants::DATE_FORMAT)
+                ));
+            }
             return $variable;
         }
 
@@ -70,7 +79,13 @@ class VariableRepository extends DefaultEntityRepository
             $variables[$v->getCode()] = $v;
         }
         foreach ($code as $c) {
-            if (!isset($variables[$c])) throw new RuntimeException("La valeur pour le variable [".$c."] est manquante pour l'établissement [".$etab->getCode()."].");
+            if (!isset($variables[$c])) {
+                throw new RuntimeException(sprintf(
+                    "La valeur de la variable '%s' est manquante pour l'établissement '%s' " .
+                    "à la date d'observation %s.",
+                    $c, $etab->getCode(), $dateObservation->format(Constants::DATE_FORMAT)
+                ));
+            }
         }
 
         return $variables;

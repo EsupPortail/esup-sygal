@@ -11,7 +11,7 @@ use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\TypeStructure;
 use Application\Provider\Privilege\EcoleDoctoralePrivileges;
 
-$this->headTitle("ED '{$ecole->getCode()}'");
+$this->headTitle("ED '{$ecole->getStructure()->getCode()}'");
 
 $canEdit = $this->isAllowed($ecole, EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION);
 $canAddRole = $canEdit;
@@ -36,7 +36,7 @@ $canAddRole = $canEdit;
                 <dt> Sigle :</dt>
                 <dd>    <?php echo $ecole->getSigle(); ?>       </dd>
                 <dt> Code :</dt>
-                <dd>    <?php echo $ecole->getCode(); ?>        </dd>
+                <dd>    <?php echo $ecole->getStructure()->getCode(); ?>        </dd>
             </dl>
         </div>
     </div>

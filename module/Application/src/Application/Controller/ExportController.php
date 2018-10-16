@@ -27,7 +27,7 @@ class ExportController extends AbstractController
             'Nom patronymique'                      => function (These $these) { return $these->getDoctorant()->getIndividu()->getNomPatronymique(); },
             'Date de naissance'                     => function (These $these) { return $these->getDoctorant()->getIndividu()->getDateNaissance(); },
             'Mail'                                  => function (These $these) { return $these->getDoctorant()->getIndividu()->getEmail(); },
-            'Numéro étudiant'                       => function (These $these) { return $these->getDoctorant()->getSourceCode(); },
+            'Numéro étudiant'                       => function (These $these) { return $these->getDoctorant()->getSourceCodeSansPrefix(); },
             //These
             'Identifiant de la thèse'               => function (These $these) { return $these->getSourceCode(); },
             'Titre'                                 => function (These $these) { return $these->getTitre(); },
@@ -49,9 +49,9 @@ class ExportController extends AbstractController
             },
             //Structures
             'Etablissement'                         => function (These $these) { return $these->getEtablissement()->getLibelle(); },
-            'Ecole Doctorale Code'                  => function (These $these) { if($these->getEcoleDoctorale() !== null)return $these->getEcoleDoctorale()->getSourceCode(); else return null; },
+            'Ecole Doctorale Code'                  => function (These $these) { if($these->getEcoleDoctorale() !== null)return $these->getEcoleDoctorale()->getStructure()->getCode(); else return null; },
             'Ecole Doctorale'                       => function (These $these) { if($these->getEcoleDoctorale() !== null)return $these->getEcoleDoctorale()->getLibelle(); else return null; },
-            'Unité de Recherche Code'               => function (These $these) { if($these->getUniteRecherche() !== null) return $these->getUniteRecherche()->getSourceCode(); else return null; },
+            'Unité de Recherche Code'               => function (These $these) { if($these->getUniteRecherche() !== null) return $these->getUniteRecherche()->getStructure()->getCode(); else return null; },
             'Unité de Recherche'                    => function (These $these) { if($these->getUniteRecherche() !== null) return $these->getUniteRecherche()->getLibelle(); else return null; },
             'Etablissement Co-Tutelle'              => function (These $these) { return $these->getLibelleEtabCotutelle(); },
             'Pays Co-Tutelle'                       => function (These $these) { return $these->getLibellePaysCotutelle(); },

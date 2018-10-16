@@ -51,6 +51,7 @@ class EtablissementService extends BaseService
     public function deleteSoftly(Etablissement $etablissement, Utilisateur $destructeur)
     {
         $etablissement->historiser($destructeur);
+        $etablissement->getStructure()->historiser($destructeur);
 
         $this->flush($etablissement);
     }
@@ -61,6 +62,7 @@ class EtablissementService extends BaseService
     public function undelete(Etablissement $etablissement)
     {
         $etablissement->dehistoriser();
+        $etablissement->getStructure()->dehistoriser();
 
         $this->flush($etablissement);
     }

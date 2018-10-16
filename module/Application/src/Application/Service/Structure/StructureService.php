@@ -12,9 +12,13 @@ use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
 use Application\Entity\Db\Utilisateur;
 use Application\Filter\EtablissementPrefixFilter;
+use Application\Filter\EtablissementPrefixFilterAwareTrait;
 use Application\Service\BaseService;
+use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
+use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Source\SourceService;
 use Application\Service\Source\SourceServiceAwareTrait;
+use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
@@ -30,6 +34,10 @@ class StructureService extends BaseService
 {
     use SourceServiceAwareTrait;
     use SynchroServiceAwareTrait;
+    use EtablissementPrefixFilterAwareTrait;
+    use EcoleDoctoraleServiceAwareTrait;
+    use EtablissementServiceAwareTrait;
+    use UniteRechercheServiceAwareTrait;
 
     /**
      * @return EntityRepository
@@ -394,7 +402,8 @@ class StructureService extends BaseService
      * @param  TypeStructure $typeStructure
      * @return StructureConcreteInterface|null
      */
-    public function createStructureConcrete($typeStructure) {
+    public function createStructureConcrete($typeStructure)
+    {
         $sourceSygal = $this->sourceService->fetchSourceSygal();
         $type = $this->fetchTypeStructure($typeStructure);
 
@@ -402,7 +411,6 @@ class StructureService extends BaseService
         switch($typeStructure) {
             case TypeStructure::CODE_ETABLISSEMENT :
                 $structureCibleDataObject = new Etablissement();
-                $structureCibleDataObject->setCode(uniqid());
                 break;
             case TypeStructure::CODE_ECOLE_DOCTORALE :
                 $structureCibleDataObject = new EcoleDoctorale();
@@ -413,7 +421,8 @@ class StructureService extends BaseService
             default:
                 throw new RuntimeException("Type de structure inconnu [".$typeStructure."]");
         }
-        $structureCibleDataObject->getStructure()->setSourceCode("SyGAL". "::" . uniqid());
+        $sourceCode = $this->getEtablissementPrefixFilter()->addPrefixTo(uniqid());
+        $structureCibleDataObject->getStructure()->setSourceCode($sourceCode);
         $structureCibleDataObject->getStructure()->setTypeStructure($type);
         $structureCibleDataObject->setSource($sourceSygal);
         $structureCibleDataObject->getStructure()->setSource($sourceSygal);
@@ -482,7 +491,7 @@ class StructureService extends BaseService
 
         $sourceCodeDictionnary = [];
         foreach ($structures as $structure) {
-            $sourceCode = explode("::", $structure->getSourceCode())[1];
+            $sourceCode = $this->getEtablissementPrefixFilter()->removePrefixFrom($structure->getSourceCode());
             $sourceCodeDictionnary[$sourceCode][] = $structure;
         }
 
@@ -578,7 +587,7 @@ class StructureService extends BaseService
             ->leftJoin('structure.structuresSubstituees', 'substitutionFrom')
             ->leftJoin('structure.structureSubstituante', 'substitutionTo')
             ->andWhere('substitutionFrom.id IS NULL')
-            ->andWhere('substitutionTo.id IS NULL')
+            ->andWhere('substitutionTo.id IS NULL OR pasHistorise(substitutionTo) != 1')
         ;
 
         $result = $qb->getQuery()->getResult();
@@ -590,12 +599,12 @@ class StructureService extends BaseService
      * @param string order
      * @return StructureConcreteInterface[]
      */
-    public function getStructuresNonSubstitueesByType($type, $order=null) {
+    public function getAllStructuresAffichablesByType($type, $order=null) {
         $qb = $this->getEntityManager()->getRepository($this->getEntityByType($type))->createQueryBuilder('structureConcrete')
             ->join('structureConcrete.structure', 'structure')
             ->leftJoin('structure.structureSubstituante', 'substitutionTo')
-            ->andWhere('substitutionTo.id IS NULL')
-        ;
+            ->andWhere('substitutionTo.id IS NULL OR pasHistorise(substitutionTo) != 1' )
+            ;
         if ($order) $qb->orderBy('structure.'.$order);
 
         $result = $qb->getQuery()->getResult();
@@ -640,4 +649,71 @@ class StructureService extends BaseService
         return $result;
     }
 
+    // TODO mettre dans le service ...
+    /** Identifie les structures substituables en utilisant le sourceCode */
+    public function checkStructure($type)
+    {
+        $structures = [];
+        switch($type) {
+            case (TypeStructure::CODE_ECOLE_DOCTORALE):
+                $structures = $this->getEcoleDoctoraleService()->getRepository()->findAll();
+                break;
+            case (TypeStructure::CODE_ETABLISSEMENT):
+                $structures = $this->getEtablissementService()->getRepository()->findAll();
+                break;
+            case (TypeStructure::CODE_UNITE_RECHERCHE):
+                $structures = $this->getUniteRechercheService()->getRepository()->findAll();
+                break;
+        }
+
+        $dictionnaire = [];
+        foreach ($structures as $structure) {
+            $identifiant = explode("::", $structure->getSourceCode())[1];
+            $dictionnaire[$identifiant][] = $structure;
+        }
+
+        $substitutions = [];
+        foreach ($dictionnaire as $identifiant => $structures) {
+            if (count($structures) >= 2) {
+                $sources = [];
+                $cible = null;
+
+                /** @var StructureConcreteInterface $structure */
+                foreach ($structures as $structure) {
+                    $prefix = explode("::",$structure->getSourceCode())[0];
+                    if ($prefix === "SyGAL" || $prefix === "COMUE") {
+                        $cible = $structure;
+                    } else {
+                        $sources[] = $structure;
+                    }
+                }
+                $substitutions[$identifiant] = [$sources, $cible];
+            }
+        }
+
+        return $substitutions;
+    }
+
+
+    public function getSubstitutionDictionnary($identifiant, $type)
+    {
+        $structures = $this->getStructuresBySuffixe($identifiant, $type);
+
+        $sources = [];
+        $cible = null;
+        /** @var StructureConcreteInterface $structure */
+        foreach ($structures as $structure) {
+            $prefix = explode("::",$structure->getSourceCode())[0];
+            if ($prefix === "SyGAL" || $prefix === "COMUE") {
+                $cible = $structure;
+            } else {
+                $sources[] = $structure;
+            }
+        }
+
+        return [
+            "cible" => $cible,
+            "sources" => $sources
+        ];
+    }
 }

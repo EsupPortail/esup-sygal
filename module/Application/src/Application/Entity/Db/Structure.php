@@ -2,6 +2,8 @@
 
 namespace Application\Entity\Db;
 
+use Application\Filter\EtablissementPrefixFilterAwareInterface;
+use Application\Filter\EtablissementPrefixFilterAwareTrait;
 use Doctrine\Common\Collections\Collection;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
@@ -18,6 +20,7 @@ class Structure implements HistoriqueAwareInterface, SourceAwareInterface
 {
     use SourceAwareTrait;
     use HistoriqueAwareTrait;
+    use EtablissementPrefixFilterAwareTrait;
 
     const PATH = "/var/www/sygal/upload";
 
@@ -93,12 +96,12 @@ class Structure implements HistoriqueAwareInterface, SourceAwareInterface
         $structureRattach->setLibelle($data->getLibelle());
         $structureRattach->setSigle($data->getSigle());
         $structureRattach->setSourceCode($data->getSourceCode());
+        $structureRattach->setCode($data->getCode());
 
         // structure concrète
         switch (true) {
             case $data instanceof Etablissement:
                 $structure = new Etablissement();
-                $structure->setCode($data->getCode());
                 $structure->setDomaine($data->getDomaine());
                 break;
             case $data instanceof EcoleDoctorale:
@@ -181,7 +184,7 @@ class Structure implements HistoriqueAwareInterface, SourceAwareInterface
     {
         if ($this->code !== null) return $this->code;
         if ($this->sourceCode !== null) {
-            $code = explode("::", $this->sourceCode)[1];
+            $code = $this->getEtablissementPrefixFilter()->removePrefixFrom($this->sourceCode);
             return $code;
         }
 

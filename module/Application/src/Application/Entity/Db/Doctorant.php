@@ -3,6 +3,7 @@
 namespace Application\Entity\Db;
 
 use Application\Entity\Db\Interfaces\DoctorantInterface;
+use Application\Filter\EtablissementPrefixFilterAwareTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use LogicException;
@@ -18,6 +19,7 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
+    use EtablissementPrefixFilterAwareTrait;
 
     /**
      * @var integer
@@ -87,23 +89,19 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
      *
      * @return string
      */
-    public function getSourceCode($no_prefix = false)
+    public function getSourceCode()
     {
-        if ($no_prefix) {
-            $res = explode("::", $this->sourceCode);
-            return end($res);
-        }
         return $this->sourceCode;
     }
 
     /**
-     * Get sourceCode
+     * Retourne le source code sans le préfixe établissement.
      *
      * @return string
      */
     public function getSourceCodeSansPrefix()
     {
-        return $this->getEtablissement()->removePrefixFrom($this->sourceCode);
+        return $this->getEtablissementPrefixFilter()->removePrefixFrom($this->getSourceCode());
     }
 
     /**

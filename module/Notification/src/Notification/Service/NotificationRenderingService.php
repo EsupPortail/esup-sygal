@@ -1,18 +1,19 @@
 <?php
 
-namespace Notification;
+namespace Notification\Service;
 
+use Notification\Notification;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\View\Renderer\PhpRenderer;
 use Zend\View\Resolver\AggregateResolver;
 use Zend\View\Resolver\TemplatePathStack;
 
-class NotificationRenderer
+class NotificationRenderingService
 {
     /**
      * @var PhpRenderer
      */
-    protected $renderer;
+    protected $phpRenderer;
 
     /**
      * @var Notification
@@ -20,13 +21,13 @@ class NotificationRenderer
     protected $notification;
 
     /**
-     * NotificationRenderer constructor.
+     * Constructor.
      *
-     * @param PhpRenderer $renderer
+     * @param PhpRenderer $phpRenderer
      */
-    public function __construct(PhpRenderer $renderer)
+    public function __construct(PhpRenderer $phpRenderer)
     {
-        $this->renderer = $renderer;
+        $this->phpRenderer = $phpRenderer;
     }
 
     /**
@@ -56,7 +57,7 @@ class NotificationRenderer
         $model = $this->notification->createViewModel();
         $model->setTemplate($template);
 
-        return $this->renderer->render($model);
+        return $this->phpRenderer->render($model);
     }
 
     /**
@@ -72,7 +73,7 @@ class NotificationRenderer
         $template = substr($templatePath, strlen($templateDir) + 1/*slash*/);
         file_put_contents($templatePath, $templateContent);
 
-        $resolver = $this->renderer->resolver();
+        $resolver = $this->phpRenderer->resolver();
         if ($resolver instanceof TemplatePathStack) {
             $resolver->addPath($templateDir);
         } elseif ($resolver instanceof AggregateResolver) {
@@ -83,11 +84,11 @@ class NotificationRenderer
             throw new RuntimeException(
                 sprintf("Resolver rencontré inattendu (%s), impossible de générer le corps du mail", get_class($resolver)));
         }
-        $this->renderer->setResolver($resolver);
+        $this->phpRenderer->setResolver($resolver);
 
         $model->setTemplate($template);
 
-        $html = $this->renderer->render($model);
+        $html = $this->phpRenderer->render($model);
 
         unlink($templatePath);
 

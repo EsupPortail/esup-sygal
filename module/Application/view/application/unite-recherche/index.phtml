@@ -1,6 +1,7 @@
 <?php
 
 use Application\Entity\Db\UniteRecherche;
+use Application\Filter\EtablissementPrefixFilter;
 use Application\Provider\Privilege\UniteRecherchePrivileges;
 use Application\View\Renderer\PhpRenderer;
 
@@ -12,6 +13,8 @@ use Application\View\Renderer\PhpRenderer;
 
 $canModifier = $this->isAllowed(UniteRecherchePrivileges::getResourceId(UniteRecherchePrivileges::UNITE_RECH_MODIFICATION));
 $canAjouter = $this->isAllowed(UniteRecherchePrivileges::getResourceId(UniteRecherchePrivileges::UNITE_RECH_CREATION));
+
+$prefixFilter = new EtablissementPrefixFilter();
 ?>
 
 
@@ -60,10 +63,10 @@ $canAjouter = $this->isAllowed(UniteRecherchePrivileges::getResourceId(UniteRech
                     </a>
                 </td>
                 <td>
-                    <?php echo explode("::", $unite->getSource()->getCode())[0]; ?>
+                    <?php echo $prefixFilter->extractCodeEtablissementFrom($unite->getSource()->getCode()); ?>
                 </td>
                 <td>
-                    <?php echo $unite->getCode(); ?>
+                    <?php echo $unite->getStructure()->getCode(); ?>
                 </td>
                 <td> <?php echo $unite->getSigle(); ?> </td>
                 <td>

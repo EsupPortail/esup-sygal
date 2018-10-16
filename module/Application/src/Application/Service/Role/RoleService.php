@@ -11,18 +11,15 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\RoleModele;
 use Application\Entity\Db\RolePrivilegeModele;
 use Application\Entity\Db\SourceInterface;
+use Application\Entity\Db\Structure;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
 use Application\Entity\Db\Utilisateur;
 use Application\Filter\EtablissementPrefixFilter;
+use Application\Filter\EtablissementPrefixFilterAwareTrait;
 use Application\Service\BaseService;
-use Application\Entity\Db\Structure;
-use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Query\Expr\Join;
-use MongoDB\BSON\Type;
-use UnicaenApp\Exception\RuntimeException;
 use UnicaenImport\Entity\Db\Source;
-use ZfcUser\Entity\UserInterface;
 
 /**
  * Class RoleService
@@ -30,6 +27,8 @@ use ZfcUser\Entity\UserInterface;
  */
 class RoleService extends BaseService
 {
+    use EtablissementPrefixFilterAwareTrait;
+
     /**
      * @return RoleRepository
      */
@@ -173,10 +172,10 @@ class RoleService extends BaseService
             $sourceCode = null;
             $roleId = null;
             if ($structure instanceof Etablissement) {
-                $sourceCode = $structure->getCode() ."::". $roleModele->getRoleCode();
+                $sourceCode = $this->getEtablissementPrefixFilter()->addPrefixEtablissementTo($roleModele->getRoleCode(), $structure);
                 $roleId = $roleModele->getLibelle()." ". $structure->getCode();
             } else {
-                $sourceCode = "COMUE" . "::". $roleModele->getRoleCode()."_" . $structure->getSourceCode();
+                $sourceCode = $this->getEtablissementPrefixFilter()->addPrefixEtablissementTo($roleModele->getRoleCode());
                 $roleId = $roleModele->getLibelle()." ". $structure->getSourceCode();
             }
 
