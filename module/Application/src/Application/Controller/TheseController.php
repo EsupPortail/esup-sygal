@@ -54,6 +54,8 @@ use UnicaenApp\Traits\MessageAwareInterface;
 use UnicaenApp\Util;
 use Zend\Form\Element\Hidden;
 use Zend\Http\Response;
+use Zend\Log\Logger;
+use Zend\Log\Writer\Noop;
 use Zend\Stdlib\ParametersInterface;
 use Zend\View\Model\ViewModel;
 
@@ -267,6 +269,7 @@ class TheseController extends AbstractController
     {
         $these = $this->requestedThese();
 
+        $this->importService->setLogger((new Logger())->addWriter(new Noop()));
         $this->importService->updateThese($these);
 
         $redirect = $this->params()->fromQuery('redirect', '/');
