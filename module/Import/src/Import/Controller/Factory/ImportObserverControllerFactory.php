@@ -1,10 +1,10 @@
 <?php
 
-namespace Application\Controller\Factory;
+namespace Import\Controller\Factory;
 
-use Application\Controller\ImportObserverController;
+use Import\Controller\ImportObserverController;
 use Application\EventRouterReplacer;
-use Application\Service\ImportObservResult\ImportObservResultService;
+use Import\Service\ImportObservResult\ImportObservResultService;
 use Zend\Mvc\Controller\ControllerManager;
 use Zend\Mvc\Router\Http\TreeRouteStack;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -15,7 +15,7 @@ class ImportObserverControllerFactory
      * Create service
      *
      * @param ControllerManager $controllerManager
-     * @return ImportObserverController
+     * @return \Import\Controller\ImportObserverController
      */
     public function __invoke(ControllerManager $controllerManager)
     {
@@ -40,7 +40,7 @@ class ImportObserverControllerFactory
      */
     private function getImportObservResultService(ServiceLocatorInterface $sl)
     {
-        /** @var ImportObservResultService $service */
+        /** @var \Import\Service\ImportObservResult\ImportObservResultService $service */
         $service = $sl->get('ImportObservResultService');
 
         return $service;

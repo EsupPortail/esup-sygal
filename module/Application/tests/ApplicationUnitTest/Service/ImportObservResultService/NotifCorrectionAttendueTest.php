@@ -6,7 +6,7 @@ use Application\Entity\Db\ImportObservResult;
 use Application\Entity\Db\Repository\ImportObservResultRepository;
 use Application\Entity\Db\These;
 use Application\Rule\NotificationDepotVersionCorrigeeAttenduRule;
-use Application\Service\ImportObservResult\ImportObservResultService;
+use Import\Service\ImportObservResult\ImportObservResultService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
 use ApplicationUnitTest\Test\Asset\EntityAsset;
@@ -19,7 +19,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
     use MockProviderAwareTrait;
 
     /**
-     * @var ImportObservResultService
+     * @var \Import\Service\ImportObservResult\ImportObservResultService
      */
     protected $service;
 
@@ -198,7 +198,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param ImportObservResult $record
-     * @return ImportObservResultService
+     * @return \Import\Service\ImportObservResult\ImportObservResultService
      */
     protected function _init_test_pour_correction_attendue(ImportObservResult $record)
     {

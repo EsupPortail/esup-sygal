@@ -66,6 +66,7 @@ class NotifierService extends \Notification\Service\NotifierService
      * Notification du BDD concernant l'évolution des résultats de thèses.
      *
      * @param array $data
+     * @return ResultatTheseModifieNotification
      */
     public function triggerBdDUpdateResultat(array $data)
     {
@@ -76,15 +77,20 @@ class NotifierService extends \Notification\Service\NotifierService
         $notif->setEmailBdd($emailBdd);
 
         $this->trigger($notif);
+
+        return $notif;
     }
 
     /**
      * Notification des doctorants dont le résultat de la thèse est passé à Admis.
      *
      * @param array $data
+     * @return ResultatTheseAdmisNotification[]
      */
     public function triggerDoctorantResultatAdmis(array $data)
     {
+        $notifs = [];
+
         foreach ($data as $array) {
             $these = $array['these'];
             /* @var These $these */
@@ -96,7 +102,11 @@ class NotifierService extends \Notification\Service\NotifierService
             $notif->setEmailBdd($emailBdd);
 
             $this->trigger($notif);
+
+            $notifs[] = $notif;
         }
+
+        return $notifs;
     }
 
     /**

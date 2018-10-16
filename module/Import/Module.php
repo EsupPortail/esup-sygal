@@ -18,10 +18,10 @@ class Module
 
     public function getConfig()
     {
-        $paths = array_merge(
-            [__DIR__ . '/config/module.config.php']
-        );
-        return ConfigFactory::fromFiles($paths);
+        return ConfigFactory::fromFiles([
+            __DIR__ . '/config/synchro.config.php',
+            __DIR__ . '/config/import.config.php',
+        ]);
     }
 
     public function getAutoloaderConfig()
@@ -48,8 +48,10 @@ class Module
             // command
             'import-all --etablissement=' => "Importer toutes les données de tous les serviceq d'un établissement.",
             // parameters
-            // parameters
             ['--etablissement', "Requis. Identifiant de l'établissement, ex: 'UCN'"],
+
+            // command
+            'process-observed-import-results' => "Traitement des résultats d'observation de certains changements durant la synchro.",
         ];
     }
 }

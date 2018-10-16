@@ -1,9 +1,10 @@
 <?php
 
-namespace Application\Controller;
+namespace Import\Controller;
 
+use Application\Controller\AbstractController;
 use Application\EventRouterReplacerAwareTrait;
-use Application\Service\ImportObservResult\ImportObservResultServiceAwareTrait;
+use Import\Service\ImportObservResult\ImportObservResultServiceAwareTrait;
 
 /**
  *
@@ -34,10 +35,9 @@ class ImportObserverController extends AbstractController
     {
         $this->eventRouterReplacer->replaceEventRouter($this->getEvent());
 
-        $this->importObservResultService
-            ->handleImportObservResultsForResultatAdmis()
-            ->handleImportObservResultsForCorrectionMineure()
-            ->handleImportObservResultsForCorrectionMajeure();
+        $this->importObservResultService->handleImportObservResultsForResultatAdmis();
+        $this->importObservResultService->handleImportObservResultsForCorrectionMineure();
+        $this->importObservResultService->handleImportObservResultsForCorrectionMajeure();
 
         $this->eventRouterReplacer->restoreEventRouter();
 
