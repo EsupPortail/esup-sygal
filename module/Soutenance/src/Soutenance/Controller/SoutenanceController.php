@@ -18,6 +18,8 @@ use Application\Service\Validation\ValidationServiceAwareTrait;
 use BjyAuthorize\Exception\UnAuthorizedException;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
+use Soutenance\Form\Confidentialite\ConfidentialiteForm;
+use Soutenance\Form\Cotutelle\CotutelleForm;
 use Soutenance\Form\SoutenanceDateLieu\SoutenanceDateLieuForm;
 use Soutenance\Form\SoutenanceMembre\SoutenanceMembreForm;
 use Soutenance\Form\SoutenanceRefus\SoutenanceRefusForm;
@@ -197,8 +199,8 @@ class SoutenanceController extends AbstractActionController {
         );
     }
 
-    public function effacerMembreAction() {
-
+    public function effacerMembreAction()
+    {
         /** @var These $these */
         $idThese = $this->params()->fromRoute('these');
         $these = $this->getTheseService()->getRepository()->find($idThese);
@@ -218,6 +220,61 @@ class SoutenanceController extends AbstractActionController {
         }
         $this->redirect()->toRoute('soutenance/proposition',['these' => $idThese],[],true);
     }
+
+    public function cotutelleAction()
+    {
+        /** @var These $these */
+        $idThese = $this->params()->fromRoute('these');
+        $these = $this->getTheseService()->getRepository()->find($idThese);
+
+        /** @var CotutelleForm  $form */
+        $form = $this->getServiceLocator()->get('FormElementManager')->get(CotutelleForm::class);
+        $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/cotutelle', ['these' => $these->getId()], [], true));
+        $form->bind($these);
+
+        /** @var Request $request */
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $form->setData($data);
+            if ($form->isValid()) {
+                $this->getTheseService()->update($these);
+            }
+        }
+
+        return new ViewModel([
+            'title' => 'Renseignement des informations relatives à une co-tutelle',
+            'form' => $form,
+        ]);
+    }
+
+    public function confidentialiteAction()
+    {
+        /** @var These $these */
+        $idThese = $this->params()->fromRoute('these');
+        $these = $this->getTheseService()->getRepository()->find($idThese);
+
+        /** @var CotutelleForm  $form */
+        $form = $this->getServiceLocator()->get('FormElementManager')->get(ConfidentialiteForm::class);
+        $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/confidentialite', ['these' => $these->getId()], [], true));
+        $form->bind($these);
+
+        /** @var Request $request */
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $form->setData($data);
+            if ($form->isValid()) {
+                $this->getTheseService()->update($these);
+            }
+        }
+
+        return new ViewModel([
+            'title' => 'Renseignement des informations relatives à la confidentialité',
+            'form' => $form,
+        ]);
+    }
+
 
     public function validerAction() {
         /** @var These $these */

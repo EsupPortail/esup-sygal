@@ -21,6 +21,12 @@ use Soutenance\Controller\Factory\SoutenanceControllerFactory;
 use Soutenance\Controller\PresoutenanceController;
 use Soutenance\Controller\QualiteController;
 use Soutenance\Controller\SoutenanceController;
+use Soutenance\Form\Confidentialite\ConfidentialiteForm;
+use Soutenance\Form\Confidentialite\ConfidentialiteFormFactory;
+use Soutenance\Form\Confidentialite\ConfidentialiteHydrator;
+use Soutenance\Form\Cotutelle\CotutelleForm;
+use Soutenance\Form\Cotutelle\CotutelleHydrator;
+use Soutenance\Form\Cotutelle\CotutelleFormFactory;
 use Soutenance\Form\QualiteEdition\QualiteEditionForm;
 use Soutenance\Form\QualiteEdition\QualiteEditionFormFactory;
 use Soutenance\Form\QualiteEdition\QualiteEditiontHydrator;
@@ -103,6 +109,8 @@ return array(
                         'modifier-date-lieu',
                         'modifier-membre',
                         'effacer-membre',
+                        'cotutelle',
+                        'confidentialite',
                     ],
                     'privileges' => SoutenancePrivileges::SOUTENANCE_PROPOSITION_MODIFIER,
                 ],
@@ -489,6 +497,28 @@ return array(
                                     ],
                                 ],
                             ],
+                            'cotutelle' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/cotutelle',
+                                    'defaults' => [
+                                        'controller' => SoutenanceController::class,
+                                        'action'     => 'cotutelle',
+                                    ],
+                                ],
+                            ],
+                            'confidentialite' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/confidentialite',
+                                    'defaults' => [
+                                        'controller' => SoutenanceController::class,
+                                        'action'     => 'confidentialite',
+                                    ],
+                                ],
+                            ],
                             'valider' => [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
@@ -603,6 +633,8 @@ return array(
             SoutenanceMembreForm::class => SoutenanceMembreFormFactory::class,
             SoutenanceRefusForm::class => SoutenanceRefusFormFactory::class,
             QualiteEditionForm::class => QualiteEditionFormFactory::class,
+            CotutelleForm::class => CotutelleFormFactory::class,
+            ConfidentialiteForm::class => ConfidentialiteFormFactory::class,
         ],
     ],
 
@@ -611,6 +643,8 @@ return array(
             SoutenanceDateLieuHydrator::class => SoutenanceDateLieuHydrator::class,
             SoutenanceDateRenduRapportHydrator::class => SoutenanceDateRenduRapportHydrator::class,
             QualiteEditiontHydrator::class => QualiteEditiontHydrator::class,
+            CotutelleHydrator::class => CotutelleHydrator::class,
+            ConfidentialiteHydrator::class => ConfidentialiteHydrator::class,
         ],
         'factories' => [
             SoutenanceMembreHydrator::class => SoutenanceMembreHydratorFactory::class,

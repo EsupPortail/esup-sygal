@@ -74,6 +74,7 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
         </h4>
     </div>
     <div class="panel-body">
+
         <div class="pull-left">
             <dl class="dl-horizontal">
                 <dt> Date de la soutenance </dt>
@@ -189,7 +190,7 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
         </h4>
     </div>
     <div class="panel-body">
-        <div class="col-md-9 pull-left">
+<!--        <div class="col-md-9 pull-left">-->
             <table class="table table-extra-condensed">
                 <thead>
                 <tr>
@@ -231,7 +232,8 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
                     <?php endforeach; ?>
                 </tbody>
             </table>
-        </div>
+<!--        </div>-->
+
         <div class="pull-right">
             <?php if ($canModifier): ?>
             <a
@@ -243,6 +245,62 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
             <?php endif; ?>
         </div>
 
+    </div>
+</div>
+
+<!-- PANNEAU COTUTELLE, CONFIDENTIALITE -->
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h4>
+            Déclaration de confidentialité, de co-tutelles.
+        </h4>
+    </div>
+    <div class="panel-body">
+
+        <div class="col-md-8">
+            <?php if($these->getLibelleEtabCotutelle() || $these->getLibellePaysCotutelle()): ?>
+                <dl class="dl-horizontal">
+                    <dt> Établissement de <br/> co-tutelle </dt>
+                    <dd> <?php echo ($these->getLibelleEtabCotutelle())?$these->getLibelleEtabCotutelle():"non renseigné"; ?></dd>
+                    <dt> Pays de co-tutelle </dt>
+                    <dd> <?php echo ($these->getLibellePaysCotutelle())?$these->getLibellePaysCotutelle():"non renseigné"; ?></dd>
+                </dl>
+            <?php else : ?>
+                Aucune co-tutelle d'enregistrée.
+            <?php endif; ?>
+        </div>
+
+        <div class="pull-right">
+            <a href="<?php echo $this->url('soutenance/proposition/cotutelle', ['these' => $these->getId()], [], true); ?>"
+               class="btn btn-primary action ajax-modal"
+               data-event="edition-cotutelle"
+            >
+                <span class="glyphicon glyphicon-plus"></span>
+                Renseigner la co-tutelle
+            </a>
+        </div>
+
+        <div class="col-md-8">
+            <?php if($these->getDateFinConfidentialite()): ?>
+            <dl class="dl-horizontal">
+                <dt> Date de fin de confidentialité </dt>
+                <dd> <?php echo $these->getDateFinConfidentialite()->format("d/m/Y"); ?> </dd>
+            </dl>
+            <?php else : ?>
+                Aucune demande de confidentialité d'enregistrée.
+            <?php endif; ?>
+        </div>
+
+        <div class="pull-right">
+            <a href="<?php echo $this->url('soutenance/proposition/confidentialite', ['these' => $these->getId()], [], true); ?>"
+               class="btn btn-primary action ajax-modal"
+               data-event="edition-confidentialite"
+            >
+                <span class="glyphicon glyphicon-plus"></span>
+                Renseigner une confidentialité
+            </a>
+        </div>
     </div>
 </div>
 
@@ -407,6 +465,18 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
     });
     $(function() {
         $("body").on("edition-membre", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+    $(function() {
+        $("body").on("edition-cotutelle", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+    $(function() {
+        $("body").on("edition-confidentialite", function (event) {
             event.div.modal('hide');
             window.location.reload();
         });
