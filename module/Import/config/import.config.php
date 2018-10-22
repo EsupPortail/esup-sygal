@@ -20,6 +20,8 @@ return [
                         'import-all',
                         'update-these',
                         'index',
+                        'apiInfo',
+                        'launcher',
                         'info-last-update',
                     ],
                     'roles' => [
@@ -91,7 +93,7 @@ return [
     ],
     'router' => [
         'routes' => [
-            'home-import' => [
+            'ws-import' => [
                 'type' => 'Literal',
                 'may_terminate' => true,
                 'options' => [
@@ -102,6 +104,28 @@ return [
                     ],
                 ],
                 'child_routes' => [
+                    'api-info' => [
+                        'type' => Segment::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/api-info/:etablissement',
+                            'defaults' => [
+                                'controller' => Import\Controller\ImportController::class,
+                                'action'     => 'apiInfo',
+                            ],
+                        ],
+                    ],
+                    'launcher' => [
+                        'type' => Literal::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/launcher',
+                            'defaults' => [
+                                'controller' => Import\Controller\ImportController::class,
+                                'action'     => 'launcher',
+                            ],
+                        ],
+                    ],
                     'info-last-update' => [
                         'type' => Segment::class,
                         'may_terminate' => true,
@@ -180,15 +204,20 @@ return [
         'default' => [
             'home' => [
                 'pages' => [
-                    'ws' => [
+                    'ws-import' => [
                         'label' => "Import",
                         'order' => 0,
-                        'route'    => 'home-import',
+                        'route' => 'ws-import',
                         'pages' => [
-                            'problems'               => [
+                            'home' => [
+                                'label' => "Accueil",
+                                'route' => 'ws-import',
+                                'resource' => \UnicaenAuth\Guard\PrivilegeController::getResourceId('Import\Controller\Import', 'index'),
+                            ],
+                            'launcher' => [
                                 'label' => "Lancement",
-                                'route' => 'home-import',
-                                'resource'    => \UnicaenAuth\Guard\PrivilegeController::getResourceId('Import\Controller\Import', 'index'),
+                                'route' => 'ws-import/launcher',
+                                'resource' => \UnicaenAuth\Guard\PrivilegeController::getResourceId('Import\Controller\Import', 'index'),
                             ],
                         ],
                     ],

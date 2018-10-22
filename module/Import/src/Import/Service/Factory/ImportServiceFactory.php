@@ -8,6 +8,7 @@ use Import\Service\FetcherService;
 use Import\Service\ImportService;
 use Import\Service\SynchroService;
 use Zend\Log\Logger;
+use Zend\Log\Writer\Noop;
 use Zend\ServiceManager\ServiceLocatorInterface as ContainerInterface;
 
 class ImportServiceFactory
@@ -26,7 +27,7 @@ class ImportServiceFactory
         /** @var EtablissementService $etbalissementService */
         $etbalissementService = $container->get(EtablissementService::class);
 
-        $logger = new Logger();
+        $logger = (new Logger())->addWriter(new Noop());
 
         $service = new ImportService();
         $service->setFetcherService($fetcherService);

@@ -90,13 +90,20 @@ class ImportService
     }
 
     /**
-     * Interroge le WS pour obtenir sa version courante.
+     * Interroge le WS d'un établissement pour obtenir sa version courante.
      *
-     * @param string|Etablissement $etablissement Code de l'établissement que l'on souhaite interroger (p.e. UCN)
+     * @param string|Etablissement $etablissement Etablissement ou code de l'établissement à interroger (ex: 'UCN')
      * @return string Ex: '1.1.0'
      */
     public function getApiVersion($etablissement)
     {
+        if (! $etablissement instanceof Etablissement) {
+            $etablissement = $this->etablissementService->getRepository()->findOneByCode($etablissement);
+            if ($etablissement === null) {
+                throw new RuntimeException("Aucun établissement trouvé avec le code " . $etablissement);
+            }
+        }
+
         $this->fetcherService->setEtablissement($etablissement);
         $json = $this->fetcherService->version();
 
