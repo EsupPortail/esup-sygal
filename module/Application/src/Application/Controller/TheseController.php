@@ -1514,7 +1514,7 @@ class TheseController extends AbstractController
         $return = null;
         exec($cmd, $output, $return);
         if ($return !== 0) {
-            $msg  = 'valuer de retour : '. $return . '<br>';
+            $msg  = 'valeur de retour : '. $return . '<br>';
             $msg .= 'sortie : <br/>';
             foreach ($output as $line) {
                 $msg .= $line . '<br/>';
@@ -1533,7 +1533,12 @@ class TheseController extends AbstractController
         $return = null;
         exec($cmd, $output, $return);
         if ($return !== 0) {
-            throw new RuntimeException("Un problème s'est produit lors du retrait de la premier page du manuscrit.");
+            $msg  = 'valeur de retour : '. $return . '<br>';
+            $msg .= 'sortie : <br/>';
+            foreach ($output as $line) {
+                $msg .= $line . '<br/>';
+            }
+            throw new RuntimeException("Un problème s'est produit lors du retrait de la premier page du manuscrit.. <br/>" . $msg);
         }
     }
 }
