@@ -2,7 +2,7 @@
 
 namespace Application\Controller;
 
-use Application\Entity\Db\Acteur;
+use Application\Command\GhostscriptCommand;
 use Application\Entity\Db\Attestation;
 use Application\Entity\Db\Diffusion;
 use Application\Entity\Db\Etablissement;
@@ -13,7 +13,6 @@ use Application\Entity\Db\MetadonneeThese;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\RdvBu;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\Structure;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Variable;
@@ -45,7 +44,6 @@ use Application\Service\Workflow\WorkflowServiceAwareTrait;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
 use Import\Service\Traits\ImportServiceAwareTrait;
-use mPDF;
 use Retraitement\Exception\TimedOutCommandException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -1479,10 +1477,11 @@ class TheseController extends AbstractController
 
 
         //RETRAIT DE LA PREMIER PAGE SI NECESSAIRE
+        $ghostscript = new GhostscriptCommand();
         if ($removal) {
-            $this->removeFirstThenMergePDF($couvertureChemin, $corpsChemin, "/tmp/" . $filename_output);
+            $ghostscript->removeThenMerge($couvertureChemin, $corpsChemin, "/tmp/" . $filename_output);
         } else {
-            $this->mergePDF($couvertureChemin, $corpsChemin, "/tmp/" . $filename_output);
+            $ghostscript->merge($couvertureChemin, $corpsChemin, "/tmp/" . $filename_output);
         }
 
         /** Retourner un PDF ...  */
@@ -1500,45 +1499,5 @@ class TheseController extends AbstractController
 
         echo $content;
         exit;
-
-
-    }
-
-    public function mergePDF($couverture, $corps, $outputFile) {
-        $GS_PATH = 'gs';
-        $options  = " -dColorConversionStrategy=/LeaveColorUnchanged -dDownsampleMonoImages=false -dDownsampleGrayImages=false";
-        $options .= " -dDownsampleColorImages=false -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode ";
-        $options .= " -q ";
-        $cmd = $GS_PATH .$options." -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=".$outputFile." -dBATCH ".$couverture." ".$corps;
-        $output = [];
-        $return = null;
-        exec($cmd, $output, $return);
-        if ($return !== 0) {
-            $msg  = 'valeur de retour : '. $return . '<br>';
-            $msg .= 'sortie : <br/>';
-            foreach ($output as $line) {
-                $msg .= $line . '<br/>';
-            }
-            throw new RuntimeException("Un problème s'est produit lors de la concaténation de la page de couverture et du manuscrit. <br/>" . $msg);
-        }
-    }
-
-    public function removeFirstThenMergePDF($couverture, $corps, $outputFile) {
-        $GS_PATH = 'gs';
-        $options  = " -dColorConversionStrategy=/LeaveColorUnchanged -dDownsampleMonoImages=false -dDownsampleGrayImages=false";
-        $options .= " -dDownsampleColorImages=false -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode ";
-        $options .= " -q ";
-        $cmd = $GS_PATH .$options." -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=".$outputFile." -dBATCH ".$couverture. " -dFirstPage=2 -dBATCH ".$corps;
-        $output = [];
-        $return = null;
-        exec($cmd, $output, $return);
-        if ($return !== 0) {
-            $msg  = 'valeur de retour : '. $return . '<br>';
-            $msg .= 'sortie : <br/>';
-            foreach ($output as $line) {
-                $msg .= $line . '<br/>';
-            }
-            throw new RuntimeException("Un problème s'est produit lors du retrait de la premier page du manuscrit.. <br/>" . $msg);
-        }
     }
 }
