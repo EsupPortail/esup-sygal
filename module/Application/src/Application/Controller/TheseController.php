@@ -1511,6 +1511,7 @@ class TheseController extends AbstractController
         $GS_PATH = 'gs';
         $options  = " -dColorConversionStrategy=/LeaveColorUnchanged -dDownsampleMonoImages=false -dDownsampleGrayImages=false";
         $options .= " -dDownsampleColorImages=false -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode ";
+        $options .= " -q ";
         $cmd = $GS_PATH .$options." -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=".$outputFile." -dBATCH ".$inputFile1." ".$inputFile2;
         $output = [];
         $return = null;
@@ -1529,6 +1530,7 @@ class TheseController extends AbstractController
         $GS_PATH = 'gs';
         $options  = " -dColorConversionStrategy=/LeaveColorUnchanged -dDownsampleMonoImages=false -dDownsampleGrayImages=false";
         $options .= " -dDownsampleColorImages=false -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode ";
+        $options .= " -q ";
         $cmd = $GS_PATH .$options." -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=".$outputFile." -dFirstPage=2 -dBATCH ".$inputFile;
         $output = [];
         $return = null;
