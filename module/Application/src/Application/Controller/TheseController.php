@@ -1480,12 +1480,10 @@ class TheseController extends AbstractController
 
         //RETRAIT DE LA PREMIER PAGE SI NECESSAIRE
         if ($removal) {
-            $this->removePremierePage($manuscritChemin, "/tmp/truncated.pdf");
-            $corpsChemin = "/tmp/truncated.pdf";
+            $this->removeFirstThenMergePDF($couvertureChemin, $corpsChemin, "/tmp/" . $filename_output);
+        } else {
+            $this->mergePDF($couvertureChemin, $corpsChemin, "/tmp/" . $filename_output);
         }
-        //CONCATENATION
-        $this->mergePDF($couvertureChemin, $corpsChemin, "/tmp/" . $filename_output);
-
 
         /** Retourner un PDF ...  */
         $contenu     = file_get_contents("/tmp/".$filename_output);
@@ -1506,13 +1504,12 @@ class TheseController extends AbstractController
 
     }
 
-    //TODO si plus de retraitement sont requis faire un service associé au retraitement de pdf
-    public function mergePDF($inputFile1, $inputFile2, $outputFile) {
+    public function mergePDF($couverture, $corps, $outputFile) {
         $GS_PATH = 'gs';
         $options  = " -dColorConversionStrategy=/LeaveColorUnchanged -dDownsampleMonoImages=false -dDownsampleGrayImages=false";
         $options .= " -dDownsampleColorImages=false -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode ";
         $options .= " -q ";
-        $cmd = $GS_PATH .$options." -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=".$outputFile." -dBATCH ".$inputFile1." ".$inputFile2;
+        $cmd = $GS_PATH .$options." -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=".$outputFile." -dBATCH ".$couverture." ".$corps;
         $output = [];
         $return = null;
         exec($cmd, $output, $return);
@@ -1526,12 +1523,12 @@ class TheseController extends AbstractController
         }
     }
 
-    public function removePremierePage($inputFile, $outputFile) {
+    public function removeFirstThenMergePDF($couverture, $corps, $outputFile) {
         $GS_PATH = 'gs';
         $options  = " -dColorConversionStrategy=/LeaveColorUnchanged -dDownsampleMonoImages=false -dDownsampleGrayImages=false";
         $options .= " -dDownsampleColorImages=false -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode ";
         $options .= " -q ";
-        $cmd = $GS_PATH .$options." -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=".$outputFile." -dFirstPage=2 -dBATCH ".$inputFile;
+        $cmd = $GS_PATH .$options." -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=".$outputFile." -dBATCH ".$couverture. " -dFirstPage=2 -dBATCH ".$corps;
         $output = [];
         $return = null;
         exec($cmd, $output, $return);
