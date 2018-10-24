@@ -1,6 +1,6 @@
 <?php
 
-namespace Retraitement\Filter\Command;
+namespace Application\Command;
 
 use Retraitement\Exception\TimedOutCommandException;
 use UnicaenApp\Exception\LogicException;
@@ -104,5 +104,15 @@ abstract class AbstractCommand implements CommandInterface
     public function getResult()
     {
         return $this->result;
+    }
+
+    /**
+     * Retourne la ligne de commande générée par generate().
+     *
+     * @return string
+     */
+    public function getCommandLine()
+    {
+        return $this->commandLine;
     }
 }

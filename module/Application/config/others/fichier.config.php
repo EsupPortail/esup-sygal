@@ -61,6 +61,13 @@ return array(
                     ],
                     'privileges' => ThesePrivileges::THESE_DEPOT_VERSION_CORRIGEE,
                 ],
+                [
+                    'controller' => 'Application\Controller\FichierThese',
+                    'action'     => [
+                        'fusionnerConsole',
+                    ],
+                    'roles' => [],
+                ],
             ],
         ],
     ],
@@ -185,6 +192,21 @@ return array(
 
         ),
     ),
+    'console' => [
+        'router' => [
+            'routes' => [
+                'fusionner' => [
+                    'options' => [
+                        'route'    => 'fichier fusionner --these= --versionFichier= [--removeFirstPage] [--notifier=]',
+                        'defaults' => [
+                            'controller' => 'Application\Controller\FichierThese',
+                            'action'     => 'fusionnerConsole',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
     'navigation'      => [
         'default' => [
             'home' => [

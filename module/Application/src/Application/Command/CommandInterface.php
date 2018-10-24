@@ -1,6 +1,6 @@
 <?php
 
-namespace Retraitement\Filter\Command;
+namespace Application\Command;
 
 use UnicaenApp\Exception\RuntimeException;
 
@@ -49,4 +49,11 @@ interface CommandInterface
      * @return mixed
      */
     public function getResult();
+
+    /**
+     * Retourne la ligne de commande générée par generate().
+     *
+     * @return string
+     */
+    public function getCommandLine();
 }

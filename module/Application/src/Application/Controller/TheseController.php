@@ -2,7 +2,8 @@
 
 namespace Application\Controller;
 
-use Application\Command\GhostscriptCommand;
+use Application\Command\MergeCommand;
+use Application\Command\TruncateAndMergeCommand;
 use Application\Entity\Db\Attestation;
 use Application\Entity\Db\Diffusion;
 use Application\Entity\Db\Etablissement;
@@ -1417,27 +1418,26 @@ class TheseController extends AbstractController
 
     public function fusionAction()
     {
-
         /** @var These $these */
         $these          = $this->requestedThese();
         $corrigee       = $this->params()->fromRoute("corrigee");
         $versionName    = $this->params()->fromRoute("version");
         $removal        = $this->params()->fromRoute("removal");
 
-        $version = null;
+        $versionFichier = null;
         if ($versionName !== null) {
             switch($versionName) {
-                case "VO" : $version = VersionFichier::CODE_ORIG;
+                case "VO" : $versionFichier = VersionFichier::CODE_ORIG;
                     break;
-                case "VA" : $version = VersionFichier::CODE_ARCHI;
+                case "VA" : $versionFichier = VersionFichier::CODE_ARCHI;
                     break;
-                case "VD" : $version = VersionFichier::CODE_DIFF;
+                case "VD" : $versionFichier = VersionFichier::CODE_DIFF;
                     break;
-                case "VOC" : $version = VersionFichier::CODE_ORIG_CORR;
+                case "VOC" : $versionFichier = VersionFichier::CODE_ORIG_CORR;
                     break;
-                case "VAC" : $version = VersionFichier::CODE_ARCHI_CORR;
+                case "VAC" : $versionFichier = VersionFichier::CODE_ARCHI_CORR;
                     break;
-                case "VDC" : $version = VersionFichier::CODE_DIFF_CORR;
+                case "VDC" : $versionFichier = VersionFichier::CODE_DIFF_CORR;
                     break;
                 default : throw  new RuntimeException("Version [".$versionName."] inconnue.");
             }
@@ -1446,58 +1446,47 @@ class TheseController extends AbstractController
             if ($corrigee === null) {
                 //tester si il existe une VA
                 if ($this->fichierService->getRepository()->hasVersion($these, VersionFichier::CODE_ARCHI)) {
-                    $version = VersionFichier::CODE_ARCHI;
+                    $versionFichier = VersionFichier::CODE_ARCHI;
                 } else {
-                    $version = VersionFichier::CODE_ORIG;
+                    $versionFichier = VersionFichier::CODE_ORIG;
                 }
             } else {
                 //tester si il existe une VAC
                 if ($this->fichierService->getRepository()->hasVersion($these, VersionFichier::CODE_ARCHI_CORR)) {
-                    $version = VersionFichier::CODE_ARCHI_CORR;
+                    $versionFichier = VersionFichier::CODE_ARCHI_CORR;
                 } else {
-                    $version = VersionFichier::CODE_ORIG_CORR;
+                    $versionFichier = VersionFichier::CODE_ORIG_CORR;
                 }
             }
         }
 
-
-        // GENERATION DE LA COUVERTURE
-        $filename = "COUVERTURE_".$these->getId()."_".uniqid().".pdf";
-        $renderer = $this->getServiceLocator()->get('view_renderer'); /* @var $renderer \Zend\View\Renderer\PhpRenderer */
-        $this->fichierService->generatePageDeCouverture($these,$renderer,$filename);
-        $couvertureChemin = "/tmp/". $filename;
-
-        // RECUPERATION DE LA BONNE VERSION DU MANUSCRIPT
-        $manuscritFichier = current($this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF,$version));
-        $manuscritChemin = $this->fichierService->computeDestinationFilePathForFichier($manuscritFichier);
-        $corpsChemin = $manuscritChemin;
-
-        $filename_output = $these->getId().'-'.$these->getDoctorant()->getNomUsuel().'-'.$these->getDoctorant()->getPrenom().'-merged.pdf';
-        $filename_output = Util::reduce($filename_output);
-
-
-        //RETRAIT DE LA PREMIER PAGE SI NECESSAIRE
-        $ghostscript = new GhostscriptCommand();
-        if ($removal) {
-            $ghostscript->removeThenMerge($couvertureChemin, $corpsChemin, "/tmp/" . $filename_output);
-        } else {
-            $ghostscript->merge($couvertureChemin, $corpsChemin, "/tmp/" . $filename_output);
+        try {
+            // Un timeout peut être appliqué au lancement du  script de retraitement.
+            // Si ce timout est atteint, l'exécution du script est interrompue
+            // et une exception TimedOutCommandException est levée.
+            $timeout = $this->timeoutRetraitement;
+            $outputFilePath = $this->fichierService->fusionneFichierThese($these, $versionFichier, $removal, $timeout=3);
+        } catch (TimedOutCommandException $toce) {
+            // relancer le retraitement en tâche de fond
+            $this->fichierService->fusionneFichierTheseAsync($these, $versionFichier, $removal);
+        } catch (RuntimeException $re) {
+            // erreur prévue
         }
 
-        /** Retourner un PDF ...  */
-        $contenu     = file_get_contents("/tmp/".$filename_output);
-        $content     = is_resource($contenu) ? stream_get_contents($contenu) : $contenu;
-
-        header('Content-Description: File Transfer');
-        header('Content-Type: ' . 'application/pdf');
-        header('Content-Disposition: attachment; filename=' . $filename_output);
-        header('Content-Transfer-Encoding: binary');
-        header('Content-Length: ' . strlen($content));
-        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-        header('Expires: 0');
-        header('Pragma: public');
-
-        echo $content;
-        exit;
+//        /** Retourner un PDF ...  */
+//        $contenu     = file_get_contents($outputFilePath);
+//        $content     = is_resource($contenu) ? stream_get_contents($contenu) : $contenu;
+//
+//        header('Content-Description: File Transfer');
+//        header('Content-Type: ' . 'application/pdf');
+//        header('Content-Disposition: attachment; filename=' . trim(strrchr($outputFilePath, '/'), '/'));
+//        header('Content-Transfer-Encoding: binary');
+//        header('Content-Length: ' . strlen($content));
+//        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+//        header('Expires: 0');
+//        header('Pragma: public');
+//
+//        echo $content;
+//        exit;
     }
 }

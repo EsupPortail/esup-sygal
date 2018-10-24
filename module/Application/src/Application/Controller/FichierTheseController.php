@@ -4,8 +4,10 @@ namespace Application\Controller;
 
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\NatureFichier;
+use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\VersionFichier;
+use Application\EventRouterReplacerAwareTrait;
 use Application\Filter\IdifyFilterAwareTrait;
 use Application\Filter\NomFichierFormatter;
 use Application\RouteMatch;
@@ -27,6 +29,7 @@ use Zend\Form\Element\Hidden;
 use Zend\Http\Response;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
+use Zend\Console\Request as ConsoleRequest;
 
 class FichierTheseController extends AbstractController
 {
@@ -37,6 +40,7 @@ class FichierTheseController extends AbstractController
     use NotifierServiceAwareTrait;
     use IndividuServiceAwareTrait;
     use ValidationServiceAwareTrait;
+    use EventRouterReplacerAwareTrait;
 
     public function deposesAction()
     {
@@ -452,6 +456,57 @@ class FichierTheseController extends AbstractController
         $response = $this->getResponse();
 
         return $this->fichierService->createResponseForFileContent($response, $content);
+    }
+
+    /**
+     * Console action.
+     */
+    public function fusionnerConsoleAction()
+    {
+        ini_set('memory_limit', '500M');
+        ini_set('max_execution_time', '600');
+
+        $request = $this->getRequest();
+
+        // Make sure that we are running in a console and the user has not tricked our
+        // application into running this action from a public web server.
+        if (!$request instanceof ConsoleRequest){
+            throw new RuntimeException('You can only use this action from a console!');
+        }
+
+        $id  = $request->getParam('these');
+        $versionFichier  = $request->getParam('versionFichier');
+        $removeFirstPage  = (bool) $request->getParam('removeFirstPage');
+        $notifier  = $request->getParam('notifier', false);
+
+        if (! $id) {
+            throw new RuntimeException("Argument obligatoire manquant: fichier");
+        }
+
+        /** @var These $these */
+        $these = $this->theseService->getRepository()->find($id);
+        if ($these === null) {
+            throw new RuntimeException("Aucune thèse trouvée avec cet id : " . $id);
+        }
+
+        $outputFilePath = $this->fichierService->fusionneFichierThese($these, $versionFichier, $removeFirstPage, 2);
+
+        $this->eventRouterReplacer->replaceEventRouter($this->getEvent());
+
+        echo "Fichier créé avec succès: " . $outputFilePath;
+        echo PHP_EOL;
+
+        if ($notifier) {
+            $destinataires = $notifier;
+//            $notif = $this->notifierService->getNotificationFactory()->createNotificationForRetraitementFini($destinataires, $fichierRetraite, $validite);
+//            $this->notifierService->trigger($notif);
+//            echo "Destinataires du courriel envoyé: " . $notif->getTo();
+//            echo PHP_EOL;
+        }
+
+        $this->eventRouterReplacer->restoreEventRouter();
+
+        exit(0);
     }
 
     /**
