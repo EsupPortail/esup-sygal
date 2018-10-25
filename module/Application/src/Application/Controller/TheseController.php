@@ -1475,7 +1475,7 @@ class TheseController extends AbstractController
             // relancer le retraitement en tâche de fond
             $this->fichierService->fusionneFichierTheseAsync($these, $versionFichier, $removal, $destinataires);
             return $this->redirect()->toRoute('these/rdv-bu', ['these' => $these->getId(), 'asynchronous' => 1], [], true);
-
+            exit();
         } catch (RuntimeException $re) {
             // erreur prévue
         }
