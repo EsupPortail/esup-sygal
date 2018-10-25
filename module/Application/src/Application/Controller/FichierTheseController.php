@@ -498,10 +498,10 @@ class FichierTheseController extends AbstractController
 
         if ($notifier) {
             $destinataires = $notifier;
-//            $notif = $this->notifierService->getNotificationFactory()->createNotificationForRetraitementFini($destinataires, $fichierRetraite, $validite);
-//            $this->notifierService->trigger($notif);
-//            echo "Destinataires du courriel envoyé: " . $notif->getTo();
-//            echo PHP_EOL;
+            $notif = $this->notifierService->getNotificationFactory()->createNotificationFusionFini($destinataires, $outputFilePath);
+            $this->notifierService->trigger($notif);
+            echo "Destinataires du courriel envoyé: " . $notif->getTo();
+            echo PHP_EOL;
         }
 
         $this->eventRouterReplacer->restoreEventRouter();

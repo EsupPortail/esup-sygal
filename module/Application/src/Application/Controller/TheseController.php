@@ -1473,20 +1473,20 @@ class TheseController extends AbstractController
             // erreur prévue
         }
 
-//        /** Retourner un PDF ...  */
-//        $contenu     = file_get_contents($outputFilePath);
-//        $content     = is_resource($contenu) ? stream_get_contents($contenu) : $contenu;
-//
-//        header('Content-Description: File Transfer');
-//        header('Content-Type: ' . 'application/pdf');
-//        header('Content-Disposition: attachment; filename=' . trim(strrchr($outputFilePath, '/'), '/'));
-//        header('Content-Transfer-Encoding: binary');
-//        header('Content-Length: ' . strlen($content));
-//        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-//        header('Expires: 0');
-//        header('Pragma: public');
-//
-//        echo $content;
-//        exit;
+        /** Retourner un PDF ...  */
+        $contenu     = file_get_contents($outputFilePath);
+        $content     = is_resource($contenu) ? stream_get_contents($contenu) : $contenu;
+
+        header('Content-Description: File Transfer');
+        header('Content-Type: ' . 'application/pdf');
+        header('Content-Disposition: attachment; filename=' . trim(strrchr($outputFilePath, '/'), '/'));
+        header('Content-Transfer-Encoding: binary');
+        header('Content-Length: ' . strlen($content));
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Expires: 0');
+        header('Pragma: public');
+
+        echo $content;
+        exit;
     }
 }
