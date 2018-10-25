@@ -2,6 +2,7 @@
 
 namespace Retraitement\Filter\Command;
 
+use Application\Command\AbstractCommand;
 use UnicaenApp\Exception\RuntimeException;
 
 class MinesCommand extends AbstractCommand

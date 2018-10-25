@@ -31,12 +31,14 @@ class FichierServiceFactory implements FactoryInterface
          * @var RetraitementService $retraitementService
          * @var EtablissementService $etablissementService
          * @var NotifierService $notifierService
+         * @var \Zend\View\Renderer\PhpRenderer $renderer
          */
         $versionFichierService = $serviceLocator->get('VersionFichierService');
         $validiteFichierService = $serviceLocator->get('ValiditeFichierService');
         $retraitementService = $serviceLocator->get('RetraitementService');
         $etablissementService = $serviceLocator->get('EtablissementService');
         $notifierService = $serviceLocator->get(NotifierService::class);
+        $renderer = $serviceLocator->get('view_renderer');
 
         $service = new FichierService();
 
@@ -46,6 +48,7 @@ class FichierServiceFactory implements FactoryInterface
         $service->setRetraitementService($retraitementService);
         $service->setEtablissementService($etablissementService);
         $service->setNotifierService($notifierService);
+        $service->setRenderer($renderer);
 
         $service->setRootDirectoryPath($this->getRootDirectoryPath($serviceLocator));
 

@@ -574,7 +574,7 @@ return [
                     'rdv-bu' => [
                         'type'          => 'Segment',
                         'options'       => [
-                            'route'       => '/rdv-bu/:these',
+                            'route'       => '/rdv-bu/:these[/:asynchronous]',
                             'constraints' => [
                                 'these' => '\d+',
                             ],

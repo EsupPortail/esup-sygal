@@ -3,7 +3,7 @@
 namespace Retraitement\Service;
 
 use Application\Service\Fichier\FichierService;
-use Retraitement\Filter\Command\CommandInterface;
+use Application\Command\CommandInterface;
 use Zend\ServiceManager\Exception\InvalidArgumentException;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -37,7 +37,7 @@ class RetraitementServiceFactory implements FactoryInterface
             throw new InvalidArgumentException("La classe spécifiée dans l'option de 'config sygal.retraitement.command.class' n'existe pas");
         }
 
-        /** @var CommandInterface $command */
+        /** @var \Application\Filter\Command\\Application\Command\CommandInterface $command */
         $command = new $commandClass;
 
         if (isset($config['sygal']['retraitement']['command']['options'])) {

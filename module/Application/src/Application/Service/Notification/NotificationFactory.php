@@ -123,9 +123,9 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
     /**
      * Notifie que le retraitement automatique du fichier PDF est terminé.
      *
-     * @param string               $destinataires   Emails séparés par une virgule
-     * @param Fichier              $fichierRetraite Fichier retraité concerné
-     * @param ValiditeFichier|null $validite        Résultat du test d'archivabilité éventuel
+     * @param string $destinataires Emails séparés par une virgule
+     * @param Fichier $fichierRetraite Fichier retraité concerné
+     * @param ValiditeFichier|null $validite Résultat du test d'archivabilité éventuel
      * @return Notification
      * @return Notification
      */
@@ -140,8 +140,8 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
             ->setTemplatePath('application/these/mail/notif-retraitement-fini')
             ->setTemplateVariables([
                 'fichierRetraite' => $fichierRetraite,
-                'validite'        => $validite,
-                'url'             => '',
+                'validite' => $validite,
+                'url' => '',
             ]);
 
         return $notif;
@@ -149,7 +149,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
 
     /**
      * @param ImportObservResult $record
-     * @param These              $these
+     * @param These $these
      * @return ImportObservResult|null
      * @return Notification
      */
@@ -224,7 +224,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
             ->setEmailBdd($this->fetchEmailBdd($these))
             ->setTemplateVariables([
                 'these' => $these,
-                'url'   => $url,
+                'url' => $url,
             ]);
 
         //$this->trigger($notif);
@@ -244,7 +244,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
 
     /**
      * @param Notification $notif
-     * @param These        $these
+     * @param These $these
      * @return Notification
      */
     public function createNotificationForValidationCorrectionThese(Notification $notif, These $these)
@@ -266,7 +266,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
 
     /**
      * @param Notification $notif
-     * @param These        $these
+     * @param These $these
      * @return Notification
      */
     public function createNotificationForValidationCorrectionTheseEtudiant(Notification $notif, These $these)
@@ -296,7 +296,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
      * Notification à l'issu du remplissage du formulaire RDV BU par le doctorant.
      *
      * @param These $these
-     * @param bool  $estLaPremiereSaisie
+     * @param bool $estLaPremiereSaisie
      * @return Notification
      */
     public function createNotificationForRdvBuSaisiParDoctorant(These $these, $estLaPremiereSaisie)
@@ -310,7 +310,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
             ->setSubject($subject)
             ->setTemplatePath('application/these/mail/notif-modif-rdv-bu-doctorant')
             ->setTemplateVariables([
-                'these'    => $these,
+                'these' => $these,
                 'updating' => !$estLaPremiereSaisie,
             ]);
 
@@ -323,7 +323,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
     /**
      * Notification à l'issue du dépôt d'un fichier de thèse.
      *
-     * @param These          $these
+     * @param These $these
      * @param VersionFichier $version
      * @return Notification
      */
@@ -337,7 +337,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
             ->setSubject("Dépôt d'une thèse")
 //            ->setTemplatePath('application/these/mail/notif-depot-these') // le template est dans la NotifEntity
             ->setTemplateVariables([
-                'these'   => $these,
+                'these' => $these,
                 'version' => $version,
             ]);
 
@@ -425,8 +425,8 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
 
     /**
      * @param MailConfirmation $mailConfirmation
-     * @param string           $titre
-     * @param string           $corps
+     * @param string $titre
+     * @param string $corps
      * @return Notification
      */
     public function createNotificationForMailConfirmation(MailConfirmation $mailConfirmation, $titre, $corps)
@@ -438,16 +438,16 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
             ->setTemplatePath('application/doctorant/empty-mail')
             ->setTemplateVariables([
                 'destinataire' => $mailConfirmation->getIndividu()->getNomUsuel(),
-                'titre'        => $titre,
-                'corps'        => $corps,
+                'titre' => $titre,
+                'corps' => $corps,
             ]);
         //$this->trigger($notif);
         return $notif;
     }
 
     /**
-     * @param string   $type
-     * @param string   $libelle
+     * @param string $type
+     * @param string $libelle
      * @param string[] $to
      * @return Notification
      */
@@ -459,7 +459,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
             ->setTo($to)
             ->setTemplatePath('application/these/mail/notif-logo-absent')
             ->setTemplateVariables([
-                'type'    => $type,
+                'type' => $type,
                 'libelle' => $libelle,
             ]);
 
@@ -502,5 +502,31 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
     public function setAppModuleOptions(ModuleOptions $options)
     {
         $this->appModuleOptions = $options;
+    }
+
+    /**
+     * Notifie que le retraitement automatique du fichier PDF est terminé.
+     *
+     * @param string $destinataires Emails séparés par une virgule
+     * @param These $these
+     * @param string $outputFilePath Chemin vers le fichier stocké en local
+     * @return Notification
+     */
+    public function createNotificationFusionFini($destinataires, $these, $outputFilePath)
+    {
+        $to = array_map('trim', explode(',', $destinataires));
+
+        $notif = $this->createNotification();
+        $notif
+            ->setSubject("Retraitement terminé")
+            ->setTo($to)
+            ->setTemplatePath('application/these/mail/notif-fusion-fini')
+            ->setTemplateVariables([
+                'these' => $these,
+                'outputFilePath' => $outputFilePath,
+                'url' => '',
+            ]);
+
+        return $notif;
     }
 }

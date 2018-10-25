@@ -61,6 +61,20 @@ return array(
                     ],
                     'privileges' => ThesePrivileges::THESE_DEPOT_VERSION_CORRIGEE,
                 ],
+                [
+                    'controller' => 'Application\Controller\FichierThese',
+                    'action'     => [
+                        'fusionnerConsole',
+                    ],
+                    'roles' => [],
+                ],
+                [
+                    'controller' => 'Application\Controller\FichierThese',
+                    'action'     => [
+                        'recuperer-fusion',
+                    ],
+                    'roles' => [],
+                ],
             ],
         ],
     ],
@@ -167,6 +181,15 @@ return array(
                                     ],
                                 ],
                             ],
+                            'recuperer-fusion' => [
+                                'type'        => 'Segment',
+                                'options'     => [
+                                    'route' => '/recuperer-fusion/:outputFile',
+                                    'defaults'    => [
+                                        'action' => 'recuperer-fusion',
+                                    ],
+                                ],
+                            ],
                         ],
                     ], // 'these'
 
@@ -185,6 +208,21 @@ return array(
 
         ),
     ),
+    'console' => [
+        'router' => [
+            'routes' => [
+                'fusionner' => [
+                    'options' => [
+                        'route'    => 'fichier fusionner --these= --versionFichier= [--removeFirstPage] [--notifier=]',
+                        'defaults' => [
+                            'controller' => 'Application\Controller\FichierThese',
+                            'action'     => 'fusionnerConsole',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
     'navigation'      => [
         'default' => [
             'home' => [

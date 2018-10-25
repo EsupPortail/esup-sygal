@@ -2,6 +2,7 @@
 
 namespace Retraitement\Filter\Command;
 
+use Application\Command\AbstractCommand;
 use UnicaenApp\Exception\RuntimeException;
 
 /**
@@ -13,7 +14,7 @@ use UnicaenApp\Exception\RuntimeException;
  *
  * @package Retraitement\Filter\Command
  */
-class CinesCommand extends AbstractCommand
+class CinesCommand extends \Application\Command\AbstractCommand
 {
     protected $options = [
         'pdftk_path' => 'pdftk',

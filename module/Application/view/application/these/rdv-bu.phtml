@@ -20,6 +20,7 @@ use Application\Entity\Db\Repository\FichierRepository;
  * @var MessageCollector    $msgCollector
  * @var string              $nextStepUrl
  * @var FichierRepository   $fichierRepository
+ * @var boolean             $asynchronous
  */
 
 $canEdit = $this->isAllowed($these, ThesePrivileges::THESE_SAISIE_RDV_BU);
@@ -68,6 +69,16 @@ $rdvBu = $these->getRdvBu();
         </div>
     </div>
 </div>
+
+<?php if ($asynchronous): ?>
+<script>
+alert("Le traitement peut prendre plusieurs minutes. \n\n" +
+    "Une fois celui-ci terminé vous recevrez un courriel électronique vous permettant \n" +
+    "de télécharger votre manuscrit complet. "
+);
+</script>
+<?php endif;?>
+
 
 <div class="panel panel-info box">
     <div class="panel-heading">
