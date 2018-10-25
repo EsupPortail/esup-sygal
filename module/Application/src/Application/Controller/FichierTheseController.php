@@ -5,7 +5,6 @@ namespace Application\Controller;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
-use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\VersionFichier;
 use Application\EventRouterReplacerAwareTrait;
 use Application\Filter\IdifyFilterAwareTrait;
@@ -23,13 +22,12 @@ use Application\View\Helper\Sortable;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
-use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
+use Zend\Console\Request as ConsoleRequest;
 use Zend\Form\Element\Hidden;
 use Zend\Http\Response;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
-use Zend\Console\Request as ConsoleRequest;
 
 class FichierTheseController extends AbstractController
 {
@@ -489,7 +487,8 @@ class FichierTheseController extends AbstractController
             throw new RuntimeException("Aucune thèse trouvée avec cet id : " . $id);
         }
 
-        $outputFilePath = $this->fichierService->fusionneFichierThese($these, $versionFichier, $removeFirstPage, 2);
+        $outputFilePath = $this->fichierService->fusionneFichierThese($these, $versionFichier, $removeFirstPage);
+//        $outputFilePath = "/tmp/recuperer-fusion/35249-samassa-haoua-merged.pdf";
 
         $this->eventRouterReplacer->replaceEventRouter($this->getEvent());
 
@@ -498,9 +497,9 @@ class FichierTheseController extends AbstractController
 
         if ($notifier) {
             $destinataires = $notifier;
-            $notif = $this->notifierService->getNotificationFactory()->createNotificationFusionFini($destinataires, $outputFilePath);
+            $notif = $this->notifierService->getNotificationFactory()->createNotificationFusionFini($destinataires, $these, $outputFilePath);
             $this->notifierService->trigger($notif);
-            echo "Destinataires du courriel envoyé: " . $notif->getTo();
+            echo "Destinataires du courriel envoyé: " . implode(",",$notif->getTo());
             echo PHP_EOL;
         }
 
@@ -518,5 +517,34 @@ class FichierTheseController extends AbstractController
         $routeMatch = $this->getEvent()->getRouteMatch();
 
         return $routeMatch->getFichier();
+    }
+
+    public function recupererFusionAction()
+    {
+        $theseId = $this->params()->fromRoute('these');
+        $these = $this->getTheseService()->getRepository()->find($theseId);
+
+        $outputFile = $this->params()->fromRoute('outputFile');
+        $outputFilePath =  sys_get_temp_dir() ."/". $outputFile;
+
+        if (!is_readable($outputFilePath)) {
+            throw new RuntimeException("Le fichier de votre manuscrit n'est plus disponible.");
+        }
+
+        /** Retourner un PDF ...  */
+        $contenu     = file_get_contents($outputFilePath);
+        $content     = is_resource($contenu) ? stream_get_contents($contenu) : $contenu;
+
+        header('Content-Description: File Transfer');
+        header('Content-Type: ' . 'application/pdf');
+        header('Content-Disposition: attachment; filename=' . $outputFile);
+        header('Content-Transfer-Encoding: binary');
+        header('Content-Length: ' . strlen($content));
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Expires: 0');
+        header('Pragma: public');
+
+        echo $content;
+        exit;
     }
 }

@@ -362,4 +362,14 @@ class UrlTheseService extends UrlService
             ['query' => ['action' => 'devalider']]
         );
     }
+
+    public function recupererFusion($these, $outputFilePath)
+    {
+        return $this->fromRoute('fichier/these/recuperer-fusion',
+            [
+                'these' => $this->idify($these),
+                'outputFile' => trim(strrchr($outputFilePath, '/'), '/'),
+            ]
+        );
+    }
 }

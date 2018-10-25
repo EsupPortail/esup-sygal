@@ -508,12 +508,11 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
      * Notifie que le retraitement automatique du fichier PDF est terminé.
      *
      * @param string $destinataires Emails séparés par une virgule
+     * @param These $these
      * @param string $outputFilePath Chemin vers le fichier stocké en local
-     * @param ValiditeFichier|null $validite Résultat du test d'archivabilité éventuel
-     * @return Notification
      * @return Notification
      */
-    public function createNotificationFusionFini($destinataires, $outputFilePath)
+    public function createNotificationFusionFini($destinataires, $these, $outputFilePath)
     {
         $to = array_map('trim', explode(',', $destinataires));
 
@@ -523,6 +522,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
             ->setTo($to)
             ->setTemplatePath('application/these/mail/notif-fusion-fini')
             ->setTemplateVariables([
+                'these' => $these,
                 'outputFilePath' => $outputFilePath,
                 'url' => '',
             ]);

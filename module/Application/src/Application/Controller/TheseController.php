@@ -38,6 +38,7 @@ use Application\Service\These\Filter\TheseSelectFilter;
 use Application\Service\These\TheseRechercheServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
+use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
@@ -60,22 +61,23 @@ use Zend\View\Model\ViewModel;
 
 class TheseController extends AbstractController
 {
-    use VariableServiceAwareTrait;
-    use TheseServiceAwareTrait;
-    use TheseRechercheServiceAwareTrait;
-    use RoleServiceAwareTrait;
     use FichierServiceAwareTrait;
-    use ValidationServiceAwareTrait;
     use MessageCollectorAwareTrait;
+    use NotifierServiceAwareTrait;
+    use RoleServiceAwareTrait;
+    use TheseRechercheServiceAwareTrait;
+    use TheseServiceAwareTrait;
+    use ValidationServiceAwareTrait;
     use VersionFichierServiceAwareTrait;
     use WorkflowServiceAwareTrait;
-    use NotifierServiceAwareTrait;
     use IdifyFilterAwareTrait;
     use EtablissementServiceAwareTrait;
     use EntityManagerAwareTrait;
     use MailConfirmationServiceAwareTrait;
     use UniteRechercheServiceAwareTrait;
     use ImportServiceAwareTrait;
+    use UserContextServiceAwareTrait;
+    use VariableServiceAwareTrait;
 
     private $timeoutRetraitement;
 
@@ -438,6 +440,7 @@ class TheseController extends AbstractController
     {
         $estDoctorant = (bool) $this->userContextService->getSelectedRoleDoctorant();
         $these = $this->requestedThese();
+        $asynchronous = $this->params()->fromRoute('asynchronous');
 
         $versionArchivable = $this->fichierService->getRepository()->getVersionArchivable($these);
         $hasVA = $this->fichierService->getRepository()->hasVersion($these, VersionFichier::CODE_ARCHI);
@@ -462,6 +465,7 @@ class TheseController extends AbstractController
             'hasVA' => $hasVA,
             'hasVD' => $hasVD,
             'pageCouvValidee' => $pageCouvValidee,
+            'asynchronous' => $asynchronous,
 
         ]);
 
@@ -1465,10 +1469,13 @@ class TheseController extends AbstractController
             // Si ce timout est atteint, l'exécution du script est interrompue
             // et une exception TimedOutCommandException est levée.
             $timeout = $this->timeoutRetraitement;
-            $outputFilePath = $this->fichierService->fusionneFichierThese($these, $versionFichier, $removal, $timeout=3);
+            $outputFilePath = $this->fichierService->fusionneFichierThese($these, $versionFichier, $removal, $timeout);
         } catch (TimedOutCommandException $toce) {
+            $destinataires = [ $this->userContextService->getIdentityDb()->getEmail() ] ;
             // relancer le retraitement en tâche de fond
-            $this->fichierService->fusionneFichierTheseAsync($these, $versionFichier, $removal);
+            $this->fichierService->fusionneFichierTheseAsync($these, $versionFichier, $removal, $destinataires);
+            return $this->redirect()->toRoute('these/rdv-bu', ['these' => $these->getId(), 'asynchronous' => 1], [], true);
+
         } catch (RuntimeException $re) {
             // erreur prévue
         }

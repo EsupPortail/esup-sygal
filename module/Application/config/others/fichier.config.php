@@ -68,6 +68,13 @@ return array(
                     ],
                     'roles' => [],
                 ],
+                [
+                    'controller' => 'Application\Controller\FichierThese',
+                    'action'     => [
+                        'recuperer-fusion',
+                    ],
+                    'roles' => [],
+                ],
             ],
         ],
     ],
@@ -171,6 +178,15 @@ return array(
                                     ],
                                     'defaults'    => [
                                         'action' => 'supprimer-fichier',
+                                    ],
+                                ],
+                            ],
+                            'recuperer-fusion' => [
+                                'type'        => 'Segment',
+                                'options'     => [
+                                    'route' => '/recuperer-fusion/:outputFile',
+                                    'defaults'    => [
+                                        'action' => 'recuperer-fusion',
                                     ],
                                 ],
                             ],

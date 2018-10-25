@@ -3,6 +3,7 @@
 namespace Application\Service\Fichier;
 
 use Application\Command\MergeCommand;
+use Application\Command\ShellCommandRunner;
 use Application\Command\ShellScriptRunner;
 use Application\Command\TruncateAndMergeCommand;
 use Application\Entity\Db\Acteur;
@@ -795,7 +796,8 @@ class FichierService extends BaseService
 
     public function fusionneFichierTheseAsync(These $these, $versionFichier, $removeFirstPage, $destinatairesNotification = [])
     {
-        $scriptPath = sprintf("bash %s/merge.sh", APPLICATION_DIR . '/bin');
+//        $scriptPath = sprintf("bash %s/merge.sh", APPLICATION_DIR . '/bin');
+        $scriptPath = sprintf("%s/merge.sh", APPLICATION_DIR . '/bin');
 
         $args = sprintf('--these=%d --versionFichier=%s', $these->getId(), $versionFichier);
         if ($removeFirstPage) {
@@ -809,6 +811,10 @@ class FichierService extends BaseService
         $runner = new ShellScriptRunner($scriptPath, 'bash');
         $runner->setAsync();
         $runner->run($args);
+//        $command = $scriptPath. ' '.$args;
+//        $runner = new ShellCommandRunner($command);
+//        $runner->setAsync();
+//        $runner->run();
 
 
     }
