@@ -507,24 +507,24 @@ class TheseRechercheService
         foreach ($eds as $ed) {
             $options[] = $this->optionify($ed);
         }
-        usort($options, function($a, $b) {
-            return strcmp($a['label'], $b['label']);
-        });
+//        usort($options, function($a, $b) {
+//            return strcmp($a['label'], $b['label']);
+//        });
 
         return $this->addEmptyOption($options, "Toutes");
     }
 
     private function fetchUnitesRecherchesOptions()
     {
-        $urs = $this->getStructureService()->getAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE);
+        $urs = $this->getStructureService()->getAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'libelle');
 
         $options = [];
         foreach ($urs as $ur) {
             $options[] = $this->optionify($ur);
         }
-        usort($options, function($a, $b) {
-            return strcmp($a['label'], $b['label']);
-        });
+//        usort($options, function($a, $b) {
+//            return strcmp($a['label'], $b['label']);
+//        });
 
         return $this->addEmptyOption($options, "Toutes");
     }

@@ -47,6 +47,9 @@ class UniteRecherche implements StructureConcreteInterface, HistoriqueAwareInter
      */
     protected $domaines;
 
+
+    /** @var string RNSR */
+    protected $RNSR;
     /**
      * UniteRecherche constructor.
      */
@@ -264,4 +267,24 @@ class UniteRecherche implements StructureConcreteInterface, HistoriqueAwareInter
         $this->domaines->removeElement($domaine);
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getRNSR()
+    {
+        return $this->RNSR;
+    }
+
+    /**
+     * @param string $RNSR
+     * @return UniteRecherche
+     */
+    public function setRNSR($RNSR)
+    {
+        $this->RNSR = $RNSR;
+        return $this;
+    }
+
+
 }
