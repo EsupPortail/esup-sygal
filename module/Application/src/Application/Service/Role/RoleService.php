@@ -221,6 +221,7 @@ class RoleService extends BaseService
         $role->setHistoCreation(new \DateTime());
         $role->setHistoModificateur($userSygal);
         $role->setHistoModification(new \DateTime());
+        $role->setOrdreAffichage("zzz");
 
         $this->getEntityManager()->persist($role);
         $this->getEntityManager()->flush($role);
@@ -275,4 +276,27 @@ class RoleService extends BaseService
 //        }
 //        return $role;
 //    }
+
+
+    public function getRolesEcolesDoctorales()
+    {
+        $typeStructureId = 2;
+
+        $qb = $this->getEntityManager()->getRepository(Role::class)->createQueryBuilder('role')
+            ->andWhere('role.typeStructureDependant = :typeStructureId')
+            ->setParameter('typeStructureId', $typeStructureId)
+            ->join('role.structure', 'structure')
+            ->leftJoin('structure.structureSubstituante', 'substitutionTo')
+            ->andWhere('substitutionTo.id IS NULL');
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
+
+//SELECT * FROM ROLE R
+//JOIN STRUCTURE S on R.STRUCTURE_ID = S.ID
+//LEFT JOIN STRUCTURE_SUBSTIT SS on S.ID = SS.FROM_STRUCTURE_ID
+//WHERE TYPE_STRUCTURE_DEPENDANT_ID = 2
+//  and SS.TO_STRUCTURE_ID IS NULL
+
 }

@@ -53,6 +53,10 @@ class UniteRecherche implements StructureConcreteInterface, HistoriqueAwareInter
     /**
      * UniteRecherche constructor.
      */
+
+    /** @var These[] */
+    private $theses;
+
     public function __construct()
     {
         $this->structure = new Structure();
@@ -286,5 +290,11 @@ class UniteRecherche implements StructureConcreteInterface, HistoriqueAwareInter
         return $this;
     }
 
-
+    /**
+     * @return These[]
+     */
+    public function getTheses()
+    {
+        return $this->theses;
+    }
 }

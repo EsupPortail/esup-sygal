@@ -8,6 +8,7 @@ use Application\Entity\Db\SourceInterface;
 use Application\Entity\Db\Structure;
 use Application\Entity\Db\StructureConcreteInterface;
 use Application\Entity\Db\StructureSubstit;
+use Application\Entity\Db\These;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
 use Application\Entity\Db\Utilisateur;
@@ -721,5 +722,22 @@ class StructureService extends BaseService
             "cible" => $cible,
             "sources" => $sources
         ];
+    }
+
+    public function getUnitesRechercheSelection() {
+        $qb = $this->getEntityManager()->getRepository(These::class)->createQueryBuilder('these')
+            ->select('count(these.id), unite.id, max(structure.libelle), max(structure.sigle), max(unite.sourceCode)')
+            ->leftJoin('these.uniteRecherche', 'unite')
+            ->join('unite.structure', 'structure')
+            ->leftJoin('structure.structureSubstituante', 'substitutionTo')
+            ->andWhere('substitutionTo.id IS NULL')
+            ->having('count(these.id) > 0')
+            ->groupBy('unite.id')
+        ;
+
+        $result = $qb->getQuery()->getResult();
+
+        usort($result, function($a, $b) { return strcmp($a[3], $b[3]);});
+        return $result;
     }
 }
