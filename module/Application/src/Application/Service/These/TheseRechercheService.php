@@ -516,11 +516,19 @@ class TheseRechercheService
 
     private function fetchUnitesRecherchesOptions()
     {
-        $urs = $this->getStructureService()->getAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'libelle');
+        //$urs = $this->getStructureService()->getAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'libelle');
+        $all = $this->getStructureService()->getUnitesRechercheSelection();
 
         $options = [];
-        foreach ($urs as $ur) {
-            $options[] = $this->optionify($ur);
+//        foreach ($urs as $ur) {
+//            $options[] = $this->optionify($ur);
+//        }
+        foreach ($all as $a) {
+            $options[] = [
+                'value' =>      $a[4], //['sourceCode'],
+                'label' =>      $a[3], //['sigle'],
+                'subtext' =>    $a[2], //['libelle']
+            ];
         }
 //        usort($options, function($a, $b) {
 //            return strcmp($a['label'], $b['label']);

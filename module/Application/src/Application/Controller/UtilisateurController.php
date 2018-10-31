@@ -4,6 +4,7 @@ namespace Application\Controller;
 
 use Application\Entity\Db\CreationUtilisateurInfos;
 use Application\Entity\Db\Individu;
+use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\Utilisateur;
 use Application\Filter\EtablissementPrefixFilter;
 use Application\Form\CreationUtilisateurForm;
@@ -12,6 +13,7 @@ use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Structure\StructureServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurService;
@@ -41,6 +43,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     use UniteRechercheServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use NotifierServiceAwareTrait;
+    use StructureServiceAwareTrait;
 
     /**
      * NOTA BENE : il s'agit des individus et non des utilisateurs car ils sont ceux qui portent les rôles
@@ -67,9 +70,9 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         }
 
         $roles = $this->roleService->getRoles();
-        $etablissements = $this->getEtablissementService()->getRepository()->findAll();
-        $unites = $this->getUniteRechercheService()->getRepository()->findAll();
-        $ecoles = $this->getEcoleDoctoraleService()->getRepository()->findAll();
+        $etablissements = $this->getStructureService()->getAllStructuresAffichablesByType(TypeStructure::CODE_ETABLISSEMENT, 'libelle');
+        $unites = $this->getStructureService()->getAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'libelle');
+        $ecoles = $this->getStructureService()->getAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle');
 
         return new ViewModel([
             'individu' => $individu,

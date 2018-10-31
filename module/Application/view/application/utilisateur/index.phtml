@@ -148,7 +148,10 @@ function generateSelect($structures, $id, $roles = null)
         }
     }
     foreach ($structuresValides as $structure) {
-        $texte .= '<option value="' . $structure->getStructure()->getId() . '">' . $structure->getStructure()->getLibelle() . '</option>';
+        $texte .= '<option value="' . $structure->getStructure()->getId() . '">';
+        $texte .= $structure->getStructure()->getLibelle() ;
+        $texte .= ' (<span class="badge ecole">'.$structure->getSigle().'</span>' . ') ';
+        $texte .= '</option>';
     }
     $texte .= "</select>";
     $texte .= "</div>";
@@ -264,7 +267,8 @@ function generateRoleEcole($individu, $roles, $rolesAffectes, $ecoles, $canModif
                 if ($canModifier) {
                     $texte .= '<span class="add-role glyphicon glyphicon-plus text-success" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
                 }
-                $texte .= $role->getRoleId();
+                $texte .= $role->getLibelle();
+                $texte .= '<span class="badge ecole">'.$role->getStructure()->getSigle().'</span>';
                 $texte .= '</div>';
             }
             $texte .= '</div>';
