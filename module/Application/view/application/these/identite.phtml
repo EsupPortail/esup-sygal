@@ -225,8 +225,16 @@ $persopassModifiedEvent = 'persopass-modified-event';
                 Financement(s)
             </dt>
             <dd>
+                <?php /** @var \Application\Entity\Db\Financement $financement */ ?>
                 <?php foreach ($these->getFinancements() as $financement) : ?>
-                    <?php echo $financement->getLibelle(); ?> <br/>
+                    <?php echo $financement->getOrigineFinancement()->getLibelle(); ?>
+                    <?php if($financement->getQuotiteFinancement()): ?>
+                        (<?php echo $financement->getQuotiteFinancement(); ?>)
+                    <?php endif; ?>
+                    <?php if($financement->getComplementFinancement()): ?>
+                        - <?php echo $financement->getComplementFinancement(); ?>
+                    <?php endif; ?>
+                    <br/>
                 <?php endforeach; ?>
             </dd>
 

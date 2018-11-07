@@ -2,7 +2,7 @@
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-    <entity name="Application\Entity\Db\OrigineFinancement" table="ORIGINE_FINANCEMENT"
+    <entity name="Application\Entity\Db\Financement" table="FINANCEMENT"
             repository-class="">
         <id name="id" type="integer" column="ID">
             <generator strategy="SEQUENCE"/>
@@ -20,9 +20,9 @@
             </join-columns>
         </many-to-one>
 
-        <field name="annee"                     column="ANNEE_ID"                   type="int"                          nullable="false" />
+        <field name="annee"                     column="ANNEE_ID"                   type="integer"                          nullable="false" />
 
-        <many-to-one field="origineFinacement" target-entity="Application\Entity\Db\OrigineFinancement">
+        <many-to-one field="origineFinancement" target-entity="Application\Entity\Db\OrigineFinancement">
             <join-columns>
                 <join-column name="ORIGINE_FINANCEMENT_ID" referenced-column-name="ID"/>
             </join-columns>

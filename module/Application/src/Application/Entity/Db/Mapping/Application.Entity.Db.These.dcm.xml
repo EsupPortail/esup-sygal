@@ -93,15 +93,6 @@
             </join-columns>
         </many-to-one>
 
-        <many-to-many target-entity="Application\Entity\Db\Financement" field="financements">
-            <join-table name="FINANCEMENT_THESE">
-                <join-columns>
-                    <join-column name="THESE_ID" referenced-column-name="ID"/>
-                </join-columns>
-                <inverse-join-columns>
-                    <join-column name="FINANCEMENT_ID" referenced-column-name="ID"/>
-                </inverse-join-columns>
-            </join-table>
-        </many-to-many>
+        <one-to-many target-entity="Application\Entity\Db\Financement" field="financements" mapped-by="these"/>
     </entity>
 </doctrine-mapping>
