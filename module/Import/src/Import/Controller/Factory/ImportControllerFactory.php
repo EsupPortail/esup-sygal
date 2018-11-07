@@ -2,6 +2,7 @@
 
 namespace Import\Controller\Factory;
 
+use Application\Service\Etablissement\EtablissementService;
 use Application\Service\These\TheseService;
 use Assert\Assertion;
 use Assert\AssertionFailedException;
@@ -32,6 +33,9 @@ class ImportControllerFactory
         /** @var TheseService $theseService */
         $theseService = $parentLocator->get('TheseService');
 
+        /** @var EtablissementService $etablissementService */
+        $etablissementService = $parentLocator->get('EtablissementService');
+
         try {
             $config = $this->getConfig($controllerManager->getServiceLocator());
         } catch (AssertionFailedException $e) {
@@ -42,6 +46,7 @@ class ImportControllerFactory
         $controller->setEntityManager($entityManager);
         $controller->setImportService($importService);
         $controller->setTheseService($theseService);
+        $controller->setEtablissementService($etablissementService);
         $controller->setConfig($config);
 
         return $controller;

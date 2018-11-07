@@ -2,6 +2,7 @@
 
 namespace Import\Controller;
 
+use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\These;
 use Application\Filter\EtablissementPrefixFilter;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
@@ -55,7 +56,10 @@ class ImportController extends AbstractActionController
 
     public function apiInfoAction()
     {
-        $etablissement = $this->params()->fromRoute("etablissement");
+        $codeStructure = $this->params()->fromRoute("etablissement"); // ex: 'UCN'
+
+        $etablissement = $this->fetchEtablissementByCodeStructure($codeStructure);
+
         try {
             $version = $this->importService->getApiVersion($etablissement);
             $error = null;
@@ -68,6 +72,23 @@ class ImportController extends AbstractActionController
             'version' => $version,
             'error' => $error,
         ];
+    }
+
+    /**
+     * @param string $codeStructure Code structure de l'tablissement, ex: 'UCN'
+     * @return Etablissement
+     */
+    private function fetchEtablissementByCodeStructure($codeStructure)
+    {
+        $f = new EtablissementPrefixFilter();
+        $sourceCode = $f->addPrefixTo($codeStructure, Etablissement::CODE_STRUCTURE_COMUE);
+
+        $etablissement = $this->etablissementService->getRepository()->findOneBySourceCode($sourceCode);
+        if ($etablissement === null) {
+            throw new RuntimeException("Aucun établissement trouvé avec le code structure " . $etablissement);
+        }
+
+        return $etablissement;
     }
 
     public function launcherAction()
@@ -112,10 +133,12 @@ class ImportController extends AbstractActionController
     public function importAction()
     {
         $service = $this->params('service');
-        $etablissement = $this->params('etablissement');
+        $codeStructure = $this->params('etablissement'); // ex: 'UCN'
         $sourceCode = $this->params('source_code');
 
         $queryParams = $this->params()->fromQuery();
+
+        $etablissement = $this->fetchEtablissementByCodeStructure($codeStructure);
 
         $stream = fopen('php://memory','r+');
         $this->setLoggerStream($stream);
@@ -142,7 +165,9 @@ class ImportController extends AbstractActionController
      */
     public function importAllAction()
     {
-        $etablissement = $this->params('etablissement');
+        $codeStructure = $this->params('etablissement'); // ex: 'UCN'
+
+        $etablissement = $this->fetchEtablissementByCodeStructure($codeStructure);
 
         $stream = fopen('php://memory','r+');
         $this->setLoggerStream($stream);
@@ -202,10 +227,12 @@ class ImportController extends AbstractActionController
     public function importConsoleAction()
     {
         $service = $this->params('service');
-        $etablissement = $this->params('etablissement');
+        $codeStructure = $this->params('etablissement'); // ex: 'UCN'
         $sourceCode = $this->params('source_code');
 
         $this->setLoggerStream('php://output');
+
+        $etablissement = $this->fetchEtablissementByCodeStructure($codeStructure);
 
         $this->importService->import($service, $etablissement, $sourceCode);
 
@@ -214,7 +241,9 @@ class ImportController extends AbstractActionController
 
     public function importAllConsoleAction()
     {
-        $etablissement = $this->params('etablissement');
+        $codeStructure = $this->params('etablissement'); // ex: 'UCN'
+
+        $etablissement = $this->fetchEtablissementByCodeStructure($codeStructure);
 
         $this->setLoggerStream('php://output');
 

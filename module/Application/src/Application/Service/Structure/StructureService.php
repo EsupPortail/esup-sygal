@@ -83,7 +83,7 @@ class StructureService extends BaseService
 
         // le source code d'une structure cible est calculé
         $sourceCode = $structureCibleDataObject->getSourceCode();
-        if ($structureCibleDataObject->getSourceCode() === null) $sourceCode = uniqid(Etablissement::CODE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP);
+        if ($structureCibleDataObject->getSourceCode() === null) $sourceCode = uniqid(Etablissement::CODE_STRUCTURE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP);
 
         // la source d'une structure cible est forcément SYGAL
         $sourceSygal = $this->sourceService->fetchSourceSygal();
@@ -113,8 +113,8 @@ class StructureService extends BaseService
 
         // instanciation du couple (Etab|ED|UR ; Structure) cible
         $structureConcreteCible = Structure::constructFromDataObject($structureCibleDataObject, $typeStructure, $sourceSygal);
-        $structureConcreteCible->setSourceCode(Etablissement::CODE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP . $unique);
-        $structureConcreteCible->getStructure()->setSourceCode(Etablissement::CODE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP . $unique);
+        $structureConcreteCible->setSourceCode(Etablissement::CODE_STRUCTURE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP . $unique);
+        $structureConcreteCible->getStructure()->setSourceCode(Etablissement::CODE_STRUCTURE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP . $unique);
         $structureConcreteCible->getStructure()->setCode($unique);
         $structureRattachCible = $structureConcreteCible->getStructure(); // StructureSubstitution ne référence que des entités de type Structure
 
