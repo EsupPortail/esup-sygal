@@ -92,5 +92,16 @@
                 <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
+
+        <many-to-many target-entity="Application\Entity\Db\Finacement" field="financements">
+            <join-table name="FINACEMENT_THESE">
+                <join-columns>
+                    <join-column name="THESE_ID" referenced-column-name="ID"/>
+                </join-columns>
+                <inverse-join-columns>
+                    <join-column name="FINANCEMENT_ID" referenced-column-name="ID"/>
+                </inverse-join-columns>
+            </join-table>
+        </many-to-many>
     </entity>
 </doctrine-mapping>

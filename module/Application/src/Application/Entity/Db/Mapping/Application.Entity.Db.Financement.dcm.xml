@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="Application\Entity\Db\Financement" table="FINANCEMENT"
+            repository-class="">
+        <id name="id" type="integer" column="ID">
+            <generator strategy="SEQUENCE"/>
+        </id>
+
+        <field name="code" column="CODE" type="string" length="64" nullable="false" />
+        <field name="libelle" column="LIBELLE" type="string" length="256" nullable="false" />
+
+
+        <many-to-many target-entity="Application\Entity\Db\These" field="theses">
+            <join-table name="FINACEMENT_THESE">
+                <join-columns>
+                    <join-column name="FINANCEMENT_ID" referenced-column-name="ID"/>
+                </join-columns>
+                <inverse-join-columns>
+                    <join-column name="THESE_ID" referenced-column-name="ID"/>
+                </inverse-join-columns>
+            </join-table>
+        </many-to-many>
+    </entity>
+</doctrine-mapping>
