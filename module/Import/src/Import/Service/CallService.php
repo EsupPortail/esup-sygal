@@ -21,32 +21,24 @@ class CallService
     use LoggerAwareTrait;
 
     /**
-     * $config est fourni par la factory et permet l'acces à la config
-     *
-     * @var array $config
+     * @var array
      */
     protected $config;
 
     /**
-     * les quatres variables $url, $code, $user et $password sont des données de configuration pour l'acces au Web
-     * Service
-     *
      * @var string         $url      : le chemin d'acces au web service
      * @var string         $user     : l'identifiant pour l'authentification
      * @var string         $password : le mot de passe pour l'authentification
      * @var string|null    $proxy    : le champ proxy
      * @var boolean|string $verify   : le champ pour le mode https
+     * @var float          $timeout  : timeout of the request in seconds
      */
     protected $url;
     protected $user;
     protected $password;
     protected $proxy;
     protected $verify = true;
-
-    /**
-     * @var array
-     */
-    protected $logs = [];
+    protected $timeout = 0;
 
     /**
      * @param array $config
@@ -78,14 +70,6 @@ class CallService
         }
 
         return $json;
-    }
-
-    /**
-     * @return array [DateTime, string] le log associé pour l'affichage
-     */
-    public function getLogs()
-    {
-        return $this->logs;
     }
 
     /**
@@ -131,17 +115,12 @@ class CallService
         if (array_key_exists('verify', $this->config)) {
             $this->verify = $this->config['verify'];
         }
+        if (array_key_exists('timeout', $this->config)) {
+            $this->timeout = $this->config['timeout'];
+        }
     }
 
-    /**
-     * Appel du Web Service d'import de données.
-     *
-     * @param string $uri : la "page" du Web Service à interroger
-     * @return Response la réponse du Web Service
-     *
-     * RMQ le client est configuré en utilisant les propriétés du FetcherService
-     */
-    private function sendRequest($uri)
+    private function createClient()
     {
         try {
             $this->loadConfig();
@@ -162,12 +141,28 @@ class CallService
         } else {
             $options['proxy'] = ['no' => 'localhost'];
         }
-
         if ($this->verify !== null) {
             $options['verify'] = $this->verify;
         }
+        if ($this->timeout !== null) {
+            $options['timeout'] = $this->timeout;
+        }
 
-        $client = new Client($options);
+        return new Client($options);
+    }
+
+    /**
+     * Appel du Web Service d'import de données.
+     *
+     * @param string $uri : la "page" du Web Service à interroger
+     * @return Response la réponse du Web Service
+     *
+     * RMQ le client est configuré en utilisant les propriétés du FetcherService
+     */
+    private function sendRequest($uri)
+    {
+        $client = $this->createClient();
+
         try {
             $_debut = microtime(true);
             $response = $client->request('GET', $uri);

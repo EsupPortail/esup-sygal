@@ -6,6 +6,8 @@ use Application\Entity\Db\These;
 use Application\Filter\EtablissementPrefixFilter;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
+use Assert\Assertion;
+use Import\Exception\CallException as ImportCallException;
 use Import\Service\Traits\ImportServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
@@ -23,17 +25,60 @@ class ImportController extends AbstractActionController
     use TheseServiceAwareTrait;
     use EtablissementServiceAwareTrait;
 
+    /**
+     * @var array $config [ 'CODE_ETABLISSEMENT' => [...] ]
+     */
+    protected $config;
+
+    /**
+     * @param array $config
+     */
+    public function setConfig($config)
+    {
+        $this->config = $config;
+    }
+
+    /**
+     * @return ViewModel
+     * @throws \Assert\AssertionFailedException
+     */
     public function indexAction()
     {
-        $connection = $this->entityManager->getConnection();
-        $result = $connection->executeQuery("SELECT REQ_END_DATE FROM API_LOG WHERE REQ_ETABLISSEMENT='UCN' AND REQ_TABLE='variable' ORDER BY REQ_END_DATE DESC");
-        $last = $result->fetch()["REQ_END_DATE"];
+        Assertion::keyIsset($this->config, 'etablissements');
+
+        $codesEtablissements = array_keys($this->config['etablissements']);
 
         return new ViewModel([
-            'last' => $last,
+            'codesEtablissements' => $codesEtablissements,
         ]);
     }
 
+    public function apiInfoAction()
+    {
+        $etablissement = $this->params()->fromRoute("etablissement");
+        try {
+            $version = $this->importService->getApiVersion($etablissement);
+            $error = null;
+        } catch (ImportCallException $e) {
+            $version = "Inconnue";
+            $error = $e->getMessage() . " : " . $e->getPrevious()->getMessage();
+        }
+
+        return [
+            'version' => $version,
+            'error' => $error,
+        ];
+    }
+
+    public function launcherAction()
+    {
+        return new ViewModel();
+    }
+
+    /**
+     * @return ViewModel
+     * @throws \Doctrine\DBAL\DBALException
+     */
     public function infoLastUpdateAction()
     {
         $etablissement = $this->params()->fromRoute("etablissement");

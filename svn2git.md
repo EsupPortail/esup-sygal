@@ -29,14 +29,17 @@ Compléter ce fichier à la main, exemple :
     gauthierb = Bertrand Gauthier <bertrand.gauthier@unicaen.fr>
     metivier = Jean-Philippe Métivier <jean-philippe.metivier@unicaen.fr>
 
-## Créer un dépôt Git à partir du dépôt Subversion
+## Créer un dépôt Git local à partir du dépôt Subversion distant
 
     $ git svn clone https://svn.unicaen.fr/svn/sodoct \
         --authors-file=users.txt --no-metadata -s /home/gauthierb/workspace/sodoct-git
 
-## Ajouter la remote "origin" au dépôt local
+## Se positionner dans le répertoire du dépôt Git local ainsi créé 
     
     $ cd /home/gauthierb/workspace/sodoct-git
+    
+## Ajouter la remote "origin" au dépôt local
+    
     $ git remote add origin https://git.unicaen.fr/bertrand.gauthier/sodoct.git
     
 ## Lister les tags Subversion importés
