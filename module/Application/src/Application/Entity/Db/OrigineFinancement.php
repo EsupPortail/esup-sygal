@@ -5,7 +5,7 @@ namespace Application\Entity\Db;
 use Doctrine\Common\Collections\ArrayCollection;
 use UnicaenImport\Entity\Db\Source;
 
-class Financement {
+class OrigineFinancement {
 
     /** @var int */
     private $id;
