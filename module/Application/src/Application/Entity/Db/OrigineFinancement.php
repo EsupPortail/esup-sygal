@@ -3,6 +3,7 @@
 namespace Application\Entity\Db;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use UnicaenImport\Entity\Db\Source;
 
 class Financement {
 
@@ -12,8 +13,10 @@ class Financement {
     private $code;
     /** @var string */
     private $libelle;
-    /** @var ArrayCollection */
-    private $theses;
+    /** @var string */
+    private $libelleCourt;
+    /** @var Source */
+    private $source;
 
     public function __construct()
     {
@@ -65,31 +68,38 @@ class Financement {
     }
 
     /**
-     * @return ArrayCollection
+     * @return string
      */
-    public function getTheses()
+    public function getLibelleCourt()
     {
-        return $this->theses;
+        return $this->libelleCourt;
     }
 
     /**
-     * @param These $these
+     * @param string $libelleCourt
      * @return Financement
      */
-    public function addThese($these)
+    public function setLibelleCourt($libelleCourt)
     {
-        $this->theses[] = $these;
+        $this->libelleCourt = $libelleCourt;
         return $this;
     }
 
     /**
-     * @param These $these
-     * @return Financement
+     * @return Source
      */
-    public function removeThese($these)
+    public function getSource()
     {
-        $this->theses->removeElement($these);
-        return $this;
+        return $this->source;
     }
 
+    /**
+     * @param Source $source
+     * @return Financement
+     */
+    public function setSource($source)
+    {
+        $this->source = $source;
+        return $this;
+    }
 }

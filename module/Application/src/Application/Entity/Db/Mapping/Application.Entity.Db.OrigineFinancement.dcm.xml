@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="Application\Entity\Db\OrigineFinancement" table="ORIGINE_FINANCEMENT"
+            repository-class="">
+        <id name="id" type="integer" column="ID">
+            <generator strategy="SEQUENCE"/>
+        </id>
+
+        <field name="code"              column="CODE"               type="string" length="64"       nullable="false" />
+        <field name="libelle"           column="LIBELLE"            type="string" length="256"      nullable="false" />
+        <field name="libelleCourt"      column="LIBELLE_COURT"      type="string" length="64"       nullable="false" />
+
+        <many-to-one field="source" target-entity="UnicaenImport\Entity\Db\Source">
+            <join-columns>
+                <join-column name="SOURCE_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
+    </entity>
+</doctrine-mapping>
