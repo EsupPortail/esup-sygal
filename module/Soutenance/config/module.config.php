@@ -21,6 +21,8 @@ use Soutenance\Controller\Factory\SoutenanceControllerFactory;
 use Soutenance\Controller\PresoutenanceController;
 use Soutenance\Controller\QualiteController;
 use Soutenance\Controller\SoutenanceController;
+use Soutenance\Form\Avis\AvisForm;
+use Soutenance\Form\Avis\AvisFormFactory;
 use Soutenance\Form\Confidentialite\ConfidentialiteForm;
 use Soutenance\Form\Confidentialite\ConfidentialiteFormFactory;
 use Soutenance\Form\Confidentialite\ConfidentialiteHydrator;
@@ -635,6 +637,7 @@ return array(
             QualiteEditionForm::class => QualiteEditionFormFactory::class,
             CotutelleForm::class => CotutelleFormFactory::class,
             ConfidentialiteForm::class => ConfidentialiteFormFactory::class,
+            AvisForm::class => AvisFormFactory::class,
         ],
     ],
 

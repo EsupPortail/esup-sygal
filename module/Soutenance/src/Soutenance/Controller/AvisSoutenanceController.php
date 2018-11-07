@@ -14,6 +14,8 @@ use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Notification\Service\NotifierServiceAwareTrait;
+use Soutenance\Entity\Avis;
+use Soutenance\Form\Avis\AvisForm;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\Form\Element\Hidden;
 use Zend\Http\Request;
@@ -36,24 +38,36 @@ class AvisSoutenanceController extends AbstractController {
         $idRapporteur = $this->params()->fromRoute('rapporteur');
         $rapporteur = $this->getActeurService()->getRepository()->findActeurByIndividu($idRapporteur);
 
-        $validation = current($this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_AVIS_SOUTENANCE, $these));
+        $avis = new Avis();
+        $fichier = $avis->getFichier();
 
+        $form = $this->getServiceLocator()->get('FormElementManager')->get(AvisForm::class);
 
+//        return new ViewModel([
+//            'form'          => $form,
+//            'fichier'       => $fichier,
+//            'these'         => $these,
+//            'rapporteur'    => $rapporteur,
+//        ]);
 
+//        $validation = current($this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_AVIS_SOUTENANCE, $these));
+//
+//
+//
         /** @var Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
-            var_dump($data['avis']);
+            var_dump($data);
         }
 
-        $view = $this->createViewForFichierAction(NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE);
+        $view = $this->createViewForFichierAction($fichier);
         $view->setVariable('isVisible', true);
-        $view->setVariable('maxUploadableFilesCount', 3);
+        $view->setVariable('maxUploadableFilesCount', 1);
         $view->setVariable('these', $these);
         $view->setVariable('rapporteur', $rapporteur);
-        $view->setVariable('validation', $validation);
-//        $view->setTemplate('application/these/depot/fichier-divers');
+        $view->setVariable('form', $form);
+//        $view->setVariable('validation', $validation);
         return $view;
 
     }
@@ -62,14 +76,14 @@ class AvisSoutenanceController extends AbstractController {
      * @param string $codeNatureFichier
      * @return ViewModel
      */
-    private function createViewForFichierAction($codeNatureFichier)
+    private function createViewForFichierAction($fichier)
     {
         $these = $this->requestedThese();
-        $nature = $this->fichierService->fetchNatureFichier($codeNatureFichier);
+        $nature = $this->fichierService->fetchNatureFichier(NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE);
         $version = $this->fichierService->fetchVersionFichier(VersionFichier::CODE_ORIG);
 
         if (!$nature) {
-            throw new RuntimeException("Nature de fichier introuvable: " . $codeNatureFichier);
+            throw new RuntimeException("Nature de fichier introuvable: " . NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE);
         }
 
         $form = $this->uploader()->getForm();
@@ -79,10 +93,19 @@ class AvisSoutenanceController extends AbstractController {
         $form->addElement((new Hidden('version'))->setValue($version->getCode()));
         $form->get('files')->setLabel("")->setAttribute('multiple', false)/*->setAttribute('accept', '.pdf')*/;
 
+        $fichierStuff = null;
+        if ($fichier)
+            $fichierStuff = [
+                'file' => $fichier,
+                'downloadUrl' => $this->urlFichierThese()->telechargerFichierThese($these, $fichier),
+                'deleteUrl' => $this->urlFichierThese()->supprimerFichierThese($these, $fichier),
+            ];
+
+
         $view = new ViewModel([
             'these'           => $these,
             'uploadUrl'       => $this->urlFichierThese()->televerserFichierThese($these),
-            'fichiersListUrl' => $this->urlFichierThese()->listerFichiers($these, $nature),
+            'fichiersListUrl' => [ $fichierStuff ],
             'nature'          => $nature,
             'version'         => $version,
         ]);

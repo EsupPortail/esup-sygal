@@ -20,6 +20,8 @@ $this->headTitle($titrePage);
 $canEdit = true;
 ?>
 
+
+
 <h1 class="page-header">
     <?php echo $titrePage; ?>
 </h1>
@@ -37,6 +39,9 @@ $canEdit = true;
     </div>
     <div class="panel-body">
 
+
+        <?php $this->form()->openTag($form); ?>
+
         <div class="row">
             <div class="col-md-4">
 
@@ -51,50 +56,38 @@ $canEdit = true;
                             'uploadUrl'               => $uploadUrl,
                             'uploadedFilesListUrl'    => $fichiersListUrl,
                             'maxUploadableFilesCount' => 1,
-                        ]) ?>
+                        ]); ?>
 <!--                    </div>-->
 <!--                </div>-->
             </div>
             <div class="col-md-4">
-                Avis :
-                <div class="form-group">
-                    <div class="radio">
-                    <label>
-                    <input type="radio" name="avis" id="favorable" value="favorable"> <strong>favorable</strong> à la soutenance
-                    </label>
-                        <br/>
-                    <label>
-                    <input type="radio" name="avis" id="defavorable" value="défavorable"> <strong>défavorable</strong> à la soutenance
-                    </label>
-                    </div>
-                </div>
+                <?php
+                    echo $this->formControlGroup($form->get('avis'));
+                ?>
             </div>
             <div class="col-md-4">
-                <?php echo $denominationRapporteur; ?> <br/>
-                <input type="submit" class="btn btn-primary" value="Signature de l'avis de soutenance"/>
+<!--                --><?php //echo $denominationRapporteur; ?><!-- <br/>-->
+                <?php echo $this->formControlGroup($form->get('enregistrer')); ?>
             </div>
+        </div>
+        <div class="col-md-12" id="justification">
+            <?php echo $this->formControlGroup($form->get('motif')); ?>
         </div>
 
     </div>
 </div>
-    <div class="col-md-12" id="justification">
-    <label>
-        Justification de l'avis défavorable de soutenance :
-    </label>
-        <textarea id="justification" rows="15" style="width:100%;">
-        </textarea>
 
-    </div>
 
 </form>
 
 <script>
     $("div#justification").hide();
 
-    $("input#defavorable").click(function() {
-        $("div#justification").show();
-    })
-    $("input#favorable").click(function() {
-        $("div#justification").hide();
+    $("input[name='avis']").click(function() {
+        if ($(this).attr('value') === 'Favorable') {
+            $("div#justification").hide();
+        } else {
+            $("div#justification").show();
+        }
     })
 </script>

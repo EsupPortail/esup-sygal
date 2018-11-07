@@ -36,7 +36,6 @@ class EngagementImpartialiteAssertion implements  AssertionInterface {
         /** @var These $these */
         $these = $resource;
 
-        if ($this->userContextService->getSelectedIdentityRole()->getCode() === Role::CODE_ADMIN_TECH) return true;
 
         switch ($privilege) {
             case SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_SIGNER:
@@ -55,7 +54,7 @@ class EngagementImpartialiteAssertion implements  AssertionInterface {
                 break;
             case SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_VISUALISER:
                 $role = $this->userContextService->getSelectedIdentityRole();
-                return ($role->getStructure() === $these->getEtablissement()->getStructure() || $role->getCode() === Role::CODE_OBSERVATEUR);
+                return ($role->getStructure() === $these->getEtablissement()->getStructure() || $role->getCode() === Role::CODE_OBSERVATEUR || $role->getCode() === Role::CODE_ADMIN_TECH);
                 break;
         }
         return false;

@@ -38,21 +38,6 @@ $canValider = ($proposition->isOk()) && $this->isAllowed($these, SoutenancePrivi
 $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_UR) || $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_ED) || $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_BDD);
 ?>
 
-<style>
-    .badge-success {
-        background-color: #468847;
-    }
-
-    .badge-error {
-        background-color: #881f18;
-    }
-
-    .action {
-        width: 20em;
-        margin:1ex;
-    }
-</style>
-
 <?php $this->headTitle($this->translate("Proposition de soutenance")); ?>
 <h1 class="page-header">
     Proposition de soutenance
@@ -75,26 +60,29 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
     </div>
     <div class="panel-body">
 
-        <div class="pull-left">
-            <dl class="dl-horizontal">
-                <dt> Date de la soutenance </dt>
-                <dd> <?php echo ($proposition->getDate())?$proposition->getDate()->format("d/m/Y"):'<strong>non communiquée</strong>'; ?> </dd>
-                <dt> Heure de la soutenance </dt>
-                <dd> <?php echo ($proposition->getDate())?$proposition->getDate()->format("H:i:s"):'<strong>non communiquée</strong>'; ?> </dd>
-                <dt> Lieu de la Soutenance </dt>
-                <dd> <?php echo ($proposition->getLieu())?$proposition->getLieu():'<strong>non communiqué</strong>'; ?> </dd>
-            </dl>
-        </div>
-        <div class="pull-right">
-            <?php if ($canModifier): ?>
-            <a
-                href="<?php echo $this->url('soutenance/proposition/modifier-date-lieu', ['these' => $these->getId()], [], true); ?>"
-                class="btn btn-primary action ajax-modal"
-                data-event="edition-datelieu"
-            >
-                <span class="glyphicon glyphicon-pencil"></span> Éditer lieu et date de la soutenace
-            </a>
-            <?php endif; ?>
+        <div class="row">
+            <div class="col-md-8">
+                <dl>
+                    <dt> Date de la soutenance </dt>
+                    <dd> <?php echo ($proposition->getDate())?$proposition->getDate()->format("d/m/Y"):'<strong>non communiquée</strong>'; ?> </dd>
+                    <dt> Heure de la soutenance </dt>
+                    <dd> <?php echo ($proposition->getDate())?$proposition->getDate()->format("H:i:s"):'<strong>non communiquée</strong>'; ?> </dd>
+                    <dt> Lieu de la Soutenance </dt>
+                    <dd> <?php echo ($proposition->getLieu())?$proposition->getLieu():'<strong>non communiqué</strong>'; ?> </dd>
+                </dl>
+            </div>
+
+            <div class="pull-right">
+                <?php if ($canModifier): ?>
+                <a
+                    href="<?php echo $this->url('soutenance/proposition/modifier-date-lieu', ['these' => $these->getId()], [], true); ?>"
+                    class="btn btn-primary action ajax-modal"
+                    data-event="edition-datelieu"
+                >
+                    <span class="glyphicon glyphicon-pencil"></span> Éditer lieu et date de la soutenace
+                </a>
+                <?php endif; ?>
+            </div>
         </div>
     </div>
 </div>
@@ -116,11 +104,11 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
         <div class="col-md-3">
             <h4>
                 Parité de genre
-                <?php if ($indicateurs["parité"]["valide"]):?>
-                    <span class="badge badge-success"> Valide </span>
-                <?php else: ?>
-                    <span class="badge badge-error"> Non valide </span>
-                <?php endif; ?>
+<!--                --><?php //if ($indicateurs["parité"]["valide"]):?>
+<!--                    <span class="badge badge-success"> Valide </span>-->
+<!--                --><?php //else: ?>
+<!--                    <span class="badge badge-error"> Non valide </span>-->
+<!--                --><?php //endif; ?>
             </h4>
 
             <div class="progress">
@@ -258,48 +246,52 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
     </div>
     <div class="panel-body">
 
-        <div class="col-md-8">
-            <?php if($these->getLibelleEtabCotutelle() || $these->getLibellePaysCotutelle()): ?>
-                <dl class="dl-horizontal">
-                    <dt> Établissement de <br/> co-tutelle </dt>
-                    <dd> <?php echo ($these->getLibelleEtabCotutelle())?$these->getLibelleEtabCotutelle():"non renseigné"; ?></dd>
-                    <dt> Pays de co-tutelle </dt>
-                    <dd> <?php echo ($these->getLibellePaysCotutelle())?$these->getLibellePaysCotutelle():"non renseigné"; ?></dd>
+        <div class="row">
+            <div class="col-md-8">
+                <?php if($these->getLibelleEtabCotutelle() || $these->getLibellePaysCotutelle()): ?>
+                    <dl>
+                        <dt> Établissement de co-tutelle </dt>
+                        <dd> <?php echo ($these->getLibelleEtabCotutelle())?$these->getLibelleEtabCotutelle():"non renseigné"; ?></dd>
+                        <dt> Pays de co-tutelle </dt>
+                        <dd> <?php echo ($these->getLibellePaysCotutelle())?$these->getLibellePaysCotutelle():"non renseigné"; ?></dd>
+                    </dl>
+                <?php else : ?>
+                    Aucune co-tutelle d'enregistrée.
+                <?php endif; ?>
+            </div>
+
+            <div class="pull-right">
+                <a href="<?php echo $this->url('soutenance/proposition/cotutelle', ['these' => $these->getId()], [], true); ?>"
+                   class="btn btn-primary action ajax-modal"
+                   data-event="edition-cotutelle"
+                >
+                    <span class="glyphicon glyphicon-plus"></span>
+                    Renseigner la co-tutelle
+                </a>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <?php if($these->getDateFinConfidentialite()): ?>
+                <dl>
+                    <dt> Date de fin de confidentialité </dt>
+                    <dd> <?php echo $these->getDateFinConfidentialite()->format("d/m/Y"); ?> </dd>
                 </dl>
-            <?php else : ?>
-                Aucune co-tutelle d'enregistrée.
-            <?php endif; ?>
-        </div>
+                <?php else : ?>
+                    Aucune demande de confidentialité d'enregistrée.
+                <?php endif; ?>
+            </div>
 
-        <div class="pull-right">
-            <a href="<?php echo $this->url('soutenance/proposition/cotutelle', ['these' => $these->getId()], [], true); ?>"
-               class="btn btn-primary action ajax-modal"
-               data-event="edition-cotutelle"
-            >
-                <span class="glyphicon glyphicon-plus"></span>
-                Renseigner la co-tutelle
-            </a>
-        </div>
-
-        <div class="col-md-8">
-            <?php if($these->getDateFinConfidentialite()): ?>
-            <dl class="dl-horizontal">
-                <dt> Date de fin de confidentialité </dt>
-                <dd> <?php echo $these->getDateFinConfidentialite()->format("d/m/Y"); ?> </dd>
-            </dl>
-            <?php else : ?>
-                Aucune demande de confidentialité d'enregistrée.
-            <?php endif; ?>
-        </div>
-
-        <div class="pull-right">
-            <a href="<?php echo $this->url('soutenance/proposition/confidentialite', ['these' => $these->getId()], [], true); ?>"
-               class="btn btn-primary action ajax-modal"
-               data-event="edition-confidentialite"
-            >
-                <span class="glyphicon glyphicon-plus"></span>
-                Renseigner une confidentialité
-            </a>
+            <div class="pull-right">
+                <a href="<?php echo $this->url('soutenance/proposition/confidentialite', ['these' => $these->getId()], [], true); ?>"
+                   class="btn btn-primary action ajax-modal"
+                   data-event="edition-confidentialite"
+                >
+                    <span class="glyphicon glyphicon-plus"></span>
+                    Renseigner une confidentialité
+                </a>
+            </div>
         </div>
     </div>
 </div>
@@ -313,36 +305,39 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
         </h4>
     </div>
     <div class="panel-body">
-        <div class="col-md-6 pull-left">
-            <h4>
-                Liste des validations
-            </h4>
 
-            <ul>
-                <li>
-                    <?php echo $doctorant->getIndividu()->getNomComplet(false, false, false, true); ?> (Doctorant)
-                    <br/>
-                    <?php if ($validations[$doctorant->getIndividu()->getId()]) : ?>
-                        <span class="badge badge-success"> Validée</span>
-                    <?php else: ?>
-                        <span class="badge badge-default"> Aucune validation</span>
-                    <?php endif; ?>
+        <div class="row">
+            <div class="col-md-8">
+                <h4>
+                    Liste des validations
+                </h4>
 
-                </li>
-                <?php foreach ($directeurs as $directeur): ?>
-                <li>
-                    <?php echo $directeur->getNomComplet(false,false,false, true); ?> (Directeur)
-                    <br/>
-                    <?php if ($validations[$directeur->getId()]) : ?>
-                        <span class="badge badge-success"> Validée</span>
-                    <?php else: ?>
-                        <span class="badge badge-default"> Aucune validation</span>
-                    <?php endif; ?>
-                </li>
-                <?php endforeach; ?>
-            </ul>
-        </div>
-        <div class="col-md-6 pull-right">
+                <ul>
+                    <li>
+                        <?php echo $doctorant->getIndividu()->getNomComplet(false, false, false, true); ?> (Doctorant)
+                        <br/>
+                        <?php if ($validations[$doctorant->getIndividu()->getId()]) : ?>
+                            <span class="badge badge-success"> Validée</span>
+                        <?php else: ?>
+                            <span class="badge badge-default"> Aucune validation</span>
+                        <?php endif; ?>
+
+                    </li>
+                    <?php foreach ($directeurs as $directeur): ?>
+                    <li>
+                        <?php echo $directeur->getNomComplet(false,false,false, true); ?> (Directeur)
+                        <br/>
+                        <?php if ($validations[$directeur->getId()]) : ?>
+                            <span class="badge badge-success"> Validée</span>
+                        <?php else: ?>
+                            <span class="badge badge-default"> Aucune validation</span>
+                        <?php endif; ?>
+                    </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+
+            <div class="pull-right">
             <?php if (!$alreadyValidated) : ?>
                 <?php if ($canValider) : ?>
                     <a
@@ -368,6 +363,7 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
                 </div>
             <?php endif; ?>
         </div>
+        </div>
     </div>
 </div>
 
@@ -378,7 +374,8 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
         <h4> Validation par les structures encadrant la thèse </h4>
     </div>
     <div class="panel-body">
-        <div class="pull-left col-md-6">
+        <div class="row">
+            <div class="col-md-8">
         <h4>
             Liste des validations
         </h4>
@@ -409,7 +406,7 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
             </li>
         </ul>
         </div>
-        <div class="col-md-6 pull-right">
+            <div class="pull-right">
             <?php if ($canStructureValider): ?>
             <p>
                 <a href="<?php echo $this->url('soutenance/proposition/valider-structure', ['these' => $these->getId()], [], true); ?>"
@@ -451,6 +448,7 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
                 </div>
             <?php endif; ?>
         </div>
+        </div>
     </div>
  </div>
 
@@ -488,3 +486,28 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
         });
     });
 </script>
+
+<style>
+    dl {
+        width: 100%;
+        /*background-color: #1d57b7;*/
+    }
+
+    dl dt {
+        width: 50%;
+        /*background-color: #337ab7;*/
+    }
+
+     .badge-success {
+         background-color: #468847;
+     }
+
+    .badge-error {
+        background-color: #881f18;
+    }
+
+    .action {
+        width: 20em;
+        margin:1ex;
+    }
+</style>

@@ -34,8 +34,6 @@ class PresoutenanceAssertion implements  AssertionInterface {
         /** @var These $these */
         $these = $resource;
 
-        if ($this->userContextService->getSelectedIdentityRole()->getCode() === Role::CODE_ADMIN_TECH) return true;
-
         switch ($privilege) {
             case SoutenancePrivileges::SOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU:
                 $role = $this->userContextService->getSelectedIdentityRole();
@@ -45,6 +43,11 @@ class PresoutenanceAssertion implements  AssertionInterface {
                 $role = $this->userContextService->getSelectedIdentityRole();
                 return ($role->getCode() === Role::CODE_BDD && $role->getStructure() === $these->getEtablissement()->getStructure());
                 break;
+            case SoutenancePrivileges::SOUTENANCE_PRESOUTENANCE_VISUALISATION:
+                $role = $this->userContextService->getSelectedIdentityRole();
+                return (($role->getCode() === Role::CODE_BDD && $role->getStructure() === $these->getEtablissement()->getStructure()) ||
+                    $role->getCode() === Role::CODE_OBSERVATEUR ||
+                    $role->getCode() === Role::CODE_ADMIN_TECH);
         }
 
         return false;

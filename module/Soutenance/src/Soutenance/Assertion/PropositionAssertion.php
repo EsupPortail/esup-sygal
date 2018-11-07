@@ -50,11 +50,14 @@ class PropositionAssertion implements  AssertionInterface {
         $directeurs = [];
         foreach ($acteurs as $acteur) $directeurs[] = $acteur->getIndividu();
 
-        if ($role === Role::CODE_ADMIN_TECH) return true;
+//        if ($role === Role::CODE_ADMIN_TECH) return true;
 
         switch ($privilege) {
             case SoutenancePrivileges::SOUTENANCE_PROPOSITION_VISUALISER:
                 switch ($role) {
+                    case Role::CODE_ADMIN_TECH:
+                        return true;
+                        break;
                     case Role::CODE_BDD :
                         return $structure === $these->getEtablissement()->getStructure();
                         break;
