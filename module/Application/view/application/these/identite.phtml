@@ -222,6 +222,15 @@ $persopassModifiedEvent = 'persopass-modified-event';
             </dd>
 
             <dt>
+                Financement(s)
+            </dt>
+            <dd>
+                <?php foreach ($these->getFinancements() as $financement) : ?>
+                    <?php echo $financement->getLibelle(); ?> <br/>
+                <?php endforeach; ?>
+            </dd>
+
+            <dt>
                 <?php echo $this->translate("Titre"); ?>
             </dt>
             <dd>

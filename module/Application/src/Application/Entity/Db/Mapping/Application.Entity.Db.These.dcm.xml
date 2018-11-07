@@ -93,8 +93,8 @@
             </join-columns>
         </many-to-one>
 
-        <many-to-many target-entity="Application\Entity\Db\Finacement" field="financements">
-            <join-table name="FINACEMENT_THESE">
+        <many-to-many target-entity="Application\Entity\Db\Financement" field="financements">
+            <join-table name="FINANCEMENT_THESE">
                 <join-columns>
                     <join-column name="THESE_ID" referenced-column-name="ID"/>
                 </join-columns>

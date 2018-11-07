@@ -13,7 +13,7 @@
 
 
         <many-to-many target-entity="Application\Entity\Db\These" field="theses">
-            <join-table name="FINACEMENT_THESE">
+            <join-table name="FINANCEMENT_THESE">
                 <join-columns>
                     <join-column name="FINANCEMENT_ID" referenced-column-name="ID"/>
                 </join-columns>
