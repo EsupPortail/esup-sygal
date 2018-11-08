@@ -6,6 +6,7 @@ use Application\Entity\Db\Individu;
 use Application\Entity\Db\Etablissement;
 use Application\Filter\ActeursFormatter;
 use Application\Entity\Db\WfEtape;
+use Application\Filter\FinancementFormatter;
 use Application\Provider\Privilege\DoctorantPrivileges;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\View\Renderer\PhpRenderer;
@@ -33,6 +34,10 @@ $canEditPersopass = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_MODI
 $canEditPersopass = $canEditPersopass && (!$estDoctorant || !$these->getDoctorant()->getPersopass());
 $persopassModifiedEvent = 'persopass-modified-event';
 
+
+$financementFormatter = new FinancementFormatter();
+$financementFormatter->setSortBy(FinancementFormatter::SORT_BY_DATE);
+$financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
 ?>
 
 <?php $this->headTitle($this->translate("Thèse"))->prepend($these->getDoctorant()->getNomUsuel()) ?>
@@ -225,17 +230,8 @@ $persopassModifiedEvent = 'persopass-modified-event';
                 Financement(s)
             </dt>
             <dd>
-                <?php /** @var \Application\Entity\Db\Financement $financement */ ?>
-                <?php foreach ($these->getFinancements() as $financement) : ?>
-                    <?php echo $financement->getOrigineFinancement()->getLibelle(); ?>
-                    <?php if($financement->getQuotiteFinancement()): ?>
-                        (<?php echo $financement->getQuotiteFinancement(); ?>)
-                    <?php endif; ?>
-                    <?php if($financement->getComplementFinancement()): ?>
-                        - <?php echo $financement->getComplementFinancement(); ?>
-                    <?php endif; ?>
-                    <br/>
-                <?php endforeach; ?>
+
+                <?php echo $financementFormatter->doFormat($these->getFinancements()); ?>
             </dd>
 
             <dt>

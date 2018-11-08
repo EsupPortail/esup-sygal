@@ -11,6 +11,8 @@ class Financement {
     private $id;
     /** @var Source */
     private $source;
+    /** @var string */
+    private $sourceCode;
     /** @var These */
     private $these;
     /** @var int */
@@ -49,6 +51,24 @@ class Financement {
     public function setSource($source)
     {
         $this->source = $source;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSourceCode()
+    {
+        return $this->sourceCode;
+    }
+
+    /**
+     * @param string $sourceCode
+     * @return Financement
+     */
+    public function setSourceCode($sourceCode)
+    {
+        $this->sourceCode = $sourceCode;
         return $this;
     }
 
