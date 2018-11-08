@@ -77,7 +77,7 @@ return [
                 'import-all-console' => [
                     'type' => Simple::class,
                     'options' => [
-                        'route'    => 'import-all --etablissement= [--synchronize=]',
+                        'route'    => 'import-all --etablissement= [--breakOnServiceNotFound=] [--synchronize=]',
                         'defaults' => [
                             'controller' => Import\Controller\ImportController::class,
                             'action'     => 'import-all-console',

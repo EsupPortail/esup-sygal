@@ -49,8 +49,9 @@ class Module
             // command
             'import-all --etablissement= [--synchronize=]' => "Importer toutes les données de tous les serviceq d'un établissement.",
             // parameters
-            ['--etablissement', "Requis. Identifiant de l'établissement, ex: 'UCN'"],
-            ['--synchronize',   "Facultatif. Réaliser ou non la synchro SRC_XXX => XXX. Valeurs possibles: 0, 1. Valeur par défaut: 1."],
+            ['--etablissement',          "Requis. Identifiant de l'établissement, ex: 'UCN'"],
+            ['--breakOnServiceNotFound', "Facultatif. Faut-il stopper si un service appelé n'existe pas. Valeurs possibles: 0, 1. Valeur par défaut: 1."],
+            ['--synchronize',            "Facultatif. Réaliser ou non la synchro SRC_XXX => XXX. Valeurs possibles: 0, 1. Valeur par défaut: 1."],
 
             // command
             'process-observed-import-results' => "Traitement des résultats d'observation de certains changements durant la synchro.",
