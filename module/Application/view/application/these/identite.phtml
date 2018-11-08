@@ -199,8 +199,8 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
             </dt>
             <dd>
                 <?php
-                if ($rattachements === null) {
-                    echo "Aucun établissement de rattachements de renseigné.";
+                if (count($rattachements) <1 ) {
+                    echo "Aucun établissement de rattachement de renseigné.";
                 } else {
                     /** @var \Application\Entity\Db\EtablissementRattachement $rattachement */
                     foreach ($rattachements as $rattachement) {
