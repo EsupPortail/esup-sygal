@@ -159,10 +159,11 @@ class ImportController extends AbstractActionController
         $service = $this->params('service');
         $etablissement = $this->params('etablissement');
         $sourceCode = $this->params('source_code');
+        $synchronize = $this->params('synchronize', true);
 
         $this->setLoggerStream('php://output');
 
-        $this->importService->import($service, $etablissement, $sourceCode);
+        $this->importService->import($service, $etablissement, $sourceCode, [], $synchronize);
 
         echo "Importation des données du service '$service' de l'établissement '$etablissement' effectuée." . PHP_EOL;
     }
@@ -170,10 +171,11 @@ class ImportController extends AbstractActionController
     public function importAllConsoleAction()
     {
         $etablissement = $this->params('etablissement');
+        $synchronize = $this->params('synchronize', true);
 
         $this->setLoggerStream('php://output');
 
-        $this->importService->importAll($etablissement);
+        $this->importService->importAll($etablissement, $synchronize);
 
         echo "Importation de toutes les données de l'établissement '$etablissement' effectuée." . PHP_EOL;
     }

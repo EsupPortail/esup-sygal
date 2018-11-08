@@ -56,15 +56,19 @@ class FinancementFormatter {
      * @param Financement[] $financements
      * @return string
      */
-    public function doFormat($financements) {
+    public function doFormat(array $financements) {
 
         //sorting
         switch($this->getSortBy()) {
             case FinancementFormatter::SORT_BY_DATE :
-                usort($financements->toArray(), function (Financement $a, Financement $b) { return $a->getDateDebut() > $b->getDateDebut();});
+                usort($financements, function (Financement $a, Financement $b) {
+                    return $a->getAnnee() - $b->getAnnee();
+                });
                 break;
             case FinancementFormatter::SORT_BY_ORIGINE :
-                usort($financements->toArray(), function (Financement $a, Financement $b) { return $a->getOrigineFinancement()->getLibelle() < $b->getOrigineFinancement()->getLibelle();});
+                usort($financements, function (Financement $a, Financement $b) {
+                    return strcmp($a->getOrigineFinancement()->getLibelleLong(), $b->getOrigineFinancement()->getLibelleLong());
+                });
                 break;
         }
 
@@ -73,10 +77,12 @@ class FinancementFormatter {
             switch($this->getDisplayAs()) {
                 case FinancementFormatter::DISPLAY_AS_LINE :
                     $infos = [];
-                    if ($financement->getOrigineFinancement())  $infos[] = $financement->getOrigineFinancement()->getLibelle();
-                    if ($financement->getQuotiteFinancement())  $infos[] = $financement->getQuotiteFinancement();
-                    if ($financement->getDateDebut())           $infos[] = $financement->getDateDebut()->format('d/m/Y');
-                    if ($financement->getDateFin())             $infos[] = $financement->getDateFin()->format('d/m/Y');
+                    if ($financement->getAnnee())                   $infos[] = $financement->getAnnee();
+                    if ($financement->getOrigineFinancement())      $infos[] = $financement->getOrigineFinancement()->getLibelleLong();
+                    if ($financement->getComplementFinancement())   $infos[] = $financement->getComplementFinancement();
+                    if ($financement->getQuotiteFinancement())      $infos[] = $financement->getQuotiteFinancement();
+                    if ($financement->getDateDebut())               $infos[] = $financement->getDateDebut()->format('d/m/Y');
+                    if ($financement->getDateFin())                 $infos[] = $financement->getDateFin()->format('d/m/Y');
                     $line = implode(", ", $infos);
                     $output .= $line . "<br/>";
                     break;

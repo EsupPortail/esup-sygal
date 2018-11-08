@@ -121,6 +121,12 @@ class SynchroService
             'variable'        => [
                 "UNICAEN_IMPORT.MAJ_VARIABLE($sqlFilterSnippet);",
             ],
+            'origine-financement'        => [
+                "UNICAEN_IMPORT.MAJ_ORIGINE_FINANCEMENT($sqlFilterSnippet);",
+            ],
+            'financement'        => [
+                "UNICAEN_IMPORT.MAJ_FINANCEMENT($sqlFilterSnippet);",
+            ],
         ];
 
         if (!isset($config[$serviceName])) {

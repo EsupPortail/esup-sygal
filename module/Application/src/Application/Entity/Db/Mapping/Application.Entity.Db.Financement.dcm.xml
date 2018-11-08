@@ -20,7 +20,8 @@
             </join-columns>
         </many-to-one>
 
-        <field name="annee"                     column="ANNEE_ID"                   type="integer"                          nullable="false" />
+        <field name="annee" column="ANNEE" type="integer" nullable="false"/>
+        <field name="sourceCode" type="string" column="SOURCE_CODE" length="64" nullable="true"/>
 
         <many-to-one field="origineFinancement" target-entity="Application\Entity\Db\OrigineFinancement">
             <join-columns>
@@ -28,10 +29,29 @@
             </join-columns>
         </many-to-one>
 
-        <field name="complementFinancement"     column="COMPLEMENT_FINANCEMENT"     type="string"   length="256"        nullable="true" />
-        <field name="quotiteFinancement"        column="QUOTITE_FINANCEMENT"        type="string"   length="8"          nullable="true" />
-        <field name="dateDebut"                 column="DATE_DEBUT"                 type="datetime"                     nullable="true" />
-        <field name="dateFin"                   column="DATE_FIN"                   type="datetime"                     nullable="true" />
+        <field name="complementFinancement" column="COMPLEMENT_FINANCEMENT" type="string" length="256" nullable="true"/>
+        <field name="quotiteFinancement" column="QUOTITE_FINANCEMENT" type="string" length="8" nullable="true"/>
+        <field name="dateDebut" column="DATE_DEBUT" type="datetime" nullable="true"/>
+        <field name="dateFin" column="DATE_FIN" type="datetime" nullable="true"/>
 
+        <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
+        <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
+        <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
+
+        <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
+            <join-columns>
+                <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
+            <join-columns>
+                <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur">
+            <join-columns>
+                <join-column name="HISTO_DESTRUCTEUR_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
     </entity>
 </doctrine-mapping>

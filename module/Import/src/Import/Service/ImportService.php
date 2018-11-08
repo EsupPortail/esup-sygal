@@ -50,6 +50,8 @@ class ImportService
         'role',
         'acteur',
         'variable',
+        'origine-financement',
+        'financement',
     ];
 
     /**
@@ -113,8 +115,9 @@ class ImportService
      * @param string|Etablissement $etablissement Code de l'établissement que l'on souhaite interroger (p.e. UCN)
      * @param string               $sourceCode    Source code éventuel de l'entité à récupérer (p.e. '12047')
      * @param array                $queryParams   Filtres éventuels à appliquer
+     * @param bool                 $synchronize   Réaliser ou non la synchro SRC_XXX => XXX
      */
-    public function import($service, $etablissement, $sourceCode, array $queryParams = [])
+    public function import($service, $etablissement, $sourceCode, array $queryParams = [], $synchronize = true)
     {
         if (! $etablissement instanceof Etablissement) {
             $etablissement = $this->etablissementService->getRepository()->findOneByCode($etablissement);
@@ -129,8 +132,10 @@ class ImportService
         $this->fetcherService->fetch($service, $sourceCode, $this->filters);
 
         // synchro UnicaenImport
-        $this->synchroService->addService($service, ['sql_filter' => $this->sqlFilters]);
-        $this->synchroService->synchronize();
+        if ($synchronize) {
+            $this->synchroService->addService($service, ['sql_filter' => $this->sqlFilters]);
+            $this->synchroService->synchronize();
+        }
     }
 
     /**
@@ -139,8 +144,9 @@ class ImportService
      *  RMQ: 'etablissement' est pour le moment obligatoire.
      *
      * @param string|Etablissement $etablissement Etablissement ou code de l'établissement que l'on souhaite interroger (p.e. UCN, UCR, ...)
+     * @param bool                 $synchronize   Réaliser ou non la synchro SRC_XXX => XXX
      */
-    public function importAll($etablissement)
+    public function importAll($etablissement, $synchronize = true)
     {
         if (! $etablissement instanceof Etablissement) {
             $etablissement = $this->etablissementService->getRepository()->findOneByCode($etablissement);
@@ -158,7 +164,9 @@ class ImportService
         }
 
         // synchro UnicaenImport
-        $this->synchroService->synchronize();
+        if ($synchronize) {
+            $this->synchroService->synchronize();
+        }
     }
 
     /**

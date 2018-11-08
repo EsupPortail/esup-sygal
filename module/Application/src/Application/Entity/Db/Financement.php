@@ -3,9 +3,12 @@
 namespace Application\Entity\Db;
 
 use DateTime;
+use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenImport\Entity\Db\Source;
 
 class Financement {
+
+    use HistoriqueAwareTrait;
 
     /** @var int */
     private $id;

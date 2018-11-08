@@ -1067,26 +1067,6 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
-     * @param Financement $financement
-     * @return These
-     */
-    public function addFinancement($financement)
-    {
-        $this->financements[] = $financement;
-        return $this;
-    }
-
-    /**
-     * @param Financement $financement
-     * @return These
-     */
-    public function removeFinancement($financement)
-    {
-        $this->financements->removeElement($financement);
-        return $this;
-    }
-
-    /**
      * Retourne les mails des directeurs de thèse.
      *
      * @param Individu[] $individusSansMail Liste des individus sans mail, format: "Paul Hochon" => Individu

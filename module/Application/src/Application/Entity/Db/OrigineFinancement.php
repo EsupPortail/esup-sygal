@@ -2,16 +2,19 @@
 
 namespace Application\Entity\Db;
 
+use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenImport\Entity\Db\Source;
 
 class OrigineFinancement {
+
+    use HistoriqueAwareTrait;
 
     /** @var int */
     private $id;
     /** @var string */
     private $code;
     /** @var string */
-    private $libelle;
+    private $libelleLong;
     /** @var string */
     private $libelleCourt;
     /** @var Source */
@@ -48,18 +51,18 @@ class OrigineFinancement {
     /**
      * @return string
      */
-    public function getLibelle()
+    public function getLibelleLong()
     {
-        return $this->libelle;
+        return $this->libelleLong;
     }
 
     /**
-     * @param string $libelle
+     * @param string $libelleLong
      * @return OrigineFinancement
      */
-    public function setLibelle($libelle)
+    public function setLibelleLong($libelleLong)
     {
-        $this->libelle = $libelle;
+        $this->libelleLong = $libelleLong;
         return $this;
     }
 

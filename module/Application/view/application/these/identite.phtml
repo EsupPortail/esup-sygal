@@ -230,8 +230,11 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                 Financement(s)
             </dt>
             <dd>
-
-                <?php echo $financementFormatter->doFormat($these->getFinancements()); ?>
+                <?php if ($these->getFinancements()->isEmpty()): ?>
+                    (Non renseigné)
+                <?php else: ?>
+                    <?php echo $financementFormatter->doFormat($these->getFinancements()->toArray()); ?>
+                <?php endif ?>
             </dd>
 
             <dt>
