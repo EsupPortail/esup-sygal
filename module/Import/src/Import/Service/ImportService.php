@@ -50,6 +50,8 @@ class ImportService
         'role',
         'acteur',
         'variable',
+        'origine-financement',
+        'financement',
     ];
 
     /**
@@ -90,12 +92,12 @@ class ImportService
     }
 
     /**
-     * Interroge le WS pour obtenir sa version courante.
+     * Interroge le WS d'un établissement pour obtenir sa version courante.
      *
-     * @param string|Etablissement $etablissement Code de l'établissement que l'on souhaite interroger (p.e. UCN)
+     * @param Etablissement $etablissement Etablissement à interroger
      * @return string Ex: '1.1.0'
      */
-    public function getApiVersion($etablissement)
+    public function getApiVersion(Etablissement $etablissement)
     {
         $this->fetcherService->setEtablissement($etablissement);
         $json = $this->fetcherService->version();
@@ -109,28 +111,24 @@ class ImportService
      *  RMQ: 'service' et 'etablissement' sont pour le moment obligatoire.
      *  RMQ: si 'source_code' est non renseigné alors il faut récupérer toutes les données
      *
-     * @param string               $service       Nom du web service qui sera appelé (p.e. these, doctorant, ...)
-     * @param string|Etablissement $etablissement Code de l'établissement que l'on souhaite interroger (p.e. UCN)
-     * @param string               $sourceCode    Source code éventuel de l'entité à récupérer (p.e. '12047')
-     * @param array                $queryParams   Filtres éventuels à appliquer
+     * @param string        $service       Nom du web service qui sera appelé (p.e. these, doctorant, ...)
+     * @param Etablissement $etablissement Etablissement que l'on souhaite interroger
+     * @param string        $sourceCode    Source code éventuel de l'entité à récupérer (p.e. '12047')
+     * @param array         $queryParams Filtres éventuels à appliquer
+     * @param bool          $synchronize   Réaliser ou non la synchro SRC_XXX => XXX
      */
-    public function import($service, $etablissement, $sourceCode, array $queryParams = [])
+    public function import($service, Etablissement $etablissement, $sourceCode, array $queryParams = [], $synchronize = true)
     {
-        if (! $etablissement instanceof Etablissement) {
-            $etablissement = $this->etablissementService->getRepository()->findOneByCode($etablissement);
-            if ($etablissement === null) {
-                throw new RuntimeException("Aucun établissement trouvé avec le code " . $etablissement);
-            }
-        }
-
         $this->computeFilters($service, $sourceCode, $queryParams);
 
         $this->fetcherService->setEtablissement($etablissement);
         $this->fetcherService->fetch($service, $sourceCode, $this->filters);
 
         // synchro UnicaenImport
-        $this->synchroService->addService($service, ['sql_filter' => $this->sqlFilters]);
-        $this->synchroService->synchronize();
+        if ($synchronize) {
+            $this->synchroService->addService($service, ['sql_filter' => $this->sqlFilters]);
+            $this->synchroService->synchronize();
+        }
     }
 
     /**
@@ -138,17 +136,11 @@ class ImportService
      *
      *  RMQ: 'etablissement' est pour le moment obligatoire.
      *
-     * @param string|Etablissement $etablissement Etablissement ou code de l'établissement que l'on souhaite interroger (p.e. UCN, UCR, ...)
+     * @param Etablissement $etablissement Etablissement que l'on souhaite interroger
+     * @param bool          $synchronize   Réaliser ou non la synchro SRC_XXX => XXX
      */
-    public function importAll($etablissement)
+    public function importAll(Etablissement $etablissement, $synchronize = true)
     {
-        if (! $etablissement instanceof Etablissement) {
-            $etablissement = $this->etablissementService->getRepository()->findOneByCode($etablissement);
-            if ($etablissement === null) {
-                throw new RuntimeException("Aucun établissement trouvé avec le code " . $etablissement);
-            }
-        }
-
         $services = static::SERVICES;
         foreach ($services as $service) {
             $this->fetcherService->setEtablissement($etablissement);
@@ -158,7 +150,9 @@ class ImportService
         }
 
         // synchro UnicaenImport
-        $this->synchroService->synchronize();
+        if ($synchronize) {
+            $this->synchroService->synchronize();
+        }
     }
 
     /**

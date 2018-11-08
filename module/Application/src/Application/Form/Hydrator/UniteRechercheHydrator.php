@@ -19,6 +19,7 @@ class UniteRechercheHydrator extends DoctrineObject
         $data['libelle'] = $ur->getLibelle();
         $data['sigle'] = $ur->getSigle();
         $data['cheminLogo'] = $ur->getCheminLogo();
+        $data['RNSR'] = $ur->getRNSR();
 
         return $data;
     }
@@ -38,6 +39,7 @@ class UniteRechercheHydrator extends DoctrineObject
         $object->setLibelle($data['libelle']);
         $object->setSigle($data['sigle']);
         $object->setCheminLogo($data['cheminLogo']);
+        $object->setRNSR($data['RNSR']);
 
         return $object;
     }

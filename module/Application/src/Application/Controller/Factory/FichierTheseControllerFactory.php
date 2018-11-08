@@ -3,6 +3,7 @@
 namespace Application\Controller\Factory;
 
 use Application\Controller\FichierTheseController;
+use Application\EventRouterReplacer;
 use Application\Service\Fichier\FichierService;
 use Application\Service\Individu\IndividuService;
 use Application\Service\Notification\NotifierService;
@@ -10,6 +11,8 @@ use Application\Service\These\TheseService;
 use Application\Service\Validation\ValidationService;
 use Application\Service\VersionFichier\VersionFichierService;
 use Zend\Mvc\Controller\ControllerManager;
+use Zend\Mvc\Router\Http\TreeRouteStack;
+use Zend\ServiceManager\ServiceLocatorInterface;
 
 class FichierTheseControllerFactory
 {
@@ -22,6 +25,10 @@ class FichierTheseControllerFactory
     public function __invoke(ControllerManager $controllerManager)
     {
         $serviceLocator = $controllerManager->getServiceLocator();
+
+        /** @var TreeRouteStack $httpRouter */
+        $httpRouter = $serviceLocator->get('HttpRouter');
+        $cliConfig = $this->getCliConfig($serviceLocator);
 
         /**
          * @var TheseService          $theseService
@@ -37,6 +44,7 @@ class FichierTheseControllerFactory
         $notificationService = $serviceLocator->get(NotifierService::class);
         $individuService = $serviceLocator->get('IndividuService');
         $validationService = $serviceLocator->get('ValidationService');
+        $eventRouterReplacer = new EventRouterReplacer($httpRouter, $cliConfig);
 
         $controller = new FichierTheseController();
         $controller->setTheseService($theseService);
@@ -45,8 +53,23 @@ class FichierTheseControllerFactory
         $controller->setNotifierService($notificationService);
         $controller->setIndividuService($individuService);
         $controller->setValidationService($validationService);
+        $controller->setEventRouterReplacer($eventRouterReplacer);
 
         return $controller;
+    }
+
+    /**
+     * @param ServiceLocatorInterface $serviceLocator
+     * @return array
+     */
+    private function getCliConfig(ServiceLocatorInterface $serviceLocator)
+    {
+        $config = $serviceLocator->get('Config');
+
+        return [
+            'domain' => isset($config['cli_config']['domain']) ? $config['cli_config']['domain'] : null,
+            'scheme' => isset($config['cli_config']['scheme']) ? $config['cli_config']['scheme'] : null,
+        ];
     }
 }
 

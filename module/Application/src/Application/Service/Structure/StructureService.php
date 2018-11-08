@@ -8,6 +8,7 @@ use Application\Entity\Db\SourceInterface;
 use Application\Entity\Db\Structure;
 use Application\Entity\Db\StructureConcreteInterface;
 use Application\Entity\Db\StructureSubstit;
+use Application\Entity\Db\These;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
 use Application\Entity\Db\Utilisateur;
@@ -82,7 +83,7 @@ class StructureService extends BaseService
 
         // le source code d'une structure cible est calculé
         $sourceCode = $structureCibleDataObject->getSourceCode();
-        if ($structureCibleDataObject->getSourceCode() === null) $sourceCode = uniqid(Etablissement::CODE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP);
+        if ($structureCibleDataObject->getSourceCode() === null) $sourceCode = uniqid(Etablissement::CODE_STRUCTURE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP);
 
         // la source d'une structure cible est forcément SYGAL
         $sourceSygal = $this->sourceService->fetchSourceSygal();
@@ -112,8 +113,8 @@ class StructureService extends BaseService
 
         // instanciation du couple (Etab|ED|UR ; Structure) cible
         $structureConcreteCible = Structure::constructFromDataObject($structureCibleDataObject, $typeStructure, $sourceSygal);
-        $structureConcreteCible->setSourceCode(Etablissement::CODE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP . $unique);
-        $structureConcreteCible->getStructure()->setSourceCode(Etablissement::CODE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP . $unique);
+        $structureConcreteCible->setSourceCode(Etablissement::CODE_STRUCTURE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP . $unique);
+        $structureConcreteCible->getStructure()->setSourceCode(Etablissement::CODE_STRUCTURE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP . $unique);
         $structureConcreteCible->getStructure()->setCode($unique);
         $structureRattachCible = $structureConcreteCible->getStructure(); // StructureSubstitution ne référence que des entités de type Structure
 
@@ -588,6 +589,7 @@ class StructureService extends BaseService
             ->leftJoin('structure.structureSubstituante', 'substitutionTo')
             ->andWhere('substitutionFrom.id IS NULL')
             ->andWhere('substitutionTo.id IS NULL OR pasHistorise(substitutionTo) != 1')
+            ->orderBy('structure.libelle')
         ;
 
         $result = $qb->getQuery()->getResult();
@@ -596,16 +598,21 @@ class StructureService extends BaseService
 
     /** Les structures non substituées
      * @param string $type
-     * @param string order
+     * @param string $order
      * @return StructureConcreteInterface[]
      */
     public function getAllStructuresAffichablesByType($type, $order=null) {
         $qb = $this->getEntityManager()->getRepository($this->getEntityByType($type))->createQueryBuilder('structureConcrete')
+            ->addSelect('structure')
+            ->addSelect('substitutionTo')
             ->join('structureConcrete.structure', 'structure')
             ->leftJoin('structure.structureSubstituante', 'substitutionTo')
             ->andWhere('substitutionTo.id IS NULL OR pasHistorise(substitutionTo) != 1' )
             ;
         if ($order) $qb->orderBy('structure.'.$order);
+        else {
+            if ($type === TypeStructure::CODE_ECOLE_DOCTORALE) $qb->orderBy('structureConcrete.sourceCode');
+        }
 
         $result = $qb->getQuery()->getResult();
         return $result;
@@ -715,5 +722,22 @@ class StructureService extends BaseService
             "cible" => $cible,
             "sources" => $sources
         ];
+    }
+
+    public function getUnitesRechercheSelection() {
+        $qb = $this->getEntityManager()->getRepository(These::class)->createQueryBuilder('these')
+            ->select('count(these.id), unite.id, max(structure.libelle), max(structure.sigle), max(unite.sourceCode)')
+            ->leftJoin('these.uniteRecherche', 'unite')
+            ->join('unite.structure', 'structure')
+            ->leftJoin('structure.structureSubstituante', 'substitutionTo')
+            ->andWhere('substitutionTo.id IS NULL')
+            ->having('count(these.id) > 0')
+            ->groupBy('unite.id')
+        ;
+
+        $result = $qb->getQuery()->getResult();
+
+        usort($result, function($a, $b) { return strcmp($a[3], $b[3]);});
+        return $result;
     }
 }

@@ -1,0 +1,19 @@
+<?php
+/**
+ * @var PhpRenderer $this
+ * @var string $version
+ * @var string $error
+ */
+
+use Application\View\Renderer\PhpRenderer;
+
+?>
+
+<?php if ($error): ?>
+    <?php echo $this->messenger()->setMessage($error, 'danger') ?>
+<?php endif ?>
+
+<dl>
+    <dt>Version de l'API</dt>
+    <dd><?php echo $version; ?></dd>
+</dl>

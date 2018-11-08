@@ -207,6 +207,12 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      */
     private $etablissement;
 
+
+    /**
+     * @var ArrayCollection
+     */
+    private $financements;
+
     /**
      * @return TitreApogeeFilter
      */
@@ -1050,6 +1056,15 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function setEtablissementId($etablissement)
     {
         $this->etablissement = $etablissement;
+    }
+
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getFinancements()
+    {
+        return $this->financements;
     }
 
     /**

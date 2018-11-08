@@ -2,9 +2,12 @@
 
 namespace Application\Rule;
 
+use Application\Constants;
 use Application\Entity\Db\These;
 use DateInterval;
 use DateTime;
+use UnicaenApp\Exception\RuntimeException;
+use UnicaenApp\Traits\MessageAwareTrait;
 
 /**
  * Règle concernant notification au sujet du dépôt attendu de la version corrigée.
@@ -13,6 +16,8 @@ use DateTime;
  */
 class NotificationDepotVersionCorrigeeAttenduRule implements RuleInterface
 {
+    use MessageAwareTrait;
+
     const SPEC_INTERVAL_ENTRE_DATE_NOTIF_ET_BUTOIRE = 'P1M'; // 1 mois
 
     /**
@@ -80,9 +85,11 @@ class NotificationDepotVersionCorrigeeAttenduRule implements RuleInterface
     public function execute()
     {
         $dateButoir = $this->these->getDateButoirDepotVersionCorrigee();
+
         if ($dateButoir === null) {
             $this->dateProchaineNotif = null;
             $this->estPremiereNotif = $this->dateDerniereNotif === null;
+            $this->addMessage("Notification non applicable, il n'y a aucune date butoir.");
             return $this;
         }
 
@@ -92,6 +99,7 @@ class NotificationDepotVersionCorrigeeAttenduRule implements RuleInterface
         if ($this->dateAujourdhui > $dateButoir) {
             $this->dateProchaineNotif = null;
             $this->estPremiereNotif = $this->dateDerniereNotif === null;
+            $this->addMessage("Plus la peine de notifier, la date butoir est dépassée.");
             return $this;
         }
 
@@ -99,6 +107,7 @@ class NotificationDepotVersionCorrigeeAttenduRule implements RuleInterface
         if ($this->dateDerniereNotif === null) {
             $this->dateProchaineNotif = $this->dateAujourdhui;
             $this->estPremiereNotif = true;
+            $this->addMessage("Première notification à faire immédiatement.");
             return $this;
         }
 
@@ -106,18 +115,20 @@ class NotificationDepotVersionCorrigeeAttenduRule implements RuleInterface
 
         switch ($this->these->getCorrectionAutorisee()) {
             case These::CORRECTION_MAJEURE:
-                if ($dateButoir !== null) {
-                    $spec = self::SPEC_INTERVAL_ENTRE_DATE_NOTIF_ET_BUTOIRE;
-                    $dateProchaineNotif = $dateButoir->sub(new DateInterval($spec)); // Date butoir - interval
+                $spec = self::SPEC_INTERVAL_ENTRE_DATE_NOTIF_ET_BUTOIRE;
+                try {
+                    $interval = new DateInterval($spec);
+                } catch (\Exception $e) {
+                    throw new RuntimeException("Interval invalide : $spec", null, $e);
                 }
-                else {
-                    $dateProchaineNotif = null;
-                }
+                $dateProchaineNotif = $dateButoir->sub($interval); // Date butoir - interval
                 break;
             case These::CORRECTION_MINEURE:
+                // Une seule notification pour des corrections mineures
                 $dateProchaineNotif = null;
                 break;
             default:
+                // pas possible
                 $dateProchaineNotif = null;
                 break;
         }
@@ -133,15 +144,18 @@ class NotificationDepotVersionCorrigeeAttenduRule implements RuleInterface
         // La date de prochaine notif est passée: plus de notif.
         if ($dateProchaineNotif < $this->dateAujourdhui) {
             $this->dateProchaineNotif = null;
+            $this->addMessage("Plus de notification nécessaire.");
             return $this;
         }
         // La date de prochaine notif égale la date de dernière notif: les notifications sont terminées.
         if ($dateProchaineNotif == $this->dateDerniereNotif) {
             $this->dateProchaineNotif = null;
+            $this->addMessage("Les notifications sont terminées.");
             return $this;
         }
 
         $this->dateProchaineNotif = $dateProchaineNotif;
+        $this->addMessage(sprintf("Prochaine notification le %s.", $this->dateProchaineNotif->format(Constants::DATETIME_FORMAT)));
 
         return $this;
     }
@@ -175,4 +189,6 @@ class NotificationDepotVersionCorrigeeAttenduRule implements RuleInterface
 
         return $this;
     }
+
+
 }

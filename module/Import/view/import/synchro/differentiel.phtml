@@ -1,0 +1,9 @@
+<?php
+
+use UnicaenImport\Provider\Privilege\Privileges;
+
+echo $this->differentielListe( $lignes )->render();
+
+if (count($lignes) > 100) : ?>
+<div>Toutes les lignes n'ont pas été affichées, leur nombre dépassant 100</div>
+<?php endif; ?>

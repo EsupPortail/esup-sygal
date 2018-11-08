@@ -4,6 +4,7 @@ namespace Application\Service\Notification;
 
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\Fichier;
 use Application\Entity\Db\ImportObservResult;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\IndividuRole;
@@ -12,12 +13,12 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\UniteRecherche;
 use Application\Entity\Db\Validation;
+use Application\Entity\Db\ValiditeFichier;
 use Application\Entity\Db\Variable;
 use Application\Notification\CorrectionAttendueUpdatedNotification;
 use Application\Notification\ResultatTheseAdmisNotification;
 use Application\Notification\ResultatTheseModifieNotification;
 use Application\Notification\ValidationDepotTheseCorrigeeNotification;
-use Application\Notification\ValidationPageDeCouvertureNotification;
 use Application\Notification\ValidationRdvBuNotification;
 use Application\Rule\NotificationDepotVersionCorrigeeAttenduRule;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
@@ -71,6 +72,7 @@ class NotifierService extends \Notification\Service\NotifierService
      * Notification du BDD concernant l'évolution des résultats de thèses.
      *
      * @param array $data
+     * @return ResultatTheseModifieNotification
      */
     public function triggerBdDUpdateResultat(array $data)
     {
@@ -81,15 +83,20 @@ class NotifierService extends \Notification\Service\NotifierService
         $notif->setEmailBdd($emailBdd);
 
         $this->trigger($notif);
+
+        return $notif;
     }
 
     /**
      * Notification des doctorants dont le résultat de la thèse est passé à Admis.
      *
      * @param array $data
+     * @return ResultatTheseAdmisNotification[]
      */
     public function triggerDoctorantResultatAdmis(array $data)
     {
+        $notifs = [];
+
         foreach ($data as $array) {
             $these = $array['these'];
             /* @var These $these */
@@ -101,7 +108,11 @@ class NotifierService extends \Notification\Service\NotifierService
             $notif->setEmailBdd($emailBdd);
 
             $this->trigger($notif);
+
+            $notifs[] = $notif;
         }
+
+        return $notifs;
     }
 
     /**
@@ -135,7 +146,7 @@ class NotifierService extends \Notification\Service\NotifierService
     /**
      * @param ImportObservResult $record
      * @param These              $these
-     * @return ImportObservResult|null
+     * @return CorrectionAttendueUpdatedNotification|null
      */
     public function triggerCorrectionAttendue(ImportObservResult $record, These $these)
     {
@@ -166,7 +177,7 @@ class NotifierService extends \Notification\Service\NotifierService
 
         $this->trigger($notif);
 
-        return $record;
+        return $notif;
     }
 
     /**

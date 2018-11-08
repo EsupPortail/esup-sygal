@@ -2,7 +2,10 @@
 
 namespace Application\Service\Fichier;
 
+use Application\Command\MergeCommand;
+use Application\Command\ShellCommandRunner;
 use Application\Command\ShellScriptRunner;
+use Application\Command\TruncateAndMergeCommand;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\NatureFichier;
@@ -23,6 +26,7 @@ use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\Validator\Exception\CinesErrorException;
 use Application\Validator\FichierCinesValidator;
 use Doctrine\ORM\OptimisticLockException;
+use Retraitement\Exception\TimedOutCommandException;
 use Retraitement\Service\RetraitementServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
@@ -30,6 +34,7 @@ use UnicaenApp\Exporter\Pdf;
 use UnicaenApp\Util;
 use Zend\Filter\FilterInterface;
 use Zend\Http\Response;
+use Zend\View\Renderer\PhpRenderer;
 use Zend\View\Renderer\RendererInterface;
 
 class FichierService extends BaseService
@@ -44,6 +49,19 @@ class FichierService extends BaseService
      * @var string
      */
     private $rootDirectoryPath;
+
+    /**
+     * @var PhpRenderer
+     */
+    private $renderer;
+
+    /**
+     * @param PhpRenderer $renderer
+     */
+    public function setRenderer(PhpRenderer $renderer)
+    {
+        $this->renderer = $renderer;
+    }
 
     /**
      * @param string $rootDirectoryPath
@@ -685,5 +703,119 @@ class FichierService extends BaseService
         $this->fichierCinesValidator = $fichierCinesValidator;
 
         return $this;
+    }
+
+    /**
+     * @param These  $these
+     * @param string $versionFichier
+     * @param bool   $removeFirstPage
+     * @param int    $timeout
+     * @return string
+     */
+    public function fusionneFichierThese(These $these, $versionFichier, $removeFirstPage = false, $timeout = 0)
+    {
+        $outputFilePath = $this->generateOutputFilePathForMerge($these);
+
+        $command = $this->instantiateCommandForMerge($these, $versionFichier, $removeFirstPage, $outputFilePath);
+
+        if ($timeout) {
+            $command->setOption('timeout', $timeout);
+        }
+        try {
+            $command->checkResources();
+            $command->execute();
+
+            $success = ($command->getReturnCode() === 0);
+            if (!$success) {
+                throw new RuntimeException(sprintf(
+                    "La commande %s a échoué (code retour = %s), voici le résultat d'exécution : %s",
+                    $command->getName(),
+                    $command->getReturnCode(),
+                    implode(PHP_EOL, $command->getResult())
+                ));
+            }
+        }
+        catch (TimedOutCommandException $toce) {
+            throw $toce;
+        }
+        catch (RuntimeException $rte) {
+            throw new RuntimeException(
+                "Une erreur est survenue lors de l'exécution de la commande " . $command->getName(),
+                0,
+                $rte);
+        }
+
+        return $outputFilePath;
+    }
+
+    private function generateOutputFilePathForMerge(These $these)
+    {
+        $outputFilePath = sprintf("%s-%s-%s-merged.pdf",
+            $these->getId(),
+            $these->getDoctorant()->getIndividu()->getNomUsuel(),
+            $these->getDoctorant()->getIndividu()->getPrenom()
+        );
+        $outputFilePath = sys_get_temp_dir() . '/' . Util::reduce($outputFilePath);
+
+        return $outputFilePath;
+    }
+
+    /**
+     * @param These  $these
+     * @param string $versionFichier
+     * @param bool   $removeFirstPage
+     * @param string $outputFilePath
+     * @return MergeCommand|TruncateAndMergeCommand
+     */
+    private function instantiateCommandForMerge(These $these, $versionFichier, $removeFirstPage, $outputFilePath)
+    {
+        // GENERATION DE LA COUVERTURE
+        $filename = "COUVERTURE_" . $these->getId() . "_" . uniqid() . ".pdf";
+        $this->generatePageDeCouverture($these, $this->renderer, $filename);
+
+        // RECUPERATION DE LA BONNE VERSION DU MANUSCRIPT
+        $manuscritFichier = current($this->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF, $versionFichier));
+        $manuscritChemin = $this->computeDestinationFilePathForFichier($manuscritFichier);
+
+        $inputFiles = [
+            'couverture' => sys_get_temp_dir() . '/' . $filename,
+            'manuscrit' => $manuscritChemin
+        ];
+
+        //RETRAIT DE LA PREMIER PAGE SI NECESSAIRE
+        if ($removeFirstPage) {
+            $command = new TruncateAndMergeCommand();
+        } else {
+            $command = new MergeCommand();
+        }
+
+        $command->generate($outputFilePath, $inputFiles, $errorFilePath);
+
+        return $command;
+    }
+
+    public function fusionneFichierTheseAsync(These $these, $versionFichier, $removeFirstPage, $destinatairesNotification = [])
+    {
+//        $scriptPath = sprintf("bash %s/merge.sh", APPLICATION_DIR . '/bin');
+        $scriptPath = sprintf("%s/merge.sh", APPLICATION_DIR . '/bin');
+
+        $args = sprintf('--these=%d --versionFichier=%s', $these->getId(), $versionFichier);
+        if ($removeFirstPage) {
+            $args .= ' --removeFirstPage';
+        }
+        if (! empty($destinatairesNotification)) {
+            $args .= sprintf(' --notifier="%s"', implode(',', $destinatairesNotification));
+        }
+
+        // lancement en tâche de fond
+        $runner = new ShellScriptRunner($scriptPath, 'bash');
+        $runner->setAsync();
+        $runner->run($args);
+//        $command = $scriptPath. ' '.$args;
+//        $runner = new ShellCommandRunner($command);
+//        $runner->setAsync();
+//        $runner->run();
+
+
     }
 }

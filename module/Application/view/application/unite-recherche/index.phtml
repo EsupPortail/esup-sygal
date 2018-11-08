@@ -45,6 +45,8 @@ $prefixFilter = new EtablissementPrefixFilter();
             <th> Source</th>
             <th> Code</th>
             <th> Sigle</th>
+            <th> Identifiant RNSR</th>
+<!--            <th> #these</th>-->
             <th> Actions</th>
         </tr>
         </thead>
@@ -69,6 +71,8 @@ $prefixFilter = new EtablissementPrefixFilter();
                     <?php echo $unite->getStructure()->getCode(); ?>
                 </td>
                 <td> <?php echo $unite->getSigle(); ?> </td>
+                <td> <?php echo $unite->getRNSR(); ?> </td>
+<!--                <td> --><?php //echo count($unite->getTheses()); ?><!-- </td>-->
                 <td>
                     <?php if ($canAjouter && !$historisee) : ?>
                         <a href="<?php echo $this->url('unite-recherche/supprimer', ["uniteRecherche" => $unite->getStructure()->getId()], [], true); ?>"

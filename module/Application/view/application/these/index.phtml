@@ -25,10 +25,14 @@ use Zend\Paginator\Paginator;
 $canExport = $this->isAllowed(Privileges::getResourceId(ThesePrivileges::THESE_EXPORT_CSV));
 $queryParams = $this->queryParams();
 
-$acteursFormatter = new ActeursFormatter();
-$acteursFormatter->asSeparated()
+$acteursFormatterDirecteurs = new ActeursFormatter();
+$acteursFormatterDirecteurs->asSeparated()
     ->paramDisplay(['role' => false, 'complement' => false, "qualite" => false, "etablissement" => false,])
     ->paramFilter((['role' => Role::CODE_DIRECTEUR_THESE]));
+$acteursFormatterCodirecteurs = new ActeursFormatter();
+$acteursFormatterCodirecteurs->asSeparated()
+    ->paramDisplay(['role' => false, 'complement' => false, "qualite" => false, "etablissement" => false,])
+    ->paramFilter((['role' => Role::CODE_CODIRECTEUR_THESE]));
 ?>
 
 <?php $this->headTitle($this->translate("Thèses")); ?>
@@ -153,9 +157,13 @@ $acteursFormatter->asSeparated()
                 <td class="acteurs">
 
                     <?php
-                    $directeurs = $acteursFormatter->filter($these->getActeurs());
+                    $directeurs = $acteursFormatterDirecteurs->filter($these->getActeurs());
                     foreach ($directeurs as $directeur) {
-                        echo $acteursFormatter->htmlifyActeur($directeur)."<br/>";
+                        echo $acteursFormatterDirecteurs->htmlifyActeur($directeur)."<br/>";
+                    }
+                    $codirecteurs = $acteursFormatterCodirecteurs->filter($these->getActeurs());
+                    foreach ($codirecteurs as $codirecteur) {
+                        echo $acteursFormatterCodirecteurs->htmlifyActeur($codirecteur)."<br/>";
                     }
                     ?>
                 </td>

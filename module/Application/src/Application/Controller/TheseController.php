@@ -2,7 +2,8 @@
 
 namespace Application\Controller;
 
-use Application\Entity\Db\Acteur;
+use Application\Command\MergeCommand;
+use Application\Command\TruncateAndMergeCommand;
 use Application\Entity\Db\Attestation;
 use Application\Entity\Db\Diffusion;
 use Application\Entity\Db\Etablissement;
@@ -13,7 +14,6 @@ use Application\Entity\Db\MetadonneeThese;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\RdvBu;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\Structure;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Variable;
@@ -38,6 +38,7 @@ use Application\Service\These\Filter\TheseSelectFilter;
 use Application\Service\These\TheseRechercheServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
+use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
@@ -45,7 +46,6 @@ use Application\Service\Workflow\WorkflowServiceAwareTrait;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
 use Import\Service\Traits\ImportServiceAwareTrait;
-use mPDF;
 use Retraitement\Exception\TimedOutCommandException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -54,27 +54,30 @@ use UnicaenApp\Traits\MessageAwareInterface;
 use UnicaenApp\Util;
 use Zend\Form\Element\Hidden;
 use Zend\Http\Response;
+use Zend\Log\Logger;
+use Zend\Log\Writer\Noop;
 use Zend\Stdlib\ParametersInterface;
 use Zend\View\Model\ViewModel;
 
 class TheseController extends AbstractController
 {
-    use VariableServiceAwareTrait;
-    use TheseServiceAwareTrait;
-    use TheseRechercheServiceAwareTrait;
-    use RoleServiceAwareTrait;
     use FichierServiceAwareTrait;
-    use ValidationServiceAwareTrait;
     use MessageCollectorAwareTrait;
+    use NotifierServiceAwareTrait;
+    use RoleServiceAwareTrait;
+    use TheseRechercheServiceAwareTrait;
+    use TheseServiceAwareTrait;
+    use ValidationServiceAwareTrait;
     use VersionFichierServiceAwareTrait;
     use WorkflowServiceAwareTrait;
-    use NotifierServiceAwareTrait;
     use IdifyFilterAwareTrait;
     use EtablissementServiceAwareTrait;
     use EntityManagerAwareTrait;
     use MailConfirmationServiceAwareTrait;
     use UniteRechercheServiceAwareTrait;
     use ImportServiceAwareTrait;
+    use UserContextServiceAwareTrait;
+    use VariableServiceAwareTrait;
 
     private $timeoutRetraitement;
 
@@ -267,6 +270,7 @@ class TheseController extends AbstractController
     {
         $these = $this->requestedThese();
 
+        $this->importService->setLogger((new Logger())->addWriter(new Noop()));
         $this->importService->updateThese($these);
 
         $redirect = $this->params()->fromQuery('redirect', '/');
@@ -436,6 +440,7 @@ class TheseController extends AbstractController
     {
         $estDoctorant = (bool) $this->userContextService->getSelectedRoleDoctorant();
         $these = $this->requestedThese();
+        $asynchronous = $this->params()->fromRoute('asynchronous');
 
         $versionArchivable = $this->fichierService->getRepository()->getVersionArchivable($these);
         $hasVA = $this->fichierService->getRepository()->hasVersion($these, VersionFichier::CODE_ARCHI);
@@ -460,6 +465,7 @@ class TheseController extends AbstractController
             'hasVA' => $hasVA,
             'hasVD' => $hasVD,
             'pageCouvValidee' => $pageCouvValidee,
+            'asynchronous' => $asynchronous,
 
         ]);
 
@@ -598,7 +604,7 @@ class TheseController extends AbstractController
             'theseListUrl'   => $this->urlFichierThese()->listerFichiers($these, $nature, $version, false, ['inclureValidite' => $inclureValidite]),
             'nature'         => $nature,
             'versionFichier' => $version,
-            'etabComue'      => $this->getEtablissementService()->getRepository()->libelle(Etablissement::CODE_COMUE),
+            'etabComue'      => $this->getEtablissementService()->getRepository()->libelle(Etablissement::CODE_STRUCTURE_COMUE),
         ]);
         $view->setTemplate('application/these/depot/these');
 
@@ -1416,27 +1422,26 @@ class TheseController extends AbstractController
 
     public function fusionAction()
     {
-
         /** @var These $these */
         $these          = $this->requestedThese();
         $corrigee       = $this->params()->fromRoute("corrigee");
         $versionName    = $this->params()->fromRoute("version");
         $removal        = $this->params()->fromRoute("removal");
 
-        $version = null;
+        $versionFichier = null;
         if ($versionName !== null) {
             switch($versionName) {
-                case "VO" : $version = VersionFichier::CODE_ORIG;
+                case "VO" : $versionFichier = VersionFichier::CODE_ORIG;
                     break;
-                case "VA" : $version = VersionFichier::CODE_ARCHI;
+                case "VA" : $versionFichier = VersionFichier::CODE_ARCHI;
                     break;
-                case "VD" : $version = VersionFichier::CODE_DIFF;
+                case "VD" : $versionFichier = VersionFichier::CODE_DIFF;
                     break;
-                case "VOC" : $version = VersionFichier::CODE_ORIG_CORR;
+                case "VOC" : $versionFichier = VersionFichier::CODE_ORIG_CORR;
                     break;
-                case "VAC" : $version = VersionFichier::CODE_ARCHI_CORR;
+                case "VAC" : $versionFichier = VersionFichier::CODE_ARCHI_CORR;
                     break;
-                case "VDC" : $version = VersionFichier::CODE_DIFF_CORR;
+                case "VDC" : $versionFichier = VersionFichier::CODE_DIFF_CORR;
                     break;
                 default : throw  new RuntimeException("Version [".$versionName."] inconnue.");
             }
@@ -1445,52 +1450,43 @@ class TheseController extends AbstractController
             if ($corrigee === null) {
                 //tester si il existe une VA
                 if ($this->fichierService->getRepository()->hasVersion($these, VersionFichier::CODE_ARCHI)) {
-                    $version = VersionFichier::CODE_ARCHI;
+                    $versionFichier = VersionFichier::CODE_ARCHI;
                 } else {
-                    $version = VersionFichier::CODE_ORIG;
+                    $versionFichier = VersionFichier::CODE_ORIG;
                 }
             } else {
                 //tester si il existe une VAC
                 if ($this->fichierService->getRepository()->hasVersion($these, VersionFichier::CODE_ARCHI_CORR)) {
-                    $version = VersionFichier::CODE_ARCHI_CORR;
+                    $versionFichier = VersionFichier::CODE_ARCHI_CORR;
                 } else {
-                    $version = VersionFichier::CODE_ORIG_CORR;
+                    $versionFichier = VersionFichier::CODE_ORIG_CORR;
                 }
             }
         }
 
-
-        // GENERATION DE LA COUVERTURE
-        $filename = "COUVERTURE_".$these->getId()."_".uniqid().".pdf";
-        $renderer = $this->getServiceLocator()->get('view_renderer'); /* @var $renderer \Zend\View\Renderer\PhpRenderer */
-        $this->fichierService->generatePageDeCouverture($these,$renderer,$filename);
-        $couvertureChemin = "/tmp/". $filename;
-
-        // RECUPERATION DE LA BONNE VERSION DU MANUSCRIPT
-        $manuscritFichier = current($this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF,$version));
-        $manuscritChemin = $this->fichierService->computeDestinationFilePathForFichier($manuscritFichier);
-        $corpsChemin = $manuscritChemin;
-
-        $filename_output = $these->getId().'-'.$these->getDoctorant()->getNomUsuel().'-'.$these->getDoctorant()->getPrenom().'-merged.pdf';
-        $filename_output = Util::reduce($filename_output);
-
-
-        //RETRAIT DE LA PREMIER PAGE SI NECESSAIRE
-        if ($removal) {
-            $this->removePremierePage($manuscritChemin, "/tmp/truncated.pdf");
-            $corpsChemin = "/tmp/truncated.pdf";
+        try {
+            // Un timeout peut être appliqué au lancement du  script de retraitement.
+            // Si ce timout est atteint, l'exécution du script est interrompue
+            // et une exception TimedOutCommandException est levée.
+            $timeout = $this->timeoutRetraitement;
+            $outputFilePath = $this->fichierService->fusionneFichierThese($these, $versionFichier, $removal, $timeout);
+        } catch (TimedOutCommandException $toce) {
+            $destinataires = [ $this->userContextService->getIdentityDb()->getEmail() ] ;
+            // relancer le retraitement en tâche de fond
+            $this->fichierService->fusionneFichierTheseAsync($these, $versionFichier, $removal, $destinataires);
+            return $this->redirect()->toRoute('these/rdv-bu', ['these' => $these->getId(), 'asynchronous' => 1], [], true);
+            exit();
+        } catch (RuntimeException $re) {
+            // erreur prévue
         }
-        //CONCATENATION
-        $this->mergePDF($couvertureChemin, $corpsChemin, "/tmp/" . $filename_output);
-
 
         /** Retourner un PDF ...  */
-        $contenu     = file_get_contents("/tmp/".$filename_output);
+        $contenu     = file_get_contents($outputFilePath);
         $content     = is_resource($contenu) ? stream_get_contents($contenu) : $contenu;
 
         header('Content-Description: File Transfer');
         header('Content-Type: ' . 'application/pdf');
-        header('Content-Disposition: attachment; filename=' . $filename_output);
+        header('Content-Disposition: attachment; filename=' . trim(strrchr($outputFilePath, '/'), '/'));
         header('Content-Transfer-Encoding: binary');
         header('Content-Length: ' . strlen($content));
         header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
@@ -1499,39 +1495,5 @@ class TheseController extends AbstractController
 
         echo $content;
         exit;
-
-
-    }
-
-    //TODO si plus de retraitement sont requis faire un service associé au retraitement de pdf
-    public function mergePDF($inputFile1, $inputFile2, $outputFile) {
-        $GS_PATH = 'gs';
-        $options  = " -dColorConversionStrategy=/LeaveColorUnchanged -dDownsampleMonoImages=false -dDownsampleGrayImages=false";
-        $options .= " -dDownsampleColorImages=false -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode ";
-        $cmd = $GS_PATH .$options." -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=".$outputFile." -dBATCH ".$inputFile1." ".$inputFile2;
-        $output = [];
-        $return = null;
-        exec($cmd, $output, $return);
-        if ($return !== 0) {
-            $msg  = 'valuer de retour : '. $return . '<br>';
-            $msg .= 'sortie : <br/>';
-            foreach ($output as $line) {
-                $msg .= $line . '<br/>';
-            }
-            throw new RuntimeException("Un problème s'est produit lors de la concaténation de la page de couverture et du manuscrit. <br/>" . $msg);
-        }
-    }
-
-    public function removePremierePage($inputFile, $outputFile) {
-        $GS_PATH = 'gs';
-        $options  = " -dColorConversionStrategy=/LeaveColorUnchanged -dDownsampleMonoImages=false -dDownsampleGrayImages=false";
-        $options .= " -dDownsampleColorImages=false -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode ";
-        $cmd = $GS_PATH .$options." -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=".$outputFile." -dFirstPage=2 -dBATCH ".$inputFile;
-        $output = [];
-        $return = null;
-        exec($cmd, $output, $return);
-        if ($return !== 0) {
-            throw new RuntimeException("Un problème s'est produit lors du retrait de la premier page du manuscrit.");
-        }
     }
 }

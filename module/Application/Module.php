@@ -5,6 +5,7 @@ namespace Application;
 use Application\Event\UserAuthenticatedEventListener;
 use Application\Event\UserRoleSelectedEventListener;
 use Zend\Config\Factory as ConfigFactory;
+use Zend\Console\Adapter\AdapterInterface as Console;
 use Zend\Http\Request as HttpRequest;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
@@ -76,6 +77,21 @@ class Module
                     __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
                 ],
             ],
+        ];
+    }
+
+    public function getConsoleUsage(Console $console)
+    {
+        return [
+            // Describe available commands
+            'fichier fusionner --these= --versionFichier= [--removeFirstPage] [--notifier=]' =>
+                'Fusionner la page de couverture générée avec le manuscrit',
+
+            // Describe expected parameters
+            ['--these',           "Id de la thèse concernée"],
+            ['--versionFichier',  "Version du fichier de thèse à utiliser (ex: 'VA', 'VOC')"],
+            ['--removeFirstPage', "(facultatif) Témoin indiquant si la première page doit être retirée avant la fusion"],
+            ['--notifier',        "(facultatif) Adresses électroniques auxquelles envoyer un courriel une fois la fusion terminée"],
         ];
     }
 }

@@ -17,7 +17,7 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
 
-    const CODE_COMUE = 'COMUE';
+    const CODE_STRUCTURE_COMUE = Structure::CODE_COMUE;
 
     protected $id;
     protected $domaine;

@@ -18,10 +18,10 @@ class Module
 
     public function getConfig()
     {
-        $paths = array_merge(
-            [__DIR__ . '/config/module.config.php']
-        );
-        return ConfigFactory::fromFiles($paths);
+        return ConfigFactory::fromFiles([
+            __DIR__ . '/config/synchro.config.php',
+            __DIR__ . '/config/import.config.php',
+        ]);
     }
 
     public function getAutoloaderConfig()
@@ -39,17 +39,21 @@ class Module
     {
         return [
             // command
-            'import --service=  --etablissement= [--source-code=]' => "Importer toutes les données d'un service d'un établissement.",
+            'import --service=  --etablissement= [--source-code=] [--synchronize=]' => "Importer toutes les données d'un service d'un établissement.",
             // parameters
             ['--service',       "Requis. Identifiant du service, ex: 'variable'"],
             ['--etablissement', "Requis. Identifiant de l'établissement, ex: 'UCN'"],
             ['--source-code',   "Facultatif. Source code du seul enregistrement à importer"],
+            ['--synchronize',   "Facultatif. Réaliser ou non la synchro SRC_XXX => XXX. Valeurs possibles: 0, 1. Valeur par défaut: 1."],
 
             // command
-            'import-all --etablissement=' => "Importer toutes les données de tous les serviceq d'un établissement.",
-            // parameters
+            'import-all --etablissement= [--synchronize=]' => "Importer toutes les données de tous les serviceq d'un établissement.",
             // parameters
             ['--etablissement', "Requis. Identifiant de l'établissement, ex: 'UCN'"],
+            ['--synchronize',   "Facultatif. Réaliser ou non la synchro SRC_XXX => XXX. Valeurs possibles: 0, 1. Valeur par défaut: 1."],
+
+            // command
+            'process-observed-import-results' => "Traitement des résultats d'observation de certains changements durant la synchro.",
         ];
     }
 }

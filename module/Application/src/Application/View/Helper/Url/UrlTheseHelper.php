@@ -86,4 +86,9 @@ class UrlTheseHelper extends AbstractHelper
     {
         return call_user_func_array([$this->urlTheseService, $name], $arguments);
     }
+
+    public function telechargerFusion($these, $outputFilePath)
+    {
+        return $this->urlTheseService->recupererFusion($these, $outputFilePath);
+    }
 }

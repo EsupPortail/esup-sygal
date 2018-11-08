@@ -5,7 +5,7 @@ namespace Retraitement;
 use Application\Validator\Exception\CinesErrorException;
 use Application\Validator\FichierCinesValidator;
 use Retraitement\Filter\Command\CinesCommand;
-use Retraitement\Filter\Command\CommandInterface;
+use Application\Command\CommandInterface;
 use Retraitement\Filter\Command\MinesCommand;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Filter\BytesFormatter;
@@ -371,7 +371,7 @@ class RetraitValid
 
     /**
      * @param string $name
-     * @return CommandInterface
+     * @return \Application\Command\CommandInterface
      */
     private function getRetraitementCommand($name)
     {

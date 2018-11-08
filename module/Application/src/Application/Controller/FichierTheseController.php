@@ -4,8 +4,9 @@ namespace Application\Controller;
 
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\NatureFichier;
-use Application\Entity\Db\TypeValidation;
+use Application\Entity\Db\These;
 use Application\Entity\Db\VersionFichier;
+use Application\EventRouterReplacerAwareTrait;
 use Application\Filter\IdifyFilterAwareTrait;
 use Application\Filter\NomFichierFormatter;
 use Application\RouteMatch;
@@ -21,8 +22,8 @@ use Application\View\Helper\Sortable;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
-use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
+use Zend\Console\Request as ConsoleRequest;
 use Zend\Form\Element\Hidden;
 use Zend\Http\Response;
 use Zend\View\Model\JsonModel;
@@ -37,6 +38,7 @@ class FichierTheseController extends AbstractController
     use NotifierServiceAwareTrait;
     use IndividuServiceAwareTrait;
     use ValidationServiceAwareTrait;
+    use EventRouterReplacerAwareTrait;
 
     public function deposesAction()
     {
@@ -455,6 +457,58 @@ class FichierTheseController extends AbstractController
     }
 
     /**
+     * Console action.
+     */
+    public function fusionnerConsoleAction()
+    {
+        ini_set('memory_limit', '500M');
+        ini_set('max_execution_time', '600');
+
+        $request = $this->getRequest();
+
+        // Make sure that we are running in a console and the user has not tricked our
+        // application into running this action from a public web server.
+        if (!$request instanceof ConsoleRequest){
+            throw new RuntimeException('You can only use this action from a console!');
+        }
+
+        $id  = $request->getParam('these');
+        $versionFichier  = $request->getParam('versionFichier');
+        $removeFirstPage  = (bool) $request->getParam('removeFirstPage');
+        $notifier  = $request->getParam('notifier', false);
+
+        if (! $id) {
+            throw new RuntimeException("Argument obligatoire manquant: fichier");
+        }
+
+        /** @var These $these */
+        $these = $this->theseService->getRepository()->find($id);
+        if ($these === null) {
+            throw new RuntimeException("Aucune thèse trouvée avec cet id : " . $id);
+        }
+
+        $outputFilePath = $this->fichierService->fusionneFichierThese($these, $versionFichier, $removeFirstPage);
+//        $outputFilePath = "/tmp/recuperer-fusion/35249-samassa-haoua-merged.pdf";
+
+        $this->eventRouterReplacer->replaceEventRouter($this->getEvent());
+
+        echo "Fichier créé avec succès: " . $outputFilePath;
+        echo PHP_EOL;
+
+        if ($notifier) {
+            $destinataires = $notifier;
+            $notif = $this->notifierService->getNotificationFactory()->createNotificationFusionFini($destinataires, $these, $outputFilePath);
+            $this->notifierService->trigger($notif);
+            echo "Destinataires du courriel envoyé: " . implode(",",$notif->getTo());
+            echo PHP_EOL;
+        }
+
+        $this->eventRouterReplacer->restoreEventRouter();
+
+        exit(0);
+    }
+
+    /**
      * @return Fichier
      */
     private function requestFichier()
@@ -463,5 +517,34 @@ class FichierTheseController extends AbstractController
         $routeMatch = $this->getEvent()->getRouteMatch();
 
         return $routeMatch->getFichier();
+    }
+
+    public function recupererFusionAction()
+    {
+        $theseId = $this->params()->fromRoute('these');
+        $these = $this->getTheseService()->getRepository()->find($theseId);
+
+        $outputFile = $this->params()->fromRoute('outputFile');
+        $outputFilePath =  sys_get_temp_dir() ."/". $outputFile;
+
+        if (!is_readable($outputFilePath)) {
+            throw new RuntimeException("Le fichier de votre manuscrit n'est plus disponible.");
+        }
+
+        /** Retourner un PDF ...  */
+        $contenu     = file_get_contents($outputFilePath);
+        $content     = is_resource($contenu) ? stream_get_contents($contenu) : $contenu;
+
+        header('Content-Description: File Transfer');
+        header('Content-Type: ' . 'application/pdf');
+        header('Content-Disposition: attachment; filename=' . $outputFile);
+        header('Content-Transfer-Encoding: binary');
+        header('Content-Length: ' . strlen($content));
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Expires: 0');
+        header('Pragma: public');
+
+        echo $content;
+        exit;
     }
 }

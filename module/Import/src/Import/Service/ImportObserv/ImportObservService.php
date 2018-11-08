@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Service\ImportObserv;
+namespace Import\Service\ImportObserv;
 
 use Application\Entity\Db\ImportObserv;
 use UnicaenImport\Service\AbstractService;

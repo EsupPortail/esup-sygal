@@ -1,16 +1,20 @@
 <?php
 
-namespace Application\Service\Import;
+namespace Import\Service;
 
 class SchemaService extends \UnicaenImport\Service\SchemaService
 {
     static public $ordreTables = [
-        'INDIVIDU'   => 'a',
-        'USER_ROLE'  => 'b',
-        'THESARD'    => 'c',
-        'THESE'      => 'd',
-        'ACTEUR'     => 'e',
-        'VARIABLE'   => 'f',
+        'STRUCTURE'     => 'a',
+        'ETABLISSEMENT' => 'b',
+        'ECOLE_DOCT'    => 'c',
+        'UNITE_RECH'    => 'd',
+        'INDIVIDU'      => 'e',
+        'DOCTORANT'     => 'f',
+        'THESE'         => 'g',
+        'ROLE'          => 'h',
+        'ACTEUR'        => 'i',
+        'VARIABLE'      => 'j',
     ];
 
     public function getImportTables()
@@ -58,8 +62,8 @@ class SchemaService extends \UnicaenImport\Service\SchemaService
 
         uksort($temp, function($a, $b) use ($ordreTables) {
             return strcmp(
-                isset($ordreTables[$a]) ? $ordreTables[$a] : 'z',
-                isset($ordreTables[$b]) ? $ordreTables[$b] : 'z'
+                isset($ordreTables[$a]) ? $ordreTables[$a] : 'zzz',
+                isset($ordreTables[$b]) ? $ordreTables[$b] : 'zzz'
             );
         });
 

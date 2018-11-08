@@ -478,20 +478,20 @@ EOS;
      */
     public function generateValueArray($entity_json, $metadata)
     {
+        $f = new EtablissementPrefixFilter();
         $valuesArray = [];
         foreach ($metadata->columnNames as $propriete => $colonne) {
             $type = $metadata->fieldMappings[$propriete]["type"];
-            $f = new EtablissementPrefixFilter();
             $value = null;
             switch ($propriete) {
                 case "etablissementId": // UCN, URN, ULHN, INSA, rien d'autre
                     $value = $this->etablissement->getStructure()->getCode();
                     break;
-                case "acteurEtablissementId":
-                    if (isset($entity_json->{$propriete})) {
-                        $value = $f->addPrefixEtablissementTo($entity_json->{$propriete}, $this->etablissement);
-                    }
-                    break;
+//                case "acteurEtablissementId":
+//                    if (isset($entity_json->{$propriete})) {
+//                        $value = $f->addPrefixEtablissementTo($entity_json->{$propriete}, $this->etablissement);
+//                    }
+//                    break;
                 case "sourceCode":
                     $value = $f->addPrefixEtablissementTo($entity_json->id, $this->etablissement);
                     break;
@@ -503,6 +503,8 @@ EOS;
                 case "structureId":
                 case "ecoleDoctId":
                 case "uniteRechId":
+                case "acteurEtablissementId":
+                case "origineFinancementId":
                     if (isset($entity_json->{$propriete})) {
                         $value = $f->addPrefixEtablissementTo($entity_json->{$propriete}, $this->etablissement);
                     }

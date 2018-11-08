@@ -8,7 +8,7 @@ use Zend\Mvc\Router\Console\Simple;
 use Zend\Mvc\Router\Http\Literal;
 use Zend\Mvc\Router\Http\Segment;
 
-return array(
+return [
     'bjyauthorize'    => [
         'guards' => [
             \UnicaenAuth\Guard\PrivilegeController::class => [
@@ -20,6 +20,8 @@ return array(
                         'import-all',
                         'update-these',
                         'index',
+                        'apiInfo',
+                        'launcher',
                         'info-last-update',
                     ],
                     'roles' => [
@@ -65,7 +67,7 @@ return array(
                 'import-console' => [
                     'type' => Simple::class,
                     'options' => [
-                        'route'    => 'import --service=  --etablissement= [--source-code=]',
+                        'route'    => 'import --service=  --etablissement= [--source-code=] [--synchronize=]',
                         'defaults' => [
                             'controller' => Import\Controller\ImportController::class,
                             'action'     => 'import-console',
@@ -75,7 +77,7 @@ return array(
                 'import-all-console' => [
                     'type' => Simple::class,
                     'options' => [
-                        'route'    => 'import-all --etablissement=',
+                        'route'    => 'import-all --etablissement= [--synchronize=]',
                         'defaults' => [
                             'controller' => Import\Controller\ImportController::class,
                             'action'     => 'import-all-console',
@@ -91,7 +93,7 @@ return array(
     ],
     'router' => [
         'routes' => [
-            'home-import' => [
+            'ws-import' => [
                 'type' => 'Literal',
                 'may_terminate' => true,
                 'options' => [
@@ -102,6 +104,28 @@ return array(
                     ],
                 ],
                 'child_routes' => [
+                    'api-info' => [
+                        'type' => Segment::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/api-info/:etablissement',
+                            'defaults' => [
+                                'controller' => Import\Controller\ImportController::class,
+                                'action'     => 'apiInfo',
+                            ],
+                        ],
+                    ],
+                    'launcher' => [
+                        'type' => Literal::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/launcher',
+                            'defaults' => [
+                                'controller' => Import\Controller\ImportController::class,
+                                'action'     => 'launcher',
+                            ],
+                        ],
+                    ],
                     'info-last-update' => [
                         'type' => Segment::class,
                         'may_terminate' => true,
@@ -176,6 +200,31 @@ return array(
             ],
         ],
     ],
+    'navigation' => [
+        'default' => [
+            'home' => [
+                'pages' => [
+                    'ws-import' => [
+                        'label' => "Import",
+                        'order' => 0,
+                        'route' => 'ws-import',
+                        'pages' => [
+                            'home' => [
+                                'label' => "Accueil",
+                                'route' => 'ws-import',
+                                'resource' => \UnicaenAuth\Guard\PrivilegeController::getResourceId('Import\Controller\Import', 'index'),
+                            ],
+                            'launcher' => [
+                                'label' => "Lancement",
+                                'route' => 'ws-import/launcher',
+                                'resource' => \UnicaenAuth\Guard\PrivilegeController::getResourceId('Import\Controller\Import', 'index'),
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
     'service_manager' => [
         'invokables' => [
             CallService::class => CallService::class,
@@ -199,9 +248,9 @@ return array(
             Import\Controller\ImportController::class => Import\Controller\Factory\ImportControllerFactory::class,
         ],
     ],
-    'view_manager' => array(
-        'template_path_stack' => array(
+    'view_manager' => [
+        'template_path_stack' => [
             __DIR__ . '/../view',
-        ),
-    ),
-);
+        ],
+    ],
+];

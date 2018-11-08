@@ -71,7 +71,7 @@ class EtablissementPrefixFilter implements FilterInterface
     public function addPrefixTo($value, $prefix = null)
     {
         if ($prefix === null) {
-            $prefix = Etablissement::CODE_COMUE;
+            $prefix = Etablissement::CODE_STRUCTURE_COMUE;
         }
 
         return $prefix . self::ETAB_PREFIX_SEP . $value;

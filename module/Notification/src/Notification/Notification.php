@@ -63,6 +63,11 @@ class Notification
     protected $infoMessages = [];
 
     /**
+     * @var \DateTime
+     */
+    protected $sendDate;
+
+    /**
      * Notification constructor.
      *
      * @param string|null $code
@@ -321,5 +326,28 @@ class Notification
     public function getInfoMessages()
     {
         return $this->infoMessages;
+    }
+
+    /**
+     * Renseigne la date d'envoi éventuelle de cette notification.
+     *
+     * @param \DateTime $sendDate
+     * @return self
+     */
+    public function setSendDate(\DateTime $sendDate)
+    {
+        $this->sendDate = $sendDate;
+
+        return $this;
+    }
+
+    /**
+     * Retourne la date d'envoi éventuelle de cette notification.
+     *
+     * @return \DateTime
+     */
+    public function getSendDate()
+    {
+        return $this->sendDate;
     }
 }

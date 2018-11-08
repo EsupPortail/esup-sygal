@@ -3,7 +3,7 @@
 namespace Retraitement\Service;
 
 use Retraitement\Exception\TimedOutCommandException;
-use Retraitement\Filter\Command\CommandInterface;
+use Application\Command\CommandInterface;
 use RuntimeException;
 
 class RetraitementService
@@ -11,7 +11,7 @@ class RetraitementService
     /**
      * FichierStarCorrector constructor.
      *
-     * @param CommandInterface $command
+     * @param \Application\Filter\Command\\Application\Command\CommandInterface $command
      */
     public function __construct(CommandInterface $command)
     {
@@ -19,12 +19,12 @@ class RetraitementService
     }
 
     /**
-     * @var CommandInterface
+     * @var \Application\Filter\Command\\Application\Command\CommandInterface
      */
     private $command;
 
     /**
-     * @param CommandInterface $command
+     * @param \Application\Filter\Command\CommandInterface $command
      * @return self
      */
     public function setCommand(CommandInterface $command)

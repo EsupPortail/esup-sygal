@@ -2,7 +2,6 @@
 
 namespace Application\Entity\Db;
 
-use Application\Filter\EtablissementPrefixFilterAwareInterface;
 use Application\Filter\EtablissementPrefixFilterAwareTrait;
 use Doctrine\Common\Collections\Collection;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
@@ -23,6 +22,8 @@ class Structure implements HistoriqueAwareInterface, SourceAwareInterface
     use EtablissementPrefixFilterAwareTrait;
 
     const PATH = "/var/www/sygal/upload";
+
+    const CODE_COMUE = 'COMUE';
 
     /**
      * @var string $id

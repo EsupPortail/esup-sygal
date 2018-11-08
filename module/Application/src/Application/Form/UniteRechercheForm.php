@@ -39,6 +39,11 @@ class UniteRechercheForm extends Form
         );
         $this
             ->add((
+            new Text('RNSR'))
+                ->setLabel("Identifiant RNSR :")
+            );
+        $this
+            ->add((
         new File('cheminLogo'))
             ->setLabel('Logo de l\'unité de recherche :')
         );
