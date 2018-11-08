@@ -92,5 +92,8 @@
                 <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
+
+        <one-to-many target-entity="Application\Entity\Db\Financement" field="financements" mapped-by="these"/>
+
     </entity>
 </doctrine-mapping>

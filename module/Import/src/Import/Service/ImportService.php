@@ -50,6 +50,8 @@ class ImportService
         'role',
         'acteur',
         'variable',
+        'origine-financement',
+        'financement',
     ];
 
     /**
@@ -112,9 +114,10 @@ class ImportService
      * @param string        $service       Nom du web service qui sera appelé (p.e. these, doctorant, ...)
      * @param Etablissement $etablissement Etablissement que l'on souhaite interroger
      * @param string        $sourceCode    Source code éventuel de l'entité à récupérer (p.e. '12047')
-     * @param array         $queryParams   Filtres éventuels à appliquer
+     * @param array         $queryParams Filtres éventuels à appliquer
+     * @param bool          $synchronize   Réaliser ou non la synchro SRC_XXX => XXX
      */
-    public function import($service, Etablissement $etablissement, $sourceCode, array $queryParams = [])
+    public function import($service, Etablissement $etablissement, $sourceCode, array $queryParams = [], $synchronize = true)
     {
         $this->computeFilters($service, $sourceCode, $queryParams);
 
@@ -122,8 +125,10 @@ class ImportService
         $this->fetcherService->fetch($service, $sourceCode, $this->filters);
 
         // synchro UnicaenImport
-        $this->synchroService->addService($service, ['sql_filter' => $this->sqlFilters]);
-        $this->synchroService->synchronize();
+        if ($synchronize) {
+            $this->synchroService->addService($service, ['sql_filter' => $this->sqlFilters]);
+            $this->synchroService->synchronize();
+        }
     }
 
     /**
@@ -132,8 +137,9 @@ class ImportService
      *  RMQ: 'etablissement' est pour le moment obligatoire.
      *
      * @param Etablissement $etablissement Etablissement que l'on souhaite interroger
+     * @param bool          $synchronize   Réaliser ou non la synchro SRC_XXX => XXX
      */
-    public function importAll(Etablissement $etablissement)
+    public function importAll(Etablissement $etablissement, $synchronize = true)
     {
         $services = static::SERVICES;
         foreach ($services as $service) {
@@ -144,7 +150,9 @@ class ImportService
         }
 
         // synchro UnicaenImport
-        $this->synchroService->synchronize();
+        if ($synchronize) {
+            $this->synchroService->synchronize();
+        }
     }
 
     /**

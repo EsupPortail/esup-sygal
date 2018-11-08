@@ -6,6 +6,7 @@ use Application\Entity\Db\Individu;
 use Application\Entity\Db\Etablissement;
 use Application\Filter\ActeursFormatter;
 use Application\Entity\Db\WfEtape;
+use Application\Filter\FinancementFormatter;
 use Application\Provider\Privilege\DoctorantPrivileges;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\View\Renderer\PhpRenderer;
@@ -33,6 +34,10 @@ $canEditPersopass = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_MODI
 $canEditPersopass = $canEditPersopass && (!$estDoctorant || !$these->getDoctorant()->getPersopass());
 $persopassModifiedEvent = 'persopass-modified-event';
 
+
+$financementFormatter = new FinancementFormatter();
+$financementFormatter->setSortBy(FinancementFormatter::SORT_BY_DATE);
+$financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
 ?>
 
 <?php $this->headTitle($this->translate("Thèse"))->prepend($these->getDoctorant()->getNomUsuel()) ?>
@@ -219,6 +224,17 @@ $persopassModifiedEvent = 'persopass-modified-event';
                     echo "</div>";
                 }
                 ?>
+            </dd>
+
+            <dt>
+                Financement(s)
+            </dt>
+            <dd>
+                <?php if ($these->getFinancements()->isEmpty()): ?>
+                    (Non renseigné)
+                <?php else: ?>
+                    <?php echo $financementFormatter->doFormat($these->getFinancements()->toArray()); ?>
+                <?php endif ?>
             </dd>
 
             <dt>
