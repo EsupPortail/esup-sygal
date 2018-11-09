@@ -1,13 +1,15 @@
 <?php
 
+use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\These;
 use Application\View\Renderer\PhpRenderer;
 
 /**
  * @var PhpRenderer $this
  * @var These $these
- * @var bool  $updating
  * @var string $contact
+ * @var Doctorant $doctorant
+ * @var bool  $emailDoctorantAbsent
  */
 ?>
 
@@ -17,6 +19,12 @@ use Application\View\Renderer\PhpRenderer;
 <p>
     Ceci est un mail envoyé automatiquement par l'application <?php echo $this->appInfos()->nom ?>.
 </p>
+<?php if ($emailDoctorantAbsent): ?>
+<p>
+    <em>Ce mail aurait dû être envoyé à <?php echo $doctorant ?> (<?php echo $doctorant->getSourceCodeSansPrefix() ?>)
+    mail aucune adresse mail n'a été trouvée pour ce doctorant.</em>
+</p>
+<?php endif ?>
 <p>
     Votre dossier est complet.
 </p>
