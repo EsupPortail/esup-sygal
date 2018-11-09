@@ -2,6 +2,8 @@
 
 namespace Import\Service\ImportObservResult;
 
+use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\ImportObserv;
 use Application\Entity\Db\ImportObservResult;
 use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\Entity\Db\Repository\ImportObservResultRepository;
@@ -75,18 +77,51 @@ class ImportObservResultService extends BaseService
     }
 
     /**
+     * Traitement des résultats d'observation des changements lors de la synchro.
+     *
+     * @param ImportObserv         $importObserv  Observation voulue
+     * @param Etablissement|string $etablissement Etablissement concerné
+     * @return void
+     */
+    public function handleImportObservResults(ImportObserv $importObserv, $etablissement)
+    {
+        switch ($importObserv->getCode()) {
+            case ImportObserv::CODE_RESULTAT_PASSE_A_ADMIS:
+                $this->handleImportObservResultsForResultatAdmis($importObserv, $etablissement);
+                break;
+            case ImportObserv::CODE_CORRECTION_PASSE_A_MINEURE:
+                $this->handleImportObservResultsForCorrectionMineure($importObserv, $etablissement);
+                break;
+            case ImportObserv::CODE_CORRECTION_PASSE_A_MAJEURE:
+                $this->handleImportObservResultsForCorrectionMajeure($importObserv, $etablissement);
+                break;
+            default:
+                throw new RuntimeException("Cas non prévu!");
+                break;
+        }
+    }
+
+    /**
      * Traitement des résultats d'observation des changements lors de la synchro :
      * notifications au sujet des thèses dont le résultat est passé à "admis".
+     *
+     * @param ImportObserv         $importObserv
+     * @param Etablissement|string $etablissement
      */
-    public function handleImportObservResultsForResultatAdmis()
+    private function handleImportObservResultsForResultatAdmis(ImportObserv $importObserv, $etablissement)
     {
-        $this->logger->info(
-            "# Traitement des résultats d'import : " .
-            "notifications au sujet des thèses dont le résultat est passé à \"admis\"");
+        $this->logger->info(sprintf(
+            "# Traitement des résultats d'import de l'établissement '%s' : " .
+            "notifications au sujet des thèses dont le résultat est passé à \"admis\"",
+            $etablissement));
 
-        $records = $this->repository->fetchImportObservResultsForResultatAdmis();
+        $records = $this->repository->fetchImportObservResults($importObserv, $etablissement);
 
         $this->logger->info(sprintf("%d résultat(s) d'import trouvé(s) à traiter.", count($records)));
+
+        if (empty($records)) {
+            return;
+        }
 
         // Mise en forme des données pour le template du mail
         $data = $this->prepareDataForResultatAdmis($records);
@@ -94,6 +129,7 @@ class ImportObservResultService extends BaseService
         // Si aucune donnée n'est retournée, c'est sans doute que les thèses concernées sont historisées, pas de notif.
         if (empty($data)) {
             $this->logger->info("Finalement, rien à faire (source codes inexistants ou thèses concernées historisées.");
+
             return;
         }
 
@@ -126,18 +162,19 @@ class ImportObservResultService extends BaseService
         $details = [];
         foreach ($records as $record) {
             $sourceCodes[] = $record->getSourceCode();
-            $details[]     = $record->getResultatToString();
+            $details[] = $record->getResultatToString();
         }
 
         // Fetch thèses concernées
         $qb = $this->theseService->getRepository()->createQueryBuilder('t');
         $qb->where($qb->expr()->in('t.sourceCode', $sourceCodes));
-        $theses = $qb->getQuery()->getResult(); /** @var These[] $theses */
+        $theses = $qb->getQuery()->getResult();
+        /** @var These[] $theses */
 
         // Mise en forme des données pour le template du mail
         $data = [];
         foreach ($theses as $index => $these) {
-            if (! $these->estNonHistorise()) {
+            if (!$these->estNonHistorise()) {
                 $this->logger->info(sprintf("La thèse '%s' est écartée car elle est historisée.", $these->getSourceCode()));
                 continue;
             }
@@ -153,14 +190,19 @@ class ImportObservResultService extends BaseService
     /**
      * Traitement des résultats d'observation des changements lors de la synchro :
      * notifications au sujet des thèses pour lesquelles le témoin "correction autorisée" est passé à "mineure".
+     *
+     * @param ImportObserv         $importObserv
+     * @param Etablissement|string $etablissement
      */
-    public function handleImportObservResultsForCorrectionMineure()
+    private function handleImportObservResultsForCorrectionMineure(ImportObserv $importObserv, $etablissement)
     {
-        $this->logger->info(
-            "# Traitement des résultats d'import : " .
-            "notifications au sujet des thèses pour lesquelles le témoin \"correction autorisée\" est passé à \"mineure\"");
+        $this->logger->info(sprintf(
+            "# Traitement des résultats d'import de l'établissement '%s' : " .
+            "notifications au sujet des thèses pour lesquelles le témoin \"correction autorisée\" est passé à \"mineure\"",
+            $etablissement
+        ));
 
-        $records = $this->repository->fetchImportObservResultsForCorrectionMineure();
+        $records = $this->repository->fetchImportObservResults($importObserv, $etablissement);
 
         $this->_handleImportObservResultsForCorrection($records);
     }
@@ -168,14 +210,19 @@ class ImportObservResultService extends BaseService
     /**
      * Traitement des résultats d'observation des changements lors de la synchro :
      * notifications au sujet des thèses pour lesquelles le témoin "correction autorisée" est passé à "majeure".
+     *
+     * @param ImportObserv         $importObserv
+     * @param Etablissement|string $etablissement
      */
-    public function handleImportObservResultsForCorrectionMajeure()
+    private function handleImportObservResultsForCorrectionMajeure(ImportObserv $importObserv, $etablissement)
     {
-        $this->logger->info(
-            "# Traitement des résultats d'import : " .
-            "notifications au sujet des thèses pour lesquelles le témoin \"correction autorisée\" est passé à \"majeure\"");
+        $this->logger->info(sprintf(
+            "# Traitement des résultats d'import de l'établissement '%s' : " .
+            "notifications au sujet des thèses pour lesquelles le témoin \"correction autorisée\" est passé à \"majeure\"",
+            $etablissement
+        ));
 
-        $records = $this->repository->fetchImportObservResultsForCorrectionMajeure();
+        $records = $this->repository->fetchImportObservResults($importObserv, $etablissement);
 
         $this->_handleImportObservResultsForCorrection($records);
     }
@@ -188,8 +235,9 @@ class ImportObservResultService extends BaseService
      */
     private function _handleImportObservResultsForCorrection(array $records)
     {
-        if (! count($records)) {
+        if (!count($records)) {
             $this->logger->info("Aucun résultat d'import à traiter.");
+
             return;
         }
 
@@ -200,7 +248,7 @@ class ImportObservResultService extends BaseService
         foreach ($records as $record) {
             /** @var These $these */
             $these = $this->theseService->getRepository()->findOneBy(['sourceCode' => $record->getSourceCode()]);
-            if (! $these->estNonHistorise()) {
+            if (!$these->estNonHistorise()) {
                 $this->logger->info(sprintf("La thèse '%s' est écartée car elle est historisée.", $these->getSourceCode()));
                 continue;
             }

@@ -105,9 +105,36 @@ class EtablissementPrefixFilter implements FilterInterface
      *
      * @param string $value Ex: "ABC123"
      * @return string Ex: "%::ABC123"
+     * @deprecated Utiliser à la place generateSourceCodeSearchPatternForAnyEtablissement()
      */
     public function addSearchPatternPrefix($value)
     {
+        return $this->generateSourceCodeSearchPatternForAnyEtablissement($value);
+    }
+
+    /**
+     * Génère ce motif de recherche en bdd par source code : "cet établissement précis".
+     *
+     * @param string $value Ex: "ABC123"
+     * @return string Ex: "%::ABC123"
+     */
+    public function generateSourceCodeSearchPatternForAnyEtablissement($value)
+    {
         return '%' . self::ETAB_PREFIX_SEP . $value;
+    }
+
+    /**
+     * Génère ce motif de recherche en bdd par source code : "cet établissement précis".
+     *
+     * @param Etablissement|string $etablissement
+     * @return string Ex: "UCN::%"
+     */
+    public function generateSourceCodeSearchPatternForThisEtablissement($etablissement)
+    {
+        if ($etablissement instanceof Etablissement) {
+            $etablissement = $etablissement->getStructure()->getCode();
+        }
+
+        return $etablissement . self::ETAB_PREFIX_SEP . '%';
     }
 }

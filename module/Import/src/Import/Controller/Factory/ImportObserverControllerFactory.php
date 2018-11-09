@@ -2,8 +2,9 @@
 
 namespace Import\Controller\Factory;
 
-use Import\Controller\ImportObserverController;
 use Application\EventRouterReplacer;
+use Import\Controller\ImportObserverController;
+use Import\Service\ImportObserv\ImportObservService;
 use Import\Service\ImportObservResult\ImportObservResultService;
 use Zend\Mvc\Controller\ControllerManager;
 use Zend\Mvc\Router\Http\TreeRouteStack;
@@ -27,7 +28,11 @@ class ImportObserverControllerFactory
 
         $routerReplacer = new EventRouterReplacer($httpRouter, $cliConfig);
 
+        /** @var ImportObservService $importObservService */
+        $importObservService = $sl->get('ImportObservService');
+
         $controller = new ImportObserverController();
+        $controller->setImportObservService($importObservService);
         $controller->setEventRouterReplacer($routerReplacer);
         $controller->setImportObservResultService($this->getImportObservResultService($sl));
 
