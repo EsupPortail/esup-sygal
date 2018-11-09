@@ -16,6 +16,8 @@ class Utilisateur extends AbstractUser implements UserInterface, ProviderInterfa
     const APP_UTILISATEUR_ID = 1; // indispensable à UnicaenImport !
     const APP_UTILISATEUR_USERNAME = 'sygal-app';
 
+    const PASSWORD_SHIB = 'shib';
+
     /**
      * @var Individu
      */

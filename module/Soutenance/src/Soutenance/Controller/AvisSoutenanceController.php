@@ -7,11 +7,13 @@ use Application\Entity\Db\Acteur;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
+use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\VersionFichier;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
+use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Notification\Service\NotifierServiceAwareTrait;
 use Soutenance\Entity\Avis;
@@ -28,6 +30,7 @@ class AvisSoutenanceController extends AbstractController {
     use ValidationServiceAwareTrait;
     use UserContextServiceAwareTrait;
     use FichierServiceAwareTrait;
+    use UtilisateurServiceAwareTrait;
 
     public function indexAction()
     {
@@ -39,7 +42,6 @@ class AvisSoutenanceController extends AbstractController {
         $rapporteur = $this->getActeurService()->getRepository()->findActeurByIndividu($idRapporteur);
 
         $avis = new Avis();
-        $fichier = $avis->getFichier();
 
         $form = $this->getServiceLocator()->get('FormElementManager')->get(AvisForm::class);
 
@@ -61,7 +63,7 @@ class AvisSoutenanceController extends AbstractController {
             var_dump($data);
         }
 
-        $view = $this->createViewForFichierAction($fichier);
+        $view = $this->createViewForFichierAction( $rapporteur);
         $view->setVariable('isVisible', true);
         $view->setVariable('maxUploadableFilesCount', 1);
         $view->setVariable('these', $these);
@@ -73,10 +75,10 @@ class AvisSoutenanceController extends AbstractController {
     }
 
     /**
-     * @param string $codeNatureFichier
+     * @param Acteur $rapporteur
      * @return ViewModel
      */
-    private function createViewForFichierAction($fichier)
+    private function createViewForFichierAction(Acteur $rapporteur)
     {
         $these = $this->requestedThese();
         $nature = $this->fichierService->fetchNatureFichier(NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE);
@@ -94,18 +96,33 @@ class AvisSoutenanceController extends AbstractController {
         $form->get('files')->setLabel("")->setAttribute('multiple', false)/*->setAttribute('accept', '.pdf')*/;
 
         $fichierStuff = null;
-        if ($fichier)
-            $fichierStuff = [
-                'file' => $fichier,
-                'downloadUrl' => $this->urlFichierThese()->telechargerFichierThese($these, $fichier),
-                'deleteUrl' => $this->urlFichierThese()->supprimerFichierThese($these, $fichier),
-            ];
+//        if ($fichier)
+//            $fichierStuff = [
+//                'listUrl'   => $this->urlFichierThese()->listerFichiers($these, $nature, $version, false, ['inclureValidite' => false]),
+//                'downloadUrl' => $this->urlFichierThese()->telechargerFichierThese($these, $fichier),
+//                'deleteUrl' => $this->urlFichierThese()->supprimerFichierThese($these, $fichier),
+//            ];
 
+
+        $utilisateurs = $this->utilisateurService->getRepository()->findByIndividu($rapporteur->getIndividu());
+        if (empty($utilisateurs)) {
+            throw new RuntimeException("Aucun utilisateur trouvé correspond au rapporteur [".$rapporteur->getId()." - " . $rapporteur->getIndividu()->getNomComplet()."]");
+        }
+
+        //TODO Que faire lorsque plusieurs utilisateurs sont remontés pour un même individu. (shib est favorisé)
+        /** @var Utilisateur $utilisateur */
+        $utilisateur = null;
+        $utilisateursShib = array_filter($utilisateurs, function (Utilisateur $u) { return $u->getPassword() === Utilisateur::PASSWORD_SHIB;});
+        if (!empty($utilisateursShib)) {
+            $utilisateur = current($utilisateursShib);
+        } else {
+            $utilisateur = current($utilisateurs);
+        }
 
         $view = new ViewModel([
             'these'           => $these,
             'uploadUrl'       => $this->urlFichierThese()->televerserFichierThese($these),
-            'fichiersListUrl' => [ $fichierStuff ],
+            'listUrl'         => $this->urlFichierThese()->listerFichiersPreRapportByUtilisateur($these, $utilisateur),
             'nature'          => $nature,
             'version'         => $version,
         ]);

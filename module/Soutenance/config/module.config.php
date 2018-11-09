@@ -2,6 +2,7 @@
 
 namespace Soutenance;
 
+use Application\Controller\FichierTheseController;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
@@ -210,6 +211,13 @@ return array(
                         'effacer',
                     ],
                     'privileges' => QualitePrivileges::SOUTENANCE_QUALITE_MODIFIER,
+                ],
+                [
+                    'controller' => 'Application\Controller\FichierThese',
+                    'action' => [
+                        'lister-rapport-presoutenance-by-utilisateur',
+                    ],
+                    'roles' => [],
                 ],
             ],
         ],
@@ -564,6 +572,17 @@ return array(
                             'defaults' => [
                                 'controller' => AvisSoutenanceController::class,
                                 'action'     => 'index',
+                            ],
+                        ],
+                    ],
+                    'lister-rapport-presoutenance-by-utilisateur' => [
+                        'type' => Segment::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/lister-rapport-presoutenance-by-utilisateur/:utilisateur',
+                            'defaults' => [
+                                'controller' => 'Application\Controller\FichierThese',
+                                'action'     => 'lister-rapport-presoutenance-by-utilisateur',
                             ],
                         ],
                     ],

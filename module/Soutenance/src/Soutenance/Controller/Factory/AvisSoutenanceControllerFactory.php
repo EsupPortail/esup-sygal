@@ -7,6 +7,7 @@ use Application\Service\Fichier\FichierService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
 use Application\Service\UserContextService;
+use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Validation\ValidationService;
 use Soutenance\Controller\AvisSoutenanceController;
 use Zend\Mvc\Controller\ControllerManager;
@@ -27,6 +28,7 @@ class AvisSoutenanceControllerFactory
          * @var NotifierService $notifierService
          * @var FichierService $fichierService
          * @var UserContextService $userContextService
+         * @var UtilisateurService $utilisateurService
          *
          */
         $theseService = $controllerManager->getServiceLocator()->get('TheseService');
@@ -34,6 +36,7 @@ class AvisSoutenanceControllerFactory
         $acteurService = $controllerManager->getServiceLocator()->get(ActeurService::class);
         $notifierService = $controllerManager->getServiceLocator()->get(NotifierService::class);
         $fichierService = $controllerManager->getServiceLocator()->get('FichierService');
+        $utilisateurService = $controllerManager->getServiceLocator()->get('UtilisateurService');
         $userContextService = $controllerManager->getServiceLocator()->get('UserContextService');
 
         /** @var AvisSoutenanceController $controller */
@@ -43,6 +46,7 @@ class AvisSoutenanceControllerFactory
         $controller->setActeurService($acteurService);
         $controller->setNotifierService($notifierService);
         $controller->setFichierService($fichierService);
+        $controller->setUtilisateurService($utilisateurService);
         $controller->setUserContextService($userContextService);
 
         return $controller;
