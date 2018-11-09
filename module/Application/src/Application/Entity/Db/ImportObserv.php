@@ -10,6 +10,12 @@ class ImportObserv
     const CODE_CORRECTION_PASSE_A_MINEURE = 'CORRECTION_PASSE_A_MINEURE';
     const CODE_CORRECTION_PASSE_A_MAJEURE = 'CORRECTION_PASSE_A_MAJEURE';
 
+    const CODES = [
+        self::CODE_RESULTAT_PASSE_A_ADMIS,
+        self::CODE_CORRECTION_PASSE_A_MINEURE,
+        self::CODE_CORRECTION_PASSE_A_MAJEURE,
+    ];
+
     const EVENT_NAME = 'import-notification-event';
 
     /**

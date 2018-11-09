@@ -2,6 +2,7 @@
 
 namespace Import;
 
+use Application\Entity\Db\ImportObserv;
 use Zend\Config\Factory as ConfigFactory;
 use Zend\Console\Adapter\AdapterInterface as Console;
 use Zend\Mvc\ModuleRouteListener;
@@ -51,7 +52,10 @@ class Module
             ['--etablissement', "Requis. Identifiant de l'établissement, ex: 'UCN'"],
 
             // command
-            'process-observed-import-results' => "Traitement des résultats d'observation de certains changements durant la synchro.",
+            'process-observed-import-results --etablissement= [--import-observ=]' => "Traitement des résultats d'observation de certains changements durant la synchro.",
+            // parameters
+            ['--etablissement', "Requis. Identifiant de l'établissement, ex: 'UCN'"],
+            ['--import-observ', "Facultatif. Code de la seule observation voulue. Valeurs possibles: " . implode(', ', ImportObserv::CODES)],
         ];
     }
 }

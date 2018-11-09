@@ -48,7 +48,7 @@ return [
             'routes' => [
                 'process-observed-import-results' => [
                     'options' => [
-                        'route'    => 'process-observed-import-results [--force]',
+                        'route'    => 'process-observed-import-results --etablissement= [--import-observ=] [--force]',
                         'defaults' => [
                             'controller' => 'Application\Controller\ImportNotification',
                             'action'     => 'process-observed-import-results',
