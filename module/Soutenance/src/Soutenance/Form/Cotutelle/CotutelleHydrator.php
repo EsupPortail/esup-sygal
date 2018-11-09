@@ -3,32 +3,33 @@
 namespace Soutenance\Form\Cotutelle;
 
 use Application\Entity\Db\These;
+use Soutenance\Entity\Proposition;
 use Zend\Stdlib\Hydrator\HydratorInterface;
 
 class CotutelleHydrator implements HydratorInterface
 {
     /**
      * @param array $data
-     * @param These $these
-     * @return These
+     * @param Proposition $proposition
+     * @return Proposition
      */
-    public function hydrate(array $data, $these) {
+    public function hydrate(array $data, $proposition) {
 
-        $these->setLibelleEtabCotutelle($data['etablissement']);
-        $these->setLibellePaysCotutelle($data['pays']);
+        $proposition->setEtablissementCotutel($data['etablissement']);
+        $proposition->setPaysCotutel($data['pays']);
 
-        return $these;
+        return $proposition;
     }
 
     /**
-     * @param These $these
+     * @param Proposition $proposition
      * @return array
      */
-    public function extract($these) {
+    public function extract($proposition) {
 
         $data = [];
-        $data['etablissement']  = $these->getLibelleEtabCotutelle();
-        $data['pays']           = $these->getLibellePaysCotutelle();
+        $data['etablissement']  = $proposition->getEtablissementCotutel();
+        $data['pays']           = $proposition->getPaysCotutel();
 
         return $data;
     }

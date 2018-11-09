@@ -19,9 +19,15 @@ class Proposition {
 
     /** @var ArrayCollection */
     private $membres;
-
     /** @var DateTime */
     private $renduRapport;
+
+    /** @var string */
+    private $etablissementCotutel;
+    /** @var string */
+    private $paysCotutel;
+    /** @var DateTime */
+    private $confidentialite;
 
 //    /** @var ArrayCollection */
 //    private $validations;
@@ -116,22 +122,76 @@ class Proposition {
     }
 
     /**
-     * @return ArrayCollection
+     * @return string
      */
-    public function getValidations()
+    public function getEtablissementCotutel()
     {
-        return $this->validations;
+        return $this->etablissementCotutel;
     }
 
     /**
-     * @param ArrayCollection $validations
+     * @param string $etablissementCotutel
      * @return Proposition
      */
-    public function setValidations($validations)
+    public function setEtablissementCotutel($etablissementCotutel)
     {
-        $this->validations = $validations;
+        $this->etablissementCotutel = $etablissementCotutel;
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getPaysCotutel()
+    {
+        return $this->paysCotutel;
+    }
+
+    /**
+     * @param string $paysCotutel
+     * @return Proposition
+     */
+    public function setPaysCotutel($paysCotutel)
+    {
+        $this->paysCotutel = $paysCotutel;
+        return $this;
+    }
+
+    /**
+     * @return DateTime
+     */
+    public function getConfidentialite()
+    {
+        return $this->confidentialite;
+    }
+
+    /**
+     * @param DateTime $confidentialite
+     * @return Proposition
+     */
+    public function setConfidentialite($confidentialite)
+    {
+        $this->confidentialite = $confidentialite;
+        return $this;
+    }
+
+//    /**
+//     * @return ArrayCollection
+//     */
+//    public function getValidations()
+//    {
+//        return $this->validations;
+//    }
+//
+//    /**
+//     * @param ArrayCollection $validations
+//     * @return Proposition
+//     */
+//    public function setValidations($validations)
+//    {
+//        $this->validations = $validations;
+//        return $this;
+//    }
 
 
     /** fonction metier qui crée un tableau associatif des indicateurs*/

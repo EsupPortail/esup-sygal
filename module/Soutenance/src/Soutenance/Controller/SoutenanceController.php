@@ -227,10 +227,14 @@ class SoutenanceController extends AbstractActionController {
         $idThese = $this->params()->fromRoute('these');
         $these = $this->getTheseService()->getRepository()->find($idThese);
 
+        /** @var Proposition $proposition */
+        $proposition = $this->getPropositionService()->findByThese($these);
+
+
         /** @var CotutelleForm  $form */
         $form = $this->getServiceLocator()->get('FormElementManager')->get(CotutelleForm::class);
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/cotutelle', ['these' => $these->getId()], [], true));
-        $form->bind($these);
+        $form->bind($proposition);
 
         /** @var Request $request */
         $request = $this->getRequest();
@@ -238,7 +242,7 @@ class SoutenanceController extends AbstractActionController {
             $data = $request->getPost();
             $form->setData($data);
             if ($form->isValid()) {
-                $this->getTheseService()->update($these);
+                $this->getPropositionService()->update($proposition);
             }
         }
 
@@ -254,10 +258,13 @@ class SoutenanceController extends AbstractActionController {
         $idThese = $this->params()->fromRoute('these');
         $these = $this->getTheseService()->getRepository()->find($idThese);
 
+        /** @var Proposition $proposition */
+        $proposition = $this->getPropositionService()->findByThese($these);
+
         /** @var CotutelleForm  $form */
         $form = $this->getServiceLocator()->get('FormElementManager')->get(ConfidentialiteForm::class);
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/confidentialite', ['these' => $these->getId()], [], true));
-        $form->bind($these);
+        $form->bind($proposition);
 
         /** @var Request $request */
         $request = $this->getRequest();
@@ -265,7 +272,7 @@ class SoutenanceController extends AbstractActionController {
             $data = $request->getPost();
             $form->setData($data);
             if ($form->isValid()) {
-                $this->getTheseService()->update($these);
+                $this->getPropositionService()->update($proposition);
             }
         }
 

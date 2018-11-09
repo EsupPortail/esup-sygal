@@ -19,7 +19,10 @@
 
         <field name="renduRapport"              type="datetime"                         column="RENDU_RAPPORT"   nullable="true"/>
 
+        <field name="etablissementCotutel"      type="string"        length="256"       column="LIB_ETAB_COTUT"       nullable="true"/>
+        <field name="paysCotutel"               type="string"        length="256"       column="LIB_PAYS_COTUT"       nullable="true"/>
 
+        <field name="confidentialite"           type="datetime"                         column="CONFIDENTIALITE"      nullable="true"/>
 
     </entity>
 </doctrine-mapping>

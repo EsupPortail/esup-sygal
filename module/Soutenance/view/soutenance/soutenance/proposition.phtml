@@ -248,12 +248,12 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
 
         <div class="row">
             <div class="col-md-8">
-                <?php if($these->getLibelleEtabCotutelle() || $these->getLibellePaysCotutelle()): ?>
+                <?php if($proposition->getEtablissementCotutel() || $proposition->getPaysCotutel()): ?>
                     <dl>
                         <dt> Établissement de co-tutelle </dt>
-                        <dd> <?php echo ($these->getLibelleEtabCotutelle())?$these->getLibelleEtabCotutelle():"non renseigné"; ?></dd>
+                        <dd> <?php echo ($proposition->getEtablissementCotutel())?$proposition->getEtablissementCotutel():"non renseigné"; ?></dd>
                         <dt> Pays de co-tutelle </dt>
-                        <dd> <?php echo ($these->getLibellePaysCotutelle())?$these->getLibellePaysCotutelle():"non renseigné"; ?></dd>
+                        <dd> <?php echo ($proposition->getPaysCotutel())?$proposition->getPaysCotutel():"non renseigné"; ?></dd>
                     </dl>
                 <?php else : ?>
                     Aucune co-tutelle d'enregistrée.
@@ -273,10 +273,10 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
 
         <div class="row">
             <div class="col-md-8">
-                <?php if($these->getDateFinConfidentialite()): ?>
+                <?php if($proposition->getConfidentialite()): ?>
                 <dl>
                     <dt> Date de fin de confidentialité </dt>
-                    <dd> <?php echo $these->getDateFinConfidentialite()->format("d/m/Y"); ?> </dd>
+                    <dd> <?php echo $proposition->getConfidentialite()->format("d/m/Y"); ?> </dd>
                 </dl>
                 <?php else : ?>
                     Aucune demande de confidentialité d'enregistrée.
