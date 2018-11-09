@@ -15,9 +15,12 @@ use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
+use BjyAuthorize\Exception\UnAuthorizedException;
 use Notification\Service\NotifierServiceAwareTrait;
 use Soutenance\Entity\Avis;
 use Soutenance\Form\Avis\AvisForm;
+use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
+use Soutenance\Service\Avis\AvisServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\Form\Element\Hidden;
 use Zend\Http\Request;
@@ -31,6 +34,7 @@ class AvisSoutenanceController extends AbstractController {
     use UserContextServiceAwareTrait;
     use FichierServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
+    use AvisServiceAwareTrait;
 
     public function indexAction()
     {
@@ -41,26 +45,31 @@ class AvisSoutenanceController extends AbstractController {
         $idRapporteur = $this->params()->fromRoute('rapporteur');
         $rapporteur = $this->getActeurService()->getRepository()->findActeurByIndividu($idRapporteur);
 
-        $avis = new Avis();
+        $isAllowed = $this->isAllowed($rapporteur, AvisSoutenancePrivileges::SOUTENANCE_AVIS_VISUALISER);
+        if (!$isAllowed) {
+            throw new UnAuthorizedException("Vous êtes non authorisé(e) à visualiser l'avis de soutenance de ".$rapporteur->getIndividu()->getNomComplet().".");
+        }
 
+        $avis = $this->getAvisService()->getAvisByRapporteur($rapporteur);
+        if ($avis === null) {
+            $avis = new Avis();
+            $avis->setRapporteur($rapporteur);
+            $avis->setThese($these);
+        }
+
+        /** @var AvisForm $form */
         $form = $this->getServiceLocator()->get('FormElementManager')->get(AvisForm::class);
+        $form->bind($avis);
 
-//        return new ViewModel([
-//            'form'          => $form,
-//            'fichier'       => $fichier,
-//            'these'         => $these,
-//            'rapporteur'    => $rapporteur,
-//        ]);
-
-//        $validation = current($this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_AVIS_SOUTENANCE, $these));
-//
-//
-//
         /** @var Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
-            var_dump($data);
+            $form->setData($data);
+            if ($form->isValid()) {
+                if ($avis->getId()) $this->getAvisService()->update($avis);
+                else $this->getAvisService()->create($avis);
+            }
         }
 
         $view = $this->createViewForFichierAction( $rapporteur);
@@ -96,14 +105,6 @@ class AvisSoutenanceController extends AbstractController {
         $form->get('files')->setLabel("")->setAttribute('multiple', false)/*->setAttribute('accept', '.pdf')*/;
 
         $fichierStuff = null;
-//        if ($fichier)
-//            $fichierStuff = [
-//                'listUrl'   => $this->urlFichierThese()->listerFichiers($these, $nature, $version, false, ['inclureValidite' => false]),
-//                'downloadUrl' => $this->urlFichierThese()->telechargerFichierThese($these, $fichier),
-//                'deleteUrl' => $this->urlFichierThese()->supprimerFichierThese($these, $fichier),
-//            ];
-
-
         $utilisateurs = $this->utilisateurService->getRepository()->findByIndividu($rapporteur->getIndividu());
         if (empty($utilisateurs)) {
             throw new RuntimeException("Aucun utilisateur trouvé correspond au rapporteur [".$rapporteur->getId()." - " . $rapporteur->getIndividu()->getNomComplet()."]");

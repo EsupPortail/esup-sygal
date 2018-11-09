@@ -2,6 +2,7 @@
 
 namespace Soutenance\Service\Avis;
 
+use Application\Entity\Db\Acteur;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Soutenance\Entity\Avis;
@@ -74,5 +75,26 @@ class AvisService {
             throw new RuntimeException('Un problème est survenu lors de l\'effacement de l\'avis', $e);
         }
 
+    }
+
+    /**
+     * @param Acteur $rapporteur
+     * @return Avis
+     */
+    public function getAvisByRapporteur($rapporteur)
+    {
+        $qb = $this->getEntityManager()->getRepository(Avis::class)->createQueryBuilder('avis')
+            ->andWhere('avis.these = :these')
+            ->andWhere('avis.rapporteur = :rapporteur')
+            ->setParameter('these', $rapporteur->getThese())
+            ->setParameter('rapporteur', $rapporteur);
+
+        try {
+            $result = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException('Plusieurs avis sont associés au rapporteur ['.$rapporteur->getId().' - '.$rapporteur->getIndividu()->getNomComplet().']');
+        }
+
+        return $result;
     }
 }

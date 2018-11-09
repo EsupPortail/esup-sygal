@@ -6,6 +6,8 @@ use Application\Controller\FichierTheseController;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
+use Soutenance\Assertion\AvisSoutenanceAssertion;
+use Soutenance\Assertion\AvisSoutenanceAssertionFactory;
 use Soutenance\Assertion\PresoutenanceAssertion;
 use Soutenance\Assertion\PresoutenanceAssertionFactory;
 use Soutenance\Assertion\EngagementImpartialiteAssertion;
@@ -24,6 +26,7 @@ use Soutenance\Controller\QualiteController;
 use Soutenance\Controller\SoutenanceController;
 use Soutenance\Form\Avis\AvisForm;
 use Soutenance\Form\Avis\AvisFormFactory;
+use Soutenance\Form\Avis\AvisHydrator;
 use Soutenance\Form\Confidentialite\ConfidentialiteForm;
 use Soutenance\Form\Confidentialite\ConfidentialiteFormFactory;
 use Soutenance\Form\Confidentialite\ConfidentialiteHydrator;
@@ -48,6 +51,8 @@ use Soutenance\Form\SoutenanceRefus\SoutenanceRefusFormFactory;
 use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
 use Soutenance\Provider\Privilege\QualitePrivileges;
 use Soutenance\Provider\Privilege\SoutenancePrivileges;
+use Soutenance\Service\Avis\AvisService;
+use Soutenance\Service\Avis\AvisServiceFactory;
 use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Membre\MembreServiceFactory;
 use Soutenance\Service\Proposition\PropositionService;
@@ -59,6 +64,11 @@ use Zend\Mvc\Router\Http\Segment;
 
 return array(
     'bjyauthorize'    => [
+        'resource_providers' => [
+            'BjyAuthorize\Provider\Resource\Config' => [
+                'Acteur' => [],
+            ],
+        ],
         'rule_providers'     => [
             PrivilegeRuleProvider::class => [
                 'allow' => [
@@ -92,7 +102,15 @@ return array(
                         ],
                         'resources'  => ['These'],
                         'assertion'  => PropositionAssertion::class,
-                    ]
+                    ],
+                    [
+                        'privileges' => [
+                            AvisSoutenancePrivileges::SOUTENANCE_AVIS_VISUALISER,
+                            AvisSoutenancePrivileges::SOUTENANCE_AVIS_MODIFIER,
+                        ],
+                        'resources'  => ['Acteur'],
+                        'assertion' => AvisSoutenanceAssertion::class,
+                    ],
                 ],
             ],
         ],
@@ -189,14 +207,23 @@ return array(
                     ],
                     'privileges' => SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_ANNULER,
                 ],
+                // Avis de soutenance
                 [
                     'controller' => AvisSoutenanceController::class,
                     'action'     => [
                         'index',
                     ],
-                    'roles' => [],
+                    //'roles' => [],
+                    'privileges' => AvisSoutenancePrivileges::SOUTENANCE_AVIS_VISUALISER,
                 ],
-
+                [
+                    'controller' => 'Application\Controller\FichierThese',
+                    'action' => [
+                        'lister-rapport-presoutenance-by-utilisateur',
+                    ],
+                    'privileges' => AvisSoutenancePrivileges::SOUTENANCE_AVIS_VISUALISER,
+                ],
+                // Qualite
                 [
                     'controller' => QualiteController::class,
                     'action'     => [
@@ -212,13 +239,7 @@ return array(
                     ],
                     'privileges' => QualitePrivileges::SOUTENANCE_QUALITE_MODIFIER,
                 ],
-                [
-                    'controller' => 'Application\Controller\FichierThese',
-                    'action' => [
-                        'lister-rapport-presoutenance-by-utilisateur',
-                    ],
-                    'roles' => [],
-                ],
+
             ],
         ],
     ],
@@ -306,19 +327,18 @@ return array(
                                             SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_VISUALISER,
                                         ],
                                     ],
-                                    'avis' => [
-                                        'label'    => 'Avis de soutenance',
-                                        'route'    => 'soutenance/avis-soutenance',
-//                                        'icon'     => 'glyphicon glyphicon-briefcase',
-                                        'withtarget' => true,
-                                        'paramsInject' => [
-                                            'these',
-                                            'rapporteur',
-                                        ],
-                                        'privileges' => [
-                                            AvisSoutenancePrivileges::SOUTENANCE_AVIS_VISUALISER,
-                                        ],
-                                    ],
+//                                    'avis' => [
+//                                        'label'    => 'Avis de soutenance',
+//                                        'route'    => 'soutenance/avis-soutenance',
+//                                        'withtarget' => true,
+//                                        'paramsInject' => [
+//                                            'these',
+//                                            'rapporteur',
+//                                        ],
+//                                        'privileges' => [
+//                                            AvisSoutenancePrivileges::SOUTENANCE_AVIS_VISUALISER,
+//                                        ],
+//                                    ],
                                 ],
                             ],
                             'qualite' => [
@@ -631,10 +651,12 @@ return array(
             //service
             PropositionService::class => PropositionServiceFactory::class,
             MembreService::class => MembreServiceFactory::class,
+            AvisService::class => AvisServiceFactory::class,
             //assertion
             EngagementImpartialiteAssertion::class => EngagementImpartialiteAssertionFactory::class,
             PresoutenanceAssertion::class => PresoutenanceAssertionFactory::class,
             PropositionAssertion::class => PropositionAssertionFactory::class,
+            AvisSoutenanceAssertion::class => AvisSoutenanceAssertionFactory::class,
         ],
     ],
     'controllers' => [
@@ -667,6 +689,7 @@ return array(
             QualiteEditiontHydrator::class => QualiteEditiontHydrator::class,
             CotutelleHydrator::class => CotutelleHydrator::class,
             ConfidentialiteHydrator::class => ConfidentialiteHydrator::class,
+            AvisHydrator::class => AvisHydrator::class,
         ],
         'factories' => [
             SoutenanceMembreHydrator::class => SoutenanceMembreHydratorFactory::class,
