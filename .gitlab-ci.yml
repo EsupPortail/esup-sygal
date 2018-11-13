@@ -20,7 +20,7 @@ build:
 deploy_preprod:
   stage: deploy
   script:
-    - git push "$DEPLOY_USER:$DEPLOY_PASSWORD"@sygal-pp.unicaen.fr:/var/www/sygal.git master
+    - git push root@usygalpp1.unr-runn.fr:/var/www/sygal.git master
   when: manual
   only:
   - master
