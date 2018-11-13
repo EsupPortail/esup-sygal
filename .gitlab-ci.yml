@@ -20,7 +20,7 @@ build:
 deploy_preprod:
   stage: deploy
   script:
-    - git push root@usygalpp1.unr-runn.fr:/var/www/sygal.git master
+    - git push root@193.55.126.7:/var/www/sygal.git master
   when: manual
   only:
   - master
