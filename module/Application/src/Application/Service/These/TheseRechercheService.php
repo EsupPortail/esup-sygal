@@ -362,7 +362,7 @@ class TheseRechercheService
                         throw new RuntimeException("Cas imprévu!");
                 }
                 $individuSourceCode = (new EtablissementPrefixFilter())
-                    ->addPrefixEtablissementTo($userWrapper->getSupannId(), $role->getStructure()->getCode());
+                    ->addPrefixTo($userWrapper->getSupannId(), $role->getStructure()->getCode());
                 $qb
                     ->join('t.acteurs', 'adt', Join::WITH, 'adt.role = :role')
                     ->join('adt.individu', 'idt', Join::WITH, 'idt.sourceCode = :idtSourceCode')
@@ -387,8 +387,8 @@ class TheseRechercheService
                  * On ne voit que les thèses concernant son ED.
                  */
                 $qb
-                    ->addSelect('ed')->join('t.ecoleDoctorale', 'ed')
-                    ->andWhere('ed = :ed')
+                    ->addSelect('ed2')->join('t.ecoleDoctorale', 'ed2')
+                    ->andWhere('ed2 = :ed')
                     ->setParameter('ed', $role->getStructure()->getEcoleDoctorale());
             }
             elseif ($role->isUniteRechercheDependant()) {
@@ -396,8 +396,8 @@ class TheseRechercheService
                  * On ne voit que les thèses concernant son UR.
                  */
                 $qb
-                    ->addSelect('ur')->join('t.uniteRecherche', 'ur')
-                    ->andWhere('ur = :ur')
+                    ->addSelect('ur2')->join('t.uniteRecherche', 'ur2')
+                    ->andWhere('ur2 = :ur')
                     ->setParameter('ur', $role->getStructure()->getUniteRecherche());
             }
         }
