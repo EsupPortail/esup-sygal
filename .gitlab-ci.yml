@@ -4,6 +4,7 @@ stages:
   - deploy
 
 test:
+  image: localhost:5000/unicaen-dev-php7.0-apache
   stage: test
   script: echo "Running tests"
   only:
