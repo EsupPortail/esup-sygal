@@ -208,6 +208,7 @@ return [
                         'label' => "Import",
                         'order' => 0,
                         'route' => 'ws-import',
+                        'resource' => \UnicaenAuth\Guard\PrivilegeController::getResourceId('Import\Controller\Import', 'index'),
                         'pages' => [
                             'home' => [
                                 'label' => "Accueil",
