@@ -6,7 +6,7 @@
 #
 ###########################################################################################
 
-FROM unicaen-dev-php7.0-apache
+FROM localhost:5000/unicaen-dev-php7.0-apache
 
 LABEL maintainer="Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>"
 
