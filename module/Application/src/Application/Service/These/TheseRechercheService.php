@@ -9,6 +9,7 @@ use Application\Entity\Db\These;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
 use Application\Entity\UserWrapper;
+use Application\Filter\EtablissementPrefixFilter;
 use Application\QueryBuilder\TheseQueryBuilder;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
@@ -360,10 +361,12 @@ class TheseRechercheService
                     default:
                         throw new RuntimeException("Cas imprévu!");
                 }
+                $individuSourceCode = (new EtablissementPrefixFilter())
+                    ->addPrefixEtablissementTo($userWrapper->getSupannId(), $role->getStructure()->getCode());
                 $qb
                     ->join('t.acteurs', 'adt', Join::WITH, 'adt.role = :role')
-                    ->join('adt.individu', 'idt', Join::WITH, 'idt.sourceCode like :idtSourceCode')
-                    ->setParameter('idtSourceCode', '%::' . $userWrapper->getSupannId())
+                    ->join('adt.individu', 'idt', Join::WITH, 'idt.sourceCode = :idtSourceCode')
+                    ->setParameter('idtSourceCode', $individuSourceCode)
                     ->setParameter('role', $role);
             }
             // sinon role = membre jury
