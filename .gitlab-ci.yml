@@ -54,7 +54,7 @@ deploy_preprod:
   stage: deploy
   script:
     - ping 193.55.126.7 -c 1
-    - git push root@193.55.126.7:/var/www/sygal.git master
+    - HTTP_PROXY=proxy.unicaen.fr:3128 git push root@193.55.126.7:/var/www/sygal.git master
   when: manual
   only:
   - master
