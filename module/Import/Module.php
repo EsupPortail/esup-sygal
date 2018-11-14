@@ -55,10 +55,11 @@ class Module
             ['--synchronize',            "Facultatif. Réaliser ou non la synchro SRC_XXX => XXX. Valeurs possibles: 0, 1. Valeur par défaut: 1."],
 
             // command
-            'process-observed-import-results --etablissement= [--import-observ=]' => "Traitement des résultats d'observation de certains changements durant la synchro.",
+            'process-observed-import-results --etablissement= [--import-observ=] [--source-code=]' => "Traitement des résultats d'observation de certains changements durant la synchro.",
             // parameters
             ['--etablissement', "Requis. Identifiant de l'établissement, ex: 'UCN'"],
             ['--import-observ', "Facultatif. Code de la seule observation voulue. Valeurs possibles: " . implode(', ', ImportObserv::CODES)],
+            ['--source-code',   "Facultatif. Source code de la seule thèse à prendre en compte."],
         ];
     }
 }
