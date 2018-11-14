@@ -16,7 +16,7 @@ select SOURCE_CODE from these where id in (25948);
 
 -- 1/ Modif Vue src_these.
 --
--- Simule que 2 thèses ont leur résultat qui passe à 1 à l'issu de la synchro :
+-- Simule qu'une thèse a son résultat qui passe à 1 à l'issu de la synchro :
 --
 -- ATTENTION !!
 --   Script initial de la vue src_these A VERIFIER :

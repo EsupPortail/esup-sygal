@@ -4,7 +4,9 @@ namespace Import\Controller;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\ImportObserv;
+use Application\Entity\Db\These;
 use Application\EventRouterReplacerAwareTrait;
+use Application\Service\These\TheseServiceAwareTrait;
 use Assert\Assertion;
 use Import\Service\ImportObserv\ImportObservServiceAwareTrait;
 use Import\Service\ImportObservResult\ImportObservResultServiceAwareTrait;
@@ -20,6 +22,7 @@ class ImportObserverController extends AbstractController
     use ImportObservServiceAwareTrait;
     use EventRouterReplacerAwareTrait;
     use ImportObservResultServiceAwareTrait;
+    use TheseServiceAwareTrait;
 
     /**
      * Console action.
@@ -40,6 +43,7 @@ class ImportObserverController extends AbstractController
     {
         $etablissement = $this->params('etablissement');
         $codeImportObserv = $this->params('import-observ');
+        $sourceCodeThese = $this->params('source-code');
 
         if ($codeImportObserv === null) {
             $codes = ImportObserv::CODES;
@@ -48,16 +52,25 @@ class ImportObserverController extends AbstractController
             $codes = (array) $codeImportObserv;
         }
 
+        /** @var These $these */
+        $these = null;
+        if ($sourceCodeThese !== null) {
+            $these = $this->theseService->getRepository()->findOneBy(['sourceCode' => $sourceCodeThese]);
+            if ($these === null) {
+                throw new RuntimeException("Aucune thèse trouvée avec le source code '$sourceCodeThese''");
+            }
+        }
+
         $this->eventRouterReplacer->replaceEventRouter($this->getEvent());
 
         foreach ($codes as $code) {
             /** @var ImportObserv|null $importObserv */
             $importObserv = $this->importObservService->getRepository()->findOneBy(['code' => $code]);
             if ($importObserv === null) {
-                throw new RuntimeException("Aucune enregistrement ImportObserv trouvé avec le code '$importObserv'");
+                throw new RuntimeException("Aucun enregistrement ImportObserv trouvé avec le code '$importObserv'");
             }
 
-            $this->importObservResultService->handleImportObservResults($importObserv, $etablissement);
+            $this->importObservResultService->handleImportObservResults($importObserv, $etablissement, $these);
         }
 
         $this->eventRouterReplacer->restoreEventRouter();
