@@ -20,6 +20,8 @@ class TheseSelectFilter extends TheseFilter
     const NAME_anneePremiereInscription = 'anneePremiereInscription';
     const NAME_anneeSoutenance = 'anneeSoutenance';
     const NAME_discipline = 'discipline';
+    const NAME_domaineScientifique = 'domaineScientifique';
+    const NAME_financement = 'financement';
 
     /**
      * @var string[]
@@ -123,6 +125,35 @@ class TheseSelectFilter extends TheseFilter
                 }
                 break;
 
+            case self::NAME_domaineScientifique:
+                  $qb
+                      ->leftJoin('t.uniteRecherche', 'uniteRecherche')
+                      ->leftJoin('uniteRecherche.domaines', 'domaine')
+                  ;
+                if ($filterValue === 'NULL') {
+                    $qb
+                        ->andWhere('domaine IS NULL');
+                } else {
+                    $qb
+                        ->andWhere('domaine.id = :domaine')
+                        ->setParameter('domaine', $filterValue);
+                }
+                break;
+
+            case self::NAME_financement:
+                $qb
+                    ->join('t.financements', 'financements')
+                    ->join('financements.origineFinancement', 'origine')
+                ;
+                if ($filterValue === 'NULL') {
+                    $qb
+                        ->andWhere('origine IS NULL');
+                } else {
+                    $qb
+                        ->andWhere('origine.id = :origine')
+                        ->setParameter('origine', $filterValue);
+                }
+                break;
             default:
                 throw new LogicException("Cas inattendu : " . $name);
                 break;
