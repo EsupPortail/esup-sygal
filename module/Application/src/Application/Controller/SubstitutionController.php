@@ -35,7 +35,7 @@ class SubstitutionController extends AbstractController
     /** Affiche l'index d'un type de structure donnée */
     public function indexStructureAction() {
         $type = $this->params()->fromRoute("type");
-        $structures = $this->getStructureService()->getStructuresSubstituantes($type);
+        $structures = $this->getStructureService()->getStructuresSubstituantes($type, 'libelle');
 
         return new ViewModel([
             'type' => $type,
