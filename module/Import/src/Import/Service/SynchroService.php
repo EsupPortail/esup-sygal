@@ -2,7 +2,11 @@
 
 namespace Import\Service;
 
+use DateTime;
+use Doctrine\DBAL\ConnectionException;
 use Doctrine\DBAL\DBALException;
+use Doctrine\ORM\OptimisticLockException;
+use Import\Model\SynchroLog;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -68,11 +72,28 @@ class SynchroService
     {
         $plsql = implode(PHP_EOL, array_merge(['BEGIN'], $calls, ['END;']));
 
+        $startDate = new DateTime();
+
+        $connection = $this->entityManager->getConnection();
+        $connection->beginTransaction();
         try {
-            $this->entityManager->getConnection()->executeQuery($plsql);
+            $connection->executeQuery($plsql);
+            $connection->commit();
+            $status = 'SUCCESS';
+            $message = null;
         } catch (DBALException $e) {
-            throw new RuntimeException("Erreur rrencontrée lors de l'exécution des procédures de synchro (import)", null, $e);
+            $status = 'FAILURE';
+            $message = "Erreur rencontrée lors de l'exécution des procédures de synchro (import) : " . PHP_EOL .
+                $e->getTraceAsString();
+            try {
+                $connection->rollBack();
+            } catch (ConnectionException $e) {
+                $message .= PHP_EOL . "Et en plus le rollback a échoué!";
+            }
         }
+
+        $finishDate = new DateTime();
+        $this->log($startDate, $finishDate, $plsql, $status, $message);
     }
 
     /**
@@ -160,5 +181,30 @@ END;
 EOS;
 
         return sprintf($template, str_replace("'", "''", $plsql));
+    }
+
+    /**
+     * @param DateTime $startDate
+     * @param DateTime $finishDate
+     * @param string    $sql
+     * @param string    $status
+     * @param string    $message
+     */
+    private function log(DateTime $startDate, DateTime $finishDate, $sql, $status, $message = null)
+    {
+        $log = (new SynchroLog())
+            ->setLogDate(new DateTime())
+            ->setStartDate($startDate)
+            ->setFinishDate($finishDate)
+            ->setSql($sql)
+            ->setStatus($status)
+            ->setMessage($message);
+
+        $this->entityManager->persist($log);
+        try {
+            $this->entityManager->flush($log);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement du SynchroLog.", null, $e);
+        }
     }
 }
