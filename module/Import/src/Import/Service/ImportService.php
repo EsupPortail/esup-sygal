@@ -128,6 +128,8 @@ class ImportService
         } catch (CallException $e) {
             if ($e->getCode() === 404) {
                 throw new RuntimeException("Le service '$service' n'existe pas !", null, $e);
+            } else {
+                throw new RuntimeException("Erreur rencontrée lors de l'import (service: '$service')", null, $e);
             }
         }
 
@@ -167,6 +169,8 @@ class ImportService
                     } else {
                         $this->logger->alert("$message On continue tout de même.");
                     }
+                } else {
+                    throw new RuntimeException("Erreur rencontrée lors de l'import (service: tous)", null, $e);
                 }
             }
         }
