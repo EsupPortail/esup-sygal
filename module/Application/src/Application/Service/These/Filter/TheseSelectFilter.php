@@ -18,6 +18,7 @@ class TheseSelectFilter extends TheseFilter
     const NAME_ecoleDoctorale = 'ecoleDoctorale';
     const NAME_uniteRecherche = 'uniteRecherche';
     const NAME_anneePremiereInscription = 'anneePremiereInscription';
+    const NAME_anneeSoutenance = 'anneeSoutenance';
     const NAME_discipline = 'discipline';
 
     /**
@@ -97,6 +98,17 @@ class TheseSelectFilter extends TheseFilter
                     $qb
                         ->andWhere('year(t.datePremiereInscription) = :anneePremiereInscription')
                         ->setParameter('anneePremiereInscription', $filterValue);
+                }
+                break;
+
+            case self::NAME_anneeSoutenance:
+                if ($filterValue === 'NULL') {
+                    $qb
+                        ->andWhere('t.dateSoutenance IS NULL');
+                } else {
+                    $qb
+                        ->andWhere('year(t.dateSoutenance) = :anneeSoutenance')
+                        ->setParameter('anneeSoutenance', $filterValue);
                 }
                 break;
 

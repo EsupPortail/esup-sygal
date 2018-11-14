@@ -66,6 +66,7 @@ class TheseRechercheService
         $ecolesDoctorales = [];
         $unitesRecherches = [];
         $anneesPremiereInscription = [];
+        $anneesSoutenance = [];
         $disciplines = [];
 
         $this->filters = [
@@ -95,6 +96,11 @@ class TheseRechercheService
                 "1ère inscr.",
                 TheseSelectFilter::NAME_anneePremiereInscription,
                 $anneesPremiereInscription
+            ),
+            TheseSelectFilter::NAME_anneeSoutenance => new TheseSelectFilter(
+                "soutenance",
+                TheseSelectFilter::NAME_anneeSoutenance,
+                $anneesSoutenance
             ),
             TheseSelectFilter::NAME_discipline               => new TheseSelectFilter(
                 "Discipline",
@@ -127,6 +133,7 @@ class TheseRechercheService
         $ecolesDoctorales = $this->fetchEcolesDoctoralesOptions();
         $unitesRecherches = $this->fetchUnitesRecherchesOptions();
         $anneesPremiereInscription = $this->fetchAnneesInscriptionOptions();
+        $anneesSoutenance = $this->fetchAnneesSoutenance();
         $disciplines = $this->fetchDisciplinesOptions();
 
         $this->filters = [
@@ -156,6 +163,11 @@ class TheseRechercheService
                 "1ère inscr.",
                 TheseSelectFilter::NAME_anneePremiereInscription,
                 $anneesPremiereInscription
+            ),
+            TheseSelectFilter::NAME_anneeSoutenance => new TheseSelectFilter(
+                "soutenance",
+                TheseSelectFilter::NAME_anneeSoutenance,
+                $anneesSoutenance
             ),
             TheseSelectFilter::NAME_discipline               => new TheseSelectFilter(
                 "Discipline",
@@ -549,6 +561,28 @@ class TheseRechercheService
             $annees = $this->theseService->getRepository()->fetchDistinctAnneesPremiereInscription($etablissement);
         } else {
             $annees = $this->theseService->getRepository()->fetchDistinctAnneesPremiereInscription();
+        }
+
+        $annees = array_reverse(array_filter($annees));
+
+        $options = [];
+        $options[] = $this->optionify(null); // option spéciale pour valeur === null
+        foreach ($annees as $annee) {
+            $options[] = $this->optionify($annee);
+        }
+
+        return $this->addEmptyOption($options, "Toutes");
+    }
+
+    private function fetchAnneesSoutenance()
+    {
+        $role = $this->getSelectedIdentityRole();
+
+        if ($role->isEtablissementDependant()) {
+            $etablissement = $role->getStructure()->getEtablissement();
+            $annees = $this->theseService->getRepository()->fetchDistinctAnneesSoutenance($etablissement);
+        } else {
+            $annees = $this->theseService->getRepository()->fetchDistinctAnneesSoutenance();
         }
 
         $annees = array_reverse(array_filter($annees));
