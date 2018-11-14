@@ -6,6 +6,7 @@ use Application\Entity\Db\EtablissementRattachement;
 use Application\Entity\Db\UniteRecherche;
 use Application\Form\UniteRechercheForm;
 use Application\View\Helper\SelectHelper;
+use Application\View\Helper\SelectsFilterPanel\SelectsFilterPanelHelper;
 use Application\View\Renderer\PhpRenderer;
 
 /**
@@ -44,8 +45,6 @@ $form->get('sourceCode')->setAttribute('readonly', !$editable);
 </h1>
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
-
-
 
 <!-- BLOC DES INFORMATIONS GENERALES ---------------------------------------------------------------------------------->
 
@@ -147,9 +146,33 @@ $form->get('sourceCode')->setAttribute('readonly', !$editable);
     <div class="col-md-6">
         <?php
         $selectDomaine = new SelectHelper("etablissements", $etablissements, "Choisissez un établissement de rattachement ...");
-        echo $selectDomaine;
         ?>
-        <br/> <br/>
+
+        <select title=""
+                class="filter selectpicker show-menu-arrow"
+                name="etablissements"
+                id="etablissements"
+                data-live-search="true"
+                data-width="450px">
+
+            <?php foreach ($selectDomaine->asDataArray() as $data): ?>
+
+                <?php
+                $value = $data['value'];
+                $label = $data['label'];
+                $subtext = isset($data['subtext']) ? $data['subtext'] : '';
+                $isActive = SelectsFilterPanelHelper::isSelectOptionActive($paramName, $value, $queryParams);
+                ?>
+                <option value="<?php echo $value ?>" <?php echo $isActive ? 'selected' : '' ?> data-subtext="<?php echo $subtext ?>">
+                    <?php echo $label ?>
+                </option>
+
+            <?php endforeach ?>
+        </select>
+
+        <br/>
+        <br/>
+
         <a
                 class="btn btn-success"
                 id="ajout-rattachement"
@@ -201,8 +224,31 @@ $form->get('sourceCode')->setAttribute('readonly', !$editable);
     <div class="col-md-6">
         <?php
         $selectDomaine = new SelectHelper("domaines", $domainesScientifiques, 'Choisissez un domaine scientifique ...');
-        echo $selectDomaine;
         ?>
+
+        <select title=""
+                class="filter selectpicker show-menu-arrow"
+                name="domaines"
+                id="domaines"
+                data-live-search="true"
+                data-width="450px">
+
+            <?php foreach ($selectDomaine->asDataArray() as $data): ?>
+
+                <?php
+                $value = $data['value'];
+                $label = $data['label'];
+                $subtext = isset($data['subtext']) ? $data['subtext'] : '';
+                $isActive = SelectsFilterPanelHelper::isSelectOptionActive($paramName, $value, $queryParams);
+                ?>
+                <option value="<?php echo $value ?>" <?php echo $isActive ? 'selected' : '' ?> data-subtext="<?php echo $subtext ?>">
+                    <?php echo $label ?>
+                </option>
+
+            <?php endforeach ?>
+        </select>
+
+
         <br/>
         <br/>
         <a class="btn btn-success"
@@ -242,5 +288,20 @@ $form->get('sourceCode')->setAttribute('readonly', !$editable);
             var domaineId = $("#domaines").val();
             $("a#ajout-domaine").attr("href", "ajouter-domaine-scientifique/" + domaineId);
         });
+    });
+</script>
+
+<?php
+$this->headLink()->appendStylesheet("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.min.css");
+$this->inlineScript()->appendFile("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js");
+$this->inlineScript()->appendFile("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/i18n/defaults-fr_FR.min.js");
+?>
+
+<script>
+    $(function() {
+        $("#domaines").refresh();
+    });
+    $(function() {
+        $("#etablissements").refresh();
     });
 </script>
