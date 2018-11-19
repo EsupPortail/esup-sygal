@@ -14,11 +14,18 @@ ENV APACHE_CONF_DIR=/etc/apache2 \
     PHP_CONF_DIR=/etc/php/7.0
 
 ## Installation de packages requis.
-RUN apt-get install -y \
-        php7.0-imagick
+RUN apt-get update && \
+    apt-get install -y php7.0-imagick exim4
 
 # Nettoyage
 RUN apt-get autoremove -y && apt-get clean && rm -rf /tmp/* /var/tmp/*
+
+# Exim4
+ENV EXIM_LOGFILE=/var/log/exim4/mainlog
+ADD docker/exim4/update-exim4.conf.conf /etc/exim4/update-exim4.conf.conf
+ADD docker/exim4/email-addresses /etc/email-addresses
+RUN update-exim4.conf && \
+    touch ${EXIM_LOGFILE} && chown Debian-exim:root ${EXIM_LOGFILE} && chmod 740 ${EXIM_LOGFILE}
 
 # Symlink apache access and error logs to stdout/stderr so Docker logs shows them
 RUN ln -sf /dev/stdout /var/log/apache2/access.log
