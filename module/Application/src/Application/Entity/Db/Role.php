@@ -281,7 +281,7 @@ class Role extends AbstractRole
      */
     public function setOrdreAffichage($ordreAffichage)
     {
-        $this->ordreAffichage = (string) $ordreAffichage;
+        $this->ordreAffichage = (string)$ordreAffichage;
 
         return $this;
     }
@@ -291,6 +291,12 @@ class Role extends AbstractRole
      */
     public function __toString()
     {
-        return $this->getLibelle();
+        $str = $this->getLibelle();
+
+        if ($this->getStructure() !== null) {
+            $str .= " " . $this->getStructure()->getCode();
+        }
+
+        return $str;
     }
 }
