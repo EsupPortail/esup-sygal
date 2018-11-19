@@ -4,6 +4,7 @@ use Application\Assertion\BaseAssertion;
 use Application\Constants;use Application\Controller\TheseController;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
+use Application\Provider\Privilege\ThesePrivileges;
 use Application\Provider\Privilege\ValidationPrivileges;
 use Application\Service\Fichier\PdcData;
 use Application\View\Renderer\PhpRenderer;
@@ -24,6 +25,7 @@ use UnicaenApp\Service\MessageCollector;
  * @see TheseController::validationPageDeCouvertureAction()
  */
 
+$canRefreshThese = $this->isAllowed($these, ThesePrivileges::THESE_REFRESH);
 $canValidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_DE_COUVERTURE);
 $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_DE_COUVERTURE_SUPPR);
 ?>
@@ -80,7 +82,7 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_
 <?php endif; ?>
 
 <!-- La mise à jour des données peut être faite tant que la page de couverture n'est pas validée -->
-<?php if (!$validation): ?>
+<?php if ($canRefreshThese && !$validation): ?>
     <div class="box panel panel-info">
         <div class="panel-heading">
             <h2 class="first">

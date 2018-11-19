@@ -77,7 +77,7 @@ return [
                 'import-all-console' => [
                     'type' => Simple::class,
                     'options' => [
-                        'route'    => 'import-all --etablissement= [--synchronize=]',
+                        'route'    => 'import-all --etablissement= [--breakOnServiceNotFound=] [--synchronize=]',
                         'defaults' => [
                             'controller' => Import\Controller\ImportController::class,
                             'action'     => 'import-all-console',
@@ -208,6 +208,7 @@ return [
                         'label' => "Import",
                         'order' => 0,
                         'route' => 'ws-import',
+                        'resource' => \UnicaenAuth\Guard\PrivilegeController::getResourceId('Import\Controller\Import', 'index'),
                         'pages' => [
                             'home' => [
                                 'label' => "Accueil",

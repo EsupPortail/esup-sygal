@@ -17,12 +17,22 @@ class ResultatTheseAdmisNotification extends Notification
     public function prepare()
     {
         $to = $this->these->getDoctorant()->getEmailPro() ?: $this->these->getDoctorant()->getEmail();
+
+        $emailDoctorantAbsent = false;
+        if (! $to) {
+            // lorsque le doctorant n'a pas d'email, envoi au BDD (+ petit message d'alerte dans le mail)
+            $emailDoctorantAbsent = true;
+            $to = $this->emailBdd;
+        }
+
         $this->setTo($to);
         $this->setSubject("Votre dossier est complet");
 
         $this->setTemplateVariables([
             'these' => $this->these,
             'contact' => $this->emailBdd,
+            'doctorant' => $this->these->getDoctorant(),
+            'emailDoctorantAbsent' => $emailDoctorantAbsent,
         ]);
 
         return $this;

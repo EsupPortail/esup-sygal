@@ -94,4 +94,21 @@ class SelectHelper  extends AbstractHelper {
         $texte .= '</select>';
         return $texte;
     }
+
+    public function asDataArray() {
+        $data = [];
+
+        $data[] = [
+            'value' => '-1',
+            'label' => $this->getText(),
+        ];
+
+        foreach ($this->listing as $element) {
+            $data[] = [
+                'value' => $element->getId(),
+                'label' => $element->getLibelle(),
+            ];
+        }
+        return $data;
+    }
 }

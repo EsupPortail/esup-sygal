@@ -10,6 +10,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ServerException;
 use Import\Exception\CallException;
+use Import\Exception\ServiceNotFoundException;
 use Zend\Http\Response;
 use Zend\Log\LoggerAwareTrait;
 
@@ -80,8 +81,10 @@ class CallService
     {
         try {
             $response = $this->sendRequest($uri);
+        } catch (CallException $ce) {
+            throw $ce;
         } catch (\Exception $e) {
-            throw CallException::error($uri, $e);
+            throw CallException::unexpectedError($uri, $e);
         }
         if ($response->getStatusCode() !== Response::STATUS_CODE_200) {
             throw CallException::unexpectedResponse($uri, $response);
@@ -175,7 +178,7 @@ class CallService
         } catch (RequestException $e) {
             throw CallException::networkError($e);
         } catch (GuzzleException $e) {
-            throw CallException::error($uri, $e);
+            throw CallException::unexpectedError($uri, $e);
         }
 
         return $response;

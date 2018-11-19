@@ -18,6 +18,8 @@ use Application\Form\Factory\RdvBuTheseDoctorantFormFactory;
 use Application\Form\Factory\RdvBuTheseFormFactory;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\Service\Acteur\ActeurService;
+use Application\Service\Financement\FinancementService;
+use Application\Service\Financement\FinancementServiceFactory;
 use Application\Service\Message\DiffusionMessages;
 use Application\Service\ServiceAwareInitializer;
 use Application\Service\These\Factory\TheseObserverServiceFactory;
@@ -976,6 +978,7 @@ return [
             'TheseService'                 => TheseServiceFactory::class,
             'TheseRechercheService'        => TheseRechercheServiceFactory::class,
             'TheseObserverService'         => TheseObserverServiceFactory::class,
+            FinancementService::class      => FinancementServiceFactory::class,
         ],
     ],
     'controllers'     => [

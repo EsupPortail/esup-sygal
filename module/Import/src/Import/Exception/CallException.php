@@ -12,7 +12,7 @@ use Zend\Http\Response;
 
 class CallException extends RuntimeException
 {
-    static public function error($uri, \Exception $previous = null)
+    static public function unexpectedError($uri, \Exception $previous = null)
     {
         return new self("Erreur inattendue rencontrée lors de l'envoi de la requête au WS (URI '$uri')", null, $previous);
     }
@@ -37,7 +37,7 @@ class CallException extends RuntimeException
 
     static public function clientError(ClientException $error)
     {
-        return new self("Erreur ClientException rencontrée lors de l'envoi de la requête au WS", null, $error);
+        return new self("Erreur ClientException rencontrée lors de l'envoi de la requête au WS", $error->getCode(), $error);
     }
 
     static public function serverError(ServerException $error)

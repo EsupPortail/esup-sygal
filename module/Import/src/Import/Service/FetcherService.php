@@ -119,9 +119,11 @@ class FetcherService
     }
 
     /**
+     * Réalise l'import d'un seul enregistrement d'un service.
+     *
      * @param string $serviceName
      * @param string $entityClass
-     * @param string $sourceCode
+     * @param string $sourceCode Source code de l'enregistrement à importer
      */
     private function fetchRow($serviceName, $entityClass, $sourceCode)
     {
@@ -171,11 +173,16 @@ class FetcherService
 
         /** Commit **/
         try {
-            $this->entityManager->getConnection()->commit();
+            $connection->commit();
         } catch (ConnectionException $e) {
             throw new RuntimeException("Le commit a échoué", null, $e);
         } catch (\Exception $e) {
-            throw new RuntimeException("Erreur inattendue", null, $e);
+            try {
+                $connection->rollBack();
+            } catch (ConnectionException $e) {
+                throw new RuntimeException("Erreur inattendue et en plus le rollback a échoué!", null, $e);
+            }
+            throw new RuntimeException("Erreur inattendue, rollback effectué.", null, $e);
         }
         $_fin = microtime(true);
         $this->logger->debug("Commit : " . ($_fin - $_debut) . " secondes.");
@@ -190,6 +197,8 @@ class FetcherService
     }
 
     /**
+     * Réalise l'import de tous les enregistrements d'un service.
+     *
      * @param string $service
      * @param string $entityClass
      * @param array  $filters
@@ -252,13 +261,7 @@ class FetcherService
                 try {
                     $connection->executeQuery($query);
                 } catch (DBALException $e) {
-                    $message = "Erreur lors de la mise à jour de la table $tableName en BDD";
-                    try {
-                        $connection->rollBack();
-                    } catch (ConnectionException $e) {
-                        throw new RuntimeException($message . " et le rollback a échoué", null, $e);
-                    }
-                    throw new RuntimeException($message, null, $e);
+                    throw new RuntimeException("Erreur lors de la mise à jour de la table $tableName en BDD", null, $e);
                 }
             }
             $_fin = microtime(true);
@@ -269,11 +272,14 @@ class FetcherService
         /** Commit **/
         $_debut = microtime(true);
         try {
-            $this->entityManager->getConnection()->commit();
-        } catch (ConnectionException $e) {
-            throw new RuntimeException("Le commit a échoué", null, $e);
+            $connection->commit();
         } catch (\Exception $e) {
-            throw new RuntimeException("Erreur inattendue", null, $e);
+            try {
+                $connection->rollBack();
+            } catch (ConnectionException $e) {
+                throw new RuntimeException("Le commit et le rollback ont échoué!", null, $e);
+            }
+            throw new RuntimeException("Le commit a échoué, un rollback a été effectué.", null, $e);
         }
         $_fin = microtime(true);
         $this->logger->debug("Commit : " . ($_fin - $_debut) . " secondes.");
@@ -434,13 +440,18 @@ class FetcherService
         $log_query .= "'" . $table . "'";
         $log_query .= ")";
 
+        $connection = $this->entityManager->getConnection();
+        $connection->beginTransaction();
         try {
-            $connection = $this->entityManager->getConnection();
-            $connection->beginTransaction();
             $connection->executeQuery($log_query);
-            $this->entityManager->getConnection()->commit();
+            $connection->commit();
         } catch (\Exception $e) {
-            throw new RuntimeException("Problème lors de l'écriture du log en base.", null, $e);
+            try {
+                $connection->rollBack();
+            } catch (ConnectionException $e) {
+                throw new RuntimeException("Ecriture du log en base et rollback impossibles.", null, $e);
+            }
+            throw new RuntimeException("Ecriture du log en base impossible.", null, $e);
         }
 
         $this->logger->info($response);

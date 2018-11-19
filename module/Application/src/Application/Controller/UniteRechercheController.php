@@ -106,6 +106,8 @@ class UniteRechercheController extends AbstractController
         // si POST alors on revient du formulaire
         if ($data = $this->params()->fromPost()) {
 
+            var_dump($data);
+
             // récupération des données et des fichiers
             $request = $this->getRequest();
             $data = $request->getPost()->toArray();

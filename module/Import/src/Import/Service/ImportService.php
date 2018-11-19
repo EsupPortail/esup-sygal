@@ -6,6 +6,7 @@ use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\These;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
+use Import\Exception\CallException;
 use Import\Model\TmpActeur;
 use Import\Model\TmpDoctorant;
 use Import\Model\TmpThese;
@@ -122,7 +123,15 @@ class ImportService
         $this->computeFilters($service, $sourceCode, $queryParams);
 
         $this->fetcherService->setEtablissement($etablissement);
-        $this->fetcherService->fetch($service, $sourceCode, $this->filters);
+        try {
+            $this->fetcherService->fetch($service, $sourceCode, $this->filters);
+        } catch (CallException $e) {
+            if ($e->getCode() === 404) {
+                throw new RuntimeException("Le service '$service' n'existe pas !", null, $e);
+            } else {
+                throw new RuntimeException("Erreur rencontrée lors de l'import (service: '$service')", null, $e);
+            }
+        }
 
         // synchro UnicaenImport
         if ($synchronize) {
@@ -138,19 +147,36 @@ class ImportService
      *
      * @param Etablissement $etablissement Etablissement que l'on souhaite interroger
      * @param bool          $synchronize   Réaliser ou non la synchro SRC_XXX => XXX
+     * @param bool          $breakOnServiceNotFound Faut-il stopper si le service appelé n'existe pas
      */
-    public function importAll(Etablissement $etablissement, $synchronize = true)
+    public function importAll(Etablissement $etablissement, $synchronize = true, $breakOnServiceNotFound = true)
     {
+        $synchronizeNeeded = false;
+
         $services = static::SERVICES;
         foreach ($services as $service) {
             $this->fetcherService->setEtablissement($etablissement);
-            $this->fetcherService->fetch($service);
+            try {
+                $this->fetcherService->fetch($service);
 
-            $this->synchroService->addService($service);
+                $this->synchroService->addService($service);
+                $synchronizeNeeded = true;
+            } catch (CallException $e) {
+                if ($e->getCode() === 404) {
+                    $message = "Le service '$service' n'existe pas !";
+                    if ($breakOnServiceNotFound) {
+                        throw new RuntimeException($message, null, $e);
+                    } else {
+                        $this->logger->alert("$message On continue tout de même.");
+                    }
+                } else {
+                    throw new RuntimeException("Erreur rencontrée lors de l'import (service: tous)", null, $e);
+                }
+            }
         }
 
         // synchro UnicaenImport
-        if ($synchronize) {
+        if ($synchronizeNeeded && $synchronize) {
             $this->synchroService->synchronize();
         }
     }

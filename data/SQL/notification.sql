@@ -5,12 +5,8 @@
 -- ------------------------------------------------------------------------------------------------
 
 --
--- 0/ Désactiver le job de synchro automatique.
+-- 0/ Désactiver la synchro CRONée.
 --
-BEGIN
-  DBMS_SCHEDULER.disable(name => '"SODOCT"."synchronisation"', force => TRUE);
-END;
-/
 
 --
 -- 0/ Recherche des SOURCE_CODE des thèses.
@@ -29,91 +25,87 @@ select SOURCE_CODE from these where id in (25948);
 create or replace view src_these as
   with v as (
       -- script initial de la vue src_these A VERIFIER !
-      select
-        null id,
-        thd.id thesard_id,
-        ed.id ecole_doct_id,
-        ur.id unite_rech_id,
-        mv.lib_ths as titre,
-        mv.eta_ths as etat_these,
-        mv.LIB_INT1_DIS as lib_disc,
-        mv.dat_deb_ths as date_prem_insc,
-        mv.cod_eqr as cod_unit_rech,
-        mv.lib_eqr as lib_unit_rech,
-        mv.dat_prev_sou as date_prev_soutenance,
-        mv.dat_sou_ths as date_soutenance,
-        mv.dat_fin_cfd_ths as date_fin_confid,
-        mv.lib_etab_cotut as lib_etab_cotut,
-        mv.lib_pays_cotut as lib_pays_cotut,
-        to_number(mv.cod_neg_tre) as resultat,
-        mv.correction_possible as CORREC_AUTORISEE,
-        mv.SOURCE_ID,
-        mv.SOURCE_CODE
-      from
-        MV_THESE mv
-        join THESARD thd on thd.SOURCE_CODE = mv.z_thesard_fk
-        left join ecole_doct ed on ed.SOURCE_CODE = mv.z_ecole_doct_fk
-        left join unite_rech ur on ur.SOURCE_CODE = mv.z_unite_rech_fk
-      order by to_number(mv.SOURCE_CODE)
+      SELECT
+        NULL                            AS id,
+        tmp.SOURCE_CODE                 AS SOURCE_CODE,
+        src.ID                          AS source_id,
+        e.id                            AS etablissement_id,
+        d.id                            AS doctorant_id,
+        coalesce(ed_substit.id, ed.id)  AS ecole_doct_id,
+        coalesce(ur_substit.id, ur.id)  AS unite_rech_id,
+        --     ed.id  AS ecole_doct_id,
+        --     ur.id  AS unite_rech_id,
+        ed.id                           AS ecole_doct_id_orig,
+        ur.id                           AS unite_rech_id_orig,
+        tmp.lib_ths                     AS titre,
+        tmp.eta_ths                     AS etat_these,
+        to_number(tmp.cod_neg_tre)      AS resultat,
+        tmp.lib_int1_dis                AS lib_disc,
+        tmp.dat_deb_ths                 AS date_prem_insc,
+        tmp.dat_prev_sou                AS date_prev_soutenance,
+        tmp.dat_sou_ths                 AS date_soutenance,
+        tmp.dat_fin_cfd_ths             AS date_fin_confid,
+        tmp.lib_etab_cotut              AS lib_etab_cotut,
+        tmp.lib_pays_cotut              AS lib_pays_cotut,
+        tmp.correction_possible         AS CORREC_AUTORISEE,
+        tem_sou_aut_ths                 AS soutenance_autoris,
+        dat_aut_sou_ths                 AS date_autoris_soutenance,
+        tem_avenant_cotut               AS tem_avenant_cotut
+      FROM TMP_THESE tmp
+        JOIN STRUCTURE s ON s.CODE = tmp.ETABLISSEMENT_ID
+        JOIN ETABLISSEMENT e ON e.STRUCTURE_ID = s.ID
+        JOIN SOURCE src ON src.CODE = tmp.SOURCE_ID
+        JOIN DOCTORANT d ON d.SOURCE_CODE = tmp.DOCTORANT_ID
+
+        LEFT JOIN ECOLE_DOCT ed ON ed.SOURCE_CODE = tmp.ECOLE_DOCT_ID
+        LEFT JOIN UNITE_RECH ur ON ur.SOURCE_CODE = tmp.UNITE_RECH_ID
+
+        LEFT JOIN STRUCTURE_SUBSTIT ss_ed on ss_ed.FROM_STRUCTURE_ID = ed.STRUCTURE_ID
+        LEFT JOIN ECOLE_DOCT ed_substit on ed_substit.STRUCTURE_ID = ss_ed.TO_STRUCTURE_ID
+
+        LEFT JOIN STRUCTURE_SUBSTIT ss_ur on ss_ur.FROM_STRUCTURE_ID = ur.STRUCTURE_ID
+        LEFT JOIN UNITE_RECH ur_substit on ur_substit.STRUCTURE_ID = ss_ur.TO_STRUCTURE_ID
   )
-  select * from v where SOURCE_CODE not in ('4783')
+  select * from v where SOURCE_CODE not in ('UCN::4783')
   union
   select
     ID,
-    THESARD_ID,
+    SOURCE_CODE,
+    SOURCE_ID,
+    ETABLISSEMENT_ID,
+    DOCTORANT_ID,
     ECOLE_DOCT_ID,
     UNITE_RECH_ID,
+    ECOLE_DOCT_ID_ORIG,
+    UNITE_RECH_ID_ORIG,
     TITRE,
     ETAT_THESE,
+    1 as RESULTAT,
     LIB_DISC,
     DATE_PREM_INSC,
-    COD_UNIT_RECH,
-    LIB_UNIT_RECH,
     DATE_PREV_SOUTENANCE,
     DATE_SOUTENANCE,
     DATE_FIN_CONFID,
-    lib_etab_cotut,
-    lib_pays_cotut,
-    1 as RESULTAT,
-    /*'mineure' as */CORREC_AUTORISEE,
-    SOURCE_ID,
-    SOURCE_CODE
-  FROM v where SOURCE_CODE in ('4783')
---   union
---   select
---     ID,
---     THESARD_ID,
---     ECOLE_DOCT_ID,
---     UNITE_RECH_ID,
---     TITRE,
---     ETAT_THESE,
---     LIB_DISC,
---     DATE_PREM_INSC,
---     COD_UNIT_RECH,
---     LIB_UNIT_RECH,
---     DATE_PREV_SOUTENANCE,
---     DATE_SOUTENANCE,
---     DATE_FIN_CONFID,
---     lib_etab_cotut,
---     lib_pays_cotut,
---     1 as RESULTAT,
---     'majeure' as CORREC_AUTORISEE,
---     SOURCE_ID,
---     SOURCE_CODE
---   FROM v where SOURCE_CODE in ('12393')
+    LIB_ETAB_COTUT,
+    LIB_PAYS_COTUT,
+    CORREC_AUTORISEE,
+    SOUTENANCE_AUTORIS,
+    DATE_AUTORIS_SOUTENANCE,
+    TEM_AVENANT_COTUT
+  FROM v where SOURCE_CODE in ('UCN::4783')
 ;
 
 --
--- 2/ Vérification que les 2 thèses apparaissent bien dans la vue diff.
+-- 2/ Vérification que les thèses apparaissent bien dans la vue diff.
 --
 select id, SOURCE_CODE, IMPORT_ACTION, CORREC_AUTORISEE, RESULTAT, U_CORREC_AUTORISEE, U_RESULTAT
 from v_diff_these
-where source_code in ('4783');
+where source_code in ('UCN::4783');
 
 --
 -- 3/ Lancement procédure.
 --
-begin sodoct_import.STORE_OBSERV_RESULTS; end; commit;
+begin app_import.STORE_OBSERV_RESULTS; end; commit;
 /
 
 --
@@ -122,7 +114,7 @@ begin sodoct_import.STORE_OBSERV_RESULTS; end; commit;
 select ior.id, io.CODE, ior.DATE_CREATION, ior.SOURCE_CODE, ior.RESULTAT, ior.DATE_NOTIF
 from IMPORT_OBSERV_RESULT ior
 join IMPORT_OBSERV io on ior.IMPORT_OBSERV_ID = io.ID
-where SOURCE_CODE = '4783'
+where SOURCE_CODE = 'UCN::4783'
 order by DATE_CREATION desc
 ;
 
@@ -137,39 +129,49 @@ order by DATE_CREATION desc
 -- 6/ Restauration Vue src_these initiale.
 --
 create or replace view src_these as
-  select
-    null id,
-    thd.id thesard_id,
-    ed.id ecole_doct_id,
-    ur.id unite_rech_id,
-    mv.lib_ths as titre,
-    mv.eta_ths as etat_these,
-    mv.LIB_INT1_DIS as lib_disc,
-    mv.dat_deb_ths as date_prem_insc,
-    mv.cod_eqr as cod_unit_rech,
-    mv.lib_eqr as lib_unit_rech,
-    mv.dat_prev_sou as date_prev_soutenance,
-    mv.dat_sou_ths as date_soutenance,
-    mv.dat_fin_cfd_ths as date_fin_confid,
-    mv.lib_etab_cotut as lib_etab_cotut,
-    mv.lib_pays_cotut as lib_pays_cotut,
-    to_number(mv.cod_neg_tre) as resultat,
-    mv.correction_possible as CORREC_AUTORISEE,
-    mv.SOURCE_ID,
-    mv.SOURCE_CODE
-  from
-    MV_THESE mv
-    join THESARD thd on thd.SOURCE_CODE = mv.z_thesard_fk
-    left join ecole_doct ed on ed.SOURCE_CODE = mv.z_ecole_doct_fk
-    left join unite_rech ur on ur.SOURCE_CODE = mv.z_unite_rech_fk
-  order by to_number(mv.SOURCE_CODE)
+  SELECT
+    NULL                            AS id,
+    tmp.SOURCE_CODE                 AS SOURCE_CODE,
+    src.ID                          AS source_id,
+    e.id                            AS etablissement_id,
+    d.id                            AS doctorant_id,
+    coalesce(ed_substit.id, ed.id)  AS ecole_doct_id,
+    coalesce(ur_substit.id, ur.id)  AS unite_rech_id,
+    --     ed.id  AS ecole_doct_id,
+    --     ur.id  AS unite_rech_id,
+    ed.id                           AS ecole_doct_id_orig,
+    ur.id                           AS unite_rech_id_orig,
+    tmp.lib_ths                     AS titre,
+    tmp.eta_ths                     AS etat_these,
+    to_number(tmp.cod_neg_tre)      AS resultat,
+    tmp.lib_int1_dis                AS lib_disc,
+    tmp.dat_deb_ths                 AS date_prem_insc,
+    tmp.dat_prev_sou                AS date_prev_soutenance,
+    tmp.dat_sou_ths                 AS date_soutenance,
+    tmp.dat_fin_cfd_ths             AS date_fin_confid,
+    tmp.lib_etab_cotut              AS lib_etab_cotut,
+    tmp.lib_pays_cotut              AS lib_pays_cotut,
+    tmp.correction_possible         AS CORREC_AUTORISEE,
+    tem_sou_aut_ths                 AS soutenance_autoris,
+    dat_aut_sou_ths                 AS date_autoris_soutenance,
+    tem_avenant_cotut               AS tem_avenant_cotut
+  FROM TMP_THESE tmp
+    JOIN STRUCTURE s ON s.CODE = tmp.ETABLISSEMENT_ID
+    JOIN ETABLISSEMENT e ON e.STRUCTURE_ID = s.ID
+    JOIN SOURCE src ON src.CODE = tmp.SOURCE_ID
+    JOIN DOCTORANT d ON d.SOURCE_CODE = tmp.DOCTORANT_ID
+
+    LEFT JOIN ECOLE_DOCT ed ON ed.SOURCE_CODE = tmp.ECOLE_DOCT_ID
+    LEFT JOIN UNITE_RECH ur ON ur.SOURCE_CODE = tmp.UNITE_RECH_ID
+
+    LEFT JOIN STRUCTURE_SUBSTIT ss_ed on ss_ed.FROM_STRUCTURE_ID = ed.STRUCTURE_ID
+    LEFT JOIN ECOLE_DOCT ed_substit on ed_substit.STRUCTURE_ID = ss_ed.TO_STRUCTURE_ID
+
+    LEFT JOIN STRUCTURE_SUBSTIT ss_ur on ss_ur.FROM_STRUCTURE_ID = ur.STRUCTURE_ID
+    LEFT JOIN UNITE_RECH ur_substit on ur_substit.STRUCTURE_ID = ss_ur.TO_STRUCTURE_ID
   ;
 
 
 --
--- 7/ Réactiver le job de synchro automatique.
+-- 7/ Réactiver la synchro CRONée.
 --
-BEGIN
-  DBMS_SCHEDULER.enable(name=>'"SODOCT"."synchronisation"');
-END;
-/

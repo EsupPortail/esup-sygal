@@ -2,16 +2,21 @@
 
 namespace Application\Service\These;
 
+use Application\Entity\Db\DomaineScientifique;
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\OrigineFinancement;
 use Application\Entity\Db\SourceInterface;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
 use Application\Entity\UserWrapper;
+use Application\Filter\EtablissementPrefixFilter;
 use Application\QueryBuilder\TheseQueryBuilder;
+use Application\Service\DomaineScientifiqueServiceAwareTrait;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Application\Service\Financement\FinancementServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Application\Service\Structure\StructureServiceAwareTrait;
 use Application\Service\These\Filter\TheseSelectFilter;
@@ -21,7 +26,6 @@ use Application\Service\UserContextServiceAwareTrait;
 use Application\View\Helper\Sortable;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\Query\Expr\Join;
-use MongoDB\BSON\Type;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
 
@@ -34,6 +38,8 @@ class TheseRechercheService
     use EcoleDoctoraleServiceAwareTrait;
     use StructureServiceAwareTrait;
     use SourceServiceAwareTrait;
+    use DomaineScientifiqueServiceAwareTrait;
+    use FinancementServiceAwareTrait;
 
     /**
      * @var bool
@@ -65,7 +71,10 @@ class TheseRechercheService
         $ecolesDoctorales = [];
         $unitesRecherches = [];
         $anneesPremiereInscription = [];
+        $anneesSoutenance = [];
         $disciplines = [];
+        $domainesSientifiques = [];
+        $financements = [];
 
         $this->filters = [
             TheseSelectFilter::NAME_etatThese                => new TheseSelectFilter(
@@ -90,16 +99,33 @@ class TheseRechercheService
                 $unitesRecherches,
                 ['liveSearch' => true]
             ),
+            TheseSelectFilter::NAME_financement           => new TheseSelectFilter(
+                "Origine financement",
+                TheseSelectFilter::NAME_financement,
+                $financements,
+                ['width' => '125px', 'liveSearch' => true]
+            ),
             TheseSelectFilter::NAME_anneePremiereInscription => new TheseSelectFilter(
                 "1ère inscr.",
                 TheseSelectFilter::NAME_anneePremiereInscription,
                 $anneesPremiereInscription
             ),
+            TheseSelectFilter::NAME_anneeSoutenance => new TheseSelectFilter(
+                "soutenance",
+                TheseSelectFilter::NAME_anneeSoutenance,
+                $anneesSoutenance
+            ),
             TheseSelectFilter::NAME_discipline               => new TheseSelectFilter(
                 "Discipline",
                 TheseSelectFilter::NAME_discipline,
                 $disciplines,
-                ['width' => '200px', 'liveSearch' => true]
+                ['width' => '125px', 'liveSearch' => true]
+            ),
+            TheseSelectFilter::NAME_domaineScientifique     => new TheseSelectFilter(
+                "Domaine scientifique",
+                TheseSelectFilter::NAME_domaineScientifique,
+                $domainesSientifiques,
+                ['width' => '125px', 'liveSearch' => true]
             ),
             TheseTextFilter::NAME_text                       => new TheseTextFilter(
                 "Recherche de texte",
@@ -126,7 +152,10 @@ class TheseRechercheService
         $ecolesDoctorales = $this->fetchEcolesDoctoralesOptions();
         $unitesRecherches = $this->fetchUnitesRecherchesOptions();
         $anneesPremiereInscription = $this->fetchAnneesInscriptionOptions();
+        $anneesSoutenance = $this->fetchAnneesSoutenance();
         $disciplines = $this->fetchDisciplinesOptions();
+        $domainesScientifiques = $this->fetchDomainesScientifiquesOptions();
+        $financements = $this->fetchOriginesFinancementsOptions();
 
         $this->filters = [
             TheseSelectFilter::NAME_etatThese                => new TheseSelectFilter(
@@ -151,16 +180,33 @@ class TheseRechercheService
                 $unitesRecherches,
                 ['liveSearch' => true]
             ),
+            TheseSelectFilter::NAME_financement           => new TheseSelectFilter(
+                "Origine financement",
+                TheseSelectFilter::NAME_financement,
+                $financements,
+                ['width' => '125px', 'liveSearch' => true]
+            ),
             TheseSelectFilter::NAME_anneePremiereInscription => new TheseSelectFilter(
                 "1ère inscr.",
                 TheseSelectFilter::NAME_anneePremiereInscription,
                 $anneesPremiereInscription
             ),
+            TheseSelectFilter::NAME_anneeSoutenance => new TheseSelectFilter(
+                "soutenance",
+                TheseSelectFilter::NAME_anneeSoutenance,
+                $anneesSoutenance
+            ),
             TheseSelectFilter::NAME_discipline               => new TheseSelectFilter(
                 "Discipline",
                 TheseSelectFilter::NAME_discipline,
                 $disciplines,
-                ['width' => '200px', 'liveSearch' => true]
+                ['width' => '125px', 'liveSearch' => true]
+            ),
+            TheseSelectFilter::NAME_domaineScientifique      => new TheseSelectFilter(
+                "Domaine scientifique",
+                TheseSelectFilter::NAME_domaineScientifique,
+                $domainesScientifiques,
+                ['width' => '125px', 'liveSearch' => true]
             ),
             TheseTextFilter::NAME_text                       => new TheseTextFilter(
                 "Recherche de texte",
@@ -360,10 +406,12 @@ class TheseRechercheService
                     default:
                         throw new RuntimeException("Cas imprévu!");
                 }
+                $individuSourceCode = (new EtablissementPrefixFilter())
+                    ->addPrefixTo($userWrapper->getSupannId(), $role->getStructure()->getCode());
                 $qb
                     ->join('t.acteurs', 'adt', Join::WITH, 'adt.role = :role')
-                    ->join('adt.individu', 'idt', Join::WITH, 'idt.sourceCode like :idtSourceCode')
-                    ->setParameter('idtSourceCode', '%::' . $userWrapper->getSupannId())
+                    ->join('adt.individu', 'idt', Join::WITH, 'idt.sourceCode = :idtSourceCode')
+                    ->setParameter('idtSourceCode', $individuSourceCode)
                     ->setParameter('role', $role);
             }
             // sinon role = membre jury
@@ -384,8 +432,8 @@ class TheseRechercheService
                  * On ne voit que les thèses concernant son ED.
                  */
                 $qb
-                    ->addSelect('ed')->join('t.ecoleDoctorale', 'ed')
-                    ->andWhere('ed = :ed')
+                    ->addSelect('ed2')->join('t.ecoleDoctorale', 'ed2')
+                    ->andWhere('ed2 = :ed')
                     ->setParameter('ed', $role->getStructure()->getEcoleDoctorale());
             }
             elseif ($role->isUniteRechercheDependant()) {
@@ -393,8 +441,8 @@ class TheseRechercheService
                  * On ne voit que les thèses concernant son UR.
                  */
                 $qb
-                    ->addSelect('ur')->join('t.uniteRecherche', 'ur')
-                    ->andWhere('ur = :ur')
+                    ->addSelect('ur2')->join('t.uniteRecherche', 'ur2')
+                    ->andWhere('ur2 = :ur')
                     ->setParameter('ur', $role->getStructure()->getUniteRecherche());
             }
         }
@@ -559,6 +607,28 @@ class TheseRechercheService
         return $this->addEmptyOption($options, "Toutes");
     }
 
+    private function fetchAnneesSoutenance()
+    {
+        $role = $this->getSelectedIdentityRole();
+
+        if ($role->isEtablissementDependant()) {
+            $etablissement = $role->getStructure()->getEtablissement();
+            $annees = $this->theseService->getRepository()->fetchDistinctAnneesSoutenance($etablissement);
+        } else {
+            $annees = $this->theseService->getRepository()->fetchDistinctAnneesSoutenance();
+        }
+
+        $annees = array_reverse(array_filter($annees));
+
+        $options = [];
+        $options[] = $this->optionify(null); // option spéciale pour valeur === null
+        foreach ($annees as $annee) {
+            $options[] = $this->optionify($annee);
+        }
+
+        return $this->addEmptyOption($options, "Toutes");
+    }
+
     private function fetchDisciplinesOptions()
     {
         $role = $this->getSelectedIdentityRole();
@@ -583,6 +653,39 @@ class TheseRechercheService
         return $this->addEmptyOption($options, "Toutes");
     }
 
+    private function fetchDomainesScientifiquesOptions()
+    {
+        $domaines = $this->getDomaineScientifiqueService()->getRepository()->findAll();
+        $domaines = array_filter($domaines);
+
+        sort($domaines);
+
+        $options = [];
+        $options[] = $this->optionify(null); // option spéciale pour valeur === null
+        /** @var DomaineScientifique $domaine */
+        foreach ($domaines as $domaine) {
+            $options[] = $this->optionify($domaine);
+        }
+
+        return $this->addEmptyOption($options, "Tous");
+    }
+
+    private function fetchOriginesFinancementsOptions()
+    {
+        $origines = $this->getFinancementService()->getOriginesFinancements("libelleLong");
+        $origines = array_filter($origines);
+
+        sort($origines);
+
+        $options = [];
+        $options[] = $this->optionify(null); // option spéciale pour valeur === null
+        /** @var DomaineScientifique $domaine */
+        foreach ($origines as $origine) {
+            $options[] = $this->optionify($origine);
+        }
+
+        return $this->addEmptyOption($options, "Toutes");
+    }
     /**
      * @return \Application\Entity\Db\Role|null|\Zend\Permissions\Acl\Role\RoleInterface
      */
@@ -603,6 +706,8 @@ class TheseRechercheService
     }
 
     /**
+     * N.B. attention value doit être une chaine de caractère car le test dans est non permissif SelectsFilterPanelHelper.php:33
+     *
      * @param Etablissement|EcoleDoctorale|UniteRecherche|string|null $value
      * @param string                                                  $label
      * @return array
@@ -615,6 +720,10 @@ class TheseRechercheService
             return ['value' => $value->getSourceCode(), 'label' => $value->getSigle(), 'subtext' => $value->getLibelle()];
         } elseif ($value instanceof UniteRecherche) {
             return ['value' => $value->getSourceCode(), 'label' => $value->getCode(), 'subtext' => $value->getLibelle()];
+        } elseif ($value instanceof DomaineScientifique) {
+            return ['value' => (string) $value->getId(), 'label' => $value->getLibelle()];
+        } elseif ($value instanceof OrigineFinancement) {
+            return ['value' => (string) $value->getId(), 'label' => $value->getLibelleLong()];
         } elseif ($value === null) {
             return ['value' => 'NULL', 'label' => $label ?: "Inconnue"];
         } elseif ($value === '') {

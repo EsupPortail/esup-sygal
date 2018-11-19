@@ -2,8 +2,10 @@
 
 namespace Application\Service\These\Factory;
 
+use Application\Service\DomaineScientifiqueService;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\Etablissement\EtablissementService;
+use Application\Service\Financement\FinancementService;
 use Application\Service\Source\SourceService;
 use Application\Service\Structure\StructureService;
 use Application\Service\These\TheseRechercheService;
@@ -30,6 +32,8 @@ class TheseRechercheServiceFactory
          * @var EcoleDoctoraleService $ecoleDoctoraleService
          * @var SourceService $sourceService
          * @var StructureService $structureService
+         * @var DomaineScientifiqueService $domaineService
+         * @var FinancementService $financementService
          */
         $theseService = $serviceLocator->get('TheseService');
         $userContextService = $serviceLocator->get('UserContextService');
@@ -38,6 +42,8 @@ class TheseRechercheServiceFactory
         $etablissementService = $serviceLocator->get('EtablissementService');
         $sourceService = $serviceLocator->get('SourceService');
         $structureService = $serviceLocator->get(StructureService::class);
+        $domaineService = $serviceLocator->get(DomaineScientifiqueService::class);
+        $financementService = $serviceLocator->get(FinancementService::class);
 
         $service = new TheseRechercheService();
         $service->setTheseService($theseService);
@@ -47,6 +53,8 @@ class TheseRechercheServiceFactory
         $service->setEcoleDoctoraleService($ecoleDoctoraleService);
         $service->setSourceService($sourceService);
         $service->setStructureService($structureService);
+        $service->setDomaineScientifiqueService($domaineService);
+        $service->setFinancementService($financementService);
 
         return $service;
     }

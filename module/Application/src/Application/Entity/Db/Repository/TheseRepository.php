@@ -64,6 +64,32 @@ class TheseRepository extends DefaultEntityRepository
 
     /**
      * @param Etablissement|null $etablissement
+     * @return int[]
+     * @see Year
+     */
+    public function fetchDistinctAnneesSoutenance(Etablissement $etablissement = null)
+    {
+        $qb = $this->createQueryBuilder('t');
+        $qb
+            ->distinct()
+            ->select("year(t.dateSoutenance)")
+            ->orderBy("year(t.dateSoutenance)");
+
+        if ($etablissement !== null) {
+            $qb
+                ->join('t.etablissement', 'etab', Join::WITH, 'etab = :etablissement')
+                ->setParameter('etablissement', $etablissement);
+        }
+
+        $results = array_map(function($value) {
+            return current($value);
+        }, $qb->getQuery()->getScalarResult());
+
+        return $results;
+    }
+
+    /**
+     * @param Etablissement|null $etablissement
      * @return string[]
      */
     public function fetchDistinctDisciplines(Etablissement $etablissement = null)
@@ -86,4 +112,6 @@ class TheseRepository extends DefaultEntityRepository
 
         return $results;
     }
+
+
 }
