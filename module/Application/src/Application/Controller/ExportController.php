@@ -3,6 +3,7 @@
 namespace Application\Controller;
 
 use Application\Entity\Db\Acteur;
+use Application\Entity\Db\Financement;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
@@ -55,6 +56,14 @@ class ExportController extends AbstractController
             'Unité de Recherche'                    => function (These $these) { if($these->getUniteRecherche() !== null) return $these->getUniteRecherche()->getLibelle(); else return null; },
             'Etablissement Co-Tutelle'              => function (These $these) { return $these->getLibelleEtabCotutelle(); },
             'Pays Co-Tutelle'                       => function (These $these) { return $these->getLibellePaysCotutelle(); },
+            //Financements
+            'Origines du financement'                            => function (These $these) {
+                $financements = $these->getFinancements();
+                $origines = [];
+                /** @var Financement $financement */
+                foreach ($financements as $financement) $origines[] = $financement->getOrigineFinancement()->getLibelleLong();
+                return implode(",", $origines);
+            },
             //Dates
             'Date de première inscription'          => function (These $these) { return $these->getDatePremiereInscription(); },
             'Date de prévisionnel de soutenance'    => function (These $these) { return $these->getDatePrevisionSoutenance(); },
