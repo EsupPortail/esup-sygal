@@ -248,6 +248,11 @@ class Membre {
         $this->individu = $individu;
     }
 
+    /** @return boolean */
+    public function estRapporteur()
+    {
+        return $this->getRole() === 'Rapporteur';
+    }
 
 
 }

@@ -2,12 +2,14 @@
 
 namespace Soutenance\Controller\Factory;
 
+use Application\Service\Acteur\ActeurService;
 use Application\Service\Individu\IndividuService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
 use Application\Service\UserContextService;
 use Application\Service\Validation\ValidationService;
 use Soutenance\Controller\SoutenanceController;
+use Soutenance\Service\Avis\AvisService;
 use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Proposition\PropositionService;
 use Zend\Mvc\Controller\ControllerManager;
@@ -29,6 +31,8 @@ class SoutenanceControllerFactory
          * @var IndividuService $individuService
          * @var NotifierService $notifierService
          * @var UserContextService $userContextService
+         * @var AvisService $avisService
+         * @var ActeurService $acteurService
          */
         $propositionService = $controllerManager->getServiceLocator()->get(PropositionService::class);
         $membreService = $controllerManager->getServiceLocator()->get(MembreService::class);
@@ -36,6 +40,8 @@ class SoutenanceControllerFactory
         $validationService = $controllerManager->getServiceLocator()->get('ValidationService');
         $individuService = $controllerManager->getServiceLocator()->get('IndividuService');
         $notifierService = $controllerManager->getServiceLocator()->get(NotifierService::class);
+        $avisService = $controllerManager->getServiceLocator()->get(AvisService::class);
+        $acteurService = $controllerManager->getServiceLocator()->get(ActeurService::class);
         $userContextService = $controllerManager->getServiceLocator()->get('UserContextService');
 
         /** @var SoutenanceController $controller */
@@ -47,6 +53,8 @@ class SoutenanceControllerFactory
         $controller->setIndividuService($individuService);
         $controller->setNotifierService($notifierService);
         $controller->setUserContextService($userContextService);
+        $controller->setAvisService($avisService);
+        $controller->setActeurService($acteurService);
 
         return $controller;
     }

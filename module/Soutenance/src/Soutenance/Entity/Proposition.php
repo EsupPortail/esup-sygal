@@ -287,9 +287,32 @@ class Proposition {
         return true;
     }
 
+    public function juryOk()
+    {
+        $indicateurs = $this->computeIndicateur();
+        if (!$indicateurs["valide"]) return false;
+        return true;
+    }
+
     /** @return boolean */
     public function hasDateEtLieu()
     {
         return ($this->getDate() && $this->getLieu());
+    }
+
+
+    /**
+     * @return Membre[]
+     */
+    public function getRapporteurs()
+    {
+        $rapporteurs = [];
+        $membres = $this->getMembres();
+        /** @var Membre $membre */
+        foreach ($membres as $membre) {
+            if ($membre->estRapporteur()) $rapporteurs[] = $membre;
+        }
+
+        return $rapporteurs;
     }
 }

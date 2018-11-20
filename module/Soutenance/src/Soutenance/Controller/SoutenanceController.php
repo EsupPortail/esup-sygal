@@ -10,6 +10,7 @@ use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Validation;
+use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
@@ -24,6 +25,7 @@ use Soutenance\Form\SoutenanceDateLieu\SoutenanceDateLieuForm;
 use Soutenance\Form\SoutenanceMembre\SoutenanceMembreForm;
 use Soutenance\Form\SoutenanceRefus\SoutenanceRefusForm;
 use Soutenance\Provider\Privilege\SoutenancePrivileges;
+use Soutenance\Service\Avis\AvisServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Zend\Http\Request;
@@ -46,6 +48,59 @@ class SoutenanceController extends AbstractActionController {
     use ValidationServiceAwareTrait;
     use NotifierServiceAwareTrait;
     use UserContextServiceAwareTrait;
+    use AvisServiceAwareTrait;
+    use ActeurServiceAwareTrait;
+
+    public function indexAction()
+    {
+        $theseId = $this->params()->fromRoute('these');
+        if ($theseId) {
+            /** @var These $these */
+            $these = $this->getTheseService()->getRepository()->find($theseId);
+
+            /** @var Individu[] $directeurs */
+            $dirs = $these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE);
+            $codirs = $these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE);
+            $acteurs = array_merge($dirs->toArray(), $codirs->toArray());
+            $directeurs = [];
+            /** @var Acteur $acteur */
+            foreach ($acteurs as $acteur) $directeurs[] = $acteur->getIndividu();
+
+            $proposition = $this->getPropositionService()->findByThese($these);
+            if ($proposition) $rapporteurs = $proposition->getRapporteurs();
+
+            $validations = [];
+            $validations[$these->getDoctorant()->getIndividu()->getId()] = $this->getValidationService()->findValidationPropositionSoutenanceByTheseAndIndividu($these, $these->getDoctorant()->getIndividu());
+            foreach ($directeurs as $directeur) {
+                $validations[$directeur->getId()] = $this->getValidationService()->findValidationPropositionSoutenanceByTheseAndIndividu($these, $directeur);
+            }
+
+            $validationUR = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these);
+            if ($validationUR) $validations["unite-recherche"] = current($validationUR);
+            $validationED = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_ED, $these);
+            if ($validationED) $validations["ecole-doctorale"] = current($validationED);
+            $validationBDD = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
+            if ($validationBDD) $validations["bureau-doctorat"] = current($validationBDD);
+
+            $avis = [];
+            foreach ($rapporteurs as $rapporteur) {
+                $validationR = $this->getValidationService()->getRepository()->findValidationByCodeAndIndividu(TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $rapporteur->getIndividu());
+                if ($validationR) $validations[$rapporteur->getIndividu()->getId()] = $validationR;
+
+                $avisRapporteur = $this->getAvisService()->getAvisByRapporteur($rapporteur, $these);
+                if ($avisRapporteur) $avis[$rapporteur->getIndividu()->getId()] = $avisRapporteur->getAvis();
+            }
+        }
+
+        return new ViewModel([
+            'these' => $these,
+            'proposition' => $proposition,
+            'directeurs' => $directeurs,
+            'rapporteurs' => $rapporteurs,
+            'validations' => $validations,
+            'avis'  => $avis,
+        ]);
+    }
 
     public function propositionAction()
     {
@@ -93,8 +148,6 @@ class SoutenanceController extends AbstractActionController {
         $validationBDD = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
         if ($validationBDD) $validations["bureau-doctorat"] = current($validationBDD);
 
-
-
         return new ViewModel([
                 'these' => $these,
                 'proposition' => $proposition,
@@ -107,7 +160,6 @@ class SoutenanceController extends AbstractActionController {
             ]
         );
     }
-
 
     /**
      * Modification de la date et lieu de la soutenance

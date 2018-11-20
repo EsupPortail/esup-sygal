@@ -3,9 +3,11 @@
 namespace Soutenance\Service\Avis;
 
 use Application\Entity\Db\Acteur;
+use Application\Entity\Db\These;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Soutenance\Entity\Avis;
+use Soutenance\Entity\Membre;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
@@ -78,15 +80,16 @@ class AvisService {
     }
 
     /**
-     * @param Acteur $rapporteur
+     * @param Membre $rapporteur
+     * @param These $these
      * @return Avis
      */
-    public function getAvisByRapporteur($rapporteur)
+    public function getAvisByRapporteur($rapporteur, $these)
     {
         $qb = $this->getEntityManager()->getRepository(Avis::class)->createQueryBuilder('avis')
             ->andWhere('avis.these = :these')
             ->andWhere('avis.rapporteur = :rapporteur')
-            ->setParameter('these', $rapporteur->getThese())
+            ->setParameter('these', $these)
             ->setParameter('rapporteur', $rapporteur);
 
         try {

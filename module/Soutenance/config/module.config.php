@@ -119,9 +119,16 @@ return array(
                 // Consitution et validations du jury
                 [
                     'controller' => SoutenanceController::class,
-                        'action'     => [
-                        'proposition',
+                    'action'     => [
+                        'index',
                     ],
+                    'roles' => [],
+                ],
+                [
+                    'controller' => SoutenanceController::class,
+                        'action'     => [
+                            'proposition',
+                        ],
                     'privileges' => SoutenancePrivileges::SOUTENANCE_PROPOSITION_VISUALISER,
                 ],
                 [
@@ -363,10 +370,10 @@ return array(
                 'may_terminate' => true,
                 'options' => [
                     'route'    => '/soutenance[/:these]',
-//                    'defaults' => [
-//                        'controller' => SoutenanceController::class,
-//                        'action'     => 'index',
-//                    ],
+                    'defaults' => [
+                        'controller' => SoutenanceController::class,
+                        'action'     => 'index',
+                    ],
                 ],
                 'child_routes' => [
                     'presoutenance' => [
