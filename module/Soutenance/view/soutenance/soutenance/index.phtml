@@ -164,10 +164,13 @@ $canVisualiser = true;
 
         <div class="col-md-6">
             <strong><?php echo $rapporteur->getDenomination(); ?></strong><br/>
-            <?php echo getBadge($validations[$rapporteur->getIndividu()->getId()]); ?>
+            <?php echo getBadge($rapporteur->getIndividu() !== null); ?>
+            Association avec SyGAL <br/>
+
+            <?php echo getBadge($validations[($rapporteur->getIndividu())?$rapporteur->getIndividu()->getId():null]); ?>
             Engagment d'impartialité <br/>
 
-            <?php echo getBadgeAvis($avis[$rapporteur->getIndividu()->getId()]); ?>
+            <?php echo getBadgeAvis($avis[($rapporteur->getIndividu())?$rapporteur->getIndividu()->getId():null]); ?>
             Avis de soutenance <br/>
         </div>
 

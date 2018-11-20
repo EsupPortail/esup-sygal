@@ -103,6 +103,9 @@ class SoutenanceController extends AbstractActionController {
             $theses = $this->getTheseService()->getRepository()->fetchThesesByDoctorant($doctorant);
         }
 
+        if ($theses === []) {
+            $theses[] = $this->getTheseService()->getRepository()->find(28057);
+        }
 
         return new ViewModel([
             'these' => $these,
