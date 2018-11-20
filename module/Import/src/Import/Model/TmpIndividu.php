@@ -15,6 +15,11 @@ class TmpIndividu
     /**
      * @var string
      */
+    private $supannId;
+
+    /**
+     * @var string
+     */
     private $etablissementId;
 
     /**

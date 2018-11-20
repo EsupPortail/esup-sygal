@@ -151,9 +151,11 @@ class ActeursFormatter extends AbstractFilter {
         return $results;
     }
 
-    /** This function format an array of acteurs as Array
+    /**
+     * This function format an array of acteurs as Array.
+     *
      * @param Acteur[] $acteurs
-     * @return array of array with key => value
+     * @return array Array of array with key => value
      */
     private function doFormatArray($acteurs) {
         $results = [];
@@ -161,10 +163,24 @@ class ActeursFormatter extends AbstractFilter {
         foreach ($acteurs as $acteur) {
             $result = [];
             $result["nom"] = $acteur->getIndividu()->getNomComplet(true);
-            if ($this->displayRole === true) $result["role"] = $acteur->getRole()->getRoleId();
-            if ($this->displayRoleComplement === true) $result["complement"] = $acteur->getLibelleRoleComplement();
-            if ($this->displayQualite === true) $result["qualite"] = $acteur->getQualite();
-            if ($this->displayEtablissement === true) $result["etablissement"] = ($etab = $acteur->getEtablissement()) ? $etab->getStructure()->getLibelle() : "Établissement non renseigné";
+            if ($this->displayRole === true) {
+                $result["role"] = $acteur->getRole()->getRoleId();
+            }
+            if ($this->displayRoleComplement === true) {
+                $result["complement"] = $acteur->getLibelleRoleComplement();
+            }
+            if ($this->displayQualite === true) {
+                $result["qualite"] = $acteur->getQualite();
+            }
+            if ($this->displayEtablissement === true) {
+                $result["etablissement"] = ($etab = $acteur->getEtablissement()) ? $etab->getStructure()->getLibelle() : "(Établissement non renseigné)";
+            }
+            if ($acteur->getIndividu()->getSupannId() === null) {
+                $result['alerte-supann-id'] = sprintf(
+                    "Cette personne ne pourra pas utiliser l'application car il manque des informations la concernant dans %s (source code '%s').",
+                    $acteur->getIndividu()->getSource(),
+                    $acteur->getIndividu()->getSourceCode());
+            }
             $results[] = $result;
         }
         return $results;

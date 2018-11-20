@@ -31,6 +31,7 @@ class IndividuService extends BaseService
      * @param People        $people
      * @param Etablissement $etablissement
      * @return Individu
+     * @deprecated À supprimer car non utilisée
      */
     public function createFromPeopleAndEtab(People $people, Etablissement $etablissement)
     {
@@ -71,6 +72,7 @@ class IndividuService extends BaseService
         $sourceCode = $etablissement->prependPrefixTo($userWrapper->getSupannId());
 
         $entity = new Individu();
+        $entity->setSupannId($userWrapper->getSupannId());
         $entity->setNomUsuel($userWrapper->getNom());
         $entity->setNomPatronymique($userWrapper->getNom());
         $entity->setPrenom($userWrapper->getPrenom());
@@ -92,7 +94,6 @@ class IndividuService extends BaseService
     /**
      * @param Individu $individu
      * @param Utilisateur $utilisateur
-     * @throws OptimisticLockException
      */
     public function createFromForm(Individu $individu, Utilisateur $utilisateur)
     {
@@ -102,13 +103,17 @@ class IndividuService extends BaseService
         $individu->setHistoCreateur($user); //sygal-app
         $individu->setHistoModificateur($user); //sygal-app
 
-        $this->getEntityManager()->persist($individu);
-        $this->getEntityManager()->flush($individu);
-        $this->getEntityManager()->persist($utilisateur);
-        $this->getEntityManager()->flush($utilisateur);
+        try {
+            $this->getEntityManager()->persist($individu);
+            $this->getEntityManager()->flush($individu);
+            $this->getEntityManager()->persist($utilisateur);
+            $this->getEntityManager()->flush($utilisateur);
 
-        $individu->setSourceCode("COMUE::" . $individu->getId());
-        $this->getEntityManager()->flush($individu);
+            $individu->setSourceCode("COMUE::" . $individu->getId());
+            $this->getEntityManager()->flush($individu);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Impossible d'enregistrer une entité", null, $e);
+        }
     }
 
     public function existIndividuUtilisateurByEmail($email) {

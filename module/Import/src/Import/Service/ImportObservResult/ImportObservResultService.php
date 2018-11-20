@@ -81,19 +81,20 @@ class ImportObservResultService extends BaseService
      *
      * @param ImportObserv         $importObserv  Observation voulue
      * @param Etablissement|string $etablissement Etablissement concerné
+     * @param These|null           $these
      * @return void
      */
-    public function handleImportObservResults(ImportObserv $importObserv, $etablissement)
+    public function handleImportObservResults(ImportObserv $importObserv, $etablissement, These $these = null)
     {
         switch ($importObserv->getCode()) {
             case ImportObserv::CODE_RESULTAT_PASSE_A_ADMIS:
-                $this->handleImportObservResultsForResultatAdmis($importObserv, $etablissement);
+                $this->handleImportObservResultsForResultatAdmis($importObserv, $etablissement, $these);
                 break;
             case ImportObserv::CODE_CORRECTION_PASSE_A_MINEURE:
-                $this->handleImportObservResultsForCorrectionMineure($importObserv, $etablissement);
+                $this->handleImportObservResultsForCorrectionMineure($importObserv, $etablissement, $these);
                 break;
             case ImportObserv::CODE_CORRECTION_PASSE_A_MAJEURE:
-                $this->handleImportObservResultsForCorrectionMajeure($importObserv, $etablissement);
+                $this->handleImportObservResultsForCorrectionMajeure($importObserv, $etablissement, $these);
                 break;
             default:
                 throw new RuntimeException("Cas non prévu!");
@@ -107,15 +108,16 @@ class ImportObservResultService extends BaseService
      *
      * @param ImportObserv         $importObserv
      * @param Etablissement|string $etablissement
+     * @param These|null           $these
      */
-    private function handleImportObservResultsForResultatAdmis(ImportObserv $importObserv, $etablissement)
+    private function handleImportObservResultsForResultatAdmis(ImportObserv $importObserv, $etablissement, These $these = null)
     {
         $this->logger->info(sprintf(
             "# Traitement des résultats d'import de l'établissement '%s' : " .
             "notifications au sujet des thèses dont le résultat est passé à \"admis\"",
             $etablissement));
 
-        $records = $this->repository->fetchImportObservResults($importObserv, $etablissement);
+        $records = $this->repository->fetchImportObservResults($importObserv, $etablissement, $these);
 
         $this->logger->info(sprintf("%d résultat(s) d'import trouvé(s) à traiter.", count($records)));
 
@@ -193,8 +195,9 @@ class ImportObservResultService extends BaseService
      *
      * @param ImportObserv         $importObserv
      * @param Etablissement|string $etablissement
+     * @param These|null           $these
      */
-    private function handleImportObservResultsForCorrectionMineure(ImportObserv $importObserv, $etablissement)
+    private function handleImportObservResultsForCorrectionMineure(ImportObserv $importObserv, $etablissement, These $these = null)
     {
         $this->logger->info(sprintf(
             "# Traitement des résultats d'import de l'établissement '%s' : " .
@@ -202,7 +205,7 @@ class ImportObservResultService extends BaseService
             $etablissement
         ));
 
-        $records = $this->repository->fetchImportObservResults($importObserv, $etablissement);
+        $records = $this->repository->fetchImportObservResults($importObserv, $etablissement, $these);
 
         $this->_handleImportObservResultsForCorrection($records);
     }
@@ -213,8 +216,9 @@ class ImportObservResultService extends BaseService
      *
      * @param ImportObserv         $importObserv
      * @param Etablissement|string $etablissement
+     * @param These|null           $these
      */
-    private function handleImportObservResultsForCorrectionMajeure(ImportObserv $importObserv, $etablissement)
+    private function handleImportObservResultsForCorrectionMajeure(ImportObserv $importObserv, $etablissement, These $these = null)
     {
         $this->logger->info(sprintf(
             "# Traitement des résultats d'import de l'établissement '%s' : " .
@@ -222,7 +226,7 @@ class ImportObservResultService extends BaseService
             $etablissement
         ));
 
-        $records = $this->repository->fetchImportObservResults($importObserv, $etablissement);
+        $records = $this->repository->fetchImportObservResults($importObserv, $etablissement, $these);
 
         $this->_handleImportObservResultsForCorrection($records);
     }

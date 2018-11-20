@@ -8,21 +8,22 @@
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <field name="civilite" type="string" column="CIVILITE" length="5" nullable="true"/>
-        <field name="dateNaissance" type="datetime" column="DATE_NAISSANCE" nullable="false"/>
-        <field name="nationalite" type="string" column="NATIONALITE" nullable="true"/>
-        <field name="email" type="string" column="EMAIL" length="255" nullable="true"/>
-        <field name="nomPatronymique" type="string" column="NOM_PATRONYMIQUE" length="60" nullable="false"/>
-        <field name="nomUsuel" type="string" column="NOM_USUEL" length="60" nullable="false"/>
-        <field name="prenom1" type="string" column="PRENOM1" length="60" nullable="false"/>
-        <field name="prenom2" type="string" column="PRENOM2" length="60" nullable="false"/>
-        <field name="prenom3" type="string" column="PRENOM3" length="60" nullable="false"/>
+        <field name="supannId" column="SUPANN_ID" nullable="true"/>
+        <field name="civilite" column="CIVILITE" nullable="true"/>
+        <field name="dateNaissance" type="datetime" column="DATE_NAISSANCE"/>
+        <field name="nationalite" column="NATIONALITE" nullable="true"/>
+        <field name="email" column="EMAIL" nullable="true"/>
+        <field name="nomPatronymique" column="NOM_PATRONYMIQUE"/>
+        <field name="nomUsuel" column="NOM_USUEL"/>
+        <field name="prenom1" column="PRENOM1"/>
+        <field name="prenom2" column="PRENOM2"/>
+        <field name="prenom3" column="PRENOM3"/>
 
-        <field name="sourceCode" type="string" column="SOURCE_CODE" length="100" nullable="true"/>
+        <field name="sourceCode" column="SOURCE_CODE" nullable="true"/>
 
-        <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
+        <field name="histoCreation" type="datetime" column="HISTO_CREATION"/>
         <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
-        <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
+        <field name="histoModification" type="datetime" column="HISTO_MODIFICATION"/>
 
         <many-to-one field="source" target-entity="UnicaenImport\Entity\Db\Source">
             <join-columns>

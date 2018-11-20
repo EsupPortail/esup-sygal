@@ -18,6 +18,23 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
     use SourceAwareTrait;
 
     /**
+     * Identifiant qui correspond en fait au :
+     * - supannEmpId (pour les acteurs) ou au
+     * - supannEtuId (pour les doctorants)
+     * que nous fournit l'authentification shibboleth.
+     *
+     * Si cet identifiant est null, cela signifie que l'individu ne pourra pas se connecter.
+     * Sa valeur résulte de l'import de données d'une source.
+     * NB: Sa valeur proprement dite n'a pas vocation à être utilisée, c'est simplement sa nullité ou non qui
+     * nous intéresse.
+     *
+     * todo: se contenter d'une valeur booléenne + renommer en qqchose de moins lié à supann
+     *
+     * @var string
+     */
+    protected $supannId;
+
+    /**
      * @var string
      */
     protected $civilite;
@@ -71,6 +88,26 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
      * @var integer
      */
     private $id;
+
+    /**
+     * @return string
+     * @see supannId
+     */
+    public function getSupannId()
+    {
+        return $this->supannId;
+    }
+
+    /**
+     * @param string $supannId
+     * @return self
+     */
+    public function setSupannId($supannId)
+    {
+        $this->supannId = $supannId;
+
+        return $this;
+    }
 
     /**
      * Set dateNaissance
