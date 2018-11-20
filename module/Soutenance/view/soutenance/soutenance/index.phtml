@@ -6,6 +6,7 @@
      * @var Membre[] $rapporteurs
      * @var Validation[] $validations
      * @var string[] $avis
+     * @var These[] $theses
      */
 
 use Application\Entity\Db\Individu;
@@ -58,11 +59,21 @@ $canVisualiser = true;
     </p>
 
     <?php if ($canProposer) : ?>
-        <a href="<?php // echo $this->url('soutenance/proposition', ['these' => $these->getId()], [], true); ?>"
-           class="btn btn-primary action pull-right">
-            <span class="glyphicon glyphicon-pencil"></span>
-            Commencer ma proposition
-        </a>
+        <div class="btn-group pull-right action">
+            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="glyphicon glyphicon-pencil"></span>
+                Commencer ma proposition <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <?php foreach($theses as $theseLink) : ?>
+                    <li class="complete">
+                        <a href="<?php echo $this->url('soutenance/proposition', ['these' => $theseLink->getId()], [], true); ?>">
+                            <?php echo $theseLink->getTitre(); ?>
+                        </a>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
     <?php endif; ?>
 
     <h2> Voir l'avancement des validations de votre soutenance </h2>
@@ -82,74 +93,90 @@ $canVisualiser = true;
     </p>
 
     <?php if ($canVisualiser) : ?>
-        <a href="<?php // echo $this->url('soutenance', ['these' => $these->getId()], [], true); ?>"
-           class="btn btn-primary action pull-right">
-            <span class="glyphicon glyphicon-eye-open"></span>
-            Voir l'avancement
-        </a>
+        <div class="btn-group pull-right action">
+            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="glyphicon glyphicon-eye-open"></span>
+                Voir les validations <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <?php foreach($theses as $theseLink) : ?>
+                    <li class="complete">
+                        <a href="<?php echo $this->url('soutenance', ['these' => $theseLink->getId()], [], true); ?>">
+                            <?php echo $theseLink->getTitre(); ?>
+                        </a>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
     <?php endif; ?>
 
 
 <?php else : ?>
     <h2> Proposition de soutenance </h2>
 
-    <dl class="dl-horizontal">
-        <dt> Lieu et date </dt>
-        <dd>
-            <?php echo validite($proposition->getDate() !== null AND $proposition->getLieu() !== null); ?>
-        </dd>
-        <dt> Jury de thèse </dt>
-        <dd>
-            <?php echo validite($proposition->juryOk()); ?>
-        </dd>
-    </dl>
+    <?php if ($proposition !== null) : ?>
+        <dl class="dl-horizontal">
+            <dt> Lieu et date </dt>
+            <dd>
+                <?php echo validite($proposition->getDate() !== null AND $proposition->getLieu() !== null); ?>
+            </dd>
+            <dt> Jury de thèse </dt>
+            <dd>
+                <?php echo validite($proposition->juryOk()); ?>
+            </dd>
+        </dl>
 
-    <h3> Validations des acteurs directs </h3>
+        <h3> Validations des acteurs directs </h3>
 
-    <?php
-        if ($these) $doctorant = $these->getDoctorant();
-    ?>
+        <?php
+            if ($these) $doctorant = $these->getDoctorant();
+        ?>
 
-    <?php echo getBadge($validations[$doctorant->getId()]); ?>
-    <?php echo $doctorant->getNomComplet(false, true, false); ?> <br/>
+        <?php echo getBadge($validations[$doctorant->getId()]); ?>
+        <?php echo $doctorant->getNomComplet(false, true, false); ?> <br/>
 
-    <?php foreach($directeurs as $directeur) : ?>
-        <?php echo getBadge($validations[$directeur->getId()]); ?>
-        <?php echo $directeur->getNomComplet(false, true, false); ?> <br/>
+        <?php foreach($directeurs as $directeur) : ?>
+            <?php echo getBadge($validations[$directeur->getId()]); ?>
+            <?php echo $directeur->getNomComplet(false, true, false); ?> <br/>
 
-    <?php endforeach; ?>
+        <?php endforeach; ?>
 
-    <h3> Validations des structures associées </h3>
+        <h3> Validations des structures associées </h3>
 
-    <?php
-        if ($these) $unite = $these->getUniteRecherche()->getStructure();
-        if ($these) $ecole = $these->getEcoleDoctorale()->getStructure();
-        if ($these) $etab  = $these->getEtablissement()->getStructure();
-    ?>
+        <?php
+            if ($these) $unite = $these->getUniteRecherche()->getStructure();
+            if ($these) $ecole = $these->getEcoleDoctorale()->getStructure();
+            if ($these) $etab  = $these->getEtablissement()->getStructure();
+        ?>
 
-    <?php echo getBadge($validations['unite-recherche']); ?>
-    <?php echo $unite->getLibelle(); ?> (<?php echo $unite->getSigle(); ?> ) <br/>
+        <?php echo getBadge($validations['unite-recherche']); ?>
+        <?php echo $unite->getLibelle(); ?> (<?php echo $unite->getSigle(); ?> ) <br/>
 
-    <?php echo getBadge($validations['ecole-doctorale']); ?>
-    <?php echo $ecole->getLibelle(); ?> (<?php echo $ecole->getSigle(); ?> ) <br/>
+        <?php echo getBadge($validations['ecole-doctorale']); ?>
+        <?php echo $ecole->getLibelle(); ?> (<?php echo $ecole->getSigle(); ?> ) <br/>
 
-    <?php echo getBadge($validations['bureau-doctorat']); ?>
-    Maison des doctorats (<?php echo $etab->getLibelle(); ?> ) <br/>
+        <?php echo getBadge($validations['bureau-doctorat']); ?>
+        Maison des doctorats (<?php echo $etab->getLibelle(); ?> ) <br/>
 
-    <h3> Validation de la soutenance par les rapporteurs </h3>
+        <h3> Validation de la soutenance par les rapporteurs </h3>
 
-    <?php foreach ($rapporteurs as $rapporteur) : ?>
+        <?php foreach ($rapporteurs as $rapporteur) : ?>
 
-    <div class="col-md-6">
-        <strong><?php echo $rapporteur->getDenomination(); ?></strong><br/>
-        <?php echo getBadge($validations[$rapporteur->getIndividu()->getId()]); ?>
-        Engagment d'impartialité <br/>
+        <div class="col-md-6">
+            <strong><?php echo $rapporteur->getDenomination(); ?></strong><br/>
+            <?php echo getBadge($validations[$rapporteur->getIndividu()->getId()]); ?>
+            Engagment d'impartialité <br/>
 
-        <?php echo getBadgeAvis($avis[$rapporteur->getIndividu()->getId()]); ?>
-        Avis de soutenance <br/>
-    </div>
+            <?php echo getBadgeAvis($avis[$rapporteur->getIndividu()->getId()]); ?>
+            Avis de soutenance <br/>
+        </div>
 
-    <?php endforeach; ?>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <div class="alert alert-warning">
+            Aucune proposition de soutenance de trouver pour la these <strong> <?php echo $these->getTitre(); ?></strong>.
+        </div>
+    <?php endif; ?>
 
 <?php endif; ?>
 

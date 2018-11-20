@@ -80,19 +80,29 @@ class SoutenanceController extends AbstractActionController {
             if ($validationBDD) $validations["bureau-doctorat"] = current($validationBDD);
 
             $avis = [];
-            foreach ($rapporteurs as $rapporteur) {
-                $validationR = $this->getValidationService()->getRepository()->findValidationByCodeAndIndividu(TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $rapporteur->getIndividu());
-                if ($validationR) $validations[$rapporteur->getIndividu()->getId()] = $validationR;
+            if ($proposition !== null) {
+                foreach ($rapporteurs as $rapporteur) {
+                    $validationR = $this->getValidationService()->getRepository()->findValidationByCodeAndIndividu(TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $rapporteur->getIndividu());
+                    if ($validationR) $validations[$rapporteur->getIndividu()->getId()] = $validationR;
 
-                $avisRapporteur = $this->getAvisService()->getAvisByRapporteur($rapporteur, $these);
-                if ($avisRapporteur) $avis[$rapporteur->getIndividu()->getId()] = $avisRapporteur->getAvis();
+                    $avisRapporteur = $this->getAvisService()->getAvisByRapporteur($rapporteur, $these);
+                    if ($avisRapporteur) $avis[$rapporteur->getIndividu()->getId()] = $avisRapporteur->getAvis();
+                }
             }
         }
 
+
+        /** @var These[] $theses */
+        $theses = [];
         $individu = $this->userContextService->getIdentityIndividu();
-        if ($this->userContextService->getNextSelectedIdentityRole()=== Role::CODE_DOCTORANT) {
-            $listeTheses[] = $this->getTheseService()->getRepository()->fetchThesesByDoctorant($individu);
+        if ($individu !== null) {
+            $theses = $this->getTheseService()->getRepository()->fetchThesesByEncadrant($individu);
         }
+        $doctorant = $this->userContextService->getIdentityDoctorant();
+        if ($doctorant !== null) {
+            $theses = $this->getTheseService()->getRepository()->fetchThesesByDoctorant($doctorant);
+        }
+
 
         return new ViewModel([
             'these' => $these,
@@ -102,7 +112,7 @@ class SoutenanceController extends AbstractActionController {
             'validations' => $validations,
             'avis'  => $avis,
 
-            'listeTheses' => $listeTheses,
+            'theses' => $theses,
         ]);
     }
 
