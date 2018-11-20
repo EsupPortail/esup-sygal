@@ -181,8 +181,6 @@ class TheseController extends AbstractController
         $these = $this->requestedThese();
         $etablissement = $these->getEtablissement();
 
-
-
         $showCorrecAttendue =
             $these->getCorrectionAutorisee() &&
             count($this->validationService->getValidationsAttenduesPourCorrectionThese($these)) > 0;

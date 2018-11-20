@@ -1,16 +1,12 @@
 <?php
 
+use Application\Entity\Db\MailConfirmation;
 use Application\Entity\Db\These;
-use Application\Entity\Db\Acteur;
-use Application\Entity\Db\Individu;
-use Application\Entity\Db\Etablissement;
 use Application\Filter\ActeursFormatter;
-use Application\Entity\Db\WfEtape;
 use Application\Filter\FinancementFormatter;
 use Application\Provider\Privilege\DoctorantPrivileges;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\View\Renderer\PhpRenderer;
-use Application\Entity\Db\MailConfirmation;
 
 /**
  * @var        $this PhpRenderer
@@ -119,19 +115,14 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
             </dd>
 
             <?php
-            //AFFICHAGE DES ACTEURS DE LA THESE
+            // Affichage des acteurs de la these
             $acteursFormatter = new ActeursFormatter();
             $acteursFormatter->paramDisplay(["role" => true,"complement" => true, "qualite" => true, "etablissement" => true]);
             $acteursFormatter->asArray();
-
             $acteurs = $these->getActeursSorted();
             $results = $acteursFormatter->doFormat($acteurs->toArray());
-
             $previous = "";
-
-
             foreach($results as $result) {
-
                     if ($previous != $result["role"]) {
                         echo "</dd>";
                         echo "<dt>" . $result["role"] . "</dt>";
@@ -139,18 +130,26 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                         $previous = $result["role"];
                     }
                     $ligne = [];
-                    if (isset($result["nom"]))              $ligne[] = $result["nom"];
-                    if (isset($result["complement"]))       $ligne[] = "<strong>".$result["complement"]."</strong>";
-                    if (isset($result["qualite"])           && trim($result["qualite"]) != "")          $ligne[] = $result["qualite"];
-                    if (isset($result["etablissement"])     && trim($result["etablissement"]) != "")    $ligne[] = $result["etablissement"];
-
-                    $ligne = implode(", ", $ligne);
+                    if (isset($result["nom"])) {
+                        $ligne[] = $result["nom"];
+                    }
+                    if (isset($result["complement"])) {
+                        $ligne[] = "<strong>".$result["complement"]."</strong>";
+                    }
+                    if (isset($result["qualite"]) && trim($result["qualite"]) != "") {
+                        $ligne[] = $result["qualite"];
+                    }
+                    if (isset($result["etablissement"]) && trim($result["etablissement"]) != "") {
+                        $ligne[] = $result["etablissement"];
+                    }
+                    if (isset($result['alerte-supann-id'])) {
+                        $ligne[] = sprintf('<span class="glyphicon glyphicon-warning-sign text-danger" title="%s"></span>',
+                            $result['alerte-supann-id']);
+                    }
+                    $ligne = implode(" &ndash; ", $ligne);
                     echo $ligne . "<br/>";
-
             }
             echo "<br/>";
-
-
             ?>
 
             <dt>

@@ -3,6 +3,7 @@
 namespace Import\Controller\Factory;
 
 use Application\EventRouterReplacer;
+use Application\Service\These\TheseService;
 use Import\Controller\ImportObserverController;
 use Import\Service\ImportObserv\ImportObservService;
 use Import\Service\ImportObservResult\ImportObservResultService;
@@ -31,10 +32,14 @@ class ImportObserverControllerFactory
         /** @var ImportObservService $importObservService */
         $importObservService = $sl->get('ImportObservService');
 
+        /** @var TheseService $theseService */
+        $theseService = $sl->get('TheseService');
+
         $controller = new ImportObserverController();
         $controller->setImportObservService($importObservService);
         $controller->setEventRouterReplacer($routerReplacer);
         $controller->setImportObservResultService($this->getImportObservResultService($sl));
+        $controller->setTheseService($theseService);
 
         return $controller;
     }
