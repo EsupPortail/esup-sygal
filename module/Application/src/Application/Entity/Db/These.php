@@ -1245,17 +1245,27 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
-     * @return Acteur[]
+     * @param boolean $asIndividu
+     * @return Acteur[]|Individu[]
      */
-    public function getEncadrements()
+    public function getEncadrements($asIndividu = false)
     {
-        $encadrants = [];
+        /** @var Acteur[] $acteurs */
+        $acteurs = [];
 
         $directeurs     = $this->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE);
-        foreach ($directeurs as $directeur) $encadrants[] = $directeur;
+        foreach ($directeurs as $directeur) $acteurs[] = $directeur;
         $codirecteurs   = $this->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE);
-        foreach ($codirecteurs as $codirecteur) $encadrants[] = $codirecteur;
+        foreach ($codirecteurs as $codirecteur) $acteurs[] = $codirecteur;
 
-        return $encadrants;
+        if ($asIndividu === true) {
+            $individus = [];
+            foreach ($acteurs as $acteur) {
+                $individus[] = $acteur->getIndividu();
+            }
+            return $individus;
+        }
+
+        return $acteurs;
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Application\Entity\Db\Repository;
 
+use Application\Entity\Db\Acteur;
+use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\These;
 use Application\ORM\Query\Functions\Year;
@@ -111,6 +113,38 @@ class TheseRepository extends DefaultEntityRepository
         }, $qb->getQuery()->getScalarResult());
 
         return $results;
+    }
+
+    /**
+     * @param Doctorant $doctorant
+     * @return These[]
+     */
+    public function fetchThesesByDoctorant($doctorant)
+    {
+        $qb = $this->createQueryBuilder('t')
+            ->andWhere('t.doctorant = :doctorant')
+            ->setParameter('doctorant', $doctorant)
+            ->orderBy('t.datePremiereInscription', 'ASC')
+        ;
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
+
+    /**
+     * @param Acteur $encadrant
+     * @return These[]
+     */
+    public function fetchThesesByEncadrant($encadrant)
+    {
+        $qb = $this->createQueryBuilder('t')
+            ->andWhere('t.doctorant = :doctorant')
+            ->setParameter('doctorant', $doctorant)
+            ->orderBy('t.datePremiereInscription', 'ASC')
+        ;
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
     }
 
 

@@ -58,7 +58,7 @@ $canVisualiser = true;
     </p>
 
     <?php if ($canProposer) : ?>
-        <a href=""
+        <a href="<?php // echo $this->url('soutenance/proposition', ['these' => $these->getId()], [], true); ?>"
            class="btn btn-primary action pull-right">
             <span class="glyphicon glyphicon-pencil"></span>
             Commencer ma proposition
@@ -82,7 +82,7 @@ $canVisualiser = true;
     </p>
 
     <?php if ($canVisualiser) : ?>
-        <a href=""
+        <a href="<?php // echo $this->url('soutenance', ['these' => $these->getId()], [], true); ?>"
            class="btn btn-primary action pull-right">
             <span class="glyphicon glyphicon-eye-open"></span>
             Voir l'avancement

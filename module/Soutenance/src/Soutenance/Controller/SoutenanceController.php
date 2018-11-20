@@ -15,6 +15,7 @@ use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
+use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use BjyAuthorize\Exception\UnAuthorizedException;
 use Soutenance\Entity\Membre;
@@ -50,6 +51,7 @@ class SoutenanceController extends AbstractActionController {
     use UserContextServiceAwareTrait;
     use AvisServiceAwareTrait;
     use ActeurServiceAwareTrait;
+    use UtilisateurServiceAwareTrait;
 
     public function indexAction()
     {
@@ -59,12 +61,7 @@ class SoutenanceController extends AbstractActionController {
             $these = $this->getTheseService()->getRepository()->find($theseId);
 
             /** @var Individu[] $directeurs */
-            $dirs = $these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE);
-            $codirs = $these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE);
-            $acteurs = array_merge($dirs->toArray(), $codirs->toArray());
-            $directeurs = [];
-            /** @var Acteur $acteur */
-            foreach ($acteurs as $acteur) $directeurs[] = $acteur->getIndividu();
+            $directeurs = $these->getEncadrements(true);
 
             $proposition = $this->getPropositionService()->findByThese($these);
             if ($proposition) $rapporteurs = $proposition->getRapporteurs();
@@ -92,6 +89,11 @@ class SoutenanceController extends AbstractActionController {
             }
         }
 
+        $individu = $this->userContextService->getIdentityIndividu();
+        if ($this->userContextService->getNextSelectedIdentityRole()=== Role::CODE_DOCTORANT) {
+            $listeTheses[] = $this->getTheseService()->getRepository()->fetchThesesByDoctorant($individu);
+        }
+
         return new ViewModel([
             'these' => $these,
             'proposition' => $proposition,
@@ -99,6 +101,8 @@ class SoutenanceController extends AbstractActionController {
             'rapporteurs' => $rapporteurs,
             'validations' => $validations,
             'avis'  => $avis,
+
+            'listeTheses' => $listeTheses,
         ]);
     }
 
@@ -128,12 +132,7 @@ class SoutenanceController extends AbstractActionController {
         /** @var Doctorant $doctorant */
         $doctorant = $these->getDoctorant();
         /** @var Individu[] $directeurs */
-        $dirs = $these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE);
-        $codirs = $these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE);
-        $acteurs = array_merge($dirs->toArray(), $codirs->toArray());
-        $directeurs = [];
-        /** @var Acteur $acteur */
-        foreach ($acteurs as $acteur) $directeurs[] = $acteur->getIndividu();
+        $directeurs = $these->getEncadrements(true);
 
         $validations = [];
         $validations[$doctorant->getIndividu()->getId()] = $this->getValidationService()->findValidationPropositionSoutenanceByTheseAndIndividu($these, $doctorant->getIndividu());
