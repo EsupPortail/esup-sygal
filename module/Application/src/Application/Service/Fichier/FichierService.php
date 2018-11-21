@@ -797,13 +797,13 @@ class FichierService extends BaseService
         }
 
         $command->generate($outputFilePath, $inputFiles, $errorFilePath);
+        unlink($inputFiles['couverture']);
 
         return $command;
     }
 
     public function fusionneFichierTheseAsync(These $these, $versionFichier, $removeFirstPage, $destinatairesNotification = [])
     {
-//        $scriptPath = sprintf("bash %s/merge.sh", APPLICATION_DIR . '/bin');
         $scriptPath = sprintf("%s/merge.sh", APPLICATION_DIR . '/bin');
 
         $args = sprintf('--these=%d --versionFichier=%s', $these->getId(), $versionFichier);
@@ -818,11 +818,5 @@ class FichierService extends BaseService
         $runner = new ShellScriptRunner($scriptPath, 'bash');
         $runner->setAsync();
         $runner->run($args);
-//        $command = $scriptPath. ' '.$args;
-//        $runner = new ShellCommandRunner($command);
-//        $runner->setAsync();
-//        $runner->run();
-
-
     }
 }
