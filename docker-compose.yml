@@ -12,7 +12,6 @@ services:
      - .:/var/www/sygal
      - /tmp:/tmp
     working_dir: /var/www/sygal
-    network_mode: bridge
 
   sygal-import-ws:
     container_name: sygal-import-ws-container
@@ -24,4 +23,3 @@ services:
     volumes:
      - ../sygal-import-ws:/var/www/sygal-import-ws
     working_dir: /var/www/sygal-import-ws
-    network_mode: bridge
