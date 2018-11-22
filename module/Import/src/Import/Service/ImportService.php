@@ -53,6 +53,7 @@ class ImportService
         'variable',
         'origine-financement',
         'financement',
+        'titre-acces',
     ];
 
     /**
@@ -124,7 +125,11 @@ class ImportService
 
         $this->fetcherService->setEtablissement($etablissement);
         try {
-            $this->fetcherService->fetch($service, $sourceCode, $this->filters);
+            if ($sourceCode !== null) {
+                $this->fetcherService->fetchRow($service, $sourceCode);
+            } else {
+                $this->fetcherService->fetchRows($service, $this->filters);
+            }
         } catch (CallException $e) {
             if ($e->getCode() === 404) {
                 throw new RuntimeException("Le service '$service' n'existe pas !", null, $e);
@@ -157,7 +162,7 @@ class ImportService
         foreach ($services as $service) {
             $this->fetcherService->setEtablissement($etablissement);
             try {
-                $this->fetcherService->fetch($service);
+                $this->fetcherService->fetchRows($service);
 
                 $this->synchroService->addService($service);
                 $synchronizeNeeded = true;
@@ -197,34 +202,34 @@ class ImportService
          */
         // these
         $sourceCodeThese = $these->getSourceCode();
-        $this->fetcherService->fetch('these', $sourceCodeThese);
+        $this->fetcherService->fetchRow('these', $sourceCodeThese);
         /** @var TmpThese $tmpThese */
         $tmpThese = $this->entityManager->getRepository(TmpThese::class)->findOneBy(['sourceCode' => $sourceCodeThese]);
         // doctorant
         $sourceCodeDoctorant = $tmpThese->getDoctorantId();
-        $this->fetcherService->fetch('doctorant', $sourceCodeDoctorant);
+        $this->fetcherService->fetchRow('doctorant', $sourceCodeDoctorant);
         /** @var TmpDoctorant $tmpDoctorant */
         $tmpDoctorant = $this->entityManager->getRepository(TmpDoctorant::class)->findOneBy(['sourceCode' => $sourceCodeDoctorant]);
         // individu doctorant
         $sourceCodeIndividu = $tmpDoctorant->getIndividuId();
-        $this->fetcherService->fetch('individu', $sourceCodeIndividu);
+        $this->fetcherService->fetchRow('individu', $sourceCodeIndividu);
         // acteurs
         $theseId = $these->getId();
-        $this->fetcherService->fetch('acteur', null, ['these_id' => $theseId]);
+        $this->fetcherService->fetchRows('acteur', ['these' => $these]);
         /** @var TmpActeur[] $tmpActeurs */
         $tmpActeurs = $this->entityManager->getRepository(TmpActeur::class)->findBy(['theseId' => $sourceCodeThese]);
         // individus acteurs
         $sourceCodeIndividus = [];
         foreach ($tmpActeurs as $tmpActeur) {
             $sourceCodeIndividus[] = $sourceCodeIndividu = $tmpActeur->getIndividuId();
-            $this->fetcherService->fetch('individu', $sourceCodeIndividu);
+            $this->fetcherService->fetchRow('individu', $sourceCodeIndividu);
         }
         // ed
         $sourceCodeEcoleDoct = $tmpThese->getEcoleDoctId();
-        $this->fetcherService->fetch('ecole-doctorale', $sourceCodeEcoleDoct);
+        $this->fetcherService->fetchRow('ecole-doctorale', $sourceCodeEcoleDoct);
         // ur
         $sourceCodeUniteRech = $tmpThese->getUniteRechId();
-        $this->fetcherService->fetch('unite-recherche', $sourceCodeUniteRech);
+        $this->fetcherService->fetchRow('unite-recherche', $sourceCodeUniteRech);
 
         /**
          * Synchro UnicaenImport pour mettre à jour les tables finales.

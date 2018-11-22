@@ -169,6 +169,15 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
             </dd>
 
             <dt>
+                <?php echo $this->translate("Titre d'accès<br/>à l'inscr. en thèse") ?>
+            </dt>
+            <dd>
+                <?php
+                    echo ($titreAcces = $these->getTitreAcces()) ?: "(Non renseigné)";
+                ?>
+            </dd>
+
+            <dt>
                 <?php echo $this->translate("Unité de recherche"); ?>
             </dt>
             <dd>

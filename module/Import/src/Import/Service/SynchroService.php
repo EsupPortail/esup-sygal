@@ -10,6 +10,7 @@ use Import\Model\SynchroLog;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
+use Zend\Filter\Word\DashToUnderscore;
 
 /**
  *
@@ -107,22 +108,26 @@ class SynchroService
     {
         $sqlFilterSnippet = $sqlFilter ? "'WHERE " . str_replace("'", "''", $sqlFilter) . "'" : '';
 
-        $config = [
-            'structure'       => [
-                "UNICAEN_IMPORT.MAJ_STRUCTURE($sqlFilterSnippet);",
-            ],
-            'etablissement'   => [
-                "UNICAEN_IMPORT.MAJ_ETABLISSEMENT($sqlFilterSnippet);",
-            ],
+        // config de base pour les services où :
+        // - il n'y a qu'une procédure à appeler, et
+        // - le nom de cette procédure peut être déduite du nom du service.
+        $defaultConfig = [];
+        $f = new DashToUnderscore();
+        foreach (ImportService::SERVICES as $service) {
+            $procName = 'MAJ_' . strtoupper($f->filter($service)); // ex: 'titre-acces' => 'MAJ_TITRE_ACCES'
+            $defaultConfig[$service] = [
+                "UNICAEN_IMPORT.$procName($sqlFilterSnippet);",
+            ];
+        }
+
+        // modif de la config de base pour certains services
+        $config = array_merge($defaultConfig, [
             'ecole-doctorale' => [
                 "UNICAEN_IMPORT.MAJ_ECOLE_DOCT($sqlFilterSnippet);",
                 $this->backgroundify("APP_IMPORT.REFRESH_MV('MV_RECHERCHE_THESE');"),
             ],
             'unite-recherche' => [
                 "UNICAEN_IMPORT.MAJ_UNITE_RECH($sqlFilterSnippet);",
-            ],
-            'individu'        => [
-                "UNICAEN_IMPORT.MAJ_INDIVIDU($sqlFilterSnippet);",
             ],
             'doctorant'       => [
                 "UNICAEN_IMPORT.MAJ_DOCTORANT($sqlFilterSnippet);",
@@ -132,26 +137,14 @@ class SynchroService
                 "UNICAEN_IMPORT.MAJ_THESE($sqlFilterSnippet);",
                 $this->backgroundify("APP_IMPORT.REFRESH_MV('MV_RECHERCHE_THESE');"),
             ],
-            'role'            => [
-                "UNICAEN_IMPORT.MAJ_ROLE($sqlFilterSnippet);",
-            ],
             'acteur'          => [
                 "UNICAEN_IMPORT.MAJ_ACTEUR($sqlFilterSnippet);",
                 $this->backgroundify("APP_IMPORT.REFRESH_MV('MV_RECHERCHE_THESE');"),
             ],
-            'variable'        => [
-                "UNICAEN_IMPORT.MAJ_VARIABLE($sqlFilterSnippet);",
-            ],
-            'origine-financement'        => [
-                "UNICAEN_IMPORT.MAJ_ORIGINE_FINANCEMENT($sqlFilterSnippet);",
-            ],
-            'financement'        => [
-                "UNICAEN_IMPORT.MAJ_FINANCEMENT($sqlFilterSnippet);",
-            ],
-        ];
+        ]);
 
-        if (!isset($config[$serviceName])) {
-            throw new LogicException("Service spécifié inattendu: $serviceName");
+        if (!array_key_exists($serviceName, $config)) {
+            throw new LogicException("Service spécifié inattendu : '$serviceName'.'");
         }
 
         return $config[$serviceName];

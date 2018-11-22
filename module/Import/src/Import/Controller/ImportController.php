@@ -228,7 +228,7 @@ class ImportController extends AbstractActionController
     {
         $service = $this->params('service');
         $codeStructure = $this->params('etablissement'); // ex: 'UCN'
-        $sourceCode = $this->params('source_code');
+        $sourceCode = $this->params('source-code');
         $synchronize = (bool) $this->params('synchronize', 1);
 
         $this->setLoggerStream('php://output');
