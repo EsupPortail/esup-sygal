@@ -2,7 +2,7 @@
 
 namespace Application\Entity\Db;
 
-use UnicaenImport\Entity\Db\Source;
+use Application\Entity\Db\Source;
 
 interface StructureConcreteInterface
 {

@@ -8,7 +8,7 @@
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <many-to-one field="source" target-entity="UnicaenImport\Entity\Db\Source">
+        <many-to-one field="source" target-entity="Application\Entity\Db\Source">
             <join-columns>
                 <join-column name="SOURCE_ID" referenced-column-name="ID"/>
             </join-columns>

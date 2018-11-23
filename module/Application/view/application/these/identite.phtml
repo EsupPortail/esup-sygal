@@ -1,11 +1,13 @@
 <?php
 
+use Application\Entity\Db\Acteur;
 use Application\Entity\Db\MailConfirmation;
 use Application\Entity\Db\These;
 use Application\Filter\ActeursFormatter;
 use Application\Filter\FinancementFormatter;
 use Application\Provider\Privilege\DoctorantPrivileges;
 use Application\Provider\Privilege\ThesePrivileges;
+use Application\View\Helper\IndividuUsurpationHelper;
 use Application\View\Renderer\PhpRenderer;
 
 /**
@@ -54,8 +56,9 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
     <div class="panel-body">
 
         <div id="photo-div" class="pull-right">
-<!--            <div class="photo-placeholder loading"-->
-<!--                 data-src="--><?php //echo $this->url('leocarte/photo', ['id' => $these->getDoctorant()->getSourceCodeSansPrefix()]) ?><!--"></div>-->
+            <!--            <div class="photo-placeholder loading"-->
+            <!--                 data-src="-->
+            <?php //echo $this->url('leocarte/photo', ['id' => $these->getDoctorant()->getSourceCodeSansPrefix()]) ?><!--"></div>-->
         </div>
 
         <dl class="dl-horizontal">
@@ -64,10 +67,17 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                 <?php echo $this->translate("Doctorant"); ?>
             </dt>
             <dd>
+                <?php echo sprintf("%s (%s)",
+                    $these->getDoctorant()->getIndividu()->getNomComplet(true, true, true),
+                    $these->getDoctorant()->getIndividu()->getDateNaissanceToString());
+                ?>
                 <?php
-                    echo $these->getDoctorant()->getNomComplet(true, true, true);
-                    echo " (".$these->getDoctorant()->getDateNaissanceToString().")";
-                ?><br>
+                // bouton d'usurpation d'identité
+                $individuUsurpationHelper = $this->plugin('individuUsurpation'); /* @var $individuUsurpationHelper IndividuUsurpationHelper */
+                $individuUsurpationHelper->setIndividu($these->getDoctorant()->getIndividu());
+                echo $individuUsurpationHelper();
+                ?>
+                <br>
 
                 <strong>
                     <?php echo $this->translate("Nationalité :"); ?>
@@ -93,14 +103,14 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                     <?php echo $this->translate("Mail de contact :"); ?>
                 </strong>
                 <?php
-                    if ($mailContact === null) {
-                        echo "(Non renseigné) ";
-                    } else {
-                        echo $mailContact;
-                        if ($etatMailContact === MailConfirmation::ENVOYER) {
-                            echo " (en attente) ";
-                        }
+                if ($mailContact === null) {
+                    echo "(Non renseigné) ";
+                } else {
+                    echo $mailContact;
+                    if ($etatMailContact === MailConfirmation::ENVOYER) {
+                        echo " (en attente) ";
                     }
+                }
                 ?>
                 <?php if ($canEditPersopass): ?>
                     <a href="<?php echo $modifierPersopassUrl ?>"
@@ -110,46 +120,55 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                         <?php echo $this->translate("Modifier"); ?>
                     </a>
                 <?php endif ?>
-                <br/>
-
             </dd>
 
             <?php
             // Affichage des acteurs de la these
             $acteursFormatter = new ActeursFormatter();
-            $acteursFormatter->paramDisplay(["role" => true,"complement" => true, "qualite" => true, "etablissement" => true]);
+            $acteursFormatter->paramDisplay(["role" => true, "complement" => true, "qualite" => true, "etablissement" => true]);
             $acteursFormatter->asArray();
             $acteurs = $these->getActeursSorted();
             $results = $acteursFormatter->doFormat($acteurs->toArray());
             $previous = "";
-            foreach($results as $result) {
-                    if ($previous != $result["role"]) {
-                        echo "</dd>";
-                        echo "<dt>" . $result["role"] . "</dt>";
-                        echo "<dd>";
-                        $previous = $result["role"];
-                    }
-                    $ligne = [];
-                    if (isset($result["nom"])) {
-                        $ligne[] = $result["nom"];
-                    }
-                    if (isset($result["complement"])) {
-                        $ligne[] = "<strong>".$result["complement"]."</strong>";
-                    }
-                    if (isset($result["qualite"]) && trim($result["qualite"]) != "") {
-                        $ligne[] = $result["qualite"];
-                    }
-                    if (isset($result["etablissement"]) && trim($result["etablissement"]) != "") {
-                        $ligne[] = $result["etablissement"];
-                    }
-                    if (isset($result['alerte-supann-id'])) {
-                        $ligne[] = sprintf('<span class="glyphicon glyphicon-warning-sign text-danger" title="%s"></span>',
-                            $result['alerte-supann-id']);
-                    }
-                    $ligne = implode(" &ndash; ", $ligne);
-                    echo $ligne . "<br/>";
+            foreach ($results as $result) {
+                /** @var Acteur $acteur */
+                $acteur = $result["acteur"];
+                if ($previous != $result["role"]) {
+                    echo "</dd>";
+                    echo "<dt>" . $result["role"] . "</dt>";
+                    echo "<dd>";
+                    $previous = $result["role"];
+                }
+                $ligne = [];
+                if (isset($result["nom"])) {
+                    $ligne[] = $result["nom"];
+                }
+                if (isset($result["complement"])) {
+                    $ligne[] = "<strong>" . $result["complement"] . "</strong>";
+                }
+                if (isset($result["qualite"]) && trim($result["qualite"]) != "") {
+                    $ligne[] = $result["qualite"];
+                }
+                if (isset($result["etablissement"]) && trim($result["etablissement"]) != "") {
+                    $ligne[] = $result["etablissement"];
+                }
+                if ($acteur->estDirecteur() && isset($result['alerte-supann-id'])) {
+                    $ligne[] = sprintf('<span class="glyphicon glyphicon-warning-sign text-danger" title="%s"></span>',
+                        $result['alerte-supann-id']);
+                }
+                $ligne = implode(" &ndash; ", $ligne);
+                echo $ligne;
+
+                if ($acteur->estDirecteur() && ! isset($result['alerte-supann-id'])) {
+                    // bouton d'usurpation d'identité
+                    $individuUsurpationHelper = $this->plugin('individuUsurpation');
+                    /* @var $individuUsurpationHelper IndividuUsurpationHelper */
+                    $individuUsurpationHelper->setIndividu($acteur->getIndividu());
+                    echo $individuUsurpationHelper();
+                }
+
+                echo "<br/>";
             }
-            echo "<br/>";
             ?>
 
             <dt>
@@ -157,14 +176,14 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
             </dt>
             <dd>
                 <?php
-                    if ($these->getEtablissement()) {
-                        echo /*$these->getEtablissement()->getCode() . " - " .*/ $these->getEtablissement()->getLibelle();
-                    }
-                    else {
-                        echo "<div class='alert alert-sm alert-warning'>";
-                        echo "<span class='glyphicon glyphicon-warning-sign'></span> Aucun établissement n'est renseignée.";
-                        echo "</div>";
-                    }
+                if ($these->getEtablissement()) {
+                    echo /*$these->getEtablissement()->getCode() . " - " .*/
+                    $these->getEtablissement()->getLibelle();
+                } else {
+                    echo "<div class='alert alert-sm alert-warning'>";
+                    echo "<span class='glyphicon glyphicon-warning-sign'></span> Aucun établissement n'est renseignée.";
+                    echo "</div>";
+                }
                 ?>
             </dd>
 
@@ -173,7 +192,7 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
             </dt>
             <dd>
                 <?php
-                    echo ($titreAcces = $these->getTitreAcces()) ?: "(Non renseigné)";
+                echo ($titreAcces = $these->getTitreAcces()) ?: "(Non renseigné)";
                 ?>
             </dd>
 
@@ -183,15 +202,14 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
             <dd>
                 <?php
                 if ($these->getUniteRecherche()) {
-                    echo /*$these->getUniteRecherche()->getSourceCode() . " - " .*/ $these->getUniteRecherche()->getLibelle();
-                }
-                elseif ($these->getCodeUniteRecherche() && $these->getLibelleUniteRecherche()) {
+                    echo /*$these->getUniteRecherche()->getSourceCode() . " - " .*/
+                    $these->getUniteRecherche()->getLibelle();
+                } elseif ($these->getCodeUniteRecherche() && $these->getLibelleUniteRecherche()) {
                     echo $these->getCodeUniteRecherche() . " - " . $these->getLibelleUniteRecherche();
                     echo "<div class='alert alert-sm alert-warning'>";
                     echo "<span class='glyphicon glyphicon-warning-sign'></span> Utilisation du champs libre (unité de recherche mal renseignée).";
                     echo "</div>";
-                }
-                else {
+                } else {
                     echo "<div class='alert alert-sm alert-warning'>";
                     echo "<span class='glyphicon glyphicon-warning-sign'></span> Aucune unité de recherche n'est renseignée";
                     echo "</div>";
@@ -207,7 +225,7 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
             </dt>
             <dd>
                 <?php
-                if (count($rattachements) <1 ) {
+                if (count($rattachements) < 1) {
                     echo "(Aucun établissement de rattachement de renseigné)";
                 } else {
                     /** @var \Application\Entity\Db\EtablissementRattachement $rattachement */
@@ -225,7 +243,8 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
             </dt>
             <dd>
                 <?php if ($these->getEcoleDoctorale()) {
-                    echo /*$these->getEcoleDoctorale()->getSourceCode() . " - " .*/ $these->getEcoleDoctorale()->getLibelle();
+                    echo /*$these->getEcoleDoctorale()->getSourceCode() . " - " .*/
+                    $these->getEcoleDoctorale()->getLibelle();
                 } else {
                     echo "<div class='alert alert-sm alert-warning'>";
                     echo "<span class='glyphicon glyphicon-warning-sign'></span> Aucune école doctorale n'est renseignée.";
@@ -258,7 +277,8 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
             <?php if ($these->etaitConfidentielle()): ?>
                 <dd>Confidentielle, jusqu'au <?php echo $these->getDateFinConfidentialiteToString() ?></dd>
             <?php elseif ($these->estConfidentielle()): ?>
-                <dd class="text-danger">Confidentielle, jusqu'au <?php echo $these->getDateFinConfidentialiteToString() ?></dd>
+                <dd class="text-danger">Confidentielle,
+                    jusqu'au <?php echo $these->getDateFinConfidentialiteToString() ?></dd>
             <?php else: ?>
                 <dd>Non confidentielle</dd>
             <?php endif ?>
@@ -269,10 +289,10 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
             </dd>
 
             <?php if ($resultat = $these->getResultatToString(false)): ?>
-            <dt>Résultat</dt>
-            <dd>
-                <?php echo $resultat ?>
-            </dd>
+                <dt>Résultat</dt>
+                <dd>
+                    <?php echo $resultat ?>
+                </dd>
             <?php endif ?>
 
             <dt>Discipline</dt>
@@ -334,59 +354,57 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
 </div>
 
 
-
 <!-------------------------------------- Fichiers divers --------------------------------------->
 
 <?php if ($this->isAllowed($these, ThesePrivileges::FICHIER_DIVERS_CONSULTER)): ?>
-<div class="row">
-    <div class="col-md-4">
-        <div id="pvSoutenanceDiv" class="" data-url="<?php echo $pvSoutenanceUrl ?>">
-            <!-- màj via ajax -->
+    <div class="row">
+        <div class="col-md-4">
+            <div id="pvSoutenanceDiv" class="" data-url="<?php echo $pvSoutenanceUrl ?>">
+                <!-- màj via ajax -->
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div id="preRapportSoutenanceDiv" class="" data-url="<?php echo $preRapportSoutenanceUrl ?>">
+                <!-- màj via ajax -->
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div id="rapportSoutenanceDiv" class="" data-url="<?php echo $rapportSoutenanceUrl ?>">
+                <!-- màj via ajax -->
+            </div>
         </div>
     </div>
 
-    <div class="col-md-4">
-        <div id="preRapportSoutenanceDiv" class="" data-url="<?php echo $preRapportSoutenanceUrl ?>">
-            <!-- màj via ajax -->
+    <div class="row">
+        <div class="col-md-4">
+            <div id="demandeConfidentDiv" class="" data-url="<?php echo $demandeConfidentUrl ?>">
+                <!-- màj via ajax -->
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div id="prolongConfidentDiv" class="" data-url="<?php echo $prolongConfidentUrl ?>">
+                <!-- màj via ajax -->
+            </div>
         </div>
     </div>
 
-    <div class="col-md-4">
-        <div id="rapportSoutenanceDiv" class="" data-url="<?php echo $rapportSoutenanceUrl ?>">
-            <!-- màj via ajax -->
+    <div class="row">
+        <div class="col-md-4">
+            <div id="convMiseEnLigneDiv" class="" data-url="<?php echo $convMiseEnLigneUrl ?>">
+                <!-- màj via ajax -->
+            </div>
         </div>
-    </div>
-</div>
 
-<div class="row">
-    <div class="col-md-4">
-        <div id="demandeConfidentDiv" class="" data-url="<?php echo $demandeConfidentUrl ?>">
-            <!-- màj via ajax -->
+        <div class="col-md-4">
+            <div id="avenantConvMiseEnLigneDiv" class="" data-url="<?php echo $avenantConvMiseEnLigneUrl ?>">
+                <!-- màj via ajax -->
+            </div>
         </div>
     </div>
-
-    <div class="col-md-4">
-        <div id="prolongConfidentDiv" class="" data-url="<?php echo $prolongConfidentUrl ?>">
-            <!-- màj via ajax -->
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-4">
-        <div id="convMiseEnLigneDiv" class="" data-url="<?php echo $convMiseEnLigneUrl ?>">
-            <!-- màj via ajax -->
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div id="avenantConvMiseEnLigneDiv" class="" data-url="<?php echo $avenantConvMiseEnLigneUrl ?>">
-            <!-- màj via ajax -->
-        </div>
-    </div>
-</div>
 <?php endif ?>
-
 
 
 <!-------------------------------------- Next step --------------------------------------->
@@ -395,15 +413,14 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
 </div>
 
 
-
 <script>
     $(function () {
         var body = $("body");
         var self = this;
 
-        var loaderFactory = function(divName) {
-            return function(done, effect) {
-                return function() {
+        var loaderFactory = function (divName) {
+            return function (done, effect) {
+                return function () {
                     $("#" + divName).addClass("loading").refresh(null, function () {
                         $(this).removeClass("loading").show();
                         if (done) done();
@@ -442,15 +459,14 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
             window.location.reload();
         });
 
-        $(window).load(function() {
-            $(".photo-placeholder").each(function() {
+        $(window).load(function () {
+            $(".photo-placeholder").each(function () {
                 loadPhoto(this);
             });
         });
     });
 
-    function loadPhoto(photoPlaceholder)
-    {
+    function loadPhoto(photoPlaceholder) {
         debugger;
         var photoUrl = $(photoPlaceholder).data('src');
 

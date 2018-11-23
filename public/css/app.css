@@ -477,6 +477,11 @@ span.sas-highlight {
   font-weight: bold;
   margin: 0; }
 
+.individu-usurpation-form {
+  display: inline; }
+  .individu-usurpation-form input[type="submit"] {
+    margin: 0 0 0 8px; }
+
 .user-usurpation-form {
   margin-top: 30px;
   padding-top: 10px;
