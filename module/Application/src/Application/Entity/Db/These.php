@@ -11,7 +11,7 @@ use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
-use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
+use Application\Entity\Db\Traits\SourceAwareTrait;
 use Zend\Filter\Exception;
 use Zend\Filter\FilterChain;
 use Zend\Filter\FilterInterface;

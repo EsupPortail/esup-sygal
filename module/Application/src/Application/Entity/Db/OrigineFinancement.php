@@ -3,7 +3,7 @@
 namespace Application\Entity\Db;
 
 use UnicaenApp\Entity\HistoriqueAwareTrait;
-use UnicaenImport\Entity\Db\Source;
+use Application\Entity\Db\Source;
 
 class OrigineFinancement {
 

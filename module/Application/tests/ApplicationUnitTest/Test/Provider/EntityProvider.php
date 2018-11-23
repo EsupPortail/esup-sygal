@@ -18,7 +18,7 @@ use Doctrine\ORM\EntityManager;
 use InvalidArgumentException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\ORM\Event\Listeners\HistoriqueListener;
-use UnicaenImport\Entity\Db\Source;
+use Application\Entity\Db\Source;
 use UnicaenTest\Entity\Db\AbstractEntityProvider;
 
 /**
