@@ -237,6 +237,7 @@ return [
         'factories' => [
             Import\Service\ImportService::class  => Import\Service\Factory\ImportServiceFactory::class,
             Import\Service\FetcherService::class => Import\Service\Factory\FetcherServiceFactory::class,
+            Import\Service\DbService::class      => Import\Service\Factory\DbServiceFactory::class,
             Import\Service\SynchroService::class => Import\Service\Factory\SynchroServiceFactory::class,
         ],
         'aliases' => [

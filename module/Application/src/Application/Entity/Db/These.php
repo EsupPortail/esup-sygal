@@ -197,6 +197,11 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     private $validations;
 
     /**
+     * @var Collection
+     */
+    private $titreAcces;
+
+    /**
      * @var TitreApogeeFilter
      */
     private $titreFilter;
@@ -205,7 +210,6 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      * @var Etablissement
      */
     private $etablissement;
-
 
     /**
      * @var ArrayCollection
@@ -1064,6 +1068,14 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function getFinancements()
     {
         return $this->financements;
+    }
+
+    /**
+     * @return TitreAcces
+     */
+    public function getTitreAcces()
+    {
+        return $this->titreAcces->first() ?: null;
     }
 
     /**
