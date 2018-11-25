@@ -11,7 +11,7 @@ use Application\Entity\UserWrapper;
 use Application\Service\BaseService;
 use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\RuntimeException;
-use UnicaenImport\Entity\Db\Source;
+use Application\Entity\Db\Source;
 use UnicaenLdap\Entity\People;
 
 class IndividuService extends BaseService

@@ -17,7 +17,7 @@
     <field name="sourceCode" type="string" column="SOURCE_CODE" length="64" nullable="true"/>
     <field name="RNSR" type="string" column="RNSR_ID" length="64" nullable="true"/>
 
-    <many-to-one field="source" target-entity="UnicaenImport\Entity\Db\Source">
+    <many-to-one field="source" target-entity="Application\Entity\Db\Source">
       <join-columns>
         <join-column name="SOURCE_ID" referenced-column-name="ID"/>
       </join-columns>

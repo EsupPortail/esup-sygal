@@ -3,6 +3,8 @@ version: '2'
 services:
   sygal:
     container_name: sygal-container
+    depends_on:
+    - sygal-import-ws
     build:
       context: .
     ports:
@@ -12,6 +14,9 @@ services:
      - .:/var/www/sygal
      - /tmp:/tmp
     working_dir: /var/www/sygal
+    links:
+    - "sygal-import-ws"
+    network_mode: bridge
 
   sygal-import-ws:
     container_name: sygal-import-ws-container
@@ -23,3 +28,4 @@ services:
     volumes:
      - ../sygal-import-ws:/var/www/sygal-import-ws
     working_dir: /var/www/sygal-import-ws
+    network_mode: bridge

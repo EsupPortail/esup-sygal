@@ -10,8 +10,10 @@ use Application\Service\Notification\NotifierService;
 use Application\Service\Role\RoleService;
 use Application\Service\Structure\StructureService;
 use Application\Service\UniteRecherche\UniteRechercheService;
+use Application\Service\UserContextService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Doctrine\ORM\EntityManager;
+use UnicaenAuth\Service\UserContext;
 use Zend\Mvc\Controller\ControllerManager;
 
 class UtilisateurControllerFactory
@@ -31,6 +33,7 @@ class UtilisateurControllerFactory
          * @var StructureService $structureService
          * @var EntityManager $entityManager
          * @var NotifierService $notifierService
+         * @var UserContextService $userContextService
          */
         $roleService = $sl->get('RoleService');
         $utilisateurService = $sl->get('UtilisateurService');
@@ -40,6 +43,7 @@ class UtilisateurControllerFactory
         $structureService = $sl->get(StructureService::class);
         $notifierService = $controllerManager->getServiceLocator()->get(NotifierService::class);
         $entityManager = $sl->get('doctrine.entitymanager.orm_default');
+        $userContextService = $sl->get(UserContext::class);
 
         $controller = new UtilisateurController();
         $controller->setRoleService($roleService);
@@ -51,6 +55,7 @@ class UtilisateurControllerFactory
         $controller->setStructureService($structureService);
         $controller->setNotifierService($notifierService);
         $controller->setEntityManager($entityManager);
+        $controller->setUserContextService($userContextService);
 
         return $controller;
     }

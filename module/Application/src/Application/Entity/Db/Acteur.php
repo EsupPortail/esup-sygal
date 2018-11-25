@@ -4,7 +4,7 @@ namespace Application\Entity\Db;
 
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
-use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
+use Application\Entity\Db\Traits\SourceAwareTrait;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 
 /**

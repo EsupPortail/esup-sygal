@@ -5,7 +5,7 @@ namespace Application\Service\Source;
 use Application\Entity\Db\SourceInterface;
 use Application\Service\BaseService;
 use Doctrine\ORM\EntityRepository;
-use UnicaenImport\Entity\Db\Source;
+use Application\Entity\Db\Source;
 
 /**
  * @author Unicaen
