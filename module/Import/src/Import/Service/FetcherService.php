@@ -96,7 +96,7 @@ class FetcherService
     {
         $config = $this->getConfigForEtablissement();
 
-        return $this->callService->setConfig($config)->version();
+        return $this->callService->setConfig($config)->getVersion();
     }
 
     /**

@@ -4,13 +4,14 @@ namespace Import\Service;
 
 use Assert\Assertion;
 use Assert\AssertionFailedException;
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ServerException;
+use UnicaenApp\Exception\RuntimeException;
 use Import\Exception\CallException;
-use Import\Exception\ServiceNotFoundException;
 use Zend\Http\Response;
 use Zend\Log\LoggerAwareTrait;
 
@@ -25,6 +26,11 @@ class CallService
      * @var array
      */
     protected $config;
+
+    /**
+     * @var Client
+     */
+    protected $client;
 
     /**
      * @var string         $url      : le chemin d'acces au web service
@@ -47,7 +53,11 @@ class CallService
      */
     public function setConfig(array $config)
     {
-        $this->config = $config;
+        try {
+            $this->loadConfig($config);
+        } catch (AssertionFailedException $e) {
+            throw CallException::badConfig($e);
+        }
 
         return $this;
     }
@@ -55,116 +65,104 @@ class CallService
     /**
      * @return \stdClass
      */
-    public function version()
+    public function getVersion()
     {
-        $uri = 'version/current';
-
-        $response = $this->sendRequest($uri);
-        if ($response->getStatusCode() != 200) {
-            throw CallException::unexpectedResponse($uri, $response);
-        }
-
-        $json = json_decode($response->getBody());
-        if ($json === null) {
-            // NULL is returned if the json cannot be decoded or if the encoded data is deeper than the recursion limit.
-            throw CallException::invalidJSONResponse($uri, (string)$response->getBody());
-        }
-
-        return $json;
+        return $this->get('version/current');
     }
 
     /**
+     * Envoie une requête au web service, à l'URI spécifiée.
+     *
      * @param string $uri
      * @return \stdClass
      */
     public function get($uri)
     {
-        try {
-            $response = $this->sendRequest($uri);
-        } catch (CallException $ce) {
-            throw $ce;
-        } catch (\Exception $e) {
-            throw CallException::unexpectedError($uri, $e);
-        }
-        if ($response->getStatusCode() !== Response::STATUS_CODE_200) {
-            throw CallException::unexpectedResponse($uri, $response);
-        }
-
-        $json = json_decode($response->getBody());
-        if ($json === null) {
-            // NULL is returned if the json cannot be decoded or if the encoded data is deeper than the recursion limit.
-            throw CallException::invalidJSONResponse($uri, (string)$response->getBody());
-        }
+        $json = $this->sendRequest($uri);
 
         return $json;
     }
 
     /**
-     * @throws \Assert\AssertionFailedException
+     * @param array $config
+     * @throws AssertionFailedException
      */
-    private function loadConfig()
+    private function loadConfig(array $config)
     {
-        Assertion::keyIsset($this->config, 'url');
-        Assertion::keyIsset($this->config, 'user');
-        Assertion::keyIsset($this->config, 'password');
+        Assertion::keyIsset($config, 'url');
+        Assertion::keyIsset($config, 'user');
+        Assertion::keyIsset($config, 'password');
 
-        $this->url = $this->config['url'];
-        $this->user = $this->config['user'];
-        $this->password = $this->config['password'];
+        $this->config = [
+            'base_uri' => $config['url'],
+            'headers' => [
+                'Accept' => 'application/json',
+            ],
+            'auth' => [
+                $config['user'],
+                $config['password'],
+            ],
+        ];
 
-        if (array_key_exists('proxy', $this->config)) {
-            $this->proxy = $this->config['proxy'];
+        if (array_key_exists('verify', $config)) {
+            $this->config['verify'] = $config['verify'];
         }
-        if (array_key_exists('verify', $this->config)) {
-            $this->verify = $this->config['verify'];
+        if (array_key_exists('timeout', $config)) {
+            $this->config['timeout'] = $config['timeout'];
         }
-        if (array_key_exists('timeout', $this->config)) {
-            $this->timeout = $this->config['timeout'];
+        if (array_key_exists('proxy', $config)) {
+            $this->config['proxy'] = $config['proxy'];
+        } else {
+            $this->config['proxy'] = ['no' => 'localhost'];
         }
     }
 
+    /**
+     * @param Client $client
+     * @return self
+     */
+    public function setClient(Client $client)
+    {
+        $this->client = $client;
+
+        return $this;
+    }
+
+    /**
+     * @return Client
+     */
+    public function getClient()
+    {
+        if ($this->client === null) {
+            $this->client = $this->createClient();
+        }
+
+        return $this->client;
+    }
+
+    /**
+     * @return Client
+     */
     private function createClient()
     {
-        try {
-            $this->loadConfig();
-        } catch (AssertionFailedException $e) {
-            throw CallException::badConfig($e);
+        if ($this->config === null) {
+            throw new RuntimeException("Une config doit être fournie au préalable.");
         }
 
-        $options = [
-            'base_uri' => $this->url,
-            'headers'  => [
-                'Accept' => 'application/json',
-            ],
-            'auth'     => [$this->user, $this->password],
-        ];
-
-        if ($this->proxy !== null) {
-            $options['proxy'] = $this->proxy;
-        } else {
-            $options['proxy'] = ['no' => 'localhost'];
-        }
-        if ($this->verify !== null) {
-            $options['verify'] = $this->verify;
-        }
-        if ($this->timeout !== null) {
-            $options['timeout'] = $this->timeout;
-        }
-
-        return new Client($options);
+        return new Client($this->config);
     }
 
     /**
      * Appel du Web Service d'import de données.
      *
      * @param string $uri : la "page" du Web Service à interroger
-     * @return Response la réponse du Web Service
+     * @return \stdClass Réponse du Web Service décodé en JSON
      *
      * RMQ le client est configuré en utilisant les propriétés du FetcherService
      */
     private function sendRequest($uri)
     {
-        $client = $this->createClient();
+        $client = $this->getClient();
 
         try {
             $_debut = microtime(true);
@@ -179,8 +177,20 @@ class CallService
             throw CallException::networkError($e);
         } catch (GuzzleException $e) {
             throw CallException::unexpectedError($uri, $e);
+        } catch (Exception $e) {
+            throw CallException::unexpectedError($uri, $e);
         }
 
-        return $response;
+        if ($response->getStatusCode() !== Response::STATUS_CODE_200) {
+            throw CallException::unexpectedResponse($uri, $response);
+        }
+
+        $json = json_decode($response->getBody());
+        if ($json === null) {
+            // NULL is returned if the json cannot be decoded or if the encoded data is deeper than the recursion limit.
+            throw CallException::invalidJSONResponse($uri, (string)$response->getBody());
+        }
+
+        return $json;
     }
 }
