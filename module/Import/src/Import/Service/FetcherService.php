@@ -124,8 +124,8 @@ class FetcherService
         $_deb = microtime(true);
         $this->dbService->setServiceName($serviceName);
         $this->dbService->setEtablissement($this->etablissement);
-        $this->dbService->deleteExistingDataForService(['id' => $sourceCode]);
-        $this->dbService->saveEntityForService($jsonEntity, $sourceCode);
+        $this->dbService->deleteExistingData(['id' => $sourceCode]);
+        $this->dbService->saveEntity($jsonEntity, $sourceCode);
         $this->dbService->commit();
         $_fin = microtime(true);
         $this->logger->info(sprintf("Enregistrement en base de données en %.2f secondes.", $_fin - $_deb));
@@ -175,8 +175,8 @@ class FetcherService
         $_deb = microtime(true);
         $this->dbService->setServiceName($serviceName);
         $this->dbService->setEtablissement($this->etablissement);
-        $this->dbService->deleteExistingDataForService($filters);
-        $this->dbService->saveEntitiesForService($jsonEntities);
+        $this->dbService->deleteExistingData($filters);
+        $this->dbService->saveEntities($jsonEntities);
         $this->dbService->commit();
         $_fin = microtime(true);
         $this->logger->info(sprintf("Enregistrement des %d entités en %.2f secondes.", count($jsonEntities), $_fin - $_deb));

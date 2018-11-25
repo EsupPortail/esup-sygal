@@ -5,6 +5,7 @@ namespace ImportTest\Service;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\TransferException;
 use Import\Service\CallService;
+use stdClass;
 use Zend\Http\Response;
 use Exception;
 use GuzzleHttp\Exception\ClientException;
@@ -129,6 +130,18 @@ class CallServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($this->client, $service->getClient());
     }
 
+    public function testCanCreateClientIfConfigIsProvided()
+    {
+        $service = new CallService();
+        $service->setConfig([
+            'url' => 'url value',
+            'user' => 'user value',
+            'password' => 'password value',
+        ]);
+
+        $this->assertInstanceOf(Client::class, $service->getClient());
+    }
+
     public function getSendRequestPossibleError()
     {
         return [
@@ -160,7 +173,7 @@ class CallServiceTest extends \PHPUnit_Framework_TestCase
     public function testSendRequestThrowsCallExceptionWhenResponseStatusCodeIsNot200()
     {
         $response = $this->createMock(Response::class);
-        $response->expects($this->any())->method('getStatusCode')->willReturn(123);
+        $response->expects($this->exactly(2))->method('getStatusCode')->willReturn(123);
 
         $this->client->expects($this->once())->method('request')->willReturn($response);
 
@@ -168,5 +181,55 @@ class CallServiceTest extends \PHPUnit_Framework_TestCase
         $service->setClient($this->client);
         $service->setLogger($this->logger);
         $service->get('peu/importe');
+    }
+
+    /**
+     * @expectedException \Import\Exception\CallException
+     */
+    public function testSendRequestThrowsExceptionWhenResponseIsInvalidJSON()
+    {
+        $response = $this->createMock(Response::class);
+        $response->expects($this->once())->method('getStatusCode')->willReturn(Response::STATUS_CODE_200);
+        $response->expects($this->once())->method('getBody')->willReturn('invalid JSON');
+
+        $this->client->expects($this->once())->method('request')->willReturn($response);
+
+        $service = new CallService();
+        $service->setClient($this->client);
+        $service->setLogger($this->logger);
+        $service->get('peu/importe');
+    }
+
+    public function testCanGetVersion()
+    {
+        $response = $this->createMock(Response::class);
+        $response->expects($this->once())->method('getStatusCode')->willReturn(Response::STATUS_CODE_200);
+        $response->expects($this->once())->method('getBody')->willReturn('{"valid": "JSON"}');
+
+        $this->client->expects($this->once())->method('request')->with('GET', 'version/current')->willReturn($response);
+
+        $service = new CallService();
+        $service->setClient($this->client);
+        $service->setLogger($this->logger);
+        $service->getVersion();
+    }
+
+    public function testSendRequestReturnsJSON()
+    {
+        $response = $this->createMock(Response::class);
+        $response->expects($this->once())->method('getStatusCode')->willReturn(Response::STATUS_CODE_200);
+        $response->expects($this->once())->method('getBody')->willReturn('{"valid": "JSON"}');
+
+        $this->client->expects($this->once())->method('request')->willReturn($response);
+
+        $service = new CallService();
+        $service->setClient($this->client);
+        $service->setLogger($this->logger);
+        $json = $service->get('peu/importe');
+
+        $entity = new stdClass();
+        $entity->valid = "JSON";
+
+        $this->assertEquals($entity, $json);
     }
 }

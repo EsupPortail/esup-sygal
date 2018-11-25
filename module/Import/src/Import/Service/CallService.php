@@ -33,21 +33,6 @@ class CallService
     protected $client;
 
     /**
-     * @var string         $url      : le chemin d'acces au web service
-     * @var string         $user     : l'identifiant pour l'authentification
-     * @var string         $password : le mot de passe pour l'authentification
-     * @var string|null    $proxy    : le champ proxy
-     * @var boolean|string $verify   : le champ pour le mode https
-     * @var float          $timeout  : timeout of the request in seconds
-     */
-    protected $url;
-    protected $user;
-    protected $password;
-    protected $proxy;
-    protected $verify = true;
-    protected $timeout = 0;
-
-    /**
      * @param array $config
      * @return self
      */
@@ -63,6 +48,8 @@ class CallService
     }
 
     /**
+     * Interroge le ws pour connaître sa version.
+     *
      * @return \stdClass
      */
     public function getVersion()
@@ -71,7 +58,7 @@ class CallService
     }
 
     /**
-     * Envoie une requête au web service, à l'URI spécifiée.
+     * Envoie une requête quelconque au web service, ex: 'version/current'.
      *
      * @param string $uri
      * @return \stdClass
@@ -185,10 +172,12 @@ class CallService
             throw CallException::unexpectedResponse($uri, $response);
         }
 
-        $json = json_decode($response->getBody());
+        $body = $response->getBody();
+
+        $json = json_decode($body);
         if ($json === null) {
             // NULL is returned if the json cannot be decoded or if the encoded data is deeper than the recursion limit.
-            throw CallException::invalidJSONResponse($uri, (string)$response->getBody());
+            throw CallException::invalidJSONResponse($uri, (string)$body);
         }
 
         return $json;

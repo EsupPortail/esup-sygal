@@ -67,6 +67,106 @@ class DbService
     private $tableName;
 
     /**
+     * Demande au WS d'import un enregistrement particulier d'un service.
+     * NB: AUCUN COMMIT N'EST FAIT.
+     *
+     * @param stdClass $jsonEntity
+     */
+    public function saveEntity(stdClass $jsonEntity)
+    {
+        $this->saveEntities([$jsonEntity]);
+    }
+
+    /**
+     * Demande au WS d'import tous les enregistrements d'un service, éventuellement filtrés.
+     * NB: AUCUN COMMIT N'EST FAIT.
+     *
+     * @param stdClass[] $jsonEntities
+     */
+    public function saveEntities(array $jsonEntities)
+    {
+        $this->loadEntityClassMetadata();
+
+        $tableColumns = $this->entityClassMetadata->columnNames;
+
+        /** Etablissement de la transaction Oracle */
+        $connection = $this->entityManager->getConnection();
+        $connection->beginTransaction();
+        $statement = null;
+
+        /** Construction des requêtes d'INSERTion **/
+        $queries = [];
+        foreach ($jsonEntities as $jsonEntity) {
+            $colonnes = implode(", ", $tableColumns);
+            $values = implode(", ", $this->generateValueArray($jsonEntity));
+            $query = "INSERT INTO " . $this->tableName . " (" . $colonnes . ") VALUES (" . $values . ")";
+            $queries[] = $query;
+        }
+
+        /** Execution des requetes d'INSERTion par groupes de N */
+        $_debut = microtime(true);
+        $queriesChunks = array_chunk($queries, self::INSERT_QUERIES_CHUNK_SIZE);
+        foreach ($queriesChunks as $queryChunk) {
+            $sql = implode(';' . PHP_EOL, $queryChunk) . ';';
+            $this->logger->debug(sprintf("Execution de %s requête(s) INSERT.", count($queryChunk)));
+            try {
+                $connection->executeQuery('BEGIN' . PHP_EOL . $sql . PHP_EOL . ' END;');
+            } catch (DBALException $e) {
+                throw new RuntimeException("Erreur lors des requêtes INSERT dans la table '$this->tableName'.'", null, $e);
+            }
+        }
+        $_fin = microtime(true);
+
+        $this->logger->debug(sprintf("%d requête(s) INSERT effectuée(s) en %s secondes.", count($queries), $_fin - $_debut));
+    }
+
+    /**
+     * Supprime les données de la table utilisée pour le service spécifié.
+     * NB: AUCUN COMMIT N'EST FAIT.
+     *
+     * $filters peut contenir une clé 'id' pour ne supprimer qu'un seul enregistrement.
+     *
+     * @param array $filters
+     */
+    public function deleteExistingData(array $filters = [])
+    {
+        $this->loadEntityClassMetadata();
+
+        // Requête de suppression des données existantes
+        $query = $this->generateSQLSnippetForDelete($this->tableName, $filters);
+
+        $connection = $this->entityManager->getConnection();
+        try {
+            $connection->executeQuery($query);
+        } catch (DBALException $e) {
+            throw new RuntimeException("Erreur lors de la suppression dans la table $this->tableName", null, $e);
+        }
+    }
+
+    /**
+     * Fait un commit en bdd.
+     */
+    public function commit()
+    {
+        $connection = $this->entityManager->getConnection();
+
+        $_debut = microtime(true);
+        try {
+            $connection->commit();
+        } catch (\Exception $e) {
+            try {
+                $connection->rollBack();
+            } catch (ConnectionException $e) {
+                throw new RuntimeException("Le rollback a échoué!", null, $e);
+            }
+            throw new RuntimeException("Le commit a échoué, un rollback a été effectué.", null, $e);
+        }
+        $_fin = microtime(true);
+
+        $this->logger->debug("Commit : " . ($_fin - $_debut) . " secondes.");
+    }
+
+    /**
      * Récupération des infos et des champs (i.e. propriétés/colonnes)
      */
     private function loadEntityClassMetadata()
@@ -80,114 +180,7 @@ class DbService
         $this->entityClassMetadata = $this->entityManager->getClassMetadata($entityClass);
         $this->tableName = $this->entityClassMetadata->table['name'];
 
-        $this->logMetadata($this->serviceName, $entityClass);
-    }
-
-    /**
-     * Demande au WS d'import un enregistrement particulier d'un service.
-     * NB: AUCUN COMMIT N'EST FAIT.
-     *
-     * @param stdClass $json
-     * @param string   $sourceCode Source code de l'enregistrement à importer
-     */
-    public function saveEntityForService(stdClass $json, $sourceCode)
-    {
-        $this->loadEntityClassMetadata();
-
-        $tableColumns = $this->entityClassMetadata->columnNames;
-
-        /** Etablissement de la transaction Oracle */
-        $connection = $this->entityManager->getConnection();
-        $connection->beginTransaction();
-        $statement = null;
-
-        $queries = [];
-
-        /** Remplissage avec les données retournées par le Web Services */
-        $colonnes = implode(", ", $tableColumns);
-        $values = implode(", ", $this->generateValueArray($json, $this->entityClassMetadata));
-        $query = "INSERT INTO " . $this->tableName . " (" . $colonnes . ") VALUES (" . $values . ")";
-        $queries[] = $query;
-
-        /** Execution des requetes */
-        $_debut = microtime(true);
-        foreach ($queries as $query) {
-            $this->logger->debug("Execution de la requête : " . $query);
-            try {
-                $connection->executeQuery($query);
-            } catch (DBALException $e) {
-                throw new RuntimeException("Erreur lors de l'insert dans la table '$this->tableName'.'", null, $e);
-            }
-        }
-        $_fin = microtime(true);
-
-        $this->logger->debug(sprintf("Exécution des %d requêtes INSERT : %s secondes.", count($queries), $_fin - $_debut));
-    }
-
-    /**
-     * Demande au WS d'import tous les enregistrements d'un service, éventuellement filtrés.
-     * NB: AUCUN COMMIT N'EST FAIT.
-     *
-     * @param array $jsonEntities
-     */
-    public function saveEntitiesForService($jsonEntities)
-    {
-        $this->loadEntityClassMetadata();
-
-        /** Etablissement de la transaction Oracle */
-        $connection = $this->entityManager->getConnection();
-        $connection->beginTransaction();
-        $statement = null;
-
-        $tableColumns = $this->entityClassMetadata->columnNames;
-
-        /** Construction des requêtes d'INSERTion **/
-        $queries = [];
-        foreach ($jsonEntities as $entry) {
-            $colonnes = implode(", ", $tableColumns);
-            $values = implode(", ", $this->generateValueArray($entry, $this->entityClassMetadata));
-            $query = "INSERT INTO " . $this->tableName . " (" . $colonnes . ") VALUES (" . $values . ")";
-            $queries[] = $query;
-        }
-
-        /** Execution des requetes d'INSERTion groupées */
-        $_debut = microtime(true);
-        $queriesChunks = array_chunk($queries, self::INSERT_QUERIES_CHUNK_SIZE);
-        foreach ($queriesChunks as $queryChunk) {
-            $sql = implode(';' . PHP_EOL, $queryChunk) . ';';
-            $this->logger->debug(sprintf("Execution de %s requêtes d'insert.", count($queryChunk)));
-            try {
-                $connection->executeQuery('BEGIN' . PHP_EOL . $sql . PHP_EOL . ' END;');
-            } catch (DBALException $e) {
-                throw new RuntimeException("Erreur lors des inserts dans la table '$this->tableName'.'", null, $e);
-            }
-        }
-        $_fin = microtime(true);
-
-        $this->logger->debug(sprintf("Exécution des %d requêtes INSERT : %s secondes.", count($queries), $_fin - $_debut));
-    }
-
-    /**
-     * Supprime les données de la table utilisée pour le service spécifié.
-     * NB: AUCUN COMMIT N'EST FAIT.
-     *
-     * $filters peut contenir une clé 'id' pour ne supprimer qu'un seul enregistrement.
-     *
-     * @param array $filters
-     */
-    public function deleteExistingDataForService(array $filters = [])
-    {
-        $this->loadEntityClassMetadata();
-
-        // Requête de suppression des données existantes
-        $query = $this->generateSQLSnippetForDelete($this->tableName, $filters);
-
-        $connection = $this->entityManager->getConnection();
-        try {
-            $connection->executeQuery($query);
-        } catch (DBALException $e) {
-            throw new RuntimeException("Erreur lors de la suppression dans la table $this->tableName", null, $e);
-        }
+        $this->logMetadata($this->serviceName);
     }
 
     /**
@@ -237,29 +230,6 @@ class DbService
         }
 
         $this->logger->info($message);
-    }
-
-    /**
-     * Fait un commit en bdd.
-     */
-    public function commit()
-    {
-        $connection = $this->entityManager->getConnection();
-
-        $_debut = microtime(true);
-        try {
-            $connection->commit();
-        } catch (\Exception $e) {
-            try {
-                $connection->rollBack();
-            } catch (ConnectionException $e) {
-                throw new RuntimeException("Le rollback a échoué!", null, $e);
-            }
-            throw new RuntimeException("Le commit a échoué, un rollback a été effectué.", null, $e);
-        }
-        $_fin = microtime(true);
-
-        $this->logger->debug("Commit : " . ($_fin - $_debut) . " secondes.");
     }
 
     /**
@@ -322,16 +292,16 @@ class DbService
     /**
      * Mise sous forme de table des données appartenant à une entité
      *
-     * @param stdClass      $jsonEntity : le json associé à une entité
-     * @param ClassMetadata $metadata : les metadonnées associées à l'entité
+     * @param stdClass $jsonEntity : le json associé à une entité
      * @return array les données mises sous forme d'un tableau
      */
-    private function generateValueArray(stdClass $jsonEntity, $metadata)
+    private function generateValueArray(stdClass $jsonEntity)
     {
         $f = new EtablissementPrefixFilter();
         $valuesArray = [];
-        foreach ($metadata->columnNames as $propriete => $colonne) {
-            $type = $metadata->fieldMappings[$propriete]["type"];
+
+        foreach ($this->entityClassMetadata->columnNames as $propriete => $colonne) {
+            $type = $this->entityClassMetadata->fieldMappings[$propriete]["type"];
             $value = null;
             switch ($propriete) {
                 case "etablissementId": // UCN, URN, ULHN, INSA, rien d'autre
@@ -433,20 +403,20 @@ class DbService
      * Ajoute aux logs les metadonnées associées à une entity
      *
      * @param string $dataName    : le nom de l'entité
-     * @param string $entityClass : le chemin vers l'entité (namespace)
      */
-    private function logMetadata($dataName, $entityClass)
+    private function logMetadata($dataName)
     {
-        $metadata = $this->entityManager->getClassMetadata($entityClass);
-        $tableName = $metadata->table['name'];
-        $tableRelation = $metadata->columnNames;
+        $entityClass = $this->entityClassMetadata->name;
+        $tableName = $this->entityClassMetadata->table['name'];
+        $tableColumns = $this->entityClassMetadata->columnNames;
 
         $str = <<<EOS
 La table associée à l'entité [$dataName][$entityClass] est [$tableName]"
 Relation dans propriétés/colonnes: 
 EOS;
-        foreach ($tableRelation as $propriete => $colonne) {
-            $str .= "  - " . $propriete . " => " . $colonne . " [" . $metadata->fieldMappings[$propriete]["type"] . "]" . PHP_EOL;
+        foreach ($tableColumns as $propriete => $colonne) {
+            $type = $this->entityClassMetadata->fieldMappings[$propriete]["type"];
+            $str .= "  - " . $propriete . " => " . $colonne . " [" . $type . "]" . PHP_EOL;
         }
 
         $this->logger->debug($str);

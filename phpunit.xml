@@ -27,7 +27,7 @@
 
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">./module</directory>
+            <directory suffix=".php">./module/Import</directory>
         </whitelist>
     </filter>
 
