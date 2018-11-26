@@ -6,6 +6,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Import\Service\DbService;
+use Import\Service\SQLGenerator;
 use Zend\Log\LoggerInterface;
 
 class DbServiceTest extends \PHPUnit_Framework_TestCase
@@ -30,6 +31,11 @@ class DbServiceTest extends \PHPUnit_Framework_TestCase
      */
     private $connection;
 
+    /**
+     * @var SQLGenerator|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $sqlGenerator;
+
     protected function setUp()
     {
         $this->entityClassMetadata = $this->createMock(ClassMetadata::class);
@@ -37,8 +43,8 @@ class DbServiceTest extends \PHPUnit_Framework_TestCase
         $this->entityClassMetadata->table = ['name' => 'TABLE'];
         $this->entityClassMetadata->columnNames = ['one'=>'ONE', 'two'=>'TWO'];
         $this->entityClassMetadata->fieldMappings = [
-            'one' => ["type" => 'string'],
-            'two' => ["type" => 'string'],
+            'one' => ['type' => 'string'],
+            'two' => ['type' => 'string'],
         ];
 
         $this->connection = $this->createMock(Connection::class);
@@ -48,10 +54,25 @@ class DbServiceTest extends \PHPUnit_Framework_TestCase
         $this->entityManager->expects($this->once())->method('getConnection')->willReturn($this->connection);
 
         $this->logger = $this->createMock(LoggerInterface::class);
+
+        $this->sqlGenerator = $this->createMock(SQLGenerator::class);
     }
 
-    public function testCanSaveEntity()
+    public function testCanSaveEntities()
     {
+        $jsonEntity = new \stdClass();
+
+        $this->entityClassMetadata->columnNames = [
+            'one' => 'ONE',
+            'two' => 'TWO',
+        ];
+        $this->entityClassMetadata->fieldMappings = [
+            'one' => ['type' => 'string'],
+            'two' => ['type' => 'string'],
+        ];
+
+        $service = new DbService();
+        $service->save([$jsonEntity]);
 
     }
 }
