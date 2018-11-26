@@ -37,7 +37,7 @@ class TruncateAndMergeCommand extends AbstractCommand {
         $couverture = $inputFilePath['couverture'];
         $manuscrit = $inputFilePath['manuscrit'];
 
-        $tmpFilePath = sys_get_temp_dir() . '/' . uniqid() . '.pdf';
+        $tmpFilePath = sys_get_temp_dir() . '/sygal_trunc_' . uniqid() . '.pdf';
 
         $command = $this->executable . ' ' . $this->noCompressionOption;
 //        $command .= ' ' . '-dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=' . $outputFilePath . ' -dBATCH ' . $couverture . ' -dFirstPage=2 -dBATCH ' . $manuscrit;
