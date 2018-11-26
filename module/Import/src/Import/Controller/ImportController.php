@@ -75,7 +75,7 @@ class ImportController extends AbstractActionController
     }
 
     /**
-     * @param string $codeStructure Code structure de l'tablissement, ex: 'UCN'
+     * @param string $codeStructure Code structure de l'établissement, ex: 'UCN'
      * @return Etablissement
      */
     private function fetchEtablissementByCodeStructure($codeStructure)
@@ -85,7 +85,7 @@ class ImportController extends AbstractActionController
 
         $etablissement = $this->etablissementService->getRepository()->findOneBySourceCode($sourceCode);
         if ($etablissement === null) {
-            throw new RuntimeException("Aucun établissement trouvé avec le code structure " . $etablissement);
+            throw new RuntimeException("Aucun établissement trouvé avec le code structure " . $sourceCode);
         }
 
         return $etablissement;

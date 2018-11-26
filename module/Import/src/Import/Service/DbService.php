@@ -27,7 +27,22 @@ class DbService
     /**
      * @var Etablissement
      */
-    protected $etablissement;
+    private $etablissement;
+
+    /**
+     * @var string
+     */
+    protected $serviceName;
+
+    /**
+     * @var ClassMetadata
+     */
+    private $entityClassMetadata;
+
+    /**
+     * @var string
+     */
+    private $tableName;
 
     /**
      * @param Etablissement $etablissement
@@ -39,11 +54,6 @@ class DbService
 
         return $this;
     }
-
-    /**
-     * @var string
-     */
-    protected $serviceName;
 
     /**
      * @param string $serviceName
@@ -59,83 +69,56 @@ class DbService
     }
 
     /**
-     * @var ClassMetadata
-     */
-    private $entityClassMetadata;
-
-    /**
-     * @var string
-     */
-    private $tableName;
-
-    /**
-     * Demande au WS d'import un enregistrement particulier d'un service.
-     * NB: AUCUN COMMIT N'EST FAIT.
+     * Persiste en base de données les données importées spécifiées, concernant le service et l'établissement courants.
      *
-     * @param stdClass $jsonEntity
-     */
-    public function saveEntity(stdClass $jsonEntity)
-    {
-        $this->saveEntities([$jsonEntity]);
-    }
-
-    /**
-     * Demande au WS d'import tous les enregistrements d'un service, éventuellement filtrés.
      * NB: AUCUN COMMIT N'EST FAIT.
      *
      * @param stdClass[] $jsonEntities
      */
-    public function saveEntities(array $jsonEntities)
+    public function save(array $jsonEntities)
     {
         $this->loadEntityClassMetadata();
-
-        $tableColumns = $this->entityClassMetadata->columnNames;
 
         /** Etablissement de la transaction Oracle */
         $connection = $this->entityManager->getConnection();
         $connection->beginTransaction();
-        $statement = null;
 
-        /** Construction des requêtes d'INSERTion **/
+        /** Construction des requêtes SQL **/
         $queries = [];
         foreach ($jsonEntities as $jsonEntity) {
-            $colonnes = implode(", ", $tableColumns);
-            $values = implode(", ", $this->generateValueArray($jsonEntity));
-            $query = "INSERT INTO " . $this->tableName . " (" . $colonnes . ") VALUES (" . $values . ")";
-            $queries[] = $query;
+            $queries[] = $this->generateSQLQueryForSavingData($jsonEntity);
         }
 
-        /** Execution des requetes d'INSERTion par groupes de N */
+        /** Execution des requetes SQL par groupes de N */
         $_debut = microtime(true);
         $queriesChunks = array_chunk($queries, self::INSERT_QUERIES_CHUNK_SIZE);
         foreach ($queriesChunks as $queryChunk) {
-            $sql = implode(';' . PHP_EOL, $queryChunk) . ';';
-            $this->logger->debug(sprintf("Execution de %s requête(s) INSERT.", count($queryChunk)));
+            $this->logger->debug(sprintf("Execution de %s requête(s).", count($queryChunk)));
+            $sql = $this->wrapSQLQueriesInBeginEnd($queryChunk);
             try {
-                $connection->executeQuery('BEGIN' . PHP_EOL . $sql . PHP_EOL . ' END;');
+                $connection->executeQuery($sql);
             } catch (DBALException $e) {
-                throw new RuntimeException("Erreur lors des requêtes INSERT dans la table '$this->tableName'.'", null, $e);
+                throw new RuntimeException("Erreur rencontrée lors des requêtes dans '$this->tableName'.'", null, $e);
             }
         }
         $_fin = microtime(true);
 
-        $this->logger->debug(sprintf("%d requête(s) INSERT effectuée(s) en %s secondes.", count($queries), $_fin - $_debut));
+        $this->logger->debug(sprintf("%d requête(s) effectuée(s) en %s secondes.", count($queries), $_fin - $_debut));
     }
 
     /**
-     * Supprime les données de la table utilisée pour le service spécifié.
+     * Supprime certaines données en base satisfaisant les critères spécifiés,
+     * concernant le service et l'établissement courants.
+     *
      * NB: AUCUN COMMIT N'EST FAIT.
      *
-     * $filters peut contenir une clé 'id' pour ne supprimer qu'un seul enregistrement.
-     *
-     * @param array $filters
+     * @param array $filters Peut contenir une clé 'id' pour ne supprimer qu'un seul enregistrement.
      */
-    public function deleteExistingData(array $filters = [])
+    public function clear(array $filters = [])
     {
         $this->loadEntityClassMetadata();
 
-        // Requête de suppression des données existantes
-        $query = $this->generateSQLSnippetForDelete($this->tableName, $filters);
+        $query = $this->generateSQLQueryForClearingExistingData($filters);
 
         $connection = $this->entityManager->getConnection();
         try {
@@ -187,6 +170,7 @@ class DbService
 
     /**
      * Fonction écrivant dans la table des logs API_LOGS.
+     *
      * NB: AUCUN COMMIT N'EST FAIT.
      *
      * @param string        $serviceName
@@ -197,7 +181,11 @@ class DbService
      */
     public function insertLog($serviceName, DateTime $startDate, $duration, $route, $status)
     {
-        $end_date = new DateTime();
+        try {
+            $end_date = new DateTime();
+        } catch (\Exception $e) {
+            throw new RuntimeException("Là, on touche le fond!", null, $e);
+        }
 
         $message = sprintf("Interrogation du service '%s' de l'établissement '%s', en %s seconde(s).",
             $serviceName,
@@ -249,113 +237,18 @@ class DbService
     }
 
     /**
-     * Fonction de mise en forme des données typées pour les requêtes Oracle
+     * Génère la requête SQL de suppression de tout ou partie des données déjà importées de l'établissement courant.
      *
-     * @param mixed  $value : la value à formater
-     * @param string $type  : le type de la donnée à formater
-     * @return string la donnée formatée
-     *
-     * RMQ si un format n'est pas prévu par le traitement la valeur est retournée sans traitement et un message est
-     * affiché
-     */
-    private function prepValue($value, $type)
-    {
-        $nvalue = null;
-        switch ($type) {
-            case "string":
-                $nvalue = $this->prepString($value);
-                break;
-            case "date":
-                $nvalue = $this->prepDate($value);
-                break;
-            default:
-                $nvalue = $value;
-                break;
-        }
-
-        return $nvalue;
-    }
-
-    private function prepString($value)
-    {
-        return ("'" . str_replace("'", "''", $value) . "'");
-    }
-
-    private function prepDate($value)
-    {
-        if ($value === null) {
-            return "null";
-        }
-        $date = explode(' ', $value->{'date'})[0];
-
-        return "to_date('" . $date . "','YYYY-MM-DD')";
-    }
-
-    /**
-     * Mise sous forme de table des données appartenant à une entité
-     *
-     * @param stdClass $jsonEntity : le json associé à une entité
-     * @return array les données mises sous forme d'un tableau
-     */
-    private function generateValueArray(stdClass $jsonEntity)
-    {
-        $f = new EtablissementPrefixFilter();
-        $valuesArray = [];
-
-        foreach ($this->entityClassMetadata->columnNames as $propriete => $colonne) {
-            $type = $this->entityClassMetadata->fieldMappings[$propriete]["type"];
-            $value = null;
-            switch ($propriete) {
-                case "etablissementId": // UCN, URN, ULHN, INSA, rien d'autre
-                    $value = $this->etablissement->getStructure()->getCode();
-                    break;
-//                case "acteurEtablissementId":
-//                    if (isset($entity_json->{$propriete})) {
-//                        $value = $f->addPrefixEtablissementTo($entity_json->{$propriete}, $this->etablissement);
-//                    }
-//                    break;
-                case "sourceCode":
-                    $value = $f->addPrefixEtablissementTo($jsonEntity->id, $this->etablissement);
-                    break;
-                case "sourceId":
-                case "individuId":
-                case "roleId":
-                case "theseId":
-                case "doctorantId":
-                case "structureId":
-                case "ecoleDoctId":
-                case "uniteRechId":
-                case "acteurEtablissementId":
-                case "origineFinancementId":
-                    if (isset($jsonEntity->{$propriete})) {
-                        $value = $f->addPrefixEtablissementTo($jsonEntity->{$propriete}, $this->etablissement);
-                    }
-                    break;
-                default:
-                    if (isset($jsonEntity->{$propriete})) {
-                        $value = $jsonEntity->{$propriete};
-                    }
-                    break;
-            }
-
-            $valuesArray[] = $this->prepValue($value, $type);
-        }
-
-        return $valuesArray;
-    }
-
-    /**
-     * Génère le code SQL de la requête de suppression des données existantes.
-     *
-     * @param string $tableName
-     * @param array  $filters
+     * @param array $filters
      * @return string
      */
-    private function generateSQLSnippetForDelete($tableName, array $filters = [])
+    private function generateSQLQueryForClearingExistingData(array $filters = [])
     {
-        $filters = $this->prepareFiltersForTmpTableUpdate($filters);
+        $codeStructureEtablissement = $this->etablissement->getStructure()->getCode();
 
-        $query = "DELETE FROM " . $tableName . " WHERE ETABLISSEMENT_ID='" . $this->etablissement->getStructure()->getCode() . "'";
+        $query = sprintf("DELETE FROM %s WHERE ETABLISSEMENT_ID = '%s'", $this->tableName, $codeStructureEtablissement);
+
+        $filters = $this->prepareFiltersForTmpTableUpdate($filters);
 
         if (count($filters) > 0) {
             $wheres = $filters;
@@ -368,6 +261,37 @@ class DbService
         }
 
         return $query;
+    }
+
+    /**
+     * Génère les requêtes SQL de persistence d'une donnée importée de l'établissement courant.
+     *
+     * @param stdClass $jsonEntity
+     * @return string[]
+     */
+    private function generateSQLQueryForSavingData(stdClass $jsonEntity)
+    {
+        $tableColumns = $this->entityClassMetadata->columnNames;
+        $forceCodeEtablissement = null;
+
+        return sprintf("INSERT INTO %s (%s) VALUES (%s)",
+            $this->tableName,
+            implode(", ", $tableColumns),
+            implode(", ", $this->generateValueArray($jsonEntity))
+        );
+    }
+
+    /**
+     * @param array $queries
+     * @return string
+     */
+    private function wrapSQLQueriesInBeginEnd(array $queries)
+    {
+        $indent = '  ';
+
+        $sql = $indent . implode(';' . PHP_EOL . $indent, $queries) . ';';
+
+        return implode(PHP_EOL, ['BEGIN', $sql, 'END;']);
     }
 
     /**
@@ -399,6 +323,106 @@ class DbService
         }
 
         return array_merge($filters, $filtersToMerge);
+    }
+
+    /**
+     * Mise sous forme de table des données appartenant à une entité
+     *
+     * @param stdClass $jsonEntity : le json associé à une entité
+     * @return array les données mises sous forme d'un tableau
+     */
+    private function generateValueArray(stdClass $jsonEntity)
+    {
+        $codeEtablissement = $this->etablissement->getStructure()->getCode();
+        $f = new EtablissementPrefixFilter();
+        $valuesArray = [];
+
+        foreach ($this->entityClassMetadata->columnNames as $property => $colonne) {
+            $prefix = null;
+            $value = null;
+            switch ($property) {
+                case "etablissementId": // UCN, URN, ULHN ou INSA, sans préfixage
+                    $value = $codeEtablissement;
+                    break;
+                case "sourceCode":
+                    $prefix = $codeEtablissement;
+                    $value = $jsonEntity->id;
+                    break;
+                case "sourceId":
+                case "individuId":
+                case "roleId":
+                case "theseId":
+                case "doctorantId":
+                case "structureId":
+                case "ecoleDoctId":
+                case "uniteRechId":
+                case "acteurEtablissementId":
+                    $prefix = $codeEtablissement;
+                    $value = isset($jsonEntity->{$property}) ? $jsonEntity->{$property} : null;
+                    break;
+                case "origineFinancementId":
+                    $prefix = Etablissement::CODE_STRUCTURE_COMUE; // particularité!
+                    $value = isset($jsonEntity->{$property}) ? $jsonEntity->{$property} : null;
+                    break;
+                default:
+                    $value = isset($jsonEntity->{$property}) ? $jsonEntity->{$property} : null;
+                    break;
+            }
+
+            // préfixage éventuel
+            if ($value !== null && $prefix !== null) {
+                $value = $f->addPrefixTo($value, $prefix);
+            }
+
+            $valuesArray[] = $this->prepValueForProperty($value, $property);
+        }
+
+        return $valuesArray;
+    }
+
+    /**
+     * Fonction de mise en forme d'une valeur selon les metatadata de la propriété spécifiée.
+     *
+     * @param mixed  $value    La valeur à formater
+     * @param string $property La propriété concernée
+     * @return string La donnée formatée
+     *
+     * RMQ si un format n'est pas prévu par le traitement la valeur est retournée sans traitement et un message est
+     * affiché
+     */
+    private function prepValueForProperty($value, $property)
+    {
+        $type = $this->entityClassMetadata->fieldMappings[$property]["type"];
+
+        $nvalue = null;
+        switch ($type) {
+            case "string":
+                $nvalue = $this->prepString($value);
+                break;
+            case "date":
+                $nvalue = $this->prepDate($value);
+                break;
+            default:
+                $nvalue = $value;
+                break;
+        }
+
+        return $nvalue;
+    }
+
+    private function prepString($value)
+    {
+        return "'" . str_replace("'", "''", $value) . "'";
+    }
+
+    private function prepDate($value)
+    {
+        if ($value === null) {
+            return "null";
+        }
+        $date = explode(' ', $value->{'date'})[0];
+
+        return "to_date('" . $date . "','YYYY-MM-DD')";
     }
 
     /**

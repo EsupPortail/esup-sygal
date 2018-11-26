@@ -110,7 +110,11 @@ class FetcherService
         $this->logger->info(sprintf("Import: service %s[%s]", $serviceName, $sourceCode));
 
         $debut = microtime(true);
-        $startDate = new DateTime();
+        try {
+            $startDate = new DateTime();
+        } catch (\Exception $e) {
+            throw new RuntimeException("On touche le fond, là!", null, $e);
+        }
 
         $this->logger->info(sprintf("Interrogations du WS '%s'...", $serviceName));
 
@@ -124,8 +128,8 @@ class FetcherService
         $_deb = microtime(true);
         $this->dbService->setServiceName($serviceName);
         $this->dbService->setEtablissement($this->etablissement);
-        $this->dbService->deleteExistingData(['id' => $sourceCode]);
-        $this->dbService->saveEntity($jsonEntity, $sourceCode);
+        $this->dbService->clear(['id' => $sourceCode]);
+        $this->dbService->save([$jsonEntity]);
         $this->dbService->commit();
         $_fin = microtime(true);
         $this->logger->info(sprintf("Enregistrement en base de données en %.2f secondes.", $_fin - $_deb));
@@ -144,7 +148,11 @@ class FetcherService
     {
         $this->logger->info(sprintf("Import: service '%s'", $serviceName));
 
-        $startDate = new DateTime();
+        try {
+            $startDate = new DateTime();
+        } catch (\Exception $e) {
+            throw new RuntimeException("On touche le fond, là!", null, $e);
+        }
         $debut = microtime(true);
 
         $this->logger->info(sprintf("Interrogations du WS '%s'...", $serviceName));
@@ -175,8 +183,8 @@ class FetcherService
         $_deb = microtime(true);
         $this->dbService->setServiceName($serviceName);
         $this->dbService->setEtablissement($this->etablissement);
-        $this->dbService->deleteExistingData($filters);
-        $this->dbService->saveEntities($jsonEntities);
+        $this->dbService->clear($filters);
+        $this->dbService->save($jsonEntities);
         $this->dbService->commit();
         $_fin = microtime(true);
         $this->logger->info(sprintf("Enregistrement des %d entités en %.2f secondes.", count($jsonEntities), $_fin - $_deb));
