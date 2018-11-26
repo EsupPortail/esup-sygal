@@ -13,7 +13,7 @@
         <field name="libelleLong" column="LIBELLE_LONG" type="string" length="256" nullable="false"/>
         <field name="libelleCourt" column="LIBELLE_COURT" type="string" length="64" nullable="false"/>
 
-        <many-to-one field="source" target-entity="UnicaenImport\Entity\Db\Source">
+        <many-to-one field="source" target-entity="Application\Entity\Db\Source">
             <join-columns>
                 <join-column name="SOURCE_ID" referenced-column-name="ID"/>
             </join-columns>

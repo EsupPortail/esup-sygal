@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<phpunit bootstrap="init_autoloader.php" colors="true">
+<phpunit bootstrap="./vendor/autoload.php" colors="true">
     <testsuites>
         <testsuite name="Application">
             <directory>./module/Application/tests</directory>
         </testsuite>
         <testsuite name="Retraitement">
             <directory>./module/Retraitement/test</directory>
+        </testsuite>
+        <testsuite name="Import">
+            <directory>./module/Import/tests/Import</directory>
         </testsuite>
         <testsuite name="Rule">
             <directory>./module/Application/tests/ApplicationUnitTest/Rule</directory>
@@ -22,11 +25,11 @@
         <!--<log type="coverage-html" target="/tmp/phpunit/coverage" />-->
     </logging>
 
-    <!--<filter>-->
-        <!--<whitelist processUncoveredFilesFromWhitelist="true">-->
-            <!--<directory suffix=".php">../src</directory>-->
-        <!--</whitelist>-->
-    <!--</filter>-->
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./module/Import</directory>
+        </whitelist>
+    </filter>
 
     <groups>
 

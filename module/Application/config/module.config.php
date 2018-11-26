@@ -36,6 +36,7 @@ return array(
                 'drivers' => [
                     'Application\Entity\Db' => 'orm_default_xml_driver',
                     'Application\Entity\Db\VSitu' => 'orm_default_xml_driver',
+                    'UnicaenImport\Entity\Db' => 'orm_default_xml_driver',
                 ],
             ],
             'orm_default_xml_driver' => [
@@ -255,6 +256,7 @@ return array(
         'inline_scripts'        => [
         ],
         'stylesheets'           => [
+            '050_bootstrap-theme' => false,
         ],
         'printable_stylesheets' => [
         ],

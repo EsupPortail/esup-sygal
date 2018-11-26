@@ -165,6 +165,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             'form' => $form,
         ]);
     }
+
     /**
      * Usurpe l'identité d'un autre utilisateur.
      *
@@ -223,22 +224,81 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     }
 
     /**
-     * Recherche l'utilisateur dont le login est spécifié puis instancie un ShibUser à partir
-     * des attibuts de cet utilisateur.
+     * Usurpe l'identité d'un individu.
      *
-     * @param string $username
-     * @return ShibUser
+     * @return Response
      */
-    public function createShibUserFromUtilisateurUsername($username)
+    public function usurperIndividuAction()
     {
-        /** @var UtilisateurService $utilisateurService */
-        $utilisateurService = $this->getServiceLocator()->get('UtilisateurService');
+        $request = $this->getRequest();
+        if (! $request instanceof Request) {
+            exit(1);
+        }
+
+        $individuId = $request->getPost('individu');
+        if (! $individuId) {
+            return $this->redirect()->toRoute('home');
+        }
+
+        /** @var AuthenticationService $authenticationService */
+        $authenticationService = $this->getServiceLocator()->get(AuthenticationService::class);
+        $currentIdentity = $authenticationService->getIdentity();
+        if (! $currentIdentity || ! is_array($currentIdentity)) {
+            return $this->redirect()->toRoute('home');
+        }
+
+        if (isset($currentIdentity['shib'])) {
+            /** @var ShibUser $currentIdentity */
+            $currentIdentity = $currentIdentity['shib'];
+        }
+        elseif (isset($currentIdentity['ldap'])) {
+            /** @var People $currentIdentity */
+            $currentIdentity = $currentIdentity['ldap'];
+        } else {
+            return $this->redirect()->toRoute('home');
+        }
+
+        // seuls les logins spécifiés dans la config sont habilités à usurper des identités
+        /** @var ModuleOptions $options */
+        $options = $this->getServiceLocator()->get('unicaen-auth_module_options');
+        if (! in_array($currentIdentity->getUsername(), $options->getUsurpationAllowedUsernames())) {
+            throw new LogicException("Usurpation non autorisée");
+        }
 
         /** @var Utilisateur $utilisateur */
-        $utilisateur = $utilisateurService->getRepository()->findOneBy(['username' => $username]);
+        $utilisateur = $this->utilisateurService->getRepository()->findOneBy(['individu' => $individuId]);
         if ($utilisateur === null) {
-            throw new RuntimeException("L'utilisateur '$username' introuvable");
+            /** @var Individu $individu */
+            $individu = $this->individuService->getRepository()->find($individuId);
+            try {
+                $utilisateur = $this->utilisateurService->createFromIndividu($individu);
+            } catch (RuntimeException $e) {
+                throw new RuntimeException("Impossible d'ajouter l'individu $individu aux utilisateurs de l'application.", null, $e);
+            }
         }
+
+        // cuisine spéciale pour Shibboleth
+        if ($currentIdentity instanceof ShibUser) {
+            $fromShibUser = $currentIdentity;
+            $toShibUser = $this->createShibUserFromUtilisateur($utilisateur);
+            /** @var ShibService $shibService */
+            $shibService = $this->getServiceLocator()->get(ShibService::class);
+            $shibService->activateUsurpation($fromShibUser, $toShibUser);
+        }
+
+        $authenticationService->getStorage()->write($individuId);
+
+        return $this->redirect()->toRoute('home');
+    }
+
+    /**
+     * Instancie un ShibUser à partir des attibuts de l'utilisateur spécifié.
+     *
+     * @param Utilisateur $utilisateur
+     * @return ShibUser
+     */
+    public function createShibUserFromUtilisateur(Utilisateur $utilisateur)
+    {
         $individu = $utilisateur->getIndividu();
         if ($individu === null) {
             throw new RuntimeException("L'utilisateur '$utilisateur' n'a aucun individu lié");
@@ -256,6 +316,27 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         $toShibUser->setPrenom($individu->getPrenom());
 
         return $toShibUser;
+    }
+
+    /**
+     * Recherche l'utilisateur dont le login est spécifié puis instancie un ShibUser à partir
+     * des attibuts de cet utilisateur.
+     *
+     * @param string $username
+     * @return ShibUser
+     */
+    public function createShibUserFromUtilisateurUsername($username)
+    {
+        /** @var UtilisateurService $utilisateurService */
+        $utilisateurService = $this->getServiceLocator()->get('UtilisateurService');
+
+        /** @var Utilisateur $utilisateur */
+        $utilisateur = $utilisateurService->getRepository()->findOneBy(['username' => $username]);
+        if ($utilisateur === null) {
+            throw new RuntimeException("L'utilisateur '$username' introuvable");
+        }
+
+        return $this->createShibUserFromUtilisateur($utilisateur);
     }
 
     public function retirerRoleAction()

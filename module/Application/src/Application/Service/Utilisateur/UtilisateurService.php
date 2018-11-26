@@ -47,6 +47,37 @@ class UtilisateurService extends BaseService
     }
 
     /**
+     * @param Individu $individu
+     * @return Utilisateur
+     */
+    public function createFromIndividu(Individu $individu)
+    {
+        if ($individu->getSupannId() == null) {
+            throw new RuntimeException("Le supannId de l'individu $individu (id={$individu->getId()}) est null.");
+        }
+
+        $etablissementSource = $individu->getSource()->getEtablissement();
+        $username = $individu->getSupannId() . '@' . $etablissementSource->getDomaine();
+
+        $utilisateur = new Utilisateur();
+        $utilisateur->setDisplayName($individu->getNomComplet());
+        $utilisateur->setEmail($individu->getEmail());
+        $utilisateur->setUsername($username);
+        $utilisateur->setPassword('shib');
+        $utilisateur->setState(1);
+        $utilisateur->setIndividu($individu);
+
+        $this->getEntityManager()->persist($utilisateur);
+        try {
+            $this->getEntityManager()->flush($utilisateur);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Impossible d'enregistrer l'utilisateur", null, $e);
+        }
+
+        return $utilisateur;
+    }
+
+    /**
      * Renseigne l'individu correspondant à un utilisateur en bdd.
      *
      * @param Individu    $individu

@@ -19,7 +19,7 @@ use Application\Filter\EtablissementPrefixFilter;
 use Application\Filter\EtablissementPrefixFilterAwareTrait;
 use Application\Service\BaseService;
 use Doctrine\ORM\Query\Expr\Join;
-use UnicaenImport\Entity\Db\Source;
+use Application\Entity\Db\Source;
 
 /**
  * Class RoleService

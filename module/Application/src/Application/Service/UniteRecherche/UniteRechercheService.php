@@ -16,7 +16,7 @@ use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Query\Expr\Join;
 use UnicaenApp\Exception\RuntimeException;
 use Application\Entity\Db\TypeStructure;
-use UnicaenImport\Entity\Db\Source;
+use Application\Entity\Db\Source;
 
 /**
  * @method UniteRecherche|null findOneBy(array $criteria, array $orderBy = null)
