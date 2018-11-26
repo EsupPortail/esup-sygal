@@ -53,6 +53,8 @@ class DbService
     {
         $this->serviceName = $serviceName;
 
+        $this->entityClassMetadata = null;
+
         return $this;
     }
 
