@@ -50,17 +50,22 @@ class DbService
     private $sqlGenerator;
 
     /**
-     * @var JSONExtractor
+     * @var DbServiceJSONHelper
      */
-    private $jsonExtractor;
+    private $jsonHelper;
+
+    /**
+     * @var int
+     */
+    private $insertQueriesChunkSize = self::INSERT_QUERIES_CHUNK_SIZE;
 
     /**
      * DbService constructor.
      */
     public function __construct()
     {
-        $this->sqlGenerator = new SQLGenerator();
-        $this->jsonExtractor = new JSONExtractor();
+        $this->setSqlGenerator(new DbServiceSQLGenerator());
+        $this->setJsonHelper(new DbServiceJSONHelper());
     }
 
     /**
@@ -71,7 +76,7 @@ class DbService
     {
         $this->etablissement = $etablissement;
 
-        $this->jsonExtractor->setEtablissement($etablissement);
+        $this->jsonHelper->setEtablissement($etablissement);
 
         return $this;
     }
@@ -87,6 +92,64 @@ class DbService
         $this->entityClassMetadata = null;
 
         return $this;
+    }
+
+    /**
+     * @param DbServiceJSONHelper $jsonHelper
+     * @return DbService
+     */
+    public function setJsonHelper(DbServiceJSONHelper $jsonHelper): DbService
+    {
+        $this->jsonHelper = $jsonHelper;
+
+        return $this;
+    }
+
+    /**
+     * @param DbServiceSQLGenerator $sqlGenerator
+     * @return DbService
+     */
+    public function setSqlGenerator(DbServiceSQLGenerator $sqlGenerator): DbService
+    {
+        $this->sqlGenerator = $sqlGenerator;
+
+        return $this;
+    }
+
+    /**
+     * @param int $insertQueriesChunkSize
+     * @return DbService
+     */
+    public function setInsertQueriesChunkSize(int $insertQueriesChunkSize) : DbService
+    {
+        $this->insertQueriesChunkSize = $insertQueriesChunkSize;
+
+        return $this;
+    }
+
+    /**
+     * Supprime certaines données en base satisfaisant les critères spécifiés,
+     * concernant le service et l'établissement courants.
+     *
+     * NB: AUCUN COMMIT N'EST FAIT.
+     *
+     * @param array $filters Peut contenir une clé 'id' pour ne supprimer qu'un seul enregistrement.
+     */
+    public function clear(array $filters = [])
+    {
+        $this->loadEntityClassMetadata();
+
+        $filters = $this->prepareFiltersForTableUpdate($filters);
+        $filters['etablissement_id'] = $this->etablissement->getCode();
+
+        $query = $this->sqlGenerator->generateSQLQueryForClearingExistingData($this->tableName, $filters);
+
+        $connection = $this->entityManager->getConnection();
+        try {
+            $connection->executeQuery($query);
+        } catch (DBALException $e) {
+            throw new RuntimeException("Erreur lors de la suppression dans la table $this->tableName", null, $e);
+        }
     }
 
     /**
@@ -115,7 +178,7 @@ class DbService
 
         /** Execution des requetes SQL par groupes de N */
         $_debut = microtime(true);
-        $queriesChunks = array_chunk($queries, self::INSERT_QUERIES_CHUNK_SIZE);
+        $queriesChunks = array_chunk($queries, $this->insertQueriesChunkSize);
         foreach ($queriesChunks as $queryChunk) {
             $this->logger->debug(sprintf("Execution de %s requête(s).", count($queryChunk)));
             $sql = $this->sqlGenerator->wrapSQLQueriesInBeginEnd($queryChunk);
@@ -128,31 +191,6 @@ class DbService
         $_fin = microtime(true);
 
         $this->logger->debug(sprintf("%d requête(s) effectuée(s) en %s secondes.", count($queries), $_fin - $_debut));
-    }
-
-    /**
-     * Supprime certaines données en base satisfaisant les critères spécifiés,
-     * concernant le service et l'établissement courants.
-     *
-     * NB: AUCUN COMMIT N'EST FAIT.
-     *
-     * @param array $filters Peut contenir une clé 'id' pour ne supprimer qu'un seul enregistrement.
-     */
-    public function clear(array $filters = [])
-    {
-        $this->loadEntityClassMetadata();
-
-        $filters = $this->prepareFiltersForTableUpdate($filters);
-        $filters['etablissement_id'] = $this->etablissement->getStructure()->getCode();
-
-        $query = $this->sqlGenerator->generateSQLQueryForClearingExistingData($this->tableName, $filters);
-
-        $connection = $this->entityManager->getConnection();
-        try {
-            $connection->executeQuery($query);
-        } catch (DBALException $e) {
-            throw new RuntimeException("Erreur lors de la suppression dans la table $this->tableName", null, $e);
-        }
     }
 
     /**
@@ -307,7 +345,7 @@ class DbService
         $valuesArray = [];
 
         foreach ($this->entityClassMetadata->columnNames as $property => $columnName) {
-            $value = $this->jsonExtractor ->extractPropertyValue($property, $jsonEntity);
+            $value = $this->jsonHelper ->extractPropertyValue($property, $jsonEntity);
             $type = $this->entityClassMetadata->fieldMappings[$property]["type"];
 
             $valuesArray[] = $this->sqlGenerator->formatValueForPropertyType($value, $type);

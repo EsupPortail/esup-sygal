@@ -99,7 +99,6 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
 
     /**
      * @return string
-     * @deprecated mais encore nécessaire à cause de StructureConcreteInterface
      * @see StructureConcreteInterface
      */
     public function getCode()

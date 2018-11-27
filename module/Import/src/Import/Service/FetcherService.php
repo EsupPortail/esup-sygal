@@ -158,11 +158,11 @@ class FetcherService
         $this->logger->info(sprintf("Interrogations du WS '%s'...", $serviceName));
 
         $this->callService->setConfig($this->getConfigForEtablissement());
-        $filtersForWebService = $this->prepareFiltersForWebServiceRequest($filters);
+        $apiFilters = $this->prepareFiltersForWebServiceRequest($filters);
         $jsonEntities = [];
         $page = 1;
         do {
-            $params = array_merge($filtersForWebService, ['page' => $page]);
+            $params = array_merge($apiFilters, ['page' => $page]);
             $uri = $serviceName;
             if (count($params) > 0) {
                 $uri .= '?' . http_build_query($params);
