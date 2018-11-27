@@ -10,6 +10,7 @@ use Assert\AssertionFailedException;
 use DateTime;
 use Import\Service\Traits\CallServiceAwareTrait;
 use Import\Service\Traits\DbServiceAwareTrait;
+use stdClass;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\Log\LoggerAwareTrait;
@@ -36,16 +37,6 @@ class FetcherService
      * @var Etablissement
      */
     protected $etablissement;
-
-    /**
-     * Constructor
-     *
-     * @param array $config
-     */
-    public function __construct(array $config)
-    {
-        $this->config = $config;
-    }
 
     /**
      * Set logger object
@@ -86,15 +77,16 @@ class FetcherService
     }
 
     /**
-     * @return \stdClass
+     * @return stdClass
      */
     public function version()
     {
         $config = $this->getConfigForEtablissement();
-
         $config['timeout'] = 10;
 
-        return $this->callService->setConfig($config)->getVersion();
+        $this->callService->setConfig($config);
+
+        return $this->callService->getVersion();
     }
 
     /**
@@ -158,7 +150,7 @@ class FetcherService
         $this->logger->info(sprintf("Interrogations du WS '%s'...", $serviceName));
 
         $this->callService->setConfig($this->getConfigForEtablissement());
-        $apiFilters = $this->prepareFiltersForWebServiceRequest($filters);
+        $apiFilters = $this->prepareFiltersForAPIRequest($filters);
         $jsonEntities = [];
         $page = 1;
         do {
@@ -167,6 +159,7 @@ class FetcherService
             if (count($params) > 0) {
                 $uri .= '?' . http_build_query($params);
             }
+
             $_deb = microtime(true);
             $json = $this->callService->get($uri);
             $_fin = microtime(true);
@@ -220,16 +213,12 @@ class FetcherService
      */
     private function getConfigForEtablissement()
     {
-        if ($this->etablissement === null) {
-            throw new LogicException("Le code établissement courant est null.");
-        }
-
-        $codeEtablissement = $this->etablissement->getStructure()->getCode();
+        $codeEtablissement = $this->etablissement->getCode();
 
         try {
             Assertion::keyIsset($this->config, $codeEtablissement);
         } catch (AssertionFailedException $e) {
-            throw new LogicException("Le code établissement '{$codeEtablissement}' est introuvable dans la config.", null, $e);
+            throw new RuntimeException("Aucune clé de config ne correspond au code établissement '{$codeEtablissement}'.", null, $e);
         }
 
         return $this->config[$codeEtablissement];
@@ -239,7 +228,7 @@ class FetcherService
      * @param array $filters
      * @return array
      */
-    private function prepareFiltersForWebServiceRequest(array $filters)
+    private function prepareFiltersForAPIRequest(array $filters)
     {
         if (empty($filters)) {
             return $filters;

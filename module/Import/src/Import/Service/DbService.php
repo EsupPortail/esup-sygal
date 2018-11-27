@@ -256,7 +256,7 @@ class DbService
 
         $message = sprintf("Interrogation du service '%s' de l'établissement '%s', en %s seconde(s).",
             $serviceName,
-            $this->etablissement->getStructure()->getCode(),
+            $this->etablissement->getCode(),
             $duration
         );
 
@@ -277,7 +277,7 @@ class DbService
         try {
             $connection->executeQuery($sql, [
                 'message' => $message,
-                'etab' => $this->etablissement->getStructure()->getCode(),
+                'etab' => $this->etablissement->getCode(),
                 'status' => $status,
                 'route' => $route,
                 'service' => $serviceName,

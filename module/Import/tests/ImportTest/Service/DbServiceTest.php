@@ -3,10 +3,13 @@
 namespace ImportTest\Service;
 
 use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\These;
+use DateTime;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ConnectionException;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Import\Service\DbService;
 use Import\Service\DbServiceJSONHelper;
@@ -87,6 +90,7 @@ class DbServiceTest extends \PHPUnit_Framework_TestCase
 
         /** @var Etablissement|\PHPUnit_Framework_MockObject_MockObject $etablissement */
         $this->etablissement = $this->createMock(Etablissement::class);
+        $this->etablissement->expects($this->any())->method('getCode')->willReturn('ETAB');
 
         $this->dbService = new DbService();
         $this->dbService->setEntityManager($this->entityManager);
@@ -96,7 +100,17 @@ class DbServiceTest extends \PHPUnit_Framework_TestCase
         $this->dbService->setEtablissement($this->etablissement);
     }
 
-    public function testClearMakesNoCommit()
+    public function testSettingServiceNameResetsMetadata()
+    {
+        $this->entityManager->expects($this->once())->method('getClassMetadata')->willReturn('not null');
+
+        $this->dbService->clear();
+        $this->dbService->setServiceName('whatever');
+
+        $this->assertNull($this->getObjectAttribute($this->dbService, 'entityClassMetadata'));
+    }
+
+    public function testClearDoesNotPerformAnyCommit()
     {
         $this->connection->expects($this->never())->method('commit');
 
@@ -105,11 +119,42 @@ class DbServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testClearAddsMandatoryEtablissementFilter()
     {
-        $this->etablissement->expects($this->any())->method('getCode')->willReturn('ETAB');
         $this->sqlGenerator->expects($this->once())->method('generateSQLQueryForClearingExistingData')
             ->with('TABLE', ['critere' => 'valeur', 'etablissement_id' => 'ETAB']);
 
         $this->dbService->clear(['critere' => 'valeur']);
+    }
+
+    public function testClearReplacesTheseIdFilterValueByTheSourceCode()
+    {
+        /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
+        $repository = $this->createMock(EntityRepository::class);
+
+        /** @var These|\PHPUnit_Framework_MockObject_MockObject $repository */
+        $these = $this->createMock(These::class);
+        $these->expects($this->once())->method('getSourceCode')->willReturn('source code');
+
+        $this->entityManager->expects($this->once())->method('getRepository')->willReturn($repository);
+        $repository->expects($this->once())->method('find')->with(12)->willReturn($these);
+
+        $this->sqlGenerator->expects($this->once())->method('generateSQLQueryForClearingExistingData')
+            ->with('TABLE', ['these_id' => 'source code', 'etablissement_id' => 'ETAB']);
+
+        $this->dbService->clear(['these_id' => 12]);
+    }
+
+    /**
+     * @expectedException \UnicaenApp\Exception\RuntimeException
+     */
+    public function testClearThrowsExceptionIfNoTheseFoundWithTheseIdFilterValue()
+    {
+        /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
+        $repository = $this->createMock(EntityRepository::class);
+
+        $this->entityManager->expects($this->once())->method('getRepository')->willReturn($repository);
+        $repository->expects($this->once())->method('find')->with(12)->willReturn(null);
+
+        $this->dbService->clear(['these_id' => 12]);
     }
 
     /**
@@ -120,6 +165,13 @@ class DbServiceTest extends \PHPUnit_Framework_TestCase
         $this->connection->expects($this->once())->method('executeQuery')->willThrowException(new DBALException());
 
         $this->dbService->clear([]);
+    }
+
+    public function testSaveDoesNotPerformAnyCommit()
+    {
+        $this->connection->expects($this->never())->method('commit');
+
+        $this->dbService->save([]);
     }
 
     public function testSaveCutsQueriesIntoChunks()
@@ -177,5 +229,15 @@ class DbServiceTest extends \PHPUnit_Framework_TestCase
         $this->connection->expects($this->once())->method('rollback')->willThrowException(new ConnectionException());
 
         $this->dbService->commit();
+    }
+
+    public function testInsertLogDoesNotPerformAnyCommit()
+    {
+        $this->connection->expects($this->never())->method('commit');
+
+        /** @var DateTime $startDate */
+        $startDate = $this->createMock(DateTime::class);
+
+        $this->dbService->insertLog('', $startDate, 0, '', '');
     }
 }
