@@ -90,9 +90,6 @@ return [
                         'type'          => Segment::class,
                         'options'       => [
                             'route'       => '/supprimer/:structure',
-                            'constraints' => [
-                                'ecoleDoctorale' => '\d+',
-                            ],
                             'defaults'    => [
                                 'action' => 'supprimer',
                             ],
@@ -102,9 +99,6 @@ return [
                         'type'          => Segment::class,
                         'options'       => [
                             'route'       => '/restaurer/:structure',
-                            'constraints' => [
-                                'ecoleDoctorale' => '\d+',
-                            ],
                             'defaults'    => [
                                 'action' => 'restaurer',
                             ],
@@ -114,46 +108,15 @@ return [
                         'type'          => Segment::class,
                         'options'       => [
                             'route'       => '/modifier/:structure',
-                            'constraints' => [
-                                'ecoleDoctorale' => '\d+',
-                            ],
                             'defaults'    => [
                                 'action' => 'modifier',
-                            ],
-                        ],
-                    ],
-                    'ajouter-individu' => [
-                        'type'          => Segment::class,
-                        'options'       => [
-                            'route'       => '/:ecoleDoctorale/ajouter-individu',
-                            'constraints' => [
-                                'ecoleDoctorale' => '\d+',
-                            ],
-                            'defaults'    => [
-                                'action' => 'ajouter-individu',
-                            ],
-                        ],
-                    ],
-                    'retirer-individu' => [
-                        'type'          => Segment::class,
-                        'options'       => [
-                            'route'       => '/:ecoleDoctorale/retirer-individu/:edi',
-                            'constraints' => [
-                                'ecoleDoctorale' => '\d+',
-                                'edi' => '\d+',
-                            ],
-                            'defaults'    => [
-                                'action' => 'retirer-individu',
                             ],
                         ],
                     ],
                     'supprimer-logo' => [
                         'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/supprimer-logo/:ecoleDoctorale',
-                            'constraints' => [
-                                'ecoleDoctorale' => '\d+',
-                            ],
+                            'route'       => '/supprimer-logo/:structure',
                             'defaults'    => [
                                 'action' => 'supprimer-logo',
                             ],
@@ -183,7 +146,7 @@ return [
 
                                         'withtarget' => true,
                                         'paramsInject' => [
-                                            'ecoleDoctorale',
+                                            'structure',
                                         ],
                                     ],
                                     'information' => [
@@ -193,7 +156,7 @@ return [
 
                                         'withtarget' => true,
                                         'paramsInject' => [
-                                            'ecoleDoctorale',
+                                            'structure',
                                         ],
                                     ],
                                 ],

@@ -238,7 +238,7 @@ class EcoleDoctoraleController extends AbstractController
 
     public function supprimerLogoAction()
     {
-        $structureId = $this->params()->fromRoute("ecoleDoctorale");
+        $structureId = $this->params()->fromRoute("structure");
         $this->supprimerLogoEcoleDoctorale();
         return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $structureId], "fragment" => $structureId], true);
     }
@@ -250,7 +250,7 @@ class EcoleDoctoraleController extends AbstractController
      */
     public function supprimerLogoEcoleDoctorale()
     {
-        $ecoleId = $this->params()->fromRoute("ecoleDoctorale");
+        $ecoleId = $this->params()->fromRoute("structure");
         $ecole  = $this->getEcoleDoctoraleService()->getRepository()->findByStructureId($ecoleId);
 
         $this->getEcoleDoctoraleService()->deleteLogo($ecole);
