@@ -9,11 +9,14 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\Structure;
 use Application\Entity\Db\TypeStructure;
 use Application\Form\EcoleDoctoraleForm;
+use Application\Provider\Privilege\Privileges;
+use Application\Provider\Privilege\StructurePrivileges;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Structure\StructureServiceAwareTrait;
+use BjyAuthorize\Exception\UnAuthorizedException;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\View\Model\ViewModel;
 
@@ -27,19 +30,38 @@ class EcoleDoctoraleController extends AbstractController
 
     public function indexAction()
     {
-        $eds = $this->getStructureService()->getAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle');
+        $consultationToutes = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_CONSULTATION_TOUTES_STRUCTURES), StructurePrivileges::STRUCTURE_CONSULTATION_TOUTES_STRUCTURES);
+
+        $ecolesDoctorales = [];
+        if ($consultationToutes) {
+            $ecolesDoctorales = $this->getStructureService()->getAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle');
+        } else {
+            /** @var Role $role*/
+            $role = $this->userContextService->getSelectedIdentityRole();
+            if ($role->isEcoleDoctoraleDependant()) {
+                $ecole = $this->getEcoleDoctoraleService()->getRepository()->findByStructureId($role->getStructure()->getId());
+                $ecolesDoctorales[] = $ecole;
+            }
+        }
 
         return new ViewModel([
-            'ecoles'                         => $eds,
+            'ecoles'                         => $ecolesDoctorales,
         ]);
     }
 
     public function informationAction()
     {
-        $id = $this->params()->fromRoute('ecoleDoctorale');
+        $id = $this->params()->fromRoute('structure');
         $ecole = $this->getEcoleDoctoraleService()->getRepository()->findByStructureId($id);
         if ($ecole === null) {
             throw new RuntimeException("Aucune école doctorale ne possède l'identifiant renseigné.");
+        }
+
+        $consultationToutes = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_CONSULTATION_TOUTES_STRUCTURES), StructurePrivileges::STRUCTURE_CONSULTATION_TOUTES_STRUCTURES);
+        $consultationSes    = $this->isAllowed($ecole->getStructure(), StructurePrivileges::STRUCTURE_CONSULTATION_SES_STRUCTURES);
+
+        if (! $consultationToutes && ! $consultationSes) {
+            throw new UnAuthorizedException("Vous ne disposez pas des privilèges vous permettant d'accéder aux informations de cette école doctorale.");
         }
 
         $roleListings = [];
@@ -85,7 +107,7 @@ class EcoleDoctoraleController extends AbstractController
     public function modifierAction()
     {
         /** @var EcoleDoctorale $ecole */
-        $ecoleId = $this->params()->fromRoute("ecoleDoctorale");
+        $ecoleId = $this->params()->fromRoute("structure");
         $ecole  = $this->getEcoleDoctoraleService()->getRepository()->findByStructureId($ecoleId);
         $this->ecoleDoctoraleForm->bind($ecole);
 
@@ -176,7 +198,7 @@ class EcoleDoctoraleController extends AbstractController
 
     public function supprimerAction()
     {
-        $ecoleId = $this->params()->fromRoute("ecoleDoctorale");
+        $ecoleId = $this->params()->fromRoute("structure");
         $ecole  = $this->getEcoleDoctoraleService()->getRepository()->findByStructureId($ecoleId);
 
         $this->getEcoleDoctoraleService()->deleteSoftly($ecole, $this->userContextService->getIdentityDb());
@@ -188,7 +210,7 @@ class EcoleDoctoraleController extends AbstractController
 
     public function restaurerAction()
     {
-        $ecoleId = $this->params()->fromRoute("ecoleDoctorale");
+        $ecoleId = $this->params()->fromRoute("structure");
         $ecole  = $this->getEcoleDoctoraleService()->getRepository()->findByStructureId($ecoleId);
 
         $this->getEcoleDoctoraleService()->undelete($ecole);

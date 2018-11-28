@@ -81,6 +81,16 @@ class ThesePrivileges extends Privileges
      */
     const THESE_CONSULTATION_VERSION_PAPIER_CORRIGEE  = 'these-consultation-version-papier-corrigee';
 
+
+    /** NOUVEAU PRIVILIEGES DE LA POC *********************************************************************************/
+
+    const THESE_CONSULTATION_TOUTES_THESES          = 'these-consultation-de-toutes-les-theses';
+    const THESE_CONSULTATION_SES_THESES             = 'these-consultation-de-ses-theses';
+    const THESE_MODIFICATION_TOUTES_THESES          = 'these-modification-de-toutes-les-theses';
+    const THESE_MODIFICATION_SES_THESES             = 'these-modification-de-ses-theses';
+
+    /**  **************************************************************************************************************/
+
     /**
      * @param bool $correctionAttendue
      * @return string

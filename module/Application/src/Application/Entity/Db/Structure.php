@@ -11,12 +11,19 @@ use UnicaenApp\Util;
 use UnicaenImport\Entity\Db\Interfaces\SourceAwareInterface;
 use Application\Entity\Db\Source;
 use Application\Entity\Db\Traits\SourceAwareTrait;
+use Zend\Permissions\Acl\Resource\ResourceInterface;
 
 /**
  * Structure
  */
-class Structure implements HistoriqueAwareInterface, SourceAwareInterface
+class Structure implements HistoriqueAwareInterface, SourceAwareInterface, ResourceInterface
 {
+    public function getResourceId()
+    {
+        return 'structure';
+    }
+
+
     use SourceAwareTrait;
     use HistoriqueAwareTrait;
     use EtablissementPrefixFilterAwareTrait;
