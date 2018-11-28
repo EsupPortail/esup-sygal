@@ -4,6 +4,7 @@ use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
 use Application\Provider\Privilege\EcoleDoctoralePrivileges;
 use Application\Provider\Privilege\EtablissementPrivileges;
+use Application\Provider\Privilege\StructurePrivileges;
 use Application\Provider\Privilege\UniteRecherchePrivileges;
 
 /**
@@ -13,13 +14,14 @@ use Application\Provider\Privilege\UniteRecherchePrivileges;
  * @var array(string => Individu[])     $repartition        (la liste des roles avec les individus associés)
  */
 
+$structure = $roles[0]->getStructure();
 $canModifier = false;
 switch($type) {
     case "etablissement":
         $canModifier = $this->isAllowed(EtablissementPrivileges::getResourceId(EtablissementPrivileges::ETABLISSEMENT_MODIFICATION));
         break;
     case "ecole-doctorale":
-        $canModifier = $this->isAllowed(EcoleDoctoralePrivileges::getResourceId(EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION));
+        $canModifier = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES)) || $this->isAllowed($structure, StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES);
         break;
     case "unite-recherche":
         $canModifier = $this->isAllowed(UniteRecherchePrivileges::getResourceId(UniteRecherchePrivileges::UNITE_RECH_MODIFICATION));

@@ -4,35 +4,15 @@ use Application\Controller\EcoleDoctoraleController;
 use Application\Controller\Factory\EcoleDoctoraleControllerFactory;
 use Application\Form\Factory\EcoleDoctoraleFormFactory;
 use Application\Form\Factory\EcoleDoctoraleHydratorFactory;
-use Application\Provider\Privilege\EcoleDoctoralePrivileges;
 use Application\Provider\Privilege\StructurePrivileges;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\View\Helper\EcoleDoctoraleHelper;
 use UnicaenAuth\Guard\PrivilegeController;
-use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 use Zend\Mvc\Router\Http\Literal;
 use Zend\Mvc\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [
-//        'resource_providers' => [
-//            'BjyAuthorize\Provider\Resource\Config' => [
-//                'EcoleDoctorale' => [],
-//            ],
-//        ],
-//        'rule_providers'     => [
-//            PrivilegeRuleProvider::class => [
-//                'allow' => [
-//                    [
-//                        'privileges' => [
-//                            EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION,
-//                        ],
-//                        'resources'  => ['EcoleDoctorale'],
-//                        'assertion'  => 'Assertion\\EcoleDoctorale',
-//                    ],
-//                ],
-//            ],
-//        ],
         'guards' => [
             PrivilegeController::class => [
                 [
