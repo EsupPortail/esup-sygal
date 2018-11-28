@@ -2,17 +2,15 @@
 
 use Application\Entity\Db\UniteRecherche;
 use Application\Filter\EtablissementPrefixFilter;
-use Application\Provider\Privilege\UniteRecherchePrivileges;
-use Application\View\Renderer\PhpRenderer;
+use Application\Provider\Privilege\StructurePrivileges;
 
 /**
  * @see \Application\Controller\EcoleDoctoraleController::indexAction()
- * @var PhpRenderer      $this
  * @var UniteRecherche[] $unites
  */
 
-$canModifier = $this->isAllowed(UniteRecherchePrivileges::getResourceId(UniteRecherchePrivileges::UNITE_RECH_MODIFICATION));
-$canAjouter = $this->isAllowed(UniteRecherchePrivileges::getResourceId(UniteRecherchePrivileges::UNITE_RECH_CREATION));
+$canModifier = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES));
+$canAjouter = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES));
 
 $prefixFilter = new EtablissementPrefixFilter();
 ?>
@@ -56,11 +54,12 @@ $prefixFilter = new EtablissementPrefixFilter();
             <?php
             $historisee = (!$unite->estNonHistorise());
             $hasSousStructure = !($unite->getStructure()->getStructuresSubstituees()->isEmpty());
+            $canModifierCetteUnite = $this->isAllowed($unite->getStructure(),StructurePrivileges::STRUCTURE_MODIFICATION_SES_STRUCTURES);
             ?>
 
             <tr>
                 <td>
-                    <a href="<?php echo $this->url('unite-recherche/information', ['uniteRecherche' => $unite->getStructure()->getId()], [], true); ?>">
+                    <a href="<?php echo $this->url('unite-recherche/information', ['structure' => $unite->getStructure()->getId()], [], true); ?>">
                         <?php echo $unite->getLibelle(); ?>
                     </a>
                 </td>
@@ -74,22 +73,22 @@ $prefixFilter = new EtablissementPrefixFilter();
                 <td> <?php echo $unite->getRNSR(); ?> </td>
 <!--                <td> --><?php //echo count($unite->getTheses()); ?><!-- </td>-->
                 <td>
-                    <?php if ($canAjouter && !$historisee) : ?>
-                        <a href="<?php echo $this->url('unite-recherche/supprimer', ["uniteRecherche" => $unite->getStructure()->getId()], [], true); ?>"
+                    <?php if (($canModifier OR $canModifierCetteUnite) && !$historisee) : ?>
+                        <a href="<?php echo $this->url('unite-recherche/supprimer', ['structure' => $unite->getStructure()->getId()], [], true); ?>"
                            title="Historiser l'établissement">
                             <span class="glyphicon glyphicon-trash"></span>
                         </a>
                     <?php endif; ?>
 
-                    <?php if ($canModifier && !$historisee && $hasSousStructure) : ?>
+                    <?php if (($canModifier OR $canModifierCetteUnite) && !$historisee && $hasSousStructure) : ?>
                         <a href="<?php echo $this->url('substitution-modifier', ['cible' => $unite->getStructure()->getId(), [], true]); ?>"
                            title="Historiser l'établissement">
                             <span class="glyphicon glyphicon-link" title="Éditer la substitution"></span>
                         </a>
                     <?php endif; ?>
 
-                    <?php if ($canAjouter && $historisee) : ?>
-                        <a href="<?php echo $this->url('unite-recherche/restaurer', ["uniteRecherche" => $unite->getStructure()->getId()], [], true); ?>"
+                    <?php if (($canModifier OR $canModifierCetteUnite) && $historisee) : ?>
+                        <a href="<?php echo $this->url('unite-recherche/restaurer', ['structure' => $unite->getStructure()->getId()], [], true); ?>"
                            title="Restaurer l'établissement">
                             Restaurer
                         </a>

@@ -1,57 +1,46 @@
 <?php
 
 use Application\Controller\Factory\UniteRechercheControllerFactory;
+use Application\Controller\UniteRechercheController;
 use Application\Form\Factory\UniteRechercheFormFactory;
 use Application\Form\Factory\UniteRechercheHydratorFactory;
-use Application\Provider\Privilege\UniteRecherchePrivileges;
+use Application\Provider\Privilege\StructurePrivileges;
 use Application\Service\DomaineScientifiqueService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use UnicaenAuth\Guard\PrivilegeController;
 use Application\View\Helper\UniteRechercheHelper;
-use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use Zend\Mvc\Router\Http\Literal;
 use Zend\Mvc\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [
-        'resource_providers' => [
-            'BjyAuthorize\Provider\Resource\Config' => [
-                'UniteRecherche' => [],
-            ],
-        ],
-        'rule_providers'     => [
-            PrivilegeRuleProvider::class => [
-                'allow' => [
-                    [
-                        'privileges' => [
-                            UniteRecherchePrivileges::UNITE_RECH_MODIFICATION,
-                        ],
-                        'resources'  => ['UniteRecherche'],
-                        'assertion'  => 'Assertion\\UniteRecherche',
-                    ],
-                ],
-            ],
-        ],
         'guards' => [
             PrivilegeController::class => [
                 [
-                    'controller' => 'Application\Controller\UniteRecherche',
+                    'controller' => UniteRechercheController::class,
                     'action'     => [
                         'index',
                         'information',
                     ],
-                    'privileges' => UniteRecherchePrivileges::UNITE_RECH_CONSULTATION,
+                    'privileges' => [
+                        StructurePrivileges::STRUCTURE_CONSULTATION_TOUTES_STRUCTURES,
+                        StructurePrivileges::STRUCTURE_CONSULTATION_SES_STRUCTURES,
+                    ],
                 ],
                 [
-                    'controller' => 'Application\Controller\UniteRecherche',
+                    'controller' => UniteRechercheController::class,
                     'action'     => [
                         'ajouter',
                         'supprimer',
                         'restaurer',
                     ],
-                    'privileges' => UniteRecherchePrivileges::UNITE_RECH_CREATION,
+                    'privileges' => [
+                        StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES,
+                        StructurePrivileges::STRUCTURE_MODIFICATION_SES_STRUCTURES,
+                    ],
                 ],
                 [
-                    'controller' => 'Application\Controller\UniteRecherche',
+                    'controller' => UniteRechercheController::class,
                     'action'     => [
                         'modifier',
                         'ajouter-individu',
@@ -63,7 +52,10 @@ return [
                         'retirer-domaine-scientifique',
                         'principal-etablissement-rattachement',
                     ],
-                    'privileges' => UniteRecherchePrivileges::UNITE_RECH_MODIFICATION,
+                    'privileges' => [
+                        StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES,
+                        StructurePrivileges::STRUCTURE_MODIFICATION_SES_STRUCTURES,
+                    ],
                 ],
             ],
         ],
@@ -71,14 +63,12 @@ return [
     'router'          => [
         'routes' => [
             'unite-recherche' => [
-                'type'          => 'Segment',
+                'type'          => Literal::class,
                 'options'       => [
-                    'route'    => '/[:language/]unite-recherche',
+                    'route'    => '/unite-recherche',
                     'defaults' => [
-                        '__NAMESPACE__' => 'Application\Controller',
-                        'controller'    => 'UniteRecherche',
+                        'controller'    => UniteRechercheController::class,
                         'action'        => 'index',
-                        'language'      => 'fr_FR',
                     ],
                 ],
                 'may_terminate' => true,
@@ -86,14 +76,14 @@ return [
                     'information' => [
                         'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/information/:uniteRecherche',
+                            'route'       => '/information/:structure',
                             'defaults'    => [
                                 'action' => 'information',
                             ],
                         ],
                     ],
                     'ajouter' => [
-                        'type'          => 'Segment',
+                        'type'          => Literal::class,
                         'options'       => [
                             'route'       => '/ajouter',
                             'defaults'    => [
@@ -102,138 +92,81 @@ return [
                         ],
                     ],
                     'supprimer' => [
-                        'type'          => 'Segment',
+                        'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/:uniteRecherche/supprimer',
-                            'constraints' => [
-                                'uniteRecherche' => '\d+',
-                            ],
+                            'route'       => '/supprimer/:structure',
                             'defaults'    => [
                                 'action' => 'supprimer',
                             ],
                         ],
                     ],
                     'restaurer' => [
-                        'type'          => 'Segment',
+                        'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/:uniteRecherche/restaurer',
-                            'constraints' => [
-                                'uniteRecherche' => '\d+',
-                            ],
+                            'route'       => '/restaurer/:structure',
                             'defaults'    => [
                                 'action' => 'restaurer',
                             ],
                         ],
                     ],
                     'modifier' => [
-                        'type'          => 'Segment',
+                        'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/:uniteRecherche/modifier',
-                            'constraints' => [
-                                'uniteRecherche' => '\d+',
-                            ],
+                            'route'       => '/modifier/:structure',
                             'defaults'    => [
                                 'action' => 'modifier',
                             ],
                         ],
                     ],
                     'ajouter-etablissement-rattachement' => [
-                        'type'          => 'Segment',
+                        'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/:uniteRecherche/ajouter-etablissement-rattachement/:etablissement',
-                            'constraints' => [
-                                'uniteRecherche' => '\d+',
-                                'etablissement' => '\d+',
-                            ],
+                            'route'       => '/ajouter-etablissement-rattachement/:structure/:etablissement',
                             'defaults'    => [
                                 'action' => 'ajouter-etablissement-rattachement',
                             ],
                         ],
                     ],
                     'retirer-etablissement-rattachement' => [
-                        'type'          => 'Segment',
+                        'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/:uniteRecherche/retirer-etablissement-rattachement/:etablissement',
-                            'constraints' => [
-                                'uniteRecherche' => '\d+',
-                                'etablissement' => '\d+',
-                            ],
+                            'route'       => '/retirer-etablissement-rattachement/:structure/:etablissement',
                             'defaults'    => [
                                 'action' => 'retirer-etablissement-rattachement',
                             ],
                         ],
                     ],
                     'principal-etablissement-rattachement' => [
-                        'type'          => 'Segment',
+                        'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/:uniteRecherche/principal-etablissement-rattachement/:etablissement',
-                            'constraints' => [
-                                'uniteRecherche' => '\d+',
-                                'etablissement' => '\d+',
-                            ],
+                            'route'       => '/principal-etablissement-rattachement/:structure/:etablissement',
                             'defaults'    => [
                                 'action' => 'principal-etablissement-rattachement',
                             ],
                         ],
                     ],
                     'ajouter-domaine-scientifique' => [
-                        'type'          => 'Segment',
+                        'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/:uniteRecherche/ajouter-domaine-scientifique/:domaineScientifique',
-                            'constraints' => [
-                                'uniteRecherche' => '\d+',
-                                'domaineScientifique' => '\d+',
-                            ],
+                            'route'       => '/ajouter-domaine-scientifique/:structure/:domaineScientifique',
                             'defaults'    => [
                                 'action' => 'ajouter-domaine-scientifique',
                             ],
                         ],
                     ],
                     'retirer-domaine-scientifique' => [
-                        'type'          => 'Segment',
+                        'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/:uniteRecherche/retirer-domaine-scientifique/:domaineScientifique',
-                            'constraints' => [
-                                'uniteRecherche' => '\d+',
-                                'domaineScientifique' => '\d+',
-                            ],
+                            'route'       => '/retirer-domaine-scientifique/:structure/:domaineScientifique',
                             'defaults'    => [
                                 'action' => 'retirer-domaine-scientifique',
                             ],
                         ],
                     ],
-                    'ajouter-individu' => [
-                        'type'          => 'Segment',
-                        'options'       => [
-                            'route'       => '/:uniteRecherche/ajouter-individu',
-                            'constraints' => [
-                                'uniteRecherche' => '\d+',
-                            ],
-                            'defaults'    => [
-                                'action' => 'ajouter-individu',
-                            ],
-                        ],
-                    ],
-                    'retirer-individu' => [
-                        'type'          => 'Segment',
-                        'options'       => [
-                            'route'       => '/:uniteRecherche/retirer-individu/:edi',
-                            'constraints' => [
-                                'uniteRecherche' => '\d+',
-                                'edi' => '\d+',
-                            ],
-                            'defaults'    => [
-                                'action' => 'retirer-individu',
-                            ],
-                        ],
-                    ],
                     'supprimer-logo' => [
-                        'type'          => 'Segment',
+                        'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/supprimer-logo/:uniteRecherche',
-                            'constraints' => [
-                                'uniteRecherche' => '\d+',
-                            ],
+                            'route'       => '/supprimer-logo/:structure',
                             'defaults'    => [
                                 'action' => 'supprimer-logo',
                             ],
@@ -252,28 +185,28 @@ return [
                             'unite-recherche' => [
                                 'label'    => 'Unités de recherche',
                                 'route'    => 'unite-recherche',
-                                'resource' => PrivilegeController::getResourceId('Application\Controller\UniteRecherche', 'index'),
+                                'resource' => PrivilegeController::getResourceId(UniteRechercheController::class, 'index'),
 
                                 'order'    => 20,
                                 'pages' => [
                                     'modification' => [
                                         'label'    => 'Modification',
                                         'route'    => 'unite-recherche/modifier',
-                                        'resource' => PrivilegeController::getResourceId('Application\Controller\UniteRecherche', 'index'),
+                                        'resource' => PrivilegeController::getResourceId(UniteRechercheController::class, 'index'),
 
                                         'withtarget' => true,
                                         'paramsInject' => [
-                                            'uniteRecherche',
+                                            'structure',
                                         ],
                                     ],
                                     'information' => [
                                         'label'    => 'Détails',
                                         'route'    => 'unite-recherche/information',
-                                        'resource' => PrivilegeController::getResourceId('Application\Controller\UniteRecherche', 'index'),
+                                        'resource' => PrivilegeController::getResourceId(UniteRechercheController::class, 'index'),
 
                                         'withtarget' => true,
                                         'paramsInject' => [
-                                            'uniteRecherche',
+                                            'structure',
                                         ],
                                     ],
                                 ],
@@ -301,6 +234,9 @@ return [
         'factories' => [
             'Application\Controller\UniteRecherche' => UniteRechercheControllerFactory::class,
         ],
+        'aliases' => [
+            UniteRechercheController::class => 'Application\Controller\UniteRecherche',
+        ]
     ],
     'form_elements'   => [
         'invokables' => [

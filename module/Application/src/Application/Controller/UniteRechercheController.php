@@ -6,7 +6,6 @@ use Application\Entity\Db\Individu;
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Structure;
-use Application\Entity\Db\StructureConcreteInterface;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
 use Application\Form\UniteRechercheForm;
@@ -47,7 +46,7 @@ class UniteRechercheController extends AbstractController
 
     public function informationAction()
     {
-        $id = $this->params()->fromRoute('uniteRecherche');
+        $id = $this->params()->fromRoute('structure');
         $unite = $this->getUniteRechercheService()->getRepository()->findByStructureId($id);
         if ($unite === null) {
             throw new RuntimeException("Aucune unité de recherche ne possède l'identifiant renseigné.");
@@ -99,8 +98,8 @@ class UniteRechercheController extends AbstractController
     public function modifierAction()
     {
         /** @var UniteRecherche $unite */
-        $uniteId = $this->params()->fromRoute("uniteRecherche");
-        $unite  = $this->getUniteRechercheService()->getRepository()->findByStructureId($uniteId);
+        $structureId = $this->params()->fromRoute("structure");
+        $unite  = $this->getUniteRechercheService()->getRepository()->findByStructureId($structureId);
         $this->uniteRechercheForm->bind($unite);
 
         // si POST alors on revient du formulaire
@@ -116,7 +115,7 @@ class UniteRechercheController extends AbstractController
             // action d'affacement du logo
             if (isset($data['supprimer-logo'])) {
                 $this->supprimerLogoUniteRecherche();
-                return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId], "fragment" => $uniteId], true);
+                return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $structureId], "fragment" => $structureId], true);
             }
 
             // action de modification
@@ -132,10 +131,10 @@ class UniteRechercheController extends AbstractController
                 $this->getUniteRechercheService()->update($unite);
 
                 $this->flashMessenger()->addSuccessMessage("Unité de recherche '$unite' modifiée avec succès");
-                return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId], "fragment" => "".$uniteId], true);
+                return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $structureId], "fragment" => "".$structureId], true);
             }
             $this->flashMessenger()->addErrorMessage("Echec de la mise à jour : données incorrectes saissie");
-            return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId], "fragment" => "".$uniteId], true);
+            return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $structureId], "fragment" => "".$structureId], true);
         }
 
         $etablissements = $this->getEtablissementService()->getRepository()->findAll();
@@ -200,26 +199,26 @@ class UniteRechercheController extends AbstractController
 
     public function supprimerAction()
     {
-        $uniteId = $this->params()->fromRoute("uniteRecherche");
-        $unite  = $this->getUniteRechercheService()->getRepository()->findByStructureId($uniteId);
+        $structureId = $this->params()->fromRoute("structure");
+        $unite  = $this->getUniteRechercheService()->getRepository()->findByStructureId($structureId);
 
         $this->getUniteRechercheService()->deleteSoftly($unite, $this->userContextService->getIdentityDb());
 
         $this->flashMessenger()->addSuccessMessage("Unité de recherche '$unite' supprimée avec succès");
 
-        return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId], "fragment" => $uniteId], true);
+        return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $structureId], "fragment" => $structureId], true);
     }
 
     public function restaurerAction()
     {
-        $uniteId = $this->params()->fromRoute("uniteRecherche");
-        $unite  = $this->getUniteRechercheService()->getRepository()->findByStructureId($uniteId);
+        $structureId = $this->params()->fromRoute("structure");
+        $unite  = $this->getUniteRechercheService()->getRepository()->findByStructureId($structureId);
 
         $this->getUniteRechercheService()->undelete($unite);
 
         $this->flashMessenger()->addSuccessMessage("Unité de recherche '$unite' restaurée avec succès");
 
-        return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $uniteId], "fragment" => $uniteId], true);
+        return $this->redirect()->toRoute('unite-recherche', [], ['query' => ['selected' => $structureId], "fragment" => $structureId], true);
     }
 
     /**
@@ -252,8 +251,8 @@ class UniteRechercheController extends AbstractController
      */
     public function supprimerLogoUniteRecherche()
     {
-        $uniteId = $this->params()->fromRoute("uniteRecherche");
-        $unite  = $this->getUniteRechercheService()->getRepository()->findByStructureId($uniteId);
+        $structureId = $this->params()->fromRoute("structure");
+        $unite  = $this->getUniteRechercheService()->getRepository()->findByStructureId($structureId);
 
         $this->getUniteRechercheService()->deleteLogo($unite);
         $filename   = UniteRechercheController::getLogoFilename($unite, true);
@@ -285,8 +284,8 @@ class UniteRechercheController extends AbstractController
         }
 
         if ($unite === null) {
-            $uniteId = $this->params()->fromRoute("uniteRecherche");
-            $unite  = $this->getUniteRechercheService()->getRepository()->findByStructureId($uniteId);
+            $structureId = $this->params()->fromRoute("structure");
+            $unite  = $this->getUniteRechercheService()->getRepository()->findByStructureId($structureId);
         }
         $chemin     = UniteRechercheController::getLogoFilename($unite, false);
         $filename   = UniteRechercheController::getLogoFilename($unite, true);
@@ -315,8 +314,8 @@ class UniteRechercheController extends AbstractController
 
     public function ajouterEtablissementRattachementAction()
     {
-        $uniteId = $this->params()->fromRoute("uniteRecherche");
-        $unite = $this->getUniteRechercheService()->getRepository()->findByStructureId($uniteId);
+        $structureId = $this->params()->fromRoute("structure");
+        $unite = $this->getUniteRechercheService()->getRepository()->findByStructureId($structureId);
         $etablissementId = $this->params()->fromRoute("etablissement");
 
         if ($etablissementId == 0) {
@@ -336,8 +335,8 @@ class UniteRechercheController extends AbstractController
 
     public function retirerEtablissementRattachementAction()
     {
-        $uniteId = $this->params()->fromRoute("uniteRecherche");
-        $unite = $this->getUniteRechercheService()->getRepository()->findByStructureId($uniteId);
+        $structureId = $this->params()->fromRoute("structure");
+        $unite = $this->getUniteRechercheService()->getRepository()->findByStructureId($structureId);
         $etablissementId = $this->params()->fromRoute("etablissement");
         $etablissement = $this->getEtablissementService()->getRepository()->find($etablissementId);
 
@@ -347,15 +346,13 @@ class UniteRechercheController extends AbstractController
         $this->redirect()->toRoute("unite-recherche/modifier",[],[], true);
     }
 
-
     /**
-     * @throws \Doctrine\ORM\NonUniqueResultException
      * @throws \Doctrine\ORM\OptimisticLockException
      */
     public function ajouterDomaineScientifiqueAction() {
-        $uniteId = $this->params()->fromRoute("uniteRecherche");
+        $structureId = $this->params()->fromRoute("structure");
         $domaineId = $this->params()->fromRoute("domaineScientifique");
-        $unite = $this->getUniteRechercheService()->getRepository()->findByStructureId($uniteId);
+        $unite = $this->getUniteRechercheService()->getRepository()->findByStructureId($structureId);
         $domaine = $this->getDomaineScientifiqueService()->getRepository()->find($domaineId);
 
         if ($domaine !== null && !array_search($domaine, $unite->getDomaines())) {
@@ -370,13 +367,12 @@ class UniteRechercheController extends AbstractController
     }
 
     /**
-     * @throws \Doctrine\ORM\NonUniqueResultException
      * @throws \Doctrine\ORM\OptimisticLockException
      */
     public function retirerDomaineScientifiqueAction() {
-        $uniteId = $this->params()->fromRoute("uniteRecherche");
+        $structureId = $this->params()->fromRoute("structure");
         $domaineId = $this->params()->fromRoute("domaineScientifique");
-        $unite = $this->getUniteRechercheService()->getRepository()->findByStructureId($uniteId);
+        $unite = $this->getUniteRechercheService()->getRepository()->findByStructureId($structureId);
         $domaine = $this->getDomaineScientifiqueService()->getRepository()->find($domaineId);
 
         $domaine = $domaine->removeUnite($unite);
