@@ -75,10 +75,9 @@ return [
                                 'action' => 'information',
                             ],
                         ],
-
                     ],
                     'ajouter' => [
-                        'type'          => Segment::class,
+                        'type'          => Literal::class,
                         'options'       => [
                             'route'       => '/ajouter',
                             'defaults'    => [
