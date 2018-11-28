@@ -117,49 +117,52 @@ return [
                                 'action' => 'modifier',
                             ],
                         ],
-                    ],
-                    'ajouter-etablissement-rattachement' => [
-                        'type'          => Segment::class,
-                        'options'       => [
-                            'route'       => '/ajouter-etablissement-rattachement/:structure/:etablissement',
-                            'defaults'    => [
-                                'action' => 'ajouter-etablissement-rattachement',
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'ajouter-etablissement-rattachement' => [
+                                'type'          => Segment::class,
+                                'options'       => [
+                                    'route'       => '/ajouter-etablissement-rattachement/:etablissement',
+                                    'defaults'    => [
+                                        'action' => 'ajouter-etablissement-rattachement',
+                                    ],
+                                ],
                             ],
-                        ],
-                    ],
-                    'retirer-etablissement-rattachement' => [
-                        'type'          => Segment::class,
-                        'options'       => [
-                            'route'       => '/retirer-etablissement-rattachement/:structure/:etablissement',
-                            'defaults'    => [
-                                'action' => 'retirer-etablissement-rattachement',
+                            'retirer-etablissement-rattachement' => [
+                                'type'          => Segment::class,
+                                'options'       => [
+                                    'route'       => '/retirer-etablissement-rattachement/:etablissement',
+                                    'defaults'    => [
+                                        'action' => 'retirer-etablissement-rattachement',
+                                    ],
+                                ],
                             ],
-                        ],
-                    ],
-                    'principal-etablissement-rattachement' => [
-                        'type'          => Segment::class,
-                        'options'       => [
-                            'route'       => '/principal-etablissement-rattachement/:structure/:etablissement',
-                            'defaults'    => [
-                                'action' => 'principal-etablissement-rattachement',
+                            'principal-etablissement-rattachement' => [
+                                'type'          => Segment::class,
+                                'options'       => [
+                                    'route'       => '/principal-etablissement-rattachement/:etablissement',
+                                    'defaults'    => [
+                                        'action' => 'principal-etablissement-rattachement',
+                                    ],
+                                ],
                             ],
-                        ],
-                    ],
-                    'ajouter-domaine-scientifique' => [
-                        'type'          => Segment::class,
-                        'options'       => [
-                            'route'       => '/ajouter-domaine-scientifique/:structure/:domaineScientifique',
-                            'defaults'    => [
-                                'action' => 'ajouter-domaine-scientifique',
+                            'ajouter-domaine-scientifique' => [
+                                'type'          => Segment::class,
+                                'options'       => [
+                                    'route'       => '/ajouter-domaine-scientifique/:domaineScientifique',
+                                    'defaults'    => [
+                                        'action' => 'ajouter-domaine-scientifique',
+                                    ],
+                                ],
                             ],
-                        ],
-                    ],
-                    'retirer-domaine-scientifique' => [
-                        'type'          => Segment::class,
-                        'options'       => [
-                            'route'       => '/retirer-domaine-scientifique/:structure/:domaineScientifique',
-                            'defaults'    => [
-                                'action' => 'retirer-domaine-scientifique',
+                            'retirer-domaine-scientifique' => [
+                                'type'          => Segment::class,
+                                'options'       => [
+                                    'route'       => '/retirer-domaine-scientifique/:domaineScientifique',
+                                    'defaults'    => [
+                                        'action' => 'retirer-domaine-scientifique',
+                                    ],
+                                ],
                             ],
                         ],
                     ],
