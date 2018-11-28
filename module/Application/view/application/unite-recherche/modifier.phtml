@@ -92,7 +92,7 @@ $form->get('sourceCode')->setAttribute('readonly', !$editable);
                         <a
                                 id="supprimer-logo"
                                 class="btn btn-danger"
-                                href="<?php echo $this->url('unite-recherche/supprimer-logo', ["uniteRecherche" => $idUniteRecherche]); ?>"
+                                href="<?php echo $this->url('unite-recherche/supprimer-logo', ["structure" => $idUniteRecherche]); ?>"
                         >
                             <span class="glyphicon glyphicon-trash"></span>
                             Supprimer le logo
@@ -131,7 +131,7 @@ $form->get('sourceCode')->setAttribute('readonly', !$editable);
                     <td> <?php echo $etablissementRattachement->getEtablissement()->getLibelle(); ?> </td>
                     <td>
                         <a
-                                href="<?php echo $this->url("unite-recherche/retirer-etablissement-rattachement", ["uniteRecherche" => $idUniteRecherche, "etablissement" => $etablissementRattachement->getEtablissement()->getId()], [], true); ?>"
+                                href="<?php echo $this->url("unite-recherche/retirer-etablissement-rattachement", ["structure" => $idUniteRecherche, "etablissement" => $etablissementRattachement->getEtablissement()->getId()], [], true); ?>"
                                 title="Retirer l'établissement de rattachement"
                         >
                             <span class="glyphicon glyphicon-trash"></span>
@@ -176,7 +176,7 @@ $form->get('sourceCode')->setAttribute('readonly', !$editable);
         <a
                 class="btn btn-success"
                 id="ajout-rattachement"
-                href="<?php echo $this->url("unite-recherche/ajouter-etablissement-rattachement", ["uniteRecherche" => $idUniteRecherche, "etablissement" => 0], [], true); ?>"
+                href="<?php echo $this->url("unite-recherche/ajouter-etablissement-rattachement", ["structure" => $idUniteRecherche, "etablissement" => 0], [], true); ?>"
         >
             <span class="glyphicon glyphicon-plus"></span>
             Ajouter un établissement de rattachement
@@ -209,7 +209,7 @@ $form->get('sourceCode')->setAttribute('readonly', !$editable);
                     </td>
                     <td>
                         <a
-                                href="<?php echo $this->url('unite-recherche/retirer-domaine-scientifique', ["uniteRecherche" => $idUniteRecherche, 'domaineScientifique' => $domaineScientifique->getId()], [], true); ?>"
+                                href="<?php echo $this->url('unite-recherche/retirer-domaine-scientifique', ["structure" => $idUniteRecherche, 'domaineScientifique' => $domaineScientifique->getId()], [], true); ?>"
                                 title="Retirer le domaine scientifique"
                         >
                             <span class="glyphicon glyphicon-trash"></span>
@@ -253,7 +253,7 @@ $form->get('sourceCode')->setAttribute('readonly', !$editable);
         <br/>
         <a class="btn btn-success"
            id="ajout-domaine"
-           href="<?php echo $this->url("unite-recherche/ajouter-domaine-scientifique", ["uniteRecherche" => $idUniteRecherche, "domaineScientifique" => 0], [], true); ?>">
+           href="<?php echo $this->url("unite-recherche/ajouter-domaine-scientifique", ["structure" => $idUniteRecherche, "domaineScientifique" => 0], [], true); ?>">
             <span class="glyphicon glyphicon-plus"></span>
             Ajouter un domaine scientifique
         </a>
@@ -281,7 +281,7 @@ $form->get('sourceCode')->setAttribute('readonly', !$editable);
 
         $("#etablissements").on("change", function () {
             var etablissementId = $("#etablissements").val();
-            $("a#ajout-rattachement").attr("href", "ajouter-etablissement-rattachement/" + etablissementId);
+            $("a#ajout-rattachement").attr("href", "ajouter-etablissement-rattachement/2901/" + etablissementId);
         });
 
         $("#domaines").on("change", function () {

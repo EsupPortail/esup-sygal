@@ -41,7 +41,6 @@ return [
                         UtilisateurPrivileges::UTILISATEUR_ATTRIBUTION_ROLE,
                         StructurePrivileges::STRUCTURE_CONSULTATION_TOUTES_STRUCTURES,
                         StructurePrivileges::STRUCTURE_CONSULTATION_SES_STRUCTURES,
-                        UniteRecherchePrivileges::UNITE_RECH_CONSULTATION,
                      ],
                 ],
                 [
