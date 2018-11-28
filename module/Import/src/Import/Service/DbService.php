@@ -45,12 +45,38 @@ class DbService
     private $tableName;
 
     /**
+     * @var SQLGenerator
+     */
+    private $sqlGenerator;
+
+    /**
+     * @var DbServiceJSONHelper
+     */
+    private $jsonHelper;
+
+    /**
+     * @var int
+     */
+    private $insertQueriesChunkSize = self::INSERT_QUERIES_CHUNK_SIZE;
+
+    /**
+     * DbService constructor.
+     */
+    public function __construct()
+    {
+        $this->setSqlGenerator(new DbServiceSQLGenerator());
+        $this->setJsonHelper(new DbServiceJSONHelper());
+    }
+
+    /**
      * @param Etablissement $etablissement
      * @return self
      */
     public function setEtablissement(Etablissement $etablissement)
     {
         $this->etablissement = $etablissement;
+
+        $this->jsonHelper->setEtablissement($etablissement);
 
         return $this;
     }
@@ -69,41 +95,36 @@ class DbService
     }
 
     /**
-     * Persiste en base de données les données importées spécifiées, concernant le service et l'établissement courants.
-     *
-     * NB: AUCUN COMMIT N'EST FAIT.
-     *
-     * @param stdClass[] $jsonEntities
+     * @param DbServiceJSONHelper $jsonHelper
+     * @return DbService
      */
-    public function save(array $jsonEntities)
+    public function setJsonHelper(DbServiceJSONHelper $jsonHelper): DbService
     {
-        $this->loadEntityClassMetadata();
+        $this->jsonHelper = $jsonHelper;
 
-        /** Etablissement de la transaction Oracle */
-        $connection = $this->entityManager->getConnection();
-        $connection->beginTransaction();
+        return $this;
+    }
 
-        /** Construction des requêtes SQL **/
-        $queries = [];
-        foreach ($jsonEntities as $jsonEntity) {
-            $queries[] = $this->generateSQLQueryForSavingData($jsonEntity);
-        }
+    /**
+     * @param DbServiceSQLGenerator $sqlGenerator
+     * @return DbService
+     */
+    public function setSqlGenerator(DbServiceSQLGenerator $sqlGenerator): DbService
+    {
+        $this->sqlGenerator = $sqlGenerator;
 
-        /** Execution des requetes SQL par groupes de N */
-        $_debut = microtime(true);
-        $queriesChunks = array_chunk($queries, self::INSERT_QUERIES_CHUNK_SIZE);
-        foreach ($queriesChunks as $queryChunk) {
-            $this->logger->debug(sprintf("Execution de %s requête(s).", count($queryChunk)));
-            $sql = $this->wrapSQLQueriesInBeginEnd($queryChunk);
-            try {
-                $connection->executeQuery($sql);
-            } catch (DBALException $e) {
-                throw new RuntimeException("Erreur rencontrée lors des requêtes dans '$this->tableName'.'", null, $e);
-            }
-        }
-        $_fin = microtime(true);
+        return $this;
+    }
 
-        $this->logger->debug(sprintf("%d requête(s) effectuée(s) en %s secondes.", count($queries), $_fin - $_debut));
+    /**
+     * @param int $insertQueriesChunkSize
+     * @return DbService
+     */
+    public function setInsertQueriesChunkSize(int $insertQueriesChunkSize) : DbService
+    {
+        $this->insertQueriesChunkSize = $insertQueriesChunkSize;
+
+        return $this;
     }
 
     /**
@@ -118,7 +139,10 @@ class DbService
     {
         $this->loadEntityClassMetadata();
 
-        $query = $this->generateSQLQueryForClearingExistingData($filters);
+        $filters = $this->prepareFiltersForTableUpdate($filters);
+        $filters['etablissement_id'] = $this->etablissement->getCode();
+
+        $query = $this->sqlGenerator->generateSQLQueryForClearingExistingData($this->tableName, $filters);
 
         $connection = $this->entityManager->getConnection();
         try {
@@ -126,6 +150,47 @@ class DbService
         } catch (DBALException $e) {
             throw new RuntimeException("Erreur lors de la suppression dans la table $this->tableName", null, $e);
         }
+    }
+
+    /**
+     * Persiste en base de données les données importées spécifiées, concernant le service et l'établissement courants.
+     *
+     * NB: AUCUN COMMIT N'EST FAIT.
+     *
+     * @param stdClass[] $jsonEntities
+     */
+    public function save(array $jsonEntities)
+    {
+        $this->loadEntityClassMetadata();
+
+        $tableColumns = $this->entityClassMetadata->columnNames;
+
+        /** Etablissement de la transaction Oracle */
+        $connection = $this->entityManager->getConnection();
+        $connection->beginTransaction();
+
+        /** Construction des requêtes SQL **/
+        $queries = [];
+        foreach ($jsonEntities as $jsonEntity) {
+            $columnsValues = $this->generateValueArray($jsonEntity);
+            $queries[] = $this->sqlGenerator->generateSQLQueryForSavingData($this->tableName, $tableColumns, $columnsValues);
+        }
+
+        /** Execution des requetes SQL par groupes de N */
+        $_debut = microtime(true);
+        $queriesChunks = array_chunk($queries, $this->insertQueriesChunkSize);
+        foreach ($queriesChunks as $queryChunk) {
+            $this->logger->debug(sprintf("Execution de %s requête(s).", count($queryChunk)));
+            $sql = $this->sqlGenerator->wrapSQLQueriesInBeginEnd($queryChunk);
+            try {
+                $connection->executeQuery($sql);
+            } catch (DBALException $e) {
+                throw new RuntimeException("Erreur rencontrée lors des requêtes dans '$this->tableName'.'", null, $e);
+            }
+        }
+        $_fin = microtime(true);
+
+        $this->logger->debug(sprintf("%d requête(s) effectuée(s) en %s secondes.", count($queries), $_fin - $_debut));
     }
 
     /**
@@ -165,7 +230,9 @@ class DbService
         $this->entityClassMetadata = $this->entityManager->getClassMetadata($entityClass);
         $this->tableName = $this->entityClassMetadata->table['name'];
 
-        $this->logMetadata($this->serviceName);
+        $this->sqlGenerator->setDatabasePlatform($this->entityManager->getConnection()->getDatabasePlatform());
+
+        $this->logMetadata();
     }
 
     /**
@@ -189,7 +256,7 @@ class DbService
 
         $message = sprintf("Interrogation du service '%s' de l'établissement '%s', en %s seconde(s).",
             $serviceName,
-            $this->etablissement->getStructure()->getCode(),
+            $this->etablissement->getCode(),
             $duration
         );
 
@@ -210,7 +277,7 @@ class DbService
         try {
             $connection->executeQuery($sql, [
                 'message' => $message,
-                'etab' => $this->etablissement->getStructure()->getCode(),
+                'etab' => $this->etablissement->getCode(),
                 'status' => $status,
                 'route' => $route,
                 'service' => $serviceName,
@@ -237,68 +304,10 @@ class DbService
     }
 
     /**
-     * Génère la requête SQL de suppression de tout ou partie des données déjà importées de l'établissement courant.
-     *
-     * @param array $filters
-     * @return string
-     */
-    private function generateSQLQueryForClearingExistingData(array $filters = [])
-    {
-        $codeStructureEtablissement = $this->etablissement->getStructure()->getCode();
-
-        $query = sprintf("DELETE FROM %s WHERE ETABLISSEMENT_ID = '%s'", $this->tableName, $codeStructureEtablissement);
-
-        $filters = $this->prepareFiltersForTmpTableUpdate($filters);
-
-        if (count($filters) > 0) {
-            $wheres = $filters;
-            // NB: préfixage par le code établissement doit être fait en amont
-            array_walk($wheres, function (&$v, $k) {
-                $v = strtoupper($k) . " = '$v'";
-            });
-            $wheres = implode(' AND ', $wheres);
-            $query .= ' AND ' . $wheres;
-        }
-
-        return $query;
-    }
-
-    /**
-     * Génère les requêtes SQL de persistence d'une donnée importée de l'établissement courant.
-     *
-     * @param stdClass $jsonEntity
-     * @return string[]
-     */
-    private function generateSQLQueryForSavingData(stdClass $jsonEntity)
-    {
-        $tableColumns = $this->entityClassMetadata->columnNames;
-        $forceCodeEtablissement = null;
-
-        return sprintf("INSERT INTO %s (%s) VALUES (%s)",
-            $this->tableName,
-            implode(", ", $tableColumns),
-            implode(", ", $this->generateValueArray($jsonEntity))
-        );
-    }
-
-    /**
-     * @param array $queries
-     * @return string
-     */
-    private function wrapSQLQueriesInBeginEnd(array $queries)
-    {
-        $indent = '  ';
-
-        $sql = $indent . implode(';' . PHP_EOL . $indent, $queries) . ';';
-
-        return implode(PHP_EOL, ['BEGIN', $sql, 'END;']);
-    }
-
-    /**
      * @param array $filters
      * @return array
      */
-    private function prepareFiltersForTmpTableUpdate(array $filters)
+    private function prepareFiltersForTableUpdate(array $filters)
     {
         if (empty($filters)) {
             return $filters;
@@ -326,118 +335,36 @@ class DbService
     }
 
     /**
-     * Mise sous forme de table des données appartenant à une entité
+     * Mise sous forme de liste de valeurs des attributs d'une entité JSON, dans l'ordre des colonnes de la table.
      *
      * @param stdClass $jsonEntity : le json associé à une entité
      * @return array les données mises sous forme d'un tableau
      */
     private function generateValueArray(stdClass $jsonEntity)
     {
-        $codeEtablissement = $this->etablissement->getStructure()->getCode();
-        $f = new EtablissementPrefixFilter();
         $valuesArray = [];
 
-        foreach ($this->entityClassMetadata->columnNames as $property => $colonne) {
-            $prefix = null;
-            $value = null;
-            switch ($property) {
-                case "etablissementId": // UCN, URN, ULHN ou INSA, sans préfixage
-                    $value = $codeEtablissement;
-                    break;
-                case "sourceCode":
-                    $prefix = $codeEtablissement;
-                    $value = $jsonEntity->id;
-                    break;
-                case "sourceId":
-                case "individuId":
-                case "roleId":
-                case "theseId":
-                case "doctorantId":
-                case "structureId":
-                case "ecoleDoctId":
-                case "uniteRechId":
-                case "acteurEtablissementId":
-                    $prefix = $codeEtablissement;
-                    $value = isset($jsonEntity->{$property}) ? $jsonEntity->{$property} : null;
-                    break;
-                case "origineFinancementId":
-                    $prefix = Etablissement::CODE_STRUCTURE_COMUE; // particularité!
-                    $value = isset($jsonEntity->{$property}) ? $jsonEntity->{$property} : null;
-                    break;
-                default:
-                    $value = isset($jsonEntity->{$property}) ? $jsonEntity->{$property} : null;
-                    break;
-            }
+        foreach ($this->entityClassMetadata->columnNames as $property => $columnName) {
+            $value = $this->jsonHelper ->extractPropertyValue($property, $jsonEntity);
+            $type = $this->entityClassMetadata->fieldMappings[$property]["type"];
 
-            // préfixage éventuel
-            if ($value !== null && $prefix !== null) {
-                $value = $f->addPrefixTo($value, $prefix);
-            }
-
-            $valuesArray[] = $this->prepValueForProperty($value, $property);
+            $valuesArray[] = $this->sqlGenerator->formatValueForPropertyType($value, $type);
         }
 
         return $valuesArray;
     }
 
     /**
-     * Fonction de mise en forme d'une valeur selon les metatadata de la propriété spécifiée.
-     *
-     * @param mixed  $value    La valeur à formater
-     * @param string $property La propriété concernée
-     * @return string La donnée formatée
-     *
-     * RMQ si un format n'est pas prévu par le traitement la valeur est retournée sans traitement et un message est
-     * affiché
+     * Log les metadonnées associées au service courant.
      */
-    private function prepValueForProperty($value, $property)
-    {
-        $type = $this->entityClassMetadata->fieldMappings[$property]["type"];
-
-        $nvalue = null;
-        switch ($type) {
-            case "string":
-                $nvalue = $this->prepString($value);
-                break;
-            case "date":
-                $nvalue = $this->prepDate($value);
-                break;
-            default:
-                $nvalue = $value;
-                break;
-        }
-
-        return $nvalue;
-    }
-
-    private function prepString($value)
-    {
-        return "'" . str_replace("'", "''", $value) . "'";
-    }
-
-    private function prepDate($value)
-    {
-        if ($value === null) {
-            return "null";
-        }
-        $date = explode(' ', $value->{'date'})[0];
-
-        return "to_date('" . $date . "','YYYY-MM-DD')";
-    }
-
-    /**
-     * Ajoute aux logs les metadonnées associées à une entity
-     *
-     * @param string $dataName    : le nom de l'entité
-     */
-    private function logMetadata($dataName)
+    private function logMetadata()
     {
         $entityClass = $this->entityClassMetadata->name;
         $tableName = $this->entityClassMetadata->table['name'];
         $tableColumns = $this->entityClassMetadata->columnNames;
 
         $str = <<<EOS
-La table associée à l'entité [$dataName][$entityClass] est [$tableName]"
+La table associée à l'entité [$this->serviceName][$entityClass] est [$tableName]"
 Relation dans propriétés/colonnes: 
 EOS;
         foreach ($tableColumns as $propriete => $colonne) {
