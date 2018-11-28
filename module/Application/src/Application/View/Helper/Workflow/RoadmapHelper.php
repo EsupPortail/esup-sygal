@@ -38,32 +38,18 @@ class RoadmapHelper extends AbstractHelper implements WorkflowServiceAwareInterf
      */
     public function render(These $these = null)
     {
-        $html = "";
-
-//        $qb = $this->workflowService->getEntityManager()->getRepository(VWfEtapePertin::class)
-//            ->createQueryBuilder('v');
-//        $qb
-//            ->join('v.these', 't', Join::WITH, 't = :these')
-//            ->join('v.etape', 'e')
-//            ->orderBy('v.ordre')
-//            ->setParameter('these', $these);
-//        $parts = [];
-//        /** @var VWfEtapePertin $r */
-//        foreach ($qb->getQuery()->getResult() as $i => $r) {
-//            $parts[] = $i+1 . ") " . $r->getEtape()->getCode();
-//        }
-//        $html .= implode('<br>', $parts);
-//
-//        $html .= '<hr>';
-
         $workflow = $this->workflowService->getWorkflow($these);
+
+        if (empty($workflow)) {
+            return '';
+        }
 
         $parts = [];
         /** @var VWorkflow $r */
         foreach ($workflow as $i => $r) {
             $parts[] = sprintf('<tr>%s</tr>', $this->renderRow($r));
         }
-        $html .=  sprintf('<table class="roadmap table table-condensed table-hover">%s</table>', implode('', $parts));
+        $html =  sprintf('<table class="roadmap table table-condensed table-hover">%s</table>', implode('', $parts));
 
         return $html;
     }

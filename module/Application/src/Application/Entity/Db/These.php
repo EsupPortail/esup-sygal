@@ -2,7 +2,7 @@
 
 namespace Application\Entity\Db;
 
-use Application\Filter\FichierFilter;
+use Application\Entity\Db\Traits\SourceAwareTrait;
 use Application\Filter\TitreApogeeFilter;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -11,10 +11,6 @@ use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
-use Application\Entity\Db\Traits\SourceAwareTrait;
-use Zend\Filter\Exception;
-use Zend\Filter\FilterChain;
-use Zend\Filter\FilterInterface;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 
 /**

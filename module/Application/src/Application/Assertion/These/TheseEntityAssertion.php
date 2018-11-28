@@ -174,6 +174,14 @@ class TheseEntityAssertion extends GeneratedTheseEntityAssertion
         return $this->these->getDoctorant()->getId() === $this->getIdentityDoctorant()->getId();
     }
 
+    /**
+     * @return bool
+     */
+    protected function isTheseEnCours()
+    {
+        return $this->these->getEtatThese() === These::ETAT_EN_COURS;
+    }
+
     protected function isTheseSoutenue()
     {
         return $this->these->estSoutenue();

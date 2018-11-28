@@ -9,6 +9,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var These               $these
  * @var null|string|WfEtape $etape
  * @var string[]|WfEtape[]  $except
+ * @var string              $message
  */
 
 $wfHelper = $this->wf($these);
@@ -25,28 +26,42 @@ if (!empty($except)) {
 
 <?php if ($wfStepHelper->isStepAtteignable()): ?>
 
-    <div class="box panel panel-success roadmap-next-step">
-        <div class="panel-heading">
-            <h2 class="first">Et ensuite ?</h2>
+    <?php if (in_array($these->getEtatThese(), [These::ETAT_EN_COURS, These::ETAT_SOUTENUE])): ?>
+        <div class="box panel panel-success roadmap-next-step">
+            <div class="panel-heading">
+                <h2 class="first">Et ensuite ?</h2>
+            </div>
+            <div class="panel-body">
+                <nav aria-label="Etape suivante">
+                    <ul class="roadmap pagination">
+                        <?php if ($message): ?>
+                            <li><?php echo $message ?></li>
+                        <?php else: ?>
+                            <li><?php echo $wfStepHelper->render() ?></li>
+                        <?php endif ?>
+                    </ul>
+                </nav>
+            </div>
         </div>
-        <div class="panel-body">
-            <nav aria-label="Etape suivante">
-                <ul class="roadmap pagination">
-                    <li><?php echo $wfStepHelper->render() ?></li>
-                </ul>
-            </nav>
-        </div>
-    </div>
+    <?php endif ?>
 
 <?php elseif ($wfStepHelper->step() === null): ?>
 
-    <div class="box panel panel-success roadmap-next-step">
-        <div class="panel-heading">
-            <h2 class="first">Et ensuite ?</h2>
+    <?php if (in_array($these->getEtatThese(), [These::ETAT_EN_COURS, These::ETAT_SOUTENUE])): ?>
+        <div class="box panel panel-success roadmap-next-step">
+            <div class="panel-heading">
+                <h2 class="first">Et ensuite ?</h2>
+            </div>
+            <div class="panel-body">
+                <p class="lead">
+                    <?php if ($message): ?>
+                        <?php echo $message ?>
+                    <?php else: ?>
+                        C'est terminé : dépôt validé.
+                    <?php endif ?>
+                </p>
+            </div>
         </div>
-        <div class="panel-body">
-            <p class="lead"><!--<span class="glyphicon glyphicon-thumbs-up"></span>--> C'est terminé : dépôt validé.</p>
-        </div>
-    </div>
+    <?php endif ?>
 
 <?php endif ?>

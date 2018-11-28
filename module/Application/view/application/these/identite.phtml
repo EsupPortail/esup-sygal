@@ -285,7 +285,7 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
 
             <dt>État</dt>
             <dd>
-                <?php echo $these->getEtatTheseToString() ?>
+                <span class="label label-default"><?php echo $these->getEtatTheseToString() ?></span>
             </dd>
 
             <?php if ($resultat = $these->getResultatToString(false)): ?>
