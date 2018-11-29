@@ -19,6 +19,7 @@ use Application\Service\BaseService;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Fichier\Exception\DepotImpossibleException;
 use Application\Service\Fichier\Exception\ValidationImpossibleException;
+use Application\Service\File\FileServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\These\PageDeGarde\PageDeCouverturePdfExporter;
 use Application\Service\ValiditeFichier\ValiditeFichierServiceAwareTrait;
@@ -44,9 +45,11 @@ class FichierService extends BaseService
     use RetraitementServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use NotifierServiceAwareTrait;
+    use FileServiceAwareTrait;
 
     /**
      * @var string
+     * @deprecated
      */
     private $rootDirectoryPath;
 
@@ -65,18 +68,20 @@ class FichierService extends BaseService
 
     /**
      * @param string $rootDirectoryPath
+     * @deprecated
      */
     public function setRootDirectoryPath($rootDirectoryPath)
     {
-        $this->rootDirectoryPath = $rootDirectoryPath;
+        $this->fileService->setRootDirectoryPath($rootDirectoryPath);
     }
 
     /**
      * @return string
+     * @deprecated
      */
     public function getRootDirectoryPath()
     {
-        return $this->rootDirectoryPath;
+        return $this->fileService->getRootDirectoryPath();
     }
 
     /**
@@ -153,7 +158,8 @@ class FichierService extends BaseService
      */
     private function computeDestinationDirectoryPathForFichier(Fichier $fichier)
     {
-        return $this->rootDirectoryPath . '/' . strtolower($fichier->getNature()->getCode());
+//        return $this->rootDirectoryPath . '/' . strtolower($fichier->getNature()->getCode());
+        return $this->fileService->getCompleteFilepath(strtolower($fichier->getNature()->getCode()));
     }
 
     /**
@@ -509,6 +515,7 @@ class FichierService extends BaseService
      * @param string $inputFilePath
      * @return string Contenu binaire du fichier PNG généré
      * @throws LogicException Format de fichier incorrect
+     * @deprecated
      */
     public function generateFirstPagePreview($inputFilePath)
     {
@@ -649,7 +656,6 @@ class FichierService extends BaseService
      */
     public function generatePageDeCouverture(These $these, RendererInterface $renderer, $filepath = null)
     {
-
         $pdcData = $this->fetchInformationsPageDeCouverture($these);
 
         $exporter = new PageDeCouverturePdfExporter($renderer, 'A4');
@@ -672,7 +678,8 @@ class FichierService extends BaseService
      */
     public function createResponseForFileContent(Response $response, $fileContent, $cacheMaxAge = null)
     {
-        $response->setContent($fileContent);
+        /*
+         * $response->setContent($fileContent);
 
         $headers = $response->getHeaders();
         $headers
@@ -694,6 +701,8 @@ class FichierService extends BaseService
         }
 
         return $response;
+        */
+        return $this->fileService->createResponseForFileContent($response, $fileContent, $cacheMaxAge);
     }
 
     /**
