@@ -4,6 +4,7 @@ use Application\Controller\TheseController;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\MailConfirmation;
 use Application\Entity\Db\These;
+use Application\Entity\Db\Validation;
 use Application\Filter\ActeursFormatter;
 use Application\Filter\FinancementFormatter;
 use Application\Provider\Privilege\DoctorantPrivileges;
@@ -12,22 +13,22 @@ use Application\View\Helper\IndividuUsurpationHelper;
 use Application\View\Renderer\PhpRenderer;
 
 /**
- * @var PhpRenderer $this
- * @var These       $these
- * @var string      $modifierPersopassUrl
- * @var bool        $estDoctorant
- * @var bool        $showCorrecAttendue
- * @var string      $pvSoutenanceUrl
- * @var string      $rapportSoutenanceUrl
- * @var string      $preRapportSoutenanceUrl
- * @var string      $demandeConfidentUrl
- * @var string      $prolongConfidentUrl
- * @var string      $convMiseEnLigneUrl
- * @var string      $avenantConvMiseEnLigneUrl
- * @var string      $modifierCorrecAutorUrl
- * @var string      $nextStepUrl
- * @var string      $mailContact
- * @var string      $etatMailContact
+ * @var PhpRenderer  $this
+ * @var These        $these
+ * @var string       $modifierPersopassUrl
+ * @var bool         $estDoctorant
+ * @var string       $pvSoutenanceUrl
+ * @var string       $rapportSoutenanceUrl
+ * @var string       $preRapportSoutenanceUrl
+ * @var string       $demandeConfidentUrl
+ * @var string       $prolongConfidentUrl
+ * @var string       $convMiseEnLigneUrl
+ * @var string       $avenantConvMiseEnLigneUrl
+ * @var string       $modifierCorrecAutorUrl
+ * @var string       $nextStepUrl
+ * @var string       $mailContact
+ * @var string       $etatMailContact
+ * @var Validation[] $validationsDesCorrectionsEnAttente
  *
  * @see TheseController::detailIdentiteAction()
  */
@@ -327,33 +328,41 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
 
             <!------------------------------- Corrections attendues --------------------------------->
             <?php
-            if ($these->getCorrectionAutoriseeEstFacultative()) {
-                $correctionAttendue = true;
-                $class = "text-warning";
-                $message = $these->getDateButoirDepotVersionCorrigeeDepassee() ?
-                    "Non. Délai pour corrections facultatives écoulé : la version déposée avant soutenance constitue désormais la version de référence." :
-                    "Oui, facultatives.";
-            } elseif ($these->getCorrectionAutoriseeEstObligatoire()) {
-                $correctionAttendue = true;
-                $class = "text-danger";
-                $message = $these->getDateButoirDepotVersionCorrigeeDepassee() ?
-                    "Non. Délai pour corrections obligatoires écoulé : ni l’attestation de réussite ni le diplôme ne peuvent désormais être délivrés." :
-                    "Oui, obligatoires.";
-            } else {
-                $correctionAttendue = false;
-                $class = null;
-                $message = "Aucune.";
+            $titre = "Corrections attendues";
+            $message = "Non.";
+            $class = null;
+
+            if ($these->isCorrectionAutorisee()) {
+                $dateButoirDepassee = $these->getDateButoirDepotVersionCorrigeeDepassee() && ! empty($validationsDesCorrectionsEnAttente);
+
+                if ($these->getCorrectionAutoriseeEstFacultative()) {
+                    $class = "text-warning";
+                    $message = $dateButoirDepassee ?
+                        "Trop tard, le délai pour corrections facultatives est écoulé : la version déposée avant soutenance constitue désormais la version de référence." :
+                        "Oui, facultatives.";
+                } elseif ($these->getCorrectionAutoriseeEstObligatoire()) {
+                    $class = "text-danger";
+                    $message = $dateButoirDepassee ?
+                        "Trop tard, le délai pour corrections obligatoires est écoulé : ni l’attestation de réussite ni le diplôme ne peuvent désormais être délivrés." :
+                        "Oui, obligatoires.";
+                }
+                if (empty($validationsDesCorrectionsEnAttente)) {
+                    $titre = "Corrections";
+                    $message = sprintf("Les corrections %s ont été validées.", lcfirst($these->getCorrectionAutoriseeToString(true)));
+                    $canEditForcageCorrectionAutorisee = false;
+                }
             }
             ?>
-            <dt class="<?php echo $class ?>">Corrections attendues</dt>
+            <dt class="<?php echo $class ?>"><?php echo $titre ?></dt>
             <dd class="<?php echo $class ?>">
-                <?php echo $message ?>
+                <?php echo $message ?> <br>
                 <?php if ($canEditForcageCorrectionAutorisee): ?>
                     <?php if ($these->isCorrectionAutoriseeForcee()): ?>
                         <em>Cette valeur est forcée.</em>
                     <?php endif ?>
                     <a href="<?php echo $modifierCorrecAutorUrl ?>" class="btn btn-xs btn-info ajax-modal"
                        data-event="event-correction-autorisee-forcee-modified"
+                       title="Forçage du témoin de corrections attendues"
                     >Forçage</a>
                 <?php endif ?>
             </dd>

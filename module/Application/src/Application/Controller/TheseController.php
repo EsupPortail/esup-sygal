@@ -186,10 +186,10 @@ class TheseController extends AbstractController
         $these = $this->requestedThese();
         $etablissement = $these->getEtablissement();
 
-//        $showCorrecAttendue =
-//            $these->getCorrectionAutorisee() &&
-//            count($this->validationService->getValidationsAttenduesPourCorrectionThese($these)) > 0;
-        $showCorrecAttendue = true;
+        $validationsDesCorrectionsEnAttente = null;
+        if ($these->getCorrectionAutorisee()) {
+            $validationsDesCorrectionsEnAttente = $this->validationService->getValidationsAttenduesPourCorrectionThese($these);
+        }
 
         /**
          * @var Individu $individu
@@ -226,7 +226,6 @@ class TheseController extends AbstractController
             'these'                     => $these,
             'etablissement'             => $etablissement,
             'estDoctorant'              => (bool)$this->userContextService->getSelectedRoleDoctorant(),
-            'showCorrecAttendue'        => $showCorrecAttendue,
 //            'modifierPersopassUrl'      => $this->urlDoctorant()->modifierPersopassUrl($these),
             'modifierPersopassUrl'      => $urlModification,
             'pvSoutenanceUrl'           => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_PV_SOUTENANCE),
@@ -243,6 +242,7 @@ class TheseController extends AbstractController
             'mailContact'               => $mailContact,
             'etatMailContact'           => $etatMailContact,
             'rattachements'             => $rattachements,
+            'validationsDesCorrectionsEnAttente' => $validationsDesCorrectionsEnAttente,
         ]);
         $view->setTemplate('application/these/identite');
 
@@ -518,7 +518,7 @@ class TheseController extends AbstractController
         ];
 
         if ($isCorrectionAutoriseeFromImport) {
-            $correctionAttendueImportee = sprintf("Correction %s attendue", strtolower($these->getCorrectionAutoriseeToString(false, false)));
+            $correctionAttendueImportee = sprintf("Corrections %s attendues", strtolower($these->getCorrectionAutoriseeToString(true, false)));
             unset($radioOptions[$valeurCorrectionAutoriseeFromImport]);
         } else {
             $correctionAttendueImportee = "Aucune correction attendue";
@@ -535,7 +535,7 @@ class TheseController extends AbstractController
             ->setLabelOption('disable_html_escape', true);
 
         $message = sprintf(
-            "Actuellement, la valeur du témoin de corrections attendues importé de %s est &laquo; <strong>%s</strong> &raquo;. " .
+            "Actuellement, la valeur du témoin de corrections attendues importé de %s <br>est &laquo; <strong>%s</strong> &raquo;. <br>" .
             "Vous avez ici la possibilité d'outre-passer cette valeur importée en réalisant un forçage...",
             $these->getSource(),
             $correctionAttendueImportee

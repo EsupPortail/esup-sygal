@@ -51,24 +51,11 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     const CORRECTION_AUTORISEE_OBLIGATOIRE = 'obligatoire';
     const CORRECTION_AUTORISEE_FACULTATIVE = 'facultative';
 
-    /**
-     * @deprecated
-     */
-    const CORRECTION_MAJEURE = 'majeure';
-    /**
-     * @deprecated
-     */
-    const CORRECTION_MINEURE = 'mineure';
-
     public static $correctionsLibelles = [
-        self::CORRECTION_MAJEURE               => "Obligatoire",
-        self::CORRECTION_MINEURE               => "Facultative",
         self::CORRECTION_AUTORISEE_OBLIGATOIRE => "Obligatoire",
         self::CORRECTION_AUTORISEE_FACULTATIVE => "Facultative",
     ];
     public static $correctionsLibellesPluriels = [
-        self::CORRECTION_MAJEURE               => "Obligatoires",
-        self::CORRECTION_MINEURE               => "Facultatives",
         self::CORRECTION_AUTORISEE_OBLIGATOIRE => "Obligatoires",
         self::CORRECTION_AUTORISEE_FACULTATIVE => "Facultatives",
     ];
@@ -78,8 +65,8 @@ class These implements HistoriqueAwareInterface, ResourceInterface
 
     const CORRECTION_AUTORISEE_FORCAGE_NON = null; // pas de forçage
     const CORRECTION_AUTORISEE_FORCAGE_AUCUNE = 'aucune'; // aucune correction autorisée
-    const CORRECTION_AUTORISEE_FORCAGE_OBLIGATOIRE = self::CORRECTION_MAJEURE; // corrections obligatoires autorisées
-    const CORRECTION_AUTORISEE_FORCAGE_FACULTATIVE = self::CORRECTION_MINEURE; // corrections facultatives autorisées
+    const CORRECTION_AUTORISEE_FORCAGE_OBLIGATOIRE = self::CORRECTION_AUTORISEE_OBLIGATOIRE; // corrections obligatoires autorisées
+    const CORRECTION_AUTORISEE_FORCAGE_FACULTATIVE = self::CORRECTION_AUTORISEE_FACULTATIVE; // corrections facultatives autorisées
 
     /**
      * @var integer
@@ -535,7 +522,6 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function getCorrectionAutoriseeEstFacultative($prendreEnCompteLeForcage = true)
     {
         return in_array($this->getCorrectionAutorisee($prendreEnCompteLeForcage), [
-            self::CORRECTION_MINEURE,
             self::CORRECTION_AUTORISEE_FACULTATIVE
         ]);
     }
@@ -547,7 +533,6 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function getCorrectionAutoriseeEstObligatoire($prendreEnCompteLeForcage = true)
     {
         return in_array($this->getCorrectionAutorisee($prendreEnCompteLeForcage), [
-            self::CORRECTION_MAJEURE,
             self::CORRECTION_AUTORISEE_OBLIGATOIRE
         ]);
     }
@@ -1217,7 +1202,6 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     {
         switch ($this->getCorrectionAutorisee()) {
             case self::CORRECTION_AUTORISEE_OBLIGATOIRE:
-            case self::CORRECTION_MAJEURE:
                 $dateButoir = $this->getDateButoirDepotVersionCorrigee();
                 if ($dateButoir !== null) {
                     return $dateButoir->sub(new \DateInterval('P1M')); // date butoir - 1 mois
@@ -1225,7 +1209,6 @@ class These implements HistoriqueAwareInterface, ResourceInterface
                     return null;
                 }
             case self::CORRECTION_AUTORISEE_FACULTATIVE:
-            case self::CORRECTION_MINEURE:
                 return null;
             default:
                 return null;
@@ -1249,7 +1232,6 @@ class These implements HistoriqueAwareInterface, ResourceInterface
 
         switch ($this->getCorrectionAutorisee()) {
             case self::CORRECTION_AUTORISEE_OBLIGATOIRE:
-            case self::CORRECTION_MAJEURE:
                 if ($dateButoir !== null) {
                     $dateProchaineNotif = $dateButoir->sub(new \DateInterval('P1M')); // Date butoir - 1 mois
                 }
@@ -1258,7 +1240,6 @@ class These implements HistoriqueAwareInterface, ResourceInterface
                 }
                 break;
             case self::CORRECTION_AUTORISEE_FACULTATIVE:
-            case self::CORRECTION_MINEURE:
                 $dateProchaineNotif = null;
                 break;
             default:
@@ -1327,10 +1308,8 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     {
         switch ($val = $this->getCorrectionAutorisee()) {
             case self::CORRECTION_AUTORISEE_OBLIGATOIRE:
-            case self::CORRECTION_MAJEURE:
                 return static::CORRECTION_OBLIGATOIRE_INTERVAL; // + 3 mois
             case self::CORRECTION_AUTORISEE_FACULTATIVE:
-            case self::CORRECTION_MINEURE:
                 return static::CORRECTION_FACULTATIVE_INTERVAL; // + 2 mois
             default:
                 throw new RuntimeException("Valeur de correction attendue non prévue: " . $val);
