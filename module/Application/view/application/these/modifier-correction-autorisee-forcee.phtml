@@ -23,7 +23,9 @@ $form->prepare();
 <p class="lead">
     <?php echo $form->getLabel() ?>
 </p>
-
+<p>
+    Que voulez-vous faire ?
+</p>
 <?php echo $this->form()->openTag($form) ?>
 <?php echo $this->formControlGroup()->render($form->get('forcage')) ?>
 <?php echo $this->formElement($form->get('submit')->setAttribute('class', 'btn btn-primary')) ?>
