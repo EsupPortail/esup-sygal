@@ -56,6 +56,10 @@ return [
                             ThesePrivileges::THESE_SAISIE_RDV_BU,
                             ThesePrivileges::FICHIER_DIVERS_TELEVERSER,
                             ThesePrivileges::FICHIER_DIVERS_CONSULTER,
+                            ThesePrivileges::THESE_CONSULTATION_TOUTES_THESES,
+                            ThesePrivileges::THESE_CONSULTATION_SES_THESES,
+                            ThesePrivileges::THESE_MODIFICATION_TOUTES_THESES,
+                            ThesePrivileges::THESE_MODIFICATION_SES_THESES,
 //                            ThesePrivileges::THESE_REFRESH,
                         ],
                         'resources'  => ['These'],
@@ -86,7 +90,10 @@ return [
                     'action'     => [
                         'index',
                     ],
-                    'privileges' => ThesePrivileges::THESE_CONSULTATION_FICHE,
+                    'privileges' => [
+                        ThesePrivileges::THESE_CONSULTATION_FICHE,
+                        ThesePrivileges::THESE_CONSULTATION_TOUTES_THESES,
+                    ],
                 ],
                 [
                     'controller' => 'Application\Controller\These',
@@ -97,7 +104,11 @@ return [
                         'fusion',
                         'validation-page-de-couverture',
                     ],
-                    'privileges' => ThesePrivileges::THESE_CONSULTATION_FICHE,
+                    'privileges' => [
+                        ThesePrivileges::THESE_CONSULTATION_FICHE,
+                        ThesePrivileges::THESE_CONSULTATION_TOUTES_THESES,
+                        ThesePrivileges::THESE_CONSULTATION_SES_THESES,
+                    ],
                     'assertion'  => 'Assertion\\These',
                 ],
                 [
