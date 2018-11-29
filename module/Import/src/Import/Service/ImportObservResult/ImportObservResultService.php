@@ -90,11 +90,11 @@ class ImportObservResultService extends BaseService
             case ImportObserv::CODE_RESULTAT_PASSE_A_ADMIS:
                 $this->handleImportObservResultsForResultatAdmis($importObserv, $etablissement, $these);
                 break;
-            case ImportObserv::CODE_CORRECTION_PASSE_A_MINEURE:
-                $this->handleImportObservResultsForCorrectionMineure($importObserv, $etablissement, $these);
+            case ImportObserv::CODE_CORRECTION_PASSE_A_FACULTATIVE:
+                $this->handleImportObservResultsForCorrectionFacultative($importObserv, $etablissement, $these);
                 break;
-            case ImportObserv::CODE_CORRECTION_PASSE_A_MAJEURE:
-                $this->handleImportObservResultsForCorrectionMajeure($importObserv, $etablissement, $these);
+            case ImportObserv::CODE_CORRECTION_PASSE_A_OBLIGATOIRE:
+                $this->handleImportObservResultsForCorrectionObligatoire($importObserv, $etablissement, $these);
                 break;
             default:
                 throw new RuntimeException("Cas non prévu!");
@@ -191,17 +191,17 @@ class ImportObservResultService extends BaseService
 
     /**
      * Traitement des résultats d'observation des changements lors de la synchro :
-     * notifications au sujet des thèses pour lesquelles le témoin "correction autorisée" est passé à "mineure".
+     * notifications au sujet des thèses pour lesquelles le témoin "correction autorisée" est passé à "facultative".
      *
      * @param ImportObserv         $importObserv
      * @param Etablissement|string $etablissement
      * @param These|null           $these
      */
-    private function handleImportObservResultsForCorrectionMineure(ImportObserv $importObserv, $etablissement, These $these = null)
+    private function handleImportObservResultsForCorrectionFacultative(ImportObserv $importObserv, $etablissement, These $these = null)
     {
         $this->logger->info(sprintf(
             "# Traitement des résultats d'import de l'établissement '%s' : " .
-            "notifications au sujet des thèses pour lesquelles le témoin \"correction autorisée\" est passé à \"mineure\"",
+            "notifications au sujet des thèses pour lesquelles le témoin \"correction autorisée\" est passé à \"facultative\"",
             $etablissement
         ));
 
@@ -212,17 +212,17 @@ class ImportObservResultService extends BaseService
 
     /**
      * Traitement des résultats d'observation des changements lors de la synchro :
-     * notifications au sujet des thèses pour lesquelles le témoin "correction autorisée" est passé à "majeure".
+     * notifications au sujet des thèses pour lesquelles le témoin "correction autorisée" est passé à "obligatoire".
      *
      * @param ImportObserv         $importObserv
      * @param Etablissement|string $etablissement
      * @param These|null           $these
      */
-    private function handleImportObservResultsForCorrectionMajeure(ImportObserv $importObserv, $etablissement, These $these = null)
+    private function handleImportObservResultsForCorrectionObligatoire(ImportObserv $importObserv, $etablissement, These $these = null)
     {
         $this->logger->info(sprintf(
             "# Traitement des résultats d'import de l'établissement '%s' : " .
-            "notifications au sujet des thèses pour lesquelles le témoin \"correction autorisée\" est passé à \"majeure\"",
+            "notifications au sujet des thèses pour lesquelles le témoin \"correction autorisée\" est passé à \"obligatoire\"",
             $etablissement
         ));
 

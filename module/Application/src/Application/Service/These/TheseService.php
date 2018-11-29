@@ -20,6 +20,7 @@ use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
+use Assert\Assertion;
 use DateInterval;
 use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\RuntimeException;
@@ -46,6 +47,30 @@ class TheseService extends BaseService
         return $repo;
     }
 
+    /**
+     * Met à jour le témoin de correction autorisée forcée.
+     *
+     * @param These  $these
+     * @param string|null $forcage
+     */
+    public function updateCorrectionAutoriseeForcee(These $these, $forcage = null)
+    {
+        if ($forcage !== null) {
+            Assertion::inArray($forcage, [
+                These::CORRECTION_AUTORISEE_FORCAGE_AUCUNE,
+                These::CORRECTION_AUTORISEE_FORCAGE_FACULTATIVE,
+                These::CORRECTION_AUTORISEE_FORCAGE_OBLIGATOIRE,
+            ]);
+        }
+
+        $these->setCorrectionAutoriseeForcee($forcage);
+
+        try {
+            $this->entityManager->flush($these);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement", null, $e);
+        }
+    }
 
     /**
      * @param These           $these

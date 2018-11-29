@@ -53,6 +53,18 @@ class TheseQueryBuilder extends DefaultQueryBuilder
     }
 
     /**
+     * @return $this
+     */
+    public function andWhereCorrectionAutorisee()
+    {
+        // correction non autorisee si : correctionAutorisee === null OU correctionAutoriseeForcee === 'aucune'
+        $this
+            ->andWhere("NOT ($this->rootAlias.correctionAutorisee IS NULL OR $this->rootAlias.correctionAutoriseeForcee = :forceeAucune)")
+            ->setParameter('forceeAucune', These::CORRECTION_AUTORISEE_FORCAGE_AUCUNE);
+
+        return $this;
+    }
+    /**
      * @param string $alias
      * @return $this
      */

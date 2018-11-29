@@ -115,6 +115,7 @@ class NotificationDepotVersionCorrigeeAttenduRule implements RuleInterface
 
         switch ($this->these->getCorrectionAutorisee()) {
             case These::CORRECTION_MAJEURE:
+            case These::CORRECTION_AUTORISEE_OBLIGATOIRE:
                 $spec = self::SPEC_INTERVAL_ENTRE_DATE_NOTIF_ET_BUTOIRE;
                 try {
                     $interval = new DateInterval($spec);
@@ -124,7 +125,8 @@ class NotificationDepotVersionCorrigeeAttenduRule implements RuleInterface
                 $dateProchaineNotif = $dateButoir->sub($interval); // Date butoir - interval
                 break;
             case These::CORRECTION_MINEURE:
-                // Une seule notification pour des corrections mineures
+            case These::CORRECTION_AUTORISEE_FACULTATIVE:
+                // Une seule notification pour des corrections facultatives
                 $dateProchaineNotif = null;
                 break;
             default:

@@ -16,7 +16,7 @@ use Application\View\Renderer\PhpRenderer;
 <p>Bonjour,</p>
 <p>Ceci est un mail envoyé automatiquement par l'application <?php echo $this->appInfos()->nom ?>.</p>
 
-<?php if ($these->getCorrectionAutoriseeEstMineure()): ?>
+<?php if ($these->getCorrectionAutoriseeEstFacultative()): ?>
 
     <p>
         A l’issue de la soutenance, le jury vous a demandé d’apporter des corrections mineures (corrections de forme) à votre thèse. Ces corrections sont facultatives.
@@ -29,7 +29,7 @@ use Application\View\Renderer\PhpRenderer;
         En ce cas la version déposée avant la soutenance restera la version de référence de votre thèse.
     </p>
 
-<?php elseif ($these->getCorrectionAutoriseeEstMajeure()): ?>
+<?php elseif ($these->getCorrectionAutoriseeEstObligatoire()): ?>
 
     <?php if ($estPremiereNotif): ?>
 

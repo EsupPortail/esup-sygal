@@ -1,5 +1,6 @@
 <?php
 
+use Application\Controller\TheseController;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\MailConfirmation;
 use Application\Entity\Db\These;
@@ -11,27 +12,31 @@ use Application\View\Helper\IndividuUsurpationHelper;
 use Application\View\Renderer\PhpRenderer;
 
 /**
- * @var        $this PhpRenderer
- * @var These  $these
- * @var string $modifierPersopassUrl
- * @var bool   $estDoctorant
- * @var bool   $showCorrecAttendue
- * @var string $pvSoutenanceUrl
- * @var string $rapportSoutenanceUrl
- * @var string $preRapportSoutenanceUrl
- * @var string $demandeConfidentUrl
- * @var string $prolongConfidentUrl
- * @var string $convMiseEnLigneUrl
- * @var string $avenantConvMiseEnLigneUrl
- * @var string $nextStepUrl
- * @var string $mailContact
- * @var string $etatMailContact
+ * @var PhpRenderer $this
+ * @var These       $these
+ * @var string      $modifierPersopassUrl
+ * @var bool        $estDoctorant
+ * @var bool        $showCorrecAttendue
+ * @var string      $pvSoutenanceUrl
+ * @var string      $rapportSoutenanceUrl
+ * @var string      $preRapportSoutenanceUrl
+ * @var string      $demandeConfidentUrl
+ * @var string      $prolongConfidentUrl
+ * @var string      $convMiseEnLigneUrl
+ * @var string      $avenantConvMiseEnLigneUrl
+ * @var string      $modifierCorrecAutorUrl
+ * @var string      $nextStepUrl
+ * @var string      $mailContact
+ * @var string      $etatMailContact
+ *
+ * @see TheseController::detailIdentiteAction()
  */
 
 $canEditPersopass = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_MODIFICATION_PERSOPASS);
 $canEditPersopass = $canEditPersopass && (!$estDoctorant || !$these->getDoctorant()->getPersopass());
 $persopassModifiedEvent = 'persopass-modified-event';
 
+$canEditForcageCorrectionAutorisee = $this->isAllowed($these, ThesePrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE);
 
 $financementFormatter = new FinancementFormatter();
 $financementFormatter->setSortBy(FinancementFormatter::SORT_BY_DATE);
@@ -320,33 +325,38 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                     <?php echo $these->getLibellePaysCotutelle() ?></dd>
             <?php endif ?>
 
-            <?php if ($showCorrecAttendue): ?>
-                <?php if ($these->getCorrectionAutoriseeEstMineure()): ?>
-                    <dt class="text-warning">Corrections attendues</dt>
-                    <?php if ($these->getDateButoirDepotVersionCorrigeeDepassee()): ?>
-                        <dd class="text-warning">
-                            Non. Délai pour corrections mineures écoulé : la version déposée avant soutenance
-                            constitue désormais la version de référence.
-                        </dd>
-                    <?php else: ?>
-                        <dd class="text-warning">
-                            Oui, mineures.
-                        </dd>
+            <!------------------------------- Corrections attendues --------------------------------->
+            <?php
+            if ($these->getCorrectionAutoriseeEstFacultative()) {
+                $correctionAttendue = true;
+                $class = "text-warning";
+                $message = $these->getDateButoirDepotVersionCorrigeeDepassee() ?
+                    "Non. Délai pour corrections facultatives écoulé : la version déposée avant soutenance constitue désormais la version de référence." :
+                    "Oui, facultatives.";
+            } elseif ($these->getCorrectionAutoriseeEstObligatoire()) {
+                $correctionAttendue = true;
+                $class = "text-danger";
+                $message = $these->getDateButoirDepotVersionCorrigeeDepassee() ?
+                    "Non. Délai pour corrections obligatoires écoulé : ni l’attestation de réussite ni le diplôme ne peuvent désormais être délivrés." :
+                    "Oui, obligatoires.";
+            } else {
+                $correctionAttendue = false;
+                $class = null;
+                $message = "Aucune.";
+            }
+            ?>
+            <dt class="<?php echo $class ?>">Corrections attendues</dt>
+            <dd class="<?php echo $class ?>">
+                <?php echo $message ?>
+                <?php if ($canEditForcageCorrectionAutorisee): ?>
+                    <?php if ($these->isCorrectionAutoriseeForcee()): ?>
+                        <em>Cette valeur est forcée.</em>
                     <?php endif ?>
-                <?php elseif ($these->getCorrectionAutoriseeEstMajeure()): ?>
-                    <dt class="text-danger">Corrections attendues</dt>
-                    <?php if ($these->getDateButoirDepotVersionCorrigeeDepassee()): ?>
-                        <dd class="text-danger">
-                            Non. Délai pour corrections majeures écoulé : ni l’attestation de réussite ni
-                            le diplôme ne peuvent désormais être délivrés.
-                        </dd>
-                    <?php else: ?>
-                        <dd class="text-danger">
-                            Oui, majeures.
-                        </dd>
-                    <?php endif ?>
+                    <a href="<?php echo $modifierCorrecAutorUrl ?>" class="btn btn-xs btn-info ajax-modal"
+                       data-event="event-correction-autorisee-forcee-modified"
+                    >Forçage</a>
                 <?php endif ?>
-            <?php endif ?>
+            </dd>
 
         </dl>
     </div>
@@ -452,9 +462,12 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
             avenantConvMiseEnLigneLoader,
         ], self);
 
-
         body.one("<?php echo $persopassModifiedEvent ?>", function (event, data) {
             // Le persopass vient d'être modifié.
+            event.div.modal('hide'); // ferme la fenêtre modale
+            window.location.reload();
+        });
+        body.one("event-correction-autorisee-forcee-modified", function (event) {
             event.div.modal('hide'); // ferme la fenêtre modale
             window.location.reload();
         });
