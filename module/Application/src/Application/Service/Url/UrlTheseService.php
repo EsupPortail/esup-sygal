@@ -235,6 +235,13 @@ class UrlTheseService extends UrlService
         );
     }
 
+    public function modifierCorrecAutoriseeForceeUrl(These $these)
+    {
+        return $this->fromRoute('these/modifier-correction-autorisee-forcee',
+            ['these' => $this->idify($these)]
+        );
+    }
+
     public function modifierMetadonneesUrl(These $these)
     {
         return $this->fromRoute('these/modifier-description',

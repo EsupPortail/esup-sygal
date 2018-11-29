@@ -15,7 +15,7 @@ use Application\View\Renderer\PhpRenderer;
 <p>Bonjour,</p>
 <p>Ceci est un mail envoyé automatiquement par l'application <?php echo $this->appInfos()->nom ?>.</p>
 
-<?php if ($these->getCorrectionAutoriseeEstMineure()): ?>
+<?php if ($these->getCorrectionAutoriseeEstFacultative()): ?>
 
     <p>
         Le délai de <?php echo $these->getDelaiDepotVersionCorrigeeToString() ?> accordé au doctorant
@@ -25,7 +25,7 @@ use Application\View\Renderer\PhpRenderer;
         Vous pouvez saisir l’admission dans Apogée si le PV et le rapport de soutenance (les originaux) ont été transmis.
     </p>
 
-<?php elseif ($these->getCorrectionAutoriseeEstMajeure()): ?>
+<?php elseif ($these->getCorrectionAutoriseeEstObligatoire()): ?>
 
     <p>
         Le délai de <?php echo $these->getDelaiDepotVersionCorrigeeToString() ?> accordé au doctorant

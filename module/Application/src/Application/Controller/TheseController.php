@@ -53,7 +53,12 @@ use UnicaenApp\Service\MessageCollectorAwareTrait;
 use UnicaenApp\Traits\MessageAwareInterface;
 use UnicaenApp\Util;
 use Zend\Form\Element\Hidden;
+use Zend\Form\Element\Radio;
+use Zend\Form\Element\Submit;
+use Zend\Form\Element\Text;
+use Zend\Form\Form;
 use Zend\Http\Response;
+use Zend\InputFilter\InputFilter;
 use Zend\Log\Logger;
 use Zend\Log\Writer\Noop;
 use Zend\Stdlib\ParametersInterface;
@@ -181,9 +186,10 @@ class TheseController extends AbstractController
         $these = $this->requestedThese();
         $etablissement = $these->getEtablissement();
 
-        $showCorrecAttendue =
-            $these->getCorrectionAutorisee() &&
-            count($this->validationService->getValidationsAttenduesPourCorrectionThese($these)) > 0;
+//        $showCorrecAttendue =
+//            $these->getCorrectionAutorisee() &&
+//            count($this->validationService->getValidationsAttenduesPourCorrectionThese($these)) > 0;
+        $showCorrecAttendue = true;
 
         /**
          * @var Individu $individu
@@ -230,6 +236,7 @@ class TheseController extends AbstractController
             'prolongConfidentUrl'       => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_PROLONG_CONFIDENT),
             'convMiseEnLigneUrl'        => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_CONV_MISE_EN_LIGNE),
             'avenantConvMiseEnLigneUrl' => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_AVENANT_CONV_MISE_EN_LIGNE),
+            'modifierCorrecAutorUrl'    => $this->urlThese()->modifierCorrecAutoriseeForceeUrl($these),
             'nextStepUrl'               => $this->urlWorkflow()->nextStepBox($these, null, [
                 WfEtape::PSEUDO_ETAPE_FINALE,
             ]),
@@ -470,6 +477,82 @@ class TheseController extends AbstractController
         $view->setTemplate('application/these/rdv-bu' . ($estDoctorant ? '-doctorant' : null));
 
         return $view;
+    }
+
+    public function modifierCorrectionAutoriseeForceeAction()
+    {
+        $these = $this->requestedThese();
+        $form = $this->getCorrectionAutoriseeForceeForm($these);
+
+        if ($this->getRequest()->isPost()) {
+            /** @var ParametersInterface $post */
+            $post = $this->getRequest()->getPost();
+            $form->setData($post);
+            if ($form->isValid()) {
+                $forcage = $post->get('forcage') ?: null;
+                $this->theseService->updateCorrectionAutoriseeForcee($these, $forcage);
+            }
+        }
+        else {
+            $form->get('forcage')->setValue($these->getCorrectionAutoriseeForcee() ?: '');
+        }
+
+        $form->setAttribute('action', $this->urlThese()->modifierCorrecAutoriseeForceeUrl($these));
+
+        return new ViewModel([
+            'these' => $these,
+            'form' => $form,
+            'title' => "Forçage du témoin de corrections attendues",
+        ]);
+    }
+
+    private function getCorrectionAutoriseeForceeForm(These $these)
+    {
+        $isCorrectionAutoriseeFromImport = $these->isCorrectionAutorisee(false);
+        $valeurCorrectionAutoriseeFromImport = $these->getCorrectionAutorisee(false);
+
+        $radioOptions = [
+            These::CORRECTION_AUTORISEE_FORCAGE_AUCUNE      => "Forcer à &laquo; <strong>Aucune correction attendue</strong> &raquo;.",
+            These::CORRECTION_AUTORISEE_FORCAGE_FACULTATIVE => "Forcer à &laquo; <strong>Corrections facultatives attendues</strong> &raquo;.",
+            These::CORRECTION_AUTORISEE_FORCAGE_OBLIGATOIRE => "Forcer à &laquo; <strong>Corrections obligatoires attendues</strong> &raquo;.",
+        ];
+
+        if ($isCorrectionAutoriseeFromImport) {
+            $correctionAttendueImportee = sprintf("Correction %s attendue", strtolower($these->getCorrectionAutoriseeToString(false, false)));
+            unset($radioOptions[$valeurCorrectionAutoriseeFromImport]);
+        } else {
+            $correctionAttendueImportee = "Aucune correction attendue";
+            unset($radioOptions[These::CORRECTION_AUTORISEE_FORCAGE_AUCUNE]);
+        }
+
+        $radioOptions = array_merge(
+            ['' => sprintf("Ne pas forcer et utiliser la valeur importée de %s.", $these->getSource())],
+            $radioOptions
+        );
+
+        $radio = (new Radio('forcage'))
+            ->setValueOptions($radioOptions)
+            ->setLabelOption('disable_html_escape', true);
+
+        $message = sprintf(
+            "Actuellement, la valeur du témoin de corrections attendues importé de %s est &laquo; <strong>%s</strong> &raquo;. " .
+            "Vous avez ici la possibilité d'outre-passer cette valeur importée en réalisant un forçage...",
+            $these->getSource(),
+            $correctionAttendueImportee
+        );
+
+        $form = new Form('correctionAutoriseeForcee');
+        $form->setLabel($message);
+        $form->add($radio);
+        $form->add((new Submit('submit'))->setValue("Enregistrer"));
+
+        $form->setInputFilter((new InputFilter())->getFactory()->createInputFilter([
+            'forcage' => [
+                'allow_empty' => true
+            ]
+        ]));
+
+        return $form;
     }
 
     public function modifierRdvBuAction()

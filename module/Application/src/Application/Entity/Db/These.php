@@ -4,6 +4,7 @@ namespace Application\Entity\Db;
 
 use Application\Entity\Db\Traits\SourceAwareTrait;
 use Application\Filter\TitreApogeeFilter;
+use Assert\Assertion;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -47,20 +48,38 @@ class These implements HistoriqueAwareInterface, ResourceInterface
         self::RESULTAT_ADMIS   => "ADM",
     ];
 
+    const CORRECTION_AUTORISEE_OBLIGATOIRE = 'obligatoire';
+    const CORRECTION_AUTORISEE_FACULTATIVE = 'facultative';
+
+    /**
+     * @deprecated
+     */
     const CORRECTION_MAJEURE = 'majeure';
+    /**
+     * @deprecated
+     */
     const CORRECTION_MINEURE = 'mineure';
 
     public static $correctionsLibelles = [
-        self::CORRECTION_MAJEURE => "Majeure",
-        self::CORRECTION_MINEURE => "Mineure",
+        self::CORRECTION_MAJEURE               => "Obligatoire",
+        self::CORRECTION_MINEURE               => "Facultative",
+        self::CORRECTION_AUTORISEE_OBLIGATOIRE => "Obligatoire",
+        self::CORRECTION_AUTORISEE_FACULTATIVE => "Facultative",
     ];
     public static $correctionsLibellesPluriels = [
-        self::CORRECTION_MAJEURE => "Majeures",
-        self::CORRECTION_MINEURE => "Mineures",
+        self::CORRECTION_MAJEURE               => "Obligatoires",
+        self::CORRECTION_MINEURE               => "Facultatives",
+        self::CORRECTION_AUTORISEE_OBLIGATOIRE => "Obligatoires",
+        self::CORRECTION_AUTORISEE_FACULTATIVE => "Facultatives",
     ];
 
-    const CORRECTION_MAJEURE_INTERVAL = 'P2M';
-    const CORRECTION_MINEURE_INTERVAL = 'P3M';
+    const CORRECTION_OBLIGATOIRE_INTERVAL = 'P2M';
+    const CORRECTION_FACULTATIVE_INTERVAL = 'P3M';
+
+    const CORRECTION_AUTORISEE_FORCAGE_NON = null; // pas de forçage
+    const CORRECTION_AUTORISEE_FORCAGE_AUCUNE = 'aucune'; // aucune correction autorisée
+    const CORRECTION_AUTORISEE_FORCAGE_OBLIGATOIRE = self::CORRECTION_MAJEURE; // corrections obligatoires autorisées
+    const CORRECTION_AUTORISEE_FORCAGE_FACULTATIVE = self::CORRECTION_MINEURE; // corrections facultatives autorisées
 
     /**
      * @var integer
@@ -126,6 +145,11 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      * @var string
      */
     private $correctionAutorisee;
+
+    /**
+     * @var string
+     */
+    private $correctionAutoriseeForcee;
 
     /**
      * @var string
@@ -460,47 +484,134 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
-     * @return string
+     * Indique si le témoin indique que des corrections sont autorisées.
+     * NB: Par défaut le forçage du témoin est pris en compte
+     *
+     * @param bool $prendreEnCompteLeForcage Faut-il prendre en compte le forçage éventuel ?
+     * @return bool
      */
-    public function getCorrectionAutorisee()
+    public function isCorrectionAutorisee($prendreEnCompteLeForcage = true)
     {
-        return $this->correctionAutorisee;
+        return (bool) $this->getCorrectionAutorisee($prendreEnCompteLeForcage);
     }
 
     /**
+     * Indique si le témoin de corrections autorisées fait l'objet d'un forçage.
+     *
      * @return bool
      */
-    public function getCorrectionAutoriseeEstMineure()
+    public function isCorrectionAutoriseeForcee()
     {
-        return $this->getCorrectionAutorisee() === self::CORRECTION_MINEURE;
+        return $this->getCorrectionAutoriseeForcee() !== null;
     }
 
     /**
+     * Retourne la valeur du témoin de corrections autorisées.
+     * NB: Par défaut le forçage du témoin est pris en compte.
+     *
+     * @param bool $prendreEnCompteLeForcage Faut-il prendre en compte le forçage éventuel ?
+     * @return string|null 'facultative' ou 'obligatoire' ou null
+     *
+     * @see These::getCorrectionAutoriseeForcee()
+     */
+    public function getCorrectionAutorisee($prendreEnCompteLeForcage = true)
+    {
+        if ($prendreEnCompteLeForcage === false) {
+            return $this->correctionAutorisee;
+        }
+
+        if ($this->getCorrectionAutoriseeForcee() === self::CORRECTION_AUTORISEE_FORCAGE_AUCUNE) {
+            // si le forçage est à 'aucune', alors aucune correction autorisée!
+            return null;
+        }
+
+        return $this->getCorrectionAutoriseeForcee() ?: $this->correctionAutorisee;
+    }
+
+    /**
+     * @param bool $prendreEnCompteLeForcage Faut-il prendre en compte le forçage éventuel ?
      * @return bool
      */
-    public function getCorrectionAutoriseeEstMajeure()
+    public function getCorrectionAutoriseeEstFacultative($prendreEnCompteLeForcage = true)
     {
-        return $this->getCorrectionAutorisee() === self::CORRECTION_MAJEURE;
+        return in_array($this->getCorrectionAutorisee($prendreEnCompteLeForcage), [
+            self::CORRECTION_MINEURE,
+            self::CORRECTION_AUTORISEE_FACULTATIVE
+        ]);
+    }
+
+    /**
+     * @param bool $prendreEnCompteLeForcage Faut-il prendre en compte le forçage éventuel ?
+     * @return bool
+     */
+    public function getCorrectionAutoriseeEstObligatoire($prendreEnCompteLeForcage = true)
+    {
+        return in_array($this->getCorrectionAutorisee($prendreEnCompteLeForcage), [
+            self::CORRECTION_MAJEURE,
+            self::CORRECTION_AUTORISEE_OBLIGATOIRE
+        ]);
     }
 
     /**
      * @param bool $plural
+     * @param bool $prendreEnCompteLeForcage Faut-il prendre en compte le forçage éventuel ?
      * @return string
      */
-    public function getCorrectionAutoriseeToString($plural = false)
+    public function getCorrectionAutoriseeToString($plural = false, $prendreEnCompteLeForcage = true)
     {
+        $correctionAutorisee = $this->getCorrectionAutorisee($prendreEnCompteLeForcage);
+
         return $plural ?
-            self::$correctionsLibellesPluriels[$this->getCorrectionAutorisee()] :
-            self::$correctionsLibelles[$this->getCorrectionAutorisee()];
+            self::$correctionsLibellesPluriels[$correctionAutorisee] :
+            self::$correctionsLibelles[$correctionAutorisee];
     }
 
     /**
-     * @param bool $correctionAutorisee
+     * Change la valeur du témoin de corrections autorisées importé.
+     * NB: cette méthode ne devrait pas être utilisée, sauf pour les tests unitaires.
+     *
+     * @param string|null $correctionAutorisee
      * @return These
      */
-    public function setCorrectionAutorisee($correctionAutorisee)
+    public function setCorrectionAutorisee(string $correctionAutorisee = null)
     {
+        Assertion::inArray($correctionAutorisee, [
+            null,
+            self::CORRECTION_AUTORISEE_FACULTATIVE,
+            self::CORRECTION_AUTORISEE_OBLIGATOIRE,
+        ]);
+
         $this->correctionAutorisee = $correctionAutorisee;
+
+        return $this;
+    }
+
+    /**
+     * Retourne la valeur du forçage du témoin de corrections autorisées.
+     *
+     * @return string
+     */
+    public function getCorrectionAutoriseeForcee()
+    {
+        return $this->correctionAutoriseeForcee;
+    }
+
+    /**
+     * Modifie la valeur du forçage du témoin de corrections autorisées.
+     *
+     * @param string|null $correctionAutoriseeForcee
+     * @return These
+     */
+    public function setCorrectionAutoriseeForcee(string $correctionAutoriseeForcee = null): These
+    {
+        Assertion::inArray($correctionAutoriseeForcee, [
+            self::CORRECTION_AUTORISEE_FORCAGE_NON,
+            self::CORRECTION_AUTORISEE_FORCAGE_AUCUNE,
+            self::CORRECTION_AUTORISEE_FORCAGE_FACULTATIVE,
+            self::CORRECTION_AUTORISEE_FORCAGE_OBLIGATOIRE,
+        ]);
+
+        $this->correctionAutoriseeForcee = $correctionAutoriseeForcee;
 
         return $this;
     }
@@ -1105,6 +1216,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function getDateNotificationDepotVersionCorrigeeAttendu()
     {
         switch ($this->getCorrectionAutorisee()) {
+            case self::CORRECTION_AUTORISEE_OBLIGATOIRE:
             case self::CORRECTION_MAJEURE:
                 $dateButoir = $this->getDateButoirDepotVersionCorrigee();
                 if ($dateButoir !== null) {
@@ -1112,6 +1224,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
                 } else {
                     return null;
                 }
+            case self::CORRECTION_AUTORISEE_FACULTATIVE:
             case self::CORRECTION_MINEURE:
                 return null;
             default:
@@ -1135,6 +1248,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
         $dateButoir = $this->getDateButoirDepotVersionCorrigee();
 
         switch ($this->getCorrectionAutorisee()) {
+            case self::CORRECTION_AUTORISEE_OBLIGATOIRE:
             case self::CORRECTION_MAJEURE:
                 if ($dateButoir !== null) {
                     $dateProchaineNotif = $dateButoir->sub(new \DateInterval('P1M')); // Date butoir - 1 mois
@@ -1143,6 +1257,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
                     $dateProchaineNotif = null;
                 }
                 break;
+            case self::CORRECTION_AUTORISEE_FACULTATIVE:
             case self::CORRECTION_MINEURE:
                 $dateProchaineNotif = null;
                 break;
@@ -1211,10 +1326,12 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function getDelaiDepotVersionCorrigeeInterval()
     {
         switch ($val = $this->getCorrectionAutorisee()) {
+            case self::CORRECTION_AUTORISEE_OBLIGATOIRE:
             case self::CORRECTION_MAJEURE:
-                return static::CORRECTION_MAJEURE_INTERVAL; // + 3 mois
+                return static::CORRECTION_OBLIGATOIRE_INTERVAL; // + 3 mois
+            case self::CORRECTION_AUTORISEE_FACULTATIVE:
             case self::CORRECTION_MINEURE:
-                return static::CORRECTION_MINEURE_INTERVAL; // + 2 mois
+                return static::CORRECTION_FACULTATIVE_INTERVAL; // + 2 mois
             default:
                 throw new RuntimeException("Valeur de correction attendue non prévue: " . $val);
         }
@@ -1223,9 +1340,9 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function getDelaiDepotVersionCorrigeeToString()
     {
         switch ($spec = $this->getDelaiDepotVersionCorrigeeInterval()) {
-            case self::CORRECTION_MAJEURE_INTERVAL:
+            case self::CORRECTION_OBLIGATOIRE_INTERVAL:
                 return '3 mois';
-            case self::CORRECTION_MINEURE_INTERVAL:
+            case self::CORRECTION_FACULTATIVE_INTERVAL:
                 return '2 mois';
             default:
                 throw new RuntimeException("Interval rencontré non prévu: " . $spec);
