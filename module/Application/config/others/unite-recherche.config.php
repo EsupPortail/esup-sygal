@@ -43,8 +43,6 @@ return [
                     'controller' => UniteRechercheController::class,
                     'action'     => [
                         'modifier',
-                        'ajouter-individu',
-                        'retirer-individu',
                         'supprimer-logo',
                         'ajouter-etablissement-rattachement',
                         'retirer-etablissement-rattachement',
