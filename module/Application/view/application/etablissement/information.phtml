@@ -28,7 +28,7 @@ $canAddRole = true;
 </a>
 
 <?php if($canEdit): ?>
-    <a href="<?php echo $this->url('etablissement/modifier', ['etablissement'=> $etablissement->getStructure()->getId()], [], true); ?>"
+    <a href="<?php echo $this->url('etablissement/modifier', ['structure'=> $etablissement->getStructure()->getId()], [], true); ?>"
        class="btn btn-primary action"
     >
         <span class="glyphicon glyphicon-pencil"></span> Modifier l'établissement

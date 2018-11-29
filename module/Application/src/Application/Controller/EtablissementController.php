@@ -6,9 +6,7 @@ use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\SourceInterface;
 use Application\Entity\Db\Structure;
-use Application\Entity\Db\StructureConcreteInterface;
 use Application\Entity\Db\TypeStructure;
 use Application\Form\EtablissementForm;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
@@ -67,7 +65,7 @@ class EtablissementController extends AbstractController
 
     public function informationAction()
     {
-        $id = $this->params()->fromRoute('etablissement');
+        $id = $this->params()->fromRoute('structure');
         $etablissement = $this->getEtablissementService()->getRepository()->findByStructureId($id);
         if ($etablissement === null) {
             throw new RuntimeException("Aucun établissement ne possède l'identifiant renseigné.");
@@ -156,7 +154,7 @@ class EtablissementController extends AbstractController
 
     public function supprimerAction()
     {
-        $structureId = $this->params()->fromRoute("etablissement");
+        $structureId = $this->params()->fromRoute("structure");
         $etablissement = $this->getEtablissementService()->getRepository()->findByStructureId($structureId);
 
         $destructeur = $this->userContextService->getIdentityDb();
@@ -169,7 +167,7 @@ class EtablissementController extends AbstractController
     public function modifierAction()
     {
         /** @var Etablissement $etablissement */
-        $structureId = $this->params()->fromRoute("etablissement");
+        $structureId = $this->params()->fromRoute("structure");
         $etablissement = null;
         if ($structureId) {
             $etablissement = $this->getEtablissementService()->getRepository()->findByStructureId($structureId);
@@ -222,7 +220,7 @@ class EtablissementController extends AbstractController
 
     public function restaurerAction()
     {
-        $structureId = $this->params()->fromRoute("etablissement");
+        $structureId = $this->params()->fromRoute("structure");
         $etablissement = $this->getEtablissementService()->getRepository()->findByStructureId($structureId);
 
         $this->getEtablissementService()->undelete($etablissement);
@@ -246,7 +244,7 @@ class EtablissementController extends AbstractController
      */
     public function supprimerLogoEtablissement()
     {
-        $structureId = $this->params()->fromRoute("etablissement");
+        $structureId = $this->params()->fromRoute("structure");
         $etablissement = $this->getEtablissementService()->getRepository()->findByStructureId($structureId);
 
         $this->getEtablissementService()->deleteLogo($etablissement);
