@@ -1393,7 +1393,6 @@ class TheseController extends AbstractController
         $these = $this->requestedThese();
         $versionArchivage = $this->fichierService->fetchVersionFichier($this->params()->fromQuery('version'));
 
-        //$fichierTheseRetraite = $these->getFichiersByNatureEtVersion(NatureFichier::CODE_THESE_PDF, $versionArchivage, true)->first();
         $fichierTheseRetraite = current($this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF, $versionArchivage, true));
 
         $form = new ConformiteFichierForm('conformite');
@@ -1404,7 +1403,7 @@ class TheseController extends AbstractController
             $form->setData($post);
             if ($form->isValid()) {
                 $conforme = $post->get('conforme');
-                $this->theseService->updateConformiteTheseRetraitee($these, $conforme);
+                $this->fichierService->updateConformiteFichierTheseRetraitee($these, $conforme);
                 if ($conforme && $versionArchivage->estVersionCorrigee()) {
                     $this->validationService->validateDepotTheseCorrigee($these);
 

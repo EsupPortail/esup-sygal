@@ -3,7 +3,6 @@
 namespace Application\Service\Fichier;
 
 use Application\Command\MergeCommand;
-use Application\Command\ShellCommandRunner;
 use Application\Command\ShellScriptRunner;
 use Application\Command\TruncateAndMergeCommand;
 use Application\Entity\Db\Acteur;
@@ -546,7 +545,8 @@ class FichierService extends BaseService
      * @param These $these
      * @return PdcData
      */
-    public function fetchInformationsPageDeCouverture(These $these) {
+    public function fetchInformationsPageDeCouverture(These $these)
+    {
         $pdcData = new PdcData();
         $informations = [];
 
@@ -818,5 +818,39 @@ class FichierService extends BaseService
         $runner = new ShellScriptRunner($scriptPath, 'bash');
         $runner->setAsync();
         $runner->run($args);
+    }
+
+    /**
+     * Recherche le fichier de la version d'archivage de la thèse (corrigée, le cas échéant)
+     * et modifie son témoin de conformité.
+     *
+     * @param These  $these
+     * @param string $conforme "1" (conforme), "0" (non conforme) ou null (i.e. pas de réponse)
+     */
+    public function updateConformiteFichierTheseRetraitee(These $these, $conforme = null)
+    {
+        $repo = $this->getRepository();
+
+        $fichiersVA  = $repo->fetchFichiers($these, NatureFichier::CODE_THESE_PDF , VersionFichier::CODE_ARCHI);
+        $fichiersVAC = $repo->fetchFichiers($these, NatureFichier::CODE_THESE_PDF , VersionFichier::CODE_ARCHI_CORR);
+
+        /** @var Fichier $fichier */
+        if (! empty($fichiersVAC)) {
+            $fichier = current($fichiersVAC) ?: null;
+        } else {
+            $fichier = current($fichiersVA) ?: null;
+        }
+        // il n'existe pas forcément de fichier en version d'archivage (si la version originale est testée archivable)
+        if ($fichier === null) {
+            return;
+        }
+
+        $fichier->setEstConforme($conforme);
+
+        try {
+            $this->entityManager->flush($fichier);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement", null, $e);
+        }
     }
 }

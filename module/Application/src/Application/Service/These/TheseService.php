@@ -4,35 +4,26 @@ namespace Application\Service\These;
 
 use Application\Entity\Db\Attestation;
 use Application\Entity\Db\Diffusion;
-use Application\Entity\Db\Fichier;
 use Application\Entity\Db\MetadonneeThese;
-use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\RdvBu;
 use Application\Entity\Db\Repository\TheseRepository;
 use Application\Entity\Db\These;
-use Application\Entity\Db\TypeValidation;
-use Application\Entity\Db\Validation;
-use Application\Entity\Db\VersionFichier;
 use Application\Notification\ValidationRdvBuNotification;
 use Application\Service\BaseService;
-use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Assert\Assertion;
-use DateInterval;
 use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Traits\MessageAwareInterface;
 use UnicaenAuth\Entity\Db\UserInterface;
-use Zend\Validator\Date;
 
 class TheseService extends BaseService
 {
     use ValidationServiceAwareTrait;
     use NotifierServiceAwareTrait;
-    use FichierServiceAwareTrait;
     use VariableServiceAwareTrait;
     use UserContextServiceAwareTrait;
 
@@ -181,42 +172,6 @@ class TheseService extends BaseService
 
         try {
             $this->entityManager->flush($diffusion);
-        } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement", null, $e);
-        }
-    }
-
-    /**
-     * Recherche le fichier de la version d'archivage de la thèse (corrigée, le cas échéant)
-     * et modifie son témoin de conformité.
-     *
-     * @param These  $these
-     * @param string $conforme "1" (conforme), "0" (non conforme) ou null (i.e. pas de réponse)
-     */
-    public function updateConformiteTheseRetraitee(These $these, $conforme = null)
-    {
-//        $fichiersVA  = $these->getFichiersByVersion(VersionFichier::CODE_ARCHI,      false);
-//        $fichiersVAC = $these->getFichiersByVersion(VersionFichier::CODE_ARCHI_CORR, false);
-        $fichiersVA  = $this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF , VersionFichier::CODE_ARCHI);
-        $fichiersVAC = $this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF , VersionFichier::CODE_ARCHI_CORR);
-
-
-        /** @var Fichier $fichier */
-        if (! empty($fichiersVAC)) {
-            $fichier = current($fichiersVAC) ?: null;
-        } else {
-            $fichier = current($fichiersVA) ?: null;
-        }
-
-        // il n'existe pas forcément de fichier en version d'archivage (si la version originale est testée archivable)
-        if ($fichier === null) {
-            return;
-        }
-
-        $fichier->setEstConforme($conforme);
-
-        try {
-            $this->entityManager->flush($fichier);
         } catch (OptimisticLockException $e) {
             throw new RuntimeException("Erreur rencontrée lors de l'enregistrement", null, $e);
         }
