@@ -18,7 +18,7 @@ class FileServiceFactory
     {
         $service = new FileService();
 
-        $service->setRootDirectoryPath($this->getRootDirectoryPath($container));
+        $service->setRootDirectoryPathForUploadedFiles($this->getRootDirectoryPath($container));
 
         return $service;
     }

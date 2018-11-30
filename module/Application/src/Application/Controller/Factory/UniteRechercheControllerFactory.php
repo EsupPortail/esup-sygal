@@ -6,6 +6,7 @@ use Application\Controller\UniteRechercheController;
 use Application\Form\UniteRechercheForm;
 use Application\Service\DomaineScientifiqueService;
 use Application\Service\Etablissement\EtablissementServiceLocateTrait;
+use Application\Service\File\FileService;
 use Application\Service\Individu\IndividuService;
 use Application\Service\Role\RoleService;
 use Application\Service\Structure\StructureService;
@@ -42,6 +43,11 @@ class UniteRechercheControllerFactory
         $structureService = $sl->get(StructureService::class);
         $domaineService = $sl->get(DomaineScientifiqueService::class);
 
+        /**
+         * @var FileService $fileService
+         */
+        $fileService = $sl->get(FileService::class);
+
         $controller = new UniteRechercheController();
         $controller->setUniteRechercheService($uniteRechercheService);
         $controller->setIndividuService($individuService);
@@ -50,6 +56,7 @@ class UniteRechercheControllerFactory
         $controller->setDomaineScientifiqueService($domaineService);
         $controller->setStructureService($structureService);
         $controller->setUniteRechercheForm($form);
+        $controller->setFileService($fileService);
 
         return $controller;
     }

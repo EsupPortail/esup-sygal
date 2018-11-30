@@ -11,9 +11,7 @@ use Application\Service\BaseService;
 use Application\Service\Role\RoleServiceAwareInterface;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\Query\Expr\Join;
 use UnicaenApp\Exception\RuntimeException;
-use Application\Entity\Db\Source;
 
 /**
  * @method EcoleDoctorale|null findOneBy(array $criteria, array $orderBy = null)

@@ -130,7 +130,7 @@ class FichierService extends BaseService
      */
     private function computeDestinationDirectoryPathForFichier(Fichier $fichier)
     {
-        return $this->fileService->prependRootDirToPath(strtolower($fichier->getNature()->getCode()));
+        return $this->fileService->prependUploadRootDirToRelativePath(strtolower($fichier->getNature()->getCode()));
     }
 
     /**

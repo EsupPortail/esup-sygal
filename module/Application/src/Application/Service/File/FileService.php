@@ -2,8 +2,11 @@
 
 namespace Application\Service\File;
 
+use Application\Entity\Db\EcoleDoctorale;
+use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Fichier;
-use UnicaenApp\Exception\LogicException;
+use Application\Entity\Db\StructureConcreteInterface;
+use Application\Entity\Db\UniteRecherche;
 use UnicaenApp\Exception\RuntimeException;
 
 class FileService
@@ -11,27 +14,104 @@ class FileService
     /**
      * @var string
      */
-    private $rootDirectoryPath;
+    private $rootDirectoryPathForUploadedFiles;
 
     /**
-     * @param string $rootDirectoryPath
+     * @var string
      */
-    public function setRootDirectoryPath($rootDirectoryPath)
+    private $rootDirectoryPathForUploadedLogos;
+
+    /**
+     * @param string $rootDirectoryPathForUploadedFiles
+     */
+    public function setRootDirectoryPathForUploadedFiles(string $rootDirectoryPathForUploadedFiles)
     {
-        $this->rootDirectoryPath = $rootDirectoryPath;
+        $this->rootDirectoryPathForUploadedFiles = $rootDirectoryPathForUploadedFiles;
+        $this->rootDirectoryPathForUploadedLogos = $rootDirectoryPathForUploadedFiles . '/' . $this->getLogosSubDirectoryRelativePath();
+    }
+
+    /**
+     * Ajoute devant le chemin relatif spécifié le chemin du répertoire racine des logos de structures uploadés.
+     *
+     * @param string $relativeFilepath
+     * @return string
+     */
+    public function prependLogosRootDirectoryToRelativePath($relativeFilepath)
+    {
+        return $this->rootDirectoryPathForUploadedLogos . '/' . $relativeFilepath;
+    }
+
+    /**
+     * Ajoute devant le chemin relatif spécifié le chemin du répertoire racine de tous les fichiers uploadés.
+     *
+     * @param string $relativeFilepath
+     * @return string
+     */
+    public function prependUploadRootDirToRelativePath($relativeFilepath)
+    {
+        return $this->rootDirectoryPathForUploadedFiles . '/' . $relativeFilepath;
     }
 
     /**
      * @return string
      */
-    public function getRootDirectoryPath()
+    public function getLogosSubDirectoryRelativePath()
     {
-        return $this->rootDirectoryPath;
+        return 'ressources/Logos';
     }
 
-    public function prependRootDirToPath($relativeFilepath)
+    /**
+     * @param StructureConcreteInterface $structure
+     * @return string
+     */
+    public function computeLogoFilenameForStructure(StructureConcreteInterface $structure)
     {
-        return $this->rootDirectoryPath . '/' . $relativeFilepath;
+        if ($structure instanceof EcoleDoctorale || $structure instanceof UniteRecherche) {
+            if ($sigle = $structure->getSourceCode() . "-" . $structure->getSigle() . ".png") {
+                return $sigle;
+            } else {
+                return uniqid() . ".png";
+            }
+        } elseif ($structure instanceof Etablissement) {
+            return $structure->getStructure()->getCode() . ".png";
+        } else {
+            throw new RuntimeException("Structure spécifiée imprévue.");
+        }
+    }
+
+    /**
+     * @param StructureConcreteInterface $structure
+     * @return string
+     */
+    public function computeLogoPathForStructure(StructureConcreteInterface $structure)
+    {
+        // sous-répertoire identifiant le type de structure
+        if ($structure instanceof EcoleDoctorale) {
+            $dir = 'ED';
+        } elseif ($structure instanceof UniteRecherche) {
+            $dir = 'UR';
+        } elseif ($structure instanceof Etablissement) {
+            $dir = 'Etab';
+        } else {
+            throw new RuntimeException("Structure spécifiée imprévue.");
+        }
+
+        $logoFilename = $this->computeLogoFilenameForStructure($structure);
+        $filepath = $this->prependLogosRootDirectoryToRelativePath($dir . '/' . $logoFilename);
+
+        return $filepath;
+    }
+
+    /**
+     * @param UniteRecherche $unite
+     * @return string
+     */
+    public function computeLogoAbsolutePathForUniteRecherche(UniteRecherche $unite)
+    {
+        $logoFilename = $this->computeLogoFilenameForStructure($unite);
+        $filepath = $this->fileService->prependLogosRootDirToRelativePath('ED/' . $logoFilename);
+
+        return $filepath;
     }
 
     /**
@@ -76,7 +156,6 @@ class FileService
      *
      * @param string $inputFilePath
      * @return string Contenu binaire du fichier PNG généré
-     * @throws LogicException Format de fichier incorrect
      */
     public function generateFirstPagePreview($inputFilePath)
     {
