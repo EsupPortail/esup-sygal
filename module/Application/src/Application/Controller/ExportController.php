@@ -27,7 +27,7 @@ class ExportController extends AbstractController
             'Prenom'                                => function (These $these) { return $these->getDoctorant()->getIndividu()->getPrenom(); },
             'Nom patronymique'                      => function (These $these) { return $these->getDoctorant()->getIndividu()->getNomPatronymique(); },
             'Date de naissance'                     => function (These $these) { return $these->getDoctorant()->getIndividu()->getDateNaissance(); },
-            'Mail'                                  => function (These $these) { return $these->getDoctorant()->getIndividu()->getEmail(); },
+            'Adresse électronique'                  => function (These $these) { return $these->getDoctorant()->getIndividu()->getEmail(); },
             'Numéro étudiant'                       => function (These $these) { return $these->getDoctorant()->getSourceCodeSansPrefix(); },
             //These
             'Identifiant de la thèse'               => function (These $these) { return $these->getSourceCode(); },

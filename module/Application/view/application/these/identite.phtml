@@ -96,7 +96,7 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                 <?php echo $these->getDoctorant()->getSourceCodeSansPrefix() ?> <br>
 
                 <strong>
-                    <?php echo $this->translate("Mail :"); ?>
+                    <?php echo $this->translate("Adresse électronique :"); ?>
                 </strong>
                 <?php if ($email = $these->getDoctorant()->getEmailPro() ?: $these->getDoctorant()->getEmail()): ?>
                     <a href="mailto: <?php echo $email ?>"><?php echo $email ?></a>
@@ -106,7 +106,7 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                 <br/>
 
                 <strong>
-                    <?php echo $this->translate("Mail de contact :"); ?>
+                    <?php echo $this->translate("Adresse électronique de contact :"); ?>
                 </strong>
                 <?php
                 if ($mailContact === null) {

@@ -27,7 +27,7 @@ class MailConfirmationForm extends Form {
         );
         $this->add((
         new Text('email'))
-            ->setLabel("Email :")
+            ->setLabel("Adresse électronique :")
         );
         $this->add((
          new Submit('enregistrer'))

@@ -9,12 +9,14 @@ use Application\Entity\Db\MailConfirmation;
  */
 ?>
 
-<h1 class="page-header"> Confirmation de l'email professionnelle </h1>
-
+<h1 class="page-header"> Adresse électronique de contact</h1>
 
 <?php if ($mailConfirmation->isConfirmer()): ?>
     <p>
-        Votre adresse <strong><?php echo $mailConfirmation->getEmail() ?></strong> est maintenant confirmée, merci.
+        <?php
+        $message = sprintf("Votre adresse électronique <strong>%s</strong> est maintenant confirmée, merci.", $mailConfirmation->getEmail());
+        echo $this->messenger()->setMessage($message, \UnicaenApp\View\Helper\Messenger::SUCCESS);
+        ?>
     </p>
     <p>
         <a href="<?php echo $this->url('home', [], [], true) ?>">
@@ -23,7 +25,7 @@ use Application\Entity\Db\MailConfirmation;
     </p>
 <?php else: ?>
     <p>
-        Votre adresse mail n'a pas pu être confirmé, êtes-vous sûr d'avoir cliqué sur le bon lien ?
+        Votre adresse électronique n'a pas pu être confirmée, êtes-vous sûr d'avoir cliqué sur le bon lien ?
     </p>
 <?php endif ?>
 
