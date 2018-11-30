@@ -388,6 +388,8 @@ form input[type='submit'] {
   margin-bottom: 10px;
   padding-left: 15px;
   padding-right: 15px; }
+.box .btn.btn-primary.dropdown-toggle {
+  margin-bottom: -2px; }
 
 /******** Feuille de route ********/
 table.roadmap .glyphicon.glyphicon-check,
