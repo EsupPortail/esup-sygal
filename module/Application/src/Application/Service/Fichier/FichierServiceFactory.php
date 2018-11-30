@@ -4,12 +4,12 @@ namespace Application\Service\Fichier;
 
 use Application\Command\ValidationFichierCinesCommand;
 use Application\Service\Etablissement\EtablissementService;
+use Application\Service\File\FileService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\ValiditeFichier\ValiditeFichierService;
 use Application\Service\VersionFichier\VersionFichierService;
 use Application\Validator\FichierCinesValidator;
 use Retraitement\Service\RetraitementService;
-use UnicaenApp\Exception\RuntimeException;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -26,6 +26,7 @@ class FichierServiceFactory implements FactoryInterface
         $fichierCinesValidator = $this->createFichierCinesValidator($serviceLocator);
 
         /**
+         * @var FileService $fileService
          * @var VersionFichierService $versionFichierService
          * @var ValiditeFichierService $validiteFichierService
          * @var RetraitementService $retraitementService
@@ -33,6 +34,7 @@ class FichierServiceFactory implements FactoryInterface
          * @var NotifierService $notifierService
          * @var \Zend\View\Renderer\PhpRenderer $renderer
          */
+        $fileService = $serviceLocator->get('FileService');
         $versionFichierService = $serviceLocator->get('VersionFichierService');
         $validiteFichierService = $serviceLocator->get('ValiditeFichierService');
         $retraitementService = $serviceLocator->get('RetraitementService');
@@ -42,6 +44,7 @@ class FichierServiceFactory implements FactoryInterface
 
         $service = new FichierService();
 
+        $service->setFileService($fileService);
         $service->setFichierCinesValidator($fichierCinesValidator);
         $service->setVersionFichierService($versionFichierService);
         $service->setValiditeFichierService($validiteFichierService);
@@ -49,8 +52,6 @@ class FichierServiceFactory implements FactoryInterface
         $service->setEtablissementService($etablissementService);
         $service->setNotifierService($notifierService);
         $service->setRenderer($renderer);
-
-        $service->setRootDirectoryPath($this->getRootDirectoryPath($serviceLocator));
 
         return $service;
     }
@@ -66,27 +67,4 @@ class FichierServiceFactory implements FactoryInterface
         return $validator;
     }
 
-    /**
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return string
-     */
-    private function getRootDirectoryPath(ServiceLocatorInterface $serviceLocator)
-    {
-        /** @var array $config */
-        $config = $serviceLocator->get('config');
-
-        if (empty($config['fichier']['root_dir_path'])) {
-            throw new RuntimeException(
-                "Vous devez spécifier dans la config le chemin du répertoire de destination des fichiers (clé fichier.root_dir_path).");
-        }
-
-        $path = $config['fichier']['root_dir_path'];
-
-        if (! is_readable($path)) {
-            throw new RuntimeException(
-                "Le chemin du répertoire de destination des fichiers doit exister et être accessible : " . $path);
-        }
-
-        return $path;
-    }
 }

@@ -1545,12 +1545,14 @@ class TheseController extends AbstractController
             }
         }
 
+        $pdcData = $this->theseService->fetchInformationsPageDeCouverture($these);
+
         try {
             // Un timeout peut être appliqué au lancement du  script de retraitement.
             // Si ce timout est atteint, l'exécution du script est interrompue
             // et une exception TimedOutCommandException est levée.
             $timeout = $this->timeoutRetraitement;
-            $outputFilePath = $this->fichierService->fusionneFichierThese($these, $versionFichier, $removal, $timeout);
+            $outputFilePath = $this->fichierService->fusionnerPdcEtThese($these, $pdcData, $versionFichier, $removal, $timeout);
         } catch (TimedOutCommandException $toce) {
             $destinataires = [ $this->userContextService->getIdentityDb()->getEmail() ] ;
             // relancer le retraitement en tâche de fond
