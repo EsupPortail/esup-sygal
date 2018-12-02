@@ -264,7 +264,7 @@ class UniteRechercheController extends AbstractController
 
         $this->getUniteRechercheService()->deleteLogo($unite);
 
-        $logoFilepath = $this->fileService->computeLogoPathForStructure($unite);
+        $logoFilepath = $this->fileService->computeLogoFilepathForStructure($unite);
 
         if (file_exists($logoFilepath)) {
             $ok = unlink($logoFilepath);
@@ -301,7 +301,7 @@ class UniteRechercheController extends AbstractController
         }
 
         $logoFilename = $this->fileService->computeLogoFilenameForStructure($unite);
-        $logoFilepath = $this->fileService->computeLogoPathForStructure($unite);
+        $logoFilepath = $this->fileService->computeLogoFilepathForStructure($unite);
 
         $ok = rename($cheminLogoUploade, $logoFilepath);
         if ($ok) {

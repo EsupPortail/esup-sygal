@@ -27,18 +27,7 @@ class FileService
     public function setRootDirectoryPathForUploadedFiles(string $rootDirectoryPathForUploadedFiles)
     {
         $this->rootDirectoryPathForUploadedFiles = $rootDirectoryPathForUploadedFiles;
-        $this->rootDirectoryPathForUploadedLogos = $rootDirectoryPathForUploadedFiles . '/' . $this->getLogosSubDirectoryRelativePath();
-    }
-
-    /**
-     * Ajoute devant le chemin relatif spécifié le chemin du répertoire racine des logos de structures uploadés.
-     *
-     * @param string $relativeFilepath
-     * @return string
-     */
-    public function prependLogosRootDirectoryToRelativePath($relativeFilepath)
-    {
-        return $this->rootDirectoryPathForUploadedLogos . '/' . $relativeFilepath;
+        $this->rootDirectoryPathForUploadedLogos = $rootDirectoryPathForUploadedFiles . '/ressources/Logos';
     }
 
     /**
@@ -53,37 +42,26 @@ class FileService
     }
 
     /**
-     * @return string
-     */
-    public function getLogosSubDirectoryRelativePath()
-    {
-        return 'ressources/Logos';
-    }
-
-    /**
+     * Retourne
      * @param StructureConcreteInterface $structure
      * @return string
      */
     public function computeLogoFilenameForStructure(StructureConcreteInterface $structure)
     {
-        if ($structure instanceof EcoleDoctorale || $structure instanceof UniteRecherche) {
-            if ($sigle = $structure->getSourceCode() . "-" . $structure->getSigle() . ".png") {
-                return $sigle;
-            } else {
-                return uniqid() . ".png";
-            }
-        } elseif ($structure instanceof Etablissement) {
-            return $structure->getStructure()->getCode() . ".png";
+        if ($structure instanceof Etablissement) {
+            $name = $structure->getCode() ?: $structure->generateUniqCode();
         } else {
-            throw new RuntimeException("Structure spécifiée imprévue.");
+            $name = $structure->getSourceCode() . "-" . $structure->getSigle();
         }
+
+        return $name . ".png";
     }
 
     /**
      * @param StructureConcreteInterface $structure
      * @return string
      */
-    public function computeLogoPathForStructure(StructureConcreteInterface $structure)
+    public function computeLogoFilepathForStructure(StructureConcreteInterface $structure)
     {
         // sous-répertoire identifiant le type de structure
         if ($structure instanceof EcoleDoctorale) {
@@ -97,19 +75,8 @@ class FileService
         }
 
         $logoFilename = $this->computeLogoFilenameForStructure($structure);
-        $filepath = $this->prependLogosRootDirectoryToRelativePath($dir . '/' . $logoFilename);
 
-        return $filepath;
-    }
-
-    /**
-     * @param UniteRecherche $unite
-     * @return string
-     */
-    public function computeLogoAbsolutePathForUniteRecherche(UniteRecherche $unite)
-    {
-        $logoFilename = $this->computeLogoFilenameForStructure($unite);
-        $filepath = $this->fileService->prependLogosRootDirToRelativePath('ED/' . $logoFilename);
+        $filepath = $this->rootDirectoryPathForUploadedLogos . '/' . $dir . '/' . $logoFilename;
 
         return $filepath;
     }
@@ -137,6 +104,8 @@ class FileService
      * @param int    $mode
      * @return bool true: folder has been created or exist and is writable.
      *              false: folder does not exist and cannot be created.
+     *
+     * @codeCoverageIgnore
      */
     private function createWritableFolder($folder, $mode = 0700)
     {

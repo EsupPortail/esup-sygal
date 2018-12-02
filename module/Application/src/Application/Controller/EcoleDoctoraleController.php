@@ -241,7 +241,7 @@ class EcoleDoctoraleController extends AbstractController
 
         $this->getEcoleDoctoraleService()->deleteLogo($ecole);
 
-        $logoFilepath = $this->fileService->computeLogoPathForStructure($ecole);
+        $logoFilepath = $this->fileService->computeLogoFilepathForStructure($ecole);
         if (file_exists($logoFilepath)) {
             $ok = unlink($logoFilepath);
             if ($ok) {
@@ -276,7 +276,7 @@ class EcoleDoctoraleController extends AbstractController
         }
 
         $logoFilename = $this->fileService->computeLogoFilenameForStructure($ecole);
-        $logoFilepath = $this->fileService->computeLogoPathForStructure($ecole);
+        $logoFilepath = $this->fileService->computeLogoFilepathForStructure($ecole);
 
         $ok = rename($cheminLogoUploade, $logoFilepath);
         if ($ok) {

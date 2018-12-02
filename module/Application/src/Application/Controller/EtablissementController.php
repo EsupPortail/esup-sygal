@@ -264,7 +264,7 @@ class EtablissementController extends AbstractController
 
         $this->getEtablissementService()->deleteLogo($etablissement);
 
-        $logoFilepath = $this->fileService->computeLogoPathForStructure($etablissement);
+        $logoFilepath = $this->fileService->computeLogoFilepathForStructure($etablissement);
 
         if (file_exists($logoFilepath)) {
             $ok = unlink($logoFilepath);
@@ -301,7 +301,7 @@ class EtablissementController extends AbstractController
         }
 
         $logoFilename = $this->fileService->computeLogoFilenameForStructure($etablissement);
-        $logoFilepath = $this->fileService->computeLogoPathForStructure($etablissement);
+        $logoFilepath = $this->fileService->computeLogoFilepathForStructure($etablissement);
 
         $ok = rename($cheminLogoUploade, $logoFilepath);
         if ($ok) {
