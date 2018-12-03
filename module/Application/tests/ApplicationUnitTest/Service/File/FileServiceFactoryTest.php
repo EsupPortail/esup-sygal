@@ -56,10 +56,9 @@ class FileServiceFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testInvokeThrowsExceptionWhenRootDirPathIsNotReadable()
     {
-        mkdir($this->rootDirPath, 200);
         $config = [
             'fichier' => [
-                'root_dir_path' => $this->rootDirPath
+                'root_dir_path' => '/azerty'
             ],
         ];
 

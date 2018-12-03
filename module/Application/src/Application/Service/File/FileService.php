@@ -5,7 +5,7 @@ namespace Application\Service\File;
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Fichier;
-use Application\Entity\Db\StructureConcreteInterface;
+use Application\Entity\Db\StructureInterface;
 use Application\Entity\Db\UniteRecherche;
 use UnicaenApp\Exception\RuntimeException;
 
@@ -33,20 +33,21 @@ class FileService
     /**
      * Ajoute devant le chemin relatif spécifié le chemin du répertoire racine de tous les fichiers uploadés.
      *
-     * @param string $relativeFilepath
+     * @param string $relativeFilePath
      * @return string
      */
-    public function prependUploadRootDirToRelativePath($relativeFilepath)
+    public function prependUploadRootDirToRelativePath($relativeFilePath)
     {
-        return $this->rootDirectoryPathForUploadedFiles . '/' . $relativeFilepath;
+        return $this->rootDirectoryPathForUploadedFiles . '/' . $relativeFilePath;
     }
 
     /**
      * Retourne
-     * @param StructureConcreteInterface $structure
+     *
+     * @param StructureInterface $structure
      * @return string
      */
-    public function computeLogoFilenameForStructure(StructureConcreteInterface $structure)
+    public function computeLogoFileNameForStructure(StructureInterface $structure)
     {
         if ($structure instanceof Etablissement) {
             $name = $structure->getCode() ?: $structure->generateUniqCode();
@@ -58,10 +59,12 @@ class FileService
     }
 
     /**
-     * @param StructureConcreteInterface $structure
+     * Retourne le chemin absolu vers le répertoire de stockage du logo de la structure spécifiée.
+     *
+     * @param StructureInterface $structure
      * @return string
      */
-    public function computeLogoFilepathForStructure(StructureConcreteInterface $structure)
+    public function computeLogoDirectoryPathForStructure(StructureInterface $structure)
     {
         // sous-répertoire identifiant le type de structure
         if ($structure instanceof EcoleDoctorale) {
@@ -74,15 +77,25 @@ class FileService
             throw new RuntimeException("Structure spécifiée imprévue.");
         }
 
-        $logoFilename = $this->computeLogoFilenameForStructure($structure);
+        $path = $this->rootDirectoryPathForUploadedLogos . '/' . $dir;
 
-        $filepath = $this->rootDirectoryPathForUploadedLogos . '/' . $dir . '/' . $logoFilename;
-
-        return $filepath;
+        return $path;
     }
 
     /**
-     * Création si besoin du dossier spécifié par son chemin absolu.
+     * @param StructureInterface $structure
+     * @return string
+     */
+    public function computeLogoFilePathForStructure(StructureInterface $structure)
+    {
+        $logoDir = $this->computeLogoDirectoryPathForStructure($structure);
+        $logoFileName = $this->computeLogoFileNameForStructure($structure);
+
+        return $logoDir . '/' . $logoFileName;
+    }
+
+    /**
+     * Création *si besoin* du dossier spécifié par son chemin absolu.
      *
      * @param string $absolutePath
      */
@@ -90,7 +103,7 @@ class FileService
     {
         $ok = $this->createWritableFolder($absolutePath, 0770);
         if (!$ok) {
-            throw new RuntimeException("Le répertoire suivant n'a pas pu être créé sur le serveur : " . $absolutePath);
+            throw new RuntimeException("Le répertoire suivant n'a pas pu être créé : " . $absolutePath);
         }
     }
 

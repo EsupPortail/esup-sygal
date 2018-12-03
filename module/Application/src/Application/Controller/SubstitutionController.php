@@ -2,16 +2,15 @@
 
 namespace Application\Controller;
 
-use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Structure;
 use Application\Entity\Db\StructureConcreteInterface;
+use Application\Entity\Db\StructureInterface;
 use Application\Entity\Db\TypeStructure;
 use Application\Filter\EtablissementPrefixFilterAwareTrait;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Structure\StructureServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
-use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Zend\View\Model\ViewModel;
 
@@ -141,6 +140,10 @@ class SubstitutionController extends AbstractController
             'cible' => $structureCible,
             'structuresConcretes' => $structures,
             'structuresConcretesSubstituees' => $structuresConcretesSubstituees,
+            'structureCibleLogoContent' => $this->structureService->getLogoStructureContent($structureCible),
+            'structuresConcretesSubstitueesLogosContents' => array_map(function(StructureInterface $structureConcreteSubstituee) {
+                return $this->structureService->getLogoStructureContent($structureConcreteSubstituee);
+            }, $structuresConcretesSubstituees),
         ]);
     }
 
@@ -155,13 +158,15 @@ class SubstitutionController extends AbstractController
     }
 
     /** Fonction appelée pour construire la div associée à une structure source */
-    public function generateSourceInputAction() {
+    public function generateSourceInputAction()
+    {
         $id = $this->params()->fromRoute('id');
         $structure = $this->structureService->findStructureById($id);
         $structureConcrete = $this->structureService->findStructureConcreteFromStructure($structure);
 
         return new ViewModel([
             'structure' => $structureConcrete,
+            'structureSourceLogoContent' => $this->structureService->getLogoStructureContent($structureConcrete),
         ]);
     }
 

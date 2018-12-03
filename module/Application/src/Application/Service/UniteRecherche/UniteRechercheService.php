@@ -6,17 +6,14 @@ use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\EtablissementRattachement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Repository\UniteRechercheRepository;
-use Application\Entity\Db\Role;
+use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\BaseService;
 use Application\Service\Role\RoleServiceAwareInterface;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\Query\Expr\Join;
 use UnicaenApp\Exception\RuntimeException;
-use Application\Entity\Db\TypeStructure;
-use Application\Entity\Db\Source;
 
 /**
  * @method UniteRecherche|null findOneBy(array $criteria, array $orderBy = null)
@@ -73,7 +70,7 @@ class UniteRechercheService extends BaseService implements RoleServiceAwareInter
      */
     public function getIndividuByUniteRechercheId($id)
     {
-        $unite = $this->getRepository()->findOneBy(['id'=>$id]);
+        $unite = $this->getRepository()->findOneBy(['id' => $id]);
         $individus = $this->roleService->getIndividuByStructure($unite->getStructure());
 
         return $individus;

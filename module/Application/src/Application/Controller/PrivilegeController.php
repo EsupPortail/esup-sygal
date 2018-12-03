@@ -56,9 +56,8 @@ class PrivilegeController extends AbstractController
     {
         $privilege_id = $this->params()->fromRoute("privilege");
         $role_id = $this->params()->fromRoute("role");
-        $privilege = $this->entityManager->getRepository(Privilege::class)->findOneBy(["id" => $privilege_id]);
-        $role = $this->entityManager->getRepository(Role::class)->findOneBy(["id" => $role_id]);
-
+        $privilege = $this->entityManager->getRepository(Privilege::class)->find($privilege_id);
+        $role = $this->entityManager->getRepository(Role::class)->find($role_id);
 
         $value = null;
         if( array_search($role, $privilege->getRole()->toArray()) !== false) {

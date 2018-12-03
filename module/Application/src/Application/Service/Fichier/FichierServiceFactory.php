@@ -34,7 +34,7 @@ class FichierServiceFactory implements FactoryInterface
          * @var NotifierService $notifierService
          * @var \Zend\View\Renderer\PhpRenderer $renderer
          */
-        $fileService = $serviceLocator->get('FileService');
+        $fileService = $serviceLocator->get(FileService::class);
         $versionFichierService = $serviceLocator->get('VersionFichierService');
         $validiteFichierService = $serviceLocator->get('ValiditeFichierService');
         $retraitementService = $serviceLocator->get('RetraitementService');

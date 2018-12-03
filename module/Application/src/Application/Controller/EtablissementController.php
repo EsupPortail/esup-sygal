@@ -2,13 +2,11 @@
 
 namespace Application\Controller;
 
+use Application\Controller\Traits\LogoAwareControllerTrait;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\SourceInterface;
-use Application\Entity\Db\Structure;
-use Application\Entity\Db\StructureConcreteInterface;
 use Application\Entity\Db\TypeStructure;
 use Application\Form\EtablissementForm;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
@@ -29,6 +27,7 @@ class EtablissementController extends AbstractController
     use RoleServiceAwareTrait;
     use StructureServiceAwareTrait;
     use FileServiceAwareTrait;
+    use LogoAwareControllerTrait;
 
     /**
      * @var EtablissementForm $etablissementForm
@@ -113,6 +112,7 @@ class EtablissementController extends AbstractController
             'etablissement'   => $etablissement,
             'roleListing'     => $roleListings,
             'individuListing' => $individuListings,
+            'logoContent'     => $this->structureService->getLogoStructureContent($etablissement),
         ]);
 
     }
@@ -225,6 +225,7 @@ class EtablissementController extends AbstractController
         // envoie vers le formulaire de modification
         $viewModel = new ViewModel([
             'form' => $this->etablissementForm,
+            'logoContent' => $this->structureService->getLogoStructureContent($etablissement),
         ]);
         $viewModel->setTemplate('application/etablissement/modifier');
 
@@ -252,63 +253,25 @@ class EtablissementController extends AbstractController
         return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $structureId], "fragment" => $structureId], true);
     }
 
-    /**
-     * Retire le logo associé à une établissement:
-     * - modification base de donnée (champ CHEMIN_LOG <- null)
-     * - effacement du fichier stocké sur le serveur
-     */
     public function supprimerLogoEtablissement()
     {
         $structureId = $this->params()->fromRoute("etablissement");
         $etablissement = $this->getEtablissementService()->getRepository()->findByStructureId($structureId);
 
-        $this->getEtablissementService()->deleteLogo($etablissement);
-
-        $logoFilepath = $this->fileService->computeLogoFilepathForStructure($etablissement);
-
-        if (file_exists($logoFilepath)) {
-            $ok = unlink($logoFilepath);
-            if ($ok) {
-                $this->flashMessenger()->addSuccessMessage("Le logo de l'école doctorale {$etablissement->getLibelle()} vient d'être supprimé.");
-            } else {
-                $this->flashMessenger()->addErrorMessage("Erreur lors de l'effacement du logo de l'établissement <strong>{$etablissement->getLibelle()}.</strong>");
-            }
-        } else {
-            $this->flashMessenger()->addWarningMessage("Aucun logo à supprimer pour l'établissement <strong>{$etablissement->getLibelle()}.</strong>");
-        }
-
+        $this->supprimerLogoStructure($etablissement);
     }
 
     /**
-     * Ajoute le logo associé à une établissement:
-     * - modification base de donnée (champ CHEMIN_LOG <- /public/Logos/Etab/LOGO_NAME)
-     * - enregistrement du fichier sur le serveur
-     *
      * @param string        $cheminLogoUploade chemin vers le fichier temporaire associé au logo
      * @param Etablissement $etablissement
      */
     public function ajouterLogoEtablissement($cheminLogoUploade, Etablissement $etablissement = null)
     {
-        if ($cheminLogoUploade === null || $cheminLogoUploade === '') {
-            $this->flashMessenger()->addErrorMessage("Fichier logo invalide.");
-
-            return;
-        }
-
         if ($etablissement === null) {
             $structureId = $this->params()->fromRoute("etablissement");
             $etablissement = $this->getEtablissementService()->getRepository()->findByStructureId($structureId);
         }
 
-        $logoFilename = $this->fileService->computeLogoFilenameForStructure($etablissement);
-        $logoFilepath = $this->fileService->computeLogoFilepathForStructure($etablissement);
-
-        $ok = rename($cheminLogoUploade, $logoFilepath);
-        if ($ok) {
-            $this->flashMessenger()->addSuccessMessage("Le logo de l'établissement {$etablissement->getLibelle()} vient d'être ajouté.");
-            $this->getEtablissementService()->setLogo($etablissement, $logoFilename);
-        } else {
-            $this->flashMessenger()->addErrorMessage("Erreur lors de l'enregistrement du logo de l'établissement <strong>{$etablissement->getLibelle()}.</strong> ");
-        }
+        $this->ajouterLogoStructure($etablissement, $cheminLogoUploade);
     }
 }

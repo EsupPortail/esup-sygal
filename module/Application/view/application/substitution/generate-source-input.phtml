@@ -3,8 +3,13 @@
 /**
  * @var \Application\View\Renderer\PhpRenderer $this
  * @var \Application\Entity\Db\StructureConcreteInterface $structure
+ * @var string $structureSourceLogoContent
+ *
+ * @see SubstitutionController::generateSourceInputAction()
  */
 
-echo $this->structureSubstitHelper()->structureSource($structure);
+use Application\Controller\SubstitutionController;
+
+echo $this->structureSubstitHelper()->structureSource($structure, $structureSourceLogoContent);
 
 

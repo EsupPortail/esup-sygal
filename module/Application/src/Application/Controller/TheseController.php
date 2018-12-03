@@ -14,6 +14,7 @@ use Application\Entity\Db\MetadonneeThese;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\RdvBu;
 use Application\Entity\Db\Role;
+use Application\Entity\Db\Structure;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Variable;
@@ -295,7 +296,7 @@ class TheseController extends AbstractController
             $these
         ));
 
-        $informations = $this->fichierService->fetchInformationsPageDeCouverture($these);
+        $informations = $this->theseService->fetchInformationsPageDeCouverture($these);
 
         $view = new ViewModel([
             'these'            => $these,
@@ -677,6 +678,8 @@ class TheseController extends AbstractController
             $form->addElement((new Hidden('validerAuto'))->setValue(1));
         }
 
+        $comue = $this->getEtablissementService()->getRepository()->findOneByCodeStructure(Structure::CODE_COMUE);
+
         $view = new ViewModel([
             'titre'          => $titre,
             'these'          => $these,
@@ -685,7 +688,7 @@ class TheseController extends AbstractController
             'theseListUrl'   => $this->urlFichierThese()->listerFichiers($these, $nature, $version, false, ['inclureValidite' => $inclureValidite]),
             'nature'         => $nature,
             'versionFichier' => $version,
-            'etabComue'      => $this->getEtablissementService()->getRepository()->libelle(Etablissement::CODE_STRUCTURE_COMUE),
+            'etabComue'      => $comue->getLibelle(),
         ]);
         $view->setTemplate('application/these/depot/these');
 

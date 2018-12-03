@@ -6,6 +6,7 @@
  * @var array                       $roleListing     (string => int)
  * @var array                       $individuListing (string => string[])
  * @var EtablissementRattachement[] $etablissementsRattachements
+ * @var string                      $logoContent
  */
 
 use Application\Entity\Db\EtablissementRattachement;
@@ -57,7 +58,13 @@ $canAddRole = $canEdit;
         </dl>
     </div>
     <div class="col-md-4">
-        <img id="logo" style="max-width: 200px; max-height: 200px; border: 1px solid black; background-color: white;" src="data:image/png;base64,<?php echo base64_encode($unite->getLogoContent()); ?>"/>
+        <dl>
+            <dt>Logo :</dt>
+            <dd>
+                <img id="logo" style="max-width: 200px; max-height: 200px; background-color: white;"
+                     src="data:image/png;base64,<?php echo base64_encode($logoContent); ?>"/>
+            </dd>
+        </dl>
     </div>
 </div>
 

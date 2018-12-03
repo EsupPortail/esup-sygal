@@ -11,13 +11,16 @@ use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\RdvBu;
 use Application\Entity\Db\Repository\TheseRepository;
 use Application\Entity\Db\Role;
+use Application\Entity\Db\Structure;
 use Application\Entity\Db\These;
 use Application\Entity\Db\VersionFichier;
 use Application\Notification\ValidationRdvBuNotification;
 use Application\Service\BaseService;
+use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\Fichier\MembreData;
 use Application\Service\Fichier\PdcData;
+use Application\Service\File\FileServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
@@ -35,6 +38,8 @@ class TheseService extends BaseService
     use FichierServiceAwareTrait;
     use VariableServiceAwareTrait;
     use UserContextServiceAwareTrait;
+    use EtablissementServiceAwareTrait;
+    use FileServiceAwareTrait;
 
     /**
      * @return TheseRepository
@@ -357,11 +362,16 @@ class TheseService extends BaseService
         $pdcData->setListing(implode(" et ", $nomination) . ", ");
         if ($these->getUniteRecherche()) $pdcData->setUniteRecherche($these->getUniteRecherche()->getStructure()->getLibelle());
 
-        $comue = $this->getEtablissementService()->getRepository()->find(1);
-        $pdcData->setLogoCOMUE(($comue) ? $comue->getCheminLogo() : null);
-        $pdcData->setLogoEtablissement($these->getEtablissement() ? $these->getEtablissement()->getCheminLogo() : null);
-        $pdcData->setLogoEcoleDoctorale($these->getEcoleDoctorale() ? $these->getEcoleDoctorale()->getCheminLogo() : null);
-        $pdcData->setLogoUniteRecherche($these->getUniteRecherche() ? $these->getUniteRecherche()->getCheminLogo() : null);
+        // chemins vers les logos
+        $comue = $this->etablissementService->getRepository()->findOneByCodeStructure(Structure::CODE_COMUE);
+        $pdcData->setLogoCOMUE($this->fileService->computeLogoFilePathForStructure($comue));
+        $pdcData->setLogoEtablissement($this->fileService->computeLogoFilePathForStructure($these->getEtablissement()));
+        if ($these->getEcoleDoctorale() !== null) {
+            $pdcData->setLogoEcoleDoctorale($this->fileService->computeLogoFilePathForStructure($these->getEcoleDoctorale()));
+        }
+        if ($these->getUniteRecherche() !== null) {
+            $pdcData->setLogoUniteRecherche($this->fileService->computeLogoFilePathForStructure($these->getUniteRecherche()));
+        }
 
         return $pdcData;
     }
