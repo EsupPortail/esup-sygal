@@ -19,7 +19,7 @@
         "unicaen/auth":                         "^1.2",
         "unicaen/faq":                          "^1.0",
         "unicaen/ldap":                         "^2.1",
-        "unicaen/import":                       "1.0.11",
+        "unicaen/import":                       "1.0.13",
         "unicaen/leocarte":                     "^1.0",
         "unicaen/code":                         "^1.0",
         "ramsey/uuid":                          "^3.3",
