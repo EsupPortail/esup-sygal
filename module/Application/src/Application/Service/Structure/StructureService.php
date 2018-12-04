@@ -4,7 +4,7 @@ namespace Application\Service\Structure;
 
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
-use Application\Entity\Db\SourceInterface;
+use Application\Entity\Db\Source;
 use Application\Entity\Db\Structure;
 use Application\Entity\Db\StructureConcreteInterface;
 use Application\Entity\Db\StructureInterface;
@@ -161,7 +161,7 @@ class StructureService extends BaseService
 
         Assert::notNull($structureCible->getId(), "La structure de substitution doit exister en bdd");
         Assert::eq(
-            $code = SourceInterface::CODE_SYGAL,
+            $code = Source::CODE_SYGAL,
             $structureCible->getSource()->getCode(),
             "La source de la structure de substitution doit être $code");
 
@@ -234,7 +234,7 @@ class StructureService extends BaseService
     {
         Assert::notNull($structureCible->getId(), "La structure de substitution doit exister en bdd");
         Assert::eq(
-            $code = SourceInterface::CODE_SYGAL,
+            $code = Source::CODE_SYGAL,
             $structureCible->getSource()->getCode(),
             "La source de la structure de substitution doit être $code");
 

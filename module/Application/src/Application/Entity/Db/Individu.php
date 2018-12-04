@@ -7,7 +7,7 @@ use Application\Filter\NomCompletFormatter;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenImport\Entity\Db\Interfaces\SourceAwareInterface;
-use Application\Entity\Db\Traits\SourceAwareTrait;
+use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
 
 /**
  * Individu

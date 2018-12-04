@@ -2,7 +2,7 @@
 
 namespace Application\Entity\Db;
 
-use Application\Entity\Db\Traits\SourceAwareTrait;
+use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
 use Application\Filter\EtablissementPrefixFilterAwareTrait;
 use Doctrine\Common\Collections\Collection;
 use UnicaenApp\Entity\HistoriqueAwareInterface;

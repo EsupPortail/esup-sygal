@@ -2,11 +2,15 @@
 
 namespace Application\Entity\Db;
 
+use UnicaenImport\Entity\Db\Interfaces\SourceInterface;
+
 /**
  * Source
  */
-class Source
+class Source implements SourceInterface
 {
+    const CODE_SYGAL = 'SYGAL::sygal';
+
     /**
      * @var string
      */

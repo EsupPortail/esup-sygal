@@ -10,7 +10,7 @@ use Application\Entity\Db\Repository\RoleRepository;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\RoleModele;
 use Application\Entity\Db\RolePrivilegeModele;
-use Application\Entity\Db\SourceInterface;
+use Application\Entity\Db\Source;
 use Application\Entity\Db\Structure;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
@@ -19,7 +19,6 @@ use Application\Filter\EtablissementPrefixFilter;
 use Application\Filter\EtablissementPrefixFilterAwareTrait;
 use Application\Service\BaseService;
 use Doctrine\ORM\Query\Expr\Join;
-use Application\Entity\Db\Source;
 
 /**
  * Class RoleService
@@ -206,7 +205,9 @@ class RoleService extends BaseService
 
     public function createRole($libelle = "Aucun")
     {
-        $sourceSygal = $this->entityManager->getRepository(Source::class)->findOneBy(["code" => SourceInterface::CODE_SYGAL]);
+        /** @var Source $sourceSygal */
+        $sourceSygal = $this->entityManager->getRepository(Source::class)->findOneBy(["code" => Source::CODE_SYGAL]);
+        /** @var Utilisateur $userSygal */
         $userSygal = $this->entityManager->getRepository(Utilisateur::class)->findOneBy(["username" => "sygal-app"]);
 
         $role = new Role();

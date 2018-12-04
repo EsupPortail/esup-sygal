@@ -2,10 +2,9 @@
 
 namespace Application\Service\Source;
 
-use Application\Entity\Db\SourceInterface;
+use Application\Entity\Db\Source;
 use Application\Service\BaseService;
 use Doctrine\ORM\EntityRepository;
-use Application\Entity\Db\Source;
 
 /**
  * @author Unicaen
@@ -29,7 +28,7 @@ class SourceService extends BaseService
     public function fetchSourceSygal()
     {
         /** @var Source $source */
-        $source = $this->getRepository()->findOneBy(['code' => SourceInterface::CODE_SYGAL]);
+        $source = $this->getRepository()->findOneBy(['code' => Source::CODE_SYGAL]);
 
         return $source;
     }

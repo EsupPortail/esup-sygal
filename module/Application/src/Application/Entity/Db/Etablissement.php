@@ -2,7 +2,7 @@
 
 namespace Application\Entity\Db;
 
-use Application\Entity\Db\Traits\SourceAwareTrait;
+use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
 use Application\Filter\EtablissementPrefixFilter;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
