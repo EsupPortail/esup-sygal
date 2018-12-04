@@ -5,6 +5,7 @@ namespace Application\Controller\Factory;
 use Application\Controller\EtablissementController;
 use Application\Form\EtablissementForm;
 use Application\Service\Etablissement\EtablissementService;
+use Application\Service\File\FileService;
 use Application\Service\Individu\IndividuService;
 use Application\Service\Role\RoleService;
 use Application\Service\Structure\StructureService;
@@ -20,6 +21,8 @@ class EtablissementControllerFactory
      */
     public function __invoke(ControllerManager $controllerManager)
     {
+        $sl = $controllerManager->getServiceLocator();
+
         /** @var EtablissementForm $form */
         $form = $controllerManager->getServiceLocator()->get('FormElementManager')->get('EtablissementForm');
 
@@ -29,10 +32,15 @@ class EtablissementControllerFactory
          * @var RoleService $roleService
          * @var StructureService $structureService
          */
-        $etablissmentService = $controllerManager->getServiceLocator()->get('EtablissementService');
-        $individuService = $controllerManager->getServiceLocator()->get('IndividuService');
-        $roleService = $controllerManager->getServiceLocator()->get('RoleService');
-        $structureService = $controllerManager->getServiceLocator()->get(StructureService::class);
+        $etablissmentService = $sl->get('EtablissementService');
+        $individuService = $sl->get('IndividuService');
+        $roleService = $sl->get('RoleService');
+        $structureService = $sl->get(StructureService::class);
+
+        /**
+         * @var FileService $fileService
+         */
+        $fileService = $sl->get(FileService::class);
 
         $controller = new EtablissementController();
         $controller->setEtablissementService($etablissmentService);
@@ -40,6 +48,7 @@ class EtablissementControllerFactory
         $controller->setRoleService($roleService);
         $controller->setStructureService($structureService);
         $controller->setEtablissementForm($form);
+        $controller->setFileService($fileService);
 
         return $controller;
     }

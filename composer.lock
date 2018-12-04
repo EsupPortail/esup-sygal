@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bd8c3d3e91508f7df99c5680292ae9d2",
+    "content-hash": "f887ed33b669d08f32be78e1333d31ee",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -3841,6 +3841,10 @@
     },
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "ext-fileinfo": "*",
+        "ext-json": "*",
+        "ext-imagick": "*"
+    },
     "platform-dev": []
 }

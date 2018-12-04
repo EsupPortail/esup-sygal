@@ -12,26 +12,27 @@ use UnicaenApp\Exception\RuntimeException;
 class EtablissementRepository extends DefaultEntityRepository
 {
     /**
-     * Cette fonction retourne le libellé associé au code d'un établissement
-     * @param $code
-     * @return string|null
-     * @throws NonUniqueResultException
+     * Recherche un établissement par son code de structure.
+     *
+     * @param string $code Ex: 'COMUE'
+     * @return Etablissement|null
      */
-    public function libelle($code)
+    public function findOneByCodeStructure($code)
     {
-        $qb = $this->getEntityManager()->getRepository(Etablissement::class)->createQueryBuilder("etablissement")
-            ->leftJoin("etablissement.structure","structure")
+        $qb = $this->getEntityManager()->getRepository(Etablissement::class)->createQueryBuilder("e")
+            ->join("e.structure","structure")
             ->andWhere("structure.code = :code")
-            ->setParameter("code", $code)
-            ;
+            ->setParameter("code", $code);
+
         /** @var Etablissement $entity */
-        $entity = $qb->getQuery()->getOneOrNullResult();
+        try {
+            $entity = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Anomalie: plusieurs établissements ont le même code structure.");
+        }
 
-        return $entity ? $entity->getLibelle() : null;
+        return $entity;
     }
-
-
-
 
     /**
      * @param int $id

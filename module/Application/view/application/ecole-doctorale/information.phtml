@@ -5,6 +5,7 @@
  * @var EcoleDoctorale $ecole
  * @var array          $roleListing     (string => int)
  * @var array          $individuListing (string => string[])
+ * @var string         $logoContent
  */
 
 use Application\Entity\Db\EcoleDoctorale;
@@ -26,9 +27,6 @@ $canAddRole = $canEdit;
         Informations générales
     </h2>
     <div class="row">
-        <div class="col-md-4">
-            <img id="logo" style="max-width: 200px; max-height: 200px; border: 1px solid black; background-color: white;" src="data:image/png;base64,<?php echo base64_encode($ecole->getLogoContent()); ?>"/>
-        </div>
         <div class="col-md-6">
             <dl>
                 <dt> Libelle :</dt>
@@ -37,6 +35,15 @@ $canAddRole = $canEdit;
                 <dd>    <?php echo $ecole->getSigle(); ?>       </dd>
                 <dt> Code :</dt>
                 <dd>    <?php echo $ecole->getStructure()->getCode(); ?>        </dd>
+            </dl>
+        </div>
+        <div class="col-md-4">
+            <dl>
+                <dt>Logo :</dt>
+                <dd>
+                    <img id="logo" style="max-width: 200px; max-height: 200px; background-color: white;"
+                         src="data:image/png;base64,<?php echo base64_encode($logoContent); ?>"/>
+                </dd>
             </dl>
         </div>
     </div>

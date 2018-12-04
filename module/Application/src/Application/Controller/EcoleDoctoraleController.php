@@ -2,15 +2,16 @@
 
 namespace Application\Controller;
 
+use Application\Controller\Traits\LogoAwareControllerTrait;
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\Structure;
 use Application\Entity\Db\TypeStructure;
 use Application\Form\EcoleDoctoraleForm;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Application\Service\File\FileServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Structure\StructureServiceAwareTrait;
@@ -24,13 +25,15 @@ class EcoleDoctoraleController extends AbstractController
     use RoleServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use StructureServiceAwareTrait;
+    use FileServiceAwareTrait;
+    use LogoAwareControllerTrait;
 
     public function indexAction()
     {
         $eds = $this->getStructureService()->getAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle');
 
         return new ViewModel([
-            'ecoles'                         => $eds,
+            'ecoles' => $eds,
         ]);
     }
 
@@ -68,9 +71,10 @@ class EcoleDoctoraleController extends AbstractController
         }
 
         return new ViewModel([
-            'ecole' => $ecole,
-            'roleListing' => $roleListings,
+            'ecole'           => $ecole,
+            'roleListing'     => $roleListings,
             'individuListing' => $individuListings,
+            'logoContent'     => $this->structureService->getLogoStructureContent($ecole),
         ]);
     }
 
@@ -86,7 +90,7 @@ class EcoleDoctoraleController extends AbstractController
     {
         /** @var EcoleDoctorale $ecole */
         $ecoleId = $this->params()->fromRoute("ecoleDoctorale");
-        $ecole  = $this->getEcoleDoctoraleService()->getRepository()->findByStructureId($ecoleId);
+        $ecole = $this->getEcoleDoctoraleService()->getRepository()->findByStructureId($ecoleId);
         $this->ecoleDoctoraleForm->bind($ecole);
 
         // si POST alors on revient du formulaire
@@ -100,6 +104,7 @@ class EcoleDoctoraleController extends AbstractController
             // action d'affacement du logo
             if (isset($data['supprimer-logo'])) {
                 $this->supprimerLogoEcoleDoctorale();
+
                 return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecoleId], "fragment" => $ecoleId], true);
             }
 
@@ -116,17 +121,21 @@ class EcoleDoctoraleController extends AbstractController
                 $this->getEcoleDoctoraleService()->update($ecole);
 
                 $this->flashMessenger()->addSuccessMessage("École doctorale '$ecole' modifiée avec succès");
+
                 return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecoleId], "fragment" => $ecoleId], true);
             }
             $this->flashMessenger()->addErrorMessage("Echec de la mise à jour : données incorrectes saissie");
+
             return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecoleId], "fragment" => $ecoleId], true);
         }
 
         // envoie vers le formulaire de modification
         $viewModel = new ViewModel([
             'form' => $this->ecoleDoctoraleForm,
+            'logoContent' => $this->structureService->getLogoStructureContent($ecole),
         ]);
         $viewModel->setTemplate('application/ecole-doctorale/modifier');
+
         return $viewModel;
     }
 
@@ -160,6 +169,7 @@ class EcoleDoctoraleController extends AbstractController
                 $this->flashMessenger()->addSuccessMessage("École doctorale '$ecole' créée avec succès");
 
                 $ecoleId = $ecole->getStructure()->getId();
+
                 return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $ecoleId], "fragment" => $ecoleId], true);
             }
         }
@@ -177,7 +187,7 @@ class EcoleDoctoraleController extends AbstractController
     public function supprimerAction()
     {
         $ecoleId = $this->params()->fromRoute("ecoleDoctorale");
-        $ecole  = $this->getEcoleDoctoraleService()->getRepository()->findByStructureId($ecoleId);
+        $ecole = $this->getEcoleDoctoraleService()->getRepository()->findByStructureId($ecoleId);
 
         $this->getEcoleDoctoraleService()->deleteSoftly($ecole, $this->userContextService->getIdentityDb());
 
@@ -189,7 +199,7 @@ class EcoleDoctoraleController extends AbstractController
     public function restaurerAction()
     {
         $ecoleId = $this->params()->fromRoute("ecoleDoctorale");
-        $ecole  = $this->getEcoleDoctoraleService()->getRepository()->findByStructureId($ecoleId);
+        $ecole = $this->getEcoleDoctoraleService()->getRepository()->findByStructureId($ecoleId);
 
         $this->getEcoleDoctoraleService()->undelete($ecole);
 
@@ -218,74 +228,29 @@ class EcoleDoctoraleController extends AbstractController
     {
         $structureId = $this->params()->fromRoute("ecoleDoctorale");
         $this->supprimerLogoEcoleDoctorale();
+
         return $this->redirect()->toRoute('ecole-doctorale', [], ['query' => ['selected' => $structureId], "fragment" => $structureId], true);
     }
 
-    /**
-     * Retire le logo associé à une école doctorale:
-     * - modification base de donnée (champ CHEMIN_LOG <- null)
-     * - effacement du fichier stocké sur le serveur
-     */
     public function supprimerLogoEcoleDoctorale()
     {
         $ecoleId = $this->params()->fromRoute("ecoleDoctorale");
-        $ecole  = $this->getEcoleDoctoraleService()->getRepository()->findByStructureId($ecoleId);
+        $ecole = $this->getEcoleDoctoraleService()->getRepository()->findByStructureId($ecoleId);
 
-        $this->getEcoleDoctoraleService()->deleteLogo($ecole);
-        $filename   = EcoleDoctoraleController::getLogoFilename($ecole, true);
-        if (file_exists($filename)) {
-            $result = unlink($filename);
-            if ($result) {
-                $this->flashMessenger()->addSuccessMessage("Le logo de l'école doctorale {$ecole->getLibelle()} vient d'être supprimé.");
-            } else {
-                $this->flashMessenger()->addErrorMessage("Erreur lors de l'effacement du logo de l'école doctorale <strong>{$ecole->getLibelle()}.</strong>");
-            }
-        } else {
-            $this->flashMessenger()->addWarningMessage("Aucun logo à supprimer pour l'école doctorale <strong>{$ecole->getLibelle()}.</strong>");
-        }
-
+        $this->supprimerLogoStructure($ecole);
     }
 
     /**
-     * Ajoute le logo associé à une école doctorale:
-     * - modification base de donnée (champ CHEMIN_LOG <- /public/Logos/ED/LOGO_NAME)
-     * - enregistrement du fichier sur le serveur
-     * @param string $cheminLogoUploade     chemin vers le fichier temporaire associé au logo
+     * @param string         $cheminLogoUploade chemin vers le fichier temporaire associé au logo
      * @param EcoleDoctorale $ecole
      */
     public function ajouterLogoEcoleDoctorale($cheminLogoUploade, EcoleDoctorale $ecole = null)
     {
-        if ($cheminLogoUploade === null || $cheminLogoUploade === '') {
-            $this->flashMessenger()->addErrorMessage("Fichier logo invalide.");
-            return;
-        }
-
         if ($ecole === null) {
             $ecoleId = $this->params()->fromRoute("ecoleDoctorale");
-            $ecole  = $this->getEcoleDoctoraleService()->getRepository()->findByStructureId($ecoleId);
+            $ecole = $this->getEcoleDoctoraleService()->getRepository()->findByStructureId($ecoleId);
         }
-        $chemin     = EcoleDoctoraleController::getLogoFilename($ecole, false);
-        $filename   = EcoleDoctoraleController::getLogoFilename($ecole, true);
-        $result = rename($cheminLogoUploade, $filename);
-        if ($result) {
-            $this->flashMessenger()->addSuccessMessage("Le logo de l'école doctorale {$ecole->getLibelle()} vient d'être ajouté.");
-            $this->getEcoleDoctoraleService()->setLogo($ecole,$chemin);
-        } else {
-            $this->flashMessenger()->addErrorMessage("Erreur lors de l'enregistrement du logo de l'école doctorale <strong>{$ecole->getLibelle()}.</strong>");
-        }
-    }
 
-    /**
-     * Retourne le chemin vers le logo d'une école doctorale
-     * @param EcoleDoctorale $ecole
-     * @param bool $fullpath            si true chemin absolue sinon chemin relatif au répertoire de l'application
-     * @return string                   le chemin vers le logo de l'école doctorale $ecole
-     */
-    static public function getLogoFilename(EcoleDoctorale $ecole, $fullpath=true)
-    {
-        $chemin = "";
-        if ($fullpath) $chemin .= Structure::PATH;
-        $chemin .= "/ressources/Logos/ED/".$ecole->getSourceCode()."-".$ecole->getSigle().".png";
-        return $chemin;
+        $this->ajouterLogoStructure($ecole, $cheminLogoUploade);
     }
 }

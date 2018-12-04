@@ -2,11 +2,10 @@
 
 namespace Application\Entity\Db;
 
+use Application\Entity\Db\Traits\SourceAwareTrait;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
-use UnicaenApp\Util;
 use UnicaenImport\Entity\Db\Interfaces\SourceAwareInterface;
-use Application\Entity\Db\Traits\SourceAwareTrait;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 
 /**
@@ -129,22 +128,6 @@ class EcoleDoctorale implements StructureConcreteInterface, HistoriqueAwareInter
     public function setCheminLogo($cheminLogo)
     {
         $this->getStructure()->setCheminLogo($cheminLogo);
-    }
-
-    /**
-     * @return string
-     */
-    public function getLogoContent()
-    {
-        if ($this->getCheminLogo() === null) {
-            $image = Util::createImageWithText("Aucun logo pour l'ED|[" . $this->getSourceCode() . " - " . $this->getSigle() . "]", 200, 200);
-            return $image;
-        }
-        if (!file_exists(Structure::PATH . $this->getCheminLogo())) {
-            $image = Util::createImageWithText("Fichier absent sur le HD",200,200);
-            return $image;
-        }
-        return file_get_contents( Structure::PATH . $this->getCheminLogo()) ?: null;
     }
 
     /**

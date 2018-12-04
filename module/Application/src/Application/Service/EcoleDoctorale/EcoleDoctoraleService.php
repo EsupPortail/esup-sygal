@@ -11,9 +11,7 @@ use Application\Service\BaseService;
 use Application\Service\Role\RoleServiceAwareInterface;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\Query\Expr\Join;
 use UnicaenApp\Exception\RuntimeException;
-use Application\Entity\Db\Source;
 
 /**
  * @method EcoleDoctorale|null findOneBy(array $criteria, array $orderBy = null)
@@ -40,7 +38,7 @@ class EcoleDoctoraleService extends BaseService implements RoleServiceAwareInter
      */
     public function getIndividuByEcoleDoctoraleId($id)
     {
-        $ecole = $this->getRepository()->findOneBy(['id'=>$id]);
+        $ecole = $this->getRepository()->findOneBy(['id' => $id]);
         $individus = $this->roleService->getIndividuByStructure($ecole->getStructure());
 
         return $individus;

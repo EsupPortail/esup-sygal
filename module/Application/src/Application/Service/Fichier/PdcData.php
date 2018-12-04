@@ -4,7 +4,8 @@ namespace Application\Service\Fichier;
 
 use Application\Entity\Db\Acteur;
 
-class MembreData {
+class MembreData
+{
     private $denomination;
     private $qualite;
     private $etablissement;
@@ -84,8 +85,8 @@ class MembreData {
 }
 
 /** Les informations ici sont des chaines de caractères */
-class PdcData {
-
+class PdcData
+{
     /** @var string */
     private $titre;
     /** @var string */
