@@ -65,17 +65,7 @@
         </div>
         
         <div id="contenu-principal" class="container">
-
-            <?php
-            $menuSecondaire =
-                $this->navigation()->menuSecondaire('navigation')->setMaxDepth(1)->render() ?:
-                $this->navigation()->menu('Zend\Navigation\Information')
-                    ->setUlClass('nav nav-pills nav-stacked menu-information')
-                    ->setMinDepth(1)
-                    ->setMaxDepth(1)
-                    ->render();
-            ?>
-            <?php if ($menuSecondaire): ?>
+            <?php if (($menuSecondaire = $this->navigation()->menuSecondaire('navigation')->setMaxDepth(1)->render())): ?>
                 <div class="row">
                     <div id="sidebar" class="col-xs-6 col-md-2" role="navigation">
                         <?php echo $menuSecondaire; ?>
