@@ -318,6 +318,7 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
                         <br/>
                         <?php if ($validations[$doctorant->getIndividu()->getId()]) : ?>
                             <span class="badge badge-success"> Validée</span>
+                            Le <?php echo $validations[$doctorant->getIndividu()->getId()]->getHistoModification()->format('d/m/Y à H:i'); ?>
                         <?php else: ?>
                             <span class="badge badge-default"> Aucune validation</span>
                         <?php endif; ?>
@@ -329,6 +330,7 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
                         <br/>
                         <?php if ($validations[$directeur->getId()]) : ?>
                             <span class="badge badge-success"> Validée</span>
+                            Le <?php echo $validations[$directeur->getId()]->getHistoModification()->format('d/m/Y à H:i'); ?>
                         <?php else: ?>
                             <span class="badge badge-default"> Aucune validation</span>
                         <?php endif; ?>
@@ -384,6 +386,8 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
                 <?php echo $these->getUniteRecherche()->getLibelle(); ?>  (Unité de recherche) <br/>
                 <?php if ($validations['unite-recherche']) : ?>
                     <span class="badge badge-success"> Validée</span>
+                    Le <?php echo $validations['unite-recherche']->getHistoModification()->format('d/m/Y à H:i'); ?>
+                    par <?php echo $validations['unite-recherche']->getIndividu()->getNomComplet(false, false, true, true); ?>
                 <?php else: ?>
                     <span class="badge badge-default"> Aucune validation</span>
                 <?php endif; ?>
@@ -392,6 +396,8 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
                 <?php echo $these->getEcoleDoctorale()->getLibelle(); ?>  (École doctorale) <br/>
                 <?php if ($validations['ecole-doctorale']) : ?>
                     <span class="badge badge-success"> Validée</span>
+                    Le <?php echo $validations['ecole-doctorale']->getHistoModification()->format('d/m/Y à H:i'); ?>
+                    par <?php echo $validations['ecole-doctorale']->getIndividu()->getNomComplet(false, false, true, true); ?>
                 <?php else: ?>
                     <span class="badge badge-default"> Aucune validation</span>
                 <?php endif; ?>
@@ -400,6 +406,8 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
                 <?php echo $these->getEtablissement()->getLibelle(); ?>  (Bureau des doctorats) <br/>
                 <?php if ($validations['bureau-doctorat']) : ?>
                     <span class="badge badge-success"> Validée</span>
+                    Le <?php echo $validations['bureau-doctorat']->getHistoModification()->format('d/m/Y à H:i'); ?>
+                    par <?php echo $validations['bureau-doctorat']->getIndividu()->getNomComplet(false, false, true, true); ?>
                 <?php else: ?>
                     <span class="badge badge-default"> Aucune validation</span>
                 <?php endif; ?>

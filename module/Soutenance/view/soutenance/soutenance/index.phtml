@@ -68,6 +68,7 @@ $canVisualiser = true;
                 <?php foreach($theses as $theseLink) : ?>
                     <li class="complete">
                         <a href="<?php echo $this->url('soutenance/proposition', ['these' => $theseLink->getId()], [], true); ?>">
+                            <span class="badge"><?php echo $theseLink->getId(); ?></span>
                             <?php echo $theseLink->getTitre(); ?>
                         </a>
                     </li>
@@ -102,6 +103,7 @@ $canVisualiser = true;
                 <?php foreach($theses as $theseLink) : ?>
                     <li class="complete">
                         <a href="<?php echo $this->url('soutenance', ['these' => $theseLink->getId()], [], true); ?>">
+                            <span class="badge"><?php echo $theseLink->getId(); ?></span>
                             <?php echo $theseLink->getTitre(); ?>
                         </a>
                     </li>
