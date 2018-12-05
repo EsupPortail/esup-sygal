@@ -4,7 +4,7 @@ namespace Application\Entity\Db;
 
 use DateTime;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
-use UnicaenImport\Entity\Db\Source;
+use Application\Entity\Db\Source;
 
 class Financement {
 

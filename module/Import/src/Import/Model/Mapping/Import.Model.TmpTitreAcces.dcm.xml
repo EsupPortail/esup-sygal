@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="Import\Model\TmpTitreAcces" table="TMP_TITRE_ACCES">
+        <id name="id" type="string" column="ID"/>
+        <field name="sourceId" column="SOURCE_ID" nullable="true"/>
+        <field name="sourceCode" column="SOURCE_CODE" nullable="true"/>
+        <field name="etablissementId" column="ETABLISSEMENT_ID" nullable="true"/>
+        <field name="theseId" column="THESE_ID" nullable="true"/>
+        <field name="titreAccesInterneExterne" column="TITRE_ACCES_INTERNE_EXTERNE" nullable="true"/>
+        <field name="libelleTitreAcces" column="LIBELLE_TITRE_ACCES" nullable="true"/>
+        <field name="typeEtabTitreAcces" column="TYPE_ETB_TITRE_ACCES" nullable="true"/>
+        <field name="libelleEtabTitreAcces" column="LIBELLE_ETB_TITRE_ACCES" nullable="true"/>
+        <field name="codeDeptTitreAcces" column="CODE_DEPT_TITRE_ACCES" nullable="true"/>
+        <field name="codePaysTitreAcces" column="CODE_PAYS_TITRE_ACCES" nullable="true"/>
+    </entity>
+</doctrine-mapping>

@@ -5,14 +5,15 @@ use Application\Form\CreationUtilisateurForm;
 use Application\Form\Factory\CreationUtilisateurFormFactory;
 use Application\Form\Factory\CreationUtilisateurHydratorFactory;
 use Application\Form\Hydrator\CreationUtilisateurHydrator;
+use Application\Form\Validator\Factory\NewEmailValidatorFactory;
+use Application\Form\Validator\NewEmailValidator;
+use Application\Form\Validator\PasswordValidator;
 use Application\Provider\Privilege\UtilisateurPrivileges;
 use Application\Service\Individu\IndividuServiceFactory;
 use Application\Service\Utilisateur\UtilisateurService;
+use Application\View\Helper\IndividuUsurpationHelperFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use Zend\Mvc\Router\Http\Literal;
-use Application\Form\Validator\PasswordValidator;
-use Application\Form\Validator\NewEmailValidator;
-use Application\Form\Validator\Factory\NewEmailValidatorFactory;
 use Zend\Mvc\Router\Http\Segment;
 
 return [
@@ -21,6 +22,7 @@ return [
             'BjyAuthorize\Guard\Controller' => [
                 ['controller' => 'Application\Controller\Utilisateur', 'action' => 'selectionner-profil', 'roles' => []],
                 ['controller' => 'Application\Controller\Utilisateur', 'action' => 'usurper-identite', 'roles' => []],
+                ['controller' => 'Application\Controller\Utilisateur', 'action' => 'usurper-individu', 'roles' => []],
             ],
             PrivilegeController::class => [
                 [
@@ -170,6 +172,11 @@ return [
         ],
         'factories' => [
             NewEmailValidator::class => NewEmailValidatorFactory::class,
+        ],
+    ],
+    'view_helpers'  => [
+        'factories'  => [
+            'individuUsurpation' => IndividuUsurpationHelperFactory::class,
         ],
     ],
 ];

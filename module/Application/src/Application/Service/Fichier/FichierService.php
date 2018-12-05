@@ -520,7 +520,7 @@ class FichierService extends BaseService
             return Util::createImageWithText("Erreur: extension PHP |'imagick' non chargée", 170, 100);
         }
 
-        $outputFilePath = sys_get_temp_dir() . '/' . uniqid() . '.png';
+        $outputFilePath = sys_get_temp_dir() . '/sygal_preview_' . uniqid() . '.png';
 
         try {
             $im = new \Imagick();
@@ -757,7 +757,7 @@ class FichierService extends BaseService
 
     private function generateOutputFilePathForMerge(These $these)
     {
-        $outputFilePath = sprintf("%s-%s-%s-merged.pdf",
+        $outputFilePath = sprintf("sygal_fusion_%s-%s-%s.pdf",
             $these->getId(),
             $these->getDoctorant()->getIndividu()->getNomUsuel(),
             $these->getDoctorant()->getIndividu()->getPrenom()
@@ -777,7 +777,7 @@ class FichierService extends BaseService
     private function instantiateCommandForMerge(These $these, $versionFichier, $removeFirstPage, $outputFilePath)
     {
         // GENERATION DE LA COUVERTURE
-        $filename = "COUVERTURE_" . $these->getId() . "_" . uniqid() . ".pdf";
+        $filename = "sygal_couverture_" . $these->getId() . "_" . uniqid() . ".pdf";
         $this->generatePageDeCouverture($these, $this->renderer, $filename);
 
         // RECUPERATION DE LA BONNE VERSION DU MANUSCRIPT
@@ -797,13 +797,13 @@ class FichierService extends BaseService
         }
 
         $command->generate($outputFilePath, $inputFiles, $errorFilePath);
+        //unlink($inputFiles['couverture']);
 
         return $command;
     }
 
     public function fusionneFichierTheseAsync(These $these, $versionFichier, $removeFirstPage, $destinatairesNotification = [])
     {
-//        $scriptPath = sprintf("bash %s/merge.sh", APPLICATION_DIR . '/bin');
         $scriptPath = sprintf("%s/merge.sh", APPLICATION_DIR . '/bin');
 
         $args = sprintf('--these=%d --versionFichier=%s', $these->getId(), $versionFichier);
@@ -818,11 +818,5 @@ class FichierService extends BaseService
         $runner = new ShellScriptRunner($scriptPath, 'bash');
         $runner->setAsync();
         $runner->run($args);
-//        $command = $scriptPath. ' '.$args;
-//        $runner = new ShellCommandRunner($command);
-//        $runner->setAsync();
-//        $runner->run();
-
-
     }
 }

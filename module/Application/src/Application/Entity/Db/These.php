@@ -12,7 +12,7 @@ use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
-use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
+use Application\Entity\Db\Traits\SourceAwareTrait;
 use Zend\Filter\Exception;
 use Zend\Filter\FilterChain;
 use Zend\Filter\FilterInterface;
@@ -198,6 +198,11 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     private $validations;
 
     /**
+     * @var Collection
+     */
+    private $titreAcces;
+
+    /**
      * @var TitreApogeeFilter
      */
     private $titreFilter;
@@ -206,7 +211,6 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      * @var Etablissement
      */
     private $etablissement;
-
 
     /**
      * @var ArrayCollection
@@ -1065,6 +1069,14 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function getFinancements()
     {
         return $this->financements;
+    }
+
+    /**
+     * @return TitreAcces
+     */
+    public function getTitreAcces()
+    {
+        return $this->titreAcces->first() ?: null;
     }
 
     /**
