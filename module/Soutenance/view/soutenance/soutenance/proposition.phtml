@@ -66,7 +66,7 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
                     <dt> Date de la soutenance </dt>
                     <dd> <?php echo ($proposition->getDate())?$proposition->getDate()->format("d/m/Y"):'<strong>non communiquée</strong>'; ?> </dd>
                     <dt> Heure de la soutenance </dt>
-                    <dd> <?php echo ($proposition->getDate())?$proposition->getDate()->format("H:i:s"):'<strong>non communiquée</strong>'; ?> </dd>
+                    <dd> <?php echo ($proposition->getDate())?$proposition->getDate()->format("H:i"):'<strong>non communiquée</strong>'; ?> </dd>
                     <dt> Lieu de la Soutenance </dt>
                     <dd> <?php echo ($proposition->getLieu())?$proposition->getLieu():'<strong>non communiqué</strong>'; ?> </dd>
                 </dl>

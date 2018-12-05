@@ -19,7 +19,7 @@ class SoutenanceDateLieuForm extends Form {
 
         $this->add(
             (new Time('heure'))
-                ->setFormat("H:m:s")
+                ->setFormat("H:m")
                 ->setLabel("Heure de la soutance :")
 
         );

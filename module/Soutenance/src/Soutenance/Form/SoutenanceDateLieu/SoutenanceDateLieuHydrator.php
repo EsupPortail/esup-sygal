@@ -15,7 +15,7 @@ class SoutenanceDateLieuHydrator implements HydratorInterface
      */
     public function hydrate(array $data, $proposition) {
 
-        $date = DateTime::createFromFormat("d/m/Y H:i:s", $data['date'].' '.$data['heure']);
+        $date = DateTime::createFromFormat("d/m/Y H:i", $data['date'].' '.$data['heure']);
         $proposition->setDate($date);
         $proposition->setLieu($data['lieu']);
 
@@ -34,7 +34,7 @@ class SoutenanceDateLieuHydrator implements HydratorInterface
         $heure = '';
         if ($datetime) {
             $date = $datetime->format("d/m/Y");
-            $heure = $datetime->format("H:i:s");
+            $heure = $datetime->format("H:i");
         }
 
         $data = [];
