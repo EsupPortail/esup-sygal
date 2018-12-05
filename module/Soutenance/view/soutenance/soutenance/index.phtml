@@ -132,7 +132,7 @@ $canVisualiser = true;
             if ($these) $doctorant = $these->getDoctorant();
         ?>
 
-        <?php echo getBadge($validations[$doctorant->getId()]); ?>
+        <?php echo getBadge($validations[$doctorant->getIndividu()->getId()]); ?>
         <?php echo $doctorant->getNomComplet(false, true, false); ?> <br/>
 
         <?php foreach($directeurs as $directeur) : ?>
