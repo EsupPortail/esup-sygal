@@ -127,8 +127,8 @@ class TheseRepository extends DefaultEntityRepository
         $qb = $this->createQueryBuilder('t')
             ->andWhere('t.doctorant = :doctorant')
             ->setParameter('doctorant', $doctorant)
-            //->andWhere('t.etatThese = :encours')
-            //->setParameter('encours', These::ETAT_EN_COURS)
+            ->andWhere('t.etatThese = :encours')
+            ->setParameter('encours', These::ETAT_EN_COURS)
             ->orderBy('t.datePremiereInscription', 'ASC')
         ;
 
@@ -149,8 +149,8 @@ class TheseRepository extends DefaultEntityRepository
             ->andWhere('r.code = :directeur OR r.code = :codirecteur')
             ->setParameter('directeur', Role::CODE_DIRECTEUR_THESE)
             ->setParameter('codirecteur', Role::CODE_CODIRECTEUR_THESE)
-//            ->andWhere('t.etatThese = :encours')
-//            ->setParameter('encours', These::ETAT_EN_COURS)
+            ->andWhere('t.etatThese = :encours')
+            ->setParameter('encours', These::ETAT_EN_COURS)
             ->andWhere('a.individu = :individu')
             ->setParameter('individu', $individu)
             ->orderBy('t.datePremiereInscription', 'ASC')

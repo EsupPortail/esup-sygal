@@ -59,11 +59,11 @@ class SoutenanceController extends AbstractActionController {
         if ($theseId) {
             /** @var These $these */
             $these = $this->getTheseService()->getRepository()->find($theseId);
+            $proposition = $this->getPropositionService()->findByThese($these);
 
             /** @var Individu[] $directeurs */
             $directeurs = $these->getEncadrements(true);
 
-            $proposition = $this->getPropositionService()->findByThese($these);
             if ($proposition) $rapporteurs = $proposition->getRapporteurs();
 
             $validations = [];
@@ -307,6 +307,7 @@ class SoutenanceController extends AbstractActionController {
             $form->setData($data);
             if ($form->isValid()) {
                 $this->getPropositionService()->update($proposition);
+                $this->unvalidate($these);
             }
         }
 
@@ -337,6 +338,7 @@ class SoutenanceController extends AbstractActionController {
             $form->setData($data);
             if ($form->isValid()) {
                 $this->getPropositionService()->update($proposition);
+                $this->unvalidate($these);
             }
         }
 
