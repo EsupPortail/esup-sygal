@@ -1,0 +1,24 @@
+<?php
+
+return [
+    'navigation'      => [
+        'information' => [
+            'accueil' => [
+                'pages' => [
+                    'doctorat' => [
+                        'label' => 'Le doctorat en Normandie',
+                        'title' => "Informations sur le doctorat et sa gestion en Normandie"
+                    ],
+                    'ecoles-doctorales' => [
+                        'label' => 'Les Ecoles Doctorales normandes',
+                        'title' => "Informations sur les Ecoles Doctorales et le Collège des Ecoles doctorales"
+                    ],
+                    'guide-these' => [
+                        'label' => 'Guide de la thèse',
+                        'title' => "Informations sur le déroulement de la thèse et formulaires administratifs à l’intention du doctorant et de ses encadrants"
+                    ],
+                ],
+            ],
+        ],
+    ],
+];

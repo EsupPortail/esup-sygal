@@ -21,6 +21,7 @@ $modules = [
     'Indicateur',
     'Retraitement',
     'Notification',
+    'Information',
 ];
 if (php_sapi_name() === 'cli') {
     unset($modules['BjyAuthorize']);
