@@ -398,7 +398,7 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
             </li>
             <li>
                 <?php echo $these->getEtablissement()->getLibelle(); ?>  (Bureau des doctorats) <br/>
-                <?php if ($validations['bureau-doctorats']) : ?>
+                <?php if ($validations['bureau-doctorat']) : ?>
                     <span class="badge badge-success"> Validée</span>
                 <?php else: ?>
                     <span class="badge badge-default"> Aucune validation</span>
@@ -440,7 +440,7 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
                 </div>
             <?php endif; ?>
 
-            <?php if ($validations["bureau-doctorats"] && $roleCode === Role::CODE_BDD): ?>
+            <?php if ($validations["bureau-doctorat"] && $roleCode === Role::CODE_BDD): ?>
                 <div class="panel panel-success">
                     <div class="panel-heading">
                         <?php echo $this->validation($validations["bureau-doctorats"]); ?>
