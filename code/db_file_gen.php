@@ -10,7 +10,7 @@ use Doctrine\ORM\NoResultException;
 use UnicaenOracle\Service\DataService;
 use UnicaenOracle\Service\SchemaService;
 
-$destDir = __DIR__ . '/';
+$destDir = '/tmp';
 
 /** @var SchemaService $schemaService */
 $schemaService = $controller->getServiceLocator()->get(SchemaService::class);
@@ -20,7 +20,7 @@ $dataService = $controller->getServiceLocator()->get(DataService::class);
 /** @var Connection $srcSchemaConn */
 $srcSchemaConn = $controller->getServiceLocator()->get('doctrine.connection.orm_default');
 
-$srcSchema = 'SYGAL';
+$srcSchema = 'SYGAL_TEST';
 $dstSchema = 'SYGAL_TEST';
 
 echo "<h1>DB Schema files generator</h1>";
