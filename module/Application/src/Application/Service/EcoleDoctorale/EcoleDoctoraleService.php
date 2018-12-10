@@ -68,17 +68,30 @@ class EcoleDoctoraleService extends BaseService implements RoleServiceAwareInter
         $this->flush($ecole);
     }
 
-    public function create(EcoleDoctorale $ecole, Utilisateur $createur)
+    public function create(EcoleDoctorale $structureConcrete, Utilisateur $createur)
     {
-        $ecole->setHistoCreateur($createur);
         /** @var TypeStructure $typeStructure */
-        $typeStructure = $this->getEntityManager()->getRepository(TypeStructure::class)->findOneBy(['code' => 'ecole-doctorale']);
-        $ecole->getStructure()->setTypeStructure($typeStructure);
+        $typeStructure = $this->getEntityManager()->getRepository(TypeStructure::class)->findOneBy(['code' => 'etablissement']);
 
-        $this->persist($ecole);
-        $this->flush($ecole);
+        $structure = $structureConcrete->getStructure();
+        $structure->setTypeStructure($typeStructure);
 
-        return $ecole;
+        $structureConcrete->setSourceCode("SyGAL::" . uniqid());
+        $structureConcrete->setHistoCreateur($createur);
+
+        $this->entityManager->beginTransaction();
+
+        $this->entityManager->persist($structure);
+        $this->entityManager->persist($structureConcrete);
+        try {
+            $this->entityManager->flush($structure);
+            $this->entityManager->flush($structureConcrete);
+            $this->entityManager->commit();
+        } catch (\Exception $e) {
+            $this->rollback();
+        }
+
+        return $structureConcrete;
     }
 
     public function update(EcoleDoctorale $ecole)

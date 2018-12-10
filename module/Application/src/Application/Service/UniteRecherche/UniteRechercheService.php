@@ -98,18 +98,30 @@ class UniteRechercheService extends BaseService implements RoleServiceAwareInter
         $this->flush($ur);
     }
 
-    public function create(UniteRecherche $ur, Utilisateur $createur)
+    public function create(UniteRecherche $structureConcrete, Utilisateur $createur)
     {
-        $ur->setHistoCreateur($createur);
         /** @var TypeStructure $typeStructure */
-        $typeStructure = $this->getEntityManager()->getRepository(TypeStructure::class)->findOneBy(['code' => 'unite-recherche']);
-        $ur->getStructure()->setTypeStructure($typeStructure);
+        $typeStructure = $this->getEntityManager()->getRepository(TypeStructure::class)->findOneBy(['code' => 'etablissement']);
 
+        $structure = $structureConcrete->getStructure();
+        $structure->setTypeStructure($typeStructure);
 
-        $this->persist($ur);
-        $this->flush($ur);
+        $structureConcrete->setSourceCode("SyGAL::" . uniqid());
+        $structureConcrete->setHistoCreateur($createur);
 
-        return $ur;
+        $this->entityManager->beginTransaction();
+
+        $this->entityManager->persist($structure);
+        $this->entityManager->persist($structureConcrete);
+        try {
+            $this->entityManager->flush($structure);
+            $this->entityManager->flush($structureConcrete);
+            $this->entityManager->commit();
+        } catch (\Exception $e) {
+            $this->rollback();
+        }
+
+        return $structureConcrete;
     }
 
     public function update(UniteRecherche $ur)
