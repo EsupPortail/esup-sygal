@@ -42,6 +42,7 @@ return [
                 'allow' => [
                     [
                         'privileges' => [
+                            ThesePrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE,
                             ThesePrivileges::THESE_SAISIE_DESCRIPTION_VERSION_INITIALE,
                             ThesePrivileges::THESE_SAISIE_DESCRIPTION_VERSION_CORRIGEE,
                             ThesePrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_INITIALE,
@@ -194,6 +195,16 @@ return [
 //                    ],
 //                    'assertion'  => 'Assertion\\These',
 //                ],
+                [
+                    'controller' => 'Application\Controller\These',
+                    'action'     => [
+                        'modifier-correction-autorisee-forcee',
+                    ],
+                    'privileges' => [
+                        ThesePrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE,
+                    ],
+                    'assertion'  => 'Assertion\\These',
+                ],
                 [
                     'controller' => 'Application\Controller\These',
                     'action'     => [
@@ -629,6 +640,18 @@ return [
                             ],
                             'defaults'    => [
                                 'action' => 'validation-these-corrigee',
+                            ],
+                        ],
+                    ],
+                    'modifier-correction-autorisee-forcee' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'       => '/modifier-correction-autorisee-forcee/:these',
+                            'constraints' => [
+                                'these' => '\d+',
+                            ],
+                            'defaults'    => [
+                                'action' => 'modifier-correction-autorisee-forcee',
                             ],
                         ],
                     ],

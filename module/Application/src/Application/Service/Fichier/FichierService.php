@@ -3,14 +3,11 @@
 namespace Application\Service\Fichier;
 
 use Application\Command\MergeCommand;
-use Application\Command\ShellCommandRunner;
 use Application\Command\ShellScriptRunner;
 use Application\Command\TruncateAndMergeCommand;
-use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\Repository\FichierRepository;
-use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\ValiditeFichier;
 use Application\Entity\Db\VersionFichier;
@@ -19,6 +16,7 @@ use Application\Service\BaseService;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Fichier\Exception\DepotImpossibleException;
 use Application\Service\Fichier\Exception\ValidationImpossibleException;
+use Application\Service\File\FileServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\These\PageDeGarde\PageDeCouverturePdfExporter;
 use Application\Service\ValiditeFichier\ValiditeFichierServiceAwareTrait;
@@ -35,20 +33,15 @@ use UnicaenApp\Util;
 use Zend\Filter\FilterInterface;
 use Zend\Http\Response;
 use Zend\View\Renderer\PhpRenderer;
-use Zend\View\Renderer\RendererInterface;
 
 class FichierService extends BaseService
 {
+    use FileServiceAwareTrait;
     use VersionFichierServiceAwareTrait;
     use ValiditeFichierServiceAwareTrait;
     use RetraitementServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use NotifierServiceAwareTrait;
-
-    /**
-     * @var string
-     */
-    private $rootDirectoryPath;
 
     /**
      * @var PhpRenderer
@@ -61,22 +54,6 @@ class FichierService extends BaseService
     public function setRenderer(PhpRenderer $renderer)
     {
         $this->renderer = $renderer;
-    }
-
-    /**
-     * @param string $rootDirectoryPath
-     */
-    public function setRootDirectoryPath($rootDirectoryPath)
-    {
-        $this->rootDirectoryPath = $rootDirectoryPath;
-    }
-
-    /**
-     * @return string
-     */
-    public function getRootDirectoryPath()
-    {
-        return $this->rootDirectoryPath;
     }
 
     /**
@@ -153,7 +130,7 @@ class FichierService extends BaseService
      */
     private function computeDestinationDirectoryPathForFichier(Fichier $fichier)
     {
-        return $this->rootDirectoryPath . '/' . strtolower($fichier->getNature()->getCode());
+        return $this->fileService->prependUploadRootDirToRelativePath(strtolower($fichier->getNature()->getCode()));
     }
 
     /**
@@ -176,16 +153,16 @@ class FichierService extends BaseService
     private function createDestinationDirectoryPathForFichier(Fichier $fichier)
     {
         $parentDir = $this->computeDestinationDirectoryPathForFichier($fichier);
-        $ok = \Application\Util::createWritableFolder($parentDir, 0770);
-        if (!$ok) {
-            throw new RuntimeException(
-                "Le répertoire suivant n'a pas pu être créé sur le serveur : " . $parentDir);
-        }
+        $this->fileService->createWritableDirectory($parentDir);
     }
 
+    /**
+     * @param Fichier $fichier
+     * @param string  $fromPath
+     */
     private function moveUploadedFileForFichier(Fichier $fichier, $fromPath)
     {
-        // création si bseoin du dossier destination
+        // création si besoin du dossier destination
         $this->createDestinationDirectoryPathForFichier($fichier);
 
         $newPath = $this->computeDestinationFilePathForFichier($fichier);
@@ -509,149 +486,21 @@ class FichierService extends BaseService
      * @param string $inputFilePath
      * @return string Contenu binaire du fichier PNG généré
      * @throws LogicException Format de fichier incorrect
+     *
+     * @deprecated Appeler directement FileService::generateFirstPagePreview()
      */
     public function generateFirstPagePreview($inputFilePath)
     {
-        if (mime_content_type($inputFilePath) !== Fichier::MIME_TYPE_PDF) {
-            return Util::createImageWithText("Erreur: Seul le format |de fichier PDF est accepté", 200, 100);
-        }
-
-        if (! extension_loaded('imagick')) {
-            return Util::createImageWithText("Erreur: extension PHP |'imagick' non chargée", 170, 100);
-        }
-
-        $outputFilePath = sys_get_temp_dir() . '/sygal_preview_' . uniqid() . '.png';
-
-        try {
-            $im = new \Imagick();
-            $im->setResolution(300, 300);
-            $im->readImage($inputFilePath . '[0]'); // 1ere page seulement
-            $im->setImageFormat('png');
-            $im->writeImage($outputFilePath);
-            $im->clear();
-            $im->destroy();
-        } catch (\ImagickException $ie) {
-            throw new RuntimeException(
-                "Erreur rencontrée lors de la création de l'aperçu", null, $ie);
-        }
-
-        $content = file_get_contents($outputFilePath);
-
-        return $content;
+        return $this->fileService->generateFirstPagePreview($inputFilePath);
     }
 
     /**
-     * Cette fonction a pour vocation de récupérer les informations utile pour la génération de la page de couverture.
-     * Si une clef est vide cela indique un problème associé à la thèse
-     * @param These $these
-     * @return PdcData
+     * @param PdcData     $pdcData
+     * @param PhpRenderer $renderer
+     * @param string      $filepath
      */
-    public function fetchInformationsPageDeCouverture(These $these) {
-        $pdcData = new PdcData();
-        $informations = [];
-
-        if ($these === null) throw new LogicException("Une these doit être fournie pour pouvoir effectuer la récupération de ces données.");
-
-        /**  informations générales */
-        $pdcData->setTitre($these->getTitre());
-        $pdcData->setSpecialite($these->getLibelleDiscipline());
-        if ($these->getEtablissement()) $pdcData->setEtablissement($these->getEtablissement()->getLibelle());
-//        if ($these->getDoctorant()) $pdcData->setDoctorant($these->getDoctorant()->getIndividu()->getNomComplet(false, false, false, true, true));
-        if ($these->getDoctorant()) {
-            $nom = $these->getDoctorant()->getIndividu()->getNomPatronymique();
-            if ($nom === null ) $nom = $these->getDoctorant()->getIndividu()->getNomUsuel();
-            $nom = strtoupper($nom);
-            $prenom = $these->getDoctorant()->getIndividu()->getPrenom1();
-            $pdcData->setDoctorant($prenom. " ". $nom);
-        }
-        if ($these->getDateSoutenance()) $pdcData->setDate($these->getDateSoutenance()->format("d/m/Y"));
-
-        /** cotutelle */
-        $pdcData->setCotutuelle(false);
-        if($these->getLibelleEtabCotutelle() !== null && $these->getLibelleEtabCotutelle() !== "") {
-            $pdcData->setCotutuelle(true);
-            $pdcData->setCotutuelleLibelle($these->getLibelleEtabCotutelle());
-            if ($these->getLibellePaysCotutelle()) $pdcData->setCotutuellePays($these->getLibellePaysCotutelle());
-        }
-
-        /** Jury de thèses */
-        $jury = [];
-        $acteurs = $these->getActeurs()->toArray();
-        $rapporteurs =  array_filter($acteurs, function(Acteur $a) { return $a->estRapporteur(); });
-        $pdcData->setRapporteurs($rapporteurs);
-        $directeurs =  array_filter($acteurs, function(Acteur $a) { return $a->estDirecteur(); });
-        $pdcData->setDirecteurs($directeurs);
-        $codirecteurs =  array_filter($acteurs, function(Acteur $a) { return $a->estCodirecteur(); });
-        $pdcData->setCodirecteurs($codirecteurs);
-        $president =  array_filter($acteurs, function(Acteur $a) { return $a->estPresidentJury(); });
-
-        $membres = array_diff($acteurs, $rapporteurs, $directeurs, $codirecteurs, $president);
-        $pdcData->setMembres($membres);
-
-        /** associée */
-        $pdcData->setAssocie(false);
-        /** @var Acteur $directeur */
-        foreach ($directeurs as $directeur) {
-            if (! $directeur->getEtablissement()) {
-                throw new RuntimeException("Anomalie: le directeur de thèse '{$directeur}' n'a pas d'établissement.");
-            }
-            if ($directeur->getEtablissement()->estAssocie()) {
-                $pdcData->setAssocie(true);
-                $pdcData->setLogoAssocie($directeur->getEtablissement()->getCheminLogo());
-                $pdcData->setLibelleAssocie($directeur->getEtablissement()->getLibelle());
-            }
-        }
-
-        $acteursEnCouverture = array_merge($rapporteurs, $directeurs, $codirecteurs, $president, $membres);
-        usort($acteursEnCouverture, Acteur::getComparisonFunction());
-        $acteursEnCouverture = array_unique($acteursEnCouverture);
-
-        /** @var Acteur $acteur */
-        foreach ($acteursEnCouverture as $acteur) {
-            $acteurData = new MembreData();
-            $acteurData->setDenomination($acteur->getIndividu()->getNomComplet(true,false,false, true, true));
-            $acteurData->setQualite($acteur->getQualite());
-
-            if (!$acteur->estPresidentJury()) {
-                $acteurData->setRole($acteur->getRole()->getLibelle());
-            } else {
-                $acteurData->setRole(Role::LIBELLE_PRESIDENT);
-            }
-            if ($acteur->getEtablissement()) $acteurData->setEtablissement($acteur->getEtablissement()->getStructure()->getLibelle());
-            $pdcData->addActeurEnCouverture($acteurData);
-        }
-
-        /** Directeurs de thèses */
-        $nomination = [];
-        foreach ($directeurs as $directeur) {
-            $nomination[] = $directeur->getIndividu()->getNomComplet(false, false, false, true, true);
-        }
-        foreach ($codirecteurs as $directeur) {
-            $nomination[] = $directeur->getIndividu()->getNomComplet(false, false, false, true, true);
-        }
-        $pdcData->setListing(implode(" et ", $nomination).", ");
-        if ($these->getUniteRecherche()) $pdcData->setUniteRecherche($these->getUniteRecherche()->getStructure()->getLibelle());
-
-        $comue = $this->getEtablissementService()->getRepository()->find(1);
-        $pdcData->setLogoCOMUE( ($comue)?$comue->getCheminLogo():null);
-        $pdcData->setLogoEtablissement($these->getEtablissement()?$these->getEtablissement()->getCheminLogo():null);
-        $pdcData->setLogoEcoleDoctorale($these->getEcoleDoctorale()?$these->getEcoleDoctorale()->getCheminLogo():null);
-        $pdcData->setLogoUniteRecherche($these->getUniteRecherche()?$these->getUniteRecherche()->getCheminLogo():null);
-
-
-        return $pdcData;
-    }
-
-    /**
-     * @param These             $these
-     * @param RendererInterface $renderer
-     * @param string            $filepath
-     */
-    public function generatePageDeCouverture(These $these, RendererInterface $renderer, $filepath = null)
+    public function generatePageDeCouverture(PdcData $pdcData, PhpRenderer $renderer, $filepath = null)
     {
-
-        $pdcData = $this->fetchInformationsPageDeCouverture($these);
-
         $exporter = new PageDeCouverturePdfExporter($renderer, 'A4');
         $exporter->setVars([
             'informations' => $pdcData,
@@ -713,17 +562,18 @@ class FichierService extends BaseService
     }
 
     /**
-     * @param These  $these
-     * @param string $versionFichier
-     * @param bool   $removeFirstPage
-     * @param int    $timeout
+     * @param These   $these
+     * @param PdcData $pdcData
+     * @param string  $versionFichier
+     * @param bool    $removeFirstPage
+     * @param int     $timeout
      * @return string
      */
-    public function fusionneFichierThese(These $these, $versionFichier, $removeFirstPage = false, $timeout = 0)
+    public function fusionnerPdcEtThese(These $these, PdcData $pdcData, $versionFichier, $removeFirstPage = false, $timeout = 0)
     {
         $outputFilePath = $this->generateOutputFilePathForMerge($these);
 
-        $command = $this->instantiateCommandForMerge($these, $versionFichier, $removeFirstPage, $outputFilePath);
+        $command = $this->createCommandForPdcMerge($these, $pdcData, $versionFichier, $removeFirstPage, $outputFilePath);
 
         if ($timeout) {
             $command->setOption('timeout', $timeout);
@@ -768,19 +618,20 @@ class FichierService extends BaseService
     }
 
     /**
-     * @param These  $these
-     * @param string $versionFichier
-     * @param bool   $removeFirstPage
-     * @param string $outputFilePath
+     * @param These   $these
+     * @param PdcData $pdcData
+     * @param string  $versionFichier
+     * @param bool    $removeFirstPage
+     * @param string  $outputFilePath
      * @return MergeCommand|TruncateAndMergeCommand
      */
-    private function instantiateCommandForMerge(These $these, $versionFichier, $removeFirstPage, $outputFilePath)
+    private function createCommandForPdcMerge(These $these, PdcData $pdcData, $versionFichier, $removeFirstPage, $outputFilePath)
     {
-        // GENERATION DE LA COUVERTURE
+        // generation de la couverture
         $filename = "sygal_couverture_" . $these->getId() . "_" . uniqid() . ".pdf";
-        $this->generatePageDeCouverture($these, $this->renderer, $filename);
+        $this->generatePageDeCouverture($pdcData, $this->renderer, $filename);
 
-        // RECUPERATION DE LA BONNE VERSION DU MANUSCRIPT
+        // recuperation de la bonne version du manuscript
         $manuscritFichier = current($this->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF, $versionFichier));
         $manuscritChemin = $this->computeDestinationFilePathForFichier($manuscritFichier);
 
@@ -789,7 +640,7 @@ class FichierService extends BaseService
             'manuscrit' => $manuscritChemin
         ];
 
-        //RETRAIT DE LA PREMIER PAGE SI NECESSAIRE
+        // retrait de la premier page si necessaire
         if ($removeFirstPage) {
             $command = new TruncateAndMergeCommand();
         } else {

@@ -6,7 +6,7 @@
 use Application\Entity\Db\These;
 ?>
 
-        <h2><?php echo count($theses) > 1 ? "Vos thèses en cours" : "Votre thèse en cours" ?></h2>
+        <h2><?php echo count($theses) > 1 ? "Vos thèses" : "Votre thèse" ?></h2>
         <?php foreach ($theses as $these): ?>
             <?php echo $this->partial('application/these/partial/panel', ['these' => $these]) ?>
         <?php endforeach ?>

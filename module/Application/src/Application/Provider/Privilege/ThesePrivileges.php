@@ -31,6 +31,7 @@ class ThesePrivileges extends Privileges
      * Fiche ("Thèse")
      */
     const THESE_CONSULTATION_FICHE                  = 'these-consultation-fiche';
+    const THESE_SAISIE_CORREC_AUTORISEE_FORCEE      = 'these-saisie-correc-autorisee-forcee';
 
     /**
      * Dépôt

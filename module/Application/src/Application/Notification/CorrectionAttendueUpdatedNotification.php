@@ -24,7 +24,7 @@ class CorrectionAttendueUpdatedNotification extends Notification
         }
 
         $directeursTheseEnCopie = false;
-        if ($this->these->getCorrectionAutoriseeEstMajeure() && !$this->estPremiereNotif) {
+        if ($this->these->getCorrectionAutoriseeEstObligatoire() && !$this->estPremiereNotif) {
             $directeursTheseEnCopie = true;
         }
 

@@ -35,7 +35,7 @@ class ValidationRdvBuNotification extends Notification
                     $cc = $emailBDD;
                 } else {
                     $this->notifierDoctorantImpossibleMessage =
-                        "NB: il n'a pas été possible d'envoyer ce mail à $doctorant car ce doctorant n'a aucune adresse email.";
+                        "NB: il n'a pas été possible d'envoyer ce mail à $doctorant car ce doctorant n'a aucune adresse électronique.";
                     $to = $emailBDD;
                     $cc = [];
                 }

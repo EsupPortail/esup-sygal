@@ -13,18 +13,21 @@ use Application\Entity\Db\VersionFichier;
 use Application\Entity\Db\VSitu\DepotVersionCorrigeeValidationDirecteur;
 use Application\Service\Fichier\FichierServiceAwareInterface;
 use Application\Service\Fichier\FichierServiceAwareTrait;
+use Application\Service\These\TheseServiceAwareInterface;
+use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareInterface;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Zend\Log\LoggerAwareTrait;
 
 class TheseEntityAssertion extends GeneratedTheseEntityAssertion
-    implements EntityAssertionInterface, ValidationServiceAwareInterface, FichierServiceAwareInterface
+    implements EntityAssertionInterface, ValidationServiceAwareInterface, FichierServiceAwareInterface, TheseServiceAwareInterface
 {
     use UserContextServiceAwareTrait;
     use ValidationServiceAwareTrait;
     use ThrowsFailedAssertionExceptionTrait;
     use FichierServiceAwareTrait;
+    use TheseServiceAwareTrait;
     use LoggerAwareTrait;
 
     /**
@@ -174,6 +177,14 @@ class TheseEntityAssertion extends GeneratedTheseEntityAssertion
         return $this->these->getDoctorant()->getId() === $this->getIdentityDoctorant()->getId();
     }
 
+    /**
+     * @return bool
+     */
+    protected function isTheseEnCours()
+    {
+        return $this->these->getEtatThese() === These::ETAT_EN_COURS;
+    }
+
     protected function isTheseSoutenue()
     {
         return $this->these->estSoutenue();
@@ -251,9 +262,8 @@ class TheseEntityAssertion extends GeneratedTheseEntityAssertion
      */
     protected function isPageDeCouvertureGenerable()
     {
-        $informations = $this->fichierService->fetchInformationsPageDeCouverture($this->these);
+        $informations = $this->theseService->fetchInformationsPageDeCouverture($this->these);
 
-        $problemes = [];
         foreach ($informations as $clef => $information) {
             if ($information == "") {
                 return false;

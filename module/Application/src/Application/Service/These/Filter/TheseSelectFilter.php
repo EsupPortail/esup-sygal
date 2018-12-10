@@ -127,27 +127,27 @@ class TheseSelectFilter extends TheseFilter
 
             case self::NAME_domaineScientifique:
                   $qb
-                      ->leftJoin('t.uniteRecherche', 'uniteRecherche')
-                      ->leftJoin('uniteRecherche.domaines', 'domaine')
+                      ->leftJoin('t.uniteRecherche', 'ur')
+                      ->leftJoin('ur.domaines', 'dom')
                   ;
                 if ($filterValue === 'NULL') {
                     $qb
-                        ->andWhere('domaine IS NULL');
+                        ->andWhere('dom.id IS NULL');
                 } else {
                     $qb
-                        ->andWhere('domaine.id = :domaine')
+                        ->andWhere('dom.id = :domaine')
                         ->setParameter('domaine', $filterValue);
                 }
                 break;
 
             case self::NAME_financement:
                 $qb
-                    ->join('t.financements', 'financements')
-                    ->join('financements.origineFinancement', 'origine')
+                    ->join('t.financements', 'fin')
+                    ->join('fin.origineFinancement', 'orig')
                 ;
                 if ($filterValue === 'NULL') {
                     $qb
-                        ->andWhere('origine IS NULL');
+                        ->andWhere('orig.id IS NULL');
                 } else {
                     $qb
                         ->andWhere('origine.id = :origine')

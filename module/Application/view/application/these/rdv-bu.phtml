@@ -38,15 +38,19 @@ $rdvBu = $these->getRdvBu();
 
 <div class="panel panel-info box">
     <div class="panel-heading">
-        <h2 class="first">Ajout de la page de couverture</h2>
+        <h2 class="first">Téléchargement de la thèse avec page de couverture</h2>
     </div>
     <div class="panel-body">
         <p>
-            Avant d'aller au rendez-vous BU, le corps du mémoire et la page de couverture générée automatiquement doivent être fusionnés.
-            Une fois la fusion réalisée, assurez vous que toutes les informations sur la page de couverture sont présentes et que la fusion n'a pas endommagé le mémoire.
+            Avant d'aller au rendez-vous BU, vous devez télécharger la thèse complète, c'est à dire le corps du mémoire auquel est ajoutée la page de couverture générée automatiquement par l'application.
+            Une fois la thèse complète téléchargée, assurez-vous que toutes les informations sur la page de couverture sont présentes et que la fusion n'a pas endommagé le mémoire.
         </p>
-
-
+        <div class="checkbox">
+            <label for="removal">
+                <input type="checkbox" id="removal"/>
+                <span class="checkbox-label">La 1ère page du corps du mémoire est une page de couverture fournie par le doctorant et je veux retirer cette 1ère page.</span>
+            </label>
+        </div>
         <div class="btn-group">
             <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Version à récupérer <span class="caret"></span>
@@ -63,9 +67,6 @@ $rdvBu = $these->getRdvBu();
                     <li class="removal"><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 0, 'version' => 'VA', 'removal' => true ], [], true); ?>">Version archivable</a></li>
                 <?php endif; ?>
             </ul>
-        </div>
-        <div>
-            <input type="checkbox" id="removal" /> Retrait de la page de couverture fournie par le doctorant.
         </div>
     </div>
 </div>

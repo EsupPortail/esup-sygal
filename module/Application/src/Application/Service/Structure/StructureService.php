@@ -4,29 +4,30 @@ namespace Application\Service\Structure;
 
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
-use Application\Entity\Db\SourceInterface;
+use Application\Entity\Db\Source;
 use Application\Entity\Db\Structure;
 use Application\Entity\Db\StructureConcreteInterface;
+use Application\Entity\Db\StructureInterface;
 use Application\Entity\Db\StructureSubstit;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
-use Application\Entity\Db\Utilisateur;
 use Application\Filter\EtablissementPrefixFilter;
 use Application\Filter\EtablissementPrefixFilterAwareTrait;
 use Application\Service\BaseService;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
-use Application\Service\Source\SourceService;
+use Application\Service\File\FileServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
+use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 use Import\Service\Traits\SynchroServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
+use UnicaenApp\Util;
 use Webmozart\Assert\Assert;
-use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 
 /**
  * @author Unicaen
@@ -39,6 +40,7 @@ class StructureService extends BaseService
     use EcoleDoctoraleServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use UniteRechercheServiceAwareTrait;
+    use FileServiceAwareTrait;
 
     /**
      * @return EntityRepository
@@ -159,7 +161,7 @@ class StructureService extends BaseService
 
         Assert::notNull($structureCible->getId(), "La structure de substitution doit exister en bdd");
         Assert::eq(
-            $code = SourceInterface::CODE_SYGAL,
+            $code = Source::CODE_SYGAL,
             $structureCible->getSource()->getCode(),
             "La source de la structure de substitution doit être $code");
 
@@ -232,7 +234,7 @@ class StructureService extends BaseService
     {
         Assert::notNull($structureCible->getId(), "La structure de substitution doit exister en bdd");
         Assert::eq(
-            $code = SourceInterface::CODE_SYGAL,
+            $code = Source::CODE_SYGAL,
             $structureCible->getSource()->getCode(),
             "La source de la structure de substitution doit être $code");
 
@@ -741,5 +743,90 @@ class StructureService extends BaseService
 
         usort($result, function($a, $b) { return strcmp($a[3], $b[3]);});
         return $result;
+    }
+
+
+    /**
+     * Supprime le logo d'une structure.
+     *
+     * @param StructureInterface $structure
+     * @return bool
+     */
+    public function deleteLogoStructure(StructureInterface $structure)
+    {
+        $structure->setCheminLogo(null);
+        try {
+            $this->entityManager->flush($structure);
+            if ($structure instanceof StructureConcreteInterface) {
+                $this->entityManager->flush($structure->getStructure());
+            }
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur lors de l'enregistrement de la structure.", null, $e);
+        }
+
+        $logoFilepath = $this->fileService->computeLogoFilePathForStructure($structure);
+        if ($fileExists = file_exists($logoFilepath)) {
+            $ok = unlink($logoFilepath);
+            if (! $ok) {
+                throw new RuntimeException("Impossible de supprimer physiquement le fichier logo sur le disque.");
+            }
+        }
+
+        return $fileExists;
+    }
+
+    /**
+     * Met à jour le logo d'une structure.
+     *
+     * @param StructureInterface $structure
+     * @param string             $uploadedFilePath
+     */
+    public function updateLogoStructure(StructureInterface $structure, string $uploadedFilePath)
+    {
+        if ($uploadedFilePath === null || $uploadedFilePath === '') {
+            throw new RuntimeException("Chemin du fichier logo uploadé invalide.");
+        }
+
+        // mise à jour en bdd du chemin vers fichier logo.
+        $this->deleteLogoStructure($structure);
+        $logoFilename = $this->fileService->computeLogoFileNameForStructure($structure);
+        $structure->setCheminLogo($logoFilename);
+        try {
+            $this->entityManager->flush($structure);
+            if ($structure instanceof StructureConcreteInterface) {
+                $this->entityManager->flush($structure->getStructure());
+            }
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur lors de l'enregistrement de la structure.", null, $e);
+        }
+
+        // création du fichier logo sur le disque.
+        $logoFilepath = $this->fileService->computeLogoFilePathForStructure($structure);
+        $logoDir = $this->fileService->computeLogoDirectoryPathForStructure($structure);
+        $this->fileService->createWritableDirectory($logoDir);
+        $ok = rename($uploadedFilePath, $logoFilepath);
+        if (! $ok) {
+            throw new RuntimeException("Impossible de renommer le fichier logo sur le disque.");
+        }
+    }
+
+    /**
+     * Retourne au format chaîne de caractères le contenu du logo de la structure spécifiée.
+     *
+     * @param StructureInterface $structure
+     * @return string|null
+     */
+    public function getLogoStructureContent(StructureInterface $structure)
+    {
+        if ($structure->getCheminLogo() === null) {
+            return Util::createImageWithText("Aucun logo|renseigné", 200, 200);
+        }
+
+        $logoFilepath = $this->fileService->computeLogoFilePathForStructure($structure);
+        if (! file_exists($logoFilepath)) {
+            return Util::createImageWithText("Anomalie: Fichier|absent sur le disque", 200, 200);
+        }
+
+        return file_get_contents($logoFilepath) ?: null;
     }
 }

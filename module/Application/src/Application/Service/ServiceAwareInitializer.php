@@ -7,6 +7,7 @@ use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Fichier\FichierService;
 use Application\Service\Individu\IndividuService;
 use Application\Service\Role\RoleService;
+use Application\Service\These\TheseService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\Validation\ValidationService;
 use Application\Service\ValiditeFichier\ValiditeFichierService;
@@ -37,7 +38,7 @@ class ServiceAwareInitializer implements InitializerInterface
             'RoleService'            => RoleService::class,
             //'ParametreService'       => ParametreService::class,
             //'VariableService'        => VariableService::class,
-            //'TheseService'           => TheseService::class,
+            'TheseService'           => TheseService::class,
             //'DoctorantService'       => DoctorantService::class,
             'FichierService'         => FichierService::class,
             'VersionFichierService'  => VersionFichierService::class,

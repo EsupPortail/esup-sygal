@@ -10,6 +10,7 @@ use Assert\AssertionFailedException;
 use DateTime;
 use Import\Service\Traits\CallServiceAwareTrait;
 use Import\Service\Traits\DbServiceAwareTrait;
+use stdClass;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\Log\LoggerAwareTrait;
@@ -36,16 +37,6 @@ class FetcherService
      * @var Etablissement
      */
     protected $etablissement;
-
-    /**
-     * Constructor
-     *
-     * @param array $config
-     */
-    public function __construct(array $config)
-    {
-        $this->config = $config;
-    }
 
     /**
      * Set logger object
@@ -86,15 +77,16 @@ class FetcherService
     }
 
     /**
-     * @return \stdClass
+     * @return stdClass
      */
     public function version()
     {
         $config = $this->getConfigForEtablissement();
-
         $config['timeout'] = 10;
 
-        return $this->callService->setConfig($config)->getVersion();
+        $this->callService->setConfig($config);
+
+        return $this->callService->getVersion();
     }
 
     /**
@@ -110,7 +102,11 @@ class FetcherService
         $this->logger->info(sprintf("Import: service %s[%s]", $serviceName, $sourceCode));
 
         $debut = microtime(true);
-        $startDate = new DateTime();
+        try {
+            $startDate = new DateTime();
+        } catch (\Exception $e) {
+            throw new RuntimeException("On touche le fond, là!", null, $e);
+        }
 
         $this->logger->info(sprintf("Interrogations du WS '%s'...", $serviceName));
 
@@ -124,8 +120,8 @@ class FetcherService
         $_deb = microtime(true);
         $this->dbService->setServiceName($serviceName);
         $this->dbService->setEtablissement($this->etablissement);
-        $this->dbService->deleteExistingData(['id' => $sourceCode]);
-        $this->dbService->saveEntity($jsonEntity, $sourceCode);
+        $this->dbService->clear(['id' => $sourceCode]);
+        $this->dbService->save([$jsonEntity]);
         $this->dbService->commit();
         $_fin = microtime(true);
         $this->logger->info(sprintf("Enregistrement en base de données en %.2f secondes.", $_fin - $_deb));
@@ -144,21 +140,26 @@ class FetcherService
     {
         $this->logger->info(sprintf("Import: service '%s'", $serviceName));
 
-        $startDate = new DateTime();
+        try {
+            $startDate = new DateTime();
+        } catch (\Exception $e) {
+            throw new RuntimeException("On touche le fond, là!", null, $e);
+        }
         $debut = microtime(true);
 
         $this->logger->info(sprintf("Interrogations du WS '%s'...", $serviceName));
 
         $this->callService->setConfig($this->getConfigForEtablissement());
-        $filtersForWebService = $this->prepareFiltersForWebServiceRequest($filters);
+        $apiFilters = $this->prepareFiltersForAPIRequest($filters);
         $jsonEntities = [];
         $page = 1;
         do {
-            $params = array_merge($filtersForWebService, ['page' => $page]);
+            $params = array_merge($apiFilters, ['page' => $page]);
             $uri = $serviceName;
             if (count($params) > 0) {
                 $uri .= '?' . http_build_query($params);
             }
+
             $_deb = microtime(true);
             $json = $this->callService->get($uri);
             $_fin = microtime(true);
@@ -175,8 +176,8 @@ class FetcherService
         $_deb = microtime(true);
         $this->dbService->setServiceName($serviceName);
         $this->dbService->setEtablissement($this->etablissement);
-        $this->dbService->deleteExistingData($filters);
-        $this->dbService->saveEntities($jsonEntities);
+        $this->dbService->clear($filters);
+        $this->dbService->save($jsonEntities);
         $this->dbService->commit();
         $_fin = microtime(true);
         $this->logger->info(sprintf("Enregistrement des %d entités en %.2f secondes.", count($jsonEntities), $_fin - $_deb));
@@ -212,16 +213,12 @@ class FetcherService
      */
     private function getConfigForEtablissement()
     {
-        if ($this->etablissement === null) {
-            throw new LogicException("Le code établissement courant est null.");
-        }
-
-        $codeEtablissement = $this->etablissement->getStructure()->getCode();
+        $codeEtablissement = $this->etablissement->getCode();
 
         try {
             Assertion::keyIsset($this->config, $codeEtablissement);
         } catch (AssertionFailedException $e) {
-            throw new LogicException("Le code établissement '{$codeEtablissement}' est introuvable dans la config.", null, $e);
+            throw new RuntimeException("Aucune clé de config ne correspond au code établissement '{$codeEtablissement}'.", null, $e);
         }
 
         return $this->config[$codeEtablissement];
@@ -231,7 +228,7 @@ class FetcherService
      * @param array $filters
      * @return array
      */
-    private function prepareFiltersForWebServiceRequest(array $filters)
+    private function prepareFiltersForAPIRequest(array $filters)
     {
         if (empty($filters)) {
             return $filters;

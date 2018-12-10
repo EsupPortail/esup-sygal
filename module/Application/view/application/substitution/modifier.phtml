@@ -2,6 +2,7 @@
 
 namespace Application;
 
+use Application\Controller\SubstitutionController;
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Structure;
 use Application\Entity\Db\StructureConcreteInterface;
@@ -16,6 +17,10 @@ use Application\View\Renderer\PhpRenderer;
  * @var StructureConcreteInterface[] $structuresConcretesSubstituees
  * @var StructureConcreteInterface[] $structuresConcretes
  * @var TypeStructure $type
+ * @var string $structureCibleLogoContent
+ * @var string $structuresConcretesSubstitueesLogosContents
+ *
+ * @see SubstitutionController::modifierAction()
   */
 
 $canEdit = false;
@@ -53,14 +58,14 @@ echo $messenger->addMessagesFromFlashMessenger();
 <div>
     <div id="sources" class="col-md-5">
         <?php
-            foreach($structuresConcretesSubstituees as $source) {
-                echo $this->structureSubstitHelper()->structureSource($source);
+            foreach($structuresConcretesSubstituees as $i => $source) {
+                echo $this->structureSubstitHelper()->structureSource($source, $structuresConcretesSubstitueesLogosContents[$i]);
             }
         ?>
     </div>
     <div id="cible" class="col-md-5">
         <?php
-            echo $this->structureSubstitHelper()->structureCible($cible);
+            echo $this->structureSubstitHelper()->structureCible($cible, $structureCibleLogoContent);
         ?>
     </div>
 </div>

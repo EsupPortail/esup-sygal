@@ -6,7 +6,7 @@ use Application\Entity\Db\DomaineScientifique;
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\OrigineFinancement;
-use Application\Entity\Db\SourceInterface;
+use Application\Entity\Db\Source;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
@@ -536,7 +536,7 @@ class TheseRechercheService
          * - ne pas être des établissements provenant de substitutions
          * - ne pas être la COMUE ... suite à l'interrogation obtenue en réunion
          */
-        $etablissements = $this->getEtablissementService()->getRepository()->findAllBySource(SourceInterface::CODE_SYGAL);
+        $etablissements = $this->getEtablissementService()->getRepository()->findAllBySource(Source::CODE_SYGAL);
         $etablissements = array_filter($etablissements, function (Etablissement $etablissement) { return count($etablissement->getStructure()->getStructuresSubstituees())==0; });
         $etablissements = array_filter($etablissements, function (Etablissement $etablissement) { return $etablissement->getSigle() != "NU";});
 

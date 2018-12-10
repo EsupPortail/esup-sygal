@@ -92,19 +92,18 @@ EOS
             }
 
             $qb = $this->theseService->getRepository()->createQueryBuilder('t')
-                ->andWhereDoctorantIs($doctorant)
-                ->andWhereEtatIs(These::ETAT_EN_COURS);
-            $thesesEnCours = $qb->getQuery()->getResult();
+                ->andWhereDoctorantIs($doctorant);
+            $theses = $qb->getQuery()->getResult();
 
             /**
-             * Si le doctorant connecté n'a aucune thèse en cours, on le déconnecte!
+             * Si aucune thèse n'a été trouvée pour le doctorant connecté, on le déconnecte!
              */
-            if (count($thesesEnCours) === 0) {
+            if (count($theses) === 0) {
                 /** @var AuthenticationServiceInterface $authenticationService */
                 $authenticationService = $this->getServiceLocator()->get('Zend\\Authentication\\AuthenticationService');
                 $authenticationService->clearIdentity();
                 $this->flashMessenger()->addErrorMessage(
-                    "Aucune thèse en cours n'a été trouvée vous concernant, vous ne pouvez pas utiliser cette application.");
+                    "Aucune thèse n'a été trouvée vous concernant, vous ne pouvez pas utiliser cette application.");
                 return $this->redirect()->toRoute('home');
             }
 
@@ -116,7 +115,7 @@ EOS
 //            return $this->redirect()->toRoute('these/identite', ['these' => current($thesesEnCours)->getId()]);
             $vm->setVariables([
                 'doctorant' => $doctorant,
-                'theses' => $thesesEnCours,
+                'theses' => $theses,
             ]);
             $vm->setTemplate('application/index/partial/doctorant');
         }

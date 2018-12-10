@@ -6,6 +6,7 @@ use Application\Controller\EcoleDoctoraleController;
 use Application\Form\EcoleDoctoraleForm;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\Etablissement\EtablissementServiceLocateTrait;
+use Application\Service\File\FileService;
 use Application\Service\Individu\IndividuService;
 use Application\Service\Role\RoleService;
 use Application\Service\Structure\StructureService;
@@ -39,6 +40,11 @@ class EcoleDoctoraleControllerFactory
         $structureService = $sl->get(StructureService::class);
         $roleService = $sl->get('RoleService');
 
+        /**
+         * @var FileService $fileService
+         */
+        $fileService = $sl->get(FileService::class);
+
         $controller = new EcoleDoctoraleController();
         $controller->setEcoleDoctoraleService($ecoleDoctoralService);
         $controller->setIndividuService($individuService);
@@ -46,6 +52,7 @@ class EcoleDoctoraleControllerFactory
         $controller->setEtablissementService($this->locateEtablissementService($sl));
         $controller->setEcoleDoctoraleForm($form);
         $controller->setStructureService($structureService);
+        $controller->setFileService($fileService);
 
         return $controller;
     }

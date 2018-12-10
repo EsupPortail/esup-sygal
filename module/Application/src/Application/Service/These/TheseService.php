@@ -2,30 +2,32 @@
 
 namespace Application\Service\These;
 
+use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Attestation;
 use Application\Entity\Db\Diffusion;
-use Application\Entity\Db\Fichier;
 use Application\Entity\Db\MetadonneeThese;
-use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\RdvBu;
 use Application\Entity\Db\Repository\TheseRepository;
+use Application\Entity\Db\Role;
+use Application\Entity\Db\Structure;
 use Application\Entity\Db\These;
-use Application\Entity\Db\TypeValidation;
-use Application\Entity\Db\Validation;
 use Application\Entity\Db\VersionFichier;
 use Application\Notification\ValidationRdvBuNotification;
 use Application\Service\BaseService;
+use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Fichier\FichierServiceAwareTrait;
+use Application\Service\Fichier\MembreData;
+use Application\Service\Fichier\PdcData;
+use Application\Service\File\FileServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
-use DateInterval;
+use Assert\Assertion;
 use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Traits\MessageAwareInterface;
 use UnicaenAuth\Entity\Db\UserInterface;
-use Zend\Validator\Date;
 
 class TheseService extends BaseService
 {
@@ -34,6 +36,8 @@ class TheseService extends BaseService
     use FichierServiceAwareTrait;
     use VariableServiceAwareTrait;
     use UserContextServiceAwareTrait;
+    use EtablissementServiceAwareTrait;
+    use FileServiceAwareTrait;
 
     /**
      * @return TheseRepository
@@ -46,6 +50,30 @@ class TheseService extends BaseService
         return $repo;
     }
 
+    /**
+     * Met à jour le témoin de correction autorisée forcée.
+     *
+     * @param These  $these
+     * @param string|null $forcage
+     */
+    public function updateCorrectionAutoriseeForcee(These $these, $forcage = null)
+    {
+        if ($forcage !== null) {
+            Assertion::inArray($forcage, [
+                These::CORRECTION_AUTORISEE_FORCAGE_AUCUNE,
+                These::CORRECTION_AUTORISEE_FORCAGE_FACULTATIVE,
+                These::CORRECTION_AUTORISEE_FORCAGE_OBLIGATOIRE,
+            ]);
+        }
+
+        $these->setCorrectionAutoriseeForcee($forcage);
+
+        try {
+            $this->entityManager->flush($these);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement", null, $e);
+        }
+    }
 
     /**
      * @param These           $these
@@ -234,224 +262,115 @@ class TheseService extends BaseService
         }
     }
 
-    public function getTheseEnCoursPostSoutenance()
-    {
-        $qb = $this->getEntityManager()->getRepository(These::class)->createQueryBuilder("these")
-            ->addSelect("doctorant")
-            ->addSelect("individu")
-            ->leftJoin("these.doctorant", "doctorant")
-            ->leftJoin("doctorant.individu", "individu")
-            ->addSelect("etablissement")
-            ->addSelect("ecoleDoctorale")
-            ->addSelect("uniteRecherche")
-            ->addSelect("structure_etab")
-            ->addSelect("structure_ed")
-            ->addSelect("structure_ur")
-            ->leftJoin("these.etablissement", "etablissement")
-            ->leftJoin("etablissement.structure", "structure_etab")
-            ->leftJoin("these.ecoleDoctorale", "ecoleDoctorale")
-            ->leftJoin("ecoleDoctorale.structure", "structure_ed")
-            ->leftJoin("these.uniteRecherche", "uniteRecherche")
-            ->leftJoin("uniteRecherche.structure", "structure_ur")
-            ->andWhere("these.etatThese = :encours")
-            ->andWhere("these.dateSoutenance < :today")
-            ->setParameter("encours", These::ETAT_EN_COURS)
-            ->setParameter("today", new \DateTime())
-            ;
-        $result = $qb->getQuery()->getResult();
-        return $result;
-    }
-
-    public function getEffectifs($etablissement = null) {
-
-        $date = new \DateTime();
-        $annee= $date->format("Y");
-
-        $qb_enCours = $this->getEntityManager()->getRepository(These::class)->createQueryBuilder("these")
-            ->andWhere("these.etatThese = :encours")
-            ->setParameter("encours", These::ETAT_EN_COURS)
-            ;
-        if ($etablissement) $qb_enCours = $qb_enCours->andWhere("these.etablissement = :etablissement")->setParameter("etablissement", $etablissement);
-        $result_enCours = $qb_enCours->getQuery()->getResult();
-
-        $qb_inscriptions = $this->getEntityManager()->getRepository(These::class)->createQueryBuilder("these")
-            ->andWhere("these.datePremiereInscription >= :debut")
-            ->andWhere("these.datePremiereInscription <= :fin")
-            ->setParameter("debut", \DateTime::createFromFormat('d/m/Y', "01/01/".$annee))
-            ->setParameter("fin", \DateTime::createFromFormat('d/m/Y', "31/12/".$annee))
-        ;
-        if ($etablissement) $qb_inscriptions = $qb_inscriptions->andWhere("these.etablissement = :etablissement")->setParameter("etablissement", $etablissement);
-        $result_inscriptions = $qb_inscriptions->getQuery()->getResult();
-
-        $qb_soutenues = $this->getEntityManager()->getRepository(These::class)->createQueryBuilder("these")
-            ->andWhere("these.dateSoutenance >= :debut")
-            ->andWhere("these.dateSoutenance <= :fin")
-            ->setParameter("debut", \DateTime::createFromFormat('d/m/Y', '01/01/'.$annee))
-            ->setParameter("fin", \DateTime::createFromFormat('d/m/Y', "31/12/".$annee))
-        ;
-        if ($etablissement) $qb_soutenues = $qb_soutenues->andWhere("these.etablissement = :etablissement")->setParameter("etablissement", $etablissement);
-        $result_soutenues = $qb_soutenues->getQuery()->getResult();
-
-        return [count($result_enCours), count($result_inscriptions), count($result_soutenues)];
-    }
-
-    public function getThesesAnciennes($age)
-    {
-        $date = new \DateTime();
-        $mois = $date->format("m") - $age;
-        $annee = $date->format("Y") - $age;
-        $dateLimite = \DateTime::createFromFormat('d/m/Y', "01/".$mois."/".$annee);
-
-        $qb = $this->getEntityManager()->getRepository(These::class)->createQueryBuilder("these")
-            ->addSelect("doctorant")
-            ->addSelect("individu")
-            ->leftJoin("these.doctorant", "doctorant")
-            ->leftJoin("doctorant.individu", "individu")
-            ->addSelect("etablissement")
-            ->addSelect("ecoleDoctorale")
-            ->addSelect("uniteRecherche")
-            ->addSelect("structure_etab")
-            ->addSelect("structure_ed")
-            ->addSelect("structure_ur")
-            ->leftJoin("these.etablissement", "etablissement")
-            ->leftJoin("etablissement.structure", "structure_etab")
-            ->leftJoin("these.ecoleDoctorale", "ecoleDoctorale")
-            ->leftJoin("ecoleDoctorale.structure", "structure_ed")
-            ->leftJoin("these.uniteRecherche", "uniteRecherche")
-            ->leftJoin("uniteRecherche.structure", "structure_ur")
-            ->andWhere("these.etatThese = :encours")
-            ->andWhere("these.datePremiereInscription <= :date")
-            ->setParameter("encours", These::ETAT_EN_COURS)
-            ->setParameter("date", $dateLimite)
-            ->orderBy("these.datePremiereInscription")
-        ;
-        $result = $qb->getQuery()->getResult();
-
-        return $result;
-    }
-
-    public function getTheseASoutenir()
-    {
-        $aujourdhui = new \DateTime();
-        $anneeCourante = ((int) (new \DateTime())->format("Y"));
-        $anneeProchaine = $anneeCourante + 1;
-        $dateMin = \DateTime::createFromFormat("d/m/Y", "01/01/".$anneeCourante);
-        $dateMax = \DateTime::createFromFormat("d/m/Y", "01/01/".$anneeProchaine);
-        $qb = $this->getEntityManager()->getRepository(These::class)->createQueryBuilder("these")
-                ->addSelect("doctorant")
-                ->addSelect("individu")
-                ->leftJoin("these.doctorant", "doctorant")
-                ->leftJoin("doctorant.individu", "individu")
-                ->addSelect("etablissement")
-                ->addSelect("ecoleDoctorale")
-                ->addSelect("uniteRecherche")
-                ->addSelect("structure_etab")
-                ->addSelect("structure_ed")
-                ->addSelect("structure_ur")
-                ->leftJoin("these.etablissement", "etablissement")
-                ->leftJoin("etablissement.structure", "structure_etab")
-                ->leftJoin("these.ecoleDoctorale", "ecoleDoctorale")
-                ->leftJoin("ecoleDoctorale.structure", "structure_ed")
-                ->leftJoin("these.uniteRecherche", "uniteRecherche")
-                ->leftJoin("uniteRecherche.structure", "structure_ur")
-            ->andWhere("these.dateSoutenance IS NOT NULL")
-            ->andWhere("these.dateSoutenance < :dateN")
-            ->andWhere("these.dateSoutenance >= :dateC")
-            ->andWhere("these.etatThese = :encours")
-            ->setParameter("dateN", $dateMax)
-            ->setParameter("dateC", $aujourdhui)
-            ->setParameter("encours",These::ETAT_EN_COURS)
-            ->orderBy("these.dateSoutenance", "ASC");
-            ;
-
-        $result = $qb->getQuery()->getResult();
-        return $result;
-    }
-
     /**
-     * @param $nbMois
-     * @return array
-     * @throws \Exception
+     * Cette fonction a pour vocation de récupérer les informations utile pour la génération de la page de couverture.
+     * Si une clef est vide cela indique un problème associé à la thèse
+     *
+     * @param These $these
+     * @return PdcData
      */
-    public function getTheseSansCouverture($nbMois)
+    public function fetchInformationsPageDeCouverture(These $these)
     {
-        $dateCourante = new \DateTime();
-        $dateLimite = (new \DateTime())->add(new DateInterval("P".$nbMois."M"));
+        $pdcData = new PdcData();
 
-        $qb = $this->getEntityManager()->getRepository(These::class)->createQueryBuilder("these")
-            ->addSelect("doctorant")
-            ->addSelect("individu")
-            ->leftJoin("these.doctorant", "doctorant")
-            ->leftJoin("doctorant.individu", "individu")
-            ->addSelect("etablissement")
-            ->addSelect("ecoleDoctorale")
-            ->addSelect("uniteRecherche")
-            ->addSelect("structure_etab")
-            ->addSelect("structure_ed")
-            ->addSelect("structure_ur")
-            ->leftJoin("these.etablissement", "etablissement")
-            ->leftJoin("etablissement.structure", "structure_etab")
-            ->leftJoin("these.ecoleDoctorale", "ecoleDoctorale")
-            ->leftJoin("ecoleDoctorale.structure", "structure_ed")
-            ->leftJoin("these.uniteRecherche", "uniteRecherche")
-            ->leftJoin("uniteRecherche.structure", "structure_ur")
-            ->andWhere("these.etatThese = :encours")
-            ->andWhere("these.dateSoutenance IS NOT NULL")
-            ->andWhere("these.dateSoutenance >= :dateCourante")
-            ->andWhere("these.dateSoutenance < :dateLimite")
-            ->setParameter("encours", These::ETAT_EN_COURS)
-            ->setParameter("dateCourante", $dateCourante)
-            ->setParameter("dateLimite", $dateLimite)
+        /** informations générales */
+        $pdcData->setTitre($these->getTitre());
+        $pdcData->setSpecialite($these->getLibelleDiscipline());
+        if ($these->getEtablissement()) $pdcData->setEtablissement($these->getEtablissement()->getLibelle());
+//        if ($these->getDoctorant()) $pdcData->setDoctorant($these->getDoctorant()->getIndividu()->getNomComplet(false, false, false, true, true));
+        if ($these->getDoctorant()) {
+            $nom = $these->getDoctorant()->getIndividu()->getNomPatronymique();
+            if ($nom === null) $nom = $these->getDoctorant()->getIndividu()->getNomUsuel();
+            $nom = strtoupper($nom);
+            $prenom = $these->getDoctorant()->getIndividu()->getPrenom1();
+            $pdcData->setDoctorant($prenom . " " . $nom);
+        }
+        if ($these->getDateSoutenance()) $pdcData->setDate($these->getDateSoutenance()->format("d/m/Y"));
 
-            ->leftJoin("these.validations", "validation")
-            ->andWhere("validation.id IS NULL")
+        /** cotutelle */
+        $pdcData->setCotutuelle(false);
+        if ($these->getLibelleEtabCotutelle() !== null && $these->getLibelleEtabCotutelle() !== "") {
+            $pdcData->setCotutuelle(true);
+            $pdcData->setCotutuelleLibelle($these->getLibelleEtabCotutelle());
+            if ($these->getLibellePaysCotutelle()) $pdcData->setCotutuellePays($these->getLibellePaysCotutelle());
+        }
 
-            ->leftjoin("validation.typeValidation", "typeValidation", "WITH", "typeValidation.code = :PDC")
-            ->setParameter("PDC", TypeValidation::CODE_PAGE_DE_COUVERTURE)
+        /** Jury de thèses */
+        $acteurs = $these->getActeurs()->toArray();
+        $rapporteurs = array_filter($acteurs, function (Acteur $a) {
+            return $a->estRapporteur();
+        });
+        $pdcData->setRapporteurs($rapporteurs);
+        $directeurs = array_filter($acteurs, function (Acteur $a) {
+            return $a->estDirecteur();
+        });
+        $pdcData->setDirecteurs($directeurs);
+        $codirecteurs = array_filter($acteurs, function (Acteur $a) {
+            return $a->estCodirecteur();
+        });
+        $pdcData->setCodirecteurs($codirecteurs);
+        $president = array_filter($acteurs, function (Acteur $a) {
+            return $a->estPresidentJury();
+        });
 
-        ;
-        $result = $qb->getQuery()->getResult();
-        return $result;
-    }
+        $membres = array_diff($acteurs, $rapporteurs, $directeurs, $codirecteurs, $president);
+        $pdcData->setMembres($membres);
 
-    public function getTheseSansDepot($nbMois)
-    {
-        $dateCourante = new \DateTime();
-        $dateLimite = (new \DateTime())->add(new DateInterval("P".$nbMois."M"));
+        /** associée */
+        $pdcData->setAssocie(false);
+        /** @var Acteur $directeur */
+        foreach ($directeurs as $directeur) {
+            if (!$directeur->getEtablissement()) {
+                throw new RuntimeException("Anomalie: le directeur de thèse '{$directeur}' n'a pas d'établissement.");
+            }
+            if ($directeur->getEtablissement()->estAssocie()) {
+                $pdcData->setAssocie(true);
+                $pdcData->setLogoAssocie($directeur->getEtablissement()->getCheminLogo());
+                $pdcData->setLibelleAssocie($directeur->getEtablissement()->getLibelle());
+            }
+        }
 
-        $qb = $this->getEntityManager()->getRepository(These::class)->createQueryBuilder("these")
-            ->addSelect("doctorant")
-            ->addSelect("individu")
-            ->leftJoin("these.doctorant", "doctorant")
-            ->leftJoin("doctorant.individu", "individu")
-            ->addSelect("etablissement")
-            ->addSelect("ecoleDoctorale")
-            ->addSelect("uniteRecherche")
-            ->addSelect("structure_etab")
-            ->addSelect("structure_ed")
-            ->addSelect("structure_ur")
-            ->leftJoin("these.etablissement", "etablissement")
-            ->leftJoin("etablissement.structure", "structure_etab")
-            ->leftJoin("these.ecoleDoctorale", "ecoleDoctorale")
-            ->leftJoin("ecoleDoctorale.structure", "structure_ed")
-            ->leftJoin("these.uniteRecherche", "uniteRecherche")
-            ->leftJoin("uniteRecherche.structure", "structure_ur")
-            ->andWhere("these.etatThese = :encours")
-            ->andWhere("these.dateSoutenance IS NOT NULL")
-            ->andWhere("these.dateSoutenance >= :dateCourante")
-            ->andWhere("these.dateSoutenance < :dateLimite")
-            ->setParameter("encours", These::ETAT_EN_COURS)
-            ->setParameter("dateCourante", $dateCourante)
-            ->setParameter("dateLimite", $dateLimite)
+        $acteursEnCouverture = array_merge($rapporteurs, $directeurs, $codirecteurs, $president, $membres);
+        usort($acteursEnCouverture, Acteur::getComparisonFunction());
+        $acteursEnCouverture = array_unique($acteursEnCouverture);
 
-            ->leftJoin("these.fichiers", "fichier")
-            ->andWhere("fichier.id IS NULL")
+        /** @var Acteur $acteur */
+        foreach ($acteursEnCouverture as $acteur) {
+            $acteurData = new MembreData();
+            $acteurData->setDenomination($acteur->getIndividu()->getNomComplet(true, false, false, true, true));
+            $acteurData->setQualite($acteur->getQualite());
 
-            ->leftJoin("fichier.nature", "nature", "WITH", "nature.code = :nature")
-            ->setParameter("nature", NatureFichier::CODE_THESE_PDF)
-        ;
+            if (!$acteur->estPresidentJury()) {
+                $acteurData->setRole($acteur->getRole()->getLibelle());
+            } else {
+                $acteurData->setRole(Role::LIBELLE_PRESIDENT);
+            }
+            if ($acteur->getEtablissement()) $acteurData->setEtablissement($acteur->getEtablissement()->getStructure()->getLibelle());
+            $pdcData->addActeurEnCouverture($acteurData);
+        }
 
-        $result = $qb->getQuery()->getResult();
-        return $result;
+        /** Directeurs de thèses */
+        $nomination = [];
+        foreach ($directeurs as $directeur) {
+            $nomination[] = $directeur->getIndividu()->getNomComplet(false, false, false, true, true);
+        }
+        foreach ($codirecteurs as $directeur) {
+            $nomination[] = $directeur->getIndividu()->getNomComplet(false, false, false, true, true);
+        }
+        $pdcData->setListing(implode(" et ", $nomination) . ", ");
+        if ($these->getUniteRecherche()) $pdcData->setUniteRecherche($these->getUniteRecherche()->getStructure()->getLibelle());
+
+        // chemins vers les logos
+        $comue = $this->etablissementService->getRepository()->findOneByCodeStructure(Structure::CODE_COMUE);
+        $pdcData->setLogoCOMUE($this->fileService->computeLogoFilePathForStructure($comue));
+        $pdcData->setLogoEtablissement($this->fileService->computeLogoFilePathForStructure($these->getEtablissement()));
+        if ($these->getEcoleDoctorale() !== null) {
+            $pdcData->setLogoEcoleDoctorale($this->fileService->computeLogoFilePathForStructure($these->getEcoleDoctorale()));
+        }
+        if ($these->getUniteRecherche() !== null) {
+            $pdcData->setLogoUniteRecherche($this->fileService->computeLogoFilePathForStructure($these->getUniteRecherche()));
+        }
+
+        return $pdcData;
     }
 }

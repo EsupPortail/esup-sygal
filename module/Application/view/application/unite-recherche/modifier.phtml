@@ -17,6 +17,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var Etablissement[]             $etablissements
  * @var DomaineScientifique[]       $domainesAssocies
  * @var DomaineScientifique[]       $domainesScientifiques
+ * @var string                      $logoContent
  *
  * @method string formControlGroup()
  */
@@ -36,7 +37,6 @@ $form->get('sourceCode')->setAttribute('readonly', !$editable);
 ?>
 
 <h1 class="page-header">
-    Modification de l'UR &laquo; <?php echo $unite->getLibelle(); ?> &raquo;
     <?php if ($isNew): ?>
         Création d'une nouvelle UR
     <?php else: ?>
@@ -67,7 +67,7 @@ $form->get('sourceCode')->setAttribute('readonly', !$editable);
         $logoFile = $form->get('cheminLogo');
         echo $this->formLabel($logoFile);
 
-        $content = $unite->getLogoContent();
+        $content = $logoContent;
         if ($content === null) {
             $unite->setCheminLogo(null);
         }
@@ -79,7 +79,7 @@ $form->get('sourceCode')->setAttribute('readonly', !$editable);
                     <img
                             id="logo"
                             style="max-width: 200px; max-height: 200px; border: 1px solid black; background-color: white;"
-                            src="data:image/png;base64,<?php echo base64_encode($unite->getLogoContent()); ?>"
+                            src="data:image/png;base64,<?php echo base64_encode($logoContent); ?>"
                     />
                 </td>
                 <td style="padding:20px;">

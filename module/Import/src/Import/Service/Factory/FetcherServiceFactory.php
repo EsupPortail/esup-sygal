@@ -26,7 +26,8 @@ class FetcherServiceFactory
             throw new LogicException("La config du FetcherService est incorrecte.", null, $e);
         }
 
-        $service = new FetcherService($config);
+        $service = new FetcherService();
+        $service->setConfig($config);
         $service->setCallService($callService);
         $service->setDbService($dbService);
 

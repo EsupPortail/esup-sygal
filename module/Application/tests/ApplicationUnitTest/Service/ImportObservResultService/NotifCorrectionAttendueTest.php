@@ -37,8 +37,8 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
     public function getTypeCorrectionAttendue()
     {
         return [
-            [These::CORRECTION_MINEURE],
-            [These::CORRECTION_MAJEURE],
+            [These::CORRECTION_AUTORISEE_FACULTATIVE],
+            [These::CORRECTION_AUTORISEE_OBLIGATOIRE],
         ];
     }
 
@@ -59,7 +59,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
             ->expects($this->exactly(1)) // 1 fois par record
             ->method('triggerCorrectionAttendue');
 
-        if ($typeCorrectionAttendue === These::CORRECTION_MINEURE) {
+        if ($typeCorrectionAttendue === These::CORRECTION_AUTORISEE_FACULTATIVE) {
             $this->service->handleImportObservResultsForCorrectionMineure();
         }
         else {
@@ -87,7 +87,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
             ->expects($this->never())
             ->method('triggerCorrectionAttendue');
 
-        if ($typeCorrectionAttendue === These::CORRECTION_MINEURE) {
+        if ($typeCorrectionAttendue === These::CORRECTION_AUTORISEE_FACULTATIVE) {
             $this->service->handleImportObservResultsForCorrectionMineure();
         }
         else {
@@ -114,7 +114,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
             ->expects($this->never())
             ->method('triggerCorrectionAttendue');
 
-        if ($typeCorrectionAttendue === These::CORRECTION_MINEURE) {
+        if ($typeCorrectionAttendue === These::CORRECTION_AUTORISEE_FACULTATIVE) {
             $this->service->handleImportObservResultsForCorrectionMineure();
         }
         else {
@@ -126,7 +126,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
 
     public function test_directeurs_de_these_ne_sont_pas_en_copie_de_la_notif_correction_mineure_attendue()
     {
-        $typeCorrectionAttendue = These::CORRECTION_MINEURE;
+        $typeCorrectionAttendue = These::CORRECTION_AUTORISEE_FACULTATIVE;
         $record = $this->createImportObservResult($typeCorrectionAttendue);
         $aujourdhui = new DateTime('today'); // set time to 0
 
@@ -144,7 +144,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
 
     public function test_directeurs_de_these_ne_sont_pas_en_copie_de_la_1ere_notif_correction_majeure_attendue()
     {
-        $typeCorrectionAttendue = These::CORRECTION_MAJEURE;
+        $typeCorrectionAttendue = These::CORRECTION_AUTORISEE_OBLIGATOIRE;
         $record = $this->createImportObservResult($typeCorrectionAttendue);
         $aujourdhui = new DateTime('today'); // set time to 0
 
@@ -165,7 +165,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
 
     public function test_directeurs_de_these_sont_en_copie_de_la_2eme_notif_correction_majeure_attendue()
     {
-        $typeCorrectionAttendue = These::CORRECTION_MAJEURE;
+        $typeCorrectionAttendue = These::CORRECTION_AUTORISEE_OBLIGATOIRE;
         $record = $this->createImportObservResult($typeCorrectionAttendue);
         $aujourdhui = new DateTime('today'); // set time to 0
 
@@ -186,9 +186,9 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
 
 
     /**
-     * Crée un résultat d'observation montrant que le flag "correction attendue" vient de passer à 'mineure' ou 'majeure'.
+     * Crée un résultat d'observation montrant que le flag "correction attendue" vient de passer à 'facultative' ou 'obligatoire'.
      *
-     * @param string $typeCorrectionAttendue 'mineure' ou 'majeure'
+     * @param string $typeCorrectionAttendue 'facultative' ou 'obligatoire'
      * @return ImportObservResult
      */
     protected function createImportObservResult($typeCorrectionAttendue)
@@ -209,10 +209,10 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
         /** @var PHPUnit_Framework_MockObject_MockObject|ImportObservResultRepository $repository */
         $repository = $this->mp()->entityRepositoryMock(ImportObservResultRepository::class);
         $repository
-            ->method('fetchImportObservResultsForCorrectionMineure')
+            ->method('fetchImportObservResultsForCorrectionFacultative')
             ->willReturn([$record]);
         $repository
-            ->method('fetchImportObservResultsForCorrectionMajeure')
+            ->method('fetchImportObservResultsForCorrectionObligatoire')
             ->willReturn([$record]);
 
         /** @var PHPUnit_Framework_MockObject_MockObject|NotificationDepotVersionCorrigeeAttenduRule $rule */

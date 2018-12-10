@@ -4,8 +4,8 @@ use Application\Entity\Db\These;
 use Application\View\Renderer\PhpRenderer;
 
 /**
- * @var        $this PhpRenderer
- * @var These  $these
+ * @var PhpRenderer $this
+ * @var These       $these
  */
 ?>
 
@@ -13,7 +13,7 @@ use Application\View\Renderer\PhpRenderer;
 
 <h1 class="page-header">Feuille de route <small><?php echo $this->partial('application/these/partial/titre') ?></small></h1>
 
-<?php echo $this->roadmap($these) ?>
+<?php echo $this->roadmap($these) ?: "Néant." ?>
 
 <?php
 $wfHelper = $this->wf($these);
@@ -21,9 +21,11 @@ $wfStepHelper = $wfHelper->current();
 ?>
 
 <?php if ($wfStepHelper->step() === null): ?>
-    <div class="box roadmap-next-step">
-        <p class="lead"><!--<span class="glyphicon glyphicon-thumbs-up"></span>--> Dépôt validé.</p>
-    </div>
+    <?php if (in_array($these->getEtatThese(), [These::ETAT_EN_COURS, These::ETAT_SOUTENUE])): ?>
+        <div class="box roadmap-next-step">
+            <p class="lead"><!--<span class="glyphicon glyphicon-thumbs-up"></span>--> Dépôt validé.</p>
+        </div>
+    <?php endif ?>
 <?php endif ?>
 
 <?php echo $this->partial('next-step-box', ['these' => $these]) ?>

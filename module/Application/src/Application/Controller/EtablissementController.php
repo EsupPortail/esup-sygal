@@ -2,14 +2,15 @@
 
 namespace Application\Controller;
 
+use Application\Controller\Traits\LogoAwareControllerTrait;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\Structure;
 use Application\Entity\Db\TypeStructure;
 use Application\Form\EtablissementForm;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Application\Service\File\FileServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Structure\StructureServiceAwareTrait;
@@ -25,6 +26,8 @@ class EtablissementController extends AbstractController
     use IndividuServiceAwareTrait;
     use RoleServiceAwareTrait;
     use StructureServiceAwareTrait;
+    use FileServiceAwareTrait;
+    use LogoAwareControllerTrait;
 
     /**
      * @var EtablissementForm $etablissementForm
@@ -48,18 +51,23 @@ class EtablissementController extends AbstractController
      * - l'établissement sélectionné
      * - la liste des rôles associées à l'établissement
      * - un tableau de tableaux des rôles associés à chaque rôle
+     *
      * @return \Zend\Http\Response|ViewModel
      */
     public function indexAction()
     {
         $etablissements = $this->getStructureService()->getAllStructuresAffichablesByType(TypeStructure::CODE_ETABLISSEMENT);
 
-        $etablissementsPrincipaux = array_filter($etablissements, function(Etablissement $e) { return $e->estMembre(); });
-        $etablissementsExternes = array_filter($etablissements, function(Etablissement $e) { return !$e->estMembre(); });
+        $etablissementsPrincipaux = array_filter($etablissements, function (Etablissement $e) {
+            return $e->estMembre();
+        });
+        $etablissementsExternes = array_filter($etablissements, function (Etablissement $e) {
+            return !$e->estMembre();
+        });
 
         return new ViewModel([
-            'etablissementsSygal'          => $etablissementsPrincipaux,
-            'etablissementsExternes'       => $etablissementsExternes,
+            'etablissementsSygal'    => $etablissementsPrincipaux,
+            'etablissementsExternes' => $etablissementsExternes,
         ]);
     }
 
@@ -79,7 +87,7 @@ class EtablissementController extends AbstractController
 
         /** @var Role $role */
         foreach ($roles as $role) {
-            if (! $role->isTheseDependant()) {
+            if (!$role->isTheseDependant()) {
                 $roleListings [$role->getLibelle()] = 0;
             }
         }
@@ -92,7 +100,7 @@ class EtablissementController extends AbstractController
 
         /** @var IndividuRole $individuRole */
         foreach ($individuRoles as $individuRole) {
-            if (! $individuRole->getRole()->isTheseDependant()) {
+            if (!$individuRole->getRole()->isTheseDependant()) {
                 $denomination = $individuRole->getIndividu()->getNomComplet(false, false, false, true, false);
                 $role = $individuRole->getRole()->getLibelle();
                 $individuListings[$denomination][] = $role;
@@ -101,9 +109,10 @@ class EtablissementController extends AbstractController
         }
 
         return new ViewModel([
-            'etablissement' => $etablissement,
-            'roleListing' => $roleListings,
+            'etablissement'   => $etablissement,
+            'roleListing'     => $roleListings,
             'individuListing' => $individuListings,
+            'logoContent'     => $this->structureService->getLogoStructureContent($etablissement),
         ]);
 
     }
@@ -126,7 +135,7 @@ class EtablissementController extends AbstractController
                 $etablissement = $this->etablissementForm->getData();
                 $this->getEtablissementService()->create($etablissement, $this->userContextService->getIdentityDb());
 
-                    // sauvegarde du logo si fourni
+                // sauvegarde du logo si fourni
                 if ($file['cheminLogo']['tmp_name'] !== '') {
                     $this->ajouterLogoEtablissement($file['cheminLogo']['tmp_name'], $etablissement);
                 }
@@ -137,6 +146,7 @@ class EtablissementController extends AbstractController
                 $this->flashMessenger()->addSuccessMessage("Établissement '$etablissement' créée avec succès");
 
                 $structureId = $etablissement->getStructure()->getId();
+
                 return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $structureId], 'fragment' => $structureId], true);
             }
         }
@@ -187,6 +197,7 @@ class EtablissementController extends AbstractController
             // action d'affacement du logo
             if (isset($data['supprimer-logo'])) {
                 $this->supprimerLogoEtablissement();
+
                 return $this->redirect()->toRoute(null, [], [], true);
             }
 
@@ -203,17 +214,21 @@ class EtablissementController extends AbstractController
                 $this->getEtablissementService()->update($etablissement);
 
                 $this->flashMessenger()->addSuccessMessage("Établissement '$etablissement' modifiée avec succès");
+
                 return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $structureId], "fragment" => $structureId], true);
             }
             $this->flashMessenger()->addErrorMessage("Echec de la mise à jour : données incorrectes saissie");
+
             return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $structureId], "fragment" => $structureId], true);
         }
 
         // envoie vers le formulaire de modification
         $viewModel = new ViewModel([
             'form' => $this->etablissementForm,
+            'logoContent' => $this->structureService->getLogoStructureContent($etablissement),
         ]);
         $viewModel->setTemplate('application/etablissement/modifier');
+
         return $viewModel;
 
     }
@@ -234,75 +249,29 @@ class EtablissementController extends AbstractController
     {
         $structureId = $this->params()->fromRoute("etablissement");
         $this->supprimerLogoEtablissement();
+
         return $this->redirect()->toRoute('etablissement', [], ['query' => ['selected' => $structureId], "fragment" => $structureId], true);
     }
 
-    /**
-     * Retire le logo associé à une établissement:
-     * - modification base de donnée (champ CHEMIN_LOG <- null)
-     * - effacement du fichier stocké sur le serveur
-     */
     public function supprimerLogoEtablissement()
     {
         $structureId = $this->params()->fromRoute("structure");
         $etablissement = $this->getEtablissementService()->getRepository()->findByStructureId($structureId);
 
-        $this->getEtablissementService()->deleteLogo($etablissement);
-        $filename   = EtablissementController::getLogoFilename($etablissement, true);
-        if (file_exists($filename)) {
-            $result = unlink($filename);
-            if ($result) {
-                $this->flashMessenger()->addSuccessMessage("Le logo de l'école doctorale {$etablissement->getLibelle()} vient d'être supprimé.");
-            } else {
-                $this->flashMessenger()->addErrorMessage("Erreur lors de l'effacement du logo de l'établissement <strong>{$etablissement->getLibelle()}.</strong>");
-            }
-        } else {
-            $this->flashMessenger()->addWarningMessage("Aucun logo à supprimer pour l'établissement <strong>{$etablissement->getLibelle()}.</strong>");
-        }
-
+        $this->supprimerLogoStructure($etablissement);
     }
 
     /**
-     * Ajoute le logo associé à une établissement:
-     * - modification base de donnée (champ CHEMIN_LOG <- /public/Logos/Etab/LOGO_NAME)
-     * - enregistrement du fichier sur le serveur
-     * @param string $cheminLogoUploade     chemin vers le fichier temporaire associé au logo
+     * @param string        $cheminLogoUploade chemin vers le fichier temporaire associé au logo
      * @param Etablissement $etablissement
      */
     public function ajouterLogoEtablissement($cheminLogoUploade, Etablissement $etablissement = null)
     {
-        if ($cheminLogoUploade === null || $cheminLogoUploade === '') {
-            $this->flashMessenger()->addErrorMessage("Fichier logo invalide.");
-            return;
-        }
-
         if ($etablissement === null) {
-            $structureId = $this->params()->fromRoute("etablissement");
+            $structureId = $this->params()->fromRoute("structure");
             $etablissement = $this->getEtablissementService()->getRepository()->findByStructureId($structureId);
         }
-        $chemin         = EtablissementController::getLogoFilename($etablissement, false);
-        $filename       = EtablissementController::getLogoFilename($etablissement, true);
-        $result = rename($cheminLogoUploade, $filename);
-        if ($result) {
-            $this->flashMessenger()->addSuccessMessage("Le logo de l'établissement {$etablissement->getLibelle()} vient d'être ajouté.");
-            $this->getEtablissementService()->setLogo($etablissement,$chemin);
-        } else {
-            $this->flashMessenger()->addErrorMessage("Erreur lors de l'enregistrement du logo de l'établissement <strong>{$etablissement->getLibelle()}.</strong> ");
-        }
-    }
 
-    /**
-     * Retourne le chemin vers le logo d'une établissement
-     * @param Etablissement $etablissement
-     * @param bool $fullpath            si true chemin absolue sinon chemin relatif au répertoire de l'application
-     * @return string                   le chemin vers le logo de l'établissement $etablissement
-     */
-    static public function getLogoFilename(Etablissement $etablissement, $fullpath=true)
-    {
-        $chemin = "";
-        if ($fullpath) $chemin .= Structure::PATH;
-        if ($etablissement->getStructure()->getCode()) $chemin .= "/ressources/Logos/Etab/".$etablissement->getStructure()->getCode().".png";
-        else $chemin .= "/ressources/Logos/Etab/". uniqid().".png";
-        return $chemin;
+        $this->ajouterLogoStructure($etablissement, $cheminLogoUploade);
     }
 }

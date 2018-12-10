@@ -7,28 +7,18 @@ use Doctrine\Common\Collections\Collection;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenApp\Exception\LogicException;
-use UnicaenApp\Util;
 use UnicaenImport\Entity\Db\Interfaces\SourceAwareInterface;
-use Application\Entity\Db\Source;
-use Application\Entity\Db\Traits\SourceAwareTrait;
+use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 
 /**
  * Structure
  */
-class Structure implements HistoriqueAwareInterface, SourceAwareInterface, ResourceInterface
+class Structure implements StructureInterface, HistoriqueAwareInterface, SourceAwareInterface, ResourceInterface
 {
-    public function getResourceId()
-    {
-        return 'structure';
-    }
-
-
     use SourceAwareTrait;
     use HistoriqueAwareTrait;
     use EtablissementPrefixFilterAwareTrait;
-
-    const PATH = "/var/www/sygal/upload";
 
     const CODE_COMUE = 'COMUE';
 
@@ -267,20 +257,12 @@ class Structure implements HistoriqueAwareInterface, SourceAwareInterface, Resou
         return $roles;
     }
 
-
+    /**
+     * @return string
+     */
     public function __toString()
     {
         return $this->getLibelle();
-    }
-
-
-    public function getLogoContent()
-    {
-        if ($this->cheminLogo === null) {
-            $image = Util::createImageWithText("Aucun logo pour la structure|[".$this->getId()." - ".$this->getSigle()."]",200,200);
-            return $image;
-        }
-        return file_get_contents( Structure::PATH . $this->cheminLogo);
     }
 
     /**
@@ -352,5 +334,11 @@ class Structure implements HistoriqueAwareInterface, SourceAwareInterface, Resou
         return $this;
     }
 
-
+    /**
+     * @return string
+     */
+    public function getResourceId()
+    {
+        return 'structure';
+    }
 }

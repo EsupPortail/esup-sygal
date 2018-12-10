@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bd8c3d3e91508f7df99c5680292ae9d2",
+    "content-hash": "946a5ea1f43e05305f62da7f28d3b592",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -2000,11 +2000,11 @@
         },
         {
             "name": "unicaen/import",
-            "version": "1.0.11",
+            "version": "1.0.13",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/import.git",
-                "reference": "c02bc2f48ac080137b9e21b0f3f1256014caf84b"
+                "reference": "124e7b9a80fedac3f953044ec09a93bd271d6568"
             },
             "require": {
                 "unicaen/auth": "1.*",
@@ -2024,7 +2024,7 @@
                 ]
             },
             "description": "Boite à outils pour la programmation avec la bibliothèque Unicaen",
-            "time": "2018-02-27T09:02:30+00:00"
+            "time": "2018-12-04T16:09:21+00:00"
         },
         {
             "name": "unicaen/ldap",
@@ -3841,6 +3841,10 @@
     },
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "ext-fileinfo": "*",
+        "ext-json": "*",
+        "ext-imagick": "*"
+    },
     "platform-dev": []
 }

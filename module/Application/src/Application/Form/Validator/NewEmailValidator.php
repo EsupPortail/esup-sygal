@@ -18,9 +18,9 @@ class NewEmailValidator extends AbstractValidator {
 
     protected $messageTemplates = [
         self::NOT_YET       => "La méthode est pas implémentée",
-        self::USER          => "Email déjà enregistré (Utilisateur)",
-        self::INDIVIDU      => "Email déjà enregistré (Individu)",
-        self::NOT_EMAIL     => "Email mal formé",
+        self::USER          => "Adresse électronique déjà enregistrée (Utilisateur)",
+        self::INDIVIDU      => "Adresse électronique déjà enregistrée (Individu)",
+        self::NOT_EMAIL     => "Adresse électronique mal formée",
     ];
 
     public function isValid($value)

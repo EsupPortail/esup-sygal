@@ -26,8 +26,8 @@ class TheseRepository extends DefaultEntityRepository
         $qb = $this->createQueryBuilder('t');
         $qb
             ->andWhereEtatIs(These::ETAT_EN_COURS)
-            ->andWhere('t.dateSoutenance is not null')
-            ->andWhere($qb->expr()->in('t.correctionAutorisee', [These::CORRECTION_MAJEURE, These::CORRECTION_MINEURE]));
+            ->andWhereCorrectionAutorisee()
+            ->andWhere('t.dateSoutenance is not null');
 
         $theses = array_filter($qb->getQuery()->getResult(), function (These $these) {
             return $these->getDateButoirDepotVersionCorrigeeDepassee();

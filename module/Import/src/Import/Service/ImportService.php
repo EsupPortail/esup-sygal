@@ -51,7 +51,7 @@ class ImportService
         'role',
         'acteur',
         'variable',
-        'origine-financement',
+        // NB: 'origine-financement' n'est plus importé.
         'financement',
         'titre-acces',
     ];
@@ -261,7 +261,11 @@ class ImportService
 
         // On met à jour le HISTO_MODIFICATION de la thèse pour mémoriser la date de l'import forcé qu'on vient de faire.
         // Pas super parce que normalement HISTO_MODIFICATION n'est modifiée que si l'import a mis à jour la thèse).
-        $these->setHistoModification(new \DateTime());
+        try {
+            $these->setHistoModification(new \DateTime());
+        } catch (\Exception $e) {
+            throw new RuntimeException("C'est le bouquet!");
+        }
         try {
             $this->getEntityManager()->flush($these);
         } catch (OptimisticLockException $e) {
