@@ -24,22 +24,34 @@ class EtablissementService extends BaseService
     }
 
     /**
-     * @param Etablissement $etablissement
+     * @param Etablissement $structureConcrete
      * @param Utilisateur   $createur
      * @return Etablissement
      */
-    public function create(Etablissement $etablissement, Utilisateur $createur)
+    public function create(Etablissement $structureConcrete, Utilisateur $createur)
     {
-        $etablissement->setHistoCreateur($createur);
         /** @var TypeStructure $typeStructure */
         $typeStructure = $this->getEntityManager()->getRepository(TypeStructure::class)->findOneBy(['code' => 'etablissement']);
-        $etablissement->getStructure()->setTypeStructure($typeStructure);
-        $etablissement->setSourceCode("SyGAL::" . uniqid());
 
-        $this->persist($etablissement);
-        $this->flush($etablissement);
+        $structure = $structureConcrete->getStructure();
+        $structure->setTypeStructure($typeStructure);
 
-        return $etablissement;
+        $structureConcrete->setSourceCode("SyGAL::" . uniqid());
+        $structureConcrete->setHistoCreateur($createur);
+
+        $this->entityManager->beginTransaction();
+
+        $this->entityManager->persist($structure);
+        $this->entityManager->persist($structureConcrete);
+        try {
+            $this->entityManager->flush($structure);
+            $this->entityManager->flush($structureConcrete);
+            $this->entityManager->commit();
+        } catch (\Exception $e) {
+            $this->rollback();
+        }
+
+        return $structureConcrete;
     }
 
     /**

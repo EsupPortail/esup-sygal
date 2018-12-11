@@ -419,34 +419,34 @@ class TheseRechercheService
             // ...
         }
 
-        elseif ($role->isStructureDependant()) {
-            if ($role->isEtablissementDependant()) {
-                /**
-                 * On ne voit que les thèses de son établissement.
-                 */
-                $qb
-                    ->andWhere('t.etablissement = :etab')
-                    ->setParameter('etab', $role->getStructure()->getEtablissement());
-            }
-            elseif ($role->isEcoleDoctoraleDependant()) {
-                /**
-                 * On ne voit que les thèses concernant son ED.
-                 */
-                $qb
-                    ->addSelect('ed2')->join('t.ecoleDoctorale', 'ed2')
-                    ->andWhere('ed2 = :ed')
-                    ->setParameter('ed', $role->getStructure()->getEcoleDoctorale());
-            }
-            elseif ($role->isUniteRechercheDependant()) {
-                /**
-                 * On ne voit que les thèses concernant son UR.
-                 */
-                $qb
-                    ->addSelect('ur2')->join('t.uniteRecherche', 'ur2')
-                    ->andWhere('ur2 = :ur')
-                    ->setParameter('ur', $role->getStructure()->getUniteRecherche());
-            }
-        }
+//        elseif ($role->isStructureDependant()) {
+//            if ($role->isEtablissementDependant()) {
+//                /**
+//                 * On ne voit que les thèses de son établissement.
+//                 */
+//                $qb
+//                    ->andWhere('t.etablissement = :etab')
+//                    ->setParameter('etab', $role->getStructure()->getEtablissement());
+//            }
+//            elseif ($role->isEcoleDoctoraleDependant()) {
+//                /**
+//                 * On ne voit que les thèses concernant son ED.
+//                 */
+//                $qb
+//                    ->addSelect('ed2')->join('t.ecoleDoctorale', 'ed2')
+//                    ->andWhere('ed2 = :ed')
+//                    ->setParameter('ed', $role->getStructure()->getEcoleDoctorale());
+//            }
+//            elseif ($role->isUniteRechercheDependant()) {
+//                /**
+//                 * On ne voit que les thèses concernant son UR.
+//                 */
+//                $qb
+//                    ->addSelect('ur2')->join('t.uniteRecherche', 'ur2')
+//                    ->andWhere('ur2 = :ur')
+//                    ->setParameter('ur', $role->getStructure()->getUniteRecherche());
+//            }
+//        }
     }
 
     /**

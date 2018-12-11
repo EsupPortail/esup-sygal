@@ -12,11 +12,12 @@
 use Application\Entity\Db\EtablissementRattachement;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
-use Application\Provider\Privilege\UniteRecherchePrivileges;
+use Application\Provider\Privilege\StructurePrivileges;
 
-$this->headTitle("UR '{$unite->getStructure()->getCode()}'");
+$this->headTitle("Unité de recherche '{$unite->getStructure()->getCode()}'");
 
-$canEdit = $this->isAllowed($unite, UniteRecherchePrivileges::UNITE_RECH_MODIFICATION);
+$canEdit = ($this->isAllowed(StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES))) ||
+    ($this->isAllowed($unite->getStructure(), StructurePrivileges::STRUCTURE_MODIFICATION_SES_STRUCTURES));
 $canAddRole = $canEdit;
 ?>
 
@@ -126,6 +127,6 @@ $canAddRole = $canEdit;
 <?php endif; ?>
 
 <?php if ($canEdit): ?>
-    <a href="<?php echo $this->url('unite-recherche/modifier', ['uniteRecherche' => $unite->getStructure()->getId()], [], true); ?>"
+    <a href="<?php echo $this->url('unite-recherche/modifier', ['structure' => $unite->getStructure()->getId()], [], true); ?>"
        class="btn btn-primary action"><span class="glyphicon glyphicon-pencil"></span> Modifier l'unité de recherche</a>
 <?php endif; ?>

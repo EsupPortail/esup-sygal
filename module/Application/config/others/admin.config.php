@@ -1,11 +1,10 @@
 <?php
 
 use Application\Controller\AdminController;
-use Application\Controller\Factory\PrivilegeControllerFactory;
 use Application\Controller\Factory\RoleControllerFactory;
 use Application\Controller\MailConfirmationController;
 use Application\Controller\RoleController;
-use Application\Provider\Privilege\EcoleDoctoralePrivileges;
+use Application\Provider\Privilege\StructurePrivileges;
 use Application\Provider\Privilege\UniteRecherchePrivileges;
 use Application\Provider\Privilege\UtilisateurPrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
@@ -40,8 +39,8 @@ return [
                     ],
                     'privileges' => [
                         UtilisateurPrivileges::UTILISATEUR_ATTRIBUTION_ROLE,
-                        EcoleDoctoralePrivileges::ECOLE_DOCT_CONSULTATION,
-                        UniteRecherchePrivileges::UNITE_RECH_CONSULTATION,
+                        StructurePrivileges::STRUCTURE_CONSULTATION_TOUTES_STRUCTURES,
+                        StructurePrivileges::STRUCTURE_CONSULTATION_SES_STRUCTURES,
                      ],
                 ],
                 [

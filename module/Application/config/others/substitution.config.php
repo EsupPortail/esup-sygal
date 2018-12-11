@@ -1,7 +1,7 @@
 <?php
 
 use Application\Controller\Factory\SubstitutionControllerFactory;
-use Application\Provider\Privilege\EcoleDoctoralePrivileges;
+use Application\Provider\Privilege\StructurePrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
 use Zend\Mvc\Router\Http\Segment;
 
@@ -23,7 +23,10 @@ return [
                         'modifier-automatique',
                         'enregistrer-automatique',
                     ],
-                    'privileges' => EcoleDoctoralePrivileges::ECOLE_DOCT_CONSULTATION,
+                    'privileges' => [
+                        StructurePrivileges::STRUCTURE_CONSULTATION_TOUTES_STRUCTURES,
+                        StructurePrivileges::STRUCTURE_CONSULTATION_SES_STRUCTURES,
+                    ],
                 ],
             ],
         ],
