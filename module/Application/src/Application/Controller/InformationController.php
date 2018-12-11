@@ -2,7 +2,10 @@
 
 namespace Application\Controller;
 
+use Application\Entity\Db\Information;
+use Application\Form\InformationForm;
 use Application\Service\Information\InformationServiceAwareTrait;
+use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
@@ -29,16 +32,61 @@ class InformationController extends AbstractActionController {
 
     public function ajouterAction()
     {
-        return new ViewModel([]);
+        /** @var Information $information */
+        $information = new Information();
+
+        /** @var InformationForm $form */
+        $form = $this->getServiceLocator()->get('FormElementManager')->get(InformationForm::class);
+        $form->bind($information);
+
+        /** @var Request $request */
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $form->setData($data);
+            if ($form->isValid()) {
+                $this->getInformationService()->create($information);
+                $this->redirect()->toRoute('informations', [], [], true);
+            }
+        }
+
+        return new ViewModel([
+            'form' => $form,
+        ]);
     }
 
     public function modifierAction()
     {
-        return new ViewModel([]);
+        $informationId  = $this->params()->fromRoute('id');
+        $information    = $this->getInformationService()->getInformation($informationId);
+
+        /** @var InformationForm $form */
+        $form = $this->getServiceLocator()->get('FormElementManager')->get(InformationForm::class);
+        $form->bind($information);
+
+        /** @var Request $request */
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $form->setData($data);
+            if ($form->isValid()) {
+                $this->getInformationService()->update($information);
+                $this->redirect()->toRoute('informations', [], [], true);
+            }
+        }
+
+        return new ViewModel([
+            'form' => $form,
+        ]);
     }
 
     public function supprimerAction()
     {
-        return new ViewModel([]);
+        $informationId  = $this->params()->fromRoute('id');
+        $information    = $this->getInformationService()->getInformation($informationId);
+
+        $this->getInformationService()->delete($information);
+
+        $this->redirect()->toRoute('informations', [], [], true);
     }
 }

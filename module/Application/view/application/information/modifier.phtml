@@ -1,1 +1,19 @@
-MODIFIER INFORMATION
+<?php
+
+/**
+ * @var InformationForm $form
+ */
+
+use Application\Form\InformationForm;
+
+$this->headTitle("Modification d'une page d'information");
+?>
+
+    <h1 class="page-header">
+        Modifcition d'une page d'information
+    </h1>
+
+
+<?php
+echo $this->form($form);
+?>

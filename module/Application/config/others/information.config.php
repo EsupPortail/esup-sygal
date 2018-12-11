@@ -2,6 +2,9 @@
 
 use Application\Controller\Factory\InformationControllerFactory;
 use Application\Controller\InformationController;
+use Application\Form\Factory\InformationFormFactory;
+use Application\Form\Hydrator\InformationHydrator;
+use Application\Form\InformationForm;
 use Application\Service\Information\InformationService;
 use Application\Service\Information\InformationServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
@@ -120,10 +123,12 @@ return [
     ],
     'form_elements'   => [
         'factories' => [
+            InformationForm::class => InformationFormFactory::class,
         ],
     ],
     'hydrators' => [
-        'factories' => [
+        'invokables' => [
+            InformationHydrator::class => InformationHydrator::class
         ]
     ],
     'view_helpers' => [

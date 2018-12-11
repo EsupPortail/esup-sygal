@@ -1,1 +1,19 @@
-CREER UNE PAGE D'INFORMATION
+<?php
+
+/**
+ * @var InformationForm $form
+ */
+
+use Application\Form\InformationForm;
+
+$this->headTitle("Création d'une nouvelle page d'information");
+?>
+
+    <h1 class="page-header">
+        Création d'une page d'information
+    </h1>
+
+
+<?php
+echo $this->form($form);
+?>

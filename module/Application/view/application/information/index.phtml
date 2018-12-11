@@ -29,6 +29,8 @@ $canDelete  = true;
         <tr>
             <th> Id </th>
             <th> Titre </th>
+            <th> Dernière modification </th>
+            <th> Dernier  modificateur </th>
             <th> Action </th>
         </tr>
     </thead>
@@ -37,6 +39,8 @@ $canDelete  = true;
             <tr>
                 <td> <?php echo $information->getId(); ?> </td>
                 <td> <?php echo $information->getTitre(); ?> </td>
+                <td> <?php echo $information->getHistoModification()->format("H:i  d/m/Y"); ?> </td>
+                <td> <?php echo $information->getHistoModificateur()->getDisplayName(); ?> </td>
                 <td>
                     <?php if ($canView) : ?>
                         <a href="<?php echo $this->url('informations/afficher', ['id' => $information->getId()], [], true); ?>">

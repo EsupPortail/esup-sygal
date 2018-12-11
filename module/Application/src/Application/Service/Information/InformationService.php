@@ -3,6 +3,7 @@
 namespace Application\Service\Information;
 
 use Application\Entity\Db\Information;
+use Application\Service\UserContextServiceAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\RuntimeException;
@@ -10,6 +11,7 @@ use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class InformationService {
     use EntityManagerAwareTrait;
+    use UserContextServiceAwareTrait;
 
     /**
      * @return Information[]
@@ -48,7 +50,12 @@ class InformationService {
      */
     public function create($information)
     {
-        //TODO set createur et modificateur
+        $date = new \DateTime();
+        $user = $this->userContextService->getIdentityDb();
+        $information->setHistoCreation($date);
+        $information->setHistoCreateur($user);
+        $information->setHistoModification($date);
+        $information->setHistoModificateur($user);
         $this->getEntityManager()->persist($information);
         try {
             $this->getEntityManager()->flush($information);
@@ -64,7 +71,10 @@ class InformationService {
      */
     public function update($information)
     {
-        //TODO set modificateur
+        $date = new \DateTime();
+        $user = $this->userContextService->getIdentityDb();
+        $information->setHistoModification($date);
+        $information->setHistoModificateur($user);
         try {
             $this->getEntityManager()->flush($information);
         } catch (OptimisticLockException $e) {
