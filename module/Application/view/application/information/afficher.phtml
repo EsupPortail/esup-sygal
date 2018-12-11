@@ -1,0 +1,17 @@
+<?php
+
+/**
+ * @var Information $information
+ */
+
+use Application\Entity\Db\Information;
+
+$this->headTitle($information->getTitre());
+
+?>
+
+<h1 class="page-header">
+    <?php echo $information->getTitre(); ?>
+</h1>
+
+<?php echo $information->getContenu(); ?>

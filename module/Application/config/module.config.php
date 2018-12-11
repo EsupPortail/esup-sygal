@@ -251,6 +251,8 @@ return array(
             '061_uploader' => "/js/jquery.iframe-transport.js",
             '062_uploader' => "/js/jquery.fileupload.js",
             '063_uploader' => "/js/unicaen.uploader.widget.js",
+            '100_' => 'js/tinymce/js/tinymce/tinymce.js',
+            '101_' => 'js/form_fiche.js',
         ],
         'inline_scripts'        => [
         ],

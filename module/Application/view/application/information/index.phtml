@@ -1,0 +1,60 @@
+<?php
+
+/**
+ * @var Information[] $informations
+ */
+
+use Application\Entity\Db\Information;
+
+$this->headTitle("Index des informations");
+
+$canView    = true;
+$canEdit    = true;
+$canDelete  = true;
+?>
+
+<h1 class="page-header">
+    Pages d'information
+</h1>
+
+<a href="<?php echo $this->url('informations/ajouter', [], [], true); ?>"
+   class="btn btn-primary action"
+>
+    <span class="glyphicon glyphicon-plus"></span>
+    Ajouter une page d'information
+</a>
+
+<table class="table table-extra-condensed">
+    <thead>
+        <tr>
+            <th> Id </th>
+            <th> Titre </th>
+            <th> Action </th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach($informations as $information) : ?>
+            <tr>
+                <td> <?php echo $information->getId(); ?> </td>
+                <td> <?php echo $information->getTitre(); ?> </td>
+                <td>
+                    <?php if ($canView) : ?>
+                        <a href="<?php echo $this->url('informations/afficher', ['id' => $information->getId()], [], true); ?>">
+                            <span class="glyphicon glyphicon-eye-open"></span>
+                        </a>
+                    <?php endif; ?>
+                    <?php if ($canEdit) : ?>
+                        <a href="<?php echo $this->url('informations/modifier', ['id' => $information->getId()], [], true); ?>">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </a>
+                    <?php endif; ?>
+                    <?php if ($canDelete) : ?>
+                        <a href="<?php echo $this->url('informations/supprimer', ['id' => $information->getId()], [], true); ?>">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </a>
+                    <?php endif; ?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
