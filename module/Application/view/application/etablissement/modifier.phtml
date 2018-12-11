@@ -52,7 +52,7 @@ $fcg = $this->formControlGroup();
                     ?>
                     <br/>
                     <?php if($form->getObject()->getId()): ?>
-                    <a id="supprimer-logo" class="btn btn-danger" href="<?php echo $this->url('etablissement/supprimer-logo', ["etablissement" => $form->getObject()->getStructure()->getId()], [], true); ?>">
+                    <a id="supprimer-logo" class="btn btn-danger" href="<?php echo $this->url('etablissement/supprimer-logo', ["structure" => $form->getObject()->getStructure()->getId()], [], true); ?>">
                         <span class="glyphicon glyphicon-trash"></span>
                         Supprimer le logo
                     </a>

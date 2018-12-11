@@ -4,6 +4,7 @@ namespace Application\Assertion\These;
 
 use Application\Acl\WfEtapeResource;
 use Application\Assertion\BaseAssertion;
+use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\WfEtape;
 use Application\Provider\Privilege\ThesePrivileges;
@@ -33,12 +34,37 @@ class TheseAssertion extends BaseAssertion implements WorkflowServiceAwareInterf
 
         /** @var These $these */
 
+        $role = $this->userContextService->getSelectedIdentityRole();
+        $individu = $this->userContextService->getIdentityIndividu();
         switch (true) {
             case $privilege === ThesePrivileges::THESE_SAISIE_DESCRIPTION_VERSION_INITIALE:
                 return ! $this->isAllowed(new WfEtapeResource(WfEtape::CODE_DEPOT_VERSION_ORIGINALE_CORRIGEE, $these));
                 break;
             case $privilege === ValidationPrivileges::THESE_VALIDATION_RDV_BU:
                 return $this->isAllowed(new WfEtapeResource(WfEtape::CODE_RDV_BU_VALIDATION_BU, $these));
+                break;
+            case $privilege === ThesePrivileges::THESE_CONSULTATION_SES_THESES:
+            case $privilege === ThesePrivileges::THESE_MODIFICATION_SES_THESES:
+                // doctorant
+                if ($role->getCode() === Role::CODE_DOCTORANT) return $these->getDoctorant()->getIndividu() === $individu;
+                // directeur
+                if ($role->getCode() === Role::CODE_DIRECTEUR_THESE) {
+                    $directeurs = $these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE);
+                    $individus = [];
+                    foreach ($directeurs as $directeur) $individus[] = $directeur->getIndividu();
+                    return (array_search($individu, $individus) !== false);
+                }
+                if ($role->getCode() === Role::CODE_CODIRECTEUR_THESE) {
+                    $directeurs = $these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE);
+                    $individus = [];
+                    foreach ($directeurs as $directeur) $individus[] = $directeur->getIndividu();
+                    return (array_search($individu, $individus) !== false);
+                }
+                // structure
+                if ($role->getCode() === Role::CODE_ED) return $these->getEcoleDoctorale()->getStructure() === $role->getStructure();
+                if ($role->getCode() === Role::CODE_UR) return $these->getUniteRecherche()->getStructure() === $role->getStructure();
+                if ($role->getCode() === Role::CODE_ADMIN || $role->getCode() === Role::CODE_BDD || $role->getCode() === Role::CODE_BU)
+                    return $these->getEtablissement()->getStructure() === $role->getStructure();
                 break;
         }
 

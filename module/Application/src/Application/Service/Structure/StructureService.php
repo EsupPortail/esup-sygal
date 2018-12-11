@@ -600,25 +600,28 @@ class StructureService extends BaseService
         return $result;
     }
 
-    /** Les structures non substituées
+    /**
+     * Les structures non substituées
+     *
      * @param string $type
      * @param string $order
      * @return StructureConcreteInterface[]
      */
-    public function getAllStructuresAffichablesByType($type, $order=null) {
+    public function getAllStructuresAffichablesByType($type, $order = null)
+    {
         $qb = $this->getEntityManager()->getRepository($this->getEntityByType($type))->createQueryBuilder('structureConcrete')
             ->addSelect('structure')
             ->addSelect('substitutionTo')
             ->join('structureConcrete.structure', 'structure')
             ->leftJoin('structure.structureSubstituante', 'substitutionTo')
-            ->andWhere('substitutionTo.id IS NULL OR pasHistorise(substitutionTo) != 1' )
-            ;
-        if ($order) $qb->orderBy('structure.'.$order);
+            ->andWhere('substitutionTo.id IS NULL OR pasHistorise(substitutionTo) != 1');
+        if ($order) $qb->orderBy('structure.' . $order);
         else {
             if ($type === TypeStructure::CODE_ECOLE_DOCTORALE) $qb->orderBy('structureConcrete.sourceCode');
         }
 
         $result = $qb->getQuery()->getResult();
+
         return $result;
     }
 

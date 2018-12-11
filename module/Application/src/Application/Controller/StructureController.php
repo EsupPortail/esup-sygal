@@ -5,6 +5,7 @@ namespace Application\Controller;
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\TypeStructure;
+use Application\Provider\Privilege\StructurePrivileges;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
@@ -22,13 +23,39 @@ class StructureController extends AbstractController
     use UniteRechercheServiceAwareTrait;
     use EtablissementServiceAwareTrait;
 
+
+
+    /**
+     * @return ViewModel
+     */
+    public function indexAction()
+    {
+        $consultationToutes = $this->isAllowed(
+            StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_CONSULTATION_TOUTES_STRUCTURES),
+            StructurePrivileges::STRUCTURE_CONSULTATION_TOUTES_STRUCTURES);
+
+        $structures = [];
+        if ($consultationToutes) {
+            $structures = $this->getStructureService()->getAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle');
+        } else {
+            /** @var Role $role*/
+            $role = $this->userContextService->getSelectedIdentityRole();
+            if ($role->isEcoleDoctoraleDependant()) {
+                $ecole = $this->getUniteRechercheService()->getRepository()->findByStructureId($role->getStructure()->getId());
+                $structures[] = $ecole;
+            }
+        }
+
+        return new ViewModel([
+            'structures' => $structures,
+        ]);
+    }
+
     public function individuRoleAction()
     {
         $structureId = $this->params()->fromRoute("structure");
         $structure = $this->structureService->findStructureById($structureId);
         $type = $this->params()->fromRoute("type");
-
-//        var_dump($structure->getLibelle());
 
         $roles_tmp = $this->roleService->getRolesByStructure($structure);
         $roles = [];

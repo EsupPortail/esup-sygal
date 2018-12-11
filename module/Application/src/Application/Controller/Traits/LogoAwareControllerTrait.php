@@ -15,8 +15,10 @@ use Zend\Mvc\Controller\Plugin\Params;
  * @method FlashMessenger flashMessenger()
  *
  * @property StructureService $structureService
- *
+
  * @package Application\Controller\Traits
+ *
+ * @deprecated Mis dans StructureConcreteController
  */
 trait LogoAwareControllerTrait
 {

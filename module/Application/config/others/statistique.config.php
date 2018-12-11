@@ -1,6 +1,6 @@
 <?php
 
-use Application\Provider\Privilege\EcoleDoctoralePrivileges;
+use Application\Provider\Privilege\StructurePrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
 use Zend\Mvc\Router\Http\Literal;
 use Application\Controller\Factory\StatistiqueControllerFactory;
@@ -14,7 +14,10 @@ return [
                     'action'     => [
                         'index',
                     ],
-                    'privileges' => EcoleDoctoralePrivileges::ECOLE_DOCT_CONSULTATION,
+                    'privileges' => [
+                        StructurePrivileges::STRUCTURE_CONSULTATION_TOUTES_STRUCTURES,
+                        StructurePrivileges::STRUCTURE_CONSULTATION_SES_STRUCTURES,
+                    ],
                 ],
             ],
         ],
