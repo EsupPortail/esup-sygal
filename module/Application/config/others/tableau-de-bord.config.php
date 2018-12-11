@@ -2,7 +2,7 @@
 
 use Application\Controller\Factory\TableauDeBordControllerFactory;
 use Application\Controller\TableauDeBordController;
-use Application\Provider\Privilege\EcoleDoctoralePrivileges;
+use Application\Provider\Privilege\StructurePrivileges;
 use Application\Service\AnomalieService;
 use UnicaenAuth\Guard\PrivilegeController;
 use Zend\Mvc\Router\Http\Literal;
@@ -18,7 +18,10 @@ return [
                         'index',
                         'anomalie',
                     ],
-                    'privileges' => EcoleDoctoralePrivileges::ECOLE_DOCT_CONSULTATION,
+                    'privileges' => [
+                        StructurePrivileges::STRUCTURE_CONSULTATION_TOUTES_STRUCTURES,
+                        StructurePrivileges::STRUCTURE_CONSULTATION_SES_STRUCTURES,
+                    ],
                 ],
             ],
         ],

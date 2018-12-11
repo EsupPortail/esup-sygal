@@ -76,7 +76,7 @@ $form->get('sourceCode')->setAttribute('readonly', !$editable);
                     ?>
                     <br/>
                     <?php if($ecole->getId()): ?>
-                        <a id="supprimer-logo" class="btn btn-danger" href="<?php echo $this->url('ecole-doctorale/supprimer-logo', ["ecoleDoctorale" => $ecole->getStructure()->getId()]); ?>">
+                        <a id="supprimer-logo" class="btn btn-danger" href="<?php echo $this->url('ecole-doctorale/supprimer-logo', ["structure" => $ecole->getStructure()->getId()]); ?>">
                             <span class="glyphicon glyphicon-trash"></span>
                             Supprimer le logo
                         </a>
