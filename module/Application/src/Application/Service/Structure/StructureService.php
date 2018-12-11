@@ -612,8 +612,10 @@ class StructureService extends BaseService
         $qb = $this->getEntityManager()->getRepository($this->getEntityByType($type))->createQueryBuilder('structureConcrete')
             ->addSelect('structure')
             ->addSelect('substitutionTo')
+            ->addSelect('substitutionFrom')
             ->join('structureConcrete.structure', 'structure')
             ->leftJoin('structure.structureSubstituante', 'substitutionTo')
+            ->leftJoin('structure.structuresSubstituees', 'substitutionFrom')
             ->andWhere('substitutionTo.id IS NULL OR pasHistorise(substitutionTo) != 1');
         if ($order) $qb->orderBy('structure.' . $order);
         else {
