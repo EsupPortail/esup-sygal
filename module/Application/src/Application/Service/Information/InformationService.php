@@ -19,6 +19,7 @@ class InformationService {
     public function getInformations()
     {
         $qb = $this->getEntityManager()->getRepository(Information::class)->createQueryBuilder('information')
+            ->orderBy('information.priorite', 'DESC')
         ;
 
         $result = $qb->getQuery()->getResult();
@@ -50,12 +51,18 @@ class InformationService {
      */
     public function create($information)
     {
-        $date = new \DateTime();
+        try {
+            $date = new \DateTime();
+        } catch (\Exception $e) {
+            throw new RuntimeException("Problème de récupération de la date lors de la création en base d'une Information", $e);
+        }
         $user = $this->userContextService->getIdentityDb();
         $information->setHistoCreation($date);
         $information->setHistoCreateur($user);
         $information->setHistoModification($date);
         $information->setHistoModificateur($user);
+        if ($information->getPriorite() === null) $information->setPriorite(Information::DEFAULT_PRIORITE);
+        if ($information->isVisible() === null) $information->setVisible(true);
         $this->getEntityManager()->persist($information);
         try {
             $this->getEntityManager()->flush($information);
@@ -71,7 +78,11 @@ class InformationService {
      */
     public function update($information)
     {
-        $date = new \DateTime();
+        try {
+            $date = new \DateTime();
+        } catch (\Exception $e) {
+            throw new RuntimeException("Problème de récupération de la date lors de la mise à jour en base d'une Information", $e);
+        }
         $user = $this->userContextService->getIdentityDb();
         $information->setHistoModification($date);
         $information->setHistoModificateur($user);

@@ -7,8 +7,10 @@
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <field name="titre"     column="TITRE"      type="string"   length="256"    nullable="false"/>
-        <field name="contenu"   column="CONTENU"    type="string"   length="10000"  nullable="false"/>
+        <field name="titre"     column="TITRE"          type="string"   length="256"    nullable="false"/>
+        <field name="contenu"   column="CONTENU"        type="string"   length="10000"  nullable="false"/>
+        <field name="priorite"  column="PRIORITE"       type="integer"                  nullable="false"/>
+        <field name="visible"   column="EST_VISIBLE"    type="boolean"                  nullable="false"/>
 
         <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
         <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>

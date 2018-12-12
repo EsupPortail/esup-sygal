@@ -15,6 +15,7 @@ use UnicaenApp\Entity\HistoriqueAwareTrait;
 class Information implements HistoriqueAwareInterface
 {
     use HistoriqueAwareTrait;
+    const DEFAULT_PRIORITE = 0;
 
     /** @var integer */
     private $id;
@@ -22,6 +23,11 @@ class Information implements HistoriqueAwareInterface
     private $titre;
     /** @var string */
     private $contenu;
+
+    /** @var  integer*/
+    private $priorite;
+    /** @var boolean */
+    private $visible;
 
     /**
      * @return int
@@ -67,4 +73,42 @@ class Information implements HistoriqueAwareInterface
         $this->contenu = $contenu;
         return $this;
     }
+
+    /**
+     * @return int
+     */
+    public function getPriorite()
+    {
+        return $this->priorite;
+    }
+
+    /**
+     * @param int $priorite
+     * @return Information
+     */
+    public function setPriorite($priorite)
+    {
+        $this->priorite = $priorite;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isVisible()
+    {
+        return $this->visible;
+    }
+
+    /**
+     * @param bool $visible
+     * @return Information
+     */
+    public function setVisible($visible)
+    {
+        $this->visible = $visible;
+        return $this;
+    }
+
+
 }

@@ -17,6 +17,8 @@ class InformationHydrator implements HydratorInterface
         return [
             'titre' => $object->getTitre(),
             'contenu' => $object->getContenu(),
+            'priorite' => $object->getPriorite(),
+            'visible' => $object->isVisible(),
         ];
     }
 
@@ -29,6 +31,8 @@ class InformationHydrator implements HydratorInterface
     {
         $object->setTitre($data['titre']);
         $object->setContenu($data['contenu']);
+        $object->setPriorite($data['priorite']);
+        $object->setVisible( ($data['visible'] == 1)?true:false);
         return $object;
     }
 
