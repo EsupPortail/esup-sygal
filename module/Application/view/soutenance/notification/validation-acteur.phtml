@@ -1,7 +1,5 @@
 <?php
 
-use Application\Entity\Db\Individu;
-use Application\Entity\Db\Role;
 use Application\Entity\Db\Validation;
 use Application\View\Renderer\PhpRenderer;
 
@@ -9,6 +7,10 @@ use Application\View\Renderer\PhpRenderer;
  * @var PhpRenderer $this
  * @var Validation $validation
  */
+?>
+
+<?php
+$urlRetour = $this->url('soutenance/proposition', ['these' => $validation->getThese()->getId()], ['force_canonical'=>true], true);
 ?>
 
 <p>
@@ -19,7 +21,11 @@ use Application\View\Renderer\PhpRenderer;
 </p>
 
 <p>
-    <?php echo $validation->getIndividu()->getNomComplet(false, false, false, true); ?> vient de valider la proposition de thèse.
+    <?php echo $validation->getIndividu()->getNomComplet(false, false, false, true); ?> vient de valider la proposition de soutenance de thèse.
+</p>
+
+<p>
+    Pour consulter cette proposition, connectez-vous à SyGAL et visualisez la proposition de soutenance en utilisant le lien suivant : <a href="<?php echo $urlRetour; ?>">proposition de soutenance</a>.
 </p>
 
 <p>

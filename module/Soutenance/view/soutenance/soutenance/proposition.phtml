@@ -307,7 +307,7 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
     <div class="panel-body">
 
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-6" >
                 <h4>
                     Liste des validations
                 </h4>
@@ -339,7 +339,7 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
                 </ul>
             </div>
 
-            <div class="pull-right">
+            <div class="col-md-6 pull-right" >
             <?php if (!$alreadyValidated) : ?>
                 <?php if ($canValider) : ?>
                     <a
@@ -356,13 +356,13 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
                     <?php endif; ?>
                 <?php endif; ?>
             <?php else: ?>
-                <div class="panel panel-success">
-                    <div class="panel-heading">
+<!--                <div class="panel panel-success">-->
+<!--                    <div class="panel-heading">-->
                         <?php if($validations[$individuId]): ?>
                             <?php echo $this->validation($validations[$individuId]); ?>
                         <?php endif; ?>
-                    </div>
-                </div>
+<!--                    </div>-->
+<!--                </div>-->
             <?php endif; ?>
         </div>
         </div>

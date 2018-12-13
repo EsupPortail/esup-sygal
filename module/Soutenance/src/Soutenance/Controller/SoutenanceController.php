@@ -9,7 +9,6 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Utilisateur;
-use Application\Entity\Db\Validation;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
@@ -202,7 +201,7 @@ class SoutenanceController extends AbstractActionController {
             $form->setData($data);
             if ($form->isValid()) {
                 $this->getPropositionService()->update($proposition);
-                $this->unvalidate($these);
+                $this->getPropositionService()->annulerValidations($proposition);
             }
         }
 
@@ -252,7 +251,7 @@ class SoutenanceController extends AbstractActionController {
                 else {
                     $this->getMembreService()->create($membre);
                 }
-                $this->unvalidate($these);
+                $this->getPropositionService()->annulerValidations($proposition);
             }
         }
 
@@ -269,6 +268,9 @@ class SoutenanceController extends AbstractActionController {
         $idThese = $this->params()->fromRoute('these');
         $these = $this->getTheseService()->getRepository()->find($idThese);
 
+        /** @var Proposition $proposition */
+        $proposition = $this->getPropositionService()->findByThese($these);
+
         $isAllowed = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_MODIFIER);
         if (!$isAllowed) {
             throw new UnAuthorizedException("Vous êtes non authorisé(e) à modifier cette propositions de soutenance.");
@@ -280,7 +282,7 @@ class SoutenanceController extends AbstractActionController {
 
         if ($membre) {
             $this->getMembreService()->delete($membre);
-            $this->unvalidate($these);
+            $this->getPropositionService()->annulerValidations($proposition);
         }
         $this->redirect()->toRoute('soutenance/proposition',['these' => $idThese],[],true);
     }
@@ -307,7 +309,7 @@ class SoutenanceController extends AbstractActionController {
             $form->setData($data);
             if ($form->isValid()) {
                 $this->getPropositionService()->update($proposition);
-                $this->unvalidate($these);
+                $this->getPropositionService()->annulerValidations($proposition);
             }
         }
 
@@ -338,7 +340,7 @@ class SoutenanceController extends AbstractActionController {
             $form->setData($data);
             if ($form->isValid()) {
                 $this->getPropositionService()->update($proposition);
-                $this->unvalidate($these);
+                $this->getPropositionService()->annulerValidations($proposition);
             }
         }
 
@@ -347,7 +349,6 @@ class SoutenanceController extends AbstractActionController {
             'form' => $form,
         ]);
     }
-
 
     public function validerAction() {
         /** @var These $these */
@@ -386,18 +387,6 @@ class SoutenanceController extends AbstractActionController {
 
     }
 
-    /**
-     * @param These $these
-     */
-    public function unvalidate($these) {
-        /** @var Validation[] $validations */
-        $validations = $this->getValidationService()->findValidationPropositionSoutenanceByThese($these);
-        foreach ($validations as $validation) {
-            $this->getValidationService()->historise($validation);
-            $this->getNotifierService()->triggerDevalidationProposition($validation);
-        }
-    }
-
     public function validerStructureAction() {
         /** @var These $these */
         $idThese = $this->params()->fromRoute('these');
@@ -428,24 +417,26 @@ class SoutenanceController extends AbstractActionController {
 
     }
 
-    public function refuserAction() {
+    public function refuserStructureAction() {
         /** @var These $these */
         $idThese = $this->params()->fromRoute('these');
         $these = $this->getTheseService()->getRepository()->find($idThese);
 
+        /** @var Proposition $proposition */
+        $proposition = $this->getPropositionService()->findByThese($these);
+
         /** @var SoutenanceRefusForm $form */
         $form = $this->getServiceLocator()->get('FormElementManager')->get(SoutenanceRefusForm::class);
-        $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/refuser', ['these' => $these->getId()], [], true));
+        $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/refuser-structure', ['these' => $these->getId()], [], true));
 
         /** @var Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
             if ($data['motif'] !== null) {
-                $this->unvalidate($these);
+                $this->getPropositionService()->annulerValidations($proposition);
                 $currentUser = $this->userContextService->getIdentityIndividu();
                 $this->getNotifierService()->triggerRefusPropositionSoutenance($these, $currentUser, $data['motif']);
-//                $this->redirect()->toRoute('soutenance/proposition',['these' => $these->getId()],[],true);
             }
         }
 

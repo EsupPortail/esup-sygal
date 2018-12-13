@@ -153,7 +153,7 @@ return array(
                     'controller' => SoutenanceController::class,
                     'action'     => [
                         'valider-structure',
-                        'refuser',
+                        'refuser-structure',
                     ],
                     'privileges' => [
                         SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_UR,

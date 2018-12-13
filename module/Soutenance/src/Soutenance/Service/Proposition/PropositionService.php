@@ -4,8 +4,12 @@ namespace Soutenance\Service\Proposition;
 
 //TODO faire le repo aussi
 use Application\Entity\Db\These;
+use Application\Entity\Db\TypeValidation;
+use Application\Service\Validation\ValidationService;
+use Application\Service\Validation\ValidationServiceAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
+use Application\Service\Notification\NotifierServiceAwareTrait;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use UnicaenApp\Exception\RuntimeException;
@@ -13,6 +17,8 @@ use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class PropositionService {
     use EntityManagerAwareTrait;
+    use ValidationServiceAwareTrait;
+    use NotifierServiceAwareTrait;
 
     /**
      * @param int $id
@@ -106,5 +112,35 @@ class PropositionService {
             if($membre->getRole() === 'Rapporteur') $rapporteurs[] = $membre;
         }
         return $rapporteurs;
+    }
+
+    /**
+     * Fonction annulant toutes les validations associés à la proposition de soutenances
+     *
+     * @param Proposition $proposition
+     */
+    public function annulerValidations($proposition)
+    {
+        $these = $proposition->getThese();
+        $validations = $this->getValidationService()->findValidationPropositionSoutenanceByThese($these);
+        foreach ($validations as $validation) {
+            $this->getValidationService()->historise($validation);
+            $this->getNotifierService()->triggerDevalidationProposition($validation);
+        }
+        $validationED = current($this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_ED, $these));
+        if ($validationED) {
+            $this->getValidationService()->historise($validationED);
+            $this->getNotifierService()->triggerDevalidationProposition($validationED);
+        }
+        $validationUR = current($this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these));
+        if ($validationUR) {
+            $this->getValidationService()->historise($validationUR);
+            $this->getNotifierService()->triggerDevalidationProposition($validationUR);
+        }
+        $validationBDD = current($this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these));
+        if ($validationBDD) {
+            $this->getValidationService()->historise($validationBDD);
+            $this->getNotifierService()->triggerDevalidationProposition($validationBDD);
+        }
     }
 }
