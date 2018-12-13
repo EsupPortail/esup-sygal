@@ -207,13 +207,19 @@ return [
                         'title' => "Informations sur le doctorat et sa gestion"
                     ],
                     'ecoles-doctorales' => [
-                        'label' => 'Les Ecoles Doctorales',
+                        'label' => 'Les Écoles Doctorales',
                         'route' => 'information/ecoles-doctorales',
                         'title' => "Informations sur les Ecoles Doctorales et le Collège des Ecoles doctorales"
                     ],
                     'guide-these' => [
                         'label' => 'Guide de la thèse',
                         'route' => 'information/guide-these',
+                        'title' => "Informations sur le déroulement de la thèse et formulaires administratifs à l’intention du doctorant et de ses encadrants"
+                    ],
+                    'tinymce-doctorat' => [
+                        'label' => 'Le doctorat',
+                        'route' => 'informations/afficher',
+                        'params'=> ['id' => 61],
                         'title' => "Informations sur le déroulement de la thèse et formulaires administratifs à l’intention du doctorant et de ses encadrants"
                     ],
                 ],
@@ -252,7 +258,7 @@ return [
     ],
     'public_files' => [
         'inline_scripts'        => [
-            '100_' => 'js/tinymce/js/tinymce/tinymce.js',
+            '100_' => 'js/tinymce/js/tinymce/tinymce.min.js',
             '101_' => 'js/form_fiche.js',
         ],
     ]
