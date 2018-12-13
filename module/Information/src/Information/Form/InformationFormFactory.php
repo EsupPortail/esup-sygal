@@ -1,9 +1,7 @@
 <?php
 
-namespace Application\Form\Factory;
+namespace Information\Form;
 
-use Application\Form\Hydrator\InformationHydrator;
-use Application\Form\InformationForm;
 use Zend\Form\FormElementManager;
 
 class InformationFormFactory

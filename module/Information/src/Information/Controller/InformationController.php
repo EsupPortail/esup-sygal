@@ -1,10 +1,10 @@
 <?php
 
-namespace Application\Controller;
+namespace Information\Controller;
 
-use Application\Entity\Db\Information;
-use Application\Form\InformationForm;
-use Application\Service\Information\InformationServiceAwareTrait;
+use Information\Entity\Db\Information;
+use Information\Form\InformationForm;
+use Information\Service\InformationServiceAwareTrait;
 use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;

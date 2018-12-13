@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Service\Information;
+namespace Information\Service;
 
 trait InformationServiceAwareTrait {
 

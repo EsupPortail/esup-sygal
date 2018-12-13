@@ -1,9 +1,9 @@
 <?php
 
-namespace Application\Form\Hydrator;
+namespace Information\Form;
 
 
-use Application\Entity\Db\Information;
+use Information\Entity\Db\Information;
 use Zend\Stdlib\Hydrator\HydratorInterface;
 
 class InformationHydrator implements HydratorInterface

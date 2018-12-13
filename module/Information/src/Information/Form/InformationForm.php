@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Form;
+namespace Information\Form;
 
 use Zend\Form\Element\Button;
 use Zend\Form\Element\Radio;
@@ -58,8 +58,8 @@ class InformationForm extends Form {
                 ],
             ],
             'attributes' => [
-//                'class' => 'type2 form-control',
-                'class' => 'form-control',
+                'class' => 'type2 form-control',
+//                'class' => 'form-control',
             ]
         ]);
 

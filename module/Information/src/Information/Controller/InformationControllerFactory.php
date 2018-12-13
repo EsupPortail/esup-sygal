@@ -1,9 +1,9 @@
 <?php
 
-namespace Application\Controller\Factory;
+namespace Information\Controller;
 
-use Application\Controller\InformationController;
-use Application\Service\Information\InformationService;
+use Information\Controller\InformationController;
+use Information\Service\InformationService;
 use Zend\Mvc\Controller\ControllerManager;
 
 class InformationControllerFactory {

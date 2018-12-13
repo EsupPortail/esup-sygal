@@ -1,8 +1,8 @@
 <?php
 
-namespace Application\Service\Information;
+namespace Information\Service;
 
-use Application\Entity\Db\Information;
+use Information\Entity\Db\Information;
 use Application\Service\UserContextServiceAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
