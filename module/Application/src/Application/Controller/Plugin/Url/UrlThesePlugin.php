@@ -24,6 +24,7 @@ use Zend\Mvc\Controller\Plugin\AbstractPlugin;
  * @method attestationThese(These $these, $version)
  * @method diffusionThese(These $these, $version)
  * @method modifierMetadonneesUrl(These $these)
+ * @method modifierCorrecAutoriseeForceeUrl(These $these)
  * @method certifierConformiteTheseRetraiteUrl(These $these, $version)
  * @method modifierAttestationUrl(These $these)
  * @method modifierDiffusionUrl(These $these)

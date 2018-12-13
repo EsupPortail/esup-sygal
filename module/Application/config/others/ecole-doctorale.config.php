@@ -1,63 +1,56 @@
 <?php
 
+use Application\Controller\EcoleDoctoraleController;
 use Application\Controller\Factory\EcoleDoctoraleControllerFactory;
 use Application\Form\Factory\EcoleDoctoraleFormFactory;
 use Application\Form\Factory\EcoleDoctoraleHydratorFactory;
-use Application\Provider\Privilege\EcoleDoctoralePrivileges;
+use Application\Provider\Privilege\StructurePrivileges;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\View\Helper\EcoleDoctoraleHelper;
 use UnicaenAuth\Guard\PrivilegeController;
-use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use Zend\Mvc\Router\Http\Literal;
 use Zend\Mvc\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [
-        'resource_providers' => [
-            'BjyAuthorize\Provider\Resource\Config' => [
-                'EcoleDoctorale' => [],
-            ],
-        ],
-        'rule_providers'     => [
-            PrivilegeRuleProvider::class => [
-                'allow' => [
-                    [
-                        'privileges' => [
-                            EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION,
-                        ],
-                        'resources'  => ['EcoleDoctorale'],
-                        'assertion'  => 'Assertion\\EcoleDoctorale',
-                    ],
-                ],
-            ],
-        ],
         'guards' => [
             PrivilegeController::class => [
                 [
-                    'controller' => 'Application\Controller\EcoleDoctorale',
+                    'controller' => EcoleDoctoraleController::class,
                     'action'     => [
                         'index',
                         'information'
                     ],
-                    'privileges' => EcoleDoctoralePrivileges::ECOLE_DOCT_CONSULTATION,
+                    'privileges' => [
+                        StructurePrivileges::STRUCTURE_CONSULTATION_TOUTES_STRUCTURES,
+                        StructurePrivileges::STRUCTURE_CONSULTATION_SES_STRUCTURES,
+                    ],
                 ],
                 [
-                    'controller' => 'Application\Controller\EcoleDoctorale',
+                    'controller' => EcoleDoctoraleController::class,
                     'action'     => [
                         'ajouter',
                         'supprimer',
                         'restaurer',
                     ],
-                    'privileges' => EcoleDoctoralePrivileges::ECOLE_DOCT_CREATION,
+                    'privileges' => [
+                        StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES,
+                        StructurePrivileges::STRUCTURE_MODIFICATION_SES_STRUCTURES,
+                        StructurePrivileges::STRUCTURE_CREATION_ED,
+                    ],
                 ],
                 [
-                    'controller' => 'Application\Controller\EcoleDoctorale',
+                    'controller' => EcoleDoctoraleController::class,
                     'action'     => [
                         'modifier',
                         'ajouter-individu',
                         'retirer-individu',
                         'supprimer-logo',
                     ],
-                    'privileges' => EcoleDoctoralePrivileges::ECOLE_DOCT_MODIFICATION,
+                    'privileges' => [
+                        StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES,
+                        StructurePrivileges::STRUCTURE_MODIFICATION_SES_STRUCTURES,
+                    ],
                 ],
             ],
         ],
@@ -65,14 +58,12 @@ return [
     'router'          => [
         'routes' => [
             'ecole-doctorale' => [
-                'type'          => 'Segment',
+                'type'          => Literal::class,
                 'options'       => [
-                    'route'    => '/[:language/]ecole-doctorale',
+                    'route'    => '/ecole-doctorale',
                     'defaults' => [
-                        '__NAMESPACE__' => 'Application\Controller',
-                        'controller'    => 'EcoleDoctorale',
+                        'controller'    => EcoleDoctoraleController::class,
                         'action'        => 'index',
-                        'language'      => 'fr_FR',
                     ],
                 ],
                 'may_terminate' => true,
@@ -80,15 +71,14 @@ return [
                     'information' => [
                         'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/information/:ecoleDoctorale',
+                            'route'       => '/information/:structure',
                             'defaults'    => [
                                 'action' => 'information',
                             ],
                         ],
-
                     ],
                     'ajouter' => [
-                        'type'          => 'Segment',
+                        'type'          => Literal::class,
                         'options'       => [
                             'route'       => '/ajouter',
                             'defaults'    => [
@@ -97,73 +87,36 @@ return [
                         ],
                     ],
                     'supprimer' => [
-                        'type'          => 'Segment',
+                        'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/:ecoleDoctorale/supprimer',
-                            'constraints' => [
-                                'ecoleDoctorale' => '\d+',
-                            ],
+                            'route'       => '/supprimer/:structure',
                             'defaults'    => [
                                 'action' => 'supprimer',
                             ],
                         ],
                     ],
                     'restaurer' => [
-                        'type'          => 'Segment',
+                        'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/:ecoleDoctorale/restaurer',
-                            'constraints' => [
-                                'ecoleDoctorale' => '\d+',
-                            ],
+                            'route'       => '/restaurer/:structure',
                             'defaults'    => [
                                 'action' => 'restaurer',
                             ],
                         ],
                     ],
                     'modifier' => [
-                        'type'          => 'Segment',
+                        'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/:ecoleDoctorale/modifier',
-                            'constraints' => [
-                                'ecoleDoctorale' => '\d+',
-                            ],
+                            'route'       => '/modifier/:structure',
                             'defaults'    => [
                                 'action' => 'modifier',
                             ],
                         ],
                     ],
-                    'ajouter-individu' => [
-                        'type'          => 'Segment',
-                        'options'       => [
-                            'route'       => '/:ecoleDoctorale/ajouter-individu',
-                            'constraints' => [
-                                'ecoleDoctorale' => '\d+',
-                            ],
-                            'defaults'    => [
-                                'action' => 'ajouter-individu',
-                            ],
-                        ],
-                    ],
-                    'retirer-individu' => [
-                        'type'          => 'Segment',
-                        'options'       => [
-                            'route'       => '/:ecoleDoctorale/retirer-individu/:edi',
-                            'constraints' => [
-                                'ecoleDoctorale' => '\d+',
-                                'edi' => '\d+',
-                            ],
-                            'defaults'    => [
-                                'action' => 'retirer-individu',
-                            ],
-                        ],
-                    ],
                     'supprimer-logo' => [
-                        'type'          => 'Segment',
+                        'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/supprimer-logo/:ecoleDoctorale',
-                            'constraints' => [
-                                'ecoleDoctorale' => '\d+',
-                            ],
+                            'route'       => '/supprimer-logo/:structure',
                             'defaults'    => [
                                 'action' => 'supprimer-logo',
                             ],
@@ -182,28 +135,28 @@ return [
                             'ecole-doctorale' => [
                                 'label'    => 'Écoles doctorales',
                                 'route'    => 'ecole-doctorale',
-                                'resource' => PrivilegeController::getResourceId('Application\Controller\EcoleDoctorale', 'index'),
+                                'resource' => PrivilegeController::getResourceId(EcoleDoctoraleController::class, 'index'),
 
                                 'order'    => 10,
                                 'pages' => [
                                     'modification' => [
                                         'label'    => 'Modification',
                                         'route'    => 'ecole-doctorale/modifier',
-                                        'resource' => PrivilegeController::getResourceId('Application\Controller\EcoleDoctorale', 'index'),
+                                        'resource' => PrivilegeController::getResourceId(EcoleDoctoraleController::class, 'index'),
 
                                         'withtarget' => true,
                                         'paramsInject' => [
-                                            'ecoleDoctorale',
+                                            'structure',
                                         ],
                                     ],
                                     'information' => [
                                         'label'    => 'Détails',
                                         'route'    => 'ecole-doctorale/information',
-                                        'resource' => PrivilegeController::getResourceId('Application\Controller\EcoleDoctorale', 'index'),
+                                        'resource' => PrivilegeController::getResourceId(EcoleDoctoraleController::class, 'index'),
 
                                         'withtarget' => true,
                                         'paramsInject' => [
-                                            'ecoleDoctorale',
+                                            'structure',
                                         ],
                                     ],
                                 ],
@@ -230,6 +183,9 @@ return [
         'factories' => [
             'Application\Controller\EcoleDoctorale' => EcoleDoctoraleControllerFactory::class,
         ],
+        'aliases' => [
+            EcoleDoctoraleController::class => 'Application\Controller\EcoleDoctorale',
+        ]
     ],
     'form_elements'   => [
         'invokables' => [

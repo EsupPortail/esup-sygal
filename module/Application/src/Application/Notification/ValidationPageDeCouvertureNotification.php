@@ -59,7 +59,7 @@ class ValidationPageDeCouvertureNotification extends Notification
             $source = $temp->getSource();
             $errorMessage = sprintf(
                 "<strong>NB:</strong> Les directeurs de thèses suivants n'ont pas pu être notifiés " .
-                "car leur adresse mail n'est pas connue dans %s : <br> %s",
+                "car leur adresse électronique n'est pas connue dans %s : <br> %s",
                 $source,
                 implode(',', $individusSansMail)
             );

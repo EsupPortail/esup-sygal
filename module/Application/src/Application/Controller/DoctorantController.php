@@ -78,7 +78,7 @@ class DoctorantController extends AbstractController
                 $this->mailConfirmationService->generateCode($id);
                 return $this->redirect()->toRoute('mail-confirmation-envoie', ['id' => $id], [], true);
             } else {
-                $this->flashMessenger()->addErrorMessage("L'email fourni <strong>".$email."</strong> est non valide.");
+                $this->flashMessenger()->addErrorMessage("L'adresse électronique fournie <strong>".$email."</strong> est non valide.");
             }
         }
 
@@ -90,7 +90,7 @@ class DoctorantController extends AbstractController
         return new ViewModel([
             'doctorant' => $doctorant,
             'form' => $form,
-            'title' => "Saisie du mail de contact",
+            'title' => "Saisie de l'adresse électronique de contact",
             //'detournement' => (bool) $this->params('detournement'),
             //'emailBdD' => $variable->getValeur(),
         ]);

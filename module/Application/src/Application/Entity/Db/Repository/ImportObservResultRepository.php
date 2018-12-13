@@ -27,11 +27,11 @@ class ImportObservResultRepository extends DefaultEntityRepository
             case ImportObserv::CODE_RESULTAT_PASSE_A_ADMIS:
                 return $this->fetchImportObservResultsForResultatAdmis($etablissement, $these);
                 break;
-            case ImportObserv::CODE_CORRECTION_PASSE_A_MINEURE:
-                return $this->fetchImportObservResultsForCorrectionMineure($etablissement, $these);
+            case ImportObserv::CODE_CORRECTION_PASSE_A_FACULTATIVE:
+                return $this->fetchImportObservResultsForCorrectionFacultative($etablissement, $these);
                 break;
-            case ImportObserv::CODE_CORRECTION_PASSE_A_MAJEURE:
-                return $this->fetchImportObservResultsForCorrectionMajeure($etablissement, $these);
+            case ImportObserv::CODE_CORRECTION_PASSE_A_OBLIGATOIRE:
+                return $this->fetchImportObservResultsForCorrectionObligatoire($etablissement, $these);
                 break;
             default:
                 throw new RuntimeException("Cas non prévu!");
@@ -58,15 +58,15 @@ class ImportObservResultRepository extends DefaultEntityRepository
     }
 
     /**
-     * Recherche des résultats d'observation des thèses dont le flag "correction_autorisee" est passé à "mineure".
+     * Recherche des résultats d'observation des thèses dont le flag "correction_autorisee" est passé à "facultative".
      *
      * @param Etablissement|string $etablissement
      * @param These|null           $these
      * @return ImportObservResult[]
      */
-    private function fetchImportObservResultsForCorrectionMineure($etablissement, These $these = null)
+    private function fetchImportObservResultsForCorrectionFacultative($etablissement, These $these = null)
     {
-        $qb = $this->createImportObservResultsQueryBuilder(ImportObserv::CODE_CORRECTION_PASSE_A_MINEURE, $etablissement, $these);
+        $qb = $this->createImportObservResultsQueryBuilder(ImportObserv::CODE_CORRECTION_PASSE_A_FACULTATIVE, $etablissement, $these);
         $qb->andWhere('ior.dateNotif is null'); // aucune notification ne doit avoir été faite
 
         /** @var ImportObservResult[] $records */
@@ -76,15 +76,15 @@ class ImportObservResultRepository extends DefaultEntityRepository
     }
 
     /**
-     * Recherche des résultats d'observation des thèses dont le flag "correction_autorisee" est passé à "majeure".
+     * Recherche des résultats d'observation des thèses dont le flag "correction_autorisee" est passé à "obligatoire".
      *
      * @param Etablissement|string $etablissement
      * @param These|null           $these
      * @return ImportObservResult[]
      */
-    private function fetchImportObservResultsForCorrectionMajeure($etablissement, These $these = null)
+    private function fetchImportObservResultsForCorrectionObligatoire($etablissement, These $these = null)
     {
-        $qb = $this->createImportObservResultsQueryBuilder(ImportObserv::CODE_CORRECTION_PASSE_A_MAJEURE, $etablissement, $these);
+        $qb = $this->createImportObservResultsQueryBuilder(ImportObserv::CODE_CORRECTION_PASSE_A_OBLIGATOIRE, $etablissement, $these);
         $qb->andWhere('ior.dateNotif is null OR ior.dateNotif is not null'); // une notif peut avoir été faite ou non
 
         /** @var ImportObservResult[] $records */

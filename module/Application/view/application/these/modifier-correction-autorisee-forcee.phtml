@@ -1,0 +1,32 @@
+<?php
+
+use Application\Entity\Db\Attestation;
+use Application\Entity\Db\These;
+use Application\Form\AttestationTheseForm;
+use Application\Provider\Privilege\ThesePrivileges;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer          $this
+ * @var These                $these
+ * @var Attestation          $attestation
+ * @var AttestationTheseForm $form
+ * @var string               $modifierAttestationUrl
+ *
+ * @see TheseController::modifierCorrectionAutoriseeForceeAction()
+ */
+
+$canEdit = $this->isAllowed($these, ThesePrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE);
+$form->prepare();
+?>
+
+<p class="lead">
+    <?php echo $form->getLabel() ?>
+</p>
+<p>
+    Que voulez-vous faire ?
+</p>
+<?php echo $this->form()->openTag($form) ?>
+<?php echo $this->formControlGroup()->render($form->get('forcage')) ?>
+<?php echo $this->formElement($form->get('submit')->setAttribute('class', 'btn btn-primary')) ?>
+<?php echo $this->form()->closeTag() ?>

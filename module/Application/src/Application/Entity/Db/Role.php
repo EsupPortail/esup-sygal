@@ -4,7 +4,7 @@ namespace Application\Entity\Db;
 
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenAuth\Entity\Db\AbstractRole;
-use Application\Entity\Db\Traits\SourceAwareTrait;
+use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
 
 /**
  * An entity that represents a role.
@@ -33,6 +33,8 @@ class Role extends AbstractRole
     const CODE_PRESIDENT_JURY = 'P';
     const CODE_RAPPORTEUR_JURY = 'R';
     const CODE_CO_ENCADRANT = 'B';
+    const CODE_ED = 'ED';
+    const CODE_UR = 'UR';
 
     // @todo NB: maintenant il y le code étab concaténé au "role_id"
     const ROLE_ID_DOCTORANT = "Doctorant";

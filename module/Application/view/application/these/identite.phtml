@@ -1,8 +1,10 @@
 <?php
 
+use Application\Controller\TheseController;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\MailConfirmation;
 use Application\Entity\Db\These;
+use Application\Entity\Db\Validation;
 use Application\Filter\ActeursFormatter;
 use Application\Filter\FinancementFormatter;
 use Application\Provider\Privilege\DoctorantPrivileges;
@@ -11,27 +13,31 @@ use Application\View\Helper\IndividuUsurpationHelper;
 use Application\View\Renderer\PhpRenderer;
 
 /**
- * @var        $this PhpRenderer
- * @var These  $these
- * @var string $modifierPersopassUrl
- * @var bool   $estDoctorant
- * @var bool   $showCorrecAttendue
- * @var string $pvSoutenanceUrl
- * @var string $rapportSoutenanceUrl
- * @var string $preRapportSoutenanceUrl
- * @var string $demandeConfidentUrl
- * @var string $prolongConfidentUrl
- * @var string $convMiseEnLigneUrl
- * @var string $avenantConvMiseEnLigneUrl
- * @var string $nextStepUrl
- * @var string $mailContact
- * @var string $etatMailContact
+ * @var PhpRenderer  $this
+ * @var These        $these
+ * @var string       $modifierPersopassUrl
+ * @var bool         $estDoctorant
+ * @var string       $pvSoutenanceUrl
+ * @var string       $rapportSoutenanceUrl
+ * @var string       $preRapportSoutenanceUrl
+ * @var string       $demandeConfidentUrl
+ * @var string       $prolongConfidentUrl
+ * @var string       $convMiseEnLigneUrl
+ * @var string       $avenantConvMiseEnLigneUrl
+ * @var string       $modifierCorrecAutorUrl
+ * @var string       $nextStepUrl
+ * @var string       $mailContact
+ * @var string       $etatMailContact
+ * @var Validation[] $validationsDesCorrectionsEnAttente
+ *
+ * @see TheseController::detailIdentiteAction()
  */
 
 $canEditPersopass = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_MODIFICATION_PERSOPASS);
 $canEditPersopass = $canEditPersopass && (!$estDoctorant || !$these->getDoctorant()->getPersopass());
 $persopassModifiedEvent = 'persopass-modified-event';
 
+$canEditForcageCorrectionAutorisee = $this->isAllowed($these, ThesePrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE);
 
 $financementFormatter = new FinancementFormatter();
 $financementFormatter->setSortBy(FinancementFormatter::SORT_BY_DATE);
@@ -90,7 +96,7 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                 <?php echo $these->getDoctorant()->getSourceCodeSansPrefix() ?> <br>
 
                 <strong>
-                    <?php echo $this->translate("Mail :"); ?>
+                    <?php echo $this->translate("Adresse électronique :"); ?>
                 </strong>
                 <?php if ($email = $these->getDoctorant()->getEmailPro() ?: $these->getDoctorant()->getEmail()): ?>
                     <a href="mailto: <?php echo $email ?>"><?php echo $email ?></a>
@@ -100,7 +106,7 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                 <br/>
 
                 <strong>
-                    <?php echo $this->translate("Mail de contact :"); ?>
+                    <?php echo $this->translate("Adresse électronique de contact :"); ?>
                 </strong>
                 <?php
                 if ($mailContact === null) {
@@ -285,7 +291,7 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
 
             <dt>État</dt>
             <dd>
-                <?php echo $these->getEtatTheseToString() ?>
+                <span class="label label-default"><?php echo $these->getEtatTheseToString() ?></span>
             </dd>
 
             <?php if ($resultat = $these->getResultatToString(false)): ?>
@@ -320,33 +326,46 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                     <?php echo $these->getLibellePaysCotutelle() ?></dd>
             <?php endif ?>
 
-            <?php if ($showCorrecAttendue): ?>
-                <?php if ($these->getCorrectionAutoriseeEstMineure()): ?>
-                    <dt class="text-warning">Corrections attendues</dt>
-                    <?php if ($these->getDateButoirDepotVersionCorrigeeDepassee()): ?>
-                        <dd class="text-warning">
-                            Non. Délai pour corrections mineures écoulé : la version déposée avant soutenance
-                            constitue désormais la version de référence.
-                        </dd>
-                    <?php else: ?>
-                        <dd class="text-warning">
-                            Oui, mineures.
-                        </dd>
+            <!------------------------------- Corrections attendues --------------------------------->
+            <?php
+            $titre = "Corrections attendues";
+            $message = "Non.";
+            $class = null;
+
+            if ($these->isCorrectionAutorisee()) {
+                $dateButoirDepassee = $these->getDateButoirDepotVersionCorrigeeDepassee() && ! empty($validationsDesCorrectionsEnAttente);
+
+                if ($these->getCorrectionAutoriseeEstFacultative()) {
+                    $class = "text-warning";
+                    $message = $dateButoirDepassee ?
+                        "Trop tard, le délai pour corrections facultatives est écoulé : la version déposée avant soutenance constitue désormais la version de référence." :
+                        "Oui, facultatives.";
+                } elseif ($these->getCorrectionAutoriseeEstObligatoire()) {
+                    $class = "text-danger";
+                    $message = $dateButoirDepassee ?
+                        "Trop tard, le délai pour corrections obligatoires est écoulé : ni l’attestation de réussite ni le diplôme ne peuvent désormais être délivrés." :
+                        "Oui, obligatoires.";
+                }
+                if (empty($validationsDesCorrectionsEnAttente)) {
+                    $titre = "Corrections";
+                    $message = sprintf("Les corrections %s ont été validées.", lcfirst($these->getCorrectionAutoriseeToString(true)));
+                    $canEditForcageCorrectionAutorisee = false;
+                }
+            }
+            ?>
+            <dt class="<?php echo $class ?>"><?php echo $titre ?></dt>
+            <dd class="<?php echo $class ?>">
+                <?php echo $message ?> <br>
+                <?php if ($canEditForcageCorrectionAutorisee): ?>
+                    <?php if ($these->isCorrectionAutoriseeForcee()): ?>
+                        <em>Cette valeur est forcée.</em>
                     <?php endif ?>
-                <?php elseif ($these->getCorrectionAutoriseeEstMajeure()): ?>
-                    <dt class="text-danger">Corrections attendues</dt>
-                    <?php if ($these->getDateButoirDepotVersionCorrigeeDepassee()): ?>
-                        <dd class="text-danger">
-                            Non. Délai pour corrections majeures écoulé : ni l’attestation de réussite ni
-                            le diplôme ne peuvent désormais être délivrés.
-                        </dd>
-                    <?php else: ?>
-                        <dd class="text-danger">
-                            Oui, majeures.
-                        </dd>
-                    <?php endif ?>
+                    <a href="<?php echo $modifierCorrecAutorUrl ?>" class="btn btn-xs btn-info ajax-modal"
+                       data-event="event-correction-autorisee-forcee-modified"
+                       title="Forçage du témoin de corrections attendues"
+                    >Forçage</a>
                 <?php endif ?>
-            <?php endif ?>
+            </dd>
 
         </dl>
     </div>
@@ -452,9 +471,12 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
             avenantConvMiseEnLigneLoader,
         ], self);
 
-
         body.one("<?php echo $persopassModifiedEvent ?>", function (event, data) {
             // Le persopass vient d'être modifié.
+            event.div.modal('hide'); // ferme la fenêtre modale
+            window.location.reload();
+        });
+        body.one("event-correction-autorisee-forcee-modified", function (event) {
             event.div.modal('hide'); // ferme la fenêtre modale
             window.location.reload();
         });

@@ -1,13 +1,14 @@
 <?php
 
+use Application\Controller\EtablissementController;
 use Application\Controller\Factory\EtablissementControllerFactory;
 use Application\Form\Factory\EtablissementFormFactory;
 use Application\Form\Factory\EtablissementHydratorFactory;
-use Application\Provider\Privilege\EcoleDoctoralePrivileges;
-use Application\Provider\Privilege\EtablissementPrivileges;
+use Application\Provider\Privilege\StructurePrivileges;
 use Application\Service\Etablissement\EtablissementService;
 use Application\View\Helper\EtablissementHelper;
 use UnicaenAuth\Guard\PrivilegeController;
+use Zend\Mvc\Router\Http\Literal;
 use Zend\Mvc\Router\Http\Segment;
 
 return [
@@ -15,25 +16,39 @@ return [
         'guards' => [
             PrivilegeController::class => [
                 [
-                    'controller' => 'Application\Controller\Etablissement',
+                    'controller' => EtablissementController::class,
                     'action'     => [
                         'index',
                         'information',
                     ],
-                    'privileges' => EtablissementPrivileges::ETABLISSEMENT_CONSULTATION,
+                    'privileges' => [
+                        StructurePrivileges::STRUCTURE_CONSULTATION_TOUTES_STRUCTURES,
+                        StructurePrivileges::STRUCTURE_CONSULTATION_SES_STRUCTURES,
+                    ],
                 ],
                 [
-                    'controller' => 'Application\Controller\Etablissement',
+                    'controller' => EtablissementController::class,
                     'action'     => [
                         'ajouter',
                         'supprimer',
                         'restaurer',
+                    ],
+                    'privileges' => [
+                        StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES,
+                        StructurePrivileges::STRUCTURE_MODIFICATION_SES_STRUCTURES,
+                        StructurePrivileges::STRUCTURE_CREATION_ETAB
+                    ],
+                ],
+                [
+                    'controller' => EtablissementController::class,
+                    'action'     => [
                         'modifier',
-                        'ajouter-individu',
-                        'retirer-individu',
                         'supprimer-logo',
                     ],
-                    'privileges' => EtablissementPrivileges::ETABLISSEMENT_MODIFICATION,
+                    'privileges' => [
+                        StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES,
+                        StructurePrivileges::STRUCTURE_MODIFICATION_SES_STRUCTURES,
+                    ],
                 ],
             ],
         ],
@@ -41,14 +56,12 @@ return [
     'router'          => [
         'routes' => [
             'etablissement' => [
-                'type'          => 'Segment',
+                'type'          => Literal::class,
                 'options'       => [
-                    'route'    => '/[:language/]etablissement',
+                    'route'    => '/etablissement',
                     'defaults' => [
-                        '__NAMESPACE__' => 'Application\Controller',
-                        'controller'    => 'Etablissement',
+                        'controller'    => EtablissementController::class,
                         'action'        => 'index',
-                        'language'      => 'fr_FR',
                     ],
                 ],
                 'may_terminate' => true,
@@ -56,14 +69,14 @@ return [
                     'information' => [
                         'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/information/:etablissement',
+                            'route'       => '/information/:structure',
                             'defaults'    => [
                                 'action' => 'information',
                             ],
                         ],
                     ],
                     'ajouter' => [
-                        'type'          => 'Segment',
+                        'type'          => Literal::class,
                         'options'       => [
                             'route'       => '/ajouter',
                             'defaults'    => [
@@ -72,33 +85,27 @@ return [
                         ],
                     ],
                     'supprimer' => [
-                        'type'          => 'Segment',
+                        'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/:etablissement/supprimer',
-                            'constraints' => [
-                                'etablissement' => '\d+',
-                            ],
+                            'route'       => '/supprimer/:structure',
                             'defaults'    => [
                                 'action' => 'supprimer',
                             ],
                         ],
                     ],
                     'restaurer' => [
-                        'type'          => 'Segment',
+                        'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/:etablissement/restaurer',
-                            'constraints' => [
-                                'ecoleDoctorale' => '\d+',
-                            ],
+                            'route'       => '/restaurer/:structure',
                             'defaults'    => [
                                 'action' => 'restaurer',
                             ],
                         ],
                     ],
                     'modifier' => [
-                        'type'          => 'Segment',
+                        'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/:etablissement/modifier',
+                            'route'       => '/modifier/:structure',
                             'constraints' => [
                                 'etablissement' => '\d+',
                             ],
@@ -107,38 +114,10 @@ return [
                             ],
                         ],
                     ],
-                    'ajouter-individu' => [
-                        'type'          => 'Segment',
-                        'options'       => [
-                            'route'       => '/:etablissement/ajouter-individu',
-                            'constraints' => [
-                                'etablissement' => '\d+',
-                            ],
-                            'defaults'    => [
-                                'action' => 'ajouter-individu',
-                            ],
-                        ],
-                    ],
-                    'retirer-individu' => [
-                        'type'          => 'Segment',
-                        'options'       => [
-                            'route'       => '/:etablissement/retirer-individu/:etabi',
-                            'constraints' => [
-                                'etablissement' => '\d+',
-                                'etabi' => '\d+',
-                            ],
-                            'defaults'    => [
-                                'action' => 'retirer-individu',
-                            ],
-                        ],
-                    ],
                     'supprimer-logo' => [
-                        'type'          => 'Segment',
+                        'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/supprimer-logo/:etablissement',
-                            'constraints' => [
-                                'etablissement' => '\d+',
-                            ],
+                            'route'       => '/supprimer-logo/:structure',
                             'defaults'    => [
                                 'action' => 'supprimer-logo',
                             ],
@@ -157,27 +136,27 @@ return [
                             'etablissement' => [
                                 'label'    => 'Établissements',
                                 'route'    => 'etablissement',
-                                'resource' => PrivilegeController::getResourceId('Application\Controller\Etablissement', 'index'),
+                                'resource' => PrivilegeController::getResourceId(EtablissementController::class, 'index'),
                                 'order'    => 5,
                                 'pages' => [
                                     'modification' => [
                                         'label'    => 'Modification',
                                         'route'    => 'etablissement/modifier',
-                                        'resource' => PrivilegeController::getResourceId('Application\Controller\Etablissement', 'index'),
+                                        'resource' => PrivilegeController::getResourceId(EtablissementController::class, 'index'),
 
                                         'withtarget' => true,
                                         'paramsInject' => [
-                                            'etablissement',
+                                            'structure',
                                         ],
                                     ],
                                     'information' => [
                                         'label'    => 'Détails',
                                         'route'    => 'etablissement/information',
-                                        'resource' => PrivilegeController::getResourceId('Application\Controller\Etablissement', 'index'),
+                                        'resource' => PrivilegeController::getResourceId(EtablissementController::class, 'index'),
 
                                         'withtarget' => true,
                                         'paramsInject' => [
-                                            'etablissement',
+                                            'structure',
                                         ],
                                     ],
                                 ],
@@ -204,6 +183,9 @@ return [
         'factories' => [
             'Application\Controller\Etablissement' => EtablissementControllerFactory::class,
         ],
+        'aliases' => [
+            EtablissementController::class => 'Application\Controller\Etablissement',
+        ]
     ],
     'form_elements'   => [
         'invokables' => [

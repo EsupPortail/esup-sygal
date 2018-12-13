@@ -5,15 +5,14 @@ namespace Application\Service\EcoleDoctorale;
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Repository\EcoleDoctoraleRepository;
+use Application\Entity\Db\Role;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\BaseService;
 use Application\Service\Role\RoleServiceAwareInterface;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\Query\Expr\Join;
 use UnicaenApp\Exception\RuntimeException;
-use Application\Entity\Db\Source;
 
 /**
  * @method EcoleDoctorale|null findOneBy(array $criteria, array $orderBy = null)
@@ -40,7 +39,7 @@ class EcoleDoctoraleService extends BaseService implements RoleServiceAwareInter
      */
     public function getIndividuByEcoleDoctoraleId($id)
     {
-        $ecole = $this->getRepository()->findOneBy(['id'=>$id]);
+        $ecole = $this->getRepository()->findOneBy(['id' => $id]);
         $individus = $this->roleService->getIndividuByStructure($ecole->getStructure());
 
         return $individus;
@@ -69,17 +68,30 @@ class EcoleDoctoraleService extends BaseService implements RoleServiceAwareInter
         $this->flush($ecole);
     }
 
-    public function create(EcoleDoctorale $ecole, Utilisateur $createur)
+    public function create(EcoleDoctorale $structureConcrete, Utilisateur $createur)
     {
-        $ecole->setHistoCreateur($createur);
         /** @var TypeStructure $typeStructure */
-        $typeStructure = $this->getEntityManager()->getRepository(TypeStructure::class)->findOneBy(['code' => 'ecole-doctorale']);
-        $ecole->getStructure()->setTypeStructure($typeStructure);
+        $typeStructure = $this->getEntityManager()->getRepository(TypeStructure::class)->findOneBy(['code' => 'etablissement']);
 
-        $this->persist($ecole);
-        $this->flush($ecole);
+        $structure = $structureConcrete->getStructure();
+        $structure->setTypeStructure($typeStructure);
 
-        return $ecole;
+        $structureConcrete->setSourceCode("SyGAL::" . uniqid());
+        $structureConcrete->setHistoCreateur($createur);
+
+        $this->entityManager->beginTransaction();
+
+        $this->entityManager->persist($structure);
+        $this->entityManager->persist($structureConcrete);
+        try {
+            $this->entityManager->flush($structure);
+            $this->entityManager->flush($structureConcrete);
+            $this->entityManager->commit();
+        } catch (\Exception $e) {
+            $this->rollback();
+        }
+
+        return $structureConcrete;
     }
 
     public function update(EcoleDoctorale $ecole)

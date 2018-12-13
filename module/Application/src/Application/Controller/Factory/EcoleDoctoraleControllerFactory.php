@@ -35,16 +35,13 @@ class EcoleDoctoraleControllerFactory
          * @var StructureService $structureService
          */
         $ecoleDoctoralService = $sl->get('EcoleDoctoraleService');
-        $individuService = $sl->get('IndividuService');
         $structureService = $sl->get(StructureService::class);
         $roleService = $sl->get('RoleService');
 
         $controller = new EcoleDoctoraleController();
         $controller->setEcoleDoctoraleService($ecoleDoctoralService);
-        $controller->setIndividuService($individuService);
         $controller->setRoleService($roleService);
-        $controller->setEtablissementService($this->locateEtablissementService($sl));
-        $controller->setEcoleDoctoraleForm($form);
+        $controller->setStructureForm($form);
         $controller->setStructureService($structureService);
 
         return $controller;

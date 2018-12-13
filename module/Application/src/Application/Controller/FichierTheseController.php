@@ -490,7 +490,8 @@ class FichierTheseController extends AbstractController
 
         $filename = uniqid() . '.pdf';
         $renderer = $this->getServiceLocator()->get('view_renderer'); /* @var $renderer \Zend\View\Renderer\PhpRenderer */
-        $this->fichierService->generatePageDeCouverture($these, $renderer, $filename);
+        $pdcData = $this->theseService->fetchInformationsPageDeCouverture($these);
+        $this->fichierService->generatePageDeCouverture($pdcData, $renderer, $filename);
 
         $filepath = sys_get_temp_dir() . '/' . $filename; // NB: l'exporter PDF stocke dans sys_get_temp_dir()
         try {
@@ -537,8 +538,8 @@ class FichierTheseController extends AbstractController
             throw new RuntimeException("Aucune thèse trouvée avec cet id : " . $id);
         }
 
-        $outputFilePath = $this->fichierService->fusionneFichierThese($these, $versionFichier, $removeFirstPage);
-//        $outputFilePath = "/tmp/recuperer-fusion/35249-samassa-haoua-merged.pdf";
+        $pdcData = $this->theseService->fetchInformationsPageDeCouverture($these);
+        $outputFilePath = $this->fichierService->fusionnerPdcEtThese($these, $pdcData, $versionFichier, $removeFirstPage);
 
         $this->eventRouterReplacer->replaceEventRouter($this->getEvent());
 

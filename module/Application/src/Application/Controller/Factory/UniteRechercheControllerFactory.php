@@ -37,19 +37,17 @@ class UniteRechercheControllerFactory
          * @var DomaineScientifiqueService $domaineService
          */
         $uniteRechercheService = $sl->get('UniteRechercheService');
-        $individuService = $sl->get('IndividuService');
         $roleService = $sl->get('RoleService');
         $structureService = $sl->get(StructureService::class);
         $domaineService = $sl->get(DomaineScientifiqueService::class);
 
         $controller = new UniteRechercheController();
         $controller->setUniteRechercheService($uniteRechercheService);
-        $controller->setIndividuService($individuService);
         $controller->setRoleService($roleService);
         $controller->setEtablissementService($this->locateEtablissementService($sl));
         $controller->setDomaineScientifiqueService($domaineService);
         $controller->setStructureService($structureService);
-        $controller->setUniteRechercheForm($form);
+        $controller->setStructureForm($form);
 
         return $controller;
     }

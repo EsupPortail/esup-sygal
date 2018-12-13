@@ -1,5 +1,7 @@
 <?php
 
+use Application\Entity\Db\Source;
+
 return [
     /* Configuration d'UnicaenImport */
     'unicaen-import' => [
@@ -13,6 +15,8 @@ return [
          * Injection automatique d'une Source dans les entités créées par l'appli.
          */
         'entity_source_injector' => [
+            // Classe des entités Source à utiliser.
+            'source_entity_class' => Source::class,
             // Code unique de la source à injecter (null pour désactiver le mécanisme).
             'source_code' => 'SYGAL::sygal',
         ],

@@ -55,9 +55,9 @@ class TheseControllerAssertion extends ControllerAssertion
             return false;
         }
 
-        if (! $this->userContextService->isStructureDuRoleRespecteeForThese($this->these)) {
-            return false;
-        }
+//        if (! $this->userContextService->isStructureDuRoleRespecteeForThese($this->these)) {
+//            return false;
+//        }
 
         return true;
     }

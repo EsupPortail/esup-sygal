@@ -12,7 +12,7 @@ class NotificationDepotVersionCorrigeeAttenduRuleTest extends \PHPUnit_Framework
 {
     public function test_retourne_date_null_si_date_butoire_null()
     {
-        $correctionAutorisee = These::CORRECTION_MINEURE;
+        $correctionAutorisee = These::CORRECTION_AUTORISEE_FACULTATIVE;
 
         $these = $this->theseMock($correctionAutorisee, $dateButoir = null);
 
@@ -88,7 +88,7 @@ class NotificationDepotVersionCorrigeeAttenduRuleTest extends \PHPUnit_Framework
      */
     public function test_correction_mineure($aujourdhui, $dateDerniereNotif, $dateButoir, $expectedDateProchaineNotif, $expectedEstPremiereNotif)
     {
-        $correctionAutorisee = These::CORRECTION_MINEURE;
+        $correctionAutorisee = These::CORRECTION_AUTORISEE_FACULTATIVE;
 
         $these = $this->theseMock($correctionAutorisee, $dateButoir);
 
@@ -216,7 +216,7 @@ class NotificationDepotVersionCorrigeeAttenduRuleTest extends \PHPUnit_Framework
      */
     public function test_correction_majeure($aujourdhui, $dateDerniereNotif, $dateButoir, $expectedDateProchaineNotif, $expectedEstPremiereNotif)
     {
-        $correctionAutorisee = These::CORRECTION_MAJEURE;
+        $correctionAutorisee = These::CORRECTION_AUTORISEE_OBLIGATOIRE;
 
         $these = $this->theseMock($correctionAutorisee, $dateButoir);
 

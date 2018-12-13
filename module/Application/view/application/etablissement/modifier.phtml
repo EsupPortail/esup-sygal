@@ -6,7 +6,8 @@ use Application\View\Renderer\PhpRenderer;
 /**
  * @var PhpRenderer        $this
  * @var string             $title
- * @var EtablissementForm $form
+ * @var EtablissementForm  $form
+ * @var string             $logoContent
  *
  * @method string formControlGroup()
  */
@@ -30,7 +31,7 @@ $fcg = $this->formControlGroup();
         ?>
 
         <?php
-        $content = $form->getObject()->getLogoContent();
+        $content = $logoContent;
         if ($content === null) {
             $form->getObject()->setCheminLogo(null);
         }
@@ -41,7 +42,7 @@ $fcg = $this->formControlGroup();
                     <img
                             id="logo"
                         style="max-width: 200px; max-height: 200px; border: 1px solid black; background-color: white;"
-                        src="data:image/png;base64,<?php echo base64_encode($form->getObject()->getLogoContent()); ?>"
+                        src="data:image/png;base64,<?php echo base64_encode($logoContent); ?>"
                     />
                 </td>
                 <td style="padding:20px;">
@@ -51,7 +52,7 @@ $fcg = $this->formControlGroup();
                     ?>
                     <br/>
                     <?php if($form->getObject()->getId()): ?>
-                    <a id="supprimer-logo" class="btn btn-danger" href="<?php echo $this->url('etablissement/supprimer-logo', ["etablissement" => $form->getObject()->getStructure()->getId()], [], true); ?>">
+                    <a id="supprimer-logo" class="btn btn-danger" href="<?php echo $this->url('etablissement/supprimer-logo', ["structure" => $form->getObject()->getStructure()->getId()], [], true); ?>">
                         <span class="glyphicon glyphicon-trash"></span>
                         Supprimer le logo
                     </a>

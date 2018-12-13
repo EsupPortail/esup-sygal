@@ -14,6 +14,7 @@ use Application\Entity\Db\MetadonneeThese;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\RdvBu;
 use Application\Entity\Db\Role;
+use Application\Entity\Db\Structure;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Variable;
@@ -53,7 +54,12 @@ use UnicaenApp\Service\MessageCollectorAwareTrait;
 use UnicaenApp\Traits\MessageAwareInterface;
 use UnicaenApp\Util;
 use Zend\Form\Element\Hidden;
+use Zend\Form\Element\Radio;
+use Zend\Form\Element\Submit;
+use Zend\Form\Element\Text;
+use Zend\Form\Form;
 use Zend\Http\Response;
+use Zend\InputFilter\InputFilter;
 use Zend\Log\Logger;
 use Zend\Log\Writer\Noop;
 use Zend\Stdlib\ParametersInterface;
@@ -181,9 +187,10 @@ class TheseController extends AbstractController
         $these = $this->requestedThese();
         $etablissement = $these->getEtablissement();
 
-        $showCorrecAttendue =
-            $these->getCorrectionAutorisee() &&
-            count($this->validationService->getValidationsAttenduesPourCorrectionThese($these)) > 0;
+        $validationsDesCorrectionsEnAttente = null;
+        if ($these->getCorrectionAutorisee()) {
+            $validationsDesCorrectionsEnAttente = $this->validationService->getValidationsAttenduesPourCorrectionThese($these);
+        }
 
         /**
          * @var Individu $individu
@@ -220,7 +227,6 @@ class TheseController extends AbstractController
             'these'                     => $these,
             'etablissement'             => $etablissement,
             'estDoctorant'              => (bool)$this->userContextService->getSelectedRoleDoctorant(),
-            'showCorrecAttendue'        => $showCorrecAttendue,
 //            'modifierPersopassUrl'      => $this->urlDoctorant()->modifierPersopassUrl($these),
             'modifierPersopassUrl'      => $urlModification,
             'pvSoutenanceUrl'           => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_PV_SOUTENANCE),
@@ -230,12 +236,14 @@ class TheseController extends AbstractController
             'prolongConfidentUrl'       => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_PROLONG_CONFIDENT),
             'convMiseEnLigneUrl'        => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_CONV_MISE_EN_LIGNE),
             'avenantConvMiseEnLigneUrl' => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_AVENANT_CONV_MISE_EN_LIGNE),
+            'modifierCorrecAutorUrl'    => $this->urlThese()->modifierCorrecAutoriseeForceeUrl($these),
             'nextStepUrl'               => $this->urlWorkflow()->nextStepBox($these, null, [
                 WfEtape::PSEUDO_ETAPE_FINALE,
             ]),
             'mailContact'               => $mailContact,
             'etatMailContact'           => $etatMailContact,
             'rattachements'             => $rattachements,
+            'validationsDesCorrectionsEnAttente' => $validationsDesCorrectionsEnAttente,
         ]);
         $view->setTemplate('application/these/identite');
 
@@ -288,7 +296,7 @@ class TheseController extends AbstractController
             $these
         ));
 
-        $informations = $this->fichierService->fetchInformationsPageDeCouverture($these);
+        $informations = $this->theseService->fetchInformationsPageDeCouverture($these);
 
         $view = new ViewModel([
             'these'            => $these,
@@ -472,6 +480,82 @@ class TheseController extends AbstractController
         return $view;
     }
 
+    public function modifierCorrectionAutoriseeForceeAction()
+    {
+        $these = $this->requestedThese();
+        $form = $this->getCorrectionAutoriseeForceeForm($these);
+
+        if ($this->getRequest()->isPost()) {
+            /** @var ParametersInterface $post */
+            $post = $this->getRequest()->getPost();
+            $form->setData($post);
+            if ($form->isValid()) {
+                $forcage = $post->get('forcage') ?: null;
+                $this->theseService->updateCorrectionAutoriseeForcee($these, $forcage);
+            }
+        }
+        else {
+            $form->get('forcage')->setValue($these->getCorrectionAutoriseeForcee() ?: '');
+        }
+
+        $form->setAttribute('action', $this->urlThese()->modifierCorrecAutoriseeForceeUrl($these));
+
+        return new ViewModel([
+            'these' => $these,
+            'form' => $form,
+            'title' => "Forçage du témoin de corrections attendues",
+        ]);
+    }
+
+    private function getCorrectionAutoriseeForceeForm(These $these)
+    {
+        $isCorrectionAutoriseeFromImport = $these->isCorrectionAutorisee(false);
+        $valeurCorrectionAutoriseeFromImport = $these->getCorrectionAutorisee(false);
+
+        $radioOptions = [
+            These::CORRECTION_AUTORISEE_FORCAGE_AUCUNE      => "Forcer à &laquo; <strong>Aucune correction attendue</strong> &raquo;.",
+            These::CORRECTION_AUTORISEE_FORCAGE_FACULTATIVE => "Forcer à &laquo; <strong>Corrections facultatives attendues</strong> &raquo;.",
+            These::CORRECTION_AUTORISEE_FORCAGE_OBLIGATOIRE => "Forcer à &laquo; <strong>Corrections obligatoires attendues</strong> &raquo;.",
+        ];
+
+        if ($isCorrectionAutoriseeFromImport) {
+            $correctionAttendueImportee = sprintf("Corrections %s attendues", strtolower($these->getCorrectionAutoriseeToString(true, false)));
+            unset($radioOptions[$valeurCorrectionAutoriseeFromImport]);
+        } else {
+            $correctionAttendueImportee = "Aucune correction attendue";
+            unset($radioOptions[These::CORRECTION_AUTORISEE_FORCAGE_AUCUNE]);
+        }
+
+        $radioOptions = array_merge(
+            ['' => sprintf("Ne pas forcer et utiliser la valeur importée de %s.", $these->getSource())],
+            $radioOptions
+        );
+
+        $radio = (new Radio('forcage'))
+            ->setValueOptions($radioOptions)
+            ->setLabelOption('disable_html_escape', true);
+
+        $message = sprintf(
+            "Actuellement, la valeur du témoin de corrections attendues importé de %s <br>est &laquo; <strong>%s</strong> &raquo;. <br>" .
+            "Vous avez ici la possibilité d'outre-passer cette valeur importée en réalisant un forçage...",
+            $these->getSource(),
+            $correctionAttendueImportee
+        );
+
+        $form = new Form('correctionAutoriseeForcee');
+        $form->setLabel($message);
+        $form->add($radio);
+        $form->add((new Submit('submit'))->setValue("Enregistrer"));
+
+        $form->setInputFilter((new InputFilter())->getFactory()->createInputFilter([
+            'forcage' => [
+                'allow_empty' => true
+            ]
+        ]));
+
+        return $form;
+    }
+
     public function modifierRdvBuAction()
     {
         $these = $this->requestedThese();
@@ -594,6 +678,8 @@ class TheseController extends AbstractController
             $form->addElement((new Hidden('validerAuto'))->setValue(1));
         }
 
+        $comue = $this->getEtablissementService()->getRepository()->findOneByCodeStructure(Structure::CODE_COMUE);
+
         $view = new ViewModel([
             'titre'          => $titre,
             'these'          => $these,
@@ -602,7 +688,7 @@ class TheseController extends AbstractController
             'theseListUrl'   => $this->urlFichierThese()->listerFichiers($these, $nature, $version, false, ['inclureValidite' => $inclureValidite]),
             'nature'         => $nature,
             'versionFichier' => $version,
-            'etabComue'      => $this->getEtablissementService()->getRepository()->libelle(Etablissement::CODE_STRUCTURE_COMUE),
+            'etabComue'      => $comue->getLibelle(),
         ]);
         $view->setTemplate('application/these/depot/these');
 
@@ -1310,7 +1396,6 @@ class TheseController extends AbstractController
         $these = $this->requestedThese();
         $versionArchivage = $this->fichierService->fetchVersionFichier($this->params()->fromQuery('version'));
 
-        //$fichierTheseRetraite = $these->getFichiersByNatureEtVersion(NatureFichier::CODE_THESE_PDF, $versionArchivage, true)->first();
         $fichierTheseRetraite = current($this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF, $versionArchivage, true));
 
         $form = new ConformiteFichierForm('conformite');
@@ -1321,7 +1406,7 @@ class TheseController extends AbstractController
             $form->setData($post);
             if ($form->isValid()) {
                 $conforme = $post->get('conforme');
-                $this->theseService->updateConformiteTheseRetraitee($these, $conforme);
+                $this->fichierService->updateConformiteFichierTheseRetraitee($these, $conforme);
                 if ($conforme && $versionArchivage->estVersionCorrigee()) {
                     $this->validationService->validateDepotTheseCorrigee($these);
 
@@ -1462,12 +1547,14 @@ class TheseController extends AbstractController
             }
         }
 
+        $pdcData = $this->theseService->fetchInformationsPageDeCouverture($these);
+
         try {
             // Un timeout peut être appliqué au lancement du  script de retraitement.
             // Si ce timout est atteint, l'exécution du script est interrompue
             // et une exception TimedOutCommandException est levée.
             $timeout = $this->timeoutRetraitement;
-            $outputFilePath = $this->fichierService->fusionneFichierThese($these, $versionFichier, $removal, $timeout);
+            $outputFilePath = $this->fichierService->fusionnerPdcEtThese($these, $pdcData, $versionFichier, $removal, $timeout);
         } catch (TimedOutCommandException $toce) {
             $destinataires = [ $this->userContextService->getIdentityDb()->getEmail() ] ;
             // relancer le retraitement en tâche de fond

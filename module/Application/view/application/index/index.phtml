@@ -18,56 +18,66 @@ echo $this->messenger()
     ->addMessagesFromFlashMessengerWithNoNamespace()
     ->addMessagesFromFlashMessengerWithNamespace('UnicaenAuth/*'); ?>
 
-<div class="jumbotron">
+<div class="row">
 
-    <h1 class="page-header"><?php echo $this->appInfos()->nom ?></h1>
+    <div id="sidebar" class="col-xs-12 col-md-2" role="navigation">
+<!--        <div class="menu-information-header">-->
+<!--            <ul class="nav nav-pills nav-stacked"><li>Informations générales</li></ul>-->
+<!--        </div>-->
+        <?php echo $this->navigation()->menu('Zend\Navigation\Information')
+            ->setUlClass('nav nav-pills nav-stacked menu-information')
+            ->setMinDepth(1)
+            ->setMaxDepth(1)
+            ->render(); ?>
+    </div>
 
-    <p class="appname-subtitle">
-        <strong><?php echo $subtitle ?></strong>
-    </p>
+    <div id="content" class="jumbotron col-xs-12 col-md-10">
 
-    <?php if (!$this->identity()): ?>
-        <p>
-            <?php echo $this->translate("Bienvenue dans l’outil de suivi et de dépôt numérique des thèses de l'université de Caen Normandie.") ?>
-        </p>
-        <p>
-            <?php echo $this->translate("SyGAL offre aux différents acteurs du circuit des thèses de Normandie Université une vision d’ensemble sur les thèses préparées au sein de la COMUE."); ?>
-            <?php echo $this->translate("Il permet la gestion du dépôt de la thèse sous forme numérique, pour archivage et affichage dans le portail national :"); ?>
-            <a href="http://www.theses.fr/">theses.fr</a>.
-        </p>
-    <?php endif ?>
+        <h1 class="page-header"><?php echo $this->appInfos()->nom ?></h1>
 
-    <?php if (!$this->identity()): ?>
-        <p class="text-danger">
-            <strong>
-                <?php echo $this->translate("Vous n'êtes pas connecté-e."); ?>
-            </strong>
+        <p class="appname-subtitle">
+            <strong><?php echo $subtitle ?></strong>
         </p>
-        <p>
-            <a class="btn btn-success btn-lg" href="<?php echo $this->url('zfcuser/login') ?>">
-                <?php echo $this->translate('Connectez-vous...') ?>
-            </a>
-        </p>
-    <?php else: ?>
-        <?php if (!$estDoctorant): ?>
-            <p class="text-success">
+
+        <?php if (!$this->identity()): ?>
+            SyGAL (Système de Gestion et d’Accompagnement doctoraL) est une application permettant la gestion dématérialisée
+            de l’ensemble des étapes du parcours doctoral en Normandie. Il offre également aux différents acteurs du parcours
+            doctoral (établissements, écoles doctorales) une visibilité sur les thèses en cours ou passées.
+        <?php endif ?>
+
+        <?php if (!$this->identity()): ?>
+            <p class="text-danger">
                 <strong>
-                    <?php echo $this->translate("Vous êtes connecté-e en tant que"); ?>
-                    &laquo; <?php echo $role ?> &raquo;.
+                    <?php echo $this->translate("Vous n'êtes pas connecté-e."); ?>
                 </strong>
             </p>
-            <ul class="roadmap pagination">
-                <li>
-                    <a class="roadmap-step-link " href="<?php echo $this->url('these') ?>">
-                        <span class="glyphicon glyphicon-circle-arrow-right"></span>
-                        <?php echo $this->translate("Accès aux thèses..."); ?>
-                    </a>
-                </li>
-            </ul>
+            <p>
+                <a class="btn btn-success btn-lg" href="<?php echo $this->url('zfcuser/login') ?>">
+                    <?php echo $this->translate('Connectez-vous...') ?>
+                </a>
+            </p>
+        <?php else: ?>
+            <?php if (!$estDoctorant): ?>
+                <p class="text-success">
+                    <strong>
+                        <?php echo $this->translate("Vous êtes connecté-e en tant que"); ?>
+                        &laquo; <?php echo $role ?> &raquo;.
+                    </strong>
+                </p>
+                <ul class="roadmap pagination">
+                    <li>
+                        <a class="roadmap-step-link " href="<?php echo $this->url('these') ?>">
+                            <span class="glyphicon glyphicon-circle-arrow-right"></span>
+                            <?php echo $this->translate("Accès aux thèses..."); ?>
+                        </a>
+                    </li>
+                </ul>
+            <?php endif ?>
+            <hr>
         <?php endif ?>
-        <hr>
-    <?php endif ?>
 
-    <?php echo $this->content ?>
+        <?php echo $this->content ?>
+
+    </div>
 
 </div>

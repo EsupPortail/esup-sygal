@@ -17,6 +17,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var Etablissement[]             $etablissements
  * @var DomaineScientifique[]       $domainesAssocies
  * @var DomaineScientifique[]       $domainesScientifiques
+ * @var string                      $logoContent
  *
  * @method string formControlGroup()
  */
@@ -36,7 +37,6 @@ $form->get('sourceCode')->setAttribute('readonly', !$editable);
 ?>
 
 <h1 class="page-header">
-    Modification de l'UR &laquo; <?php echo $unite->getLibelle(); ?> &raquo;
     <?php if ($isNew): ?>
         Création d'une nouvelle UR
     <?php else: ?>
@@ -67,7 +67,7 @@ $form->get('sourceCode')->setAttribute('readonly', !$editable);
         $logoFile = $form->get('cheminLogo');
         echo $this->formLabel($logoFile);
 
-        $content = $unite->getLogoContent();
+        $content = $logoContent;
         if ($content === null) {
             $unite->setCheminLogo(null);
         }
@@ -79,7 +79,7 @@ $form->get('sourceCode')->setAttribute('readonly', !$editable);
                     <img
                             id="logo"
                             style="max-width: 200px; max-height: 200px; border: 1px solid black; background-color: white;"
-                            src="data:image/png;base64,<?php echo base64_encode($unite->getLogoContent()); ?>"
+                            src="data:image/png;base64,<?php echo base64_encode($logoContent); ?>"
                     />
                 </td>
                 <td style="padding:20px;">
@@ -92,7 +92,7 @@ $form->get('sourceCode')->setAttribute('readonly', !$editable);
                         <a
                                 id="supprimer-logo"
                                 class="btn btn-danger"
-                                href="<?php echo $this->url('unite-recherche/supprimer-logo', ["uniteRecherche" => $idUniteRecherche]); ?>"
+                                href="<?php echo $this->url('unite-recherche/supprimer-logo', ["structure" => $idUniteRecherche]); ?>"
                         >
                             <span class="glyphicon glyphicon-trash"></span>
                             Supprimer le logo
@@ -131,7 +131,7 @@ $form->get('sourceCode')->setAttribute('readonly', !$editable);
                     <td> <?php echo $etablissementRattachement->getEtablissement()->getLibelle(); ?> </td>
                     <td>
                         <a
-                                href="<?php echo $this->url("unite-recherche/retirer-etablissement-rattachement", ["uniteRecherche" => $idUniteRecherche, "etablissement" => $etablissementRattachement->getEtablissement()->getId()], [], true); ?>"
+                                href="<?php echo $this->url("unite-recherche/modifier/retirer-etablissement-rattachement", ["structure" => $idUniteRecherche, "etablissement" => $etablissementRattachement->getEtablissement()->getId()], [], true); ?>"
                                 title="Retirer l'établissement de rattachement"
                         >
                             <span class="glyphicon glyphicon-trash"></span>
@@ -176,7 +176,7 @@ $form->get('sourceCode')->setAttribute('readonly', !$editable);
         <a
                 class="btn btn-success"
                 id="ajout-rattachement"
-                href="<?php echo $this->url("unite-recherche/ajouter-etablissement-rattachement", ["uniteRecherche" => $idUniteRecherche, "etablissement" => 0], [], true); ?>"
+                href="<?php echo $this->url("unite-recherche/modifier/ajouter-etablissement-rattachement", ["structure" => $idUniteRecherche, "etablissement" => 0], [], true); ?>"
         >
             <span class="glyphicon glyphicon-plus"></span>
             Ajouter un établissement de rattachement
@@ -209,7 +209,7 @@ $form->get('sourceCode')->setAttribute('readonly', !$editable);
                     </td>
                     <td>
                         <a
-                                href="<?php echo $this->url('unite-recherche/retirer-domaine-scientifique', ["uniteRecherche" => $idUniteRecherche, 'domaineScientifique' => $domaineScientifique->getId()], [], true); ?>"
+                                href="<?php echo $this->url('unite-recherche/modifier/retirer-domaine-scientifique', ["structure" => $idUniteRecherche, 'domaineScientifique' => $domaineScientifique->getId()], [], true); ?>"
                                 title="Retirer le domaine scientifique"
                         >
                             <span class="glyphicon glyphicon-trash"></span>
@@ -226,6 +226,7 @@ $form->get('sourceCode')->setAttribute('readonly', !$editable);
         $selectDomaine = new SelectHelper("domaines", $domainesScientifiques, 'Choisissez un domaine scientifique ...');
         ?>
 
+        <input type="hidden" id="unite" value="<?php echo $unite->getStructure()->getId(); ?>">
         <select title=""
                 class="filter selectpicker show-menu-arrow"
                 name="domaines"
@@ -253,7 +254,7 @@ $form->get('sourceCode')->setAttribute('readonly', !$editable);
         <br/>
         <a class="btn btn-success"
            id="ajout-domaine"
-           href="<?php echo $this->url("unite-recherche/ajouter-domaine-scientifique", ["uniteRecherche" => $idUniteRecherche, "domaineScientifique" => 0], [], true); ?>">
+           href="<?php echo $this->url("unite-recherche/modifier/ajouter-domaine-scientifique", ["structure" => $idUniteRecherche, "domaineScientifique" => 0], [], true); ?>">
             <span class="glyphicon glyphicon-plus"></span>
             Ajouter un domaine scientifique
         </a>
@@ -281,12 +282,14 @@ $form->get('sourceCode')->setAttribute('readonly', !$editable);
 
         $("#etablissements").on("change", function () {
             var etablissementId = $("#etablissements").val();
-            $("a#ajout-rattachement").attr("href", "ajouter-etablissement-rattachement/" + etablissementId);
+            var uniteId = $("#unite").val();
+            $("a#ajout-rattachement").attr("href", uniteId + "/ajouter-etablissement-rattachement/" + etablissementId);
         });
 
         $("#domaines").on("change", function () {
             var domaineId = $("#domaines").val();
-            $("a#ajout-domaine").attr("href", "ajouter-domaine-scientifique/" + domaineId);
+            var uniteId = $("#unite").val();
+            $("a#ajout-domaine").attr("href",  uniteId + "/ajouter-domaine-scientifique/" + domaineId);
         });
     });
 </script>

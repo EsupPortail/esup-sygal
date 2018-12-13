@@ -1,5 +1,6 @@
 <?php
 
+use Application\Controller\EcoleDoctoraleController;
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Form\EcoleDoctoraleForm;
 use Application\View\Renderer\PhpRenderer;
@@ -8,8 +9,11 @@ use Application\View\Renderer\PhpRenderer;
  * @var PhpRenderer        $this
  * @var string             $title
  * @var EcoleDoctoraleForm $form
+ * @car string             $logoContent
  *
-* @method string formControlGroup()
+ * @method string formControlGroup()
+ *
+ * @see EcoleDoctoraleController::modifierAction()
 */
 
 /** @var EcoleDoctorale $ecole */
@@ -51,7 +55,7 @@ $form->get('sourceCode')->setAttribute('readonly', !$editable);
         ?>
 
         <?php
-        $content = $ecole->getLogoContent();
+        $content = $logoContent;
         if ($content === null) {
             $ecole->setCheminLogo(null);
         }
@@ -62,7 +66,7 @@ $form->get('sourceCode')->setAttribute('readonly', !$editable);
                     <img
                             id="logo"
                             style="max-width: 200px; max-height: 200px; border: 1px solid black; background-color: white;"
-                            src="data:image/png;base64,<?php echo base64_encode($ecole->getLogoContent()); ?>"
+                            src="data:image/png;base64,<?php echo base64_encode($logoContent); ?>"
                     />
                 </td>
                 <td style="padding:20px;">
@@ -72,7 +76,7 @@ $form->get('sourceCode')->setAttribute('readonly', !$editable);
                     ?>
                     <br/>
                     <?php if($ecole->getId()): ?>
-                        <a id="supprimer-logo" class="btn btn-danger" href="<?php echo $this->url('ecole-doctorale/supprimer-logo', ["ecoleDoctorale" => $ecole->getStructure()->getId()]); ?>">
+                        <a id="supprimer-logo" class="btn btn-danger" href="<?php echo $this->url('ecole-doctorale/supprimer-logo', ["structure" => $ecole->getStructure()->getId()]); ?>">
                             <span class="glyphicon glyphicon-trash"></span>
                             Supprimer le logo
                         </a>

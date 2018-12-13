@@ -1,11 +1,8 @@
 <?php
 
-use Application\Entity\Db\Structure;
 use Application\Entity\Db\These;
-use Application\Entity\Db\Acteur;
-use Application\Entity\Db\Doctorant;
-use Application\Entity\Db\Individu;
 use Application\Service\Fichier\PdcData;
+use Application\Service\These\TheseService;
 use Application\View\Renderer\PhpRenderer;
 
 /**
@@ -15,21 +12,17 @@ use Application\View\Renderer\PhpRenderer;
  * @var array(string=>string)   $infos
  * @var array(string=>string)   $encadrements
  * @var array(array)            $jury
- * @var PdcData                      $informations
+ * @var PdcData                 $informations
  *
- * @see \Application\Service\Fichier\FichierService::fetchInformationsPageDeCouverture() pour la génération de $informations
+ * @see TheseService::fetchInformationsPageDeCouverture() pour la génération de $informations
  */
-
-
-
-$PATH = Structure::PATH;
 ?>
 
 <!-- SECTION DU LOGO DE LA COMUE -------------------------------------------------------------------------------------->
 <div style="text-align: center; margin-bottom: 30px;">
     <div class='logo-comue'>
         <?php if ($informations->getLogoCOMUE() !== null): ?>
-            <img src="<?php echo $PATH . $informations->getLogoCOMUE(); ?>"/>
+            <img src="<?php echo $informations->getLogoCOMUE() ?>"/>
         <?php else: ?>
             <span style='background-color:red;'> COMUE ou logo de la COMUE non renseigné. </span>
         <?php endif; ?>
@@ -144,7 +137,7 @@ $PATH = Structure::PATH;
     <tr>
         <td>
             <?php if ($informations->getLogoEtablissement()): ?>
-                <img class="logo_small" src="<?php echo $PATH . $informations->getLogoEtablissement(); ?>"/>
+                <img class="logo_small" src="<?php echo $informations->getLogoEtablissement() ?>"/>
             <?php else: ?>
                 <span style='background-color:red;'> Établissement d'inscription ou logo d'établissement non renseigné. </span>
             <?php endif; ?>
@@ -152,7 +145,7 @@ $PATH = Structure::PATH;
         <?php if ($informations->isAssocie()): ?>
             <td>
                 <?php if ($informations->getLogoAssocie()): ?>
-                    <img class="logo_small" src="<?php echo $PATH . $informations->getLogoAssocie(); ?>"/>
+                    <img class="logo_small" src="<?php echo $informations->getLogoAssocie() ?>"/>
                 <?php else: ?>
                     <span style='background-color:red;'> Établissement associé ou logo d'établissement non renseigné. </span>
                 <?php endif; ?>
@@ -160,14 +153,14 @@ $PATH = Structure::PATH;
         <?php endif; ?>
         <td>
             <?php if ($informations->getLogoEcoleDoctorale()): ?>
-                <img class="logo_small" src="<?php echo $PATH . ($informations->getLogoEcoleDoctorale()); ?>"/>
+                <img class="logo_small" src="<?php echo $informations->getLogoEcoleDoctorale() ?>"/>
             <?php else: ?>
                 <span style='background-color:red;'> École doctorale ou logo d'école doctorale non renseigné </span>
             <?php endif; ?>
         </td>
         <td>
             <?php if ($informations->getLogoUniteRecherche()): ?>
-                <img class="logo_small" src="<?php echo $PATH . ($informations->getLogoUniteRecherche()); ?>"/>
+                <img class="logo_small" src="<?php echo $informations->getLogoUniteRecherche() ?>"/>
             <?php else: ?>
                 <span style='background-color:red;'> Unité de recherche ou logo d'unité de recherche non renseigné </span>
             <?php endif; ?>

@@ -43,7 +43,7 @@ class CreationUtilisateurForm extends Form implements InputFilterProviderInterfa
         );
         $this->add(
             (new Text('email'))
-                ->setLabel("Email :")
+                ->setLabel("Adresse électronique :")
         );
         $this->add(
             (new Password('password'))

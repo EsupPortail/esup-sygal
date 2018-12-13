@@ -20,8 +20,10 @@ class EtablissementControllerFactory
      */
     public function __invoke(ControllerManager $controllerManager)
     {
+        $sl = $controllerManager->getServiceLocator();
+
         /** @var EtablissementForm $form */
-        $form = $controllerManager->getServiceLocator()->get('FormElementManager')->get('EtablissementForm');
+        $form = $sl->get('FormElementManager')->get('EtablissementForm');
 
         /**
          * @var EtablissementService $etablissmentService
@@ -29,17 +31,15 @@ class EtablissementControllerFactory
          * @var RoleService $roleService
          * @var StructureService $structureService
          */
-        $etablissmentService = $controllerManager->getServiceLocator()->get('EtablissementService');
-        $individuService = $controllerManager->getServiceLocator()->get('IndividuService');
-        $roleService = $controllerManager->getServiceLocator()->get('RoleService');
-        $structureService = $controllerManager->getServiceLocator()->get(StructureService::class);
+        $etablissmentService = $sl->get('EtablissementService');
+        $roleService = $sl->get('RoleService');
+        $structureService = $sl->get(StructureService::class);
 
         $controller = new EtablissementController();
         $controller->setEtablissementService($etablissmentService);
-        $controller->setIndividuService($individuService);
         $controller->setRoleService($roleService);
         $controller->setStructureService($structureService);
-        $controller->setEtablissementForm($form);
+        $controller->setStructureForm($form);
 
         return $controller;
     }

@@ -38,13 +38,13 @@ class WorkflowServiceTest extends WorkflowServiceAbstractTest
         $this->assertEtapeEstCourante(WfEtape::CODE_DEPOT_VERSION_ORIGINALE);
 
         // correction autorisee = mineure
-        $this->these->setCorrectionAutorisee(These::CORRECTION_MINEURE);
+        $this->these->setCorrectionAutorisee(These::CORRECTION_AUTORISEE_FACULTATIVE);
         $this->em()->flush($this->these);
         $this->wfs->reloadWorkflow($this->these);
         $this->assertEtapeEstCourante(WfEtape::CODE_DEPOT_VERSION_ORIGINALE);
 
         // correction autorisee = majeure
-        $this->these->setCorrectionAutorisee(These::CORRECTION_MAJEURE);
+        $this->these->setCorrectionAutorisee(These::CORRECTION_AUTORISEE_OBLIGATOIRE);
         $this->em()->flush($this->these);
         $this->wfs->reloadWorkflow($this->these);
         $this->assertEtapeEstCourante(WfEtape::CODE_DEPOT_VERSION_ORIGINALE_CORRIGEE);
@@ -52,13 +52,13 @@ class WorkflowServiceTest extends WorkflowServiceAbstractTest
         $this->_franchir_etape_rdv_bu_validation_bu();
 
         // correction autorisee = mineure
-        $this->these->setCorrectionAutorisee(These::CORRECTION_MINEURE);
+        $this->these->setCorrectionAutorisee(These::CORRECTION_AUTORISEE_FACULTATIVE);
         $this->em()->flush($this->these);
         $this->wfs->reloadWorkflow($this->these);
         $this->assertEtapeEstCourante(WfEtape::CODE_DEPOT_VERSION_ORIGINALE_CORRIGEE);
 
         // correction autorisee = majeure
-        $this->these->setCorrectionAutorisee(These::CORRECTION_MAJEURE);
+        $this->these->setCorrectionAutorisee(These::CORRECTION_AUTORISEE_OBLIGATOIRE);
         $this->em()->flush($this->these);
         $this->wfs->reloadWorkflow($this->these);
         $this->assertEtapeEstCourante(WfEtape::CODE_DEPOT_VERSION_ORIGINALE_CORRIGEE);
@@ -67,7 +67,7 @@ class WorkflowServiceTest extends WorkflowServiceAbstractTest
     public function test_etape_validation_correction_directeurs_necessite_toutes_les_validations()
     {
         // pré-requis: correction autorisee != null
-        $this->these->setCorrectionAutorisee(These::CORRECTION_MINEURE);
+        $this->these->setCorrectionAutorisee(These::CORRECTION_AUTORISEE_FACULTATIVE);
         $this->em()->flush($this->these);
         $this->wfs->reloadWorkflow($this->these);
         $this->assertEtapeEstCourante(WfEtape::CODE_DEPOT_VERSION_ORIGINALE_CORRIGEE);
@@ -108,7 +108,7 @@ class WorkflowServiceTest extends WorkflowServiceAbstractTest
     public function test_cas_version_originale_valide()
     {
         // pré-requis: correction autorisee != null
-        $this->these->setCorrectionAutorisee(These::CORRECTION_MINEURE);
+        $this->these->setCorrectionAutorisee(These::CORRECTION_AUTORISEE_FACULTATIVE);
         $this->em()->flush($this->these);
         $this->wfs->reloadWorkflow($this->these);
         $this->_assertSeuleEtapeCourante(WfEtape::CODE_DEPOT_VERSION_ORIGINALE_CORRIGEE);
@@ -154,7 +154,7 @@ class WorkflowServiceTest extends WorkflowServiceAbstractTest
     public function test_cas_vo_nonvalide_va_valide_conforme()
     {
         // pré-requis: correction autorisee != null
-        $this->these->setCorrectionAutorisee(These::CORRECTION_MINEURE);
+        $this->these->setCorrectionAutorisee(These::CORRECTION_AUTORISEE_FACULTATIVE);
         $this->em()->flush($this->these);
         $this->wfs->reloadWorkflow($this->these);
 
@@ -200,7 +200,7 @@ class WorkflowServiceTest extends WorkflowServiceAbstractTest
     public function test_cas_vo_nonvalide_va_valide_nonconforme()
     {
         // pré-requis: correction autorisee != null
-        $this->these->setCorrectionAutorisee(These::CORRECTION_MINEURE);
+        $this->these->setCorrectionAutorisee(These::CORRECTION_AUTORISEE_FACULTATIVE);
         $this->em()->flush($this->these);
         $this->wfs->reloadWorkflow($this->these);
 
@@ -225,7 +225,7 @@ class WorkflowServiceTest extends WorkflowServiceAbstractTest
     public function test_cas_vo_nonvalide_va_nonvalide()
     {
         // pré-requis: correction autorisee != null
-        $this->these->setCorrectionAutorisee(These::CORRECTION_MINEURE);
+        $this->these->setCorrectionAutorisee(These::CORRECTION_AUTORISEE_FACULTATIVE);
         $this->em()->flush($this->these);
         $this->wfs->reloadWorkflow($this->these);
 

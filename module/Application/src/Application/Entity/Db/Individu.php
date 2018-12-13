@@ -7,7 +7,7 @@ use Application\Filter\NomCompletFormatter;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenImport\Entity\Db\Interfaces\SourceAwareInterface;
-use Application\Entity\Db\Traits\SourceAwareTrait;
+use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
 
 /**
  * Individu
@@ -381,6 +381,7 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
      * @param bool $avecNomPatro
      * @param bool $prenoms
      * @return string
+     * @deprecated Utiliser la class NomCompletFormatter.
      */
     public function getNomComplet($avecCivilite = false, $avecNomPatro = false, $prenoms = false, $prenomfirst = false, $court = false)
     {

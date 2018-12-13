@@ -1,24 +1,43 @@
 <?php
 
-use Application\Controller\Factory\EcoleDoctoraleControllerFactory;
 use Application\Controller\Factory\StructureControllerFactory;
 use Application\Controller\StructureController;
-use Application\Form\Factory\EcoleDoctoraleFormFactory;
-use Application\Form\Factory\EcoleDoctoraleHydratorFactory;
-use Application\Provider\Privilege\EcoleDoctoralePrivileges;
 use Application\Provider\Privilege\EtablissementPrivileges;
-use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
+use Application\Provider\Privilege\StructurePrivileges;
 use Application\Service\Structure\StructureService;
 use Application\Service\Structure\StructureServiceFactory;
-use Application\View\Helper\EcoleDoctoraleHelper;
-use UnicaenAuth\Guard\PrivilegeController;
-use Application\Entity\Db\StructureConcreteInterface;
 use Application\View\Helper\StructureSubstitHelper;
-use Application\View\Helper\StructureArrayHelper;
+use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 use Zend\Mvc\Router\Http\Segment;
 
 return [
+
     'bjyauthorize'    => [
+        'resource_providers' => [
+            'BjyAuthorize\Provider\Resource\Config' => [
+                'structure' => [],
+            ],
+        ],
+        'rule_providers'     => [
+            PrivilegeRuleProvider::class => [
+                'allow' => [
+                    [
+                        'privileges' => [
+                            StructurePrivileges::STRUCTURE_CONSULTATION_TOUTES_STRUCTURES,
+                            StructurePrivileges::STRUCTURE_CONSULTATION_SES_STRUCTURES,
+                            StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES,
+                            StructurePrivileges::STRUCTURE_MODIFICATION_SES_STRUCTURES,
+                            StructurePrivileges::STRUCTURE_CREATION_ETAB,
+                            StructurePrivileges::STRUCTURE_CREATION_ED,
+                            StructurePrivileges::STRUCTURE_CREATION_UR,
+                        ],
+                        'resources'  => ['structure'],
+                        'assertion'  => 'Assertion\\Structure',
+                    ],
+                ],
+            ],
+        ],
         'guards' => [
             PrivilegeController::class => [
                 [

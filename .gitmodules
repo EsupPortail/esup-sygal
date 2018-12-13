@@ -1,3 +1,0 @@
-[submodule "deploiement"]
-	path = deploiement
-	url = git@git.unicaen.fr:dsi/deploiement/sygal.git

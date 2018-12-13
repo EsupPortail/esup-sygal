@@ -11,58 +11,6 @@ use Application\View\Renderer\PhpRenderer;
  * @var string[]|WfEtape[]  $except
  * @var string              $message
  */
-
-$wfHelper = $this->wf($these);
-$wfStepHelper = isset($etape) ? $wfHelper->next($etape) : $wfHelper->current();
-
-//echo("etape = " . $etape ?: 'null') . '<br>';
-//echo("except = <br>" . implode('<br>', (array)$except)) . '<br>';
-//echo("wfStepHelper->isStepAtteignable() = " . (int)$wfStepHelper->isStepAtteignable()) . '<br>';
-//echo("wfStepHelper->step() = " . (($s = $wfStepHelper->step()) ? $s->getEtape()->getCode() : 'null')) . '<br>';
-
-if (!empty($except)) {
-    foreach ((array)$except as $e) {
-        if ($wfStepHelper->isStep($e)) {
-            return;
-        }
-    }
-}
 ?>
 
-<?php if ($wfStepHelper->isStepAtteignable()): ?>
-
-    <div class="box panel panel-success roadmap-next-step">
-        <div class="panel-heading">
-            <h2 class="first">Et ensuite ?</h2>
-        </div>
-        <div class="panel-body">
-            <nav aria-label="Etape suivante">
-                <ul class="roadmap pagination">
-                    <?php if ($message): ?>
-                        <li><?php echo $message ?></li>
-                    <?php else: ?>
-                        <li><?php echo $wfStepHelper->render() ?></li>
-                    <?php endif ?>
-                </ul>
-            </nav>
-        </div>
-    </div>
-
-<?php elseif ($wfStepHelper->step() === null): ?>
-
-    <div class="box panel panel-success roadmap-next-step">
-        <div class="panel-heading">
-            <h2 class="first">Et ensuite ?</h2>
-        </div>
-        <div class="panel-body">
-            <p class="lead">
-                <?php if ($message): ?>
-                    <?php echo $message ?>
-                <?php else: ?>
-                    C'est terminé : dépôt validé.
-                <?php endif ?>
-            </p>
-        </div>
-    </div>
-
-<?php endif ?>
+<?php echo $this->partial('next-step-box') ?>
