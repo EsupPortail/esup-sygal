@@ -2,12 +2,14 @@
 
 namespace Information\Form;
 
+use Zend\Filter\StripTags;
 use Zend\Form\Element\Button;
 use Zend\Form\Element\Radio;
 use Zend\Form\Element\Text;
 use Zend\Form\Form;
+use Zend\InputFilter\InputFilterProviderInterface;
 
-class InformationForm extends Form {
+class InformationForm extends Form implements InputFilterProviderInterface {
 
     public function init()
     {
@@ -58,7 +60,7 @@ class InformationForm extends Form {
                 ],
             ],
             'attributes' => [
-                'class' => 'type2 form-control',
+                'class' => 'contenu-page form-control',
 //                'class' => 'form-control',
             ]
         ]);
@@ -78,5 +80,53 @@ class InformationForm extends Form {
                 'class' => 'btn btn-primary',
             ],
         ]);
+    }
+
+    /**
+     * Should return an array specification compatible with
+     * {@link Zend\InputFilter\Factory::createInputFilter()}.
+     *
+     * @return array
+     */
+    public function getInputFilterSpecification()
+    {
+        return [
+            'titre' => [
+                'required' => true,
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min' => 1,
+                            'max' => 100,
+                        ],
+                    ],
+                ],
+            ],
+            'contenu' => [
+                'required' => false,
+                'filters' => [
+                    [
+                        'name' => 'StringTrim'
+                    ],
+                    [
+                        'name' => StripTags::class,
+                        'options' => [
+                            'allowTags' => [
+                                'p', 'strong', 'em', 'ul', 'ol', 'li', 'a', 'h2', 'h3', 'h4', 'table', 'theader', 'th', 'tbody', 'tr', 'td'
+                            ],
+                            'allowAttribs' => [
+                                'href', 'title', 'target'
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+        ];
     }
 }

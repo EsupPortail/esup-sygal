@@ -5,13 +5,39 @@
  */
 
 use Information\Entity\Db\Information;
+use Information\Provider\Privilege\InformationPrivileges;
 
 $this->headTitle($information->getTitre());
 
+$canEdit = $this->isAllowed(InformationPrivileges::getResourceId(InformationPrivileges::INFORMATION_MODIFIER));
 ?>
 
 <h1 class="page-header">
     <?php echo $information->getTitre(); ?>
 </h1>
 
+<?php if($canEdit) : ?>
+    <a href="<?php echo $this->url('informations/modifier', ['id' => $information->getId()], [], true); ?>"
+       class="btn btn-primary"
+       >
+        <span class="glyphicon glyphicon-pencil"></span>
+        Modifier la page d'information
+    </a>
+<?php endif; ?>
+
 <?php echo $information->getContenu(); ?>
+
+<style>
+    table {
+        width:80%;
+    }
+
+    td {
+        border-bottom: 1px solid #666666;
+    }
+
+    th {
+        border-bottom: 2px solid #666666;
+        font-weight: bold;
+    }
+</style>
