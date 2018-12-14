@@ -166,17 +166,20 @@ return [
                 'pages' => [
                     'doctorat' => [
                         'label' => 'Le doctorat',
-                        'route' => 'informations',
+                        'route' => 'informations/afficher',
+                        'params' => ['id' => 61],
                         'title' => "Informations sur le doctorat et sa gestion"
                     ],
                     'ecoles-doctorales' => [
                         'label' => 'Les Ecoles Doctorales',
-                        'route' => 'informations',
+                        'route' => 'informations/afficher',
+                        'params' => ['id' => 81],
                         'title' => "Informations sur les Ecoles Doctorales et le Collège des Ecoles doctorales"
                     ],
                     'guide-these' => [
                         'label' => 'Guide de la thèse',
-                        'route' => 'informations',
+                        'route' => 'informations/afficher',
+                        'params' => ['id' => 82],
                         'title' => "Informations sur le déroulement de la thèse et formulaires administratifs à l’intention du doctorant et de ses encadrants"
                     ],
                 ],
