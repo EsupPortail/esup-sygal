@@ -159,6 +159,8 @@ return [
         ],
     ],
     'navigation'      => [
+        'information' => [
+        ],
     ],
     'service_manager' => [
         'abstract_factories' => [
