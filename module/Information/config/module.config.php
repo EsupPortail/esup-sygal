@@ -1,13 +1,12 @@
 <?php
 
 use Application\Entity\Db\Repository\DefaultEntityRepository;
-use Information\Controller\IndexController;
-use Information\Controller\IndexControllerFactory;
 use Information\Controller\InformationController;
 use Information\Controller\InformationControllerFactory;
 use Information\Form\InformationForm;
 use Information\Form\InformationFormFactory;
 use Information\Form\InformationHydrator;
+use Information\Provider\Privilege\InformationPrivileges;
 use Information\Service\InformationService;
 use Information\Service\InformationServiceFactory;
 use Zend\Mvc\Router\Http\Literal;
@@ -31,7 +30,6 @@ return [
                 'class'   => MappingDriverChain::class,
                 'drivers' => [
                     'Information\Entity\Db' => 'orm_default_xml_driver',
-                    'Information\Entity\Db\VSitu' => 'orm_default_xml_driver',
                 ],
             ],
             'orm_default_xml_driver' => [
@@ -71,14 +69,13 @@ return [
         'guards' => [
             \UnicaenAuth\Guard\PrivilegeController::class => [
                 [
-                    'controller' => IndexController::class,
-                    'roles' => [],
-                ],
-                [
                     'controller' => InformationController::class,
                     'action'     => [
                         'index',
                     ],
+                    'privileges' => [
+                        InformationPrivileges::INFORMATION_MODIFIER,
+                    ]
                 ],
                 [
                     'controller' => InformationController::class,
@@ -86,12 +83,18 @@ return [
                         'ajouter',
                         'supprimer',
                     ],
+                    'privileges' => [
+                        InformationPrivileges::INFORMATION_MODIFIER,
+                    ]
                 ],
                 [
                     'controller' => InformationController::class,
                     'action'     => [
                         'modifier',
                     ],
+                    'privileges' => [
+                        InformationPrivileges::INFORMATION_MODIFIER,
+                    ]
                 ],
                 [
                     'controller' => InformationController::class,
@@ -105,45 +108,6 @@ return [
     ],
     'router' => [
         'routes' => [
-            'information' => [
-                'type'    => 'Literal',
-                'options' => [
-                    'route'    => '/information',
-                    'defaults' => [
-                        'controller' => IndexController::class,
-                    ],
-                ],
-                'may_terminate' => true,
-                'child_routes' => [
-                    'doctorat' => [
-                        'type'    => 'Literal',
-                        'options' => [
-                            'route'    => '/doctorat',
-                            'defaults' => [
-                                'action' => 'doctorat',
-                            ],
-                        ],
-                    ],
-                    'ecoles-doctorales' => [
-                        'type'    => 'Literal',
-                        'options' => [
-                            'route'    => '/ecoles-doctorales',
-                            'defaults' => [
-                                'action' => 'ecoles-doctorales',
-                            ],
-                        ],
-                    ],
-                    'guide-these' => [
-                        'type'    => 'Literal',
-                        'options' => [
-                            'route'    => '/guide-these',
-                            'defaults' => [
-                                'action' => 'guide-these',
-                            ],
-                        ],
-                    ],
-                ],
-            ],
             'informations' => [
                 'type'          => Literal::class,
                 'options'       => [
@@ -201,21 +165,6 @@ return [
                 'label' => 'Accueil',
                 'route' => 'home',
                 'pages' => [
-//                    'doctorat' => [
-//                        'label' => 'Le doctorat',
-//                        'route' => 'information/doctorat',
-//                        'title' => "Informations sur le doctorat et sa gestion"
-//                    ],
-//                    'ecoles-doctorales' => [
-//                        'label' => 'Les Écoles Doctorales',
-//                        'route' => 'information/ecoles-doctorales',
-//                        'title' => "Informations sur les Ecoles Doctorales et le Collège des Ecoles doctorales"
-//                    ],
-//                    'guide-these' => [
-//                        'label' => 'Guide de la thèse',
-//                        'route' => 'information/guide-these',
-//                        'title' => "Informations sur le déroulement de la thèse et formulaires administratifs à l’intention du doctorant et de ses encadrants"
-//                    ],
                     'tinymce-doctorat' => [
                         'label' => 'Le doctorat',
                         'route' => 'informations/afficher',
@@ -249,7 +198,6 @@ return [
 
     'controllers' => [
         'factories' => [
-            IndexController::class => IndexControllerFactory::class,
             InformationController::class => InformationControllerFactory::class,
         ],
     ],
@@ -272,7 +220,6 @@ return [
     'public_files' => [
         'inline_scripts' => [
             '902_' => 'js/tinymce/js/tinymce/tinymce.js',
-            '903_' => 'js/form_fiche.js',
         ],
     ]
 ];
