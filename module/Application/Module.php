@@ -92,6 +92,14 @@ class Module
             ['--versionFichier',  "Version du fichier de thèse à utiliser (ex: 'VA', 'VOC')"],
             ['--removeFirstPage', "(facultatif) Témoin indiquant si la première page doit être retirée avant la fusion"],
             ['--notifier',        "(facultatif) Adresses électroniques auxquelles envoyer un courriel une fois la fusion terminée"],
+
+            // Describe available commands
+            'transfer-these-data --source-id= --destination-id=' =>
+                "Transférer toutes les données saisies sur une thèse *historisée* vers une autre thèse",
+
+            // Describe expected parameters
+            ['--source-id',       "Id de la thèse historisée source"],
+            ['--destination-id',  "Id de la thèse destination"],
         ];
     }
 }
