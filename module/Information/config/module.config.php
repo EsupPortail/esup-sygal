@@ -160,6 +160,27 @@ return [
     ],
     'navigation'      => [
         'information' => [
+            'accueil' => [
+                'label' => 'Accueil',
+                'route' => 'home',
+                'pages' => [
+                    'doctorat' => [
+                        'label' => 'Le doctorat',
+                        'route' => 'informations',
+                        'title' => "Informations sur le doctorat et sa gestion"
+                    ],
+                    'ecoles-doctorales' => [
+                        'label' => 'Les Ecoles Doctorales',
+                        'route' => 'informations',
+                        'title' => "Informations sur les Ecoles Doctorales et le Collège des Ecoles doctorales"
+                    ],
+                    'guide-these' => [
+                        'label' => 'Guide de la thèse',
+                        'route' => 'informations',
+                        'title' => "Informations sur le déroulement de la thèse et formulaires administratifs à l’intention du doctorant et de ses encadrants"
+                    ],
+                ],
+            ],
         ],
     ],
     'service_manager' => [
