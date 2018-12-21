@@ -1,9 +1,11 @@
 <?php
 
 use Application\Assertion\AssertionAbstractFactory;
+use Application\Controller\Factory\TheseConsoleControllerFactory;
 use Application\Controller\Factory\TheseControllerFactory;
 use Application\Controller\Factory\TheseObserverControllerFactory;
 use Application\Controller\Plugin\Url\UrlThesePluginFactory;
+use Application\Controller\TheseConsoleController;
 use Application\Entity\Db\Diffusion;
 use Application\Entity\Db\WfEtape;
 use Application\Form\Factory\AttestationHydratorFactory;
@@ -284,6 +286,13 @@ return [
                         ThesePrivileges::THESE_CONSULTATION_VERSION_PAPIER_CORRIGEE,
                     ],
                     'assertion'  => 'Assertion\\These',
+                ],
+                [
+                    'controller' => TheseConsoleController::class,
+                    'action'     => [
+                        'transfer-these-data',
+                    ],
+                    'roles' => [],
                 ],
             ],
         ],
@@ -755,6 +764,15 @@ return [
                         ],
                     ],
                 ],
+                'transfer-these-data' => [
+                    'options' => [
+                        'route'    => 'transfer-these-data --source-id= --destination-id=',
+                        'defaults' => [
+                            'controller' => TheseConsoleController::class,
+                            'action'     => 'transfer-these-data',
+                        ],
+                    ],
+                ],
             ],
         ],
     ],
@@ -1020,6 +1038,7 @@ return [
         ],
         'factories' => [
             'Application\Controller\These' => TheseControllerFactory::class,
+            TheseConsoleController::class => TheseConsoleControllerFactory::class,
             'Application\Controller\TheseObserver' => TheseObserverControllerFactory::class,
         ],
         'aliases' => [
