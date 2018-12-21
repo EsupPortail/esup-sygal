@@ -48,6 +48,7 @@ class ImportService
         'individu',
         'doctorant',
         'these',
+        'these-annee-univ',
         'role',
         'acteur',
         'variable',
