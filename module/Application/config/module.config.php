@@ -252,8 +252,6 @@ return array(
             '062_uploader' => "/js/jquery.fileupload.js",
             '063_uploader' => "/js/unicaen.uploader.widget.js",
         ],
-        'inline_scripts'        => [
-        ],
         'stylesheets'           => [
             '050_bootstrap-theme' => false,
         ],

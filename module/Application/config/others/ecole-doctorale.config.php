@@ -36,6 +36,7 @@ return [
                     'privileges' => [
                         StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES,
                         StructurePrivileges::STRUCTURE_MODIFICATION_SES_STRUCTURES,
+                        StructurePrivileges::STRUCTURE_CREATION_ED,
                     ],
                 ],
                 [
