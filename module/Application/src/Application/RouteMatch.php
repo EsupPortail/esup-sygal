@@ -7,6 +7,7 @@ use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Doctorant;
+use Application\Entity\Db\Structure;
 use Application\Entity\Db\These;
 use Application\Entity\Db\UniteRecherche;
 use Application\Entity\Db\Utilisateur;
@@ -229,5 +230,20 @@ class RouteMatch extends BaseRouteMatch
         }
 
         return $this->etablissement;
+    }
+
+    /** @var Structure */
+    private $structure;
+
+    /**
+     * @return Structure
+     */
+    public function getStructure()
+    {
+        if (null === $this->structure) {
+            $this->structure = $this->fetchEntityParam('structure');
+        }
+
+        return $this->structure;
     }
 }

@@ -17,7 +17,7 @@ class EtablissementFormFactory
 
         $form = new EtablissementForm();
         $form->setHydrator($hydrator);
-        
+
         return $form;
     }
 }

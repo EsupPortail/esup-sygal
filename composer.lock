@@ -1864,11 +1864,11 @@
         },
         {
             "name": "unicaen/app",
-            "version": "1.3.17",
+            "version": "1.3.21",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/app.git",
-                "reference": "e043750b9658219ececbe8fe4280b742b53ea332"
+                "reference": "b9bff28b8f304748390ef9b8b8d4f30889147a0f"
             },
             "require": {
                 "doctrine/doctrine-orm-module": ">=0.7",
@@ -1911,7 +1911,7 @@
                 ]
             },
             "description": "Module de base des applications unicaen",
-            "time": "2018-11-19T11:09:37+00:00"
+            "time": "2018-12-14T10:27:17+00:00"
         },
         {
             "name": "unicaen/auth",
@@ -2094,11 +2094,11 @@
         },
         {
             "name": "unicaen/oracle",
-            "version": "1.2.1",
+            "version": "1.2.3",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/oracle.git",
-                "reference": "fc16a7394c40ffa50324f7028e90431f9ecae12a"
+                "reference": "bc79ca51396e377999225c02f1726a153a2f342c"
             },
             "require": {
                 "doctrine/dbal": "^2.5",
@@ -2118,7 +2118,7 @@
                 ]
             },
             "description": "Bibliothèque utile lorsqu'on utilise un base de données Oracle",
-            "time": "2018-09-11T07:47:55+00:00"
+            "time": "2018-12-06T10:39:40+00:00"
         },
         {
             "name": "webmozart/assert",

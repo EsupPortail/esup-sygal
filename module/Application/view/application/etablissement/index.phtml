@@ -2,17 +2,16 @@
 
 use Application\Entity\Db\Etablissement;
 use Application\Filter\EtablissementPrefixFilter;
-use Application\Provider\Privilege\EtablissementPrivileges;
-use Application\View\Renderer\PhpRenderer;
+use Application\Provider\Privilege\StructurePrivileges;
 
 /**
  * @see \Application\Controller\EtablissementController::indexAction()
- * @var PhpRenderer $this
  * @var Etablissement[] $etablissementsSygal
  * @var Etablissement[] $etablissementsExternes
  */
 
-$canModifier = $this->isAllowed(EtablissementPrivileges::getResourceId(EtablissementPrivileges::ETABLISSEMENT_MODIFICATION));
+$canModifier = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES));
+$canAjouter = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES));
 
 $prefixFilter = new EtablissementPrefixFilter();
 ?>
@@ -63,11 +62,12 @@ $prefixFilter = new EtablissementPrefixFilter();
             <?php
             $historisee = (!$etablissement->estNonHistorise());
             $hasSousStructure = !($etablissement->getStructure()->getStructuresSubstituees()->isEmpty());
+            $canModifierCetEtab = $this->isAllowed($etablissement->getStructure(),StructurePrivileges::STRUCTURE_MODIFICATION_SES_STRUCTURES);
             ?>
 
             <tr>
                 <td>
-                    <a href="<?php echo $this->url('etablissement/information', ['etablissement' => $etablissement->getStructure()->getId()], [], true); ?>">
+                    <a href="<?php echo $this->url('etablissement/information', ['structure' => $etablissement->getStructure()->getId()], [], true); ?>">
                         <?php echo $etablissement->getLibelle(); ?>
                     </a>
                     <?php if ($etablissement->estMembre()): ?>
@@ -85,22 +85,22 @@ $prefixFilter = new EtablissementPrefixFilter();
                 </td>
                 <td> <?php echo $etablissement->getSigle(); ?> </td>
                 <td>
-                    <?php if ($canModifier && !$historisee) : ?>
-                        <a href="<?php echo $this->url('etablissement/supprimer', ["etablissement" => $etablissement->getStructure()->getId()], [], true); ?>"
+                    <?php if (($canModifier OR $canModifierCetEtab) && !$historisee) : ?>
+                        <a href="<?php echo $this->url('etablissement/supprimer', ["structure" => $etablissement->getStructure()->getId()], [], true); ?>"
                            title="Historiser l'établissement">
                             <span class="glyphicon glyphicon-trash"></span>
                         </a>
                     <?php endif; ?>
 
-                    <?php if ($canModifier && !$historisee && $hasSousStructure) : ?>
+                    <?php if (($canModifier OR $canModifierCetEtab) && !$historisee && $hasSousStructure) : ?>
                         <a href="<?php echo $this->url('substitution-modifier', ['cible' => $etablissement->getStructure()->getId(), [], true]); ?>"
                            title="Historiser l'établissement">
                             <span class="glyphicon glyphicon-link" title="Éditer la substitution"></span>
                         </a>
                     <?php endif; ?>
 
-                    <?php if ($canModifier && $historisee) : ?>
-                        <a href="<?php echo $this->url('etablissement/restaurer', ["etablissement" => $etablissement->getStructure()->getId()], [], true); ?>"
+                    <?php if (($canModifier OR $canModifierCetEtab) && $historisee) : ?>
+                        <a href="<?php echo $this->url('etablissement/restaurer', ["structure" => $etablissement->getStructure()->getId()], [], true); ?>"
                            title="Restaurer l'établissement">
                             Restaurer
                         </a>
@@ -138,11 +138,12 @@ $prefixFilter = new EtablissementPrefixFilter();
             <?php
             $historisee = (!$etablissement->estNonHistorise());
             $hasSousStructure = !($etablissement->getStructure()->getStructuresSubstituees()->isEmpty());
+            $canModifierCetEtab = $this->isAllowed($etablissement->getStructure(),StructurePrivileges::STRUCTURE_MODIFICATION_SES_STRUCTURES);
             ?>
 
             <tr>
                 <td>
-                    <a href="<?php echo $this->url('etablissement/information', ['etablissement' => $etablissement->getStructure()->getId()], [], true); ?>">
+                    <a href="<?php echo $this->url('etablissement/information', ['structure' => $etablissement->getStructure()->getId()], [], true); ?>">
                         <?php echo $etablissement->getLibelle(); ?>
                     </a>
                     <?php if ($etablissement->estMembre()): ?>
@@ -160,22 +161,22 @@ $prefixFilter = new EtablissementPrefixFilter();
                 </td>
                 <td> <?php echo $etablissement->getSigle(); ?> </td>
                 <td>
-                    <?php if ($canModifier && !$historisee) : ?>
-                        <a href="<?php echo $this->url('etablissement/supprimer', ["etablissement" => $etablissement->getStructure()->getId()], [], true); ?>"
+                    <?php if (($canModifier OR $canModifierCetEtab) && !$historisee) : ?>
+                        <a href="<?php echo $this->url('etablissement/supprimer', ["structure" => $etablissement->getStructure()->getId()], [], true); ?>"
                            title="Historiser l'établissement">
                             <span class="glyphicon glyphicon-trash"></span>
                         </a>
                     <?php endif; ?>
 
-                    <?php if ($canModifier && !$historisee && $hasSousStructure) : ?>
+                    <?php if (($canModifier OR $canModifierCetEtab) && !$historisee && $hasSousStructure) : ?>
                         <a href="<?php echo $this->url('substitution-modifier', ['cible' => $etablissement->getStructure()->getId(), [], true]); ?>"
                            title="Historiser l'établissement">
                             <span class="glyphicon glyphicon-link" title="Éditer la substitution"></span>
                         </a>
                     <?php endif; ?>
 
-                    <?php if ($canModifier && $historisee) : ?>
-                        <a href="<?php echo $this->url('etablissement/restaurer', ["etablissement" => $etablissement->getStructure()->getId()], [], true); ?>"
+                    <?php if (($canModifier OR $canModifierCetEtab) && $historisee) : ?>
+                        <a href="<?php echo $this->url('etablissement/restaurer', ["structure" => $etablissement->getStructure()->getId()], [], true); ?>"
                            title="Restaurer l'établissement">
                             Restaurer
                         </a>

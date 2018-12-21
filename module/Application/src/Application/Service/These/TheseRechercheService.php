@@ -66,72 +66,17 @@ class TheseRechercheService
      */
     public function createFiltersWithUnpopulatedOptions()
     {
-        $etatsThese = [];
-        $etablissements = [];
-        $ecolesDoctorales = [];
-        $unitesRecherches = [];
-        $anneesPremiereInscription = [];
-        $anneesSoutenance = [];
-        $disciplines = [];
-        $domainesSientifiques = [];
-        $financements = [];
-
-        $this->filters = [
-            TheseSelectFilter::NAME_etatThese                => new TheseSelectFilter(
-                "État",
-                TheseSelectFilter::NAME_etatThese,
-                $etatsThese
-            ),
-            TheseSelectFilter::NAME_etablissement            => new TheseSelectFilter(
-                "Établissement",
-                TheseSelectFilter::NAME_etablissement,
-                $etablissements
-            ),
-            TheseSelectFilter::NAME_ecoleDoctorale           => new TheseSelectFilter(
-                "ED",
-                TheseSelectFilter::NAME_ecoleDoctorale,
-                $ecolesDoctorales,
-                ['liveSearch' => true]
-            ),
-            TheseSelectFilter::NAME_uniteRecherche           => new TheseSelectFilter(
-                "UR",
-                TheseSelectFilter::NAME_uniteRecherche,
-                $unitesRecherches,
-                ['liveSearch' => true]
-            ),
-            TheseSelectFilter::NAME_financement           => new TheseSelectFilter(
-                "Origine financement",
-                TheseSelectFilter::NAME_financement,
-                $financements,
-                ['width' => '125px', 'liveSearch' => true]
-            ),
-            TheseSelectFilter::NAME_anneePremiereInscription => new TheseSelectFilter(
-                "1ère inscr.",
-                TheseSelectFilter::NAME_anneePremiereInscription,
-                $anneesPremiereInscription
-            ),
-            TheseSelectFilter::NAME_anneeSoutenance => new TheseSelectFilter(
-                "soutenance",
-                TheseSelectFilter::NAME_anneeSoutenance,
-                $anneesSoutenance
-            ),
-            TheseSelectFilter::NAME_discipline               => new TheseSelectFilter(
-                "Discipline",
-                TheseSelectFilter::NAME_discipline,
-                $disciplines,
-                ['width' => '125px', 'liveSearch' => true]
-            ),
-            TheseSelectFilter::NAME_domaineScientifique     => new TheseSelectFilter(
-                "Domaine scientifique",
-                TheseSelectFilter::NAME_domaineScientifique,
-                $domainesSientifiques,
-                ['width' => '125px', 'liveSearch' => true]
-            ),
-            TheseTextFilter::NAME_text                       => new TheseTextFilter(
-                "Recherche de texte",
-                TheseTextFilter::NAME_text
-            ),
-        ];
+        $this->createFiltersArray([
+            TheseSelectFilter::NAME_etatThese                => [],
+            TheseSelectFilter::NAME_etablissement            => [],
+            TheseSelectFilter::NAME_ecoleDoctorale           => [],
+            TheseSelectFilter::NAME_uniteRecherche           => [],
+            TheseSelectFilter::NAME_financement              => [],
+            TheseSelectFilter::NAME_anneePremiereInscription => [],
+            TheseSelectFilter::NAME_anneeSoutenance          => [],
+//            TheseSelectFilter::NAME_discipline               => [],
+            TheseSelectFilter::NAME_domaineScientifique      => [],
+        ]);
 
         $this->unpopulatedOptions = true;
 
@@ -147,65 +92,77 @@ class TheseRechercheService
             return $this;
         }
 
-        $etatsThese = $this->fetchEtatsTheseOptions();
-        $etablissements = $this->fetchEtablissementsOptions();
-        $ecolesDoctorales = $this->fetchEcolesDoctoralesOptions();
-        $unitesRecherches = $this->fetchUnitesRecherchesOptions();
-        $anneesPremiereInscription = $this->fetchAnneesInscriptionOptions();
-        $anneesSoutenance = $this->fetchAnneesSoutenance();
-        $disciplines = $this->fetchDisciplinesOptions();
-        $domainesScientifiques = $this->fetchDomainesScientifiquesOptions();
-        $financements = $this->fetchOriginesFinancementsOptions();
+        $this->createFiltersArray([
+            TheseSelectFilter::NAME_etatThese                => $this->fetchEtatsTheseOptions(),
+            TheseSelectFilter::NAME_etablissement            => $this->fetchEtablissementsOptions(),
+            TheseSelectFilter::NAME_ecoleDoctorale           => $this->fetchEcolesDoctoralesOptions(),
+            TheseSelectFilter::NAME_uniteRecherche           => $this->fetchUnitesRecherchesOptions(),
+            TheseSelectFilter::NAME_financement              => $this->fetchOriginesFinancementsOptions(),
+            TheseSelectFilter::NAME_anneePremiereInscription => $this->fetchAnneesInscriptionOptions(),
+            TheseSelectFilter::NAME_anneeSoutenance          => $this->fetchAnneesSoutenance(),
+//            TheseSelectFilter::NAME_discipline               => $this->fetchDisciplinesOptions(),
+            TheseSelectFilter::NAME_domaineScientifique      => $this->fetchDomainesScientifiquesOptions(),
+        ]);
 
+        $this->unpopulatedOptions = false;
+
+        return $this;
+    }
+
+    /**
+     * @param array $optionsArray
+     */
+    private function createFiltersArray(array $optionsArray)
+    {
         $this->filters = [
             TheseSelectFilter::NAME_etatThese                => new TheseSelectFilter(
                 "État",
                 TheseSelectFilter::NAME_etatThese,
-                $etatsThese
+                $optionsArray[TheseSelectFilter::NAME_etatThese]
             ),
             TheseSelectFilter::NAME_etablissement            => new TheseSelectFilter(
                 "Établissement",
                 TheseSelectFilter::NAME_etablissement,
-                $etablissements
+                $optionsArray[TheseSelectFilter::NAME_etablissement]
             ),
             TheseSelectFilter::NAME_ecoleDoctorale           => new TheseSelectFilter(
                 "ED",
                 TheseSelectFilter::NAME_ecoleDoctorale,
-                $ecolesDoctorales,
+                $optionsArray[TheseSelectFilter::NAME_ecoleDoctorale],
                 ['liveSearch' => true]
             ),
             TheseSelectFilter::NAME_uniteRecherche           => new TheseSelectFilter(
                 "UR",
                 TheseSelectFilter::NAME_uniteRecherche,
-                $unitesRecherches,
+                $optionsArray[TheseSelectFilter::NAME_uniteRecherche],
                 ['liveSearch' => true]
             ),
             TheseSelectFilter::NAME_financement           => new TheseSelectFilter(
                 "Origine financement",
                 TheseSelectFilter::NAME_financement,
-                $financements,
+                $optionsArray[TheseSelectFilter::NAME_financement],
                 ['width' => '125px', 'liveSearch' => true]
             ),
             TheseSelectFilter::NAME_anneePremiereInscription => new TheseSelectFilter(
                 "1ère inscr.",
                 TheseSelectFilter::NAME_anneePremiereInscription,
-                $anneesPremiereInscription
+                $optionsArray[TheseSelectFilter::NAME_anneePremiereInscription]
             ),
             TheseSelectFilter::NAME_anneeSoutenance => new TheseSelectFilter(
-                "soutenance",
+                "Soutenance",
                 TheseSelectFilter::NAME_anneeSoutenance,
-                $anneesSoutenance
+                $optionsArray[TheseSelectFilter::NAME_anneeSoutenance]
             ),
-            TheseSelectFilter::NAME_discipline               => new TheseSelectFilter(
-                "Discipline",
-                TheseSelectFilter::NAME_discipline,
-                $disciplines,
-                ['width' => '125px', 'liveSearch' => true]
-            ),
+//            TheseSelectFilter::NAME_discipline               => new TheseSelectFilter(
+//                "Discipline",
+//                TheseSelectFilter::NAME_discipline,
+//                $optionsArray[TheseSelectFilter::NAME_discipline],
+//                ['width' => '125px', 'liveSearch' => true]
+//            ),
             TheseSelectFilter::NAME_domaineScientifique      => new TheseSelectFilter(
                 "Domaine scientifique",
                 TheseSelectFilter::NAME_domaineScientifique,
-                $domainesScientifiques,
+                $optionsArray[TheseSelectFilter::NAME_domaineScientifique],
                 ['width' => '125px', 'liveSearch' => true]
             ),
             TheseTextFilter::NAME_text                       => new TheseTextFilter(
@@ -213,10 +170,6 @@ class TheseRechercheService
                 TheseTextFilter::NAME_text
             ),
         ];
-
-        $this->unpopulatedOptions = false;
-
-        return $this;
     }
 
     /**
@@ -419,34 +372,34 @@ class TheseRechercheService
             // ...
         }
 
-        elseif ($role->isStructureDependant()) {
-            if ($role->isEtablissementDependant()) {
-                /**
-                 * On ne voit que les thèses de son établissement.
-                 */
-                $qb
-                    ->andWhere('t.etablissement = :etab')
-                    ->setParameter('etab', $role->getStructure()->getEtablissement());
-            }
-            elseif ($role->isEcoleDoctoraleDependant()) {
-                /**
-                 * On ne voit que les thèses concernant son ED.
-                 */
-                $qb
-                    ->addSelect('ed2')->join('t.ecoleDoctorale', 'ed2')
-                    ->andWhere('ed2 = :ed')
-                    ->setParameter('ed', $role->getStructure()->getEcoleDoctorale());
-            }
-            elseif ($role->isUniteRechercheDependant()) {
-                /**
-                 * On ne voit que les thèses concernant son UR.
-                 */
-                $qb
-                    ->addSelect('ur2')->join('t.uniteRecherche', 'ur2')
-                    ->andWhere('ur2 = :ur')
-                    ->setParameter('ur', $role->getStructure()->getUniteRecherche());
-            }
-        }
+//        elseif ($role->isStructureDependant()) {
+//            if ($role->isEtablissementDependant()) {
+//                /**
+//                 * On ne voit que les thèses de son établissement.
+//                 */
+//                $qb
+//                    ->andWhere('t.etablissement = :etab')
+//                    ->setParameter('etab', $role->getStructure()->getEtablissement());
+//            }
+//            elseif ($role->isEcoleDoctoraleDependant()) {
+//                /**
+//                 * On ne voit que les thèses concernant son ED.
+//                 */
+//                $qb
+//                    ->addSelect('ed2')->join('t.ecoleDoctorale', 'ed2')
+//                    ->andWhere('ed2 = :ed')
+//                    ->setParameter('ed', $role->getStructure()->getEcoleDoctorale());
+//            }
+//            elseif ($role->isUniteRechercheDependant()) {
+//                /**
+//                 * On ne voit que les thèses concernant son UR.
+//                 */
+//                $qb
+//                    ->addSelect('ur2')->join('t.uniteRecherche', 'ur2')
+//                    ->andWhere('ur2 = :ur')
+//                    ->setParameter('ur', $role->getStructure()->getUniteRecherche());
+//            }
+//        }
     }
 
     /**
