@@ -19,24 +19,22 @@ Lancer la commande suivante qui génère un fichier `users.txt` :
 
 Exemple de fichier `users.txt` généré :
 
-    brossard = 
-    gauthierb = 
-    metivier = 
+    hochon = 
+    terieur = 
     
 Compléter ce fichier à la main, exemple :
 
-    brossard = Stéphane Brossard <stephane.brossard@unicaen.fr>
-    gauthierb = Bertrand Gauthier <bertrand.gauthier@unicaen.fr>
-    metivier = Jean-Philippe Métivier <jean-philippe.metivier@unicaen.fr>
+    hochon = Paule Hochon <paule.hochon@unicaen.fr>
+    terieur = Alain Térieur <alain.terieur@unicaen.fr>
 
 ## Créer un dépôt Git local à partir du dépôt Subversion distant
 
     $ git svn clone https://svn.unicaen.fr/svn/sodoct \
-        --authors-file=users.txt --no-metadata -s /home/gauthierb/workspace/sodoct-git
+        --authors-file=users.txt --no-metadata -s /home/terieur/workspace/sodoct-git
 
 ## Se positionner dans le répertoire du dépôt Git local ainsi créé 
     
-    $ cd /home/gauthierb/workspace/sodoct-git
+    $ cd /home/terieur/workspace/sodoct-git
     
 ## Ajouter la remote "origin" au dépôt local
     
