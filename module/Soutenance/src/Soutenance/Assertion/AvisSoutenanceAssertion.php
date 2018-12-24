@@ -64,8 +64,9 @@ class AvisSoutenanceAssertion  implements  AssertionInterface {
              */
             case AvisSoutenancePrivileges::SOUTENANCE_AVIS_MODIFIER :
 
-                if ($role->getCode() === Role::CODE_RAPPORTEUR_JURY && $utilisateur->getIndividu() === $rapporteur->getIndividu()) return true;
-                return false;
+                if ($role->getCode() !== Role::CODE_RAPPORTEUR_JURY) return false;
+                if ($utilisateur->getIndividu() !== $rapporteur->getIndividu()) return false;
+                return true;
                 break;
         }
     }

@@ -2,7 +2,6 @@
 
 namespace Soutenance;
 
-use Application\Controller\FichierTheseController;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;

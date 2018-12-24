@@ -50,7 +50,7 @@ class AvisSoutenanceController extends AbstractController {
             throw new UnAuthorizedException("Vous êtes non authorisé(e) à visualiser l'avis de soutenance de ".$rapporteur->getIndividu()->getNomComplet().".");
         }
 
-        $avis = $this->getAvisService()->getAvisByRapporteur($rapporteur);
+        $avis = $this->getAvisService()->getAvisByRapporteur($rapporteur,$these);
         if ($avis === null) {
             $avis = new Avis();
             $avis->setRapporteur($rapporteur);
