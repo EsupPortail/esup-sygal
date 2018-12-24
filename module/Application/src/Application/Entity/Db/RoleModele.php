@@ -2,6 +2,8 @@
 
 namespace Application\Entity\Db;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 class RoleModele
 {
     /** @var int $id */
@@ -12,6 +14,14 @@ class RoleModele
     protected $structureType;
     /** @var string $roleCode */
     protected $roleCode;
+    /** @var ArrayCollection */
+    protected $privileges;
+
+    public function __construct()
+    {
+        $this->privileges = new ArrayCollection();
+    }
+
 
     /**
      * @return int
@@ -77,8 +87,46 @@ class RoleModele
         $this->roleCode = $roleCode;
     }
 
+    public function __toString()
+    {
+        return $this->getLibelle();
+    }
 
+    /**
+     * @return ArrayCollection
+     */
+    public function getPrivileges()
+    {
+        return $this->privileges;
+    }
 
+    /**
+     * @param Privilege $privilege
+     * @return RoleModele
+     */
+    public function addPrivilege($privilege)
+    {
+        $this->privileges->add($privilege);
+        return $this;
+    }
 
+    /**
+     * @param Privilege $privilege
+     * @return RoleModele
+     */
+    public function removePrivilege($privilege)
+    {
+        $this->privileges->removeElement($privilege);
+        return $this;
+    }
+
+    /**
+     * @param Privilege $privilege
+     * @return boolean
+     */
+    public function hasPrivilege($privilege)
+    {
+        return $this->privileges->contains($privilege);
+    }
 
 }
