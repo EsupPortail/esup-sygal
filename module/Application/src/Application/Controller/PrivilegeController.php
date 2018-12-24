@@ -4,12 +4,15 @@ namespace Application\Controller;
 
 use Application\Entity\Db\Privilege;
 use Application\Entity\Db\Role;
+use Application\Entity\Db\RoleModele;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Structure\StructureServiceAwareTrait;
 use Doctrine\ORM\QueryBuilder;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenAuth\Entity\Db\CategoriePrivilege;
+use UnicaenAuth\Service\Traits\PrivilegeServiceAwareTrait;
+use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
 class PrivilegeController extends AbstractController
@@ -18,6 +21,7 @@ class PrivilegeController extends AbstractController
     use RoleServiceAwareTrait;
     use StructureServiceAwareTrait;
     use EtablissementServiceAwareTrait;
+    use PrivilegeServiceAwareTrait;
 
     public function indexAction()
     {
@@ -77,6 +81,36 @@ class PrivilegeController extends AbstractController
         //$this->redirect()->toRoute("roles", [], ["query" => $queryParams], true);
     }
 
+    public function modifierModeleAction()
+    {
+        $privilege_id = $this->params()->fromRoute("privilege");
+        $role_id = $this->params()->fromRoute("role");
+
+        /**
+         * @var RoleModele $role
+         * @var Privilege $privilege
+         */
+        $role = $this->entityManager->getRepository(RoleModele::class)->find($role_id);
+        $privilege = $this->entityManager->getRepository(Privilege::class)->find($privilege_id);
+
+        $value = null;
+        if( $role->hasPrivilege($privilege)) {
+            $privilege->removeRoleModele($role);
+            $value = 0;
+        } else {
+            $privilege->addRoleModele($role);
+            $value = 1;
+        }
+//        $this->entityManager->flush($role);
+        $this->entityManager->flush($privilege);
+
+        $queryParams = $this->params()->fromQuery();
+        return new JsonModel([
+            'value' => $value,
+        ]);
+        //$this->redirect()->toRoute("roles", [], ["query" => $queryParams], true);
+    }
+
     private function decorateWithDepend(QueryBuilder $qb, $depend) {
         switch($depend) {
             case "ED" :
@@ -114,5 +148,21 @@ class PrivilegeController extends AbstractController
                 ->setParameter("type", $categorie);
         }
         return $qb;
+    }
+
+    public function roleModeleIndexAction() {
+
+        $modeles = $this->getRoleService()->getRolesModeles();
+
+        //$privileges = $this->getServicePrivilege()->getRepo()->findAll();
+        $qb_categorie = $this->entityManager->getRepository(Privilege::class)->createQueryBuilder("p");
+//        $qb_categorie = $this->decorateWithCategorie($qb_categorie, $categorie);
+        $qb_categorie->orderBy("p.categorie, p.ordre","ASC");
+        $privileges = $qb_categorie->getQuery()->execute();
+
+        return new ViewModel([
+            'modeles' => $modeles,
+            'privileges' => $privileges,
+        ]);
     }
 }

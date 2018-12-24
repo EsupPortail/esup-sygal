@@ -300,4 +300,16 @@ class RoleService extends BaseService
 //WHERE TYPE_STRUCTURE_DEPENDANT_ID = 2
 //  and SS.TO_STRUCTURE_ID IS NULL
 
+
+    /**
+     * @return RoleModele[]
+     */
+    public function getRolesModeles()
+    {
+        $qb = $this->getEntityManager()->getRepository(RoleModele::class)->createQueryBuilder('modele')
+            ;
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
 }

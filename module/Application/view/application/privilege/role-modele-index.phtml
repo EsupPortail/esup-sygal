@@ -1,0 +1,121 @@
+<?php
+
+use UnicaenAuth\Provider\Privilege\Privileges;
+
+$this->headTitle('Index des rôles modèles');
+
+/** @var \Application\Entity\Db\RoleModele[] $modeles */
+/** @var \Application\Entity\Db\Privilege[] $privileges */
+
+$canModifier = $this->isAllowed(Privileges::getResourceId(Privileges::DROIT_PRIVILEGE_EDITION));
+
+//TODO mettre le filtre sur les categorie
+//TODO virer le RoleModelePrivilege au profit du bon mapping
+?>
+
+<h1 class="page-header">
+    Index des rôles modèles
+</h1>
+
+<h2> Liste des rôles modèles </h2>
+
+<table class="table table--condensed">
+    <thead>
+        <tr>
+           <th> Code </th>
+           <th> Libellé </th>
+           <th> Structure dépendant </th>
+           <th> Action </th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($modeles as $modele) : ?>
+        <tr>
+            <td> <?php echo $modele->getRoleCode(); ?> </td>
+            <td> <?php echo $modele->getLibelle(); ?></td>
+            <td> <?php echo $modele->getStructureType(); ?></td>
+            <td> Nothing </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+<h2> Privilèges associés </h2>
+
+    <table class="table table--condensed">
+        <thead>
+        <tr>
+            <th> Privilège </th>
+            <?php foreach ($modeles as $modele) : ?>
+            <th> <?php echo $modele; ?> </th>
+            <?php endforeach; ?>
+        </tr>
+        </thead>
+        <tbody>
+            <?php $previous = "" ?>
+            <?php foreach ($privileges as $privilege) : ?>
+                <?php if ($previous != $privilege->getCategorie()): ?>
+                <tr>
+                    <?php $previous = $privilege->getCategorie(); ?>
+                    <td class="categorie" colspan="<?php echo (1 + count($modeles)); ?>"> <?php echo $previous; ?> </td>
+
+                </tr>
+                <?php endif; ?>
+                <tr>
+                    <th> <?php echo $privilege; ?> </th>
+                    <?php foreach ($modeles as $modele) : ?>
+                        <td id="<?php echo $privilege->getId(); ?>_<?php echo $modele->getId();?>">
+                            <?php if ($modele->hasPrivilege($privilege)) : ?>
+                                <span class="glyphicon glyphicon-ok text-success"></span>
+                            <?php else: ?>
+                                <span class="glyphicon glyphicon-remove text-danger"></span>
+                            <?php endif; ?>
+                        </td>
+                    <?php endforeach; ?>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+
+
+<style>
+    td.categorie {
+        font-size:  small;
+        background-color: lightblue;
+    }
+</style>
+
+<script>
+    $(document).ready(function() {
+        $("td").click(function() {
+
+            var canModifier =  Boolean(<?php echo $canModifier; ?>);
+            if (!canModifier) {
+                alert("Vous n'êtes pas autorisé à modifier les privilèges associés à un rôle.");
+                return;
+            }
+
+            var id = $(this).attr("id");
+            var splits = id.split("_");
+            var role = splits[1];
+            var privilege = splits[0];
+            var url = "modifier-modele-privilege/" + role + "/" + privilege;
+            // alert("click => R="+ role + " P="+privilege + "\n" + url);
+
+            $.ajax({
+                type: "POST",
+                url : url,
+                beforeSend:
+                    function () {
+                        document.getElementById(id).innerHTML = "<img style='height:40px;' src='css/loading.gif'/>";
+                    },
+                success:
+                    function(retour){
+                        if (retour["value"] == 1) texte = "<span class='glyphicon glyphicon-ok text-success'></span>";
+                        else var texte = "<span class='glyphicon glyphicon-remove text-danger'></span>";
+                        document.getElementById(id).innerHTML = texte;
+                    }
+            });
+        });
+    });
+</script>
