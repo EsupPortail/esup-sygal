@@ -24,6 +24,7 @@ use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Assert\Assertion;
+use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Traits\MessageAwareInterface;
@@ -383,5 +384,37 @@ class TheseService extends BaseService
         }
 
         return $pdcData;
+    }
+
+    /**
+     * Transfère toutes les données saisies sur une thèse *historisée* vers une autre thèse.
+     *
+     * @param These $fromThese Thèse source historisée
+     * @param These $toThese   Thèse destination
+     */
+    public function transferTheseData(These $fromThese, These $toThese)
+    {
+        if (! $fromThese->estHistorise()) {
+            throw new TheseServiceException("La thèse source doit être une thèse historisée.");
+        }
+
+        $fromId = $fromThese->getId();
+        $toId = $toThese->getId();
+
+        $sql = <<<EOS
+begin        
+    update FICHIER          set THESE_ID = $toId where THESE_ID = $fromId;
+    update ATTESTATION      set THESE_ID = $toId where THESE_ID = $fromId;
+    update DIFFUSION        set THESE_ID = $toId where THESE_ID = $fromId;
+    update METADONNEE_THESE set THESE_ID = $toId where THESE_ID = $fromId;
+    update RDV_BU           set THESE_ID = $toId where THESE_ID = $fromId;
+    update VALIDATION       set THESE_ID = $toId where THESE_ID = $fromId;
+end;
+EOS;
+        try {
+            $this->entityManager->getConnection()->executeQuery($sql);
+        } catch (DBALException $e) {
+            throw new RuntimeException("Erreur rencontrée lors des updates en bdd.", null, $e);
+        }
     }
 }

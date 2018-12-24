@@ -16,5 +16,16 @@
             </join-columns>
         </many-to-one>
 
+        <many-to-many target-entity="Application\Entity\Db\Privilege" field="privileges">
+            <join-table name="ROLE_PRIVILEGE_MODELE">
+                <join-columns>
+                    <join-column name="ROLE_ID" referenced-column-name="ID" />
+                </join-columns>
+                <inverse-join-columns>
+                    <join-column name="PRIVILEGE_ID" referenced-column-name="ID" />
+                </inverse-join-columns>
+            </join-table>
+        </many-to-many>
+
     </entity>
 </doctrine-mapping>

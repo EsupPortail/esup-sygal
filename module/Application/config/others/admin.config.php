@@ -47,6 +47,7 @@ return [
                     'controller' => \Application\Controller\PrivilegeController::class,
                     'action'     => [
                         'index',
+                        'role-modele-index',
                     ],
                     'privileges' => [
                         Privileges::DROIT_PRIVILEGE_VISUALISATION,
@@ -57,6 +58,7 @@ return [
                     'controller' => \Application\Controller\PrivilegeController::class,
                     'action'     => [
                         'modifier',
+                        'modifier-modele',
                     ],
                     'privileges' => [
                         Privileges::DROIT_PRIVILEGE_EDITION,
@@ -111,6 +113,16 @@ return [
                     'defaults' => [
                         'controller'    => \Application\Controller\PrivilegeController::class,
                         'action'        => 'index',
+                    ],
+                ],
+            ],
+            'gestion-role-modele' => [
+                'type'          => Literal::class,
+                'options'       => [
+                    'route'    => '/gestion-role-modele',
+                    'defaults' => [
+                        'controller'    => \Application\Controller\PrivilegeController::class,
+                        'action'        => 'role-modele-index',
                     ],
                 ],
             ],
@@ -204,6 +216,16 @@ return [
                     'defaults' => [
                         'controller'    => \Application\Controller\PrivilegeController::class,
                         'action'        => 'modifier',
+                    ],
+                ],
+            ],
+            'modifier-modele-privilege' => [
+                'type'          => Segment::class,
+                'options'       => [
+                    'route'    => '/modifier-modele-privilege/:role/:privilege',
+                    'defaults' => [
+                        'controller'    => \Application\Controller\PrivilegeController::class,
+                        'action'        => 'modifier-modele',
                     ],
                 ],
             ],
