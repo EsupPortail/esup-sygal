@@ -7,6 +7,7 @@ use Application\Entity\Db\Financement;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
+use Application\Entity\Db\VersionFichier;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\These\TheseRechercheServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
@@ -69,7 +70,8 @@ class ExportController extends AbstractController
             'Date de prévisionnel de soutenance'    => function (These $these) { return $these->getDatePrevisionSoutenance(); },
             'Date de soutenance'                    => function (These $these) { return $these->getDateSoutenance(); },
             'Date de fin de confientialité'         => function (These $these) { return $these->getDateFinConfidentialite(); },
-            'Date de dépôt'                         => function (These $these) { $file = $this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF)[0]; if ($file !== null) return $file->getHistoCreation()->format('d/m/Y'); },
+            'Date de dépôt version initiale'        => function (These $these) { $file = $this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF, VersionFichier::CODE_ORIG)[0]; if ($file !== null) return $file->getHistoCreation()->format('d/m/Y'); },
+            'Date de dépôt version corigée'         => function (These $these) { $file = $this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_THESE_PDF,VersionFichier::CODE_ORIG_CORR)[0]; if ($file !== null) return $file->getHistoCreation()->format('d/m/Y'); },
             //Flags
             'Etat de la thèse'                      => function (These $these) { return $these->getEtatTheseToString();},
             'Autorisation à soutenir'               => function (These $these) { return $these->getSoutenanceAutorisee();},
