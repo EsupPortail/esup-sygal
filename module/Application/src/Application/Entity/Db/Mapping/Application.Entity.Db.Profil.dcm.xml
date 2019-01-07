@@ -18,7 +18,7 @@
         </many-to-one>
 
         <many-to-many target-entity="Application\Entity\Db\Privilege" field="privileges">
-            <join-table name="ROLE_PRIVILEGE_MODELE">
+            <join-table name="PROFIL_PRIVILEGE">
                 <join-columns>
                     <join-column name="ROLE_ID" referenced-column-name="ID" />
                 </join-columns>
