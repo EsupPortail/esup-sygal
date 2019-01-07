@@ -25,31 +25,31 @@ class Privilege extends AbstractPrivilege
     }
 
     /**
-     * @param RoleModele $modele
+     * @param Profil $profil
      * @return Privilege
      */
-    public function addRoleModele($modele)
+    public function addProfil($profil)
     {
-        $this->modeles->add($modele);
+        $this->modeles->add($profil);
         return $this;
     }
 
     /**
-     * @param RoleModele $modele
+     * @param Profil $profil
      * @return Privilege
      */
-    public function removeRoleModele($modele)
+    public function removeProfil($profil)
     {
-        $this->modeles->removeElement($modele);
+        $this->modeles->removeElement($profil);
         return $this;
     }
 
     /**
-     * @param RoleModele $modele
+     * @param Profil $profil
      * @return bool
      */
-    public function hasRoleModele($modele)
+    public function hasProfil($profil)
     {
-        return $this->modeles->contains($modele);
+        return $this->modeles->contains($profil);
     }
 }

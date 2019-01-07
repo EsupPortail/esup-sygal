@@ -4,7 +4,7 @@ namespace Application\Entity\Db;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
-class RoleModele
+class Profil
 {
     /** @var int $id */
     private $id;
@@ -14,6 +14,8 @@ class RoleModele
     protected $structureType;
     /** @var string $roleCode */
     protected $roleCode;
+    /** @var string $description */
+    protected $description;
     /** @var ArrayCollection */
     protected $privileges;
 
@@ -102,7 +104,7 @@ class RoleModele
 
     /**
      * @param Privilege $privilege
-     * @return RoleModele
+     * @return Profil
      */
     public function addPrivilege($privilege)
     {
@@ -112,7 +114,7 @@ class RoleModele
 
     /**
      * @param Privilege $privilege
-     * @return RoleModele
+     * @return Profil
      */
     public function removePrivilege($privilege)
     {
@@ -127,6 +129,24 @@ class RoleModele
     public function hasPrivilege($privilege)
     {
         return $this->privileges->contains($privilege);
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     * @return Profil
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+        return $this;
     }
 
 }

@@ -4,7 +4,7 @@ use UnicaenAuth\Provider\Privilege\Privileges;
 
 $this->headTitle('Index des rôles modèles');
 
-/** @var \Application\Entity\Db\RoleModele[] $modeles */
+/** @var \Application\Entity\Db\Profil[] $modeles */
 /** @var \Application\Entity\Db\Privilege[] $privileges */
 
 $canModifier = $this->isAllowed(Privileges::getResourceId(Privileges::DROIT_PRIVILEGE_EDITION));
@@ -18,6 +18,10 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(Privileges::DROIT_PRIV
 </h1>
 
 <h2> Liste des rôles modèles </h2>
+
+<a href="<?php echo $this->url('gestion-role-modele/editer', [], [], true); ?>" class="btn btn-primary">
+    <span class="glyphicon glyphicon-plus"></span>Ajouter un nouveau rôle modèle
+</a>
 
 <table class="table table--condensed">
     <thead>

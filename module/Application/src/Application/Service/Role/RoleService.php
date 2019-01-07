@@ -9,7 +9,7 @@ use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Privilege;
 use Application\Entity\Db\Repository\RoleRepository;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\RoleModele;
+use Application\Entity\Db\Profil;
 use Application\Entity\Db\Source;
 use Application\Entity\Db\Structure;
 use Application\Entity\Db\TypeStructure;
@@ -124,28 +124,15 @@ class RoleService extends BaseService
 
     /**
      * @param int $structureType_id
-     * @return RoleModele[] $roles
+     * @return Profil[] $roles
      */
-    public function getRoleModeleByStructureType($structureType_id) {
-        $qb = $this->entityManager->getRepository(RoleModele::class)->createQueryBuilder("rm")
+    public function getProfilByStructureType($structureType_id) {
+        $qb = $this->entityManager->getRepository(Profil::class)->createQueryBuilder("rm")
             //->join("TypeStructure", "ts", "WITH", "rm.structureType = ts.id")
             ->andWhere('rm.structureType = :structureType')->setParameter("structureType", $structureType_id)
         ;
         $roles = $qb->getQuery()->execute();
         return $roles;
-    }
-
-    public function getRoleModeleByStructures() {
-        $roleModele = [];
-        $structures = $this->entityManager->getRepository(TypeStructure::class)->findAll();
-
-        /** @var TypeStructure $structure */
-        foreach ($structures as $structure) {
-            $roles = $this->getRoleModeleByStructureType($structure->getId());
-            $roleModele[$structure->getLibelle()] = $roles;
-        }
-
-        return $roleModele;
     }
 
     /**
@@ -168,8 +155,8 @@ class RoleService extends BaseService
                 break;
         }
 
-        /** @var RoleModele[] $roleModeles */
-        $qb = $this->entityManager->getRepository(RoleModele::class)->createQueryBuilder("rm")
+        /** @var Profil[] $roleModeles */
+        $qb = $this->entityManager->getRepository(Profil::class)->createQueryBuilder("rm")
             ->andWhere("rm.structureType = :stype")->setParameter("stype", $type);
         $roleModeles = $qb->getQuery()->execute();
 
@@ -329,14 +316,74 @@ class RoleService extends BaseService
 
 
     /**
-     * @return RoleModele[]
+     * @return Profil[]
      */
-    public function getRolesModeles()
+    public function getProfils()
     {
-        $qb = $this->getEntityManager()->getRepository(RoleModele::class)->createQueryBuilder('modele')
+        $qb = $this->getEntityManager()->getRepository(Profil::class)->createQueryBuilder('profil')
             ;
-
         $result = $qb->getQuery()->getResult();
         return $result;
+    }
+
+    /**
+     * @param integer $id
+     * @return Profil
+     */
+    public function getProfil($id)
+    {
+        $qb = $this->getEntityManager()->getRepository(Profil::class)->createQueryBuilder('profil')
+            ->andWhere('profil.id = :id')
+            ->setParameter('id', $id)
+            ;
+
+        try {
+            $result = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException('Plusieurs profils partagent le même id.', $e);
+        }
+        return $result;
+    }
+
+    /**
+     * @param Profil $profil
+     * @return  Profil
+     */
+    public function createProfil($profil)
+    {
+        $this->getEntityManager()->persist($profil);
+        try {
+            $this->getEntityManager()->flush($profil);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Un problème s'est produit lors de la création d'un Profil", $e);
+        }
+        return $profil;
+    }
+
+    /**
+     * @param Profil $profil
+     * @return  Profil
+     */
+    public function updateProfil($profil)
+    {
+        try {
+            $this->getEntityManager()->flush($profil);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Un problème s'est produit lors de la mise à jour d'un Profil", $e);
+        }
+        return $profil;
+    }
+
+    /**
+     * @param Profil $profil
+     */
+    public function deleteProfil($profil)
+    {
+        $this->getEntityManager()->remove($profil);
+        try {
+            $this->getEntityManager()->flush();
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Un problème s'est produit lors de la suppression d'un Profil", $e);
+        }
     }
 }

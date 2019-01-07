@@ -4,7 +4,8 @@ namespace Application\Controller;
 
 use Application\Entity\Db\Privilege;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\RoleModele;
+use Application\Entity\Db\Profil;
+use Application\Form\ProfilForm;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Structure\StructureServiceAwareTrait;
@@ -12,6 +13,7 @@ use Doctrine\ORM\QueryBuilder;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenAuth\Entity\Db\CategoriePrivilege;
 use UnicaenAuth\Service\Traits\PrivilegeServiceAwareTrait;
+use Zend\Http\Request;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
@@ -87,18 +89,18 @@ class PrivilegeController extends AbstractController
         $role_id = $this->params()->fromRoute("role");
 
         /**
-         * @var RoleModele $role
+         * @var Profil $role
          * @var Privilege $privilege
          */
-        $role = $this->entityManager->getRepository(RoleModele::class)->find($role_id);
+        $role = $this->entityManager->getRepository(Profil::class)->find($role_id);
         $privilege = $this->entityManager->getRepository(Privilege::class)->find($privilege_id);
 
         $value = null;
         if( $role->hasPrivilege($privilege)) {
-            $privilege->removeRoleModele($role);
+            $privilege->removeProfil($role);
             $value = 0;
         } else {
-            $privilege->addRoleModele($role);
+            $privilege->addProfil($role);
             $value = 1;
         }
 //        $this->entityManager->flush($role);
@@ -152,7 +154,7 @@ class PrivilegeController extends AbstractController
 
     public function roleModeleIndexAction() {
 
-        $modeles = $this->getRoleService()->getRolesModeles();
+        $modeles = $this->getRoleService()->getProfils();
 
         //$privileges = $this->getServicePrivilege()->getRepo()->findAll();
         $qb_categorie = $this->entityManager->getRepository(Privilege::class)->createQueryBuilder("p");
@@ -164,5 +166,36 @@ class PrivilegeController extends AbstractController
             'modeles' => $modeles,
             'privileges' => $privileges,
         ]);
+    }
+
+    public function editerProfilAction() {
+        /** @var Profil $profil */
+        $profilId = $this->params()->fromRoute('profil');
+
+        $profil = null;
+        if($profilId)   $profil = $this->getRoleService()->getProfil($profilId);
+        else            $profil = new Profil();
+
+        /** @var ProfilForm $form */
+        $form = $this->getServiceLocator()->get('FormElementManager')->get(ProfilForm::class);
+        $form->bind($profil);
+
+        /** @var Request $request */
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $form->setData($data);
+            if ($form->isValid()) {
+                if ($profilId)  $this->getRoleService()->updateProfil($profil);
+                else            $this->getRoleService()->createProfil($profil);
+                $this->redirect()->toRoute('admin/gestion-role-modele', [], [], true);
+            }
+        }
+
+        return new ViewModel([
+            'form' => $form,
+        ]);
+
+
     }
 }
