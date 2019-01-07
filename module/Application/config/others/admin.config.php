@@ -4,6 +4,10 @@ use Application\Controller\AdminController;
 use Application\Controller\Factory\RoleControllerFactory;
 use Application\Controller\MailConfirmationController;
 use Application\Controller\RoleController;
+use Application\Form\Factory\ProfilFormFactory;
+use Application\Form\Factory\ProfilHydratorFactory;
+use Application\Form\Hydrator\ProfilHydrator;
+use Application\Form\ProfilForm;
 use Application\Provider\Privilege\StructurePrivileges;
 use Application\Provider\Privilege\UniteRecherchePrivileges;
 use Application\Provider\Privilege\UtilisateurPrivileges;
@@ -51,6 +55,15 @@ return [
                     ],
                     'privileges' => [
                         Privileges::DROIT_PRIVILEGE_VISUALISATION,
+                        Privileges::DROIT_PRIVILEGE_EDITION,
+                    ],
+                ],
+                [
+                    'controller' => \Application\Controller\PrivilegeController::class,
+                    'action'     => [
+                        'editer-profil',
+                    ],
+                    'privileges' => [
                         Privileges::DROIT_PRIVILEGE_EDITION,
                     ],
                 ],
@@ -123,6 +136,19 @@ return [
                     'defaults' => [
                         'controller'    => \Application\Controller\PrivilegeController::class,
                         'action'        => 'role-modele-index',
+                    ],
+                ],
+                'may_terminate' => true,
+                'child_routes' => [
+                    'editer' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'    => '/editer[/:profil]',
+                            'defaults' => [
+                                'controller'    => \Application\Controller\PrivilegeController::class,
+                                'action'        => 'editer-profil',
+                            ],
+                        ],
                     ],
                 ],
             ],
@@ -290,11 +316,13 @@ return [
         ],
         'factories' => [
             'MailConfirmationForm' => MailConfirmationFormFactory::class,
+            ProfilForm::class => ProfilFormFactory::class,
         ],
     ],
     'hydrators' => [
         'factories' => [
             'MailConfirmationHydrator' => MailConfirmationHydratorFactory::class,
+            ProfilHydrator::class => ProfilHydratorFactory::class,
         ]
     ],
 

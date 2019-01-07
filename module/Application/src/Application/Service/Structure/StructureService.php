@@ -832,4 +832,24 @@ class StructureService extends BaseService
 
         return file_get_contents($logoFilepath) ?: null;
     }
+
+    /**
+     * @param string $code
+     * @return TypeStructure
+     */
+    public function getTypeStructureByCode($code)
+    {
+        $qb = $this->getEntityManager()->getRepository(TypeStructure::class)->createQueryBuilder('type')
+            ->andWhere('type.code = :code')
+            ->setParameter('code', $code)
+            ;
+
+        try {
+            $result = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Un problème s'est produit", $e);
+        }
+
+        return $result;
+    }
 }

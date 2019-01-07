@@ -30,7 +30,7 @@
             </join-table>
         </many-to-many>
 
-        <many-to-many target-entity="Application\Entity\Db\RoleModele" field="modeles">
+        <many-to-many target-entity="Application\Entity\Db\Profil" field="modeles">
             <join-table name="ROLE_PRIVILEGE_MODELE">
                 <join-columns>
                     <join-column name="PRIVILEGE_ID" referenced-column-name="ID"/>
