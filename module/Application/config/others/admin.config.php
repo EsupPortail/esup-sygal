@@ -9,7 +9,6 @@ use Application\Form\Factory\ProfilHydratorFactory;
 use Application\Form\Hydrator\ProfilHydrator;
 use Application\Form\ProfilForm;
 use Application\Provider\Privilege\StructurePrivileges;
-use Application\Provider\Privilege\UniteRecherchePrivileges;
 use Application\Provider\Privilege\UtilisateurPrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Privilege\Privileges;
@@ -62,6 +61,8 @@ return [
                     'controller' => \Application\Controller\PrivilegeController::class,
                     'action'     => [
                         'editer-profil',
+                        'supprimer-profil',
+                        'gerer-roles',
                     ],
                     'privileges' => [
                         Privileges::DROIT_PRIVILEGE_EDITION,
@@ -147,6 +148,26 @@ return [
                             'defaults' => [
                                 'controller'    => \Application\Controller\PrivilegeController::class,
                                 'action'        => 'editer-profil',
+                            ],
+                        ],
+                    ],
+                    'supprimer' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'    => '/supprimer/:profil',
+                            'defaults' => [
+                                'controller'    => \Application\Controller\PrivilegeController::class,
+                                'action'        => 'supprimer-profil',
+                            ],
+                        ],
+                    ],
+                    'gerer-roles' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'    => '/gerer-roles/:profil',
+                            'defaults' => [
+                                'controller'    => \Application\Controller\PrivilegeController::class,
+                                'action'        => 'gerer-roles',
                             ],
                         ],
                     ],

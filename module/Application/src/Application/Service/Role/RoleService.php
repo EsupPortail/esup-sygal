@@ -321,6 +321,7 @@ class RoleService extends BaseService
     public function getProfils()
     {
         $qb = $this->getEntityManager()->getRepository(Profil::class)->createQueryBuilder('profil')
+            ->orderBy('profil.libelle')
             ;
         $result = $qb->getQuery()->getResult();
         return $result;

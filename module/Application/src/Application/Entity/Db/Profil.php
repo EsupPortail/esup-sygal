@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 class Profil
 {
-    /** @var int $id */
+    /** @var integer $id */
     private $id;
     /** @var string $libelle */
     protected $libelle;
@@ -18,10 +18,13 @@ class Profil
     protected $description;
     /** @var ArrayCollection */
     protected $privileges;
+    /** @var ArrayCollection */
+    protected $roles;
 
     public function __construct()
     {
         $this->privileges = new ArrayCollection();
+        $this->roles = new ArrayCollection();
     }
 
 
@@ -103,6 +106,25 @@ class Profil
     }
 
     /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     * @return Profil
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+        return $this;
+    }
+
+
+    /**
      * @param Privilege $privilege
      * @return Profil
      */
@@ -131,22 +153,39 @@ class Profil
         return $this->privileges->contains($privilege);
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+
+    /** @return ArrayCollection */
+    public function getRoles()
     {
-        return $this->description;
+        return $this->roles;
     }
 
     /**
-     * @param string $description
+     * @param Role $role
      * @return Profil
      */
-    public function setDescription($description)
+    public function addRole($role)
     {
-        $this->description = $description;
+        $this->roles->add($role);
         return $this;
     }
 
+    /**
+     * @param Role $role
+     * @return Profil
+     */
+    public function removeRole($role)
+    {
+        $this->roles->removeElement($role);
+        return $this;
+    }
+
+    /**
+     * @param Role $role
+     * @return boolean
+     */
+    public function hasRole($role)
+    {
+        return $this->roles->contains($role);
+    }
 }

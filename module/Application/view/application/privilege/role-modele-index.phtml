@@ -9,6 +9,9 @@ $this->headTitle('Index des rôles modèles');
 
 $canModifier = $this->isAllowed(Privileges::getResourceId(Privileges::DROIT_PRIVILEGE_EDITION));
 
+
+$canEdit = true;
+$canDelete = true;
 //TODO mettre le filtre sur les categories
 
 ?>
@@ -29,6 +32,7 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(Privileges::DROIT_PRIV
            <th> Code </th>
            <th> Libellé </th>
            <th> Structure dépendant </th>
+           <th> Nombre de rôle ayant le profil </th>
            <th> Action </th>
         </tr>
     </thead>
@@ -38,7 +42,24 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(Privileges::DROIT_PRIV
             <td> <?php echo $modele->getRoleCode(); ?> </td>
             <td> <?php echo $modele->getLibelle(); ?></td>
             <td> <?php echo $modele->getStructureType(); ?></td>
-            <td> Nothing </td>
+            <td> <?php echo count($modele->getRoles()); ?></td>
+            <td>
+                <?php if ($canEdit) : ?>
+                    <a href="<?php echo $this->url('gestion-role-modele/editer', ['profil' => $modele->getId()], [], true);?>">
+                        <span class="glyphicon glyphicon-pencil" title="Éditer les informations du profil"></span>
+                    </a>
+                <?php endif; ?>
+                <?php if ($canDelete) : ?>
+                    <a href="<?php echo $this->url('gestion-role-modele/supprimer', ['profil' => $modele->getId()], [], true);?>">
+                        <span class="glyphicon glyphicon-trash" title="Supprimer le profil"></span>
+                    </a>
+                <?php endif; ?>
+                <?php if ($canDelete) : ?>
+                    <a href="<?php echo $this->url('gestion-role-modele/gerer-roles', ['profil' => $modele->getId()], [], true);?>">
+                        <span class="glyphicon glyphicon-link" title="Gérer les rôles associés au profil" ></span>
+                    </a>
+                <?php endif; ?>
+            </td>
         </tr>
     <?php endforeach; ?>
     </tbody>

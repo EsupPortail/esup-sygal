@@ -1,0 +1,37 @@
+<?php
+
+/** @var \Application\Entity\Db\Profil $profil */
+
+?>
+
+<h1>
+    Gestion des rôles associées au profil (<?php echo $profil->getRoleCode(); ?>) <?php echo $profil->getLibelle(); ?>
+</h1>
+
+
+    <a href="" class="btn btn-primary">
+        <span class="glyphicon glyphicon-plus"></span> Ajouter un rôle
+    </a>
+
+<br/>
+<br/>
+
+
+
+<table class="table table-condensed">
+    <tr>
+        <th> Libelle du rôle </th>
+        <th> Actions </th>
+    </tr>
+    <?php foreach ($profil->getRoles() as $role) : ?>
+        <tr>
+            <td>
+                <?php echo $role->getLibelle(); ?>
+            </td>
+            <td>
+                VOIR
+                SUPPRIMER
+            </td>
+        </tr>
+    <?php endforeach; ?>
+</table>

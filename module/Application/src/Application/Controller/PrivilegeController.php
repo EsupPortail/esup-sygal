@@ -188,14 +188,36 @@ class PrivilegeController extends AbstractController
             if ($form->isValid()) {
                 if ($profilId)  $this->getRoleService()->updateProfil($profil);
                 else            $this->getRoleService()->createProfil($profil);
-                $this->redirect()->toRoute('admin/gestion-role-modele', [], [], true);
+                $this->redirect()->toRoute('gestion-role-modele', [], [], true);
             }
         }
 
         return new ViewModel([
             'form' => $form,
         ]);
+    }
 
+    public function supprimerProfilAction() {
+        /** @var Profil $profil */
+        $profilId = $this->params()->fromRoute('profil');
+        $profil = $this->getRoleService()->getProfil($profilId);
 
+        if ($profil) {
+            $this->getRoleService()->deleteProfil($profil);
+        }
+
+        $this->redirect()->toRoute('gestion-role-modele', [], [], true);
+
+    }
+
+    public function gererRolesAction()
+    {
+        /** @var Profil $profil */
+        $profilId = $this->params()->fromRoute('profil');
+        $profil = $this->getRoleService()->getProfil($profilId);
+
+        return new ViewModel([
+            'profil' => $profil,
+        ]);
     }
 }

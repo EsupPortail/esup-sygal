@@ -5,6 +5,7 @@
     <entity name="Application\Entity\Db\Profil" table="PROFIL">
             <!--repository-class="Application\Entity\Db\Repository\RoleRepository">-->
         <id name="id" type="integer" column="ID">
+            <generator strategy="SEQUENCE"/>
         </id>
 
         <field name="libelle" type="string" column="LIBELLE" length="100" nullable="false"/>
@@ -20,10 +21,21 @@
         <many-to-many target-entity="Application\Entity\Db\Privilege" field="privileges">
             <join-table name="PROFIL_PRIVILEGE">
                 <join-columns>
-                    <join-column name="ROLE_ID" referenced-column-name="ID" />
+                    <join-column name="PROFIL_ID" referenced-column-name="ID" />
                 </join-columns>
                 <inverse-join-columns>
                     <join-column name="PRIVILEGE_ID" referenced-column-name="ID" />
+                </inverse-join-columns>
+            </join-table>
+        </many-to-many>
+
+        <many-to-many target-entity="Application\Entity\Db\Role" field="roles">
+            <join-table name="PROFIL_TO_ROLE">
+                <join-columns>
+                    <join-column name="PROFIL_ID" referenced-column-name="ID" />
+                </join-columns>
+                <inverse-join-columns>
+                    <join-column name="ROLE_ID" referenced-column-name="ID" />
                 </inverse-join-columns>
             </join-table>
         </many-to-many>
