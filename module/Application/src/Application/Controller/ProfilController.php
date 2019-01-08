@@ -133,7 +133,7 @@ class ProfilController extends AbstractActionController {
             if (! $profil->hasRole($role)) {
                 $profil->addRole($role);
                 $this->getProfilService()->update($profil);
-//                $this->getProfilService()->applyProfilToRole($profil, $role);
+                $this->getProfilService()->applyProfilToRole($profil, $role);
             }
         }
 

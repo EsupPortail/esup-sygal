@@ -4,24 +4,25 @@ namespace Application\Entity\Db;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use UnicaenAuth\Entity\Db\AbstractPrivilege;
+use UnicaenAuth\Entity\Db\RoleInterface;
 
 class Privilege extends AbstractPrivilege
 {
     /** @var ArrayCollection */
-    private $modeles;
+    private $profils;
 
     public function __construct()
     {
         parent::__construct();
-        $this->modeles = new ArrayCollection();
+        $this->profils = new ArrayCollection();
     }
 
     /**
      * @return ArrayCollection
      */
-    public function getRolesModeles()
+    public function getProfils()
     {
-        return $this->modeles;
+        return $this->profils;
     }
 
     /**
@@ -30,7 +31,7 @@ class Privilege extends AbstractPrivilege
      */
     public function addProfil($profil)
     {
-        $this->modeles->add($profil);
+        $this->profils->add($profil);
         return $this;
     }
 
@@ -40,7 +41,7 @@ class Privilege extends AbstractPrivilege
      */
     public function removeProfil($profil)
     {
-        $this->modeles->removeElement($profil);
+        $this->profils->removeElement($profil);
         return $this;
     }
 
@@ -50,6 +51,23 @@ class Privilege extends AbstractPrivilege
      */
     public function hasProfil($profil)
     {
-        return $this->modeles->contains($profil);
+        return $this->profils->contains($profil);
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getRoles()
+    {
+        return $this->role;
+    }
+
+    /**
+     * @param RoleInterface $role
+     * @return bool
+     */
+    public function hasRole($role)
+    {
+        return $this->role->contains($role);
     }
 }
