@@ -1,0 +1,145 @@
+<?php
+
+/**
+ * @var \Application\Entity\Db\Profil[] $profils
+ * @var \Application\Entity\Db\Privilege[] $privileges
+ */
+$this->headTitle("Profils");
+
+$canEdit = true;
+$canDelete = true;
+$canManage = true;
+$canChangePrivilege = true;
+?>
+
+<h1 class="page-header">
+    Profils
+    <span class="badge">
+        <?php echo count($profils); ?>
+    </span>
+</h1>
+
+<h2> Liste des profils </h2>
+
+<a href="<?php echo $this->url('profil/editer', [], [], true); ?>" class="btn btn-primary">
+    <span class="glyphicon glyphicon-plus"></span>Ajouter un nouveau profil
+</a>
+
+<table class="table table-condensed">
+    <thead>
+    <tr>
+        <th> Code </th>
+        <th> Libellé </th>
+        <th> Structure dépendant </th>
+        <th> Nombre de rôle ayant le profil </th>
+        <th> Action </th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($profils as $profil) : ?>
+        <tr>
+            <td> <?php echo $profil->getRoleCode(); ?> </td>
+            <td> <?php echo $profil->getLibelle(); ?></td>
+            <td> <?php echo $profil->getStructureType(); ?></td>
+            <td> <?php echo count($profil->getRoles()); ?></td>
+            <td>
+                <?php if ($canEdit) : ?>
+                    <a href="<?php echo $this->url('profil/editer', ['profil' => $profil->getId()], [], true);?>">
+                        <span class="glyphicon glyphicon-pencil" title="Éditer les informations du profil"></span>
+                    </a>
+                <?php endif; ?>
+                <?php if ($canDelete) : ?>
+                    <a href="<?php echo $this->url('profil/supprimer', ['profil' => $profil->getId()], [], true);?>">
+                        <span class="glyphicon glyphicon-trash" title="Supprimer le profil"></span>
+                    </a>
+                <?php endif; ?>
+                <?php if ($canManage) : ?>
+                    <a href="<?php echo $this->url('profil/gerer-roles', ['profil' => $profil->getId()], [], true);?>">
+                        <span class="glyphicon glyphicon-link" title="Gérer les rôles associés au profil" ></span>
+                    </a>
+                <?php endif; ?>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+<h2> Gestion des privilèges accordés aux profils </h2>
+
+<table class="table table--condensed">
+    <thead>
+    <tr>
+        <th> Privilège </th>
+        <?php foreach ($profils as $profil) : ?>
+            <th> <?php echo $profil; ?> </th>
+        <?php endforeach; ?>
+    </tr>
+    </thead>
+    <tbody>
+    <?php $previous = "" ?>
+    <?php foreach ($privileges as $privilege) : ?>
+        <?php if ($previous != $privilege->getCategorie()): ?>
+            <tr>
+                <?php $previous = $privilege->getCategorie(); ?>
+                <td class="categorie" colspan="<?php echo (1 + count($profils)); ?>"> <?php echo $previous; ?> </td>
+
+            </tr>
+        <?php endif; ?>
+        <tr>
+            <th> <?php echo $privilege; ?> </th>
+            <?php foreach ($profils as $profil) : ?>
+                <td id="<?php echo $privilege->getId(); ?>_<?php echo $profil->getId();?>">
+                    <?php if ($profil->hasPrivilege($privilege)) : ?>
+                        <span class="glyphicon glyphicon-ok text-success"></span>
+                    <?php else: ?>
+                        <span class="glyphicon glyphicon-remove text-danger"></span>
+                    <?php endif; ?>
+                </td>
+            <?php endforeach; ?>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+
+<style>
+    td.categorie {
+        font-size:  small;
+        background-color: lightblue;
+    }
+</style>
+
+<script>
+    $(document).ready(function() {
+        $("td").click(function() {
+
+            var canModifier =  Boolean(<?php echo $canChangePrivilege; ?>);
+            if (!canModifier) {
+                alert("Vous n'êtes pas autorisé à modifier les privilèges associés à un rôle.");
+                return;
+            }
+
+            var id = $(this).attr("id");
+            var splits = id.split("_");
+            var role = splits[1];
+            var privilege = splits[0];
+            var url = "modifier-profil-privilege/" + role + "/" + privilege;
+            // alert("click => R="+ role + " P="+privilege + "\n" + url);
+
+            $.ajax({
+                type: "POST",
+                url : url,
+                beforeSend:
+                    function () {
+                        document.getElementById(id).innerHTML = "<img style='height:40px;' src='css/loading.gif'/>";
+                    },
+                success:
+                    function(retour){
+                        if (retour["value"] == 1) texte = "<span class='glyphicon glyphicon-ok text-success'></span>";
+                        else var texte = "<span class='glyphicon glyphicon-remove text-danger'></span>";
+                        document.getElementById(id).innerHTML = texte;
+                    }
+            });
+        });
+    });
+</script>

@@ -50,7 +50,6 @@ return [
                     'controller' => \Application\Controller\PrivilegeController::class,
                     'action'     => [
                         'index',
-                        'role-modele-index',
                     ],
                     'privileges' => [
                         Privileges::DROIT_PRIVILEGE_VISUALISATION,
@@ -60,19 +59,7 @@ return [
                 [
                     'controller' => \Application\Controller\PrivilegeController::class,
                     'action'     => [
-                        'editer-profil',
-                        'supprimer-profil',
-                        'gerer-roles',
-                    ],
-                    'privileges' => [
-                        Privileges::DROIT_PRIVILEGE_EDITION,
-                    ],
-                ],
-                [
-                    'controller' => \Application\Controller\PrivilegeController::class,
-                    'action'     => [
                         'modifier',
-                        'modifier-modele',
                     ],
                     'privileges' => [
                         Privileges::DROIT_PRIVILEGE_EDITION,
@@ -127,49 +114,6 @@ return [
                     'defaults' => [
                         'controller'    => \Application\Controller\PrivilegeController::class,
                         'action'        => 'index',
-                    ],
-                ],
-            ],
-            'gestion-role-modele' => [
-                'type'          => Literal::class,
-                'options'       => [
-                    'route'    => '/gestion-role-modele',
-                    'defaults' => [
-                        'controller'    => \Application\Controller\PrivilegeController::class,
-                        'action'        => 'role-modele-index',
-                    ],
-                ],
-                'may_terminate' => true,
-                'child_routes' => [
-                    'editer' => [
-                        'type'          => Segment::class,
-                        'options'       => [
-                            'route'    => '/editer[/:profil]',
-                            'defaults' => [
-                                'controller'    => \Application\Controller\PrivilegeController::class,
-                                'action'        => 'editer-profil',
-                            ],
-                        ],
-                    ],
-                    'supprimer' => [
-                        'type'          => Segment::class,
-                        'options'       => [
-                            'route'    => '/supprimer/:profil',
-                            'defaults' => [
-                                'controller'    => \Application\Controller\PrivilegeController::class,
-                                'action'        => 'supprimer-profil',
-                            ],
-                        ],
-                    ],
-                    'gerer-roles' => [
-                        'type'          => Segment::class,
-                        'options'       => [
-                            'route'    => '/gerer-roles/:profil',
-                            'defaults' => [
-                                'controller'    => \Application\Controller\PrivilegeController::class,
-                                'action'        => 'gerer-roles',
-                            ],
-                        ],
                     ],
                 ],
             ],
@@ -337,13 +281,11 @@ return [
         ],
         'factories' => [
             'MailConfirmationForm' => MailConfirmationFormFactory::class,
-            ProfilForm::class => ProfilFormFactory::class,
         ],
     ],
     'hydrators' => [
         'factories' => [
             'MailConfirmationHydrator' => MailConfirmationHydratorFactory::class,
-            ProfilHydrator::class => ProfilHydratorFactory::class,
         ]
     ],
 
