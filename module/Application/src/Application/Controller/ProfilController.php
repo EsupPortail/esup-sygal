@@ -108,7 +108,7 @@ class ProfilController extends AbstractActionController {
         $profilId   = $this->params()->fromRoute('profil');
         $profil     = $this->getProfilService()->getProfil($profilId);
 
-        $roles      = $this->getRoleService()->getRoles();
+        $roles      = $this->getRoleService()->getRolesSansProfil();
 
         return new ViewModel([
             'profil' => $profil,
@@ -133,6 +133,7 @@ class ProfilController extends AbstractActionController {
             if (! $profil->hasRole($role)) {
                 $profil->addRole($role);
                 $this->getProfilService()->update($profil);
+//                $this->getProfilService()->applyProfilToRole($profil, $role);
             }
         }
 

@@ -308,6 +308,21 @@ class RoleService extends BaseService
         return $result;
     }
 
+    /**
+     * @return Role[]
+     */
+    public function getRolesSansProfil()
+    {
+        $qb = $this->getEntityManager()->getRepository(Role::class)->createQueryBuilder('role')
+            ->leftJoin('role.profils', 'profil')
+            ->andWhere('profil.id IS NULL')
+            ->orderBy('role.roleId', 'ASC')
+        ;
+
+        $roles = $qb->getQuery()->getResult();
+        return $roles;
+    }
+
 //SELECT * FROM ROLE R
 //JOIN STRUCTURE S on R.STRUCTURE_ID = S.ID
 //LEFT JOIN STRUCTURE_SUBSTIT SS on S.ID = SS.FROM_STRUCTURE_ID
