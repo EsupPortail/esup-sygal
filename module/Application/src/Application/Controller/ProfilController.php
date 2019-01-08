@@ -4,8 +4,10 @@ namespace Application\Controller;
 
 use Application\Entity\Db\Privilege;
 use Application\Entity\Db\Profil;
+use Application\Entity\Db\Role;
 use Application\Form\ProfilForm;
 use Application\Service\Profil\ProfilServiceAwareTrait;
+use Application\Service\Role\RoleServiceAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Service\Traits\PrivilegeServiceAwareTrait;
@@ -17,6 +19,7 @@ use Zend\View\Model\ViewModel;
 class ProfilController extends AbstractActionController {
     use PrivilegeServiceAwareTrait;
     use ProfilServiceAwareTrait;
+    use RoleServiceAwareTrait;
 
     public function indexAction()
     {
@@ -102,11 +105,55 @@ class ProfilController extends AbstractActionController {
     public function gererRolesAction()
     {
         /** @var Profil $profil */
-        $profilId = $this->params()->fromRoute('profil');
-        $profil = $this->getProfilService()->getProfil($profilId);
+        $profilId   = $this->params()->fromRoute('profil');
+        $profil     = $this->getProfilService()->getProfil($profilId);
+
+        $roles      = $this->getRoleService()->getRoles();
 
         return new ViewModel([
             'profil' => $profil,
+            'rolesDisponibles' => $roles,
         ]);
+    }
+
+    public function ajouterRoleAction()
+    {
+        /** @var Profil $profil */
+        $profilId = $this->params()->fromRoute('profil');
+        $profil = $this->getProfilService()->getProfil($profilId);
+
+        /** @var Request $request */
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            /** @var Role $role */
+            $roleId = $data['role'];
+            $role = $this->getRoleService()->getRepository()->find($roleId);
+
+            if (! $profil->hasRole($role)) {
+                $profil->addRole($role);
+                $this->getProfilService()->update($profil);
+            }
+        }
+
+        $this->redirect()->toRoute('profil/gerer-roles', ['profil' => $profil->getId()], [], true);
+    }
+
+    public function retirerRoleAction()
+    {
+        /** @var Profil $profil */
+        $profilId = $this->params()->fromRoute('profil');
+        $profil = $this->getProfilService()->getProfil($profilId);
+
+        /** @var Role $role */
+        $roleId = $this->params()->fromRoute('role');
+        $role = $this->getRoleService()->getRepository()->find($roleId);
+
+        if ($profil->hasRole($role)) {
+            $profil->removeRole($role);
+            $this->getProfilService()->update($profil);
+        }
+
+        $this->redirect()->toRoute('profil/gerer-roles', ['profil' => $profil->getId()], [], true);
     }
 }

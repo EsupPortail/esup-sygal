@@ -35,6 +35,8 @@ return [
                         'editer',
                         'supprimer',
                         'gerer-roles',
+                        'ajouter-role',
+                        'retirer-role',
                         'modifier-profil-privilege'
                     ],
                     'privileges' => [
@@ -79,6 +81,7 @@ return [
                         ],
                         'may_terminate' => true,
                     ],
+
                     'gerer-roles' => [
                         'type'          => Segment::class,
                         'options'       => [
@@ -89,6 +92,30 @@ return [
                             ],
                         ],
                         'may_terminate' => true,
+                        'child_routes' => [
+                            'retirer' => [
+                                'type'          => Segment::class,
+                                'options'       => [
+                                    'route'    => '/retirer/:role',
+                                    'defaults' => [
+                                        'controller'    => ProfilController::class,
+                                        'action'        => 'retirer-role',
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                            ],
+                            'ajouter' => [
+                                'type'          => Literal::class,
+                                'options'       => [
+                                    'route'    => '/ajouter',
+                                    'defaults' => [
+                                        'controller'    => ProfilController::class,
+                                        'action'        => 'ajouter-role',
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                            ],
+                        ],
                     ],
                 ],
             ],
