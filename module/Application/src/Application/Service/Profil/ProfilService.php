@@ -89,6 +89,7 @@ class ProfilService {
     }
 
     /**
+     * // TODO : /?\ DQL plutôt que cela /?\
      * Lors de l'affectation d'un profil à un rôle :
      * 1 - retrait des anciens privilèges accordés ;
      * 2 - affectation des privilèges du nouveau profil.
@@ -106,7 +107,7 @@ class ProfilService {
             if ($privilege->hasRole($role)) {
                 $privilege->removeRole($role);
                 try {
-                    $this->getServicePrivilege()->getEntityManager()->flush($privilege);
+                    $this->getEntityManager()->flush($privilege);
                 } catch (OptimisticLockException $e) {
                     throw new RuntimeException("Un problème est survenu lors du retrait d'un privilège", $e);
                 }
@@ -116,7 +117,7 @@ class ProfilService {
         foreach ($profil->getPrivileges() as $privilege) {
             $privilege->addRole($role);
             try {
-                $this->getServicePrivilege()->getEntityManager()->flush($privilege);
+                $this->getEntityManager()->flush($privilege);
             } catch (OptimisticLockException $e) {
                 throw new RuntimeException("Un problème est survenu lors de l'ajout d'un privilège", $e);
             }

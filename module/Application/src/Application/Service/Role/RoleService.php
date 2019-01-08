@@ -323,6 +323,21 @@ class RoleService extends BaseService
         return $roles;
     }
 
+    /**
+     * @param Role $role
+     */
+    public function removeProfils($role)
+    {
+        foreach ($role->getProfils() as $profil) {
+            $role->removeProfil($profil);
+            try {
+                $this->getEntityManager()->flush($role);
+            } catch (OptimisticLockException $e) {
+                throw new RuntimeException("Un problème est survenu lors de la déassociation entre le role et le profil.",$e);
+            }
+        }
+    }
+
 //SELECT * FROM ROLE R
 //JOIN STRUCTURE S on R.STRUCTURE_ID = S.ID
 //LEFT JOIN STRUCTURE_SUBSTIT SS on S.ID = SS.FROM_STRUCTURE_ID
