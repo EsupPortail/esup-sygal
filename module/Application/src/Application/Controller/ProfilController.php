@@ -97,6 +97,9 @@ class ProfilController extends AbstractActionController {
         } catch (OptimisticLockException $e) {
             throw new RuntimeException("Un problème lors du changement de rôle s'est produit", $e);
         }
+        // Application aux rôles associés au profil
+        $this->getRoleService()->applyChangement($profil->getRoles(), $privilege, $value);
+
         return new JsonModel([
             'value' => $value,
         ]);

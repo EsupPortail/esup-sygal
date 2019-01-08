@@ -18,6 +18,7 @@ use Application\Entity\Db\Utilisateur;
 use Application\Filter\EtablissementPrefixFilter;
 use Application\Filter\EtablissementPrefixFilterAwareTrait;
 use Application\Service\BaseService;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Query\Expr\Join;
@@ -334,6 +335,28 @@ class RoleService extends BaseService
                 $this->getEntityManager()->flush($role);
             } catch (OptimisticLockException $e) {
                 throw new RuntimeException("Un problème est survenu lors de la déassociation entre le role et le profil.",$e);
+            }
+        }
+    }
+
+    /**
+     * @param ArrayCollection $roles
+     * @param Privilege $privilege
+     * @param boolean $etat
+     */
+    public function applyChangement($roles, $privilege, $etat)
+    {
+        /** @var Role $role */
+        foreach ($roles as $role) {
+            if ($etat) {
+                $privilege->addRole($role);
+            } else {
+                $privilege->removeRole($role);
+            }
+            try {
+                $this->getEntityManager()->flush($privilege);
+            } catch (OptimisticLockException $e) {
+                throw new RuntimeException("Un problème est survenu lors de l'application du changement du profil aux rôles associés.",$e);
             }
         }
     }
