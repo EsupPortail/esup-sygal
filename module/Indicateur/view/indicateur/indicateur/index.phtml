@@ -57,6 +57,9 @@ use Application\Entity\Db\These;use Indicateur\Model\Indicateur;
         <?php if ($indicateur->getDisplayAs() === Indicateur::INDIVIDU) : ?>
             <?php echo $this->resumeIndicateurIndividu()->render($indicateur, $resultat); ?>
         <?php endif; ?>
+        <?php if ($indicateur->getDisplayAs() === Indicateur::STRUCTURE) : ?>
+            <?php echo $this->resumeIndicateurStructure()->render($indicateur, $resultat); ?>
+        <?php endif; ?>
     <?php endif; ?>
 <?php endforeach; ?>
 
