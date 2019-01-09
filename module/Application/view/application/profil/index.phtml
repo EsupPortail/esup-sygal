@@ -48,6 +48,11 @@ $canChangePrivilege = true;
                         <span class="glyphicon glyphicon-pencil" title="Éditer les informations du profil"></span>
                     </a>
                 <?php endif; ?>
+                <?php if ($canEdit) : ?>
+                    <a class="ajax-modal" data-event="modification" href="<?php echo $this->url('profil/dupliquer', ['profil' => $profil->getId()], [], true);?>">
+                        <span class="glyphicon glyphicon-paste" title="Recopier privilèges d'une autre profil"></span>
+                    </a>
+                <?php endif; ?>
                 <?php if ($canDelete) : ?>
                     <a href="<?php echo $this->url('profil/supprimer', ['profil' => $profil->getId()], [], true);?>">
                         <span class="glyphicon glyphicon-trash" title="Supprimer le profil"></span>
@@ -110,6 +115,14 @@ $canChangePrivilege = true;
 </style>
 
 <script>
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+
+
     $(document).ready(function() {
         $("td").click(function() {
 

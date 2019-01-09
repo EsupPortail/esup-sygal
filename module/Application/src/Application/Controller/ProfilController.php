@@ -160,4 +160,28 @@ class ProfilController extends AbstractActionController {
 
         $this->redirect()->toRoute('profil/gerer-roles', ['profil' => $profil->getId()], [], true);
     }
+
+    public function dupliquerPrivilegesAction()
+    {
+        /** @var Profil $profil */
+        $profilId = $this->params()->fromRoute('profil');
+        $profil = $this->getProfilService()->getProfil($profilId);
+
+        /** @var Request $request */
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $profilFrom = $this->getProfilService()->getProfil($data['profil']);
+
+            $this->getProfilService()->copyPrivilegeFrom($profilFrom, $profil);
+            $this->redirect()->toRoute('profil', [], [], true);
+        }
+
+        $profils = $this->getProfilService()->getProfils();
+        return new ViewModel([
+            'title' => 'Sélectionner un profil pour dupliquer les privilèges',
+            'profil' => $profil,
+            'profils' => $profils,
+        ]);
+    }
 }

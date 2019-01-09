@@ -123,4 +123,29 @@ class ProfilService {
             }
         }
     }
+
+    /**
+     * @param Profil $from
+     * @param Profil $to
+     */
+    public function copyPrivilegeFrom($from, $to)
+    {
+        foreach ($to->getPrivileges() as $privilege) {
+            $to->removePrivilege($privilege);
+        }
+        try {
+            $this->getEntityManager()->flush($to);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Un problème est survenu lors du retrait des privilèges initiaux", $e);
+        }
+
+        foreach ($from->getPrivileges() as $privilege) {
+            $to->addPrivilege($privilege);
+        }
+        try {
+            $this->getEntityManager()->flush($to);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Un problème est survenu lors de l'ajout des privilèges", $e);
+        }
+    }
 }

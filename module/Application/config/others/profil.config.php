@@ -37,6 +37,7 @@ return [
                         'gerer-roles',
                         'ajouter-role',
                         'retirer-role',
+                        'dupliquer-privileges',
                         'modifier-profil-privilege'
                     ],
                     'privileges' => [
@@ -81,7 +82,17 @@ return [
                         ],
                         'may_terminate' => true,
                     ],
-
+                    'dupliquer' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'    => '/dupliquer/:profil',
+                            'defaults' => [
+                                'controller'    => ProfilController::class,
+                                'action'        => 'dupliquer-privileges',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
                     'gerer-roles' => [
                         'type'          => Segment::class,
                         'options'       => [
