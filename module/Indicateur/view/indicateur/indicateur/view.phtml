@@ -40,3 +40,7 @@ use Indicateur\Provider\Privilege\IndicateurPrivileges;
     <?php echo $this->completIndicateurIndividu()->render($indicateur, $data); ?>
 <?php endif; ?>
 
+<?php if ($indicateur->getDisplayAs() === Indicateur::STRUCTURE): ?>
+    <?php echo $this->completIndicateurStructure()->render($indicateur, $data); ?>
+<?php endif; ?>
+
