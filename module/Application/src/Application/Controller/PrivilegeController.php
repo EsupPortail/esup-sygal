@@ -68,28 +68,39 @@ class PrivilegeController extends AbstractController
         $role = $this->entityManager->getRepository(Role::class)->find($role_id);
 
         $value = null;
-        if( array_search($role, $privilege->getRole()->toArray()) !== false) {
-            $privilege->removeRole($role);
-            try {
-                $this->getEntityManager()->flush($privilege);
-            } catch (OptimisticLockException $e) {
-                throw new RuntimeException("Un problème est survenu lors de la suppression du privilège.",$e);
+
+        // /!\ si le role à un privilège desactivé la modification
+        if (! $role->getProfils()->isEmpty()) {
+            if( array_search($role, $privilege->getRole()->toArray()) !== false) {
+                $value = 1;
+            } else {
+                $value = 0;
             }
-            $value = 0;
-        } else {
-            $privilege->addRole($role);
-            try {
-                $this->getEntityManager()->flush($privilege);
-            } catch (OptimisticLockException $e) {
-                throw new RuntimeException("Un problème est survenu lors de l'ajout du privilège.",$e);
-            }
-            $value = 1;
         }
-        // retrait des profils associés à un role
-        $this->getRoleService()->removeProfils($role);
 
+        else {
 
-        $queryParams = $this->params()->fromQuery();
+            if (array_search($role, $privilege->getRole()->toArray()) !== false) {
+                $privilege->removeRole($role);
+                try {
+                    $this->getEntityManager()->flush($privilege);
+                } catch (OptimisticLockException $e) {
+                    throw new RuntimeException("Un problème est survenu lors de la suppression du privilège.", $e);
+                }
+                $value = 0;
+            } else {
+                $privilege->addRole($role);
+                try {
+                    $this->getEntityManager()->flush($privilege);
+                } catch (OptimisticLockException $e) {
+                    throw new RuntimeException("Un problème est survenu lors de l'ajout du privilège.", $e);
+                }
+                $value = 1;
+            }
+            // retrait des profils associés à un role
+            $this->getRoleService()->removeProfils($role);
+        }
+
         return new ViewModel([
             'value' => $value,
         ]);

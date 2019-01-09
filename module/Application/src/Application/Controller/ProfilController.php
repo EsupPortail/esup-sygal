@@ -42,6 +42,7 @@ class ProfilController extends AbstractActionController {
 
         /** @var ProfilForm $form */
         $form = $this->getServiceLocator()->get('FormElementManager')->get(ProfilForm::class);
+        $form->setAttribute('action', $this->url()->fromRoute('profil/editer', ['profil' => $profil->getId()], [], true));
         $form->bind($profil);
 
         /** @var Request $request */
@@ -57,6 +58,7 @@ class ProfilController extends AbstractActionController {
         }
 
         return new ViewModel([
+            'title' => 'Édition d\'un profil',
             'form' => $form,
         ]);
     }

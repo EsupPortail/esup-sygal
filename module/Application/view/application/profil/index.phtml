@@ -21,8 +21,8 @@ $canChangePrivilege = true;
 
 <h2> Liste des profils </h2>
 
-<a href="<?php echo $this->url('profil/editer', [], [], true); ?>" class="btn btn-primary">
-    <span class="glyphicon glyphicon-plus"></span>Ajouter un nouveau profil
+<a href="<?php echo $this->url('profil/editer', [], [], true); ?>" class="btn btn-primary ajax-modal" data-event="modification">
+    <span class="glyphicon glyphicon-plus"></span> Ajouter un nouveau profil
 </a>
 
 <table class="table table-condensed">
@@ -44,7 +44,7 @@ $canChangePrivilege = true;
             <td> <?php echo count($profil->getRoles()); ?></td>
             <td>
                 <?php if ($canEdit) : ?>
-                    <a href="<?php echo $this->url('profil/editer', ['profil' => $profil->getId()], [], true);?>">
+                    <a href="<?php echo $this->url('profil/editer', ['profil' => $profil->getId()], [], true);?>" class="ajax-modal" data-event="modification">
                         <span class="glyphicon glyphicon-pencil" title="Éditer les informations du profil"></span>
                     </a>
                 <?php endif; ?>
