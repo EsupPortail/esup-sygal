@@ -40,14 +40,9 @@ echo $this->messenger()
         </p>
 
         <?php if (!$this->identity()): ?>
-            <p>
-                <?php echo $this->translate("Bienvenue dans l’outil de suivi et de dépôt numérique des thèses de l'université de Caen Normandie.") ?>
-            </p>
-            <p>
-                <?php echo $this->translate("SyGAL offre aux différents acteurs du circuit des thèses de Normandie Université une vision d’ensemble sur les thèses préparées au sein de la COMUE."); ?>
-                <?php echo $this->translate("Il permet la gestion du dépôt de la thèse sous forme numérique, pour archivage et affichage dans le portail national :"); ?>
-                <a href="http://www.theses.fr/">theses.fr</a>.
-            </p>
+            SyGAL (Système de Gestion et d’Accompagnement doctoraL) est une application permettant la gestion dématérialisée
+            de l’ensemble des étapes du parcours doctoral en Normandie. Il offre également aux différents acteurs du parcours
+            doctoral (établissements, écoles doctorales) une visibilité sur les thèses en cours ou passées.
         <?php endif ?>
 
         <?php if (!$this->identity()): ?>

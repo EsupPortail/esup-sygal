@@ -12,6 +12,7 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\Structure;
 use Application\Entity\Db\These;
 use Application\Entity\Db\VersionFichier;
+use Application\Filter\NomCompletFormatter;
 use Application\Notification\ValidationRdvBuNotification;
 use Application\Service\BaseService;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
@@ -278,13 +279,8 @@ class TheseService extends BaseService
         $pdcData->setTitre($these->getTitre());
         $pdcData->setSpecialite($these->getLibelleDiscipline());
         if ($these->getEtablissement()) $pdcData->setEtablissement($these->getEtablissement()->getLibelle());
-//        if ($these->getDoctorant()) $pdcData->setDoctorant($these->getDoctorant()->getIndividu()->getNomComplet(false, false, false, true, true));
         if ($these->getDoctorant()) {
-            $nom = $these->getDoctorant()->getIndividu()->getNomPatronymique();
-            if ($nom === null) $nom = $these->getDoctorant()->getIndividu()->getNomUsuel();
-            $nom = strtoupper($nom);
-            $prenom = $these->getDoctorant()->getIndividu()->getPrenom1();
-            $pdcData->setDoctorant($prenom . " " . $nom);
+            $pdcData->setDoctorant($these->getDoctorant()->getIndividu()->getNomComplet(false, false, false, true, true, true));
         }
         if ($these->getDateSoutenance()) $pdcData->setDate($these->getDateSoutenance()->format("d/m/Y"));
 
