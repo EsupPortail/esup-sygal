@@ -1,9 +1,9 @@
 <?php
 
-use Application\Provider\Privilege\StructurePrivileges;
+use Application\Controller\Factory\StatistiqueControllerFactory;
+use Indicateur\Provider\Privilege\IndicateurPrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
 use Zend\Mvc\Router\Http\Literal;
-use Application\Controller\Factory\StatistiqueControllerFactory;
 
 return [
     'bjyauthorize'    => [
@@ -14,10 +14,7 @@ return [
                     'action'     => [
                         'index',
                     ],
-                    'privileges' => [
-                        StructurePrivileges::STRUCTURE_CONSULTATION_TOUTES_STRUCTURES,
-                        StructurePrivileges::STRUCTURE_CONSULTATION_SES_STRUCTURES,
-                    ],
+                    'privileges' => IndicateurPrivileges::INDICATEUR_STATISTIQUE,
                 ],
             ],
         ],
@@ -47,7 +44,7 @@ return [
                             'statistique' => [
                                 'label'    => 'Statistiques',
                                 'route'    => 'statistique',
-                                'resource' => PrivilegeController::getResourceId('Application\Controller\EcoleDoctorale', 'index'),
+                                'resource' => IndicateurPrivileges::getResourceId(IndicateurPrivileges::INDICATEUR_STATISTIQUE),
                                 'order'    => 90,
                             ],
                         ],
