@@ -208,6 +208,30 @@ class ImportService
     }
 
     /**
+     * Lance la synchro UnicaenImport complète en base de données.
+     *
+     * @param string $service Nom du service correspondant à la table qui sera synchronisée (ex: these, doctorant, ...)
+     */
+    public function synchronize($service)
+    {
+        $this->synchroService->addService($service);
+        $this->synchroService->synchronize();
+    }
+
+    /**
+     * Lance la synchro UnicaenImport sur toutes les tables en base de données.
+     */
+    public function synchronizeAll()
+    {
+        $services = static::SERVICES;
+        foreach ($services as $service) {
+            $this->synchroService->addService($service);
+        }
+
+        $this->synchroService->synchronize();
+    }
+
+    /**
      * Lance l'import pour la mise à jour d'une thèse déjà présente dans la base de données, et de ses données liées.
      *
      * Pour l'instant, les données liées se limitent à celles concernées par la génération de la page de couverture.
