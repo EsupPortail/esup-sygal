@@ -8,7 +8,6 @@ use Application\Filter\EtablissementPrefixFilter;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Assert\Assertion;
-use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManager;
 use Import\Exception\CallException as ImportCallException;
 use Import\Service\Traits\ImportServiceAwareTrait;
@@ -247,7 +246,7 @@ class ImportController extends AbstractActionController
         $_fin = microtime(true);
 
         echo sprintf(
-            "Importation des données du service '%s' de l'établissement '%s' effectuée en %.2f.",
+            "Importation des données du service '%s' de l'établissement '%s' effectuée en %.2f secondes.",
             $service,
             $etablissement,
             $_fin - $_deb
@@ -274,7 +273,7 @@ class ImportController extends AbstractActionController
         $_fin = microtime(true);
 
         echo sprintf(
-            "Importation de toutes les données de l'établissement '%s' effectuée en %.2f.",
+            "Importation de toutes les données de l'établissement '%s' effectuée en %.2f secondes.",
             $etablissement,
             $_fin - $_deb
         ) . PHP_EOL;
