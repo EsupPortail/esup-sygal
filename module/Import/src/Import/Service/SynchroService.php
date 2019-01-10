@@ -13,7 +13,7 @@ use UnicaenApp\Service\EntityManagerAwareTrait;
 use Zend\Filter\Word\DashToUnderscore;
 
 /**
- *
+ * Service chargé de réaliser la synchro UnicaenImport en base de données.
  *
  * @author Unicaen
  */
@@ -73,7 +73,7 @@ class SynchroService
     {
         $plsql = implode(PHP_EOL, array_merge(['BEGIN'], $calls, ['END;']));
 
-        $startDate = new DateTime();
+        $startDate = date_create();
 
         $connection = $this->entityManager->getConnection();
         $connection->beginTransaction();
@@ -93,7 +93,7 @@ class SynchroService
             }
         }
 
-        $finishDate = new DateTime();
+        $finishDate = date_create();
         $this->log($startDate, $finishDate, $plsql, $status, $message);
     }
 
@@ -186,7 +186,7 @@ EOS;
     private function log(DateTime $startDate, DateTime $finishDate, $sql, $status, $message = null)
     {
         $log = (new SynchroLog())
-            ->setLogDate(new DateTime())
+            ->setLogDate(date_create())
             ->setStartDate($startDate)
             ->setFinishDate($finishDate)
             ->setSql($sql)
@@ -196,7 +196,7 @@ EOS;
         $this->entityManager->persist($log);
         try {
             $this->entityManager->flush($log);
-        } catch (OptimisticLockException $e) {
+        } catch (\Exception $e) {
             throw new RuntimeException("Erreur rencontrée lors de l'enregistrement du SynchroLog.", null, $e);
         }
     }
