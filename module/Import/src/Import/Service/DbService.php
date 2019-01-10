@@ -248,11 +248,7 @@ class DbService
      */
     public function insertLog($serviceName, DateTime $startDate, $duration, $route, $status)
     {
-        try {
-            $end_date = new DateTime();
-        } catch (\Exception $e) {
-            throw new RuntimeException("Là, on touche le fond!", null, $e);
-        }
+        $end_date = date_create();
 
         $message = sprintf("Interrogation du service '%s' de l'établissement '%s', en %s seconde(s).",
             $serviceName,
@@ -285,8 +281,6 @@ class DbService
         } catch (DBALException $e) {
             throw new RuntimeException("Ecriture du log en base impossible.", null, $e);
         }
-
-        $this->logger->info($message);
     }
 
     /**

@@ -21,6 +21,7 @@ class NomCompletFormatter extends AbstractFilter
     protected $prenomDabord   = false;
     protected $tousLesPrenoms = false;
     protected $court = false;
+    protected $patroPlutotQueUsuel = false;
 
     /**
      * Constructeur.
@@ -31,15 +32,15 @@ class NomCompletFormatter extends AbstractFilter
      * @param bool $prenomDabord
      * @param bool $tousLesPrenoms
      */
-    public function __construct($nomEnMajuscule = true, $avecCivilite = false, $avecNomPatro = false, $prenomDabord = false, $tousLesPrenoms = false, $court = false)
+    public function __construct($nomEnMajuscule = true, $avecCivilite = false, $avecNomPatro = false, $prenomDabord = false, $tousLesPrenoms = false, $court = false, $patroPlutotQueUsuel=false)
     {
-        $this->nomEnMajuscule = $nomEnMajuscule;
-        $this->avecCivilite   = $avecCivilite;
-        $this->avecNomPatro   = $avecNomPatro;
-        $this->prenomDabord   = $prenomDabord;
-        $this->tousLesPrenoms = $tousLesPrenoms;
-        $this->court          = $court;
-
+        $this->nomEnMajuscule       = $nomEnMajuscule;
+        $this->avecCivilite         = $avecCivilite;
+        $this->avecNomPatro         = $avecNomPatro;
+        $this->prenomDabord         = $prenomDabord;
+        $this->tousLesPrenoms       = $tousLesPrenoms;
+        $this->court                = $court;
+        $this->patroPlutotQueUsuel  = $patroPlutotQueUsuel;
     }
 
     /**
@@ -113,18 +114,27 @@ class NomCompletFormatter extends AbstractFilter
         $nomPatro = ucfirst($this->nomEnMajuscule ? mb_strtoupper($nomPatro) : $nomPatro);
         $civilite = $this->avecCivilite ? $civilite : null;
 
-        $parts = [
-            $civilite,
-            $this->prenomDabord ? "$prenom $nomUsuel" : "$nomUsuel $prenom",
-        ];
+        if ($this->patroPlutotQueUsuel && $nomPatro != '') {
+            $parts = [
+                $civilite,
+                $this->prenomDabord ? "$prenom $nomPatro" : "$nomPatro $prenom",
+            ];
+        } else {
+            $parts = [
+                $civilite,
+                $this->prenomDabord ? "$prenom $nomUsuel" : "$nomUsuel $prenom",
+            ];
+        }
 
         $result = implode(' ', array_filter($parts));
 
-        if ($this->avecNomPatro && $nomPatro !== $nomUsuel) {
-            if ($this->court) {
-                $result .= "-$nomPatro";
-            } else {
-                $result .= ", née $nomPatro";
+        if (! $this->patroPlutotQueUsuel) {
+            if ($this->avecNomPatro && $nomPatro !== $nomUsuel) {
+                if ($this->court) {
+                    $result .= "-$nomPatro";
+                } else {
+                    $result .= ", née $nomPatro";
+                }
             }
         }
 

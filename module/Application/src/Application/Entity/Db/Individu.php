@@ -383,9 +383,9 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
      * @return string
      * @deprecated Utiliser la class NomCompletFormatter.
      */
-    public function getNomComplet($avecCivilite = false, $avecNomPatro = false, $prenoms = false, $prenomfirst = false, $court = false)
+    public function getNomComplet($avecCivilite = false, $avecNomPatro = false, $prenoms = false, $prenomfirst = false, $court = false, $patroPlutotQueUsuel=false)
     {
-        $f = new NomCompletFormatter(true, $avecCivilite, $avecNomPatro, $prenomfirst, $prenoms, $court);
+        $f = new NomCompletFormatter(true, $avecCivilite, $avecNomPatro, $prenomfirst, $prenoms, $court, $patroPlutotQueUsuel);
 
         return $f->filter($this);
     }
