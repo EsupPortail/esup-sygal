@@ -8,10 +8,10 @@ use Application\Filter\EtablissementPrefixFilter;
 use Assert\Assertion;
 use Assert\AssertionFailedException;
 use DateTime;
+use Doctrine\ORM\EntityManager;
 use Import\Service\Traits\CallServiceAwareTrait;
 use Import\Service\Traits\DbServiceAwareTrait;
 use stdClass;
-use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\Log\LoggerAwareTrait;
 use Zend\Log\LoggerInterface;
@@ -37,6 +37,21 @@ class FetcherService
      * @var Etablissement
      */
     protected $etablissement;
+
+    /**
+     * Force le gestionnaire d'entités que doit utiliser le DbService.
+     *
+     * NB: le nom de ce setter tente d'informer que la classe FetcherService n'a pas besoin d'entity manager.
+     *
+     * @param EntityManager $entityManager
+     * @return self
+     */
+    public function setEntityManagerForDbService(EntityManager $entityManager)
+    {
+        $this->dbService->setEntityManager($entityManager);
+
+        return $this;
+    }
 
     /**
      * Set logger object
@@ -99,23 +114,16 @@ class FetcherService
     {
         $sourceCode = $this->normalizeSourceCode($sourceCode);
 
-        $this->logger->info(sprintf("Import: service %s[%s]", $serviceName, $sourceCode));
+        $this->logger->info(sprintf("Import: service %s[%s] {", $serviceName, $sourceCode));
 
         $debut = microtime(true);
-        try {
-            $startDate = new DateTime();
-        } catch (\Exception $e) {
-            throw new RuntimeException("On touche le fond, là!", null, $e);
-        }
-
-        $this->logger->info(sprintf("Interrogations du WS '%s'...", $serviceName));
+        $startDate = date_create();
 
         $uri = $serviceName . "/" . $sourceCode;
         $this->callService->setConfig($this->getConfigForEtablissement());
-        $_deb = microtime(true);
         $jsonEntity = $this->callService->get($uri);
         $_fin = microtime(true);
-        $this->logger->debug(sprintf("- '%s' en %.2f secondes.", $uri, $_fin - $_deb));
+        $this->logger->info(sprintf("- interrogation du WS '%s' en %.2f secondes", $serviceName, $_fin - $debut));
 
         $_deb = microtime(true);
         $this->dbService->setServiceName($serviceName);
@@ -124,8 +132,9 @@ class FetcherService
         $this->dbService->save([$jsonEntity]);
         $this->dbService->commit();
         $_fin = microtime(true);
-        $this->logger->info(sprintf("Enregistrement en base de données en %.2f secondes.", $_fin - $_deb));
+        $this->logger->info(sprintf("- enregistrement en BDD en %.2f secondes.", $_fin - $_deb));
 
+        $this->logger->info(sprintf("} %.2f secondes.", $_fin - $debut));
         $this->dbService->insertLog($serviceName . ($sourceCode ? "[$sourceCode]" : ''), $startDate, $_fin - $debut, $uri, 'OK');
         $this->dbService->commit();
     }
@@ -138,16 +147,10 @@ class FetcherService
      */
     public function fetchRows($serviceName, array $filters = [])
     {
-        $this->logger->info(sprintf("Import: service '%s'", $serviceName));
+        $this->logger->info(sprintf("Import: service '%s' {", $serviceName));
 
-        try {
-            $startDate = new DateTime();
-        } catch (\Exception $e) {
-            throw new RuntimeException("On touche le fond, là!", null, $e);
-        }
+        $startDate = date_create();
         $debut = microtime(true);
-
-        $this->logger->info(sprintf("Interrogations du WS '%s'...", $serviceName));
 
         $this->callService->setConfig($this->getConfigForEtablissement());
         $apiFilters = $this->prepareFiltersForAPIRequest($filters);
@@ -163,7 +166,7 @@ class FetcherService
             $_deb = microtime(true);
             $json = $this->callService->get($uri);
             $_fin = microtime(true);
-            $this->logger->debug(sprintf("- '%s' en %.2f secondes.", $uri, $_fin - $_deb));
+            $this->logger->debug(sprintf("  ('%s' en %.2f secondes.)", $uri, $_fin - $_deb));
 
             $pageCount = $json->page_count; // NB: même valeur retournée à chaque requête (nombre total de pages)
             $jsonName = str_replace("-", "_", $serviceName);
@@ -172,6 +175,8 @@ class FetcherService
             $page++;
         }
         while ($page <= $pageCount);
+        $_fin = microtime(true);
+        $this->logger->info(sprintf("- interrogation du WS '%s' en %.2f secondes", $serviceName, $_fin - $debut));
 
         $_deb = microtime(true);
         $this->dbService->setServiceName($serviceName);
@@ -180,8 +185,9 @@ class FetcherService
         $this->dbService->save($jsonEntities);
         $this->dbService->commit();
         $_fin = microtime(true);
-        $this->logger->info(sprintf("Enregistrement des %d entités en %.2f secondes.", count($jsonEntities), $_fin - $_deb));
+        $this->logger->info(sprintf("- enregistrement en BDD de %d lignes en %.2f secondes.", count($jsonEntities), $_fin - $_deb));
 
+        $this->logger->info(sprintf("} %.2f secondes.", $_fin - $debut));
         $this->dbService->insertLog($serviceName, $startDate, $_fin - $debut, $uri, 'OK');
         $this->dbService->commit();
     }
