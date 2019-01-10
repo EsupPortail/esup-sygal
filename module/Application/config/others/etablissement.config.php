@@ -32,6 +32,16 @@ return [
                         'ajouter',
                         'supprimer',
                         'restaurer',
+                    ],
+                    'privileges' => [
+                        StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES,
+                        StructurePrivileges::STRUCTURE_MODIFICATION_SES_STRUCTURES,
+                        StructurePrivileges::STRUCTURE_CREATION_ETAB
+                    ],
+                ],
+                [
+                    'controller' => EtablissementController::class,
+                    'action'     => [
                         'modifier',
                         'supprimer-logo',
                     ],

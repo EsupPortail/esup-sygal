@@ -588,6 +588,9 @@ class StructureService extends BaseService
     public function getStructuresSubstituablesByType($type)
     {
         $qb = $this->getEntityManager()->getRepository($this->getEntityByType($type))->createQueryBuilder('structureConcrete')
+            ->addSelect('structure')
+            ->addSelect('substitutionTo')
+            ->addSelect('substitutionFrom')
             ->join('structureConcrete.structure', 'structure')
             ->leftJoin('structure.structuresSubstituees', 'substitutionFrom')
             ->leftJoin('structure.structureSubstituante', 'substitutionTo')
@@ -612,8 +615,10 @@ class StructureService extends BaseService
         $qb = $this->getEntityManager()->getRepository($this->getEntityByType($type))->createQueryBuilder('structureConcrete')
             ->addSelect('structure')
             ->addSelect('substitutionTo')
+            ->addSelect('substitutionFrom')
             ->join('structureConcrete.structure', 'structure')
             ->leftJoin('structure.structureSubstituante', 'substitutionTo')
+            ->leftJoin('structure.structuresSubstituees', 'substitutionFrom')
             ->andWhere('substitutionTo.id IS NULL OR pasHistorise(substitutionTo) != 1');
         if ($order) $qb->orderBy('structure.' . $order);
         else {
@@ -631,8 +636,12 @@ class StructureService extends BaseService
      */
     public function getStructuresSubstitueesUtilisablesByType($type) {
         $qb = $this->getEntityManager()->getRepository($this->getEntityByType($type))->createQueryBuilder('structureConcrete')
+            ->addSelect('structure')
+            ->addSelect('substitutionTo')
+            ->addSelect('substitutionFrom')
             ->join('structureConcrete.structure', 'structure')
             ->leftJoin('structure.structuresSubstituees', 'substitutionFrom')
+            ->leftJoin('structure.structureSubstituante', 'substitutionTo')
             ->andWhere('substitutionFrom.id IS NULL')
         ;
 
@@ -648,6 +657,7 @@ class StructureService extends BaseService
     public function getStructuresConcreteByTypeAndStructureId($type, $structureId)
     {
         $qb = $this->getEntityManager()->getRepository($this->getEntityByType($type))->createQueryBuilder('structureConcrete')
+            ->addSelect('structure')
             ->join('structureConcrete.structure', 'structure')
             ->andWhere('structure.id = :structureId')
             ->setParameter('structureId', $structureId)
@@ -663,7 +673,6 @@ class StructureService extends BaseService
         return $result;
     }
 
-    // TODO mettre dans le service ...
     /** Identifie les structures substituables en utilisant le sourceCode */
     public function checkStructure($type)
     {
