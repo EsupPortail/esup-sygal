@@ -57,6 +57,17 @@ class Module
             ['--em',                     "Facultatif. Nom de l'EntityManager à utiliser. Valeur par défaut: 'orm_default'."],
 
             // command
+            'synchronize --service= [--em=]' => "Lancer la synchro UnicaenImport pour un seul service.",
+            // parameters
+            ['--service', "Requis. Identifiant du service, ex: 'variable'"],
+            ['--em',      "Facultatif. Nom de l'EntityManager à utiliser. Valeur par défaut: 'orm_default'."],
+
+            // command
+            'synchronize-all [--em=]' => "Lancer la synchro UnicaenImport pour tous les services.",
+            // parameters
+            ['--em', "Facultatif. Nom de l'EntityManager à utiliser. Valeur par défaut: 'orm_default'."],
+
+            // command
             'process-observed-import-results --etablissement= [--import-observ=] [--source-code=]' => "Traitement des résultats d'observation de certains changements durant la synchro.",
             // parameters
             ['--etablissement', "Requis. Identifiant de l'établissement, ex: 'UCN'"],
