@@ -46,7 +46,7 @@ return [
                         'individu-role',
                         'generer-roles-defauts',
                     ],
-                    'privileges' => EtablissementPrivileges::ETABLISSEMENT_CONSULTATION,
+                    'privileges' => StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES,
                 ],
             ],
         ],
