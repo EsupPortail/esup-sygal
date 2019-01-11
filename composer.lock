@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "946a5ea1f43e05305f62da7f28d3b592",
+    "content-hash": "279eb09bb0299ba3814065b1dbacaa73",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -817,12 +817,12 @@
             "version": "v2.5.14",
             "source": {
                 "type": "git",
-                "url": "https://github.com/doctrine/doctrine2.git",
+                "url": "https://github.com/doctrine/orm.git",
                 "reference": "810a7baf81462a5ddf10e8baa8cb94b6eec02754"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/doctrine2/zipball/810a7baf81462a5ddf10e8baa8cb94b6eec02754",
+                "url": "https://api.github.com/repos/doctrine/orm/zipball/810a7baf81462a5ddf10e8baa8cb94b6eec02754",
                 "reference": "810a7baf81462a5ddf10e8baa8cb94b6eec02754",
                 "shasum": ""
             },
@@ -2094,11 +2094,11 @@
         },
         {
             "name": "unicaen/oracle",
-            "version": "1.2.3",
+            "version": "1.2.4",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/oracle.git",
-                "reference": "bc79ca51396e377999225c02f1726a153a2f342c"
+                "reference": "52ae94ec5f3b4bb9f3af38676e076491139edecc"
             },
             "require": {
                 "doctrine/dbal": "^2.5",
@@ -2118,7 +2118,7 @@
                 ]
             },
             "description": "Bibliothèque utile lorsqu'on utilise un base de données Oracle",
-            "time": "2018-12-06T10:39:40+00:00"
+            "time": "2019-01-09T13:47:48+00:00"
         },
         {
             "name": "webmozart/assert",
@@ -3844,7 +3844,8 @@
     "platform": {
         "ext-fileinfo": "*",
         "ext-json": "*",
-        "ext-imagick": "*"
+        "ext-imagick": "*",
+        "ext-pdo": "*"
     },
     "platform-dev": []
 }

@@ -36,6 +36,8 @@ class IndicateurController extends AbstractActionController {
         $indicateurs = $this->getIndicateurService()->findAll();
 
         foreach ($indicateurs as $indicateur) {
+            $id = $indicateur->getId();
+
             if ($indicateur->isActif()) {
                 $resultats[$indicateur->getId()] = $this->getIndicateurService()->fetch($indicateur->getId());
             }
@@ -173,6 +175,14 @@ class IndicateurController extends AbstractActionController {
                 'Prénom 2'              => 'PRENOM2',
                 'Prénom 3'              => 'PRENOM3',
                 'Email'                 => 'EMAIL',
+            ];
+        }
+        if ($indicateur->getDisplayAs() == Indicateur::STRUCTURE) {
+            $headers = [
+                'id'                    => 'ID',
+                'Sigle'                 => 'SIGLE',
+                'Libelle'               => 'LIBELLE',
+                'Type'                  => 'TYPE_STRUCTURE_ID',
             ];
         }
 

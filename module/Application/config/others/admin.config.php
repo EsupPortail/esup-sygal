@@ -4,8 +4,11 @@ use Application\Controller\AdminController;
 use Application\Controller\Factory\RoleControllerFactory;
 use Application\Controller\MailConfirmationController;
 use Application\Controller\RoleController;
+use Application\Form\Factory\ProfilFormFactory;
+use Application\Form\Factory\ProfilHydratorFactory;
+use Application\Form\Hydrator\ProfilHydrator;
+use Application\Form\ProfilForm;
 use Application\Provider\Privilege\StructurePrivileges;
-use Application\Provider\Privilege\UniteRecherchePrivileges;
 use Application\Provider\Privilege\UtilisateurPrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Privilege\Privileges;
@@ -205,6 +208,16 @@ return [
                     'defaults' => [
                         'controller'    => \Application\Controller\PrivilegeController::class,
                         'action'        => 'modifier',
+                    ],
+                ],
+            ],
+            'modifier-modele-privilege' => [
+                'type'          => Segment::class,
+                'options'       => [
+                    'route'    => '/modifier-modele-privilege/:role/:privilege',
+                    'defaults' => [
+                        'controller'    => \Application\Controller\PrivilegeController::class,
+                        'action'        => 'modifier-modele',
                     ],
                 ],
             ],

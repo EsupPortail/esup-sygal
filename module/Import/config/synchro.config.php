@@ -7,6 +7,7 @@ use Import\Service\ImportObserv\ImportObservService;
 use Import\Service\ImportObservResult\ImportObservResultServiceFactory;
 use Import\Service\SchemaService;
 use UnicaenAuth\Guard\PrivilegeController;
+use Zend\Mvc\Router\Console\Simple;
 
 return [
     'bjyauthorize'    => [
@@ -46,6 +47,26 @@ return [
     'console' => [
         'router' => [
             'routes' => [
+                'synchronizeConsole' => [
+                    'type' => Simple::class,
+                    'options' => [
+                        'route'    => 'synchronize --service= [--em=]',
+                        'defaults' => [
+                            'controller' => SynchroController::class,
+                            'action'     => 'synchronizeConsole',
+                        ],
+                    ],
+                ],
+                'synchronizeAllConsole' => [
+                    'type' => Simple::class,
+                    'options' => [
+                        'route'    => 'synchronize-all [--em=]',
+                        'defaults' => [
+                            'controller' => SynchroController::class,
+                            'action'     => 'synchronizeAllConsole',
+                        ],
+                    ],
+                ],
                 'process-observed-import-results' => [
                     'options' => [
                         'route'    => 'process-observed-import-results --etablissement= [--import-observ=] [--source-code=] [--force]',

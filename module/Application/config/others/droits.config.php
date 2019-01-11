@@ -94,13 +94,19 @@ return [
                                 'resource'   => PrivilegeController::getResourceId('UnicaenAuth\Controller\Droits', 'privileges'),
                                 'withtarget' => true,
                             ],
+                            'profil' => [
+                                'label'      => "Profils",
+                                'title'      => "Gestion des profils",
+                                'route'      => 'profil',
+                                'resource'   => PrivilegeController::getResourceId('UnicaenAuth\Controller\Droits', 'privileges'),
+                                'withtarget' => true,
+                            ],
                         ],
                     ],
                 ],
             ],
         ],
     ],
-
     'service_manager' => [
         'invokables' => [
             RoleService::class => RoleService::class,

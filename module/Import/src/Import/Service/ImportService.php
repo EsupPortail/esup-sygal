@@ -5,6 +5,7 @@ namespace Import\Service;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\These;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
 use Import\Exception\CallException;
 use Import\Model\TmpActeur;
@@ -78,6 +79,25 @@ class ImportService
      * @var string
      */
     private $sqlFilters;
+
+    /**
+     * @inheritdoc
+     * @see EntityManagerAwareTrait
+     */
+    public function setEntityManager(EntityManager $entityManager)
+    {
+        $this->entityManager = $entityManager;
+
+        // propagation de l'EntityManager dans les services sous-traitants
+        if ($this->fetcherService !== null) {
+            $this->fetcherService->setEntityManagerForDbService($entityManager);
+        }
+        if ($this->synchroService !== null) {
+            $this->synchroService->setEntityManager($entityManager);
+        }
+
+        return $this;
+    }
 
     /**
      * Set logger object
@@ -185,6 +205,30 @@ class ImportService
         if ($synchronizeNeeded && $synchronize) {
             $this->synchroService->synchronize();
         }
+    }
+
+    /**
+     * Lance la synchro UnicaenImport complète en base de données.
+     *
+     * @param string $service Nom du service correspondant à la table qui sera synchronisée (ex: these, doctorant, ...)
+     */
+    public function synchronize($service)
+    {
+        $this->synchroService->addService($service);
+        $this->synchroService->synchronize();
+    }
+
+    /**
+     * Lance la synchro UnicaenImport sur toutes les tables en base de données.
+     */
+    public function synchronizeAll()
+    {
+        $services = static::SERVICES;
+        foreach ($services as $service) {
+            $this->synchroService->addService($service);
+        }
+
+        $this->synchroService->synchronize();
     }
 
     /**

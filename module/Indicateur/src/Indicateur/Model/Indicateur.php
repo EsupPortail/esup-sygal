@@ -6,6 +6,7 @@ class Indicateur {
 
     const THESE = 'THESE';
     const INDIVIDU = 'INDIVIDU';
+    const STRUCTURE = 'STRUCTURE';
 
     /** @var int */
     private $id;

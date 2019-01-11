@@ -1,0 +1,72 @@
+<?php
+
+/**
+ * @var \Application\Entity\Db\Profil $profil
+ * @var \Application\Entity\Db\Role[] $rolesDisponibles
+ * @var $form
+ */
+
+?>
+
+<h1>
+    Gestion des rôles associées au profil
+</h1>
+
+<a href="<?php echo $this->url('profil', [], [], true); ?>" class="btn btn-info">
+    <span class="glyphicon glyphicon-chevron-left"></span>
+    Retour à la gestion des profils
+</a>
+
+<br/>
+<br/>
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        Information sur le profil sélectionné
+    </div>
+    <div class="panel-body">
+        <dl class="dl-horizontal">
+            <dt> Libellé </dt>
+            <dd> <?php echo $profil->getLibelle(); ?> </dd>
+            <dt> Code </dt>
+            <dd> <?php echo $profil->getRoleCode(); ?> </dd>
+            <dt> Nombre d'affectation</dt>
+            <dd> <?php echo count($profil->getRoles()); ?> </dd>
+        </dl>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <table class="table table-condensed">
+            <tr>
+                <th> Libelle du rôle </th>
+                <th> Actions </th>
+            </tr>
+            <?php foreach ($profil->getRoles() as $role) : ?>
+                <tr>
+                    <td>
+                        <?php echo $role->getRoleId(); ?>
+                    </td>
+                    <td>
+                        <a href="<?php echo $this->url('profil/gerer-roles/retirer', ['profil' => $profil->getId(), 'role' => $role->getId()], [], true); ?>">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </table>
+    </div>
+    <div class="col-md-6">
+        <form method="POST" action="<?php echo $this->url('profil/gerer-roles/ajouter', ['profil' => $profil->getId()], [], true); ?>">
+            <select name="role">
+                <?php foreach ($rolesDisponibles as $role) : ?>
+                    <option value="<?php echo $role->getId(); ?>"> <?php echo $role->getRoleId(); ?></option>
+                <?php endforeach; ?>
+            </select>
+            <br/>
+            <input type="submit" class="btn btn-primary" value="Ajouter un rôle"/>
+        </form>
+
+    </div>
+</div>

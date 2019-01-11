@@ -7,9 +7,12 @@ use Application\Entity\Db\Role;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Structure\StructureServiceAwareTrait;
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\QueryBuilder;
+use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenAuth\Entity\Db\CategoriePrivilege;
+use UnicaenAuth\Service\Traits\PrivilegeServiceAwareTrait;
 use Zend\View\Model\ViewModel;
 
 class PrivilegeController extends AbstractController
@@ -18,6 +21,7 @@ class PrivilegeController extends AbstractController
     use RoleServiceAwareTrait;
     use StructureServiceAwareTrait;
     use EtablissementServiceAwareTrait;
+    use PrivilegeServiceAwareTrait;
 
     public function indexAction()
     {
@@ -56,21 +60,47 @@ class PrivilegeController extends AbstractController
     {
         $privilege_id = $this->params()->fromRoute("privilege");
         $role_id = $this->params()->fromRoute("role");
+        /**
+         * @var Privilege $privilege
+         * @var Role $role
+         */
         $privilege = $this->entityManager->getRepository(Privilege::class)->find($privilege_id);
         $role = $this->entityManager->getRepository(Role::class)->find($role_id);
 
         $value = null;
-        if( array_search($role, $privilege->getRole()->toArray()) !== false) {
-            $privilege->removeRole($role);
-            $this->entityManager->flush($privilege);
-            $value = 0;
-        } else {
-            $privilege->addRole($role);
-            $this->entityManager->flush($privilege);
-            $value = 1;
+
+        // /!\ si le role à un privilège desactivé la modification
+        if (! $role->getProfils()->isEmpty()) {
+            if( array_search($role, $privilege->getRole()->toArray()) !== false) {
+                $value = 1;
+            } else {
+                $value = 0;
+            }
         }
 
-        $queryParams = $this->params()->fromQuery();
+        else {
+
+            if (array_search($role, $privilege->getRole()->toArray()) !== false) {
+                $privilege->removeRole($role);
+                try {
+                    $this->getEntityManager()->flush($privilege);
+                } catch (OptimisticLockException $e) {
+                    throw new RuntimeException("Un problème est survenu lors de la suppression du privilège.", $e);
+                }
+                $value = 0;
+            } else {
+                $privilege->addRole($role);
+                try {
+                    $this->getEntityManager()->flush($privilege);
+                } catch (OptimisticLockException $e) {
+                    throw new RuntimeException("Un problème est survenu lors de l'ajout du privilège.", $e);
+                }
+                $value = 1;
+            }
+            // retrait des profils associés à un role
+            $this->getRoleService()->removeProfils($role);
+        }
+
         return new ViewModel([
             'value' => $value,
         ]);
