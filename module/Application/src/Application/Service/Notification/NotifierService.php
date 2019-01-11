@@ -567,13 +567,91 @@ class NotifierService extends \Notification\Service\NotifierService
         $notif
             ->setSubject("Demande de validation d'une proposition de soutenance")
             ->setTo($emails)
-            ->setTemplatePath('soutenance/notification/validation-unite')
+            ->setTemplatePath('soutenance/notification/validation-structure')
             ->setTemplateVariables([
                 'these'     => $these,
             ]);
         $this->trigger($notif);
     }
 
+    /** @param These $these */
+    public function triggerNotificationEcoleDoctoraleProposition($these)
+    {
+        /** @var IndividuRole[] $individuRoles */
+        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
+
+        $emails = [];
+        foreach ($individuRoles as $individuRole) {
+            $emails = $individuRole->getIndividu()->getEmail();
+        }
+
+        $notif = new Notification();
+        $notif
+            ->setSubject("Demande de validation d'une proposition de soutenance")
+            ->setTo($emails)
+            ->setTemplatePath('soutenance/notification/validation-structure')
+            ->setTemplateVariables([
+                'these'     => $these,
+            ]);
+        $this->trigger($notif);
+    }
+
+    /** @param These $these */
+    public function triggerNotificationBureauDesDoctoratsProposition($these)
+    {
+        $emails = $this->fetchEmailBdd($these);
+
+        $notif = new Notification();
+        $notif
+            ->setSubject("Demande de validation d'une proposition de soutenance")
+            ->setTo($emails)
+            ->setTemplatePath('soutenance/notification/validation-structure')
+            ->setTemplateVariables([
+                'these'     => $these,
+            ]);
+        $this->trigger($notif);
+    }
+
+    /** @param These $these */
+    public function triggerNotificationPropositionValidee($these)
+    {
+        $emails = [];
+        //structures
+        $emails[]  = $this->fetchEmailBdd($these);
+        foreach ($this->roleService->getIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure()) as $individuRole) $emails[] = $individuRole->getIndividu()->getEmail();
+        foreach ($this->roleService->getIndividuRoleByStructure($these->getUniteRecherche()->getStructure()) as $individuRole) $emails[] = $individuRole->getIndividu()->getEmail();
+        //acteurs
+        $emails[]  = $these->getDoctorant()->getIndividu()->getEmail();
+        foreach ($these->getDirecteursTheseEmails() as $email => $name) $emails[] = $email;
+        var_dump($emails);
+
+
+        $notif = new Notification();
+        $notif
+            ->setSubject("Demande de validation d'une proposition de soutenance")
+            ->setTo($emails)
+            ->setTemplatePath('soutenance/notification/validation-soutenance')
+            ->setTemplateVariables([
+                'these'     => $these,
+            ]);
+        $this->trigger($notif);
+    }
+
+    /** @param These $these */
+    public function triggerNotificationPresoutenance($these)
+    {
+        $emails = $this->fetchEmailBdd($these);
+
+        $notif = new Notification();
+        $notif
+            ->setSubject("Vous pouvez procéder aux rensignement de la présoutenance")
+            ->setTo($emails)
+            ->setTemplatePath('soutenance/notification/presoutenance')
+            ->setTemplateVariables([
+                'these'     => $these,
+            ]);
+        $this->trigger($notif);
+    }
 
     /**
      * @param These $these

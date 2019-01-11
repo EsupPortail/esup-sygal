@@ -401,16 +401,16 @@ class SoutenanceController extends AbstractActionController {
 
         if ($role=== Role::CODE_UR) {
             $this->getValidationService()->validateValidationUR($these, $individu);
-            //TODO NOTIFIER ED
+            $this->getNotifierService()->triggerNotificationEcoleDoctoraleProposition($these);
         }
         if ($role=== Role::CODE_ED) {
             $this->getValidationService()->validateValidationED($these, $individu);
-            //TODO NOTIFIER BDD
+            $this->getNotifierService()->triggerNotificationBureauDesDoctoratsProposition($these);
         }
         if ($role=== Role::CODE_BDD) {
             $this->getValidationService()->validateValidationBDD($these, $individu);
-            //TODO NOTIFIER ACTEURS + ED + UR
-            // go to presoutenance
+            $this->getNotifierService()->triggerNotificationPropositionValidee($these);
+            $this->getNotifierService()->triggerNotificationPresoutenance($these);
         }
 
         $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
