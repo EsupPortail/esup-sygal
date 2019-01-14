@@ -1,32 +1,23 @@
-------------------------------------------------------------------------------------------------------------
 --
--- Reprise de données de SYGAL_TEST pour SYGAL_PROD
+-- Fait vendredi sur la base de dev.
 --
-------------------------------------------------------------------------------------------------------------
+
+--> Faire l'IMPORT-SYNCHRO en ligne de commande
+/*
+php /var/www/sygal/public/index.php import-all --etablissement=INSA --synchronize=1
+php /var/www/sygal/public/index.php import-all --etablissement=ULHN --synchronize=1
+php /var/www/sygal/public/index.php import-all --etablissement=URN  --synchronize=1
+php /var/www/sygal/public/index.php import-all --etablissement=UCN  --synchronize=1
+*/
+
+--> !!!!!!!!!! Lancer le script data/SQL/profil.sql
 
 
-------- !!!!!!!!!!!!!! L'IMPORT-SYNCHRO DOIT ÊTRE FAIT AUPARAVANT !!!!!!!!!!!!!!!!!! ----------
-
-
--- !!!!!!!!!! Lancer le script data/SQL/profil.sql
-
-
-
---
--- Pages d'infos vides.
---
 INSERT INTO INFORMATION (ID, TITRE, HISTO_CREATION, HISTO_CREATEUR_ID, HISTO_MODIFICATION, HISTO_MODIFICATEUR_ID, HISTO_DESTRUCTION, HISTO_DESTRUCTEUR_ID, CONTENU, PRIORITE, EST_VISIBLE) VALUES (61, 'Le doctorat', TO_DATE('2018-12-13 10:53:25', 'YYYY-MM-DD HH24:MI:SS'), 838, TO_DATE('2019-01-10 09:53:10', 'YYYY-MM-DD HH24:MI:SS'), 838, null, null, 'coucou', 100, 1);
 INSERT INTO INFORMATION (ID, TITRE, HISTO_CREATION, HISTO_CREATEUR_ID, HISTO_MODIFICATION, HISTO_MODIFICATEUR_ID, HISTO_DESTRUCTION, HISTO_DESTRUCTEUR_ID, CONTENU, PRIORITE, EST_VISIBLE) VALUES (81, 'Les écoles doctorales', TO_DATE('2018-12-13 17:59:40', 'YYYY-MM-DD HH24:MI:SS'), 838, TO_DATE('2018-12-20 06:26:52', 'YYYY-MM-DD HH24:MI:SS'), 2681, null, null, 'coucou', 50, 1);
 INSERT INTO INFORMATION (ID, TITRE, HISTO_CREATION, HISTO_CREATEUR_ID, HISTO_MODIFICATION, HISTO_MODIFICATEUR_ID, HISTO_DESTRUCTION, HISTO_DESTRUCTEUR_ID, CONTENU, PRIORITE, EST_VISIBLE) VALUES (82, 'Guide de la thèse', TO_DATE('2018-12-13 18:00:01', 'YYYY-MM-DD HH24:MI:SS'), 838, TO_DATE('2018-12-20 06:31:54', 'YYYY-MM-DD HH24:MI:SS'), 2681, null, null, 'coucou', 10, 1);
 
 
---
--- Structures créées dans Sygal.
---
-update STRUCTURE set HISTO_CREATEUR_ID = 1, HISTO_MODIFICATEUR_ID = 1 where SOURCE_ID = 1;
-select * from STRUCTURE where SOURCE_ID = 1 and id > 5 order by id;
-rollback ;
-/*
 INSERT INTO STRUCTURE (ID, SIGLE, LIBELLE, CHEMIN_LOGO, TYPE_STRUCTURE_ID, HISTO_CREATION, HISTO_CREATEUR_ID, HISTO_MODIFICATION, HISTO_MODIFICATEUR_ID, HISTO_DESTRUCTION, HISTO_DESTRUCTEUR_ID, SOURCE_ID, SOURCE_CODE, CODE) VALUES (10000 + 2345, 'ED 98 DN', 'École Doctorale Droit Normandie', null, 2, TO_DATE('2018-10-03 11:42:41', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-10-05 07:56:01', 'YYYY-MM-DD HH24:MI:SS'), 1, null, null, 1, 'COMUE::98', '98');
 INSERT INTO STRUCTURE (ID, SIGLE, LIBELLE, CHEMIN_LOGO, TYPE_STRUCTURE_ID, HISTO_CREATION, HISTO_CREATEUR_ID, HISTO_MODIFICATION, HISTO_MODIFICATEUR_ID, HISTO_DESTRUCTION, HISTO_DESTRUCTEUR_ID, SOURCE_ID, SOURCE_CODE, CODE) VALUES (10000 + 2361, 'ED 242 EGN', 'École Doctorale Économie - Gestion Normandie', null, 2, TO_DATE('2018-10-04 09:20:24', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-10-05 07:58:24', 'YYYY-MM-DD HH24:MI:SS'), 1, null, null, 1, 'COMUE::242', '242');
 INSERT INTO STRUCTURE (ID, SIGLE, LIBELLE, CHEMIN_LOGO, TYPE_STRUCTURE_ID, HISTO_CREATION, HISTO_CREATEUR_ID, HISTO_MODIFICATION, HISTO_MODIFICATEUR_ID, HISTO_DESTRUCTION, HISTO_DESTRUCTEUR_ID, SOURCE_ID, SOURCE_CODE, CODE) VALUES (10000 + 2401, 'ED 497 NBISE', 'Normande de Biologie Intégrative, Santé, Environnement', 'COMUE::497-ED 497 NBISE.png', 2, TO_DATE('2018-10-05 08:07:04', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-12-04 11:12:37', 'YYYY-MM-DD HH24:MI:SS'), 1, null, null, 1, 'COMUE::497', '497');
@@ -141,27 +132,13 @@ INSERT INTO STRUCTURE (ID, SIGLE, LIBELLE, CHEMIN_LOGO, TYPE_STRUCTURE_ID, HISTO
 INSERT INTO STRUCTURE (ID, SIGLE, LIBELLE, CHEMIN_LOGO, TYPE_STRUCTURE_ID, HISTO_CREATION, HISTO_CREATEUR_ID, HISTO_MODIFICATION, HISTO_MODIFICATEUR_ID, HISTO_DESTRUCTION, HISTO_DESTRUCTEUR_ID, SOURCE_ID, SOURCE_CODE, CODE) VALUES (10000 + 3801, 'C101 - AGHYLE', 'AGROECOLOGIE, HYDROGEOCHIMIE, MILIEUX ET RESSOURCES', null, 3, TO_DATE('2018-11-14 15:45:29', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-11-14 15:45:29', 'YYYY-MM-DD HH24:MI:SS'), 1, null, null, 1, 'COMUE::C101', 'C101');
 INSERT INTO STRUCTURE (ID, SIGLE, LIBELLE, CHEMIN_LOGO, TYPE_STRUCTURE_ID, HISTO_CREATION, HISTO_CREATEUR_ID, HISTO_MODIFICATION, HISTO_MODIFICATEUR_ID, HISTO_DESTRUCTION, HISTO_DESTRUCTEUR_ID, SOURCE_ID, SOURCE_CODE, CODE) VALUES (10000 + 3821, 'EA7519 - T&A', 'TRANSFORMATIONS ET AGRO-RESSOURCES', null, 3, TO_DATE('2018-11-14 15:46:08', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-11-14 15:46:08', 'YYYY-MM-DD HH24:MI:SS'), 1, null, null, 1, 'COMUE::EA7519', 'EA7519');
 INSERT INTO STRUCTURE (ID, SIGLE, LIBELLE, CHEMIN_LOGO, TYPE_STRUCTURE_ID, HISTO_CREATION, HISTO_CREATEUR_ID, HISTO_MODIFICATION, HISTO_MODIFICATEUR_ID, HISTO_DESTRUCTION, HISTO_DESTRUCTEUR_ID, SOURCE_ID, SOURCE_CODE, CODE) VALUES (10000 + 3861, 'EA7464 ATE', 'ARCHITECTURE TERRITOIRE ENVIRONNEMENT NORMANDIE', null, 3, TO_DATE('2018-11-15 10:20:20', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-11-15 10:20:20', 'YYYY-MM-DD HH24:MI:SS'), 1, null, null, 1, 'COMUE::EA7464', 'EA7464');
-*/
 
---
--- Etab créés dans Sygal.
---
-update ETABLISSEMENT set HISTO_CREATEUR_ID = 1, HISTO_MODIFICATEUR_ID = 1 where SOURCE_ID = 1;
-select * from ETABLISSEMENT where SOURCE_ID = 1 and id > 5 order by id;
-rollback ;
-/*
+
 INSERT INTO ETABLISSEMENT (ID, STRUCTURE_ID, HISTO_CREATION, HISTO_MODIFICATION, HISTO_DESTRUCTION, HISTO_CREATEUR_ID, HISTO_MODIFICATEUR_ID, HISTO_DESTRUCTEUR_ID, DOMAINE, SOURCE_ID, SOURCE_CODE, EST_MEMBRE, EST_ASSOCIE) select ETABLISSEMENT_ID_SEQ.nextval, 10000 + 2826, TO_DATE('2018-10-25 08:48:30', 'YYYY-MM-DD HH24:MI:SS'), TO_DATE('2018-10-25 08:48:30', 'YYYY-MM-DD HH24:MI:SS'), null, 1, 1, null, null, 1, 'COMUE::0134009M', 0, 0 from dual;
 INSERT INTO ETABLISSEMENT (ID, STRUCTURE_ID, HISTO_CREATION, HISTO_MODIFICATION, HISTO_DESTRUCTION, HISTO_CREATEUR_ID, HISTO_MODIFICATEUR_ID, HISTO_DESTRUCTEUR_ID, DOMAINE, SOURCE_ID, SOURCE_CODE, EST_MEMBRE, EST_ASSOCIE) select ETABLISSEMENT_ID_SEQ.nextval, 10000 + 2827, TO_DATE('2018-10-25 08:48:36', 'YYYY-MM-DD HH24:MI:SS'), TO_DATE('2018-10-25 08:48:36', 'YYYY-MM-DD HH24:MI:SS'), null, 1, 1, null, null, 1, 'COMUE::0133440U', 0, 0 from dual;
 INSERT INTO ETABLISSEMENT (ID, STRUCTURE_ID, HISTO_CREATION, HISTO_MODIFICATION, HISTO_DESTRUCTION, HISTO_CREATEUR_ID, HISTO_MODIFICATEUR_ID, HISTO_DESTRUCTEUR_ID, DOMAINE, SOURCE_ID, SOURCE_CODE, EST_MEMBRE, EST_ASSOCIE) select ETABLISSEMENT_ID_SEQ.nextval, 10000 + 2828, TO_DATE('2018-10-25 08:48:49', 'YYYY-MM-DD HH24:MI:SS'), TO_DATE('2018-10-25 08:48:49', 'YYYY-MM-DD HH24:MI:SS'), null, 1, 1, null, null, 1, 'COMUE::0753480A', 0, 0 from dual;
-*/
 
---
--- ED créées dans Sygal.
---
-update ECOLE_DOCT set HISTO_CREATEUR_ID = 1, HISTO_MODIFICATEUR_ID = 1 where SOURCE_ID = 1;
-select * from ECOLE_DOCT where SOURCE_ID = 1 order by id;
-rollback ;
-/*
+
 INSERT INTO ECOLE_DOCT (ID, HISTO_CREATION, HISTO_CREATEUR_ID, HISTO_MODIFICATION, HISTO_MODIFICATEUR_ID, HISTO_DESTRUCTION, HISTO_DESTRUCTEUR_ID, SOURCE_ID, SOURCE_CODE, STRUCTURE_ID) select ECOLE_DOCT_ID_SEQ.nextval, TO_DATE('2018-10-03 11:42:41', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-10-03 11:42:41', 'YYYY-MM-DD HH24:MI:SS'), 1, null, null, 1, 'COMUE::098', 10000 + 2345 from dual;
 INSERT INTO ECOLE_DOCT (ID, HISTO_CREATION, HISTO_CREATEUR_ID, HISTO_MODIFICATION, HISTO_MODIFICATEUR_ID, HISTO_DESTRUCTION, HISTO_DESTRUCTEUR_ID, SOURCE_ID, SOURCE_CODE, STRUCTURE_ID) select ECOLE_DOCT_ID_SEQ.nextval, TO_DATE('2018-10-04 09:20:24', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-10-04 09:20:24', 'YYYY-MM-DD HH24:MI:SS'), 1, null, null, 1, 'COMUE::242', 10000 + 2361 from dual;
 INSERT INTO ECOLE_DOCT (ID, HISTO_CREATION, HISTO_CREATEUR_ID, HISTO_MODIFICATION, HISTO_MODIFICATEUR_ID, HISTO_DESTRUCTION, HISTO_DESTRUCTEUR_ID, SOURCE_ID, SOURCE_CODE, STRUCTURE_ID) select ECOLE_DOCT_ID_SEQ.nextval, TO_DATE('2018-10-05 08:07:04', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-10-05 08:07:04', 'YYYY-MM-DD HH24:MI:SS'), 1, null, null, 1, 'COMUE::497', 10000 + 2401 from dual;
@@ -177,29 +154,8 @@ INSERT INTO ECOLE_DOCT (ID, HISTO_CREATION, HISTO_CREATEUR_ID, HISTO_MODIFICATIO
 INSERT INTO ECOLE_DOCT (ID, HISTO_CREATION, HISTO_CREATEUR_ID, HISTO_MODIFICATION, HISTO_MODIFICATEUR_ID, HISTO_DESTRUCTION, HISTO_DESTRUCTEUR_ID, SOURCE_ID, SOURCE_CODE, STRUCTURE_ID) select ECOLE_DOCT_ID_SEQ.nextval, TO_DATE('2018-10-25 11:49:18', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-10-25 11:49:18', 'YYYY-MM-DD HH24:MI:SS'), 1, null, null, 1, 'COMUE::351', 10000 + 2966 from dual;
 INSERT INTO ECOLE_DOCT (ID, HISTO_CREATION, HISTO_CREATEUR_ID, HISTO_MODIFICATION, HISTO_MODIFICATEUR_ID, HISTO_DESTRUCTION, HISTO_DESTRUCTEUR_ID, SOURCE_ID, SOURCE_CODE, STRUCTURE_ID) select ECOLE_DOCT_ID_SEQ.nextval, TO_DATE('2018-10-25 12:06:38', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-10-25 12:06:38', 'YYYY-MM-DD HH24:MI:SS'), 1, null, null, 1, 'COMUE::181', 10000 + 2981 from dual;
 INSERT INTO ECOLE_DOCT (ID, HISTO_CREATION, HISTO_CREATEUR_ID, HISTO_MODIFICATION, HISTO_MODIFICATEUR_ID, HISTO_DESTRUCTION, HISTO_DESTRUCTEUR_ID, SOURCE_ID, SOURCE_CODE, STRUCTURE_ID) select ECOLE_DOCT_ID_SEQ.nextval, TO_DATE('2018-10-25 12:11:37', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-10-25 12:11:37', 'YYYY-MM-DD HH24:MI:SS'), 1, null, null, 1, 'COMUE::265', 10000 + 3001 from dual;
-*/
 
---
--- UR créées dans Sygal.
---
-update UNITE_RECH set HISTO_CREATEUR_ID = 1, HISTO_MODIFICATEUR_ID = 1 where SOURCE_ID = 1;
-select
-  ID,
-  ETAB_SUPPORT,
-  AUTRES_ETAB,
-  SOURCE_ID,
-  SOURCE_CODE,
-  HISTO_CREATION,
-  HISTO_CREATEUR_ID,
-  HISTO_MODIFICATION,
-  HISTO_MODIFICATEUR_ID,
-  HISTO_DESTRUCTION,
-  HISTO_DESTRUCTEUR_ID,
-  RNSR_ID,
-  STRUCTURE_ID
-from UNITE_RECH where SOURCE_ID = 1 order by id;
-rollback ;
-/*
+
 INSERT INTO UNITE_RECH (ID, ETAB_SUPPORT, AUTRES_ETAB, SOURCE_ID, SOURCE_CODE, HISTO_CREATION, HISTO_CREATEUR_ID, HISTO_MODIFICATION, HISTO_MODIFICATEUR_ID, HISTO_DESTRUCTION, HISTO_DESTRUCTEUR_ID, RNSR_ID, STRUCTURE_ID) select UNITE_RECH_ID_SEQ.nextval, null, null, 1, 'COMUE::5bcf10cdc12f1', TO_DATE('2018-10-23 14:15:09', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-11-13 18:11:09', 'YYYY-MM-DD HH24:MI:SS'), 1, null, null, '201722478N',  10000 + 2661 from dual;
 INSERT INTO UNITE_RECH (ID, ETAB_SUPPORT, AUTRES_ETAB, SOURCE_ID, SOURCE_CODE, HISTO_CREATION, HISTO_CREATEUR_ID, HISTO_MODIFICATION, HISTO_MODIFICATEUR_ID, HISTO_DESTRUCTION, HISTO_DESTRUCTEUR_ID, RNSR_ID, STRUCTURE_ID) select UNITE_RECH_ID_SEQ.nextval, null, null, 1, 'COMUE::5bcffdac8c2ae', TO_DATE('2018-10-24 07:05:48', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-11-13 18:09:59', 'YYYY-MM-DD HH24:MI:SS'), 1, null, null, '201722473H',  10000 + 2701 from dual;
 INSERT INTO UNITE_RECH (ID, ETAB_SUPPORT, AUTRES_ETAB, SOURCE_ID, SOURCE_CODE, HISTO_CREATION, HISTO_CREATEUR_ID, HISTO_MODIFICATION, HISTO_MODIFICATEUR_ID, HISTO_DESTRUCTION, HISTO_DESTRUCTEUR_ID, RNSR_ID, STRUCTURE_ID) select UNITE_RECH_ID_SEQ.nextval, null, null, 1, 'COMUE::5bcfffa3e4c4f', TO_DATE('2018-10-24 07:14:11', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-11-13 17:26:58', 'YYYY-MM-DD HH24:MI:SS'), 1, null, null, '200615352R',  10000 + 2721 from dual;
@@ -296,641 +252,587 @@ INSERT INTO UNITE_RECH (ID, ETAB_SUPPORT, AUTRES_ETAB, SOURCE_ID, SOURCE_CODE, H
 INSERT INTO UNITE_RECH (ID, ETAB_SUPPORT, AUTRES_ETAB, SOURCE_ID, SOURCE_CODE, HISTO_CREATION, HISTO_CREATEUR_ID, HISTO_MODIFICATION, HISTO_MODIFICATEUR_ID, HISTO_DESTRUCTION, HISTO_DESTRUCTEUR_ID, RNSR_ID, STRUCTURE_ID) select UNITE_RECH_ID_SEQ.nextval, null, null, 1, 'COMUE::C101', TO_DATE('2018-11-14 15:45:29', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-11-14 15:49:46', 'YYYY-MM-DD HH24:MI:SS'), 1, null, null, '201622796N',           10000 + 3801 from dual;
 INSERT INTO UNITE_RECH (ID, ETAB_SUPPORT, AUTRES_ETAB, SOURCE_ID, SOURCE_CODE, HISTO_CREATION, HISTO_CREATEUR_ID, HISTO_MODIFICATION, HISTO_MODIFICATEUR_ID, HISTO_DESTRUCTION, HISTO_DESTRUCTEUR_ID, RNSR_ID, STRUCTURE_ID) select UNITE_RECH_ID_SEQ.nextval, null, null, 1, 'COMUE::EA7519', TO_DATE('2018-11-14 15:46:08', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-11-14 15:48:32', 'YYYY-MM-DD HH24:MI:SS'), 1, null, null, '201622797P',         10000 + 3821 from dual;
 INSERT INTO UNITE_RECH (ID, ETAB_SUPPORT, AUTRES_ETAB, SOURCE_ID, SOURCE_CODE, HISTO_CREATION, HISTO_CREATEUR_ID, HISTO_MODIFICATION, HISTO_MODIFICATEUR_ID, HISTO_DESTRUCTION, HISTO_DESTRUCTEUR_ID, RNSR_ID, STRUCTURE_ID) select UNITE_RECH_ID_SEQ.nextval, null, null, 1, 'COMUE::EA7464', TO_DATE('2018-11-15 10:20:20', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-11-15 10:22:31', 'YYYY-MM-DD HH24:MI:SS'), 1, null, null, null,                 10000 + 3861 from dual;
-*/
 
---
--- Substitutions.
---
-select 'select ''' || sf.SOURCE_CODE || ''', ', 10000+st.id || ' from dual union all'
-from STRUCTURE_SUBSTIT ss
-       join STRUCTURE sf on sf.id = ss.FROM_STRUCTURE_ID
-       join STRUCTURE st on st.id = ss.TO_STRUCTURE_ID
-order by ss.TO_STRUCTURE_ID;
-/*
--- vérif avant reprise :
-with tmp(FROM_SOURCE_CODE, TO_STRUCTURE_ID) as (
-    select 'URN::98', 	12345 from dual union all
-    select 'ULHN::98', 	12345 from dual union all
-    select 'UCN::98', 	12345 from dual union all
-    select 'INSA::30623', 	12361 from dual union all
-    select 'URN::242', 	12361 from dual union all
-    select 'ULHN::242', 	12361 from dual union all
-    select 'UCN::242', 	12361 from dual union all
-    select 'UCN::497', 	12401 from dual union all
-    select 'URN::497', 	12401 from dual union all
-    select 'ULHN::497', 	12401 from dual union all
-    select 'UCN::508', 	12402 from dual union all
-    select 'INSA::33328', 	12402 from dual union all
-    select 'ULHN::508', 	12402 from dual union all
-    select 'URN::508', 	12402 from dual union all
-    select 'INSA::30622', 	12402 from dual union all
-    select 'INSA::31577', 	12402 from dual union all
-    select 'ULHN::556', 	12403 from dual union all
-    select 'UCN::556', 	12403 from dual union all
-    select 'URN::556', 	12403 from dual union all
-    select 'UCN::558', 	12404 from dual union all
-    select 'ULHN::558', 	12404 from dual union all
-    select 'URN::558', 	12404 from dual union all
-    select 'ULHN::590', 	12405 from dual union all
-    select 'INSA::36493', 	12405 from dual union all
-    select 'UCN::590', 	12405 from dual union all
-    select 'URN::590', 	12405 from dual union all
-    select 'UCN::UMRS1077*', 	12661 from dual union all
-    select 'UCN::UMRS1077', 	12661 from dual union all
-    select 'UCN::UMRS1086*', 	12701 from dual union all
-    select 'UCN::UMRS1086', 	12701 from dual union all
-    select 'ULHN::EA4108', 	12721 from dual union all
-    select 'URN::EA4108', 	12721 from dual union all
-    select 'ULHN::LITIS', 	12721 from dual union all
-    select 'INSA::28250', 	12721 from dual union all
-    select 'UCN::UMR6266', 	12722 from dual union all
-    select 'ULHN::UMR6266', 	12722 from dual union all
-    select 'ULHN::IDEES', 	12722 from dual union all
-    select 'URN::UMR6266', 	12722 from dual union all
-    select 'UCN::EANIMEC', 	12723 from dual union all
-    select 'UCN::EA969', 	12723 from dual union all
-    select 'ULHN::NIMEC', 	12723 from dual union all
-    select 'URN::EA969', 	12723 from dual union all
-    select 'ULHN::EA969', 	12723 from dual union all
-    select 'UCN::EA4651', 	12724 from dual union all
-    select 'URN::EA4651', 	12724 from dual union all
-    select 'UCN::EA7454', 	12725 from dual union all
-    select 'URN::EA7454', 	12725 from dual union all
-    select 'UCN::UMR6143', 	12726 from dual union all
-    select 'URN::6143', 	12726 from dual union all
-    select 'URN::UMR6143', 	12726 from dual union all
-    select 'UCN::591', 	12781 from dual union all
-    select 'INSA::36494', 	12781 from dual union all
-    select 'URN::591', 	12781 from dual union all
-    select 'ULHN::591', 	12781 from dual union all
-    select 'URN::FRE3090', 	12801 from dual union all
-    select 'URN::EA4358', 	12801 from dual union all
-    select 'URN::I2120', 	12821 from dual union all
-    select 'URN::FRE2645', 	12821 from dual union all
-    select 'URN::EA2120', 	12821 from dual union all
-    select 'URN::2120', 	12821 from dual union all
-    select 'UCN::FRE2795', 	12823 from dual union all
-    select 'URN::FRE2795', 	12823 from dual union all
-    select 'UCN::0134009M', 	12826 from dual union all
-    select 'INSA::0134009M', 	12826 from dual union all
-    select 'URN::0134009M', 	12826 from dual union all
-    select 'URN::0133440U', 	12827 from dual union all
-    select 'ULHN::0133440U', 	12827 from dual union all
-    select 'UCN::0753480A', 	12828 from dual union all
-    select 'URN::0753480A', 	12828 from dual union all
-    select 'UCN::96', 	12842 from dual union all
-    select 'INSA::28352', 	12842 from dual union all
-    select 'URN::96', 	12842 from dual union all
-    select 'UCN::68', 	12843 from dual union all
-    select 'ULHN::68', 	12843 from dual union all
-    select 'URN::350', 	12844 from dual union all
-    select 'URN::IFRMP23', 	12861 from dual union all
-    select 'URN::IFRMP', 	12861 from dual union all
-    select 'URN::IFR23', 	12861 from dual union all
-    select 'INSA::28688', 	12881 from dual union all
-    select 'URN::UMR6014', 	12881 from dual union all
-    select 'UCN::DODOLA', 	12901 from dual union all
-    select 'UCN::AUTOMATI', 	12901 from dual union all
-    select 'UCN::ALGO', 	12901 from dual union all
-    select 'UCN::ELECTRON', 	12901 from dual union all
-    select 'UCN::UMR6072U', 	12901 from dual union all
-    select 'UCN::UMR6072', 	12901 from dual union all
-    select 'UCN::IMAGE', 	12901 from dual union all
-    select 'UCN::INSTRUME', 	12901 from dual union all
-    select 'UCN::ISLAND', 	12901 from dual union all
-    select 'UCN::MAD', 	12901 from dual union all
-    select 'UCN::SISTEM', 	12901 from dual union all
-    select 'UCN::UMR6072E', 	12901 from dual union all
-    select 'UCN::EA4656', 	12921 from dual union all
-    select 'UCN::UMRS1199', 	12921 from dual union all
-    select 'UCN::UPR3266', 	12922 from dual union all
-    select 'UCN::UMR6415', 	12922 from dual union all
-    select 'URN::6614', 	12925 from dual union all
-    select 'URN::UMR6614', 	12925 from dual union all
-    select 'INSA::24768', 	12925 from dual union all
-    select 'URN::EA1292', 	12926 from dual union all
-    select 'URN::EA4528', 	12926 from dual union all
-    select 'URN::LCAP4528', 	12926 from dual union all
-    select 'URN::UMR6036', 	12927 from dual union all
-    select 'URN::6036', 	12927 from dual union all
-    select 'URN::FRE2735', 	12927 from dual union all
-    select 'UCN::FRE3101', 	12928 from dual union all
-    select 'URN::6522', 	12928 from dual union all
-    select 'INSA::28697', 	12928 from dual union all
-    select 'URN::UMR6522', 	12928 from dual union all
-    select 'URN::UMR6270', 	12928 from dual union all
-    select 'UCN::EA4255', 	12929 from dual union all
-    select 'UCN::EACRISCO', 	12929 from dual union all
-    select 'UCN::FRE2805', 	12929 from dual union all
-    select 'INSA::24780', 	12961 from dual union all
-    select 'URN::INSA', 	12961 from dual union all
-    select 'INSA::31146', 	12962 from dual union all
-    select 'INSA::35728', 	12962 from dual union all
-    select 'ULHN::UMR-I02', 	12963 from dual union all
-    select 'ULHN::SEBIO', 	12963 from dual union all
-    select 'ULHN::EA3221', 	12964 from dual union all
-    select 'ULHN::URCOM', 	12964 from dual union all
-    select 'URN::EA2658', 	12965 from dual union all
-    select 'URN::2658', 	12965 from dual union all
-    select 'URN::EA3230', 	12965 from dual union all
-    select 'COMUE::351', 	12966 from dual union all
-    select 'INSA::28318', 	12966 from dual union all
-    select 'URN::351', 	12966 from dual union all
-    select 'ULHN::351', 	12966 from dual union all
-    select 'INSA::33309', 	12966 from dual union all
-    select 'INSA::31544', 	12966 from dual union all
-    select 'URN::6634', 	12967 from dual union all
-    select 'INSA::24789', 	12967 from dual union all
-    select 'URN::UMR6634', 	12967 from dual union all
-    select 'UCN::181', 	12981 from dual union all
-    select 'ULHN::265', 	13001 from dual union all
-    select 'UCN::UMR6266H', 	13041 from dual union all
-    select 'UCN::FRE2795H', 	13041 from dual union all
-    select 'UCN::UMR6228H', 	13041 from dual union all
-    select 'URN::2122', 	13101 from dual union all
-    select 'URN::IFRSI', 	13101 from dual union all
-    select 'URN::EA2122', 	13101 from dual union all
-    select 'URN::U982', 	13121 from dual union all
-    select 'URN::UMRS982', 	13121 from dual union all
-    select 'URN::2010', 	13161 from dual union all
-    select 'URN::JE2010', 	13161 from dual union all
-    select 'URN::EA2260', 	13181 from dual union all
-    select 'URN::2260', 	13181 from dual union all
-    select 'URN::2124', 	13201 from dual union all
-    select 'URN::EA2124', 	13201 from dual union all
-    select 'URN::1305', 	13221 from dual union all
-    select 'URN::EA1305', 	13221 from dual union all
-    select 'URN::UMR6065', 	13241 from dual union all
-    select 'URN::6065', 	13241 from dual union all
-    select 'URN::2125', 	13261 from dual union all
-    select 'URN::EA2125', 	13261 from dual union all
-    select 'URN::EA2656', 	13281 from dual union all
-    select 'URN::2656', 	13281 from dual union all
-    select 'URN::6063', 	13301 from dual union all
-    select 'URN::UMR6063', 	13301 from dual union all
-    select 'URN::EA1293', 	13321 from dual union all
-    select 'URN::1293', 	13321 from dual union all
-    select 'URN::EA1290', 	13323 from dual union all
-    select 'URN::1290', 	13323 from dual union all
-    select 'URN::413', 	13324 from dual union all
-    select 'URN::INSERM', 	13324 from dual union all
-    select 'URN::519', 	13325 from dual union all
-    select 'URN::U519', 	13325 from dual union all
-    select 'URN::EA3228', 	13326 from dual union all
-    select 'URN::2009', 	13326 from dual union all
-    select 'URN::2123', 	13327 from dual union all
-    select 'URN::EA2123', 	13327 from dual union all
-    select 'UCN::EALASLAR', 	13328 from dual union all
-    select 'UCN::EA4256', 	13328 from dual union all
-    select 'UCN::EA3917', 	13341 from dual union all
-    select 'UCN::EAMOCOTE', 	13341 from dual union all
-    select 'UCN::EAGMPC', 	13361 from dual union all
-    select 'URN::U905', 	13381 from dual union all
-    select 'URN::UMRS905', 	13381 from dual union all
-    select 'URN::UMR6037', 	13382 from dual union all
-    select 'URN::6037', 	13382 from dual union all
-    select 'UCN::UMRS1237', 	13383 from dual union all
-    select 'UCN::UMRS919*', 	13383 from dual union all
-    select 'URN::H', 	13384 from dual union all
-    select 'URN::EA3234', 	13385 from dual union all
-    select 'URN::B', 	13385 from dual union all
-    select 'ULHN::GREAH', 	13386 from dual union all
-    select 'ULHN::EA3220', 	13386 from dual union all
-    select 'ULHN::LMAH', 	13387 from dual union all
-    select 'ULHN::EA3821', 	13387 from dual union all
-    select 'URN::EA2657', 	13421 from dual union all
-    select 'URN::2657', 	13421 from dual union all
-    select 'UCN::EA3918', 	13521 from dual union all
-    select 'UCN::EACERREV', 	13521 from dual union all
-    select 'ULHN::UMR6294', 	13541 from dual union all
-    select 'ULHN::LOMC', 	13541 from dual union all
-    select 'ULHN::EA1013', 	13561 from dual union all
-    select 'ULHN::LEXFEIM', 	13561 from dual union all
-    select 'UCN::EA967', 	13581 from dual union all
-    select 'URN::UMRS1234', 	13583 from dual union all
-    select 'URN::UMRS1245', 	13584 from dual union all
-    select 'ULHN::GRIC', 	13585 from dual union all
-    select 'ULHN::EA4314', 	13585 from dual union all
-    select 'URN::EA4312', 	13586 from dual union all
-    select 'URN::EA3831', 	13587 from dual union all
-    select 'URN::EA3830', 	13588 from dual union all
-    select 'URN::EA4308', 	13589 from dual union all
-    select 'URN::EA3233', 	13590 from dual union all
-    select 'URN::EA3229', 	13591 from dual union all
-    select 'URN::EA4353', 	13592 from dual union all
-    select 'UCN::EA4650', 	13594 from dual union all
-    select 'UCN::EA2129', 	13595 from dual union all
-    select 'URN::EA4702', 	13596 from dual union all
-    select 'URN::EA4703', 	13597 from dual union all
-    select 'URN::EA4705', 	13598 from dual union all
-    select 'ULHN::EA7263', 	13599 from dual union all
-    select 'ULHN::EDHEN', 	13599 from dual union all
-    select 'URN::EA7474', 	13600 from dual union all
-    select 'URN::EA7475', 	13601 from dual union all
-    select 'URN::EA7476', 	13602 from dual union all
-    select 'URN::UMR6085', 	13603 from dual union all
-    select 'URN::UMRS1073', 	13604 from dual union all
-    select 'URN::UMRS1096', 	13605 from dual union all
-    select 'URN::UMRS1239', 	13606 from dual union all
-    select 'UCN::EA7478', 	13607 from dual union all
-    select 'UCN::EA4253', 	13608 from dual union all
-    select 'UCN::EALUSAC', 	13608 from dual union all
-    select 'UCN::EAERLIS', 	13609 from dual union all
-    select 'UCN::EA4254', 	13609 from dual union all
-    select 'URN::G', 	13621 from dual union all
-    select 'URN::EA3832', 	13621 from dual union all
-    select 'INSA::28701', 	13622 from dual union all
-    select 'URN::EA4704', 	13622 from dual union all
-    select 'UCN::EA4258', 	13623 from dual union all
-    select 'UCN::EACERMN', 	13623 from dual union all
-    select 'UCN::EALRPMN', 	13624 from dual union all
-    select 'UCN::EA4257', 	13624 from dual union all
-    select 'UCN::EACENTRE', 	13625 from dual union all
-    select 'UCN::EA4252', 	13625 from dual union all
-    select 'UCN::EA3213', 	13626 from dual union all
-    select 'UCN::EAMILA', 	13626 from dual union all
-    select 'UCN::UMR6552', 	13627 from dual union all
-    select 'URN::EA3800', 	13741 from dual union all
-    select 'URN::C101', 	13801 from dual union all
-    select 'URN::EA7519', 	13821 from dual union all
-    select 'URN::EA7464', 	13861 from dual
-)
-select sf.id, st.id, tmp.TO_STRUCTURE_ID, 1, 1
-from tmp
-  left join structure sf on sf.SOURCE_CODE = tmp.FROM_SOURCE_CODE
-  left join structure st on st.id = tmp.TO_STRUCTURE_ID
-where sf.id is null or st.id is null;
--- reprise :
+
 insert into STRUCTURE_SUBSTIT(ID, FROM_STRUCTURE_ID, TO_STRUCTURE_ID, HISTO_CREATEUR_ID, HISTO_MODIFICATEUR_ID)
-  with tmp(FROM_SOURCE_CODE, TO_STRUCTURE_ID) as (
-    -- idem vérif
-  )
-  select STRUCTURE_SUBSTIT_ID_SEQ.nextval, sf.id, tmp.TO_STRUCTURE_ID, 1, 1
-  from tmp
-  join structure sf on sf.SOURCE_CODE = tmp.FROM_SOURCE_CODE;
-*/
--- NB: vérifier le nombre d'insertions.
+with tmp(FROM_SOURCE_CODE, TO_STRUCTURE_ID) as (
+  select 'URN::98', 	12345 from dual union all
+  select 'ULHN::98', 	12345 from dual union all
+  select 'UCN::98', 	12345 from dual union all
+  select 'INSA::30623', 	12361 from dual union all
+  select 'URN::242', 	12361 from dual union all
+  select 'ULHN::242', 	12361 from dual union all
+  select 'UCN::242', 	12361 from dual union all
+  select 'UCN::497', 	12401 from dual union all
+  select 'URN::497', 	12401 from dual union all
+  select 'ULHN::497', 	12401 from dual union all
+  select 'UCN::508', 	12402 from dual union all
+  select 'INSA::33328', 	12402 from dual union all
+  select 'ULHN::508', 	12402 from dual union all
+  select 'URN::508', 	12402 from dual union all
+  select 'INSA::30622', 	12402 from dual union all
+  select 'INSA::31577', 	12402 from dual union all
+  select 'ULHN::556', 	12403 from dual union all
+  select 'UCN::556', 	12403 from dual union all
+  select 'URN::556', 	12403 from dual union all
+  select 'UCN::558', 	12404 from dual union all
+  select 'ULHN::558', 	12404 from dual union all
+  select 'URN::558', 	12404 from dual union all
+  select 'ULHN::590', 	12405 from dual union all
+  select 'INSA::36493', 	12405 from dual union all
+  select 'UCN::590', 	12405 from dual union all
+  select 'URN::590', 	12405 from dual union all
+  select 'UCN::UMRS1077*', 	12661 from dual union all
+  select 'UCN::UMRS1077', 	12661 from dual union all
+  select 'UCN::UMRS1086*', 	12701 from dual union all
+  select 'UCN::UMRS1086', 	12701 from dual union all
+  select 'ULHN::EA4108', 	12721 from dual union all
+  select 'URN::EA4108', 	12721 from dual union all
+  select 'ULHN::LITIS', 	12721 from dual union all
+  select 'INSA::28250', 	12721 from dual union all
+  select 'UCN::UMR6266', 	12722 from dual union all
+  select 'ULHN::UMR6266', 	12722 from dual union all
+  select 'ULHN::IDEES', 	12722 from dual union all
+  select 'URN::UMR6266', 	12722 from dual union all
+  select 'UCN::EANIMEC', 	12723 from dual union all
+  select 'UCN::EA969', 	12723 from dual union all
+  select 'ULHN::NIMEC', 	12723 from dual union all
+  select 'URN::EA969', 	12723 from dual union all
+  select 'ULHN::EA969', 	12723 from dual union all
+  select 'UCN::EA4651', 	12724 from dual union all
+  select 'URN::EA4651', 	12724 from dual union all
+  select 'UCN::EA7454', 	12725 from dual union all
+  select 'URN::EA7454', 	12725 from dual union all
+  select 'UCN::UMR6143', 	12726 from dual union all
+  select 'URN::6143', 	12726 from dual union all
+  select 'URN::UMR6143', 	12726 from dual union all
+  select 'UCN::591', 	12781 from dual union all
+  select 'INSA::36494', 	12781 from dual union all
+  select 'URN::591', 	12781 from dual union all
+  select 'ULHN::591', 	12781 from dual union all
+  select 'URN::FRE3090', 	12801 from dual union all
+  select 'URN::EA4358', 	12801 from dual union all
+  select 'URN::I2120', 	12821 from dual union all
+  select 'URN::FRE2645', 	12821 from dual union all
+  select 'URN::EA2120', 	12821 from dual union all
+  select 'URN::2120', 	12821 from dual union all
+  select 'UCN::FRE2795', 	12823 from dual union all
+  select 'URN::FRE2795', 	12823 from dual union all
+  select 'UCN::0134009M', 	12826 from dual union all
+  select 'INSA::0134009M', 	12826 from dual union all
+  select 'URN::0134009M', 	12826 from dual union all
+  select 'URN::0133440U', 	12827 from dual union all
+  select 'ULHN::0133440U', 	12827 from dual union all
+  select 'UCN::0753480A', 	12828 from dual union all
+  select 'URN::0753480A', 	12828 from dual union all
+  select 'UCN::96', 	12842 from dual union all
+  select 'INSA::28352', 	12842 from dual union all
+  select 'URN::96', 	12842 from dual union all
+  select 'UCN::68', 	12843 from dual union all
+  select 'ULHN::68', 	12843 from dual union all
+  select 'URN::350', 	12844 from dual union all
+  select 'URN::IFRMP23', 	12861 from dual union all
+  select 'URN::IFRMP', 	12861 from dual union all
+  select 'URN::IFR23', 	12861 from dual union all
+  select 'INSA::28688', 	12881 from dual union all
+  select 'URN::UMR6014', 	12881 from dual union all
+  select 'UCN::DODOLA', 	12901 from dual union all
+  select 'UCN::AUTOMATI', 	12901 from dual union all
+  select 'UCN::ALGO', 	12901 from dual union all
+  select 'UCN::ELECTRON', 	12901 from dual union all
+  select 'UCN::UMR6072U', 	12901 from dual union all
+  select 'UCN::UMR6072', 	12901 from dual union all
+  select 'UCN::IMAGE', 	12901 from dual union all
+  select 'UCN::INSTRUME', 	12901 from dual union all
+  select 'UCN::ISLAND', 	12901 from dual union all
+  select 'UCN::MAD', 	12901 from dual union all
+  select 'UCN::SISTEM', 	12901 from dual union all
+  select 'UCN::UMR6072E', 	12901 from dual union all
+  select 'UCN::EA4656', 	12921 from dual union all
+  select 'UCN::UMRS1199', 	12921 from dual union all
+  select 'UCN::UPR3266', 	12922 from dual union all
+  select 'UCN::UMR6415', 	12922 from dual union all
+  select 'URN::6614', 	12925 from dual union all
+  select 'URN::UMR6614', 	12925 from dual union all
+  select 'INSA::24768', 	12925 from dual union all
+  select 'URN::EA1292', 	12926 from dual union all
+  select 'URN::EA4528', 	12926 from dual union all
+  select 'URN::LCAP4528', 	12926 from dual union all
+  select 'URN::UMR6036', 	12927 from dual union all
+  select 'URN::6036', 	12927 from dual union all
+  select 'URN::FRE2735', 	12927 from dual union all
+  select 'UCN::FRE3101', 	12928 from dual union all
+  select 'URN::6522', 	12928 from dual union all
+  select 'INSA::28697', 	12928 from dual union all
+  select 'URN::UMR6522', 	12928 from dual union all
+  select 'URN::UMR6270', 	12928 from dual union all
+  select 'UCN::EA4255', 	12929 from dual union all
+  select 'UCN::EACRISCO', 	12929 from dual union all
+  select 'UCN::FRE2805', 	12929 from dual union all
+  select 'INSA::24780', 	12961 from dual union all
+  select 'URN::INSA', 	12961 from dual union all
+  select 'INSA::31146', 	12962 from dual union all
+  select 'INSA::35728', 	12962 from dual union all
+  select 'ULHN::UMR-I02', 	12963 from dual union all
+  select 'ULHN::SEBIO', 	12963 from dual union all
+  select 'ULHN::EA3221', 	12964 from dual union all
+  select 'ULHN::URCOM', 	12964 from dual union all
+  select 'URN::EA2658', 	12965 from dual union all
+  select 'URN::2658', 	12965 from dual union all
+  select 'URN::EA3230', 	12965 from dual union all
+  select 'COMUE::351', 	12966 from dual union all
+  select 'INSA::28318', 	12966 from dual union all
+  select 'URN::351', 	12966 from dual union all
+  select 'ULHN::351', 	12966 from dual union all
+  select 'INSA::33309', 	12966 from dual union all
+  select 'INSA::31544', 	12966 from dual union all
+  select 'URN::6634', 	12967 from dual union all
+  select 'INSA::24789', 	12967 from dual union all
+  select 'URN::UMR6634', 	12967 from dual union all
+  select 'UCN::181', 	12981 from dual union all
+  select 'ULHN::265', 	13001 from dual union all
+  select 'UCN::UMR6266H', 	13041 from dual union all
+  select 'UCN::FRE2795H', 	13041 from dual union all
+  select 'UCN::UMR6228H', 	13041 from dual union all
+  select 'URN::2122', 	13101 from dual union all
+  select 'URN::IFRSI', 	13101 from dual union all
+  select 'URN::EA2122', 	13101 from dual union all
+  select 'URN::U982', 	13121 from dual union all
+  select 'URN::UMRS982', 	13121 from dual union all
+  select 'URN::2010', 	13161 from dual union all
+  select 'URN::JE2010', 	13161 from dual union all
+  select 'URN::EA2260', 	13181 from dual union all
+  select 'URN::2260', 	13181 from dual union all
+  select 'URN::2124', 	13201 from dual union all
+  select 'URN::EA2124', 	13201 from dual union all
+  select 'URN::1305', 	13221 from dual union all
+  select 'URN::EA1305', 	13221 from dual union all
+  select 'URN::UMR6065', 	13241 from dual union all
+  select 'URN::6065', 	13241 from dual union all
+  select 'URN::2125', 	13261 from dual union all
+  select 'URN::EA2125', 	13261 from dual union all
+  select 'URN::EA2656', 	13281 from dual union all
+  select 'URN::2656', 	13281 from dual union all
+  select 'URN::6063', 	13301 from dual union all
+  select 'URN::UMR6063', 	13301 from dual union all
+  select 'URN::EA1293', 	13321 from dual union all
+  select 'URN::1293', 	13321 from dual union all
+  select 'URN::EA1290', 	13323 from dual union all
+  select 'URN::1290', 	13323 from dual union all
+  select 'URN::413', 	13324 from dual union all
+  select 'URN::INSERM', 	13324 from dual union all
+  select 'URN::519', 	13325 from dual union all
+  select 'URN::U519', 	13325 from dual union all
+  select 'URN::EA3228', 	13326 from dual union all
+  select 'URN::2009', 	13326 from dual union all
+  select 'URN::2123', 	13327 from dual union all
+  select 'URN::EA2123', 	13327 from dual union all
+  select 'UCN::EALASLAR', 	13328 from dual union all
+  select 'UCN::EA4256', 	13328 from dual union all
+  select 'UCN::EA3917', 	13341 from dual union all
+  select 'UCN::EAMOCOTE', 	13341 from dual union all
+  select 'UCN::EAGMPC', 	13361 from dual union all
+  select 'URN::U905', 	13381 from dual union all
+  select 'URN::UMRS905', 	13381 from dual union all
+  select 'URN::UMR6037', 	13382 from dual union all
+  select 'URN::6037', 	13382 from dual union all
+  select 'UCN::UMRS1237', 	13383 from dual union all
+  select 'UCN::UMRS919*', 	13383 from dual union all
+  select 'URN::H', 	13384 from dual union all
+  select 'URN::EA3234', 	13385 from dual union all
+  select 'URN::B', 	13385 from dual union all
+  select 'ULHN::GREAH', 	13386 from dual union all
+  select 'ULHN::EA3220', 	13386 from dual union all
+  select 'ULHN::LMAH', 	13387 from dual union all
+  select 'ULHN::EA3821', 	13387 from dual union all
+  select 'URN::EA2657', 	13421 from dual union all
+  select 'URN::2657', 	13421 from dual union all
+  select 'UCN::EA3918', 	13521 from dual union all
+  select 'UCN::EACERREV', 	13521 from dual union all
+  select 'ULHN::UMR6294', 	13541 from dual union all
+  select 'ULHN::LOMC', 	13541 from dual union all
+  select 'ULHN::EA1013', 	13561 from dual union all
+  select 'ULHN::LEXFEIM', 	13561 from dual union all
+  select 'UCN::EA967', 	13581 from dual union all
+  select 'URN::UMRS1234', 	13583 from dual union all
+  select 'URN::UMRS1245', 	13584 from dual union all
+  select 'ULHN::GRIC', 	13585 from dual union all
+  select 'ULHN::EA4314', 	13585 from dual union all
+  select 'URN::EA4312', 	13586 from dual union all
+  select 'URN::EA3831', 	13587 from dual union all
+  select 'URN::EA3830', 	13588 from dual union all
+  select 'URN::EA4308', 	13589 from dual union all
+  select 'URN::EA3233', 	13590 from dual union all
+  select 'URN::EA3229', 	13591 from dual union all
+  select 'URN::EA4353', 	13592 from dual union all
+  select 'UCN::EA4650', 	13594 from dual union all
+  select 'UCN::EA2129', 	13595 from dual union all
+  select 'URN::EA4702', 	13596 from dual union all
+  select 'URN::EA4703', 	13597 from dual union all
+  select 'URN::EA4705', 	13598 from dual union all
+  select 'ULHN::EA7263', 	13599 from dual union all
+  select 'ULHN::EDHEN', 	13599 from dual union all
+  select 'URN::EA7474', 	13600 from dual union all
+  select 'URN::EA7475', 	13601 from dual union all
+  select 'URN::EA7476', 	13602 from dual union all
+  select 'URN::UMR6085', 	13603 from dual union all
+  select 'URN::UMRS1073', 	13604 from dual union all
+  select 'URN::UMRS1096', 	13605 from dual union all
+  select 'URN::UMRS1239', 	13606 from dual union all
+  select 'UCN::EA7478', 	13607 from dual union all
+  select 'UCN::EA4253', 	13608 from dual union all
+  select 'UCN::EALUSAC', 	13608 from dual union all
+  select 'UCN::EAERLIS', 	13609 from dual union all
+  select 'UCN::EA4254', 	13609 from dual union all
+  select 'URN::G', 	13621 from dual union all
+  select 'URN::EA3832', 	13621 from dual union all
+  select 'INSA::28701', 	13622 from dual union all
+  select 'URN::EA4704', 	13622 from dual union all
+  select 'UCN::EA4258', 	13623 from dual union all
+  select 'UCN::EACERMN', 	13623 from dual union all
+  select 'UCN::EALRPMN', 	13624 from dual union all
+  select 'UCN::EA4257', 	13624 from dual union all
+  select 'UCN::EACENTRE', 	13625 from dual union all
+  select 'UCN::EA4252', 	13625 from dual union all
+  select 'UCN::EA3213', 	13626 from dual union all
+  select 'UCN::EAMILA', 	13626 from dual union all
+  select 'UCN::UMR6552', 	13627 from dual union all
+  select 'URN::EA3800', 	13741 from dual union all
+  select 'URN::C101', 	13801 from dual union all
+  select 'URN::EA7519', 	13821 from dual union all
+  select 'URN::EA7464', 	13861 from dual
+)
+select STRUCTURE_SUBSTIT_ID_SEQ.nextval, sf.id, tmp.TO_STRUCTURE_ID, 1, 1
+from tmp
+       join structure sf on sf.SOURCE_CODE = tmp.FROM_SOURCE_CODE;
 
---
--- Domaines scientifiques des UR.
---
-select 'select ''' || u.SOURCE_CODE || ''', ', d.ID || ' from dual union all'
-from UNITE_DOMAINE_LINKER ud
-       join UNITE_RECH u on u.id = ud.UNITE_ID
-       join DOMAINE_SCIENTIFIQUE d on d.id = ud.DOMAINE_ID
-order by u.id;
-/*
+
 insert into UNITE_DOMAINE_LINKER(UNITE_ID, DOMAINE_ID)
-  with tmp(UR_SOURCE_CODE, DOMAINE_ID) as (
-    select 'UCN::EA2132', 	7 from dual union all
-    select 'UCN::EA2607', 	2 from dual union all
-    select 'UCN::EA2608', 	5 from dual union all
-    select 'UCN::EA2610', 	6 from dual union all
-    select 'UCN::EA3915', 	4 from dual union all
-    select 'UCN::EA4260', 	7 from dual union all
-    select 'UCN::EA4655', 	5 from dual union all
-    select 'UCN::EA7450', 	5 from dual union all
-    select 'UCN::EA7451', 	5 from dual union all
-    select 'UCN::EA7452', 	7 from dual union all
-    select 'UCN::EA7455', 	6 from dual union all
-    select 'UCN::EA7466', 	5 from dual union all
-    select 'UCN::FRE2001', 	5 from dual union all
-    select 'UCN::FRE3251', 	7 from dual union all
-    select 'UCN::UMR6139', 	1 from dual union all
-    select 'UCN::UMR6211', 	7 from dual union all
-    select 'UCN::UMR6252', 	2 from dual union all
-    select 'UCN::UMR6273', 	6 from dual union all
-    select 'UCN::UMR6506', 	4 from dual union all
-    select 'UCN::UMR6507', 	4 from dual union all
-    select 'UCN::UMR6508', 	4 from dual union all
-    select 'UCN::UMR6534', 	2 from dual union all
-    select 'UCN::UMR6554', 	7 from dual union all
-    select 'UCN::UMR6590', 	7 from dual union all
-    select 'UCN::UMR7208', 	5 from dual union all
-    select 'UCN::UMR8240', 	7 from dual union all
-    select 'UCN::UMRA950', 	10 from dual union all
-    select 'UCN::UMRA957', 	5 from dual union all
-    select 'UCN::UMRS1075', 	5 from dual union all
-    select 'COMUE::5bcf10cdc12f1', 	5 from dual union all
-    select 'COMUE::5bcffdac8c2ae', 	5 from dual union all
-    select 'COMUE::5bcfffa3e4c4f', 	9 from dual union all
-    select 'COMUE::5bd0013d4a466', 	7 from dual union all
-    select 'COMUE::5bd0046492c23', 	7 from dual union all
-    select 'COMUE::EA4651', 	5 from dual union all
-    select 'COMUE::EA7454', 	7 from dual union all
-    select 'COMUE::UMR6143', 	3 from dual union all
-    select 'COMUE::EA4358', 	10 from dual union all
-    select 'COMUE::5bd17fea6496c', 	4 from dual union all
-    select 'COMUE::5bd1809584b37', 	9 from dual union all
-    select 'COMUE::5bd18386c5d8b', 	2 from dual union all
-    select 'COMUE::5bd1842140a2b', 	8 from dual union all
-    select 'COMUE::5bd185992c294', 	4 from dual union all
-    select 'COMUE::5bd186b7ac61a', 	6 from dual union all
-    select 'COMUE::24780', 	1 from dual union all
-    select 'COMUE::35728', 	2 from dual union all
-    select 'COMUE::35728', 	8 from dual union all
-    select 'COMUE::5bd18caacbb13', 	10 from dual union all
-    select 'COMUE::5bd18e60b5c7d', 	4 from dual union all
-    select 'COMUE::5bd193abde42d', 	2 from dual union all
-    select 'COMUE::5bd4262256e3b', 	5 from dual union all
-    select 'COMUE::5bd547e2215c2', 	10 from dual union all
-    select 'COMUE::5bd5505e7738b', 	6 from dual union all
-    select 'COMUE::5bd55591e4017', 	5 from dual union all
-    select 'COMUE::5bd55d7324739', 	2 from dual union all
-    select 'COMUE::5bd55d7324739', 	8 from dual union all
-    select 'COMUE::5bd55dc78e592', 	1 from dual union all
-    select 'COMUE::5bdd493201c1c', 	6 from dual union all
-    select 'COMUE::5be03a8f6b7e3', 	2 from dual union all
-    select 'COMUE::5be03a8f6b7e3', 	8 from dual union all
-    select 'COMUE::LEXFEIM', 	7 from dual union all
-    select 'COMUE::EA967', 	7 from dual union all
-    select 'COMUE::UMRS1234', 	5 from dual union all
-    select 'COMUE::UMRS1245', 	5 from dual union all
-    select 'COMUE::GRIC', 	6 from dual union all
-    select 'COMUE::EA4312', 	5 from dual union all
-    select 'COMUE::EA3831', 	6 from dual union all
-    select 'COMUE::EA3830', 	5 from dual union all
-    select 'COMUE::EA4308', 	5 from dual union all
-    select 'COMUE::EA3233', 	4 from dual union all
-    select 'COMUE::EA3229', 	6 from dual union all
-    select 'COMUE::EA4353', 	9 from dual union all
-    select 'COMUE::EA4650', 	5 from dual union all
-    select 'COMUE::EA2129', 	6 from dual union all
-    select 'COMUE::EA4702', 	7 from dual union all
-    select 'COMUE::EA4703', 	7 from dual union all
-    select 'COMUE::EA4705', 	6 from dual union all
-    select 'COMUE::EDHEN', 	7 from dual union all
-    select 'COMUE::EA7474', 	7 from dual union all
-    select 'COMUE::EA7475', 	7 from dual union all
-    select 'COMUE::EA7476', 	6 from dual union all
-    select 'COMUE::UMR6085', 	1 from dual union all
-    select 'COMUE::UMRS1073', 	5 from dual union all
-    select 'COMUE::UMRS1096', 	5 from dual union all
-    select 'COMUE::UMRS1239', 	5 from dual union all
-    select 'COMUE::EA7478', 	9 from dual union all
-    select 'COMUE::5be062beaa651', 	2 from dual union all
-    select 'COMUE::5be062beaa651', 	8 from dual union all
-    select 'COMUE::5be063a17146f', 	6 from dual union all
-    select 'COMUE::5be11e3e093b2', 	7 from dual union all
-    select 'COMUE::5be11ee6f0173', 	4 from dual union all
-    select 'COMUE::5be11ee6f0173', 	8 from dual union all
-    select 'COMUE::5be120edaab8f', 	4 from dual union all
-    select 'COMUE::5be120edaab8f', 	5 from dual union all
-    select 'COMUE::UMR6552', 	5 from dual union all
-    select 'URN::C101', 	10 from dual union all
-    select 'URN::EA7519', 	10 from dual union all
-    select 'COMUE::EA3800', 	5 from dual union all
-    select 'COMUE::C101', 	10 from dual union all
-    select 'COMUE::EA7519', 	10 from dual union all
-    select 'COMUE::EA7464', 	7 from dual
-  )
-  select ur.id, tmp.DOMAINE_ID
-  from tmp
-  join UNITE_RECH ur on ur.SOURCE_CODE = tmp.UR_SOURCE_CODE;
-*/
+with tmp(UR_SOURCE_CODE, DOMAINE_ID) as (
+  select 'UCN::EA2132', 	7 from dual union all
+  select 'UCN::EA2607', 	2 from dual union all
+  select 'UCN::EA2608', 	5 from dual union all
+  select 'UCN::EA2610', 	6 from dual union all
+  select 'UCN::EA3915', 	4 from dual union all
+  select 'UCN::EA4260', 	7 from dual union all
+  select 'UCN::EA4655', 	5 from dual union all
+  select 'UCN::EA7450', 	5 from dual union all
+  select 'UCN::EA7451', 	5 from dual union all
+  select 'UCN::EA7452', 	7 from dual union all
+  select 'UCN::EA7455', 	6 from dual union all
+  select 'UCN::EA7466', 	5 from dual union all
+  select 'UCN::FRE2001', 	5 from dual union all
+  select 'UCN::FRE3251', 	7 from dual union all
+  select 'UCN::UMR6139', 	1 from dual union all
+  select 'UCN::UMR6211', 	7 from dual union all
+  select 'UCN::UMR6252', 	2 from dual union all
+  select 'UCN::UMR6273', 	6 from dual union all
+  select 'UCN::UMR6506', 	4 from dual union all
+  select 'UCN::UMR6507', 	4 from dual union all
+  select 'UCN::UMR6508', 	4 from dual union all
+  select 'UCN::UMR6534', 	2 from dual union all
+  select 'UCN::UMR6554', 	7 from dual union all
+  select 'UCN::UMR6590', 	7 from dual union all
+  select 'UCN::UMR7208', 	5 from dual union all
+  select 'UCN::UMR8240', 	7 from dual union all
+  select 'UCN::UMRA950', 	10 from dual union all
+  select 'UCN::UMRA957', 	5 from dual union all
+  select 'UCN::UMRS1075', 	5 from dual union all
+  select 'COMUE::5bcf10cdc12f1', 	5 from dual union all
+  select 'COMUE::5bcffdac8c2ae', 	5 from dual union all
+  select 'COMUE::5bcfffa3e4c4f', 	9 from dual union all
+  select 'COMUE::5bd0013d4a466', 	7 from dual union all
+  select 'COMUE::5bd0046492c23', 	7 from dual union all
+  select 'COMUE::EA4651', 	5 from dual union all
+  select 'COMUE::EA7454', 	7 from dual union all
+  select 'COMUE::UMR6143', 	3 from dual union all
+  select 'COMUE::EA4358', 	10 from dual union all
+  select 'COMUE::5bd17fea6496c', 	4 from dual union all
+  select 'COMUE::5bd1809584b37', 	9 from dual union all
+  select 'COMUE::5bd18386c5d8b', 	2 from dual union all
+  select 'COMUE::5bd1842140a2b', 	8 from dual union all
+  select 'COMUE::5bd185992c294', 	4 from dual union all
+  select 'COMUE::5bd186b7ac61a', 	6 from dual union all
+  select 'COMUE::24780', 	1 from dual union all
+  select 'COMUE::35728', 	2 from dual union all
+  select 'COMUE::35728', 	8 from dual union all
+  select 'COMUE::5bd18caacbb13', 	10 from dual union all
+  select 'COMUE::5bd18e60b5c7d', 	4 from dual union all
+  select 'COMUE::5bd193abde42d', 	2 from dual union all
+  select 'COMUE::5bd4262256e3b', 	5 from dual union all
+  select 'COMUE::5bd547e2215c2', 	10 from dual union all
+  select 'COMUE::5bd5505e7738b', 	6 from dual union all
+  select 'COMUE::5bd55591e4017', 	5 from dual union all
+  select 'COMUE::5bd55d7324739', 	2 from dual union all
+  select 'COMUE::5bd55d7324739', 	8 from dual union all
+  select 'COMUE::5bd55dc78e592', 	1 from dual union all
+  select 'COMUE::5bdd493201c1c', 	6 from dual union all
+  select 'COMUE::5be03a8f6b7e3', 	2 from dual union all
+  select 'COMUE::5be03a8f6b7e3', 	8 from dual union all
+  select 'COMUE::LEXFEIM', 	7 from dual union all
+  select 'COMUE::EA967', 	7 from dual union all
+  select 'COMUE::UMRS1234', 	5 from dual union all
+  select 'COMUE::UMRS1245', 	5 from dual union all
+  select 'COMUE::GRIC', 	6 from dual union all
+  select 'COMUE::EA4312', 	5 from dual union all
+  select 'COMUE::EA3831', 	6 from dual union all
+  select 'COMUE::EA3830', 	5 from dual union all
+  select 'COMUE::EA4308', 	5 from dual union all
+  select 'COMUE::EA3233', 	4 from dual union all
+  select 'COMUE::EA3229', 	6 from dual union all
+  select 'COMUE::EA4353', 	9 from dual union all
+  select 'COMUE::EA4650', 	5 from dual union all
+  select 'COMUE::EA2129', 	6 from dual union all
+  select 'COMUE::EA4702', 	7 from dual union all
+  select 'COMUE::EA4703', 	7 from dual union all
+  select 'COMUE::EA4705', 	6 from dual union all
+  select 'COMUE::EDHEN', 	7 from dual union all
+  select 'COMUE::EA7474', 	7 from dual union all
+  select 'COMUE::EA7475', 	7 from dual union all
+  select 'COMUE::EA7476', 	6 from dual union all
+  select 'COMUE::UMR6085', 	1 from dual union all
+  select 'COMUE::UMRS1073', 	5 from dual union all
+  select 'COMUE::UMRS1096', 	5 from dual union all
+  select 'COMUE::UMRS1239', 	5 from dual union all
+  select 'COMUE::EA7478', 	9 from dual union all
+  select 'COMUE::5be062beaa651', 	2 from dual union all
+  select 'COMUE::5be062beaa651', 	8 from dual union all
+  select 'COMUE::5be063a17146f', 	6 from dual union all
+  select 'COMUE::5be11e3e093b2', 	7 from dual union all
+  select 'COMUE::5be11ee6f0173', 	4 from dual union all
+  select 'COMUE::5be11ee6f0173', 	8 from dual union all
+  select 'COMUE::5be120edaab8f', 	4 from dual union all
+  select 'COMUE::5be120edaab8f', 	5 from dual union all
+  select 'COMUE::UMR6552', 	5 from dual union all
+  select 'URN::C101', 	10 from dual union all
+  select 'URN::EA7519', 	10 from dual union all
+  select 'COMUE::EA3800', 	5 from dual union all
+  select 'COMUE::C101', 	10 from dual union all
+  select 'COMUE::EA7519', 	10 from dual union all
+  select 'COMUE::EA7464', 	7 from dual
+)
+select ur.id, tmp.DOMAINE_ID
+from tmp
+       join UNITE_RECH ur on ur.SOURCE_CODE = tmp.UR_SOURCE_CODE;
 
---
--- Etablissements de rattachement des UR.
---
-select 'select ''' || u.SOURCE_CODE || ''', ', '''' || e.SOURCE_CODE || ''' from dual union all'
-from ETABLISSEMENT_RATTACH ud
-       join UNITE_RECH u on u.id = ud.UNITE_ID
-       join ETABLISSEMENT e on e.id = ud.ETABLISSEMENT_ID
-order by u.id;
-/*
+
 insert into ETABLISSEMENT_RATTACH(ID, UNITE_ID, ETABLISSEMENT_ID)
-  with tmp(UR_SOURCE_CODE, ETAB_SOURCE_CODE) as (
-    select 'UCN::EA2132', 	'ULHN::0141408E' from dual union all
-    select 'UCN::EA2607', 	'ULHN::0141408E' from dual union all
-    select 'UCN::EA2608', 	'ULHN::0141408E' from dual union all
-    select 'UCN::EA2610', 	'ULHN::0141408E' from dual union all
-    select 'UCN::EA3915', 	'ULHN::0141408E' from dual union all
-    select 'UCN::EA4260', 	'ULHN::0141408E' from dual union all
-    select 'UCN::EA4655', 	'ULHN::0141408E' from dual union all
-    select 'UCN::EA7450', 	'ULHN::0141408E' from dual union all
-    select 'UCN::EA7451', 	'ULHN::0141408E' from dual union all
-    select 'UCN::EA7452', 	'INSA::1024456498' from dual union all
-    select 'UCN::EA7455', 	'INSA::9854525117' from dual union all
-    select 'UCN::EA7466', 	'UCN::0141408E' from dual union all
-    select 'UCN::FRE2001', 	'URN::0141408E' from dual union all
-    select 'UCN::FRE3251', 	'INSA::9974538124' from dual union all
-    select 'UCN::FRE3251', 	'URN::0141408E' from dual union all
-    select 'UCN::UMR6072', 	'UCN::BACLESSE' from dual union all
-    select 'UCN::UMR6139', 	'ULHN::0141408E' from dual union all
-    select 'UCN::UMR6211', 	'ULHN::0141408E' from dual union all
-    select 'UCN::UMR6211', 	'ULHN::0350936C' from dual union all
-    select 'UCN::UMR6252', 	'INSA::10984636259' from dual union all
-    select 'UCN::UMR6252', 	'ULHN::0141408E' from dual union all
-    select 'UCN::UMR6273', 	'UCN::0141408E' from dual union all
-    select 'UCN::UMR6506', 	'INSA::9854525117' from dual union all
-    select 'UCN::UMR6506', 	'INSA::10984636259' from dual union all
-    select 'UCN::UMR6507', 	'INSA::10984636259' from dual union all
-    select 'UCN::UMR6507', 	'ULHN::0141408E' from dual union all
-    select 'UCN::UMR6508', 	'INSA::10984636259' from dual union all
-    select 'UCN::UMR6508', 	'ULHN::0141408E' from dual union all
-    select 'UCN::UMR6534', 	'ULHN::0141408E' from dual union all
-    select 'UCN::UMR6534', 	'INSA::10984636259' from dual union all
-    select 'UCN::UMR6554', 	'URN::0440984F' from dual union all
-    select 'UCN::UMR6554', 	'URN::0290346U' from dual union all
-    select 'UCN::UMR6554', 	'ULHN::0350936C' from dual union all
-    select 'UCN::UMR6554', 	'URN::0490970N' from dual union all
-    select 'UCN::UMR6554', 	'ULHN::0141408E' from dual union all
-    select 'UCN::UMR6590', 	'UCN::0490970N' from dual union all
-    select 'UCN::UMR6590', 	'ULHN::0720916E' from dual union all
-    select 'UCN::UMR6590', 	'ULHN::0141408E' from dual union all
-    select 'UCN::UMR6590', 	'URN::0440984F' from dual union all
-    select 'UCN::UMR6590', 	'ULHN::0350936C' from dual union all
-    select 'UCN::UMR7208', 	'INSA::9854525117' from dual union all
-    select 'UCN::UMR7208', 	'UCN::0751722P' from dual union all
-    select 'UCN::UMR7208', 	'UCN::0753494R' from dual union all
-    select 'UCN::UMR8240', 	'ULHN::0751721N' from dual union all
-    select 'UCN::UMR8240', 	'ULHN::0141408E' from dual union all
-    select 'UCN::UMRA950', 	'ULHN::0141408E' from dual union all
-    select 'UCN::UMRA957', 	'UCN::ECVETERI' from dual union all
-    select 'UCN::UMRS1075', 	'UCN::0141408E' from dual union all
-    select 'COMUE::5bcf10cdc12f1', 	'ULHN::0141408E' from dual union all
-    select 'COMUE::5bcffdac8c2ae', 	'ULHN::0141408E' from dual union all
-    select 'COMUE::5bcfffa3e4c4f', 	'URN::0760165S' from dual union all
-    select 'COMUE::5bcfffa3e4c4f', 	'ULHN::0761904G' from dual union all
-    select 'COMUE::5bcfffa3e4c4f', 	'URN::0762762P' from dual union all
-    select 'COMUE::5bd0013d4a466', 	'ULHN::0761904G' from dual union all
-    select 'COMUE::5bd0013d4a466', 	'UCN::0762762P' from dual union all
-    select 'COMUE::5bd0013d4a466', 	'ULHN::0141408E' from dual union all
-    select 'COMUE::5bd0046492c23', 	'URN::0762762P' from dual union all
-    select 'COMUE::5bd0046492c23', 	'ULHN::0141408E' from dual union all
-    select 'COMUE::5bd0046492c23', 	'UCN::0761904G' from dual union all
-    select 'COMUE::EA4651', 	'ULHN::0141408E' from dual union all
-    select 'COMUE::EA4651', 	'UCN::0761904G' from dual union all
-    select 'COMUE::EA7454', 	'UCN::0761904G' from dual union all
-    select 'COMUE::EA7454', 	'UCN::0141408E' from dual union all
-    select 'COMUE::UMR6143', 	'INSA::9854525117' from dual union all
-    select 'COMUE::UMR6143', 	'UCN::0761904G' from dual union all
-    select 'COMUE::EA4358', 	'ULHN::0761904G' from dual union all
-    select 'COMUE::5bd17fea6496c', 	'URN::0760165S' from dual union all
-    select 'COMUE::5bd17fea6496c', 	'UCN::0761904G' from dual union all
-    select 'COMUE::5bd1809584b37', 	'INSA::10984636259' from dual union all
-    select 'COMUE::5bd1809584b37', 	'INSA::9854525117' from dual union all
-    select 'COMUE::5bd18386c5d8b', 	'UCN::9999999G' from dual union all
-    select 'COMUE::5bd1842140a2b', 	'URN::0760165S' from dual union all
-    select 'COMUE::5bd1842140a2b', 	'UCN::0761904G' from dual union all
-    select 'COMUE::5bd185992c294', 	'UCN::0761904G' from dual union all
-    select 'COMUE::5bd185992c294', 	'URN::0760165S' from dual union all
-    select 'COMUE::5bd186b7ac61a', 	'ULHN::0141408E' from dual union all
-    select 'COMUE::24780', 	'URN::0760165S' from dual union all
-    select 'COMUE::35728', 	'URN::0760165S' from dual union all
-    select 'COMUE::5bd18caacbb13', 	'ULHN::0511296G' from dual union all
-    select 'COMUE::5bd18caacbb13', 	'URN::0762762P' from dual union all
-    select 'COMUE::5bd18e60b5c7d', 	'URN::0762762P' from dual union all
-    select 'COMUE::5bd193abde42d', 	'URN::0760165S' from dual union all
-    select 'COMUE::5bd193abde42d', 	'UCN::0761904G' from dual union all
-    select 'COMUE::5bd4262256e3b', 	'ULHN::0141408E' from dual union all
-    select 'COMUE::5bd4262256e3b', 	'UCN::0761904G' from dual union all
-    select 'COMUE::5bd547e2215c2', 	'UCN::0761904G' from dual union all
-    select 'COMUE::5bd5505e7738b', 	'ULHN::0141408E' from dual union all
-    select 'COMUE::5bd55591e4017', 	'ULHN::0141408E' from dual union all
-    select 'COMUE::5bd55d7324739', 	'URN::0762762P' from dual union all
-    select 'COMUE::5bd55dc78e592', 	'UCN::0762762P' from dual union all
-    select 'COMUE::5bdd493201c1c', 	'ULHN::0141408E' from dual union all
-    select 'COMUE::5be03a8f6b7e3', 	'URN::0762762P' from dual union all
-    select 'COMUE::LEXFEIM', 	'URN::0762762P' from dual union all
-    select 'COMUE::EA967', 	'ULHN::0141408E' from dual union all
-    select 'COMUE::UMRS1234', 	'ULHN::0761904G' from dual union all
-    select 'COMUE::UMRS1245', 	'UCN::0761904G' from dual union all
-    select 'COMUE::GRIC', 	'URN::0762762P' from dual union all
-    select 'COMUE::EA4312', 	'UCN::0761904G' from dual union all
-    select 'COMUE::EA3831', 	'UCN::0761904G' from dual union all
-    select 'COMUE::EA3830', 	'UCN::0761904G' from dual union all
-    select 'COMUE::EA4308', 	'UCN::0761904G' from dual union all
-    select 'COMUE::EA4308', 	'UCN::0593560Z' from dual union all
-    select 'COMUE::EA3233', 	'UCN::0761904G' from dual union all
-    select 'COMUE::EA3229', 	'UCN::0761904G' from dual union all
-    select 'COMUE::EA4353', 	'UCN::0762378X' from dual union all
-    select 'COMUE::EA4353', 	'ULHN::0761904G' from dual union all
-    select 'COMUE::EA4650', 	'ULHN::0141408E' from dual union all
-    select 'COMUE::EA2129', 	'ULHN::0141408E' from dual union all
-    select 'COMUE::EA4702', 	'UCN::0761904G' from dual union all
-    select 'COMUE::EA4703', 	'UCN::0761904G' from dual union all
-    select 'COMUE::EA4705', 	'UCN::0761904G' from dual union all
-    select 'COMUE::EDHEN', 	'URN::0762762P' from dual union all
-    select 'COMUE::EA7474', 	'UCN::0761904G' from dual union all
-    select 'COMUE::EA7475', 	'UCN::0761904G' from dual union all
-    select 'COMUE::EA7476', 	'UCN::0761904G' from dual union all
-    select 'COMUE::UMR6085', 	'UCN::0761904G' from dual union all
-    select 'COMUE::UMRS1073', 	'UCN::0761904G' from dual union all
-    select 'COMUE::UMRS1096', 	'UCN::0761904G' from dual union all
-    select 'COMUE::UMRS1239', 	'UCN::0761904G' from dual union all
-    select 'COMUE::EA7478', 	'ULHN::0141408E' from dual union all
-    select 'COMUE::5be062beaa651', 	'ULHN::0141408E' from dual union all
-    select 'COMUE::5be063a17146f', 	'ULHN::0141408E' from dual union all
-    select 'COMUE::5be11e3e093b2', 	'UCN::0761904G' from dual union all
-    select 'COMUE::5be11ee6f0173', 	'UCN::0761904G' from dual union all
-    select 'COMUE::5be11ee6f0173', 	'URN::0760165S' from dual union all
-    select 'COMUE::5be120edaab8f', 	'ULHN::0141408E' from dual union all
-    select 'COMUE::UMR6552', 	'URN::0350936C' from dual union all
-    select 'COMUE::UMR6552', 	'INSA::1024456498' from dual union all
-    select 'URN::C101', 	'URN::0763400H' from dual union all
-    select 'URN::EA7519', 	'URN::0763400H' from dual union all
-    select 'COMUE::EA3800', 	'ULHN::0761904G' from dual union all
-    select 'COMUE::EA3800', 	'ULHN::0511296G' from dual union all
-    select 'COMUE::C101', 	'URN::0763400H' from dual union all
-    select 'COMUE::EA7519', 	'URN::0763400H' from dual union all
-    select 'COMUE::EA7464', 	'URN::0760164R' from dual
-  )
-  select ETABLISSEMENT_RATTACH_ID_SEQ.nextval, ur.id, e.ID
-  from tmp
-    join UNITE_RECH ur on ur.SOURCE_CODE = tmp.UR_SOURCE_CODE
-    join ETABLISSEMENT e on e.SOURCE_CODE = tmp.ETAB_SOURCE_CODE;
-*/
+with tmp(UR_SOURCE_CODE, ETAB_SOURCE_CODE) as (
+  select 'UCN::EA2132', 	'ULHN::0141408E' from dual union all
+  select 'UCN::EA2607', 	'ULHN::0141408E' from dual union all
+  select 'UCN::EA2608', 	'ULHN::0141408E' from dual union all
+  select 'UCN::EA2610', 	'ULHN::0141408E' from dual union all
+  select 'UCN::EA3915', 	'ULHN::0141408E' from dual union all
+  select 'UCN::EA4260', 	'ULHN::0141408E' from dual union all
+  select 'UCN::EA4655', 	'ULHN::0141408E' from dual union all
+  select 'UCN::EA7450', 	'ULHN::0141408E' from dual union all
+  select 'UCN::EA7451', 	'ULHN::0141408E' from dual union all
+  select 'UCN::EA7452', 	'INSA::1024456498' from dual union all
+  select 'UCN::EA7455', 	'INSA::9854525117' from dual union all
+  select 'UCN::EA7466', 	'UCN::0141408E' from dual union all
+  select 'UCN::FRE2001', 	'URN::0141408E' from dual union all
+  select 'UCN::FRE3251', 	'INSA::9974538124' from dual union all
+  select 'UCN::FRE3251', 	'URN::0141408E' from dual union all
+  select 'UCN::UMR6072', 	'UCN::BACLESSE' from dual union all
+  select 'UCN::UMR6139', 	'ULHN::0141408E' from dual union all
+  select 'UCN::UMR6211', 	'ULHN::0141408E' from dual union all
+  select 'UCN::UMR6211', 	'ULHN::0350936C' from dual union all
+  select 'UCN::UMR6252', 	'INSA::10984636259' from dual union all
+  select 'UCN::UMR6252', 	'ULHN::0141408E' from dual union all
+  select 'UCN::UMR6273', 	'UCN::0141408E' from dual union all
+  select 'UCN::UMR6506', 	'INSA::9854525117' from dual union all
+  select 'UCN::UMR6506', 	'INSA::10984636259' from dual union all
+  select 'UCN::UMR6507', 	'INSA::10984636259' from dual union all
+  select 'UCN::UMR6507', 	'ULHN::0141408E' from dual union all
+  select 'UCN::UMR6508', 	'INSA::10984636259' from dual union all
+  select 'UCN::UMR6508', 	'ULHN::0141408E' from dual union all
+  select 'UCN::UMR6534', 	'ULHN::0141408E' from dual union all
+  select 'UCN::UMR6534', 	'INSA::10984636259' from dual union all
+  select 'UCN::UMR6554', 	'URN::0440984F' from dual union all
+  select 'UCN::UMR6554', 	'URN::0290346U' from dual union all
+  select 'UCN::UMR6554', 	'ULHN::0350936C' from dual union all
+  select 'UCN::UMR6554', 	'URN::0490970N' from dual union all
+  select 'UCN::UMR6554', 	'ULHN::0141408E' from dual union all
+  select 'UCN::UMR6590', 	'UCN::0490970N' from dual union all
+  select 'UCN::UMR6590', 	'ULHN::0720916E' from dual union all
+  select 'UCN::UMR6590', 	'ULHN::0141408E' from dual union all
+  select 'UCN::UMR6590', 	'URN::0440984F' from dual union all
+  select 'UCN::UMR6590', 	'ULHN::0350936C' from dual union all
+  select 'UCN::UMR7208', 	'INSA::9854525117' from dual union all
+  select 'UCN::UMR7208', 	'UCN::0751722P' from dual union all
+  select 'UCN::UMR7208', 	'UCN::0753494R' from dual union all
+  select 'UCN::UMR8240', 	'ULHN::0751721N' from dual union all
+  select 'UCN::UMR8240', 	'ULHN::0141408E' from dual union all
+  select 'UCN::UMRA950', 	'ULHN::0141408E' from dual union all
+  select 'UCN::UMRA957', 	'UCN::ECVETERI' from dual union all
+  select 'UCN::UMRS1075', 	'UCN::0141408E' from dual union all
+  select 'COMUE::5bcf10cdc12f1', 	'ULHN::0141408E' from dual union all
+  select 'COMUE::5bcffdac8c2ae', 	'ULHN::0141408E' from dual union all
+  select 'COMUE::5bcfffa3e4c4f', 	'URN::0760165S' from dual union all
+  select 'COMUE::5bcfffa3e4c4f', 	'ULHN::0761904G' from dual union all
+  select 'COMUE::5bcfffa3e4c4f', 	'URN::0762762P' from dual union all
+  select 'COMUE::5bd0013d4a466', 	'ULHN::0761904G' from dual union all
+  select 'COMUE::5bd0013d4a466', 	'UCN::0762762P' from dual union all
+  select 'COMUE::5bd0013d4a466', 	'ULHN::0141408E' from dual union all
+  select 'COMUE::5bd0046492c23', 	'URN::0762762P' from dual union all
+  select 'COMUE::5bd0046492c23', 	'ULHN::0141408E' from dual union all
+  select 'COMUE::5bd0046492c23', 	'UCN::0761904G' from dual union all
+  select 'COMUE::EA4651', 	'ULHN::0141408E' from dual union all
+  select 'COMUE::EA4651', 	'UCN::0761904G' from dual union all
+  select 'COMUE::EA7454', 	'UCN::0761904G' from dual union all
+  select 'COMUE::EA7454', 	'UCN::0141408E' from dual union all
+  select 'COMUE::UMR6143', 	'INSA::9854525117' from dual union all
+  select 'COMUE::UMR6143', 	'UCN::0761904G' from dual union all
+  select 'COMUE::EA4358', 	'ULHN::0761904G' from dual union all
+  select 'COMUE::5bd17fea6496c', 	'URN::0760165S' from dual union all
+  select 'COMUE::5bd17fea6496c', 	'UCN::0761904G' from dual union all
+  select 'COMUE::5bd1809584b37', 	'INSA::10984636259' from dual union all
+  select 'COMUE::5bd1809584b37', 	'INSA::9854525117' from dual union all
+  select 'COMUE::5bd18386c5d8b', 	'UCN::9999999G' from dual union all
+  select 'COMUE::5bd1842140a2b', 	'URN::0760165S' from dual union all
+  select 'COMUE::5bd1842140a2b', 	'UCN::0761904G' from dual union all
+  select 'COMUE::5bd185992c294', 	'UCN::0761904G' from dual union all
+  select 'COMUE::5bd185992c294', 	'URN::0760165S' from dual union all
+  select 'COMUE::5bd186b7ac61a', 	'ULHN::0141408E' from dual union all
+  select 'COMUE::24780', 	'URN::0760165S' from dual union all
+  select 'COMUE::35728', 	'URN::0760165S' from dual union all
+  select 'COMUE::5bd18caacbb13', 	'ULHN::0511296G' from dual union all
+  select 'COMUE::5bd18caacbb13', 	'URN::0762762P' from dual union all
+  select 'COMUE::5bd18e60b5c7d', 	'URN::0762762P' from dual union all
+  select 'COMUE::5bd193abde42d', 	'URN::0760165S' from dual union all
+  select 'COMUE::5bd193abde42d', 	'UCN::0761904G' from dual union all
+  select 'COMUE::5bd4262256e3b', 	'ULHN::0141408E' from dual union all
+  select 'COMUE::5bd4262256e3b', 	'UCN::0761904G' from dual union all
+  select 'COMUE::5bd547e2215c2', 	'UCN::0761904G' from dual union all
+  select 'COMUE::5bd5505e7738b', 	'ULHN::0141408E' from dual union all
+  select 'COMUE::5bd55591e4017', 	'ULHN::0141408E' from dual union all
+  select 'COMUE::5bd55d7324739', 	'URN::0762762P' from dual union all
+  select 'COMUE::5bd55dc78e592', 	'UCN::0762762P' from dual union all
+  select 'COMUE::5bdd493201c1c', 	'ULHN::0141408E' from dual union all
+  select 'COMUE::5be03a8f6b7e3', 	'URN::0762762P' from dual union all
+  select 'COMUE::LEXFEIM', 	'URN::0762762P' from dual union all
+  select 'COMUE::EA967', 	'ULHN::0141408E' from dual union all
+  select 'COMUE::UMRS1234', 	'ULHN::0761904G' from dual union all
+  select 'COMUE::UMRS1245', 	'UCN::0761904G' from dual union all
+  select 'COMUE::GRIC', 	'URN::0762762P' from dual union all
+  select 'COMUE::EA4312', 	'UCN::0761904G' from dual union all
+  select 'COMUE::EA3831', 	'UCN::0761904G' from dual union all
+  select 'COMUE::EA3830', 	'UCN::0761904G' from dual union all
+  select 'COMUE::EA4308', 	'UCN::0761904G' from dual union all
+  select 'COMUE::EA4308', 	'UCN::0593560Z' from dual union all
+  select 'COMUE::EA3233', 	'UCN::0761904G' from dual union all
+  select 'COMUE::EA3229', 	'UCN::0761904G' from dual union all
+  select 'COMUE::EA4353', 	'UCN::0762378X' from dual union all
+  select 'COMUE::EA4353', 	'ULHN::0761904G' from dual union all
+  select 'COMUE::EA4650', 	'ULHN::0141408E' from dual union all
+  select 'COMUE::EA2129', 	'ULHN::0141408E' from dual union all
+  select 'COMUE::EA4702', 	'UCN::0761904G' from dual union all
+  select 'COMUE::EA4703', 	'UCN::0761904G' from dual union all
+  select 'COMUE::EA4705', 	'UCN::0761904G' from dual union all
+  select 'COMUE::EDHEN', 	'URN::0762762P' from dual union all
+  select 'COMUE::EA7474', 	'UCN::0761904G' from dual union all
+  select 'COMUE::EA7475', 	'UCN::0761904G' from dual union all
+  select 'COMUE::EA7476', 	'UCN::0761904G' from dual union all
+  select 'COMUE::UMR6085', 	'UCN::0761904G' from dual union all
+  select 'COMUE::UMRS1073', 	'UCN::0761904G' from dual union all
+  select 'COMUE::UMRS1096', 	'UCN::0761904G' from dual union all
+  select 'COMUE::UMRS1239', 	'UCN::0761904G' from dual union all
+  select 'COMUE::EA7478', 	'ULHN::0141408E' from dual union all
+  select 'COMUE::5be062beaa651', 	'ULHN::0141408E' from dual union all
+  select 'COMUE::5be063a17146f', 	'ULHN::0141408E' from dual union all
+  select 'COMUE::5be11e3e093b2', 	'UCN::0761904G' from dual union all
+  select 'COMUE::5be11ee6f0173', 	'UCN::0761904G' from dual union all
+  select 'COMUE::5be11ee6f0173', 	'URN::0760165S' from dual union all
+  select 'COMUE::5be120edaab8f', 	'ULHN::0141408E' from dual union all
+  select 'COMUE::UMR6552', 	'URN::0350936C' from dual union all
+  select 'COMUE::UMR6552', 	'INSA::1024456498' from dual union all
+  select 'URN::C101', 	'URN::0763400H' from dual union all
+  select 'URN::EA7519', 	'URN::0763400H' from dual union all
+  select 'COMUE::EA3800', 	'ULHN::0761904G' from dual union all
+  select 'COMUE::EA3800', 	'ULHN::0511296G' from dual union all
+  select 'COMUE::C101', 	'URN::0763400H' from dual union all
+  select 'COMUE::EA7519', 	'URN::0763400H' from dual union all
+  select 'COMUE::EA7464', 	'URN::0760164R' from dual
+)
+select ETABLISSEMENT_RATTACH_ID_SEQ.nextval, ur.id, e.ID
+from tmp
+       join UNITE_RECH ur on ur.SOURCE_CODE = tmp.UR_SOURCE_CODE
+       join ETABLISSEMENT e on e.SOURCE_CODE = tmp.ETAB_SOURCE_CODE;
 
---
--- Individus créés dans SYGAL.
---
-update INDIVIDU set HISTO_CREATEUR_ID = 1, HISTO_MODIFICATEUR_ID = 1 where SOURCE_ID = 1;
-select * from INDIVIDU where SOURCE_ID = 1 order by id;
-rollback ;
-/*
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'GAUTHIER', 'GAUTHIER', 'Bertrand', null, null, 'bertrand.gauthier@unicaen.fr', null, 'Française', 'UCN::00021237', 1, 1, TO_DATE('2018-07-12 15:36:06', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-12 15:36:06', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, 'M.', 'Bernard', 'Bernard', 'Bruno', null, null, 'bruno.bernard@unicaen.fr', null, null, 'UCN::00000035', 1, 1, TO_DATE('2018-07-13 14:49:46', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-13 14:49:46', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Metivier', 'Metivier', 'Jean-Philippe', null, null, 'jean-philippe.metivier@unicaen.fr', null, null, 'UCN::00017566', 1, 1, TO_DATE('2018-07-16 09:22:08', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-16 09:22:08', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Bernard', 'Bernard', 'Sara', null, null, 'sara.bernard@unicaen.fr', null, null, 'UCN::00004855', 1, 1, TO_DATE('2018-07-16 11:05:01', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-16 11:05:01', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Le Bourhis', 'Le Bourhis', 'Francoise', null, null, 'francoise.lebourhis@unicaen.fr', null, null, 'UCN::00002121', 1, 1, TO_DATE('2018-07-16 11:28:45', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-16 11:28:45', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Grosjean;Holvas', 'Grosjean;Holvas', 'Sandrine', null, null, 'sandrine.holvas@unicaen.fr', null, null, 'UCN::00005112', 1, 1, TO_DATE('2018-07-16 12:05:24', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-16 12:05:24', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Lefrancois;Le Gloan', 'Lefrancois;Le Gloan', 'Celine', null, null, 'celine.legloan@unicaen.fr', null, null, 'UCN::00003635', 1, 1, TO_DATE('2018-07-16 12:50:43', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-16 12:50:43', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Barakat', 'Barakat', 'Mahmoud', null, null, 'mahmoud.barakat@unicaen.fr', null, null, 'UCN::00099652', 1, 1, TO_DATE('2018-07-16 12:53:58', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-16 12:53:58', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Cauchois', 'Cauchois', 'Bartholome', null, null, 'bartholome.cauchois@unicaen.fr', null, null, 'UCN::00100611', 1, 1, TO_DATE('2018-07-16 15:04:50', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-16 15:04:50', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Brossard', 'Brossard', 'Stephane', null, null, 'stephane.brossard@unicaen.fr', null, null, 'UCN::00002054', 1, 1, TO_DATE('2018-07-17 09:08:13', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-17 09:08:13', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Masson', 'Masson', 'Marie-Josephine', null, null, 'josephine.masson@unicaen.fr', null, null, 'UCN::00005310', 1, 1, TO_DATE('2018-07-17 09:12:23', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-17 09:12:23', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Maviel', 'Maviel', 'Sandrine', null, null, 'sandrine.maviel@unicaen.fr', null, null, 'UCN::00002316', 1, 1, TO_DATE('2018-07-17 09:31:14', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-17 09:31:14', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Boudier', 'Boudier', 'Dimitri', null, null, 'dimitri.boudier@unicaen.fr', null, null, 'UCN::00106811', 1, 1, TO_DATE('2018-07-17 10:12:18', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-17 10:12:18', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Chauvat', 'Chauvat', 'Marie-Christine', null, null, 'marie-christine.chauvat@unicaen.fr', null, null, 'UCN::00003600', 1, 1, TO_DATE('2018-07-17 17:58:50', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-17 17:58:50', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Brocero', 'Brocero', 'Guillaume', null, null, 'guillaume.brocero@unicaen.fr', null, null, 'UCN::00102851', 1, 1, TO_DATE('2018-07-18 09:05:05', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-18 09:05:05', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Thomazo', 'Thomazo', 'Emmanuel', null, null, 'emmanuel.thomazo@unicaen.fr', null, null, 'UCN::00005790', 1, 1, TO_DATE('2018-07-18 15:16:16', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-18 15:16:16', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Busson', 'Busson', 'Raphael', null, null, 'raphael.busson@unicaen.fr', null, null, 'UCN::00083479', 1, 1, TO_DATE('2018-07-19 16:21:35', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-19 16:21:35', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Caille', 'Caille', 'Laetitia', null, null, 'laetitia.caille@unicaen.fr', null, null, 'UCN::00107994', 1, 1, TO_DATE('2018-07-24 11:26:39', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-24 11:26:39', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Picot', 'Picot', 'Florent', null, null, 'florent.picot@unicaen.fr', null, null, 'UCN::00110332', 1, 1, TO_DATE('2018-07-26 09:55:48', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-26 09:55:48', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Yembi Yembi', 'Yembi Yembi', 'Louis Kadryl', null, null, 'louis-kadryl.yembi-yembi@unicaen.fr', null, null, 'UCN::00122855', 1, 1, TO_DATE('2018-07-26 15:26:40', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-26 15:26:40', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Coufourier', 'Coufourier', 'Sebastien', null, null, 'sebastien.coufourier@unicaen.fr', null, null, 'UCN::00099336', 1, 1, TO_DATE('2018-08-04 18:07:59', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-08-04 18:07:59', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Cohen', 'Cohen', 'Jonathan', null, null, 'jonathan.cohen@unicaen.fr', null, null, 'UCN::00109401', 1, 1, TO_DATE('2018-08-13 14:31:14', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-08-13 14:31:14', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Henri', 'Henri', 'Maxime', null, null, 'maxime.henri@unicaen.fr', null, null, 'UCN::00109932', 1, 1, TO_DATE('2018-08-16 00:07:12', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-08-16 00:07:12', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Walker', 'Walker', 'Etienne', null, null, 'etienne.walker@unicaen.fr', null, null, 'UCN::00036411', 1, 1, TO_DATE('2018-08-19 18:52:45', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-08-19 18:52:45', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Brier', 'Brier', 'Jean-Baptiste', null, null, 'jean-baptiste.brier@unicaen.fr', null, null, 'UCN::00005273', 1, 1, TO_DATE('2018-08-20 11:29:37', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-08-20 11:29:37', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Paris', 'Paris', 'David', null, null, 'david.paris@unicaen.fr', null, null, 'UCN::00017260', 1, 1, TO_DATE('2018-08-21 09:34:37', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-08-21 09:34:37', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Rizk', 'Rizk', 'Rania', null, null, 'rania.rizk@unicaen.fr', null, null, 'UCN::00103231', 1, 1, TO_DATE('2018-08-21 12:27:15', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-08-21 12:27:15', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Contentin', 'Contentin', 'Romain', null, null, 'romain.contentin@unicaen.fr', null, null, 'UCN::00109392', 1, 1, TO_DATE('2018-08-27 09:48:51', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-08-27 09:48:51', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Perdriel', 'Perdriel', 'Jean-Baptiste', null, null, 'jean-baptiste.perdriel@unicaen.fr', null, null, 'UCN::00129998', 1, 1, TO_DATE('2018-08-27 12:11:08', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-08-27 12:11:08', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Fournet', 'Fournet', 'Sylviane', null, null, 'sylviane.fournet@unicaen.fr', null, null, 'UCN::00004663', 1, 1, TO_DATE('2018-08-27 15:32:39', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-08-27 15:32:39', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Rego', 'Rego', 'Diane', null, null, 'diane.rego@unicaen.fr', null, null, 'UCN::00065775', 1, 1, TO_DATE('2018-08-27 18:21:11', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-08-27 18:21:11', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Lariagon', 'Lariagon', 'Renaud', null, null, 'renaud.lariagon@unicaen.fr', null, null, 'UCN::00082339', 1, 1, TO_DATE('2018-08-28 04:03:22', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-08-28 04:03:22', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Lienart;Bollengier', 'Lienart;Bollengier', 'Muriel', null, null, 'muriel.bollengier@unicaen.fr', null, null, 'UCN::00001801', 1, 1, TO_DATE('2018-08-31 09:23:56', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-08-31 09:23:56', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Nilsen', 'Nilsen', 'Catrine', null, null, 'catrine.nilsen@unicaen.fr', null, null, 'UCN::00091621', 1, 1, TO_DATE('2018-09-03 11:14:19', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-09-03 11:14:19', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Chieu', 'Chieu', 'Laetitia', null, null, 'laetitia.chieu@unicaen.fr', null, null, 'UCN::00018800', 1, 1, TO_DATE('2018-09-04 14:56:48', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-09-04 14:56:48', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Paysant', 'Paysant', 'Hippolyte', null, null, '21306066@etu.unicaen.fr', null, null, 'UCN::21306066', 1, 1, TO_DATE('2018-09-04 15:06:50', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-09-04 15:06:50', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Vernon', 'Vernon', 'Megane', null, null, 'megane.vernon@unicaen.fr', null, null, 'UCN::00107411', 1, 1, TO_DATE('2018-09-05 22:39:46', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-09-05 22:39:46', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Lebris;Parey', 'Lebris;Parey', 'Blandine', null, null, 'blandine.parey@unicaen.fr', null, null, 'UCN::00016117', 1, 1, TO_DATE('2018-09-06 09:46:18', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-09-06 09:46:18', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Paquet', 'Paquet', 'Fabien', null, null, 'fabien.paquet@unicaen.fr', null, null, 'UCN::00107371', 1, 1, TO_DATE('2018-09-06 13:50:02', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-09-06 13:50:02', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Mohamad', 'Mohamad', 'Ranim', null, null, 'ranim.mohamad@unicaen.fr', null, null, 'UCN::00110131', 1, 1, TO_DATE('2018-09-07 08:30:03', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-09-07 08:30:03', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Kharmich', 'Kharmich', 'Zouhair', null, null, 'zouhair.kharmich@univ-lehavre.fr', null, null, 'ULHN::8197', 1, 1, TO_DATE('2018-09-18 13:19:21', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-09-18 13:19:21', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'GAUTHIER', 'GAUTHIER', 'Bertrand', null, null, 'bertrand.gauthier@unicaen.fr', null, 'Française', 'UCN::00021237', 1, 1, TO_DATE('2018-07-12 15:36:06', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-12 15:36:06', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, 'M.', 'Bernard', 'Bernard', 'Bruno', null, null, 'bruno.bernard@unicaen.fr', null, null, 'UCN::00000035', 1, 1, TO_DATE('2018-07-13 14:49:46', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-13 14:49:46', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Metivier', 'Metivier', 'Jean-Philippe', null, null, 'jean-philippe.metivier@unicaen.fr', null, null, 'UCN::00017566', 1, 1, TO_DATE('2018-07-16 09:22:08', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-16 09:22:08', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Bernard', 'Bernard', 'Sara', null, null, 'sara.bernard@unicaen.fr', null, null, 'UCN::00004855', 1, 1, TO_DATE('2018-07-16 11:05:01', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-16 11:05:01', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Le Bourhis', 'Le Bourhis', 'Francoise', null, null, 'francoise.lebourhis@unicaen.fr', null, null, 'UCN::00002121', 1, 1, TO_DATE('2018-07-16 11:28:45', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-16 11:28:45', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Grosjean;Holvas', 'Grosjean;Holvas', 'Sandrine', null, null, 'sandrine.holvas@unicaen.fr', null, null, 'UCN::00005112', 1, 1, TO_DATE('2018-07-16 12:05:24', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-16 12:05:24', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Lefrancois;Le Gloan', 'Lefrancois;Le Gloan', 'Celine', null, null, 'celine.legloan@unicaen.fr', null, null, 'UCN::00003635', 1, 1, TO_DATE('2018-07-16 12:50:43', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-16 12:50:43', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Barakat', 'Barakat', 'Mahmoud', null, null, 'mahmoud.barakat@unicaen.fr', null, null, 'UCN::00099652', 1, 1, TO_DATE('2018-07-16 12:53:58', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-16 12:53:58', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Cauchois', 'Cauchois', 'Bartholome', null, null, 'bartholome.cauchois@unicaen.fr', null, null, 'UCN::00100611', 1, 1, TO_DATE('2018-07-16 15:04:50', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-16 15:04:50', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Brossard', 'Brossard', 'Stephane', null, null, 'stephane.brossard@unicaen.fr', null, null, 'UCN::00002054', 1, 1, TO_DATE('2018-07-17 09:08:13', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-17 09:08:13', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Masson', 'Masson', 'Marie-Josephine', null, null, 'josephine.masson@unicaen.fr', null, null, 'UCN::00005310', 1, 1, TO_DATE('2018-07-17 09:12:23', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-17 09:12:23', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Maviel', 'Maviel', 'Sandrine', null, null, 'sandrine.maviel@unicaen.fr', null, null, 'UCN::00002316', 1, 1, TO_DATE('2018-07-17 09:31:14', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-17 09:31:14', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Boudier', 'Boudier', 'Dimitri', null, null, 'dimitri.boudier@unicaen.fr', null, null, 'UCN::00106811', 1, 1, TO_DATE('2018-07-17 10:12:18', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-17 10:12:18', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Chauvat', 'Chauvat', 'Marie-Christine', null, null, 'marie-christine.chauvat@unicaen.fr', null, null, 'UCN::00003600', 1, 1, TO_DATE('2018-07-17 17:58:50', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-17 17:58:50', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Brocero', 'Brocero', 'Guillaume', null, null, 'guillaume.brocero@unicaen.fr', null, null, 'UCN::00102851', 1, 1, TO_DATE('2018-07-18 09:05:05', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-18 09:05:05', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Thomazo', 'Thomazo', 'Emmanuel', null, null, 'emmanuel.thomazo@unicaen.fr', null, null, 'UCN::00005790', 1, 1, TO_DATE('2018-07-18 15:16:16', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-18 15:16:16', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Busson', 'Busson', 'Raphael', null, null, 'raphael.busson@unicaen.fr', null, null, 'UCN::00083479', 1, 1, TO_DATE('2018-07-19 16:21:35', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-19 16:21:35', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Caille', 'Caille', 'Laetitia', null, null, 'laetitia.caille@unicaen.fr', null, null, 'UCN::00107994', 1, 1, TO_DATE('2018-07-24 11:26:39', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-24 11:26:39', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Picot', 'Picot', 'Florent', null, null, 'florent.picot@unicaen.fr', null, null, 'UCN::00110332', 1, 1, TO_DATE('2018-07-26 09:55:48', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-26 09:55:48', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Yembi Yembi', 'Yembi Yembi', 'Louis Kadryl', null, null, 'louis-kadryl.yembi-yembi@unicaen.fr', null, null, 'UCN::00122855', 1, 1, TO_DATE('2018-07-26 15:26:40', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-26 15:26:40', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Coufourier', 'Coufourier', 'Sebastien', null, null, 'sebastien.coufourier@unicaen.fr', null, null, 'UCN::00099336', 1, 1, TO_DATE('2018-08-04 18:07:59', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-08-04 18:07:59', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Cohen', 'Cohen', 'Jonathan', null, null, 'jonathan.cohen@unicaen.fr', null, null, 'UCN::00109401', 1, 1, TO_DATE('2018-08-13 14:31:14', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-08-13 14:31:14', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Henri', 'Henri', 'Maxime', null, null, 'maxime.henri@unicaen.fr', null, null, 'UCN::00109932', 1, 1, TO_DATE('2018-08-16 00:07:12', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-08-16 00:07:12', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Walker', 'Walker', 'Etienne', null, null, 'etienne.walker@unicaen.fr', null, null, 'UCN::00036411', 1, 1, TO_DATE('2018-08-19 18:52:45', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-08-19 18:52:45', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Brier', 'Brier', 'Jean-Baptiste', null, null, 'jean-baptiste.brier@unicaen.fr', null, null, 'UCN::00005273', 1, 1, TO_DATE('2018-08-20 11:29:37', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-08-20 11:29:37', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Paris', 'Paris', 'David', null, null, 'david.paris@unicaen.fr', null, null, 'UCN::00017260', 1, 1, TO_DATE('2018-08-21 09:34:37', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-08-21 09:34:37', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Rizk', 'Rizk', 'Rania', null, null, 'rania.rizk@unicaen.fr', null, null, 'UCN::00103231', 1, 1, TO_DATE('2018-08-21 12:27:15', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-08-21 12:27:15', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Contentin', 'Contentin', 'Romain', null, null, 'romain.contentin@unicaen.fr', null, null, 'UCN::00109392', 1, 1, TO_DATE('2018-08-27 09:48:51', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-08-27 09:48:51', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Perdriel', 'Perdriel', 'Jean-Baptiste', null, null, 'jean-baptiste.perdriel@unicaen.fr', null, null, 'UCN::00129998', 1, 1, TO_DATE('2018-08-27 12:11:08', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-08-27 12:11:08', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Fournet', 'Fournet', 'Sylviane', null, null, 'sylviane.fournet@unicaen.fr', null, null, 'UCN::00004663', 1, 1, TO_DATE('2018-08-27 15:32:39', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-08-27 15:32:39', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Rego', 'Rego', 'Diane', null, null, 'diane.rego@unicaen.fr', null, null, 'UCN::00065775', 1, 1, TO_DATE('2018-08-27 18:21:11', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-08-27 18:21:11', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Lariagon', 'Lariagon', 'Renaud', null, null, 'renaud.lariagon@unicaen.fr', null, null, 'UCN::00082339', 1, 1, TO_DATE('2018-08-28 04:03:22', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-08-28 04:03:22', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Lienart;Bollengier', 'Lienart;Bollengier', 'Muriel', null, null, 'muriel.bollengier@unicaen.fr', null, null, 'UCN::00001801', 1, 1, TO_DATE('2018-08-31 09:23:56', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-08-31 09:23:56', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Nilsen', 'Nilsen', 'Catrine', null, null, 'catrine.nilsen@unicaen.fr', null, null, 'UCN::00091621', 1, 1, TO_DATE('2018-09-03 11:14:19', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-09-03 11:14:19', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Chieu', 'Chieu', 'Laetitia', null, null, 'laetitia.chieu@unicaen.fr', null, null, 'UCN::00018800', 1, 1, TO_DATE('2018-09-04 14:56:48', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-09-04 14:56:48', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Vernon', 'Vernon', 'Megane', null, null, 'megane.vernon@unicaen.fr', null, null, 'UCN::00107411', 1, 1, TO_DATE('2018-09-05 22:39:46', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-09-05 22:39:46', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Lebris;Parey', 'Lebris;Parey', 'Blandine', null, null, 'blandine.parey@unicaen.fr', null, null, 'UCN::00016117', 1, 1, TO_DATE('2018-09-06 09:46:18', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-09-06 09:46:18', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Paquet', 'Paquet', 'Fabien', null, null, 'fabien.paquet@unicaen.fr', null, null, 'UCN::00107371', 1, 1, TO_DATE('2018-09-06 13:50:02', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-09-06 13:50:02', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Mohamad', 'Mohamad', 'Ranim', null, null, 'ranim.mohamad@unicaen.fr', null, null, 'UCN::00110131', 1, 1, TO_DATE('2018-09-07 08:30:03', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-09-07 08:30:03', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Kharmich', 'Kharmich', 'Zouhair', null, null, 'zouhair.kharmich@univ-lehavre.fr', null, null, 'ULHN::8197', 1, 1, TO_DATE('2018-09-18 13:19:21', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-09-18 13:19:21', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
 INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Laisne', 'Laisne', 'Alban', null, null, 'alban.laisne@univ-lehavre.fr', null, null, 'ULHN::22888', 1, 1, TO_DATE('2018-09-18 14:17:35', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-09-18 14:17:35', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Despois', 'Despois', 'Emilie', null, null, 'emilie.despois1@univ-rouen.fr', null, null, 'URN::39624', 1, 1, TO_DATE('2018-09-18 15:32:11', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-09-18 15:32:11', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+--INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Despois', 'Despois', 'Emilie', null, null, 'emilie.despois1@univ-rouen.fr', null, null, 'URN::39624', 1, 1, TO_DATE('2018-09-18 15:32:11', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-09-18 15:32:11', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
 INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Le Bodo', 'Le Bodo', 'Christine', null, null, 'christine.le-bodo@univ-lehavre.fr', null, null, 'ULHN::3361', 1, 1, TO_DATE('2018-09-19 15:32:56', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-09-19 15:32:56', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
 INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Marchand', 'Marchand', 'Julien', null, null, 'julien.marchand@insa-rouen.fr', null, null, 'INSA::89184', 1, 1, TO_DATE('2018-09-21 07:56:02', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-09-21 07:56:02', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
 INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Lemercier', 'Lemercier', 'Rodolphe', null, null, 'rodolphe.lemercier@univ-rouen.fr', null, null, 'URN::9768', 1, 1, TO_DATE('2018-09-21 08:30:26', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-09-21 08:30:26', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
 INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Maeght', 'Maeght', 'Rachel', null, null, 'rachel.maeght@insa-rouen.fr', null, null, 'INSA::67366', 1, 1, TO_DATE('2018-09-21 11:12:11', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-09-21 11:12:11', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Auger', 'Auger', 'Stéphane', null, null, 'stephane.auger@normandie-univ.fr', null, null, 'COMUE::1318', 1, 1, TO_DATE('2018-09-25 09:45:14', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-09-25 09:45:14', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Tamion', 'Tamion', 'Sandra', null, null, 'sandra.tamion@univ-rouen.fr', null, null, 'URN::40858', 1, 1, TO_DATE('2018-09-26 10:21:53', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-09-26 10:21:53', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+--INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Auger', 'Auger', 'Stéphane', null, null, 'stephane.auger@normandie-univ.fr', null, null, 'COMUE::1318', 1, 1, TO_DATE('2018-09-25 09:45:14', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-09-25 09:45:14', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+--INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Tamion', 'Tamion', 'Sandra', null, null, 'sandra.tamion@univ-rouen.fr', null, null, 'URN::40858', 1, 1, TO_DATE('2018-09-26 10:21:53', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-09-26 10:21:53', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
 INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Coirre', 'Coirre', 'Mickael', null, null, 'mickael.coirre@univ-lehavre.fr', null, null, 'ULHN::1884', 1, 1, TO_DATE('2018-10-02 08:40:06', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-10-02 08:40:06', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
 INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Guyot', 'Guyot', 'Francoise', null, null, 'francoise.guyot@univ-lehavre.fr', null, null, 'ULHN::22381', 1, 1, TO_DATE('2018-10-04 11:07:37', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-10-04 11:07:37', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Reguer', 'Reguer', 'Daniel', null, null, 'daniel.reguer@univ-lehavre.fr', null, null, 'ULHN::1322', 1, 1, TO_DATE('2018-10-30 12:30:09', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-10-30 12:30:09', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
 INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Puechberty', 'Puechberty', 'Laurence', null, null, 'laurence.puechberty@univ-rouen.fr', null, null, 'URN::4029', 1, 1, TO_DATE('2018-10-30 17:44:04', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-10-30 17:44:04', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
 INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Moguerou', 'Moguerou', 'Philippe', null, null, 'philippe.moguerou@univ-rouen.fr', null, null, 'URN::19409', 1, 1, TO_DATE('2018-11-05 09:06:38', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-11-05 09:06:38', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
 INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Lahcen', 'Lahcen', 'Leila', null, null, 'leila.lahcen@univ-rouen.fr', null, null, 'URN::36625', 1, 1, TO_DATE('2018-11-05 09:56:24', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-11-05 09:56:24', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
 INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Ghislain', 'Ghislain', 'Marion', null, null, 'marion.ghislain@univ-rouen.fr', null, null, 'URN::47174', 1, 1, TO_DATE('2018-11-05 11:24:12', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-11-05 11:24:12', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Adalid', 'Adalid', 'Sebastien', null, null, 'sebastien.adalid@univ-lehavre.fr', null, null, 'ULHN::23124', 1, 1, TO_DATE('2018-11-05 11:27:03', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-11-05 11:27:03', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Ezan', 'Ezan', 'Pascale', null, null, 'pascale.ezan@univ-lehavre.fr', null, null, 'ULHN::21548', 1, 1, TO_DATE('2018-11-05 11:29:11', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-11-05 11:29:11', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
 INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Mallet', 'Mallet', 'Helene', null, null, 'helene.mallet@univ-rouen.fr', null, null, 'URN::44836', 1, 1, TO_DATE('2018-11-05 12:16:16', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-11-05 12:16:16', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Le Foll', 'Le Foll', 'Frank', null, null, 'frank.le-foll@univ-lehavre.fr', null, null, 'ULHN::22378', 1, 1, TO_DATE('2018-11-05 14:04:23', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-11-05 14:04:23', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
 INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Vander Eecken', 'Vander Eecken', 'Stephanie', null, null, 'stephanie.vander-eecken@insa-rouen.fr', null, null, 'INSA::69945', 1, 1, TO_DATE('2018-11-05 14:05:49', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-11-05 14:05:49', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
 INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Mandeville', 'Mandeville', 'Sophie', null, null, 'sophie.mandeville@univ-lehavre.fr', null, null, 'ULHN::23628', 1, 1, TO_DATE('2018-11-05 16:08:06', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-11-05 16:08:06', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Mathey', 'Mathey', 'Laurence', null, null, 'laurence.mathey@univ-lehavre.fr', null, null, 'ULHN::11391', 1, 1, TO_DATE('2018-11-06 08:30:25', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-11-06 08:30:25', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
 INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Godard', 'Godard', 'Catherine', null, null, 'catherine.godard@univ-rouen.fr', null, null, 'URN::13323', 1, 1, TO_DATE('2018-11-06 10:53:53', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-11-06 10:53:53', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
 INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Letetu', 'Letetu', 'Lynda', null, null, 'lynda.letetu@univ-rouen.fr', null, null, 'URN::8966', 1, 1, TO_DATE('2018-11-07 15:54:54', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-11-07 15:54:54', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
-INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Elie', 'Elie', 'Joseph', null, null, 'joseph.elie@univ-rouen.fr', null, null, 'URN::5165', 1, 1, TO_DATE('2018-11-12 10:30:27', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-11-12 10:30:27', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
+-- INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Elie', 'Elie', 'Joseph', null, null, 'joseph.elie@univ-rouen.fr', null, null, 'URN::5165', 1, 1, TO_DATE('2018-11-12 10:30:27', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-11-12 10:30:27', 'YYYY-MM-DD HH24:MI:SS'), null, null, null from dual;
 INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Leroux', 'Leroux', 'Denis', null, null, 'denis.leroux@univ-rouen.fr', null, null, 'URN::10871', 1, 1, TO_DATE('2018-12-06 16:59:57', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-12-06 16:59:57', 'YYYY-MM-DD HH24:MI:SS'), null, null, '10871' from dual;
 INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Dumontier', 'Dumontier', 'Rodolphe', null, null, 'rodolphe.dumontier3@univ-rouen.fr', null, null, 'URN::45835', 1, 1, TO_DATE('2018-12-10 14:36:19', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-12-10 14:36:19', 'YYYY-MM-DD HH24:MI:SS'), null, null, '45835' from dual;
 INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Fery', 'Fery', 'Karin', null, null, 'karin.fery@unicaen.fr', null, null, 'UCN::00134789', 1, 1, TO_DATE('2018-12-13 15:39:44', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-12-13 15:39:44', 'YYYY-MM-DD HH24:MI:SS'), null, null, '00134789' from dual;
-*/
+INSERT INTO INDIVIDU (ID, TYPE, CIVILITE, NOM_USUEL, NOM_PATRONYMIQUE, PRENOM1, PRENOM2, PRENOM3, EMAIL, DATE_NAISSANCE, NATIONALITE, SOURCE_CODE, SOURCE_ID, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, SUPANN_ID) select INDIVIDU_ID_SEQ.nextval, null, null, 'Sammour', 'Sammour', 'Karim', null, null, 'karim.sammour@unicaen.fr', null, null, 'UCN::00045190', 1, 1, TO_DATE('2019-01-02 18:20:03', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2019-01-02 18:20:03', 'YYYY-MM-DD HH24:MI:SS'), null, null, '00045190' from dual;
 
 
---
--- Vidage puis création des rôles (déclinés par structures).
---
+
 -- NB: lancer tel quel
-/*
 DELETE FROM ROLE; -- NB: va vider INDIVIDU_ROLE et ROLE_PRIVILEGE
--- rôles sans structure
+-- sans structure
 INSERT INTO role(ID, STRUCTURE_ID, CODE, LIBELLE, SOURCE_CODE, SOURCE_ID, ROLE_ID, IS_DEFAULT, LDAP_FILTER, ATTRIB_AUTO, THESE_DEP, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, TYPE_STRUCTURE_DEPENDANT_ID, ORDRE_AFFICHAGE) VALUES (241, null, 'OBSERV', 'Observateur', 'COMUE::OBSERV', 1, 'Observateur COMUE', 0, null, 0, 0, 1, TO_DATE('2018-09-18 09:15:46', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-09-18 09:15:46', 'YYYY-MM-DD HH24:MI:SS'), null, null, null, 'yy');
 INSERT INTO role(ID, STRUCTURE_ID, CODE, LIBELLE, SOURCE_CODE, SOURCE_ID, ROLE_ID, IS_DEFAULT, LDAP_FILTER, ATTRIB_AUTO, THESE_DEP, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, TYPE_STRUCTURE_DEPENDANT_ID, ORDRE_AFFICHAGE) VALUES (1, null, 'ADMIN_TECH', 'Administrateur technique', 'UCN::ADMIN_TECH', 1, 'Administrateur technique', 0, null, 0, 0, 1, TO_DATE('2018-07-12 11:17:12', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-12 11:17:12', 'YYYY-MM-DD HH24:MI:SS'), null, null, null, 'zzz');
--- rôles avec structure
+-- avec structure
 INSERT INTO role(ID, STRUCTURE_ID, CODE, LIBELLE, SOURCE_CODE, SOURCE_ID, ROLE_ID, IS_DEFAULT, LDAP_FILTER, ATTRIB_AUTO, THESE_DEP, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, TYPE_STRUCTURE_DEPENDANT_ID, ORDRE_AFFICHAGE) select 25, s.id, 'K', 'Co-directeur de thèse', 'UCN::K', 3, 'Co-directeur de thèse UCN', 0, null, 0, 1, 1, TO_DATE('2018-07-12 16:22:05', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-12 16:22:05', 'YYYY-MM-DD HH24:MI:SS'), null, null, null, 'dd' from structure s where s.SOURCE_CODE = 'COMUE::UCN';
 INSERT INTO role(ID, STRUCTURE_ID, CODE, LIBELLE, SOURCE_CODE, SOURCE_ID, ROLE_ID, IS_DEFAULT, LDAP_FILTER, ATTRIB_AUTO, THESE_DEP, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, TYPE_STRUCTURE_DEPENDANT_ID, ORDRE_AFFICHAGE) select 24, s.id, 'A', 'Membre absent', 'UCN::A', 3, 'Membre absent UCN', 0, null, 0, 1, 1, TO_DATE('2018-07-12 16:22:05', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-12 16:22:05', 'YYYY-MM-DD HH24:MI:SS'), null, null, null, 'zzz' from structure s where s.SOURCE_CODE = 'COMUE::UCN';
 INSERT INTO role(ID, STRUCTURE_ID, CODE, LIBELLE, SOURCE_CODE, SOURCE_ID, ROLE_ID, IS_DEFAULT, LDAP_FILTER, ATTRIB_AUTO, THESE_DEP, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, TYPE_STRUCTURE_DEPENDANT_ID, ORDRE_AFFICHAGE) select 23, s.id, 'B', 'Co-encadrant', 'UCN::B', 3, 'Co-encadrant UCN', 0, null, 0, 1, 1, TO_DATE('2018-07-12 16:22:05', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-07-12 16:22:05', 'YYYY-MM-DD HH24:MI:SS'), null, null, null, 'ee' from structure s where s.SOURCE_CODE = 'COMUE::UCN';
@@ -1011,12 +913,8 @@ INSERT INTO role(ID, STRUCTURE_ID, CODE, LIBELLE, SOURCE_CODE, SOURCE_ID, ROLE_I
 INSERT INTO role(ID, STRUCTURE_ID, CODE, LIBELLE, SOURCE_CODE, SOURCE_ID, ROLE_ID, IS_DEFAULT, LDAP_FILTER, ATTRIB_AUTO, THESE_DEP, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, TYPE_STRUCTURE_DEPENDANT_ID, ORDRE_AFFICHAGE) select 388, s.id, 'ED', 'École doctorale', 'COMUE::ED_COMUE::068', 1, 'École doctorale COMUE::068', 0, null, 0, 0, 1, TO_DATE('2018-10-30 15:29:38', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-10-30 15:29:38', 'YYYY-MM-DD HH24:MI:SS'), null, null, 2, 'zzz' from structure s where s.SOURCE_CODE = 'COMUE::68';
 INSERT INTO role(ID, STRUCTURE_ID, CODE, LIBELLE, SOURCE_CODE, SOURCE_ID, ROLE_ID, IS_DEFAULT, LDAP_FILTER, ATTRIB_AUTO, THESE_DEP, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, TYPE_STRUCTURE_DEPENDANT_ID, ORDRE_AFFICHAGE) select 392, s.id, 'ED', 'École doctorale', 'COMUE::ED_COMUE::350', 1, 'École doctorale COMUE::350', 0, null, 0, 0, 1, TO_DATE('2018-10-30 15:30:29', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-10-30 15:30:29', 'YYYY-MM-DD HH24:MI:SS'), null, null, 2, 'zzz' from structure s where s.SOURCE_CODE = 'COMUE::350';
 INSERT INTO role(ID, STRUCTURE_ID, CODE, LIBELLE, SOURCE_CODE, SOURCE_ID, ROLE_ID, IS_DEFAULT, LDAP_FILTER, ATTRIB_AUTO, THESE_DEP, HISTO_CREATEUR_ID, HISTO_CREATION, HISTO_MODIFICATEUR_ID, HISTO_MODIFICATION, HISTO_DESTRUCTEUR_ID, HISTO_DESTRUCTION, TYPE_STRUCTURE_DEPENDANT_ID, ORDRE_AFFICHAGE) select 421, s.id, 'UR', 'Unité de recherche', 'COMUE::UR_COMUE::UMR6072', 1, 'Unité de recherche GREYC (UMR6072)', 0, null, 0, 0, 1, TO_DATE('2018-11-19 17:21:36', 'YYYY-MM-DD HH24:MI:SS'), 1, TO_DATE('2018-11-19 17:21:36', 'YYYY-MM-DD HH24:MI:SS'), null, null, 3, 'zzz' from structure s where s.SOURCE_CODE = 'COMUE::5bd1809584b37';
-*/
 
---
--- Recréation des Privilèges.
---
--- NB: à lancer tel quel.
+
 delete from privilege;
 
 INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (161, 24, 'version-papier-corrigee', 'Validation de la remise de la version papier corrigée', 4300);
@@ -1102,6 +1000,7 @@ INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (37, 19, '
 INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (38, 19, 'modification-toutes-structures', 'Modification de toutes les substitutions ', 400);
 INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (39, 19, 'modification-sa-structure', 'Modification de la substitution de sa structure', 500);
 
+
 --
 -- Privilèges mini d'admin tech pour que je puisse accéder à l'appli !
 --
@@ -1110,6 +1009,7 @@ insert into ROLE_PRIVILEGE(ROLE_ID, PRIVILEGE_ID) VALUES (1, 1);
 insert into ROLE_PRIVILEGE(ROLE_ID, PRIVILEGE_ID) VALUES (1, 2);
 insert into ROLE_PRIVILEGE(ROLE_ID, PRIVILEGE_ID) VALUES (1, 3);
 insert into ROLE_PRIVILEGE(ROLE_ID, PRIVILEGE_ID) VALUES (1, 4);
+
 
 --
 -- Configuration des profils.
@@ -1383,143 +1283,139 @@ INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID) VALUES (127, 61);
 INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID) VALUES (129, 61);
 INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID) VALUES (409, 61);
 
+
 --
 -- Privilèges associés à chaque rôle.
 --
-/*
--- A FAIRE VIA L'INTERFACE : Application des profils.
-*/
+
+---------------> A FAIRE VIA L'INTERFACE : Application des profils.
 
 
---
--- Attributions de rôles aux individus.
---
-select distinct * from (
-  select 'select ''' || i.SOURCE_CODE || ''', ', '''' || r.SOURCE_CODE || ''' from dual union all'
-  from INDIVIDU_ROLE ir
-    join INDIVIDU i on i.id = ir.INDIVIDU_ID
-    join role r on r.id = ir.ROLE_ID
-)
-order by 1;
-/*
+
+
 delete from INDIVIDU_ROLE;
 
 insert into INDIVIDU_ROLE(ID, INDIVIDU_ID, ROLE_ID)
-  with tmp(INDIVIDU_SOURCE_CODE, ROLE_SOURCE_CODE) as (
-    select 'COMUE::1318', 	'UCN::ADMIN_TECH' from dual union all
-    select 'COMUE::1318', 	'URN::ADMIN' from dual union all
-    select 'COMUE::1318', 	'COMUE::OBSERV' from dual union all
-    select 'INSA::497872', 	'COMUE::ED' from dual union all
-    select 'INSA::67366', 	'INSA::BDD' from dual union all
-    select 'INSA::67366', 	'COMUE::OBSERV' from dual union all
-    select 'INSA::67366', 	'UCN::ADMIN_TECH' from dual union all
-    select 'INSA::67366', 	'INSA::ADMIN' from dual union all
-    select 'INSA::67366', 	'INSA::BU' from dual union all
-    select 'INSA::89184', 	'INSA::BDD' from dual union all
-    select 'INSA::89184', 	'INSA::ADMIN' from dual union all
-    select 'INSA::89184', 	'COMUE::OBSERV' from dual union all
-    select 'INSA::89184', 	'UCN::ADMIN_TECH' from dual union all
-    select 'INSA::89184', 	'INSA::BU' from dual union all
-    select 'UCN::00000035', 	'UCN::BDD' from dual union all
-    select 'UCN::00000035', 	'UCN::BU' from dual union all
-    select 'UCN::00000035', 	'UCN::ADMIN_TECH' from dual union all
-    select 'UCN::00000035', 	'UCN::ADMIN' from dual union all
-    select 'UCN::00001420', 	'COMUE::ED_UCN::556' from dual union all
-    select 'UCN::00001712', 	'COMUE::ED_UCN::242' from dual union all
-    select 'UCN::00002054', 	'UCN::BU' from dual union all
-    select 'UCN::00002121', 	'UCN::BDD' from dual union all
-    select 'UCN::00002316', 	'UCN::ADMIN_TECH' from dual union all
-    select 'UCN::00002316', 	'UCN::BDD' from dual union all
-    select 'UCN::00002370', 	'COMUE::ED_UCN::497' from dual union all
-    select 'UCN::00002615', 	'COMUE::ED_UCN::508' from dual union all
-    select 'UCN::00002747', 	'COMUE::ED_UCN::558' from dual union all
-    select 'UCN::00003600', 	'UCN::BU' from dual union all
-    select 'UCN::00003635', 	'UCN::BU' from dual union all
-    select 'UCN::00003646', 	'COMUE::ED_UCN::590' from dual union all
-    select 'UCN::00004663', 	'UCN::BDD' from dual union all
-    select 'UCN::00004855', 	'UCN::BU' from dual union all
-    select 'UCN::00004855', 	'UCN::ADMIN_TECH' from dual union all
-    select 'UCN::00004855', 	'UCN::ADMIN' from dual union all
-    select 'UCN::00005112', 	'UCN::BU' from dual union all
-    select 'UCN::00005191', 	'COMUE::ED_UCN::497' from dual union all
-    select 'UCN::00005273', 	'UCN::BU' from dual union all
-    select 'UCN::00005310', 	'UCN::BU' from dual union all
-    select 'UCN::00005790', 	'UCN::BU' from dual union all
-    select 'UCN::00006018', 	'UCN::ADMIN_TECH' from dual union all
-    select 'UCN::00017260', 	'UCN::BU' from dual union all
-    select 'UCN::00017566', 	'COMUE::ED' from dual union all
-    select 'UCN::00017566', 	'COMUE::UR' from dual union all
-    select 'UCN::00017566', 	'URN::BDD' from dual union all
-    select 'UCN::00017566', 	'UCN::ADMIN_TECH' from dual union all
-    select 'UCN::00017566', 	'UCN::BDD' from dual union all
-    select 'UCN::00019945', 	'COMUE::ED_UCN::591' from dual union all
-    select 'UCN::00021237', 	'COMUE::UR' from dual union all
-    select 'UCN::00021237', 	'COMUE::ED' from dual union all
-    select 'UCN::00021237', 	'UCN::BDD' from dual union all
-    select 'UCN::00021237', 	'UCN::ADMIN_TECH' from dual union all
-    select 'UCN::00029896', 	'COMUE::OBSERV' from dual union all
-    select 'UCN::00029896', 	'UCN::ADMIN' from dual union all
-    select 'UCN::00029896', 	'UCN::ADMIN_TECH' from dual union all
-    select 'UCN::00029896', 	'UCN::BDD' from dual union all
-    select 'UCN::00032954', 	'COMUE::ED_UCN::98' from dual union all
-    select 'UCN::00045190', 	'UCN::ADMIN_TECH' from dual union all
-    select 'UCN::00102573', 	'UCN::BDD' from dual union all
-    select 'UCN::00134789', 	'UCN::ADMIN_TECH' from dual union all
-    select 'ULHN::COD_PER_1024', 	'COMUE::ED' from dual union all
-    select 'ULHN::COD_PER_1753', 	'COMUE::ED' from dual union all
-    select 'ULHN::COD_PER_2383', 	'COMUE::OBSERV' from dual union all
-    select 'ULHN::COD_PER_2383', 	'ULHN::BDD' from dual union all
-    select 'ULHN::COD_PER_358', 	'COMUE::ED' from dual union all
-    select 'ULHN::COD_PER_561', 	'COMUE::ED' from dual union all
-    select 'ULHN::2175', 	'COMUE::ED' from dual union all
-    select 'ULHN::22381', 	'ULHN::BDD' from dual union all
-    select 'ULHN::22381', 	'COMUE::OBSERV' from dual union all
-    select 'ULHN::23628', 	'ULHN::BDD' from dual union all
-    select 'ULHN::3361', 	'UCN::ADMIN_TECH' from dual union all
-    select 'ULHN::3361', 	'ULHN::ADMIN' from dual union all
-    select 'ULHN::3361', 	'ULHN::BDD' from dual union all
-    select 'ULHN::8197', 	'ULHN::BDD' from dual union all
-    select 'ULHN::8197', 	'ULHN::BU' from dual union all
-    select 'ULHN::8197', 	'ULHN::ADMIN' from dual union all
-    select 'URN::10871', 	'UCN::ADMIN_TECH' from dual union all
-    select 'URN::11153', 	'COMUE::ED' from dual union all
-    select 'URN::11276', 	'COMUE::ED' from dual union all
-    select 'URN::13323', 	'COMUE::ED' from dual union all
-    select 'URN::19409', 	'URN::BDD' from dual union all
-    select 'URN::19409', 	'COMUE::OBSERV' from dual union all
-    select 'URN::2059', 	'COMUE::ED' from dual union all
-    select 'URN::2935', 	'COMUE::ED' from dual union all
-    select 'URN::32593', 	'COMUE::ED' from dual union all
-    select 'URN::36625', 	'URN::BDD' from dual union all
-    select 'URN::36625', 	'COMUE::ED' from dual union all
-    select 'URN::36625', 	'COMUE::OBSERV' from dual union all
-    select 'URN::39624', 	'URN::BDD' from dual union all
-    select 'URN::39624', 	'UCN::ADMIN_TECH' from dual union all
-    select 'URN::4029', 	'URN::BDD' from dual union all
-    select 'URN::4029', 	'COMUE::OBSERV' from dual union all
-    select 'URN::40858', 	'COMUE::OBSERV' from dual union all
-    select 'URN::40858', 	'UCN::ADMIN_TECH' from dual union all
-    select 'URN::40858', 	'URN::BDD' from dual union all
-    select 'URN::40858', 	'URN::ADMIN' from dual union all
-    select 'URN::4201', 	'COMUE::ED' from dual union all
-    select 'URN::4203', 	'UCN::ADMIN_TECH' from dual union all
-    select 'URN::44011', 	'COMUE::ED' from dual union all
-    select 'URN::44836', 	'URN::BDD' from dual union all
-    select 'URN::47174', 	'COMUE::ED' from dual union all
-    select 'URN::4724', 	'COMUE::ED' from dual union all
-    select 'URN::5165', 	'URN::ADMIN' from dual union all
-    select 'URN::6997', 	'COMUE::ED' from dual union all
-    select 'URN::8966', 	'URN::BDD' from dual union all
-    select 'URN::96002446', 	'UCN::ADMIN_TECH' from dual union all
-    select 'URN::9768', 	'URN::BU' from dual union all
-    select 'URN::9768', 	'URN::BDD' from dual union all
-    select 'URN::9768', 	'UCN::ADMIN_TECH' from dual union all
-    select 'URN::9768', 	'URN::ADMIN' from dual
-  )
-  select INDIVIDU_ROLE_ID_SEQ.nextval, i.id, r.id
-  from tmp
-  join INDIVIDU i on i.SOURCE_CODE = tmp.INDIVIDU_SOURCE_CODE
-  join ROLE r on r.SOURCE_CODE = tmp.ROLE_SOURCE_CODE;
-*/
+with tmp(INDIVIDU_SOURCE_CODE, ROLE_SOURCE_CODE) as (
+  select 'COMUE::1318', 	'URN::ADMIN' from dual union all
+  select 'COMUE::1318', 	'UCN::ADMIN_TECH' from dual union all
+  select 'COMUE::1318', 	'COMUE::OBSERV' from dual union all
+  select 'INSA::497872', 	'COMUE::ED_COMUE::590' from dual union all
+  select 'INSA::67366', 	'UCN::ADMIN_TECH' from dual union all
+  select 'INSA::67366', 	'INSA::ADMIN' from dual union all
+  select 'INSA::67366', 	'INSA::BDD' from dual union all
+  select 'INSA::67366', 	'COMUE::OBSERV' from dual union all
+  select 'INSA::67366', 	'INSA::BU' from dual union all
+  select 'INSA::89184', 	'UCN::ADMIN_TECH' from dual union all
+  select 'INSA::89184', 	'INSA::BU' from dual union all
+  select 'INSA::89184', 	'INSA::ADMIN' from dual union all
+  select 'INSA::89184', 	'COMUE::OBSERV' from dual union all
+  select 'INSA::89184', 	'INSA::BDD' from dual union all
+  select 'UCN::00000035', 	'UCN::BU' from dual union all
+  select 'UCN::00000035', 	'UCN::BDD' from dual union all
+  select 'UCN::00000035', 	'UCN::ADMIN_TECH' from dual union all
+  select 'UCN::00000035', 	'UCN::ADMIN' from dual union all
+  select 'UCN::00001420', 	'COMUE::ED_UCN::556' from dual union all
+  select 'UCN::00001712', 	'COMUE::ED_UCN::242' from dual union all
+  select 'UCN::00002054', 	'UCN::BU' from dual union all
+  select 'UCN::00002121', 	'UCN::BDD' from dual union all
+  select 'UCN::00002316', 	'UCN::ADMIN_TECH' from dual union all
+  select 'UCN::00002316', 	'UCN::BDD' from dual union all
+  select 'UCN::00002370', 	'COMUE::ED_UCN::497' from dual union all
+  select 'UCN::00002615', 	'COMUE::ED_UCN::508' from dual union all
+  select 'UCN::00002747', 	'COMUE::ED_UCN::558' from dual union all
+  select 'UCN::00003600', 	'UCN::BU' from dual union all
+  select 'UCN::00003635', 	'UCN::BU' from dual union all
+  select 'UCN::00003646', 	'COMUE::ED_UCN::590' from dual union all
+  select 'UCN::00004663', 	'UCN::BDD' from dual union all
+  select 'UCN::00004855', 	'UCN::BU' from dual union all
+  select 'UCN::00004855', 	'UCN::ADMIN_TECH' from dual union all
+  select 'UCN::00004855', 	'UCN::ADMIN' from dual union all
+  select 'UCN::00005112', 	'UCN::BU' from dual union all
+  select 'UCN::00005191', 	'COMUE::ED_UCN::497' from dual union all
+  select 'UCN::00005273', 	'UCN::BU' from dual union all
+  select 'UCN::00005310', 	'UCN::BU' from dual union all
+  select 'UCN::00005790', 	'UCN::BU' from dual union all
+  select 'UCN::00006018', 	'UCN::ADMIN_TECH' from dual union all
+  select 'UCN::00017260', 	'UCN::BU' from dual union all
+  select 'UCN::00017566', 	'COMUE::UR_COMUE::5be120edaab8f' from dual union all
+  select 'UCN::00017566', 	'UCN::BDD' from dual union all
+  select 'UCN::00017566', 	'COMUE::ED_COMUE::508' from dual union all
+  select 'UCN::00017566', 	'UCN::ADMIN_TECH' from dual union all
+  select 'UCN::00017566', 	'URN::BDD' from dual union all
+  select 'UCN::00019945', 	'COMUE::ED_UCN::591' from dual union all
+  select 'UCN::00021237', 	'COMUE::ED_COMUE::558' from dual union all
+  select 'UCN::00021237', 	'UCN::BDD' from dual union all
+  select 'UCN::00021237', 	'UCN::ADMIN_TECH' from dual union all
+  select 'UCN::00021237', 	'COMUE::UR_COMUE::UMR6072' from dual union all
+  select 'UCN::00029896', 	'COMUE::OBSERV' from dual union all
+  select 'UCN::00029896', 	'UCN::ADMIN' from dual union all
+  select 'UCN::00029896', 	'UCN::ADMIN_TECH' from dual union all
+  select 'UCN::00029896', 	'UCN::BDD' from dual union all
+  select 'UCN::00032954', 	'COMUE::ED_UCN::98' from dual union all
+  select 'UCN::00045190', 	'UCN::ADMIN_TECH' from dual union all
+  select 'UCN::00102573', 	'UCN::BDD' from dual union all
+  select 'UCN::00134789', 	'UCN::ADMIN_TECH' from dual union all
+  select 'ULHN::COD_PER_1024', 	'COMUE::ED_COMUE::5bd1463cc7927' from dual union all
+  select 'ULHN::COD_PER_1753', 	'COMUE::ED_COMUE::558' from dual union all
+  select 'ULHN::COD_PER_2383', 	'ULHN::BDD' from dual union all
+  select 'ULHN::COD_PER_2383', 	'COMUE::OBSERV' from dual union all
+  select 'ULHN::COD_PER_358', 	'COMUE::ED_COMUE::508' from dual union all
+  select 'ULHN::COD_PER_561', 	'COMUE::ED_COMUE::497' from dual union all
+  select 'ULHN::2175', 	'COMUE::ED_COMUE::590' from dual union all
+  select 'ULHN::22381', 	'COMUE::OBSERV' from dual union all
+  select 'ULHN::22381', 	'ULHN::BDD' from dual union all
+  select 'ULHN::23628', 	'ULHN::BDD' from dual union all
+  select 'ULHN::3361', 	'ULHN::BDD' from dual union all
+  select 'ULHN::3361', 	'ULHN::ADMIN' from dual union all
+  select 'ULHN::3361', 	'UCN::ADMIN_TECH' from dual union all
+  select 'ULHN::8197', 	'ULHN::ADMIN' from dual union all
+  select 'ULHN::8197', 	'ULHN::BDD' from dual union all
+  select 'ULHN::8197', 	'ULHN::BU' from dual union all
+  select 'URN::10871', 	'UCN::ADMIN_TECH' from dual union all
+  select 'URN::11153', 	'COMUE::ED_COMUE::508' from dual union all
+  select 'URN::11276', 	'COMUE::ED_COMUE::558' from dual union all
+  select 'URN::13323', 	'COMUE::ED_COMUE::556' from dual union all
+  select 'URN::13323', 	'COMUE::ED_COMUE::098' from dual union all
+  select 'URN::13323', 	'COMUE::ED_COMUE::242' from dual union all
+  select 'URN::13323', 	'COMUE::ED_COMUE::558' from dual union all
+  select 'URN::19409', 	'COMUE::OBSERV' from dual union all
+  select 'URN::19409', 	'URN::BDD' from dual union all
+  select 'URN::2059', 	'COMUE::ED_COMUE::5bd1463cc7927' from dual union all
+  select 'URN::2935', 	'COMUE::ED_COMUE::497' from dual union all
+  select 'URN::32593', 	'COMUE::ED_COMUE::556' from dual union all
+  select 'URN::36625', 	'COMUE::ED_COMUE::5bd1463cc7927' from dual union all
+  select 'URN::36625', 	'COMUE::OBSERV' from dual union all
+  select 'URN::36625', 	'URN::BDD' from dual union all
+  select 'URN::39624', 	'UCN::ADMIN_TECH' from dual union all
+  select 'URN::39624', 	'URN::BDD' from dual union all
+  select 'URN::4029', 	'URN::BDD' from dual union all
+  select 'URN::4029', 	'COMUE::OBSERV' from dual union all
+  select 'URN::40858', 	'COMUE::OBSERV' from dual union all
+  select 'URN::40858', 	'UCN::ADMIN_TECH' from dual union all
+  select 'URN::40858', 	'URN::ADMIN' from dual union all
+  select 'URN::40858', 	'URN::BDD' from dual union all
+  select 'URN::4201', 	'COMUE::ED_COMUE::497' from dual union all
+  select 'URN::4203', 	'UCN::ADMIN_TECH' from dual union all
+  select 'URN::44011', 	'COMUE::ED_COMUE::242' from dual union all
+  select 'URN::44836', 	'URN::BDD' from dual union all
+  select 'URN::47174', 	'COMUE::ED_COMUE::558' from dual union all
+  select 'URN::47174', 	'COMUE::ED_COMUE::556' from dual union all
+  select 'URN::47174', 	'COMUE::ED_COMUE::242' from dual union all
+  select 'URN::47174', 	'COMUE::ED_COMUE::098' from dual union all
+  select 'URN::4724', 	'COMUE::ED_COMUE::098' from dual union all
+  select 'URN::5165', 	'URN::ADMIN' from dual union all
+  select 'URN::6997', 	'COMUE::ED_COMUE::098' from dual union all
+  select 'URN::8966', 	'URN::BDD' from dual union all
+  select 'URN::96002446', 	'UCN::ADMIN_TECH' from dual union all
+  select 'URN::9768', 	'URN::ADMIN' from dual union all
+  select 'URN::9768', 	'URN::BDD' from dual union all
+  select 'URN::9768', 	'UCN::ADMIN_TECH' from dual union all
+  select 'URN::9768', 	'URN::BU' from dual
+)
+select INDIVIDU_ROLE_ID_SEQ.nextval, i.id, r.id
+from tmp
+       join INDIVIDU i on i.SOURCE_CODE = tmp.INDIVIDU_SOURCE_CODE
+       join ROLE r on r.SOURCE_CODE = tmp.ROLE_SOURCE_CODE;
 
 

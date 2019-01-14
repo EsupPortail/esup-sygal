@@ -166,10 +166,10 @@ class RoleService extends BaseService
             $sourceCode = null;
             $roleId = null;
             if ($structure instanceof Etablissement) {
-                $sourceCode = $this->getEtablissementPrefixFilter()->addPrefixEtablissementTo($roleModele->getRoleCode(), $structure);
+                $sourceCode = $this->getEtablissementPrefixFilter()->addPrefixEtablissementTo($roleModele->getRoleCode()."_". $structure->getSourceCode(), $structure);
                 $roleId = $roleModele->getLibelle()." ". $structure->getCode();
             } else {
-                $sourceCode = $this->getEtablissementPrefixFilter()->addPrefixEtablissementTo($roleModele->getRoleCode());
+                $sourceCode = $this->getEtablissementPrefixFilter()->addPrefixEtablissementTo($roleModele->getRoleCode()."_". $structure->getSourceCode());
                 $roleId = $roleModele->getLibelle()." ". $structure->getSourceCode();
             }
 
