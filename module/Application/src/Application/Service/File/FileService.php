@@ -105,7 +105,7 @@ class FileService
     public function computeLogoFilePathForStructure(StructureInterface $structure)
     {
         $logoDir = $this->computeLogoDirectoryPathForStructure($structure);
-        $logoFileName = $this->computeLogoFileNameForStructure($structure);
+        $logoFileName = $structure->getCheminLogo();
 
         return $logoDir . '/' . $logoFileName;
     }
