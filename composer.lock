@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "279eb09bb0299ba3814065b1dbacaa73",
+    "content-hash": "946a5ea1f43e05305f62da7f28d3b592",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -1864,11 +1864,11 @@
         },
         {
             "name": "unicaen/app",
-            "version": "1.3.21",
+            "version": "1.3.22",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/app.git",
-                "reference": "b9bff28b8f304748390ef9b8b8d4f30889147a0f"
+                "reference": "6ffcb3430ac40e317f369047db3ca190fbcd791e"
             },
             "require": {
                 "doctrine/doctrine-orm-module": ">=0.7",
@@ -1911,7 +1911,7 @@
                 ]
             },
             "description": "Module de base des applications unicaen",
-            "time": "2018-12-14T10:27:17+00:00"
+            "time": "2019-01-11T15:53:12+00:00"
         },
         {
             "name": "unicaen/auth",
@@ -3844,8 +3844,7 @@
     "platform": {
         "ext-fileinfo": "*",
         "ext-json": "*",
-        "ext-imagick": "*",
-        "ext-pdo": "*"
+        "ext-imagick": "*"
     },
     "platform-dev": []
 }
