@@ -64,7 +64,6 @@ return [
             ],
         ],
     ],
-
     'bjyauthorize'    => [
         'guards' => [
             \UnicaenAuth\Guard\PrivilegeController::class => [
@@ -165,22 +164,22 @@ return [
                 'label' => 'Accueil',
                 'route' => 'home',
                 'pages' => [
-                    'tinymce-doctorat' => [
+                    'doctorat' => [
                         'label' => 'Le doctorat',
                         'route' => 'informations/afficher',
-                        'params'=> ['id' => 61],
+                        'params' => ['id' => 61],
                         'title' => "Informations sur le doctorat et sa gestion"
                     ],
-                    'tinymce-ecoles' => [
-                        'label' => 'Les écoles doctorales',
+                    'ecoles-doctorales' => [
+                        'label' => 'Les Ecoles Doctorales',
                         'route' => 'informations/afficher',
-                        'params'=> ['id' => 81],
-                        'title' => "Informations sur les Écoles Doctorales et le Collège des Écoles doctorales"
+                        'params' => ['id' => 81],
+                        'title' => "Informations sur les Ecoles Doctorales et le Collège des Ecoles doctorales"
                     ],
-                    'tinymce-guide' => [
+                    'guide-these' => [
                         'label' => 'Guide de la thèse',
                         'route' => 'informations/afficher',
-                        'params'=> ['id' => 82],
+                        'params' => ['id' => 82],
                         'title' => "Informations sur le déroulement de la thèse et formulaires administratifs à l’intention du doctorant et de ses encadrants"
                     ],
                 ],

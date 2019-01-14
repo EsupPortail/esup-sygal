@@ -670,4 +670,32 @@ class FichierService extends BaseService
         $runner->setAsync();
         $runner->run($args);
     }
+
+    public function updateConformiteFichierTheseRetraitee(These $these, $conforme = null)
+    {
+        $repo = $this->getRepository();
+
+        $fichiersVA  = $repo->fetchFichiers($these, NatureFichier::CODE_THESE_PDF , VersionFichier::CODE_ARCHI);
+        $fichiersVAC = $repo->fetchFichiers($these, NatureFichier::CODE_THESE_PDF , VersionFichier::CODE_ARCHI_CORR);
+
+        /** @var Fichier $fichier */
+        if (! empty($fichiersVAC)) {
+            $fichier = current($fichiersVAC) ?: null;
+        } else {
+            $fichier = current($fichiersVA) ?: null;
+        }
+        // il n'existe pas forcément de fichier en version d'archivage (si la version originale est testée archivable)
+        if ($fichier === null) {
+            return;
+        }
+
+        $fichier->setEstConforme($conforme);
+
+        try {
+            $this->entityManager->flush($fichier);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement", null, $e);
+        }
+    }
+
 }
