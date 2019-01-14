@@ -1864,11 +1864,11 @@
         },
         {
             "name": "unicaen/app",
-            "version": "1.3.22",
+            "version": "1.3.24",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/app.git",
-                "reference": "6ffcb3430ac40e317f369047db3ca190fbcd791e"
+                "reference": "6538619ecd0f9c7c450259135879a57f12268544"
             },
             "require": {
                 "doctrine/doctrine-orm-module": ">=0.7",
@@ -1911,7 +1911,7 @@
                 ]
             },
             "description": "Module de base des applications unicaen",
-            "time": "2019-01-11T15:53:12+00:00"
+            "time": "2019-01-14T13:47:00+00:00"
         },
         {
             "name": "unicaen/auth",
