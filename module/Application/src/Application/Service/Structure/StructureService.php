@@ -777,7 +777,7 @@ class StructureService extends BaseService
         }
 
         $logoFilepath = $this->fileService->computeLogoFilePathForStructure($structure);
-        if ($fileExists = file_exists($logoFilepath)) {
+        if ($fileExists = file_exists($logoFilepath) && $structure->getCheminLogo() !== null) {
             $ok = unlink($logoFilepath);
             if (! $ok) {
                 throw new RuntimeException("Impossible de supprimer physiquement le fichier logo sur le disque.");
