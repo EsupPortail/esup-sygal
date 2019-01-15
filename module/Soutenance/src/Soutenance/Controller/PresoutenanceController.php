@@ -5,11 +5,13 @@ namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Acteur;
+use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
+use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use BjyAuthorize\Exception\UnAuthorizedException;
@@ -26,6 +28,8 @@ use Zend\Http\Request;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
+// TODO mettre directement l'acteur dans la table membre simplifierai beaucoup de chose ...
+
 class PresoutenanceController extends AbstractController
 {
     use TheseServiceAwareTrait;
@@ -35,6 +39,7 @@ class PresoutenanceController extends AbstractController
     use PropositionServiceAwareTrait;
     use ActeurServiceAwareTrait;
     use ValidationServiceAwareTrait;
+    use RoleServiceAwareTrait;
 
     public function presoutenanceAction()
     {
@@ -118,93 +123,74 @@ class PresoutenanceController extends AbstractController
     }
 
     /**
-     * @return ViewModel
+     * Ici on affecte au membre des acteurs qui remonte des SIs des établissements
+     * Puis on affecte les rôles rapporteurs et membres
+     * QUID :: Président ...
      */
-    public function associerMembreIndividuAction()
+    public function associerJuryAction()
     {
         /** @var These $these */
-        $idThese = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($idThese);
-
-        $isAllowed = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU);
-        if (!$isAllowed) {
-            throw new UnAuthorizedException("Vous êtes non authorisé(e) à associer des individus aux membres de jury de cette thèse.");
-        }
+        $theseId = $this->params()->fromRoute('these');
+        $these = $this->getTheseService()->getRepository()->find($theseId);
 
         /** @var Membre $membre */
         $idMembre = $this->params()->fromRoute('membre');
         $membre = $this->getMembreService()->find($idMembre);
 
-        $acteur = null;
-        if ($membre->getIndividu()) {
-            $acteur = $this->getActeurService()->getRepository()->findActeurByIndividu($membre->getIndividu()->getId());
-        }
+        $acteurs = $this->getActeurService()->getRepository()->findActeurByThese($these);
 
         /** @var Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
-            $acteur = $this->getActeurService()->getRepository()->findActeurByIndividu($data['individu']['id']);
+            $acteurId = $data['acteur'];
+            /** @var Acteur $acteur */
+            $acteur = $this->getActeurService()->getRepository()->find($acteurId);
+
+            if (!$acteur) {
+                throw new RuntimeException("Aucun acteur à associer !");
+            } else {
+                //mise à jour du membre de soutenance
+                $membre->setIndividu($acteur->getIndividu());
+                $this->getMembreService()->update($membre);
+                //affectation du rôle
+                $this->getRoleService()->addIndividuRole($acteur->getIndividu(),$acteur->getRole());
+            }
         }
 
         return new ViewModel([
-            'these' => $these,
+            'title' => "Association de ".$membre->getDenomination()." à un acteur SyGAL",
+            'acteurs' => $acteurs,
             'membre' => $membre,
-            'acteur' => $acteur,
-            'title' => "Association d'un acteur SyGAL au membre [".$membre->getDenomination()."]",
+            'these' => $these,
         ]);
     }
 
-    public function enregistrerAssociationMembreIndividuAction() {
-
+    public function deassocierJuryAction() {
         /** @var These $these */
-        $idThese = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($idThese);
-
-        $isAllowed = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU);
-        if (!$isAllowed) {
-            throw new UnAuthorizedException("Vous êtes non authorisé(e) à associer des individus aux membres de jury de cette thèse.");
-        }
+        $theseId = $this->params()->fromRoute('these');
+        $these = $this->getTheseService()->getRepository()->find($theseId);
 
         /** @var Membre $membre */
         $idMembre = $this->params()->fromRoute('membre');
         $membre = $this->getMembreService()->find($idMembre);
 
-        /** @var Acteur $acteur */
-        $idActeur = $this->params()->fromRoute('acteur');
-        $acteur = $this->getActeurService()->getRepository()->find($idActeur);
-
-        $membre->setIndividu($acteur->getIndividu());
-        $this->getMembreService()->update($membre);
-
-        $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
-    }
-
-    /**
-     * @return JsonModel
-     */
-    public function rechercherActeurAction()
-    {
-        if (($term = $this->params()->fromQuery('term'))) {
-            $rows = $this->getActeurService()->getRepository()->findByText($term);
-            $result = [];
-            foreach ($rows as $row) {
-                $prenoms = implode(' ', array_filter([$row['PRENOM1'], $row['PRENOM2'], $row['PRENOM3']]));
-                // mise en forme attendue par l'aide de vue FormSearchAndSelect
-                $label = $row['NOM_USUEL'] . ' ' . $prenoms;
-                $extra = $row['EMAIL'] ?: $row['SOURCE_CODE'];
-                $result[] = array(
-                    'id'    => $row['ID'], // identifiant unique de l'item
-                    'label' => $label,     // libellé de l'item
-                    'extra' => $extra,     // infos complémentaires (facultatives) sur l'item
-                );
-            }
-            usort($result, function($a, $b) {
-                return strcmp($a['label'], $b['label']);
-            });
-
-            return new JsonModel($result);
+        /** @var Acteur[] $acteurs */
+        $acteurs = $this->getActeurService()->getRepository()->findActeurByThese($these);
+        $acteur = null;
+        foreach ($acteurs as $acteur_) {
+            if ($acteur_->getIndividu() === $membre->getIndividu()) $acteur = $acteur_;
         }
-        exit;
+        if (!$acteur) {
+            throw new RuntimeException("Aucun acteur à deassocier !");
+        } else {
+            //retrait dans membre de soutenance
+            $membre->setIndividu(null);
+            $this->getMembreService()->update($membre);
+            //retrait du role
+            $this->getRoleService()->removeIndividuRole($acteur->getIndividu(), $acteur->getRole());
+
+            $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
+        }
     }
 }

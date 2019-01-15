@@ -7,6 +7,7 @@
  * @var array $engagements
  */
 
+use Application\Constants;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
 use Soutenance\Provider\Privilege\SoutenancePrivileges;
@@ -66,7 +67,23 @@ $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->get
 <div class=" panel panel-info">
 
     <div class="panel-heading">
-        <h2> Association d'acteur SYGAL aux membres de jury </h2>
+        <div class="row">
+        <div class="col-md-8">
+            <h2> Association d'acteur SYGAL aux membres de jury </h2>
+        </div>
+        <div class="col-md-4">
+            <p>
+                <a class="btn btn-default btn-sm"
+                   id="refresh-these-button"
+                   href="<?php echo $this->urlThese()->refreshTheseUrl($these, $this->url('soutenance/presoutenance', ['these' => $these->getId()], [], true)); ?>"
+                ><span class="glyphicon glyphicon-import"></span> <strong>Mettre à jour</strong> la thèse à partir de
+                    <?php echo $these->getSource() ?></a>
+            </p>
+            <p class="small">
+                Dernière mise à jour : <?php echo $these->getHistoModification()->format(Constants::DATETIME_FORMAT) ?>.
+            </p>
+        </div>
+        </div>
     </div>
 
     <div class="panel-body">
@@ -74,6 +91,8 @@ $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->get
         <p class="lead">
             Tous les membres du jury doivent être associés à des acteurs enregistrés dans SyGAL.
         </p>
+
+
 
         <table class="table table-extra-condensed">
             <thead>
@@ -94,10 +113,21 @@ $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->get
                     <td>    <?php echo ($membre->getIndividu())?$membre->getIndividu()->getId() .' '. $membre->getIndividu()->getNomComplet():''; ?>                  </td>
                     <td>
                         <?php if($canAssocierMembreIndividu): ?>
-                        <a
-                            href="<?php echo $this->url('soutenance/presoutenance/associer-membre-individu', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true); ?>"
-                            <span class="glyphicon glyphicon-link" title="Associer un individu SyGAL à un membre de jury"></span>
-                        </a>
+                            <?php if (! $membre->getIndividu()): ?>
+                                <a
+                                        href="<?php echo $this->url('soutenance/presoutenance/associer-jury', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true); ?>"
+                                        class="ajax-modal"
+                                        data-event="modification-date-rendu-rapport"
+                                >
+                                        <span class="glyphicon glyphicon-link" title="Associer un individu SyGAL à un membre de jury"></span>
+                                </a>
+                            <?php else: ?>
+                                <a
+                                        href="<?php echo $this->url('soutenance/presoutenance/deassocier-jury', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true); ?>"
+                                >
+                                    <span class="glyphicon glyphicon-remove" title="Casser l'association d'un individu SyGAL à un membre de jury"></span>
+                                </a>
+                            <?php endif; ?>
                         <?php endif; ?>
                     </td>
                 </tr>
@@ -177,6 +207,12 @@ $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->get
 </div>
 
 
+<!-- Envois des demandes de rapport -->
+<!-- TODO
+        toutes les demandes d'impartialité doivent être signé
+        dans le mail préciser l'adresse de la page
+        dans le mail rappeler la date de retour
+-->
 
 <script>
     $(function() {

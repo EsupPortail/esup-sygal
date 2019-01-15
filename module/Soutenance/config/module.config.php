@@ -178,9 +178,8 @@ return array(
                 [
                     'controller' => PresoutenanceController::class,
                     'action'     => [
-                        'associer-membre-individu',
-                        'enregistrer-association-membre-individu',
-                        'rechercher-acteur',
+                        'associer-jury',
+                        'deassocier-jury',
                     ],
                     'privileges' => SoutenancePrivileges::SOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU,
                 ],
@@ -309,7 +308,20 @@ return array(
                                 'pages' => [
                                     'association' => [
                                         'label'    => 'Association d\'un acteur SyGAL',
-                                        'route'    => 'soutenance/presoutenance/associer-membre-individu',
+                                        'route'    => 'soutenance/presoutenance/associer-jury',
+//                                        'icon'     => 'glyphicon glyphicon-briefcase',
+                                        'withtarget' => true,
+                                        'paramsInject' => [
+                                            'these',
+                                            'membre',
+                                        ],
+                                        'privileges' => [
+                                            SoutenancePrivileges::SOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU,
+                                        ],
+                                    ],
+                                    'deassociation' => [
+                                        'label'    => 'Casser l\'association d\'un acteur SyGAL',
+                                        'route'    => 'soutenance/presoutenance/associer-jury',
 //                                        'icon'     => 'glyphicon glyphicon-briefcase',
                                         'withtarget' => true,
                                         'paramsInject' => [
@@ -454,36 +466,25 @@ return array(
                                     ],
                                 ],
                             ],
-                            'associer-membre-individu' => [
+                            'associer-jury' => [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/associer-membre-individu/:membre',
+                                    'route'    => '/associer-jury/:membre',
                                     'defaults' => [
                                         'controller' => PresoutenanceController::class,
-                                        'action'     => 'associer-membre-individu',
+                                        'action'     => 'associer-jury',
                                     ],
                                 ],
-                                'child_routes' => [
-                                    'rechercher-acteur' => [
-                                        'type'          => Segment::class,
-                                        'options'       => [
-                                            'route'       => '/rechercher-acteur',
-                                            'defaults'    => [
-                                                'action' => 'rechercher-acteur',
-                                            ],
-                                        ],
-                                    ],
-                                    'enregistrer' => [
-                                        'type' => Segment::class,
-                                        'may_terminate' => true,
-                                        'options' => [
-                                            'route'    => '/enregistrer/:acteur',
-                                            'defaults' => [
-                                                'controller' => PresoutenanceController::class,
-                                                'action'     => 'enregistrer-association-membre-individu',
-                                            ],
-                                        ],
+                            ],
+                            'deassocier-jury' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/deassocier-jury/:membre',
+                                    'defaults' => [
+                                        'controller' => PresoutenanceController::class,
+                                        'action'     => 'deassocier-jury',
                                     ],
                                 ],
                             ],

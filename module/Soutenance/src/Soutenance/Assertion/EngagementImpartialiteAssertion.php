@@ -42,7 +42,7 @@ class EngagementImpartialiteAssertion implements  AssertionInterface {
                 $utilisateur = $this->userContextService->getIdentityDb();
                 /** @var Collection $rapporteurs */
                 $rapporteurs = $these->getActeursByRoleCode(Role::CODE_RAPPORTEUR_JURY);
-                return $rapporteurs->map(function(Acteur $acteur) { return $acteur->getIndividu(); })->contains($utilisateur);
+                return $rapporteurs->map(function(Acteur $acteur) { return $acteur->getIndividu(); })->contains($utilisateur->getIndividu());
                 break;
             case SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_ANNULER:
                 $role = $this->userContextService->getSelectedIdentityRole();

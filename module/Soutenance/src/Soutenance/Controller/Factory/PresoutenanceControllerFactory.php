@@ -5,6 +5,7 @@ namespace Soutenance\Controller\Factory;
 use Application\Service\Acteur\ActeurService;
 use Application\Service\Individu\IndividuService;
 use Application\Service\Notification\NotifierService;
+use Application\Service\Role\RoleService;
 use Application\Service\These\TheseService;
 use Application\Service\Validation\ValidationService;
 use Soutenance\Controller\EngagementImpartialiteController;
@@ -29,6 +30,7 @@ class PresoutenanceControllerFactory
          * @var NotifierService $notifierService
          * @var ActeurService $acteurService
          * @var ValidationService $validationService
+         * @var RoleService $roleService
          */
         $propositionService = $controllerManager->getServiceLocator()->get(PropositionService::class);
         $membreService = $controllerManager->getServiceLocator()->get(MembreService::class);
@@ -37,6 +39,7 @@ class PresoutenanceControllerFactory
         $acteurService = $controllerManager->getServiceLocator()->get(ActeurService::class);
         $notifierService = $controllerManager->getServiceLocator()->get(NotifierService::class);
         $validationService = $controllerManager->getServiceLocator()->get('ValidationService');
+        $roleService = $controllerManager->getServiceLocator()->get('RoleService');
 
         /** @var PresoutenanceController $controller */
         $controller = new PresoutenanceController();
@@ -47,6 +50,7 @@ class PresoutenanceControllerFactory
         $controller->setActeurService($acteurService);
         $controller->setNotifierService($notifierService);
         $controller->setValidationService($validationService);
+        $controller->setRoleService($roleService);
 
         return $controller;
     }

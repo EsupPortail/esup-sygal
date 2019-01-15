@@ -4,6 +4,7 @@ namespace Application\Entity\Db\Repository;
 
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Individu;
+use Application\Entity\Db\These;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\Query\Expr\Join;
 use UnicaenApp\Exception\RuntimeException;
@@ -62,5 +63,20 @@ class ActeurRepository extends DefaultEntityRepository
         }
 
         return $stmt->fetchAll();
+    }
+
+    /**
+     * @param These $these
+     * @return Acteur[]
+     */
+    public function findActeurByThese($these)
+    {
+        $qb = $this->createQueryBuilder('acteur')
+            ->andWhere('acteur.these = :these')
+            ->setParameter('these', $these->getId())
+        ;
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
     }
 }

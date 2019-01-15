@@ -560,7 +560,7 @@ class NotifierService extends \Notification\Service\NotifierService
 
         $emails = [];
         foreach ($individuRoles as $individuRole) {
-            $emails = $individuRole->getIndividu()->getEmail();
+            $emails[] = $individuRole->getIndividu()->getEmail();
         }
 
         $notif = new Notification();
@@ -582,7 +582,7 @@ class NotifierService extends \Notification\Service\NotifierService
 
         $emails = [];
         foreach ($individuRoles as $individuRole) {
-            $emails = $individuRole->getIndividu()->getEmail();
+            $emails[] = $individuRole->getIndividu()->getEmail();
         }
 
         $notif = new Notification();
