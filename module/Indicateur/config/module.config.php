@@ -12,8 +12,10 @@ use Indicateur\Form\IndicateurHydrator;
 use Indicateur\Service\Factory\IndicateurServiceFactory;
 use Indicateur\Service\IndicateurService;
 use Indicateur\View\Helper\CompletIndicateurIndividuHelper;
+use Indicateur\View\Helper\CompletIndicateurStructureHelper;
 use Indicateur\View\Helper\CompletIndicateurTheseHelper;
 use Indicateur\View\Helper\ResumeIndicateurIndividuHelper;
+use Indicateur\View\Helper\ResumeIndicateurStructureHelper;
 use Indicateur\View\Helper\ResumeIndicateurTheseHelper;
 use Zend\Mvc\Router\Http\Literal;
 use Zend\Mvc\Router\Http\Segment;
@@ -210,10 +212,12 @@ return array(
     ],
     'view_helpers' => [
         'invokables' => [
-            'completIndicateurThese'    => CompletIndicateurTheseHelper::class,
-            'completIndicateurIndividu' => CompletIndicateurIndividuHelper::class,
-            'resumeIndicateurThese'     => ResumeIndicateurTheseHelper::class,
-            'resumeIndicateurIndividu'  => ResumeIndicateurIndividuHelper::class,
+            'completIndicateurThese'     => CompletIndicateurTheseHelper::class,
+            'completIndicateurIndividu'  => CompletIndicateurIndividuHelper::class,
+            'completIndicateurStructure' => CompletIndicateurStructureHelper::class,
+            'resumeIndicateurThese'      => ResumeIndicateurTheseHelper::class,
+            'resumeIndicateurIndividu'   => ResumeIndicateurIndividuHelper::class,
+            'resumeIndicateurStructure'  => ResumeIndicateurStructureHelper::class,
         ],
     ],
     'view_manager' => [

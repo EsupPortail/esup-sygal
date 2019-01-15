@@ -42,7 +42,7 @@ class EtablissementController extends StructureConcreteController
      */
     public function indexAction()
     {
-        $etablissements = $this->structureService->getAllStructuresAffichablesByType($this->codeTypeStructure);
+        $etablissements = $this->structureService->getAllStructuresAffichablesByType($this->codeTypeStructure, 'libelle');
 
         $etablissementsPrincipaux = array_filter($etablissements, function (Etablissement $e) {
             return $e->estMembre();

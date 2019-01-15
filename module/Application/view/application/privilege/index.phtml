@@ -30,6 +30,7 @@
     </div>
 </div>
 
+
 <table id='mytable' class='mytable table-bordered'>
     <thead>
         <tr>
@@ -58,6 +59,12 @@
                             }
                         ?>
                         <?php echo $role->getLibelle(); ?>
+                        <?php if(!$role->getProfils()->isEmpty()): ?>
+                            <span class="glyphicon glyphicon-info-sign text-info" title="<?php foreach ($role->getProfils() as $profil) { echo "[".$profil->getLibelle()."] "; }?>"></span>
+                        <?php else : ?>
+                            <span class="glyphicon glyphicon-warning-sign text-warning" title="Aucun profil d'assigné à ce rôle"></span>
+                        <?php endif; ?>
+
                         <br/>
                         <span class="depend <?php echo $depend; ?> "> <?php echo $sigleStructure; ?> </span>
                     </th>

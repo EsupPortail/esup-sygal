@@ -16,13 +16,13 @@ $modules = [
     'UnicaenImport',
     'UnicaenFaq',
     'UnicaenLeocarte',
-    'Application',
     'Import',
     'Indicateur',
     'Soutenance',
     'Retraitement',
     'Notification',
     'Information',
+    'Application',
 ];
 if (php_sapi_name() === 'cli') {
     unset($modules['BjyAuthorize']);

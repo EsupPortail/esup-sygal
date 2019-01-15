@@ -8,6 +8,7 @@ use Application\Filter\EtablissementPrefixFilter;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Assert\Assertion;
+use Doctrine\ORM\EntityManager;
 use Import\Exception\CallException as ImportCallException;
 use Import\Service\Traits\ImportServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
@@ -230,14 +231,26 @@ class ImportController extends AbstractActionController
         $codeStructure = $this->params('etablissement'); // ex: 'UCN'
         $sourceCode = $this->params('source-code');
         $synchronize = (bool) $this->params('synchronize', 1);
+        $emName = $this->params('em', 'orm_default');
 
         $this->setLoggerStream('php://output');
 
         $etablissement = $this->fetchEtablissementByCodeStructure($codeStructure);
 
-        $this->importService->import($service, $etablissement, $sourceCode, [], $synchronize);
+        /** @var EntityManager $entityManager */
+        $entityManager = $this->getServiceLocator()->get("doctrine.entitymanager.$emName");
 
-        echo "Importation des données du service '$service' de l'établissement '$etablissement' effectuée." . PHP_EOL;
+        $_deb = microtime(true);
+        $this->importService->setEntityManager($entityManager);
+        $this->importService->import($service, $etablissement, $sourceCode, [], $synchronize);
+        $_fin = microtime(true);
+
+        echo sprintf(
+            "Importation des données du service '%s' de l'établissement '%s' effectuée en %.2f secondes.",
+            $service,
+            $etablissement,
+            $_fin - $_deb
+        ) . PHP_EOL;
     }
 
     public function importAllConsoleAction()
@@ -245,14 +258,25 @@ class ImportController extends AbstractActionController
         $codeStructure = $this->params('etablissement'); // ex: 'UCN'
         $breakOnServiceNotFound = (bool) $this->params('breakOnServiceNotFound', 1);
         $synchronize = (bool) $this->params('synchronize', 1);
+        $emName = $this->params('em', 'orm_default');
 
         $etablissement = $this->fetchEtablissementByCodeStructure($codeStructure);
 
         $this->setLoggerStream('php://output');
 
-        $this->importService->importAll($etablissement, $synchronize, $breakOnServiceNotFound);
+        /** @var EntityManager $entityManager */
+        $entityManager = $this->getServiceLocator()->get("doctrine.entitymanager.$emName");
 
-        echo "Importation de toutes les données de l'établissement '$etablissement' effectuée." . PHP_EOL;
+        $_deb = microtime(true);
+        $this->importService->setEntityManager($entityManager);
+        $this->importService->importAll($etablissement, $synchronize, $breakOnServiceNotFound);
+        $_fin = microtime(true);
+
+        echo sprintf(
+            "Importation de toutes les données de l'établissement '%s' effectuée en %.2f secondes.",
+            $etablissement,
+            $_fin - $_deb
+        ) . PHP_EOL;
     }
 
     /**

@@ -45,6 +45,7 @@ class IndicateurForm extends Form {
                 'value_options' => [
                     Indicateur::THESE => 'Thèse',
                     Indicateur::INDIVIDU => 'Individu',
+                    Indicateur::STRUCTURE => 'Structure',
                 ],
             ],
         ]);

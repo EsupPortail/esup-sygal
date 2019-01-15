@@ -7,10 +7,15 @@ use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\StructureInterface;
 use Application\Entity\Db\UniteRecherche;
+use Application\Entity\Db\Structure;
 use UnicaenApp\Exception\RuntimeException;
 
 class FileService
 {
+    const DIR_ETAB = 'Etab';
+    const DIR_ED = 'ED';
+    const DIR_UR = 'UR';
+
     /**
      * @var string
      */
@@ -66,14 +71,25 @@ class FileService
      */
     public function computeLogoDirectoryPathForStructure(StructureInterface $structure)
     {
+        $dir = null;
+
         // sous-répertoire identifiant le type de structure
         if ($structure instanceof EcoleDoctorale) {
-            $dir = 'ED';
+            $dir = self::DIR_ED;
         } elseif ($structure instanceof UniteRecherche) {
-            $dir = 'UR';
+            $dir = self::DIR_UR;
         } elseif ($structure instanceof Etablissement) {
-            $dir = 'Etab';
-        } else {
+            $dir = self::DIR_ETAB;
+        } elseif ($structure instanceof Structure) {
+            if ($structure->getTypeStructure()->isEtablissement()) {
+                $dir = self::DIR_ETAB;
+            } elseif ($structure->getTypeStructure()->isEcoleDoctorale()) {
+                $dir = self::DIR_ED;
+            } elseif ($structure->getTypeStructure()->isUniteRecherche()) {
+                $dir = self::DIR_UR;
+            }
+        }
+        if ($dir === null) {
             throw new RuntimeException("Structure spécifiée imprévue.");
         }
 
@@ -89,7 +105,7 @@ class FileService
     public function computeLogoFilePathForStructure(StructureInterface $structure)
     {
         $logoDir = $this->computeLogoDirectoryPathForStructure($structure);
-        $logoFileName = $this->computeLogoFileNameForStructure($structure);
+        $logoFileName = $structure->getCheminLogo();
 
         return $logoDir . '/' . $logoFileName;
     }

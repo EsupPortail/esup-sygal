@@ -3,10 +3,13 @@
 namespace Import\Controller;
 
 use Application\Controller\Plugin\Url\UrlThesePlugin;
-use Import\Service\SchemaService;
-use Import\Service\ImportObserv\ImportObservServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
+use Doctrine\ORM\EntityManager;
+use Import\Service\ImportObserv\ImportObservServiceAwareTrait;
+use Import\Service\ImportService;
+use Import\Service\SchemaService;
+use Import\Service\Traits\SynchroServiceAwareTrait;
 use Zend\View\Model\ViewModel;
 
 /**
@@ -19,6 +22,7 @@ class SynchroController extends \UnicaenImport\Controller\ImportController
     use TheseServiceAwareTrait;
     use ImportObservServiceAwareTrait;
     use NotifierServiceAwareTrait;
+    use SynchroServiceAwareTrait;
 
     const NOTIF_UPDATE_THESE_RESULTAT = 'UPDATE--THESE--RESULTAT'; // format 'UPDATE--{NOM_DE_TABLE}--{NOM_DE_COLONNE}'
 
@@ -35,6 +39,57 @@ class SynchroController extends \UnicaenImport\Controller\ImportController
         $view->setVariables(['tables' => $data, 'mviews' => $mviews]);
 
         return $view;
+    }
+
+    /**
+     * CLI : lancement de la Synchronisation des données d'un seul service.
+     */
+    public function synchronizeConsoleAction()
+    {
+        $service = $this->params('service');
+        $emName = $this->params('em', 'orm_default');
+
+        /** @var EntityManager $entityManager */
+        $entityManager = $this->getServiceLocator()->get("doctrine.entitymanager.$emName");
+
+        $_deb = microtime(true);
+        $this->synchroService->setEntityManager($entityManager);
+        $this->synchroService->addService($service);
+        $this->synchroService->synchronize();
+        $_fin = microtime(true);
+
+        echo sprintf(
+                "Synchronisation des données du service '%s' effectuée en %.2f secondes.",
+                $service,
+                $_fin - $_deb
+            ) . PHP_EOL;
+        echo "NB: Vérifiez dans la table SYNC_LOG la présence éventuelle d'erreurs." . PHP_EOL;
+    }
+
+    /**
+     * CLI : lancement de la Synchronisation des données de tous les services.
+     */
+    public function synchronizeAllConsoleAction()
+    {
+        $emName = $this->params('em', 'orm_default');
+
+        /** @var EntityManager $entityManager */
+        $entityManager = $this->getServiceLocator()->get("doctrine.entitymanager.$emName");
+
+        $services = ImportService::SERVICES;
+        foreach ($services as $service) {
+            $this->synchroService->addService($service);
+        }
+
+        $_deb = microtime(true);
+        $this->synchroService->setEntityManager($entityManager);
+        $this->synchroService->synchronize();
+        $_fin = microtime(true);
+
+        echo sprintf(
+                "Synchronisation des données de tous les services effectuée en %.2f secondes.",
+                $_fin - $_deb
+            ) . PHP_EOL;
     }
 
 //    public function updateTablesAction()

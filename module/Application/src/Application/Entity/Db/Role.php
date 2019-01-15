@@ -2,6 +2,7 @@
 
 namespace Application\Entity\Db;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenAuth\Entity\Db\AbstractRole;
 use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
@@ -83,6 +84,15 @@ class Role extends AbstractRole
      * @var int
      */
     private $ordreAffichage;
+
+    /** @var ArrayCollection */
+    private $profils;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->profils = new ArrayCollection();
+    }
 
     /**
      * @return bool
@@ -305,4 +315,40 @@ class Role extends AbstractRole
 
         return $str;
     }
+
+    /** return ArrayCollection */
+    public function getProfils()
+    {
+        return $this->profils;
+    }
+
+    /**
+     * @param Profil $profil
+     * @return Role
+     */
+    public function addProfil($profil)
+    {
+        $this->profils->add($profil);
+        return $this;
+    }
+
+    /**
+     * @param Profil $profil
+     * @return Role
+     */
+    public function removeProfil($profil)
+    {
+        $this->profils->removeElement($profil);
+        return $this;
+    }
+
+    /**
+     * @param Profil $profil
+     * @return boolean
+     */
+    public function hasProfil($profil)
+    {
+        return $this->profils->contains($profil);
+    }
+
 }

@@ -94,10 +94,10 @@ return [
                                 'resource'   => PrivilegeController::getResourceId('UnicaenAuth\Controller\Droits', 'privileges'),
                                 'withtarget' => true,
                             ],
-                            'role-modele' => [
-                                'label'      => "Rôles modèles",
-                                'title'      => "Gestion des rôles modèles",
-                                'route'      => 'gestion-role-modele',
+                            'profil' => [
+                                'label'      => "Profils",
+                                'title'      => "Gestion des profils",
+                                'route'      => 'profil',
                                 'resource'   => PrivilegeController::getResourceId('UnicaenAuth\Controller\Droits', 'privileges'),
                                 'withtarget' => true,
                             ],

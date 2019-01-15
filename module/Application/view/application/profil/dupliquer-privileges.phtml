@@ -1,0 +1,23 @@
+<?php
+
+/**
+ * @var Profil[] $profils
+ * @var Profil $profil
+ */
+
+use Application\Entity\Db\Profil;
+
+?>
+
+Dupliquer le profil :
+
+<form method="POST" action="<?php echo $this->url('profil/dupliquer', ['profil' => $profil->getId()], [], true); ?>">
+    <select name="profil">
+        <?php foreach ($profils as $profil): ?>
+            <option value="<?php echo $profil->getId(); ?>">
+                <?php echo $profil->getLibelle(); ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+    <input type="submit" value="Appliquer"/>
+</form>
