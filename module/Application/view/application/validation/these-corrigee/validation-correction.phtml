@@ -45,10 +45,22 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_CORRE
             <?php foreach ($attendues as $validation): ?>
                 <li>
                     <?php echo $i = $validation->getIndividu() ?> n'a pas encore validé.
-                    <?php if (! $i->getEmail()): ?>
-                        <span class="text-danger"><small><span class="glyphicon glyphicon-warning-sign"></span>
-                                Cette personne ne peut pas valider car son email n'est pas connu
-                                dans <?php echo $i->getSource() ?>.</small></span>
+                    <?php if (! $i->getSupannId()): ?>
+                        <?php
+                        $message = sprintf(
+                            "Cette personne ne pourra pas utiliser l'application car il manque des informations la concernant dans %s (source code '%s').",
+                            $validation->getIndividu()->getSource(),
+                            $validation->getIndividu()->getSourceCode());
+                        ?>
+                        <p class="text-danger"><small><span class="glyphicon glyphicon-warning-sign"></span> <?php echo $message ?></small></p>
+                    <?php elseif (! $i->getEmail()): ?>
+                        <?php
+                        $message = sprintf(
+                            "L'application n'a pas pu notifier cette personne car son email n'est pas connu dans %s (source code '%s').",
+                            $validation->getIndividu()->getSource(),
+                            $validation->getIndividu()->getSourceCode());
+                        ?>
+                        <p class="text-danger"><small><span class="glyphicon glyphicon-warning-sign"></span> <?php echo $message ?></small></p>
                     <?php endif ?>
                 </li>
             <?php endforeach ?>
