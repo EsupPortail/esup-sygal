@@ -15,243 +15,79 @@ use Application\Entity\Db\Structure;
  * @var Etablissement[] $etablissements
  */
 
-const DEBUG = true;
-function display_debug($texte) {
-    if (DEBUG) {
-        echo "<span style='background-color: lightgoldenrodyellow; font-family: monospace;'>";
-        echo $texte;
-        echo "</span>";
-    }
-}
+
+$this->headTitle($this->translate("Statistiques"));
+
 ?>
-
-
-
-<?php $this->headTitle($this->translate("Statistiques")) ?>
 
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <h1 class="page-header first"><?php echo $this->translate("Statistiques") ?> <span
             class="badge"><?php echo count($theses) . " thèses"?></span></h1>
 
-<div  id="filtrage_option"                style='border-radius: 5px;
-                             border:solid gray 2px;
-                             background-color: whitesmoke;
-                             padding: 5px;
-                             margin: 10px;
-                             '>
-    <div class='selector' style='border-radius: 0px;
-                                 border-left:solid gray 2px;
-                                 background-color: whitesmoke;
-                                 padding: 5px;
-                                 margin: 10px;
-                                 width:415px;
-                                 float:left;'>
-        <form id="selection" method="post" action="">
-            <div style="width:200px; padding: 5px; margin: 5px; float:left;">
-                <h4>Type de structure : </h4>
-                <input id="structure_aucun" type="radio" name="structure_type" value="Aucun">  Aucune <br/>
-                <input id="structure_etab" type="radio" name="structure_type" value="Etab">   Établissement <br/>
-                <input id="structure_ed" type="radio" name="structure_type" value="ED">     École doctorale <br/>
-                <input id="structure_ur" type="radio" name="structure_type" value="UR">     Unité de recherche
-            </div>
+    <div id="selector">
+        <form id="selection" method="get" action="">
+            <h4>Type de structure : </h4>
+            <input type="radio" name="structure_type" value="Aucun">  Aucune <br/>
+            <input type="radio" name="structure_type" value="ETAB">   Établissement <br/>
+            <input type="radio" name="structure_type" value="ED">     École doctorale <br/>
+            <input type="radio" name="structure_type" value="UR">     Unité de recherche
 
-            <div style="clear:both;"></div>
-            <div id='structure_selector' >
-                <h4>Libellé de la structure :</h4>
-                <select style='width: 400px; max-width:400px; ' id='structure_id'> </select>
-            </div>
+            <h4>Libellé de la structure :</h4>
+            <select style='width: 400px; max-width:400px;' name='structure_id' id='structure_id'> </select>
+
+            <br/>
+            <input type="submit" value="Filter">
         </form>
     </div>
 
-    <div class='selector' style='border-radius: 0px;
-                                 border-left:solid gray 2px;
-                                 background-color: whitesmoke;
-                                 padding: 5px;
-                                 margin: 10px;
-                                 width:415px;
-                                 height:240px;
-                                 float:left;'>
-        <div style="width:200px; padding: 5px; margin: 5px; float:left;">
-            <h4>Type de date :</h4>
-            <input id="date_inscription" type="radio" name="date_type" value="inscription">  Inscription <br/>
-            <input id="date_soutenance" type="radio" name="date_type" value="soutenance">   Soutenance <br/>
-        </div>
+<hr/>
 
-        <div style="clear:both;"></div>
-        <div>
-            <h4>Sélection de la période :</h4>
-            <p>
 
-                <input type="text" id="amount" readonly >
-            </p>
 
-            <center>
-                <div id="slider-range" style="width:380px;"></div>
-            </center>
-        </div>
-
-    </div>
-
-    <div style="clear:both;"></div>
-
-    <div style=' float:right;
-                         text-align:center;
-                         padding:10px;'>
-        <a  href='/statistique'>
-            <input type='button' class='btn btn-info' value='Remise à zéro'/>
-        </a>
-    </div>
-    <div style=' float:right;
-                         text-align:center;
-                         padding:10px; '
-         id = "linku">
-        <a  href='/statistique'>
-            <input type='button' class='btn btn-info' value='Filtrer les thèses'/>
-        </a>
-    </div>
-
-    <div style="clear:both;"></div>
-</div>
-
+<style>
+    div#selector {
+        border-radius: 0px;
+        border-left:solid gray 2px;
+        background-color: whitesmoke;
+        padding: 5px;
+        margin: 10px;
+        width:800px;
+    }
+</style>
 
 <script>
-    $( function() {
-        $( "#slider-range" ).slider({
-            range: true,
-            min: 1998,
-            max: 2018,
-            values: [ 1998, 2018 ],
-            slide: function( event, ui ) {
-                $( "#amount" ).val( "" + ui.values[ 0 ] + " - " + ui.values[ 1 ] );
-                $.prepUrl();
+    $(document).ready(function() {
+        $("input[type='radio']").change(function() {
+            $('select#structure_id').find('option').remove();
+
+            switch($(this).attr("value")) {
+                case "ETAB" :
+                    //null option
+                    $("select#structure_id").append(new Option(("Selectionner un établissement ... "), null, false, true));
+                    <?php foreach ($etablissements as $structureConcrete) : ?>
+                        $("select#structure_id").append(new Option(<?php echo '"'.$structureConcrete->getLibelle().'"'; ?> , <?php echo $structureConcrete->getId(); ?>, false, false));
+                    <?php endforeach; ?>
+                    break;
+                case "ED" :
+                    //null option
+                    $("select#structure_id").append(new Option(("Selectionner une école doctorale ... "), null, false, true));
+                    <?php foreach ($ecoles as $structureConcrete) : ?>
+                        $("select#structure_id").append(new Option(<?php echo '"'.$structureConcrete->getLibelle().'"'; ?> , <?php echo $structureConcrete->getId(); ?>, false, false));
+                    <?php endforeach; ?>
+                    break;
+                case "UR" :
+                    //null option
+                    $("select#structure_id").append(new Option(("Selectionner une unité de recherche ... "), null, false, true));
+                    <?php foreach ($unites as $structureConcrete) : ?>
+                        $("select#structure_id").append(new Option(<?php echo '"'.$structureConcrete->getLibelle().'"'; ?> , <?php echo $structureConcrete->getId(); ?>, false, false));
+                    <?php endforeach; ?>
+                    break;
             }
         });
-        $( "#amount" ).val( "" + $( "#slider-range" ).slider( "values", 0 ) +
-            " - " + $( "#slider-range" ).slider( "values", 1 ) );
-    } );
-</script>
 
-<script>SOURCE
-    $(document).ready(function(){
-
-        var date_type = $.urlParam('date_type');
-        var date_min = $.urlParam('date_min');
-        var date_max = $.urlParam('date_max');
-        var structure_type = $.urlParam('structure_type');
-        var structure_id = $.urlParam('structure_id');
-
-        $.resetForm(structure_type,structure_id,date_type,date_min,date_max);
-
-        $('#filtrage_option').change(function() {$.prepUrl();});
-        $('input[type=radio][name=structure_type]').change(function() {
-            //alert(this.value);
-            if (this.value == "Aucun") {
-                // alert("Aucun");
-                document.getElementById('structure_id').innerHTML = "";
-            } else {
-                // alert("Pas Aucun : " + this.value);
-            }
-            if (this.value == "ED") {
-                // var form = "ED";
-                var form = " <?php echo generateStructureSelector($ecoles); ?> ";
-                document.getElementById('structure_id').innerHTML = form;
-            }
-            if (this.value == "UR") {
-                // alert("UR");
-                var form = " <?php echo generateStructureSelector($unites); ?> ";
-                document.getElementById('structure_id').innerHTML = form;
-            }
-            if (this.value == "Etab") {
-                // alert("Etab");
-                var form = " <?php echo generateStructureSelector($etablissements); ?> ";
-                document.getElementById('structure_id').innerHTML = form;
-            }
-        });
     });
-
-    $.urlParam = function(name){
-        var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
-        if (results==null){
-            return null;
-        }
-        else{
-            return decodeURI(results[1]) || 0;
-        }
-    }
-
-    $.resetForm = function(structure_type, structure_id, date_type, date_min, date_max) {
-        // alert("Data \n" + structure_type + " = " + structure_id +"\n" + date_type + " = [" + date_min + "," + date_max + "]");
-
-        //Date
-        if (date_type == "soutenance") {
-            document.getElementById('date_soutenance').checked = true;
-        } else {
-            document.getElementById('date_inscription').checked = true;
-        }
-
-        if (date_min == null) date_min=1998;
-        if (date_max == null) date_max=2018;
-        $("#slider-range").slider('values',0,date_min);
-        $("#slider-range").slider('values',1,date_max);
-        $( "#amount" ).val( "" + date_min + " - " + date_max );
-
-
-        //structure
-        if (structure_type == "ED") {
-            document.getElementById('structure_ed').checked = true;
-            var form = " <?php echo generateStructureSelector($ecoles, $structure_id); ?> ";
-
-        } else {
-            if (structure_type == "UR") {
-                document.getElementById('structure_ur').checked = true;
-                var form = " <?php echo generateStructureSelector($unites, $structure_id); ?> ";
-            } else {
-                if (structure_type == "Etab") {
-                    document.getElementById('structure_etab').checked = true;
-                    var form = " <?php echo generateStructureSelector($etablissements, $structure_id); ?> ";
-                } else {
-                    document.getElementById('structure_aucun').checked = true;
-                    var form = "";
-                }
-            }
-        }
-        document.getElementById('structure_id').innerHTML = form;
-
-    }
-
-    $.prepUrl = function() {
-        var selected_structure_type = document.querySelector('input[name="structure_type"]:checked').value;
-        var selected_structure_id = document.getElementById("structure_id").value;
-        var selected_date_type = document.querySelector('input[name="date_type"]:checked').value;
-        var selected_min = $( "#slider-range" ).slider( "values", 0 );
-        var selected_max = $( "#slider-range" ).slider( "values", 1 );
-        document.getElementById("linku").innerHTML = "" +
-            "<a  href='/statistique?structure_type=" + selected_structure_type + "&structure_id=" + selected_structure_id + "&date_type="+ selected_date_type + "&date_min="+ selected_min + "&date_max="+ selected_max +"'> " +
-            "<input type='button' class='btn btn-info' value='Filtrer les thèses'/>" +
-            "</a>";
-        //alert( this.value );
-    }
 </script>
-
-<?php
-function generateStructureSelector($structures, $id = null) {
-    //var_dump($id);
-
-    $texte = "";
-    $texte .= "<select id='structure_id'>";
-    $texte .= "<option value=''> Aucune </option>";
-    /** @var Structure $structure */
-    foreach ($structures as $structure) {
-
-        $texte .= "<option value='".$structure->getId()."'";
-        if($structure->getId() == $id) $texte .= " selected ";
-        $texte .= ">".$structure->getLibelle() ."</option>";
-    }
-    $texte .= "</select>";
-    return $texte;
-}
-?>
 
 <?php
 $validInscriptionTheses = [];
@@ -342,17 +178,38 @@ $femme = 0;
 $discipline = [];
 $discipline["Autres"] = 0;
 $threshold = 5;
-foreach($effectifsInscription[$end-2] as $these) {
+
+
+$parite = [
+        'homme' => [],
+        'femme' => [],
+];
+
+for ($annee = 1999 ; $annee <= 2019 ; $annee++) {
+    $parite['homme'][$annee] = 0;
+    $parite['femme'][$annee] = 0;
+}
+
+//foreach($effectifsInscription[$position_annee] as $these) {
+foreach($theses as $these) {
     if ($these->getDoctorant()->getIndividu()->estUneFemme()) {
         $femme++;
+        if ($these->getDatePremiereInscription()) $parite['femme'][$these->getDatePremiereInscription()->format("Y")] ++ ;
     } else {
         $homme++;
+        if ($these->getDatePremiereInscription()) $parite['homme'][$these->getDatePremiereInscription()->format("Y")] ++ ;
     }
-    $discipline[$these->getLibelleDiscipline()]++;
+    if ($these->getUniteRecherche()) {
+        $domaines = $these->getUniteRecherche()->getDomaines();
+        if ($domaines) {
+            foreach ($domaines as $domaine) {
+                $discipline[$domaine->getLibelle()]++;
+            }
+        }
+    }
 }
 
 $effectifParPays = generateEffectifParPays($effectifsInscription, $start, $end);
-echo "{$homme}/{$femme}";
 ?>
 
 <script> var do_drawing = true; </script>
@@ -492,7 +349,7 @@ echo "{$homme}/{$femme}";
         ]);
 
         var options = {
-            title: 'Répartition en fonction des disciplines',
+            title: 'Répartition en fonction des domaines scientifiques',
             legend: 'none',
         };
 
@@ -505,13 +362,85 @@ echo "{$homme}/{$femme}";
 <div class="box panel panel-info" style="height: 550px;">
     <div class="panel-heading">
         <h2 class="first">
-            Répartition des inscriptions en <?php echo ($end-1) ?>
+            Répartition des inscriptions entre <?php echo $start; ?> et <?php echo $end; ?>
         </h2>
     </div>
     <div id="Repartition/Discipline" style="width: 420px; height: 500px; float:left;"></div>
     <div id="Repartition/Sexe" style="width: 420px; height: 500px; float:left;"></div>
 
 </div>
+
+<div class="box panel panel-info" style="height: 550px;">
+    <div class="panel-heading">
+    <h2> Statistiques sur la parité </h2>
+    </div>
+
+    <div id="parite_cumul" class="col-md-6"></div>
+    <div id="parite_area"  class="col-md-6"></div>
+
+</div>
+
+<script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            let data = google.visualization.arrayToDataTable([
+                ['Année', 'Homme', 'Femme'],
+                <?php
+                for ($i = $start; $i <= $end; $i++) {
+                    echo "[\"" . (((int) $i)) . "\"," . $parite['homme'][((int)  $i)] . "," . $parite['femme'][((int)  $i)] . "],";
+                }
+                ?>
+            ]);
+            //console.log(data);
+
+            let options_fullStacked = {
+                title: 'Pourcentage d\'inscription en premère année de thèse en fonction du genre du doctorant' ,
+                isStacked: 'relative',
+                height: 400,
+                legend: { position: 'bottom' },
+                vAxis: {
+                    minValue: 0,
+                    ticks: [0, .25, .50, .75, 1]
+                },
+                hAxis: {
+                    slantedText:true,
+                    slantedTextAngle:45
+                },
+                series: {
+                    0: { color: '#adcde2' },
+                    1: { color: '#ff93dd'},
+                }
+            };
+
+            let options_stacked = {
+                title: 'Nombre d\'inscription en premère année de thèse en fonction du genre du doctorant' ,
+                isStacked: 'false',
+                height: 400,
+                legend: { position: 'bottom' },
+                vAxis: {
+                    minValue: 0,
+                },
+                hAxis: {
+                    slantedText:true,
+                    slantedTextAngle:45,
+
+                },
+                series: {
+                    0: { color: '#adcde2' },
+                    1: { color: '#ff93dd'},
+                }
+            };
+            var chart = new google.visualization.AreaChart(document.getElementById('parite_area'));
+            chart.draw(data, options_fullStacked);
+
+            var chart = new google.visualization.AreaChart(document.getElementById('parite_cumul'));
+            chart.draw(data, options_stacked);
+        }
+    </script>
+
+
 
 <script type="text/javascript">
     google.charts.load('current', {
@@ -540,7 +469,7 @@ echo "{$homme}/{$femme}";
 <div class="box panel panel-info" style="height: 550px;">
     <div class="panel-heading">
         <h2 class="first">
-            Provenance des doctorants inscrits entre <?php echo ($start) ?> et <? echo $end?>
+            Provenance des doctorants inscrits entre <?php echo $start; ?> et <?php echo $end; ?>
         </h2>
     </div>
     <div id="regions_div" style="width: 900px; height: 500px;"></div>
@@ -584,11 +513,14 @@ function generateEffectifParPays($effectifsInscription, $start , $end) {
     $code["COLOMBIEN(NE)"] = "Colombia";
     $code["COMORIEN(NE)"] = "Comoros";
     $code["CONGOLAIS(E)"] = "Congo";
+    $code["COSTARICIEN(NE)"] = "Costa Rica";
     $code["CROATE"] = "Croatia";
     $code["CUBAIN(E)"] = "Cuba";
     $code["DANOIS(E)"] = "Denmark";
     $code["DJIBOUTIEN(NE)"] = "Djibouti";
+    $code["DOMINICAIN(E)"] = "Dominican Republic";
     $code["EGYPTIEN(NE)"] = "Egypt";
+    $code["EL SALVADOR"] = "El Salvador";
     $code["EL SALVADORIEN(NE)"] = "El Salvador";
     $code["EQUATORIEN(NE)"] = "Equatorial Guinea";
     $code["ESPAGNOL(E)"] = "Spain";
@@ -645,6 +577,7 @@ function generateEffectifParPays($effectifsInscription, $start , $end) {
     $code["PAKISTANAIS(E)"] = "Pakistan";
     $code["PALESTINIEN(NE)"] = "Palestine";
     $code["PANAMEEN(NE)"] = "Panama";
+    $code["PARAGUAYEN(NE)"] = "Paraguay";
     $code["PERUVIEN(NE)"] = "Peru";
     $code["PHILIPPIN(NE)"] = "Philippines";
     $code["POLONAIS(E)"] = "Poland";
