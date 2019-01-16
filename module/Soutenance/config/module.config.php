@@ -184,6 +184,13 @@ return array(
                     'privileges' => SoutenancePrivileges::SOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU,
                 ],
                 [
+                    'controller' => PresoutenanceController::class,
+                    'action'     => [
+                        'notifier-demande-avis-soutenance',
+                    ],
+                    'privileges' => SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_NOTIFIER,
+                ],
+                [
                     'controller' => EngagementImpartialiteController::class,
                     'action'     => [
                         'engagement-impartialite',
@@ -485,6 +492,17 @@ return array(
                                     'defaults' => [
                                         'controller' => PresoutenanceController::class,
                                         'action'     => 'deassocier-jury',
+                                    ],
+                                ],
+                            ],
+                            'notifier-demande-avis-soutenance' => [
+                                'type' => Literal::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/notifier-demande-avis-soutenance',
+                                    'defaults' => [
+                                        'controller' => PresoutenanceController::class,
+                                        'action'     => 'notifier-demande-avis-soutenance',
                                     ],
                                 ],
                             ],

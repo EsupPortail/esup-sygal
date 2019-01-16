@@ -81,13 +81,18 @@ $canEdit = true;
 </form>
 
 <script>
-    $("div#justification").hide();
+    // $(document).ready(function() {
+    //     alert('test');
+    //     if ($("input[name='avis']").attr('value') === 'Favorable') {
+    //         $("div#justification").hide();
+    //     }
+    // });
 
-    $("input[name='avis']").click(function() {
-        if ($(this).attr('value') === 'Favorable') {
-            $("div#justification").hide();
-        } else {
-            $("div#justification").show();
-        }
-    })
+    // $("input[name='avis']").change(function() {
+    //     if ($(this).attr('value') === 'Favorable') {
+    //         $("div#justification").hide();
+    //     } else {
+    //         $("div#justification").show();
+    //     }
+    // })
 </script>

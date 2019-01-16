@@ -18,9 +18,11 @@ use Application\Service\Validation\ValidationServiceAwareTrait;
 use BjyAuthorize\Exception\UnAuthorizedException;
 use Notification\Service\NotifierServiceAwareTrait;
 use Soutenance\Entity\Avis;
+use Soutenance\Entity\Membre;
 use Soutenance\Form\Avis\AvisForm;
 use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
 use Soutenance\Service\Avis\AvisServiceAwareTrait;
+use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\Form\Element\Hidden;
 use Zend\Http\Request;
@@ -35,15 +37,18 @@ class AvisSoutenanceController extends AbstractController {
     use FichierServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
     use AvisServiceAwareTrait;
+    use MembreServiceAwareTrait;
 
     public function indexAction()
     {
         /** @var These $these */
         $idThese = $this->params()->fromRoute('these');
         $these = $this->getTheseService()->getRepository()->find($idThese);
+        /** @var Membre $membre */
+        $idMembre = $this->params()->fromRoute('rapporteur');
+        $membre = $this->getMembreService()->find($idMembre);
         /** @var Acteur $rapporteur */
-        $idRapporteur = $this->params()->fromRoute('rapporteur');
-        $rapporteur = $this->getActeurService()->getRepository()->findActeurByIndividu($idRapporteur);
+        $rapporteur = $this->getActeurService()->getRepository()->findActeurByIndividu($membre->getIndividu());
 
         $isAllowed = $this->isAllowed($rapporteur, AvisSoutenancePrivileges::SOUTENANCE_AVIS_VISUALISER);
         if (!$isAllowed) {

@@ -5,14 +5,20 @@ namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Acteur;
+use Application\Entity\Db\Fichier;
 use Application\Entity\Db\IndividuRole;
+use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
+use Application\Entity\Db\Utilisateur;
+use Application\Entity\Db\VersionFichier;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
+use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
+use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use BjyAuthorize\Exception\UnAuthorizedException;
 use DateInterval;
@@ -21,9 +27,11 @@ use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Form\SoutenanceDateRenduRapport\SoutenanceDateRenduRapportForm;
 use Soutenance\Provider\Privilege\SoutenancePrivileges;
+use Soutenance\Service\Avis\AvisServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
+use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
 use Zend\Http\Request;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
@@ -40,6 +48,9 @@ class PresoutenanceController extends AbstractController
     use ActeurServiceAwareTrait;
     use ValidationServiceAwareTrait;
     use RoleServiceAwareTrait;
+    use AvisServiceAwareTrait;
+    use FichierServiceAwareTrait;
+    use UtilisateurServiceAwareTrait;
 
     public function presoutenanceAction()
     {
@@ -77,11 +88,36 @@ class PresoutenanceController extends AbstractController
             }
         }
 
+        $avis = $this->getAvisService()->getAvisByThese($these);
+
+        $rapports = [];
+        foreach ($rapporteurs as $rapporteur) {
+            if ($rapporteur->getIndividu()) {
+                $utilisateurs = $this->utilisateurService->getRepository()->findByIndividu($rapporteur->getIndividu());
+                $utilisateur = null;
+                $utilisateursShib = array_filter($utilisateurs, function (Utilisateur $u) { return $u->getPassword() === Utilisateur::PASSWORD_SHIB;});
+                if (!empty($utilisateursShib)) {
+                    $utilisateur = current($utilisateursShib);
+                } else {
+                    $utilisateur = current($utilisateurs);
+                }
+                /** @var Fichier $fichier */
+                $fichier = $this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE, VersionFichier::CODE_ORIG, false, $utilisateur);
+                if ($fichier) {
+                    $url = $this->urlFichierThese()->telechargerFichierThese($these,current($fichier));
+                    $rapports[$rapporteur->getIndividu()->getId()] = $url;
+                }
+            }
+        }
+
+
         return new ViewModel([
             'these' => $these,
             'proposition' => $proposition,
             'rapporteurs' => $rapporteurs,
             'engagements' => $engagements,
+            'avis' => $avis,
+            'rapports' => $rapports,
         ]);
     }
 
@@ -175,6 +211,9 @@ class PresoutenanceController extends AbstractController
         $idMembre = $this->params()->fromRoute('membre');
         $membre = $this->getMembreService()->find($idMembre);
 
+        /** @var Proposition $proposition */
+        $proposition = $this->getPropositionService()->findByThese($these);
+
         /** @var Acteur[] $acteurs */
         $acteurs = $this->getActeurService()->getRepository()->findActeurByThese($these);
         $acteur = null;
@@ -189,8 +228,39 @@ class PresoutenanceController extends AbstractController
             $this->getMembreService()->update($membre);
             //retrait du role
             $this->getRoleService()->removeIndividuRole($acteur->getIndividu(), $acteur->getRole());
+            //annuler impartialite
+            $validations = $this->getValidationService()->getRepository()->findValidationByCodeAndIndividu(TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $acteur->getIndividu());
+            if (!empty($validations)) {
+                $this->getValidationService()->unsignEngagementImpartialite(current($validations));
+//                $this->getNotifierService()->triggerAnnulationEngagementImpartialite($these, $proposition, $membre);
+            }
+
 
             $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
         }
+    }
+
+    public function notifierDemandeAvisSoutenanceAction()
+    {
+
+        /** @var These $these */
+        $idThese = $this->params()->fromRoute('these');
+        $these = $this->getTheseService()->getRepository()->find($idThese);
+
+        $isAllowed = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_NOTIFIER);
+        if (!$isAllowed) {
+            throw new UnAuthorizedException("Vous êtes non authorisé(e) à notifier la demande d'avis de soutenance cette thèse.");
+        }
+
+        /** @var Proposition $proposition */
+        $proposition = $this->getPropositionService()->findByThese($these);
+        $rapporteurs = $this->getPropositionService()->getRapporteurs($proposition);
+
+        /** @var Membre $rapporteur */
+        foreach ($rapporteurs as $rapporteur) {
+            $this->getNotifierService()->triggerDemandeAvisSoutenance($these, $proposition, $rapporteur);
+        }
+
+        $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 }

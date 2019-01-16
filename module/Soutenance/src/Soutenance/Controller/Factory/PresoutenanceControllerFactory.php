@@ -3,13 +3,16 @@
 namespace Soutenance\Controller\Factory;
 
 use Application\Service\Acteur\ActeurService;
+use Application\Service\Fichier\FichierService;
 use Application\Service\Individu\IndividuService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\Role\RoleService;
 use Application\Service\These\TheseService;
+use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Validation\ValidationService;
 use Soutenance\Controller\EngagementImpartialiteController;
 use Soutenance\Controller\PresoutenanceController;
+use Soutenance\Service\Avis\AvisService;
 use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Proposition\PropositionService;
 use Zend\Mvc\Controller\ControllerManager;
@@ -24,6 +27,7 @@ class PresoutenanceControllerFactory
     {
         /**
          * @var PropositionService $propositionService
+         * @var AvisService $avisService
          * @var MembreService $membreService
          * @var TheseService $theseService
          * @var IndividuService $individuService
@@ -31,6 +35,8 @@ class PresoutenanceControllerFactory
          * @var ActeurService $acteurService
          * @var ValidationService $validationService
          * @var RoleService $roleService
+         * @var UtilisateurService $utilisateurService
+         * @var FichierService $fichierService
          */
         $propositionService = $controllerManager->getServiceLocator()->get(PropositionService::class);
         $membreService = $controllerManager->getServiceLocator()->get(MembreService::class);
@@ -40,6 +46,9 @@ class PresoutenanceControllerFactory
         $notifierService = $controllerManager->getServiceLocator()->get(NotifierService::class);
         $validationService = $controllerManager->getServiceLocator()->get('ValidationService');
         $roleService = $controllerManager->getServiceLocator()->get('RoleService');
+        $avisService = $controllerManager->getServiceLocator()->get(AvisService::class);
+        $utilisateurService = $controllerManager->getServiceLocator()->get('UtilisateurService');
+        $fichierService = $controllerManager->getServiceLocator()->get('FichierService');
 
         /** @var PresoutenanceController $controller */
         $controller = new PresoutenanceController();
@@ -51,6 +60,9 @@ class PresoutenanceControllerFactory
         $controller->setNotifierService($notifierService);
         $controller->setValidationService($validationService);
         $controller->setRoleService($roleService);
+        $controller->setAvisService($avisService);
+        $controller->setUtilisateurService($utilisateurService);
+        $controller->setFichierService($fichierService);
 
         return $controller;
     }

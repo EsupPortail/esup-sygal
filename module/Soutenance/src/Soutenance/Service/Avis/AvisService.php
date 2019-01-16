@@ -100,4 +100,25 @@ class AvisService {
 
         return $result;
     }
+
+    /**
+     * @param These these
+     * @return Avis[]
+     */
+    public function getAvisByThese($these)
+    {
+        $qb = $this->getEntityManager()->getRepository(Avis::class)->createQueryBuilder('avis')
+            ->andWhere('avis.these = :these')
+            ->setParameter('these', $these);
+
+        $result = $qb->getQuery()->getResult();
+
+        $avis = [];
+        /** @var Avis $entry */
+        foreach ($result as $entry) {
+            $avis[$entry->getRapporteur()->getIndividu()->getId()] = $entry;
+        }
+        return $avis;
+
+    }
 }

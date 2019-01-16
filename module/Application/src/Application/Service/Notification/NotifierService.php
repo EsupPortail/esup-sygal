@@ -743,4 +743,25 @@ class NotifierService extends \Notification\Service\NotifierService
             ]);
         $this->trigger($notif);
     }
+
+    /**
+     * @param These $these
+     * @param Proposition $proposition
+     * @param Membre $rapporteur
+     */
+    public function triggerDemandeAvisSoutenance($these, $proposition, $rapporteur)
+    {
+        $email   = $rapporteur->getIndividu()->getEmail();
+        $notif = new Notification();
+        $notif
+            ->setSubject("Demande de l'avis de soutenance de la thèse de ".$these->getDoctorant()->getNomComplet())
+            ->setTo($email)
+            ->setTemplatePath('soutenance/notification/demande-avis-soutenance')
+            ->setTemplateVariables([
+                'these' => $these,
+                'proposition' => $proposition,
+                'membre' => $rapporteur,
+            ]);
+        $this->trigger($notif);
+    }
 }

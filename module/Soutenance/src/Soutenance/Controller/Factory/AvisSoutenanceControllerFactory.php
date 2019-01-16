@@ -11,6 +11,7 @@ use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Validation\ValidationService;
 use Soutenance\Controller\AvisSoutenanceController;
 use Soutenance\Service\Avis\AvisService;
+use Soutenance\Service\Membre\MembreService;
 use Zend\Mvc\Controller\ControllerManager;
 
 class AvisSoutenanceControllerFactory
@@ -23,6 +24,7 @@ class AvisSoutenanceControllerFactory
     {
 
         /**
+         * @var MembreService $membreService
          * @var TheseService $theseService
          * @var ValidationService $validationService
          * @var ActeurService $acteurService
@@ -33,6 +35,7 @@ class AvisSoutenanceControllerFactory
          * @var UtilisateurService $utilisateurService
          *
          */
+        $membreService = $controllerManager->getServiceLocator()->get(MembreService::class);
         $theseService = $controllerManager->getServiceLocator()->get('TheseService');
         $validationService = $controllerManager->getServiceLocator()->get('ValidationService');
         $acteurService = $controllerManager->getServiceLocator()->get(ActeurService::class);
@@ -52,6 +55,7 @@ class AvisSoutenanceControllerFactory
         $controller->setUtilisateurService($utilisateurService);
         $controller->setUserContextService($userContextService);
         $controller->setAvisService($avisService);
+        $controller->setMembreService($membreService);
 
         return $controller;
     }
