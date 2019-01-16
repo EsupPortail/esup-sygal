@@ -2,6 +2,7 @@
 
 use Application\Controller\Factory\SubstitutionControllerFactory;
 use Application\Provider\Privilege\StructurePrivileges;
+use Application\Provider\Privilege\SubstitutionPrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
 use Zend\Mvc\Router\Http\Segment;
 
@@ -156,8 +157,8 @@ return [
                             'substitution' => [
                                 'label'    => 'Substitutions',
                                 'route'    => 'substitution-index',
-                                'resource' => PrivilegeController::getResourceId('Application\Controller\Admin', 'index'),
-
+//                                'resource' => PrivilegeController::getResourceId('Application\Controller\Admin', 'index'),
+                                'resource' => SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_CONSULTATION_ECOLE),
                                 'order'    => 50,
                             ],
                         ],
