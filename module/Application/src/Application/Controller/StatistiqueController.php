@@ -2,12 +2,15 @@
 
 namespace Application\Controller;
 
+use Application\Entity\Db\TypeStructure;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Application\Service\Structure\StructureServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;
+use Zend\Http\Request;
 use Zend\View\Model\ViewModel;
 
 class StatistiqueController extends AbstractController
@@ -16,15 +19,23 @@ class StatistiqueController extends AbstractController
     use EcoleDoctoraleServiceAwareTrait;
     use UniteRechercheServiceAwareTrait;
     use EtablissementServiceAwareTrait;
+    use StructureServiceAwareTrait;
 
     public function indexAction()
     {
+        $theses = null;
+
+        /** TODO prendre les non substitué **/
+        $ecoles = $this->getStructureService()->getAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle');
+        $unites = $this->getStructureService()->getAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'libelle');
+        $etablissements = $this->getEtablissementService()->getRepository()->findAllEtablissementsMembres();
 
         /**
          * Certaines statistiques exploites le genre de la personne et nécessite de récupérer
          * les données présentent dans la table Individu. Afin d'évite moultes requêtes, il
          * faut faire les jointures qui vont biens (et aussi le select)
          */
+
 
         $qb = $this->theseService->getRepository()->createQueryBuilder("t");
         $qb = $qb
@@ -43,15 +54,15 @@ class StatistiqueController extends AbstractController
         $qb = $this->decorateWithDate($qb, $dateType, $dateDebut, $dateFin);
 
         $theses = $qb->getQuery()->execute();
-        $ecoles = $this->getEcoleDoctoraleService()->getRepository()->findAll();
-        $unites = $this->getUniteRechercheService()->getRepository()->findAll();
-        $etablissements = $this->getEtablissementService()->getRepository()->findAll();
+
+
+
         return new ViewModel([
             'theses' => $theses,
             'ecoles' => $ecoles,
             'unites' => $unites,
             'etablissements' => $etablissements,
-            'structure_id' => $structureId,
+//            'structure_id' => $structureId,
         ]);
     }
 
