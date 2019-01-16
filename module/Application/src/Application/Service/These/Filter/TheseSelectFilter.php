@@ -150,7 +150,7 @@ class TheseSelectFilter extends TheseFilter
                         ->andWhere('orig.id IS NULL');
                 } else {
                     $qb
-                        ->andWhere('origine.id = :origine')
+                        ->andWhere('orig.id = :origine')
                         ->setParameter('origine', $filterValue);
                 }
                 break;
