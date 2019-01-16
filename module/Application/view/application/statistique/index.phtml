@@ -180,12 +180,24 @@ $discipline["Autres"] = 0;
 $threshold = 5;
 
 
+$parite = [
+        'homme' => [],
+        'femme' => [],
+];
+
+for ($annee = 1999 ; $annee <= 2019 ; $annee++) {
+    $parite['homme'][$annee] = 0;
+    $parite['femme'][$annee] = 0;
+}
+
 //foreach($effectifsInscription[$position_annee] as $these) {
 foreach($theses as $these) {
     if ($these->getDoctorant()->getIndividu()->estUneFemme()) {
         $femme++;
+        if ($these->getDatePremiereInscription()) $parite['femme'][$these->getDatePremiereInscription()->format("Y")] ++ ;
     } else {
         $homme++;
+        if ($these->getDatePremiereInscription()) $parite['homme'][$these->getDatePremiereInscription()->format("Y")] ++ ;
     }
     if ($these->getUniteRecherche()) {
         $domaines = $these->getUniteRecherche()->getDomaines();
@@ -357,6 +369,78 @@ $effectifParPays = generateEffectifParPays($effectifsInscription, $start, $end);
     <div id="Repartition/Sexe" style="width: 420px; height: 500px; float:left;"></div>
 
 </div>
+
+<div class="box panel panel-info" style="height: 550px;">
+    <div class="panel-heading">
+    <h2> Statistiques sur la parité </h2>
+    </div>
+
+    <div id="parite_cumul" class="col-md-6"></div>
+    <div id="parite_area"  class="col-md-6"></div>
+
+</div>
+
+<script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            let data = google.visualization.arrayToDataTable([
+                ['Année', 'Homme', 'Femme'],
+                <?php
+                for ($i = $start; $i <= $end; $i++) {
+                    echo "[\"" . (((int) $i)) . "\"," . $parite['homme'][((int)  $i)] . "," . $parite['femme'][((int)  $i)] . "],";
+                }
+                ?>
+            ]);
+            //console.log(data);
+
+            let options_fullStacked = {
+                title: 'Pourcentage d\'inscription en premère année de thèse en fonction du genre du doctorant' ,
+                isStacked: 'relative',
+                height: 400,
+                legend: { position: 'bottom' },
+                vAxis: {
+                    minValue: 0,
+                    ticks: [0, .25, .50, .75, 1]
+                },
+                hAxis: {
+                    slantedText:true,
+                    slantedTextAngle:45
+                },
+                series: {
+                    0: { color: '#adcde2' },
+                    1: { color: '#ff93dd'},
+                }
+            };
+
+            let options_stacked = {
+                title: 'Nombre d\'inscription en premère année de thèse en fonction du genre du doctorant' ,
+                isStacked: 'false',
+                height: 400,
+                legend: { position: 'bottom' },
+                vAxis: {
+                    minValue: 0,
+                },
+                hAxis: {
+                    slantedText:true,
+                    slantedTextAngle:45,
+
+                },
+                series: {
+                    0: { color: '#adcde2' },
+                    1: { color: '#ff93dd'},
+                }
+            };
+            var chart = new google.visualization.AreaChart(document.getElementById('parite_area'));
+            chart.draw(data, options_fullStacked);
+
+            var chart = new google.visualization.AreaChart(document.getElementById('parite_cumul'));
+            chart.draw(data, options_stacked);
+        }
+    </script>
+
+
 
 <script type="text/javascript">
     google.charts.load('current', {
