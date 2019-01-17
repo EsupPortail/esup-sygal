@@ -2,9 +2,12 @@
 
 namespace Application\Controller;
 
+use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\NatureFichier;
+use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
+use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\VersionFichier;
 use Application\EventRouterReplacerAwareTrait;
 use Application\Filter\IdifyFilterAwareTrait;
@@ -16,6 +19,7 @@ use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
+use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\View\Helper\Sortable;
@@ -39,6 +43,7 @@ class FichierTheseController extends AbstractController
     use IndividuServiceAwareTrait;
     use ValidationServiceAwareTrait;
     use EventRouterReplacerAwareTrait;
+    use UtilisateurServiceAwareTrait;
 
     public function deposesAction()
     {
@@ -175,9 +180,54 @@ class FichierTheseController extends AbstractController
 
         $estRetraite = $this->params()->fromQuery('retraite', false);
 
-        //TODO substituer
-//        $fichiers = $these->getFichiersByNatureEtVersion($nature, $version, $estRetraite);
         $fichiers = $this->fichierService->getRepository()->fetchFichiers($these, $nature, $version, $estRetraite);
+
+        $items = array_map(function (Fichier $fichier) use ($these) {
+            return [
+                'file'          => $fichier,
+                'downloadUrl'   => $this->urlFichierThese()->telechargerFichierThese($these, $fichier),
+                'deleteUrl'     => $this->urlFichierThese()->supprimerFichierThese($these, $fichier),
+            ];
+        }, $fichiers);
+
+        $viewModel = new ViewModel([
+            'items' => $items,
+            'inclureValidite' => false,
+            'inclureRetraitement' => false,
+        ]);
+        $viewModel->setTemplate('application/fichier-these/lister-fichiers');
+
+        return $viewModel;
+    }
+
+    /**
+     * Action de listage des fichiers déposés répondant aux critères de nature (et version) spécifiés.
+     *
+     * @return ViewModel
+     */
+    public function listerRapportPresoutenanceByUtilisateurAction()
+    {
+        $these = $this->requestedThese();
+
+        $nature = $this->fichierService->fetchNatureFichier(NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE);
+        $version = $this->versionFichierService->getRepository()->findOneByCode(VersionFichier::CODE_ORIG);
+
+        /** @var Utilisateur $utilisateur */
+        $utilisateur = $this->params()->fromRoute('utilisateur');
+        if ($utilisateur !== null) {
+            $utilisateur = $this->utilisateurService->getRepository()->find($utilisateur);
+        }
+
+        $filter = function(Acteur $a) use ($utilisateur) {
+            return $a->getIndividu() === $utilisateur->getIndividu();
+        };
+        if ($these->getActeursByRoleCode(Role::CODE_RAPPORTEUR_JURY)->filter($filter)->isEmpty()) {
+            throw new RuntimeException("L'utilisateur spécifié n'est pas rapporteur du jury de cette thèse.");
+        }
+
+        $estRetraite = $this->params()->fromQuery('retraite', false);
+
+        $fichiers = $this->fichierService->getRepository()->fetchFichiers($these, $nature, $version, $estRetraite, $utilisateur);
 
         $items = array_map(function (Fichier $fichier) use ($these) {
             return [

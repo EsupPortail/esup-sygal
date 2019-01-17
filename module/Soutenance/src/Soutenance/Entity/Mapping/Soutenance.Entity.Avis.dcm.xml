@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="Soutenance\Entity\Avis" table="SOUTENANCE_AVIS">
+        <id name="id" type="integer" column="ID">
+            <generator strategy="SEQUENCE"/>
+        </id>
+
+        <many-to-one field="rapporteur" target-entity="Application\Entity\Db\Acteur">
+            <join-columns>
+                <join-column name="RAPPORTEUR_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
+        <many-to-one field="these" target-entity="Application\Entity\Db\These">
+            <join-columns>
+                <join-column name="THESE_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
+        <field name="avis"              type="string"       length="64"         column="AVIS"           nullable="false"/>
+        <field name="motif"             type="string"       length="1024"       column="MOTIF"          nullable="false"/>
+
+        <many-to-one field="validation" target-entity="Application\Entity\Db\Validation">
+            <join-columns>
+                <join-column name="VALIDATION_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
+        <many-to-one field="fichier" target-entity="Application\Entity\Db\Fichier">
+            <join-columns>
+                <join-column name="FICHIER_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
+    </entity>
+</doctrine-mapping>

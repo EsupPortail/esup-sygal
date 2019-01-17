@@ -1,0 +1,335 @@
+<?php
+
+/**
+ * @var These $these
+ * @var Proposition $proposition
+ * @var Membre[] $rapporteurs
+ * @var array $engagements
+ * @var Avis[] $avis
+ */
+
+use Application\Constants;
+use Application\Entity\Db\These;
+use Application\Entity\Db\Validation;
+use Soutenance\Entity\Avis;
+use Soutenance\Provider\Privilege\SoutenancePrivileges;
+use Soutenance\Entity\Membre;
+use Soutenance\Entity\Proposition;
+
+$canEditDateRenduRapport                = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_DATE_RETOUR_MODIFICATION);
+$canAssocierMembreIndividu              = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU);
+$canVisualiserEngagementImpartialite    = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_VISUALISER);
+$canNotifierEngagementImpartialite      = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_NOTIFIER);
+
+$allSigned = true;
+
+$this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->getNomComplet());
+?>
+
+<h1 class="page-header">
+    Préparation de la soutenance
+    <small><?php echo $this->partial('application/these/partial/titre') ?></small>
+</h1>
+
+<!-- DATE DE RENDU DE RAPPORT ----------------------------------------------------------------------------------------->
+
+<div class=" panel panel-info">
+
+    <div class="panel-heading">
+        <h2> Date de retour des rapports </h2>
+    </div>
+
+    <div class="panel-body">
+
+        <p class="lead">
+            Les rapports doivent être reçu un mois avant la date de soutenance.
+        </p>
+
+        <div class="pull-left">
+            Date de retour :
+            <strong><?php echo $proposition->getRenduRapport()->format('d/m/Y'); ?> </strong>
+        </div>
+
+        <?php if($canEditDateRenduRapport): ?>
+        <div class="pull-right">
+            <a
+                href="<?php echo $this->url('soutenance/presoutenance/date-rendu-rapport', ['these' => $these->getId()], [] , true); ?>"
+                class="btn btn-primary action ajax-modal"
+                data-event="modification-date-rendu-rapport"
+            >
+                <span class="glyphicon glyphicon-pencil"></span> Modifier
+            </a>
+        </div>
+        <?php endif; ?>
+
+    </div>
+
+</div>
+
+<!-- MEMBRES DU JURY ET PERSOPASS ------------------------------------------------------------------------------------->
+
+<div class=" panel panel-info">
+
+    <div class="panel-heading">
+        <div class="row">
+        <div class="col-md-8">
+            <h2> Association d'acteur SYGAL aux membres de jury </h2>
+        </div>
+        <div class="col-md-4">
+            <p>
+                <a class="btn btn-default btn-sm"
+                   id="refresh-these-button"
+                   href="<?php echo $this->urlThese()->refreshTheseUrl($these, $this->url('soutenance/presoutenance', ['these' => $these->getId()], [], true)); ?>"
+                ><span class="glyphicon glyphicon-import"></span> <strong>Mettre à jour</strong> la thèse à partir de
+                    <?php echo $these->getSource() ?></a>
+            </p>
+            <p class="small">
+                Dernière mise à jour : <?php echo $these->getHistoModification()->format(Constants::DATETIME_FORMAT) ?>.
+            </p>
+        </div>
+        </div>
+    </div>
+
+    <div class="panel-body">
+
+        <p class="lead">
+            Tous les membres du jury doivent être associés à des acteurs enregistrés dans SyGAL.
+        </p>
+
+
+
+        <table class="table table-extra-condensed">
+            <thead>
+            <tr>
+                <th> Dénomination </th>
+                <th> Qualité </th>
+                <th> Etablissement </th>
+                <th> Id SyGAL </th>
+                <th> Action </th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($proposition->getMembres() as $membre): ?>
+                <tr>
+                    <td>    <?php echo $membre->getDenomination(); ?>                                                   </td>
+                    <td>    <?php echo $membre->getQualite()->getLibelle(); ?>                                          </td>
+                    <td>    <?php echo $membre->getEtablissement(); ?>                                                  </td>
+                    <td>    <?php echo ($membre->getIndividu())?$membre->getIndividu()->getId() .' '. $membre->getIndividu()->getNomComplet():''; ?>                  </td>
+                    <td>
+                        <?php if($canAssocierMembreIndividu): ?>
+                            <?php if (! $membre->getIndividu()): ?>
+                                <a
+                                        href="<?php echo $this->url('soutenance/presoutenance/associer-jury', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true); ?>"
+                                        class="ajax-modal"
+                                        data-event="modification-date-rendu-rapport"
+                                >
+                                        <span class="glyphicon glyphicon-link" title="Associer un individu SyGAL à un membre de jury"></span>
+                                </a>
+                            <?php else: ?>
+                                <a
+                                        href="<?php echo $this->url('soutenance/presoutenance/deassocier-jury', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true); ?>"
+                                >
+                                    <span class="glyphicon glyphicon-remove" title="Casser l'association d'un individu SyGAL à un membre de jury"></span>
+                                </a>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+
+    </div>
+
+</div>
+
+<!-- DEMANDE D'EXPERTISE ---------------------------------------------------------------------------------------------->
+
+<div class=" panel panel-info">
+    <div class="panel-heading">
+        <h2> Engagements d'impartialité</h2>
+    </div>
+    <div class="panel-body">
+        <p class="lead">
+            Afin de devenir officiellement rapporteur de cette thèse les futurs rapporteurs doivent signer un engagement
+            d'impartialité.
+        </p>
+
+        <table class="table table-extra-condensed">
+            <thead>
+            <tr>
+                <th> Rapporteur </th>
+                <th> Signé </th>
+                <th> Actions </th>
+            </tr>
+            </thead>
+            <tbody>
+                <?php
+                    /** @var Membre $rapporteur */
+                foreach ($rapporteurs as $rapporteur) : ?>
+                <tr>
+                    <td>
+                        <?php if ($rapporteur->getIndividu()) : ?>
+                            <?php echo $rapporteur->getIndividu()->getNomComplet(); ?>
+                        <?php else : ?>
+                            <span class="text-danger">
+                                <?php echo $rapporteur->getDenomination(); ?>
+                            </span>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <?php if ($rapporteur->getIndividu()) : ?>
+                            <?php if ($rapporteur->getIndividu() AND isset($engagements[$rapporteur->getIndividu()->getId()])): ?>
+                                <?php
+                                    /** @var Validation $validation */
+                                    $validation = $engagements[$rapporteur->getIndividu()->getId()];
+                                    echo $validation->getHistoCreation()->format("d/m/Y à H:i");
+                                ?>
+                            <?php else: ?>
+                                <span class="text-warning">
+                                    <i> Non signé </i>
+                                    <?php $allSigned = false; ?>
+                                </span>
+                            <?php endif; ?>
+                        <?php else: ?>
+                            <span class="text-danger">
+                                <span class="glyphicon glyphicon-warning-sign"></span>
+                                <i> N'est pas un individu SyGAL</i>
+                                <span class="glyphicon glyphicon-warning-sign"></span>
+                            </span>
+                            <?php $allSigned = false; ?>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <?php if($canVisualiserEngagementImpartialite AND  $rapporteur->getIndividu()): ?>
+                            <a href="<?php echo $this->url('soutenance/presoutenance/engagement-impartialite', ['these' => $these->getId(), 'proposition' => $proposition->getId(), 'membre' => $rapporteur->getId()], [], true);?>">
+                                <span class="glyphicon glyphicon-eye-open" title="Visualiser l'engagement d'impartialité"></span>
+                            </a>
+                        <?php endif; ?>
+                        <?php if($canNotifierEngagementImpartialite AND  $rapporteur->getIndividu() AND !isset($engagements[$rapporteur->getIndividu()->getId()])): ?>
+                        <a href="<?php echo $this->url('soutenance/presoutenance/engagement-impartialite/notifier', ['these' => $these->getId(), 'proposition' => $proposition->getId(), 'membre' => $rapporteur->getId()], [], true);?>">
+                            <span class="glyphicon glyphicon-send" title="Notifier le rapporteur"></span>
+                        </a>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+
+        <?php if($canNotifierEngagementImpartialite): ?>
+            <a href="<?php echo $this->url('soutenance/presoutenance/notifier-engagement-impartialite', ['these' => $these->getId(), 'proposition' => $proposition->getId()], [], true);?>"
+               class="btn btn-info">
+                <span class="glyphicon glyphicon-send"></span> Envoyer les notifications aux rapporteurs
+            </a>
+        <?php endif; ?>
+    </div>
+</div>
+
+
+<!-- Envois des demandes de rapport ----------------------------------------------------------------------------------->
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h2> Avis de soutenance</h2>
+    </div>
+    <div class="panel-body">
+        <p class="lead">
+            Avant de pouvoir déclencher la procédure de soutenance il est nécessaire d'attendre le retour des avis de souteance des rapporteurs.
+        </p>
+
+        <table class="table table-extra-condensed">
+            <thead>
+            <tr>
+                <th> Rapporteur </th>
+                <th> Avis </th>
+                <th> Rapport </th>
+                <th> Actions </th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php
+            /** @var Membre $rapporteur */
+            foreach ($rapporteurs as $rapporteur) : ?>
+                <tr>
+                    <td>
+                        <?php if ($rapporteur->getIndividu()) : ?>
+                            <?php echo $rapporteur->getIndividu()->getNomComplet(); ?>
+                        <?php else : ?>
+                            <span class="text-danger">
+                                <?php echo $rapporteur->getDenomination(); ?>
+                            </span>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <?php if ($rapporteur->getIndividu()) : ?>
+                            <?php if ($rapporteur->getIndividu() AND isset($avis[$rapporteur->getIndividu()->getId()])): ?>
+                                <?php
+                                /** @var Avis $avi */
+                                $avi = $avis[$rapporteur->getIndividu()->getId()];
+                                if ($avi->getAvis() === 'Favorable') : ?>
+                                    <span class="text-success">
+                                        <span class="glyphicon glyphicon-ok"></span>
+                                        Favorable
+                                    </span>
+                                <?php else: ?>
+                                    <span class="text-danger" title="<?php echo $avi->getMotif(); ?>">
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                        Défavorable
+                                    </span>
+                                <?php endif; ?>
+
+                            <?php else: ?>
+                                <span class="text-warning">
+                                    <i> Non rendu </i>
+                                </span>
+                            <?php endif; ?>
+                        <?php else: ?>
+                            <span class="text-danger">
+                                <span class="glyphicon glyphicon-warning-sign"></span>
+                                <i> N'est pas un individu SyGAL</i>
+                                <span class="glyphicon glyphicon-warning-sign"></span>
+                            </span>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <!-- TODO si fichier existe permettre le téléchargement de celui-ci -->
+                        <?php if ($rapporteur->getIndividu() && $rapports[$rapporteur->getIndividu()->getId()]) : ?>
+                            <a href="<?php echo $rapports[$rapporteur->getIndividu()->getId()]; ?>" >Rapport de pré-soutenance</a>
+                        <?php endif ?>
+                    </td>
+                    <td>
+
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+
+        <?php if($canNotifierEngagementImpartialite): ?>
+            <?php if ($allSigned) : ?>
+                <a class="btn btn-info"
+                   href="<?php echo $this->url('soutenance/presoutenance/notifier-demande-avis-soutenance', ['these' => $these->getId()], [], true); ?>"
+                >
+                    <span class="glyphicon glyphicon-send"></span> Envoyer des demandes d'avis de soutenance
+                </a>
+            <?php else : ?>
+                <div class="panel panel-warning">
+                    <div class="panel-heading">
+                        Tous les rapporteurs n'ont pas encore signé leur engagement d'impartialité.
+                    </div>
+                </div>
+            <?php endif; ?>
+        <?php endif; ?>
+    </div>
+
+</div>
+
+<script>
+    $(function() {
+        $("body").on("modification-date-rendu-rapport", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+</script>

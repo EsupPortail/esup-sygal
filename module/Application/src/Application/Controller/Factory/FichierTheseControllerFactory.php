@@ -8,6 +8,7 @@ use Application\Service\Fichier\FichierService;
 use Application\Service\Individu\IndividuService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
+use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Validation\ValidationService;
 use Application\Service\VersionFichier\VersionFichierService;
 use Zend\Mvc\Controller\ControllerManager;
@@ -37,6 +38,7 @@ class FichierTheseControllerFactory
          * @var NotifierService       $notificationService
          * @var IndividuService       $individuService
          * @var ValidationService     $validationService
+         * @var UtilisateurService    $utilisateurService
          */
         $theseService = $serviceLocator->get('TheseService');
         $fichierService = $serviceLocator->get('FichierService');
@@ -44,6 +46,7 @@ class FichierTheseControllerFactory
         $notificationService = $serviceLocator->get(NotifierService::class);
         $individuService = $serviceLocator->get('IndividuService');
         $validationService = $serviceLocator->get('ValidationService');
+        $utilisateurService = $serviceLocator->get('UtilisateurService');
         $eventRouterReplacer = new EventRouterReplacer($httpRouter, $cliConfig);
 
         $controller = new FichierTheseController();
@@ -53,6 +56,7 @@ class FichierTheseControllerFactory
         $controller->setNotifierService($notificationService);
         $controller->setIndividuService($individuService);
         $controller->setValidationService($validationService);
+        $controller->setUtilisateurService($utilisateurService);
         $controller->setEventRouterReplacer($eventRouterReplacer);
 
         return $controller;
