@@ -16,4 +16,9 @@ trait ActeurServiceAwareTrait
     {
         $this->acteurService = $acteurService;
     }
+
+    public function getActeurService()
+    {
+        return $this->acteurService;
+    }
 }

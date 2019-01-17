@@ -2,6 +2,7 @@
 
 namespace Application\Entity\Db\Repository;
 
+use Application\Entity\Db\Individu;
 use Application\Entity\Db\Utilisateur;
 use Doctrine\ORM\NonUniqueResultException;
 use UnicaenApp\Exception\RuntimeException;
@@ -27,8 +28,21 @@ class UtilisateurRepository extends DefaultEntityRepository
         return $utilisateur;
     }
 
-    public function findByEmail()
+    /**
+     * NB : Attention cette methode renvoie la liste de tous les utilisateurs associés à un individu.
+     *
+     * @param Individu $individu
+     * @return Utilisateur[]
+     */
+    public function findByIndividu(Individu $individu)
     {
-        
+        $qb = $this->createQueryBuilder('u')
+            ->andWhere('u.individu = :individu')
+            ->setParameter('individu', $individu)
+        ;
+
+        $result = $qb->getQuery()->getResult();
+
+        return $result;
     }
 }

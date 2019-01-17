@@ -1,0 +1,39 @@
+<?php
+
+use Application\Entity\Db\Individu;
+use Application\Entity\Db\Role;
+use Application\Entity\Db\These;
+use Application\Entity\Db\Validation;
+use Application\View\Renderer\PhpRenderer;
+use UnicaenAuth\Entity\Db\RoleInterface;
+
+/**
+ * @var PhpRenderer $this
+ * @var These $these
+ * @var Individu $acteur
+ * @var RoleInterface $crole
+ * @var Role $role
+ * @var string $motif
+ */
+?>
+
+<p>
+    Bonjour,
+</p>
+<p>
+    <?php echo $acteur->getNomComplet(false, false, false, true); ?>
+    (<?php echo $role->getLibelle(); ?> <i><?php echo $role->getStructure()->getLibelle(); ?></i>)
+    a refus votre proposition de soutenance.
+    Le motif du refus est le suivant :
+</p>
+
+<table style="border:gray solid 2px; width:50em; background-color: whitesmoke;">
+<tr><td>
+<?php echo $motif; ?>
+</td></tr>
+</table>
+
+<p>
+    Suite à ce refus toutes les validations associées à cette proposition ont été annulées.
+</p>
+
