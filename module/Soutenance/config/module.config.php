@@ -160,6 +160,17 @@ return array(
                         SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_BDD,
                     ],
                 ],
+                [
+                    'controller' => SoutenanceController::class,
+                    'action'     => [
+                        'add-acteurs',
+                        'remove-acteurs',
+                        'restore-validation',
+                    ],
+                    'roles' => [
+                        "Administrateur technique",
+                    ],
+                ],
                 // Présoutenance et pages connexes
                 [
                     'controller' => PresoutenanceController::class,
@@ -383,6 +394,39 @@ return array(
 
     'router' => [
         'routes' => [
+            'add-acteurs' => [
+                'type' => Literal::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route'    => '/add-acteurs',
+                    'defaults' => [
+                        'controller' => SoutenanceController::class,
+                        'action'     => 'add-acteurs',
+                    ],
+                ],
+            ],
+            'remove-acteurs' => [
+                'type' => Literal::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route'    => '/remove-acteurs',
+                    'defaults' => [
+                        'controller' => SoutenanceController::class,
+                        'action'     => 'remove-acteurs',
+                    ],
+                ],
+            ],
+            'restore-validation' => [
+                'type' => Literal::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route'    => '/restore-validation',
+                    'defaults' => [
+                        'controller' => SoutenanceController::class,
+                        'action'     => 'restore-validation',
+                    ],
+                ],
+            ],
             'soutenance' => [
                 'type' => Segment::class,
                 'may_terminate' => true,
