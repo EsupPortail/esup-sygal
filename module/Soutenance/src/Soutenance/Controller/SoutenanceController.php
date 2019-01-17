@@ -95,6 +95,7 @@ class SoutenanceController extends AbstractActionController {
         /** @var These[] $theses */
         $theses = [];
         $individu = $this->userContextService->getIdentityIndividu();
+        $role = $this->userContextService->getSelectedIdentityRole();
         if ($individu !== null) {
             $theses = $this->getTheseService()->getRepository()->fetchThesesByEncadrant($individu);
         }
@@ -116,6 +117,7 @@ class SoutenanceController extends AbstractActionController {
             'avis'  => $avis,
 
             'theses' => $theses,
+            'role' => $role,
         ]);
     }
 
@@ -448,6 +450,24 @@ class SoutenanceController extends AbstractActionController {
                 'these' => $these,
             ]
         );
+    }
+
+    public function addActeursAction()
+    {
+        $this->getActeurService()->addActeur41321();
+        $this->redirect()->toRoute('soutenance', [], [], true);
+    }
+
+    public function removeActeursAction()
+    {
+        $this->getActeurService()->removeActeur41321();
+        $this->redirect()->toRoute('soutenance', [], [], true);
+    }
+
+    public function restoreValidationAction()
+    {
+        $this->getActeurService()->restaureValidation();
+        $this->redirect()->toRoute('soutenance', [], [], true);
     }
 }
 
