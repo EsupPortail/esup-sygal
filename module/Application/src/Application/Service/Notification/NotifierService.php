@@ -30,6 +30,7 @@ use Application\Service\Variable\VariableServiceAwareTrait;
 use Notification\Notification;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
+use UnicaenAuth\Entity\Db\RoleInterface;
 use Zend\Mvc\Controller\Plugin\FlashMessenger;
 use Zend\View\Helper\Url as UrlHelper;
 
@@ -656,9 +657,10 @@ class NotifierService extends \Notification\Service\NotifierService
     /**
      * @param These $these
      * @param Individu $currentUser
+     * @param RoleInterface $currentRole
      * @param string $motif
      */
-    public function triggerRefusPropositionSoutenance($these, $currentUser, $motif)
+    public function triggerRefusPropositionSoutenance($these, $currentUser, $currentRole, $motif)
     {
         $emails   = $these->getDirecteursTheseEmails();
         $emails[] = $these->getDoctorant()->getIndividu()->getEmail();
@@ -670,6 +672,7 @@ class NotifierService extends \Notification\Service\NotifierService
             ->setTemplatePath('soutenance/notification/refus')
             ->setTemplateVariables([
                 'acteur' => $currentUser,
+                'role' => $currentRole,
                 'motif' => $motif,
                 'these' => $these,
             ]);

@@ -3,7 +3,7 @@
      * @var These $these
      * @var Proposition $proposition
      * @var Doctorant $doctorant
-     * @var Individu[] $directeurs
+     * @var Acteur[] $directeurs
      * @var $acteurs
      * @var Individu $currentIndividu
      * @var Validation[] $validations
@@ -11,6 +11,7 @@
      * @var int $individuId
      */
 
+use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
@@ -79,7 +80,7 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
                     class="btn btn-primary action ajax-modal"
                     data-event="edition-datelieu"
                 >
-                    <span class="glyphicon glyphicon-pencil"></span> Éditer lieu et date de la soutenace
+                    <span class="glyphicon glyphicon-pencil"></span> Éditer lieu et date de la soutenance
                 </a>
                 <?php endif; ?>
             </div>
@@ -187,6 +188,7 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
                     <th>Genre</th>
                     <th>Qualité</th>
                     <th>Rang</th>
+                    <th>Extérieur</th>
                     <th>Etablissement</th>
                     <th>Rôle</th>
                     <th>Action</th>
@@ -201,6 +203,13 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
                             <td> <?php echo $membre->getGenre(); ?> </td>
                             <td> <?php echo $membre->getQualite()->getLibelle(); ?> </td>
                             <td> <?php echo $membre->getRang(); ?> </td>
+                            <td>
+                                <?php if ($membre->getExterieur() === 'oui'): ?>
+                                    <span class="glyphicon glyphicon-ok text-success"></span>
+                                <?php else: ?>
+                                    <span class="glyphicon glyphicon-remove text-danger"></span>
+                                <?php endif; ?>
+                            </td>
                             <td> <?php echo $membre->getEtablissement(); ?> </td>
                             <td> <?php echo $membre->getRole(); ?> </td>
                             <td>
@@ -326,11 +335,12 @@ $canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, Souten
                     </li>
                     <?php foreach ($directeurs as $directeur): ?>
                     <li>
-                        <?php echo $directeur->getNomComplet(false,false,false, true); ?> (Directeur)
+                        <?php echo $directeur->getIndividu()->getNomComplet(false,false,false, true); ?>
+                        (<?php echo $directeur->getRole()->getLibelle();?>)
                         <br/>
-                        <?php if ($validations[$directeur->getId()]) : ?>
+                        <?php if ($validations[$directeur->getIndividu()->getId()]) : ?>
                             <span class="badge badge-success"> Validée</span>
-                            Le <?php echo $validations[$directeur->getId()]->getHistoModification()->format('d/m/Y à H:i'); ?>
+                            Le <?php echo $validations[$directeur->getIndividu()->getId()]->getHistoModification()->format('d/m/Y à H:i'); ?>
                         <?php else: ?>
                             <span class="badge badge-default"> Aucune validation</span>
                         <?php endif; ?>

@@ -235,7 +235,7 @@ class Proposition {
         /** Au moins la motié du jury de rang A */
         $ratioRangA = ($nbMembre)?($nbRangA / $nbMembre):0;
         $indicateurs["rang A"]      = ["Nombre" => $nbRangA, "Ratio" => $ratioRangA];
-        if ($ratioRangA < 0.5 && !$nbMembre)  {
+        if ($ratioRangA < 0.5 || !$nbMembre)  {
             $indicateurs["rang A"]["valide"]    = false;
         } else {
             $indicateurs["rang A"]["valide"]    = true;
@@ -244,7 +244,7 @@ class Proposition {
         /** Au moins la motié du jury exterieur*/
         $ratioExterieur = ($nbMembre)?($nbExterieur / $nbMembre):0;
         $indicateurs["exterieur"]      = ["Nombre" => $nbExterieur, "Ratio" => $ratioExterieur];
-        if ($ratioExterieur < 0.5 && !$nbMembre)  {
+        if ($ratioExterieur < 0.5 || !$nbMembre)  {
             $indicateurs["exterieur"]["valide"]    = false;
         } else {
             $indicateurs["exterieur"]["valide"]    = true;

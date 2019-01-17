@@ -294,7 +294,7 @@ $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->get
                     </td>
                     <td>
                         <!-- TODO si fichier existe permettre le téléchargement de celui-ci -->
-                        <?php if ($rapports[$rapporteur->getIndividu()->getId()]) : ?>
+                        <?php if ($rapporteur->getIndividu() && $rapports[$rapporteur->getIndividu()->getId()]) : ?>
                             <a href="<?php echo $rapports[$rapporteur->getIndividu()->getId()]; ?>" >Rapport de pré-soutenance</a>
                         <?php endif ?>
                     </td>

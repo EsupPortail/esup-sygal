@@ -70,7 +70,7 @@ class SoutenanceMembreForm extends Form {
         $this->add(
             (new Radio('exterieur'))
                 ->setLabel("Le membre est extérieur à l'établissement encadrant la thèse :")
-                ->setValueOptions([ 'oui' => 'Oui', 'non' => 'non'])
+                ->setValueOptions([ 'oui' => 'Oui', 'non' => 'Non'])
         );
         $this->add(
             (new Text('role'))

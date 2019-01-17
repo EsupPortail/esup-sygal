@@ -60,15 +60,16 @@ class SoutenanceController extends AbstractActionController {
             $these = $this->getTheseService()->getRepository()->find($theseId);
             $proposition = $this->getPropositionService()->findByThese($these);
 
-            /** @var Individu[] $directeurs */
-            $directeurs = $these->getEncadrements(true);
+            /** @var Acteur[] $directeurs */
+            $directeurs = $these->getEncadrements(false);
 
             if ($proposition) $rapporteurs = $proposition->getRapporteurs();
 
+            /** TODO récupérer les validations via le service */
             $validations = [];
             $validations[$these->getDoctorant()->getIndividu()->getId()] = $this->getValidationService()->findValidationPropositionSoutenanceByTheseAndIndividu($these, $these->getDoctorant()->getIndividu());
             foreach ($directeurs as $directeur) {
-                $validations[$directeur->getId()] = $this->getValidationService()->findValidationPropositionSoutenanceByTheseAndIndividu($these, $directeur);
+                $validations[$directeur->getIndividu()->getId()] = $this->getValidationService()->findValidationPropositionSoutenanceByTheseAndIndividu($these, $directeur);
             }
 
             $validationUR = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these);
@@ -103,7 +104,7 @@ class SoutenanceController extends AbstractActionController {
         }
 
         if ($theses === []) {
-            $theses[] = $this->getTheseService()->getRepository()->find(28057);
+            $theses[] = $this->getTheseService()->getRepository()->find(41321);
         }
 
         return new ViewModel([
@@ -163,7 +164,7 @@ class SoutenanceController extends AbstractActionController {
                 'these' => $these,
                 'proposition' => $proposition,
                 'doctorant' => $doctorant,
-                'directeurs' => $directeurs,
+                'directeurs' => $directeurs = $these->getEncadrements(false),
                 'validations' => $validations,
                 'currentIndividu' => $currentIndividu,
                 'roleCode' => $this->userContextService->getSelectedIdentityRole()->getCode(),
@@ -436,11 +437,13 @@ class SoutenanceController extends AbstractActionController {
             if ($data['motif'] !== null) {
                 $this->getPropositionService()->annulerValidations($proposition);
                 $currentUser = $this->userContextService->getIdentityIndividu();
-                $this->getNotifierService()->triggerRefusPropositionSoutenance($these, $currentUser, $data['motif']);
+                $currentRole = $this->userContextService->getSelectedIdentityRole();
+                $this->getNotifierService()->triggerRefusPropositionSoutenance($these, $currentUser, $currentRole, $data['motif']);
             }
         }
 
         return new ViewModel([
+                'title' => "Motivation du refus de la proposition de soutenance",
                 'form' => $form,
                 'these' => $these,
             ]
