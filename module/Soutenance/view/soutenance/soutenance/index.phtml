@@ -7,10 +7,12 @@
      * @var Validation[] $validations
      * @var string[] $avis
      * @var These[] $theses
+     * @var Role $role
      */
 
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Individu;
+use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
 use Soutenance\Entity\Membre;
@@ -212,6 +214,35 @@ $canVisualiser = true;
         return '<span class="badge default">Aucune</span>';
     }
 ?>
+
+
+<?php if($role->getId() === 1): ?>
+<br/>
+<br/>
+
+<div>
+<a href="<?php echo $this->url('restore-validation'); ?>" class="btn btn-danger">
+    <span class="glyphicon glyphicon-leaf"></span>
+    <b> Restaurer les validations des acteurs directs </b>
+</a>
+
+    <br/>
+    <br/>
+
+
+<a href="<?php echo $this->url('add-acteurs'); ?>" class="btn btn-danger">
+    <span class="glyphicon glyphicon-pencil"></span>
+    <b>Ajout des acteurs <i>à la Apogée</i></b>
+</a>
+
+<a href="<?php echo $this->url('remove-acteurs'); ?>" class="btn btn-danger">
+    <span class="glyphicon glyphicon-erase"></span>
+    <b>Retrait des acteurs <i>à la Apogée</i></b>
+</a>
+</div>
+<?php endif; ?>
+
+
 <style>
     .action {
         width: 20em;
