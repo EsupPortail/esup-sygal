@@ -3,6 +3,7 @@
 namespace Application\Entity\Db;
 
 use Application\Filter\TitreApogeeFilter;
+use Assert\Assertion;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -12,8 +13,6 @@ use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
 use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
-use Application\Controller\RoleController;
-use Application\Filter\FichierFilter;
 
 /**
  * These
