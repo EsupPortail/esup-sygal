@@ -158,14 +158,14 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                 if (isset($result["etablissement"]) && trim($result["etablissement"]) != "") {
                     $ligne[] = $result["etablissement"];
                 }
-                if ($acteur->estDirecteur() && isset($result['alerte-supann-id'])) {
+                if (($acteur->estDirecteur() || $acteur->estCodirecteur()) && isset($result['alerte-supann-id'])) {
                     $ligne[] = sprintf('<span class="glyphicon glyphicon-warning-sign text-danger" title="%s"></span>',
                         $result['alerte-supann-id']);
                 }
                 $ligne = implode(" &ndash; ", $ligne);
                 echo $ligne;
 
-                if ($acteur->estDirecteur() && ! isset($result['alerte-supann-id'])) {
+                if (($acteur->estDirecteur() || $acteur->estCodirecteur()) && ! isset($result['alerte-supann-id'])) {
                     // bouton d'usurpation d'identité
                     $individuUsurpationHelper = $this->plugin('individuUsurpation');
                     /* @var $individuUsurpationHelper IndividuUsurpationHelper */

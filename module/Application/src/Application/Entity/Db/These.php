@@ -2,7 +2,6 @@
 
 namespace Application\Entity\Db;
 
-use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
 use Application\Filter\TitreApogeeFilter;
 use Assert\Assertion;
 use DateTime;
@@ -12,6 +11,7 @@ use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
+use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 
 /**
@@ -1179,10 +1179,12 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function getDirecteursTheseEmails(array &$individusSansMail = [])
     {
         $emails = [];
-        $directeurs = $this->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE);
+        $directeurs = $this->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE)->toArray();
+        $codirecteurs = $this->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE)->toArray();
+        $acteurs = array_merge($directeurs, $codirecteurs);
 
         /** @var Acteur $acteur */
-        foreach ($directeurs as $acteur) {
+        foreach ($acteurs as $acteur) {
             $email = $acteur->getIndividu()->getEmail();
             $name = (string) $acteur->getIndividu();
             if (! $email) {
@@ -1345,5 +1347,30 @@ class These implements HistoriqueAwareInterface, ResourceInterface
             return true;
         }
         return false;
+    }
+
+    /**
+     * @param boolean $asIndividu
+     * @return Acteur[]|Individu[]
+     */
+    public function getEncadrements($asIndividu = false)
+    {
+        /** @var Acteur[] $acteurs */
+        $acteurs = [];
+
+        $directeurs     = $this->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE);
+        foreach ($directeurs as $directeur) $acteurs[] = $directeur;
+        $codirecteurs   = $this->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE);
+        foreach ($codirecteurs as $codirecteur) $acteurs[] = $codirecteur;
+
+        if ($asIndividu === true) {
+            $individus = [];
+            foreach ($acteurs as $acteur) {
+                $individus[] = $acteur->getIndividu();
+            }
+            return $individus;
+        }
+
+        return $acteurs;
     }
 }

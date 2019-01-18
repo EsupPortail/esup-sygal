@@ -1,0 +1,38 @@
+<?php
+
+use Application\Entity\Db\These;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var These $these
+ */
+
+$urlRetour = $this->url('soutenance/proposition', ['these' => $these->getId()], ['force_canonical'=>true], true);
+?>
+
+<p>
+    Bonjour,
+</p>
+<p>
+    Ceci est un mail envoyé automatiquement par l'application SyGAL.
+</p>
+
+<p>
+    La proposition de souteance de thèse suivante a été validée par tous les acteurs et structures associées :
+</p>
+
+    <table>
+        <tr>
+            <th>Titre :</th>
+            <td> <?php echo $these->getTitre(); ?> </td>
+        </tr>
+        <tr>
+            <th>Doctorant :</th>
+            <td> <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(false,false,false, true); ?> </td>
+        </tr>
+    </table>
+
+<p> Pour examiner cette proposition merci de vous rendre dans l'application SyGAL :
+    <a href="<?php echo $urlRetour;?>"> proposition de soutenance.</a> </p>
+

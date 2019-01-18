@@ -22,6 +22,11 @@ class Role extends AbstractRole
     const CODE_ADMIN_TECH = 'ADMIN_TECH';
     const CODE_BU = 'BU';
     const CODE_BDD = 'BDD';
+    const CODE_OBSERVATEUR = 'OBSERV';
+
+    const CODE_ED = 'ED';
+    const CODE_UR = 'UR';
+
 
     const CODE_DIRECTEUR_THESE = 'D';
     const CODE_CODIRECTEUR_THESE = 'K';
@@ -29,8 +34,7 @@ class Role extends AbstractRole
     const CODE_PRESIDENT_JURY = 'P';
     const CODE_RAPPORTEUR_JURY = 'R';
     const CODE_CO_ENCADRANT = 'B';
-    const CODE_ED = 'ED';
-    const CODE_UR = 'UR';
+
 
     // @todo NB: maintenant il y le code étab concaténé au "role_id"
     const ROLE_ID_DOCTORANT = "Doctorant";

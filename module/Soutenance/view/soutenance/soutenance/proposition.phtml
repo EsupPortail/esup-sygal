@@ -1,0 +1,531 @@
+<?php
+    /**
+     * @var These $these
+     * @var Proposition $proposition
+     * @var Doctorant $doctorant
+     * @var Acteur[] $directeurs
+     * @var $acteurs
+     * @var Individu $currentIndividu
+     * @var Validation[] $validations
+     * @var string $roleCode
+     * @var int $individuId
+     */
+
+use Application\Entity\Db\Acteur;
+use Application\Entity\Db\Doctorant;
+use Application\Entity\Db\Individu;
+use Application\Entity\Db\Role;
+use Application\Entity\Db\These;
+use Application\Entity\Db\Validation;
+use Soutenance\Entity\Membre;
+use Soutenance\Entity\Proposition;
+use Soutenance\Provider\Privilege\SoutenancePrivileges;
+
+/**
+ * canValidate : on peut valider une proposition si :
+ * 1 - tous les indicateurs sont ok date/lieu et constitution du jury
+ * 2 - être un des intervenants directs de la thèse (doctorant, directeur, co-directeurs)
+ * 3 - ne pas avoir déjà validé
+ */
+
+$alreadyValidated = ($validations[$currentIndividu->getId()] !== null);
+//$canValidate = ($proposition->isOk())
+//    && (($currentIndividu === $doctorant->getIndividu()) || (array_search($currentIndividu, $directeurs) !== false))
+//    && ($validations[$currentIndividu->getId()] === null)
+//;
+
+$canModifier = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_MODIFIER);
+$canValider = ($proposition->isOk()) && $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_ACTEUR);
+$canStructureValider = ($proposition->isOk()) && $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_UR) || $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_ED) || $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_BDD);
+?>
+
+<?php $this->headTitle($this->translate("Proposition de soutenance")); ?>
+<h1 class="page-header">
+    Proposition de soutenance
+</h1>
+
+<p class="">
+    Afin d'être validée et traitée par l'école doctorale, la proposition de soutenance doit être validée par tous les
+    intervenants immédiats de la thèse (c.-à-d. doctorant, directeur et co-directeur(s)). <br/>
+    <span class="glyphicon glyphicon-warning-sign"></span> En cas de modifications de la proposition, toutes validations
+    (ou refus) seront annulées et la proposition devra être à nouveau être validée.
+</p>
+
+<!-- PANNEAU DATE ET HEURE -------------------------------------------------------------------------------------------->
+
+<div class="panel <?php echo ($proposition->hasDateEtLieu())?'panel-success':'panel-danger'; ?>">
+    <div class="panel-heading">
+        <h4>
+            Date/Heure et lieu de la soutenance
+        </h4>
+    </div>
+    <div class="panel-body">
+
+        <div class="row">
+            <div class="col-md-8">
+                <dl>
+                    <dt> Date de la soutenance </dt>
+                    <dd> <?php echo ($proposition->getDate())?$proposition->getDate()->format("d/m/Y"):'<strong>non communiquée</strong>'; ?> </dd>
+                    <dt> Heure de la soutenance </dt>
+                    <dd> <?php echo ($proposition->getDate())?$proposition->getDate()->format("H:i"):'<strong>non communiquée</strong>'; ?> </dd>
+                    <dt> Lieu de la Soutenance </dt>
+                    <dd> <?php echo ($proposition->getLieu())?$proposition->getLieu():'<strong>non communiqué</strong>'; ?> </dd>
+                </dl>
+            </div>
+
+            <div class="pull-right">
+                <?php if ($canModifier): ?>
+                <a
+                    href="<?php echo $this->url('soutenance/proposition/modifier-date-lieu', ['these' => $these->getId()], [], true); ?>"
+                    class="btn btn-primary action ajax-modal"
+                    data-event="edition-datelieu"
+                >
+                    <span class="glyphicon glyphicon-pencil"></span> Éditer lieu et date de la soutenance
+                </a>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PANNEAU INDICATEURS----------------------------------------------------------------------------------------------->
+
+<?php
+    $indicateurs = $proposition->computeIndicateur();
+?>
+
+<div class="panel <?php echo ($indicateurs["valide"])?'panel-success':'panel-danger'; ?>">
+    <div class="panel-heading">
+        <h4>
+            Indicateurs liés à la validité du jury de thèse
+        </h4>
+    </div>
+    <div class="panel-body">
+
+        <div class="col-md-3">
+            <h4>
+                Parité de genre
+<!--                --><?php //if ($indicateurs["parité"]["valide"]):?>
+<!--                    <span class="badge badge-success"> Valide </span>-->
+<!--                --><?php //else: ?>
+<!--                    <span class="badge badge-error"> Non valide </span>-->
+<!--                --><?php //endif; ?>
+            </h4>
+
+            <div class="progress">
+                <div class="progress-bar progress-bar-success" style="width:<?php echo $indicateurs["parité"]["Femme"]*100; ?>%;"> Femme </div>
+                <div class="progress-bar progress-bar-danger"  style="width:<?php echo $indicateurs["parité"]["Homme"]*100; ?>%;"> Homme</div>
+            </div>
+
+        </div>
+        <div class="col-md-3">
+            <h4>
+                Nombre de rapporteurs
+                <?php if ($indicateurs["rapporteur"]["valide"]):?>
+                    <span class="badge badge-success"> Valide </span>
+                <?php else: ?>
+                    <span class="badge badge-error"> Non valide </span>
+                <?php endif; ?>
+            </h4>
+
+            <div class="progress">
+                <div class="progress-bar progress-bar-info" style="width:<?php echo $indicateurs["rapporteur"]["Ratio"]*100; ?>%;">
+                    <?php echo $indicateurs["rapporteur"]["Nombre"]; ?>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <h4>
+            Nombre <!--de membres--> de rang A
+                <?php if ($indicateurs["rang A"]["valide"]):?>
+                    <span class="badge badge-success"> Valide </span>
+                <?php else: ?>
+                    <span class="badge badge-error"> Non valide </span>
+                <?php endif; ?>
+            </h4>
+
+            <div class="progress">
+                <div class="progress">
+                    <div class="progress-bar progress-bar-info" style="width:<?php echo $indicateurs["rang A"]["Ratio"]*100; ?>%;">
+                        <?php echo $indicateurs["rang A"]["Nombre"]; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <h4>
+            Nombre <!--de membres--> d'extérieurs
+                <?php if ($indicateurs["exterieur"]["valide"]):?>
+                    <span class="badge badge-success"> Valide </span>
+                <?php else: ?>
+                    <span class="badge badge-error"> Non valide </span>
+                <?php endif; ?>
+            </h4>
+            <div class="progress">
+                <div class="progress-bar progress-bar-info" style="width:<?php echo $indicateurs["exterieur"]["Ratio"]*100; ?>%;">
+                    <?php echo $indicateurs["exterieur"]["Nombre"]; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PANNEAU COMPOSITION DU JURY -------------------------------------------------------------------------------------->
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h4>
+            Composition du jury
+        </h4>
+    </div>
+    <div class="panel-body">
+<!--        <div class="col-md-9 pull-left">-->
+            <table class="table table-extra-condensed">
+                <thead>
+                <tr>
+                    <th>Dénomination</th>
+                    <th>Adresse électronique</th>
+                    <th>Genre</th>
+                    <th>Qualité</th>
+                    <th>Rang</th>
+                    <th>Extérieur</th>
+                    <th>Etablissement</th>
+                    <th>Rôle</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <?php /** @var Membre $membre */ ?>
+                    <?php foreach($proposition->getMembres() as $membre): ?>
+                        <tr>
+                            <td> <?php echo $membre->getDenomination(); ?> </td>
+                            <td> <?php echo $membre->getEmail(); ?> </td>
+                            <td> <?php echo $membre->getGenre(); ?> </td>
+                            <td> <?php echo $membre->getQualite()->getLibelle(); ?> </td>
+                            <td> <?php echo $membre->getRang(); ?> </td>
+                            <td>
+                                <?php if ($membre->getExterieur() === 'oui'): ?>
+                                    <span class="glyphicon glyphicon-ok text-success"></span>
+                                <?php else: ?>
+                                    <span class="glyphicon glyphicon-remove text-danger"></span>
+                                <?php endif; ?>
+                            </td>
+                            <td> <?php echo $membre->getEtablissement(); ?> </td>
+                            <td> <?php echo $membre->getRole(); ?> </td>
+                            <td>
+                                <?php if ($canModifier): ?>
+                                <a
+                                        href="<?php echo $this->url('soutenance/proposition/modifier-membre', ['these' => $these->getId(), 'membre' => $membre->getId()], [] ,true); ?>"
+                                        class="ajax-modal"
+                                        data-event="edition-membre">
+                                    <span class="glyphicon glyphicon-pencil"></span>
+                                </a>
+                                <a href="<?php echo $this->url('soutenance/proposition/effacer-membre', ['these' => $these->getId(), 'membre' => $membre->getId()], [] ,true); ?>">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </a>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+<!--        </div>-->
+
+        <div class="pull-right">
+            <?php if ($canModifier): ?>
+            <a
+                href="<?php echo $this->url('soutenance/proposition/modifier-membre', ['these' => $these->getId()], [], true); ?>"
+                class="btn btn-primary action ajax-modal"
+                data-event="edition-membre">
+                    <span class="glyphicon glyphicon-plus"></span> Ajouter un membre de jury
+            </a>
+            <?php endif; ?>
+        </div>
+
+    </div>
+</div>
+
+<!-- PANNEAU COTUTELLE, CONFIDENTIALITE -->
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h4>
+            Déclaration de confidentialité, de co-tutelles.
+        </h4>
+    </div>
+    <div class="panel-body">
+
+        <div class="row">
+            <div class="col-md-8">
+                <?php if($proposition->getEtablissementCotutel() || $proposition->getPaysCotutel()): ?>
+                    <dl>
+                        <dt> Établissement de co-tutelle </dt>
+                        <dd> <?php echo ($proposition->getEtablissementCotutel())?$proposition->getEtablissementCotutel():"non renseigné"; ?></dd>
+                        <dt> Pays de co-tutelle </dt>
+                        <dd> <?php echo ($proposition->getPaysCotutel())?$proposition->getPaysCotutel():"non renseigné"; ?></dd>
+                    </dl>
+                <?php else : ?>
+                    Aucune co-tutelle d'enregistrée.
+                <?php endif; ?>
+            </div>
+
+            <div class="pull-right">
+                <a href="<?php echo $this->url('soutenance/proposition/cotutelle', ['these' => $these->getId()], [], true); ?>"
+                   class="btn btn-primary action ajax-modal"
+                   data-event="edition-cotutelle"
+                >
+                    <span class="glyphicon glyphicon-plus"></span>
+                    Renseigner la co-tutelle
+                </a>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <?php if($proposition->getConfidentialite()): ?>
+                <dl>
+                    <dt> Date de fin de confidentialité </dt>
+                    <dd> <?php echo $proposition->getConfidentialite()->format("d/m/Y"); ?> </dd>
+                </dl>
+                <?php else : ?>
+                    Aucune demande de confidentialité d'enregistrée.
+                <?php endif; ?>
+            </div>
+
+            <div class="pull-right">
+                <a href="<?php echo $this->url('soutenance/proposition/confidentialite', ['these' => $these->getId()], [], true); ?>"
+                   class="btn btn-primary action ajax-modal"
+                   data-event="edition-confidentialite"
+                >
+                    <span class="glyphicon glyphicon-plus"></span>
+                    Renseigner une confidentialité
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PANNEAU VALIDATION ACTEUR ---------------------------------------------------------------------------------------->
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h4>
+            Validation de la proposition de soutenance
+        </h4>
+    </div>
+    <div class="panel-body">
+
+        <div class="row">
+            <div class="col-md-6" >
+                <h4>
+                    Liste des validations
+                </h4>
+
+                <ul>
+                    <li>
+                        <?php echo $doctorant->getIndividu()->getNomComplet(false, false, false, true); ?> (Doctorant)
+                        <br/>
+                        <?php if ($validations[$doctorant->getIndividu()->getId()]) : ?>
+                            <span class="badge badge-success"> Validée</span>
+                            Le <?php echo $validations[$doctorant->getIndividu()->getId()]->getHistoModification()->format('d/m/Y à H:i'); ?>
+                        <?php else: ?>
+                            <span class="badge badge-default"> Aucune validation</span>
+                        <?php endif; ?>
+
+                    </li>
+                    <?php foreach ($directeurs as $directeur): ?>
+                    <li>
+                        <?php echo $directeur->getIndividu()->getNomComplet(false,false,false, true); ?>
+                        (<?php echo $directeur->getRole()->getLibelle();?>)
+                        <br/>
+                        <?php if ($validations[$directeur->getIndividu()->getId()]) : ?>
+                            <span class="badge badge-success"> Validée</span>
+                            Le <?php echo $validations[$directeur->getIndividu()->getId()]->getHistoModification()->format('d/m/Y à H:i'); ?>
+                        <?php else: ?>
+                            <span class="badge badge-default"> Aucune validation</span>
+                        <?php endif; ?>
+                    </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+
+            <div class="col-md-6 pull-right" >
+            <?php if (!$alreadyValidated) : ?>
+                <?php if ($canValider) : ?>
+                    <a
+                            href="<?php echo $this->url('soutenance/proposition/valider', ['these' => $these->getId()], [], true); ?>"
+                            class="btn btn-success action ">
+                        <span class="glyphicon glyphicon-ok"></span> Valider la proposition de soutenance
+                    </a>
+                <?php else : ?>
+                    <?php if (!$proposition->isOk()): ?>
+                        <div class="alert alert-sm alert-warning">
+                            <span class="glyphicon glyphicon-warning-sign"></span>
+                            Pour pouvoir être valider la proposition de soutenance doit être recevable : date et lieu, composition du jury, ...
+                        </div>
+                    <?php endif; ?>
+                <?php endif; ?>
+            <?php else: ?>
+<!--                <div class="panel panel-success">-->
+<!--                    <div class="panel-heading">-->
+                        <?php if($validations[$individuId]): ?>
+                            <?php echo $this->validation($validations[$individuId]); ?>
+                        <?php endif; ?>
+<!--                    </div>-->
+<!--                </div>-->
+            <?php endif; ?>
+        </div>
+        </div>
+    </div>
+</div>
+
+<!-- PANNEAU VALIDATION STRUCTURE ------------------------------------------------------------------------------------->
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h4> Validation par les structures encadrant la thèse </h4>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-8">
+        <h4>
+            Liste des validations
+        </h4>
+        <ul>
+            <li>
+                <?php echo $these->getUniteRecherche()->getLibelle(); ?>  (Unité de recherche) <br/>
+                <?php if ($validations['unite-recherche']) : ?>
+                    <span class="badge badge-success"> Validée</span>
+                    Le <?php echo $validations['unite-recherche']->getHistoModification()->format('d/m/Y à H:i'); ?>
+                    par <?php echo $validations['unite-recherche']->getIndividu()->getNomComplet(false, false, true, true); ?>
+                <?php else: ?>
+                    <span class="badge badge-default"> Aucune validation</span>
+                <?php endif; ?>
+            </li>
+            <li>
+                <?php echo $these->getEcoleDoctorale()->getLibelle(); ?>  (École doctorale) <br/>
+                <?php if ($validations['ecole-doctorale']) : ?>
+                    <span class="badge badge-success"> Validée</span>
+                    Le <?php echo $validations['ecole-doctorale']->getHistoModification()->format('d/m/Y à H:i'); ?>
+                    par <?php echo $validations['ecole-doctorale']->getIndividu()->getNomComplet(false, false, true, true); ?>
+                <?php else: ?>
+                    <span class="badge badge-default"> Aucune validation</span>
+                <?php endif; ?>
+            </li>
+            <li>
+                <?php echo $these->getEtablissement()->getLibelle(); ?>  (Bureau des doctorats) <br/>
+                <?php if ($validations['bureau-doctorat']) : ?>
+                    <span class="badge badge-success"> Validée</span>
+                    Le <?php echo $validations['bureau-doctorat']->getHistoModification()->format('d/m/Y à H:i'); ?>
+                    par <?php echo $validations['bureau-doctorat']->getIndividu()->getNomComplet(false, false, true, true); ?>
+                <?php else: ?>
+                    <span class="badge badge-default"> Aucune validation</span>
+                <?php endif; ?>
+            </li>
+        </ul>
+        </div>
+            <div class="pull-right">
+            <?php if ($canStructureValider): ?>
+            <p>
+                <a href="<?php echo $this->url('soutenance/proposition/valider-structure', ['these' => $these->getId()], [], true); ?>"
+                   class="btn btn-success action">
+                    <span class="glyphicon glyphicon-ok"></span> Valider la proposition de soutenance
+                </a>
+            </p>
+            <p>
+                <a
+                        href="<?php echo $this->url('soutenance/proposition/refuser-structure', ['these' => $these->getId()], [], true); ?>"
+                        class="btn btn-danger action ajax-modal"
+                        data-event="refus-proposition">
+                    <span class="glyphicon glyphicon-remove"></span> Refuser la proposition de soutenance
+                </a>
+            </p>
+            <?php endif; ?>
+
+            <?php if ($validations["unite-recherche"] && $roleCode === Role::CODE_UR): ?>
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <?php echo $this->validation($validations["unite-recherche"]); ?>
+                </div>
+            </div>
+            <?php endif; ?>
+
+            <?php if ($validations["ecole-doctorale"] && $roleCode === Role::CODE_ED): ?>
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <?php echo $this->validation($validations["ecole-doctorale"]); ?>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($validations["bureau-doctorat"] && $roleCode === Role::CODE_BDD): ?>
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <?php echo $this->validation($validations["bureau-doctorats"]); ?>
+                    </div>
+                </div>
+            <?php endif; ?>
+        </div>
+        </div>
+    </div>
+ </div>
+
+
+
+<script>
+    $(function() {
+        $("body").on("edition-datelieu", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+    $(function() {
+        $("body").on("edition-membre", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+    $(function() {
+        $("body").on("edition-cotutelle", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+    $(function() {
+        $("body").on("edition-confidentialite", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+    $(function() {
+        $("body").on("refus-proposition", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+</script>
+
+<style>
+    dl {
+        width: 100%;
+        /*background-color: #1d57b7;*/
+    }
+
+    dl dt {
+        width: 50%;
+        /*background-color: #337ab7;*/
+    }
+
+     .badge-success {
+         background-color: #468847;
+     }
+
+    .badge-error {
+        background-color: #881f18;
+    }
+
+    .action {
+        width: 20em;
+        margin:1ex;
+    }
+</style>

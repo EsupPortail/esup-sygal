@@ -27,6 +27,6 @@ insert into role (
   u.id
   from source src, UTILISATEUR u
   where
-    src.CODE = 'COMUE::SYGAL' and
+    src.CODE = 'SYGAL::sygal' and
     u.USERNAME = 'sygal-app'
 ;

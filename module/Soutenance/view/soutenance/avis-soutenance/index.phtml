@@ -1,0 +1,98 @@
+<?php
+
+use Application\Entity\Db\Acteur;
+use Application\Entity\Db\NatureFichier;
+use Application\Entity\Db\These;
+use Application\Entity\Db\Validation;
+
+/**
+ * @var string $nature
+ * @var These $these
+ * @var Acteur $rapporteur
+ * @var Validation $validation
+ */
+
+$denominationDoctorant = $these->getDoctorant()->getIndividu()->getNomComplet(false,false,false, true, false);
+$denominationRapporteur = $rapporteur->getIndividu()->getNomComplet(false,false,false, true, false);
+$titrePage = "Avis sur la soutenance de la thèse de ".$denominationDoctorant;
+$this->headTitle($titrePage);
+
+$canEdit = true;
+?>
+
+
+
+<h1 class="page-header">
+    <?php echo $titrePage; ?>
+</h1>
+
+<p class="lead">
+    En cas d’avis favorable, si vous souhaitez néanmoins que des modifications soient apportées à la thèse, elles seront
+    transmises au jury qui peut demander à l’issu de la soutenance l'introduction de corrections dans la thèse.
+</p>
+
+<form method="post" action="" >
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h2> Dépot du prérapport de soutenace et avis de soutenance </h2>
+    </div>
+    <div class="panel-body">
+
+
+        <?php $this->form()->openTag($form); ?>
+
+        <div class="row">
+            <div class="col-md-4">
+
+<!--                <div class="box panel panel-info">-->
+<!--                    <div class="panel-heading">-->
+<!--                        <h2 class="first">--><?php //echo $nature ?><!--</h2>-->
+<!--                    </div>-->
+<!--                    <div class="panel-body">-->
+                        <?php echo $this->partial('application/these/depot/partial/fichier', [
+                            'canUpload'               => $canEdit,
+                            'class'                   => NatureFichier::toRoute(NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE),
+                            'uploadUrl'               => $uploadUrl,
+                            'uploadedFilesListUrl'    => $listUrl,
+                            'maxUploadableFilesCount' => 1,
+                        ]); ?>
+<!--                    </div>-->
+<!--                </div>-->
+            </div>
+            <div class="col-md-4">
+                <?php
+                    echo $this->formControlGroup($form->get('avis'));
+                ?>
+            </div>
+            <div class="col-md-4">
+<!--                --><?php //echo $denominationRapporteur; ?><!-- <br/>-->
+                <?php echo $this->formControlGroup($form->get('enregistrer')); ?>
+            </div>
+        </div>
+        <div class="col-md-12" id="justification">
+            <?php echo $this->formControlGroup($form->get('motif')); ?>
+        </div>
+
+    </div>
+</div>
+
+
+</form>
+
+<script>
+    // $(document).ready(function() {
+    //     alert('test');
+    //     if ($("input[name='avis']").attr('value') === 'Favorable') {
+    //         $("div#justification").hide();
+    //     }
+    // });
+
+    // $("input[name='avis']").change(function() {
+    //     if ($(this).attr('value') === 'Favorable') {
+    //         $("div#justification").hide();
+    //     } else {
+    //         $("div#justification").show();
+    //     }
+    // })
+</script>

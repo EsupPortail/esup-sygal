@@ -1,0 +1,34 @@
+<?php
+
+use Application\Entity\Db\These;
+use Soutenance\Entity\Membre;
+use Soutenance\Entity\Proposition;
+
+/**
+ * @var These $these
+ * @var Proposition $proposition
+ * @var Membre $membre
+ */
+
+$url = $this->url('soutenance/avis-soutenance', ['these' => $these->getId(), 'rapporteur' => $membre->getId()], ['force_canonical'=>true], true);
+?>
+
+<p>
+    Bonjour,
+</p>
+<p>
+    Vous pouvez dès mantenant commencer votre travail de rapporteur sur la these de
+    <strong><?php echo $these->getDoctorant()->getNomComplet(); ?></strong> intitulée
+    <strong><?php echo $these->getTitre(); ?></strong>.
+</p>
+<p>
+    Une fois rapport de pré-soutenance et votre avis fait vous pouvez déposer ceux-ci sur la plateforme SyGAL à l'adresse suivante :
+    <a href="<?php echo $url; ?>">Avis de soutenance</a>.
+</p>
+<?php if($proposition->getRenduRapport()) : ?>
+<p>
+    <u>Rappel : </u> les rapports sont attendus pour le <?php echo $proposition->getRenduRapport()->format('d/m/Y'); ?>.
+</p>
+<?php endif;?>
+
+

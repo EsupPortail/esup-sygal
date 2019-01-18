@@ -1,0 +1,2 @@
+create sequence SOUTENANCE_MEMBRE_ID_seq;
+create sequence SOUTENANCE_PROPOSITION_ID_seq;
