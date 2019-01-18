@@ -12,8 +12,8 @@ use Application\Entity\Db\StructureSubstit;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
-use Application\Filter\EtablissementPrefixFilter;
-use Application\Filter\EtablissementPrefixFilterAwareTrait;
+use Application\SourceCodeStringHelper;
+use Application\SourceCodeStringHelperAwareTrait;
 use Application\Service\BaseService;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
@@ -36,7 +36,7 @@ class StructureService extends BaseService
 {
     use SourceServiceAwareTrait;
     use SynchroServiceAwareTrait;
-    use EtablissementPrefixFilterAwareTrait;
+    use SourceCodeStringHelperAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use UniteRechercheServiceAwareTrait;
@@ -85,7 +85,7 @@ class StructureService extends BaseService
 
         // le source code d'une structure cible est calculé
         $sourceCode = $structureCibleDataObject->getSourceCode();
-        if ($structureCibleDataObject->getSourceCode() === null) $sourceCode = uniqid(Etablissement::CODE_STRUCTURE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP);
+        if ($structureCibleDataObject->getSourceCode() === null) $sourceCode = uniqid(Etablissement::CODE_STRUCTURE_COMUE . SourceCodeStringHelper::ETAB_PREFIX_SEP);
 
         // la source d'une structure cible est forcément SYGAL
         $sourceSygal = $this->sourceService->fetchSourceSygal();
@@ -104,9 +104,9 @@ class StructureService extends BaseService
         $structureCibleDataObject->setSourceCode($sourceCode);
 
         /** si toutes les sources ont le même sourcecode (au préfixe près) alors sourcecode => CODE_COMUE::source */
-        $unique = explode(EtablissementPrefixFilter::ETAB_PREFIX_SEP, $structuresSources[0]->getSourceCode())[1];
+        $unique = explode(SourceCodeStringHelper::ETAB_PREFIX_SEP, $structuresSources[0]->getSourceCode())[1];
         foreach ($structuresSources as $structureSource) {
-            $code = explode(EtablissementPrefixFilter::ETAB_PREFIX_SEP, $structureSource->getSourceCode());
+            $code = explode(SourceCodeStringHelper::ETAB_PREFIX_SEP, $structureSource->getSourceCode());
             if ($code[1] != $unique) {
                 $unique = uniqid();
                 break;
@@ -115,8 +115,8 @@ class StructureService extends BaseService
 
         // instanciation du couple (Etab|ED|UR ; Structure) cible
         $structureConcreteCible = Structure::constructFromDataObject($structureCibleDataObject, $typeStructure, $sourceSygal);
-        $structureConcreteCible->setSourceCode(Etablissement::CODE_STRUCTURE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP . $unique);
-        $structureConcreteCible->getStructure()->setSourceCode(Etablissement::CODE_STRUCTURE_COMUE . EtablissementPrefixFilter::ETAB_PREFIX_SEP . $unique);
+        $structureConcreteCible->setSourceCode(Etablissement::CODE_STRUCTURE_COMUE . SourceCodeStringHelper::ETAB_PREFIX_SEP . $unique);
+        $structureConcreteCible->getStructure()->setSourceCode(Etablissement::CODE_STRUCTURE_COMUE . SourceCodeStringHelper::ETAB_PREFIX_SEP . $unique);
         $structureConcreteCible->getStructure()->setCode($unique);
         $structureRattachCible = $structureConcreteCible->getStructure(); // StructureSubstitution ne référence que des entités de type Structure
 
@@ -426,7 +426,7 @@ class StructureService extends BaseService
             default:
                 throw new RuntimeException("Type de structure inconnu [".$typeStructure."]");
         }
-        $sourceCode = $this->getEtablissementPrefixFilter()->addPrefixTo(uniqid());
+        $sourceCode = $this->getSourceCodeStringHelper()->addPrefixTo(uniqid());
         $structureCibleDataObject->getStructure()->setSourceCode($sourceCode);
         $structureCibleDataObject->getStructure()->setTypeStructure($type);
         $structureCibleDataObject->setSource($sourceSygal);
@@ -496,7 +496,7 @@ class StructureService extends BaseService
 
         $sourceCodeDictionnary = [];
         foreach ($structures as $structure) {
-            $sourceCode = $this->getEtablissementPrefixFilter()->removePrefixFrom($structure->getSourceCode());
+            $sourceCode = $this->getSourceCodeStringHelper()->removePrefixFrom($structure->getSourceCode());
             $sourceCodeDictionnary[$sourceCode][] = $structure;
         }
 

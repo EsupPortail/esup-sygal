@@ -3,7 +3,7 @@
 namespace Application\Entity\Db;
 
 use Application\Entity\Db\Interfaces\DoctorantInterface;
-use Application\Filter\EtablissementPrefixFilterAwareTrait;
+use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use LogicException;
@@ -19,7 +19,7 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
-    use EtablissementPrefixFilterAwareTrait;
+    use SourceCodeStringHelperAwareTrait;
 
     /**
      * @var integer
@@ -101,7 +101,7 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
      */
     public function getSourceCodeSansPrefix()
     {
-        return $this->getEtablissementPrefixFilter()->removePrefixFrom($this->getSourceCode());
+        return $this->getSourceCodeStringHelper()->removePrefixFrom($this->getSourceCode());
     }
 
     /**

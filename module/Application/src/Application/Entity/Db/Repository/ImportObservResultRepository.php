@@ -6,7 +6,7 @@ use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\ImportObserv;
 use Application\Entity\Db\ImportObservResult;
 use Application\Entity\Db\These;
-use Application\Filter\EtablissementPrefixFilter;
+use Application\SourceCodeStringHelper;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use UnicaenApp\Exception\RuntimeException;
@@ -110,8 +110,8 @@ class ImportObservResultRepository extends DefaultEntityRepository
             $etablissement = $etablissement->getStructure()->getCode();
         }
 
-        $f = new EtablissementPrefixFilter();
-        $sourceCodePattern = $f->generateSourceCodeSearchPatternForThisEtablissement($etablissement);
+        $sourceCodeHelper = new SourceCodeStringHelper();
+        $sourceCodePattern = $sourceCodeHelper->generateSearchPatternForThisEtablissement($etablissement);
 
         $qb
             ->andWhere('ior.sourceCode like :pattern')

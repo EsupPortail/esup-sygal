@@ -4,6 +4,7 @@ namespace Application\Event;
 
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\UserWrapper;
+use Application\Entity\UserWrapperFactory;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
@@ -37,7 +38,8 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
      */
     public function onUserAuthenticatedPrePersist(UserAuthenticatedEvent $e)
     {
-        $userWrapper = UserWrapper::instFromUserAuthenticatedEvent($e);
+        $userWrapperFactory = new UserWrapperFactory();
+        $userWrapper = $userWrapperFactory->createInstanceFromUserAuthenticatedEvent($e);
 
         /** @var Utilisateur $utilisateur */
         $utilisateur = $e->getDbUser();
@@ -58,7 +60,8 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
      */
     public function onUserAuthenticatedPostPersist(UserAuthenticatedEvent $e)
     {
-        $userWrapper = UserWrapper::instFromUserAuthenticatedEvent($e);
+        $userWrapperFactory = new UserWrapperFactory();
+        $userWrapper = $userWrapperFactory->createInstanceFromUserAuthenticatedEvent($e);
 
         $domaineEtab = $userWrapper->getDomainFromEppn();
         $etablissement = $this->getEtablissementService()->getRepository()->findOneByDomaine($domaineEtab);

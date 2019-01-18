@@ -2,49 +2,39 @@
 
 namespace Application\Form;
 
+use Application\Entity\Db\Individu;
 use Application\Form\Validator\NewEmailValidator;
 use Application\Form\Validator\PasswordValidator;
 use Zend\Form\Element\Hidden;
 use Zend\Form\Element\Password;
-use Zend\Form\Element\Radio;
 use Zend\Form\Element\Submit;
 use Zend\Form\Element\Text;
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilterProviderInterface;
 use Zend\Validator\Identical;
 
-class CreationUtilisateurForm extends Form implements InputFilterProviderInterface
+class CreationUtilisateurFromIndividuForm extends Form implements InputFilterProviderInterface
 {
+    /**
+     * @var Individu
+     */
+    private $individu;
+
     public function init()
     {
         $this->add(
             (new Hidden('id'))
         );
-        $this->add(
-            (new Radio('civilite'))
-                ->setLabel("Civilité :")
-                ->setValueOptions([
-                    'M.' => 'M.',
-                    'Mme' => 'Mme',
-                ])
-        );
-        $this->add(
-            (new Text('nomUsuel'))
-                ->setLabel("Nom usuel :")
-        );
 
         $this->add(
-            (new Text('nomPatronymique'))
-            ->setLabel("Nom Patronymique :")
+            (new Hidden('individuId'))
         );
-        $this->add(
-            (new Text('prenom'))
-                ->setLabel("Prénom :")
-        );
+
         $this->add(
             (new Text('email'))
                 ->setLabel("Adresse électronique :")
         );
+
         $this->add(
             (new Password('password'))
                 ->setLabel("Mot de passe :")
@@ -62,6 +52,25 @@ class CreationUtilisateurForm extends Form implements InputFilterProviderInterfa
     }
 
     /**
+     * @param Individu $individu
+     */
+    public function setIndividu(Individu $individu)
+    {
+        $this->individu = $individu;
+
+        $this->get('individuId')->setValue($this->individu->getId());
+
+        if ($this->individu->getEmail()) {
+            $this->get('email')
+                ->setValue($this->individu->getEmail())
+                ->setAttribute('disabled', true);
+        } else {
+            $this->get('email')
+                ->setAttribute('disabled', false);
+        }
+    }
+
+    /**
      * Should return an array specification compatible with
      * {@link Zend\InputFilter\Factory::createInputFilter()}.
      *
@@ -70,25 +79,9 @@ class CreationUtilisateurForm extends Form implements InputFilterProviderInterfa
     public function getInputFilterSpecification()
     {
         return [
-            'civilite' => [
-                'name' => 'civilite',
-                'required' => true,
-            ],
-            'nomUsuel' => [
-                'name' => 'nomUsuel',
-                'required' => true,
-            ],
-            'nomPatronymique' => [
-                'name' => 'nomPatronymique',
-                'required' => false,
-            ],
-            'prenom' => [
-                'name' => 'prenom',
-                'required' => true,
-            ],
             'email' => [
                 'name' => 'email',
-                'required' => true,
+                'required' => ! $this->individu->getEmail(),
                 'validators' => [
                     [
                         'name' => NewEmailValidator::class,

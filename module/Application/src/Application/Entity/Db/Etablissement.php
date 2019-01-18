@@ -2,11 +2,11 @@
 
 namespace Application\Entity\Db;
 
-use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
-use Application\Filter\EtablissementPrefixFilter;
+use Application\SourceCodeStringHelper;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenImport\Entity\Db\Interfaces\SourceAwareInterface;
+use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
 
 /**
  * Etablissement
@@ -17,6 +17,9 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
     use SourceAwareTrait;
 
     const CODE_STRUCTURE_COMUE = Structure::CODE_COMUE;
+
+    const SOURCE_CODE_ETABLISSEMENT_INCONNU =
+        Source::CODE_SYGAL . SourceCodeStringHelper::ETAB_PREFIX_SEP . '?';
 
     protected $id;
     protected $domaine;
@@ -53,9 +56,9 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
      */
     public function prependPrefixTo($string)
     {
-        $filter = new EtablissementPrefixFilter();
+        $sourceCodeHelper = new SourceCodeStringHelper();
 
-        return $filter->addPrefixEtablissementTo($string, $this);
+        return $sourceCodeHelper->addPrefixEtablissementTo($string, $this);
     }
 
     /**
@@ -66,9 +69,9 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
      */
     public function removePrefixFrom($string)
     {
-        $filter = new EtablissementPrefixFilter();
+        $sourceCodeHelper = new SourceCodeStringHelper();
 
-        return $filter->removePrefixFrom($string);
+        return $sourceCodeHelper->removePrefixFrom($string);
     }
 
     /**

@@ -2,128 +2,72 @@
 
 namespace Application\Entity;
 
+use Application\Entity\Db\Individu;
+use Application\Entity\Db\Utilisateur;
+use Application\Exception\DomainException;
 use UnicaenApp\Entity\Ldap\People as UnicaenAppPeople;
-use UnicaenAuth\Authentication\Storage\ChainEvent as StorageChainEvent;
-use UnicaenLdap\Entity\People as UnicaenLdapPeople;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
-use UnicaenAuth\Entity\Db\AbstractUser;
 use UnicaenAuth\Entity\Shibboleth\ShibUser;
-use UnicaenAuth\Event\UserAuthenticatedEvent;
-use Zend\Authentication\Exception\ExceptionInterface;
+use UnicaenLdap\Entity\People as UnicaenLdapPeople;
 use ZfcUser\Entity\UserInterface;
 
 /**
- * Wrapper représentant un utilisateur authentifié.
+ * Wrapper représentant un utilisateur authentifié, permettant de masquer autant que faire se peut
+ * les différences entre les classes d'utilisateurs pouvant être rencontrées dans l'appli :
+ * - UnicaenLdapPeople
+ * - UnicaenAppPeople
+ * - Utilisateur
+ * - ShibUser
  *
  * @author Unicaen
  */
 class UserWrapper implements UserInterface
 {
     /**
-     * @var UnicaenLdapPeople|UnicaenAppPeople|AbstractUser|ShibUser
+     * @var UnicaenLdapPeople|UnicaenAppPeople|Utilisateur|ShibUser
      */
-    private $user;
+    private $userData;
 
     /**
-     * Factory method.
-     *
-     * Instancie à partir d'une entité utilisateur.
-     *
-     * @param $user UnicaenLdapPeople|UnicaenAppPeople|AbstractUser|ShibUser
-     * @return self
+     * @var Individu
      */
-    static public function inst($user)
-    {
-        if (
-            !$user instanceof UnicaenLdapPeople &&
-            !$user instanceof UnicaenAppPeople &&
-            !$user instanceof AbstractUser &&
-            !$user instanceof ShibUser
-        ) {
-            throw new LogicException("Type d'utilisateur spécifié invalide");
-        }
-
-        return new static($user);
-    }
+    private $individu;
 
     /**
-     * Factory method.
-     *
-     * Instancie à partir des données issues d'un StorageChainEvent, si possible.
-     *
-     * @param StorageChainEvent $event
-     * @return UserWrapper|null
-     */
-    static public function instFromStorageChainEvent(StorageChainEvent $event)
-    {
-        try {
-            $contents = $event->getContents();
-        } catch (ExceptionInterface $e) {
-            throw new RuntimeException("Impossible de lire le storage");
-        }
-
-        if (null === $contents['ldap'] && null === $contents['shib']) {
-            return null;
-        }
-
-        return new static($contents['ldap'] ?: $contents['shib']);
-    }
-
-    /**
-     * Factory method.
-     *
-     * Instancie à partir des données d'identité, si possible.
-     *
-     * @param array $identity ['ldap' => People|null, 'db' => Utilisateur|null, 'shib' => ShibUser|null]
-     * @return UserWrapper|null
-     */
-    static public function instFromIdentity(array $identity)
-    {
-        if (isset($identity['ldap'])) {
-            /** @var UnicaenAppPeople $userData */
-            $userData = $identity['ldap'];
-        } elseif (isset($identity['shib'])) {
-            /** @var ShibUser $userData */
-            $userData = $identity['shib'];
-        } else {
-            return null;
-        }
-
-        return new static($userData);
-    }
-
-    /**
-     * Factory method.
-     *
-     * Instancie à partir d'un événement UserAuthenticatedEvent.
-     *
-     * @param UserAuthenticatedEvent $event
+     * @param Utilisateur|UnicaenAppPeople|ShibUser|UnicaenLdapPeople $userData
      * @return UserWrapper
      */
-    static public function instFromUserAuthenticatedEvent(UserAuthenticatedEvent $event)
+    public function setUserData($userData)
     {
-        if ($event->getLdapUser()) {
-            $user = $event->getLdapUser();
-        } elseif ($event->getShibUser()) {
-            $user = $event->getShibUser();
-        } elseif ($event->getDbUser()) {
-            $user = $event->getDbUser();
-        } else {
-            throw new LogicException("L'événement ne fournit aucune entité utilisateur!");
+        $this->userData = $userData;
+
+        if ($this->userData instanceof Utilisateur) {
+            $this->individu = $this->userData->getIndividu();
         }
 
-        return new static($user);
+        return $this;
     }
 
     /**
-     * PRIVATE constructor.
-     *
-     * @param $user UnicaenLdapPeople|UnicaenAppPeople|AbstractUser|ShibUser
+     * @param Individu $individu
+     * @return UserWrapper
      */
-    private function __construct($user)
+    public function setIndividu(Individu $individu)
     {
-        $this->user = $user;
+        $this->individu = $individu;
+
+        return $this;
+    }
+
+    /**
+     * Retourne l'Individu correpondant à l'utilisateur authentifié, si disponible.
+     *
+     * @return Individu|null
+     */
+    public function getIndividu()
+    {
+        return $this->individu;
     }
 
     /**
@@ -141,62 +85,85 @@ class UserWrapper implements UserInterface
     }
 
     /**
+     * Retourne la partie domaine DNS de l'adresse email.
+     *
+     * Retourne par exemple "unicaen.fr" lorsque l'email est "paul.hochon@unicaen.fr"
+     *
+     * @return string
+     */
+    public function getDomainFromEmail()
+    {
+        $parts = explode('@', $this->getEmail());
+
+        return $parts[1];
+    }
+
+    /**
      * Retourne l'EduPersonPrincipalName (EPPN), si applicable aux données utilisateur courantes.
      *
      * @return string
+     * @throws DomainException Si l'EPPN n'a pas de sens pour les données utilisateur courantes
      */
     public function getEppn()
     {
         switch (true) {
-            case $this->user instanceof UnicaenLdapPeople:
-            case $this->user instanceof UnicaenAppPeople:
-                return $this->user->getEduPersonPrincipalName();
+            case $this->userData instanceof UnicaenLdapPeople:
+            case $this->userData instanceof UnicaenAppPeople:
+                return $this->userData->getEduPersonPrincipalName();
                 break;
-            case $this->user instanceof AbstractUser:
-                throw new LogicException("Non applicable!");
+            case $this->userData instanceof Utilisateur:
+                throw new DomainException("Non applicable!");
                 break;
-            case $this->user instanceof ShibUser:
-                return $this->user->getEppn();
+            case $this->userData instanceof ShibUser:
+                return $this->userData->getEppn();
                 break;
         }
+
+        throw new LogicException("Cas imprévu!");
     }
 
     /**
-     * @return string
+     * @return string|null
+     * @throws DomainException Si l'EPPN n'a pas de sens pour les données utilisateur courantes
      */
     protected function getSupannEmpId()
     {
         switch (true) {
-            case $this->user instanceof UnicaenLdapPeople:
-            case $this->user instanceof UnicaenAppPeople:
-                return $this->user->getSupannEmpId();
+            case $this->userData instanceof UnicaenLdapPeople:
+            case $this->userData instanceof UnicaenAppPeople:
+                return $this->userData->getSupannEmpId();
                 break;
-            case $this->user instanceof AbstractUser:
-                throw new LogicException("Non applicable!");
-                break;
-            case $this->user instanceof ShibUser:
-                return $this->user->getId();
+//            case $this->user instanceof AbstractUser:
+//                throw new LogicException("Non applicable!");
+//                break;
+            case $this->userData instanceof ShibUser:
+                return $this->userData->getId();
                 break;
         }
+
+        return null;
     }
 
     /**
-     * @return string
+     * @return string|null
+     * @throws DomainException Si l'EPPN n'a pas de sens pour les données utilisateur courantes
      */
     protected function getSupannEtuId()
     {
         switch (true) {
-            case $this->user instanceof UnicaenLdapPeople:
-            case $this->user instanceof UnicaenAppPeople:
-                return $this->user->getSupannEtuId();
+            case $this->userData instanceof UnicaenLdapPeople:
+            case $this->userData instanceof UnicaenAppPeople:
+                return $this->userData->getSupannEtuId();
                 break;
-            case $this->user instanceof AbstractUser:
-                throw new LogicException("Non applicable!");
-                break;
-            case $this->user instanceof ShibUser:
-                return $this->user->getId();
+//            case $this->user instanceof Utilisateur:
+//                throw new DomainException("Non applicable!");
+//                break;
+            case $this->userData instanceof ShibUser:
+                return $this->userData->getId();
                 break;
         }
+
+        return null;
     }
 
     /**
@@ -206,7 +173,17 @@ class UserWrapper implements UserInterface
      */
     public function getSupannId()
     {
-        return $this->getSupannEmpId() ?: $this->getSupannEtuId();
+        $supannId = $this->getSupannEmpId() ?: $this->getSupannEtuId();
+
+        if ($supannId !== null) {
+            return $supannId;
+        }
+
+        if ($this->individu) {
+            return $this->individu->getSupannId();
+        }
+
+        throw new LogicException("Cas imprévu!");
     }
 
     /**
@@ -216,18 +193,24 @@ class UserWrapper implements UserInterface
      */
     public function getNom()
     {
+        if ($this->individu !== null) {
+            return $this->individu->getNomUsuel();
+        }
+
         switch (true) {
-            case $this->user instanceof UnicaenLdapPeople:
-            case $this->user instanceof UnicaenAppPeople:
-                return $this->user->getSn(true);
+            case $this->userData instanceof UnicaenLdapPeople:
+            case $this->userData instanceof UnicaenAppPeople:
+                return $this->userData->getSn(true);
                 break;
-            case $this->user instanceof AbstractUser:
-                throw new RuntimeException("Cas non implementé car la classe AbstractUser n'a pas de propriété 'nom'");
+            case $this->userData instanceof Utilisateur:
+                throw new RuntimeException("Cas non implementé car la classe Utilisateur n'a pas de propriété 'nom'");
                 break;
-            case $this->user instanceof ShibUser:
-                return $this->user->getNom();
+            case $this->userData instanceof ShibUser:
+                return $this->userData->getNom();
                 break;
         }
+
+        throw new LogicException("Cas imprévu!");
     }
 
     /**
@@ -237,18 +220,24 @@ class UserWrapper implements UserInterface
      */
     public function getPrenom()
     {
+        if ($this->individu !== null) {
+            return $this->individu->getPrenom();
+        }
+
         switch (true) {
-            case $this->user instanceof UnicaenLdapPeople:
-            case $this->user instanceof UnicaenAppPeople:
-                return $this->user->getGivenName();
+            case $this->userData instanceof UnicaenLdapPeople:
+            case $this->userData instanceof UnicaenAppPeople:
+                return $this->userData->getGivenName();
                 break;
-            case $this->user instanceof AbstractUser:
-                throw new RuntimeException("Cas non implementé car la classe AbstractUser n'a pas de propriété 'prenom'");
+            case $this->userData instanceof Utilisateur:
+                throw new RuntimeException("Cas non implementé car la classe Utilisateur n'a pas de propriété 'prenom'");
                 break;
-            case $this->user instanceof ShibUser:
-                return $this->user->getPrenom();
+            case $this->userData instanceof ShibUser:
+                return $this->userData->getPrenom();
                 break;
         }
+
+        throw new LogicException("Cas imprévu!");
     }
 
     /**
@@ -258,18 +247,24 @@ class UserWrapper implements UserInterface
      */
     public function getCivilite()
     {
+        if ($this->individu !== null) {
+            return $this->individu->getCivilite();
+        }
+
         switch (true) {
-            case $this->user instanceof UnicaenLdapPeople:
-            case $this->user instanceof UnicaenAppPeople:
-                return $this->user->getSupannCivilite();
+            case $this->userData instanceof UnicaenLdapPeople:
+            case $this->userData instanceof UnicaenAppPeople:
+                return $this->userData->getSupannCivilite();
                 break;
-            case $this->user instanceof AbstractUser:
-                throw new RuntimeException("Cas non implementé car la classe AbstractUser n'a pas de propriété 'civilite'");
+            case $this->userData instanceof Utilisateur:
+                throw new RuntimeException("Cas non implementé car la classe Utilisateur n'a pas de propriété 'civilite'");
                 break;
-            case $this->user instanceof ShibUser:
-                return $this->user->getCivilite();
+            case $this->userData instanceof ShibUser:
+                return $this->userData->getCivilite();
                 break;
         }
+
+        throw new LogicException("Cas imprévu!");
     }
 
 
@@ -283,15 +278,17 @@ class UserWrapper implements UserInterface
     public function getId()
     {
         switch (true) {
-            case $this->user instanceof UnicaenLdapPeople:
-            case $this->user instanceof UnicaenAppPeople:
-                return $this->user->getId();
+            case $this->userData instanceof UnicaenLdapPeople:
+            case $this->userData instanceof UnicaenAppPeople:
+                return $this->userData->getId();
                 break;
-            case $this->user instanceof AbstractUser:
-            case $this->user instanceof ShibUser:
-                return $this->user->getId();
+            case $this->userData instanceof Utilisateur:
+            case $this->userData instanceof ShibUser:
+                return $this->userData->getId();
                 break;
         }
+
+        throw new LogicException("Cas imprévu!");
     }
 
     /**
@@ -312,15 +309,17 @@ class UserWrapper implements UserInterface
     public function getUsername()
     {
         switch (true) {
-            case $this->user instanceof UnicaenLdapPeople:
-            case $this->user instanceof UnicaenAppPeople:
-                return $this->user->getSupannAliasLogin();
+            case $this->userData instanceof UnicaenLdapPeople:
+            case $this->userData instanceof UnicaenAppPeople:
+                return $this->userData->getSupannAliasLogin();
                 break;
-            case $this->user instanceof AbstractUser:
-            case $this->user instanceof ShibUser:
-                return $this->user->getUsername();
+            case $this->userData instanceof Utilisateur:
+            case $this->userData instanceof ShibUser:
+                return $this->userData->getUsername();
                 break;
         }
+
+        throw new LogicException("Cas imprévu!");
     }
 
     /**
@@ -341,15 +340,17 @@ class UserWrapper implements UserInterface
     public function getEmail()
     {
         switch (true) {
-            case $this->user instanceof UnicaenLdapPeople:
-            case $this->user instanceof UnicaenAppPeople:
-                return $this->user->getMail();
+            case $this->userData instanceof UnicaenLdapPeople:
+            case $this->userData instanceof UnicaenAppPeople:
+                return $this->userData->getMail();
                 break;
-            case $this->user instanceof AbstractUser:
-            case $this->user instanceof ShibUser:
-                return $this->user->getEmail();
+            case $this->userData instanceof Utilisateur:
+            case $this->userData instanceof ShibUser:
+                return $this->userData->getEmail();
                 break;
         }
+
+        throw new LogicException("Cas imprévu!");
     }
 
     /**
@@ -370,15 +371,17 @@ class UserWrapper implements UserInterface
     public function getDisplayName()
     {
         switch (true) {
-            case $this->user instanceof UnicaenLdapPeople:
-            case $this->user instanceof UnicaenAppPeople:
-                return $this->user->getNomComplet(true);
+            case $this->userData instanceof UnicaenLdapPeople:
+            case $this->userData instanceof UnicaenAppPeople:
+                return $this->userData->getNomComplet(true);
                 break;
-            case $this->user instanceof AbstractUser:
-            case $this->user instanceof ShibUser:
-                return $this->user->getDisplayName();
+            case $this->userData instanceof Utilisateur:
+            case $this->userData instanceof ShibUser:
+                return $this->userData->getDisplayName();
                 break;
         }
+
+        throw new LogicException("Cas imprévu!");
     }
 
     /**
@@ -399,17 +402,19 @@ class UserWrapper implements UserInterface
     public function getPassword()
     {
         switch (true) {
-            case $this->user instanceof UnicaenLdapPeople:
-            case $this->user instanceof UnicaenAppPeople:
+            case $this->userData instanceof UnicaenLdapPeople:
+            case $this->userData instanceof UnicaenAppPeople:
                 return 'ldap';
                 break;
-            case $this->user instanceof AbstractUser:
-                return $this->user->getPassword();
+            case $this->userData instanceof Utilisateur:
+                return $this->userData->getPassword();
                 break;
-            case $this->user instanceof ShibUser:
+            case $this->userData instanceof ShibUser:
                 return 'shib';
                 break;
         }
+
+        throw new LogicException("Cas imprévu!");
     }
 
     /**
@@ -430,18 +435,20 @@ class UserWrapper implements UserInterface
     public function getState()
     {
         switch (true) {
-            case $this->user instanceof UnicaenLdapPeople:
-            case $this->user instanceof UnicaenAppPeople:
-                $parts = ldap_explode_dn($this->user->getDn(), 1);
+            case $this->userData instanceof UnicaenLdapPeople:
+            case $this->userData instanceof UnicaenAppPeople:
+                $parts = ldap_explode_dn($this->userData->getDn(), 1);
                 $isDeactivated = in_array('deactivated', $parts);
                 return $isDeactivated ? 0 : 1;
-            case $this->user instanceof AbstractUser:
-                return $this->user->getState();
+            case $this->userData instanceof Utilisateur:
+                return $this->userData->getState();
                 break;
-            case $this->user instanceof ShibUser:
+            case $this->userData instanceof ShibUser:
                 return 1;
                 break;
         }
+
+        throw new LogicException("Cas imprévu!");
     }
 
     /**
