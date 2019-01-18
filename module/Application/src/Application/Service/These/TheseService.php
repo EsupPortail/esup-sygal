@@ -76,17 +76,6 @@ class TheseService extends BaseService
             throw new RuntimeException("Erreur rencontrée lors de l'enregistrement", null, $e);
         }
     }
-    /**
-     * @param These           $these
-     */
-    public function update(These $these)
-    {
-        try {
-            $this->entityManager->flush($these);
-        } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement", null, $e);
-        }
-    }
 
     /**
      * @param These           $these
