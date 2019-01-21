@@ -4,6 +4,7 @@ namespace Information\Controller;
 
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\NatureFichier;
+use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\VersionFichier;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
