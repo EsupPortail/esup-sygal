@@ -98,25 +98,6 @@ class RoleService extends BaseService
     }
 
     /**
-     * @param Individu $individu
-     * @param Role $role
-     * @return IndividuRole
-     */
-    public function getIndividuRole($individu, $role) {
-        $qb = $this->entityManager->getRepository(IndividuRole::class)->createQueryBuilder('ir')
-            ->andWhere('ir.individu = :individu')
-            ->andWhere('ir.role = :role')
-            ->setParameter('individu', $individu->getId())
-            ->setParameter('role', $role->getId())
-        ;
-        try {
-            $result = $qb->getQuery()->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Plusieurs IndividuRole ont été trouvé pour l'association [Individu(".$individu->getId()."),Role(".$role->getId().")].",$e);
-        }
-        return $result;
-    }
-    /**
      * @param int $individuRoleId
      * @return null|object
      * @throws \Doctrine\ORM\OptimisticLockException
@@ -128,42 +109,17 @@ class RoleService extends BaseService
         return $individuRole;
     }
 
-    /**
-     * @param Individu $individu
-     * @param Role $role
-     * @return IndividuRole
-     */
     public function addIndividuRole(Individu $individu, Role $role) {
-        $result = $this->getIndividuRole($individu, $role);
-
-        if ($result === null) {
-            $ur = new IndividuRole();
-            $ur->setIndividu($individu);
-            $ur->setRole($role);
-            $this->getEntityManager()->persist($ur);
-            try {
-                $this->getEntityManager()->flush($ur);
-            } catch (OptimisticLockException $e) {
-                throw new RuntimeException("Un problème est survenu.", $e);
-            }
-            $result = $ur;
-        }
-        return $result;
-    }
-
-    /**
-     * @param Individu $individu
-     * @param Role $role
-     */
-    public function removeIndividuRole(Individu $individu, Role $role)
-    {
-        $result = $this->getIndividuRole($individu, $role);
-        $this->getEntityManager()->remove($result);
+        $ur = new IndividuRole();
+        $ur->setIndividu($individu);
+        $ur->setRole($role);
+        $this->getEntityManager()->persist($ur);
         try {
-            $this->getEntityManager()->flush();
+            $this->getEntityManager()->flush($ur);
         } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Un problème est en BD.", $e);
+            throw new RuntimeException("Un problème est survenu.",$e);
         }
+        return $ur;
     }
 
 

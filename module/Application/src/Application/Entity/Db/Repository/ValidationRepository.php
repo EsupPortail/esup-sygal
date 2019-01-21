@@ -2,7 +2,6 @@
 
 namespace Application\Entity\Db\Repository;
 
-use Application\Entity\Db\Individu;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
 use Application\QueryBuilder\ValidationQueryBuilder;
@@ -30,24 +29,6 @@ class ValidationRepository extends DefaultEntityRepository
             ->andWhere('1 = pasHistorise(v)')
             ->setParameter('these', $these)
             ->setParameter('code', $code);
-
-        return $qb->getQuery()->getResult();
-    }
-
-    /**
-     * @param string $code
-     * @param Individu $individu
-     * @return Validation[]
-     */
-    public function findValidationByCodeAndIndividu($code, $individu)
-    {
-        $qb = $this->createQueryBuilder('v')
-            ->where('tv.code = :code')
-            ->andWhere('v.individu = :individu')
-            ->andWhere('1 = pasHistorise(v)')
-            ->setParameter('code', $code)
-            ->setParameter('individu', $individu)
-        ;
 
         return $qb->getQuery()->getResult();
     }

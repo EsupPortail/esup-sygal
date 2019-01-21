@@ -72,7 +72,7 @@ class IndividuService extends BaseService
 
         $entity = new Individu();
         $entity->setSupannId($userWrapper->getSupannId());
-        $entity->setNomUsuel($userWrapper->getNom());
+        $entity->setNomUsuel($userWrapper->getNom() ?: "X"); // NB: le nom est obligatoire mais pas forcément disponible
         $entity->setNomPatronymique($userWrapper->getNom());
         $entity->setPrenom($userWrapper->getPrenom());
         $entity->setCivilite($userWrapper->getCivilite());
