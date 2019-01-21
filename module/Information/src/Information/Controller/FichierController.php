@@ -3,66 +3,113 @@
 namespace Information\Controller;
 
 use Application\Entity\Db\Fichier;
-use Application\Entity\Db\NatureFichier;
-use Application\Entity\Db\Utilisateur;
-use Application\Entity\Db\VersionFichier;
 use Application\Service\Fichier\FichierServiceAwareTrait;
-use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
-use Zend\Form\Element\Hidden;
-use Zend\Form\Form;
+use Application\Service\File\FileServiceAwareTrait;
+use Application\Service\UserContextServiceAwareTrait;
+use Information\Entity\Db\InformationFichier;
+use Information\Form\FichierForm;
+use Information\Service\InformationFichierServiceAwareTrait;
+use UnicaenApp\Exception\RuntimeException;
+use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
-class FichierController extends AbstractActionController {
+class FichierController extends AbstractActionController
+{
     use FichierServiceAwareTrait;
-    use UtilisateurServiceAwareTrait;
+    use InformationFichierServiceAwareTrait;
+    use FileServiceAwareTrait;
+    use UserContextServiceAwareTrait;
 
     public function indexAction()
     {
-        $nature = $this->fichierService->fetchNatureFichier(NatureFichier::CODE_INFORMATION);
-        $fichiers = $this->fichierService->getRepository()->fetchFichiersByNature($nature);
+        $fichiers = $this->getInformationFichierService()->getInformationFichiers();
         return new ViewModel([
             'fichiers' => $fichiers,
         ]);
     }
 
-    public function ajouterAction()
-    {
-        $nature = $this->fichierService->fetchNatureFichier(NatureFichier::CODE_INFORMATION);
-        $version = $this->fichierService->fetchVersionFichier(VersionFichier::CODE_ORIG);
-
-        /** @var Form $form */
-        $form = $this->uploader()->getForm();
-        $form->setAttribute('id', uniqid('form-'));
-//        $form->setUploadMaxFilesize('50M');
-        $form->addElement((new Hidden('nature'))->setValue($nature->getCode()));
-        $form->addElement((new Hidden('version'))->setValue($version->getCode()));
-        $form->get('files')->setLabel("")->setAttribute('multiple', false)/*->setAttribute('accept', '.pdf')*/;
-
-        $fichierStuff = null;
-        $utilisateurs = $this->utilisateurService->getRepository()->findByIndividu($rapporteur->getIndividu());
-
-        //TODO Que faire lorsque plusieurs utilisateurs sont remontés pour un même individu. (shib est favorisé)
-        /** @var Utilisateur $utilisateur */
-        $utilisateur = null;
-        $utilisateursShib = array_filter($utilisateurs, function (Utilisateur $u) { return $u->getPassword() === Utilisateur::PASSWORD_SHIB;});
-        if (!empty($utilisateursShib)) {
-            $utilisateur = current($utilisateursShib);
-        } else {
-            $utilisateur = current($utilisateurs);
-        }
-
-    }
-
     public function supprimerAction()
     {
-        /** @var Fichier $fichier */
+        /** @var InformationFichier $fichier */
         $id = $this->params()->fromRoute('id');
-        $fichier = $this->fichierService->getRepository()->find($id);
+        $fichier = $this->getInformationFichierService()->getInformationFichier($id);
+        $this->getInformationFichierService()->delete($fichier);
 
-        $fichier->historiser();
-        $this->fichierService->update($fichier);
+        $logoDir = $this->fileService->computeDirectoryPathForInformation();
+        $filePath = implode("/", [$logoDir,$fichier->getNom()]);
+        $success = unlink($filePath);
+        if (!$success) throw new RuntimeException("Un problème s'est produit lors de l'effacement sur le disque du fichier ".$filePath);
+
         $this->redirect()->toRoute('informations/fichiers', [], [], true);
+    }
+
+    /** ***************************************************************************************************************/
+
+    public function ajouterAction()
+    {
+        /** @var FichierForm $form */
+        $form = $this->getServiceLocator()->get('FormElementManager')->get(FichierForm::class);
+        $form->setAttribute('action', $this->url()->fromRoute('informations/fichiers/ajouter', [], [], true));
+
+        /** @var Request $request */
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $file = $request->getFiles()->toArray();
+            if ($file['chemin'] !== null) {
+                $logoDir = $this->fileService->computeDirectoryPathForInformation();
+                $this->fileService->createWritableDirectory($logoDir);
+
+                $uploadPath = $file['chemin']['tmp_name'];
+                $truePath = implode("/", [$logoDir, $file['chemin']['name']]);
+                var_dump($uploadPath . " -> ".$truePath);
+                $ok = rename($uploadPath, $truePath);
+                if (! $ok) {
+                    throw new RuntimeException("Impossible de renommer le fichier sur le disque.");
+                }
+
+                $user = $this->userContextService->getIdentityDb();
+                $fichier = new InformationFichier();
+                $fichier->setNom($file['chemin']['name']);
+                $fichier->setCreateur($user);
+                $fichier->setDateCreation(new \DateTime());
+                $this->getInformationFichierService()->create($fichier);
+            }
+        }
+
+        return new ViewModel([
+            'title' => 'Sélection du fichier à déposer',
+            'form' => $form,
+        ]);
+    }
+
+    /** TELECHARGEMENT ************************************************************************************************/
+
+    /** Action permettant le téléchargement */
+    public function telechargerAction()
+    {
+        /** @var InformationFichier $fichier */
+        $id = $this->params()->fromRoute('id');
+        $fichier = $this->getInformationFichierService()->getInformationFichier($id);
+
+        $logoDir = $this->fileService->computeDirectoryPathForInformation();
+        $filePath = implode("/", [$logoDir,$fichier->getNom()]);
+        $contenuFichier = file_get_contents($filePath);
+
+
+        $contentType = 'application/octet-stream';
+
+        header('Content-Description: File Transfer');
+        header('Content-Type: ' . $contentType);
+        header('Content-Disposition: attachment; filename=' . $fichier->getNom());
+        header('Content-Transfer-Encoding: binary');
+        header('Content-Length: ' . strlen($contenuFichier));
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Expires: 0');
+        header('Pragma: public');
+
+        echo $contenuFichier;
+        exit;
     }
 
 }

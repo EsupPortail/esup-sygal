@@ -1,8 +1,8 @@
 <?php
 
-/** @var Fichier[] $fichiers */
+/** @var InformationFichier[] $fichiers */
 
-use Application\Entity\Db\Fichier;
+use Information\Entity\Db\InformationFichier;
 
 $this->headTitle("Fichiers associées aux pages d'information")
 ?>
@@ -12,7 +12,10 @@ $this->headTitle("Fichiers associées aux pages d'information")
     Fichiers associées aux pages d'information
 </h1>
 
-<a href="" class="btn btn-primary">
+<a href="<?php echo $this->url("informations/fichiers/ajouter", [], [], true); ?>"
+   class="btn btn-primary ajax-modal"
+   data-event="modification"
+>
     <span class="glyphicon glyphicon-plus"> </span>
     Ajouter un fichier
 </a>
@@ -45,13 +48,17 @@ $this->headTitle("Fichiers associées aux pages d'information")
         <?php foreach ($fichiers as $fichier): ?>
             <tr>
                 <td>
-                    <?php echo $fichier->getNom(); ?>
+                    <a href="<?php
+//                            echo "upload/information/" . $fichier->getNom();
+                            echo $this->url('informations/fichiers/telecharger', ['id' => $fichier->getId()], [], true);  ?>">
+                        <?php echo $fichier->getNom(); ?>
+                    </a>
                 </td>
                 <td>
-                    <?php echo $fichier->getHistoCreateur()->getDisplayName(); ?>
+                    <?php echo $fichier->getCreateur()->getDisplayName(); ?>
                 </td>
                 <td>
-                    <?php echo $fichier->getHistoCreation()->format("d/m/Y à h:i"); ?>
+                    <?php echo $fichier->getDateCreation()->format("d/m/Y à h:i"); ?>
                 </td>
                 <td>
                     <a href="<?php echo $this->url("informations/fichiers/supprimer", ['id' => $fichier->getId()], [], true); ?>">

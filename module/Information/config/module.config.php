@@ -4,10 +4,13 @@ use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Information\Controller\FichierController;
 use Information\Controller\InformationController;
 use Information\Controller\InformationControllerFactory;
+use Information\Form\FichierForm;
 use Information\Form\InformationForm;
 use Information\Form\InformationFormFactory;
 use Information\Form\InformationHydrator;
 use Information\Provider\Privilege\InformationPrivileges;
+use Information\Service\InformationFichierService;
+use Information\Service\InformationFichierServiceFactory;
 use Information\Service\InformationService;
 use Information\Service\InformationServiceFactory;
 use Zend\Mvc\Router\Http\Literal;
@@ -109,6 +112,7 @@ return [
                         'index',
                         'ajouter',
                         'supprimer',
+                        'telecharger',
                     ],
                     'privileges' => [
                         InformationPrivileges::INFORMATION_MODIFIER,
@@ -160,6 +164,17 @@ return [
                                     'defaults'    => [
                                         'controller'    => FichierController::class,
                                         'action' => 'supprimer',
+                                    ],
+                                ],
+                            ],
+                            'telecharger' => [
+                                'type'          => Segment::class,
+                                'may_terminate' => true,
+                                'options'       => [
+                                    'route'       => '/telecharger/:id',
+                                    'defaults'    => [
+                                        'controller'    => FichierController::class,
+                                        'action' => 'telecharger',
                                     ],
                                 ],
                             ],
@@ -239,6 +254,7 @@ return [
         ],
         'factories' => [
             InformationService::class => InformationServiceFactory::class,
+            InformationFichierService::class => InformationFichierServiceFactory::class,
         ],
     ],
 
@@ -249,6 +265,9 @@ return [
         ],
     ],
     'form_elements'   => [
+        'invokables' => [
+            FichierForm::class => FichierForm::class,
+        ],
         'factories' => [
             InformationForm::class => InformationFormFactory::class,
         ],
