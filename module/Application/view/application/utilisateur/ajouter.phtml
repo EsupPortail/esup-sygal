@@ -12,19 +12,19 @@ use Application\View\Renderer\PhpRenderer;
  */
 ?>
 
-<?php $this->headTitle($this->translate("Création d'utilisateur")) ?>
+<?php $this->headTitle($this->translate("Création d'un utilisateur")) ?>
 
-<h1 class="page-header"><?php echo $this->translate("Création d'utilisateur"); ?> </h1>
+<h1 class="page-header"><?php echo $this->translate("Création d'un utilisateur"); ?> </h1>
 
 <p class="lead">
-    Cette page permet de créer un utilisateur <em>manuellement</em>.
-    Un individu sera également créé à l'aide des informations fournies dans ce formulaire.
+    Cette page permet de créer un utilisateur <em>manuellement</em> à partir de rien.
+    Un individu sera également créé à l'aide des informations fournies.
 </p>
 <p class="lead">
-    <strong>Remarque :</strong> l'adresse électronique saisie sera l'identifiant de connexion de l'utilisateur,
+    <strong>NB:</strong> l'adresse électronique saisie sera l'identifiant de connexion de l'utilisateur,
     elle doit donc être unique.
 </p>
 
-<?php
-$form->prepare();
-echo $this->form($form);
+<div class="col-md-4">
+    <?php echo $this->form()->render($form->prepare()) ?>
+</div>

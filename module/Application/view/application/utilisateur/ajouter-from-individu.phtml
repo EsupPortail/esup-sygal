@@ -1,11 +1,13 @@
 <?php
 
 use Application\Controller\UtilisateurController;
+use Application\Entity\Db\Individu;
 use Zend\Form\Form;
 use Application\View\Renderer\PhpRenderer;
 
 /**
- * @var Form $form
+ * @var Form        $form
+ * @var Individu    $individu
  * @var PhpRenderer $this
  *
  * @see UtilisateurController::ajouterFromIndividuAction()
@@ -14,17 +16,17 @@ use Application\View\Renderer\PhpRenderer;
 
 <?php $this->headTitle($this->translate("Création d'utilisateur par individu")) ?>
 
-<h1 class="page-header"><?php echo $this->translate("Création d'utilisateur à partir d'un individu"); ?> </h1>
+<h1 class="page-header"><?php echo $this->translate("Création d'utilisateur à partir d'un individu existant"); ?> </h1>
 
 <p class="lead">
-    Cette page permet de créer un utilisateur <em>manuellement</em> à partir de l'individu <?php echo $individu ?>
-    existant déjà en base de données.
+    Cette page permet de créer un utilisateur <em>manuellement</em> à partir de
+    <strong><?php echo $individu ?> (<?php echo $individu->getId() ?>)</strong>, individu existant en base de données.
 </p>
 <p class="lead">
-    <strong>Remarque :</strong> l'adresse électronique sera l'identifiant de connexion de l'utilisateur,
+    <strong>NB:</strong> l'adresse électronique sera l'identifiant de connexion de l'utilisateur,
     elle doit donc être unique.
 </p>
 
-<?php
-$form->prepare();
-echo $this->form($form);
+<div class="col-md-4">
+    <?php echo $this->form()->render($form->prepare()) ?>
+</div>
