@@ -32,7 +32,7 @@ class CreationUtilisateurFromIndividuForm extends Form implements InputFilterPro
 
         $this->add(
             (new Text('email'))
-                ->setLabel("Adresse électronique :")
+                ->setLabel("Adresse électronique (identifiant de connexion) :")
         );
 
         $this->add(

@@ -2,6 +2,7 @@
 
 namespace Application\Form;
 
+use Application\Entity\Db\Individu;
 use Application\Form\Validator\NewEmailValidator;
 use Application\Form\Validator\PasswordValidator;
 use Zend\Form\Element\Hidden;
@@ -22,11 +23,11 @@ class CreationUtilisateurForm extends Form implements InputFilterProviderInterfa
         );
         $this->add(
             (new Radio('civilite'))
-                ->setLabel("Civilité :")
                 ->setValueOptions([
-                    'M.' => 'M.',
-                    'Mme' => 'Mme',
+                    Individu::CIVILITE_M => Individu::CIVILITE_M,
+                    Individu::CIVILITE_MME => Individu::CIVILITE_MME,
                 ])
+                ->setLabel("Civilité :")
         );
         $this->add(
             (new Text('nomUsuel'))
@@ -43,7 +44,7 @@ class CreationUtilisateurForm extends Form implements InputFilterProviderInterfa
         );
         $this->add(
             (new Text('email'))
-                ->setLabel("Adresse électronique :")
+                ->setLabel("Adresse électronique (identifiant de connexion) :")
         );
         $this->add(
             (new Password('password'))
