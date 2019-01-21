@@ -1,6 +1,7 @@
 <?php
 
 use Application\Entity\Db\Repository\DefaultEntityRepository;
+use Information\Controller\FichierController;
 use Information\Controller\InformationController;
 use Information\Controller\InformationControllerFactory;
 use Information\Form\InformationForm;
@@ -102,6 +103,17 @@ return [
                     ],
                     'roles' => [],
                 ],
+                [
+                    'controller' => FichierController::class,
+                    'action'     => [
+                        'index',
+                        'ajouter',
+                        'supprimer',
+                    ],
+                    'privileges' => [
+                        InformationPrivileges::INFORMATION_MODIFIER,
+                    ]
+                ],
             ],
         ],
     ],
@@ -118,6 +130,41 @@ return [
                 ],
                 'may_terminate' => true,
                 'child_routes'  => [
+                    'fichiers' => [
+                        'type'          => Literal::class,
+                        'may_terminate' => true,
+                        'options'       => [
+                            'route'       => '/fichiers',
+                            'defaults'    => [
+                                'controller'    => FichierController::class,
+                                'action' => 'index',
+                            ],
+                        ],
+                        'child_routes'  => [
+                            'ajouter' => [
+                                'type'          => Literal::class,
+                                'may_terminate' => true,
+                                'options'       => [
+                                    'route'       => '/ajouter',
+                                    'defaults'    => [
+                                        'controller'    => FichierController::class,
+                                        'action' => 'ajouter',
+                                    ],
+                                ],
+                            ],
+                            'supprimer' => [
+                                'type'          => Segment::class,
+                                'may_terminate' => true,
+                                'options'       => [
+                                    'route'       => '/supprimer/:id',
+                                    'defaults'    => [
+                                        'controller'    => FichierController::class,
+                                        'action' => 'supprimer',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
                     'afficher' => [
                         'type'          => Segment::class,
                         'options'       => [
@@ -198,6 +245,7 @@ return [
     'controllers' => [
         'factories' => [
             InformationController::class => InformationControllerFactory::class,
+            FichierController::class => \Information\Controller\FichierControllerFactory::class,
         ],
     ],
     'form_elements'   => [

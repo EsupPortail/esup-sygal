@@ -1,0 +1,65 @@
+<?php
+
+/** @var Fichier[] $fichiers */
+
+use Application\Entity\Db\Fichier;
+
+$this->headTitle("Fichiers associées aux pages d'information")
+?>
+
+
+<h1 class="page-header">
+    Fichiers associées aux pages d'information
+</h1>
+
+<a href="" class="btn btn-primary">
+    <span class="glyphicon glyphicon-plus"> </span>
+    Ajouter un fichier
+</a>
+
+
+<?php if ($fichiers) : ?>
+    <?php echo count($fichiers); ?> fichiers déposés.
+<?php endif; ?>
+
+
+<table class="table table-condensed">
+    <thead>
+    <tr>
+        <th>
+            Fichier
+        </th>
+        <th>
+            Déposé par
+        </th>
+        <th>
+            Déposé le
+        </th>
+        <th>
+            Actions
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php if ($fichiers) : ?>
+        <?php foreach ($fichiers as $fichier): ?>
+            <tr>
+                <td>
+                    <?php echo $fichier->getNom(); ?>
+                </td>
+                <td>
+                    <?php echo $fichier->getHistoCreateur()->getDisplayName(); ?>
+                </td>
+                <td>
+                    <?php echo $fichier->getHistoCreation()->format("d/m/Y à h:i"); ?>
+                </td>
+                <td>
+                    <a href="<?php echo $this->url("informations/fichiers/supprimer", ['id' => $fichier->getId()], [], true); ?>">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    <?php endif; ?>
+    </tbody>
+</table>

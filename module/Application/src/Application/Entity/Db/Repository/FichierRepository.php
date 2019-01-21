@@ -131,4 +131,21 @@ class FichierRepository extends DefaultEntityRepository
         $fichiers = $this->fetchFichiers($these, NatureFichier::CODE_THESE_PDF , $version);
         return !empty($fichiers);
     }
+
+    /**
+     * @param NatureFichier|string $nature
+     * @return Fichier[]
+     */
+    public function fetchFichiersByNature($nature)
+    {
+        $qb = $this->createQueryBuilder("fichier")
+            ->andWhere('fichier.nature = :nature')
+            ->andWhere('fichier.histoDestruction IS NULL')
+            ->setParameter("nature", $nature)
+            ->orderBy('fichier.histoCreation')
+        ;
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
 }
