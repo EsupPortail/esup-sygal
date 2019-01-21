@@ -50,10 +50,10 @@ class UserWrapper implements UserInterface
     }
 
     /**
-     * @param Individu $individu
+     * @param Individu|null $individu
      * @return UserWrapper
      */
-    public function setIndividu(Individu $individu)
+    public function setIndividu(Individu $individu = null)
     {
         $this->individu = $individu;
 
