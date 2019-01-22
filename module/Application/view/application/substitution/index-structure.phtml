@@ -11,22 +11,19 @@ use Application\Provider\Privilege\SubstitutionPrivileges;
 
  $libelle = 'Structure';
  $canEdit = false;
- $canView = false;
+ $canView = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_CONSULTATION_TOUTES_STRUCTURES))
+        OR  $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_CONSULTATION_SA_STRUCTURE));
+$canEdit =  $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_MODIFICATION_TOUTES_STRUCTURES))
+        OR  $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_MODIFICATION_SA_STRUCTURE));
   switch($type) {
      case TypeStructure::CODE_ECOLE_DOCTORALE :
          $libelle   = 'École doctorale';
-         $canView   = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_CONSULTATION_ECOLE));
-         $canEdit   = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_MODIFICATION_ECOLE));
          break;
      case TypeStructure::CODE_UNITE_RECHERCHE :
          $libelle   = 'Unité de recherche';
-         $canView   = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_CONSULTATION_UNITE));
-         $canEdit   = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_MODIFICATION_UNITE));
          break;
      case TypeStructure::CODE_ETABLISSEMENT :
          $libelle   = 'Établissement';
-         $canView   = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_CONSULTATION_ETABLISSEMENT));
-         $canEdit   = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_MODIFICATION_ETABLISSEMENT));
          break;
  }
 

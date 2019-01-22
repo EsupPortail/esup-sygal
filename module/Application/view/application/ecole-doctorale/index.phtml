@@ -3,6 +3,7 @@
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Filter\EtablissementPrefixFilter;
 use Application\Provider\Privilege\StructurePrivileges;
+use Application\Provider\Privilege\SubstitutionPrivileges;
 
 /**
  * @see \Application\Controller\EcoleDoctoraleController::indexAction()
@@ -11,6 +12,8 @@ use Application\Provider\Privilege\StructurePrivileges;
 
 $canModifier = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES));
 $canAjouter = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES));
+$canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_CONSULTATION_TOUTES_STRUCTURES))
+    OR $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_CONSULTATION_SA_STRUCTURE));
 
 $prefixFilter = new EtablissementPrefixFilter();
 ?>
@@ -76,7 +79,7 @@ $prefixFilter = new EtablissementPrefixFilter();
                         </a>
                     <?php endif; ?>
 
-                    <?php if (($canModifier OR $canModifierCetteEcole) AND !$historisee AND $hasSousStructure) : ?>
+                    <?php if ($canSubstituer AND !$historisee AND $hasSousStructure) : ?>
                         <a href="<?php echo $this->url('substitution-modifier', ['cible' => $ecole->getStructure()->getId(), [], true]); ?>"
                            title="Historiser l'établissement">
                             <span class="glyphicon glyphicon-link" title="Éditer la substitution"></span>
