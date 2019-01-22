@@ -8,6 +8,7 @@ use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\OrigineFinancement;
 use Application\Entity\Db\Source;
 use Application\Entity\Db\These;
+use Application\Entity\Db\TheseAnneeUniv;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
 use Application\Entity\UserWrapper;
@@ -73,6 +74,8 @@ class TheseRechercheService
             TheseSelectFilter::NAME_uniteRecherche           => [],
             TheseSelectFilter::NAME_financement              => [],
             TheseSelectFilter::NAME_anneePremiereInscription => [],
+            TheseSelectFilter::NAME_anneeUniv1ereInscription => [],
+            TheseSelectFilter::NAME_anneeUnivInscription     => [],
             TheseSelectFilter::NAME_anneeSoutenance          => [],
 //            TheseSelectFilter::NAME_discipline               => [],
             TheseSelectFilter::NAME_domaineScientifique      => [],
@@ -99,6 +102,8 @@ class TheseRechercheService
             TheseSelectFilter::NAME_uniteRecherche           => $this->fetchUnitesRecherchesOptions(),
             TheseSelectFilter::NAME_financement              => $this->fetchOriginesFinancementsOptions(),
             TheseSelectFilter::NAME_anneePremiereInscription => $this->fetchAnneesInscriptionOptions(),
+            TheseSelectFilter::NAME_anneeUniv1ereInscription => $this->fetchAnneesUniv1ereInscriptionOptions(),
+            TheseSelectFilter::NAME_anneeUnivInscription     => $this->fetchAnneesUnivInscriptionOptions(),
             TheseSelectFilter::NAME_anneeSoutenance          => $this->fetchAnneesSoutenance(),
 //            TheseSelectFilter::NAME_discipline               => $this->fetchDisciplinesOptions(),
             TheseSelectFilter::NAME_domaineScientifique      => $this->fetchDomainesScientifiquesOptions(),
@@ -144,9 +149,19 @@ class TheseRechercheService
                 ['width' => '125px', 'liveSearch' => true]
             ),
             TheseSelectFilter::NAME_anneePremiereInscription => new TheseSelectFilter(
-                "1ère inscr.",
+                "Année civile<br>1ère inscr.",
                 TheseSelectFilter::NAME_anneePremiereInscription,
                 $optionsArray[TheseSelectFilter::NAME_anneePremiereInscription]
+            ),
+            TheseSelectFilter::NAME_anneeUniv1ereInscription => new TheseSelectFilter(
+                "Année univ.<br>1ère inscr.",
+                TheseSelectFilter::NAME_anneeUniv1ereInscription,
+                $optionsArray[TheseSelectFilter::NAME_anneeUniv1ereInscription]
+            ),
+            TheseSelectFilter::NAME_anneeUnivInscription => new TheseSelectFilter(
+                "Année univ.<br>d'inscr.",
+                TheseSelectFilter::NAME_anneeUnivInscription,
+                $optionsArray[TheseSelectFilter::NAME_anneeUnivInscription]
             ),
             TheseSelectFilter::NAME_anneeSoutenance => new TheseSelectFilter(
                 "Soutenance",
@@ -561,6 +576,85 @@ class TheseRechercheService
         return $this->addEmptyOption($options, "Toutes");
     }
 
+    private function fetchAnneesUniv1ereInscriptionOptions()
+    {
+        $role = $this->getSelectedIdentityRole();
+
+        $etablissement = null;
+        if ($role->isEtablissementDependant()) {
+            $etablissement = $role->getStructure()->getEtablissement();
+        }
+        $annees = $this->theseService->getRepository()->fetchDistinctAnneesUniv1ereInscription($etablissement);
+
+        $annees = array_reverse(array_filter($annees));
+
+        $options = [];
+        $options[] = $this->optionify(null); // option spéciale pour valeur === null
+        foreach ($annees as $annee) {
+            $options[] = $this->optionify($annee);
+        }
+
+        // formattage spécial du label: "2018" devient "2018/2019"
+        $options = array_map(function($value) {
+            if (! is_numeric($value['label'])) {
+                return $value;
+            }
+            $annee = (int) $value['label'];
+            $value['label'] = $annee . '/' . ($annee+1);
+            return $value;
+        }, $options);
+
+        return $this->addEmptyOption($options, "Toutes");
+    }
+
+    private function fetchAnneesUnivInscriptionOptions()
+    {
+        // Vilaine entorse au SOC: on fetche directement TheseAnneeUniv dans TheseRechercheService !
+        // TODO: crééer un TheseAnneeUnivService
+        $annees = $this->fetchDistinctAnneesUnivInscription();
+
+        $annees = array_reverse(array_filter($annees));
+
+        $options = [];
+        $options[] = $this->optionify(null); // option spéciale pour valeur === null
+        foreach ($annees as $annee) {
+            $options[] = $this->optionify($annee);
+        }
+
+        // formattage spécial du label: "2018" devient "2018/2019"
+        $options = array_map(function($value) {
+            if (! is_numeric($value['label'])) {
+                return $value;
+            }
+            $annee = (int) $value['label'];
+            $value['label'] = $annee . '/' . ($annee+1);
+            return $value;
+        }, $options);
+
+        return $this->addEmptyOption($options, "Toutes");
+    }
+
+    /**
+     * Vilaine entorse au SOC: on fetche directement TheseAnneeUniv dans TheseRechercheService !
+     * TODO: crééer un TheseAnneeUnivService
+     *
+     * @return int[]
+     */
+    private function fetchDistinctAnneesUnivInscription()
+    {
+        $qb = $this->theseService->getEntityManager()->getRepository(TheseAnneeUniv::class)->createQueryBuilder('t');
+        $qb
+            ->distinct()
+            ->select("t.anneeUniv")
+            ->orderBy("t.anneeUniv");
+
+        $results = array_map(function($value) {
+            return current($value);
+        }, $qb->getQuery()->getScalarResult());
+
+        return $results;
+    }
+
     private function fetchAnneesSoutenance()
     {
         $role = $this->getSelectedIdentityRole();
@@ -679,7 +773,7 @@ class TheseRechercheService
         } elseif ($value instanceof OrigineFinancement) {
             return ['value' => (string) $value->getId(), 'label' => $value->getLibelleLong()];
         } elseif ($value === null) {
-            return ['value' => 'NULL', 'label' => $label ?: "Inconnue"];
+            return ['value' => 'NULL', 'label' => $label ?: "Inconnu(e)"];
         } elseif ($value === '') {
             return ['value' => '', 'label' => $label];
         } else {

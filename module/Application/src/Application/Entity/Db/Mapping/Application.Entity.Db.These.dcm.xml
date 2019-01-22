@@ -12,6 +12,7 @@
         <field name="etatThese" type="string" column="ETAT_THESE" length="20" nullable="false"/>
         <field name="resultat" type="integer" column="RESULTAT" nullable="true"/>
         <field name="datePremiereInscription" type="datetime" column="DATE_PREM_INSC" nullable="true"/>
+        <field name="anneeUniv1ereInscription" type="integer" column="ANNEE_UNIV_1ERE_INSC" nullable="true"/>
         <field name="libelleDiscipline" type="string" column="LIB_DISC" length="200" nullable="true"/>
         <field name="datePrevisionSoutenance" type="datetime" column="DATE_PREV_SOUTENANCE" nullable="true"/>
         <field name="dateSoutenance" type="datetime" column="DATE_SOUTENANCE" nullable="true"/>
@@ -49,6 +50,7 @@
         <one-to-many field="rdvBus" target-entity="Application\Entity\Db\RdvBu" mapped-by="these"/>
         <one-to-many field="validations" target-entity="Application\Entity\Db\Validation" mapped-by="these"/>
         <one-to-many field="titreAcces" target-entity="Application\Entity\Db\TitreAcces" mapped-by="these"/>
+        <one-to-many field="anneesUnivInscription" target-entity="Application\Entity\Db\TheseAnneeUniv" mapped-by="these"/>
 
         <many-to-one field="etablissement" target-entity="Application\Entity\Db\Etablissement" fetch="LAZY">
             <join-columns>
