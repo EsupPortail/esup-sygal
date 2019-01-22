@@ -49,9 +49,9 @@ class IndividuRepository extends DefaultEntityRepository
         $text = Util::reduce($text);
         $criteres = explode(' ', $text);
 
-        $sql = sprintf('SELECT * FROM INDIVIDU i JOIN INDIVIDU_RECH ir on ir.id = i.id WHERE rownum <= %s ', (int)$limit);
+        $sql = sprintf('SELECT * FROM INDIVIDU i JOIN INDIVIDU_RECH ir on ir.id = i.id WHERE i.HISTO_DESTRUCTION IS NULL AND rownum <= %s ', (int)$limit);
         if ($type !== null) {
-            $sql = sprintf('SELECT * FROM INDIVIDU i JOIN INDIVIDU_RECH ir on ir.id = i.id WHERE i.type = \'%s\' AND  rownum <= %s ', $type, (int)$limit);
+            $sql = sprintf('SELECT * FROM INDIVIDU i JOIN INDIVIDU_RECH ir on ir.id = i.id WHERE i.HISTO_DESTRUCTION IS NULL AND  i.type = \'%s\' AND  rownum <= %s ', $type, (int)$limit);
             $tmp = null;
         }
         $sqlCri  = [];
