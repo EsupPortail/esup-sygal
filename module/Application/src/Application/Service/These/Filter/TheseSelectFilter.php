@@ -18,7 +18,7 @@ class TheseSelectFilter extends TheseFilter
     const NAME_ecoleDoctorale = 'ecoleDoctorale';
     const NAME_uniteRecherche = 'uniteRecherche';
     const NAME_anneePremiereInscription = 'anneePremiereInscription';
-    const NAME_anneeUniv1ereInscription = 'anneeUnivPremiereInscription';
+    const NAME_anneeUniv1ereInscription = 'anneeUniv1ereInscription';
     const NAME_anneeSoutenance = 'anneeSoutenance';
     const NAME_discipline = 'discipline';
     const NAME_domaineScientifique = 'domaineScientifique';
