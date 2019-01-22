@@ -33,11 +33,11 @@ class FichierController extends AbstractActionController
         if ($request->isPost()) {
             $file = $request->getFiles()->toArray();
             if ($file['chemin'] !== null) {
-                $logoDir = $this->fileService->computeDirectoryPathForInformation();
-                $this->fileService->createWritableDirectory($logoDir);
+                $pathDir = $this->fileService->computeDirectoryPathForInformation();
+                $this->fileService->createWritableDirectory($pathDir);
 
                 $uploadPath = $file['chemin']['tmp_name'];
-                $truePath = implode("/", [$logoDir, $file['chemin']['name']]);
+                $truePath = implode("/", [$pathDir, $file['chemin']['name']]);
                 var_dump($uploadPath . " -> ".$truePath);
                 $ok = rename($uploadPath, $truePath);
                 if (! $ok) {
@@ -68,8 +68,7 @@ class FichierController extends AbstractActionController
         $fichier = $this->getInformationFichierService()->getInformationFichier($id);
         $this->getInformationFichierService()->delete($fichier);
 
-        $logoDir = $this->fileService->computeDirectoryPathForInformation();
-        $filePath = implode("/", [$logoDir,$fichier->getNom()]);
+        $filePath = $this->getInformationFichierService()->computeFilePath($fichier);
         $success = unlink($filePath);
         if (!$success) throw new RuntimeException("Un problème s'est produit lors de l'effacement sur le disque du fichier ".$filePath);
 
@@ -85,8 +84,7 @@ class FichierController extends AbstractActionController
         $id = $this->params()->fromRoute('id');
         $fichier = $this->getInformationFichierService()->getInformationFichier($id);
 
-        $logoDir = $this->fileService->computeDirectoryPathForInformation();
-        $filePath = implode("/", [$logoDir,$fichier->getNom()]);
+        $filePath = $filePath = $this->getInformationFichierService()->computeFilePath($fichier);
         $contenuFichier = file_get_contents($filePath);
 
 
