@@ -13,6 +13,12 @@ $canEdit    = true;
 $canDelete  = true;
 ?>
 
+<style>
+    a.action {
+        width: 30rem;
+    }
+</style>
+
 <h1 class="page-header">
     Pages d'information
 </h1>
@@ -22,6 +28,13 @@ $canDelete  = true;
 >
     <span class="glyphicon glyphicon-plus"></span>
     Ajouter une page d'information
+</a>
+
+<a href="<?php echo $this->url('informations/fichiers', [], [], true); ?>"
+   class="btn btn-primary action"
+>
+    <span class="glyphicon glyphicon-folder-open "></span>
+    Gestion des fichiers
 </a>
 
 <table class="table table-extra-condensed">
