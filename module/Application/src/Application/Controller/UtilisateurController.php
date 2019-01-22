@@ -158,6 +158,11 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             throw new RuntimeException("Individu introuvable avec cet id");
         }
 
+        $utilisateurs = $this->utilisateurService->getRepository()->findByIndividu($individu);
+        if (count($utilisateurs) > 0) {
+            throw new RuntimeException("Il existe déjà un utilisateur lié à l'individu $individu.");
+        }
+
         /** @var CreationUtilisateurFromIndividuForm $form */
         $form = $this->getServiceLocator()->get('FormElementManager')->get(CreationUtilisateurFromIndividuForm::class);
         $form->setIndividu($individu);
