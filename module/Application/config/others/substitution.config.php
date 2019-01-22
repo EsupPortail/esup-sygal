@@ -157,8 +157,10 @@ return [
                             'substitution' => [
                                 'label'    => 'Substitutions',
                                 'route'    => 'substitution-index',
-//                                'resource' => PrivilegeController::getResourceId('Application\Controller\Admin', 'index'),
-                                'resource' => SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_CONSULTATION_ECOLE),
+                                'resources' => [
+                                    SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_CONSULTATION_TOUTES_STRUCTURES),
+                                    SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_CONSULTATION_SA_STRUCTURE),
+                                ],
                                 'order'    => 50,
                             ],
                         ],
