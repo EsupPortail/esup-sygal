@@ -93,11 +93,11 @@ $canChangePrivilege = true;
         <tr>
             <th> <?php echo $privilege; ?> </th>
             <?php foreach ($profils as $profil) : ?>
-                <td id="<?php echo $privilege->getId(); ?>_<?php echo $profil->getId();?>">
+                <td class="<?php echo ($profil->getStructureType())?$profil->getStructureType()->getCode():"aucun"; ?>" id="<?php echo $privilege->getId(); ?>_<?php echo $profil->getId();?>">
                     <?php if ($profil->hasPrivilege($privilege)) : ?>
-                        <span class="glyphicon glyphicon-ok text-success"></span>
+                        <span class="glyphicon glyphicon-ok text-success" title="Cliquer pour retirer le privilège [<?php echo $privilege->getLibelle(); ?>] pour le profil [<?php echo $profil->getLibelle(); ?>]"></span>
                     <?php else: ?>
-                        <span class="glyphicon glyphicon-remove text-danger"></span>
+                        <span class="glyphicon glyphicon-remove text-danger" title="Cliquer pour ajouter le privilège [<?php echo $privilege->getLibelle(); ?>] pour le profil [<?php echo $profil->getLibelle(); ?>]"></span>
                     <?php endif; ?>
                 </td>
             <?php endforeach; ?>
@@ -112,6 +112,21 @@ $canChangePrivilege = true;
         font-size:  small;
         background-color: lightblue;
     }
+
+    td.aucun {
+        background-color: lightgoldenrodyellow;
+    }
+
+    td.ecole-doctorale {
+        background-color: #F1CEFF;
+    }
+    td.unite-recherche {
+        background-color: #c8e7ff;
+    }
+    td.etablissement {
+        background-color: #dcffe9;
+    }
+
 </style>
 
 <script>
