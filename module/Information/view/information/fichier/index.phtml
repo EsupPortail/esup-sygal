@@ -1,0 +1,65 @@
+<?php
+
+/** @var InformationFichier[] $fichiers */
+
+use Information\Entity\Db\InformationFichier;
+
+$this->headTitle("Fichiers associées aux pages d'information")
+?>
+
+<style>
+    .form-control {
+        height: auto;
+    }
+</style>
+
+<h1 class="page-header">
+    Fichiers associées aux pages d'information
+</h1>
+
+<h2> Téléversement d'un fichier </h2>
+
+<?php echo $this->form($form); ?>
+
+<h2> Listing des fichiers téléversés pour le module informations </h2>
+
+<?php if ($fichiers) : ?>
+    <?php echo count($fichiers); ?> fichiers déposés.
+<?php endif; ?>
+
+
+<table class="table table-condensed">
+    <thead>
+        <tr>
+            <th> Fichier </th>
+            <th> Déposé par </th>
+            <th> Déposé le  </th>
+            <th> Action </th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php if ($fichiers) : ?>
+        <?php foreach ($fichiers as $fichier): ?>
+            <tr>
+                <td>
+                    <a href="<?php
+                            echo $this->url('informations/fichiers/telecharger', ['id' => $fichier->getId()], [], true);  ?>">
+                        <?php echo $fichier->getNom(); ?>
+                    </a>
+                </td>
+                <td>
+                    <?php echo $fichier->getCreateur()->getDisplayName(); ?>
+                </td>
+                <td>
+                    <?php echo $fichier->getDateCreation()->format("d/m/Y à h:i"); ?>
+                </td>
+                <td>
+                    <a href="<?php echo $this->url("informations/fichiers/supprimer", ['id' => $fichier->getId()], [], true); ?>">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    <?php endif; ?>
+    </tbody>
+</table>

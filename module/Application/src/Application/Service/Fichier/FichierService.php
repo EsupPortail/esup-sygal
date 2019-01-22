@@ -698,4 +698,18 @@ class FichierService extends BaseService
         }
     }
 
+    /**
+     * @param Fichier $fichier
+     * @return Fichier
+     */
+    public function update($fichier)
+    {
+        try {
+            $this->getEntityManager()->flush($fichier);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Problème lors de la mise à jour du Fichier", $e);
+        }
+        return $fichier;
+    }
+
 }
