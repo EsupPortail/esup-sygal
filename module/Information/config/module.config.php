@@ -13,6 +13,7 @@ use Information\Service\InformationFichierService;
 use Information\Service\InformationFichierServiceFactory;
 use Information\Service\InformationService;
 use Information\Service\InformationServiceFactory;
+use UnicaenAuth\Guard\PrivilegeController;
 use Zend\Mvc\Router\Http\Literal;
 use Zend\Mvc\Router\Http\Segment;
 use Zend\Navigation\Service\NavigationAbstractServiceFactory;
@@ -208,7 +209,29 @@ return [
             ],
         ],
     ],
+
     'navigation'      => [
+        'default' => [
+            'home' => [
+                'pages' => [
+                    'admin' => [
+                        'label'    => 'Administration',
+                        'route'    => 'admin',
+                        'icon'     => 'glyphicon glyphicon-cog',
+                        'resource' => PrivilegeController::getResourceId('Application\Controller\Admin', 'index'),
+                        'pages' => [
+                            'information' => [
+                                'order'    => 100,
+                                'label'    => 'Pages d\'information',
+                                'route'    => 'informations',
+                                //'icon'     => 'glyphicon glyphicon-send',
+                                'resource' => InformationPrivileges::getResourceId(InformationPrivileges::INFORMATION_MODIFIER),
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
         'information' => [
             'accueil' => [
                 'label' => 'Accueil',
