@@ -63,15 +63,19 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
         $userWrapperFactory = new UserWrapperFactory();
         $userWrapper = $userWrapperFactory->createInstanceFromUserAuthenticatedEvent($e);
 
-        $domaineEtab = $userWrapper->getDomainFromEppn();
-        $etablissement = $this->getEtablissementService()->getRepository()->findOneByDomaine($domaineEtab);
+        if ($userWrapper->getIndividu() !== null) {
+            $individu = $userWrapper->getIndividu();
+        } else {
+            $domaineEtab = $userWrapper->getDomainFromEppn();
+            $etablissement = $this->getEtablissementService()->getRepository()->findOneByDomaine($domaineEtab);
 
-        // création de l'Individu si besoin
-        $sourceCode = $etablissement->prependPrefixTo($userWrapper->getSupannId());
-        $individu = $this->individuService->getRepository()->findOneBySourceCode($sourceCode);
-        if (null === $individu) {
-            $createur = $this->utilisateurService->getRepository()->fetchAppPseudoUser();
-            $individu = $this->individuService->createFromUserWrapperAndEtab($userWrapper, $etablissement, $createur);
+            // création de l'Individu si besoin
+            $sourceCode = $etablissement->prependPrefixTo($userWrapper->getSupannId());
+            $individu = $this->individuService->getRepository()->findOneBySourceCode($sourceCode);
+            if (null === $individu) {
+                $createur = $this->utilisateurService->getRepository()->fetchAppPseudoUser();
+                $individu = $this->individuService->createFromUserWrapperAndEtab($userWrapper, $etablissement, $createur);
+            }
         }
 
         // renseigne le lien utilisateur-->individu
