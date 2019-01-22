@@ -7,19 +7,21 @@ use Information\Entity\Db\InformationFichier;
 $this->headTitle("Fichiers associées aux pages d'information")
 ?>
 
+<style>
+    .form-control {
+        height: auto;
+    }
+</style>
 
 <h1 class="page-header">
     Fichiers associées aux pages d'information
 </h1>
 
-<a href="<?php echo $this->url("informations/fichiers/ajouter", [], [], true); ?>"
-   class="btn btn-primary ajax-modal"
-   data-event="modification"
->
-    <span class="glyphicon glyphicon-plus"> </span>
-    Ajouter un fichier
-</a>
+<h2> Téléversement d'un fichier </h2>
 
+<?php echo $this->form($form); ?>
+
+<h2> Listing des fichiers téléversés pour le module informations </h2>
 
 <?php if ($fichiers) : ?>
     <?php echo count($fichiers); ?> fichiers déposés.
@@ -28,20 +30,12 @@ $this->headTitle("Fichiers associées aux pages d'information")
 
 <table class="table table-condensed">
     <thead>
-    <tr>
-        <th>
-            Fichier
-        </th>
-        <th>
-            Déposé par
-        </th>
-        <th>
-            Déposé le
-        </th>
-        <th>
-            Actions
-        </th>
-    </tr>
+        <tr>
+            <th> Fichier </th>
+            <th> Déposé par </th>
+            <th> Déposé le  </th>
+            <th> Action </th>
+        </tr>
     </thead>
     <tbody>
     <?php if ($fichiers) : ?>
@@ -49,7 +43,6 @@ $this->headTitle("Fichiers associées aux pages d'information")
             <tr>
                 <td>
                     <a href="<?php
-//                            echo "upload/information/" . $fichier->getNom();
                             echo $this->url('informations/fichiers/telecharger', ['id' => $fichier->getId()], [], true);  ?>">
                         <?php echo $fichier->getNom(); ?>
                     </a>

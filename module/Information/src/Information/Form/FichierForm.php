@@ -13,12 +13,12 @@ class FichierForm extends Form {
         $this
             ->add((
             new File('chemin'))
-                ->setLabel('Fichier à téléverser :')
+                //->setLabel('Fichier à téléverser :')
             );
         $this
             ->add((
-            new Submit('submit'))
-                ->setValue("Enregistrer")
+            new Submit('televerser'))
+                ->setValue("Téléverser")
                 ->setAttribute('class', 'btn btn-primary')
             );
     }

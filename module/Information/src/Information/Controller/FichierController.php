@@ -24,38 +24,16 @@ class FichierController extends AbstractActionController
     public function indexAction()
     {
         $fichiers = $this->getInformationFichierService()->getInformationFichiers();
-        return new ViewModel([
-            'fichiers' => $fichiers,
-        ]);
-    }
-
-    public function supprimerAction()
-    {
-        /** @var InformationFichier $fichier */
-        $id = $this->params()->fromRoute('id');
-        $fichier = $this->getInformationFichierService()->getInformationFichier($id);
-        $this->getInformationFichierService()->delete($fichier);
-
-        $logoDir = $this->fileService->computeDirectoryPathForInformation();
-        $filePath = implode("/", [$logoDir,$fichier->getNom()]);
-        $success = unlink($filePath);
-        if (!$success) throw new RuntimeException("Un problème s'est produit lors de l'effacement sur le disque du fichier ".$filePath);
-
-        $this->redirect()->toRoute('informations/fichiers', [], [], true);
-    }
-
-    /** ***************************************************************************************************************/
-
-    public function ajouterAction()
-    {
         /** @var FichierForm $form */
         $form = $this->getServiceLocator()->get('FormElementManager')->get(FichierForm::class);
-        $form->setAttribute('action', $this->url()->fromRoute('informations/fichiers/ajouter', [], [], true));
+        $form->setAttribute('action', $this->url()->fromRoute("informations/fichiers", [], [], true));
 
         /** @var Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
+            var_dump("here");
             $file = $request->getFiles()->toArray();
+            var_dump($file);
             if ($file['chemin'] !== null) {
                 $logoDir = $this->fileService->computeDirectoryPathForInformation();
                 $this->fileService->createWritableDirectory($logoDir);
@@ -74,13 +52,30 @@ class FichierController extends AbstractActionController
                 $fichier->setCreateur($user);
                 $fichier->setDateCreation(new \DateTime());
                 $this->getInformationFichierService()->create($fichier);
+
+                $this->redirect()->toRoute("informations/fichiers");
             }
         }
 
         return new ViewModel([
-            'title' => 'Sélection du fichier à déposer',
+            'fichiers' => $fichiers,
             'form' => $form,
         ]);
+    }
+
+    public function supprimerAction()
+    {
+        /** @var InformationFichier $fichier */
+        $id = $this->params()->fromRoute('id');
+        $fichier = $this->getInformationFichierService()->getInformationFichier($id);
+        $this->getInformationFichierService()->delete($fichier);
+
+        $logoDir = $this->fileService->computeDirectoryPathForInformation();
+        $filePath = implode("/", [$logoDir,$fichier->getNom()]);
+        $success = unlink($filePath);
+        if (!$success) throw new RuntimeException("Un problème s'est produit lors de l'effacement sur le disque du fichier ".$filePath);
+
+        $this->redirect()->toRoute('informations/fichiers', [], [], true);
     }
 
     /** TELECHARGEMENT ************************************************************************************************/

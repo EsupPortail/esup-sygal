@@ -110,7 +110,6 @@ return [
                     'controller' => FichierController::class,
                     'action'     => [
                         'index',
-                        'ajouter',
                         'supprimer',
                         'telecharger',
                     ],
@@ -145,17 +144,6 @@ return [
                             ],
                         ],
                         'child_routes'  => [
-                            'ajouter' => [
-                                'type'          => Literal::class,
-                                'may_terminate' => true,
-                                'options'       => [
-                                    'route'       => '/ajouter',
-                                    'defaults'    => [
-                                        'controller'    => FichierController::class,
-                                        'action' => 'ajouter',
-                                    ],
-                                ],
-                            ],
                             'supprimer' => [
                                 'type'          => Segment::class,
                                 'may_terminate' => true,

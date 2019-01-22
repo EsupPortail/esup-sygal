@@ -59,6 +59,8 @@ class InformationFichierService {
     public function getInformationFichiers()
     {
         $qb = $this->getEntityManager()->getRepository(InformationFichier::class)->createQueryBuilder('fichier')
+            ->addSelect('createur')
+            ->join('fichier.createur', 'createur')
             ->orderBy('fichier.id')
         ;
         return $qb->getQuery()->getResult();
