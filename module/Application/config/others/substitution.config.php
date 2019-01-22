@@ -157,10 +157,12 @@ return [
                             'substitution' => [
                                 'label'    => 'Substitutions',
                                 'route'    => 'substitution-index',
-                                'resources' => [
-                                    SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_CONSULTATION_TOUTES_STRUCTURES),
-                                    SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_CONSULTATION_SA_STRUCTURE),
-                                ],
+//                                'resources' => [
+//                                    SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_CONSULTATION_TOUTES_STRUCTURES),
+//                                    SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_CONSULTATION_SA_STRUCTURE),
+//                                ],
+                                'resource' => SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_CONSULTATION_TOUTES_STRUCTURES),
+
                                 'order'    => 50,
                             ],
                         ],
