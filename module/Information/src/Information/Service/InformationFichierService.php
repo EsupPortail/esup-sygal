@@ -2,6 +2,7 @@
 
 namespace Information\Service;
 
+use Application\Service\File\FileServiceAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Information\Entity\Db\InformationFichier;
@@ -10,6 +11,7 @@ use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class InformationFichierService {
     use EntityManagerAwareTrait;
+    use FileServiceAwareTrait;
 
     /**
      * @var InformationFichier $fichier
@@ -82,5 +84,16 @@ class InformationFichierService {
             throw new RuntimeException("Plusieur InformationFichier partagent le même identifiant [".$id."]", $e);
         }
         return $result;
+    }
+
+    /**
+     * @param InformationFichier $fichier
+     * @return string
+     */
+    public function computeFilePath($fichier)
+    {
+        $pathDir = $this->fileService->computeDirectoryPathForInformation();
+        $filePath = implode("/", [$pathDir, $fichier->getNom()]);
+        return $filePath;
     }
 }
