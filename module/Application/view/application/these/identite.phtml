@@ -304,8 +304,11 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
             <dt>Discipline</dt>
             <dd><?php echo $these->getLibelleDiscipline() ?></dd>
 
-            <dt>Date de première<br>inscription</dt>
+            <dt>Date de 1ère<br>inscription</dt>
             <dd><?php echo $these->getDatePremiereInscriptionToString() ?: "(Non renseignée)" ?></dd>
+
+            <dt>Année universitaire<br>de 1ère inscription</dt>
+            <dd><?php echo $these->getAnneeUniv1ereInscriptionToString() ?: "(Non renseignée)" ?></dd>
 
             <?php if ($these->getSoutenanceAutorisee()): ?>
                 <dt>Soutenance autorisée</dt>

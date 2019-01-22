@@ -99,6 +99,11 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     private $datePremiereInscription;
 
     /**
+     * @var integer
+     */
+    private $anneeUniv1ereInscription;
+
+    /**
      * @var string
      */
     private $libelleDiscipline;
@@ -1095,6 +1100,33 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function setPremiereInscription(DateTime $date = null)
     {
         $this->datePremiereInscription = $date;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getAnneeUniv1ereInscription()
+    {
+        return $this->anneeUniv1ereInscription;
+    }
+
+    /**
+     * @return int
+     */
+    public function getAnneeUniv1ereInscriptionToString()
+    {
+        return $this->anneeUniv1ereInscription . '/' . ($this->anneeUniv1ereInscription + 1);
+    }
+
+    /**
+     * @param int $anneeUniv1ereInscription
+     * @return These
+     */
+    public function setAnneeUniv1ereInscription($anneeUniv1ereInscription)
+    {
+        $this->anneeUniv1ereInscription = (int) $anneeUniv1ereInscription;
 
         return $this;
     }
