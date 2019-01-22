@@ -310,6 +310,9 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
             <dt>Année universitaire<br>de 1ère inscription</dt>
             <dd><?php echo $these->getAnneeUniv1ereInscriptionToString() ?: "(Non renseignée)" ?></dd>
 
+            <dt>Années universitaires<br>d'inscription</dt>
+            <dd><?php echo $these->getAnneesUnivInscriptionToString('<br>') ?: "(Non renseignée)" ?></dd>
+
             <?php if ($these->getSoutenanceAutorisee()): ?>
                 <dt>Soutenance autorisée</dt>
                 <dd><?php echo $these->getSoutenanceAutorisee() === 'O' ? "Oui" : "Non" ?></dd>

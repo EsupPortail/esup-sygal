@@ -50,6 +50,7 @@
         <one-to-many field="rdvBus" target-entity="Application\Entity\Db\RdvBu" mapped-by="these"/>
         <one-to-many field="validations" target-entity="Application\Entity\Db\Validation" mapped-by="these"/>
         <one-to-many field="titreAcces" target-entity="Application\Entity\Db\TitreAcces" mapped-by="these"/>
+        <one-to-many field="anneesUnivInscription" target-entity="Application\Entity\Db\TheseAnneeUniv" mapped-by="these"/>
 
         <many-to-one field="etablissement" target-entity="Application\Entity\Db\Etablissement" fetch="LAZY">
             <join-columns>
