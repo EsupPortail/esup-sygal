@@ -31,9 +31,7 @@ class FichierController extends AbstractActionController
         /** @var Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
-            var_dump("here");
             $file = $request->getFiles()->toArray();
-            var_dump($file);
             if ($file['chemin'] !== null) {
                 $logoDir = $this->fileService->computeDirectoryPathForInformation();
                 $this->fileService->createWritableDirectory($logoDir);
