@@ -5,7 +5,6 @@ namespace Application\Service\Individu;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Repository\IndividuRepository;
-use Application\Entity\Db\Source;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\UserWrapper;
 use Application\Service\BaseService;
@@ -88,34 +87,6 @@ class IndividuService extends BaseService
         }
 
         return $entity;
-    }
-
-    /**
-     * @param Individu $individu
-     * @param Utilisateur $utilisateur
-     */
-    public function createFromForm(Individu $individu, Utilisateur $utilisateur)
-    {
-        /** @var Source $source */
-        $source = $this->getEntityManager()->getRepository(Source::class)->findOneBy(["code" => Source::CODE_SYGAL]);
-        /** @var Utilisateur $user */
-        $user = $this->getEntityManager()->getRepository(Utilisateur::class)->findOneBy(["username" => 'sygal-app']);
-
-        $individu->setSource($source); //COMUE::SyGAL
-        $individu->setHistoCreateur($user); //sygal-app
-        $individu->setHistoModificateur($user); //sygal-app
-
-        try {
-            $this->getEntityManager()->persist($individu);
-            $this->getEntityManager()->flush($individu);
-            $this->getEntityManager()->persist($utilisateur);
-            $this->getEntityManager()->flush($utilisateur);
-
-            $individu->setSourceCode("COMUE::" . $individu->getId());
-            $this->getEntityManager()->flush($individu);
-        } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Impossible d'enregistrer une entité", null, $e);
-        }
     }
 
     public function existIndividuUtilisateurByEmail($email) {

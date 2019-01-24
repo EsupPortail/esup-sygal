@@ -17,6 +17,9 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
 
+    const CIVILITE_M = 'M.';
+    const CIVILITE_MME = 'Mme';
+
     /**
      * Identifiant qui correspond en fait au :
      * - supannEmpId (pour les acteurs) ou au

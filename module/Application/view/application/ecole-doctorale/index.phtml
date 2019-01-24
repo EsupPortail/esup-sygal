@@ -1,9 +1,9 @@
 <?php
 
 use Application\Entity\Db\EcoleDoctorale;
-use Application\Filter\EtablissementPrefixFilter;
 use Application\Provider\Privilege\StructurePrivileges;
 use Application\Provider\Privilege\SubstitutionPrivileges;
+use Application\SourceCodeStringHelper;
 
 /**
  * @see \Application\Controller\EcoleDoctoraleController::indexAction()
@@ -15,7 +15,7 @@ $canAjouter = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivi
 $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_CONSULTATION_TOUTES_STRUCTURES))
     OR $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_CONSULTATION_SA_STRUCTURE));
 
-$prefixFilter = new EtablissementPrefixFilter();
+$sourceCodeHelper = new SourceCodeStringHelper();
 ?>
 
 
@@ -65,7 +65,7 @@ $prefixFilter = new EtablissementPrefixFilter();
                     </a>
                 </td>
                 <td>
-                    <?php echo $prefixFilter->extractCodeEtablissementFrom($ecole->getSource()->getCode()); ?>
+                    <?php echo $sourceCodeHelper->extractCodeEtablissementFrom($ecole->getSource()->getCode()); ?>
                 </td>
                 <td>
                     <?php echo $ecole->getStructure()->getCode(); ?>

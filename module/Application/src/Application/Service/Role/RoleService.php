@@ -7,17 +7,16 @@ use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Privilege;
+use Application\Entity\Db\Profil;
 use Application\Entity\Db\Repository\RoleRepository;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\Profil;
 use Application\Entity\Db\Source;
 use Application\Entity\Db\Structure;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
 use Application\Entity\Db\Utilisateur;
-use Application\Filter\EtablissementPrefixFilter;
-use Application\Filter\EtablissementPrefixFilterAwareTrait;
 use Application\Service\BaseService;
+use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
@@ -30,7 +29,7 @@ use UnicaenLeocarte\Exception\RuntimeException;
  */
 class RoleService extends BaseService
 {
-    use EtablissementPrefixFilterAwareTrait;
+    use SourceCodeStringHelperAwareTrait;
 
     /**
      * @return RoleRepository
@@ -73,21 +72,40 @@ class RoleService extends BaseService
     }
 
     /**
-     * @param int $individuSourceCode
+     * Recherche des IndividuRole pour l'individu spécifié.
+     *
+     * @param Individu $individu
      * @return IndividuRole[]
      */
-    public function getIndividuRolesByIndividuSourceCode($individuSourceCode)
+    public function findIndividuRolesByIndividu(Individu $individu)
     {
         $repo = $this->entityManager->getRepository(IndividuRole::class);
 
-        $filter = new EtablissementPrefixFilter();
-        $pattern = $filter->addSearchPatternPrefix($individuSourceCode);
-
-        $qb = $repo->createQueryBuilder("ro")
+        $qb = $repo->createQueryBuilder("ir")
             ->addSelect('i, r')
-            ->join('ro.individu', 'i', Join::WITH, "i.sourceCode LIKE :pattern")
-            ->join('ro.role', 'r')
-            ->setParameter('pattern', $pattern);
+            ->join('ir.individu', 'i')
+            ->join('ir.role', 'r')
+            ->where('i = :individu')
+            ->setParameter('individu', $individu);
+
+        return $qb->getQuery()->execute();
+    }
+
+    /**
+     * Recherche des IndividuRole tels que "individu.sourceCode LIKE pattern".
+     *
+     * @param string $individuSourceCodePattern
+     * @return IndividuRole[]
+     */
+    public function findIndividuRolesByIndividuSourceCodePattern($individuSourceCodePattern)
+    {
+        $repo = $this->entityManager->getRepository(IndividuRole::class);
+
+        $qb = $repo->createQueryBuilder("ir")
+            ->addSelect('i, r')
+            ->join('ir.individu', 'i', Join::WITH, "i.sourceCode LIKE :pattern")
+            ->join('ir.role', 'r')
+            ->setParameter('pattern', $individuSourceCodePattern);
         return $qb->getQuery()->execute();
     }
 
@@ -166,10 +184,10 @@ class RoleService extends BaseService
             $sourceCode = null;
             $roleId = null;
             if ($structure instanceof Etablissement) {
-                $sourceCode = $this->getEtablissementPrefixFilter()->addPrefixEtablissementTo($roleModele->getRoleCode()."_". $structure->getSourceCode(), $structure);
+                $sourceCode = $this->getSourceCodeStringHelper()->addPrefixEtablissementTo($roleModele->getRoleCode()."_". $structure->getSourceCode(), $structure);
                 $roleId = $roleModele->getLibelle()." ". $structure->getCode();
             } else {
-                $sourceCode = $this->getEtablissementPrefixFilter()->addPrefixEtablissementTo($roleModele->getRoleCode()."_". $structure->getSourceCode());
+                $sourceCode = $this->getSourceCodeStringHelper()->addPrefixEtablissementTo($roleModele->getRoleCode()."_". $structure->getSourceCode());
                 $roleId = $roleModele->getLibelle()." ". $structure->getSourceCode();
             }
 

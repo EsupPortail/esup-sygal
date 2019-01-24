@@ -1,9 +1,9 @@
 <?php
 
 use Application\Entity\Db\Etablissement;
-use Application\Filter\EtablissementPrefixFilter;
 use Application\Provider\Privilege\StructurePrivileges;
 use Application\Provider\Privilege\SubstitutionPrivileges;
+use Application\SourceCodeStringHelper;
 
 /**
  * @see \Application\Controller\EtablissementController::indexAction()
@@ -16,7 +16,7 @@ $canAjouter = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivi
 $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_CONSULTATION_TOUTES_STRUCTURES))
     OR $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_CONSULTATION_SA_STRUCTURE));
 
-$prefixFilter = new EtablissementPrefixFilter();
+$sourceCodeHelper = new SourceCodeStringHelper();
 ?>
 
 
@@ -81,7 +81,7 @@ $prefixFilter = new EtablissementPrefixFilter();
                     <?php endif ?>
                 </td>
                 <td>
-                    <?php echo $prefixFilter->extractCodeEtablissementFrom($etablissement->getSource()->getCode()); ?>
+                    <?php echo $sourceCodeHelper->extractCodeEtablissementFrom($etablissement->getSource()->getCode()); ?>
                 </td>
                 <td>
                     <?php echo $etablissement->getStructure()->getCode(); ?>
@@ -157,7 +157,7 @@ $prefixFilter = new EtablissementPrefixFilter();
                     <?php endif ?>
                 </td>
                 <td>
-                    <?php echo $prefixFilter->extractCodeEtablissementFrom($etablissement->getSource()->getCode()); ?>
+                    <?php echo $sourceCodeHelper->extractCodeEtablissementFrom($etablissement->getSource()->getCode()); ?>
                 </td>
                 <td>
                     <?php echo $etablissement->getStructure()->getCode(); ?>

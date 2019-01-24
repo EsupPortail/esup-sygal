@@ -6,6 +6,7 @@ use Application\Entity\Db\Acteur;
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Entity\UserWrapper;
+use Application\Entity\UserWrapperFactory;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Doctorant\DoctorantServiceAwareTrait;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
@@ -13,6 +14,7 @@ use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
+use Application\SourceCodeStringHelper;
 use BjyAuthorize\Provider\Identity\ProviderInterface;
 use UnicaenAuth\Provider\Identity\ChainableProvider;
 use UnicaenAuth\Provider\Identity\ChainEvent;
@@ -85,7 +87,8 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
         /** @var array $identity */
         $identity = $this->authenticationService->getIdentity();
 
-        $this->userWrapper = UserWrapper::instFromIdentity($identity);
+        $userWrapperFactory = new UserWrapperFactory();
+        $this->userWrapper = $userWrapperFactory->createInstanceFromIdentity($identity);
         if ($this->userWrapper === null) {
             return [];
         }
@@ -110,9 +113,18 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
      */
     private function getRolesFromActeur()
     {
-        $id = $this->userWrapper->getSupannId();
+        // peut-être disposons-nous de l'Individu (cas d'une authentification locale)
+        $individu = $this->userWrapper->getIndividu();
 
-        $acteurs = $this->acteurService->getRepository()->findBySourceCodeIndividu($id);
+        if ($individu !== null) {
+            $sourceCode = $individu->getSourceCode();
+            $acteurs = $this->acteurService->getRepository()->findBySourceCodeIndividu($sourceCode);
+        } else {
+            $id = $this->userWrapper->getSupannId();
+            $sourceCodeHelper = new SourceCodeStringHelper();
+            $pattern = $sourceCodeHelper->generateSearchPatternForAnyEtablissement($id);
+            $acteurs = $this->acteurService->getRepository()->findBySourceCodeIndividuPattern($pattern);
+        }
 
         // pour l'instant on ne considère pas tous les types d'acteur
         $acteurs = array_filter($acteurs, function(Acteur $a) {
@@ -131,9 +143,17 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
      */
     private function getRolesFromIndividuRole()
     {
-        $id = $this->userWrapper->getSupannId();
+        // peut-être disposons-nous de l'Individu (cas d'une authentification locale)
+        $individu = $this->userWrapper->getIndividu();
 
-        $individuRoles = $this->roleService->getIndividuRolesByIndividuSourceCode($id);
+        if ($individu !== null) {
+            $individuRoles = $this->roleService->findIndividuRolesByIndividu($individu);
+        } else {
+            $id = $this->userWrapper->getSupannId();
+            $sourceCodeHelper = new SourceCodeStringHelper();
+            $pattern = $sourceCodeHelper->generateSearchPatternForAnyEtablissement($id);
+            $individuRoles = $this->roleService->findIndividuRolesByIndividuSourceCodePattern($pattern);
+        }
 
         usort($individuRoles, IndividuRole::getComparisonFunction());
 
