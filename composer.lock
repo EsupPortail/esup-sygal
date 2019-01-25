@@ -1975,11 +1975,11 @@
         },
         {
             "name": "unicaen/auth",
-            "version": "1.3.0",
+            "version": "1.3.1",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/auth.git",
-                "reference": "3734df0f0bca8fdb4f7879e7ee38c65e94a8c09a"
+                "reference": "f09180d6f0a4f222a98f69dfba1942f3cab26830"
             },
             "require": {
                 "bjyoungblood/bjy-authorize": ">=1.4",
@@ -2001,13 +2001,8 @@
                     "./Module.php"
                 ]
             },
-            "scripts": {
-                "pre-update-cmd": [
-                    "@php bin/password-reset-requires-schema-update-warning.php"
-                ]
-            },
             "description": "Module d'authentification pour les applications Unicaen",
-            "time": "2019-01-24T12:36:36+00:00"
+            "time": "2019-01-25T14:30:18+00:00"
         },
         {
             "name": "unicaen/code",
