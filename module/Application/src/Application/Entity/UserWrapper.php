@@ -167,9 +167,9 @@ class UserWrapper implements UserInterface
     }
 
     /**
-     * Retourne soit le supannEmpId soit le supannEtuId, car l'un ou l'autre est forcément null.
+     * Retourne soit le supannEmpId soit le supannEtuId, ou null.
      *
-     * @return string
+     * @return string|null
      */
     public function getSupannId()
     {
@@ -183,7 +183,7 @@ class UserWrapper implements UserInterface
             return $this->individu->getSupannId();
         }
 
-        throw new LogicException("Cas imprévu!");
+        return null;
     }
 
     /**
