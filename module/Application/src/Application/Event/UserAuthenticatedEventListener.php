@@ -84,11 +84,11 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
             }
         }
 
-        // mise à jour éventuelle de l'Individu à partir des données d'identité
-        if ($individuUpdateRequired) {
-            $modificateur = $this->utilisateurService->getRepository()->fetchAppPseudoUser();
-            $this->individuService->updateIndividuFromUserWrapper($individu, $userWrapper, $modificateur);
-        }
+//        // mise à jour éventuelle de l'Individu à partir des données d'identité
+//        if ($individuUpdateRequired) {
+//            $modificateur = $this->utilisateurService->getRepository()->fetchAppPseudoUser();
+//            $this->individuService->updateIndividuFromUserWrapper($individu, $userWrapper, $modificateur);
+//        }
 
         // renseigne le lien utilisateur-->individu
         /** @var Utilisateur $utilisateur */
