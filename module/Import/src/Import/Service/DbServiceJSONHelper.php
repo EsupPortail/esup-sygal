@@ -3,6 +3,7 @@
 namespace Import\Service;
 
 use Application\Entity\Db\Etablissement;
+use Application\SourceCodeStringHelper;
 use stdClass;
 
 class DbServiceJSONHelper
