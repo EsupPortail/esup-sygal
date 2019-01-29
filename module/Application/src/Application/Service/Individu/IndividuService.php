@@ -31,7 +31,7 @@ class IndividuService extends BaseService
      * @return Individu
      * @deprecated À supprimer car non utilisée
      */
-    public function createFromPeopleAndEtab(People $people, Etablissement $etablissement)
+    public function createIndividuFromPeopleAndEtab(People $people, Etablissement $etablissement)
     {
         $sns = (array)$people->get('sn');
         $usuel = array_pop($sns);
@@ -63,9 +63,9 @@ class IndividuService extends BaseService
      * @param Utilisateur   $utilisateur   Auteur éventuel de la création
      * @return Individu
      */
-    public function createFromUserWrapperAndEtab(UserWrapper $userWrapper,
-                                                 Etablissement $etablissement,
-                                                 Utilisateur $utilisateur = null)
+    public function createIndividuFromUserWrapperAndEtab(UserWrapper $userWrapper,
+                                                         Etablissement $etablissement,
+                                                         Utilisateur $utilisateur = null)
     {
         $sourceCode = $etablissement->prependPrefixTo($userWrapper->getSupannId());
 
@@ -87,6 +87,31 @@ class IndividuService extends BaseService
         }
 
         return $entity;
+    }
+
+    /**
+     * @param Individu    $entity
+     * @param UserWrapper $userWrapper
+     * @param Utilisateur $utilisateur
+     */
+    public function updateIndividuFromUserWrapper(Individu $entity,
+                                                  UserWrapper $userWrapper,
+                                                  Utilisateur $utilisateur)
+    {
+        $entity->setSupannId($userWrapper->getSupannId());
+        $entity->setNomUsuel($userWrapper->getNom() ?: "X"); // NB: le nom est obligatoire mais quid si indisponible ?
+        $entity->setNomPatronymique($userWrapper->getNom());
+        $entity->setPrenom($userWrapper->getPrenom());
+        $entity->setCivilite($userWrapper->getCivilite());
+        $entity->setEmail($userWrapper->getEmail());
+        $entity->setHistoModificateur($utilisateur);
+
+        $this->getEntityManager()->persist($entity);
+        try {
+            $this->getEntityManager()->flush($entity);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Impossible d'enregistrer l'Individu", null, $e);
+        }
     }
 
     public function existIndividuUtilisateurByEmail($email) {

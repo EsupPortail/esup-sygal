@@ -3,11 +3,11 @@
 namespace Application\Event;
 
 use Application\Entity\Db\Utilisateur;
-use Application\Entity\UserWrapper;
 use Application\Entity\UserWrapperFactory;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
+use Application\SourceCodeStringHelper;
 use UnicaenAuth\Event\Listener\AuthenticatedUserSavedAbstractListener;
 use UnicaenAuth\Event\UserAuthenticatedEvent;
 use UnicaenAuth\Service\UserContext as UserContextService;
@@ -63,19 +63,31 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
         $userWrapperFactory = new UserWrapperFactory();
         $userWrapper = $userWrapperFactory->createInstanceFromUserAuthenticatedEvent($e);
 
+        $individuUpdateRequired = true;
+
         if ($userWrapper->getIndividu() !== null) {
             $individu = $userWrapper->getIndividu();
         } else {
             $domaineEtab = $userWrapper->getDomainFromEppn();
             $etablissement = $this->getEtablissementService()->getRepository()->findOneByDomaine($domaineEtab);
 
-            // création de l'Individu si besoin
-            $sourceCode = $etablissement->prependPrefixTo($userWrapper->getSupannId());
+            // recherche de l'Individu correspondant à l'utilisateur
+            $sourceCodeHelper = new SourceCodeStringHelper();
+            $sourceCode = $sourceCodeHelper->addPrefixEtablissementTo($userWrapper->getSupannId(), $etablissement);
             $individu = $this->individuService->getRepository()->findOneBySourceCode($sourceCode);
+
+            // création de l'Individu si inexistant
             if (null === $individu) {
                 $createur = $this->utilisateurService->getRepository()->fetchAppPseudoUser();
-                $individu = $this->individuService->createFromUserWrapperAndEtab($userWrapper, $etablissement, $createur);
+                $individu = $this->individuService->createIndividuFromUserWrapperAndEtab($userWrapper, $etablissement, $createur);
+                $individuUpdateRequired = false;
             }
+        }
+
+        // mise à jour éventuelle de l'Individu à partir des données d'identité
+        if ($individuUpdateRequired) {
+            $modificateur = $this->utilisateurService->getRepository()->fetchAppPseudoUser();
+            $this->individuService->updateIndividuFromUserWrapper($individu, $userWrapper, $modificateur);
         }
 
         // renseigne le lien utilisateur-->individu
