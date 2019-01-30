@@ -63,8 +63,6 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
         $userWrapperFactory = new UserWrapperFactory();
         $userWrapper = $userWrapperFactory->createInstanceFromUserAuthenticatedEvent($e);
 
-        $individuUpdateRequired = true;
-
         if ($userWrapper->getIndividu() !== null) {
             $individu = $userWrapper->getIndividu();
         } else {
@@ -80,15 +78,8 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
             if (null === $individu) {
                 $createur = $this->utilisateurService->getRepository()->fetchAppPseudoUser();
                 $individu = $this->individuService->createIndividuFromUserWrapperAndEtab($userWrapper, $etablissement, $createur);
-                $individuUpdateRequired = false;
             }
         }
-
-//        // mise à jour éventuelle de l'Individu à partir des données d'identité
-//        if ($individuUpdateRequired) {
-//            $modificateur = $this->utilisateurService->getRepository()->fetchAppPseudoUser();
-//            $this->individuService->updateIndividuFromUserWrapper($individu, $userWrapper, $modificateur);
-//        }
 
         // renseigne le lien utilisateur-->individu
         /** @var Utilisateur $utilisateur */
