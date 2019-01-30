@@ -12,7 +12,9 @@ use Application\Entity\Db\TheseAnneeUniv;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
 use Application\Entity\UserWrapperFactory;
+use Application\Provider\Privilege\StructurePrivileges;
 use Application\QueryBuilder\TheseQueryBuilder;
+use Application\Service\AuthorizeServiceAwareTrait;
 use Application\Service\DomaineScientifiqueServiceAwareTrait;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
@@ -41,6 +43,7 @@ class TheseRechercheService
     use SourceServiceAwareTrait;
     use DomaineScientifiqueServiceAwareTrait;
     use FinancementServiceAwareTrait;
+    use AuthorizeServiceAwareTrait;
 
     /**
      * @var bool
@@ -499,9 +502,11 @@ class TheseRechercheService
 
     private function fetchEtablissementsOptions()
     {
-        $role = $this->getSelectedIdentityRole();
+        $privilege = StructurePrivileges::STRUCTURE_CONSULTATION_TOUTES_STRUCTURES;
+        $toutesStructuresAllowed = $this->authorizeService->isAllowed(StructurePrivileges::getResourceId($privilege));
+        if (!$toutesStructuresAllowed) {
+            $role = $this->getSelectedIdentityRole();
 
-        if ($role->isEtablissementDependant()) {
             return [
                 $this->optionify($role->getStructure()->getEtablissement())
             ];

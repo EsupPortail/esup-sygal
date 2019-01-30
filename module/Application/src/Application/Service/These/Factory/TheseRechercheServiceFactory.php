@@ -12,6 +12,7 @@ use Application\Service\These\TheseRechercheService;
 use Application\Service\These\TheseService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\UserContextService;
+use UnicaenAuth\Service\AuthorizeService;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 class TheseRechercheServiceFactory
@@ -34,6 +35,7 @@ class TheseRechercheServiceFactory
          * @var StructureService $structureService
          * @var DomaineScientifiqueService $domaineService
          * @var FinancementService $financementService
+         * @var AuthorizeService $authorizeService
          */
         $theseService = $serviceLocator->get('TheseService');
         $userContextService = $serviceLocator->get('UserContextService');
@@ -44,6 +46,7 @@ class TheseRechercheServiceFactory
         $structureService = $serviceLocator->get(StructureService::class);
         $domaineService = $serviceLocator->get(DomaineScientifiqueService::class);
         $financementService = $serviceLocator->get(FinancementService::class);
+        $authorizeService = $serviceLocator->get('BjyAuthorize\Service\Authorize');
 
         $service = new TheseRechercheService();
         $service->setTheseService($theseService);
@@ -55,6 +58,7 @@ class TheseRechercheServiceFactory
         $service->setStructureService($structureService);
         $service->setDomaineScientifiqueService($domaineService);
         $service->setFinancementService($financementService);
+        $service->setAuthorizeService($authorizeService);
 
         return $service;
     }
