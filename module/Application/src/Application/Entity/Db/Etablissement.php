@@ -18,9 +18,6 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
 
     const CODE_STRUCTURE_COMUE = Structure::CODE_COMUE;
 
-    const SOURCE_CODE_ETABLISSEMENT_INCONNU =
-        Source::CODE_SYGAL . SourceCodeStringHelper::ETAB_PREFIX_SEP . '?';
-
     protected $id;
     protected $domaine;
     protected $theses;

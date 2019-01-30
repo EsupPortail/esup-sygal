@@ -141,7 +141,7 @@ class UtilisateurService extends BaseService
         $individu->setNomPatronymique($formData['nomPatronymique']);
         $individu->setPrenom1($formData['prenom']);
         $individu->setEmail($formData['email']);
-        $individu->setSourceCode(uniqid()); // NB: sera remplacé par "SYGAL::{INDIVIDU.ID}"
+        $individu->setSourceCode(uniqid()); // NB: sera remplacé par "COMUE::{INDIVIDU.ID}"
 
         $this->getEntityManager()->persist($individu);
         try {
@@ -150,9 +150,9 @@ class UtilisateurService extends BaseService
             throw new RuntimeException("Erreur lors de l'enregistrement du nouvel individu", null, $e);
         }
 
-        // source code définitif : "SYGAL::{INDIVIDU.ID}"
+        // source code définitif : "COMUE::{INDIVIDU.ID}"
         $sourceCodeHelper = new SourceCodeStringHelper();
-        $sourceCodeIndividu = $sourceCodeHelper->addPrefixTo($individu->getId(), Etablissement::SOURCE_CODE_ETABLISSEMENT_INCONNU);
+        $sourceCodeIndividu = $sourceCodeHelper->addPrefixTo($individu->getId(), Etablissement::CODE_STRUCTURE_COMUE);
         $individu->setSourceCode($sourceCodeIndividu);
 
         try {

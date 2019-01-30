@@ -12,16 +12,6 @@ use UnicaenApp\Exception\RuntimeException;
 class EtablissementRepository extends DefaultEntityRepository
 {
     /**
-     * Retourne l'établissement inconnu.
-     *
-     * @return Etablissement
-     */
-    public function fetchEtablissementInconnu()
-    {
-        return $this->findOneBySourceCode(Etablissement::SOURCE_CODE_ETABLISSEMENT_INCONNU);
-    }
-
-    /**
      * Recherche un établissement par son code de structure.
      *
      * @param string $code Ex: 'COMUE'
