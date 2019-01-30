@@ -110,9 +110,7 @@ class UserWrapperFactory
     {
         $inst = new UserWrapper();
 
-        if ($event->getDbUser()) {
-            $userData = $event->getDbUser();
-        } elseif ($event->getLdapUser()) {
+        if ($event->getLdapUser()) {
             $userData = $event->getLdapUser();
         } elseif ($event->getShibUser()) {
             $userData = $event->getShibUser();
