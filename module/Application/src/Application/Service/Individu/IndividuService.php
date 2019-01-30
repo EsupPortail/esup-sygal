@@ -106,7 +106,6 @@ class IndividuService extends BaseService
         $entity->setEmail($userWrapper->getEmail());
         $entity->setHistoModificateur($utilisateur);
 
-        $this->getEntityManager()->persist($entity);
         try {
             $this->getEntityManager()->flush($entity);
         } catch (OptimisticLockException $e) {
