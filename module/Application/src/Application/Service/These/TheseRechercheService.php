@@ -522,7 +522,7 @@ class TheseRechercheService
          */
         $etablissements = $this->getEtablissementService()->getRepository()->findAllBySource(Source::CODE_SYGAL);
         $etablissements = array_filter($etablissements, function (Etablissement $etablissement) { return count($etablissement->getStructure()->getStructuresSubstituees())==0; });
-        $etablissements = array_filter($etablissements, function (Etablissement $etablissement) { return $etablissement->getSigle() != "NU";});
+        $etablissements = array_filter($etablissements, function (Etablissement $etablissement) { return $etablissement->getCode() != "COMUE";});
 
         $options = [];
         foreach ($etablissements as $etablissement) {
