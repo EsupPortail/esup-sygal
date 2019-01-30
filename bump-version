@@ -50,8 +50,12 @@ if (version_compare($new, $current) <= 0) {
 }
 
 $config['unicaen-app']['app_infos']['version'] = $new;
+$config['unicaen-app']['app_infos']['date'] = date('d/m/Y');
+$config['comment'] = "Fichier généré le " . date('d/m/Y à H:i:s') . ' avec ' . __FILE__;
 
 $phpArray = new PhpArray();
-$phpArray->toFile($configFilepath, $config);
+$phpArray
+    ->setUseBracketArraySyntax(true)
+    ->toFile($configFilepath, $config);
 
 echo "Nouvelle version inscrite: $new" . PHP_EOL;

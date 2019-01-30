@@ -6,8 +6,8 @@ return [
         'app_infos' => [
             'nom'     => "SyGAL",
             'desc'    => "SYstème de Gestion et d'Accompagnement doctoraL",
-            //'version' => "1.0.3", // NB: déplacé dans 'version.global.php'
-            'date'    => "05/12/2018",
+            //'version' => cf. 'version.global.php'
+            //'date'    => cf. 'version.global.php'
             'contact' => [
                 'mail' => "assistance-sygal@unicaen.fr",
                 //'tel' => "01 02 03 04 05",
