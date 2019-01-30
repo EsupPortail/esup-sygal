@@ -15,7 +15,7 @@
 
         <many-to-one field="categorie" target-entity="UnicaenAuth\Entity\Db\CategoriePrivilege">
             <join-columns>
-                <join-column name="CATEGORIE_ID" referenced-column-name="ID"/>
+                <join-column name="CATEGORIE_ID" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
