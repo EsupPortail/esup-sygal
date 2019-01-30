@@ -282,15 +282,22 @@ div.filters span.filter {
 div.filters form {
   padding: 10px; }
   div.filters form .form-group {
-    margin-right: 5px; }
+    margin-right: 4px;
+    vertical-align: bottom;
+    font-size: 11px; }
+    div.filters form .form-group ul.dropdown-menu {
+      font-size: 11px; }
+      div.filters form .form-group ul.dropdown-menu a {
+        padding: 3px 7px; }
+    div.filters form .form-group .dropdown-toggle {
+      font-size: 11px;
+      padding: 3px 25px 3px 10px; }
   div.filters form label {
     display: block;
-    font-size: 93%;
-    margin-bottom: 0; }
-  div.filters form button.dropdown-toggle {
-    padding: 3px 25px 3px 10px; }
+    margin-bottom: 3px;
+    line-height: 95%; }
   div.filters form .filter-option, div.filters form #search-input {
-    font-size: 90%; }
+    font-size: 11px; }
 
 table.these-fiche {
   max-width: 400px;

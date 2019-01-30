@@ -8,11 +8,13 @@ use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\OrigineFinancement;
 use Application\Entity\Db\Source;
 use Application\Entity\Db\These;
+use Application\Entity\Db\TheseAnneeUniv;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
-use Application\Entity\UserWrapper;
-use Application\Filter\EtablissementPrefixFilter;
+use Application\Entity\UserWrapperFactory;
+use Application\Provider\Privilege\StructurePrivileges;
 use Application\QueryBuilder\TheseQueryBuilder;
+use Application\Service\AuthorizeServiceAwareTrait;
 use Application\Service\DomaineScientifiqueServiceAwareTrait;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
@@ -23,6 +25,7 @@ use Application\Service\These\Filter\TheseSelectFilter;
 use Application\Service\These\Filter\TheseTextFilter;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
+use Application\SourceCodeStringHelper;
 use Application\View\Helper\Sortable;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\Query\Expr\Join;
@@ -40,6 +43,7 @@ class TheseRechercheService
     use SourceServiceAwareTrait;
     use DomaineScientifiqueServiceAwareTrait;
     use FinancementServiceAwareTrait;
+    use AuthorizeServiceAwareTrait;
 
     /**
      * @var bool
@@ -73,6 +77,8 @@ class TheseRechercheService
             TheseSelectFilter::NAME_uniteRecherche           => [],
             TheseSelectFilter::NAME_financement              => [],
             TheseSelectFilter::NAME_anneePremiereInscription => [],
+            TheseSelectFilter::NAME_anneeUniv1ereInscription => [],
+            TheseSelectFilter::NAME_anneeUnivInscription     => [],
             TheseSelectFilter::NAME_anneeSoutenance          => [],
 //            TheseSelectFilter::NAME_discipline               => [],
             TheseSelectFilter::NAME_domaineScientifique      => [],
@@ -99,6 +105,8 @@ class TheseRechercheService
             TheseSelectFilter::NAME_uniteRecherche           => $this->fetchUnitesRecherchesOptions(),
             TheseSelectFilter::NAME_financement              => $this->fetchOriginesFinancementsOptions(),
             TheseSelectFilter::NAME_anneePremiereInscription => $this->fetchAnneesInscriptionOptions(),
+            TheseSelectFilter::NAME_anneeUniv1ereInscription => $this->fetchAnneesUniv1ereInscriptionOptions(),
+            TheseSelectFilter::NAME_anneeUnivInscription     => $this->fetchAnneesUnivInscriptionOptions(),
             TheseSelectFilter::NAME_anneeSoutenance          => $this->fetchAnneesSoutenance(),
 //            TheseSelectFilter::NAME_discipline               => $this->fetchDisciplinesOptions(),
             TheseSelectFilter::NAME_domaineScientifique      => $this->fetchDomainesScientifiquesOptions(),
@@ -144,9 +152,19 @@ class TheseRechercheService
                 ['width' => '125px', 'liveSearch' => true]
             ),
             TheseSelectFilter::NAME_anneePremiereInscription => new TheseSelectFilter(
-                "1ère inscr.",
+                "Année civile<br>1ère inscr.",
                 TheseSelectFilter::NAME_anneePremiereInscription,
                 $optionsArray[TheseSelectFilter::NAME_anneePremiereInscription]
+            ),
+            TheseSelectFilter::NAME_anneeUniv1ereInscription => new TheseSelectFilter(
+                "Année univ.<br>1ère inscr.",
+                TheseSelectFilter::NAME_anneeUniv1ereInscription,
+                $optionsArray[TheseSelectFilter::NAME_anneeUniv1ereInscription]
+            ),
+            TheseSelectFilter::NAME_anneeUnivInscription => new TheseSelectFilter(
+                "Année univ.<br>d'inscr.",
+                TheseSelectFilter::NAME_anneeUnivInscription,
+                $optionsArray[TheseSelectFilter::NAME_anneeUnivInscription]
             ),
             TheseSelectFilter::NAME_anneeSoutenance => new TheseSelectFilter(
                 "Soutenance",
@@ -352,21 +370,32 @@ class TheseRechercheService
                     ->setParameter('doctorant', $this->userContextService->getIdentityDoctorant());
             }
             elseif ($role->isDirecteurThese()) {
-                switch (true) {
-                    case $identity = $this->userContextService->getIdentityLdap():
-                    case $identity = $this->userContextService->getIdentityShib():
-                        $userWrapper = UserWrapper::inst($identity);
-                        break;
-                    default:
-                        throw new RuntimeException("Cas imprévu!");
+//                switch (true) {
+//                    case $identity = $this->userContextService->getIdentityLdap():
+//                    case $identity = $this->userContextService->getIdentityShib():
+//                    case $identity = $this->userContextService->getIdentityDb():
+//                        $userWrapper = UserWrapper::inst($identity);
+//                        break;
+//                    default:
+//                        throw new RuntimeException("Cas imprévu!");
+//                }
+                $userWrapperFactory = new UserWrapperFactory();
+                $userWrapper = $userWrapperFactory->createInstanceFromIdentity($this->userContextService->getIdentity());
+                if ($userWrapper->getIndividu() !== null) {
+                    $qb
+                        ->join('t.acteurs', 'adt', Join::WITH, 'adt.role = :role')
+                        ->join('adt.individu', 'idt', Join::WITH, 'idt = :individu')
+                        ->setParameter('individu', $userWrapper->getIndividu())
+                        ->setParameter('role', $role);
+                } else {
+                    $individuSourceCode = (new SourceCodeStringHelper())
+                        ->addPrefixTo($userWrapper->getSupannId(), $role->getStructure()->getCode());
+                    $qb
+                        ->join('t.acteurs', 'adt', Join::WITH, 'adt.role = :role')
+                        ->join('adt.individu', 'idt', Join::WITH, 'idt.sourceCode = :idtSourceCode')
+                        ->setParameter('idtSourceCode', $individuSourceCode)
+                        ->setParameter('role', $role);
                 }
-                $individuSourceCode = (new EtablissementPrefixFilter())
-                    ->addPrefixTo($userWrapper->getSupannId(), $role->getStructure()->getCode());
-                $qb
-                    ->join('t.acteurs', 'adt', Join::WITH, 'adt.role = :role')
-                    ->join('adt.individu', 'idt', Join::WITH, 'idt.sourceCode = :idtSourceCode')
-                    ->setParameter('idtSourceCode', $individuSourceCode)
-                    ->setParameter('role', $role);
             }
             // sinon role = membre jury
             // ...
@@ -473,9 +502,11 @@ class TheseRechercheService
 
     private function fetchEtablissementsOptions()
     {
-        $role = $this->getSelectedIdentityRole();
+        $privilege = StructurePrivileges::STRUCTURE_CONSULTATION_TOUTES_STRUCTURES;
+        $toutesStructuresAllowed = $this->authorizeService->isAllowed(StructurePrivileges::getResourceId($privilege));
+        if (!$toutesStructuresAllowed) {
+            $role = $this->getSelectedIdentityRole();
 
-        if ($role->isEtablissementDependant()) {
             return [
                 $this->optionify($role->getStructure()->getEtablissement())
             ];
@@ -491,7 +522,7 @@ class TheseRechercheService
          */
         $etablissements = $this->getEtablissementService()->getRepository()->findAllBySource(Source::CODE_SYGAL);
         $etablissements = array_filter($etablissements, function (Etablissement $etablissement) { return count($etablissement->getStructure()->getStructuresSubstituees())==0; });
-        $etablissements = array_filter($etablissements, function (Etablissement $etablissement) { return $etablissement->getSigle() != "NU";});
+        $etablissements = array_filter($etablissements, function (Etablissement $etablissement) { return $etablissement->getCode() != "COMUE";});
 
         $options = [];
         foreach ($etablissements as $etablissement) {
@@ -559,6 +590,85 @@ class TheseRechercheService
         }
 
         return $this->addEmptyOption($options, "Toutes");
+    }
+
+    private function fetchAnneesUniv1ereInscriptionOptions()
+    {
+        $role = $this->getSelectedIdentityRole();
+
+        $etablissement = null;
+        if ($role->isEtablissementDependant()) {
+            $etablissement = $role->getStructure()->getEtablissement();
+        }
+        $annees = $this->theseService->getRepository()->fetchDistinctAnneesUniv1ereInscription($etablissement);
+
+        $annees = array_reverse(array_filter($annees));
+
+        $options = [];
+        $options[] = $this->optionify(null); // option spéciale pour valeur === null
+        foreach ($annees as $annee) {
+            $options[] = $this->optionify($annee);
+        }
+
+        // formattage spécial du label: "2018" devient "2018/2019"
+        $options = array_map(function($value) {
+            if (! is_numeric($value['label'])) {
+                return $value;
+            }
+            $annee = (int) $value['label'];
+            $value['label'] = $annee . '/' . ($annee+1);
+            return $value;
+        }, $options);
+
+        return $this->addEmptyOption($options, "Toutes");
+    }
+
+    private function fetchAnneesUnivInscriptionOptions()
+    {
+        // Vilaine entorse au SOC: on fetche directement TheseAnneeUniv dans TheseRechercheService !
+        // TODO: crééer un TheseAnneeUnivService
+        $annees = $this->fetchDistinctAnneesUnivInscription();
+
+        $annees = array_reverse(array_filter($annees));
+
+        $options = [];
+        $options[] = $this->optionify(null); // option spéciale pour valeur === null
+        foreach ($annees as $annee) {
+            $options[] = $this->optionify($annee);
+        }
+
+        // formattage spécial du label: "2018" devient "2018/2019"
+        $options = array_map(function($value) {
+            if (! is_numeric($value['label'])) {
+                return $value;
+            }
+            $annee = (int) $value['label'];
+            $value['label'] = $annee . '/' . ($annee+1);
+            return $value;
+        }, $options);
+
+        return $this->addEmptyOption($options, "Toutes");
+    }
+
+    /**
+     * Vilaine entorse au SOC: on fetche directement TheseAnneeUniv dans TheseRechercheService !
+     * TODO: crééer un TheseAnneeUnivService
+     *
+     * @return int[]
+     */
+    private function fetchDistinctAnneesUnivInscription()
+    {
+        $qb = $this->theseService->getEntityManager()->getRepository(TheseAnneeUniv::class)->createQueryBuilder('t');
+        $qb
+            ->distinct()
+            ->select("t.anneeUniv")
+            ->orderBy("t.anneeUniv");
+
+        $results = array_map(function($value) {
+            return current($value);
+        }, $qb->getQuery()->getScalarResult());
+
+        return $results;
     }
 
     private function fetchAnneesSoutenance()
@@ -679,7 +789,7 @@ class TheseRechercheService
         } elseif ($value instanceof OrigineFinancement) {
             return ['value' => (string) $value->getId(), 'label' => $value->getLibelleLong()];
         } elseif ($value === null) {
-            return ['value' => 'NULL', 'label' => $label ?: "Inconnue"];
+            return ['value' => 'NULL', 'label' => $label ?: "Inconnu(e)"];
         } elseif ($value === '') {
             return ['value' => '', 'label' => $label];
         } else {

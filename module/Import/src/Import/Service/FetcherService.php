@@ -4,10 +4,9 @@ namespace Import\Service;
 
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\These;
-use Application\Filter\EtablissementPrefixFilter;
+use Application\SourceCodeStringHelper;
 use Assert\Assertion;
 use Assert\AssertionFailedException;
-use DateTime;
 use Doctrine\ORM\EntityManager;
 use Import\Service\Traits\CallServiceAwareTrait;
 use Import\Service\Traits\DbServiceAwareTrait;
@@ -202,9 +201,9 @@ class FetcherService
             return $sourceCode;
         }
 
-        $f = new EtablissementPrefixFilter();
+        $sourceCodeHelper = new SourceCodeStringHelper();
         try {
-            $sourceCode = $f->removePrefixFrom($sourceCode);
+            $sourceCode = $sourceCodeHelper->removePrefixFrom($sourceCode);
         } catch (RuntimeException $e) {
             // le source code n'est pas préfixé, tant mieux.
         }
@@ -247,8 +246,8 @@ class FetcherService
                 case 'these':
                     /** @var These $these */
                     $these = $value;
-                    $f = new EtablissementPrefixFilter();
-                    $filtersToMerge['these_id'] = $f->removePrefixFrom($these->getSourceCode());
+                    $sourceCodeHelper = new SourceCodeStringHelper();
+                    $filtersToMerge['these_id'] = $sourceCodeHelper->removePrefixFrom($these->getSourceCode());
                     // NB: les WS ne traitent que des sources codes.
                     break;
                 default:

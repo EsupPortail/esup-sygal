@@ -2,19 +2,20 @@
 
 namespace Application\Form;
 
+use Application\Entity\Db\Individu;
 use Application\Form\Validator\NewEmailValidator;
 use Application\Form\Validator\PasswordValidator;
 use Zend\Form\Element\Hidden;
 use Zend\Form\Element\Password;
+use Zend\Form\Element\Radio;
 use Zend\Form\Element\Submit;
 use Zend\Form\Element\Text;
-use Zend\Form\Element\Radio;
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilterProviderInterface;
+use Zend\Validator\Identical;
 
 class CreationUtilisateurForm extends Form implements InputFilterProviderInterface
 {
-
     public function init()
     {
         $this->add(
@@ -22,11 +23,11 @@ class CreationUtilisateurForm extends Form implements InputFilterProviderInterfa
         );
         $this->add(
             (new Radio('civilite'))
-                ->setLabel("Civilité :")
                 ->setValueOptions([
-                    'M.' => 'M.',
-                    'Mme' => 'Mme',
+                    Individu::CIVILITE_M => Individu::CIVILITE_M,
+                    Individu::CIVILITE_MME => Individu::CIVILITE_MME,
                 ])
+                ->setLabel("Civilité :")
         );
         $this->add(
             (new Text('nomUsuel'))
@@ -43,19 +44,22 @@ class CreationUtilisateurForm extends Form implements InputFilterProviderInterfa
         );
         $this->add(
             (new Text('email'))
-                ->setLabel("Adresse électronique :")
+                ->setLabel("Adresse électronique (identifiant de connexion) :")
         );
         $this->add(
             (new Password('password'))
                 ->setLabel("Mot de passe :")
         );
 
+        $this->add(
+            (new Password('passwordbis'))
+                ->setLabel("Confirmation du mot de passe :")
+        );
+
         $this->add((new Submit('submit'))
             ->setValue("Enregistrer")
             ->setAttribute('class', 'btn btn-primary')
         );
-
-        //$this->setInputFilter((new Factory())->createInputFilter());
     }
 
     /**
@@ -99,6 +103,13 @@ class CreationUtilisateurForm extends Form implements InputFilterProviderInterfa
                     [
                         'name' => PasswordValidator::class,
                     ],
+                ],
+            ],
+            'passwordbis' => [
+                'name' =>'passwordbis',
+                'required' => true,
+                'validators' => [
+                    new Identical('password'),
                 ],
             ],
         ];

@@ -2,7 +2,9 @@
 
 use Application\Controller\Factory\UtilisateurControllerFactory;
 use Application\Form\CreationUtilisateurForm;
+use Application\Form\CreationUtilisateurFromIndividuForm;
 use Application\Form\Factory\CreationUtilisateurFormFactory;
+use Application\Form\Factory\CreationUtilisateurFromIndividuFormFactory;
 use Application\Form\Factory\CreationUtilisateurHydratorFactory;
 use Application\Form\Hydrator\CreationUtilisateurHydrator;
 use Application\Form\Validator\Factory\NewEmailValidatorFactory;
@@ -39,7 +41,8 @@ return [
                     'action'     => [
                         'retirer-role',
                         'ajouter-role',
-                        'creation-utilisateur',
+                        'ajouter',
+                        'ajouterFromIndividu',
                     ],
                     'privileges' => UtilisateurPrivileges::UTILISATEUR_MODIFICATION,
                 ],
@@ -48,18 +51,6 @@ return [
     ],
     'router'          => [
         'routes' => [
-            'creation-utilisateur' => [
-                'type'          => Literal::class,
-                'options'       => [
-                    'route'       => '/creation-utilisateur',
-                    'defaults'    => [
-                        '__NAMESPACE__' => 'Application\Controller',
-                        'controller'    => 'Utilisateur',
-                        'action' => 'creation-utilisateur',
-                    ],
-                ],
-                'may_terminate' => true,
-            ],
             'utilisateur' => [
                 'type'          => Segment::class,
                 'options'       => [
@@ -74,6 +65,24 @@ return [
                 ],
                 'may_terminate' => true,
                 'child_routes'  => [
+                    'ajouter' => [
+                        'type'          => Literal::class,
+                        'options'       => [
+                            'route'       => '/ajouter',
+                            'defaults'    => [
+                                'action' => 'ajouter',
+                            ],
+                        ],
+                    ],
+                    'ajouter-pour-individu' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/ajouter-pour-individu/:individu',
+                            'defaults'    => [
+                                'action' => 'ajouterFromIndividu',
+                            ],
+                        ],
+                    ],
                     'rechercher-people' => [
                         'type'          => Segment::class,
                         'options'       => [
@@ -121,7 +130,7 @@ return [
                 'pages' => [
                     'admin' => [
                         'pages' => [
-                            'utilisateur' => [
+                            'index' => [
                                 'label'    => 'Utilisateurs',
                                 'route'    => 'utilisateur',
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\Utilisateur', 'index'),
@@ -129,9 +138,9 @@ return [
                                 'order'    => 60,
                             ],
                             'creation' => [
-                                'label'    => 'Création d\'utilisateur',
-                                'route'    => 'creation-utilisateur',
-                                'resource' => PrivilegeController::getResourceId('Application\Controller\Utilisateur', 'creation-utilisateur'),
+                                'label'    => "Création d'utilisateur",
+                                'route'    => 'utilisateur/ajouter',
+                                'resource' => PrivilegeController::getResourceId('Application\Controller\Utilisateur', 'ajouter'),
 
                                 'order'    => 50,
                             ],
@@ -158,7 +167,8 @@ return [
     ],
     'form_elements' => [
         'factories' => [
-            CreationUtilisateurForm::class => CreationUtilisateurFormFactory::class
+            CreationUtilisateurForm::class => CreationUtilisateurFormFactory::class,
+            CreationUtilisateurFromIndividuForm::class => CreationUtilisateurFromIndividuFormFactory::class,
         ]
     ],
     'hydrators' => [

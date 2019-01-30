@@ -5,6 +5,7 @@ namespace Application\Authentication\Storage;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\UserWrapper;
+use Application\Entity\UserWrapperFactory;
 use Application\Service\Doctorant\DoctorantServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
@@ -46,19 +47,20 @@ class AppStorage implements ChainableStorage
      */
     public function read(ChainEvent $e)
     {
-        $this->userWrapper = UserWrapper::instFromStorageChainEvent($e);
+        $userWrapperFactory = new UserWrapperFactory();
+        $this->userWrapper = $userWrapperFactory->createInstanceFromStorageChainEvent($e);
         if ($this->userWrapper === null) {
             return;
         }
 
-        // pas la peine d'aller plus loin si l'établissement correspondant au domaine n'existe pas
-        $domaineEtab = $this->userWrapper->getDomainFromEppn();
-        $etablissement = $this->getEtablissementService()->getRepository()->findOneByDomaine($domaineEtab);
-        if (! $etablissement) {
-            throw new RuntimeException(
-                "Les données concernant l'utilisateur authentifié font référence au domaine '$domaineEtab' " .
-                "mais aucun établissement n'a été trouvé avec ce domaine.");
-        }
+//        // pas la peine d'aller plus loin si l'établissement correspondant au domaine n'existe pas
+//        $domaineEtab = $this->userWrapper->getDomainFromEppn();
+//        $etablissement = $this->getEtablissementService()->getRepository()->findOneByDomaine($domaineEtab);
+//        if (! $etablissement) {
+//            throw new RuntimeException(
+//                "Les données concernant l'utilisateur authentifié font référence au domaine '$domaineEtab' " .
+//                "mais aucun établissement n'a été trouvé avec ce domaine.");
+//        }
 
         /**
          * Collecte des données issues de la table Utilisateur.

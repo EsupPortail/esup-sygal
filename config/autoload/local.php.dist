@@ -5,6 +5,7 @@ use Zend\Mail\Transport\Smtp;
 return [
     'import-api' => [
         'etablissements' => [
+            // code établissement => [config]
             'UNILIM' => [
                 'url'      => 'https://sygal-import-ws:443', // https://{nom du service docker-compose}:443
                 'proxy'    => false, // indispensable pour docker-compose run/exec

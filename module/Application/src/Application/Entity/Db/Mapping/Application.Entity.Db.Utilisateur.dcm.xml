@@ -11,6 +11,7 @@
     <field name="displayName" type="string" column="DISPLAY_NAME" length="64" nullable="false"/>
     <field name="email" type="string" column="EMAIL" length="255" nullable="true"/>
     <field name="state" type="integer" column="STATE" nullable="false"/>
+    <field name="passwordResetToken" column="PASSWORD_RESET_TOKEN" nullable="true"/>
 
     <many-to-one field="individu" target-entity="Application\Entity\Db\Individu">
       <join-columns>

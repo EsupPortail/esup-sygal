@@ -1,8 +1,9 @@
 <?php
 
 use Application\Entity\Db\Etablissement;
-use Application\Filter\EtablissementPrefixFilter;
 use Application\Provider\Privilege\StructurePrivileges;
+use Application\Provider\Privilege\SubstitutionPrivileges;
+use Application\SourceCodeStringHelper;
 
 /**
  * @see \Application\Controller\EtablissementController::indexAction()
@@ -12,8 +13,10 @@ use Application\Provider\Privilege\StructurePrivileges;
 
 $canModifier = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES));
 $canAjouter = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES));
+$canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_CONSULTATION_TOUTES_STRUCTURES))
+    OR $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_CONSULTATION_SA_STRUCTURE));
 
-$prefixFilter = new EtablissementPrefixFilter();
+$sourceCodeHelper = new SourceCodeStringHelper();
 ?>
 
 
@@ -78,7 +81,7 @@ $prefixFilter = new EtablissementPrefixFilter();
                     <?php endif ?>
                 </td>
                 <td>
-                    <?php echo $prefixFilter->extractCodeEtablissementFrom($etablissement->getSource()->getCode()); ?>
+                    <?php echo $sourceCodeHelper->extractCodeEtablissementFrom($etablissement->getSource()->getCode()); ?>
                 </td>
                 <td>
                     <?php echo $etablissement->getStructure()->getCode(); ?>
@@ -92,7 +95,7 @@ $prefixFilter = new EtablissementPrefixFilter();
                         </a>
                     <?php endif; ?>
 
-                    <?php if (($canModifier OR $canModifierCetEtab) && !$historisee && $hasSousStructure) : ?>
+                    <?php if ($canSubstituer && !$historisee && $hasSousStructure) : ?>
                         <a href="<?php echo $this->url('substitution-modifier', ['cible' => $etablissement->getStructure()->getId(), [], true]); ?>"
                            title="Historiser l'établissement">
                             <span class="glyphicon glyphicon-link" title="Éditer la substitution"></span>
@@ -154,7 +157,7 @@ $prefixFilter = new EtablissementPrefixFilter();
                     <?php endif ?>
                 </td>
                 <td>
-                    <?php echo $prefixFilter->extractCodeEtablissementFrom($etablissement->getSource()->getCode()); ?>
+                    <?php echo $sourceCodeHelper->extractCodeEtablissementFrom($etablissement->getSource()->getCode()); ?>
                 </td>
                 <td>
                     <?php echo $etablissement->getStructure()->getCode(); ?>

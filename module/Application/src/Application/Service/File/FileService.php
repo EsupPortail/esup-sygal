@@ -184,4 +184,9 @@ class FileService
 
         return $content;
     }
+
+    public function computeDirectoryPathForInformation() {
+        $path = $this->rootDirectoryPathForUploadedFiles . '/' . 'information';
+        return $path;
+    }
 }

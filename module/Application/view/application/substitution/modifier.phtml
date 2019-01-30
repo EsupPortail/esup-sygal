@@ -23,12 +23,9 @@ use Application\View\Renderer\PhpRenderer;
  * @see SubstitutionController::modifierAction()
   */
 
-$canEdit = false;
 if ( $type === null && $cible !== null) $type = $cible->getTypeStructure()->getCode();
-if ( $type === TypeStructure::CODE_ECOLE_DOCTORALE )    $canEdit = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_MODIFICATION_ECOLE));
-if ( $type === TypeStructure::CODE_ETABLISSEMENT )      $canEdit = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_MODIFICATION_ETABLISSEMENT));
-if ( $type === TypeStructure::CODE_UNITE_RECHERCHE )    $canEdit = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_MODIFICATION_UNITE));
-
+$canEdit =  $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_MODIFICATION_TOUTES_STRUCTURES))
+        OR  $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_MODIFICATION_SA_STRUCTURE));
 ?>
 
 <div class="container">

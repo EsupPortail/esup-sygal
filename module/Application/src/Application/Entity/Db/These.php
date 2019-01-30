@@ -2,7 +2,6 @@
 
 namespace Application\Entity\Db;
 
-use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
 use Application\Filter\TitreApogeeFilter;
 use Assert\Assertion;
 use DateTime;
@@ -12,6 +11,7 @@ use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
+use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 
 /**
@@ -97,6 +97,11 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      * @var DateTime
      */
     private $datePremiereInscription;
+
+    /**
+     * @var integer
+     */
+    private $anneeUniv1ereInscription;
 
     /**
      * @var string
@@ -224,6 +229,11 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     private $financements;
 
     /**
+     * @var ArrayCollection
+     */
+    private $anneesUnivInscription;
+
+    /**
      * @return TitreApogeeFilter
      */
     public function getTitreFilter()
@@ -245,6 +255,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
         $this->miseEnLignes = new ArrayCollection();
         $this->acteurs = new ArrayCollection();
         $this->rdvBus = new ArrayCollection();
+        $this->anneesUnivInscription = new ArrayCollection();
     }
 
     /**
@@ -1100,6 +1111,33 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
+     * @return int
+     */
+    public function getAnneeUniv1ereInscription()
+    {
+        return $this->anneeUniv1ereInscription;
+    }
+
+    /**
+     * @return int
+     */
+    public function getAnneeUniv1ereInscriptionToString()
+    {
+        return $this->anneeUniv1ereInscription . '/' . ($this->anneeUniv1ereInscription + 1);
+    }
+
+    /**
+     * @param int $anneeUniv1ereInscription
+     * @return These
+     */
+    public function setAnneeUniv1ereInscription($anneeUniv1ereInscription)
+    {
+        $this->anneeUniv1ereInscription = (int) $anneeUniv1ereInscription;
+
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getLibelleEtabCotutelle()
@@ -1153,6 +1191,26 @@ class These implements HistoriqueAwareInterface, ResourceInterface
         $this->etablissement = $etablissement;
     }
 
+    /**
+     * @return ArrayCollection
+     */
+    public function getAnneesUnivInscription()
+    {
+        return $this->anneesUnivInscription;
+    }
+
+    /**
+     * Retourne les années universitaires d'inscription séparées par une virgule.
+     *
+     * @param string $glue Séparateur, ex: ' - '
+     * @return string Ex: "2015/2016, 2016/2017, 2017/2018"
+     */
+    public function getAnneesUnivInscriptionToString($glue = ', ')
+    {
+        return implode($glue, array_map(function(TheseAnneeUniv $tau) {
+            return $tau->getAnneeUniv1ereInscriptionToString();
+        }, $this->anneesUnivInscription->toArray()));
+    }
 
     /**
      * @return ArrayCollection

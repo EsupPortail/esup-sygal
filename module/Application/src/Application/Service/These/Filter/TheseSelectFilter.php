@@ -18,6 +18,8 @@ class TheseSelectFilter extends TheseFilter
     const NAME_ecoleDoctorale = 'ecoleDoctorale';
     const NAME_uniteRecherche = 'uniteRecherche';
     const NAME_anneePremiereInscription = 'anneePremiereInscription';
+    const NAME_anneeUniv1ereInscription = 'anneeUniv1ereInscription';
+    const NAME_anneeUnivInscription = 'anneeUnivInscription';
     const NAME_anneeSoutenance = 'anneeSoutenance';
     const NAME_discipline = 'discipline';
     const NAME_domaineScientifique = 'domaineScientifique';
@@ -100,6 +102,30 @@ class TheseSelectFilter extends TheseFilter
                     $qb
                         ->andWhere('year(t.datePremiereInscription) = :anneePremiereInscription')
                         ->setParameter('anneePremiereInscription', $filterValue);
+                }
+                break;
+
+            case self::NAME_anneeUniv1ereInscription:
+                if ($filterValue === 'NULL') {
+                    $qb
+                        ->andWhere('t.anneeUniv1ereInscription IS NULL');
+                } else {
+                    $qb
+                        ->andWhere('t.anneeUniv1ereInscription = :anneeUniv1ereInscription')
+                        ->setParameter('anneeUniv1ereInscription', $filterValue);
+                }
+                break;
+
+            case self::NAME_anneeUnivInscription:
+                if ($filterValue === 'NULL') {
+                    $qb
+                        ->leftJoin('t.anneesUnivInscription', 'aui')
+                        ->andWhere('aui.anneeUniv IS NULL');
+                } else {
+                    $qb
+                        ->join('t.anneesUnivInscription', 'aui')
+                        ->andWhere('aui.anneeUniv = :anneeUniv')
+                        ->setParameter('anneeUniv', $filterValue);
                 }
                 break;
 
