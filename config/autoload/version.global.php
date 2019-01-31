@@ -2,7 +2,7 @@
 return [
     'unicaen-app' => [
         'app_infos' => [
-            'version' => '1.0.6',
+            'version' => '1.0.5',
             'date' => '31/01/2019',
         ],
     ],
