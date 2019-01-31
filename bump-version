@@ -1,0 +1,61 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * Script à utiliser pour mettre à jour la version courante de l'application,
+ * configurée dans 'config/autoload/version.global.php'.
+ *
+ * Usage:  bump-version [<version>]
+ *
+ * Ex:     bump-version 1.3
+ */
+
+require 'vendor/autoload.php';
+
+use Zend\Config\Writer\PhpArray;
+
+$defaultConfig = [
+    'unicaen-app' => [
+        'app_infos' => [
+            'version' => 'Aucune',
+        ],
+    ]
+];
+
+$configFilepath = 'config/autoload/version.global.php';
+echo "Fichier de config: $configFilepath" . PHP_EOL;
+
+if (!is_readable($configFilepath)) {
+    echo "Fichier de config $configFilepath introuvable ou illisible." . PHP_EOL;
+    exit(1);
+}
+
+$config = require $configFilepath;
+
+if (! isset($config['unicaen-app']['app_infos']['version'])) {
+    $config = array_merge_recursive($config, $defaultConfig);
+}
+$current = $config['unicaen-app']['app_infos']['version'];
+echo sprintf("Version actuelle: %s.", $current) . PHP_EOL;
+
+$new = isset($argv[1]) ? $argv[1] : null;
+if ($new === null) {
+    $message = "Nouvelle version ? ";
+    $new = readline($message);
+}
+
+if (version_compare($new, $current) <= 0) {
+    echo ":-( Impossible, la nouvelle version doit être supérieure à l'actuelle." . PHP_EOL;
+    exit(1);
+}
+
+$config['unicaen-app']['app_infos']['version'] = $new;
+$config['unicaen-app']['app_infos']['date'] = date('d/m/Y');
+$config['comment'] = "Fichier généré le " . date('d/m/Y à H:i:s') . ' avec ' . __FILE__;
+
+$phpArray = new PhpArray();
+$phpArray
+    ->setUseBracketArraySyntax(true)
+    ->toFile($configFilepath, $config);
+
+echo "Nouvelle version inscrite: $new" . PHP_EOL;

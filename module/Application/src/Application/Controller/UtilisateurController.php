@@ -2,12 +2,11 @@
 
 namespace Application\Controller;
 
-use Application\Entity\Db\CreationUtilisateurInfos;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\Utilisateur;
-use Application\Filter\EtablissementPrefixFilter;
 use Application\Form\CreationUtilisateurForm;
+use Application\Form\CreationUtilisateurFromIndividuForm;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
@@ -18,6 +17,7 @@ use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
+use Application\SourceCodeStringHelper;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -26,7 +26,6 @@ use UnicaenAuth\Options\ModuleOptions;
 use UnicaenAuth\Service\ShibService;
 use UnicaenLdap\Entity\People;
 use Zend\Authentication\AuthenticationService;
-use Zend\Form\Form;
 use Zend\Http\Request;
 use Zend\Http\Response;
 use Zend\View\Model\JsonModel;
@@ -117,52 +116,76 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         exit;
     }
 
-
-    public function creationUtilisateurAction()
+    /**
+     * @return ViewModel
+     */
+    public function ajouterAction()
     {
-        /** @var Form $form */
+        /** @var CreationUtilisateurForm $form */
         $form = $this->getServiceLocator()->get('FormElementManager')->get(CreationUtilisateurForm::class);
-        $infos = new CreationUtilisateurInfos();
-        $error = null;
-
-        $form->bind($infos);
+//        $infos = new CreationUtilisateurInfos();
+//        $form->bind($infos);
 
         /** @var Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
             $form->setData($data);
-
             if ($form->isValid()) {
-                if ($data['nomPatronymique'] === '') $data['nomPatronymique'] = $data['nomUsuel'];
-
-                /** @var Individu $individu */
-                $individu = new Individu();
-                $individu->setCivilite($data['civilite']);
-                $individu->setNomUsuel($data['nomUsuel']);
-                $individu->setNomPatronymique($data['nomPatronymique']);
-                $individu->setPrenom1($data['prenom']);
-                $individu->setEmail($data['email']);
-                $individu->setSourceCode("COMUE::" . $data['email']);
-
-                /** @var Utilisateur $utilisateur */
-                $utilisateur = new Utilisateur();
-                $utilisateur->setUsername($data['email']);
-                $utilisateur->setPassword(password_hash($data['password'], PASSWORD_DEFAULT));
-                $utilisateur->setState(1);
-                $utilisateur->setEmail($data['email']);
-                $utilisateur->setDisplayName($data['nomUsuel']. " " .$data['prenom']);
-
-                $this->individuService->createFromForm($individu, $utilisateur);
-
-                $this->flashMessenger()->addSuccessMessage("Utilisateur <strong>{$utilisateur->getUsername()}</strong> crée avec succés.");
+                if (!trim($data['nomPatronymique'])) {
+                    $data['nomPatronymique'] = $data['nomUsuel'];
+                }
+                $utilisateur = $this->utilisateurService->createFromFormData($data->toArray());
+                $this->flashMessenger()->addSuccessMessage("Utilisateur <strong>{$utilisateur->getUsername()}</strong> créé avec succès.");
                 $this->redirect()->toRoute('utilisateur');
             }
         }
 
-        $form->prepare();
         return new ViewModel([
             'form' => $form,
+        ]);
+    }
+
+    /**
+     * @return ViewModel
+     */
+    public function ajouterFromIndividuAction()
+    {
+        /** @var Individu $individu */
+        $individuId = $this->params('individu');
+        $individu = $this->individuService->getRepository()->findOneBy(["id"=>$individuId]);
+        if ($individu === null) {
+            throw new RuntimeException("Individu introuvable avec cet id");
+        }
+
+        $utilisateurs = $this->utilisateurService->getRepository()->findByIndividu($individu);
+        if (count($utilisateurs) > 0) {
+            throw new RuntimeException("Il existe déjà un utilisateur lié à l'individu $individu.");
+        }
+
+        /** @var CreationUtilisateurFromIndividuForm $form */
+        $form = $this->getServiceLocator()->get('FormElementManager')->get(CreationUtilisateurFromIndividuForm::class);
+        $form->setIndividu($individu);
+
+        /** @var Request $request */
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $form->setData($data);
+            if ($form->isValid()) {
+                if (!empty($data['email'])) {
+                    $individu->setEmail($data['email']);
+                }
+                $utilisateur = $this->utilisateurService->createFromIndividuAndFormData($individu, $data->toArray());
+                $this->flashMessenger()->addSuccessMessage(
+                    "Utilisateur <strong>{$utilisateur->getUsername()}</strong> créé avec succès à partir de l'individu $individu.");
+                $this->redirect()->toRoute('utilisateur');
+            }
+        }
+
+        return new ViewModel([
+            'form' => $form,
+            'individu' => $individu,
         ]);
     }
 
@@ -271,7 +294,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             /** @var Individu $individu */
             $individu = $this->individuService->getRepository()->find($individuId);
             try {
-                $utilisateur = $this->utilisateurService->createFromIndividu($individu);
+                $utilisateur = $this->utilisateurService->createFromIndividuForUsurpationShib($individu);
             } catch (RuntimeException $e) {
                 throw new RuntimeException("Impossible d'ajouter l'individu $individu aux utilisateurs de l'application.", null, $e);
             }
@@ -304,8 +327,8 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             throw new RuntimeException("L'utilisateur '$utilisateur' n'a aucun individu lié");
         }
 
-        $filter = new EtablissementPrefixFilter();
-        $supannId = $filter->removePrefixFrom($individu->getSourceCode());
+        $sourceCodeHelper = new SourceCodeStringHelper();
+        $supannId = $sourceCodeHelper->removePrefixFrom($individu->getSourceCode());
 
         $toShibUser = new ShibUser();
         $toShibUser->setEppn($utilisateur->getUsername());

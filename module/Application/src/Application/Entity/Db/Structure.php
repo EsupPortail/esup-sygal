@@ -2,7 +2,7 @@
 
 namespace Application\Entity\Db;
 
-use Application\Filter\EtablissementPrefixFilterAwareTrait;
+use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\Common\Collections\Collection;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
@@ -18,7 +18,7 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
 {
     use SourceAwareTrait;
     use HistoriqueAwareTrait;
-    use EtablissementPrefixFilterAwareTrait;
+    use SourceCodeStringHelperAwareTrait;
 
     const CODE_COMUE = 'COMUE';
 
@@ -182,7 +182,7 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
     {
         if ($this->code !== null) return $this->code;
         if ($this->sourceCode !== null) {
-            $code = $this->getEtablissementPrefixFilter()->removePrefixFrom($this->sourceCode);
+            $code = $this->getSourceCodeStringHelper()->removePrefixFrom($this->sourceCode);
             return $code;
         }
 

@@ -10,6 +10,7 @@ use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
+use Application\Entity\UserWrapperFactory;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use UnicaenApp\Entity\Ldap\People;
@@ -227,10 +228,13 @@ class UserContextService extends BaseUserContextService
      */
     public function getIdentityIndividu()
     {
-        $userWrapper = $this->createIdentityUserWrapper();
-
+        $userWrapper = $this->createUserWrapperFromIdentity();
         if ($userWrapper === null) {
             return null;
+        }
+
+        if ($userWrapper->getIndividu()) {
+            return $userWrapper->getIndividu();
         }
 
         $domaineEtab = $userWrapper->getDomainFromEppn();
@@ -245,15 +249,12 @@ class UserContextService extends BaseUserContextService
     /**
      * @return UserWrapper
      */
-    private function createIdentityUserWrapper()
+    private function createUserWrapperFromIdentity()
     {
-        if ($this->getIdentityLdap() === null && $this->getIdentityShib() === null) {
-            return null;
-        }
+        $userWrapperFactory = new UserWrapperFactory();
+        $userWrapper = $userWrapperFactory->createInstanceFromIdentity($this->getIdentity());
 
-        $user = $this->getIdentityLdap() ?: $this->getIdentityShib();
-
-        return UserWrapper::inst($user);
+        return $userWrapper;
     }
 
     /**

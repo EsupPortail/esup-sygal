@@ -67,7 +67,7 @@ class ImportObserverController extends AbstractController
             /** @var ImportObserv|null $importObserv */
             $importObserv = $this->importObservService->getRepository()->findOneBy(['code' => $code]);
             if ($importObserv === null) {
-                throw new RuntimeException("Aucun enregistrement ImportObserv trouvé avec le code '$importObserv'");
+                throw new RuntimeException("Aucun enregistrement ImportObserv trouvé avec le code '$code'");
             }
 
             $this->importObservResultService->handleImportObservResults($importObserv, $etablissement, $these);

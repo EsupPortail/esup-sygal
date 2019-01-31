@@ -3,7 +3,7 @@
 namespace Import\Service;
 
 use Application\Entity\Db\Etablissement;
-use Application\Filter\EtablissementPrefixFilter;
+use Application\SourceCodeStringHelper;
 use stdClass;
 
 class DbServiceJSONHelper
@@ -66,9 +66,9 @@ class DbServiceJSONHelper
         }
 
         // préfixage éventuel
-        $f = new EtablissementPrefixFilter();
+        $sourceCodeHelper = new SourceCodeStringHelper();
         if ($value !== null && $prefix !== null) {
-            $value = $f->addPrefixTo($value, $prefix);
+            $value = $sourceCodeHelper->addPrefixTo($value, $prefix);
         }
 
         return $value;

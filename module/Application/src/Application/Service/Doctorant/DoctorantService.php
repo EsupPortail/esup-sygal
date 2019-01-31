@@ -62,7 +62,8 @@ class DoctorantService extends BaseService
     {
         $id = $user->getSupannId();
         if (! $id) {
-            throw new RuntimeException("Aucun id supann disponible.");
+//            throw new RuntimeException("Aucun id supann disponible.");
+            return null;
         }
 
         $domaineEtab = $user->getDomainFromEppn();

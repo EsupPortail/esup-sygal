@@ -3,10 +3,11 @@
 namespace Application\Event;
 
 use Application\Entity\Db\Utilisateur;
-use Application\Entity\UserWrapper;
+use Application\Entity\UserWrapperFactory;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
+use Application\SourceCodeStringHelper;
 use UnicaenAuth\Event\Listener\AuthenticatedUserSavedAbstractListener;
 use UnicaenAuth\Event\UserAuthenticatedEvent;
 use UnicaenAuth\Service\UserContext as UserContextService;
@@ -37,7 +38,8 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
      */
     public function onUserAuthenticatedPrePersist(UserAuthenticatedEvent $e)
     {
-        $userWrapper = UserWrapper::instFromUserAuthenticatedEvent($e);
+        $userWrapperFactory = new UserWrapperFactory();
+        $userWrapper = $userWrapperFactory->createInstanceFromUserAuthenticatedEvent($e);
 
         /** @var Utilisateur $utilisateur */
         $utilisateur = $e->getDbUser();
@@ -58,17 +60,25 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
      */
     public function onUserAuthenticatedPostPersist(UserAuthenticatedEvent $e)
     {
-        $userWrapper = UserWrapper::instFromUserAuthenticatedEvent($e);
+        $userWrapperFactory = new UserWrapperFactory();
+        $userWrapper = $userWrapperFactory->createInstanceFromUserAuthenticatedEvent($e);
 
-        $domaineEtab = $userWrapper->getDomainFromEppn();
-        $etablissement = $this->getEtablissementService()->getRepository()->findOneByDomaine($domaineEtab);
+        if ($userWrapper->getIndividu() !== null) {
+            $individu = $userWrapper->getIndividu();
+        } else {
+            $domaineEtab = $userWrapper->getDomainFromEppn();
+            $etablissement = $this->getEtablissementService()->getRepository()->findOneByDomaine($domaineEtab);
 
-        // création de l'Individu si besoin
-        $sourceCode = $etablissement->prependPrefixTo($userWrapper->getSupannId());
-        $individu = $this->individuService->getRepository()->findOneBySourceCode($sourceCode);
-        if (null === $individu) {
-            $createur = $this->utilisateurService->getRepository()->fetchAppPseudoUser();
-            $individu = $this->individuService->createFromUserWrapperAndEtab($userWrapper, $etablissement, $createur);
+            // recherche de l'Individu correspondant à l'utilisateur
+            $sourceCodeHelper = new SourceCodeStringHelper();
+            $sourceCode = $sourceCodeHelper->addPrefixEtablissementTo($userWrapper->getSupannId(), $etablissement);
+            $individu = $this->individuService->getRepository()->findOneBySourceCode($sourceCode);
+
+            // création de l'Individu si inexistant
+            if (null === $individu) {
+                $createur = $this->utilisateurService->getRepository()->fetchAppPseudoUser();
+                $individu = $this->individuService->createIndividuFromUserWrapperAndEtab($userWrapper, $etablissement, $createur);
+            }
         }
 
         // renseigne le lien utilisateur-->individu

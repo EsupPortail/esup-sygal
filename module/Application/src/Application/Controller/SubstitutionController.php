@@ -6,7 +6,7 @@ use Application\Entity\Db\Structure;
 use Application\Entity\Db\StructureConcreteInterface;
 use Application\Entity\Db\StructureInterface;
 use Application\Entity\Db\TypeStructure;
-use Application\Filter\EtablissementPrefixFilterAwareTrait;
+use Application\SourceCodeStringHelperAwareTrait;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Structure\StructureServiceAwareTrait;
@@ -21,7 +21,7 @@ class SubstitutionController extends AbstractController
     use EcoleDoctoraleServiceAwareTrait;
     use UniteRechercheServiceAwareTrait;
     use StructureServiceAwareTrait;
-    use EtablissementPrefixFilterAwareTrait;
+    use SourceCodeStringHelperAwareTrait;
 
     const CODE_SYGAL = 'SyGAL';
 
@@ -253,7 +253,7 @@ class SubstitutionController extends AbstractController
 
         if ($cible === null) {
             $cible = $this->getStructureService()->createStructureConcrete($type);
-            $cible->setSourceCode($this->getEtablissementPrefixFilter()->addPrefixEtablissementTo($identifiant));
+            $cible->setSourceCode($this->getSourceCodeStringHelper()->addPrefixEtablissementTo($identifiant));
         }
 
         $vm = new ViewModel();

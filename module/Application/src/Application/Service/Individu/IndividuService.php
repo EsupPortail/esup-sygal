@@ -5,7 +5,6 @@ namespace Application\Service\Individu;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Repository\IndividuRepository;
-use Application\Entity\Db\Source;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\UserWrapper;
 use Application\Service\BaseService;
@@ -32,7 +31,7 @@ class IndividuService extends BaseService
      * @return Individu
      * @deprecated À supprimer car non utilisée
      */
-    public function createFromPeopleAndEtab(People $people, Etablissement $etablissement)
+    public function createIndividuFromPeopleAndEtab(People $people, Etablissement $etablissement)
     {
         $sns = (array)$people->get('sn');
         $usuel = array_pop($sns);
@@ -64,9 +63,9 @@ class IndividuService extends BaseService
      * @param Utilisateur   $utilisateur   Auteur éventuel de la création
      * @return Individu
      */
-    public function createFromUserWrapperAndEtab(UserWrapper $userWrapper,
-                                                 Etablissement $etablissement,
-                                                 Utilisateur $utilisateur = null)
+    public function createIndividuFromUserWrapperAndEtab(UserWrapper $userWrapper,
+                                                         Etablissement $etablissement,
+                                                         Utilisateur $utilisateur = null)
     {
         $sourceCode = $etablissement->prependPrefixTo($userWrapper->getSupannId());
 
@@ -91,30 +90,26 @@ class IndividuService extends BaseService
     }
 
     /**
-     * @param Individu $individu
+     * @param Individu    $entity
+     * @param UserWrapper $userWrapper
      * @param Utilisateur $utilisateur
      */
-    public function createFromForm(Individu $individu, Utilisateur $utilisateur)
+    public function updateIndividuFromUserWrapper(Individu $entity,
+                                                  UserWrapper $userWrapper,
+                                                  Utilisateur $utilisateur)
     {
-        /** @var Source $source */
-        $source = $this->getEntityManager()->getRepository(Source::class)->findOneBy(["code" => Source::CODE_SYGAL]);
-        /** @var Utilisateur $user */
-        $user = $this->getEntityManager()->getRepository(Utilisateur::class)->findOneBy(["username" => 'sygal-app']);
-
-        $individu->setSource($source); //COMUE::SyGAL
-        $individu->setHistoCreateur($user); //sygal-app
-        $individu->setHistoModificateur($user); //sygal-app
+        $entity->setSupannId($userWrapper->getSupannId());
+        $entity->setNomUsuel($userWrapper->getNom() ?: "X"); // NB: le nom est obligatoire mais quid si indisponible ?
+        $entity->setNomPatronymique($userWrapper->getNom());
+        $entity->setPrenom($userWrapper->getPrenom());
+        $entity->setCivilite($userWrapper->getCivilite());
+        $entity->setEmail($userWrapper->getEmail());
+        $entity->setHistoModificateur($utilisateur);
 
         try {
-            $this->getEntityManager()->persist($individu);
-            $this->getEntityManager()->flush($individu);
-            $this->getEntityManager()->persist($utilisateur);
-            $this->getEntityManager()->flush($utilisateur);
-
-            $individu->setSourceCode("COMUE::" . $individu->getId());
-            $this->getEntityManager()->flush($individu);
+            $this->getEntityManager()->flush($entity);
         } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Impossible d'enregistrer une entité", null, $e);
+            throw new RuntimeException("Impossible d'enregistrer l'Individu", null, $e);
         }
     }
 

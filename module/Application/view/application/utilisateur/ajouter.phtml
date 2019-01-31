@@ -1,0 +1,30 @@
+<?php
+
+use Application\Controller\UtilisateurController;
+use Zend\Form\Form;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var Form $form
+ * @var PhpRenderer $this
+ *
+ * @see UtilisateurController::ajouterAction()
+ */
+?>
+
+<?php $this->headTitle($this->translate("Création d'un utilisateur")) ?>
+
+<h1 class="page-header"><?php echo $this->translate("Création d'un utilisateur"); ?> </h1>
+
+<p class="lead">
+    Cette page permet de créer un utilisateur <em>manuellement</em> à partir de rien.
+    Un individu sera également créé à l'aide des informations fournies.
+</p>
+<p class="lead">
+    <strong>NB:</strong> l'adresse électronique saisie sera l'identifiant de connexion de l'utilisateur,
+    elle doit donc être unique.
+</p>
+
+<div class="col-md-4">
+    <?php echo $this->form()->render($form->prepare()) ?>
+</div>

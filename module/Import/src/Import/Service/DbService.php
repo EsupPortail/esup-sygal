@@ -4,7 +4,6 @@ namespace Import\Service;
 
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\These;
-use Application\Filter\EtablissementPrefixFilter;
 use DateTime;
 use Doctrine\DBAL\ConnectionException;
 use Doctrine\DBAL\DBALException;
