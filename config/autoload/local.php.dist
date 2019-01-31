@@ -1,80 +1,39 @@
 <?php
-
-use Zend\Mail\Transport\Smtp;
+/**
+ * Fichier de config locale, SANS INFORMATIONS SENSIBLES.
+ */
 
 return [
     'import-api' => [
-        'etablissements' => [
-            // code établissement => [config]
-            'UNILIM' => [
-                'url'      => 'https://sygal-import-ws:443', // https://{nom du service docker-compose}:443
-                'proxy'    => false, // indispensable pour docker-compose run/exec
-                'verify'   => false, // si true : cURL error 60: SSL certificate problem: self signed certificate
-                'user'     => 'sygal-app',
-                'password' => 'xxxxxxxxxxx',
-            ],
-        ],
+        // cf. secret.local.php
     ],
+
     'doctrine' => [
-        'connection' => [
-            'orm_default' => [
-                'params' => [
-                    'host'     => 'host.domain.fr',
-                    'dbname'   => 'DBNAME',
-                    'port'     => '1523',
-                    'user'     => $user = 'sygal_test',
-                    'password' => 'xxxxxxxxxxx',
-                    'charset'  => 'AL32UTF8',
-                    'CURRENT_SCHEMA' => $user,
-                ],
-            ],
-        ],
+        // cf. secret.local.php
     ],
+
     'fichier' => [
         'root_dir_path' => '/var/www/sygal/upload',
     ],
-    'navigation'      => [
-        'information' => [
-            'accueil' => [
-                'pages' => [
-                    'doctorat' => [
-                        'label' => 'Le doctorat en Normandie',
-                        'title' => "Informations sur le doctorat et sa gestion en Normandie"
-                    ],
-                    'ecoles-doctorales' => [
-                        'label' => 'Les Ecoles Doctorales normandes',
-                        'title' => "Informations sur les Ecoles Doctorales et le Collège des Ecoles doctorales"
-                    ],
-                    'guide-these' => [
-                        'label' => 'Guide de la thèse',
-                        'title' => "Informations sur le déroulement de la thèse et formulaires administratifs à l’intention du doctorant et de ses encadrants"
-                    ],
-                ],
-            ],
-        ],
-    ],
+
     'cli_config' => [
-        'scheme' => 'http',
-        'domain' => 'localhost:8000',
+        // cf. secret.local.php
     ],
+
     'public_files' => [
         'cache_enabled' => false,
     ],
+
     'unicaen-app' => [
         'mail' => [
-            'transport' => Smtp::class,
-            'transport_options' => [
-                'host' => 'smtp.domain.fr',
-                'port' => 25,
-            ],
-            'from' => 'ne_pas_repondre@domain.fr',
-            'redirect_to' => [/*'mail@domain.fr'*/],
+            // cf. secret.local.php
             'do_not_send' => false,
         ],
         'ldap' => [
             'connection' => [
                 'default' => [
-                    'params' => $ldapParams = [
+                    'params' => [
+                        // pas de LDAP
                     ]
                 ]
             ]
@@ -82,22 +41,32 @@ return [
         'maintenance' => [
             // activation (true: activé, false: désactivé)
             'enable' => false,
+            // message à afficher
+            'message' => "SyGAL est indisponible pour des raisons de maintenance, veuillez nous excuser pour la gêne occasionnée.",
+            // le mode console est-il aussi concerné (TRUE: oui, FALSE: non)
+            'include_cli' => false,
             // liste blanche des adresses IP clientes non concernées
             'white_list' => [
-                //['127.0.0.1'],   // localhost
+                // cf. secret.local.php
             ],
         ],
     ],
-    'unicaen-ldap' => $ldapParams,
+
+    'unicaen-ldap' => [
+        // pas de LDAP
+    ],
+
     'unicaen-auth' => [
+        'local' => [
+            'enabled' => true,
+        ],
         'ldap' => [
             'enabled' => false,
         ],
         'shibboleth' => [
             'enable' => true,
             'simulate' => [
-                'eppn'        => 'id@domain.fr',
-                'supannEmpId' => 'xxxxxx',
+                // cf. secret.local.php
             ],
             'aliases' => [
                 'eppn'                   => 'HTTP_EPPN',
@@ -108,25 +77,28 @@ return [
                 'supannCivilite'         => 'HTTP_SUPANNCIVILITE',
                 'displayName'            => 'HTTP_DISPLAYNAME',
                 'sn'                     => 'HTTP_SN',
+                'surname'                => 'HTTP_SURNAME',
                 'givenName'              => 'HTTP_GIVENNAME',
+            ],
+            'required_attributes' => [
+                'eppn',
+                'mail',
+                'eduPersonPrincipalName',
+                'supannCivilite',
+                'displayName',
+                'sn|surname', // i.e. 'sn' ou 'surname'
+                'givenName',
+                'supannEtuId|supannEmpId',
             ],
         ],
         'cas' => [
-//            'connection' => [
-//                'default' => [
-//                    'params' => [
-//                        'hostname' => 'host.domain.fr',
-//                        'port' => 443,
-//                        'version' => "2.0",
-//                        'uri' => "",
-//                        'debug' => false,
-//                    ],
-//                ],
-//            ],
+            // pas de CAS
         ],
         'usurpation_allowed_usernames' => [
+            // cf. secret.local.php
         ],
     ],
+
     'zenddevelopertools' => [
         /**
          * General Profiler settings
