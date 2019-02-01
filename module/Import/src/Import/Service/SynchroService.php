@@ -5,7 +5,6 @@ namespace Import\Service;
 use DateTime;
 use Doctrine\DBAL\ConnectionException;
 use Doctrine\DBAL\DBALException;
-use Doctrine\ORM\OptimisticLockException;
 use Import\Model\SynchroLog;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
@@ -54,11 +53,13 @@ class SynchroService
             throw new LogicException("Aucun service à synchroniser");
         }
 
+        // ajout en premier des appels de procédures permettant d'enregistrer certains changements durant la synchro
+        $calls = $this->getProcedureCallsForStoringObservImportResults();
+
         // détermination des appels de procédures de synchro à faire
-        $calls = [];
         foreach ($this->services as $service => $params) {
             $sqlFilter = isset($params['sql_filter']) ? $params['sql_filter'] : [];
-            $calls = array_merge($calls, $this->getImportProcedureCallsForService($service, $sqlFilter));
+            $calls = array_merge($calls, $this->getProcedureCallsForImportingService($service, $sqlFilter));
         }
         // suppression des appels en double EN CONSERVANT LE DERNIER appel et non le premier
         $calls = array_reverse(array_unique(array_reverse($calls)));
@@ -102,13 +103,25 @@ class SynchroService
     }
 
     /**
+     * Retourne les appels de procédures permettant d'enregistrer certains changements durant la synchro.
+     *
+     * @return string[]
+     */
+    private function getProcedureCallsForStoringObservImportResults()
+    {
+        return [
+            'APP_IMPORT.STORE_OBSERV_RESULTS();',
+        ];
+    }
+
+    /**
      * Retourne, pour un service donné, les appels ORDONNÉS de procédures de synchronisation à lancer.
      *
      * @param string $serviceName
      * @param string $sqlFilter
      * @return string[]
      */
-    private function getImportProcedureCallsForService($serviceName, $sqlFilter = null)
+    private function getProcedureCallsForImportingService($serviceName, $sqlFilter = null)
     {
         $sqlFilterSnippet = $sqlFilter ? "'WHERE " . str_replace("'", "''", $sqlFilter) . "'" : '';
 
