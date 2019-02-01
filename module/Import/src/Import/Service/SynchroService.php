@@ -5,7 +5,6 @@ namespace Import\Service;
 use DateTime;
 use Doctrine\DBAL\ConnectionException;
 use Doctrine\DBAL\DBALException;
-use Doctrine\ORM\OptimisticLockException;
 use Import\Model\SynchroLog;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
@@ -54,11 +53,13 @@ class SynchroService
             throw new LogicException("Aucun service à synchroniser");
         }
 
+        // ajout en premier des appels de procédures permettant d'enregistrer certains changements durant la synchro
+        $calls = $this->getProcedureCallsForStoringObservImportResults();
+
         // détermination des appels de procédures de synchro à faire
-        $calls = [];
         foreach ($this->services as $service => $params) {
             $sqlFilter = isset($params['sql_filter']) ? $params['sql_filter'] : [];
-            $calls = array_merge($calls, $this->getImportProcedureCallsForService($service, $sqlFilter));
+            $calls = array_merge($calls, $this->getProcedureCallsForImportingService($service, $sqlFilter));
         }
         // suppression des appels en double EN CONSERVANT LE DERNIER appel et non le premier
         $calls = array_reverse(array_unique(array_reverse($calls)));
@@ -80,21 +81,37 @@ class SynchroService
         try {
             $connection->executeQuery($plsql);
             $connection->commit();
-            $status = 'SUCCESS';
+            $success = true;
             $message = null;
         } catch (DBALException $e) {
-            $status = 'FAILURE';
-            $message = "Erreur rencontrée lors de l'exécution des procédures de synchro (import) : " . PHP_EOL .
-                $e->getTraceAsString();
+            $success = false;
+            $message = "Erreur rencontrée lors de l'exécution des procédures de synchro (import) : " . PHP_EOL . $e->getMessage();
             try {
                 $connection->rollBack();
             } catch (ConnectionException $e) {
                 $message .= PHP_EOL . "Et en plus le rollback a échoué!";
             }
+        } finally {
+            $finishDate = date_create();
+            $status = $success ? 'SUCCESS' : 'FAILURE';
+            $this->log($startDate, $finishDate, $plsql, $status, $message);
         }
 
-        $finishDate = date_create();
-        $this->log($startDate, $finishDate, $plsql, $status, $message);
+        if (! $success) {
+            throw new RuntimeException($message);
+        }
+    }
+
+    /**
+     * Retourne les appels de procédures permettant d'enregistrer certains changements durant la synchro.
+     *
+     * @return string[]
+     */
+    private function getProcedureCallsForStoringObservImportResults()
+    {
+        return [
+            'APP_IMPORT.STORE_OBSERV_RESULTS();',
+        ];
     }
 
     /**
@@ -104,7 +121,7 @@ class SynchroService
      * @param string $sqlFilter
      * @return string[]
      */
-    private function getImportProcedureCallsForService($serviceName, $sqlFilter = null)
+    private function getProcedureCallsForImportingService($serviceName, $sqlFilter = null)
     {
         $sqlFilterSnippet = $sqlFilter ? "'WHERE " . str_replace("'", "''", $sqlFilter) . "'" : '';
 
