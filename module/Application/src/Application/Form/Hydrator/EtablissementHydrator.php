@@ -20,6 +20,7 @@ class EtablissementHydrator extends DoctrineObject
         $data['libelle'] = $etablissement->getLibelle();
         $data['code'] = $etablissement->getStructure()->getCode();
         $data['sigle'] = $etablissement->getSigle();
+        $data['domaine'] = $etablissement->getDomaine();
         $data['estMembre'] = $etablissement->estMembre();
         $data['estAssocie'] = $etablissement->estAssocie();
         $data['cheminLogo'] = $etablissement->getCheminLogo();
@@ -41,6 +42,7 @@ class EtablissementHydrator extends DoctrineObject
 
         $object->setLibelle($data['libelle']);
         $object->setSigle($data['sigle']);
+        $object->setDomaine($data['domaine']);
         $object->getStructure()->setCode($data['code']);
         $object->setEstMembre($data['estMembre']);
         $object->setEstAssocie($data['estAssocie']);

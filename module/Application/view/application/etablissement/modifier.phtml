@@ -1,5 +1,6 @@
 <?php
 
+use Application\Controller\EtablissementController;
 use Application\Form\EtablissementForm;
 use Application\View\Renderer\PhpRenderer;
 
@@ -10,6 +11,8 @@ use Application\View\Renderer\PhpRenderer;
  * @var string             $logoContent
  *
  * @method string formControlGroup()
+ *
+ * @see EtablissementController::modifierAction()
  */
 
 $fcg = $this->formControlGroup();
@@ -20,6 +23,7 @@ $fcg = $this->formControlGroup();
 <?php echo $fcg($form->get('libelle')) ?>
 <?php echo $fcg($form->get('sigle')) ?>
 <?php echo $fcg($form->get('code')) ?>
+<?php echo $fcg($form->get('domaine')) ?>
 <?php echo $fcg($form->get('estMembre')) ?>
 <?php echo $fcg($form->get('estAssocie')) ?>
 
