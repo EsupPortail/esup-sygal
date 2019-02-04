@@ -12,7 +12,7 @@ class UtilisateurRepository extends DefaultEntityRepository
     /**
      * @return Utilisateur
      */
-    public function fetchAppPseudoUser()
+    public function fetchAppPseudoUtilisateur()
     {
         $qb = $this->createQueryBuilder('u')
             ->where('u.username = :username')
