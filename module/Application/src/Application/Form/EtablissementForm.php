@@ -4,8 +4,8 @@ namespace Application\Form;
 
 use Application\Entity\Db\Etablissement;
 use Zend\Form\Element\Checkbox;
-use Zend\Form\Element\Hidden;
 use Zend\Form\Element\File;
+use Zend\Form\Element\Hidden;
 use Zend\Form\Element\Submit;
 use Zend\Form\Element\Text;
 use Zend\Form\Form;
@@ -28,15 +28,21 @@ class EtablissementForm extends Form
                 ->setLabel("Sigle :")
         );
 
-        $this->add((
-        new Text('code'))
-            ->setLabel("Code :")
+        $this->add(
+            (new Text('domaine'))
+                ->setLabel("Domaine :")
+                ->setAttribute('placeholder', 'domaine.fr')
         );
 
         $this
             ->add((
                 new Text('libelle'))
                     ->setLabel("Libellé :")
+        );
+
+        $this->add((
+        new Text('code'))
+            ->setLabel("Code :")
         );
 
         $this->add(

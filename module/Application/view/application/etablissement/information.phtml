@@ -55,9 +55,10 @@ $canAddRole = true;
         <div class="col-md-6">
             <dl>
                 <dt> Libelle : </dt>    <dd>    <?php echo $etablissement->getLibelle(); ?>     </dd>
-                <dt> Sigle : </dt>      <dd>    <?php echo $etablissement->getSigle(); ?>       </dd>
+                <dt> Sigle : </dt>      <dd>    <?php echo $etablissement->getSigle() ?: "(Non renseigné)"; ?></dd>
                 <dt> Code : </dt>       <dd>    <?php echo $etablissement->getStructure()->getCode(); ?>        </dd>
-                <dt> Status : </dt>     <dd>
+                <dt> Domaine : </dt>    <dd>    <?php echo $etablissement->getDomaine() ?: "(Non renseigné)"; ?></dd>
+                <dt> Statut : </dt>     <dd>
                     <?php if ($etablissement->estMembre()): ?>
                         <span class="label label-primary">Membre</span>
                     <?php endif ?>
