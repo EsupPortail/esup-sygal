@@ -2,12 +2,13 @@
 
 namespace Application\Event;
 
+use Application\Entity\Db\Individu;
 use Application\Entity\Db\Utilisateur;
+use Application\Entity\UserWrapper;
 use Application\Entity\UserWrapperFactory;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
-use Application\SourceCodeStringHelper;
 use UnicaenAuth\Event\Listener\AuthenticatedUserSavedAbstractListener;
 use UnicaenAuth\Event\UserAuthenticatedEvent;
 use UnicaenAuth\Service\UserContext as UserContextService;
@@ -66,24 +67,60 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
         if ($userWrapper->getIndividu() !== null) {
             $individu = $userWrapper->getIndividu();
         } else {
-            $domaineEtab = $userWrapper->getDomainFromEppn();
-            $etablissement = $this->getEtablissementService()->getRepository()->findOneByDomaine($domaineEtab);
-
-            // recherche de l'Individu correspondant à l'utilisateur
-            $sourceCodeHelper = new SourceCodeStringHelper();
-            $sourceCode = $sourceCodeHelper->addPrefixEtablissementTo($userWrapper->getSupannId(), $etablissement);
-            $individu = $this->individuService->getRepository()->findOneBySourceCode($sourceCode);
-
-            // création de l'Individu si inexistant
-            if (null === $individu) {
-                $createur = $this->utilisateurService->getRepository()->fetchAppPseudoUser();
-                $individu = $this->individuService->createIndividuFromUserWrapperAndEtab($userWrapper, $etablissement, $createur);
-            }
+            $individu = $this->processIndividu($userWrapper);
         }
 
         // renseigne le lien utilisateur-->individu
         /** @var Utilisateur $utilisateur */
         $utilisateur = $e->getDbUser();
         $this->utilisateurService->setIndividuForUtilisateur($individu, $utilisateur);
+    }
+
+    /**
+     * @param UserWrapper $userWrapper
+     * @return Individu
+     */
+    private function processIndividu(UserWrapper $userWrapper)
+    {
+        $createIndividu = false;
+        $etablissementInconnu = $this->etablissementService->getRepository()->fetchEtablissementInconnu();
+
+        // recherche de l'établissement de connexion l'utilisateur : à partir du domaine de l'EPPN, ex: 'unicaen.fr'
+        $domaineEtab = $userWrapper->getDomainFromEppn();
+        $etablissement = $this->etablissementService->getRepository()->findOneByDomaine($domaineEtab);
+
+        if ($etablissement === null) {
+            // si aucun établissement ne correspond au domaine, on essaie l'établissement "inconnu"...
+
+            // recherche de l'Individu correspondant à l'utilisateur, peut-être rattaché à l'établissement inconnu?
+            $individu = $this->individuService->getRepository()->findOneByUserWrapperAndEtab($userWrapper, $etablissementInconnu);
+            if ($individu === null) {
+                // si l'individu n'est pas trouvé dans l'établissement inconnu, il y sera ajouté.
+                $createIndividu = true;
+                $etablissement = $etablissementInconnu;
+            }
+        } else {
+            // recherche de l'Individu dans l'établissement de connexion existant
+            $individu = $this->individuService->getRepository()->findOneByUserWrapperAndEtab($userWrapper, $etablissement);
+
+            if ($individu === null) {
+                // si l'individu n'est pas trouvé dans l'établissement de connexion, recherche dans l'établissement inconnu
+                $individu = $this->individuService->getRepository()->findOneByUserWrapperAndEtab($userWrapper, $etablissementInconnu);
+                if ($individu === null) {
+                    // si l'individu n'est pas trouvé non plus dans l'établissement inconnu, il sera ajouté dans l'établissement de connexion.
+                    $createIndividu = true;
+                } else {
+                    // s'il existe dans l'établissement inconnu, on le "déplace" dans l'établissement de connexion
+                    $this->individuService->updateIndividuSourceCodeFromEtab($individu, $etablissement);
+                }
+            }
+        }
+
+        // création de l'Individu si besoin
+        if ($createIndividu) {
+            $individu = $this->individuService->createIndividuFromUserWrapperAndEtab($userWrapper, $etablissement);
+        }
+
+        return $individu;
     }
 }

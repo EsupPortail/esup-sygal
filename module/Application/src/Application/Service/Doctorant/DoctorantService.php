@@ -73,7 +73,7 @@ class DoctorantService extends BaseService
 
         $etablissement = $this->getEtablissementService()->getRepository()->findOneByDomaine($domaineEtab);
         if (! $etablissement) {
-            throw new RuntimeException("Aucun établissement trouvé avec ce domaine: " . $domaineEtab);
+            return null;
         }
 
         $sourceCode = $etablissement->prependPrefixTo($id);

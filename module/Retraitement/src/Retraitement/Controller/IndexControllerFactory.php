@@ -54,7 +54,7 @@ class IndexControllerFactory
         /** @var UtilisateurRepository $repo */
         $repo = $em->getRepository(Utilisateur::class);
         /** @var Utilisateur $utilisateur */
-        $utilisateur = $repo->fetchAppPseudoUser();
+        $utilisateur = $repo->fetchAppPseudoUtilisateur();
 
         if (!$utilisateur) {
             throw new RuntimeException("Pseudo-utilisateur application introuvable");
