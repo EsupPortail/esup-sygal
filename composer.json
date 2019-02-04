@@ -17,7 +17,7 @@
         "ext-imagick":                   "*",
         "ext-readline":                  "*",
         "unicaen/app":                   "^1.3",
-        "unicaen/auth":                  "dev-release-1.3.5 as 1.3.4",
+        "unicaen/auth":                  "^1.3",
         "unicaen/faq":                   "^1.0",
         "unicaen/ldap":                  "^2.1",
         "unicaen/import":                "1.0.13",
