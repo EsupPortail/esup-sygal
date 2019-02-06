@@ -93,7 +93,7 @@ class InformationFichierService {
     public function computeFilePath($fichier)
     {
         $pathDir = $this->fileService->computeDirectoryPathForInformation();
-        $filePath = implode("/", [$pathDir, $fichier->getNom()]);
+        $filePath = implode("/", [$pathDir, $fichier->getFilename()]);
         return $filePath;
     }
 
