@@ -4,9 +4,7 @@ namespace  Information\Controller;
 
 use Application\Service\Fichier\FichierService;
 use Application\Service\File\FileService;
-use Application\Service\These\TheseService;
 use Application\Service\UserContextService;
-use Application\Service\Utilisateur\UtilisateurService;
 use Information\Service\InformationFichierService;
 use Zend\Mvc\Controller\ControllerManager;
 

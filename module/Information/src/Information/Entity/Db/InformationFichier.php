@@ -10,6 +10,8 @@ class InformationFichier {
     private $id;
     /** @var string */
     private $nom;
+    /** @var string */
+    private $filename;
     /** @var Utilisateur */
     private $createur;
     /** @var DateTime */
@@ -76,5 +78,25 @@ class InformationFichier {
         $this->dateCreation = $dateCreation;
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getFilename()
+    {
+        return $this->filename;
+    }
+
+    /**
+     * @param string $filename
+     * @return InformationFichier
+     */
+    public function setFilename($filename)
+    {
+        $this->filename = $filename;
+        return $this;
+    }
+
+
 
 }

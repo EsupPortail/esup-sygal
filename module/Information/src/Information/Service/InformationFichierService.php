@@ -96,4 +96,20 @@ class InformationFichierService {
         $filePath = implode("/", [$pathDir, $fichier->getNom()]);
         return $filePath;
     }
+
+
+    /**
+     * @param integer $length (longueur des paquets)
+     * @param integer $group (nombre de paquets)
+     * @return string
+     */
+    public function generateUniqueFilename($length = 5, $group = 4)
+    {
+        $result = "";
+        for ($i = 0 ; $i < $group ; $i++) {
+            if ($i) $result .= "-";
+            $result .= uniqid();
+        }
+        return $result;
+    }
 }
