@@ -32,13 +32,16 @@ class FichierController extends AbstractActionController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $file = $request->getFiles()->toArray();
-            if ($file['chemin'] !== null) {
+            if ($file['chemin'] !== null && $file['chemin']['tmp_name'] !== "") {
                 $pathDir = $this->fileService->computeDirectoryPathForInformation();
                 $this->fileService->createWritableDirectory($pathDir);
 
+                $newFilename = $this->getInformationFichierService()->generateUniqueFilename();
+
+
+
                 $uploadPath = $file['chemin']['tmp_name'];
-                $truePath = implode("/", [$pathDir, $file['chemin']['name']]);
-                var_dump($uploadPath . " -> ".$truePath);
+                $truePath = implode("/", [$pathDir, $newFilename]);
                 $ok = rename($uploadPath, $truePath);
                 if (! $ok) {
                     throw new RuntimeException("Impossible de renommer le fichier sur le disque.");
@@ -47,6 +50,7 @@ class FichierController extends AbstractActionController
                 $user = $this->userContextService->getIdentityDb();
                 $fichier = new InformationFichier();
                 $fichier->setNom($file['chemin']['name']);
+                $fichier->setFilename($newFilename);
                 $fichier->setCreateur($user);
                 $fichier->setDateCreation(new \DateTime());
                 $this->getInformationFichierService()->create($fichier);
