@@ -7,7 +7,8 @@
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <field name="nom"     column="NOM"          type="string"   length="256"    nullable="false"/>
+        <field name="nom"       column="NOM"          type="string"   length="256"    nullable="false"/>
+        <field name="filename"  column="FILENAME"     type="string"   length="256"    nullable="false"/>
 
         <field name="dateCreation" type="datetime" column="CREATION" nullable="false"/>
 
