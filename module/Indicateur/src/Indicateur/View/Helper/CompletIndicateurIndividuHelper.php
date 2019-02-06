@@ -38,7 +38,11 @@ class CompletIndicateurIndividuHelper extends AbstractHelper
         foreach($data as $entry) {
             $html .= '<tr>';
             foreach ($rubriques as $clef => $valeur) {
-                $html .= '<td>' . $entry[$valeur] . '</td>';
+                $html .= '<td>';
+//                if ($clef === 'SOURCE_CODE') $html .= '<a href="'.$this->getView()->url('these/identite', ['these' => $entry['ID']], [], true).'">';
+                $html .= $entry[$valeur] ;
+//                if ($clef === 'SOURCE_CODE') $html .= '</a>';
+                $html .= '</td>';
             }
             $html .= '</tr>';
         }
