@@ -71,11 +71,14 @@ class NotifierService extends \Notification\Service\NotifierService
      */
     public function triggerBdDUpdateResultat(array $data)
     {
-        $emailBdd = $this->fetchEmailBdd(current($data)['these']);
+        $these = current($data)['these'];
+
+        $emailBdd = $this->fetchEmailBdd($these);
+        $emailBu = $this->fetchEmailBu($these);
 
         $notif = new ResultatTheseModifieNotification();
         $notif->setData($data);
-        $notif->setEmailBdd($emailBdd);
+        $notif->setTo([$emailBdd, $emailBu]);
 
         $this->trigger($notif);
 

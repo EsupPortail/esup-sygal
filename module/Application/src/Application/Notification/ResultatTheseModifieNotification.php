@@ -16,7 +16,8 @@ class ResultatTheseModifieNotification extends Notification
      */
     public function prepare()
     {
-        $this->setTo($this->emailBdd);
+        // NB: les destinataires sont ajoutés en amont.
+
         $this->setSubject("Résultats de thèses modifiés");
 
         $this->setTemplateVariables([
@@ -40,22 +41,6 @@ class ResultatTheseModifieNotification extends Notification
     public function setData(array $data)
     {
         $this->data = $data;
-
-        return $this;
-    }
-
-    /**
-     * @var string
-     */
-    private $emailBdd;
-
-    /**
-     * @param string $emailBdd
-     * @return self
-     */
-    public function setEmailBdd($emailBdd)
-    {
-        $this->emailBdd = $emailBdd;
 
         return $this;
     }
