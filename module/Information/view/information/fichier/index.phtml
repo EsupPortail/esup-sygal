@@ -3,8 +3,11 @@
 /** @var InformationFichier[] $fichiers */
 
 use Information\Entity\Db\InformationFichier;
+use Information\Provider\Privilege\InformationPrivileges;
 
-$this->headTitle("Fichiers associées aux pages d'information")
+$this->headTitle("Fichiers associées aux pages d'information");
+
+$canFichier = $this->isAllowed(InformationPrivileges::getResourceId(InformationPrivileges::INFORMATION_FICHIER));
 ?>
 
 <style>
@@ -17,9 +20,12 @@ $this->headTitle("Fichiers associées aux pages d'information")
     Fichiers associées aux pages d'information
 </h1>
 
-<h2> Téléversement d'un fichier </h2>
 
-<?php echo $this->form($form); ?>
+<?php if ($canFichier) : ?>
+    <h2> Téléversement d'un fichier </h2>
+
+    <?php echo $this->form($form); ?>
+<?php endif; ?>
 
 <h2> Listing des fichiers téléversés pour le module informations </h2>
 
@@ -54,9 +60,11 @@ $this->headTitle("Fichiers associées aux pages d'information")
                     <?php echo $fichier->getDateCreation()->format("d/m/Y à H:i"); ?>
                 </td>
                 <td>
-                    <a href="<?php echo $this->url("informations/fichiers/supprimer", ['id' => $fichier->getId()], [], true); ?>">
-                        <span class="glyphicon glyphicon-remove"></span>
-                    </a>
+                    <?php if ($canFichier) : ?>
+                        <a href="<?php echo $this->url("informations/fichiers/supprimer", ['id' => $fichier->getId()], [], true); ?>">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </a>
+                    <?php endif; ?>
                 </td>
             </tr>
         <?php endforeach; ?>

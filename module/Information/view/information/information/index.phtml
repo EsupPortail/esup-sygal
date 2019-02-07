@@ -5,12 +5,14 @@
  */
 
 use Information\Entity\Db\Information;
+use Information\Provider\Privilege\InformationPrivileges;
 
 $this->headTitle("Index des informations");
 
 $canView    = true;
-$canEdit    = true;
-$canDelete  = true;
+$canEdit    = $this->isAllowed(InformationPrivileges::getResourceId(InformationPrivileges::INFORMATION_MODIFIER));
+$canDelete  = $this->isAllowed(InformationPrivileges::getResourceId(InformationPrivileges::INFORMATION_MODIFIER));
+$canFichier = $this->isAllowed(InformationPrivileges::getResourceId(InformationPrivileges::INFORMATION_FICHIER));
 ?>
 
 <style>
@@ -30,12 +32,14 @@ $canDelete  = true;
     Ajouter une page d'information
 </a>
 
-<a href="<?php echo $this->url('informations/fichiers', [], [], true); ?>"
-   class="btn btn-primary action"
->
-    <span class="glyphicon glyphicon-folder-open "></span>
-    Gestion des fichiers
-</a>
+<?php if ($canFichier) : ?>
+    <a href="<?php echo $this->url('informations/fichiers', [], [], true); ?>"
+       class="btn btn-primary action"
+    >
+        <span class="glyphicon glyphicon-folder-open "></span>
+        Gestion des fichiers
+    </a>
+<?php endif; ?>
 
 <table class="table table-extra-condensed">
     <thead>
