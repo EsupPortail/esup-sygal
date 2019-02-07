@@ -90,6 +90,7 @@ class SubstitutionController extends AbstractController
             'structuresConcretesSubstituees' => $structuresConcretesSubstituees,
             'structuresConcretes' => $structures,
             'type' => $type,
+            'structureCibleLogoContent' => $this->structureService->getLogoStructureContent(),
         ]);
         $vm->setTemplate('application/substitution/modifier');
 

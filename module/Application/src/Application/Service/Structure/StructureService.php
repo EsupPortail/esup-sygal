@@ -828,9 +828,9 @@ class StructureService extends BaseService
      * @param StructureInterface $structure
      * @return string|null
      */
-    public function getLogoStructureContent(StructureInterface $structure)
+    public function getLogoStructureContent(StructureInterface $structure = null)
     {
-        if ($structure->getCheminLogo() === null) {
+        if ($structure === null OR $structure->getCheminLogo() === null) {
             return Util::createImageWithText("Aucun logo|renseigné", 200, 200);
         }
 
