@@ -598,7 +598,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      * @param string|null $correctionAutoriseeForcee
      * @return These
      */
-    public function setCorrectionAutoriseeForcee(string $correctionAutoriseeForcee = null): These
+    public function setCorrectionAutoriseeForcee(string $correctionAutoriseeForcee = null)
     {
         Assertion::inArray($correctionAutoriseeForcee, [
             self::CORRECTION_AUTORISEE_FORCAGE_NON,
@@ -1403,5 +1403,39 @@ class These implements HistoriqueAwareInterface, ResourceInterface
             return true;
         }
         return false;
+    }
+
+    public function hasAnnexe()
+    {
+        /** @var Fichier $fichier */
+        foreach ($this->fichiers as $fichier) {
+            if ($fichier->getNature() === NatureFichier::CODE_FICHIER_NON_PDF) return true;
+        }
+        return false;
+    }
+
+    public function hasMemoire()
+    {
+        /** @var Fichier $fichier */
+        foreach ($this->fichiers as $fichier) {
+            if ($fichier->getNature() === NatureFichier::CODE_THESE_PDF) return true;
+        }
+        return false;
+    }
+
+    public function hasVersionInitiale() {
+        /** @var Fichier $fichier */
+        foreach ($this->fichiers as $fichier) {
+            if ($fichier->getHistoDestruction() === null && $fichier->getNature() === NatureFichier::CODE_THESE_PDF && $fichier->getVersion() === VersionFichier::CODE_ORIG) return $fichier;
+        }
+        return null;
+    }
+
+    public function hasVersionCorrigee() {
+        /** @var Fichier $fichier */
+        foreach ($this->fichiers as $fichier) {
+            if ($fichier->getHistoDestruction() === null && $fichier->getNature() === NatureFichier::CODE_THESE_PDF && $fichier->getVersion() === VersionFichier::CODE_ORIG_CORR) return $fichier;
+        }
+        return null;
     }
 }

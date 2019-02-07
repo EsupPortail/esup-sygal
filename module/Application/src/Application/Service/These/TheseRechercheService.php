@@ -321,6 +321,7 @@ class TheseRechercheService
             ->addSelect('i')->leftJoin('a.individu', 'i')
             ->addSelect('r')->leftJoin('a.role', 'r')
             ->addSelect('f')->leftJoin('t.financements', 'f')
+            ->addSelect('fi')->leftJoin('t.fichiers', 'fi')
             ->andWhere('1 = pasHistorise(t)');
 
         foreach ($this->filters as $filter) {
