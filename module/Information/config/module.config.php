@@ -115,7 +115,7 @@ return [
                         'telecharger',
                     ],
                     'privileges' => [
-                        InformationPrivileges::INFORMATION_MODIFIER,
+                        InformationPrivileges::INFORMATION_FICHIER,
                     ]
                 ],
             ],

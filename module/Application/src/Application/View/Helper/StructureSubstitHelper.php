@@ -19,7 +19,7 @@ class StructureSubstitHelper extends AbstractHelper
      * @param string                     $logoContent
      * @return string
      */
-    public function structureSource(StructureConcreteInterface $structurestructureConcrete, string $logoContent)
+    public function structureSource(StructureConcreteInterface $structurestructureConcrete, $logoContent)
     {
         $texte = '<div class="panel panel-info" id="panel_' . $structurestructureConcrete->getId() . '" >';
         $texte .= '<div class="panel-heading">';

@@ -12,4 +12,5 @@ use UnicaenAuth\Provider\Privilege\Privileges;
 class InformationPrivileges extends Privileges
 {
     const INFORMATION_MODIFIER          = 'faq-modifier-information';
+    const INFORMATION_FICHIER           = 'faq-modifier-fichier';
 }
