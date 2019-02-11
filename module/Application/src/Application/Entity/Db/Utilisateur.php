@@ -16,6 +16,10 @@ class Utilisateur extends AbstractUser implements UserInterface, ProviderInterfa
     const APP_UTILISATEUR_ID = 1; // indispensable à UnicaenImport !
     const APP_UTILISATEUR_USERNAME = 'sygal-app';
 
+    const SQL_CREATE_APP_USER =
+        "INSERT INTO UTILISATEUR (ID, USERNAME, EMAIL, DISPLAY_NAME, PASSWORD) " . PHP_EOL .
+        "VALUES (1, 'sygal-app', 'noreply@mail.fr', 'Application SyGAL', 'ldap');";
+
     /**
      * @var Individu
      */

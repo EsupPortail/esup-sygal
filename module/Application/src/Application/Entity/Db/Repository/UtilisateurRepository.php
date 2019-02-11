@@ -25,6 +25,12 @@ class UtilisateurRepository extends DefaultEntityRepository
             throw new RuntimeException("Plusieurs pseudo-utilisateur trouvé avec ce username: " . $username);
         }
 
+        if ($utilisateur === null) {
+            throw new RuntimeException(
+                "Le pseudo-utilisateur '$username' n'existe pas dans la base de données. " .
+                "Vous devez l'ajouter, ex: " . Utilisateur::SQL_CREATE_APP_USER);
+        }
+
         return $utilisateur;
     }
 
