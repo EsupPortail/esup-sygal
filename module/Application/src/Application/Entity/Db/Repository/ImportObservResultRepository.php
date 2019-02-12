@@ -6,13 +6,15 @@ use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\ImportObserv;
 use Application\Entity\Db\ImportObservResult;
 use Application\Entity\Db\These;
-use Application\SourceCodeStringHelper;
+use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use UnicaenApp\Exception\RuntimeException;
 
 class ImportObservResultRepository extends DefaultEntityRepository
 {
+    use SourceCodeStringHelperAwareTrait;
+
     /**
      * Recherche des résultats d'observation d'import des thèses.
      *
@@ -106,12 +108,11 @@ class ImportObservResultRepository extends DefaultEntityRepository
             ->andWhere('io.enabled = 1')
             ->setParameter('code', $importObservCode);
 
-        if ($etablissement instanceof Etablissement) {
-            $etablissement = $etablissement->getStructure()->getCode();
-        }
+        $code = $etablissement instanceof Etablissement ?
+            $etablissement->getStructure()->getCode() :
+            $etablissement;
 
-        $sourceCodeHelper = new SourceCodeStringHelper();
-        $sourceCodePattern = $sourceCodeHelper->generateSearchPatternForThisEtablissement($etablissement);
+        $sourceCodePattern = $this->sourceCodeStringHelper->generateSearchPatternForThisPrefix($code);
 
         $qb
             ->andWhere('ior.sourceCode like :pattern')

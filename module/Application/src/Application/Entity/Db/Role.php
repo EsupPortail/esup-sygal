@@ -3,14 +3,16 @@
 namespace Application\Entity\Db;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenAuth\Entity\Db\AbstractRole;
+use UnicaenImport\Entity\Db\Interfaces\SourceAwareInterface;
 use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
 
 /**
  * An entity that represents a role.
  */
-class Role extends AbstractRole
+class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAwareInterface
 {
     use SourceAwareTrait;
     use HistoriqueAwareTrait;

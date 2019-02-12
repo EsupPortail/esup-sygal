@@ -12,7 +12,6 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\Structure;
 use Application\Entity\Db\These;
 use Application\Entity\Db\VersionFichier;
-use Application\Filter\NomCompletFormatter;
 use Application\Notification\ValidationRdvBuNotification;
 use Application\Service\BaseService;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
@@ -358,8 +357,9 @@ class TheseService extends BaseService
         if ($these->getUniteRecherche()) $pdcData->setUniteRecherche($these->getUniteRecherche()->getStructure()->getLibelle());
 
         // chemins vers les logos
-        $comue = $this->etablissementService->getRepository()->findOneByCodeStructure(Structure::CODE_COMUE);
-        $pdcData->setLogoCOMUE($this->fileService->computeLogoFilePathForStructure($comue));
+        if ($comue = $this->etablissementService->fetchEtablissementCommunaute()) {
+            $pdcData->setLogoCOMUE($this->fileService->computeLogoFilePathForStructure($comue));
+        }
         $pdcData->setLogoEtablissement($this->fileService->computeLogoFilePathForStructure($these->getEtablissement()));
         if ($these->getEcoleDoctorale() !== null) {
             $pdcData->setLogoEcoleDoctorale($this->fileService->computeLogoFilePathForStructure($these->getEcoleDoctorale()));

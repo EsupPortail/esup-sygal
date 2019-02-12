@@ -17,6 +17,7 @@ class UniteRechercheHydrator extends DoctrineObject
     {
         $data = parent::extract($ur);
         $data['libelle'] = $ur->getLibelle();
+        $data['code'] = $ur->getStructure()->getCode();
         $data['sigle'] = $ur->getSigle();
         $data['cheminLogo'] = $ur->getCheminLogo();
         $data['RNSR'] = $ur->getRNSR();
@@ -37,6 +38,7 @@ class UniteRechercheHydrator extends DoctrineObject
         $object = parent::hydrate($data, $ur);
 
         $object->setLibelle($data['libelle']);
+        $object->getStructure()->setCode($data['code']);
         $object->setSigle($data['sigle']);
         $object->setCheminLogo($data['cheminLogo']);
         $object->setRNSR($data['RNSR']);

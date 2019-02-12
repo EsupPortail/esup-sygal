@@ -521,7 +521,7 @@ class PdcData
         $warnings = [];
 
         //logos
-        if (!$this->getLogoCOMUE())                 $warnings[] = "Logo de la COMUE absent";
+//        if (!$this->getLogoCOMUE())                 $warnings[] = "Logo de la COMUE absent";
         if (!$this->getLogoEcoleDoctorale())        $warnings[] = "Logo de l'école doctorale absent";
         if (!$this->getLogoEtablissement())         $warnings[] = "Logo de l'établissement absent";
         if (!$this->getLogoUniteRecherche())        $warnings[] = "Logo de l'unité de recherche absent";

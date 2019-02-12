@@ -4,13 +4,12 @@ namespace Application\Controller;
 
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Financement;
-use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
-use Application\Entity\Db\VersionFichier;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\These\TheseRechercheServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
+use Application\SourceCodeStringHelperAwareTrait;
 use UnicaenApp\View\Model\CsvModel;
 
 class ExportController extends AbstractController
@@ -18,6 +17,7 @@ class ExportController extends AbstractController
     use TheseServiceAwareTrait;
     use TheseRechercheServiceAwareTrait;
     use FichierServiceAwareTrait;
+    use SourceCodeStringHelperAwareTrait;
 
     public function csvAction()
     {
@@ -30,7 +30,7 @@ class ExportController extends AbstractController
             'Date de naissance'                     => function (These $these) { return $these->getDoctorant()->getIndividu()->getDateNaissance(); },
             'Nationalité'                           => function (These $these) { return $these->getDoctorant()->getIndividu()->getNationalite(); },
             'Adresse électronique'                  => function (These $these) { return $these->getDoctorant()->getIndividu()->getEmail(); },
-            'Numéro étudiant'                       => function (These $these) { return $these->getDoctorant()->getSourceCodeSansPrefix(); },
+            'Numéro étudiant'                       => function (These $these) { return $this->sourceCodeStringHelper->removePrefixFrom($these->getDoctorant()->getSourceCode()); },
             //These
             'Identifiant de la thèse'               => function (These $these) { return $these->getSourceCode(); },
             'Titre'                                 => function (These $these) { return $these->getTitre(); },

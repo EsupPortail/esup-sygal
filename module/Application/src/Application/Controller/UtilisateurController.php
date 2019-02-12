@@ -17,7 +17,7 @@ use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
-use Application\SourceCodeStringHelper;
+use Application\SourceCodeStringHelperAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -43,6 +43,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     use EtablissementServiceAwareTrait;
     use NotifierServiceAwareTrait;
     use StructureServiceAwareTrait;
+    use SourceCodeStringHelperAwareTrait;
 
     /**
      * NOTA BENE : il s'agit des individus et non des utilisateurs car ils sont ceux qui portent les rôles
@@ -327,8 +328,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             throw new RuntimeException("L'utilisateur '$utilisateur' n'a aucun individu lié");
         }
 
-        $sourceCodeHelper = new SourceCodeStringHelper();
-        $supannId = $sourceCodeHelper->removePrefixFrom($individu->getSourceCode());
+        $supannId = $this->sourceCodeStringHelper->removePrefixFrom($individu->getSourceCode());
 
         $toShibUser = new ShibUser();
         $toShibUser->setEppn($utilisateur->getUsername());

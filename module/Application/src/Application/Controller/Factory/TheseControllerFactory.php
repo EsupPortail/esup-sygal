@@ -15,6 +15,7 @@ use Application\Service\Validation\ValidationService;
 use Application\Service\Variable\VariableService;
 use Application\Service\VersionFichier\VersionFichierService;
 use Application\Service\Workflow\WorkflowService;
+use Application\SourceCodeStringHelper;
 use Doctrine\ORM\EntityManager;
 use Import\Service\ImportService;
 use Zend\Mvc\Controller\ControllerManager;
@@ -30,7 +31,9 @@ class TheseControllerFactory
      */
     public function __invoke(ControllerManager $controllerManager)
     {
-        $options = $this->getOptions($controllerManager->getServiceLocator());
+        $sl = $controllerManager->getServiceLocator();
+
+        $options = $this->getOptions($sl);
 
         /**
          * @var VariableService $variableService
@@ -48,20 +51,20 @@ class TheseControllerFactory
          * @var EntityManager $entityManager
          * @var ImportService $importService
          */
-        $variableService = $controllerManager->getServiceLocator()->get('VariableService');
-        $validationService = $controllerManager->getServiceLocator()->get('ValidationService');
-        $versionFichierService = $controllerManager->getServiceLocator()->get('VersionFichierService');
-        $theseService = $controllerManager->getServiceLocator()->get('TheseService');
-        $theseRechercheService = $controllerManager->getServiceLocator()->get('TheseRechercheService');
-        $roleService = $controllerManager->getServiceLocator()->get('RoleService');
-        $uniteService = $controllerManager->getServiceLocator()->get('UniteRechercheService');
-        $fichierService = $controllerManager->getServiceLocator()->get('FichierService');
-        $workflowService = $controllerManager->getServiceLocator()->get('WorkflowService');
-        $etablissementService = $controllerManager->getServiceLocator()->get('EtablissementService');
-        $mailConfirmationService = $controllerManager->getServiceLocator()->get('MailConfirmationService');
-        $entityManager = $controllerManager->getServiceLocator()->get('doctrine.entitymanager.orm_default');
-        $notifierService = $controllerManager->getServiceLocator()->get(NotifierService::class);
-        $importService = $controllerManager->getServiceLocator()->get('ImportService');
+        $variableService = $sl->get('VariableService');
+        $validationService = $sl->get('ValidationService');
+        $versionFichierService = $sl->get('VersionFichierService');
+        $theseService = $sl->get('TheseService');
+        $theseRechercheService = $sl->get('TheseRechercheService');
+        $roleService = $sl->get('RoleService');
+        $uniteService = $sl->get('UniteRechercheService');
+        $fichierService = $sl->get('FichierService');
+        $workflowService = $sl->get('WorkflowService');
+        $etablissementService = $sl->get('EtablissementService');
+        $mailConfirmationService = $sl->get('MailConfirmationService');
+        $entityManager = $sl->get('doctrine.entitymanager.orm_default');
+        $notifierService = $sl->get(NotifierService::class);
+        $importService = $sl->get('ImportService');
 
         $controller = new TheseController();
         $controller->setTimeoutRetraitement($this->getTimeoutRetraitementFromOptions($options));
@@ -79,6 +82,12 @@ class TheseControllerFactory
         $controller->setEntityManager($entityManager);
         $controller->setNotifierService($notifierService);
         $controller->setImportService($importService);
+
+        /**
+         * @var SourceCodeStringHelper $sourceCodeHelper
+         */
+        $sourceCodeHelper = $sl->get(SourceCodeStringHelper::class);
+        $controller->setSourceCodeStringHelper($sourceCodeHelper);
 
         return $controller;
     }

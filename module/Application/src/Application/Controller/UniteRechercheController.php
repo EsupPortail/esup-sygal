@@ -8,6 +8,7 @@ use Application\Service\DomaineScientifiqueServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
+use Application\SourceCodeStringHelperAwareTrait;
 use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
 
@@ -16,6 +17,7 @@ class UniteRechercheController extends StructureConcreteController
     use UniteRechercheServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use DomaineScientifiqueServiceAwareTrait;
+    use SourceCodeStringHelperAwareTrait;
 
     protected $codeTypeStructure = TypeStructure::CODE_UNITE_RECHERCHE;
 
@@ -39,8 +41,13 @@ class UniteRechercheController extends StructureConcreteController
     {
         $viewModel = parent::indexAction();
 
+        $codeStructureExtractor = function($code) {
+            return $this->sourceCodeStringHelper->extractPrefixFrom($code);
+        };
+
         return new ViewModel([
             'unites' => $viewModel->getVariable('structures'),
+            'codeStructureExtractor' => $codeStructureExtractor,
         ]);
     }
 

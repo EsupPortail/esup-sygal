@@ -3,17 +3,10 @@
 namespace Application;
 
 use Application\Entity\Db\Doctorant;
-use Application\Entity\Db\MailConfirmation;
 use Application\Service\MailConfirmationService;
 use Application\Service\UserContextService;
-use Zend\Http\Response as HttpResponse;
 
 /**
- * Cette fonction est appelée pour tester si un doctorant à bien fourni les infos necessaires de mise en relation
- * entre son compte et lui
- * Pré SyGAL :: avoir rempli son persopass
- * SyGAL :: avoir fournis un adresse de contact et l'avoir vérifier
- *
  * Class SaisiePersopassRouteDeflector
  *
  * @package Application

@@ -12,6 +12,8 @@ use Zend\Form\Form;
  * @var bool   $detournement Indique s'il s'agit d'un détournement de requête pour saisie du persopass
  * @var string $emailBdD
  */
+
+$appName = $this->appInfos()->nom;
 ?>
 
 <h1 class="page-header"><?php echo $title ?></h1>
@@ -22,7 +24,7 @@ use Zend\Form\Form;
     <div class="col-md-8">
         <p class="lead">
             Avant de continer, merci de saisir une adresse mail de contact.
-            Cette adresse sera utilisée par SyGAL pour vous communiquer les informations importantes associées à votre
+            Cette adresse sera utilisée par <?php echo $appName ?> pour vous communiquer les informations importantes associées à votre
             thèse.
             <!--Cette adresse peut aussi être utilisée afin de vous identifier à SyGAL.-->
         </p>

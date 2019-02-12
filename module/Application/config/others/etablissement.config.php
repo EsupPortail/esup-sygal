@@ -6,6 +6,7 @@ use Application\Form\Factory\EtablissementFormFactory;
 use Application\Form\Factory\EtablissementHydratorFactory;
 use Application\Provider\Privilege\StructurePrivileges;
 use Application\Service\Etablissement\EtablissementService;
+use Application\Service\Etablissement\EtablissementServiceFactory;
 use Application\View\Helper\EtablissementHelper;
 use UnicaenAuth\Guard\PrivilegeController;
 use Zend\Mvc\Router\Http\Literal;
@@ -169,9 +170,9 @@ return [
     ],
     'service_manager' => [
         'invokables' => [
-            'EtablissementService' => EtablissementService::class,
         ],
         'factories' => [
+            'EtablissementService' => EtablissementServiceFactory::class,
         ],
         'aliases' => [
             EtablissementService::class => 'EtablissementService',

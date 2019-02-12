@@ -9,8 +9,6 @@ use UnicaenImport\Entity\Db\Interfaces\SourceInterface;
  */
 class Source implements SourceInterface
 {
-    const CODE_SYGAL = 'SYGAL::sygal';
-
     /**
      * @var string
      */

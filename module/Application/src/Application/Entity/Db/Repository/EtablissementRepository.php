@@ -32,7 +32,7 @@ class EtablissementRepository extends DefaultEntityRepository
     /**
      * Recherche un établissement par son code de structure.
      *
-     * @param string $code Ex: 'COMUE'
+     * @param string $code Ex: 'ENSICAEN'
      * @return Etablissement|null
      */
     public function findOneByCodeStructure($code)
@@ -131,9 +131,9 @@ class EtablissementRepository extends DefaultEntityRepository
     }
 
     /**
-     * Recherche un établissement par son source code.
+     * Recherche un établissement par son source_code.
      *
-     * @param string $sourceCode Ex: 'COMUE::UCN'
+     * @param string $sourceCode Ex: 'UCN::CRHEA'
      * @return Etablissement|null
      */
     public function findOneBySourceCode($sourceCode)
@@ -189,10 +189,11 @@ class EtablissementRepository extends DefaultEntityRepository
      */
     public function findAllEtablissementsMembres()
     {
-        $qb = $this->createQueryBuilder("etablissement")
-            ->addSelect("structure")
-            ->join("etablissement.structure", "structure")
-            ->andWhere("etablissement.estMembre = 1")
+        $qb = $this->createQueryBuilder("e")
+            ->addSelect("s")
+            ->join("e.structure", "s")
+            ->andWhere("e.estMembre = 1")
+            ->orderBy('s.libelle')
         ;
 
         return  $qb->getQuery()->getResult();
