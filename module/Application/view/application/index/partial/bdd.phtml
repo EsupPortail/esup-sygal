@@ -4,13 +4,15 @@
  */
 
 use Application\Entity\Db\These;
+
+$appName = $this->appInfos()->nom;
 ?>
 
 <p>
-    SyGAL vous alerte lorsque le dépôt est validé et la BU de votre établissement vous envoie par courrier interne la convention de mise en ligne signée du doctorant.
+    <?php echo $appName ?> vous alerte lorsque le dépôt est validé et la BU de votre établissement vous envoie par courrier interne la convention de mise en ligne signée du doctorant.
     Le dépôt avant soutenance et la réception des pré-rapports favorables conditionnent la demande d’autorisation de soutenance au Président.
 </p>
 <p>
-    <em>Rappel : SyGAL offre aux différents acteurs des thèses une vision d’ensemble des thèses préparées telles qu’elles sont signalées dans Apogée : en cours, soutenues, transférées, abandonnées. <br>
-        Les informations sont importées dès l’inscription en première année de doctorat puis mises à jour en temps réel. SyGAL étant une application dédiée à la période de soutenance, seules les données sur les thèses en cours ont été fiabilisées dans Apogée : les thèses soutenues, transférées et abandonnées n’apparaissent donc qu’à titre indicatif. </em>
+    <em>Rappel : <?php echo $appName ?> offre aux différents acteurs des thèses une vision d’ensemble des thèses préparées telles qu’elles sont signalées dans Apogée : en cours, soutenues, transférées, abandonnées. <br>
+        Les informations sont importées dès l’inscription en première année de doctorat puis mises à jour en temps réel. <?php echo $appName ?> étant une application dédiée à la période de soutenance, seules les données sur les thèses en cours ont été fiabilisées dans Apogée : les thèses soutenues, transférées et abandonnées n’apparaissent donc qu’à titre indicatif. </em>
 </p>

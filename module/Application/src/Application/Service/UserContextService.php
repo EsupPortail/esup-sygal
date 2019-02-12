@@ -13,6 +13,7 @@ use Application\Entity\Db\Utilisateur;
 use Application\Entity\UserWrapperFactory;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
+use Application\SourceCodeStringHelperAwareTrait;
 use UnicaenApp\Entity\Ldap\People;
 use UnicaenAuth\Entity\Shibboleth\ShibUser;
 use UnicaenAuth\Service\UserContext as BaseUserContextService;
@@ -22,6 +23,7 @@ class UserContextService extends BaseUserContextService
 {
     use IndividuServiceAwareTrait;
     use EtablissementServiceAwareTrait;
+    use SourceCodeStringHelperAwareTrait;
 
     /**
      * @return Role|RoleInterface|null
@@ -239,7 +241,7 @@ class UserContextService extends BaseUserContextService
 
         $domaineEtab = $userWrapper->getDomainFromEppn();
         $etablissement = $this->getEtablissementService()->getRepository()->findOneByDomaine($domaineEtab);
-        $sourceCode = $etablissement->prependPrefixTo($userWrapper->getSupannId());
+        $sourceCode = $this->sourceCodeStringHelper->addEtablissementPrefixTo($userWrapper->getSupannId(), $etablissement);
 
         $individu = $this->individuService->getRepository()->findOneBySourceCode($sourceCode);
 

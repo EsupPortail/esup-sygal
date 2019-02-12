@@ -6,6 +6,7 @@ use Application\Command\MergeCommand;
 use Application\Command\TruncateAndMergeCommand;
 use Application\Entity\Db\Attestation;
 use Application\Entity\Db\Diffusion;
+use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\Individu;
@@ -44,6 +45,7 @@ use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\Service\Workflow\WorkflowServiceAwareTrait;
+use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
 use Import\Service\Traits\ImportServiceAwareTrait;
@@ -84,6 +86,7 @@ class TheseController extends AbstractController
     use ImportServiceAwareTrait;
     use UserContextServiceAwareTrait;
     use VariableServiceAwareTrait;
+    use SourceCodeStringHelperAwareTrait;
 
     private $timeoutRetraitement;
 
@@ -125,6 +128,10 @@ class TheseController extends AbstractController
             ->setItemCountPerPage((int)$maxi)
             ->setCurrentPageNumber((int)$page);
 
+        $numeroEtudiantExtractor = function(Doctorant $doctorant) {
+            return $this->sourceCodeStringHelper->removePrefixFrom($doctorant->getSourceCode());
+        };
+
         return new ViewModel([
             'theses'                => $paginator,
             'text'                  => $text,
@@ -132,6 +139,7 @@ class TheseController extends AbstractController
             'displayEtablissement'  => !$etablissement,
             'displayDateSoutenance' => $etatThese === These::ETAT_SOUTENUE || !$etatThese,
             'etatThese'             => $etatThese,
+            'numeroEtudiantExtractor' => $numeroEtudiantExtractor,
         ]);
     }
 
@@ -219,6 +227,9 @@ class TheseController extends AbstractController
         $rattachements = null;
         if ($unite !== null) $rattachements = $this->getUniteRechercheService()->findEtablissementRattachement($unite);
 
+        $numeroEtudiantExtractor = function(Doctorant $doctorant) {
+            return $this->sourceCodeStringHelper->removePrefixFrom($doctorant->getSourceCode());
+        };
 
         //TODO JP remplacer dans modifierPersopassUrl();
         $urlModification = $this->url()->fromRoute('doctorant/modifier-persopass',['back' => 1, 'doctorant' => $these->getDoctorant()->getId()], [], true);
@@ -244,6 +255,7 @@ class TheseController extends AbstractController
             'etatMailContact'           => $etatMailContact,
             'rattachements'             => $rattachements,
             'validationsDesCorrectionsEnAttente' => $validationsDesCorrectionsEnAttente,
+            'numeroEtudiantExtractor'   => $numeroEtudiantExtractor,
         ]);
         $view->setTemplate('application/these/identite');
 
@@ -678,8 +690,6 @@ class TheseController extends AbstractController
             $form->addElement((new Hidden('validerAuto'))->setValue(1));
         }
 
-        $comue = $this->getEtablissementService()->getRepository()->findOneByCodeStructure(Structure::CODE_COMUE);
-
         $view = new ViewModel([
             'titre'          => $titre,
             'these'          => $these,
@@ -688,7 +698,6 @@ class TheseController extends AbstractController
             'theseListUrl'   => $this->urlFichierThese()->listerFichiers($these, $nature, $version, false, ['inclureValidite' => $inclureValidite]),
             'nature'         => $nature,
             'versionFichier' => $version,
-            'etabComue'      => $comue->getLibelle(),
         ]);
         $view->setTemplate('application/these/depot/these');
 

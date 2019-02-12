@@ -7,7 +7,6 @@ return [
     'service_manager' => [
         'invokables' => array(
             'VariableService' => VariableService::class,
-            'EtablissementService' => EtablissementService::class,
         ),
         'factories' => [
 

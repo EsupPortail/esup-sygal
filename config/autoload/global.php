@@ -10,6 +10,8 @@ return [
         'locale' => 'fr_FR',
     ],
     'sygal' => [
+        // Préfixe par défaut à utiliser pour générer le SOURCE_CODE d'un enregistrement créé dans l'application
+        'default_prefix_for_source_code' => 'SyGAL',
         // Options pour le test d'archivabilité
         'archivabilite' => [
             'check_ws_script_path' => __DIR__ . '/../../bin/from_cines/check_webservice_response.sh',

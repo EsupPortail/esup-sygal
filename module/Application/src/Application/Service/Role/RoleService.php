@@ -10,18 +10,17 @@ use Application\Entity\Db\Privilege;
 use Application\Entity\Db\Profil;
 use Application\Entity\Db\Repository\RoleRepository;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\Source;
 use Application\Entity\Db\Structure;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
-use Application\Entity\Db\Utilisateur;
 use Application\Service\BaseService;
+use Application\Service\Source\SourceServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Query\Expr\Join;
-use UnicaenLeocarte\Exception\RuntimeException;
+use UnicaenApp\Exception\RuntimeException;
 
 /**
  * Class RoleService
@@ -29,6 +28,7 @@ use UnicaenLeocarte\Exception\RuntimeException;
  */
 class RoleService extends BaseService
 {
+    use SourceServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
 
     /**
@@ -156,7 +156,6 @@ class RoleService extends BaseService
 
     /**
      * @param UniteRecherche|EcoleDoctorale|Etablissement $structure
-     * @throws \Doctrine\ORM\OptimisticLockException
      */
     public function addRoleByStructure($structure) {
 
@@ -184,65 +183,67 @@ class RoleService extends BaseService
             $sourceCode = null;
             $roleId = null;
             if ($structure instanceof Etablissement) {
-                $sourceCode = $this->getSourceCodeStringHelper()->addPrefixEtablissementTo($roleModele->getRoleCode()."_". $structure->getSourceCode(), $structure);
+                $sourceCode = $this->sourceCodeStringHelper->addEtablissementPrefixTo($roleModele->getRoleCode()."_". $structure->getSourceCode(), $structure);
                 $roleId = $roleModele->getLibelle()." ". $structure->getCode();
             } else {
-                $sourceCode = $this->getSourceCodeStringHelper()->addPrefixEtablissementTo($roleModele->getRoleCode()."_". $structure->getSourceCode());
+                $sourceCode = $this->sourceCodeStringHelper->addDefaultPrefixTo($roleModele->getRoleCode()."_". $structure->getSourceCode());
                 $roleId = $roleModele->getLibelle()." ". $structure->getSourceCode();
             }
 
-            /** @var Role $role */
-            $role = $this->createRole();
-            $role->setCode($roleModele->getRoleCode());
-            $role->setLibelle($roleModele->getLibelle());
-            $role->setSourceCode($sourceCode);
+            $role = $this->createRole($roleModele->getRoleCode(), $roleModele->getLibelle(), $sourceCode);
             $role->setRoleId($roleId);
             $role->setTypeStructureDependant($type);
             $role->setStructure($structure->getStructure());
-            $this->entityManager->flush($role);
+            try {
+                $this->entityManager->flush($role);
+            } catch (OptimisticLockException $e) {
+                throw new RuntimeException("Erreur lors de l'enregistrement du rôle '{$role->getRoleId()}'", null, $e);
+            }
 
             /** @var Privilege $privilege */
             foreach ($roleModele->getPrivileges() as $privilege) {
                 $privilege->addRole($role);
-                $this->entityManager->flush($privilege);
+                try {
+                    $this->entityManager->flush($privilege);
+                } catch (OptimisticLockException $e) {
+                    throw new RuntimeException(
+                        "Erreur lors de l'ajout du privilège '{$privilege->getCode()}' au rôle '{$role->getRoleId()}'", null, $e);
+                }
             }
         }
 
     }
 
-
-    public function createRole($libelle = "Aucun")
+    /**
+     * @param string $code
+     * @param string $libelle
+     * @param string $sourceCode
+     * @return Role
+     */
+    private function createRole($code, $libelle, $sourceCode)
     {
-        /** @var Source $sourceSygal */
-        $sourceSygal = $this->entityManager->getRepository(Source::class)->findOneBy(["code" => Source::CODE_SYGAL]);
-        /** @var Utilisateur $userSygal */
-        $userSygal = $this->entityManager->getRepository(Utilisateur::class)->findOneBy(["username" => "sygal-app"]);
+        $appSource = $this->sourceService->fetchApplicationSource();
 
         $role = new Role();
-        $role->setCode("SyGAL");
+        $role->setCode($code);
         $role->setLibelle($libelle);
-        $role->setSourceCode("SyGAL::" . $libelle);
-        $role->setSource($sourceSygal);
-        $role->setRoleId($libelle . "SyGAL");
+        $role->setSourceCode($sourceCode);
+//        $role->setSource($appSource);
+        $role->setRoleId($libelle . " " . $appSource->getCode());
         $role->setAttributionAutomatique(false);
         $role->setTheseDependant(false);
-        $role->setHistoCreateur($userSygal);
-        try {
-            $date = new \DateTime();
-        } catch (\Exception $e) {
-            throw new RuntimeException("Un problème est survenu.",$e);
-        }
-        $role->setHistoCreation($date);
-        $role->setHistoModificateur($userSygal);
-        $role->setHistoModification($date);
         $role->setOrdreAffichage("zzz");
 
-        $this->getEntityManager()->persist($role);
+        $this->entityManager->beginTransaction();
+        $this->entityManager->persist($role);
         try {
-            $this->getEntityManager()->flush($role);
-        } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Un problème est survenu.",$e);
+            $this->entityManager->flush($role);
+            $this->entityManager->commit();
+        } catch (\Exception $e) {
+            $this->rollback();
+            throw new RuntimeException("Erreur lors de l'enregistrement du rôle '{$role->getRoleId()}'.", null, $e);
         }
+
         return $role;
     }
 

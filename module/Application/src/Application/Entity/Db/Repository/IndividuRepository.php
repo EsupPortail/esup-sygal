@@ -6,13 +6,15 @@ use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\UserWrapper;
-use Application\SourceCodeStringHelper;
+use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\DBAL\DBALException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
 
 class IndividuRepository extends DefaultEntityRepository
 {
+    use SourceCodeStringHelperAwareTrait;
+
     /**
      * @param int $id
      * @return Individu
@@ -43,8 +45,7 @@ class IndividuRepository extends DefaultEntityRepository
      */
     public function findOneByUserWrapperAndEtab(UserWrapper $userWrapper, Etablissement $etablissement)
     {
-        $sourceCodeHelper = new SourceCodeStringHelper();
-        $sourceCode = $sourceCodeHelper->addPrefixEtablissementTo($userWrapper->getSupannId(), $etablissement);
+        $sourceCode = $this->sourceCodeStringHelper->addEtablissementPrefixTo($userWrapper->getSupannId(), $etablissement);
 
         return $this->findOneBySourceCode($sourceCode);
 

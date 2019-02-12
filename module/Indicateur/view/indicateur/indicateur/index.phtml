@@ -18,11 +18,13 @@ use Application\Entity\Db\These;use Indicateur\Model\Indicateur;
  * @var Indicateur[] $indicateurs
  * @var Indicateur[] $resultats
  */
+
+$appName = $this->appInfos()->nom;
 ?>
 
 
 <h1 class="page-header">
-    Indicateurs de SyGAL
+    Indicateurs de <?php echo $appName ?>
 </h1>
 
 <div class="row">

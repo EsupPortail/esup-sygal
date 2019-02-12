@@ -4,6 +4,8 @@
  */
 
 use Application\Entity\Db\These;
+
+$appName = $this->appInfos()->nom;
 ?>
 
         <h2><?php echo count($theses) > 1 ? "Vos thèses" : "Votre thèse" ?></h2>
@@ -12,7 +14,7 @@ use Application\Entity\Db\These;
         <?php endforeach ?>
 
 <p>
-    Avec SyGAL, vous allez :
+    Avec <?php echo $appName ?>, vous allez :
 </p>
 <ul>
     <li>déposer le fichier de votre thèse simplement et de manière sécurisée un mois avant la soutenance ;</li>

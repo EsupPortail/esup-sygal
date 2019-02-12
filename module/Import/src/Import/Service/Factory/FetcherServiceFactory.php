@@ -2,9 +2,9 @@
 
 namespace Import\Service\Factory;
 
+use Application\SourceCodeStringHelper;
 use Assert\Assertion;
 use Assert\AssertionFailedException;
-use Doctrine\ORM\EntityManager;
 use Import\Service\CallService;
 use Import\Service\DbService;
 use Import\Service\FetcherService;
@@ -30,6 +30,12 @@ class FetcherServiceFactory
         $service->setConfig($config);
         $service->setCallService($callService);
         $service->setDbService($dbService);
+
+        /**
+         * @var SourceCodeStringHelper $sourceCodeHelper
+         */
+        $sourceCodeHelper = $container->get(SourceCodeStringHelper::class);
+        $service->setSourceCodeStringHelper($sourceCodeHelper);
 
         return $service;
     }

@@ -500,7 +500,7 @@ class NotifierService extends \Notification\Service\NotifierService
 
         $notif = new Notification();
         $notif
-            ->setSubject("Changement dans vos rôle SyGAL")
+            ->setSubject("Modification de vos rôles dans l'application")
             ->setTo($mail)
             ->setTemplatePath('application/utilisateur/changement-role')
             ->setTemplateVariables([

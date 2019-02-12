@@ -6,6 +6,7 @@ use Application\Entity\Db\Repository\UtilisateurRepository;
 use Application\Entity\Db\Utilisateur;
 use Application\EventRouterReplacer;
 use Application\Service\Notification\NotifierService;
+use Application\Service\Utilisateur\UtilisateurService;
 use Doctrine\ORM\EntityManager;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\Mvc\Controller\ControllerManager;
@@ -49,12 +50,10 @@ class IndexControllerFactory
      */
     public function getUtilisateurApp(ServiceLocatorInterface $sl)
     {
-        /** @var EntityManager $em */
-        $em = $sl->get('doctrine.entitymanager.orm_default');
-        /** @var UtilisateurRepository $repo */
-        $repo = $em->getRepository(Utilisateur::class);
-        /** @var Utilisateur $utilisateur */
-        $utilisateur = $repo->fetchAppPseudoUtilisateur();
+        /** @var UtilisateurService $utilisateurService */
+        $utilisateurService = $sl->get('UtilisateurService');
+
+        $utilisateur = $utilisateurService->fetchAppPseudoUtilisateur();
 
         if (!$utilisateur) {
             throw new RuntimeException("Pseudo-utilisateur application introuvable");

@@ -8,7 +8,8 @@
 use Application\Entity\Db\Role;
 use Application\View\Renderer\PhpRenderer;
 
-$subtitle = "SYstème de Gestion et d'Accompagnement doctoraL";
+$appName = $this->appInfos()->nom;
+$subtitle = $this->appInfos()->desc;
 ?>
 
 <?php $this->headTitle($this->translate("Accueil")); ?>
@@ -42,7 +43,7 @@ echo $this->messenger()
         </p>
 
         <?php if (!$this->identity()): ?>
-            SyGAL (Système de Gestion et d’Accompagnement doctoraL) est une application permettant la gestion dématérialisée
+            <?php echo $appName ?> (<?php echo $subtitle ?>) est une application permettant la gestion dématérialisée
             de l’ensemble des étapes du parcours doctoral en Normandie. Il offre également aux différents acteurs du parcours
             doctoral (établissements, écoles doctorales) une visibilité sur les thèses en cours ou passées.
         <?php endif ?>

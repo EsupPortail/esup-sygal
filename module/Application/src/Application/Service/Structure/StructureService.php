@@ -12,14 +12,13 @@ use Application\Entity\Db\StructureSubstit;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
-use Application\SourceCodeStringHelper;
-use Application\SourceCodeStringHelperAwareTrait;
 use Application\Service\BaseService;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\File\FileServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
+use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
@@ -85,10 +84,12 @@ class StructureService extends BaseService
 
         // le source code d'une structure cible est calculé
         $sourceCode = $structureCibleDataObject->getSourceCode();
-        if ($structureCibleDataObject->getSourceCode() === null) $sourceCode = uniqid(Etablissement::CODE_STRUCTURE_COMUE . SourceCodeStringHelper::ETAB_PREFIX_SEP);
+        if ($sourceCode === null) {
+            $sourceCode = $this->sourceCodeStringHelper->addDefaultPrefixTo(uniqid());
+        }
 
         // la source d'une structure cible est forcément SYGAL
-        $sourceSygal = $this->sourceService->fetchSourceSygal();
+        $sourceSygal = $this->sourceService->fetchApplicationSource();
 
         // le type de la structure cible dépend du type des données spécifiées (data object)
         $tsCode = null;
@@ -103,21 +104,24 @@ class StructureService extends BaseService
 
         $structureCibleDataObject->setSourceCode($sourceCode);
 
-        /** si toutes les sources ont le même sourcecode (au préfixe près) alors sourcecode => CODE_COMUE::source */
-        $unique = explode(SourceCodeStringHelper::ETAB_PREFIX_SEP, $structuresSources[0]->getSourceCode())[1];
-        foreach ($structuresSources as $structureSource) {
-            $code = explode(SourceCodeStringHelper::ETAB_PREFIX_SEP, $structureSource->getSourceCode());
-            if ($code[1] != $unique) {
-                $unique = uniqid();
-                break;
-            }
+        // si toutes les structures sources ont le même code alors on le réutilise, sinon on en génère un unique
+        $codeExtractor = function($structureSource) {
+            /** @var StructureConcreteInterface $structureSource */
+            return $this->sourceCodeStringHelper->removePrefixFrom($structureSource->getSourceCode());
+        };
+        $codesStructuresSources = array_map($codeExtractor, $structuresSources);
+        if (count(array_unique($codesStructuresSources)) === 1) {
+            $codeStructureCible = reset($codesStructuresSources);
+        } else {
+            $codeStructureCible = uniqid();
         }
 
         // instanciation du couple (Etab|ED|UR ; Structure) cible
+        $structureConcreteCibleSourceCode = $this->sourceCodeStringHelper->addDefaultPrefixTo($codeStructureCible);
         $structureConcreteCible = Structure::constructFromDataObject($structureCibleDataObject, $typeStructure, $sourceSygal);
-        $structureConcreteCible->setSourceCode(Etablissement::CODE_STRUCTURE_COMUE . SourceCodeStringHelper::ETAB_PREFIX_SEP . $unique);
-        $structureConcreteCible->getStructure()->setSourceCode(Etablissement::CODE_STRUCTURE_COMUE . SourceCodeStringHelper::ETAB_PREFIX_SEP . $unique);
-        $structureConcreteCible->getStructure()->setCode($unique);
+        $structureConcreteCible->setSourceCode($structureConcreteCibleSourceCode);
+        $structureConcreteCible->getStructure()->setSourceCode($structureConcreteCibleSourceCode);
+        $structureConcreteCible->getStructure()->setCode($codeStructureCible);
         $structureRattachCible = $structureConcreteCible->getStructure(); // StructureSubstitution ne référence que des entités de type Structure
 
         // instanciations des substitutions
@@ -126,14 +130,14 @@ class StructureService extends BaseService
         // enregistrement en bdd
         $this->getEntityManager()->beginTransaction();
         try {
-            $this->getEntityManager()->persist($structureConcreteCible);
             $this->getEntityManager()->persist($structureRattachCible);
+            $this->getEntityManager()->persist($structureConcreteCible);
             array_map(function(StructureSubstit $ss) {
                 $this->getEntityManager()->persist($ss);
             }, $substitutions);
 
-            $this->getEntityManager()->flush($structureConcreteCible);
             $this->getEntityManager()->flush($structureRattachCible);
+            $this->getEntityManager()->flush($structureConcreteCible);
             $this->getEntityManager()->flush($substitutions);
 
             $this->getEntityManager()->commit();
@@ -157,14 +161,15 @@ class StructureService extends BaseService
      */
     public function updateStructureSubstitutions(array $structuresSources, Structure $structureCible)
     {
+        $source = $this->sourceService->fetchApplicationSource();
+
         Assert::notEmpty($structuresSources, "La liste des structures à substituer ne peut être vide");
 
         Assert::notNull($structureCible->getId(), "La structure de substitution doit exister en bdd");
         Assert::eq(
-            $code = Source::CODE_SYGAL,
+            $code = $source->getCode(),
             $structureCible->getSource()->getCode(),
-            "La source de la structure de substitution doit être $code");
-
+            "La source de la structure de substitution doit être '$code'.");
 
         switch (true) {
             case ($structuresSources[0] instanceOf Etablissement):
@@ -232,11 +237,13 @@ class StructureService extends BaseService
      */
     public function deleteStructureSubstitutions(Structure $structureCible)
     {
+        $source = $this->sourceService->fetchApplicationSource();
+
         Assert::notNull($structureCible->getId(), "La structure de substitution doit exister en bdd");
         Assert::eq(
-            $code = Source::CODE_SYGAL,
+            $code = $source->getCode(),
             $structureCible->getSource()->getCode(),
-            "La source de la structure de substitution doit être $code");
+            "La source de la structure de substitution doit être '$code'.");
 
         // recherche des substitutions existantes
         $structureSubstits =
@@ -409,7 +416,7 @@ class StructureService extends BaseService
      */
     public function createStructureConcrete($typeStructure)
     {
-        $sourceSygal = $this->sourceService->fetchSourceSygal();
+        $sourceSygal = $this->sourceService->fetchApplicationSource();
         $type = $this->fetchTypeStructure($typeStructure);
 
         $structureCibleDataObject = null;
@@ -426,7 +433,7 @@ class StructureService extends BaseService
             default:
                 throw new RuntimeException("Type de structure inconnu [".$typeStructure."]");
         }
-        $sourceCode = $this->getSourceCodeStringHelper()->addPrefixTo(uniqid());
+        $sourceCode = $this->sourceCodeStringHelper->addDefaultPrefixTo(uniqid());
         $structureCibleDataObject->getStructure()->setSourceCode($sourceCode);
         $structureCibleDataObject->getStructure()->setTypeStructure($type);
         $structureCibleDataObject->setSource($sourceSygal);
@@ -496,7 +503,7 @@ class StructureService extends BaseService
 
         $sourceCodeDictionnary = [];
         foreach ($structures as $structure) {
-            $sourceCode = $this->getSourceCodeStringHelper()->removePrefixFrom($structure->getSourceCode());
+            $sourceCode = $this->sourceCodeStringHelper->removePrefixFrom($structure->getSourceCode());
             $sourceCodeDictionnary[$sourceCode][] = $structure;
         }
 
@@ -673,7 +680,15 @@ class StructureService extends BaseService
         return $result;
     }
 
-    /** Identifie les structures substituables en utilisant le sourceCode */
+    /**
+     * Identifie les structures substituables en utilisant le sourceCode.
+     *
+     * @param string $type
+     * @return array
+     *
+     * @deprecated Mise deprecated pour penser à la renommer clairement,
+     * et à remplacer if ($prefix === "SyGAL" || $prefix === "COMUE").
+     */
     public function checkStructure($type)
     {
         $structures = [];
@@ -717,7 +732,10 @@ class StructureService extends BaseService
         return $substitutions;
     }
 
-
+    /**
+     * @deprecated Mise deprecated pour penser à la renommer clairement, la documenter,
+     * et à remplacer if ($prefix === "SyGAL" || $prefix === "COMUE").
+     */
     public function getSubstitutionDictionnary($identifiant, $type)
     {
         $structures = $this->getStructuresBySuffixe($identifiant, $type);

@@ -9,6 +9,7 @@ use Application\Service\Etablissement\EtablissementServiceLocateTrait;
 use Application\Service\Role\RoleService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\Utilisateur\UtilisateurService;
+use Application\SourceCodeStringHelper;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use ZfcUser\Service\User as UserService;
 
@@ -55,6 +56,12 @@ class IdentityProviderFactory
         $service->setRoleService($roleService);
         $service->setUtilisateurService($utilisateurService);
         $service->setEtablissementService($etablissementService);
+
+        /**
+         * @var SourceCodeStringHelper $sourceCodeHelper
+         */
+        $sourceCodeHelper = $sl->get(SourceCodeStringHelper::class);
+        $service->setSourceCodeStringHelper($sourceCodeHelper);
 
         return $service;
     }

@@ -3,6 +3,7 @@
 namespace Application\Service\Doctorant;
 
 use Application\Service\Etablissement\EtablissementService;
+use Application\SourceCodeStringHelper;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -22,6 +23,12 @@ class DoctorantServiceFactory implements FactoryInterface
         $service = new DoctorantService();
 
         $service->setEtablissementService($etablissementService);
+
+        /**
+         * @var SourceCodeStringHelper $sourceCodeHelper
+         */
+        $sourceCodeHelper = $serviceLocator->get(SourceCodeStringHelper::class);
+        $service->setSourceCodeStringHelper($sourceCodeHelper);
 
         return $service;
     }

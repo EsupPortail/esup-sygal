@@ -7,6 +7,7 @@ use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Structure\StructureService;
 use Application\Service\UniteRecherche\UniteRechercheService;
+use Application\SourceCodeStringHelper;
 use Doctrine\ORM\EntityManager;
 use Zend\Mvc\Controller\ControllerManager;
 
@@ -41,6 +42,12 @@ class SubstitutionControllerFactory
         $controller->setEcoleDoctoraleService($ecoleService);
         $controller->setUniteRechercheService($uniteService);
         $controller->setStructureService($structureService);
+
+        /**
+         * @var SourceCodeStringHelper $sourceCodeHelper
+         */
+        $sourceCodeHelper = $sl->get(SourceCodeStringHelper::class);
+        $controller->setSourceCodeStringHelper($sourceCodeHelper);
 
         return $controller;
     }

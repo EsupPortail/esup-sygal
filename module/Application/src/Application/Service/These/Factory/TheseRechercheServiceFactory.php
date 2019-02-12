@@ -12,6 +12,7 @@ use Application\Service\These\TheseRechercheService;
 use Application\Service\These\TheseService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\UserContextService;
+use Application\SourceCodeStringHelper;
 use UnicaenAuth\Service\AuthorizeService;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -59,6 +60,12 @@ class TheseRechercheServiceFactory
         $service->setDomaineScientifiqueService($domaineService);
         $service->setFinancementService($financementService);
         $service->setAuthorizeService($authorizeService);
+
+        /**
+         * @var SourceCodeStringHelper $sourceCodeHelper
+         */
+        $sourceCodeHelper = $serviceLocator->get(SourceCodeStringHelper::class);
+        $service->setSourceCodeStringHelper($sourceCodeHelper);
 
         return $service;
     }

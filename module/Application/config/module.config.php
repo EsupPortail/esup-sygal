@@ -11,10 +11,13 @@ use Application\Navigation\NavigationFactoryFactory;
 use Application\RouteMatchInjector;
 use Application\Service\AuthorizeServiceAwareInitializer;
 use Application\Service\Role\RoleService;
+use Application\Service\Role\RoleServiceFactory;
 use Application\Service\ServiceAwareInitializer;
 use Application\Service\Url\UrlServiceFactory;
 use Application\Service\UserContextServiceAwareInitializer;
 use Application\Service\UserContextServiceFactory;
+use Application\SourceCodeStringHelper;
+use Application\SourceCodeStringHelperFactory;
 use Application\View\Helper\EscapeTextHelper;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
@@ -161,17 +164,19 @@ return array(
     'service_manager' => array(
         'aliases' => array(
             'UserContextService' => 'UnicaenAuth\Service\UserContext',
+            RoleService::class => 'RoleService',
         ),
         'invokables' => array(
             'RouteMatchInjector' => RouteMatchInjector::class,
             'UserRoleSelectedEventListener' => UserRoleSelectedEventListener::class,
-            'RoleService' => RoleService::class,
         ),
         'factories' => array(
             'navigation'                     => NavigationFactoryFactory::class,
             'UnicaenAuth\Service\UserContext' => UserContextServiceFactory::class,
             'UserAuthenticatedEventListener' => UserAuthenticatedEventListenerFactory::class,
             'Sygal\Memcached'                => MemcachedFactory::class,
+            'RoleService' => RoleServiceFactory::class,
+            SourceCodeStringHelper::class => SourceCodeStringHelperFactory::class,
         ),
         'abstract_factories' => [
             AssertionAbstractFactory::class,

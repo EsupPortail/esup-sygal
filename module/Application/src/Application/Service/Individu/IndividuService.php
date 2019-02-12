@@ -9,7 +9,7 @@ use Application\Entity\Db\Repository\IndividuRepository;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\UserWrapper;
 use Application\Service\BaseService;
-use Application\SourceCodeStringHelper;
+use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenLdap\Entity\People;
@@ -17,6 +17,7 @@ use UnicaenLdap\Entity\People;
 class IndividuService extends BaseService
 {
     use AppPseudoUtilisateurAwareTrait;
+    use SourceCodeStringHelperAwareTrait;
 
     /**
      * @return IndividuRepository
@@ -25,6 +26,8 @@ class IndividuService extends BaseService
     {
         /** @var IndividuRepository $repo */
         $repo = $this->entityManager->getRepository(Individu::class);
+
+        $repo->setSourceCodeStringHelper($this->sourceCodeStringHelper);
 
         return $repo;
     }
@@ -49,7 +52,8 @@ class IndividuService extends BaseService
         $entity->setCivilite($people->get('supannCivilite'));
         $entity->setEmail($people->get('mail'));
 
-        $entity->setSourceCode($etablissement->prependPrefixTo($people->get('supannEmpId')));
+        $sourceCode = $this->sourceCodeStringHelper->addEtablissementPrefixTo($people->get('supannEmpId'), $etablissement);
+        $entity->setSourceCode($sourceCode);
 
         $this->getEntityManager()->persist($entity);
         try {
@@ -71,7 +75,7 @@ class IndividuService extends BaseService
                                                          Etablissement $etablissement,
                                                          Utilisateur $utilisateur = null)
     {
-        $sourceCode = $etablissement->prependPrefixTo($userWrapper->getSupannId());
+        $sourceCode = $this->sourceCodeStringHelper->addEtablissementPrefixTo($userWrapper->getSupannId(), $etablissement);
 
         $entity = new Individu();
         $entity->setSupannId($userWrapper->getSupannId());
@@ -128,8 +132,7 @@ class IndividuService extends BaseService
                                                      Etablissement $etablissement,
                                                      Utilisateur $modificateur = null)
     {
-        $sourceCodeHelper = new SourceCodeStringHelper();
-        $sourceCode = $sourceCodeHelper->addPrefixEtablissementTo($entity->getSupannId(), $etablissement);
+        $sourceCode = $this->sourceCodeStringHelper->addEtablissementPrefixTo($entity->getSupannId(), $etablissement);
 
         $entity->setSourceCode($sourceCode);
         $entity->setHistoModificateur($modificateur ?: $this->appPseudoUtilisateur);

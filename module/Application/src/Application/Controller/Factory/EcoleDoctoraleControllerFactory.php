@@ -9,6 +9,7 @@ use Application\Service\Etablissement\EtablissementServiceLocateTrait;
 use Application\Service\Individu\IndividuService;
 use Application\Service\Role\RoleService;
 use Application\Service\Structure\StructureService;
+use Application\SourceCodeStringHelper;
 use Zend\Mvc\Controller\ControllerManager;
 
 class EcoleDoctoraleControllerFactory
@@ -43,6 +44,12 @@ class EcoleDoctoraleControllerFactory
         $controller->setRoleService($roleService);
         $controller->setStructureForm($form);
         $controller->setStructureService($structureService);
+
+        /**
+         * @var SourceCodeStringHelper $sourceCodeHelper
+         */
+        $sourceCodeHelper = $sl->get(SourceCodeStringHelper::class);
+        $controller->setSourceCodeStringHelper($sourceCodeHelper);
 
         return $controller;
     }

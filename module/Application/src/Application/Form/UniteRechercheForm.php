@@ -34,7 +34,7 @@ class UniteRechercheForm extends Form
 
         $this
             ->add((
-                new Text('sourceCode'))
+                new Text('code'))
                     ->setLabel("Code :")
         );
         $this
@@ -70,8 +70,8 @@ class UniteRechercheForm extends Form
                 'name' => 'libelle',
                 'required' => true,
             ],
-            'sourceCode' => [
-                'name' => 'sourceCode',
+            'code' => [
+                'name' => 'code',
                 'required' => true,
             ],
         ]));
