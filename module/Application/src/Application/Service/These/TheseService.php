@@ -9,7 +9,6 @@ use Application\Entity\Db\MetadonneeThese;
 use Application\Entity\Db\RdvBu;
 use Application\Entity\Db\Repository\TheseRepository;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\Structure;
 use Application\Entity\Db\These;
 use Application\Entity\Db\VersionFichier;
 use Application\Notification\ValidationRdvBuNotification;
@@ -357,7 +356,7 @@ class TheseService extends BaseService
         if ($these->getUniteRecherche()) $pdcData->setUniteRecherche($these->getUniteRecherche()->getStructure()->getLibelle());
 
         // chemins vers les logos
-        if ($comue = $this->etablissementService->fetchEtablissementCommunaute()) {
+        if ($comue = $this->etablissementService->fetchEtablissementComue()) {
             $pdcData->setLogoCOMUE($this->fileService->computeLogoFilePathForStructure($comue));
         }
         $pdcData->setLogoEtablissement($this->fileService->computeLogoFilePathForStructure($these->getEtablissement()));

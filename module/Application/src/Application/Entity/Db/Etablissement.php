@@ -44,6 +44,11 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
     protected $estAssocie = false;
 
     /**
+     * @var bool
+     */
+    protected $estComue = false;
+
+    /**
      * Etablissement constructor.
      */
     public function __construct()
@@ -190,6 +195,25 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
     public function setEstAssocie($estAssocie)
     {
         $this->estAssocie = $estAssocie;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function estComue()
+    {
+        return $this->estComue;
+    }
+
+    /**
+     * @param bool $estComue
+     * @return Etablissement
+     */
+    public function setEstComue($estComue)
+    {
+        $this->estComue = $estComue;
 
         return $this;
     }

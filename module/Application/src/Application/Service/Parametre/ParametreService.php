@@ -24,17 +24,6 @@ class ParametreService extends BaseService
     }
 
     /**
-     * Retourne le Code de l'éventuel établissement chapeau représentant une communauté d'établissements.
-     * NULL <=> pas d'établissement chapeau.
-     *
-     * @return string|null
-     */
-    public function getSourceCodeEtablissementCommunaute()
-    {
-        return $this->fetch(Parametre::ID__SOURCE_CODE_ETAB_COMMUNAUTE)->getValeur();
-    }
-
-    /**
      * Retourne la valeur d'un paramètre spécifié par son code.
      *
      * @param $id
