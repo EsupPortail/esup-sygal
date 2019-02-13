@@ -2,12 +2,8 @@
 
 namespace Application\Controller;
 
-use Application\Command\MergeCommand;
-use Application\Command\TruncateAndMergeCommand;
 use Application\Entity\Db\Attestation;
 use Application\Entity\Db\Diffusion;
-use Application\Entity\Db\Doctorant;
-use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\MailConfirmation;
@@ -15,7 +11,6 @@ use Application\Entity\Db\MetadonneeThese;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\RdvBu;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\Structure;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Variable;
@@ -54,11 +49,9 @@ use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenApp\Service\MessageCollectorAwareTrait;
 use UnicaenApp\Traits\MessageAwareInterface;
-use UnicaenApp\Util;
 use Zend\Form\Element\Hidden;
 use Zend\Form\Element\Radio;
 use Zend\Form\Element\Submit;
-use Zend\Form\Element\Text;
 use Zend\Form\Form;
 use Zend\Http\Response;
 use Zend\InputFilter\InputFilter;
@@ -128,10 +121,6 @@ class TheseController extends AbstractController
             ->setItemCountPerPage((int)$maxi)
             ->setCurrentPageNumber((int)$page);
 
-        $numeroEtudiantExtractor = function(Doctorant $doctorant) {
-            return $this->sourceCodeStringHelper->removePrefixFrom($doctorant->getSourceCode());
-        };
-
         return new ViewModel([
             'theses'                => $paginator,
             'text'                  => $text,
@@ -139,7 +128,6 @@ class TheseController extends AbstractController
             'displayEtablissement'  => !$etablissement,
             'displayDateSoutenance' => $etatThese === These::ETAT_SOUTENUE || !$etatThese,
             'etatThese'             => $etatThese,
-            'numeroEtudiantExtractor' => $numeroEtudiantExtractor,
         ]);
     }
 
@@ -227,10 +215,6 @@ class TheseController extends AbstractController
         $rattachements = null;
         if ($unite !== null) $rattachements = $this->getUniteRechercheService()->findEtablissementRattachement($unite);
 
-        $numeroEtudiantExtractor = function(Doctorant $doctorant) {
-            return $this->sourceCodeStringHelper->removePrefixFrom($doctorant->getSourceCode());
-        };
-
         //TODO JP remplacer dans modifierPersopassUrl();
         $urlModification = $this->url()->fromRoute('doctorant/modifier-persopass',['back' => 1, 'doctorant' => $these->getDoctorant()->getId()], [], true);
 
@@ -255,7 +239,6 @@ class TheseController extends AbstractController
             'etatMailContact'           => $etatMailContact,
             'rattachements'             => $rattachements,
             'validationsDesCorrectionsEnAttente' => $validationsDesCorrectionsEnAttente,
-            'numeroEtudiantExtractor'   => $numeroEtudiantExtractor,
         ]);
         $view->setTemplate('application/these/identite');
 

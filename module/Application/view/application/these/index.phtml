@@ -17,7 +17,6 @@ use Zend\Paginator\Paginator;
  * @var Role        $roleDirecteurThese
  * @var bool        $displayEtablissement
  * @var bool        $displayDateSoutenance
- * @var callable    $numeroEtudiantExtractor
  *
  * @see \Application\Controller\TheseController::indexAction()
  */
@@ -136,7 +135,7 @@ $acteursFormatterCodirecteurs->asSeparated()
                 <td>
                     <span title="<?php echo $these->getTitre() ?>">
                         <a href="<?php echo $this->url('these/identite', ['these' => $these->getId()], [], true) ?>">
-                            <?php echo $this->partial('application/these/partial/titre', ['these' => $these, 'useTitreThese' => true, 'numeroEtudiantExtractor' => $numeroEtudiantExtractor]) ?>
+                            <?php echo $this->partial('application/these/partial/titre', ['these' => $these, 'useTitreThese' => true]) ?>
                         </a>
                     </span>
                 </td>
@@ -152,7 +151,7 @@ $acteursFormatterCodirecteurs->asSeparated()
                     }
                 ?>
                 <td><?php echo $these->getEtatThese() ?></td>
-                <td><?php echo $numeroEtudiantExtractor($these->getDoctorant()) ?></td>
+                <td><?php echo $these->getDoctorant()->getNumeroEtudiant() ?></td>
                 <td><?php echo $these->getDoctorant()->getIndividu()->getNomComplet() ?></td>
                 <td class="acteurs">
 

@@ -18,7 +18,7 @@ $acteursFormatter = new ActeursFormatter();
         <td>
             <?php echo $these->getDoctorant()->getNomComplet(true, true, true) ?>
             (<?php echo $these->getDoctorant()->getDateNaissanceToString() ?>) <br>
-            N°<?php echo $these->getDoctorant()->getIndividu()->getSupannId() ?> <br>
+            N°<?php echo $these->getDoctorant()->getNumeroEtudiant() ?> <br>
             Nationalité: <?php echo $these->getDoctorant()->getNationalite() ?>
         </td>
     </tr>
