@@ -6,7 +6,6 @@ use Application\Provider\Privilege\SubstitutionPrivileges;
 
 /**
  * @var EcoleDoctorale[] $ecoles
- * @var callable $codeStructureExtractor
  *
  * @see \Application\Controller\EcoleDoctoraleController::indexAction()
  */
@@ -64,7 +63,7 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
                     </a>
                 </td>
                 <td>
-                    <?php echo $codeStructureExtractor($ecole->getSource()->getCode()); ?>
+                    <?php echo $ecole->getSource(); ?>
                 </td>
                 <td>
                     <?php echo $ecole->getStructure()->getCode(); ?>

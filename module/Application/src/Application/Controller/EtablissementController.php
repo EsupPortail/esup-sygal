@@ -53,14 +53,9 @@ class EtablissementController extends StructureConcreteController
             return !$e->estMembre();
         });
 
-        $codeStructureExtractor = function($code) {
-            return $this->sourceCodeStringHelper->extractPrefixFrom($code);
-        };
-
         return new ViewModel([
             'etablissementsSygal'    => $etablissementsPrincipaux,
             'etablissementsExternes' => $etablissementsExternes,
-            'codeStructureExtractor' => $codeStructureExtractor,
         ]);
     }
 
