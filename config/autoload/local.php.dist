@@ -58,7 +58,7 @@ return [
 
     'unicaen-auth' => [
         'local' => [
-            'enabled' => true,
+            'enabled' => false,
         ],
         'ldap' => [
             'enabled' => false,
@@ -69,26 +69,7 @@ return [
                 // cf. secret.local.php
             ],
             'aliases' => [
-                'eppn'                   => 'HTTP_EPPN',
-                'mail'                   => 'HTTP_MAIL',
-                'eduPersonPrincipalName' => 'HTTP_EPPN',
-                'supannEtuId'            => 'HTTP_SUPANNETUID',
-                'supannEmpId'            => 'HTTP_SUPANNEMPID',
-                'supannCivilite'         => 'HTTP_SUPANNCIVILITE',
-                'displayName'            => 'HTTP_DISPLAYNAME',
-                'sn'                     => 'HTTP_SN',
-                'surname'                => 'HTTP_SURNAME',
-                'givenName'              => 'HTTP_GIVENNAME',
-            ],
-            'required_attributes' => [
-                'eppn',
-                'mail',
-                'eduPersonPrincipalName',
-                'supannCivilite',
-                'displayName',
-                'sn|surname', // i.e. 'sn' ou 'surname'
-                'givenName',
-                'supannEtuId|supannEmpId',
+                // cf. secret.local.php
             ],
         ],
         'cas' => [
