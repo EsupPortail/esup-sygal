@@ -10,23 +10,25 @@ use Application\View\Renderer\PhpRenderer;
  * @var Role $role
  * @var Individu $individu
  */
+
+$appName = $this->appInfos()->nom;
 ?>
 
 <p>
     Bonjour,
 </p>
 <p>
-    Ceci est un mail envoyé automatiquement par l'application SyGAL.
+    Ceci est un mail envoyé automatiquement par l'application <?php echo $appName ?>.
 </p>
 
 <?php if ($type === "ajout"): ?>
     <p>
-        Vous venez de recevoir le rôle <?php echo $role->getRoleId(); ?> dans l'application SyGAL.
+        Vous venez de recevoir le rôle <?php echo $role->getRoleId(); ?> dans l'application <?php echo $appName ?>.
     </p>
 <?php endif; ?>
 
 <?php if ($type === "retrait"): ?>
     <p>
-        Vous venez de perdre le rôle <?php echo $role->getRoleId(); ?> dans l'application SyGAL.
+        Vous venez de perdre le rôle <?php echo $role->getRoleId(); ?> dans l'application <?php echo $appName ?>.
     </p>
 <?php endif; ?>

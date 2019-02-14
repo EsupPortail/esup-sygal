@@ -7,6 +7,7 @@ use Application\Service\Etablissement\EtablissementService;
 use Application\Service\File\FileService;
 use Application\Service\Source\SourceService;
 use Application\Service\UniteRecherche\UniteRechercheService;
+use Application\SourceCodeStringHelper;
 use Import\Service\SynchroService;
 use Zend\ServiceManager\ServiceLocatorInterface as ContainerInterface;
 
@@ -44,6 +45,12 @@ class StructureServiceFactory
         $service->setEtablissementService($etablissementService);
         $service->setUniteRechercheService($uniteRechercheService);
         $service->setFileService($fileService);
+
+        /**
+         * @var SourceCodeStringHelper $sourceCodeHelper
+         */
+        $sourceCodeHelper = $container->get(SourceCodeStringHelper::class);
+        $service->setSourceCodeStringHelper($sourceCodeHelper);
 
         return $service;
     }

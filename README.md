@@ -2,7 +2,13 @@
 
 SYstème de Gestion et d'Accompagement doctoraL
 
-## Docker
+
+## Installation
+
+Cf. [`INSTALL.md`](INSTALL.md).
+
+
+## Lancement de l'application *pour le dévelopement*
 
 En dev, on monte les sources (répertoire courant) dans un volume.
 

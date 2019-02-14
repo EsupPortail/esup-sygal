@@ -3,20 +3,20 @@
 use Application\Entity\Db\Etablissement;
 use Application\Provider\Privilege\StructurePrivileges;
 use Application\Provider\Privilege\SubstitutionPrivileges;
-use Application\SourceCodeStringHelper;
 
 /**
- * @see \Application\Controller\EtablissementController::indexAction()
  * @var Etablissement[] $etablissementsSygal
  * @var Etablissement[] $etablissementsExternes
+ *
+ * @see \Application\Controller\EtablissementController::indexAction()
  */
+
+$appName = $this->appInfos()->nom;
 
 $canModifier = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES));
 $canAjouter = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES));
 $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_CONSULTATION_TOUTES_STRUCTURES))
     OR $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_CONSULTATION_SA_STRUCTURE));
-
-$sourceCodeHelper = new SourceCodeStringHelper();
 ?>
 
 
@@ -42,7 +42,7 @@ $sourceCodeHelper = new SourceCodeStringHelper();
 <?php endif ?>
 
 <h2>
-    Établissements participant à SyGAL
+    Établissements participant à <?php echo $appName ?>
     <span class="badge">
         <?php echo count($etablissementsSygal); ?>
     </span>
@@ -81,7 +81,7 @@ $sourceCodeHelper = new SourceCodeStringHelper();
                     <?php endif ?>
                 </td>
                 <td>
-                    <?php echo $sourceCodeHelper->extractCodeEtablissementFrom($etablissement->getSource()->getCode()); ?>
+                    <?php echo $etablissement->getSource(); ?>
                 </td>
                 <td>
                     <?php echo $etablissement->getStructure()->getCode(); ?>
@@ -157,7 +157,7 @@ $sourceCodeHelper = new SourceCodeStringHelper();
                     <?php endif ?>
                 </td>
                 <td>
-                    <?php echo $sourceCodeHelper->extractCodeEtablissementFrom($etablissement->getSource()->getCode()); ?>
+                    <?php echo $etablissement->getSource(); ?>
                 </td>
                 <td>
                     <?php echo $etablissement->getStructure()->getCode(); ?>

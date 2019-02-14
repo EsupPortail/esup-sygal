@@ -10,6 +10,7 @@ use Application\Entity\Db\TypeStructure;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
+use Application\SourceCodeStringHelperAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
@@ -21,6 +22,7 @@ class EtablissementController extends StructureConcreteController
 {
     use EtablissementServiceAwareTrait;
     use RoleServiceAwareTrait;
+    use SourceCodeStringHelperAwareTrait;
 
     protected $codeTypeStructure = TypeStructure::CODE_ETABLISSEMENT;
 

@@ -12,6 +12,7 @@ use Application\Entity\Db\Utilisateur;
 use Application\Service\BaseService;
 use Application\Service\Role\RoleServiceAwareInterface;
 use Application\Service\Role\RoleServiceAwareTrait;
+use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\RuntimeException;
 
@@ -21,6 +22,7 @@ use UnicaenApp\Exception\RuntimeException;
 class UniteRechercheService extends BaseService implements RoleServiceAwareInterface
 {
     use RoleServiceAwareTrait;
+    use SourceCodeStringHelperAwareTrait;
 
     /**
      * @return UniteRechercheRepository
@@ -103,11 +105,13 @@ class UniteRechercheService extends BaseService implements RoleServiceAwareInter
         /** @var TypeStructure $typeStructure */
         $typeStructure = $this->getEntityManager()->getRepository(TypeStructure::class)->findOneBy(['code' => 'etablissement']);
 
+        $sourceCode = $this->sourceCodeStringHelper->addDefaultPrefixTo(uniqid());
+        $structureConcrete->setSourceCode($sourceCode);
+        $structureConcrete->setHistoCreateur($createur);
+
         $structure = $structureConcrete->getStructure();
         $structure->setTypeStructure($typeStructure);
-
-        $structureConcrete->setSourceCode("SyGAL::" . uniqid());
-        $structureConcrete->setHistoCreateur($createur);
+        $structure->setSourceCode($sourceCode);
 
         $this->entityManager->beginTransaction();
 
@@ -119,6 +123,7 @@ class UniteRechercheService extends BaseService implements RoleServiceAwareInter
             $this->entityManager->commit();
         } catch (\Exception $e) {
             $this->rollback();
+            throw new RuntimeException("Erreur lors de l'enregistrement de l'UR '$structure'", null, $e);
         }
 
         return $structureConcrete;

@@ -109,7 +109,6 @@ return [
     ],
     'service_manager' => [
         'invokables' => [
-            RoleService::class => RoleService::class,
         ],
         'factories' => [
         ],

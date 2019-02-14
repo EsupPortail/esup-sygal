@@ -10,14 +10,10 @@ trait SourceCodeStringHelperAwareTrait
     protected $sourceCodeStringHelper;
 
     /**
-     * @return SourceCodeStringHelper
+     * @param SourceCodeStringHelper $sourceCodeStringHelper
      */
-    public function getSourceCodeStringHelper()
+    public function setSourceCodeStringHelper(SourceCodeStringHelper $sourceCodeStringHelper)
     {
-        if (null === $this->sourceCodeStringHelper) {
-            $this->sourceCodeStringHelper = new SourceCodeStringHelper();
-        }
-
-        return $this->sourceCodeStringHelper;
+        $this->sourceCodeStringHelper = $sourceCodeStringHelper;
     }
 }

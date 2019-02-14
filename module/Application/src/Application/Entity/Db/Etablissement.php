@@ -2,7 +2,6 @@
 
 namespace Application\Entity\Db;
 
-use Application\SourceCodeStringHelper;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenImport\Entity\Db\Interfaces\SourceAwareInterface;
@@ -17,8 +16,6 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
     use SourceAwareTrait;
 
     const SOURCE_CODE_ETABLISSEMENT_INCONNU = 'ETAB_INCONNU';
-
-    const CODE_STRUCTURE_COMUE = Structure::CODE_COMUE;
 
     protected $id;
     protected $domaine;
@@ -46,32 +43,10 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
      */
     protected $estAssocie = false;
 
-
     /**
-     * Ajoute le préfixe établissement à la chaîne de caractères spécifiée.
-     *
-     * @param string $string
-     * @return string
+     * @var bool
      */
-    public function prependPrefixTo($string)
-    {
-        $sourceCodeHelper = new SourceCodeStringHelper();
-
-        return $sourceCodeHelper->addPrefixEtablissementTo($string, $this);
-    }
-
-    /**
-     * Supprime le préfixe établissement à la chaîne de caractères spécifiée.
-     *
-     * @param string $string
-     * @return string
-     */
-    public function removePrefixFrom($string)
-    {
-        $sourceCodeHelper = new SourceCodeStringHelper();
-
-        return $sourceCodeHelper->removePrefixFrom($string);
-    }
+    protected $estComue = false;
 
     /**
      * Etablissement constructor.
@@ -220,6 +195,25 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
     public function setEstAssocie($estAssocie)
     {
         $this->estAssocie = $estAssocie;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function estComue()
+    {
+        return $this->estComue;
+    }
+
+    /**
+     * @param bool $estComue
+     * @return Etablissement
+     */
+    public function setEstComue($estComue)
+    {
+        $this->estComue = $estComue;
 
         return $this;
     }

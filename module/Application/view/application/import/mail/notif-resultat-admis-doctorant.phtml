@@ -21,7 +21,7 @@ use Application\View\Renderer\PhpRenderer;
 </p>
 <?php if ($emailDoctorantAbsent): ?>
 <p>
-    <em>Ce mail aurait dû être envoyé à <?php echo $doctorant ?> (<?php echo $doctorant->getSourceCodeSansPrefix() ?>)
+    <em>Ce mail aurait dû être envoyé à <?php echo $doctorant ?> (<?php echo $doctorant->getSourceCode() ?>)
     mais aucune adresse électronique n'a été trouvée pour ce doctorant.</em>
 </p>
 <?php endif ?>

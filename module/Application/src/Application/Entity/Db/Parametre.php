@@ -7,6 +7,7 @@ namespace Application\Entity\Db;
  */
 class Parametre
 {
+    // todo: cette valeur n'existe pas dans la table !
     const APP_UTILISATEUR_ID = 'APP_UTILISATEUR_ID';
 
     /**

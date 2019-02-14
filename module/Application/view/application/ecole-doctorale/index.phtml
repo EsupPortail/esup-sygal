@@ -3,19 +3,17 @@
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Provider\Privilege\StructurePrivileges;
 use Application\Provider\Privilege\SubstitutionPrivileges;
-use Application\SourceCodeStringHelper;
 
 /**
- * @see \Application\Controller\EcoleDoctoraleController::indexAction()
  * @var EcoleDoctorale[] $ecoles
+ *
+ * @see \Application\Controller\EcoleDoctoraleController::indexAction()
  */
 
 $canModifier = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES));
 $canAjouter = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES));
 $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_CONSULTATION_TOUTES_STRUCTURES))
     OR $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_CONSULTATION_SA_STRUCTURE));
-
-$sourceCodeHelper = new SourceCodeStringHelper();
 ?>
 
 
@@ -65,7 +63,7 @@ $sourceCodeHelper = new SourceCodeStringHelper();
                     </a>
                 </td>
                 <td>
-                    <?php echo $sourceCodeHelper->extractCodeEtablissementFrom($ecole->getSource()->getCode()); ?>
+                    <?php echo $ecole->getSource(); ?>
                 </td>
                 <td>
                     <?php echo $ecole->getStructure()->getCode(); ?>

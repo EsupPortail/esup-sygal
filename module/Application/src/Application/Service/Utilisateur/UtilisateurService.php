@@ -2,14 +2,14 @@
 
 namespace Application\Service\Utilisateur;
 
-use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Repository\UtilisateurRepository;
 use Application\Entity\Db\Source;
 use Application\Entity\Db\Utilisateur;
 use Application\Filter\NomCompletFormatter;
 use Application\Service\BaseService;
-use Application\SourceCodeStringHelper;
+use Application\SourceCodeStringHelperAwareTrait;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenLdap\Entity\People;
@@ -17,6 +17,11 @@ use Zend\Crypt\Password\Bcrypt;
 
 class UtilisateurService extends BaseService
 {
+    use SourceCodeStringHelperAwareTrait;
+
+    const SQL_CREATE_APP_USER =
+        "INSERT INTO UTILISATEUR (ID, USERNAME, EMAIL, DISPLAY_NAME, PASSWORD) VALUES (1, 'sygal-app', 'noreply@mail.fr', 'Application SyGAL', 'ldap');";
+
     /**
      * @return UtilisateurRepository
      */
@@ -26,6 +31,30 @@ class UtilisateurService extends BaseService
         $repo = $this->entityManager->getRepository(Utilisateur::class);
 
         return $repo;
+    }
+    /**
+     * @return Utilisateur
+     */
+    public function fetchAppPseudoUtilisateur()
+    {
+        $qb = $this->getRepository()->createQueryBuilder('u')
+            ->where('u.username = :username')
+            ->setParameter('username', $username = Utilisateur::APP_UTILISATEUR_USERNAME);
+
+        try {
+            /** @var Utilisateur $utilisateur */
+            $utilisateur = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Plusieurs pseudo-utilisateur trouvé avec ce username: " . $username);
+        }
+
+        if ($utilisateur === null) {
+            throw new RuntimeException(
+                "Le pseudo-utilisateur '$username' n'existe pas dans la base de données. " .
+                "Vous devez l'ajouter ainsi : " . self::SQL_CREATE_APP_USER);
+        }
+
+        return $utilisateur;
     }
 
     /**
@@ -150,9 +179,8 @@ class UtilisateurService extends BaseService
             throw new RuntimeException("Erreur lors de l'enregistrement du nouvel individu", null, $e);
         }
 
-        // source code définitif : "COMUE::{INDIVIDU.ID}"
-        $sourceCodeHelper = new SourceCodeStringHelper();
-        $sourceCodeIndividu = $sourceCodeHelper->addPrefixTo($individu->getId(), Etablissement::CODE_STRUCTURE_COMUE);
+        // source code définitif, ex : "COMUE::{INDIVIDU.ID}"
+        $sourceCodeIndividu = $this->sourceCodeStringHelper->addDefaultPrefixTo($individu->getId());
         $individu->setSourceCode($sourceCodeIndividu);
 
         try {

@@ -3,6 +3,7 @@
 namespace Application\Service\Individu;
 
 use Application\Service\Utilisateur\UtilisateurService;
+use Application\SourceCodeStringHelper;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 class IndividuServiceFactory
@@ -11,10 +12,16 @@ class IndividuServiceFactory
     {
         /** @var UtilisateurService $utilisateurService */
         $utilisateurService = $sl->get('UtilisateurService');
-        $utilisateur = $utilisateurService->getRepository()->fetchAppPseudoUtilisateur();
+        $utilisateur = $utilisateurService->fetchAppPseudoUtilisateur();
 
         $service = new IndividuService();
         $service->setAppPseudoUtilisateur($utilisateur);
+
+        /**
+         * @var SourceCodeStringHelper $sourceCodeHelper
+         */
+        $sourceCodeHelper = $sl->get(SourceCodeStringHelper::class);
+        $service->setSourceCodeStringHelper($sourceCodeHelper);
 
         return $service;
     }

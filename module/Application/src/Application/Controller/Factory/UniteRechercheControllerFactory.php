@@ -10,6 +10,7 @@ use Application\Service\Individu\IndividuService;
 use Application\Service\Role\RoleService;
 use Application\Service\Structure\StructureService;
 use Application\Service\UniteRecherche\UniteRechercheService;
+use Application\SourceCodeStringHelper;
 use Zend\Mvc\Controller\ControllerManager;
 
 class UniteRechercheControllerFactory
@@ -48,6 +49,12 @@ class UniteRechercheControllerFactory
         $controller->setDomaineScientifiqueService($domaineService);
         $controller->setStructureService($structureService);
         $controller->setStructureForm($form);
+
+        /**
+         * @var SourceCodeStringHelper $sourceCodeHelper
+         */
+        $sourceCodeHelper = $sl->get(SourceCodeStringHelper::class);
+        $controller->setSourceCodeStringHelper($sourceCodeHelper);
 
         return $controller;
     }

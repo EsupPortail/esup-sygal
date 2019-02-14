@@ -7,11 +7,15 @@ use Application\Entity\Db\Repository\EtablissementRepository;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\BaseService;
+use Application\SourceCodeStringHelperAwareTrait;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\RuntimeException;
 
 class EtablissementService extends BaseService
 {
+    use SourceCodeStringHelperAwareTrait;
+
     /**
      * @return EtablissementRepository
      */
@@ -24,6 +28,27 @@ class EtablissementService extends BaseService
     }
 
     /**
+     * Fetch l'éventuel établissement chapeau représentant une communauté d'établissements.
+     *
+     * @return Etablissement|null
+     */
+    public function fetchEtablissementComue()
+    {
+        $qb = $this->getRepository()->createQueryBuilder('e')
+            ->addSelect('s')
+            ->join('e.structure', 's')
+            ->where('e.estComue = 1');
+
+        try {
+            $comue = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Anomalie: plusieurs établissements COMUE trouvés.");
+        }
+
+        return $comue;
+    }
+
+    /**
      * @param Etablissement $structureConcrete
      * @param Utilisateur   $createur
      * @return Etablissement
@@ -33,11 +58,13 @@ class EtablissementService extends BaseService
         /** @var TypeStructure $typeStructure */
         $typeStructure = $this->getEntityManager()->getRepository(TypeStructure::class)->findOneBy(['code' => 'etablissement']);
 
+        $sourceCode = $this->sourceCodeStringHelper->addDefaultPrefixTo(uniqid());
+        $structureConcrete->setSourceCode($sourceCode);
+        $structureConcrete->setHistoCreateur($createur);
+
         $structure = $structureConcrete->getStructure();
         $structure->setTypeStructure($typeStructure);
-
-        $structureConcrete->setSourceCode("SyGAL::" . uniqid());
-        $structureConcrete->setHistoCreateur($createur);
+        $structure->setSourceCode($sourceCode);
 
         $this->entityManager->beginTransaction();
 
@@ -49,6 +76,7 @@ class EtablissementService extends BaseService
             $this->entityManager->commit();
         } catch (\Exception $e) {
             $this->rollback();
+            throw new RuntimeException("Erreur lors de l'enregistrement de l'établissement '$structure'", null, $e);
         }
 
         return $structureConcrete;

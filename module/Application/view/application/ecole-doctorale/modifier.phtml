@@ -26,7 +26,7 @@ $this->headTitle("Modification de l'ED ".$ecole->getStructure()->getCode());
 $editable = $isNew || $estSubstituante;
 $form->get('libelle')->setAttribute('readonly', !$editable);
 $form->get('sigle')->setAttribute('readonly', !$editable);
-$form->get('sourceCode')->setAttribute('readonly', !$editable);
+$form->get('code')->setAttribute('readonly', !$editable);
 ?>
 
 <h1 class="page-header">
@@ -44,7 +44,7 @@ $form->get('sourceCode')->setAttribute('readonly', !$editable);
     <div class="col-md-6">
         <?php echo $fcg($form->get('libelle')) ?>
         <?php echo $fcg($form->get('sigle')) ?>
-        <?php echo $fcg($form->get('sourceCode')) ?>
+        <?php echo $fcg($form->get('code')) ?>
     </div>
 
     <div id="logo-div" class="col-md-6">

@@ -10,13 +10,15 @@ use Application\View\Renderer\PhpRenderer;
  * @var array $manques
  * @var These $these
  */
+
+$appName = $this->appInfos()->nom;
 ?>
 
 <p>
     Bonjour,
 </p>
 <p>
-    Ceci est un mail envoyé automatiquement par l'application SyGAL.
+    Ceci est un mail envoyé automatiquement par l'application <?php echo $appName ?>.
 </p>
 <p>
     Des informations associées à la thèse [<?php echo $these->getId() ?> | <?php echo $these->getTitre() ?>] sont manquantes :

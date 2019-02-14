@@ -59,15 +59,6 @@ class DbService
     private $insertQueriesChunkSize = self::INSERT_QUERIES_CHUNK_SIZE;
 
     /**
-     * DbService constructor.
-     */
-    public function __construct()
-    {
-        $this->setSqlGenerator(new DbServiceSQLGenerator());
-        $this->setJsonHelper(new DbServiceJSONHelper());
-    }
-
-    /**
      * @param Etablissement $etablissement
      * @return self
      */

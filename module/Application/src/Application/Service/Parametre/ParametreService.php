@@ -3,8 +3,8 @@
 namespace Application\Service\Parametre;
 
 use Application\Entity\Db\Parametre;
-use Application\Service\BaseService;
 use Application\Entity\Db\Repository\DefaultEntityRepository;
+use Application\Service\BaseService;
 use RuntimeException;
 
 /**
@@ -17,7 +17,10 @@ class ParametreService extends BaseService
      */
     public function getRepository()
     {
-        return $this->entityManager->getRepository(Parametre::class);
+        /** @var DefaultEntityRepository $repo */
+        $repo = $this->entityManager->getRepository(Parametre::class);
+
+        return $repo;
     }
 
     /**
@@ -38,10 +41,12 @@ class ParametreService extends BaseService
      */
     private function fetch($id)
     {
+        /** @var Parametre $p */
         $p = $this->getRepository()->findOneBy(['id' => $id]);
         if (null === $p) {
-            throw new RuntimeException("Paramètre '$id'' introuvable");
+            throw new RuntimeException("Paramètre '$id' introuvable");
         }
+
         return $p;
     }
 }

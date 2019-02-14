@@ -3,13 +3,14 @@
 namespace Application\Controller;
 
 use Application\Entity\Db\Etablissement;
-use Application\Entity\Db\Source;
 use Application\Service\AnomalieServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Application\Service\Source\SourceServiceAwareTrait;
 use Zend\View\Model\ViewModel;
 
 class TableauDeBordController extends AbstractController
 {
+    use SourceServiceAwareTrait;
     use AnomalieServiceAwareTrait;
     use EtablissementServiceAwareTrait;
 
@@ -27,7 +28,8 @@ class TableauDeBordController extends AbstractController
             $anomaliesTables[$anomalie->getTableName()][] = $anomalie;
         }
 
-        $etablissements = $this->getEtablissementService()->getRepository()->findAllBySource(Source::CODE_SYGAL);
+        $source = $this->sourceService->fetchApplicationSource();
+        $etablissements = $this->getEtablissementService()->getRepository()->findAllBySource($source->getCode());
         $etablissements = array_filter($etablissements, function (Etablissement $etablissement) { return count($etablissement->getStructure()->getStructuresSubstituees())==0; });
         $etablissements = array_filter($etablissements, function (Etablissement $etablissement) { return $etablissement->getSigle() != "NU";});
 

@@ -7,6 +7,7 @@ use Application\Entity\Db\Repository\ImportObservResultRepository;
 use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
 use Application\Service\Variable\VariableService;
+use Application\SourceCodeStringHelper;
 use Zend\Console\Request as ConsoleRequest;
 use Zend\Log\Logger;
 use Zend\Log\Writer\Noop;
@@ -17,8 +18,14 @@ class ImportObservResultServiceFactory
 {
     public function __invoke(ServiceLocatorInterface $sl)
     {
+        /**
+         * @var SourceCodeStringHelper $sourceCodeHelper
+         */
+        $sourceCodeHelper = $sl->get(SourceCodeStringHelper::class);
+
         /** @var ImportObservResultRepository $repo */
         $repo = $sl->get('doctrine.entitymanager.orm_default')->getRepository(ImportObservResult::class);
+        $repo->setSourceCodeStringHelper($sourceCodeHelper);
 
         /** @var TheseService $theseService */
         $theseService = $sl->get('TheseService');

@@ -2,11 +2,8 @@
 
 namespace Application\Controller;
 
-use Application\Command\MergeCommand;
-use Application\Command\TruncateAndMergeCommand;
 use Application\Entity\Db\Attestation;
 use Application\Entity\Db\Diffusion;
-use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\MailConfirmation;
@@ -14,7 +11,6 @@ use Application\Entity\Db\MetadonneeThese;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\RdvBu;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\Structure;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Variable;
@@ -44,6 +40,7 @@ use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\Service\Workflow\WorkflowServiceAwareTrait;
+use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
 use Import\Service\Traits\ImportServiceAwareTrait;
@@ -52,11 +49,9 @@ use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenApp\Service\MessageCollectorAwareTrait;
 use UnicaenApp\Traits\MessageAwareInterface;
-use UnicaenApp\Util;
 use Zend\Form\Element\Hidden;
 use Zend\Form\Element\Radio;
 use Zend\Form\Element\Submit;
-use Zend\Form\Element\Text;
 use Zend\Form\Form;
 use Zend\Http\Response;
 use Zend\InputFilter\InputFilter;
@@ -84,6 +79,7 @@ class TheseController extends AbstractController
     use ImportServiceAwareTrait;
     use UserContextServiceAwareTrait;
     use VariableServiceAwareTrait;
+    use SourceCodeStringHelperAwareTrait;
 
     private $timeoutRetraitement;
 
@@ -218,7 +214,6 @@ class TheseController extends AbstractController
         $unite = $these->getUniteRecherche();
         $rattachements = null;
         if ($unite !== null) $rattachements = $this->getUniteRechercheService()->findEtablissementRattachement($unite);
-
 
         //TODO JP remplacer dans modifierPersopassUrl();
         $urlModification = $this->url()->fromRoute('doctorant/modifier-persopass',['back' => 1, 'doctorant' => $these->getDoctorant()->getId()], [], true);
@@ -678,8 +673,6 @@ class TheseController extends AbstractController
             $form->addElement((new Hidden('validerAuto'))->setValue(1));
         }
 
-        $comue = $this->getEtablissementService()->getRepository()->findOneByCodeStructure(Structure::CODE_COMUE);
-
         $view = new ViewModel([
             'titre'          => $titre,
             'these'          => $these,
@@ -688,7 +681,6 @@ class TheseController extends AbstractController
             'theseListUrl'   => $this->urlFichierThese()->listerFichiers($these, $nature, $version, false, ['inclureValidite' => $inclureValidite]),
             'nature'         => $nature,
             'versionFichier' => $version,
-            'etabComue'      => $comue->getLibelle(),
         ]);
         $view->setTemplate('application/these/depot/these');
 

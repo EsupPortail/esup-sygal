@@ -1,12 +1,14 @@
 <?php
 
-use Zend\View\Renderer\PhpRenderer;
+use Application\View\Renderer\PhpRenderer;
 use Application\Entity\Db\MailConfirmation;
 
 /**
  * @var PhpRenderer      $this
  * @var MailConfirmation $mailConfirmation
  */
+
+$appName = $this->appInfos()->nom;
 ?>
 
 <h1 class="page-header"> Adresse électronique de contact</h1>
@@ -20,7 +22,7 @@ use Application\Entity\Db\MailConfirmation;
     </p>
     <p>
         <a href="<?php echo $this->url('home', [], [], true) ?>">
-            <input type='button' class='btn btn-info' value="Retour à l'acceuil de SyGAL">
+            <input type='button' class='btn btn-info' value="Retour à l'acceuil de <?php echo $appName ?>">
         </a>
     </p>
 <?php else: ?>

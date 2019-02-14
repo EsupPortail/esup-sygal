@@ -18,8 +18,8 @@ use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Structure\StructureServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheService;
+use Application\SourceCodeStringHelperAwareTrait;
 use BjyAuthorize\Exception\UnAuthorizedException;
-use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
@@ -28,6 +28,7 @@ abstract class StructureConcreteController extends AbstractController
 {
     use RoleServiceAwareTrait;
     use StructureServiceAwareTrait;
+    use SourceCodeStringHelperAwareTrait;
 
     /**
      * @var string TypeStructure::CODE_ECOLE_DOCTORALE ou
@@ -224,12 +225,7 @@ abstract class StructureConcreteController extends AbstractController
                 }
 
                 // creation automatique des roles associés à une structure
-                try {
-                    $this->roleService->addRoleByStructure($structureConcrete);
-                } catch (OptimisticLockException $e) {
-                    throw new RuntimeException(
-                        "Erreur lors de la création automatique des rôles associés à la structure '$structureConcrete'", null, $e);
-                }
+                $this->roleService->addRoleByStructure($structureConcrete);
 
                 $this->flashMessenger()->addSuccessMessage("Structure '$structureConcrete' créée avec succès");
 

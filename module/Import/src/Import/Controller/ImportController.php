@@ -4,9 +4,10 @@ namespace Import\Controller;
 
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\These;
+use Application\Exception\StructureNotFoundException;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
-use Application\SourceCodeStringHelper;
+use Application\SourceCodeStringHelperAwareTrait;
 use Assert\Assertion;
 use Doctrine\ORM\EntityManager;
 use Import\Exception\CallException as ImportCallException;
@@ -26,6 +27,7 @@ class ImportController extends AbstractActionController
     use ImportServiceAwareTrait;
     use TheseServiceAwareTrait;
     use EtablissementServiceAwareTrait;
+    use SourceCodeStringHelperAwareTrait;
 
     /**
      * @var array $config [ 'CODE_ETABLISSEMENT' => [...] ]
@@ -59,11 +61,13 @@ class ImportController extends AbstractActionController
     {
         $codeStructure = $this->params()->fromRoute("etablissement"); // ex: 'UCN'
 
-        $etablissement = $this->fetchEtablissementByCodeStructure($codeStructure);
-
         try {
+            $etablissement = $this->fetchEtablissementByCodeStructure($codeStructure);
             $version = $this->importService->getApiVersion($etablissement);
             $error = null;
+        } catch (StructureNotFoundException $e) {
+            $version = "Inconnue";
+            $error = $e->getMessage();
         } catch (ImportCallException $e) {
             $version = "Inconnue";
             $error = $e->getMessage() . " : " . $e->getPrevious()->getMessage();
@@ -76,17 +80,15 @@ class ImportController extends AbstractActionController
     }
 
     /**
-     * @param string $codeStructure Code structure de l'établissement, ex: 'UCN'
+     * @param string $sourceCode SOURCE_CODE de l'établissement, ex: 'UCN'
      * @return Etablissement
+     * @throws StructureNotFoundException
      */
-    private function fetchEtablissementByCodeStructure($codeStructure)
+    private function fetchEtablissementByCodeStructure($sourceCode)
     {
-        $sourceCodeHelper = new SourceCodeStringHelper();
-        $sourceCode = $sourceCodeHelper->addPrefixTo($codeStructure, Etablissement::CODE_STRUCTURE_COMUE);
-
         $etablissement = $this->etablissementService->getRepository()->findOneBySourceCode($sourceCode);
         if ($etablissement === null) {
-            throw new RuntimeException("Aucun établissement trouvé avec le code structure " . $sourceCode);
+            throw new StructureNotFoundException("Aucun établissement trouvé avec le code structure " . $sourceCode);
         }
 
         return $etablissement;
@@ -94,7 +96,7 @@ class ImportController extends AbstractActionController
 
     public function launcherAction()
     {
-        return new ViewModel();
+        return false; // todo: la page doit être rénovée...
     }
 
     /**
@@ -199,8 +201,7 @@ class ImportController extends AbstractActionController
             throw new LogicException("Le source code de la thèse est requis");
         }
 
-        $sourceCodeHelper = new SourceCodeStringHelper();
-        $sourceCodeThese = $sourceCodeHelper->addPrefixTo($sourceCodeThese, $codeEtablissement);
+        $sourceCodeThese = $this->sourceCodeStringHelper->addPrefixTo($sourceCodeThese, $codeEtablissement);
 
         /** @var These $these */
         $these = $this->theseService->getRepository()->findOneBy(['sourceCode' => $sourceCodeThese]);

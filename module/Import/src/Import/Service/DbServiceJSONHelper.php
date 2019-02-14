@@ -3,11 +3,13 @@
 namespace Import\Service;
 
 use Application\Entity\Db\Etablissement;
-use Application\SourceCodeStringHelper;
+use Application\SourceCodeStringHelperAwareTrait;
 use stdClass;
 
 class DbServiceJSONHelper
 {
+    use SourceCodeStringHelperAwareTrait;
+
     /**
      * @var Etablissement
      */
@@ -33,14 +35,16 @@ class DbServiceJSONHelper
     {
         $codeEtablissement = $this->etablissement->getCode();
 
-        $prefix = null;
         $value = null;
 
         switch ($propertyName) {
             case 'etablissementId': // UCN, URN, ULHN ou INSA, sans préfixage
+                $prefixRequired = false;
+                $prefix = null;
                 $value = $codeEtablissement;
                 break;
             case 'sourceCode':
+                $prefixRequired = true;
                 $prefix = $codeEtablissement;
                 $value = $jsonObject->id;
                 break;
@@ -53,22 +57,25 @@ class DbServiceJSONHelper
             case 'ecoleDoctId':
             case 'uniteRechId':
             case 'acteurEtablissementId':
+                $prefixRequired = true;
                 $prefix = $codeEtablissement;
                 $value = isset($jsonObject->{$propertyName}) ? $jsonObject->{$propertyName} : null;
                 break;
             case 'origineFinancementId':
-                $prefix = Etablissement::CODE_STRUCTURE_COMUE; // particularité!
+                $prefixRequired = true;
+                $prefix = null; // particularité! prefix par défaut.
                 $value = isset($jsonObject->{$propertyName}) ? $jsonObject->{$propertyName} : null;
                 break;
             default:
+                $prefixRequired = false;
+                $prefix = null;
                 $value = isset($jsonObject->{$propertyName}) ? $jsonObject->{$propertyName} : null;
                 break;
         }
 
         // préfixage éventuel
-        $sourceCodeHelper = new SourceCodeStringHelper();
-        if ($value !== null && $prefix !== null) {
-            $value = $sourceCodeHelper->addPrefixTo($value, $prefix);
+        if ($value !== null && $prefixRequired) {
+            $value = $this->sourceCodeStringHelper->addPrefixTo($value, $prefix);
         }
 
         return $value;
