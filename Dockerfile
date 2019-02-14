@@ -14,7 +14,8 @@ ENV APACHE_CONF_DIR=/etc/apache2 \
     PHP_CONF_DIR=/etc/php/7.0
 
 ## Installation de packages requis.
-RUN apt-get install -y \
+RUN apt-get update && apt-get install -y \
+        ghostscript-x \
         php7.0-imagick
 
 # Nettoyage

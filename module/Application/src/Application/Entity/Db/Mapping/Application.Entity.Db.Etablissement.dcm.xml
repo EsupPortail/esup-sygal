@@ -12,6 +12,7 @@
         <field name="domaine"   type="string"   length="50"  column="DOMAINE"   nullable="true"/>
         <field name="estMembre"  type="boolean" column="EST_MEMBRE" nullable="false"/>
         <field name="estAssocie" type="boolean" column="EST_ASSOCIE" nullable="false"/>
+        <field name="estComue" type="boolean" column="EST_COMUE"/>
 
         <one-to-many field="theses"         target-entity="Application\Entity\Db\These"     mapped-by="etablissement"/>
         <one-to-many field="doctorants"     target-entity="Application\Entity\Db\Doctorant" mapped-by="etablissement"/>

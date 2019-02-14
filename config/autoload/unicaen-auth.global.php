@@ -27,6 +27,19 @@ return [
             200 => 'UnicaenAuth\Provider\Identity\Db',      // en 2e
             100 => 'Application\Provider\IdentityProvider', // en 3e
         ],
+
+        'shibboleth' => [
+            'required_attributes' => [
+                'eppn',
+                'mail',
+                'eduPersonPrincipalName',
+                'supannCivilite',
+                'displayName',
+                'sn|surname', // i.e. 'sn' ou 'surname'
+                'givenName',
+                'supannEtuId|supannEmpId',
+            ],
+        ],
     ],
 
     'bjyauthorize' => [

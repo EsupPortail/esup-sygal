@@ -10,8 +10,6 @@ class Parametre
     // todo: cette valeur n'existe pas dans la table !
     const APP_UTILISATEUR_ID = 'APP_UTILISATEUR_ID';
 
-    const ID__SOURCE_CODE_ETAB_COMMUNAUTE = 'SOURCE_CODE_ETAB_COMMUNAUTE';
-
     /**
      * @var string
      */
