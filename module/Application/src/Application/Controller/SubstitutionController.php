@@ -6,11 +6,11 @@ use Application\Entity\Db\Structure;
 use Application\Entity\Db\StructureConcreteInterface;
 use Application\Entity\Db\StructureInterface;
 use Application\Entity\Db\TypeStructure;
-use Application\SourceCodeStringHelperAwareTrait;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Structure\StructureServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
+use Application\SourceCodeStringHelperAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Zend\View\Model\ViewModel;
 
@@ -22,8 +22,6 @@ class SubstitutionController extends AbstractController
     use UniteRechercheServiceAwareTrait;
     use StructureServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
-
-    const CODE_SYGAL = 'SyGAL';
 
     /** Affiche l'index générale */
     public function indexAction() {
@@ -42,8 +40,11 @@ class SubstitutionController extends AbstractController
         ]);
     }
 
-    /** Créer une substitution manuelle */
-    public function creerAction() {
+    /**
+     * Créer une substitution manuelle
+     */
+    public function creerAction()
+    {
         $type = $this->params()->fromRoute('type');
         $structures = $this->getStructureService()->getStructuresSubstituablesByType($type);
 
@@ -254,7 +255,7 @@ class SubstitutionController extends AbstractController
 
         if ($cible === null) {
             $cible = $this->getStructureService()->createStructureConcrete($type);
-            $cible->setSourceCode($this->getSourceCodeStringHelper()->addPrefixEtablissementTo($identifiant));
+            $cible->setSourceCode($this->sourceCodeStringHelper->addDefaultPrefixTo($identifiant));
         }
 
         $vm = new ViewModel();

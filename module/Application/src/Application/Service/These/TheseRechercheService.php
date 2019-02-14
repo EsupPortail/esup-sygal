@@ -6,7 +6,6 @@ use Application\Entity\Db\DomaineScientifique;
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\OrigineFinancement;
-use Application\Entity\Db\Source;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TheseAnneeUniv;
 use Application\Entity\Db\TypeStructure;
@@ -25,7 +24,7 @@ use Application\Service\These\Filter\TheseSelectFilter;
 use Application\Service\These\Filter\TheseTextFilter;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
-use Application\SourceCodeStringHelper;
+use Application\SourceCodeStringHelperAwareTrait;
 use Application\View\Helper\Sortable;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\Query\Expr\Join;
@@ -44,6 +43,7 @@ class TheseRechercheService
     use DomaineScientifiqueServiceAwareTrait;
     use FinancementServiceAwareTrait;
     use AuthorizeServiceAwareTrait;
+    use SourceCodeStringHelperAwareTrait;
 
     /**
      * @var bool
@@ -322,6 +322,7 @@ class TheseRechercheService
             ->addSelect('r')->leftJoin('a.role', 'r')
             ->addSelect('f')->leftJoin('t.financements', 'f')
             ->addSelect('fi')->leftJoin('t.fichiers', 'fi')
+//            ->addSelect('ds')->leftJoin('ur.domaines', 'ds')
             ->andWhere('1 = pasHistorise(t)');
 
         foreach ($this->filters as $filter) {
@@ -389,7 +390,7 @@ class TheseRechercheService
                         ->setParameter('individu', $userWrapper->getIndividu())
                         ->setParameter('role', $role);
                 } else {
-                    $individuSourceCode = (new SourceCodeStringHelper())
+                    $individuSourceCode = $this->sourceCodeStringHelper
                         ->addPrefixTo($userWrapper->getSupannId(), $role->getStructure()->getCode());
                     $qb
                         ->join('t.acteurs', 'adt', Join::WITH, 'adt.role = :role')
@@ -513,17 +514,7 @@ class TheseRechercheService
             ];
         }
 
-        /**
-         * @var Etablissement[] $etablissements
-         * $etablissements stocke la liste des établissements qui seront utilisés pour le filtrage
-         * les critères sont les suivants:
-         * - être un établissement crée par sygal (et ne pas liste les établissements de co-tutelles)
-         * - ne pas être des établissements provenant de substitutions
-         * - ne pas être la COMUE ... suite à l'interrogation obtenue en réunion
-         */
-        $etablissements = $this->getEtablissementService()->getRepository()->findAllBySource(Source::CODE_SYGAL);
-        $etablissements = array_filter($etablissements, function (Etablissement $etablissement) { return count($etablissement->getStructure()->getStructuresSubstituees())==0; });
-        $etablissements = array_filter($etablissements, function (Etablissement $etablissement) { return $etablissement->getCode() != "COMUE";});
+        $etablissements = $this->getEtablissementService()->getRepository()->findAllEtablissementsMembres();
 
         $options = [];
         foreach ($etablissements as $etablissement) {

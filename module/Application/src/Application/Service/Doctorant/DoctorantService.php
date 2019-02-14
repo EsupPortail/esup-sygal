@@ -8,12 +8,14 @@ use Application\Entity\Db\Repository\DoctorantRepository;
 use Application\Entity\UserWrapper;
 use Application\Service\BaseService;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
 use UnicaenApp\Exception\RuntimeException;
 
 class DoctorantService extends BaseService
 {
     use EtablissementServiceAwareTrait;
+    use SourceCodeStringHelperAwareTrait;
 
     /**
      * @return DoctorantRepository
@@ -76,7 +78,7 @@ class DoctorantService extends BaseService
             return null;
         }
 
-        $sourceCode = $etablissement->prependPrefixTo($id);
+        $sourceCode = $this->sourceCodeStringHelper->addEtablissementPrefixTo($id, $etablissement);
 
         try {
             $doctorant = $this->getRepository()->findOneBySourceCode($sourceCode);

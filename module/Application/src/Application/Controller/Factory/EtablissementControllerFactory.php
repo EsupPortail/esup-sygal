@@ -8,6 +8,7 @@ use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Individu\IndividuService;
 use Application\Service\Role\RoleService;
 use Application\Service\Structure\StructureService;
+use Application\SourceCodeStringHelper;
 use Zend\Mvc\Controller\ControllerManager;
 
 class EtablissementControllerFactory
@@ -40,6 +41,12 @@ class EtablissementControllerFactory
         $controller->setRoleService($roleService);
         $controller->setStructureService($structureService);
         $controller->setStructureForm($form);
+
+        /**
+         * @var SourceCodeStringHelper $sourceCodeHelper
+         */
+        $sourceCodeHelper = $sl->get(SourceCodeStringHelper::class);
+        $controller->setSourceCodeStringHelper($sourceCodeHelper);
 
         return $controller;
     }

@@ -5,6 +5,7 @@ namespace Import\Service;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\These;
 use Application\SourceCodeStringHelper;
+use Application\SourceCodeStringHelperAwareTrait;
 use Assert\Assertion;
 use Assert\AssertionFailedException;
 use Doctrine\ORM\EntityManager;
@@ -26,6 +27,7 @@ class FetcherService
     use CallServiceAwareTrait;
     use DbServiceAwareTrait;
     use LoggerAwareTrait;
+    use SourceCodeStringHelperAwareTrait;
 
     /**
      * @var array $config [ 'CODE_ETABLISSEMENT' => [...] ]
@@ -201,9 +203,8 @@ class FetcherService
             return $sourceCode;
         }
 
-        $sourceCodeHelper = new SourceCodeStringHelper();
         try {
-            $sourceCode = $sourceCodeHelper->removePrefixFrom($sourceCode);
+            $sourceCode = $this->sourceCodeStringHelper->removePrefixFrom($sourceCode);
         } catch (RuntimeException $e) {
             // le source code n'est pas préfixé, tant mieux.
         }
@@ -246,8 +247,7 @@ class FetcherService
                 case 'these':
                     /** @var These $these */
                     $these = $value;
-                    $sourceCodeHelper = new SourceCodeStringHelper();
-                    $filtersToMerge['these_id'] = $sourceCodeHelper->removePrefixFrom($these->getSourceCode());
+                    $filtersToMerge['these_id'] = $this->sourceCodeStringHelper->removePrefixFrom($these->getSourceCode());
                     // NB: les WS ne traitent que des sources codes.
                     break;
                 default:

@@ -7,6 +7,7 @@ use Application\Form\Factory\UniteRechercheHydratorFactory;
 use Application\Provider\Privilege\StructurePrivileges;
 use Application\Service\DomaineScientifiqueService;
 use Application\Service\UniteRecherche\UniteRechercheService;
+use Application\Service\UniteRecherche\UniteRechercheServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use Application\View\Helper\UniteRechercheHelper;
 use Zend\Mvc\Router\Http\Literal;
@@ -111,7 +112,7 @@ return [
                     'modifier' => [
                         'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/modifier/:structure',
+                            'route'       => '/modifier[/:structure]',
                             'defaults'    => [
                                 'action' => 'modifier',
                             ],
@@ -221,10 +222,10 @@ return [
     ],
     'service_manager' => [
         'invokables' => [
-            'UniteRechercheService' => UniteRechercheService::class,
             DomaineScientifiqueService::class => DomaineScientifiqueService::class,
         ],
         'factories' => [
+            'UniteRechercheService' => UniteRechercheServiceFactory::class,
         ],
         'aliases' => [
             UniteRechercheService::class => 'UniteRechercheService',

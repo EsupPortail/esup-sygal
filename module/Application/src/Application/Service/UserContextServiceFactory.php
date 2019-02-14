@@ -5,6 +5,7 @@ namespace Application\Service;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Etablissement\EtablissementServiceLocateTrait;
 use Application\Service\Individu\IndividuService;
+use Application\SourceCodeStringHelper;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 class UserContextServiceFactory
@@ -25,6 +26,12 @@ class UserContextServiceFactory
         $service = new UserContextService();
         $service->setIndividuService($individuService);
         $service->setEtablissementService($etablissementService);
+
+        /**
+         * @var SourceCodeStringHelper $sourceCodeHelper
+         */
+        $sourceCodeHelper = $sl->get(SourceCodeStringHelper::class);
+        $service->setSourceCodeStringHelper($sourceCodeHelper);
 
         return $service;
     }

@@ -5,13 +5,15 @@ use Application\Entity\Db\Doctorant;
 /**
  * @var Doctorant $doctorant
  */
+
+$appName = $this->appInfos()->nom;
 ?>
 
 <h1 class="page-header"> Confirmation de votre adresse électronique de contact</h1>
 
 <p class="lead">
     Une demande de confirmation de votre adresse électronique de contact a été envoyée à <strong><?php echo $email ?> </strong>.
-    Pour pouvoir poursuivre sur SyGAL, veuillez confirmer cette adresse grâce au lien figurant dans la demande.
+    Pour pouvoir poursuivre sur <?php echo $appName ?>, veuillez confirmer cette adresse grâce au lien figurant dans la demande.
 </p>
 
 <p class="lead">

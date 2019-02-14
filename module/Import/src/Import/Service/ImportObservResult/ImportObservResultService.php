@@ -5,7 +5,6 @@ namespace Import\Service\ImportObservResult;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\ImportObserv;
 use Application\Entity\Db\ImportObservResult;
-use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\Entity\Db\Repository\ImportObservResultRepository;
 use Application\Entity\Db\These;
 use Application\Rule\NotificationDepotVersionCorrigeeAttenduRule;
@@ -58,7 +57,7 @@ class ImportObservResultService extends BaseService
     }
 
     /**
-     * @return DefaultEntityRepository
+     * @return ImportObservResultRepository
      */
     public function getRepository()
     {

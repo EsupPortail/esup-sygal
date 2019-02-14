@@ -6,7 +6,7 @@ use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\These;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
-use Application\SourceCodeStringHelper;
+use Application\SourceCodeStringHelperAwareTrait;
 use Assert\Assertion;
 use Doctrine\ORM\EntityManager;
 use Import\Exception\CallException as ImportCallException;
@@ -26,6 +26,7 @@ class ImportController extends AbstractActionController
     use ImportServiceAwareTrait;
     use TheseServiceAwareTrait;
     use EtablissementServiceAwareTrait;
+    use SourceCodeStringHelperAwareTrait;
 
     /**
      * @var array $config [ 'CODE_ETABLISSEMENT' => [...] ]
@@ -81,8 +82,7 @@ class ImportController extends AbstractActionController
      */
     private function fetchEtablissementByCodeStructure($codeStructure)
     {
-        $sourceCodeHelper = new SourceCodeStringHelper();
-        $sourceCode = $sourceCodeHelper->addPrefixTo($codeStructure, Etablissement::CODE_STRUCTURE_COMUE);
+        $sourceCode = $this->sourceCodeStringHelper->addDefaultPrefixTo($codeStructure);
 
         $etablissement = $this->etablissementService->getRepository()->findOneBySourceCode($sourceCode);
         if ($etablissement === null) {
@@ -199,8 +199,7 @@ class ImportController extends AbstractActionController
             throw new LogicException("Le source code de la thèse est requis");
         }
 
-        $sourceCodeHelper = new SourceCodeStringHelper();
-        $sourceCodeThese = $sourceCodeHelper->addPrefixTo($sourceCodeThese, $codeEtablissement);
+        $sourceCodeThese = $this->sourceCodeStringHelper->addPrefixTo($sourceCodeThese, $codeEtablissement);
 
         /** @var These $these */
         $these = $this->theseService->getRepository()->findOneBy(['sourceCode' => $sourceCodeThese]);

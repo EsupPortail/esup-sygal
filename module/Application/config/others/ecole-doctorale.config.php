@@ -6,6 +6,7 @@ use Application\Form\Factory\EcoleDoctoraleFormFactory;
 use Application\Form\Factory\EcoleDoctoraleHydratorFactory;
 use Application\Provider\Privilege\StructurePrivileges;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
+use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceFactory;
 use Application\View\Helper\EcoleDoctoraleHelper;
 use UnicaenAuth\Guard\PrivilegeController;
 use Zend\Mvc\Router\Http\Literal;
@@ -169,9 +170,9 @@ return [
     ],
     'service_manager' => [
         'invokables' => [
-            'EcoleDoctoraleService' => EcoleDoctoraleService::class,
         ],
         'factories' => [
+            'EcoleDoctoraleService' => EcoleDoctoraleServiceFactory::class,
         ],
         'aliases' => [
             EcoleDoctoraleService::class => 'EcoleDoctoraleService',

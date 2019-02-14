@@ -34,8 +34,13 @@ class EcoleDoctoraleController extends StructureConcreteController
     {
         $vm = parent::indexAction();
 
+        $codeStructureExtractor = function($code) {
+            return $this->sourceCodeStringHelper->extractPrefixFrom($code);
+        };
+
         return new ViewModel([
             'ecoles' => $vm->getVariable('structures'),
+            'codeStructureExtractor' => $codeStructureExtractor,
         ]);
     }
 

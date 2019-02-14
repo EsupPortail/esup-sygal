@@ -2,7 +2,6 @@
 
 namespace Application\Entity\Db;
 
-use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\Common\Collections\Collection;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
@@ -18,9 +17,6 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
 {
     use SourceAwareTrait;
     use HistoriqueAwareTrait;
-    use SourceCodeStringHelperAwareTrait;
-
-    const CODE_COMUE = 'COMUE';
 
     /**
      * @var string $id
@@ -180,13 +176,17 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
      */
     public function getCode()
     {
-        if ($this->code !== null) return $this->code;
-        if ($this->sourceCode !== null) {
-            $code = $this->getSourceCodeStringHelper()->removePrefixFrom($this->sourceCode);
-            return $code;
-        }
+//        if ($this->code !== null) return $this->code;
+//        if ($this->sourceCode !== null) {
+//            $code = $this->getSourceCodeStringHelper()->removePrefixFrom($this->sourceCode);
+//            return $code;
+//        }
+        // (!) Les lignes précédentes ont été mises en commentaire car l'entité Structure *possède* un attribut 'code'
+        //     donc faire ici autre chose que de retourner l'attribut, c'est du sabotage, voire du terrorisme (spécial dédicace) !!
+        //     Preuve que ce n'est pas une bonne idée : impossible de dire dans quels cas c'était nécessaire de faire
+        //     ce jonglage avec 'code' et 'sourceCode'.
 
-        return null;
+        return $this->code;
     }
 
     /**

@@ -12,6 +12,7 @@ use Application\Service\Structure\StructureService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\UserContextService;
 use Application\Service\Utilisateur\UtilisateurService;
+use Application\SourceCodeStringHelper;
 use Doctrine\ORM\EntityManager;
 use UnicaenAuth\Service\UserContext;
 use Zend\Mvc\Controller\ControllerManager;
@@ -56,6 +57,12 @@ class UtilisateurControllerFactory
         $controller->setNotifierService($notifierService);
         $controller->setEntityManager($entityManager);
         $controller->setUserContextService($userContextService);
+
+        /**
+         * @var SourceCodeStringHelper $sourceCodeHelper
+         */
+        $sourceCodeHelper = $sl->get(SourceCodeStringHelper::class);
+        $controller->setSourceCodeStringHelper($sourceCodeHelper);
 
         return $controller;
     }

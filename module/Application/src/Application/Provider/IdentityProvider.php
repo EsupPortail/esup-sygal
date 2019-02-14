@@ -14,7 +14,7 @@ use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
-use Application\SourceCodeStringHelper;
+use Application\SourceCodeStringHelperAwareTrait;
 use BjyAuthorize\Provider\Identity\ProviderInterface;
 use UnicaenAuth\Provider\Identity\ChainableProvider;
 use UnicaenAuth\Provider\Identity\ChainEvent;
@@ -37,6 +37,7 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
     use RoleServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
     use EtablissementServiceAwareTrait;
+    use SourceCodeStringHelperAwareTrait;
 
     private $roles;
 
@@ -121,8 +122,7 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
             $acteurs = $this->acteurService->getRepository()->findBySourceCodeIndividu($sourceCode);
         } else {
             $id = $this->userWrapper->getSupannId();
-            $sourceCodeHelper = new SourceCodeStringHelper();
-            $pattern = $sourceCodeHelper->generateSearchPatternForAnyEtablissement($id);
+            $pattern = $this->sourceCodeStringHelper->generateSearchPatternForAnyPrefix($id);
             $acteurs = $this->acteurService->getRepository()->findBySourceCodeIndividuPattern($pattern);
         }
 
@@ -150,8 +150,7 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
             $individuRoles = $this->roleService->findIndividuRolesByIndividu($individu);
         } else {
             $id = $this->userWrapper->getSupannId();
-            $sourceCodeHelper = new SourceCodeStringHelper();
-            $pattern = $sourceCodeHelper->generateSearchPatternForAnyEtablissement($id);
+            $pattern = $this->sourceCodeStringHelper->generateSearchPatternForAnyPrefix($id);
             $individuRoles = $this->roleService->findIndividuRolesByIndividuSourceCodePattern($pattern);
         }
 

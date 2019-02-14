@@ -4,6 +4,7 @@ namespace Import\Controller\Factory;
 
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\These\TheseService;
+use Application\SourceCodeStringHelper;
 use Assert\Assertion;
 use Assert\AssertionFailedException;
 use Doctrine\ORM\EntityManager;
@@ -48,6 +49,12 @@ class ImportControllerFactory
         $controller->setTheseService($theseService);
         $controller->setEtablissementService($etablissementService);
         $controller->setConfig($config);
+
+        /**
+         * @var SourceCodeStringHelper $sourceCodeHelper
+         */
+        $sourceCodeHelper = $parentLocator->get(SourceCodeStringHelper::class);
+        $controller->setSourceCodeStringHelper($sourceCodeHelper);
 
         return $controller;
     }
