@@ -96,7 +96,7 @@ class ImportController extends AbstractActionController
 
     public function launcherAction()
     {
-        return new ViewModel();
+        return false; // todo: la page doit être rénovée...
     }
 
     /**
