@@ -179,7 +179,7 @@ contenant les données déjà importées.
 
     php public/index.php synchronize-all
 
-Pour plus de détails, vous pouvez vous reporter à la documentation sur les [lignes de commandes](../cli.md).
+Pour plus de détails, vous pouvez vous reporter à la documentation sur les [lignes de commandes](doc/cli.md).
 
 Une fois la synchro effectuée, vous devriez voir des thèses apparaître en cliquant sur le menu "Thèses" de 
 l'application.
