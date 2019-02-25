@@ -112,7 +112,7 @@ return [
                     'modifier' => [
                         'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/modifier/:structure',
+                            'route'       => '/modifier[/:structure]',
                             'defaults'    => [
                                 'action' => 'modifier',
                             ],

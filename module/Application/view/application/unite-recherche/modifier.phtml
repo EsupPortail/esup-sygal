@@ -115,7 +115,10 @@ $form->get('code')->setAttribute('readonly', !$editable);
 
 <h2> Établissements de rattachement </h2>
 
-<div class="row">
+<?php if(!$structure): ?>
+    <p> Les établissements de rattachement ne peuvent être ajoutés que lors que l'établissement est créé.</p>
+<?php else : ?>
+    <div class="row">
 
     <div class="col-md-6">
         <table class="table table-extra-condensed">
@@ -183,7 +186,7 @@ $form->get('code')->setAttribute('readonly', !$editable);
         </a>
     </div>
 </div>
-
+<?php endif; ?>
 
 <hr>
 
@@ -192,6 +195,9 @@ $form->get('code')->setAttribute('readonly', !$editable);
 
 <h2> Domaines scientifiques</h2>
 
+<?php if(!$structure): ?>
+    <p> Les domaines scientifiques ne peuvent être ajoutés que lors que l'établissement est créé.</p>
+<?php else : ?>
 <div class="row">
     <div class="col-md-6">
         <table class="table table-extra-condensed">
@@ -220,6 +226,7 @@ $form->get('code')->setAttribute('readonly', !$editable);
             </tbody>
         </table>
     </div>
+
 
     <div class="col-md-6">
         <?php
@@ -259,6 +266,7 @@ $form->get('code')->setAttribute('readonly', !$editable);
             Ajouter un domaine scientifique
         </a>
     </div>
+    <?php endif; ?>
 </div>
 
 

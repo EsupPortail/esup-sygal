@@ -66,6 +66,14 @@ class ExportController extends AbstractController
                 foreach ($financements as $financement) $origines[] = $financement->getOrigineFinancement()->getLibelleLong();
                 return implode(",", $origines);
             },
+            //Domaine
+            'Domaines scientifiques'                            => function (These $these) {
+                $domaines = ($these->getUniteRecherche())?($these->getUniteRecherche())->getDomaines():[];
+                $liste = [];
+                /** @var Financement $financement */
+                foreach ($domaines as $domaine) $liste[] = $domaine->getLibelle();
+                return implode(",", $liste);
+            },
             //Dates
             'Date de première inscription'          => function (These $these) { return $these->getDatePremiereInscription(); },
             'Date de prévisionnel de soutenance'    => function (These $these) { return $these->getDatePrevisionSoutenance(); },
