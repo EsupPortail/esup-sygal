@@ -1,0 +1,155 @@
+<?php
+
+/**
+ * @var Proposition $proposition
+ * @var These $these
+ * @var Acteur[] $directeurs
+ * @var Membre[] $rapporteurs
+ * @var boolean $jury
+ */
+
+use Application\Entity\Db\Acteur;
+use Application\Entity\Db\Role;
+use Application\Entity\Db\These;
+use Application\Entity\Db\Validation;
+use Soutenance\Entity\Membre;
+use Soutenance\Entity\Proposition;
+
+$this->headTitle('Avancement de la soutenance');
+?>
+
+<h1 class="page-header">
+    Avancement de la soutenance
+</h1>
+
+<div class="main">
+    <a href="<?php echo $this->url('soutenance', [], [], true); ?>"
+       class="btn btn-primary action"
+    >
+        <span class="glyphicon glyphicon-menu-up"></span>
+        Accueil du module de soutenance
+    </a>
+    <a href="<?php echo $this->url('soutenance/proposition', ['these' => $these->getId()], [], true); ?>"
+       class="btn btn-primary action"
+    >
+        <span class="glyphicon glyphicon-pencil"></span>
+        Page de la proposition
+    </a>
+
+    <br/>
+    <br/>
+
+    <?php if ($proposition !== null) : ?>
+
+        <dl class="dl-horizontal">
+            <dt> Lieu et date </dt>
+            <dd>
+                <?php echo validite($proposition->getDate() !== null AND $proposition->getLieu() !== null); ?>
+            </dd>
+            <dt> Jury de thèse </dt>
+            <dd>
+                <?php echo validite($jury); ?>
+            </dd>
+        </dl>
+
+        <h3> Validations des acteurs directs </h3>
+
+        <?php
+            if ($these) $doctorant = $these->getDoctorant();
+        ?>
+
+        <?php echo getBadge(!empty($validations[Role::CODE_DOCTORANT])); ?>
+        <?php echo $doctorant->getIndividu(); ?> <br/>
+
+        <?php $validationsEncadrement = array_merge($validations[Role::CODE_DIRECTEUR_THESE], $validations[Role::CODE_CODIRECTEUR_THESE]); ?>
+        <?php foreach($directeurs as $directeur) : ?>
+            <?php $validation = array_filter($validationsEncadrement, function (Validation $v) use ($directeur) { return $v->getIndividu() === $directeur->getIndividu(); }); ?>
+            <?php echo getBadge(!empty($validation)); ?>
+            <?php echo $directeur->getIndividu(); ?> (<?php echo $directeur->getRole()->getLibelle(); ?>) <br/>
+
+        <?php endforeach; ?>
+
+        <h3> Validations des structures associées </h3>
+
+        <?php
+            if ($these) $unite = $these->getUniteRecherche()->getStructure();
+            if ($these) $ecole = $these->getEcoleDoctorale()->getStructure();
+            if ($these) $etab  = $these->getEtablissement()->getStructure();
+        ?>
+
+        <?php echo getBadge(!empty($validations[Role::CODE_UR])); ?>
+        <?php echo $unite->getLibelle(); ?> (<?php echo $unite->getSigle(); ?> ) <br/>
+
+        <?php echo getBadge(!empty($validations[Role::CODE_ED])); ?>
+        <?php echo $ecole->getLibelle(); ?> (<?php echo $ecole->getSigle(); ?> ) <br/>
+
+        <?php echo getBadge(!empty($validations[Role::CODE_BDD])); ?>
+        Maison des doctorats (<?php echo $etab->getLibelle(); ?> ) <br/>
+
+        <h3> Validation de la soutenance par les rapporteurs </h3>
+
+        <?php foreach ($rapporteurs as $rapporteur) : ?>
+
+        <div class="col-md-4">
+            <strong><?php echo $rapporteur->getDenomination(); ?></strong><br/>
+            <?php echo getBadge($rapporteur->getIndividu() !== null); ?>
+            Association avec SyGAL <br/>
+
+            <?php
+                $validation = [];
+                if ($rapporteur->getIndividu()) $validation = array_filter($validations['Impartialite'], function (Validation $v) use ($rapporteur) { return $v->getIndividu() === $rapporteur->getIndividu(); });
+                echo getBadge(!empty($validation));
+            ?>
+            Engagment d'impartialité <br/>
+
+            <?php
+            $validation = [];
+            if ($rapporteur->getIndividu()) $validation = array_filter($validations['Avis'], function (Validation $v) use ($rapporteur) { return $v->getIndividu() === $rapporteur->getIndividu(); });
+            echo getBadge(!empty($validation));
+            ?>
+            Avis de soutenance <br/>
+        </div>
+
+        <?php endforeach; ?>
+    <?php else: ?>
+        <div class="alert alert-warning">
+            Aucune proposition de soutenance de trouvée.
+        </div>
+    <?php endif; ?>
+</div>
+
+<?php
+function validite($value) {
+    if ($value === true) {
+        return '<span class="badge success">Valide</span>';
+    }
+    if ($value === false) {
+        return '<span class="badge danger">Invalide</span>';
+    }
+}
+
+function getBadge($validation) {
+    if ($validation) return '<span class="badge success">Valide</span>';
+    return '<span class="badge default">Aucune</span>';
+}
+?>
+
+<style>
+    .action {
+        width: 20em;
+    }
+
+    .success {
+        width: 10em;
+        background-color: darkgreen;
+    }
+
+    .danger {
+        width: 10em;
+        background-color: darkred;
+    }
+
+    .default {
+        width: 10em;
+    }
+</style>

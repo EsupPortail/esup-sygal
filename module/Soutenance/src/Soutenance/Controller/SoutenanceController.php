@@ -58,64 +58,59 @@ class SoutenanceController extends AbstractActionController {
         $these       = null;
         $proposition = null;
         $directeurs  = null;
-        $rapporteurs = null;
-        $validations = null;
-        $avis        = null;
 
         $theseId = $this->params()->fromRoute('these');
         if ($theseId) {
             /** @var These $these */
             $these = $this->getTheseService()->getRepository()->find($theseId);
             $proposition = $this->getPropositionService()->findByThese($these);
-
-            /** @var Acteur[] $directeurs */
-            $directeurs = $these->getEncadrements(false);
-
-            if ($proposition) {
-                $rapporteurs = $proposition->getRapporteurs();
-                $validations = $this->getPropositionService()->getValidationSoutenance($these);
-            }
-
-            $avis = [];
-            if ($proposition !== null) {
-                foreach ($rapporteurs as $rapporteur) {
-                    $validationR = $this->getValidationService()->getRepository()->findValidationByCodeAndIndividu(TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $rapporteur->getIndividu());
-                    if ($validationR) $validations[$rapporteur->getIndividu()->getId()] = $validationR;
-
-                    $acteur = $this->getActeurService()->getRepository()->findActeurByIndividu($rapporteur->getIndividu());
-                    $avisRapporteur = $this->getAvisService()->getAvisByRapporteur($acteur, $these);
-                    if ($avisRapporteur) $avis[$rapporteur->getIndividu()->getId()] = $avisRapporteur->getAvis();
-                }
-            }
         }
-
 
         /** @var These[] $theses */
         $theses = [];
         $individu = $this->userContextService->getIdentityIndividu();
         $role = $this->userContextService->getSelectedIdentityRole();
-        if ($individu !== null) {
-            $theses = $this->getTheseService()->getRepository()->fetchThesesByEncadrant($individu);
-        }
-        $doctorant = $this->userContextService->getIdentityDoctorant();
-        if ($doctorant !== null) {
-            $theses = $this->getTheseService()->getRepository()->fetchThesesByDoctorant($doctorant);
-        }
 
-        if ($theses === []) {
-            $theses[] = $this->getTheseService()->getRepository()->find(41321);
+        switch ($role->getCode()) {
+            case Role::CODE_DOCTORANT :
+                $theses = $this->getTheseService()->getRepository()->fetchThesesByDoctorant($these->getDoctorant());
+                break;
+            case Role::CODE_DIRECTEUR_THESE :
+            case Role::CODE_CODIRECTEUR_THESE :
+                $theses = $this->getTheseService()->getRepository()->fetchThesesByEncadrant($individu);
+                break;
+            default :
+                $theses[] = $this->getTheseService()->getRepository()->find(41321);
+                break;
         }
 
         return new ViewModel([
             'these' => $these,
             'proposition' => $proposition,
+            'theses' => $theses,
+        ]);
+    }
+
+    public function avancementAction()
+    {
+        /** @var These $these */
+        $theseId = $this->params()->fromRoute('these');
+        $these = $this->getTheseService()->getRepository()->find($theseId);
+        $proposition = $this->getPropositionService()->findByThese($these);
+
+        /** @var Acteur[] $directeurs */
+        $directeurs = $these->getEncadrements(false);
+
+        /** @var Membre[] $rapporteurs */
+        $rapporteurs = ($proposition)?$proposition->getRapporteurs():[];
+
+        return new ViewModel([
+            'these' => $these,
+            'proposition' => $proposition,
+            'jury' => $this->getPropositionService()->juryOk($proposition),
+            'validations' => ($proposition)?$this->getPropositionService()->getValidationSoutenance($these):[],
             'directeurs' => $directeurs,
             'rapporteurs' => $rapporteurs,
-            'validations' => $validations,
-            'avis'  => $avis,
-
-            'theses' => $theses,
-            'role' => $role,
         ]);
     }
 
