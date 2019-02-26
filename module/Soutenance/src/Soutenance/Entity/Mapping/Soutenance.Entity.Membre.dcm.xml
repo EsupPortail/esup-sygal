@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="Soutenance\Entity\Membre" table="SOUTENANCE_MEMBRE">
+        <id name="id" type="integer" column="ID">
+            <generator strategy="SEQUENCE"/>
+        </id>
+
+        <many-to-one field="proposition" target-entity="Soutenance\Entity\Proposition">
+            <join-columns>
+                <join-column name="PROPOSITION_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
+        <field name="genre"             type="string"       length="1"          column="GENRE"          nullable="false"/>
+        <field name="denomination"      type="string"       length="256"        column="DENOMINATION"   nullable="false"/>
+        <field name="email"             type="string"       length="256"        column="EMAIL"          nullable="false"/>
+
+        <many-to-one field="qualite" target-entity="Soutenance\Entity\Qualite">
+            <join-columns>
+                <join-column name="QUALITE" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
+        <field name="etablissement"     type="string"       length="128"        column="ETABLISSEMENT"  nullable="false"/>
+        <field name="exterieur"         type="string"       length="3"          column="EXTERIEUR"      nullable="false"/>
+        <field name="role"              type="string"       length="64"         column="ROLE_ID"        nullable="false"/>
+        <field name="visio"             type="boolean"                          column="VISIO"          nullable="false"/>
+
+        <many-to-one field="individu" target-entity="Application\Entity\Db\Individu">
+            <join-columns>
+                <join-column name="INDIVIDU_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
+
+    </entity>
+</doctrine-mapping>

@@ -138,5 +138,17 @@ class TheseRepository extends DefaultEntityRepository
         return $results;
     }
 
+    public function fetchThesesByEncadrant($individu)
+    {
+        //TODO URGENT
+        return [];
+    }
+
+    public function fetchThesesByDoctorant($doctorant)
+    {
+        //TODO URGENT
+        return [];
+    }
+
 
 }

@@ -1,0 +1,32 @@
+<?php
+
+use Soutenance\Form\SoutenanceMembre\SoutenanceMembreForm;
+
+/**
+ * @var SoutenanceMembreForm $form
+ */
+?>
+
+
+<?php
+echo $this->form()->openTag($form);
+echo $this->formControlGroup($form->get('sexe'));
+echo $this->formControlGroup($form->get('denomination'));
+echo $this->formControlGroup($form->get('email'));
+echo $this->formControlGroup($form->get('qualite'));
+echo $this->formControlGroup($form->get('etablissement'));
+echo $this->formControlGroup($form->get('exterieur'));
+?>
+<strong>Rôle dans le jury :</strong>
+<?php
+echo $this->formControlGroup($form->get('rapporteur'));
+echo $this->formControlGroup($form->get('membre'));
+echo $this->formControlGroup($form->get('visio'));
+echo $this->formControlGroup($form->get('submit'));
+echo $this->form()->closeTag();
+?>
+
+
+<?php
+//echo $this->form($form);
+?>

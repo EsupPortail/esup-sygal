@@ -1,0 +1,89 @@
+<?php
+/**
+ * @var \Soutenance\Entity\Proposition $proposition
+ * @var \Application\Entity\Db\These $these
+ * @var \Application\Entity\Db\Validation[] $validations
+ * @var \Application\Entity\Db\Doctorant $doctorant
+ * @var \Application\Entity\Db\Acteur[] $directeurs
+ * @var \Application\Entity\Db\Individu $currentIndividu
+ * @var int $individuId
+ * @var boolean $isOk
+ */
+
+use Soutenance\Provider\Privilege\SoutenancePrivileges;
+
+$alreadyValidated = ($validations[$currentIndividu->getId()] !== null);
+$canValider = $isOk && $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_ACTEUR);
+?>
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h4>
+            Validation de la proposition de soutenance
+        </h4>
+    </div>
+    <div class="panel-body">
+
+        <div class="row">
+            <div class="col-md-6" >
+                <h4>
+                    Liste des validations
+                </h4>
+
+                <ul>
+                    <li>
+                        <?php echo $doctorant->getIndividu()->getNomComplet(false, false, false, true); ?> (Doctorant)
+                        <br/>
+                        <?php if ($validations[$doctorant->getIndividu()->getId()]) : ?>
+                            <span class="badge badge-success"> Validée</span>
+                            Le <?php echo $validations[$doctorant->getIndividu()->getId()]->getHistoModification()->format('d/m/Y à H:i'); ?>
+                        <?php else: ?>
+                            <span class="badge badge-default"> Aucune validation</span>
+                        <?php endif; ?>
+
+                    </li>
+                    <?php foreach ($directeurs as $directeur): ?>
+                        <li>
+                            <?php echo $directeur->getIndividu()->getNomComplet(false,false,false, true); ?>
+                            (<?php echo $directeur->getRole()->getLibelle();?>)
+                            <br/>
+                            <?php if ($validations[$directeur->getIndividu()->getId()]) : ?>
+                                <span class="badge badge-success"> Validée</span>
+                                Le <?php echo $validations[$directeur->getIndividu()->getId()]->getHistoModification()->format('d/m/Y à H:i'); ?>
+                            <?php else: ?>
+                                <span class="badge badge-default"> Aucune validation</span>
+                            <?php endif; ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+
+            <div class="col-md-6 pull-right" >
+                <?php if (!$alreadyValidated) : ?>
+                    <?php if ($canValider) : ?>
+                        <a
+                            href="<?php echo $this->url('soutenance/proposition/valider', ['these' => $these->getId()], [], true); ?>"
+                            class="btn btn-success action ">
+                            <span class="glyphicon glyphicon-ok"></span> Valider la proposition de soutenance
+                        </a>
+                    <?php else : ?>
+                        <?php if (!$isOk): ?>
+                            <div class="alert alert-sm alert-warning">
+                                <span class="glyphicon glyphicon-warning-sign"></span>
+                                Pour pouvoir être valider la proposition de soutenance doit être recevable : date et lieu, composition du jury, ...
+                            </div>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                <?php else: ?>
+                    <!--                <div class="panel panel-success">-->
+                    <!--                    <div class="panel-heading">-->
+                    <?php if($validations[$individuId]): ?>
+                        <?php echo $this->validation($validations[$individuId]); ?>
+                    <?php endif; ?>
+                    <!--                    </div>-->
+                    <!--                </div>-->
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>
