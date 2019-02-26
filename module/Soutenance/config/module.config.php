@@ -135,6 +135,7 @@ return array(
                     'controller' => SoutenanceController::class,
                         'action'     => [
                             'proposition',
+                            'avancement',
                         ],
                     'privileges' => SoutenancePrivileges::SOUTENANCE_PROPOSITION_VISUALISER,
                 ],
@@ -417,39 +418,40 @@ return array(
 
     'router' => [
         'routes' => [
-            'add-acteurs' => [
-                'type' => Literal::class,
-                'may_terminate' => true,
-                'options' => [
-                    'route'    => '/add-acteurs',
-                    'defaults' => [
-                        'controller' => SoutenanceController::class,
-                        'action'     => 'add-acteurs',
-                    ],
-                ],
-            ],
-            'remove-acteurs' => [
-                'type' => Literal::class,
-                'may_terminate' => true,
-                'options' => [
-                    'route'    => '/remove-acteurs',
-                    'defaults' => [
-                        'controller' => SoutenanceController::class,
-                        'action'     => 'remove-acteurs',
-                    ],
-                ],
-            ],
-            'restore-validation' => [
-                'type' => Literal::class,
-                'may_terminate' => true,
-                'options' => [
-                    'route'    => '/restore-validation',
-                    'defaults' => [
-                        'controller' => SoutenanceController::class,
-                        'action'     => 'restore-validation',
-                    ],
-                ],
-            ],
+//            'add-acteurs' => [
+//                'type' => Literal::class,
+//                'may_terminate' => true,
+//                'options' => [
+//                    'route'    => '/add-acteurs',
+//                    'defaults' => [
+//                        'controller' => SoutenanceController::class,
+//                        'action'     => 'add-acteurs',
+//                    ],
+//                ],
+//            ],
+//            'remove-acteurs' => [
+//                'type' => Literal::class,
+//                'may_terminate' => true,
+//                'options' => [
+//                    'route'    => '/remove-acteurs',
+//                    'defaults' => [
+//                        'controller' => SoutenanceController::class,
+//                        'action'     => 'remove-acteurs',
+//                    ],
+//                ],
+//            ],
+//            'restore-validation' => [
+//                'type' => Literal::class,
+//                'may_terminate' => true,
+//                'options' => [
+//                    'route'    => '/restore-validation',
+//                    'defaults' => [
+//                        'controller' => SoutenanceController::class,
+//                        'action'     => 'restore-validation',
+//                    ],
+//                ],
+//            ],
+
             'soutenance' => [
                 'type' => Segment::class,
                 'may_terminate' => true,
@@ -574,6 +576,18 @@ return array(
                                 ],
                             ],
                         ],
+                    ],
+                    'avancement' => [
+                        'type' => Segment::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/avancement',
+                            'defaults' => [
+                                'controller' => SoutenanceController::class,
+                                'action'     => 'avancement',
+                            ],
+                        ],
+                        'child_routes' => [],
                     ],
                     'proposition' => [
                         'type' => Segment::class,

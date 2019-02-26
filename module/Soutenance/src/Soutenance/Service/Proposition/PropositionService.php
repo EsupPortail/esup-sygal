@@ -159,6 +159,8 @@ class PropositionService {
      */
     public function computeIndicateur($proposition)
     {
+        if ($proposition === null) return [];
+
         $nbMembre       = 0;
         $nbFemme        = 0;
         $nbHomme        = 0;
@@ -308,6 +310,11 @@ class PropositionService {
         $validations[Role::CODE_BDD] = [];
         $validation = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
         if (!empty($validation)) $validations[Role::CODE_BDD][] = current($validation);
+
+        /** Recuperation des engagement d'impartialite */
+        $validations['Impartilite'] = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $these);
+        $validations['Avis']        = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_AVIS_SOUTENANCE, $these);
+
 
         return $validations;
     }
