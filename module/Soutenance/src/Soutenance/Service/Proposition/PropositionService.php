@@ -304,6 +304,11 @@ class PropositionService {
         $validation = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_ED, $these);
         if (!empty($validation)) $validations[Role::CODE_ED][] = current($validation);
 
+        /** Recuperation de la validation du bureau des doctorats */
+        $validations[Role::CODE_BDD] = [];
+        $validation = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
+        if (!empty($validation)) $validations[Role::CODE_BDD][] = current($validation);
+
         return $validations;
     }
 

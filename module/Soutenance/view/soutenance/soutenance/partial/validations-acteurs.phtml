@@ -2,7 +2,7 @@
 /**
  * @var \Soutenance\Entity\Proposition $proposition
  * @var \Application\Entity\Db\These $these
- * @var \Application\Entity\Db\Validation[] $validations
+ * @var Validation[] $validations
  * @var \Application\Entity\Db\Doctorant $doctorant
  * @var \Application\Entity\Db\Acteur[] $directeurs
  * @var \Application\Entity\Db\Individu $currentIndividu
@@ -10,10 +10,13 @@
  * @var boolean $isOk
  */
 
+use Application\Entity\Db\Role;
+use Application\Entity\Db\Validation;
 use Soutenance\Provider\Privilege\SoutenancePrivileges;
 
 $alreadyValidated = ($validations[$currentIndividu->getId()] !== null);
 $canValider = $isOk && $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_ACTEUR);
+
 ?>
 
 <div class="panel panel-info">
@@ -32,24 +35,28 @@ $canValider = $isOk && $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE
 
                 <ul>
                     <li>
-                        <?php echo $doctorant->getIndividu()->getNomComplet(false, false, false, true); ?> (Doctorant)
+                        <?php echo $doctorant->getIndividu(); ?>
                         <br/>
-                        <?php if ($validations[$doctorant->getIndividu()->getId()]) : ?>
+                        <?php if ($validations[Role::CODE_DOCTORANT]) : ?>
+                            <?php $validation = current($validations[Role::CODE_DOCTORANT]); ?>
                             <span class="badge badge-success"> Validée</span>
-                            Le <?php echo $validations[$doctorant->getIndividu()->getId()]->getHistoModification()->format('d/m/Y à H:i'); ?>
+                            Le <?php echo $validation->getHistoModification()->format('d/m/Y à H:i'); ?>
                         <?php else: ?>
                             <span class="badge badge-default"> Aucune validation</span>
                         <?php endif; ?>
 
                     </li>
+
+                    <?php $validationsDirecteurs = array_merge($validations[Role::CODE_DIRECTEUR_THESE], $validations[Role::CODE_CODIRECTEUR_THESE]); ?>
                     <?php foreach ($directeurs as $directeur): ?>
+                        <?php $validation = current(array_filter($validationsDirecteurs, function (Validation $v) use ($directeur) { return $v->getIndividu()->getId() === $directeur->getIndividu()->getId();})); ?>
                         <li>
-                            <?php echo $directeur->getIndividu()->getNomComplet(false,false,false, true); ?>
+                            <?php echo $directeur->getIndividu(); ?>
                             (<?php echo $directeur->getRole()->getLibelle();?>)
                             <br/>
-                            <?php if ($validations[$directeur->getIndividu()->getId()]) : ?>
+                            <?php if ($validation) : ?>
                                 <span class="badge badge-success"> Validée</span>
-                                Le <?php echo $validations[$directeur->getIndividu()->getId()]->getHistoModification()->format('d/m/Y à H:i'); ?>
+                                Le <?php echo $validation->getHistoModification()->format('d/m/Y à H:i'); ?>
                             <?php else: ?>
                                 <span class="badge badge-default"> Aucune validation</span>
                             <?php endif; ?>

@@ -44,6 +44,11 @@ class Proposition {
     public function __construct()
     {
         $this->membres = new ArrayCollection();
+        $this->setLabelEuropeen(false);
+        $this->setManuscritAnglais(false);
+        $this->setSoutenanceAnglais(false);
+        $this->setHuitClos(false);
+        $this->setExterieur(false);
 //        $this->validations = new ArrayCollection();
     }
 
