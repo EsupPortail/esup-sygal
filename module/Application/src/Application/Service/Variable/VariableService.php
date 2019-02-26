@@ -16,6 +16,9 @@ class VariableService extends BaseService
      */
     public function getRepository()
     {
-        return $this->entityManager->getRepository(Variable::class);
+        /** @var VariableRepository $repo */
+        $repo = $this->entityManager->getRepository(Variable::class);
+
+        return $repo;
     }
 }

@@ -25,6 +25,13 @@ use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use UnicaenApp\Service\EntityManagerAwareInitializer;
 
 return array(
+    'bjyauthorize' => [
+        'guards' => [
+            'BjyAuthorize\Guard\Controller' => [
+                ['controller' => 'Application\Controller\Index', 'action' => 'contact', 'roles' => ['user']],
+            ],
+        ],
+    ],
     'doctrine'     => [
         /**
          * Génération du mapping à partir de la bdd, exemple :
@@ -85,6 +92,17 @@ return array(
                         'action'     => 'index',
                     ],
                 ],
+            ],
+            'contact'          => [
+//                'type'     => 'Zend\Mvc\Router\Http\Literal',
+                'options'  => [
+//                    'route'    => '/contact',
+                    'defaults' => [
+                        'controller' => 'Application\Controller\Index',
+//                        'action'     => 'contact',
+                    ],
+                ],
+                'priority' => 9999,
             ],
             /*'lhome' => [
                 'type' => 'Segment',

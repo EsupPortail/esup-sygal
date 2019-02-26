@@ -251,6 +251,14 @@ class UserContextService extends BaseUserContextService
     /**
      * @return UserWrapper
      */
+    public function getIdentityUserWrapper()
+    {
+        return $this->createUserWrapperFromIdentity();
+    }
+
+    /**
+     * @return UserWrapper
+     */
     private function createUserWrapperFromIdentity()
     {
         $userWrapperFactory = new UserWrapperFactory();

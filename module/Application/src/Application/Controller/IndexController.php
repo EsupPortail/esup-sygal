@@ -2,15 +2,20 @@
 
 namespace Application\Controller;
 
-use Application\Entity\Db\These;
+use Application\Entity\Db\Variable;
+use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
+use Application\Service\Variable\VariableServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\Http\Response;
+use Zend\Validator\EmailAddress as EmailAddressValidator;
 use Zend\View\Model\ViewModel;
 
 class IndexController extends AbstractController
 {
+    use VariableServiceAwareTrait;
+    use EtablissementServiceAwareTrait;
     use TheseServiceAwareTrait;
 
     public function pretty_print(array $array, $level = 0) {
@@ -154,5 +159,41 @@ EOS
         }
 
         return $vm;
+    }
+
+    /**
+     * Remplacement de la page de contact de unicaen/app par une autre, soumise à authentification,
+     * on l'adresse de contact dépend de l'établissement de l'utilisateur authentifié.
+     *
+     * @return array
+     */
+    public function contactAction()
+    {
+        $userWrapper = $this->userContextService->getIdentityUserWrapper();
+        $etablissement = $this->etablissementService->getRepository()->findOneForUserWrapper($userWrapper);
+        if ($etablissement === null) {
+            throw new RuntimeException(
+                "Anomalie: établissement introuvable pour l'utilisateur '{$userWrapper->getUsername()}'.");
+        }
+
+        $repo = $this->variableService->getRepository();
+        $variable = $repo->findByCodeAndEtab(Variable::CODE_EMAIL_ASSISTANCE, $etablissement);
+        if ($variable === null) {
+            throw new RuntimeException(
+                "Anomalie: aucune adresse d'assistance trouvée dans les Variables pour l'établissement '$etablissement'.");
+        }
+
+        $contact = $variable->getValeur();
+
+        $v = new EmailAddressValidator();
+        if (!$v->isValid($contact)) {
+            throw new RuntimeException(
+                "Anomalie: l'adresse d'assistance trouvée dans les Variables n'est pas valide: $contact");
+        }
+
+        return [
+            'etablissement' => $etablissement,
+            'contact' => $contact,
+        ];
     }
 }
