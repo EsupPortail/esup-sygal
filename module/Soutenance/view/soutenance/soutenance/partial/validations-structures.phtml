@@ -1,0 +1,115 @@
+<?php
+/**
+ * @var \Soutenance\Entity\Proposition $proposition
+ * @var \Application\Entity\Db\These $these
+ * @var \Application\Entity\Db\Validation[] $validations
+ * @var string $roleCode
+ * @var boolean $isOk
+ */
+
+use Application\Entity\Db\Role;
+use Soutenance\Provider\Privilege\SoutenancePrivileges;
+
+$canStructureValider = $isOk && $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_UR) ||
+    $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_ED) ||
+    $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_BDD);
+$canPresidence = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_PRESIDENCE);
+
+?>
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h4> Validation par les structures encadrant la thèse </h4>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-8">
+                <h4>
+                    Liste des validations
+                </h4>
+                <ul>
+                    <li>
+                        <?php echo $these->getUniteRecherche()->getLibelle(); ?>  (Unité de recherche) <br/>
+                        <?php if ($validations['unite-recherche']) : ?>
+                            <span class="badge badge-success"> Validée</span>
+                            Le <?php echo $validations['unite-recherche']->getHistoModification()->format('d/m/Y à H:i'); ?>
+                            par <?php echo $validations['unite-recherche']->getIndividu()->getNomComplet(false, false, true, true); ?>
+                        <?php else: ?>
+                            <span class="badge badge-default"> Aucune validation</span>
+                        <?php endif; ?>
+                    </li>
+                    <li>
+                        <?php echo $these->getEcoleDoctorale()->getLibelle(); ?>  (École doctorale) <br/>
+                        <?php if ($validations['ecole-doctorale']) : ?>
+                            <span class="badge badge-success"> Validée</span>
+                            Le <?php echo $validations['ecole-doctorale']->getHistoModification()->format('d/m/Y à H:i'); ?>
+                            par <?php echo $validations['ecole-doctorale']->getIndividu()->getNomComplet(false, false, true, true); ?>
+                        <?php else: ?>
+                            <span class="badge badge-default"> Aucune validation</span>
+                        <?php endif; ?>
+                    </li>
+                    <li>
+                        <?php echo $these->getEtablissement()->getLibelle(); ?>  (Bureau des doctorats) <br/>
+                        <?php if ($validations['bureau-doctorat']) : ?>
+                            <span class="badge badge-success"> Validée</span>
+                            Le <?php echo $validations['bureau-doctorat']->getHistoModification()->format('d/m/Y à H:i'); ?>
+                            par <?php echo $validations['bureau-doctorat']->getIndividu()->getNomComplet(false, false, true, true); ?>
+                        <?php else: ?>
+                            <span class="badge badge-default"> Aucune validation</span>
+                        <?php endif; ?>
+                    </li>
+                </ul>
+            </div>
+            <div class="pull-right">
+                <?php if ($canPresidence): ?>
+                    <p>
+                        <a  href="<?php echo $this->url('soutenance/proposition/signature-presidence', ['these' => $these->getId()], [], true); ?>"
+                            class="btn btn-primary action">
+                            <span class="glyphicon glyphicon-list-alt"></span>Générer document pour signature
+                        </a>
+                    </p>
+                <?php endif; ?>
+                <?php if ($canStructureValider): ?>
+                    <p>
+                        <a href="<?php echo $this->url('soutenance/proposition/valider-structure', ['these' => $these->getId()], [], true); ?>"
+                           class="btn btn-success action">
+                            <span class="glyphicon glyphicon-ok"></span> Valider la proposition de soutenance
+                        </a>
+                    </p>
+                    <p>
+                        <a
+                            href="<?php echo $this->url('soutenance/proposition/refuser-structure', ['these' => $these->getId()], [], true); ?>"
+                            class="btn btn-danger action ajax-modal"
+                            data-event="refus-proposition">
+                            <span class="glyphicon glyphicon-remove"></span> Refuser la proposition de soutenance
+                        </a>
+                    </p>
+                <?php endif; ?>
+
+                <?php if ($validations["unite-recherche"] && $roleCode === Role::CODE_UR): ?>
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <?php echo $this->validation($validations["unite-recherche"]); ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
+                <?php if ($validations["ecole-doctorale"] && $roleCode === Role::CODE_ED): ?>
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <?php echo $this->validation($validations["ecole-doctorale"]); ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
+                <?php if ($validations["bureau-doctorat"] && $roleCode === Role::CODE_BDD): ?>
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <?php echo $this->validation($validations["bureau-doctorats"]); ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>

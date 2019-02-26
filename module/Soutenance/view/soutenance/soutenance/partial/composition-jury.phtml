@@ -1,0 +1,194 @@
+<?php
+ /**
+  * @var array $indicateurs
+  * @var \Soutenance\Entity\Proposition $proposition
+  * @var \Application\Entity\Db\These $these
+  *
+  */
+
+use Soutenance\Entity\Membre;
+
+?>
+
+<div class="panel <?php echo ($indicateurs["valide"])?'panel-success':'panel-danger'; ?>">
+    <div class="panel-heading">
+        <h4>
+            <!-- Indicateurs liés à la validité du jury de thèse -->
+            Composition du jury
+        </h4>
+    </div>
+    <div class="panel-body">
+
+        <div class="col-md-4">
+            <h5>
+                Parité de genre
+                <!--                --><?php //if ($indicateurs["parité"]["valide"]):?>
+                <!--                    <span class="badge badge-success"> Valide </span>-->
+                <!--                --><?php //else: ?>
+                <!--                    <span class="badge badge-error"> Non valide </span>-->
+                <!--                --><?php //endif; ?>
+            </h5>
+
+            <div class="progress">
+                <div class="progress-bar progress-bar-success" style="width:<?php echo $indicateurs["parité"]["Femme"]*100; ?>%;"> Femme </div>
+                <div class="progress-bar progress-bar-danger"  style="width:<?php echo $indicateurs["parité"]["Homme"]*100; ?>%;"> Homme</div>
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+            <h5>
+                Nombre de membres
+                <?php if ($indicateurs["membre"]["valide"]):?>
+                    <span class="badge badge-success"> Valide </span>
+                <?php else: ?>
+                    <span class="badge badge-error"> Non valide </span>
+                <?php endif; ?>
+            </h5>
+
+            <div class="progress">
+                <div class="progress-bar progress-bar-info" style="width:<?php echo $indicateurs["membre"]["Ratio"]*100; ?>%;">
+                    <?php echo $indicateurs["membre"]["Nombre"]; ?>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <h5>
+                Nombre de rapporteurs
+                <?php if ($indicateurs["rapporteur"]["valide"]):?>
+                    <span class="badge badge-success"> Valide </span>
+                <?php else: ?>
+                    <span class="badge badge-error"> Non valide </span>
+                <?php endif; ?>
+            </h5>
+
+            <div class="progress">
+                <div class="progress-bar progress-bar-info" style="width:<?php echo $indicateurs["rapporteur"]["Ratio"]*100; ?>%;">
+                    <?php echo $indicateurs["rapporteur"]["Nombre"]; ?>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <h5>
+                Nombre <!--de membres--> de rang A
+                <?php if ($indicateurs["rang A"]["valide"]):?>
+                    <span class="badge badge-success"> Valide </span>
+                <?php else: ?>
+                    <span class="badge badge-error"> Non valide </span>
+                <?php endif; ?>
+            </h5>
+
+            <div class="progress">
+                <div class="progress">
+                    <div class="progress-bar progress-bar-info" style="width:<?php echo $indicateurs["rang A"]["Ratio"]*100; ?>%;">
+                        <?php echo $indicateurs["rang A"]["Nombre"]; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <h5>
+                Nombre <!--de membres--> d'extérieurs
+                <?php if ($indicateurs["exterieur"]["valide"]):?>
+                    <span class="badge badge-success"> Valide </span>
+                <?php else: ?>
+                    <span class="badge badge-error"> Non valide </span>
+                <?php endif; ?>
+            </h5>
+            <div class="progress">
+                <div class="progress-bar progress-bar-info" style="width:<?php echo $indicateurs["exterieur"]["Ratio"]*100; ?>%;">
+                    <?php echo $indicateurs["exterieur"]["Nombre"]; ?>
+                </div>
+            </div>
+        </div>
+
+        <table class="table table-extra-condensed">
+            <thead>
+            <tr>
+                <th>Dénomination</th>
+                <th>Adresse électronique</th>
+                <th>Genre</th>
+                <th>Qualité</th>
+                <th>Rang</th>
+                <th>Extérieur</th>
+                <th>Etablissement</th>
+                <th>Rôle</th>
+                <th>En visio</th>
+                <?php if ($canModifier): ?>
+                    <th>Action</th>
+                <?php endif; ?>
+            </tr>
+            </thead>
+            <tbody>
+            <?php $hasVisio = false; /** @var Membre $membre */ ?>
+            <?php foreach($proposition->getMembres() as $membre): ?>
+                <tr>
+                    <td> <?php echo $membre->getDenomination(); ?> </td>
+                    <td> <?php echo $membre->getEmail(); ?> </td>
+                    <td> <?php echo $membre->getGenre(); ?> </td>
+                    <td> <?php echo $membre->getQualite()->getLibelle(); ?> </td>
+                    <td> <?php echo $membre->getRang(); ?> </td>
+                    <td>
+                        <?php if ($membre->getExterieur() === 'oui'): ?>
+                            <span class="glyphicon glyphicon-ok text-success"></span>
+                        <?php else: ?>
+                            <span class="glyphicon glyphicon-remove text-danger"></span>
+                        <?php endif; ?>
+                    </td>
+                    <td> <?php echo $membre->getEtablissement(); ?> </td>
+                    <td> <?php echo $membre->getRole(); ?> </td>
+                    <td>
+                        <?php if ($membre->isVisio()): ?>
+                            <span class="glyphicon glyphicon-ok text-success"></span>
+                            <?php $hasVisio = true; ?>
+                        <?php else: ?>
+                            <span class="glyphicon glyphicon-remove text-danger"></span>
+                        <?php endif; ?>
+                    </td>
+                    <?php if ($canModifier): ?>
+                    <td>
+
+                            <a
+                                href="<?php echo $this->url('soutenance/proposition/modifier-membre', ['these' => $these->getId(), 'membre' => $membre->getId()], [] ,true); ?>"
+                                class="ajax-modal"
+                                data-event="edition-membre">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            </a>
+                            <a href="<?php echo $this->url('soutenance/proposition/effacer-membre', ['these' => $these->getId(), 'membre' => $membre->getId()], [] ,true); ?>">
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </a>
+
+                    </td>
+                    <?php endif; ?>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+        <!--        </div>-->
+
+        <div class="row">
+            <div class="col-md-7">
+                <?php if ($hasVisio) : ?>
+                    <div class="alert alert-sm alert-warning">
+                        <span class="glyphicon glyphicon-warning-sign"></span>
+                        Les membres du jury participant à la soutenance en visioconférence doivent au préalable remplir la demande
+                        de déléguation de signature suivante :
+                        <a href="https://localhost/informations/fichiers/telecharger/281">formulaire de demande de déléguation</a>.
+                    </div>
+                <?php endif; ?>
+            </div>
+            <div class="col-md-4 pull-right">
+                <?php if ($canModifier): ?>
+                    <a
+                        href="<?php echo $this->url('soutenance/proposition/modifier-membre', ['these' => $these->getId()], [], true); ?>"
+                        class="btn btn-primary action ajax-modal"
+                        data-event="edition-membre">
+                        <span class="glyphicon glyphicon-plus"></span> Ajouter un membre de jury
+                    </a>
+                <?php endif; ?>
+            </div>
+        </div>
+
+    </div>
+</div>

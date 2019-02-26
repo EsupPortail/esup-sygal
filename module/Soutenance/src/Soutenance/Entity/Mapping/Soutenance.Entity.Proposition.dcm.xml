@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="Soutenance\Entity\Proposition" table="SOUTENANCE_PROPOSITION">
+        <id name="id" type="integer" column="ID">
+            <generator strategy="SEQUENCE"/>
+        </id>
+
+        <many-to-one field="these" target-entity="Application\Entity\Db\These">
+            <join-columns>
+                <join-column name="THESE_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
+        <field name="date"                      type="datetime"                         column="DATEPREV"   nullable="true"/>
+        <field name="lieu"                      type="string"        length="256"       column="LIEU"       nullable="true"/>
+        <field name="exterieur"                 type="boolean"                          column="EXTERIEUR"       nullable="true"/>
+
+        <one-to-many field="membres" target-entity="Soutenance\Entity\Membre" mapped-by="proposition"/>
+
+        <field name="renduRapport"              type="datetime"                         column="RENDU_RAPPORT"        nullable="true"/>
+        <field name="confidentialite"           type="datetime"                         column="CONFIDENTIALITE"      nullable="true"/>
+
+        <field name="labelEuropeen"             type="boolean"                           column="LABEL_EUROPEEN"      nullable="false"/>
+        <field name="huitClos"                  type="boolean"                           column="HUIT_CLOS"           nullable="false"/>
+        <field name="manuscritAnglais"          type="boolean"                           column="MANUSCRIT_ANGLAIS"   nullable="false"/>
+        <field name="soutenanceAnglais"         type="boolean"                           column="SOUTENANCE_ANGLAIS"  nullable="false"/>
+
+
+    </entity>
+</doctrine-mapping>

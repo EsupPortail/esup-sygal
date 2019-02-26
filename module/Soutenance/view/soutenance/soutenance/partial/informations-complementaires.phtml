@@ -1,0 +1,131 @@
+<?php
+/**
+ * @var \Soutenance\Entity\Proposition $proposition
+ * @var \Application\Entity\Db\These $these
+ */
+?>
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h4>
+            Informations sur la thèse et la soutenance
+        </h4>
+    </div>
+    <div class="panel-body">
+
+        <div class="row">
+            <div class="col-md-8">
+                <dl>
+
+                    <!-- COTUTELLE -->
+                    <?php if ($these->getLibelleEtabCotutelle() || $these->getLibellePaysCotutelle()) : ?>
+
+                        <dt> Établissement de co-tutelle </dt>
+                        <dd> <?php echo ($these->getLibelleEtabCotutelle())?$these->getLibelleEtabCotutelle():"non renseigné"; ?></dd>
+                        <dt> Pays de co-tutelle </dt>
+                        <dd> <?php echo ($these->getLibellePaysCotutelle())?$these->getLibellePaysCotutelle():"non renseigné"; ?></dd>
+                    <?php else : ?>
+                        <dt> Cotutelle  </dt>
+                        <dd> Pas de cotutuelle. </dd>
+                    <?php endif; ?>
+
+                    <!-- LABEL -->
+                    <dt>Label européen </dt>
+                    <dd>
+                        <?php echo ($proposition->isLabelEuropeen())?"Oui":"Non"; ?>
+                    </dd>
+
+                    <!-- ANGLAIS -->
+                    <dt>Thèse en anglais </dt>
+
+                    <?php if ($proposition->isManuscritAnglais() || $proposition->isSoutenanceAnglais()) : ?>
+                        <?php if ($proposition->isManuscritAnglais()) : ?>
+                            <dd>
+                                Manuscrit en anglais
+                            </dd>
+                        <?php endif; ?>
+                        <?php if ($proposition->isSoutenanceAnglais()) : ?>
+                            <dd>
+                                Soutenance en anglais
+                            </dd>
+                        <?php endif; ?>
+                    <?php else : ?>
+                        <dd> Non </dd>
+                    <?php endif;?>
+
+                </dl>
+            </div>
+
+            <div class="col-md-4">
+                <?php if ($canModifier) : ?>
+
+                    <div class="pull-right">
+                        <a href="<?php echo $this->url('soutenance/proposition/label-et-anglais', ['these' => $these->getId()], [], true); ?>"
+                           class="btn btn-primary action ajax-modal"
+                           data-event="edition-confidentialite"
+                        >
+                            <span class="glyphicon glyphicon-plus"></span>
+                            Renseigner un label européen
+                        </a>
+                    </div>
+
+                    <br/>
+                    <br/>
+                    <br/>
+
+                <?php endif; ?>
+
+                <?php if($proposition->isLabelEuropeen()): ?>
+                    <div class="alert alert-sm alert-warning">
+                        <span class="glyphicon glyphicon-warning-sign"> </span>
+                        Afin de réaliser la demande de label européen, vous devez remplir le formulaire de demande suivant :
+                        <a href="https://localhost/informations/fichiers/telecharger/282">formulaire de demande de label européen</a>.
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <dl>
+                    <dt> Confidentialité de la thèse</dt>
+                    <?php if($proposition->getConfidentialite()): ?>
+                        <dd> Date de fin de confidentialité : <?php echo $proposition->getConfidentialite()->format("d/m/Y"); ?> </dd>
+                        <?php if($proposition->isHuitClos()): ?>
+                            <dd> Soutenance en huit clos </dd>
+                        <?php endif; ?>
+                    <?php else : ?>
+                        <dd> Thèse non confidentielle </dd>
+                    <?php endif; ?>
+                </dl>
+            </div>
+
+            <div class="col-md-4">
+                <?php if ($canModifier) : ?>
+                    <div class="pull-right">
+                        <a href="<?php echo $this->url('soutenance/proposition/confidentialite', ['these' => $these->getId()], [], true); ?>"
+                           class="btn btn-primary action ajax-modal"
+                           data-event="edition-confidentialite"
+                        >
+                            <span class="glyphicon glyphicon-plus"></span>
+                            Renseigner une confidentialité
+                        </a>
+                    </div>
+
+                    <br/>
+                    <br/>
+                    <br/>
+
+                <?php endif; ?>
+
+                <?php if($proposition->getConfidentialite()): ?>
+                    <div class="alert alert-sm alert-warning">
+                        <span class="glyphicon glyphicon-warning-sign"> </span>
+                        Afin de réaliser de demande de confidentialité un accord doit au préalable être rempli :
+                        <a href="https://localhost/informations/fichiers/telecharger/301">demande d'accord de confidentialité</a>.
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>
