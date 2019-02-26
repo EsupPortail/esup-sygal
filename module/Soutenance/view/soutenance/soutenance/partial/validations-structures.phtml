@@ -30,30 +30,33 @@ $canPresidence = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPO
                 <ul>
                     <li>
                         <?php echo $these->getUniteRecherche()->getLibelle(); ?>  (Unité de recherche) <br/>
-                        <?php if ($validations['unite-recherche']) : ?>
+                        <?php if ($validations[Role::CODE_UR]) : ?>
+                            <?php $validation = current($validations[Role::CODE_UR]); ?>
                             <span class="badge badge-success"> Validée</span>
-                            Le <?php echo $validations['unite-recherche']->getHistoModification()->format('d/m/Y à H:i'); ?>
-                            par <?php echo $validations['unite-recherche']->getIndividu()->getNomComplet(false, false, true, true); ?>
+                            Le <?php echo $validation->getHistoModification()->format('d/m/Y à H:i'); ?>
+                            par <?php echo $validation->getIndividu(); ?>
                         <?php else: ?>
                             <span class="badge badge-default"> Aucune validation</span>
                         <?php endif; ?>
                     </li>
                     <li>
                         <?php echo $these->getEcoleDoctorale()->getLibelle(); ?>  (École doctorale) <br/>
-                        <?php if ($validations['ecole-doctorale']) : ?>
+                        <?php if ($validations[Role::CODE_ED]) : ?>
+                            <?php $validation = current($validations[Role::CODE_ED]); ?>
                             <span class="badge badge-success"> Validée</span>
-                            Le <?php echo $validations['ecole-doctorale']->getHistoModification()->format('d/m/Y à H:i'); ?>
-                            par <?php echo $validations['ecole-doctorale']->getIndividu()->getNomComplet(false, false, true, true); ?>
+                            Le <?php echo $validation->getHistoModification()->format('d/m/Y à H:i'); ?>
+                            par <?php echo $validation->getIndividu(); ?>
                         <?php else: ?>
                             <span class="badge badge-default"> Aucune validation</span>
                         <?php endif; ?>
                     </li>
                     <li>
                         <?php echo $these->getEtablissement()->getLibelle(); ?>  (Bureau des doctorats) <br/>
-                        <?php if ($validations['bureau-doctorat']) : ?>
+                        <?php if ($validations[Role::CODE_BDD]) : ?>
+                            <?php $validation = current($validations[Role::CODE_BDD]); ?>
                             <span class="badge badge-success"> Validée</span>
-                            Le <?php echo $validations['bureau-doctorat']->getHistoModification()->format('d/m/Y à H:i'); ?>
-                            par <?php echo $validations['bureau-doctorat']->getIndividu()->getNomComplet(false, false, true, true); ?>
+                            Le <?php echo $validation->getHistoModification()->format('d/m/Y à H:i'); ?>
+                            par <?php echo $validation->getIndividu(); ?>
                         <?php else: ?>
                             <span class="badge badge-default"> Aucune validation</span>
                         <?php endif; ?>
@@ -84,30 +87,6 @@ $canPresidence = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPO
                             <span class="glyphicon glyphicon-remove"></span> Refuser la proposition de soutenance
                         </a>
                     </p>
-                <?php endif; ?>
-
-                <?php if ($validations["unite-recherche"] && $roleCode === Role::CODE_UR): ?>
-                    <div class="panel panel-success">
-                        <div class="panel-heading">
-                            <?php echo $this->validation($validations["unite-recherche"]); ?>
-                        </div>
-                    </div>
-                <?php endif; ?>
-
-                <?php if ($validations["ecole-doctorale"] && $roleCode === Role::CODE_ED): ?>
-                    <div class="panel panel-success">
-                        <div class="panel-heading">
-                            <?php echo $this->validation($validations["ecole-doctorale"]); ?>
-                        </div>
-                    </div>
-                <?php endif; ?>
-
-                <?php if ($validations["bureau-doctorat"] && $roleCode === Role::CODE_BDD): ?>
-                    <div class="panel panel-success">
-                        <div class="panel-heading">
-                            <?php echo $this->validation($validations["bureau-doctorats"]); ?>
-                        </div>
-                    </div>
                 <?php endif; ?>
             </div>
         </div>

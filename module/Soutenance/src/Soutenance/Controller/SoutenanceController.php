@@ -71,22 +71,10 @@ class SoutenanceController extends AbstractActionController {
             /** @var Acteur[] $directeurs */
             $directeurs = $these->getEncadrements(false);
 
-
-            if ($proposition) $rapporteurs = $proposition->getRapporteurs();
-
-            /** TODO récupérer les validations via le service */
-            $validations = [];
-            $validations[$these->getDoctorant()->getIndividu()->getId()] = $this->getValidationService()->findValidationPropositionSoutenanceByTheseAndIndividu($these, $these->getDoctorant()->getIndividu());
-            foreach ($directeurs as $directeur) {
-                $validations[$directeur->getIndividu()->getId()] = $this->getValidationService()->findValidationPropositionSoutenanceByTheseAndIndividu($these, $directeur->getIndividu());
+            if ($proposition) {
+                $rapporteurs = $proposition->getRapporteurs();
+                $validations = $this->getPropositionService()->getValidationSoutenance($these);
             }
-
-            $validationUR = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these);
-            if ($validationUR) $validations["unite-recherche"] = current($validationUR);
-            $validationED = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_ED, $these);
-            if ($validationED) $validations["ecole-doctorale"] = current($validationED);
-            $validationBDD = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
-            if ($validationBDD) $validations["bureau-doctorat"] = current($validationBDD);
 
             $avis = [];
             if ($proposition !== null) {
@@ -163,30 +151,13 @@ class SoutenanceController extends AbstractActionController {
         $currentUser = $this->userContextService->getDbUser();
         $currentIndividu = $currentUser->getIndividu();
 
-        /** @var Doctorant $doctorant */
-        $doctorant = $these->getDoctorant();
-        /** @var Individu[] $directeurs */
-        $directeurs = $these->getEncadrements(true);
-
-        $validations = [];
-        $validations[$doctorant->getIndividu()->getId()] = $this->getValidationService()->findValidationPropositionSoutenanceByTheseAndIndividu($these, $doctorant->getIndividu());
-        foreach ($directeurs as $directeur) {
-            $validations[$directeur->getId()] = $this->getValidationService()->findValidationPropositionSoutenanceByTheseAndIndividu($these, $directeur);
-        }
-
-        $validationUR = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these);
-        if ($validationUR) $validations["unite-recherche"] = current($validationUR);
-        $validationED = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_ED, $these);
-        if ($validationED) $validations["ecole-doctorale"] = current($validationED);
-        $validationBDD = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
-        if ($validationBDD) $validations["bureau-doctorat"] = current($validationBDD);
 
         return new ViewModel([
                 'these' => $these,
                 'proposition' => $proposition,
-                'doctorant' => $doctorant,
-                'directeurs' => $directeurs = $these->getEncadrements(false),
-                'validations' => $validations,
+                'doctorant' => $these->getDoctorant(),
+                'directeurs' =>$these->getEncadrements(false),
+                'validations' => $this->getPropositionService()->getValidationSoutenance($these),
                 'currentIndividu' => $currentIndividu,
                 'roleCode' => $this->userContextService->getSelectedIdentityRole()->getCode(),
                 'individuId' => $this->userContextService->getIdentityDb()->getIndividu()->getId(),
