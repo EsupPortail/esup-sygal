@@ -4,8 +4,6 @@ namespace Soutenance\Form\SoutenanceDateRenduRapport;
 
 use UnicaenApp\Form\Element\Date;
 use Zend\Form\Element\Submit;
-use Zend\Form\Element\Text;
-use Zend\Form\Element\Time;
 use Zend\Form\Form;
 
 class SoutenanceDateRenduRapportForm extends Form {

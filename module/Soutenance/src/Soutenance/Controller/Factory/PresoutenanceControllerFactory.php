@@ -10,7 +10,6 @@ use Application\Service\Role\RoleService;
 use Application\Service\These\TheseService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Validation\ValidationService;
-use Soutenance\Controller\EngagementImpartialiteController;
 use Soutenance\Controller\PresoutenanceController;
 use Soutenance\Service\Avis\AvisService;
 use Soutenance\Service\Membre\MembreService;

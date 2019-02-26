@@ -2,7 +2,6 @@
 
 namespace Soutenance\Form\Confidentialite;
 
-use Application\Entity\Db\These;
 use DateTime;
 use Soutenance\Entity\Proposition;
 use Zend\Stdlib\Hydrator\HydratorInterface;

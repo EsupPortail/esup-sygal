@@ -3,7 +3,6 @@
 namespace Soutenance\Service\Proposition;
 
 //TODO faire le repo aussi
-use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
@@ -333,7 +332,10 @@ class PropositionService {
     public function getLogos($these)
     {
         $logos = [];
-        $logos['COMUE'] = $this->fileService->computeLogoFilePathForStructure($this->getEtablissementService()->getRepository()->findOneByCodeStructure(Etablissement::CODE_STRUCTURE_COMUE));
+        $logos['COMUE'] = null;
+        if ($comue = $this->getEtablissementService()->fetchEtablissementCommunaute()) {
+            $logos['COMUE'] = $this->fileService->computeLogoFilePathForStructure($comue);
+        }
         $logos['ETAB']  = $this->fileService->computeLogoFilePathForStructure($these->getEtablissement());
         return $logos;
     }

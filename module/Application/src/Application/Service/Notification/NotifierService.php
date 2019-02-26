@@ -517,6 +517,25 @@ class NotifierService extends \Notification\Service\NotifierService
     }
 
     /**
+     * @param Validation $validation
+     */
+    public function triggerDevalidationProposition($validation) {
+        $mail = $validation->getIndividu()->getEmail();
+        $these = $validation->getThese();
+
+        $notif = new Notification();
+        $notif
+            ->setSubject("Votre validation de la proposition de soutenance a été annulée")
+            ->setTo($mail)
+            ->setTemplatePath('soutenance/notification/devalidation')
+            ->setTemplateVariables([
+                'validation'     => $validation,
+                'these'          => $these,
+            ]);
+        $this->trigger($notif);
+    }
+
+    /**
      * @param These $these
      * @param Validation $validation
      */

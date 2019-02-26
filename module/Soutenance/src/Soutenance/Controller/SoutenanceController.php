@@ -38,7 +38,7 @@ use Zend\View\Model\ViewModel;
  * @package Soutenance\Controller
  *
  * Controlleur principale du module de gestion de la soutenance
- * @method isAllowed($these, $PRIVILEGE)
+ * @method boolean isAllowed($resource, $privilege = null)
  */
 
 class SoutenanceController extends AbstractActionController {
@@ -94,7 +94,8 @@ class SoutenanceController extends AbstractActionController {
                     $validationR = $this->getValidationService()->getRepository()->findValidationByCodeAndIndividu(TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $rapporteur->getIndividu());
                     if ($validationR) $validations[$rapporteur->getIndividu()->getId()] = $validationR;
 
-                    $avisRapporteur = $this->getAvisService()->getAvisByRapporteur($rapporteur, $these);
+                    $acteur = $this->getActeurService()->getRepository()->findActeurByIndividu($rapporteur->getIndividu());
+                    $avisRapporteur = $this->getAvisService()->getAvisByRapporteur($acteur, $these);
                     if ($avisRapporteur) $avis[$rapporteur->getIndividu()->getId()] = $avisRapporteur->getAvis();
                 }
             }

@@ -6,7 +6,6 @@ namespace Soutenance\Controller;
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Fichier;
-use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
@@ -32,9 +31,7 @@ use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
-use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
 use Zend\Http\Request;
-use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
 // TODO mettre directement l'acteur dans la table membre simplifierai beaucoup de chose ...
@@ -214,8 +211,8 @@ class PresoutenanceController extends AbstractController
         $idMembre = $this->params()->fromRoute('membre');
         $membre = $this->getMembreService()->find($idMembre);
 
-        /** @var Proposition $proposition */
-        $proposition = $this->getPropositionService()->findByThese($these);
+//        /** @var Proposition $proposition */
+//        $proposition = $this->getPropositionService()->findByThese($these);
 
         /** @var Acteur[] $acteurs */
         $acteurs = $this->getActeurService()->getRepository()->findActeurByThese($these);

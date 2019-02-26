@@ -3,7 +3,6 @@
 namespace Soutenance\Entity;
 
 use Application\Entity\Db\Individu;
-use DateTime;
 
 class Membre {
 

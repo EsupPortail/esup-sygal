@@ -7,7 +7,6 @@ use Application\Entity\Db\These;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Soutenance\Entity\Avis;
-use Soutenance\Entity\Membre;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
@@ -80,7 +79,7 @@ class AvisService {
     }
 
     /**
-     * @param Membre $rapporteur
+     * @param Acteur $rapporteur
      * @param These $these
      * @return Avis
      */

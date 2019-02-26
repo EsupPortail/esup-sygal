@@ -9,8 +9,6 @@ class SoutenanceRefusFormFactory
 {
     public function __invoke(FormElementManager $formElementManager)
     {
-        $sl = $formElementManager->getServiceLocator();
-
         /** @var SoutenanceRefusForm $form */
         $form = new SoutenanceRefusForm();
 

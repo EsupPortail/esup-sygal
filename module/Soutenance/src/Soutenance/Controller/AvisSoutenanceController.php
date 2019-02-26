@@ -6,7 +6,6 @@ use Application\Controller\AbstractController;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
-use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\VersionFichier;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
@@ -83,7 +82,6 @@ class AvisSoutenanceController extends AbstractController {
         $view->setVariable('these', $these);
         $view->setVariable('rapporteur', $rapporteur);
         $view->setVariable('form', $form);
-//        $view->setVariable('validation', $validation);
         return $view;
 
     }
