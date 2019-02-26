@@ -103,6 +103,16 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
     }
 
     /**
+     * Get numeroEtudiant
+     *
+     * @return string
+     */
+    public function getNumeroEtudiant()
+    {
+        return $this->getIndividu()->getSupannId(); // todo: à remplacer par $this->>numeroEtudiant lorsqu'il sera importé.
+    }
+
+    /**
      * Set dateNaissance
      *
      * @param \DateTime $dateNaissance

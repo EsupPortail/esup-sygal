@@ -7,14 +7,13 @@ use Application\Entity\Db\Repository\EtablissementRepository;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\BaseService;
-use Application\Service\Parametre\ParametreServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\RuntimeException;
 
 class EtablissementService extends BaseService
 {
-    use ParametreServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
 
     /**
@@ -33,20 +32,20 @@ class EtablissementService extends BaseService
      *
      * @return Etablissement|null
      */
-    public function fetchEtablissementCommunaute()
+    public function fetchEtablissementComue()
     {
-        $sourceCode = $this->parametreService->getSourceCodeEtablissementCommunaute();
-        if ($sourceCode === null) {
-            return null;
+        $qb = $this->getRepository()->createQueryBuilder('e')
+            ->addSelect('s')
+            ->join('e.structure', 's')
+            ->where('e.estComue = 1');
+
+        try {
+            $comue = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Anomalie: plusieurs établissements COMUE trouvés.");
         }
 
-        $etab = $this->getRepository()->findOneBySourceCode($sourceCode);
-        if ($etab === null) {
-            throw new RuntimeException(
-                "Anomalie: aucun établissement trouvé avec le SOURCE_CODE '$sourceCode' spécifié pour l'établissement chapeau.");
-        }
-
-        return $etab;
+        return $comue;
     }
 
     /**

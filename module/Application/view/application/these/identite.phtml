@@ -29,7 +29,6 @@ use Application\View\Renderer\PhpRenderer;
  * @var string       $mailContact
  * @var string       $etatMailContact
  * @var Validation[] $validationsDesCorrectionsEnAttente
- * @var callable     $numeroEtudiantExtractor
  *
  * @see TheseController::detailIdentiteAction()
  */
@@ -94,7 +93,7 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                 <strong>
                     <?php echo $this->translate("N° étudiant :"); ?>
                 </strong>
-                <?php echo $numeroEtudiantExtractor($these->getDoctorant()) ?> <br>
+                <?php echo $these->getDoctorant()->getNumeroEtudiant() ?> <br>
 
                 <strong>
                     <?php echo $this->translate("Adresse électronique :"); ?>

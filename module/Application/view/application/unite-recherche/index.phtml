@@ -6,9 +6,8 @@ use Application\Provider\Privilege\SubstitutionPrivileges;
 
 /**
  * @var UniteRecherche[] $unites
- * @var callable $codeStructureExtractor
  *
- * @see \Application\Controller\EcoleDoctoraleController::indexAction()
+ * @see \Application\Controller\UniteRechercheController::indexAction()
  */
 
 $canModifier = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES));
@@ -66,7 +65,7 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
                     </a>
                 </td>
                 <td>
-                    <?php echo $codeStructureExtractor($unite->getSource()->getCode()); ?>
+                    <?php echo $unite->getSource(); ?>
                 </td>
                 <td>
                     <?php echo $unite->getStructure()->getCode(); ?>

@@ -41,13 +41,8 @@ class UniteRechercheController extends StructureConcreteController
     {
         $viewModel = parent::indexAction();
 
-        $codeStructureExtractor = function($code) {
-            return $this->sourceCodeStringHelper->extractPrefixFrom($code);
-        };
-
         return new ViewModel([
             'unites' => $viewModel->getVariable('structures'),
-            'codeStructureExtractor' => $codeStructureExtractor,
         ]);
     }
 
