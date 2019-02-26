@@ -3,6 +3,10 @@
  * @var \Soutenance\Entity\Proposition $proposition
  * @var \Application\Entity\Db\These $these
  */
+
+use Soutenance\Provider\Privilege\SoutenancePrivileges;
+
+$canModifier = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_MODIFIER);
 ?>
 
 <div class="panel panel-info">

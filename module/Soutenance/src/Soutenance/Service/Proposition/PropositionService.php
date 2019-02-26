@@ -338,7 +338,7 @@ class PropositionService {
     {
         $logos = [];
         $logos['COMUE'] = null;
-        if ($comue = $this->getEtablissementService()->fetchEtablissementCommunaute()) {
+        if ($comue = $this->getEtablissementService()->fetchEtablissementComue()) {
             $logos['COMUE'] = $this->fileService->computeLogoFilePathForStructure($comue);
         }
         $logos['ETAB']  = $this->fileService->computeLogoFilePathForStructure($these->getEtablissement());

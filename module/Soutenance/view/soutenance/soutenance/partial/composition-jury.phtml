@@ -7,7 +7,9 @@
   */
 
 use Soutenance\Entity\Membre;
+use Soutenance\Provider\Privilege\SoutenancePrivileges;
 
+$canModifier = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_MODIFIER);
 ?>
 
 <div class="panel <?php echo ($indicateurs["valide"])?'panel-success':'panel-danger'; ?>">
