@@ -2,34 +2,20 @@
 
 namespace Soutenance\Controller;
 
-use Application\Entity\Db\Acteur;
-use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
-use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
-use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Validation;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
-use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use BjyAuthorize\Exception\UnAuthorizedException;
-use DateInterval;
-use DateTime;
-use Exception;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
-use Soutenance\Form\SoutenanceDateLieu\SoutenanceDateLieuForm;
-use Soutenance\Form\SoutenanceDateRenduRapport\SoutenanceDateRenduRapportForm;
-use Soutenance\Form\SoutenanceMembre\SoutenanceMembreForm;
-use Soutenance\Form\SoutenanceRefus\SoutenanceRefusForm;
 use Soutenance\Provider\Privilege\SoutenancePrivileges;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
-use UnicaenApp\Exception\RuntimeException;
-use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
@@ -38,6 +24,7 @@ use Zend\View\Model\ViewModel;
  * @package Soutenance\Controller
  *
  * Controlleur principale du module de gestion de la soutenance
+ * @method boolean isAllowed($resource, $privilege = null)
  */
 
 class EngagementImpartialiteController extends AbstractActionController

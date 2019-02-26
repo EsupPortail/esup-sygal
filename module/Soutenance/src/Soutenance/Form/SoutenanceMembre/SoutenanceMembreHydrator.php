@@ -2,9 +2,7 @@
 
 namespace Soutenance\Form\SoutenanceMembre;
 
-use DateTime;
 use Soutenance\Entity\Membre;
-use Soutenance\Entity\Proposition;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Zend\Stdlib\Hydrator\HydratorInterface;
 

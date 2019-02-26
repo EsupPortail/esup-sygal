@@ -39,7 +39,7 @@ class ConfigurationController extends  AbstractActionController {
             foreach ($data as $key => $valeur) {
                 if (array_search($key, $params) !== false) {
                     $parametre = $this->getParametreService()->getParametreByCode($key)->setValeur($valeur);
-                    $parametre = $this->getParametreService()->update($parametre);
+                    $this->getParametreService()->update($parametre);
                 }
             }
             $this->redirect()->toRoute('configuration');

@@ -11,6 +11,10 @@ use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
+/**
+ * @method boolean isAllowed($resource, $privilege = null)
+ */
+
 class QualiteController extends AbstractActionController
 {
     use MembreServiceAwareTrait;
