@@ -163,6 +163,26 @@ class TheseRepository extends DefaultEntityRepository
      * @param Individu $individu
      * @return These[]
      */
+    public function fetchThesesByDoctorantAsIndividu($individu)
+    {
+        $qb = $this->createQueryBuilder('t')
+            ->join('t.doctorant', 'doctorant')
+            ->join('doctorant.individu', 'individu')
+            ->andWhere('individu = :individu')
+            ->setParameter('individu', $individu)
+            ->andWhere('t.etatThese = :encours')
+            ->setParameter('encours', These::ETAT_EN_COURS)
+            ->orderBy('t.datePremiereInscription', 'ASC')
+        ;
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
+
+    /**
+     * @param Individu $individu
+     * @return These[]
+     */
     public function fetchThesesByEncadrant($individu)
     {
         $qb = $this->createQueryBuilder('t')

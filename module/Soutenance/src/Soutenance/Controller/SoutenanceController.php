@@ -7,16 +7,11 @@ use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
-use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Utilisateur;
-use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
-use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
-use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
-use BjyAuthorize\Exception\UnAuthorizedException;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Form\Confidentialite\ConfidentialiteForm;
@@ -24,11 +19,11 @@ use Soutenance\Form\LabelEtAnglais\LabelEtAnglaisForm;
 use Soutenance\Form\SoutenanceDateLieu\SoutenanceDateLieuForm;
 use Soutenance\Form\SoutenanceMembre\SoutenanceMembreForm;
 use Soutenance\Form\SoutenanceRefus\SoutenanceRefusForm;
-use Soutenance\Provider\Privilege\SoutenancePrivileges;
-use Soutenance\Service\Avis\AvisServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
+use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Soutenance\Service\SignaturePresident\SiganturePresidentPdfExporter;
+use UnicaenApp\Exception\RuntimeException;
 use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
@@ -47,25 +42,11 @@ class SoutenanceController extends AbstractActionController {
     use MembreServiceAwareTrait;
     use IndividuServiceAwareTrait;
     use ValidationServiceAwareTrait;
-    use NotifierServiceAwareTrait;
+    use NotifierSoutenanceServiceAwareTrait;
     use UserContextServiceAwareTrait;
-    use AvisServiceAwareTrait;
-    use ActeurServiceAwareTrait;
-    use UtilisateurServiceAwareTrait;
 
     public function indexAction()
     {
-        $these       = null;
-        $proposition = null;
-        $directeurs  = null;
-
-        $theseId = $this->params()->fromRoute('these');
-        if ($theseId) {
-            /** @var These $these */
-            $these = $this->getTheseService()->getRepository()->find($theseId);
-            $proposition = $this->getPropositionService()->findByThese($these);
-        }
-
         /** @var These[] $theses */
         $theses = [];
         $individu = $this->userContextService->getIdentityIndividu();
@@ -73,21 +54,20 @@ class SoutenanceController extends AbstractActionController {
 
         switch ($role->getCode()) {
             case Role::CODE_DOCTORANT :
-                $theses = $this->getTheseService()->getRepository()->fetchThesesByDoctorant($these->getDoctorant());
+                $theses = $this->getTheseService()->getRepository()->fetchThesesByDoctorantAsIndividu($individu);
                 break;
             case Role::CODE_DIRECTEUR_THESE :
             case Role::CODE_CODIRECTEUR_THESE :
                 $theses = $this->getTheseService()->getRepository()->fetchThesesByEncadrant($individu);
                 break;
             default :
+                //TODO changer cela !!!
                 $theses[] = $this->getTheseService()->getRepository()->find(41321);
                 break;
         }
 
         return new ViewModel([
-            'these' => $these,
-            'proposition' => $proposition,
-            'theses' => $theses,
+            'theses'            => $theses,
         ]);
     }
 
@@ -105,12 +85,12 @@ class SoutenanceController extends AbstractActionController {
         $rapporteurs = ($proposition)?$proposition->getRapporteurs():[];
 
         return new ViewModel([
-            'these' => $these,
-            'proposition' => $proposition,
-            'jury' => $this->getPropositionService()->juryOk($proposition),
-            'validations' => ($proposition)?$this->getPropositionService()->getValidationSoutenance($these):[],
-            'directeurs' => $directeurs,
-            'rapporteurs' => $rapporteurs,
+            'these'             => $these,
+            'proposition'       => $proposition,
+            'jury'              => $this->getPropositionService()->juryOk($proposition),
+            'validations'       => ($proposition)?$this->getPropositionService()->getValidationSoutenance($these):[],
+            'directeurs'        => $directeurs,
+            'rapporteurs'       => $rapporteurs,
         ]);
     }
 
@@ -120,11 +100,6 @@ class SoutenanceController extends AbstractActionController {
         $idThese = $this->params()->fromRoute('these');
         $these = $this->getTheseService()->getRepository()->find($idThese);
 
-        $isAllowed = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_VISUALISER);
-        if (!$isAllowed) {
-            throw new UnAuthorizedException("Vous êtes non authorisé(e) à visualiser cette propositions de soutenance.");
-        }
-
         /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
         if (!$proposition) {
@@ -133,49 +108,38 @@ class SoutenanceController extends AbstractActionController {
             $this->getPropositionService()->create($proposition);
 
             /** @var Acteur[] $encadrements */
-
             $encadrements = $these->getEncadrements();
             foreach ($encadrements as $encadrement) {
                 $this->getMembreService()->createMembre($proposition, $encadrement);
             }
-
             $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
         }
 
         /** @var Utilisateur $currentUser */
         $currentUser = $this->userContextService->getDbUser();
         $currentIndividu = $currentUser->getIndividu();
+        /** @var Role $currentRole */
+        $currentRole = $this->userContextService->getSelectedIdentityRole();
 
 
         return new ViewModel([
-                'these' => $these,
-                'proposition' => $proposition,
-                'doctorant' => $these->getDoctorant(),
-                'directeurs' =>$these->getEncadrements(false),
-                'validations' => $this->getPropositionService()->getValidationSoutenance($these),
-                'currentIndividu' => $currentIndividu,
-                'roleCode' => $this->userContextService->getSelectedIdentityRole()->getCode(),
-                'individuId' => $this->userContextService->getIdentityDb()->getIndividu()->getId(),
-                'indicateurs' => $this->getPropositionService()->computeIndicateur($proposition),
-                'juryOk' => $this->getPropositionService()->juryOk($proposition),
-                'isOk'   => $this->getPropositionService()->isOk($proposition),
-            ]
-        );
+            'these'             => $these,
+            'proposition'       => $proposition,
+            'doctorant'         => $these->getDoctorant(),
+            'directeurs'        =>$these->getEncadrements(false),
+            'validations'       => $this->getPropositionService()->getValidationSoutenance($these),
+            'validationActeur'  => $this->getPropositionService()->isValidated($these, $currentIndividu, $currentRole),
+            'roleCode'          => $this->userContextService->getSelectedIdentityRole()->getCode(),
+            'indicateurs'       => $this->getPropositionService()->computeIndicateur($proposition),
+            'juryOk'            => $this->getPropositionService()->juryOk($proposition),
+            'isOk'              => $this->getPropositionService()->isOk($proposition),
+        ]);
     }
 
-    /**
-     * Modification de la date et lieu de la soutenance
-     * => se fait dans une fenêtre modale
-     */
     public function modifierDateLieuAction() {
         /** @var These $these */
         $idThese = $this->params()->fromRoute('these');
         $these = $this->getTheseService()->getRepository()->find($idThese);
-
-        $isAllowed = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_MODIFIER);
-        if (!$isAllowed) {
-            throw new UnAuthorizedException("Vous êtes non authorisé(e) à modifier cette propositions de soutenance.");
-        }
 
         /** @var SoutenanceDateLieuForm $form */
         $form = $this->getServiceLocator()->get('FormElementManager')->get(SoutenanceDateLieuForm::class);
@@ -197,21 +161,15 @@ class SoutenanceController extends AbstractActionController {
         }
 
         return new ViewModel([
-                'form' => $form,
-                'title' => 'Renseigner la date et le lieu de la soutenance',
-            ]
-        );
+            'form'              => $form,
+            'title'             => 'Renseigner la date et le lieu de la soutenance',
+        ]);
     }
 
     public function modifierMembreAction() {
         /** @var These $these */
         $idThese = $this->params()->fromRoute('these');
         $these = $this->getTheseService()->getRepository()->find($idThese);
-
-        $isAllowed = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_MODIFIER);
-        if (!$isAllowed) {
-            throw new UnAuthorizedException("Vous êtes non authorisé(e) à modifier cette propositions de soutenance.");
-        }
 
         /** @var SoutenanceDateLieuForm $form */
         $form = $this->getServiceLocator()->get('FormElementManager')->get(SoutenanceMembreForm::class);
@@ -246,11 +204,10 @@ class SoutenanceController extends AbstractActionController {
             }
         }
 
-               return new ViewModel([
-                'form' => $form,
-                'title' => 'Renseigner les informations sur un membre du jury',
-            ]
-        );
+       return new ViewModel([
+        'form'                  => $form,
+        'title'                 => 'Renseigner les informations sur un membre du jury',
+        ]);
     }
 
     public function effacerMembreAction()
@@ -261,11 +218,6 @@ class SoutenanceController extends AbstractActionController {
 
         /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
-
-        $isAllowed = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_MODIFIER);
-        if (!$isAllowed) {
-            throw new UnAuthorizedException("Vous êtes non authorisé(e) à modifier cette propositions de soutenance.");
-        }
 
         /** @var Membre $membre */
         $idMembre = $this->params()->fromRoute('membre');
@@ -304,8 +256,8 @@ class SoutenanceController extends AbstractActionController {
         }
 
         return new ViewModel([
-            'title' => 'Renseignement des informations relatives à la confidentialité',
-            'form' => $form,
+            'title'             => 'Renseignement des informations relatives à la confidentialité',
+            'form'              => $form,
         ]);
     }
 
@@ -335,32 +287,27 @@ class SoutenanceController extends AbstractActionController {
         }
 
         return new ViewModel([
-            'title' => 'Renseignement d\'un label ou thèse en anglais',
-            'form' => $form,
+            'title'             => 'Renseignement d\'un label ou thèse en anglais',
+            'form'              => $form,
         ]);
     }
 
-    public function validerAction() {
+    public function validerActeurAction() {
         /** @var These $these */
         $idThese = $this->params()->fromRoute('these');
         $these = $this->getTheseService()->getRepository()->find($idThese);
 
-        $isAllowed = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_ACTEUR);
-        if (!$isAllowed) {
-            throw new UnAuthorizedException("Vous êtes non authorisé(e) à modifier cette propositions de soutenance.");
-        }
-
         $validation = $this->getValidationService()->validatePropositionSoutenance($these);
-        $this->getNotifierService()->triggerValidationProposition($these, $validation);
+        $this->getNotifierSoutenanceService()->triggerValidationProposition($these, $validation);
 
         /** @var Doctorant $doctorant */
         $doctorant = $these->getDoctorant();
 
+        /** @var Acteur[] $acteurs */
         $dirs = $these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE);
         $codirs = $these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE);
-        /** @var Acteur[] $acteurs */
-        $acteurs = array_merge($dirs->toArray(), $codirs->toArray());
-        $acteurs[] = $doctorant;
+        $acteurs = array_merge($dirs->toArray(), $codirs->toArray(), [ $doctorant ]);
+
         $allValidated = true;
         foreach ($acteurs as $acteur) {
             if ($this->getValidationService()->findValidationPropositionSoutenanceByTheseAndIndividu($these, $acteur->getIndividu()) === null) {
@@ -368,10 +315,7 @@ class SoutenanceController extends AbstractActionController {
                 break;
             }
         }
-
-        if ($allValidated) $this->getNotifierService()->triggerNotificationUniteRechercheProposition($these);
-
-
+        if ($allValidated) $this->getNotifierSoutenanceService()->triggerNotificationUniteRechercheProposition($these);
 
         $this->redirect()->toRoute('soutenance/proposition',['these' => $idThese],[],true);
 
@@ -382,25 +326,30 @@ class SoutenanceController extends AbstractActionController {
         $idThese = $this->params()->fromRoute('these');
         $these = $this->getTheseService()->getRepository()->find($idThese);
 
-//        /** @var Proposition $proposition */
-//        $proposition = $this->getPropositionService()->findByThese($these);
-
-        /** @var string $role */
-        $role =  $this->userContextService->getSelectedIdentityRole()->getCode();
+        /**
+         * @var Role $role
+         * @var Individu $individu
+         */
+        $role =  $this->userContextService->getSelectedIdentityRole();
         $individu = $this->userContextService->getIdentityDb()->getIndividu();
 
-        if ($role=== Role::CODE_UR) {
-            $this->getValidationService()->validateValidationUR($these, $individu);
-            $this->getNotifierService()->triggerNotificationEcoleDoctoraleProposition($these);
-        }
-        if ($role=== Role::CODE_ED) {
-            $this->getValidationService()->validateValidationED($these, $individu);
-            $this->getNotifierService()->triggerNotificationBureauDesDoctoratsProposition($these);
-        }
-        if ($role=== Role::CODE_BDD) {
-            $this->getValidationService()->validateValidationBDD($these, $individu);
-            $this->getNotifierService()->triggerNotificationPropositionValidee($these);
-            $this->getNotifierService()->triggerNotificationPresoutenance($these);
+        switch($role->getCode()) {
+            case Role::CODE_UR :
+                $this->getValidationService()->validateValidationUR($these, $individu);
+                $this->getNotifierSoutenanceService()->triggerNotificationEcoleDoctoraleProposition($these);
+                break;
+            case Role::CODE_ED :
+                $this->getValidationService()->validateValidationED($these, $individu);
+                $this->getNotifierSoutenanceService()->triggerNotificationBureauDesDoctoratsProposition($these);
+                break;
+            case Role::CODE_BDD :
+                $this->getValidationService()->validateValidationBDD($these, $individu);
+                $this->getNotifierSoutenanceService()->triggerNotificationPropositionValidee($these);
+                $this->getNotifierSoutenanceService()->triggerNotificationPresoutenance($these);
+                break;
+            default :
+                throw new RuntimeException("Le role [] ne peut pas valider cette proposition.");
+                break;
         }
 
         $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
@@ -427,35 +376,16 @@ class SoutenanceController extends AbstractActionController {
                 $this->getPropositionService()->annulerValidations($proposition);
                 $currentUser = $this->userContextService->getIdentityIndividu();
                 $currentRole = $this->userContextService->getSelectedIdentityRole();
-                $this->getNotifierService()->triggerRefusPropositionSoutenance($these, $currentUser, $currentRole, $data['motif']);
+                $this->getNotifierSoutenanceService()->triggerRefusPropositionSoutenance($these, $currentUser, $currentRole, $data['motif']);
             }
         }
 
         return new ViewModel([
-                'title' => "Motivation du refus de la proposition de soutenance",
-                'form' => $form,
-                'these' => $these,
-            ]
-        );
+            'title'             => "Motivation du refus de la proposition de soutenance",
+            'form'              => $form,
+            'these'             => $these,
+        ]);
     }
-
-//    public function addActeursAction()
-//    {
-//        $this->getActeurService()->addActeur41321();
-//        $this->redirect()->toRoute('soutenance', [], [], true);
-//    }
-//
-//    public function removeActeursAction()
-//    {
-//        $this->getActeurService()->removeActeur41321();
-//        $this->redirect()->toRoute('soutenance', [], [], true);
-//    }
-//
-//    public function restoreValidationAction()
-//    {
-//        $this->getActeurService()->restaureValidation();
-//        $this->redirect()->toRoute('soutenance', [], [], true);
-//    }
 
     /** Document pour la signature en présidence */
     public function signaturePresidenceAction()

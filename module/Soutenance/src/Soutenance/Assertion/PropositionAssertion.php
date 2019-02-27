@@ -79,6 +79,12 @@ class PropositionAssertion implements  AssertionInterface {
                         break;
                 }
             case SoutenancePrivileges::SOUTENANCE_PROPOSITION_MODIFIER:
+                /** REMARQUE : une fois que l'unite de recherche, l'école doctorale ou le bureau des doctorats a validé, on ne peut plus modifier la proposition **/
+                $validations_UNITE  = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these);
+                $validations_ECOLE  = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_ED, $these);
+                $validations_BUREAU = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
+                if ($validations_UNITE || $validations_ECOLE || $validations_BUREAU) return false;
+
                 switch ($role) {
                     case Role::CODE_DOCTORANT :
                         return $doctorant->getId() === $individu->getId();

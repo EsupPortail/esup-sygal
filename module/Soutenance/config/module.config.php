@@ -58,6 +58,8 @@ use Soutenance\Service\Avis\AvisService;
 use Soutenance\Service\Avis\AvisServiceFactory;
 use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Membre\MembreServiceFactory;
+use Soutenance\Service\Notifier\NotifierSoutenanceService;
+use Soutenance\Service\Notifier\NotifierSoutenanceServiceFactory;
 use Soutenance\Service\Parametre\ParametreService;
 use Soutenance\Service\Parametre\ParametreServiceFactory;
 use Soutenance\Service\Proposition\PropositionService;
@@ -153,7 +155,7 @@ return array(
                 [
                     'controller' => SoutenanceController::class,
                     'action'     => [
-                            'valider',
+                            'valider-acteur',
                     ],
                     'privileges' => SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_ACTEUR,
                 ],
@@ -673,7 +675,7 @@ return array(
                                     'route'    => '/valider',
                                     'defaults' => [
                                         'controller' => SoutenanceController::class,
-                                        'action'     => 'valider',
+                                        'action'     => 'valider-acteur',
                                     ],
                                 ],
                             ],
@@ -781,6 +783,7 @@ return array(
             MembreService::class => MembreServiceFactory::class,
             AvisService::class => AvisServiceFactory::class,
             ParametreService::class => ParametreServiceFactory::class,
+            NotifierSoutenanceService::class => NotifierSoutenanceServiceFactory::class,
             //assertion
             EngagementImpartialiteAssertion::class => EngagementImpartialiteAssertionFactory::class,
             PresoutenanceAssertion::class => PresoutenanceAssertionFactory::class,

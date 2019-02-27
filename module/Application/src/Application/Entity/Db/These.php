@@ -1237,10 +1237,14 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function getDirecteursTheseEmails(array &$individusSansMail = [])
     {
         $emails = [];
-        $directeurs = $this->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE);
+        /** @var Acteur[] $directeurs */
+        $directeurs = $this->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE)->toArray();
+        /** @var Acteur[] $codirecteurs */
+        $codirecteurs = $this->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE)->toArray();
+        $encadrements = array_merge($directeurs, $codirecteurs);
 
         /** @var Acteur $acteur */
-        foreach ($directeurs as $acteur) {
+        foreach ($encadrements as $acteur) {
             $email = $acteur->getIndividu()->getEmail();
             $name = (string) $acteur->getIndividu();
             if (! $email) {
