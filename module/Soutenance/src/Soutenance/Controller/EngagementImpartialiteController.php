@@ -7,7 +7,6 @@ use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Validation;
 use Application\Service\Individu\IndividuServiceAwareTrait;
-use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use BjyAuthorize\Exception\UnAuthorizedException;
@@ -15,6 +14,7 @@ use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\SoutenancePrivileges;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
+use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
@@ -34,7 +34,7 @@ class EngagementImpartialiteController extends AbstractActionController
     use MembreServiceAwareTrait;
     use IndividuServiceAwareTrait;
     use ValidationServiceAwareTrait;
-    use NotifierServiceAwareTrait;
+    use NotifierSoutenanceServiceAwareTrait;
 
     public function engagementImpartialiteAction()
     {
@@ -90,9 +90,9 @@ class EngagementImpartialiteController extends AbstractActionController
 
         /** @var Membre $membre */
         foreach ($proposition->getMembres() as $membre) {
-            if ($membre->getIndividu()) {
+            if (($membre->getRole() === Membre::RAPPORTEUR OR $membre->getRole() === Membre::RAPPORTEUR_ABSENT) AND $membre->getIndividu()) {
                 $validations = $this->getValidationService()->getRepository()->findValidationByCodeAndIndividu(TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $membre->getIndividu());
-                if (!$validations) $this->getNotifierService()->triggerDemandeSignatureEngagementImpartialite($these, $proposition, $membre);
+                if (!$validations) $this->getNotifierSoutenanceService()->triggerDemandeSignatureEngagementImpartialite($these, $proposition, $membre);
             }
         }
 
@@ -118,7 +118,7 @@ class EngagementImpartialiteController extends AbstractActionController
         $idMembre = $this->params()->fromRoute('membre');
         $membre = $this->getMembreService()->find($idMembre);
 
-        $this->getNotifierService()->triggerDemandeSignatureEngagementImpartialite($these, $proposition, $membre);
+        $this->getNotifierSoutenanceService()->triggerDemandeSignatureEngagementImpartialite($these, $proposition, $membre);
 
         $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
@@ -144,7 +144,7 @@ class EngagementImpartialiteController extends AbstractActionController
         $proposition = $this->getPropositionService()->findByThese($these);
 
         $this->getValidationService()->signEngagementImpartialite($these, $individu);
-        $this->getNotifierService()->triggerSignatureEngagementImpartialite($these, $proposition, $membre);
+        $this->getNotifierSoutenanceService()->triggerSignatureEngagementImpartialite($these, $proposition, $membre);
 
         $this->redirect()->toRoute('soutenance/presoutenance/engagement-impartialite', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true);
     }
@@ -172,7 +172,7 @@ class EngagementImpartialiteController extends AbstractActionController
         /** @var Validation[] $validations */
         $validations = $this->getValidationService()->getRepository()->findValidationByCodeAndIndividu(TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $individu);
         $this->getValidationService()->unsignEngagementImpartialite(current($validations));
-        $this->getNotifierService()->triggerAnnulationEngagementImpartialite($these, $proposition, $membre);
+        $this->getNotifierSoutenanceService()->triggerAnnulationEngagementImpartialite($these, $proposition, $membre);
 
         $this->redirect()->toRoute('soutenance/presoutenance/engagement-impartialite', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true);
     }

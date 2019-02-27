@@ -14,7 +14,6 @@ use Application\Entity\Db\VersionFichier;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
-use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
@@ -28,6 +27,7 @@ use Soutenance\Form\SoutenanceDateRenduRapport\SoutenanceDateRenduRapportForm;
 use Soutenance\Provider\Privilege\SoutenancePrivileges;
 use Soutenance\Service\Avis\AvisServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
+use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
 use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
@@ -41,7 +41,7 @@ class PresoutenanceController extends AbstractController
     use TheseServiceAwareTrait;
     use MembreServiceAwareTrait;
     use IndividuServiceAwareTrait;
-    use NotifierServiceAwareTrait;
+    use NotifierSoutenanceServiceAwareTrait;
     use PropositionServiceAwareTrait;
     use ActeurServiceAwareTrait;
     use ValidationServiceAwareTrait;
@@ -118,6 +118,7 @@ class PresoutenanceController extends AbstractController
             'engagements' => $engagements,
             'avis' => $avis,
             'rapports' => $rapports,
+            'deadline' => $this->getParametreService()->getParametreByCode('AVIS_DEADLINE')->getValeur(),
         ]);
     }
 
@@ -258,7 +259,7 @@ class PresoutenanceController extends AbstractController
 
         /** @var Membre $rapporteur */
         foreach ($rapporteurs as $rapporteur) {
-            $this->getNotifierService()->triggerDemandeAvisSoutenance($these, $proposition, $rapporteur);
+            $this->getNotifierSoutenanceService()->triggerDemandeAvisSoutenance($these, $proposition, $rapporteur);
         }
 
         $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
