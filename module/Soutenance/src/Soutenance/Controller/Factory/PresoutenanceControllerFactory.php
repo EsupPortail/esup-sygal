@@ -5,7 +5,6 @@ namespace Soutenance\Controller\Factory;
 use Application\Service\Acteur\ActeurService;
 use Application\Service\Fichier\FichierService;
 use Application\Service\Individu\IndividuService;
-use Application\Service\Notification\NotifierService;
 use Application\Service\Role\RoleService;
 use Application\Service\These\TheseService;
 use Application\Service\Utilisateur\UtilisateurService;
@@ -13,6 +12,7 @@ use Application\Service\Validation\ValidationService;
 use Soutenance\Controller\PresoutenanceController;
 use Soutenance\Service\Avis\AvisService;
 use Soutenance\Service\Membre\MembreService;
+use Soutenance\Service\Notifier\NotifierSoutenanceService;
 use Soutenance\Service\Parametre\ParametreService;
 use Soutenance\Service\Proposition\PropositionService;
 use Zend\Mvc\Controller\ControllerManager;
@@ -31,7 +31,7 @@ class PresoutenanceControllerFactory
          * @var MembreService $membreService
          * @var TheseService $theseService
          * @var IndividuService $individuService
-         * @var NotifierService $notifierService
+         * @var NotifierSoutenanceService $notifierService
          * @var ActeurService $acteurService
          * @var ValidationService $validationService
          * @var RoleService $roleService
@@ -44,7 +44,7 @@ class PresoutenanceControllerFactory
         $theseService = $controllerManager->getServiceLocator()->get('TheseService');
         $individuService = $controllerManager->getServiceLocator()->get('IndividuService');
         $acteurService = $controllerManager->getServiceLocator()->get(ActeurService::class);
-        $notifierService = $controllerManager->getServiceLocator()->get(NotifierService::class);
+        $notifierService = $controllerManager->getServiceLocator()->get(NotifierSoutenanceService::class);
         $validationService = $controllerManager->getServiceLocator()->get('ValidationService');
         $roleService = $controllerManager->getServiceLocator()->get('RoleService');
         $avisService = $controllerManager->getServiceLocator()->get(AvisService::class);
@@ -59,7 +59,7 @@ class PresoutenanceControllerFactory
         $controller->setTheseService($theseService);
         $controller->setIndividuService($individuService);
         $controller->setActeurService($acteurService);
-        $controller->setNotifierService($notifierService);
+        $controller->setNotifierSoutenanceService($notifierService);
         $controller->setValidationService($validationService);
         $controller->setRoleService($roleService);
         $controller->setAvisService($avisService);
