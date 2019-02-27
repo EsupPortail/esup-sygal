@@ -28,6 +28,8 @@ return array(
     'bjyauthorize' => [
         'guards' => [
             'BjyAuthorize\Guard\Controller' => [
+                // la page Contact requiert une authentification car l'adresse d'assistance dépend de l'utilisateur
+                ['controller' => 'UnicaenApp\Controller\Application', 'action' => 'contact', 'roles' => ['user']],
                 ['controller' => 'Application\Controller\Index', 'action' => 'contact', 'roles' => ['user']],
             ],
         ],
