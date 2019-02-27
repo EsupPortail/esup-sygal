@@ -3,9 +3,11 @@
 namespace Soutenance\Service\Proposition;
 
 //TODO faire le repo aussi
+use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
+use Application\Entity\Db\Validation;
 use Application\Entity\Db\Variable;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\File\FileServiceAwareTrait;
@@ -16,6 +18,7 @@ use Doctrine\ORM\OptimisticLockException;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
+use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
 use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -24,6 +27,7 @@ class PropositionService {
     use EntityManagerAwareTrait;
     use ValidationServiceAwareTrait;
     use NotifierServiceAwareTrait;
+    use NotifierSoutenanceServiceAwareTrait;
     use ParametreServiceAwareTrait;
     use VariableServiceAwareTrait;
     use FileServiceAwareTrait;
@@ -134,22 +138,22 @@ class PropositionService {
         $validations = $this->getValidationService()->findValidationPropositionSoutenanceByThese($these);
         foreach ($validations as $validation) {
             $this->getValidationService()->historise($validation);
-            $this->getNotifierService()->triggerDevalidationProposition($validation);
+            $this->getNotifierSoutenanceService()->triggerDevalidationProposition($validation);
         }
         $validationED = current($this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_ED, $these));
         if ($validationED) {
             $this->getValidationService()->historise($validationED);
-            $this->getNotifierService()->triggerDevalidationProposition($validationED);
+            $this->getNotifierSoutenanceService()->triggerDevalidationProposition($validationED);
         }
         $validationUR = current($this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these));
         if ($validationUR) {
             $this->getValidationService()->historise($validationUR);
-            $this->getNotifierService()->triggerDevalidationProposition($validationUR);
+            $this->getNotifierSoutenanceService()->triggerDevalidationProposition($validationUR);
         }
         $validationBDD = current($this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these));
         if ($validationBDD) {
             $this->getValidationService()->historise($validationBDD);
-            $this->getNotifierService()->triggerDevalidationProposition($validationBDD);
+            $this->getNotifierSoutenanceService()->triggerDevalidationProposition($validationBDD);
         }
     }
 
@@ -350,5 +354,34 @@ class PropositionService {
         }
         $logos['ETAB']  = $this->fileService->computeLogoFilePathForStructure($these->getEtablissement());
         return $logos;
+    }
+
+    /**
+     * @param These $these
+     * @param Individu $currentIndividu
+     * @param Role $currentRole
+     * @return boolean
+     */
+    public function isValidated($these, $currentIndividu, $currentRole)
+    {
+        $validations = [];
+        switch($currentRole->getCode()) {
+            case Role::CODE_DOCTORANT :
+            case Role::CODE_DIRECTEUR_THESE :
+            case Role::CODE_CODIRECTEUR_THESE :
+                $validations = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PROPOSITION_SOUTENANCE, $these);
+                $validations = array_filter($validations, function (Validation $v) use ($currentIndividu) { return $v->getIndividu() === $currentIndividu;});
+                break;
+            case Role::CODE_UR :
+                $validations = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these);
+                break;
+            case Role::CODE_ED :
+                $validations = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_ED, $these);
+                break;
+            case Role::CODE_BDD :
+                $validations = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
+                break;
+        }
+        return !(empty($validations));
     }
 }

@@ -1,17 +1,13 @@
 <?php
     /**
-     * @var These $these
-     * @var Proposition $proposition
      * @var These[] $theses
      */
 
 use Application\Entity\Db\These;
-use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\SoutenancePrivileges;
 
 $this->headTitle("Gestion de la préparation de la soutenance");
 
-//TODO faire assertion pour les canTrucs
 $canProposer   = $this->isAllowed(SoutenancePrivileges::getResourceId(SoutenancePrivileges::SOUTENANCE_PROPOSITION_MODIFIER));
 $canVisualiser = $this->isAllowed(SoutenancePrivileges::getResourceId(SoutenancePrivileges::SOUTENANCE_PROPOSITION_VISUALISER));
 ?>

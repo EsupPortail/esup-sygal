@@ -6,15 +6,14 @@
  * @var \Application\Entity\Db\Doctorant $doctorant
  * @var \Application\Entity\Db\Acteur[] $directeurs
  * @var \Application\Entity\Db\Individu $currentIndividu
- * @var int $individuId
  * @var boolean $isOk
+ * @var boolean $validationActeur
  */
 
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Validation;
 use Soutenance\Provider\Privilege\SoutenancePrivileges;
 
-$alreadyValidated = ($validations[$currentIndividu->getId()] !== null);
 $canValider = $isOk && $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_ACTEUR);
 
 ?>
@@ -66,7 +65,7 @@ $canValider = $isOk && $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE
             </div>
 
             <div class="col-md-6 pull-right" >
-                <?php if (!$alreadyValidated) : ?>
+                <?php if (! $validationActeur) : ?>
                     <?php if ($canValider) : ?>
                         <a
                             href="<?php echo $this->url('soutenance/proposition/valider', ['these' => $these->getId()], [], true); ?>"
@@ -81,14 +80,6 @@ $canValider = $isOk && $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE
                             </div>
                         <?php endif; ?>
                     <?php endif; ?>
-                <?php else: ?>
-                    <!--                <div class="panel panel-success">-->
-                    <!--                    <div class="panel-heading">-->
-                    <?php if($validations[$individuId]): ?>
-                        <?php echo $this->validation($validations[$individuId]); ?>
-                    <?php endif; ?>
-                    <!--                    </div>-->
-                    <!--                </div>-->
                 <?php endif; ?>
             </div>
         </div>
