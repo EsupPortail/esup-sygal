@@ -165,11 +165,15 @@ EOS
      * Remplacement de la page de contact de unicaen/app par une autre, soumise à authentification,
      * on l'adresse de contact dépend de l'établissement de l'utilisateur authentifié.
      *
-     * @return array
+     * @return array|Response
      */
     public function contactAction()
     {
         $userWrapper = $this->userContextService->getIdentityUserWrapper();
+        if ($userWrapper === null) {
+            return $this->redirect()->toRoute('home');
+        }
+
         $etablissement = $this->etablissementService->getRepository()->findOneForUserWrapper($userWrapper);
         if ($etablissement === null) {
             throw new RuntimeException(
