@@ -18,13 +18,12 @@ use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
-use BjyAuthorize\Exception\UnAuthorizedException;
 use DateInterval;
 use Exception;
+use Soutenance\Entity\Avis;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Form\SoutenanceDateRenduRapport\SoutenanceDateRenduRapportForm;
-use Soutenance\Provider\Privilege\SoutenancePrivileges;
 use Soutenance\Service\Avis\AvisServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
@@ -57,11 +56,6 @@ class PresoutenanceController extends AbstractController
         $idThese = $this->params()->fromRoute('these');
         $these = $this->getTheseService()->getRepository()->find($idThese);
 
-        $isAllowed = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PRESOUTENANCE_VISUALISATION);
-        if (!$isAllowed) {
-            throw new UnAuthorizedException("Vous êtes non authorisé(e) à visualiser les informations de ces soutenances.");
-        }
-
         /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
         $rapporteurs = $this->getPropositionService()->getRapporteurs($proposition);
@@ -80,6 +74,7 @@ class PresoutenanceController extends AbstractController
             $this->getPropositionService()->update($proposition);
         }
 
+        /** Recupération des engagements d'impartialité */
         $engagements = [];
         foreach ($rapporteurs as $rapporteur) {
             if ($rapporteur->getIndividu()) {
@@ -88,8 +83,10 @@ class PresoutenanceController extends AbstractController
             }
         }
 
+        /** Récupération des avis de soutenances */
         $avis = $this->getAvisService()->getAvisByThese($these);
 
+        /** Récupération des avis des rapports de présoutenances */
         $rapports = [];
         foreach ($rapporteurs as $rapporteur) {
             if ($rapporteur->getIndividu()) {
@@ -109,15 +106,18 @@ class PresoutenanceController extends AbstractController
                 }
             }
         }
+        $tousLesAvis = (count($avis) === count($rapporteurs) && count($rapports) === count($rapporteurs));
 
 
         return new ViewModel([
-            'these' => $these,
-            'proposition' => $proposition,
-            'rapporteurs' => $rapporteurs,
-            'engagements' => $engagements,
-            'avis' => $avis,
-            'rapports' => $rapports,
+            'these'                 => $these,
+            'proposition'           => $proposition,
+            'rapporteurs'           => $rapporteurs,
+            'engagements'           => $engagements,
+            'avis'                  => $avis,
+            'rapports'              => $rapports,
+            'tousLesAvis'           => $tousLesAvis,
+
             'deadline' => $this->getParametreService()->getParametreByCode('AVIS_DEADLINE')->getValeur(),
         ]);
     }
@@ -128,11 +128,6 @@ class PresoutenanceController extends AbstractController
         /** @var These $these */
         $idThese = $this->params()->fromRoute('these');
         $these = $this->getTheseService()->getRepository()->find($idThese);
-
-        $isAllowed = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_DATE_RETOUR_MODIFICATION);
-        if (!$isAllowed) {
-            throw new UnAuthorizedException("Vous êtes non authorisé(e) à modifier la date de retour des rapports.");
-        }
 
         /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
@@ -241,21 +236,30 @@ class PresoutenanceController extends AbstractController
         }
     }
 
+    /**
+     * Envoi des demandes d'avis de soutenance
+     * /!\ si un membre est fourni alors seulement envoyé à celui-ci sinon à tous les rapporteurs
+     */
     public function notifierDemandeAvisSoutenanceAction()
     {
-
         /** @var These $these */
         $idThese = $this->params()->fromRoute('these');
         $these = $this->getTheseService()->getRepository()->find($idThese);
 
-        $isAllowed = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_NOTIFIER);
-        if (!$isAllowed) {
-            throw new UnAuthorizedException("Vous êtes non authorisé(e) à notifier la demande d'avis de soutenance cette thèse.");
-        }
-
         /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
-        $rapporteurs = $this->getPropositionService()->getRapporteurs($proposition);
+
+        /** @var Membre $membre */
+        $idMembre = $this->params()->fromRoute('membre');
+        $membre = $this->getMembreService()->find($idMembre);
+
+        /** @var Membre[] $rapporteurs */
+        $rapporteurs = [];
+        if ($membre) {
+            $rapporteurs[] = $membre;
+        } else {
+            $rapporteurs = $this->getPropositionService()->getRapporteurs($proposition);
+        }
 
         /** @var Membre $rapporteur */
         foreach ($rapporteurs as $rapporteur) {
@@ -263,5 +267,19 @@ class PresoutenanceController extends AbstractController
         }
 
         $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
+    }
+
+    public function revoquerAvisSoutenanceAction()
+    {
+        $idAvis = $this->params()->fromRoute('avis');
+        $avis = $this->getAvisService()->getAvis($idAvis);
+        $validation = $avis->getValidation();
+        if ($validation) {
+            $validation->historiser();
+            $this->getValidationService()->getEntityManager()->flush($validation);
+        }
+        $this->getAvisService()->delete($avis);
+
+        $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $avis->getThese()->getId()], [], true);
     }
 }

@@ -471,5 +471,23 @@ class ValidationService extends BaseService
 
     }
 
+    public function signerAvisSoutenance($these, $individu)
+    {
+        $v = new Validation(
+            $this->getTypeValidation(TypeValidation::CODE_AVIS_SOUTENANCE),
+            $these,
+            $individu);
+
+        $this->entityManager->persist($v);
+        try {
+            $this->entityManager->flush($v);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur lors de la signature de l'avis de soutanance", null, $e);
+        }
+
+        return $v;
+
+    }
+
 
 }

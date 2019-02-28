@@ -29,10 +29,6 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
 /**
- * Class SoutenanceController
- * @package Soutenance\Controller
- *
- * Controlleur principale du module de gestion de la soutenance
  * @method boolean isAllowed($resource, $privilege = null)
  */
 

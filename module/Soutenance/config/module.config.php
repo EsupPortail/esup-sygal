@@ -209,6 +209,7 @@ return array(
                     'controller' => PresoutenanceController::class,
                     'action'     => [
                         'notifier-demande-avis-soutenance',
+                        'revoquer-avis-soutenance',
                     ],
                     'privileges' => SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_NOTIFIER,
                 ],
@@ -567,13 +568,24 @@ return array(
                                 ],
                             ],
                             'notifier-demande-avis-soutenance' => [
-                                'type' => Literal::class,
+                                'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/notifier-demande-avis-soutenance',
+                                    'route'    => '/notifier-demande-avis-soutenance[/:membre]',
                                     'defaults' => [
                                         'controller' => PresoutenanceController::class,
                                         'action'     => 'notifier-demande-avis-soutenance',
+                                    ],
+                                ],
+                            ],
+                            'revoquer-avis-soutenance' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/revoquer-avis-soutenance/:avis',
+                                    'defaults' => [
+                                        'controller' => PresoutenanceController::class,
+                                        'action'     => 'revoquer-avis-soutenance',
                                     ],
                                 ],
                             ],
