@@ -79,21 +79,21 @@ $this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctora
 <div class="row">
     <div class="col-md-4">
     <?php if ($validation): ?>
-        <?php if ($canAnnuler): ?>
-            <p>
-                <center>
-                <a href="<?php echo $urlAnnuler; ?>" class="btn btn-danger">
-                    <span class="glyphicon glyphicon-thumbs-up"></span>
-                    Annulation de la signature</a>
-                </center>
-            </p>
-        <?php else: ?>
-        <div class="panel panel-danger">
-            <div class="panel-heading">
-                Vous n'êtes pas habilité à annuler une signature d'engagement d'impartialité.
-            </div>
-        </div>
-        <?php endif; ?>
+<!--        --><?php //if ($canAnnuler): ?>
+<!--            <p>-->
+<!--                <center>-->
+<!--                <a href="--><?php //echo $urlAnnuler; ?><!--" class="btn btn-danger">-->
+<!--                    <span class="glyphicon glyphicon-thumbs-up"></span>-->
+<!--                    Annulation de la signature</a>-->
+<!--                </center>-->
+<!--            </p>-->
+<!--        --><?php //else: ?>
+<!--        <div class="panel panel-danger">-->
+<!--            <div class="panel-heading">-->
+<!--                Vous n'êtes pas habilité à annuler une signature d'engagement d'impartialité.-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        --><?php //endif; ?>
     <?php else: ?>
         <?php if ($canSign): ?>
         <p>

@@ -1,0 +1,85 @@
+<?php
+
+/**
+ * @var \Soutenance\Entity\Proposition $proposition
+ * @var \Application\Entity\Db\These $these
+ */
+
+use Application\Constants;
+use Soutenance\Provider\Privilege\SoutenancePrivileges;
+
+$canAssocierMembreIndividu              = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU);
+?>
+
+<div class=" panel panel-info">
+
+    <div class="panel-heading">
+        <div class="row">
+            <div class="col-md-8">
+                <h2> Association d'acteur SYGAL aux membres de jury </h2>
+            </div>
+            <div class="col-md-4">
+                <p>
+                    <a class="btn btn-default btn-sm"
+                       id="refresh-these-button"
+                       href="<?php echo $this->urlThese()->refreshTheseUrl($these, $this->url('soutenance/presoutenance', ['these' => $these->getId()], [], true)); ?>"
+                    ><span class="glyphicon glyphicon-import"></span> <strong>Mettre à jour</strong> la thèse à partir de
+                        <?php echo $these->getSource() ?></a>
+                </p>
+                <p class="small">
+                    Dernière mise à jour : <?php echo $these->getHistoModification()->format(Constants::DATETIME_FORMAT) ?>.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-body">
+
+        <p class="lead">
+            Tous les membres du jury doivent être associés à des acteurs enregistrés dans SyGAL.
+        </p>
+
+        <table class="table table-extra-condensed">
+            <thead>
+            <tr>
+                <th> Dénomination </th>
+                <th> Qualité </th>
+                <th> Etablissement </th>
+                <th> Id SyGAL </th>
+                <th> Action </th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($proposition->getMembres() as $membre): ?>
+                <tr>
+                    <td>    <?php echo $membre->getDenomination(); ?>                                                   </td>
+                    <td>    <?php echo $membre->getQualite()->getLibelle(); ?>                                          </td>
+                    <td>    <?php echo $membre->getEtablissement(); ?>                                                  </td>
+                    <td>    <?php echo ($membre->getIndividu())?$membre->getIndividu()->getId() .' '. $membre->getIndividu()->getNomComplet():''; ?>                  </td>
+                    <td>
+                        <?php if($canAssocierMembreIndividu): ?>
+                            <?php if (! $membre->getIndividu()): ?>
+                                <a
+                                    href="<?php echo $this->url('soutenance/presoutenance/associer-jury', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true); ?>"
+                                    class="ajax-modal"
+                                    data-event="modification-date-rendu-rapport"
+                                >
+                                    <span class="glyphicon glyphicon-link" title="Associer un individu SyGAL à un membre de jury"></span>
+                                </a>
+                            <?php else: ?>
+                                <a
+                                    href="<?php echo $this->url('soutenance/presoutenance/deassocier-jury', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true); ?>"
+                                >
+                                    <span class="glyphicon glyphicon-remove" title="Casser l'association d'un individu SyGAL à un membre de jury"></span>
+                                </a>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+
+    </div>
+
+</div>

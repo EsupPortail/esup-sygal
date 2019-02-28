@@ -71,7 +71,11 @@ class AvisSoutenanceController extends AbstractController {
             $data = $request->getPost();
             $form->setData($data);
             if ($form->isValid()) {
-                if ($avis->getId()) $this->getAvisService()->update($avis);
+                $validation = $this->getValidationService()->signerAvisSoutenance($these, $membre->getIndividu());
+                $avis->setValidation($validation);
+                if ($avis->getId()) {
+                    $this->getAvisService()->update($avis);
+                }
                 else $this->getAvisService()->create($avis);
             }
         }

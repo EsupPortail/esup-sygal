@@ -174,6 +174,6 @@ class EngagementImpartialiteController extends AbstractActionController
         $this->getValidationService()->unsignEngagementImpartialite(current($validations));
         $this->getNotifierSoutenanceService()->triggerAnnulationEngagementImpartialite($these, $proposition, $membre);
 
-        $this->redirect()->toRoute('soutenance/presoutenance/engagement-impartialite', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true);
+        $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 }

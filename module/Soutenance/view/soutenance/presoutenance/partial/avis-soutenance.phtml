@@ -1,0 +1,166 @@
+<?php
+
+/**
+ * @var \Application\Entity\Db\These $these
+ * @var \Soutenance\Entity\Proposition $proposition
+ * @var \Soutenance\Entity\Membre[] $rapporteurs
+ * @var \Application\Entity\Db\Validation[] $engagements
+ * @var \Soutenance\Entity\Avis[] $avis
+ * @var string[] $rapports
+ */
+
+use Application\Constants;
+
+$canNotifierAvisSoutenance = true;
+$canRevoquerAvisSoutenance = true;
+
+$tousLesEngagements = count($rapporteurs) === count($engagements) ;
+$tousLesAvis = count($rapporteurs) === count($avis) ;
+$tousLesRapports = count($rapporteurs) === count($rapports) ;
+?>
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h2> Avis de soutenance</h2>
+    </div>
+    <div class="panel-body">
+        <p class="lead">
+            Avant de pouvoir déclencher la procédure de soutenance il est nécessaire d'attendre le retour des avis de soutenance des rapporteurs.
+        </p>
+
+        <table class="table table-extra-condensed">
+            <thead>
+            <tr>
+                <th> Rapporteur </th>
+                <th> Avis </th>
+                <th> Rapport </th>
+                <th> Date </th>
+                <th> Actions </th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php
+            foreach ($rapporteurs as $rapporteur) : ?>
+
+                <?php
+                $individu = $rapporteur->getIndividu();
+                $avi = ($individu !== null)?$avis[$individu->getId()]:null;
+
+                ?>
+
+                <tr>
+                    <!-- Colonne affichant le nom du rapporteur -->
+                    <td>
+                        <?php if ($individu) : ?>
+                            <?php echo $individu; ?>
+                        <?php else : ?>
+                            <span class="text-danger">
+                                <?php echo $rapporteur->getDenomination(); ?>
+                            </span>
+                        <?php endif; ?>
+                    </td>
+
+                    <!-- Affichage de l'avis de soutenance -->
+                    <td>
+                        <?php if ($individu) : ?>
+                            <?php if (isset($avis[$individu->getId()])): ?>
+                                <?php
+                                $avi = $avis[$individu->getId()];
+                                if ($avi->getAvis() === 'Favorable') : ?>
+                                    <span class="text-success">
+                                            <span class="glyphicon glyphicon-ok"></span>
+                                            Favorable
+                                        </span>
+                                <?php else: ?>
+                                    <span class="text-danger" title="<?php echo $avi->getMotif(); ?>">
+                                            <span class="glyphicon glyphicon-remove"></span>
+                                            Défavorable
+                                        </span>
+                                <?php endif; ?>
+                            <?php else: ?>
+                                <span class="text-warning">
+                                    <i> Non rendu </i>
+                                </span>
+                            <?php endif; ?>
+                        <?php else: ?>
+                            <span class="text-danger">
+                                <span class="glyphicon glyphicon-warning-sign"></span>
+                                <i> N'est pas un individu SyGAL</i>
+                                <span class="glyphicon glyphicon-warning-sign"></span>
+                            </span>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <!-- TODO si fichier existe permettre le téléchargement de celui-ci -->
+                        <?php if ($rapporteur->getIndividu() && $engagements[$rapporteur->getIndividu()->getId()]) : ?>
+                            <a href="<?php echo $rapports[$rapporteur->getIndividu()->getId()]; ?>" >Rapport de pré-soutenance</a>
+                        <?php endif ?>
+                    </td>
+                    <td>
+                        <?php if ($individu !== null) :?>
+                            <?php if ($avi !== null) :?>
+                                <?php echo $avi->getValidation()->getHistoCreation()->format(Constants::DATETIME_FORMAT); ?>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+
+                        <?php if ($canNotifierAvisSoutenance && $rapporteur->getIndividu() && isset($engagements[$rapporteur->getIndividu()->getId()])) : ?>
+                            <a href="<?php echo $this->url('soutenance/presoutenance/notifier-demande-avis-soutenance', ['these' => $these->getId(), 'membre' => $rapporteur->getId()], [], true); ?>">
+                                <span class="glyphicon glyphicon-send"      title="Notifier le rapporteur"></span>
+                            </a>
+                        <?php else: ?>
+                            <span class="glyphicon glyphicon-send" title="Notifier le rapporteur" style="color:lightgray;" ></span>
+                        <?php endif; ?>
+
+                        <?php if ($canRevoquerAvisSoutenance && $avi !== null) : ?>
+                            <a href="<?php echo $this->url('soutenance/presoutenance/revoquer-avis-soutenance', ['these' => $these->getId(), 'avis' => $avi->getId()], [], true); ?>">
+                                <span class="glyphicon glyphicon-remove"
+                                      title="Révoquer l'avis de soutenance">
+                                </span>
+                            </a>
+                        <?php else: ?>
+                            <span class="glyphicon glyphicon-remove"
+                                  title="Révoquer l'avis de soutenance"
+                                  style="color:lightgray;">
+                            </span>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+
+        <div class="row">
+            <div class="col-md-4">
+                <?php if($canNotifierAvisSoutenance): ?>
+                    <a class="btn btn-info <?php echo ($tousLesEngagements)?'':'disabled'; ?>"
+                       href="<?php echo $this->url('soutenance/presoutenance/notifier-demande-avis-soutenance', ['these' => $these->getId()], [], true); ?>"
+                    >
+                        <span class="glyphicon glyphicon-send"></span> Envoyer des demandes d'avis de soutenance
+                    </a>
+                <?php endif; ?>
+            </div>
+
+            <div class="col-md-8">
+                <?php if ($tousLesAvis && $tousLesRapports) : ?>
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <span class="glyphicon glyphicon-check"></span>
+                            Tous les rapports et avis ont été fournis.
+                        </div>
+                    </div>
+                <?php else : ?>
+                    <div class="panel panel-warning">
+                        <div class="panel-heading">
+                            <span class="glyphicon glyphicon-warning-sign"></span>
+                            Tous les rapports et avis n'ont pas été founis.
+                        </div>
+                    </div>
+                <?php endif; ?>
+
+            </div>
+        </div>
+    </div>
+
+</div>
