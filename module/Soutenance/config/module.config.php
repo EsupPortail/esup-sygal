@@ -64,6 +64,8 @@ use Soutenance\Service\Parametre\ParametreService;
 use Soutenance\Service\Parametre\ParametreServiceFactory;
 use Soutenance\Service\Proposition\PropositionService;
 use Soutenance\Service\Proposition\PropositionServiceFactory;
+use Soutenance\Service\Validation\ValidationService;
+use Soutenance\Service\Validation\ValidationServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 use Zend\Mvc\Router\Http\Literal;
@@ -796,6 +798,7 @@ return array(
             AvisService::class => AvisServiceFactory::class,
             ParametreService::class => ParametreServiceFactory::class,
             NotifierSoutenanceService::class => NotifierSoutenanceServiceFactory::class,
+            ValidationService::class => ValidationServiceFactory::class,
             //assertion
             EngagementImpartialiteAssertion::class => EngagementImpartialiteAssertionFactory::class,
             PresoutenanceAssertion::class => PresoutenanceAssertionFactory::class,
