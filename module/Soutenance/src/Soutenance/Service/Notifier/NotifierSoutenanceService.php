@@ -6,13 +6,39 @@ use Application\Entity\Db\Individu;
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
-use Application\Service\Notification\NotifierService;
+use Application\Entity\Db\Variable;
+use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Variable\VariableServiceAwareTrait;
 use Notification\Notification;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use UnicaenAuth\Entity\Db\RoleInterface;
+use Zend\View\Helper\Url as UrlHelper;
 
-class NotifierSoutenanceService extends NotifierService {
+class NotifierSoutenanceService extends \Notification\Service\NotifierService {
+    use RoleServiceAwareTrait;
+    use VariableServiceAwareTrait;
+
+    /**
+     * @var UrlHelper
+     */
+    protected $urlHelper;
+
+    public function setUrlHelper($urlHelper)
+    {
+        $this->urlHelper = $urlHelper;
+    }
+
+    /**
+     * @param These $these
+     * @return string
+     */
+    protected function fetchEmailBdd(These $these)
+    {
+        $variable = $this->variableService->getRepository()->findByCodeAndThese(Variable::CODE_EMAIL_BDD, $these);
+
+        return $variable->getValeur();
+    }
 
     /**
      * @see Application/view/soutenance/notification/devalidation.phtml
