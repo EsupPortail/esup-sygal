@@ -7,9 +7,9 @@
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <many-to-one field="rapporteur" target-entity="Application\Entity\Db\Acteur">
+        <many-to-one field="rapporteur" target-entity="Application\Entity\Db\Individu">
             <join-columns>
-                <join-column name="RAPPORTEUR_ID" referenced-column-name="ID"/>
+                <join-column name="INDIVIDU_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
 

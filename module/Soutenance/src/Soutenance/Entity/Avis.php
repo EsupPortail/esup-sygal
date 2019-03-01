@@ -4,6 +4,7 @@ namespace Soutenance\Entity;
 
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Fichier;
+use Application\Entity\Db\Individu;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
 
@@ -13,7 +14,7 @@ class Avis {
     private $id;
     /** @var These */
     private $these;
-    /** @var Acteur */
+    /** @var Individu */
     private $rapporteur;
     /** @var string */
     private $avis;
@@ -51,7 +52,7 @@ class Avis {
     }
 
     /**
-     * @return Acteur
+     * @return Individu
      */
     public function getRapporteur()
     {
@@ -59,7 +60,7 @@ class Avis {
     }
 
     /**
-     * @param Acteur $rapporteur
+     * @param Individu $rapporteur
      * @return Avis
      */
     public function setRapporteur($rapporteur)

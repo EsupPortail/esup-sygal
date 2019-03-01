@@ -85,28 +85,7 @@ class PresoutenanceController extends AbstractController
 
         /** Récupération des avis de soutenances */
         $avis = $this->getAvisService()->getAvisByThese($these);
-
-        /** Récupération des avis des rapports de présoutenances */
-        $rapports = [];
-        foreach ($rapporteurs as $rapporteur) {
-            if ($rapporteur->getIndividu()) {
-                $utilisateurs = $this->utilisateurService->getRepository()->findByIndividu($rapporteur->getIndividu());
-                $utilisateur = null;
-                $utilisateursShib = array_filter($utilisateurs, function (Utilisateur $u) { return $u->getPassword() === Utilisateur::PASSWORD_SHIB;});
-                if (!empty($utilisateursShib)) {
-                    $utilisateur = current($utilisateursShib);
-                } else {
-                    $utilisateur = current($utilisateurs);
-                }
-                /** @var Fichier $fichier */
-                $fichier = $this->fichierService->getRepository()->fetchFichiers($these, NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE, VersionFichier::CODE_ORIG, false, $utilisateur);
-                if ($fichier) {
-                    $url = $this->urlFichierThese()->telechargerFichierThese($these,current($fichier));
-                    $rapports[$rapporteur->getIndividu()->getId()] = $url;
-                }
-            }
-        }
-        $tousLesAvis = (count($avis) === count($rapporteurs) && count($rapports) === count($rapporteurs));
+        $tousLesAvis = count($avis) === count($rapporteurs);
 
 
         return new ViewModel([
@@ -115,8 +94,8 @@ class PresoutenanceController extends AbstractController
             'rapporteurs'           => $rapporteurs,
             'engagements'           => $engagements,
             'avis'                  => $avis,
-            'rapports'              => $rapports,
             'tousLesAvis'           => $tousLesAvis,
+            'urlFichierThese'        => $this->urlFichierThese(),
 
             'deadline' => $this->getParametreService()->getParametreByCode('AVIS_DEADLINE')->getValeur(),
         ]);

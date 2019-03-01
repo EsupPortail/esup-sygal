@@ -44,12 +44,15 @@ class ActeurRepository extends DefaultEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findActeurByIndividu($individuId)
+    public function findActeurByIndividuAndThese($individuId, $these)
     {
         $qb = $this->createQueryBuilder('a')
             ->andWhereNotHistorise()
+//            ->join('a.these', 't')
             ->andWhere('a.individu = :individu')
+            ->andWhere('a.these = :these')
             ->setParameter('individu', $individuId)
+            ->setParameter('these', $these)
             ->orderBy('a.id', 'DESC')
         ;
 

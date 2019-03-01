@@ -7,6 +7,7 @@ use Application\Entity\Db\These;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Soutenance\Entity\Avis;
+use Soutenance\Entity\Membre;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
@@ -79,28 +80,6 @@ class AvisService {
     }
 
     /**
-     * @param Acteur $rapporteur
-     * @param These $these
-     * @return Avis
-     */
-    public function getAvisByRapporteur($rapporteur, $these)
-    {
-        $qb = $this->getEntityManager()->getRepository(Avis::class)->createQueryBuilder('avis')
-            ->andWhere('avis.these = :these')
-            ->andWhere('avis.rapporteur = :rapporteur')
-            ->setParameter('these', $these)
-            ->setParameter('rapporteur', $rapporteur);
-
-        try {
-            $result = $qb->getQuery()->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
-            throw new RuntimeException('Plusieurs avis sont associés au rapporteur ['.$rapporteur->getId().' - '.$rapporteur->getIndividu()->getNomComplet().']');
-        }
-
-        return $result;
-    }
-
-    /**
      * @param These these
      * @return Avis[]
      */
@@ -115,9 +94,31 @@ class AvisService {
         $avis = [];
         /** @var Avis $entry */
         foreach ($result as $entry) {
-            $avis[$entry->getRapporteur()->getIndividu()->getId()] = $entry;
+            $avis[$entry->getRapporteur()->getId()] = $entry;
         }
         return $avis;
 
+    }
+
+    /**
+     * @param These $these
+     * @param Membre $membre
+     * @return Avis
+     */
+    public function getAvisByMembre($these, $membre)
+    {
+        $qb = $this->getEntityManager()->getRepository(Avis::class)->createQueryBuilder('avis')
+            ->andWhere('avis.these = :these')
+            ->andWhere('avis.rapporteur = :rapporteur')
+            ->setParameter('these', $these)
+            ->setParameter('rapporteur', $membre->getIndividu());
+
+        try {
+            $result = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException('Plusieurs avis sont associés au rapporteur ['.$membre->getId().' - '.$membre->getIndividu()->getNomComplet().']');
+        }
+
+        return $result;
     }
 }

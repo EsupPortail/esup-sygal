@@ -3,12 +3,14 @@
 namespace Soutenance\Form\Avis;
 
 use Zend\Form\Element\Button;
+use Zend\Form\Element\File;
 use Zend\Form\Element\Radio;
 use Zend\Form\Element\Text;
 use Zend\Form\Element\Textarea;
 use Zend\Form\Form;
+use Zend\InputFilter\Factory;
 
-class AvisForm extends Form{
+class AvisForm extends Form {
 
     public function init()
     {
@@ -38,6 +40,14 @@ class AvisForm extends Form{
                 'id' => 'motif',
             ],
         ]);
+        //RAPPORT
+        $this->add([
+            'type' => File::class,
+            'name' => 'rapport',
+            'options' => [
+                'label' => 'Rapport de présoutenance :',
+            ],
+        ]);
         //SUBMIT
         $this->add([
             'type' => Button::class,
@@ -53,5 +63,16 @@ class AvisForm extends Form{
                 'class' => 'btn btn-success',
             ],
         ]);
+        $this->setInputFilter((new Factory())->createInputFilter([
+            'avis' => [
+                'required' => true,
+            ],
+            'rapport' => [
+                'required' => false,
+            ],
+            'motif' => [
+                'required' => false,
+            ],
+        ]));
     }
 }

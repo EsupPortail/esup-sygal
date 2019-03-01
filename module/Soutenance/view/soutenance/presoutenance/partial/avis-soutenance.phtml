@@ -6,7 +6,7 @@
  * @var \Soutenance\Entity\Membre[] $rapporteurs
  * @var \Application\Entity\Db\Validation[] $engagements
  * @var \Soutenance\Entity\Avis[] $avis
- * @var string[] $rapports
+
  */
 
 use Application\Constants;
@@ -16,7 +16,6 @@ $canRevoquerAvisSoutenance = true;
 
 $tousLesEngagements = count($rapporteurs) === count($engagements) ;
 $tousLesAvis = count($rapporteurs) === count($avis) ;
-$tousLesRapports = count($rapporteurs) === count($rapports) ;
 ?>
 
 <div class="panel panel-info">
@@ -91,9 +90,9 @@ $tousLesRapports = count($rapporteurs) === count($rapports) ;
                         <?php endif; ?>
                     </td>
                     <td>
-                        <!-- TODO si fichier existe permettre le téléchargement de celui-ci -->
-                        <?php if ($rapporteur->getIndividu() && $engagements[$rapporteur->getIndividu()->getId()]) : ?>
-                            <a href="<?php echo $rapports[$rapporteur->getIndividu()->getId()]; ?>" >Rapport de pré-soutenance</a>
+                        <?php if ($engagements[$individu->getId()] && $avis[$individu->getId()]) : ?>
+                            <a href=" <?php echo $this->urlFichierThese->telechargerFichierThese($these, $avis[$individu->getId()]->getFichier()); ?>" >
+                                Rapport de pré-soutenance</a>
                         <?php endif ?>
                     </td>
                     <td>
@@ -105,7 +104,7 @@ $tousLesRapports = count($rapporteurs) === count($rapports) ;
                     </td>
                     <td>
 
-                        <?php if ($canNotifierAvisSoutenance && $rapporteur->getIndividu() && isset($engagements[$rapporteur->getIndividu()->getId()])) : ?>
+                        <?php if ($canNotifierAvisSoutenance && isset($engagements[$individu->getId()]) && !isset($avis[$individu->getId()])) : ?>
                             <a href="<?php echo $this->url('soutenance/presoutenance/notifier-demande-avis-soutenance', ['these' => $these->getId(), 'membre' => $rapporteur->getId()], [], true); ?>">
                                 <span class="glyphicon glyphicon-send"      title="Notifier le rapporteur"></span>
                             </a>
@@ -143,7 +142,7 @@ $tousLesRapports = count($rapporteurs) === count($rapports) ;
             </div>
 
             <div class="col-md-8">
-                <?php if ($tousLesAvis && $tousLesRapports) : ?>
+                <?php if ($tousLesAvis) : ?>
                     <div class="panel panel-success">
                         <div class="panel-heading">
                             <span class="glyphicon glyphicon-check"></span>
