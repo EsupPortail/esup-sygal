@@ -249,6 +249,8 @@ return array(
                     'controller' => AvisSoutenanceController::class,
                     'action'     => [
                         'index',
+                        'afficher',
+                        'annuler',
                     ],
                     //'roles' => [],
                     'privileges' => AvisSoutenancePrivileges::SOUTENANCE_AVIS_VISUALISER,
@@ -727,6 +729,30 @@ return array(
                                 'action'     => 'index',
                             ],
                         ],
+                        'child_routes' => [
+                            'afficher' => [
+                                'type' => Literal::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/afficher',
+                                    'defaults' => [
+                                        'controller' => AvisSoutenanceController::class,
+                                        'action'     => 'afficher',
+                                    ],
+                                ],
+                            ],
+                            'annuler' => [
+                                'type' => Literal::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/annuler',
+                                    'defaults' => [
+                                        'controller' => AvisSoutenanceController::class,
+                                        'action'     => 'annuler',
+                                    ],
+                                ],
+                            ],
+                        ],
                     ],
                     'lister-rapport-presoutenance-by-utilisateur' => [
                         'type' => Segment::class,
@@ -821,6 +847,9 @@ return array(
     ],
 
     'form_elements' => [
+        'invokables' => [
+//            AvisForm::class => AvisForm::class,
+        ],
         'factories' => [
             SoutenanceDateRenduRapportForm::class => SoutenanceDateRenduRapportFormFactory::class,
             SoutenanceDateLieuForm::class => SoutenanceDateLieuFormFactory::class,

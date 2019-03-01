@@ -8,10 +8,10 @@ use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
 use Application\Service\UserContextService;
 use Application\Service\Utilisateur\UtilisateurService;
-use Application\Service\Validation\ValidationService;
 use Soutenance\Controller\AvisSoutenanceController;
 use Soutenance\Service\Avis\AvisService;
 use Soutenance\Service\Membre\MembreService;
+use Soutenance\Service\Validation\ValidationService;
 use Zend\Mvc\Controller\ControllerManager;
 
 class AvisSoutenanceControllerFactory
@@ -37,7 +37,7 @@ class AvisSoutenanceControllerFactory
          */
         $membreService = $controllerManager->getServiceLocator()->get(MembreService::class);
         $theseService = $controllerManager->getServiceLocator()->get('TheseService');
-        $validationService = $controllerManager->getServiceLocator()->get('ValidationService');
+        $validationService = $controllerManager->getServiceLocator()->get(ValidationService::class);
         $acteurService = $controllerManager->getServiceLocator()->get(ActeurService::class);
         $notifierService = $controllerManager->getServiceLocator()->get(NotifierService::class);
         $fichierService = $controllerManager->getServiceLocator()->get('FichierService');

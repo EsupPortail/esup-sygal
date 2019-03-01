@@ -15,7 +15,8 @@ class AvisHydrator implements HydratorInterface {
     {
         $data = [
             'avis' => $object->getAvis(),
-            'motifs' => $object->getMotif()
+            'motifs' => $object->getMotif(),
+            //'rapport' => $object->getFichier(),
         ];
         return $data;
     }
@@ -27,8 +28,10 @@ class AvisHydrator implements HydratorInterface {
      */
     public function hydrate(array $data, $object)
     {
+        $fichier = null;
         $object->setAvis($data['avis']);
         $object->setMotif($data['motif']);
+        $object->setFichier($fichier);
         return $object;
     }
 
