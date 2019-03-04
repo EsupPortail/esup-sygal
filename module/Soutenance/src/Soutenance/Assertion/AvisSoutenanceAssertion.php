@@ -68,6 +68,16 @@ class AvisSoutenanceAssertion  implements  AssertionInterface {
                 if ($utilisateur->getIndividu() !== $rapporteur->getIndividu()) return false;
                 return true;
                 break;
+            /**
+             * Les personnes pouvant révoquer un avis
+             * - le rapporteur
+             * - le bdd de l'etablissement
+             */
+            case AvisSoutenancePrivileges::SOUTENANCE_AVIS_ANNULER :
+                if ($role->getCode() === Role::CODE_BDD && $role->getStructure() === $these->getEtablissement()->getStructure()) return true;
+                if ($role->getCode() === Role::CODE_RAPPORTEUR_JURY && $utilisateur->getIndividu() === $rapporteur->getIndividu()) return true;
+                return false;
+                break;
         }
     }
 

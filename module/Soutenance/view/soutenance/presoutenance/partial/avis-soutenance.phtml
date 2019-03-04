@@ -10,9 +10,10 @@
  */
 
 use Application\Constants;
+use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
 
-$canNotifierAvisSoutenance = true;
-$canRevoquerAvisSoutenance = true;
+$canNotifierAvisSoutenance = $this->isAllowed(AvisSoutenancePrivileges::getResourceId(AvisSoutenancePrivileges::SOUTENANCE_AVIS_NOTIFIER));
+$canRevoquerAvisSoutenance = $this->isAllowed(AvisSoutenancePrivileges::getResourceId(AvisSoutenancePrivileges::SOUTENANCE_AVIS_ANNULER));
 
 $tousLesEngagements = count($rapporteurs) === count($engagements) ;
 $tousLesAvis = count($rapporteurs) === count($avis) ;

@@ -117,6 +117,7 @@ return array(
                         'privileges' => [
                             AvisSoutenancePrivileges::SOUTENANCE_AVIS_VISUALISER,
                             AvisSoutenancePrivileges::SOUTENANCE_AVIS_MODIFIER,
+                            AvisSoutenancePrivileges::SOUTENANCE_AVIS_ANNULER,
                         ],
                         'resources'  => ['Acteur'],
                         'assertion' => AvisSoutenanceAssertion::class,
@@ -211,9 +212,15 @@ return array(
                     'controller' => PresoutenanceController::class,
                     'action'     => [
                         'notifier-demande-avis-soutenance',
-                        'revoquer-avis-soutenance',
                     ],
                     'privileges' => SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_NOTIFIER,
+                ],
+                [
+                    'controller' => PresoutenanceController::class,
+                    'action'     => [
+                        'revoquer-avis-soutenance'
+                    ],
+                    'privileges' => AvisSoutenancePrivileges::SOUTENANCE_AVIS_ANNULER,
                 ],
                 [
                     'controller' => EngagementImpartialiteController::class,
@@ -261,6 +268,13 @@ return array(
                         'lister-rapport-presoutenance-by-utilisateur',
                     ],
                     'privileges' => AvisSoutenancePrivileges::SOUTENANCE_AVIS_VISUALISER,
+                ],
+                [
+                    'controller' => AvisSoutenanceController::class,
+                    'action'     => [
+                        'annuler',
+                    ],
+                    'privileges' => AvisSoutenancePrivileges::SOUTENANCE_AVIS_ANNULER,
                 ],
                 // Qualite
                 [

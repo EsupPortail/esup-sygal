@@ -3,6 +3,7 @@
 use Application\Constants;use Application\Entity\Db\Acteur;
 use Application\Entity\Db\These;
 use Soutenance\Entity\Avis;
+use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
 
 /**
  * @var These $these
@@ -13,7 +14,7 @@ use Soutenance\Entity\Avis;
 
 $this->headTitle("Avis de soutenance (".$avis->getId().")");
 
-$canAnnuler = true;
+$canAnnuler = $this->isAllowed(AvisSoutenancePrivileges::getResourceId(AvisSoutenancePrivileges::SOUTENANCE_AVIS_ANNULER));
 ?>
 
 <h1 class="page-header">
@@ -58,7 +59,7 @@ $canAnnuler = true;
             <div class="panel-body">
                 <dl>
                     <dt> Rapporteur </dt>
-                    <dd> <?php echo $rapporteur; ?> </dd>
+                    <dd> <?php echo $rapporteur->getIndividu(); ?> </dd>
                     <dt> Avis </dt>
                     <dd> <?php echo $avis->getAvis(); ?></dd>
                     <?php if ($avis->getMotif()) : ?>
