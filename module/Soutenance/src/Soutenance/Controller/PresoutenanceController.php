@@ -252,12 +252,12 @@ class PresoutenanceController extends AbstractController
     {
         $idAvis = $this->params()->fromRoute('avis');
         $avis = $this->getAvisService()->getAvis($idAvis);
-        $validation = $avis->getValidation();
-        if ($validation) {
-            $validation->historiser();
-            $this->getValidationService()->getEntityManager()->flush($validation);
-        }
-        $this->getAvisService()->delete($avis);
+
+        //historisation de la validation associée et du prérapport
+        $avis->getValidation()->historiser();
+        $avis->getFichier()->historiser();
+        $avis->historiser();
+        $this->getAvisService()->update($avis);
 
         $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $avis->getThese()->getId()], [], true);
     }

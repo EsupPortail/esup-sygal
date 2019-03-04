@@ -7,8 +7,10 @@ use Application\Entity\Db\Fichier;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
+use UnicaenApp\Entity\HistoriqueAwareTrait;
 
 class Avis {
+    use HistoriqueAwareTrait;
 
     /** @var int */
     private $id;
