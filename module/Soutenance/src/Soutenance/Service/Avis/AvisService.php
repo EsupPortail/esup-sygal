@@ -4,6 +4,10 @@ namespace Soutenance\Service\Avis;
 
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\These;
+use Application\Entity\Db\Utilisateur;
+use Application\Service\UserContextServiceAwareTrait;
+use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
+use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Soutenance\Entity\Avis;
@@ -13,6 +17,7 @@ use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class AvisService {
     use EntityManagerAwareTrait;
+    use UserContextServiceAwareTrait;
 
     /**
      * @param int $id
@@ -40,6 +45,19 @@ class AvisService {
      */
     public function create($avis)
     {
+        /** @var Utilisateur $user */
+        $user = $this->userContextService->getIdentityDb();
+        /** @var DateTime $date */
+        try {
+            $date = new DateTime();
+        } catch (\Exception $e) {
+            throw new RuntimeException("Un problème s'est produit lors de la récupération de la date");
+        }
+        $avis->setHistoCreation($date);
+        $avis->setHistoCreateur($user);
+        $avis->setHistoModification($date);
+        $avis->setHistoModificateur($user);
+
         $this->getEntityManager()->persist($avis);
         try {
             $this->getEntityManager()->flush($avis);
@@ -56,6 +74,17 @@ class AvisService {
      */
     public function update($avis)
     {
+        /** @var Utilisateur $user */
+        $user = $this->userContextService->getIdentityDb();
+        /** @var DateTime $date */
+        try {
+            $date = new DateTime();
+        } catch (\Exception $e) {
+            throw new RuntimeException("Un problème s'est produit lors de la récupération de la date");
+        }
+        $avis->setHistoModification($date);
+        $avis->setHistoModificateur($user);
+
         try {
             $this->getEntityManager()->flush($avis);
         } catch (OptimisticLockException $e) {
@@ -87,6 +116,7 @@ class AvisService {
     {
         $qb = $this->getEntityManager()->getRepository(Avis::class)->createQueryBuilder('avis')
             ->andWhere('avis.these = :these')
+            ->andWhere('1 = pasHistorise(avis)')
             ->setParameter('these', $these);
 
         $result = $qb->getQuery()->getResult();
@@ -110,6 +140,7 @@ class AvisService {
         $qb = $this->getEntityManager()->getRepository(Avis::class)->createQueryBuilder('avis')
             ->andWhere('avis.these = :these')
             ->andWhere('avis.rapporteur = :rapporteur')
+            ->andWhere('1 = pasHistorise(avis)')
             ->setParameter('these', $these)
             ->setParameter('rapporteur', $membre->getIndividu());
 

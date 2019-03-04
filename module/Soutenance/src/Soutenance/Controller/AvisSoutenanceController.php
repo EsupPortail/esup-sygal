@@ -15,6 +15,7 @@ use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Notification\Service\NotifierServiceAwareTrait;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Membre;
+use Soutenance\Filter\NomAvisFormatter;
 use Soutenance\Form\Avis\AvisForm;
 use Soutenance\Service\Avis\AvisServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
@@ -73,8 +74,7 @@ class AvisSoutenanceController extends AbstractController {
 
                 $nature = $this->fichierService->fetchNatureFichier(NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE);
                 $version = $this->fichierService->fetchVersionFichier(VersionFichier::CODE_ORIG);
-                //TODO le formatteur ...
-                $fichiers = $this->fichierService->createFichiersFromUpload($these, $files, $nature, $version, null, null);
+                $fichiers = $this->fichierService->createFichiersFromUpload($these, $files, $nature, $version, null, new NomAvisFormatter($membre->getIndividu()));
                 $fichier = current($fichiers);
 
                 $validation = $this->getValidationService()->signerAvisSoutenance($these, $membre->getIndividu());
@@ -103,7 +103,7 @@ class AvisSoutenanceController extends AbstractController {
         /** @var Membre $membre */
         $membreId = $this->params()->fromRoute('rapporteur');
         $membre = $this->getMembreService()->find($membreId);
-        $rapporteur = current($this->getActeurService()->getRepository()->findActeurByIndividuAndThese($membre->getIndividu(), $these));
+        $rapporteur = $this->getActeurService()->getRepository()->findActeurByIndividuAndThese($membre->getIndividu(), $these);
         /** @var Avis $avis */
         $avis = $this->getAvisService()->getAvisByMembre($these, $membre);
 
@@ -127,9 +127,12 @@ class AvisSoutenanceController extends AbstractController {
 
         //historisation de la validation associée et du prérapport
         $avis->getValidation()->historiser();
+        $this->fichierService->getEntityManager()->flush($avis->getFichier());
         $avis->getFichier()->historiser();
+        $this->getValidationService()->getEntityManager()->flush($avis->getValidation());
         $avis->historiser();
         $this->getAvisService()->update($avis);
+
 
         $this->redirect()->toRoute('soutenance/avis-soutenance', ['these' => $these->getId(), 'rapporteur' => $membreId], [], true);
     }
