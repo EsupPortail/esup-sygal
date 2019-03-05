@@ -4,9 +4,9 @@
  * @var \Application\Entity\Db\These $these
  */
 
-use Soutenance\Provider\Privilege\SoutenancePrivileges;
+use Soutenance\Provider\Privilege\PropositionPrivileges;
 
-$canModifier = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_MODIFIER);
+$canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER);
 ?>
 
 <div class="panel panel-info">
@@ -126,7 +126,7 @@ $canModifier = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSI
                     <div class="alert alert-sm alert-warning">
                         <span class="glyphicon glyphicon-warning-sign"> </span>
                         Afin de réaliser de demande de confidentialité un accord doit au préalable être rempli :
-                        <a href="https://localhost/informations/fichiers/telecharger/301">demande d'accord de confidentialité</a>.
+                        <a href="https://localhost/informations/fichiers/telecharger/362">demande d'accord de confidentialité</a>.
                     </div>
                 <?php endif; ?>
             </div>

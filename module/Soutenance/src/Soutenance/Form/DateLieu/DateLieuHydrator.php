@@ -1,12 +1,12 @@
 <?php
 
-namespace Soutenance\Form\SoutenanceDateLieu;
+namespace Soutenance\Form\DateLieu;
 
 use DateTime;
 use Soutenance\Entity\Proposition;
 use Zend\Stdlib\Hydrator\HydratorInterface;
 
-class SoutenanceDateLieuHydrator implements HydratorInterface
+class DateLieuHydrator implements HydratorInterface
 {
     /**
      * @param array $data

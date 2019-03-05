@@ -1,12 +1,12 @@
 <?php
 
-namespace Soutenance\Form\SoutenanceMembre;
+namespace Soutenance\Form\Membre;
 
 use Soutenance\Service\Membre\MembreService;
 use Zend\Stdlib\Hydrator\HydratorPluginManager;
 
 
-class SoutenanceMembreHydratorFactory
+class MembreHydratorFactory
 {
     public function __invoke(HydratorPluginManager $hydratorPluginManager)
     {
@@ -14,8 +14,8 @@ class SoutenanceMembreHydratorFactory
         /** @var MembreService $membreService */
         $membreService = $servicelocator->get(MembreService::class);
 
-        /** @var SoutenanceMembreForm $form */
-        $hydrator = new SoutenanceMembreHydrator();
+        /** @var MembreForm $form */
+        $hydrator = new MembreHydrator();
         $hydrator->setMembreService($membreService);
 
         return $hydrator;

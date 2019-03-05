@@ -1,6 +1,6 @@
 <?php
 
-namespace Soutenance\Form\SoutenanceMembre;
+namespace Soutenance\Form\Membre;
 
 use DoctrineModule\Form\Element\ObjectSelect;
 use Soutenance\Entity\Qualite;
@@ -12,7 +12,7 @@ use Zend\Form\Element\Submit;
 use Zend\Form\Element\Text;
 use Zend\Form\Form;
 
-class SoutenanceMembreForm extends Form {
+class MembreForm extends Form {
     use EntityManagerAwareTrait;
 
     public function init()
@@ -65,10 +65,7 @@ class SoutenanceMembreForm extends Form {
                 ->setLabel("Le membre est extérieur (non membre d'un établissement de la COMUE et non membre de l'unité de recherche de la thèse) :")
                 ->setValueOptions([ 'oui' => 'Oui', 'non' => 'Non'])
         );
-        $this->add(
-            (new Text('role'))
-                ->setLabel("Rôle (rapporteur, membre, membre absent, ...) :")
-        );
+
 
         $this->add(
             [

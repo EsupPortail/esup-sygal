@@ -1,20 +1,20 @@
 <?php
 
-namespace Soutenance\Form\SoutenanceDateLieu;
+namespace Soutenance\Form\DateLieu;
 
 use Zend\Form\FormElementManager;
 
 
-class SoutenanceDateLieuFormFactory
+class DateLieuFormFactory
 {
     public function __invoke(FormElementManager $formElementManager)
     {
         $sl = $formElementManager->getServiceLocator();
 
-        /** @var SoutenanceDateLieuForm $form */
-        $form = new SoutenanceDateLieuForm();
+        /** @var DateLieuForm $form */
+        $form = new DateLieuForm();
 
-        $hydrator = $sl->get('HydratorManager')->get(SoutenanceDateLieuHydrator::class);
+        $hydrator = $sl->get('HydratorManager')->get(DateLieuHydrator::class);
         $form->setHydrator($hydrator);
         $form->init();
         

@@ -5,11 +5,11 @@ namespace  Soutenance\Service\Proposition;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\File\FileService;
 use Application\Service\Notification\NotifierService;
-use Application\Service\Validation\ValidationService;
 use Application\Service\Variable\VariableService;
 use Doctrine\ORM\EntityManager;
 use Soutenance\Service\Notifier\NotifierSoutenanceService;
 use Soutenance\Service\Parametre\ParametreService;
+use Soutenance\Service\Validation\ValidationService;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 class PropositionServiceFactory
@@ -27,7 +27,7 @@ class PropositionServiceFactory
          * @var EtablissementService $etablissamentService
          */
         $entityManager = $servicelocator->get('doctrine.entitymanager.orm_default');
-        $validationService = $servicelocator->get('ValidationService');
+        $validationService = $servicelocator->get(ValidationService::class);
         $notifierService = $servicelocator->get(NotifierService::class);
         $notifierSoutenanceService = $servicelocator->get(NotifierSoutenanceService::class);
         $parametreService = $servicelocator->get(ParametreService::class);
