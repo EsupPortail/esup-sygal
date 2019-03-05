@@ -11,6 +11,11 @@ use Soutenance\Controller\Factory\QualiteControllerFactory;
 use Soutenance\Controller\Factory\SoutenanceControllerFactory;
 use Soutenance\Controller\QualiteController;
 use Soutenance\Controller\SoutenanceController;
+use Soutenance\Form\Configuration\ConfigurationForm;
+use Soutenance\Form\Configuration\ConfigurationFormFactory;
+use Soutenance\Form\QualiteEdition\QualiteEditionForm;
+use Soutenance\Form\QualiteEdition\QualiteEditionFormFactory;
+use Soutenance\Form\QualiteEdition\QualiteEditiontHydrator;
 use Soutenance\Provider\Privilege\EngagementImpartialitePrivileges;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
@@ -188,10 +193,6 @@ return array(
                                 'label'    => 'Qualités des membres',
                                 'route'    => 'qualite',
                                 'withtarget' => true,
-                                'paramsInject' => [
-                                    'these',
-                                    'membre',
-                                ],
                                 'privileges' => [
                                     QualitePrivileges::SOUTENANCE_QUALITE_VISUALISER,
                                 ],
@@ -200,10 +201,6 @@ return array(
                                 'label'    => 'Paramétrage du module de soutenance',
                                 'route'    => 'configuration',
                                 'withtarget' => true,
-                                'paramsInject' => [
-                                    'these',
-                                    'membre',
-                                ],
                                 'privileges' => [
                                     'privileges' => QualitePrivileges::SOUTENANCE_QUALITE_MODIFIER,
                                 ],
@@ -313,11 +310,14 @@ return array(
 
     'form_elements' => [
         'factories' => [
+            QualiteEditionForm::class => QualiteEditionFormFactory::class,
+            ConfigurationForm::class => ConfigurationFormFactory::class,
         ],
     ],
 
     'hydrators' => [
         'invokables' => [
+            QualiteEditiontHydrator::class => QualiteEditiontHydrator::class,
         ],
     ],
 

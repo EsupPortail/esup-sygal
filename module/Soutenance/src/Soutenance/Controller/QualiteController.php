@@ -5,6 +5,7 @@ namespace Soutenance\Controller;
 use BjyAuthorize\Exception\UnAuthorizedException;
 use Soutenance\Entity\Qualite;
 use Soutenance\Form\QualiteEdition\QualiteEditionForm;
+use Soutenance\Form\QualiteEdition\QualiteEditionFormAwareTrait;
 use Soutenance\Provider\Privilege\QualitePrivileges;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Zend\Http\Request;
@@ -18,6 +19,7 @@ use Zend\View\Model\ViewModel;
 class QualiteController extends AbstractActionController
 {
     use MembreServiceAwareTrait;
+    use QualiteEditionFormAwareTrait;
 
     /**
      * Affiche la liste des qualités enregistrées dans SyGAL et permet l'accés aux fonctions d'ajout, d'édition et de retrait
@@ -53,7 +55,7 @@ class QualiteController extends AbstractActionController
         }
 
         /** @var QualiteEditionForm $form */
-        $form = $this->getServiceLocator()->get('FormElementManager')->get(QualiteEditionForm::class);
+        $form = $this->getQualiteEditionForm();
         $form->setAttribute('action', $this->url()->fromRoute('qualite/editer', ['qualite' => $idQualite], [], true));
         $form->bind($qualite);
 

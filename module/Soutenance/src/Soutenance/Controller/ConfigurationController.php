@@ -4,6 +4,7 @@ namespace Soutenance\Controller;
 
 use Soutenance\Entity\Parametre;
 use Soutenance\Form\Configuration\ConfigurationForm;
+use Soutenance\Form\Configuration\ConfigurationFormAwareTrait;
 use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
 use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
@@ -11,11 +12,12 @@ use Zend\View\Model\ViewModel;
 
 class ConfigurationController extends  AbstractActionController {
     use ParametreServiceAwareTrait;
+    use ConfigurationFormAwareTrait;
 
     public function indexAction()
     {
         /** @var ConfigurationForm $form */
-        $form = $this->getServiceLocator()->get('FormElementManager')->get(ConfigurationForm::class);
+        $form = $this->getConfigurationForm();
 
         //todo faire une fonction dans le service ...
         $params = [
