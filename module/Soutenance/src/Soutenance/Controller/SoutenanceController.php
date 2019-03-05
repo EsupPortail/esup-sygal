@@ -37,8 +37,7 @@ class SoutenanceController extends AbstractActionController {
                 $theses = $this->getTheseService()->getRepository()->fetchThesesByEncadrant($individu);
                 break;
             default :
-                //TODO changer cela !!!
-                $theses[] = $this->getTheseService()->getRepository()->find(41321);
+                //$theses[] = $this->getTheseService()->getRepository()->find(41321);
                 break;
         }
 

@@ -79,7 +79,7 @@ return array(
                     'action'     => [
                         'index',
                     ],
-                    'roles' => [ "Administrateur technique" ],
+                    'privileges' => QualitePrivileges::SOUTENANCE_QUALITE_MODIFIER,
                 ],
 
             ],
@@ -187,7 +187,11 @@ return array(
                             'qualite' => [
                                 'label'    => 'Qualités des membres',
                                 'route'    => 'qualite',
-//                                'icon'     => 'glyphicon glyphicon-briefcase',
+                                'withtarget' => true,
+                                'paramsInject' => [
+                                    'these',
+                                    'membre',
+                                ],
                                 'privileges' => [
                                     QualitePrivileges::SOUTENANCE_QUALITE_VISUALISER,
                                 ],
@@ -195,10 +199,14 @@ return array(
                             'configuration' => [
                                 'label'    => 'Paramétrage du module de soutenance',
                                 'route'    => 'configuration',
-//                                'icon'     => 'glyphicon glyphicon-briefcase',
-                                'roles' => [
-                                    "Administrateur technique"
-                                ]
+                                'withtarget' => true,
+                                'paramsInject' => [
+                                    'these',
+                                    'membre',
+                                ],
+                                'privileges' => [
+                                    'privileges' => QualitePrivileges::SOUTENANCE_QUALITE_MODIFIER,
+                                ],
                             ],
                         ],
                     ],

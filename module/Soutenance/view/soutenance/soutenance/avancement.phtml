@@ -91,7 +91,14 @@ $this->headTitle('Avancement de la soutenance');
         <?php foreach ($rapporteurs as $rapporteur) : ?>
 
         <div class="col-md-4">
-            <strong><?php echo $rapporteur->getDenomination(); ?></strong><br/>
+            <strong>
+                <?php if ($rapporteur->getIndividu()) : ?>
+                    <?php echo $rapporteur->getIndividu(); ?>
+                <?php else : ?>
+                    <?php echo $rapporteur->getDenomination(); ?>
+                <?php endif; ?>
+            </strong>
+            <br/>
             <?php echo getBadge($rapporteur->getIndividu() !== null); ?>
             Association avec SyGAL <br/>
 
@@ -132,6 +139,7 @@ function getBadge($validation) {
     if ($validation) return '<span class="badge success">Valide</span>';
     return '<span class="badge default">Aucune</span>';
 }
+
 ?>
 
 <style>
