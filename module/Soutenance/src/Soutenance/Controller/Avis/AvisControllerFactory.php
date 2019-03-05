@@ -1,6 +1,6 @@
 <?php
 
-namespace Soutenance\Controller\Factory;
+namespace Soutenance\Controller\Avis;
 
 use Application\Service\Acteur\ActeurService;
 use Application\Service\Fichier\FichierService;
@@ -8,17 +8,16 @@ use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
 use Application\Service\UserContextService;
 use Application\Service\Utilisateur\UtilisateurService;
-use Soutenance\Controller\AvisSoutenanceController;
 use Soutenance\Service\Avis\AvisService;
 use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Validation\ValidationService;
 use Zend\Mvc\Controller\ControllerManager;
 
-class AvisSoutenanceControllerFactory
+class AvisControllerFactory
 {
     /**
      * @param ControllerManager $controllerManager
-     * @return AvisSoutenanceController
+     * @return AvisController
      */
     public function __invoke(ControllerManager $controllerManager)
     {
@@ -45,8 +44,8 @@ class AvisSoutenanceControllerFactory
         $userContextService = $controllerManager->getServiceLocator()->get('UserContextService');
         $avisService = $controllerManager->getServiceLocator()->get(AvisService::class);
 
-        /** @var AvisSoutenanceController $controller */
-        $controller = new AvisSoutenanceController();
+        /** @var AvisController $controller */
+        $controller = new AvisController();
         $controller->setTheseService($theseService);
         $controller->setValidationService($validationService);
         $controller->setActeurService($acteurService);

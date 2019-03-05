@@ -4,11 +4,6 @@ namespace Soutenance\Provider\Privilege;
 
 use UnicaenAuth\Provider\Privilege\Privileges;
 
-/**
- * Liste des privilèges utilisables.
- *
- * @author UnicaenCode
- */
 class PropositionPrivileges extends Privileges
 {
     // PROPOSITION ET VALIDATION DE LA PROPOSITION ---------------------------------------------------------------------

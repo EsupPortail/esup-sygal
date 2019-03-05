@@ -5,7 +5,7 @@ namespace Soutenance\Assertion;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Service\UserContextServiceAwareTrait;
-use Soutenance\Provider\Privilege\SoutenancePrivileges;
+use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 use Zend\Permissions\Acl\Acl;
 use Zend\Permissions\Acl\Assertion\AssertionInterface;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
@@ -35,15 +35,15 @@ class PresoutenanceAssertion implements  AssertionInterface {
         $these = $resource;
 
         switch ($privilege) {
-            case SoutenancePrivileges::SOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU:
+            case PresoutenancePrivileges::PRESOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU:
                 $role = $this->userContextService->getSelectedIdentityRole();
                 return ($role->getCode() === Role::CODE_BDD && $role->getStructure() === $these->getEtablissement()->getStructure());
                 break;
-            case SoutenancePrivileges::SOUTENANCE_DATE_RETOUR_MODIFICATION:
+            case PresoutenancePrivileges::PRESOUTENANCE_DATE_RETOUR_MODIFICATION:
                 $role = $this->userContextService->getSelectedIdentityRole();
                 return ($role->getCode() === Role::CODE_BDD && $role->getStructure() === $these->getEtablissement()->getStructure());
                 break;
-            case SoutenancePrivileges::SOUTENANCE_PRESOUTENANCE_VISUALISATION:
+            case PresoutenancePrivileges::PRESOUTENANCE_PRESOUTENANCE_VISUALISATION:
                 $role = $this->userContextService->getSelectedIdentityRole();
                 return (($role->getCode() === Role::CODE_BDD && $role->getStructure() === $these->getEtablissement()->getStructure()) ||
                     $role->getCode() === Role::CODE_OBSERVATEUR ||

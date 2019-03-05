@@ -2,6 +2,7 @@
 
 /**
  * @var \Application\Entity\Db\These $these
+ * @var \Application\Entity\Db\Validation $validationBDD
  */
 
 $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->getIndividu());
@@ -12,18 +13,23 @@ $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->get
     <small><?php echo $this->partial('application/these/partial/titre') ?></small>
 </h1>
 
-<!-- DATE DE RENDU DE RAPPORT ----------------------------------------------------------------------------------------->
-<?php echo $this->partial('soutenance/presoutenance/partial/date-de-retour'); ?>
+<?php if ($validationBDD) : ?>
+    <!-- DATE DE RENDU DE RAPPORT ----------------------------------------------------------------------------------------->
+    <?php echo $this->partial('soutenance/presoutenance/partial/date-de-retour'); ?>
 
-<!-- MEMBRES DU JURY ET PERSOPASS ------------------------------------------------------------------------------------->
-<?php echo $this->partial('soutenance/presoutenance/partial/association-jury'); ?>
+    <!-- MEMBRES DU JURY ET PERSOPASS ------------------------------------------------------------------------------------->
+    <?php echo $this->partial('soutenance/presoutenance/partial/association-jury'); ?>
 
-<!-- ENGAGEMENT IMPARTIALITE------------------------------------------------------------------------------------------->
-<?php echo $this->partial('soutenance/presoutenance/partial/engagement-impartialite'); ?>
+    <!-- ENGAGEMENT IMPARTIALITE------------------------------------------------------------------------------------------->
+    <?php echo $this->partial('soutenance/presoutenance/partial/engagement-impartialite'); ?>
 
-<!-- AVIS SOUTENANCE -------------------------------------------------------------------------------------------------->
-<?php echo $this->partial('soutenance/presoutenance/partial/avis-soutenance'); ?>
-
+    <!-- AVIS SOUTENANCE -------------------------------------------------------------------------------------------------->
+    <?php echo $this->partial('soutenance/presoutenance/partial/avis-soutenance'); ?>
+<?php else : ?>
+    <p class="lead">
+        Vous ne pouvez commencer les démarches de présouteances qu'une fois toutes les validations obtenues.
+    </p>
+<?php endif; ?>
 
 <script>
     $(function() {

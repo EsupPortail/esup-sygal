@@ -12,8 +12,8 @@
 use Application\Constants;
 use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
 
-$canNotifierAvisSoutenance = $this->isAllowed(AvisSoutenancePrivileges::getResourceId(AvisSoutenancePrivileges::SOUTENANCE_AVIS_NOTIFIER));
-$canRevoquerAvisSoutenance = $this->isAllowed(AvisSoutenancePrivileges::getResourceId(AvisSoutenancePrivileges::SOUTENANCE_AVIS_ANNULER));
+$canNotifierAvisSoutenance = $this->isAllowed(AvisSoutenancePrivileges::getResourceId(AvisSoutenancePrivileges::AVIS_NOTIFIER));
+$canRevoquerAvisSoutenance = $this->isAllowed(AvisSoutenancePrivileges::getResourceId(AvisSoutenancePrivileges::AVIS_ANNULER));
 
 $tousLesEngagements = count($rapporteurs) === count($engagements) ;
 $tousLesAvis = count($rapporteurs) === count($avis) ;
@@ -91,10 +91,12 @@ $tousLesAvis = count($rapporteurs) === count($avis) ;
                         <?php endif; ?>
                     </td>
                     <td>
-                        <?php if ($engagements[$individu->getId()] && $avis[$individu->getId()]) : ?>
-                            <a href=" <?php echo $this->urlFichierThese->telechargerFichierThese($these, $avis[$individu->getId()]->getFichier()); ?>" >
-                                Rapport de pré-soutenance</a>
-                        <?php endif ?>
+                        <?php if ($individu) : ?>
+                            <?php if ($engagements[$individu->getId()] && $avis[$individu->getId()]) : ?>
+                                <a href=" <?php echo $this->urlFichierThese->telechargerFichierThese($these, $avis[$individu->getId()]->getFichier()); ?>" >
+                                    Rapport de pré-soutenance</a>
+                            <?php endif ?>
+                        <?php endif; ?>
                     </td>
                     <td>
                         <?php if ($individu !== null) :?>
@@ -104,27 +106,29 @@ $tousLesAvis = count($rapporteurs) === count($avis) ;
                         <?php endif; ?>
                     </td>
                     <td>
+                        <?php if ($individu !== null) : ?>
+                            <?php if ($canNotifierAvisSoutenance && isset($engagements[$individu->getId()]) && !isset($avis[$individu->getId()])) : ?>
+                                <a href="<?php echo $this->url('soutenance/presoutenance/notifier-demande-avis-soutenance', ['these' => $these->getId(), 'membre' => $rapporteur->getId()], [], true); ?>">
+                                    <span class="glyphicon glyphicon-send"      title="Notifier le rapporteur"></span>
+                                </a>
+                            <?php else: ?>
+                                <span class="glyphicon glyphicon-send" title="Notifier le rapporteur" style="color:lightgray;" ></span>
+                            <?php endif; ?>
 
-                        <?php if ($canNotifierAvisSoutenance && isset($engagements[$individu->getId()]) && !isset($avis[$individu->getId()])) : ?>
-                            <a href="<?php echo $this->url('soutenance/presoutenance/notifier-demande-avis-soutenance', ['these' => $these->getId(), 'membre' => $rapporteur->getId()], [], true); ?>">
-                                <span class="glyphicon glyphicon-send"      title="Notifier le rapporteur"></span>
-                            </a>
-                        <?php else: ?>
-                            <span class="glyphicon glyphicon-send" title="Notifier le rapporteur" style="color:lightgray;" ></span>
-                        <?php endif; ?>
-
-                        <?php if ($canRevoquerAvisSoutenance && $avi !== null) : ?>
-                            <a href="<?php echo $this->url('soutenance/presoutenance/revoquer-avis-soutenance', ['these' => $these->getId(), 'avis' => $avi->getId()], [], true); ?>">
-                                <span class="glyphicon glyphicon-remove"
-                                      title="Révoquer l'avis de soutenance">
+                            <?php if ($canRevoquerAvisSoutenance && $avi !== null) : ?>
+                                <a href="<?php echo $this->url('soutenance/presoutenance/revoquer-avis-soutenance', ['these' => $these->getId(), 'avis' => $avi->getId()], [], true); ?>">
+                                    <span class="glyphicon glyphicon-remove"
+                                          title="Révoquer l'avis de soutenance">
+                                    </span>
+                                </a>
+                            <?php else: ?>
+                                <span class="glyphicon glyphicon-remove"notifier-demande-avis-soutenance
+                                      title="Révoquer l'avis de soutenance"
+                                      style="color:lightgray;">
                                 </span>
-                            </a>
-                        <?php else: ?>
-                            <span class="glyphicon glyphicon-remove"
-                                  title="Révoquer l'avis de soutenance"
-                                  style="color:lightgray;">
-                            </span>
+                            <?php endif; ?>
                         <?php endif; ?>
+
                     </td>
                 </tr>
             <?php endforeach; ?>

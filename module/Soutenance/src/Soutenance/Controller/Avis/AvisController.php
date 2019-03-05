@@ -1,6 +1,6 @@
 <?php
 
-namespace Soutenance\Controller;
+namespace Soutenance\Controller\Avis;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Individu;
@@ -23,7 +23,7 @@ use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use Zend\Http\Request;
 use Zend\View\Model\ViewModel;
 
-class AvisSoutenanceController extends AbstractController {
+class AvisController extends AbstractController {
     use TheseServiceAwareTrait;
     use ActeurServiceAwareTrait;
     use NotifierServiceAwareTrait;

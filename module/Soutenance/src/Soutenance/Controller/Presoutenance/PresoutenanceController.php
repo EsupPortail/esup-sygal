@@ -1,34 +1,31 @@
 <?php
 
-namespace Soutenance\Controller;
+namespace Soutenance\Controller\Presoutenance;
 
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Acteur;
-use Application\Entity\Db\Fichier;
-use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
-use Application\Entity\Db\Utilisateur;
-use Application\Entity\Db\VersionFichier;
+use Application\Entity\Db\Validation;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
-use Application\Service\Validation\ValidationServiceAwareTrait;
 use DateInterval;
 use Exception;
-use Soutenance\Entity\Avis;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
-use Soutenance\Form\SoutenanceDateRenduRapport\SoutenanceDateRenduRapportForm;
+use Soutenance\Form\DateRenduRapport\DateRenduRapportForm;
+use Soutenance\Form\DateRenduRapport\DateRenduRapportFormAwareTrait;
 use Soutenance\Service\Avis\AvisServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
 use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
+use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\Http\Request;
 use Zend\View\Model\ViewModel;
@@ -43,12 +40,14 @@ class PresoutenanceController extends AbstractController
     use NotifierSoutenanceServiceAwareTrait;
     use PropositionServiceAwareTrait;
     use ActeurServiceAwareTrait;
-    use ValidationServiceAwareTrait;
+    use ValidatationServiceAwareTrait;
     use RoleServiceAwareTrait;
     use AvisServiceAwareTrait;
     use FichierServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
     use ParametreServiceAwareTrait;
+
+    use DateRenduRapportFormAwareTrait;
 
     public function presoutenanceAction()
     {
@@ -87,6 +86,7 @@ class PresoutenanceController extends AbstractController
         $avis = $this->getAvisService()->getAvisByThese($these);
         $tousLesAvis = count($avis) === count($rapporteurs);
 
+        $validationBDD = $this->getValidationService()->getRepository(Validation::class)->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these) ;
 
         return new ViewModel([
             'these'                 => $these,
@@ -95,12 +95,12 @@ class PresoutenanceController extends AbstractController
             'engagements'           => $engagements,
             'avis'                  => $avis,
             'tousLesAvis'           => $tousLesAvis,
-            'urlFichierThese'        => $this->urlFichierThese(),
+            'urlFichierThese'       => $this->urlFichierThese(),
+            'validationBDD'         => $validationBDD,
 
             'deadline' => $this->getParametreService()->getParametreByCode('AVIS_DEADLINE')->getValeur(),
         ]);
     }
-
 
     public function dateRenduRapportAction()
     {
@@ -111,8 +111,8 @@ class PresoutenanceController extends AbstractController
         /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
 
-        /** @var SoutenanceDateRenduRapportForm $form */
-        $form = $this->getServiceLocator()->get('FormElementManager')->get(SoutenanceDateRenduRapportForm::class);
+        /** @var DateRenduRapportForm $form */
+        $form = $this->getDateRenduRapportForm();
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/presoutenance/date-rendu-rapport', ['these' => $these->getId()], [], true));
         $form->bind($proposition);
 
@@ -126,11 +126,13 @@ class PresoutenanceController extends AbstractController
             }
         }
 
-        return new ViewModel([
+        $vm = new ViewModel();
+        $vm->setTemplate('soutenance/default/default-form');
+        $vm->setVariables([
                 'form' => $form,
                 'title' => 'Modification de la date de rendu des rapports',
-            ]
-        );
+        ]);
+        return $vm;
     }
 
     /**
@@ -255,7 +257,9 @@ class PresoutenanceController extends AbstractController
 
         //historisation de la validation associée et du prérapport
         $avis->getValidation()->historiser();
+        $this->getValidationService()->getEntityManager()->flush($avis->getValidation());
         $avis->getFichier()->historiser();
+        $this->fichierService->getEntityManager()->flush($avis->getFichier());
         $avis->historiser();
         $this->getAvisService()->update($avis);
 

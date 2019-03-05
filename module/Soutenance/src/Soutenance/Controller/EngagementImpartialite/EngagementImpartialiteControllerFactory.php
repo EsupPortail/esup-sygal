@@ -1,14 +1,13 @@
 <?php
 
-namespace Soutenance\Controller\Factory;
+namespace Soutenance\Controller\EngagementImpartialite;
 
 use Application\Service\Individu\IndividuService;
 use Application\Service\These\TheseService;
-use Application\Service\Validation\ValidationService;
-use Soutenance\Controller\EngagementImpartialiteController;
 use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Notifier\NotifierSoutenanceService;
 use Soutenance\Service\Proposition\PropositionService;
+use Soutenance\Service\Validation\ValidationService;
 use Zend\Mvc\Controller\ControllerManager;
 
 class EngagementImpartialiteControllerFactory
@@ -31,7 +30,7 @@ class EngagementImpartialiteControllerFactory
         $propositionService = $controllerManager->getServiceLocator()->get(PropositionService::class);
         $membreService = $controllerManager->getServiceLocator()->get(MembreService::class);
         $theseService = $controllerManager->getServiceLocator()->get('TheseService');
-        $validationService = $controllerManager->getServiceLocator()->get('ValidationService');
+        $validationService = $controllerManager->getServiceLocator()->get(ValidationService::class);
         $individuService = $controllerManager->getServiceLocator()->get('IndividuService');
         $notifierService = $controllerManager->getServiceLocator()->get(NotifierSoutenanceService::class);
 
