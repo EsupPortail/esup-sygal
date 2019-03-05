@@ -7,7 +7,7 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Service\UserContextServiceAwareTrait;
 use Doctrine\Common\Collections\Collection;
-use Soutenance\Provider\Privilege\SoutenancePrivileges;
+use Soutenance\Provider\Privilege\EngagementImpartialitePrivileges;
 use Zend\Permissions\Acl\Acl;
 use Zend\Permissions\Acl\Assertion\AssertionInterface;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
@@ -38,21 +38,21 @@ class EngagementImpartialiteAssertion implements  AssertionInterface {
 
 
         switch ($privilege) {
-            case SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_SIGNER:
+            case EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_SIGNER:
                 $utilisateur = $this->userContextService->getIdentityDb();
                 /** @var Collection $rapporteurs */
                 $rapporteurs = $these->getActeursByRoleCode(Role::CODE_RAPPORTEUR_JURY);
                 return $rapporteurs->map(function(Acteur $acteur) { return $acteur->getIndividu(); })->contains($utilisateur->getIndividu());
                 break;
-            case SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_ANNULER:
+            case EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_ANNULER:
                 $role = $this->userContextService->getSelectedIdentityRole();
                 return ($role->getCode() === Role::CODE_BDD && $role->getStructure() === $these->getEtablissement()->getStructure());
                 break;
-            case SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_NOTIFIER:
+            case EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_NOTIFIER:
                 $role = $this->userContextService->getSelectedIdentityRole();
                 return ($role->getCode() === Role::CODE_BDD && $role->getStructure() === $these->getEtablissement()->getStructure());
                 break;
-            case SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_VISUALISER:
+            case EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_VISUALISER:
                 $role = $this->userContextService->getSelectedIdentityRole();
                 return ($role->getStructure() === $these->getEtablissement()->getStructure() || $role->getCode() === Role::CODE_OBSERVATEUR || $role->getCode() === Role::CODE_ADMIN_TECH);
                 break;

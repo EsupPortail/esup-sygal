@@ -8,7 +8,7 @@
  */
 
 use Application\Constants;
-use Soutenance\Provider\Privilege\SoutenancePrivileges;
+use Soutenance\Provider\Privilege\EngagementImpartialitePrivileges;
 
 $tousLesRapporteurs = true;
 foreach ($rapporteurs as $rapporteur) {
@@ -19,8 +19,8 @@ foreach ($rapporteurs as $rapporteur) {
 }
 $tousLesEngagements = count($rapporteurs) === count($engagements) ;
 
-$canNotifierEngagementImpartialite      = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_NOTIFIER);
-$canRevoquerEngagementImpartialite     = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_ANNULER);
+$canNotifierEngagementImpartialite      = $this->isAllowed($these, EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_NOTIFIER);
+$canRevoquerEngagementImpartialite     = $this->isAllowed($these, EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_ANNULER);
 
 ?>
 
@@ -93,7 +93,7 @@ $canRevoquerEngagementImpartialite     = $this->isAllowed($these, SoutenancePriv
                                 <?php if ($engagement) : ?>
                                     <span class="glyphicon glyphicon-send" title="Notifier le rapporteur" style="color:lightgray;"></span>
                                 <?php else: ?>
-                                    <a href="<?php echo $this->url('soutenance/presoutenance/engagement-impartialite/notifier', ['these' => $these->getId(), 'proposition' => $proposition->getId(), 'membre' => $rapporteur->getId()], [], true);?>">
+                                    <a href="<?php echo $this->url('soutenance/engagement-impartialite/notifier', ['these' => $these->getId(), 'proposition' => $proposition->getId(), 'membre' => $rapporteur->getId()], [], true);?>">
                                         <span class="glyphicon glyphicon-send" title="Notifier le rapporteur"></span>
                                     </a>
                                 <?php endif; ?>
@@ -101,7 +101,7 @@ $canRevoquerEngagementImpartialite     = $this->isAllowed($these, SoutenancePriv
 
                             <?php if($canRevoquerEngagementImpartialite) : ?>
                                 <?php if ($engagement) : ?>
-                                    <a href="<?php echo $this->url('soutenance/presoutenance/engagement-impartialite/annuler', ['these' => $these->getId(), 'membre' => $rapporteur->getId()], [], true); ?>">
+                                    <a href="<?php echo $this->url('soutenance/engagement-impartialite/annuler', ['these' => $these->getId(), 'membre' => $rapporteur->getId()], [], true); ?>">
                                         <span class="glyphicon glyphicon-remove"    title="Révoquer l'engagement d'impartialité"></span>
                                     </a>
                                 <?php else: ?>

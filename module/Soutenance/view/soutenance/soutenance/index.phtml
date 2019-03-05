@@ -5,12 +5,12 @@
 
 use Application\Entity\Db\These;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
-use Soutenance\Provider\Privilege\SoutenancePrivileges;
+use Soutenance\Provider\Privilege\EngagementImpartialitePrivileges;
 
 $this->headTitle("Gestion de la préparation de la soutenance");
 
-$canProposer   = $this->isAllowed(SoutenancePrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER));
-$canVisualiser = $this->isAllowed(SoutenancePrivileges::getResourceId(PropositionPrivileges::PROPOSITION_VISUALISER));
+$canProposer   = $this->isAllowed(EngagementImpartialitePrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER));
+$canVisualiser = $this->isAllowed(EngagementImpartialitePrivileges::getResourceId(PropositionPrivileges::PROPOSITION_VISUALISER));
 ?>
 
 <h1 class="page-header">
@@ -26,14 +26,16 @@ $canVisualiser = $this->isAllowed(SoutenancePrivileges::getResourceId(Propositio
 <p>
     SyGAL permet la constitution de votre jury de thèse de façon dématérialisée.
     La composition de votre jury se passe en deux étapes :
-    <ol>
-        <li> la composition et acceptation par le doctorant et les directeurs et co-directeurs ;</li>
-        <li> la validation par l'unité de recherche, l'école doctorale et maison des doctorats associé à la thèse.</li>
-    </ol>
 </p>
+<ol>
+    <li> la composition et acceptation par le doctorant et les directeurs et co-directeurs ;</li>
+    <li> la validation par l'unité de recherche, l'école doctorale et maison des doctorats associé à la thèse.</li>
+</ol>
+
 
 <p>
     Votre jury doit respecter les règles suivantes :
+</p>
     <ul>
         <li> le jury doit être contenir aux moins deux rapporteurs ;</li>
         <li> au moins la motié des membres doivent être de rang A (Professeurs des universités, Directeur de recherche, ...) ; </li>
@@ -41,7 +43,7 @@ $canVisualiser = $this->isAllowed(SoutenancePrivileges::getResourceId(Propositio
     </ul>
 
     <u>N.B. :</u> Le jury doit idéalement respecter la parité homme/femme.
-</p>
+
 
 <p>
     Pour passer à la second étape de la composition de votre jury tous les acteurs directs (doctorant, directeurs et
@@ -71,12 +73,13 @@ $canVisualiser = $this->isAllowed(SoutenancePrivileges::getResourceId(Propositio
 
 <p>
     Avant de pouvoir soutenir de nombreuses validations sont nécessaires par :
+</p>
     <ul>
         <li> les acteurs directs de la thèse (doctorant, directeurs et co-directeurs) ; </li>
         <li> les structures associés à la thèses (unité de recherche, école doctorale, ...) ;</li>
         <li> les rapporteurs de la thèse.</li>
     </ul>
-</p>
+
 
 <p>
     Afin de suivre ces validations, SyGAL fournit une interface permettant de suivre l'évolution de celle-ci.

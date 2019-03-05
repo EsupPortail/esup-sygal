@@ -50,7 +50,7 @@ class AvisSoutenanceAssertion  implements  AssertionInterface {
              * - les directeurs/co-directeurs de la thèses
              * - le rapporteur émettant l'avis
              */
-            case AvisSoutenancePrivileges::SOUTENANCE_AVIS_VISUALISER :
+            case AvisSoutenancePrivileges::AVIS_VISUALISER :
 
                 if ($role->getCode() === Role::CODE_ADMIN_TECH || $role->getCode() === Role::CODE_OBSERVATEUR) return true;
                 if ($role->getCode() === Role::CODE_BDD && $role->getStructure() === $these->getEtablissement()->getStructure()) return true;
@@ -62,7 +62,7 @@ class AvisSoutenanceAssertion  implements  AssertionInterface {
              * Les personnes pouvant éditer l'avis de soutenance sont :
              * - le rapporteur émettant l'avis
              */
-            case AvisSoutenancePrivileges::SOUTENANCE_AVIS_MODIFIER :
+            case AvisSoutenancePrivileges::AVIS_MODIFIER :
 
                 if ($role->getCode() !== Role::CODE_RAPPORTEUR_JURY) return false;
                 if ($utilisateur->getIndividu() !== $rapporteur->getIndividu()) return false;
@@ -73,7 +73,7 @@ class AvisSoutenanceAssertion  implements  AssertionInterface {
              * - le rapporteur
              * - le bdd de l'etablissement
              */
-            case AvisSoutenancePrivileges::SOUTENANCE_AVIS_ANNULER :
+            case AvisSoutenancePrivileges::AVIS_ANNULER :
                 if ($role->getCode() === Role::CODE_BDD && $role->getStructure() === $these->getEtablissement()->getStructure()) return true;
                 if ($role->getCode() === Role::CODE_RAPPORTEUR_JURY && $utilisateur->getIndividu() === $rapporteur->getIndividu()) return true;
                 return false;

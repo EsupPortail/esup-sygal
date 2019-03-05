@@ -122,7 +122,7 @@ class PropositionService {
         $rapporteurs = [];
         /** @var Membre $membre */
         foreach ($proposition->getMembres() as $membre) {
-            if($membre->getRole() === 'Rapporteur') $rapporteurs[] = $membre;
+            if($membre->getRole() === Membre::RAPPORTEUR || $membre->getRole() === Membre::RAPPORTEUR_ABSENT) $rapporteurs[] = $membre;
         }
         return $rapporteurs;
     }

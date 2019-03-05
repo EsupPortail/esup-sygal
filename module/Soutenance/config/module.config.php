@@ -5,40 +5,16 @@ namespace Soutenance;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
-use Soutenance\Assertion\AvisSoutenanceAssertion;
-use Soutenance\Assertion\AvisSoutenanceAssertionFactory;
-use Soutenance\Assertion\EngagementImpartialiteAssertion;
-use Soutenance\Assertion\EngagementImpartialiteAssertionFactory;
-use Soutenance\Assertion\PresoutenanceAssertion;
-use Soutenance\Assertion\PresoutenanceAssertionFactory;
-use Soutenance\Controller\AvisSoutenanceController;
 use Soutenance\Controller\ConfigurationController;
-use Soutenance\Controller\EngagementImpartialiteController;
-use Soutenance\Controller\Factory\AvisSoutenanceControllerFactory;
 use Soutenance\Controller\Factory\ConfigurationControllerFactory;
-use Soutenance\Controller\Factory\EngagementImpartialiteControllerFactory;
-use Soutenance\Controller\Factory\PresoutenanceControllerFactory;
 use Soutenance\Controller\Factory\QualiteControllerFactory;
 use Soutenance\Controller\Factory\SoutenanceControllerFactory;
-use Soutenance\Controller\PresoutenanceController;
 use Soutenance\Controller\QualiteController;
 use Soutenance\Controller\SoutenanceController;
-use Soutenance\Form\Avis\AvisForm;
-use Soutenance\Form\Avis\AvisFormFactory;
-use Soutenance\Form\Avis\AvisHydrator;
-use Soutenance\Form\Configuration\ConfigurationForm;
-use Soutenance\Form\Configuration\ConfigurationFormFactory;
-use Soutenance\Form\QualiteEdition\QualiteEditionForm;
-use Soutenance\Form\QualiteEdition\QualiteEditionFormFactory;
-use Soutenance\Form\QualiteEdition\QualiteEditiontHydrator;
-use Soutenance\Form\SoutenanceDateRenduRapport\SoutenanceDateRenduRapportForm;
-use Soutenance\Form\SoutenanceDateRenduRapport\SoutenanceDateRenduRapportFormFactory;
-use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
+use Soutenance\Provider\Privilege\EngagementImpartialitePrivileges;
+use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 use Soutenance\Provider\Privilege\QualitePrivileges;
-use Soutenance\Provider\Privilege\SoutenancePrivileges;
-use Soutenance\Service\Avis\AvisService;
-use Soutenance\Service\Avis\AvisServiceFactory;
 use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Membre\MembreServiceFactory;
 use Soutenance\Service\Notifier\NotifierSoutenanceService;
@@ -62,34 +38,6 @@ return array(
         'rule_providers'     => [
             PrivilegeRuleProvider::class => [
                 'allow' => [
-                    [
-                        'privileges' => [
-                            SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_SIGNER,
-                            SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_ANNULER,
-                            SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_NOTIFIER,
-                            SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_VISUALISER,
-                        ],
-                        'resources'  => ['These'],
-                        'assertion'  => EngagementImpartialiteAssertion::class,
-                    ],
-                    [
-                        'privileges' => [
-                            SoutenancePrivileges::SOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU,
-                            SoutenancePrivileges::SOUTENANCE_DATE_RETOUR_MODIFICATION,
-                            SoutenancePrivileges::SOUTENANCE_PRESOUTENANCE_VISUALISATION,
-                        ],
-                        'resources'  => ['These'],
-                        'assertion'  => PresoutenanceAssertion::class,
-                    ],
-                    [
-                        'privileges' => [
-                            AvisSoutenancePrivileges::SOUTENANCE_AVIS_VISUALISER,
-                            AvisSoutenancePrivileges::SOUTENANCE_AVIS_MODIFIER,
-                            AvisSoutenancePrivileges::SOUTENANCE_AVIS_ANNULER,
-                        ],
-                        'resources'  => ['Acteur'],
-                        'assertion' => AvisSoutenanceAssertion::class,
-                    ],
                 ],
             ],
         ],
@@ -109,97 +57,6 @@ return array(
                             'avancement',
                         ],
                     'privileges' => PropositionPrivileges::PROPOSITION_VISUALISER,
-                ],
-                // Présoutenance et pages connexes
-                [
-                    'controller' => PresoutenanceController::class,
-                    'action'     => [
-                        'presoutenance',
-                    ],
-                    'privileges' => SoutenancePrivileges::SOUTENANCE_PRESOUTENANCE_VISUALISATION,
-                ],
-                [
-                    'controller' => PresoutenanceController::class,
-                    'action'     => [
-                        'date-rendu-rapport',
-                    ],
-                    'privileges' => SoutenancePrivileges::SOUTENANCE_DATE_RETOUR_MODIFICATION,
-                ],
-                [
-                    'controller' => PresoutenanceController::class,
-                    'action'     => [
-                        'associer-jury',
-                        'deassocier-jury',
-                    ],
-                    'privileges' => SoutenancePrivileges::SOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU,
-                ],
-                [
-                    'controller' => PresoutenanceController::class,
-                    'action'     => [
-                        'notifier-demande-avis-soutenance',
-                    ],
-                    'privileges' => SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_NOTIFIER,
-                ],
-                [
-                    'controller' => PresoutenanceController::class,
-                    'action'     => [
-                        'revoquer-avis-soutenance'
-                    ],
-                    'privileges' => AvisSoutenancePrivileges::SOUTENANCE_AVIS_ANNULER,
-                ],
-                [
-                    'controller' => EngagementImpartialiteController::class,
-                    'action'     => [
-                        'engagement-impartialite',
-                    ],
-                    'privileges' => SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_VISUALISER,
-                ],
-                [
-                    'controller' => EngagementImpartialiteController::class,
-                    'action'     => [
-                        'notifier-rapporteurs-engagement-impartialite',
-                        'notifier-engagement-impartialite',
-                    ],
-                    'privileges' => SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_NOTIFIER,
-                ],
-                [
-                    'controller' => EngagementImpartialiteController::class,
-                    'action'     => [
-                        'signer-engagement-impartialite',
-                    ],
-                    'privileges' => SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_SIGNER,
-                ],
-                [
-                    'controller' => EngagementImpartialiteController::class,
-                    'action'     => [
-                        'annuler-engagement-impartialite',
-                    ],
-                    'privileges' => SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_ANNULER,
-                ],
-                // Avis de soutenance
-                [
-                    'controller' => AvisSoutenanceController::class,
-                    'action'     => [
-                        'index',
-                        'afficher',
-                        'annuler',
-                    ],
-                    //'roles' => [],
-                    'privileges' => AvisSoutenancePrivileges::SOUTENANCE_AVIS_VISUALISER,
-                ],
-                [
-                    'controller' => 'Application\Controller\FichierThese',
-                    'action' => [
-                        'lister-rapport-presoutenance-by-utilisateur',
-                    ],
-                    'privileges' => AvisSoutenancePrivileges::SOUTENANCE_AVIS_VISUALISER,
-                ],
-                [
-                    'controller' => AvisSoutenanceController::class,
-                    'action'     => [
-                        'annuler',
-                    ],
-                    'privileges' => AvisSoutenancePrivileges::SOUTENANCE_AVIS_ANNULER,
                 ],
                 // Qualite
                 [
@@ -283,7 +140,7 @@ return array(
                                     'these',
                                 ],
                                 'privileges' => [
-                                    SoutenancePrivileges::SOUTENANCE_PRESOUTENANCE_VISUALISATION,
+                                    PresoutenancePrivileges::PRESOUTENANCE_PRESOUTENANCE_VISUALISATION,
                                 ],
                                 'pages' => [
                                     'association' => [
@@ -296,7 +153,7 @@ return array(
                                             'membre',
                                         ],
                                         'privileges' => [
-                                            SoutenancePrivileges::SOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU,
+                                            PresoutenancePrivileges::PRESOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU,
                                         ],
                                     ],
                                     'deassociation' => [
@@ -309,7 +166,7 @@ return array(
                                             'membre',
                                         ],
                                         'privileges' => [
-                                            SoutenancePrivileges::SOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU,
+                                            PresoutenancePrivileges::PRESOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU
                                         ],
                                     ],
                                     'engagement' => [
@@ -322,21 +179,9 @@ return array(
                                             'membre',
                                         ],
                                         'privileges' => [
-                                            SoutenancePrivileges::SOUTENANCE_ENGAGEMENT_IMPARTIALITE_VISUALISER,
+                                            EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_VISUALISER,
                                         ],
                                     ],
-//                                    'avis' => [
-//                                        'label'    => 'Avis de soutenance',
-//                                        'route'    => 'soutenance/avis-soutenance',
-//                                        'withtarget' => true,
-//                                        'paramsInject' => [
-//                                            'these',
-//                                            'rapporteur',
-//                                        ],
-//                                        'privileges' => [
-//                                            AvisSoutenancePrivileges::SOUTENANCE_AVIS_VISUALISER,
-//                                        ],
-//                                    ],
                                 ],
                             ],
                             'qualite' => [
@@ -376,131 +221,6 @@ return array(
                     ],
                 ],
                 'child_routes' => [
-                    'presoutenance' => [
-                        'type' => Segment::class,
-                        'may_terminate' => true,
-                        'options' => [
-                            'route'    => '/presoutenance',
-                            'defaults' => [
-                                'controller' => PresoutenanceController::class,
-                                'action'     => 'presoutenance',
-                            ],
-                        ],
-                        'child_routes' => [
-                            'date-rendu-rapport' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route'    => '/date-rendu-rapport',
-                                    'defaults' => [
-                                        'controller' => PresoutenanceController::class,
-                                        'action'     => 'date-rendu-rapport',
-                                    ],
-                                ],
-                            ],
-                            'notifier-engagement-impartialite' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route'    => '/notifier-engagement-impartialite',
-                                    'defaults' => [
-                                        'controller' => EngagementImpartialiteController::class,
-                                        'action'     => 'notifier-rapporteurs-engagement-impartialite',
-                                    ],
-                                ],
-                            ],
-                            'engagement-impartialite' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route'    => '/engagement-impartialite/:membre',
-                                    'defaults' => [
-                                        'controller' => EngagementImpartialiteController::class,
-                                        'action'     => 'engagement-impartialite',
-                                    ],
-                                ],
-                                'child_routes' => [
-                                    'notifier' => [
-                                        'type' => Segment::class,
-                                        'may_terminate' => true,
-                                        'options' => [
-                                            'route'    => '/notifier',
-                                            'defaults' => [
-                                                'controller' => EngagementImpartialiteController::class,
-                                                'action'     => 'notifier-engagement-impartialite',
-                                            ],
-                                        ],
-                                    ],
-                                    'signer' => [
-                                        'type' => Segment::class,
-                                        'may_terminate' => true,
-                                        'options' => [
-                                            'route'    => '/signer',
-                                            'defaults' => [
-                                                'controller' => EngagementImpartialiteController::class,
-                                                'action'     => 'signer-engagement-impartialite',
-                                            ],
-                                        ],
-                                    ],
-                                    'annuler' => [
-                                        'type' => Segment::class,
-                                        'may_terminate' => true,
-                                        'options' => [
-                                            'route'    => '/annuler',
-                                            'defaults' => [
-                                                'controller' => EngagementImpartialiteController::class,
-                                                'action'     => 'annuler-engagement-impartialite',
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                            'associer-jury' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route'    => '/associer-jury/:membre',
-                                    'defaults' => [
-                                        'controller' => PresoutenanceController::class,
-                                        'action'     => 'associer-jury',
-                                    ],
-                                ],
-                            ],
-                            'deassocier-jury' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route'    => '/deassocier-jury/:membre',
-                                    'defaults' => [
-                                        'controller' => PresoutenanceController::class,
-                                        'action'     => 'deassocier-jury',
-                                    ],
-                                ],
-                            ],
-                            'notifier-demande-avis-soutenance' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route'    => '/notifier-demande-avis-soutenance[/:membre]',
-                                    'defaults' => [
-                                        'controller' => PresoutenanceController::class,
-                                        'action'     => 'notifier-demande-avis-soutenance',
-                                    ],
-                                ],
-                            ],
-                            'revoquer-avis-soutenance' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route'    => '/revoquer-avis-soutenance/:avis',
-                                    'defaults' => [
-                                        'controller' => PresoutenanceController::class,
-                                        'action'     => 'revoquer-avis-soutenance',
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
                     'avancement' => [
                         'type' => Segment::class,
                         'may_terminate' => true,
@@ -512,52 +232,6 @@ return array(
                             ],
                         ],
                         'child_routes' => [],
-                    ],
-                    'avis-soutenance' => [
-                        'type' => Segment::class,
-                        'may_terminate' => true,
-                        'options' => [
-                            'route'    => '/avis-soutenance/:rapporteur',
-                            'defaults' => [
-                                'controller' => AvisSoutenanceController::class,
-                                'action'     => 'index',
-                            ],
-                        ],
-                        'child_routes' => [
-                            'afficher' => [
-                                'type' => Literal::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route'    => '/afficher',
-                                    'defaults' => [
-                                        'controller' => AvisSoutenanceController::class,
-                                        'action'     => 'afficher',
-                                    ],
-                                ],
-                            ],
-                            'annuler' => [
-                                'type' => Literal::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route'    => '/annuler',
-                                    'defaults' => [
-                                        'controller' => AvisSoutenanceController::class,
-                                        'action'     => 'annuler',
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                    'lister-rapport-presoutenance-by-utilisateur' => [
-                        'type' => Segment::class,
-                        'may_terminate' => true,
-                        'options' => [
-                            'route'    => '/lister-rapport-presoutenance-by-utilisateur/:utilisateur',
-                            'defaults' => [
-                                'controller' => 'Application\Controller\FichierThese',
-                                'action'     => 'lister-rapport-presoutenance-by-utilisateur',
-                            ],
-                        ],
                     ],
                 ],
             ],
@@ -614,15 +288,9 @@ return array(
         'factories' => [
             //service
             MembreService::class => MembreServiceFactory::class,
-            AvisService::class => AvisServiceFactory::class,
             ParametreService::class => ParametreServiceFactory::class,
             NotifierSoutenanceService::class => NotifierSoutenanceServiceFactory::class,
             ValidationService::class => ValidationServiceFactory::class,
-            //assertion
-            EngagementImpartialiteAssertion::class => EngagementImpartialiteAssertionFactory::class,
-            PresoutenanceAssertion::class => PresoutenanceAssertionFactory::class,
-            AvisSoutenanceAssertion::class => AvisSoutenanceAssertionFactory::class,
-
         ],
     ],
     'controllers' => [
@@ -631,28 +299,20 @@ return array(
         'factories' => [
             SoutenanceController::class => SoutenanceControllerFactory::class,
             QualiteController::class => QualiteControllerFactory::class,
-            EngagementImpartialiteController::class => EngagementImpartialiteControllerFactory::class,
-            PresoutenanceController::class => PresoutenanceControllerFactory::class,
-            AvisSoutenanceController::class => AvisSoutenanceControllerFactory::class,
             ConfigurationController::class => ConfigurationControllerFactory::class,
         ],
     ],
 
     'form_elements' => [
         'factories' => [
-            SoutenanceDateRenduRapportForm::class => SoutenanceDateRenduRapportFormFactory::class,
-            QualiteEditionForm::class => QualiteEditionFormFactory::class,
-            AvisForm::class => AvisFormFactory::class,
-            ConfigurationForm::class => ConfigurationFormFactory::class,
         ],
     ],
 
     'hydrators' => [
         'invokables' => [
-            QualiteEditiontHydrator::class => QualiteEditiontHydrator::class,
-            AvisHydrator::class => AvisHydrator::class,
         ],
     ],
+
     'view_manager' => [
         'template_path_stack' => [
             __DIR__ . '/../view',

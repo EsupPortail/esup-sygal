@@ -1,12 +1,12 @@
 <?php
 
-namespace Soutenance\Form\SoutenanceDateRenduRapport;
+namespace Soutenance\Form\DateRenduRapport;
 
 use UnicaenApp\Form\Element\Date;
 use Zend\Form\Element\Submit;
 use Zend\Form\Form;
 
-class SoutenanceDateRenduRapportForm extends Form {
+class DateRenduRapportForm extends Form {
 
     public function init()
     {

@@ -264,7 +264,6 @@ return [
             DateLieuHydrator::class => DateLieuHydrator::class,
             LabelEtAnglaisHydrator::class => LabelEtAnglaisHydrator::class,
             ConfidentialiteHydrator::class => ConfidentialiteHydrator::class,
-
         ],
         'factories' => [
             MembreHydrator::class => MembreHydratorFactory::class,

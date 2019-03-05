@@ -1,6 +1,6 @@
 <?php
 
-namespace Soutenance\Controller\Factory;
+namespace Soutenance\Controller\Presoutenance;
 
 use Application\Service\Acteur\ActeurService;
 use Application\Service\Fichier\FichierService;
@@ -8,22 +8,22 @@ use Application\Service\Individu\IndividuService;
 use Application\Service\Role\RoleService;
 use Application\Service\These\TheseService;
 use Application\Service\Utilisateur\UtilisateurService;
-use Application\Service\Validation\ValidationService;
-use Soutenance\Controller\PresoutenanceController;
+use Soutenance\Form\DateRenduRapport\DateRenduRapportForm;
 use Soutenance\Service\Avis\AvisService;
 use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Notifier\NotifierSoutenanceService;
 use Soutenance\Service\Parametre\ParametreService;
 use Soutenance\Service\Proposition\PropositionService;
+use Soutenance\Service\Validation\ValidationService;
 use Zend\Mvc\Controller\ControllerManager;
 
 class PresoutenanceControllerFactory
 {
     /**
-     * @param ControllerManager $controllerManager
+     * @param ControllerManager $manager
      * @return  PresoutenanceController
      */
-    public function __invoke(ControllerManager $controllerManager)
+    public function __invoke(ControllerManager $manager)
     {
         /**
          * @var PropositionService $propositionService
@@ -39,18 +39,23 @@ class PresoutenanceControllerFactory
          * @var FichierService $fichierService
          * @var ParametreService $parametreService
          */
-        $propositionService = $controllerManager->getServiceLocator()->get(PropositionService::class);
-        $membreService = $controllerManager->getServiceLocator()->get(MembreService::class);
-        $theseService = $controllerManager->getServiceLocator()->get('TheseService');
-        $individuService = $controllerManager->getServiceLocator()->get('IndividuService');
-        $acteurService = $controllerManager->getServiceLocator()->get(ActeurService::class);
-        $notifierService = $controllerManager->getServiceLocator()->get(NotifierSoutenanceService::class);
-        $validationService = $controllerManager->getServiceLocator()->get('ValidationService');
-        $roleService = $controllerManager->getServiceLocator()->get('RoleService');
-        $avisService = $controllerManager->getServiceLocator()->get(AvisService::class);
-        $utilisateurService = $controllerManager->getServiceLocator()->get('UtilisateurService');
-        $fichierService = $controllerManager->getServiceLocator()->get('FichierService');
-        $parametreService = $controllerManager->getServiceLocator()->get(ParametreService::class);
+        $propositionService = $manager->getServiceLocator()->get(PropositionService::class);
+        $membreService = $manager->getServiceLocator()->get(MembreService::class);
+        $theseService = $manager->getServiceLocator()->get('TheseService');
+        $individuService = $manager->getServiceLocator()->get('IndividuService');
+        $acteurService = $manager->getServiceLocator()->get(ActeurService::class);
+        $notifierService = $manager->getServiceLocator()->get(NotifierSoutenanceService::class);
+        $validationService = $manager->getServiceLocator()->get(ValidationService::class);
+        $roleService = $manager->getServiceLocator()->get('RoleService');
+        $avisService = $manager->getServiceLocator()->get(AvisService::class);
+        $utilisateurService = $manager->getServiceLocator()->get('UtilisateurService');
+        $fichierService = $manager->getServiceLocator()->get('FichierService');
+        $parametreService = $manager->getServiceLocator()->get(ParametreService::class);
+
+        /**
+         * @var DateRenduRapportForm $dateRenduRapportForm
+         */
+        $dateRenduRapportForm = $manager->getServiceLocator()->get('FormElementManager')->get(DateRenduRapportForm::class);
 
         /** @var PresoutenanceController $controller */
         $controller = new PresoutenanceController();
@@ -67,6 +72,7 @@ class PresoutenanceControllerFactory
         $controller->setFichierService($fichierService);
         $controller->setParametreService($parametreService);
 
+        $controller->setDateRenduRapportForm($dateRenduRapportForm);
         return $controller;
     }
 }

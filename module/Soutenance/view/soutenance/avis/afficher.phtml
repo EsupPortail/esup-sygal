@@ -14,7 +14,7 @@ use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
 
 $this->headTitle("Avis de soutenance (".$avis->getId().")");
 
-$canAnnuler = $this->isAllowed(AvisSoutenancePrivileges::getResourceId(AvisSoutenancePrivileges::SOUTENANCE_AVIS_ANNULER));
+$canAnnuler = $this->isAllowed(AvisSoutenancePrivileges::getResourceId(AvisSoutenancePrivileges::AVIS_ANNULER));
 ?>
 
 <h1 class="page-header">
