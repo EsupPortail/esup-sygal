@@ -214,7 +214,7 @@ class Membre {
     /** @return boolean */
     public function estRapporteur()
     {
-        return $this->getRole() === 'Rapporteur';
+        return $this->getRole() === Membre::RAPPORTEUR || $this->getRole() === Membre::RAPPORTEUR_ABSENT;
     }
 
     /**
