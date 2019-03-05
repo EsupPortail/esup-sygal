@@ -1,11 +1,11 @@
 <?php
 
-namespace Soutenance\Form\SoutenanceRefus;
+namespace Soutenance\Form\Refus;
 
 use Zend\Form\Element\Submit;
 use Zend\Form\Form;
 
-class SoutenanceRefusForm extends Form {
+class RefusForm extends Form {
 
     public function init()
     {

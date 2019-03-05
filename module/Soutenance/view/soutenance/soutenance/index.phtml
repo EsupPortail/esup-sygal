@@ -4,12 +4,13 @@
      */
 
 use Application\Entity\Db\These;
+use Soutenance\Provider\Privilege\PropositionPrivileges;
 use Soutenance\Provider\Privilege\SoutenancePrivileges;
 
 $this->headTitle("Gestion de la préparation de la soutenance");
 
-$canProposer   = $this->isAllowed(SoutenancePrivileges::getResourceId(SoutenancePrivileges::SOUTENANCE_PROPOSITION_MODIFIER));
-$canVisualiser = $this->isAllowed(SoutenancePrivileges::getResourceId(SoutenancePrivileges::SOUTENANCE_PROPOSITION_VISUALISER));
+$canProposer   = $this->isAllowed(SoutenancePrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER));
+$canVisualiser = $this->isAllowed(SoutenancePrivileges::getResourceId(PropositionPrivileges::PROPOSITION_VISUALISER));
 ?>
 
 <h1 class="page-header">

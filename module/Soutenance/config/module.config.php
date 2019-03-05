@@ -7,12 +7,10 @@ use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Soutenance\Assertion\AvisSoutenanceAssertion;
 use Soutenance\Assertion\AvisSoutenanceAssertionFactory;
-use Soutenance\Assertion\PresoutenanceAssertion;
-use Soutenance\Assertion\PresoutenanceAssertionFactory;
 use Soutenance\Assertion\EngagementImpartialiteAssertion;
 use Soutenance\Assertion\EngagementImpartialiteAssertionFactory;
-use Soutenance\Assertion\PropositionAssertion;
-use Soutenance\Assertion\PropositionAssertionFactory;
+use Soutenance\Assertion\PresoutenanceAssertion;
+use Soutenance\Assertion\PresoutenanceAssertionFactory;
 use Soutenance\Controller\AvisSoutenanceController;
 use Soutenance\Controller\ConfigurationController;
 use Soutenance\Controller\EngagementImpartialiteController;
@@ -28,30 +26,15 @@ use Soutenance\Controller\SoutenanceController;
 use Soutenance\Form\Avis\AvisForm;
 use Soutenance\Form\Avis\AvisFormFactory;
 use Soutenance\Form\Avis\AvisHydrator;
-use Soutenance\Form\Confidentialite\ConfidentialiteForm;
-use Soutenance\Form\Confidentialite\ConfidentialiteFormFactory;
-use Soutenance\Form\Confidentialite\ConfidentialiteHydrator;
 use Soutenance\Form\Configuration\ConfigurationForm;
 use Soutenance\Form\Configuration\ConfigurationFormFactory;
-use Soutenance\Form\LabelEtAnglais\LabelEtAnglaisForm;
-use Soutenance\Form\LabelEtAnglais\LabelEtAnglaisFormFactory;
-use Soutenance\Form\LabelEtAnglais\LabelEtAnglaisHydrator;
 use Soutenance\Form\QualiteEdition\QualiteEditionForm;
 use Soutenance\Form\QualiteEdition\QualiteEditionFormFactory;
 use Soutenance\Form\QualiteEdition\QualiteEditiontHydrator;
-use Soutenance\Form\SoutenanceDateLieu\SoutenanceDateLieuForm;
-use Soutenance\Form\SoutenanceDateLieu\SoutenanceDateLieuFormFactory;
-use Soutenance\Form\SoutenanceDateLieu\SoutenanceDateLieuHydrator;
 use Soutenance\Form\SoutenanceDateRenduRapport\SoutenanceDateRenduRapportForm;
 use Soutenance\Form\SoutenanceDateRenduRapport\SoutenanceDateRenduRapportFormFactory;
-use Soutenance\Form\SoutenanceDateRenduRapport\SoutenanceDateRenduRapportHydrator;
-use Soutenance\Form\SoutenanceMembre\SoutenanceMembreForm;
-use Soutenance\Form\SoutenanceMembre\SoutenanceMembreFormFactory;
-use Soutenance\Form\SoutenanceMembre\SoutenanceMembreHydrator;
-use Soutenance\Form\SoutenanceMembre\SoutenanceMembreHydratorFactory;
-use Soutenance\Form\SoutenanceRefus\SoutenanceRefusForm;
-use Soutenance\Form\SoutenanceRefus\SoutenanceRefusFormFactory;
 use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
+use Soutenance\Provider\Privilege\PropositionPrivileges;
 use Soutenance\Provider\Privilege\QualitePrivileges;
 use Soutenance\Provider\Privilege\SoutenancePrivileges;
 use Soutenance\Service\Avis\AvisService;
@@ -62,8 +45,6 @@ use Soutenance\Service\Notifier\NotifierSoutenanceService;
 use Soutenance\Service\Notifier\NotifierSoutenanceServiceFactory;
 use Soutenance\Service\Parametre\ParametreService;
 use Soutenance\Service\Parametre\ParametreServiceFactory;
-use Soutenance\Service\Proposition\PropositionService;
-use Soutenance\Service\Proposition\PropositionServiceFactory;
 use Soutenance\Service\Validation\ValidationService;
 use Soutenance\Service\Validation\ValidationServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
@@ -102,19 +83,6 @@ return array(
                     ],
                     [
                         'privileges' => [
-                            SoutenancePrivileges::SOUTENANCE_PROPOSITION_VISUALISER,
-                            SoutenancePrivileges::SOUTENANCE_PROPOSITION_MODIFIER,
-                            SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_ACTEUR,
-                            SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_ED,
-                            SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_UR,
-                            SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_BDD,
-                            SoutenancePrivileges::SOUTENANCE_PROPOSITION_PRESIDENCE,
-                        ],
-                        'resources'  => ['These'],
-                        'assertion'  => PropositionAssertion::class,
-                    ],
-                    [
-                        'privileges' => [
                             AvisSoutenancePrivileges::SOUTENANCE_AVIS_VISUALISER,
                             AvisSoutenancePrivileges::SOUTENANCE_AVIS_MODIFIER,
                             AvisSoutenancePrivileges::SOUTENANCE_AVIS_ANNULER,
@@ -132,58 +100,15 @@ return array(
                     'controller' => SoutenanceController::class,
                     'action'     => [
                         'index',
-                        'signature-presidence'
                     ],
                     'roles' => [],
                 ],
                 [
                     'controller' => SoutenanceController::class,
                         'action'     => [
-                            'proposition',
                             'avancement',
                         ],
-                    'privileges' => SoutenancePrivileges::SOUTENANCE_PROPOSITION_VISUALISER,
-                ],
-                [
-                    'controller' => SoutenanceController::class,
-                    'action'     => [
-                        'modifier-date-lieu',
-                        'modifier-membre',
-                        'effacer-membre',
-                        'confidentialite',
-                        'label-et-anglais',
-                    ],
-                    'privileges' => SoutenancePrivileges::SOUTENANCE_PROPOSITION_MODIFIER,
-                ],
-                [
-                    'controller' => SoutenanceController::class,
-                    'action'     => [
-                            'valider-acteur',
-                    ],
-                    'privileges' => SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_ACTEUR,
-                ],
-                [
-                    'controller' => SoutenanceController::class,
-                    'action'     => [
-                        'valider-structure',
-                        'refuser-structure',
-                    ],
-                    'privileges' => [
-                        SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_UR,
-                        SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_ED,
-                        SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_BDD,
-                    ],
-                ],
-                [
-                    'controller' => SoutenanceController::class,
-                    'action'     => [
-                        'add-acteurs',
-                        'remove-acteurs',
-                        'restore-validation',
-                    ],
-                    'roles' => [
-                        "Administrateur technique",
-                    ],
+                    'privileges' => PropositionPrivileges::PROPOSITION_VISUALISER,
                 ],
                 // Présoutenance et pages connexes
                 [
@@ -346,7 +271,7 @@ return array(
                                     'these',
                                 ],
                                 'privileges' => [
-                                    SoutenancePrivileges::SOUTENANCE_PROPOSITION_VISUALISER,
+                                    PropositionPrivileges::PROPOSITION_VISUALISER,
                                 ],
                             ],
                             'presoutenance' => [
@@ -439,39 +364,6 @@ return array(
 
     'router' => [
         'routes' => [
-//            'add-acteurs' => [
-//                'type' => Literal::class,
-//                'may_terminate' => true,
-//                'options' => [
-//                    'route'    => '/add-acteurs',
-//                    'defaults' => [
-//                        'controller' => SoutenanceController::class,
-//                        'action'     => 'add-acteurs',
-//                    ],
-//                ],
-//            ],
-//            'remove-acteurs' => [
-//                'type' => Literal::class,
-//                'may_terminate' => true,
-//                'options' => [
-//                    'route'    => '/remove-acteurs',
-//                    'defaults' => [
-//                        'controller' => SoutenanceController::class,
-//                        'action'     => 'remove-acteurs',
-//                    ],
-//                ],
-//            ],
-//            'restore-validation' => [
-//                'type' => Literal::class,
-//                'may_terminate' => true,
-//                'options' => [
-//                    'route'    => '/restore-validation',
-//                    'defaults' => [
-//                        'controller' => SoutenanceController::class,
-//                        'action'     => 'restore-validation',
-//                    ],
-//                ],
-//            ],
 
             'soutenance' => [
                 'type' => Segment::class,
@@ -621,118 +513,6 @@ return array(
                         ],
                         'child_routes' => [],
                     ],
-                    'proposition' => [
-                        'type' => Segment::class,
-                        'may_terminate' => true,
-                        'options' => [
-                            'route'    => '/proposition',
-                            'defaults' => [
-                                'controller' => SoutenanceController::class,
-                                'action'     => 'proposition',
-                            ],
-                        ],
-                        'child_routes' => [
-                            'signature-presidence' => [
-                                'type' => Literal::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route'    => '/signature-presidence',
-                                    'defaults' => [
-                                        'controller' => SoutenanceController::class,
-                                        'action'     => 'signature-presidence',
-                                    ],
-                                ],
-                            ],
-                            'modifier-date-lieu' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route'    => '/modifier-date-lieu',
-                                    'defaults' => [
-                                        'controller' => SoutenanceController::class,
-                                        'action'     => 'modifier-date-lieu',
-                                    ],
-                                ],
-                            ],
-                            'modifier-membre' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route'    => '/modifier-membre[/:membre]',
-                                    'defaults' => [
-                                        'controller' => SoutenanceController::class,
-                                        'action'     => 'modifier-membre',
-                                    ],
-                                ],
-                            ],
-                            'effacer-membre' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route'    => '/effacer-membre/:membre',
-                                    'defaults' => [
-                                        'controller' => SoutenanceController::class,
-                                        'action'     => 'effacer-membre',
-                                    ],
-                                ],
-                            ],
-                            'confidentialite' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route'    => '/confidentialite',
-                                    'defaults' => [
-                                        'controller' => SoutenanceController::class,
-                                        'action'     => 'confidentialite',
-                                    ],
-                                ],
-                            ],
-                            'label-et-anglais' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route'    => '/label-et-anglais',
-                                    'defaults' => [
-                                        'controller' => SoutenanceController::class,
-                                        'action'     => 'label-et-anglais',
-                                    ],
-                                ],
-                            ],
-                            'valider' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route'    => '/valider',
-                                    'defaults' => [
-                                        'controller' => SoutenanceController::class,
-                                        'action'     => 'valider-acteur',
-                                    ],
-                                ],
-                            ],
-                            'valider-structure' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route'    => '/valider-structure',
-                                    'defaults' => [
-                                        'controller' => SoutenanceController::class,
-                                        'action'     => 'valider-structure',
-                                    ],
-                                ],
-                            ],
-                            'refuser-structure' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route'    => '/refuser-structure',
-                                    'defaults' => [
-                                        'controller' => SoutenanceController::class,
-                                        'action'     => 'refuser-structure',
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
                     'avis-soutenance' => [
                         'type' => Segment::class,
                         'may_terminate' => true,
@@ -833,7 +613,6 @@ return array(
     'service_manager' => [
         'factories' => [
             //service
-            PropositionService::class => PropositionServiceFactory::class,
             MembreService::class => MembreServiceFactory::class,
             AvisService::class => AvisServiceFactory::class,
             ParametreService::class => ParametreServiceFactory::class,
@@ -842,7 +621,6 @@ return array(
             //assertion
             EngagementImpartialiteAssertion::class => EngagementImpartialiteAssertionFactory::class,
             PresoutenanceAssertion::class => PresoutenanceAssertionFactory::class,
-            PropositionAssertion::class => PropositionAssertionFactory::class,
             AvisSoutenanceAssertion::class => AvisSoutenanceAssertionFactory::class,
 
         ],
@@ -861,17 +639,9 @@ return array(
     ],
 
     'form_elements' => [
-        'invokables' => [
-//            AvisForm::class => AvisForm::class,
-        ],
         'factories' => [
             SoutenanceDateRenduRapportForm::class => SoutenanceDateRenduRapportFormFactory::class,
-            SoutenanceDateLieuForm::class => SoutenanceDateLieuFormFactory::class,
-            SoutenanceMembreForm::class => SoutenanceMembreFormFactory::class,
-            SoutenanceRefusForm::class => SoutenanceRefusFormFactory::class,
             QualiteEditionForm::class => QualiteEditionFormFactory::class,
-            ConfidentialiteForm::class => ConfidentialiteFormFactory::class,
-            LabelEtAnglaisForm::class => LabelEtAnglaisFormFactory::class,
             AvisForm::class => AvisFormFactory::class,
             ConfigurationForm::class => ConfigurationFormFactory::class,
         ],
@@ -879,15 +649,8 @@ return array(
 
     'hydrators' => [
         'invokables' => [
-            SoutenanceDateLieuHydrator::class => SoutenanceDateLieuHydrator::class,
-            SoutenanceDateRenduRapportHydrator::class => SoutenanceDateRenduRapportHydrator::class,
             QualiteEditiontHydrator::class => QualiteEditiontHydrator::class,
-            ConfidentialiteHydrator::class => ConfidentialiteHydrator::class,
-            LabelEtAnglaisHydrator::class => LabelEtAnglaisHydrator::class,
             AvisHydrator::class => AvisHydrator::class,
-        ],
-        'factories' => [
-            SoutenanceMembreHydrator::class => SoutenanceMembreHydratorFactory::class,
         ],
     ],
     'view_manager' => [

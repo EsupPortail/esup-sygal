@@ -1,16 +1,16 @@
 <?php
 
-namespace Soutenance\Form\SoutenanceRefus;
+namespace Soutenance\Form\Refus;
 
 use Zend\Form\FormElementManager;
 
 
-class SoutenanceRefusFormFactory
+class RefusFormFactory
 {
     public function __invoke(FormElementManager $formElementManager)
     {
-        /** @var SoutenanceRefusForm $form */
-        $form = new SoutenanceRefusForm();
+        /** @var RefusForm $form */
+        $form = new RefusForm();
 
         $form->init();
         

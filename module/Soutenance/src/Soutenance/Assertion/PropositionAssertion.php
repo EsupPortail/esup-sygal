@@ -8,7 +8,7 @@ use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
-use Soutenance\Provider\Privilege\SoutenancePrivileges;
+use Soutenance\Provider\Privilege\PropositionPrivileges;
 use Zend\Permissions\Acl\Acl;
 use Zend\Permissions\Acl\Assertion\AssertionInterface;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
@@ -53,7 +53,7 @@ class PropositionAssertion implements  AssertionInterface {
 //        if ($role === Role::CODE_ADMIN_TECH) return true;
 
         switch ($privilege) {
-            case SoutenancePrivileges::SOUTENANCE_PROPOSITION_VISUALISER:
+            case PropositionPrivileges::PROPOSITION_VISUALISER:
                 switch ($role) {
                     case Role::CODE_ADMIN_TECH:
                         return true;
@@ -78,7 +78,7 @@ class PropositionAssertion implements  AssertionInterface {
                         return false;
                         break;
                 }
-            case SoutenancePrivileges::SOUTENANCE_PROPOSITION_MODIFIER:
+            case PropositionPrivileges::PROPOSITION_MODIFIER:
                 /** REMARQUE : une fois que l'unite de recherche, l'école doctorale ou le bureau des doctorats a validé, on ne peut plus modifier la proposition **/
                 $validations_UNITE  = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these);
                 $validations_ECOLE  = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_ED, $these);
@@ -97,7 +97,7 @@ class PropositionAssertion implements  AssertionInterface {
                         return false;
                         break;
                 }
-            case SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_ACTEUR:
+            case PropositionPrivileges::PROPOSITION_VALIDER_ACTEUR:
                 switch ($role) {
                     case Role::CODE_DOCTORANT :
                         return $doctorant->getId() === $individu->getId();
@@ -110,7 +110,7 @@ class PropositionAssertion implements  AssertionInterface {
                         return false;
                         break;
                 }
-            case SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_UR:
+            case PropositionPrivileges::PROPOSITION_VALIDER_UR:
                 switch ($role) {
                     case Role::CODE_UR :
                         $validations_ACTEUR = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PROPOSITION_SOUTENANCE, $these);
@@ -124,7 +124,7 @@ class PropositionAssertion implements  AssertionInterface {
                         return false;
                         break;
                 }
-            case SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_ED:
+            case PropositionPrivileges::PROPOSITION_VALIDER_ED:
                 switch ($role) {
                     case Role::CODE_ED :
                         $validations_UNITE  = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these);
@@ -135,7 +135,7 @@ class PropositionAssertion implements  AssertionInterface {
                         return false;
                         break;
                 }
-            case SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_BDD:
+            case PropositionPrivileges::PROPOSITION_VALIDER_BDD:
 
                 switch ($role) {
                     case Role::CODE_BDD :
@@ -148,7 +148,7 @@ class PropositionAssertion implements  AssertionInterface {
                         return false;
                         break;
                 }
-            case SoutenancePrivileges::SOUTENANCE_PROPOSITION_PRESIDENCE:
+            case PropositionPrivileges::PROPOSITION_PRESIDENCE:
                 switch($role) {
                     case Role::CODE_ADMIN_TECH:
                         return true;

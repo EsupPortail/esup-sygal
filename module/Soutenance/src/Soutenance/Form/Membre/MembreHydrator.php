@@ -1,12 +1,12 @@
 <?php
 
-namespace Soutenance\Form\SoutenanceMembre;
+namespace Soutenance\Form\Membre;
 
 use Soutenance\Entity\Membre;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Zend\Stdlib\Hydrator\HydratorInterface;
 
-class SoutenanceMembreHydrator implements HydratorInterface
+class MembreHydrator implements HydratorInterface
 {
     use MembreServiceAwareTrait;
     /**

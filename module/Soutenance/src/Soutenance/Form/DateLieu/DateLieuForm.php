@@ -1,6 +1,6 @@
 <?php
 
-namespace Soutenance\Form\SoutenanceDateLieu;
+namespace Soutenance\Form\DateLieu;
 
 use UnicaenApp\Form\Element\Date;
 use Zend\Form\Element\Checkbox;
@@ -9,7 +9,7 @@ use Zend\Form\Element\Text;
 use Zend\Form\Element\Time;
 use Zend\Form\Form;
 
-class SoutenanceDateLieuForm extends Form {
+class DateLieuForm extends Form {
 
     public function init()
     {

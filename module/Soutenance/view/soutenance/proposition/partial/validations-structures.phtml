@@ -8,12 +8,12 @@
  */
 
 use Application\Entity\Db\Role;
-use Soutenance\Provider\Privilege\SoutenancePrivileges;
+use Soutenance\Provider\Privilege\PropositionPrivileges;
 
-$canStructureValider = $isOk && $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_UR) ||
-    $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_ED) ||
-    $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_VALIDER_BDD);
-$canPresidence = $this->isAllowed($these, SoutenancePrivileges::SOUTENANCE_PROPOSITION_PRESIDENCE);
+$canStructureValider = $isOk && $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_UR) ||
+    $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_ED) ||
+    $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_BDD);
+$canPresidence = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_PRESIDENCE);
 
 ?>
 

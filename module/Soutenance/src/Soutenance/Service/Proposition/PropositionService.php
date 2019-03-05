@@ -11,7 +11,6 @@ use Application\Entity\Db\Validation;
 use Application\Entity\Db\Variable;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\File\FileServiceAwareTrait;
-use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
@@ -20,12 +19,13 @@ use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
 use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
+use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class PropositionService {
     use EntityManagerAwareTrait;
-    use ValidationServiceAwareTrait;
+    use ValidatationServiceAwareTrait;
     use NotifierServiceAwareTrait;
     use NotifierSoutenanceServiceAwareTrait;
     use ParametreServiceAwareTrait;
