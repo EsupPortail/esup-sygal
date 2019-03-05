@@ -12,7 +12,7 @@ use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
-use Soutenance\Form\Confidentialite\ConfidentialiteForm;
+use Soutenance\Form\Confidentialite\ConfigurationForm;
 use Soutenance\Form\Confidentialite\ConfidentialiteFormAwareTrait;
 use Soutenance\Form\DateLieu\DateLieuForm;
 use Soutenance\Form\DateLieu\DateLieuFormAwareTrait;
@@ -230,7 +230,7 @@ class PropositionController extends AbstractActionController {
         /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
 
-        /** @var ConfidentialiteForm  $form */
+        /** @var ConfigurationForm  $form */
         $form = $this->getConfidentialiteForm();
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/confidentialite', ['these' => $these->getId()], [], true));
         $form->bind($proposition);

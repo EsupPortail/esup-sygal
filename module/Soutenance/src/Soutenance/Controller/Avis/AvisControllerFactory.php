@@ -8,6 +8,7 @@ use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
 use Application\Service\UserContextService;
 use Application\Service\Utilisateur\UtilisateurService;
+use Soutenance\Form\Avis\AvisForm;
 use Soutenance\Service\Avis\AvisService;
 use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Validation\ValidationService;
@@ -44,6 +45,11 @@ class AvisControllerFactory
         $userContextService = $controllerManager->getServiceLocator()->get('UserContextService');
         $avisService = $controllerManager->getServiceLocator()->get(AvisService::class);
 
+        /**
+         * @var AvisForm $avisForm
+         */
+        $avisForm = $controllerManager->getServiceLocator()->get('FormElementManager')->get(AvisForm::class);
+
         /** @var AvisController $controller */
         $controller = new AvisController();
         $controller->setTheseService($theseService);
@@ -55,6 +61,8 @@ class AvisControllerFactory
         $controller->setUserContextService($userContextService);
         $controller->setAvisService($avisService);
         $controller->setMembreService($membreService);
+
+        $controller->setAvisForm($avisForm);
 
         return $controller;
     }

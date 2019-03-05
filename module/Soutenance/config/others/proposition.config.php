@@ -252,7 +252,7 @@ return [
             DateLieuForm::class => DateLieuFormFactory::class,
             MembreForm::class => MembreFormFactory::class,
             LabelEtAnglaisForm::class => LabelEtAnglaisFormFactory::class,
-            ConfidentialiteForm::class => ConfidentialiteFormFactory::class,
+            ConfidentialiteForm::class=> ConfidentialiteFormFactory::class,
             RefusForm::class => RefusFormFactory::class,
 
 

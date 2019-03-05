@@ -10,8 +10,8 @@ class ConfidentialiteFormFactory
     {
         $sl = $formElementManager->getServiceLocator();
 
-        /** @var ConfidentialiteForm $form */
-        $form = new ConfidentialiteForm();
+        /** @var ConfigurationForm $form */
+        $form = new ConfigurationForm();
         $hydrator = $sl->get('HydratorManager')->get(ConfidentialiteHydrator::class);
         $form->setHydrator($hydrator);
         $form->init();

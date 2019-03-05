@@ -17,6 +17,7 @@ use Soutenance\Entity\Avis;
 use Soutenance\Entity\Membre;
 use Soutenance\Filter\NomAvisFormatter;
 use Soutenance\Form\Avis\AvisForm;
+use Soutenance\Form\Avis\AvisFormAwareTrait;
 use Soutenance\Service\Avis\AvisServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
@@ -33,6 +34,7 @@ class AvisController extends AbstractController {
     use AvisServiceAwareTrait;
     use MembreServiceAwareTrait;
     use ValidatationServiceAwareTrait;
+    use AvisFormAwareTrait;
 
     public function indexAction()
     {
@@ -52,7 +54,7 @@ class AvisController extends AbstractController {
         }
 
         /** @var AvisForm $form */
-        $form = $this->getServiceLocator()->get('FormElementManager')->get(AvisForm::class);
+        $form = $this->getAvisForm();
 
         /** @var Request $request */
         $request = $this->getRequest();
