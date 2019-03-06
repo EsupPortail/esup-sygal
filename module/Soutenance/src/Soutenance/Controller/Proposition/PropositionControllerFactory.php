@@ -4,7 +4,7 @@ namespace Soutenance\Controller\Proposition;
 
 use Application\Service\These\TheseService;
 use Application\Service\UserContextService;
-use Soutenance\Form\Confidentialite\ConfigurationForm;
+use Soutenance\Form\Confidentialite\ConfidentialiteForm;
 use Soutenance\Form\DateLieu\DateLieuForm;
 use Soutenance\Form\LabelEtAnglais\LabelEtAnglaisForm;
 use Soutenance\Form\Membre\MembreForm;
@@ -38,13 +38,13 @@ class PropositionControllerFactory {
          * @var DateLieuForm $dateLieuForm
          * @var MembreForm $membreForm
          * @var LabelEtAnglaisForm $labelEtAnglaisForm
-         * @var ConfigurationForm $confidentialiteForm
+         * @var ConfidentialiteForm $confidentialiteForm
          * @var RefusForm $refusForm
          */
         $dateLieuForm = $manager->getServiceLocator()->get('FormElementManager')->get(DateLieuForm::class);
         $membreForm = $manager->getServiceLocator()->get('FormElementManager')->get(MembreForm::class);
         $labelEtAnglaisForm = $manager->getServiceLocator()->get('FormElementManager')->get(LabelEtAnglaisForm::class);
-        $confidentialiteForm = $manager->getServiceLocator()->get('FormElementManager')->get(ConfigurationForm::class);
+        $confidentialiteForm = $manager->getServiceLocator()->get('FormElementManager')->get(ConfidentialiteForm::class);
         $refusForm = $manager->getServiceLocator()->get('FormElementManager')->get(RefusForm::class);
 
         /** @var PropositionController $controller */

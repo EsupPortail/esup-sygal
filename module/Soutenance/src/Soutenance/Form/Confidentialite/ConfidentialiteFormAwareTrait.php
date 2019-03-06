@@ -4,11 +4,11 @@ namespace Soutenance\Form\Confidentialite;
 
 trait ConfidentialiteFormAwareTrait {
 
-    /** @var ConfigurationForm */
+    /** @var ConfidentialiteForm */
     private $confidentialiteForm;
 
     /**
-     * @return ConfigurationForm
+     * @return ConfidentialiteForm
      */
     public function getConfidentialiteForm()
     {
@@ -16,8 +16,8 @@ trait ConfidentialiteFormAwareTrait {
     }
 
     /**
-     * @param ConfigurationForm $confidentialiteForm
-     * @return ConfigurationForm
+     * @param ConfidentialiteForm $confidentialiteForm
+     * @return ConfidentialiteForm
      */
     public function setConfidentialiteForm($confidentialiteForm)
     {
