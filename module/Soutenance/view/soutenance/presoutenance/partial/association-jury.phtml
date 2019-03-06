@@ -6,6 +6,7 @@
  */
 
 use Application\Constants;
+use Soutenance\Entity\Membre;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 
 $canAssocierMembreIndividu              = $this->isAllowed($these, PresoutenancePrivileges::PRESOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU);
@@ -43,6 +44,7 @@ $canAssocierMembreIndividu              = $this->isAllowed($these, Presoutenance
             <thead>
             <tr>
                 <th> Dénomination </th>
+                <th> Rôle </th>
                 <th> Qualité </th>
                 <th> Etablissement </th>
                 <th> Id SyGAL </th>
@@ -50,9 +52,11 @@ $canAssocierMembreIndividu              = $this->isAllowed($these, Presoutenance
             </tr>
             </thead>
             <tbody>
+            <?php /** @var Membre $membre  */ ?>
             <?php foreach ($proposition->getMembres() as $membre): ?>
                 <tr>
                     <td>    <?php echo $membre->getDenomination(); ?>                                                   </td>
+                    <td>    <?php echo $membre->getRole(); ?>                                                   </td>
                     <td>    <?php echo $membre->getQualite()->getLibelle(); ?>                                          </td>
                     <td>    <?php echo $membre->getEtablissement(); ?>                                                  </td>
                     <td>    <?php echo ($membre->getIndividu())?$membre->getIndividu()->getId() .' '. $membre->getIndividu()->getNomComplet():''; ?>                  </td>
