@@ -5,6 +5,7 @@ namespace Soutenance\Controller;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
+use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Soutenance\Entity\Membre;
@@ -17,9 +18,12 @@ use Zend\View\Model\ViewModel;
  */
 
 class SoutenanceController extends AbstractActionController {
-    use TheseServiceAwareTrait;
+    use ActeurServiceAwareTrait;
     use PropositionServiceAwareTrait;
+    use TheseServiceAwareTrait;
     use UserContextServiceAwareTrait;
+
+
 
     public function indexAction()
     {
@@ -36,9 +40,12 @@ class SoutenanceController extends AbstractActionController {
             case Role::CODE_CODIRECTEUR_THESE :
                 $theses = $this->getTheseService()->getRepository()->fetchThesesByEncadrant($individu);
                 break;
-//            case Role::CODE_RAPPORTEUR_JURY :
-//            case Role::CODE_RAPPORTEUR_ABSENT :
-//                break;
+            case Role::CODE_RAPPORTEUR_JURY :
+            case Role::CODE_RAPPORTEUR_ABSENT :
+            case Role::CODE_MEMBRE_JURY :
+                $acteur = $this->getActeurService()->getRepository()->findActeurByIndividuAndRole($individu, $role);
+                $theses[] = $acteur->getThese();
+                break;
             case Role::CODE_ADMIN_TECH :
             case Role::CODE_OBSERVATEUR :
             case Role::CODE_BDD :
