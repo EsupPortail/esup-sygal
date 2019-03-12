@@ -10,6 +10,7 @@ use Soutenance\Controller\SoutenanceController;
 use Soutenance\Provider\Privilege\EngagementImpartialitePrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use Zend\Mvc\Router\Http\Literal;
 use Zend\Mvc\Router\Http\Segment;
 
 return array(
@@ -73,10 +74,10 @@ return array(
     'router' => [
         'routes' => [
             'soutenance' => [
-                'type' => Segment::class,
+                'type' => Literal::class,
                 'may_terminate' => true,
                 'options' => [
-                    'route'    => '/soutenance[/:these]',
+                    'route'    => '/soutenance',
                     'defaults' => [
                         'controller' => SoutenanceController::class,
                         'action'     => 'index',
@@ -87,7 +88,7 @@ return array(
                         'type' => Segment::class,
                         'may_terminate' => true,
                         'options' => [
-                            'route'    => '/engagement-impartialite/:membre',
+                            'route'    => '/engagement-impartialite/:these/:membre',
                             'defaults' => [
                                 'controller' => EngagementImpartialiteController::class,
                                 'action'     => 'engagement-impartialite',

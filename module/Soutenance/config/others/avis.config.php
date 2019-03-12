@@ -64,10 +64,10 @@ return array(
     'router' => [
         'routes' => [
             'soutenance' => [
-                'type' => Segment::class,
+                'type' => Literal::class,
                 'may_terminate' => true,
                 'options' => [
-                    'route'    => '/soutenance[/:these]',
+                    'route'    => '/soutenance',
                     'defaults' => [
                         'controller' => SoutenanceController::class,
                         'action'     => 'index',
@@ -78,7 +78,7 @@ return array(
                         'type' => Segment::class,
                         'may_terminate' => true,
                         'options' => [
-                            'route'    => '/avis-soutenance/:rapporteur',
+                            'route'    => '/avis-soutenance/:these/:rapporteur',
                             'defaults' => [
                                 'controller' => AvisController::class,
                                 'action'     => 'index',

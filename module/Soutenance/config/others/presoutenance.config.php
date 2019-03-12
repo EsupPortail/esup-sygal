@@ -87,10 +87,10 @@ return [
     'router' => [
         'routes' => [
             'soutenance' => [
-                'type' => Segment::class,
+                'type' => Literal::class,
                 'may_terminate' => true,
                 'options' => [
-                    'route'    => '/soutenance[/:these]',
+                    'route'    => '/soutenance',
                     'defaults' => [
                         'controller' => SoutenanceController::class,
                         'action'     => 'index',
@@ -101,7 +101,7 @@ return [
                         'type' => Segment::class,
                         'may_terminate' => true,
                         'options' => [
-                            'route'    => '/presoutenance',
+                            'route'    => '/presoutenance/:these',
                             'defaults' => [
                                 'controller' => PresoutenanceController::class,
                                 'action'     => 'presoutenance',

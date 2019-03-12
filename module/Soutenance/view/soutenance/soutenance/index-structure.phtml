@@ -1,0 +1,70 @@
+<?php
+
+/**
+ * @var \Soutenance\Entity\Proposition[] $propositions
+ */
+
+use Application\Entity\Db\Role;
+
+?>
+
+<h1 class="page-header">
+    Index des propositions en cours
+    <span class="badge">
+        <?php echo count($propositions); ?>
+    </span>
+</h1>
+
+<table class="table table-condensed">
+    <thead>
+        <tr>
+            <th class="title-column">
+                These
+            </th>
+            <th>
+                Doctorant
+            </th>
+            <th>
+                Direction
+            </th>
+            <th>
+                Actions
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($propositions as $proposition) : ?>
+            <tr>
+                <td> <?php echo $proposition->getThese()->getTitre(); ?> </td>
+                <td> <?php echo $proposition->getThese()->getDoctorant()->getIndividu(); ?> </td>
+                <td>
+                    <?php foreach ($proposition->getThese()->getEncadrements() as $encadrement) : ?>
+                        <?php if ($encadrement->getRole()->getCode() !== Role::CODE_DIRECTEUR_THESE) echo "<i>"; ?>
+                        <?php echo $encadrement->getIndividu() ; ?>
+                        <?php if ($encadrement->getRole()->getCode() !== Role::CODE_DIRECTEUR_THESE) echo "</i>"; ?>
+                        <br/>
+                    <?php endforeach; ?>
+                </td>
+                <td>
+                    <a href="<?php echo $this->url('soutenance/proposition', ['these' => $proposition->getThese()->getId()], [], true); ?>"
+                       title="Visualiser la proposition de soutenance"
+                    >
+                        Proposition
+                    </a>
+                    <br/>
+                    <a href="<?php echo $this->url('soutenance/presoutenance', ['these' => $proposition->getThese()->getId()], [], true); ?>"
+                       title="Visualiser la préparation de la soutenance"
+                    >
+                        Présoutenance
+                    </a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+
+<style>
+    th.title-column {
+        width:80rem;
+    }
+</style>
