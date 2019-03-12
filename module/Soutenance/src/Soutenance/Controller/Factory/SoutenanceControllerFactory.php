@@ -2,6 +2,7 @@
 
 namespace Soutenance\Controller\Factory;
 
+use Application\Service\Acteur\ActeurService;
 use Application\Service\These\TheseService;
 use Application\Service\UserContextService;
 use Soutenance\Controller\SoutenanceController;
@@ -11,24 +12,27 @@ use Zend\Mvc\Controller\ControllerManager;
 class SoutenanceControllerFactory
 {
     /**
-     * @param ControllerManager $controllerManager
+     * @param ControllerManager $manager
      * @return SoutenanceController
      */
-    public function __invoke(ControllerManager $controllerManager)
+    public function __invoke(ControllerManager $manager)
     {
 
         /**
+         * @var ActeurService $acteurService
          * @var PropositionService $propositionService
          * @var TheseService $theseService
          * @var UserContextService $userContextService
          */
-        $propositionService = $controllerManager->getServiceLocator()->get(PropositionService::class);
-        $theseService = $controllerManager->getServiceLocator()->get('TheseService');
-        $userContextService = $controllerManager->getServiceLocator()->get('UserContextService');
+        $acteurService          = $manager->getServiceLocator()->get(ActeurService::class);
+        $propositionService     = $manager->getServiceLocator()->get(PropositionService::class);
+        $theseService           = $manager->getServiceLocator()->get('TheseService');
+        $userContextService     = $manager->getServiceLocator()->get('UserContextService');
 
 
         /** @var SoutenanceController $controller */
         $controller = new SoutenanceController();
+        $controller->setActeurService($acteurService);
         $controller->setPropositionService($propositionService);
         $controller->setTheseService($theseService);
         $controller->setUserContextService($userContextService);
