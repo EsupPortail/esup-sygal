@@ -105,7 +105,40 @@ class AvisService {
         } catch (OptimisticLockException $e) {
             throw new RuntimeException('Un problème est survenu lors de l\'effacement de l\'avis', $e);
         }
+    }
 
+    /**
+     * @param Avis $avis
+     * @return Avis
+     */
+    public function historiser($avis)
+    {
+        /** @var Utilisateur $user */
+        $user = $this->userContextService->getIdentityDb();
+        /** @var DateTime $date */
+        try {
+            $date = new DateTime();
+        } catch (\Exception $e) {
+            throw new RuntimeException("Un problème s'est produit lors de la récupération de la date");
+        }
+
+        $avis->getValidation()->setHistoDestruction($date);
+        $avis->getValidation()->setHistoDestructeur($user);
+        $avis->getFichier()->setHistoDestruction($date);
+        $avis->getFichier()->setHistoDestructeur($user);
+        $avis->setHistoDestruction($date);
+        $avis->setHistoDestructeur($user);
+
+
+        try {
+            $this->getEntityManager()->flush($avis->getValidation());
+            $this->getEntityManager()->flush($avis->getFichier());
+            $this->getEntityManager()->flush($avis);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Un problème s'est produit lors de l'historisation de l'avis (id:".$avis->getId().").");
+        }
+
+        return $avis;
     }
 
     /**

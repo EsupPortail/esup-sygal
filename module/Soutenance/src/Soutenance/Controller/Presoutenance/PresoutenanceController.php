@@ -7,7 +7,6 @@ use Application\Controller\AbstractController;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
-use Application\Entity\Db\Validation;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
@@ -256,13 +255,7 @@ class PresoutenanceController extends AbstractController
         $idAvis = $this->params()->fromRoute('avis');
         $avis = $this->getAvisService()->getAvis($idAvis);
 
-        //historisation de la validation associée et du prérapport
-        $avis->getValidation()->historiser();
-        $this->getValidationService()->getEntityManager()->flush($avis->getValidation());
-        $avis->getFichier()->historiser();
-        $this->fichierService->getEntityManager()->flush($avis->getFichier());
-        $avis->historiser();
-        $this->getAvisService()->update($avis);
+        $this->getAvisService()->historiser($avis);
 
         $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $avis->getThese()->getId()], [], true);
     }

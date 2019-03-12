@@ -136,13 +136,7 @@ class AvisController extends AbstractController {
         /** @var Avis $avis */
         $avis = $this->getAvisService()->getAvisByMembre($these, $membre);
 
-        //historisation de la validation associée et du prérapport
-        $avis->getValidation()->historiser();
-        $this->fichierService->getEntityManager()->flush($avis->getFichier());
-        $avis->getFichier()->historiser();
-        $this->getValidationService()->getEntityManager()->flush($avis->getValidation());
-        $avis->historiser();
-        $this->getAvisService()->update($avis);
+        $this->getAvisService()->historiser($avis);
 
 
         $this->redirect()->toRoute('soutenance/avis-soutenance', ['these' => $these->getId(), 'rapporteur' => $membreId], [], true);
