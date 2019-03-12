@@ -1,0 +1,54 @@
+<?php
+
+use Application\Constants;
+use Application\Entity\Db\These;
+use Application\View\Renderer\PhpRenderer;
+use Soutenance\Entity\Avis;
+use Soutenance\Entity\Proposition;
+
+/**
+ * @see \Soutenance\Service\Notifier\NotifierSoutenanceService::triggerFeuVertSoutenance()
+ *
+ * @var PhpRenderer $this
+ * @var These $these
+ * @var Proposition $proposition
+ * @var Avis[] $avis
+ */
+
+?>
+
+<p>
+    Bonjour,
+</p>
+<p>
+    Votre soutenance a été accepté par la maison du doctorats de votre établissement.
+    Conformément aux informations que vous avez fournis celle-ci se tiendra le
+    <em> <?php echo $proposition->getDate()->format(Constants::DATETIME_FORMAT); ?> </em>
+    dans <em> <?php echo $proposition->getLieu() ?> </em>.
+</p>
+<p>
+    Vous pouvez consulter les rapports de présoutenance en utilisant les liens suivant :
+</p>
+<ul>
+    <?php foreach ($avis as $avi) : ?>
+        <?php $url = $this->url('fichier/these/telecharger', [
+            'these'      => $these->getId(),
+            'fichier'    => $avi->getFichier()->getId(),
+            'fichierNom' => $avi->getFichier()->getNom(),
+        ], [
+            'force_canonical'=>true
+        ],true);
+        ?>
+    <li>
+        <?php echo  $avi->getRapporteur(); ?>
+        :
+
+        <a href="<?php echo $url; ?>">
+            rapport de pré-soutenance
+        </a>
+    </li>
+    <?php endforeach; ?>
+</ul>
+
+
+

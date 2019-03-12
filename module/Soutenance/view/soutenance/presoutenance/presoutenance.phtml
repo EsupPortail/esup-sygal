@@ -5,6 +5,8 @@
  * @var \Application\Entity\Db\Validation $validationBDD
  */
 
+$tousLesAvis = count($rapporteurs) === count($avis) ;
+
 $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->getIndividu());
 ?>
 
@@ -12,6 +14,11 @@ $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->get
     Préparation de la soutenance
     <small><?php echo $this->partial('application/these/partial/titre') ?></small>
 </h1>
+
+<?php
+    $messenger = $this->messenger();
+    echo $this->messenger()->addMessagesFromFlashMessenger();
+?>
 
 <?php if ($validationBDD) : ?>
     <!-- DATE DE RENDU DE RAPPORT ----------------------------------------------------------------------------------------->
@@ -25,6 +32,16 @@ $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->get
 
     <!-- AVIS SOUTENANCE -------------------------------------------------------------------------------------------------->
     <?php echo $this->partial('soutenance/presoutenance/partial/avis-soutenance'); ?>
+
+    <!-- FEU VERT --------------------------------------------------------------------------------------------------------->
+    <?php if ($tousLesAvis) : ?>
+        <a href="<?php echo $this->url('soutenance/presoutenance/feu-vert', ['these' => $these->getId()], [], true); ?>"
+            class="btn btn-primary pull-right"
+        >
+            <span class="glyphicon glyphicon-thumbs-up"></span>
+            Donner le feu vert pour la soutenance
+        </a>
+    <?php endif; ?>
 <?php else : ?>
     <p class="lead">
         Vous ne pouvez commencer les démarches de présouteances qu'une fois toutes les validations obtenues.

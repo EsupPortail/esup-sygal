@@ -16,6 +16,7 @@ use Soutenance\Provider\Privilege\EngagementImpartialitePrivileges;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use Zend\Mvc\Router\Http\Literal;
 use Zend\Mvc\Router\Http\Segment;
 
 return [
@@ -53,6 +54,7 @@ return [
                     'controller' => PresoutenanceController::class,
                     'action'     => [
                         'date-rendu-rapport',
+                        'feu-vert'
                     ],
                     'privileges' => PresoutenancePrivileges::PRESOUTENANCE_DATE_RETOUR_MODIFICATION,
                 ],
@@ -169,6 +171,17 @@ return [
                                     'defaults' => [
                                         'controller' => PresoutenanceController::class,
                                         'action'     => 'revoquer-avis-soutenance',
+                                    ],
+                                ],
+                            ],
+                            'feu-vert' => [
+                                'type' => Literal::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/feu-vert',
+                                    'defaults' => [
+                                        'controller' => PresoutenanceController::class,
+                                        'action'     => 'feu-vert',
                                     ],
                                 ],
                             ],
