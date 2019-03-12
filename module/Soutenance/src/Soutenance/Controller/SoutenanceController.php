@@ -36,10 +36,14 @@ class SoutenanceController extends AbstractActionController {
             case Role::CODE_CODIRECTEUR_THESE :
                 $theses = $this->getTheseService()->getRepository()->fetchThesesByEncadrant($individu);
                 break;
-            case Role::CODE_RAPPORTEUR_JURY :
-            case Role::CODE_RAPPORTEUR_ABSENT :
-                break;
-            default :
+//            case Role::CODE_RAPPORTEUR_JURY :
+//            case Role::CODE_RAPPORTEUR_ABSENT :
+//                break;
+            case Role::CODE_ADMIN_TECH :
+            case Role::CODE_OBSERVATEUR :
+            case Role::CODE_BDD :
+            case Role::CODE_UR :
+            case Role::CODE_ED :
                 $this->redirect()->toRoute('soutenance/index-structure', [], [], true);
                 break;
         }
