@@ -150,9 +150,6 @@ class PropositionAssertion implements  AssertionInterface {
                 }
             case PropositionPrivileges::PROPOSITION_PRESIDENCE:
                 switch($role) {
-                    case Role::CODE_ADMIN_TECH:
-                        return true;
-                        break;
                     case Role::CODE_BDD :
                         return $structure === $these->getEtablissement()->getStructure();
                         break;

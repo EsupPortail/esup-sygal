@@ -11,54 +11,52 @@ use Application\Service\Utilisateur\UtilisateurService;
 use Soutenance\Form\Avis\AvisForm;
 use Soutenance\Service\Avis\AvisService;
 use Soutenance\Service\Membre\MembreService;
+use Soutenance\Service\Notifier\NotifierSoutenanceService;
+use Soutenance\Service\Proposition\PropositionService;
 use Soutenance\Service\Validation\ValidationService;
 use Zend\Mvc\Controller\ControllerManager;
 
 class AvisControllerFactory
 {
     /**
-     * @param ControllerManager $controllerManager
+     * @param ControllerManager $manager
      * @return AvisController
      */
-    public function __invoke(ControllerManager $controllerManager)
+    public function __invoke(ControllerManager $manager)
     {
 
         /**
+         * @var ActeurService $acteurService
+         * @var AvisService $avisService
+         * @var FichierService $fichierService
          * @var MembreService $membreService
+         * @var NotifierSoutenanceService $notifierSoutenanceService
+         * @var PropositionService $propositionService
          * @var TheseService $theseService
          * @var ValidationService $validationService
-         * @var ActeurService $acteurService
-         * @var NotifierService $notifierService
-         * @var FichierService $fichierService
-         * @var UserContextService $userContextService
-         * @var AvisService $avisService
-         * @var UtilisateurService $utilisateurService
-         *
          */
-        $membreService = $controllerManager->getServiceLocator()->get(MembreService::class);
-        $theseService = $controllerManager->getServiceLocator()->get('TheseService');
-        $validationService = $controllerManager->getServiceLocator()->get(ValidationService::class);
-        $acteurService = $controllerManager->getServiceLocator()->get(ActeurService::class);
-        $notifierService = $controllerManager->getServiceLocator()->get(NotifierService::class);
-        $fichierService = $controllerManager->getServiceLocator()->get('FichierService');
-        $utilisateurService = $controllerManager->getServiceLocator()->get('UtilisateurService');
-        $userContextService = $controllerManager->getServiceLocator()->get('UserContextService');
-        $avisService = $controllerManager->getServiceLocator()->get(AvisService::class);
+        $acteurService              = $manager->getServiceLocator()->get(ActeurService::class);
+        $avisService                = $manager->getServiceLocator()->get(AvisService::class);
+        $fichierService             = $manager->getServiceLocator()->get('FichierService');
+        $membreService              = $manager->getServiceLocator()->get(MembreService::class);
+        $notifierSoutenanceService  = $manager->getServiceLocator()->get(NotifierSoutenanceService::class);
+        $propositionService         = $manager->getServiceLocator()->get(PropositionService::class);
+        $theseService               = $manager->getServiceLocator()->get('TheseService');
+        $validationService          = $manager->getServiceLocator()->get(ValidationService::class);
 
         /**
          * @var AvisForm $avisForm
          */
-        $avisForm = $controllerManager->getServiceLocator()->get('FormElementManager')->get(AvisForm::class);
+        $avisForm = $manager->getServiceLocator()->get('FormElementManager')->get(AvisForm::class);
 
         /** @var AvisController $controller */
         $controller = new AvisController();
         $controller->setTheseService($theseService);
         $controller->setValidationService($validationService);
         $controller->setActeurService($acteurService);
-        $controller->setNotifierService($notifierService);
+        $controller->setNotifierSoutenanceService($notifierSoutenanceService);
+        $controller->setPropositionService($propositionService);
         $controller->setFichierService($fichierService);
-        $controller->setUtilisateurService($utilisateurService);
-        $controller->setUserContextService($userContextService);
         $controller->setAvisService($avisService);
         $controller->setMembreService($membreService);
 

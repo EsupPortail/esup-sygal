@@ -10,30 +10,30 @@ use Application\Entity\Db\VersionFichier;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
-use Application\Service\UserContextServiceAwareTrait;
-use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
-use Notification\Service\NotifierServiceAwareTrait;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Membre;
+use Soutenance\Entity\Proposition;
 use Soutenance\Filter\NomAvisFormatter;
 use Soutenance\Form\Avis\AvisForm;
 use Soutenance\Form\Avis\AvisFormAwareTrait;
 use Soutenance\Service\Avis\AvisServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
+use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
+use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use Zend\Http\Request;
 use Zend\View\Model\ViewModel;
 
 class AvisController extends AbstractController {
-    use TheseServiceAwareTrait;
     use ActeurServiceAwareTrait;
-    use NotifierServiceAwareTrait;
-    use UserContextServiceAwareTrait;
     use FichierServiceAwareTrait;
-    use UtilisateurServiceAwareTrait;
     use AvisServiceAwareTrait;
     use MembreServiceAwareTrait;
+    use NotifierSoutenanceServiceAwareTrait;
+    use PropositionServiceAwareTrait;
+    use TheseServiceAwareTrait;
     use ValidatationServiceAwareTrait;
+
     use AvisFormAwareTrait;
 
     public function indexAction()
@@ -46,6 +46,8 @@ class AvisController extends AbstractController {
         $membre = $this->getMembreService()->find($idMembre);
         /** @var Individu $rapporteur */
         $rapporteur = $membre->getIndividu();
+        /** @var Proposition $proposition */
+        $proposition = $this->getPropositionService()->findByThese($these);
 
         $avis = $this->getAvisService()->getAvisByMembre($these, $membre);
 
@@ -89,6 +91,13 @@ class AvisController extends AbstractController {
                 $avis->setAvis($data['avis']);
                 $avis->setMotif($data['motif']);
                 $this->getAvisService()->create($avis);
+
+                //test du rendu de tous les avis
+                $allAvis        = $this->getAvisService()->getAvisByThese($these);
+                $allRapporteurs = $this->getMembreService()->getRapporteursByProposition($proposition);
+                if (count($allAvis) === count($allRapporteurs)) {
+                    $this->getNotifierSoutenanceService()->triggerAvisRendus($these);
+                }
 
                 $this->redirect()->toRoute('soutenance/avis-soutenance/afficher', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true);
             }
