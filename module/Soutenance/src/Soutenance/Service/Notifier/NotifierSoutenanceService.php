@@ -306,4 +306,22 @@ class NotifierSoutenanceService extends \Notification\Service\NotifierService {
         $this->trigger($notif);
     }
 
+    /**
+     * @param These $these
+     */
+    public function triggerAvisRendus($these)
+    {
+        $emails = $this->fetchEmailBdd($these);
+        $notif  = new Notification();
+        $notif
+            ->setSubject("Tous les avis de soutenance de la thèse de ".$these->getDoctorant()->getIndividu()." ont été rendus.")
+            ->setTo($emails)
+            ->setTemplatePath('soutenance/notification/tous-avis-soutenance')
+            ->setTemplateVariables([
+                'these' => $these,
+            ]);
+        $this->trigger($notif);
+
+    }
+
 }

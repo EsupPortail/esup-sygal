@@ -4,6 +4,7 @@ namespace Soutenance\Service\Membre;
 
 //TODO faire le repo aussi
 use Application\Entity\Db\Acteur;
+use Application\Entity\Db\These;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Soutenance\Entity\Membre;
@@ -169,5 +170,23 @@ class MembreService {
         } catch (OptimisticLockException $e) {
             throw new RuntimeException("Un problème s'est produit lors de l'effacement en BD d'une nouvelle qualité.");
         }
+    }
+
+    /**
+     * @param Proposition $proposition
+     * @return Membre[]
+     */
+    public function getRapporteursByProposition($proposition)
+    {
+        $qb = $this->getEntityManager()->getRepository(Membre::class)->createQueryBuilder('membre')
+            ->andWhere('membre.proposition = :proposition')
+            ->andWhere('membre.role = :rapporteur OR membre.role = :rapporteurAbsent')
+            ->setParameter('proposition', $proposition)
+            ->setParameter('rapporteur', Membre::RAPPORTEUR)
+            ->setParameter('rapporteurAbsent', Membre::RAPPORTEUR_ABSENT)
+        ;
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
     }
 }
