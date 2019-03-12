@@ -36,13 +36,26 @@ class SoutenanceController extends AbstractActionController {
             case Role::CODE_CODIRECTEUR_THESE :
                 $theses = $this->getTheseService()->getRepository()->fetchThesesByEncadrant($individu);
                 break;
+            case Role::CODE_RAPPORTEUR_JURY :
+            case Role::CODE_RAPPORTEUR_ABSENT :
+                break;
             default :
-                //$theses[] = $this->getTheseService()->getRepository()->find(41321);
+                $this->redirect()->toRoute('soutenance/index-structure', [], [], true);
                 break;
         }
 
         return new ViewModel([
             'theses'            => $theses,
+        ]);
+    }
+
+    public function indexStructureAction()
+    {
+        $role = $this->userContextService->getSelectedIdentityRole();
+        $propositions = $this->getPropositionService()->getPropositionsByRole($role);
+
+        return new ViewModel([
+            'propositions' => $propositions,
         ]);
     }
 

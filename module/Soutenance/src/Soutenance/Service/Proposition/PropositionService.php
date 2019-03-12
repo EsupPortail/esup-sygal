@@ -384,4 +384,46 @@ class PropositionService {
         }
         return !(empty($validations));
     }
+
+    /**
+     * @param Role $role
+     * @return Proposition[]
+     */
+    public function getPropositionsByRole($role)
+    {
+        $qb = $this->getEntityManager()->getRepository(Proposition::class)->createQueryBuilder('proposition')
+            ->addSelect('these')->join('proposition.these', 'these')
+            ->andWhere('these.etatThese = :encours')
+            ->setParameter('encours', These::ETAT_EN_COURS)
+        ;
+
+        switch ($role->getCode()) {
+            case Role::CODE_UR :
+                $qb = $qb->addSelect('unite')->leftJoin('these.uniteRecherche', 'unite')
+                    ->addSelect('structure')->leftJoin('unite.structure', 'structure')
+                    ->andWhere('structure.id = :unite')
+                    ->setParameter('unite', $role->getStructure()->getId())
+                ;
+                break;
+            case Role::CODE_ED :
+                $qb = $qb->addSelect('ecole')->leftJoin('these.ecoleDoctorale', 'ecole')
+                    ->addSelect('structure')->leftJoin('ecole.structure', 'structure')
+                    ->andWhere('structure.id = :ecole')
+                    ->setParameter('ecole', $role->getStructure()->getId())
+                ;
+                break;
+            case Role::CODE_BDD :
+                $qb = $qb->addSelect('etablissement')->leftJoin('these.etablissement', 'etablissement')
+                    ->addSelect('structure')->leftJoin('etablissement.structure', 'structure')
+                    ->andWhere('structure.id = :etablissement')
+                    ->setParameter('etablissement', $role->getStructure()->getId())
+                ;
+                break;
+            default:
+                break;
+        }
+
+        $propositions = $qb->getQuery()->getResult();
+        return $propositions;
+    }
 }

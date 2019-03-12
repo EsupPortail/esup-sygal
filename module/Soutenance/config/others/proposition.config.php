@@ -108,10 +108,10 @@ return [
     'router' => [
         'routes' => [
             'soutenance' => [
-                'type' => Segment::class,
+                'type' => Literal::class,
                 'may_terminate' => true,
                 'options' => [
-                    'route'    => '/soutenance[/:these]',
+                    'route'    => '/soutenance',
                     'defaults' => [
                         'controller' => SoutenanceController::class,
                         'action'     => 'index',
@@ -119,10 +119,10 @@ return [
                 ],
                 'child_routes' => [
                     'proposition' => [
-                        'type' => Literal::class,
+                        'type' => Segment::class,
                         'may_terminate' => true,
                         'options' => [
-                            'route'    => '/proposition',
+                            'route'    => '/proposition/:these',
                             'defaults' => [
                                 'controller' => PropositionController::class,
                                 'action'     => 'proposition',

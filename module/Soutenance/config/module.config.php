@@ -53,6 +53,7 @@ return array(
                     'controller' => SoutenanceController::class,
                     'action'     => [
                         'index',
+                        'index-structure',
                     ],
                     'roles' => [],
                 ],
@@ -214,23 +215,33 @@ return array(
 
     'router' => [
         'routes' => [
-
             'soutenance' => [
-                'type' => Segment::class,
+                'type' => Literal::class,
                 'may_terminate' => true,
                 'options' => [
-                    'route'    => '/soutenance[/:these]',
+                    'route'    => '/soutenance',
                     'defaults' => [
                         'controller' => SoutenanceController::class,
                         'action'     => 'index',
                     ],
                 ],
                 'child_routes' => [
+                    'index-structure' => [
+                        'type' => Literal::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/index-structure',
+                            'defaults' => [
+                                'controller' => SoutenanceController::class,
+                                'action'     => 'index-structure',
+                            ],
+                        ],
+                    ],
                     'avancement' => [
                         'type' => Segment::class,
                         'may_terminate' => true,
                         'options' => [
-                            'route'    => '/avancement',
+                            'route'    => '/avancement/:these',
                             'defaults' => [
                                 'controller' => SoutenanceController::class,
                                 'action'     => 'avancement',
