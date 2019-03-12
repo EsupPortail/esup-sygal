@@ -4,10 +4,7 @@ namespace Soutenance\Controller\Avis;
 
 use Application\Service\Acteur\ActeurService;
 use Application\Service\Fichier\FichierService;
-use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
-use Application\Service\UserContextService;
-use Application\Service\Utilisateur\UtilisateurService;
 use Soutenance\Form\Avis\AvisForm;
 use Soutenance\Service\Avis\AvisService;
 use Soutenance\Service\Membre\MembreService;

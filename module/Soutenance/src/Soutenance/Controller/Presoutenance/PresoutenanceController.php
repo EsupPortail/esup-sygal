@@ -16,6 +16,7 @@ use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use DateInterval;
 use Exception;
+use Soutenance\Entity\Avis;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportForm;
@@ -86,7 +87,7 @@ class PresoutenanceController extends AbstractController
         $avis = $this->getAvisService()->getAvisByThese($these);
         $tousLesAvis = count($avis) === count($rapporteurs);
 
-        $validationBDD = $this->getValidationService()->getRepository(Validation::class)->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these) ;
+        $validationBDD = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these) ;
 
         return new ViewModel([
             'these'                 => $these,
@@ -264,5 +265,22 @@ class PresoutenanceController extends AbstractController
         $this->getAvisService()->update($avis);
 
         $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $avis->getThese()->getId()], [], true);
+    }
+
+    public function feuVertAction() {
+        /** @var These $these */
+        $theseId = $this->params()->fromRoute('these');
+        $these = $this->getTheseService()->getRepository()->find($theseId);
+        /** @var Proposition $proposition */
+        $proposition = $this->getPropositionService()->findByThese($these);
+        /** @var Avis[] $avis*/
+        $avis = $this->getAvisService()->getAvisByThese($these);
+
+        $this->getNotifierSoutenanceService()->triggerFeuVertSoutenance($these, $proposition, $avis);
+        $this->flashMessenger()
+            //->setNamespace('presoutenance')
+            ->addSuccessMessage("Notifications d'accord de soutenance envoyées");
+
+        $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 }

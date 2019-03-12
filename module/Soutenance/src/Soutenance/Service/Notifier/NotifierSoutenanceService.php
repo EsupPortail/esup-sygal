@@ -10,6 +10,7 @@ use Application\Entity\Db\Variable;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Notification\Notification;
+use Soutenance\Entity\Avis;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use UnicaenAuth\Entity\Db\RoleInterface;
@@ -38,6 +39,20 @@ class NotifierSoutenanceService extends \Notification\Service\NotifierService {
         $variable = $this->variableService->getRepository()->findByCodeAndThese(Variable::CODE_EMAIL_BDD, $these);
 
         return $variable->getValeur();
+    }
+
+    /**
+     * @param These $these
+     * @return array
+     */
+    protected function fetchEmailActeursDirects(These $these)
+    {
+        $emails = [];
+        $emails[] = $these->getDoctorant()->getIndividu()->getEmail();
+        foreach ($these->getEncadrements() as $encadrant) {
+            $emails[] = $encadrant->getIndividu()->getEmail();
+        }
+        return $emails;
     }
 
     /**
@@ -322,6 +337,27 @@ class NotifierSoutenanceService extends \Notification\Service\NotifierService {
             ]);
         $this->trigger($notif);
 
+    }
+
+    /**
+     * @param These $these
+     * @param Proposition $proposition
+     * @param Avis[] $avis
+     */
+    public function triggerFeuVertSoutenance($these, $proposition, $avis) {
+
+        $emails = $this->fetchEmailActeursDirects($these);
+        $notif  = new Notification();
+        $notif
+            ->setSubject("Votre soutenance a été accepté par la maison du doctorats de votre établissement.")
+            ->setTo($emails)
+            ->setTemplatePath('soutenance/notification/feu-vert-soutenance')
+            ->setTemplateVariables([
+                'these' => $these,
+                'proposition' => $proposition,
+                'avis' => $avis,
+            ]);
+        $this->trigger($notif);
     }
 
 }
