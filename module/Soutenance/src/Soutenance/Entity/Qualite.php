@@ -4,6 +4,7 @@ namespace Soutenance\Entity;
 
 class Qualite
 {
+    const ID_INCONNUE = 0;
 
     /** @var int */
     private $id;
