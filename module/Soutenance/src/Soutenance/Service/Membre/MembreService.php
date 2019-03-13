@@ -7,6 +7,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
+use Soutenance\Entity\Qualite;
 use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -74,14 +75,14 @@ class MembreService {
      */
     public function createMembre($proposition, $acteur) {
         //Qualité par défaut
-        $autreA = $this->getQualiteService()->getQualiteById(3);
+        $inconnue = $this->getQualiteService()->getQualiteById(Qualite::ID_INCONNUE);
 
         $membre = new Membre();
         $membre->setProposition($proposition);
         $membre->setDenomination($acteur->getIndividu()->getNomComplet());
         $membre->setGenre(($acteur->getIndividu()->estUneFemme())?"F":"H");
         $qualite = $this->getQualiteService()->getQualiteByLibelle($acteur->getQualite());
-        $membre->setQualite(($qualite)?$qualite:$autreA);
+        $membre->setQualite(($qualite)?$qualite:$inconnue);
         $membre->setEtablissement($acteur->getEtablissement()->getLibelle());
         $membre->setRole(Membre::MEMBRE);
         $membre->setExterieur("non");
