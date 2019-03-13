@@ -2,11 +2,9 @@
 
 namespace Soutenance\Service\Avis;
 
-use Application\Entity\Db\Acteur;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\UserContextServiceAwareTrait;
-use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
@@ -129,7 +127,6 @@ class AvisService {
         $avis->setHistoDestruction($date);
         $avis->setHistoDestructeur($user);
 
-
         try {
             $this->getEntityManager()->flush($avis->getValidation());
             $this->getEntityManager()->flush($avis->getFichier());
@@ -175,12 +172,12 @@ class AvisService {
             ->andWhere('avis.rapporteur = :rapporteur')
             ->andWhere('1 = pasHistorise(avis)')
             ->setParameter('these', $these)
-            ->setParameter('rapporteur', $membre->getIndividu());
+            ->setParameter('rapporteur', $membre->getActeur());
 
         try {
             $result = $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
-            throw new RuntimeException('Plusieurs avis sont associés au rapporteur ['.$membre->getId().' - '.$membre->getIndividu()->getNomComplet().']');
+            throw new RuntimeException('Plusieurs avis sont associés au rapporteur ['.$membre->getId().' - '.$membre->getActeur()->getIndividu()->getNomComplet().']');
         }
 
         return $result;

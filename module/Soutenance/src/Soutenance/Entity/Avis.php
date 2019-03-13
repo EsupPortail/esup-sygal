@@ -4,7 +4,6 @@ namespace Soutenance\Entity;
 
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Fichier;
-use Application\Entity\Db\Individu;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
@@ -16,7 +15,7 @@ class Avis {
     private $id;
     /** @var These */
     private $these;
-    /** @var Individu */
+    /** @var Acteur */
     private $rapporteur;
     /** @var string */
     private $avis;
@@ -54,7 +53,7 @@ class Avis {
     }
 
     /**
-     * @return Individu
+     * @return Acteur
      */
     public function getRapporteur()
     {
@@ -62,7 +61,7 @@ class Avis {
     }
 
     /**
-     * @param Individu $rapporteur
+     * @param Acteur $rapporteur
      * @return Avis
      */
     public function setRapporteur($rapporteur)
@@ -143,5 +142,3 @@ class Avis {
         return $this;
     }
 }
-
-?>

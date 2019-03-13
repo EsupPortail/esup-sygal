@@ -6,13 +6,17 @@ use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Service\UserContextServiceAwareTrait;
+use DoctrineORMModule\Proxy\__CG__\Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
+use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
+use UnicaenApp\Exception\RuntimeException;
 use Zend\Permissions\Acl\Acl;
 use Zend\Permissions\Acl\Assertion\AssertionInterface;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 use Zend\Permissions\Acl\Role\RoleInterface;
 
 class AvisSoutenanceAssertion  implements  AssertionInterface {
+    use PropositionServiceAwareTrait;
     use UserContextServiceAwareTrait;
 
     /**
@@ -66,6 +70,16 @@ class AvisSoutenanceAssertion  implements  AssertionInterface {
 
                 if ($role->getCode() !== Role::CODE_RAPPORTEUR_JURY) return false;
                 if ($utilisateur->getIndividu() !== $rapporteur->getIndividu()) return false;
+                try {
+                    $currentDate = new \DateTime();
+                } catch (\Exception $e) {
+                    throw new RuntimeException("Problème de récupération de la date");
+                }
+
+                /** @var Proposition $proposition */
+                $proposition = $this->getPropositionService()->findByThese($these);
+                $dateRetour = ($proposition->getRenduRapport())->add(new \DateInterval('P1D'));
+                if ($currentDate > $dateRetour) return false;
                 return true;
                 break;
             /**

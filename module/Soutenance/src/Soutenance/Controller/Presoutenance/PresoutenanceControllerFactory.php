@@ -10,6 +10,7 @@ use Application\Service\These\TheseService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportForm;
 use Soutenance\Service\Avis\AvisService;
+use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteService;
 use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Notifier\NotifierSoutenanceService;
 use Soutenance\Service\Parametre\ParametreService;
@@ -38,6 +39,7 @@ class PresoutenanceControllerFactory
          * @var UtilisateurService $utilisateurService
          * @var FichierService $fichierService
          * @var ParametreService $parametreService
+         * @var EngagementImpartialiteService $engagementImpartialiteService
          */
         $propositionService = $manager->getServiceLocator()->get(PropositionService::class);
         $membreService = $manager->getServiceLocator()->get(MembreService::class);
@@ -51,6 +53,7 @@ class PresoutenanceControllerFactory
         $utilisateurService = $manager->getServiceLocator()->get('UtilisateurService');
         $fichierService = $manager->getServiceLocator()->get('FichierService');
         $parametreService = $manager->getServiceLocator()->get(ParametreService::class);
+        $engagementImpartialiteService = $manager->getServiceLocator()->get(EngagementImpartialiteService::class);
 
         /**
          * @var DateRenduRapportForm $dateRenduRapportForm
@@ -71,6 +74,7 @@ class PresoutenanceControllerFactory
         $controller->setUtilisateurService($utilisateurService);
         $controller->setFichierService($fichierService);
         $controller->setParametreService($parametreService);
+        $controller->setEngagementImpartialiteService($engagementImpartialiteService);
 
         $controller->setDateRenduRapportForm($dateRenduRapportForm);
         return $controller;

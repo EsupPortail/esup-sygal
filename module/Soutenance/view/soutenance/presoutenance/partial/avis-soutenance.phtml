@@ -43,16 +43,16 @@ $tousLesAvis = count($rapporteurs) === count($avis) ;
             foreach ($rapporteurs as $rapporteur) : ?>
 
                 <?php
-                $individu = $rapporteur->getIndividu();
-                $avi = ($individu !== null)?$avis[$individu->getId()]:null;
+                $acteur = $rapporteur->getActeur();
+                $avi = ($acteur !== null)?$avis[$acteur->getIndividu()->getId()]:null;
 
                 ?>
 
                 <tr>
                     <!-- Colonne affichant le nom du rapporteur -->
                     <td>
-                        <?php if ($individu) : ?>
-                            <?php echo $individu; ?>
+                        <?php if ($acteur) : ?>
+                            <?php echo $acteur->getIndividu(); ?>
                         <?php else : ?>
                             <span class="text-danger">
                                 <?php echo $rapporteur->getDenomination(); ?>
@@ -62,10 +62,10 @@ $tousLesAvis = count($rapporteurs) === count($avis) ;
 
                     <!-- Affichage de l'avis de soutenance -->
                     <td>
-                        <?php if ($individu) : ?>
-                            <?php if (isset($avis[$individu->getId()])): ?>
+                        <?php if ($acteur) : ?>
+                            <?php if (isset($avis[$acteur->getIndividu()->getId()])): ?>
                                 <?php
-                                $avi = $avis[$individu->getId()];
+                                $avi = $avis[$acteur->getIndividu()->getId()];
                                 if ($avi->getAvis() === 'Favorable') : ?>
                                     <span class="text-success">
                                             <span class="glyphicon glyphicon-ok"></span>
@@ -91,23 +91,23 @@ $tousLesAvis = count($rapporteurs) === count($avis) ;
                         <?php endif; ?>
                     </td>
                     <td>
-                        <?php if ($individu) : ?>
-                            <?php if ($engagements[$individu->getId()] && $avis[$individu->getId()]) : ?>
-                                <a href=" <?php echo $this->urlFichierThese->telechargerFichierThese($these, $avis[$individu->getId()]->getFichier()); ?>" >
+                        <?php if ($acteur) : ?>
+                            <?php if ($engagements[$acteur->getIndividu()->getId()] && $avis[$acteur->getIndividu()->getId()]) : ?>
+                                <a href=" <?php echo $this->urlFichierThese->telechargerFichierThese($these, $avis[$acteur->getIndividu()->getId()]->getFichier()); ?>" >
                                     Rapport de pré-soutenance</a>
                             <?php endif ?>
                         <?php endif; ?>
                     </td>
                     <td>
-                        <?php if ($individu !== null) :?>
+                        <?php if ($acteur !== null) :?>
                             <?php if ($avi !== null) :?>
                                 <?php echo $avi->getValidation()->getHistoCreation()->format(Constants::DATETIME_FORMAT); ?>
                             <?php endif; ?>
                         <?php endif; ?>
                     </td>
                     <td>
-                        <?php if ($individu !== null) : ?>
-                            <?php if ($canNotifierAvisSoutenance && isset($engagements[$individu->getId()]) && !isset($avis[$individu->getId()])) : ?>
+                        <?php if ($acteur !== null) : ?>
+                            <?php if ($canNotifierAvisSoutenance && isset($engagements[$rapporteur->getActeur()->getIndividu()->getId()]) && !isset($avis[$acteur->getIndividu()->getId()])) : ?>
                                 <a href="<?php echo $this->url('soutenance/presoutenance/notifier-demande-avis-soutenance', ['these' => $these->getId(), 'membre' => $rapporteur->getId()], [], true); ?>">
                                     <span class="glyphicon glyphicon-send"      title="Notifier le rapporteur"></span>
                                 </a>
@@ -122,7 +122,7 @@ $tousLesAvis = count($rapporteurs) === count($avis) ;
                                     </span>
                                 </a>
                             <?php else: ?>
-                                <span class="glyphicon glyphicon-remove"notifier-demande-avis-soutenance
+                                <span class="glyphicon glyphicon-remove"
                                       title="Révoquer l'avis de soutenance"
                                       style="color:lightgray;">
                                 </span>

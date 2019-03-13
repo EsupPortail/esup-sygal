@@ -6,9 +6,11 @@ use Application\Entity\Db\Individu;
 use Application\Entity\Db\Repository\ValidationRepository;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
+use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Validation;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
+use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\RuntimeException;
@@ -39,6 +41,53 @@ class ValidationService
         return $this->entityManager->getRepository(TypeValidation::class)->findOneBy(['code' => $code]);
     }
 
+
+    /**
+     * @param string $type
+     * @param These $these
+     * @param Individu $individu
+     * @return Validation
+     */
+    public function create($type, $these, $individu) {
+        $v = new Validation(
+            $this->getTypeValidation($type),
+            $these,
+            $individu);
+
+        $this->getEntityManager()->persist($v);
+        try {
+            $this->getEntityManager()->flush($v);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur lors de l'enregistrement de la validation en bdd", null, $e);
+        }
+        return $v;
+    }
+
+    /**
+     * @param Validation $validation
+     * @return Validation
+     */
+    public function historiser($validation)
+    {
+        /** @var Utilisateur $user */
+        $user = $this->userContextService->getIdentityDb();
+        /** @var DateTime $date */
+        try {
+            $date = new DateTime();
+        } catch (\Exception $e) {
+            throw new RuntimeException("Problème lors de la récupération de la date", $e);
+        }
+        $validation->setHistoDestructeur($user);
+        $validation->setHistoDestruction($date);
+
+        try {
+            $this->getEntityManager()->flush($validation);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Un problème est survenue lors de l'historisation en base d'un Validation",$e);
+        }
+
+        return $validation;
+    }
 
     /**
      * @param These $these
@@ -139,28 +188,6 @@ class ValidationService
         } catch (OptimisticLockException $e) {
             throw new RuntimeException("Un problème est survenu lors de l'historisation");
         }
-    }
-
-    /**
-     * @param These $these
-     * @param Individu $individu
-     * @return Validation
-     */
-    public function signEngagementImpartialite($these, $individu)
-    {
-        $v = new Validation(
-            $this->getTypeValidation(TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE),
-            $these,
-            $individu);
-
-        $this->entityManager->persist($v);
-        try {
-            $this->entityManager->flush($v);
-        } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Erreur lors de l'enregistrement de la validation en bdd", null, $e);
-        }
-
-        return $v;
     }
 
     /**

@@ -59,10 +59,10 @@ $canAssocierMembreIndividu              = $this->isAllowed($these, Presoutenance
                     <td>    <?php echo $membre->getRole(); ?>                                                   </td>
                     <td>    <?php echo $membre->getQualite()->getLibelle(); ?>                                          </td>
                     <td>    <?php echo $membre->getEtablissement(); ?>                                                  </td>
-                    <td>    <?php echo ($membre->getIndividu())?$membre->getIndividu()->getId() .' '. $membre->getIndividu()->getNomComplet():''; ?>                  </td>
+                    <td>    <?php echo ($membre->getActeur())?$membre->getActeur()->getId() .' '. $membre->getActeur()->getIndividu()->getNomComplet():''; ?>                  </td>
                     <td>
                         <?php if($canAssocierMembreIndividu): ?>
-                            <?php if (! $membre->getIndividu()): ?>
+                            <?php if (! $membre->getActeur()): ?>
                                 <a
                                     href="<?php echo $this->url('soutenance/presoutenance/associer-jury', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true); ?>"
                                     class="ajax-modal"

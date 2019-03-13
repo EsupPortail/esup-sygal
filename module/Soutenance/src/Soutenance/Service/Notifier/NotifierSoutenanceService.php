@@ -241,7 +241,7 @@ class NotifierSoutenanceService extends \Notification\Service\NotifierService {
      */
     public function triggerDemandeSignatureEngagementImpartialite($these, $proposition, $membre)
     {
-        $email   = $membre->getIndividu()->getEmail();
+        $email   = $membre->getActeur()->getIndividu()->getEmail();
 
         $notif = new Notification();
         $notif
@@ -285,7 +285,7 @@ class NotifierSoutenanceService extends \Notification\Service\NotifierService {
      */
     public function triggerAnnulationEngagementImpartialite($these, $proposition, $membre)
     {
-        $email   = $membre->getIndividu()->getEmail();
+        $email   = $membre->getActeur()->getIndividu()->getEmail();
 
         $notif = new Notification();
         $notif
@@ -307,7 +307,7 @@ class NotifierSoutenanceService extends \Notification\Service\NotifierService {
      */
     public function triggerDemandeAvisSoutenance($these, $proposition, $rapporteur)
     {
-        $email   = $rapporteur->getIndividu()->getEmail();
+        $email   = $rapporteur->getActeur()->getIndividu()->getEmail();
         $notif = new Notification();
         $notif
             ->setSubject("Demande de l'avis de soutenance de la thèse de ".$these->getDoctorant()->getIndividu())

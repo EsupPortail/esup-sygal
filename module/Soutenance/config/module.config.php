@@ -5,7 +5,9 @@ namespace Soutenance;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
+use Soutenance\Controller\Avis\AvisController;
 use Soutenance\Controller\ConfigurationController;
+use Soutenance\Controller\EngagementImpartialite\EngagementImpartialiteController;
 use Soutenance\Controller\Factory\ConfigurationControllerFactory;
 use Soutenance\Controller\Factory\QualiteControllerFactory;
 use Soutenance\Controller\Factory\SoutenanceControllerFactory;
@@ -16,6 +18,7 @@ use Soutenance\Form\Configuration\ConfigurationFormFactory;
 use Soutenance\Form\QualiteEdition\QualiteEditionForm;
 use Soutenance\Form\QualiteEdition\QualiteEditionFormFactory;
 use Soutenance\Form\QualiteEdition\QualiteEditiontHydrator;
+use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
 use Soutenance\Provider\Privilege\EngagementImpartialitePrivileges;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
@@ -26,6 +29,8 @@ use Soutenance\Service\Notifier\NotifierSoutenanceService;
 use Soutenance\Service\Notifier\NotifierSoutenanceServiceFactory;
 use Soutenance\Service\Parametre\ParametreService;
 use Soutenance\Service\Parametre\ParametreServiceFactory;
+use Soutenance\Service\Qualite\QualiteService;
+use Soutenance\Service\Qualite\QualiteServiceFactory;
 use Soutenance\Service\Validation\ValidationService;
 use Soutenance\Service\Validation\ValidationServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
@@ -128,83 +133,56 @@ return array(
                             'proposition' => [
                                 'label'    => 'Proposition de soutenance',
                                 'route'    => 'soutenance/proposition',
-//                                'icon'     => 'glyphicon glyphicon-briefcase',
+                                'order'    => 100,
+                                'resource' => PresoutenancePrivileges::getResourceId(PropositionPrivileges::PROPOSITION_VISUALISER),
                                 'withtarget' => true,
                                 'paramsInject' => [
                                     'these',
-                                ],
-                                'privileges' => [
-                                    PropositionPrivileges::PROPOSITION_VISUALISER,
                                 ],
                             ],
                             'presoutenance' => [
-                                'label'    => 'Finalisation de la soutenance',
+                                'label'    => 'Étape de présoutenance',
                                 'route'    => 'soutenance/presoutenance',
-//                                'icon'     => 'glyphicon glyphicon-briefcase',
+                                'order'    => 200,
+                                'resource' => PresoutenancePrivileges::getResourceId(PresoutenancePrivileges::PRESOUTENANCE_PRESOUTENANCE_VISUALISATION),
                                 'withtarget' => true,
                                 'paramsInject' => [
                                     'these',
                                 ],
-                                'privileges' => [
-                                    PresoutenancePrivileges::PRESOUTENANCE_PRESOUTENANCE_VISUALISATION,
+                            ],
+                            'engagement' => [
+                                'label' => 'Engagement d\'impartialité',
+                                'route' => 'soutenance/engagement-impartialite',
+                                'order'    => 300,
+                                'resource' => PrivilegeController::getResourceId(EngagementImpartialiteController::class, 'engagement-impartialite'),
+                                'withtarget' => true,
+                                'paramsInject' => [
+                                    'these',
+                                    'Acteur',
                                 ],
-                                'pages' => [
-                                    'association' => [
-                                        'label'    => 'Association d\'un acteur SyGAL',
-                                        'route'    => 'soutenance/presoutenance/associer-jury',
-//                                        'icon'     => 'glyphicon glyphicon-briefcase',
-                                        'withtarget' => true,
-                                        'paramsInject' => [
-                                            'these',
-                                            'membre',
-                                        ],
-                                        'privileges' => [
-                                            PresoutenancePrivileges::PRESOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU,
-                                        ],
-                                    ],
-                                    'deassociation' => [
-                                        'label'    => 'Casser l\'association d\'un acteur SyGAL',
-                                        'route'    => 'soutenance/presoutenance/associer-jury',
-//                                        'icon'     => 'glyphicon glyphicon-briefcase',
-                                        'withtarget' => true,
-                                        'paramsInject' => [
-                                            'these',
-                                            'membre',
-                                        ],
-                                        'privileges' => [
-                                            PresoutenancePrivileges::PRESOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU
-                                        ],
-                                    ],
-                                    'engagement' => [
-                                        'label'    => 'Engagement d\'impartialité',
-                                        'route'    => 'soutenance/presoutenance/engagement-impartialite',
-//                                        'icon'     => 'glyphicon glyphicon-briefcase',
-                                        'withtarget' => true,
-                                        'paramsInject' => [
-                                            'these',
-                                            'membre',
-                                        ],
-                                        'privileges' => [
-                                            EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_VISUALISER,
-                                        ],
-                                    ],
+                            ],
+                            'avis' => [
+                                'label' => 'Avis de soutenance',
+                                'route' => 'soutenance/avis-soutenance',
+                                'order'    => 400,
+                                'resource' => PrivilegeController::getResourceId(AvisController::class, 'index'),
+                                'withtarget' => true,
+                                'paramsInject' => [
+                                    'these',
+                                    'Acteur',
                                 ],
                             ],
                             'qualite' => [
                                 'label'    => 'Qualités des membres',
                                 'route'    => 'qualite',
-                                'withtarget' => true,
-                                'privileges' => [
-                                    QualitePrivileges::SOUTENANCE_QUALITE_VISUALISER,
-                                ],
+                                'order'    => 1000,
+                                'resource' => QualitePrivileges::getResourceId(QualitePrivileges::SOUTENANCE_QUALITE_VISUALISER),
                             ],
                             'configuration' => [
                                 'label'    => 'Paramétrage du module de soutenance',
                                 'route'    => 'configuration',
-                                'withtarget' => true,
-                                'privileges' => [
-                                    'privileges' => QualitePrivileges::SOUTENANCE_QUALITE_MODIFIER,
-                                ],
+                                'order'    => 2000,
+                                'resource' => QualitePrivileges::getResourceId(QualitePrivileges::SOUTENANCE_QUALITE_VISUALISER),
                             ],
                         ],
                     ],
@@ -305,6 +283,7 @@ return array(
             //service
             MembreService::class => MembreServiceFactory::class,
             ParametreService::class => ParametreServiceFactory::class,
+            QualiteService::class => QualiteServiceFactory::class,
             NotifierSoutenanceService::class => NotifierSoutenanceServiceFactory::class,
             ValidationService::class => ValidationServiceFactory::class,
         ],

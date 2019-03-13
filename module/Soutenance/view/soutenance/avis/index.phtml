@@ -2,24 +2,25 @@
 
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\These;
+use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
 
 /**
  * @var These $these
  * @var Acteur $rapporteur
  */
 
-//$denominationDoctorant = $these->getDoctorant()->getIndividu()->__toString();
-//$denominationRapporteur = $rapporteur->getIndividu()->__toString();
-//$titrePage = "Avis sur la soutenance de la thèse de ".$denominationDoctorant;
-//$this->headTitle($titrePage);
-//
-//$canEdit = true;
+$denominationDoctorant = $these->getDoctorant()->getIndividu()->__toString();
+$denominationRapporteur = $rapporteur->__toString();
+$titrePage = "Avis sur la soutenance de la thèse de ".$denominationDoctorant;
+$this->headTitle($titrePage);
+
+$canEdit = $this->isAllowed($rapporteur, AvisSoutenancePrivileges::AVIS_MODIFIER);
 ?>
 
 
 
 <h1 class="page-header">
-<!--    --><?php //echo $titrePage; ?>
+    <?php echo $titrePage; ?>
 </h1>
 
 <p class="lead">
@@ -29,41 +30,30 @@ use Application\Entity\Db\These;
 
 <?php echo $this->messenger()->addMessagesFromFlashMessenger(); ?>
 
+<?php if ($canEdit) : ?>
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h2> Dépot du prérapport de soutenance et de l'avis de soutenance </h2>
+        </div>
+        <div class="panel-body">
 
-<div class="panel panel-info">
-    <div class="panel-heading">
-        <h2> Dépot du prérapport de soutenance et de l'avis de soutenance </h2>
+    <?php echo $this->form($form); ?>
+        </div>
     </div>
-    <div class="panel-body">
-
-<?php echo $this->form($form); ?>
-
-
-
-<!--        --><?php //echo $this->form()->openTag($form); ?>
-<!---->
-<!--        <div class="row">-->
-<!--            <div class="col-md-4">-->
-<!--                --><?php //echo $this->formControlGroup($form->get('rapport')); ?>
-<!--            </div>-->
-<!--            <div class="col-md-4">-->
-<!--                --><?php
-//                    echo $this->formControlGroup($form->get('avis'));
-//                ?>
-<!--            </div>-->
-<!--            <div class="col-md-4">-->
-<!--                --><?php //echo $denominationRapporteur; ?><!-- <br/>-->
-<!--                --><?php //echo $this->formControlGroup($form->get('enregistrer')); ?>
-<!--            </div>-->
-<!--        </div>-->
-<!--        <div class="col-md-12" id="justification">-->
-<!--            --><?php //echo $this->formControlGroup($form->get('motif')); ?>
-<!--        </div>-->
-<!---->
-<!--        --><?php //echo $this->form()->closeTag(); ?>
-
+<?php else : ?>
+    <div class="panel panel-danger">
+        <div class="panel-heading">
+            <h2> Vous ne pouvez pas modifier cette avis de soutenance </h2>
+        </div>
+        <div class="panel-body">
+            Les raisons de cette impossiblité peuvent être :
+            <ul>
+                <li> vous n'êtes pas connecté&middot;e avec le rôle de 'Rapporteur' ;</li>
+                <li> le dépassements de la date de soutenance.</li>
+            </ul>
+        </div>
     </div>
-</div>
+<?php endif; ?>
 
 <style>
     .form-control {
