@@ -3,12 +3,12 @@
 namespace Soutenance\Form\Membre;
 
 use Soutenance\Entity\Membre;
-use Soutenance\Service\Membre\MembreServiceAwareTrait;
+use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
 use Zend\Stdlib\Hydrator\HydratorInterface;
 
 class MembreHydrator implements HydratorInterface
 {
-    use MembreServiceAwareTrait;
+    use QualiteServiceAwareTrait;
     /**
      * @param array $data
      * @param Membre $membre
@@ -18,7 +18,7 @@ class MembreHydrator implements HydratorInterface
 
         $membre->setGenre($data['sexe']);
         $membre->setDenomination($data['denomination']);
-        $membre->setQualite($this->getMembreService()->getQualiteById($data['qualite']));
+        $membre->setQualite($this->getQualiteService()->getQualiteById($data['qualite']));
         $membre->setEtablissement($data['etablissement']);
         $membre->setExterieur($data['exterieur']);
         if ($data['rapporteur'] && $data['membre']) {

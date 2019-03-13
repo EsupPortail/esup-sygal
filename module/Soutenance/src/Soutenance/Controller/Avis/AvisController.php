@@ -3,6 +3,7 @@
 namespace Soutenance\Controller\Avis;
 
 use Application\Controller\AbstractController;
+use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
@@ -44,8 +45,8 @@ class AvisController extends AbstractController {
         /** @var Membre $membre */
         $idMembre = $this->params()->fromRoute('rapporteur');
         $membre = $this->getMembreService()->find($idMembre);
-        /** @var Individu $rapporteur */
-        $rapporteur = $membre->getIndividu();
+        /** @var Acteur $rapporteur */
+        $rapporteur = $membre->getActeur();
         /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
 
@@ -78,10 +79,10 @@ class AvisController extends AbstractController {
 
                 $nature = $this->fichierService->fetchNatureFichier(NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE);
                 $version = $this->fichierService->fetchVersionFichier(VersionFichier::CODE_ORIG);
-                $fichiers = $this->fichierService->createFichiersFromUpload($these, $files, $nature, $version, null, new NomAvisFormatter($membre->getIndividu()));
+                $fichiers = $this->fichierService->createFichiersFromUpload($these, $files, $nature, $version, null, new NomAvisFormatter($membre->getActeur()->getIndividu()));
                 $fichier = current($fichiers);
 
-                $validation = $this->getValidationService()->signerAvisSoutenance($these, $membre->getIndividu());
+                $validation = $this->getValidationService()->signerAvisSoutenance($these, $membre->getActeur()->getIndividu());
 
                 $avis = new Avis();
                 $avis->setThese($these);
@@ -104,6 +105,8 @@ class AvisController extends AbstractController {
         }
         return new ViewModel([
             'form' => $form,
+            'these' => $these,
+            'rapporteur' => $rapporteur,
         ]);
     }
 
@@ -114,7 +117,7 @@ class AvisController extends AbstractController {
         /** @var Membre $membre */
         $membreId = $this->params()->fromRoute('rapporteur');
         $membre = $this->getMembreService()->find($membreId);
-        $rapporteur = $this->getActeurService()->getRepository()->findActeurByIndividuAndThese($membre->getIndividu(), $these);
+        $rapporteur = $membre->getActeur();
         /** @var Avis $avis */
         $avis = $this->getAvisService()->getAvisByMembre($these, $membre);
 

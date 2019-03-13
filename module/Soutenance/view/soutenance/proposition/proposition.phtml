@@ -1,24 +1,30 @@
 <?php
-    /**
-     * @var These $these
-     * @var Proposition $proposition
-     * @var Doctorant $doctorant
-     * @var Acteur[] $directeurs
-     * @var array $indicateurs
-     * @var boolean $isOk
-     * @var boolean $juryOk
-     */
 
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\These;
 use Soutenance\Entity\Proposition;
 
+/**
+ * @var These $these
+ * @var Proposition $proposition
+ * @var Doctorant $doctorant
+ * @var Acteur[] $directeurs
+ * @var array $indicateurs
+ * @var boolean $isOk
+ * @var boolean $juryOk
+ *
+ * @see \Soutenance\Controller\Proposition\PropositionController::propositionAction()
+ */
+
+$this->headTitle("Proposition de soutenance");
 ?>
 
-<?php $this->headTitle($this->translate("Proposition de soutenance")); ?>
+
+
 <h1 class="page-header">
     Proposition de soutenance
+    <small><?php echo $this->partial('application/these/partial/titre') ?></small>
 </h1>
 
 <p class=".lead">

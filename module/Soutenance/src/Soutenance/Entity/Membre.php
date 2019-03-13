@@ -2,6 +2,7 @@
 
 namespace Soutenance\Entity;
 
+use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Individu;
 
 class Membre {
@@ -32,8 +33,8 @@ class Membre {
     /** @var boolean */
     private $visio;
 
-    /** @var Individu */
-    private  $individu;
+    /** @var Acteur */
+    private  $acteur;
 
     /**
      * @return int
@@ -196,19 +197,21 @@ class Membre {
     }
 
     /**
-     * @return Individu
+     * @return Acteur
      */
-    public function getIndividu()
+    public function getActeur()
     {
-        return $this->individu;
+        return $this->acteur;
     }
 
     /**
-     * @param Individu $individu
+     * @param Acteur $acteur
+     * @return Membre
      */
-    public function setIndividu($individu)
+    public function setActeur($acteur)
     {
-        $this->individu = $individu;
+        $this->acteur = $acteur;
+        return $this;
     }
 
     /** @return boolean */

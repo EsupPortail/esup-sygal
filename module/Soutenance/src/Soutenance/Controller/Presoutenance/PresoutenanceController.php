@@ -21,6 +21,7 @@ use Soutenance\Entity\Proposition;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportForm;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportFormAwareTrait;
 use Soutenance\Service\Avis\AvisServiceAwareTrait;
+use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
 use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
@@ -46,6 +47,7 @@ class PresoutenanceController extends AbstractController
     use FichierServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
     use ParametreServiceAwareTrait;
+    use EngagementImpartialiteServiceAwareTrait;
 
     use DateRenduRapportFormAwareTrait;
 
@@ -73,18 +75,10 @@ class PresoutenanceController extends AbstractController
             $this->getPropositionService()->update($proposition);
         }
 
-        /** Recupération des engagements d'impartialité */
-        $engagements = [];
-        foreach ($rapporteurs as $rapporteur) {
-            if ($rapporteur->getIndividu()) {
-                $validations = $this->getValidationService()->getRepository()->findValidationByCodeAndIndividu(TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $rapporteur->getIndividu());
-                if ($validations) $engagements[$rapporteur->getIndividu()->getId()] = current($validations);
-            }
-        }
-
-        /** Récupération des avis de soutenances */
+        /** Recupération des engagements d'impartialité  et des avis de soutenance */
+        /** ==> clef: Membre->getActeur()->getIndividu()->getId() <== */
+        $engagements = $this->getEngagementImpartialiteService()->getEngagmentsImpartialiteByThese($these);
         $avis = $this->getAvisService()->getAvisByThese($these);
-        $tousLesAvis = count($avis) === count($rapporteurs);
 
         $validationBDD = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these) ;
 
@@ -94,7 +88,8 @@ class PresoutenanceController extends AbstractController
             'rapporteurs'           => $rapporteurs,
             'engagements'           => $engagements,
             'avis'                  => $avis,
-            'tousLesAvis'           => $tousLesAvis,
+            'tousLesEngagements'    => count($engagements) === count($rapporteurs),
+            'tousLesAvis'           => count($avis) === count($rapporteurs),
             'urlFichierThese'       => $this->urlFichierThese(),
             'validationBDD'         => $validationBDD,
 
@@ -164,7 +159,7 @@ class PresoutenanceController extends AbstractController
                 throw new RuntimeException("Aucun acteur à associer !");
             } else {
                 //mise à jour du membre de soutenance
-                $membre->setIndividu($acteur->getIndividu());
+                $membre->setActeur($acteur);
                 $this->getMembreService()->update($membre);
                 //affectation du rôle
                 $this->getRoleService()->addIndividuRole($acteur->getIndividu(),$acteur->getRole());
@@ -195,13 +190,13 @@ class PresoutenanceController extends AbstractController
         $acteurs = $this->getActeurService()->getRepository()->findActeurByThese($these);
         $acteur = null;
         foreach ($acteurs as $acteur_) {
-            if ($acteur_->getIndividu() === $membre->getIndividu()) $acteur = $acteur_;
+            if ($acteur_ === $membre->getActeur()) $acteur = $acteur_;
         }
         if (!$acteur) {
             throw new RuntimeException("Aucun acteur à deassocier !");
         } else {
             //retrait dans membre de soutenance
-            $membre->setIndividu(null);
+            $membre->setActeur(null);
             $this->getMembreService()->update($membre);
             //retrait du role
             $this->getRoleService()->removeIndividuRole($acteur->getIndividu(), $acteur->getRole());

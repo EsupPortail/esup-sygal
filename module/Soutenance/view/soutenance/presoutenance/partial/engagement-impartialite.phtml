@@ -12,7 +12,7 @@ use Soutenance\Provider\Privilege\EngagementImpartialitePrivileges;
 
 $tousLesRapporteurs = true;
 foreach ($rapporteurs as $rapporteur) {
-    if ($rapporteur->getIndividu() === null) {
+    if ($rapporteur->getActeur() === null) {
         $tousLesRapporteurs = false;
         break;
     }
@@ -48,15 +48,15 @@ $canRevoquerEngagementImpartialite     = $this->isAllowed($these, EngagementImpa
             foreach ($rapporteurs as $rapporteur) : ?>
 
                 <?php
-                    $individu       = $rapporteur->getIndividu();
-                    $engagement     = ($individu)?$engagements[$individu->getId()]:null;
+                    $acteur       = $rapporteur->getActeur();
+                    $engagement     = ($acteur)?$engagements[$rapporteur->getActeur()->getIndividu()->getId()]:null;
                 ?>
 
                 <tr>
                     <!-- Affichage du nom du rapporteur --------------------------------------------------------------->
                     <td>
-                        <?php if ($individu !== null) : ?>
-                            <?php echo $individu; ?>
+                        <?php if ($acteur !== null) : ?>
+                            <?php echo $acteur->getIndividu(); ?>
                         <?php else : ?>
                             <span class="text-danger">
                                 <?php echo $rapporteur->getDenomination(); ?>
@@ -66,7 +66,7 @@ $canRevoquerEngagementImpartialite     = $this->isAllowed($these, EngagementImpa
 
                     <!-- Signature ------------------------------------------------------------------------------------>
                     <td>
-                        <?php if ($individu !== null) : ?>
+                        <?php if ($acteur !== null) : ?>
                             <?php if ($engagement !== null): ?>
                                 <?php
                                     echo $engagement->getHistoCreation()->format(Constants::DATETIME_FORMAT);
@@ -87,7 +87,7 @@ $canRevoquerEngagementImpartialite     = $this->isAllowed($these, EngagementImpa
 
                     <!-- Actions -------------------------------------------------------------------------------------->
                     <td>
-                        <?php if ($individu !== null) : ?>
+                        <?php if ($acteur !== null) : ?>
 
                             <?php if($canNotifierEngagementImpartialite) : ?>
                                 <?php if ($engagement) : ?>
