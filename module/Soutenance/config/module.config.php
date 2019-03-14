@@ -11,6 +11,7 @@ use Soutenance\Controller\EngagementImpartialite\EngagementImpartialiteControlle
 use Soutenance\Controller\Factory\ConfigurationControllerFactory;
 use Soutenance\Controller\Factory\QualiteControllerFactory;
 use Soutenance\Controller\Factory\SoutenanceControllerFactory;
+use Soutenance\Controller\Index\IndexController;
 use Soutenance\Controller\QualiteController;
 use Soutenance\Controller\SoutenanceController;
 use Soutenance\Form\Configuration\ConfigurationForm;
@@ -18,8 +19,6 @@ use Soutenance\Form\Configuration\ConfigurationFormFactory;
 use Soutenance\Form\QualiteEdition\QualiteEditionForm;
 use Soutenance\Form\QualiteEdition\QualiteEditionFormFactory;
 use Soutenance\Form\QualiteEdition\QualiteEditiontHydrator;
-use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
-use Soutenance\Provider\Privilege\EngagementImpartialitePrivileges;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 use Soutenance\Provider\Privilege\QualitePrivileges;
@@ -200,33 +199,11 @@ return array(
                 'options' => [
                     'route'    => '/soutenance',
                     'defaults' => [
-                        'controller' => SoutenanceController::class,
+                        'controller' => IndexController::class,
                         'action'     => 'index',
                     ],
                 ],
                 'child_routes' => [
-                    'index-structure' => [
-                        'type' => Literal::class,
-                        'may_terminate' => true,
-                        'options' => [
-                            'route'    => '/index-structure',
-                            'defaults' => [
-                                'controller' => SoutenanceController::class,
-                                'action'     => 'index-structure',
-                            ],
-                        ],
-                    ],
-                    'index-rapporteur' => [
-                        'type' => Segment::class,
-                        'may_terminate' => true,
-                        'options' => [
-                            'route'    => '/index-rapporteur[/:these]',
-                            'defaults' => [
-                                'controller' => SoutenanceController::class,
-                                'action'     => 'index-rapporteur',
-                            ],
-                        ],
-                    ],
                     'avancement' => [
                         'type' => Segment::class,
                         'may_terminate' => true,

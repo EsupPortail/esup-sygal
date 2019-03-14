@@ -87,15 +87,6 @@ return [
     'router' => [
         'routes' => [
             'soutenance' => [
-                'type' => Literal::class,
-                'may_terminate' => true,
-                'options' => [
-                    'route'    => '/soutenance',
-                    'defaults' => [
-                        'controller' => SoutenanceController::class,
-                        'action'     => 'index',
-                    ],
-                ],
                 'child_routes' => [
                     'presoutenance' => [
                         'type' => Segment::class,
