@@ -1,13 +1,13 @@
 <?php
 
-namespace Soutenance\Controller;
+namespace Soutenance\Controller\Qualite;
 
 use BjyAuthorize\Exception\UnAuthorizedException;
 use Soutenance\Entity\Qualite;
 use Soutenance\Form\QualiteEdition\QualiteEditionForm;
 use Soutenance\Form\QualiteEdition\QualiteEditionFormAwareTrait;
 use Soutenance\Provider\Privilege\QualitePrivileges;
-use Soutenance\Service\Membre\MembreServiceAwareTrait;
+use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
 use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
@@ -18,7 +18,7 @@ use Zend\View\Model\ViewModel;
 
 class QualiteController extends AbstractActionController
 {
-    use MembreServiceAwareTrait;
+    use QualiteServiceAwareTrait;
     use QualiteEditionFormAwareTrait;
 
     /**
@@ -31,7 +31,7 @@ class QualiteController extends AbstractActionController
             throw new UnAuthorizedException("Vous êtes non authorisé(e) à visualiser la liste des qualités affectables aux membres du jury.");
         }
 
-        $qualites = $this->getMembreService()->findAllQualites();
+        $qualites = $this->getQualiteService()->findAllQualites();
 
         return new ViewModel([
             'qualites' => $qualites,
@@ -48,8 +48,8 @@ class QualiteController extends AbstractActionController
         /** @var Qualite $qualite */
         $idQualite = $this->params()->fromRoute('qualite');
         $qualite = null;
-        if ($idQualite) {
-            $qualite = $this->getMembreService()->getQualiteById($idQualite);
+        if ($idQualite !== null) {
+            $qualite = $this->getQualiteService()->getQualiteById($idQualite);
         } else {
             $qualite = new Qualite();
         }
@@ -66,9 +66,9 @@ class QualiteController extends AbstractActionController
             $form->setData($data);
             if ($form->isValid()) {
                 if ($idQualite) {
-                    $this->getMembreService()->update($qualite);
+                    $this->getQualiteService()->updateQualite($qualite);
                 } else {
-                    $this->getMembreService()->createQualite($qualite);
+                    $this->getQualiteService()->createQualite($qualite);
                 }
             }
         }
@@ -87,9 +87,9 @@ class QualiteController extends AbstractActionController
 
         /** @var Qualite $qualite */
         $idQualite = $this->params()->fromRoute('qualite');
-        $qualite = $this->getMembreService()->getQualiteById($idQualite);
+        $qualite = $this->getQualiteService()->getQualiteById($idQualite);
 
-        $this->getMembreService()->removeQualite($qualite);
+        $this->getQualiteService()->removeQualite($qualite);
 
         $this->redirect()->toRoute('qualite', [], [], true);
     }

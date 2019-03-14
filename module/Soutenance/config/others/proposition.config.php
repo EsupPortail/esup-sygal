@@ -101,6 +101,13 @@ return [
                     ],
                     'privileges' => PropositionPrivileges::PROPOSITION_PRESIDENCE,
                 ],
+                [
+                    'controller' => PropositionController::class,
+                    'action'     => [
+                        'avancement',
+                    ],
+                    'privileges' => PropositionPrivileges::PROPOSITION_VISUALISER,
+                ],
             ],
         ],
     ],
@@ -109,6 +116,17 @@ return [
         'routes' => [
             'soutenance' => [
                 'child_routes' => [
+                    'avancement' => [
+                        'type' => Segment::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/avancement/:these',
+                            'defaults' => [
+                                'controller' => PropositionController::class,
+                                'action'     => 'avancement',
+                            ],
+                        ],
+                    ],
                     'proposition' => [
                         'type' => Segment::class,
                         'may_terminate' => true,

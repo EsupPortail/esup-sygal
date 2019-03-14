@@ -376,4 +376,26 @@ class PropositionController extends AbstractActionController {
         exit;
     }
 
+    public function avancementAction()
+    {
+        /** @var These $these */
+        $theseId = $this->params()->fromRoute('these');
+        $these = $this->getTheseService()->getRepository()->find($theseId);
+        $proposition = $this->getPropositionService()->findByThese($these);
+
+        /** @var Acteur[] $directeurs */
+        $directeurs = $these->getEncadrements(false);
+
+        /** @var Membre[] $rapporteurs */
+        $rapporteurs = ($proposition)?$proposition->getRapporteurs():[];
+
+        return new ViewModel([
+            'these'             => $these,
+            'proposition'       => $proposition,
+            'jury'              => $this->getPropositionService()->juryOk($proposition),
+            'validations'       => ($proposition)?$this->getPropositionService()->getValidationSoutenance($these):[],
+            'directeurs'        => $directeurs,
+            'rapporteurs'       => $rapporteurs,
+        ]);
+    }
 }
