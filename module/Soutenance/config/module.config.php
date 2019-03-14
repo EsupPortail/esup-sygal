@@ -39,18 +39,6 @@ return array(
                 ],
             ],
         ],
-        'guards' => [
-                PrivilegeController::class => [
-                [
-                    'controller' => ConfigurationController::class,
-                    'action'     => [
-                        'index',
-                    ],
-                    'privileges' => QualitePrivileges::SOUTENANCE_QUALITE_MODIFIER,
-                ],
-
-            ],
-        ],
     ],
 
     'doctrine'     => [
@@ -147,42 +135,12 @@ return array(
         ],
     ],
 
-    'router' => [
-        'routes' => [
-            'configuration' => [
-                'type' => Literal::class,
-                'may_terminate' => true,
-                'options' => [
-                    'route'    => '/configuration',
-                    'defaults' => [
-                        'controller' => ConfigurationController::class,
-                        'action'     => 'index',
-                    ],
-                ],
-            ],
-        ],
-    ],
-
     'service_manager' => [
         'factories' => [
             //service
             MembreService::class => MembreServiceFactory::class,
-            ParametreService::class => ParametreServiceFactory::class,
             NotifierSoutenanceService::class => NotifierSoutenanceServiceFactory::class,
             ValidationService::class => ValidationServiceFactory::class,
-        ],
-    ],
-    'controllers' => [
-        'invokables' => [
-        ],
-        'factories' => [
-            ConfigurationController::class => ConfigurationControllerFactory::class,
-        ],
-    ],
-
-    'form_elements' => [
-        'factories' => [
-            ConfigurationForm::class => ConfigurationFormFactory::class,
         ],
     ],
 
