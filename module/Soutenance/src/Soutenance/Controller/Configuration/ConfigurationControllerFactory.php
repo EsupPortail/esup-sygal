@@ -1,8 +1,7 @@
 <?php
 
-namespace Soutenance\Controller\Factory;
+namespace Soutenance\Controller\Configuration;
 
-use Soutenance\Controller\ConfigurationController;
 use Soutenance\Form\Configuration\ConfigurationForm;
 use Soutenance\Service\Parametre\ParametreService;
 use Zend\Mvc\Controller\ControllerManager;
