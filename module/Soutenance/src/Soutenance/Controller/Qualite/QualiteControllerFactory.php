@@ -1,10 +1,9 @@
 <?php
 
-namespace Soutenance\Controller\Factory;
+namespace Soutenance\Controller\Qualite;
 
-use Soutenance\Controller\QualiteController;
 use Soutenance\Form\QualiteEdition\QualiteEditionForm;
-use Soutenance\Service\Membre\MembreService;
+use Soutenance\Service\Qualite\QualiteService;
 use Zend\Mvc\Controller\ControllerManager;
 
 class QualiteControllerFactory
@@ -17,9 +16,9 @@ class QualiteControllerFactory
     {
 
         /**
-         * @var MembreService $membreService
+         * @var QualiteService $qualiteService
          */
-        $membreService = $manager->getServiceLocator()->get(MembreService::class);
+        $qualiteService = $manager->getServiceLocator()->get(QualiteService::class);
 
         /**
          * @var QualiteEditionForm $qualiteEditionForm
@@ -28,7 +27,7 @@ class QualiteControllerFactory
 
         /** @var QualiteController $controller */
         $controller = new QualiteController();
-        $controller->setMembreService($membreService);
+        $controller->setQualiteService($qualiteService);
         $controller->setQualiteEditionForm($qualiteEditionForm);
 
         return $controller;
