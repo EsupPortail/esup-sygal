@@ -1430,7 +1430,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function hasVersionInitiale() {
         /** @var Fichier $fichier */
         foreach ($this->fichiers as $fichier) {
-            if ($fichier->getHistoDestruction() === null && $fichier->getNature() === NatureFichier::CODE_THESE_PDF && $fichier->getVersion() === VersionFichier::CODE_ORIG) return $fichier;
+            if ($fichier->getHistoDestruction() === null && $fichier->getNature()->getCode() === NatureFichier::CODE_THESE_PDF && $fichier->getVersion()->getCode() === VersionFichier::CODE_ORIG) return $fichier;
         }
         return null;
     }
@@ -1438,7 +1438,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function hasVersionCorrigee() {
         /** @var Fichier $fichier */
         foreach ($this->fichiers as $fichier) {
-            if ($fichier->getHistoDestruction() === null && $fichier->getNature() === NatureFichier::CODE_THESE_PDF && $fichier->getVersion() === VersionFichier::CODE_ORIG_CORR) return $fichier;
+            if ($fichier->getHistoDestruction() === null && $fichier->getNature()->getCode() === NatureFichier::CODE_THESE_PDF && $fichier->getVersion()->getCode() === VersionFichier::CODE_ORIG_CORR) return $fichier;
         }
         return null;
     }

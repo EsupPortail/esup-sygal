@@ -9,6 +9,9 @@ use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Soutenance\Entity\Membre;
+use Soutenance\Service\Avis\AvisServiceAwareTrait;
+use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;
+use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
@@ -22,6 +25,10 @@ class SoutenanceController extends AbstractActionController {
     use PropositionServiceAwareTrait;
     use TheseServiceAwareTrait;
     use UserContextServiceAwareTrait;
+
+    use MembreServiceAwareTrait;
+    use EngagementImpartialiteServiceAwareTrait;
+    use AvisServiceAwareTrait;
 
 
 
@@ -42,9 +49,7 @@ class SoutenanceController extends AbstractActionController {
                 break;
             case Role::CODE_RAPPORTEUR_JURY :
             case Role::CODE_RAPPORTEUR_ABSENT :
-            case Role::CODE_MEMBRE_JURY :
-                $acteur = $this->getActeurService()->getRepository()->findActeurByIndividuAndRole($individu, $role);
-                $theses[] = $acteur->getThese();
+                $this->redirect()->toRoute('soutenance/index-rapporteur', [], [], true);
                 break;
             case Role::CODE_ADMIN_TECH :
             case Role::CODE_OBSERVATEUR :
@@ -68,6 +73,56 @@ class SoutenanceController extends AbstractActionController {
         return new ViewModel([
             'propositions' => $propositions,
         ]);
+    }
+
+    public function indexRapporteurAction()
+    {
+        $role = $this->userContextService->getSelectedIdentityRole();
+        $individu = $this->userContextService->getIdentityIndividu();
+
+        $theseId = $this->params()->fromRoute('these');
+        if ($theseId !== null) {
+
+            /** @var These $these */
+            $these = $this->getTheseService()->getRepository()->find($theseId);
+            $proposition = $this->getPropositionService()->findByThese($these);
+            /** @var Membre[] $membres */
+            $membres = $proposition->getMembres()->toArray();
+            $membre = null;
+            $rappoteur = null;
+            foreach($membres as $membre_) {
+                if ($membre_->getActeur()->getIndividu() === $individu) {
+                    $membre = $membre_;
+                    $rapporteur = $membre;
+                }
+            }
+
+            $engagement = $this->getEngagementImpartialiteService()->getEngagementImpartialiteByMembre($membre);
+            $avis = $this->getAvisService()->getAvisByMembre($membre);
+
+            return new ViewModel([
+                'these' => $these,
+                'membre' => $membre,
+                'proposition' => $membre->getProposition(),
+                'depot' => $these->hasVersionInitiale(),
+                'engagement' => $engagement,
+                'avis' => $avis,
+                'urlFichierThese' => $this->urlFichierThese(),
+            ]);
+        } else {
+            $acteurs = $this->getActeurService()->getRapporteurDansTheseEnCours($individu);
+            $theses = [];
+            foreach ($acteurs as $acteur) $theses[] = $acteur->getThese();
+
+            if (count($theses) == 1) {
+                $these = current($theses);
+                return $this->redirect()->toRoute('soutenance/index-rapporteur', ['these' => $these->getId()], [], true);
+            } else {
+                return new ViewModel([
+                    'theses' => $theses,
+                ]);
+            }
+        }
     }
 
     public function avancementAction()

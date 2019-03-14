@@ -59,6 +59,7 @@ return array(
                     'action'     => [
                         'index',
                         'index-structure',
+                        'index-rapporteur',
                     ],
                     'roles' => [],
                 ],
@@ -212,6 +213,17 @@ return array(
                             'defaults' => [
                                 'controller' => SoutenanceController::class,
                                 'action'     => 'index-structure',
+                            ],
+                        ],
+                    ],
+                    'index-rapporteur' => [
+                        'type' => Segment::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/index-rapporteur[/:these]',
+                            'defaults' => [
+                                'controller' => SoutenanceController::class,
+                                'action'     => 'index-rapporteur',
                             ],
                         ],
                     ],

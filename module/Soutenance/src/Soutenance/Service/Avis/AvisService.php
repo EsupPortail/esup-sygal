@@ -161,19 +161,17 @@ class AvisService {
     }
 
     /**
-     * @param These $these
      * @param Membre $membre
      * @return Avis
      */
-    public function getAvisByMembre($these, $membre)
+    public function getAvisByMembre($membre)
     {
         $qb = $this->getEntityManager()->getRepository(Avis::class)->createQueryBuilder('avis')
             ->andWhere('avis.these = :these')
             ->andWhere('avis.rapporteur = :rapporteur')
             ->andWhere('1 = pasHistorise(avis)')
-            ->setParameter('these', $these)
+            ->setParameter('these', $membre->getProposition()->getThese())
             ->setParameter('rapporteur', $membre->getActeur());
-
         try {
             $result = $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
