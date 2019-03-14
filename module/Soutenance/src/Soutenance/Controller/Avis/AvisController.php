@@ -4,7 +4,6 @@ namespace Soutenance\Controller\Avis;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Acteur;
-use Application\Entity\Db\Individu;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
 use Application\Entity\Db\VersionFichier;
@@ -50,7 +49,7 @@ class AvisController extends AbstractController {
         /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
 
-        $avis = $this->getAvisService()->getAvisByMembre($these, $membre);
+        $avis = $this->getAvisService()->getAvisByMembre($membre);
 
         if ($avis !== null) {
             $this->redirect()->toRoute('soutenance/avis-soutenance/afficher', ['these' => $these->getId(), 'rapporteur' => $membre->getId()]);
@@ -119,7 +118,7 @@ class AvisController extends AbstractController {
         $membre = $this->getMembreService()->find($membreId);
         $rapporteur = $membre->getActeur();
         /** @var Avis $avis */
-        $avis = $this->getAvisService()->getAvisByMembre($these, $membre);
+        $avis = $this->getAvisService()->getAvisByMembre($membre);
 
         return new ViewModel([
             'these' => $these,
@@ -137,7 +136,7 @@ class AvisController extends AbstractController {
         $membreId = $this->params()->fromRoute('rapporteur');
         $membre = $this->getMembreService()->find($membreId);
         /** @var Avis $avis */
-        $avis = $this->getAvisService()->getAvisByMembre($these, $membre);
+        $avis = $this->getAvisService()->getAvisByMembre($membre);
 
         $this->getAvisService()->historiser($avis);
 
