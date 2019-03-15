@@ -5,6 +5,7 @@ namespace Indicateur\Controller\Factory;
 use Application\Service\AnomalieService;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Individu\IndividuService;
+use Application\Service\Structure\StructureService;
 use Application\Service\These\TheseService;
 use Indicateur\Controller\IndicateurController;
 use Indicateur\Service\IndicateurService;
@@ -23,6 +24,7 @@ class IndicateurControllerFactory
          * @var TheseService $theseService
          * @var AnomalieService $anomalieService
          * @var EtablissementService $etablissementService
+         * @var StructureService $structureService
          * @var IndicateurService $indicateurService
          */
         $individuService = $controllerManager->getServiceLocator()->get('IndividuService');
@@ -30,6 +32,7 @@ class IndicateurControllerFactory
         $anomalieService = $controllerManager->getServiceLocator()->get(AnomalieService::class);
         $etablissementService = $controllerManager->getServiceLocator()->get('EtablissementService');
         $indicateurService = $controllerManager->getServiceLocator()->get(IndicateurService::class);
+        $structureService = $controllerManager->getServiceLocator()->get(StructureService::class);
 
         $controller = new IndicateurController();
         $controller->setIndividuService($individuService);
@@ -37,6 +40,7 @@ class IndicateurControllerFactory
         $controller->setAnomalieService($anomalieService);
         $controller->setEtablissementService($etablissementService);
         $controller->setIndicateurService($indicateurService);
+        $controller->setStructureService($structureService);
 
         return $controller;
     }
