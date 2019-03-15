@@ -681,6 +681,30 @@ class StructureService extends BaseService
     }
 
     /**
+     * @param string $type
+     * @param int $structureId
+     * @return StructureConcreteInterface
+     */
+    public function getStructuresConcreteByTypeAndStructureConcreteId($type, $structureId)
+    {
+        $qb = $this->getEntityManager()->getRepository($this->getEntityByType($type))->createQueryBuilder('structureConcrete')
+            ->addSelect('structure')
+            ->join('structureConcrete.structure', 'structure')
+            ->andWhere('structureConcrete.id = :structureId')
+            ->setParameter('structureId', $structureId)
+        ;
+
+        try {
+            $result = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Plusieurs ".$type." partagent le même identifiant de structure [".$structureId."]");
+        }
+
+        if (!$result) throw new RuntimeException("Aucun(e) ".$type." de trouvé(e).");
+        return $result;
+    }
+
+    /**
      * Identifie les structures substituables en utilisant le sourceCode.
      *
      * @param string $type

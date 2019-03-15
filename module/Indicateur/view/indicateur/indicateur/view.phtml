@@ -6,6 +6,9 @@ use Indicateur\Provider\Privilege\IndicateurPrivileges;
 /**
  * @var Indicateur $indicateur
  * @var array $data
+ * @var \Application\Service\Structure\StructureService $structureService
+ *
+ * @see \Indicateur\Controller\IndicateurController::viewAction()
  */
 
 ?>
@@ -33,7 +36,7 @@ use Indicateur\Provider\Privilege\IndicateurPrivileges;
 </p>
 
 <?php if ($indicateur->getDisplayAs() === Indicateur::THESE): ?>
-    <?php echo $this->completIndicateurThese()->render($indicateur, $data); ?>
+    <?php echo $this->completIndicateurThese()->render($indicateur, $data, $structureService); ?>
 <?php endif; ?>
 
 <?php if ($indicateur->getDisplayAs() === Indicateur::INDIVIDU): ?>
