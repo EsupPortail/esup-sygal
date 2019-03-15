@@ -1,0 +1,21 @@
+<?php
+
+use Application\Entity\Db\Etablissement;
+
+/**
+ * @var Etablissement $etablissement
+ * @var string $contact
+ */
+?>
+
+<?php $this->headTitle()->append($title = "Contact") ?>
+
+<h1 class="page-header"><?php echo $this->translate($title); ?></h1>
+
+<dl>
+    <dt>Adresse d'assistance - <?php echo $etablissement ?></dt>
+    <dd>
+        <a href="mailto:<?php echo $contact ?>"
+           title="<?php echo $this->translate("Envoyer un mail à cette adresse") ?>"><?php echo $contact ?></a>
+    </dd>
+</dl>

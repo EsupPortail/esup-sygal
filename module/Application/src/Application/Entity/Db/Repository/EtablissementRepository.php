@@ -3,6 +3,7 @@
 namespace Application\Entity\Db\Repository;
 
 use Application\Entity\Db\Etablissement;
+use Application\Entity\UserWrapper;
 use Doctrine\ORM\NonUniqueResultException;
 use UnicaenApp\Exception\RuntimeException;
 
@@ -112,7 +113,7 @@ class EtablissementRepository extends DefaultEntityRepository
      * Recherche un établissement par son domaine DNS.
      *
      * @param string $domaine Ex: "unicaen.fr"
-     * @return Etablissement
+     * @return Etablissement|null
      */
     public function findOneByDomaine($domaine)
     {
@@ -128,6 +129,24 @@ class EtablissementRepository extends DefaultEntityRepository
         }
 
         return $etab;
+    }
+
+    /**
+     * Tente de trouver l'établissement auquel appartient un utilisateur.
+     *
+     * @param UserWrapper $userWrapper Utilisateur
+     * @return Etablissement|null
+     */
+    public function findOneForUserWrapper(UserWrapper $userWrapper)
+    {
+        $domaine = $userWrapper->getDomainFromEppn() ?: $userWrapper->getDomainFromEmail();
+        if (! $domaine) {
+            throw new RuntimeException("Cas imprévu: aucun domaine exploitable.");
+        }
+
+        $etablissement = $this->findOneByDomaine($domaine);
+
+        return $etablissement;
     }
 
     /**

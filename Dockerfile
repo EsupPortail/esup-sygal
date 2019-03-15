@@ -2,8 +2,6 @@
 #
 #                               Image pour le dev.
 #
-#         Montage des sources attendu dans le volume "/webapp" du container.
-#
 ###########################################################################################
 
 FROM unicaen-dev-php7.0-apache
@@ -14,7 +12,8 @@ ENV APACHE_CONF_DIR=/etc/apache2 \
     PHP_CONF_DIR=/etc/php/7.0
 
 ## Installation de packages requis.
-RUN apt-get update && apt-get install -y \
+RUN apt-get update -qq && \
+    apt-get install -y \
         ghostscript-x \
         php7.0-imagick
 
@@ -26,14 +25,12 @@ RUN ln -sf /dev/stdout /var/log/apache2/access.log
 RUN ln -sf /dev/stdout /var/log/apache2/other_vhosts_access.log
 RUN ln -sf /dev/stderr /var/log/apache2/error.log
 
-# Config PHP.
-ADD docker/php.conf ${PHP_CONF_DIR}/fpm/conf.d/sygal.ini
-
-# Configuration Apache et FPM
+# Configuration Apache, PHP et FPM
 ADD docker/apache-ports.conf    ${APACHE_CONF_DIR}/ports.conf
 ADD docker/apache-site.conf     ${APACHE_CONF_DIR}/sites-available/sygal.conf
 ADD docker/apache-site-ssl.conf ${APACHE_CONF_DIR}/sites-available/sygal-ssl.conf
 ADD docker/fpm/pool.d/app.conf  ${PHP_CONF_DIR}/fpm/pool.d/sygal.conf
+ADD docker/fpm/conf.d/app.ini   ${PHP_CONF_DIR}/fpm/conf.d/sygal.ini
 
 RUN a2ensite sygal sygal-ssl && \
     service php7.0-fpm reload

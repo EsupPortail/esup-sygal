@@ -13,17 +13,33 @@
 --
 -- Etablissements
 --
---
 INSERT INTO STRUCTURE (ID, SOURCE_CODE, SIGLE, LIBELLE, TYPE_STRUCTURE_ID, SOURCE_ID, CODE, HISTO_CREATEUR_ID, HISTO_MODIFICATEUR_ID)
-select STRUCTURE_ID_SEQ.nextval, :codeEtablissement, 'Unicaen', 'Université de Caen Normandie', 1, 1, :codeEtablissement, 1, 1 from dual;
+select
+  STRUCTURE_ID_SEQ.nextval,
+  :codeEtablissement,             --> à remplacer par le code choisi *entre apostrophe*, ex: 'UCN'
+  'Unicaen',                      --> sigle ou abbréviation à personnaliser
+  'Université de Caen Normandie', --> libellé à personnaliser
+  1, 1,
+  :codeEtablissement,             --> à remplacer par le code choisi *entre apostrophe*, ex: 'UCN'
+  1, 1
+from dual;
+
 INSERT INTO ETABLISSEMENT (ID, STRUCTURE_ID, DOMAINE, SOURCE_ID, SOURCE_CODE, EST_COMUE, EST_MEMBRE, HISTO_CREATEUR_ID, HISTO_MODIFICATEUR_ID)
-select ETABLISSEMENT_ID_SEQ.nextval, s.ID, 'unicaen.fr', 1, :codeEtablissement, 0, 1, 1, 1 from STRUCTURE s where s.SOURCE_CODE = :codeEtablissement;
+select
+  ETABLISSEMENT_ID_SEQ.nextval, s.ID,
+  'unicaen.fr',       --> domaine à personnaliser
+  1,
+  :codeEtablissement, --> à remplacer par le code choisi *entre apostrophe*, ex: 'UCN'
+  0, 1, 1, 1
+from STRUCTURE s
+where s.SOURCE_CODE = :codeEtablissement; --> à remplacer par le code choisi *entre apostrophe*, ex: 'UCN'
 
 --
--- Sources de données importables.
+-- Sources de données importables, ex: Apogée.
 --
 INSERT INTO SOURCE (ID, CODE, LIBELLE, IMPORTABLE, ETABLISSEMENT_ID)
-  SELECT 2, SOURCE_CODE||'::apogee', 'Apogée '||SOURCE_CODE, 1, ID from STRUCTURE where SOURCE_CODE = :codeEtablissement;
+  SELECT 2, SOURCE_CODE||'::apogee', 'Apogée '||SOURCE_CODE, 1, ID
+  from STRUCTURE where SOURCE_CODE = :codeEtablissement; --> à remplacer par le code choisi *entre apostrophe*, ex: 'UCN'
 
 --
 -- Rôles par établissement.
@@ -60,7 +76,7 @@ SELECT
   s.ID,
 1
 FROM tmp, STRUCTURE s
-WHERE s.SOURCE_CODE = :codeEtablissement;
+WHERE s.SOURCE_CODE = :codeEtablissement; --> à remplacer par le code choisi *entre apostrophe*, ex: 'UCN'
 
 --
 -- Création de l'individu/utilisateur de test
