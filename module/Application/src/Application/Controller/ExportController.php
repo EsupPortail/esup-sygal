@@ -52,12 +52,15 @@ class ExportController extends AbstractController
             },
             //Structures
             'Etablissement'                         => function (These $these) { return $these->getEtablissement()->getLibelle(); },
-            'Ecole Doctorale Code'                  => function (These $these) { if($these->getEcoleDoctorale() !== null)return $these->getEcoleDoctorale()->getStructure()->getCode(); else return null; },
+            'Ecole Doctorale Code'                  => function (These $these) { if($these->getEcoleDoctorale() !== null) return $these->getEcoleDoctorale()->getStructure()->getCode(); else return null; },
             'Ecole Doctorale'                       => function (These $these) { if($these->getEcoleDoctorale() !== null)return $these->getEcoleDoctorale()->getLibelle(); else return null; },
             'Unité de Recherche Code'               => function (These $these) { if($these->getUniteRecherche() !== null) return $these->getUniteRecherche()->getStructure()->getCode(); else return null; },
             'Unité de Recherche'                    => function (These $these) { if($these->getUniteRecherche() !== null) return $these->getUniteRecherche()->getLibelle(); else return null; },
             'Etablissement Co-Tutelle'              => function (These $these) { return $these->getLibelleEtabCotutelle(); },
             'Pays Co-Tutelle'                       => function (These $these) { return $these->getLibellePaysCotutelle(); },
+            //accession
+            'Diplôme d\'accession à la thèse'       => function (These $these) { if($these->getTitreAcces() !== null) return $these->getTitreAcces()->getLibelleTitreAcces(); },
+            'Établissement d\'accession à la thèse' => function (These $these) { if($these->getTitreAcces() !== null) return $these->getTitreAcces()->getLibelleEtabTitreAcces(); },
             //Financements
             'Origines du financement'                            => function (These $these) {
                 $financements = $these->getFinancements();
