@@ -8,16 +8,24 @@ Reportez-vous au [README consacré à la création de la base de données](doc/d
 
 
 
-## Installation de l'applicatif
+## Installation 
 
-### Première obtention des sources et installation du serveur 
+Pour ce qui est de l'installation du serveur d'application, n'ayant pas à Caen les compétences 
+en déploiement Docker autres que pour le développement (d'où la présence d'un `Dockerfile` et d'un `docker-compose.yml`
+dans les sources), nous documenterons une installation à l'ancienne.
+Si vous voulez déployer l'application avec Docker, faites-le à partir du `Dockerfile` présent et n'hésitez pas à 
+proposer des améliorations pour cette doc d'install!
+
+### Première obtention des sources de l'application
 
 Sur un serveur *Debian Stretch* de préférence, lancez les commandes suivantes pour obtenir les sources de SyGAL :
 ```bash
 git clone https://git.unicaen.fr/open-source/sygal.git /var/www/sygal
 ```
 
-Ensuite, placez-vous dans le répertoire des sources et jetez un oeil au script `Dockerfile.sh`.
+### Configuration du serveur
+
+Sur le serveur, placez-vous dans le répertoire des sources de SyGAL et jetez un oeil au script `Dockerfile.sh`.
 Ce script est en quelque sorte l'équivalent du `Dockerfile` traduit en bash. 
 (Vous y verrez que le dépôt git d'une image Docker Unicaen est cloné pour lancer 
 son script `Dockerfile.sh` qui est lui aussi l'équivalent du `Dockerfile` de l'image 
@@ -40,7 +48,7 @@ créés par le script `Dockerfile.sh` :
 NB: Vérifiez dans le script `Dockerfile.sh` que vous venez de lancer mais normalement 
 `APACHE_CONF_DIR=/etc/apache2` et `PHP_CONF_DIR=/etc/php/7.0`.
 
-### Installation d'une version précise 
+### Installation d'une version précise de l'application
 
 Normalement, vous ne devez installer que les versions officielles, c'est à dire les versions taguées, du genre `1.0.9`
 par exemple.
@@ -70,7 +78,7 @@ Si l'on est sur un serveur de PROD, corrigez les lignes suivantes du fichier de 
 
 ### Fichiers de config de l'application
 
-Placez-vous dans le répertoire de l'application puis déscendez dans le répertoire `config/autoload/`.
+Placez-vous dans le répertoire de l'application puis descendez dans le répertoire `config/autoload/`.
 
 Supprimez l'extension `.dist` des fichiers suivants :
 - `local.php.dist`
@@ -85,7 +93,7 @@ RAS.
 #### `secret.local.php`
 
 Concernant la config de connexion au WS, `'UCN'` doit être remplacé par le code établissement choisi lors
-de la création de votre établissement dans la base de données (dans le script [`04-init.sql`](04-init.sql)) :
+de la création de votre établissement dans la base de données (dans le script [`05-init.sql`](04-init.sql)) :
 
     'import-api' => [
         'etablissements' => [
@@ -94,8 +102,8 @@ de la création de votre établissement dans la base de données (dans le script
                 'url'      => 'https://sygal-import-ws:443',
                 'proxy'    => false,
                 'verify'   => false, // si true et faux certif : cURL error 60: SSL certificate problem: self signed certificate
-                'user'     => 'sygal-app',
-                'password' => 'xxxxxxxxxxx',
+                'user'     => 'xxx',
+                'password' => 'yyy',
 
 Renseignez les infos de connexion à la BDD :
 
@@ -112,7 +120,7 @@ Renseignez les infos de connexion à la BDD :
                     'CURRENT_SCHEMA' => $user,
 
 La config fournie permet de simuler l'authentification Shibboleth de l'utilisateur 'premierf@univ.fr' 
-créé en base de données (dans le script [`04-init.sql`](04-init.sql)) avec le rôle "Administrateur technique".
+créé en base de données (dans le script [`05-init.sql`](04-init.sql)) avec le rôle "Administrateur technique".
 Cela permet d'accéder aux pages de gestion des droits d'accès.
 
     'unicaen-auth' => [
@@ -126,13 +134,14 @@ Cela permet d'accéder aux pages de gestion des droits d'accès.
                 'HTTP_SN'             => 'Premier',
                 'HTTP_SUPANNCIVILITE' => 'M.'
 
+Théoriquement, à ce stade l'application SyGAL devrait être accessible.
 
 
 ## Dans l'application SyGAL elle-même
 
 Si vous n'avez rien changé à la config de l'application concernant Shibboleth et si vous cliquez en haut à droite de
 la page d'accueil de SyGAL sur "Connexion" puis sur "Fédération d'identité", vous devriez être dans la peau de 
-François Premier, administrateur technique de test créé en base de données (dans le script [`04-init.sql`](04-init.sql)).
+François Premier, administrateur technique de test créé en base de données (dans le script [`05-init.sql`](04-init.sql)).
 
 ### Droits d'accès
 
@@ -147,7 +156,7 @@ Appliquez, svp :
 - le profil `BDD` au rôle *Bureau des doctorats UCN*
 
 NB: "UCN" n'est qu'un exemple et pour vous ce sera le code établissement choisi lors
-de la création de votre établissement dans la base de données (dans le script [`04-init.sql`](04-init.sql)) 
+de la création de votre établissement dans la base de données (dans le script [`05-init.sql`](04-init.sql)) 
 
 ### Import
 
@@ -164,7 +173,7 @@ depuis l'interface graphique.
 Placez-vous dans le répertoire de SyGAL sur le serveur pour lancer l'import puis la synchro des données.
 
 Ce qui suit n'est possible que si le web service d'import de données est installé, si ce n'est pas le cas,
-reportez-vous au [README du projet sygal-import-ws](https://git.unicaen.fr/open-source/sygal-import-ws).
+reportez-vous au [README du projet sygal-import-ws](https://github.com/EsupPortail/sygal-import-ws).
 
 ### Lancement de l'import des données
 

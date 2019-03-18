@@ -3,10 +3,15 @@
 namespace Indicateur\Controller;
 
 use Application\Entity\Db\Acteur;
+use Application\Entity\Db\EcoleDoctorale;
+use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\These;
+use Application\Entity\Db\TypeStructure;
+use Application\Entity\Db\UniteRecherche;
 use Application\Service\AnomalieServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
+use Application\Service\Structure\StructureServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use DateTime;
 use Indicateur\Form\IndicateurForm;
@@ -24,6 +29,7 @@ class IndicateurController extends AbstractActionController {
     use EtablissementServiceAwareTrait;
     use AnomalieServiceAwareTrait;
     use IndicateurServiceAwareTrait;
+    use StructureServiceAwareTrait;
 
     /**
      * @return array|ViewModel
@@ -146,6 +152,7 @@ class IndicateurController extends AbstractActionController {
         return new ViewModel([
             'indicateur' => $indicateur,
             'data' => $data,
+            'structureService' => $this->getStructureService(),
         ]);
     }
 
@@ -163,6 +170,9 @@ class IndicateurController extends AbstractActionController {
                 'Titre'                 => 'TITRE',
                 'Première inscription'  => 'DATE_PREM_INSC',
                 'Date de soutenance'    => 'DATE_SOUTENANCE',
+                'Établissement d\'inscription'         => 'ETABLISSEMENT_ID',
+                'École doctorale'       => 'ECOLE_DOCT_ID',
+                'Unité de recherche'    => 'UNITE_RECH_ID',
             ];
         }
         if ($indicateur->getDisplayAs() == Indicateur::INDIVIDU) {
@@ -191,7 +201,35 @@ class IndicateurController extends AbstractActionController {
         foreach ($data as $entry) {
             $record = [];
             foreach($headers as $key => $fct) {
-                $record[] = $entry[$fct];
+                $value = '';
+                switch($key) {
+                    case 'Établissement d\'inscription' :
+                        if ($entry[$fct]) {
+                            /** @var Etablissement $etablissement */
+                            $etablissement = $this->getStructureService()->getStructuresConcreteByTypeAndStructureConcreteId(TypeStructure::CODE_ETABLISSEMENT, $entry[$fct]);
+                            $value = $etablissement->getLibelle();
+                        } else $value .= "";
+                        break;
+                    case 'École doctorale' :
+                        if ($entry[$fct]) {
+                            /** @var EcoleDoctorale $ecole */
+                            $ecole = $this->getStructureService()->getStructuresConcreteByTypeAndStructureConcreteId(TypeStructure::CODE_ECOLE_DOCTORALE, $entry[$fct]);
+                            $value = $ecole->getLibelle();
+                        } else $value .= "";
+                        break;
+                    case 'Unité de recherche' :
+                        if ($entry[$fct]) {
+                            /** @var UniteRecherche $unite */
+                            $unite = $this->getStructureService()->getStructuresConcreteByTypeAndStructureConcreteId(TypeStructure::CODE_UNITE_RECHERCHE, $entry[$fct]);
+                            $value = $unite->getLibelle();
+                        } else $value .= "";
+                        break;
+                    default:
+                        $value = $entry[$fct];
+                        break;
+                }
+
+                $record[] = $value;
             }
             $records[] = $record;
         }
