@@ -64,7 +64,7 @@ echo $this->messenger()
                 <p class="text-success">
                     <strong>
                         <?php echo $this->translate("Vous êtes connecté-e en tant que"); ?>
-                        &laquo; <?php echo $role ?> &raquo;.
+                        &laquo; <?php echo ($role)?:"utilisateur authentifié"; ?> &raquo;.
                     </strong>
                 </p>
                 <ul class="roadmap pagination">
