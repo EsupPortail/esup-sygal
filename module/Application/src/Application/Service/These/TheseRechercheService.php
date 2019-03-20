@@ -335,9 +335,10 @@ class TheseRechercheService
         }
 
         /**
+         * NB (2019/03/20) : désactiver pour donner l'accès à toutes les thèses pour les rôles doctorant et directeur/co-directeur
          * Filtres découlant du rôle de l'utilisateur.
          */
-        $this->decorateQbFromUserContext($qb);
+//        $this->decorateQbFromUserContext($qb);
 
         /**
          * Prise en compte du texte recherché éventuel.
