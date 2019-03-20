@@ -76,7 +76,16 @@ return [
                 [
                     'controller' => 'Application\Controller\These',
                     'action'     => [
+                        'index',
+                        'these',
+                        'detail-identite',
                         'rechercher',
+                    ],
+                    'roles' => 'user',
+                ],
+                [
+                    'controller' => 'Application\Controller\These',
+                    'action'     => [
                         'depot-papier-final',
                     ],
                     'privileges' => ThesePrivileges::THESE_RECHERCHE,
@@ -91,18 +100,7 @@ return [
                 [
                     'controller' => 'Application\Controller\These',
                     'action'     => [
-                        'index',
-                    ],
-                    'privileges' => [
-                        ThesePrivileges::THESE_CONSULTATION_FICHE,
-                        ThesePrivileges::THESE_CONSULTATION_TOUTES_THESES,
-                    ],
-                ],
-                [
-                    'controller' => 'Application\Controller\These',
-                    'action'     => [
                         'roadmap',
-                        'detail-identite',
                         'generate',
                         'fusion',
                         'validation-page-de-couverture',
@@ -128,7 +126,6 @@ return [
                         'detail-depot-version-corrigee',
                         'detail-fichiers',
 
-                        'these',
                         'these-retraitee',
                         'annexes',
                         'attestation',
@@ -181,22 +178,6 @@ return [
                     'privileges' => ThesePrivileges::THESE_CONSULTATION_RDV_BU,
                     'assertion'  => 'Assertion\\These',
                 ],
-//                [ NB: ECLATÉ JUSTE APRÈS
-//                    'controller' => 'Application\Controller\These',
-//                    'action'     => [
-//                        'modifier-description',
-//                        'modifier-certif-conformite',
-//                        'modifier-attestation',
-//                        'modifier-diffusion',
-//                        'modifier-rdv-bu',
-//                    ],
-//                    'privileges' => [
-//                        ThesePrivileges::THESE_SAISIE_DESCRIPTION,
-//                        ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION,
-//                        ThesePrivileges::THESE_DEPOT_VERSION_INITIALE,
-//                    ],
-//                    'assertion'  => 'Assertion\\These',
-//                ],
                 [
                     'controller' => 'Application\Controller\These',
                     'action'     => [

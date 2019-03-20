@@ -506,11 +506,11 @@ class TheseRechercheService
 
     private function fetchEtablissementsOptions()
     {
+        $role = $this->getSelectedIdentityRole();
+
         $privilege = StructurePrivileges::STRUCTURE_CONSULTATION_TOUTES_STRUCTURES;
         $toutesStructuresAllowed = $this->authorizeService->isAllowed(StructurePrivileges::getResourceId($privilege));
-        if (!$toutesStructuresAllowed) {
-            $role = $this->getSelectedIdentityRole();
-
+        if ($role && !$toutesStructuresAllowed) {
             return [
                 $this->optionify($role->getStructure()->getEtablissement())
             ];
@@ -568,12 +568,13 @@ class TheseRechercheService
     {
         $role = $this->getSelectedIdentityRole();
 
-        if ($role->isEtablissementDependant()) {
+        if ($role && $role->isEtablissementDependant()) {
             $etablissement = $role->getStructure()->getEtablissement();
             $annees = $this->theseService->getRepository()->fetchDistinctAnneesPremiereInscription($etablissement);
         } else {
             $annees = $this->theseService->getRepository()->fetchDistinctAnneesPremiereInscription();
         }
+        $annees = $this->theseService->getRepository()->fetchDistinctAnneesPremiereInscription();
 
         $annees = array_reverse(array_filter($annees));
 
@@ -591,7 +592,7 @@ class TheseRechercheService
         $role = $this->getSelectedIdentityRole();
 
         $etablissement = null;
-        if ($role->isEtablissementDependant()) {
+        if ($role && $role->isEtablissementDependant()) {
             $etablissement = $role->getStructure()->getEtablissement();
         }
         $annees = $this->theseService->getRepository()->fetchDistinctAnneesUniv1ereInscription($etablissement);
@@ -669,7 +670,7 @@ class TheseRechercheService
     {
         $role = $this->getSelectedIdentityRole();
 
-        if ($role->isEtablissementDependant()) {
+        if ($role && $role->isEtablissementDependant()) {
             $etablissement = $role->getStructure()->getEtablissement();
             $annees = $this->theseService->getRepository()->fetchDistinctAnneesSoutenance($etablissement);
         } else {
