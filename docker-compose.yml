@@ -11,9 +11,9 @@ services:
      - "8000:80"
      - "443:443"
     volumes:
-     - .:/var/www/sygal
+     - .:/app
      - /tmp:/tmp
-    working_dir: /var/www/sygal
+    working_dir: /app
     links:
     - "sygal-import-ws"
     network_mode: bridge
@@ -26,6 +26,6 @@ services:
      - "8080:80"
      - "8443:443"
     volumes:
-     - ../sygal-import-ws:/var/www/sygal-import-ws
-    working_dir: /var/www/sygal-import-ws
+     - ../sygal-import-ws:/ws
+    working_dir: /ws
     network_mode: bridge
