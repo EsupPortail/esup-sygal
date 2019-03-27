@@ -4,7 +4,7 @@
 #
 ###########################################################################################
 
-ARG PHP_VERSION=7.0
+ARG PHP_VERSION=7.1
 
 FROM unicaen-dev-php${PHP_VERSION}-apache
 
@@ -14,8 +14,7 @@ ENV APACHE_CONF_DIR=/etc/apache2 \
     PHP_CONF_DIR=/etc/php/${PHP_VERSION}
 
 ## Installation de packages requis.
-RUN apt-get update -qq && \
-    apt-get install -y \
+RUN apt-get update && apt-get install -y \
         ghostscript-x \
         php${PHP_VERSION}-imagick
 
@@ -27,7 +26,7 @@ RUN ln -sf /dev/stdout /var/log/apache2/access.log
 RUN ln -sf /dev/stdout /var/log/apache2/other_vhosts_access.log
 RUN ln -sf /dev/stderr /var/log/apache2/error.log
 
-# Configuration Apache, PHP et FPM
+# Configuration Apache et FPM
 ADD docker/apache-ports.conf    ${APACHE_CONF_DIR}/ports.conf
 ADD docker/apache-site.conf     ${APACHE_CONF_DIR}/sites-available/sygal.conf
 ADD docker/apache-site-ssl.conf ${APACHE_CONF_DIR}/sites-available/sygal-ssl.conf
