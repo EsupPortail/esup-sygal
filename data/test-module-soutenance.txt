@@ -1,0 +1,23 @@
+- chercher un doctorant ayant un co-directeur usurpable
+- usurper le doctorant (nb: l'ordre importe peu)
+- utiliser le cas échéant module/Soutenance/SQL/cleaning.sql pour raz
+
+- usurper le doctorant le dir
+- valider la proposition (tout modif de la prop raz les validations)
+- usurper le doctorant un codir
+- valider la proposition (tout modif de la prop raz les validations)
+
+- usurper un membre de l'UR de la thèse
+- la page d'accueil du module contiendra la liste des soutenance en préparation, pour l'instant utiliser le lien dans le mail envoyé lors de la dernière valmidation)
+- valider la proposition (si refus, motiver)
+- un mail est envoyé à l'ED
+
+- usurper l'ED
+- valider
+
+- usurper le BDD
+- générer le doument pour signature (à déboguer)
+- valider
+
+- menu finalisation de la soutenance (réservé au BDD)
+
