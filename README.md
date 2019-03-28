@@ -23,9 +23,10 @@ Enlever le `-d` (detached) pour voir les logs en direct.
     docker build \
     --add-host="proxy.unicaen.fr:10.14.128.99" \
     --add-host="svn.unicaen.fr:10.14.129.44" \
-    --build-arg http_proxy="http://proxy.unicaen.fr:3128" \
-    --build-arg https_proxy="http://proxy.unicaen.fr:3128" \
-    --build-arg no_proxy=".unicaen.fr,localhost" \
+    --build-arg PHP_VERSION=7.0 \
+    --build-arg HTTP_PROXY="http://proxy.unicaen.fr:3128" \
+    --build-arg HTTPS_PROXY="http://proxy.unicaen.fr:3128" \
+    --build-arg NO_PROXY=".unicaen.fr,localhost" \
     -t unicaen/sygal-php7-dev-image \
     .
 

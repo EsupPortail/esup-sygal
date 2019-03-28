@@ -4,14 +4,11 @@
 #
 ###########################################################################################
 
-ARG PHP_VERSION=7.0
+ARG PHP_VERSION
 
 FROM unicaen-dev-php${PHP_VERSION}-apache
 
 LABEL maintainer="Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>"
-
-ENV APACHE_CONF_DIR=/etc/apache2 \
-    PHP_CONF_DIR=/etc/php/${PHP_VERSION}
 
 ## Installation de packages requis.
 RUN apt-get update -qq && \
