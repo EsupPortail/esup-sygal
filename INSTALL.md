@@ -39,7 +39,7 @@ traduit en bash.)
 Lancez le script `Dockerfile.sh` ainsi :
 ```bash
 cd /var/www/sygal
-source Dockerfile.sh
+bash Dockerfile.sh 7.0
 ```
 
 Ensuite, vérifiez et ajustez si besoin sur votre serveur les fichiers de configs suivants,

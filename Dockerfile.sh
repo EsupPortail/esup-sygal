@@ -31,7 +31,7 @@ apt-get install -y \
 export UNICAEN_IMAGE_TMP_DIR=/tmp/docker-unicaen-image
 git clone https://git.unicaen.fr/open-source/docker/unicaen-image.git ${UNICAEN_IMAGE_TMP_DIR}
 cd ${UNICAEN_IMAGE_TMP_DIR}
-bash Dockerfile.sh "$1"
+. Dockerfile.sh ${PHP_VERSION}
 
 
 cd ${SYGAL_DIR}
