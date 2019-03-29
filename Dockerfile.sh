@@ -48,4 +48,5 @@ cp docker/fpm/pool.d/app.conf  ${PHP_CONF_DIR}/fpm/pool.d/sygal.conf
 cp docker/fpm/conf.d/app.ini   ${PHP_CONF_DIR}/fpm/conf.d/sygal.ini
 
 a2ensite sygal sygal-ssl && \
+    service apache2 reload && \
     service php${PHP_VERSION}-fpm reload
