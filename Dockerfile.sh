@@ -4,7 +4,7 @@
 # Script d'install d'un serveur, inspiré du Dockerfile.
 #
 
-DIR=$(cd `dirname $0` && pwd)
+SYGAL_DIR=$(cd `dirname $0` && pwd)
 
 set -e
 
@@ -18,10 +18,10 @@ apt-get install -y \
 export UNICAEN_IMAGE_TMP_DIR=/tmp/docker-unicaen-image
 git clone https://git.unicaen.fr/open-source/docker/unicaen-image.git ${UNICAEN_IMAGE_TMP_DIR}
 cd ${UNICAEN_IMAGE_TMP_DIR}
-. ./Dockerfile.sh
+bash Dockerfile.sh
 
 
-cd ${DIR}
+cd ${SYGAL_DIR}
 
 # NB: Variables d'env positionnées par ${UNICAEN_IMAGE_TMP_DIR}/Dockerfile.sh
 # APACHE_CONF_DIR=/etc/apache2 \
