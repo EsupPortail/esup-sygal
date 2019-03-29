@@ -18,8 +18,13 @@ proposer des améliorations pour cette doc d'install!
 
 ### Première obtention des sources de l'application
 
-Sur un serveur *Debian Stretch* de préférence, lancez les commandes suivantes pour obtenir les sources de SyGAL :
+*NB: la procédure proposée ici part d'un serveur *Debian Stretch* tout nu et couvre l'installation de tous les packages 
+requis.* Si ce n'était pas le cas, merci de le signaler.
+
+Sur un serveur *Debian Stretch*, en `root`, lancez les commandes suivantes pour installer git et obtenir les sources de 
+SyGAL :
 ```bash
+apt-get update -qq && apt-get install -y git
 git clone https://git.unicaen.fr/open-source/sygal.git /var/www/sygal
 ```
 
