@@ -6,9 +6,9 @@ services:
     depends_on:
     - sygal-import-ws
     build:
-      context: .
       args:
-        PHP_VERSION: 7.2
+        PHP_VERSION: 7.0
+      context: .
     ports:
      - "8000:80"
      - "443:443"
