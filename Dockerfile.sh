@@ -1,8 +1,20 @@
 #!/usr/bin/env bash
 
 #
-# Script d'install d'un serveur, inspiré du Dockerfile.
+# Script d'install d'un serveur, traduction du Dockerfile.
 #
+
+usage() {
+  cat << EOF
+Script d'install d'un serveur, traduction du Dockerfile.
+Usage: $0 <version de PHP>
+EOF
+  exit 0;
+}
+
+[[ -z $1 ]] && usage
+
+################################################################################################################
 
 SYGAL_DIR=$(cd `dirname $0` && pwd)
 
@@ -18,7 +30,7 @@ apt-get install -y \
 export UNICAEN_IMAGE_TMP_DIR=/tmp/docker-unicaen-image
 git clone https://git.unicaen.fr/open-source/docker/unicaen-image.git ${UNICAEN_IMAGE_TMP_DIR}
 cd ${UNICAEN_IMAGE_TMP_DIR}
-bash Dockerfile.sh
+bash Dockerfile.sh ${PHP_VERSION}
 
 
 cd ${SYGAL_DIR}
