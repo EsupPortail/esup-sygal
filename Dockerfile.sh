@@ -16,6 +16,7 @@ EOF
 
 ################################################################################################################
 
+PHP_VERSION="$1"
 SYGAL_DIR=$(cd `dirname $0` && pwd)
 
 set -e
@@ -35,9 +36,9 @@ bash Dockerfile.sh "$1"
 
 cd ${SYGAL_DIR}
 
-# NB: Variables d'env positionnées par ${UNICAEN_IMAGE_TMP_DIR}/Dockerfile.sh
-# APACHE_CONF_DIR=/etc/apache2 \
-# PHP_CONF_DIR=/etc/php/7.0
+# NB: Variables d'env exportées par ${UNICAEN_IMAGE_TMP_DIR}/Dockerfile.sh
+# APACHE_CONF_DIR=/etc/apache2
+# PHP_CONF_DIR="/etc/php/$1"
 
 # Configuration Apache et FPM
 cp docker/apache-ports.conf    ${APACHE_CONF_DIR}/ports.conf
@@ -47,4 +48,4 @@ cp docker/fpm/pool.d/app.conf  ${PHP_CONF_DIR}/fpm/pool.d/sygal.conf
 cp docker/fpm/conf.d/app.ini   ${PHP_CONF_DIR}/fpm/conf.d/sygal.ini
 
 a2ensite sygal sygal-ssl && \
-    service php7.0-fpm reload
+    service php${PHP_VERSION}-fpm reload
