@@ -12,7 +12,7 @@ EOF
   exit 0;
 }
 
-[[ -z $1 ]] && usage
+[[ -z "$1" ]] && usage
 
 ################################################################################################################
 
@@ -30,7 +30,7 @@ apt-get install -y \
 export UNICAEN_IMAGE_TMP_DIR=/tmp/docker-unicaen-image
 git clone https://git.unicaen.fr/open-source/docker/unicaen-image.git ${UNICAEN_IMAGE_TMP_DIR}
 cd ${UNICAEN_IMAGE_TMP_DIR}
-bash Dockerfile.sh ${PHP_VERSION}
+bash Dockerfile.sh "$1"
 
 
 cd ${SYGAL_DIR}
