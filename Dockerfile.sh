@@ -42,11 +42,11 @@ cd ${SYGAL_DIR}
 
 # Configuration Apache et FPM
 cp docker/apache-ports.conf    ${APACHE_CONF_DIR}/ports.conf
-cp docker/apache-site.conf     ${APACHE_CONF_DIR}/sites-available/sygal.conf
-cp docker/apache-site-ssl.conf ${APACHE_CONF_DIR}/sites-available/sygal-ssl.conf
-cp docker/fpm/pool.d/app.conf  ${PHP_CONF_DIR}/fpm/pool.d/sygal.conf
-cp docker/fpm/conf.d/app.ini   ${PHP_CONF_DIR}/fpm/conf.d/sygal.ini
+cp docker/apache-site.conf     ${APACHE_CONF_DIR}/sites-available/app.conf
+cp docker/apache-site-ssl.conf ${APACHE_CONF_DIR}/sites-available/app-ssl.conf
+cp docker/fpm/pool.d/app.conf  ${PHP_CONF_DIR}/fpm/pool.d/app.conf
+cp docker/fpm/conf.d/app.ini   ${PHP_CONF_DIR}/fpm/conf.d/90-app.ini
 
-a2ensite sygal sygal-ssl && \
+a2ensite app app-ssl && \
     service apache2 reload && \
     service php${PHP_VERSION}-fpm reload
