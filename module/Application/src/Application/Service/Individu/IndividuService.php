@@ -2,22 +2,28 @@
 
 namespace Application\Service\Individu;
 
-use Application\Entity\Db\AppPseudoUtilisateurAwareTrait;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Repository\IndividuRepository;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\UserWrapper;
 use Application\Service\BaseService;
+use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
+use UnicaenApp\Entity\UserInterface;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenLdap\Entity\People;
 
 class IndividuService extends BaseService
 {
-    use AppPseudoUtilisateurAwareTrait;
+    use UtilisateurServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
+
+    /**
+     * @var Utilisateur
+     */
+    protected $appPseudoUtilisateur;
 
     /**
      * @return IndividuRepository
@@ -85,7 +91,7 @@ class IndividuService extends BaseService
         $entity->setCivilite($userWrapper->getCivilite());
         $entity->setEmail($userWrapper->getEmail());
         $entity->setSourceCode($sourceCode);
-        $entity->setHistoCreateur($utilisateur ?: $this->appPseudoUtilisateur);
+        $entity->setHistoCreateur($utilisateur ?: $this->getAppPseudoUtilisateur());
 
         $this->getEntityManager()->persist($entity);
         try {
@@ -112,7 +118,7 @@ class IndividuService extends BaseService
         $entity->setPrenom($userWrapper->getPrenom());
         $entity->setCivilite($userWrapper->getCivilite());
         $entity->setEmail($userWrapper->getEmail());
-        $entity->setHistoModificateur($utilisateur ?: $this->appPseudoUtilisateur);
+        $entity->setHistoModificateur($utilisateur ?: $this->getAppPseudoUtilisateur());
 
         try {
             $this->getEntityManager()->flush($entity);
@@ -135,13 +141,25 @@ class IndividuService extends BaseService
         $sourceCode = $this->sourceCodeStringHelper->addEtablissementPrefixTo($entity->getSupannId(), $etablissement);
 
         $entity->setSourceCode($sourceCode);
-        $entity->setHistoModificateur($modificateur ?: $this->appPseudoUtilisateur);
+        $entity->setHistoModificateur($modificateur ?: $this->getAppPseudoUtilisateur());
 
         try {
             $this->getEntityManager()->flush($entity);
         } catch (OptimisticLockException $e) {
             throw new RuntimeException("Impossible d'enregistrer l'Individu", null, $e);
         }
+    }
+
+    /**
+     * @return Utilisateur|UserInterface
+     */
+    private function getAppPseudoUtilisateur()
+    {
+        if ($this->appPseudoUtilisateur === null) {
+            $this->appPseudoUtilisateur = $this->utilisateurService->fetchAppPseudoUtilisateur();
+        }
+
+        return $this->appPseudoUtilisateur;
     }
 
     public function existIndividuUtilisateurByEmail($email) {

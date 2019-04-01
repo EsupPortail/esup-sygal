@@ -12,10 +12,9 @@ class IndividuServiceFactory
     {
         /** @var UtilisateurService $utilisateurService */
         $utilisateurService = $sl->get('UtilisateurService');
-        $utilisateur = $utilisateurService->fetchAppPseudoUtilisateur();
 
         $service = new IndividuService();
-        $service->setAppPseudoUtilisateur($utilisateur);
+        $service->setUtilisateurService($utilisateurService);
 
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper
