@@ -35,5 +35,4 @@ ADD docker/fpm/conf.d/app.ini   ${PHP_CONF_DIR}/fpm/conf.d/app.ini
 COPY docker/entrypoint.d/* /entrypoint.d/
 
 RUN a2ensite app app-ssl && \
-    service apache2 reload && \
     service php${PHP_VERSION}-fpm reload
