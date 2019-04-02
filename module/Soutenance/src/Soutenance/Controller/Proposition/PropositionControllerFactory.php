@@ -4,6 +4,7 @@ namespace Soutenance\Controller\Proposition;
 
 use Application\Service\These\TheseService;
 use Application\Service\UserContextService;
+use Soutenance\Form\ChangementTitre\ChangementTitreForm;
 use Soutenance\Form\Confidentialite\ConfidentialiteForm;
 use Soutenance\Form\DateLieu\DateLieuForm;
 use Soutenance\Form\LabelEtAnglais\LabelEtAnglaisForm;
@@ -40,12 +41,14 @@ class PropositionControllerFactory {
          * @var LabelEtAnglaisForm $labelEtAnglaisForm
          * @var ConfidentialiteForm $confidentialiteForm
          * @var RefusForm $refusForm
+         * @var ChangementTitreForm $changementTitreForm
          */
         $dateLieuForm = $manager->getServiceLocator()->get('FormElementManager')->get(DateLieuForm::class);
         $membreForm = $manager->getServiceLocator()->get('FormElementManager')->get(MembreForm::class);
         $labelEtAnglaisForm = $manager->getServiceLocator()->get('FormElementManager')->get(LabelEtAnglaisForm::class);
         $confidentialiteForm = $manager->getServiceLocator()->get('FormElementManager')->get(ConfidentialiteForm::class);
         $refusForm = $manager->getServiceLocator()->get('FormElementManager')->get(RefusForm::class);
+        $changementTitreForm = $manager->getServiceLocator()->get('FormElementManager')->get(ChangementTitreForm::class);
 
         /** @var PropositionController $controller */
         $controller = new PropositionController();
@@ -62,6 +65,7 @@ class PropositionControllerFactory {
         $controller->setLabelEtAnglaisForm($labelEtAnglaisForm);
         $controller->setConfidentialiteForm($confidentialiteForm);
         $controller->setRefusForm($refusForm);
+        $controller->setChangementTitreForm($changementTitreForm);
 
         return $controller;
     }

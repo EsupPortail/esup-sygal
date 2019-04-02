@@ -12,6 +12,7 @@ use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
+use Soutenance\Form\ChangementTitre\ChangementTitreFormAwareTrait;
 use Soutenance\Form\Confidentialite\ConfidentialiteForm;
 use Soutenance\Form\Confidentialite\ConfidentialiteFormAwareTrait;
 use Soutenance\Form\DateLieu\DateLieuForm;
@@ -45,6 +46,7 @@ class PropositionController extends AbstractActionController {
     use LabelEtAnglaisAwareTrait;
     use ConfidentialiteFormAwareTrait;
     use RefusFormAwareTrait;
+    use ChangementTitreFormAwareTrait;
 
     public function propositionAction()
     {
@@ -250,6 +252,40 @@ class PropositionController extends AbstractActionController {
         $vm->setTemplate('soutenance/default/default-form');
         $vm->setVariables([
             'title'             => 'Renseignement des informations relatives à la confidentialité',
+            'form'              => $form,
+        ]);
+        return $vm;
+    }
+
+    public function changementTitreAction()
+    {
+        /** @var These $these */
+        $idThese = $this->params()->fromRoute('these');
+        $these = $this->getTheseService()->getRepository()->find($idThese);
+
+        /** @var Proposition $proposition */
+        $proposition = $this->getPropositionService()->findByThese($these);
+
+        /** @var ConfidentialiteForm  $form */
+        $form = $this->getChangementTitreForm();
+        $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/changement-titre', ['these' => $these->getId()], [], true));
+        $form->bind($proposition);
+
+        /** @var Request $request */
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $form->setData($data);
+            if ($form->isValid()) {
+                $this->getPropositionService()->update($proposition);
+                $this->getPropositionService()->annulerValidations($proposition);
+            }
+        }
+
+        $vm = new ViewModel();
+        $vm->setTemplate('soutenance/default/default-form');
+        $vm->setVariables([
+            'title'             => 'Changement du titre de la thèse',
             'form'              => $form,
         ]);
         return $vm;

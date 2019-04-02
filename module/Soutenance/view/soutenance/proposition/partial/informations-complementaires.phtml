@@ -131,5 +131,41 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
                 <?php endif; ?>
             </div>
         </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <dl>
+                    <dt> Titre de la thèse </dt>
+                    <dd> <?php echo ($proposition->getNouveauTitre())?:$proposition->getThese()->getTitre(); ?> </dd>
+                </dl>
+            </div>
+
+            <div class="col-md-4">
+                <?php if ($canModifier) : ?>
+                    <div class="pull-right">
+                        <a href="<?php echo $this->url('soutenance/proposition/changement-titre', ['these' => $these->getId()], [], true); ?>"
+                           class="btn btn-primary action ajax-modal"
+                           data-event="edition-confidentialite"
+                        >
+                            <span class="glyphicon glyphicon-plus"></span>
+                            Modifier le titre de la thèse
+                        </a>
+                    </div>
+
+                    <br/>
+                    <br/>
+                    <br/>
+
+                <?php endif; ?>
+
+                <?php if($proposition->getConfidentialite()): ?>
+                    <div class="alert alert-sm alert-warning">
+                        <span class="glyphicon glyphicon-warning-sign"> </span>
+                        Afin de réaliser de demande de confidentialité un accord doit au préalable être rempli :
+                        <a href="https://localhost/informations/fichiers/telecharger/362">demande d'accord de confidentialité</a>.
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
     </div>
 </div>

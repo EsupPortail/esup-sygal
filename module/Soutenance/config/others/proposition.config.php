@@ -5,7 +5,9 @@ use Soutenance\Assertion\PropositionAssertion;
 use Soutenance\Assertion\PropositionAssertionFactory;
 use Soutenance\Controller\Proposition\PropositionController;
 use Soutenance\Controller\Proposition\PropositionControllerFactory;
-use Soutenance\Controller\SoutenanceController;
+use Soutenance\Form\ChangementTitre\ChangementTitreForm;
+use Soutenance\Form\ChangementTitre\ChangementTitreFormFactory;
+use Soutenance\Form\ChangementTitre\ChangementTitreHydrator;
 use Soutenance\Form\Confidentialite\ConfidentialiteForm;
 use Soutenance\Form\Confidentialite\ConfidentialiteFormFactory;
 use Soutenance\Form\Confidentialite\ConfidentialiteHydrator;
@@ -72,6 +74,7 @@ return [
                         'effacer-membre',
                         'label-et-anglais',
                         'confidentialite',
+                        'changement-titre',
                     ],
                     'privileges' => PropositionPrivileges::PROPOSITION_MODIFIER,
                 ],
@@ -193,6 +196,17 @@ return [
                                     ],
                                 ],
                             ],
+                            'changement-titre' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/changement-titre',
+                                    'defaults' => [
+                                        'controller' => PropositionController::class,
+                                        'action'     => 'changement-titre',
+                                    ],
+                                ],
+                            ],
                             'valider' => [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
@@ -258,13 +272,12 @@ return [
 
     'form_elements' => [
         'factories' => [
+            ChangementTitreForm::class => ChangementTitreFormFactory::class,
             DateLieuForm::class => DateLieuFormFactory::class,
             MembreForm::class => MembreFormFactory::class,
             LabelEtAnglaisForm::class => LabelEtAnglaisFormFactory::class,
             ConfidentialiteForm::class=> ConfidentialiteFormFactory::class,
             RefusForm::class => RefusFormFactory::class,
-
-
         ],
     ],
 
@@ -272,6 +285,7 @@ return [
         'invokables' => [
             DateLieuHydrator::class => DateLieuHydrator::class,
             LabelEtAnglaisHydrator::class => LabelEtAnglaisHydrator::class,
+            ChangementTitreHydrator::class => ChangementTitreHydrator::class,
             ConfidentialiteHydrator::class => ConfidentialiteHydrator::class,
         ],
         'factories' => [

@@ -27,6 +27,7 @@
         <field name="manuscritAnglais"          type="boolean"                           column="MANUSCRIT_ANGLAIS"   nullable="false"/>
         <field name="soutenanceAnglais"         type="boolean"                           column="SOUTENANCE_ANGLAIS"  nullable="false"/>
 
+        <field name="nouveauTitre"              type="string"        length="2048"       column="NOUVEAU_TITRE"       nullable="true"/>
 
     </entity>
 </doctrine-mapping>

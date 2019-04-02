@@ -20,7 +20,7 @@ class DateLieuForm extends Form {
 
         $this->add(
             (new Time('heure'))
-                ->setFormat("H:m")
+                ->setFormat("24h")
                 ->setLabel("Heure de la soutance :")
 
         );

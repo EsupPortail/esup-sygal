@@ -108,9 +108,9 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
         <table class="table table-extra-condensed">
             <thead>
             <tr>
+                <th>Civilité</th>
                 <th>Dénomination</th>
                 <th>Adresse électronique</th>
-                <th>Genre</th>
                 <th>Qualité</th>
                 <th>Rang</th>
                 <th>Extérieur</th>
@@ -126,9 +126,9 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
             <?php $hasVisio = false; /** @var Membre $membre */ ?>
             <?php foreach($proposition->getMembres() as $membre): ?>
                 <tr>
+                    <td> <?php echo ($membre->getGenre()==='F')?"Madame":"Monsieur"; ?> </td>
                     <td> <?php echo $membre->getDenomination(); ?> </td>
                     <td> <?php echo $membre->getEmail(); ?> </td>
-                    <td> <?php echo $membre->getGenre(); ?> </td>
                     <td> <?php echo $membre->getQualite()->getLibelle(); ?> </td>
                     <td> <?php echo $membre->getRang(); ?> </td>
                     <td>
