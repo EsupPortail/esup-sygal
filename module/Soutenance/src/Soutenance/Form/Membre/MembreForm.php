@@ -19,8 +19,8 @@ class MembreForm extends Form {
     {
         $this->add(
             (new Radio('sexe'))
-                ->setLabel("Genre :")
-                ->setValueOptions([ 'F' => 'Femme', 'H' => 'Homme'])
+                ->setLabel("Civilité :")
+                ->setValueOptions([ 'F' => 'Madame', 'H' => 'Monsieur'])
         );
 
         $this->add(
@@ -58,7 +58,7 @@ class MembreForm extends Form {
 
         $this->add(
             (new Text('etablissement'))
-                ->setLabel("Etablissement employeur :")
+                ->setLabel("Établissement employeur :")
         );
         $this->add(
             (new Radio('exterieur'))

@@ -34,6 +34,8 @@ class Proposition {
     private $manuscritAnglais;
     /** @var boolean */
     private $soutenanceAnglais;
+    /** @var string */
+    private $nouveauTitre;
 
 //    /** @var ArrayCollection */
 //    private $validations;
@@ -278,5 +280,23 @@ class Proposition {
         }
 
         return $rapporteurs;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNouveauTitre()
+    {
+        return $this->nouveauTitre;
+    }
+
+    /**
+     * @param string $nouveauTitre
+     * @return Proposition
+     */
+    public function setNouveauTitre($nouveauTitre)
+    {
+        $this->nouveauTitre = $nouveauTitre;
+        return $this;
     }
 }
