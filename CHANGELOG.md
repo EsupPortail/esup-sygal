@@ -6,7 +6,8 @@ Avant la version 1.1.4, le journal des modifications n'avait pas encore été d�
 
 ### Nouveautés
 
-Néant.
+- Ouverture à toutes personnes identifiées de la consultation de la liste des thèses, à la recherche de thèse et à la 
+  visualisation de la page d'information associée à un thèse. 
 
 ### Améliorations
 
