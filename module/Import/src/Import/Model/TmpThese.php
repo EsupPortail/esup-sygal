@@ -55,11 +55,6 @@ class TmpThese
     /**
      * @var \DateTime
      */
-    private $anneeUnivPremiereInsc;
-
-    /**
-     * @var \DateTime
-     */
     private $dateSoutenancePrev;
 
     /**

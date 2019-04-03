@@ -15,7 +15,6 @@
         <field name="dateSoutenanceAutorisee"   type="date" column="DAT_AUT_SOU_THS" nullable="true"/>
         <field name="dateConfidFin"             type="date" column="DAT_FIN_CFD_THS" nullable="true"/>
         <field name="datePremiereInsc"          type="date" column="DAT_DEB_THS" nullable="true"/>
-        <field name="anneeUnivPremiereInsc"     type="integer" column="ANNEE_UNIV_1ERE_INSC"/>
         <field name="dateSoutenancePrev"        type="date" column="DAT_PREV_SOU" nullable="true"/>
         <field name="dateSoutenance"            type="date" column="DAT_SOU_THS" nullable="true"/>
 

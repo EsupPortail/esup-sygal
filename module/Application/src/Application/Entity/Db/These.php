@@ -99,6 +99,8 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     private $datePremiereInscription;
 
     /**
+     * NB: N'est plus mappée à une colonne.
+     *
      * @var integer
      */
     private $anneeUniv1ereInscription;
@@ -234,6 +236,11 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     private $anneesUnivInscription;
 
     /**
+     * @var ArrayCollection
+     */
+    private $anneesUniv1ereInscription;
+
+    /**
      * @return TitreApogeeFilter
      */
     public function getTitreFilter()
@@ -256,6 +263,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
         $this->acteurs = new ArrayCollection();
         $this->rdvBus = new ArrayCollection();
         $this->anneesUnivInscription = new ArrayCollection();
+        $this->anneesUniv1ereInscription = new ArrayCollection();
     }
 
     /**
@@ -1111,33 +1119,6 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
-     * @return int
-     */
-    public function getAnneeUniv1ereInscription()
-    {
-        return $this->anneeUniv1ereInscription;
-    }
-
-    /**
-     * @return int
-     */
-    public function getAnneeUniv1ereInscriptionToString()
-    {
-        return $this->anneeUniv1ereInscription . '/' . ($this->anneeUniv1ereInscription + 1);
-    }
-
-    /**
-     * @param int $anneeUniv1ereInscription
-     * @return These
-     */
-    public function setAnneeUniv1ereInscription($anneeUniv1ereInscription)
-    {
-        $this->anneeUniv1ereInscription = (int) $anneeUniv1ereInscription;
-
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function getLibelleEtabCotutelle()
@@ -1208,8 +1189,19 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function getAnneesUnivInscriptionToString($glue = ', ')
     {
         return implode($glue, array_map(function(TheseAnneeUniv $tau) {
-            return $tau->getAnneeUniv1ereInscriptionToString();
+            return $tau->getAnneeUnivToString();
         }, $this->anneesUnivInscription->toArray()));
+    }
+
+    /**
+     * Retourne l'année universitaire de première inscription,
+     *
+     * @return TheseAnneeUniv|VTheseAnneeUnivFirst
+     */
+    public function getAnneeUniv1ereInscription()
+    {
+        // NB: le mapping de VTheseAnneeUnivFirst est un copier-coller de TheseAnneeUniv
+        return $this->anneesUniv1ereInscription->first();
     }
 
     /**
