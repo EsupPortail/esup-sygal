@@ -73,7 +73,7 @@ git checkout --force 1.0.9 && bash install.sh
 ### Configuration du moteur PHP pour SyGAL
 
 Si l'on est sur un serveur de PROD, corrigez les lignes suivantes du fichier de config PHP 
-`/etc/php/7.0/fpm/conf.d/sygal.ini` :
+`/etc/php/7.0/fpm/conf.d/90-app.ini` :
 
     ...
     display_errors = Off
@@ -88,13 +88,32 @@ Placez-vous dans le répertoire de l'application puis descendez dans le réperto
 Supprimez l'extension `.dist` des fichiers suivants :
 - `local.php.dist`
 - `secret.local.php.dist`
+Dans la suite, vous les adapterez à votre situation.
 
-Dans la suite, vous les adapterez à votre situation...
+#### `unicaen-app.global.php`
+
+Adaptez les URL des pages "Mentions légales" et "Informatique et liberté" pour votre établissement :
+
+```php
+    'unicaen-app' => [
+        'app_infos' => [
+            //...
+            'mentionsLegales'        => "http://www.unicaen.fr/acces-direct/mentions-legales/",
+            'informatiqueEtLibertes' => "http://www.unicaen.fr/acces-direct/informatique-et-libertes/",
+        ], 
+```
 
 #### `local.php`
 
-RAS.
+Adaptez le chemin du répertoire où seront stockés les fichiers uploadés par les utilisateurs de l'application :
 
+```php
+    'fichier' => [
+        'root_dir_path' => '/app/upload',
+    ],
+```
+*NB: ce répertoire doit être autorisé en écriture à l'utilisateur `www-data` (ou équivalent).*
+    
 #### `secret.local.php`
 
 Concernant la config de connexion au WS, `'UCN'` doit être remplacé par le code établissement choisi lors
@@ -110,7 +129,7 @@ de la création de votre établissement dans la base de données (dans le script
                 'user'     => 'xxx',
                 'password' => 'yyy',
 
-Renseignez les infos de connexion à la BDD :
+Renseignez les infos de connexion à la base de données :
 
     'doctrine' => [
         'connection' => [
