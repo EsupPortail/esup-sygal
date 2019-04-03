@@ -80,6 +80,23 @@ return [
         ],
     ],
 
+    'navigation'   => [
+        'default' => [
+            'home' => [
+                'pages' => [
+                    'etab' => [
+                        'label' => "Normandie Université",
+                        'title' => _("Page d'accueil du site de Normandie Université"),
+                        'uri'   => 'http://www.normandie-univ.fr',
+                        'class' => 'logo-etablissement',
+                        // NB: Spécifier la classe 'logo-etablissement' sur une page de navigation provoque le "remplacement"
+                        //     du label du lien par l'image 'public/logo-etablissement.png' (à créer le cas échéant).
+                    ],
+                ],
+            ],
+        ],
+    ],
+
     'zenddevelopertools' => [
         /**
          * General Profiler settings
