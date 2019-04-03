@@ -14,6 +14,7 @@ Avant la version 1.1.4, le journal des modifications n'avait pas encore été d�
 - Suppression dans la table `THESE` de la redondance de l'année universitaire de 1ere inscription avec la table
   `THESE_ANNEE_UNIV`. La colonne `ANNEE_UNIV_1ERE_INSC` n'est plus utilisée, vaut toujours NULL et disparaîtra dans 
   une version ultérieure. 
+- Possibilité de changer le lien/logo affiché dans le pied des pages de l'application.
 
 ### Corrections
 
