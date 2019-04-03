@@ -13,7 +13,7 @@ return [
     ],
 
     'fichier' => [
-        'root_dir_path' => '/var/www/sygal/upload',
+        'root_dir_path' => '/app/upload',
     ],
 
     'cli_config' => [
