@@ -22,6 +22,7 @@ use Application\Service\Source\SourceServiceAwareTrait;
 use Application\Service\Structure\StructureServiceAwareTrait;
 use Application\Service\These\Filter\TheseSelectFilter;
 use Application\Service\These\Filter\TheseTextFilter;
+use Application\Service\TheseAnneeUniv\TheseAnneeUnivServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
@@ -44,6 +45,7 @@ class TheseRechercheService
     use FinancementServiceAwareTrait;
     use AuthorizeServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
+    use TheseAnneeUnivServiceAwareTrait;
 
     /**
      * @var bool
@@ -595,8 +597,7 @@ class TheseRechercheService
         if ($role && $role->isEtablissementDependant()) {
             $etablissement = $role->getStructure()->getEtablissement();
         }
-        $annees = $this->theseService->getRepository()->fetchDistinctAnneesUniv1ereInscription($etablissement);
-
+        $annees = $this->theseAnneeUnivService->getRepository()->fetchDistinctAnneesUniv1ereInscription($etablissement);
         $annees = array_reverse(array_filter($annees));
 
         $options = [];
@@ -621,7 +622,7 @@ class TheseRechercheService
     private function fetchAnneesUnivInscriptionOptions()
     {
         // Vilaine entorse au SOC: on fetche directement TheseAnneeUniv dans TheseRechercheService !
-        // TODO: crééer un TheseAnneeUnivService
+        // TODO: déplacer dans TheseAnneeUnivService existant
         $annees = $this->fetchDistinctAnneesUnivInscription();
 
         $annees = array_reverse(array_filter($annees));

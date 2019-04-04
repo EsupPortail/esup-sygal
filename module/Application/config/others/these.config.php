@@ -1,6 +1,5 @@
 <?php
 
-use Application\Assertion\AssertionAbstractFactory;
 use Application\Controller\Factory\TheseConsoleControllerFactory;
 use Application\Controller\Factory\TheseControllerFactory;
 use Application\Controller\Factory\TheseObserverControllerFactory;
@@ -27,7 +26,8 @@ use Application\Service\ServiceAwareInitializer;
 use Application\Service\These\Factory\TheseObserverServiceFactory;
 use Application\Service\These\Factory\TheseRechercheServiceFactory;
 use Application\Service\These\Factory\TheseServiceFactory;
-use Application\Service\Url\UrlServiceFactory;
+use Application\Service\TheseAnneeUniv\TheseAnneeUnivService;
+use Application\Service\TheseAnneeUniv\TheseAnneeUnivServiceFactory;
 use Application\View\Helper\Url\UrlTheseHelperFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
@@ -1012,6 +1012,7 @@ return [
             'TheseRechercheService'        => TheseRechercheServiceFactory::class,
             'TheseObserverService'         => TheseObserverServiceFactory::class,
             FinancementService::class      => FinancementServiceFactory::class,
+            TheseAnneeUnivService::class   => TheseAnneeUnivServiceFactory::class,
         ],
     ],
     'controllers'     => [

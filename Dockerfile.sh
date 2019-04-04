@@ -47,6 +47,9 @@ cp docker/apache-site-ssl.conf ${APACHE_CONF_DIR}/sites-available/app-ssl.conf
 cp docker/fpm/pool.d/app.conf  ${PHP_CONF_DIR}/fpm/pool.d/app.conf
 cp docker/fpm/conf.d/app.ini   ${PHP_CONF_DIR}/fpm/conf.d/90-app.ini
 
+sed -i -re 's/SetEnv APPLICATION_ENV "(development|test)"/SetEnv APPLICATION_ENV "production"/' \
+    ${APACHE_CONF_DIR}/sites-available/app-ssl.conf
+
 a2ensite app app-ssl && \
     service apache2 reload && \
     service php${PHP_VERSION}-fpm reload

@@ -2,9 +2,9 @@
 return [
     'unicaen-app' => [
         'app_infos' => [
-            'version' => '1.1.3',
-            'date' => '18/03/2019',
+            'version' => '1.1.4',
+            'date' => '01/04/2019',
         ],
     ],
-    'comment' => 'Fichier généré le 18/03/2019 à 10:09:13 avec /home/metivier/MyWeb/sygal/bump-version',
+    'comment' => 'Fichier généré le 01/04/2019 à 12:13:35 avec /home/gauthierb/workspace/sygal/bump-version',
 ];
