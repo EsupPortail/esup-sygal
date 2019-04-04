@@ -2194,11 +2194,11 @@
         },
         {
             "name": "unicaen/oracle",
-            "version": "1.2.9",
+            "version": "1.2.10",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/oracle.git",
-                "reference": "13a73001400eda1fec9e3d2227c4a39a162b43f8"
+                "reference": "d242249be5225c37fcd68da8dc635add03e368ec"
             },
             "require": {
                 "doctrine/dbal": "^2.5",
@@ -2218,7 +2218,7 @@
                 ]
             },
             "description": "Bibliothèque utile lorsqu'on utilise un base de données Oracle",
-            "time": "2019-04-04T13:17:17+00:00"
+            "time": "2019-04-04T15:01:51+00:00"
         },
         {
             "name": "webmozart/assert",
