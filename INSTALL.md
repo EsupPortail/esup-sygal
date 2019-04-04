@@ -12,7 +12,7 @@ Reportez-vous au [README consacré à la création de la base de données](doc/d
 
 Pour ce qui est de l'installation du serveur d'application, n'ayant pas à Caen les compétences 
 en déploiement Docker autres que pour le développement (d'où la présence d'un `Dockerfile` et d'un `docker-compose.yml`
-dans les sources), nous documenterons une installation à l'ancienne.
+dans les sources), nous documenterons une installation à l'ancienne sur un serveur *entièrement dédié à l'application*.
 Si vous voulez déployer l'application avec Docker, faites-le à partir du `Dockerfile` présent et n'hésitez pas à 
 proposer des améliorations pour cette doc d'install!
 
@@ -21,12 +21,19 @@ proposer des améliorations pour cette doc d'install!
 *NB: la procédure proposée ici part d'un serveur *Debian Stretch* tout nu et couvre l'installation de tous les packages 
 requis.* Si ce n'était pas le cas, merci de le signaler.
 
-Sur un serveur *Debian Stretch*, en `root`, lancez les commandes suivantes pour installer git et obtenir les sources de 
-SyGAL :
+En `root` sur votre serveur, pour obtenir les sources de SyGAL, lancez l'une des commandes suivantes en fonction 
+du site sur lequel vous lisez la présente page :
 ```bash
-apt-get update -qq && apt-get install -y git
-git clone https://git.unicaen.fr/open-source/sygal.git /var/www/sygal
+# Si vous êtes sur git.unicaen.fr :
+git clone https://git.unicaen.fr/open-source/sygal.git /app
+
+# Si vous êtes sur github.com :
+git clone https://github.com/EsupPortail/sygal.git /app
 ```
+
+*NB: merci de respecter dans un premier temps le choix de `/app` comme répertoire d'installation. 
+Libre à vous une fois que tout fonctionne de changer d'emplacement et de modifier en conséquence les configs
+nécessaires.*
 
 ### Configuration du serveur
 
@@ -38,24 +45,24 @@ traduit en bash.)
 
 Lancez le script `Dockerfile.sh` ainsi :
 ```bash
-cd /var/www/sygal
+cd /app
 bash Dockerfile.sh 7.0
 ```
 
 Ensuite, vérifiez et ajustez si besoin sur votre serveur les fichiers de configs suivants,
 créés par le script `Dockerfile.sh` :
 - ${APACHE_CONF_DIR}/ports.conf
-- ${APACHE_CONF_DIR}/sites-available/sygal.conf
-- ${APACHE_CONF_DIR}/sites-available/sygal-ssl.conf  
-- ${PHP_CONF_DIR}/fpm/pool.d/sygal.conf
-- ${PHP_CONF_DIR}/fpm/conf.d/
+- ${APACHE_CONF_DIR}/sites-available/app.conf
+- ${APACHE_CONF_DIR}/sites-available/app-ssl.conf  
+- ${PHP_CONF_DIR}/fpm/pool.d/app.conf
+- ${PHP_CONF_DIR}/fpm/conf.d/90-app.ini
 
 NB: Vérifiez dans le script `Dockerfile.sh` que vous venez de lancer mais normalement 
 `APACHE_CONF_DIR=/etc/apache2` et `PHP_CONF_DIR=/etc/php/7.0`.
 
 ### Installation d'une version précise de l'application
 
-Normalement, vous ne devez installer que les versions officielles, c'est à dire les versions taguées, du genre `1.0.9`
+Normalement, vous ne devez installer que les versions officielles, c'est à dire les versions taguées, du genre `1.1.4`
 par exemple.
 
 Placez-vous dans le répertoire des sources de l'application puis lancez les commandes suivantes pour obtenir la liste des
@@ -64,10 +71,10 @@ versions officielles (taguées) :
 git fetch && git fetch --tags && git tag
 ```
 
-Si la version la plus récente est par exemple la `1.0.9`, utilisez les commandes suivantes pour "installer" cette version 
+Si la version la plus récente est par exemple la `1.1.4`, utilisez les commandes suivantes pour "installer" cette version 
 sur votre serveur :
 ```bash
-git checkout --force 1.0.9 && bash install.sh
+git checkout --force 1.1.4 && bash install.sh
 ```
 
 ### Configuration du moteur PHP pour SyGAL
@@ -219,14 +226,18 @@ depuis l'interface graphique.
 
 Placez-vous dans le répertoire de SyGAL sur le serveur pour lancer l'import puis la synchro des données.
 
-Ce qui suit n'est possible que si le web service d'import de données est installé, si ce n'est pas le cas,
-reportez-vous au [README du projet sygal-import-ws](https://github.com/EsupPortail/sygal-import-ws).
+Ce qui suit n'est possible que si le web service d'import de données est installé, si ce n'est pas le cas, 
+reportez-vous au projet `sygal-import-ws` [sur github.com/EsupPortail](https://github.com/EsupPortail/sygal-import-ws)
+ou [sur git.unicaen.fr](https://git.unicaen.fr/open-source/sygal-import-ws).
 
 ### Lancement de l'import des données
 
 Il s'agit de l'interrogation du WS et du remplissage des tables TMP_*.
 
     php public/index.php import-all --etablissement=UCN --synchronize=0 --breakOnServiceNotFound=0
+
+*NB: `'UCN'` doit être remplacé par le code établissement choisi lors
+    de la création de votre établissement dans la base de données (dans le script [`05-init.sql`](04-init.sql)).*
 
 ### Lancement de la synchro à partir des données importées 
 
