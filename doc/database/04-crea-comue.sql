@@ -3,9 +3,9 @@
 --
 
 --
--- Pour faire simple... si le logo de votre COMUE doit figurer sur la page de couverture des thèses
+-- Pour faire simple, si le logo de votre COMUE doit figurer sur la page de couverture des thèses
 -- (page générée par l'appli), alors personnalisez puis lancez les 2 inserts ci-dessous pour créer
--- un établissement "COMUE" dans la base de données.
+-- un établissement "COMUE" dans la base de données, sinon passez votre chemin.
 --
 
 INSERT INTO STRUCTURE (ID, SOURCE_CODE, SIGLE, LIBELLE, TYPE_STRUCTURE_ID, SOURCE_ID, CODE, HISTO_CREATEUR_ID, HISTO_MODIFICATEUR_ID)
