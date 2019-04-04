@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8cf89d8aa3a8b99d31c267555f254266",
+    "content-hash": "2efae1d051567be2653312db3e480e52",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -2194,11 +2194,11 @@
         },
         {
             "name": "unicaen/oracle",
-            "version": "1.2.8",
+            "version": "1.2.9",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/oracle.git",
-                "reference": "026e0ef03dc0326ec1e563774852891c894fa03f"
+                "reference": "13a73001400eda1fec9e3d2227c4a39a162b43f8"
             },
             "require": {
                 "doctrine/dbal": "^2.5",
@@ -2218,7 +2218,7 @@
                 ]
             },
             "description": "Bibliothèque utile lorsqu'on utilise un base de données Oracle",
-            "time": "2019-03-10T20:11:52+00:00"
+            "time": "2019-04-04T13:17:17+00:00"
         },
         {
             "name": "webmozart/assert",
@@ -3947,7 +3947,8 @@
         "ext-fileinfo": "*",
         "ext-json": "*",
         "ext-imagick": "*",
-        "ext-readline": "*"
+        "ext-readline": "*",
+        "ext-gettext": "*"
     },
     "platform-dev": []
 }
