@@ -8,6 +8,16 @@ h2 {
 h2:nth-of-type(1) {
   margin-top: 20px; }
 
+#footer a.logo-etablissement {
+  background-image: url("/logo-etablissement.png");
+  background-repeat: no-repeat;
+  background-size: 90px auto;
+  background-position: right top;
+  display: inline-block;
+  height: 90px;
+  width: 90px;
+  text-indent: -9999px; }
+
 .modal-body h2 {
   font-size: 180%; }
 .modal-body h2:nth-of-type(1) {

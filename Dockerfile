@@ -4,18 +4,17 @@
 #
 ###########################################################################################
 
-FROM unicaen-dev-php7.0-apache
+ARG PHP_VERSION
+
+FROM unicaen-dev-php${PHP_VERSION}-apache
 
 LABEL maintainer="Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>"
-
-ENV APACHE_CONF_DIR=/etc/apache2 \
-    PHP_CONF_DIR=/etc/php/7.0
 
 ## Installation de packages requis.
 RUN apt-get update -qq && \
     apt-get install -y \
         ghostscript-x \
-        php7.0-imagick
+        php${PHP_VERSION}-imagick
 
 # Nettoyage
 RUN apt-get autoremove -y && apt-get clean && rm -rf /tmp/* /var/tmp/*
@@ -27,10 +26,13 @@ RUN ln -sf /dev/stderr /var/log/apache2/error.log
 
 # Configuration Apache, PHP et FPM
 ADD docker/apache-ports.conf    ${APACHE_CONF_DIR}/ports.conf
-ADD docker/apache-site.conf     ${APACHE_CONF_DIR}/sites-available/sygal.conf
-ADD docker/apache-site-ssl.conf ${APACHE_CONF_DIR}/sites-available/sygal-ssl.conf
-ADD docker/fpm/pool.d/app.conf  ${PHP_CONF_DIR}/fpm/pool.d/sygal.conf
-ADD docker/fpm/conf.d/app.ini   ${PHP_CONF_DIR}/fpm/conf.d/sygal.ini
+ADD docker/apache-site.conf     ${APACHE_CONF_DIR}/sites-available/app.conf
+ADD docker/apache-site-ssl.conf ${APACHE_CONF_DIR}/sites-available/app-ssl.conf
+ADD docker/fpm/pool.d/app.conf  ${PHP_CONF_DIR}/fpm/pool.d/app.conf
+ADD docker/fpm/conf.d/app.ini   ${PHP_CONF_DIR}/fpm/conf.d/90-app.ini
 
-RUN a2ensite sygal sygal-ssl && \
-    service php7.0-fpm reload
+# Copie des scripts complémentaires à lancer au démarrage du container
+COPY docker/entrypoint.d/* /entrypoint.d/
+
+RUN a2ensite app app-ssl && \
+    service php${PHP_VERSION}-fpm reload

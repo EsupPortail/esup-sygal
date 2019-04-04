@@ -7,6 +7,9 @@
 # Composer install
 composer install --no-dev --no-suggest --optimize-autoloader
 
+# Répertoire d'upload par défaut
+mkdir -p upload && chown www-data upload
+
 # Répertoires de travail de Doctrine
 mkdir -p data/cache                   && chmod -R 777 data/cache
 mkdir -p data/DoctrineModule/cache    && chmod -R 777 data/DoctrineModule/cache

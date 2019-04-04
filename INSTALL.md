@@ -18,8 +18,13 @@ proposer des améliorations pour cette doc d'install!
 
 ### Première obtention des sources de l'application
 
-Sur un serveur *Debian Stretch* de préférence, lancez les commandes suivantes pour obtenir les sources de SyGAL :
+*NB: la procédure proposée ici part d'un serveur *Debian Stretch* tout nu et couvre l'installation de tous les packages 
+requis.* Si ce n'était pas le cas, merci de le signaler.
+
+Sur un serveur *Debian Stretch*, en `root`, lancez les commandes suivantes pour installer git et obtenir les sources de 
+SyGAL :
 ```bash
+apt-get update -qq && apt-get install -y git
 git clone https://git.unicaen.fr/open-source/sygal.git /var/www/sygal
 ```
 
@@ -34,7 +39,7 @@ traduit en bash.)
 Lancez le script `Dockerfile.sh` ainsi :
 ```bash
 cd /var/www/sygal
-source Dockerfile.sh
+bash Dockerfile.sh 7.0
 ```
 
 Ensuite, vérifiez et ajustez si besoin sur votre serveur les fichiers de configs suivants,
@@ -68,7 +73,7 @@ git checkout --force 1.0.9 && bash install.sh
 ### Configuration du moteur PHP pour SyGAL
 
 Si l'on est sur un serveur de PROD, corrigez les lignes suivantes du fichier de config PHP 
-`/etc/php/7.0/fpm/conf.d/sygal.ini` :
+`/etc/php/7.0/fpm/conf.d/90-app.ini` :
 
     ...
     display_errors = Off
@@ -83,18 +88,55 @@ Placez-vous dans le répertoire de l'application puis descendez dans le réperto
 Supprimez l'extension `.dist` des fichiers suivants :
 - `local.php.dist`
 - `secret.local.php.dist`
+Dans la suite, vous les adapterez à votre situation.
 
-Dans la suite, vous les adapterez à votre situation...
+#### `unicaen-app.global.php`
+
+- Adaptez les URL des pages "Mentions légales" et "Informatique et liberté" pour votre établissement :
+
+```php
+    'unicaen-app' => [
+        'app_infos' => [
+            //...
+            'mentionsLegales'        => "http://www.unicaen.fr/acces-direct/mentions-legales/",
+            'informatiqueEtLibertes' => "http://www.unicaen.fr/acces-direct/informatique-et-libertes/",
+```
 
 #### `local.php`
 
-RAS.
+- Adaptez le `'label'`, `'title'` et `'uri'` du lien mentionnant votre établissement dans le pied de page de 
+  l'application :
+
+```php
+    'navigation'   => [
+        'default' => [
+            'home' => [
+                'pages' => [
+                    'etab' => [
+                        'label' => _("Normandie Université"),
+                        'title' => _("Page d'accueil du site de Normandie Université"),
+                        'uri'   => 'http://www.normandie-univ.fr',
+                        'class' => 'logo-etablissement',
+                        // NB: Spécifier la classe 'logo-etablissement' sur une page de navigation provoque le "remplacement"
+                        //     du label du lien par l'image 'public/logo-etablissement.png' (à créer le cas échéant).
+```
+*NB: ensuite créez le fichier `public/logo-etablissement.png` correspondant au logo de votre établissement.*
+
+- Adaptez le chemin du répertoire où seront stockés les fichiers uploadés par les utilisateurs de l'application :
+
+```php
+    'fichier' => [
+        'root_dir_path' => '/app/upload',
+    ],
+```
+*NB: ce répertoire doit être autorisé en écriture à l'utilisateur `www-data` (ou équivalent).*
 
 #### `secret.local.php`
 
-Concernant la config de connexion au WS, `'UCN'` doit être remplacé par le code établissement choisi lors
+- Dans la config de connexion au WS suivante, `'UCN'` doit être remplacé par le code établissement choisi lors
 de la création de votre établissement dans la base de données (dans le script [`05-init.sql`](04-init.sql)) :
 
+```php
     'import-api' => [
         'etablissements' => [
             // code établissement => [config]
@@ -104,9 +146,11 @@ de la création de votre établissement dans la base de données (dans le script
                 'verify'   => false, // si true et faux certif : cURL error 60: SSL certificate problem: self signed certificate
                 'user'     => 'xxx',
                 'password' => 'yyy',
+```
 
-Renseignez les infos de connexion à la BDD :
+- Renseignez les infos de connexion à la base de données :
 
+```php
     'doctrine' => [
         'connection' => [
             'orm_default' => [
@@ -118,11 +162,13 @@ Renseignez les infos de connexion à la BDD :
                     'password' => 'xxxxxxxxxxx',
                     'charset'  => 'AL32UTF8',
                     'CURRENT_SCHEMA' => $user,
+```
 
-La config fournie permet de simuler l'authentification Shibboleth de l'utilisateur 'premierf@univ.fr' 
+- La config fournie permet de simuler l'authentification Shibboleth de l'utilisateur 'premierf@univ.fr' 
 créé en base de données (dans le script [`05-init.sql`](04-init.sql)) avec le rôle "Administrateur technique".
 Cela permet d'accéder aux pages de gestion des droits d'accès.
 
+```php
     'unicaen-auth' => [
         'shibboleth' => [
             'simulate' => [
@@ -133,8 +179,9 @@ Cela permet d'accéder aux pages de gestion des droits d'accès.
                 'HTTP_GIVENNAME'      => 'François',
                 'HTTP_SN'             => 'Premier',
                 'HTTP_SUPANNCIVILITE' => 'M.'
+```
 
-Théoriquement, à ce stade l'application SyGAL devrait être accessible.
+- Théoriquement, à ce stade l'application SyGAL devrait être accessible.
 
 
 ## Dans l'application SyGAL elle-même

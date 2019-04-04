@@ -39,15 +39,17 @@ class IndexController extends AbstractController
 //        $config = ($this->getServiceLocator()->get('config'));
 //        $this->pretty_print($config);
 
-
-        if ($this->identity() && count($this->userContextService->getSelectableIdentityRoles()) === 0) {
-            // déconnexion applicative
-            $this->zfcUserAuthentication()->getAuthAdapter()->resetAdapters();
-            $this->zfcUserAuthentication()->getAuthAdapter()->logoutAdapters();
-            $this->zfcUserAuthentication()->getAuthService()->clearIdentity();
-
-            return $this->redirect()->toRoute('not-allowed');
-        }
+        /**
+         * NB (2019/03/20) : désactiver pour donner l'accès à toutes les thèses pour les rôles doctorant et directeur/co-directeur
+         */
+//        if ($this->identity() && count($this->userContextService->getSelectableIdentityRoles()) === 0) {
+//            // déconnexion applicative
+//            $this->zfcUserAuthentication()->getAuthAdapter()->resetAdapters();
+//            $this->zfcUserAuthentication()->getAuthAdapter()->logoutAdapters();
+//            $this->zfcUserAuthentication()->getAuthService()->clearIdentity();
+//
+//            return $this->redirect()->toRoute('not-allowed');
+//        }
 
         if (($response = $this->indexForSelectedRole()) instanceof Response) {
             return $response;
