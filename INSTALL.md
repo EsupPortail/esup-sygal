@@ -92,10 +92,13 @@ Si l'on est sur un serveur de PROD, corrigez les lignes suivantes du fichier de 
 
 Placez-vous dans le répertoire de l'application puis descendez dans le répertoire `config/autoload/`.
 
-Supprimez l'extension `.dist` des fichiers suivants :
-- `local.php.dist`
-- `secret.local.php.dist`
-Dans la suite, vous les adapterez à votre situation.
+Supprimez l'extension `.dist` des fichiers `local.php.dist` et `secret.local.php.dist`, ex :
+```bash
+cp -n local.php.dist        local.php 
+cp -n secret.local.php.dist secret.local.php
+```
+
+Dans la suite, vous adapterez le contenu de ces fichiers à votre situation.
 
 #### `unicaen-app.global.php`
 
@@ -141,7 +144,7 @@ Dans la suite, vous les adapterez à votre situation.
 #### `secret.local.php`
 
 - Dans la config de connexion au WS suivante, `'UCN'` doit être remplacé par le code établissement choisi lors
-de la création de votre établissement dans la base de données (dans le script [`05-init.sql`](04-init.sql)) :
+de la création de votre établissement dans la base de données (dans le script `05-init.sql`) :
 
 ```php
     'import-api' => [
@@ -172,7 +175,7 @@ de la création de votre établissement dans la base de données (dans le script
 ```
 
 - La config fournie permet de simuler l'authentification Shibboleth de l'utilisateur 'premierf@univ.fr' 
-créé en base de données (dans le script [`05-init.sql`](04-init.sql)) avec le rôle "Administrateur technique".
+créé en base de données (dans le script `05-init.sql`) avec le rôle "Administrateur technique".
 Cela permet d'accéder aux pages de gestion des droits d'accès.
 
 ```php
@@ -195,7 +198,7 @@ Cela permet d'accéder aux pages de gestion des droits d'accès.
 
 Si vous n'avez rien changé à la config de l'application concernant Shibboleth et si vous cliquez en haut à droite de
 la page d'accueil de SyGAL sur "Connexion" puis sur "Fédération d'identité", vous devriez être dans la peau de 
-François Premier, administrateur technique de test créé en base de données (dans le script [`05-init.sql`](04-init.sql)).
+François Premier, administrateur technique de test créé en base de données (dans le script `05-init.sql`).
 
 ### Droits d'accès
 
@@ -210,7 +213,7 @@ Appliquez, svp :
 - le profil `BDD` au rôle *Bureau des doctorats UCN*
 
 NB: "UCN" n'est qu'un exemple et pour vous ce sera le code établissement choisi lors
-de la création de votre établissement dans la base de données (dans le script [`05-init.sql`](04-init.sql)) 
+de la création de votre établissement dans la base de données (dans le script `05-init.sql`) 
 
 ### Import
 
@@ -237,7 +240,7 @@ Il s'agit de l'interrogation du WS et du remplissage des tables TMP_*.
     php public/index.php import-all --etablissement=UCN --synchronize=0 --breakOnServiceNotFound=0
 
 *NB: `'UCN'` doit être remplacé par le code établissement choisi lors
-    de la création de votre établissement dans la base de données (dans le script [`05-init.sql`](04-init.sql)).*
+    de la création de votre établissement dans la base de données (dans le script `05-init.sql`).*
 
 ### Lancement de la synchro à partir des données importées 
 
