@@ -3,9 +3,10 @@
 SYstème de Gestion et d'Accompagement doctoraL
 
 
-## Installation
+## Documentation
 
-Cf. [`INSTALL.md`](INSTALL.md).
+Allez à l'adresse suivante et pensez bien à sélectionner la branche correspondant à la version voulue (ex: 1.1.4) : 
+https://git.unicaen.fr/open-source/sygal-doc/blob/master/README.md 
 
 
 ## Lancement de l'application *pour le dévelopement*
