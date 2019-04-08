@@ -52,11 +52,11 @@ return [
     'doctrine' => [
         'configuration' => [
             'orm_default' => [
-                'metadata_cache'   => ($env !== 'production' ? 'memcached' : 'array'),
-                'query_cache'      => ($env !== 'production' ? 'memcached' : 'array'),
-                'result_cache'     => ($env !== 'production' ? 'memcached' : 'array'),
-                'hydration_cache'  => ($env !== 'production' ? 'memcached' : 'array'),
-                'generate_proxies' => ($env === 'production'),
+                'metadata_cache'   => ($env === 'production' ? 'memcached' : 'array'),
+                'query_cache'      => ($env === 'production' ? 'memcached' : 'array'),
+                'result_cache'     => ($env === 'production' ? 'memcached' : 'array'),
+                'hydration_cache'  => ($env === 'production' ? 'memcached' : 'array'),
+                'generate_proxies' => ($env !== 'production'),
             ],
         ],
     ],
