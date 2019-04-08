@@ -5,25 +5,32 @@
 --
 -- Sources de données SyGAL.
 --
-delete from SOURCE where CODE = 'SYGAL::sygal';
+delete from SOURCE where CODE = 'SYGAL::sygal'
+/
 INSERT INTO SOURCE (ID, CODE, LIBELLE, IMPORTABLE)
-VALUES (1, 'SYGAL::sygal', 'SyGAL', 0);
+VALUES (1, 'SYGAL::sygal', 'SyGAL', 0)
+/
 
 --
 -- Pseudo-utilisateur 'sygal-app'.
 --
-delete from UTILISATEUR where USERNAME = 'sygal-app';
+delete from UTILISATEUR where USERNAME = 'sygal-app'
+/
 INSERT INTO UTILISATEUR (ID, USERNAME, DISPLAY_NAME, PASSWORD)
-VALUES (1, 'sygal-app', 'Application SyGAL', 'ldap');
+VALUES (1, 'sygal-app', 'Application SyGAL', 'ldap')
+/
 
 --
 -- Rôles multi-établissements.
 --
-delete from ROLE where SOURCE_CODE in ('ADMIN_TECH', 'OBSERV');
+delete from ROLE where SOURCE_CODE in ('ADMIN_TECH', 'OBSERV')
+/
 INSERT INTO ROLE (ID, CODE, LIBELLE, SOURCE_CODE, SOURCE_ID, ROLE_ID, THESE_DEP, HISTO_CREATEUR_ID, HISTO_MODIFICATEUR_ID)
-  VALUES (1, 'ADMIN_TECH', 'Administrateur technique', 'ADMIN_TECH', 1, 'Administrateur technique', 0, 1, 1);
+  VALUES (1, 'ADMIN_TECH', 'Administrateur technique', 'ADMIN_TECH', 1, 'Administrateur technique', 0, 1, 1)
+/
 INSERT INTO ROLE (ID, CODE, LIBELLE, ROLE_ID, SOURCE_CODE, SOURCE_ID, THESE_DEP, HISTO_CREATEUR_ID, HISTO_MODIFICATEUR_ID)
-  VALUES (2 /*241*/, 'OBSERV', 'Observateur', 'Observateur', 'OBSERV', 1, 0, 1, 1);
+  VALUES (2 /*241*/, 'OBSERV', 'Observateur', 'Observateur', 'OBSERV', 1, 0, 1, 1)
+/
 
 -- drop sequence INDIVIDU_ID_SEQ;
 -- drop sequence UTILISATEUR_ID_SEQ;
@@ -37,8 +44,10 @@ INSERT INTO ROLE (ID, CODE, LIBELLE, ROLE_ID, SOURCE_CODE, SOURCE_ID, THESE_DEP,
 --
 -- L'établissement inconnu.
 --
-delete from ETABLISSEMENT where SOURCE_CODE  = 'ETAB_INCONNU';
-delete from STRUCTURE where SOURCE_CODE  = 'ETAB_INCONNU';
+delete from ETABLISSEMENT where SOURCE_CODE  = 'ETAB_INCONNU'
+/
+delete from STRUCTURE where SOURCE_CODE  = 'ETAB_INCONNU'
+/
 insert into STRUCTURE(ID, LIBELLE, TYPE_STRUCTURE_ID, HISTO_CREATEUR_ID, HISTO_MODIFICATEUR_ID, SOURCE_ID, SOURCE_CODE, CODE)
 select STRUCTURE_ID_SEQ.nextval,
        'Établissement inconnu',
@@ -47,14 +56,16 @@ select STRUCTURE_ID_SEQ.nextval,
        1, -- source sygal
        'ETAB_INCONNU', -- source code unique
        'INCONNU' -- code
-from dual;
+from dual
+/
 insert into ETABLISSEMENT(ID, STRUCTURE_ID, HISTO_CREATEUR_ID, HISTO_MODIFICATEUR_ID, SOURCE_ID, SOURCE_CODE)
 select ETABLISSEMENT_ID_SEQ.nextval,
        STRUCTURE_ID_SEQ.currval,
        1, 1,
        1, -- source sygal
        'ETAB_INCONNU' -- source code unique, idem structure
-from dual;
+from dual
+/
 
 --
 -- Avance de sequences.
@@ -69,6 +80,7 @@ begin
     EXIT WHEN seqnextval >= maxid;
   END LOOP;
 end;
+/
 declare
   maxid integer;
   seqnextval integer;
@@ -79,3 +91,4 @@ begin
     EXIT WHEN seqnextval >= maxid;
   END LOOP;
 end;
+/

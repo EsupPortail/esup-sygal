@@ -308,7 +308,7 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
             <dd><?php echo $these->getDatePremiereInscriptionToString() ?: "(Non renseignée)" ?></dd>
 
             <dt>Année universitaire<br>de 1ère inscription</dt>
-            <dd><?php echo $these->getAnneeUniv1ereInscriptionToString() ?: "(Non renseignée)" ?></dd>
+            <dd><?php echo $these->getAnneeUniv1ereInscription() ?></dd>
 
             <dt>Années universitaires<br>d'inscription</dt>
             <dd><?php echo $these->getAnneesUnivInscriptionToString('<br>') ?: "(Non renseignée)" ?></dd>

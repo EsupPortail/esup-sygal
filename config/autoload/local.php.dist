@@ -13,7 +13,7 @@ return [
     ],
 
     'fichier' => [
-        'root_dir_path' => '/var/www/sygal/upload',
+        'root_dir_path' => '/app/upload',
     ],
 
     'cli_config' => [
@@ -77,6 +77,23 @@ return [
         ],
         'usurpation_allowed_usernames' => [
             // cf. secret.local.php
+        ],
+    ],
+
+    'navigation'   => [
+        'default' => [
+            'home' => [
+                'pages' => [
+                    'etab' => [
+                        'label' => "Normandie Université",
+                        'title' => _("Page d'accueil du site de Normandie Université"),
+                        'uri'   => 'http://www.normandie-univ.fr',
+                        'class' => 'logo-etablissement',
+                        // NB: Spécifier la classe 'logo-etablissement' sur une page de navigation provoque le "remplacement"
+                        //     du label du lien par l'image 'public/logo-etablissement.png' (à créer le cas échéant).
+                    ],
+                ],
+            ],
         ],
     ],
 

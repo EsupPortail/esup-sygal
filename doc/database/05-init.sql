@@ -1,13 +1,14 @@
 --
 -- INIT
 --
-
+-- ATTENTION, ce sript doit être personnalisé :
 --
--- Si votre client SQL ne supporte pas l'utilisation de paramètre du genre :codeEtablissement, remplacez dans ce script
--- toutes les occurences de ":codeEtablissement" par le code choisi *entre apostrophe*, ex: 'UCN'.
+-- Remplacez "UCN"                          par le code SyGAL de votre établissement (ex: "UTLN").
+-- Remplacez "Unicaen"                      par l'intitulé court de votre établissement (ex: "UTLN").
+-- Remplacez "Université de Caen Normandie" par l'intitulé long de votre établissement (ex: "Université de Toulon").
 --
--- Si votre client SQL supporte les motifs du genre :codeEtablissement, il vous demandera de saisir une valeur
--- pour ce parameètre : entrez le code choisi *entre apostrophe*, ex: 'UCN'.
+-- Faites-le avec sed !
+--    cat 05-init.sql | sed "s/'UCN/\'UTLN\'/g" | sed "s/Unicaen/UTLN/g" | sed "s/Caen Normandie/Toulon/g" > 04-init-utln.sql
 --
 
 --
@@ -16,11 +17,11 @@
 INSERT INTO STRUCTURE (ID, SOURCE_CODE, SIGLE, LIBELLE, TYPE_STRUCTURE_ID, SOURCE_ID, CODE, HISTO_CREATEUR_ID, HISTO_MODIFICATEUR_ID)
 select
   STRUCTURE_ID_SEQ.nextval,
-  :codeEtablissement,             --> à remplacer par le code choisi *entre apostrophe*, ex: 'UCN'
+  'UCN',             --> à remplacer par le code choisi *entre apostrophe*, ex: 'UCN'
   'Unicaen',                      --> sigle ou abbréviation à personnaliser
   'Université de Caen Normandie', --> libellé à personnaliser
   1, 1,
-  :codeEtablissement,             --> à remplacer par le code choisi *entre apostrophe*, ex: 'UCN'
+  'UCN',             --> à remplacer par le code choisi *entre apostrophe*, ex: 'UCN'
   1, 1
 from dual;
 
@@ -29,17 +30,17 @@ select
   ETABLISSEMENT_ID_SEQ.nextval, s.ID,
   'unicaen.fr',       --> domaine à personnaliser
   1,
-  :codeEtablissement, --> à remplacer par le code choisi *entre apostrophe*, ex: 'UCN'
+  'UCN', --> à remplacer par le code choisi *entre apostrophe*, ex: 'UCN'
   0, 1, 1, 1
 from STRUCTURE s
-where s.SOURCE_CODE = :codeEtablissement; --> à remplacer par le code choisi *entre apostrophe*, ex: 'UCN'
+where s.SOURCE_CODE = 'UCN'; --> à remplacer par le code choisi *entre apostrophe*, ex: 'UCN'
 
 --
 -- Sources de données importables, ex: Apogée.
 --
 INSERT INTO SOURCE (ID, CODE, LIBELLE, IMPORTABLE, ETABLISSEMENT_ID)
   SELECT 2, SOURCE_CODE||'::apogee', 'Apogée '||SOURCE_CODE, 1, ID
-  from STRUCTURE where SOURCE_CODE = :codeEtablissement; --> à remplacer par le code choisi *entre apostrophe*, ex: 'UCN'
+  from STRUCTURE where SOURCE_CODE = 'UCN'; --> à remplacer par le code choisi *entre apostrophe*, ex: 'UCN'
 
 --
 -- Rôles par établissement.
@@ -76,7 +77,7 @@ SELECT
   s.ID,
 1
 FROM tmp, STRUCTURE s
-WHERE s.SOURCE_CODE = :codeEtablissement; --> à remplacer par le code choisi *entre apostrophe*, ex: 'UCN'
+WHERE s.SOURCE_CODE = 'UCN'; --> à remplacer par le code choisi *entre apostrophe*, ex: 'UCN'
 
 --
 -- Création de l'individu/utilisateur de test

@@ -10,6 +10,7 @@ use Application\Service\Source\SourceService;
 use Application\Service\Structure\StructureService;
 use Application\Service\These\TheseRechercheService;
 use Application\Service\These\TheseService;
+use Application\Service\TheseAnneeUniv\TheseAnneeUnivService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\UserContextService;
 use Application\SourceCodeStringHelper;
@@ -37,6 +38,7 @@ class TheseRechercheServiceFactory
          * @var DomaineScientifiqueService $domaineService
          * @var FinancementService $financementService
          * @var AuthorizeService $authorizeService
+         * @var TheseAnneeUnivService $theseAnneeUnivService
          */
         $theseService = $serviceLocator->get('TheseService');
         $userContextService = $serviceLocator->get('UserContextService');
@@ -48,6 +50,7 @@ class TheseRechercheServiceFactory
         $domaineService = $serviceLocator->get(DomaineScientifiqueService::class);
         $financementService = $serviceLocator->get(FinancementService::class);
         $authorizeService = $serviceLocator->get('BjyAuthorize\Service\Authorize');
+        $theseAnneeUnivService = $serviceLocator->get(TheseAnneeUnivService::class);
 
         $service = new TheseRechercheService();
         $service->setTheseService($theseService);
@@ -60,6 +63,7 @@ class TheseRechercheServiceFactory
         $service->setDomaineScientifiqueService($domaineService);
         $service->setFinancementService($financementService);
         $service->setAuthorizeService($authorizeService);
+        $service->setTheseAnneeUnivService($theseAnneeUnivService);
 
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper

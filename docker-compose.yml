@@ -6,14 +6,16 @@ services:
     depends_on:
     - sygal-import-ws
     build:
+      args:
+        PHP_VERSION: 7.0
       context: .
     ports:
      - "8000:80"
      - "443:443"
     volumes:
-     - .:/var/www/sygal
+     - .:/app
      - /tmp:/tmp
-    working_dir: /var/www/sygal
+    working_dir: /app
     links:
     - "sygal-import-ws"
     network_mode: bridge
@@ -22,10 +24,12 @@ services:
     container_name: sygal-import-ws-container
     build:
       context: ../sygal-import-ws
+      args:
+        PHP_VERSION: 7.0
     ports:
      - "8080:80"
      - "8443:443"
     volumes:
-     - ../sygal-import-ws:/var/www/sygal-import-ws
-    working_dir: /var/www/sygal-import-ws
+     - ../sygal-import-ws:/app
+    working_dir: /app
     network_mode: bridge

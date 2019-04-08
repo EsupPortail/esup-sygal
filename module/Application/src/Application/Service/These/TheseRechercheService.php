@@ -22,6 +22,7 @@ use Application\Service\Source\SourceServiceAwareTrait;
 use Application\Service\Structure\StructureServiceAwareTrait;
 use Application\Service\These\Filter\TheseSelectFilter;
 use Application\Service\These\Filter\TheseTextFilter;
+use Application\Service\TheseAnneeUniv\TheseAnneeUnivServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
@@ -44,6 +45,7 @@ class TheseRechercheService
     use FinancementServiceAwareTrait;
     use AuthorizeServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
+    use TheseAnneeUnivServiceAwareTrait;
 
     /**
      * @var bool
@@ -335,9 +337,10 @@ class TheseRechercheService
         }
 
         /**
+         * NB (2019/03/20) : désactiver pour donner l'accès à toutes les thèses pour les rôles doctorant et directeur/co-directeur
          * Filtres découlant du rôle de l'utilisateur.
          */
-        $this->decorateQbFromUserContext($qb);
+//        $this->decorateQbFromUserContext($qb);
 
         /**
          * Prise en compte du texte recherché éventuel.
@@ -505,11 +508,11 @@ class TheseRechercheService
 
     private function fetchEtablissementsOptions()
     {
+        $role = $this->getSelectedIdentityRole();
+
         $privilege = StructurePrivileges::STRUCTURE_CONSULTATION_TOUTES_STRUCTURES;
         $toutesStructuresAllowed = $this->authorizeService->isAllowed(StructurePrivileges::getResourceId($privilege));
-        if (!$toutesStructuresAllowed) {
-            $role = $this->getSelectedIdentityRole();
-
+        if ($role && !$toutesStructuresAllowed) {
             return [
                 $this->optionify($role->getStructure()->getEtablissement())
             ];
@@ -567,12 +570,13 @@ class TheseRechercheService
     {
         $role = $this->getSelectedIdentityRole();
 
-        if ($role->isEtablissementDependant()) {
+        if ($role && $role->isEtablissementDependant()) {
             $etablissement = $role->getStructure()->getEtablissement();
             $annees = $this->theseService->getRepository()->fetchDistinctAnneesPremiereInscription($etablissement);
         } else {
             $annees = $this->theseService->getRepository()->fetchDistinctAnneesPremiereInscription();
         }
+        $annees = $this->theseService->getRepository()->fetchDistinctAnneesPremiereInscription();
 
         $annees = array_reverse(array_filter($annees));
 
@@ -590,11 +594,10 @@ class TheseRechercheService
         $role = $this->getSelectedIdentityRole();
 
         $etablissement = null;
-        if ($role->isEtablissementDependant()) {
+        if ($role && $role->isEtablissementDependant()) {
             $etablissement = $role->getStructure()->getEtablissement();
         }
-        $annees = $this->theseService->getRepository()->fetchDistinctAnneesUniv1ereInscription($etablissement);
-
+        $annees = $this->theseAnneeUnivService->getRepository()->fetchDistinctAnneesUniv1ereInscription($etablissement);
         $annees = array_reverse(array_filter($annees));
 
         $options = [];
@@ -619,7 +622,7 @@ class TheseRechercheService
     private function fetchAnneesUnivInscriptionOptions()
     {
         // Vilaine entorse au SOC: on fetche directement TheseAnneeUniv dans TheseRechercheService !
-        // TODO: crééer un TheseAnneeUnivService
+        // TODO: déplacer dans TheseAnneeUnivService existant
         $annees = $this->fetchDistinctAnneesUnivInscription();
 
         $annees = array_reverse(array_filter($annees));
@@ -668,7 +671,7 @@ class TheseRechercheService
     {
         $role = $this->getSelectedIdentityRole();
 
-        if ($role->isEtablissementDependant()) {
+        if ($role && $role->isEtablissementDependant()) {
             $etablissement = $role->getStructure()->getEtablissement();
             $annees = $this->theseService->getRepository()->fetchDistinctAnneesSoutenance($etablissement);
         } else {

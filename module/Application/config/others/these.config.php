@@ -1,6 +1,5 @@
 <?php
 
-use Application\Assertion\AssertionAbstractFactory;
 use Application\Controller\Factory\TheseConsoleControllerFactory;
 use Application\Controller\Factory\TheseControllerFactory;
 use Application\Controller\Factory\TheseObserverControllerFactory;
@@ -27,7 +26,8 @@ use Application\Service\ServiceAwareInitializer;
 use Application\Service\These\Factory\TheseObserverServiceFactory;
 use Application\Service\These\Factory\TheseRechercheServiceFactory;
 use Application\Service\These\Factory\TheseServiceFactory;
-use Application\Service\Url\UrlServiceFactory;
+use Application\Service\TheseAnneeUniv\TheseAnneeUnivService;
+use Application\Service\TheseAnneeUniv\TheseAnneeUnivServiceFactory;
 use Application\View\Helper\Url\UrlTheseHelperFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
@@ -76,7 +76,16 @@ return [
                 [
                     'controller' => 'Application\Controller\These',
                     'action'     => [
+                        'index',
+                        'these',
+                        'detail-identite',
                         'rechercher',
+                    ],
+                    'roles' => 'user',
+                ],
+                [
+                    'controller' => 'Application\Controller\These',
+                    'action'     => [
                         'depot-papier-final',
                     ],
                     'privileges' => ThesePrivileges::THESE_RECHERCHE,
@@ -91,18 +100,7 @@ return [
                 [
                     'controller' => 'Application\Controller\These',
                     'action'     => [
-                        'index',
-                    ],
-                    'privileges' => [
-                        ThesePrivileges::THESE_CONSULTATION_FICHE,
-                        ThesePrivileges::THESE_CONSULTATION_TOUTES_THESES,
-                    ],
-                ],
-                [
-                    'controller' => 'Application\Controller\These',
-                    'action'     => [
                         'roadmap',
-                        'detail-identite',
                         'generate',
                         'fusion',
                         'validation-page-de-couverture',
@@ -128,7 +126,6 @@ return [
                         'detail-depot-version-corrigee',
                         'detail-fichiers',
 
-                        'these',
                         'these-retraitee',
                         'annexes',
                         'attestation',
@@ -181,22 +178,6 @@ return [
                     'privileges' => ThesePrivileges::THESE_CONSULTATION_RDV_BU,
                     'assertion'  => 'Assertion\\These',
                 ],
-//                [ NB: ECLATÉ JUSTE APRÈS
-//                    'controller' => 'Application\Controller\These',
-//                    'action'     => [
-//                        'modifier-description',
-//                        'modifier-certif-conformite',
-//                        'modifier-attestation',
-//                        'modifier-diffusion',
-//                        'modifier-rdv-bu',
-//                    ],
-//                    'privileges' => [
-//                        ThesePrivileges::THESE_SAISIE_DESCRIPTION,
-//                        ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION,
-//                        ThesePrivileges::THESE_DEPOT_VERSION_INITIALE,
-//                    ],
-//                    'assertion'  => 'Assertion\\These',
-//                ],
                 [
                     'controller' => 'Application\Controller\These',
                     'action'     => [
@@ -1031,6 +1012,7 @@ return [
             'TheseRechercheService'        => TheseRechercheServiceFactory::class,
             'TheseObserverService'         => TheseObserverServiceFactory::class,
             FinancementService::class      => FinancementServiceFactory::class,
+            TheseAnneeUnivService::class   => TheseAnneeUnivServiceFactory::class,
         ],
     ],
     'controllers'     => [
