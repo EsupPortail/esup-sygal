@@ -108,10 +108,12 @@ class TheseSelectFilter extends TheseFilter
             case self::NAME_anneeUniv1ereInscription:
                 if ($filterValue === 'NULL') {
                     $qb
-                        ->andWhere('t.anneeUniv1ereInscription IS NULL');
+                        ->leftJoin('t.anneesUnivInscription', 'aui')
+                        ->andWhere('aui.anneeUniv IS NULL');
                 } else {
                     $qb
-                        ->andWhere('t.anneeUniv1ereInscription = :anneeUniv1ereInscription')
+                        ->join('t.anneesUnivInscription', 'aui')
+                        ->andWhere('aui.anneeUniv = :anneeUniv1ereInscription')
                         ->setParameter('anneeUniv1ereInscription', $filterValue);
                 }
                 break;

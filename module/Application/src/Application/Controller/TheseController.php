@@ -88,10 +88,13 @@ class TheseController extends AbstractController
      */
     public function indexAction()
     {
-        /** L'utilisateur est un doctorant, redirection vers l'accueil. **/
-        if ($this->userContextService->getSelectedRoleDoctorant()) {
-            return $this->redirect()->toRoute('home');
-        }
+        /**
+         * NB (2019/03/20) : désactiver pour donner l'accès à toutes les thèses pour les rôles doctorant et directeur/co-directeur
+         * L'utilisateur est un doctorant, redirection vers l'accueil. *
+         */
+//        if ($this->userContextService->getSelectedRoleDoctorant()) {
+//            return $this->redirect()->toRoute('home');
+//        }
 
         $queryParams = $this->params()->fromQuery();
         $text = $this->params()->fromQuery('text');

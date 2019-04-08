@@ -3,7 +3,8 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <entity name="Application\Entity\Db\TheseAnneeUniv" table="THESE_ANNEE_UNIV">
+    <entity name="Application\Entity\Db\TheseAnneeUniv" table="THESE_ANNEE_UNIV"
+            repository-class="Application\Entity\Db\Repository\TheseAnneeUnivRepository">
 
         <id name="id" type="integer" column="ID">
             <generator strategy="SEQUENCE"/>

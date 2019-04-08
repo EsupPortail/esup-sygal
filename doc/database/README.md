@@ -10,6 +10,10 @@ Voire même une 3e si vous envisagez de collaborer au développement (ex: `SYGAL
 
 Vous pouvez lancer ce script sans modifier quoi que ce soit.
 
+Si l'erreur Oracle `ORA-00922: option erronée ou absente` est rencontrée, 
+c'est que `SET SQLBLANKLINES ON;` n'est pas compris par le client SQL que vous utilisez. 
+Supprimez cette première ligne et relancez le script.
+
 ## Script SQL [`01-bootstrap.sql`](01-bootstrap.sql)
 
 Vous pouvez lancer ce script sans modifier quoi que ce soit.
