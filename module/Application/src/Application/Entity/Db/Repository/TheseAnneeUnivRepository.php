@@ -21,8 +21,8 @@ class TheseAnneeUnivRepository extends DefaultEntityRepository
 
         if ($etablissement !== null) {
             $qb
-                ->join('t.these', 't')
-                ->join('t.etablissement', 'etab', Join::WITH, 'etab = :etablissement')
+                ->join('t.these', 'th')
+                ->join('th.etablissement', 'etab', Join::WITH, 'etab = :etablissement')
                 ->setParameter('etablissement', $etablissement);
         }
 
