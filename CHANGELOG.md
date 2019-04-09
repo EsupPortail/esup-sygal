@@ -1,8 +1,16 @@
-# Journal des modifications
+Journal des modifications
+=========================
 
-Avant la version 1.1.4, le journal des modifications n'avait pas encore été découvert.
+1.1.5 (09/04/2019)
+------------------
 
-## 1.1.4 (03/04/2019)
+### Corrections
+
+- Correction du requêtage des années universitaires de 1ère inscription pour le pavé de filtrage des thèses.
+
+
+1.1.4 (03/04/2019)
+------------------
 
 ### Nouveautés
 
@@ -20,3 +28,9 @@ Avant la version 1.1.4, le journal des modifications n'avait pas encore été d�
 
 - Résolution du problème de l'année universitaire de 1ere inscription erronée en cas de changement de discipline.
   Requiert la version 1.2.5 du web service d'import.
+
+
+Versions antérieures
+--------------------
+
+Avant la version 1.1.4, le journal des modifications n'avait pas encore été découvert.
