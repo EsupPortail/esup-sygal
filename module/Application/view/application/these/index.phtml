@@ -3,6 +3,7 @@
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Filter\ActeursFormatter;
+use Application\Filter\TitreFormatter;
 use Application\Provider\Privilege\ExportPrivileges;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\Service\These\TheseSorter;
@@ -32,6 +33,7 @@ $acteursFormatterCodirecteurs = new ActeursFormatter();
 $acteursFormatterCodirecteurs->asSeparated()
     ->paramDisplay(['role' => false, 'complement' => false, "qualite" => false, "etablissement" => false,])
     ->paramFilter((['role' => Role::CODE_CODIRECTEUR_THESE]));
+$titreFormatter = new TitreFormatter();
 ?>
 
 <?php $this->headTitle($this->translate("Thèses")); ?>

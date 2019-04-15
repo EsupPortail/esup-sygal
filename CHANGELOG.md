@@ -1,6 +1,13 @@
 Journal des modifications
 =========================
 
+1.1.6 (15/04/2019)
+------------------
+
+### Correction 
+
+- Remplacement des caractère spéciaux d'apogée pour les guillement par le biais d'un TitreFormatter.
+
 1.1.5 (09/04/2019)
 ------------------
 
@@ -11,6 +18,8 @@ Journal des modifications
 
 1.1.4 (03/04/2019)
 ------------------
+
+## 1.1.4 (03/04/2019)
 
 ### Nouveautés
 
