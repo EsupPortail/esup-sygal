@@ -6,9 +6,11 @@
 
 use Application\Entity\Db\These;
 use Application\Filter\ActeursFormatter;
+use Application\Filter\TitreFormatter;
 use Application\View\Renderer\PhpRenderer;
 
 $acteursFormatter = new ActeursFormatter();
+$titreFormatter = new TitreFormatter();
 ?>
 
 <table class="table table-condensed these-fiche">
@@ -72,7 +74,7 @@ $acteursFormatter = new ActeursFormatter();
 
     <tr>
         <th>Titre</th>
-        <td><?php echo $these->getTitre() ?></td>
+        <td><?php echo $titreFormatter->doFormat($these); ?></td>
     </tr>
 
     <tr>

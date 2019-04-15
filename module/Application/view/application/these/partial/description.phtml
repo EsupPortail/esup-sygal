@@ -8,6 +8,7 @@
 use Application\Entity\Db\MetadonneeThese;
 use Application\Entity\Db\These;
 use Application\Filter\MotsClesFormatter;
+use Application\Filter\TitreFormatter;
 
 $metadonnee = $these->getMetadonnee();
 $motsClesFormatter = new MotsClesFormatter(['separator' => MetadonneeThese::SEPARATEUR_MOTS_CLES]);
@@ -23,7 +24,13 @@ $langueAutreTitre = function() use ($metadonnee) {
     <div class="col-md-6">
         <dl class="metadonnees">
             <dt>Titre</dt>
-            <dd><?php echo $this->escapeHtml($these->getTitre()) ?></dd>
+            <dd>
+                <?php
+                    $titreFormatter = new TitreFormatter();
+                    $titre = $titreFormatter->doFormat($these);
+                    echo $this->escapeHtml($titre);
+                ?>
+            </dd>
             <dt>Langue</dt>
             <dd><?php echo MetadonneeThese::$langues[$metadonnee->getLangue()] ?></dd>
             <dt>Titre en <?php echo strtolower(MetadonneeThese::$langues[$langueAutreTitre()]) ?></dt>

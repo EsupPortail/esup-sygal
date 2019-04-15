@@ -1,6 +1,7 @@
 <?php
 
 use Application\Entity\Db\These;
+use Application\Filter\TitreFormatter;
 use Application\View\Renderer\PhpRenderer;
 
 /**
@@ -55,7 +56,11 @@ use Application\View\Renderer\PhpRenderer;
         <strong>Date de fin de confidentialité :</strong> <?php echo $these->getDateFinConfidentialiteToString() ?> <br>
     <?php endif ?>
 
-    <strong>Titre de la thèse :</strong> <?php echo $these->getTitre() ?: "(Aucun titre)" ?> <br>
+    <strong>Titre de la thèse :</strong>
+        <?php
+            $titreFormatter = new TitreFormatter();
+            echo $titreFormatter->doFormat($these) ?: "(Aucun titre)" ?>
+    <br>
 </p>
 
 <div class="attestations">

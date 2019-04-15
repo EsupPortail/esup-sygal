@@ -143,6 +143,10 @@ class TitreApogeeFilter extends AbstractFilter
             "°"  => "°",
             "ö"  => "ö",
             "ã"  => "ã",
+
+            //semble pas fonctionner ...
+            "₀" => "«",
+            "ε" => "«",
         ];
 
         return strtr($strin, $mapping);
