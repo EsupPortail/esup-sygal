@@ -1,7 +1,6 @@
 <?php
 
 use Application\Entity\Db\These;
-use Application\Filter\TitreFormatter;
 use Application\Service\Fichier\PdcData;
 use Application\Service\These\TheseService;
 use Application\View\Renderer\PhpRenderer;
@@ -72,19 +71,9 @@ use Application\View\Renderer\PhpRenderer;
 </div>
 
 
-<?php
-//    $titre = $informations->getTitre();
-//    $titre = str_replace("₀","«", $titre);
-//    $titre = str_replace("ε", "»", $titre);
-
- $formatteur = new TitreFormatter();
- $titre = $formatteur->doFormat($informations);
-?>
-
-
 <div class='bandeau-titre'>
     <?php if ($informations->getTitre() !== null): ?>
-        <?php echo $titre; ?>
+        <?php echo $informations->getTitre(); ?>
     <?php else: ?>
         <span style='background-color:red;'> Aucun titre </span>
     <?php endif; ?>

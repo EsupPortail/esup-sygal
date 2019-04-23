@@ -3,7 +3,6 @@
 namespace Application\Entity\Db;
 
 use Application\Filter\TitreApogeeFilter;
-use Application\Filter\TitreFormatter;
 use Assert\Assertion;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -314,8 +313,6 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      */
     public function getTitre()
     {
-//        $titreFormatter = new TitreFormatter();
-//        $titre = $titreFormatter->doFormat($this->titre);
         return $this->getTitreFilter()->filter($this->titre);
     }
 
