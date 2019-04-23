@@ -75,7 +75,11 @@ class DbServiceJSONHelper
 
         // préfixage éventuel
         if ($value !== null && $prefixRequired) {
-            $value = $this->sourceCodeStringHelper->addPrefixTo($value, $prefix);
+            if ($prefix === null) {
+                $value = $this->sourceCodeStringHelper->addDefaultPrefixTo($value);
+            } else {
+                $value = $this->sourceCodeStringHelper->addPrefixTo($value, $prefix);
+            }
         }
 
         return $value;
