@@ -1,12 +1,23 @@
 Journal des modifications
 =========================
 
+1.1.7 (23/04/2019)
+------------------
+
+### Corrections
+
+- Abandon du TitreFormatter redondant et rétablissement du TitreApogeeFilter corrigé (pour ne plus subtituer les 
+  guillemets français).
+- Correction du bug dans le module unicaen/auth empêchant de s'authentifier via la fédération d'identité Renater.   
+
+
 1.1.6 (15/04/2019)
 ------------------
 
-### Correction 
+### Corrections
 
-- Remplacement des caractère spéciaux d'apogée pour les guillement par le biais d'un TitreFormatter.
+- Remplacement des caractères spéciaux d'apogée pour les guillements par le biais d'un TitreFormatter.
+
 
 1.1.5 (09/04/2019)
 ------------------
