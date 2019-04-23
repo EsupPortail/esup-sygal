@@ -5,19 +5,14 @@
  */
 
 use Application\Entity\Db\These;
-use Application\Filter\TitreFormatter;
 use UnicaenApp\Util;
 
 $class = $these->estConfidentielle() ? 'text-danger' : '';
-
-$titreFormatter = new TitreFormatter();
-$titre = $titreFormatter->doFormat($these);
 ?>
 
 <?php if (isset($useTitreThese) && $useTitreThese): ?>
     <span class="<?php echo $class ?>"
-          title="<?php echo $titre ?>">
-        <?php echo trim($titre) ? Util::truncatedString($titre, 40) : "(Aucun titre)" ?></span>
+          title="<?php echo $titre = $these->getTitre() ?>"><?php echo trim($titre) ? Util::truncatedString($titre, 40) : "(Aucun titre)" ?></span>
 <?php else: ?>
     <span class="<?php echo $class ?>"><?php echo $these->getDoctorant()->getNomComplet() ?></span>
 <?php endif ?>

@@ -19,8 +19,6 @@ Journal des modifications
 1.1.4 (03/04/2019)
 ------------------
 
-## 1.1.4 (03/04/2019)
-
 ### Nouveautés
 
 - Ouverture à toutes personnes identifiées de la consultation de la liste des thèses, à la recherche de thèse et à la 
