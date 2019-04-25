@@ -25,11 +25,11 @@ RUN ln -sf /dev/stdout /var/log/apache2/other_vhosts_access.log
 RUN ln -sf /dev/stderr /var/log/apache2/error.log
 
 # Configuration Apache, PHP et FPM
-ADD docker/apache-ports.conf    ${APACHE_CONF_DIR}/ports.conf
-ADD docker/apache-site.conf     ${APACHE_CONF_DIR}/sites-available/app.conf
-ADD docker/apache-site-ssl.conf ${APACHE_CONF_DIR}/sites-available/app-ssl.conf
-ADD docker/fpm/pool.d/app.conf  ${PHP_CONF_DIR}/fpm/pool.d/app.conf
-ADD docker/fpm/conf.d/app.ini   ${PHP_CONF_DIR}/fpm/conf.d/90-app.ini
+ADD docker/apache-ports.conf     ${APACHE_CONF_DIR}/ports.conf
+ADD docker/apache-site.conf      ${APACHE_CONF_DIR}/sites-available/app.conf
+ADD docker/apache-site-ssl.conf  ${APACHE_CONF_DIR}/sites-available/app-ssl.conf
+ADD docker/fpm/pool.d/www.conf   ${PHP_CONF_DIR}/fpm/pool.d/
+ADD docker/fpm/conf.d/99-app.ini ${PHP_CONF_DIR}/fpm/conf.d/
 
 # Copie des scripts complémentaires à lancer au démarrage du container
 COPY docker/entrypoint.d/* /entrypoint.d/

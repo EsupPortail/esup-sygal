@@ -41,11 +41,11 @@ cd ${SYGAL_DIR}
 # PHP_CONF_DIR="/etc/php/$1"
 
 # Configuration Apache et FPM
-cp docker/apache-ports.conf    ${APACHE_CONF_DIR}/ports.conf
-cp docker/apache-site.conf     ${APACHE_CONF_DIR}/sites-available/app.conf
-cp docker/apache-site-ssl.conf ${APACHE_CONF_DIR}/sites-available/app-ssl.conf
-cp docker/fpm/pool.d/app.conf  ${PHP_CONF_DIR}/fpm/pool.d/app.conf
-cp docker/fpm/conf.d/app.ini   ${PHP_CONF_DIR}/fpm/conf.d/90-app.ini
+cp docker/apache-ports.conf     ${APACHE_CONF_DIR}/ports.conf
+cp docker/apache-site.conf      ${APACHE_CONF_DIR}/sites-available/app.conf
+cp docker/apache-site-ssl.conf  ${APACHE_CONF_DIR}/sites-available/app-ssl.conf
+cp docker/fpm/pool.d/www.conf   ${PHP_CONF_DIR}/fpm/pool.d/
+cp docker/fpm/conf.d/90-app.ini ${PHP_CONF_DIR}/fpm/conf.d/
 
 sed -i -re 's/SetEnv APPLICATION_ENV "(development|test)"/SetEnv APPLICATION_ENV "production"/' \
     ${APACHE_CONF_DIR}/sites-available/app-ssl.conf
