@@ -1,6 +1,15 @@
 Journal des modifications
 =========================
 
+1.1.8 (30/04/2019)
+------------------
+
+### Corrections
+
+- Correction du nom de fichier généré lors d'un téléversement : application du formatter à tous les types 
+  de fichiers téléversés pour éviter les collisions.
+
+
 1.1.7 (23/04/2019)
 ------------------
 
