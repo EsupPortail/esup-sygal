@@ -261,10 +261,7 @@ class FichierTheseController extends AbstractController
                 }
             }
 
-            $nomFichierFormatter = null;
-            if ($nature->estThesePdf() || $nature->estFichierNonPdf()) {
-               $nomFichierFormatter = new NomFichierFormatter();
-            }
+            $nomFichierFormatter = new NomFichierFormatter();
 
             try {
                 $fichiers = $this->fichierService->createFichiersFromUpload(
