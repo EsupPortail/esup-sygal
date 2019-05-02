@@ -22,6 +22,12 @@ class QualiteEditionForm extends Form {
                 ->setValueOptions(['A' => 'A', 'B' => 'B']))
         ;
 
+        $this->add(
+            (new Radio('hdr'))
+                ->setLabel("Possède une habilitation à diriger des recherches :")
+                ->setValueOptions(['O' => 'Oui', 'N' => 'Non']))
+        ;
+
 
         $this->add((new Submit('submit'))
             ->setValue("Enregister")

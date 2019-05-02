@@ -16,6 +16,7 @@ class QualiteEditiontHydrator implements HydratorInterface
 
         $qualite->setRang($data['rang']);
         $qualite->setLibelle($data['libelle']);
+        $qualite->setHdr($data['hdr']);
 
         return $qualite;
     }
@@ -27,8 +28,9 @@ class QualiteEditiontHydrator implements HydratorInterface
     public function extract($qualite) {
 
         $data = [];
-        $data['rang']       = $qualite->getRang();
         $data['libelle']    = $qualite->getLibelle();
+        $data['rang']       = $qualite->getRang();
+        $data['hdr']        = $qualite->getHdr();
 
         return $data;
     }
