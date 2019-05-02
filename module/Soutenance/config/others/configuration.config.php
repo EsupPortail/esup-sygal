@@ -44,6 +44,26 @@ return array(
         ],
     ],
 
+    'navigation'      => [
+        'default' => [
+            'home' => [
+                'pages' => [
+                    'admin' => [
+                        'pages' => [
+                            'qualite' => [
+                                'label'    => 'Qualités des membres',
+                                'route'    => 'qualite',
+                                'order'    => 1000,
+                                'resource' => QualitePrivileges::getResourceId(QualitePrivileges::SOUTENANCE_QUALITE_VISUALISER),
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
+
+
     'service_manager' => [
         'factories' => [
             ParametreService::class => ParametreServiceFactory::class,

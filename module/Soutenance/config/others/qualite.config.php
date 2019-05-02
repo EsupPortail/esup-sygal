@@ -2,7 +2,7 @@
 
 namespace Soutenance;
 
-use Soutenance\Controller\ConfigurationController;
+use Soutenance\Controller\Configuration\ConfigurationController;
 use Soutenance\Controller\Qualite\QualiteControllerFactory;
 use Soutenance\Controller\Qualite\QualiteController;
 use Soutenance\Form\QualiteEdition\QualiteEditionForm;
@@ -78,6 +78,25 @@ return array(
                             'defaults' => [
                                 'controller' => QualiteController::class,
                                 'action'     => 'effacer',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
+
+    'navigation'      => [
+        'default' => [
+            'home' => [
+                'pages' => [
+                    'admin' => [
+                        'pages' => [
+                            'configuration' => [
+                                'label'    => 'Paramétrage du module de soutenance',
+                                'route'    => 'configuration',
+                                'order'    => 2000,
+                                'resource' => QualitePrivileges::getResourceId(QualitePrivileges::SOUTENANCE_QUALITE_VISUALISER),
                             ],
                         ],
                     ],
