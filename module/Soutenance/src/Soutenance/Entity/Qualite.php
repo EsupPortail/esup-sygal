@@ -12,6 +12,8 @@ class Qualite
     private $libelle;
     /** @var string */
     private $rang;
+    /** @var string */
+    private $hdr;
 
     /**
      * @return int
@@ -54,6 +56,24 @@ class Qualite
     public function setRang($rang)
     {
         $this->rang = $rang;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHdr()
+    {
+        return $this->hdr;
+    }
+
+    /**
+     * @param string $hdr
+     * @return Qualite
+     */
+    public function setHdr($hdr)
+    {
+        $this->hdr = $hdr;
         return $this;
     }
 

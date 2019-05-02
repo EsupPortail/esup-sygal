@@ -6,11 +6,7 @@ use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Soutenance\Controller\Avis\AvisController;
-use Soutenance\Controller\ConfigurationController;
 use Soutenance\Controller\EngagementImpartialite\EngagementImpartialiteController;
-use Soutenance\Controller\Factory\ConfigurationControllerFactory;
-use Soutenance\Form\Configuration\ConfigurationForm;
-use Soutenance\Form\Configuration\ConfigurationFormFactory;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 use Soutenance\Provider\Privilege\QualitePrivileges;
@@ -18,13 +14,10 @@ use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Membre\MembreServiceFactory;
 use Soutenance\Service\Notifier\NotifierSoutenanceService;
 use Soutenance\Service\Notifier\NotifierSoutenanceServiceFactory;
-use Soutenance\Service\Parametre\ParametreService;
-use Soutenance\Service\Parametre\ParametreServiceFactory;
 use Soutenance\Service\Validation\ValidationService;
 use Soutenance\Service\Validation\ValidationServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
-use Zend\Mvc\Router\Http\Literal;
 
 return array(
     'bjyauthorize'    => [
@@ -115,18 +108,6 @@ return array(
                                     'these',
                                     'Acteur',
                                 ],
-                            ],
-                            'qualite' => [
-                                'label'    => 'Qualités des membres',
-                                'route'    => 'qualite',
-                                'order'    => 1000,
-                                'resource' => QualitePrivileges::getResourceId(QualitePrivileges::SOUTENANCE_QUALITE_VISUALISER),
-                            ],
-                            'configuration' => [
-                                'label'    => 'Paramétrage du module de soutenance',
-                                'route'    => 'configuration',
-                                'order'    => 2000,
-                                'resource' => QualitePrivileges::getResourceId(QualitePrivileges::SOUTENANCE_QUALITE_VISUALISER),
                             ],
                         ],
                     ],

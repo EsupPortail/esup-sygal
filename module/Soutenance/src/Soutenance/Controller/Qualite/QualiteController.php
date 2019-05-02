@@ -73,9 +73,13 @@ class QualiteController extends AbstractActionController
             }
         }
 
-        return  new ViewModel([
+        $vm = new ViewModel();
+        $vm->setTemplate('soutenance/default/default-form');
+        $vm->setVariables([
+            'title' => 'Édition d\'une qualité',
             'form' => $form,
         ]);
+        return  $vm;
     }
 
     public function effacerAction() {
