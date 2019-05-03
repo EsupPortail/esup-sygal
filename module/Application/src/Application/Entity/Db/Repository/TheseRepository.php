@@ -127,6 +127,7 @@ class TheseRepository extends DefaultEntityRepository
             ->setParameter('doctorant', $doctorant)
             ->andWhere('t.etatThese = :encours')
             ->setParameter('encours', These::ETAT_EN_COURS)
+            ->andWhere('1 = pasHistorise(t)')
             ->orderBy('t.datePremiereInscription', 'ASC')
         ;
 
@@ -147,6 +148,7 @@ class TheseRepository extends DefaultEntityRepository
             ->setParameter('individu', $individu)
             ->andWhere('t.etatThese = :encours')
             ->setParameter('encours', These::ETAT_EN_COURS)
+            ->andWhere('1 = pasHistorise(t)')
             ->orderBy('t.datePremiereInscription', 'ASC')
         ;
 
@@ -170,6 +172,7 @@ class TheseRepository extends DefaultEntityRepository
             ->setParameter('encours', These::ETAT_EN_COURS)
             ->andWhere('a.individu = :individu')
             ->setParameter('individu', $individu)
+            ->andWhere('1 = pasHistorise(t)')
             ->orderBy('t.datePremiereInscription', 'ASC')
         ;
 
