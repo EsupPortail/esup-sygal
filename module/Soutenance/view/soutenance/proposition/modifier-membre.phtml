@@ -11,7 +11,8 @@ use Soutenance\Form\Membre\MembreForm;
 <?php
 echo $this->form()->openTag($form);
 echo $this->formControlGroup($form->get('sexe'));
-echo $this->formControlGroup($form->get('denomination'));
+echo $this->formControlGroup($form->get('prenom'));
+echo $this->formControlGroup($form->get('nom'));
 echo $this->formControlGroup($form->get('email'));
 echo $this->formControlGroup($form->get('qualite'));
 echo $this->formControlGroup($form->get('etablissement'));

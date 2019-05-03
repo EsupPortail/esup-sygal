@@ -3,7 +3,6 @@
 namespace Soutenance\Entity;
 
 use Application\Entity\Db\Acteur;
-use Application\Entity\Db\Individu;
 
 class Membre {
 
@@ -18,7 +17,9 @@ class Membre {
     /** @var string */
     private $genre;
     /** @var string */
-    private $denomination;
+    private $prenom;
+    /** @var string */
+    private $nom;
     /** @var string */
     private $email;
     /** @var Qualite */
@@ -85,18 +86,41 @@ class Membre {
      */
     public function getDenomination()
     {
-        return $this->denomination;
+        return $this->prenom." ".$this->getNom();
     }
 
     /**
-     * @param string $denomination
-     * @return Membre
+     * @return string
      */
-    public function setDenomination($denomination)
+    public function getPrenom()
     {
-        $this->denomination = $denomination;
-        return $this;
+        return $this->prenom;
     }
+
+    /**
+     * @param string $prenom
+     */
+    public function setPrenom($prenom)
+    {
+        $this->prenom = $prenom;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNom()
+    {
+        return $this->nom;
+    }
+
+    /**
+     * @param string $nom
+     */
+    public function setNom($nom)
+    {
+        $this->nom = $nom;
+    }
+
 
     /**
      * @return Qualite
