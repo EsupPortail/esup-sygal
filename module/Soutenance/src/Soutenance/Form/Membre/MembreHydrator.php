@@ -17,7 +17,8 @@ class MembreHydrator implements HydratorInterface
     public function hydrate(array $data, $membre) {
 
         $membre->setGenre($data['sexe']);
-        $membre->setDenomination($data['denomination']);
+        $membre->setPrenom($data['prenom']);
+        $membre->setNom($data['nom']);
         $membre->setQualite($this->getQualiteService()->getQualiteById($data['qualite']));
         $membre->setEtablissement($data['etablissement']);
         $membre->setExterieur($data['exterieur']);
@@ -45,7 +46,8 @@ class MembreHydrator implements HydratorInterface
 
         $data = [];
         $data['sexe']               = $membre->getGenre();
-        $data['denomination']       = $membre->getDenomination();
+        $data['prenom']             = $membre->getPrenom();
+        $data['nom']                = $membre->getNom();
         $data['qualite']            = $membre->getQualite();
         $data['etablissement']      = $membre->getEtablissement();
         $data['exterieur']          = $membre->getExterieur();

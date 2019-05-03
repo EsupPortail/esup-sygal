@@ -14,7 +14,8 @@
         </many-to-one>
 
         <field name="genre"             type="string"       length="1"          column="GENRE"          nullable="false"/>
-        <field name="denomination"      type="string"       length="256"        column="DENOMINATION"   nullable="false"/>
+        <field name="prenom"            type="string"       length="256"        column="PRENOM"         nullable="false"/>
+        <field name="nom"               type="string"       length="256"        column="NOM"            nullable="false"/>
         <field name="email"             type="string"       length="256"        column="EMAIL"          nullable="false"/>
 
         <many-to-one field="qualite" target-entity="Soutenance\Entity\Qualite">
