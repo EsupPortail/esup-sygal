@@ -68,43 +68,19 @@ class MembreForm extends Form {
                 ->setLabel("Le membre est extérieur (non membre d'un établissement de la COMUE et non membre de l'unité de recherche de la thèse) :")
                 ->setValueOptions([ 'oui' => 'Oui', 'non' => 'Non'])
         );
-
-
         $this->add(
-            [
-                'type' => Checkbox::class,
-                'name' => 'rapporteur',
-                'options' => [
-                    'label' => "Rapporteur",
-                ],
-                'attributes' => [
-                    'id' => 'rapporteur',
-                ],
-            ]
+            (new Radio('visio'))
+                ->setLabel("Le membre sera présent en visioconférence :")
+                ->setValueOptions([ '1' => 'Oui', '0' => 'Non'])
         );
         $this->add(
-            [
-                'type' => Checkbox::class,
-                'name' => 'membre',
-                'options' => [
-                    'label' => "Membre du jury",
-                ],
-                'attributes' => [
-                    'id' => 'membre',
-                ],
-            ]
-        );
-        $this->add(
-            [
-                'type' => Checkbox::class,
-                'name' => 'visio',
-                'options' => [
-                    'label' => "Membre du jury présent en visioconférence",
-                ],
-                'attributes' => [
-                    'id' => 'visio',
-                ],
-            ]
+            (new Radio('role'))
+                ->setLabel("Role dans le jury :")
+                ->setValueOptions([
+                    'Rapporteur' => 'rapporteur et membre du jury',
+                    'Rapporteur absent' => 'rapporteur non présent à la soutenance',
+                    'Membre' => 'membre du jury',
+                ])
         );
 
         $this->add((new Submit('submit'))
