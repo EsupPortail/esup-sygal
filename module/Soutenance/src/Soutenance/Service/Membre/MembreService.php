@@ -79,7 +79,8 @@ class MembreService {
 
         $membre = new Membre();
         $membre->setProposition($proposition);
-        $membre->setDenomination($acteur->getIndividu()->getNomComplet());
+        $membre->setPrenom($acteur->getIndividu()->getPrenom());
+        $membre->setNom($acteur->getIndividu()->getNomUsuel());
         $membre->setGenre(($acteur->getIndividu()->estUneFemme())?"F":"H");
         $qualite = $this->getQualiteService()->getQualiteByLibelle($acteur->getQualite());
         $membre->setQualite(($qualite)?$qualite:$inconnue);

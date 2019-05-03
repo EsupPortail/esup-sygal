@@ -22,10 +22,13 @@ class MembreForm extends Form {
                 ->setLabel("Civilité :")
                 ->setValueOptions([ 'F' => 'Madame', 'H' => 'Monsieur'])
         );
-
         $this->add(
-            (new Text('denomination'))
-                ->setLabel("Denomination du membre de jury :")
+            (new Text('prenom'))
+                ->setLabel("Prénom du membre de jury :")
+        );
+        $this->add(
+            (new Text('nom'))
+                ->setLabel("Nom du membre de jury :")
         );
 
         $this->add(
