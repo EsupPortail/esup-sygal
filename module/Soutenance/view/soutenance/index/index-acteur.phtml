@@ -60,8 +60,10 @@ $canVisualiser = $this->isAllowed(EngagementImpartialitePrivileges::getResourceI
                 <?php foreach($theses as $theseLink) : ?>
                     <li class="complete">
                         <a href="<?php echo $this->url('soutenance/proposition', ['these' => $theseLink->getId()], [], true); ?>">
-                            <span class="badge"><?php echo $theseLink->getId(); ?></span>
-                            <?php echo $theseLink->getTitre(); ?>
+                            <span class="badge"><?php echo $theseLink->getDoctorant(); ?></span>
+                            <?php
+                                 echo $this->partial('application/these/partial/titre', ['these' => $theseLink, 'useTitreThese' => true, 'length' => 120, 'description' => false])
+                            ?>
                         </a>
                     </li>
                 <?php endforeach; ?>
@@ -96,8 +98,10 @@ $canVisualiser = $this->isAllowed(EngagementImpartialitePrivileges::getResourceI
                 <?php foreach($theses as $theseLink) : ?>
                     <li class="complete">
                         <a href="<?php echo $this->url('soutenance/avancement', ['these' => $theseLink->getId()], [], true); ?>">
-                            <span class="badge"><?php echo $theseLink->getId(); ?></span>
-                            <?php echo $theseLink->getTitre(); ?>
+                            <span class="badge"><?php echo $theseLink->getDoctorant(); ?></span>
+                            <?php
+                            echo $this->partial('application/these/partial/titre', ['these' => $theseLink, 'useTitreThese' => true, 'length' => 120, 'description' => false])
+                            ?>
                         </a>
                     </li>
                 <?php endforeach; ?>
