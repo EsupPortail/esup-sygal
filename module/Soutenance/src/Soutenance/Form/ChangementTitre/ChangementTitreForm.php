@@ -3,7 +3,7 @@
 namespace Soutenance\Form\ChangementTitre;
 
 use Zend\Form\Element\Submit;
-use Zend\Form\Element\Text;
+use Zend\Form\Element\Textarea;
 use Zend\Form\Form;
 
 class ChangementTitreForm extends Form {
@@ -11,7 +11,7 @@ class ChangementTitreForm extends Form {
     public function init()
     {
         $this->add(
-            (new Text('titre'))
+            (new Textarea('titre'))
                 ->setLabel("Nouveau titre :")
         );
 
