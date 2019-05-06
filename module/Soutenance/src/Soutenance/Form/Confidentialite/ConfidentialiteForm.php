@@ -14,13 +14,14 @@ class ConfidentialiteForm extends Form {
         $this->add(
             (new Date('date'))
                 ->setLabel("Date de fin de confidentialité :")
+                ->setAttribute('style','z-index:1000;')
         );
         $this->add(
             [
                 'type' => Checkbox::class,
                 'name' => 'huitclos',
                 'options' => [
-                    'label' => "Soutenance en huit clos",
+                    'label' => "Soutenance en huis clos",
                 ],
                 'attributes' => [
                     'id' => 'huitclos',

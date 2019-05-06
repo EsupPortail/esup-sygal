@@ -2,7 +2,11 @@
 /**
  * @var These $these
  * @var bool $useTitreThese
+ * @var int $length
+ * @var boolean $description
  */
+
+if (! isset($length)) $length = 40;
 
 use Application\Entity\Db\These;
 use UnicaenApp\Util;
@@ -12,7 +16,7 @@ $class = $these->estConfidentielle() ? 'text-danger' : '';
 
 <?php if (isset($useTitreThese) && $useTitreThese): ?>
     <span class="<?php echo $class ?>"
-          title="<?php echo $titre = $these->getTitre() ?>"><?php echo trim($titre) ? Util::truncatedString($titre, 40) : "(Aucun titre)" ?></span>
+          title="<?php echo $titre = $these->getTitre() ?>"><?php echo trim($titre) ? Util::truncatedString($titre, $length) : "(Aucun titre)" ?></span>
 <?php else: ?>
     <span class="<?php echo $class ?>"><?php echo $these->getDoctorant()->getNomComplet() ?></span>
 <?php endif ?>
@@ -27,13 +31,15 @@ $class = $these->estConfidentielle() ? 'text-danger' : '';
        data-placement="bottom"><span class="label label-danger">CONFIDENTIELLE</span></span>
 <?php endif ?>
 
-<a title="Thèse"
-   data-toggle="popover"
-   data-content="<?php echo htmlspecialchars($this->partial('application/these/partial/fiche')) ?>"
-   data-trigger="click"
-   data-placement="bottom"
-   data-container="body"
-   data-html="true"
-   tabindex="0"
-   role="button"><span class="glyphicon glyphicon-list-alt"></span>
-</a>
+<?php if ($description !== false) : ?>
+    <a title="Thèse"
+       data-toggle="popover"
+       data-content="<?php echo htmlspecialchars($this->partial('application/these/partial/fiche')) ?>"
+       data-trigger="click"
+       data-placement="bottom"
+       data-container="body"
+       data-html="true"
+       tabindex="0"
+       role="button"><span class="glyphicon glyphicon-list-alt"></span>
+    </a>
+<?php endif; ?>

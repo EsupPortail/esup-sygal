@@ -12,6 +12,7 @@ use Soutenance\Entity\Proposition;
  * @var Validation[] $validations
  * @var Validation $validation
  * @var array $logos
+ * @var int $nbCodirecteur
  * @see
  */
 ?>
@@ -161,7 +162,7 @@ use Soutenance\Entity\Proposition;
         <?php foreach ($proposition->getMembres() as $membre) : ?>
             <tr>
                 <td> <?php echo $membre->getDenomination(); ?> </td>
-                <td> <?php echo $membre->getQualite(); ?> </td>
+                <td> <?php echo ($membre->getQualite())?$membre->getQualite()->getLibelle():"Non définie"; ?> </td>
                 <td> <?php echo $membre->getEtablissement(); ?> </td>
                 <td> <?php echo ($membre->isVisio())?"Oui":"Non"; ?></td>
             </tr>
@@ -187,7 +188,7 @@ use Soutenance\Entity\Proposition;
         <td class="info"> <?php echo ($proposition->getConfidentialite())?"Fin de confidentialité le ".$proposition->getConfidentialite()->format('d/m/Y'):"Non"; ?> </td>
     </tr>
     <tr>
-        <td class="head"> Soutenance en huit clos : </td>
+        <td class="head"> Soutenance en huis clos : </td>
         <td class="info"> <?php echo ($proposition->isHuitClos())?"Oui":"Non"; ?> </td>
     </tr>
     <tr>
@@ -239,7 +240,7 @@ use Soutenance\Entity\Proposition;
         <?php if (!empty($validations[Role::CODE_DOCTORANT])): ?>
             <?php foreach($validations[Role::CODE_DOCTORANT] as $validation) : ?>
                 <tr>
-                    <td> Doctortant </td>
+                    <td> Doctorant </td>
                     <td> <?php echo $validation->getIndividu()->getNomComplet(); ?> </td>
                     <td> Favorable </td>
                     <td> <?php echo $validation->getHistoCreation()->format('d/m/Y'); ?> </td>
@@ -274,7 +275,7 @@ use Soutenance\Entity\Proposition;
                 </tr>
             <?php endforeach; ?>
         <?php else :?>
-            <?php if($nbCodirecteur - count($validations[Role::CODE_CODIRECTEUR_THESE]) !== 0): ?>
+            <?php if($nbCodirecteur && $nbCodirecteur - count($validations[Role::CODE_CODIRECTEUR_THESE]) !== 0): ?>
                 <tr>
                     <td colspan="4"> <span class="warning">Validation manquante d'au moins un codirecteur.</span></td>
                 </tr>

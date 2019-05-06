@@ -96,7 +96,7 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
                     <?php if($proposition->getConfidentialite()): ?>
                         <dd> Date de fin de confidentialité : <?php echo $proposition->getConfidentialite()->format("d/m/Y"); ?> </dd>
                         <?php if($proposition->isHuitClos()): ?>
-                            <dd> Soutenance en huit clos </dd>
+                            <dd> Soutenance en huis clos </dd>
                         <?php endif; ?>
                     <?php else : ?>
                         <dd> Thèse non confidentielle </dd>

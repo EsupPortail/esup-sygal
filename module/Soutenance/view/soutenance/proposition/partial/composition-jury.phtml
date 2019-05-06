@@ -131,7 +131,7 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
                     <td> <?php echo $membre->getPrenom(); ?> </td>
                     <td> <?php echo $membre->getNom(); ?> </td>
                     <td> <?php echo $membre->getEmail(); ?> </td>
-                    <td> <?php echo $membre->getQualite()->getLibelle(); ?> </td>
+                    <td> <?php ($membre->getQualite())?$membre->getQualite()->getLibelle():"Non définie"; ?> </td>
                     <td> <?php echo $membre->getRang(); ?> </td>
                     <td>
                         <?php if ($membre->getExterieur() === 'oui'): ?>
