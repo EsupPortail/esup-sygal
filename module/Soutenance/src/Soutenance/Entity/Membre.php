@@ -3,6 +3,7 @@
 namespace Soutenance\Entity;
 
 use Application\Entity\Db\Acteur;
+use UnicaenApp\Exception\RuntimeException;
 
 class Membre {
 
@@ -145,6 +146,9 @@ class Membre {
      */
     public function getRang()
     {
+        if ($this->getQualite() === null) {
+            throw new RuntimeException("Pas de qualité associé au membre de jury [".$this->getDenomination()."].");
+        }
         return $this->getQualite()->getRang();
     }
     
