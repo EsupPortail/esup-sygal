@@ -56,8 +56,8 @@ $canAssocierMembreIndividu              = $this->isAllowed($these, Presoutenance
             <?php foreach ($proposition->getMembres() as $membre): ?>
                 <tr>
                     <td>    <?php echo $membre->getDenomination(); ?>                                                   </td>
-                    <td>    <?php echo $membre->getRole(); ?>                                                   </td>
-                    <td>    <?php echo $membre->getQualite()->getLibelle(); ?>                                          </td>
+                    <td>    <?php echo $membre->getRole(); ?>                                                           </td>
+                    <td>    <?php echo ($membre->getQualite())?$membre->getQualite()->getLibelle():"Non définie"; ?>    </td>
                     <td>    <?php echo $membre->getEtablissement(); ?>                                                  </td>
                     <td>    <?php echo ($membre->getActeur())?$membre->getActeur()->getId() .' '. $membre->getActeur()->getIndividu()->getNomComplet():''; ?>                  </td>
                     <td>

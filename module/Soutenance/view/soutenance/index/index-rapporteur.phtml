@@ -95,7 +95,7 @@ $canAvis = true;
                     <?php foreach ($proposition->getMembres() as $jury) : ?>
                         <tr>
                             <td> <?php echo $jury->getDenomination(); ?> </td>
-                            <td> <?php echo $jury->getQualite()->getLibelle(); ?> </td>
+                            <td> <?php echo ($jury->getQualite())?$jury->getQualite()->getLibelle():"Non définie"; ?> </td>
                             <td> <?php echo $jury->getEtablissement(); ?> </td>
                             <td> <?php echo $jury->getRole(); ?> </td>
                         </tr>

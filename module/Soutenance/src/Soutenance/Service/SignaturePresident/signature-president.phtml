@@ -162,7 +162,7 @@ use Soutenance\Entity\Proposition;
         <?php foreach ($proposition->getMembres() as $membre) : ?>
             <tr>
                 <td> <?php echo $membre->getDenomination(); ?> </td>
-                <td> <?php echo $membre->getQualite(); ?> </td>
+                <td> <?php echo ($membre->getQualite())?$membre->getQualite()->getLibelle():"Non définie"; ?> </td>
                 <td> <?php echo $membre->getEtablissement(); ?> </td>
                 <td> <?php echo ($membre->isVisio())?"Oui":"Non"; ?></td>
             </tr>
