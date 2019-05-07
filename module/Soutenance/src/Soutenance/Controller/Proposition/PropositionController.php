@@ -2,6 +2,7 @@
 
 namespace Soutenance\Controller\Proposition;
 
+use Application\Controller\AbstractController;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
@@ -33,7 +34,7 @@ use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
-class PropositionController extends AbstractActionController {
+class PropositionController extends AbstractController {
     use MembreServiceAwareTrait;
     use NotifierSoutenanceServiceAwareTrait;
     use PropositionServiceAwareTrait;
@@ -51,11 +52,11 @@ class PropositionController extends AbstractActionController {
     public function propositionAction()
     {
         /** @var These $these */
-        $idThese = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($idThese);
+        $these = $this->requestedThese();
 
         /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
+
         if (!$proposition) {
             $proposition = new Proposition();
             $proposition->setThese($these);

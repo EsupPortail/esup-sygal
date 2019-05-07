@@ -17,11 +17,18 @@ class MembreForm extends Form {
 
     public function init()
     {
-        $this->add(
-            (new Radio('sexe'))
-                ->setLabel("Civilité :")
-                ->setValueOptions([ 'F' => 'Madame', 'H' => 'Monsieur'])
-        );
+        $this->add([
+           'type' => Radio::class,
+           'name' => 'sexe',
+           'options' => [
+               'label' => 'Civilité : ',
+               'value_options' => [
+                   'F' => 'Madame',
+                   'H' => 'Monsieur',
+               ],
+           ],
+        ]);
+
         $this->add(
             (new Text('prenom'))
                 ->setLabel("Prénom du membre de jury :")
