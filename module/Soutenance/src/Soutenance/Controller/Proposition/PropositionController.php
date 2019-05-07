@@ -2,6 +2,7 @@
 
 namespace Soutenance\Controller\Proposition;
 
+use Application\Controller\AbstractController;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
@@ -12,13 +13,15 @@ use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
+use Soutenance\Form\Anglais\AnglaisForm;
+use Soutenance\Form\Anglais\AnglaisFormAwareTrait;
 use Soutenance\Form\ChangementTitre\ChangementTitreFormAwareTrait;
 use Soutenance\Form\Confidentialite\ConfidentialiteForm;
 use Soutenance\Form\Confidentialite\ConfidentialiteFormAwareTrait;
 use Soutenance\Form\DateLieu\DateLieuForm;
 use Soutenance\Form\DateLieu\DateLieuFormAwareTrait;
-use Soutenance\Form\LabelEtAnglais\LabelEtAnglaisAwareTrait;
-use Soutenance\Form\LabelEtAnglais\LabelEtAnglaisForm;
+use Soutenance\Form\LabelEuropeen\LabelEuropeenForm;
+use Soutenance\Form\LabelEuropeen\LabelEuropeenFormAwareTrait;
 use Soutenance\Form\Membre\MembreForm;
 use Soutenance\Form\Membre\MembreFromAwareTrait;
 use Soutenance\Form\Refus\RefusForm;
@@ -30,10 +33,9 @@ use Soutenance\Service\SignaturePresident\SiganturePresidentPdfExporter;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\Http\Request;
-use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
-class PropositionController extends AbstractActionController {
+class PropositionController extends AbstractController {
     use MembreServiceAwareTrait;
     use NotifierSoutenanceServiceAwareTrait;
     use PropositionServiceAwareTrait;
@@ -43,7 +45,8 @@ class PropositionController extends AbstractActionController {
 
     use DateLieuFormAwareTrait;
     use MembreFromAwareTrait;
-    use LabelEtAnglaisAwareTrait;
+    use LabelEuropeenFormAwareTrait;
+    use AnglaisFormAwareTrait;
     use ConfidentialiteFormAwareTrait;
     use RefusFormAwareTrait;
     use ChangementTitreFormAwareTrait;
@@ -51,11 +54,11 @@ class PropositionController extends AbstractActionController {
     public function propositionAction()
     {
         /** @var These $these */
-        $idThese = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($idThese);
+        $these = $this->requestedThese();
 
         /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
+
         if (!$proposition) {
             $proposition = new Proposition();
             $proposition->setThese($these);
@@ -189,18 +192,17 @@ class PropositionController extends AbstractActionController {
         $this->redirect()->toRoute('soutenance/proposition',['these' => $idThese],[],true);
     }
 
-    public function labelEtAnglaisAction()
+    public function labelEuropeenAction()
     {
         /** @var These $these */
-        $idThese = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($idThese);
+        $these = $this->requestedThese();
 
         /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
 
-        /** @var LabelEtAnglaisForm  $form */
-        $form = $this->getServiceLocator()->get('FormElementManager')->get(LabelEtAnglaisForm::class);
-        $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/label-et-anglais', ['these' => $these->getId()], [], true));
+        /** @var LabelEuropeenForm  $form */
+        $form = $this->getServiceLocator()->get('FormElementManager')->get(LabelEuropeenForm::class); //TODO trait plz
+        $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/label-europeen', ['these' => $these->getId()], [], true));
         $form->bind($proposition);
 
         /** @var Request $request */
@@ -217,7 +219,40 @@ class PropositionController extends AbstractActionController {
         $vm = new ViewModel();
         $vm->setTemplate('soutenance/default/default-form');
         $vm->setVariables([
-            'title'             => 'Renseignement d\'un label ou thèse en anglais',
+            'title'             => 'Renseignement d\'un label europeen',
+            'form'              => $form,
+        ]);
+        return $vm;
+    }
+
+    public function anglaisAction()
+    {
+        /** @var These $these */
+        $these = $this->requestedThese();
+
+        /** @var Proposition $proposition */
+        $proposition = $this->getPropositionService()->findByThese($these);
+
+        /** @var LabelEuropeenForm  $form */
+        $form = $this->getServiceLocator()->get('FormElementManager')->get(AnglaisForm::class); //TODO trait plz
+        $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/anglais', ['these' => $these->getId()], [], true));
+        $form->bind($proposition);
+
+        /** @var Request $request */
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $form->setData($data);
+            if ($form->isValid()) {
+                $this->getPropositionService()->update($proposition);
+                $this->getPropositionService()->annulerValidations($proposition);
+            }
+        }
+
+        $vm = new ViewModel();
+        $vm->setTemplate('soutenance/default/default-form');
+        $vm->setVariables([
+            'title'             => 'Renseignement de l\'utilisation de l\'anglais',
             'form'              => $form,
         ]);
         return $vm;

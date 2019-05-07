@@ -1,11 +1,11 @@
 <?php
 
-namespace Soutenance\Form\LabelEtAnglais;
+namespace Soutenance\Form\LabelEuropeen;
 
 use Soutenance\Entity\Proposition;
 use Zend\Stdlib\Hydrator\HydratorInterface;
 
-class LabelEtAnglaisHydrator implements HydratorInterface
+class LabelEuropeenHydrator implements HydratorInterface
 {
     /**
      * @param array $data
@@ -15,8 +15,6 @@ class LabelEtAnglaisHydrator implements HydratorInterface
     public function hydrate(array $data, $proposition) {
 
         $proposition->setLabelEuropeen($data['label']);
-        $proposition->setManuscritAnglais($data['manuscrit']);
-        $proposition->setSoutenanceAnglais($data['soutenance']);
 
         return $proposition;
     }
@@ -29,8 +27,6 @@ class LabelEtAnglaisHydrator implements HydratorInterface
 
         $data = [
             'label' => $proposition->isLabelEuropeen(),
-            'manuscrit' => $proposition->isManuscritAnglais(),
-            'soutenance' => $proposition->isSoutenanceAnglais(),
         ];
 
 

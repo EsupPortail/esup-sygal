@@ -39,7 +39,42 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
                         <?php echo ($proposition->isLabelEuropeen())?"Oui":"Non"; ?>
                     </dd>
 
-                    <!-- ANGLAIS -->
+                </dl>
+            </div>
+
+            <div class="col-md-4">
+                <?php if ($canModifier) : ?>
+
+                    <div class="pull-right">
+                        <a href="<?php echo $this->url('soutenance/proposition/label-europeen', ['these' => $these->getId()], [], true); ?>"
+                           class="btn btn-primary action ajax-modal"
+                           data-event="edition-confidentialite"
+                        >
+                            <span class="glyphicon glyphicon-plus"></span>
+                            Renseigner un label européen
+                        </a>
+                    </div>
+
+                    <br/>
+                    <br/>
+                    <br/>
+
+                <?php endif; ?>
+
+                <?php if($proposition->isLabelEuropeen()): ?>
+                    <div class="alert alert-sm alert-warning">
+                        <span class="glyphicon glyphicon-warning-sign"> </span>
+                        Afin de réaliser la demande de label européen, vous devez remplir le formulaire de demande suivant :
+                        <a href="https://localhost/informations/fichiers/telecharger/282">formulaire de demande de label européen</a>.
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <!-- THESE EN ANGLAIS ----------------------------------------------------------------------------------------->
+        <div class="row">
+            <div class="col-md-8">
+                <dl>
                     <dt>Thèse en anglais </dt>
 
                     <?php if ($proposition->isManuscritAnglais() || $proposition->isSoutenanceAnglais()) : ?>
@@ -64,12 +99,12 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
                 <?php if ($canModifier) : ?>
 
                     <div class="pull-right">
-                        <a href="<?php echo $this->url('soutenance/proposition/label-et-anglais', ['these' => $these->getId()], [], true); ?>"
+                        <a href="<?php echo $this->url('soutenance/proposition/anglais', ['these' => $these->getId()], [], true); ?>"
                            class="btn btn-primary action ajax-modal"
                            data-event="edition-confidentialite"
                         >
                             <span class="glyphicon glyphicon-plus"></span>
-                            Renseigner un label européen
+                            Renseigner thèse en anglais
                         </a>
                     </div>
 
@@ -79,11 +114,11 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
 
                 <?php endif; ?>
 
-                <?php if($proposition->isLabelEuropeen()): ?>
+                <?php if($proposition->isManuscritAnglais() || $proposition->isSoutenanceAnglais()): ?>
                     <div class="alert alert-sm alert-warning">
                         <span class="glyphicon glyphicon-warning-sign"> </span>
-                        Afin de réaliser la demande de label européen, vous devez remplir le formulaire de demande suivant :
-                        <a href="https://localhost/informations/fichiers/telecharger/282">formulaire de demande de label européen</a>.
+                        Afin de réaliser la demande de rédaction ou de soutenance en anglais vous devez motiver votre demande via la demande suivante :
+                        <a href="https://localhost/informations/fichiers/telecharger/282">demande de redaction ou de soutenance en anglais</a>.
                     </div>
                 <?php endif; ?>
             </div>

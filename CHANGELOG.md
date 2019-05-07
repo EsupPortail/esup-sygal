@@ -1,8 +1,43 @@
-# Journal des modifications
+Journal des modifications
+=========================
 
-Avant la version 1.1.4, le journal des modifications n'avait pas encore été découvert.
+1.1.8 (30/04/2019)
+------------------
 
-## 1.1.4 (03/04/2019)
+### Corrections
+
+- Correction du nom de fichier généré lors d'un téléversement : application du formatter à tous les types 
+  de fichiers téléversés pour éviter les collisions.
+
+
+1.1.7 (23/04/2019)
+------------------
+
+### Corrections
+
+- Abandon du TitreFormatter redondant et rétablissement du TitreApogeeFilter corrigé (pour ne plus subtituer les 
+  guillemets français).
+- Correction du bug dans le module unicaen/auth empêchant de s'authentifier via la fédération d'identité Renater.   
+
+
+1.1.6 (15/04/2019)
+------------------
+
+### Corrections
+
+- Remplacement des caractères spéciaux d'apogée pour les guillements par le biais d'un TitreFormatter.
+
+
+1.1.5 (09/04/2019)
+------------------
+
+### Corrections
+
+- Correction du requêtage des années universitaires de 1ère inscription pour le pavé de filtrage des thèses.
+
+
+1.1.4 (03/04/2019)
+------------------
 
 ### Nouveautés
 
@@ -20,3 +55,9 @@ Avant la version 1.1.4, le journal des modifications n'avait pas encore été d�
 
 - Résolution du problème de l'année universitaire de 1ere inscription erronée en cas de changement de discipline.
   Requiert la version 1.2.5 du web service d'import.
+
+
+Versions antérieures
+--------------------
+
+Avant la version 1.1.4, le journal des modifications n'avait pas encore été découvert.

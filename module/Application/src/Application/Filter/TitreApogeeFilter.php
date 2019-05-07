@@ -3,7 +3,6 @@
 namespace Application\Filter;
 
 use Zend\Filter\AbstractFilter;
-use Zend\Filter\Exception;
 
 /**
  * Class TitreApogeeFilter
@@ -73,7 +72,7 @@ class TitreApogeeFilter extends AbstractFilter
             "ì"  => "ˣ", //739
             "¡"  => "⁺",
             "ñ"  => "⁻",
-            "«"  => "₀",
+//            "«"  => "₀", // commenté pour respecter l'utilisation possible dans Apogée de "«"
             "_"  => "₁",
             "ú"  => "₂",
             "~"  => "₃",
@@ -93,7 +92,7 @@ class TitreApogeeFilter extends AbstractFilter
             "£"  => "β",
             "¶"  => "γ",
             "·"  => "δ",
-            "»"  => "ε",
+//            "»"  => "ε", // commenté pour respecter l'utilisation possible dans Apogée de "»"
             "¼"  => "ζ",
             "½"  => "η",
             "¾"  => "θ",
