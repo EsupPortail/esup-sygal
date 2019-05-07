@@ -1,27 +1,15 @@
 <?php
 
-namespace Soutenance\Form\LabelEtAnglais;
+namespace Soutenance\Form\Anglais;
 
 use Zend\Form\Element\Checkbox;
 use Zend\Form\Element\Submit;
 use Zend\Form\Form;
 
-class LabelEtAnglaisForm extends Form {
+class AnglaisForm extends Form {
 
     public function init()
     {
-        $this->add(
-            [
-                'type' => Checkbox::class,
-                'name' => 'label',
-                'options' => [
-                    'label' => "Demande de label européen",
-                ],
-                'attributes' => [
-                    'id' => 'label',
-                ],
-            ]
-        );
         $this->add(
             [
                 'type' => Checkbox::class,

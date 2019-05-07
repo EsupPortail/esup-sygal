@@ -5,6 +5,9 @@ use Soutenance\Assertion\PropositionAssertion;
 use Soutenance\Assertion\PropositionAssertionFactory;
 use Soutenance\Controller\Proposition\PropositionController;
 use Soutenance\Controller\Proposition\PropositionControllerFactory;
+use Soutenance\Form\Anglais\AnglaisForm;
+use Soutenance\Form\Anglais\AnglaisFormFactory;
+use Soutenance\Form\Anglais\AnglaisHydrator;
 use Soutenance\Form\ChangementTitre\ChangementTitreForm;
 use Soutenance\Form\ChangementTitre\ChangementTitreFormFactory;
 use Soutenance\Form\ChangementTitre\ChangementTitreHydrator;
@@ -14,9 +17,9 @@ use Soutenance\Form\Confidentialite\ConfidentialiteHydrator;
 use Soutenance\Form\DateLieu\DateLieuForm;
 use Soutenance\Form\DateLieu\DateLieuFormFactory;
 use Soutenance\Form\DateLieu\DateLieuHydrator;
-use Soutenance\Form\LabelEtAnglais\LabelEtAnglaisForm;
-use Soutenance\Form\LabelEtAnglais\LabelEtAnglaisFormFactory;
-use Soutenance\Form\LabelEtAnglais\LabelEtAnglaisHydrator;
+use Soutenance\Form\LabelEuropeen\LabelEuropeenForm;
+use Soutenance\Form\LabelEuropeen\LabelEuropeenFormFactory;
+use Soutenance\Form\LabelEuropeen\LabelEuropeenHydrator;
 use Soutenance\Form\Membre\MembreForm;
 use Soutenance\Form\Membre\MembreFormFactory;
 use Soutenance\Form\Membre\MembreHydrator;
@@ -72,7 +75,8 @@ return [
                         'modifier-date-lieu',
                         'modifier-membre',
                         'effacer-membre',
-                        'label-et-anglais',
+                        'label-europeen',
+                        'anglais',
                         'confidentialite',
                         'changement-titre',
                     ],
@@ -174,14 +178,25 @@ return [
                                     ],
                                 ],
                             ],
-                            'label-et-anglais' => [
+                            'label-europeen' => [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/label-et-anglais',
+                                    'route'    => '/label-europeen',
                                     'defaults' => [
                                         'controller' => PropositionController::class,
-                                        'action'     => 'label-et-anglais',
+                                        'action'     => 'label-europeen',
+                                    ],
+                                ],
+                            ],
+                            'anglais' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/anglais',
+                                    'defaults' => [
+                                        'controller' => PropositionController::class,
+                                        'action'     => 'anglais',
                                     ],
                                 ],
                             ],
@@ -272,10 +287,11 @@ return [
 
     'form_elements' => [
         'factories' => [
+            AnglaisForm::class => AnglaisFormFactory::class,
             ChangementTitreForm::class => ChangementTitreFormFactory::class,
             DateLieuForm::class => DateLieuFormFactory::class,
             MembreForm::class => MembreFormFactory::class,
-            LabelEtAnglaisForm::class => LabelEtAnglaisFormFactory::class,
+            LabelEuropeenForm::class => LabelEuropeenFormFactory::class,
             ConfidentialiteForm::class=> ConfidentialiteFormFactory::class,
             RefusForm::class => RefusFormFactory::class,
         ],
@@ -283,8 +299,9 @@ return [
 
     'hydrators' => [
         'invokables' => [
+            AnglaisHydrator::class => AnglaisHydrator::class,
             DateLieuHydrator::class => DateLieuHydrator::class,
-            LabelEtAnglaisHydrator::class => LabelEtAnglaisHydrator::class,
+            LabelEuropeenHydrator::class => LabelEuropeenHydrator::class,
             ChangementTitreHydrator::class => ChangementTitreHydrator::class,
             ConfidentialiteHydrator::class => ConfidentialiteHydrator::class,
         ],
