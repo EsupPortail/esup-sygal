@@ -1,18 +1,18 @@
 <?php
 
-namespace Soutenance\Form\LabelEtAnglais;
+namespace Soutenance\Form\Anglais;
 
 use Zend\Form\FormElementManager;
 
-class LabelEtAnglaisFormFactory
+class AnglaisFormFactory
 {
     public function __invoke(FormElementManager $formElementManager)
     {
         $sl = $formElementManager->getServiceLocator();
 
-        /** @var LabelEtAnglaisForm $form */
-        $form = new LabelEtAnglaisForm();
-        $hydrator = $sl->get('HydratorManager')->get(LabelEtAnglaisHydrator::class);
+        /** @var AnglaisForm $form */
+        $form = new AnglaisForm();
+        $hydrator = $sl->get('HydratorManager')->get(AnglaisHydrator::class);
         $form->setHydrator($hydrator);
         $form->init();
 
