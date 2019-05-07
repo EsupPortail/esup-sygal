@@ -39,6 +39,10 @@ class PropositionService {
      */
     public function find($id) {
         $qb = $this->getEntityManager()->getRepository(Proposition::class)->createQueryBuilder("proposition")
+            ->addSelect('membre')->join('proposition.membres', 'membre')
+            ->addSelect('qualite')->leftJoin('membre.qualite', 'qualite')
+            ->addSelect('acteur')->leftJoin('membre.acteur', 'acteur')
+            ->addSelect('these')->join('proposition.these', 'these')
             ->andWhere("proposition.id = :id")
             ->setParameter("id", $id)
         ;
@@ -56,6 +60,10 @@ class PropositionService {
      */
     public function findByThese($these) {
         $qb = $this->getEntityManager()->getRepository(Proposition::class)->createQueryBuilder("proposition")
+            ->addSelect('membre')->join('proposition.membres', 'membre')
+            ->addSelect('qualite')->leftJoin('membre.qualite', 'qualite')
+            ->addSelect('acteur')->leftJoin('membre.acteur', 'acteur')
+            ->addSelect('these')->join('proposition.these', 'these')
             ->andWhere("proposition.these = :these")
             ->setParameter("these", $these)
         ;
