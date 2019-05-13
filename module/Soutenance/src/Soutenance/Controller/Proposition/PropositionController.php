@@ -13,7 +13,6 @@ use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
-use Soutenance\Form\Anglais\AnglaisForm;
 use Soutenance\Form\Anglais\AnglaisFormAwareTrait;
 use Soutenance\Form\ChangementTitre\ChangementTitreFormAwareTrait;
 use Soutenance\Form\Confidentialite\ConfidentialiteForm;
@@ -201,7 +200,7 @@ class PropositionController extends AbstractController {
         $proposition = $this->getPropositionService()->findByThese($these);
 
         /** @var LabelEuropeenForm  $form */
-        $form = $this->getServiceLocator()->get('FormElementManager')->get(LabelEuropeenForm::class); //TODO trait plz
+        $form = $this->getLabelEuropeenForm();
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/label-europeen', ['these' => $these->getId()], [], true));
         $form->bind($proposition);
 
@@ -234,7 +233,7 @@ class PropositionController extends AbstractController {
         $proposition = $this->getPropositionService()->findByThese($these);
 
         /** @var LabelEuropeenForm  $form */
-        $form = $this->getServiceLocator()->get('FormElementManager')->get(AnglaisForm::class); //TODO trait plz
+        $form = $this->getAnglaisForm();
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/anglais', ['these' => $these->getId()], [], true));
         $form->bind($proposition);
 
@@ -424,13 +423,13 @@ class PropositionController extends AbstractController {
     /** Document pour la signature en présidence */
     public function signaturePresidenceAction()
     {
-        /**
-         * @var These $these
-         * @var Proposition $proposition
-         */
-        $theseId = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($theseId);
+        /** @var These $these */
+        $these = $this->requestedThese();
+        /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
+
+        $encadrement = $these->getEncadrements();
+        $codirecteurs = array_filter($encadrement, function(Acteur $a) { return ($a->getRole()->getCode() === Role::CODE_CODIRECTEUR_THESE);});
 
         /* @var $renderer \Zend\View\Renderer\PhpRenderer */
         $renderer = $this->getServiceLocator()->get('view_renderer');
@@ -441,7 +440,7 @@ class PropositionController extends AbstractController {
             'validations' => $this->getPropositionService()->getValidationSoutenance($these),
             'logos'       => $this->getPropositionService()->getLogos($these),
             'libelle'     => $this->getPropositionService()->generateLibelleSignaturePresidence($these),
-            'nbCodirecteur'     => 1,
+            'nbCodirecteur' => count($codirecteurs),
         ]);
         $exporter->export('export.pdf');
         exit;
