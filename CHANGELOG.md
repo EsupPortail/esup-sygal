@@ -1,6 +1,14 @@
 Journal des modifications
 =========================
 
+1.1.9 (14/05/2019)
+------------------
+
+### Ajout
+
+- Role Rapporteur non membre du jury pour les cas particuliers. Seulement sur les pages de couverture.
+
+
 1.1.8 (30/04/2019)
 ------------------
 
