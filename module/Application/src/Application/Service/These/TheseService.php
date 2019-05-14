@@ -290,8 +290,15 @@ class TheseService extends BaseService
             if ($these->getLibellePaysCotutelle()) $pdcData->setCotutuellePays($these->getLibellePaysCotutelle());
         }
 
+
+
         /** Jury de thèses */
         $acteurs = $these->getActeurs()->toArray();
+
+        $jury = array_filter($acteurs, function (Acteur $a) {
+           return $a->estMembreDuJury();
+        });
+
         $rapporteurs = array_filter($acteurs, function (Acteur $a) {
             return $a->estRapporteur();
         });
@@ -337,6 +344,12 @@ class TheseService extends BaseService
 
             if (!$acteur->estPresidentJury()) {
                 $acteurData->setRole($acteur->getRole()->getLibelle());
+
+                //patch rapporteur non membre ...
+                $estMembre = !empty(array_filter($jury, function (Acteur $a) use ($acteur) {return $a->getIndividu() === $acteur->getIndividu();}));
+                if ($acteur->getRole()->getCode() === Role::CODE_RAPPORTEUR_JURY && !$estMembre) {
+                    $acteurData->setRole("Rapporteur non membre du jury");
+                }
             } else {
                 $acteurData->setRole(Role::LIBELLE_PRESIDENT);
             }
