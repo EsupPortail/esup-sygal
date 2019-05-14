@@ -17,7 +17,6 @@ use Application\Entity\Db\Variable;
 use Application\Entity\Db\VersionFichier;
 use Application\Entity\Db\WfEtape;
 use Application\Filter\IdifyFilterAwareTrait;
-use Application\Filter\TitreFormatter;
 use Application\Form\AttestationTheseForm;
 use Application\Form\ConformiteFichierForm;
 use Application\Form\DiffusionTheseForm;
@@ -1379,9 +1378,7 @@ class TheseController extends AbstractController
 
         if ($description === null) {
             $description = new MetadonneeThese();
-            $titreFormatter = new TitreFormatter();
-            $titre = $titreFormatter->doFormat($these);
-            $description->setTitre($titre);
+            $description->setTitre($these->getTitre());
         }
 
         $form->bind($description);

@@ -7,8 +7,11 @@
 # Composer install
 composer install --no-dev --no-suggest --optimize-autoloader
 
+# mpdf/mpdf/ttfontdata dir access
+chown -R www-data:root vendor/mpdf/mpdf/ttfontdata && chmod -R 770 vendor/mpdf/mpdf/ttfontdata
+
 # Répertoire d'upload par défaut
-mkdir -p upload && chown www-data upload
+mkdir -p upload && chown -R www-data:root upload && chmod -R 770 upload
 
 # Répertoires de travail de Doctrine
 mkdir -p data/cache                   && chmod -R 777 data/cache
