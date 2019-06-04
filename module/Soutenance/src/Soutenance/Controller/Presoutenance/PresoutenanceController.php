@@ -64,6 +64,7 @@ class PresoutenanceController extends AbstractController
         /** Si la proposition ne possède pas encore de date de rendu de rapport alors la valeur par défaut est donnée */
         $renduRapport = $proposition->getRenduRapport();
         if (!$renduRapport) {
+            if ($proposition->getDate() === null) throw new RuntimeException("Aucune date de soutenance de renseignée !");
             try {
                 $renduRapport = $proposition->getDate();
                 $deadline = $this->getParametreService()->getParametreByCode('AVIS_DEADLINE')->getValeur();

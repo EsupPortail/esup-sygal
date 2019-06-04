@@ -13,6 +13,7 @@ use Notification\Notification;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
+use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Entity\Db\RoleInterface;
 use Zend\View\Helper\Url as UrlHelper;
 
@@ -360,4 +361,21 @@ class NotifierSoutenanceService extends \Notification\Service\NotifierService {
         $this->trigger($notif);
     }
 
+    /**
+     * @param Notification $notification
+     */
+    public function trigger(Notification $notification)
+    {
+        $notification->prepare();
+
+        $this->sendNotification($notification);
+
+        // collecte des éventuels messages exposés par la notification
+        foreach ($notification->getInfoMessages() as $message) {
+            $this->messageContainer->setMessage($message, 'info');
+        }
+        foreach ($notification->getWarningMessages() as $message) {
+            $this->messageContainer->setMessage($message, 'warning');
+        }
+    }
 }
