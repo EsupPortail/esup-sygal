@@ -68,7 +68,7 @@ class MembreForm extends Form {
 
         $this->add(
             (new Text('etablissement'))
-                ->setLabel("Établissement employeur :")
+                ->setLabel("Université ou établissement d'enseignement de rattachement :")
         );
         $this->add(
             (new Radio('exterieur'))

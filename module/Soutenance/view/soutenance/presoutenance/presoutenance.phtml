@@ -1,10 +1,11 @@
 <?php
 
 /**
- * @var \Application\Entity\Db\These $these
- * @var \Application\Entity\Db\Validation $validationBDD
+ * @var Application\Entity\Db\These $these
+ * @var Application\Entity\Db\Validation $validationBDD
+ * @var Soutenance\Entity\Proposition $proposition
  *
- * @see \Soutenance\Controller\Presoutenance\PresoutenanceController::presoutenanceAction()
+ * @see Soutenance\Controller\Presoutenance\PresoutenanceController::presoutenanceAction()
  */
 
 $tousLesAvis = count($rapporteurs) === count($avis) ;
@@ -23,6 +24,17 @@ $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->get
 ?>
 
 <?php if ($validationBDD) : ?>
+    <?php if ($proposition->getNouveauTitre() !== null) : ?>
+    <div class="panel panel-warning">
+        <div class="panel-heading">
+            <h2>Changement de titre</h2>
+        </div>
+        <div class="panel-body">
+            <?php echo $proposition->getNouveauTitre(); ?>
+        </div>
+    </div>
+    <?php endif; ?>
+
     <!-- DATE DE RENDU DE RAPPORT ----------------------------------------------------------------------------------------->
     <?php echo $this->partial('soutenance/presoutenance/partial/date-de-retour'); ?>
 
