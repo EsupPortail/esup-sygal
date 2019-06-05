@@ -6,7 +6,7 @@ use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Service\UserContextServiceAwareTrait;
-use DoctrineORMModule\Proxy\__CG__\Soutenance\Entity\Proposition;
+use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
