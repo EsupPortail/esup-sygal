@@ -5,12 +5,13 @@ namespace Soutenance\Form\Membre;
 use DoctrineModule\Form\Element\ObjectSelect;
 use Soutenance\Entity\Qualite;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\Form\Element\Checkbox;
+use Zend\Filter\StringToLower;
 use Zend\Form\Element\Email;
 use Zend\Form\Element\Radio;
 use Zend\Form\Element\Submit;
 use Zend\Form\Element\Text;
 use Zend\Form\Form;
+use Zend\Validator\EmailAddress;
 
 class MembreForm extends Form {
     use EntityManagerAwareTrait;
@@ -38,9 +39,15 @@ class MembreForm extends Form {
                 ->setLabel("Nom du membre de jury :")
         );
 
+
+        $mailValidator = new EmailAddress();
+        $mailValidator->setMessages([
+           EmailAddress::INVALID_FORMAT =>  'Adresse électronique non valide !',
+        ]);
         $this->add(
             (new Email('email'))
                 ->setLabel("Adresse électronique :")
+                ->setValidator($mailValidator)
         );
 
         $this->add([
@@ -96,25 +103,59 @@ class MembreForm extends Form {
         );
 
 //        $this->setInputFilter(
-//            $this->getInputFilter()
+//            $this->getInputFilterSpecification()
 //        );
     }
 
-//    public function getInputFilterSpecification()
-//    {
-//        return [
-//            'date' => [
-//                'name' => 'date',
-//                'required' => true,
-//            ],
-//            'heure' => [
-//                'name' => 'heure',
-//                'required' => true,
-//            ],
-//            'lieu' => [
-//                'name' => 'lieu',
-//                'required' => true,
-//            ],
-//        ];
-//    }
+    public function getInputFilterSpecification()
+    {
+        return [
+            'sexe' => [
+                'name' => 'sexe',
+                'required' => true,
+            ],
+            'prenom' => [
+                'name' => 'prenom',
+                'required' => true,
+            ],
+            'nom' => [
+                'name' => 'prenom',
+                'required' => true,
+            ],
+            'email' => [
+                'name' => 'email',
+                'required' => true,
+                'filters' => [
+                    'name' => StringToLower::class,
+                ],
+                'validator' => [
+                    'name' => EmailAddress::class,
+                    'messages' => [
+                        EmailAddress::INVALID_FORMAT => '',
+                    ],
+                ],
+            ],
+            'qualite' => [
+                'name' => 'qualite',
+                'required' => true,
+            ],
+            'etablissement' => [
+                'name' => 'etablissement',
+                'required' => true,
+            ],
+            'exterieur' => [
+                'name' => 'exterieur',
+                'required' => true,
+            ],
+            'visio' => [
+                'name' => 'visio',
+                'required' => true,
+            ],
+            'role' => [
+                'name' => 'role',
+                'required' => true,
+            ]
+
+        ];
+    }
 }

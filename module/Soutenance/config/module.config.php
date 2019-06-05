@@ -116,6 +116,13 @@ return array(
         ],
     ],
 
+//    'navigation_helpers' => [
+//        'factories' => [
+//            'menuPiedDePage'      => MenuPiedDePageFactory::class,
+//            'menuSecondaire'      => MenuSecondaireFactory::class,
+//        ],
+//    ],
+
     'service_manager' => [
         'factories' => [
             //service
