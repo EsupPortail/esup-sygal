@@ -837,7 +837,7 @@ return [
                                 'class' => 'version-initiale correction-attendue-{correctionAutorisee}',
                                 'icon' => 'glyphicon glyphicon-file',
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'validation-page-de-couverture'),
-//                                'etape' => WfEtape::CODE_DEPOT_VERSION_ORIGINALE,
+                                'etape' => WfEtape::CODE_VALIDATION_PAGE_DE_COUVERTURE,
 //                                'visible' => 'Assertion\\These',
                             ],
                             'depot' => [

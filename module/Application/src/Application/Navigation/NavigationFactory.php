@@ -2,12 +2,13 @@
 
 namespace Application\Navigation;
 
+use Application\Acl\WfEtapeResource;
 use Zend\Http\Request;
-use Zend\Mvc\Router\RouteStackInterface as Router;
 use Zend\Mvc\Router\RouteMatch;
+use Zend\Mvc\Router\RouteStackInterface as Router;
 use Zend\Navigation\Service\DefaultNavigationFactory;
-use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
+use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Factory de navigation prenant en charge :
@@ -30,10 +31,10 @@ class NavigationFactory extends DefaultNavigationFactory
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         $this->setServiceLocator($serviceLocator);
-        
+
         return parent::createService($serviceLocator);
     }
-    
+
     /**
      * @param array $pages
      * @param RouteMatch $routeMatch
@@ -65,10 +66,12 @@ class NavigationFactory extends DefaultNavigationFactory
             $this->handlePagesProvider($page);
             
             // l'attribut 'visible' d'une page peut être le nom d'un service
-            $this->handleVisibility($page, $routeMatch);
-//            
+//            $this->handleVisibility($page, $routeMatch);
+
             // injections éventuelles de paramètres de page à partir du RouteMatch
             $this->handleParamsInjection($page, $routeMatch);
+
+//            $this->handleResourceInjection($page, $routeMatch);
 
             //
             if (isset($page['pages'])) {
@@ -125,27 +128,26 @@ class NavigationFactory extends DefaultNavigationFactory
         $page['pages'] = array_merge($children, $page['pages']); // NB: possibilité d'écraser une page fille issue du fournisseur
     }
     
-    /**
-     * Recherche de l'attribut 'visible' d'une page peut être aussi le nom d'un service
-     * (au lieu d'un booléen comme le fonctionnement standard).
-     * 
-     * @param array $page
-     * @param RouteMatch $routeMatch
-     * @return boolean
-     * @throws \LogicException
-     */
-    protected function handleVisibility(&$page, RouteMatch $routeMatch = null)
-    {
-        // l'attribut 'visible' d'une page peut être le nom d'un service
-        if (isset($page['visible']) && is_string($page['visible'])) {
-            $visible = $this->getServiceLocator()->get($page['visible']);
-            if (!is_callable($visible)) {
-                throw new \LogicException(
-                        "Service spécifié pour l'attribut de page 'visible' non valide : {$page['visible']}.");
-            }
-            $page['visible'] = $visible($page, $routeMatch);
-        }
-    }
+//    /**
+//     * Recherche de l'attribut 'visible' d'une page peut être aussi le nom d'un service
+//     * (au lieu d'un booléen comme le fonctionnement standard).
+//     *
+//     * @param array $page
+//     * @param RouteMatch $routeMatch
+//     * @throws \LogicException
+//     */
+//    protected function handleVisibility(&$page, RouteMatch $routeMatch = null)
+//    {
+//        // l'attribut 'visible' d'une page peut être le nom d'un service
+//        if (isset($page['visible']) && is_string($page['visible'])) {
+//            $visible = $this->getServiceLocator()->get($page['visible']);
+//            if (!is_callable($visible)) {
+//                throw new \LogicException(
+//                        "Service spécifié pour l'attribut de page 'visible' non valide : {$page['visible']}.");
+//            }
+//            $page['visible'] = $visible($page, $routeMatch);
+//        }
+//    }
     
     /**
      * Injection éventuelle de paramètres du RouteMatch dans la page courante.3
@@ -181,6 +183,34 @@ class NavigationFactory extends DefaultNavigationFactory
             }
         }
         
+        return $this;
+    }
+
+    /**
+     * Injection éventuelle d'une instance de WfEtapeResource dans la clé 'resource'.
+     *
+     * @param array $page
+     * @param RouteMatch $routeMatch
+     * @return self
+     */
+    protected function handleResourceInjection(array &$page, RouteMatch $routeMatch = null)
+    {
+        if (!$routeMatch || !isset($page['resource']) || !isset($page['etape'])) {
+            return $this;
+        }
+        if (! $routeMatch instanceof \Application\RouteMatch) {
+            return $this;
+        }
+        if ($routeMatch->getThese() === null) {
+            return $this;
+        }
+
+        $etape = $page['etape'];
+        $these = $routeMatch->getThese();
+        $resource = new WfEtapeResource($etape, $these);
+
+        $page['resource'] = $resource;
+
         return $this;
     }
 }

@@ -446,6 +446,9 @@ class TheseController extends AbstractController
         $these = $this->requestedThese();
         $asynchronous = $this->params()->fromRoute('asynchronous');
 
+//        $etape = WfEtape::CODE_RDV_BU_SAISIE_DOCTORANT;
+//        $this->isEtapeAllowed($etape, $these);
+
         $versionArchivable = $this->fichierService->getRepository()->getVersionArchivable($these);
         $hasVA = $this->fichierService->getRepository()->hasVersion($these, VersionFichier::CODE_ARCHI);
         $hasVD = $this->fichierService->getRepository()->hasVersion($these, VersionFichier::CODE_DIFF);

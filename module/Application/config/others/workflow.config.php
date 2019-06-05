@@ -2,6 +2,7 @@
 
 use Application\Acl\WfEtapeResource;
 use Application\Assertion\WorkflowAssertion;
+use Application\Assertion\WorkflowAssertionFactory;
 use Application\Controller\Plugin\UrlWorkflow;
 use Application\Controller\WorkflowController;
 use Application\ORM\Query\Functions\Atteignable;
@@ -86,9 +87,9 @@ return [
     'service_manager' => [
         'invokables' => [
             'WorkflowService' => WorkflowService::class,
-            'WorkflowAssertion' => WorkflowAssertion::class,
         ],
         'factories' => [
+            'WorkflowAssertion' => WorkflowAssertionFactory::class,
         ],
     ],
     'controllers' => [
