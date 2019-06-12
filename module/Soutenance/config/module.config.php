@@ -61,8 +61,14 @@ return array(
         'default' => [
             'home' => [
                 'pages' => [
+                    'depot' => [
+                        'order'    => -98,
+                        'label'    => 'Dépôt',
+                        'route'    => 'home',
+                        'roles' => ['Doctorant'],
+                    ],
                     'soutenance' => [
-                        'order'    => -90,
+                        'order'    => -99,
                         'label'    => 'Soutenance',
                         'route'    => 'soutenance',
                         'roles' => [],
