@@ -9,12 +9,12 @@ use Soutenance\Provider\Privilege\PropositionPrivileges;
 $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER);
 ?>
 
-<div class="panel <?php echo ($proposition->hasDateEtLieu())?'panel-success':'panel-danger'; ?>">
+<div class="box panel <?php echo ($proposition->hasDateEtLieu())?'panel-success':'panel-danger'; ?>">
 
     <div class="panel-heading">
-        <h4>
+        <h2>
             Date et lieu de la soutenance
-        </h4>
+        </h2>
     </div>
 
     <div class="panel-body">

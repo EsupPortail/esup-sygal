@@ -166,6 +166,7 @@ class PropositionController extends AbstractController {
         $vm = new ViewModel();
         $vm->setVariables([
             'form'                  => $form,
+            'these'                 => $these,
             'title'                 => 'Renseigner les informations sur un membre du jury',
         ]);
         return $vm;
