@@ -1,0 +1,72 @@
+<?php
+
+/**
+ * @var Application\Entity\Db\These $these
+ * @var Application\Entity\Db\Validation $validationBDD
+ * @var Soutenance\Entity\Proposition $proposition
+ *
+ * @see Soutenance\Controller\Presoutenance\PresoutenanceController::presoutenanceAction()
+ */
+
+$tousLesAvis = count($rapporteurs) === count($avis) ;
+
+$this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->getIndividu());
+?>
+
+<h1 class="page-header">
+    Préparation de la soutenance
+    <small><?php echo $this->partial('application/these/partial/titre') ?></small>
+</h1>
+
+<?php
+    $messenger = $this->messenger();
+    echo $this->messenger()->addMessagesFromFlashMessenger();
+?>
+
+<?php if ($validationBDD) : ?>
+    <?php if ($proposition->getNouveauTitre() !== null) : ?>
+    <div class="panel panel-warning">
+        <div class="panel-heading">
+            <h2>Changement de titre</h2>
+        </div>
+        <div class="panel-body">
+            <?php echo $proposition->getNouveauTitre(); ?>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- DATE DE RENDU DE RAPPORT ----------------------------------------------------------------------------------------->
+    <?php echo $this->partial('soutenance/presoutenance/partial/date-de-retour'); ?>
+
+    <!-- MEMBRES DU JURY ET PERSOPASS ------------------------------------------------------------------------------------->
+    <?php echo $this->partial('soutenance/presoutenance/partial/association-jury'); ?>
+
+    <!-- ENGAGEMENT IMPARTIALITE------------------------------------------------------------------------------------------->
+    <?php echo $this->partial('soutenance/presoutenance/partial/engagement-impartialite'); ?>
+
+    <!-- AVIS SOUTENANCE -------------------------------------------------------------------------------------------------->
+    <?php echo $this->partial('soutenance/presoutenance/partial/avis-soutenance'); ?>
+
+    <!-- FEU VERT --------------------------------------------------------------------------------------------------------->
+    <?php if ($tousLesAvis) : ?>
+        <a href="<?php echo $this->url('soutenance/presoutenance/feu-vert', ['these' => $these->getId()], [], true); ?>"
+            class="btn btn-primary pull-right"
+        >
+            <span class="glyphicon glyphicon-thumbs-up"></span>
+            Donner le feu vert pour la soutenance
+        </a>
+    <?php endif; ?>
+<?php else : ?>
+    <p class="lead">
+        Vous ne pouvez commencer les démarches de présouteances qu'une fois toutes les validations obtenues.
+    </p>
+<?php endif; ?>
+
+<script>
+    $(function() {
+        $("body").on("modification-date-rendu-rapport", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+</script>

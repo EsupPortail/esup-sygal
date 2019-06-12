@@ -1,0 +1,29 @@
+<?php
+
+use Application\Entity\Db\Acteur;
+use Application\Entity\Db\These;
+use Soutenance\Entity\Membre;
+
+/**
+ * @var Acteur[] $acteurs
+ * @var Membre $membre
+ * @var These $these
+ */
+
+?>
+
+<form method="post" action="<?php echo $this->url('soutenance/presoutenance/associer-jury', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true); ?>">
+    <select name="acteur" class="form-control">
+        <option value="">Sélectionner un membre du jury ... </option>
+        <?php foreach($acteurs as $acteur) : ?>
+            <option value="<?php echo $acteur->getId(); ?>">
+                <span class="badge"> <?php echo $acteur->getRole()->getLibelle(); ?> </span>
+<!--                --><?php //echo $acteur->getIndividu()->getNomComplet(false,false,false, true); ?>
+                <?php echo $acteur->getIndividu()->getNomComplet(false,false,false, true); ?>
+                <?php echo $acteur->getQualite(); ?>
+                <?php echo ($acteur->getEtablissement())?$acteur->getEtablissement()->getLibelle():"Établissement inconnu"; ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+    <input type="submit" value="Associer">
+</form>

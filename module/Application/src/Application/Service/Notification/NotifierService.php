@@ -447,7 +447,7 @@ class NotifierService extends \Notification\Service\NotifierService
      * @param These $these
      * @return string
      */
-    private function fetchEmailBdd(These $these)
+    protected function fetchEmailBdd(These $these)
     {
         $variable = $this->variableService->getRepository()->findByCodeAndThese(Variable::CODE_EMAIL_BDD, $these);
 
@@ -458,7 +458,7 @@ class NotifierService extends \Notification\Service\NotifierService
      * @param These $these
      * @return string
      */
-    private function fetchEmailBu(These $these)
+    protected function fetchEmailBu(These $these)
     {
         $variable = $this->variableService->getRepository()->findByCodeAndThese(Variable::CODE_EMAIL_BU, $these);
 
@@ -510,6 +510,5 @@ class NotifierService extends \Notification\Service\NotifierService
             ]);
         $this->trigger($notif);
     }
-
 
 }

@@ -1,0 +1,93 @@
+<?php
+
+use Application\Constants;use Application\Entity\Db\Acteur;
+use Application\Entity\Db\These;
+use Soutenance\Entity\Avis;
+use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
+
+/**
+ * @var These $these
+ * @var Acteur $rapporteur
+ * @var Avis $avis
+ * @var string $url
+ */
+
+$this->headTitle("Avis de soutenance (".$avis->getId().")");
+
+$canAnnuler = $this->isAllowed(AvisSoutenancePrivileges::getResourceId(AvisSoutenancePrivileges::AVIS_ANNULER));
+?>
+
+<h1 class="page-header">
+    Avis de soutenance
+</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                Informations de la thèse
+            </div>
+
+            <div class="panel-body">
+                <dl>
+                    <dt> Thèse </dt>
+                    <dd> <?php echo $these->getTitre(); ?> </dd>
+                    <dt> Doctorant </dt>
+                    <dd> <?php echo $these->getDoctorant()->getIndividu(); ?> </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <?php
+            $vclass="panel-info";
+            switch ($avis->getAvis()) {
+                case "Favorable" :
+                    $vclass = "panel-success";
+                    break;
+                case "Défavorable" :
+                    $vclass = "panel-danger";
+                    break;
+            }
+        ?>
+
+        <div class="panel <?php echo $vclass; ?>">
+            <div class="panel-heading">
+                Avis de soutenance
+            </div>
+            <div class="panel-body">
+                <dl>
+                    <dt> Rapporteur </dt>
+                    <dd> <?php echo $rapporteur->getIndividu(); ?> </dd>
+                    <dt> Avis </dt>
+                    <dd> <?php echo $avis->getAvis(); ?></dd>
+                    <?php if ($avis->getMotif()) : ?>
+                        <dt> Motif </dt>
+                        <dd> <?php echo $avis->getMotif(); ?></dd>
+                    <?php endif; ?>
+                    <dt> Rapport de présoutenance</dt>
+                    <dd>
+                        <a href="<?php echo $url; ?>">
+                            <?php echo $avis->getFichier()->getNom(); ?>
+                        </a>
+                    </dd>
+                    <dt> Date de création </dt>
+                    <dd>
+                        <?php echo $avis->getValidation()->getHistoModification()->format(Constants::DATETIME_FORMAT); ?>
+                    </dd>
+
+                </dl>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<?php if ($canAnnuler) : ?>
+    <a  href="<?php echo $this->url('soutenance/avis-soutenance/annuler', ['these' => $these->getId(), 'rapporteur' => 541], [] , true); ?>"
+        class="btn btn-danger">
+        <span class="glyphicon glyphicon-remove"></span>
+        Annuler l'avis de soutance
+    </a>
+<?php endif; ?>

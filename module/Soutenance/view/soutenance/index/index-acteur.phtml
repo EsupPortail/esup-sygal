@@ -1,0 +1,116 @@
+<?php
+    /**
+     * @var These[] $theses
+     */
+
+use Application\Entity\Db\These;
+use Soutenance\Provider\Privilege\PropositionPrivileges;
+use Soutenance\Provider\Privilege\EngagementImpartialitePrivileges;
+
+$this->headTitle("Gestion de la préparation de la soutenance");
+
+$canProposer   = $this->isAllowed(EngagementImpartialitePrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER));
+$canVisualiser = $this->isAllowed(EngagementImpartialitePrivileges::getResourceId(PropositionPrivileges::PROPOSITION_VISUALISER));
+?>
+
+<h1 class="page-header">
+    Gestion de la préparation de la soutenance
+</h1>
+
+<p class="lead">
+    Le module permet de préparer la soutenance de la <strong>proposition du jury</strong> jusqu'au <strong>rendu des rapports de présoutenance</strong>.
+</p>
+
+<h2> Constituer votre jury de thèse </h2>
+
+<p>
+    SyGAL permet la constitution de votre jury de thèse de façon dématérialisée.
+    La composition de votre jury se passe en deux étapes :
+</p>
+<ol>
+    <li> la composition et acceptation par le doctorant et les directeurs et co-directeurs ;</li>
+    <li> la validation par l'unité de recherche, l'école doctorale et maison des doctorats associé à la thèse.</li>
+</ol>
+
+
+<p>
+    Votre jury doit respecter les règles suivantes :
+</p>
+    <ul>
+        <li> le jury doit être contenir aux moins deux rapporteurs ;</li>
+        <li> au moins la motié des membres doivent être de rang A (Professeurs des universités, Directeur de recherche, ...) ; </li>
+        <li> au moins la motié des membres doivent être extérieurs à l'université dans laquelle la thèse se déroule. </li>
+    </ul>
+
+    <u>N.B. :</u> Le jury doit idéalement respecter la parité homme/femme.
+
+
+<p>
+    Pour passer à la second étape de la composition de votre jury tous les acteurs directs (doctorant, directeurs et
+    co-directeurs) doivent valider unanimement la proposition de soutenance (jury, date et lieu de soutenance).
+</p>
+
+    <?php if ($canProposer && $theses !== []) : ?>
+        <div class="btn-group pull-right action">
+            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="glyphicon glyphicon-pencil"></span>
+                Commencer ma proposition <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <?php foreach($theses as $theseLink) : ?>
+                    <li class="complete">
+                        <a href="<?php echo $this->url('soutenance/proposition', ['these' => $theseLink->getId()], [], true); ?>">
+                            <span class="badge"><?php echo $theseLink->getDoctorant(); ?></span>
+                            <?php
+                                 echo $this->partial('application/these/partial/titre', ['these' => $theseLink, 'useTitreThese' => true, 'length' => 120, 'description' => false])
+                            ?>
+                        </a>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    <?php endif; ?>
+
+<h2> Voir l'avancement des validations de votre soutenance </h2>
+
+<p>
+    Avant de pouvoir soutenir de nombreuses validations sont nécessaires par :
+</p>
+    <ul>
+        <li> les acteurs directs de la thèse (doctorant, directeurs et co-directeurs) ; </li>
+        <li> les structures associés à la thèses (unité de recherche, école doctorale, ...) ;</li>
+        <li> les rapporteurs de la thèse.</li>
+    </ul>
+
+
+<p>
+    Afin de suivre ces validations, SyGAL fournit une interface permettant de suivre l'évolution de celle-ci.
+    Cette interface permet de connaître la liste de validations reçus, celles en attentes et l'ordre des validations.
+</p>
+
+    <?php if ($canVisualiser && $theses !== []) : ?>
+        <div class="btn-group pull-right action">
+            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="glyphicon glyphicon-eye-open"></span>
+                Voir les validations <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <?php foreach($theses as $theseLink) : ?>
+                    <li class="complete">
+                        <a href="<?php echo $this->url('soutenance/avancement', ['these' => $theseLink->getId()], [], true); ?>">
+                            <span class="badge"><?php echo $theseLink->getDoctorant(); ?></span>
+                            <?php
+                            echo $this->partial('application/these/partial/titre', ['these' => $theseLink, 'useTitreThese' => true, 'length' => 120, 'description' => false])
+                            ?>
+                        </a>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    <?php endif; ?>
+
+<style>
+    .action {
+        width: 20em;
+    }
+</style>

@@ -1,0 +1,30 @@
+<?php
+
+use Soutenance\Form\Membre\MembreForm;
+
+/**
+ * @var MembreForm $form
+ */
+?>
+
+
+<?php
+echo $this->form()->openTag($form);
+echo $this->formControlGroup($form->get('sexe'));
+echo $this->formControlGroup($form->get('prenom'));
+echo $this->formControlGroup($form->get('nom'));
+echo $this->formControlGroup($form->get('email'));
+echo $this->formControlGroup($form->get('qualite'));
+echo $this->formControlGroup($form->get('etablissement'));
+echo $this->formControlGroup($form->get('exterieur'));
+echo $this->formControlGroup($form->get('visio'));
+echo $this->formControlGroup($form->get('role'));
+
+echo $this->formControlGroup($form->get('submit'));
+echo $this->form()->closeTag();
+?>
+
+
+<?php
+//echo $this->form($form);
+?>

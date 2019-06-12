@@ -1,0 +1,38 @@
+<?php
+
+/**
+ * @var These $these
+ * @var RefusForm $form
+ */
+
+use Application\Entity\Db\These;
+use Soutenance\Form\Refus\RefusForm;
+?>
+
+<?php
+    echo $this->form($form);
+?>
+
+<script>
+    $(document).ready(function() {
+        // tinymce.remove();
+        tinymce.init({
+            selector: '.motif',
+            toolbar: 'newdocument undo redo | bold italic | bullist',
+            resize: true,
+            language: 'fr_FR',
+            plugins: 'lists',
+            statusbar: true,
+            browser_spellcheck: true,
+            branding: false,
+            menu: {},
+            body_id: 'motif',
+            setup: function (editor) {
+                editor.on("focusout", function () {
+                    console.log(tinymce.get('motif').getContent());
+                    $('textarea#motif').val(tinymce.get('motif').getContent());
+                });
+            }
+        });
+    });
+</script>

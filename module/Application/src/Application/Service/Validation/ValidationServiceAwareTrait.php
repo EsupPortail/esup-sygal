@@ -16,4 +16,14 @@ trait ValidationServiceAwareTrait
     {
         $this->validationService = $validationService;
     }
+
+    /**
+     * @return ValidationService
+     */
+    public function getValidationService()
+    {
+        return $this->validationService;
+    }
+
+
 }

@@ -1,0 +1,104 @@
+<?php
+
+use Application\Entity\Db\Acteur;
+use Application\Entity\Db\Doctorant;
+use Application\Entity\Db\These;
+use Soutenance\Entity\Proposition;
+
+/**
+ * @var These $these
+ * @var Proposition $proposition
+ * @var Doctorant $doctorant
+ * @var Acteur[] $directeurs
+ * @var array $indicateurs
+ * @var boolean $isOk
+ * @var boolean $juryOk
+ *
+ * @see \Soutenance\Controller\Proposition\PropositionController::propositionAction()
+ */
+
+$this->headTitle("Proposition de soutenance");
+?>
+
+<h1 class="page-header">
+    Proposition de soutenance
+    <small><?php echo $this->partial('application/these/partial/titre') ?></small>
+</h1>
+
+<p class=".lead">
+    Afin d'être validée et traitée par l'école doctorale, la proposition de soutenance doit être validée par tous les
+    intervenants immédiats de la thèse (c.-à-d. doctorant, directeur et co-directeur(s)).
+</p>
+<p class=".lead">
+    <span class="glyphicon glyphicon-warning-sign"></span> En cas de modifications de la proposition, toutes validations
+    (ou refus) seront annulées et la proposition devra être à nouveau être validée.
+</p>
+
+
+<h2> Date et composition du jury </h2>
+
+<?php echo $this->partial('partial/date-et-lieu'); ?>
+
+<?php echo $this->partial('partial/composition-jury'); ?>
+
+<h2> Informations complémentaires </h2>
+
+<?php echo $this->partial('partial/informations-complementaires'); ?>
+
+<h2> Validations </h2>
+
+<?php echo $this->partial('partial/validations-acteurs'); ?>
+
+<?php echo $this->partial('partial/validations-structures'); ?>
+
+<script>
+    $(function() {
+        $("body").on("edition-datelieu", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+    $(function() {
+        $("body").on("edition-membre", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+    $(function() {
+        $("body").on("edition-confidentialite", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+    $(function() {
+        $("body").on("refus-proposition", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+</script>
+
+<style>
+    dl {
+        width: 100%;
+        /*background-color: #1d57b7;*/
+    }
+
+    dl dt {
+        width: 50%;
+        /*background-color: #337ab7;*/
+    }
+
+    .badge-success {
+        background-color: #468847;
+    }
+
+    .badge-error {
+        background-color: #881f18;
+    }
+
+    .action {
+        width: 20em;
+        margin:1ex;
+    }
+</style>

@@ -1,0 +1,79 @@
+<?php
+
+use Application\Entity\Db\Acteur;
+use Application\Entity\Db\These;
+use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
+
+/**
+ * @var These $these
+ * @var Acteur $rapporteur
+ */
+
+$denominationDoctorant = $these->getDoctorant()->getIndividu()->__toString();
+$denominationRapporteur = $rapporteur->__toString();
+$titrePage = "Avis sur la soutenance de la thèse de ".$denominationDoctorant;
+$this->headTitle($titrePage);
+
+$canEdit = $this->isAllowed($rapporteur, AvisSoutenancePrivileges::AVIS_MODIFIER);
+?>
+
+
+
+<h1 class="page-header">
+    <?php echo $titrePage; ?>
+</h1>
+
+<p class="lead">
+    En cas d’avis favorable, si vous souhaitez néanmoins que des modifications soient apportées à la thèse, elles seront
+    transmises au jury qui peut demander à l’issu de la soutenance l'introduction de corrections dans la thèse.
+</p>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessenger(); ?>
+
+<?php if ($canEdit) : ?>
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h2> Dépot du prérapport de soutenance et de l'avis de soutenance </h2>
+        </div>
+        <div class="panel-body">
+
+    <?php echo $this->form($form); ?>
+        </div>
+    </div>
+<?php else : ?>
+    <div class="panel panel-danger">
+        <div class="panel-heading">
+            <h2> Vous ne pouvez pas modifier cette avis de soutenance </h2>
+        </div>
+        <div class="panel-body">
+            Les raisons de cette impossiblité peuvent être :
+            <ul>
+                <li> vous n'êtes pas connecté&middot;e avec le rôle de 'Rapporteur' ;</li>
+                <li> le dépassements de la date de soutenance.</li>
+            </ul>
+        </div>
+    </div>
+<?php endif; ?>
+
+<style>
+    .form-control {
+        height: auto;
+    }
+</style>
+
+<script>
+    // $(document).ready(function() {
+    //     alert('test');
+    //     if ($("input[name='avis']").attr('value') === 'Favorable') {
+    //         $("div#justification").hide();
+    //     }
+    // });
+
+    // $("input[name='avis']").change(function() {
+    //     if ($(this).attr('value') === 'Favorable') {
+    //         $("div#justification").hide();
+    //     } else {
+    //         $("div#justification").show();
+    //     }
+    // })
+</script>
