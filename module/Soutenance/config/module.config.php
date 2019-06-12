@@ -65,7 +65,6 @@ return array(
                         'order'    => -98,
                         'label'    => 'Dépôt',
                         'route'    => 'home',
-                        'roles' => ['Doctorant'],
                     ],
                     'soutenance' => [
                         'order'    => -99,
