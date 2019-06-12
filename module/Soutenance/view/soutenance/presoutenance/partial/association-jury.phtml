@@ -12,8 +12,7 @@ use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 $canAssocierMembreIndividu              = $this->isAllowed($these, PresoutenancePrivileges::PRESOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU);
 ?>
 
-<div class=" panel panel-info">
-
+<div class="box panel panel-info">
     <div class="panel-heading">
         <div class="row">
             <div class="col-md-8">
@@ -26,10 +25,12 @@ $canAssocierMembreIndividu              = $this->isAllowed($these, Presoutenance
                        href="<?php echo $this->urlThese()->refreshTheseUrl($these, $this->url('soutenance/presoutenance', ['these' => $these->getId()], [], true)); ?>"
                     ><span class="glyphicon glyphicon-import"></span> <strong>Mettre à jour</strong> la thèse à partir de
                         <?php echo $these->getSource() ?></a>
+
                 </p>
-                <p class="small">
-                    Dernière mise à jour : <?php echo $these->getHistoModification()->format(Constants::DATETIME_FORMAT) ?>.
-                </p>
+<!--                <span class="small">-->
+<!--                    Dernière mise à jour : --><?php //echo $these->getHistoModification()->format(Constants::DATETIME_FORMAT) ?><!--.-->
+<!--                </span>-->
+
             </div>
         </div>
     </div>

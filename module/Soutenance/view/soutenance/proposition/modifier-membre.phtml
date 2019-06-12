@@ -1,9 +1,11 @@
 <?php
 
+use Application\Entity\Db\These;
 use Soutenance\Form\Membre\MembreForm;
 
 /**
  * @var MembreForm $form
+ * @var These $these
  */
 ?>
 
@@ -16,6 +18,12 @@ echo $this->formControlGroup($form->get('nom'));
 echo $this->formControlGroup($form->get('email'));
 echo $this->formControlGroup($form->get('qualite'));
 echo $this->formControlGroup($form->get('etablissement'));
+
+if ($these->getEtablissement()->estComue()) {
+    /** @var \Zend\Form\Element $element */
+    $element = $form->get('exterieur');
+    $element->setLabel('Le membre est extérieur (n\'appartient pas à l\'établissement qui délivre le dîplome)');
+}
 echo $this->formControlGroup($form->get('exterieur'));
 echo $this->formControlGroup($form->get('visio'));
 echo $this->formControlGroup($form->get('role'));

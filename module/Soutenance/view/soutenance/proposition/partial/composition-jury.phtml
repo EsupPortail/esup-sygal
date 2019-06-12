@@ -12,12 +12,12 @@ use Soutenance\Provider\Privilege\PropositionPrivileges;
 $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER);
 ?>
 
-<div class="panel <?php echo ($indicateurs["valide"])?'panel-success':'panel-danger'; ?>">
+<div class="box panel <?php echo ($indicateurs["valide"])?'panel-success':'panel-danger'; ?>">
     <div class="panel-heading">
-        <h4>
+        <h2>
             <!-- Indicateurs liés à la validité du jury de thèse -->
             Composition du jury
-        </h4>
+        </h2>
     </div>
     <div class="panel-body">
 

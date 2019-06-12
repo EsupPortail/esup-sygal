@@ -137,9 +137,7 @@ class AvisController extends AbstractController {
         $membre = $this->getMembreService()->find($membreId);
         /** @var Avis $avis */
         $avis = $this->getAvisService()->getAvisByMembre($membre);
-
         $this->getAvisService()->historiser($avis);
-
 
         $this->redirect()->toRoute('soutenance/avis-soutenance', ['these' => $these->getId(), 'rapporteur' => $membreId], [], true);
     }

@@ -122,6 +122,16 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
+     * Prédicat testant cet un acteur est un membre du jury de thèse.
+     *
+     * @return bool
+     */
+    public function estMembreDuJury()
+    {
+        return $this->getRole()->getCode() === Role::CODE_MEMBRE_JURY;
+    }
+
+    /**
      * @return string
      */
     public function __toString()
@@ -295,4 +305,6 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface
     {
         return 'Acteur';
     }
+
+
 }
