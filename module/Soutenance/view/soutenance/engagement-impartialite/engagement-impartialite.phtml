@@ -38,9 +38,9 @@ $this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctora
 </p>
 
 <div>
-    <div class="panel panel-info">
+    <div class="box panel panel-info">
         <div class="panel-heading">
-            Information sur la thèse
+            <h2 class="first"> Information sur la thèse</h2>
         </div>
         <div class="panel-body">
             <dl class="dl-horizontal">
@@ -129,5 +129,26 @@ $this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctora
             </div>
         <?php endif; ?>
     </div>
-
 </div>
+
+<?php if ($validation): ?>
+<div class="box panel panel-success">
+    <div class="panel-heading">
+        <h2 class="first"> Et ensuite ? </h2>
+    </div>
+    <div class="panel-body">
+
+        Vous pouvez maintenant accéder à la partie de remise de votre avis de soutenance et dépôt du pré-rapport de soutenance.
+        <nav aria-label="Etape suivante">
+            <ul class="roadmap pagination">
+            <li>
+                <a class="roadmap-step-link" href="<?php echo $this->url('soutenance/avis-soutenance', ['these' => $these->getId(), 'rapporteur' => $membre->getId()], [], true); ?>">
+                    <span class="glyphicon glyphicon-circle-arrow-right"></span>
+                        Avis de soutenance
+                </a>
+            </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+<?php endif; ?>
