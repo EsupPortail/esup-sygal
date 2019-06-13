@@ -2,12 +2,14 @@
 
 namespace Soutenance\Controller\Proposition;
 
+use Application\Service\Fichier\FichierService;
 use Application\Service\These\TheseService;
 use Application\Service\UserContextService;
 use Soutenance\Form\Anglais\AnglaisForm;
 use Soutenance\Form\ChangementTitre\ChangementTitreForm;
 use Soutenance\Form\Confidentialite\ConfidentialiteForm;
 use Soutenance\Form\DateLieu\DateLieuForm;
+use Soutenance\Form\Justificatif\JustificatifForm;
 use Soutenance\Form\LabelEuropeen\LabelEuropeenForm;
 use Soutenance\Form\Membre\MembreForm;
 use Soutenance\Form\Refus\RefusForm;
@@ -28,6 +30,7 @@ class PropositionControllerFactory {
          * @var TheseService $theseService
          * @var UserContextService $userContextService
          * @var ValidationService $validationService
+         * @var FichierService $fichierService
          */
         $membreService = $manager->getServiceLocator()->get(MembreService::class);
         $notificationSoutenanceService = $manager->getServiceLocator()->get(NotifierSoutenanceService::class);
@@ -35,6 +38,7 @@ class PropositionControllerFactory {
         $theseService = $manager->getServiceLocator()->get('TheseService');
         $userContextService = $manager->getServiceLocator()->get('UserContextService');
         $validationService = $manager->getServiceLocator()->get(ValidationService::class);
+        $fichierService = $manager->getServiceLocator()->get('FichierService');
 
         /**
          * @var DateLieuForm $dateLieuForm
@@ -44,6 +48,7 @@ class PropositionControllerFactory {
          * @var ConfidentialiteForm $confidentialiteForm
          * @var RefusForm $refusForm
          * @var ChangementTitreForm $changementTitreForm
+         * @var JustificatifForm $justificatifForm
          */
         $dateLieuForm = $manager->getServiceLocator()->get('FormElementManager')->get(DateLieuForm::class);
         $membreForm = $manager->getServiceLocator()->get('FormElementManager')->get(MembreForm::class);
@@ -52,6 +57,7 @@ class PropositionControllerFactory {
         $confidentialiteForm = $manager->getServiceLocator()->get('FormElementManager')->get(ConfidentialiteForm::class);
         $refusForm = $manager->getServiceLocator()->get('FormElementManager')->get(RefusForm::class);
         $changementTitreForm = $manager->getServiceLocator()->get('FormElementManager')->get(ChangementTitreForm::class);
+        $justificatifForm = $manager->getServiceLocator()->get('FormElementManager')->get(JustificatifForm::class);
 
         /** @var PropositionController $controller */
         $controller = new PropositionController();
@@ -62,6 +68,7 @@ class PropositionControllerFactory {
         $controller->setTheseService($theseService);
         $controller->setUserContextService($userContextService);
         $controller->setValidationService($validationService);
+        $controller->setFichierService($fichierService);
 
         $controller->setDateLieuForm($dateLieuForm);
         $controller->setMembreForm($membreForm);
@@ -70,6 +77,7 @@ class PropositionControllerFactory {
         $controller->setConfidentialiteForm($confidentialiteForm);
         $controller->setRefusForm($refusForm);
         $controller->setChangementTitreForm($changementTitreForm);
+        $controller->setJustificatifForm($justificatifForm);
 
         return $controller;
     }

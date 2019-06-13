@@ -6,9 +6,11 @@ use Application\Controller\AbstractController;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
+use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
+use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Soutenance\Entity\Membre;
@@ -19,6 +21,7 @@ use Soutenance\Form\Confidentialite\ConfidentialiteForm;
 use Soutenance\Form\Confidentialite\ConfidentialiteFormAwareTrait;
 use Soutenance\Form\DateLieu\DateLieuForm;
 use Soutenance\Form\DateLieu\DateLieuFormAwareTrait;
+use Soutenance\Form\Justificatif\JustificatifFormAwareTrait;
 use Soutenance\Form\LabelEuropeen\LabelEuropeenForm;
 use Soutenance\Form\LabelEuropeen\LabelEuropeenFormAwareTrait;
 use Soutenance\Form\Membre\MembreForm;
@@ -41,6 +44,7 @@ class PropositionController extends AbstractController {
     use TheseServiceAwareTrait;
     use UserContextServiceAwareTrait;
     use ValidatationServiceAwareTrait;
+    use FichierServiceAwareTrait;
 
     use DateLieuFormAwareTrait;
     use MembreFromAwareTrait;
@@ -49,6 +53,7 @@ class PropositionController extends AbstractController {
     use ConfidentialiteFormAwareTrait;
     use RefusFormAwareTrait;
     use ChangementTitreFormAwareTrait;
+    use JustificatifFormAwareTrait;
 
     public function propositionAction()
     {
@@ -77,6 +82,20 @@ class PropositionController extends AbstractController {
         /** @var Role $currentRole */
         $currentRole = $this->userContextService->getSelectedIdentityRole();
 
+        $natures = [
+            NatureFichier::CODE_JUSTIFICATIF_HDR,
+            NatureFichier::CODE_DELOCALISATION_SOUTENANCE,
+            NatureFichier::CODE_DELEGUATION_SIGNATURE,
+            NatureFichier::CODE_DEMANDE_LABEL,
+            NatureFichier::CODE_LANGUE_ANGLAISE,
+        ];
+
+        $fichiers = [];
+        foreach ($natures as $nature) {
+            $fichiers[$nature] = $this->fichierService->getRepository()->fetchFichiers($these, $nature);
+        }
+
+
 
         return new ViewModel([
             'these'             => $these,
@@ -89,6 +108,7 @@ class PropositionController extends AbstractController {
             'indicateurs'       => $this->getPropositionService()->computeIndicateur($proposition),
             'juryOk'            => $this->getPropositionService()->juryOk($proposition),
             'isOk'              => $this->getPropositionService()->isOk($proposition),
+            'fichiers'          => $fichiers,
         ]);
     }
 
