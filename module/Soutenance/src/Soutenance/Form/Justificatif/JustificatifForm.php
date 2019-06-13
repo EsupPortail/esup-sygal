@@ -5,9 +5,7 @@ namespace Soutenance\Form\Justificatif;
 use Application\Entity\Db\NatureFichier;
 use Zend\Form\Element\Button;
 use Zend\Form\Element\File;
-use Zend\Form\Element\Radio;
 use Zend\Form\Element\Select;
-use Zend\Form\Element\Textarea;
 use Zend\Form\Form;
 use Zend\InputFilter\Factory;
 
@@ -30,7 +28,7 @@ class JustificatifForm extends Form {
                     NatureFichier::CODE_LANGUE_ANGLAISE => 'Demande de manuscrit ou soutenance en langue anglaise',
                 ],
                 'attributes' => [
-                    'class' => 'selectpicker show-tick',
+                    'class' => 'bootstrap-selectpicker show-tick',
                     'data-live-search' => 'true',
                 ],
             ],
@@ -63,7 +61,7 @@ class JustificatifForm extends Form {
                 'required' => true,
             ],
             'fichier' => [
-                'required' => true,
+                'required' => false,
             ],
         ]));
     }

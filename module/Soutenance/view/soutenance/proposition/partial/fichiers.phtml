@@ -1,13 +1,20 @@
 <?php
 
 /**
- * @var \Soutenance\Entity\Proposition $proposition
+ * @var Proposition $proposition
+ * @var These $these
  * @var Fichier[][] $fichiers
+ * @var UrlFichierThese $urlFichierThese
  */
 
+use Application\Controller\Plugin\UrlFichierThese;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\NatureFichier;
+use Application\Entity\Db\These;
+use Soutenance\Entity\Proposition;
+use Soutenance\Provider\Privilege\PropositionPrivileges;
 
+$canModifier = true || $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER));
 $hasVisio = false;
 foreach ($proposition->getMembres() as $membre) {
     if ($membre->isVisio()) $hasVisio = true;
@@ -20,11 +27,20 @@ foreach ($proposition->getMembres() as $membre) {
     </div>
     <div class="panel-body">
 
-        ICI FORMULAIRE D'UPLOAD ...
+        <?php if ($canModifier) : ?>
+            <a href="<?php echo $this->url('soutenance/proposition/ajouter-justificatif', [ 'these' => $these->getId()], [], true); ?>" class="btn btn-primary">
+                Téléversement d'un justificatif
+            </a>
+        <?php endif; ?>
 
         <?php
             /** @var Fichier[] $hdrs */
-            $hdrs = $fichiers[NatureFichier::CODE_JUSTIFICATIF_HDR]; ?>
+            $hdrs = $fichiers[NatureFichier::CODE_JUSTIFICATIF_HDR];
+            $delocalisations = $fichiers[NatureFichier::CODE_DELOCALISATION_SOUTENANCE];
+            $deleguations = $fichiers[NatureFichier::CODE_DELEGUATION_SIGNATURE];
+            $langues = $fichiers[NatureFichier::CODE_LANGUE_ANGLAISE];
+            $labels = $fichiers[NatureFichier::CODE_DEMANDE_LABEL];
+        ?>
 
         <h4>
             Justificatifs d'HDR
@@ -34,31 +50,130 @@ foreach ($proposition->getMembres() as $membre) {
         <?php if (empty($hdrs)) : ?>
             Aucun.
         <?php else : ?>
-            <?php foreach($hdrs as $hdr) : ?>
-                There is a file there <br/>
+            <ul>
+            <?php foreach($hdrs as $fichier) : ?>
+                <li>
+                    <a href="<?php echo $urlFichierThese->telechargerFichierThese($these, $fichier); ?>">
+                        <?php echo $fichier->getNom(); ?>
+                    </a>
+                    (<?php echo $fichier->getHistoCreateur()->getDisplayName(); ?> - <?php echo $fichier->getHistoCreation()->format("d/m/Y à H:i"); ?>)
+                    <?php if ($canModifier) : ?>
+                        <a href="<?php echo $this->url('soutenance/proposition/retirer-justificatif', ['these'=>$these->getId(), 'justificatif'=>$fichier->getId()], [], true); ?>">
+                            <span style='color:darkred;' class="glyphicon glyphicon-remove" title="Supprimer le justificatif"></span>
+                        </a>
+                    <?php endif; ?>
+                </li>
             <?php endforeach; ?>
+            </ul>
         <?php endif; ?>
 
         <?php if ($proposition->isExterieur()): ?>
-        <h4>Formulaire de demande de délocalisation</h4>
+            <h4>
+                Formulaire de demande de délocalisation
+                <span class="badge"><?php echo count($delocalisations); ?></span>
+            </h4>
 
-            Aucun.
+            <?php if (empty($delocalisations)) : ?>
+                Aucun.
+            <?php else : ?>
+                <ul>
+                    <?php foreach($delocalisations as $fichier) : ?>
+                        <li>
+                            <a href="<?php echo $urlFichierThese->telechargerFichierThese($these, $fichier); ?>">
+                                <?php echo $fichier->getNom(); ?>
+                            </a>
+                            (<?php echo $fichier->getHistoCreateur()->getDisplayName(); ?> - <?php echo $fichier->getHistoCreation()->format("d/m/Y à H:i"); ?>)
+                            <?php if ($canModifier) : ?>
+                                <a href="<?php echo $this->url('soutenance/proposition/retirer-justificatif', ['these'=>$these->getId(), 'justificatif'=>$fichier->getId()], [], true); ?>">
+                                    <span style='color:darkred;' class="glyphicon glyphicon-remove" title="Supprimer le justificatif"></span>
+                                </a>
+                            <?php endif; ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
 
         <?php endif; ?>
 
         <?php if ($hasVisio) : ?>
-        <h4>Formulaires de demande de déléguation de signature</h4>
-        Aucun.
+            <h4>
+                Formulaire de demande de déléguations de signature
+                <span class="badge"><?php echo count($deleguations); ?></span>
+            </h4>
+
+            <?php if (empty($deleguations)) : ?>
+                Aucun.
+            <?php else : ?>
+                <ul>
+                    <?php foreach($deleguations as $fichier) : ?>
+                        <li>
+                            <a href="<?php echo $urlFichierThese->telechargerFichierThese($these, $fichier); ?>">
+                                <?php echo $fichier->getNom(); ?>
+                            </a>
+                            (<?php echo $fichier->getHistoCreateur()->getDisplayName(); ?> - <?php echo $fichier->getHistoCreation()->format("d/m/Y à H:i"); ?>)
+                            <?php if ($canModifier) : ?>
+                                <a href="<?php echo $this->url('soutenance/proposition/retirer-justificatif', ['these'=>$these->getId(), 'justificatif'=>$fichier->getId()], [], true); ?>">
+                                    <span style='color:darkred;' class="glyphicon glyphicon-remove" title="Supprimer le justificatif"></span>
+                                </a>
+                            <?php endif; ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
         <?php endif; ?>
 
         <?php if ($proposition->isLabelEuropeen()) : ?>
-        <h4>Formulaires de demande de label européen</h4>
-        Aucun.
+            <h4>
+                Formulaires de demande de label européen
+                <span class="badge"><?php echo count($labels); ?></span>
+            </h4>
+
+            <?php if (empty($labels)) : ?>
+                Aucun.
+            <?php else : ?>
+                <ul>
+                    <?php foreach($labels as $fichier) : ?>
+                        <li>
+                            <a href="<?php echo $urlFichierThese->telechargerFichierThese($these, $fichier); ?>">
+                                <?php echo $fichier->getNom(); ?>
+                            </a>
+                            (<?php echo $fichier->getHistoCreateur()->getDisplayName(); ?> - <?php echo $fichier->getHistoCreation()->format("d/m/Y à H:i"); ?>)
+                            <?php if ($canModifier) : ?>
+                                <a href="<?php echo $this->url('soutenance/proposition/retirer-justificatif', ['these'=>$these->getId(), 'justificatif'=>$fichier->getId()], [], true); ?>">
+                                    <span style='color:darkred;' class="glyphicon glyphicon-remove" title="Supprimer le justificatif"></span>
+                                </a>
+                            <?php endif; ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
         <?php endif; ?>
 
         <?php if ($proposition->isManuscritAnglais() OR $proposition->isSoutenanceAnglais()) : ?>
-        <h4>Formulaires de demande de manuscrit ou de soutenance en anglais</h4>
-        Aucun.
+            <h4>
+                Formulaires de demande de manuscrit ou de soutenance en anglais
+                <span class="badge"><?php echo count($langues); ?></span>
+            </h4>
+
+            <?php if (empty($langues)) : ?>
+                Aucun.
+            <?php else : ?>
+                <ul>
+                    <?php foreach($langues as $fichier) : ?>
+                        <li>
+                            <a href="<?php echo $urlFichierThese->telechargerFichierThese($these, $fichier); ?>">
+                                <?php echo $fichier->getNom(); ?>
+                            </a>
+                            (<?php echo $fichier->getHistoCreateur()->getDisplayName(); ?> - <?php echo $fichier->getHistoCreation()->format("d/m/Y à H:i"); ?>)
+                            <?php if ($canModifier) : ?>
+                                <a href="<?php echo $this->url('soutenance/proposition/retirer-justificatif', ['these'=>$these->getId(), 'justificatif'=>$fichier->getId()], [], true); ?>">
+                                    <span style='color:darkred;' class="glyphicon glyphicon-remove" title="Supprimer le justificatif"></span>
+                                </a>
+                            <?php endif; ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
         <?php endif; ?>
     </div>
 </div>
