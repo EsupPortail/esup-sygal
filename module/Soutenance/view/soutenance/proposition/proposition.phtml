@@ -34,18 +34,24 @@ $this->headTitle("Proposition de soutenance");
     (ou refus) seront annulées et la proposition devra être à nouveau être validée.
 </p>
 
-
-<h2> Date et composition du jury </h2>
+<br/><br/>
+<!--<h2> Date et composition du jury </h2>-->
 
 <?php echo $this->partial('partial/date-et-lieu'); ?>
 
 <?php echo $this->partial('partial/composition-jury'); ?>
 
-<h2> Informations complémentaires </h2>
+<br/><br/>
+<!--<h2> Informations complémentaires </h2>-->
 
 <?php echo $this->partial('partial/informations-complementaires'); ?>
 
-<h2> Validations </h2>
+<!--<h2> Fichiers associés à la proposition </h2>-->
+
+<?php echo $this->partial('partial/fichiers'); ?>
+
+<br/><br/>
+<!--<h2> Validations </h2>-->
 
 <?php echo $this->partial('partial/validations-acteurs'); ?>
 
