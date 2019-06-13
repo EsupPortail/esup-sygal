@@ -17,6 +17,10 @@ use Soutenance\Form\Confidentialite\ConfidentialiteHydrator;
 use Soutenance\Form\DateLieu\DateLieuForm;
 use Soutenance\Form\DateLieu\DateLieuFormFactory;
 use Soutenance\Form\DateLieu\DateLieuHydrator;
+use Soutenance\Form\Justificatif\JusticatifHydrator;
+use Soutenance\Form\Justificatif\JustificatifForm;
+use Soutenance\Form\Justificatif\JustificatifFormFactory;
+use Soutenance\Form\Justificatif\JustificatifHydratorFactory;
 use Soutenance\Form\LabelEuropeen\LabelEuropeenForm;
 use Soutenance\Form\LabelEuropeen\LabelEuropeenFormFactory;
 use Soutenance\Form\LabelEuropeen\LabelEuropeenHydrator;
@@ -294,6 +298,7 @@ return [
             LabelEuropeenForm::class => LabelEuropeenFormFactory::class,
             ConfidentialiteForm::class=> ConfidentialiteFormFactory::class,
             RefusForm::class => RefusFormFactory::class,
+            JustificatifForm::class => JustificatifFormFactory::class,
         ],
     ],
 
@@ -307,6 +312,7 @@ return [
         ],
         'factories' => [
             MembreHydrator::class => MembreHydratorFactory::class,
+            JusticatifHydrator::class => JustificatifHydratorFactory::class,
         ],
     ],
 ];

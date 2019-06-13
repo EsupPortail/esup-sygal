@@ -1,0 +1,64 @@
+<?php
+
+/**
+ * @var \Soutenance\Entity\Proposition $proposition
+ * @var Fichier[][] $fichiers
+ */
+
+use Application\Entity\Db\Fichier;
+use Application\Entity\Db\NatureFichier;
+
+$hasVisio = false;
+foreach ($proposition->getMembres() as $membre) {
+    if ($membre->isVisio()) $hasVisio = true;
+}
+?>
+
+<div class="box panel panel-info">
+    <div class="panel-heading">
+        <h2> Fichiers associés à la proposition</h2>
+    </div>
+    <div class="panel-body">
+
+        ICI FORMULAIRE D'UPLOAD ...
+
+        <?php
+            /** @var Fichier[] $hdrs */
+            $hdrs = $fichiers[NatureFichier::CODE_JUSTIFICATIF_HDR]; ?>
+
+        <h4>
+            Justificatifs d'HDR
+            <span class="badge"><?php echo count($hdrs); ?></span>
+        </h4>
+
+        <?php if (empty($hdrs)) : ?>
+            Aucun.
+        <?php else : ?>
+            <?php foreach($hdrs as $hdr) : ?>
+                There is a file there <br/>
+            <?php endforeach; ?>
+        <?php endif; ?>
+
+        <?php if ($proposition->isExterieur()): ?>
+        <h4>Formulaire de demande de délocalisation</h4>
+
+            Aucun.
+
+        <?php endif; ?>
+
+        <?php if ($hasVisio) : ?>
+        <h4>Formulaires de demande de déléguation de signature</h4>
+        Aucun.
+        <?php endif; ?>
+
+        <?php if ($proposition->isLabelEuropeen()) : ?>
+        <h4>Formulaires de demande de label européen</h4>
+        Aucun.
+        <?php endif; ?>
+
+        <?php if ($proposition->isManuscritAnglais() OR $proposition->isSoutenanceAnglais()) : ?>
+        <h4>Formulaires de demande de manuscrit ou de soutenance en anglais</h4>
+        Aucun.
+        <?php endif; ?>
+    </div>
+</div>
