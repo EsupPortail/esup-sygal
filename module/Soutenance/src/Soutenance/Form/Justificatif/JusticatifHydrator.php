@@ -17,7 +17,7 @@ class JusticatifHydrator implements HydratorInterface {
     public function extract($object)
     {
         $data  = [
-            'nature' => $object->getNature()->getCode(),
+            'nature' => ($object && $object->getNature())?$object->getNature()->getCode(): null,
             'fichier' => null,
         ];
         return $data;

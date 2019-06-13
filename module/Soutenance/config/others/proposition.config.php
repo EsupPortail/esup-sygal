@@ -83,6 +83,8 @@ return [
                         'anglais',
                         'confidentialite',
                         'changement-titre',
+                        'ajouter-justificatif',
+                        'retirer-justificatif',
                     ],
                     'privileges' => PropositionPrivileges::PROPOSITION_MODIFIER,
                 ],
@@ -223,6 +225,28 @@ return [
                                     'defaults' => [
                                         'controller' => PropositionController::class,
                                         'action'     => 'changement-titre',
+                                    ],
+                                ],
+                            ],
+                            'ajouter-justificatif' => [
+                                'type' => Literal::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/ajouter-justificatif',
+                                    'defaults' => [
+                                        'controller' => PropositionController::class,
+                                        'action'     => 'ajouter-justificatif',
+                                    ],
+                                ],
+                            ],
+                            'retirer-justificatif' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/retirer-justificatif/:justificatif',
+                                    'defaults' => [
+                                        'controller' => PropositionController::class,
+                                        'action'     => 'retirer-justificatif',
                                     ],
                                 ],
                             ],
