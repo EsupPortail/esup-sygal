@@ -3,7 +3,6 @@
 namespace Soutenance\Controller\Proposition;
 
 use Application\Controller\AbstractController;
-use Application\Controller\Plugin\UrlFichierThese;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Fichier;
@@ -13,6 +12,7 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\VersionFichier;
+use Application\Filter\NomFichierFormatter;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
@@ -525,7 +525,7 @@ class PropositionController extends AbstractController {
             if ($form->isValid()) {
                 $nature = $this->fichierService->fetchNatureFichier($data['nature']);
                 $version = $this->fichierService->fetchVersionFichier(VersionFichier::CODE_ORIG);
-                $fichiers = $this->fichierService->createFichiersFromUpload($these, $files, $nature, $version, null, new JustificatifFormatter($these));
+                $fichiers = $this->fichierService->createFichiersFromUpload($these, $files, $nature, $version, null, new NomFichierFormatter());
 
                 return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
             }
