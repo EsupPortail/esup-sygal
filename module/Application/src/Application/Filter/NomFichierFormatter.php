@@ -69,7 +69,7 @@ class NomFichierFormatter extends AbstractFilter
      *
      * @return string
      */
-    private function transformText($str, $encoding = 'UTF-8')
+    protected function transformText($str, $encoding = 'UTF-8')
     {
         $s = $this->separator;
 
