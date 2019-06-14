@@ -32,8 +32,8 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
             </h5>
 
             <div class="progress">
-                <div class="progress-bar progress-bar-success" style="width:<?php echo $indicateurs["parité"]["Femme"]*100; ?>%;"> Femme </div>
-                <div class="progress-bar progress-bar-danger"  style="width:<?php echo $indicateurs["parité"]["Homme"]*100; ?>%;"> Homme</div>
+                <div class="progress-bar femme-bar" style="width:<?php echo $indicateurs["parité"]["Femme"]*100; ?>%;"> Femme </div>
+                <div class="progress-bar homme-bar"  style="width:<?php echo $indicateurs["parité"]["Homme"]*100; ?>%;"> Homme</div>
             </div>
 
         </div>
@@ -196,3 +196,12 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
 
     </div>
 </div>
+
+<style>
+    div.femme-bar {
+        background-color: hotpink;
+    }
+    div.homme-bar {
+        background-color: dodgerblue;
+    }
+</style>
