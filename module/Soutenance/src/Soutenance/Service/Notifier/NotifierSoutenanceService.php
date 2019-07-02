@@ -393,6 +393,12 @@ class NotifierSoutenanceService extends NotifierService {
 
         $emails = $this->fetchEmailActeursDirects($these);
 
+        /** @var IndividuRole $individuRole */
+        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
+        foreach ($individuRoles as $individuRole) {
+            $emails[] = $individuRole->getIndividu()->getEmail();
+        }
+
         $emails = array_filter($emails, function ($s) {
             return $s !== null;
         });
@@ -400,7 +406,7 @@ class NotifierSoutenanceService extends NotifierService {
         if (!empty($emails)) {
             $notif = new Notification();
             $notif
-                ->setSubject("Votre soutenance a été accepté par la maison du doctorats de votre établissement.")
+                ->setSubject("La soutenance de ".$these->getDoctorant()->getIndividu()." a été accepté par la maison du doctorats de votre établissement.")
                 ->setTo($emails)
                 ->setTemplatePath('soutenance/notification/feu-vert-soutenance')
                 ->setTemplateVariables([
