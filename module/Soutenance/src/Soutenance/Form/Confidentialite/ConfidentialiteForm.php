@@ -4,6 +4,8 @@ namespace Soutenance\Form\Confidentialite;
 
 use DateInterval;
 use DateTime;
+use Soutenance\Validator\DateGreaterThan;
+use Soutenance\Validator\DateLesserThan;
 use UnicaenApp\Form\Element\Date;
 use Zend\Form\Element\Checkbox;
 use Zend\Form\Element\Submit;
@@ -48,7 +50,22 @@ class ConfidentialiteForm extends Form {
 
         $this->setInputFilter((new Factory())->createInputFilter([
             'date' => [
-                'required' => false,
+                'name' => 'date',
+                'required' => true,
+                'validators' => [
+                    [
+                        'name' => DateLesserThan::class,
+                        'options' => [
+                            'max' => (new DateTime("+10 years"))->format('Y-m-d'),
+                            'inclusive' => true,
+                            'messages' => [
+                                DateLesserThan::NOT_LESSER => "La période de confidentialité maximale est de 10 ans.",
+                                DateLesserThan::NOT_LESSER_INCLUSIVE => "La période de confidentialité maximale est de 10 ans.",
+                            ],
+                            //'break_chain_on_failure' => true,
+                        ],
+                    ],
+                ],
             ],
             'huitclos' => [
                 'required' => false,
