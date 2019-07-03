@@ -15,10 +15,10 @@ use Zend\Stdlib\ArrayUtils;
 use Zend\Validator\AbstractValidator;
 use Zend\Validator\Exception\InvalidArgumentException;
 
-class DateGreaterThan extends AbstractValidator
+class DateLesserThan extends AbstractValidator
 {
-    const NOT_GREATER           = 'notGreaterThan';
-    const NOT_GREATER_INCLUSIVE = 'notGreaterThanInclusive';
+    const NOT_LESSER           = 'notLesserThan';
+    const NOT_LESSER_INCLUSIVE = 'notLesserThanInclusive';
 
     /**
      * Validation failure message template definitions
@@ -26,15 +26,15 @@ class DateGreaterThan extends AbstractValidator
      * @var array
      */
     protected $messageTemplates = array(
-        self::NOT_GREATER => "The input is not greater than '%min%'",
-        self::NOT_GREATER_INCLUSIVE => "The input is not greater or equal than '%min%'"
+        self::NOT_LESSER => "The input is not greater than '%min%'",
+        self::NOT_LESSER_INCLUSIVE => "The input is not greater or equal than '%min%'"
     );
 
     /**
      * @var array
      */
     protected $messageVariables = array(
-        'min' => 'min'
+        'max' => 'max'
     );
 
     /**
@@ -42,7 +42,7 @@ class DateGreaterThan extends AbstractValidator
      *
      * @var mixed
      */
-    protected $min;
+    protected $max;
 
     /**
      * Whether to do inclusive comparisons, allowing equivalence to max
@@ -67,7 +67,7 @@ class DateGreaterThan extends AbstractValidator
         }
         if (!is_array($options)) {
             $options = func_get_args();
-            $temp['min'] = array_shift($options);
+            $temp['max'] = array_shift($options);
 
             if (!empty($options)) {
                 $temp['inclusive'] = array_shift($options);
@@ -76,39 +76,39 @@ class DateGreaterThan extends AbstractValidator
             $options = $temp;
         }
 
-        if (!array_key_exists('min', $options)) {
-            throw new Exception\InvalidArgumentException("Missing option 'min'");
+        if (!array_key_exists('max', $options)) {
+            throw new Exception\InvalidArgumentException("Missing option 'max'");
         }
 
         if (!array_key_exists('inclusive', $options)) {
             $options['inclusive'] = false;
         }
 
-        $this->setMin($options['min'])
+        $this->setMax($options['max'])
             ->setInclusive($options['inclusive']);
 
         parent::__construct($options);
     }
 
     /**
-     * Returns the min option
+     * Returns the max option
      *
      * @return mixed
      */
-    public function getMin()
+    public function getMax()
     {
-        return $this->min;
+        return $this->max;
     }
 
     /**
      * Sets the min option
      *
-     * @param  mixed $min
-     * @return DateGreaterThan Provides a fluent interface
+     * @param  mixed $max
+     * @return DateLesserThan Provides a fluent interface
      */
-    public function setMin($min)
+    public function setMax($max)
     {
-        $this->min = $min;
+        $this->max = $max;
         return $this;
     }
 
@@ -126,7 +126,7 @@ class DateGreaterThan extends AbstractValidator
      * Sets the inclusive option
      *
      * @param  bool $inclusive
-     * @return DateGreaterThan Provides a fluent interface
+     * @return DateLesserThan Provides a fluent interface
      */
     public function setInclusive($inclusive)
     {
@@ -143,16 +143,16 @@ class DateGreaterThan extends AbstractValidator
     public function isValid($value)
     {
         $date = (\DateTime::createFromFormat("d/m/Y", $value))->format('Y-m-d');
-        $min = $this->min;
+        $max = $this->max;
 
         if ($this->inclusive) {
-            if (! ($date > $min)) {
-                $this->error(self::NOT_GREATER_INCLUSIVE);
+            if (! ($date < $max)) {
+                $this->error(self::NOT_LESSER_INCLUSIVE);
                 return false;
             }
         } else {
-            if (! ($date >= $min)) {
-                $this->error(self::NOT_GREATER);
+            if (! ($date <= $max)) {
+                $this->error(self::NOT_LESSER);
                 return false;
             }
         }
