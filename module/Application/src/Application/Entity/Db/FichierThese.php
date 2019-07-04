@@ -81,7 +81,9 @@ class FichierThese implements ResourceInterface
      */
     public function supporteTestValidite()
     {
-        return ! $this->getEstAnnexe() && ! $this->getEstExpurge();
+        $fichier = $this->getFichier();
+
+        return $fichier->getNature()->estThesePdf() && ! $fichier->getVersion()->estVersionDiffusion();
     }
 
     /**
@@ -92,27 +94,6 @@ class FichierThese implements ResourceInterface
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * @return boolean
-     * @deprecated Exploiter la NatureFichier
-     */
-    public function getEstAnnexe()
-    {
-        return $this->estAnnexe;
-    }
-
-    /**
-     * @param boolean $estAnnexe
-     * @return self
-     * @deprecated Exploiter la NatureFichier
-     */
-    public function setEstAnnexe($estAnnexe = true)
-    {
-        $this->estAnnexe = $estAnnexe;
-
-        return $this;
     }
 
     /**
@@ -146,27 +127,6 @@ class FichierThese implements ResourceInterface
     public function setRetraitement($retraitement)
     {
         $this->retraitement = $retraitement;
-
-        return $this;
-    }
-
-    /**
-     * @return boolean
-     * @deprecated Redondant avec la version du fichier (version de diffusion)
-     */
-    public function getEstExpurge()
-    {
-        return $this->estExpurge;
-    }
-
-    /**
-     * @param boolean $estExpurge
-     * @return self
-     * @deprecated Redondant avec la version du fichier (version de diffusion)
-     */
-    public function setEstExpurge($estExpurge = true)
-    {
-        $this->estExpurge = $estExpurge;
 
         return $this;
     }
@@ -272,123 +232,5 @@ class FichierThese implements ResourceInterface
     public function getResourceId()
     {
         return self::RESOURCE_ID;
-    }
-}
-
-
-
-
-class FichierTheseFiltering
-{
-    /**
-     * @param int|bool $estExpurge
-     * @return \Closure
-     */
-    static public function getFilterByExpurge($estExpurge = true)
-    {
-        return function(FichierThese $fichier = null) use ($estExpurge) {
-            if ($estExpurge === null) {
-                return $fichier;
-            }
-            if ($fichier === null) {
-                return null;
-            }
-
-            $actual = $fichier->getEstExpurge();
-            $expected = (bool) $estExpurge;
-
-            return $actual === $expected ? $fichier : null;
-        };
-    }
-
-    /**
-     * @param int|bool $estAnnexe
-     * @return \Closure
-     */
-    static public function getFilterByAnnexe($estAnnexe = true)
-    {
-        return function(FichierThese $fichier = null) use ($estAnnexe) {
-            if ($estAnnexe === null) {
-                return $fichier;
-            }
-            if ($fichier === null) {
-                return null;
-            }
-
-            $actual = $fichier->getEstAnnexe();
-            $expected = (bool) $estAnnexe;
-
-            return $actual === $expected ? $fichier : null;
-        };
-    }
-
-    /**
-     * @param int|bool|string $estRetraite '0', '1', booléen ou code du retraitement
-     * @return \Closure
-     */
-    static public function getFilterByRetraitement($estRetraite = true)
-    {
-        return function(FichierThese $fichier = null) use ($estRetraite) {
-            if ($estRetraite === null) {
-                return $fichier;
-            }
-            if ($fichier === null) {
-                return null;
-            }
-
-            $actual = $fichier->getRetraitement();
-            $expected = $estRetraite;
-
-            if (is_numeric($expected) || is_bool($expected)) {
-                $expected = (bool) $estRetraite;
-                $actual = (bool) $actual;
-            }
-
-            return $actual === $expected ? $fichier : null;
-        };
-    }
-
-    /**
-     * @param NatureFichier|string $nature
-     * @return \Closure
-     */
-    static public function getFilterByNature($nature = null)
-    {
-        return function(FichierThese $fichier = null) use ($nature) {
-            if ($nature === null) {
-                return $fichier;
-            }
-            if ($fichier === null) {
-                return null;
-            }
-
-            if ($nature instanceof NatureFichier) {
-                $nature = $nature->getCode();
-            }
-
-            return $nature === $fichier->getFichier()->getNature()->getCode() ? $fichier : null;
-        };
-    }
-
-    /**
-     * @param VersionFichier|string $version
-     * @return \Closure
-     */
-    static public function getFilterByVersion($version = null)
-    {
-        return function(FichierThese $fichier = null) use ($version) {
-            if ($version === null) {
-                return $fichier;
-            }
-            if ($fichier === null) {
-                return null;
-            }
-
-            if ($version instanceof VersionFichier) {
-                $version = $version->getCode();
-            }
-
-            return $version === $fichier->getFichier()->getVersion()->getCode() ? $fichier : null;
-        };
     }
 }

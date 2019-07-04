@@ -51,7 +51,7 @@ class NomFichierFormatter extends AbstractFilter
                 break;
         }
 
-        if ($fichierThese->getEstAnnexe()) {
+        if ($fichierThese->getFichier()->getNature()->estFichierNonPdf()) {
             $parts['annexe'] = 'ANNEXE';
         }
 

@@ -164,7 +164,6 @@ class FichierTheseService extends BaseService
             $fichierThese
                 ->setFichier($fichier)
                 ->setThese($these)
-                ->setEstAnnexe($nature->estFichierNonPdf())
                 ->setRetraitement($retraitement);
 
             // à faire en dernier car le formatter exploite des propriétés du FichierThese
@@ -272,8 +271,7 @@ class FichierTheseService extends BaseService
         $fichierTheseRetraite
             ->setFichier($fichier)
             ->setThese($these)
-            ->setEstPartiel(true)
-            ->setEstAnnexe($fichierThese->getEstAnnexe());
+            ->setEstPartiel(true);
 
         $fichierTheseRetraite->setRetraitement(FichierThese::RETRAITEMENT_AUTO);
 
