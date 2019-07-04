@@ -2,7 +2,7 @@
 
 namespace Indicateur\Service\Factory;
 
-use Application\Service\Fichier\FichierService;
+use Application\Service\FichierThese\FichierTheseService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
 use Application\Service\UserContextService;

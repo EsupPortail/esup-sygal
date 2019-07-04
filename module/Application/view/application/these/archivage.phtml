@@ -1,6 +1,6 @@
 <?php
 
-use Application\Entity\Db\Fichier;
+use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\These;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\View\Renderer\PhpRenderer;
@@ -8,8 +8,7 @@ use Application\View\Renderer\PhpRenderer;
 /**
  * @var         $this PhpRenderer
  * @var These   $these
- * @var Fichier $fichierThese
- * @var Fichier $fichierTheseRetraite
+ * @var FichierThese $fichierThese
  * @var array   $theseFichiersItems
  * @var array   $theseFichiersRetraitesItems
  * @var string  $theseRetraiteeUrl
@@ -21,16 +20,12 @@ use Application\View\Renderer\PhpRenderer;
 
 const CERTIF_CONFORME_MODIFIED_EVENT = "CERTIF_CONFORME_MODIFIED_EVENT";
 
-$estVersionCorrigee = $fichierThese->getVersion()->estVersionCorrigee();
+$estVersionCorrigee = $fichierThese->getFichier()->getVersion()->estVersionCorrigee();
 
 $privilege = ThesePrivileges::THESE_SAISIE_DESCRIPTION_($estVersionCorrigee);
 $canEdit = $this->isAllowed($these, $privilege);
 
 $pageDepotThese = $this->navigation('navigation')->getContainer()->findOneBy('id', 'depot');
-
-//$validiteFichierThese = $fichierThese ? $fichierThese->getValidite() : null;
-//$validiteFichierTheseRetraite = $fichierTheseRetraite ? $fichierTheseRetraite->getValidite() : null;
-//$originaleOuRetraitee = $fichierTheseRetraite ? "retraitée" : "";
 ?>
 
 <?php $this->headTitle("Archivage")->prepend($these->getDoctorant()->getNomUsuel()) ?>

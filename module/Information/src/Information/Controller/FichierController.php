@@ -2,8 +2,7 @@
 
 namespace Information\Controller;
 
-use Application\Entity\Db\Fichier;
-use Application\Service\Fichier\FichierServiceAwareTrait;
+use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\File\FileServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Information\Entity\Db\InformationFichier;
@@ -16,7 +15,7 @@ use Zend\View\Model\ViewModel;
 
 class FichierController extends AbstractActionController
 {
-    use FichierServiceAwareTrait;
+    use FichierTheseServiceAwareTrait;
     use InformationFichierServiceAwareTrait;
     use FileServiceAwareTrait;
     use UserContextServiceAwareTrait;

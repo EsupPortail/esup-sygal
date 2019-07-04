@@ -3,11 +3,9 @@
 namespace Application\Entity\Db\Repository;
 
 use Application\Entity\Db\VersionFichier;
-use Application\QueryBuilder\FichierQueryBuilder;
 use Doctrine\ORM\QueryBuilder;
 
 /**
- * @method FichierQueryBuilder createQueryBuilder()
  * @method VersionFichier findOneByCode($code)
  */
 class VersionFichierRepository extends DefaultEntityRepository

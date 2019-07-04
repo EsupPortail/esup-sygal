@@ -2,7 +2,6 @@
 
 namespace Application\QueryBuilder;
 
-use Application\Entity\Db\Fichier;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Validation;

@@ -2,7 +2,7 @@
 
 namespace ApplicationUnitTest;
 
-use Application\Service\Fichier\FichierService;
+use Application\Service\FichierThese\FichierTheseService;
 use Application\Service\UserContextService;
 use Prophecy\Prophecy\ObjectProphecy;
 use Prophecy\Prophet;
@@ -15,7 +15,7 @@ trait FichierServiceProphetTrait
     protected $prophet;
 
     /**
-     * @var FichierService|ObjectProphecy
+     * @var FichierTheseService|ObjectProphecy
      */
     protected $fichierServiceProphecy;
 

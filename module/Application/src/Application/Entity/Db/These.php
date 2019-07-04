@@ -178,7 +178,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * @var Collection
      */
-    private $fichiers;
+    private $fichierTheses;
 
     /**
      * @var Collection
@@ -256,7 +256,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      */
     public function __construct()
     {
-        $this->fichiers = new ArrayCollection();
+        $this->fichierTheses = new ArrayCollection();
         $this->metadonnees = new ArrayCollection();
         $this->attestations = new ArrayCollection();
         $this->miseEnLignes = new ArrayCollection();
@@ -694,12 +694,24 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
     
     /**
-     * @param Fichier $fichier
+     * @param FichierThese $fichierThese
      * @return $this
      */
-    public function addFichier(Fichier $fichier)
+    public function addFichierThese(FichierThese $fichierThese)
     {
-        $this->fichiers->add($fichier);
+        $this->fichierTheses->add($fichierThese);
+
+        return $this;
+    }
+
+    /**
+     * @param FichierThese $fichierThese
+     * @return $this
+     */
+    public function removeFichierThese(FichierThese $fichierThese)
+    {
+        $this->fichierTheses->removeElement($fichierThese);
+
         return $this;
     }
 
@@ -709,7 +721,15 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      */
     public function removeFichier(Fichier $fichier)
     {
-        $this->fichiers->removeElement($fichier);
+        $fichierThese = $this->fichierTheses->filter(function(FichierThese $ft) use ($fichier) {
+            return $ft->getFichier() === $fichier;
+        })->first();
+        if (! $fichierThese) {
+            throw new RuntimeException("Le fichier à supprimer est introuvable parmi les fichiers de la thèse");
+        }
+
+        $this->fichierTheses->removeElement($fichierThese);
+
         return $this;
     }
 
@@ -1399,8 +1419,8 @@ class These implements HistoriqueAwareInterface, ResourceInterface
 
     public function hasAnnexe()
     {
-        /** @var Fichier $fichier */
-        foreach ($this->fichiers as $fichier) {
+        /** @var FichierThese $fichier */
+        foreach ($this->fichierTheses as $fichier) {
             if ($fichier->getNature() === NatureFichier::CODE_FICHIER_NON_PDF) return true;
         }
         return false;
@@ -1408,24 +1428,24 @@ class These implements HistoriqueAwareInterface, ResourceInterface
 
     public function hasMemoire()
     {
-        /** @var Fichier $fichier */
-        foreach ($this->fichiers as $fichier) {
+        /** @var FichierThese $fichier */
+        foreach ($this->fichierTheses as $fichier) {
             if ($fichier->getNature() === NatureFichier::CODE_THESE_PDF) return true;
         }
         return false;
     }
 
     public function hasVersionInitiale() {
-        /** @var Fichier $fichier */
-        foreach ($this->fichiers as $fichier) {
+        /** @var FichierThese $fichier */
+        foreach ($this->fichierTheses as $fichier) {
             if ($fichier->getHistoDestruction() === null && $fichier->getNature() === NatureFichier::CODE_THESE_PDF && $fichier->getVersion() === VersionFichier::CODE_ORIG) return $fichier;
         }
         return null;
     }
 
     public function hasVersionCorrigee() {
-        /** @var Fichier $fichier */
-        foreach ($this->fichiers as $fichier) {
+        /** @var FichierThese $fichier */
+        foreach ($this->fichierTheses as $fichier) {
             if ($fichier->getHistoDestruction() === null && $fichier->getNature() === NatureFichier::CODE_THESE_PDF && $fichier->getVersion() === VersionFichier::CODE_ORIG_CORR) return $fichier;
         }
         return null;
