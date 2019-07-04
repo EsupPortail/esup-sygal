@@ -54,7 +54,7 @@ class WorkflowService extends BaseService
 
     /**
      * @param These $these
-     * @return \Application\Entity\Db\VWorkflow[]
+     * @return VWorkflow[]
      */
     public function reloadWorkflow(These $these)
     {
@@ -64,7 +64,7 @@ class WorkflowService extends BaseService
     /**
      * @param These $these
      * @param bool  $forceRefresh
-     * @return \Application\Entity\Db\VWorkflow[]
+     * @return VWorkflow[]
      */
     private function loadWorkflow(These $these, $forceRefresh = false)
     {
@@ -75,36 +75,30 @@ class WorkflowService extends BaseService
         $qb = $this->getRepository()->createQueryBuilder('v');
         $qb
             ->addSelect('e, t')
-            ->addSelect('atteignable(e, t) atteignable')
             ->join('v.these', 't')
             ->join('v.etape', 'e')
             ->orderBy('v.ordre')
             ->andWhere('v.these = :these')
             ->setParameter('these', $these);
 
-        /** @var array $array */
         $workflow = [];
         /** @var WfEtape $prec */
         $prec = null;
 
         $q = $qb->getQuery()->setHint(Query::HINT_REFRESH, true); // setHint indispensable pour les tests fonctionnels
 
-        foreach ($q->getResult() as $i => $array) {
-            /** @var VWorkflow $r */
-            $r = $array[0];
-            $atteignable = $array['atteignable'];
-            $r->setAtteignable($atteignable);
-
-            // injection des étapes précédente et suivante
-            $e = $r->getEtape();
+        /** @var VWorkflow $vwf */
+        foreach ($q->getResult() as $vwf) {
+            // injection de l'étape précédente
+            $e = $vwf->getEtape();
             $e->setPrecedente($prec);
             $prec = $e;
 
             // injection des témoins d'état
-            $e->setAtteignable($r->getAtteignable());
-            $e->setFranchie($r->getFranchie());
+            $e->setAtteignable($vwf->getAtteignable());
+            $e->setFranchie($vwf->getFranchie());
 
-            $workflow[] = $r;
+            $workflow[] = $vwf;
         }
 
         $this->loaded[$these->getId()] = $workflow;
