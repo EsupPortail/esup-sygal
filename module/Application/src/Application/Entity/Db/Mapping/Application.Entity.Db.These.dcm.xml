@@ -29,11 +29,7 @@
 
         <field name="sourceCode" type="string" column="SOURCE_CODE" length="64" nullable="true"/>
 
-        <one-to-many field="fichiers" target-entity="Application\Entity\Db\Fichier" mapped-by="these" >
-            <order-by>
-                <order-by-field name="histoModification" direction="ASC" />
-            </order-by>
-        </one-to-many>
+        <one-to-many field="fichierTheses" target-entity="Application\Entity\Db\FichierThese" mapped-by="these" />
         <one-to-many field="attestations" target-entity="Application\Entity\Db\Attestation" mapped-by="these" >
             <order-by>
                 <order-by-field name="histoModification" direction="ASC" />

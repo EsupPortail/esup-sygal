@@ -4,17 +4,17 @@ namespace Application\Form\Hydrator;
 
 use Application\Entity\Db\Diffusion;
 use Application\Entity\Db\RdvBu;
-use Application\Service\Fichier\FichierServiceAwareTrait;
+use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 
 class RdvBuHydrator extends DoctrineObject
 {
-    use FichierServiceAwareTrait;
+    use FichierTheseServiceAwareTrait;
 //    use EntityManagerAwareTrait;
 
     private function existeVersionArchivable(RdvBu $rdvBu)
     {
-        return (int) $this->fichierService->getRepository()->existeVersionArchivable($rdvBu->getThese());
+        return (int) $this->fichierTheseService->getRepository()->existeVersionArchivable($rdvBu->getThese());
     }
 
     /**

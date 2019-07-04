@@ -3,7 +3,7 @@
 namespace Application\Service;
 
 use Application\Service\Doctorant\DoctorantService;
-use Application\Service\Fichier\FichierService;
+use Application\Service\FichierThese\FichierTheseService;
 use Application\Service\Parametre\ParametreService;
 use Application\Service\Role\RoleService;
 use Application\Service\These\TheseService;

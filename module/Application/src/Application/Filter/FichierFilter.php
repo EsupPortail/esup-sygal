@@ -2,8 +2,8 @@
 
 namespace Application\Filter;
 
-use Application\Entity\Db\Fichier;
-use Application\Entity\Db\FichierFiltering;
+use Application\Entity\Db\FichierThese;
+use Application\Entity\Db\FichierTheseFiltering;
 use Application\Entity\Db\VersionFichier;
 use Doctrine\Common\Collections\Collection;
 use Zend\Filter\FilterChain;
@@ -27,25 +27,21 @@ class FichierFilter implements FilterInterface
      */
     public function filter($collection)
     {
-//        $f = fopen('/tmp/fichier-filter.csv', 'a+');
-//        fputcsv($f, [intval($this->estExpurge), intval($this->estRetraite), $this->version]);
-//        fclose($f);
-
         $chain = new FilterChain();
         if ($this->estAnnexe !== null) {
-            $chain->attach(FichierFiltering::getFilterByAnnexe($this->estAnnexe));
+            $chain->attach(FichierTheseFiltering::getFilterByAnnexe($this->estAnnexe));
         }
         if ($this->estExpurge !== null) {
-            $chain->attach(FichierFiltering::getFilterByExpurge($this->estExpurge));
+            $chain->attach(FichierTheseFiltering::getFilterByExpurge($this->estExpurge));
         }
         if ($this->estRetraite !== null) {
-            $chain->attach(FichierFiltering::getFilterByRetraitement($this->estRetraite));
+            $chain->attach(FichierTheseFiltering::getFilterByRetraitement($this->estRetraite));
         }
         if ($this->version !== null) {
-            $chain->attach(FichierFiltering::getFilterByVersion($this->version));
+            $chain->attach(FichierTheseFiltering::getFilterByVersion($this->version));
         }
 
-        return $collection->filter(function(Fichier $f) use ($chain) {
+        return $collection->filter(function(FichierThese $f) use ($chain) {
             return (bool) $chain->filter($f);
         });
     }

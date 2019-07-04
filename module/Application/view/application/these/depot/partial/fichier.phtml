@@ -1,6 +1,6 @@
 <?php
 
-use Application\Entity\Db\Fichier;
+use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
 use Application\Entity\Db\VersionFichier;
@@ -37,7 +37,7 @@ $uploaderDivId = uniqid('uploader-div-');
             ?>
             <div class="clearfix"></div>
             <div class="text-sm text-info" style="margin-top: 8px; max-width: 250px">
-                <strong>NB: </strong> <?php echo Fichier::MESSAGE_DEPOT_DUREE ?>
+                <strong>NB: </strong> <?php echo FichierThese::MESSAGE_DEPOT_DUREE ?>
             </div>
         <?php endif ?>
     </div>

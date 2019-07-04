@@ -1,6 +1,6 @@
 <?php
 
-use Application\Entity\Db\Fichier;
+use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\These;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\View\Renderer\PhpRenderer;
@@ -8,7 +8,7 @@ use Application\View\Renderer\PhpRenderer;
 /**
  * @var PhpRenderer $this
  * @var These       $these
- * @var Fichier     $fichierTheseRetraite
+ * @var FichierThese $fichierTheseRetraite
  * @var string      $validerFichierRetraiteUrl
  * @var string      $contact
  */
@@ -16,13 +16,13 @@ use Application\View\Renderer\PhpRenderer;
 const CERTIF_CONFORME_MODIFIED_EVENT = "CERTIF_CONFORME_MODIFIED_EVENT";
 ?>
 
-<?php if ($fichierTheseRetraite && ($v = $fichierTheseRetraite->getValidite()) && $v->getEstValide() === true): ?>
+<?php if ($fichierTheseRetraite && ($v = $fichierTheseRetraite->getFichier()->getValidite()) && $v->getEstValide() === true): ?>
 
     <div class="panel panel-info box">
 
         <div class="panel-heading">
             <?php
-            $estVersionCorrigee = $fichierTheseRetraite->getVersion()->estVersionCorrigee();
+            $estVersionCorrigee = $fichierTheseRetraite->getFichier()->getVersion()->estVersionCorrigee();
             $heading = $estVersionCorrigee ? "Vérification de la thèse corrigée retraitée" : "Vérification de la thèse retraitée";
 
             $privilege = ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_($estVersionCorrigee);

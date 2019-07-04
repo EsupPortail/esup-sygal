@@ -6,15 +6,15 @@
  * $fichier
  *
  * @var PhpRenderer $this
- * @var Fichier     $fichier
+ * @var FichierThese $fichier
  */
 
-use Application\Entity\Db\Fichier;
+use Application\Entity\Db\FichierThese;
 use Application\View\Renderer\PhpRenderer;
 
 $canConform = true;//$this->isAllowed(Privileges::getResourceId(Privileges::PIECE_JUSTIFICATIVE_TELECHARGEMENT));
 
-$validiteFichier = $fichier->getValidite();
+$validiteFichier = $fichier->getFichier()->getValidite();
 ?>
 
 <!-- Validité du fichier -->

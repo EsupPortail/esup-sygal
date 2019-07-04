@@ -4,6 +4,7 @@ namespace ApplicationUnitTest\Test\Provider;
 
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Fichier;
+use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\Parametre;
@@ -129,7 +130,7 @@ class EntityProvider extends AbstractEntityProvider
         return $entity;
     }
 
-    public function fichier(These $these, $nature = NatureFichier::CODE_THESE_PDF, $version = VersionFichier::CODE_ORIG)
+    public function fichierThese(These $these, $nature = NatureFichier::CODE_THESE_PDF, $version = VersionFichier::CODE_ORIG)
     {
         if (!$nature instanceof NatureFichier) {
             $nature = $this->getEntityManager()->getRepository(NatureFichier::class)
@@ -140,7 +141,10 @@ class EntityProvider extends AbstractEntityProvider
                 ->findOneBy(['code' => $version]);
         }
 
-        $entity = EntityAsset::newFichier($these, $nature, $version);
+        $fichier = EntityAsset::newFichier($nature, $version);
+        $this->getEntityManager()->persist($fichier);
+
+        $entity = EntityAsset::newFichierThese($these, $fichier);
         $this->getEntityManager()->persist($entity);
 
         // $this->newEntities->push() inutile grâce au "delete cascade"
@@ -180,7 +184,7 @@ class EntityProvider extends AbstractEntityProvider
 
     public function validiteFichier(Fichier $fichier, $estValide = null)
     {
-        $entity = EntityAsset::newValiditeFichier($fichier, $estValide);
+        $entity = EntityAsset::newValiditeFichierThese($fichier, $estValide);
         $this->getEntityManager()->persist($entity);
 
         // $this->newEntities->push() inutile grâce au "delete cascade"
