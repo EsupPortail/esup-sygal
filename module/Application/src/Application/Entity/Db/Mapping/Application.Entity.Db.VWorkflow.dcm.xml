@@ -7,6 +7,8 @@
 
         <field name="ordre" type="integer" column="ORDRE" nullable="false" />
         <field name="franchie" type="boolean" column="FRANCHIE" nullable="false" />
+        <field name="atteignable" type="boolean" column="ATTEIGNABLE" nullable="false" />
+        <field name="courante" type="boolean" column="COURANTE" nullable="false" />
         <field name="resultat" type="integer" column="RESULTAT" nullable="false" />
         <field name="objectif" type="integer" column="OBJECTIF" nullable="false" />
 

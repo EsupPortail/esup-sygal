@@ -3,6 +3,7 @@
 namespace ApplicationFunctionalTest\Service\Workflow;
 
 use Application\Entity\Db\Fichier;
+use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
@@ -217,7 +218,7 @@ abstract class WorkflowServiceAbstractTest extends AbstractControllerTestCase
     protected function _deposer_fichier_version_originale($corrigee = false)
     {
         $version = $corrigee ? VersionFichier::CODE_ORIG_CORR : VersionFichier::CODE_ORIG;
-        $fichier = $this->ep()->fichier($this->these, NatureFichier::CODE_THESE_PDF, $version);
+        $fichier = $this->ep()->fichierThese($this->these, NatureFichier::CODE_THESE_PDF, $version);
         $this->em()->flush($fichier);
     }
 
@@ -289,7 +290,7 @@ abstract class WorkflowServiceAbstractTest extends AbstractControllerTestCase
 
         // Seul franchissement possible :
         //  - insertion d'un fichier (version d'archivage)
-        $fichier = $this->ep()->fichier($this->these, NatureFichier::CODE_THESE_PDF, $version);
+        $fichier = $this->ep()->fichierThese($this->these, NatureFichier::CODE_THESE_PDF, $version);
         $this->em()->flush($fichier);
         $this->wfs->reloadWorkflow($this->these);
     }
@@ -316,7 +317,7 @@ abstract class WorkflowServiceAbstractTest extends AbstractControllerTestCase
     {
         $version = $corrigee ? VersionFichier::CODE_ARCHI_CORR : VersionFichier::CODE_ARCHI;
 
-        /** @var Fichier $fichier */
+        /** @var FichierThese $fichier */
         $fichier = $this->these->getFichiersByNatureEtVersion(NatureFichier::CODE_THESE_PDF, $version, false)->first();
 
         // Franchissement
