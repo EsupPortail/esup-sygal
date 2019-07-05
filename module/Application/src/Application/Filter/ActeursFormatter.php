@@ -231,10 +231,6 @@ class ActeursFormatter extends AbstractFilter {
         /** @var Acteur $acteur */
         foreach($acteurs as $acteur) {
 
-            $acteurRole = $acteur->getRole()->getCode();
-            $acteurNom  = $acteur->getIndividu()->getNomComplet();
-
-
             $keep = true;
             if ($keep && $this->contrainteRole != null && $acteur->getRole()->getCode() != $this->contrainteRole) $keep = false;
             if ($keep && $this->contrainteRoleLibelle != null && $acteur->getRole()->getLibelle() != $this->contrainteRoleLibelle) $keep = false;

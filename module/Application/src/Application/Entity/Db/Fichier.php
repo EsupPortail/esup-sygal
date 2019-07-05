@@ -13,33 +13,25 @@ use UnicaenApp\Filter\BytesFormatter;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 
 /**
- * Fichier
+ * Classe représentant un fichier générique.
  */
 class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFileInterface
 {
     use HistoriqueAwareTrait;
 
-    /**
-     * Tag marquant un fichier qui résulte d'un deuxième dépôt (après correction).
-     *
-     * 'V2' = Deuxième dépôt (après corrections)
-     */
-    const TAG_DEUXIEME_DEPOT = 'V2';
-
     const RESOURCE_ID = 'Fichier';
-
-    const MESSAGE_RETRAITEMENT_DUREE = "L'opération de retraitement automatique de fichier peut durer quelques minutes.";
-    const MESSAGE_DEPOT_DUREE = "L'opération de téléversement de fichier peut durer quelques minutes.";
-
-    const RETRAITEMENT_AUTO = 'sygal';
-    const RETRAITEMENT_MANU = 'Inconnu';
 
     const MIME_TYPE_PDF = 'application/pdf';
 
     /**
-     * @var string
+     * @var integer
      */
     private $id;
+
+    /**
+     * @var string
+     */
+    private $uuid;
 
     /**
      * @var string
@@ -67,36 +59,6 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     private $description;
 
     /**
-     * @var bool
-     */
-    private $estAnnexe = false;
-
-    /**
-     * @var string
-     */
-    private $retraitement;
-
-    /**
-     * @var bool
-     */
-    private $estExpurge = false;
-
-    /**
-     * @var null|int
-     */
-    private $estConforme = null;
-
-    /**
-     * @var bool
-     */
-    private $estPartiel = false;
-
-    /**
-     * @var These
-     */
-    private $these;
-
-    /**
      * Contenu binaire de ce fichier.
      *
      * NB: utile uniquement pour le plugin Uploader.
@@ -122,12 +84,10 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
 
     /**
      * Fichier constructor.
-     *
-     * Génère un UUID en guise de clé primaire.
      */
     public function __construct()
     {
-        $this->id = Uuid::uuid4()->toString();
+        $this->uuid = Uuid::uuid4()->toString();
         $this->validites = new ArrayCollection();
     }
 
@@ -143,26 +103,6 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
                 $this->getNom());
         
         return $string;
-    }
-
-    /**
-     * Détermine si ce fichier peut faire l'objet d'un test de validité (i.e. compatibilité STAR).
-     *
-     * @return bool
-     */
-    public function supporteTestValidite()
-    {
-        return ! $this->getEstAnnexe() && ! $this->getEstExpurge();
-    }
-
-    /**
-     * Détermine si ce fichier peut faire l'objet d'un aperçu.
-     *
-     * @return bool
-     */
-    public function supporteApercu()
-    {
-        return $this->getTypeMime() === 'application/pdf';
     }
 
     /**
@@ -283,13 +223,21 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     }
 
     /**
-     * Get first part of uuid4 hash id.
+     * @return string
+     */
+    public function getUuid()
+    {
+        return $this->uuid;
+    }
+
+    /**
+     * Get first part of uuid4 hash.
      *
      * @return string
      */
-    public function getShortId()
+    public function getShortUuid()
     {
-        return strstr($this->id, '-', true);
+        return strstr($this->uuid, '-', true);
     }
 
     /**
@@ -339,157 +287,6 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     }
 
     /**
-     * @return boolean
-     * @deprecated Exploiter la NatureFichier
-     */
-    public function getEstAnnexe()
-    {
-        return $this->estAnnexe;
-    }
-
-    /**
-     * @param boolean $estAnnexe
-     * @return self
-     * @deprecated Exploiter la NatureFichier
-     */
-    public function setEstAnnexe($estAnnexe = true)
-    {
-        $this->estAnnexe = $estAnnexe;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isRetraitementAuto()
-    {
-        return $this->getRetraitement() === self::RETRAITEMENT_AUTO;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isRetraitementManuel()
-    {
-        return $this->getRetraitement() === self::RETRAITEMENT_MANU;
-    }
-
-    /**
-     * @return string
-     */
-    public function getRetraitement()
-    {
-        return $this->retraitement;
-    }
-
-    /**
-     * @param string $retraitement
-     * @return self
-     */
-    public function setRetraitement($retraitement)
-    {
-        $this->retraitement = $retraitement;
-
-        return $this;
-    }
-
-    /**
-     * @return boolean
-     * @deprecated Redondant avec la version du fichier (version de diffusion)
-     */
-    public function getEstExpurge()
-    {
-        return $this->estExpurge;
-    }
-
-    /**
-     * @param boolean $estExpurge
-     * @return self
-     * @deprecated Redondant avec la version du fichier (version de diffusion)
-     */
-    public function setEstExpurge($estExpurge = true)
-    {
-        $this->estExpurge = $estExpurge;
-
-        return $this;
-    }
-
-    /**
-     * Retourne :
-     * - <code>1</code> si le thésard a certifié que le fichier de thèse était conforme ;
-     * - <code>0</code> si le thésard a certifié que le fichier de thèse n'était PAS conforme ;
-     * - <code>null</code> si le thésard n'a pas encore répondu à la question.
-     *
-     * @return null|int
-     */
-    public function getEstConforme()
-    {
-        return $this->estConforme;
-    }
-
-    /**
-     * @return bool|null
-     */
-    public function getEstConformeToString()
-    {
-        if ($this->getEstConforme() === null) {
-            return "";
-        }
-
-        return $this->getEstConforme() ? "Oui" : "Non";
-    }
-
-    /**
-     * @param null|int $estConforme
-     * @return self
-     */
-    public function setEstConforme($estConforme = null)
-    {
-        $this->estConforme = $estConforme;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getEstPartiel()
-    {
-        return $this->estPartiel;
-    }
-
-    /**
-     * @param bool $estPartiel
-     * @return Fichier
-     */
-    public function setEstPartiel($estPartiel = true)
-    {
-        $this->estPartiel = $estPartiel;
-
-        return $this;
-    }
-
-    /**
-     * @return These
-     */
-    public function getThese()
-    {
-        return $this->these;
-    }
-
-    /**
-     * @param These $these
-     * @return self
-     */
-    public function setThese($these)
-    {
-        $this->these = $these;
-
-        return $this;
-    }
-
-    /**
      * @return NatureFichier
      */
     public function getNature()
@@ -504,8 +301,6 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     public function setNature(NatureFichier $nature)
     {
         $this->nature = $nature;
-
-        $this->setEstAnnexe($nature->estFichierNonPdf());
 
         return $this;
     }
@@ -546,6 +341,28 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     }
 
     /**
+     * @param ValiditeFichier $validiteFichier
+     * @return $this
+     */
+    public function addValidite(ValiditeFichier $validiteFichier)
+    {
+        $this->validites->add($validiteFichier);
+
+        return $this;
+    }
+
+    /**
+     * @param ValiditeFichier $validiteFichier
+     * @return $this
+     */
+    public function removeValidite(ValiditeFichier $validiteFichier)
+    {
+        $this->validites->removeElement($validiteFichier);
+
+        return $this;
+    }
+
+    /**
      * Ce fichier est-il archivable ?
      *
      * @return bool|null
@@ -574,25 +391,6 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
         return $this->estArchivable() ? "Oui" : "Non";
     }
 
-    /**
-     * @param ValiditeFichier $validiteFichier
-     * @return $this
-     */
-    public function addValidite(ValiditeFichier $validiteFichier)
-    {
-        $this->validites->add($validiteFichier);
-        return $this;
-    }
-
-    /**
-     * @param ValiditeFichier $validiteFichier
-     * @return $this
-     */
-    public function removeValidite(ValiditeFichier $validiteFichier)
-    {
-        $this->validites->removeElement($validiteFichier);
-        return $this;
-    }
 
     /**
      * Retourne la date de dépôt du fichier.
@@ -612,123 +410,5 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     public function getResourceId()
     {
         return self::RESOURCE_ID;
-    }
-}
-
-
-
-
-class FichierFiltering
-{
-    /**
-     * @param int|bool $estExpurge
-     * @return \Closure
-     */
-    static public function getFilterByExpurge($estExpurge = true)
-    {
-        return function(Fichier $fichier = null) use ($estExpurge) {
-            if ($estExpurge === null) {
-                return $fichier;
-            }
-            if ($fichier === null) {
-                return null;
-            }
-
-            $actual = $fichier->getEstExpurge();
-            $expected = (bool) $estExpurge;
-
-            return $actual === $expected ? $fichier : null;
-        };
-    }
-
-    /**
-     * @param int|bool $estAnnexe
-     * @return \Closure
-     */
-    static public function getFilterByAnnexe($estAnnexe = true)
-    {
-        return function(Fichier $fichier = null) use ($estAnnexe) {
-            if ($estAnnexe === null) {
-                return $fichier;
-            }
-            if ($fichier === null) {
-                return null;
-            }
-
-            $actual = $fichier->getEstAnnexe();
-            $expected = (bool) $estAnnexe;
-
-            return $actual === $expected ? $fichier : null;
-        };
-    }
-
-    /**
-     * @param int|bool|string $estRetraite '0', '1', booléen ou code du retraitement
-     * @return \Closure
-     */
-    static public function getFilterByRetraitement($estRetraite = true)
-    {
-        return function(Fichier $fichier = null) use ($estRetraite) {
-            if ($estRetraite === null) {
-                return $fichier;
-            }
-            if ($fichier === null) {
-                return null;
-            }
-
-            $actual = $fichier->getRetraitement();
-            $expected = $estRetraite;
-
-            if (is_numeric($expected) || is_bool($expected)) {
-                $expected = (bool) $estRetraite;
-                $actual = (bool) $actual;
-            }
-
-            return $actual === $expected ? $fichier : null;
-        };
-    }
-
-    /**
-     * @param NatureFichier|string $nature
-     * @return \Closure
-     */
-    static public function getFilterByNature($nature = null)
-    {
-        return function(Fichier $fichier = null) use ($nature) {
-            if ($nature === null) {
-                return $fichier;
-            }
-            if ($fichier === null) {
-                return null;
-            }
-
-            if ($nature instanceof NatureFichier) {
-                $nature = $nature->getCode();
-            }
-
-            return $nature === $fichier->getNature()->getCode() ? $fichier : null;
-        };
-    }
-
-    /**
-     * @param VersionFichier|string $version
-     * @return \Closure
-     */
-    static public function getFilterByVersion($version = null)
-    {
-        return function(Fichier $fichier = null) use ($version) {
-            if ($version === null) {
-                return $fichier;
-            }
-            if ($fichier === null) {
-                return null;
-            }
-
-            if ($version instanceof VersionFichier) {
-                $version = $version->getCode();
-            }
-
-            return $version === $fichier->getVersion()->getCode() ? $fichier : null;
-        };
     }
 }

@@ -49,7 +49,7 @@ $canFichier = $this->isAllowed(InformationPrivileges::getResourceId(InformationP
             <tr>
                 <td>
                     <a href="<?php
-                            echo $this->url('informations/fichiers/telecharger', ['id' => $fichier->getId()], [], true);  ?>">
+                            echo $this->url('informations/fichiers/telecharger', ['id' => $fichier->getUuid()], [], true);  ?>">
                         <?php echo $fichier->getNom(); ?>
                     </a>
                 </td>
@@ -61,7 +61,7 @@ $canFichier = $this->isAllowed(InformationPrivileges::getResourceId(InformationP
                 </td>
                 <td>
                     <?php if ($canFichier) : ?>
-                        <a href="<?php echo $this->url("informations/fichiers/supprimer", ['id' => $fichier->getId()], [], true); ?>">
+                        <a href="<?php echo $this->url("informations/fichiers/supprimer", ['id' => $fichier->getUuid()], [], true); ?>">
                             <span class="glyphicon glyphicon-remove"></span>
                         </a>
                     <?php endif; ?>

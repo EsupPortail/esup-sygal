@@ -5,6 +5,7 @@ namespace Application\Controller\Factory;
 use Application\Controller\FichierTheseController;
 use Application\EventRouterReplacer;
 use Application\Service\Fichier\FichierService;
+use Application\Service\FichierThese\FichierTheseService;
 use Application\Service\Individu\IndividuService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
@@ -33,13 +34,15 @@ class FichierTheseControllerFactory
         /**
          * @var TheseService          $theseService
          * @var FichierService        $fichierService
+         * @var FichierTheseService   $fichierTheseService
          * @var VersionFichierService $versionFichierService
          * @var NotifierService       $notificationService
          * @var IndividuService       $individuService
          * @var ValidationService     $validationService
          */
         $theseService = $serviceLocator->get('TheseService');
-        $fichierService = $serviceLocator->get('FichierService');
+        $fichierService = $serviceLocator->get(FichierService::class);
+        $fichierTheseService = $serviceLocator->get('FichierTheseService');
         $versionFichierService = $serviceLocator->get('VersionFichierService');
         $notificationService = $serviceLocator->get(NotifierService::class);
         $individuService = $serviceLocator->get('IndividuService');
@@ -48,6 +51,7 @@ class FichierTheseControllerFactory
 
         $controller = new FichierTheseController();
         $controller->setTheseService($theseService);
+        $controller->setFichierTheseService($fichierTheseService);
         $controller->setFichierService($fichierService);
         $controller->setVersionFichierService($versionFichierService);
         $controller->setNotifierService($notificationService);

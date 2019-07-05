@@ -924,7 +924,6 @@ INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (83, 3, 'c
 INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (84, 3, 'consultation-description', 'Consultation de la description de la thèse', 3027);
 INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (85, 3, 'consultation-archivage', 'Consultation de l''archivage de la thèse', 3028);
 INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (86, 3, 'consultation-rdv-bu', 'Consultation du rendez-vous BU', 3029);
-INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (87, 3, 'creation-zip', 'Création de l''archive ZIP', 3200);
 INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (88, 24, 'rdv-bu', 'Validation suite au rendez-vous à la BU', 3035);
 INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (91, 21, 'consultation', 'Consultation d''école doctorale', 100);
 INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (92, 21, 'modification', 'Modification d''école doctorale', 110);

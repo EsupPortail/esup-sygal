@@ -15,6 +15,9 @@ use Application\View\Renderer\PhpRenderer;
  * @var TypeValidation   $typeValidation
  * @var Validation|null  $validation
  * @var string           $nextStepUrl
+ * @var bool             $isDoctorant
+ * @var bool             $hasVDC
+ * @var bool             $hasVAC
  */
 
 $canValidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE);
@@ -52,15 +55,15 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_DEPOT
                     Version à récupérer <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
-                    <li class="complete"><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 1, 'version' => 'VOC'], [], true); ?>">Version originale</a></li>
-                    <li class="removal"><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 1, 'version' => 'VOC', 'removal' => true], [], true); ?>">Version originale</a></li>
+                    <li class="complete"><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 1, 'version' => 'VOC'], [], true); ?>">Version originale corrigée</a></li>
+                    <li class="removal"><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 1, 'version' => 'VOC', 'removal' => true], [], true); ?>">Version originale corrigée</a></li>
                     <?php if ($hasVDC): ?>
-                        <li class="complete"><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 1, 'version' => 'VDC'], [], true); ?>">Version diffusion</a></li>
-                        <li class="removal"><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 1, 'version' => 'VDC', 'removal' => true], [], true); ?>">Version diffusion</a></li>
+                        <li class="complete"><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 1, 'version' => 'VDC'], [], true); ?>">Version diffusion corrigée</a></li>
+                        <li class="removal"><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 1, 'version' => 'VDC', 'removal' => true], [], true); ?>">Version diffusion corrigée</a></li>
                     <?php endif; ?>
                     <?php if ($hasVAC): ?>
-                        <li class="complete"><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 1, 'version' => 'VAC' ], [], true); ?>">Version archivable</a></li>
-                        <li class="removal"><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 1, 'version' => 'VAC', 'removal' => true ], [], true); ?>">Version archivable</a></li>
+                        <li class="complete"><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 1, 'version' => 'VAC' ], [], true); ?>">Version archivable corrigée</a></li>
+                        <li class="removal"><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 1, 'version' => 'VAC', 'removal' => true ], [], true); ?>">Version archivable corrigée</a></li>
                     <?php endif; ?>
                 </ul>
             </div>

@@ -4,7 +4,7 @@ namespace Application\Service;
 
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\Etablissement\EtablissementService;
-use Application\Service\Fichier\FichierService;
+use Application\Service\FichierThese\FichierTheseService;
 use Application\Service\Individu\IndividuService;
 use Application\Service\Role\RoleService;
 use Application\Service\These\TheseService;
@@ -40,7 +40,7 @@ class ServiceAwareInitializer implements InitializerInterface
             //'VariableService'        => VariableService::class,
             'TheseService'           => TheseService::class,
             //'DoctorantService'       => DoctorantService::class,
-            'FichierService'         => FichierService::class,
+            'FichierTheseService'    => FichierTheseService::class,
             'VersionFichierService'  => VersionFichierService::class,
             'ValiditeFichierService' => ValiditeFichierService::class,
             'WorkflowService'        => WorkflowService::class,

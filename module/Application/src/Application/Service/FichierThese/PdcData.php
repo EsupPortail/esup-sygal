@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Service\Fichier;
+namespace Application\Service\FichierThese;
 
 use Application\Entity\Db\Acteur;
 

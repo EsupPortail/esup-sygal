@@ -3,7 +3,6 @@
 namespace Application\Validator;
 
 use Application\Command\ValidationFichierCinesCommand;
-use Application\Entity\Db\Fichier;
 use Application\Validator\Exception\CinesErrorException;
 use Zend\Validator\AbstractValidator;
 

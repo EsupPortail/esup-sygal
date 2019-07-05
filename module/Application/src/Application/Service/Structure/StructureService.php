@@ -442,6 +442,10 @@ class StructureService extends BaseService
     }
 
 
+    /**
+     * @param $structure
+     * @param $data
+     */
     public function updateFromPostData($structure, $data)
     {
         $hydrator = new DoctrineObject($this->getEntityManager());

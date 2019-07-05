@@ -11,7 +11,7 @@ class WorkflowServiceGeneralTest extends WorkflowServiceAbstractTest
         $etape1 = $this->wfs->getCurrent($this->these)->getEtape();
 
         /******************/
-        $fichier = $this->ep()->fichier($this->these);
+        $fichier = $this->ep()->fichierThese($this->these);
         $this->em()->flush($fichier);
         // NB: pas de reload du workflow
         /******************/

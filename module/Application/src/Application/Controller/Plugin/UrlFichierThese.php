@@ -2,7 +2,7 @@
 
 namespace Application\Controller\Plugin;
 
-use Application\Entity\Db\Fichier;
+use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
@@ -24,12 +24,12 @@ class UrlFichierThese extends UrlPlugin
         );
     }
 
-    public function telechargerFichierThese(These $these, Fichier $fichier)
+    public function telechargerFichierThese(These $these, FichierThese $fichier)
     {
         return $this->fromRoute('fichier/these/telecharger', [
             'these'      => $this->idify($these),
             'fichier'    => $this->idify($fichier),
-            'fichierNom' => $fichier->getNom(),
+            'fichierNom' => $fichier->getFichier()->getNom(),
         ], [], true);
     }
 
@@ -42,12 +42,12 @@ class UrlFichierThese extends UrlPlugin
         ], true);
     }
 
-    public function supprimerFichierThese(These $these, Fichier $fichier)
+    public function supprimerFichierThese(These $these, FichierThese $fichier)
     {
         return $this->fromRoute('fichier/these/supprimer', [
             'these'      => $this->idify($these),
             'fichier'    => $this->idify($fichier),
-            'fichierNom' => $fichier->getNom(),
+            'fichierNom' => $fichier->getFichier()->getNom(),
         ], [], true);
     }
 

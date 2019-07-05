@@ -3,10 +3,10 @@
 namespace Retraitement\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Entity\Db\Fichier;
+use Application\Entity\Db\FichierThese;
 use Application\EventRouterReplacerAwareTrait;
-use Application\Service\Fichier\FichierServiceAwareInterface;
-use Application\Service\Fichier\FichierServiceAwareTrait;
+use Application\Service\FichierThese\FichierTheseServiceAwareInterface;
+use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Retraitement\Form\Retraitement;
 use UnicaenApp\Exception\RuntimeException;
@@ -15,10 +15,10 @@ use UnicaenApp\ORM\Event\Listeners\HistoriqueListener;
 use Zend\Console\Request as ConsoleRequest;
 
 class IndexController extends AbstractController
-    implements FichierServiceAwareInterface
+    implements FichierTheseServiceAwareInterface
 {
     use EventRouterReplacerAwareTrait;
-    use FichierServiceAwareTrait;
+    use FichierTheseServiceAwareTrait;
     use NotifierServiceAwareTrait;
 
     public function indexAction()
@@ -83,14 +83,14 @@ class IndexController extends AbstractController
             throw new RuntimeException("Argument obligatoire manquant: fichier");
         }
 
-        /** @var Fichier $fichier */
-        $fichier = $this->fichierService->getRepository()->find($id);
-        if (! $fichier) {
+        /** @var FichierThese $fichierThese */
+        $fichierThese = $this->fichierTheseService->getRepository()->find($id);
+        if (! $fichierThese) {
             throw new RuntimeException("Fichier introuvable: " . $id);
         }
 
         // recherche du listener de gestion de l'historique pour lui transmettre le pseudo-utilisateur correspondant à l'application
-        foreach ($this->fichierService->getEntityManager()->getEventManager()->getListeners() as $listeners) {
+        foreach ($this->fichierTheseService->getEntityManager()->getEventManager()->getListeners() as $listeners) {
             foreach ($listeners as $listener) {
                 if ($listener instanceof HistoriqueListener) {
                     $listener->setIdentity(['db' => $this->utilisateurApplication]);
@@ -100,20 +100,20 @@ class IndexController extends AbstractController
 
         $this->eventRouterReplacer->replaceEventRouter($this->getEvent());
 
-        $fichierRetraite = $this->fichierService->creerFichierRetraite($fichier);
-        echo "Fichier créé avec succès: " . $fichierRetraite->getId();
+        $fichierTheseRetraite = $this->fichierTheseService->creerFichierTheseRetraite($fichierThese);
+        echo "Fichier créé avec succès: " . $fichierTheseRetraite->getFichier()->getId();
         echo PHP_EOL;
 
         $validite = null;
         if ($tester) {
-            $validite = $this->fichierService->validerFichier($fichierRetraite);
+            $validite = $this->fichierTheseService->validerFichierThese($fichierTheseRetraite);
             echo "Résultat du test d'archivabilité: " . PHP_EOL . $validite;
             echo PHP_EOL;
         }
 
         if ($notifier) {
             $destinataires = $notifier;
-            $notif = $this->notifierService->getNotificationFactory()->createNotificationForRetraitementFini($destinataires, $fichierRetraite, $validite);
+            $notif = $this->notifierService->getNotificationFactory()->createNotificationForRetraitementFini($destinataires, $fichierTheseRetraite, $validite);
             $this->notifierService->trigger($notif);
             echo "Destinataires du courriel envoyé: " . $notif->getTo();
             echo PHP_EOL;
