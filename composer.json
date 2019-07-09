@@ -17,7 +17,7 @@
         "ext-imagick":                   "*",
         "ext-readline":                  "*",
         "ext-gettext":                   "*",
-        "unicaen/app":                   "^1.3",
+        "unicaen/app":                   "dev-run-sql-service as 1.3.27",
         "unicaen/auth":                  "^1.3",
         "unicaen/faq":                   "^1.0",
         "unicaen/ldap":                  "^2.1",
