@@ -323,7 +323,7 @@ class TheseRechercheService
             ->addSelect('i')->leftJoin('a.individu', 'i')
             ->addSelect('r')->leftJoin('a.role', 'r')
             ->addSelect('f')->leftJoin('t.financements', 'f')
-            ->addSelect('fi')->leftJoin('t.fichiers', 'fi')
+            ->addSelect('fi')->leftJoin('t.fichierTheses', 'fi')
             ->addSelect('ta')->leftJoin('t.titreAcces', 'ta')
 //            ->addSelect('ds')->leftJoin('ur.domaines', 'ds')
             ->andWhere('1 = pasHistorise(t)');

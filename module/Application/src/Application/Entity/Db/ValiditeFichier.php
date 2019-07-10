@@ -33,7 +33,7 @@ class ValiditeFichier implements HistoriqueAwareInterface
     private $id;
 
     /**
-     * @var \Application\Entity\Db\Fichier
+     * @var Fichier
      */
     private $fichier;
 
@@ -149,11 +149,11 @@ class ValiditeFichier implements HistoriqueAwareInterface
     /**
      * Set fichier
      *
-     * @param \Application\Entity\Db\Fichier $fichier
+     * @param Fichier $fichier
      *
      * @return ValiditeFichier
      */
-    public function setFichier(\Application\Entity\Db\Fichier $fichier = null)
+    public function setFichier(Fichier $fichier = null)
     {
         $this->fichier = $fichier;
 
@@ -163,7 +163,7 @@ class ValiditeFichier implements HistoriqueAwareInterface
     /**
      * Get fichier
      *
-     * @return \Application\Entity\Db\Fichier
+     * @return Fichier
      */
     public function getFichier()
     {

@@ -74,6 +74,13 @@ class SubstitutionController extends AbstractController
             $this->structureService->updateFromPostData($structureCibleDataObject, $data['cible']);
             $structureCible = $this->structureService->createStructureSubstitutions($sources, $structureCibleDataObject);
 
+            if ($data['cible']['code'] !== null && $data['cible']['code'] !== '') {
+                $sourceCode = $this->sourceCodeStringHelper->addDefaultPrefixTo($data['cible']['code']);
+                $structureCible->getStructure()->setSourceCode($sourceCode);
+                $structureCible->getStructure()->setCode($data['cible']['code']);
+                $this->structureService->updateStructureSubstitutions($sources, $structureCible->getStructure());
+            }
+
             $message  = "La substitution <strong>".$structureCible->getLibelle()."</strong> vient d'être créée. Elle regroupe les structures : ";
             $message .= implode(", ", array_map(function(StructureConcreteInterface $s) { return "<i>".$s->getLibelle()."</i>";}, $sources));
             $this->flashMessenger()->addSuccessMessage($message);
@@ -266,6 +273,7 @@ class SubstitutionController extends AbstractController
             'identifiant' => $identifiant,
             'structuresConcretes' => $structures,
             'structuresConcretesSubstituees' => $sources,
+            'structureCibleLogoContent' => $this->structureService->getLogoStructureContent($cible),
         ]);
         $vm->setTemplate('application/substitution/modifier');
         return $vm;

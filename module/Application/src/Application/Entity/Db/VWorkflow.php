@@ -1,6 +1,7 @@
 <?php
 
 namespace Application\Entity\Db;
+
 use Application\Entity\VWorkflowNull;
 
 /**
@@ -34,9 +35,14 @@ class VWorkflow
     private $franchie = false;
 
     /**
-     * @var integer
+     * @var bool
      */
     private $atteignable = false;
+
+    /**
+     * @var bool
+     */
+    private $courante = false;
 
     /**
      * @var integer
@@ -129,6 +135,14 @@ class VWorkflow
     }
 
     /**
+     * @return bool
+     */
+    public function getCourante()
+    {
+        return (bool) $this->courante;
+    }
+
+    /**
      * Get resultat
      *
      * @return integer
@@ -150,16 +164,6 @@ class VWorkflow
 
 
 
-    /**
-     * @param int $atteignable
-     * @return VWorkflow
-     */
-    public function setAtteignable($atteignable)
-    {
-        $this->atteignable = $atteignable;
-
-        return $this;
-    }
 
     /**
      * @return static

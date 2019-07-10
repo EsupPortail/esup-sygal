@@ -6,7 +6,9 @@ use Application\Controller\Factory\FichierControllerFactory;
 use Application\Controller\Factory\FichierTheseControllerFactory;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\Provider\Privilege\ValidationPrivileges;
+use Application\Service\Fichier\FichierService;
 use Application\Service\Fichier\FichierServiceFactory;
+use Application\Service\FichierThese\FichierTheseServiceFactory;
 use Application\Service\File\FileService;
 use Application\Service\File\FileServiceFactory;
 use Application\Service\ValiditeFichier\ValiditeFichierService;
@@ -250,7 +252,8 @@ return array(
         ),
         'factories' => array(
             FileService::class => FileServiceFactory::class,
-            'FichierService' => FichierServiceFactory::class,
+            FichierService::class => FichierServiceFactory::class,
+            'FichierTheseService' => FichierTheseServiceFactory::class,
             'ValidationFichierCinesCommand' => ValidationFichierCinesCommandFactory::class,
             'CheckWSValidationFichierCinesCommand' => CheckWSValidationFichierCinesCommandFactory::class,
         ),

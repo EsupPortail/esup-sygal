@@ -7,20 +7,20 @@ use Application\Provider\Privilege\ThesePrivileges;
 use Application\Provider\Privilege\ValidationPrivileges;
 use Application\View\Renderer\PhpRenderer;
 use UnicaenApp\Service\MessageCollector;
-use Application\Entity\Db\Repository\FichierRepository;
+use Application\Entity\Db\Repository\FichierTheseRepository;
 
 /**
- * @var PhpRenderer         $this
- * @var These               $these
- * @var bool                $estDoctorant
- * @var string              $modifierUrl
- * @var string              $validerUrl
- * @var string              $devaliderUrl
- * @var Validation|null     $validation
- * @var MessageCollector    $msgCollector
- * @var string              $nextStepUrl
- * @var FichierRepository   $fichierRepository
- * @var boolean             $asynchronous
+ * @var PhpRenderer            $this
+ * @var These                  $these
+ * @var bool                   $estDoctorant
+ * @var string                 $modifierUrl
+ * @var string                 $validerUrl
+ * @var string                 $devaliderUrl
+ * @var Validation|null        $validation
+ * @var MessageCollector       $msgCollector
+ * @var string                 $nextStepUrl
+ * @var FichierTheseRepository $fichierRepository
+ * @var boolean                $asynchronous
  */
 
 $canEdit = $this->isAllowed($these, ThesePrivileges::THESE_SAISIE_RDV_BU);
@@ -42,7 +42,7 @@ $rdvBu = $these->getRdvBu();
     </div>
     <div class="panel-body">
         <p>
-            Avant d'aller au rendez-vous BU, vous devez télécharger la thèse complète, c'est à dire le corps du mémoire auquel est ajoutée la page de couverture générée automatiquement par l'application.
+            Avant que la BU ne prenne contact avec vous, vous devez télécharger la thèse complète, c'est à dire le corps du mémoire auquel est ajoutée la page de couverture générée automatiquement par l'application.
             Une fois la thèse complète téléchargée, assurez-vous que toutes les informations sur la page de couverture sont présentes et que la fusion n'a pas endommagé le mémoire.
         </p>
         <div class="checkbox">

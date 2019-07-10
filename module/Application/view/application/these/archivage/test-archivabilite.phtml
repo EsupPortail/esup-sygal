@@ -1,18 +1,18 @@
 <?php
 
-use Application\Entity\Db\Fichier;
+use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\These;
 use Application\View\Renderer\PhpRenderer;
 
 /**
  * @var         $this PhpRenderer
  * @var These   $these
- * @var Fichier $fichierThese
+ * @var FichierThese $fichierThese
  * @var string  $testArchivabiliteUrl
  */
 
-$validiteFichierThese = $fichierThese ? $fichierThese->getValidite() : null;
-$estVersionCorrigee = $fichierThese->getVersion()->estVersionCorrigee();
+$validiteFichierThese = $fichierThese ? $fichierThese->getFichier()->getValidite() : null;
+$estVersionCorrigee = $fichierThese->getFichier()->getVersion()->estVersionCorrigee();
 ?>
 
 <div class="box panel panel-info" id="div-tester-archi">
