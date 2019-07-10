@@ -238,16 +238,6 @@ drop index VALIDITE_FICHIER_HMFK_IDX
 --
 alter table FICHIER rename to FICHIER_SAV
 /
-alter table FICHIER_SAV drop constraint FICHIER_VERSION_FK
-/
-alter table FICHIER_SAV drop constraint FICHIER_HCFK
-/
-alter table FICHIER_SAV drop constraint FICHIER_HMFK
-/
-alter table FICHIER_SAV drop constraint FICHIER_HDFK
-/
-alter table FICHIER_SAV drop constraint FICHIER_NATURE_FIC_ID_FK
-/
 alter table FICHIER_THESE drop constraint FICHIER_THESE_PK
 /
 alter table FICHIER_THESE drop constraint FICHIER_THESE_FICHIER_FK
