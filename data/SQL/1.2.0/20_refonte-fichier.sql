@@ -204,27 +204,6 @@ where EST_ANNEXE = 0 AND EST_EXPURGE = 0
 
 
 --
--- Nouvelles entrées dans NATURE_FICHIER
---
---INSERT INTO NATURE_FICHIER (ID, CODE, LIBELLE) VALUES (?, 'XXX_XXX', 'Bla bla');
-
-
-
-
-/*
-drop table FICHIER;
-drop table FICHIER_THESE;
-drop table VALIDITE_FICHIER;
-
-alter table FICHIER_SAV rename to FICHIER ;
-alter table FICHIER_THESE_SAV rename to FICHIER_THESE ;
-alter table VALIDITE_FICHIER_SAV rename to VALIDITE_FICHIER ;
-*/
-
-
-
-
---
 -- Modif FICHIER : ID varchar => ID number
 --
 
@@ -455,4 +434,3 @@ select
 from VALIDITE_FICHIER_SAV vfs
 join FICHIER f on vfs.FICHIER_ID = f.UUID
 /
-
