@@ -231,34 +231,43 @@ alter table VALIDITE_FICHIER_SAV rename to VALIDITE_FICHIER ;
 --
 -- Cleanup
 --
-/*
-drop index FICHIER_HCFK_IDX;
-drop index FICHIER_HDFK_IDX;
-drop index FICHIER_HMFK_IDX;
-drop index FICHIER_VERSION_FK_IDX;
-drop index FICHIER_NATURE_ID_INDEX;
-drop index FICHIER_THESE_FICHIER_ID_index;
-drop index FICHIER_THESE_THESE_ID_index;
-drop index VALIDITE_FICHIER_FICHIER_IDX;
-drop index VALIDITE_FICHIER_HCFK_IDX;
-drop index VALIDITE_FICHIER_HDFK_IDX;
-drop index VALIDITE_FICHIER_HMFK_IDX;
-*/
+drop index FICHIER_HCFK_IDX
+/
+drop index FICHIER_HDFK_IDX
+/
+drop index FICHIER_HMFK_IDX
+/
+drop index FICHIER_VERSION_FK_IDX
+/
+drop index FICHIER_NATURE_ID_INDEX
+/
+drop index FICHIER_THESE_FICHIER_ID_index
+/
+drop index FICHIER_THESE_THESE_ID_index
+/
+drop index VALIDITE_FICHIER_FICHIER_IDX
+/
+drop index VALIDITE_FICHIER_HCFK_IDX
+/
+drop index VALIDITE_FICHIER_HDFK_IDX
+/
+drop index VALIDITE_FICHIER_HMFK_IDX
+/
 
 --
 -- FICHIER
 --
 alter table FICHIER rename to FICHIER_SAV
 /
-alter table FICHIER drop constraint FICHIER_VERSION_FK
+alter table FICHIER_SAV drop constraint FICHIER_VERSION_FK
 /
-alter table FICHIER drop constraint FICHIER_HCFK
+alter table FICHIER_SAV drop constraint FICHIER_HCFK
 /
-alter table FICHIER drop constraint FICHIER_HMFK
+alter table FICHIER_SAV drop constraint FICHIER_HMFK
 /
-alter table FICHIER drop constraint FICHIER_HDFK
+alter table FICHIER_SAV drop constraint FICHIER_HDFK
 /
-alter table FICHIER drop constraint FICHIER_NATURE_FIC_ID_FK
+alter table FICHIER_SAV drop constraint FICHIER_NATURE_FIC_ID_FK
 /
 alter table FICHIER_THESE drop constraint FICHIER_THESE_PK
 /
