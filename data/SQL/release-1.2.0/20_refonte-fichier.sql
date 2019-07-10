@@ -34,17 +34,17 @@ from FICHIER
 --
 -- Màj table FICHIER
 --
-alter table FICHIER drop column THESE_ID;
+alter table FICHIER drop column THESE_ID
 /
-alter table FICHIER drop column EST_ANNEXE;
+alter table FICHIER drop column EST_ANNEXE
 /
-alter table FICHIER drop column EST_EXPURGE;
+alter table FICHIER drop column EST_EXPURGE
 /
-alter table FICHIER drop column EST_CONFORME;
+alter table FICHIER drop column EST_CONFORME
 /
-alter table FICHIER drop column RETRAITEMENT;
+alter table FICHIER drop column RETRAITEMENT
 /
-alter table FICHIER drop column EST_PARTIEL;
+alter table FICHIER drop column EST_PARTIEL
 /
 
 --
@@ -204,46 +204,8 @@ where EST_ANNEXE = 0 AND EST_EXPURGE = 0
 
 
 --
--- Nouvelles entrées dans NATURE_FICHIER
---
---INSERT INTO NATURE_FICHIER (ID, CODE, LIBELLE) VALUES (?, 'XXX_XXX', 'Bla bla');
-
-
-
-
-/*
-drop table FICHIER;
-drop table FICHIER_THESE;
-drop table VALIDITE_FICHIER;
-
-alter table FICHIER_SAV rename to FICHIER ;
-alter table FICHIER_THESE_SAV rename to FICHIER_THESE ;
-alter table VALIDITE_FICHIER_SAV rename to VALIDITE_FICHIER ;
-*/
-
-
-
-
---
 -- Modif FICHIER : ID varchar => ID number
 --
-
---
--- Cleanup
---
-/*
-drop index FICHIER_HCFK_IDX;
-drop index FICHIER_HDFK_IDX;
-drop index FICHIER_HMFK_IDX;
-drop index FICHIER_VERSION_FK_IDX;
-drop index FICHIER_NATURE_ID_INDEX;
-drop index FICHIER_THESE_FICHIER_ID_index;
-drop index FICHIER_THESE_THESE_ID_index;
-drop index VALIDITE_FICHIER_FICHIER_IDX;
-drop index VALIDITE_FICHIER_HCFK_IDX;
-drop index VALIDITE_FICHIER_HDFK_IDX;
-drop index VALIDITE_FICHIER_HMFK_IDX;
-*/
 
 --
 -- FICHIER
