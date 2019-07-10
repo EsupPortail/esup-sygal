@@ -26,3 +26,7 @@ vendor/bin/doctrine-module orm:clear-cache:query
 vendor/bin/doctrine-module orm:clear-cache:metadata
 vendor/bin/doctrine-module orm:clear-cache:result
 vendor/bin/doctrine-module orm:generate-proxies
+
+
+# Install de la dernière release
+bash ./install-release-1.2.0.sh
