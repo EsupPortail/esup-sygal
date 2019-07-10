@@ -8,15 +8,15 @@ use Doctrine\ORM\Query\Parser;
 use Doctrine\ORM\Query\SqlWalker;
 
 /**
- * Fonction DQL maison "atteignable()".
+ * Fonction DQL maison "year()".
  * 
- * NB: le format DQL attendu est "atteignable(EntityExpression, EntityExpression)".
+ * NB: le format DQL attendu est "year(ArithmeticPrimary)".
  * Exemples :
  * <pre>
- * $qb->andWhere("1 = atteignable(e, t)")
+ * $qb->andWhere("1 = year(e.attr)")
  * </pre>
  * 
- * En SQL, génère l'appel à la fonction Oracle APP_WORKFLOW.ATTEIGNABLE().
+ * En SQL, génère l'appel à la fonction Oracle EXTRACT(year FROM ...).
  */
 class Year extends FunctionNode
 {

@@ -4,7 +4,7 @@ namespace Application\Controller\Factory;
 
 use Application\Controller\TheseController;
 use Application\Service\Etablissement\EtablissementService;
-use Application\Service\Fichier\FichierService;
+use Application\Service\FichierThese\FichierTheseService;
 use Application\Service\MailConfirmationService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\Role\RoleService;
@@ -36,20 +36,20 @@ class TheseControllerFactory
         $options = $this->getOptions($sl);
 
         /**
-         * @var VariableService $variableService
-         * @var ValidationService $validationService
-         * @var VersionFichierService $versionFichierService
-         * @var TheseService $theseService
-         * @var TheseRechercheService $theseRechercheService
-         * @var RoleService $roleService
-         * @var FichierService $fichierService
-         * @var WorkflowService $workflowService
-         * @var NotifierService $notifierService
-         * @var EtablissementService $etablissementService
-         * @var UniteRechercheService $uniteService
+         * @var VariableService         $variableService
+         * @var ValidationService       $validationService
+         * @var VersionFichierService   $versionFichierService
+         * @var TheseService            $theseService
+         * @var TheseRechercheService   $theseRechercheService
+         * @var RoleService             $roleService
+         * @var FichierTheseService     $fichierTheseService
+         * @var WorkflowService         $workflowService
+         * @var NotifierService         $notifierService
+         * @var EtablissementService    $etablissementService
+         * @var UniteRechercheService   $uniteService
          * @var MailConfirmationService $mailConfirmationService
-         * @var EntityManager $entityManager
-         * @var ImportService $importService
+         * @var EntityManager           $entityManager
+         * @var ImportService           $importService
          */
         $variableService = $sl->get('VariableService');
         $validationService = $sl->get('ValidationService');
@@ -58,7 +58,7 @@ class TheseControllerFactory
         $theseRechercheService = $sl->get('TheseRechercheService');
         $roleService = $sl->get('RoleService');
         $uniteService = $sl->get('UniteRechercheService');
-        $fichierService = $sl->get('FichierService');
+        $fichierTheseService = $sl->get('FichierTheseService');
         $workflowService = $sl->get('WorkflowService');
         $etablissementService = $sl->get('EtablissementService');
         $mailConfirmationService = $sl->get('MailConfirmationService');
@@ -74,7 +74,7 @@ class TheseControllerFactory
         $controller->setTheseService($theseService);
         $controller->setTheseRechercheService($theseRechercheService);
         $controller->setRoleService($roleService);
-        $controller->setFichierService($fichierService);
+        $controller->setFichierTheseService($fichierTheseService);
         $controller->setWorkflowService($workflowService);
         $controller->setEtablissementService($etablissementService);
         $controller->setUniteRechercheService($uniteService);

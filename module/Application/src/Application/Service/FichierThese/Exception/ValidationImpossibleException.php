@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Service\Fichier\Exception;
+namespace Application\Service\FichierThese\Exception;
 
 use UnicaenApp\Exception\RuntimeException;
 

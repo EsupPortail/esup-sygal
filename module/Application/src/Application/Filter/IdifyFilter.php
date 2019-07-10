@@ -2,6 +2,7 @@
 
 namespace Application\Filter;
 
+use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\VersionFichier;
 use Zend\Filter\Exception\RuntimeException;
@@ -48,6 +49,9 @@ class IdifyFilter implements FilterInterface
                 break;
             case $value instanceof NatureFichier:
                 return $value->getCode();
+                break;
+            case $value instanceof FichierThese:
+                return $value->getFichier()->getUuid();
                 break;
         }
 

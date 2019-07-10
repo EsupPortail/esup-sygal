@@ -1,6 +1,6 @@
 <?php
 
-use Application\Entity\Db\Fichier;
+use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\These;
 use Application\Entity\Db\WfEtape;
 use Application\Provider\Privilege\ThesePrivileges;
@@ -9,12 +9,12 @@ use Application\View\Renderer\PhpRenderer;
 /**
  * @var PhpRenderer $this
  * @var These       $these
- * @var Fichier     $fichier
+ * @var FichierThese $fichier
  * @var bool        $retraite
  * @var string      $contact
  */
 
-$validiteFichier = $fichier ? $fichier->getValidite() : null;
+$validiteFichier = $fichier ? $fichier->getFichier()->getValidite() : null;
 $originaleOuRetraitee = $retraite ? "retraitée" : "";
 ?>
 
@@ -23,7 +23,7 @@ $originaleOuRetraitee = $retraite ? "retraitée" : "";
     <div class="panel panel-info box">
 
         <div class="panel-heading">
-            <?php $heading = $fichier->getVersion()->estVersionCorrigee() ?
+            <?php $heading = $fichier->getFichier()->getVersion()->estVersionCorrigee() ?
                 "Archivabilité de la thèse corrigée $originaleOuRetraitee" : "Archivabilité de la thèse $originaleOuRetraitee"; ?>
             <h2 class="first"><?php echo $heading ?></h2>
         </div>

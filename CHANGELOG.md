@@ -1,6 +1,24 @@
 Journal des modifications
 =========================
 
+1.2.0 (10/07/2019)
+------------------
+
+### Améliorations
+
+- Amélioration des temps de réponse du moteur de workflow en base de données.
+- Refonte technique de la gestion des fichiers liés aux thèses, prélable au travail sur les droits de dépôt de 
+  fichiers divers.
+
+
+1.1.9 (14/05/2019)
+------------------
+
+### Ajout
+
+- Role Rapporteur non membre du jury pour les cas particuliers. Seulement sur les pages de couverture.
+
+
 1.1.8 (30/04/2019)
 ------------------
 

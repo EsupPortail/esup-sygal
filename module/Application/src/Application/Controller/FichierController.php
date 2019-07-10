@@ -5,10 +5,12 @@ namespace Application\Controller;
 use Application\Entity\Db\Fichier;
 use Application\RouteMatch;
 use Application\Service\Fichier\FichierServiceAwareTrait;
+use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Zend\View\Model\JsonModel;
 
 class FichierController extends AbstractController
 {
+    use FichierTheseServiceAwareTrait;
     use FichierServiceAwareTrait;
 
     public function uploadAction()

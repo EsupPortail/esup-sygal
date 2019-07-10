@@ -11,8 +11,8 @@ use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\VersionFichier;
 use Application\Entity\Db\VSitu\DepotVersionCorrigeeValidationDirecteur;
-use Application\Service\Fichier\FichierServiceAwareInterface;
-use Application\Service\Fichier\FichierServiceAwareTrait;
+use Application\Service\FichierThese\FichierTheseServiceAwareInterface;
+use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareInterface;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
@@ -21,12 +21,12 @@ use Application\Service\Validation\ValidationServiceAwareTrait;
 use Zend\Log\LoggerAwareTrait;
 
 class TheseEntityAssertion extends GeneratedTheseEntityAssertion
-    implements EntityAssertionInterface, ValidationServiceAwareInterface, FichierServiceAwareInterface, TheseServiceAwareInterface
+    implements EntityAssertionInterface, ValidationServiceAwareInterface, FichierTheseServiceAwareInterface, TheseServiceAwareInterface
 {
     use UserContextServiceAwareTrait;
     use ValidationServiceAwareTrait;
     use ThrowsFailedAssertionExceptionTrait;
-    use FichierServiceAwareTrait;
+    use FichierTheseServiceAwareTrait;
     use TheseServiceAwareTrait;
     use LoggerAwareTrait;
 
@@ -204,7 +204,7 @@ class TheseEntityAssertion extends GeneratedTheseEntityAssertion
     protected function isExisteFichierTheseVersionOriginale()
     {
         if (null === $this->existeFichierTheseVersionOriginale) {
-            $this->existeFichierTheseVersionOriginale = ! empty($this->fichierService->getRepository()->fetchFichiers(
+            $this->existeFichierTheseVersionOriginale = ! empty($this->fichierTheseService->getRepository()->fetchFichierTheses(
                 $this->these,
                 NatureFichier::CODE_THESE_PDF,
                 VersionFichier::CODE_ORIG,
@@ -225,7 +225,7 @@ class TheseEntityAssertion extends GeneratedTheseEntityAssertion
     protected function isExisteFichierTheseVersionCorrigee()
     {
         if (null === $this->existeFichierTheseVersionCorrigee) {
-            $this->existeFichierTheseVersionCorrigee = ! empty($this->fichierService->getRepository()->fetchFichiers(
+            $this->existeFichierTheseVersionCorrigee = ! empty($this->fichierTheseService->getRepository()->fetchFichierTheses(
                 $this->these,
                 NatureFichier::CODE_THESE_PDF,
                 VersionFichier::CODE_ORIG_CORR,

@@ -7,20 +7,20 @@ use Application\Provider\Privilege\ThesePrivileges;
 use Application\Provider\Privilege\ValidationPrivileges;
 use Application\View\Renderer\PhpRenderer;
 use UnicaenApp\Service\MessageCollector;
-use Application\Entity\Db\Repository\FichierRepository;
+use Application\Entity\Db\Repository\FichierTheseRepository;
 
 /**
- * @var PhpRenderer         $this
- * @var These               $these
- * @var bool                $estDoctorant
- * @var string              $modifierUrl
- * @var string              $validerUrl
- * @var string              $devaliderUrl
- * @var Validation|null     $validation
- * @var MessageCollector    $msgCollector
- * @var string              $nextStepUrl
- * @var FichierRepository   $fichierRepository
- * @var boolean             $asynchronous
+ * @var PhpRenderer            $this
+ * @var These                  $these
+ * @var bool                   $estDoctorant
+ * @var string                 $modifierUrl
+ * @var string                 $validerUrl
+ * @var string                 $devaliderUrl
+ * @var Validation|null        $validation
+ * @var MessageCollector       $msgCollector
+ * @var string                 $nextStepUrl
+ * @var FichierTheseRepository $fichierRepository
+ * @var boolean                $asynchronous
  */
 
 $canEdit = $this->isAllowed($these, ThesePrivileges::THESE_SAISIE_RDV_BU);

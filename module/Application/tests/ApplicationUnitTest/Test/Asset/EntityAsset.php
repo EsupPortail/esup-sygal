@@ -7,6 +7,7 @@ use Application\Entity\Db\Attestation;
 use Application\Entity\Db\Diffusion;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Fichier;
+use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\ImportObserv;
 use Application\Entity\Db\ImportObservResult;
 use Application\Entity\Db\Individu;
@@ -14,13 +15,13 @@ use Application\Entity\Db\MetadonneeThese;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\RdvBu;
 use Application\Entity\Db\Role;
+use Application\Entity\Db\Source;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Validation;
 use Application\Entity\Db\ValiditeFichier;
 use Application\Entity\Db\VersionFichier;
-use Application\Entity\Db\Source;
 
 /**
  * Données de tests.
@@ -43,11 +44,10 @@ class EntityAsset
         return $e;
     }
 
-    static public function newFichier(These $these, NatureFichier $nature, VersionFichier $version)
+    static public function newFichier(NatureFichier $nature, VersionFichier $version)
     {
         $e = new Fichier();
         $e
-            ->setThese($these)
             ->setNature($nature)
             ->setVersion($version)
             ->setNom(uniqid('Fichier_') . '.png')
@@ -55,6 +55,16 @@ class EntityAsset
             ->setDescription('Fichier de test')
             ->setTypeMime("image/png")
             ->setTaille(1024);
+
+        return $e;
+    }
+
+    static public function newFichierThese(These $these, Fichier $fichier)
+    {
+        $e = new FichierThese();
+        $e
+            ->setFichier($fichier)
+            ->setThese($these);
 
         return $e;
     }
@@ -155,7 +165,7 @@ class EntityAsset
         return $e;
     }
 
-    public static function newValiditeFichier(Fichier $fichier, $estValide = null)
+    public static function newValiditeFichierThese(Fichier $fichier, $estValide = null)
     {
         $e = new ValiditeFichier();
 

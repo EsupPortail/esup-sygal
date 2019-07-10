@@ -6,7 +6,7 @@ use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Financement;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
-use Application\Service\Fichier\FichierServiceAwareTrait;
+use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\These\TheseRechercheServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
@@ -16,7 +16,7 @@ class ExportController extends AbstractController
 {
     use TheseServiceAwareTrait;
     use TheseRechercheServiceAwareTrait;
-    use FichierServiceAwareTrait;
+    use FichierTheseServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
 
     public function csvAction()

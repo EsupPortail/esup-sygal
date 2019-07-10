@@ -2,7 +2,7 @@
 
 namespace  Information\Controller;
 
-use Application\Service\Fichier\FichierService;
+use Application\Service\FichierThese\FichierTheseService;
 use Application\Service\File\FileService;
 use Application\Service\UserContextService;
 use Information\Service\InformationFichierService;
@@ -13,18 +13,18 @@ class FichierControllerFactory {
     public function __invoke(ControllerManager $manager)
     {
         /**
-         * @var FichierService $fichierService
-         * @var UserContextService $userContextService
-         * @var FileService $fileService
+         * @var FichierTheseService       $fichierTheseService
+         * @var UserContextService        $userContextService
+         * @var FileService               $fileService
          * @var InformationFichierService $informationFichierService
          */
-        $fichierService = $manager->getServiceLocator()->get('FichierService');
+        $fichierTheseService = $manager->getServiceLocator()->get('FichierTheseService');
         $userContextService = $manager->getServiceLocator()->get('UnicaenAuth\Service\UserContext');
         $fileService = $manager->getServiceLocator()->get(FileService::class);
         $informationFichierService = $manager->getServiceLocator()->get(InformationFichierService::class);
 
         $controller = new FichierController();
-        $controller->setFichierService($fichierService);
+        $controller->setFichierTheseService($fichierTheseService);
         $controller->setUserContextService($userContextService);
         $controller->setFileService($fileService);
         $controller->setInformationFichierService($informationFichierService);
