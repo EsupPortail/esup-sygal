@@ -1,6 +1,15 @@
 Journal des modifications
 =========================
 
+1.2.1 ()
+------------------
+
+### Améliorations
+
+- Refonte technique de la gestion des fichiers liés aux pages d'informations, prélable au travail sur les droits de 
+  dépôt de fichiers divers.
+
+
 1.2.0 (10/07/2019)
 ------------------
 
