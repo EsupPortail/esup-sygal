@@ -7,7 +7,7 @@
 
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\NatureFichier;
-use Application\Filter\NomFichierFormatter;
+use Application\Filter\NomFichierTheseFormatter;
 use Application\Service\Fichier\FichierService;
 use Application\Service\FichierThese\FichierTheseService;
 use Application\Service\File\FileService;
@@ -40,7 +40,7 @@ $qb
 /** @var Fichier[] $fichiers */
 $fichiers = $qb/*->setMaxResults(50)*/->getQuery()->getResult();
 
-$nomFichierFormatter = new NomFichierFormatter();
+$nomFichierFormatter = new NomFichierTheseFormatter();
 
 $updatedFichiers = [];
 foreach ($fichiers as $fichier) {

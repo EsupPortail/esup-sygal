@@ -9,7 +9,6 @@ use Application\Entity\Db\These;
 use Application\Entity\Db\VersionFichier;
 use Application\EventRouterReplacerAwareTrait;
 use Application\Filter\IdifyFilterAwareTrait;
-use Application\Filter\NomFichierFormatter;
 use Application\RouteMatch;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\FichierThese\Exception\DepotImpossibleException;
@@ -262,16 +261,13 @@ class FichierTheseController extends AbstractController
                 }
             }
 
-            $nomFichierFormatter = new NomFichierFormatter();
-
             try {
                 $fichierTheses = $this->fichierTheseService->createFichierThesesFromUpload(
                     $these,
                     $result,
                     $nature,
                     $version,
-                    $retraitement,
-                    $nomFichierFormatter
+                    $retraitement
                 );
             } catch (DepotImpossibleException $die) {
                 return new JsonModel(['errors' => [$die->getMessage()]]);
