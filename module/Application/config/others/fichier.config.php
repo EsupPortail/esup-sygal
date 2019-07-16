@@ -11,6 +11,7 @@ use Application\Service\Fichier\FichierServiceFactory;
 use Application\Service\FichierThese\FichierTheseServiceFactory;
 use Application\Service\File\FileService;
 use Application\Service\File\FileServiceFactory;
+use Application\Service\NatureFichier\NatureFichierService;
 use Application\Service\ValiditeFichier\ValiditeFichierService;
 use Application\Service\VersionFichier\VersionFichierService;
 use UnicaenAuth\Guard\PrivilegeController;
@@ -248,6 +249,7 @@ return array(
     'service_manager' => array(
         'invokables' => array(
             'VersionFichierService' => VersionFichierService::class,
+            'NatureFichierService' => NatureFichierService::class,
             'ValiditeFichierService' => ValiditeFichierService::class,
         ),
         'factories' => array(

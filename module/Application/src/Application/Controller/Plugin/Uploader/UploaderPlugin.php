@@ -80,7 +80,7 @@ class UploaderPlugin extends AbstractPlugin implements ServiceLocatorAwareInterf
 
         header('Content-Description: File Transfer');
         header('Content-Type: ' . $contentType);
-        header('Content-Disposition: attachment; filename=' . $fichier->getNom());
+        header('Content-Disposition: attachment; filename="' . $fichier->getNom() . '"');
         header('Content-Transfer-Encoding: binary');
         header('Content-Length: ' . strlen($content));
         header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
