@@ -5,6 +5,7 @@ namespace Application\Controller;
 use Application\Controller\Plugin\Uploader\UploaderPlugin;
 use Application\Controller\Plugin\Url\UrlThesePlugin;
 use Application\Controller\Plugin\UrlDoctorant;
+use Application\Controller\Plugin\UrlFichier;
 use Application\Controller\Plugin\UrlFichierThese;
 use Application\Controller\Plugin\UrlWorkflow;
 use Application\Entity\Db\These;
@@ -28,6 +29,7 @@ use ZfcUser\Controller\Plugin\ZfcUserAuthentication;
  * @method boolean isAllowed($resource, $privilege)
  * @method UrlThesePlugin urlThese()
  * @method UrlDoctorant urlDoctorant()
+ * @method UrlFichier urlFichier()
  * @method UrlFichierThese urlFichierThese()
  * @method UrlWorkflow urlWorkflow()
  * @method Mail mail()

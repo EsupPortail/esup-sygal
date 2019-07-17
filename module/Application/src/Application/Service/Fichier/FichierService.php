@@ -68,22 +68,23 @@ class FichierService extends BaseService
      * ]
      * </pre>
      *
-     * @param array                 $uploadResult Données résultant d'un upload de fichiers
-     * @param string|NatureFichier  $nature       Nature de fichier, ou son code
-     * @param string|VersionFichier $version      Version de fichier, ou son code
+     * @param array                      $uploadResult Données résultant d'un upload de fichiers
+     * @param string|NatureFichier       $nature       Nature de fichier, ou son code
+     * @param string|VersionFichier|null $version      Version de fichier, ou son code.
+     *                                                 Si null, ce sera VersionFichier::CODE_ORIG
      * @return Fichier[] Fichiers créés
      */
-    public function createFichiersFromUpload(array $uploadResult, $nature, $version)
+    public function createFichiersFromUpload(array $uploadResult, $nature, $version = null)
     {
         $fichiers = [];
         $files = $uploadResult['files'];
 
-        if (! $version instanceof VersionFichier) {
+        if (!$version instanceof VersionFichier) {
             $version = $this->versionFichierService->getRepository()->findOneBy(
                 ['code' => $version ?: VersionFichier::CODE_ORIG]
             );
         }
-        if (! $nature instanceof NatureFichier) {
+        if (!$nature instanceof NatureFichier) {
             $nature = $this->natureFichierService->getRepository()->findOneBy(
                 ['code' => $nature ?: NatureFichier::CODE_DIVERS]
             );
@@ -200,8 +201,8 @@ class FichierService extends BaseService
     /**
      * Retourne le chemin sur le disque (du serveur) du fichier physique associé à un Fichier.
      *
-     * @param Fichier $fichier      Entité Fichier dont on veut connaître le chemin du fichier physique associé
-     *                                   stocké sur disque
+     * @param Fichier $fichier Entité Fichier dont on veut connaître le chemin du fichier physique associé
+     *                         stocké sur disque
      * @return string
      */
     public function computeDestinationFilePathForFichier(Fichier $fichier)

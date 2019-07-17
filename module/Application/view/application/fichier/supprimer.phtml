@@ -1,0 +1,13 @@
+<?php
+/**
+ * @var Fichier $fichier
+ */
+
+use Application\Entity\Db\Fichier;
+
+?>
+
+<h1><?php echo $this->title ?></h1>
+
+<?php
+echo $this->confirm("Confirmez-vous la suppression du fichier '{$fichier->getNomOriginal()}', svp ?");

@@ -4,6 +4,10 @@ use Application\Command\CheckWSValidationFichierCinesCommandFactory;
 use Application\Command\ValidationFichierCinesCommandFactory;
 use Application\Controller\Factory\FichierControllerFactory;
 use Application\Controller\Factory\FichierTheseControllerFactory;
+use Application\Controller\FichierTheseController;
+use Application\Controller\Plugin\UrlFichier;
+use Application\Controller\Plugin\UrlFichierThese;
+use Application\Provider\Privilege\FichierPrivileges;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\Provider\Privilege\ValidationPrivileges;
 use Application\Service\Fichier\FichierService;
@@ -15,9 +19,29 @@ use Application\Service\NatureFichier\NatureFichierService;
 use Application\Service\ValiditeFichier\ValiditeFichierService;
 use Application\Service\VersionFichier\VersionFichierService;
 use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 
-return array(
+return [
     'bjyauthorize'    => [
+        'resource_providers' => [
+            'BjyAuthorize\Provider\Resource\Config' => [
+                'Fichier' => [],
+            ],
+        ],
+        'rule_providers'     => [
+            PrivilegeRuleProvider::class => [
+                'allow' => [
+                    [
+                        'privileges' => [
+                            FichierPrivileges::FICHIER_COMMUN_TELECHARGER,
+                            FichierPrivileges::FICHIER_COMMUN_TELEVERSER,
+                        ],
+                        'resources'  => ['Fichier'],
+                        //'assertion'  => 'Assertion\\These',
+                    ],
+                ],
+            ],
+        ],
         'guards' => [
             PrivilegeController::class => [
                 [
@@ -30,7 +54,6 @@ return array(
                 [
                     'controller' => 'Application\Controller\FichierThese',
                     'action'     => [
-                        'lister',
                         'lister-fichiers',
                     ],
                     'privileges' => ThesePrivileges::THESE_CONSULTATION_DEPOT,
@@ -80,12 +103,40 @@ return array(
                     ],
                     'roles' => [],
                 ],
+
+                [
+                    'controller' => 'Application\Controller\Fichier',
+                    'action'     => [
+                        'lister-fichiers-communs',
+                    ],
+                    'privileges' => FichierPrivileges::FICHIER_COMMUN_TELECHARGER,
+                ],
+
+                [
+                    'controller' => 'Application\Controller\Fichier',
+                    'action'     => [
+                        'telecharger',
+                    ],
+                    'privileges' => [
+                        FichierPrivileges::FICHIER_COMMUN_TELECHARGER,
+                    ],
+                ],
+                [
+                    'controller' => 'Application\Controller\Fichier',
+                    'action'     => [
+                        'televerser-fichiers-communs',
+                        'supprimer',
+                    ],
+                    'privileges' => [
+                        FichierPrivileges::FICHIER_COMMUN_TELEVERSER,
+                    ],
+                ],
             ],
         ],
     ],
 
-    'router' => array(
-        'routes' => array(
+    'router' => [
+        'routes' => [
 
             'fichier' => [
                 'type'          => 'Segment',
@@ -114,21 +165,13 @@ return array(
                         ],
                         'may_terminate' => false,
                         'child_routes'  => [
-                            'lister'     => [
-                                'type'     => 'Segment',
-                                'options'  => [
-                                    'route' => '/lister',
-                                    'defaults' => [
-                                        'action' => 'lister',
-                                    ],
-                                ],
-                            ],
                             'lister-fichiers'     => [
                                 'type'     => 'Segment',
                                 'options'  => [
                                     'route' => '/lister-fichiers',
                                     'defaults' => [
                                         'action' => 'lister-fichiers',
+                                        /* @see FichierTheseController::listerFichiersAction() */
                                     ],
                                 ],
                             ],
@@ -208,11 +251,60 @@ return array(
                             ],
                         ],
                     ],
+
+                    /*--------------- Hors Thèse --------------*/
+                    'telecharger' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route' => '/telecharger/:fichier[/:fichierNom]',
+                            'constraints' => [
+                                'fichier' => '[a-zA-Z0-9-]+',
+                            ],
+                            'defaults'      => [
+                                'controller' => 'Fichier',
+                                'action' => 'telecharger',
+                            ],
+                        ],
+                    ],
+                    'supprimer' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route' => '/supprimer/:fichier[/:fichierNom]',
+                            'constraints' => [
+                                'fichier' => '[a-zA-Z0-9-]+',
+                            ],
+                            'defaults'      => [
+                                'controller' => 'Fichier',
+                                'action' => 'supprimer',
+                            ],
+                        ],
+                    ],
+
+                    'televerser-fichiers-communs' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route' => '/televerser-fichiers-communs',
+                            'defaults'      => [
+                                'controller' => 'Fichier',
+                                'action' => 'televerser-fichiers-communs',
+                            ],
+                        ],
+                    ],
+                    'lister-fichiers-communs' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route' => '/lister-fichiers-communs',
+                            'defaults'      => [
+                                'controller' => 'Fichier',
+                                'action' => 'lister-fichiers-communs',
+                            ],
+                        ],
+                    ],
                 ],
             ], // 'fichier'
 
-        ),
-    ),
+        ],
+    ],
     'console' => [
         'router' => [
             'routes' => [
@@ -235,10 +327,16 @@ return array(
                     'admin' => [
                         'pages' => [
                             'fichiers-deposes' => [
-                                'label'    => 'Fichiers déposés',
+                                'label'    => 'Fichiers de thèses',
                                 'route'    => 'fichier/deposes',
                                 'order'    => 100,
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\FichierThese', 'deposes'),
+                            ],
+                            'fichiers-communs' => [
+                                'label'    => 'Fichiers communs',
+                                'route'    => 'fichier/lister-fichiers-communs',
+                                'order'    => 200,
+                                'resource' => PrivilegeController::getResourceId('Application\Controller\Fichier', 'lister-fichiers-communs'),
                             ],
                         ],
                     ],
@@ -246,20 +344,20 @@ return array(
             ],
         ],
     ],
-    'service_manager' => array(
-        'invokables' => array(
+    'service_manager' => [
+        'invokables' => [
             'VersionFichierService' => VersionFichierService::class,
             'NatureFichierService' => NatureFichierService::class,
             'ValiditeFichierService' => ValiditeFichierService::class,
-        ),
-        'factories' => array(
+        ],
+        'factories' => [
             FileService::class => FileServiceFactory::class,
             FichierService::class => FichierServiceFactory::class,
             'FichierTheseService' => FichierTheseServiceFactory::class,
             'ValidationFichierCinesCommand' => ValidationFichierCinesCommandFactory::class,
             'CheckWSValidationFichierCinesCommand' => CheckWSValidationFichierCinesCommandFactory::class,
-        ),
-    ),
+        ],
+    ],
     'controllers' => [
         'factories' => [
             'Application\Controller\Fichier' => FichierControllerFactory::class,
@@ -268,7 +366,8 @@ return array(
     ],
     'controller_plugins' => [
         'invokables' => [
-            'urlFichierThese'       => 'Application\Controller\Plugin\UrlFichierThese',
+            'urlFichier'            => UrlFichier::class,
+            'urlFichierThese'       => UrlFichierThese::class,
         ],
     ],
-);
+];

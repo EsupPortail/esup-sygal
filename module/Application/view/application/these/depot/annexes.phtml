@@ -4,6 +4,7 @@ use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
 use Application\Entity\Db\VersionFichier;
+use Application\Provider\Privilege\FichierPrivileges;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\View\Renderer\PhpRenderer;
 use Zend\Form\Element\Hidden;
@@ -17,7 +18,7 @@ use Zend\Form\Element\Hidden;
  * @var VersionFichier $versionFichier
  */
 
-$canEdit = $this->isAllowed($these, ThesePrivileges::privilegeDeposerFor($nature, $versionFichier));
+$canEdit = $this->isAllowed($these, FichierPrivileges::privilegeTeleverserFor($nature, $versionFichier));
 
 $uploader = $this->uploader()->setUrl($uploadUrl);
 

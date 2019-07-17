@@ -2,8 +2,6 @@
 
 namespace Application\Provider\Privilege;
 
-use Application\Entity\Db\NatureFichier;
-use Application\Entity\Db\VersionFichier;
 use UnicaenAuth\Provider\Privilege\Privileges;
 
 /**
@@ -134,48 +132,5 @@ class ThesePrivileges extends Privileges
         return $correctionAttendue ?
             ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE :
             ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_INITIALE;
-    }
-
-    /**
-     * Retourne le privilège correspondant au téléversement/suppression de fichier répondant aux critères spécifiés.
-     *
-     * @param NatureFichier  $nature
-     * @param VersionFichier $versionFichier
-     * @return string
-     */
-    public static function privilegeDeposerFor(NatureFichier $nature, VersionFichier $versionFichier)
-    {
-        switch ($nature->getCode()) {
-            case NatureFichier::CODE_PV_SOUTENANCE:
-            case NatureFichier::CODE_RAPPORT_SOUTENANCE:
-            case NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE:
-            case NatureFichier::CODE_DEMANDE_CONFIDENT:
-            case NatureFichier::CODE_PROLONG_CONFIDENT:
-            case NatureFichier::CODE_CONV_MISE_EN_LIGNE:
-            case NatureFichier::CODE_AVENANT_CONV_MISE_EN_LIGNE:
-                return static::FICHIER_DIVERS_TELEVERSER;
-        }
-
-        return $versionFichier->estVersionCorrigee() ?
-            ThesePrivileges::THESE_DEPOT_VERSION_CORRIGEE :
-            ThesePrivileges::THESE_DEPOT_VERSION_INITIALE;
-    }
-
-    /**
-     * Retourne le privilège correspondant à la consultation des fichiers déposés répondant aux critères spécifiés.
-     *
-     * @param NatureFichier $nature
-     * @return string
-     */
-    public static function privilegeConsulterDepotFor(NatureFichier $nature)
-    {
-        if ($nature->getCode() === NatureFichier::CODE_PV_SOUTENANCE) {
-            return static::FICHIER_DIVERS_CONSULTER;
-        }
-        if ($nature->getCode() === NatureFichier::CODE_RAPPORT_SOUTENANCE) {
-            return static::FICHIER_DIVERS_CONSULTER;
-        }
-
-        return ThesePrivileges::THESE_TELECHARGEMENT_FICHIER;
     }
 }
