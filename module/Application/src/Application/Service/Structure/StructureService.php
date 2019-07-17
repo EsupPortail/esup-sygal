@@ -343,7 +343,9 @@ class StructureService extends BaseService
     public function getStructuresSubstituantes($type = null, $order = null)
     {
         $qb = $this->getEntityManager()->getRepository(Structure::class)->createQueryBuilder("s")
-            ->andWhere("s.structuresSubstituees IS NOT EMPTY");
+            ->addSelect('substituees')
+            ->join("s.structuresSubstituees", "substituees")/*
+            ->andWhere("s.structuresSubstituees IS NOT EMPTY")*/;
         if ($type) {
             $typeStructure = $this->fetchTypeStructure($type);
             $qb->andWhere("s.typeStructure = :type")

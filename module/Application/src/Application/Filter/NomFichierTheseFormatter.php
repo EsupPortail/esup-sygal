@@ -3,16 +3,14 @@
 namespace Application\Filter;
 
 use Application\Entity\Db\FichierThese;
-use UnicaenApp\Util;
-use Zend\Filter\AbstractFilter;
 use Zend\Filter\Exception;
 
 /**
- * Filtre générateur du nom de fichier téléversé.
+ * Filtre générateur du nom de fichier lié à une thèse.
  *
  * @author Unicaen
  */
-class NomFichierTheseFormatter extends AbstractFilter
+class NomFichierTheseFormatter extends AbstractNomFichierFormatter
 {
     private $separator = '-';
 
@@ -32,8 +30,8 @@ class NomFichierTheseFormatter extends AbstractFilter
         $date = $fichierThese->getThese()->getDateSoutenance() ?: $fichierThese->getThese()->getDatePrevisionSoutenance();
         $parts['annee'] = $date ? $date->format('Y') : date('Y');
 
-        $parts['nomDoctorant']    = mb_strtoupper($this->transformText($doctorant->getNomUsuel()));
-        $parts['prenomDoctorant'] = mb_strtoupper($this->transformText($doctorant->getPrenom()));
+        $parts['nomDoctorant']    = $this->normalizedString($doctorant->getIndividu()->getNomUsuel());
+        $parts['prenomDoctorant'] = $this->normalizedString($doctorant->getIndividu()->getPrenom());
 
         // on inclue un id unique car il peut y avoir plusieurs fichiers de même nature déposés, exemples :
         // - plusieurs pré-rapports de soutenance pour une même thèse,
@@ -57,25 +55,8 @@ class NomFichierTheseFormatter extends AbstractFilter
 
         $name = implode($this->separator, $parts);
 
-        $pathParts = pathinfo($fichierThese->getFichier()->getNomOriginal());
-        $extension = mb_strtolower($pathParts['extension']);
+        $extension = $this->extractExtensionFromFichier($fichierThese->getFichier());
 
         return $name . '.' . $extension;
-    }
-
-    /**
-     * @param string $str
-     * @param string $encoding
-     *
-     * @return string
-     */
-    private function transformText($str, $encoding = 'UTF-8')
-    {
-        $s = $this->separator;
-
-        $from = "ÀÁÂÃÄÅÇÐÈÉÊËÌÍÎÏÒÓÔÕÖØÙÚÛÜŸÑàáâãäåçðèéêëìíîïòóôõöøùúûüÿñ€@ \"'";
-        $to   = "AAAAAACDEEEEIIIIOOOOOOUUUUYNaaaaaacdeeeeiiiioooooouuuuynEA$s$s$s";
-
-        return Util::strtr($str, $from, $to, false, $encoding);
     }
 }

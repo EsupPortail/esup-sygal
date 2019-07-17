@@ -5,7 +5,7 @@ use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
 use Application\Entity\Db\VersionFichier;
-use Application\Provider\Privilege\ThesePrivileges;
+use Application\Provider\Privilege\FichierPrivileges;
 use Application\View\Renderer\PhpRenderer;
 
 /**
@@ -22,7 +22,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var VersionFichier $versionFichier
  */
 
-$privilege = ThesePrivileges::privilegeDeposerFor($nature, $versionFichier);
+$privilege = FichierPrivileges::privilegeTeleverserFor($nature, $versionFichier);
 $canEdit = $this->isAllowed($these, $privilege);
 
 $uploader = $this->uploader()->setUrl($uploadUrl);

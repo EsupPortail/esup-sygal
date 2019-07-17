@@ -3,14 +3,13 @@
 namespace Application\Filter;
 
 use Application\Entity\Db\Fichier;
-use Zend\Filter\AbstractFilter;
 
 /**
- * Filtre générateur du nom de fichier téléversé.
+ * Filtre générateur du nom de fichier.
  *
  * @author Unicaen
  */
-class NomFichierFormatter extends AbstractFilter
+class NomFichierFormatter extends AbstractNomFichierFormatter
 {
     private $separator = '-';
 
@@ -22,20 +21,19 @@ class NomFichierFormatter extends AbstractFilter
      */
     public function filter($fichier)
     {
+        $extension = $this->extractExtensionFromFichier($fichier);
+
         $parts = [];
 
-        // on inclue un id unique car il peut y avoir plusieurs fichiers de même nature déposés
+        $nomOriginalSansExtension = substr($fichier->getNomOriginal(), 0, -1 * (strlen($extension)+1));
+        $parts['nom'] = $this->normalizedString($nomOriginalSansExtension);
+
+        // on inclue un id unique car il peut y avoir plusieurs fichiers de même nom déposés
         $parts['id'] = $fichier->getShortUuid();
 
-        $parts['version'] = $fichier->getVersion()->getCode();
-
-        $nature = str_replace('_', '-', $fichier->getNature()->getCode());
-        $parts['nature'] = mb_strtoupper($nature);
+        $parts['nature'] = $this->normalizedString($fichier->getNature()->getCode());
 
         $name = implode($this->separator, $parts);
-
-        $pathParts = pathinfo($fichier->getNomOriginal());
-        $extension = mb_strtolower($pathParts['extension']);
 
         return $name . '.' . $extension;
     }
