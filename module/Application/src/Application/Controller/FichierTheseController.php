@@ -60,7 +60,7 @@ class FichierTheseController extends AbstractController
         }
 
         if ($sort === null) { // null <=> paramètre absent
-            // tri par défaut : datePremiereInscription
+            // tri par défaut : nom
             $queryParams = array_merge($queryParams, ['sort' => 'f.nom', 'direction' => Sortable::ASC]);
             $needsRedirect = true;
         }
@@ -112,44 +112,6 @@ class FichierTheseController extends AbstractController
         ]);
 
         return $vm;
-    }
-
-    /**
-     * Listage des fichiers (thèse ou annexes) déposés.
-     *
-     * @return ViewModel
-     */
-    public function listerAction()
-    {
-        $these = $this->requestedThese();
-        $estAnnexe   = $this->params()->fromQuery('annexe',  false);
-//        $estExpurge  = $this->params()->fromQuery('expurge', false);
-        $estRetraite = $this->params()->fromQuery('retraite', false);
-        $inclureValidite = (bool)$this->params()->fromQuery('inclureValidite', false);
-        $inclureRetraitement = (bool)$this->params()->fromQuery('inclureRetraitement', false);
-
-        $version = $this->params()->fromQuery('version');
-
-//      $fichiers = $these->getFichiersBy($estAnnexe, $estExpurge, $estRetraite, $version);
-        $nature = $estAnnexe ? NatureFichier::CODE_FICHIER_NON_PDF : NatureFichier::CODE_THESE_PDF;
-        $fichiers = $this->fichierTheseService->getRepository()->fetchFichierTheses($these, $nature , $version , $estRetraite);
-
-        $items = array_map(function (FichierThese $fichier) use ($these) {
-            return [
-                'file'          => $fichier,
-                'downloadUrl'   => $this->urlFichierThese()->telechargerFichierThese($these, $fichier),
-                'deleteUrl'     => $this->urlFichierThese()->supprimerFichierThese($these, $fichier),
-            ];
-        }, $fichiers);
-
-        $viewModel = new ViewModel([
-            'items' => $items,
-            'inclureValidite' => $inclureValidite,
-            'inclureRetraitement' => $inclureRetraitement,
-        ]);
-        $viewModel->setTemplate('application/fichier-these/lister-fichiers');
-
-        return $viewModel;
     }
 
     /**
