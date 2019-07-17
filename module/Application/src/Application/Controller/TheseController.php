@@ -226,15 +226,7 @@ class TheseController extends AbstractController
             'these'                     => $these,
             'etablissement'             => $etablissement,
             'estDoctorant'              => (bool)$this->userContextService->getSelectedRoleDoctorant(),
-//            'modifierPersopassUrl'      => $this->urlDoctorant()->modifierPersopassUrl($these),
             'modifierPersopassUrl'      => $urlModification,
-            'pvSoutenanceUrl'           => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_PV_SOUTENANCE),
-            'rapportSoutenanceUrl'      => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_RAPPORT_SOUTENANCE),
-            'preRapportSoutenanceUrl'   => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE),
-            'demandeConfidentUrl'       => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_DEMANDE_CONFIDENT),
-            'prolongConfidentUrl'       => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_PROLONG_CONFIDENT),
-            'convMiseEnLigneUrl'        => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_CONV_MISE_EN_LIGNE),
-            'avenantConvMiseEnLigneUrl' => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_AVENANT_CONV_MISE_EN_LIGNE),
             'modifierCorrecAutorUrl'    => $this->urlThese()->modifierCorrecAutoriseeForceeUrl($these),
             'nextStepUrl'               => $this->urlWorkflow()->nextStepBox($these, null, [
                 WfEtape::PSEUDO_ETAPE_FINALE,
@@ -351,6 +343,28 @@ class TheseController extends AbstractController
         ]);
 
         $view->setTemplate('application/these/depot');
+
+        return $view;
+    }
+
+    /**
+     * @return ViewModel
+     */
+    public function detailDepotDiversAction()
+    {
+        $these = $this->requestedThese();
+
+        $view = new ViewModel([
+            'these'                     => $these,
+            'pvSoutenanceUrl'           => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_PV_SOUTENANCE),
+            'rapportSoutenanceUrl'      => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_RAPPORT_SOUTENANCE),
+            'preRapportSoutenanceUrl'   => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE),
+            'demandeConfidentUrl'       => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_DEMANDE_CONFIDENT),
+            'prolongConfidentUrl'       => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_PROLONG_CONFIDENT),
+            'convMiseEnLigneUrl'        => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_CONV_MISE_EN_LIGNE),
+            'avenantConvMiseEnLigneUrl' => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_AVENANT_CONV_MISE_EN_LIGNE),
+        ]);
+        $view->setTemplate('application/these/depot-divers');
 
         return $view;
     }
