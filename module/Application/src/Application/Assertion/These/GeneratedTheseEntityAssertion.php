@@ -9,7 +9,7 @@ namespace Application\Assertion\These;
  * /home/gauthierb/workspace/sygal/data/assertions/TheseEntityAssertion.csv.
  *
  * @author Application\Assertion\Generator\AssertionGenerator
- * @date 29/11/2018 12:25:42
+ * @date 15/07/2019 09:35:53
  */
 abstract class GeneratedTheseEntityAssertion
 {
@@ -91,14 +91,14 @@ abstract class GeneratedTheseEntityAssertion
             return true;
         }
 
-        if ($privilege === \Application\Provider\Privilege\ThesePrivileges::FICHIER_DIVERS_TELEVERSER) {
+        if ($privilege === \Application\Provider\Privilege\ThesePrivileges::THESE_FICHIER_DIVERS_TELEVERSER) {
         //--------------------------------------------------------------------------------------
             /* line 10 */
             $this->linesTrace[] = '/* line 10 */';
             return true;
         }
 
-        if ($privilege === \Application\Provider\Privilege\ThesePrivileges::FICHIER_DIVERS_CONSULTER) {
+        if ($privilege === \Application\Provider\Privilege\ThesePrivileges::THESE_FICHIER_DIVERS_CONSULTER) {
         //--------------------------------------------------------------------------------------
             /* line 11 */
             $this->linesTrace[] = '/* line 11 */';
@@ -622,8 +622,8 @@ line;enabled;privilege;isRoleDoctorantSelected;;isStructureDuRoleRespectee;;isTh
 7;1;\Application\Provider\Privilege\ThesePrivileges::THESE_DEPOT_VERSION_INITIALE;;;;;;;1:1;;;;;;;;;;;;;;;;;;;;;0;Le dépôt d'une version initiale n'est plus possible dès lors qu'une version corrigée est attendue.
 8;1;\Application\Provider\Privilege\ThesePrivileges::THESE_DEPOT_VERSION_INITIALE;;;;;;;;;;;;;;;1:1;;;;;;;;;;;;;0;Opération impossible dès lors que la BU a validé.
 9;1;\Application\Provider\Privilege\ThesePrivileges::THESE_DEPOT_VERSION_INITIALE;;;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-10;1;\Application\Provider\Privilege\ThesePrivileges::FICHIER_DIVERS_TELEVERSER;;;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-11;1;\Application\Provider\Privilege\ThesePrivileges::FICHIER_DIVERS_CONSULTER;;;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+10;1;\Application\Provider\Privilege\ThesePrivileges::THESE_FICHIER_DIVERS_TELEVERSER;;;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+11;1;\Application\Provider\Privilege\ThesePrivileges::THESE_FICHIER_DIVERS_CONSULTER;;;;;;;;;;;;;;;;;;;;;;;;;;;;1;
 12;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_INITIALE;;;;;1:0;;;;;;;;;;;;;;;;;;;;;;;0;L’état de la thèse ne permet pas cette opération.
 13;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_INITIALE;;;;;;;1:1;;;;;;;;;;;;;;;;;;;;;0;Opération impossible dès lors qu’une version corrigée est attendue.
 14;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_INITIALE;;;;;;;;;;;;;;;1:1;;;;;;;;;;;;;0;Opération impossible dès lors que la BU a validé.

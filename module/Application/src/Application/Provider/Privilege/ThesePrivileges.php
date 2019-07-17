@@ -7,7 +7,7 @@ use Application\Entity\Db\VersionFichier;
 use UnicaenAuth\Provider\Privilege\Privileges;
 
 /**
- * Liste des privilèges utilisables.
+ * Privilèges pour les opérations concernant les thèses.
  */
 class ThesePrivileges extends Privileges
 {
@@ -34,14 +34,14 @@ class ThesePrivileges extends Privileges
     const THESE_SAISIE_CORREC_AUTORISEE_FORCEE      = 'these-saisie-correc-autorisee-forcee';
 
     /**
-     * Dépôt
+     * Dépôt de fichiers liés à une thèse
      */
     const THESE_DEPOT_VERSION_INITIALE              = 'these-depot-version-initiale';
     const THESE_DEPOT_VERSION_CORRIGEE              = 'these-depot-version-corrigee';
     const THESE_CONSULTATION_DEPOT                  = 'these-consultation-depot';
     const THESE_TELECHARGEMENT_FICHIER              = 'these-telechargement-fichier';
-    const FICHIER_DIVERS_TELEVERSER                 = 'fichier-divers-televerser';
-    const FICHIER_DIVERS_CONSULTER                  = 'fichier-divers-consulter';
+    const THESE_FICHIER_DIVERS_TELEVERSER           = 'these-fichier-divers-televerser';
+    const THESE_FICHIER_DIVERS_CONSULTER            = 'these-fichier-divers-consulter';
 
     /**
      * Attestations
