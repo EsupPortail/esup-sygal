@@ -15,6 +15,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Exception;
 use UnicaenApp\Exception\RuntimeException;
+use Zend\Filter\FilterInterface;
 
 class FichierService extends BaseService
 {
@@ -72,9 +73,10 @@ class FichierService extends BaseService
      * @param string|NatureFichier       $nature       Nature de fichier, ou son code
      * @param string|VersionFichier|null $version      Version de fichier, ou son code.
      *                                                 Si null, ce sera VersionFichier::CODE_ORIG
+     * @param FilterInterface|null       $nomFichierFormatter
      * @return Fichier[] Fichiers créés
      */
-    public function createFichiersFromUpload(array $uploadResult, $nature, $version = null)
+    public function createFichiersFromUpload(array $uploadResult, $nature, $version = null, FilterInterface $nomFichierFormatter = null)
     {
         $fichiers = [];
         $files = $uploadResult['files'];
@@ -95,7 +97,9 @@ class FichierService extends BaseService
             $files = [$files];
         }
 
-        $nomFichierFormatter = new NomFichierFormatter();
+        if ($nomFichierFormatter === null) {
+            $nomFichierFormatter = new NomFichierFormatter();
+        }
 
         foreach ((array)$files as $file) {
             $path = $file['tmp_name'];

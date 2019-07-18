@@ -19,7 +19,12 @@ class NomAvisFormatter extends NomFichierFormatter
     /** @var Individu */
     private $individu;
 
-    public function __construct($individu)
+    /**
+     * NomAvisFormatter constructor.
+     *
+     * @param Individu $individu
+     */
+    public function __construct(Individu $individu)
     {
         $this->individu = $individu;
     }
@@ -27,18 +32,15 @@ class NomAvisFormatter extends NomFichierFormatter
     /**
      * Retourne un nom de fichier conforme aux règles de nommage.
      *
-     * @param  Fichier $fichier
-     * @throws Exception\RuntimeException If filtering $value is impossible
-     * @return mixed
+     * @param Fichier $fichier
+     * @return string
      */
     public function filter($fichier)
     {
-
         $parts = [];
-        $parts['id']            = $fichier->getShortId();
-        $parts['displayName']   = mb_strtoupper($this->transformText($this->individu->getNomUsuel()." ".$this->individu->getPrenom()));
-        $nature = str_replace('_', '-', $fichier->getNature()->getCode());
-        $parts['nature'] = mb_strtoupper($nature);
+        $parts['id'] = $fichier->getShortUuid();
+        $parts['displayName'] = $this->normalizedString($this->individu->getNomUsuel() . " " . $this->individu->getPrenom());
+        $parts['nature'] = $this->normalizedString($fichier->getNature()->getCode());
 
         $name = implode($this->separator, $parts);
 

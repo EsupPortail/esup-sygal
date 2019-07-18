@@ -6,6 +6,7 @@ use Application\Controller\AbstractController;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Fichier;
+use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\Role;
@@ -13,12 +14,11 @@ use Application\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\VersionFichier;
 use Application\Filter\NomFichierFormatter;
-use Application\Service\Fichier\FichierServiceAwareTrait;
+use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
-use Soutenance\Filter\JustificatifFormatter;
 use Soutenance\Form\Anglais\AnglaisFormAwareTrait;
 use Soutenance\Form\ChangementTitre\ChangementTitreFormAwareTrait;
 use Soutenance\Form\Confidentialite\ConfidentialiteForm;
@@ -49,7 +49,7 @@ class PropositionController extends AbstractController {
     use TheseServiceAwareTrait;
     use UserContextServiceAwareTrait;
     use ValidatationServiceAwareTrait;
-    use FichierServiceAwareTrait;
+    use FichierTheseServiceAwareTrait;
 
     use DateLieuFormAwareTrait;
     use MembreFromAwareTrait;
@@ -97,7 +97,7 @@ class PropositionController extends AbstractController {
 
         $fichiers = [];
         foreach ($natures as $nature) {
-            $fichiers[$nature] = $this->fichierService->getRepository()->fetchFichiers($these, $nature);
+            $fichiers[$nature] = $this->fichierTheseService->getRepository()->fetchFichierTheses($these, $nature);
         }
 
 
@@ -523,9 +523,9 @@ class PropositionController extends AbstractController {
 
             $form->setData($data);
             if ($form->isValid()) {
-                $nature = $this->fichierService->fetchNatureFichier($data['nature']);
-                $version = $this->fichierService->fetchVersionFichier(VersionFichier::CODE_ORIG);
-                $fichiers = $this->fichierService->createFichiersFromUpload($these, $files, $nature, $version, null, new NomFichierFormatter());
+                $nature = $this->fichierTheseService->fetchNatureFichier($data['nature']);
+                $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
+                $this->fichierTheseService->createFichierThesesFromUpload($these, $files, $nature, $version);
 
                 return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
             }
@@ -540,13 +540,10 @@ class PropositionController extends AbstractController {
     public function retirerJustificatifAction() {
 
         $these = $this->requestedThese();
-        /** @var Fichier $justificatif */
-        $justificatif = $this->fichierService->getRepository()->find($this->params()->fromRoute('justificatif'));
+        /** @var FichierThese $justificatif */
+        $justificatif = $this->fichierTheseService->getRepository()->find($this->params()->fromRoute('justificatif'));
 
-        $filePath = $this->fichierService->computeDestinationFilePathForFichier($justificatif);
-        $this->fichierService->getEntityManager()->remove($justificatif);
-        $this->fichierService->getEntityManager()->flush();
-        unlink($filePath);
+        $this->fichierTheseService->deleteFichiers([$justificatif], $these);
 
         return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
     }

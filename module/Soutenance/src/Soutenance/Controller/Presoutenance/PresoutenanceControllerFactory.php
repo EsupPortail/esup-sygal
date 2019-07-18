@@ -3,7 +3,6 @@
 namespace Soutenance\Controller\Presoutenance;
 
 use Application\Service\Acteur\ActeurService;
-use Application\Service\Fichier\FichierService;
 use Application\Service\Individu\IndividuService;
 use Application\Service\Role\RoleService;
 use Application\Service\These\TheseService;
@@ -37,7 +36,6 @@ class PresoutenanceControllerFactory
          * @var ValidationService $validationService
          * @var RoleService $roleService
          * @var UtilisateurService $utilisateurService
-         * @var FichierService $fichierService
          * @var ParametreService $parametreService
          * @var EngagementImpartialiteService $engagementImpartialiteService
          */
@@ -51,7 +49,6 @@ class PresoutenanceControllerFactory
         $roleService = $manager->getServiceLocator()->get('RoleService');
         $avisService = $manager->getServiceLocator()->get(AvisService::class);
         $utilisateurService = $manager->getServiceLocator()->get('UtilisateurService');
-        $fichierService = $manager->getServiceLocator()->get('FichierService');
         $parametreService = $manager->getServiceLocator()->get(ParametreService::class);
         $engagementImpartialiteService = $manager->getServiceLocator()->get(EngagementImpartialiteService::class);
 
@@ -72,7 +69,6 @@ class PresoutenanceControllerFactory
         $controller->setRoleService($roleService);
         $controller->setAvisService($avisService);
         $controller->setUtilisateurService($utilisateurService);
-        $controller->setFichierService($fichierService);
         $controller->setParametreService($parametreService);
         $controller->setEngagementImpartialiteService($engagementImpartialiteService);
 

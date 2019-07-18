@@ -8,7 +8,6 @@ use Application\Entity\Db\Acteur;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
-use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
@@ -44,7 +43,6 @@ class PresoutenanceController extends AbstractController
     use ValidatationServiceAwareTrait;
     use RoleServiceAwareTrait;
     use AvisServiceAwareTrait;
-    use FichierServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
     use ParametreServiceAwareTrait;
     use EngagementImpartialiteServiceAwareTrait;

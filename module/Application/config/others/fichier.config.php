@@ -12,6 +12,7 @@ use Application\Provider\Privilege\ThesePrivileges;
 use Application\Provider\Privilege\ValidationPrivileges;
 use Application\Service\Fichier\FichierService;
 use Application\Service\Fichier\FichierServiceFactory;
+use Application\Service\FichierThese\FichierTheseService;
 use Application\Service\FichierThese\FichierTheseServiceFactory;
 use Application\Service\File\FileService;
 use Application\Service\File\FileServiceFactory;
@@ -353,10 +354,14 @@ return [
         'factories' => [
             FileService::class => FileServiceFactory::class,
             FichierService::class => FichierServiceFactory::class,
-            'FichierTheseService' => FichierTheseServiceFactory::class,
+            FichierTheseService::class => FichierTheseServiceFactory::class,
             'ValidationFichierCinesCommand' => ValidationFichierCinesCommandFactory::class,
             'CheckWSValidationFichierCinesCommand' => CheckWSValidationFichierCinesCommandFactory::class,
         ],
+        'aliases' => [
+            'FichierService' => FichierService::class,
+            'FichierTheseService' => FichierTheseService::class,
+        ]
     ],
     'controllers' => [
         'factories' => [

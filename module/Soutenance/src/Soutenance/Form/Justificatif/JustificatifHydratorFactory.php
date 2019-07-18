@@ -2,7 +2,7 @@
 
 namespace Soutenance\Form\Justificatif;
 
-use Application\Service\Fichier\FichierService;
+use Application\Service\FichierThese\FichierTheseService;
 use Zend\Stdlib\Hydrator\HydratorPluginManager;
 
 class JustificatifHydratorFactory {
@@ -10,12 +10,12 @@ class JustificatifHydratorFactory {
     public function __invoke(HydratorPluginManager $container)
     {
         /**
-         * @var FichierService $fichierService
+         * @var FichierTheseService $fichierTheseService
          */
-        $fichierService = $container->getServiceLocator()->get('FichierService');
+        $fichierTheseService = $container->getServiceLocator()->get(FichierTheseService::class);
 
         $hydrator = new JusticatifHydrator();
-        $hydrator->setFichierService($fichierService);
+        $hydrator->setFichierTheseService($fichierTheseService);
         return $hydrator;
     }
 }

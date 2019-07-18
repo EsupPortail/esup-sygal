@@ -2,6 +2,7 @@
 
 namespace Application\Controller\Plugin;
 
+use Application\Entity\Db\Fichier;
 use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
@@ -23,12 +24,21 @@ class UrlFichierThese extends UrlPlugin
         );
     }
 
-    public function telechargerFichierThese(These $these, FichierThese $fichier)
+    /**
+     * @param These $these
+     * @param FichierThese|Fichier $fichier
+     * @return string
+     */
+    public function telechargerFichierThese(These $these, $fichier)
     {
+        if ($fichier instanceof FichierThese) {
+            $fichier = $fichier->getFichier();
+        }
+
         return $this->fromRoute('fichier/these/telecharger', [
             'these'      => $this->idify($these),
             'fichier'    => $this->idify($fichier),
-            'fichierNom' => $fichier->getFichier()->getNom(),
+            'fichierNom' => $fichier->getNom(),
         ], [], true);
     }
 
