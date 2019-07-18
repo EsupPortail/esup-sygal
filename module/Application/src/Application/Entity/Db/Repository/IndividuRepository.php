@@ -39,13 +39,19 @@ class IndividuRepository extends DefaultEntityRepository
     }
 
     /**
+     * Recherche l'Individu correspondant à un Utilisateur, au sein d'un Etablissement.
+     *
      * @param UserWrapper   $userWrapper
      * @param Etablissement $etablissement
      * @return Individu
      */
     public function findOneByUserWrapperAndEtab(UserWrapper $userWrapper, Etablissement $etablissement)
     {
-        $sourceCode = $this->sourceCodeStringHelper->addEtablissementPrefixTo($userWrapper->getSupannId(), $etablissement);
+        // C'est le "supann{Emp|Etu}Id" présent dans les données d'authentification qui nous permet de trouver
+        // l'Individu correspodant à l'Utilisateur.
+        $supannId = $userWrapper->getSupannId();
+
+        $sourceCode = $this->sourceCodeStringHelper->addEtablissementPrefixTo($supannId, $etablissement);
 
         return $this->findOneBySourceCode($sourceCode);
 
@@ -67,13 +73,19 @@ class IndividuRepository extends DefaultEntityRepository
         $text = Util::reduce($text);
         $criteres = explode(' ', $text);
 
-        $sql = sprintf('SELECT * FROM INDIVIDU i JOIN INDIVIDU_RECH ir on ir.id = i.id WHERE i.HISTO_DESTRUCTION IS NULL AND rownum <= %s ', (int)$limit);
+        $sqlTemplate =
+            "SELECT * FROM INDIVIDU i " .
+            "JOIN INDIVIDU_RECH ir on ir.id = i.id " .
+            "WHERE i.HISTO_DESTRUCTION IS NULL AND rownum <= %d";
         if ($type !== null) {
-            $sql = sprintf('SELECT * FROM INDIVIDU i JOIN INDIVIDU_RECH ir on ir.id = i.id WHERE i.HISTO_DESTRUCTION IS NULL AND  i.type = \'%s\' AND  rownum <= %s ', $type, (int)$limit);
+            $sqlTemplate .= " AND i.type = '%s'";
+            $sql = sprintf($sqlTemplate, $type, (int)$limit);
             $tmp = null;
+        } else {
+            $sql = sprintf($sqlTemplate, (int)$limit);
         }
-        $sqlCri  = [];
 
+        $sqlCri = [];
         foreach ($criteres as $c) {
             $sqlCri[] = "ir.haystack LIKE LOWER(q'[%" . $c . "%]')"; // q'[] : double les quotes
         }
@@ -100,10 +112,9 @@ class IndividuRepository extends DefaultEntityRepository
     {
         $repo = $this->getEntityManager()->getRepository(IndividuRole::class);
         $qb = $repo->createQueryBuilder("ir")
-            -> join (Individu::class, "in")
-            -> andWhere("ir.role = :role")
-            ->setParameter("role", $role)
-        ;
+            ->join(Individu::class, "in")
+            ->andWhere("ir.role = :role")
+            ->setParameter("role", $role);
         $query = $qb->getQuery();
         /** @var IndividuRole[] $res */
         $res = $query->execute();

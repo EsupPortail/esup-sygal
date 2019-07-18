@@ -12,6 +12,7 @@ use Application\Provider\Privilege\UtilisateurPrivileges;
 
 /**
  * @var PhpRenderer $this
+ * @var Individu $individu
  * @var Etablissement[] etablissements
  * @var EcoleDoctorale[] ecoles
  * @var UniteRecherche[] unites
@@ -21,7 +22,6 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(UtilisateurPrivileges:
 
 ?>
 
-
 <?php $this->headTitle($this->translate("Utilisateurs")) ?>
 
 <h1 class="page-header"><?php echo $this->translate("Utilisateurs"); ?>
@@ -29,18 +29,25 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(UtilisateurPrivileges:
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
 
-<form method='post' class="form-inline " style="margin-bottom:10px;">
-    <?php
-        $sas = new SearchAndSelect('individu');
-        $sas->setAttribute('placeholder','Recherchez un utilisateur');
-        $sas->setAttribute('class', 'individu-finder');
-        $sas->setAutocompleteSource($this->url('utilisateur/rechercher-individu', [], [], true));
-        echo $this->formControlGroup($sas, 'formSearchAndSelect');
-    ?>
-    <input type="submit" class="" value="Sélection l'utilisateur"/>
-</form>
+<div class="row">
+    <div class="col-md-3">
+        <form method="post">
+            <label for="individu">Recherche de l'individu :</label>
+            <?php
+            $sas = new SearchAndSelect('individu');
+            $sas->setAttribute('placeholder','Nom, prénom');
+            $sas->setAttribute('class', 'form-control individu-finder');
+            $sas->setAutocompleteSource($this->url('utilisateur/rechercher-individu', [], [], true));
+            echo $this->formControlGroup($sas, 'formSearchAndSelect');
+            ?>
+            <input type="submit" id="select-individu-btn" class="btn btn-default" value="Sélection l'utilisateur"/>
+        </form>
+    </div>
+</div>
 
 <?php if ($individu) : ?>
+    <hr>
+
     <div class="box panel panel-info">
 
         <div class="panel-heading">
@@ -53,10 +60,7 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(UtilisateurPrivileges:
             <dl>
                 <dt>État civil</dt>
                 <dd>
-                    <?php
-                    /** @var Individu $individu */
-                    echo $individu->getNomComplet(false, true, true);
-                    ?>
+                    <?php echo $individu->getNomComplet(false, true, true); ?>
                     <br/>
                     <?php echo $individu->getDateNaissanceToString(); ?>
                     <br/>
