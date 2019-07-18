@@ -1,7 +1,7 @@
 --
 -- Nouvelle catégorie.
 --
-insert into CATEGORIE_PRIVILEGE(ID, CODE, LIBELLE, ORDRE) values (CATEGORIE_PRIVILEGE_ID_SEQ.nextval, 'utilisateur', 'Utilisateur', 5);
+insert into CATEGORIE_PRIVILEGE(ID, CODE, LIBELLE, ORDRE) values (666, 'utilisateur', 'Utilisateur', 5);
 
 
 --
@@ -12,37 +12,33 @@ insert into PRIVILEGE(ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE)
   from CATEGORIE_PRIVILEGE cp where cp.CODE = 'ecole-doctorale';
 
 --
--- Ajout de ROLE_PRIVILEGE_MODELE.
+-- Ajout de PROFIL_PRIVILEGE.
 --
-INSERT INTO ROLE_PRIVILEGE_MODELE (ROLE_CODE, PRIVILEGE_ID)
-  with data(role, categ, priv) as (
-    select 'ADMIN',       'ecole-doctorale',  'creation' from dual union
-    select 'ADMIN_TECH',  'ecole-doctorale',  'creation' from dual union
-    select 'BU',          'ecole-doctorale',  'creation' from dual union
-    select 'BDD',         'ecole-doctorale',  'creation' from dual union
-
-    select 'ADMIN',       'unite-recherche',  'creation' from dual union
-    select 'ADMIN_TECH',  'unite-recherche',  'creation' from dual union
-    select 'BU',          'unite-recherche',  'creation' from dual union
-    select 'BDD',         'unite-recherche',  'creation' from dual
-  )
-    select role, p.id
-    from data
-      join CATEGORIE_PRIVILEGE cp on cp.CODE = data.categ
-      join PRIVILEGE p on p.CATEGORIE_ID = cp.id and p.code = data.priv
-;
+INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
+with data(categ, priv) as (
+    select 'fichier-divers',  'televerser'  from dual union
+    select 'fichier-divers',  'telecharger' from dual
+)
+select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
+from data
+         join PROFIL on profil.ROLE_ID in ('ADMIN_TECH')
+         join CATEGORIE_PRIVILEGE cp on cp.CODE = data.categ
+         join PRIVILEGE p on p.CATEGORIE_ID = cp.id and p.code = data.priv
+/
 
 --
--- Application des modèles (ceux pas déjà appliqués).
+-- Ajout les privilèges manquant au rôle 'ADMIN_TECH' grâce au profil 'ADMIN_TECH'.
 --
 insert into ROLE_PRIVILEGE (ROLE_ID, PRIVILEGE_ID)
-  SELECT r.id, p.ID
-  from ROLE_PRIVILEGE_MODELE rpm
-    join role r on r.CODE = rpm.ROLE_CODE
-    join PRIVILEGE p on p.id = rpm.PRIVILEGE_ID
-  where not exists (
+    SELECT r.id as ROLE_ID, p.ID as PRIVILEGE_ID
+    from PROFIL_PRIVILEGE pp
+    join profil on PROFIL.ID = pp.PROFIL_ID and profil.ROLE_ID = 'ADMIN_TECH'
+    join PRIVILEGE p on p.id = pp.PRIVILEGE_ID
+    join CATEGORIE_PRIVILEGE cp on cp.id = p.CATEGORIE_ID --and cp.CODE = 'fichier-divers'
+    join role r on r.CODE = PROFIL.ROLE_ID
+    where not exists (
       select * from ROLE_PRIVILEGE rp where rp.ROLE_ID = r.id and rp.PRIVILEGE_ID = p.id
-  );
+    );
 
 
 --

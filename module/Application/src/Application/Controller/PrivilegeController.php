@@ -11,7 +11,6 @@ use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\QueryBuilder;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use UnicaenAuth\Entity\Db\CategoriePrivilege;
 use UnicaenAuth\Service\Traits\PrivilegeServiceAwareTrait;
 use Zend\View\Model\ViewModel;
 
@@ -27,33 +26,85 @@ class PrivilegeController extends AbstractController
     {
         $depend = $this->params()->fromQuery("depend");
         $categorie = $this->params()->fromQuery("categorie");
+        $role = $this->params()->fromQuery("role");
 
-        $qb_depend = $this->entityManager->getRepository(Role::class)->createQueryBuilder("r");
-        $qb_depend = $this->decorateWithDepend($qb_depend, $depend);
-        $qb_depend = $qb_depend->orderBy("r.typeStructureDependant, r.libelle, r.structure", 'asc');
-        $roles = $qb_depend->getQuery()->execute();
-        $qb_categorie = $this->entityManager->getRepository(Privilege::class)->createQueryBuilder("p");
-        $qb_categorie = $this->decorateWithCategorie($qb_categorie, $categorie);
-        $qb_categorie->orderBy("p.categorie, p.ordre","ASC");
-        $privileges = $qb_categorie->getQuery()->execute();
+        $qbRoles = $this->entityManager->getRepository(Role::class)->createQueryBuilder("r");
+        $qbRoles
+            ->addSelect('p')
+            ->leftJoin('r.profils', 'p')
+            ->addSelect('s')
+            ->leftJoin('r.structure', 's')
+            ->addSelect('ts')
+            ->leftJoin('s.typeStructure', 'ts')
+            ->orderBy("r.typeStructureDependant, r.libelle, r.structure", 'asc');
+        $this->applyFilterDependance($qbRoles, $depend);
+        $this->applyFilterRole($qbRoles, $role);
+        /** @var Role[] $roles */
+        $roles = $qbRoles->getQuery()->execute();
 
-        $substituees = $this->getStructureService()->getStructuresSubstituees();
+        $qbPrivileges = $this->entityManager->getRepository(Privilege::class)->createQueryBuilder("p");
+        $qbPrivileges
+            ->addSelect('r')
+            ->leftJoin('p.role', 'r')
+            ->orderBy("p.categorie, p.ordre", "ASC");
+        $this->applyFilterCategorie($qbPrivileges, $categorie);
+        /** @var Privilege[] $privileges */
+        $privileges = $qbPrivileges->getQuery()->execute();
 
-        //Retrait des rôles associés à des structures historisées ou substituées
-        $roles = array_filter($roles, function (Role $role) use ($substituees) {
-            $structure = $role->getStructure();
-            if (array_search($structure, $substituees))  return false;
-            if ($structure === null) return true;
-            $structureConcrete = $this->getStructureService()->findStructureConcreteFromStructure($structure);
-            if ($structureConcrete === null) return true;
-            return  $structureConcrete->estNonHistorise();
-        });
+        // Retrait des rôles associés à des structures historisées ou substituées
+        $roles = $this->cleanRoles($roles);
 
         return new ViewModel([
-            'roles' => $roles,
-            'privileges' => $privileges,
-            'params' => $this->params()->fromQuery(),
+            'roles'          => $roles,
+            'privileges'     => $privileges,
+            'rolesForFilter' => $this->fetchRolesForFilter($depend),
+            'params'         => $this->params()->fromQuery(),
         ]);
+    }
+
+    private function fetchRolesForFilter($depend)
+    {
+        // pour filtre par (libellé de) rôle
+        $qb = $this->entityManager->getRepository(Role::class)->createQueryBuilder("r");
+        $qb
+            ->orderBy('r.libelle');
+
+        $this->applyFilterDependance($qb, $depend);
+
+        /** @var Role[] $roles */
+        $roles = $qb->getQuery()->getResult();
+
+        return $roles;
+    }
+
+    /**
+     * Retrait des rôles associés à des structures historisées ou substituées
+     *
+     * @param Role[] $roles
+     * @return Role[]
+     */
+    private function cleanRoles($roles)
+    {
+        $substituees = $this->structureService->getStructuresSubstituees();
+
+        // Retrait des rôles associés à des structures historisées ou substituées
+        $roles = array_filter($roles, function (Role $role) use ($substituees) {
+            $structure = $role->getStructure();
+            if (array_search($structure, $substituees)) {
+                return false;
+            }
+            if ($structure === null) {
+                return true;
+            }
+            $structureConcrete = $this->structureService->findStructureConcreteFromStructure($structure);
+            if ($structureConcrete === null) {
+                return true;
+            }
+
+            return $structureConcrete->estNonHistorise();
+        });
+
+        return $roles;
     }
 
     public function modifierAction()
@@ -62,7 +113,7 @@ class PrivilegeController extends AbstractController
         $role_id = $this->params()->fromRoute("role");
         /**
          * @var Privilege $privilege
-         * @var Role $role
+         * @var Role      $role
          */
         $privilege = $this->entityManager->getRepository(Privilege::class)->find($privilege_id);
         $role = $this->entityManager->getRepository(Role::class)->find($role_id);
@@ -70,15 +121,13 @@ class PrivilegeController extends AbstractController
         $value = null;
 
         // /!\ si le role à un privilège desactivé la modification
-        if (! $role->getProfils()->isEmpty()) {
-            if( array_search($role, $privilege->getRole()->toArray()) !== false) {
+        if (!$role->getProfils()->isEmpty()) {
+            if (array_search($role, $privilege->getRole()->toArray()) !== false) {
                 $value = 1;
             } else {
                 $value = 0;
             }
-        }
-
-        else {
+        } else {
 
             if (array_search($role, $privilege->getRole()->toArray()) !== false) {
                 $privilege->removeRole($role);
@@ -107,42 +156,57 @@ class PrivilegeController extends AbstractController
         //$this->redirect()->toRoute("roles", [], ["query" => $queryParams], true);
     }
 
-    private function decorateWithDepend(QueryBuilder $qb, $depend) {
-        switch($depend) {
+    private function applyFilterDependance(QueryBuilder $qb, $depend)
+    {
+        switch ($depend) {
             case "ED" :
-                $qb = $qb->andWhere("r.typeStructureDependant = :type")
+                $qb->andWhere("r.typeStructureDependant = :type")
                     ->setParameter("type", "2");
-                return $qb;
+                break;
             case "UR" :
-                $qb = $qb->andWhere("r.typeStructureDependant = :type")
+                $qb->andWhere("r.typeStructureDependant = :type")
                     ->setParameter("type", "3");
-                return $qb;
+                break;
             case "Etab" :
-                $qb = $qb->andWhere("r.typeStructureDependant = :type")
+                $qb->andWhere("r.typeStructureDependant = :type")
                     ->setParameter("type", "1");
-                return $qb;
+                break;
             case "These" :
-                $qb = $qb->andWhere("r.theseDependant = :value")
+                $qb->andWhere("r.theseDependant = :value")
                     ->setParameter("value", true);
-                return $qb;
+                break;
             case "Aucune" :
-                $qb = $qb->andWhere("r.theseDependant = :value")
+                $qb->andWhere("r.theseDependant = :value")
                     ->andWhere("r.typeStructureDependant IS NULL")
                     ->setParameter("value", false);
-                return $qb;
+                break;
             default:
-                return $qb;
+                break;
         }
+
+        return $qb;
     }
 
-    private function decorateWithCategorie(QueryBuilder $qb, $categorie)
+    private function applyFilterCategorie(QueryBuilder $qb, $categorie)
     {
-        $qb->leftJoin(CategoriePrivilege::class, "cp", "WITH", "cp.id = p.categorie");
+        $qb->leftJoin('p.categorie', "cp");
         if ($categorie !== null && $categorie !== "") {
             $qb
                 ->andWhere("cp.code = :type")
                 ->setParameter("type", $categorie);
         }
+
+        return $qb;
+    }
+
+    private function applyFilterRole(QueryBuilder $qb, $role)
+    {
+        if ($role !== null && $role !== "") {
+            $qb
+                ->andWhere("r.libelle = :role")
+                ->setParameter("role", $role);
+        }
+
         return $qb;
     }
 }

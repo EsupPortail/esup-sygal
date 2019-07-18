@@ -110,19 +110,26 @@ class UserWrapper implements UserInterface
             case $this->userData instanceof UnicaenLdapPeople:
             case $this->userData instanceof UnicaenAppPeople:
                 return $this->userData->getEduPersonPrincipalName();
-                break;
+
             case $this->userData instanceof Utilisateur:
                 throw new DomainException("Non applicable!");
-                break;
+
             case $this->userData instanceof ShibUser:
                 return $this->userData->getEppn();
-                break;
-        }
 
-        throw new LogicException("Cas imprévu!");
+            default:
+                throw new LogicException("Cas imprévu!");
+        }
     }
 
     /**
+     * Retourne l'identifiant "supannEmpId" éventuel, en fonction de la nauture des données utilisateur disponibles.
+     *
+     * Valeur retournée :
+     * - Si les données utilisateur proviennent de l'annuaire LDAP : l'attribut "supannEmpId" ;
+     * - Si les données utilisateur proviennent de Shibboleth : l'id (dont la valeur est sensée être un supann{Emp|Etu}Id).
+     * - Sinon : null
+     *
      * @return string|null
      * @throws DomainException Si l'EPPN n'a pas de sens pour les données utilisateur courantes
      */
@@ -132,19 +139,23 @@ class UserWrapper implements UserInterface
             case $this->userData instanceof UnicaenLdapPeople:
             case $this->userData instanceof UnicaenAppPeople:
                 return $this->userData->getSupannEmpId();
-                break;
-//            case $this->user instanceof AbstractUser:
-//                throw new LogicException("Non applicable!");
-//                break;
+
             case $this->userData instanceof ShibUser:
                 return $this->userData->getId();
-                break;
-        }
 
-        return null;
+            default:
+                return null;
+        }
     }
 
     /**
+     * Retourne l'identifiant "supannEtuId" éventuel, en fonction de la nauture des données utilisateur disponibles.
+     *
+     * Valeur retournée :
+     * - Si les données utilisateur proviennent de l'annuaire LDAP : l'attribut "supannEtuId" ;
+     * - Si les données utilisateur proviennent de Shibboleth : l'id (dont la valeur est sensée être un supann{Emp|Etu}Id).
+     * - Sinon : null
+     *
      * @return string|null
      * @throws DomainException Si l'EPPN n'a pas de sens pour les données utilisateur courantes
      */
@@ -154,20 +165,20 @@ class UserWrapper implements UserInterface
             case $this->userData instanceof UnicaenLdapPeople:
             case $this->userData instanceof UnicaenAppPeople:
                 return $this->userData->getSupannEtuId();
-                break;
-//            case $this->user instanceof Utilisateur:
-//                throw new DomainException("Non applicable!");
-//                break;
+
             case $this->userData instanceof ShibUser:
                 return $this->userData->getId();
-                break;
-        }
 
-        return null;
+            default:
+                return null;
+        }
     }
 
     /**
-     * Retourne soit le supannEmpId soit le supannEtuId, ou null.
+     * Retourne :
+     * - soit le "supann{Emp|Etu}Id" issu des données utilisateur ;
+     * - soit le "supannId" des données individu éventuelles ;
+     * - soit null.
      *
      * @return string|null
      */
@@ -201,16 +212,16 @@ class UserWrapper implements UserInterface
             case $this->userData instanceof UnicaenLdapPeople:
             case $this->userData instanceof UnicaenAppPeople:
                 return $this->userData->getSn(true);
-                break;
+
             case $this->userData instanceof Utilisateur:
                 throw new RuntimeException("Cas non implementé car la classe Utilisateur n'a pas de propriété 'nom'");
-                break;
+
             case $this->userData instanceof ShibUser:
                 return $this->userData->getNom();
-                break;
-        }
 
-        throw new LogicException("Cas imprévu!");
+            default:
+                throw new LogicException("Cas imprévu!");
+        }
     }
 
     /**
@@ -228,16 +239,16 @@ class UserWrapper implements UserInterface
             case $this->userData instanceof UnicaenLdapPeople:
             case $this->userData instanceof UnicaenAppPeople:
                 return $this->userData->getGivenName();
-                break;
+
             case $this->userData instanceof Utilisateur:
                 throw new RuntimeException("Cas non implementé car la classe Utilisateur n'a pas de propriété 'prenom'");
-                break;
+
             case $this->userData instanceof ShibUser:
                 return $this->userData->getPrenom();
-                break;
-        }
 
-        throw new LogicException("Cas imprévu!");
+            default:
+                throw new LogicException("Cas imprévu!");
+        }
     }
 
     /**
@@ -255,16 +266,17 @@ class UserWrapper implements UserInterface
             case $this->userData instanceof UnicaenLdapPeople:
             case $this->userData instanceof UnicaenAppPeople:
                 return $this->userData->getSupannCivilite();
-                break;
+
             case $this->userData instanceof Utilisateur:
                 throw new RuntimeException("Cas non implementé car la classe Utilisateur n'a pas de propriété 'civilite'");
-                break;
+
             case $this->userData instanceof ShibUser:
                 return $this->userData->getCivilite();
-                break;
-        }
 
-        throw new LogicException("Cas imprévu!");
+            default:
+                throw new LogicException("Cas imprévu!");
+
+        }
     }
 
 
@@ -281,14 +293,14 @@ class UserWrapper implements UserInterface
             case $this->userData instanceof UnicaenLdapPeople:
             case $this->userData instanceof UnicaenAppPeople:
                 return $this->userData->getId();
-                break;
+
             case $this->userData instanceof Utilisateur:
             case $this->userData instanceof ShibUser:
                 return $this->userData->getId();
-                break;
-        }
 
-        throw new LogicException("Cas imprévu!");
+            default:
+                throw new LogicException("Cas imprévu!");
+        }
     }
 
     /**
@@ -312,14 +324,14 @@ class UserWrapper implements UserInterface
             case $this->userData instanceof UnicaenLdapPeople:
             case $this->userData instanceof UnicaenAppPeople:
                 return $this->userData->getSupannAliasLogin();
-                break;
+
             case $this->userData instanceof Utilisateur:
             case $this->userData instanceof ShibUser:
                 return $this->userData->getUsername();
-                break;
-        }
 
-        throw new LogicException("Cas imprévu!");
+            default:
+                throw new LogicException("Cas imprévu!");
+        }
     }
 
     /**
@@ -343,14 +355,14 @@ class UserWrapper implements UserInterface
             case $this->userData instanceof UnicaenLdapPeople:
             case $this->userData instanceof UnicaenAppPeople:
                 return $this->userData->getMail();
-                break;
+
             case $this->userData instanceof Utilisateur:
             case $this->userData instanceof ShibUser:
                 return $this->userData->getEmail();
-                break;
-        }
 
-        throw new LogicException("Cas imprévu!");
+            default:
+                throw new LogicException("Cas imprévu!");
+        }
     }
 
     /**
@@ -374,14 +386,14 @@ class UserWrapper implements UserInterface
             case $this->userData instanceof UnicaenLdapPeople:
             case $this->userData instanceof UnicaenAppPeople:
                 return $this->userData->getNomComplet(true);
-                break;
+
             case $this->userData instanceof Utilisateur:
             case $this->userData instanceof ShibUser:
                 return $this->userData->getDisplayName();
-                break;
-        }
 
-        throw new LogicException("Cas imprévu!");
+            default:
+                throw new LogicException("Cas imprévu!");
+        }
     }
 
     /**
@@ -405,16 +417,16 @@ class UserWrapper implements UserInterface
             case $this->userData instanceof UnicaenLdapPeople:
             case $this->userData instanceof UnicaenAppPeople:
                 return 'ldap';
-                break;
+
             case $this->userData instanceof Utilisateur:
                 return $this->userData->getPassword();
-                break;
+
             case $this->userData instanceof ShibUser:
                 return 'shib';
-                break;
-        }
 
-        throw new LogicException("Cas imprévu!");
+            default:
+                throw new LogicException("Cas imprévu!");
+        }
     }
 
     /**
@@ -440,15 +452,16 @@ class UserWrapper implements UserInterface
                 $parts = ldap_explode_dn($this->userData->getDn(), 1);
                 $isDeactivated = in_array('deactivated', $parts);
                 return $isDeactivated ? 0 : 1;
+
             case $this->userData instanceof Utilisateur:
                 return $this->userData->getState();
-                break;
+
             case $this->userData instanceof ShibUser:
                 return 1;
-                break;
-        }
 
-        throw new LogicException("Cas imprévu!");
+            default:
+                throw new LogicException("Cas imprévu!");
+        }
     }
 
     /**

@@ -12,7 +12,7 @@ use Application\Entity\Db\Repository\FichierTheseRepository;
 use Application\Entity\Db\These;
 use Application\Entity\Db\ValiditeFichier;
 use Application\Entity\Db\VersionFichier;
-use Application\Filter\NomFichierFormatter;
+use Application\Filter\NomFichierTheseFormatter;
 use Application\Service\BaseService;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Fichier\FichierServiceAwareTrait;
@@ -106,12 +106,11 @@ class FichierTheseService extends BaseService
     /**
      * Crée des fichiers concernant la soutenance de la thèse spécifiée, à partir des données d'upload fournies.
      *
-     * @param These               $these        Thèse concernée
-     * @param array               $uploadResult Données résultant de l'upload de fichiers
-     * @param NatureFichier       $nature       Version de fichier
-     * @param VersionFichier      $version
-     * @param string              $retraitement
-     * @param NomFichierFormatter $nomFichierFormatter
+     * @param These          $these        Thèse concernée
+     * @param array          $uploadResult Données résultant de l'upload de fichiers
+     * @param NatureFichier  $nature       Version de fichier
+     * @param VersionFichier $version
+     * @param string         $retraitement
      * @return FichierThese[] Fichiers créés
      */
     public function createFichierThesesFromUpload(
@@ -119,8 +118,7 @@ class FichierTheseService extends BaseService
         array $uploadResult,
         NatureFichier $nature,
         VersionFichier $version = null,
-        $retraitement = null,
-        NomFichierFormatter $nomFichierFormatter = null)
+        $retraitement = null)
     {
         $fichierTheses = [];
         $files = $uploadResult['files'];
@@ -133,6 +131,8 @@ class FichierTheseService extends BaseService
         if (isset($files['name'])) {
             $files = [$files];
         }
+
+        $nomFichierFormatter = new NomFichierTheseFormatter();
 
         foreach ((array)$files as $file) {
             $path = $file['tmp_name'];
@@ -167,7 +167,7 @@ class FichierTheseService extends BaseService
                 ->setRetraitement($retraitement);
 
             // à faire en dernier car le formatter exploite des propriétés du FichierThese
-            $fichier->setNom($nomFichierFormatter ? $nomFichierFormatter->filter($fichierThese) : $nomFichier);
+            $fichier->setNom($nomFichierFormatter->filter($fichierThese));
 
             $this->fichierService->moveUploadedFileForFichier($fichierThese->getFichier(), $path);
 
@@ -255,7 +255,7 @@ class FichierTheseService extends BaseService
             $this->deleteFichiers([$fichierTheseRetraite], $these);
         }
 
-        $nomFichierFormatter = new NomFichierFormatter();
+        $nomFichierFormatter = new NomFichierTheseFormatter();
 
         $fichier = new Fichier();
         $fichier
@@ -397,32 +397,16 @@ class FichierTheseService extends BaseService
      */
     public function deleteFichiers(array $fichiers, These $these)
     {
-        $filePaths = [];
         $this->entityManager->beginTransaction();
         try {
             foreach ($fichiers as $fichier) {
-                $filePaths[] = $this->fichierService->computeDestinationFilePathForFichier($fichier);
                 $these->removeFichier($fichier);
-                $this->entityManager->remove($fichier);
-                $this->entityManager->flush($fichier);
             }
+            $this->fichierService->supprimerFichiers($fichiers);
             $this->entityManager->commit();
         } catch (\Exception $e) {
             $this->entityManager->rollback();
             throw new RuntimeException("Erreur survenue lors de la suppression des Fichiers en bdd, rollback!", 0, $e);
-        }
-
-        // suppression des fichiers physiques sur le disque
-        $notDeletedFiles = [];
-        foreach ($filePaths as $filePath) {
-            $success = unlink($filePath);
-            if ($success === false) {
-                $notDeletedFiles[] = $filePath;
-            }
-        }
-        if ($notDeletedFiles) {
-            throw new RuntimeException(
-                "Les fichiers suivants n'ont pas pu être supprimés sur le disque : " . implode(', ', $notDeletedFiles));
         }
     }
 

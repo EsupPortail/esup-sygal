@@ -10,7 +10,7 @@
  */
 
 use Application\Entity\Db\FichierThese;
-use Application\Provider\Privilege\ThesePrivileges;
+use Application\Provider\Privilege\FichierPrivileges;
 use Application\View\Renderer\PhpRenderer;
 
 $canCorrect = true;
@@ -22,41 +22,42 @@ if (!empty($items)): ?>
             <li class="uploaded-file">
                 <!-- lien de téléchargement du fichier -->
                 <?php
-                /** @var FichierThese $fichier */
-                $fichier = $item['file'];
-                $canDownload = $this->isAllowed($fichier->getThese(), $p = ThesePrivileges::privilegeConsulterDepotFor($fichier->getFichier()->getNature()));
-                $canEdit = $this->isAllowed($fichier->getThese(), ThesePrivileges::privilegeDeposerFor($fichier->getFichier()->getNature(), $fichier->getFichier()->getVersion()));
+                /** @var FichierThese $fichierThese */
+                $fichierThese = $item['file'];
+                $fichier = $fichierThese->getFichier();
+                $canDownload = $this->isAllowed($fichierThese->getThese(), FichierPrivileges::privilegeTelechargerFor($fichier->getNature(), $fichier->getVersion()));
+                $canEdit = $this->isAllowed($fichierThese->getThese(), FichierPrivileges::privilegeTeleverserFor($fichier->getNature(), $fichier->getVersion()));
                 if ($canDownload) {
                     $urlTelecharger = isset($item['downloadUrl']) ? $item['downloadUrl'] : null;
                 } else {
                     $urlTelecharger = null;
                 }
                 echo sprintf('<span class="%s">%s</span>',
-                    $fichier->getFichier()->getVersion()->getCode(),
-                    $this->uploader()->renderUploadedFile($fichier->getFichier(), $urlTelecharger));
+                    $fichier->getVersion()->getCode(),
+                    $this->uploader()->renderUploadedFile($fichier, $urlTelecharger));
                 ?>
-                <?php if ($fichier->getFichier()->getNomOriginal() !== $fichier->getFichier()->getNom()): ?>
+                <?php if ($fichier->getNomOriginal() !== $fichier->getNom()): ?>
                 <br>
                 <!-- Nom original du fichier -->
-                <small><abbr title="Nom original du fichier déposé"><?php echo $fichier->getFichier()->getNomOriginal() ?></abbr></small>
+                <small><abbr title="Nom original du fichier déposé"><?php echo $fichier->getNomOriginal() ?></abbr></small>
                 <?php endif ?>
 
                 <!-- lien de suppression du fichier -->
                 <?php
                 $urlSupprimer = isset($item['deleteUrl']) ? $item['deleteUrl'] : null;
                 if ($canEdit && $urlSupprimer) {
-                    echo $this->uploader()->renderDeleteFile($fichier->getFichier(), $urlSupprimer);
+                    echo $this->uploader()->renderDeleteFile($fichier, $urlSupprimer);
                 }
                 ?>
 
                 <?php if (!empty($inclureValidite)): ?>
                     <div class="fichier-validite">
-                    <?php echo $this->partial('application/fichier-these/partial/validite', ['fichier' => $fichier]) ?>
+                    <?php echo $this->partial('application/fichier-these/partial/validite', ['fichier' => $fichierThese]) ?>
                     </div>
                 <?php endif ?>
                 <?php if (!empty($inclureRetraitement)): ?>
                     <div class="fichier-retraitement">
-                        <?php echo $this->partial('application/fichier-these/partial/retraitement', ['fichier' => $fichier]) ?>
+                        <?php echo $this->partial('application/fichier-these/partial/retraitement', ['fichier' => $fichierThese]) ?>
                     </div>
                 <?php endif ?>
 

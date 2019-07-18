@@ -1,6 +1,26 @@
 Journal des modifications
 =========================
 
+1.2.1 ()
+------------------
+
+### Ajout
+
+- Nouvelle page consacrée au dépôt de fichiers divers liés à une thèse (précédemment dans la page "Thèse").
+- Possibilité de déposer des fichiers dits "communs" utiles aux gestionnaires, ex: modèle d'avenant à la convention 
+  de mise en ligne.
+
+### Améliorations
+
+- Améliorations de la page "Privilèges", notamment le filtrage par rôle. 
+- Déplacement des privilèges de la catégorie `fichier-divers` vers la catégorie `these`
+  car ils concernent des fichiers liés à une thèse (ex: PV de soutenance).
+  La catégorie `fichier-divers` désigne désormais les privilèges concernant des fichiers sans lien aux
+  thèses (ex: fichiers déposés pour les pages d'informations).
+- Refonte technique de la gestion des fichiers liés aux pages d'informations, prélable au travail sur les droits de 
+  dépôt de fichiers "divers" et "communs".
+
+
 1.2.0 (10/07/2019)
 ------------------
 

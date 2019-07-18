@@ -5,6 +5,7 @@ use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
 use Application\Entity\Db\VersionFichier;
+use Application\Provider\Privilege\FichierPrivileges;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\View\Renderer\PhpRenderer;
 
@@ -21,7 +22,7 @@ use Application\View\Renderer\PhpRenderer;
 $maintenant = new DateTime();
 $soutenance = $these->getDateSoutenance();
 
-$privilege = ThesePrivileges::privilegeDeposerFor($nature, $versionFichier);
+$privilege = FichierPrivileges::privilegeTeleverserFor($nature, $versionFichier);
 $canEdit = $this->isAllowed($these, $privilege);
 
 $uploader = $this->uploader()->setUrl($uploadUrl);

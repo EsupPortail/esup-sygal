@@ -1,21 +1,23 @@
 <?php
-    use Application\Entity\Db\Role;
-    use Application\Entity\Db\Privilege;
-    use UnicaenAuth\Provider\Privilege\Privileges;
-    use Application\Entity\Db\Etablissement;
-    $canVisualiser = $this->isAllowed(Privileges::getResourceId(Privileges::DROIT_PRIVILEGE_VISUALISATION));
-    $canModifier = $this->isAllowed(Privileges::getResourceId(Privileges::DROIT_PRIVILEGE_EDITION));
+
+use Application\Entity\Db\Role;
+use Application\Entity\Db\Privilege;
+use UnicaenAuth\Provider\Privilege\Privileges;
+use Application\Entity\Db\Etablissement;
+
+$canVisualiser = $this->isAllowed(Privileges::getResourceId(Privileges::DROIT_PRIVILEGE_VISUALISATION));
+$canModifier = $this->isAllowed(Privileges::getResourceId(Privileges::DROIT_PRIVILEGE_EDITION));
 
 
 /**
- * //Provenant du controleur
- * @var Role[] $roles
- * @var Privilege[] $privileges
+ * Provenant du controleur
+ * @var Role[]          $roles
+ * @var Privilege[]     $privileges
  * @var Etablissement[] $etablissements
  *
- * //Utilisée couramment
- * @var Role $role
- * @var Privilege $privilege
+ * Utilisée couramment
+ * @var Role            $role
+ * @var Privilege       $privilege
  */
 ?>
 
@@ -33,81 +35,89 @@
 
 <table id='mytable' class='mytable table-bordered'>
     <thead>
-        <tr>
-            <th></th>  <! -- //empty first cell -->
-            <?php foreach ($roles as $role) : ?>
-                    <th class="role">
-                        <?php
-                            $depend = "";
-                            if ($role->isTheseDependant()) {
-                                $depend = "these";
-                            } else {
-                                if ($role->getStructure() === null) {
-                                    $sigleStructure = "structure manquante";
-                                } else {
-                                    $depend = $role->getStructure()->getTypeStructure()->getCode();
-                                }
-                            }
+    <tr>
+        <th></th>
+        <! -- //empty first cell -->
+        <?php foreach ($roles as $role) : ?>
+            <th class="role">
+                <?php
+                $depend = "";
+                if ($role->isTheseDependant()) {
+                    $depend = "these";
+                } else {
+                    if ($role->getStructure() === null) {
+                        $sigleStructure = "structure manquante";
+                    } else {
+                        $depend = $role->getStructure()->getTypeStructure()->getCode();
+                    }
+                }
 
-                            $sigleStructure = "";
-                            if ($role->getStructure() === null) {
-                                $sigleStructure = "structure manquante";
-                            }  elseif ($role->getStructure()->getSigle() === null || $role->getStructure()->getSigle() === "") {
-                                $sigleStructure = "sigle manquant";
-                            } else {
-                                $sigleStructure = $role->getStructure()->getSigle();
-                            }
-                        ?>
-                        <?php echo $role->getLibelle(); ?>
-                        <?php if(!$role->getProfils()->isEmpty()): ?>
-                            <span class="glyphicon glyphicon-info-sign text-info" title="<?php foreach ($role->getProfils() as $profil) { echo "[".$profil->getLibelle()."] "; }?>"></span>
-                        <?php else : ?>
-                            <span class="glyphicon glyphicon-warning-sign text-warning" title="Aucun profil d'assigné à ce rôle"></span>
-                        <?php endif; ?>
+                $sigleStructure = "";
+                if ($role->getStructure() === null) {
+                    $sigleStructure = "structure manquante";
+                } elseif ($role->getStructure()->getSigle() === null || $role->getStructure()->getSigle() === "") {
+                    $sigleStructure = "sigle manquant";
+                } else {
+                    $sigleStructure = $role->getStructure()->getSigle();
+                }
+                ?>
+                <?php echo $role->getLibelle(); ?>
+                <?php if (!$role->getProfils()->isEmpty()): ?>
+                    <span class="glyphicon glyphicon-info-sign text-info"
+                          title="<?php foreach ($role->getProfils() as $profil) {
+                              echo "[" . $profil->getLibelle() . "] ";
+                          } ?>"></span>
+                <?php else : ?>
+                    <span class="glyphicon glyphicon-warning-sign text-warning"
+                          title="Aucun profil d'assigné à ce rôle"></span>
+                <?php endif; ?>
 
-                        <br/>
-                        <span class="depend <?php echo $depend; ?> "> <?php echo $sigleStructure; ?> </span>
-                    </th>
-            <?php endforeach; ?>
-        </tr>
+                <br/>
+                <span class="depend <?php echo $depend; ?> "> <?php echo $sigleStructure; ?> </span>
+            </th>
+        <?php endforeach; ?>
+    </tr>
     </thead>
     <tbody>
-        <?php $previous_categorie = null; ?>
-        <?php foreach($privileges as $privilege) : ?>
-                <?php if ($previous_categorie !== $privilege->getCategorie()) : ?>
-                    <tr>
-                        <th colspan="<?php echo count($roles)+1; ?>" class="categorie">
-                            <?php echo $privilege->getCategorie()->getLibelle(); ?>
-                        </th>
-                    </tr>
-                    <?php $previous_categorie = $privilege->getCategorie(); ?>
-                <?php endif; ?>
-                <tr>
-                    <th class="privilege"> <?php echo $privilege->getLibelle(); ?> </th>
-                    <?php  foreach($roles as $role) : ?>
-                        <?php
-                            $code = ($role->getStructure() !== null) ? $role->getStructure()->getSigle() : '';
-                            $title = $role->getLibelle(). ' - '.$code. " \n " .$privilege->getLibelle();
-                            $id = $privilege->getId().'_'.$role->getId();
-                        ?>
-                        <td class="droit" id="<?php echo $id; ?>" title="<?php echo $title;?>">
-                            <?php if( array_search($role, $privilege->getRole()->toArray()) !== false) : ?>
-                                <span class="glyphicon glyphicon-ok text-success"></span>
-                            <?php else: ?>
-                                <span class="glyphicon glyphicon-remove text-danger"></span>
-                            <?php endif; ?>
-                        </td>
-                    <?php endforeach; ?>
-                </tr>
+    <?php $previous_categorie = null; ?>
+    <?php foreach ($privileges as $privilege) : ?>
+        <?php
+        $privilegeRoles = $privilege->getRole()->toArray();
+        ?>
+        <?php if ($previous_categorie !== $privilege->getCategorie()) : ?>
+            <tr>
+                <th colspan="<?php echo count($roles) + 1; ?>" class="categorie">
+                    <?php echo $privilege->getCategorie()->getLibelle(); ?>
+                </th>
+            </tr>
+            <?php $previous_categorie = $privilege->getCategorie(); ?>
+        <?php endif; ?>
+        <tr>
+            <th class="privilege"> <?php echo $privilege->getLibelle(); ?> </th>
+            <?php foreach ($roles as $role) : ?>
+                <?php
+                $code = ($role->getStructure() !== null) ? $role->getStructure()->getSigle() : '';
+                $title = $role->getLibelle() . ' - ' . $code . " \n " . $privilege->getLibelle();
+                $id = $privilege->getId() . '_' . $role->getId();
+                ?>
+                <td class="droit" id="<?php echo $id; ?>" title="<?php echo $title; ?>">
+                    <?php if (array_search($role, $privilegeRoles) !== false) : ?>
+                        <span class="glyphicon glyphicon-ok text-success"></span>
+                    <?php else: ?>
+                        <span class="glyphicon glyphicon-remove text-danger"></span>
+                    <?php endif; ?>
+                </td>
             <?php endforeach; ?>
+        </tr>
+    <?php endforeach; ?>
     </tbody>
 </table>
 
 <script>
-    $(document).ready(function() {
-        $("td").click(function() {
+    $(document).ready(function () {
+        $("td").click(function () {
 
-            var canModifier =  Boolean(<?php echo $canModifier; ?>);
+            var canModifier = Boolean(<?php echo $canModifier; ?>);
             if (!canModifier) {
                 alert("Vous n'êtes pas autorisé à modifier les privilèges associés à un rôle.");
                 return;
@@ -121,13 +131,13 @@
 
             $.ajax({
                 type: "POST",
-                url : url,
+                url: url,
                 beforeSend:
                     function () {
                         document.getElementById(id).innerHTML = "<img style='height:40px;' src='css/loading.gif'/>";
                     },
                 success:
-                    function(retour){
+                    function (retour) {
                         var texte = "";
                         if (retour == 1) texte = "<span class='glyphicon glyphicon-ok text-success'></span>";
                         else var texte = "<span class='glyphicon glyphicon-remove text-danger'></span>";
@@ -140,8 +150,9 @@
     });
 </script>
 
-<style>
 
+
+<style>
     table.mytable {
         background-color: white;
     }
@@ -154,37 +165,33 @@
     }
 
     th.privilege {
-        height:50px;
+        height: 50px;
     }
 
     th.role {
-        min-width:50px;
+        min-width: 50px;
         writing-mode: vertical-lr;
         text-align: left;
         vertical-align: top;
     }
-    .depend
-    {
-        //text-orientation: upright;
+
+    .depend {
+    / / text-orientation: upright;
     }
 
-    .ecole-doctorale
-    {
+    .ecole-doctorale {
         color: #5B2268;
     }
 
-    .unite-recherche
-    {
+    .unite-recherche {
         color: #0a3783;
     }
 
-    .etablissement
-    {
+    .etablissement {
         color: #870a0a;
     }
 
-    .these
-    {
+    .these {
         color: #004602;
     }
 
@@ -194,6 +201,6 @@
     }
 
     td.droit :hover {
-        cursor:pointer;
+        cursor: pointer;
     }
 </style>
