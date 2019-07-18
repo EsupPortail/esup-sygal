@@ -16,17 +16,8 @@ class IndividuRepository extends DefaultEntityRepository
     use SourceCodeStringHelperAwareTrait;
 
     /**
-     * @param int $id
-     * @return Individu
-     */
-    public function find($id) {
-
-        /** @var Individu $individu */
-        $individu = $this->findOneBy(["id"=>$id]);
-        return $individu;
-    }
-
-    /**
+     * Recherche d'un Individu à partir de son SOURCE_CODE.
+     *
      * @param string $sourceCode
      * @return Individu
      */
