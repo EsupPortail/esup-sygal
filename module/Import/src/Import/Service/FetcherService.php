@@ -247,7 +247,7 @@ class FetcherService
                 case 'these':
                     /** @var These $these */
                     $these = $value;
-                    $filtersToMerge['these_id'] = $this->sourceCodeStringHelper->removePrefixFrom($these->getSourceCode());
+                    $filtersToMerge['these_id'] = $this->normalizeSourceCode($these->getSourceCode());
                     // NB: les WS ne traitent que des sources codes.
                     break;
                 default:

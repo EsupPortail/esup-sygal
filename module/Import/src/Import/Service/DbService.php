@@ -301,8 +301,12 @@ class DbService
 
         foreach ($filters as $name => $value) {
             switch ($name) {
+                case 'these':
+                    /** @var These $value */
+                    $filtersToMerge['these_id'] = $value->getSourceCode();
+                    unset($filters['these']);
+                    break;
                 case 'these_id':
-                    // on remplace l'id par le source code car les WS ne traitent que des sources codes.
                     /** @var These $these */
                     $these = $this->entityManager->getRepository(These::class)->find($value);
                     if ($these === null) {
