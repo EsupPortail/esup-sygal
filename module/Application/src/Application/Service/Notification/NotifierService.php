@@ -4,7 +4,6 @@ namespace Application\Service\Notification;
 
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
-use Application\Entity\Db\Fichier;
 use Application\Entity\Db\ImportObservResult;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\MailConfirmation;
@@ -111,34 +110,6 @@ class NotifierService extends \Notification\Service\NotifierService
         }
 
         return $notifs;
-    }
-
-    /**
-     * Notifie que le retraitement automatique du fichier PDF est terminé.
-     *
-     * @param string               $destinataires   Emails séparés par une virgule
-     * @param Fichier              $fichierRetraite Fichier retraité concerné
-     * @param ValiditeFichier|null $validite        Résultat du test d'archivabilité éventuel
-     * @return Notification
-     */
-    public function triggerRetraitementFini($destinataires, Fichier $fichierRetraite, ValiditeFichier $validite = null)
-    {
-        $to = array_map('trim', explode(',', $destinataires));
-
-        $notif = new Notification();
-        $notif
-            ->setSubject("Retraitement terminé")
-            ->setTo($to)
-            ->setTemplatePath('application/these/mail/notif-retraitement-fini')
-            ->setTemplateVariables([
-                'fichierRetraite' => $fichierRetraite,
-                'validite'        => $validite,
-                'url'             => '',
-            ]);
-
-        $this->trigger($notif);
-
-        return $notif;
     }
 
     /**

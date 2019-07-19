@@ -3,6 +3,7 @@
 namespace Soutenance\Controller\Proposition;
 
 use Application\Service\Fichier\FichierService;
+use Application\Service\FichierThese\FichierTheseService;
 use Application\Service\These\TheseService;
 use Application\Service\UserContextService;
 use Soutenance\Form\Anglais\AnglaisForm;
@@ -30,7 +31,7 @@ class PropositionControllerFactory {
          * @var TheseService $theseService
          * @var UserContextService $userContextService
          * @var ValidationService $validationService
-         * @var FichierService $fichierService
+         * @var FichierTheseService $fichierTheseService
          */
         $membreService = $manager->getServiceLocator()->get(MembreService::class);
         $notificationSoutenanceService = $manager->getServiceLocator()->get(NotifierSoutenanceService::class);
@@ -38,7 +39,7 @@ class PropositionControllerFactory {
         $theseService = $manager->getServiceLocator()->get('TheseService');
         $userContextService = $manager->getServiceLocator()->get('UserContextService');
         $validationService = $manager->getServiceLocator()->get(ValidationService::class);
-        $fichierService = $manager->getServiceLocator()->get('FichierService');
+        $fichierTheseService = $manager->getServiceLocator()->get(FichierTheseService::class);
 
         /**
          * @var DateLieuForm $dateLieuForm
@@ -68,7 +69,7 @@ class PropositionControllerFactory {
         $controller->setTheseService($theseService);
         $controller->setUserContextService($userContextService);
         $controller->setValidationService($validationService);
-        $controller->setFichierService($fichierService);
+        $controller->setFichierTheseService($fichierTheseService);
 
         $controller->setDateLieuForm($dateLieuForm);
         $controller->setMembreForm($membreForm);

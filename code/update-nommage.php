@@ -7,8 +7,9 @@
 
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\NatureFichier;
-use Application\Filter\NomFichierFormatter;
+use Application\Filter\NomFichierTheseFormatter;
 use Application\Service\Fichier\FichierService;
+use Application\Service\FichierThese\FichierTheseService;
 use Application\Service\File\FileService;
 use UnicaenApp\Util;
 
@@ -17,11 +18,13 @@ $REAL_APP_PATH = '/var/www/sygal';
 $CSV_OUTPUT_FILE_PATH = '/tmp/' . uniqid('fichiers-divers-etat-') . '.csv';
 
 /** @var FichierService $fichierService */
-$fichierService = $controller->getServiceLocator()->get('FichierService');
+$fichierService = $controller->getServiceLocator()->get(FichierService::class);
+/** @var FichierTheseService $fichierTheseService */
+$fichierTheseService = $controller->getServiceLocator()->get('FichierTheseService');
 /** @var FileService $fileService */
 $fileService = $controller->getServiceLocator()->get(FileService::class);
 
-$repo = $fichierService->getEntityManager()->getRepository(Fichier::class);
+$repo = $fichierTheseService->getEntityManager()->getRepository(Fichier::class);
 $qb = $repo->createQueryBuilder('f');
 $qb
     ->addSelect('nf, t, d, i')
@@ -37,7 +40,7 @@ $qb
 /** @var Fichier[] $fichiers */
 $fichiers = $qb/*->setMaxResults(50)*/->getQuery()->getResult();
 
-$nomFichierFormatter = new NomFichierFormatter();
+$nomFichierFormatter = new NomFichierTheseFormatter();
 
 $updatedFichiers = [];
 foreach ($fichiers as $fichier) {

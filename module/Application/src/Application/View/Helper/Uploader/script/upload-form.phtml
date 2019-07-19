@@ -7,6 +7,7 @@
 <?php
 
 use Zend\Form\Element\File;
+use Zend\Form\Element\Submit;
 use Zend\Form\ElementInterface;
 
 if ($this->url): ?>
@@ -26,24 +27,38 @@ if ($this->url): ?>
     $appendToLabel = "";
     ?>
 
+    <?php if (!$this->form->isAjaxMode()): ?>
+        <?php
+        $this->form->setAttribute('action', $this->url);
+        echo $this->form()->openTag($this->form);
+        ?>
+    <?php endif ?>
+
     <!-- éléments de formulaire SANS BALISE FORM -->
     <?php if ($fileElement->getLabel()): ?>
-    <div>
-        <?php echo $this->formLabel($fileElement) . $appendToLabel ?>
-    </div>
+        <div>
+            <?php echo $this->formLabel($fileElement) . $appendToLabel ?>
+        </div>
     <?php endif ?>
     <?php echo $this->formFile($fileElement) ?>
     <?php echo $this->formElementErrors($fileElement) ?>
 
+    <?php echo $this->formElement($this->form->get('csrf')) ?>
+
     <?php /** @var ElementInterface $element */
-    foreach($this->form->getAddedElements() as $element): ?>
+    foreach ($this->form->getAddedElements() as $element): ?>
         <?php echo $this->formElement($element->setAttribute('class', 'uploader-submitable')) ?>
     <?php endforeach ?>
 
-    <!-- NB: bouton non exploité pour l'instant car l'upload est déclenché dès la sélection de fichiers -->
-    <button class="upload-file btn btn-primary btn-xs pull-right" data-loading-text="Patientez..." style="display: none;">
-        <span class="glyphicon glyphicon-upload"></span> Envoyer
-    </button>
+    <?php if (!$this->form->isAjaxMode()): ?>
+        <?php
+        /** @var Submit $submit */
+        $submit = $this->form->get('submit');
+        ?>
+        <button class="upload-file <?php echo $submit->getAttribute('class') ?>" data-loading-text="Patientez...">
+            <span class="glyphicon glyphicon-upload"></span> <?php echo $submit->getLabel() ?>
+        </button>
+    <?php endif ?>
 
     <div class="clearfix"></div>
     <div class="progress" style="display: none;">
@@ -51,4 +66,9 @@ if ($this->url): ?>
              aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
              style="width: 0%;"></div>
     </div>
+
+    <?php if (!$this->form->isAjaxMode()): ?>
+        <?php echo $this->form()->closeTag() ?>
+    <?php endif ?>
+
 <?php endif;

@@ -1,12 +1,12 @@
 <?php
 
-use Application\Entity\Db\Fichier;
+use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\ValiditeFichier;
 use Application\View\Renderer\PhpRenderer;
 
 /**
  * @var PhpRenderer $this
- * @var Fichier $fichierRetraite
+ * @var FichierThese $fichierRetraite
  * @var ValiditeFichier $validite
  * @var string $url
  */
@@ -22,7 +22,6 @@ use Application\View\Renderer\PhpRenderer;
     Le retraitement de votre fichier de thèse est terminé.
 </p>
 <p>
-
-    <?php $url = $this->urlThese()->setForceCanonical()->archivageThese($fichierRetraite->getThese(), $fichierRetraite->getVersion()) ?>
+    <?php $url = $this->urlThese()->setForceCanonical()->archivageThese($fichierRetraite->getThese(), $fichierRetraite->getFichier()->getVersion()) ?>
     Cliquez <a href="<?php echo $url ?>">ici</a> pour accéder à la page correspondante de l'application.
 </p>

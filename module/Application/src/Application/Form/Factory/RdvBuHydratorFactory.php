@@ -32,7 +32,7 @@ class RdvBuHydratorFactory
     {
         $parentLocator = $serviceLocator->getServiceLocator();
         $rdvBuHydrator = new RdvBuHydrator($parentLocator->get('doctrine.entitymanager.orm_default'));
-        $rdvBuHydrator->setFichierService($parentLocator->get('FichierService'));
+        $rdvBuHydrator->setFichierTheseService($parentLocator->get('FichierTheseService'));
        // $rdvBuHydrator->setEntityManager($parentLocator->get('doctrine.entitymanager.orm_default'));
         return $rdvBuHydrator;
     }

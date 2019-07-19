@@ -1,17 +1,17 @@
 <?php
+use Application\Entity\Db\MetadonneeThese;
+use Application\Entity\Db\RdvBu;
+use Application\Entity\Db\These;
+use Application\Entity\Db\FichierThese;
+use Application\Filter\MotsClesFormatter;
+
 /**
  * Affichage des renseignements concernant le RDV BU.
  *
  * @var These $these
- * @var Fichier $versionArchivable
+ * @var FichierThese $versionArchivable
  * @var bool $pageCouvValidee
  */
-
-use Application\Entity\Db\MetadonneeThese;
-use Application\Entity\Db\RdvBu;
-use Application\Entity\Db\These;
-use Application\Entity\Db\Fichier;
-use Application\Filter\MotsClesFormatter;
 
 $rdvBu = $these->getRdvBu();
 $desc = $these->getMetadonnee();

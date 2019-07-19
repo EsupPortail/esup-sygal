@@ -19,7 +19,7 @@ class FichierControllerFactory
         $sl = $controllerManager->getServiceLocator();
 
         /** @var FichierService $fichierService */
-        $fichierService = $sl->get('FichierService');
+        $fichierService = $sl->get(FichierService::class);
 
         $service = new FichierController();
         $service->setFichierService($fichierService);

@@ -2,6 +2,7 @@
 
 namespace Application\Controller;
 
+use Application\Entity\Db\Individu;
 use Application\Entity\Db\MailConfirmation;
 use Application\Form\MailConfirmationForm;
 use Application\Service\Individu\IndividuServiceAwareTrait;
@@ -46,6 +47,7 @@ class MailConfirmationController extends AbstractController {
                 $data = $request->getPost();
 
                 if (isset($data['idIndividu'])) {
+                    /** @var Individu $individu */
                     $individu = $this->individuService->getRepository()->find($data['idIndividu']);
                     $mailConfirmation->setIndividu($individu);
                     if (isset($data['email']) && $data['email'] !== "") {
@@ -66,6 +68,7 @@ class MailConfirmationController extends AbstractController {
                         //pas de mail on reste sur le formulaire
                     }
                 } else {
+                    /** @var Individu $individu */
                     $individu = $this->individuService->getRepository()->find($data['individu']['id']);
                     $mailConfirmation->setIndividu($individu);
                 }

@@ -4,7 +4,7 @@ namespace Application\Service\Notification;
 
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
-use Application\Entity\Db\Fichier;
+use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\ImportObservResult;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\MailConfirmation;
@@ -126,13 +126,13 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
     /**
      * Notifie que le retraitement automatique du fichier PDF est terminé.
      *
-     * @param string $destinataires Emails séparés par une virgule
-     * @param Fichier $fichierRetraite Fichier retraité concerné
-     * @param ValiditeFichier|null $validite Résultat du test d'archivabilité éventuel
+     * @param string               $destinataires        Emails séparés par une virgule
+     * @param FichierThese         $fichierTheseRetraite Fichier retraité concerné
+     * @param ValiditeFichier|null $validite             Résultat du test d'archivabilité éventuel
      * @return Notification
      * @return Notification
      */
-    public function createNotificationForRetraitementFini($destinataires, Fichier $fichierRetraite, ValiditeFichier $validite = null)
+    public function createNotificationForRetraitementFini($destinataires, FichierThese $fichierTheseRetraite, ValiditeFichier $validite = null)
     {
         $to = array_map('trim', explode(',', $destinataires));
 
@@ -142,7 +142,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
             ->setTo($to)
             ->setTemplatePath('application/these/mail/notif-retraitement-fini')
             ->setTemplateVariables([
-                'fichierRetraite' => $fichierRetraite,
+                'fichierRetraite' => $fichierTheseRetraite,
                 'validite' => $validite,
                 'url' => '',
             ]);

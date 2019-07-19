@@ -17,13 +17,6 @@ use Application\View\Renderer\PhpRenderer;
  * @var These        $these
  * @var string       $modifierPersopassUrl
  * @var bool         $estDoctorant
- * @var string       $pvSoutenanceUrl
- * @var string       $rapportSoutenanceUrl
- * @var string       $preRapportSoutenanceUrl
- * @var string       $demandeConfidentUrl
- * @var string       $prolongConfidentUrl
- * @var string       $convMiseEnLigneUrl
- * @var string       $avenantConvMiseEnLigneUrl
  * @var string       $modifierCorrecAutorUrl
  * @var string       $nextStepUrl
  * @var string       $mailContact
@@ -379,59 +372,6 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
 </div>
 
 
-<!-------------------------------------- Fichiers divers --------------------------------------->
-
-<?php if ($this->isAllowed($these, ThesePrivileges::FICHIER_DIVERS_CONSULTER)): ?>
-    <div class="row">
-        <div class="col-md-4">
-            <div id="pvSoutenanceDiv" class="" data-url="<?php echo $pvSoutenanceUrl ?>">
-                <!-- màj via ajax -->
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div id="preRapportSoutenanceDiv" class="" data-url="<?php echo $preRapportSoutenanceUrl ?>">
-                <!-- màj via ajax -->
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div id="rapportSoutenanceDiv" class="" data-url="<?php echo $rapportSoutenanceUrl ?>">
-                <!-- màj via ajax -->
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-4">
-            <div id="demandeConfidentDiv" class="" data-url="<?php echo $demandeConfidentUrl ?>">
-                <!-- màj via ajax -->
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div id="prolongConfidentDiv" class="" data-url="<?php echo $prolongConfidentUrl ?>">
-                <!-- màj via ajax -->
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-4">
-            <div id="convMiseEnLigneDiv" class="" data-url="<?php echo $convMiseEnLigneUrl ?>">
-                <!-- màj via ajax -->
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div id="avenantConvMiseEnLigneDiv" class="" data-url="<?php echo $avenantConvMiseEnLigneUrl ?>">
-                <!-- màj via ajax -->
-            </div>
-        </div>
-    </div>
-<?php endif ?>
-
-
 <!-------------------------------------- Next step --------------------------------------->
 <div id="nextStepDiv" data-url="<?php echo $nextStepUrl ?>" style="display: none">
     <!-- màj via ajax -->
@@ -454,27 +394,11 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
             };
         };
 
-        var pvSoutenanceLoader = loaderFactory("pvSoutenanceDiv");
-        var rapportSoutenanceLoader = loaderFactory("rapportSoutenanceDiv");
-        var preRapportSoutenanceLoader = loaderFactory("preRapportSoutenanceDiv");
-
-        var demandeConfidentLoader = loaderFactory("demandeConfidentDiv");
-        var prolongConfidentLoader = loaderFactory("prolongConfidentDiv");
-        var convMiseEnLigneLoader = loaderFactory("convMiseEnLigneDiv");
-        var avenantConvMiseEnLigneLoader = loaderFactory("avenantConvMiseEnLigneDiv");
-
         var refreshingNextStep = loaderFactory("nextStepDiv");
 
         // Au chargement de la page, on actualise les div
         runInCascade([
-            pvSoutenanceLoader,
-            preRapportSoutenanceLoader,
-            rapportSoutenanceLoader,
-            refreshingNextStep,
-            demandeConfidentLoader,
-            prolongConfidentLoader,
-            convMiseEnLigneLoader,
-            avenantConvMiseEnLigneLoader,
+            refreshingNextStep
         ], self);
 
         body.one("<?php echo $persopassModifiedEvent ?>", function (event, data) {

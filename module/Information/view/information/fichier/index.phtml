@@ -1,11 +1,11 @@
 <?php
 
-/** @var InformationFichier[] $fichiers */
+/** @var Fichier[] $fichiers */
 
-use Information\Entity\Db\InformationFichier;
+use Application\Entity\Db\Fichier;
 use Information\Provider\Privilege\InformationPrivileges;
 
-$this->headTitle("Fichiers associées aux pages d'information");
+$this->headTitle("Fichiers associés aux pages d'information");
 
 $canFichier = $this->isAllowed(InformationPrivileges::getResourceId(InformationPrivileges::INFORMATION_FICHIER));
 ?>
@@ -17,7 +17,7 @@ $canFichier = $this->isAllowed(InformationPrivileges::getResourceId(InformationP
 </style>
 
 <h1 class="page-header">
-    Fichiers associées aux pages d'information
+    Fichiers associés aux pages d'information
 </h1>
 
 
@@ -50,14 +50,14 @@ $canFichier = $this->isAllowed(InformationPrivileges::getResourceId(InformationP
                 <td>
                     <a href="<?php
                             echo $this->url('informations/fichiers/telecharger', ['id' => $fichier->getId()], [], true);  ?>">
-                        <?php echo $fichier->getNom(); ?>
+                        <?php echo $fichier->getNomOriginal(); ?>
                     </a>
                 </td>
                 <td>
-                    <?php echo $fichier->getCreateur()->getDisplayName(); ?>
+                    <?php echo $fichier->getHistoCreateur()->getDisplayName(); ?>
                 </td>
                 <td>
-                    <?php echo $fichier->getDateCreation()->format("d/m/Y à H:i"); ?>
+                    <?php echo $fichier->getHistoCreation()->format("d/m/Y à H:i"); ?>
                 </td>
                 <td>
                     <?php if ($canFichier) : ?>

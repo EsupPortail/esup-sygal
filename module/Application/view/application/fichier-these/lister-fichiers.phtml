@@ -9,8 +9,8 @@
  * @var array       $items
  */
 
-use Application\Entity\Db\Fichier;
-use Application\Provider\Privilege\ThesePrivileges;
+use Application\Entity\Db\FichierThese;
+use Application\Provider\Privilege\FichierPrivileges;
 use Application\View\Renderer\PhpRenderer;
 
 $canCorrect = true;
@@ -22,10 +22,11 @@ if (!empty($items)): ?>
             <li class="uploaded-file">
                 <!-- lien de téléchargement du fichier -->
                 <?php
-                /** @var Fichier $fichier */
-                $fichier = $item['file'];
-                $canDownload = $this->isAllowed($fichier->getThese(), $p = ThesePrivileges::privilegeConsulterDepotFor($fichier->getNature()));
-                $canEdit = $this->isAllowed($fichier->getThese(), ThesePrivileges::privilegeDeposerFor($fichier->getNature(), $fichier->getVersion()));
+                /** @var FichierThese $fichierThese */
+                $fichierThese = $item['file'];
+                $fichier = $fichierThese->getFichier();
+                $canDownload = $this->isAllowed($fichierThese->getThese(), FichierPrivileges::privilegeTelechargerFor($fichier->getNature(), $fichier->getVersion()));
+                $canEdit = $this->isAllowed($fichierThese->getThese(), FichierPrivileges::privilegeTeleverserFor($fichier->getNature(), $fichier->getVersion()));
                 if ($canDownload) {
                     $urlTelecharger = isset($item['downloadUrl']) ? $item['downloadUrl'] : null;
                 } else {
@@ -51,12 +52,12 @@ if (!empty($items)): ?>
 
                 <?php if (!empty($inclureValidite)): ?>
                     <div class="fichier-validite">
-                    <?php echo $this->partial('application/fichier-these/partial/validite', ['fichier' => $fichier]) ?>
+                    <?php echo $this->partial('application/fichier-these/partial/validite', ['fichier' => $fichierThese]) ?>
                     </div>
                 <?php endif ?>
                 <?php if (!empty($inclureRetraitement)): ?>
                     <div class="fichier-retraitement">
-                        <?php echo $this->partial('application/fichier-these/partial/retraitement', ['fichier' => $fichier]) ?>
+                        <?php echo $this->partial('application/fichier-these/partial/retraitement', ['fichier' => $fichierThese]) ?>
                     </div>
                 <?php endif ?>
 

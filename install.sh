@@ -26,3 +26,11 @@ vendor/bin/doctrine-module orm:clear-cache:query
 vendor/bin/doctrine-module orm:clear-cache:metadata
 vendor/bin/doctrine-module orm:clear-cache:result
 vendor/bin/doctrine-module orm:generate-proxies
+
+
+
+#
+# Install 1.2.1
+#
+
+mv upload/information upload/divers

@@ -3,7 +3,7 @@
 namespace Application\Service\ValiditeFichier;
 
 use Application\Entity\Db\ValiditeFichier;
-use Application\Entity\Db\Fichier;
+use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\Repository\ValiditeFichierRepository;
 use Application\Service\BaseService;
 
@@ -24,19 +24,20 @@ class ValiditeFichierService extends BaseService
     }
 
     /**
-     * @param Fichier $fichier
-     * @param array   $validiteResult
+     * @param FichierThese $fichierThese
+     * @param array        $validiteResult
      * @return ValiditeFichier
+     * @throws \Doctrine\ORM\OptimisticLockException
      */
-    public function createValiditeFichier(Fichier $fichier, array $validiteResult)
+    public function createValiditeFichier(FichierThese $fichierThese, array $validiteResult)
     {
         $entity = new ValiditeFichier();
         $entity
-            ->setFichier($fichier)
+            ->setFichier($fichierThese->getFichier())
             ->setMessage($validiteResult['message'])
             ->setLog($validiteResult['resultat']);
 
-        $fichier->addValidite($entity);
+        $fichierThese->getFichier()->addValidite($entity);
 
         if ($validiteResult['estArchivable'] !== null) {
             $entity->setEstValide($validiteResult['estArchivable']);
@@ -49,11 +50,12 @@ class ValiditeFichierService extends BaseService
     }
 
     /**
-     * @param Fichier $fichier
+     * @param FichierThese $fichierThese
+     * @throws \Doctrine\ORM\OptimisticLockException
      */
-    public function clearValiditesFichier(Fichier $fichier)
+    public function clearValiditesFichier(FichierThese $fichierThese)
     {
-        $validites = $fichier->getValidites();
+        $validites = $fichierThese->getFichier()->getValidites();
         if ($validites->count() === 0) {
             return;
         }

@@ -5,6 +5,7 @@ namespace Application;
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Fichier;
+use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Structure;
@@ -59,6 +60,9 @@ class RouteMatch extends BaseRouteMatch
         switch ($name) {
             case 'role':
                 $criteria = is_numeric($id) ? ['id' => $id] : ['roleId' => $id];
+                break;
+            case 'fichier':
+                $criteria = ['uuid' => $id];
                 break;
             default:
                 $criteria = ['id' => $id];

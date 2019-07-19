@@ -1,65 +1,84 @@
 <?php
 
-use Application\Entity\Db\These;
+use Application\Entity\Db\Role;
 use Application\View\Renderer\PhpRenderer;
 
 /**
  * @var PhpRenderer $this
  * @var string      $text
+ * @var Role[]      $rolesForFilter
  */
 
 /**
  * @param string $paramName
  * @param string $paramValue
- * @param array $queryParams
+ * @param array  $queryParams
  * @return string
  */
 $urlFiltrer = function ($paramName, $paramValue, $queryParams) {
     $queryParams[$paramName] = $paramValue;
+
     return $this->url('gestion-privilege', [], ['query' => $queryParams], true);
 };
 
 echo $this->filterPanel([
-    $this->translate("Depend") => [
-        'paramName' => 'depend',
+    $this->translate("Dépendance") => [
+        'paramName'   => 'depend',
         'paramConfig' => [
-            ['value' => '',                             'label' => $this->translate(" - ") ],
-            ['value' => $v = "Aucune",                  'label' => $this->translate("Aucun") ],
-            ['value' => $v = "ED",                      'label' => $this->translate("École doctorale") ],
-            ['value' => $v = "UR",                      'label' => $this->translate("Unité de recherche") ],
-            ['value' => $v = "Etab",                    'label' => $this->translate("Établissement") ],
-            ['value' => $v = "These",                   'label' => $this->translate("Thèse") ],
+            ['value' => '', 'label' => $this->translate("(Peu importe)")],
+            ['value' => $v = "Aucune", 'label' => $this->translate("Sans dépendance")],
+            ['value' => $v = "ED", 'label' => $this->translate("École doctorale")],
+            ['value' => $v = "UR", 'label' => $this->translate("Unité de recherche")],
+            ['value' => $v = "Etab", 'label' => $this->translate("Établissement")],
+            ['value' => $v = "These", 'label' => $this->translate("Thèse")],
 
         ],
-        'filterUrl' => $urlFiltrer,
-        'titre' => "Filtrage en fonction de la dépendance du rôle",
+        'filterUrl'   => $urlFiltrer,
+        'titre'       => "Filtrage en fonction de la dépendance du rôle",
     ],
 ]);
-
 
 echo $this->filterPanel([
     $this->translate("Catégorie") => [
-        'paramName' => 'categorie',
+        'paramName'   => 'categorie',
         'paramConfig' => [
-            ['value' => '',                             'label' => $this->translate(" - ") ],
-            ['value' => $v = "droit",                   'label' => $this->translate("Droit") ],
-            ['value' => $v = "import",                  'label' => $this->translate("Import") ],
-            ['value' => $v = "these",                   'label' => $this->translate("These") ],
-            ['value' => $v = "utilisateur",             'label' => $this->translate("Utilisateur") ],
-            ['value' => $v = "doctorant",               'label' => $this->translate("Doctorant") ],
-            ['value' => $v = "structure",               'label' => $this->translate("Structure") ],
-            ['value' => $v = "indicateur",              'label' => $this->translate("Indicateur") ],
-            ['value' => $v = "substitution",            'label' => $this->translate("Substitution") ],
-            ['value' => $v = "validation",              'label' => $this->translate("Validation") ],
-            ['value' => $v = "fichier-divers",          'label' => $this->translate("Fichier") ],
-            ['value' => $v = "faq",                     'label' => $this->translate("FAQ") ],
+            ['value' => '', 'label' => $this->translate("(Peu importe)")],
+            ['value' => $v = "droit", 'label' => $this->translate("Droit")],
+            ['value' => $v = "import", 'label' => $this->translate("Import")],
+            ['value' => $v = "these", 'label' => $this->translate("These")],
+            ['value' => $v = "utilisateur", 'label' => $this->translate("Utilisateur")],
+            ['value' => $v = "doctorant", 'label' => $this->translate("Doctorant")],
+            ['value' => $v = "structure", 'label' => $this->translate("Structure")],
+            ['value' => $v = "indicateur", 'label' => $this->translate("Indicateur")],
+            ['value' => $v = "substitution", 'label' => $this->translate("Substitution")],
+            ['value' => $v = "validation", 'label' => $this->translate("Validation")],
+            ['value' => $v = "fichier-divers", 'label' => $this->translate("Fichier divers")],
+            ['value' => $v = "fichier-commun", 'label' => $this->translate("Fichier commun")],
+            ['value' => $v = "faq", 'label' => $this->translate("FAQ")],
 
         ],
-        'filterUrl' => $urlFiltrer,
-        'titre' => "Filtrage en fonction de la catégorie du priviliège",
+        'filterUrl'   => $urlFiltrer,
+        'titre'       => "Filtrage en fonction de la catégorie du priviliège",
     ],
 ]);
 
-?>
+$values = [
+    ['value' => '', 'label' => $this->translate("(Tous)")],
+];
+foreach ($rolesForFilter as $role) {
+    $values[$role->getLibelle()] = [
+        'value' => $role->getLibelle(),
+        'label' => $this->translate($role->getLibelle()),
+    ];
+}
+
+echo $this->filterPanel([
+    $this->translate("Rôle") => [
+        'paramName'   => 'role',
+        'paramConfig' => $values,
+        'filterUrl'   => $urlFiltrer,
+        'titre'       => "Filtrage par rôle",
+    ],
+]);
 
 

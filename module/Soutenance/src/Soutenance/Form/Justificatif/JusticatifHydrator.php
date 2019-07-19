@@ -3,11 +3,11 @@
 namespace Soutenance\Form\Justificatif;
 
 use Application\Entity\Db\Fichier;
-use Application\Service\Fichier\FichierServiceAwareTrait;
+use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Zend\Stdlib\Hydrator\HydratorInterface;
 
 class JusticatifHydrator implements HydratorInterface {
-    use FichierServiceAwareTrait;
+    use FichierTheseServiceAwareTrait;
 
     /**
      * NB : ne devrait pas servir ...
@@ -30,7 +30,7 @@ class JusticatifHydrator implements HydratorInterface {
      */
     public function hydrate(array $data, $object)
     {
-        $nature = $this->fichierService->fetchNatureFichier($data['nature']);
+        $nature = $this->fichierTheseService->fetchNatureFichier($data['nature']);
         $object->setNature($nature);
         return $object;
     }

@@ -3,7 +3,7 @@
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
 use Application\Entity\Db\VersionFichier;
-use Application\Provider\Privilege\ThesePrivileges;
+use Application\Provider\Privilege\FichierPrivileges;
 use Application\View\Renderer\PhpRenderer;
 
 /**
@@ -17,8 +17,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var int            $maxUploadableFilesCount
  */
 
-$canEdit = $this->isAllowed($these, $p = ThesePrivileges::privilegeDeposerFor($nature, $version));
-//$canEdit = $this->isAllowed(ThesePrivileges::getResourceId(ThesePrivileges::FICHIER_DIVERS_TELEVERSER));
+$canEdit = $this->isAllowed($these, $p = FichierPrivileges::privilegeTeleverserFor($nature, $version));
 $maxUploadableFilesCount = isset($maxUploadableFilesCount) ? $maxUploadableFilesCount : 1;
 $isVisible = isset($isVisible) ? $isVisible : true;
 ?>

@@ -1,11 +1,11 @@
 <?php
 
 use Application\Assertion\BaseAssertion;
-use Application\Entity\Db\Fichier;
+use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
 use Application\Entity\Db\VersionFichier;
-use Application\Provider\Privilege\ThesePrivileges;
+use Application\Provider\Privilege\FichierPrivileges;
 use Application\View\Renderer\PhpRenderer;
 
 /**
@@ -16,20 +16,20 @@ use Application\View\Renderer\PhpRenderer;
  * @var string         $theseRetraiteeAutoListUrl
  * @var string         $theseRetraiteeManuListUrl
  * @var string         $creerVersionRetraiteeUrl
- * @var Fichier        $fichierVOouVOC
- * @var Fichier        $fichierVAouVAC
+ * @var FichierThese   $fichierVOouVOC
+ * @var FichierThese   $fichierVAouVAC
  * @var NatureFichier  $nature
  * @var VersionFichier $versionFichier
  */
 
-$privilege = ThesePrivileges::privilegeDeposerFor($nature, $versionFichier);
+$privilege = FichierPrivileges::privilegeTeleverserFor($nature, $versionFichier);
 $canEdit = $this->isAllowed($these, $privilege);
 
 $uploader = $this->uploader()->setUrl($uploadUrl);
 
 $maxFileCountThese = 1;
 
-$validite = $fichierVOouVOC ? $fichierVOouVOC->getValidite() : null;
+$validite = $fichierVOouVOC ? $fichierVOouVOC->getFichier()->getValidite() : null;
 $validiteEstInconnue = $validite && $validite->getEstValide() === null;
 $estValide = $validite && $validite->getEstValide() === true;
 if ($validite === null || $validiteEstInconnue || $estValide) {
@@ -56,7 +56,7 @@ if ($validite === null || $validiteEstInconnue || $estValide) {
                 <?php
                 $autreMethodeRetraitementEchouee =
                     $fichierVAouVAC &&
-                    $fichierVAouVAC->isRetraitementManuel() && $fichierVAouVAC->estArchivable() === false;
+                    $fichierVAouVAC->isRetraitementManuel() && $fichierVAouVAC->getFichier()->estArchivable() === false;
 
                 $displayContent =
                     !$fichierVAouVAC ||
@@ -111,7 +111,7 @@ if ($validite === null || $validiteEstInconnue || $estValide) {
                             <a href="<?php echo $creerVersionRetraiteeUrl ?>" id="btnCreerVersionRetraitee"
                                class="btn btn-default">Générer</a>
                             <div class="text-sm text-info" style="margin-top: 8px; margin-bottom: 12px; max-width: 250px">
-                                <strong>NB: </strong> <?php echo Fichier::MESSAGE_RETRAITEMENT_DUREE ?>
+                                <strong>NB: </strong> <?php echo FichierThese::MESSAGE_RETRAITEMENT_DUREE ?>
                             </div>
                         <?php else: ?>
                             <?php
@@ -140,7 +140,7 @@ if ($validite === null || $validiteEstInconnue || $estValide) {
                 <?php
                 $autreMethodeRetraitementEchouee =
                     $fichierVAouVAC &&
-                    $fichierVAouVAC->isRetraitementAuto() && $fichierVAouVAC->estArchivable() === false;
+                    $fichierVAouVAC->isRetraitementAuto() && $fichierVAouVAC->getFichier()->estArchivable() === false;
 
                 $displayContent =
                     !$fichierVAouVAC ||
@@ -187,7 +187,7 @@ if ($validite === null || $validiteEstInconnue || $estValide) {
                                     ?>
                                     <div class="clearfix"></div>
                                     <div class="text-sm text-info" style="margin-top: 8px; max-width: 250px">
-                                        <strong>NB: </strong> <?php echo Fichier::MESSAGE_DEPOT_DUREE ?>
+                                        <strong>NB: </strong> <?php echo FichierThese::MESSAGE_DEPOT_DUREE ?>
                                     </div>
                                 </div>
                             <?php else: ?>

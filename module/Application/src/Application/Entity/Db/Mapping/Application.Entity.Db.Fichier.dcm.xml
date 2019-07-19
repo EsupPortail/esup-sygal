@@ -1,42 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-  <entity name="Application\Entity\Db\Fichier" table="FICHIER" repository-class="Application\Entity\Db\Repository\FichierRepository">
-    <id name="id" type="string" length="36" column="ID" /><!-- C'est un UUID. -->
+  <entity name="Application\Entity\Db\Fichier" table="FICHIER">
 
-    <field name="nom" type="string" column="NOM" nullable="false"/>
-    <field name="nomOriginal" type="string" column="NOM_ORIGINAL" nullable="false"/>
-    <field name="taille" type="integer" column="TAILLE" nullable="false"/>
-    <field name="typeMime" type="string" column="TYPE_MIME" nullable="false"/>
-    <field name="description" type="string" column="DESCRIPTION" nullable="true"/>
-    <field name="estAnnexe" type="boolean" column="EST_ANNEXE" nullable="false"/>
-    <field name="retraitement" type="string" column="RETRAITEMENT" nullable="true"/>
-    <field name="estExpurge" type="boolean" column="EST_EXPURGE" nullable="false"/>
-    <field name="estConforme" type="integer" column="EST_CONFORME" nullable="true"/>
-    <field name="estPartiel" type="boolean" column="EST_PARTIEL" nullable="false"/>
+    <id name="id" type="integer" column="ID">
+      <generator strategy="SEQUENCE"/>
+    </id>
 
-    <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
+    <field name="uuid" length="40" column="UUID" />
+    <field name="nom" column="NOM"/>
+    <field name="nomOriginal" column="NOM_ORIGINAL"/>
+    <field name="taille" type="integer" column="TAILLE"/>
+    <field name="typeMime" column="TYPE_MIME"/>
+    <field name="description" column="DESCRIPTION" nullable="true"/>
+
+    <field name="histoCreation" type="datetime" column="HISTO_CREATION"/>
     <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
-    <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
-
-    <!-- ATTENTION ! Ne pas déclarer cette relation "contenuFichier" car un paginator l'interroge systématiquement! -->
-    <!--
-    <one-to-one field="contenuFichier" target-entity="Application\Entity\Db\ContenuFichier" mapped-by="fichier"/>
-    -->
-
-    <one-to-many field="validites" target-entity="Application\Entity\Db\ValiditeFichier" mapped-by="fichier" >
-      <order-by>
-        <order-by-field name="histoModification" direction="DESC" />
-      </order-by>
-    </one-to-many>
+    <field name="histoModification" type="datetime" column="HISTO_MODIFICATION"/>
 
     <many-to-one field="nature" target-entity="Application\Entity\Db\NatureFichier">
       <join-columns>
         <join-column name="NATURE_ID" referenced-column-name="ID"/>
-      </join-columns>
-    </many-to-one>
-    <many-to-one field="these" target-entity="Application\Entity\Db\These">
-      <join-columns>
-        <join-column name="THESE_ID" referenced-column-name="ID"/>
       </join-columns>
     </many-to-one>
     <many-to-one field="version" target-entity="Application\Entity\Db\VersionFichier">
@@ -60,6 +43,12 @@
         <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
       </join-columns>
     </many-to-one>
+
+    <one-to-many field="validites" target-entity="Application\Entity\Db\ValiditeFichier" mapped-by="fichier">
+      <order-by>
+        <order-by-field name="histoModification" direction="DESC" />
+      </order-by>
+    </one-to-many>
 
   </entity>
 </doctrine-mapping>

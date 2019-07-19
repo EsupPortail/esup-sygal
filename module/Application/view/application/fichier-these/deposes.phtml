@@ -2,13 +2,13 @@
 /**
  * Liste de tous les fichiers uploadés.
  *
- * @var PhpRenderer     $this
- * @var Paginator       $fichiers
- * @var UrlFichierThese $urlFichierThese
+ * @var PhpRenderer              $this
+ * @var Paginator|FichierThese[] $fichiers
+ * @var UrlFichierThese          $urlFichierThese
  */
 
 use Application\Controller\Plugin\UrlFichierThese;
-use Application\Entity\Db\Fichier;
+use Application\Entity\Db\FichierThese;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\View\Renderer\PhpRenderer;
 use Zend\Paginator\Paginator;
@@ -33,16 +33,16 @@ use UnicaenApp\Form\Element\SearchAndSelect;
 <form method="post" action="<?php echo $url ?>">
     <div class="pull-right">
         &nbsp;
-        <input type='submit' class='btn btn-default btn-sm' value='Filtrer' />
+        <input type='submit' class='btn btn-default btn-sm' value='Filtrer'/>
     </div>
     <div class="pull-right">
-    <?php
+        <?php
         $sas = new SearchAndSelect('individu');
         $sas->setLabel($this->translate("Filtrage selon un doctorant :"));
         $sas->setAttribute('class', 'individu-finder');
-        $sas->setAutocompleteSource($this->url('utilisateur/rechercher-individu',[],[],true));
+        $sas->setAutocompleteSource($this->url('utilisateur/rechercher-individu', [], [], true));
         echo $this->formControlGroup($sas, 'formSearchAndSelect');
-    ?>
+        ?>
     </div>
 
 </form>
@@ -53,37 +53,41 @@ use UnicaenApp\Form\Element\SearchAndSelect;
 
 <table class="table table-bordered table-hovered table-condensed">
     <thead>
-        <tr>
-            <th><a href="<?php echo $s = $this->sortable('f.nom'); ?>">
-                    <?php echo $this->translate("Fichier"); ?>
-                </a> <?php echo $s->icon() ?></th>
-            <th><a href="<?php echo $s = $this->sortable('f.nomOriginal'); ?>">
-                    <?php echo $this->translate("Nom original"); ?>
-                </a> <?php echo $s->icon() ?></th>
-            <th><a href="<?php echo $s = $this->sortable('ver.code'); ?>">
-                    <?php echo $this->translate("Version"); ?>
-                </a> <?php echo $s->icon() ?></th>
-            <th><a href="<?php echo $s = $this->sortable('t.titre'); ?>">
-                    <?php echo $this->translate("Thèse"); ?>
-                </a> <?php echo $s->icon() ?></th>
-            <th><a href="<?php echo $s = $this->sortable('d.nomUsuel+d.prenom'); ?>">
-                    <?php echo $this->translate("Doctorant"); ?>
-                </a> <?php echo $s->icon() ?></th>
-            <th><a href="<?php echo $s = $this->sortable('val.estValide'); ?>">
-                    <?php echo $this->translate("Archivable"); ?>
-                </a> <?php echo $s->icon() ?></th>
-            <th><a href="<?php echo $s = $this->sortable('f.estConforme'); ?>">
-                    <?php echo $this->translate("Valide"); ?>
-                </a> <?php echo $s->icon() ?></th>
-        </tr>
+    <tr>
+        <th><a href="<?php echo $s = $this->sortable('f.nom'); ?>">
+                <?php echo $this->translate("Fichier"); ?>
+            </a> <?php echo $s->icon() ?></th>
+        <th><a href="<?php echo $s = $this->sortable('f.nomOriginal'); ?>">
+                <?php echo $this->translate("Nom original"); ?>
+            </a> <?php echo $s->icon() ?></th>
+        <th><a href="<?php echo $s = $this->sortable('ver.code'); ?>">
+                <?php echo $this->translate("Version"); ?>
+            </a> <?php echo $s->icon() ?></th>
+        <th><a href="<?php echo $s = $this->sortable('t.titre'); ?>">
+                <?php echo $this->translate("Thèse"); ?>
+            </a> <?php echo $s->icon() ?></th>
+        <th><a href="<?php echo $s = $this->sortable('d.nomUsuel+d.prenom'); ?>">
+                <?php echo $this->translate("Doctorant"); ?>
+            </a> <?php echo $s->icon() ?></th>
+        <th><a href="<?php echo $s = $this->sortable('val.estValide'); ?>">
+                <?php echo $this->translate("Archivable"); ?>
+            </a> <?php echo $s->icon() ?></th>
+        <th><a href="<?php echo $s = $this->sortable('f.estConforme'); ?>">
+                <?php echo $this->translate("Valide"); ?>
+            </a> <?php echo $s->icon() ?></th>
+    </tr>
     </thead>
     <tbody>
-    <?php foreach ($fichiers as $fichier): /** @var Fichier $fichier */ ?>
+    <?php foreach ($fichiers as $fichierThese): ?>
         <tr>
             <td>
                 <?php
-                $canDownload = $this->isAllowed($fichier->getThese(), ThesePrivileges::THESE_TELECHARGEMENT_FICHIER);
-                $urlTelecharger = $canDownload ? $urlFichierThese->telechargerFichierThese($fichier->getThese(), $fichier) : null;
+                /** @var FichierThese $fichierThese */
+                $fichier = $fichierThese->getFichier();
+                $these = $fichierThese->getThese();
+
+                $canDownload = $this->isAllowed($these, ThesePrivileges::THESE_TELECHARGEMENT_FICHIER);
+                $urlTelecharger = $canDownload ? $urlFichierThese->telechargerFichierThese($these, $fichierThese) : null;
                 echo $this->uploader()->renderUploadedFile($fichier, $urlTelecharger);
                 ?>
             </td>
@@ -94,24 +98,23 @@ use UnicaenApp\Form\Element\SearchAndSelect;
                 <?php echo $fichier->getVersion()->getCode() ?>
             </td>
             <td>
-                <a href="<?php echo $this->url('these/identite', ['these' => $fichier->getThese()->getId()], [], true) ?>"><?php echo $fichier->getThese()->getTitre() ?></a>
+                <a href="<?php echo $this->url('these/identite', ['these' => $these->getId()], [], true) ?>"><?php echo $these->getTitre() ?></a>
             </td>
             <td>
                 <?php
-                    //echo $fichier->getThese()->getDoctorant()
-                    $doctorant = $fichier->getThese()->getDoctorant();
-                    echo $this->translate($doctorant->getCivilite());
-                    echo " ";
-                    echo $doctorant->getPrenom();
-                    echo " ";
-                    echo $doctorant->getNomUsuel();
+                $doctorant = $these->getDoctorant();
+                echo $this->translate($doctorant->getCivilite());
+                echo " ";
+                echo $doctorant->getPrenom();
+                echo " ";
+                echo $doctorant->getNomUsuel();
                 ?>
             </td>
             <td>
                 <?php echo $this->translate($fichier->estArchivableToString()); ?>
             </td>
             <td>
-                <?php echo $this->translate($fichier->getEstConformeToString()); ?>
+                <?php echo $this->translate($fichierThese->getEstConformeToString()); ?>
             </td>
         </tr>
     <?php endforeach ?>

@@ -3,7 +3,7 @@
 namespace Application\Controller\Factory;
 
 use Application\Controller\ExportController;
-use Application\Service\Fichier\FichierService;
+use Application\Service\FichierThese\FichierTheseService;
 use Application\Service\These\TheseRechercheService;
 use Application\Service\These\TheseService;
 use Application\SourceCodeStringHelper;
@@ -22,16 +22,16 @@ class ExportControllerFactory
         $sl = $controllerManager->getServiceLocator();
 
         /**
-         * @var FichierService $fichierService
-         * @var TheseService $theseService
+         * @var FichierTheseService   $fichierTheseService
+         * @var TheseService          $theseService
          * @var TheseRechercheService $theseRechercheService
          */
-        $fichierService = $sl->get('FichierService');
+        $fichierTheseService = $sl->get('FichierTheseService');
         $theseService = $sl->get('TheseService');
         $theseRechercheService = $sl->get('TheseRechercheService');
 
         $controller = new ExportController();
-        $controller->setFichierService($fichierService);
+        $controller->setFichierTheseService($fichierTheseService);
         $controller->setTheseService($theseService);
         $controller->setTheseRechercheService($theseRechercheService);
 

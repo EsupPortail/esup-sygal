@@ -6,13 +6,13 @@
  * $fichier
  *
  * @var PhpRenderer $this
- * @var Fichier     $fichier
+ * @var FichierThese $fichier
  */
 
-use Application\Entity\Db\Fichier;
+use Application\Entity\Db\FichierThese;
 use Application\View\Renderer\PhpRenderer;
 
-$validiteFichier = $fichier->getValidite();
+$validiteFichier = $fichier->getFichier()->getValidite();
 ?>
 
 <?php if ($validiteFichier): ?>

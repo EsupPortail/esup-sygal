@@ -3,16 +3,17 @@
 namespace Application\Controller;
 
 use Application\Entity\Db\Fichier;
+use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
 use Application\Entity\Db\VersionFichier;
 use Application\EventRouterReplacerAwareTrait;
 use Application\Filter\IdifyFilterAwareTrait;
-use Application\Filter\NomFichierFormatter;
 use Application\RouteMatch;
-use Application\Service\Fichier\Exception\DepotImpossibleException;
-use Application\Service\Fichier\Exception\ValidationImpossibleException;
 use Application\Service\Fichier\FichierServiceAwareTrait;
+use Application\Service\FichierThese\Exception\DepotImpossibleException;
+use Application\Service\FichierThese\Exception\ValidationImpossibleException;
+use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
@@ -33,6 +34,7 @@ class FichierTheseController extends AbstractController
 {
     use TheseServiceAwareTrait;
     use FichierServiceAwareTrait;
+    use FichierTheseServiceAwareTrait;
     use VersionFichierServiceAwareTrait;
     use IdifyFilterAwareTrait;
     use NotifierServiceAwareTrait;
@@ -58,7 +60,7 @@ class FichierTheseController extends AbstractController
         }
 
         if ($sort === null) { // null <=> paramètre absent
-            // tri par défaut : datePremiereInscription
+            // tri par défaut : nom
             $queryParams = array_merge($queryParams, ['sort' => 'f.nom', 'direction' => Sortable::ASC]);
             $needsRedirect = true;
         }
@@ -71,10 +73,11 @@ class FichierTheseController extends AbstractController
         $maxi = $this->params()->fromQuery('maxi', 40);
         $page = $this->params()->fromQuery('page', 1);
 
-        $qb = $this->fichierService->getRepository()->createQueryBuilder('f');
+        $qb = $this->fichierTheseService->getRepository()->createQueryBuilder('ft');
         $qb
-            ->addSelect('t, d, val, ver')
-            ->join('f.these', 't')
+            ->addSelect('f, t, d, val, ver')
+            ->join('ft.fichier', 'f')
+            ->join('ft.these', 't')
             ->join('t.doctorant', 'd')
             ->join('d.individu', 'i')
             ->leftJoin('f.validites', 'val')
@@ -88,7 +91,6 @@ class FichierTheseController extends AbstractController
             $qb->andWhere('i.id = :individuId')
                 ->setParameter("individuId" , $individuId);
         }
-
 
         foreach (explode('+', $sort) as $sortProp) {
             if ($sortProp === 't.titre') {
@@ -113,44 +115,6 @@ class FichierTheseController extends AbstractController
     }
 
     /**
-     * Listage des fichiers (thèse ou annexes) déposés.
-     *
-     * @return ViewModel
-     */
-    public function listerAction()
-    {
-        $these = $this->requestedThese();
-        $estAnnexe   = $this->params()->fromQuery('annexe',  false);
-//        $estExpurge  = $this->params()->fromQuery('expurge', false);
-        $estRetraite = $this->params()->fromQuery('retraite', false);
-        $inclureValidite = (bool)$this->params()->fromQuery('inclureValidite', false);
-        $inclureRetraitement = (bool)$this->params()->fromQuery('inclureRetraitement', false);
-
-        $version = $this->params()->fromQuery('version');
-
-//      $fichiers = $these->getFichiersBy($estAnnexe, $estExpurge, $estRetraite, $version);
-        $nature = $estAnnexe ? NatureFichier::CODE_FICHIER_NON_PDF : NatureFichier::CODE_THESE_PDF;
-        $fichiers = $this->fichierService->getRepository()->fetchFichiers($these, $nature , $version , $estRetraite);
-
-        $items = array_map(function (Fichier $fichier) use ($these) {
-            return [
-                'file'          => $fichier,
-                'downloadUrl'   => $this->urlFichierThese()->telechargerFichierThese($these, $fichier),
-                'deleteUrl'     => $this->urlFichierThese()->supprimerFichierThese($these, $fichier),
-            ];
-        }, $fichiers);
-
-        $viewModel = new ViewModel([
-            'items' => $items,
-            'inclureValidite' => $inclureValidite,
-            'inclureRetraitement' => $inclureRetraitement,
-        ]);
-        $viewModel->setTemplate('application/fichier-these/lister-fichiers');
-
-        return $viewModel;
-    }
-
-    /**
      * Action de listage des fichiers déposés répondant aux critères de nature (et version) spécifiés.
      *
      * @return ViewModel
@@ -160,7 +124,7 @@ class FichierTheseController extends AbstractController
         $these = $this->requestedThese();
 
         $nature = $this->params()->fromQuery('nature');
-        $nature = $this->fichierService->fetchNatureFichier($nature);
+        $nature = $this->fichierTheseService->fetchNatureFichier($nature);
         if ($nature === null) {
             return new JsonModel(['errors' => ["Nature de fichier spécifiée invalide"]]);
         }
@@ -175,11 +139,9 @@ class FichierTheseController extends AbstractController
 
         $estRetraite = $this->params()->fromQuery('retraite', false);
 
-        //TODO substituer
-//        $fichiers = $these->getFichiersByNatureEtVersion($nature, $version, $estRetraite);
-        $fichiers = $this->fichierService->getRepository()->fetchFichiers($these, $nature, $version, $estRetraite);
+        $fichiers = $this->fichierTheseService->getRepository()->fetchFichierTheses($these, $nature, $version, $estRetraite);
 
-        $items = array_map(function (Fichier $fichier) use ($these) {
+        $items = array_map(function (FichierThese $fichier) use ($these) {
             return [
                 'file'          => $fichier,
                 'downloadUrl'   => $this->urlFichierThese()->telechargerFichierThese($these, $fichier),
@@ -200,9 +162,8 @@ class FichierTheseController extends AbstractController
     public function telechargerFichierAction()
     {
         $fichier = $this->requestFichier();
-        $these = $this->requestedThese();
 
-        if (!$fichier || $fichier->getThese() !== $these) {
+        if (!$fichier) {
             return;
         }
 
@@ -211,7 +172,7 @@ class FichierTheseController extends AbstractController
         $fichier->setContenuFichierData($contenuFichier);
 
         // Envoi du fichier au client (navigateur)
-        // NB: $fichier doit être de type \UnicaenApp\Controller\Plugin\Upload\UploadedFileInterface
+        // NB: $fichierThese->getFichier() doit être de type \UnicaenApp\Controller\Plugin\Upload\UploadedFileInterface
         $this->uploader()->download($fichier);
     }
 
@@ -219,6 +180,7 @@ class FichierTheseController extends AbstractController
      * Action de téléversement de fichiers, qualifiés par leur nature et version.
      *
      * @return array|JsonModel
+     * @throws \Doctrine\ORM\OptimisticLockException
      */
     public function televerserFichierAction()
     {
@@ -227,7 +189,7 @@ class FichierTheseController extends AbstractController
         $validerAuto = (bool)$this->params()->fromPost('validerAuto', false);
 
         $nature = $this->params()->fromPost('nature');
-        $nature = $this->fichierService->fetchNatureFichier($nature);
+        $nature = $this->fichierTheseService->fetchNatureFichier($nature);
         if ($nature === null) {
             return new JsonModel(['errors' => ["Nature de fichier spécifiée invalide"]]);
         }
@@ -255,39 +217,36 @@ class FichierTheseController extends AbstractController
                 $versionASupprimer = $version->estVersionCorrigee() ?
                     VersionFichier::CODE_ARCHI_CORR :
                     VersionFichier::CODE_ARCHI;
-                $fichiersThese = $this->fichierService->getRepository()->fetchFichiers($these, null, $versionASupprimer, null) ;
-                if (! empty($fichiersThese)) {
-                    $this->fichierService->deleteFichiers($fichiersThese);
+                $fichiers = $this->fichierTheseService->getRepository()->fetchFichierTheses($these, null, $versionASupprimer, null) ;
+                if (! empty($fichiers)) {
+                    $this->fichierTheseService->deleteFichiers($fichiers, $these);
                 }
             }
 
-            $nomFichierFormatter = new NomFichierFormatter();
-
             try {
-                $fichiers = $this->fichierService->createFichiersFromUpload(
+                $fichierTheses = $this->fichierTheseService->createFichierThesesFromUpload(
                     $these,
                     $result,
                     $nature,
                     $version,
-                    $retraitement,
-                    $nomFichierFormatter
+                    $retraitement
                 );
             } catch (DepotImpossibleException $die) {
                 return new JsonModel(['errors' => [$die->getMessage()]]);
             }
 
             // tests d'archivabilité (sauf annexes)
-            foreach ($fichiers as $fichier) {
-                if ($validerAuto && $fichier->supporteTestValidite()) {
+            foreach ($fichierTheses as $fichierThese) {
+                if ($validerAuto && $fichierThese->supporteTestValidite()) {
                     try {
-                        $this->fichierService->validerFichier($fichier);
+                        $this->fichierTheseService->validerFichierThese($fichierThese);
                     }
                     catch (ValidationImpossibleException $vie) {
 //                        $error = sprintf(
 //                            "Le test d'archivabilité du fichier '%s' a rencontré un problème indépendant de notre volonté. " .
 //                            "Veuillez supprimer le fichier téléversé puis réessayer ultérieurement ou signaler le problème à " .
 //                            "l'adresse figurant sur la page 'Contact'.",
-//                            $fichier->getNomOriginal());
+//                            $fichierThese->getNomOriginal());
 //                        return new JsonModel(['errors' => [$error]]);
                     }
                 }
@@ -326,7 +285,7 @@ class FichierTheseController extends AbstractController
         $version = $this->versionFichierService->getRepository()->findOneBy(['code' => $version]);
 
         $nature = $this->params()->fromPost('nature');
-        $nature = $this->fichierService->fetchNatureFichier($nature);
+        $nature = $this->fichierTheseService->fetchNatureFichier($nature);
         if ($nature === null) {
             return new JsonModel(['errors' => ["Nature de fichier spécifiée invalide"]]);
         }
@@ -360,7 +319,7 @@ class FichierTheseController extends AbstractController
         $version = $fichier->getVersion();
         $nature = $fichier->getNature();
 
-        if (!$fichier || $fichier->getThese() !== $these) {
+        if (!$fichier) {
             // NB: il a fallu abandonner l'exception car faisait planter la suppression
             // de la version de diffusion de la thèse
             // todo: chercher pourquoi
@@ -371,7 +330,7 @@ class FichierTheseController extends AbstractController
         // s'il s'agit de la thèse corrigée, il faudra supprimer l'éventuelle validation du dépôt
         $supprimerValidationDepotTheseCorrigee = $nature->estThesePdf() && $version->estVersionCorrigee();
 
-        $this->fichierService->supprimerFichier($fichier);
+        $this->fichierTheseService->supprimerFichierThese($fichier, $these);
 
         // suppression de l'éventuelle validation du dépôt
         if ($supprimerValidationDepotTheseCorrigee) {
@@ -438,11 +397,11 @@ class FichierTheseController extends AbstractController
         $filename = uniqid() . '.pdf';
         $renderer = $this->getServiceLocator()->get('view_renderer'); /* @var $renderer \Zend\View\Renderer\PhpRenderer */
         $pdcData = $this->theseService->fetchInformationsPageDeCouverture($these);
-        $this->fichierService->generatePageDeCouverture($pdcData, $renderer, $filename);
+        $this->fichierTheseService->generatePageDeCouverture($pdcData, $renderer, $filename);
 
         $filepath = sys_get_temp_dir() . '/' . $filename; // NB: l'exporter PDF stocke dans sys_get_temp_dir()
         try {
-            $content = $this->fichierService->generateFirstPagePreview($filepath);
+            $content = $this->fichierTheseService->generateFirstPagePreview($filepath);
         } catch (RuntimeException $e) {
             $content = "";
         }
@@ -451,7 +410,7 @@ class FichierTheseController extends AbstractController
         /** @var \Zend\Http\Response $response */
         $response = $this->getResponse();
 
-        return $this->fichierService->createResponseForFileContent($response, $content);
+        return $this->fichierTheseService->createResponseForFileContent($response, $content);
     }
 
     /**
@@ -486,7 +445,7 @@ class FichierTheseController extends AbstractController
         }
 
         $pdcData = $this->theseService->fetchInformationsPageDeCouverture($these);
-        $outputFilePath = $this->fichierService->fusionnerPdcEtThese($these, $pdcData, $versionFichier, $removeFirstPage);
+        $outputFilePath = $this->fichierTheseService->fusionnerPdcEtThese($these, $pdcData, $versionFichier, $removeFirstPage);
 
         $this->eventRouterReplacer->replaceEventRouter($this->getEvent());
 

@@ -2,26 +2,24 @@
 
 namespace Application\Entity\Db\Repository;
 
-use Application\Entity\Db\Fichier;
-use Application\Entity\Db\Repository\DefaultEntityRepository;
+use Application\Entity\Db\FichierThese;
+use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\ValiditeFichier;
 use Application\Entity\Db\VersionFichier;
-use Application\Entity\Db\NatureFichier;
-use Application\QueryBuilder\FichierQueryBuilder;
+use Application\QueryBuilder\FichierTheseQueryBuilder;
 use Doctrine\ORM\Query\Expr;
 
-
 /**
- * @method FichierQueryBuilder createQueryBuilder($alias, $indexBy = null)
+ * @method FichierTheseQueryBuilder createQueryBuilder($alias, $indexBy = null)
  */
-class FichierRepository extends DefaultEntityRepository
+class FichierTheseRepository extends DefaultEntityRepository
 {
     /**
      * @var string
      */
-    protected $queryBuilderClassName = FichierQueryBuilder::class;
+    protected $queryBuilderClassName = FichierTheseQueryBuilder::class;
 
     /**
      * Retourne les fichiers liés à une thèse, qui ont la nature et version spécifiées.
@@ -31,11 +29,13 @@ class FichierRepository extends DefaultEntityRepository
      * @param VersionFichier|string $version
      * @param int|bool|string $retraitement '0', '1', booléen ou code du retraitementOTH
      * @param Utilisateur $auteur
-     * @return Fichier[]
+     * @return FichierThese[]
      */
-    public function fetchFichiers(These $these, $nature = null, $version = null, $retraitement = null, $auteur = null)
+    public function fetchFichierTheses(These $these, $nature = null, $version = null, $retraitement = null, $auteur = null)
     {
-        $qb = $this->createQueryBuilder("f");
+        $qb = $this->createQueryBuilder("ft");
+
+        $qb->join("ft.fichier", "f");
 
         if ($nature !== null) {
             if (!$nature instanceof NatureFichier) {
@@ -48,7 +48,7 @@ class FichierRepository extends DefaultEntityRepository
 
         if ($version !== null) {
             if (!$version instanceof VersionFichier) {
-                $qb->join("f.version", "v", Expr\Join::WITH, "v.code=:version");
+                $qb->join("f.version", "v", Expr\Join::WITH, "v.code = :version");
             } else {
                 $qb->andWhere("f.version = :version");
             }
@@ -60,12 +60,12 @@ class FichierRepository extends DefaultEntityRepository
             if (is_numeric($retraitement) || is_bool($retraitement)) {
                 $retraitement = (bool) $retraitement;
                 if ($retraitement) {
-                    $qb->andWhere("f.retraitement IS NOT NULL");
+                    $qb->andWhere("ft.retraitement IS NOT NULL");
                 } else {
-                    $qb->andWhere("f.retraitement IS NULL");
+                    $qb->andWhere("ft.retraitement IS NULL");
                 }
             } else {
-                $qb->andWhere("f.retraitement = :estRetraite");
+                $qb->andWhere("ft.retraitement = :estRetraite");
                 $qb->setParameter("estRetraite", $retraitement);
             }
         }
@@ -75,14 +75,15 @@ class FichierRepository extends DefaultEntityRepository
                 ->setParameter('auteur', $auteur);
         }
 
-        $qb->andWhere("f.these = :these");
+        $qb->andWhere("ft.these = :these");
         $qb->setParameter("these", $these);
 
         $qb->andWhere("1 = pasHistorise(f)");
 
+        $qb->addOrderBy('f.histoModification', 'ASC');
+
         return $qb->getQuery()->getResult();
     }
-
 
     public function existeVersionArchivable(These $these)
     {
@@ -96,27 +97,25 @@ class FichierRepository extends DefaultEntityRepository
      * Soit la version retraitée si elle est archivable et vérifiée conforme.
      *
      * @param These $these
-     * @return Fichier|null
+     * @return FichierThese|null
      */
     public function getVersionArchivable(These $these)
     {
-//        $theseFichiers = $this->getFichiersBy(false, false, false);
-        $theseFichiers = $this->fetchFichiers($these, NatureFichier::CODE_THESE_PDF , VersionFichier::CODE_ORIG, false);
-        /** @var Fichier $fichierThese */
+        $theseFichiers = $this->fetchFichierTheses($these, NatureFichier::CODE_THESE_PDF , VersionFichier::CODE_ORIG, false);
+        /** @var FichierThese $fichierThese */
         $fichierThese = current($theseFichiers);
         /** @var ValiditeFichier $validiteFichierThese */
-        $validiteFichierThese = $fichierThese ? $fichierThese->getValidite() : null;
+        $validiteFichierThese = $fichierThese ? $fichierThese->getFichier()->getValidite() : null;
 
         if ($validiteFichierThese && $validiteFichierThese->getEstValide() === true) {
             return $fichierThese;
         }
 
-//        $theseFichiersRetraites = $this->getFichiersBy(false, false, true);
-        $theseFichiersRetraites = $this->fetchFichiers($these, NatureFichier::CODE_THESE_PDF , VersionFichier::CODE_ARCHI, true);
-        /** @var Fichier $fichierTheseRetraite */
+        $theseFichiersRetraites = $this->fetchFichierTheses($these, NatureFichier::CODE_THESE_PDF , VersionFichier::CODE_ARCHI, true);
+        /** @var FichierThese $fichierTheseRetraite */
         $fichierTheseRetraite = current($theseFichiersRetraites);
         /** @var ValiditeFichier $validiteFichierTheseRetraite */
-        $validiteFichierTheseRetraite = $fichierTheseRetraite ? $fichierTheseRetraite->getValidite() : null;
+        $validiteFichierTheseRetraite = $fichierTheseRetraite ? $fichierTheseRetraite->getFichier()->getValidite() : null;
 
         if ($validiteFichierTheseRetraite && $validiteFichierTheseRetraite->getEstValide() === true
             && $fichierTheseRetraite->getEstConforme()) {
@@ -126,27 +125,9 @@ class FichierRepository extends DefaultEntityRepository
         return null;
     }
 
-
-    public function hasVersion(These $these,  $version)
+    public function hasVersion(These $these, $version)
     {
-        $fichiers = $this->fetchFichiers($these, NatureFichier::CODE_THESE_PDF , $version);
+        $fichiers = $this->fetchFichierTheses($these, NatureFichier::CODE_THESE_PDF , $version);
         return !empty($fichiers);
-    }
-
-    /**
-     * @param NatureFichier|string $nature
-     * @return Fichier[]
-     */
-    public function fetchFichiersByNature($nature)
-    {
-        $qb = $this->createQueryBuilder("fichier")
-            ->andWhere('fichier.nature = :nature')
-            ->andWhere('fichier.histoDestruction IS NULL')
-            ->setParameter("nature", $nature)
-            ->orderBy('fichier.histoCreation')
-        ;
-
-        $result = $qb->getQuery()->getResult();
-        return $result;
     }
 }
