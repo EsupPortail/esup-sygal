@@ -42,7 +42,7 @@ where not exists (
 -- Nouvelle NATURE_FICHIER : 'COMMUNS'
 --
 insert into NATURE_FICHIER (ID, CODE, LIBELLE)
-values (11, 'COMMUNS', 'Fichier commun (ex: modèle d''avenant à la convention de MEL)')
+values (NATURE_FICHIER_ID_SEQ.nextval, 'COMMUNS', 'Fichier commun (ex: modèle d''avenant à la convention de MEL)')
 /
 
 
