@@ -2,6 +2,7 @@
 
 namespace Soutenance\Form\DateLieu;
 
+use Soutenance\Validator\DateGreaterThan;
 use UnicaenApp\Form\Element\Date;
 use Zend\Form\Element\Button;
 use Zend\Form\Element\Checkbox;
@@ -10,12 +11,15 @@ use Zend\Form\Element\Submit;
 use Zend\Form\Element\Text;
 use Zend\Form\Element\Time;
 use Zend\Form\Form;
+use Zend\InputFilter\Factory;
+use Zend\Validator\GreaterThan;
 
 class DateLieuForm extends Form {
 
     public function init()
     {
         $today = new DateTime();
+        $twomonth = new DateTime("+2 months");
 
         $this->add([
             'name' => 'date',
@@ -28,7 +32,7 @@ class DateLieuForm extends Form {
             ],
             'attributes' => [
                 'class' => 'form-control',
-                'min'  => $today->format('Y-m-d'),
+                'min'  => $twomonth->format('Y-m-d'),
             ]
         ]);
 
@@ -87,9 +91,26 @@ class DateLieuForm extends Form {
             ],
         ]);
 
-//        $this->setInputFilter(
-//            $this->getInputFilter()
-//        );
+        $this->setInputFilter((new Factory())->createInputFilter([
+            'date' => [
+                'name' => 'date',
+                'required' => true,
+                'validators' => [
+                    [
+                        'name' => DateGreaterThan::class,
+                        'options' => [
+                            'min' => (new DateTime("+2 months"))->format('Y-m-d'),
+                            'inclusive' => true,
+                            'messages' => [
+                                DateGreaterThan::NOT_GREATER => "La soutenance doit être déclarée deux mois avant qu'elle est lieu",
+                                DateGreaterThan::NOT_GREATER_INCLUSIVE => "La soutenance doit être déclarée deux mois avant qu'elle est lieu",
+                            ],
+                            //'break_chain_on_failure' => true,
+                        ],
+                    ],
+                ],
+            ],
+        ]));
     }
 
 //    public function getInputFilterSpecification()
@@ -97,11 +118,25 @@ class DateLieuForm extends Form {
 //        return [
 //            'date' => [
 //                'name' => 'date',
-//                'required' => false,
+//                'required' => true,
+//                'validators' => [
+//                    [
+//                        'name' => GreaterThan::class,
+//                        'options' => [
+//                            'min' => new DateTime("+2 months"),
+//                            'inclusive' => true,
+//                            'messages' => [
+//                                GreaterThan::NOT_GREATER => "La soutenance doit être déclarée deux mois avant qu'elle est lieu",
+//                                GreaterThan::NOT_GREATER_INCLUSIVE => "La soutenance doit être déclarée deux mois avant qu'elle est lieu",
+//                            ],
+//                            //'break_chain_on_failure' => true,
+//                        ],
+//                    ],
+//                ],
 //            ],
 //            'heure' => [
 //                'name' => 'heure',
-//                'required' => false,
+//                'required' => true,
 //            ],
 //            'lieu' => [
 //                'name' => 'lieu',

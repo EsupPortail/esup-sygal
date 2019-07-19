@@ -28,5 +28,9 @@ vendor/bin/doctrine-module orm:clear-cache:result
 vendor/bin/doctrine-module orm:generate-proxies
 
 
-# Install de la dernière release
-bash ./install-release-1.2.0.sh
+
+#
+# Install 1.2.1
+#
+
+mv upload/information upload/divers

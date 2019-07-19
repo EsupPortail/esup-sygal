@@ -3,12 +3,12 @@
 /**
  * @var Proposition $proposition
  * @var These $these
- * @var Fichier[][] $fichiers
+ * @var FichierThese[][] $fichiers
  * @var UrlFichierThese $urlFichierThese
  */
 
 use Application\Controller\Plugin\UrlFichierThese;
-use Application\Entity\Db\Fichier;
+use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
 use Soutenance\Entity\Proposition;
@@ -34,7 +34,6 @@ foreach ($proposition->getMembres() as $membre) {
         <?php endif; ?>
 
         <?php
-            /** @var Fichier[] $hdrs */
             $hdrs = $fichiers[NatureFichier::CODE_JUSTIFICATIF_HDR];
             $delocalisations = $fichiers[NatureFichier::CODE_DELOCALISATION_SOUTENANCE];
             $deleguations = $fichiers[NatureFichier::CODE_DELEGUATION_SIGNATURE];
@@ -51,9 +50,10 @@ foreach ($proposition->getMembres() as $membre) {
             Aucun.
         <?php else : ?>
             <ul>
-            <?php foreach($hdrs as $fichier) : ?>
+            <?php foreach($hdrs as $fichierThese) : ?>
+                <?php $fichier = $fichierThese->getFichier(); ?>
                 <li>
-                    <a href="<?php echo $urlFichierThese->telechargerFichierThese($these, $fichier); ?>">
+                    <a href="<?php echo $urlFichierThese->telechargerFichierThese($these, $fichierThese); ?>">
                         <?php echo $fichier->getNom(); ?>
                     </a>
                     (<?php echo $fichier->getHistoCreateur()->getDisplayName(); ?> - <?php echo $fichier->getHistoCreation()->format("d/m/Y à H:i"); ?>)
@@ -77,9 +77,10 @@ foreach ($proposition->getMembres() as $membre) {
                 Aucun.
             <?php else : ?>
                 <ul>
-                    <?php foreach($delocalisations as $fichier) : ?>
+                    <?php foreach($delocalisations as $fichierThese) : ?>
+                        <?php $fichier = $fichierThese->getFichier(); ?>
                         <li>
-                            <a href="<?php echo $urlFichierThese->telechargerFichierThese($these, $fichier); ?>">
+                            <a href="<?php echo $urlFichierThese->telechargerFichierThese($these, $fichierThese); ?>">
                                 <?php echo $fichier->getNom(); ?>
                             </a>
                             (<?php echo $fichier->getHistoCreateur()->getDisplayName(); ?> - <?php echo $fichier->getHistoCreation()->format("d/m/Y à H:i"); ?>)
@@ -105,9 +106,10 @@ foreach ($proposition->getMembres() as $membre) {
                 Aucun.
             <?php else : ?>
                 <ul>
-                    <?php foreach($deleguations as $fichier) : ?>
+                    <?php foreach($deleguations as $fichierThese) : ?>
+                        <?php $fichier = $fichierThese->getFichier(); ?>
                         <li>
-                            <a href="<?php echo $urlFichierThese->telechargerFichierThese($these, $fichier); ?>">
+                            <a href="<?php echo $urlFichierThese->telechargerFichierThese($these, $fichierThese); ?>">
                                 <?php echo $fichier->getNom(); ?>
                             </a>
                             (<?php echo $fichier->getHistoCreateur()->getDisplayName(); ?> - <?php echo $fichier->getHistoCreation()->format("d/m/Y à H:i"); ?>)
@@ -132,9 +134,10 @@ foreach ($proposition->getMembres() as $membre) {
                 Aucun.
             <?php else : ?>
                 <ul>
-                    <?php foreach($labels as $fichier) : ?>
+                    <?php foreach($labels as $fichierThese) : ?>
+                        <?php $fichier = $fichierThese->getFichier(); ?>
                         <li>
-                            <a href="<?php echo $urlFichierThese->telechargerFichierThese($these, $fichier); ?>">
+                            <a href="<?php echo $urlFichierThese->telechargerFichierThese($these, $fichierThese); ?>">
                                 <?php echo $fichier->getNom(); ?>
                             </a>
                             (<?php echo $fichier->getHistoCreateur()->getDisplayName(); ?> - <?php echo $fichier->getHistoCreation()->format("d/m/Y à H:i"); ?>)
@@ -159,9 +162,10 @@ foreach ($proposition->getMembres() as $membre) {
                 Aucun.
             <?php else : ?>
                 <ul>
-                    <?php foreach($langues as $fichier) : ?>
+                    <?php foreach($langues as $fichierThese) : ?>
+                        <?php $fichier = $fichierThese->getFichier(); ?>
                         <li>
-                            <a href="<?php echo $urlFichierThese->telechargerFichierThese($these, $fichier); ?>">
+                            <a href="<?php echo $urlFichierThese->telechargerFichierThese($these, $fichierThese); ?>">
                                 <?php echo $fichier->getNom(); ?>
                             </a>
                             (<?php echo $fichier->getHistoCreateur()->getDisplayName(); ?> - <?php echo $fichier->getHistoCreation()->format("d/m/Y à H:i"); ?>)

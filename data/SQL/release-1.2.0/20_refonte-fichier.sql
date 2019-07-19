@@ -34,17 +34,17 @@ from FICHIER
 --
 -- Màj table FICHIER
 --
-alter table FICHIER drop column THESE_ID
+alter table FICHIER drop column THESE_ID;
 /
-alter table FICHIER drop column EST_ANNEXE
+alter table FICHIER drop column EST_ANNEXE;
 /
-alter table FICHIER drop column EST_EXPURGE
+alter table FICHIER drop column EST_EXPURGE;
 /
-alter table FICHIER drop column EST_CONFORME
+alter table FICHIER drop column EST_CONFORME;
 /
-alter table FICHIER drop column RETRAITEMENT
+alter table FICHIER drop column RETRAITEMENT;
 /
-alter table FICHIER drop column EST_PARTIEL
+alter table FICHIER drop column EST_PARTIEL;
 /
 
 --
@@ -208,19 +208,35 @@ where EST_ANNEXE = 0 AND EST_EXPURGE = 0
 --
 
 --
+-- Cleanup
+--
+drop index FICHIER_HCFK_IDX
+/
+drop index FICHIER_HDFK_IDX
+/
+drop index FICHIER_HMFK_IDX
+/
+drop index FICHIER_VERSION_FK_IDX
+/
+drop index FICHIER_NATURE_ID_INDEX
+/
+drop index FICHIER_THESE_FICHIER_ID_index
+/
+drop index FICHIER_THESE_THESE_ID_index
+/
+drop index VALIDITE_FICHIER_FICHIER_IDX
+/
+drop index VALIDITE_FICHIER_HCFK_IDX
+/
+drop index VALIDITE_FICHIER_HDFK_IDX
+/
+drop index VALIDITE_FICHIER_HMFK_IDX
+/
+
+--
 -- FICHIER
 --
 alter table FICHIER rename to FICHIER_SAV
-/
-alter table FICHIER drop constraint FICHIER_VERSION_FK
-/
-alter table FICHIER drop constraint FICHIER_HCFK
-/
-alter table FICHIER drop constraint FICHIER_HMFK
-/
-alter table FICHIER drop constraint FICHIER_HDFK
-/
-alter table FICHIER drop constraint FICHIER_NATURE_FIC_ID_FK
 /
 alter table FICHIER_THESE drop constraint FICHIER_THESE_PK
 /
@@ -408,4 +424,3 @@ select
 from VALIDITE_FICHIER_SAV vfs
 join FICHIER f on vfs.FICHIER_ID = f.UUID
 /
-

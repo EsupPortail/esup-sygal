@@ -9,6 +9,7 @@ use Application\Entity\Db\These;
 use Application\Entity\Db\VersionFichier;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Fichier\FichierServiceAwareTrait;
+use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Membre;
@@ -27,6 +28,7 @@ use Zend\View\Model\ViewModel;
 class AvisController extends AbstractController {
     use ActeurServiceAwareTrait;
     use FichierServiceAwareTrait;
+    use FichierTheseServiceAwareTrait;
     use AvisServiceAwareTrait;
     use MembreServiceAwareTrait;
     use NotifierSoutenanceServiceAwareTrait;
@@ -76,9 +78,9 @@ class AvisController extends AbstractController {
             $form->setData($data);
             if ($form->isValid()) {
 
-                $nature = $this->fichierService->fetchNatureFichier(NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE);
-                $version = $this->fichierService->fetchVersionFichier(VersionFichier::CODE_ORIG);
-                $fichiers = $this->fichierService->createFichiersFromUpload($these, $files, $nature, $version, null, new NomAvisFormatter($membre->getActeur()->getIndividu()));
+                $nature = $this->fichierTheseService->fetchNatureFichier(NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE);
+                $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
+                $fichiers = $this->fichierService->createFichiersFromUpload($files, $nature, $version, new NomAvisFormatter($membre->getActeur()->getIndividu()));
                 $fichier = current($fichiers);
 
                 $validation = $this->getValidationService()->signerAvisSoutenance($these, $membre->getActeur()->getIndividu());

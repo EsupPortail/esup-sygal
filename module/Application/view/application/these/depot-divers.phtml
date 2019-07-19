@@ -1,0 +1,125 @@
+<?php
+
+use Application\Controller\TheseController;
+use Application\Entity\Db\These;
+use Application\Provider\Privilege\ThesePrivileges;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * Dépot de fichiers divers liés à une thèse.
+ *
+ * @var PhpRenderer $this
+ * @var These       $these
+ * @var string      $pvSoutenanceUrl
+ * @var string      $rapportSoutenanceUrl
+ * @var string      $preRapportSoutenanceUrl
+ * @var string      $demandeConfidentUrl
+ * @var string      $prolongConfidentUrl
+ * @var string      $convMiseEnLigneUrl
+ * @var string      $avenantConvMiseEnLigneUrl
+ *
+ * @see TheseController::detailDepotDiversAction()
+ */
+
+?>
+
+<?php $this->headTitle($this->translate($title = "Dépôt de fichiers divers"))
+    ->prepend($these->getDoctorant()->getIndividu()->getNomUsuel()) ?>
+
+<h1 class="page-header">
+    <?php echo $this->translate($title); ?>
+    <small><?php echo $this->partial('application/these/partial/titre') ?></small>
+</h1>
+
+<p class="lead">
+    Cette page vous permet de téléverser/télécharger divers fichiers <strong>liés à la thèse</strong> de
+    <?php echo $these->getDoctorant() ?>.
+</p>
+
+<?php if ($this->isAllowed($these, ThesePrivileges::THESE_FICHIER_DIVERS_CONSULTER)): ?>
+    <div class="row">
+        <div class="col-md-4">
+            <div id="pvSoutenanceDiv" class="" data-url="<?php echo $pvSoutenanceUrl ?>">
+                <!-- màj via ajax -->
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div id="preRapportSoutenanceDiv" class="" data-url="<?php echo $preRapportSoutenanceUrl ?>">
+                <!-- màj via ajax -->
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div id="rapportSoutenanceDiv" class="" data-url="<?php echo $rapportSoutenanceUrl ?>">
+                <!-- màj via ajax -->
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div id="demandeConfidentDiv" class="" data-url="<?php echo $demandeConfidentUrl ?>">
+                <!-- màj via ajax -->
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div id="prolongConfidentDiv" class="" data-url="<?php echo $prolongConfidentUrl ?>">
+                <!-- màj via ajax -->
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div id="convMiseEnLigneDiv" class="" data-url="<?php echo $convMiseEnLigneUrl ?>">
+                <!-- màj via ajax -->
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div id="avenantConvMiseEnLigneDiv" class="" data-url="<?php echo $avenantConvMiseEnLigneUrl ?>">
+                <!-- màj via ajax -->
+            </div>
+        </div>
+    </div>
+<?php endif ?>
+
+
+<script>
+    $(function () {
+        var self = this;
+
+        var loaderFactory = function (divName) {
+            return function (done, effect) {
+                return function () {
+                    $("#" + divName).addClass("loading").refresh(null, function () {
+                        $(this).removeClass("loading").show();
+                        if (done) done();
+                    });
+                };
+            };
+        };
+
+        var pvSoutenanceLoader = loaderFactory("pvSoutenanceDiv");
+        var rapportSoutenanceLoader = loaderFactory("rapportSoutenanceDiv");
+        var preRapportSoutenanceLoader = loaderFactory("preRapportSoutenanceDiv");
+
+        var demandeConfidentLoader = loaderFactory("demandeConfidentDiv");
+        var prolongConfidentLoader = loaderFactory("prolongConfidentDiv");
+        var convMiseEnLigneLoader = loaderFactory("convMiseEnLigneDiv");
+        var avenantConvMiseEnLigneLoader = loaderFactory("avenantConvMiseEnLigneDiv");
+
+        // Au chargement de la page, on actualise les div
+        runInCascade([
+            pvSoutenanceLoader,
+            preRapportSoutenanceLoader,
+            rapportSoutenanceLoader,
+            demandeConfidentLoader,
+            prolongConfidentLoader,
+            convMiseEnLigneLoader,
+            avenantConvMiseEnLigneLoader
+        ], self);
+    });
+</script>

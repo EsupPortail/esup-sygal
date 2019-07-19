@@ -383,10 +383,18 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
      * @param bool $avecCivilite
      * @param bool $avecNomPatro
      * @param bool $prenoms
+     * @param bool $prenomfirst
+     * @param bool $court
+     * @param bool $patroPlutotQueUsuel
      * @return string
-     * @deprecated Utiliser la class NomCompletFormatter.
      */
-    public function getNomComplet($avecCivilite = false, $avecNomPatro = false, $prenoms = false, $prenomfirst = false, $court = false, $patroPlutotQueUsuel=false)
+    public function getNomComplet(
+        $avecCivilite = false,
+        $avecNomPatro = false,
+        $prenoms = false,
+        $prenomfirst = false,
+        $court = false,
+        $patroPlutotQueUsuel=false)
     {
         $f = new NomCompletFormatter(true, $avecCivilite, $avecNomPatro, $prenomfirst, $prenoms, $court, $patroPlutotQueUsuel);
 

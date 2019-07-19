@@ -1,0 +1,97 @@
+<?php
+/**
+ * Liste de tous les fichiers communs uploadés.
+ *
+ * @var PhpRenderer         $this
+ * @var Paginator|Fichier[] $fichiers
+ * @var UrlFichier          $urlFichierPlugin
+ */
+
+use Application\Constants;
+use Application\Controller\Plugin\UrlFichier;
+use Application\Entity\Db\Fichier;
+use Application\Provider\Privilege\FichierPrivileges;
+use Application\View\Renderer\PhpRenderer;
+use Zend\Paginator\Paginator;
+
+?>
+
+<?php $this->headTitle($this->translate("Fichiers communs")) ?>
+
+<h1 class="page-header">
+    <?php echo $this->translate("Fichiers communs"); ?>
+    <span class="badge"><?php echo $fichiers->getTotalItemCount(); ?></span>
+</h1>
+
+<div class="upload-container"> <!-- Cette div.upload-container est INDISPENSABLE -->
+    <?php
+    $uploader = $this->uploader()->setUrl($urlFichierPlugin->televerserFichiersCommuns());
+    ?>
+    <div class="row">
+        <div class="col-md-7">
+            <!-- Formulaire de dépôt de PJ -->
+            <?php
+            $form = $uploader->getForm();
+            $form->setAjaxMode(false);
+            $form->get('submit')->setAttribute('class', 'pull-right');
+            echo $uploader->renderForm();
+            ?>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<table class="table table-bordered table-hovered table-condensed">
+    <thead>
+    <tr>
+        <th><a href="<?php echo $s = $this->sortable('f.nom'); ?>">
+                <?php echo $this->translate("Fichier"); ?></a> <?php echo $s->icon() ?></th>
+        <th><a href="<?php echo $s = $this->sortable('f.nomOriginal'); ?>">
+                <?php echo $this->translate("Nom original"); ?></a> <?php echo $s->icon() ?></th>
+        <th><a href="<?php echo $s = $this->sortable('i.nomUsuel+i.prenom1'); ?>">
+                <?php echo $this->translate("Téléversé par"); ?></a> <?php echo $s->icon() ?></th>
+        <th><a href="<?php echo $s = $this->sortable('f.histoCreation'); ?>">
+                <?php echo $this->translate("Téléversé le"); ?></a> <?php echo $s->icon() ?></th>
+        <th class="action">Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($fichiers as $fichier): ?>
+        <tr>
+            <td>
+                <?php
+                $canDownload = $this->isAllowed($fichier, FichierPrivileges::FICHIER_COMMUN_TELECHARGER);
+                $urlTelecharger = $canDownload ? $urlFichierPlugin->telechargerFichier($fichier) : null;
+                echo $this->uploader()->renderUploadedFile($fichier, $urlTelecharger);
+                ?>
+            </td>
+            <td>
+                <?php echo $fichier->getNomOriginal() ?>
+            </td>
+            <td>
+                <?php echo $fichier->getHistoCreateur() ?>
+            </td>
+            <td>
+                <?php echo $fichier->getHistoCreation()->format(Constants::DATETIME_FORMAT) ?>
+            </td>
+            <td>
+                <a href="<?php echo $urlFichierPlugin->supprimerFichier($fichier) ?>"
+                    ><span class="glyphicon glyphicon-remove text-danger" title="Supprimer le fichier"></span></a>
+            </td>
+        </tr>
+    <?php endforeach ?>
+    </tbody>
+</table>
+
+<?php echo $paginationControl = $this->paginationControl($fichiers, 'sliding', 'paginator.phtml', ['route' => 'fichier/communs']) ?>
+
+
+<!-- for translation purpose -->
+<?php
+$this->translate("Fichiers communs");
+$this->translate("Fichier");
+$this->translate("Nom original");
+$this->translate("Téléversé par");
+$this->translate("Téléversé le");
+?>

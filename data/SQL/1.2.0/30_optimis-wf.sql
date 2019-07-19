@@ -622,26 +622,3 @@ AS
 
 END APP_WORKFLOW;
 /
-
-
-
-
-/*
-select *
-from V_WORKFLOW v2_
-INNER JOIN THESE t1_ ON v2_.THESE_ID = t1_.ID
-INNER JOIN WF_ETAPE w0_ ON v2_.ETAPE_ID = w0_.ID
-where THESE_ID = 38307
-order by THESE_ID, v2_.ORDRE
-/
-
-
-select *
-from V_WORKFLOW v
-JOIN THESE t ON v.THESE_ID = t.ID
-join WF_ETAPE e on v.ETAPE_ID = e.id
-where e.CODE = 'DEPOT_VERSION_ORIGINALE'
-  and courante = 1
-order by THESE_ID, v.ORDRE
-/
-*/

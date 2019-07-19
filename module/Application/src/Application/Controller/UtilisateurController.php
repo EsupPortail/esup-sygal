@@ -369,6 +369,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
          */
         $request = $this->getRequest();
         if ($request->isPost()) {
+            /** @var Individu $individu */
             $individuId = $this->params()->fromRoute('individu');
             $individu = $this->getIndividuService()->getRepository()->find($individuId);
             $roleId = $this->params()->fromRoute('role');
@@ -388,6 +389,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
          */
         $request = $this->getRequest();
         if ($request->isPost()) {
+            /** @var Individu $individu */
             $individuId = $this->params()->fromRoute('individu');
             $individu = $this->getIndividuService()->getRepository()->find($individuId);
             $roleId = $this->params()->fromRoute('role');
