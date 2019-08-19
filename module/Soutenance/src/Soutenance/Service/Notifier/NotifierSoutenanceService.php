@@ -319,6 +319,36 @@ class NotifierSoutenanceService extends NotifierService {
      * @param Proposition $proposition
      * @param Membre $membre
      */
+    public function triggerRefusEngagementImpartialite($these, $proposition, $membre)
+    {
+
+        $emails  = $this->fetchEmailActeursDirects($these);
+        $emails[] = $this->fetchEmailBdd($these);
+
+        $emails = array_filter($emails, function ($s) {
+            return $s !== null;
+        });
+
+        if (!empty($emails)) {
+            $notif = new Notification();
+            $notif
+                ->setSubject("Refus de l'engagement d'impartialité de la thèse de " . $these->getDoctorant()->getIndividu())
+                ->setTo($emails)
+                ->setTemplatePath('soutenance/notification/engagement-impartialite-refus')
+                ->setTemplateVariables([
+                    'these' => $these,
+                    'proposition' => $proposition,
+                    'membre' => $membre,
+                ]);
+            $this->trigger($notif);
+        }
+    }
+
+    /**
+     * @param These $these
+     * @param Proposition $proposition
+     * @param Membre $membre
+     */
     public function triggerAnnulationEngagementImpartialite($these, $proposition, $membre)
     {
         $email   = $membre->getActeur()->getIndividu()->getEmail();

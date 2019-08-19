@@ -49,6 +49,7 @@ class EngagementImpartialiteController extends AbstractActionController
 
         /** @var Validation $validation */
         $validation = $this->getEngagementImpartialiteService()->getEngagementImpartialiteByMembre($membre);
+        if ($validation === null) $validation = $this->getEngagementImpartialiteService()->getRefusEngagementImpartialiteByMembre($membre);
 
         return new ViewModel([
             'these' => $these,
@@ -56,6 +57,7 @@ class EngagementImpartialiteController extends AbstractActionController
             'membre' => $membre,
             'validation' => $validation,
             'urlSigner' => $this->url()->fromRoute('soutenance/engagement-impartialite/signer', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true),
+            'urlRefuser' => $this->url()->fromRoute('soutenance/engagement-impartialite/refuser', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true),
             'urlAnnuler' => $this->url()->fromRoute('soutenance/engagement-impartialite/annuler', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true),
         ]);
     }
@@ -121,6 +123,26 @@ class EngagementImpartialiteController extends AbstractActionController
         $this->redirect()->toRoute('soutenance/engagement-impartialite', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true);
     }
 
+    public function refuserEngagementImpartialiteAction()
+    {
+        /** @var These $these */
+        $idThese = $this->params()->fromRoute('these');
+        $these = $this->getTheseService()->getRepository()->find($idThese);
+
+        /** @var Membre $membre */
+        $idMembre = $this->params()->fromRoute('membre');
+        $membre = $this->getMembreService()->find($idMembre);
+
+        /** @var Proposition $proposition */
+        $proposition = $this->getPropositionService()->findByThese($these);
+
+        $this->getEngagementImpartialiteService()->createRefusEngagementImpartialite($membre);
+        $this->getPropositionService()->annulerValidations($proposition);
+        $this->getNotifierSoutenanceService()->triggerRefusEngagementImpartialite($these, $proposition, $membre);
+
+
+        $this->redirect()->toRoute('soutenance/engagement-impartialite', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true);
+    }
 
     public function annulerEngagementImpartialiteAction()
     {

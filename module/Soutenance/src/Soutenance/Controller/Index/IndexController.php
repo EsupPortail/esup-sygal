@@ -87,7 +87,7 @@ class IndexController extends AbstractActionController {
             $membre = null;
             $rappoteur = null;
             foreach($membres as $membre_) {
-                if ($membre_->getActeur()->getIndividu() === $individu) {
+                if ($membre_->getActeur() && $membre_->getActeur()->getIndividu() === $individu) {
                     $membre = $membre_;
                     $rapporteur = $membre;
                 }

@@ -197,7 +197,7 @@ $canAvis = true;
             Afin de valider la soutenance de thèse de <?php echo $these->getDoctorant()->getIndividu(); ?>, vous devez rendre votre
             avis de soutenance et votre prérapport de soutenance.
 
-            <a href="<?php echo $this->url('soutenance/avis-soutenance', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true); ?>"
+            <a href="<?php echo $this->url('soutenance/avis-soutenance', ['these' => $these->getId(), 'rapporteur' => $membre->getId()], [], true); ?>"
                class="btn btn-primary pull-right"
             >
                 <span class="glyphicon glyphicon-pencil"></span>

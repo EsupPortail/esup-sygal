@@ -59,6 +59,7 @@ return array(
                     'controller' => EngagementImpartialiteController::class,
                     'action'     => [
                         'signer-engagement-impartialite',
+                        'refuser-engagement-impartialite',
                     ],
                     'privileges' => EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_SIGNER,
                 ],
@@ -107,6 +108,17 @@ return array(
                                     'defaults' => [
                                         'controller' => EngagementImpartialiteController::class,
                                         'action'     => 'signer-engagement-impartialite',
+                                    ],
+                                ],
+                            ],
+                            'refuser' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/refuser',
+                                    'defaults' => [
+                                        'controller' => EngagementImpartialiteController::class,
+                                        'action'     => 'refuser-engagement-impartialite',
                                     ],
                                 ],
                             ],

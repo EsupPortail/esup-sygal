@@ -1,0 +1,23 @@
+<?php
+
+use Application\Entity\Db\These;
+use Soutenance\Entity\Membre;
+use Soutenance\Entity\Proposition;
+
+/**
+ * @var These $these
+ * @var Proposition $proposition
+ * @var Membre $membre
+ */
+?>
+
+<p>
+    Bonjour,
+</p>
+<p>
+    <strong><?php echo $membre->getActeur()->getIndividu(); ?></strong> vient de refuser de signer l'engagement d'impartialité de la thèse de
+    <strong><?php echo $these->getDoctorant()->getNomComplet(); ?></strong> intitulée
+    <strong><?php echo $these->getTitre(); ?></strong>.
+</p>
+
+
