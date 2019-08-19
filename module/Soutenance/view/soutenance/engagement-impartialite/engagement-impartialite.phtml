@@ -5,11 +5,13 @@
  * @var Membre $membre
  * @var Validation $validation
  * @var string $urlSigner
+ * @var string $urlRefuser
  * @var string $urlAnnuler
  */
 
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\These;
+use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Validation;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
@@ -98,9 +100,16 @@ $this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctora
         <?php if ($canSign): ?>
         <p>
             <center>
-            <a href="<?php echo $urlSigner;  ?>" class="btn btn-success">
+            <a href="<?php echo $urlSigner;  ?>" class="btn btn-success" style="width:80%;">
                 <span class="glyphicon glyphicon-thumbs-up"></span>
                 Je signe l'engagement d'impartialité</a>
+
+                <br/>
+                <br/>
+
+            <a href="<?php echo $urlRefuser;  ?>" class="btn btn-danger" style="width:80%;">
+                <span class="glyphicon glyphicon-thumbs-down"></span>
+                Je ne peux pas signer l'engagement d'impartialité</a>
             </center>
 
         </p>
@@ -116,7 +125,13 @@ $this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctora
     <div class="col-md-8">
         <!-- affichage -->
         <?php if ($validation): ?>
-        <div class="panel panel-success">
+        <div class="panel
+            <?php  if ($validation && $validation->getTypeValidation()->getCode() === TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE): ?>
+                panel-success
+            <?php else : ?>
+                panel-danger
+            <?php endif; ?>
+        ">
             <div class="panel-heading">
                 <?php echo $this->validation($validation) ?>
             </div>
@@ -131,7 +146,7 @@ $this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctora
     </div>
 </div>
 
-<?php if ($validation): ?>
+<?php if ($validation && $validation->getTypeValidation()->getCode() === TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE): ?>
 <div class="box panel panel-success">
     <div class="panel-heading">
         <h2 class="first"> Et ensuite ? </h2>

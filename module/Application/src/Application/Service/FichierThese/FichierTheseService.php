@@ -303,7 +303,7 @@ class FichierTheseService extends BaseService
         $fichierTheseRetraite
             ->setEstPartiel(false);
         $fichierTheseRetraite->getFichier()
-            ->setTaille(strlen(file_get_contents($outputFilePath))); // TODO: utiliser filesize() plutôt ?
+            ->setTaille(filesize($outputFilePath));
 
         $this->entityManager->persist($fichierThese);
         try {
@@ -341,7 +341,9 @@ class FichierTheseService extends BaseService
         $newFichierThese = $this->preparerFichierTheseRetraite($fichierThese);
 
         try {
+            $this->entityManager->persist($newFichierThese->getFichier());
             $this->entityManager->persist($newFichierThese);
+            $this->entityManager->flush($newFichierThese->getFichier());
             $this->entityManager->flush($newFichierThese);
         } catch (\Exception $e) {
             throw new RuntimeException("Erreur survenue lors de l'enregistrement du fichier retraité", 0, $e);

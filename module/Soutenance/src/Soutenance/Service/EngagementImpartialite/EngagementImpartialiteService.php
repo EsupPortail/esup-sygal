@@ -58,6 +58,34 @@ class EngagementImpartialiteService {
      * @param Membre $membre
      * @return Validation
      */
+    public function getRefusEngagementImpartialiteByMembre($membre)
+    {
+        $individu = $membre->getActeur()->getIndividu();
+        $these = $membre->getActeur()->getThese();
+
+        $qb = $this->getValidationService()->getEntityManager()->getRepository(Validation::class)->createQueryBuilder('validation')
+            ->addSelect('type')->join('validation.typeValidation', 'type')
+            ->andWhere('type.code = :codeEngagement')
+            ->andWhere('validation.these = :these')
+            ->andWhere('validation.individu = :individu')
+            ->andWhere('1 = pasHistorise(validation)')
+            ->setParameter('codeEngagement', TypeValidation::CODE_REFUS_ENGAGEMENT_IMPARTIALITE)
+            ->setParameter('these', $these)
+            ->setParameter('individu', $individu)
+        ;
+
+        try {
+            $validation = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Plusieurs refus engagements d'impartialité ont été signé par le membre [".$individu->__toString()."].", $e);
+        }
+        return $validation;
+    }
+
+    /**
+     * @param Membre $membre
+     * @return Validation
+     */
     public function createEngagementImpartialite($membre)
     {
         $individu = $membre->getActeur()->getIndividu();
@@ -65,6 +93,19 @@ class EngagementImpartialiteService {
 
         $validation = $this->getValidationService()->create(TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $these, $individu);
 
+        return $validation;
+    }
+
+    /**
+     * @param Membre $membre
+     * @return Validation
+     */
+    public function createRefusEngagementImpartialite($membre)
+    {
+        $individu = $membre->getActeur()->getIndividu();
+        $these = $membre->getActeur()->getThese();
+
+        $validation = $this->getValidationService()->create(TypeValidation::CODE_REFUS_ENGAGEMENT_IMPARTIALITE, $these, $individu);
 
         return $validation;
     }
