@@ -5,7 +5,6 @@ namespace Soutenance\Controller\Proposition;
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Doctorant;
-use Application\Entity\Db\Fichier;
 use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\NatureFichier;
@@ -13,10 +12,10 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\VersionFichier;
-use Application\Filter\NomFichierFormatter;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
+use Soutenance\Entity\Justificatif;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Form\Anglais\AnglaisFormAwareTrait;
@@ -32,6 +31,7 @@ use Soutenance\Form\Membre\MembreForm;
 use Soutenance\Form\Membre\MembreFromAwareTrait;
 use Soutenance\Form\Refus\RefusForm;
 use Soutenance\Form\Refus\RefusFormAwareTrait;
+use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
@@ -50,7 +50,7 @@ class PropositionController extends AbstractController {
     use UserContextServiceAwareTrait;
     use ValidatationServiceAwareTrait;
     use FichierTheseServiceAwareTrait;
-
+    use JustificatifServiceAwareTrait;
     use DateLieuFormAwareTrait;
     use MembreFromAwareTrait;
     use LabelEuropeenFormAwareTrait;
@@ -87,22 +87,6 @@ class PropositionController extends AbstractController {
         /** @var Role $currentRole */
         $currentRole = $this->userContextService->getSelectedIdentityRole();
 
-        $natures = [
-            NatureFichier::CODE_JUSTIFICATIF_HDR,
-            NatureFichier::CODE_JUSTIFICATIF_EMERITAT,
-            NatureFichier::CODE_DELOCALISATION_SOUTENANCE,
-            NatureFichier::CODE_DELEGUATION_SIGNATURE,
-            NatureFichier::CODE_DEMANDE_LABEL,
-            NatureFichier::CODE_LANGUE_ANGLAISE,
-        ];
-
-        $fichiers = [];
-        foreach ($natures as $nature) {
-            $fichiers[$nature] = $this->fichierTheseService->getRepository()->fetchFichierTheses($these, $nature);
-        }
-
-
-
         return new ViewModel([
             'these'             => $these,
             'proposition'       => $proposition,
@@ -114,7 +98,6 @@ class PropositionController extends AbstractController {
             'indicateurs'       => $this->getPropositionService()->computeIndicateur($proposition),
             'juryOk'            => $this->getPropositionService()->juryOk($proposition),
             'isOk'              => $this->getPropositionService()->isOk($proposition),
-            'fichiers'          => $fichiers,
             'urlFichierThese'   => $this->urlFichierThese(),
         ]);
     }
@@ -501,33 +484,29 @@ class PropositionController extends AbstractController {
 
         /** @var These $these */
         $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findByThese($these);
 
-        $fichier = new Fichier();
+        $justificatif = new Justificatif();
+        $justificatif->setProposition($proposition);
         $form = $this->getJustificatifForm();
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/ajouter-justificatif', ['these' => $these->getId()], [], true));
-        $form->bind($fichier);
+        $form->bind($justificatif);
+        $form->init();
 
         /** @var Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
+            true;
             $data = $request->getPost();
             $files = ['files' => $request->getFiles()->toArray()];
-
-            if ($files['files']['rapport']['size'] === 0) {
-                $this->flashMessenger()->addErrorMessage("Pas de prérapport de soutenance !");
-                return $this->redirect()->toRoute('soutenance/proposition/ajouter-justificatif', ['these' => $these->getId()], [], true);
-            }
-            if ($data['avis'] === "Défavorable" && trim($data['motif']) == '') {
-                $this->flashMessenger()->addErrorMessage("Vous devez motivez votre avis défavorable en quelques mots.");
-                return$this->redirect()->toRoute('soutenance/proposition/ajouter-justificatif', ['these' => $these->getId()], [], true);
-            }
 
             $form->setData($data);
             if ($form->isValid()) {
                 $nature = $this->fichierTheseService->fetchNatureFichier($data['nature']);
                 $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
-                $this->fichierTheseService->createFichierThesesFromUpload($these, $files, $nature, $version);
-
+                $fichiers = $this->fichierTheseService->createFichierThesesFromUpload($these, $files, $nature, $version);
+                $justificatif->setFichier($fichiers[0]);
+                $this->getJustificatifService()->create($justificatif);
                 return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
             }
         }
@@ -541,10 +520,8 @@ class PropositionController extends AbstractController {
     public function retirerJustificatifAction() {
 
         $these = $this->requestedThese();
-        /** @var FichierThese $justificatif */
-        $justificatif = $this->fichierTheseService->getRepository()->find($this->params()->fromRoute('justificatif'));
-
-        $this->fichierTheseService->deleteFichiers([$justificatif], $these);
+        $justifcatif = $this->getJustificatifService()->getRequestedJustificatif($this);
+        $this->getJustificatifService()->delete($justifcatif);
 
         return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
     }

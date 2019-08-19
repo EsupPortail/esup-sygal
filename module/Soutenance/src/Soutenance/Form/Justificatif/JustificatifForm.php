@@ -3,6 +3,8 @@
 namespace Soutenance\Form\Justificatif;
 
 use Application\Entity\Db\NatureFichier;
+use Soutenance\Entity\Proposition;
+use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Zend\Form\Element\Button;
 use Zend\Form\Element\File;
 use Zend\Form\Element\Select;
@@ -10,6 +12,7 @@ use Zend\Form\Form;
 use Zend\InputFilter\Factory;
 
 class JustificatifForm extends Form {
+    use PropositionServiceAwareTrait;
 
     public function init()
     {
@@ -34,6 +37,21 @@ class JustificatifForm extends Form {
                 ],
             ],
         ]);
+        //membre
+        $this->add([
+            'type' => Select::class,
+            'name' => 'membre',
+            'options' => [
+                'label' => 'Associer à un membre du jury :',
+                'empty_option' => 'Aucun',
+                'value_options' => ($this->getObject()?$this->getPropositionService()->getMembresAsOptions($this->getObject()->getProposition()):null),
+                'attributes' => [
+                    'class' => 'bootstrap-selectpicker show-tick',
+                    'data-live-search' => 'true',
+                ],
+            ],
+        ]);
+
         //Fichier
         $this->add([
             'type' => File::class,
@@ -64,6 +82,10 @@ class JustificatifForm extends Form {
             'fichier' => [
                 'required' => false,
             ],
+            'membre' => [
+                'required' => false,
+            ],
+
         ]));
     }
 }

@@ -14,6 +14,7 @@ use Soutenance\Form\Justificatif\JustificatifForm;
 use Soutenance\Form\LabelEuropeen\LabelEuropeenForm;
 use Soutenance\Form\Membre\MembreForm;
 use Soutenance\Form\Refus\RefusForm;
+use Soutenance\Service\Justificatif\JustificatifService;
 use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Notifier\NotifierSoutenanceService;
 use Soutenance\Service\Proposition\PropositionService;
@@ -32,6 +33,7 @@ class PropositionControllerFactory {
          * @var UserContextService $userContextService
          * @var ValidationService $validationService
          * @var FichierTheseService $fichierTheseService
+         * @var JustificatifService $justificatifService
          */
         $membreService = $manager->getServiceLocator()->get(MembreService::class);
         $notificationSoutenanceService = $manager->getServiceLocator()->get(NotifierSoutenanceService::class);
@@ -40,6 +42,7 @@ class PropositionControllerFactory {
         $userContextService = $manager->getServiceLocator()->get('UserContextService');
         $validationService = $manager->getServiceLocator()->get(ValidationService::class);
         $fichierTheseService = $manager->getServiceLocator()->get(FichierTheseService::class);
+        $justificatifService = $manager->getServiceLocator()->get(JustificatifService::class);
 
         /**
          * @var DateLieuForm $dateLieuForm
@@ -70,6 +73,7 @@ class PropositionControllerFactory {
         $controller->setUserContextService($userContextService);
         $controller->setValidationService($validationService);
         $controller->setFichierTheseService($fichierTheseService);
+        $controller->setJustificatifService($justificatifService);
 
         $controller->setDateLieuForm($dateLieuForm);
         $controller->setMembreForm($membreForm);
