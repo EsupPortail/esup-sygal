@@ -42,8 +42,7 @@ class DateLieuHydrator implements HydratorInterface
         $data['date']       = $date;
         $data['heure']      = $heure;
         $data['lieu']       = $proposition->getLieu();
-        $data['exterieur']  = $proposition->isExterieur();
-
+        $data['exterieur']  = ($proposition->isExterieur())?1:0;
         return $data;
     }
 }
