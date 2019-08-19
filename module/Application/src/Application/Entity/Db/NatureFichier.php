@@ -30,7 +30,7 @@ class NatureFichier
     const LABEL_JUSTIFICATIF_HDR = "Justificatif d'habilitation à diriger des recherches";
     const LABEL_JUSTIFICATIF_EMERITAT = "Justificatif d'émeritat";
     const LABEL_DELOCALISATION_SOUTENANCE = "Formulaire de délocalisation de soutenance";
-    const LABEL_DELEGUATION_SIGNATURE = "Formulaire de délégation de signature";
+    const LABEL_DELEGUATION_SIGNATURE = "Formulaire de délégation de signature du rapport de soutenance (visioconférence)";
     const LABEL_LANGUE_ANGLAISE = "Formulaire d'utilisation de la langue anglaise";
     const LABEL_DEMANDE_LABEL = "Formulaire de demande de label européen";
 

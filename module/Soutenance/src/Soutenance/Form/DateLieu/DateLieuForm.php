@@ -7,6 +7,7 @@ use UnicaenApp\Form\Element\Date;
 use Zend\Form\Element\Button;
 use Zend\Form\Element\Checkbox;
 use DateTime;
+use Zend\Form\Element\Radio;
 use Zend\Form\Element\Submit;
 use Zend\Form\Element\Text;
 use Zend\Form\Element\Time;
@@ -64,11 +65,15 @@ class DateLieuForm extends Form {
 
         $this->add([
             'name' => 'exterieur',
-            'type' => Checkbox::class,
+            'type' => Radio::class,
             'options' => [
-                'label' => 'Thèse soutenue à l\'extérieur de l\'établissement d\'encadrement',
+                'label' => 'La soutenance aura lieu :',
                 'label_attributes' => [
                     'class' => 'control-label',
+                ],
+                'value_options' => [
+                    '0' => 'dans l\'établissement d\'encadrement',
+                    '1' => 'hors l\'établissement d\'encadrement',
                 ],
             ],
             'attributes' => [
