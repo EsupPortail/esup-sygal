@@ -21,6 +21,7 @@ class Proposition {
 
     /** @var ArrayCollection */
     private $membres;
+
     /** @var DateTime */
     private $renduRapport;
 
@@ -37,6 +38,9 @@ class Proposition {
     /** @var string */
     private $nouveauTitre;
 
+    /** @var ArrayCollection */
+    private $justificatifs;
+
 //    /** @var ArrayCollection */
 //    private $validations;
 
@@ -51,7 +55,7 @@ class Proposition {
         $this->setSoutenanceAnglais(false);
         $this->setHuitClos(false);
         $this->setExterieur(false);
-//        $this->validations = new ArrayCollection();
+        $this->justificatifs = new ArrayCollection();
     }
 
     /**
@@ -297,6 +301,30 @@ class Proposition {
     public function setNouveauTitre($nouveauTitre)
     {
         $this->nouveauTitre = $nouveauTitre;
+        return $this;
+    }
+
+    /**
+     * @return Justificatif[]
+     */
+    public function getJustificatifs()
+    {
+        return $this->justificatifs->toArray();
+    }
+
+    /**
+     * @param Justificatif $justificatif
+     * @return Proposition
+     */
+    public function addJustificatif($justificatif)
+    {
+        $this->justificatifs->add($justificatif);
+        return $this;
+    }
+
+    public function removeJustificatif($justificatif)
+    {
+        $this->justificatifs->removeElement($justificatif);
         return $this;
     }
 }

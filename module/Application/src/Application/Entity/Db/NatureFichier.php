@@ -21,10 +21,18 @@ class NatureFichier
     const CODE_DIVERS = 'DIVERS';
 
     const CODE_JUSTIFICATIF_HDR = 'JUSTIFICATIF_HDR';
+    const CODE_JUSTIFICATIF_EMERITAT = 'JUSTIFICATIF_EMERITAT';
     const CODE_DELOCALISATION_SOUTENANCE = 'DELOCALISATION_SOUTENANCE';
     const CODE_DELEGUATION_SIGNATURE = 'DELEGUATION_SIGNATURE';
     const CODE_DEMANDE_LABEL = 'DEMANDE_LABEL_EUROPEEN';
     const CODE_LANGUE_ANGLAISE = 'DEMANDE_LANGUE_ANGLAISE';
+
+    const LABEL_JUSTIFICATIF_HDR = "Justificatif d'habilitation à diriger des recherches";
+    const LABEL_JUSTIFICATIF_EMERITAT = "Justificatif d'émeritat";
+    const LABEL_DELOCALISATION_SOUTENANCE = "Formulaire de délocalisation de soutenance";
+    const LABEL_DELEGUATION_SIGNATURE = "Formulaire de délégation de signature";
+    const LABEL_LANGUE_ANGLAISE = "Formulaire d'utilisation de la langue anglaise";
+    const LABEL_DEMANDE_LABEL = "Formulaire de demande de label européen";
 
     /**
      * @var string

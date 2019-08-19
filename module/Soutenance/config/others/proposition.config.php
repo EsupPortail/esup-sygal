@@ -31,8 +31,11 @@ use Soutenance\Form\Membre\MembreHydratorFactory;
 use Soutenance\Form\Refus\RefusForm;
 use Soutenance\Form\Refus\RefusFormFactory;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
+use Soutenance\Service\Justificatif\JustificatifService;
+use Soutenance\Service\Justificatif\JustificatifServiceFactory;
 use Soutenance\Service\Proposition\PropositionService;
 use Soutenance\Service\Proposition\PropositionServiceFactory;
+use Soutenance\View\Helper\JustificatifViewHelper;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 use Zend\Mvc\Router\Http\Literal;
@@ -303,6 +306,7 @@ return [
 
     'service_manager' => [
         'factories' => [
+            JustificatifService::class => JustificatifServiceFactory::class,
             PropositionService::class => PropositionServiceFactory::class,
             PropositionAssertion::class => PropositionAssertionFactory::class,
         ],
@@ -337,6 +341,12 @@ return [
         'factories' => [
             MembreHydrator::class => MembreHydratorFactory::class,
             JusticatifHydrator::class => JustificatifHydratorFactory::class,
+        ],
+    ],
+
+    'view_helpers' => [
+        'invokables' => [
+            'justificatif' => JustificatifViewHelper::class,
         ],
     ],
 ];

@@ -2,36 +2,45 @@
 
 namespace Soutenance\Form\Justificatif;
 
-use Application\Entity\Db\Fichier;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
+use Soutenance\Entity\Justificatif;
+use Soutenance\Entity\Membre;
+use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Zend\Stdlib\Hydrator\HydratorInterface;
+
+/**
+ * NB : Fichier est un object "complexe" géré en dehors de l'hydrator directement dans les actions ...
+ */
 
 class JusticatifHydrator implements HydratorInterface {
     use FichierTheseServiceAwareTrait;
+    use MembreServiceAwareTrait;
 
     /**
      * NB : ne devrait pas servir ...
-     * @param Fichier $object
+     * @param Justificatif $object
      * @return array
      */
     public function extract($object)
     {
         $data  = [
-            'nature' => ($object && $object->getNature())?$object->getNature()->getCode(): null,
-            'fichier' => null,
+            'nature' => ($object && $object->getFichier() &&  $object->getFichier()->getFichier()->getNature())? $object->getFichier()->getFichier()->getNature()->getCode(): null,
+            'membre' => ($object && $object->getMembre())? $object->getMembre()->getId(): null,
+//            'fichier' => null,
         ];
         return $data;
     }
 
     /**
      * @param array $data
-     * @param Fichier $object
-     * @return Fichier
+     * @param Justificatif $object
+     * @return Justificatif
      */
     public function hydrate(array $data, $object)
     {
-        $nature = $this->fichierTheseService->fetchNatureFichier($data['nature']);
-        $object->setNature($nature);
+        /** @var Membre $membre */
+        $membre = $this->getMembreService()->find($data['membre']);
+        $object->setMembre($membre);
         return $object;
     }
 

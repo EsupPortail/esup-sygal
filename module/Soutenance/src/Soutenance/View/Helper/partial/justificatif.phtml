@@ -1,0 +1,28 @@
+<?php
+
+/**
+ * @var Justificatif $justificatif
+ * @var UrlFichierThese $urlFichierThese
+ */
+
+use Application\Controller\Plugin\UrlFichierThese;
+use Soutenance\Entity\Justificatif;
+
+$these = $justificatif->getProposition()->getThese();
+$fichierThese = $justificatif->getFichier();
+$fichier = $justificatif->getFichier()->getFichier();
+$membre = $justificatif->getMembre();
+
+?>
+
+<a href="<?php echo $urlFichierThese->telechargerFichierThese($these, $fichierThese); ?>">
+    <?php echo $fichier->getNature()->getLibelle(); ?>
+    <?php if($membre !== null) : ?>
+    de <strong>
+        <span class="glyphicon glyphicon-user"></span>
+        <?php echo $membre->getDenomination(); ?>
+    </strong>
+    <?php endif; ?>
+</a>
+    (<?php echo $fichier->getHistoCreateur()->getDisplayName(); ?> - <?php echo $fichier->getHistoCreation()->format("d/m/Y à H:i"); ?>)
+

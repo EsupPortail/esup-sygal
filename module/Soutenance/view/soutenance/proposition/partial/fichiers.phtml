@@ -3,7 +3,6 @@
 /**
  * @var Proposition $proposition
  * @var These $these
- * @var FichierThese[][] $fichiers
  * @var UrlFichierThese $urlFichierThese
  */
 
@@ -11,6 +10,7 @@ use Application\Controller\Plugin\UrlFichierThese;
 use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
+use Soutenance\Entity\Justificatif;
 use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 
@@ -34,150 +34,39 @@ foreach ($proposition->getMembres() as $membre) {
         <?php endif; ?>
 
         <?php
-            $hdrs = $fichiers[NatureFichier::CODE_JUSTIFICATIF_HDR];
-            $delocalisations = $fichiers[NatureFichier::CODE_DELOCALISATION_SOUTENANCE];
-            $deleguations = $fichiers[NatureFichier::CODE_DELEGUATION_SIGNATURE];
-            $langues = $fichiers[NatureFichier::CODE_LANGUE_ANGLAISE];
-            $labels = $fichiers[NatureFichier::CODE_DEMANDE_LABEL];
+        $justificatifs = $proposition->getJustificatifs();
+
+        $typesJustificatif = [
+            NatureFichier::CODE_JUSTIFICATIF_HDR => NatureFichier::LABEL_JUSTIFICATIF_HDR,
+            NatureFichier::CODE_JUSTIFICATIF_EMERITAT => NatureFichier::LABEL_JUSTIFICATIF_EMERITAT,
+            NatureFichier::CODE_DELOCALISATION_SOUTENANCE => NatureFichier::LABEL_DELOCALISATION_SOUTENANCE,
+            NatureFichier::CODE_DELEGUATION_SIGNATURE => NatureFichier::LABEL_DELEGUATION_SIGNATURE,
+            NatureFichier::CODE_LANGUE_ANGLAISE => NatureFichier::LABEL_LANGUE_ANGLAISE,
+            NatureFichier::CODE_DEMANDE_LABEL => NatureFichier::LABEL_DEMANDE_LABEL,
+        ];
         ?>
 
-        <h4>
-            Justificatifs d'HDR
-            <span class="badge"><?php echo count($hdrs); ?></span>
-        </h4>
-
-        <?php if (empty($hdrs)) : ?>
-            Aucun.
-        <?php else : ?>
-            <ul>
-            <?php foreach($hdrs as $fichierThese) : ?>
-                <?php $fichier = $fichierThese->getFichier(); ?>
-                <li>
-                    <a href="<?php echo $urlFichierThese->telechargerFichierThese($these, $fichierThese); ?>">
-                        <?php echo $fichier->getNom(); ?>
-                    </a>
-                    (<?php echo $fichier->getHistoCreateur()->getDisplayName(); ?> - <?php echo $fichier->getHistoCreation()->format("d/m/Y à H:i"); ?>)
-                    <?php if ($canModifier) : ?>
-                        <a href="<?php echo $this->url('soutenance/proposition/retirer-justificatif', ['these'=>$these->getId(), 'justificatif'=>$fichier->getId()], [], true); ?>">
-                            <span style='color:darkred;' class="glyphicon glyphicon-remove" title="Supprimer le justificatif"></span>
-                        </a>
-                    <?php endif; ?>
-                </li>
-            <?php endforeach; ?>
-            </ul>
-        <?php endif; ?>
-
-        <?php if ($proposition->isExterieur()): ?>
+        <?php foreach ($typesJustificatif as $code => $label): ?>
+            <?php $liste = array_filter($proposition->getJustificatifs(), function(Justificatif $j) use ($code) {return $j->getFichier()->getFichier()->getNature()->getCode() === $code; }); ?>
+            <?php if (!empty($liste)) : ?>
             <h4>
-                Formulaire de demande de délocalisation
-                <span class="badge"><?php echo count($delocalisations); ?></span>
+                <?php echo $label; ?>
+                <span class="badge"><?php echo count($liste); ?></span>
             </h4>
-
-            <?php if (empty($delocalisations)) : ?>
-                Aucun.
-            <?php else : ?>
                 <ul>
-                    <?php foreach($delocalisations as $fichierThese) : ?>
-                        <?php $fichier = $fichierThese->getFichier(); ?>
-                        <li>
-                            <a href="<?php echo $urlFichierThese->telechargerFichierThese($these, $fichierThese); ?>">
-                                <?php echo $fichier->getNom(); ?>
+                <?php /** @var Justificatif $justificatif */
+                foreach($liste as $justificatif) : ?>
+                    <li>
+                        <?php echo $this->justificatif()->render($justificatif, $urlFichierThese); ?>
+                        <?php if ($canModifier) : ?>
+                            <a href="<?php echo $this->url('soutenance/proposition/retirer-justificatif', ['these'=>$these->getId(), 'justificatif'=>$justificatif->getId()], [], true); ?>">
+                                <span style='color:darkred;' class="glyphicon glyphicon-remove" title="Supprimer le justificatif"></span>
                             </a>
-                            (<?php echo $fichier->getHistoCreateur()->getDisplayName(); ?> - <?php echo $fichier->getHistoCreation()->format("d/m/Y à H:i"); ?>)
-                            <?php if ($canModifier) : ?>
-                                <a href="<?php echo $this->url('soutenance/proposition/retirer-justificatif', ['these'=>$these->getId(), 'justificatif'=>$fichier->getId()], [], true); ?>">
-                                    <span style='color:darkred;' class="glyphicon glyphicon-remove" title="Supprimer le justificatif"></span>
-                                </a>
-                            <?php endif; ?>
-                        </li>
-                    <?php endforeach; ?>
+                        <?php endif; ?>
+                    </li>
+                <?php endforeach; ?>
                 </ul>
             <?php endif; ?>
-
-        <?php endif; ?>
-
-        <?php if ($hasVisio) : ?>
-            <h4>
-                Formulaire de demande de déléguations de signature
-                <span class="badge"><?php echo count($deleguations); ?></span>
-            </h4>
-
-            <?php if (empty($deleguations)) : ?>
-                Aucun.
-            <?php else : ?>
-                <ul>
-                    <?php foreach($deleguations as $fichierThese) : ?>
-                        <?php $fichier = $fichierThese->getFichier(); ?>
-                        <li>
-                            <a href="<?php echo $urlFichierThese->telechargerFichierThese($these, $fichierThese); ?>">
-                                <?php echo $fichier->getNom(); ?>
-                            </a>
-                            (<?php echo $fichier->getHistoCreateur()->getDisplayName(); ?> - <?php echo $fichier->getHistoCreation()->format("d/m/Y à H:i"); ?>)
-                            <?php if ($canModifier) : ?>
-                                <a href="<?php echo $this->url('soutenance/proposition/retirer-justificatif', ['these'=>$these->getId(), 'justificatif'=>$fichier->getId()], [], true); ?>">
-                                    <span style='color:darkred;' class="glyphicon glyphicon-remove" title="Supprimer le justificatif"></span>
-                                </a>
-                            <?php endif; ?>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            <?php endif; ?>
-        <?php endif; ?>
-
-        <?php if ($proposition->isLabelEuropeen()) : ?>
-            <h4>
-                Formulaires de demande de label européen
-                <span class="badge"><?php echo count($labels); ?></span>
-            </h4>
-
-            <?php if (empty($labels)) : ?>
-                Aucun.
-            <?php else : ?>
-                <ul>
-                    <?php foreach($labels as $fichierThese) : ?>
-                        <?php $fichier = $fichierThese->getFichier(); ?>
-                        <li>
-                            <a href="<?php echo $urlFichierThese->telechargerFichierThese($these, $fichierThese); ?>">
-                                <?php echo $fichier->getNom(); ?>
-                            </a>
-                            (<?php echo $fichier->getHistoCreateur()->getDisplayName(); ?> - <?php echo $fichier->getHistoCreation()->format("d/m/Y à H:i"); ?>)
-                            <?php if ($canModifier) : ?>
-                                <a href="<?php echo $this->url('soutenance/proposition/retirer-justificatif', ['these'=>$these->getId(), 'justificatif'=>$fichier->getId()], [], true); ?>">
-                                    <span style='color:darkred;' class="glyphicon glyphicon-remove" title="Supprimer le justificatif"></span>
-                                </a>
-                            <?php endif; ?>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            <?php endif; ?>
-        <?php endif; ?>
-
-        <?php if ($proposition->isManuscritAnglais() OR $proposition->isSoutenanceAnglais()) : ?>
-            <h4>
-                Formulaires de demande de manuscrit ou de soutenance en anglais
-                <span class="badge"><?php echo count($langues); ?></span>
-            </h4>
-
-            <?php if (empty($langues)) : ?>
-                Aucun.
-            <?php else : ?>
-                <ul>
-                    <?php foreach($langues as $fichierThese) : ?>
-                        <?php $fichier = $fichierThese->getFichier(); ?>
-                        <li>
-                            <a href="<?php echo $urlFichierThese->telechargerFichierThese($these, $fichierThese); ?>">
-                                <?php echo $fichier->getNom(); ?>
-                            </a>
-                            (<?php echo $fichier->getHistoCreateur()->getDisplayName(); ?> - <?php echo $fichier->getHistoCreation()->format("d/m/Y à H:i"); ?>)
-                            <?php if ($canModifier) : ?>
-                                <a href="<?php echo $this->url('soutenance/proposition/retirer-justificatif', ['these'=>$these->getId(), 'justificatif'=>$fichier->getId()], [], true); ?>">
-                                    <span style='color:darkred;' class="glyphicon glyphicon-remove" title="Supprimer le justificatif"></span>
-                                </a>
-                            <?php endif; ?>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            <?php endif; ?>
-        <?php endif; ?>
+        <?php endforeach; ?>
     </div>
 </div>

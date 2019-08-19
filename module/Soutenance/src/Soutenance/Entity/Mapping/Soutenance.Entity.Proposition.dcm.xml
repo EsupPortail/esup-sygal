@@ -18,6 +18,7 @@
         <field name="exterieur"                 type="boolean"                          column="EXTERIEUR"       nullable="true"/>
 
         <one-to-many field="membres" target-entity="Soutenance\Entity\Membre" mapped-by="proposition"/>
+        <one-to-many field="justificatifs" target-entity="Soutenance\Entity\Justificatif" mapped-by="proposition"/>
 
         <field name="renduRapport"              type="datetime"                         column="RENDU_RAPPORT"        nullable="true"/>
         <field name="confidentialite"           type="datetime"                         column="CONFIDENTIALITE"      nullable="true"/>

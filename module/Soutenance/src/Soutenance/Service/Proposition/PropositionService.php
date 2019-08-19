@@ -434,4 +434,22 @@ class PropositionService {
         $propositions = $qb->getQuery()->getResult();
         return $propositions;
     }
+
+    /**
+     * @param Proposition $proposition
+     * @return array
+     */
+    public function getMembresAsOptions($proposition)
+    {
+        $array = [];
+
+        if ($proposition !== null) {
+            /** @var Membre[] $membres */
+            $membres = $proposition->getMembres();
+            foreach ($membres as $membre) {
+                $array[$membre->getId()] = $membre->getDenomination();
+            }
+        }
+        return $array;
+    }
 }
