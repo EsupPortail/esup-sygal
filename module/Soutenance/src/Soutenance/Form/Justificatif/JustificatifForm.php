@@ -22,6 +22,7 @@ class JustificatifForm extends Form {
                 'empty_option' => 'Nature du justificatif',
                 'value_options' => [
                     NatureFichier::CODE_JUSTIFICATIF_HDR => 'Justificatif d\'habilitation à diriger des recherches',
+                    NatureFichier::CODE_JUSTIFICATIF_EMERITAT => 'Justificatif d\'émeritat',
                     NatureFichier::CODE_DELOCALISATION_SOUTENANCE => 'Demande de délocalisation de la soutenance',
                     NatureFichier::CODE_DELEGUATION_SIGNATURE => 'Demande de déléguation de signature',
                     NatureFichier::CODE_DEMANDE_LABEL => 'Demande de label européen',

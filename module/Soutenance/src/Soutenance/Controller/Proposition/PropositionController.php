@@ -89,6 +89,7 @@ class PropositionController extends AbstractController {
 
         $natures = [
             NatureFichier::CODE_JUSTIFICATIF_HDR,
+            NatureFichier::CODE_JUSTIFICATIF_EMERITAT,
             NatureFichier::CODE_DELOCALISATION_SOUTENANCE,
             NatureFichier::CODE_DELEGUATION_SIGNATURE,
             NatureFichier::CODE_DEMANDE_LABEL,
