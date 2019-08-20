@@ -1,11 +1,13 @@
 <?php
 
 use Application\Entity\Db\These;
+use Soutenance\Entity\Membre;
 use Soutenance\Form\Justificatif\JustificatifForm;
 
 /**
  * @var These $these
  * @var JustificatifForm $form
+ * @var Membre[] $membres
  */
 
 ?>
@@ -17,8 +19,55 @@ use Soutenance\Form\Justificatif\JustificatifForm;
         height: auto;
     }
 </style>
+
 <script>
-    $('select').selectpicker();
+    // ID, NOM, HRD, EMERITAT
+    let membres = [];
+    <?php foreach ($membres as $membre) : ?>
+        membres.push(
+            new Array(
+                <?php echo $membre->getId(); ?> ,
+                <?php echo '"'.$membre->getDenomination().'"'; ?> ,
+                <?php echo '"'.$membre->hasHDR().'"'; ?> ,
+                <?php echo '"'.$membre->hasEmeritat().'"'; ?>
+            )
+        );
+    <?php endforeach; ?>
+
+    let nbMembres = membres.length;
+    // console.log(membres);
+    // console.log(nbMembres);
+
+    console.log('ready');
+    $('select[name="nature"]').change(function() {
+        let value =  $(this). children("option:selected"). val();
+        //console.log('changement => ' + value);
+
+        $('select[name="membre"]').empty();
+
+        switch(value) {
+            case 'JUSTIFICATIF_HDR' :
+                for (let i = 0 ; i < nbMembres ; ++i) {
+                    if (membres[i][2] === 'O') {
+                        $('select[name="membre"]').append(new Option(membres[i][1], membres[i][0]));
+                    }
+                }
+                break;
+            case 'JUSTIFICATIF_EMERITAT' :
+                for (let i = 0 ; i < nbMembres ; ++i) {
+                    if (membres[i][3] === 'O') {
+                        $('select[name="membre"]').append(new Option(membres[i][1], membres[i][0]));
+                    }
+                }
+                break;
+            default :
+                $('select[name="membre"]').append(new Option("Aucun", null));
+                for (let i = 0 ; i < nbMembres ; ++i) {
+                    $('select[name="membre"]').append(new Option(membres[i][1], membres[i][0]));
+                }
+                break;
+        }
+    });
 </script>
 
 
