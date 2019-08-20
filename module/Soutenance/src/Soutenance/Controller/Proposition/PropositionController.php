@@ -514,6 +514,7 @@ class PropositionController extends AbstractController {
         return new ViewModel([
             'these' => $these,
             'form' => $form,
+            'membres' => $proposition->getMembres(),
         ]);
     }
 

@@ -28,6 +28,11 @@ class QualiteEditionForm extends Form {
                 ->setValueOptions(['O' => 'Oui', 'N' => 'Non']))
         ;
 
+        $this->add(
+            (new Radio('emeritat'))
+                ->setLabel("Possède un émeritat :")
+                ->setValueOptions(['O' => 'Oui', 'N' => 'Non']))
+        ;
 
         $this->add((new Submit('submit'))
             ->setValue("Enregister")

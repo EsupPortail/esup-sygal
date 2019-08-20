@@ -34,6 +34,7 @@ class JustificatifForm extends Form {
                 'attributes' => [
                     'class' => 'bootstrap-selectpicker show-tick',
                     'data-live-search' => 'true',
+                    'id' => 'nature',
                 ],
             ],
         ]);

@@ -266,6 +266,13 @@ class Membre {
         return $this;
     }
 
+    public function hasHDR() {
+        return $this->getQualite()->getHdr();
+    }
+
+    public function hasEmeritat() {
+        return $this->getQualite()->getEmeritat();
+    }
 }
 
 ?>

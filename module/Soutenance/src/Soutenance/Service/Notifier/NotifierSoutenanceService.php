@@ -241,8 +241,7 @@ class NotifierSoutenanceService extends NotifierService {
      */
     public function triggerRefusPropositionSoutenance($these, $currentUser, $currentRole, $motif)
     {
-        $emails   = $these->getDirecteursTheseEmails();
-        $emails[] = $these->getDoctorant()->getIndividu()->getEmail();
+        $emails = $this->fetchEmailActeursDirects($these);
 
         $emails = array_filter($emails, function ($s) {
             return $s !== null;

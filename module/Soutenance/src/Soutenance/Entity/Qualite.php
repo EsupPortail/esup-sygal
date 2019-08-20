@@ -14,6 +14,8 @@ class Qualite
     private $rang;
     /** @var string */
     private $hdr;
+    /** @var string */
+    private $emeritat;
 
     /**
      * @return int
@@ -77,11 +79,29 @@ class Qualite
         return $this;
     }
 
+    /**
+     * @return string
+     */
+    public function getEmeritat()
+    {
+        return $this->emeritat;
+    }
+
+    /**
+     * @param string $emeritat
+     * @return Qualite
+     */
+    public function setEmeritat($emeritat)
+    {
+        $this->emeritat = $emeritat;
+        return $this;
+    }
+
+
     public function __toString()
     {
         return $this->getLibelle();
     }
-
 
 }
 
