@@ -17,7 +17,8 @@ class NatureFichier
     const CODE_PROLONG_CONFIDENT = 'PROLONG_CONFIDENT';
     const CODE_CONV_MISE_EN_LIGNE = 'CONV_MISE_EN_LIGNE';
     const CODE_AVENANT_CONV_MISE_EN_LIGNE = 'AVENANT_CONV_MISE_EN_LIGNE';
-    const CODE_INFORMATION = 'INFORMATION';
+    const CODE_COMMUNS = 'COMMUNS';
+    const CODE_DIVERS = 'DIVERS';
 
     /**
      * @var string

@@ -5,6 +5,7 @@ use Application\Controller\Factory\TheseControllerFactory;
 use Application\Controller\Factory\TheseObserverControllerFactory;
 use Application\Controller\Plugin\Url\UrlThesePluginFactory;
 use Application\Controller\TheseConsoleController;
+use Application\Controller\TheseController;
 use Application\Entity\Db\Diffusion;
 use Application\Entity\Db\WfEtape;
 use Application\Form\Factory\AttestationHydratorFactory;
@@ -57,8 +58,8 @@ return [
                             ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_INITIALE,
                             ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE,
                             ThesePrivileges::THESE_SAISIE_RDV_BU,
-                            ThesePrivileges::FICHIER_DIVERS_TELEVERSER,
-                            ThesePrivileges::FICHIER_DIVERS_CONSULTER,
+                            ThesePrivileges::THESE_FICHIER_DIVERS_TELEVERSER,
+                            ThesePrivileges::THESE_FICHIER_DIVERS_CONSULTER,
                             ThesePrivileges::THESE_CONSULTATION_TOUTES_THESES,
                             ThesePrivileges::THESE_CONSULTATION_SES_THESES,
                             ThesePrivileges::THESE_MODIFICATION_TOUTES_THESES,
@@ -82,6 +83,14 @@ return [
                         'rechercher',
                     ],
                     'roles' => 'user',
+                ],
+                [
+                    'controller' => 'Application\Controller\These',
+                    'action'     => [
+                        'detail-depot-divers',
+                        /* @see TheseController::detailDepotDiversAction() */
+                    ],
+                    'privileges' => ThesePrivileges::THESE_FICHIER_DIVERS_CONSULTER,
                 ],
                 [
                     'controller' => 'Application\Controller\These',
@@ -149,7 +158,7 @@ return [
                         'depot-conv-mise-en-ligne',
                         'depot-avenant-conv-mise-en-ligne',
                     ],
-                    'privileges' => ThesePrivileges::FICHIER_DIVERS_CONSULTER,
+                    'privileges' => ThesePrivileges::THESE_FICHIER_DIVERS_CONSULTER,
                     'assertion'  => 'Assertion\\These',
                 ],
                 [
@@ -513,6 +522,19 @@ return [
                             ],
                         ],
                     ],
+                    'depot-divers' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'       => '/depot-divers/:these',
+                            'constraints' => [
+                                'these' => '\d+',
+                            ],
+                            'defaults'    => [
+                                'action' => 'detail-depot-divers',
+                                /* @see TheseController::detailDepotDiversAction() */
+                            ],
+                        ],
+                    ],
                     'attestation' => [
                         'type'          => 'Segment',
                         'options'       => [
@@ -810,9 +832,22 @@ return [
                                 'paramsInject' => [
                                     'these',
                                 ],
-                                'icon' => 'glyphicon glyphicon-exclamation-sign',
+                                'icon' => 'glyphicon glyphicon-warning-sign',
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'modifier-rdv-bu'),
                                 'etape' => null,
+                                'visible' => 'Assertion\\These',
+                            ],
+                            'depot-divers' => [
+                                'id'       => 'depot-divers',
+                                'label'    => 'Dépôt fichiers divers',
+                                'route'    => 'these/depot-divers',
+                                'withtarget' => true,
+                                'paramsInject' => [
+                                    'these',
+                                ],
+                                'icon' => 'glyphicon glyphicon-duplicate',
+                                'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'detail-fichiers'),
+                                'etape' => WfEtape::CODE_DEPOT_VERSION_ORIGINALE,
                                 'visible' => 'Assertion\\These',
                             ],
 
@@ -835,7 +870,7 @@ return [
                                     'these',
                                 ],
                                 'class' => 'version-initiale correction-attendue-{correctionAutorisee}',
-                                'icon' => 'glyphicon glyphicon-file',
+                                'icon' => 'glyphicon glyphicon-picture',
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'validation-page-de-couverture'),
 //                                'etape' => WfEtape::CODE_DEPOT_VERSION_ORIGINALE,
 //                                'visible' => 'Assertion\\These',
@@ -849,7 +884,7 @@ return [
                                     'these',
                                 ],
                                 'class' => 'version-initiale correction-attendue-{correctionAutorisee}',
-                                'icon' => 'glyphicon glyphicon-duplicate',
+                                'icon' => 'glyphicon glyphicon-file',
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'detail-fichiers'),
                                 'etape' => WfEtape::CODE_DEPOT_VERSION_ORIGINALE,
                                 'visible' => 'Assertion\\These',

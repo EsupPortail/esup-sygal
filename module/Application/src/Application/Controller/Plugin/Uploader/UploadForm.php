@@ -4,6 +4,7 @@ namespace Application\Controller\Plugin\Uploader;
 
 use UnicaenApp\Filter\BytesFormatter;
 use UnicaenApp\Util;
+use Zend\Form\Element\Csrf;
 use Zend\Form\Element\Hidden;
 use Zend\Form\Form;
 use Zend\InputFilter\FileInput;
@@ -21,6 +22,11 @@ class UploadForm extends Form
      * @var array
      */
     private $addedElements = [];
+
+    /**
+     * @var bool
+     */
+    private $ajaxMode = true;
 
     /**
      * Constructeur.
@@ -45,6 +51,43 @@ class UploadForm extends Form
         $this
             ->addElements()
             ->addInputFilter();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAjaxMode()
+    {
+        return $this->ajaxMode;
+    }
+
+    /**
+     * @param bool $ajaxMode
+     * @return $this
+     */
+    public function setAjaxMode($ajaxMode = true)
+    {
+        if ($this->ajaxMode && ! $ajaxMode) {
+            $this->addSubmitButton();
+        }
+
+        $this->ajaxMode = $ajaxMode;
+
+        return $this;
+    }
+
+    private function addSubmitButton()
+    {
+        $this->add([
+            'name' => 'submit',
+            'type' => 'Submit',
+            'options' => [
+                'label' => "Téléverser",
+            ],
+            'attributes' => [
+                'class' => 'upload-file',
+            ],
+        ]);
     }
 
     /**
@@ -108,6 +151,8 @@ class UploadForm extends Form
                 'multiple' => true,
             ],
         ]);
+
+        $this->add(new Csrf('csrf'));
 
         return $this;
     }

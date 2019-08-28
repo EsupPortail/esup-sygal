@@ -28,8 +28,9 @@ RUN ln -sf /dev/stderr /var/log/apache2/error.log
 ADD docker/apache-ports.conf     ${APACHE_CONF_DIR}/ports.conf
 ADD docker/apache-site.conf      ${APACHE_CONF_DIR}/sites-available/app.conf
 ADD docker/apache-site-ssl.conf  ${APACHE_CONF_DIR}/sites-available/app-ssl.conf
-ADD docker/fpm/pool.d/www.conf   ${PHP_CONF_DIR}/fpm/pool.d/
-ADD docker/fpm/conf.d/99-app.ini ${PHP_CONF_DIR}/fpm/conf.d/
+ADD docker/php/fpm/pool.d/www.conf   ${PHP_CONF_DIR}/fpm/pool.d/
+ADD docker/php/fpm/conf.d/99-app.ini ${PHP_CONF_DIR}/fpm/conf.d/
+ADD docker/php/cli/conf.d/99-app.ini ${PHP_CONF_DIR}/cli/conf.d/
 
 # Copie des scripts complémentaires à lancer au démarrage du container
 COPY docker/entrypoint.d/* /entrypoint.d/
