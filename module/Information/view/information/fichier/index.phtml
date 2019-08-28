@@ -3,11 +3,11 @@
 /** @var Fichier[] $fichiers */
 
 use Application\Entity\Db\Fichier;
-use Information\Provider\Privilege\InformationPrivileges;
+use Application\Provider\Privilege\FichierPrivileges;
 
 $this->headTitle("Fichiers associés aux pages d'information");
 
-$canFichier = $this->isAllowed(InformationPrivileges::getResourceId(InformationPrivileges::INFORMATION_FICHIER));
+$canFichier = $this->isAllowed(FichierPrivileges::getResourceId(FichierPrivileges::FICHIER_DIVERS_TELEVERSER));
 ?>
 
 <style>

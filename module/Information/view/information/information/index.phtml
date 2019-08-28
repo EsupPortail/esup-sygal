@@ -4,6 +4,7 @@
  * @var Information[] $informations
  */
 
+use Application\Provider\Privilege\FichierPrivileges;
 use Information\Entity\Db\Information;
 use Information\Provider\Privilege\InformationPrivileges;
 
@@ -12,7 +13,7 @@ $this->headTitle("Index des informations");
 $canView    = true;
 $canEdit    = $this->isAllowed(InformationPrivileges::getResourceId(InformationPrivileges::INFORMATION_MODIFIER));
 $canDelete  = $this->isAllowed(InformationPrivileges::getResourceId(InformationPrivileges::INFORMATION_MODIFIER));
-$canFichier = $this->isAllowed(InformationPrivileges::getResourceId(InformationPrivileges::INFORMATION_FICHIER));
+$canFichier = $this->isAllowed(FichierPrivileges::getResourceId(FichierPrivileges::FICHIER_DIVERS_TELEVERSER));
 ?>
 
 <style>
