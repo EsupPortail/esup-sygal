@@ -10,7 +10,6 @@ use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Authentication\Storage\ChainEvent as StorageChainEvent;
 use UnicaenAuth\Entity\Shibboleth\ShibUser;
 use UnicaenAuth\Event\UserAuthenticatedEvent;
-use UnicaenLdap\Entity\People as UnicaenLdapPeople;
 use Zend\Authentication\Exception\ExceptionInterface;
 
 /**
@@ -18,38 +17,6 @@ use Zend\Authentication\Exception\ExceptionInterface;
  */
 class UserWrapperFactory
 {
-    /**
-     * Factory method.
-     *
-     * Instancie à partir d'une entité utilisateur.
-     *
-     * @param $userData UnicaenLdapPeople|UnicaenAppPeople|Utilisateur|ShibUser
-     * @return UserWrapper
-     */
-    public function createInstanceFromUserData($userData)
-    {
-        if (
-            !$userData instanceof UnicaenLdapPeople &&
-            !$userData instanceof UnicaenAppPeople &&
-            !$userData instanceof Utilisateur &&
-            !$userData instanceof ShibUser
-        ) {
-            throw new DomainException("Type d'utilisateur spécifié invalide");
-        }
-
-        $inst = new UserWrapper();
-
-        $individu = null;
-        if ($userData instanceof Utilisateur) {
-            $individu = $userData->getIndividu();
-        }
-
-        $inst->setUserData($userData);
-        $inst->setIndividu($individu);
-
-        return $inst;
-    }
-
     /**
      * Factory method.
      *
