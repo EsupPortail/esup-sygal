@@ -15,5 +15,4 @@ class InformationPrivileges extends Privileges
      * Todo: créer une catégorie de privilèges 'page-information'.
      */
     const INFORMATION_MODIFIER          = 'faq-modifier-information';
-    const INFORMATION_FICHIER           = 'faq-modifier-fichier';
 }
