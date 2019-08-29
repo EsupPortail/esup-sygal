@@ -43,7 +43,7 @@ if ($this->url): ?>
     <?php echo $this->formFile($fileElement) ?>
     <?php echo $this->formElementErrors($fileElement) ?>
 
-    <?php echo $this->formElement($this->form->get('csrf')) ?>
+    <?php echo $this->formElement($this->form->get('csrf')->setAttribute('class', 'uploader-submitable')) ?>
 
     <?php /** @var ElementInterface $element */
     foreach ($this->form->getAddedElements() as $element): ?>
