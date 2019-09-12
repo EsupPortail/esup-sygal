@@ -91,11 +91,7 @@ class FichierPrivileges extends Privileges
 
             case NatureFichier::CODE_THESE_PDF:
             case NatureFichier::CODE_FICHIER_NON_PDF:
-                //
-                return $versionFichier !== null && $versionFichier->estVersionCorrigee() ?
-                    ThesePrivileges::THESE_DEPOT_VERSION_CORRIGEE :
-                    ThesePrivileges::THESE_DEPOT_VERSION_INITIALE;
-
+                return ThesePrivileges::THESE_TELECHARGEMENT_FICHIER;
             case NatureFichier::CODE_DIVERS:
                 //
                 return self::FICHIER_DIVERS_TELECHARGER;

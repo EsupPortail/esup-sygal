@@ -1,7 +1,23 @@
 Journal des modifications
 =========================
 
-1.2.1 ()
+1.2.3 (29/08/2019)
+------------------
+
+### Corrections
+
+- Correction du formulaire d'upload : l'élément CSRF n'était pas POSTé comme les autres.
+
+
+1.2.2 (28/08/2019)
+------------------
+
+### Corrections
+
+- Suppression des usages résiduels du privilège `InformationPrivileges::INFORMATION_FICHIER` qui n'existe plus.    
+
+
+1.2.1 (11/07/2019)
 ------------------
 
 ### Ajout
