@@ -22,6 +22,8 @@ $canAddRole = true;
     Details de l'établissement [  <?php echo $etablissement->getLibelle(); ?> ]
 </h1>
 
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
+
 <a href="<?php echo $this->url('etablissement', [], [], true); ?>"
    class="btn btn-primary action"
    >
