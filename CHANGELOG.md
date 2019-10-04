@@ -1,6 +1,14 @@
 Journal des modifications
 =========================
 
+1.2.5 (04/10/2019)
+------------------
+
+### Améliorations
+
+- Ligne de commande d'import : nouvel argument --verbose pour obtenir plus de logs.
+
+
 1.2.4 (27/09/2019)
 ------------------
 
