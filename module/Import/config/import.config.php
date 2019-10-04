@@ -67,7 +67,7 @@ return [
                 'import-console' => [
                     'type' => Simple::class,
                     'options' => [
-                        'route'    => 'import --service=  --etablissement= [--source-code=] [--synchronize=] [--em=]',
+                        'route'    => 'import --service=  --etablissement= [--source-code=] [--synchronize=] [--verbose] [--em=]',
                         'defaults' => [
                             'controller' => Import\Controller\ImportController::class,
                             'action'     => 'import-console',
@@ -77,7 +77,7 @@ return [
                 'import-all-console' => [
                     'type' => Simple::class,
                     'options' => [
-                        'route'    => 'import-all --etablissement= [--breakOnServiceNotFound=] [--synchronize=] [--em=]',
+                        'route'    => 'import-all --etablissement= [--breakOnServiceNotFound=] [--synchronize=] [--verbose] [--em=]',
                         'defaults' => [
                             'controller' => Import\Controller\ImportController::class,
                             'action'     => 'import-all-console',

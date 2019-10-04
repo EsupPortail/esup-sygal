@@ -160,28 +160,24 @@ abstract class StructureConcreteController extends AbstractController
             $data = $request->getPost()->toArray();
             $file = $request->getFiles()->toArray();
 
-            // action d'affacement du logo
-            if (isset($data['supprimer-logo'])) {
-                $this->supprimerLogoStructure();
-
-                return $this->redirect()->toRoute($this->routeName, [], ['query' => ['selected' => $structureId], "fragment" => $structureId], true);
-            }
-
             // action de modification
+            $cheminLogo = $structureConcrete->getCheminLogo();
             $this->structureForm->setData($data);
             if ($this->structureForm->isValid()) {
 
                 // sauvegarde du logo si fourni
                 if ($file['cheminLogo']['tmp_name'] !== '') {
                     $this->ajouterLogoStructure($file['cheminLogo']['tmp_name']);
+                } else {
+                    $structureConcrete->setCheminLogo($cheminLogo);
                 }
                 // mise à jour des données relatives aux structures
                 $structureConcrete = $this->structureForm->getData();
                 $this->getStructureConcreteService()->update($structureConcrete);
 
                 $this->flashMessenger()->addSuccessMessage("Structure '$structureConcrete' modifiée avec succès");
-
-                return $this->redirect()->toRoute($this->routeName, [], ['query' => ['selected' => $structureId], "fragment" => "" . $structureId], true);
+                $test = $this->routeName .'/information';
+                return $this->redirect()->toRoute($this->routeName.'/information', ['structure' => $structureId], [], true);
             }
             $this->flashMessenger()->addErrorMessage("Echec de la mise à jour : données incorrectes saissie");
 
