@@ -132,19 +132,21 @@ class ImportController extends AbstractActionController
      * avec les tables destinations.
      *
      * @return ViewModel
+     * @throws StructureNotFoundException
      */
     public function importAction()
     {
         $service = $this->params('service');
         $codeStructure = $this->params('etablissement'); // ex: 'UCN'
         $sourceCode = $this->params('source_code');
+        $verbose = (bool) $this->params('verbose', 0);
 
         $queryParams = $this->params()->fromQuery();
 
         $etablissement = $this->fetchEtablissementByCodeStructure($codeStructure);
 
         $stream = fopen('php://memory','r+');
-        $this->setLoggerStream($stream);
+        $this->setLoggerStream($stream, $verbose);
 
         $this->importService->import($service, $etablissement, $sourceCode, $queryParams);
 
@@ -165,15 +167,17 @@ class ImportController extends AbstractActionController
      * des données obtenues avec les tables destinations.
      *
      * @return ViewModel
+     * @throws StructureNotFoundException
      */
     public function importAllAction()
     {
         $codeStructure = $this->params('etablissement'); // ex: 'UCN'
+        $verbose = (bool) $this->params('verbose', 0);
 
         $etablissement = $this->fetchEtablissementByCodeStructure($codeStructure);
 
         $stream = fopen('php://memory','r+');
-        $this->setLoggerStream($stream);
+        $this->setLoggerStream($stream, $verbose);
 
         $this->importService->importAll($etablissement);
 
@@ -196,6 +200,7 @@ class ImportController extends AbstractActionController
     {
         $codeEtablissement = $this->params('etablissement');
         $sourceCodeThese = $this->params('source_code');
+        $verbose = (bool) $this->params('verbose', 0);
 
         if (! $sourceCodeThese) {
             throw new LogicException("Le source code de la thèse est requis");
@@ -210,7 +215,7 @@ class ImportController extends AbstractActionController
         }
 
         $stream = fopen('php://memory','r+');
-        $this->setLoggerStream($stream);
+        $this->setLoggerStream($stream, $verbose);
 
         $this->importService->updateThese($these);
 
@@ -226,6 +231,9 @@ class ImportController extends AbstractActionController
         ]);
     }
 
+    /**
+     * @throws StructureNotFoundException
+     */
     public function importConsoleAction()
     {
         $service = $this->params('service');
@@ -233,8 +241,9 @@ class ImportController extends AbstractActionController
         $sourceCode = $this->params('source-code');
         $synchronize = (bool) $this->params('synchronize', 1);
         $emName = $this->params('em', 'orm_default');
+        $verbose = (bool) $this->params('verbose', 0);
 
-        $this->setLoggerStream('php://output');
+        $this->setLoggerStream('php://output', $verbose);
 
         $etablissement = $this->fetchEtablissementByCodeStructure($codeStructure);
 
@@ -254,16 +263,20 @@ class ImportController extends AbstractActionController
         ) . PHP_EOL;
     }
 
+    /**
+     * @throws StructureNotFoundException
+     */
     public function importAllConsoleAction()
     {
         $codeStructure = $this->params('etablissement'); // ex: 'UCN'
         $breakOnServiceNotFound = (bool) $this->params('breakOnServiceNotFound', 1);
         $synchronize = (bool) $this->params('synchronize', 1);
         $emName = $this->params('em', 'orm_default');
+        $verbose = (bool) $this->params('verbose', 0);
 
         $etablissement = $this->fetchEtablissementByCodeStructure($codeStructure);
 
-        $this->setLoggerStream('php://output');
+        $this->setLoggerStream('php://output', $verbose);
 
         /** @var EntityManager $entityManager */
         $entityManager = $this->getServiceLocator()->get("doctrine.entitymanager.$emName");
@@ -282,10 +295,11 @@ class ImportController extends AbstractActionController
 
     /**
      * @param string|resource $stream
+     * @param bool            $verbose
      */
-    private function setLoggerStream($stream)
+    private function setLoggerStream($stream, $verbose = false)
     {
-        $filter = new Priority(Logger::INFO);
+        $filter = new Priority($verbose ? Logger::DEBUG : Logger::INFO);
 
         $writer = new Stream($stream);
         $writer->addFilter($filter);
