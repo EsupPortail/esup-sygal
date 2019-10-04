@@ -1,6 +1,22 @@
 Journal des modifications
 =========================
 
+1.2.5 (04/10/2019)
+------------------
+
+### Améliorations
+
+- Ligne de commande d'import : nouvel argument --verbose pour obtenir plus de logs.
+
+
+1.2.4 (27/09/2019)
+------------------
+
+### Corrections
+
+- Persistance du logo si non renseigné et changement de la redirection et des flashMessenger.
+
+
 1.2.3 (29/08/2019)
 ------------------
 
