@@ -1,6 +1,14 @@
 Journal des modifications
 =========================
 
+1.2.4 (27/09/2019)
+------------------
+
+### Corrections
+
+- Persistance du logo si non renseigné et changement de la redirection et des flashMessenger.
+
+
 1.2.3 (29/08/2019)
 ------------------
 
