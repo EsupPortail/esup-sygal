@@ -136,10 +136,10 @@ class NotifierService
         $mail = $this->mailerService->createNewMessage($html, $subject);
         $mail->setTo($to);
 
-        if ($cc) {
+        if ($cc AND $cc !== []) {
             $mail->setCc($cc);
         }
-        if ($bcc) {
+        if ($bcc AND $bcc !== []) {
             $mail->setBcc($bcc);
         }
 
