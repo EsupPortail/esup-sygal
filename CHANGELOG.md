@@ -1,6 +1,14 @@
 Journal des modifications
 =========================
 
+1.2.6 (15/10/2019)
+------------------
+
+### Corrections
+
+- L'envoi de mail concernant les résultats de thèses modifiés échouait à cause d'une erreur dans le chemin de la vue.
+
+
 1.2.5 (04/10/2019)
 ------------------
 
