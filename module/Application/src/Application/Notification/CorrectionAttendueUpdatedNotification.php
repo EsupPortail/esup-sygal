@@ -10,7 +10,7 @@ class CorrectionAttendueUpdatedNotification extends Notification
 {
     use TheseAwareTrait;
 
-    protected $templatePath = 'notif-depot-version-corrigee-attendu';
+    protected $templatePath = 'application/these/mail/notif-depot-version-corrigee-attendu';
 
     /**
      * Initialisation, préparation, etc. nécessaires avant de pouvoir envoyer la notification.

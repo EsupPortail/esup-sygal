@@ -1,7 +1,7 @@
 Journal des modifications
 =========================
 
-1.2.6 (17/10/2019)
+1.2.7 (17/10/2019)
 ------------------
 
 ### Ajout
@@ -9,6 +9,14 @@ Journal des modifications
 - L'export des thèses contient maintenant deux colonnes supplémentaires addresse électronnique de contact et INE
     - l'adresse électronique de contact est récupérer de la saisie faite à la première connection à SyGAL
     - l'INE sera rappatrié via les Web Services
+
+
+1.2.6 (15/10/2019)
+------------------
+
+### Corrections
+
+- L'envoi de mail concernant les résultats de thèses modifiés échouait à cause d'une erreur dans le chemin de la vue.
 
 
 1.2.5 (04/10/2019)
