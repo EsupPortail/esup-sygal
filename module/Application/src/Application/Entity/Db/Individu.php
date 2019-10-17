@@ -4,6 +4,7 @@ namespace Application\Entity\Db;
 
 use Application\Constants;
 use Application\Filter\NomCompletFormatter;
+use Doctrine\Common\Collections\ArrayCollection;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenImport\Entity\Db\Interfaces\SourceAwareInterface;
@@ -92,6 +93,20 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
      */
     private $id;
 
+    /**
+     * @var ArrayCollection (mailContact)
+     */
+    private $mailsConfirmations;
+
+    /**
+     * @var string
+     */
+    private $ine;
+
+
+    public function __construct() {
+        $this->mailsConfirmations = new ArrayCollection();
+    }
     /**
      * @return string
      * @see supannId
@@ -445,4 +460,39 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
     {
         return $this->id;
     }
+
+    /** @return string */
+    public function getMailContact()
+    {
+        if (! $this->mailsConfirmations->isEmpty())
+        {
+            /** @var MailConfirmation $mailConfirmation */
+            foreach ($this->mailsConfirmations as $mailConfirmation) {
+                if ($mailConfirmation->getEtat() === MailConfirmation::CONFIRMER) {
+                    return $mailConfirmation->getEmail();
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIne()
+    {
+        return $this->ine;
+    }
+
+    /**
+     * @param string $ine
+     * @return Individu
+     */
+    public function setIne($ine)
+    {
+        $this->ine = $ine;
+        return $this;
+    }
+
+
 }

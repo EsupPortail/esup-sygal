@@ -18,6 +18,7 @@ use Application\Provider\Privilege\UtilisateurPrivileges;
  * @var UniteRecherche[] unites
  */
 
+$this->headLink()->appendStylesheet("https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css");
 $canModifier = $this->isAllowed(Privileges::getResourceId(UtilisateurPrivileges::UTILISATEUR_MODIFICATION));
 
 ?>
@@ -135,7 +136,7 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(UtilisateurPrivileges:
 function generateSelect($structures, $id, $roles = null)
 {
     $texte = '<div class="form-group">';
-    $texte .= '<select class="form-control" id="' . $id . '">';
+    $texte .= '<select class="form-control selectpicker" data-live-search="true" id="' . $id . '">';
     $texte .= '<option value=""></option>';
 
     $structuresValides = [];
@@ -319,9 +320,10 @@ function generateRoleUnite( $individu,  $roles,  $rolesAffectes,  $unites, $canM
 
 ?>
 
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
 <script>
     $(document).ready(function () {
+        $('.selectpicker').selectpicker();
         $(".remove-role").click(function () {
             var id = $(this).attr("id");
             var splits = id.split("_");
@@ -394,5 +396,9 @@ function generateRoleUnite( $individu,  $roles,  $rolesAffectes,  $unites, $canM
         margin: 5px 5px 5px 5px;
     }
 
+    .dropdown-menu {
+        z-index: 100000;
+        max-height: 400px;
+    }
 
 </style>
