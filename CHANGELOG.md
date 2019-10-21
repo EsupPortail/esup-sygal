@@ -1,6 +1,22 @@
 Journal des modifications
 =========================
 
+1.2.8 (21/10/2019)
+------------------
+
+### Correction
+
+- Déplacement de l'INE dans l'entity Doctorant et adaption de l'ExportController
+
+1.2.7 (17/10/2019)
+------------------
+
+### Ajout
+
+- L'export des thèses contient maintenant deux colonnes supplémentaires addresse électronnique de contact et INE
+    - l'adresse électronique de contact est récupérer de la saisie faite à la première connection à SyGAL
+    - l'INE sera rappatrié via les Web Services
+
 1.2.6 (15/10/2019)
 ------------------
 

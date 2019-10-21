@@ -32,7 +32,7 @@ class ExportController extends AbstractController
             'Adresse électronique'                  => function (These $these) { return $these->getDoctorant()->getIndividu()->getEmail(); },
             'Adresse électronique personnelle'      => function (These $these) { return $these->getDoctorant()->getIndividu()->getMailContact(); },
             'Numéro étudiant'                       => function (These $these) { return $this->sourceCodeStringHelper->removePrefixFrom($these->getDoctorant()->getSourceCode()); },
-            'I.N.E.'                                => function (These $these) { return $these->getDoctorant()->getIndividu()->getIne(); },
+            'I.N.E.'                                => function (These $these) { return $these->getDoctorant()->getIne(); },
             //These
             'Identifiant de la thèse'               => function (These $these) { return $these->getSourceCode(); },
             'Titre'                                 => function (These $these) { return $these->getTitre(); },

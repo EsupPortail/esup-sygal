@@ -98,12 +98,6 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
      */
     private $mailsConfirmations;
 
-    /**
-     * @var string
-     */
-    private $ine;
-
-
     public function __construct() {
         $this->mailsConfirmations = new ArrayCollection();
     }
@@ -475,24 +469,4 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
         }
         return null;
     }
-
-    /**
-     * @return string
-     */
-    public function getIne()
-    {
-        return $this->ine;
-    }
-
-    /**
-     * @param string $ine
-     * @return Individu
-     */
-    public function setIne($ine)
-    {
-        $this->ine = $ine;
-        return $this;
-    }
-
-
 }
