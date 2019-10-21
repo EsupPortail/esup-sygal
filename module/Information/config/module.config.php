@@ -123,9 +123,7 @@ return [
                     'action'     => [
                         'telecharger',
                     ],
-                    'privileges' => [
-                        FichierPrivileges::FICHIER_DIVERS_TELECHARGER,
-                    ]
+                    'role' => [],
                 ],
             ],
         ],
