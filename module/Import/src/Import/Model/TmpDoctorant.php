@@ -25,6 +25,11 @@ class TmpDoctorant
     /**
      * @var string
      */
+    private $ine;
+
+    /**
+     * @var string
+     */
     private $sourceCode;
 
     /**
