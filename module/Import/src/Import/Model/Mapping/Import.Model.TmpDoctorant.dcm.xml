@@ -8,6 +8,7 @@
         <field name="sourceId"          type="string" column="SOURCE_ID" length="64" nullable="true"/>
         <field name="etablissementId"   type="string" column="ETABLISSEMENT_ID" length="64" nullable="true"/>
         <field name="individuId"        type="string" column="INDIVIDU_ID" length="64" nullable="true"/>
+        <field name="ine"               type="string" column="INE" length="64" nullable="true"/>
         <field name="sourceCode"        type="string" column="SOURCE_CODE"      length="64"     nullable="true"/>
     </entity>
 </doctrine-mapping>
