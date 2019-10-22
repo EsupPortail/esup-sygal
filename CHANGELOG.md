@@ -1,7 +1,63 @@
 Journal des modifications
 =========================
 
-1.2.1 ()
+1.2.8 (21/10/2019)
+------------------
+
+### Correction
+
+- Déplacement de l'INE dans l'entity Doctorant et adaption de l'ExportController
+
+1.2.7 (17/10/2019)
+------------------
+
+### Ajout
+
+- L'export des thèses contient maintenant deux colonnes supplémentaires addresse électronnique de contact et INE
+    - l'adresse électronique de contact est récupérer de la saisie faite à la première connection à SyGAL
+    - l'INE sera rappatrié via les Web Services
+
+1.2.6 (15/10/2019)
+------------------
+
+### Corrections
+
+- L'envoi de mail concernant les résultats de thèses modifiés échouait à cause d'une erreur dans le chemin de la vue.
+
+
+1.2.5 (04/10/2019)
+------------------
+
+### Améliorations
+
+- Ligne de commande d'import : nouvel argument --verbose pour obtenir plus de logs.
+
+
+1.2.4 (27/09/2019)
+------------------
+
+### Corrections
+
+- Persistance du logo si non renseigné et changement de la redirection et des flashMessenger.
+
+
+1.2.3 (29/08/2019)
+------------------
+
+### Corrections
+
+- Correction du formulaire d'upload : l'élément CSRF n'était pas POSTé comme les autres.
+
+
+1.2.2 (28/08/2019)
+------------------
+
+### Corrections
+
+- Suppression des usages résiduels du privilège `InformationPrivileges::INFORMATION_FICHIER` qui n'existe plus.    
+
+
+1.2.1 (11/07/2019)
 ------------------
 
 ### Ajout

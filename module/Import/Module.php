@@ -40,20 +40,22 @@ class Module
     {
         return [
             // command
-            'import --service=  --etablissement= [--source-code=] [--synchronize=] [--em=]' => "Importer toutes les données d'un service d'un établissement.",
+            'import --service=  --etablissement= [--source-code=] [--synchronize=] [--verbose] [--em=]' => "Importer toutes les données d'un service d'un établissement.",
             // parameters
             ['--service',       "Requis. Identifiant du service, ex: 'variable'"],
             ['--etablissement', "Requis. Identifiant de l'établissement, ex: 'UCN'"],
             ['--source-code',   "Facultatif. Source code du seul enregistrement à importer"],
             ['--synchronize',   "Facultatif. Réaliser ou non la synchro SRC_XXX => XXX. Valeurs possibles: 0, 1. Valeur par défaut: 1."],
+            ['--verbose',       "Facultatif. Activer les logs verbeux (debug)."],
             ['--em',            "Facultatif. Nom de l'EntityManager à utiliser. Valeur par défaut: 'orm_default'."],
 
             // command
-            'import-all --etablissement= [--synchronize=] [--em=]' => "Importer toutes les données de tous les serviceq d'un établissement.",
+            'import-all --etablissement= [--synchronize=] [--verbose] [--em=]' => "Importer toutes les données de tous les serviceq d'un établissement.",
             // parameters
             ['--etablissement',          "Requis. Identifiant de l'établissement, ex: 'UCN'"],
             ['--breakOnServiceNotFound', "Facultatif. Faut-il stopper si un service appelé n'existe pas. Valeurs possibles: 0, 1. Valeur par défaut: 1."],
             ['--synchronize',            "Facultatif. Réaliser ou non la synchro SRC_XXX => XXX. Valeurs possibles: 0, 1. Valeur par défaut: 1."],
+            ['--verbose',                "Facultatif. Activer les logs verbeux (debug)."],
             ['--em',                     "Facultatif. Nom de l'EntityManager à utiliser. Valeur par défaut: 'orm_default'."],
 
             // command

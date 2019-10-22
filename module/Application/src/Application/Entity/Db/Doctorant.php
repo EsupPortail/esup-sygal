@@ -45,6 +45,11 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
     protected $etablissement;
 
     /**
+     * @var string
+     */
+    private $ine;
+
+    /**
      * @return Etablissement
      */
     public function getEtablissement()
@@ -441,4 +446,23 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
     {
         return 'Doctorant';
     }
+
+    /**
+     * @return string
+     */
+    public function getIne()
+    {
+        return $this->ine;
+    }
+
+    /**
+     * @param string $ine
+     * @return Individu
+     */
+    public function setIne($ine)
+    {
+        $this->ine = $ine;
+        return $this;
+    }
+
 }

@@ -50,5 +50,6 @@
             </join-columns>
         </many-to-one>
 
+        <field name="ine" column="INE"/>
     </entity>
 </doctrine-mapping>

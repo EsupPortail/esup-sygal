@@ -2,7 +2,7 @@
 --
 -- Nouvelle NATURE_FICHIER : 'Fichier divers'
 --
-insert into NATURE_FICHIER (ID, CODE, LIBELLE) values (10, 'DIVERS', 'Fichier divers')
+insert into NATURE_FICHIER (ID, CODE, LIBELLE) values (NATURE_FICHIER_ID_SEQ.nextval, 'DIVERS', 'Fichier divers')
 /
 update NATURE_FICHIER set LIBELLE = 'Fichier non PDF joint à une thèse (ex: vidéo)' where CODE = 'FICHIER_NON_PDF'
 /
@@ -61,7 +61,7 @@ CREATE OR REPLACE Function new_contenu(information_id in number)
     vcontenu clob;
     cursor cur is
         select inf.id as from_id, f.id as to_id
-        from INFORMATION_FICHIER inf
+        from INFORMATION_FICHIER_SAV inf
                  join fichier f on f.UUID = inf.FILENAME;
 begin
     select contenu into vcontenu from INFORMATION where id = information_id;

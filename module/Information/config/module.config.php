@@ -1,6 +1,7 @@
 <?php
 
 use Application\Entity\Db\Repository\DefaultEntityRepository;
+use Application\Provider\Privilege\FichierPrivileges;
 use Information\Controller\FichierController;
 use Information\Controller\InformationController;
 use Information\Controller\InformationControllerFactory;
@@ -112,11 +113,17 @@ return [
                     'action'     => [
                         'index',
                         'supprimer',
-                        'telecharger',
                     ],
                     'privileges' => [
-                        InformationPrivileges::INFORMATION_FICHIER,
+                        InformationPrivileges::INFORMATION_MODIFIER,
                     ]
+                ],
+                [
+                    'controller' => FichierController::class,
+                    'action'     => [
+                        'telecharger',
+                    ],
+                    'role' => [],
                 ],
             ],
         ],
