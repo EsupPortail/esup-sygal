@@ -9,7 +9,6 @@ use Soutenance\Controller\Avis\AvisController;
 use Soutenance\Controller\EngagementImpartialite\EngagementImpartialiteController;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
-use Soutenance\Provider\Privilege\QualitePrivileges;
 use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Membre\MembreServiceFactory;
 use Soutenance\Service\Notifier\NotifierSoutenanceService;
@@ -77,6 +76,16 @@ return array(
                                 'route'    => 'soutenance/proposition',
                                 'order'    => 100,
                                 'resource' => PresoutenancePrivileges::getResourceId(PropositionPrivileges::PROPOSITION_VISUALISER),
+                                'withtarget' => true,
+                                'paramsInject' => [
+                                    'these',
+                                ],
+                            ],
+                            'simulation' => [
+                                'label'    => 'Simulation SI',
+                                'route'    => 'simulation',
+                                'order'    => 150,
+                                'resource' => PresoutenancePrivileges::getResourceId(PresoutenancePrivileges::PRESOUTENANCE_PRESOUTENANCE_VISUALISATION),
                                 'withtarget' => true,
                                 'paramsInject' => [
                                     'these',

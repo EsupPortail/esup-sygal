@@ -5,6 +5,7 @@ namespace Soutenance\Controller\Presoutenance;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Acteur;
+use Application\Entity\Db\Profil;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
@@ -145,6 +146,27 @@ class PresoutenanceController extends AbstractController
         $membre = $this->getMembreService()->find($idMembre);
 
         $acteurs = $this->getActeurService()->getRepository()->findActeurByThese($these);
+        switch($membre->getRole()) {
+            case Membre::RAPPORTEUR :
+                $acteurs = array_filter($acteurs, function(Acteur $a) {
+                    /** @var Profil  $profil */
+                    $profil = ($a->getRole()->getProfils()->first());
+                    return $profil->getRoleCode() === 'R';});
+                break;
+            case Membre::RAPPORTEUR_ABSENT :
+                $acteurs = array_filter($acteurs, function(Acteur $a) {
+                    /** @var Profil  $profil */
+                    $profil = ($a->getRole()->getProfils()->first());
+                    return $profil->getRoleCode() === 'A';});
+                break;
+            case Membre::MEMBRE :
+                $acteurs = array_filter($acteurs, function(Acteur $a) {
+                    /** @var Profil  $profil */
+                    $profil = ($a->getRole()->getProfils()->first());
+                    return $profil->getRoleCode() === 'M';});
+                break;
+        }
+
 
         /** @var Request $request */
         $request = $this->getRequest();
