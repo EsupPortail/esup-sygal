@@ -1,6 +1,13 @@
 Journal des modifications
 =========================
 
+1.2.9 (24/10/2019)
+------------------
+
+### Correction
+
+- Correction de l'assertion gérant la saisie de conformité de la version corrigée achivable.
+
 1.2.8 (21/10/2019)
 ------------------
 
