@@ -3,7 +3,6 @@
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Filter\ActeursFormatter;
-use Application\Provider\Privilege\ExportPrivileges;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\Service\These\TheseSorter;
 use Application\View\Renderer\PhpRenderer;
@@ -174,7 +173,7 @@ $acteursFormatterCodirecteurs->asSeparated()
                             if ($sigle && $sigle !== "") {
                                 echo $sigle;
                             } else {
-                                echo $these->getEcoleDoctorale()->getCode();;
+                                echo $these->getEcoleDoctorale()->getStructure()->getCode();
                             }
                             ?>
                         </abbr>
@@ -183,7 +182,7 @@ $acteursFormatterCodirecteurs->asSeparated()
                 <td>
                     <?php if($these->getUniteRecherche()): ?>
                         <abbr title="<?php echo $these->getUniteRecherche()->getLibelle() ?>">
-                            <?php echo $these->getUniteRecherche()->getCode(); ?>
+                            <?php echo $these->getUniteRecherche()->getStructure()->getCode(); ?>
                         </abbr>
                     <?php endif ?>
                 </td>
