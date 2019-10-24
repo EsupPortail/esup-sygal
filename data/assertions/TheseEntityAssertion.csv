@@ -19,7 +19,7 @@ line;enabled;privilege;isRoleDoctorantSelected;;isStructureDuRoleRespectee;;isTh
 17;1;\Application\Provider\Privilege\ThesePrivileges::THESE_DEPOT_VERSION_CORRIGEE;;;;;;;;1:1;;;;;;;;;;;;;;;;;;;;0;La date butoir pour le dépôt de la version corrigée est dépassée (%s).
 18;1;\Application\Provider\Privilege\ThesePrivileges::THESE_DEPOT_VERSION_CORRIGEE;;;;;;;;;;;;;;;;1:1;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé par au moins un directeur.
 19;1;\Application\Provider\Privilege\ThesePrivileges::THESE_DEPOT_VERSION_CORRIGEE;;;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-20;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE;;;;;1:0;;;;;;;;;;;;;;;;;;;;;;;0;L’état de la thèse ne permet pas cette opération.
+20;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE;;;;;;1:0;;;;;;;;;;;;;;;;;;;;;;0;L’état de la thèse ne permet pas cette opération.
 21;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE;;;;;;;1:0;;;;;;;;;;;;;;;;;;;;;0;Aucune correction n'est attendue pour cette thèse
 22;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE;;;;;;;;;;;;;;1:1;;;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé.
 23;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE;;;;;;;;;;;;;;;;;;;;;;;;;;;;1;
