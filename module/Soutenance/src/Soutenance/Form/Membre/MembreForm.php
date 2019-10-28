@@ -2,12 +2,12 @@
 
 namespace Soutenance\Form\Membre;
 
-use DoctrineModule\Form\Element\ObjectSelect;
-use Soutenance\Entity\Qualite;
+use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Zend\Filter\StringToLower;
 use Zend\Form\Element\Email;
 use Zend\Form\Element\Radio;
+use Zend\Form\Element\Select;
 use Zend\Form\Element\Submit;
 use Zend\Form\Element\Text;
 use Zend\Form\Form;
@@ -15,6 +15,7 @@ use Zend\Validator\EmailAddress;
 
 class MembreForm extends Form {
     use EntityManagerAwareTrait;
+    use QualiteServiceAwareTrait;
 
     public function init()
     {
@@ -51,26 +52,21 @@ class MembreForm extends Form {
         );
 
         $this->add([
-            'type' => ObjectSelect::class,
             'name' => 'qualite',
+            'type' => Select::class,
             'options' => [
-                'label' => "Qualité du membre du jury :",
-                'empty_option' => "Sélectionner une qualité...",
-                'object_manager' => $this->getEntityManager(),
-                'target_class' => Qualite::class,
-                'property' => 'libelle',
-                'find_method' => [
-                    'name' => 'findBy',
-                    'params' => [
-                        'criteria' => [],
-                        'orderBy' => ['id' => 'ASC'],
-                    ],
+                'label' => 'Qualité* : ',
+                'label_attributes' => [
+                    'class' => 'control-label',
                 ],
-                'disable_inarray_validator' => true,
+                'empty_option' => "Sélectionner une qualité ... ",
+                'value_options' => $this->getQualiteService()->getQualitesAsGroupOptions(),
             ],
             'attributes' => [
-                'id' => 'qualite',
-            ],
+                'id'                => 'competence',
+                'class'             => 'bootstrap-selectpicker show-tick',
+                'data-live-search'  => 'true',
+            ]
         ]);
 
         $this->add(
