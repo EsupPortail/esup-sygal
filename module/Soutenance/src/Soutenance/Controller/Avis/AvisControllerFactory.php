@@ -4,6 +4,7 @@ namespace Soutenance\Controller\Avis;
 
 use Application\Service\Acteur\ActeurService;
 use Application\Service\Fichier\FichierService;
+use Application\Service\FichierThese\FichierTheseService;
 use Application\Service\These\TheseService;
 use Soutenance\Form\Avis\AvisForm;
 use Soutenance\Service\Avis\AvisService;
@@ -26,6 +27,7 @@ class AvisControllerFactory
          * @var ActeurService $acteurService
          * @var AvisService $avisService
          * @var FichierService $fichierService
+         * @var FichierTheseService $fichierTheseService
          * @var MembreService $membreService
          * @var NotifierSoutenanceService $notifierSoutenanceService
          * @var PropositionService $propositionService
@@ -35,6 +37,7 @@ class AvisControllerFactory
         $acteurService              = $manager->getServiceLocator()->get(ActeurService::class);
         $avisService                = $manager->getServiceLocator()->get(AvisService::class);
         $fichierService             = $manager->getServiceLocator()->get('FichierService');
+        $fichierTheseService        = $manager->getServiceLocator()->get('FichierTheseService');
         $membreService              = $manager->getServiceLocator()->get(MembreService::class);
         $notifierSoutenanceService  = $manager->getServiceLocator()->get(NotifierSoutenanceService::class);
         $propositionService         = $manager->getServiceLocator()->get(PropositionService::class);
@@ -54,6 +57,7 @@ class AvisControllerFactory
         $controller->setNotifierSoutenanceService($notifierSoutenanceService);
         $controller->setPropositionService($propositionService);
         $controller->setFichierService($fichierService);
+        $controller->setFichierTheseService($fichierTheseService);
         $controller->setAvisService($avisService);
         $controller->setMembreService($membreService);
 

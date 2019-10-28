@@ -5,12 +5,14 @@
     echo $this->form($form);
 ?>
 
-<script>
-    // $('input').datepicker();
-</script>
-
 <style>
     option {
         z-index:10000;
     }
 </style>
+
+<script>
+    $(document).ready(function() {
+        $('select').selectpicker();
+    });
+</script>

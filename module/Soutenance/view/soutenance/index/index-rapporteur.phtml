@@ -171,7 +171,7 @@ $canAvis = true;
             Vous avez rendu votre avis de soutenance pour la thèse de <?php echo $these->getDoctorant()->getIndividu(); ?>.
 
             <div class="col-md-5 pull-right">
-                <div class="panel <?php echo ($avis->getMotif() === 'Favorable')?"panel-success":"panel-danger"; ?> ">
+                <div class="panel <?php echo ($avis->getAvis() === 'Favorable')?"panel-success":"panel-danger"; ?> ">
                     <div class="panel-heading">
                         Avis de soutenance : <strong><?php echo $avis->getAvis(); ?></strong>
                     </div>
@@ -181,7 +181,7 @@ $canAvis = true;
                         </ul>
 
                         <dl>
-                            <?php if ($avis->getMotif() !== 'Favorable') : ?>
+                            <?php if ($avis->getAvis() !== 'Favorable') : ?>
                                 <dt> Motif de refus </dt>
                                 <dd> <?php echo $avis->getMotif(); ?> </dd>
                             <?php endif; ?>

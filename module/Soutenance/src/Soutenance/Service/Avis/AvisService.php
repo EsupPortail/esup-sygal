@@ -154,7 +154,7 @@ class AvisService {
         $avis = [];
         /** @var Avis $entry */
         foreach ($result as $entry) {
-            $avis[$entry->getRapporteur()->getId()] = $entry;
+            $avis[$entry->getRapporteur()->getIndividu()->getId()] = $entry;
         }
         return $avis;
 

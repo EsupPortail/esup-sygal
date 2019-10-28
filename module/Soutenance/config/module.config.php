@@ -9,7 +9,6 @@ use Soutenance\Controller\Avis\AvisController;
 use Soutenance\Controller\EngagementImpartialite\EngagementImpartialiteController;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
-use Soutenance\Provider\Privilege\QualitePrivileges;
 use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Membre\MembreServiceFactory;
 use Soutenance\Service\Notifier\NotifierSoutenanceService;
@@ -82,6 +81,16 @@ return array(
                                     'these',
                                 ],
                             ],
+                            'simulation' => [
+                                'label'    => 'Simulation SI',
+                                'route'    => 'simulation',
+                                'order'    => 150,
+                                'resource' => PresoutenancePrivileges::getResourceId(PresoutenancePrivileges::PRESOUTENANCE_PRESOUTENANCE_VISUALISATION),
+                                'withtarget' => true,
+                                'paramsInject' => [
+                                    'these',
+                                ],
+                            ],
                             'presoutenance' => [
                                 'label'    => 'Étape de présoutenance',
                                 'route'    => 'soutenance/presoutenance',
@@ -140,6 +149,15 @@ return array(
     'view_manager' => [
         'template_path_stack' => [
             __DIR__ . '/../view',
+        ],
+    ],
+
+    'public_files' => [
+        'inline_scripts' => [
+            '114_' => 'vendor/bootstrap-select-1.13.9/dist/js/bootstrap-select.min.js',
+        ],
+        'stylesheets' => [
+            '114_' => 'vendor/bootstrap-select-1.13.9/dist/css/bootstrap-select.min.css',
         ],
     ],
 );

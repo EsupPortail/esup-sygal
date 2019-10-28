@@ -67,14 +67,22 @@ $canRevoquerEngagementImpartialite     = $this->isAllowed($these, EngagementImpa
                     <!-- Signature ------------------------------------------------------------------------------------>
                     <td>
                         <?php if ($acteur !== null) : ?>
-                            <?php if ($engagement !== null): ?>
-                                <?php
-                                    echo $engagement->getHistoCreation()->format(Constants::DATETIME_FORMAT);
-                                ?>
-                            <?php else: ?>
-                                <span class="text-warning">
-                                    <i> Non signé </i>
-                                </span>
+                            <?php if ($acteur->getIndividu()->getEmail() !== null) : ?>
+                                <?php if ($engagement !== null): ?>
+                                    <?php
+                                        echo $engagement->getHistoCreation()->format(Constants::DATETIME_FORMAT);
+                                    ?>
+                                <?php else: ?>
+                                    <span class="text-warning">
+                                        <i> Non signé </i>
+                                    </span>
+                                <?php endif; ?>
+                            <?php else : ?>
+                                <span class="text-danger">
+                                <span class="glyphicon glyphicon-warning-sign"></span>
+                                <i> Aucun email de trouvé</i>
+                                <span class="glyphicon glyphicon-warning-sign"></span>
+                            </span>
                             <?php endif; ?>
                         <?php else: ?>
                             <span class="text-danger">
@@ -87,7 +95,7 @@ $canRevoquerEngagementImpartialite     = $this->isAllowed($these, EngagementImpa
 
                     <!-- Actions -------------------------------------------------------------------------------------->
                     <td>
-                        <?php if ($acteur !== null) : ?>
+                        <?php if ($acteur !== null AND $acteur->getIndividu()->getEmail() !== null) : ?>
 
                             <?php if($canNotifierEngagementImpartialite) : ?>
                                 <?php if ($engagement) : ?>
