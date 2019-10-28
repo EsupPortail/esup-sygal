@@ -6,10 +6,10 @@ namespace Application\Assertion\These;
  * Classe mère d'Assertion.
  *
  * Générée à partir du fichier
- * /home/gauthierb/workspace/sygal/data/assertions/TheseEntityAssertion.csv.
+ * /home/metivier/MyWeb/sygal/data/assertions/TheseEntityAssertion.csv.
  *
  * @author Application\Assertion\Generator\AssertionGenerator
- * @date 15/07/2019 09:35:53
+ * @date 24/10/2019 10:08:24
  */
 abstract class GeneratedTheseEntityAssertion
 {
@@ -159,7 +159,7 @@ abstract class GeneratedTheseEntityAssertion
         //--------------------------------------------------------------------------------------
             /* line 20 */
             $this->linesTrace[] = '/* line 20 */';
-            if (! $this->isTheseEnCours() /* test 5 */) {
+            if (! $this->isTheseSoutenue() /* test 6 */) {
                 $this->failureMessage = "L’état de la thèse ne permet pas cette opération.";
                 return false;
             }
@@ -632,7 +632,7 @@ line;enabled;privilege;isRoleDoctorantSelected;;isStructureDuRoleRespectee;;isTh
 17;1;\Application\Provider\Privilege\ThesePrivileges::THESE_DEPOT_VERSION_CORRIGEE;;;;;;;;1:1;;;;;;;;;;;;;;;;;;;;0;La date butoir pour le dépôt de la version corrigée est dépassée (%s).
 18;1;\Application\Provider\Privilege\ThesePrivileges::THESE_DEPOT_VERSION_CORRIGEE;;;;;;;;;;;;;;;;1:1;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé par au moins un directeur.
 19;1;\Application\Provider\Privilege\ThesePrivileges::THESE_DEPOT_VERSION_CORRIGEE;;;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-20;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE;;;;;1:0;;;;;;;;;;;;;;;;;;;;;;;0;L’état de la thèse ne permet pas cette opération.
+20;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE;;;;;;1:0;;;;;;;;;;;;;;;;;;;;;;0;L’état de la thèse ne permet pas cette opération.
 21;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE;;;;;;;1:0;;;;;;;;;;;;;;;;;;;;;0;Aucune correction n'est attendue pour cette thèse
 22;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE;;;;;;;;;;;;;;1:1;;;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé.
 23;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE;;;;;;;;;;;;;;;;;;;;;;;;;;;;1;

@@ -11,6 +11,16 @@ use UnicaenApp\Service\EntityManagerAwareTrait;
 class QualiteService {
     use EntityManagerAwareTrait;
 
+    /** @return Qualite[] */
+    public function getQualites() {
+        $qb = $this->getEntityManager()->getRepository(Qualite::class)->createQueryBuilder("qualite")
+            ->orderBy("qualite.libelle")
+        ;
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
+
     public function getQualiteById($id) {
         $qb = $this->getEntityManager()->getRepository(Qualite::class)->createQueryBuilder("qualite")
             ->andWhere("qualite.id = :id")
@@ -89,5 +99,37 @@ class QualiteService {
         } catch (OptimisticLockException $e) {
             throw new RuntimeException("Un problème s'est produit lors de l'effacement en BD d'une nouvelle qualité.");
         }
+    }
+
+    /**
+     * @return array
+     */
+    public function getQualitesAsGroupOptions()
+    {
+        $listings = [];
+        $qualites = $this->getQualites();
+        foreach ($qualites as $qualite) {
+            $listings[$qualite->getRang()][] = $qualite;
+        }
+
+        $result = [];
+        foreach ($listings as $rang => $qualites) {
+            $options = [];
+            foreach ($qualites as $qualite) {
+                $this_option = [
+                    'value' => $qualite->getId(),
+                    'label' => $qualite->getLibelle(),
+                ];
+                $options[] = $this_option;
+            }
+            $this_group = [
+                'label' => $rang,
+                'options' => $options,
+            ];
+            $result[] = $this_group;
+        }
+        return $result;
+
+
     }
 }

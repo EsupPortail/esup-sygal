@@ -1,20 +1,27 @@
 Journal des modifications
 =========================
 
+1.2.9 (24/10/2019)
+------------------
+
+### Correction
+
+- Correction de l'assertion gérant la saisie de conformité de la version corrigée achivable.
+
 1.2.8 (21/10/2019)
 ------------------
 
 ### Correction
 
-- Déplacement de l'INE dans l'entity Doctorant et adaption de l'ExportController
+- Déplacement de l'INE dans les données Doctorant.
 
 1.2.7 (17/10/2019)
 ------------------
 
 ### Ajout
 
-- L'export des thèses contient maintenant deux colonnes supplémentaires addresse électronnique de contact et INE
-    - l'adresse électronique de contact est récupérer de la saisie faite à la première connection à SyGAL
+- L'export des thèses contient maintenant deux colonnes supplémentaires : adresse électronnique de contact et INE
+    - l'adresse électronique de contact est récupérée de la saisie faite à la première connection à SyGAL
     - l'INE sera rappatrié via les Web Services
 
 1.2.6 (15/10/2019)
