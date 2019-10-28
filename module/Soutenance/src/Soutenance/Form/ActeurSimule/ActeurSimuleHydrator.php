@@ -3,12 +3,15 @@
 namespace Soutenance\Form\ActeurSimule;
 
 use Application\Entity\Db\Acteur;
+use Application\Entity\Db\Individu;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Zend\Stdlib\Hydrator\HydratorInterface;
 
 class ActeurSimuleHydrator implements HydratorInterface {
     use EtablissementServiceAwareTrait;
+    use IndividuServiceAwareTrait;
     use RoleServiceAwareTrait;
 
     /**
@@ -18,10 +21,7 @@ class ActeurSimuleHydrator implements HydratorInterface {
     public function extract($object)
     {
         $data  = [
-            'civilite' => $object->getIndividu()->getCivilite(),
-            'prenom' => $object->getIndividu()->getPrenom(),
-            'nom' => $object->getIndividu()->getNomUsuel(),
-            'email' => $object->getIndividu()->getEmail(),
+            'individu' => ($object->getIndividu()) ? $object->getIndividu()->getId(): null,
             'role' => ($object->getRole() !== null)?$object->getRole()->getId():null,
             'qualite' => $object->getQualite(),
             'etablissement' => ($object->getEtablissement() !== null)?$object->getEtablissement()->getId():null,
@@ -38,11 +38,10 @@ class ActeurSimuleHydrator implements HydratorInterface {
     {
         $role = $this->getRoleService()->getRepository()->find($data['role']);
         $etablissement = $this->getEtablissementService()->getRepository()->find($data['etablissement']);
+        /** @var Individu $individu */
+        $individu = $this->getIndividuService()->getRepository()->find($data['individu']);
 
-        $object->getIndividu()->setCivilite($data['civilite']);
-        $object->getIndividu()->setPrenom($data['prenom']);
-        $object->getIndividu()->setNomUsuel($data['nom']);
-        $object->getIndividu()->setEmail($data['email']);
+        $object->setIndividu($individu);
         $object->setRole($role);
         $object->setQualite($data['qualite']);
         $object->setEtablissement($etablissement);

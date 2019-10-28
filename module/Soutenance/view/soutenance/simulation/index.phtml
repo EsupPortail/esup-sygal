@@ -11,8 +11,6 @@ use Application\Entity\Db\These;
 
 $this->headTitle('Index des acteurs simulés');
 
-$query = [];
-if ($these != null) $query = ["query" => ["these" => $these->getId()]];
 ?>
 
 <h1 class="page-header">
@@ -55,7 +53,7 @@ if ($these != null) $query = ["query" => ["these" => $these->getId()]];
         <div class="pull-right">
             <br/>
             <?php /**  @see \Soutenance\Controller\SimulationController::ajouterActeurSimuleAction(); */ ?>
-            <a href="<?php echo $this->url('simulation/ajouter-acteur-simule', [], $query, true); ?>"
+            <a href="<?php echo $this->url('simulation/ajouter-acteur-simule', ['these' => $these->getId()], [], true); ?>"
                class="btn btn-primary action ajax-modal"
                data-event="modification"
             >
@@ -94,11 +92,11 @@ if ($these != null) $query = ["query" => ["these" => $these->getId()]];
                 <td> <?php echo ($acteur->getEtablissement() ? $acteur->getEtablissement()->getLibelle() : "Non renseigné"); ?> </td>
                 <td>
                     <?php /** @see \Soutenance\Controller\SimulationController::modifierActeurSimuleAction() */ ?>
-                    <a href="<?php echo $this->url('simulation/modifier-acteur-simule', ['acteur' => $acteur->getId()], $query, true); ?>"
+                    <a href="<?php echo $this->url('simulation/modifier-acteur-simule', ['these' => $these->getId(), 'acteur' => $acteur->getId()], [], true); ?>"
                        class="ajax-modal" data-event="modification">
                         <span class="glyphicon glyphicon-pencil" title="Modifier l'acteur"></span></a>
                     <?php /** @see \Soutenance\Controller\SimulationController::supprimerActeurSimuleAction() */ ?>
-                    <a href="<?php echo $this->url('simulation/supprimer-acteur-simule', ['acteur' => $acteur->getId()], $query, true); ?>">
+                    <a href="<?php echo $this->url('simulation/supprimer-acteur-simule', ['these' => $these->getId(), 'acteur' => $acteur->getId()], [], true); ?>">
                         <span class="glyphicon glyphicon-remove" title="Supprimer l'acteur"></span></a>
                 </td>
             </tr>
@@ -109,7 +107,7 @@ if ($these != null) $query = ["query" => ["these" => $these->getId()]];
 
 <script>
     $(document).ready(function() {
-        $('select').selectpicker();
+        //$('select').selectpicker();
 
         $(function() {
             $("body").on("modification", function (event) {

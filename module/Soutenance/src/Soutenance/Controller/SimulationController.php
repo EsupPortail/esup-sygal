@@ -3,27 +3,32 @@
 namespace Soutenance\Controller;
 
 use Application\Entity\Db\Acteur;
-use Application\Entity\Db\Individu;
 use Application\Entity\Db\Source;
 use Application\Entity\Db\These;
+use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Soutenance\Form\ActeurSimule\ActeurSimuleFormAwareTrait;
+use Soutenance\Service\IndividuSimulable\IndividuSimulableServiceAwareTrait;
 use Soutenance\Service\Simulation\SimulationService;
 use Soutenance\Service\Simulation\SimulationServiceAwareTrait;
+use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
 class SimulationController extends AbstractActionController {
     use SimulationServiceAwareTrait;
+    use IndividuSimulableServiceAwareTrait;
     use TheseServiceAwareTrait;
-    use ActeurSimuleFormAwareTrait;
+    use IndividuServiceAwareTrait;
     use SourceServiceAwareTrait;
+    use ActeurSimuleFormAwareTrait;
 
     public function indexAction() {
-        $these      = null;
-        $theseId    = $this->params()->fromQuery('these');
-        if ($theseId != null) $these = $this->getTheseService()->getRepository()->find($theseId);
+        /** @var These $these */
+        $theseId    = $this->params()->fromRoute('these');
+        $these = $this->getTheseService()->getRepository()->find($theseId);
+        /** @var Acteur[] $acteurs */
         $acteurs  = $this->getSimulationService()->getActeursSimules($these);
 
         return new ViewModel([
@@ -35,24 +40,16 @@ class SimulationController extends AbstractActionController {
 
     public function ajouterActeurSimuleAction() {
         /** @var These $these */
-        $these      = null;
-        $query = [];
-
-        $theseId    = $this->params()->fromQuery('these');
-        if ($theseId != null) {
-            $these = $this->getTheseService()->getRepository()->find($theseId);
-            $query = ["query" => ["these" => $theseId]];
-        }
-
+        $theseId    = $this->params()->fromRoute('these');
+        $these = $this->getTheseService()->getRepository()->find($theseId);
+        /** @var Acteur $acteur */
         $acteur = new Acteur();
-        $individu = new Individu();
-        $acteur->setIndividu($individu);
 
         $form = $this->getActeurSimuleForm();
-        $form->setAttribute('action', $this->url()->fromRoute('simulation/ajouter-acteur-simule', [], $query, true));
+        $form->setAttribute('action', $this->url()->fromRoute('simulation/ajouter-acteur-simule', ['these' => $these->getId()], [], true));
         $form->bind($acteur);
 
-        /** @var \Zend\Http\Request $request */
+        /** @var Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
@@ -60,13 +57,11 @@ class SimulationController extends AbstractActionController {
             if ($form->isValid()) {
                 /** @var Source $source */
                 $source = $this->sourceService->getRepository()->find(SimulationService::SIMULATION_SOURCE);
-                $individu->setSourceCode(uniqid());
                 $acteur->setSourceCode(uniqid());
                 $acteur->setThese($these);
-                $individu->setSource($source);
                 $acteur->setSource($source);
                 $this->getSimulationService()->create($acteur);
-                return $this->redirect()->toRoute('simulation', [], $query, true);
+                return $this->redirect()->toRoute('simulation', ['these' => $these->getId()], [], true);
             }
         }
 
@@ -81,29 +76,23 @@ class SimulationController extends AbstractActionController {
     }
 
     public function modifierActeurSimuleAction() {
-        $these      = null;
-        $query = [];
-
-        $theseId    = $this->params()->fromQuery('these');
-        if ($theseId != null) {
-            $these = $this->getTheseService()->getRepository()->find($theseId);
-            $query = ["query" => ["these" => $theseId]];
-        }
-
+        /** @var These $these */
+        $theseId    = $this->params()->fromRoute('these');
+        $these = $this->getTheseService()->getRepository()->find($theseId);
+        /** @var Acteur $acteur */
         $acteur = $this->getSimulationService()->getRequestedActeurSimule($this);
         $form = $this->getActeurSimuleForm();
-        $form->setAttribute('action', $this->url()->fromRoute('simulation/modifier-acteur-simule', ['acteur' => $acteur->getId()], $query, true));
+        $form->setAttribute('action', $this->url()->fromRoute('simulation/modifier-acteur-simule', ['these' => $these->getId(), 'acteur' => $acteur->getId()], [], true));
         $form->bind($acteur);
 
-
-        /** @var \Zend\Http\Request $request */
+        /** @var Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
             $form->setData($data);
             if ($form->isValid()) {
                 $this->getSimulationService()->update($acteur);
-                return $this->redirect()->toRoute('simulation', [], $query, true);
+                return $this->redirect()->toRoute('simulation', ['these' => $these->getId()], [], true);
             }
         }
 
@@ -117,18 +106,13 @@ class SimulationController extends AbstractActionController {
     }
 
     public function supprimerActeurSimuleAction() {
-        $these      = null;
-        $query = [];
-
-        $theseId    = $this->params()->fromQuery('these');
-        if ($theseId != null) {
-            $these = $this->getTheseService()->getRepository()->find($theseId);
-            $query = ["query" => ["these" => $theseId]];
-        }
-
+        /** @var These $these */
+        $theseId    = $this->params()->fromRoute('these');
+        $these = $this->getTheseService()->getRepository()->find($theseId);
+        /** @var Acteur $acteur */
         $acteur = $this->getSimulationService()->getRequestedActeurSimule($this);
-        $this->getSimulationService()->delete($acteur);
-        return $this->redirect()->toRoute('simulation', [], $query, true);
-    }
 
+        $this->getSimulationService()->delete($acteur);
+        return $this->redirect()->toRoute('simulation', ['these' => $these->getId()], [], true);
+    }
 }

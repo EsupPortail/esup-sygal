@@ -9,6 +9,8 @@ use Soutenance\Form\ActeurSimule\ActeurSimuleFormFactory;
 use Soutenance\Form\ActeurSimule\ActeurSimuleHydrator;
 use Soutenance\Form\ActeurSimule\ActeurSimuleHydratorFactory;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
+use Soutenance\Service\IndividuSimulable\IndividuSimulableService;
+use Soutenance\Service\IndividuSimulable\IndividuSimulableServiceFactory;
 use Soutenance\Service\Simulation\SimulationService;
 use Soutenance\Service\Simulation\SimulationServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
@@ -23,9 +25,13 @@ return array(
                     'controller' => SimulationController::class,
                     'action'     => [
                         'index',
+                        'gerer-individu-simulable',
+                        'ajouter-individu-simulable',
+                        'retirer-individu-simulable',
                         'ajouter-acteur-simule',
                         'modifier-acteur-simule',
                         'supprimer-acteur-simule',
+                        'rechercher-individus-simulables'
                     ],
                     //TODO change that
                     'privileges' => PresoutenancePrivileges::PRESOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU,
@@ -38,10 +44,10 @@ return array(
     'router' => [
         'routes' => [
             'simulation' => [
-                'type' => Literal::class,
+                'type' => Segment::class,
                 'may_terminate' => true,
                 'options' => [
-                    'route'    => '/simulation',
+                    'route'    => '/simulation[/:these]',
                     'defaults' => [
                         'controller' => SimulationController::class,
                         'action'     => 'index',
@@ -88,6 +94,7 @@ return array(
 
     'service_manager' => [
         'factories' => [
+            IndividuSimulableService::class => IndividuSimulableServiceFactory::class,
             SimulationService::class => SimulationServiceFactory::class,
         ],
     ],

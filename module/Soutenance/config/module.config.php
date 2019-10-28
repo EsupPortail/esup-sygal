@@ -151,4 +151,13 @@ return array(
             __DIR__ . '/../view',
         ],
     ],
+
+    'public_files' => [
+        'inline_scripts' => [
+            '114_' => 'vendor/bootstrap-select-1.13.9/dist/js/bootstrap-select.min.js',
+        ],
+        'stylesheets' => [
+            '114_' => 'vendor/bootstrap-select-1.13.9/dist/css/bootstrap-select.min.css',
+        ],
+    ],
 );

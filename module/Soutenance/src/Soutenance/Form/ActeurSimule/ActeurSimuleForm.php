@@ -3,7 +3,9 @@
 namespace Soutenance\Form\ActeurSimule;
 
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
+use Soutenance\Service\IndividuSimulable\IndividuSimulableServiceAwareTrait;
 use Zend\Form\Element\Button;
 use Zend\Form\Element\Email;
 use Zend\Form\Element\Radio;
@@ -15,58 +17,26 @@ use Zend\InputFilter\Factory;
 
 class ActeurSimuleForm extends Form {
     use RoleServiceAwareTrait;
+    use IndividuServiceAwareTrait;
     use EtablissementServiceAwareTrait;
+    use IndividuSimulableServiceAwareTrait;
 
     public function init()
     {
-        $this->add(
-            [
-                'type' => Radio::class,
-                'name' => 'civilite',
-                'options' => [
-                    'label' => 'Civilité :',
-                    'value_options' => [
-                        'Mme' => 'Madame',
-                        'M.'  => 'Monsieur',
-                    ],
-                    'attributes' => [
-                        'class' => 'radio-inline',
-                    ],
-                ],
+        //individu
+        $this->add([
+            'name' => 'individu',
+            'type' => Select::class,
+            'options' => [
+                'label' => 'Individu* : ',
+                'empty_option' => "Sélectionner un individu ... ",
+                'value_options' => $this->getIndividuSimulableService()->getIndividusSimulablesAsOptions(),
+            ],
+            'attributes' => [
+                'id'                => 'individu',
+                'class'             => 'bootstrap-selectpicker',
+                'data-live-search'  => 'true',
             ]
-        );
-        // prenom
-        $this->add([
-            'type' => Text::class,
-            'name' => 'prenom',
-            'options' => [
-                'label' => "Prénom* :",
-            ],
-            'attributes' => [
-                'id' => 'prenom',
-            ],
-        ]);
-        // nom
-        $this->add([
-            'type' => Text::class,
-            'name' => 'nom',
-            'options' => [
-                'label' => "Nom* :",
-            ],
-            'attributes' => [
-                'id' => 'nom',
-            ],
-        ]);
-        //email
-        $this->add([
-            'type' => Email::class,
-            'name' => 'email',
-            'options' => [
-                'label' => "Adresse électronique :",
-            ],
-            'attributes' => [
-                'id' => 'email',
-            ],
         ]);
         //role
         $this->add([
@@ -133,10 +103,7 @@ class ActeurSimuleForm extends Form {
         ]);
 
         $this->setInputFilter((new Factory())->createInputFilter([
-            'civilite'      => [ "required" => false ],
-            'prenom'        => [ "required" => true ],
-            'nom'           => [ "required" => true ],
-            'email'         => [ "required" => false ],
+            'individu'      => [ "required" => true ],
             'role'          => [ "required" => true ],
             'qualite'       => [ "required" => false ],
             'etablissement' => [ "required" => false ],
