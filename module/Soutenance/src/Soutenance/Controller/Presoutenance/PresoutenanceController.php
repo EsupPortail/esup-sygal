@@ -81,6 +81,7 @@ class PresoutenanceController extends AbstractController
         $avis = $this->getAvisService()->getAvisByThese($these);
 
         $validationBDD = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these) ;
+        $validationPDC = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PAGE_DE_COUVERTURE, $these) ;
 
         return new ViewModel([
             'these'                 => $these,
@@ -92,6 +93,7 @@ class PresoutenanceController extends AbstractController
             'tousLesAvis'           => count($avis) === count($rapporteurs),
             'urlFichierThese'       => $this->urlFichierThese(),
             'validationBDD'         => $validationBDD,
+            'validationPDC'         => $validationPDC,
 
             'deadline' => $this->getParametreService()->getParametreByCode('AVIS_DEADLINE')->getValeur(),
         ]);

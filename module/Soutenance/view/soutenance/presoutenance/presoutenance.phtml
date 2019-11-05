@@ -4,9 +4,12 @@
  * @var Application\Entity\Db\These $these
  * @var Application\Entity\Db\Validation $validationBDD
  * @var Soutenance\Entity\Proposition $proposition
+ * @var \Application\Entity\Db\Validation $validationPDC
  *
  * @see Soutenance\Controller\Presoutenance\PresoutenanceController::presoutenanceAction()
  */
+
+use Application\Constants;
 
 $tousLesAvis = count($rapporteurs) === count($avis) ;
 
@@ -44,6 +47,45 @@ $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->get
     <!-- ENGAGEMENT IMPARTIALITE------------------------------------------------------------------------------------------->
     <?php echo $this->partial('soutenance/presoutenance/partial/engagement-impartialite'); ?>
 
+    <div class="box panel panel-info">
+        <div class="panel-heading">
+            <h2>Validation de la page de couverture</h2>
+        </div>
+        <div class="panel-body">
+            <?php
+                $ok_rapporteurs = false;
+                $tousLesRapporteurs = true;
+                foreach ($rapporteurs as $rapporteur) {
+                    if ($rapporteur->getActeur() === null) {
+                        $tousLesRapporteurs = false;
+                        break;
+                    }
+            }
+            $tousLesEngagements = count($rapporteurs) === count($engagements) ;
+            ?>
+            <?php if ($tousLesEngagements) : ?>
+                <?php if ($validationPDC !== null) : ?>
+                    La page de couverture a été validée le
+                    <?php echo current($validationPDC)->getHistoModification()->format(Constants::DATETIME_FORMAT); ?>
+                    par
+                    <?php echo current($validationPDC)->getHistoModificateur()->getDisplayName(); ?>.
+                <?php else : ?>
+                    <div class="row">
+                        <div class="col-md-8">
+                            Vous pouvez maintenant valider la page de couverture.
+                        </div>
+                        <div class="pull-right" style="margin-right: 2rem;">
+                            <a href="<?php echo $this->url('these/validation-page-de-couverture', ['these' => $these->getId()], [], true); ?>" class="btn btn-primary">
+                                Accéder à la validation de la PDC
+                            </a>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            <?php else : ?>
+                    Tous les engagments d'impartialité n'ont pas encore été signés.
+            <?php endif; ?>
+        </div>
+    </div>
     <!-- AVIS SOUTENANCE -------------------------------------------------------------------------------------------------->
     <?php echo $this->partial('soutenance/presoutenance/partial/avis-soutenance'); ?>
 
