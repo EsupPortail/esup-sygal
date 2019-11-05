@@ -48,6 +48,7 @@ $form->get('code')->setAttribute('readonly', !$editable);
     </div>
 
     <div id="logo-div" class="col-md-6">
+
         <?php
         /** @var \Zend\Form\Element\File $logoFile */
         $logoFile = $form->get('cheminLogo');
@@ -60,6 +61,8 @@ $form->get('code')->setAttribute('readonly', !$editable);
             $ecole->setCheminLogo(null);
         }
         ?>
+
+
         <table>
             <tr>
                 <td>
@@ -84,6 +87,18 @@ $form->get('code')->setAttribute('readonly', !$editable);
                 </td>
             </tr>
         </table>
+
+        <div class="alert alert-warning">
+            <small>
+                <span class="glyphicon glyphicon-exclamation-sign"></span>
+                Le logo de la structure doit être donné dans un des formats suivant&nbsp;:
+                <ul>
+                    <li>.bmp</li>
+                    <li>.jpg, .jpeg</li>
+                    <li>.png</li>
+                </ul>
+            </small>
+        </div>
     </div>
 
 </div>
