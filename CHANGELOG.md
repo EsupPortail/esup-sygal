@@ -1,6 +1,14 @@
 Journal des modifications
 =========================
 
+1.2.10 (5/11/2019)
+------------------
+
+### Ajout
+
+- Un message avertissant des formats d'image valide est maintenant ajouté dans les pages de modification des structures concertes
+- Utilisation de convert (imagemagick) pour convertir les logos "automatiquement" au format png 
+
 1.2.9 (24/10/2019)
 ------------------
 
