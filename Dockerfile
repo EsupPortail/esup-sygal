@@ -14,7 +14,8 @@ LABEL maintainer="Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>"
 RUN apt-get update -qq && \
     apt-get install -y \
         ghostscript-x \
-        php${PHP_VERSION}-imagick
+        php${PHP_VERSION}-imagick \
+        imagemagick
 
 # Nettoyage
 RUN apt-get autoremove -y && apt-get clean && rm -rf /tmp/* /var/tmp/*
