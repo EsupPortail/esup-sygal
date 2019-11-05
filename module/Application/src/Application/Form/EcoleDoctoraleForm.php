@@ -9,6 +9,7 @@ use Zend\Form\Element\Submit;
 use Zend\Form\Element\Text;
 use Zend\Form\Form;
 use Zend\InputFilter\Factory;
+use Zend\Validator\File\Extension;
 
 class EcoleDoctoraleForm extends Form
 {
@@ -66,10 +67,23 @@ class EcoleDoctoraleForm extends Form
             'libelle' => [
                 'name' => 'libelle',
                 'required' => true,
-            ],
+        ],
             'code' => [
                 'name' => 'code',
                 'required' => true,
+            ],
+            'cheminLogo' => [
+                'required' => false,
+//                'validators' => [
+//                    [
+//                        'name' => Extension::class,
+//                        'options' => [
+//                            'extension' => ['bmp', 'png', 'jpg', 'jpeg'],
+//                            'case' => false,
+//                        ],
+//                        'break_chain_on_failure' => true,
+//                    ],
+//                ],
             ],
         ]));
     }
