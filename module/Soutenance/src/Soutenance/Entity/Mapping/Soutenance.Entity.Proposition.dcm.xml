@@ -30,5 +30,10 @@
 
         <field name="nouveauTitre"              type="string"        length="2048"       column="NOUVEAU_TITRE"       nullable="true"/>
 
+        <many-to-one field="etat" target-entity="Soutenance\Entity\Etat">
+            <join-columns>
+                <join-column name="ETAT_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
     </entity>
 </doctrine-mapping>

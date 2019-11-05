@@ -10,9 +10,11 @@
  */
 
 use Application\Constants;
+use Soutenance\Entity\Etat;
+use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 
 $tousLesAvis = count($rapporteurs) === count($avis) ;
-
+$canFeuVert = $this->isAllowed(PresoutenancePrivileges::getResourceId(PresoutenancePrivileges::PRESOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU));
 $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->getIndividu());
 ?>
 
@@ -90,19 +92,42 @@ $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->get
     <?php echo $this->partial('soutenance/presoutenance/partial/avis-soutenance'); ?>
 
     <!-- FEU VERT --------------------------------------------------------------------------------------------------------->
-    <?php if ($tousLesAvis) : ?>
-        <a href="<?php echo $this->url('soutenance/presoutenance/feu-vert', ['these' => $these->getId()], [], true); ?>"
-            class="btn btn-primary pull-right"
-        >
-            <span class="glyphicon glyphicon-thumbs-up"></span>
-            Donner le feu vert pour la soutenance
-        </a>
+    <?php if($proposition->getEtat()->getCode() === Etat::EN_COURS) :?>
+            <?php if ($tousLesAvis) : ?>
+            <?php if ($canFeuVert) : ?>
+                <?php /** @see \Soutenance\Controller\Presoutenance\PresoutenanceController::feuVertAction() */ ?>
+                <a href="<?php echo $this->url('soutenance/presoutenance/feu-vert', ['these' => $these->getId()], [], true); ?>"
+                    class="btn btn-success action"
+                >
+                    <span class="glyphicon glyphicon-thumbs-up"></span>
+                    Donner le feu vert
+                </a>
+            <?php endif; ?>
+        <?php else : ?>
+            <p class="lead">
+                Vous ne pouvez commencer les démarches de présouteances qu'une fois toutes les validations obtenues.
+            </p>
+        <?php endif; ?>
+
+        <?php if ($canFeuVert) : ?>
+            <?php /** @see \Soutenance\Controller\Presoutenance\PresoutenanceController::stopperDemarcheAction() */ ?>
+            <a href="<?php echo $this->url('soutenance/presoutenance/stopper-demarche', ['these' => $these->getId()], [], true); ?>"
+               class="btn btn-danger action"
+            >
+                <span class="glyphicon glyphicon-thumbs-down"></span>
+                Stopper les démarches
+            </a>
+        <?php endif; ?>
+    <?php else :?>
+        <span style="font-size: 24pt">
+        <span class="badge <?php echo $proposition->getEtat()->getCode(); ?>" style="font-size: 24pt">
+            <?php echo $proposition->getEtat()->getLibelle(); ?>
+        </span>
+        </span>
+
     <?php endif; ?>
-<?php else : ?>
-    <p class="lead">
-        Vous ne pouvez commencer les démarches de présouteances qu'une fois toutes les validations obtenues.
-    </p>
 <?php endif; ?>
+
 
 <script>
     $(function() {

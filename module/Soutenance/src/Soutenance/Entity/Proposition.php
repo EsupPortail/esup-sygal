@@ -37,6 +37,8 @@ class Proposition {
     private $soutenanceAnglais;
     /** @var string */
     private $nouveauTitre;
+    /** @var Etat */
+    private  $etat;
 
     /** @var ArrayCollection */
     private $justificatifs;
@@ -327,4 +329,24 @@ class Proposition {
         $this->justificatifs->removeElement($justificatif);
         return $this;
     }
+
+    /**
+     * @return Etat
+     */
+    public function getEtat()
+    {
+        return $this->etat;
+    }
+
+    /**
+     * @param Etat $etat
+     * @return Proposition
+     */
+    public function setEtat($etat)
+    {
+        $this->etat = $etat;
+        return $this;
+    }
+
+
 }

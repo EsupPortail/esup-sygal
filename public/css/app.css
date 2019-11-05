@@ -530,3 +530,21 @@ span.sas-highlight {
     margin-top: 0; }
 
 /*# sourceMappingURL=app.css.map */
+
+/********** SOUTENANCE ****************/
+
+span.badge.EN_COURS {
+  background-color: darkorange;
+}
+
+span.badge.VALIDEE {
+  background-color: darkgreen;
+}
+
+span.badge.REJETEE {
+  background-color: darkred;
+}
+
+a.action {
+  width: 20rem;
+}

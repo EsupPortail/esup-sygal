@@ -428,6 +428,12 @@ class NotifierSoutenanceService extends NotifierService {
             $emails[] = $individuRole->getIndividu()->getEmail();
         }
 
+        /** @var IndividuRole $individuRole */
+        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
+        foreach ($individuRoles as $individuRole) {
+            $emails[] = $individuRole->getIndividu()->getEmail();
+        }
+
         $emails = array_filter($emails, function ($s) {
             return $s !== null;
         });
@@ -442,6 +448,44 @@ class NotifierSoutenanceService extends NotifierService {
                     'these' => $these,
                     'proposition' => $proposition,
                     'avis' => $avis,
+                ]);
+            $this->trigger($notif);
+        }
+    }
+
+    /**
+     * @param These $these
+     * @param Proposition $proposition
+     */
+    public function triggerStopperDemarcheSoutenance($these, $proposition) {
+
+        $emails = $this->fetchEmailActeursDirects($these);
+
+        /** @var IndividuRole $individuRole */
+        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
+        foreach ($individuRoles as $individuRole) {
+            $emails[] = $individuRole->getIndividu()->getEmail();
+        }
+
+        /** @var IndividuRole $individuRole */
+        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
+        foreach ($individuRoles as $individuRole) {
+            $emails[] = $individuRole->getIndividu()->getEmail();
+        }
+
+        $emails = array_filter($emails, function ($s) {
+            return $s !== null;
+        });
+
+        if (!empty($emails)) {
+            $notif = new Notification();
+            $notif
+                ->setSubject("Les démarches de soutenance de ".$these->getDoctorant()->getIndividu()." ont été stoppées par la maison du doctorats de votre établissement.")
+                ->setTo($emails)
+                ->setTemplatePath('soutenance/notification/stopper-demarche-soutenance')
+                ->setTemplateVariables([
+                    'these' => $these,
+                    'proposition' => $proposition,
                 ]);
             $this->trigger($notif);
         }

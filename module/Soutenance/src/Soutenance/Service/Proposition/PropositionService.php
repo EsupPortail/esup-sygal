@@ -15,6 +15,8 @@ use Application\Service\Variable\VariableServiceAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Application\Service\Notification\NotifierServiceAwareTrait;
+use Doctrine\ORM\ORMException;
+use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
@@ -451,5 +453,26 @@ class PropositionService {
             }
         }
         return $array;
+    }
+
+    /** PROPOSTITION ETAT  ********************************************************************************************/
+
+    /**
+     * @param string $code
+     * @return Etat
+     */
+    public function getPropositionEtatByCode($code)
+    {
+        $qb = $this->getEntityManager()->getRepository(Etat::class)->createQueryBuilder('etat')
+            ->andWhere('etat.code = :code')
+            ->setParameter('code', $code)
+        ;
+
+        try {
+            $result = $qb->getQuery()->getOneOrNullResult();
+            return $result;
+        } catch (ORMException $e) {
+            throw new RuntimeException("Plusieurs ".Etat::class." partagent le même CODE [".$code."]", $e);
+        }
     }
 }

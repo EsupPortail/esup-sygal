@@ -7,7 +7,6 @@ use Soutenance\Assertion\PresoutenanceAssertionFactory;
 use Soutenance\Controller\EngagementImpartialite\EngagementImpartialiteController;
 use Soutenance\Controller\Presoutenance\PresoutenanceController;
 use Soutenance\Controller\Presoutenance\PresoutenanceControllerFactory;
-use Soutenance\Controller\SoutenanceController;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportForm;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportFormFactory;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportHydrator;
@@ -54,7 +53,8 @@ return [
                     'controller' => PresoutenanceController::class,
                     'action'     => [
                         'date-rendu-rapport',
-                        'feu-vert'
+                        'feu-vert',
+                        'stopper-demarche',
                     ],
                     'privileges' => PresoutenancePrivileges::PRESOUTENANCE_DATE_RETOUR_MODIFICATION,
                 ],
@@ -173,6 +173,17 @@ return [
                                     'defaults' => [
                                         'controller' => PresoutenanceController::class,
                                         'action'     => 'feu-vert',
+                                    ],
+                                ],
+                            ],
+                            'stopper-demarche' => [
+                                'type' => Literal::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/stopper-demarche',
+                                    'defaults' => [
+                                        'controller' => PresoutenanceController::class,
+                                        'action'     => 'stopper-demarche',
                                     ],
                                 ],
                             ],

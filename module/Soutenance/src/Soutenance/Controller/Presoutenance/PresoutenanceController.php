@@ -16,6 +16,7 @@ use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use DateInterval;
 use Exception;
 use Soutenance\Entity\Avis;
+use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportForm;
@@ -284,6 +285,11 @@ class PresoutenanceController extends AbstractController
         $these = $this->getTheseService()->getRepository()->find($theseId);
         /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
+
+        $etat = $this->getPropositionService()->getPropositionEtatByCode(Etat::VALIDEE);
+        $proposition->setEtat($etat);
+        $this->getPropositionService()->update($proposition);
+
         /** @var Avis[] $avis*/
         $avis = $this->getAvisService()->getAvisByThese($these);
 
@@ -291,6 +297,25 @@ class PresoutenanceController extends AbstractController
         $this->flashMessenger()
             //->setNamespace('presoutenance')
             ->addSuccessMessage("Notifications d'accord de soutenance envoyées");
+
+        $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
+    }
+
+    public function stopperDemarcheAction() {
+        /** @var These $these */
+        $theseId = $this->params()->fromRoute('these');
+        $these = $this->getTheseService()->getRepository()->find($theseId);
+        /** @var Proposition $proposition */
+        $proposition = $this->getPropositionService()->findByThese($these);
+
+        $etat = $this->getPropositionService()->getPropositionEtatByCode(Etat::REJETEE);
+        $proposition->setEtat($etat);
+        $this->getPropositionService()->update($proposition);
+
+        $this->getNotifierSoutenanceService()->triggerStopperDemarcheSoutenance($these, $proposition);
+        $this->flashMessenger()
+            //->setNamespace('presoutenance')
+            ->addSuccessMessage("Notifications d'arrêt des démarches de soutenance soutenance envoyées");
 
         $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
