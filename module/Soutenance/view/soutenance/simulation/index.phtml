@@ -88,7 +88,7 @@ $this->headTitle('Index des acteurs simulés');
                 <td> <?php echo $acteur->getIndividu()->getNomUsuel(); ?> </td>
                 <td> <?php echo $acteur->getIndividu()->getEmail(); ?> </td>
                 <td> <?php echo $acteur->getRole()->getRoleId(); ?> </td>
-                <td> <?php echo ($acteur->getQualite() ? $acteur->getQualite : "Non renseigné"); ?> </td>
+                <td> <?php echo ($acteur->getQualite() ? $acteur->getQualite() : "Non renseigné"); ?> </td>
                 <td> <?php echo ($acteur->getEtablissement() ? $acteur->getEtablissement()->getLibelle() : "Non renseigné"); ?> </td>
                 <td>
                     <?php /** @see \Soutenance\Controller\SimulationController::modifierActeurSimuleAction() */ ?>

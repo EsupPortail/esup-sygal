@@ -410,8 +410,86 @@ class NotifierSoutenanceService extends NotifierService {
                 ]);
             $this->trigger($notif);
         }
-
     }
+
+    /**
+     * @param These $these
+     * @param Avis $avis
+     * @param string $url
+     */
+    public function triggerAvisFavorable($these, $avis, $url)
+    {
+        $emails = [];
+        $emails[] = $this->fetchEmailBdd($these);
+        foreach ($these->getDirecteursTheseEmails() as $email => $name) $emails[] = $email;
+        /** @var IndividuRole $individuRole */
+        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
+        foreach ($individuRoles as $individuRole) {
+            $emails[] = $individuRole->getIndividu()->getEmail();
+        }
+        /** @var IndividuRole $individuRole */
+        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
+        foreach ($individuRoles as $individuRole) {
+            $emails[] = $individuRole->getIndividu()->getEmail();
+        }
+
+        $emails = array_filter($emails, function ($s) {
+            return $s !== null;
+        });
+
+        if ($emails !== []) {
+            $notif = new Notification();
+            $notif
+                ->setSubject("Un avis de soutenance favorable de la thèse de " . $these->getDoctorant()->getIndividu() . " a été rendue.")
+                ->setTo($emails)
+                ->setTemplatePath('soutenance/notification/avis-favorable')
+                ->setTemplateVariables([
+                    'these' => $these,
+                    'avis' => $avis,
+                    'url' => $url,
+                ]);
+            $this->trigger($notif);
+        }
+    }
+    /**
+     * @param These $these
+     * @param Avis $avis
+     * @param string $url
+     */
+    public function triggerAvisDefavorable($these, $avis, $url)
+    {
+        $emails = [];
+        foreach ($these->getDirecteursTheseEmails() as $email => $name) $emails[] = $email;
+        /** @var IndividuRole $individuRole */
+        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
+        foreach ($individuRoles as $individuRole) {
+            $emails[] = $individuRole->getIndividu()->getEmail();
+        }
+        /** @var IndividuRole $individuRole */
+        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
+        foreach ($individuRoles as $individuRole) {
+            $emails[] = $individuRole->getIndividu()->getEmail();
+        }
+
+        $emails = array_filter($emails, function ($s) {
+            return $s !== null;
+        });
+
+        if ($emails !== []) {
+            $notif = new Notification();
+            $notif
+                ->setSubject("Un avis de soutenance défavorable de la thèse de " . $these->getDoctorant()->getIndividu() . " a été rendue.")
+                ->setTo($emails)
+                ->setTemplatePath('soutenance/notification/avis-defavorable')
+                ->setTemplateVariables([
+                    'these' => $these,
+                    'avis' => $avis,
+                    'url' => $url,
+                ]);
+            $this->trigger($notif);
+        }
+    }
+
 
     /**
      * @param These $these

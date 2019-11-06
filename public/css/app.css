@@ -546,5 +546,6 @@ span.badge.REJETEE {
 }
 
 a.action {
-  width: 20rem;
+  padding:0.5rem;
+  margin:0.5rem;
 }

@@ -16,6 +16,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\QueryBuilder;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
@@ -34,6 +35,31 @@ class PropositionService {
     use VariableServiceAwareTrait;
     use FileServiceAwareTrait;
     use EtablissementServiceAwareTrait;
+
+    /**
+     *
+     * @return QueryBuilder
+     */
+    public function createQueryBuilder(/*$alias = 'proposition'*/)
+    {
+        $qb = $this->getEntityManager()->getRepository(Proposition::class)->createQueryBuilder("proposition")
+            ->addSelect('etat')->join('proposition.etat', 'etat')
+            ->addSelect('these')->join('proposition.these', 'these')
+            ->addSelect('unite')->leftJoin('these.uniteRecherche', 'unite')
+            ->addSelect('structure_ur')->leftJoin('unite.structure', 'structure_ur')
+            ->addSelect('ecole')->leftJoin('these.ecoleDoctorale', 'ecole')
+            ->addSelect('structure_ed')->leftJoin('ecole.structure', 'structure_ed')
+            ->addSelect('etablissement')->leftJoin('these.etablissement', 'etablissement')
+            ->addSelect('structure_etab')->leftJoin('etablissement.structure', 'structure_etab')
+            ->addSelect('membre')->join('proposition.membres', 'membre')
+            ->addSelect('qualite')->leftJoin('membre.qualite', 'qualite')
+            ->addSelect('acteur')->leftJoin('membre.acteur', 'acteur')
+
+
+
+            ;
+        return $qb;
+    }
 
     /**
      * @param int $id
@@ -401,31 +427,24 @@ class PropositionService {
      */
     public function getPropositionsByRole($role)
     {
-        $qb = $this->getEntityManager()->getRepository(Proposition::class)->createQueryBuilder('proposition')
-            ->addSelect('these')->join('proposition.these', 'these')
+        $qb = $this->createQueryBuilder()
             ->andWhere('these.etatThese = :encours')
             ->setParameter('encours', These::ETAT_EN_COURS)
         ;
 
         switch ($role->getCode()) {
             case Role::CODE_UR :
-                $qb = $qb->addSelect('unite')->leftJoin('these.uniteRecherche', 'unite')
-                    ->addSelect('structure')->leftJoin('unite.structure', 'structure')
-                    ->andWhere('structure.id = :unite')
+                $qb = $qb ->andWhere('structure_ur.id = :unite')
                     ->setParameter('unite', $role->getStructure()->getId())
                 ;
                 break;
             case Role::CODE_ED :
-                $qb = $qb->addSelect('ecole')->leftJoin('these.ecoleDoctorale', 'ecole')
-                    ->addSelect('structure')->leftJoin('ecole.structure', 'structure')
-                    ->andWhere('structure.id = :ecole')
+                $qb = $qb->andWhere('structure_ed.id = :ecole')
                     ->setParameter('ecole', $role->getStructure()->getId())
                 ;
                 break;
             case Role::CODE_BDD :
-                $qb = $qb->addSelect('etablissement')->leftJoin('these.etablissement', 'etablissement')
-                    ->addSelect('structure')->leftJoin('etablissement.structure', 'structure')
-                    ->andWhere('structure.id = :etablissement')
+                $qb = $qb->andWhere('structure_etab.id = :etablissement')
                     ->setParameter('etablissement', $role->getStructure()->getId())
                 ;
                 break;

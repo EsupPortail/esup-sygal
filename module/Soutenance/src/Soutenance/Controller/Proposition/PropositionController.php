@@ -87,11 +87,88 @@ class PropositionController extends AbstractController {
         /** @var Role $currentRole */
         $currentRole = $this->userContextService->getSelectedIdentityRole();
 
+        /** Justificatifs attendus ---------------------------------------------------------------------------------- */
+
+        $justificatifsDeposes = $proposition->getJustificatifs();
+
+        $justificatifs = [];
+
+        /**
+         * Justificatifs liés à la nature de la thèse ou de la soutenance :
+         * - NatureFichier::CODE_DELOCALISATION_SOUTENANCE,
+         * - NatureFichier::CODE_DEMANDE_LABEL,
+         * - NatureFichier::CODE_DEMANDE_CONFIDENT,
+         * - NatureFichier::CODE_LANGUE_ANGLAISE
+         */
+        if ($proposition->isExterieur()) {
+            $justificatifs[] = [
+                'type' => NatureFichier::CODE_DELOCALISATION_SOUTENANCE,
+                'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_DELOCALISATION_SOUTENANCE, null),
+            ];
+        }
+        if ($proposition->isLabelEuropeen()) {
+            $justificatifs[] = [
+                'type' => NatureFichier::CODE_DEMANDE_LABEL,
+                'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_DEMANDE_LABEL, null),
+            ];
+        }
+        if ($proposition->getThese()->getDateFinConfidentialite() !== null) {
+            $justificatifs[] = [
+                'type' => NatureFichier::CODE_DEMANDE_CONFIDENT,
+                'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_DEMANDE_CONFIDENT, null),
+            ];
+        }
+        if ($proposition->isManuscritAnglais() OR $proposition->isSoutenanceAnglais()) {
+            $justificatifs[] = [
+                'type' => NatureFichier::CODE_LANGUE_ANGLAISE,
+                'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_LANGUE_ANGLAISE, null),
+            ];
+        }
+
+        /**
+         * Justificatifs liés aux membres du jury :
+         * - NatureFichier::CODE_DELEGUATION_SIGNATURE,
+         * - NatureFichier::CODE_JUSTIFICATIF_HDR,
+         * - NatureFichier::CODE_JUSTIFICATIF_EMERITAT
+         * @var Membre $membre
+         */
+        foreach ($proposition->getMembres() as $membre) {
+            if ($membre->isVisio()) {
+                $justificatifs[] = [
+                    'type' => NatureFichier::CODE_DELEGUATION_SIGNATURE,
+                    'membre' => $membre,
+                    'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_DELEGUATION_SIGNATURE, $membre),
+                ];
+            }
+            if ($membre->getQualite()->getHDR() === 'O') {
+                $justificatifs[] = [
+                    'type' => NatureFichier::CODE_JUSTIFICATIF_HDR,
+                    'membre' => $membre,
+                    'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_JUSTIFICATIF_HDR, $membre),
+                ];
+            }
+            if ($membre->getQualite()->getEmeritat() === 'O') {
+                $justificatifs[] = [
+                    'type' => NatureFichier::CODE_JUSTIFICATIF_EMERITAT,
+                    'membre' => $membre,
+                    'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_JUSTIFICATIF_EMERITAT, $membre),
+                ];
+            }
+        }
+
+        $justificatifsOk = true;
+        foreach ($justificatifs as $justificatif) {
+            if ($justificatif['justificatif'] === null) {
+                $justificatifsOk = false;
+                break;
+            }
+        }
+
         return new ViewModel([
             'these'             => $these,
             'proposition'       => $proposition,
             'doctorant'         => $these->getDoctorant(),
-            'directeurs'        =>$these->getEncadrements(false),
+            'directeurs'        => $these->getEncadrements(false),
             'validations'       => $this->getPropositionService()->getValidationSoutenance($these),
             'validationActeur'  => $this->getPropositionService()->isValidated($these, $currentIndividu, $currentRole),
             'roleCode'          => $currentRole,
@@ -99,6 +176,8 @@ class PropositionController extends AbstractController {
             'juryOk'            => $this->getPropositionService()->juryOk($proposition),
             'isOk'              => $this->getPropositionService()->isOk($proposition),
             'urlFichierThese'   => $this->urlFichierThese(),
+            'justificatifs'     => $justificatifs,
+            'justificatifsOk'   => $justificatifsOk,
         ]);
     }
 

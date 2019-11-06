@@ -1,0 +1,45 @@
+<?php
+
+use Application\Constants;
+use Application\Entity\Db\These;
+use Application\View\Renderer\PhpRenderer;
+use Soutenance\Entity\Avis;
+use Soutenance\Entity\Proposition;
+
+/**
+ * @see \Soutenance\Service\Notifier\NotifierSoutenanceService::triggerFeuVertSoutenance()
+ *
+ * @var PhpRenderer $this
+ * @var These $these
+ * @var Proposition $proposition
+ * @var Avis $avis
+ * @var string $url
+ */
+
+?>
+
+<p>
+    Bonjour,
+</p>
+<p>
+    Le rapporteur <strong><?php echo $avis->getRapporteur()->getIndividu()->getNomComplet(); ?></strong> vient de rendre
+    un avis défavorable pour la these de <strong> <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?> </strong>
+    intitulée <strong><?php echo $these->getTitre(); ?></strong>.
+</p>
+<p> Voici le motif donné par le rapporteur : <?php echo $avis->getMotif(); ?></p>
+<p>
+    Vous pouvez consulter le rapport de présoutenance en utilisant le lien suivant :
+</p>
+<ul>
+    <li>
+        <?php echo  $avis->getRapporteur(); ?>
+        :
+
+        <a href="<?php echo $url; ?>">
+            rapport de pré-soutenance
+        </a>
+    </li>
+</ul>
+
+
+

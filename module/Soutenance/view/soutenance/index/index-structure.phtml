@@ -7,7 +7,9 @@
  */
 
 use Application\Entity\Db\Role;
+use Application\Provider\Privilege\ThesePrivileges;
 
+$canVoirThese = $this->isAllowed(ThesePrivileges::getResourceId(ThesePrivileges::THESE_CONSULTATION_FICHE));
 $canSuppression = ($role->getCode() === Role::CODE_ADMIN_TECH);
 ?>
 
@@ -41,7 +43,15 @@ $canSuppression = ($role->getCode() === Role::CODE_ADMIN_TECH);
     <tbody>
         <?php foreach ($propositions as $proposition) : ?>
             <tr>
-                <td> <?php echo $proposition->getThese()->getTitre(); ?> </td>
+                <td>
+                    <?php if ($canVoirThese) : ?>
+                        <a href="<?php echo $this->url('these/identite', ['these' => $proposition->getThese()->getId()], [] ,true); ?>">
+                    <?php endif; ?>
+                        <?php echo $proposition->getThese()->getTitre(); ?>
+                    <?php if ($canVoirThese) : ?>
+                        </a>
+                    <?php endif; ?>
+                </td>
                 <td> <?php echo $proposition->getThese()->getDoctorant()->getIndividu(); ?> </td>
                 <td>
                     <?php foreach ($proposition->getThese()->getEncadrements() as $encadrement) : ?>

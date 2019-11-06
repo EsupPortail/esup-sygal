@@ -314,6 +314,17 @@ class Proposition {
         return $this->justificatifs->toArray();
     }
 
+    public function getJustificatif($nature, $membre = null) {
+        /** @var Justificatif $justificatif */
+        foreach ($this->justificatifs as $justificatif) {
+            if (($membre === null OR $justificatif->getMembre() === $membre) AND
+                $justificatif->getFichier()->getFichier()->getNature()->getCode() === $nature) {
+                return $justificatif;
+            }
+        }
+        return null;
+    }
+
     /**
      * @param Justificatif $justificatif
      * @return Proposition

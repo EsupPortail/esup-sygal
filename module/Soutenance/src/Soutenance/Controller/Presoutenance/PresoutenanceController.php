@@ -148,6 +148,12 @@ class PresoutenanceController extends AbstractController
         $idMembre = $this->params()->fromRoute('membre');
         $membre = $this->getMembreService()->find($idMembre);
 
+        /** Ici on prépare la liste des acteurs correspondant aux différents rôles pour le Select du formulaire
+         *  d'association. On part du principe :
+         *  - qu'un Rapporteur du jury est Rapporteur et Membre du jury,
+         *  - qu'un Rapporteur absent  est Rapporteur,
+         *  - qu'un Membre du jury     est Membre du jury.
+         */
         $acteurs = $this->getActeurService()->getRepository()->findActeurByThese($these);
         switch($membre->getRole()) {
             case Membre::RAPPORTEUR :
@@ -160,7 +166,7 @@ class PresoutenanceController extends AbstractController
                 $acteurs = array_filter($acteurs, function(Acteur $a) {
                     /** @var Profil  $profil */
                     $profil = ($a->getRole()->getProfils()->first());
-                    return $profil->getRoleCode() === 'A';});
+                    return $profil->getRoleCode() === 'R';});
                 break;
             case Membre::MEMBRE :
                 $acteurs = array_filter($acteurs, function(Acteur $a) {

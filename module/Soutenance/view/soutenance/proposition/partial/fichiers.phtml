@@ -3,6 +3,8 @@
 /**
  * @var Proposition $proposition
  * @var These $these
+ * @var array $justificatifs
+ * @var bool $justificatifsOk
  * @var UrlFichierThese $urlFichierThese
  */
 
@@ -11,6 +13,7 @@ use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
 use Soutenance\Entity\Justificatif;
+use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 
@@ -21,7 +24,7 @@ foreach ($proposition->getMembres() as $membre) {
 }
 ?>
 
-<div class="box panel panel-info">
+<div class="box panel <?php echo ($justificatifsOk)?"panel-info":"panel-warning";?>">
     <div class="panel-heading">
         <h2> Fichiers associés à la proposition</h2>
     </div>
@@ -31,6 +34,29 @@ foreach ($proposition->getMembres() as $membre) {
             <a href="<?php echo $this->url('soutenance/proposition/ajouter-justificatif', [ 'these' => $these->getId()], [], true); ?>" class="btn btn-primary">
                 Téléversement d'un justificatif
             </a>
+        <?php endif; ?>
+
+        <?php if ($justificatifsOk === false) : ?>
+            <div class="alert alert-warning pull-right">
+            Liste des justificatifs manquants :
+            <ul>
+            <?php foreach ($justificatifs as $justificatif) : ?>
+                <?php if($justificatif['justificatif'] === null) : ?>
+                    <li>
+                        <?php echo $justificatif['type'] ?>
+                        <?php if (isset($justificatif['membre'])) : ?>
+                            -
+                            <?php
+                                /** @var Membre $membre */
+                                $membre = $justificatif['membre'];
+                                echo $membre->getDenomination();
+                            ?>
+                        <?php endif; ?>
+                    </li>
+                <?php endif; ?>
+            <?php endforeach; ?>
+            </ul>
+            </div>
         <?php endif; ?>
 
         <?php
@@ -57,7 +83,7 @@ foreach ($proposition->getMembres() as $membre) {
                 <?php /** @var Justificatif $justificatif */
                 foreach($liste as $justificatif) : ?>
                     <li>
-                        <?php echo $this->justificatif()->render($justificatif, $urlFichierThese); ?>
+                        <?php echo $this->justificatif()->render($justificatif, $urlFichierThese, ['court' => true]); ?>
                         <?php if ($canModifier) : ?>
                             <a href="<?php echo $this->url('soutenance/proposition/retirer-justificatif', ['these'=>$these->getId(), 'justificatif'=>$justificatif->getId()], [], true); ?>">
                                 <span style='color:darkred;' class="glyphicon glyphicon-remove" title="Supprimer le justificatif"></span>

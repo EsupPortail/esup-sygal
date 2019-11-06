@@ -97,6 +97,15 @@ class AvisController extends AbstractController {
                 //test du rendu de tous les avis
                 $allAvis        = $this->getAvisService()->getAvisByThese($these);
                 $allRapporteurs = $this->getMembreService()->getRapporteursByProposition($proposition);
+
+                $url = null; //$this->urlFichierThese()->telechargerFichierThese($these, $avis->getFichier());
+                if ($avis->getAvis() === Avis::FAVORABLE) {
+                    $this->getNotifierSoutenanceService()->triggerAvisFavorable($these, $avis, $url);
+                }
+                if ($avis->getAvis() === Avis::DEFAVORABLE) {
+                    $this->getNotifierSoutenanceService()->triggerAvisDefavorable($these, $avis, $url);
+                }
+
                 if (count($allAvis) === count($allRapporteurs)) {
                     $this->getNotifierSoutenanceService()->triggerAvisRendus($these);
                 }
