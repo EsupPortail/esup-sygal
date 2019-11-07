@@ -33,7 +33,7 @@ use Soutenance\Entity\Proposition;
     <?php foreach ($avis as $avi) : ?>
         <?php $url = $this->url('fichier/these/telecharger', [
             'these'      => $these->getId(),
-            'fichier'    => $avi->getFichier()->getId(),
+            'fichier'    => $avi->getFichier()->getUuid(),
             'fichierNom' => $avi->getFichier()->getNom(),
         ], [
             'force_canonical'=>true

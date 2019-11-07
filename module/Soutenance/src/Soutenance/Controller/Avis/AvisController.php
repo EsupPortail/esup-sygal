@@ -98,6 +98,8 @@ class AvisController extends AbstractController {
                 $allAvis        = $this->getAvisService()->getAvisByThese($these);
                 $allRapporteurs = $this->getMembreService()->getRapporteursByProposition($proposition);
 
+
+
                 $url = null; //$this->urlFichierThese()->telechargerFichierThese($these, $avis->getFichier());
                 if ($avis->getAvis() === Avis::FAVORABLE) {
                     $this->getNotifierSoutenanceService()->triggerAvisFavorable($these, $avis, $url);

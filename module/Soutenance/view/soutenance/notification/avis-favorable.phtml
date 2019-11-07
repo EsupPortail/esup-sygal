@@ -29,19 +29,19 @@ use Soutenance\Entity\Proposition;
     Vous pouvez consulter le rapport de présoutenance en utilisant le lien suivant :
 </p>
 <ul>
-        <?php $url = $this->url('fichier/these/telecharger', [
+    <li>
+        <?php echo  $avis->getRapporteur(); ?>
+        :
+        <?php $url_ = $this->url('fichier/these/telecharger', [
             'these'      => $these->getId(),
-            'fichier'    => $avis->getFichier()->getId(),
+            'fichier'    => $avis->getFichier()->getUuid(),
             'fichierNom' => $avis->getFichier()->getNom(),
         ], [
             'force_canonical'=>true
         ],true);
         ?>
-    <li>
-        <?php echo  $avis->getRapporteur(); ?>
-        :
 
-        <a href="<?php echo $url; ?>">
+        <a href="<?php echo $url_; ?>">
             rapport de pré-soutenance
         </a>
     </li>
