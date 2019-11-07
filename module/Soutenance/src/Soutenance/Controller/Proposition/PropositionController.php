@@ -575,7 +575,6 @@ class PropositionController extends AbstractController {
         /** @var Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
-            true;
             $data = $request->getPost();
             $files = ['files' => $request->getFiles()->toArray()];
 
