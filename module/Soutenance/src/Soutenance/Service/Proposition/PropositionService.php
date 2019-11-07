@@ -191,6 +191,8 @@ class PropositionService {
             $this->getValidationService()->historise($validationBDD);
             $this->getNotifierSoutenanceService()->triggerDevalidationProposition($validationBDD);
         }
+//        $proposition->setSurcis(false);
+//        $this->update($proposition);
     }
 
     /**

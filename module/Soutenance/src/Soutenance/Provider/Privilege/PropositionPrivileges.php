@@ -14,4 +14,5 @@ class PropositionPrivileges extends Privileges
     const PROPOSITION_VALIDER_UR                      = 'soutenance-proposition-validation-ur';
     const PROPOSITION_VALIDER_BDD                     = 'soutenance-proposition-validation-bdd';
     const PROPOSITION_PRESIDENCE                      = 'soutenance-proposition-presidence';
+    const PROPOSITION_SURSIS                          = 'soutenance-proposition-sursis';
 }

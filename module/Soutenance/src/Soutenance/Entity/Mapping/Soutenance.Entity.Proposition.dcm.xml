@@ -35,5 +35,7 @@
                 <join-column name="ETAT_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
+
+        <field name="sursis"              type="string"        length="1"       column="SURSIS"       nullable="true"/>
     </entity>
 </doctrine-mapping>

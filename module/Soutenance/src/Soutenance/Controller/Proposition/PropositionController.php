@@ -604,4 +604,16 @@ class PropositionController extends AbstractController {
 
         return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
     }
+
+    public function toggleSursisAction() {
+        /** @var These $these */
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findByThese($these);
+
+        $sursis = $proposition->hasSursis();
+        $proposition->setSurcis(! $sursis);
+        $this->getPropositionService()->update($proposition);
+
+        return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
+    }
 }

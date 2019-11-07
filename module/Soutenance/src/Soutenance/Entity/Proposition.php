@@ -3,6 +3,7 @@
 namespace Soutenance\Entity;
 
 use Application\Entity\Db\These;
+use DateInterval;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -42,6 +43,8 @@ class Proposition {
 
     /** @var ArrayCollection */
     private $justificatifs;
+    /** @var string */
+    private $sursis;
 
 //    /** @var ArrayCollection */
 //    private $validations;
@@ -359,5 +362,40 @@ class Proposition {
         return $this;
     }
 
+    /**
+     * @return bool
+     */
+    public function isDelaiOk()
+    {
+        $soutenance = $this->getDate();
+        if ($soutenance === null) return false;
 
+        $deux = new DateInterval('P2M');
+        $date = new DateTime();
+        $date_ = $date->add($deux);
+
+        return ($date_ < $soutenance);
+    }
+
+    /**
+     * @var bool $sursis
+     * @return Proposition
+     */
+    public function setSurcis($sursis)
+    {
+        if ($sursis) {
+            $this->sursis = 'O';
+        } else {
+            $this->sursis = 'N';
+        }
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasSursis()
+    {
+        return ($this->sursis === 'O');
+    }
 }

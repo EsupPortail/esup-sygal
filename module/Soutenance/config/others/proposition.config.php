@@ -124,6 +124,15 @@ return [
                     ],
                     'privileges' => PropositionPrivileges::PROPOSITION_VISUALISER,
                 ],
+                [
+                    'controller' => PropositionController::class,
+                    'action'     => [
+                        'toggle-sursis',
+                    ],
+                    'privileges' => PropositionPrivileges::PROPOSITION_SURSIS,
+                ],
+
+
             ],
         ],
     ],
@@ -154,6 +163,17 @@ return [
                             ],
                         ],
                         'child_routes' => [
+                            'sursis' => [
+                                'type' => Literal::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/sursis',
+                                    'defaults' => [
+                                        'controller' => PropositionController::class,
+                                        'action'     => 'toggle-sursis',
+                                    ],
+                                ],
+                            ],
                             'modifier-date-lieu' => [
                                 'type' => Literal::class,
                                 'may_terminate' => true,

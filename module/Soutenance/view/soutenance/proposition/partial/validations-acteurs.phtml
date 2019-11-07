@@ -15,6 +15,7 @@ use Application\Entity\Db\Validation;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 
 $canValider = $isOk && $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_ACTEUR);
+$canSursis = $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_SURSIS));
 
 ?>
 
@@ -67,11 +68,19 @@ $canValider = $isOk && $this->isAllowed($these, PropositionPrivileges::PROPOSITI
             <div class="col-md-6 pull-right" >
                 <?php if (! $validationActeur) : ?>
                     <?php if ($canValider) : ?>
-                        <a
-                            href="<?php echo $this->url('soutenance/proposition/valider', ['these' => $these->getId()], [], true); ?>"
-                            class="btn btn-success action ">
-                            <span class="glyphicon glyphicon-ok"></span> Valider la proposition de soutenance
-                        </a>
+                        <?php if ($proposition->isDelaiOk() OR $proposition->hasSursis()) : ?>
+                            <a
+                                href="<?php echo $this->url('soutenance/proposition/valider', ['these' => $these->getId()], [], true); ?>"
+                                class="btn btn-success action ">
+                                <span class="glyphicon glyphicon-ok"></span> Valider la proposition de soutenance
+                            </a>
+                        <?php else : ?>
+                            <div class="alert alert-sm alert-warning">
+                                <span class="glyphicon glyphicon-warning-sign"></span>
+                                Le délai de deux mois entre la validation de la proposition et la soutenance n'est plus
+                                respecté. Veuillez adpater la date de soutenance.
+                            </div>
+                        <?php endif; ?>
                     <?php else : ?>
                         <?php if (!$isOk): ?>
                             <div class="alert alert-sm alert-warning">
@@ -82,6 +91,21 @@ $canValider = $isOk && $this->isAllowed($these, PropositionPrivileges::PROPOSITI
                     <?php endif; ?>
                 <?php endif; ?>
             </div>
+
+            <?php if ($canSursis) : ?>
+                <div class="col-md-6" >
+                    <?php /** @see \Soutenance\Controller\Proposition\PropositionController::toggleSursisAction() */ ?>
+                    <a href="<?php echo $this->url('soutenance/proposition/sursis', ['these' => $these->getId()], [], true); ?>" class="btn btn-primary action pull-right">
+                        <?php if (!$proposition->hasSursis()) : ?>
+                            <span class="glyphicon glyphicon-plus-sign"></span>
+                            Accorder un sursis
+                        <?php else : ?>
+                            <span class="glyphicon glyphicon-minus-sign"></span>
+                            Retirer le sursis
+                        <?php endif; ?>
+                    </a>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 </div>
