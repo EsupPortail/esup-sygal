@@ -70,7 +70,7 @@ $canAvis = true;
     <small><?php echo $this->partial('application/these/partial/titre') ?></small>
 </h1>
 
-<div class="panel panel-info">
+<div class="box panel panel-info">
     <div class="panel-heading">
         <h2> Récapitulatif de la proposition de soutenance </h2>
     </div>
@@ -108,7 +108,7 @@ $canAvis = true;
     </div>
 </div>
 
-<div class="panel panel-info">
+<div class="box panel panel-info">
     <div class="panel-heading">
         <h2> Signature de l'engagement d'impartialité </h2>
     </div>
@@ -140,7 +140,7 @@ $canAvis = true;
     </div>
 </div>
 
-<div class="panel panel-info">
+<div class="box panel <?php echo ($depot !== null)?"panel-info":"panel-warning"; ?>">
     <div class="panel-heading">
         <h2> Téléchargement de la thèse </h2>
     </div>
@@ -155,6 +155,7 @@ $canAvis = true;
                 Télécharger la thèse
             </a>
         <?php else : ?>
+            <span class="glyphicon glyphicon-warning-sign"></span>
             La thèse de <?php echo $these->getDoctorant()->getIndividu(); ?> n'a pas encore été déposée dans <?php echo $this->appInfos()->nom; ?>.
             Une fois le dépôt réalisé vous pourrez télécharger celle-ci via cette page.
         <?php endif; ?>
@@ -162,48 +163,52 @@ $canAvis = true;
     </div>
 </div>
 
-<div class="panel panel-info">
+<div class="box panel <?php echo ($engagement !== null)?"panel-info":"panel-warning"; ?>">
     <div class="panel-heading">
         <h2> Avis de soutenance </h2>
     </div>
     <div class="panel-body">
-        <?php if ($avis !== null) : ?>
-            Vous avez rendu votre avis de soutenance pour la thèse de <?php echo $these->getDoctorant()->getIndividu(); ?>.
+    <?php if ($engagement !== null) : ?>
+            <?php if ($avis !== null) : ?>
+                Vous avez rendu votre avis de soutenance pour la thèse de <?php echo $these->getDoctorant()->getIndividu(); ?>.
 
-            <div class="col-md-5 pull-right">
-                <div class="panel <?php echo ($avis->getAvis() === 'Favorable')?"panel-success":"panel-danger"; ?> ">
-                    <div class="panel-heading">
-                        Avis de soutenance : <strong><?php echo $avis->getAvis(); ?></strong>
-                    </div>
-                    <div class="panel-body">
-                        <ul>
-                            <li>Rendu le <?php echo $avis->getValidation()->getHistoModification()->format(Constants::DATETIME_FORMAT); ?> par <?php echo $avis->getValidation()->getIndividu(); ?></li>
-                        </ul>
+                <div class="col-md-5 pull-right">
+                    <div class="panel <?php echo ($avis->getAvis() === 'Favorable')?"panel-success":"panel-danger"; ?> ">
+                        <div class="panel-heading">
+                            Avis de soutenance : <strong><?php echo $avis->getAvis(); ?></strong>
+                        </div>
+                        <div class="panel-body">
+                            <ul>
+                                <li>Rendu le <?php echo $avis->getValidation()->getHistoModification()->format(Constants::DATETIME_FORMAT); ?> par <?php echo $avis->getValidation()->getIndividu(); ?></li>
+                            </ul>
 
-                        <dl>
-                            <?php if ($avis->getAvis() !== 'Favorable') : ?>
-                                <dt> Motif de refus </dt>
-                                <dd> <?php echo $avis->getMotif(); ?> </dd>
-                            <?php endif; ?>
-                        </dl>
+                            <dl>
+                                <?php if ($avis->getAvis() !== 'Favorable') : ?>
+                                    <dt> Motif de refus </dt>
+                                    <dd> <?php echo $avis->getMotif(); ?> </dd>
+                                <?php endif; ?>
+                            </dl>
 
-                        <a href=" <?php echo $this->urlFichierThese->telechargerFichierThese($these, $avis->getFichier()); ?>" >
-                            Prérapport de soutenance
-                        </a>
+                            <a href=" <?php echo $this->urlFichierThese->telechargerFichierThese($these, $avis->getFichier()); ?>" >
+                                Prérapport de soutenance
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
+            <?php else : ?>
+                Afin de valider la soutenance de thèse de <?php echo $these->getDoctorant()->getIndividu(); ?>, vous devez rendre votre
+                avis de soutenance et votre prérapport de soutenance.
+
+                <a href="<?php echo $this->url('soutenance/avis-soutenance', ['these' => $these->getId(), 'rapporteur' => $membre->getId()], [], true); ?>"
+                   class="btn btn-primary pull-right"
+                >
+                    <span class="glyphicon glyphicon-pencil"></span>
+                    Rendre l'avis de soutenance
+                </a>
+
+            <?php endif; ?>
         <?php else : ?>
-            Afin de valider la soutenance de thèse de <?php echo $these->getDoctorant()->getIndividu(); ?>, vous devez rendre votre
-            avis de soutenance et votre prérapport de soutenance.
-
-            <a href="<?php echo $this->url('soutenance/avis-soutenance', ['these' => $these->getId(), 'rapporteur' => $membre->getId()], [], true); ?>"
-               class="btn btn-primary pull-right"
-            >
-                <span class="glyphicon glyphicon-pencil"></span>
-                Rendre l'avis de soutenance
-            </a>
-
+        <span class="glyphicon glyphicon-warning-sign"></span> Pour pouvoir rendre votre avis de soutenance vous devez avoir signez l'engagement d'impartialité.
         <?php endif; ?>
     </div>
 </div>

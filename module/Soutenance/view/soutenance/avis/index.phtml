@@ -62,18 +62,13 @@ $canEdit = $this->isAllowed($rapporteur, AvisSoutenancePrivileges::AVIS_MODIFIER
 </style>
 
 <script>
-    // $(document).ready(function() {
-    //     alert('test');
-    //     if ($("input[name='avis']").attr('value') === 'Favorable') {
-    //         $("div#justification").hide();
-    //     }
-    // });
+    $("textarea#motif").parent().hide();
 
-    // $("input[name='avis']").change(function() {
-    //     if ($(this).attr('value') === 'Favorable') {
-    //         $("div#justification").hide();
-    //     } else {
-    //         $("div#justification").show();
-    //     }
-    // })
+    $("input[name='avis']").change(function() {
+        if ($(this).attr('value') === 'Favorable') {
+            $("textarea#motif").parent().hide();
+        } else {
+            $("textarea#motif").parent().show();
+        }
+    })
 </script>
