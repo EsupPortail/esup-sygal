@@ -11,6 +11,10 @@ use UnicaenApp\Entity\HistoriqueAwareTrait;
 class Avis {
     use HistoriqueAwareTrait;
 
+    const FAVORABLE = 'Favorable';
+    const DEFAVORABLE = 'Défavorable';
+
+
     /** @var int */
     private $id;
     /** @var These */

@@ -1,0 +1,51 @@
+<?php
+
+use Application\Constants;
+use Application\Entity\Db\These;
+use Application\View\Renderer\PhpRenderer;
+use Soutenance\Entity\Avis;
+use Soutenance\Entity\Proposition;
+
+/**
+ * @see \Soutenance\Service\Notifier\NotifierSoutenanceService::triggerFeuVertSoutenance()
+ *
+ * @var PhpRenderer $this
+ * @var These $these
+ * @var Proposition $proposition
+ * @var Avis $avis
+ */
+
+?>
+
+<p>
+    Bonjour,
+</p>
+<p>
+    Le rapporteur <strong><?php echo $avis->getRapporteur()->getIndividu()->getNomComplet(); ?></strong> vient de rendre
+    un avis favorable pour la these de <strong> <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?> </strong>
+    intitulée <strong><?php echo $these->getTitre(); ?></strong>.
+</p>
+<p>
+    Vous pouvez consulter le rapport de présoutenance en utilisant le lien suivant :
+</p>
+<ul>
+    <li>
+        <?php echo  $avis->getRapporteur(); ?>
+        :
+        <?php $url_ = $this->url('fichier/these/telecharger', [
+            'these'      => $these->getId(),
+            'fichier'    => $avis->getFichier()->getUuid(),
+            'fichierNom' => $avis->getFichier()->getNom(),
+        ], [
+            'force_canonical'=>true
+        ],true);
+        ?>
+
+        <a href="<?php echo $url_; ?>">
+            rapport de pré-soutenance
+        </a>
+    </li>
+</ul>
+
+
+

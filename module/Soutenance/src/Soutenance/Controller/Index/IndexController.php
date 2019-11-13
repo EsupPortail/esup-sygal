@@ -128,6 +128,7 @@ class IndexController extends AbstractActionController {
 
         return new ViewModel([
             'propositions' => $propositions,
+            'role' => $role,
         ]);
     }
 }

@@ -1,10 +1,13 @@
 <?php
 
+use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
 use Soutenance\Entity\Membre;
 use Soutenance\Form\Justificatif\JustificatifForm;
 
 /**
+ * @see \Soutenance\Controller\Proposition\PropositionController::ajouterJustificatifAction()
+ *
  * @var These $these
  * @var JustificatifForm $form
  * @var Membre[] $membres
@@ -35,33 +38,41 @@ use Soutenance\Form\Justificatif\JustificatifForm;
     <?php endforeach; ?>
 
     let nbMembres = membres.length;
+    $('select[name="membre"]').parent().hide();
     // console.log(membres);
     // console.log(nbMembres);
 
     console.log('ready');
     $('select[name="nature"]').change(function() {
         let value =  $(this). children("option:selected"). val();
-        //console.log('changement => ' + value);
+        // console.log('changement => ' + value);
 
         $('select[name="membre"]').empty();
 
+
+        $('select[name="membre"]').parent().show();
         switch(value) {
-            case 'JUSTIFICATIF_HDR' :
+            case <?php echo "'".NatureFichier::CODE_JUSTIFICATIF_HDR."'"; ?> :
                 for (let i = 0 ; i < nbMembres ; ++i) {
                     if (membres[i][2] === 'O') {
                         $('select[name="membre"]').append(new Option(membres[i][1], membres[i][0]));
                     }
                 }
                 break;
-            case 'JUSTIFICATIF_EMERITAT' :
+            case <?php echo "'".NatureFichier::CODE_JUSTIFICATIF_EMERITAT."'"; ?> :
                 for (let i = 0 ; i < nbMembres ; ++i) {
                     if (membres[i][3] === 'O') {
                         $('select[name="membre"]').append(new Option(membres[i][1], membres[i][0]));
                     }
                 }
                 break;
+            case <?php echo "'".NatureFichier::CODE_DELOCALISATION_SOUTENANCE."'"; ?> :
+            case <?php echo "'".NatureFichier::CODE_DEMANDE_LABEL."'"; ?> :
+            case <?php echo "'".NatureFichier::CODE_LANGUE_ANGLAISE."'"; ?> :
+                $('select[name="membre"]').parent().hide();
+                break;
             default :
-                $('select[name="membre"]').append(new Option("Aucun", null));
+                $('select[name="membre"]').append(new Option("Aucun", ""));
                 for (let i = 0 ; i < nbMembres ; ++i) {
                     $('select[name="membre"]').append(new Option(membres[i][1], membres[i][0]));
                 }

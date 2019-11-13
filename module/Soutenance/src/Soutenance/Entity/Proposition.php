@@ -3,6 +3,7 @@
 namespace Soutenance\Entity;
 
 use Application\Entity\Db\These;
+use DateInterval;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -37,9 +38,13 @@ class Proposition {
     private $soutenanceAnglais;
     /** @var string */
     private $nouveauTitre;
+    /** @var Etat */
+    private  $etat;
 
     /** @var ArrayCollection */
     private $justificatifs;
+    /** @var string */
+    private $sursis;
 
 //    /** @var ArrayCollection */
 //    private $validations;
@@ -312,6 +317,17 @@ class Proposition {
         return $this->justificatifs->toArray();
     }
 
+    public function getJustificatif($nature, $membre = null) {
+        /** @var Justificatif $justificatif */
+        foreach ($this->justificatifs as $justificatif) {
+            if (($membre === null OR $justificatif->getMembre() === $membre) AND
+                $justificatif->getFichier()->getFichier()->getNature()->getCode() === $nature) {
+                return $justificatif;
+            }
+        }
+        return null;
+    }
+
     /**
      * @param Justificatif $justificatif
      * @return Proposition
@@ -326,5 +342,60 @@ class Proposition {
     {
         $this->justificatifs->removeElement($justificatif);
         return $this;
+    }
+
+    /**
+     * @return Etat
+     */
+    public function getEtat()
+    {
+        return $this->etat;
+    }
+
+    /**
+     * @param Etat $etat
+     * @return Proposition
+     */
+    public function setEtat($etat)
+    {
+        $this->etat = $etat;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDelaiOk()
+    {
+        $soutenance = $this->getDate();
+        if ($soutenance === null) return false;
+
+        $deux = new DateInterval('P2M');
+        $date = new DateTime();
+        $date_ = $date->add($deux);
+
+        return ($date_ < $soutenance);
+    }
+
+    /**
+     * @var bool $sursis
+     * @return Proposition
+     */
+    public function setSurcis($sursis)
+    {
+        if ($sursis) {
+            $this->sursis = 'O';
+        } else {
+            $this->sursis = 'N';
+        }
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasSursis()
+    {
+        return ($this->sursis === 'O');
     }
 }

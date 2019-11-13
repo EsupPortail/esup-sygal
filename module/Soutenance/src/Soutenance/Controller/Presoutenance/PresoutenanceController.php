@@ -16,6 +16,7 @@ use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use DateInterval;
 use Exception;
 use Soutenance\Entity\Avis;
+use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportForm;
@@ -81,6 +82,7 @@ class PresoutenanceController extends AbstractController
         $avis = $this->getAvisService()->getAvisByThese($these);
 
         $validationBDD = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these) ;
+        $validationPDC = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PAGE_DE_COUVERTURE, $these) ;
 
         return new ViewModel([
             'these'                 => $these,
@@ -92,6 +94,7 @@ class PresoutenanceController extends AbstractController
             'tousLesAvis'           => count($avis) === count($rapporteurs),
             'urlFichierThese'       => $this->urlFichierThese(),
             'validationBDD'         => $validationBDD,
+            'validationPDC'         => $validationPDC,
 
             'deadline' => $this->getParametreService()->getParametreByCode('AVIS_DEADLINE')->getValeur(),
         ]);
@@ -145,6 +148,12 @@ class PresoutenanceController extends AbstractController
         $idMembre = $this->params()->fromRoute('membre');
         $membre = $this->getMembreService()->find($idMembre);
 
+        /** Ici on prépare la liste des acteurs correspondant aux différents rôles pour le Select du formulaire
+         *  d'association. On part du principe :
+         *  - qu'un Rapporteur du jury est Rapporteur et Membre du jury,
+         *  - qu'un Rapporteur absent  est Rapporteur,
+         *  - qu'un Membre du jury     est Membre du jury.
+         */
         $acteurs = $this->getActeurService()->getRepository()->findActeurByThese($these);
         switch($membre->getRole()) {
             case Membre::RAPPORTEUR :
@@ -157,7 +166,7 @@ class PresoutenanceController extends AbstractController
                 $acteurs = array_filter($acteurs, function(Acteur $a) {
                     /** @var Profil  $profil */
                     $profil = ($a->getRole()->getProfils()->first());
-                    return $profil->getRoleCode() === 'A';});
+                    return $profil->getRoleCode() === 'R';});
                 break;
             case Membre::MEMBRE :
                 $acteurs = array_filter($acteurs, function(Acteur $a) {
@@ -282,6 +291,11 @@ class PresoutenanceController extends AbstractController
         $these = $this->getTheseService()->getRepository()->find($theseId);
         /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
+
+        $etat = $this->getPropositionService()->getPropositionEtatByCode(Etat::VALIDEE);
+        $proposition->setEtat($etat);
+        $this->getPropositionService()->update($proposition);
+
         /** @var Avis[] $avis*/
         $avis = $this->getAvisService()->getAvisByThese($these);
 
@@ -289,6 +303,25 @@ class PresoutenanceController extends AbstractController
         $this->flashMessenger()
             //->setNamespace('presoutenance')
             ->addSuccessMessage("Notifications d'accord de soutenance envoyées");
+
+        $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
+    }
+
+    public function stopperDemarcheAction() {
+        /** @var These $these */
+        $theseId = $this->params()->fromRoute('these');
+        $these = $this->getTheseService()->getRepository()->find($theseId);
+        /** @var Proposition $proposition */
+        $proposition = $this->getPropositionService()->findByThese($these);
+
+        $etat = $this->getPropositionService()->getPropositionEtatByCode(Etat::REJETEE);
+        $proposition->setEtat($etat);
+        $this->getPropositionService()->update($proposition);
+
+        $this->getNotifierSoutenanceService()->triggerStopperDemarcheSoutenance($these, $proposition);
+        $this->flashMessenger()
+            //->setNamespace('presoutenance')
+            ->addSuccessMessage("Notifications d'arrêt des démarches de soutenance soutenance envoyées");
 
         $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }

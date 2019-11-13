@@ -4,12 +4,17 @@
  * @var Application\Entity\Db\These $these
  * @var Application\Entity\Db\Validation $validationBDD
  * @var Soutenance\Entity\Proposition $proposition
+ * @var \Application\Entity\Db\Validation $validationPDC
  *
  * @see Soutenance\Controller\Presoutenance\PresoutenanceController::presoutenanceAction()
  */
 
-$tousLesAvis = count($rapporteurs) === count($avis) ;
+use Application\Constants;
+use Soutenance\Entity\Etat;
+use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 
+$tousLesAvis = count($rapporteurs) === count($avis) ;
+$canFeuVert = $this->isAllowed(PresoutenancePrivileges::getResourceId(PresoutenancePrivileges::PRESOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU));
 $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->getIndividu());
 ?>
 
@@ -44,23 +49,85 @@ $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->get
     <!-- ENGAGEMENT IMPARTIALITE------------------------------------------------------------------------------------------->
     <?php echo $this->partial('soutenance/presoutenance/partial/engagement-impartialite'); ?>
 
+    <div class="box panel panel-info">
+        <div class="panel-heading">
+            <h2>Validation de la page de couverture</h2>
+        </div>
+        <div class="panel-body">
+            <?php
+                $ok_rapporteurs = false;
+                $tousLesRapporteurs = true;
+                foreach ($rapporteurs as $rapporteur) {
+                    if ($rapporteur->getActeur() === null) {
+                        $tousLesRapporteurs = false;
+                        break;
+                    }
+            }
+            $tousLesEngagements = count($rapporteurs) === count($engagements) ;
+            ?>
+            <?php if ($tousLesEngagements) : ?>
+                <?php if ($validationPDC !== null) : ?>
+                    La page de couverture a été validée le
+                    <?php echo current($validationPDC)->getHistoModification()->format(Constants::DATETIME_FORMAT); ?>
+                    par
+                    <?php echo current($validationPDC)->getHistoModificateur()->getDisplayName(); ?>.
+                <?php else : ?>
+                    <div class="row">
+                        <div class="col-md-8">
+                            Vous pouvez maintenant valider la page de couverture.
+                        </div>
+                        <div class="pull-right" style="margin-right: 2rem;">
+                            <a href="<?php echo $this->url('these/validation-page-de-couverture', ['these' => $these->getId()], [], true); ?>" class="btn btn-primary">
+                                Accéder à la validation de la PDC
+                            </a>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            <?php else : ?>
+                    Tous les engagments d'impartialité n'ont pas encore été signés.
+            <?php endif; ?>
+        </div>
+    </div>
     <!-- AVIS SOUTENANCE -------------------------------------------------------------------------------------------------->
     <?php echo $this->partial('soutenance/presoutenance/partial/avis-soutenance'); ?>
 
     <!-- FEU VERT --------------------------------------------------------------------------------------------------------->
-    <?php if ($tousLesAvis) : ?>
-        <a href="<?php echo $this->url('soutenance/presoutenance/feu-vert', ['these' => $these->getId()], [], true); ?>"
-            class="btn btn-primary pull-right"
-        >
-            <span class="glyphicon glyphicon-thumbs-up"></span>
-            Donner le feu vert pour la soutenance
-        </a>
+    <?php if($proposition->getEtat()->getCode() === Etat::EN_COURS) :?>
+            <?php if ($tousLesAvis) : ?>
+            <?php if ($canFeuVert) : ?>
+                <?php /** @see \Soutenance\Controller\Presoutenance\PresoutenanceController::feuVertAction() */ ?>
+                <a href="<?php echo $this->url('soutenance/presoutenance/feu-vert', ['these' => $these->getId()], [], true); ?>"
+                    class="btn btn-success action"
+                >
+                    <span class="glyphicon glyphicon-thumbs-up"></span>
+                    Donner le feu vert
+                </a>
+            <?php endif; ?>
+        <?php else : ?>
+            <p class="lead">
+                Vous ne pouvez commencer les démarches de présouteances qu'une fois toutes les validations obtenues.
+            </p>
+        <?php endif; ?>
+
+        <?php if ($canFeuVert) : ?>
+            <?php /** @see \Soutenance\Controller\Presoutenance\PresoutenanceController::stopperDemarcheAction() */ ?>
+            <a href="<?php echo $this->url('soutenance/presoutenance/stopper-demarche', ['these' => $these->getId()], [], true); ?>"
+               class="btn btn-danger action"
+            >
+                <span class="glyphicon glyphicon-thumbs-down"></span>
+                Stopper les démarches
+            </a>
+        <?php endif; ?>
+    <?php else :?>
+        <span style="font-size: 24pt">
+        <span class="badge <?php echo $proposition->getEtat()->getCode(); ?>" style="font-size: 24pt">
+            <?php echo $proposition->getEtat()->getLibelle(); ?>
+        </span>
+        </span>
+
     <?php endif; ?>
-<?php else : ?>
-    <p class="lead">
-        Vous ne pouvez commencer les démarches de présouteances qu'une fois toutes les validations obtenues.
-    </p>
 <?php endif; ?>
+
 
 <script>
     $(function() {

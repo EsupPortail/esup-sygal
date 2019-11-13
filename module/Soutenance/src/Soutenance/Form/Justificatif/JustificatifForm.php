@@ -3,7 +3,6 @@
 namespace Soutenance\Form\Justificatif;
 
 use Application\Entity\Db\NatureFichier;
-use Soutenance\Entity\Proposition;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Zend\Form\Element\Button;
 use Zend\Form\Element\File;
@@ -76,17 +75,20 @@ class JustificatifForm extends Form {
                 'class' => 'btn btn-success',
             ],
         ]);
+
         $this->setInputFilter((new Factory())->createInputFilter([
-            'nature' => [
+            'nature'    => [
+                'name' => 'nature',
                 'required' => true,
             ],
-            'fichier' => [
+            'fichier'   => [
+                'name' => 'fichier',
                 'required' => false,
             ],
-            'membre' => [
+            'membre'    => [
+                'name' => 'membre',
                 'required' => false,
             ],
-
         ]));
     }
 }

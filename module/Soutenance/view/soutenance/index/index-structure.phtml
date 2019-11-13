@@ -1,11 +1,16 @@
 <?php
 
 /**
+ * @see \Soutenance\Controller\Index\IndexController::indexStructureAction()
  * @var \Soutenance\Entity\Proposition[] $propositions
+ * @var Role $role
  */
 
 use Application\Entity\Db\Role;
+use Application\Provider\Privilege\ThesePrivileges;
 
+$canVoirThese = $this->isAllowed(ThesePrivileges::getResourceId(ThesePrivileges::THESE_CONSULTATION_FICHE));
+$canSuppression = ($role->getCode() === Role::CODE_ADMIN_TECH);
 ?>
 
 <h1 class="page-header">
@@ -28,6 +33,9 @@ use Application\Entity\Db\Role;
                 Direction
             </th>
             <th>
+                État
+            </th>
+            <th>
                 Actions
             </th>
         </tr>
@@ -35,7 +43,15 @@ use Application\Entity\Db\Role;
     <tbody>
         <?php foreach ($propositions as $proposition) : ?>
             <tr>
-                <td> <?php echo $proposition->getThese()->getTitre(); ?> </td>
+                <td>
+                    <?php if ($canVoirThese) : ?>
+                        <a href="<?php echo $this->url('these/identite', ['these' => $proposition->getThese()->getId()], [] ,true); ?>">
+                    <?php endif; ?>
+                        <?php echo $proposition->getThese()->getTitre(); ?>
+                    <?php if ($canVoirThese) : ?>
+                        </a>
+                    <?php endif; ?>
+                </td>
                 <td> <?php echo $proposition->getThese()->getDoctorant()->getIndividu(); ?> </td>
                 <td>
                     <?php foreach ($proposition->getThese()->getEncadrements() as $encadrement) : ?>
@@ -44,6 +60,11 @@ use Application\Entity\Db\Role;
                         <?php if ($encadrement->getRole()->getCode() !== Role::CODE_DIRECTEUR_THESE) echo "</i>"; ?>
                         <br/>
                     <?php endforeach; ?>
+                </td>
+                <td>
+                    <span class="badge <?php echo $proposition->getEtat()->getCode(); ?>">
+                        <?php echo $proposition->getEtat()->getLibelle(); ?>
+                    </span>
                 </td>
                 <td>
                     <a href="<?php echo $this->url('soutenance/proposition', ['these' => $proposition->getThese()->getId()], [], true); ?>"
@@ -57,6 +78,13 @@ use Application\Entity\Db\Role;
                     >
                         Présoutenance
                     </a>
+                    <br/>
+                    <?php if ($canSuppression) : ?>
+                    <a href="<?php echo $this->url('soutenance'); ?>"
+                       title="">
+                        Suppression
+                    </a>
+                    <?php endif; ?>
                 </td>
             </tr>
         <?php endforeach; ?>
