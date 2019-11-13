@@ -15,6 +15,7 @@ use Application\Entity\Db\VersionFichier;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
+use Soutenance\Entity\Etat;
 use Soutenance\Entity\Justificatif;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
@@ -71,6 +72,7 @@ class PropositionController extends AbstractController {
         if (!$proposition) {
             $proposition = new Proposition();
             $proposition->setThese($these);
+            $proposition->setEtat($this->getPropositionService()->getPropositionEtatByCode(Etat::EN_COURS));
             $this->getPropositionService()->create($proposition);
 
             /** @var Acteur[] $encadrements */
