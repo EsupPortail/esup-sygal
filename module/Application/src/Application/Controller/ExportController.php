@@ -84,8 +84,8 @@ class ExportController extends AbstractController
             'Date de prévisionnel de soutenance'    => function (These $these) { return $these->getDatePrevisionSoutenance(); },
             'Date de soutenance'                    => function (These $these) { return $these->getDateSoutenance(); },
             'Date de fin de confientialité'         => function (These $these) { return $these->getDateFinConfidentialite(); },
-            'Date de dépôt version initiale'        => function (These $these) { $file = $these->hasVersionInitiale(); if ($file) return $file->getHistoCreation()->format('d/m/Y'); },
-            'Date de dépôt version corigée'         => function (These $these) { $file = $these->hasVersionCorrigee(); if ($file) return $file->getHistoCreation()->format('d/m/Y'); },
+            'Date de dépôt version initiale'        => function (These $these) { $file = $these->hasVersionInitiale(); if ($file) return $file->getFichier()->getHistoCreation()->format('d/m/Y'); },
+            'Date de dépôt version corigée'         => function (These $these) { $file = $these->hasVersionCorrigee(); if ($file) return $file->getFichier()->getHistoCreation()->format('d/m/Y'); },
             //Flags
             'Etat de la thèse'                      => function (These $these) { return $these->getEtatTheseToString();},
             'Autorisation à soutenir'               => function (These $these) { return $these->getSoutenanceAutorisee();},
