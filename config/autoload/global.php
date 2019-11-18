@@ -38,7 +38,7 @@ return [
         // préfixe à ajouter systématiquement devant le sujet des mails
         'subject_prefix' => '[SyGAL]',
         // destinataires à ajouter systématiquement en copie simple ou cachée de tous les mails
-        'cc' => ['suivi-mail-sodoct@unicaen.fr'],
+        //'cc' => [],
         //'bcc' => [],
     ],
     'module_listener_options' => [
