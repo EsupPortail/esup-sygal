@@ -84,6 +84,7 @@ foreach ($proposition->getMembres() as $membre) {
                     <li>
                         <?php echo $this->justificatif()->render($justificatif, $urlFichierThese, ['court' => true]); ?>
                         <?php if ($canModifier) : ?>
+                            <?php /** @see \Soutenance\Controller\Proposition\PropositionController::retirerJustificatifAction() */ ?>
                             <a href="<?php echo $this->url('soutenance/proposition/retirer-justificatif', ['these'=>$these->getId(), 'justificatif'=>$justificatif->getId()], [], true); ?>">
                                 <span style='color:darkred;' class="glyphicon glyphicon-remove" title="Supprimer le justificatif"></span>
                             </a>

@@ -5,7 +5,6 @@ namespace Soutenance\Controller\Proposition;
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Doctorant;
-use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\Role;
@@ -91,80 +90,8 @@ class PropositionController extends AbstractController {
 
         /** Justificatifs attendus ---------------------------------------------------------------------------------- */
 
-        $justificatifsDeposes = $proposition->getJustificatifs();
-
-        $justificatifs = [];
-
-        /**
-         * Justificatifs liés à la nature de la thèse ou de la soutenance :
-         * - NatureFichier::CODE_DELOCALISATION_SOUTENANCE,
-         * - NatureFichier::CODE_DEMANDE_LABEL,
-         * - NatureFichier::CODE_DEMANDE_CONFIDENT,
-         * - NatureFichier::CODE_LANGUE_ANGLAISE
-         */
-        if ($proposition->isExterieur()) {
-            $justificatifs[] = [
-                'type' => NatureFichier::CODE_DELOCALISATION_SOUTENANCE,
-                'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_DELOCALISATION_SOUTENANCE, null),
-            ];
-        }
-        if ($proposition->isLabelEuropeen()) {
-            $justificatifs[] = [
-                'type' => NatureFichier::CODE_DEMANDE_LABEL,
-                'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_DEMANDE_LABEL, null),
-            ];
-        }
-        if ($proposition->getThese()->getDateFinConfidentialite() !== null) {
-            $justificatifs[] = [
-                'type' => NatureFichier::CODE_DEMANDE_CONFIDENT,
-                'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_DEMANDE_CONFIDENT, null),
-            ];
-        }
-        if ($proposition->isManuscritAnglais() OR $proposition->isSoutenanceAnglais()) {
-            $justificatifs[] = [
-                'type' => NatureFichier::CODE_LANGUE_ANGLAISE,
-                'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_LANGUE_ANGLAISE, null),
-            ];
-        }
-
-        /**
-         * Justificatifs liés aux membres du jury :
-         * - NatureFichier::CODE_DELEGUATION_SIGNATURE,
-         * - NatureFichier::CODE_JUSTIFICATIF_HDR,
-         * - NatureFichier::CODE_JUSTIFICATIF_EMERITAT
-         * @var Membre $membre
-         */
-        foreach ($proposition->getMembres() as $membre) {
-            if ($membre->isVisio()) {
-                $justificatifs[] = [
-                    'type' => NatureFichier::CODE_DELEGUATION_SIGNATURE,
-                    'membre' => $membre,
-                    'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_DELEGUATION_SIGNATURE, $membre),
-                ];
-            }
-            if ($membre->getQualite()->getHDR() === 'O') {
-                $justificatifs[] = [
-                    'type' => NatureFichier::CODE_JUSTIFICATIF_HDR,
-                    'membre' => $membre,
-                    'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_JUSTIFICATIF_HDR, $membre),
-                ];
-            }
-            if ($membre->getQualite()->getEmeritat() === 'O') {
-                $justificatifs[] = [
-                    'type' => NatureFichier::CODE_JUSTIFICATIF_EMERITAT,
-                    'membre' => $membre,
-                    'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_JUSTIFICATIF_EMERITAT, $membre),
-                ];
-            }
-        }
-
-        $justificatifsOk = true;
-        foreach ($justificatifs as $justificatif) {
-            if ($justificatif['justificatif'] === null) {
-                $justificatifsOk = false;
-                break;
-            }
-        }
+        $justificatifs = $this->getJustificatifService()->generateListeJustificatif($proposition);
+        $justificatifsOk = $this->getJustificatifService()->isJustificatifsOk($proposition, $justificatifs);
 
         return new ViewModel([
             'these'             => $these,

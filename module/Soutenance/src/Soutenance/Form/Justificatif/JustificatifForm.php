@@ -29,6 +29,7 @@ class JustificatifForm extends Form {
                     NatureFichier::CODE_DELEGUATION_SIGNATURE => 'Demande de déléguation de signature',
                     NatureFichier::CODE_DEMANDE_LABEL => 'Demande de label européen',
                     NatureFichier::CODE_LANGUE_ANGLAISE => 'Demande de manuscrit ou soutenance en langue anglaise',
+                    NatureFichier::CODE_DEMANDE_CONFIDENT => 'Demande de confidentialité',
                 ],
                 'attributes' => [
                     'class' => 'bootstrap-selectpicker show-tick',

@@ -13,9 +13,56 @@ use Soutenance\Form\Justificatif\JustificatifForm;
  * @var Membre[] $membres
  */
 
+$explications = [];
+$explications[NatureFichier::CODE_JUSTIFICATIF_HDR] =
+    "<div class='alert alert-warning'>" .
+        "<strong><span class='glyphicon glyphicon-info-sign'></span> Justification d'habilitation à diriger des recherches</strong> <br/>".
+        "Le justificatif d'habilitation à diriger des recherches est demandé pour tous les membres de rang B titulaire d'un HDR extérieur à l'établissement/la COMUE de soutenance. <br/>" .
+        "<u>NB:</u> <i>Pour les membres du jury étrangers, il est nécessaire de fournir un équivalent à l'habilitation à diriger des recherches ou d'un curriculum vitae en dernier recours.</i>" .
+    "</div>";
+$explications[NatureFichier::CODE_JUSTIFICATIF_EMERITAT] =
+    "<div class='alert alert-warning'>" .
+    "<strong><span class='glyphicon glyphicon-info-sign'></span> Justification d'émeritat</strong> <br/>".
+    "Le justificatif d'émeritat est demandé pour tous les membres disposant d'un éméritat extérieur à l'établissement/la COMUE de soutenance. <br/>" .
+    "<u>NB:</u> <i>Pour les membres du jury étrangers, il est nécessaire de fournir un équivalent à l'éméritat ou d'un curriculum vitae en dernier recours.</i>" .
+    "</div>";
+$explications[NatureFichier::CODE_DELOCALISATION_SOUTENANCE] =
+    "<div class='alert alert-warning'>" .
+    "<strong><span class='glyphicon glyphicon-info-sign'></span> Délocalisation de la soutenance</strong> <br/>".
+    "Lorsque la soutenance se déroule à l'extérieur de l'établissement d'inscription il est nécessaire de fournir un justificatif de délocalisation de soutenance. <br/>" .
+    "<u>NB:</u> Le formulaire de demande de délocalisation de la soutenance peut être téléchargé ici : ".
+    "<a href='".$this->url('informations/fichiers/telecharger', ['id' => 401], [], true) ."'>formulaire de demande de délocalisation.</a></i>" .
+    "</div>";
+$explications[NatureFichier::CODE_DELEGUATION_SIGNATURE] =
+    "<div class='alert alert-warning'>" .
+    "<strong><span class='glyphicon glyphicon-info-sign'></span> Délégation de signature</strong> <br/>".
+    "Les membres du jury participant à la soutenance en visioconférence doivent au préalable remplir une demande de déléguation de signature <br/>" .
+    "<u>NB:</u> Le formulaire de demande de délégation de signature peut être téléchargé ici : ".
+    "<a href='".$this->url('informations/fichiers/telecharger', ['id' => 381], [], true) ."'>formulaire de demande de délégation.</a></i>" .
+    "</div>";
+$explications[NatureFichier::CODE_DEMANDE_LABEL] =
+    "<div class='alert alert-warning'>" .
+    "<strong><span class='glyphicon glyphicon-info-sign'></span> Demande de label européen</strong> <br/>".
+    "<u>NB:</u> La demande d'un label européen nécessite le retour du formulaire de demande de label européen qui peut être téléchargé ici : ".
+    "<a href='".$this->url('informations/fichiers/telecharger', ['id' => 402], [], true) ."'>formulaire de demande de label européen.</a></i>" .
+    "</div>";
+$explications[NatureFichier::CODE_LANGUE_ANGLAISE] =
+    "<div class='alert alert-warning'>" .
+    "<strong><span class='glyphicon glyphicon-info-sign'></span> Délégation de signature</strong> <br/>".
+    "L'usage de la langue angliase pour la rédaction du manuscrit ou la soutenance de la thèse doit être motivé par un lettre justifiant la nécessité de l'usage de la langue anglaise. <br/>" .
+    "</div>";
+$explications[NatureFichier::CODE_DEMANDE_CONFIDENT] =
+    "<div class='alert alert-warning'>" .
+    "<strong><span class='glyphicon glyphicon-info-sign'></span> Demande de confidentialité</strong> <br/>".
+    "<u>NB:</u> La demande de confidentialité nécessite le retour du formulaire de demande de label européen qui peut être téléchargé ici : ".
+    "<a href='".$this->url('informations/fichiers/telecharger', ['id' => 403], [], true) ."'>formulaire de demande de confidentialité.</a></i>" .
+    "</div>";
 ?>
 
 <?php echo $this->form($form); ?>
+
+<div class="explication">
+</div>
 
 <style>
     input[type='file'] {
@@ -69,6 +116,7 @@ use Soutenance\Form\Justificatif\JustificatifForm;
             case <?php echo "'".NatureFichier::CODE_DELOCALISATION_SOUTENANCE."'"; ?> :
             case <?php echo "'".NatureFichier::CODE_DEMANDE_LABEL."'"; ?> :
             case <?php echo "'".NatureFichier::CODE_LANGUE_ANGLAISE."'"; ?> :
+            case <?php echo "'".NatureFichier::CODE_DEMANDE_CONFIDENT."'"; ?> :
                 $('select[name="membre"]').parent().hide();
                 break;
             default :
@@ -76,6 +124,39 @@ use Soutenance\Form\Justificatif\JustificatifForm;
                 for (let i = 0 ; i < nbMembres ; ++i) {
                     $('select[name="membre"]').append(new Option(membres[i][1], membres[i][0]));
                 }
+                break;
+        }
+    });
+
+    /** Changement du texte explicatif associé au type de document **/
+    $('select[name="nature"]').change(function() {
+        console.log('Changes');
+        let value =  $(this). children("option:selected"). val();
+        $('div.explication').html("");
+        switch(value) {
+            case <?php echo "'".NatureFichier::CODE_JUSTIFICATIF_HDR."'"; ?> :
+                $('div.explication').html("<?php echo $explications[NatureFichier::CODE_JUSTIFICATIF_HDR]; ?>");
+                break;
+            case <?php echo "'".NatureFichier::CODE_JUSTIFICATIF_EMERITAT."'"; ?> :
+                $('div.explication').html("<?php echo $explications[NatureFichier::CODE_JUSTIFICATIF_EMERITAT]; ?>");
+                break;
+            case <?php echo "'".NatureFichier::CODE_DELOCALISATION_SOUTENANCE."'"; ?> :
+                $('div.explication').html("<?php echo $explications[NatureFichier::CODE_DELOCALISATION_SOUTENANCE]; ?>");
+                break;
+            case <?php echo "'".NatureFichier::CODE_DELEGUATION_SIGNATURE."'"; ?> :
+                $('div.explication').html("<?php echo $explications[NatureFichier::CODE_DELEGUATION_SIGNATURE]; ?>");
+                break;
+            case <?php echo "'".NatureFichier::CODE_DEMANDE_LABEL."'"; ?> :
+                $('div.explication').html("<?php echo $explications[NatureFichier::CODE_DEMANDE_LABEL]; ?>");
+                break;
+            case <?php echo "'".NatureFichier::CODE_LANGUE_ANGLAISE."'"; ?> :
+                $('div.explication').html("<?php echo $explications[NatureFichier::CODE_LANGUE_ANGLAISE]; ?>");
+                break;
+            case <?php echo "'".NatureFichier::CODE_DEMANDE_CONFIDENT."'"; ?> :
+                $('div.explication').html("<?php echo $explications[NatureFichier::CODE_DEMANDE_CONFIDENT]; ?>");
+                break;
+
+            default :
                 break;
         }
     });
