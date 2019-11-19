@@ -158,7 +158,7 @@ class PropositionService {
         $rapporteurs = [];
         /** @var Membre $membre */
         foreach ($proposition->getMembres() as $membre) {
-            if($membre->getRole() === Membre::RAPPORTEUR || $membre->getRole() === Membre::RAPPORTEUR_ABSENT) $rapporteurs[] = $membre;
+            if($membre->estRapporteur()) $rapporteurs[] = $membre;
         }
         return $rapporteurs;
     }
@@ -223,7 +223,7 @@ class PropositionService {
             if ($membre->getGenre() === "F") $nbFemme++; else $nbHomme++;
             if ($membre->getRang() === "A") $nbRangA++;
             if ($membre->getExterieur() === "oui") $nbExterieur++;
-            if ($membre->getRole() === Membre::RAPPORTEUR || $membre->getRole() === Membre::RAPPORTEUR_ABSENT) $nbRapporteur++;
+            if ($membre->estRapporteur()) $nbRapporteur++;
         }
 
         $indicateurs = [];

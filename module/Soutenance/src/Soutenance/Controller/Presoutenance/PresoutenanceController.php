@@ -144,6 +144,11 @@ class PresoutenanceController extends AbstractController
         $theseId = $this->params()->fromRoute('these');
         $these = $this->getTheseService()->getRepository()->find($theseId);
 
+        /** @var Proposition $proposition */
+        $proposition = $this->getPropositionService()->findByThese($these);
+        /** @var Membre[] $membres */
+        $membres = $proposition->getMembres();
+
         /** @var Membre $membre */
         $idMembre = $this->params()->fromRoute('membre');
         $membre = $this->getMembreService()->find($idMembre);
@@ -156,7 +161,8 @@ class PresoutenanceController extends AbstractController
          */
         $acteurs = $this->getActeurService()->getRepository()->findActeurByThese($these);
         switch($membre->getRole()) {
-            case Membre::RAPPORTEUR :
+            case Membre::RAPPORTEUR_JURY :
+            case Membre::RAPPORTEUR_VISIO :
                 $acteurs = array_filter($acteurs, function(Acteur $a) {
                     /** @var Profil  $profil */
                     $profil = ($a->getRole()->getProfils()->first());
@@ -168,12 +174,24 @@ class PresoutenanceController extends AbstractController
                     $profil = ($a->getRole()->getProfils()->first());
                     return $profil->getRoleCode() === 'R';});
                 break;
-            case Membre::MEMBRE :
+            case Membre::MEMBRE_JURY :
                 $acteurs = array_filter($acteurs, function(Acteur $a) {
                     /** @var Profil  $profil */
                     $profil = ($a->getRole()->getProfils()->first());
                     return $profil->getRoleCode() === 'M';});
                 break;
+        }
+
+        $acteurs_libres = [];
+        foreach ($acteurs as $acteur) {
+            $libre = true;
+            foreach ($membres as $membre_) {
+                if ($membre_->getActeur() && $membre_->getActeur()->getId() === $acteur->getId()) {
+                    $libre = false;
+                    break;
+                }
+            }
+            if ($libre) $acteurs_libres[] = $acteur;
         }
 
 
@@ -198,7 +216,7 @@ class PresoutenanceController extends AbstractController
 
         return new ViewModel([
             'title' => "Association de ".$membre->getDenomination()." à un acteur SyGAL",
-            'acteurs' => $acteurs,
+            'acteurs' => $acteurs_libres,
             'membre' => $membre,
             'these' => $these,
         ]);

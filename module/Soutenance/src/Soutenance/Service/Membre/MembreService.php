@@ -85,7 +85,7 @@ class MembreService {
         $qualite = $this->getQualiteService()->getQualiteByLibelle($acteur->getQualite());
         $membre->setQualite(($qualite)?$qualite:$inconnue);
         $membre->setEtablissement($acteur->getEtablissement()->getLibelle());
-        $membre->setRole(Membre::MEMBRE);
+        $membre->setRole(Membre::MEMBRE_JURY);
         $membre->setExterieur("non");
         $membre->setEmail($acteur->getIndividu()->getEmail());
         $membre->setActeur($acteur);
@@ -101,9 +101,10 @@ class MembreService {
     {
         $qb = $this->getEntityManager()->getRepository(Membre::class)->createQueryBuilder('membre')
             ->andWhere('membre.proposition = :proposition')
-            ->andWhere('membre.role = :rapporteur OR membre.role = :rapporteurAbsent')
+            ->andWhere('membre.role = :rapporteur OR membre.role = :rapporteurVisio or membre.role = :rapporteurAbsent')
             ->setParameter('proposition', $proposition)
-            ->setParameter('rapporteur', Membre::RAPPORTEUR)
+            ->setParameter('rapporteur', Membre::RAPPORTEUR_JURY)
+            ->setParameter('rapporteurVisio', Membre::RAPPORTEUR_VISIO)
             ->setParameter('rapporteurAbsent', Membre::RAPPORTEUR_ABSENT)
         ;
 
