@@ -5,6 +5,7 @@ namespace Soutenance\Service\Membre;
 use Application\Entity\Db\Acteur;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\QueryBuilder;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Entity\Qualite;
@@ -17,11 +18,24 @@ class MembreService {
     use QualiteServiceAwareTrait;
 
     /**
+     * @return QueryBuilder
+     */
+    public function createQueryBuilder()
+    {
+        $qb = $this->getEntityManager()->getRepository(Membre::class)->createQueryBuilder("membre")
+            ->addSelect('proposition')->join('membre.proposition', 'proposition')
+            ->addSelect('qualite')->join('membre.qualite', 'qualite')
+            ->addSelect('acteur')->leftJoin('membre.acteur', 'acteur')
+            ;
+        return $qb;
+    }
+
+    /**
      * @param int $id
      * @return Proposition
      */
     public function find($id) {
-        $qb = $this->getEntityManager()->getRepository(Membre::class)->createQueryBuilder("membre")
+        $qb = $this->createQueryBuilder()
             ->andWhere("membre.id = :id")
             ->setParameter("id", $id)
         ;
@@ -99,7 +113,7 @@ class MembreService {
      */
     public function getRapporteursByProposition($proposition)
     {
-        $qb = $this->getEntityManager()->getRepository(Membre::class)->createQueryBuilder('membre')
+        $qb = $this->createQueryBuilder()
             ->andWhere('membre.proposition = :proposition')
             ->andWhere('membre.role = :rapporteur OR membre.role = :rapporteurVisio or membre.role = :rapporteurAbsent')
             ->setParameter('proposition', $proposition)

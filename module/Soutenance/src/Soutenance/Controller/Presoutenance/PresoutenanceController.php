@@ -9,6 +9,7 @@ use Application\Entity\Db\Profil;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
+use Application\Service\FichierThese\PdcData;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
@@ -26,6 +27,7 @@ use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAware
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
 use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
+use Soutenance\Service\ProcesVerbalSoutenance\ProcesVerbalSoutenancePdfExporter;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
@@ -342,5 +344,31 @@ class PresoutenanceController extends AbstractController
             ->addSuccessMessage("Notifications d'arrêt des démarches de soutenance soutenance envoyées");
 
         $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
+    }
+
+
+    /** Document pour la signature en présidence */
+    public function procesVerbalSoutenanceAction()
+    {
+        /**
+         * @var These $these
+         * @var Proposition $proposition
+         * @var PdcData $pdcData;
+         */
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findByThese($these);
+        $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
+
+        /* @var $renderer \Zend\View\Renderer\PhpRenderer */
+        $renderer = $this->getServiceLocator()->get('view_renderer');
+
+        $exporter = new ProcesVerbalSoutenancePdfExporter($renderer, 'A4');
+        $exporter->setVars([
+            'proposition' => $proposition,
+            'these' => $these,
+            'informations' => $pdcData,
+        ]);
+        $exporter->export('export.pdf');
+        exit;
     }
 }

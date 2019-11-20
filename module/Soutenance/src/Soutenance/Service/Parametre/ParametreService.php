@@ -24,6 +24,16 @@ class ParametreService {
         return $result;
     }
 
+    public function getParametresAsArray()
+    {
+        $result = $this->getParametres();
+        $array = [];
+        foreach ($result as $item) {
+            $array[$item->getCode()] = $item->getValeur();
+        }
+        return $array;
+    }
+
     /**
      * @param integer $id
      * @return Parametre

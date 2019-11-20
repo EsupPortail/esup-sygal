@@ -5,6 +5,7 @@ namespace Soutenance\Service\Justificatif;
 use Application\Entity\Db\NatureFichier;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\QueryBuilder;
 use Soutenance\Entity\Justificatif;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
@@ -15,6 +16,9 @@ use Zend\Mvc\Controller\AbstractActionController;
 class JustificatifService {
     use EntityManagerAwareTrait;
 
+    /**
+     * @return QueryBuilder
+     */
     public function createQueryBuilder()
     {
         $qb = $this->getEntityManager()->getRepository(Justificatif::class)->createQueryBuilder('justificatif')
