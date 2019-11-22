@@ -10,8 +10,6 @@ use Application\View\Renderer\PhpRenderer;
  * @var string      $libEtablissementA
  * @var string      $libEtablissementLe
  * @var string      $libEtablissementDe
- * @var string      $libPresidentLe
- * @var string      $nomPresid
  * @var string      $libTribunal
  */
 ?>
@@ -38,7 +36,7 @@ use Application\View\Renderer\PhpRenderer;
 <p>
     En application de la Charte de dépôt et de diffusion des thèses votée par le
     Conseil Académique de Normandie Université le 28/11/2016, il est convenu ce qui suit
-    entre Normandie Université, représentée par <?php echo lcfirst($libPresidentLe) ?> <?php echo $libEtablissementDe ?>,
+    entre Normandie Université, représentée par le chef d'établissement,
     et l’auteur identifié ci-dessous :
 </p>
 <p>
@@ -93,8 +91,6 @@ use Application\View\Renderer\PhpRenderer;
     </tr>
     <tr>
         <td>L'auteur</td>
-        <td>
-            <?php echo $libPresidentLe ?> <?php echo $libEtablissementDe ?>
-        </td>
+        <td>Le chef d'établissement</td>
     </tr>
 </table>
