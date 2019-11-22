@@ -59,6 +59,13 @@ class Module
             ['--em',                     "Facultatif. Nom de l'EntityManager à utiliser. Valeur par défaut: 'orm_default'."],
 
             // command
+            'update-these --id= [--verbose] [--em=]' => "Mettre à jour une thèse et ses données liées.",
+            // parameters
+            ['--id',      "Requis. Id de la thèse"],
+            ['--verbose', "Facultatif. Activer les logs verbeux (debug)."],
+            ['--em',      "Facultatif. Nom de l'EntityManager à utiliser. Valeur par défaut: 'orm_default'."],
+
+            // command
             'synchronize --service= [--em=]' => "Lancer la synchro UnicaenImport pour un seul service.",
             // parameters
             ['--service', "Requis. Identifiant du service, ex: 'variable'"],

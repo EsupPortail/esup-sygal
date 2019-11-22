@@ -21,7 +21,7 @@ class DbService
     use EntityManagerAwareTrait;
     use LoggerAwareTrait;
 
-    const INSERT_QUERIES_CHUNK_SIZE = 200;
+    const INSERT_QUERIES_CHUNK_SIZE = 500;
 
     /**
      * @var Etablissement
@@ -118,6 +118,15 @@ class DbService
     }
 
     /**
+     * Débute une transaction en bdd.
+     */
+    public function beginTransaction()
+    {
+        $connection = $this->entityManager->getConnection();
+        $connection->beginTransaction();
+    }
+
+    /**
      * Supprime certaines données en base satisfaisant les critères spécifiés,
      * concernant le service et l'établissement courants.
      *
@@ -157,7 +166,6 @@ class DbService
 
         /** Etablissement de la transaction Oracle */
         $connection = $this->entityManager->getConnection();
-        $connection->beginTransaction();
 
         /** Construction des requêtes SQL **/
         $queries = [];
@@ -170,7 +178,7 @@ class DbService
         $_debut = microtime(true);
         $queriesChunks = array_chunk($queries, $this->insertQueriesChunkSize);
         foreach ($queriesChunks as $queryChunk) {
-            $this->logger->debug(sprintf("Execution de %s requête(s).", count($queryChunk)));
+            $this->logger->debug(sprintf("    (Execution de %s requêtes SQL)", count($queryChunk)));
             $sql = $this->sqlGenerator->wrapSQLQueriesInBeginEnd($queryChunk);
             try {
                 $connection->executeQuery($sql);
