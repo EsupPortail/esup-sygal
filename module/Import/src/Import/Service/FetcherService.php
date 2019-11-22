@@ -4,7 +4,6 @@ namespace Import\Service;
 
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\These;
-use Application\SourceCodeStringHelper;
 use Application\SourceCodeStringHelperAwareTrait;
 use Assert\Assertion;
 use Assert\AssertionFailedException;
@@ -106,90 +105,77 @@ class FetcherService
     }
 
     /**
-     * Demande au WS d'import un enregistrement particulier d'un service.
-     *
-     * @param string $serviceName
-     * @param string $sourceCode Source code de l'enregistrement à importer
-     */
-    public function fetchRow($serviceName, $sourceCode)
-    {
-        $sourceCode = $this->normalizeSourceCode($sourceCode);
-
-        $this->logger->info(sprintf("Import: service %s[%s] {", $serviceName, $sourceCode));
-
-        $debut = microtime(true);
-        $startDate = date_create();
-
-        $uri = $serviceName . "/" . $sourceCode;
-        $this->callService->setConfig($this->getConfigForEtablissement());
-        $jsonEntity = $this->callService->get($uri);
-        $_fin = microtime(true);
-        $this->logger->info(sprintf("- interrogation du WS '%s' en %.2f secondes", $serviceName, $_fin - $debut));
-
-        $_deb = microtime(true);
-        $this->dbService->setServiceName($serviceName);
-        $this->dbService->setEtablissement($this->etablissement);
-        $this->dbService->clear(['id' => $sourceCode]);
-        $this->dbService->save([$jsonEntity]);
-        $this->dbService->commit();
-        $_fin = microtime(true);
-        $this->logger->info(sprintf("- enregistrement en BDD en %.2f secondes.", $_fin - $_deb));
-
-        $this->logger->info(sprintf("} %.2f secondes.", $_fin - $debut));
-        $this->dbService->insertLog($serviceName . ($sourceCode ? "[$sourceCode]" : ''), $startDate, $_fin - $debut, $uri, 'OK');
-        $this->dbService->commit();
-    }
-
-    /**
      * Demande au WS d'import tous les enregistrements d'un service, éventuellement filtrés.
      *
-     * @param string $serviceName
-     * @param array  $filters
+     * @param string $serviceName Nom du service concerné, ex: 'individu'
+     * @param array  $filters     Si $filters['source_code'] existe, seul cet enregistrement est importé
      */
     public function fetchRows($serviceName, array $filters = [])
     {
-        $this->logger->info(sprintf("Import: service '%s' {", $serviceName));
+        $sourceCode = null;
+        if (isset($filters['source_code'])) {
+            $sourceCode = $this->normalizeSourceCode($filters['source_code']);
+            $filters = []; // NB: raz des filtres
+        }
 
         $startDate = date_create();
         $debut = microtime(true);
 
+        $this->dbService->setServiceName($serviceName);
+        $this->dbService->setEtablissement($this->etablissement);
+        $this->dbService->beginTransaction();
+
+        if ($sourceCode) {
+            $this->dbService->clear(['id' => $sourceCode]);
+        } else {
+            $this->dbService->clear($filters);
+        }
+
         $this->callService->setConfig($this->getConfigForEtablissement());
         $apiFilters = $this->prepareFiltersForAPIRequest($filters);
-        $jsonEntities = [];
+        $jsonEntitiesCount = 0;
         $page = 1;
+        $pageCount = 0;
         do {
-            $params = array_merge($apiFilters, ['page' => $page]);
             $uri = $serviceName;
-            if (count($params) > 0) {
-                $uri .= '?' . http_build_query($params);
+            if ($sourceCode) {
+                $uri .= '/' . $sourceCode;
+            } else {
+                $params = array_merge($apiFilters, ['page' => $page]);
+                if (count($params) > 0) {
+                    $uri .= '?' . http_build_query($params);
+                }
             }
 
             $_deb = microtime(true);
             $json = $this->callService->get($uri);
             $_fin = microtime(true);
-            $this->logger->debug(sprintf("  ('%s' en %.2f secondes.)", $uri, $_fin - $_deb));
+            $this->logger->info(sprintf("Interrogation du WS : %s en %f s.", $uri, $_fin - $_deb));
 
-            $pageCount = $json->page_count; // NB: même valeur retournée à chaque requête (nombre total de pages)
-            $jsonName = str_replace("-", "_", $serviceName);
-            $jsonCollection = $json->{'_embedded'}->{$jsonName};
-            $jsonEntities = array_merge($jsonEntities, $jsonCollection);
-            $page++;
+            if ($sourceCode) {
+                $jsonEntities = [$json];
+            } else {
+                $pageCount = $json->page_count; // NB: le même nombre total de pages est retourné à chaque requête
+                $jsonName = str_replace("-", "_", $serviceName);
+                $jsonEntities = $json->{'_embedded'}->{$jsonName};
+                $page++;
+            }
+
+            $_deb = microtime(true);
+            $this->dbService->save($jsonEntities);
+            $_fin = microtime(true);
+            $this->logger->info(sprintf("  Enregistrement dans la table temporaire : %d lignes en %f s.", count($jsonEntities), $_fin - $_deb));
+
+            $jsonEntitiesCount += count($jsonEntities);
+            unset($jsonEntities);
         }
         while ($page <= $pageCount);
         $_fin = microtime(true);
-        $this->logger->info(sprintf("- interrogation du WS '%s' en %.2f secondes", $serviceName, $_fin - $debut));
 
-        $_deb = microtime(true);
-        $this->dbService->setServiceName($serviceName);
-        $this->dbService->setEtablissement($this->etablissement);
-        $this->dbService->clear($filters);
-        $this->dbService->save($jsonEntities);
         $this->dbService->commit();
-        $_fin = microtime(true);
-        $this->logger->info(sprintf("- enregistrement en BDD de %d lignes en %.2f secondes.", count($jsonEntities), $_fin - $_deb));
 
-        $this->logger->info(sprintf("} %.2f secondes.", $_fin - $debut));
-        $this->dbService->insertLog($serviceName, $startDate, $_fin - $debut, $uri, 'OK');
+        $this->logger->info(sprintf("} %f s.", $_fin - $debut));
+        $this->dbService->insertLog($serviceName . ($sourceCode ? "[$sourceCode]" : ''), $startDate, $_fin - $debut, $uri, 'OK');
         $this->dbService->commit();
     }
 
