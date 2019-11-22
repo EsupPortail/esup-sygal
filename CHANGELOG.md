@@ -1,6 +1,26 @@
 Journal des modifications
 =========================
 
+1.3.0 (22/11/2019)
+------------------
+
+### Ajouts
+
+- Convention de mise en ligne : 
+    - Le libellé du tribunal compétent mentionné est importé de chaque établissement.
+    - Utilisation de la mention générique "Le chef d'établissement" plutôt que d'exploiter les libellés 
+      importés des établissements.
+- Nouvelle ligne de commande pour importer une thèse à la demande.
+
+### Corrections
+
+- Import : 
+    - Vidage et remplissage de chaque table temporaire n'étaient pas faits dans une même transaction !
+    - Améliorations pour utiliser moins de mémoire ; meilleurs logs. 
+    - Correction des exceptions de type `ORA-00001: unique constraint (SYGAL.TMP_ACTEUR_UNIQ) violated` 
+      par un changement de stratégie côté web service (interrogation de tables plutôt que des vues). 
+- Le bouton d'import d'une thèse à la demande avait disparu (menu "Page de couverture") à cause d'une config erronée.
+
 1.2.10 (5/11/2019)
 ------------------
 

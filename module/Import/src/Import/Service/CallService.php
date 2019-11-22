@@ -152,10 +152,7 @@ class CallService
         $client = $this->getClient();
 
         try {
-            $_debut = microtime(true);
             $response = $client->request('GET', $uri);
-            $_fin = microtime(true);
-            $this->logger->debug("Interrogation du WS : " . ($_fin - $_debut) . " secondes.");
         } catch (ClientException $e) {
             throw CallException::clientError($e);
         } catch (ServerException $e) {
