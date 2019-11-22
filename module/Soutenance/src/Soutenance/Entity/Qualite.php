@@ -52,6 +52,22 @@ class Qualite
     }
 
     /**
+     * @return bool
+     */
+    public function isRangA()
+    {
+        return $this->rang === 'A';
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRangB()
+    {
+        return $this->rang === 'B';
+    }
+
+    /**
      * @param string $rang
      * @return Qualite
      */
@@ -80,11 +96,27 @@ class Qualite
     }
 
     /**
+     * @return bool
+     */
+    public function isHDR()
+    {
+        return ($this->hdr === 'O');
+    }
+
+    /**
      * @return string
      */
     public function getEmeritat()
     {
         return $this->emeritat;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEmeritat()
+    {
+        return ($this->emeritat === 'O');
     }
 
     /**

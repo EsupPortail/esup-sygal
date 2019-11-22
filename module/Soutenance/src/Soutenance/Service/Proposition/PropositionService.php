@@ -217,7 +217,7 @@ class PropositionService {
             $nbMembre++;
             if ($membre->getGenre() === "F") $nbFemme++; else $nbHomme++;
             if ($membre->getRang() === "A") $nbRangA++;
-            if ($membre->getExterieur() === "oui") $nbExterieur++;
+            if ($membre->isExterieur()) $nbExterieur++;
             if ($membre->estRapporteur()) $nbRapporteur++;
         }
 

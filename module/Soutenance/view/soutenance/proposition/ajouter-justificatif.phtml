@@ -10,7 +10,7 @@ use Soutenance\Form\Justificatif\JustificatifForm;
  *
  * @var These $these
  * @var JustificatifForm $form
- * @var Membre[] $membres
+ * @var array $justificatifs
  */
 
 $explications = [];
@@ -72,58 +72,65 @@ $explications[NatureFichier::CODE_DEMANDE_CONFIDENT] =
 
 <script>
     // ID, NOM, HRD, EMERITAT
-    let membres = [];
-    <?php foreach ($membres as $membre) : ?>
-        membres.push(
-            new Array(
-                <?php echo $membre->getId(); ?> ,
-                <?php echo '"'.$membre->getDenomination().'"'; ?> ,
-                <?php echo '"'.$membre->hasHDR().'"'; ?> ,
-                <?php echo '"'.$membre->hasEmeritat().'"'; ?>
-            )
-        );
+    let needVisio = [];
+    let needHDR = [];
+    let needEmeritat = [];
+    let membre_id = -1;
+    <?php foreach ($justificatifs as $tuple) : ?>
+        <?php if (isset($tuple['membre']) AND $tuple['justificatif'] === null) : ?>
+            if (<?php echo "'".$tuple['type']."'"; ?> === <?php echo "'".NatureFichier::CODE_JUSTIFICATIF_HDR."'"; ?>) {
+                needHDR.push(new Array(
+                    <?php echo  "'".$tuple['membre']->getId()."'"; ?>,
+                    <?php echo  "'".$tuple['membre']->getDenomination()."'"; ?>
+                ));
+            }
+            if (<?php echo "'".$tuple['type']."'"; ?> === <?php echo "'".NatureFichier::CODE_JUSTIFICATIF_EMERITAT."'"; ?>) {
+                needEmeritat.push(new Array(
+                    <?php echo  "'".$tuple['membre']->getId()."'"; ?>,
+                    <?php echo  "'".$tuple['membre']->getDenomination()."'"; ?>
+                ));
+            }
+            if (<?php echo "'".$tuple['type']."'"; ?> === <?php echo "'".NatureFichier::CODE_DELEGUATION_SIGNATURE."'"; ?>) {
+                needVisio.push(new Array(
+                    <?php echo  "'".$tuple['membre']->getId()."'"; ?>,
+                    <?php echo  "'".$tuple['membre']->getDenomination()."'"; ?>
+                ));
+            }
+        <?php endif; ?>
     <?php endforeach; ?>
 
-    let nbMembres = membres.length;
+    // console.log('HDR');
+    // console.log(needHDR);
+    // console.log('Emeritat');
+    // console.log(needEmeritat);
+    // console.log('Visio');
+    // console.log(needVisio);
+
     $('select[name="membre"]').parent().hide();
-    // console.log(membres);
-    // console.log(nbMembres);
-
-    console.log('ready');
     $('select[name="nature"]').change(function() {
-        let value =  $(this). children("option:selected"). val();
+        let value = $(this).children("option:selected").val();
         // console.log('changement => ' + value);
-
         $('select[name="membre"]').empty();
-
-
         $('select[name="membre"]').parent().show();
+
         switch(value) {
-            case <?php echo "'".NatureFichier::CODE_JUSTIFICATIF_HDR."'"; ?> :
-                for (let i = 0 ; i < nbMembres ; ++i) {
-                    if (membres[i][2] === 'O') {
-                        $('select[name="membre"]').append(new Option(membres[i][1], membres[i][0]));
-                    }
+            case <?php echo "'" . NatureFichier::CODE_JUSTIFICATIF_HDR . "'"; ?> :
+                for (position = 0 ; position < needHDR.length ; position++ ) {
+                    $('select[name="membre"]').append(new Option(needHDR[position][1], needHDR[position][0]));
                 }
                 break;
-            case <?php echo "'".NatureFichier::CODE_JUSTIFICATIF_EMERITAT."'"; ?> :
-                for (let i = 0 ; i < nbMembres ; ++i) {
-                    if (membres[i][3] === 'O') {
-                        $('select[name="membre"]').append(new Option(membres[i][1], membres[i][0]));
-                    }
+            case <?php echo "'" . NatureFichier::CODE_JUSTIFICATIF_EMERITAT . "'"; ?> :
+                for (position = 0 ; position < needEmeritat.length ; position++ ) {
+                    $('select[name="membre"]').append(new Option(needEmeritat[position][1], needEmeritat[position][0]));
                 }
                 break;
-            case <?php echo "'".NatureFichier::CODE_DELOCALISATION_SOUTENANCE."'"; ?> :
-            case <?php echo "'".NatureFichier::CODE_DEMANDE_LABEL."'"; ?> :
-            case <?php echo "'".NatureFichier::CODE_LANGUE_ANGLAISE."'"; ?> :
-            case <?php echo "'".NatureFichier::CODE_DEMANDE_CONFIDENT."'"; ?> :
+            case <?php echo "'" . NatureFichier::CODE_DELEGUATION_SIGNATURE . "'"; ?> :
+                for (position = 0 ; position < needVisio.length ; position++ ) {
+                    $('select[name="membre"]').append(new Option(needVisio[position][1], needVisio[position][0]));
+                }
+                break;
+            default:
                 $('select[name="membre"]').parent().hide();
-                break;
-            default :
-                $('select[name="membre"]').append(new Option("Aucun", ""));
-                for (let i = 0 ; i < nbMembres ; ++i) {
-                    $('select[name="membre"]').append(new Option(membres[i][1], membres[i][0]));
-                }
                 break;
         }
     });

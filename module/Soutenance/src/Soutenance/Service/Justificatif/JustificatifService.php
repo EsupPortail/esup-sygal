@@ -171,14 +171,14 @@ class JustificatifService {
                     'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_DELEGUATION_SIGNATURE, $membre),
                 ];
             }
-            if ($membre->getQualite()->getHDR() === 'O') {
+            if ($membre->isExterieur() AND $membre->getQualite()->isRangB() AND $membre->getQualite()->isHDR()) {
                 $justificatifs[] = [
                     'type' => NatureFichier::CODE_JUSTIFICATIF_HDR,
                     'membre' => $membre,
                     'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_JUSTIFICATIF_HDR, $membre),
                 ];
             }
-            if ($membre->getQualite()->getEmeritat() === 'O') {
+            if ($membre->isExterieur() === 'oui' AND $membre->getQualite()->isEmeritat() === 'O') {
                 $justificatifs[] = [
                     'type' => NatureFichier::CODE_JUSTIFICATIF_EMERITAT,
                     'membre' => $membre,

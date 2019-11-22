@@ -6,7 +6,6 @@ use Application\Controller\AbstractController;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
-use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
@@ -518,10 +517,12 @@ class PropositionController extends AbstractController {
             }
         }
 
+        $justificatifs = $this->getJustificatifService()->generateListeJustificatif($proposition);
+
         return new ViewModel([
             'these' => $these,
             'form' => $form,
-            'membres' => $proposition->getMembres(),
+            'justificatifs' => $justificatifs,
         ]);
     }
 

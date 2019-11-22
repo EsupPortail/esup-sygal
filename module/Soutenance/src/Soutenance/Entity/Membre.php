@@ -190,6 +190,15 @@ class Membre {
     }
 
     /**
+     * @return bool|null
+     */
+    public function isExterieur()
+    {
+        if ($this->exterieur === null) return null;
+        return ($this->exterieur === "oui");
+    }
+
+    /**
      * @return string
      */
     public function getRole()
@@ -267,14 +276,6 @@ class Membre {
     {
         $this->visio = $visio;
         return $this;
-    }
-
-    public function hasHDR() {
-        return $this->getQualite()->getHdr();
-    }
-
-    public function hasEmeritat() {
-        return $this->getQualite()->getEmeritat();
     }
 }
 
