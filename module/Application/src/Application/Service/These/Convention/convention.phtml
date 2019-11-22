@@ -12,6 +12,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var string      $libEtablissementDe
  * @var string      $libPresidentLe
  * @var string      $nomPresid
+ * @var string      $libTribunal
  */
 ?>
 
@@ -81,7 +82,7 @@ use Application\View\Renderer\PhpRenderer;
     </p>
     <p>
         La loi applicable à cette présente convention est la loi française. Le tribunal compétent pour juger de tout
-        contentieux lié au présent contrat est le Tribunal Administratif de Caen.
+        contentieux lié au présent contrat est <?php echo $libTribunal ?>.
     </p>
 </div>
 

@@ -1312,6 +1312,7 @@ class TheseController extends AbstractController
             Variable::CODE_ETB_ART_ETB_LIB,
             Variable::CODE_ETB_LIB_TIT_RESP,
             Variable::CODE_ETB_LIB_NOM_RESP,
+            Variable::CODE_TRIBUNAL_COMPETENT,
         ];
         $dateObs = $these->getDateSoutenance() ?: $these->getDatePrevisionSoutenance();
         $variableRepo = $this->variableService->getRepository();
@@ -1323,6 +1324,7 @@ class TheseController extends AbstractController
         $libEtablissementDe = "de " . $letab;
         $libPresidentLe = $vars[Variable::CODE_ETB_LIB_TIT_RESP]->getValeur();
         $nomPresid = $vars[Variable::CODE_ETB_LIB_NOM_RESP]->getValeur();
+        $libTribunal = lcfirst($vars[Variable::CODE_TRIBUNAL_COMPETENT]->getValeur());
 
         $renderer = $this->getServiceLocator()->get('view_renderer'); /* @var $renderer \Zend\View\Renderer\PhpRenderer */
         $exporter = new ConventionPdfExporter($renderer, 'A4');
@@ -1335,6 +1337,7 @@ class TheseController extends AbstractController
             'libEtablissementDe' => $libEtablissementDe,
             'libPresidentLe'     => $libPresidentLe,
             'nomPresid'          => $nomPresid,
+            'libTribunal'        => $libTribunal,
         ]);
         $exporter->export('export.pdf');
         exit;
