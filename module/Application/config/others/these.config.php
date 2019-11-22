@@ -44,6 +44,18 @@ return [
             PrivilegeRuleProvider::class => [
                 'allow' => [
                     [
+                        //
+                        // Privilèges concernant la ressource These *NON* SOUMIS À ASSERTION.
+                        //
+                        [
+                            'privileges' => [
+                                ThesePrivileges::THESE_REFRESH,
+                            ],
+                            'resources'  => ['These'],
+                        ],
+                        //
+                        // Privilèges concernant la ressource These SOUMIS À ASSERTION.
+                        //
                         'privileges' => [
                             ThesePrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE,
                             ThesePrivileges::THESE_SAISIE_DESCRIPTION_VERSION_INITIALE,
@@ -64,7 +76,6 @@ return [
                             ThesePrivileges::THESE_CONSULTATION_SES_THESES,
                             ThesePrivileges::THESE_MODIFICATION_TOUTES_THESES,
                             ThesePrivileges::THESE_MODIFICATION_SES_THESES,
-//                            ThesePrivileges::THESE_REFRESH,
                         ],
                         'resources'  => ['These'],
                         'assertion'  => 'Assertion\\These',

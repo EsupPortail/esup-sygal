@@ -293,6 +293,33 @@ class ImportController extends AbstractActionController
         ) . PHP_EOL;
     }
 
+    public function updateTheseConsoleAction()
+    {
+        $id = $this->params('id');
+        $emName = $this->params('em', 'orm_default');
+        $verbose = (bool) $this->params('verbose', 0);
+
+        /** @var These $these */
+        $these = $this->theseService->getRepository()->find($id);
+
+        $this->setLoggerStream('php://output', $verbose);
+
+        /** @var EntityManager $entityManager */
+        $entityManager = $this->getServiceLocator()->get("doctrine.entitymanager.$emName");
+
+        $_deb = microtime(true);
+        $this->importService->setEntityManager($entityManager);
+        $this->importService->updateThese($these);
+        $_fin = microtime(true);
+
+        echo sprintf(
+                "Mise à jour de la thèse %d de l'établissement '%s' effectuée en %f s.",
+                $these->getId(),
+                $these->getEtablissement()->getSourceCode(),
+                $_fin - $_deb
+            ) . PHP_EOL;
+    }
+
     /**
      * @param string|resource $stream
      * @param bool            $verbose

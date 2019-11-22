@@ -47,7 +47,7 @@ class VariableRepository extends DefaultEntityRepository
      */
     public function findByCodeAndEtab($code, Etablissement $etab, \DateTime $dateObservation = null)
     {
-        $dateObservation = $dateObservation ?: new \DateTime('now');
+        $dateObservation = $dateObservation ?: date_create('now');
 
         $qb = $this->createQueryBuilder('v');
         $qb
