@@ -291,7 +291,7 @@ class TheseService extends BaseService
             }
             if ($directeur->getEtablissement()->estAssocie()) {
                 $pdcData->setAssocie(true);
-                $pdcData->setLogoAssocie($directeur->getEtablissement()->getCheminLogo());
+                $pdcData->setLogoAssocie($this->fileService->computeLogoFilePathForStructure($directeur->getEtablissement()));
                 $pdcData->setLibelleAssocie($directeur->getEtablissement()->getLibelle());
             }
         }
