@@ -392,19 +392,25 @@ class FichierTheseService extends BaseService
     }
 
     /**
-     * Supprime définitivement des fichiers liés à une thèse.
+     * Supprime définitivement des Fichiers ou des FichierThese, pour une thèse donnée.
      *
-     * @param Fichier[] $fichiers
-     * @param These     $these
+     * @param Fichier[]|FichierThese[] $fichiers
+     * @param These                    $these
      */
     public function deleteFichiers(array $fichiers, These $these)
     {
+        // normalisation
+        $normalizedFichiers = [];
+        foreach ($fichiers as $fichier) {
+            $normalizedFichiers[] = $fichier instanceof FichierThese ? $fichier->getFichier() : $fichier;
+        }
+
         $this->entityManager->beginTransaction();
         try {
-            foreach ($fichiers as $fichier) {
+            foreach ($normalizedFichiers as $fichier) {
                 $these->removeFichier($fichier);
             }
-            $this->fichierService->supprimerFichiers($fichiers);
+            $this->fichierService->supprimerFichiers($normalizedFichiers);
             $this->entityManager->commit();
         } catch (\Exception $e) {
             $this->entityManager->rollback();

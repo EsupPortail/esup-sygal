@@ -1242,9 +1242,9 @@ class TheseController extends AbstractController
 
                 // suppression des fichiers expurgés éventuellement déposés en l'absence de pb de droit d'auteur
                 $besoinVersionExpurgee = ! $diffusion->getDroitAuteurOk();
-                $fichiersExpurgesDeposes = $this->fichierTheseService->getRepository()->fetchFichierTheses($these, null , $version, false);
-                if (! $besoinVersionExpurgee && !empty($fichiersExpurgesDeposes)) {
-                    $this->fichierTheseService->deleteFichiers($fichiersExpurgesDeposes, $these);
+                $fichierThesesExpurgesDeposes = $this->fichierTheseService->getRepository()->fetchFichierTheses($these, null , $version, false);
+                if (! $besoinVersionExpurgee && !empty($fichierThesesExpurgesDeposes)) {
+                    $this->fichierTheseService->deleteFichiers($fichierThesesExpurgesDeposes, $these);
 //                    $this->flashMessenger()->addSuccessMessage("Les fichiers expurgés fournis devenus inutiles ont été supprimés.");
                 }
 
