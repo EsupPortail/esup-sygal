@@ -21,6 +21,17 @@ Journal des modifications
       par un changement de stratégie côté web service (interrogation de tables plutôt que des vues). 
 - Le bouton d'import d'une thèse à la demande avait disparu (menu "Page de couverture") à cause d'une config erronée.
 
+1.2.11 (13/11/2019)
+------------------
+
+### Correction
+
+- Changement dans l'export pour récupérer les dates et la liste de fichiers (qui avait été oubliés précédemment) pour les infos
+    - Date de dépôt version initiale
+    - Date de dépôt version corrigée
+    - Thèse format PDF
+    - Annexes
+
 1.2.10 (5/11/2019)
 ------------------
 
