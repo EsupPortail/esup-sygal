@@ -217,9 +217,9 @@ class FichierTheseController extends AbstractController
                 $versionASupprimer = $version->estVersionCorrigee() ?
                     VersionFichier::CODE_ARCHI_CORR :
                     VersionFichier::CODE_ARCHI;
-                $fichiers = $this->fichierTheseService->getRepository()->fetchFichierTheses($these, null, $versionASupprimer, null) ;
-                if (! empty($fichiers)) {
-                    $this->fichierTheseService->deleteFichiers($fichiers, $these);
+                $fichierTheses = $this->fichierTheseService->getRepository()->fetchFichierTheses($these, null, $versionASupprimer, null) ;
+                if (! empty($fichierTheses)) {
+                    $this->fichierTheseService->deleteFichiers($fichierTheses, $these);
                 }
             }
 
