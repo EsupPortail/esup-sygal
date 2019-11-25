@@ -1,6 +1,13 @@
 Journal des modifications
 =========================
 
+1.3.1 (25/11/2019)
+------------------
+
+### Corrections
+
+- Correction d'un bug empêchant la suppression auto de fichier lorsqu'on dépose une version retraitée manuellement.
+
 1.3.0 (22/11/2019)
 ------------------
 
