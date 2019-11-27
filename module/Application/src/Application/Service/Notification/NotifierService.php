@@ -216,7 +216,7 @@ class NotifierService extends \Notification\Service\NotifierService
 
         $this->trigger($notif);
 
-        $infoMessage = sprintf("Un mail de notification vient d'être envoyé aux Bureau des Doctorats (%s)", $to);
+        $infoMessage = sprintf("Un mail de notification vient d'être envoyé à la Maison des doctorats (%s)", $to);
         $this->messageContainer->setMessage($infoMessage, 'info');
     }
 
