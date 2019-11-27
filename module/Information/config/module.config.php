@@ -262,6 +262,12 @@ return [
                         'params' => ['id' => 82],
                         'title' => "Informations sur le déroulement de la thèse et formulaires administratifs à l’intention du doctorant et de ses encadrants"
                     ],
+                    'guide-utilisation' => [
+                        'label' => 'Guide d\'utilisation',
+                        'route' => 'informations/afficher',
+                        'params' => ['id' => 162],
+                        'title' => "Guide d'utilisation de l'application SyGAL",
+                    ],
                 ],
             ],
         ],
