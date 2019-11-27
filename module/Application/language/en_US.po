@@ -470,7 +470,7 @@ msgid "Bibliothèque universitaire"
 msgstr "University Library"
 
 #: module/Application/view/application/utilisateur/index.phtml:180
-msgid "Maison des doctorats"
+msgid "Maison du doctorat"
 msgstr "Doctorate Office"
 
 #: module/Application/view/application/utilisateur/index.phtml:181

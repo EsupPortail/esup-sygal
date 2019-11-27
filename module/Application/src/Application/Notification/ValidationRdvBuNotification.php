@@ -71,20 +71,20 @@ class ValidationRdvBuNotification extends Notification
     {
         if ($this->estDevalidation) {
             $this->infoMessages[] = sprintf(
-                "Un mail de notification vient d'être envoyé à la BU (%s) avec copie à la Maison des doctorats (%s).",
+                "Un mail de notification vient d'être envoyé à la BU (%s) avec copie à la Maison du doctorat (%s).",
                 $this->getTo(),
                 $this->getCc()
             );
         } else {
             if ($this->notifierDoctorant) {
                 $this->infoMessages[] = sprintf(
-                    "Un mail de notification vient d'être envoyé à %s avec copie à la Maison des doctorats (%s)",
+                    "Un mail de notification vient d'être envoyé à %s avec copie à la Maison du doctorat (%s)",
                     $this->these->getDoctorant(),
                     $this->getCc()
                 );
             } else {
                 $this->infoMessages[] = sprintf(
-                    "Un mail de notification vient d'être envoyé à la Maison des doctorats (%s).",
+                    "Un mail de notification vient d'être envoyé à la Maison du doctorat (%s).",
                     $this->getTo()
                 );
             }
