@@ -23,7 +23,7 @@ class ValidationDepotTheseCorrigeeNotification extends Notification
         $cc = $this->emailBdd;
 
         $infoMessage = sprintf(
-            "Un mail de notification vient d'être envoyé au(x) directeur(s) de thèse (%s) avec copie au Bureau des Doctorats (%s)",
+            "Un mail de notification vient d'être envoyé au(x) directeur(s) de thèse (%s) avec copie à la Maison des doctorats (%s)",
             implode(',', $to),
             $cc
         );

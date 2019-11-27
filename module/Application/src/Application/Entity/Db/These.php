@@ -728,7 +728,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
             throw new RuntimeException("Le fichier à supprimer est introuvable parmi les fichiers de la thèse");
         }
 
-        $this->fichierTheses->removeElement($fichierThese);
+        $this->removeFichierThese($fichierThese);
 
         return $this;
     }

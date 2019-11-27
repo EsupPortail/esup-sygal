@@ -85,7 +85,7 @@ class UserContextService extends BaseUserContextService
     }
 
     /**
-     * Si le rôle sélectionné correspond à celui de Bureau des doctorats,
+     * Si le rôle sélectionné correspond à celui de la Maison des doctorats,
      * retourne le rôle en question, sinon retourne null.
      *
      * @return Role|null
