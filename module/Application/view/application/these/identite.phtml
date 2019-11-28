@@ -26,6 +26,7 @@ use Application\View\Renderer\PhpRenderer;
  * @see TheseController::detailIdentiteAction()
  */
 
+$canVoirEmailContact = $this->isAllowed($these,DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT);
 $canEditPersopass = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_MODIFICATION_PERSOPASS);
 $canEditPersopass = $canEditPersopass && (!$estDoctorant || !$these->getDoctorant()->getPersopass());
 $persopassModifiedEvent = 'persopass-modified-event';
@@ -96,21 +97,24 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                 <?php else: ?>
                     <?php echo $this->translate("(Inconnu)"); ?>
                 <?php endif ?>
-                <br/>
 
-                <strong>
-                    <?php echo $this->translate("Adresse électronique de contact :"); ?>
-                </strong>
-                <?php
-                if ($mailContact === null) {
-                    echo "(Non renseigné) ";
-                } else {
-                    echo $mailContact;
-                    if ($etatMailContact === MailConfirmation::ENVOYER) {
-                        echo " (en attente) ";
+                <?php if ($canVoirEmailContact) : ?>
+                    <br/>
+
+                    <strong>
+                        <?php echo $this->translate("Adresse électronique de contact :"); ?>
+                    </strong>
+                    <?php
+                    if ($mailContact === null) {
+                        echo "(Non renseigné) ";
+                    } else {
+                        echo $mailContact;
+                        if ($etatMailContact === MailConfirmation::ENVOYER) {
+                            echo " (en attente) ";
+                        }
                     }
-                }
-                ?>
+                    ?>
+                <?php endif; ?>
                 <?php if ($canEditPersopass): ?>
                     <a href="<?php echo $modifierPersopassUrl ?>"
                        data-event="<?php echo $persopassModifiedEvent ?>"
