@@ -100,7 +100,8 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
                 <?php if ($canModifier) : ?>
 
                     <div class="pull-right">
-                        <a href="<?php echo $this->url('soutenance/proposition/anglais', ['these' => $these->getId()], [], true); ?>"
+                        <a <?php /** @see \Soutenance\Controller\Proposition\PropositionController::anglaisAction(); */ ?>
+                           href="<?php echo $this->url('soutenance/proposition/anglais', ['these' => $these->getId()], [], true); ?>"
                            class="btn btn-primary action ajax-modal"
                            data-event="edition-confidentialite"
                         >
@@ -143,7 +144,8 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
             <div class="col-md-4">
                 <?php if ($canModifier) : ?>
                     <div class="pull-right">
-                        <a href="<?php echo $this->url('soutenance/proposition/confidentialite', ['these' => $these->getId()], [], true); ?>"
+                        <a <?php /** @see \Soutenance\Controller\Proposition\PropositionController::confidentialiteAction(); */ ?>
+                           href="<?php echo $this->url('soutenance/proposition/confidentialite', ['these' => $these->getId()], [], true); ?>"
                            class="btn btn-primary action ajax-modal"
                            data-event="edition-confidentialite"
                         >
@@ -179,7 +181,8 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
             <div class="col-md-4">
                 <?php if ($canModifier) : ?>
                     <div class="pull-right">
-                        <a href="<?php echo $this->url('soutenance/proposition/changement-titre', ['these' => $these->getId()], [], true); ?>"
+                        <a <?php /** @see \Soutenance\Controller\Proposition\PropositionController::changementTitreAction(); */ ?>
+                           href="<?php echo $this->url('soutenance/proposition/changement-titre', ['these' => $these->getId()], [], true); ?>"
                            class="btn btn-primary action ajax-modal"
                            data-event="edition-confidentialite"
                         >

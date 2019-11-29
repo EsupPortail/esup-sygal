@@ -56,6 +56,7 @@ class Proposition {
     public function __construct(These $these = null)
     {
         $this->membres = new ArrayCollection();
+        $this->setThese($these);
         $this->setLabelEuropeen(false);
         $this->setManuscritAnglais(false);
         $this->setSoutenanceAnglais(false);

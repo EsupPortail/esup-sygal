@@ -7,7 +7,6 @@ use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\VersionFichier;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
@@ -37,6 +36,7 @@ use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Soutenance\Service\SignaturePresident\SiganturePresidentPdfExporter;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
+use Zend\Form\Form;
 use Zend\Http\Request;
 use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\PhpRenderer;
@@ -117,12 +117,7 @@ class PropositionController extends AbstractController {
         /** @var Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $data = $request->getPost();
-            $form->setData($data);
-            if ($form->isValid()) {
-                $this->getPropositionService()->update($proposition);
-                $this->getPropositionService()->annulerValidations($proposition);
-            }
+            $this->updateAndUnvalidate($request, $form, $proposition);
         }
 
         $vm = new ViewModel();
@@ -204,12 +199,7 @@ class PropositionController extends AbstractController {
         /** @var Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $data = $request->getPost();
-            $form->setData($data);
-            if ($form->isValid()) {
-                $this->getPropositionService()->update($proposition);
-                $this->getPropositionService()->annulerValidations($proposition);
-            }
+            $this->updateAndUnvalidate($request, $form, $proposition);
         }
 
         $vm = new ViewModel();
@@ -234,12 +224,7 @@ class PropositionController extends AbstractController {
         /** @var Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $data = $request->getPost();
-            $form->setData($data);
-            if ($form->isValid()) {
-                $this->getPropositionService()->update($proposition);
-                $this->getPropositionService()->annulerValidations($proposition);
-            }
+            $this->updateAndUnvalidate($request, $form, $proposition);
         }
 
         $vm = new ViewModel();
@@ -264,12 +249,7 @@ class PropositionController extends AbstractController {
         /** @var Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $data = $request->getPost();
-            $form->setData($data);
-            if ($form->isValid()) {
-                $this->getPropositionService()->update($proposition);
-                $this->getPropositionService()->annulerValidations($proposition);
-            }
+            $this->updateAndUnvalidate($request, $form, $proposition);
         }
 
         $vm = new ViewModel();
@@ -294,12 +274,7 @@ class PropositionController extends AbstractController {
         /** @var Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $data = $request->getPost();
-            $form->setData($data);
-            if ($form->isValid()) {
-                $this->getPropositionService()->update($proposition);
-                $this->getPropositionService()->annulerValidations($proposition);
-            }
+            $this->updateAndUnvalidate($request, $form, $proposition);
         }
 
         $vm = new ViewModel();
@@ -499,5 +474,21 @@ class PropositionController extends AbstractController {
         $this->getPropositionService()->update($proposition);
 
         return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
+    }
+
+    /**
+     * @param Request $request
+     * @param Form $form
+     * @param Proposition $proposition
+     * @return Proposition
+     */
+    private function updateAndUnvalidate(Request $request, Form $form, Proposition $proposition) {
+        $data = $request->getPost();
+        $form->setData($data);
+        if ($form->isValid()) {
+            $this->getPropositionService()->update($proposition);
+            $this->getPropositionService()->annulerValidations($proposition);
+        }
+        return $proposition;
     }
 }
