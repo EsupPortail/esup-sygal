@@ -45,4 +45,22 @@ class UtilisateurRepository extends DefaultEntityRepository
         }
         return $result;
     }
+
+    /**
+     * @param string $token
+     * @return Utilisateur
+     */
+    public function findByToken($token)
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->andWhere('u.passwordResetToken = :token')
+            ->setParameter('token', $token);
+
+        try {
+            $result = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Plusieurs Utilisateur partagent le même token [".$token."]", 0 , $e);
+        }
+        return $result;
+    }
 }

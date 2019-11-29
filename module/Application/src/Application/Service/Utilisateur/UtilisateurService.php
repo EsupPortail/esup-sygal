@@ -12,12 +12,15 @@ use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\RuntimeException;
+use UnicaenAuth\Entity\Db\User;
+use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
 use UnicaenLdap\Entity\People;
 use Zend\Crypt\Password\Bcrypt;
 
 class UtilisateurService extends BaseService
 {
     use SourceCodeStringHelperAwareTrait;
+    use UserServiceAwareTrait;
 
     const SQL_CREATE_APP_USER =
         "INSERT INTO UTILISATEUR (ID, USERNAME, EMAIL, DISPLAY_NAME, PASSWORD) VALUES (1, 'sygal-app', 'noreply@mail.fr', 'Application SyGAL', 'ldap');";
@@ -220,5 +223,29 @@ class UtilisateurService extends BaseService
         } catch (OptimisticLockException $e) {
             throw new RuntimeException("Impossible d'enregistrer l'utilisateur", null, $e);
         }
+    }
+
+    /**
+     * @param Utilisateur $utilisateur
+     * @param string $password
+     * @return Utilisateur
+     */
+    public function changePassword($utilisateur, $password)
+    {
+
+        $bcrypt = new Bcrypt();
+        $bcrypt->setCost($this->userService->getZfcUserOptions()->getPasswordCost());
+        $password = $bcrypt->create($password);
+
+        $utilisateur->setPassword($password);
+        $utilisateur->setPasswordResetToken();
+
+        try {
+            $this->getEntityManager()->flush($utilisateur);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Impossible d'enregistrer l'utilisateur", null, $e);
+        }
+
+        return $utilisateur;
     }
 }

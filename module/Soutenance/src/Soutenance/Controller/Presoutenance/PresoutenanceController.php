@@ -23,6 +23,8 @@ use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportForm;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportFormAwareTrait;
+use Soutenance\Form\InitCompte\InitCompteForm;
+use Soutenance\Form\InitCompte\InitCompteFormAwareTrait;
 use Soutenance\Service\Avis\AvisServiceAwareTrait;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
@@ -34,6 +36,7 @@ use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
+use Zend\Form\Form;
 use Zend\Http\Request;
 use Zend\View\Model\ViewModel;
 
@@ -56,6 +59,7 @@ class PresoutenanceController extends AbstractController
     use EngagementImpartialiteServiceAwareTrait;
 
     use DateRenduRapportFormAwareTrait;
+    use InitCompteFormAwareTrait;
 
     public function presoutenanceAction()
     {
@@ -390,5 +394,33 @@ class PresoutenanceController extends AbstractController
         if ($acteur === null) throw new LogicException("La génération du username est basée sur l'Individu qui est mamquant.");
         $nomusuel = strtolower($acteur->getIndividu()->getNomUsuel());
         return ($nomusuel . "_" . $membre->getId());
+    }
+
+    public function initCompteAction() {
+//        $these = $this->requestedThese();
+        $token = $this->params()->fromRoute('token');
+        $utilisateur = $this->utilisateurService->getRepository()->findByToken($token);
+
+        /** @var InitCompteForm $form */
+        $form = $this->getInitCompteForm();
+        $form->setUsername($utilisateur->getUsername());
+        $form->setAttribute('action', $this->url()->fromRoute('soutenance/init-compte', [ 'token' => $token ], [] , true));
+        $form->bind(new Utilisateur());
+
+        /** @var Request $request */
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $form->setData($data);
+            if ($form->isValid()) {
+                $this->utilisateurService->changePassword($utilisateur, $data['password1']);
+                $this->flashMessenger()->addSuccessMessage('Mot de passe initialisé avec succés.');
+                return $this->redirect()->toRoute('home');
+            }
+        }
+
+        return new ViewModel([
+           'form' => $form,
+        ]);
     }
 }

@@ -13,6 +13,7 @@ use Application\Form\Validator\PasswordValidator;
 use Application\Provider\Privilege\UtilisateurPrivileges;
 use Application\Service\Individu\IndividuServiceFactory;
 use Application\Service\Utilisateur\UtilisateurService;
+use Application\Service\Utilisateur\UtilisateurServiceFactory;
 use Application\View\Helper\IndividuUsurpationHelperFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use Zend\Mvc\Router\Http\Literal;
@@ -152,10 +153,10 @@ return [
     ],
     'service_manager' => [
         'invokables' => array(
-            'UtilisateurService' => UtilisateurService::class,
         ),
         'factories' => [
             'IndividuService' => IndividuServiceFactory::class,
+            'UtilisateurService' => UtilisateurServiceFactory::class,
         ],
     ],
     'controllers'     => [
