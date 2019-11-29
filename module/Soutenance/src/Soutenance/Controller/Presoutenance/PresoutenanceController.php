@@ -224,6 +224,8 @@ class PresoutenanceController extends AbstractController
             //creation de l'utilisateur
             $user = $this->utilisateurService->createFromIndividu($individu,$this->generateUsername($membre),'none');
             $this->userService->updateUserPasswordResetToken($user);
+            $url = $this->url()->fromRoute('soutenance/init-compte', ['token' => $user->getPasswordResetToken()], ['force_canonical' => true], true);
+            $this->getNotifierSoutenanceService()->triggerInitialisationCompte($these, $user, $url);
         }
 
         return new ViewModel([
@@ -397,7 +399,6 @@ class PresoutenanceController extends AbstractController
     }
 
     public function initCompteAction() {
-//        $these = $this->requestedThese();
         $token = $this->params()->fromRoute('token');
         $utilisateur = $this->utilisateurService->getRepository()->findByToken($token);
 
