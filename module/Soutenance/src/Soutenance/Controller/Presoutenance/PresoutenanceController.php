@@ -8,6 +8,7 @@ use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Profil;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
+use Application\Entity\Db\Utilisateur;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\FichierThese\PdcData;
 use Application\Service\Individu\IndividuServiceAwareTrait;
@@ -30,7 +31,9 @@ use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
 use Soutenance\Service\ProcesVerbalSoutenance\ProcesVerbalSoutenancePdfExporter;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
+use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
+use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
 use Zend\Http\Request;
 use Zend\View\Model\ViewModel;
 
@@ -48,6 +51,7 @@ class PresoutenanceController extends AbstractController
     use RoleServiceAwareTrait;
     use AvisServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
+    use UserServiceAwareTrait;
     use ParametreServiceAwareTrait;
     use EngagementImpartialiteServiceAwareTrait;
 
@@ -204,16 +208,18 @@ class PresoutenanceController extends AbstractController
             $acteurId = $data['acteur'];
             /** @var Acteur $acteur */
             $acteur = $this->getActeurService()->getRepository()->find($acteurId);
+            $individu = $acteur->getIndividu();
 
-            if (!$acteur) {
-                throw new RuntimeException("Aucun acteur à associer !");
-            } else {
-                //mise à jour du membre de soutenance
-                $membre->setActeur($acteur);
-                $this->getMembreService()->update($membre);
-                //affectation du rôle
-                $this->getRoleService()->addIndividuRole($acteur->getIndividu(),$acteur->getRole());
-            }
+            if (!$acteur) throw new RuntimeException("Aucun acteur à associer !");
+
+            //mise à jour du membre de soutenance
+            $membre->setActeur($acteur);
+            $this->getMembreService()->update($membre);
+            //affectation du rôle
+            $this->getRoleService()->addIndividuRole($individu,$acteur->getRole());
+            //creation de l'utilisateur
+            $user = $this->utilisateurService->createFromIndividu($individu,$this->generateUsername($membre),'none');
+            $this->userService->updateUserPasswordResetToken($user);
         }
 
         return new ViewModel([
@@ -246,6 +252,7 @@ class PresoutenanceController extends AbstractController
             throw new RuntimeException("Aucun acteur à deassocier !");
         } else {
             //retrait dans membre de soutenance
+            $username = $this->generateUsername($membre);
             $membre->setActeur(null);
             $this->getMembreService()->update($membre);
             //retrait du role
@@ -254,10 +261,11 @@ class PresoutenanceController extends AbstractController
             $validations = $this->getValidationService()->getRepository()->findValidationByCodeAndIndividu(TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $acteur->getIndividu());
             if (!empty($validations)) {
                 $this->getValidationService()->unsignEngagementImpartialite(current($validations));
-//                $this->getNotifierService()->triggerAnnulationEngagementImpartialite($these, $proposition, $membre);
             }
 
-
+            /** @var Utilisateur $utilisateur */
+            $utilisateur = $this->utilisateurService->getRepository()->findByUsername($username);
+            $this->utilisateurService->supprimerUtilisateur($utilisateur);
             $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
         }
     }
@@ -370,5 +378,17 @@ class PresoutenanceController extends AbstractController
         ]);
         $exporter->export('export.pdf');
         exit;
+    }
+
+    /**
+     * Fonction calculant le nom du rapporteur : NOMUSUEL_MEMBREID
+     * @param Membre $membre
+     * @return string
+     */
+    private function generateUsername($membre) {
+        $acteur = $membre->getActeur();
+        if ($acteur === null) throw new LogicException("La génération du username est basée sur l'Individu qui est mamquant.");
+        $nomusuel = strtolower($acteur->getIndividu()->getNomUsuel());
+        return ($nomusuel . "_" . $membre->getId());
     }
 }

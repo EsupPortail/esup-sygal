@@ -208,4 +208,17 @@ class UtilisateurService extends BaseService
             throw new RuntimeException("Impossible d'enregistrer l'utilisateur", null, $e);
         }
     }
+
+    /**
+     * Fonction utilisée lors de la déassociation d'un utilisateur/individu et un membre d'un jury de thèse
+     * @param Utilisateur $utilisateur
+     */
+    public function supprimerUtilisateur(Utilisateur $utilisateur) {
+        try {
+            $this->getEntityManager()->remove($utilisateur);
+            $this->getEntityManager()->flush($utilisateur);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Impossible d'enregistrer l'utilisateur", null, $e);
+        }
+    }
 }
