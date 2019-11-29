@@ -10,6 +10,8 @@ use Soutenance\Controller\Presoutenance\PresoutenanceControllerFactory;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportForm;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportFormFactory;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportHydrator;
+use Soutenance\Form\InitCompte\InitCompteForm;
+use Soutenance\Form\InitCompte\InitCompteFormFactory;
 use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
 use Soutenance\Provider\Privilege\EngagementImpartialitePrivileges;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
@@ -55,6 +57,7 @@ return [
                         'date-rendu-rapport',
                         'feu-vert',
                         'stopper-demarche',
+                        'proces-verbal-soutenance',
                     ],
                     'privileges' => PresoutenancePrivileges::PRESOUTENANCE_DATE_RETOUR_MODIFICATION,
                 ],
@@ -80,6 +83,13 @@ return [
                     ],
                     'privileges' => AvisSoutenancePrivileges::AVIS_ANNULER,
                 ],
+                [
+                    'controller' => PresoutenanceController::class,
+                    'action'     => [
+                        'init-compte'
+                    ],
+                    'roles' => 'guest',
+                ],
             ],
         ],
     ],
@@ -88,6 +98,17 @@ return [
         'routes' => [
             'soutenance' => [
                 'child_routes' => [
+                    'init-compte' => [
+                        'type' => Segment::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/init-compte/:token',
+                            'defaults' => [
+                                'controller' => PresoutenanceController::class,
+                                'action'     => 'init-compte',
+                            ],
+                        ],
+                    ],
                     'presoutenance' => [
                         'type' => Segment::class,
                         'may_terminate' => true,
@@ -99,6 +120,17 @@ return [
                             ],
                         ],
                         'child_routes' => [
+                            'proces-verbal-soutenance' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/proces-verbal-soutenance',
+                                    'defaults' => [
+                                        'controller' => PresoutenanceController::class,
+                                        'action'     => 'proces-verbal-soutenance',
+                                    ],
+                                ],
+                            ],
                             'date-rendu-rapport' => [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
@@ -208,6 +240,7 @@ return [
     'form_elements' => [
         'factories' => [
             DateRenduRapportForm::class => DateRenduRapportFormFactory::class,
+            InitCompteForm::class => InitCompteFormFactory::class,
         ],
     ],
 

@@ -28,6 +28,13 @@ $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->get
     echo $this->messenger()->addMessagesFromFlashMessenger();
 ?>
 
+<p>
+    <a  href="<?php echo $this->url('soutenance/presoutenance/proces-verbal-soutenance', ['these' => $these->getId()], [], true); ?>"
+        class="btn btn-primary action">
+        <span class="glyphicon glyphicon-list-alt"></span>Générer le procès verbal de soutenance
+    </a>
+</p>
+
 <?php if ($validationBDD) : ?>
     <?php if ($proposition->getNouveauTitre() !== null) : ?>
     <div class="box panel panel-warning">

@@ -8,7 +8,9 @@ use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Profil;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
+use Application\Entity\Db\Utilisateur;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
+use Application\Service\FichierThese\PdcData;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
@@ -21,14 +23,20 @@ use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportForm;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportFormAwareTrait;
+use Soutenance\Form\InitCompte\InitCompteForm;
+use Soutenance\Form\InitCompte\InitCompteFormAwareTrait;
 use Soutenance\Service\Avis\AvisServiceAwareTrait;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
 use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
+use Soutenance\Service\ProcesVerbalSoutenance\ProcesVerbalSoutenancePdfExporter;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
+use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
+use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
+use Zend\Form\Form;
 use Zend\Http\Request;
 use Zend\View\Model\ViewModel;
 
@@ -46,10 +54,12 @@ class PresoutenanceController extends AbstractController
     use RoleServiceAwareTrait;
     use AvisServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
+    use UserServiceAwareTrait;
     use ParametreServiceAwareTrait;
     use EngagementImpartialiteServiceAwareTrait;
 
     use DateRenduRapportFormAwareTrait;
+    use InitCompteFormAwareTrait;
 
     public function presoutenanceAction()
     {
@@ -144,6 +154,11 @@ class PresoutenanceController extends AbstractController
         $theseId = $this->params()->fromRoute('these');
         $these = $this->getTheseService()->getRepository()->find($theseId);
 
+        /** @var Proposition $proposition */
+        $proposition = $this->getPropositionService()->findByThese($these);
+        /** @var Membre[] $membres */
+        $membres = $proposition->getMembres();
+
         /** @var Membre $membre */
         $idMembre = $this->params()->fromRoute('membre');
         $membre = $this->getMembreService()->find($idMembre);
@@ -156,7 +171,8 @@ class PresoutenanceController extends AbstractController
          */
         $acteurs = $this->getActeurService()->getRepository()->findActeurByThese($these);
         switch($membre->getRole()) {
-            case Membre::RAPPORTEUR :
+            case Membre::RAPPORTEUR_JURY :
+            case Membre::RAPPORTEUR_VISIO :
                 $acteurs = array_filter($acteurs, function(Acteur $a) {
                     /** @var Profil  $profil */
                     $profil = ($a->getRole()->getProfils()->first());
@@ -168,12 +184,24 @@ class PresoutenanceController extends AbstractController
                     $profil = ($a->getRole()->getProfils()->first());
                     return $profil->getRoleCode() === 'R';});
                 break;
-            case Membre::MEMBRE :
+            case Membre::MEMBRE_JURY :
                 $acteurs = array_filter($acteurs, function(Acteur $a) {
                     /** @var Profil  $profil */
                     $profil = ($a->getRole()->getProfils()->first());
                     return $profil->getRoleCode() === 'M';});
                 break;
+        }
+
+        $acteurs_libres = [];
+        foreach ($acteurs as $acteur) {
+            $libre = true;
+            foreach ($membres as $membre_) {
+                if ($membre_->getActeur() && $membre_->getActeur()->getId() === $acteur->getId()) {
+                    $libre = false;
+                    break;
+                }
+            }
+            if ($libre) $acteurs_libres[] = $acteur;
         }
 
 
@@ -184,21 +212,25 @@ class PresoutenanceController extends AbstractController
             $acteurId = $data['acteur'];
             /** @var Acteur $acteur */
             $acteur = $this->getActeurService()->getRepository()->find($acteurId);
+            $individu = $acteur->getIndividu();
 
-            if (!$acteur) {
-                throw new RuntimeException("Aucun acteur à associer !");
-            } else {
-                //mise à jour du membre de soutenance
-                $membre->setActeur($acteur);
-                $this->getMembreService()->update($membre);
-                //affectation du rôle
-                $this->getRoleService()->addIndividuRole($acteur->getIndividu(),$acteur->getRole());
-            }
+            if (!$acteur) throw new RuntimeException("Aucun acteur à associer !");
+
+            //mise à jour du membre de soutenance
+            $membre->setActeur($acteur);
+            $this->getMembreService()->update($membre);
+            //affectation du rôle
+            $this->getRoleService()->addIndividuRole($individu,$acteur->getRole());
+            //creation de l'utilisateur
+            $user = $this->utilisateurService->createFromIndividu($individu,$this->generateUsername($membre),'none');
+            $this->userService->updateUserPasswordResetToken($user);
+            $url = $this->url()->fromRoute('soutenance/init-compte', ['token' => $user->getPasswordResetToken()], ['force_canonical' => true], true);
+            $this->getNotifierSoutenanceService()->triggerInitialisationCompte($these, $user, $url);
         }
 
         return new ViewModel([
             'title' => "Association de ".$membre->getDenomination()." à un acteur SyGAL",
-            'acteurs' => $acteurs,
+            'acteurs' => $acteurs_libres,
             'membre' => $membre,
             'these' => $these,
         ]);
@@ -226,6 +258,7 @@ class PresoutenanceController extends AbstractController
             throw new RuntimeException("Aucun acteur à deassocier !");
         } else {
             //retrait dans membre de soutenance
+            $username = $this->generateUsername($membre);
             $membre->setActeur(null);
             $this->getMembreService()->update($membre);
             //retrait du role
@@ -234,10 +267,11 @@ class PresoutenanceController extends AbstractController
             $validations = $this->getValidationService()->getRepository()->findValidationByCodeAndIndividu(TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $acteur->getIndividu());
             if (!empty($validations)) {
                 $this->getValidationService()->unsignEngagementImpartialite(current($validations));
-//                $this->getNotifierService()->triggerAnnulationEngagementImpartialite($these, $proposition, $membre);
             }
 
-
+            /** @var Utilisateur $utilisateur */
+            $utilisateur = $this->utilisateurService->getRepository()->findByUsername($username);
+            $this->utilisateurService->supprimerUtilisateur($utilisateur);
             $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
         }
     }
@@ -324,5 +358,70 @@ class PresoutenanceController extends AbstractController
             ->addSuccessMessage("Notifications d'arrêt des démarches de soutenance soutenance envoyées");
 
         $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
+    }
+
+
+    /** Document pour la signature en présidence */
+    public function procesVerbalSoutenanceAction()
+    {
+        /**
+         * @var These $these
+         * @var Proposition $proposition
+         * @var PdcData $pdcData;
+         */
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findByThese($these);
+        $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
+
+        /* @var $renderer \Zend\View\Renderer\PhpRenderer */
+        $renderer = $this->getServiceLocator()->get('view_renderer');
+
+        $exporter = new ProcesVerbalSoutenancePdfExporter($renderer, 'A4');
+        $exporter->setVars([
+            'proposition' => $proposition,
+            'these' => $these,
+            'informations' => $pdcData,
+        ]);
+        $exporter->export('export.pdf');
+        exit;
+    }
+
+    /**
+     * Fonction calculant le nom du rapporteur : NOMUSUEL_MEMBREID
+     * @param Membre $membre
+     * @return string
+     */
+    private function generateUsername($membre) {
+        $acteur = $membre->getActeur();
+        if ($acteur === null) throw new LogicException("La génération du username est basée sur l'Individu qui est mamquant.");
+        $nomusuel = strtolower($acteur->getIndividu()->getNomUsuel());
+        return ($nomusuel . "_" . $membre->getId());
+    }
+
+    public function initCompteAction() {
+        $token = $this->params()->fromRoute('token');
+        $utilisateur = $this->utilisateurService->getRepository()->findByToken($token);
+
+        /** @var InitCompteForm $form */
+        $form = $this->getInitCompteForm();
+        $form->setUsername($utilisateur->getUsername());
+        $form->setAttribute('action', $this->url()->fromRoute('soutenance/init-compte', [ 'token' => $token ], [] , true));
+        $form->bind(new Utilisateur());
+
+        /** @var Request $request */
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $form->setData($data);
+            if ($form->isValid()) {
+                $this->utilisateurService->changePassword($utilisateur, $data['password1']);
+                $this->flashMessenger()->addSuccessMessage('Mot de passe initialisé avec succés.');
+                return $this->redirect()->toRoute('home');
+            }
+        }
+
+        return new ViewModel([
+           'form' => $form,
+        ]);
     }
 }

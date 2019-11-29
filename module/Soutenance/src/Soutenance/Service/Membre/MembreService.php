@@ -5,6 +5,7 @@ namespace Soutenance\Service\Membre;
 use Application\Entity\Db\Acteur;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\QueryBuilder;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Entity\Qualite;
@@ -17,11 +18,24 @@ class MembreService {
     use QualiteServiceAwareTrait;
 
     /**
+     * @return QueryBuilder
+     */
+    public function createQueryBuilder()
+    {
+        $qb = $this->getEntityManager()->getRepository(Membre::class)->createQueryBuilder("membre")
+            ->addSelect('proposition')->join('membre.proposition', 'proposition')
+            ->addSelect('qualite')->join('membre.qualite', 'qualite')
+            ->addSelect('acteur')->leftJoin('membre.acteur', 'acteur')
+            ;
+        return $qb;
+    }
+
+    /**
      * @param int $id
      * @return Proposition
      */
     public function find($id) {
-        $qb = $this->getEntityManager()->getRepository(Membre::class)->createQueryBuilder("membre")
+        $qb = $this->createQueryBuilder()
             ->andWhere("membre.id = :id")
             ->setParameter("id", $id)
         ;
@@ -85,7 +99,7 @@ class MembreService {
         $qualite = $this->getQualiteService()->getQualiteByLibelle($acteur->getQualite());
         $membre->setQualite(($qualite)?$qualite:$inconnue);
         $membre->setEtablissement($acteur->getEtablissement()->getLibelle());
-        $membre->setRole(Membre::MEMBRE);
+        $membre->setRole(Membre::MEMBRE_JURY);
         $membre->setExterieur("non");
         $membre->setEmail($acteur->getIndividu()->getEmail());
         $membre->setActeur($acteur);
@@ -99,11 +113,12 @@ class MembreService {
      */
     public function getRapporteursByProposition($proposition)
     {
-        $qb = $this->getEntityManager()->getRepository(Membre::class)->createQueryBuilder('membre')
+        $qb = $this->createQueryBuilder()
             ->andWhere('membre.proposition = :proposition')
-            ->andWhere('membre.role = :rapporteur OR membre.role = :rapporteurAbsent')
+            ->andWhere('membre.role = :rapporteur OR membre.role = :rapporteurVisio or membre.role = :rapporteurAbsent')
             ->setParameter('proposition', $proposition)
-            ->setParameter('rapporteur', Membre::RAPPORTEUR)
+            ->setParameter('rapporteur', Membre::RAPPORTEUR_JURY)
+            ->setParameter('rapporteurVisio', Membre::RAPPORTEUR_VISIO)
             ->setParameter('rapporteurAbsent', Membre::RAPPORTEUR_ABSENT)
         ;
 

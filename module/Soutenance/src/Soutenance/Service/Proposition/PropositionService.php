@@ -54,6 +54,8 @@ class PropositionService {
             ->addSelect('membre')->join('proposition.membres', 'membre')
             ->addSelect('qualite')->leftJoin('membre.qualite', 'qualite')
             ->addSelect('acteur')->leftJoin('membre.acteur', 'acteur')
+            ->addSelect('justificatif')->leftJoin('proposition.justificatifs', 'justificatif')
+            //->addSelect('validation')->leftJoin('proposition.validations', 'validation')
 
 
 
@@ -66,11 +68,7 @@ class PropositionService {
      * @return Proposition
      */
     public function find($id) {
-        $qb = $this->getEntityManager()->getRepository(Proposition::class)->createQueryBuilder("proposition")
-            ->addSelect('membre')->join('proposition.membres', 'membre')
-            ->addSelect('qualite')->leftJoin('membre.qualite', 'qualite')
-            ->addSelect('acteur')->leftJoin('membre.acteur', 'acteur')
-            ->addSelect('these')->join('proposition.these', 'these')
+        $qb = $this->createQueryBuilder()
             ->andWhere("proposition.id = :id")
             ->setParameter("id", $id)
         ;
@@ -87,11 +85,7 @@ class PropositionService {
      * @return Proposition
      */
     public function findByThese($these) {
-        $qb = $this->getEntityManager()->getRepository(Proposition::class)->createQueryBuilder("proposition")
-            ->addSelect('membre')->join('proposition.membres', 'membre')
-            ->addSelect('qualite')->leftJoin('membre.qualite', 'qualite')
-            ->addSelect('acteur')->leftJoin('membre.acteur', 'acteur')
-            ->addSelect('these')->join('proposition.these', 'these')
+        $qb = $this->createQueryBuilder()
             ->andWhere("proposition.these = :these")
             ->setParameter("these", $these)
         ;
@@ -158,7 +152,7 @@ class PropositionService {
         $rapporteurs = [];
         /** @var Membre $membre */
         foreach ($proposition->getMembres() as $membre) {
-            if($membre->getRole() === Membre::RAPPORTEUR || $membre->getRole() === Membre::RAPPORTEUR_ABSENT) $rapporteurs[] = $membre;
+            if($membre->estRapporteur()) $rapporteurs[] = $membre;
         }
         return $rapporteurs;
     }
@@ -210,20 +204,21 @@ class PropositionService {
         $nbExterieur    = 0;
         $nbRapporteur   = 0;
 
-        $parite_min = $this->getParametreService()->getParametreByCode('JURY_PARITE_RATIO_MIN')->getValeur();
-        $membre_min =  $this->getParametreService()->getParametreByCode('JURY_SIZE_MIN')->getValeur();
-        $membre_max =  $this->getParametreService()->getParametreByCode('JURY_SIZE_MAX')->getValeur();
-        $rapporteur_min = $this->getParametreService()->getParametreByCode('JURY_RAPPORTEUR_SIZE_MIN')->getValeur();
-        $rangA_min = $this->getParametreService()->getParametreByCode('JURY_RANGA_RATIO_MIN')->getValeur();
-        $exterieur_min = $this->getParametreService()->getParametreByCode('JURY_EXTERIEUR_RATIO_MIN')->getValeur();
+        $parameters     =  $this->getParametreService()->getParametresAsArray();
+        $parite_min     =  $parameters['JURY_PARITE_RATIO_MIN'];
+        $membre_min     =  $parameters['JURY_SIZE_MIN'];
+        $membre_max     =  $parameters['JURY_SIZE_MAX'];
+        $rapporteur_min =  $parameters['JURY_RAPPORTEUR_SIZE_MIN'];
+        $rangA_min      =  $parameters['JURY_RANGA_RATIO_MIN'];
+        $exterieur_min  =  $parameters['JURY_EXTERIEUR_RATIO_MIN'];
 
         /** @var Membre $membre */
         foreach ($proposition->getMembres() as $membre) {
             $nbMembre++;
             if ($membre->getGenre() === "F") $nbFemme++; else $nbHomme++;
             if ($membre->getRang() === "A") $nbRangA++;
-            if ($membre->getExterieur() === "oui") $nbExterieur++;
-            if ($membre->getRole() === Membre::RAPPORTEUR || $membre->getRole() === Membre::RAPPORTEUR_ABSENT) $nbRapporteur++;
+            if ($membre->isExterieur()) $nbExterieur++;
+            if ($membre->estRapporteur()) $nbRapporteur++;
         }
 
         $indicateurs = [];

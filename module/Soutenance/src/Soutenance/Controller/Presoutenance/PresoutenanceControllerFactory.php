@@ -8,6 +8,7 @@ use Application\Service\Role\RoleService;
 use Application\Service\These\TheseService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportForm;
+use Soutenance\Form\InitCompte\InitCompteForm;
 use Soutenance\Service\Avis\AvisService;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteService;
 use Soutenance\Service\Membre\MembreService;
@@ -16,12 +17,13 @@ use Soutenance\Service\Parametre\ParametreService;
 use Soutenance\Service\Proposition\PropositionService;
 use Soutenance\Service\Validation\ValidationService;
 use Zend\Mvc\Controller\ControllerManager;
+use UnicaenAuth\Service\User as UserService;
 
 class PresoutenanceControllerFactory
 {
     /**
      * @param ControllerManager $manager
-     * @return  PresoutenanceController
+     * @return PresoutenanceController
      */
     public function __invoke(ControllerManager $manager)
     {
@@ -36,6 +38,7 @@ class PresoutenanceControllerFactory
          * @var ValidationService $validationService
          * @var RoleService $roleService
          * @var UtilisateurService $utilisateurService
+         * @var UserService $userService
          * @var ParametreService $parametreService
          * @var EngagementImpartialiteService $engagementImpartialiteService
          */
@@ -49,13 +52,16 @@ class PresoutenanceControllerFactory
         $roleService = $manager->getServiceLocator()->get('RoleService');
         $avisService = $manager->getServiceLocator()->get(AvisService::class);
         $utilisateurService = $manager->getServiceLocator()->get('UtilisateurService');
+        $userService = $manager->getServiceLocator()->get('unicaen-auth_user_service');
         $parametreService = $manager->getServiceLocator()->get(ParametreService::class);
         $engagementImpartialiteService = $manager->getServiceLocator()->get(EngagementImpartialiteService::class);
 
         /**
          * @var DateRenduRapportForm $dateRenduRapportForm
+         * @var InitCompteForm $initCompteForm
          */
         $dateRenduRapportForm = $manager->getServiceLocator()->get('FormElementManager')->get(DateRenduRapportForm::class);
+        $initCompteForm = $manager->getServiceLocator()->get('FormElementManager')->get(InitCompteForm::class);
 
         /** @var PresoutenanceController $controller */
         $controller = new PresoutenanceController();
@@ -69,10 +75,12 @@ class PresoutenanceControllerFactory
         $controller->setRoleService($roleService);
         $controller->setAvisService($avisService);
         $controller->setUtilisateurService($utilisateurService);
+        $controller->setUserService($userService);
         $controller->setParametreService($parametreService);
         $controller->setEngagementImpartialiteService($engagementImpartialiteService);
 
         $controller->setDateRenduRapportForm($dateRenduRapportForm);
+        $controller->setInitCompteForm($initCompteForm);
         return $controller;
     }
 }

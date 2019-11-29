@@ -237,10 +237,22 @@ class TheseService extends BaseService
     {
         $pdcData = new PdcData();
 
+
+        if ($these->getDateSoutenance() !== null) {
+            $mois = (int) $these->getDateSoutenance()->format('m');
+            $annee = (int) $these->getDateSoutenance()->format('Y');
+
+            $anneeUniversitaire = null;
+            if ($mois > 9)  $anneeUniversitaire = $annee . "/" . ($annee + 1);
+            else            $anneeUniversitaire = ($annee - 1) . "/" . $annee;
+            $pdcData->setAnneeUniversitaire($anneeUniversitaire);
+        }
+
         /** informations générales */
         $pdcData->setTitre($these->getTitre());
         $pdcData->setSpecialite($these->getLibelleDiscipline());
         if ($these->getEtablissement()) $pdcData->setEtablissement($these->getEtablissement()->getLibelle());
+        if ($these->getEcoleDoctorale()) $pdcData->setEtablissement($these->getEtablissement()->getLibelle());
         if ($these->getDoctorant()) {
             $pdcData->setDoctorant($these->getDoctorant()->getIndividu()->getNomComplet(false, false, false, true, true, true));
         }
@@ -253,8 +265,6 @@ class TheseService extends BaseService
             $pdcData->setCotutuelleLibelle($these->getLibelleEtabCotutelle());
             if ($these->getLibellePaysCotutelle()) $pdcData->setCotutuellePays($these->getLibellePaysCotutelle());
         }
-
-
 
         /** Jury de thèses */
         $acteurs = $these->getActeurs()->toArray();
@@ -331,6 +341,7 @@ class TheseService extends BaseService
         }
         $pdcData->setListing(implode(" et ", $nomination) . ", ");
         if ($these->getUniteRecherche()) $pdcData->setUniteRecherche($these->getUniteRecherche()->getStructure()->getLibelle());
+        if ($these->getEcoleDoctorale()) $pdcData->setEcoleDoctorale($these->getEcoleDoctorale()->getStructure()->getLibelle());
 
         // chemins vers les logos
         if ($comue = $this->etablissementService->fetchEtablissementComue()) {

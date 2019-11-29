@@ -7,9 +7,10 @@ use UnicaenApp\Exception\RuntimeException;
 
 class Membre {
 
-    const MEMBRE = 'Membre';
-    const RAPPORTEUR = 'Rapporteur';
-    const RAPPORTEUR_ABSENT = 'Rapporteur absent';
+    const MEMBRE_JURY        = 'Membre';
+    const RAPPORTEUR_JURY    = 'Rapporteur membre du jury';
+    const RAPPORTEUR_VISIO   = 'Rapporteur en visioconférence';
+    const RAPPORTEUR_ABSENT  = 'Rapporteur absent';
 
     /** @var int */
     private $id;
@@ -189,6 +190,15 @@ class Membre {
     }
 
     /**
+     * @return bool|null
+     */
+    public function isExterieur()
+    {
+        if ($this->exterieur === null) return null;
+        return ($this->exterieur === "oui");
+    }
+
+    /**
      * @return string
      */
     public function getRole()
@@ -245,7 +255,9 @@ class Membre {
     /** @return boolean */
     public function estRapporteur()
     {
-        return $this->getRole() === Membre::RAPPORTEUR || $this->getRole() === Membre::RAPPORTEUR_ABSENT;
+        return $this->getRole() === Membre::RAPPORTEUR_JURY ||
+            $this->getRole() === Membre::RAPPORTEUR_VISIO  ||
+            $this->getRole() === Membre::RAPPORTEUR_ABSENT;
     }
 
     /**
@@ -264,14 +276,6 @@ class Membre {
     {
         $this->visio = $visio;
         return $this;
-    }
-
-    public function hasHDR() {
-        return $this->getQualite()->getHdr();
-    }
-
-    public function hasEmeritat() {
-        return $this->getQualite()->getEmeritat();
     }
 }
 

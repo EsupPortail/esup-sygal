@@ -97,6 +97,8 @@ class PdcData
     private $doctorant;
     /** @var string */
     private $date;
+    /** @var string */
+    private $anneeUniversitaire;
 
     /** @var bool */
     private $cotutuelle;
@@ -138,6 +140,8 @@ class PdcData
     private $listing;
     /** @var string */
     private $uniteRecherche;
+    /** @var string */
+    private $ecoleDoctorale;
 
     /**
      * @return string
@@ -154,6 +158,24 @@ class PdcData
     public function setUniteRecherche($uniteRecherche)
     {
         $this->uniteRecherche = $uniteRecherche;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEcoleDoctorale()
+    {
+        return $this->ecoleDoctorale;
+    }
+
+    /**
+     * @param string $ecoleDoctorale
+     * @return PdcData
+     */
+    public function setEcoleDoctorale($ecoleDoctorale)
+    {
+        $this->ecoleDoctorale = $ecoleDoctorale;
         return $this;
     }
 
@@ -498,6 +520,24 @@ class PdcData
     public function setLogoUniteRecherche($logoUniteRecherche)
     {
         $this->logoUniteRecherche = $logoUniteRecherche;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAnneeUniversitaire()
+    {
+        return $this->anneeUniversitaire;
+    }
+
+    /**
+     * @param string $anneeUniversitaire
+     * @return PdcData
+     */
+    public function setAnneeUniversitaire($anneeUniversitaire)
+    {
+        $this->anneeUniversitaire = $anneeUniversitaire;
         return $this;
     }
 

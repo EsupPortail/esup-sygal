@@ -2,6 +2,7 @@
 
 namespace Soutenance\Form\Membre;
 
+use Soutenance\Entity\Membre;
 use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Zend\Filter\StringToLower;
@@ -71,7 +72,8 @@ class MembreForm extends Form {
 
         $this->add(
             (new Text('etablissement'))
-                ->setLabel("Université ou établissement d'enseignement de rattachement :")
+//                ->setLabel("Université ou établissement d'enseignement de rattachement :")
+                ->setLabel("Université, établissement d'enseignement ou entreprise :")
         );
         $this->add(
             (new Radio('exterieur'))
@@ -87,9 +89,10 @@ class MembreForm extends Form {
             (new Radio('role'))
                 ->setLabel("Role dans le jury :")
                 ->setValueOptions([
-                    'Rapporteur' => 'rapporteur et membre du jury',
-                    'Rapporteur absent' => 'rapporteur non présent à la soutenance',
-                    'Membre' => 'membre du jury',
+                    Membre::RAPPORTEUR_JURY   => 'rapporteur et membre du jury',
+                    Membre::RAPPORTEUR_VISIO  => 'rapporteur en visioconférence',
+                    Membre::RAPPORTEUR_ABSENT => 'rapporteur non membre du jury',
+                    Membre::MEMBRE_JURY       => 'membre du jury',
                 ])
         );
 

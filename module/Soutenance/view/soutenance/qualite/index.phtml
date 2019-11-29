@@ -44,7 +44,7 @@ $canDelete = $this->isAllowed(QualitePrivileges::getResourceId(QualitePrivileges
             <td> <?php echo $qualite->getRang(); ?> </td>
             <td> <?php echo $qualite->getLibelle(); ?> </td>
             <td>
-                <?php if ($qualite->getHdr() === 'O'): ?>
+                <?php if ($qualite->isHDR()): ?>
                     <span class="glyphicon glyphicon-ok text-success"></span>
                     <?php $hasVisio = true; ?>
                 <?php else: ?>
@@ -52,7 +52,7 @@ $canDelete = $this->isAllowed(QualitePrivileges::getResourceId(QualitePrivileges
                 <?php endif; ?>
             </td>
             <td>
-                <?php if ($qualite->getEmeritat() === 'O'): ?>
+                <?php if ($qualite->isEmeritat()): ?>
                     <span class="glyphicon glyphicon-ok text-success"></span>
                     <?php $hasVisio = true; ?>
                 <?php else: ?>

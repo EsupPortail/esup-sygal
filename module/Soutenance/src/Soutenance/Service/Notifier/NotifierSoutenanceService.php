@@ -5,6 +5,7 @@ namespace Soutenance\Service\Notifier;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\These;
+use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Validation;
 use Application\Entity\Db\Variable;
 use Application\Service\Role\RoleServiceAwareTrait;
@@ -14,6 +15,7 @@ use Notification\Service\NotifierService;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
+use UnicaenApp\Exception\LogicException;
 use UnicaenAuth\Entity\Db\RoleInterface;
 use Zend\View\Helper\Url as UrlHelper;
 
@@ -568,6 +570,35 @@ class NotifierSoutenanceService extends NotifierService {
             $this->trigger($notif);
         }
     }
+
+    /**
+     * @param These $these
+     * @param Utilisateur $utilisateur
+     * @param string $url
+     */
+    public function triggerInitialisationCompte($these, $utilisateur, $url) {
+
+        $email = $utilisateur->getEmail();
+        if ($email === null) throw new LogicException("Aucun email de fourni !");
+
+        $token = $utilisateur->getPasswordResetToken();
+        if ($token === null) throw new LogicException("Aucun token de fourni !");
+
+        if (!empty($email)) {
+            $notif = new Notification();
+            $notif
+                ->setSubject("Initialisation de votre compte SyGAL")
+                ->setTo($email)
+                ->setTemplatePath('soutenance/notification/init-compte')
+                ->setTemplateVariables([
+                    'these' => $these,
+                    'username' => $utilisateur->getUsername(),
+                    'url' => $url,
+                ]);
+            $this->trigger($notif);
+        }
+    }
+
 
     /**
      * @param Notification $notification

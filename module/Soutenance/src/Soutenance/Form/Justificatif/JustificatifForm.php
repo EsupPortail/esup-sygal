@@ -23,12 +23,13 @@ class JustificatifForm extends Form {
                 'label' => 'Type de justificatif* :',
                 'empty_option' => 'Nature du justificatif',
                 'value_options' => [
-                    NatureFichier::CODE_JUSTIFICATIF_HDR => 'Justificatif d\'habilitation à diriger des recherches',
-                    NatureFichier::CODE_JUSTIFICATIF_EMERITAT => 'Justificatif d\'émeritat',
+                    NatureFichier::CODE_JUSTIFICATIF_HDR => 'Justificatif d\'habilitation à diriger des recherches ou équivalent (pour les étrangers)',
+                    NatureFichier::CODE_JUSTIFICATIF_EMERITAT => 'Justificatif d\'émeritat ou équivalent (pour les étrangers)',
                     NatureFichier::CODE_DELOCALISATION_SOUTENANCE => 'Demande de délocalisation de la soutenance',
                     NatureFichier::CODE_DELEGUATION_SIGNATURE => 'Demande de déléguation de signature',
                     NatureFichier::CODE_DEMANDE_LABEL => 'Demande de label européen',
                     NatureFichier::CODE_LANGUE_ANGLAISE => 'Demande de manuscrit ou soutenance en langue anglaise',
+                    NatureFichier::CODE_DEMANDE_CONFIDENT => 'Demande de confidentialité',
                 ],
                 'attributes' => [
                     'class' => 'bootstrap-selectpicker show-tick',
