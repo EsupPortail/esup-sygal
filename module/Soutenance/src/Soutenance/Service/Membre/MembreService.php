@@ -12,6 +12,7 @@ use Soutenance\Entity\Qualite;
 use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
+use Zend\Mvc\Controller\AbstractActionController;
 
 class MembreService {
     use EntityManagerAwareTrait;
@@ -32,7 +33,7 @@ class MembreService {
 
     /**
      * @param int $id
-     * @return Proposition
+     * @return Membre
      */
     public function find($id) {
         $qb = $this->createQueryBuilder()
@@ -45,6 +46,18 @@ class MembreService {
             throw new RuntimeException("De multiples propositions identifiées [".$id."] ont été trouvées !");
         }
         return $result;
+    }
+
+    /**
+     * @param AbstractActionController $controller
+     * @param string $paramName
+     * @return Membre
+     */
+    public function getRequestedMembre($controller, $paramName = 'membre')
+    {
+        $id = $controller->params()->fromRoute($paramName);
+        $membre = $this->find($id);
+        return $membre;
     }
 
     /**

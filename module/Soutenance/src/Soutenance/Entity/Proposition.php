@@ -51,8 +51,9 @@ class Proposition {
 
     /**
      * Proposition constructor.
+     * @param These|null $these
      */
-    public function __construct()
+    public function __construct(These $these = null)
     {
         $this->membres = new ArrayCollection();
         $this->setLabelEuropeen(false);

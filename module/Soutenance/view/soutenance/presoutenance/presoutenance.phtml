@@ -29,7 +29,8 @@ $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->get
 ?>
 
 <p>
-    <a  href="<?php echo $this->url('soutenance/presoutenance/proces-verbal-soutenance', ['these' => $these->getId()], [], true); ?>"
+    <a  <?php /** @see \Soutenance\Controller\Presoutenance\PresoutenanceController::procesVerbalSoutenanceAction() */ ?>
+        href="<?php echo $this->url('soutenance/presoutenance/proces-verbal-soutenance', ['these' => $these->getId()], [], true); ?>"
         class="btn btn-primary action">
         <span class="glyphicon glyphicon-list-alt"></span>Générer le procès verbal de soutenance
     </a>

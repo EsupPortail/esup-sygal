@@ -108,7 +108,8 @@ $tousLesAvis = count($rapporteurs) === count($avis) ;
                     <td>
                         <?php if ($acteur !== null) : ?>
                             <?php if ($canNotifierAvisSoutenance && isset($engagements[$rapporteur->getActeur()->getIndividu()->getId()]) && !isset($avis[$acteur->getIndividu()->getId()])) : ?>
-                                <a href="<?php echo $this->url('soutenance/presoutenance/notifier-demande-avis-soutenance', ['these' => $these->getId(), 'membre' => $rapporteur->getId()], [], true); ?>">
+                                <a  <?php /** @see \Soutenance\Controller\Presoutenance\PresoutenanceController::notifierDemandeAvisSoutenanceAction() */ ?>
+                                    href="<?php echo $this->url('soutenance/presoutenance/notifier-demande-avis-soutenance', ['these' => $these->getId(), 'membre' => $rapporteur->getId()], [], true); ?>">
                                     <span class="glyphicon glyphicon-send"      title="Notifier le rapporteur"></span>
                                 </a>
                             <?php else: ?>
@@ -116,7 +117,8 @@ $tousLesAvis = count($rapporteurs) === count($avis) ;
                             <?php endif; ?>
 
                             <?php if ($canRevoquerAvisSoutenance && $avi !== null) : ?>
-                                <a href="<?php echo $this->url('soutenance/presoutenance/revoquer-avis-soutenance', ['these' => $these->getId(), 'avis' => $avi->getId()], [], true); ?>">
+                                <a  <?php /** @see \Soutenance\Controller\Presoutenance\PresoutenanceController::revoquerAvisSoutenanceAction(); */ ?>
+                                    href="<?php echo $this->url('soutenance/presoutenance/revoquer-avis-soutenance', ['these' => $these->getId(), 'avis' => $avi->getId()], [], true); ?>">
                                     <span class="glyphicon glyphicon-remove"
                                           title="Révoquer l'avis de soutenance">
                                     </span>
@@ -138,8 +140,9 @@ $tousLesAvis = count($rapporteurs) === count($avis) ;
         <div class="row">
             <div class="col-md-4">
                 <?php if($canNotifierAvisSoutenance): ?>
-                    <a class="btn btn-info <?php echo ($tousLesEngagements)?'':'disabled'; ?>"
-                       href="<?php echo $this->url('soutenance/presoutenance/notifier-demande-avis-soutenance', ['these' => $these->getId()], [], true); ?>"
+                    <a  <?php /** @see \Soutenance\Controller\Presoutenance\PresoutenanceController::notifierDemandeAvisSoutenanceAction() */ ?>
+                        class="btn btn-info <?php echo ($tousLesEngagements)?'':'disabled'; ?>"
+                        href="<?php echo $this->url('soutenance/presoutenance/notifier-demande-avis-soutenance', ['these' => $these->getId()], [], true); ?>"
                     >
                         <span class="glyphicon glyphicon-send"></span> Envoyer des demandes d'avis de soutenance
                     </a>

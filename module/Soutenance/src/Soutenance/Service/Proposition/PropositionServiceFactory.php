@@ -7,6 +7,7 @@ use Application\Service\File\FileService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\Variable\VariableService;
 use Doctrine\ORM\EntityManager;
+use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Notifier\NotifierSoutenanceService;
 use Soutenance\Service\Parametre\ParametreService;
 use Soutenance\Service\Validation\ValidationService;
@@ -25,6 +26,7 @@ class PropositionServiceFactory
          * @var VariableService $variableService
          * @var FileService $fileService
          * @var EtablissementService $etablissamentService
+         * @var MembreService $membreService
          */
         $entityManager = $servicelocator->get('doctrine.entitymanager.orm_default');
         $validationService = $servicelocator->get(ValidationService::class);
@@ -34,6 +36,7 @@ class PropositionServiceFactory
         $variableService = $servicelocator->get('VariableService');
         $fileService = $servicelocator->get(FileService::class);
         $etablissamentService = $servicelocator->get(EtablissementService::class);
+        $membreService = $servicelocator->get(MembreService::class);
 
         /** @var PropositionService $service */
         $service = new PropositionService();
@@ -45,6 +48,7 @@ class PropositionServiceFactory
         $service->setVariableService($variableService);
         $service->setFileService($fileService);
         $service->setEtablissementService($etablissamentService);
+        $service->setMembreService($membreService);
 
         return $service;
     }

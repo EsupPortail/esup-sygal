@@ -46,7 +46,8 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
                 <?php if ($canModifier) : ?>
 
                     <div class="pull-right">
-                        <a href="<?php echo $this->url('soutenance/proposition/label-europeen', ['these' => $these->getId()], [], true); ?>"
+                        <a <?php /** @see \Soutenance\Controller\Proposition\PropositionController::labelEuropeenAction(); */ ?>
+                           href="<?php echo $this->url('soutenance/proposition/label-europeen', ['these' => $these->getId()], [], true); ?>"
                            class="btn btn-primary action ajax-modal"
                            data-event="edition-confidentialite"
                         >

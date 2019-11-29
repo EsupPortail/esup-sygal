@@ -3,6 +3,7 @@
 namespace Soutenance\Service\Proposition;
 
 //TODO faire le repo aussi
+use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
@@ -20,9 +21,11 @@ use Doctrine\ORM\QueryBuilder;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
+use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
 use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
+use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
@@ -35,6 +38,7 @@ class PropositionService {
     use VariableServiceAwareTrait;
     use FileServiceAwareTrait;
     use EtablissementServiceAwareTrait;
+    use MembreServiceAwareTrait;
 
     /**
      *
@@ -489,6 +493,25 @@ class PropositionService {
             return $result;
         } catch (ORMException $e) {
             throw new RuntimeException("Plusieurs ".Etat::class." partagent le même CODE [".$code."]", $e);
+        }
+    }
+
+    /**
+     * Les directeurs et co-directeurs sont des membres par défauts du jury d'une thèse. Cette fonction permet d'ajouter
+     * ceux-ci à une proposition.
+     * NB: La proposition doit être liée à une thèse.
+     *
+     * @param Proposition $proposition
+     */
+    public function addDirecteursAsMembres(Proposition $proposition)
+    {
+        $these = $proposition->getThese();
+        if ($these === null) throw new LogicException("Impossible d'ajout les directeurs comme membres : Aucun thèse de lié à la proposition id:" . $proposition->getId());
+
+        /** @var Acteur[] $encadrements */
+        $encadrements = $these->getEncadrements();
+        foreach ($encadrements as $encadrement) {
+            $this->getMembreService()->createMembre($proposition, $encadrement);
         }
     }
 }

@@ -61,24 +61,17 @@ class PropositionController extends AbstractController {
 
     public function propositionAction()
     {
-        /** @var These $these */
         $these = $this->requestedThese();
-
-        /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
 
         if (!$proposition) {
-            $proposition = new Proposition();
-            $proposition->setThese($these);
+            $proposition = new Proposition($these);
+            //TODO transferer l'etat dans la création
             $proposition->setEtat($this->getPropositionService()->getPropositionEtatByCode(Etat::EN_COURS));
             $this->getPropositionService()->create($proposition);
 
-            /** @var Acteur[] $encadrements */
-            $encadrements = $these->getEncadrements();
-            foreach ($encadrements as $encadrement) {
-                $this->getMembreService()->createMembre($proposition, $encadrement);
-            }
-            $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
+            $this->getPropositionService()->addDirecteursAsMembres($proposition);
+            return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
         }
 
         /** @var Utilisateur $currentUser */
@@ -110,16 +103,15 @@ class PropositionController extends AbstractController {
     }
 
     public function modifierDateLieuAction() {
-        /** @var These $these */
-        $idThese = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($idThese);
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findByThese($these);
 
         /** @var DateLieuForm $form */
         $form = $this->getDateLieuForm();
-        $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/modifier-date-lieu', ['these' => $idThese], [], true));
+        $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/modifier-date-lieu', ['these' => $these->getId()], [], true));
 
         /** @var Proposition $proposition */
-        $proposition = $this->getPropositionService()->findByThese($these);
+
         $form->bind($proposition);
 
         /** @var Request $request */
@@ -142,25 +134,21 @@ class PropositionController extends AbstractController {
         return $vm;
     }
 
-    public function modifierMembreAction() {
-        /** @var These $these */
-        $idThese = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($idThese);
+    public function modifierMembreAction()
+    {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findByThese($these);
 
         /** @var MembreForm $form */
         $form = $this->getMembreForm();
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/modifier-membre', ['these' => $these->getId()], [], true));
 
-        /** @var Proposition $proposition */
-        $proposition = $this->getPropositionService()->findByThese($these);
-
-        /** @var Membre $membre */
-        $idMembre = $this->params()->fromRoute('membre');
-        $membre = null;
-        if ($idMembre) $membre = $this->getMembreService()->find($idMembre);
-        else           {
+        $new = false;
+        $membre = $this->getMembreService()->getRequestedMembre($this);
+        if ($membre === null) {
             $membre = new Membre();
             $membre->setProposition($proposition);
+            $new = true;
         }
         $form->bind($membre);
 
@@ -170,7 +158,7 @@ class PropositionController extends AbstractController {
             $data = $request->getPost();
             $form->setData($data);
             if ($form->isValid()) {
-                if ($idMembre)  {
+                if ($new === true)  {
                     $this->getMembreService()->update($membre);
                 }
                 else {
@@ -191,30 +179,21 @@ class PropositionController extends AbstractController {
 
     public function effacerMembreAction()
     {
-        /** @var These $these */
-        $idThese = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($idThese);
-
-        /** @var Proposition $proposition */
+        $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
-
-        /** @var Membre $membre */
-        $idMembre = $this->params()->fromRoute('membre');
-        $membre = $this->getMembreService()->find($idMembre);
+        $membre = $this->getMembreService()->getRequestedMembre($this);
 
         if ($membre) {
             $this->getMembreService()->delete($membre);
             $this->getPropositionService()->annulerValidations($proposition);
         }
-        $this->redirect()->toRoute('soutenance/proposition',['these' => $idThese],[],true);
+
+        return $this->redirect()->toRoute('soutenance/proposition',['these' => $these->getId()],[],true);
     }
 
     public function labelEuropeenAction()
     {
-        /** @var These $these */
         $these = $this->requestedThese();
-
-        /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
 
         /** @var LabelEuropeenForm  $form */
@@ -244,10 +223,7 @@ class PropositionController extends AbstractController {
 
     public function anglaisAction()
     {
-        /** @var These $these */
         $these = $this->requestedThese();
-
-        /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
 
         /** @var LabelEuropeenForm  $form */
@@ -277,11 +253,7 @@ class PropositionController extends AbstractController {
 
     public function confidentialiteAction()
     {
-        /** @var These $these */
-        $idThese = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($idThese);
-
-        /** @var Proposition $proposition */
+        $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
 
         /** @var ConfidentialiteForm  $form */
@@ -311,11 +283,7 @@ class PropositionController extends AbstractController {
 
     public function changementTitreAction()
     {
-        /** @var These $these */
-        $idThese = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($idThese);
-
-        /** @var Proposition $proposition */
+        $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
 
         /** @var ConfidentialiteForm  $form */
@@ -344,9 +312,7 @@ class PropositionController extends AbstractController {
     }
 
     public function validerActeurAction() {
-        /** @var These $these */
-        $idThese = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($idThese);
+        $these = $this->requestedThese();
 
         $validation = $this->getValidationService()->validatePropositionSoutenance($these);
         $this->getNotifierSoutenanceService()->triggerValidationProposition($these, $validation);
@@ -368,14 +334,12 @@ class PropositionController extends AbstractController {
         }
         if ($allValidated) $this->getNotifierSoutenanceService()->triggerNotificationUniteRechercheProposition($these);
 
-        $this->redirect()->toRoute('soutenance/proposition',['these' => $idThese],[],true);
+        return $this->redirect()->toRoute('soutenance/proposition',['these' => $these->getId()],[],true);
 
     }
 
     public function validerStructureAction() {
-        /** @var These $these */
-        $idThese = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($idThese);
+        $these = $this->requestedThese();
 
         /**
          * @var Role $role
@@ -403,16 +367,12 @@ class PropositionController extends AbstractController {
                 break;
         }
 
-        $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
+        return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
 
     }
 
     public function refuserStructureAction() {
-        /** @var These $these */
-        $idThese = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($idThese);
-
-        /** @var Proposition $proposition */
+        $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
 
         /** @var RefusForm $form */
@@ -441,9 +401,7 @@ class PropositionController extends AbstractController {
     /** Document pour la signature en présidence */
     public function signaturePresidenceAction()
     {
-        /** @var These $these */
         $these = $this->requestedThese();
-        /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
 
         $encadrement = $these->getEncadrements();
@@ -466,9 +424,7 @@ class PropositionController extends AbstractController {
 
     public function avancementAction()
     {
-        /** @var These $these */
-        $theseId = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($theseId);
+        $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
 
         /** @var Acteur[] $directeurs */
@@ -489,7 +445,6 @@ class PropositionController extends AbstractController {
 
     public function ajouterJustificatifAction() {
 
-        /** @var These $these */
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
 
@@ -536,7 +491,6 @@ class PropositionController extends AbstractController {
     }
 
     public function toggleSursisAction() {
-        /** @var These $these */
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
 
