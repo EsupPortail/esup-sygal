@@ -38,7 +38,7 @@ class Module
         );
 
         /* Détournement de requête pour demander la saisie du persopass */
-        $deflector = new SaisiePersopassRouteDeflector('#^home|these\/.+#', [
+        $deflector = new SaisiePersopassRouteDeflector('#^home|these|soutenance\/.+#', [
             'options' => ['name' => 'doctorant/modifier-persopass'],
             'params' => ['detournement' => 1]
         ]);
