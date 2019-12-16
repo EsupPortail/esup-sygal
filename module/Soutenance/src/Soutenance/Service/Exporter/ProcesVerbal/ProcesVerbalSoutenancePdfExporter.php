@@ -1,6 +1,6 @@
 <?php
 
-namespace Soutenance\Service\ProcesVerbalSoutenance;
+namespace Soutenance\Service\Exporter\ProcesVerbal;
 
 use UnicaenApp\Exporter\Pdf as PdfExporter;
 use Zend\View\Renderer\PhpRenderer;
@@ -29,7 +29,7 @@ class ProcesVerbalSoutenancePdfExporter extends PdfExporter
     {
         $this->addBodyHtml('<style>' . file_get_contents(APPLICATION_DIR . '/public/css/page-unicaen.css') . '</style>');
         $this->setHeaderScript('empty.phtml');
-        $this->setFooterScript('empty.phtml');
+        $this->setFooterScript('footer.phtml');
         $this->addBodyScript('proces-verbal-soutenance-1.phtml', false, $this->vars);
         $this->addBodyScript('proces-verbal-soutenance-2.phtml', true, $this->vars);
         return PdfExporter::export($filename, $destination, $memoryLimit);

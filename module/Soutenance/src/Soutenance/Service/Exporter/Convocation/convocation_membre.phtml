@@ -1,0 +1,142 @@
+<?php
+
+use Application\Entity\Db\Acteur;
+use Application\Entity\Db\These;
+use Application\Entity\Db\Validation;
+use Application\Service\FichierThese\PdcData;
+use Application\View\Renderer\PhpRenderer;
+use Soutenance\Entity\Proposition;
+
+/**
+ * @var PhpRenderer             $this
+ * @var Proposition $proposition
+ * @var Validation[] $validations
+ * @var Validation $validation
+ * @var array $logos
+ * @var int $nbCodirecteur
+ * @var PdcData                 $informations
+ * @var These $these
+ * @var DateTime $date
+ * @var string $ville
+ * @var Acteur $membre
+ * @see
+ */
+
+$date = new DateTime();
+
+$civilite = "<span  style='background-color:red;'>Inconnu</span>";
+if ($membre->getIndividu()->getCivilite() === 'M.') $civilite = "Monsieur";
+if ($membre->getIndividu()->getCivilite() === 'Mme') $civilite = "Madame";
+
+?>
+
+<style>
+    .not-yet {
+        background-color: lightpink;
+        color: darkred;
+    }
+
+</style>
+
+<br/>
+<br/>
+<br/>
+<br/>
+
+<table>
+    <tr>
+        <td width="70%"></td>
+        <td>
+            À <?php echo $ville; ?>, le <?php echo $date->format('d/m/Y'); ?>
+            <br/>
+            <br/>
+            <?php echo $membre->getIndividu()->getNomComplet(true); ?> <br/>
+            <span class="not-yet">ADRESSE ETABLISSEMENT RATTACHEMENT</span> <br/>
+        </td>
+    </tr>
+</table>
+
+<br/>
+<br/>
+<br/>
+<br/>
+
+<p>
+    <?php echo $civilite ?>, <br/>
+</p>
+
+Par décision en date du
+<?php if ($date): ?>
+    <?php echo $date->format('d/m/Y'); ?>,
+<?php else: ?>
+    <span style='background-color:red;'>
+                Date manquante,
+        </span>
+<?php endif; ?>
+le chef de l'établissement <?php echo  $these->getEtablissement()->getLibelle(); ?> vous a désigné<?php if($civilite==="Madame") echo "e"; ?>
+pour participer au jury devant examiner les travaux de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(true); ?>
+en vue de l'obtention du diplôme : <br/>
+Doctorat en <?php echo $these->getLibelleDiscipline(); ?>.
+</p>
+
+<p>
+    Le titre des travaux est : <?php echo $these->getTitre(); ?>
+</p>
+
+<?php
+$encadrement = array_merge($informations->getDirecteurs(), $informations->getCodirecteurs());
+$texte_directeur = implode(" et ", $encadrement);
+?>
+
+<p>
+    Les travaux sont dirigées par <?php echo $texte_directeur; ?>.
+</p>
+
+<p>
+    La soutenance aura lieu le
+    <?php if ($informations->getDate() !== null): ?>
+        <?php echo $informations->getDate(); ?>
+    <?php else : ?>
+        <span style='background-color:red;'>
+                Date manquante
+        </span>
+    <?php endif; ?> à l'adresse suivante : <br/>
+    <span class="not-yet">LIEU DE SOUTENANCE</span>
+</p>
+
+<p>
+    La soutenance <?php if ($proposition && $proposition->isHuitClos() !== null): ?>
+        <?php if ($proposition->isHuitClos()) : ?>
+            se déroulera en huis clos.
+        <?php else : ?>
+            sera publique.
+        <?php endif ; ?>
+    <?php else: ?>
+        <span style='background-color:red;'> information sur l'aspect public manquante </span>
+    <?php endif; ?>
+</p>
+
+<p>
+    Je vous prie d'agréer, <?php echo $civilite; ?>, l'expression de mes salutations distinguées.
+</p>
+
+<br/>
+<br/>
+<br/>
+<br/>
+
+<table>
+    <tr>
+        <td width="70%"></td>
+        <td>
+            À <?php echo $ville; ?>, le <?php echo $date->format('d/m/Y'); ?>
+            <br/>
+            <br/>
+            Le Responsable de la Direction Recherche et Innovation.<br/>
+            <span class="not-yet">NOM RESPONSABLE,</span> <br/>
+        </td>
+    </tr>
+</table>
+
+
+

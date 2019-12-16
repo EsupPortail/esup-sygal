@@ -46,8 +46,6 @@ class AvisController extends AbstractController {
         /** @var Membre $membre */
         $idMembre = $this->params()->fromRoute('rapporteur');
         $membre = $this->getMembreService()->find($idMembre);
-        /** @var Acteur $rapporteur */
-        $rapporteur = $membre->getActeur();
         /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
 
@@ -87,7 +85,7 @@ class AvisController extends AbstractController {
 
                 $avis = new Avis();
                 $avis->setProposition($proposition);
-                $avis->setRapporteur($rapporteur);
+                $avis->setMembre($membre);
                 $avis->setFichier($fichier);
                 $avis->setValidation($validation);
                 $avis->setAvis($data['avis']);
@@ -118,7 +116,7 @@ class AvisController extends AbstractController {
         return new ViewModel([
             'form' => $form,
             'these' => $these,
-            'rapporteur' => $rapporteur,
+            'rapporteur' => $membre->getActeur(),
         ]);
     }
 

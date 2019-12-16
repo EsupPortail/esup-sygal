@@ -8,6 +8,7 @@ use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Profil;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Utilisateur;
+use Application\Entity\Db\Validation;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\FichierThese\PdcData;
 use Application\Service\Individu\IndividuServiceAwareTrait;
@@ -25,10 +26,12 @@ use Soutenance\Form\InitCompte\InitCompteForm;
 use Soutenance\Form\InitCompte\InitCompteFormAwareTrait;
 use Soutenance\Service\Avis\AvisServiceAwareTrait;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;
+use Soutenance\Service\Exporter\AvisSoutenance\AvisSoutenancePdfExporter;
+use Soutenance\Service\Exporter\Convocation\ConvocationPdfExporter;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
 use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
-use Soutenance\Service\ProcesVerbalSoutenance\ProcesVerbalSoutenancePdfExporter;
+use Soutenance\Service\Exporter\ProcesVerbal\ProcesVerbalSoutenancePdfExporter;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
@@ -341,6 +344,67 @@ class PresoutenanceController extends AbstractController
             'proposition' => $proposition,
             'these' => $these,
             'informations' => $pdcData,
+        ]);
+        $exporter->export('export.pdf');
+        exit;
+    }
+
+    /** Document pour la signature en présidence */
+    public function avisSoutenanceAction()
+    {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findByThese($these);
+
+        /** @var PdcData $pdcData */
+        $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
+
+        /* @var $renderer PhpRenderer */
+        $renderer = $this->getServiceLocator()->get('view_renderer');
+
+        $exporter = new AvisSoutenancePdfExporter($renderer, 'A4');
+        $exporter->setVars([
+            'proposition' => $proposition,
+            'these' => $these,
+            'informations' => $pdcData,
+        ]);
+        $exporter->export('export.pdf');
+        exit;
+    }
+
+    /** Document pour la signature en présidence */
+    public function convocationAction()
+    {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findByThese($these);
+
+        /** @var PdcData $pdcData */
+        $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
+
+        /* @var $renderer PhpRenderer */
+        $renderer = $this->getServiceLocator()->get('view_renderer');
+
+        /** @var Validation[] $validationMDD */
+        $validationMDD = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
+        $dateValidation = (! empty($validationMDD))?current($validationMDD)->getHistoModification():null;
+
+        /** @var string $ville */
+        switch($these->getEtablissement()->getSigle()) {
+            case "UCN" : $ville = "Caen"; break;
+            case "URN" :
+            case "INSA" :
+                $ville = "Rouen"; break;
+            case "ULHN" : $ville = "Le Havre"; break;
+            default:
+                $ville = "Manquant";
+        }
+
+        $exporter = new ConvocationPdfExporter($renderer, 'A4');
+        $exporter->setVars([
+            'proposition' => $proposition,
+            'these' => $these,
+            'informations' => $pdcData,
+            'date' => $dateValidation,
+            'ville' => $ville,
         ]);
         $exporter->export('export.pdf');
         exit;

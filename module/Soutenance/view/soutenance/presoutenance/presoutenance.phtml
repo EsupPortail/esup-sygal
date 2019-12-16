@@ -34,6 +34,18 @@ $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->get
         class="btn btn-primary action">
         <span class="glyphicon glyphicon-list-alt"></span>Générer le procès verbal de soutenance
     </a>
+
+    <a  <?php /** @see \Soutenance\Controller\Presoutenance\PresoutenanceController::avisSoutenanceAction() */ ?>
+            href="<?php echo $this->url('soutenance/presoutenance/avis-soutenance', ['these' => $these->getId()], [], true); ?>"
+            class="btn btn-primary action">
+        <span class="glyphicon glyphicon-list-alt"></span>Générer l'avis de soutenance
+    </a>
+
+    <a  <?php /** @see \Soutenance\Controller\Presoutenance\PresoutenanceController::convocationAction() */ ?>
+            href="<?php echo $this->url('soutenance/presoutenance/convocation', ['these' => $these->getId()], [], true); ?>"
+            class="btn btn-primary action">
+        <span class="glyphicon glyphicon-list-alt"></span>Générer les convocations
+    </a>
 </p>
 
 <?php if ($validationBDD) : ?>

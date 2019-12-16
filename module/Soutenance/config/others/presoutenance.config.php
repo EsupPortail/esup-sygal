@@ -57,6 +57,8 @@ return [
                         'date-rendu-rapport',
                         'feu-vert',
                         'stopper-demarche',
+                        'avis-soutenance',
+                        'convocation',
                         'proces-verbal-soutenance',
                     ],
                     'privileges' => PresoutenancePrivileges::PRESOUTENANCE_DATE_RETOUR_MODIFICATION,
@@ -133,6 +135,28 @@ return [
                             ],
                         ],
                         'child_routes' => [
+                            'avis-soutenance' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/avis-soutenance',
+                                    'defaults' => [
+                                        'controller' => PresoutenanceController::class,
+                                        'action'     => 'avis-soutenance',
+                                    ],
+                                ],
+                            ],
+                            'convocation' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/convocation',
+                                    'defaults' => [
+                                        'controller' => PresoutenanceController::class,
+                                        'action'     => 'convocation',
+                                    ],
+                                ],
+                            ],
                             'proces-verbal-soutenance' => [
                                 'type' => Segment::class,
                                 'may_terminate' => true,

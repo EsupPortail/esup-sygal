@@ -8,6 +8,8 @@ use Application\Service\UserContextServiceAwareTrait;
 use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\QueryBuilder;
+use Exception;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Membre;
 use UnicaenApp\Exception\RuntimeException;
@@ -17,25 +19,7 @@ class AvisService {
     use EntityManagerAwareTrait;
     use UserContextServiceAwareTrait;
 
-    /**
-     * @param int $id
-     * @return Avis
-     */
-    public function getAvis($id)
-    {
-        $qb = $this->getEntityManager()->getRepository(Avis::class)->createQueryBuilder('avis')
-            ->andWhere('avis.id = :id')
-            ->setParameter('id', $id)
-        ;
-
-        try {
-            $result = $qb->getQuery()->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
-            throw new RuntimeException('Plusieurs avis partagent le même identifiant ['.$id.']', $e);
-        }
-
-        return $result;
-    }
+    /** GESTION DES ENTITÉS *******************************************************************************************/
 
     /**
      * @param Avis $avis
@@ -48,7 +32,7 @@ class AvisService {
         /** @var DateTime $date */
         try {
             $date = new DateTime();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new RuntimeException("Un problème s'est produit lors de la récupération de la date");
         }
         $avis->setHistoCreation($date);
@@ -77,7 +61,7 @@ class AvisService {
         /** @var DateTime $date */
         try {
             $date = new DateTime();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new RuntimeException("Un problème s'est produit lors de la récupération de la date");
         }
         $avis->setHistoModification($date);
@@ -116,7 +100,7 @@ class AvisService {
         /** @var DateTime $date */
         try {
             $date = new DateTime();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new RuntimeException("Un problème s'est produit lors de la récupération de la date");
         }
 
@@ -138,15 +122,52 @@ class AvisService {
         return $avis;
     }
 
+    /** REQUETE *******************************************************************************************************/
+
+    /**
+     * @return QueryBuilder
+     */
+    public function createQueryBuilder()
+    {
+        $qb = $this->getEntityManager()->getRepository(Avis::class)->createQueryBuilder('avis')
+            ->addSelect('proposition')->join('avis.proposition', 'proposition')
+            ->addSelect('membre')->join('avis.membre', 'membre')
+        ;
+
+        return $qb;
+    }
+
+    /**
+     * @param int $id
+     * @return Avis
+     */
+    public function getAvis($id)
+    {
+        $qb = $this->createQueryBuilder()
+            ->andWhere('avis.id = :id')
+            ->setParameter('id', $id)
+        ;
+
+        try {
+            $result = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException('Plusieurs avis partagent le même identifiant ['.$id.']', $e);
+        }
+
+        return $result;
+    }
+
+
+
     /**
      * @param These these
      * @return Avis[]
      */
     public function getAvisByThese($these)
     {
-        $qb = $this->getEntityManager()->getRepository(Avis::class)->createQueryBuilder('avis')
-            ->andWhere('avis.these = :these')
+        $qb =$this->createQueryBuilder()
             ->andWhere('1 = pasHistorise(avis)')
+            ->andWhere('proposition.these = :these')
             ->setParameter('these', $these);
 
         $result = $qb->getQuery()->getResult();
@@ -166,12 +187,11 @@ class AvisService {
      */
     public function getAvisByMembre($membre)
     {
-        $qb = $this->getEntityManager()->getRepository(Avis::class)->createQueryBuilder('avis')
-            ->andWhere('avis.these = :these')
-            ->andWhere('avis.rapporteur = :rapporteur')
+        $qb = $this->createQueryBuilder()
             ->andWhere('1 = pasHistorise(avis)')
-            ->setParameter('these', $membre->getProposition()->getThese())
-            ->setParameter('rapporteur', $membre->getActeur());
+            ->andWhere('avis.membre = :membre')
+            ->setParameter('membre', $membre);
+
         try {
             $result = $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {

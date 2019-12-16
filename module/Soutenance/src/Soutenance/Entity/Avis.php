@@ -18,8 +18,8 @@ class Avis {
     private $id;
     /** @var Proposition */
     private  $proposition;
-    /** @var Acteur */
-    private $rapporteur;
+    /** @var Membre */
+    private $membre;
     /** @var string */
     private $avis;
     /** @var string */
@@ -50,17 +50,7 @@ class Avis {
      */
     public function getRapporteur()
     {
-        return $this->rapporteur;
-    }
-
-    /**
-     * @param Acteur $rapporteur
-     * @return Avis
-     */
-    public function setRapporteur($rapporteur)
-    {
-        $this->rapporteur = $rapporteur;
-        return $this;
+        return $this->getMembre()->getActeur();
     }
 
     /**
@@ -153,4 +143,21 @@ class Avis {
         return $this;
     }
 
+    /**
+     * @return Membre
+     */
+    public function getMembre()
+    {
+        return $this->membre;
+    }
+
+    /**
+     * @param Membre $membre
+     * @return Avis
+     */
+    public function setMembre($membre)
+    {
+        $this->membre = $membre;
+        return $this;
+    }
 }
