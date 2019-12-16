@@ -37,7 +37,7 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
 
     // @todo NB: maintenant il y le code étab concaténé au "role_id"
     const ROLE_ID_DOCTORANT = "Doctorant";
-    const ROLE_ID_BUREAU_DES_DOCTORATS = "Maison des doctorats";
+    const ROLE_ID_BUREAU_DES_DOCTORATS = "Maison du doctorat";
     const ROLE_ID_BIBLIO_UNIV = "Bibliothèque universitaire";
 
     const ROLE_ID_ECOLE_DOCT = "École doctorale";
