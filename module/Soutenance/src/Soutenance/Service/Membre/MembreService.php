@@ -3,9 +3,14 @@
 namespace Soutenance\Service\Membre;
 
 use Application\Entity\Db\Acteur;
+use Application\Entity\Db\These;
+use DateInterval;
+use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\QueryBuilder;
+use Exception;
+use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Entity\Qualite;
@@ -133,6 +138,40 @@ class MembreService {
             ->setParameter('rapporteur', Membre::RAPPORTEUR_JURY)
             ->setParameter('rapporteurVisio', Membre::RAPPORTEUR_VISIO)
             ->setParameter('rapporteurAbsent', Membre::RAPPORTEUR_ABSENT)
+        ;
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
+
+
+    /**
+     * @param DateInterval $interval
+     * @return array
+     */
+    public function getRapporteursEnRetard(DateInterval $interval)
+    {
+        try {
+            $date = new DateTime();
+            $date = $date->add($interval);
+        } catch (Exception $e) {
+            throw new RuntimeException("Un problème est survenu lors de la récupération de la date.", 0, $e);
+        }
+
+        $qb = $this->createQueryBuilder()
+            ->andWhere('membre.role = :rapporteurAbsent OR membre.role = :rapporteurVisio OR membre.role = :rapporteurJury')
+            ->setParameter('rapporteurAbsent', Membre::RAPPORTEUR_ABSENT)
+            ->setParameter('rapporteurVisio', Membre::RAPPORTEUR_VISIO)
+            ->setParameter('rapporteurJury', Membre::RAPPORTEUR_JURY)
+            ->addSelect('etat')->join('proposition.etat', 'etat')
+            ->andWhere('etat.code = :EnCours')
+            ->setParameter('EnCours', Etat::EN_COURS)
+            ->addSelect('avis')->leftJoin('proposition.avis', 'avis')
+            ->andWhere('avis.id IS NULL')
+            ->addSelect('these')->leftJoin('proposition.these', 'these')
+            ->andWhere('these.dateSoutenance < :date')
+//            ->andWhere('proposition.date < :date')
+            ->setParameter('date', $date)
         ;
 
         $result = $qb->getQuery()->getResult();

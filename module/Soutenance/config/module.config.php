@@ -7,6 +7,7 @@ use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Soutenance\Controller\Avis\AvisController;
 use Soutenance\Controller\EngagementImpartialite\EngagementImpartialiteController;
+use Soutenance\Controller\Presoutenance\PresoutenanceController;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 use Soutenance\Service\Membre\MembreService;
@@ -122,6 +123,13 @@ return array(
                                     'these',
                                     'Acteur',
                                 ],
+                            ],
+                            'retard' => [
+                                'label' => 'Notifier attente de rapport',
+                                'route' => 'soutenance/notifier-retard-rapport-presoutenance',
+                                'order'    => 500,
+//                                'resource' => PrivilegeController::getResourceId(PresoutenanceController::class, 'notifier-retard-rapport-presoutenance'),
+                                'privileges' => PresoutenancePrivileges::PRESOUTENANCE_DATE_RETOUR_MODIFICATION,
                             ],
                         ],
                     ],

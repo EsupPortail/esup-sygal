@@ -13,12 +13,18 @@ use Soutenance\Form\Justificatif\JustificatifForm;
  * @var array $justificatifs
  */
 
+$FORMULAIRE_DELOCALISATION = 'https://sygal-test.normandie-univ.fr/informations/fichiers/telecharger/801';
+$FORMULAIRE_DELEGUATION = 'https://sygal-test.normandie-univ.fr/informations/fichiers/telecharger/804';
+$FORMULAIRE_DEMANDE_LABEL = 'https://sygal-test.normandie-univ.fr/informations/fichiers/telecharger/802';
+$FORMULAIRE_DEMANDE_ANGLAIS = 'https://sygal-test.normandie-univ.fr/informations/fichiers/telecharger/1541';
+$FORMULAIRE_DEMANDE_CONFIDENTIALITE = 'https://sygal-test.normandie-univ.fr/informations/fichiers/telecharger/803';
+
 $explications = [];
 $explications[NatureFichier::CODE_JUSTIFICATIF_HDR] =
     "<div class='alert alert-warning'>" .
         "<strong><span class='glyphicon glyphicon-info-sign'></span> Justification d'habilitation à diriger des recherches</strong> <br/>".
         "Le justificatif d'habilitation à diriger des recherches est demandé pour tous les membres de rang B titulaire d'un HDR extérieur à l'établissement/la COMUE de soutenance. <br/>" .
-        "<u>NB:</u> <i>Pour les membres du jury étrangers, il est nécessaire de fournir un équivalent à l'habilitation à diriger des recherches ou d'un curriculum vitae en dernier recours.</i>" .
+        "<u>NB:</u> <i>Pour les membres du jury étrangers, il est nécessaire de fournir un équivalent à l'habilitation à diriger des recherches ou d'un curriculum vitae en dernier recours.</i>".
     "</div>";
 $explications[NatureFichier::CODE_JUSTIFICATIF_EMERITAT] =
     "<div class='alert alert-warning'>" .
@@ -31,31 +37,33 @@ $explications[NatureFichier::CODE_DELOCALISATION_SOUTENANCE] =
     "<strong><span class='glyphicon glyphicon-info-sign'></span> Délocalisation de la soutenance</strong> <br/>".
     "Lorsque la soutenance se déroule à l'extérieur de l'établissement d'inscription il est nécessaire de fournir un justificatif de délocalisation de soutenance. <br/>" .
     "<u>NB:</u> Le formulaire de demande de délocalisation de la soutenance peut être téléchargé ici : ".
-    "<a href='".$this->url('informations/fichiers/telecharger', ['id' => 401], [], true) ."'>formulaire de demande de délocalisation.</a></i>" .
+    "<a href='"./*$this->url('informations/fichiers/telecharger', ['id' => 401], [], true)*/ $FORMULAIRE_DELOCALISATION ."'>formulaire de demande de délocalisation.</a></i>" .
     "</div>";
 $explications[NatureFichier::CODE_DELEGUATION_SIGNATURE] =
     "<div class='alert alert-warning'>" .
     "<strong><span class='glyphicon glyphicon-info-sign'></span> Délégation de signature</strong> <br/>".
     "Les membres du jury participant à la soutenance en visioconférence doivent au préalable remplir une demande de déléguation de signature <br/>" .
     "<u>NB:</u> Le formulaire de demande de délégation de signature peut être téléchargé ici : ".
-    "<a href='".$this->url('informations/fichiers/telecharger', ['id' => 381], [], true) ."'>formulaire de demande de délégation.</a></i>" .
+    "<a href='"./*$this->url('informations/fichiers/telecharger', ['id' => 381], [], true)*/ $FORMULAIRE_DELEGUATION ."'>formulaire de demande de délégation.</a></i>" .
     "</div>";
 $explications[NatureFichier::CODE_DEMANDE_LABEL] =
     "<div class='alert alert-warning'>" .
     "<strong><span class='glyphicon glyphicon-info-sign'></span> Demande de label européen</strong> <br/>".
     "<u>NB:</u> La demande d'un label européen nécessite le retour du formulaire de demande de label européen qui peut être téléchargé ici : ".
-    "<a href='".$this->url('informations/fichiers/telecharger', ['id' => 402], [], true) ."'>formulaire de demande de label européen.</a></i>" .
+    "<a href='"./*$this->url('informations/fichiers/telecharger', ['id' => 402], [], true)*/ $FORMULAIRE_DEMANDE_LABEL ."'>formulaire de demande de label européen.</a></i>" .
     "</div>";
 $explications[NatureFichier::CODE_LANGUE_ANGLAISE] =
     "<div class='alert alert-warning'>" .
-    "<strong><span class='glyphicon glyphicon-info-sign'></span> Délégation de signature</strong> <br/>".
-    "L'usage de la langue angliase pour la rédaction du manuscrit ou la soutenance de la thèse doit être motivé par un lettre justifiant la nécessité de l'usage de la langue anglaise. <br/>" .
+    "<strong><span class='glyphicon glyphicon-info-sign'></span> Usage de la langue anglaise pour la rédaction du manuscrit ou la soutenance de la thèse</strong> <br/>".
+    "L'usage de la langue anglaise pour la rédaction du manuscrit ou la soutenance de la thèse doit être motivé par un lettre justifiant la nécessité de l'usage de la langue anglaise. <br/>" .
+    "<u>NB:</u> La demande de l'usage de la langue anglaise nécessite le retour du formulaire de demande de l'usage de la langue anglaise pour la rédaction du manuscrit ou la soutenance de la thèse qui peut être téléchargé ici : ".
+    "<a href='"./*$this->url('informations/fichiers/telecharger', ['id' => 403], [], true)*/ $FORMULAIRE_DEMANDE_ANGLAIS ."'>formulaire de l'usage de la langue anglaise pour la rédaction du manuscrit ou la soutenance de la thèse.</a></i>" .
     "</div>";
 $explications[NatureFichier::CODE_DEMANDE_CONFIDENT] =
     "<div class='alert alert-warning'>" .
     "<strong><span class='glyphicon glyphicon-info-sign'></span> Demande de confidentialité</strong> <br/>".
     "<u>NB:</u> La demande de confidentialité nécessite le retour du formulaire de demande de label européen qui peut être téléchargé ici : ".
-    "<a href='".$this->url('informations/fichiers/telecharger', ['id' => 403], [], true) ."'>formulaire de demande de confidentialité.</a></i>" .
+    "<a href='"./*$this->url('informations/fichiers/telecharger', ['id' => 403], [], true)*/ $FORMULAIRE_DEMANDE_CONFIDENTIALITE ."'>formulaire de demande de confidentialité.</a></i>" .
     "</div>";
 ?>
 

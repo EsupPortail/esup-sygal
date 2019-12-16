@@ -7,6 +7,9 @@
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 
 $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER);
+
+$FORMULAIRE_DELOCALISATION = 'https://sygal-test.normandie-univ.fr/informations/fichiers/telecharger/801';
+
 ?>
 
 <div class="box panel <?php echo ($proposition->hasDateEtLieu())?'panel-success':'panel-danger'; ?>">
@@ -58,7 +61,7 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
                     <div class="alert alert-sm alert-warning">
                         <span class="glyphicon glyphicon-warning-sign"> </span>
                         Si la soutenance ne se déroule pas dans les locaux de l'établissement d'inscription il est nécessaire de signer une demande de délocalisation :
-                        <a href="../../informations/fichiers/telecharger/401">
+                        <a href="<?php echo $FORMULAIRE_DELOCALISATION; ?>">
                             formulaire de demande de délocalisation</a>.
                     </div>
                 <?php endif; ?>

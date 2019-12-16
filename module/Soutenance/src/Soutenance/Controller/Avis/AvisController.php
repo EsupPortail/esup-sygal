@@ -86,7 +86,7 @@ class AvisController extends AbstractController {
                 $validation = $this->getValidationService()->signerAvisSoutenance($these, $membre->getActeur()->getIndividu());
 
                 $avis = new Avis();
-                $avis->setThese($these);
+                $avis->setProposition($proposition);
                 $avis->setRapporteur($rapporteur);
                 $avis->setFichier($fichier);
                 $avis->setValidation($validation);

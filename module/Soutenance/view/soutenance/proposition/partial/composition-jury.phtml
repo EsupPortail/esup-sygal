@@ -1,14 +1,17 @@
 <?php
  /**
   * @var array $indicateurs
-  * @var \Soutenance\Entity\Proposition $proposition
-  * @var \Application\Entity\Db\These $these
+  * @var Proposition $proposition
+  * @var These $these
   *
   */
 
+use Application\Entity\Db\These;
 use Soutenance\Entity\Membre;
+use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 
+$FORMULAIRE_DELEGUATION = 'https://sygal-test.normandie-univ.fr/informations/fichiers/telecharger/804';
 $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER);
 ?>
 
@@ -179,7 +182,7 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
                         <span class="glyphicon glyphicon-warning-sign"></span>
                         Les membres du jury participant à la soutenance en visioconférence doivent au préalable remplir la demande
                         de déléguation de signature suivante :
-                        <a href="../../informations/fichiers/telecharger/381">formulaire de demande de déléguation</a>.
+                        <a href="<?php echo $FORMULAIRE_DELEGUATION; ?>">formulaire de demande de déléguation</a>.
                     </div>
                 <?php endif; ?>
             </div>

@@ -12,10 +12,10 @@ use Application\Entity\Db\Validation;
 use Application\Entity\Db\Variable;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\File\FileServiceAwareTrait;
+use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
-use Application\Service\Notification\NotifierServiceAwareTrait;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\QueryBuilder;
 use Soutenance\Entity\Etat;
@@ -59,11 +59,9 @@ class PropositionService {
             ->addSelect('qualite')->leftJoin('membre.qualite', 'qualite')
             ->addSelect('acteur')->leftJoin('membre.acteur', 'acteur')
             ->addSelect('justificatif')->leftJoin('proposition.justificatifs', 'justificatif')
+            ->addSelect('avis')->leftJoin('proposition.avis', 'avis')
             //->addSelect('validation')->leftJoin('proposition.validations', 'validation')
-
-
-
-            ;
+        ;
         return $qb;
     }
 

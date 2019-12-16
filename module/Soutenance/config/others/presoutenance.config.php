@@ -86,7 +86,8 @@ return [
                 [
                     'controller' => PresoutenanceController::class,
                     'action'     => [
-                        'init-compte'
+                        'init-compte',
+                        'notifier-retard-rapport-presoutenance'
                     ],
                     'roles' => 'guest',
                 ],
@@ -98,6 +99,18 @@ return [
         'routes' => [
             'soutenance' => [
                 'child_routes' => [
+                    // TODO :: doit devenir une route console ...
+                    'notifier-retard-rapport-presoutenance' => [
+                        'type' => Literal::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/notifier-retard-rapport-presoutenance',
+                            'defaults' => [
+                                'controller' => PresoutenanceController::class,
+                                'action'     => 'notifier-retard-rapport-presoutenance',
+                            ],
+                        ],
+                    ],
                     'init-compte' => [
                         'type' => Segment::class,
                         'may_terminate' => true,

@@ -13,9 +13,9 @@
             </join-columns>
         </many-to-one>
 
-        <many-to-one field="these" target-entity="Application\Entity\Db\These">
+        <many-to-one field="proposition" target-entity="Soutenance\Entity\Proposition">
             <join-columns>
-                <join-column name="THESE_ID" referenced-column-name="ID"/>
+                <join-column name="PROPOSITION_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
 

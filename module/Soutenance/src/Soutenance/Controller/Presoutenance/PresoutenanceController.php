@@ -346,6 +346,18 @@ class PresoutenanceController extends AbstractController
         exit;
     }
 
+    public function notifierRetardRapportPresoutenanceAction() {
+
+        $delai = new DateInterval('P15D');
+        $membres = $this->getMembreService()->getRapporteursEnRetard($delai);
+        $url = $this->url()->fromRoute('soutenance/index-rapporteur', [], ['force_canonical' => true], true);
+
+        foreach ($membres as $membre) {
+            $this->getNotifierSoutenanceService()->triggerNotificationRapporteurRetard($membre, $url);
+        }
+        exit();
+    }
+
     /**
      * Fonction calculant le nom du rapporteur : NOMUSUEL_MEMBREID
      * @param Membre $membre

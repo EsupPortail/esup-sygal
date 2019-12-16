@@ -14,11 +14,10 @@ class Avis {
     const FAVORABLE = 'Favorable';
     const DEFAVORABLE = 'Défavorable';
 
-
     /** @var int */
     private $id;
-    /** @var These */
-    private $these;
+    /** @var Proposition */
+    private  $proposition;
     /** @var Acteur */
     private $rapporteur;
     /** @var string */
@@ -43,17 +42,7 @@ class Avis {
      */
     public function getThese()
     {
-        return $this->these;
-    }
-
-    /**
-     * @param These $these
-     * @return Avis
-     */
-    public function setThese($these)
-    {
-        $this->these = $these;
-        return $this;
+        return $this->proposition->getThese();
     }
 
     /**
@@ -145,4 +134,23 @@ class Avis {
         $this->fichier = $fichier;
         return $this;
     }
+
+    /**
+     * @return Proposition
+     */
+    public function getProposition()
+    {
+        return $this->proposition;
+    }
+
+    /**
+     * @param Proposition $proposition
+     * @return Avis
+     */
+    public function setProposition($proposition)
+    {
+        $this->proposition = $proposition;
+        return $this;
+    }
+
 }
