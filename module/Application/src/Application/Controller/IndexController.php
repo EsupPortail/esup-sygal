@@ -156,6 +156,9 @@ EOS
         elseif ($role = $this->userContextService->getSelectedRoleBU()) {
             $vm->setTemplate('application/index/partial/bu');
         }
+        elseif ($this->userContextService->getIdentityRoles()['user']->getRoleName() === "Authentifié(e)") {
+            $vm->setTemplate('application/index/partial/authentifie');
+        }
         else {
             return null;
         }
