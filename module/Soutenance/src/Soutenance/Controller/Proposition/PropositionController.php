@@ -155,7 +155,7 @@ class PropositionController extends AbstractController {
             $data = $request->getPost();
             $form->setData($data);
             if ($form->isValid()) {
-                if ($new === true)  {
+                if ($new !== true)  {
                     $this->getMembreService()->update($membre);
                 }
                 else {
