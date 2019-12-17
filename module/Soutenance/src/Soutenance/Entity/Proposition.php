@@ -40,27 +40,35 @@ class Proposition {
     private $nouveauTitre;
     /** @var Etat */
     private  $etat;
+    /** @var string */
+    private $sursis;
+
 
     /** @var ArrayCollection */
     private $justificatifs;
-    /** @var string */
-    private $sursis;
+    /** @var ArrayCollection */
+    private $avis;
+
 
 //    /** @var ArrayCollection */
 //    private $validations;
 
     /**
      * Proposition constructor.
+     * @param These|null $these
      */
-    public function __construct()
+    public function __construct(These $these = null)
     {
         $this->membres = new ArrayCollection();
+        $this->setThese($these);
         $this->setLabelEuropeen(false);
         $this->setManuscritAnglais(false);
         $this->setSoutenanceAnglais(false);
         $this->setHuitClos(false);
         $this->setExterieur(false);
+
         $this->justificatifs = new ArrayCollection();
+        $this->avis = new ArrayCollection();
     }
 
     /**
@@ -398,4 +406,25 @@ class Proposition {
     {
         return ($this->sursis === 'O');
     }
+
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getAvis()
+    {
+        return $this->avis;
+    }
+
+    /**
+     * @param ArrayCollection $avis
+     * @return Proposition
+     */
+    public function setAvis($avis)
+    {
+        $this->avis = $avis;
+        return $this;
+    }
+
+
 }

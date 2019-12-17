@@ -7,6 +7,7 @@ use Doctrine\ORM\OptimisticLockException;
 use Soutenance\Entity\Qualite;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
+use Zend\Mvc\Controller\AbstractActionController;
 
 class QualiteService {
     use EntityManagerAwareTrait;
@@ -36,7 +37,8 @@ class QualiteService {
 
     public function getQualiteByLibelle($libelle) {
         $qb = $this->getEntityManager()->getRepository(Qualite::class)->createQueryBuilder("qualite")
-            ->andWhere("qualite.libelle = :libelle")
+            ->addSelect('libelleSupplementaire')->leftJoin('qualite.libellesSupplementaires', 'libelleSupplementaire')
+            ->andWhere("qualite.libelle = :libelle OR libelleSupplementaire.libelle = :libelle")
             ->setParameter("libelle", $libelle);
 
         try {
@@ -129,7 +131,18 @@ class QualiteService {
             $result[] = $this_group;
         }
         return $result;
+    }
 
+    /**
+     * @param AbstractActionController $controller
+     * @param string $paramName
+     * @return Qualite
+     */
+    public function getRequestedQualite($controller, $paramName = 'qualite')
+    {
+        $id = $controller->params()->fromRoute($paramName);
+        $qualite = $this->getQualiteById($id);
 
+        return $qualite;
     }
 }

@@ -37,5 +37,8 @@
         </many-to-one>
 
         <field name="sursis"              type="string"        length="1"       column="SURSIS"       nullable="true"/>
+
+        <one-to-many field="avis" target-entity="Soutenance\Entity\Avis" mapped-by="proposition"/>
+
     </entity>
 </doctrine-mapping>

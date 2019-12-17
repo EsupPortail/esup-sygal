@@ -2,6 +2,7 @@
 
 namespace Soutenance\Service\Notifier;
 
+use Application\Service\Acteur\ActeurService;
 use Application\Service\Role\RoleService;
 use Application\Service\Variable\VariableService;
 use Application\Service\Notification\NotificationFactory; //TODO DEGUELASSE
@@ -25,9 +26,11 @@ class NotifierSoutenanceServiceFactory extends NotifierServiceFactory {
         $service = parent::__invoke($serviceLocator);
 
         /**
+         * @var ActeurService           $acteurService
          * @var RoleService             $roleService
          * @var VariableService         $variableService
          */
+        $acteurService = $serviceLocator->get(ActeurService::class);
         $roleService = $serviceLocator->get('RoleService');
         $variableService = $serviceLocator->get('VariableService');
 
@@ -41,6 +44,7 @@ class NotifierSoutenanceServiceFactory extends NotifierServiceFactory {
 
         $service->setNotificationFactory($notificationFactory);
         $service->setUrlHelper($urlHelper);
+        $service->setActeurService($acteurService);
         $service->setRoleService($roleService);
         $service->setVariableService($variableService);
 

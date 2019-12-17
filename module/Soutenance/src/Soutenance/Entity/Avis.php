@@ -14,13 +14,12 @@ class Avis {
     const FAVORABLE = 'Favorable';
     const DEFAVORABLE = 'Défavorable';
 
-
     /** @var int */
     private $id;
-    /** @var These */
-    private $these;
-    /** @var Acteur */
-    private $rapporteur;
+    /** @var Proposition */
+    private  $proposition;
+    /** @var Membre */
+    private $membre;
     /** @var string */
     private $avis;
     /** @var string */
@@ -43,17 +42,7 @@ class Avis {
      */
     public function getThese()
     {
-        return $this->these;
-    }
-
-    /**
-     * @param These $these
-     * @return Avis
-     */
-    public function setThese($these)
-    {
-        $this->these = $these;
-        return $this;
+        return $this->proposition->getThese();
     }
 
     /**
@@ -61,17 +50,7 @@ class Avis {
      */
     public function getRapporteur()
     {
-        return $this->rapporteur;
-    }
-
-    /**
-     * @param Acteur $rapporteur
-     * @return Avis
-     */
-    public function setRapporteur($rapporteur)
-    {
-        $this->rapporteur = $rapporteur;
-        return $this;
+        return $this->getMembre()->getActeur();
     }
 
     /**
@@ -143,6 +122,42 @@ class Avis {
     public function setFichier($fichier)
     {
         $this->fichier = $fichier;
+        return $this;
+    }
+
+    /**
+     * @return Proposition
+     */
+    public function getProposition()
+    {
+        return $this->proposition;
+    }
+
+    /**
+     * @param Proposition $proposition
+     * @return Avis
+     */
+    public function setProposition($proposition)
+    {
+        $this->proposition = $proposition;
+        return $this;
+    }
+
+    /**
+     * @return Membre
+     */
+    public function getMembre()
+    {
+        return $this->membre;
+    }
+
+    /**
+     * @param Membre $membre
+     * @return Avis
+     */
+    public function setMembre($membre)
+    {
+        $this->membre = $membre;
         return $this;
     }
 }

@@ -1,14 +1,17 @@
 <?php
  /**
   * @var array $indicateurs
-  * @var \Soutenance\Entity\Proposition $proposition
-  * @var \Application\Entity\Db\These $these
+  * @var Proposition $proposition
+  * @var These $these
   *
   */
 
+use Application\Entity\Db\These;
 use Soutenance\Entity\Membre;
+use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 
+$FORMULAIRE_DELEGUATION = 'https://sygal-test.normandie-univ.fr/informations/fichiers/telecharger/804';
 $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER);
 ?>
 
@@ -153,13 +156,14 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
                     <?php if ($canModifier): ?>
                     <td>
 
-                            <a
+                            <a  <?php /** @see \Soutenance\Controller\Proposition\PropositionController::modifierMembreAction(); */ ?>
                                 href="<?php echo $this->url('soutenance/proposition/modifier-membre', ['these' => $these->getId(), 'membre' => $membre->getId()], [] ,true); ?>"
                                 class="ajax-modal"
                                 data-event="edition-membre">
                                 <span class="glyphicon glyphicon-pencil"></span>
                             </a>
-                            <a href="<?php echo $this->url('soutenance/proposition/effacer-membre', ['these' => $these->getId(), 'membre' => $membre->getId()], [] ,true); ?>">
+                            <a  <?php /** @see \Soutenance\Controller\Proposition\PropositionController::effacerMembreAction(); */ ?>
+                                href="<?php echo $this->url('soutenance/proposition/effacer-membre', ['these' => $these->getId(), 'membre' => $membre->getId()], [] ,true); ?>">
                                 <span class="glyphicon glyphicon-trash"></span>
                             </a>
 
@@ -178,13 +182,13 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
                         <span class="glyphicon glyphicon-warning-sign"></span>
                         Les membres du jury participant à la soutenance en visioconférence doivent au préalable remplir la demande
                         de déléguation de signature suivante :
-                        <a href="../../informations/fichiers/telecharger/381">formulaire de demande de déléguation</a>.
+                        <a href="<?php echo $FORMULAIRE_DELEGUATION; ?>">formulaire de demande de déléguation</a>.
                     </div>
                 <?php endif; ?>
             </div>
             <div class="col-md-4 pull-right">
                 <?php if ($canModifier): ?>
-                    <a
+                    <a  <?php /** @see \Soutenance\Controller\Proposition\PropositionController::modifierMembreAction(); */ ?>
                         href="<?php echo $this->url('soutenance/proposition/modifier-membre', ['these' => $these->getId()], [], true); ?>"
                         class="btn btn-primary action ajax-modal"
                         data-event="edition-membre">

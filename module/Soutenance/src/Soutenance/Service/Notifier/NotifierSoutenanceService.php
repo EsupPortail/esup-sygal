@@ -8,6 +8,7 @@ use Application\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Validation;
 use Application\Entity\Db\Variable;
+use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Notification\Notification;
@@ -16,10 +17,12 @@ use Soutenance\Entity\Avis;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use UnicaenApp\Exception\LogicException;
+use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Entity\Db\RoleInterface;
 use Zend\View\Helper\Url as UrlHelper;
 
 class NotifierSoutenanceService extends NotifierService {
+    use ActeurServiceAwareTrait;
     use RoleServiceAwareTrait;
     use VariableServiceAwareTrait;
 
@@ -51,7 +54,9 @@ class NotifierSoutenanceService extends NotifierService {
     {
         $emails = [];
         $emails[] = $these->getDoctorant()->getIndividu()->getEmail();
-        foreach ($these->getEncadrements() as $encadrant) {
+
+        $encadrants = $this->getActeurService()->getRepository()->findEncadrementThese($these);
+        foreach ($encadrants as $encadrant) {
             $emails[] = $encadrant->getIndividu()->getEmail();
         }
         return $emails;
@@ -617,4 +622,36 @@ class NotifierSoutenanceService extends NotifierService {
             $this->messageContainer->setMessage($message, 'warning');
         }
     }
+
+    /**
+     * @param Membre $membre
+     * @param string $url
+     */
+    public function triggerNotificationRapporteurRetard($membre, $url)
+    {
+        if ($membre->getActeur() === null) throw new RuntimeException("Notification vers rapporteur [MembreId = ".$membre->getId()."] impossible car aucun acteur n'est lié.");
+
+        $email = $membre->getActeur()->getIndividu()->getEmail();
+        if ($email === null) throw new RuntimeException("Notification vers rapporteur [MembreId = ".$membre->getId()."] impossible car aucun email est donné pour l'individu associé [IndividuId = ".$membre->getActeur()->getIndividu()->getId()."].");
+
+
+        $these = $membre->getProposition()->getThese();
+        $doctorant = $these->getDoctorant()->getIndividu();
+
+        if (!empty($email)) {
+            $notif = new Notification();
+            $notif
+                ->setSubject("Demande de rapport de présoutenance pour la thèse de " . $doctorant->getNomComplet())
+                ->setTo($email)
+                ->setTemplatePath('soutenance/notification/retard-rapporteur')
+                ->setTemplateVariables([
+                    'these' => $these,
+                    'doctorant' => $doctorant,
+                    'proposition' => $membre->getProposition(),
+                    'url' => $url,
+                ]);
+            $this->trigger($notif);
+        }
+    }
+
 }

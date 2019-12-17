@@ -7,9 +7,9 @@ use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\VersionFichier;
+use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
@@ -37,11 +37,13 @@ use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Soutenance\Service\SignaturePresident\SiganturePresidentPdfExporter;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
+use Zend\Form\Form;
 use Zend\Http\Request;
 use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\PhpRenderer;
 
 class PropositionController extends AbstractController {
+    use ActeurServiceAwareTrait;
     use MembreServiceAwareTrait;
     use NotifierSoutenanceServiceAwareTrait;
     use PropositionServiceAwareTrait;
@@ -61,24 +63,17 @@ class PropositionController extends AbstractController {
 
     public function propositionAction()
     {
-        /** @var These $these */
         $these = $this->requestedThese();
-
-        /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
 
         if (!$proposition) {
-            $proposition = new Proposition();
-            $proposition->setThese($these);
+            $proposition = new Proposition($these);
+            //TODO transferer l'etat dans la création
             $proposition->setEtat($this->getPropositionService()->getPropositionEtatByCode(Etat::EN_COURS));
             $this->getPropositionService()->create($proposition);
 
-            /** @var Acteur[] $encadrements */
-            $encadrements = $these->getEncadrements();
-            foreach ($encadrements as $encadrement) {
-                $this->getMembreService()->createMembre($proposition, $encadrement);
-            }
-            $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
+            $this->getPropositionService()->addDirecteursAsMembres($proposition);
+            return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
         }
 
         /** @var Utilisateur $currentUser */
@@ -96,7 +91,7 @@ class PropositionController extends AbstractController {
             'these'             => $these,
             'proposition'       => $proposition,
             'doctorant'         => $these->getDoctorant(),
-            'directeurs'        => $these->getEncadrements(false),
+            'directeurs'        => $this->getActeurService()->getRepository()->findEncadrementThese($these),
             'validations'       => $this->getPropositionService()->getValidationSoutenance($these),
             'validationActeur'  => $this->getPropositionService()->isValidated($these, $currentIndividu, $currentRole),
             'roleCode'          => $currentRole,
@@ -110,27 +105,21 @@ class PropositionController extends AbstractController {
     }
 
     public function modifierDateLieuAction() {
-        /** @var These $these */
-        $idThese = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($idThese);
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findByThese($these);
 
         /** @var DateLieuForm $form */
         $form = $this->getDateLieuForm();
-        $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/modifier-date-lieu', ['these' => $idThese], [], true));
+        $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/modifier-date-lieu', ['these' => $these->getId()], [], true));
 
         /** @var Proposition $proposition */
-        $proposition = $this->getPropositionService()->findByThese($these);
+
         $form->bind($proposition);
 
         /** @var Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $data = $request->getPost();
-            $form->setData($data);
-            if ($form->isValid()) {
-                $this->getPropositionService()->update($proposition);
-                $this->getPropositionService()->annulerValidations($proposition);
-            }
+            $this->updateAndUnvalidate($request, $form, $proposition);
         }
 
         $vm = new ViewModel();
@@ -142,25 +131,21 @@ class PropositionController extends AbstractController {
         return $vm;
     }
 
-    public function modifierMembreAction() {
-        /** @var These $these */
-        $idThese = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($idThese);
+    public function modifierMembreAction()
+    {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findByThese($these);
 
         /** @var MembreForm $form */
         $form = $this->getMembreForm();
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/modifier-membre', ['these' => $these->getId()], [], true));
 
-        /** @var Proposition $proposition */
-        $proposition = $this->getPropositionService()->findByThese($these);
-
-        /** @var Membre $membre */
-        $idMembre = $this->params()->fromRoute('membre');
-        $membre = null;
-        if ($idMembre) $membre = $this->getMembreService()->find($idMembre);
-        else           {
+        $new = false;
+        $membre = $this->getMembreService()->getRequestedMembre($this);
+        if ($membre === null) {
             $membre = new Membre();
             $membre->setProposition($proposition);
+            $new = true;
         }
         $form->bind($membre);
 
@@ -170,7 +155,7 @@ class PropositionController extends AbstractController {
             $data = $request->getPost();
             $form->setData($data);
             if ($form->isValid()) {
-                if ($idMembre)  {
+                if ($new === true)  {
                     $this->getMembreService()->update($membre);
                 }
                 else {
@@ -191,30 +176,21 @@ class PropositionController extends AbstractController {
 
     public function effacerMembreAction()
     {
-        /** @var These $these */
-        $idThese = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($idThese);
-
-        /** @var Proposition $proposition */
+        $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
-
-        /** @var Membre $membre */
-        $idMembre = $this->params()->fromRoute('membre');
-        $membre = $this->getMembreService()->find($idMembre);
+        $membre = $this->getMembreService()->getRequestedMembre($this);
 
         if ($membre) {
             $this->getMembreService()->delete($membre);
             $this->getPropositionService()->annulerValidations($proposition);
         }
-        $this->redirect()->toRoute('soutenance/proposition',['these' => $idThese],[],true);
+
+        return $this->redirect()->toRoute('soutenance/proposition',['these' => $these->getId()],[],true);
     }
 
     public function labelEuropeenAction()
     {
-        /** @var These $these */
         $these = $this->requestedThese();
-
-        /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
 
         /** @var LabelEuropeenForm  $form */
@@ -225,12 +201,7 @@ class PropositionController extends AbstractController {
         /** @var Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $data = $request->getPost();
-            $form->setData($data);
-            if ($form->isValid()) {
-                $this->getPropositionService()->update($proposition);
-                $this->getPropositionService()->annulerValidations($proposition);
-            }
+            $this->updateAndUnvalidate($request, $form, $proposition);
         }
 
         $vm = new ViewModel();
@@ -244,10 +215,7 @@ class PropositionController extends AbstractController {
 
     public function anglaisAction()
     {
-        /** @var These $these */
         $these = $this->requestedThese();
-
-        /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
 
         /** @var LabelEuropeenForm  $form */
@@ -258,12 +226,7 @@ class PropositionController extends AbstractController {
         /** @var Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $data = $request->getPost();
-            $form->setData($data);
-            if ($form->isValid()) {
-                $this->getPropositionService()->update($proposition);
-                $this->getPropositionService()->annulerValidations($proposition);
-            }
+            $this->updateAndUnvalidate($request, $form, $proposition);
         }
 
         $vm = new ViewModel();
@@ -277,11 +240,7 @@ class PropositionController extends AbstractController {
 
     public function confidentialiteAction()
     {
-        /** @var These $these */
-        $idThese = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($idThese);
-
-        /** @var Proposition $proposition */
+        $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
 
         /** @var ConfidentialiteForm  $form */
@@ -292,12 +251,7 @@ class PropositionController extends AbstractController {
         /** @var Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $data = $request->getPost();
-            $form->setData($data);
-            if ($form->isValid()) {
-                $this->getPropositionService()->update($proposition);
-                $this->getPropositionService()->annulerValidations($proposition);
-            }
+            $this->updateAndUnvalidate($request, $form, $proposition);
         }
 
         $vm = new ViewModel();
@@ -311,11 +265,7 @@ class PropositionController extends AbstractController {
 
     public function changementTitreAction()
     {
-        /** @var These $these */
-        $idThese = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($idThese);
-
-        /** @var Proposition $proposition */
+        $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
 
         /** @var ConfidentialiteForm  $form */
@@ -326,12 +276,7 @@ class PropositionController extends AbstractController {
         /** @var Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $data = $request->getPost();
-            $form->setData($data);
-            if ($form->isValid()) {
-                $this->getPropositionService()->update($proposition);
-                $this->getPropositionService()->annulerValidations($proposition);
-            }
+            $this->updateAndUnvalidate($request, $form, $proposition);
         }
 
         $vm = new ViewModel();
@@ -344,9 +289,7 @@ class PropositionController extends AbstractController {
     }
 
     public function validerActeurAction() {
-        /** @var These $these */
-        $idThese = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($idThese);
+        $these = $this->requestedThese();
 
         $validation = $this->getValidationService()->validatePropositionSoutenance($these);
         $this->getNotifierSoutenanceService()->triggerValidationProposition($these, $validation);
@@ -368,14 +311,12 @@ class PropositionController extends AbstractController {
         }
         if ($allValidated) $this->getNotifierSoutenanceService()->triggerNotificationUniteRechercheProposition($these);
 
-        $this->redirect()->toRoute('soutenance/proposition',['these' => $idThese],[],true);
+        return $this->redirect()->toRoute('soutenance/proposition',['these' => $these->getId()],[],true);
 
     }
 
     public function validerStructureAction() {
-        /** @var These $these */
-        $idThese = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($idThese);
+        $these = $this->requestedThese();
 
         /**
          * @var Role $role
@@ -403,16 +344,12 @@ class PropositionController extends AbstractController {
                 break;
         }
 
-        $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
+        return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
 
     }
 
     public function refuserStructureAction() {
-        /** @var These $these */
-        $idThese = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($idThese);
-
-        /** @var Proposition $proposition */
+        $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
 
         /** @var RefusForm $form */
@@ -441,13 +378,10 @@ class PropositionController extends AbstractController {
     /** Document pour la signature en présidence */
     public function signaturePresidenceAction()
     {
-        /** @var These $these */
         $these = $this->requestedThese();
-        /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
 
-        $encadrement = $these->getEncadrements();
-        $codirecteurs = array_filter($encadrement, function(Acteur $a) { return ($a->getRole()->getCode() === Role::CODE_CODIRECTEUR_THESE);});
+        $codirecteurs = $this->getActeurService()->getRepository()->findActeursByTheseAndRole($these, Role::CODE_CODIRECTEUR_THESE);
 
         /* @var $renderer PhpRenderer */
         $renderer = $this->getServiceLocator()->get('view_renderer');
@@ -466,13 +400,11 @@ class PropositionController extends AbstractController {
 
     public function avancementAction()
     {
-        /** @var These $these */
-        $theseId = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($theseId);
+        $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
 
         /** @var Acteur[] $directeurs */
-        $directeurs = $these->getEncadrements(false);
+        $directeurs = $this->getActeurService()->getRepository()->findEncadrementThese($these);
 
         /** @var Membre[] $rapporteurs */
         $rapporteurs = ($proposition)?$proposition->getRapporteurs():[];
@@ -489,7 +421,6 @@ class PropositionController extends AbstractController {
 
     public function ajouterJustificatifAction() {
 
-        /** @var These $these */
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
 
@@ -536,7 +467,6 @@ class PropositionController extends AbstractController {
     }
 
     public function toggleSursisAction() {
-        /** @var These $these */
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
 
@@ -545,5 +475,21 @@ class PropositionController extends AbstractController {
         $this->getPropositionService()->update($proposition);
 
         return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
+    }
+
+    /**
+     * @param Request $request
+     * @param Form $form
+     * @param Proposition $proposition
+     * @return Proposition
+     */
+    private function updateAndUnvalidate(Request $request, Form $form, Proposition $proposition) {
+        $data = $request->getPost();
+        $form->setData($data);
+        if ($form->isValid()) {
+            $this->getPropositionService()->update($proposition);
+            $this->getPropositionService()->annulerValidations($proposition);
+        }
+        return $proposition;
     }
 }

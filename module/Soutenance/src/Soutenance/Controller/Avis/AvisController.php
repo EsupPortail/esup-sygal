@@ -3,7 +3,6 @@
 namespace Soutenance\Controller\Avis;
 
 use Application\Controller\AbstractController;
-use Application\Entity\Db\Acteur;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
 use Application\Entity\Db\VersionFichier;
@@ -46,8 +45,6 @@ class AvisController extends AbstractController {
         /** @var Membre $membre */
         $idMembre = $this->params()->fromRoute('rapporteur');
         $membre = $this->getMembreService()->find($idMembre);
-        /** @var Acteur $rapporteur */
-        $rapporteur = $membre->getActeur();
         /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
 
@@ -86,8 +83,8 @@ class AvisController extends AbstractController {
                 $validation = $this->getValidationService()->signerAvisSoutenance($these, $membre->getActeur()->getIndividu());
 
                 $avis = new Avis();
-                $avis->setThese($these);
-                $avis->setRapporteur($rapporteur);
+                $avis->setProposition($proposition);
+                $avis->setMembre($membre);
                 $avis->setFichier($fichier);
                 $avis->setValidation($validation);
                 $avis->setAvis($data['avis']);
@@ -118,7 +115,7 @@ class AvisController extends AbstractController {
         return new ViewModel([
             'form' => $form,
             'these' => $these,
-            'rapporteur' => $rapporteur,
+            'rapporteur' => $membre->getActeur(),
         ]);
     }
 

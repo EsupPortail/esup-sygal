@@ -1,7 +1,10 @@
 <?php
-    /**
-     * @var These[] $theses
-     */
+
+/**
+ * @see \Soutenance\Controller\Index\IndexController::indexActeurAction()
+ *
+ * @var These[] $theses
+ */
 
 use Application\Entity\Db\These;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
@@ -31,7 +34,6 @@ $canVisualiser = $this->isAllowed(EngagementImpartialitePrivileges::getResourceI
     <li> la composition et acceptation par le doctorant et les directeurs et co-directeurs ;</li>
     <li> la validation par l'unité de recherche, l'école doctorale et maison des doctorats associé à la thèse.</li>
 </ol>
-
 
 <p>
     Votre jury doit respecter les règles suivantes :
@@ -97,7 +99,8 @@ $canVisualiser = $this->isAllowed(EngagementImpartialitePrivileges::getResourceI
             <ul class="dropdown-menu">
                 <?php foreach($theses as $theseLink) : ?>
                     <li class="complete">
-                        <a href="<?php echo $this->url('soutenance/avancement', ['these' => $theseLink->getId()], [], true); ?>">
+                        <a  <?php /** @see \Soutenance\Controller\Proposition\PropositionController::avancementAction() */ ?>
+                            href="<?php echo $this->url('soutenance/avancement', ['these' => $theseLink->getId()], [], true); ?>">
                             <span class="badge"><?php echo $theseLink->getDoctorant(); ?></span>
                             <?php
                             echo $this->partial('application/these/partial/titre', ['these' => $theseLink, 'useTitreThese' => true, 'length' => 120, 'description' => false])

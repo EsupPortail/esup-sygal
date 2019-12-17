@@ -29,7 +29,7 @@ $canEditDateRenduRapport                = $this->isAllowed($these, Presoutenance
 
         <?php if($canEditDateRenduRapport): ?>
             <div class="pull-right">
-                <a
+                <a  <?php /** @see \Soutenance\Controller\Presoutenance\PresoutenanceController::dateRenduRapportAction() */ ?>
                     href="<?php echo $this->url('soutenance/presoutenance/date-rendu-rapport', ['these' => $these->getId()], [] , true); ?>"
                     class="btn btn-primary action ajax-modal"
                     data-event="modification-date-rendu-rapport"

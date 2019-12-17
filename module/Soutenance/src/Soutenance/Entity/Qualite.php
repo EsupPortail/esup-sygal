@@ -2,6 +2,8 @@
 
 namespace Soutenance\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 class Qualite
 {
     const ID_INCONNUE = 0;
@@ -16,6 +18,9 @@ class Qualite
     private $hdr;
     /** @var string */
     private $emeritat;
+
+    /** @var ArrayCollection (QualiteLibelleSupplementaire) */
+    private $libellesSupplementaires;
 
     /**
      * @return int
@@ -129,6 +134,13 @@ class Qualite
         return $this;
     }
 
+    /**
+     * @return ArrayCollection
+     */
+    public function getLibellesSupplementaires()
+    {
+        return $this->libellesSupplementaires;
+    }
 
     public function __toString()
     {

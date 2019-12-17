@@ -103,5 +103,49 @@ class ActeurRepository extends DefaultEntityRepository
         return $acteur;
     }
 
+    /**
+     * @param These $these
+     * @param Role|string $role
+     * @return Acteur[]
+     */
+    public function findActeursByTheseAndRole(These $these, $role)
+    {
+        $code = $role;
+        if ($role instanceof Role) $code = $role->getCode();
+        $qb = $this->createQueryBuilder('acteur')
+            ->addSelect('individu')->join('acteur.individu', 'individu')
+            ->addSelect('role')->join('acteur.role', 'role')
+            ->andWhere('role.code = :code')
+            ->setParameter('code', $code)
+            ->andWhere('acteur.these = :these')
+            ->setParameter('these', $these)
+            ->andWhere('1 = pasHistorise(acteur)')
+        ;
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
+
+    /**
+     * @param These $these
+     * @return Acteur[]
+     */
+    public function findEncadrementThese(These $these)
+    {
+        $qb = $this->createQueryBuilder('acteur')
+            ->addSelect('individu')->join('acteur.individu', 'individu')
+            ->addSelect('role')->join('acteur.role', 'role')
+            ->andWhere('role.code = :directeur OR role.code = :codirecteur')
+            ->setParameter('directeur', Role::CODE_DIRECTEUR_THESE)
+            ->setParameter('codirecteur', Role::CODE_CODIRECTEUR_THESE)
+            ->andWhere('acteur.these = :these')
+            ->setParameter('these', $these)
+            ->andWhere('1 = pasHistorise(acteur)')
+        ;
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
+
 
 }

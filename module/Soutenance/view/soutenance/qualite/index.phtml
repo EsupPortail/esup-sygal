@@ -5,6 +5,7 @@
  */
 
 use Soutenance\Entity\Qualite;
+use Soutenance\Entity\QualiteLibelleSupplementaire;
 use Soutenance\Provider\Privilege\QualitePrivileges;
 
 
@@ -42,7 +43,29 @@ $canDelete = $this->isAllowed(QualitePrivileges::getResourceId(QualitePrivileges
         <?php foreach ($qualites as $qualite): ?>
         <tr>
             <td> <?php echo $qualite->getRang(); ?> </td>
-            <td> <?php echo $qualite->getLibelle(); ?> </td>
+            <td>
+                    <div class="toggle" id="_<?php echo $qualite->getId(); ?>">
+                    <?php
+                    $sups = $qualite->getLibellesSupplementaires()->toArray();
+                    $sups = array_filter($sups, function(QualiteLibelleSupplementaire $a) { return $a->getHistoDestruction() === null;});
+                    usort($sups, function (QualiteLibelleSupplementaire $a, QualiteLibelleSupplementaire $b) { return $a->getLibelle() > $b->getLibelle();});
+                    ?>
+
+                    <?php echo $qualite->getLibelle(); ?> (<?php echo count($sups) ?>)
+                    </div>
+
+                    <div class="display" id="d_<?php echo $qualite->getId(); ?>" style="display: none;">
+                    <?php foreach ($sups as $sup) : ?>
+                        <br/>
+                        >>> <?php echo $sup->getLibelle(); ?>
+                        <?php if ($canEdit) : ?>
+                            <a <?php /** @see \Soutenance\Controller\Qualite\QualiteController::retirerLibelleSupplementaireAction() */ ?>
+                               href="<?php echo $this->url('qualite/retirer-libelle-supplementaire', ['libelle' => $sup->getId()], [], true); ?>">
+                            <span class="glyphicon glyphicon-minus" title="Retirer le libellé supplémentaire"></span></a>
+                        <?php endif; ?>
+                    <?php endforeach;?>
+                    </div>
+            </td>
             <td>
                 <?php if ($qualite->isHDR()): ?>
                     <span class="glyphicon glyphicon-ok text-success"></span>
@@ -67,6 +90,14 @@ $canDelete = $this->isAllowed(QualitePrivileges::getResourceId(QualitePrivileges
                         <span class="glyphicon glyphicon-pencil"></span>
                     </a>
                 <?php endif; ?>
+                <?php if($canEdit): ?>
+                    <a  <?php /** @see \Soutenance\Controller\Qualite\QualiteController::ajouterLibelleSupplementaireAction() */ ?>
+                        class="ajax-modal"
+                        data-event="edition-qualite"
+                        href="<?php echo $this->url('qualite/ajouter-libelle-supplementaire', ['qualite' => $qualite->getId()], [], true); ?>">
+                        <span class="glyphicon glyphicon-plus" title="Ajouter un libellé supplémentaire"></span>
+                    </a>
+                <?php endif; ?>
                 <?php if($canDelete): ?>
                     <a href="<?php echo $this->url('qualite/effacer', ['qualite' => $qualite->getId()], [], true); ?>">
                         <span class="glyphicon glyphicon-trash"></span>
@@ -84,6 +115,13 @@ $canDelete = $this->isAllowed(QualitePrivileges::getResourceId(QualitePrivileges
         $("body").on("edition-qualite", function (event) {
             event.div.modal('hide');
             window.location.reload();
+        });
+    });
+
+    $(function() {
+        $("div.toggle").click(function event() {
+            let id = $(this).attr('id');
+            $("div#d" + id).toggle();
         });
     });
 </script>

@@ -1,9 +1,12 @@
 <?php
 /**
+ * @see \Soutenance\Controller\EngagementImpartialite\EngagementImpartialiteController::engagementImpartialiteAction()
+ *
  * @var These $these
  * @var Proposition $proposition
  * @var Membre $membre
  * @var Validation $validation
+ * @var Acteur[] $encadrants
  * @var string $urlSigner
  * @var string $urlRefuser
  * @var string $urlAnnuler
@@ -52,10 +55,10 @@ $this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctora
                 <dd> <?php echo $doctorantNom; ?> </dd>
                 <dt> Encadrement </dt>
                 <dd>
-                    <?php foreach ($these->getEncadrements() as $directeur): ?>
+                    <?php foreach ($encadrants as $encadrant): ?>
                         <?php
-                        /** @var Acteur $directeur */
-                        echo $directeur->getIndividu();
+                        /** @var Acteur $encadrant */
+                        echo $encadrant->getIndividu();
                         ?>
                         <br/>
                     <?php endforeach; ?>
@@ -99,7 +102,7 @@ $this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctora
     <?php else: ?>
         <?php if ($canSign): ?>
         <p>
-            <center>
+            <span style="text-align: center">
             <a href="<?php echo $urlSigner;  ?>" class="btn btn-success" style="width:80%;">
                 <span class="glyphicon glyphicon-thumbs-up"></span>
                 Je signe l'engagement d'impartialité</a>
@@ -110,7 +113,7 @@ $this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctora
             <a href="<?php echo $urlRefuser;  ?>" class="btn btn-danger" style="width:80%;">
                 <span class="glyphicon glyphicon-thumbs-down"></span>
                 Je ne peux pas signer l'engagement d'impartialité</a>
-            </center>
+            </span>
 
         </p>
         <?php else: ?>

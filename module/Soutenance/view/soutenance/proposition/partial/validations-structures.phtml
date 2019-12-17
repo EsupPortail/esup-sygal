@@ -66,7 +66,8 @@ $canPresidence = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_PRE
             <div class="pull-right">
                 <?php if ($canPresidence): ?>
                     <p>
-                        <a  href="<?php echo $this->url('soutenance/proposition/signature-presidence', ['these' => $these->getId()], [], true); ?>"
+                        <a  <?php /** @see \Soutenance\Controller\Proposition\PropositionController::signaturePresidenceAction(); */ ?>
+                            href="<?php echo $this->url('soutenance/proposition/signature-presidence', ['these' => $these->getId()], [], true); ?>"
                             class="btn btn-primary action">
                             <span class="glyphicon glyphicon-list-alt"></span>Générer document pour signature
                         </a>
@@ -74,13 +75,15 @@ $canPresidence = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_PRE
                 <?php endif; ?>
                 <?php if ($canStructureValider): ?>
                     <p>
-                        <a href="<?php echo $this->url('soutenance/proposition/valider-structure', ['these' => $these->getId()], [], true); ?>"
+                        <a <?php /** @see \Soutenance\Controller\Proposition\PropositionController::validerStructureAction(); */ ?>
+                           href="<?php echo $this->url('soutenance/proposition/valider-structure', ['these' => $these->getId()], [], true); ?>"
                            class="btn btn-success action">
                             <span class="glyphicon glyphicon-ok"></span> Valider la proposition de soutenance
                         </a>
                     </p>
                     <p>
                         <a
+                            <?php /** @see \Soutenance\Controller\Proposition\PropositionController::refuserStructureAction(); */ ?>
                             href="<?php echo $this->url('soutenance/proposition/refuser-structure', ['these' => $these->getId()], [], true); ?>"
                             class="btn btn-danger action ajax-modal"
                             data-event="refus-proposition">

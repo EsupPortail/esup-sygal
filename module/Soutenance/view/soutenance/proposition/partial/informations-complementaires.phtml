@@ -6,6 +6,9 @@
 
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 
+$FORMULAIRE_DEMANDE_LABEL = 'https://sygal-test.normandie-univ.fr/informations/fichiers/telecharger/802';
+$FORMULAIRE_DEMANDE_ANGLAIS = 'https://sygal-test.normandie-univ.fr/informations/fichiers/telecharger/1541';
+$FORMULAIRE_DEMANDE_CONFIDENTIALITE = 'https://sygal-test.normandie-univ.fr/informations/fichiers/telecharger/803';
 $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER);
 ?>
 
@@ -46,7 +49,8 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
                 <?php if ($canModifier) : ?>
 
                     <div class="pull-right">
-                        <a href="<?php echo $this->url('soutenance/proposition/label-europeen', ['these' => $these->getId()], [], true); ?>"
+                        <a <?php /** @see \Soutenance\Controller\Proposition\PropositionController::labelEuropeenAction(); */ ?>
+                           href="<?php echo $this->url('soutenance/proposition/label-europeen', ['these' => $these->getId()], [], true); ?>"
                            class="btn btn-primary action ajax-modal"
                            data-event="edition-confidentialite"
                         >
@@ -65,7 +69,7 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
                     <div class="alert alert-sm alert-warning">
                         <span class="glyphicon glyphicon-warning-sign"> </span>
                         Afin de réaliser la demande de label européen, vous devez remplir le formulaire de demande suivant :
-                        <a href="../../informations/fichiers/telecharger/402">formulaire de demande de label européen</a>.
+                        <a href="<?php echo $FORMULAIRE_DEMANDE_LABEL; ?>">formulaire de demande de label européen</a>.
                     </div>
                 <?php endif; ?>
             </div>
@@ -99,7 +103,8 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
                 <?php if ($canModifier) : ?>
 
                     <div class="pull-right">
-                        <a href="<?php echo $this->url('soutenance/proposition/anglais', ['these' => $these->getId()], [], true); ?>"
+                        <a <?php /** @see \Soutenance\Controller\Proposition\PropositionController::anglaisAction(); */ ?>
+                           href="<?php echo $this->url('soutenance/proposition/anglais', ['these' => $these->getId()], [], true); ?>"
                            class="btn btn-primary action ajax-modal"
                            data-event="edition-confidentialite"
                         >
@@ -118,7 +123,7 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
                     <div class="alert alert-sm alert-warning">
                         <span class="glyphicon glyphicon-warning-sign"> </span>
                         Afin de réaliser la demande de rédaction ou de soutenance en anglais vous devez motiver votre demande via la demande suivante :
-                        <a href="../../informations/fichiers/telecharger/404">demande de redaction ou de soutenance en anglais</a>.
+                        <a href="<?php echo $FORMULAIRE_DEMANDE_ANGLAIS; ?>>">demande de redaction ou de soutenance en anglais</a>.
                     </div>
                 <?php endif; ?>
             </div>
@@ -142,7 +147,8 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
             <div class="col-md-4">
                 <?php if ($canModifier) : ?>
                     <div class="pull-right">
-                        <a href="<?php echo $this->url('soutenance/proposition/confidentialite', ['these' => $these->getId()], [], true); ?>"
+                        <a <?php /** @see \Soutenance\Controller\Proposition\PropositionController::confidentialiteAction(); */ ?>
+                           href="<?php echo $this->url('soutenance/proposition/confidentialite', ['these' => $these->getId()], [], true); ?>"
                            class="btn btn-primary action ajax-modal"
                            data-event="edition-confidentialite"
                         >
@@ -161,7 +167,7 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
                     <div class="alert alert-sm alert-warning">
                         <span class="glyphicon glyphicon-warning-sign"> </span>
                         Afin de réaliser de demande de confidentialité un accord doit au préalable être rempli :
-                        <a href="../../informations/fichiers/telecharger/403">demande d'accord de confidentialité</a>.
+                        <a href="<?php echo $FORMULAIRE_DEMANDE_CONFIDENTIALITE; ?>">demande d'accord de confidentialité</a>.
                     </div>
                 <?php endif; ?>
             </div>
@@ -178,7 +184,8 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
             <div class="col-md-4">
                 <?php if ($canModifier) : ?>
                     <div class="pull-right">
-                        <a href="<?php echo $this->url('soutenance/proposition/changement-titre', ['these' => $these->getId()], [], true); ?>"
+                        <a <?php /** @see \Soutenance\Controller\Proposition\PropositionController::changementTitreAction(); */ ?>
+                           href="<?php echo $this->url('soutenance/proposition/changement-titre', ['these' => $these->getId()], [], true); ?>"
                            class="btn btn-primary action ajax-modal"
                            data-event="edition-confidentialite"
                         >

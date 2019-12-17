@@ -1,19 +1,25 @@
 <?php
 
 /**
- * @var \Application\Entity\Db\These[] $theses
+ * @see \Soutenance\Controller\Index\IndexController::indexRapporteurAction()
  *
- * @var \Soutenance\Entity\Membre $membre
+ * @var Proposition $proposition
+ * @var These[] $theses
+ * @var Membre $membre
  * @var boolean $depot
- * @var \Application\Entity\Db\These $these
- * @var \Application\Entity\Db\Validation $engagement
- * @var \Soutenance\Entity\Avis $avis
+ * @var These $these
+ * @var Validation $engagement
+ * @var Avis $avis
  * @var string $telecharger
  */
 
 use Application\Constants;
 use Application\Entity\Db\Role;
+use Application\Entity\Db\These;
+use Application\Entity\Db\Validation;
+use Soutenance\Entity\Avis;
 use Soutenance\Entity\Membre;
+use Soutenance\Entity\Proposition;
 
 $canEngagement = true;
 $canTelecharger = true;

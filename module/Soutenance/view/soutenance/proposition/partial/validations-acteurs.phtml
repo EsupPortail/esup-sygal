@@ -71,6 +71,7 @@ $canSursis = $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPr
                     <?php if ($canValider) : ?>
                         <?php if ($proposition->isDelaiOk() OR $proposition->hasSursis()) : ?>
                             <a
+                                <?php /** @see \Soutenance\Controller\Proposition\PropositionController::validerActeurAction(); */ ?>
                                 href="<?php echo $this->url('soutenance/proposition/valider', ['these' => $these->getId()], [], true); ?>"
                                 class="btn btn-success action ">
                                 <span class="glyphicon glyphicon-ok"></span> Valider la proposition de soutenance

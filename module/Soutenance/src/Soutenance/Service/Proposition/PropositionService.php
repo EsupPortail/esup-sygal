@@ -3,31 +3,36 @@
 namespace Soutenance\Service\Proposition;
 
 //TODO faire le repo aussi
+use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Validation;
 use Application\Entity\Db\Variable;
+use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\File\FileServiceAwareTrait;
+use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
-use Application\Service\Notification\NotifierServiceAwareTrait;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\QueryBuilder;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
+use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
 use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
+use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class PropositionService {
     use EntityManagerAwareTrait;
+    use ActeurServiceAwareTrait;
     use ValidatationServiceAwareTrait;
     use NotifierServiceAwareTrait;
     use NotifierSoutenanceServiceAwareTrait;
@@ -35,6 +40,7 @@ class PropositionService {
     use VariableServiceAwareTrait;
     use FileServiceAwareTrait;
     use EtablissementServiceAwareTrait;
+    use MembreServiceAwareTrait;
 
     /**
      *
@@ -55,11 +61,9 @@ class PropositionService {
             ->addSelect('qualite')->leftJoin('membre.qualite', 'qualite')
             ->addSelect('acteur')->leftJoin('membre.acteur', 'acteur')
             ->addSelect('justificatif')->leftJoin('proposition.justificatifs', 'justificatif')
+            ->addSelect('avis')->leftJoin('proposition.avis', 'avis')
             //->addSelect('validation')->leftJoin('proposition.validations', 'validation')
-
-
-
-            ;
+        ;
         return $qb;
     }
 
@@ -489,6 +493,25 @@ class PropositionService {
             return $result;
         } catch (ORMException $e) {
             throw new RuntimeException("Plusieurs ".Etat::class." partagent le même CODE [".$code."]", $e);
+        }
+    }
+
+    /**
+     * Les directeurs et co-directeurs sont des membres par défauts du jury d'une thèse. Cette fonction permet d'ajouter
+     * ceux-ci à une proposition.
+     * NB: La proposition doit être liée à une thèse.
+     *
+     * @param Proposition $proposition
+     */
+    public function addDirecteursAsMembres(Proposition $proposition)
+    {
+        $these = $proposition->getThese();
+        if ($these === null) throw new LogicException("Impossible d'ajout les directeurs comme membres : Aucun thèse de lié à la proposition id:" . $proposition->getId());
+
+        /** @var Acteur[] $encadrements */
+        $encadrements = $this->getActeurService()->getRepository()->findEncadrementThese($these);
+        foreach ($encadrements as $encadrement) {
+            $this->getMembreService()->createMembre($proposition, $encadrement);
         }
     }
 }
