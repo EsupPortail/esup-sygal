@@ -9,6 +9,7 @@ use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\VersionFichier;
+use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
@@ -42,6 +43,7 @@ use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\PhpRenderer;
 
 class PropositionController extends AbstractController {
+    use ActeurServiceAwareTrait;
     use MembreServiceAwareTrait;
     use NotifierSoutenanceServiceAwareTrait;
     use PropositionServiceAwareTrait;
@@ -89,7 +91,7 @@ class PropositionController extends AbstractController {
             'these'             => $these,
             'proposition'       => $proposition,
             'doctorant'         => $these->getDoctorant(),
-            'directeurs'        => $these->getEncadrements(false),
+            'directeurs'        => $this->getActeurService()->getRepository()->findEncadrementThese($these),
             'validations'       => $this->getPropositionService()->getValidationSoutenance($these),
             'validationActeur'  => $this->getPropositionService()->isValidated($these, $currentIndividu, $currentRole),
             'roleCode'          => $currentRole,
@@ -379,8 +381,7 @@ class PropositionController extends AbstractController {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
 
-        $encadrement = $these->getEncadrements();
-        $codirecteurs = array_filter($encadrement, function(Acteur $a) { return ($a->getRole()->getCode() === Role::CODE_CODIRECTEUR_THESE);});
+        $codirecteurs = $this->getActeurService()->getRepository()->findActeursByTheseAndRole($these, Role::CODE_CODIRECTEUR_THESE);
 
         /* @var $renderer PhpRenderer */
         $renderer = $this->getServiceLocator()->get('view_renderer');
@@ -403,7 +404,7 @@ class PropositionController extends AbstractController {
         $proposition = $this->getPropositionService()->findByThese($these);
 
         /** @var Acteur[] $directeurs */
-        $directeurs = $these->getEncadrements(false);
+        $directeurs = $this->getActeurService()->getRepository()->findEncadrementThese($these);
 
         /** @var Membre[] $rapporteurs */
         $rapporteurs = ($proposition)?$proposition->getRapporteurs():[];

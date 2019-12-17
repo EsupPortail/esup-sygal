@@ -10,6 +10,7 @@ use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Validation;
 use Application\Entity\Db\Variable;
+use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\File\FileServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
@@ -31,6 +32,7 @@ use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class PropositionService {
     use EntityManagerAwareTrait;
+    use ActeurServiceAwareTrait;
     use ValidatationServiceAwareTrait;
     use NotifierServiceAwareTrait;
     use NotifierSoutenanceServiceAwareTrait;
@@ -507,7 +509,7 @@ class PropositionService {
         if ($these === null) throw new LogicException("Impossible d'ajout les directeurs comme membres : Aucun thèse de lié à la proposition id:" . $proposition->getId());
 
         /** @var Acteur[] $encadrements */
-        $encadrements = $these->getEncadrements();
+        $encadrements = $this->getActeurService()->getRepository()->findEncadrementThese($these);
         foreach ($encadrements as $encadrement) {
             $this->getMembreService()->createMembre($proposition, $encadrement);
         }

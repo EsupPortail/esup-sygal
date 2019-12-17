@@ -47,7 +47,6 @@ class IndexController extends AbstractActionController {
                 $this->redirect()->toRoute('soutenance/index-structure', [], [], true);
                 break;
         }
-
         return new ViewModel();
     }
 
@@ -65,7 +64,7 @@ class IndexController extends AbstractActionController {
             case Role::CODE_CODIRECTEUR_THESE :
                 $theses = $this->getTheseService()->getRepository()->fetchThesesByEncadrant($individu);
                 break;
-        };
+        }
 
         return new ViewModel([
             'theses' => $theses,
@@ -89,7 +88,6 @@ class IndexController extends AbstractActionController {
             foreach($membres as $membre_) {
                 if ($membre_->getActeur() && $membre_->getActeur()->getIndividu() === $individu) {
                     $membre = $membre_;
-                    $rapporteur = $membre;
                 }
             }
 
@@ -103,7 +101,6 @@ class IndexController extends AbstractActionController {
                 'depot' => $these->hasVersionInitiale(),
                 'engagement' => $engagement,
                 'avis' => $avis,
-                'urlFichierThese' => $this->urlFichierThese(),
             ]);
         } else {
             $acteurs = $this->getActeurService()->getRapporteurDansTheseEnCours($individu);

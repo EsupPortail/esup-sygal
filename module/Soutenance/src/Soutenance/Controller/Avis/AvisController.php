@@ -3,7 +3,6 @@
 namespace Soutenance\Controller\Avis;
 
 use Application\Controller\AbstractController;
-use Application\Entity\Db\Acteur;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
 use Application\Entity\Db\VersionFichier;

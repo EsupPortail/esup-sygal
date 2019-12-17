@@ -8,9 +8,14 @@ use Soutenance\Controller\Qualite\QualiteController;
 use Soutenance\Form\QualiteEdition\QualiteEditionForm;
 use Soutenance\Form\QualiteEdition\QualiteEditionFormFactory;
 use Soutenance\Form\QualiteEdition\QualiteEditiontHydrator;
+use Soutenance\Form\QualiteLibelleSupplementaire\QualiteLibelleSupplementaireForm;
+use Soutenance\Form\QualiteLibelleSupplementaire\QualiteLibelleSupplementaireFormFactory;
+use Soutenance\Form\QualiteLibelleSupplementaire\QualiteLibelleSupplementaireHydrator;
 use Soutenance\Provider\Privilege\QualitePrivileges;
 use Soutenance\Service\Qualite\QualiteService;
 use Soutenance\Service\Qualite\QualiteServiceFactory;
+use Soutenance\Service\QualiteLibelleSupplementaire\QualiteLibelleSupplementaireService;
+use Soutenance\Service\QualiteLibelleSupplementaire\QualiteLibelleSupplementaireServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use Zend\Mvc\Router\Http\Literal;
 use Zend\Mvc\Router\Http\Segment;
@@ -31,6 +36,8 @@ return array(
                     'action'     => [
                         'editer',
                         'effacer',
+                        'ajouter-libelle-supplementaire',
+                        'retirer-libelle-supplementaire'
                     ],
                     'privileges' => QualitePrivileges::SOUTENANCE_QUALITE_MODIFIER,
                 ],
@@ -81,6 +88,28 @@ return array(
                             ],
                         ],
                     ],
+                    'ajouter-libelle-supplementaire' => [
+                        'type' => Segment::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/ajouter-libelle-supplementaire/:qualite',
+                            'defaults' => [
+                                'controller' => QualiteController::class,
+                                'action'     => 'ajouter-libelle-supplementaire',
+                            ],
+                        ],
+                    ],
+                    'retirer-libelle-supplementaire' => [
+                        'type' => Segment::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/retirer-libelle-supplementaire/:libelle',
+                            'defaults' => [
+                                'controller' => QualiteController::class,
+                                'action'     => 'retirer-libelle-supplementaire',
+                            ],
+                        ],
+                    ],
                 ],
             ],
         ],
@@ -108,6 +137,7 @@ return array(
     'service_manager' => [
         'factories' => [
             QualiteService::class => QualiteServiceFactory::class,
+            QualiteLibelleSupplementaireService::class => QualiteLibelleSupplementaireServiceFactory::class,
         ],
     ],
     'controllers' => [
@@ -119,12 +149,14 @@ return array(
     'form_elements' => [
         'factories' => [
             QualiteEditionForm::class => QualiteEditionFormFactory::class,
+            QualiteLibelleSupplementaireForm::class => QualiteLibelleSupplementaireFormFactory::class,
         ],
     ],
 
     'hydrators' => [
         'invokables' => [
             QualiteEditiontHydrator::class => QualiteEditiontHydrator::class,
+            QualiteLibelleSupplementaireHydrator::class => QualiteLibelleSupplementaireHydrator::class,
         ],
     ],
 );

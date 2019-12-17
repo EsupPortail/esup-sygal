@@ -12,5 +12,6 @@
         <field name="hdr"               type="string"       length="1"          column="HDR"            nullable="false"/>
         <field name="emeritat"          type="string"       length="1"          column="EMERITAT"       nullable="false"/>
 
+        <one-to-many field="libellesSupplementaires" target-entity="Soutenance\Entity\QualiteLibelleSupplementaire" mapped-by="qualite"/>
     </entity>
 </doctrine-mapping>

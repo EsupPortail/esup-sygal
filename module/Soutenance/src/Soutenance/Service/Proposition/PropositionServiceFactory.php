@@ -2,6 +2,7 @@
 
 namespace  Soutenance\Service\Proposition;
 
+use Application\Service\Acteur\ActeurService;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\File\FileService;
 use Application\Service\Notification\NotifierService;
@@ -19,6 +20,7 @@ class PropositionServiceFactory
     {
         /**
          * @var EntityManager $entityManager
+         * @var ActeurService $acteurService
          * @var ValidationService $validationService
          * @var NotifierService $notifierService
          * @var NotifierSoutenanceService $notifierSoutenanceService
@@ -29,6 +31,7 @@ class PropositionServiceFactory
          * @var MembreService $membreService
          */
         $entityManager = $servicelocator->get('doctrine.entitymanager.orm_default');
+        $acteurService = $servicelocator->get(ActeurService::class);
         $validationService = $servicelocator->get(ValidationService::class);
         $notifierService = $servicelocator->get(NotifierService::class);
         $notifierSoutenanceService = $servicelocator->get(NotifierSoutenanceService::class);
@@ -41,6 +44,7 @@ class PropositionServiceFactory
         /** @var PropositionService $service */
         $service = new PropositionService();
         $service->setEntityManager($entityManager);
+        $service->setActeurService($acteurService);
         $service->setValidationService($validationService);
         $service->setNotifierService($notifierService);
         $service->setNotifierSoutenanceService($notifierSoutenanceService);

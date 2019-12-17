@@ -2,6 +2,7 @@
 
 namespace Soutenance\Controller\Proposition;
 
+use Application\Service\Acteur\ActeurService;
 use Application\Service\Fichier\FichierService;
 use Application\Service\FichierThese\FichierTheseService;
 use Application\Service\These\TheseService;
@@ -26,6 +27,7 @@ class PropositionControllerFactory {
     public function __invoke(ControllerManager $manager)
     {
         /**
+         * @var ActeurService $acteurService
          * @var MembreService $membreService
          * @var NotifierSoutenanceService $notificationSoutenanceService
          * @var PropositionService $propositionService
@@ -35,6 +37,7 @@ class PropositionControllerFactory {
          * @var FichierTheseService $fichierTheseService
          * @var JustificatifService $justificatifService
          */
+        $acteurService = $manager->getServiceLocator()->get(ActeurService::class);
         $membreService = $manager->getServiceLocator()->get(MembreService::class);
         $notificationSoutenanceService = $manager->getServiceLocator()->get(NotifierSoutenanceService::class);
         $propositionService = $manager->getServiceLocator()->get(PropositionService::class);
@@ -66,6 +69,7 @@ class PropositionControllerFactory {
         /** @var PropositionController $controller */
         $controller = new PropositionController();
 
+        $controller->setActeurService($acteurService);
         $controller->setMembreService($membreService);
         $controller->setNotifierSoutenanceService($notificationSoutenanceService);
         $controller->setPropositionService($propositionService);

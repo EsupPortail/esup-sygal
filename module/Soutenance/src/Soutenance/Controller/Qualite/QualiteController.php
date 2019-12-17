@@ -4,10 +4,13 @@ namespace Soutenance\Controller\Qualite;
 
 use BjyAuthorize\Exception\UnAuthorizedException;
 use Soutenance\Entity\Qualite;
+use Soutenance\Entity\QualiteLibelleSupplementaire;
 use Soutenance\Form\QualiteEdition\QualiteEditionForm;
 use Soutenance\Form\QualiteEdition\QualiteEditionFormAwareTrait;
+use Soutenance\Form\QualiteLibelleSupplementaire\QualiteLibelleSupplementaireFormAwareTrait;
 use Soutenance\Provider\Privilege\QualitePrivileges;
 use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
+use Soutenance\Service\QualiteLibelleSupplementaire\QualiteLibelleSupplementaireServiceAwareTrait;
 use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
@@ -19,7 +22,10 @@ use Zend\View\Model\ViewModel;
 class QualiteController extends AbstractActionController
 {
     use QualiteServiceAwareTrait;
+    use QualiteLibelleSupplementaireServiceAwareTrait;
+
     use QualiteEditionFormAwareTrait;
+    use QualiteLibelleSupplementaireFormAwareTrait;
 
     /**
      * Affiche la liste des qualités enregistrées dans SyGAL et permet l'accés aux fonctions d'ajout, d'édition et de retrait
@@ -96,6 +102,43 @@ class QualiteController extends AbstractActionController
         $this->getQualiteService()->removeQualite($qualite);
 
         $this->redirect()->toRoute('qualite', [], [], true);
+    }
+
+    public function ajouterLibelleSupplementaireAction()
+    {
+        $qualite = $this->getQualiteService()->getRequestedQualite($this);
+        $libelleSupplementaire = new QualiteLibelleSupplementaire();
+        $libelleSupplementaire->setQualite($qualite);
+
+        $form = $this->getQualiteLibelleSupplementaireForm();
+        $form->setAttribute('action', $this->url()->fromRoute('qualite/ajouter-libelle-supplementaire', ['qualite' => $qualite->getId()], [], true));
+        $form->bind($libelleSupplementaire);
+
+        /** @var Request $request */
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $form->setData($data);
+            if ($form->isValid()) {
+                $this->getQualiteLibelleSupplementaireService()->create($libelleSupplementaire);
+                exit();
+            }
+        }
+
+        $vm = new ViewModel();
+        $vm->setTemplate('soutenance/default/default-form');
+        $vm->setVariables([
+            'title' => "Ajout d'un libellé pour [".$qualite->getLibelle()."]",
+            'form' => $form,
+        ]);
+        return $vm;
+    }
+
+    public function retirerLibelleSupplementaireAction()
+    {
+        $libelle = $this->getQualiteLibelleSupplementaireService()->getRequestedLibelle($this);
+        $this->getQualiteLibelleSupplementaireService()->delete($libelle);
+        return $this->redirect()->toRoute('qualite');
     }
 
 }

@@ -4,6 +4,7 @@ namespace Soutenance\Controller\EngagementImpartialite;
 
 use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
+use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Soutenance\Entity\Membre;
@@ -26,13 +27,14 @@ use Zend\View\Model\ViewModel;
 
 class EngagementImpartialiteController extends AbstractActionController
 {
-    use TheseServiceAwareTrait;
-    use PropositionServiceAwareTrait;
-    use MembreServiceAwareTrait;
-    use IndividuServiceAwareTrait;
-    use NotifierSoutenanceServiceAwareTrait;
-    use ValidatationServiceAwareTrait;
+    use ActeurServiceAwareTrait;
     use EngagementImpartialiteServiceAwareTrait;
+    use IndividuServiceAwareTrait;
+    use MembreServiceAwareTrait;
+    use NotifierSoutenanceServiceAwareTrait;
+    use PropositionServiceAwareTrait;
+    use TheseServiceAwareTrait;
+    use ValidatationServiceAwareTrait;
 
     public function engagementImpartialiteAction()
     {
@@ -56,6 +58,7 @@ class EngagementImpartialiteController extends AbstractActionController
             'proposition' => $proposition,
             'membre' => $membre,
             'validation' => $validation,
+            'encadrants' => $this->getActeurService()->getRepository()->findEncadrementThese($these),
             'urlSigner' => $this->url()->fromRoute('soutenance/engagement-impartialite/signer', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true),
             'urlRefuser' => $this->url()->fromRoute('soutenance/engagement-impartialite/refuser', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true),
             'urlAnnuler' => $this->url()->fromRoute('soutenance/engagement-impartialite/annuler', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true),

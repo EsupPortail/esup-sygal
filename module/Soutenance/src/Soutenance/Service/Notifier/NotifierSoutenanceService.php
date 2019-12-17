@@ -8,6 +8,7 @@ use Application\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Validation;
 use Application\Entity\Db\Variable;
+use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Notification\Notification;
@@ -21,6 +22,7 @@ use UnicaenAuth\Entity\Db\RoleInterface;
 use Zend\View\Helper\Url as UrlHelper;
 
 class NotifierSoutenanceService extends NotifierService {
+    use ActeurServiceAwareTrait;
     use RoleServiceAwareTrait;
     use VariableServiceAwareTrait;
 
@@ -52,7 +54,9 @@ class NotifierSoutenanceService extends NotifierService {
     {
         $emails = [];
         $emails[] = $these->getDoctorant()->getIndividu()->getEmail();
-        foreach ($these->getEncadrements() as $encadrant) {
+
+        $encadrants = $this->getActeurService()->getRepository()->findEncadrementThese($these);
+        foreach ($encadrants as $encadrant) {
             $emails[] = $encadrant->getIndividu()->getEmail();
         }
         return $emails;

@@ -2,6 +2,7 @@
 
 namespace Soutenance\Controller\EngagementImpartialite;
 
+use Application\Service\Acteur\ActeurService;
 use Application\Service\Individu\IndividuService;
 use Application\Service\These\TheseService;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteService;
@@ -21,6 +22,7 @@ class EngagementImpartialiteControllerFactory
     {
 
         /**
+         * @var ActeurService $acteurService
          * @var PropositionService $propositionService
          * @var MembreService $membreService
          * @var TheseService $theseService
@@ -29,6 +31,7 @@ class EngagementImpartialiteControllerFactory
          * @var NotifierSoutenanceService $notifierService
          * @var EngagementImpartialiteService $engagementImpartialiteService
          */
+        $acteurService                  = $manager->getServiceLocator()->get(ActeurService::class);
         $propositionService             = $manager->getServiceLocator()->get(PropositionService::class);
         $membreService                  = $manager->getServiceLocator()->get(MembreService::class);
         $theseService                   = $manager->getServiceLocator()->get('TheseService');
@@ -39,6 +42,7 @@ class EngagementImpartialiteControllerFactory
 
         /** @var EngagementImpartialiteController $controller */
         $controller = new EngagementImpartialiteController();
+        $controller->setActeurService($acteurService);
         $controller->setPropositionService($propositionService);
         $controller->setMembreService($membreService);
         $controller->setTheseService($theseService);
