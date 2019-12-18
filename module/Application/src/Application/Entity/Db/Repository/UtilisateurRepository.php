@@ -25,7 +25,8 @@ class UtilisateurRepository extends DefaultEntityRepository
         try {
             $utilisateur = $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Plusieurs Utilisateur partagent le même individu [".$individu->getId()."]", 0, $e);
+            $utilisateurs = $qb->getQuery()->getResult();
+            throw new RuntimeException("Plusieurs (".count($utilisateurs).") Utilisateur partagent le même individu [".$individu->getId()."]", 0, $e);
         }
 
         return $utilisateur;
