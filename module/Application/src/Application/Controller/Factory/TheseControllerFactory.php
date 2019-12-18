@@ -11,6 +11,7 @@ use Application\Service\Role\RoleService;
 use Application\Service\These\TheseRechercheService;
 use Application\Service\These\TheseService;
 use Application\Service\UniteRecherche\UniteRechercheService;
+use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Validation\ValidationService;
 use Application\Service\Variable\VariableService;
 use Application\Service\VersionFichier\VersionFichierService;
@@ -50,6 +51,7 @@ class TheseControllerFactory
          * @var MailConfirmationService $mailConfirmationService
          * @var EntityManager           $entityManager
          * @var ImportService           $importService
+         * @var UtilisateurService      $utilisateurService
          */
         $variableService = $sl->get('VariableService');
         $validationService = $sl->get('ValidationService');
@@ -65,6 +67,7 @@ class TheseControllerFactory
         $entityManager = $sl->get('doctrine.entitymanager.orm_default');
         $notifierService = $sl->get(NotifierService::class);
         $importService = $sl->get('ImportService');
+        $utilisateurService = $sl->get('UtilisateurService');
 
         $controller = new TheseController();
         $controller->setTimeoutRetraitement($this->getTimeoutRetraitementFromOptions($options));
@@ -82,6 +85,7 @@ class TheseControllerFactory
         $controller->setEntityManager($entityManager);
         $controller->setNotifierService($notifierService);
         $controller->setImportService($importService);
+        $controller->setUtilisateurService($utilisateurService);
 
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper
