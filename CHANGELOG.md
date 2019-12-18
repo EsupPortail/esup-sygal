@@ -1,6 +1,26 @@
 Journal des modifications
 =========================
 
+1.3.3 (18/12/2019)
+------------------
+
+### Ajouts
+
+- Gestion des directeurs sans SUPANN_ID
+    - Création de compte associé aux individus
+    - Réinitialisation de mot de passe
+    - Changement de l'affichage des warning associés
+
+1.3.2 (27/11/2019)
+------------------
+
+### Ajouts
+
+- Amélioration de l'affichage des rôles liés aux établissements
+- Rénommage de 'Bureau du doctorats' en 'Maison du doctorat'
+- Ajout d'un privilège pour l'affichage de l'adresse de contact du doctorant
+- Ajout du menu 'Guide d'utilisation' sur l'accueil de l'application
+
 1.3.1 (25/11/2019)
 ------------------
 

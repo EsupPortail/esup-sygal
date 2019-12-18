@@ -145,7 +145,7 @@ EOS
             $vm->setTemplate('application/index/partial/ur');
         }
         /**
-         * Profil "Bureau des doctorats".
+         * Profil "Maison du doctorat".
          */
         elseif ($role = $this->userContextService->getSelectedRoleBDD()) {
             $vm->setTemplate('application/index/partial/bdd');

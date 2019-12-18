@@ -5,18 +5,14 @@ use Application\Provider\Privilege\DoctorantPrivileges;
 use Application\Service\Doctorant\DoctorantService;
 use Application\Service\Doctorant\DoctorantServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 
 return [
     'bjyauthorize'    => [
 //        'rule_providers'     => [
 //            PrivilegeRuleProvider::class => [
 //                'allow' => [
-//                    [
-//                        'privileges' => [
-//                        ],
-//                        'resources'  => ['These'],
-//                        'assertion'  => 'Assertion\\These',
-//                    ],
+//                    [],
 //                ],
 //            ],
 //        ],
@@ -92,8 +88,6 @@ return [
         )
     ),
     'service_manager' => [
-        'invokables' => array(
-        ),
         'factories' => [
             'DoctorantService' => DoctorantServiceFactory::class,
         ],

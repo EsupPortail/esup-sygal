@@ -2,6 +2,7 @@
 
 namespace Application\Controller;
 
+use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\TypeValidation;
 use Application\Notification\ValidationDepotTheseCorrigeeNotification;
@@ -11,6 +12,7 @@ use Application\Provider\Privilege\ValidationPrivileges;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
+use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Notification\Notification;
@@ -25,6 +27,7 @@ class ValidationController extends AbstractController
     use NotifierServiceAwareTrait;
     use RoleServiceAwareTrait;
     use VariableServiceAwareTrait;
+    use UtilisateurServiceAwareTrait;
 
     public function pageDeCouvertureAction()
     {
@@ -156,6 +159,13 @@ class ValidationController extends AbstractController
     {
         $these = $this->requestedThese();
 
+        $utilisateurs = [];
+        /** @var Acteur $acteur */
+        foreach ($these->getActeurs() as $acteur) {
+            $individu = $acteur->getIndividu();
+            $utilisateurs[$individu->getId()] = $this->utilisateurService->getRepository()->findByIndividu($individu);
+        }
+
         $view = new ViewModel([
             'these'          => $these,
             'validerUrl'     => $this->urlThese()->validerCorrectionTheseUrl($these),
@@ -163,6 +173,7 @@ class ValidationController extends AbstractController
             'typeValidation' => $this->validationService->getTypeValidation($type = TypeValidation::CODE_CORRECTION_THESE),
             'validations'    => $these->getValidations($type),
             'attendues'      => $this->validationService->getValidationsAttenduesPourCorrectionThese($these),
+            'utilisateurs'   => $utilisateurs,
         ]);
 
         $view->setTemplate('application/validation/these-corrigee/validation-correction');

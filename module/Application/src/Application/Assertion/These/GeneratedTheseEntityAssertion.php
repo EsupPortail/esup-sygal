@@ -9,7 +9,7 @@ namespace Application\Assertion\These;
  * /home/metivier/MyWeb/sygal/data/assertions/TheseEntityAssertion.csv.
  *
  * @author Application\Assertion\Generator\AssertionGenerator
- * @date 24/10/2019 10:08:24
+ * @date 27/11/2019 12:02:44
  */
 abstract class GeneratedTheseEntityAssertion
 {
@@ -518,6 +518,20 @@ abstract class GeneratedTheseEntityAssertion
             return true;
         }
 
+        if ($privilege === \Application\Provider\Privilege\DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT) {
+        //--------------------------------------------------------------------------------------
+            /* line 77 */
+            $this->linesTrace[] = '/* line 77 */';
+            if ($this->isRoleDoctorantSelected() /* test 1 */ && 
+                ! $this->isUtilisateurEstAuteurDeLaThese() /* test 22 */) {
+                $this->failureMessage = "Vous ne pouvez pas visualiser l’adresse de contact car vous n’êtes pas l’auteur de la thèse";
+                return false;
+            }
+            /* line 78 */
+            $this->linesTrace[] = '/* line 78 */';
+            return true;
+        }
+
         throw new \Application\Assertion\Exception\UnexpectedPrivilegeException(
             "Le privilège spécifié n'est pas couvert par l'assertion: $privilege. Trace : " . PHP_EOL . implode(PHP_EOL, $this->linesTrace));
     }
@@ -689,6 +703,8 @@ line;enabled;privilege;isRoleDoctorantSelected;;isStructureDuRoleRespectee;;isTh
 74;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_INITIALE;;;;;;;;;;;;;;;;;;;;;;;;;;;;1;
 75;1;\Application\Provider\Privilege\ThesePrivileges::THESE_TELECHARGEMENT_FICHIER /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;;;;;;;;;;;;1;
 76;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+77;1;\Application\Provider\Privilege\DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT;1:1;;;;;;;;;;;;;;;;;;;;;2:0;;;;;;0;Vous ne pouvez pas visualiser l’adresse de contact car vous n’êtes pas l’auteur de la thèse
+78;1;\Application\Provider\Privilege\DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT;;;;;;;;;;;;;;;;;;;;;;;;;;;;1;
 EOT;
     }
 

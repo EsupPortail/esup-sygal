@@ -7,6 +7,7 @@ use Application\Assertion\Interfaces\EntityAssertionInterface;
 use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\NatureFichier;
+use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\VersionFichier;
@@ -174,6 +175,7 @@ class TheseEntityAssertion extends GeneratedTheseEntityAssertion
 
     protected function isUtilisateurEstAuteurDeLaThese()
     {
+        if ($this->getIdentityDoctorant() === null) return false;
         return $this->these->getDoctorant()->getId() === $this->getIdentityDoctorant()->getId();
     }
 
