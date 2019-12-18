@@ -3,6 +3,7 @@
 namespace Application\Entity\Db\Repository;
 
 use Application\Entity\Db\Acteur;
+use Application\Entity\Db\Individu;
 use Doctrine\ORM\Query\Expr\Join;
 
 class ActeurRepository extends DefaultEntityRepository
@@ -41,5 +42,23 @@ class ActeurRepository extends DefaultEntityRepository
             ->setParameter('sourceCode', '%::' . $sourceCodePattern);
 
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param Individu $individu
+     * @return Acteur[]
+     */
+    public function findActeursByIndividu(Individu $individu)
+    {
+        $qb = $this->createQueryBuilder('acteur')
+            ->addSelect('these')->join('acteur.these', 'these')
+            ->andWhere('1 =  pasHistorise(acteur)')
+            ->andWhere('acteur.individu = :individu')
+            ->setParameter('individu', $individu)
+            ->orderBy('these.id', 'ASC')
+            ;
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
     }
 }

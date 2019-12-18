@@ -9,6 +9,7 @@ use Application\Filter\ActeursFormatter;
 use Application\Filter\FinancementFormatter;
 use Application\Provider\Privilege\DoctorantPrivileges;
 use Application\Provider\Privilege\ThesePrivileges;
+use Application\Provider\Privilege\UtilisateurPrivileges;
 use Application\View\Helper\IndividuUsurpationHelper;
 use Application\View\Renderer\PhpRenderer;
 
@@ -30,6 +31,7 @@ $canVoirEmailContact = $this->isAllowed($these,DoctorantPrivileges::DOCTORANT_AF
 $canEditPersopass = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_MODIFICATION_PERSOPASS);
 $canEditPersopass = $canEditPersopass && (!$estDoctorant || !$these->getDoctorant()->getPersopass());
 $persopassModifiedEvent = 'persopass-modified-event';
+$canCreate = $this->isAllowed(UtilisateurPrivileges::getResourceId(UtilisateurPrivileges::UTILISATEUR_CREATE_FROM_INDIVIDU));
 
 $canEditForcageCorrectionAutorisee = $this->isAllowed($these, ThesePrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE);
 
@@ -158,6 +160,10 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                 if ($acteur->estDirecteur() && isset($result['alerte-supann-id'])) {
                     $ligne[] = sprintf('<span class="glyphicon glyphicon-warning-sign text-danger" title="%s"></span>',
                         $result['alerte-supann-id']);
+                    if ($canCreate) {
+                        $ligne[] = sprintf('<a href="%s" class="btn btn-sm btn-warning">Gérer l\'utilisateur</a>',
+                            $this->url('utilisateur/gerer-utilisateur', ['individu' => $acteur->getIndividu()->getId()], [], true));
+                    }
                 }
                 $ligne = implode(" &ndash; ", $ligne);
                 echo $ligne;
