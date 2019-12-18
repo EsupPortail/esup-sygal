@@ -1,6 +1,16 @@
 Journal des modifications
 =========================
 
+1.3.3 (18/12/2019)
+------------------
+
+### Ajouts
+
+- Gestion des directeurs sans SUPANN_ID
+    - Création de compte associé aux individus
+    - Réinitialisation de mot de passe
+    - Changement de l'affichage des warning associés
+
 1.3.2 (27/11/2019)
 ------------------
 
