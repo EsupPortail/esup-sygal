@@ -4,6 +4,7 @@ use Application\Controller\TheseController;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\MailConfirmation;
 use Application\Entity\Db\These;
+use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Validation;
 use Application\Filter\ActeursFormatter;
 use Application\Filter\FinancementFormatter;
@@ -23,6 +24,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var string       $mailContact
  * @var string       $etatMailContact
  * @var Validation[] $validationsDesCorrectionsEnAttente
+ * @var Utilisateur[] $utilisateurs
  *
  * @see TheseController::detailIdentiteAction()
  */
@@ -158,8 +160,12 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                     $ligne[] = $result["etablissement"];
                 }
                 if ($acteur->estDirecteur() && isset($result['alerte-supann-id'])) {
-                    $ligne[] = sprintf('<span class="glyphicon glyphicon-warning-sign text-danger" title="%s"></span>',
-                        $result['alerte-supann-id']);
+                    if ($utilisateurs[$acteur->getId()] === null) {
+                        $ligne[] = sprintf('<span class="glyphicon glyphicon-warning-sign text-danger" title="%s"></span>',
+                            $result['alerte-supann-id']);
+                    } else {
+                        $ligne[] = sprintf('<span class="glyphicon glyphicon-info-sign text-warning" title="Compte local"></span>');
+                    }
                     if ($canCreate) {
                         $ligne[] = sprintf('<a href="%s" class="btn btn-sm btn-warning">Gérer l\'utilisateur</a>',
                             $this->url('utilisateur/gerer-utilisateur', ['individu' => $acteur->getIndividu()->getId()], [], true));

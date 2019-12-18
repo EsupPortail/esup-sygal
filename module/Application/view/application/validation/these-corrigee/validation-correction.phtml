@@ -4,12 +4,14 @@ use Application\Assertion\BaseAssertion;
 use Application\Constants;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
+use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Validation;
 use Application\Entity\Db\VSitu\DepotVersionCorrigeeValidationDirecteur;
 use Application\Provider\Privilege\ValidationPrivileges;
 use Application\View\Renderer\PhpRenderer;
 
 /**
+ * @see \Application\Controller\ValidationController::validationCorrectionTheseAction()
  * @var PhpRenderer                               $this
  * @var These                                     $these
  * @var string                                    $validerUrl
@@ -17,6 +19,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var TypeValidation                            $typeValidation
  * @var Validation[]                              $validations
  * @var DepotVersionCorrigeeValidationDirecteur[] $attendues
+ * @var Utilisateur[]                             $utilisateurs
  */
 
 $canValidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_CORRECTION_THESE);
@@ -46,13 +49,20 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_CORRE
                 <li>
                     <?php echo $i = $validation->getIndividu() ?> n'a pas encore validé.
                     <?php if (! $i->getSupannId()): ?>
-                        <?php
-                        $message = sprintf(
-                            "Cette personne ne pourra pas utiliser l'application car il manque des informations la concernant dans %s (source code '%s').",
-                            $validation->getIndividu()->getSource(),
-                            $validation->getIndividu()->getSourceCode());
-                        ?>
-                        <p class="text-danger"><small><span class="glyphicon glyphicon-warning-sign"></span> <?php echo $message ?></small></p>
+                        <?php if ($utilisateurs[$i->getId()] === null) : ?>
+                            <?php
+                            $message = sprintf(
+                                "Cette personne ne pourra pas utiliser l'application car il manque des informations la concernant dans %s (source code '%s').",
+                                $validation->getIndividu()->getSource(),
+                                $validation->getIndividu()->getSourceCode());
+                            ?>
+                            <p class="text-danger"><small><span class="glyphicon glyphicon-warning-sign"></span> <?php echo $message ?></small></p>
+                        <?php else: ?>
+                            <p class="text-warning"><small>
+                                    <span class="glyphicon glyphicon-info-sign"></span>
+                                    Cet utilisateur utilise un compte local
+                            </small></p>
+                        <?php endif; ?>
                     <?php elseif (! $i->getEmail()): ?>
                         <?php
                         $message = sprintf(
