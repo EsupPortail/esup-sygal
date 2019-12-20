@@ -13,7 +13,6 @@ use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Entity\UserInterface;
 use UnicaenApp\Exception\RuntimeException;
-use UnicaenLdap\Entity\People;
 use Zend\Mvc\Controller\AbstractActionController;
 
 class IndividuService extends BaseService
@@ -40,39 +39,6 @@ class IndividuService extends BaseService
     }
 
     /**
-     * @param People        $people
-     * @param Etablissement $etablissement
-     * @return Individu
-     * @deprecated À supprimer car non utilisée
-     */
-    public function createIndividuFromPeopleAndEtab(People $people, Etablissement $etablissement)
-    {
-        $sns = (array)$people->get('sn');
-        $usuel = array_pop($sns);
-        $patro = array_pop($sns);
-        if ($patro === null) $patro = $usuel;
-
-        $entity = new Individu();
-        $entity->setNomUsuel($usuel);
-        $entity->setNomPatronymique($patro);
-        $entity->setPrenom($people->get('givenName'));
-        $entity->setCivilite($people->get('supannCivilite'));
-        $entity->setEmail($people->get('mail'));
-
-        $sourceCode = $this->sourceCodeStringHelper->addEtablissementPrefixTo($people->get('supannEmpId'), $etablissement);
-        $entity->setSourceCode($sourceCode);
-
-        $this->getEntityManager()->persist($entity);
-        try {
-            $this->getEntityManager()->flush($entity);
-        } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Impossible d'enregistrer l'Individu", null, $e);
-        }
-
-        return $entity;
-    }
-
-    /**
      * @param UserWrapper   $userWrapper
      * @param Etablissement $etablissement
      * @param Utilisateur   $utilisateur   Auteur éventuel de la création
@@ -82,7 +48,7 @@ class IndividuService extends BaseService
                                                          Etablissement $etablissement,
                                                          Utilisateur $utilisateur = null)
     {
-        $sourceCode = $this->sourceCodeStringHelper->addEtablissementPrefixTo($userWrapper->getSupannId(), $etablissement);
+        $sourceCode = $this->sourceCodeStringHelper->generateSourceCodeFromUserWrapperAndEtab($userWrapper, $etablissement);
 
         $entity = new Individu();
         $entity->setSupannId($userWrapper->getSupannId());
@@ -105,20 +71,22 @@ class IndividuService extends BaseService
     }
 
     /**
-     * @param Individu    $entity
-     * @param UserWrapper $userWrapper
-     * @param Utilisateur $utilisateur
+     * @param Individu      $entity
+     * @param UserWrapper   $userWrapper
+     * @param Etablissement $etablissement
+     * @param Utilisateur   $utilisateur
      */
-    public function updateIndividuFromUserWrapper(Individu $entity,
-                                                  UserWrapper $userWrapper,
-                                                  Utilisateur $utilisateur = null)
+    public function updateIndividuFromUserWrapperAndEtab(Individu $entity,
+                                                         UserWrapper $userWrapper,
+                                                         Etablissement $etablissement,
+                                                         Utilisateur $utilisateur = null)
     {
+        $sourceCode = $this->sourceCodeStringHelper->generateSourceCodeFromUserWrapperAndEtab($userWrapper, $etablissement);
+
+        $entity->setSourceCode($sourceCode);
         $entity->setSupannId($userWrapper->getSupannId());
-        $entity->setNomUsuel($userWrapper->getNom() ?: "X"); // NB: le nom est obligatoire mais quid si indisponible ?
-        $entity->setNomPatronymique($userWrapper->getNom());
-        $entity->setPrenom($userWrapper->getPrenom());
-        $entity->setCivilite($userWrapper->getCivilite());
         $entity->setEmail($userWrapper->getEmail());
+
         $entity->setHistoModificateur($utilisateur ?: $this->getAppPseudoUtilisateur());
 
         try {
@@ -129,7 +97,9 @@ class IndividuService extends BaseService
     }
 
     /**
-     * Met à jour le SOURCE_CODE d'un individu à partir de l'établissement spécifié.
+     * Met à jour le SOURCE_CODE d'un Individu.
+     *
+     * Si
      *
      * @param Individu      $entity
      * @param Etablissement $etablissement

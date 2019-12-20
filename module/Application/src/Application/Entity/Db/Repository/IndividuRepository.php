@@ -34,18 +34,13 @@ class IndividuRepository extends DefaultEntityRepository
      *
      * @param UserWrapper   $userWrapper
      * @param Etablissement $etablissement
-     * @return Individu
+     * @return Individu|null
      */
     public function findOneByUserWrapperAndEtab(UserWrapper $userWrapper, Etablissement $etablissement)
     {
-        // C'est le "supann{Emp|Etu}Id" présent dans les données d'authentification qui nous permet de trouver
-        // l'Individu correspodant à l'Utilisateur.
-        $supannId = $userWrapper->getSupannId();
-
-        $sourceCode = $this->sourceCodeStringHelper->addEtablissementPrefixTo($supannId, $etablissement);
+        $sourceCode = $this->sourceCodeStringHelper->generateSourceCodeFromUserWrapperAndEtab($userWrapper, $etablissement);
 
         return $this->findOneBySourceCode($sourceCode);
-
     }
 
     /**

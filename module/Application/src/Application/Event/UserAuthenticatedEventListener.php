@@ -92,7 +92,7 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
         if ($etablissement === null) {
             // si aucun établissement ne correspond au domaine, on essaie l'établissement "inconnu"...
 
-            // recherche de l'Individu correspondant à l'utilisateur, peut-être rattaché à l'établissement inconnu?
+            // recherche de l'Individu correspondant à l'utilisateur, peut-être rattaché à l'établissement inconnu
             $individu = $this->individuService->getRepository()->findOneByUserWrapperAndEtab($userWrapper, $etablissementInconnu);
             if ($individu === null) {
                 // si l'individu n'est pas trouvé dans l'établissement inconnu, il y sera ajouté.
@@ -110,7 +110,7 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
                     // si l'individu n'est pas trouvé non plus dans l'établissement inconnu, il sera ajouté dans l'établissement de connexion.
                     $createIndividu = true;
                 } else {
-                    // s'il existe dans l'établissement inconnu, on le "déplace" dans l'établissement de connexion
+                    // s'il existe dans l'établissement inconnu, on "déplace" son source_code dans l'établissement de connexion
                     $this->individuService->updateIndividuSourceCodeFromEtab($individu, $etablissement);
                 }
             }

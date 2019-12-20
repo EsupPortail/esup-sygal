@@ -3,6 +3,7 @@
 namespace Application;
 
 use Application\Entity\Db\Etablissement;
+use Application\Entity\UserWrapper;
 use UnicaenApp\Exception\RuntimeException;
 
 /**
@@ -130,5 +131,32 @@ class SourceCodeStringHelper
     public function generateSearchPatternForThisPrefix($value)
     {
         return $this->addPrefixTo('%', $value);
+    }
+
+
+
+    /**
+     * Génération du source_code à partir des données d'authentification et d'un Etablissement.
+     *
+     * @param UserWrapper   $userWrapper
+     * @param Etablissement $etablissement
+     * @return string
+     */
+    public function generateSourceCodeFromUserWrapperAndEtab(UserWrapper $userWrapper, Etablissement $etablissement)
+    {
+        // C'est le "supann{Emp|Etu}Id" présent dans les données d'authentification qu'on utilise dans le source_code
+        $supannId = $userWrapper->getSupannId();
+
+        if ($supannId === null) {
+            // Si aucun supannId n'est dispo dans les données d'authentification, on colle l'EPPN dans
+            // le source_code de l'individu (ex: "UCN::tartempion@unicaen.fr", "INCONNU::machin@unicaen.fr")
+            // ce qui permettra si besoin de retrouver l'individu dans le cas où il se reconnecterait plus tard
+            // et qu'un un supannId soit dispo dans les données d'authentification.
+            $sourceCodePart = $userWrapper->getEppn();
+        } else {
+            $sourceCodePart = $supannId;
+        }
+
+        return $this->addEtablissementPrefixTo($sourceCodePart, $etablissement);
     }
 }
