@@ -21,6 +21,12 @@
 
         <field name="sourceCode" column="SOURCE_CODE" nullable="true"/>
 
+        <many-to-one field="etablissement" target-entity="Application\Entity\Db\Etablissement" fetch="LAZY">
+            <join-columns>
+                <join-column name="ETABLISSEMENT_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
         <one-to-many target-entity="Application\Entity\Db\MailConfirmation" mapped-by="individu" field="mailsConfirmations"/>
 
         <field name="histoCreation" type="datetime" column="HISTO_CREATION"/>

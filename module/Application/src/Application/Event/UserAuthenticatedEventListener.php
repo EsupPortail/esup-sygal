@@ -66,6 +66,9 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
 
         if ($userWrapper->getIndividu() !== null) {
             $individu = $userWrapper->getIndividu();
+
+            // màj de l'individu (utile si un supannId fait son apparition dans les données d'authentification)
+            $this->individuService->updateIndividuFromUserWrapper($individu, $userWrapper);
         } else {
             $individu = $this->processIndividu($userWrapper);
         }
@@ -111,7 +114,7 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
                     $createIndividu = true;
                 } else {
                     // s'il existe dans l'établissement inconnu, on "déplace" son source_code dans l'établissement de connexion
-                    $this->individuService->updateIndividuSourceCodeFromEtab($individu, $etablissement);
+                    $this->individuService->updateIndividuFromEtab($individu, $etablissement);
                 }
             }
         }

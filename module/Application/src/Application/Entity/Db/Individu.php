@@ -94,13 +94,36 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
     private $id;
 
     /**
+     * @var Etablissement
+     */
+    protected $etablissement;
+
+    /**
      * @var ArrayCollection (mailContact)
      */
     private $mailsConfirmations;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->mailsConfirmations = new ArrayCollection();
     }
+
+    /**
+     * @return Etablissement
+     */
+    public function getEtablissement()
+    {
+        return $this->etablissement;
+    }
+
+    /**
+     * @param Etablissement $etablissement
+     */
+    public function setEtablissement(Etablissement $etablissement)
+    {
+        $this->etablissement = $etablissement;
+    }
+
     /**
      * @return string
      * @see supannId

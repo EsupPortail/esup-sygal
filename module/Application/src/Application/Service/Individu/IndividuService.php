@@ -11,7 +11,7 @@ use Application\Service\BaseService;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
-use UnicaenApp\Entity\UserInterface;
+use UnicaenAuth\Entity\Db\UserInterface;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\Mvc\Controller\AbstractActionController;
 
@@ -51,6 +51,7 @@ class IndividuService extends BaseService
         $sourceCode = $this->sourceCodeStringHelper->generateSourceCodeFromUserWrapperAndEtab($userWrapper, $etablissement);
 
         $entity = new Individu();
+        $entity->setEtablissement($etablissement);
         $entity->setSupannId($userWrapper->getSupannId());
         $entity->setNomUsuel($userWrapper->getNom() ?: "X"); // NB: le nom est obligatoire mais pas forcément disponible
         $entity->setNomPatronymique($userWrapper->getNom());
@@ -71,23 +72,20 @@ class IndividuService extends BaseService
     }
 
     /**
-     * @param Individu      $entity
-     * @param UserWrapper   $userWrapper
-     * @param Etablissement $etablissement
-     * @param Utilisateur   $utilisateur
+     * @param Individu    $entity
+     * @param UserWrapper $userWrapper
      */
-    public function updateIndividuFromUserWrapperAndEtab(Individu $entity,
-                                                         UserWrapper $userWrapper,
-                                                         Etablissement $etablissement,
-                                                         Utilisateur $utilisateur = null)
+    public function updateIndividuFromUserWrapper(Individu $entity, UserWrapper $userWrapper)
     {
+        $etablissement = $entity->getEtablissement();
+
         $sourceCode = $this->sourceCodeStringHelper->generateSourceCodeFromUserWrapperAndEtab($userWrapper, $etablissement);
 
         $entity->setSourceCode($sourceCode);
         $entity->setSupannId($userWrapper->getSupannId());
         $entity->setEmail($userWrapper->getEmail());
 
-        $entity->setHistoModificateur($utilisateur ?: $this->getAppPseudoUtilisateur());
+        $entity->setHistoModificateur($this->getAppPseudoUtilisateur());
 
         try {
             $this->getEntityManager()->flush($entity);
@@ -97,21 +95,21 @@ class IndividuService extends BaseService
     }
 
     /**
-     * Met à jour le SOURCE_CODE d'un Individu.
-     *
-     * Si
+     * Met à jour le SOURCE_CODE et l'Etablissement d'un Individu.
      *
      * @param Individu      $entity
      * @param Etablissement $etablissement
      * @param Utilisateur   $modificateur
      */
-    public function updateIndividuSourceCodeFromEtab(Individu $entity,
-                                                     Etablissement $etablissement,
-                                                     Utilisateur $modificateur = null)
+    public function updateIndividuFromEtab(Individu $entity,
+                                           Etablissement $etablissement,
+                                           Utilisateur $modificateur = null)
     {
         $sourceCode = $this->sourceCodeStringHelper->addEtablissementPrefixTo($entity->getSupannId(), $etablissement);
 
         $entity->setSourceCode($sourceCode);
+        $entity->setEtablissement($etablissement);
+
         $entity->setHistoModificateur($modificateur ?: $this->getAppPseudoUtilisateur());
 
         try {

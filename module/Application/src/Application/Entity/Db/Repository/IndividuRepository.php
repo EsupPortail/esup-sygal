@@ -8,6 +8,7 @@ use Application\Entity\Db\IndividuRole;
 use Application\Entity\UserWrapper;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\DBAL\DBALException;
+use Doctrine\ORM\NonUniqueResultException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
 
@@ -23,10 +24,18 @@ class IndividuRepository extends DefaultEntityRepository
      */
     public function findOneBySourceCode($sourceCode)
     {
-        /** @var Individu $i */
-        $i = $this->findOneBy(['sourceCode' => $sourceCode]);
+        $qb = $this->createQueryBuilder('i')
+            ->where('i.sourceCode = :sourceCode')
+            ->setParameter('sourceCode', $sourceCode);
 
-        return $i;
+        try {
+            return $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException(
+                sprintf("Anomalie : plusieurs individus trouvés ayant le même source_code '%s'", $sourceCode),
+                null,
+                $e);
+        }
     }
 
     /**
@@ -38,9 +47,32 @@ class IndividuRepository extends DefaultEntityRepository
      */
     public function findOneByUserWrapperAndEtab(UserWrapper $userWrapper, Etablissement $etablissement)
     {
-        $sourceCode = $this->sourceCodeStringHelper->generateSourceCodeFromUserWrapperAndEtab($userWrapper, $etablissement);
+        // C'est le "supann{Emp|Etu}Id" présent dans les données d'authentification qu'on utilise dans le source_code
+        $supannId = $userWrapper->getSupannId();
 
-        return $this->findOneBySourceCode($sourceCode);
+        if ($supannId === null) {
+            // Si aucun supannId n'est dispo dans les données d'authentification, on colle l'EPPN dans
+            // le source_code de l'individu (ex: "UCN::tartempion@unicaen.fr", "INCONNU::machin@unicaen.fr")
+            // ce qui permettra si besoin de retrouver l'individu dans le cas où il se reconnecterait plus tard
+            // et qu'un un supannId soit dispo dans les données d'authentification.
+            $value = $userWrapper->getEppn();
+        } else {
+            $value = $supannId;
+        }
+
+        $qb = $this->createQueryBuilder('i')
+            ->where('i.supannId = :supannId')
+            ->andWhere('i.etablissement = :etab')
+            ->setParameters(['supannId' => $value, 'etab' => $etablissement]);
+
+        try {
+            return $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException(
+                sprintf("Anomalie : plusieurs individus trouvés pour l'établissement '%s' et le supannId '%s'", $etablissement, $value),
+                null,
+                $e);
+        }
     }
 
     /**

@@ -27,7 +27,7 @@ class Utilisateur extends AbstractUser implements UserInterface, ProviderInterfa
     protected $lastRole;
 
     /**
-     * @return Individu
+     * @return Individu|null
      */
     public function getIndividu()
     {
