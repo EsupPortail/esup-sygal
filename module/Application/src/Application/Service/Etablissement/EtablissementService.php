@@ -17,6 +17,19 @@ class EtablissementService extends BaseService
     use SourceCodeStringHelperAwareTrait;
 
     /**
+     * @var string
+     */
+    private $etablissementPrincipalSourceCode;
+
+    /**
+     * @param string $etablissementPrincipalSourceCode
+     */
+    public function setEtablissementPrincipalSourceCode(string $etablissementPrincipalSourceCode)
+    {
+        $this->etablissementPrincipalSourceCode = $etablissementPrincipalSourceCode;
+    }
+
+    /**
      * @return EtablissementRepository
      */
     public function getRepository()
@@ -28,24 +41,26 @@ class EtablissementService extends BaseService
     }
 
     /**
-     * Fetch l'éventuel établissement chapeau représentant une communauté d'établissements.
+     * Fetch l'établissement principal, spécifié dans la config.
      *
-     * @return Etablissement|null
+     * @return Etablissement
      */
-    public function fetchEtablissementComue()
+    public function fetchEtablissementPrincipal()
     {
+        $sourceCode = $this->etablissementPrincipalSourceCode;
+
         $qb = $this->getRepository()->createQueryBuilder('e')
             ->addSelect('s')
             ->join('e.structure', 's')
-            ->where('e.estComue = 1');
+            ->where('e.sourceCode = :sourceCode')
+            ->setParameter('sourceCode', $sourceCode);
 
         try {
-            $comue = $qb->getQuery()->getOneOrNullResult();
+            return $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Anomalie: plusieurs établissements COMUE trouvés.");
+            throw new RuntimeException(
+                sprintf("Anomalie: plusieurs établissements trouvés avec le même sourceCode '%s'.", $sourceCode));
         }
-
-        return $comue;
     }
 
     /**

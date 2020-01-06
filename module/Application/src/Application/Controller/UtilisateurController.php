@@ -145,7 +145,9 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
                 if (!trim($data['nomPatronymique'])) {
                     $data['nomPatronymique'] = $data['nomUsuel'];
                 }
-                $utilisateur = $this->utilisateurService->createFromFormData($data->toArray());
+                $etablissement = $this->etablissementService->fetchEtablissementPrincipal();
+
+                $utilisateur = $this->utilisateurService->createFromFormData($data->toArray(), $etablissement);
                 $this->flashMessenger()->addSuccessMessage("Utilisateur <strong>{$utilisateur->getUsername()}</strong> créé avec succès.");
                 $this->redirect()->toRoute('utilisateur');
             }

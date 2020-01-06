@@ -2,6 +2,7 @@
 
 namespace Application\Service\Utilisateur;
 
+use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Repository\UtilisateurRepository;
 use Application\Entity\Db\Source;
@@ -160,13 +161,15 @@ class UtilisateurService extends BaseService
     /**
      * Crée un utilisateur ainsi que l'individu associé, à partir des données du formulaire de création d'utilisateur.
      *
-     * @param array $formData
+     * @param array         $formData
+     * @param Etablissement $etablissement
      * @return Utilisateur
      */
-    public function createFromFormData(array $formData)
+    public function createFromFormData(array $formData, Etablissement $etablissement)
     {
         /** @var Individu $individu */
         $individu = new Individu();
+        $individu->setEtablissement($etablissement);
         $individu->setCivilite($formData['civilite']);
         $individu->setNomUsuel($formData['nomUsuel']);
         $individu->setNomPatronymique($formData['nomPatronymique']);

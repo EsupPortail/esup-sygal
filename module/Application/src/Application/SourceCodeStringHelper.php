@@ -4,6 +4,7 @@ namespace Application;
 
 use Application\Entity\Db\Etablissement;
 use Application\Entity\UserWrapper;
+use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 
 /**
@@ -59,6 +60,20 @@ class SourceCodeStringHelper
      */
     public function addPrefixTo($value, $prefix)
     {
+        if (! is_string($value)) {
+            throw new LogicException("La valeur à préfixer doit être une chaîne de caractères");
+        }
+        if (! $value) {
+            throw new LogicException("Les chaînes de caractères vides ne sont pas acceptées");
+        }
+
+        if (! is_string($prefix)) {
+            throw new LogicException("Le préfixe doit être une chaîne de caractères");
+        }
+        if (! $prefix) {
+            throw new LogicException("Les préfixes vides ne sont pas acceptés");
+        }
+
         return $prefix . $this->separator . $value;
     }
 

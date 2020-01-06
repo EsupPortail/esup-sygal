@@ -333,8 +333,10 @@ class TheseService extends BaseService
         if ($these->getUniteRecherche()) $pdcData->setUniteRecherche($these->getUniteRecherche()->getStructure()->getLibelle());
 
         // chemins vers les logos
-        if ($comue = $this->etablissementService->fetchEtablissementComue()) {
-            $pdcData->setLogoCOMUE($this->fileService->computeLogoFilePathForStructure($comue));
+        if ($etablissement = $this->etablissementService->fetchEtablissementPrincipal()) {
+            if ($etablissement->estComue()) {
+                $pdcData->setLogoCOMUE($this->fileService->computeLogoFilePathForStructure($etablissement));
+            }
         }
         $pdcData->setLogoEtablissement($this->fileService->computeLogoFilePathForStructure($these->getEtablissement()));
         if ($these->getEcoleDoctorale() !== null) {

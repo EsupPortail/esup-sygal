@@ -10,6 +10,8 @@ return [
         'locale' => 'fr_FR',
     ],
     'sygal' => [
+        // SOURCE_CODE de l'établissement principal. Celui de la COMUE si vous en avez une.
+        'etablissement_principal_source_code' => 'COMUE',
         // Préfixe par défaut à utiliser pour générer le SOURCE_CODE d'un enregistrement créé dans l'application
         'default_prefix_for_source_code' => 'SyGAL',
         // Options pour le test d'archivabilité

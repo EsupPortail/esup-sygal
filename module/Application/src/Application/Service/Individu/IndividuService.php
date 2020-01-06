@@ -99,18 +99,15 @@ class IndividuService extends BaseService
      *
      * @param Individu      $entity
      * @param Etablissement $etablissement
-     * @param Utilisateur   $modificateur
      */
-    public function updateIndividuFromEtab(Individu $entity,
-                                           Etablissement $etablissement,
-                                           Utilisateur $modificateur = null)
+    public function updateIndividuFromEtab(Individu $entity, Etablissement $etablissement)
     {
         $sourceCode = $this->sourceCodeStringHelper->addEtablissementPrefixTo($entity->getSupannId(), $etablissement);
 
         $entity->setSourceCode($sourceCode);
         $entity->setEtablissement($etablissement);
 
-        $entity->setHistoModificateur($modificateur ?: $this->getAppPseudoUtilisateur());
+        $entity->setHistoModificateur($this->getAppPseudoUtilisateur());
 
         try {
             $this->getEntityManager()->flush($entity);
