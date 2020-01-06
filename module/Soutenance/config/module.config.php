@@ -2,6 +2,7 @@
 
 namespace Soutenance;
 
+use Application\Provider\Privilege\ThesePrivileges;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
@@ -65,12 +66,13 @@ return array(
                         'order'    => -98,
                         'label'    => 'Dépôt',
                         'route'    => 'home',
+                        'resource' => ThesePrivileges::getResourceId(ThesePrivileges::THESE_CONSULTATION_DEPOT),
                     ],
                     'soutenance' => [
                         'order'    => -99,
                         'label'    => 'Soutenance',
                         'route'    => 'soutenance',
-                        'roles' => [],
+                        'resource' => PresoutenancePrivileges::getResourceId(PropositionPrivileges::PROPOSITION_VISUALISER),
                         'pages' => [
                             'proposition' => [
                                 'label'    => 'Proposition de soutenance',
