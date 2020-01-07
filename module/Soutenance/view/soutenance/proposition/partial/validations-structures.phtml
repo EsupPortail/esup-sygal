@@ -51,7 +51,7 @@ $canPresidence = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_PRE
                         <?php endif; ?>
                     </li>
                     <li>
-                        <?php echo $these->getEtablissement()->getLibelle(); ?>  (Bureau des doctorats) <br/>
+                        <?php echo $these->getEtablissement()->getLibelle(); ?>  (Maison du doctorat) <br/>
                         <?php if ($validations[Role::CODE_BDD]) : ?>
                             <?php $validation = current($validations[Role::CODE_BDD]); ?>
                             <span class="badge badge-success"> Validée</span>

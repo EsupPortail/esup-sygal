@@ -187,6 +187,7 @@ class AvisService {
      */
     public function getAvisByMembre($membre)
     {
+        if ($membre === null OR $membre->getActeur() === null) return null;
         $qb = $this->createQueryBuilder()
             ->andWhere('1 = pasHistorise(avis)')
             ->andWhere('avis.membre = :membre')

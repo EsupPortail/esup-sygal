@@ -83,7 +83,6 @@ class PropositionController extends AbstractController {
         $currentRole = $this->userContextService->getSelectedIdentityRole();
 
         /** Justificatifs attendus ---------------------------------------------------------------------------------- */
-
         $justificatifs = $this->getJustificatifService()->generateListeJustificatif($proposition);
         $justificatifsOk = $this->getJustificatifService()->isJustificatifsOk($proposition, $justificatifs);
 
@@ -409,10 +408,14 @@ class PropositionController extends AbstractController {
         /** @var Membre[] $rapporteurs */
         $rapporteurs = ($proposition)?$proposition->getRapporteurs():[];
 
+        /** Justificatifs attendus ---------------------------------------------------------------------------------- */
+        $justificatifs = $this->getJustificatifService()->generateListeJustificatif($proposition);
+
         return new ViewModel([
             'these'             => $these,
             'proposition'       => $proposition,
             'jury'              => $this->getPropositionService()->juryOk($proposition),
+            'justificatif'      => $this->getJustificatifService()->isJustificatifsOk($proposition, $justificatifs),
             'validations'       => ($proposition)?$this->getPropositionService()->getValidationSoutenance($these):[],
             'directeurs'        => $directeurs,
             'rapporteurs'       => $rapporteurs,

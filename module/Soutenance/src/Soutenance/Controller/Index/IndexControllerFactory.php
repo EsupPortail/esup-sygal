@@ -19,7 +19,6 @@ class IndexControllerFactory {
          * @var ActeurService $acteurService
          * @var AvisService $avisService
          * @var EngagementImpartialiteService $engagementService
-         * @var MembreService $membreService
          * @var PropositionService $propositionService
          * @var TheseService $theseService
          * @var UserContextService $userContextService
@@ -27,7 +26,6 @@ class IndexControllerFactory {
         $acteurService          = $manager->getServiceLocator()->get(ActeurService::class);
         $avisService            = $manager->getServiceLocator()->get(AvisService::class);
         $engagementService      = $manager->getServiceLocator()->get(EngagementImpartialiteService::class);
-        $membreService          = $manager->getServiceLocator()->get(MembreService::class);
         $propositionService     = $manager->getServiceLocator()->get(PropositionService::class);
         $theseService           = $manager->getServiceLocator()->get('TheseService');
         $userContextService     = $manager->getServiceLocator()->get('UserContextService');
@@ -38,7 +36,6 @@ class IndexControllerFactory {
         $controller->setActeurService($acteurService);
         $controller->setAvisService($avisService);
         $controller->setEngagementImpartialiteService($engagementService);
-        $controller->setMembreService($membreService);
         $controller->setPropositionService($propositionService);
         $controller->setTheseService($theseService);
         $controller->setUserContextService($userContextService);

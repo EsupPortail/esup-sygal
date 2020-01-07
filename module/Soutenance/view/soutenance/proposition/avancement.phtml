@@ -1,11 +1,13 @@
 <?php
 
 /**
+ * @see \Soutenance\Controller\Proposition\PropositionController::avancementAction()
  * @var Proposition $proposition
  * @var These $these
  * @var Acteur[] $directeurs
  * @var Membre[] $rapporteurs
  * @var boolean $jury
+ * @var boolean $justificatif
  */
 
 use Application\Entity\Db\Acteur;
@@ -49,6 +51,10 @@ $this->headTitle('Avancement de la soutenance');
             <dt> Jury de thèse </dt>
             <dd>
                 <?php echo validite($jury); ?>
+            </dd>
+            <dt> Justificatifs </dt>
+            <dd>
+                <?php echo validite($justificatif); ?>
             </dd>
         </dl>
 

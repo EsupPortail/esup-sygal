@@ -2,6 +2,7 @@
 
 namespace Soutenance\Controller\Index;
 
+use Application\Controller\AbstractController;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
@@ -9,22 +10,21 @@ use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Soutenance\Entity\Membre;
 use Soutenance\Service\Avis\AvisServiceAwareTrait;
-use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;
-use Soutenance\Service\Membre\MembreServiceAwareTrait;
+use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
-use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
-class IndexController extends AbstractActionController {
+class IndexController extends AbstractController {
     use ActeurServiceAwareTrait;
     use AvisServiceAwareTrait;
     use EngagementImpartialiteServiceAwareTrait;
-    use MembreServiceAwareTrait;
     use PropositionServiceAwareTrait;
     use TheseServiceAwareTrait;
     use UserContextServiceAwareTrait;
 
-    /** Cette action à pour but de dispatcher vers l'index correspondant au rôle sélectionné */
+    /**
+     * Cette action a pour but de dispatcher vers l'index correspondant au rôle sélectionné
+     */
     public function indexAction()
     {
         $role = $this->userContextService->getSelectedIdentityRole();
@@ -74,17 +74,14 @@ class IndexController extends AbstractActionController {
     public function indexRapporteurAction()
     {
         $individu = $this->userContextService->getIdentityIndividu();
+        $these = $this->requestedThese();
 
-        $theseId = $this->params()->fromRoute('these');
-        if ($theseId !== null) {
-
+        if ($these !== null) {
             /** @var These $these */
-            $these = $this->getTheseService()->getRepository()->find($theseId);
             $proposition = $this->getPropositionService()->findByThese($these);
             /** @var Membre[] $membres */
             $membres = $proposition->getMembres()->toArray();
             $membre = null;
-            $rappoteur = null;
             foreach($membres as $membre_) {
                 if ($membre_->getActeur() && $membre_->getActeur()->getIndividu() === $individu) {
                     $membre = $membre_;

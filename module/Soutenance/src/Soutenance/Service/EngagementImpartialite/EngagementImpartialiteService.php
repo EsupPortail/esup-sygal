@@ -32,6 +32,7 @@ class EngagementImpartialiteService {
      */
     public function getEngagementImpartialiteByMembre($membre)
     {
+        if ($membre === null OR $membre->getActeur() === null) return null;
         $individu = $membre->getActeur()->getIndividu();
         $these = $membre->getActeur()->getThese();
 

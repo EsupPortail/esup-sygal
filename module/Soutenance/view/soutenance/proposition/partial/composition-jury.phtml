@@ -12,6 +12,7 @@ use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 
 $FORMULAIRE_DELEGUATION = 'https://sygal-test.normandie-univ.fr/informations/fichiers/telecharger/804';
+
 $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER);
 ?>
 
@@ -127,8 +128,13 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
             </tr>
             </thead>
             <tbody>
-            <?php $hasVisio = false; /** @var Membre $membre */ ?>
-            <?php foreach($proposition->getMembres() as $membre): ?>
+            <?php $hasVisio = false; ?>
+            <?php
+                /** @var Membre $membre */
+                $membres = $proposition->getMembres()->toArray();
+                usort($membres, function (Membre $a, Membre $b) { return $a->getNom() . " " . $a->getPrenom() > $b->getNom() . " " . $b->getPrenom();});
+            ?>
+            <?php foreach($membres as $membre): ?>
                 <tr>
                     <td> <?php echo ($membre->getGenre()==='F')?"Madame":"Monsieur"; ?> </td>
                     <td> <?php echo $membre->getPrenom(); ?> </td>

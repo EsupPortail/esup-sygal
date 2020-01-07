@@ -2,18 +2,15 @@
 
 namespace Soutenance\Form\DateLieu;
 
+use DateTime;
 use Soutenance\Validator\DateGreaterThan;
 use UnicaenApp\Form\Element\Date;
 use Zend\Form\Element\Button;
-use Zend\Form\Element\Checkbox;
-use DateTime;
+use Zend\Form\Element\DateTime as DateTimeElement;
 use Zend\Form\Element\Radio;
-use Zend\Form\Element\Submit;
 use Zend\Form\Element\Text;
-use Zend\Form\Element\Time;
 use Zend\Form\Form;
 use Zend\InputFilter\Factory;
-use Zend\Validator\GreaterThan;
 
 class DateLieuForm extends Form {
 
@@ -39,12 +36,12 @@ class DateLieuForm extends Form {
 
         $this->add([
             'name' => 'heure',
-            'type' => DateTime::class,
+            'type' => DateTimeElement::class,
             'options' => [
                 'label' => 'Heure de la soutenance : ',
-//                'label_attributes' => [
-//                    'class' => 'control-label',
-//                ],
+                'label_attributes' => [
+                    'class' => 'control-label',
+                ],
                 'format' => 'H:i',
             ],
         ]);
