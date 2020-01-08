@@ -24,6 +24,7 @@ use Application\Form\MetadonneeTheseForm;
 use Application\Form\PointsDeVigilanceForm;
 use Application\Form\RdvBuTheseDoctorantForm;
 use Application\Form\RdvBuTheseForm;
+use Application\Rule\SuppressionAttestationsRequiseRule;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\FichierThese\Exception\ValidationImpossibleException;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
@@ -1042,6 +1043,15 @@ class TheseController extends AbstractController
         return $view;
     }
 
+    private function isEtapeAttestationVisible(These $these, VersionFichier $version)
+    {
+        $versionInitialeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_ATTESTATIONS)->getAtteignable();
+        $versionCorrigeeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_ATTESTATIONS_VERSION_CORRIGEE)->getAtteignable();
+        return
+            $version->estVersionCorrigee() && $versionCorrigeeAtteignable ||
+            !$version->estVersionCorrigee() && $versionInitialeAtteignable && !$versionCorrigeeAtteignable;
+    }
+
     public function attestationAction()
     {
         $these = $this->requestedThese();
@@ -1049,17 +1059,9 @@ class TheseController extends AbstractController
         $version = $this->fichierTheseService->fetchVersionFichier($this->params()->fromQuery('version'));
         $hasFichierThese = ! empty($this->fichierTheseService->getRepository()->fetchFichierTheses($these, NatureFichier::CODE_THESE_PDF, $version, false));
 
-// Est-ce vraiment indispensable d'interroger le moteur du WF ?
-// Mis en commentaire pour accélerer l'affichage...
-//        $versionInitialeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_ATTESTATIONS)->getAtteignable();
-//        $versionCorrigeeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_ATTESTATIONS_VERSION_CORRIGEE)->getAtteignable();
-//        $visible =
-//            $version->estVersionCorrigee() && $versionCorrigeeAtteignable ||
-//            !$version->estVersionCorrigee() && $versionInitialeAtteignable && !$versionCorrigeeAtteignable;
-//
-//        if (! $visible) {
-//            return false;
-//        }
+        if (! $this->isEtapeAttestationVisible($these, $version)) {
+            return false;
+        }
         if (! $hasFichierThese) {
             return false;
         }
@@ -1169,23 +1171,24 @@ class TheseController extends AbstractController
         return $this->existeVersionCorrigee;
     }
 
+    private function isEtapeDiffusionVisible(These $these, VersionFichier $version)
+    {
+        $versionInitialeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_AUTORISATION_DIFFUSION_THESE)->getAtteignable();
+        $versionCorrigeeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_AUTORISATION_DIFFUSION_THESE_VERSION_CORRIGEE)->getAtteignable();
+        return
+            $version->estVersionCorrigee() && $versionCorrigeeAtteignable ||
+            !$version->estVersionCorrigee() && $versionInitialeAtteignable && !$versionCorrigeeAtteignable;
+    }
+
     public function diffusionAction()
     {
         $these = $this->requestedThese();
         $version = $this->fichierTheseService->fetchVersionFichier($this->params()->fromQuery('version'));
         $hasFichierThese = ! empty($this->fichierTheseService->getRepository()->fetchFichierTheses($these, NatureFichier::CODE_THESE_PDF, $version, false));
 
-// Est-ce vraiment indispensable d'interroger le moteur du WF ?
-// Mis en commentaire pour accélerer l'affichage...
-//        $versionInitialeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_AUTORISATION_DIFFUSION_THESE)->getAtteignable();
-//        $versionCorrigeeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_AUTORISATION_DIFFUSION_THESE_VERSION_CORRIGEE)->getAtteignable();
-//        $visible =
-//            $version->estVersionCorrigee() && $versionCorrigeeAtteignable ||
-//            !$version->estVersionCorrigee() && $versionInitialeAtteignable && !$versionCorrigeeAtteignable;
-//
-//        if (! $visible) {
-//            return false;
-//        }
+        if (! $this->isEtapeDiffusionVisible($these, $version)) {
+            return false;
+        }
         if (! $hasFichierThese) {
             return false;
         }
@@ -1239,6 +1242,11 @@ class TheseController extends AbstractController
 
         $form = $this->getDiffusionForm($version);
 
+        /** @var Diffusion $diffusion */
+        $diffusion = $form->getObject();
+
+        $isUpdate = $diffusion->getId() !== null;
+
         if ($this->getRequest()->isPost()) {
             /** @var ParametersInterface $post */
             $post = $this->getRequest()->getPost();
@@ -1247,6 +1255,7 @@ class TheseController extends AbstractController
             if ($isValid) {
                 /** @var Diffusion $diffusion */
                 $diffusion = $form->getData();
+
                 $this->theseService->updateDiffusion($these, $diffusion);
 
                 // suppression des fichiers expurgés éventuellement déposés en l'absence de pb de droit d'auteur

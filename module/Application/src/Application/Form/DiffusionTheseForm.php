@@ -281,9 +281,6 @@ class DiffusionTheseForm extends Form
         $autorisMel = $this->get('autorisMel')->getValue();
         switch ($autorisMel) {
             case null:
-                $required['autorisEmbargoDuree'] = false;
-                $required['autorisMotif'] = false;
-                break;
             case Diffusion::AUTORISATION_OUI_IMMEDIAT:
                 $required['autorisEmbargoDuree'] = false;
                 $required['autorisMotif'] = false;

@@ -19,9 +19,9 @@ class Diffusion implements HistoriqueAwareInterface
     const CONFIDENTIELLE_OUI = '1';
     const CONFIDENTIELLE_NON = '0';
 
-    const AUTORISATION_OUI_IMMEDIAT = '2';
-    const AUTORISATION_OUI_EMBARGO = '1';
-    const AUTORISATION_NON = '0';
+    const AUTORISATION_OUI_IMMEDIAT = 2;
+    const AUTORISATION_OUI_EMBARGO = 1;
+    const AUTORISATION_NON = 0;
 
     const EMBARGO_DUREE_6_MOIS = '6 mois';
     const EMBARGO_DUREE_1_AN = '1 an';
@@ -99,7 +99,7 @@ class Diffusion implements HistoriqueAwareInterface
      */
     public function getConfidentielle()
     {
-        return $this->confidentielle;
+        return (bool) $this->confidentielle;
     }
 
     /**
@@ -108,7 +108,7 @@ class Diffusion implements HistoriqueAwareInterface
      */
     public function setConfidentielle($confidentielle)
     {
-        $this->confidentielle = $confidentielle;
+        $this->confidentielle = (bool) $confidentielle;
 
         return $this;
     }
@@ -149,7 +149,7 @@ class Diffusion implements HistoriqueAwareInterface
      */
     public function setDroitAuteurOk($droitAuteurOk = true)
     {
-        $this->droitAuteurOk = $droitAuteurOk;
+        $this->droitAuteurOk = (bool) $droitAuteurOk;
 
         return $this;
     }
@@ -161,7 +161,7 @@ class Diffusion implements HistoriqueAwareInterface
      */
     public function getDroitAuteurOk()
     {
-        return $this->droitAuteurOk;
+        return (bool) $this->droitAuteurOk;
     }
 
     /**
@@ -169,7 +169,7 @@ class Diffusion implements HistoriqueAwareInterface
      */
     public function getCertifCharteDiff()
     {
-        return $this->certifCharteDiff;
+        return (bool) $this->certifCharteDiff;
     }
 
     /**
@@ -178,7 +178,7 @@ class Diffusion implements HistoriqueAwareInterface
      */
     public function setCertifCharteDiff($certifCharteDiff)
     {
-        $this->certifCharteDiff = $certifCharteDiff;
+        $this->certifCharteDiff = (bool) $certifCharteDiff;
 
         return $this;
     }

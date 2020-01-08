@@ -12,6 +12,8 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\VersionFichier;
 use Application\Notification\ValidationRdvBuNotification;
+use Application\Rule\AutorisationDiffusionRule;
+use Application\Rule\SuppressionAttestationsRequiseRule;
 use Application\Service\BaseService;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
@@ -116,7 +118,10 @@ class TheseService extends BaseService
     }
 
     /**
-     * Supprime l'Attestation (éventuelle) d'une These.
+     * Supprime ou historise l'Attestation (éventuelle) d'une These.
+     *
+     * Si un destructeur est spécifié, l'Attestation est historisée.
+     * Sinon, elle est supprimée.
      *
      * @param These         $these Thèse concernée
      * @param UserInterface $destructeur Auteur de l'historisation, le cas échéant
@@ -143,22 +148,68 @@ class TheseService extends BaseService
     }
 
     /**
-     * @param These       $these
-     * @param Diffusion $mel
+     * Détermine si la réponse à l'autorisation de diffusion est passée
+     * de "Oui" à "Oui+Embargo" ou "Non",
+     * ou
+     * de "Oui+Embargo" ou "Non" à "Oui".
+     *
+     * @param Diffusion $diffusion
+     * @return bool
      */
-    public function updateDiffusion(These $these, Diffusion $mel)
+    private function isAutorisationDiffusionUpdated(Diffusion $diffusion)
     {
-        if (! $mel->getId()) {
-            $mel->setThese($these);
-            $these->addDiffusion($mel);
+        $rule = new AutorisationDiffusionRule();
+        $rule->setDiffusion($diffusion);
+        $rule->execute();
 
-            $this->entityManager->persist($mel);
+        return $rule->computeChangementDeReponseImportant($this->entityManager);
+    }
+
+    /**
+     * @param These     $these
+     * @param Diffusion $diffusion
+     */
+    public function updateDiffusion(These $these, Diffusion $diffusion)
+    {
+        $isUpdate = $diffusion->getId() !== null;
+
+        if ($isUpdate) {
+            // on teste si la réponse à l'autorisation de diffusion existante a changé de manière "importante"
+            // (auquel cas, il sera nécessaire de tester s'il faut supprimer ou pas les attestations)
+            $rule = new AutorisationDiffusionRule();
+            $rule->setDiffusion($diffusion);
+            $rule->execute();
+            $suppressionAttestationsAVerifier = $rule->computeChangementDeReponseImportant($this->entityManager);
+        } else {
+            $suppressionAttestationsAVerifier = false;
+        }
+
+        if (! $isUpdate) {
+            $diffusion->setThese($these);
+            $these->addDiffusion($diffusion);
+
+            $this->entityManager->persist($diffusion);
         }
 
         try {
-            $this->entityManager->flush($mel);
+            $this->entityManager->flush($diffusion);
         } catch (OptimisticLockException $e) {
             throw new RuntimeException("Erreur rencontrée lors de l'enregistrement", null, $e);
+        }
+
+        //
+        // Il peut être nécessaire de supprimer les "attestations" existantes en fonction des réponses
+        // à l'autorisation de diffusion.
+        //
+        if ($suppressionAttestationsAVerifier) {
+            $rule = new SuppressionAttestationsRequiseRule();
+            $rule->setThese($these);
+            $rule->execute();
+            $suppressionRequise = $rule->computeEstRequise();
+
+            if ($suppressionRequise) {
+                $this->deleteAttestation($these);
+            }
         }
     }
 
