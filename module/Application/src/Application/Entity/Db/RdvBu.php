@@ -36,9 +36,9 @@ class RdvBu implements HistoriqueAwareInterface
     private $versionArchivableFournie = false;
 
     /**
-     * @var boolean
+     * @var boolean|null
      */
-    private $exemplPapierFourni = false;
+    private $exemplPapierFourni;
 
     /**
      * @var string
@@ -100,8 +100,11 @@ class RdvBu implements HistoriqueAwareInterface
      */
     public function isInfosBuSaisies()
     {
+        $exemplairePapierFourniPertinent = $this->isExemplPapierFourniPertinent();
+
         return
-            $this->getExemplPapierFourni() && $this->getConventionMelSignee() && $this->getMotsClesRameau() &&
+            (!$exemplairePapierFourniPertinent || $exemplairePapierFourniPertinent && $this->getExemplPapierFourni()) &&
+            $this->getConventionMelSignee() && $this->getMotsClesRameau() &&
             $this->isVersionArchivableFournie();
     }
 
@@ -213,11 +216,22 @@ class RdvBu implements HistoriqueAwareInterface
     /**
      * Get exemplPapierFourni
      *
-     * @return boolean
+     * @return boolean|null
      */
     public function getExemplPapierFourni()
     {
         return $this->exemplPapierFourni;
+    }
+
+    /**
+     * Détermine d'après la réponse à l'autorisation de diffusion de la thèse si le flag de remise de
+     * l'exemplaire papier est pertinent ou non.
+     *
+     * @return boolean|null
+     */
+    public function isExemplPapierFourniPertinent()
+    {
+        return $this->getThese()->getDiffusion()->isRemiseExemplairePapierRequise();
     }
 
     /**

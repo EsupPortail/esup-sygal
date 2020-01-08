@@ -58,9 +58,11 @@ $ddPageCouv = $pageCouvValidee ? $checked : $unchecked;
     <?php $class = ($ok = $rdvBu->getConventionMelSignee()) ? '' : 'text-danger' ?>
     <dd class="<?php echo $class ?>"><?php echo $ok ? $checked : $unchecked ?></dd>
 
+    <?php if ($rdvBu->isExemplPapierFourniPertinent()): ?>
     <dt>Exemplaire papier fourni :</dt>
     <?php $class = ($ok = $rdvBu->getExemplPapierFourni()) ? '' : 'text-danger' ?>
     <dd class="<?php echo $class ?>"><?php echo $ok ? $checked : $unchecked ?></dd>
+    <?php endif ?>
 
     <dt>Points de vigilance :</dt>
     <dd>

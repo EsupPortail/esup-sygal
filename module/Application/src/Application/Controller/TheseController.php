@@ -593,6 +593,10 @@ class TheseController extends AbstractController
         $form = $this->getServiceLocator()->get('formElementManager')->get($estDoctorant ? 'RdvBuTheseDoctorantForm' : 'RdvBuTheseForm');
         $form->bind($rdvBu);
 
+        if (! $rdvBu->isExemplPapierFourniPertinent()) {
+            $form->disableExemplPapierFourni();
+        }
+
         if ($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
             $form->setData($post);
@@ -1122,11 +1126,7 @@ class TheseController extends AbstractController
         /** @var AttestationTheseForm $form */
         $form = $this->getServiceLocator()->get('formElementManager')->get('AttestationTheseForm');
 
-        $rule = new AutorisationDiffusionRule();
-        $rule->setDiffusion($these->getDiffusion());
-        $rule->execute();
-        $exemplairePaiperRequis = $rule->computeRemiseExemplairePapierEstRequise();
-        if (! $exemplairePaiperRequis) {
+        if (! $these->getDiffusion()->isRemiseExemplairePapierRequise()) {
             $form->disableExemplaireImprimeConformeAVersionDeposee();
         }
 

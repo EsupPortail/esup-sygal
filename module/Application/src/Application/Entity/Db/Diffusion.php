@@ -3,6 +3,7 @@
 namespace Application\Entity\Db;
 
 use Application\Constants;
+use Application\Rule\AutorisationDiffusionRule;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenApp\Message\Message;
@@ -326,6 +327,17 @@ class Diffusion implements HistoriqueAwareInterface
         return $this;
     }
 
+    /**
+     * Teste si l'exemplaire papier de la thèse est requis, d'après la réponse à l'autorisation de diffusion.
+     *
+     * @return bool
+     */
+    public function isRemiseExemplairePapierRequise()
+    {
+        $rule = new AutorisationDiffusionRule();
+        $rule->setDiffusion($this);
 
+        return $rule->computeRemiseExemplairePapierEstRequise();
+    }
 }
 
