@@ -25,7 +25,10 @@ set -e
 apt-get -qq update && \
 apt-get install -y \
     git \
-    nano
+    nano \
+    ghostscript-x \
+    php${PHP_VERSION}-imagick \
+    imagemagick
 
 # Récupération de l'image Docker Unicaen et lancement de son Dockerfile.sh
 export UNICAEN_IMAGE_TMP_DIR=/tmp/docker-unicaen-image

@@ -18,6 +18,7 @@ use Application\Form\Factory\PointsDeVigilanceHydratorFactory;
 use Application\Form\Factory\RdvBuHydratorFactory;
 use Application\Form\Factory\RdvBuTheseDoctorantFormFactory;
 use Application\Form\Factory\RdvBuTheseFormFactory;
+use Application\Provider\Privilege\DoctorantPrivileges;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\Service\Acteur\ActeurService;
 use Application\Service\Financement\FinancementService;
@@ -44,6 +45,18 @@ return [
             PrivilegeRuleProvider::class => [
                 'allow' => [
                     [
+                        //
+                        // Privilèges concernant la ressource These *NON* SOUMIS À ASSERTION.
+                        //
+                        [
+                            'privileges' => [
+                                ThesePrivileges::THESE_REFRESH,
+                            ],
+                            'resources'  => ['These'],
+                        ],
+                        //
+                        // Privilèges concernant la ressource These SOUMIS À ASSERTION.
+                        //
                         'privileges' => [
                             ThesePrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE,
                             ThesePrivileges::THESE_SAISIE_DESCRIPTION_VERSION_INITIALE,
@@ -64,7 +77,6 @@ return [
                             ThesePrivileges::THESE_CONSULTATION_SES_THESES,
                             ThesePrivileges::THESE_MODIFICATION_TOUTES_THESES,
                             ThesePrivileges::THESE_MODIFICATION_SES_THESES,
-//                            ThesePrivileges::THESE_REFRESH,
                         ],
                         'resources'  => ['These'],
                         'assertion'  => 'Assertion\\These',
@@ -81,6 +93,7 @@ return [
                         'these',
                         'detail-identite',
                         'rechercher',
+                        'depot-accueil'
                     ],
                     'roles' => 'user',
                 ],
@@ -290,6 +303,18 @@ return [
     'router'          => [
         'routes' => [
 
+            'depot' => [
+                'type'          => 'Literal',
+                'options'       => [
+                    'route'    => '/depot',
+                    'defaults' => [
+                        '__NAMESPACE__' => 'Application\Controller',
+                        'controller'    => 'These',
+                        'action'        => 'depot-accueil',
+                    ],
+                ],
+                'may_terminate' => true,
+            ],
             'these' => [
                 'type'          => 'Literal',
                 'options'       => [
@@ -788,6 +813,13 @@ return [
                         'label'    => 'Thèses',
                         'route'    => 'these',
                         'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'index'),
+                        'pages' => [],
+                    ],
+                    'depot' => [
+                        'order'    => -99,
+                        'label'    => 'Dépôt',
+                        'route'    => 'depot',
+                        'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'index'),
                         'pages' => [
                             'roadmap' => [
                                 'label'    => 'Feuille de route',
@@ -802,17 +834,6 @@ return [
                                 'etape' => null,
                                 'visible' => 'Assertion\\These',
                             ],
-
-                            'divider-roadmap' => [
-                                'label'    => null,
-                                'uri' => '',
-                                'withtarget' => true,
-                                'paramsInject' => [
-                                    'these',
-                                ],
-                                'class' => 'divider',
-                            ],
-
                             'identite' => [
                                 'label'    => 'Thèse',
                                 'route'    => 'these/identite',
@@ -825,6 +846,17 @@ return [
                                 'etape' => null,
                                 'visible' => 'Assertion\\These',
                             ],
+                            'divider-roadmap' => [
+                                'label'    => null,
+                                'uri' => '',
+                                'withtarget' => true,
+                                'paramsInject' => [
+                                    'these',
+                                ],
+                                'class' => 'divider',
+                            ],
+
+
                             'points-de-vigilance' => [
                                 'label'    => 'Points de vigilance',
                                 'route'    => 'these/points-de-vigilance',

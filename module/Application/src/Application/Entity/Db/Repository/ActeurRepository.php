@@ -148,4 +148,22 @@ class ActeurRepository extends DefaultEntityRepository
     }
 
 
+
+    /**
+     * @param Individu $individu
+     * @return Acteur[]
+     */
+    public function findActeursByIndividu(Individu $individu)
+    {
+        $qb = $this->createQueryBuilder('acteur')
+            ->addSelect('these')->join('acteur.these', 'these')
+            ->andWhere('1 =  pasHistorise(acteur)')
+            ->andWhere('acteur.individu = :individu')
+            ->setParameter('individu', $individu)
+            ->orderBy('these.id', 'ASC')
+            ;
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
 }

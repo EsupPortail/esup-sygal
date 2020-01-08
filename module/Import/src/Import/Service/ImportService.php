@@ -140,17 +140,15 @@ class ImportService
      * @param array         $queryParams Filtres éventuels à appliquer
      * @param bool          $synchronize   Réaliser ou non la synchro SRC_XXX => XXX
      */
-    public function import($service, Etablissement $etablissement, $sourceCode, array $queryParams = [], $synchronize = true)
+    public function import($service, Etablissement $etablissement, $sourceCode = null, array $queryParams = [], $synchronize = true)
     {
+        $this->logger->info(sprintf("Import: service %s[%s] {", $service, $sourceCode));
+
         $this->computeFilters($service, $sourceCode, $queryParams);
 
         $this->fetcherService->setEtablissement($etablissement);
         try {
-            if ($sourceCode !== null) {
-                $this->fetcherService->fetchRow($service, $sourceCode);
-            } else {
-                $this->fetcherService->fetchRows($service, $this->filters);
-            }
+            $this->fetcherService->fetchRows($service, $this->filters);
         } catch (CallException $e) {
             if ($e->getCode() === 404) {
                 throw new RuntimeException("Le service '$service' n'existe pas !", null, $e);
@@ -247,17 +245,17 @@ class ImportService
          */
         // these
         $sourceCodeThese = $these->getSourceCode();
-        $this->fetcherService->fetchRow('these', $sourceCodeThese);
+        $this->fetcherService->fetchRows('these', ['source_code' => $sourceCodeThese]);
         /** @var TmpThese $tmpThese */
         $tmpThese = $this->entityManager->getRepository(TmpThese::class)->findOneBy(['sourceCode' => $sourceCodeThese]);
         // doctorant
         $sourceCodeDoctorant = $tmpThese->getDoctorantId();
-        $this->fetcherService->fetchRow('doctorant', $sourceCodeDoctorant);
+        $this->fetcherService->fetchRows('doctorant', ['source_code' => $sourceCodeDoctorant]);
         /** @var TmpDoctorant $tmpDoctorant */
         $tmpDoctorant = $this->entityManager->getRepository(TmpDoctorant::class)->findOneBy(['sourceCode' => $sourceCodeDoctorant]);
         // individu doctorant
         $sourceCodeIndividu = $tmpDoctorant->getIndividuId();
-        $this->fetcherService->fetchRow('individu', $sourceCodeIndividu);
+        $this->fetcherService->fetchRows('individu', ['source_code' => $sourceCodeIndividu]);
         // acteurs
         $theseId = $these->getId();
         $this->fetcherService->fetchRows('acteur', ['these' => $these]);
@@ -267,14 +265,14 @@ class ImportService
         $sourceCodeIndividus = [];
         foreach ($tmpActeurs as $tmpActeur) {
             $sourceCodeIndividus[] = $sourceCodeIndividu = $tmpActeur->getIndividuId();
-            $this->fetcherService->fetchRow('individu', $sourceCodeIndividu);
+            $this->fetcherService->fetchRows('individu', ['source_code' => $sourceCodeIndividu]);
         }
         // ed
         $sourceCodeEcoleDoct = $tmpThese->getEcoleDoctId();
-        $this->fetcherService->fetchRow('ecole-doctorale', $sourceCodeEcoleDoct);
+        $this->fetcherService->fetchRows('ecole-doctorale', ['source_code' => $sourceCodeEcoleDoct]);
         // ur
         $sourceCodeUniteRech = $tmpThese->getUniteRechId();
-        $this->fetcherService->fetchRow('unite-recherche', $sourceCodeUniteRech);
+        $this->fetcherService->fetchRows('unite-recherche', ['source_code' => $sourceCodeUniteRech]);
 
         /**
          * Synchro UnicaenImport pour mettre à jour les tables finales.
@@ -329,15 +327,24 @@ class ImportService
      */
     private function computeFilters($service, $sourceCode = null, array $queryParams = [])
     {
+        // traitement particulier pour le source code
+        if ($sourceCode !== null) {
+            if (! empty($queryParams)) {
+                throw new LogicException("Aucun filtre ne peut être appliqué lorsqu'un source code est spécifié");
+            }
+
+            // si un source_code est spécifié, il remplace tout autre filtre
+            $this->filters = ['source_code' => $sourceCode];
+            $this->sqlFilters = "SOURCE_CODE = '$sourceCode'";
+
+            return;
+        }
+
         $this->filters = [];
         $this->sqlFilters = null;
 
         if (empty($queryParams)) {
             return;
-        }
-
-        if ($sourceCode !== null && ! empty($queryParams)) {
-            throw new LogicException("Aucun filtre ne peut être appliqué lorsqu'un source code est spécifié");
         }
 
         // normalisation des clés
@@ -371,17 +378,13 @@ class ImportService
         }
 
         // fabrication des filtres SQL pour la synchro UnicaenImport
-        if ($sourceCode) {
-            $sqlFilters = "SOURCE_CODE = '$sourceCode'";
-        } else {
-            foreach ($filters as $name => $value) {
-                switch ($name) {
-                    case 'these_id':
-                        $sqlFilters = "THESE_ID = '$value'";
-                        break;
-                    default:
-                        break;
-                }
+        foreach ($filters as $name => $value) {
+            switch ($name) {
+                case 'these_id':
+                    $sqlFilters = "THESE_ID = '$value'";
+                    break;
+                default:
+                    break;
             }
         }
 

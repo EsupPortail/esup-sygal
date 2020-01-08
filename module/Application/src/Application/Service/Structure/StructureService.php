@@ -2,6 +2,7 @@
 
 namespace Application\Service\Structure;
 
+use Application\Command\ConvertCommand;
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Source;
@@ -24,6 +25,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 use Import\Service\Traits\SynchroServiceAwareTrait;
+use Retraitement\Exception\TimedOutCommandException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
 use Webmozart\Assert\Assert;
@@ -861,13 +863,42 @@ class StructureService extends BaseService
         }
 
         // création du fichier logo sur le disque.
-        $logoFilepath = $this->fileService->computeLogoFilePathForStructure($structure);
         $logoDir = $this->fileService->computeLogoDirectoryPathForStructure($structure);
         $this->fileService->createWritableDirectory($logoDir);
-        $ok = rename($uploadedFilePath, $logoFilepath);
-        if (! $ok) {
-            throw new RuntimeException("Impossible de renommer le fichier logo sur le disque.");
+
+        $logoFilepath = $this->fileService->computeLogoFilePathForStructure($structure);
+        /** ANCIENNE METHODE  */
+//        $ok = rename($uploadedFilePath, $logoFilepath);
+//        if (! $ok) {
+//            throw new RuntimeException("Impossible de renommer le fichier logo sur le disque.");
+//        }
+        $command = new ConvertCommand();
+        $errorFilePath = null;
+        $command->generate($logoFilepath, ['logo' => $uploadedFilePath], $errorFilePath);
+        try {
+            $command->checkResources();
+            $command->execute();
+
+            $success = ($command->getReturnCode() === 0);
+            if (!$success) {
+                throw new RuntimeException(sprintf(
+                    "La commande %s a échoué (code retour = %s), voici le résultat d'exécution : %s",
+                    $command->getName(),
+                    $command->getReturnCode(),
+                    implode(PHP_EOL, $command->getResult())
+                ));
+            }
+        } catch (TimedOutCommandException $toce) {
+            throw $toce;
         }
+        catch (RuntimeException $rte) {
+            throw new RuntimeException(
+                "Une erreur est survenue lors de l'exécution de la commande " . $command->getName(),
+                0,
+                $rte);
+        }
+        //!todo remplacer par 'convert  $uploadedFilePath $logoFilepath'
+
     }
 
     /**

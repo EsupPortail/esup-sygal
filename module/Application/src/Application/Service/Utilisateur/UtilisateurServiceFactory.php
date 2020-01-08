@@ -22,6 +22,12 @@ class UtilisateurServiceFactory
          */
         $userService = $serviceLocator->get('unicaen-auth_user_service');
 
+        /**
+         * @var UserService $userService
+         */
+        $userService = $serviceLocator->get('unicaen-auth_user_service');
+
+
         $service = new UtilisateurService();
 
         /**

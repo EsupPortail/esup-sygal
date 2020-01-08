@@ -88,45 +88,24 @@ $canAddRole = true;
         Rôles et membres
     </h2>
         <div class="row">
-            <div class="col-md-6">
-                <table class="table table-condensed">
-                    <thead>
-                    <tr>
-                        <th> Libellé du rôles </th> <th> Effectifs </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php foreach($roleListing as $libelle => $count): ?>
-                        <tr>
-                            <td> <?php echo $libelle; ?> </td>
-                            <td> <?php echo $count; ?> </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </tbody>
+            <?php foreach ($roleListing as $roleId => $count) :?>
+            <div class="col-md-4">
+                <h3>
+                    <?php echo $roleId; ?>
+                    <span class="badge"><?php echo $count; ?></span>
+                </h3>
 
-                </table>
-            </div>
-
-
-            <div class="col-md-6">
-                <table class="table table-condensed">
-                    <thead>
-                    <tr>
-                        <th> Dénomination </th> <th> Rôle </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php foreach($individuListing as $denomination => $roles): ?>
-                        <?php foreach($roles as $role): ?>
-                            <tr>
-                                <td> <?php echo $denomination; ?> </td>
-                                <td> <?php echo $role; ?> </td>
-                            </tr>
+                <ul>
+                <?php foreach($individuListing as $denomination => $roles): ?>
+                    <?php foreach($roles as $role): ?>
+                        <?php if ($role === $roleId) : ?>
+                            <li><?php echo $denomination; ?></li>
+                            <?php endif; ?>
                         <?php endforeach; ?>
                     <?php endforeach; ?>
-                    </tbody>
-                </table>
+                </ul>
             </div>
+            <?php endforeach; ?>
         </div>
 </div>
 

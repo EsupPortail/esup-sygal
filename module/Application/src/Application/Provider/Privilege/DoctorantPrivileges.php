@@ -12,4 +12,5 @@ use UnicaenAuth\Provider\Privilege\Privileges;
 class DoctorantPrivileges extends Privileges
 {
     const DOCTORANT_MODIFICATION_PERSOPASS          = 'doctorant-modification-persopass';
+    const DOCTORANT_AFFICHER_EMAIL_CONTACT          = 'doctorant-afficher-mail-contact';
 }

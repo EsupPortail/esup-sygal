@@ -1,0 +1,47 @@
+<?php
+
+/**
+ * @see \Application\Controller\UtilisateurController::initCompteAction()
+ *
+ * @var InitCompteForm $form
+ */
+
+
+use Application\Form\InitCompteForm;
+
+$this->headTitle("Initialisation du compte");
+?>
+
+<h1 class="page-header">
+    Initialisation du compte
+</h1>
+
+
+
+<?php echo $this->form()->openTag($form); ?>
+
+<div class="alert alert-info">
+    <span class="glyphicon glyphicon-info-sign"></span>
+    Le nom d'utilisateur vous a été transmis dans le courrier électronique qui contenait l'adresse pour accéder à cette page.
+</div>
+
+<?php echo $this->formControlGroup($form->get('username')); ?>
+
+<div class="alert alert-info">
+    <span class="glyphicon glyphicon-info-sign"></span>
+    Le mot de passe doit :
+    <ul>
+        <li> être d'une longueur minimale de 8 caractères ; </li>
+        <li> posséder des caractères en majuscule et en minuscule  ; </li>
+        <li> posséder au moins un chiffre  ; </li>
+        <li> posséder au moins un caractère spécial (parmi '!', '@', '#', '$', '%', '^', '&', '*', '_').</li>
+    </ul>
+</div>
+
+<?php echo $this->formControlGroup($form->get('password1')); ?>
+<?php echo $this->formControlGroup($form->get('password2')); ?>
+
+<?php echo $this->formControlGroup($form->get('bouton')); ?>
+
+
+<?php echo $this->form()->closeTag(); ?>

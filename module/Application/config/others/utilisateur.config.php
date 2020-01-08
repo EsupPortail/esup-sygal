@@ -6,13 +6,14 @@ use Application\Form\CreationUtilisateurFromIndividuForm;
 use Application\Form\Factory\CreationUtilisateurFormFactory;
 use Application\Form\Factory\CreationUtilisateurFromIndividuFormFactory;
 use Application\Form\Factory\CreationUtilisateurHydratorFactory;
+use Application\Form\Factory\InitCompteFormFactory;
 use Application\Form\Hydrator\CreationUtilisateurHydrator;
+use Application\Form\InitCompteForm;
 use Application\Form\Validator\Factory\NewEmailValidatorFactory;
 use Application\Form\Validator\NewEmailValidator;
 use Application\Form\Validator\PasswordValidator;
 use Application\Provider\Privilege\UtilisateurPrivileges;
 use Application\Service\Individu\IndividuServiceFactory;
-use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Utilisateur\UtilisateurServiceFactory;
 use Application\View\Helper\IndividuUsurpationHelperFactory;
 use UnicaenAuth\Guard\PrivilegeController;
@@ -47,6 +48,22 @@ return [
                     ],
                     'privileges' => UtilisateurPrivileges::UTILISATEUR_MODIFICATION,
                 ],
+                [
+                    'controller' => 'Application\Controller\Utilisateur',
+                    'action'     => [
+                        'gerer-utilisateur',
+                        'creer-compte-local-individu',
+                        'reset-password',
+                    ],
+                    'privileges' => UtilisateurPrivileges::UTILISATEUR_CREATE_FROM_INDIVIDU,
+                ],
+                [
+                    'controller' => 'Application\Controller\Utilisateur',
+                    'action'     => [
+                        'init-compte',
+                    ],
+                    'roles' => [],
+                ],
             ],
         ],
     ],
@@ -75,12 +92,48 @@ return [
                             ],
                         ],
                     ],
+                    'gerer-utilisateur' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/gerer-utilisateur/:individu',
+                            'defaults'    => [
+                                'action' => 'gerer-utilisateur',
+                            ],
+                        ],
+                    ],
                     'ajouter-pour-individu' => [
                         'type'          => Segment::class,
                         'options'       => [
                             'route'       => '/ajouter-pour-individu/:individu',
                             'defaults'    => [
                                 'action' => 'ajouterFromIndividu',
+                            ],
+                        ],
+                    ],
+                    'creer-compte-local-individu' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/creer-compte-local-individu/:individu',
+                            'defaults'    => [
+                                'action' => 'creer-compte-local-individu',
+                            ],
+                        ],
+                    ],
+                    'reset-password' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/reset-password/:individu',
+                            'defaults'    => [
+                                'action' => 'reset-password',
+                            ],
+                        ],
+                    ],
+                    'init-compte' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/init-compte/:token',
+                            'defaults'    => [
+                                'action' => 'init-compte',
                             ],
                         ],
                     ],
@@ -152,8 +205,8 @@ return [
         ],
     ],
     'service_manager' => [
-        'invokables' => array(
-        ),
+        'invokables' => [
+        ],
         'factories' => [
             'IndividuService' => IndividuServiceFactory::class,
             'UtilisateurService' => UtilisateurServiceFactory::class,
@@ -168,6 +221,7 @@ return [
     ],
     'form_elements' => [
         'factories' => [
+            InitCompteForm::class => InitCompteFormFactory::class,
             CreationUtilisateurForm::class => CreationUtilisateurFormFactory::class,
             CreationUtilisateurFromIndividuForm::class => CreationUtilisateurFromIndividuFormFactory::class,
         ]

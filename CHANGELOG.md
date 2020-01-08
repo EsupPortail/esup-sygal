@@ -1,6 +1,72 @@
 Journal des modifications
 =========================
 
+1.3.3 (18/12/2019)
+------------------
+
+### Ajouts
+
+- Gestion des directeurs sans SUPANN_ID
+    - Création de compte associé aux individus
+    - Réinitialisation de mot de passe
+    - Changement de l'affichage des warning associés
+
+1.3.2 (27/11/2019)
+------------------
+
+### Ajouts
+
+- Amélioration de l'affichage des rôles liés aux établissements
+- Rénommage de 'Bureau du doctorats' en 'Maison du doctorat'
+- Ajout d'un privilège pour l'affichage de l'adresse de contact du doctorant
+- Ajout du menu 'Guide d'utilisation' sur l'accueil de l'application
+
+1.3.1 (25/11/2019)
+------------------
+
+### Corrections
+
+- Correction d'un bug empêchant la suppression auto de fichier lorsqu'on dépose une version retraitée manuellement.
+
+1.3.0 (22/11/2019)
+------------------
+
+### Ajouts
+
+- Convention de mise en ligne : 
+    - Le libellé du tribunal compétent mentionné est importé de chaque établissement.
+    - Utilisation de la mention générique "Le chef d'établissement" plutôt que d'exploiter les libellés 
+      importés des établissements.
+- Nouvelle ligne de commande pour importer une thèse à la demande.
+
+### Corrections
+
+- Import : 
+    - Vidage et remplissage de chaque table temporaire n'étaient pas faits dans une même transaction !
+    - Améliorations pour utiliser moins de mémoire ; meilleurs logs. 
+    - Correction des exceptions de type `ORA-00001: unique constraint (SYGAL.TMP_ACTEUR_UNIQ) violated` 
+      par un changement de stratégie côté web service (interrogation de tables plutôt que des vues). 
+- Le bouton d'import d'une thèse à la demande avait disparu (menu "Page de couverture") à cause d'une config erronée.
+
+1.2.11 (13/11/2019)
+------------------
+
+### Correction
+
+- Changement dans l'export pour récupérer les dates et la liste de fichiers (qui avait été oubliés précédemment) pour les infos
+    - Date de dépôt version initiale
+    - Date de dépôt version corrigée
+    - Thèse format PDF
+    - Annexes
+    
+1.2.10 (5/11/2019)
+------------------
+
+### Ajout
+
+- Un message avertissant des formats d'image valide est maintenant ajouté dans les pages de modification des structures concertes
+- Utilisation de convert (imagemagick) pour convertir les logos "automatiquement" au format png 
+
 1.2.9 (24/10/2019)
 ------------------
 

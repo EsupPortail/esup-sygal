@@ -7,6 +7,7 @@ use Application\Assertion\BaseAssertion;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\WfEtape;
+use Application\Provider\Privilege\DoctorantPrivileges;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\Provider\Privilege\ValidationPrivileges;
 use Application\Service\UserContextService;

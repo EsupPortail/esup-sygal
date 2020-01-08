@@ -1,0 +1,29 @@
+<?php
+
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @see
+ *
+ * @var PhpRenderer $this
+ * @var string $username
+ * @var string $url
+ */
+
+?>
+
+<p>
+    Bonjour,
+</p>
+<p>
+    La réinitialisation de votre mot de passe  <strong> <?php echo $this->appInfos()->nom; ?> </strong> vient d'être demandée.
+    Afin de pouvoir vous connecter à l'application, vous devez saisir un nouveau mot de passe.
+</p>
+<p>
+    Votre nom d'utilisateur est <strong><?php echo $username; ?></strong>. Celui-ci vous sera demandé dans le formulaire
+    d'initialisation que vous trouverez à l'adresse suivante : <br/>
+    <a href="<?php echo $url; ?>"><?php echo $url;?> </a>
+</p>
+
+
+

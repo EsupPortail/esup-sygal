@@ -7,6 +7,9 @@ use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\Utilisateur;
 use Application\Form\CreationUtilisateurForm;
 use Application\Form\CreationUtilisateurFromIndividuForm;
+use Application\Form\InitCompteForm;
+use Application\Form\InitCompteFormAwareTrait;
+use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
@@ -24,6 +27,7 @@ use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenAuth\Entity\Shibboleth\ShibUser;
 use UnicaenAuth\Options\ModuleOptions;
 use UnicaenAuth\Service\ShibService;
+use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
 use UnicaenLdap\Entity\People;
 use Zend\Authentication\AuthenticationService;
 use Zend\Http\Request;
@@ -33,6 +37,7 @@ use Zend\View\Model\ViewModel;
 
 class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurController
 {
+    use ActeurServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
     use UserContextServiceAwareTrait;
     use RoleServiceAwareTrait;
@@ -44,6 +49,9 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     use NotifierServiceAwareTrait;
     use StructureServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
+    use UserServiceAwareTrait;
+
+    use InitCompteFormAwareTrait;
 
     /**
      * NOTA BENE : il s'agit des individus et non des utilisateurs car ils sont ceux qui portent les rôles
@@ -64,6 +72,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         }
 
         $individuId = $this->params()->fromQuery("id");
+        $rolesAffectes = [];
         if ($individuId !== null) {
             $individu = $this->individuService->getRepository()->find($individuId);
             $rolesAffectes = $this->roleService->getRepository()->findAllByIndividu($individu);
@@ -159,8 +168,8 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             throw new RuntimeException("Individu introuvable avec cet id");
         }
 
-        $utilisateurs = $this->utilisateurService->getRepository()->findByIndividu($individu);
-        if (count($utilisateurs) > 0) {
+        $utilisateur = $this->utilisateurService->getRepository()->findByIndividu($individu);
+        if ($utilisateur !== null) {
             throw new RuntimeException("Il existe déjà un utilisateur lié à l'individu $individu.");
         }
 
@@ -400,4 +409,79 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         }
         return new ViewModel([]);
     }
+
+    public function gererUtilisateurAction()
+    {
+        $individu = $this->getIndividuService()->getRequestedIndividu($this);
+        $acteurs = $this->acteurService->getRepository()->findActeursByIndividu($individu);
+        $utilisateur = $this->utilisateurService->getRepository()->findByIndividu($individu);
+        if ($utilisateur === null AND $individu->getEmail() !== null) $utilisateur = $this->utilisateurService->getRepository()->findByUsername($individu->getEmail());
+
+
+        return new ViewModel([
+            'individu' => $individu,
+            'acteurs' => $acteurs,
+            'utilisateur' => $utilisateur,
+        ]);
+    }
+
+    public function creerCompteLocalIndividuAction()
+    {
+        $individu = $this->getIndividuService()->getRequestedIndividu($this);
+        $utilisateur = $this->utilisateurService->getRepository()->findByIndividu($individu);
+
+        if ($utilisateur === null) {
+            $user = $this->utilisateurService->createFromIndividu($individu, $individu->getEmail(), 'none');
+            $this->userService->updateUserPasswordResetToken($user);
+            $url = $this->url()->fromRoute('utilisateur/init-compte', ['token' => $user->getPasswordResetToken()], ['force_canonical' => true], true);
+            $this->notifierService->triggerInitialisationCompte($user, $url);
+        } else {
+            $this->flashMessenger()->addErrorMessage('Impossible de créer le compte local car un utilisateur est déjà lié à cet individu.');
+        }
+
+        return $this->redirect()->toRoute('utilisateur/gerer-utilisateur', ['individu' => $individu->getId()], [], true);
+    }
+
+    public function resetPasswordAction() {
+        $individu = $this->getIndividuService()->getRequestedIndividu($this);
+        $utilisateur = $this->utilisateurService->getRepository()->findByIndividu($individu);
+
+        if ($utilisateur !== null) {
+            $this->userService->updateUserPasswordResetToken($utilisateur);
+            $url = $this->url()->fromRoute('utilisateur/init-compte', ['token' => $utilisateur->getPasswordResetToken()], ['force_canonical' => true], true);
+            $this->notifierService->triggerResetCompte($utilisateur, $url);
+        } else {
+            $this->flashMessenger()->addErrorMessage('Impossible de réinitiliser la mot de passe car aucun utilisateur est lié');
+        }
+
+        return $this->redirect()->toRoute('utilisateur/gerer-utilisateur', ['individu' => $individu->getId()], [], true);
+    }
+
+    public function initCompteAction() {
+        $token = $this->params()->fromRoute('token');
+        $utilisateur = $this->utilisateurService->getRepository()->findByToken($token);
+
+        /** @var InitCompteForm $form */
+        $form = $this->getInitCompteForm();
+        $form->setUsername($utilisateur->getUsername());
+        $form->setAttribute('action', $this->url()->fromRoute('utilisateur/init-compte', [ 'token' => $token ], [] , true));
+        $form->bind(new Utilisateur());
+
+        /** @var Request $request */
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $form->setData($data);
+            if ($form->isValid()) {
+                $this->utilisateurService->changePassword($utilisateur, $data['password1']);
+                $this->flashMessenger()->addSuccessMessage('Mot de passe initialisé avec succés.');
+                return $this->redirect()->toRoute('home');
+            }
+        }
+
+        return new ViewModel([
+            'form' => $form,
+        ]);
+    }
+
 }

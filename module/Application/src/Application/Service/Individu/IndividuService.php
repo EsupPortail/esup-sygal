@@ -14,6 +14,7 @@ use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Entity\UserInterface;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenLdap\Entity\People;
+use Zend\Mvc\Controller\AbstractActionController;
 
 class IndividuService extends BaseService
 {
@@ -167,5 +168,19 @@ class IndividuService extends BaseService
         $exist_utilisateur = $this->getEntityManager()->getRepository(Utilisateur::class)->findOneBy(["email" => $email]);
 
         return ($exist_individu !== null || $exist_utilisateur !== null);
+    }
+
+    /**
+     * @param AbstractActionController $controller
+     * @param string $param
+     * @return Individu
+     */
+    public function getRequestedIndividu($controller, $param = 'individu')
+    {
+        $id = $controller->params()->fromRoute($param);
+        /** @var Individu $individu */
+        $individu = $this->getRepository()->find($id);
+        return $individu;
+
     }
 }
