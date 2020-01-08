@@ -19,7 +19,7 @@ $urlRetour = $this->url('soutenance/presoutenance', ['these' => $these->getId()]
 </p>
 
 <p>
-    La présoutenance de la thèse suivante a été totalement validée :
+    La proposition de soutenance de la thèse suivante a été totalement validée :
 </p>
 
 <table>
@@ -33,5 +33,5 @@ $urlRetour = $this->url('soutenance/presoutenance', ['these' => $these->getId()]
     </tr>
 </table>
 
-<p> Vous pouvez maintenance procéder à la saisie des informations liées à la présoutenance :
-    <a href="<?php echo $urlRetour;?>"> présoutenance</a>. </p>
+<p> Vous pouvez maintenance procéder à la saisie des informations liées à la soutenance :
+    <a href="<?php echo $urlRetour;?>"> soutenance de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(false,false,false, true); ?></a>. </p>

@@ -17,13 +17,12 @@ $url = $this->url('soutenance/avis-soutenance', ['these' => $these->getId(), 'ra
     Bonjour,
 </p>
 <p>
-    Vous pouvez dès mantenant commencer votre travail de rapporteur sur la these de
-    <strong><?php echo $these->getDoctorant()->getNomComplet(); ?></strong> intitulée
-    <strong><?php echo $these->getTitre(); ?></strong>.
+    Vous pouvez commencer à examiner les travaux de <strong><?php echo $these->getDoctorant()->getNomComplet(); ?></strong>,
+    thèse ayant pour titre <strong><?php echo $these->getTitre(); ?></strong>.
+    Par la suite, vous devez établir un rapport incluant votre avis sur la soutenance et votre signature au moins 14 jours avant la date de soutenance.
 </p>
 <p>
-    Une fois rapport de pré-soutenance et votre avis fait vous pouvez déposer ceux-ci sur la plateforme SyGAL à l'adresse suivante :
-    <a href="<?php echo $url; ?>">Avis de soutenance</a>.
+    Une fois votre rapport de pré-soutenance établi, vous devez le déposer sur la plateforme SyGal à l’adresse suivante : <a href="<?php echo $url; ?>">dépôt de l'avis de soutenance</a>.
 </p>
 <?php if($proposition->getRenduRapport()) : ?>
     <p>

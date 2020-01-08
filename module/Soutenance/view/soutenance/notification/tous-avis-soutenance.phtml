@@ -15,7 +15,9 @@ $url = $this->url('soutenance/presoutenance', ['these' => $these->getId()], ['fo
     Bonjour,
 </p>
 <p>
-    Tous les rapporteurs de la thèse de <?php echo $these->getDoctorant()->getIndividu(); ?> ont été rendu leur avis de soutenance.
-    Vous pouvez consuslter ces avis et les rapports de présoutenances sur la page de gestion de la présoutenance de cette thèse :
-    <a href="<?php echo $url; ?>">page de gestion de la présoutenance</a>.
+    es rapporteurs de la thèse de <?php echo $these->getDoctorant()->getIndividu(); ?> ont rendu leur rapport de pré-soutenance.
+</p>
+<p>
+    Vous pouvez les consulter sur la page de gestion de la pré-soutenance de cette thèse :
+    <a href="<?php echo $url; ?>">page de gestion de la soutenance</a>.
 </p>

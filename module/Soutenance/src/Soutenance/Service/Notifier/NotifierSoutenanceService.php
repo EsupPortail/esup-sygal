@@ -230,7 +230,7 @@ class NotifierSoutenanceService extends NotifierService {
         if ($email !== null) {
             $notif = new Notification();
             $notif
-                ->setSubject("Vous pouvez procéder aux rensignement de la présoutenance")
+                ->setSubject("Vous pouvez procéder au renseignement des informations de soutenance")
                 ->setTo($email)
                 ->setTemplatePath('soutenance/notification/presoutenance')
                 ->setTemplateVariables([
@@ -526,7 +526,7 @@ class NotifierSoutenanceService extends NotifierService {
         if (!empty($emails)) {
             $notif = new Notification();
             $notif
-                ->setSubject("La soutenance de ".$these->getDoctorant()->getIndividu()." a été accepté par la maison du doctorats de votre établissement.")
+                ->setSubject("La soutenance de ".$these->getDoctorant()->getIndividu()." a été accepté par la maison du doctorat de votre établissement.")
                 ->setTo($emails)
                 ->setTemplatePath('soutenance/notification/feu-vert-soutenance')
                 ->setTemplateVariables([
