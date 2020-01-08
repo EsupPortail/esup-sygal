@@ -17,6 +17,8 @@ class Proposition {
     private $date;
     /** @var string */
     private $lieu;
+    /** @var string */
+    private $adresse;
     /** @var boolean */
     private $exterieur;
 
@@ -130,6 +132,24 @@ class Proposition {
     public function setLieu($lieu)
     {
         $this->lieu = $lieu;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAdresse()
+    {
+        return $this->adresse;
+    }
+
+    /**
+     * @param string $adresse
+     * @return Proposition
+     */
+    public function setAdresse($adresse)
+    {
+        $this->adresse = $adresse;
         return $this;
     }
 

@@ -128,32 +128,79 @@ $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->get
     <?php endif; ?>
 
     <?php if ($proposition->getEtat()->getCode() === Etat::VALIDEE) : ?>
-    <p>
-        <a  <?php /** @see \Soutenance\Controller\Presoutenance\PresoutenanceController::procesVerbalSoutenanceAction() */ ?>
-                href="<?php echo $this->url('soutenance/presoutenance/proces-verbal-soutenance', ['these' => $these->getId()], [], true); ?>"
-                class="btn btn-primary action">
-            <span class="glyphicon glyphicon-list-alt"></span>Générer le procès verbal de soutenance
-        </a>
 
-        <a  <?php /** @see \Soutenance\Controller\Presoutenance\PresoutenanceController::avisSoutenanceAction() */ ?>
-                href="<?php echo $this->url('soutenance/presoutenance/avis-soutenance', ['these' => $these->getId()], [], true); ?>"
-                class="btn btn-primary action">
-            <span class="glyphicon glyphicon-list-alt"></span>Générer l'avis de soutenance
-        </a>
+    <br/><br/>
 
-        <a  <?php /** @see \Soutenance\Controller\Presoutenance\PresoutenanceController::convocationAction() */ ?>
-                href="<?php echo $this->url('soutenance/presoutenance/convocation', ['these' => $these->getId()], [], true); ?>"
-                class="btn btn-primary action">
-            <span class="glyphicon glyphicon-list-alt"></span>Générer les convocations
-        </a>
-    </p>
+    <div class="panel panel-info box">
+        <div class="panel-heading">
+            <h2>Génération des documents associés à la soutenance</h2>
+        </div>
+        <div class="panel-body">
+
+            <div class="row">
+            <div class="col-md-8">
+            <?php if ($proposition->getAdresse() === null) : ?>
+                        <p class="lead">
+                        L'adresse exacte de la soutenance est nécessaire pour la génération des documents.
+                        Veuillez renseigner celle-ci.
+                        </p>
+            <?php else : ?>
+                <p class="lead">Adresse exacte de la soutenance : </p>
+                <?php echo $proposition->getAdresse(); ?>
+            <?php endif; ?>
+            </div>
+
+            <div class="pull-right">
+                <br/>
+                <br/>
+                <a
+                        <?php /** @see \Soutenance\Controller\Presoutenance\PresoutenanceController::modifierAdresseAction() */ ?>
+                        href="<?php echo $this->url('soutenance/presoutenance/modifier-adresse', ['these' => $these->getId()], [] ,true); ?>"
+                        class="btn btn-primary action ajax-modal" data-event="modification-adresse">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                    Modifier l'adresse
+                </a>
+            </div>
+            </div>
+
+                <br/><br/>
+
+            <p>
+                <a  <?php /** @see \Soutenance\Controller\Presoutenance\PresoutenanceController::procesVerbalSoutenanceAction() */ ?>
+                        href="<?php echo $this->url('soutenance/presoutenance/proces-verbal-soutenance', ['these' => $these->getId()], [], true); ?>"
+                        class="btn btn-primary action">
+                    <span class="glyphicon glyphicon-list-alt"></span>Générer le procès verbal de soutenance
+                </a>
+
+                <a  <?php /** @see \Soutenance\Controller\Presoutenance\PresoutenanceController::avisSoutenanceAction() */ ?>
+                        href="<?php echo $this->url('soutenance/presoutenance/avis-soutenance', ['these' => $these->getId()], [], true); ?>"
+                        class="btn btn-primary action">
+                    <span class="glyphicon glyphicon-list-alt"></span>Générer l'avis de soutenance
+                </a>
+
+                <a  <?php /** @see \Soutenance\Controller\Presoutenance\PresoutenanceController::convocationAction() */ ?>
+                        href="<?php echo $this->url('soutenance/presoutenance/convocation', ['these' => $these->getId()], [], true); ?>"
+                        class="btn btn-primary action">
+                    <span class="glyphicon glyphicon-list-alt"></span>Générer les convocations
+                </a>
+            </p>
+        </div>
+    </div>
     <?php endif; ?>
+
 <?php endif; ?>
 
 
 <script>
     $(function() {
         $("body").on("modification-date-rendu-rapport", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+
+    $(function() {
+        $("body").on("modification-adresse", function (event) {
             event.div.modal('hide');
             window.location.reload();
         });

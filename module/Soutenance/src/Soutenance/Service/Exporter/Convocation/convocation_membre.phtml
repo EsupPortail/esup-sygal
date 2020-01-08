@@ -101,7 +101,14 @@ $texte_directeur = implode(" et ", $encadrement);
                 Date manquante
         </span>
     <?php endif; ?> à l'adresse suivante : <br/>
-    <span class="not-yet">LIEU DE SOUTENANCE</span>
+    <?php if ($proposition->getAdresse() !== null): ?>
+        <?php echo $proposition->getAdresse(); ?>
+    <?php else : ?>
+        <span style='background-color:red;'>
+                    Adresse manquante
+            </span>
+        <br/>
+    <?php endif; ?>
 </p>
 
 <p>

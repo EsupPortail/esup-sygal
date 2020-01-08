@@ -15,6 +15,7 @@
 
         <field name="date"                      type="datetime"                         column="DATEPREV"   nullable="true"/>
         <field name="lieu"                      type="string"        length="256"       column="LIEU"       nullable="true"/>
+        <field name="adresse"                   type="string"        length="2048"      column="ADRESSE_EXACTE"       nullable="true"/>
         <field name="exterieur"                 type="boolean"                          column="EXTERIEUR"       nullable="true"/>
 
         <one-to-many field="membres" target-entity="Soutenance\Entity\Membre" mapped-by="proposition"/>

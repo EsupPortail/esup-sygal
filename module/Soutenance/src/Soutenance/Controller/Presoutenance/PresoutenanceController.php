@@ -20,6 +20,7 @@ use Exception;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
+use Soutenance\Form\AdresseSoutenance\AdresseSoutenanceFormAwareTrait;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportForm;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportFormAwareTrait;
 use Soutenance\Form\InitCompte\InitCompteForm;
@@ -59,6 +60,7 @@ class PresoutenanceController extends AbstractController
 
     use DateRenduRapportFormAwareTrait;
     use InitCompteFormAwareTrait;
+    use AdresseSoutenanceFormAwareTrait;
 
     public function presoutenanceAction()
     {
@@ -326,6 +328,31 @@ class PresoutenanceController extends AbstractController
         $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 
+    public function modifierAdresseAction() {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findByThese($these);
+
+        $form = $this->getAdresseSoutenanceForm();
+        $form->setAttribute('action', $this->url()->fromRoute('soutenance/presoutenance/modifier-adresse', ['these' => $these->getId()], [], true));
+        $form->bind($proposition);
+
+        /** @var Request $request */
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $form->setData($data);
+            if ($form->isValid()) {
+                $this->getPropositionService()->update($proposition);
+            }
+        }
+
+        return new ViewModel([
+            'title' => "Modifier l'adresse exacte de la soutenance",
+            'these' => $these,
+            'form' => $form,
+        ]);
+
+    }
 
     /** Document pour la signature en présidence */
     public function procesVerbalSoutenanceAction()
