@@ -84,16 +84,6 @@ return array(
                                     'these',
                                 ],
                             ],
-                            'simulation' => [
-                                'label'    => 'Simulation SI',
-                                'route'    => 'simulation',
-                                'order'    => 150,
-                                'resource' => PresoutenancePrivileges::getResourceId(PresoutenancePrivileges::PRESOUTENANCE_PRESOUTENANCE_VISUALISATION),
-                                'withtarget' => true,
-                                'paramsInject' => [
-                                    'these',
-                                ],
-                            ],
                             'presoutenance' => [
                                 'label'    => 'Préparation de la soutenance',
                                 'route'    => 'soutenance/presoutenance',
