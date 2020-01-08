@@ -65,13 +65,13 @@ class SuppressionAttestationsRequiseRule implements RuleInterface
         $remisePapierRequise = $rule->computeRemiseExemplairePapierEstRequise();
 
         if ($remisePapierRequise) {
-            if (! $attestation->isExemplaireImprimeConformeAVersionDeposee()) {
+            if (! $attestation->getExemplaireImprimeConformeAVersionDeposee()) {
                 // la question "exemplaire papier conforme" n'a pas été posée, il faudra la poser : suppression
                 return true;
             }
         } else {
-            if ($attestation->isExemplaireImprimeConformeAVersionDeposee()) {
-                // la question "exemplaire papier conforme" n'a pas été posée, il faudra la poser : suppression
+            if ($attestation->getExemplaireImprimeConformeAVersionDeposee()) {
+                // la question "exemplaire papier conforme" a été posée, ce n'est plus pertinent : suppression
                 return true;
             }
         }

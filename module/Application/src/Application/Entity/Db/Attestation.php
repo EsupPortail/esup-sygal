@@ -60,23 +60,9 @@ class Attestation implements HistoriqueAwareInterface
     }
 
     /**
-     * Get isVersionDeposeeEstVersionRef
-     *
-     * @return string
+     * @return bool|null
      */
-    public function isVersionDeposeeEstVersionRefToString()
-    {
-        if (null === $this->isVersionDeposeeEstVersionRef()) {
-            return "";
-        }
-
-        return $this->isVersionDeposeeEstVersionRef() ? "Oui" : "Non";
-    }
-
-    /**
-     * @return bool
-     */
-    public function isExemplaireImprimeConformeAVersionDeposee()
+    public function getExemplaireImprimeConformeAVersionDeposee()
     {
         return $this->exemplaireImprimeConformeAVersionDeposee;
     }
@@ -90,20 +76,6 @@ class Attestation implements HistoriqueAwareInterface
         $this->exemplaireImprimeConformeAVersionDeposee = $exemplaireImprimeConformeAVersionDeposee;
 
         return $this;
-    }
-
-    /**
-     * Get isExemplaireImprimeConformeAVersionDeposee
-     *
-     * @return string
-     */
-    public function isExemplaireImprimeConformeAVersionDeposeeToString()
-    {
-        if (null === $this->isExemplaireImprimeConformeAVersionDeposee()) {
-            return "";
-        }
-
-        return $this->isExemplaireImprimeConformeAVersionDeposee() ? "Oui" : "Non";
     }
 
     /**

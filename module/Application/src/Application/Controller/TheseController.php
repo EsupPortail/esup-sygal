@@ -24,6 +24,7 @@ use Application\Form\MetadonneeTheseForm;
 use Application\Form\PointsDeVigilanceForm;
 use Application\Form\RdvBuTheseDoctorantForm;
 use Application\Form\RdvBuTheseForm;
+use Application\Rule\AutorisationDiffusionRule;
 use Application\Rule\SuppressionAttestationsRequiseRule;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\FichierThese\Exception\ValidationImpossibleException;
@@ -1121,11 +1122,19 @@ class TheseController extends AbstractController
         /** @var AttestationTheseForm $form */
         $form = $this->getServiceLocator()->get('formElementManager')->get('AttestationTheseForm');
 
+        $rule = new AutorisationDiffusionRule();
+        $rule->setDiffusion($these->getDiffusion());
+        $rule->execute();
+        $exemplairePaiperRequis = $rule->computeRemiseExemplairePapierEstRequise();
+        if (! $exemplairePaiperRequis) {
+            $form->disableExemplaireImprimeConformeAVersionDeposee();
+        }
+
         $attestation = $these->getAttestation();
 
         if ($attestation === null) {
             // si l'on est dans le cadre du dépôt de la version corrigée, on rappelle les infos historisées
-            if ($this->existeVersionCorrigee()) {
+            if ($this->theseService->existeVersionCorrigee($these)) {
                 $attestations = $these->getAttestations($historise = true);
                 $attestationPrec = $attestations->last() ?: null; // la plus récente
 
@@ -1140,35 +1149,6 @@ class TheseController extends AbstractController
         $form->bind($attestation);
 
         return $form;
-    }
-
-    /**
-     * @var bool
-     */
-    protected $existeVersionCorrigee = null;
-
-    /**
-     * Si le fichier de la thèse originale est une version corrigée, on est dans le cadre d'un dépôt d'une version
-     * corrigée et cette fonction retourne true.
-     *
-     * @param These|null $these
-     * @return bool
-     */
-    private function existeVersionCorrigee(These $these = null)
-    {
-        if ($these !== null) {
-            return (!empty($this->fichierTheseService->getRepository()->fetchFichierTheses($these, NatureFichier::CODE_THESE_PDF , VersionFichier::CODE_ORIG_CORR)));
-        }
-        if ($this->existeVersionCorrigee !== null) {
-            return $this->existeVersionCorrigee;
-        }
-        if ($these === null) {
-            $these = $this->requestedThese();
-        }
-
-        $this->existeVersionCorrigee = ! empty($this->fichierTheseService->getRepository()->fetchFichierTheses($these, NatureFichier::CODE_THESE_PDF , VersionFichier::CODE_ORIG_CORR));
-
-        return $this->existeVersionCorrigee;
     }
 
     private function isEtapeDiffusionVisible(These $these, VersionFichier $version)
@@ -1301,7 +1281,7 @@ class TheseController extends AbstractController
 
         if ($diffusion === null) {
             // si l'on est dans le cadre du dépôt de la version corrigée, on rappelle les infos historisées
-            if ($this->existeVersionCorrigee()) {
+            if ($this->theseService->existeVersionCorrigee($these)) {
                 $diffusions = $these->getDiffusions($historise = true);
                 $diffusionPrec = $diffusions->last() ?: null; // la plus récente
 

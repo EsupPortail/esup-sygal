@@ -6,6 +6,7 @@ use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Attestation;
 use Application\Entity\Db\Diffusion;
 use Application\Entity\Db\MetadonneeThese;
+use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\RdvBu;
 use Application\Entity\Db\Repository\TheseRepository;
 use Application\Entity\Db\Role;
@@ -428,5 +429,22 @@ EOS;
         } catch (DBALException $e) {
             throw new RuntimeException("Erreur rencontrée lors des updates en bdd.", null, $e);
         }
+    }
+
+    /**
+     * Si le fichier de la thèse originale est une version corrigée, on est dans le cadre d'un dépôt d'une version
+     * corrigée et cette fonction retourne true.
+     *
+     * @param These $these
+     * @return bool
+     */
+    public function existeVersionCorrigee(These $these)
+    {
+        $fichierTheses = $this->fichierTheseService->getRepository()->fetchFichierTheses(
+            $these,
+            NatureFichier::CODE_THESE_PDF,
+            VersionFichier::CODE_ORIG_CORR);
+
+        return !empty($fichierTheses);
     }
 }

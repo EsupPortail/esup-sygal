@@ -1,5 +1,6 @@
 <?php
 
+use Application\Controller\TheseController;
 use Application\Entity\Db\Attestation;
 use Application\Entity\Db\These;
 use Application\Form\AttestationTheseForm;
@@ -12,6 +13,8 @@ use Application\View\Renderer\PhpRenderer;
  * @var Attestation          $attestation
  * @var AttestationTheseForm $form
  * @var string               $modifierAttestationUrl
+ *
+ * @see TheseController::attestationAction()
  */
 
 $privilege = ThesePrivileges::THESE_SAISIE_ATTESTATIONS_($these->getCorrectionAutorisee());
