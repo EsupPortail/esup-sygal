@@ -98,6 +98,7 @@ class IndexController extends AbstractController {
                 'depot' => $these->hasVersionInitiale(),
                 'engagement' => $engagement,
                 'avis' => $avis,
+                'telecharger' => $this->urlFichierThese()->telechargerFichierThese($these, $avis->getFichier()),
             ]);
         } else {
             $acteurs = $this->getActeurService()->getRapporteurDansTheseEnCours($individu);

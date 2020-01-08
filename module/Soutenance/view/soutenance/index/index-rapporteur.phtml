@@ -11,6 +11,7 @@
  * @var Validation $engagement
  * @var Avis $avis
  * @var string $telecharger
+
  */
 
 use Application\Constants;
@@ -195,7 +196,8 @@ $canAvis = true;
                                 <?php endif; ?>
                             </dl>
 
-                            <a href=" <?php echo $this->urlFichierThese->telechargerFichierThese($these, $avis->getFichier()); ?>" >
+<!--                            <a href=" --><?php //echo $this->urlFichierThese->telechargerFichierThese($these, $avis->getFichier()); ?><!--" >-->
+                            <a href=" <?php echo $telecharger; ?>" >
                                 Prérapport de soutenance
                             </a>
                         </div>
