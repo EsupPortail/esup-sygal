@@ -53,7 +53,7 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
             </h5>
 
             <div class="progress">
-                <div class="progress-bar progress-bar-info" style="width:<?php echo $indicateurs["membre"]["Ratio"]*100; ?>%;">
+                <div class="progress-bar progress-bar-info" style="width:<?php echo $indicateurs["membre"]["Ratio"]*100; ?>%; <?php if ($indicateurs["membre"]["valide"] !== true) echo "background-color:darkred;"; ?>" >
                     <?php echo $indicateurs["membre"]["Nombre"]; ?>
                 </div>
             </div>
@@ -70,7 +70,7 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
             </h5>
 
             <div class="progress">
-                <div class="progress-bar progress-bar-info" style="width:<?php echo $indicateurs["rapporteur"]["Ratio"]*100; ?>%;">
+                <div class="progress-bar progress-bar-info" style="width:<?php echo $indicateurs["rapporteur"]["Ratio"]*100; ?>%; <?php if ($indicateurs["rapporteur"]["valide"] !== true) echo "background-color:darkred;"; ?>">
                     <?php echo $indicateurs["rapporteur"]["Nombre"]; ?>
                 </div>
             </div>
@@ -87,7 +87,7 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
 
             <div class="progress">
                 <div class="progress">
-                    <div class="progress-bar progress-bar-info" style="width:<?php echo $indicateurs["rang A"]["Ratio"]*100; ?>%;">
+                    <div class="progress-bar progress-bar-info" style="width:<?php echo $indicateurs["rang A"]["Ratio"]*100; ?>%; <?php if ($indicateurs["rang A"]["valide"] !== true) echo "background-color:darkred;"; ?>">
                         <?php echo $indicateurs["rang A"]["Nombre"]; ?>
                     </div>
                 </div>
@@ -103,7 +103,7 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
                 <?php endif; ?>
             </h5>
             <div class="progress">
-                <div class="progress-bar progress-bar-info" style="width:<?php echo $indicateurs["exterieur"]["Ratio"]*100; ?>%;">
+                <div class="progress-bar progress-bar-info" style="width:<?php echo $indicateurs["exterieur"]["Ratio"]*100; ?>%; <?php if ($indicateurs["exterieur"]["valide"] !== true) echo "background-color:darkred;"; ?>">
                     <?php echo $indicateurs["exterieur"]["Nombre"]; ?>
                 </div>
             </div>
