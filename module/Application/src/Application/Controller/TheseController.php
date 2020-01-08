@@ -172,6 +172,36 @@ class TheseController extends AbstractController
         return $this->redirect()->toRoute('these', [], ['query' => $queryParams]);
     }
 
+    /**
+     * Action servant l'accueil du menu Dépôt :
+     * - pour un doctorant / directeur affiche la liste des thèses en cours
+     * - pour un bu et mdd la liste des thèses en cours dans son établissement
+     * - sinon un message disant de sélectionner une thèse via l'annuaire
+     **/
+    public function depotAccueilAction() {
+
+        $role = $this->userContextService->getSelectedIdentityRole();
+        $user = $this->userContextService->getIdentityDb();
+
+        $theses = [];
+        switch ($role->getCode()) {
+            case Role::CODE_DOCTORANT :
+                $theses = $this->getTheseService()->getRepository()->findTheseByDoctorant($user->getIndividu());
+                break;
+            case Role::CODE_DIRECTEUR_THESE :
+            case Role::CODE_CODIRECTEUR_THESE :
+                $theses = $this->getTheseService()->getRepository()->findTheseByActeur($user->getIndividu());
+                break;
+            default :
+                break;
+        }
+
+        return new ViewModel([
+            'role' => $role,
+            'theses' => $theses,
+        ]);
+    }
+
     public function roadmapAction()
     {
         $these = $this->requestedThese();

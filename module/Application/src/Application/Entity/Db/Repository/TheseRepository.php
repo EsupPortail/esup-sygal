@@ -3,6 +3,7 @@
 namespace Application\Entity\Db\Repository;
 
 use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\Individu;
 use Application\Entity\Db\These;
 use Application\ORM\Query\Functions\Year;
 use Application\QueryBuilder\TheseQueryBuilder;
@@ -113,5 +114,39 @@ class TheseRepository extends DefaultEntityRepository
         return $results;
     }
 
+    /**
+     * @param Individu $individu
+     * @return These[]
+     */
+    public function findTheseByDoctorant(Individu $individu)
+    {
+        $qb = $this->createQueryBuilder('t')
+            ->andWhere('th.individu = :individu')
+            ->setParameter('individu', $individu)
+            ->andWhere('t.etatThese = :encours')
+            ->setParameter('encours', These::ETAT_EN_COURS)
+            ->orderBy('t.id')
+        ;
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param Individu $individu
+     * @return These[]
+     */
+    public function findTheseByActeur(Individu $individu)
+    {
+        $qb = $this->createQueryBuilder('t')
+            ->leftJoinActeur()
+            ->andWhere('a.individu = :individu')
+            ->setParameter('individu', $individu)
+            ->andWhere('t.etatThese = :encours')
+            ->setParameter('encours', These::ETAT_EN_COURS)
+            ->orderBy('t.id')
+        ;
+
+        return $qb->getQuery()->getResult();
+    }
 
 }
