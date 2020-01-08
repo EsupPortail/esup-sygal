@@ -16,7 +16,7 @@ use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 
-$canModifier = $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER));
+$canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER);
 $hasVisio = false;
 foreach ($proposition->getMembres() as $membre) {
     if ($membre->isVisio()) $hasVisio = true;
