@@ -4,7 +4,6 @@ namespace Soutenance\Form\Confidentialite;
 
 use DateInterval;
 use DateTime;
-use Soutenance\Validator\DateGreaterThan;
 use Soutenance\Validator\DateLesserThan;
 use UnicaenApp\Form\Element\Date;
 use Zend\Form\Element\Checkbox;

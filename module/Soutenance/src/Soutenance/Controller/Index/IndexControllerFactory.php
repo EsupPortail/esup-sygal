@@ -7,7 +7,6 @@ use Application\Service\These\TheseService;
 use Application\Service\UserContextService;
 use Soutenance\Service\Avis\AvisService;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteService;
-use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Proposition\PropositionService;
 use Zend\Mvc\Controller\ControllerManager;
 

@@ -16,7 +16,6 @@ class DateLieuForm extends Form {
 
     public function init()
     {
-        $today = new DateTime();
         $twomonth = new DateTime("+2 months");
 
         $this->add([

@@ -3,7 +3,6 @@
 namespace Soutenance\Controller\Proposition;
 
 use Application\Service\Acteur\ActeurService;
-use Application\Service\Fichier\FichierService;
 use Application\Service\FichierThese\FichierTheseService;
 use Application\Service\These\TheseService;
 use Application\Service\UserContextService;

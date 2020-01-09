@@ -6,13 +6,11 @@ use Soutenance\Assertion\EngagementImpartialiteAssertion;
 use Soutenance\Assertion\EngagementImpartialiteAssertionFactory;
 use Soutenance\Controller\EngagementImpartialite\EngagementImpartialiteController;
 use Soutenance\Controller\EngagementImpartialite\EngagementImpartialiteControllerFactory;
-use Soutenance\Controller\SoutenanceController;
 use Soutenance\Provider\Privilege\EngagementImpartialitePrivileges;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteService;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
-use Zend\Mvc\Router\Http\Literal;
 use Zend\Mvc\Router\Http\Segment;
 
 return array(

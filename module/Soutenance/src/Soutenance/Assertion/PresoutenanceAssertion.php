@@ -36,9 +36,6 @@ class PresoutenanceAssertion implements  AssertionInterface {
 
         switch ($privilege) {
             case PresoutenancePrivileges::PRESOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU:
-                $role = $this->userContextService->getSelectedIdentityRole();
-                return ($role->getCode() === Role::CODE_BDD && $role->getStructure() === $these->getEtablissement()->getStructure());
-                break;
             case PresoutenancePrivileges::PRESOUTENANCE_DATE_RETOUR_MODIFICATION:
                 $role = $this->userContextService->getSelectedIdentityRole();
                 return ($role->getCode() === Role::CODE_BDD && $role->getStructure() === $these->getEtablissement()->getStructure());

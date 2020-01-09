@@ -278,5 +278,3 @@ class Membre {
         return $this;
     }
 }
-
-?>

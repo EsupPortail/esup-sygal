@@ -5,8 +5,6 @@ namespace Soutenance\Filter;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\Individu;
 use Application\Filter\NomFichierFormatter;
-use UnicaenApp\Util;
-use Zend\Filter\Exception;
 
 /**
  * Filtre générateur du nom de l'avis téléversé.

@@ -6,6 +6,8 @@ use Application\Entity\Db\These;
 use DateInterval;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
+use Exception;
+use UnicaenApp\Exception\RuntimeException;
 
 class Proposition {
 
@@ -398,8 +400,12 @@ class Proposition {
         $soutenance = $this->getDate();
         if ($soutenance === null) return false;
 
-        $deux = new DateInterval('P2M');
-        $date = new DateTime();
+        try {
+            $deux = new DateInterval('P2M');
+            $date = new DateTime();
+        } catch(Exception $e) {
+            throw new RuntimeException("Problème de récupération de la date", 0, $e);
+        }
         $date_ = $date->add($deux);
 
         return ($date_ < $soutenance);

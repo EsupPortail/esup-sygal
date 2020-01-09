@@ -2,7 +2,6 @@
 
 namespace Soutenance;
 
-use Application\Provider\Privilege\ThesePrivileges;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
@@ -62,12 +61,6 @@ return array(
         'default' => [
             'home' => [
                 'pages' => [
-                    'depot' => [
-                        'order'    => -98,
-                        'label'    => 'Dépôt',
-                        'route'    => 'home',
-                        'resource' => ThesePrivileges::getResourceId(ThesePrivileges::THESE_CONSULTATION_DEPOT),
-                    ],
                     'soutenance' => [
                         'order'    => -99,
                         'label'    => 'Soutenance',
@@ -129,13 +122,6 @@ return array(
             ],
         ],
     ],
-
-//    'navigation_helpers' => [
-//        'factories' => [
-//            'menuPiedDePage'      => MenuPiedDePageFactory::class,
-//            'menuSecondaire'      => MenuSecondaireFactory::class,
-//        ],
-//    ],
 
     'service_manager' => [
         'factories' => [

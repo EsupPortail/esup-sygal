@@ -10,7 +10,7 @@ use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Soutenance\Entity\Membre;
 use Soutenance\Service\Avis\AvisServiceAwareTrait;
-use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;;
+use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Zend\View\Model\ViewModel;
 

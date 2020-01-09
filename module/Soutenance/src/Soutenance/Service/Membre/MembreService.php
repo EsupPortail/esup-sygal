@@ -3,7 +3,6 @@
 namespace Soutenance\Service\Membre;
 
 use Application\Entity\Db\Acteur;
-use Application\Entity\Db\These;
 use DateInterval;
 use DateTime;
 use Doctrine\ORM\NonUniqueResultException;

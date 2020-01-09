@@ -103,14 +103,17 @@ $this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctora
         <?php if ($canSign): ?>
         <p>
             <span style="text-align: center">
-            <a href="<?php echo $urlSigner;  ?>" class="btn btn-success" style="width:80%;">
+            <a      <?php /** @see \Soutenance\Controller\EngagementImpartialite\EngagementImpartialiteController::signerEngagementImpartialiteAction()  */ ?>
+                    href="<?php echo $urlSigner;  ?>"
+                    class="btn btn-success" style="width:80%;">
                 <span class="glyphicon glyphicon-thumbs-up"></span>
                 Je signe l'engagement d'impartialité</a>
 
                 <br/>
                 <br/>
 
-            <a href="<?php echo $urlRefuser;  ?>" class="btn btn-danger" style="width:80%;">
+            <a      <?php /** @see \Soutenance\Controller\EngagementImpartialite\EngagementImpartialiteController::refuserEngagementImpartialiteAction()  */ ?>
+                    href="<?php echo $urlRefuser;  ?>" class="btn btn-danger" style="width:80%;">
                 <span class="glyphicon glyphicon-thumbs-down"></span>
                 Je ne peux pas signer l'engagement d'impartialité</a>
             </span>

@@ -449,6 +449,7 @@ class PresoutenanceController extends AbstractController
         exit();
     }
 
+    //TODO recuperer les partie commune pour nettoyer dessous
     /**
      * Fonction calculant le nom du rapporteur : NOMUSUEL_MEMBREID
      * @param Membre $membre

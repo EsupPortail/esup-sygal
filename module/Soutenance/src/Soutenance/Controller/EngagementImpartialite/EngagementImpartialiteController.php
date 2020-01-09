@@ -2,19 +2,17 @@
 
 namespace Soutenance\Controller\EngagementImpartialite;
 
-use Application\Entity\Db\These;
+use Application\Controller\AbstractController;
 use Application\Entity\Db\Validation;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Soutenance\Entity\Membre;
-use Soutenance\Entity\Proposition;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
-use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
 /**
@@ -25,7 +23,7 @@ use Zend\View\Model\ViewModel;
  * @method boolean isAllowed($resource, $privilege = null)
  */
 
-class EngagementImpartialiteController extends AbstractActionController
+class EngagementImpartialiteController extends AbstractController
 {
     use ActeurServiceAwareTrait;
     use EngagementImpartialiteServiceAwareTrait;
@@ -38,16 +36,9 @@ class EngagementImpartialiteController extends AbstractActionController
 
     public function engagementImpartialiteAction()
     {
-        /** @var These $these */
-        $idThese = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($idThese);
-
-        /** @var Proposition $proposition */
+        $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
-
-        /** @var Membre $membre */
-        $idMembre = $this->params()->fromRoute('membre');
-        $membre = $this->getMembreService()->find($idMembre);
+        $membre = $this->getMembreService()->getRequestedMembre($this);
 
         /** @var Validation $validation */
         $validation = $this->getEngagementImpartialiteService()->getEngagementImpartialiteByMembre($membre);
@@ -67,11 +58,7 @@ class EngagementImpartialiteController extends AbstractActionController
 
     public function notifierRapporteursEngagementImpartialiteAction()
     {
-        /** @var These $these */
-        $idThese = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($idThese);
-
-        /** @var Proposition $proposition */
+        $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
 
         /** @var Membre $membre */
@@ -87,16 +74,9 @@ class EngagementImpartialiteController extends AbstractActionController
 
     public function notifierEngagementImpartialiteAction()
     {
-        /** @var These $these */
-        $idThese = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($idThese);
-
-        /** @var Proposition $proposition */
+        $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
-
-        /** @var Membre $membre */
-        $idMembre = $this->params()->fromRoute('membre');
-        $membre = $this->getMembreService()->find($idMembre);
+        $membre = $this->getMembreService()->getRequestedMembre($this);
 
         if ($membre->getActeur()) {
             $this->getNotifierSoutenanceService()->triggerDemandeSignatureEngagementImpartialite($these, $proposition, $membre);
@@ -107,17 +87,9 @@ class EngagementImpartialiteController extends AbstractActionController
 
     public function signerEngagementImpartialiteAction()
     {
-
-        /** @var These $these */
-        $idThese = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($idThese);
-
-        /** @var Membre $membre */
-        $idMembre = $this->params()->fromRoute('membre');
-        $membre = $this->getMembreService()->find($idMembre);
-
-        /** @var Proposition $proposition */
+        $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
+        $membre = $this->getMembreService()->getRequestedMembre($this);
 
         $this->getEngagementImpartialiteService()->createEngagementImpartialite($membre);
         $this->getNotifierSoutenanceService()->triggerSignatureEngagementImpartialite($these, $proposition, $membre);
@@ -128,16 +100,9 @@ class EngagementImpartialiteController extends AbstractActionController
 
     public function refuserEngagementImpartialiteAction()
     {
-        /** @var These $these */
-        $idThese = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($idThese);
-
-        /** @var Membre $membre */
-        $idMembre = $this->params()->fromRoute('membre');
-        $membre = $this->getMembreService()->find($idMembre);
-
-        /** @var Proposition $proposition */
+        $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
+        $membre = $this->getMembreService()->getRequestedMembre($this);
 
         $this->getEngagementImpartialiteService()->createRefusEngagementImpartialite($membre);
         $this->getPropositionService()->annulerValidations($proposition);
@@ -149,16 +114,9 @@ class EngagementImpartialiteController extends AbstractActionController
 
     public function annulerEngagementImpartialiteAction()
     {
-        /** @var These $these */
-        $idThese = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($idThese);
-
-        /** @var Membre $membre */
-        $idMembre = $this->params()->fromRoute('membre');
-        $membre = $this->getMembreService()->find($idMembre);
-
-        /** @var Proposition $proposition */
+        $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
+        $membre = $this->getMembreService()->getRequestedMembre($this);
 
         /** @var Validation[] $validations */
         $this->getEngagementImpartialiteService()->deleteEngagementImpartialite($membre);
