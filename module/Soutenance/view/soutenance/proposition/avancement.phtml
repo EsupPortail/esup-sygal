@@ -110,14 +110,14 @@ $this->headTitle('Avancement de la soutenance');
 
             <?php
                 $validation = [];
-                if ($rapporteur->getActeur() && isset($validations['Impartialite'])) $validation = array_filter($validations['Impartialite'], function (Validation $v) use ($rapporteur) { return $v->getIndividu() === $rapporteur->getIndividu(); });
+                if ($rapporteur->getActeur() && isset($validations['Impartialite'])) $validation = array_filter($validations['Impartialite'], function (Validation $v) use ($rapporteur) { return $v->getIndividu() === $rapporteur->getActeur()->getIndividu(); });
                 echo getBadge(!empty($validation));
             ?>
             Engagment d'impartialité <br/>
 
             <?php
             $validation = [];
-            if ($rapporteur->getActeur() && isset($validations['Avis'])) $validation = array_filter($validations['Avis'], function (Validation $v) use ($rapporteur) { return $v->getIndividu() === $rapporteur->getIndividu(); });
+            if ($rapporteur->getActeur() && isset($validations['Avis'])) $validation = array_filter($validations['Avis'], function (Validation $v) use ($rapporteur) { return $v->getIndividu() === $rapporteur->getActeur()->getIndividu(); });
             echo getBadge(!empty($validation));
             ?>
             Avis de soutenance <br/>
@@ -139,6 +139,7 @@ function validite($value) {
     if ($value === false) {
         return '<span class="badge danger">Invalide</span>';
     }
+    return "";
 }
 
 function getBadge($validation) {

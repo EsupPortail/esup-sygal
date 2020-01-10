@@ -64,8 +64,10 @@ $these = $proposition->getThese();
                 <?php if ($canPresidence): ?>
                     <p>
                         <a  <?php /** @see \Soutenance\Controller\Proposition\PropositionController::signaturePresidenceAction(); */ ?>
-                            href="<?php echo $this->url('soutenance/proposition/signature-presidence', ['these' => $these->getId()], [], true); ?>"
-                            class="btn btn-primary action">
+                            href="<?php echo $this->url('soutenance/proposition/signature-presidence', ['these' => $these->getId()], true); ?>"
+                            class="btn btn-primary action"
+                            target="_blank"
+                        >
                             <span class="glyphicon glyphicon-list-alt"></span>Générer document pour signature
                         </a>
                     </p>
