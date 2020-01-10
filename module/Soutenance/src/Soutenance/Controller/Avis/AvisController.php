@@ -72,10 +72,10 @@ class AvisController extends AbstractController {
                 //todo faire une fonction dans AvisService ...
                 $nature = $this->fichierTheseService->fetchNatureFichier(NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE);
                 $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
-                $fichiers = $this->fichierService->createFichiersFromUpload($files, $nature, $version, new NomAvisFormatter($membre->getActeur()->getIndividu()));
+                $fichiers = $this->fichierService->createFichiersFromUpload($files, $nature, $version, new NomAvisFormatter($membre->getIndividu()));
                 $fichier = current($fichiers);
 
-                $validation = $this->getValidationService()->signerAvisSoutenance($these, $membre->getActeur()->getIndividu());
+                $validation = $this->getValidationService()->signerAvisSoutenance($these, $membre->getIndividu());
 
                 $avis = new Avis();
                 $avis->setProposition($proposition);

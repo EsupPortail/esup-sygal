@@ -53,7 +53,7 @@ $canRevoquerEngagementImpartialite     = $this->isAllowed($these, EngagementImpa
 
                 <?php
                     $acteur       = $rapporteur->getActeur();
-                    $engagement     = ($acteur)?$engagements[$rapporteur->getActeur()->getIndividu()->getId()]:null;
+                    $engagement     = ($acteur)?$engagements[$rapporteur->getIndividu()->getId()]:null;
                 ?>
 
                 <tr>

@@ -107,7 +107,7 @@ $tousLesAvis = count($rapporteurs) === count($avis) ;
                     </td>
                     <td>
                         <?php if ($acteur !== null) : ?>
-                            <?php if ($canNotifierAvisSoutenance && isset($engagements[$rapporteur->getActeur()->getIndividu()->getId()]) && !isset($avis[$acteur->getIndividu()->getId()])) : ?>
+                            <?php if ($canNotifierAvisSoutenance && isset($engagements[$rapporteur->getIndividu()->getId()]) && !isset($avis[$acteur->getIndividu()->getId()])) : ?>
                                 <a  <?php /** @see \Soutenance\Controller\Presoutenance\PresoutenanceController::notifierDemandeAvisSoutenanceAction() */ ?>
                                     href="<?php echo $this->url('soutenance/presoutenance/notifier-demande-avis-soutenance', ['these' => $these->getId(), 'membre' => $rapporteur->getId()], [], true); ?>">
                                     <span class="glyphicon glyphicon-send"      title="Notifier le rapporteur"></span>
