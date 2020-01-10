@@ -2,6 +2,7 @@
 
 namespace Soutenance;
 
+use Application\Provider\Privilege\UtilisateurPrivileges;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
@@ -113,8 +114,7 @@ return array(
                                 'label' => 'Notifier attente de rapport',
                                 'route' => 'soutenance/notifier-retard-rapport-presoutenance',
                                 'order'    => 500,
-                                'resource' => PrivilegeController::getResourceId(PresoutenanceController::class, 'notifier-retard-rapport-presoutenance'),
-//                                'roles' => "Adminsitrateur technique",
+                                'resource' => UtilisateurPrivileges::getResourceId(UtilisateurPrivileges::UTILISATEUR_MODIFICATION),
                             ],
                         ],
                     ],

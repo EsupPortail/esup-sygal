@@ -1,25 +1,20 @@
 <?php
  /**
-  * @var array $indicateurs
   * @var Proposition $proposition
-  * @var These $these
-  *
+  * @var array $indicateurs
+  * @var bool $canModifier
+  * @var string $FORMULAIRE_DELEGUATION
   */
 
-use Application\Entity\Db\These;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
-use Soutenance\Provider\Privilege\PropositionPrivileges;
 
-$FORMULAIRE_DELEGUATION = 'https://sygal-test.normandie-univ.fr/informations/fichiers/telecharger/804';
-
-$canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER);
+$these = $proposition->getThese();
 ?>
 
 <div class="box panel <?php echo ($indicateurs["valide"])?'panel-success':'panel-danger'; ?>">
     <div class="panel-heading">
         <h2>
-            <!-- Indicateurs liés à la validité du jury de thèse -->
             Composition du jury
         </h2>
     </div>
@@ -28,18 +23,15 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
         <div class="col-md-4">
             <h5>
                 Parité de genre
-                <!--                --><?php //if ($indicateurs["parité"]["valide"]):?>
-                <!--                    <span class="badge badge-success"> Valide </span>-->
-                <!--                --><?php //else: ?>
-                <!--                    <span class="badge badge-error"> Non valide </span>-->
-                <!--                --><?php //endif; ?>
             </h5>
-
             <div class="progress">
-                <div class="progress-bar femme-bar" style="width:<?php echo $indicateurs["parité"]["Femme"]*100; ?>%;"> Femme </div>
-                <div class="progress-bar homme-bar"  style="width:<?php echo $indicateurs["parité"]["Homme"]*100; ?>%;"> Homme</div>
+                <div class="progress-bar femme-bar" style="width:<?php echo $indicateurs["parité"]["Femme"]*100; ?>%;">
+                    Femme
+                </div>
+                <div class="progress-bar homme-bar"  style="width:<?php echo $indicateurs["parité"]["Homme"]*100; ?>%;">
+                    Homme
+                </div>
             </div>
-
         </div>
 
         <div class="col-md-4">
@@ -68,23 +60,22 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
                     <span class="badge badge-error"> Non valide </span>
                 <?php endif; ?>
             </h5>
-
             <div class="progress">
                 <div class="progress-bar progress-bar-info" style="width:<?php echo $indicateurs["rapporteur"]["Ratio"]*100; ?>%; <?php if ($indicateurs["rapporteur"]["valide"] !== true) echo "background-color:darkred;"; ?>">
                     <?php echo $indicateurs["rapporteur"]["Nombre"]; ?>
                 </div>
             </div>
         </div>
+
         <div class="col-md-4">
             <h5>
-                Nombre <!--de membres--> de rang A
+                Nombre de rang A
                 <?php if ($indicateurs["rang A"]["valide"]):?>
                     <span class="badge badge-success"> Valide </span>
                 <?php else: ?>
                     <span class="badge badge-error"> Non valide </span>
                 <?php endif; ?>
             </h5>
-
             <div class="progress">
                 <div class="progress">
                     <div class="progress-bar progress-bar-info" style="width:<?php echo $indicateurs["rang A"]["Ratio"]*100; ?>%; <?php if ($indicateurs["rang A"]["valide"] !== true) echo "background-color:darkred;"; ?>">
@@ -93,9 +84,10 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
                 </div>
             </div>
         </div>
+
         <div class="col-md-4">
             <h5>
-                Nombre <!--de membres--> d'extérieurs
+                Nombre d'extérieurs
                 <?php if ($indicateurs["exterieur"]["valide"]):?>
                     <span class="badge badge-success"> Valide </span>
                 <?php else: ?>

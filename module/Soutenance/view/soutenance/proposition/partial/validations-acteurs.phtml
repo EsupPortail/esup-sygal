@@ -1,22 +1,29 @@
 <?php
 /**
- * @var \Soutenance\Entity\Proposition $proposition
- * @var \Application\Entity\Db\These $these
- * @var Validation[] $validations
- * @var \Application\Entity\Db\Doctorant $doctorant
- * @var \Application\Entity\Db\Acteur[] $directeurs
- * @var \Application\Entity\Db\Individu $currentIndividu
+ * @var Proposition $proposition
+ * @var Validation[][] $validations
+ *
  * @var boolean $isOk
- * @var boolean $justificatifsOk
+ * @var boolean $canValiderActeur
+ * @var boolean $canSursis
+ *
+ *
+
+ * @var Doctorant $doctorant
+ * @var Acteur[] $directeurs
+ * @var Individu $currentIndividu
  * @var boolean $validationActeur
+ *
  */
 
+use Application\Entity\Db\Acteur;
+use Application\Entity\Db\Doctorant;
+use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Validation;
-use Soutenance\Provider\Privilege\PropositionPrivileges;
+use Soutenance\Entity\Proposition;
 
-$canValider = $isOk && $justificatifsOk && $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_ACTEUR);
-$canSursis = $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_SURSIS));
+$these = $proposition->getThese();
 
 ?>
 
@@ -68,7 +75,7 @@ $canSursis = $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPr
 
             <div class="col-md-6 pull-right" >
                 <?php if (! $validationActeur) : ?>
-                    <?php if ($canValider) : ?>
+                    <?php if ($canValiderActeur) : ?>
                         <?php if ($proposition->isDelaiOk() OR $proposition->hasSursis()) : ?>
                             <a
                                 <?php /** @see \Soutenance\Controller\Proposition\PropositionController::validerActeurAction(); */ ?>

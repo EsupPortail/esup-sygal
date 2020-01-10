@@ -1,14 +1,13 @@
 <?php
+
 /**
- * @var \Soutenance\Entity\Proposition $proposition
- * @var \Application\Entity\Db\These $these
+ * @var Proposition $proposition
+ * @var string $FORMULAIRE_DELOCALISATION
  */
 
-use Soutenance\Provider\Privilege\PropositionPrivileges;
+use Soutenance\Entity\Proposition;
 
-$canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER);
-
-$FORMULAIRE_DELOCALISATION = 'https://sygal-test.normandie-univ.fr/informations/fichiers/telecharger/801';
+$these = $proposition->getThese();
 
 ?>
 
@@ -26,12 +25,28 @@ $FORMULAIRE_DELOCALISATION = 'https://sygal-test.normandie-univ.fr/informations/
             <div class="col-md-8">
                 <dl>
                     <dt> Date de la soutenance </dt>
-                    <dd> <?php echo ($proposition->getDate())?$proposition->getDate()->format("d/m/Y"):'<strong>non communiquée</strong>'; ?> </dd>
+                    <dd>
+                        <?php if ($proposition->getDate() !== null) : ?>
+                            <?php echo $proposition->getDate()->format("d/m/Y"); ?>
+                        <?php else : ?>
+                            <strong>Date de la soutenance non communiquée </strong>
+                        <?php endif; ?>
+                    </dd>
                     <dt> Heure de la soutenance </dt>
-                    <dd> <?php echo ($proposition->getDate())?$proposition->getDate()->format("H:i"):'<strong>non communiquée</strong>'; ?> </dd>
+                    <dd>
+                        <?php if ($proposition->getDate() !== null) : ?>
+                            <?php echo $proposition->getDate()->format("H:i"); ?>
+                        <?php else : ?>
+                            <strong>Heure de la soutenance non communiquée </strong>
+                        <?php endif; ?>
+                    </dd>
                     <dt> Lieu de la Soutenance </dt>
                     <dd>
-                        <?php echo ($proposition->getLieu())?$proposition->getLieu():'<strong>non communiqué</strong>'; ?>
+                        <?php if ($proposition->getLieu() !== null) : ?>
+                            <?php echo $proposition->getLieu(); ?>
+                        <?php else : ?>
+                            <strong>Lieu de la soutenance non communiqué </strong>
+                        <?php endif; ?>
                         <?php echo ($proposition->isExterieur())?" (extérieur)":""; ?>
                     </dd>
                 </dl>
@@ -40,31 +55,27 @@ $FORMULAIRE_DELOCALISATION = 'https://sygal-test.normandie-univ.fr/informations/
             <div class="col-md-4">
                 <div class="pull-right">
                     <?php if ($canModifier) : ?>
-                    <a  <?php /**  @see \Soutenance\Controller\Proposition\PropositionController::modifierDateLieuAction() */ ?>
-                        href="<?php echo $this->url('soutenance/proposition/modifier-date-lieu', ['these' => $these->getId()], [], true); ?>"
-                        class="btn btn-primary action ajax-modal"
-                        data-event="edition-datelieu"
-                    >
-                        <span class="glyphicon glyphicon-pencil"></span> Éditer lieu et date de la soutenance
-                    </a>
+                        <a  <?php /**  @see \Soutenance\Controller\Proposition\PropositionController::modifierDateLieuAction() */ ?>
+                            href="<?php echo $this->url('soutenance/proposition/modifier-date-lieu', ['these' => $these->getId()], [], true); ?>"
+                            class="btn btn-primary action ajax-modal"
+                            data-event="edition-datelieu"
+                        >
+                            <span class="glyphicon glyphicon-pencil"></span>
+                            Éditer lieu et date de la soutenance
+                        </a>
+                    <?php endif; ?>
 
-
-                <?php endif; ?>
-
+                    <?php if ($proposition->isExterieur()) : ?>
+                        <div class="alert alert-sm alert-warning">
+                            <span class="glyphicon glyphicon-warning-sign"> </span>
+                            Si la soutenance ne se déroule pas dans les locaux de l'établissement d'inscription alors il est nécessaire de signer une demande de délocalisation :
+                            <a href="<?php echo $FORMULAIRE_DELOCALISATION; ?>">
+                                formulaire de demande de délocalisation</a>.
+                        </div>
+                    <?php endif; ?>
                 </div>
 
-                <br/>
-                <br/>
-                <br/>
 
-                <?php if ($proposition->isExterieur()) : ?>
-                    <div class="alert alert-sm alert-warning">
-                        <span class="glyphicon glyphicon-warning-sign"> </span>
-                        Si la soutenance ne se déroule pas dans les locaux de l'établissement d'inscription il est nécessaire de signer une demande de délocalisation :
-                        <a href="<?php echo $FORMULAIRE_DELOCALISATION; ?>">
-                            formulaire de demande de délocalisation</a>.
-                    </div>
-                <?php endif; ?>
             </div>
 
         </div>

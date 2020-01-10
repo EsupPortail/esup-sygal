@@ -50,7 +50,7 @@ class ConfidentialiteForm extends Form {
         $this->setInputFilter((new Factory())->createInputFilter([
             'date' => [
                 'name' => 'date',
-                'required' => true,
+                'required' => false,
                 'validators' => [
                     [
                         'name' => DateLesserThan::class,

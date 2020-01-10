@@ -1,21 +1,37 @@
 <?php
 
+use Application\Controller\Plugin\UrlFichierThese;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\These;
+use Application\Entity\Db\Validation;
 use Soutenance\Entity\Proposition;
+use Soutenance\Provider\Privilege\PropositionPrivileges;
 
 /**
+ * @see \Soutenance\Controller\Proposition\PropositionController::propositionAction()
+ *
  * @var These $these
  * @var Proposition $proposition
+ * @var Validation[] $validations
  * @var Doctorant $doctorant
  * @var Acteur[] $directeurs
  * @var array $indicateurs
  * @var boolean $isOk
  * @var boolean $juryOk
-
- * @see \Soutenance\Controller\Proposition\PropositionController::propositionAction()
+ * @var UrlFichierThese $urlFichierThese,
+ * @var array $justificatifs,
+ * @var boolean $justificatifsOk,
+ * @var boolean $validationActeur
  */
+
+$FORMULAIRE_DELOCALISATION              = 'https://sygal.normandie-univ.fr/informations/fichiers/telecharger/8716';
+$FORMULAIRE_DELEGUATION                 = 'https://sygal.normandie-univ.fr/informations/fichiers/telecharger/8714';
+$FORMULAIRE_DEMANDE_LABEL               = 'https://sygal-test.normandie-univ.fr/informations/fichiers/telecharger/802';
+$FORMULAIRE_DEMANDE_ANGLAIS             = 'https://sygal-test.normandie-univ.fr/informations/fichiers/telecharger/1541';
+$FORMULAIRE_DEMANDE_CONFIDENTIALITE     = 'https://sygal.normandie-univ.fr/informations/fichiers/telecharger/8715';
+
+$canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER);
 
 $this->headTitle("Proposition de soutenance");
 ?>
@@ -25,85 +41,112 @@ $this->headTitle("Proposition de soutenance");
     <small><?php echo $this->partial('application/these/partial/titre') ?></small>
 </h1>
 
-<p class=".lead">
+<p class="lead">
     Afin d'être validée et traitée par l'école doctorale, la proposition de soutenance doit être validée par tous les
-    intervenants immédiats de la thèse (c.-à-d. doctorant, directeur et co-directeur(s)).
+    intervenants immédiats de la thèse (c'est-à-dire doctorant, directeur et co-directeur).
 </p>
-<p class=".lead">
-    <span class="glyphicon glyphicon-warning-sign"></span> En cas de modifications de la proposition, toutes validations
-    (ou refus) seront annulées et la proposition devra être à nouveau être validée.
-</p>
+<div class="alert alert-warning">
+    <span class="glyphicon glyphicon-warning-sign"></span>
+    En cas de modifications de la proposition, toutes validations seront annulées et la proposition devra être à nouveau être validée.
+</div>
 
 <br/><br/>
-<!--<h2> Date et composition du jury </h2>-->
 
-<?php echo $this->partial('partial/date-et-lieu'); ?>
+<div id="DATE_ET_LIEU"></div>
+<?php
+    echo $this->partial('partial/date-et-lieu', [
+        'proposition' => $proposition,
+        'canModifier' => $canModifier,
+        'FORMULAIRE_DELOCALISATION' => $FORMULAIRE_DELOCALISATION]);
+?>
 
-<?php echo $this->partial('partial/composition-jury'); ?>
+<div id="COMPOSITION_JURY"></div>
+<?php
+    echo $this->partial('partial/composition-jury', [
+        'proposition' => $proposition,
+        'indicateurs' => $indicateurs,
+        'canModifier' => $canModifier,
+        'FORMULAIRE_DELEGUATION' => $FORMULAIRE_DELEGUATION]);
+?>
 
-<!--<h2> Informations complémentaires </h2>-->
 
-<?php echo $this->partial('partial/informations-complementaires'); ?>
+<div id="INFORMATION"></div>
+<?php
+    echo $this->partial('partial/informations-complementaires', [
+        'proposition' => $proposition,
+        'canModifier' => $canModifier,
+        'FORMULAIRE_DEMANDE_LABEL' => $FORMULAIRE_DEMANDE_LABEL,
+        'FORMULAIRE_DEMANDE_ANGLAIS' => $FORMULAIRE_DEMANDE_ANGLAIS,
+        'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $FORMULAIRE_DEMANDE_CONFIDENTIALITE]);
+?>
 
-<!--<h2> Fichiers associés à la proposition </h2>-->
-
-<?php echo $this->partial('partial/fichiers'); ?>
+<div id="JUSTIFICATIF"></div>
+<?php echo $this->partial('partial/fichiers', [
+        'proposition' => $proposition,
+        'canModifier' => $canModifier,
+        'justificatifs' => $justificatifs,
+        'justificatifsOk' => $justificatifsOk,
+        'urlFichierThese' => $urlFichierThese,
+]); ?>
 
 <br/><br/>
-<!--<h2> Validations </h2>-->
 
-<?php echo $this->partial('partial/validations-acteurs'); ?>
+<div id="VALIDATION"></div>
+<?php
+    $canValiderActeur = $isOk && $justificatifsOk && $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_ACTEUR);
+    $canSursis = $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_SURSIS));
 
-<?php echo $this->partial('partial/validations-structures'); ?>
+    echo $this->partial('partial/validations-acteurs', [
+        'proposition' => $proposition,
+        'validations' => $validations,
+        'canValiderActeur' => $canValiderActeur,
+        'canSursis' => $canSursis,
+
+        'isOk' => $isOk,
+        'doctorant' => $doctorant,
+        'directeurs' => $directeurs,
+        'validationActeur' => $validationActeur,
+
+    ]); ?>
+
+<?php
+    $canStructureValider = $isOk && $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_UR) ||
+        $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_ED) ||
+        $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_BDD);
+    $canPresidence = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_PRESIDENCE);
+
+    echo $this->partial('partial/validations-structures', [
+        'proposition' => $proposition,
+        'validations' => $validations,
+        'canStructureValider' => $canStructureValider,
+        'canPresidence' => $canPresidence,
+    ]); ?>
 
 <script>
+    let navbar = 50 + 5;
+
     $(function() {
-        $("body").on("edition-datelieu", function (event) {
-            event.div.modal('hide');
-            window.location.reload();
-        });
-    });
-    $(function() {
-        $("body").on("edition-membre", function (event) {
-            event.div.modal('hide');
-            window.location.reload();
-        });
-    });
-    $(function() {
-        $("body").on("edition-confidentialite", function (event) {
-            event.div.modal('hide');
-            window.location.reload();
-        });
-    });
-    $(function() {
-        $("body").on("refus-proposition", function (event) {
-            event.div.modal('hide');
-            window.location.reload();
+        $("body").on({
+            "edition-datelieu" : function (event) {
+                event.div.modal('hide');
+                window.location.reload();
+                let top = $('div#DATE_ET_LIEU').offset().top - navbar;
+                window.scrollTo(0,top);
+            },
+            "edition-membre" : function (event) {
+                event.div.modal('hide');
+                window.location.reload();
+                let top = $('div#COMPOSITION_JURY').offset().top - navbar;
+                window.scrollTo(0,top);
+            },
+            "edition-confidentialite" : function (event) {
+                event.div.modal('hide');
+                window.location.reload();
+            },
+            "refus-proposition" : function (event) {
+                event.div.modal('hide');
+                window.location.reload();
+            },
         });
     });
 </script>
-
-<style>
-    dl {
-        width: 100%;
-        /*background-color: #1d57b7;*/
-    }
-
-    dl dt {
-        width: 50%;
-        /*background-color: #337ab7;*/
-    }
-
-    .badge-success {
-        background-color: #468847;
-    }
-
-    .badge-error {
-        background-color: #881f18;
-    }
-
-    .action {
-        width: 20em;
-        margin:1ex;
-    }
-</style>

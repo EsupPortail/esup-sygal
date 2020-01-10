@@ -1,19 +1,16 @@
 <?php
 /**
- * @var \Soutenance\Entity\Proposition $proposition
- * @var \Application\Entity\Db\These $these
- * @var \Application\Entity\Db\Validation[] $validations
- * @var string $roleCode
- * @var boolean $isOk
+ * @var Proposition $proposition
+ * @var Validation[][] $validations
+ * @var boolean $canStructureValider
+ * @var boolean $canPresidence
  */
 
 use Application\Entity\Db\Role;
-use Soutenance\Provider\Privilege\PropositionPrivileges;
+use Application\Entity\Db\Validation;
+use Soutenance\Entity\Proposition;
 
-$canStructureValider = $isOk && $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_UR) ||
-    $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_ED) ||
-    $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_BDD);
-$canPresidence = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_PRESIDENCE);
+$these = $proposition->getThese();
 
 ?>
 

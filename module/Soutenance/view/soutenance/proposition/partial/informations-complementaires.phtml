@@ -1,17 +1,16 @@
 <?php
 /**
  * @var Proposition $proposition
- * @var These $these
+ * @var string $FORMULAIRE_DEMANDE_LABEL
+ * @var string $FORMULAIRE_DEMANDE_ANGLAIS
+ * @var string $FORMULAIRE_DEMANDE_CONFIDENTIALITE
+ * @var bool $canModifier
  */
 
-use Application\Entity\Db\These;
 use Soutenance\Entity\Proposition;
-use Soutenance\Provider\Privilege\PropositionPrivileges;
 
-$FORMULAIRE_DEMANDE_LABEL = 'https://sygal-test.normandie-univ.fr/informations/fichiers/telecharger/802';
-$FORMULAIRE_DEMANDE_ANGLAIS = 'https://sygal-test.normandie-univ.fr/informations/fichiers/telecharger/1541';
-$FORMULAIRE_DEMANDE_CONFIDENTIALITE = 'https://sygal-test.normandie-univ.fr/informations/fichiers/telecharger/803';
-$canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER);
+
+$these = $proposition->getThese();
 ?>
 
 <div class="box panel panel-info">
@@ -22,7 +21,6 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
     </div>
     <div class="panel-body">
 
-        <div class="row">
             <div class="col-md-8">
                 <dl>
 
@@ -49,22 +47,14 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
 
             <div class="col-md-4">
                 <?php if ($canModifier) : ?>
-
-                    <div class="pull-right">
-                        <a <?php /** @see \Soutenance\Controller\Proposition\PropositionController::labelEuropeenAction(); */ ?>
-                           href="<?php echo $this->url('soutenance/proposition/label-europeen', ['these' => $these->getId()], [], true); ?>"
-                           class="btn btn-primary action ajax-modal"
-                           data-event="edition-confidentialite"
-                        >
-                            <span class="glyphicon glyphicon-plus"></span>
-                            Renseigner un label européen
-                        </a>
-                    </div>
-
-                    <br/>
-                    <br/>
-                    <br/>
-
+                    <a <?php /** @see \Soutenance\Controller\Proposition\PropositionController::labelEuropeenAction(); */ ?>
+                       href="<?php echo $this->url('soutenance/proposition/label-europeen', ['these' => $these->getId()], [], true); ?>"
+                       class="btn btn-primary action ajax-modal"
+                       data-event="edition-confidentialite"
+                    >
+                        <span class="glyphicon glyphicon-plus"></span>
+                        Renseigner un label européen
+                    </a>
                 <?php endif; ?>
 
                 <?php if($proposition->isLabelEuropeen()): ?>
@@ -74,135 +64,105 @@ $canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIF
                         <a href="<?php echo $FORMULAIRE_DEMANDE_LABEL; ?>">formulaire de demande de label européen</a>.
                     </div>
                 <?php endif; ?>
-            </div>
         </div>
 
         <!-- THESE EN ANGLAIS ----------------------------------------------------------------------------------------->
-        <div class="row">
-            <div class="col-md-8">
-                <dl>
-                    <dt>Thèse en anglais </dt>
+        <div class="col-md-8">
+            <dl>
+                <dt>Thèse en anglais </dt>
 
-                    <?php if ($proposition->isManuscritAnglais() || $proposition->isSoutenanceAnglais()) : ?>
-                        <?php if ($proposition->isManuscritAnglais()) : ?>
-                            <dd>
-                                Manuscrit en anglais
-                            </dd>
-                        <?php endif; ?>
-                        <?php if ($proposition->isSoutenanceAnglais()) : ?>
-                            <dd>
-                                Soutenance en anglais
-                            </dd>
-                        <?php endif; ?>
-                    <?php else : ?>
-                        <dd> Non </dd>
-                    <?php endif;?>
-
-                </dl>
-            </div>
-
-            <div class="col-md-4">
-                <?php if ($canModifier) : ?>
-
-                    <div class="pull-right">
-                        <a <?php /** @see \Soutenance\Controller\Proposition\PropositionController::anglaisAction(); */ ?>
-                           href="<?php echo $this->url('soutenance/proposition/anglais', ['these' => $these->getId()], [], true); ?>"
-                           class="btn btn-primary action ajax-modal"
-                           data-event="edition-confidentialite"
-                        >
-                            <span class="glyphicon glyphicon-plus"></span>
-                            Renseigner thèse en anglais
-                        </a>
-                    </div>
-
-                    <br/>
-                    <br/>
-                    <br/>
-
-                <?php endif; ?>
-
-                <?php if($proposition->isManuscritAnglais() || $proposition->isSoutenanceAnglais()): ?>
-                    <div class="alert alert-sm alert-warning">
-                        <span class="glyphicon glyphicon-warning-sign"> </span>
-                        Afin de réaliser la demande de rédaction ou de soutenance en anglais vous devez motiver votre demande via la demande suivante :
-                        <a href="<?php echo $FORMULAIRE_DEMANDE_ANGLAIS; ?>>">demande de redaction ou de soutenance en anglais</a>.
-                    </div>
-                <?php endif; ?>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-8">
-                <dl>
-                    <dt> Confidentialité de la thèse</dt>
-                    <?php if($proposition->getConfidentialite()): ?>
-                        <dd> Date de fin de confidentialité : <?php echo $proposition->getConfidentialite()->format("d/m/Y"); ?> </dd>
-                        <?php if($proposition->isHuitClos()): ?>
-                            <dd> Soutenance en huis clos </dd>
-                        <?php endif; ?>
-                    <?php else : ?>
-                        <dd> Thèse non confidentielle </dd>
+                <?php if ($proposition->isManuscritAnglais() || $proposition->isSoutenanceAnglais()) : ?>
+                    <?php if ($proposition->isManuscritAnglais()) : ?>
+                        <dd>
+                            Manuscrit en anglais
+                        </dd>
                     <?php endif; ?>
-                </dl>
-            </div>
+                    <?php if ($proposition->isSoutenanceAnglais()) : ?>
+                        <dd>
+                            Soutenance en anglais
+                        </dd>
+                    <?php endif; ?>
+                <?php else : ?>
+                    <dd> Non </dd>
+                <?php endif;?>
 
-            <div class="col-md-4">
-                <?php if ($canModifier) : ?>
-                    <div class="pull-right">
-                        <a <?php /** @see \Soutenance\Controller\Proposition\PropositionController::confidentialiteAction(); */ ?>
-                           href="<?php echo $this->url('soutenance/proposition/confidentialite', ['these' => $these->getId()], [], true); ?>"
-                           class="btn btn-primary action ajax-modal"
-                           data-event="edition-confidentialite"
-                        >
-                            <span class="glyphicon glyphicon-plus"></span>
-                            Renseigner une confidentialité
-                        </a>
-                    </div>
-
-                    <br/>
-                    <br/>
-                    <br/>
-
-                <?php endif; ?>
-
-                <?php if($proposition->getConfidentialite()): ?>
-                    <div class="alert alert-sm alert-warning">
-                        <span class="glyphicon glyphicon-warning-sign"> </span>
-                        Afin de réaliser de demande de confidentialité un accord doit au préalable être rempli :
-                        <a href="<?php echo $FORMULAIRE_DEMANDE_CONFIDENTIALITE; ?>">demande d'accord de confidentialité</a>.
-                    </div>
-                <?php endif; ?>
-            </div>
+            </dl>
         </div>
 
-        <div class="row">
-            <div class="col-md-8">
-                <dl>
-                    <dt> Titre de la thèse </dt>
-                    <dd> <?php echo ($proposition->getNouveauTitre())?:$proposition->getThese()->getTitre(); ?> </dd>
-                </dl>
-            </div>
+        <div class="col-md-4">
+            <?php if ($canModifier) : ?>
+                <a <?php /** @see \Soutenance\Controller\Proposition\PropositionController::anglaisAction(); */ ?>
+                   href="<?php echo $this->url('soutenance/proposition/anglais', ['these' => $these->getId()], [], true); ?>"
+                   class="btn btn-primary action ajax-modal"
+                   data-event="edition-confidentialite"
+                >
+                    <span class="glyphicon glyphicon-plus"></span>
+                    Renseigner thèse en anglais
+                </a>
+            <?php endif; ?>
 
-            <div class="col-md-4">
-                <?php if ($canModifier) : ?>
-                    <div class="pull-right">
-                        <a <?php /** @see \Soutenance\Controller\Proposition\PropositionController::changementTitreAction(); */ ?>
-                           href="<?php echo $this->url('soutenance/proposition/changement-titre', ['these' => $these->getId()], [], true); ?>"
-                           class="btn btn-primary action ajax-modal"
-                           data-event="edition-confidentialite"
-                        >
-                            <span class="glyphicon glyphicon-plus"></span>
-                            Modifier le titre de la thèse
-                        </a>
-                    </div>
+            <?php if($proposition->isManuscritAnglais() || $proposition->isSoutenanceAnglais()): ?>
+                <div class="alert alert-sm alert-warning">
+                    <span class="glyphicon glyphicon-warning-sign"> </span>
+                    Afin de réaliser la demande de rédaction ou de soutenance en anglais vous devez motiver votre demande via la demande suivante :
+                    <a href="<?php echo $FORMULAIRE_DEMANDE_ANGLAIS; ?>>">demande de redaction ou de soutenance en anglais</a>.
+                </div>
+            <?php endif; ?>
+        </div>
 
-                    <br/>
-                    <br/>
-                    <br/>
-
+        <div class="col-md-8">
+            <dl>
+                <dt> Confidentialité de la thèse</dt>
+                <?php if($proposition->getConfidentialite()): ?>
+                    <dd> Date de fin de confidentialité : <?php echo $proposition->getConfidentialite()->format("d/m/Y"); ?> </dd>
+                    <?php if($proposition->isHuitClos()): ?>
+                        <dd> Soutenance en huis clos </dd>
+                    <?php endif; ?>
+                <?php else : ?>
+                    <dd> Thèse non confidentielle </dd>
                 <?php endif; ?>
+            </dl>
+        </div>
 
-            </div>
+        <div class="col-md-4">
+            <?php if ($canModifier) : ?>
+                <a <?php /** @see \Soutenance\Controller\Proposition\PropositionController::confidentialiteAction(); */ ?>
+                   href="<?php echo $this->url('soutenance/proposition/confidentialite', ['these' => $these->getId()], [], true); ?>"
+                   class="btn btn-primary action ajax-modal"
+                   data-event="edition-confidentialite"
+                >
+                    <span class="glyphicon glyphicon-plus"></span>
+                    Renseigner une confidentialité
+                </a>
+            <?php endif; ?>
+
+            <?php if($proposition->getConfidentialite()): ?>
+                <div class="alert alert-sm alert-warning">
+                    <span class="glyphicon glyphicon-warning-sign"> </span>
+                    Afin de réaliser de demande de confidentialité un accord doit au préalable être rempli :
+                    <a href="<?php echo $FORMULAIRE_DEMANDE_CONFIDENTIALITE; ?>">demande d'accord de confidentialité</a>.
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <div class="col-md-8">
+            <dl>
+                <dt> Titre de la thèse </dt>
+                <dd> <?php echo ($proposition->getNouveauTitre())?:$proposition->getThese()->getTitre(); ?> </dd>
+            </dl>
+        </div>
+
+        <div class="col-md-4">
+            <?php if ($canModifier) : ?>
+                <a <?php /** @see \Soutenance\Controller\Proposition\PropositionController::changementTitreAction(); */ ?>
+                   href="<?php echo $this->url('soutenance/proposition/changement-titre', ['these' => $these->getId()], [], true); ?>"
+                   class="btn btn-primary action ajax-modal"
+                   data-event="edition-confidentialite"
+                >
+                    <span class="glyphicon glyphicon-plus"></span>
+                    Modifier le titre de la thèse
+                </a>
+            <?php endif; ?>
         </div>
     </div>
 </div>
