@@ -9,7 +9,6 @@ use Application\Service\These\TheseService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Soutenance\Form\AdresseSoutenance\AdresseSoutenanceForm;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportForm;
-use Soutenance\Form\InitCompte\InitCompteForm;
 use Soutenance\Service\Avis\AvisService;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteService;
 use Soutenance\Service\Membre\MembreService;
@@ -59,11 +58,9 @@ class PresoutenanceControllerFactory
 
         /**
          * @var DateRenduRapportForm $dateRenduRapportForm
-         * @var InitCompteForm $initCompteForm
          * @var AdresseSoutenanceForm $adresseSoutenanceForm
          */
         $dateRenduRapportForm = $manager->getServiceLocator()->get('FormElementManager')->get(DateRenduRapportForm::class);
-        $initCompteForm = $manager->getServiceLocator()->get('FormElementManager')->get(InitCompteForm::class);
         $adresseSoutenanceForm = $manager->getServiceLocator()->get('FormElementManager')->get(AdresseSoutenanceForm::class);
 
         /** @var PresoutenanceController $controller */
@@ -83,7 +80,6 @@ class PresoutenanceControllerFactory
         $controller->setEngagementImpartialiteService($engagementImpartialiteService);
 
         $controller->setDateRenduRapportForm($dateRenduRapportForm);
-        $controller->setInitCompteForm($initCompteForm);
         $controller->setAdresseSoutenanceForm($adresseSoutenanceForm);
         return $controller;
     }

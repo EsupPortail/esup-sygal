@@ -92,7 +92,6 @@ return [
                 [
                     'controller' => PresoutenanceController::class,
                     'action'     => [
-                        'init-compte',
                         'notifier-retard-rapport-presoutenance'
                     ],
                     'roles' => 'guest',
@@ -114,17 +113,6 @@ return [
                             'defaults' => [
                                 'controller' => PresoutenanceController::class,
                                 'action'     => 'notifier-retard-rapport-presoutenance',
-                            ],
-                        ],
-                    ],
-                    'init-compte' => [
-                        'type' => Segment::class,
-                        'may_terminate' => true,
-                        'options' => [
-                            'route'    => '/init-compte/:token',
-                            'defaults' => [
-                                'controller' => PresoutenanceController::class,
-                                'action'     => 'init-compte',
                             ],
                         ],
                     ],
@@ -292,7 +280,6 @@ return [
     'form_elements' => [
         'factories' => [
             DateRenduRapportForm::class => DateRenduRapportFormFactory::class,
-            InitCompteForm::class => InitCompteFormFactory::class,
             AdresseSoutenanceForm::class => AdresseSoutenanceFormFactory::class,
         ],
     ],

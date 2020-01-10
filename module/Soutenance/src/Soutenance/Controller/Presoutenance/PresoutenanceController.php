@@ -23,8 +23,6 @@ use Soutenance\Entity\Membre;
 use Soutenance\Form\AdresseSoutenance\AdresseSoutenanceFormAwareTrait;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportForm;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportFormAwareTrait;
-use Soutenance\Form\InitCompte\InitCompteForm;
-use Soutenance\Form\InitCompte\InitCompteFormAwareTrait;
 use Soutenance\Service\Avis\AvisServiceAwareTrait;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;
 use Soutenance\Service\Exporter\AvisSoutenance\AvisSoutenancePdfExporter;
@@ -59,7 +57,6 @@ class PresoutenanceController extends AbstractController
     use EngagementImpartialiteServiceAwareTrait;
 
     use DateRenduRapportFormAwareTrait;
-    use InitCompteFormAwareTrait;
     use AdresseSoutenanceFormAwareTrait;
 
     public function presoutenanceAction()
@@ -212,7 +209,7 @@ class PresoutenanceController extends AbstractController
             if (empty($utilisateurs)) {
                 $user = $this->utilisateurService->createFromIndividu($individu, $this->generateUsername($membre), 'none');
                 $this->userService->updateUserPasswordResetToken($user);
-                $url = $this->url()->fromRoute('soutenance/init-compte', ['token' => $user->getPasswordResetToken()], ['force_canonical' => true], true);
+                $url = $this->url()->fromRoute('utilisateur/init-compte', ['token' => $user->getPasswordResetToken()], ['force_canonical' => true], true);
                 $this->getNotifierSoutenanceService()->triggerInitialisationCompte($these, $user, $url);
             }
         }
@@ -460,32 +457,5 @@ class PresoutenanceController extends AbstractController
         if ($acteur === null) throw new LogicException("La génération du username est basée sur l'Individu qui est mamquant.");
         $nomusuel = strtolower($acteur->getIndividu()->getNomUsuel());
         return ($nomusuel . "_" . $membre->getId());
-    }
-
-    public function initCompteAction() {
-        $token = $this->params()->fromRoute('token');
-        $utilisateur = $this->utilisateurService->getRepository()->findByToken($token);
-
-        /** @var InitCompteForm $form */
-        $form = $this->getInitCompteForm();
-        $form->setUsername($utilisateur->getUsername());
-        $form->setAttribute('action', $this->url()->fromRoute('soutenance/init-compte', [ 'token' => $token ], [] , true));
-        $form->bind(new Utilisateur());
-
-        /** @var Request $request */
-        $request = $this->getRequest();
-        if ($request->isPost()) {
-            $data = $request->getPost();
-            $form->setData($data);
-            if ($form->isValid()) {
-                $this->utilisateurService->changePassword($utilisateur, $data['password1']);
-                $this->flashMessenger()->addSuccessMessage('Mot de passe initialisé avec succés.');
-                return $this->redirect()->toRoute('home');
-            }
-        }
-
-        return new ViewModel([
-           'form' => $form,
-        ]);
     }
 }
