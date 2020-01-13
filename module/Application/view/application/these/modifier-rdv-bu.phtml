@@ -57,8 +57,9 @@ $fcg = $this->formControlGroup();
             <?php endif ?>
         </div>
         <div class="col-md-6">
-            <?php echo $fcg($form->get('divers')) ?>
+            <?php echo $fcg($form->get('divers')->setAttribute('rows', 2)) ?>
             <?php echo $fcg($form->get('idOrcid')) ?>
+            <?php echo $fcg($form->get('halId')) ?>
         </div>
     </div>
 

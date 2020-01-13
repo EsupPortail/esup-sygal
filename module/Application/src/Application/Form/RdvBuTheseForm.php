@@ -105,6 +105,17 @@ class RdvBuTheseForm extends Form
             ],
         ]);
 
+        $this->add([
+            'type'       => 'Text',
+            'name'       => 'halId',
+            'options'    => [
+                'label' => 'Identifiant HAL (facultatif)',
+            ],
+            'attributes' => [
+                'title' => "",
+            ],
+        ]);
+
         $this->add((new Submit('submit'))
             ->setValue("Enregistrer")
             ->setAttribute('class', 'btn btn-primary')
@@ -140,6 +151,14 @@ class RdvBuTheseForm extends Form
                 'filters' => [
                     new MotsClesFilter(['separator' => self::SEPARATEUR_MOTS_CLES_RAMEAU]),
                 ],
+            ],
+            'idOrcid' => [
+                'name' => 'idOrcid',
+                'required' => false,
+            ],
+            'halId' => [
+                'name' => 'halId',
+                'required' => false,
             ],
             'divers' => [
                 'name' => 'divers',

@@ -215,6 +215,17 @@ class DiffusionTheseForm extends Form
         ]);
 
         $this->add([
+            'type'       => 'Text',
+            'name'       => 'halId',
+            'options'    => [
+                'label' => 'Identifiant HAL (facultatif)',
+            ],
+            'attributes' => [
+                'title' => "",
+            ],
+        ]);
+
+        $this->add([
             'type'       => 'Checkbox',
             'name'       => 'certifCharteDiff',
             'options'    => [

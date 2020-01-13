@@ -47,4 +47,8 @@ use Application\Service\Message\DiffusionMessages;
     <?php if ($orcid = $diffusion->getOrcid()): ?>
         <li>Identifiant ORCID : <code class="text-muted"><?php echo $orcid ?></code></li>
     <?php endif ?>
+
+    <?php if ($halId = $diffusion->getHalId()): ?>
+        <li>Identifiant HAL : <code class="text-muted"><?php echo $halId ?></code></li>
+    <?php endif ?>
 </ul>

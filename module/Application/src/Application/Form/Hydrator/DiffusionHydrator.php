@@ -3,18 +3,10 @@
 namespace Application\Form\Hydrator;
 
 use Application\Entity\Db\Diffusion;
-use Application\Entity\Db\RecapBu;
-use Doctrine\ORM\OptimisticLockException;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 use UnicaenApp\Service\EntityManagerAwareInterface;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
-/**
- * Created by PhpStorm.
- * User: gauthierb
- * Date: 20/05/16
- * Time: 17:08
- */
 class DiffusionHydrator extends DoctrineObject implements EntityManagerAwareInterface
 {
     use EntityManagerAwareTrait;
@@ -41,7 +33,6 @@ class DiffusionHydrator extends DoctrineObject implements EntityManagerAwareInte
      * @param  array     $data
      * @param  Diffusion $attestation
      * @return Diffusion
-     * @throws OptimisticLockException
      */
     public function hydrate(array $data, $attestation)
     {
@@ -52,6 +43,9 @@ class DiffusionHydrator extends DoctrineObject implements EntityManagerAwareInte
 
         if (!isset($data['orcid'])) {
             $data['orcid'] = null;
+        }
+        if (!isset($data['halId'])) {
+            $data['halId'] = null;
         }
 
         /** @var Diffusion $diff */

@@ -6,9 +6,6 @@ use Application\Constants;
 use Application\Rule\AutorisationDiffusionRule;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
-use UnicaenApp\Message\Message;
-use UnicaenApp\Message\MessageRepository;
-use UnicaenApp\Message\MessageService;
 
 /**
  * Diffusion
@@ -76,6 +73,11 @@ class Diffusion implements HistoriqueAwareInterface
      * @var string
      */
     private $orcid;
+
+    /**
+     * @var string
+     */
+    private $halId;
 
     /**
      * @var string
@@ -295,6 +297,25 @@ class Diffusion implements HistoriqueAwareInterface
     public function setOrcid($orcid)
     {
         $this->orcid = $orcid;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getHalId()
+    {
+        return $this->halId;
+    }
+
+    /**
+     * @param string|null $halId
+     * @return Diffusion
+     */
+    public function setHalId($halId = null): Diffusion
+    {
+        $this->halId = $halId;
 
         return $this;
     }

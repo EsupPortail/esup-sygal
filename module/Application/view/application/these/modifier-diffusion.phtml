@@ -102,13 +102,18 @@ Cliquez <a href="<?php echo $this->basePath('charte_de_depot_et_diffusion.pdf') 
         <span class="glyphicon glyphicon-info-sign"></span>
         <?php echo $this->message()->render('AUTORIS_MISE_EN_LIGNE_LAIUS', [], $protoDiffusion->setAutorisMel(Diffusion::AUTORISATION_NON)) ?>
     </div>
-    <div class="row idOrcid" style="display: none">
+    <div class="row auteur" style="display: none">
         <div class="col-sm-7 col-md-4">
             <?php echo $fcg
                 ->setHelpContent(
                         "Cet identifiant permet d’identifier de manière unique les chercheurs et auteurs de contributions académiques scientifiques. ".
                         '<a target="_blank" title="Ouvrir ce lien dans un autre onglet" href="https://orcid.org">Plus d\'infos...</a>')
                 ->render($form->get('orcid')) ?>
+            <?php echo $fcg
+                ->setHelpContent(
+                    "L’IdHAL, géré dans l’archive ouverte HAL, permet de vous identifier en tant qu’auteur de vos travaux déposés sur la plateforme. ".
+                    '<a target="_blank" title="Ouvrir ce lien dans un autre onglet" href="https://doc.archives-ouvertes.fr/identifiant-auteur-idhal-cv/">Plus d\'infos...</a>')
+                ->render($form->get('halId')) ?>
         </div>
     </div>
 </div>
