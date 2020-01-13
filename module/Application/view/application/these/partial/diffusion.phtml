@@ -1,6 +1,7 @@
 <?php
 /**
  * @var These              $these
+ * @var Diffusion          $diffusion
  * @var DiffusionTheseForm $form
  * @var boolean            $masquerFichiers
  * @var array              $theseFichiersExpurgesItems
@@ -12,7 +13,6 @@ use Application\Entity\Db\These;
 use Application\Form\DiffusionTheseForm;
 use Application\Service\Message\DiffusionMessages;
 
-$diffusion = $these->getDiffusion();
 ?>
 
 <?php if ($diffusion->getConfidentielle()): ?>
@@ -28,7 +28,7 @@ $diffusion = $these->getDiffusion();
 <ul class="autorisation-diffusion">
     <li><?php echo $this->message()->render('DROITS_AUTEUR_OK_PHRASE', [], $diffusion) ?></li>
 
-    <?php if (empty($masquerFichiers) && ! $these->getDiffusion()->getDroitAuteurOk()): ?>
+    <?php if (empty($masquerFichiers) && ! $diffusion->getDroitAuteurOk()): ?>
         <li>Version expurgée pour la diffusion :
         <?php echo $this->partial('application/fichier-these/lister-fichiers', ['items' => $theseFichiersExpurgesItems]) ?></li>
         <li>Autres formats de fichiers expurgés, le cas échéant :
@@ -44,7 +44,7 @@ $diffusion = $these->getDiffusion();
         </div>
     </li>
 
-    <?php if ($idOrcid = $diffusion->getOrcid()): ?>
-        <li>Identifiant ORCID : <code class="text-muted"><?php echo $idOrcid ?></code></li>
+    <?php if ($orcid = $diffusion->getOrcid()): ?>
+        <li>Identifiant ORCID : <code class="text-muted"><?php echo $orcid ?></code></li>
     <?php endif ?>
 </ul>

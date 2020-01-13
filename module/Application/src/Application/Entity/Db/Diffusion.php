@@ -33,6 +33,11 @@ class Diffusion implements HistoriqueAwareInterface
     const DROIT_AUTEUR_OK_NON = '0';
 
     /**
+     * @var bool
+     */
+    private $versionCorrigee = false;
+
+    /**
      * @var boolean
      */
     private $confidentielle;
@@ -93,6 +98,25 @@ class Diffusion implements HistoriqueAwareInterface
     public function __clone()
     {
         $this->id = null;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getVersionCorrigee(): bool
+    {
+        return $this->versionCorrigee;
+    }
+
+    /**
+     * @param bool $versionCorrigee
+     * @return Diffusion
+     */
+    public function setVersionCorrigee(bool $versionCorrigee): Diffusion
+    {
+        $this->versionCorrigee = $versionCorrigee;
+
+        return $this;
     }
 
     /**
@@ -162,7 +186,7 @@ class Diffusion implements HistoriqueAwareInterface
      */
     public function getDroitAuteurOk()
     {
-        return (bool) $this->droitAuteurOk;
+        return $this->droitAuteurOk;
     }
 
     /**
@@ -170,7 +194,7 @@ class Diffusion implements HistoriqueAwareInterface
      */
     public function getCertifCharteDiff()
     {
-        return (bool) $this->certifCharteDiff;
+        return $this->certifCharteDiff;
     }
 
     /**

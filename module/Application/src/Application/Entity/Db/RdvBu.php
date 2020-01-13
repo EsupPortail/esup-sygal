@@ -94,21 +94,6 @@ class RdvBu implements HistoriqueAwareInterface
     }
 
     /**
-     * Détermine si les infos qui doivent être saisies pour le RDV BU l'ont été.
-     *
-     * @return bool
-     */
-    public function isInfosBuSaisies()
-    {
-        $exemplairePapierFourniPertinent = $this->isExemplPapierFourniPertinent();
-
-        return
-            (!$exemplairePapierFourniPertinent || $exemplairePapierFourniPertinent && $this->getExemplPapierFourni()) &&
-            $this->getConventionMelSignee() && $this->getMotsClesRameau() &&
-            $this->isVersionArchivableFournie();
-    }
-
-    /**
      * Set conventionMelSignee
      *
      * @param boolean $conventionMelSignee
@@ -221,17 +206,6 @@ class RdvBu implements HistoriqueAwareInterface
     public function getExemplPapierFourni()
     {
         return $this->exemplPapierFourni;
-    }
-
-    /**
-     * Détermine d'après la réponse à l'autorisation de diffusion de la thèse si le flag de remise de
-     * l'exemplaire papier est pertinent ou non.
-     *
-     * @return boolean|null
-     */
-    public function isExemplPapierFourniPertinent()
-    {
-        return $this->getThese()->getDiffusion()->isRemiseExemplairePapierRequise();
     }
 
     /**

@@ -28,6 +28,7 @@ use Application\Service\Variable\VariableServiceAwareTrait;
 use Assert\Assertion;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\OptimisticLockException;
+use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Traits\MessageAwareInterface;
 use UnicaenAuth\Entity\Db\UserInterface;
@@ -119,58 +120,34 @@ class TheseService extends BaseService
     }
 
     /**
-     * Supprime ou historise l'Attestation (éventuelle) d'une These.
+     * Supprime définitivement l'éventuelle Attestation concernant une version de fichier.
      *
-     * Si un destructeur est spécifié, l'Attestation est historisée.
-     * Sinon, elle est supprimée.
-     *
-     * @param These         $these Thèse concernée
-     * @param UserInterface $destructeur Auteur de l'historisation, le cas échéant
+     * @param These          $these Thèse concernée
+     * @param VersionFichier $version
      */
-    public function deleteAttestation(These $these, UserInterface $destructeur = null)
+    public function deleteAttestationForVersion(These $these, VersionFichier $version)
     {
-        $attestation = $these->getAttestation();
+        $attestation = $these->getAttestationForVersion($version);
         if ($attestation === null) {
             return;
         }
 
-        if ($destructeur) {
-            $attestation->historiser($destructeur);
-        } else {
-            $these->removeAttestation($attestation);
-            $this->entityManager->remove($attestation);
-        }
+        $these->removeAttestation($attestation);
+        $this->entityManager->remove($attestation);
 
         try {
             $this->entityManager->flush($attestation);
         } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement", null, $e);
+            throw new RuntimeException("Erreur rencontrée lors de la suppression", null, $e);
         }
     }
 
     /**
-     * Détermine si la réponse à l'autorisation de diffusion est passée
-     * de "Oui" à "Oui+Embargo" ou "Non",
-     * ou
-     * de "Oui+Embargo" ou "Non" à "Oui".
-     *
-     * @param Diffusion $diffusion
-     * @return bool
+     * @param These          $these
+     * @param Diffusion      $diffusion
+     * @param VersionFichier $version
      */
-    private function isAutorisationDiffusionUpdated(Diffusion $diffusion)
-    {
-        $rule = new AutorisationDiffusionRule();
-        $rule->setDiffusion($diffusion);
-        $rule->execute();
-
-        return $rule->computeChangementDeReponseImportant($this->entityManager);
-    }
-
-    /**
-     * @param These     $these
-     * @param Diffusion $diffusion
-     */
-    public function updateDiffusion(These $these, Diffusion $diffusion)
+    public function updateDiffusion(These $these, Diffusion $diffusion, VersionFichier $version)
     {
         $isUpdate = $diffusion->getId() !== null;
 
@@ -203,42 +180,75 @@ class TheseService extends BaseService
         // à l'autorisation de diffusion.
         //
         if ($suppressionAttestationsAVerifier) {
-            $rule = new SuppressionAttestationsRequiseRule();
-            $rule->setThese($these);
-            $rule->execute();
+            $rule = new SuppressionAttestationsRequiseRule($these, $version);
             $suppressionRequise = $rule->computeEstRequise();
 
             if ($suppressionRequise) {
-                $this->deleteAttestation($these);
+                $this->deleteAttestationForVersion($these, $version);
             }
         }
     }
 
     /**
-     * Supprime la Diffusion (éventuelle) d'une These.
+     * Détermine d'après la réponse à l'autorisation de diffusion de la thèse si le flag de remise de
+     * l'exemplaire papier est pertinent ou non.
      *
-     * @param These         $these Thèse concernée
-     * @param UserInterface $destructeur Auteur de l'historisation, le cas échéant
+     * @param These          $these
+     * @param VersionFichier $version
+     * @return boolean
      */
-    public function deleteDiffusion(These $these, UserInterface $destructeur = null)
+    public function isRemiseExemplairePapierRequise(These $these, VersionFichier $version)
     {
-        $diffusion = $these->getDiffusion();
+        $diffusion = $these->getDiffusionForVersion($version);
+
         if ($diffusion === null) {
-            return;
+            throw new LogicException("Appel de méthode prématuré : autorisation de diffusion introuvable pour la $version");
         }
 
-        if ($destructeur) {
-            $diffusion->historiser($destructeur);
-        } else {
-            $these->removeDiffusion($diffusion);
-            $this->entityManager->remove($diffusion);
+        return $diffusion->isRemiseExemplairePapierRequise();
+    }
+
+    /**
+     * Détermine d'après la réponse à l'autorisation de diffusion de la thèse si le flag de remise de
+     * l'exemplaire papier est pertinent ou non.
+     *
+     * @param These $these
+     * @return boolean|null
+     */
+    public function isExemplPapierFourniPertinent(These $these)
+    {
+        // le RDV BU ne concerne que le dépôt de la version initiale
+        $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
+
+        $diffusion = $these->getDiffusionForVersion($version);
+
+        if ($diffusion === null) {
+            return false;
         }
 
-        try {
-            $this->entityManager->flush($diffusion);
-        } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement", null, $e);
+        return $diffusion->isRemiseExemplairePapierRequise();
+    }
+
+    /**
+     * Détermine si les infos qui doivent être saisies pour le RDV BU l'ont été.
+     *
+     * @param These $these
+     * @return bool
+     */
+    public function isInfosBuSaisies(These $these)
+    {
+        $rdvBu = $these->getRdvBu();
+
+        if ($rdvBu === null) {
+            return false;
         }
+
+        $exemplairePapierFourniPertinent = $this->isExemplPapierFourniPertinent($rdvBu->getThese());
+
+        return
+            (!$exemplairePapierFourniPertinent || $exemplairePapierFourniPertinent && $rdvBu->getExemplPapierFourni()) &&
+            $rdvBu->getConventionMelSignee() && $rdvBu->getMotsClesRameau() &&
+            $rdvBu->isVersionArchivableFournie();
     }
 
     /**
@@ -261,7 +271,7 @@ class TheseService extends BaseService
         }
 
         // si tout est renseigné, on valide automatiquement
-        if ($rdvBu->isInfosBuSaisies()) {
+        if ($this->isInfosBuSaisies($these)) {
             $this->validationService->validateRdvBu($these);
             $successMessage = "Validation enregistrée avec succès.";
 

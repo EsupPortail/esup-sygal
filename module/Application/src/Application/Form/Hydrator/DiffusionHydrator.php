@@ -50,6 +50,10 @@ class DiffusionHydrator extends DoctrineObject implements EntityManagerAwareInte
             $data['confidentielle'] = $attestation->getThese()->getDateFinConfidentialite() !== null ? Diffusion::CONFIDENTIELLE_OUI : Diffusion::CONFIDENTIELLE_NON;
         }
 
+        if (!isset($data['orcid'])) {
+            $data['orcid'] = null;
+        }
+
         /** @var Diffusion $diff */
         $diff = parent::hydrate($data, $attestation);
 

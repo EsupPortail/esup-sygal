@@ -3,6 +3,7 @@
 use Application\Controller\TheseController;
 use Application\Entity\Db\Attestation;
 use Application\Entity\Db\These;
+use Application\Entity\Db\VersionFichier;
 use Application\Form\AttestationTheseForm;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\View\Renderer\PhpRenderer;
@@ -10,6 +11,7 @@ use Application\View\Renderer\PhpRenderer;
 /**
  * @var PhpRenderer          $this
  * @var These                $these
+ * @var VersionFichier       $version
  * @var Attestation          $attestation
  * @var AttestationTheseForm $form
  * @var string               $modifierAttestationUrl
@@ -17,7 +19,7 @@ use Application\View\Renderer\PhpRenderer;
  * @see TheseController::attestationAction()
  */
 
-$privilege = ThesePrivileges::THESE_SAISIE_ATTESTATIONS_($these->getCorrectionAutorisee());
+$privilege = ThesePrivileges::THESE_SAISIE_ATTESTATIONS_($version);
 $canEdit = $this->isAllowed($these, $privilege);
 ?>
 

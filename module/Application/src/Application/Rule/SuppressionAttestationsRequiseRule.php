@@ -3,6 +3,8 @@
 namespace Application\Rule;
 
 use Application\Entity\Db\These;
+use Application\Entity\Db\VersionFichier;
+use UnicaenApp\Exception\LogicException;
 
 /**
  * Règle déterminant s'il est nécessaire de supprimer les réponses aux "attestations" selon les réponses
@@ -20,19 +22,20 @@ class SuppressionAttestationsRequiseRule implements RuleInterface
     private $these;
 
     /**
-     * @var bool
+     * @var VersionFichier
      */
-    private $estRequise;
+    private $versionFichier;
 
     /**
-     * @param These $these
-     * @return self
+     * SuppressionAttestationsRequiseRule constructor.
+     *
+     * @param These          $these
+     * @param VersionFichier $versionFichier
      */
-    public function setThese($these)
+    public function __construct(These $these, VersionFichier $versionFichier)
     {
         $this->these = $these;
-
-        return $this;
+        $this->versionFichier = $versionFichier;
     }
 
     /**
@@ -52,19 +55,20 @@ class SuppressionAttestationsRequiseRule implements RuleInterface
      */
     public function computeEstRequise(): bool
     {
-        $attestation = $this->these->getAttestation();
+        $attestation = $this->these->getAttestationForVersion($this->versionFichier);
 
         if ($attestation === null) {
             // aucune attestation remplie : suppression inutile
             return false;
         }
 
-        $rule = new AutorisationDiffusionRule();
-        $rule->setDiffusion($this->these->getDiffusion());
-        $rule->execute();
-        $remisePapierRequise = $rule->computeRemiseExemplairePapierEstRequise();
+        $diffusion = $this->these->getDiffusionForVersion($this->versionFichier);
 
-        if ($remisePapierRequise) {
+        if ($diffusion === null) {
+            throw new LogicException("Appel de méthode prématuré : autorisation de diffusion introuvable pour la $this->versionFichier");
+        }
+
+        if ($diffusion->isRemiseExemplairePapierRequise()) {
             if (! $attestation->getExemplaireImprimeConformeAVersionDeposee()) {
                 // la question "exemplaire papier conforme" n'a pas été posée, il faudra la poser : suppression
                 return true;

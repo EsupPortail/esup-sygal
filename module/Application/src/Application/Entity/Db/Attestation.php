@@ -13,6 +13,11 @@ class Attestation implements HistoriqueAwareInterface
     use HistoriqueAwareTrait;
 
     /**
+     * @var bool
+     */
+    private $versionCorrigee = false;
+
+    /**
      * @var boolean
      */
     private $versionDeposeeEstVersionRef;
@@ -38,6 +43,25 @@ class Attestation implements HistoriqueAwareInterface
     public function __clone()
     {
         $this->id = null;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getVersionCorrigee(): bool
+    {
+        return $this->versionCorrigee;
+    }
+
+    /**
+     * @param bool $versionCorrigee
+     * @return Attestation
+     */
+    public function setVersionCorrigee(bool $versionCorrigee): Attestation
+    {
+        $this->versionCorrigee = $versionCorrigee;
+
+        return $this;
     }
 
     /**
@@ -111,4 +135,6 @@ class Attestation implements HistoriqueAwareInterface
     {
         return $this->these;
     }
+
+
 }

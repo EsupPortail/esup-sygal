@@ -7,6 +7,7 @@
             <generator strategy="SEQUENCE"/>
         </id>
 
+        <field name="versionCorrigee" type="boolean" column="VERSION_CORRIGEE"/>
         <field name="confidentielle" type="boolean" column="CONFIDENT" nullable="false"/>
         <field name="dateFinConfidentialite" type="datetime" column="CONFIDENT_DATE_FIN" nullable="true"/>
         <field name="droitAuteurOk" type="boolean" column="DROIT_AUTEUR_OK" nullable="false"/>

@@ -205,7 +205,7 @@ class DiffusionTheseForm extends Form
 
         $this->add([
             'type'       => 'Text',
-            'name'       => 'idOrcid',
+            'name'       => 'orcid',
             'options'    => [
                 'label' => 'Identifiant ORCID (facultatif)',
             ],
@@ -418,7 +418,7 @@ class DiffusionTheseForm extends Form
                     ],
                 ],
             ],
-            $name = 'idOrcid'        => [
+            $name = 'orcid'        => [
                 'required'   => false,
             ],
             $name = 'certifCharteDiff'   => [
