@@ -2,6 +2,7 @@
 
 namespace Application\Provider\Privilege;
 
+use Application\Entity\Db\VersionFichier;
 use UnicaenAuth\Provider\Privilege\Privileges;
 
 /**
@@ -102,34 +103,34 @@ class ThesePrivileges extends Privileges
     }
 
     /**
-     * @param bool $correctionAttendue
+     * @param VersionFichier $version
      * @return string
      */
-    static public function THESE_SAISIE_ATTESTATIONS_($correctionAttendue)
+    static public function THESE_SAISIE_ATTESTATIONS_(VersionFichier $version)
     {
-        return (bool) $correctionAttendue ?
+        return $version->estVersionCorrigee() ?
             ThesePrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_CORRIGEE :
             ThesePrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_INITIALE;
     }
 
     /**
-     * @param bool $correctionAttendue
+     * @param VersionFichier $version
      * @return string
      */
-    static public function THESE_SAISIE_AUTORISATION_DIFFUSION_($correctionAttendue)
+    static public function THESE_SAISIE_AUTORISATION_DIFFUSION_(VersionFichier $version)
     {
-        return (bool) $correctionAttendue ?
+        return $version->estVersionCorrigee() ?
             ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_CORRIGEE :
             ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_INITIALE;
     }
 
     /**
-     * @param bool $correctionAttendue
+     * @param VersionFichier $version
      * @return string
      */
-    static public function THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_($correctionAttendue)
+    static public function THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_(VersionFichier $version)
     {
-        return $correctionAttendue ?
+        return $version->estVersionCorrigee() ?
             ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE :
             ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_INITIALE;
     }

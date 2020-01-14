@@ -1144,6 +1144,39 @@ return [
 
             [
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////
+                'id'   => DiffusionMessages::AUTORIS_DIFFUSION_FORM_LAIUS,
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////
+                'data' => [
+                    "" =>
+                        function (Diffusion $d) {
+                            return $d->getAutorisMel() === null;
+                        },
+
+                    "<p>La thèse est consultable sur internet via le portail national des thèses (<a href=\"http://www.theses.fr\">www.theses.fr</a>), " .
+                    "sans authentification. La thèse peut également être accessible depuis des plateformes de diffusion choisies par " .
+                    "Normandie Université dans le cadre de sa politique de valorisation scientifique " .
+                    "(exemple : <a href=\"http://tel.archives-ouvertes.fr\">http://tel.archives-ouvertes.fr</a>). </p>" =>
+                        function (Diffusion $d) {
+                            return $d->getAutorisMel() === (int)Diffusion::AUTORISATION_OUI_IMMEDIAT;
+                        },
+
+                    "<p>Pendant cette période, la diffusion de la thèse est uniquement assurée dans l’établissement de préparation du Doctorat et au sein de l’ensemble de la communauté universitaire, sans mise en ligne sur internet. Un exemplaire imprimé ou une version numérique en PDF est accessible dans toute bibliothèque, en faisant la demande dans le cadre du prêt entre bibliothèques. La consultation est alors uniquement ouverte à une personne appartenant à la communauté universitaire, avec engagement de ne pas rediffuser la thèse à des tiers non membres de la communauté universitaire.</p>" .
+                    "<p>La diffusion en ligne de la thèse est ensuite effectuée automatiquement le lendemain de l’expiration du délai, sans préavis. Une demande de prolongation de l’embargo auprès du service de documentation concerné est possible, mais doit anticiper le délai de traitement de la demande (un mois, hors périodes de fermeture).</p>" =>
+                        function (Diffusion $d) {
+                            return
+                                $d->getAutorisMel() === (int)Diffusion::AUTORISATION_OUI_EMBARGO;
+                        },
+
+                    "<p>La diffusion de la thèse est uniquement assurée dans l’établissement de préparation du doctorat et au sein de l’ensemble de la communauté universitaire, sans mise en ligne sur internet. L’auteur peut toutefois revenir sur sa décision à tout moment par avenant à la présente convention.</p>" .
+                    "<p>Dans tous les cas, un exemplaire imprimé ou une version numérique en PDF est accessible dans toute bibliothèque, en faisant la demande dans le cadre du prêt entre bibliothèques. La consultation est alors uniquement ouverte à une personne appartenant à la communauté universitaire, avec engagement de ne pas rediffuser la thèse à des tiers non membres de la communauté universitaire.</p>" =>
+                        function (Diffusion $d) {
+                            return $d->getAutorisMel() === (int)Diffusion::AUTORISATION_NON;
+                        },
+                ],
+            ],
+
+            [
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////
                 'id' => DiffusionMessages::AUTORIS_MISE_EN_LIGNE_QUESTION,
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////
                 'data' => [
@@ -1251,32 +1284,17 @@ return [
                             return $d->getAutorisMel() === null;
                         },
 
-                    "<p>La thèse est consultable sur internet via le portail national des thèses (<a href=\"http://www.theses.fr\">www.theses.fr</a>), " .
-                    "sans authentification. La thèse peut également être accessible depuis des plateformes de diffusion choisies par " .
-                    "Normandie Université dans le cadre de sa politique de valorisation scientifique " .
-                    "(exemple : <a href=\"http://tel.archives-ouvertes.fr\">http://tel.archives-ouvertes.fr</a>). </p>" =>
+                    "<p>La loi applicable à cette présente convention est la loi française. Le tribunal compétent pour juger de tout contentieux lié au présent contrat est le tribunal administratif dans le ressort duquel l'établissement de préparation du doctorat a son siège.</p>" =>
                         function (Diffusion $d) {
                             return $d->getAutorisMel() === (int)Diffusion::AUTORISATION_OUI_IMMEDIAT;
                         },
 
-                    "<p>Pendant cette période, la diffusion de la thèse est uniquement assurée dans l'établissement de " .
-                    "préparation du doctorat et au sein de l’ensemble de la communauté universitaire sans mise en ligne sur internet. " .
-                    "Celle-ci est ensuite effectuée automatiquement le lendemain de l'expiration du délai, sans préavis. " .
-                    "Une demande de prolongation de l'embargo auprès du service de documentation concerné esrt possible, " .
-                    "mais doit anticiper le délai de traitement de la demande. </p>" .
-                    "<p>Dès la fin de l'embargo, la thèse est consultable sur internet via le portail national des thèses (<a href=\"http://www.theses.fr\">www.theses.fr</a>), " .
-                    "sans authentification. La thèse pourra également être accessible depuis des plateformes de diffusion choisies par " .
-                    "Normandie Université dans le cadre de sa politique de valorisation scientifique " .
-                    "(exemple : <a href=\"http://tel.archives-ouvertes.fr\">http://tel.archives-ouvertes.fr</a>). </p>" =>
+                    "<p>La thèse est disponible en version imprimée au service de documentation de l’établissement d’accueil et en PDF pour l'ensemble de la communauté universitaire (en intranet ou dans le cadre du Prêt Entre Bibliothèques).</p>" .
+                    "<p>La loi applicable à cette présente convention est la loi française. Le tribunal compétent pour juger de tout contentieux lié au présent contrat est le tribunal administratif dans le ressort duquel l'établissement de préparation du doctorat a son siège.</p>" =>
                         function (Diffusion $d) {
-                            return $d->getAutorisMel() === (int)Diffusion::AUTORISATION_OUI_EMBARGO;
-                        },
-
-                    "<p>La diffusion de la thèse est uniquement assurée dans l'établissement de préparation du doctorat et " .
-                    "au sein de l'ensemble de la communauté universitaire, sans mise en ligne sur internet. " .
-                    "L'auteur peut toutefois revenir sur sa décision à tout moment par avenant à la présente convention.</p>" =>
-                        function (Diffusion $d) {
-                            return $d->getAutorisMel() === (int)Diffusion::AUTORISATION_NON;
+                            return
+                                $d->getAutorisMel() === (int)Diffusion::AUTORISATION_OUI_EMBARGO ||
+                                $d->getAutorisMel() === (int)Diffusion::AUTORISATION_NON;
                         },
                 ],
             ],

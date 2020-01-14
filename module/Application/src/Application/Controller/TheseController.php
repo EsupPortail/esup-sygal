@@ -24,6 +24,8 @@ use Application\Form\MetadonneeTheseForm;
 use Application\Form\PointsDeVigilanceForm;
 use Application\Form\RdvBuTheseDoctorantForm;
 use Application\Form\RdvBuTheseForm;
+use Application\Rule\AutorisationDiffusionRule;
+use Application\Rule\SuppressionAttestationsRequiseRule;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\FichierThese\Exception\ValidationImpossibleException;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
@@ -373,10 +375,9 @@ class TheseController extends AbstractController
             'attestationUrl'   => $this->urlThese()->attestationThese($these, $codeVersion),
             'diffusionUrl'     => $this->urlThese()->diffusionThese($these, $codeVersion),
             'nextStepUrl'      => $this->urlWorkflow()->nextStepBox($these, null, [
-                WfEtape::CODE_DEPOT_VERSION_ORIGINALE,
-                WfEtape::CODE_DEPOT_VERSION_ORIGINALE_CORRIGEE,
-                WfEtape::CODE_ATTESTATIONS,
-                WfEtape::CODE_AUTORISATION_DIFFUSION_THESE,
+                $versionCorrigee ? WfEtape::CODE_DEPOT_VERSION_ORIGINALE_CORRIGEE : WfEtape::CODE_DEPOT_VERSION_ORIGINALE,
+                $versionCorrigee ? WfEtape::CODE_ATTESTATIONS_VERSION_CORRIGEE : WfEtape::CODE_ATTESTATIONS,
+                $versionCorrigee ? WfEtape::CODE_AUTORISATION_DIFFUSION_THESE_VERSION_CORRIGEE : WfEtape::CODE_AUTORISATION_DIFFUSION_THESE,
                 WfEtape::PSEUDO_ETAPE_FINALE,
             ]),
         ]);
@@ -610,6 +611,7 @@ class TheseController extends AbstractController
     {
         $these = $this->requestedThese();
         $estDoctorant = (bool) $this->userContextService->getSelectedRoleDoctorant();
+        $isExemplPapierFourniPertinent = $this->theseService->isExemplPapierFourniPertinent($these);
 
         $validationsPdc = $this->validationService->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PAGE_DE_COUVERTURE, $these);
         $pageCouvValidee = !empty($validationsPdc);
@@ -620,6 +622,10 @@ class TheseController extends AbstractController
         /** @var RdvBuTheseForm|RdvBuTheseDoctorantForm $form */
         $form = $this->getServiceLocator()->get('formElementManager')->get($estDoctorant ? 'RdvBuTheseDoctorantForm' : 'RdvBuTheseForm');
         $form->bind($rdvBu);
+
+        if (! $this->theseService->isExemplPapierFourniPertinent($these)) {
+            $form->disableExemplPapierFourni();
+        }
 
         if ($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
@@ -658,6 +664,7 @@ class TheseController extends AbstractController
             'form'  => $form,
             'title' => "Rendez-vous BU",
             'pageCouvValidee' => $pageCouvValidee,
+            'isExemplPapierFourniPertinent' => $isExemplPapierFourniPertinent,
         ]);
 
         $vm->setTemplate('application/these/modifier-rdv-bu' . ($estDoctorant ? '-doctorant' : null));
@@ -668,6 +675,9 @@ class TheseController extends AbstractController
     public function validationTheseCorrigeeAction()
     {
         $these = $this->requestedThese();
+        $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG_CORR);
+
+        $isRemiseExemplairePapierRequise = $this->theseService->isRemiseExemplairePapierRequise($these, $version);
 
         $hasVAC = $this->fichierTheseService->getRepository()->hasVersion($these, VersionFichier::CODE_ARCHI_CORR);
         $hasVDC = $this->fichierTheseService->getRepository()->hasVersion($these, VersionFichier::CODE_DIFF_CORR);
@@ -680,7 +690,9 @@ class TheseController extends AbstractController
                 WfEtape::CODE_DEPOT_VERSION_CORRIGEE_VALIDATION_DOCTORANT,
                 WfEtape::CODE_DEPOT_VERSION_CORRIGEE_VALIDATION_DIRECTEUR,
             ], [
-                'message' => "Il ne reste plus qu'à fournir à la BU un exemplaire imprimé de la version corrigée pour valider le dépôt.",
+                'message' => $isRemiseExemplairePapierRequise ?
+                    "Il ne reste plus qu'à fournir à la BU un exemplaire imprimé de la version corrigée pour valider le dépôt." :
+                    null,
             ]),
             'hasVAC' => $hasVAC,
             'hasVDC' => $hasVDC,
@@ -1072,36 +1084,35 @@ class TheseController extends AbstractController
         return $view;
     }
 
+    private function isEtapeAttestationVisible(These $these, VersionFichier $version)
+    {
+        $versionInitialeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_ATTESTATIONS)->getAtteignable();
+        $versionCorrigeeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_ATTESTATIONS_VERSION_CORRIGEE)->getAtteignable();
+        return
+            $version->estVersionCorrigee() && $versionCorrigeeAtteignable ||
+            !$version->estVersionCorrigee() && $versionInitialeAtteignable /*&& !$versionCorrigeeAtteignable*/;
+    }
+
     public function attestationAction()
     {
         $these = $this->requestedThese();
-        $attestation = $these->getAttestation();
         $version = $this->fichierTheseService->fetchVersionFichier($this->params()->fromQuery('version'));
+        $attestation = $these->getAttestationForVersion($version);
         $hasFichierThese = ! empty($this->fichierTheseService->getRepository()->fetchFichierTheses($these, NatureFichier::CODE_THESE_PDF, $version, false));
 
-// Est-ce vraiment indispensable d'interroger le moteur du WF ?
-// Mis en commentaire pour accélerer l'affichage...
-//        $versionInitialeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_ATTESTATIONS)->getAtteignable();
-//        $versionCorrigeeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_ATTESTATIONS_VERSION_CORRIGEE)->getAtteignable();
-//        $visible =
-//            $version->estVersionCorrigee() && $versionCorrigeeAtteignable ||
-//            !$version->estVersionCorrigee() && $versionInitialeAtteignable && !$versionCorrigeeAtteignable;
-//
-//        if (! $visible) {
-//            return false;
-//        }
+        if (! $this->isEtapeAttestationVisible($these, $version)) {
+            return false;
+        }
         if (! $hasFichierThese) {
             return false;
         }
-
-        $form = $this->getAttestationTheseForm();
 
         $view = new ViewModel([
             'these'                  => $these,
             'version'                => $version,
             'attestation'            => $attestation,
-            'form'                   => $form,
-            'modifierAttestationUrl' => $this->urlThese()->modifierAttestationUrl($these),
+            'form'                   => $this->getAttestationTheseForm($version), // les labels des cases à cocher sont affichés
+            'modifierAttestationUrl' => $this->urlThese()->modifierAttestationUrl($these, $version),
             'hasFichierThese'        => $hasFichierThese,
         ]);
         $view->setTemplate('application/these/attestation');
@@ -1112,7 +1123,16 @@ class TheseController extends AbstractController
     public function modifierAttestationAction()
     {
         $these = $this->requestedThese();
-        $form = $this->getAttestationTheseForm();
+        $version = $this->fichierTheseService->fetchVersionFichier($this->params()->fromQuery('version'));
+        $attestation = $these->getAttestationForVersion($version);
+        $form = $this->getAttestationTheseForm($version);
+
+        if ($attestation === null) {
+            $attestation = new Attestation();
+            $attestation->setThese($these);
+        }
+
+        $form->bind($attestation);
 
         if ($this->getRequest()->isPost()) {
             /** @var ParametersInterface $post */
@@ -1122,6 +1142,8 @@ class TheseController extends AbstractController
             if ($isValid) {
                 /** @var Attestation $attestation */
                 $attestation = $form->getData();
+                $attestation->setVersionCorrigee($version->estVersionCorrigee());
+
                 $this->theseService->updateAttestation($these, $attestation);
 
                 if (! $this->getRequest()->isXmlHttpRequest()) {
@@ -1130,7 +1152,7 @@ class TheseController extends AbstractController
             }
         }
 
-        $form->setAttribute('action', $this->urlThese()->modifierAttestationUrl($these));
+        $form->setAttribute('action', $this->urlThese()->modifierAttestationUrl($these, $version));
 
         return new ViewModel([
             'these' => $these,
@@ -1140,82 +1162,42 @@ class TheseController extends AbstractController
     }
 
     /**
+     * @param VersionFichier $version
      * @return AttestationTheseForm
      */
-    private function getAttestationTheseForm()
+    private function getAttestationTheseForm(VersionFichier $version)
     {
         $these = $this->requestedThese();
 
         /** @var AttestationTheseForm $form */
         $form = $this->getServiceLocator()->get('formElementManager')->get('AttestationTheseForm');
 
-        $attestation = $these->getAttestation();
-
-        if ($attestation === null) {
-            // si l'on est dans le cadre du dépôt de la version corrigée, on rappelle les infos historisées
-            if ($this->existeVersionCorrigee()) {
-                $attestations = $these->getAttestations($historise = true);
-                $attestationPrec = $attestations->last() ?: null; // la plus récente
-
-                /** @var Attestation $attestation */
-                $attestation = clone $attestationPrec;
-            } else {
-                $attestation = new Attestation();
-                $attestation->setThese($these);
-            }
+        if (! $these->getDiffusionForVersion($version)->isRemiseExemplairePapierRequise()) {
+            $form->disableExemplaireImprimeConformeAVersionDeposee();
         }
-
-        $form->bind($attestation);
 
         return $form;
     }
 
-    /**
-     * @var bool
-     */
-    protected $existeVersionCorrigee = null;
-
-    /**
-     * Si le fichier de la thèse originale est une version corrigée, on est dans le cadre d'un dépôt d'une version
-     * corrigée et cette fonction retourne true.
-     *
-     * @param These|null $these
-     * @return bool
-     */
-    private function existeVersionCorrigee(These $these = null)
+    private function isEtapeDiffusionVisible(These $these, VersionFichier $version)
     {
-        if ($these !== null) {
-            return (!empty($this->fichierTheseService->getRepository()->fetchFichierTheses($these, NatureFichier::CODE_THESE_PDF , VersionFichier::CODE_ORIG_CORR)));
-        }
-        if ($this->existeVersionCorrigee !== null) {
-            return $this->existeVersionCorrigee;
-        }
-        if ($these === null) {
-            $these = $this->requestedThese();
-        }
-
-        $this->existeVersionCorrigee = ! empty($this->fichierTheseService->getRepository()->fetchFichierTheses($these, NatureFichier::CODE_THESE_PDF , VersionFichier::CODE_ORIG_CORR));
-
-        return $this->existeVersionCorrigee;
+        $versionInitialeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_AUTORISATION_DIFFUSION_THESE)->getAtteignable();
+        $versionCorrigeeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_AUTORISATION_DIFFUSION_THESE_VERSION_CORRIGEE)->getAtteignable();
+        return
+            $version->estVersionCorrigee() && $versionCorrigeeAtteignable ||
+            !$version->estVersionCorrigee() && $versionInitialeAtteignable /*&& !$versionCorrigeeAtteignable*/;
     }
 
     public function diffusionAction()
     {
         $these = $this->requestedThese();
         $version = $this->fichierTheseService->fetchVersionFichier($this->params()->fromQuery('version'));
+        $diffusion = $these->getDiffusionForVersion($version);
         $hasFichierThese = ! empty($this->fichierTheseService->getRepository()->fetchFichierTheses($these, NatureFichier::CODE_THESE_PDF, $version, false));
 
-// Est-ce vraiment indispensable d'interroger le moteur du WF ?
-// Mis en commentaire pour accélerer l'affichage...
-//        $versionInitialeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_AUTORISATION_DIFFUSION_THESE)->getAtteignable();
-//        $versionCorrigeeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_AUTORISATION_DIFFUSION_THESE_VERSION_CORRIGEE)->getAtteignable();
-//        $visible =
-//            $version->estVersionCorrigee() && $versionCorrigeeAtteignable ||
-//            !$version->estVersionCorrigee() && $versionInitialeAtteignable && !$versionCorrigeeAtteignable;
-//
-//        if (! $visible) {
-//            return false;
-//        }
+        if (! $this->isEtapeDiffusionVisible($these, $version)) {
+            return false;
+        }
         if (! $hasFichierThese) {
             return false;
         }
@@ -1227,7 +1209,7 @@ class TheseController extends AbstractController
         $theseFichiersExpurges = $this->fichierTheseService->getRepository()->fetchFichierTheses($these, NatureFichier::CODE_THESE_PDF, $versionExpurgee, false);
         $annexesFichiersExpurges = $this->fichierTheseService->getRepository()->fetchFichierTheses($these, NatureFichier::CODE_FICHIER_NON_PDF, $versionExpurgee, false);
 
-        if ($diffusion = $these->getDiffusion()) {
+        if ($diffusion) {
             $form->bind($diffusion);
         }
 
@@ -1246,12 +1228,13 @@ class TheseController extends AbstractController
 
         $view = new ViewModel([
             'these'                        => $these,
+            'diffusion'                    => $diffusion,
             'version'                      => $version,
             'form'                         => $form,
             'theseFichiersExpurgesItems'   => $theseFichiersExpurgesItems,
             'annexesFichiersExpurgesItems' => $annexesFichiersExpurgesItems,
-            'modifierDiffusionUrl'         => $this->urlThese()->modifierDiffusionUrl($these),
-            'exporterConventionMelUrl'     => $this->urlThese()->exporterConventionMiseEnLigneUrl($these),
+            'modifierDiffusionUrl'         => $this->urlThese()->modifierDiffusionUrl($these, $version),
+            'exporterConventionMelUrl'     => $this->urlThese()->exporterConventionMiseEnLigneUrl($these, $version),
             'hasFichierThese'              => $hasFichierThese,
         ]);
         $view->setTemplate('application/these/diffusion');
@@ -1265,9 +1248,17 @@ class TheseController extends AbstractController
 
         // si le fichier de la thèse originale est une version corrigée, la version de diffusion est aussi en version corrigée
         $existeVersionOrigCorrig = ! empty($this->fichierTheseService->getRepository()->fetchFichierTheses($these, NatureFichier::CODE_THESE_PDF , VersionFichier::CODE_ORIG_CORR));
-        $version = $existeVersionOrigCorrig ? VersionFichier::CODE_DIFF_CORR : VersionFichier::CODE_DIFF;
+        $version = $this->fichierTheseService->fetchVersionFichier($existeVersionOrigCorrig ? VersionFichier::CODE_DIFF_CORR : VersionFichier::CODE_DIFF);
+        $diffusion = $these->getDiffusionForVersion($version);
 
         $form = $this->getDiffusionForm($version);
+
+        if ($diffusion === null) {
+            $diffusion = new Diffusion();
+            $diffusion->setThese($these);
+        }
+
+        $form->bind($diffusion);
 
         if ($this->getRequest()->isPost()) {
             /** @var ParametersInterface $post */
@@ -1277,7 +1268,9 @@ class TheseController extends AbstractController
             if ($isValid) {
                 /** @var Diffusion $diffusion */
                 $diffusion = $form->getData();
-                $this->theseService->updateDiffusion($these, $diffusion);
+                $diffusion->setVersionCorrigee($version->estVersionCorrigee());
+
+                $this->theseService->updateDiffusion($these, $diffusion, $version);
 
                 // suppression des fichiers expurgés éventuellement déposés en l'absence de pb de droit d'auteur
                 $besoinVersionExpurgee = ! $diffusion->getDroitAuteurOk();
@@ -1288,53 +1281,35 @@ class TheseController extends AbstractController
                 }
 
                 if (! $this->getRequest()->isXmlHttpRequest()) {
-                    $url = $this->urlThese()->depotThese($these, $version);
+                    $url = $this->urlThese()->depotThese($these, $version->getCode());
                     return $this->redirect()->toUrl($url);
                 }
             }
         }
 
-        $form->setAttribute('action', $this->urlThese()->modifierDiffusionUrl($these));
+        $form->setAttribute('action', $this->urlThese()->modifierDiffusionUrl($these, $version));
 
         return new ViewModel([
             'these'      => $these,
+            'diffusion'  => $diffusion,
             'form'       => $form,
             'title'      => "Autorisation de diffusion",
             'theseUrl'   => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_THESE_PDF, $version),
-//            'annexesUrl' => $this->urlThese()->fichiersAnnexes($these, NatureFichier::CODE_FICHIER_NON_PDF, $version),
             'annexesUrl' => $this->urlThese()->depotFichiers($these, NatureFichier::CODE_FICHIER_NON_PDF, $version),
         ]);
     }
 
     /**
-     * @param string $version
+     * @param VersionFichier $version
      * @return DiffusionTheseForm
      */
-    private function getDiffusionForm($version)
+    private function getDiffusionForm(VersionFichier $version)
     {
         $these = $this->requestedThese();
 
         /** @var DiffusionTheseForm $form */
         $form = $this->getServiceLocator()->get('formElementManager')->get('DiffusionTheseForm');
-        $form->setVersionFichier($this->versionFichierService->getRepository()->findOneByCode($version));
-
-        $diffusion = $these->getDiffusion();
-
-        if ($diffusion === null) {
-            // si l'on est dans le cadre du dépôt de la version corrigée, on rappelle les infos historisées
-            if ($this->existeVersionCorrigee()) {
-                $diffusions = $these->getDiffusions($historise = true);
-                $diffusionPrec = $diffusions->last() ?: null; // la plus récente
-
-                /** @var Diffusion $diffusion */
-                $diffusion = clone $diffusionPrec;
-            } else {
-                $diffusion = new Diffusion();
-                $diffusion->setThese($these);
-            }
-        }
-
-        $form->bind($diffusion);
+        $form->setVersionFichier($version);
 
         return $form;
     }
@@ -1342,6 +1317,9 @@ class TheseController extends AbstractController
     public function exporterConventionMiseEnLigneAction()
     {
         $these = $this->requestedThese();
+        $version = $this->fichierTheseService->fetchVersionFichier($this->params()->fromQuery('version'));
+        $diffusion = $these->getDiffusionForVersion($version);
+        $attestation = $these->getAttestationForVersion($version);
 
         /** @var DiffusionTheseForm $form */
         $form = $this->getServiceLocator()->get('formElementManager')->get('DiffusionTheseForm');
@@ -1365,6 +1343,8 @@ class TheseController extends AbstractController
         $exporter = new ConventionPdfExporter($renderer, 'A4');
         $exporter->setVars([
             'these'              => $these,
+            'diffusion'          => $diffusion,
+            'attestation'        => $attestation,
             'form'               => $form,
             'libEtablissement'   => $etab,
             'libEtablissementA'  => $libEtablissementA,

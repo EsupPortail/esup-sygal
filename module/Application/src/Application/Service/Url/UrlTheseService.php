@@ -264,24 +264,36 @@ class UrlTheseService extends UrlService
         );
     }
 
-    public function modifierAttestationUrl(These $these)
+    public function modifierAttestationUrl(These $these, VersionFichier $version)
     {
+        $queryParams = [];
+        $queryParams['version'] = $this->idify($version);
+
         return $this->fromRoute('these/modifier-attestation',
-            ['these' => $this->idify($these)]
+            ['these' => $this->idify($these)],
+            ['query' => $queryParams]
         );
     }
 
-    public function modifierDiffusionUrl(These $these)
+    public function modifierDiffusionUrl(These $these, VersionFichier $version)
     {
+        $queryParams = [];
+        $queryParams['version'] = $this->idify($version);
+
         return $this->fromRoute('these/modifier-diffusion',
-            ['these' => $this->idify($these)]
+            ['these' => $this->idify($these)],
+            ['query' => $queryParams]
         );
     }
 
-    public function exporterConventionMiseEnLigneUrl(These $these)
+    public function exporterConventionMiseEnLigneUrl(These $these, VersionFichier $version)
     {
+        $queryParams = [];
+        $queryParams['version'] = $this->idify($version);
+
         return $this->fromRoute('these/exporter-convention-mise-en-ligne',
-            ['these' => $this->idify($these)]
+            ['these' => $this->idify($these)],
+            ['query' => $queryParams]
         );
     }
 
