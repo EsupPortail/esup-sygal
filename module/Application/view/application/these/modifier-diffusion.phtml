@@ -5,12 +5,12 @@ use Application\Entity\Db\These;
 use Application\Form\DiffusionTheseForm;
 use Application\Service\Message\DiffusionMessages;
 use Application\View\Renderer\PhpRenderer;
-use Zend\Form\Form;
 
 /**
  * @var PhpRenderer        $this
  * @var string             $title
  * @var These              $these
+ * @var Diffusion          $diffusion
  * @var bool               $expurge
  * @var DiffusionTheseForm $form
  * @var string             $theseUrl
@@ -26,9 +26,9 @@ $protoDiffusion = new Diffusion();
 
 <?php $this->headTitle("Diffusion") ?>
 
-<!--<h1 class="page-header">--><?php //echo $title ?>
-<!--    <small>--><?php //echo $this->partial('application/these/partial/titre') ?><!--</small>-->
-<!--</h1>-->
+<h1 class="page-header"><?php echo $title . ($diffusion->getVersionCorrigee() ? " de la version corrigée" : "") ?>
+    <small><?php echo $this->partial('application/these/partial/titre') ?></small>
+</h1>
 
 <?php echo $this->form()->openTag($form->setAttribute('class', 'diffusion')) ?>
 
@@ -74,7 +74,7 @@ $protoDiffusion = new Diffusion();
 <!-------------------------------- Charte de diffusion -------------------------------->
 <h2>Charte de diffusion</h2>
 <?php echo $fcg($form->get('certifCharteDiff')) ?>
-Cliquez <a href="<?php echo $this->basePath('charte_de_depot_et_diffusion.pdf') ?>" target="_blank" download>ici pour télécharger</a> la charte.
+Cliquez <a href="<?php echo $this->basePath('charte_depot_et_diffusion_des_theses.pdf') ?>" target="_blank" download>ici pour télécharger</a> la charte.
 
 <!-------------------------------- Autorisation de mise en ligne -------------------------------->
 <h2>Autorisation de mise en ligne</h2>
@@ -92,23 +92,28 @@ Cliquez <a href="<?php echo $this->basePath('charte_de_depot_et_diffusion.pdf') 
     </div>
     <div id="explicOuiImmediat" class="alert alert-md alert-info" style="display: none">
         <span class="glyphicon glyphicon-info-sign"></span>
-        <?php echo $this->message()->render('AUTORIS_MISE_EN_LIGNE_LAIUS', [], $protoDiffusion->setAutorisMel(Diffusion::AUTORISATION_OUI_IMMEDIAT)) ?>
+        <?php echo $this->message()->render(DiffusionMessages::AUTORIS_DIFFUSION_FORM_LAIUS, [], $protoDiffusion->setAutorisMel(Diffusion::AUTORISATION_OUI_IMMEDIAT)) ?>
     </div>
     <div id="explicOuiEmbargo" class="alert alert-md alert-info" style="display: none">
         <span class="glyphicon glyphicon-info-sign"></span>
-        <?php echo $this->message()->render('AUTORIS_MISE_EN_LIGNE_LAIUS', [], $protoDiffusion->setAutorisMel(Diffusion::AUTORISATION_OUI_EMBARGO)) ?>
+        <?php echo $this->message()->render(DiffusionMessages::AUTORIS_DIFFUSION_FORM_LAIUS, [], $protoDiffusion->setAutorisMel(Diffusion::AUTORISATION_OUI_EMBARGO)) ?>
     </div>
     <div id="explicNon" class="alert alert-md alert-info" style="display: none">
         <span class="glyphicon glyphicon-info-sign"></span>
-        <?php echo $this->message()->render('AUTORIS_MISE_EN_LIGNE_LAIUS', [], $protoDiffusion->setAutorisMel(Diffusion::AUTORISATION_NON)) ?>
+        <?php echo $this->message()->render(DiffusionMessages::AUTORIS_DIFFUSION_FORM_LAIUS, [], $protoDiffusion->setAutorisMel(Diffusion::AUTORISATION_NON)) ?>
     </div>
-    <div class="row idOrcid" style="display: none">
+    <div class="row auteur" style="display: none">
         <div class="col-sm-7 col-md-4">
             <?php echo $fcg
                 ->setHelpContent(
                         "Cet identifiant permet d’identifier de manière unique les chercheurs et auteurs de contributions académiques scientifiques. ".
                         '<a target="_blank" title="Ouvrir ce lien dans un autre onglet" href="https://orcid.org">Plus d\'infos...</a>')
-                ->render($form->get('idOrcid')) ?>
+                ->render($form->get('orcid')) ?>
+            <?php echo $fcg
+                ->setHelpContent(
+                    "L’IdHAL, géré dans l’archive ouverte HAL, permet de vous identifier en tant qu’auteur de vos travaux déposés sur la plateforme. ".
+                    '<a target="_blank" title="Ouvrir ce lien dans un autre onglet" href="https://doc.archives-ouvertes.fr/identifiant-auteur-idhal-cv/">Plus d\'infos...</a>')
+                ->render($form->get('halId')) ?>
         </div>
     </div>
 </div>

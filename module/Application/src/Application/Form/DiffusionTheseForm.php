@@ -205,9 +205,20 @@ class DiffusionTheseForm extends Form
 
         $this->add([
             'type'       => 'Text',
-            'name'       => 'idOrcid',
+            'name'       => 'orcid',
             'options'    => [
                 'label' => 'Identifiant ORCID (facultatif)',
+            ],
+            'attributes' => [
+                'title' => "",
+            ],
+        ]);
+
+        $this->add([
+            'type'       => 'Text',
+            'name'       => 'halId',
+            'options'    => [
+                'label' => 'Identifiant HAL (facultatif)',
             ],
             'attributes' => [
                 'title' => "",
@@ -281,9 +292,6 @@ class DiffusionTheseForm extends Form
         $autorisMel = $this->get('autorisMel')->getValue();
         switch ($autorisMel) {
             case null:
-                $required['autorisEmbargoDuree'] = false;
-                $required['autorisMotif'] = false;
-                break;
             case Diffusion::AUTORISATION_OUI_IMMEDIAT:
                 $required['autorisEmbargoDuree'] = false;
                 $required['autorisMotif'] = false;
@@ -421,7 +429,7 @@ class DiffusionTheseForm extends Form
                     ],
                 ],
             ],
-            $name = 'idOrcid'        => [
+            $name = 'orcid'        => [
                 'required'   => false,
             ],
             $name = 'certifCharteDiff'   => [

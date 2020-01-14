@@ -3,11 +3,9 @@
 namespace Application\Entity\Db;
 
 use Application\Constants;
+use Application\Rule\AutorisationDiffusionRule;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
-use UnicaenApp\Message\Message;
-use UnicaenApp\Message\MessageRepository;
-use UnicaenApp\Message\MessageService;
 
 /**
  * Diffusion
@@ -19,9 +17,9 @@ class Diffusion implements HistoriqueAwareInterface
     const CONFIDENTIELLE_OUI = '1';
     const CONFIDENTIELLE_NON = '0';
 
-    const AUTORISATION_OUI_IMMEDIAT = '2';
-    const AUTORISATION_OUI_EMBARGO = '1';
-    const AUTORISATION_NON = '0';
+    const AUTORISATION_OUI_IMMEDIAT = 2;
+    const AUTORISATION_OUI_EMBARGO = 1;
+    const AUTORISATION_NON = 0;
 
     const EMBARGO_DUREE_6_MOIS = '6 mois';
     const EMBARGO_DUREE_1_AN = '1 an';
@@ -30,6 +28,11 @@ class Diffusion implements HistoriqueAwareInterface
 
     const DROIT_AUTEUR_OK_OUI = '1';
     const DROIT_AUTEUR_OK_NON = '0';
+
+    /**
+     * @var bool
+     */
+    private $versionCorrigee = false;
 
     /**
      * @var boolean
@@ -74,6 +77,11 @@ class Diffusion implements HistoriqueAwareInterface
     /**
      * @var string
      */
+    private $halId;
+
+    /**
+     * @var string
+     */
     private $nnt;
 
     /**
@@ -95,11 +103,30 @@ class Diffusion implements HistoriqueAwareInterface
     }
 
     /**
+     * @return bool
+     */
+    public function getVersionCorrigee(): bool
+    {
+        return $this->versionCorrigee;
+    }
+
+    /**
+     * @param bool $versionCorrigee
+     * @return Diffusion
+     */
+    public function setVersionCorrigee(bool $versionCorrigee): Diffusion
+    {
+        $this->versionCorrigee = $versionCorrigee;
+
+        return $this;
+    }
+
+    /**
      * @return boolean
      */
     public function getConfidentielle()
     {
-        return $this->confidentielle;
+        return (bool) $this->confidentielle;
     }
 
     /**
@@ -108,7 +135,7 @@ class Diffusion implements HistoriqueAwareInterface
      */
     public function setConfidentielle($confidentielle)
     {
-        $this->confidentielle = $confidentielle;
+        $this->confidentielle = (bool) $confidentielle;
 
         return $this;
     }
@@ -149,7 +176,7 @@ class Diffusion implements HistoriqueAwareInterface
      */
     public function setDroitAuteurOk($droitAuteurOk = true)
     {
-        $this->droitAuteurOk = $droitAuteurOk;
+        $this->droitAuteurOk = (bool) $droitAuteurOk;
 
         return $this;
     }
@@ -178,7 +205,7 @@ class Diffusion implements HistoriqueAwareInterface
      */
     public function setCertifCharteDiff($certifCharteDiff)
     {
-        $this->certifCharteDiff = $certifCharteDiff;
+        $this->certifCharteDiff = (bool) $certifCharteDiff;
 
         return $this;
     }
@@ -275,6 +302,25 @@ class Diffusion implements HistoriqueAwareInterface
     }
 
     /**
+     * @return string|null
+     */
+    public function getHalId()
+    {
+        return $this->halId;
+    }
+
+    /**
+     * @param string|null $halId
+     * @return Diffusion
+     */
+    public function setHalId($halId = null): Diffusion
+    {
+        $this->halId = $halId;
+
+        return $this;
+    }
+
+    /**
      * Get id
      *
      * @return integer
@@ -326,6 +372,17 @@ class Diffusion implements HistoriqueAwareInterface
         return $this;
     }
 
+    /**
+     * Teste si l'exemplaire papier de la thèse est requis, d'après la réponse à l'autorisation de diffusion.
+     *
+     * @return bool
+     */
+    public function isRemiseExemplairePapierRequise()
+    {
+        $rule = new AutorisationDiffusionRule();
+        $rule->setDiffusion($this);
 
+        return $rule->computeRemiseExemplairePapierEstRequise();
+    }
 }
 

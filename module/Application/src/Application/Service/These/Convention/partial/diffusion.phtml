@@ -2,13 +2,14 @@
 /**
  * @var PhpRenderer $this
  * @var These       $these
+ * @var Diffusion   $diffusion
  */
 
+use Application\Entity\Db\Diffusion;
 use Application\Entity\Db\These;
 use Application\Service\Message\DiffusionMessages;
 use Application\View\Renderer\PhpRenderer;
 
-$diffusion = $these->getDiffusion();
 ?>
 
 <style>

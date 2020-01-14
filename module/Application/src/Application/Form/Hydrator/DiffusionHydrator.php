@@ -3,18 +3,10 @@
 namespace Application\Form\Hydrator;
 
 use Application\Entity\Db\Diffusion;
-use Application\Entity\Db\RecapBu;
-use Doctrine\ORM\OptimisticLockException;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 use UnicaenApp\Service\EntityManagerAwareInterface;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
-/**
- * Created by PhpStorm.
- * User: gauthierb
- * Date: 20/05/16
- * Time: 17:08
- */
 class DiffusionHydrator extends DoctrineObject implements EntityManagerAwareInterface
 {
     use EntityManagerAwareTrait;
@@ -41,13 +33,19 @@ class DiffusionHydrator extends DoctrineObject implements EntityManagerAwareInte
      * @param  array     $data
      * @param  Diffusion $attestation
      * @return Diffusion
-     * @throws OptimisticLockException
      */
     public function hydrate(array $data, $attestation)
     {
         // le champ de saisie de la confidentialité est grisé pour l'instant
         if (!isset($data['confidentielle'])) {
             $data['confidentielle'] = $attestation->getThese()->getDateFinConfidentialite() !== null ? Diffusion::CONFIDENTIELLE_OUI : Diffusion::CONFIDENTIELLE_NON;
+        }
+
+        if (!isset($data['orcid'])) {
+            $data['orcid'] = null;
+        }
+        if (!isset($data['halId'])) {
+            $data['halId'] = null;
         }
 
         /** @var Diffusion $diff */
