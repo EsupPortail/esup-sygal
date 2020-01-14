@@ -20,6 +20,7 @@ class ConfigurationForm extends Form {
                 ],
                 'attributes' => [
                     'id' => Parametre::CODE_AVIS_DEADLINE,
+                    'class' => 'form-control',
                 ],
             ]
         );
@@ -98,6 +99,67 @@ class ConfigurationForm extends Form {
                 ],
                 'attributes' => [
                     'id' => Parametre::CODE_JURY_PARITE_RATIO_MIN,
+                ],
+            ]
+        );
+
+        $this->add(
+            [
+                'type' => Text::class,
+                'name' => Parametre::CODE_FORMULAIRE_DELOCALISATION,
+                'options' => [
+                    'label' => "Formulaire de délocalisation de la soutenance : ",
+                ],
+                'attributes' => [
+                    'id' => Parametre::CODE_FORMULAIRE_DELOCALISATION,
+                ],
+            ]
+        );
+        $this->add(
+            [
+                'type' => Text::class,
+                'name' => Parametre::CODE_FORMULAIRE_DELEGUATION,
+                'options' => [
+                    'label' => "Formulaire de déléguation de signature : ",
+                ],
+                'attributes' => [
+                    'id' => Parametre::CODE_FORMULAIRE_DELEGUATION,
+                ],
+            ]
+        );
+        $this->add(
+            [
+                'type' => Text::class,
+                'name' => Parametre::CODE_FORMULAIRE_LABEL_EUROPEEN,
+                'options' => [
+                    'label' => "Formulaire de demande de label européen : ",
+                ],
+                'attributes' => [
+                    'id' => Parametre::CODE_FORMULAIRE_LABEL_EUROPEEN,
+                ],
+            ]
+        );
+        $this->add(
+            [
+                'type' => Text::class,
+                'name' => Parametre::CODE_FORMULAIRE_THESE_ANGLAIS,
+                'options' => [
+                    'label' => "Formulaire de demande de rédaction en anglais : ",
+                ],
+                'attributes' => [
+                    'id' => Parametre::CODE_FORMULAIRE_THESE_ANGLAIS,
+                ],
+            ]
+        );
+        $this->add(
+            [
+                'type' => Text::class,
+                'name' => Parametre::CODE_FORMULAIRE_CONFIDENTIALITE,
+                'options' => [
+                    'label' => "Formulaire de demande de confidentialité : ",
+                ],
+                'attributes' => [
+                    'id' => Parametre::CODE_FORMULAIRE_CONFIDENTIALITE,
                 ],
             ]
         );

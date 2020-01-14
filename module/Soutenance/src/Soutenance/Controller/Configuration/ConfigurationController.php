@@ -2,6 +2,7 @@
 
 namespace Soutenance\Controller\Configuration;
 
+use phpDocumentor\Reflection\DocBlock\Tags\Param;
 use Soutenance\Entity\Parametre;
 use Soutenance\Form\Configuration\ConfigurationForm;
 use Soutenance\Form\Configuration\ConfigurationFormAwareTrait;
@@ -28,10 +29,19 @@ class ConfigurationController extends  AbstractActionController {
             Parametre::CODE_JURY_RANGA_RATIO_MIN,
             Parametre::CODE_JURY_EXTERIEUR_RATIO_MIN,
             Parametre::CODE_JURY_PARITE_RATIO_MIN,
+
+            Parametre::CODE_FORMULAIRE_DELOCALISATION,
+            Parametre::CODE_FORMULAIRE_DELEGUATION,
+            Parametre::CODE_FORMULAIRE_THESE_ANGLAIS,
+            Parametre::CODE_FORMULAIRE_LABEL_EUROPEEN,
+            Parametre::CODE_FORMULAIRE_CONFIDENTIALITE,
         ];
 
         foreach ($params as $param) {
-            $form->get($param)->setValue($this->getParametreService()->getParametreByCode($param)->getValeur());
+            $element = $form->get($param);
+            $value = $this->getParametreService()->getParametreByCode($param);
+
+            if($value !== null) $form->get($param)->setValue($this->getParametreService()->getParametreByCode($param)->getValeur());
         }
 
         /** @var Request $request */

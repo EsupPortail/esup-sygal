@@ -16,6 +16,7 @@ use Application\Service\UserContextServiceAwareTrait;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Justificatif;
 use Soutenance\Entity\Membre;
+use Soutenance\Entity\Parametre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Form\Anglais\AnglaisFormAwareTrait;
 use Soutenance\Form\ChangementTitre\ChangementTitreFormAwareTrait;
@@ -33,6 +34,7 @@ use Soutenance\Form\Refus\RefusFormAwareTrait;
 use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
+use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Soutenance\Service\SignaturePresident\SiganturePresidentPdfExporter;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
@@ -52,6 +54,7 @@ class PropositionController extends AbstractController {
     use ValidatationServiceAwareTrait;
     use FichierTheseServiceAwareTrait;
     use JustificatifServiceAwareTrait;
+    use ParametreServiceAwareTrait;
     use DateLieuFormAwareTrait;
     use MembreFromAwareTrait;
     use LabelEuropeenFormAwareTrait;
@@ -100,6 +103,13 @@ class PropositionController extends AbstractController {
             'urlFichierThese'   => $this->urlFichierThese(),
             'justificatifs'     => $justificatifs,
             'justificatifsOk'   => $justificatifsOk,
+
+            'FORMULAIRE_DELOCALISATION'              => $this->getParametreService()->getParametreByCode(Parametre::CODE_FORMULAIRE_DELOCALISATION)->getValeur(),
+            'FORMULAIRE_DELEGUATION'                 => $this->getParametreService()->getParametreByCode(Parametre::CODE_FORMULAIRE_DELEGUATION)->getValeur(),
+            'FORMULAIRE_DEMANDE_LABEL'               => $this->getParametreService()->getParametreByCode(Parametre::CODE_FORMULAIRE_LABEL_EUROPEEN)->getValeur(),
+            'FORMULAIRE_DEMANDE_ANGLAIS'             => $this->getParametreService()->getParametreByCode(Parametre::CODE_FORMULAIRE_THESE_ANGLAIS)->getValeur(),
+            'FORMULAIRE_DEMANDE_CONFIDENTIALITE'     => $this->getParametreService()->getParametreByCode(Parametre::CODE_FORMULAIRE_CONFIDENTIALITE)->getValeur(),
+
         ]);
     }
 
@@ -457,6 +467,12 @@ class PropositionController extends AbstractController {
             'these' => $these,
             'form' => $form,
             'justificatifs' => $justificatifs,
+
+            'FORMULAIRE_DELOCALISATION'              => $this->getParametreService()->getParametreByCode(Parametre::CODE_FORMULAIRE_DELOCALISATION)->getValeur(),
+            'FORMULAIRE_DELEGUATION'                 => $this->getParametreService()->getParametreByCode(Parametre::CODE_FORMULAIRE_DELEGUATION)->getValeur(),
+            'FORMULAIRE_DEMANDE_LABEL'               => $this->getParametreService()->getParametreByCode(Parametre::CODE_FORMULAIRE_LABEL_EUROPEEN)->getValeur(),
+            'FORMULAIRE_DEMANDE_ANGLAIS'             => $this->getParametreService()->getParametreByCode(Parametre::CODE_FORMULAIRE_THESE_ANGLAIS)->getValeur(),
+            'FORMULAIRE_DEMANDE_CONFIDENTIALITE'     => $this->getParametreService()->getParametreByCode(Parametre::CODE_FORMULAIRE_CONFIDENTIALITE)->getValeur(),
         ]);
     }
 
