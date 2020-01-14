@@ -2,6 +2,7 @@
 
 namespace Soutenance;
 
+use Application\Provider\Privilege\UtilisateurPrivileges;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
@@ -61,16 +62,11 @@ return array(
         'default' => [
             'home' => [
                 'pages' => [
-                    'depot' => [
-                        'order'    => -98,
-                        'label'    => 'Dépôt',
-                        'route'    => 'home',
-                    ],
                     'soutenance' => [
                         'order'    => -99,
                         'label'    => 'Soutenance',
                         'route'    => 'soutenance',
-                        'roles' => [],
+                        'resource' => PresoutenancePrivileges::getResourceId(PropositionPrivileges::PROPOSITION_VISUALISER),
                         'pages' => [
                             'proposition' => [
                                 'label'    => 'Proposition de soutenance',
@@ -82,18 +78,8 @@ return array(
                                     'these',
                                 ],
                             ],
-                            'simulation' => [
-                                'label'    => 'Simulation SI',
-                                'route'    => 'simulation',
-                                'order'    => 150,
-                                'resource' => PresoutenancePrivileges::getResourceId(PresoutenancePrivileges::PRESOUTENANCE_PRESOUTENANCE_VISUALISATION),
-                                'withtarget' => true,
-                                'paramsInject' => [
-                                    'these',
-                                ],
-                            ],
                             'presoutenance' => [
-                                'label'    => 'Étape de présoutenance',
+                                'label'    => 'Préparation de la soutenance',
                                 'route'    => 'soutenance/presoutenance',
                                 'order'    => 200,
                                 'resource' => PresoutenancePrivileges::getResourceId(PresoutenancePrivileges::PRESOUTENANCE_PRESOUTENANCE_VISUALISATION),
@@ -128,8 +114,7 @@ return array(
                                 'label' => 'Notifier attente de rapport',
                                 'route' => 'soutenance/notifier-retard-rapport-presoutenance',
                                 'order'    => 500,
-//                                'resource' => PrivilegeController::getResourceId(PresoutenanceController::class, 'notifier-retard-rapport-presoutenance'),
-                                'privileges' => PresoutenancePrivileges::PRESOUTENANCE_DATE_RETOUR_MODIFICATION,
+                                'resource' => UtilisateurPrivileges::getResourceId(UtilisateurPrivileges::UTILISATEUR_MODIFICATION),
                             ],
                         ],
                     ],
@@ -137,13 +122,6 @@ return array(
             ],
         ],
     ],
-
-//    'navigation_helpers' => [
-//        'factories' => [
-//            'menuPiedDePage'      => MenuPiedDePageFactory::class,
-//            'menuSecondaire'      => MenuSecondaireFactory::class,
-//        ],
-//    ],
 
     'service_manager' => [
         'factories' => [

@@ -1,0 +1,146 @@
+<?php
+
+/**
+ * @see \Application\Controller\UtilisateurController::gererUtilisateurAction()
+ * @var Individu $individu
+ * @var Utilisateur $utilisateur
+ * @var Acteur[] $acteurs
+ */
+
+use Application\Entity\Db\Acteur;
+use Application\Entity\Db\Individu;
+use Application\Entity\Db\Utilisateur;
+
+?>
+
+<h1 class="page-header">
+    Gérer un utilisateur
+</h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
+
+<div class="main">
+
+    <!-- PARTIE INFORMATION ------------------------------------------------------------------------------------------->
+    <div class="row">
+
+        <div class="col-md-4">
+            <h2> Information sur l'individu </h2>
+
+            <dl class="dl-horizontal">
+                <dt> Nom usuel </dt>
+                <dd> <?php echo $individu->getNomUsuel(); ?> </dd>
+                <?php if ($individu->getNomPatronymique() AND $individu->getNomPatronymique() !== $individu->getNomUsuel()) : ?>
+                    <dt> Nom patronymique </dt>
+                    <dd> <?php echo $individu->getNomPatronymique(); ?></dd>
+                <?php endif; ?>
+                <dt> Prénom </dt>
+                <dd> <?php echo $individu->getPrenoms(); ?></dd>
+                <dt> Email</dt>
+                <dd> <?php echo $individu->getEmail(); ?> </dd>
+            </dl>
+
+            <h2> Information sur l'utilisateur </h2>
+
+            <?php if ($utilisateur !== null) : ?>
+                <dl class="dl-horizontal">
+                    <dt> Nom d'utilisateur </dt>
+                    <dd> <?php echo $utilisateur->getUsername(); ?> </dd>
+                    <dt> Email </dt>
+                    <dd> <?php echo $utilisateur->getEmail(); ?> </dd>
+                    <dt> Est un compte local </dt>
+                    <dd> <?php echo ($utilisateur->isLocal())?'Oui':'Non'; ?> </dd>
+                </dl>
+            <?php else : ?>
+                Aucun utilisateur
+            <?php endif; ?>
+        </div>
+
+        <div class="col-md-8">
+            <h2> Acteurs associés à l'individu </h2>
+
+            <table class="table table-extra-condensed">
+                <thead>
+                    <tr>
+                        <th> These Id </th>
+                        <th> Role </th>
+                        <th> Qualité </th>
+                        <th> Établissement </th>
+                    </tr>
+                </thead>
+                <?php foreach ($acteurs as $acteur) : ?>
+                    <tr>
+                        <td>
+                            <a href="<?php echo $this->url('these/identite', ['these' => $acteur->getThese()->getId()], [], true); ?>"
+                               title="<?php echo $acteur->getThese()->getDoctorant()->getIndividu()->getNomComplet(); ?> - <?php echo $acteur->getThese()->getTitre(); ?>"
+                            >
+                            <?php echo $acteur->getThese()->getId(); ?>
+                            </a>
+                        </td>
+                        <td>
+                            <?php echo $acteur->getRole()->getLibelle(); ?>
+                        </td>
+                        <td>
+                            <?php echo $acteur->getQualite(); ?>
+                        </td>
+                        <td>
+                            <?php if ($acteur->getEtablissement() !== null) : ?>
+                                <?php echo $acteur->getEtablissement()->getLibelle(); ?>
+                            <?php else : ?>
+                                Aucun établissement
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+            <?php endforeach; ?>
+            </table>
+        </div>
+    </div>
+
+    <h2> Gestion du compte utilisateur</h2>
+
+    <?php if ($utilisateur) : ?>
+        <?php if ($utilisateur->isLocal()) : ?>
+
+            <?php if ($utilisateur->getEmail() === null AND $acteur->getIndividu()->getEmail() === null) : ?>
+                <div class="alert alert-warning">
+                    <strong>
+                        <span class="glyphicon glyphicon-warning-sign"></span>
+                        Aucune adresse électronique de connue pour l'utilisateur et l'individu.
+                    </strong>
+                    <br/>
+                    Veuillez renseigner celle-ci pour l'individu correspondant dans votre système d'information (<?php echo $individu->getSource()->getLibelle(); ?>).
+                </div>
+            <?php else: ?>
+                <a  <?php /** @see \Application\Controller\UtilisateurController::resetPasswordAction() */ ?>
+                    href="<?php echo $this->url('utilisateur/reset-password', ['individu' => $individu->getId()], [], true); ?>"
+                    class="btn btn-primary action"
+                >
+                    <span class="glyphicon glyphicon-refresh"></span>
+                    Reinitialiser le mot de passe
+                </a>
+            <?php endif; ?>
+        <?php else : ?>
+            Le compte utilisateur existe et est non local.
+        <?php endif; ?>
+    <?php else : ?>
+        <?php if ($acteur->getIndividu()->getEmail() === null) : ?>
+            <div class="alert alert-warning">
+                <strong>
+                    <span class="glyphicon glyphicon-warning-sign"></span>
+                    Aucune adresse électronique de connue pour l'individu.
+                </strong>
+                <br/>
+                Veuillez renseigner celle-ci pour l'individu correspondant dans votre système d'information (<?php echo $individu->getSource()->getLibelle(); ?>).
+            </div>
+        <?php else: ?>
+            <a  <?php /** @see \Application\Controller\UtilisateurController::creerCompteLocalIndividuAction() */ ?>
+                href="<?php echo $this->url('utilisateur/creer-compte-local-individu', ['individu' => $individu->getId()], [], true); ?>"
+                class="btn btn-primary"
+            >
+                <span class="glyphicon glyphicon-plus"></span>
+                Creer un compte local
+            </a>
+        <?php endif; ?>
+    <?php endif; ?>
+
+</div>

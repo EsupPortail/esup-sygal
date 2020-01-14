@@ -166,8 +166,14 @@ use Soutenance\Entity\Proposition;
     <?php endif; ?>
     </strong>
     à l'adresse suivante : <br/>
-    <span class="to-complete">information non encore remontée</span>
-    <br/>
+    <?php if ($proposition->getAdresse() !== null): ?>
+        <?php echo $proposition->getAdresse(); ?>
+    <?php else : ?>
+        <span style='background-color:red;'>
+                    Adresse manquante
+            </span>
+        <br/>
+    <?php endif; ?>
     en vue de l'obtention du diplôme de <strong>Doctorat spécialité
 
     <?php if ($informations->getSpecialite() !== null): ?>
@@ -220,10 +226,10 @@ use Soutenance\Entity\Proposition;
             <?php endif; ?>
         </td>
     </tr>
-    <tr>
-        <td>Section CNU </td>
-        <td><span class="to-complete">information non encore remontée</span></td>
-    </tr>
+<!--    <tr>-->
+<!--        <td>Section CNU </td>-->
+<!--        <td><span class="to-complete">information non encore remontée</span></td>-->
+<!--    </tr>-->
     <tr>
         <td>Unité de recherche </td>
         <td>

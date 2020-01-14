@@ -4,7 +4,6 @@ namespace Soutenance\Form\Confidentialite;
 
 use DateInterval;
 use DateTime;
-use Soutenance\Validator\DateGreaterThan;
 use Soutenance\Validator\DateLesserThan;
 use UnicaenApp\Form\Element\Date;
 use Zend\Form\Element\Checkbox;
@@ -51,7 +50,7 @@ class ConfidentialiteForm extends Form {
         $this->setInputFilter((new Factory())->createInputFilter([
             'date' => [
                 'name' => 'date',
-                'required' => true,
+                'required' => false,
                 'validators' => [
                     [
                         'name' => DateLesserThan::class,

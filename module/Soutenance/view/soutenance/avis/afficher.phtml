@@ -1,11 +1,14 @@
 <?php
 
-use Application\Constants;use Application\Entity\Db\Acteur;
+use Application\Constants;
+use Application\Entity\Db\Acteur;
 use Application\Entity\Db\These;
 use Soutenance\Entity\Avis;
 use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
 
 /**
+ * @see \Soutenance\Controller\Avis\AvisController::afficherAction()
+ *
  * @var These $these
  * @var Acteur $rapporteur
  * @var Avis $avis
@@ -85,7 +88,9 @@ $canAnnuler = $this->isAllowed(AvisSoutenancePrivileges::getResourceId(AvisSoute
 </div>
 
 <?php if ($canAnnuler) : ?>
-    <a  href="<?php echo $this->url('soutenance/avis-soutenance/annuler', ['these' => $these->getId(), 'rapporteur' => 541], [] , true); ?>"
+    <a
+        <?php /** @see \Soutenance\Controller\Avis\AvisController::annulerAction() */ ?>
+        href="<?php echo $this->url('soutenance/avis-soutenance/annuler', ['these' => $these->getId(), 'rapporteur' => 541], [] , true); ?>"
         class="btn btn-danger">
         <span class="glyphicon glyphicon-remove"></span>
         Annuler l'avis de soutance

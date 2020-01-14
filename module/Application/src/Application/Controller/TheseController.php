@@ -36,6 +36,7 @@ use Application\Service\These\TheseRechercheServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
+use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
@@ -81,6 +82,7 @@ class TheseController extends AbstractController
     use UserContextServiceAwareTrait;
     use VariableServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
+    use UtilisateurServiceAwareTrait;
 
     private $timeoutRetraitement;
 
@@ -170,6 +172,36 @@ class TheseController extends AbstractController
         return $this->redirect()->toRoute('these', [], ['query' => $queryParams]);
     }
 
+    /**
+     * Action servant l'accueil du menu Dépôt :
+     * - pour un doctorant / directeur affiche la liste des thèses en cours
+     * - pour un bu et mdd la liste des thèses en cours dans son établissement
+     * - sinon un message disant de sélectionner une thèse via l'annuaire
+     **/
+    public function depotAccueilAction() {
+
+        $role = $this->userContextService->getSelectedIdentityRole();
+        $user = $this->userContextService->getIdentityDb();
+
+        $theses = [];
+        switch ($role->getCode()) {
+            case Role::CODE_DOCTORANT :
+                $theses = $this->getTheseService()->getRepository()->findTheseByDoctorant($user->getIndividu());
+                break;
+            case Role::CODE_DIRECTEUR_THESE :
+            case Role::CODE_CODIRECTEUR_THESE :
+                $theses = $this->getTheseService()->getRepository()->findTheseByActeur($user->getIndividu());
+                break;
+            default :
+                break;
+        }
+
+        return new ViewModel([
+            'role' => $role,
+            'theses' => $theses,
+        ]);
+    }
+
     public function roadmapAction()
     {
         $these = $this->requestedThese();
@@ -219,6 +251,12 @@ class TheseController extends AbstractController
         $rattachements = null;
         if ($unite !== null) $rattachements = $this->getUniteRechercheService()->findEtablissementRattachement($unite);
 
+        $utilisateurs = [];
+        foreach ($these->getActeurs() as $acteur) {
+            $utilisateur = $this->utilisateurService->getRepository()->findByIndividu($acteur->getIndividu());
+            $utilisateurs[$acteur->getId()] = $utilisateur;
+        }
+
         //TODO JP remplacer dans modifierPersopassUrl();
         $urlModification = $this->url()->fromRoute('doctorant/modifier-persopass',['back' => 1, 'doctorant' => $these->getDoctorant()->getId()], [], true);
 
@@ -235,6 +273,7 @@ class TheseController extends AbstractController
             'etatMailContact'           => $etatMailContact,
             'rattachements'             => $rattachements,
             'validationsDesCorrectionsEnAttente' => $validationsDesCorrectionsEnAttente,
+            'utilisateurs'              => $utilisateurs,
         ]);
         $view->setTemplate('application/these/identite');
 

@@ -6,6 +6,8 @@ use Application\Entity\Db\These;
 use DateInterval;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
+use Exception;
+use UnicaenApp\Exception\RuntimeException;
 
 class Proposition {
 
@@ -17,6 +19,8 @@ class Proposition {
     private $date;
     /** @var string */
     private $lieu;
+    /** @var string */
+    private $adresse;
     /** @var boolean */
     private $exterieur;
 
@@ -130,6 +134,24 @@ class Proposition {
     public function setLieu($lieu)
     {
         $this->lieu = $lieu;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAdresse()
+    {
+        return $this->adresse;
+    }
+
+    /**
+     * @param string $adresse
+     * @return Proposition
+     */
+    public function setAdresse($adresse)
+    {
+        $this->adresse = $adresse;
         return $this;
     }
 
@@ -378,8 +400,12 @@ class Proposition {
         $soutenance = $this->getDate();
         if ($soutenance === null) return false;
 
-        $deux = new DateInterval('P2M');
-        $date = new DateTime();
+        try {
+            $deux = new DateInterval('P2M');
+            $date = new DateTime();
+        } catch(Exception $e) {
+            throw new RuntimeException("Problème de récupération de la date", 0, $e);
+        }
         $date_ = $date->add($deux);
 
         return ($date_ < $soutenance);

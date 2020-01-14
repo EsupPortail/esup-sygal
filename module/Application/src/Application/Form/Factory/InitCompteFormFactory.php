@@ -1,7 +1,8 @@
 <?php
 
-namespace Soutenance\Form\InitCompte;
+namespace Application\Form\Factory;
 
+use Application\Form\InitCompteForm;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 use Zend\Form\FormElementManager;
 

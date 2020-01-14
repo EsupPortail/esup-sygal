@@ -1,6 +1,6 @@
 <?php
 
-namespace Soutenance\Form\InitCompte;
+namespace Application\Form;
 
 trait InitCompteFormAwareTrait {
 

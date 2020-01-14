@@ -548,4 +548,13 @@ span.badge.REJETEE {
 a.action {
   padding:0.5rem;
   margin:0.5rem;
+  width: 20em;
+}
+
+.badge-success {
+  background-color: #468847;
+}
+
+.badge-error {
+  background-color: #881f18;
 }

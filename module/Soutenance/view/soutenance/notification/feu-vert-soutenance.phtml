@@ -21,13 +21,13 @@ use Soutenance\Entity\Proposition;
     Bonjour,
 </p>
 <p>
-    La soutenance de <?php echo $these->getDoctorant()->getIndividu(); ?> a été accepté par la maison du doctorats de votre établissement.
-    Conformément aux informations que vous avez fournis celle-ci se tiendra le
+    La soutenance de <?php echo $these->getDoctorant()->getIndividu(); ?> a été accepté par la maison du doctorat de votre établissement.
+    Conformément aux informations que vous avez fournies celle-ci se tiendra le
     <em> <?php echo $proposition->getDate()->format(Constants::DATETIME_FORMAT); ?> </em>
     dans <em> <?php echo $proposition->getLieu() ?> </em>.
 </p>
 <p>
-    Vous pouvez consulter les rapports de présoutenance en utilisant les liens suivant :
+    Vous pouvez consulter les rapports de pré-soutenance en utilisant les liens suivant :
 </p>
 <ul>
     <?php foreach ($avis as $avi) : ?>

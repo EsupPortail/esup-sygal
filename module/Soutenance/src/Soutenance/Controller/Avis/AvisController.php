@@ -4,14 +4,12 @@ namespace Soutenance\Controller\Avis;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\NatureFichier;
-use Application\Entity\Db\These;
 use Application\Entity\Db\VersionFichier;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Soutenance\Entity\Avis;
-use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Filter\NomAvisFormatter;
 use Soutenance\Form\Avis\AvisForm;
@@ -39,15 +37,11 @@ class AvisController extends AbstractController {
 
     public function indexAction()
     {
-        /** @var These $these */
-        $theseId    = $this->params()->fromRoute('these');
-        $these      = $this->getTheseService()->getRepository()->find($theseId);
-        /** @var Membre $membre */
-        $idMembre = $this->params()->fromRoute('rapporteur');
-        $membre = $this->getMembreService()->find($idMembre);
+        $these = $this->requestedThese();
+        $membre = $this->getMembreService()->getRequestedMembre($this, 'rapporteur');
+
         /** @var Proposition $proposition */
         $proposition = $this->getPropositionService()->findByThese($these);
-
         $avis = $this->getAvisService()->getAvisByMembre($membre);
 
         if ($avis !== null) {
@@ -75,12 +69,13 @@ class AvisController extends AbstractController {
             $form->setData($data);
             if ($form->isValid()) {
 
+                //todo faire une fonction dans AvisService ...
                 $nature = $this->fichierTheseService->fetchNatureFichier(NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE);
                 $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
-                $fichiers = $this->fichierService->createFichiersFromUpload($files, $nature, $version, new NomAvisFormatter($membre->getActeur()->getIndividu()));
+                $fichiers = $this->fichierService->createFichiersFromUpload($files, $nature, $version, new NomAvisFormatter($membre->getIndividu()));
                 $fichier = current($fichiers);
 
-                $validation = $this->getValidationService()->signerAvisSoutenance($these, $membre->getActeur()->getIndividu());
+                $validation = $this->getValidationService()->signerAvisSoutenance($these, $membre->getIndividu());
 
                 $avis = new Avis();
                 $avis->setProposition($proposition);
@@ -120,12 +115,8 @@ class AvisController extends AbstractController {
     }
 
     public function afficherAction() {
-        /** @var These $these */
-        $theseId = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($theseId);
-        /** @var Membre $membre */
-        $membreId = $this->params()->fromRoute('rapporteur');
-        $membre = $this->getMembreService()->find($membreId);
+        $these = $this->requestedThese();
+        $membre = $this->getMembreService()->getRequestedMembre($this, 'rapporteur');
         $rapporteur = $membre->getActeur();
         /** @var Avis $avis */
         $avis = $this->getAvisService()->getAvisByMembre($membre);
@@ -139,17 +130,13 @@ class AvisController extends AbstractController {
     }
 
     public function annulerAction() {
-        /** @var These $these */
-        $theseId = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($theseId);
-        /** @var Membre $membre */
-        $membreId = $this->params()->fromRoute('rapporteur');
-        $membre = $this->getMembreService()->find($membreId);
+        $these = $this->requestedThese();
+        $membre = $this->getMembreService()->getRequestedMembre($this, 'rapporteur');
         /** @var Avis $avis */
         $avis = $this->getAvisService()->getAvisByMembre($membre);
         $this->getAvisService()->historiser($avis);
 
-        $this->redirect()->toRoute('soutenance/avis-soutenance', ['these' => $these->getId(), 'rapporteur' => $membreId], [], true);
+        $this->redirect()->toRoute('soutenance/avis-soutenance', ['these' => $these->getId(), 'rapporteur' => $membre->getId()], [], true);
     }
 
 }

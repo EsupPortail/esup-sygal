@@ -3,6 +3,7 @@
 namespace Soutenance\Entity;
 
 use Application\Entity\Db\Acteur;
+use Application\Entity\Db\Individu;
 use UnicaenApp\Exception\RuntimeException;
 
 class Membre {
@@ -252,6 +253,16 @@ class Membre {
         return $this;
     }
 
+    /**
+     * @return Individu
+     */
+    public function getIndividu()
+    {
+        $acteur = $this->getActeur();
+        if ($acteur === null) return null;
+        return $acteur->getIndividu();
+    }
+
     /** @return boolean */
     public function estRapporteur()
     {
@@ -278,5 +289,3 @@ class Membre {
         return $this;
     }
 }
-
-?>

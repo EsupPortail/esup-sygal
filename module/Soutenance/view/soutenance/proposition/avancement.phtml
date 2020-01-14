@@ -1,11 +1,13 @@
 <?php
 
 /**
+ * @see \Soutenance\Controller\Proposition\PropositionController::avancementAction()
  * @var Proposition $proposition
  * @var These $these
  * @var Acteur[] $directeurs
  * @var Membre[] $rapporteurs
  * @var boolean $jury
+ * @var boolean $justificatif
  */
 
 use Application\Entity\Db\Acteur;
@@ -50,6 +52,10 @@ $this->headTitle('Avancement de la soutenance');
             <dd>
                 <?php echo validite($jury); ?>
             </dd>
+            <dt> Justificatifs </dt>
+            <dd>
+                <?php echo validite($justificatif); ?>
+            </dd>
         </dl>
 
         <h3> Validations des acteurs directs </h3>
@@ -93,7 +99,7 @@ $this->headTitle('Avancement de la soutenance');
         <div class="col-md-4">
             <strong>
                 <?php if ($rapporteur->getActeur()) : ?>
-                    <?php echo $rapporteur->getActeur()->getIndividu(); ?>
+                    <?php echo $rapporteur->getIndividu(); ?>
                 <?php else : ?>
                     <?php echo $rapporteur->getDenomination(); ?>
                 <?php endif; ?>
@@ -133,6 +139,7 @@ function validite($value) {
     if ($value === false) {
         return '<span class="badge danger">Invalide</span>';
     }
+    return "";
 }
 
 function getBadge($validation) {

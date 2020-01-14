@@ -10,6 +10,7 @@ use Application\Entity\Db\MailConfirmation;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\UniteRecherche;
+use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\ValiditeFichier;
 use Application\Entity\Db\Variable;
 use Application\Notification\CorrectionAttendueUpdatedNotification;
@@ -24,6 +25,7 @@ use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Notification\Notification;
+use UnicaenApp\Exception\LogicException;
 use Zend\Mvc\Controller\Plugin\FlashMessenger;
 use Zend\View\Helper\Url as UrlHelper;
 
@@ -481,5 +483,58 @@ class NotifierService extends \Notification\Service\NotifierService
             ]);
         $this->trigger($notif);
     }
+
+    /**
+     * @param Utilisateur $utilisateur
+     * @param string $url
+     */
+    public function triggerInitialisationCompte($utilisateur, $url) {
+
+        $email = $utilisateur->getEmail();
+        if ($email === null) throw new LogicException("Aucun email de fourni !");
+
+        $token = $utilisateur->getPasswordResetToken();
+        if ($token === null) throw new LogicException("Aucun token de fourni !");
+
+        if (!empty($email)) {
+            $notif = new Notification();
+            $notif
+                ->setSubject("Initialisation de votre compte SyGAL")
+                ->setTo($email)
+                ->setTemplatePath('application/utilisateur/mail/init-compte')
+                ->setTemplateVariables([
+                    'username' => $utilisateur->getUsername(),
+                    'url' => $url,
+                ]);
+            $this->trigger($notif);
+        }
+    }
+
+    /**
+     * @param Utilisateur $utilisateur
+     * @param string $url
+     */
+    public function triggerResetCompte($utilisateur, $url) {
+
+        $email = $utilisateur->getEmail();
+        if ($email === null) throw new LogicException("Aucun email de fourni !");
+
+        $token = $utilisateur->getPasswordResetToken();
+        if ($token === null) throw new LogicException("Aucun token de fourni !");
+
+        if (!empty($email)) {
+            $notif = new Notification();
+            $notif
+                ->setSubject("Réinitialisation de votre mot de passe de votre compte SyGAL")
+                ->setTo($email)
+                ->setTemplatePath('application/utilisateur/mail/reinit-compte')
+                ->setTemplateVariables([
+                    'username' => $utilisateur->getUsername(),
+                    'url' => $url,
+                ]);
+            $this->trigger($notif);
+        }
+    }
+
 
 }

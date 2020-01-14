@@ -7,6 +7,9 @@ use Soutenance\Assertion\PresoutenanceAssertionFactory;
 use Soutenance\Controller\EngagementImpartialite\EngagementImpartialiteController;
 use Soutenance\Controller\Presoutenance\PresoutenanceController;
 use Soutenance\Controller\Presoutenance\PresoutenanceControllerFactory;
+use Soutenance\Form\AdresseSoutenance\AdresseSoutenanceForm;
+use Soutenance\Form\AdresseSoutenance\AdresseSoutenanceFormFactory;
+use Soutenance\Form\AdresseSoutenance\AdresseSoutenanceHydrator;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportForm;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportFormFactory;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportHydrator;
@@ -60,6 +63,7 @@ return [
                         'avis-soutenance',
                         'convocation',
                         'proces-verbal-soutenance',
+                        'modifier-adresse',
                     ],
                     'privileges' => PresoutenancePrivileges::PRESOUTENANCE_DATE_RETOUR_MODIFICATION,
                 ],
@@ -88,7 +92,6 @@ return [
                 [
                     'controller' => PresoutenanceController::class,
                     'action'     => [
-                        'init-compte',
                         'notifier-retard-rapport-presoutenance'
                     ],
                     'roles' => 'guest',
@@ -110,17 +113,6 @@ return [
                             'defaults' => [
                                 'controller' => PresoutenanceController::class,
                                 'action'     => 'notifier-retard-rapport-presoutenance',
-                            ],
-                        ],
-                    ],
-                    'init-compte' => [
-                        'type' => Segment::class,
-                        'may_terminate' => true,
-                        'options' => [
-                            'route'    => '/init-compte/:token',
-                            'defaults' => [
-                                'controller' => PresoutenanceController::class,
-                                'action'     => 'init-compte',
                             ],
                         ],
                     ],
@@ -256,6 +248,17 @@ return [
                                     ],
                                 ],
                             ],
+                            'modifier-adresse' => [
+                                'type' => Literal::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/modifier-adresse',
+                                    'defaults' => [
+                                        'controller' => PresoutenanceController::class,
+                                        'action'     => 'modifier-adresse',
+                                    ],
+                                ],
+                            ],
                         ],
                     ],
                 ],
@@ -277,13 +280,14 @@ return [
     'form_elements' => [
         'factories' => [
             DateRenduRapportForm::class => DateRenduRapportFormFactory::class,
-            InitCompteForm::class => InitCompteFormFactory::class,
+            AdresseSoutenanceForm::class => AdresseSoutenanceFormFactory::class,
         ],
     ],
 
     'hydrators' => [
         'invokables' => [
             DateRenduRapportHydrator::class => DateRenduRapportHydrator::class,
+            AdresseSoutenanceHydrator::class => AdresseSoutenanceHydrator::class,
         ],
         'factories' => [
         ],

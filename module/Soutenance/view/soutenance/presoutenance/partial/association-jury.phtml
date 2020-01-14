@@ -60,7 +60,7 @@ $canAssocierMembreIndividu              = $this->isAllowed($these, Presoutenance
                     <td>    <?php echo $membre->getRole(); ?>                                                           </td>
                     <td>    <?php echo ($membre->getQualite())?$membre->getQualite()->getLibelle():"Non définie"; ?>    </td>
                     <td>    <?php echo $membre->getEtablissement(); ?>                                                  </td>
-                    <td>    <?php echo ($membre->getActeur())?$membre->getActeur()->getId() .' '. $membre->getActeur()->getIndividu()->getNomComplet():''; ?>                  </td>
+                    <td>    <?php echo ($membre->getActeur())?$membre->getActeur()->getId() .' '. $membre->getIndividu()->getNomComplet():''; ?>                  </td>
                     <td>
                         <?php if($canAssocierMembreIndividu): ?>
                             <?php if ($membre->estRapporteur()) : ?>

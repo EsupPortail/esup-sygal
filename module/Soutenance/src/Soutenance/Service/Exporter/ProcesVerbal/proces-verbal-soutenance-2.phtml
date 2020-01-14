@@ -149,7 +149,13 @@ use Soutenance\Entity\Proposition;
         </tr>
     <tr>
         <td> Date de soutenance </td>
-        <td> <?php echo $informations->getDate(); ?> </td>
+        <td> <?php if ($informations->getDate() !== null): ?>
+                <?php echo $informations->getDate(); ?>
+            <?php else : ?>
+                <span style='background-color:red;'>
+                Date manquante
+        </span>
+            <?php endif; ?> </td>
     </tr>
 </table>
 </p>

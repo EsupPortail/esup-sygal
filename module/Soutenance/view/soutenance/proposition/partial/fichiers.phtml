@@ -2,28 +2,27 @@
 
 /**
  * @var Proposition $proposition
- * @var These $these
  * @var array $justificatifs
  * @var bool $justificatifsOk
  * @var UrlFichierThese $urlFichierThese
+ * @var bool $canModifier
  */
 
 use Application\Controller\Plugin\UrlFichierThese;
 use Application\Entity\Db\NatureFichier;
-use Application\Entity\Db\These;
 use Soutenance\Entity\Justificatif;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
-use Soutenance\Provider\Privilege\PropositionPrivileges;
 
-$canModifier = $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER));
+
+$these = $proposition->getThese();
 $hasVisio = false;
 foreach ($proposition->getMembres() as $membre) {
     if ($membre->isVisio()) $hasVisio = true;
 }
 ?>
 
-<div class="box panel <?php echo ($justificatifsOk)?"panel-info":"panel-danger";?>">
+<div class="box panel <?php echo ($justificatifsOk)?"panel-success":"panel-danger";?>">
     <div class="panel-heading">
         <h2> Fichiers associés à la proposition</h2>
     </div>

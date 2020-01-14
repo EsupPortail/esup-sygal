@@ -3,7 +3,6 @@
 namespace Soutenance\Controller\Proposition;
 
 use Application\Service\Acteur\ActeurService;
-use Application\Service\Fichier\FichierService;
 use Application\Service\FichierThese\FichierTheseService;
 use Application\Service\These\TheseService;
 use Application\Service\UserContextService;
@@ -18,6 +17,7 @@ use Soutenance\Form\Refus\RefusForm;
 use Soutenance\Service\Justificatif\JustificatifService;
 use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Notifier\NotifierSoutenanceService;
+use Soutenance\Service\Parametre\ParametreService;
 use Soutenance\Service\Proposition\PropositionService;
 use Soutenance\Service\Validation\ValidationService;
 use Zend\Mvc\Controller\ControllerManager;
@@ -36,6 +36,7 @@ class PropositionControllerFactory {
          * @var ValidationService $validationService
          * @var FichierTheseService $fichierTheseService
          * @var JustificatifService $justificatifService
+         * @var ParametreService $parametreService
          */
         $acteurService = $manager->getServiceLocator()->get(ActeurService::class);
         $membreService = $manager->getServiceLocator()->get(MembreService::class);
@@ -46,6 +47,7 @@ class PropositionControllerFactory {
         $validationService = $manager->getServiceLocator()->get(ValidationService::class);
         $fichierTheseService = $manager->getServiceLocator()->get(FichierTheseService::class);
         $justificatifService = $manager->getServiceLocator()->get(JustificatifService::class);
+        $parametreService = $manager->getServiceLocator()->get(ParametreService::class);
 
         /**
          * @var DateLieuForm $dateLieuForm
@@ -78,6 +80,7 @@ class PropositionControllerFactory {
         $controller->setValidationService($validationService);
         $controller->setFichierTheseService($fichierTheseService);
         $controller->setJustificatifService($justificatifService);
+        $controller->setParametreService($parametreService);
 
         $controller->setDateLieuForm($dateLieuForm);
         $controller->setMembreForm($membreForm);

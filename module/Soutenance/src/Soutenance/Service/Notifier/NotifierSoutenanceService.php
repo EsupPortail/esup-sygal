@@ -230,7 +230,7 @@ class NotifierSoutenanceService extends NotifierService {
         if ($email !== null) {
             $notif = new Notification();
             $notif
-                ->setSubject("Vous pouvez procéder aux rensignement de la présoutenance")
+                ->setSubject("Vous pouvez procéder au renseignement des informations de soutenance")
                 ->setTo($email)
                 ->setTemplatePath('soutenance/notification/presoutenance')
                 ->setTemplateVariables([
@@ -279,7 +279,7 @@ class NotifierSoutenanceService extends NotifierService {
      */
     public function triggerDemandeSignatureEngagementImpartialite($these, $proposition, $membre)
     {
-        $email   = $membre->getActeur()->getIndividu()->getEmail();
+        $email   = $membre->getIndividu()->getEmail();
 
         if ($email !== null) {
             $notif = new Notification();
@@ -357,7 +357,7 @@ class NotifierSoutenanceService extends NotifierService {
      */
     public function triggerAnnulationEngagementImpartialite($these, $proposition, $membre)
     {
-        $email   = $membre->getActeur()->getIndividu()->getEmail();
+        $email   = $membre->getIndividu()->getEmail();
 
         if ($email) {
             $notif = new Notification();
@@ -381,7 +381,7 @@ class NotifierSoutenanceService extends NotifierService {
      */
     public function triggerDemandeAvisSoutenance($these, $proposition, $rapporteur)
     {
-        $email   = $rapporteur->getActeur()->getIndividu()->getEmail();
+        $email   = $rapporteur->getIndividu()->getEmail();
 
         if ($email !== null) {
             $notif = new Notification();
@@ -526,7 +526,7 @@ class NotifierSoutenanceService extends NotifierService {
         if (!empty($emails)) {
             $notif = new Notification();
             $notif
-                ->setSubject("La soutenance de ".$these->getDoctorant()->getIndividu()." a été accepté par la maison du doctorats de votre établissement.")
+                ->setSubject("La soutenance de ".$these->getDoctorant()->getIndividu()." a été accepté par la maison du doctorat de votre établissement.")
                 ->setTo($emails)
                 ->setTemplatePath('soutenance/notification/feu-vert-soutenance')
                 ->setTemplateVariables([
@@ -631,8 +631,8 @@ class NotifierSoutenanceService extends NotifierService {
     {
         if ($membre->getActeur() === null) throw new RuntimeException("Notification vers rapporteur [MembreId = ".$membre->getId()."] impossible car aucun acteur n'est lié.");
 
-        $email = $membre->getActeur()->getIndividu()->getEmail();
-        if ($email === null) throw new RuntimeException("Notification vers rapporteur [MembreId = ".$membre->getId()."] impossible car aucun email est donné pour l'individu associé [IndividuId = ".$membre->getActeur()->getIndividu()->getId()."].");
+        $email = $membre->getIndividu()->getEmail();
+        if ($email === null) throw new RuntimeException("Notification vers rapporteur [MembreId = ".$membre->getId()."] impossible car aucun email est donné pour l'individu associé [IndividuId = ".$membre->getIndividu()->getId()."].");
 
 
         $these = $membre->getProposition()->getThese();

@@ -5,7 +5,7 @@ namespace Soutenance\Service\Notifier;
 use Application\Service\Acteur\ActeurService;
 use Application\Service\Role\RoleService;
 use Application\Service\Variable\VariableService;
-use Application\Service\Notification\NotificationFactory; //TODO DEGUELASSE
+use Application\Service\Notification\NotificationFactory;
 use Notification\Service\NotifierServiceFactory;
 use Zend\Mvc\View\Console\ViewManager as ConsoleViewManager;
 use Zend\Mvc\View\Http\ViewManager as HttpViewManager;

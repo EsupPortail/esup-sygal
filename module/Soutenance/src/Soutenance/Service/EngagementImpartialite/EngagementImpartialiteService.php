@@ -32,7 +32,8 @@ class EngagementImpartialiteService {
      */
     public function getEngagementImpartialiteByMembre($membre)
     {
-        $individu = $membre->getActeur()->getIndividu();
+        if ($membre === null OR $membre->getActeur() === null) return null;
+        $individu = $membre->getIndividu();
         $these = $membre->getActeur()->getThese();
 
         $qb = $this->getValidationService()->getEntityManager()->getRepository(Validation::class)->createQueryBuilder('validation')
@@ -60,7 +61,7 @@ class EngagementImpartialiteService {
      */
     public function getRefusEngagementImpartialiteByMembre($membre)
     {
-        $individu = $membre->getActeur()->getIndividu();
+        $individu = $membre->getIndividu();
         $these = $membre->getActeur()->getThese();
 
         $qb = $this->getValidationService()->getEntityManager()->getRepository(Validation::class)->createQueryBuilder('validation')
@@ -88,7 +89,7 @@ class EngagementImpartialiteService {
      */
     public function createEngagementImpartialite($membre)
     {
-        $individu = $membre->getActeur()->getIndividu();
+        $individu = $membre->getIndividu();
         $these = $membre->getActeur()->getThese();
 
         $validation = $this->getValidationService()->create(TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $these, $individu);
@@ -102,7 +103,7 @@ class EngagementImpartialiteService {
      */
     public function createRefusEngagementImpartialite($membre)
     {
-        $individu = $membre->getActeur()->getIndividu();
+        $individu = $membre->getIndividu();
         $these = $membre->getActeur()->getThese();
 
         $validation = $this->getValidationService()->create(TypeValidation::CODE_REFUS_ENGAGEMENT_IMPARTIALITE, $these, $individu);

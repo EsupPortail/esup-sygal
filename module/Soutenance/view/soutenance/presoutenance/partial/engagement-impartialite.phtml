@@ -1,13 +1,17 @@
 <?php
 
 /**
- * @var \Soutenance\Entity\Proposition $proposition
- * @var \Application\Entity\Db\These $these
- * @var \Soutenance\Entity\Membre[] $rapporteurs
- * @var \Application\Entity\Db\Validation[] $engagements
+ * @var Proposition $proposition
+ * @var These $these
+ * @var Membre[] $rapporteurs
+ * @var Validation[] $engagements
  */
 
 use Application\Constants;
+use Application\Entity\Db\These;
+use Application\Entity\Db\Validation;
+use Soutenance\Entity\Membre;
+use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\EngagementImpartialitePrivileges;
 
 $tousLesRapporteurs = true;
@@ -49,7 +53,7 @@ $canRevoquerEngagementImpartialite     = $this->isAllowed($these, EngagementImpa
 
                 <?php
                     $acteur       = $rapporteur->getActeur();
-                    $engagement     = ($acteur)?$engagements[$rapporteur->getActeur()->getIndividu()->getId()]:null;
+                    $engagement     = ($acteur)?$engagements[$rapporteur->getIndividu()->getId()]:null;
                 ?>
 
                 <tr>
@@ -101,7 +105,9 @@ $canRevoquerEngagementImpartialite     = $this->isAllowed($these, EngagementImpa
                                 <?php if ($engagement) : ?>
                                     <span class="glyphicon glyphicon-send" title="Notifier le rapporteur" style="color:lightgray;"></span>
                                 <?php else: ?>
-                                    <a href="<?php echo $this->url('soutenance/engagement-impartialite/notifier', ['these' => $these->getId(), 'proposition' => $proposition->getId(), 'membre' => $rapporteur->getId()], [], true);?>">
+                                    <a
+                                        <?php /** @see \Soutenance\Controller\EngagementImpartialite\EngagementImpartialiteController::notifierEngagementImpartialiteAction() */ ?>
+                                        href="<?php echo $this->url('soutenance/engagement-impartialite/notifier', ['these' => $these->getId(), 'proposition' => $proposition->getId(), 'membre' => $rapporteur->getId()], [], true);?>">
                                         <span class="glyphicon glyphicon-send" title="Notifier le rapporteur"></span>
                                     </a>
                                 <?php endif; ?>
@@ -109,7 +115,8 @@ $canRevoquerEngagementImpartialite     = $this->isAllowed($these, EngagementImpa
 
                             <?php if($canRevoquerEngagementImpartialite) : ?>
                                 <?php if ($engagement) : ?>
-                                    <a href="<?php echo $this->url('soutenance/engagement-impartialite/annuler', ['these' => $these->getId(), 'membre' => $rapporteur->getId()], [], true); ?>">
+                                    <a  <?php /** @see \Soutenance\Controller\EngagementImpartialite\EngagementImpartialiteController::annulerEngagementImpartialiteAction() */ ?>
+                                        href="<?php echo $this->url('soutenance/engagement-impartialite/annuler', ['these' => $these->getId(), 'membre' => $rapporteur->getId()], [], true); ?>">
                                         <span class="glyphicon glyphicon-remove"    title="Révoquer l'engagement d'impartialité"></span>
                                     </a>
                                 <?php else: ?>
@@ -137,7 +144,9 @@ $canRevoquerEngagementImpartialite     = $this->isAllowed($these, EngagementImpa
         <div class="row">
             <div class="col-md-4">
                 <?php if($canNotifierEngagementImpartialite): ?>
-                    <a href="<?php echo $this->url('soutenance/presoutenance/notifier-engagement-impartialite', ['these' => $these->getId(), 'proposition' => $proposition->getId()], [], true);?>"
+                    <a
+                        <?php /** @see \Soutenance\Controller\EngagementImpartialite\EngagementImpartialiteController::notifierRapporteursEngagementImpartialiteAction() */ ?>
+                        href="<?php echo $this->url('soutenance/presoutenance/notifier-engagement-impartialite', ['these' => $these->getId(), 'proposition' => $proposition->getId()], [], true);?>"
                        class="btn btn-info <?php echo ($tousLesRapporteurs)?'':'disabled'; ?>">
                         <span class="glyphicon glyphicon-send"></span> Envoyer les notifications aux rapporteurs
                     </a>

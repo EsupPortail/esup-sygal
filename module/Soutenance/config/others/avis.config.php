@@ -6,7 +6,6 @@ use Soutenance\Assertion\AvisSoutenanceAssertion;
 use Soutenance\Assertion\AvisSoutenanceAssertionFactory;
 use Soutenance\Controller\Avis\AvisController;
 use Soutenance\Controller\Avis\AvisControllerFactory;
-use Soutenance\Controller\SoutenanceController;
 use Soutenance\Form\Avis\AvisForm;
 use Soutenance\Form\Avis\AvisFormFactory;
 use Soutenance\Form\Avis\AvisHydrator;
@@ -107,7 +106,6 @@ return array(
 
     'service_manager' => [
         'factories' => [
-            //service
             AvisService::class => AvisServiceFactory::class,
             AvisSoutenanceAssertion::class => AvisSoutenanceAssertionFactory::class,
 

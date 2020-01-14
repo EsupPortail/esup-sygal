@@ -1,19 +1,16 @@
 <?php
 /**
- * @var \Soutenance\Entity\Proposition $proposition
- * @var \Application\Entity\Db\These $these
- * @var \Application\Entity\Db\Validation[] $validations
- * @var string $roleCode
- * @var boolean $isOk
+ * @var Proposition $proposition
+ * @var Validation[][] $validations
+ * @var boolean $canStructureValider
+ * @var boolean $canPresidence
  */
 
 use Application\Entity\Db\Role;
-use Soutenance\Provider\Privilege\PropositionPrivileges;
+use Application\Entity\Db\Validation;
+use Soutenance\Entity\Proposition;
 
-$canStructureValider = $isOk && $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_UR) ||
-    $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_ED) ||
-    $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_BDD);
-$canPresidence = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_PRESIDENCE);
+$these = $proposition->getThese();
 
 ?>
 
@@ -51,7 +48,7 @@ $canPresidence = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_PRE
                         <?php endif; ?>
                     </li>
                     <li>
-                        <?php echo $these->getEtablissement()->getLibelle(); ?>  (Bureau des doctorats) <br/>
+                        <?php echo $these->getEtablissement()->getLibelle(); ?>  (Maison du doctorat) <br/>
                         <?php if ($validations[Role::CODE_BDD]) : ?>
                             <?php $validation = current($validations[Role::CODE_BDD]); ?>
                             <span class="badge badge-success"> Validée</span>
@@ -67,8 +64,10 @@ $canPresidence = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_PRE
                 <?php if ($canPresidence): ?>
                     <p>
                         <a  <?php /** @see \Soutenance\Controller\Proposition\PropositionController::signaturePresidenceAction(); */ ?>
-                            href="<?php echo $this->url('soutenance/proposition/signature-presidence', ['these' => $these->getId()], [], true); ?>"
-                            class="btn btn-primary action">
+                            href="<?php echo $this->url('soutenance/proposition/signature-presidence', ['these' => $these->getId()], true); ?>"
+                            class="btn btn-primary action"
+                            target="_blank"
+                        >
                             <span class="glyphicon glyphicon-list-alt"></span>Générer document pour signature
                         </a>
                     </p>

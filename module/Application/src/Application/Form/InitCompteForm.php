@@ -1,6 +1,6 @@
 <?php
 
-namespace Soutenance\Form\InitCompte;
+namespace Application\Form;
 
 use Zend\Form\Element\Button;
 use Zend\Form\Element\Password;
