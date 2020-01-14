@@ -92,15 +92,15 @@ Cliquez <a href="<?php echo $this->basePath('charte_depot_et_diffusion_des_these
     </div>
     <div id="explicOuiImmediat" class="alert alert-md alert-info" style="display: none">
         <span class="glyphicon glyphicon-info-sign"></span>
-        <?php echo $this->message()->render('AUTORIS_MISE_EN_LIGNE_LAIUS', [], $protoDiffusion->setAutorisMel(Diffusion::AUTORISATION_OUI_IMMEDIAT)) ?>
+        <?php echo $this->message()->render(DiffusionMessages::AUTORIS_DIFFUSION_FORM_LAIUS, [], $protoDiffusion->setAutorisMel(Diffusion::AUTORISATION_OUI_IMMEDIAT)) ?>
     </div>
     <div id="explicOuiEmbargo" class="alert alert-md alert-info" style="display: none">
         <span class="glyphicon glyphicon-info-sign"></span>
-        <?php echo $this->message()->render('AUTORIS_MISE_EN_LIGNE_LAIUS', [], $protoDiffusion->setAutorisMel(Diffusion::AUTORISATION_OUI_EMBARGO)) ?>
+        <?php echo $this->message()->render(DiffusionMessages::AUTORIS_DIFFUSION_FORM_LAIUS, [], $protoDiffusion->setAutorisMel(Diffusion::AUTORISATION_OUI_EMBARGO)) ?>
     </div>
     <div id="explicNon" class="alert alert-md alert-info" style="display: none">
         <span class="glyphicon glyphicon-info-sign"></span>
-        <?php echo $this->message()->render('AUTORIS_MISE_EN_LIGNE_LAIUS', [], $protoDiffusion->setAutorisMel(Diffusion::AUTORISATION_NON)) ?>
+        <?php echo $this->message()->render(DiffusionMessages::AUTORIS_DIFFUSION_FORM_LAIUS, [], $protoDiffusion->setAutorisMel(Diffusion::AUTORISATION_NON)) ?>
     </div>
     <div class="row auteur" style="display: none">
         <div class="col-sm-7 col-md-4">
