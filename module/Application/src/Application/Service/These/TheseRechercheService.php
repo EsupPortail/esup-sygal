@@ -151,7 +151,7 @@ class TheseRechercheService
                 "Origine financement",
                 TheseSelectFilter::NAME_financement,
                 $optionsArray[TheseSelectFilter::NAME_financement],
-                ['width' => '125px', 'liveSearch' => true]
+                ['liveSearch' => true]
             ),
             TheseSelectFilter::NAME_anneePremiereInscription => new TheseSelectFilter(
                 "Année civile<br>1ère inscr.",
@@ -177,13 +177,13 @@ class TheseRechercheService
 //                "Discipline",
 //                TheseSelectFilter::NAME_discipline,
 //                $optionsArray[TheseSelectFilter::NAME_discipline],
-//                ['width' => '125px', 'liveSearch' => true]
+//                ['liveSearch' => true]
 //            ),
             TheseSelectFilter::NAME_domaineScientifique      => new TheseSelectFilter(
                 "Domaine scientifique",
                 TheseSelectFilter::NAME_domaineScientifique,
                 $optionsArray[TheseSelectFilter::NAME_domaineScientifique],
-                ['width' => '125px', 'liveSearch' => true]
+                ['liveSearch' => true]
             ),
             TheseTextFilter::NAME_text                       => new TheseTextFilter(
                 "Recherche de texte",
