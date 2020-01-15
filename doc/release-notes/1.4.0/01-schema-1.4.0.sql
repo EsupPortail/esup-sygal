@@ -1,5 +1,12 @@
 
 --
+-- Structure fermée
+--
+
+alter table STRUCTURE
+    add EST_FERME number(1) default 0 ;
+
+--
 -- Id HAL dans le formulaire de diffusion.
 --
 

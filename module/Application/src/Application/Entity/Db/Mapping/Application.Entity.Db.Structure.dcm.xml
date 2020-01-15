@@ -10,6 +10,7 @@
         </id>
         <field name="sigle"      type="string" column="SIGLE"       length="32"  nullable="true"/>
         <field name="libelle"    type="string" column="LIBELLE"     length="128" nullable="false"/>
+        <field name="ferme"      type="integer" column="EST_FERME"   nullable="false"/>
         <field name="cheminLogo" type="string" column="CHEMIN_LOGO" length="200" nullable="true"/>
 
         <many-to-one field="typeStructure" target-entity="Application\Entity\Db\TypeStructure">

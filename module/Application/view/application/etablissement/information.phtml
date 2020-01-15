@@ -67,6 +67,11 @@ $canAddRole = true;
                     <?php if ($etablissement->estAssocie()): ?>
                         <span class="label label-info">Associé</span>
                     <?php endif ?>
+                    <?php if ($etablissement->getStructure()->isFerme()) : ?>
+                        <span class="label" style="background-color:darkred">Structure fermée</span>
+                    <?php else : ?>
+                        <span class="label" style="background-color:darkgreen">Structure ouverte</span>
+                    <?php endif; ?>
                 </dd>
             </dl>
         </div>
