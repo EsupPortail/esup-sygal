@@ -3,6 +3,7 @@
 namespace Application\Form;
 
 use Application\Entity\Db\UniteRecherche;
+use Zend\Form\Element\Checkbox;
 use Zend\Form\Element\Submit;
 use Zend\Form\Element\Text;
 use Zend\Form\Element\File;
@@ -42,6 +43,10 @@ class UniteRechercheForm extends Form
             new Text('RNSR'))
                 ->setLabel("Identifiant RNSR :")
             );
+        $this->add(
+            (new Checkbox('estFerme'))
+                ->setLabel("Unité de recherche fermée")
+        );
         $this
             ->add((
         new File('cheminLogo'))

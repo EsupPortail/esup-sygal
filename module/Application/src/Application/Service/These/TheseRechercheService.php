@@ -775,11 +775,17 @@ class TheseRechercheService
     private function optionify($value = null, $label = null)
     {
         if ($value instanceof Etablissement) {
-            return ['value' => $value->getStructure()->getCode(), 'label' => $value->getSigle()];
+            $subtext = $value->getLibelle();
+            if ($value->getStructure()->isFerme()) $subtext.= "&nbsp; <span class='label' style='color:darkred;'>FERME</span>";
+            return ['value' => $value->getStructure()->getCode(), 'label' => $subtext];
         } elseif ($value instanceof EcoleDoctorale) {
-            return ['value' => $value->getSourceCode(), 'label' => $value->getSigle(), 'subtext' => $value->getLibelle()];
+            $subtext = $value->getLibelle();
+            if ($value->getStructure()->isFerme()) $subtext.= "&nbsp; <span class='label' style='color:darkred;'>FERMEE</span>";
+            return ['value' => $value->getSourceCode(), 'label' => $value->getSigle(), 'subtext' => $subtext];
         } elseif ($value instanceof UniteRecherche) {
-            return ['value' => $value->getSourceCode(), 'label' => $value->getCode(), 'subtext' => $value->getLibelle()];
+            $subtext = $value->getLibelle();
+            if ($value->getStructure()->isFerme()) $subtext.= "&nbsp; <span class='label' style='color:darkred;'>FERMEE</span>";
+            return ['value' => $value->getSourceCode(), 'label' => $value->getCode(), 'subtext' => $subtext];
         } elseif ($value instanceof DomaineScientifique) {
             return ['value' => (string) $value->getId(), 'label' => $value->getLibelle()];
         } elseif ($value instanceof OrigineFinancement) {

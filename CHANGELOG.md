@@ -1,7 +1,7 @@
 Journal des modifications
 =========================
 
-1.4.0 (???????????????????/01/2020)
+1.4.0 (??/01/2020)
 ------------------
 
 ### Ajouts
@@ -12,6 +12,7 @@ Journal des modifications
 - Nouvelle charte de diffusion téléchargeable.
 - Ajout du flag "fermé" pour les structures et utilisations dans la recherche de thèses.
 - Ajout d'un champ "Id HAL" dans le formulaire d'autorisation de diffusion.
+- Ajout d'un menu dépôt pour séparer les action liés au dépôt de la partie annuaire
 
 1.3.3 (18/12/2019)
 ------------------

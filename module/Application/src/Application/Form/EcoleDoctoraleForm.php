@@ -3,6 +3,7 @@
 namespace Application\Form;
 
 use Application\Entity\Db\EcoleDoctorale;
+use Zend\Form\Element\Checkbox;
 use Zend\Form\Element\Hidden;
 use Zend\Form\Element\File;
 use Zend\Form\Element\Submit;
@@ -38,6 +39,10 @@ class EcoleDoctoraleForm extends Form
             ->add((
                 new Text('code'))
                     ->setLabel("Code :")
+        );
+        $this->add(
+            (new Checkbox('estFerme'))
+                ->setLabel("École doctorale fermée")
         );
         $this
             ->add((
