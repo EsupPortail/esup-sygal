@@ -435,6 +435,22 @@ form input[type='submit'] {
 .btn span.glyphicon {
   margin-right: 5px; }
 
+.btn-info {
+  background-color: #009ce4;
+  border-color: #009ce4; }
+
+.btn-success {
+  background-color: #2EA662;
+  border-color: #2EA662; }
+
+.btn-danger {
+  background-color: #d23544;
+  border-color: #d23544; }
+
+.btn-warning {
+  background-color: #F19A2E;
+  border-color: #F19A2E; }
+
 .btn.btn-xs span.glyphicon {
   margin-right: 2px; }
 

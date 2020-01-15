@@ -1,5 +1,10 @@
 $uploadedFileFontSize: 80%;
 
+$infoColor: #009ce4;
+$successColor: #2EA662;
+$warningColor: #F19A2E;
+$dangerColor: #d23544;
+
 h1, h2, h3 {
   font-weight: bold;
 }
@@ -110,39 +115,39 @@ h2.modal-title {
 }
 
 .panel-info {
-  border-color: #009ce4;
+  border-color: $infoColor;
 }
 .panel-info > .panel-heading {
   color: white;
-  background-color: #009ce4;
-  border-color: #009ce4;
+  background-color: $infoColor;
+  border-color: $infoColor;
 }
 
 .panel-success {
-  border-color: #2EA662;
+  border-color: $successColor;
 }
 .panel-success > .panel-heading {
   color: white;
-  background-color: #2EA662;
-  border-color: #2EA662;
+  background-color: $successColor;
+  border-color: $successColor;
 }
 
 .panel-danger {
-  border-color: #d23544;
+  border-color: $dangerColor;
 }
 .panel-danger > .panel-heading {
   color: white;
-  background-color: #d23544;
-  border-color: #d23544;
+  background-color: $dangerColor;
+  border-color: $dangerColor;
 }
 
 .panel-warning {
-  border-color: #F19A2E;
+  border-color: $warningColor;
 }
 .panel-warning > .panel-heading {
   color: white;
-  background-color: #F19A2E;
-  border-color: #F19A2E;
+  background-color: $warningColor;
+  border-color: $warningColor;
 }
 
 
@@ -683,6 +688,23 @@ form {
   span.glyphicon {
     margin-right: 5px;
   }
+}
+
+.btn-info {
+  background-color: $infoColor;
+  border-color: $infoColor;
+}
+.btn-success {
+  background-color: $successColor;
+  border-color: $successColor;
+}
+.btn-danger {
+  background-color: $dangerColor;
+  border-color: $dangerColor;
+}
+.btn-warning {
+  background-color: $warningColor;
+  border-color: $warningColor;
 }
 
 .btn.btn-xs {
