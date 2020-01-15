@@ -279,6 +279,7 @@ return array(
         ],
         'stylesheets'           => [
             '050_bootstrap-theme' => false,
+            '100_charte' => '/css/charte.css',
         ],
         'printable_stylesheets' => [
         ],
