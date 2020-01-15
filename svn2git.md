@@ -38,7 +38,9 @@ Compléter ce fichier à la main, exemple :
     
 ## Ajouter la remote "origin" au dépôt local
     
-    $ git remote add origin https://git.unicaen.fr/bertrand.gauthier/sodoct.git
+    $ git remote add origin https://git.unicaen.fr/dsi/sodoct.git
+    ou bien
+    $ git remote add origin git@git.unicaen.fr:dsi/sodoct.git
     
 ## Lister les tags Subversion importés
 
@@ -51,7 +53,7 @@ Lister les tags Subversion importés :
 
 NB: le nom des tags affichés ici ne doit pas contenir `origin/` ; si c'est le cas, ajuster `refs/remotes/origin/tags` et `5-`.
 
-## Déplacer les tags Subversion importés pour en faire de vrais tags Git
+## Déplacer les éventuels tags Subversion importés pour en faire de vrais tags Git
 
     $ git for-each-ref refs/remotes/origin/tags | cut -d / -f 5- | grep -v @ | 
         while read tagname; do
