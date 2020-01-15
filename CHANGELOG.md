@@ -13,6 +13,7 @@ Journal des modifications
 - Ajout du flag "fermé" pour les structures et utilisations dans la recherche de thèses.
 - Ajout d'un champ "Id HAL" dans le formulaire d'autorisation de diffusion.
 - Ajout d'un menu dépôt pour séparer les action liés au dépôt de la partie annuaire
+- La couverture est maintenant recto/verso lorsque la premiere page n'est pas retirée
 
 1.3.3 (18/12/2019)
 ------------------
