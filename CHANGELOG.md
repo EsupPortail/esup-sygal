@@ -1,6 +1,18 @@
 Journal des modifications
 =========================
 
+1.4.0 (???????????????????/01/2020)
+------------------
+
+### Ajouts
+
+- La remise d'un exemplaire papier de la thèse n'est requise que si la diffusion est acceptée avec embargo ou refusée.
+- Inversion des étapes Diffusion et Attestations.
+- Modification des textes liés à l'autorisation de diffusion dans le formulaire et dans la convention PDF générée.
+- Nouvelle charte de diffusion téléchargeable.
+- Ajout du flag "fermé" pour les structures et utilisations dans la recherche de thèses.
+- Ajout d'un champ "Id HAL" dans le formulaire d'autorisation de diffusion.
+
 1.3.3 (18/12/2019)
 ------------------
 
