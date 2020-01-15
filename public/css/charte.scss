@@ -5,6 +5,10 @@ $navbarBackgroundColorActive: #004980;
  * Charte Normandie Université
  */
 
+body {
+  padding-bottom: 100px;
+}
+
 body.development .navbar-inverse,
 body.test .navbar-inverse {
   background-image: none; //linear-gradient(to bottom, #660000 0px, #870a0a 100%);
@@ -34,8 +38,13 @@ body.test .navbar-inverse .navbar-nav .active a {
   text-indent: -9999px;
 }
 
+.nav-pills > li > a {
+  border-radius: 20px;
+}
+
 #footer {
   padding-top: 10px;
+  margin-bottom: 0;
   background-color: $navbarBackgroundColor;
 }
 #footer ul {
@@ -55,4 +64,20 @@ h1.app-name {
   background-size: contain;
   background-position: right top;
   text-indent: -9999px;
+}
+
+.scrollup {
+  bottom: 80px;
+}
+
+ul.menu-secondaire,
+ul.menu-information {
+  background: none;
+  border-radius: 18px;
+  padding: 2px;
+  box-shadow: 1px 1px 6px;
+}
+ul.menu-secondaire li a,
+ul.menu-information li a {
+  padding: 7px 10px;
 }
