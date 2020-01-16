@@ -406,6 +406,12 @@ p.autoris-diffusion-motif {
 .checkbox .checkbox-label {
   margin-left: 5px; }
 
+.checkbox-sm input[type="checkbox"] {
+  transform: scale(0.9); }
+.checkbox-sm .checkbox-label {
+  margin-left: 2px;
+  font-size: 90%; }
+
 form.form-retraiter {
   margin: 4px 0 15px 0; }
 

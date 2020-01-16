@@ -1,5 +1,7 @@
 <?php
 
+use Application\Controller\TheseController;
+use Application\Entity\Db\Diffusion;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
 use Application\Entity\Db\WfEtape;
@@ -12,6 +14,7 @@ use Application\Entity\Db\Repository\FichierTheseRepository;
 /**
  * @var PhpRenderer            $this
  * @var These                  $these
+ * @var Diffusion              $diffusion
  * @var bool                   $estDoctorant
  * @var string                 $modifierUrl
  * @var string                 $validerUrl
@@ -21,6 +24,8 @@ use Application\Entity\Db\Repository\FichierTheseRepository;
  * @var string                 $nextStepUrl
  * @var FichierTheseRepository $fichierRepository
  * @var boolean                $asynchronous
+ *
+ * @see TheseController::modifierRdvBuAction()
  */
 
 $canEdit = $this->isAllowed($these, ThesePrivileges::THESE_SAISIE_RDV_BU);
@@ -38,14 +43,18 @@ $rdvBu = $these->getRdvBu();
 
 <div class="panel panel-info box">
     <div class="panel-heading">
-        <h2 class="first">Téléchargement de la thèse avec page de couverture</h2>
+        <h2 class="first">Téléchargement de la version imprimable de la thèse</h2>
     </div>
     <div class="panel-body">
         <p>
+        <?php if ($diffusion->isRemiseExemplairePapierRequise()): ?>
             Avant que la BU ne prenne contact avec vous, vous devez télécharger la thèse complète, c'est à dire le corps du mémoire auquel est ajoutée la page de couverture générée automatiquement par l'application.
             Une fois la thèse complète téléchargée, assurez-vous que toutes les informations sur la page de couverture sont présentes et que la fusion n'a pas endommagé le mémoire.
+        <?php else: ?>
+            Vous pouvez obtenir la version imprimable de votre thèse (avec page de couverture) en cliquant sur le bouton ci-dessous.
+        <?php endif ?>
         </p>
-        <div class="checkbox">
+        <div class="checkbox checkbox-sm">
             <label for="removal">
                 <input type="checkbox" id="removal"/>
                 <span class="checkbox-label">La 1ère page du corps du mémoire est une page de couverture fournie par le doctorant et je veux retirer cette 1ère page.</span>
