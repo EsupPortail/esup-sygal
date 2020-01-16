@@ -497,6 +497,7 @@ class TheseController extends AbstractController
     {
         $estDoctorant = (bool) $this->userContextService->getSelectedRoleDoctorant();
         $these = $this->requestedThese();
+        $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
         $asynchronous = $this->params()->fromRoute('asynchronous');
 
         $versionArchivable = $this->fichierTheseService->getRepository()->getVersionArchivable($these);
@@ -508,6 +509,7 @@ class TheseController extends AbstractController
 
         $view = new ViewModel([
             'these'        => $these,
+            'diffusion'    => $these->getDiffusionForVersion($version),
             'estDoctorant' => $estDoctorant,
             'modifierUrl'  => $this->urlThese()->modifierRdvBuUrl($these),
             'validerUrl'   => $this->urlThese()->validerRdvBuUrl($these),
