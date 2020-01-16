@@ -54,6 +54,10 @@ class EtablissementForm extends Form
             (new Checkbox('estAssocie'))
                 ->setLabel("Établissement associé")
         );
+        $this->add(
+            (new Checkbox('estFerme'))
+                ->setLabel("Établissement fermé")
+        );
 
         $this
             ->add((

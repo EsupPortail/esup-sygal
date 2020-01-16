@@ -20,6 +20,7 @@ class EcoleDoctoraleHydrator extends DoctrineObject
         $data['code'] = $ed->getStructure()->getCode();
         $data['sigle'] = $ed->getSigle();
         $data['cheminLogo'] = $ed->getCheminLogo();
+        $data['estFerme'] = $ed->getStructure()->isFerme();
 
         return $data;
     }
@@ -40,6 +41,7 @@ class EcoleDoctoraleHydrator extends DoctrineObject
         $object->getStructure()->setCode($data['code']);
         $object->setSigle($data['sigle']);
         $object->setCheminLogo($data['cheminLogo']);
+        if (isset($data['estFerme']) AND $data['estFerme'] === "1") $object->getStructure()->setFerme(true); else $object->getStructure()->setFerme(false);
 
         return $object;
     }
