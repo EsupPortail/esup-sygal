@@ -2,9 +2,9 @@
 
 namespace Application\Controller;
 
+use Application\Command\Exception\TimedOutCommandException;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\FichierThese;
-use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
 use Application\Entity\Db\VersionFichier;
 use Application\EventRouterReplacerAwareTrait;
@@ -445,7 +445,11 @@ class FichierTheseController extends AbstractController
         }
 
         $pdcData = $this->theseService->fetchInformationsPageDeCouverture($these);
-        $outputFilePath = $this->fichierTheseService->fusionnerPdcEtThese($these, $pdcData, $versionFichier, $removeFirstPage);
+        try {
+            $outputFilePath = $this->fichierTheseService->fusionnerPdcEtThese($these, $pdcData, $versionFichier, $removeFirstPage);
+        } catch (TimedOutCommandException $e) {
+            // n'arrive jamais car aucun timeout n'a été spécifié lors de l'appel à fusionnerPdcEtThese()
+        }
 
         $this->eventRouterReplacer->replaceEventRouter($this->getEvent());
 
