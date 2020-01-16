@@ -97,12 +97,12 @@ h2.modal-title {
   border-color: #d23544; }
 
 .panel-warning {
-  border-color: #F19A2E; }
+  border-color: #f1732d; }
 
 .panel-warning > .panel-heading {
   color: white;
-  background-color: #F19A2E;
-  border-color: #F19A2E; }
+  background-color: #f1732d;
+  border-color: #f1732d; }
 
 .panel.panel-md {
   font-size: 90%; }
@@ -448,8 +448,8 @@ form input[type='submit'] {
   border-color: #d23544; }
 
 .btn-warning {
-  background-color: #F19A2E;
-  border-color: #F19A2E; }
+  background-color: #f1732d;
+  border-color: #f1732d; }
 
 .btn.btn-xs span.glyphicon {
   margin-right: 2px; }
