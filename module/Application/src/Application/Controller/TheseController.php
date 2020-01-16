@@ -625,7 +625,7 @@ class TheseController extends AbstractController
         $form = $this->getServiceLocator()->get('formElementManager')->get($estDoctorant ? 'RdvBuTheseDoctorantForm' : 'RdvBuTheseForm');
         $form->bind($rdvBu);
 
-        if (! $this->theseService->isExemplPapierFourniPertinent($these)) {
+        if ($form instanceof RdvBuTheseForm && ! $this->theseService->isExemplPapierFourniPertinent($these)) {
             $form->disableExemplPapierFourni();
         }
 
