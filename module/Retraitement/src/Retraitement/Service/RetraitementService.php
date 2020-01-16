@@ -2,16 +2,16 @@
 
 namespace Retraitement\Service;
 
-use Retraitement\Exception\TimedOutCommandException;
+use Application\Command\Exception\TimedOutCommandException;
 use Application\Command\CommandInterface;
 use RuntimeException;
 
 class RetraitementService
 {
     /**
-     * FichierStarCorrector constructor.
+     * RetraitementService constructor.
      *
-     * @param \Application\Filter\Command\\Application\Command\CommandInterface $command
+     * @param CommandInterface $command
      */
     public function __construct(CommandInterface $command)
     {
@@ -19,12 +19,12 @@ class RetraitementService
     }
 
     /**
-     * @var \Application\Filter\Command\\Application\Command\CommandInterface
+     * @var CommandInterface
      */
     private $command;
 
     /**
-     * @param \Application\Filter\Command\CommandInterface $command
+     * @param CommandInterface $command
      * @return self
      */
     public function setCommand(CommandInterface $command)
@@ -40,7 +40,7 @@ class RetraitementService
      * @param string $inputFilePath Chemin du fichier à retraiter
      * @param string $outputFilePath Chemin du fichier retraité généré
      * @param string  $timeout Timeout à appliquer au lancement du script de retraitement.
-     * @throws TimedOutCommandException Le timout a été atteint
+     * @throws TimedOutCommandException Le timout d'exécution a été atteint
      */
     private function retraiterFichierByPath($inputFilePath, $outputFilePath, $timeout = null)
     {
@@ -61,9 +61,6 @@ class RetraitementService
                     implode(PHP_EOL, $this->command->getResult())
                 ));
             }
-        }
-        catch (TimedOutCommandException $toce) {
-            throw $toce;
         }
         catch (RuntimeException $rte) {
             throw new RuntimeException(

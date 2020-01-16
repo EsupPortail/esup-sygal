@@ -1,16 +1,14 @@
 <?php
 
-namespace Retraitement\Exception;
+namespace Application\Command\Exception;
 
-use UnicaenApp\Exception\RuntimeException;
-
-class TimedOutCommandException extends RuntimeException
+class TimedOutCommandException extends \Exception
 {
     private $timeout;
 
     /**
      * @param string $userFirendlyTimeout
-     * @return TimedOutCommandException
+     * @return $this
      */
     public function setTimeout($userFirendlyTimeout)
     {
