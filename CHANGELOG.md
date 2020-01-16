@@ -9,6 +9,7 @@ Journal des modifications
 - La remise d'un exemplaire papier de la thèse n'est requise que si la diffusion est acceptée avec embargo ou refusée.
 - Inversion des étapes Diffusion et Attestations.
 - Modification des textes liés à l'autorisation de diffusion dans le formulaire et dans la convention PDF générée.
+- Convention de MEL : suppression du petit logo dans l'entête puisqu'il y en a déjà un sous le titre
 - Nouvelle charte de diffusion téléchargeable.
 - Ajout du flag "fermé" pour les structures et utilisations dans la recherche de thèses.
 - Ajout d'un champ "Id HAL" dans le formulaire d'autorisation de diffusion.
