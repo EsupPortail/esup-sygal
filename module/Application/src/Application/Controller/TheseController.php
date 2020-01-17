@@ -2,6 +2,7 @@
 
 namespace Application\Controller;
 
+use Application\Command\Exception\TimedOutCommandException;
 use Application\Entity\Db\Attestation;
 use Application\Entity\Db\Diffusion;
 use Application\Entity\Db\FichierThese;
@@ -24,8 +25,6 @@ use Application\Form\MetadonneeTheseForm;
 use Application\Form\PointsDeVigilanceForm;
 use Application\Form\RdvBuTheseDoctorantForm;
 use Application\Form\RdvBuTheseForm;
-use Application\Rule\AutorisationDiffusionRule;
-use Application\Rule\SuppressionAttestationsRequiseRule;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\FichierThese\Exception\ValidationImpossibleException;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
@@ -48,7 +47,6 @@ use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
 use Import\Service\Traits\ImportServiceAwareTrait;
-use Retraitement\Exception\TimedOutCommandException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenApp\Service\MessageCollectorAwareTrait;
@@ -497,6 +495,7 @@ class TheseController extends AbstractController
     {
         $estDoctorant = (bool) $this->userContextService->getSelectedRoleDoctorant();
         $these = $this->requestedThese();
+        $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
         $asynchronous = $this->params()->fromRoute('asynchronous');
 
         $versionArchivable = $this->fichierTheseService->getRepository()->getVersionArchivable($these);
@@ -508,6 +507,7 @@ class TheseController extends AbstractController
 
         $view = new ViewModel([
             'these'        => $these,
+            'diffusion'    => $these->getDiffusionForVersion($version),
             'estDoctorant' => $estDoctorant,
             'modifierUrl'  => $this->urlThese()->modifierRdvBuUrl($these),
             'validerUrl'   => $this->urlThese()->validerRdvBuUrl($these),
@@ -623,7 +623,7 @@ class TheseController extends AbstractController
         $form = $this->getServiceLocator()->get('formElementManager')->get($estDoctorant ? 'RdvBuTheseDoctorantForm' : 'RdvBuTheseForm');
         $form->bind($rdvBu);
 
-        if (! $this->theseService->isExemplPapierFourniPertinent($these)) {
+        if ($form instanceof RdvBuTheseForm && ! $this->theseService->isExemplPapierFourniPertinent($these)) {
             $form->disableExemplPapierFourni();
         }
 
@@ -806,8 +806,6 @@ class TheseController extends AbstractController
                 } catch (TimedOutCommandException $toce) {
                     // relancer le retraitement en tâche de fond
                     $this->fichierTheseService->creerFichierTheseRetraiteAsync($fichierVersionOriginale);
-                } catch (RuntimeException $re) {
-                    // erreur prévue
                 }
             }
             return $this->redirect()->toRoute(null, [], ['query'=>$this->params()->fromQuery()], true);
@@ -1567,7 +1565,7 @@ class TheseController extends AbstractController
         $pdcData = $this->theseService->fetchInformationsPageDeCouverture($these);
 
         try {
-            // Un timeout peut être appliqué au lancement du  script de retraitement.
+            // Un timeout peut être appliqué au lancement du  script.
             // Si ce timout est atteint, l'exécution du script est interrompue
             // et une exception TimedOutCommandException est levée.
             $timeout = $this->timeoutRetraitement;
@@ -1576,10 +1574,8 @@ class TheseController extends AbstractController
             $destinataires = [ $this->userContextService->getIdentityDb()->getEmail() ] ;
             // relancer le retraitement en tâche de fond
             $this->fichierTheseService->fusionneFichierTheseAsync($these, $versionFichier, $removal, $destinataires);
+
             return $this->redirect()->toRoute('these/rdv-bu', ['these' => $these->getId(), 'asynchronous' => 1], [], true);
-            exit();
-        } catch (RuntimeException $re) {
-            // erreur prévue
         }
 
         /** Retourner un PDF ...  */

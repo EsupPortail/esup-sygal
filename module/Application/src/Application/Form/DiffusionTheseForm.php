@@ -218,7 +218,7 @@ class DiffusionTheseForm extends Form
             'type'       => 'Text',
             'name'       => 'halId',
             'options'    => [
-                'label' => 'Identifiant HAL (facultatif)',
+                'label' => 'IdHAL (facultatif)',
             ],
             'attributes' => [
                 'title' => "",
