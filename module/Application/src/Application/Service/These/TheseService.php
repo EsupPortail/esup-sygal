@@ -306,11 +306,12 @@ class TheseService extends BaseService
             $acteurData->setDenomination($acteur->getIndividu()->getNomComplet(true, false, false, true, true));
             $acteurData->setQualite($acteur->getQualite());
 
+            $estMembre = !empty(array_filter($jury, function (Acteur $a) use ($acteur) {return $a->getIndividu() === $acteur->getIndividu();}));
+
             if (!$acteur->estPresidentJury()) {
                 $acteurData->setRole($acteur->getRole()->getLibelle());
 
                 //patch rapporteur non membre ...
-                $estMembre = !empty(array_filter($jury, function (Acteur $a) use ($acteur) {return $a->getIndividu() === $acteur->getIndividu();}));
                 if ($acteur->getRole()->getCode() === Role::CODE_RAPPORTEUR_JURY && !$estMembre) {
                     $acteurData->setRole("Rapporteur non membre du jury");
                 }
@@ -318,7 +319,8 @@ class TheseService extends BaseService
                 $acteurData->setRole(Role::LIBELLE_PRESIDENT);
             }
             if ($acteur->getEtablissement()) $acteurData->setEtablissement($acteur->getEtablissement()->getStructure()->getLibelle());
-            $pdcData->addActeurEnCouverture($acteurData);
+
+            if ($estMembre) $pdcData->addActeurEnCouverture($acteurData);
         }
 
         /** Directeurs de thèses */
