@@ -50,6 +50,41 @@ class NotifierSoutenanceService extends NotifierService {
      * @param These $these
      * @return array
      */
+    protected function fetchEmailEcoleDoctorale(These $these)
+    {
+        /** @var IndividuRole[] $individuRoles */
+        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
+
+        $emails = [];
+        foreach ($individuRoles as $individuRole) {
+            if ($individuRole->getIndividu()->getEmail() !== null)
+                $emails[] = $individuRole->getIndividu()->getEmail();
+        }
+        return $emails;
+    }
+
+
+    /**
+     * @param These $these
+     * @return string[]
+     */
+    protected function fetchEmailUniteRecherche(These $these)
+    {
+        /** @var IndividuRole[] $individuRoles */
+        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
+
+        $emails = [];
+        foreach ($individuRoles as $individuRole) {
+            if ($individuRole->getIndividu()->getEmail() !== null)
+                $emails[] = $individuRole->getIndividu()->getEmail();
+        }
+        return $emails;
+    }
+
+    /**
+     * @param These $these
+     * @return array
+     */
     protected function fetchEmailActeursDirects(These $these)
     {
         $emails = [];
@@ -117,17 +152,8 @@ class NotifierSoutenanceService extends NotifierService {
      */
     public function triggerNotificationUniteRechercheProposition($these)
     {
-        /** @var IndividuRole[] $individuRoles */
-        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
+        $emails = $this->fetchEmailUniteRecherche($these);
 
-        $emails = [];
-        foreach ($individuRoles as $individuRole) {
-            $emails[] = $individuRole->getIndividu()->getEmail();
-        }
-
-        $emails = array_filter($emails, function ($s) {
-            return $s !== null;
-        });
         if (!empty($emails)) {
             $notif = new Notification();
             $notif
@@ -147,16 +173,7 @@ class NotifierSoutenanceService extends NotifierService {
      */
     public function triggerNotificationEcoleDoctoraleProposition($these)
     {
-        /** @var IndividuRole[] $individuRoles */
-        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
-
-        $emails = [];
-        foreach ($individuRoles as $individuRole) {
-            $emails[] = $individuRole->getIndividu()->getEmail();
-        }
-        $emails = array_filter($emails, function ($s) {
-            return $s !== null;
-        });
+        $emails = $this->fetchEmailEcoleDoctorale($these);
 
         if (!empty($emails)) {
             $notif = new Notification();
@@ -195,9 +212,12 @@ class NotifierSoutenanceService extends NotifierService {
     /** @param These $these */
     public function triggerNotificationPropositionValidee($these)
     {
-        $emails = [];
-        //structures
-        $emails[]  = $this->fetchEmailBdd($these);
+        $emailsBDD      = [ $this->fetchEmailBdd($these) ];
+        $emailsED       = $this->fetchEmailEcoleDoctorale($these);
+        $emailsUR       = $this->fetchEmailUniteRecherche($these);
+        $emailsActeurs  = $this->fetchEmailActeursDirects($these);
+        $emails = array_merge($emailsBDD, $emailsED, $emailsUR, $emailsActeurs);
+
         /** @var IndividuRole $individuRole */
         foreach ($this->roleService->getIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure()) as $individuRole) $emails[] = $individuRole->getIndividu()->getEmail();
         foreach ($this->roleService->getIndividuRoleByStructure($these->getUniteRecherche()->getStructure()) as $individuRole) $emails[] = $individuRole->getIndividu()->getEmail();

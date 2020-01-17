@@ -29,21 +29,6 @@ class JustificatifService {
         return $qb;
     }
 
-    /**
-     * @param string $champ
-     * @param string $order
-     * @return Justificatif[]
-     */
-    public function getJustificatifs($champ = 'id', $order = 'ASC')
-    {
-        $qb = $this->createQueryBuilder()
-            ->orderBy('justificatif.'. $champ, $order)
-        ;
-
-        $result = $qb->getQuery()->getResult();
-        return $result;
-    }
-
     public function getJustificatif($id)
     {
         $qb = $this->createQueryBuilder()
