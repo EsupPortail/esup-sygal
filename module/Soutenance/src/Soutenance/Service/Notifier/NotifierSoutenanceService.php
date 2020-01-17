@@ -218,13 +218,6 @@ class NotifierSoutenanceService extends NotifierService {
         $emailsActeurs  = $this->fetchEmailActeursDirects($these);
         $emails = array_merge($emailsBDD, $emailsED, $emailsUR, $emailsActeurs);
 
-        /** @var IndividuRole $individuRole */
-        foreach ($this->roleService->getIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure()) as $individuRole) $emails[] = $individuRole->getIndividu()->getEmail();
-        foreach ($this->roleService->getIndividuRoleByStructure($these->getUniteRecherche()->getStructure()) as $individuRole) $emails[] = $individuRole->getIndividu()->getEmail();
-        //acteurs
-        $emails[]  = $these->getDoctorant()->getIndividu()->getEmail();
-        foreach ($these->getDirecteursTheseEmails() as $email => $name) $emails[] = $email;
-
         $emails = array_filter($emails, function ($s) {
             return $s !== null;
         });
@@ -425,7 +418,6 @@ class NotifierSoutenanceService extends NotifierService {
     {
         $email = $this->fetchEmailBdd($these);
 
-
         if ($email !== null) {
             $notif = new Notification();
             $notif
@@ -446,19 +438,11 @@ class NotifierSoutenanceService extends NotifierService {
      */
     public function triggerAvisFavorable($these, $avis, $url)
     {
-        $emails = [];
-        $emails[] = $this->fetchEmailBdd($these);
-        foreach ($these->getDirecteursTheseEmails() as $email => $name) $emails[] = $email;
-        /** @var IndividuRole $individuRole */
-        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
-        foreach ($individuRoles as $individuRole) {
-            $emails[] = $individuRole->getIndividu()->getEmail();
-        }
-        /** @var IndividuRole $individuRole */
-        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
-        foreach ($individuRoles as $individuRole) {
-            $emails[] = $individuRole->getIndividu()->getEmail();
-        }
+        $emailBDD           = [ $this->fetchEmailBdd($these) ];
+        $emailsDirecteurs   = $these->getDirecteursTheseEmails();
+        $emailsED           = $this->fetchEmailEcoleDoctorale($these);
+        $emailsUR           = $this->fetchEmailUniteRecherche($these);
+        $emails = array_merge($emailBDD, $emailsDirecteurs, $emailsED, $emailsUR);
 
         $emails = array_filter($emails, function ($s) {
             return $s !== null;
@@ -485,18 +469,10 @@ class NotifierSoutenanceService extends NotifierService {
      */
     public function triggerAvisDefavorable($these, $avis, $url)
     {
-        $emails = [];
-        foreach ($these->getDirecteursTheseEmails() as $email => $name) $emails[] = $email;
-        /** @var IndividuRole $individuRole */
-        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
-        foreach ($individuRoles as $individuRole) {
-            $emails[] = $individuRole->getIndividu()->getEmail();
-        }
-        /** @var IndividuRole $individuRole */
-        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
-        foreach ($individuRoles as $individuRole) {
-            $emails[] = $individuRole->getIndividu()->getEmail();
-        }
+        $emailsDirecteurs   = $these->getDirecteursTheseEmails();
+        $emailsED           = $this->fetchEmailEcoleDoctorale($these);
+        $emailsUR           = $this->fetchEmailUniteRecherche($these);
+        $emails = array_merge($emailsDirecteurs, $emailsED, $emailsUR);
 
         $emails = array_filter($emails, function ($s) {
             return $s !== null;
@@ -525,19 +501,10 @@ class NotifierSoutenanceService extends NotifierService {
      */
     public function triggerFeuVertSoutenance($these, $proposition, $avis) {
 
-        $emails = $this->fetchEmailActeursDirects($these);
-
-        /** @var IndividuRole $individuRole */
-        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
-        foreach ($individuRoles as $individuRole) {
-            $emails[] = $individuRole->getIndividu()->getEmail();
-        }
-
-        /** @var IndividuRole $individuRole */
-        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
-        foreach ($individuRoles as $individuRole) {
-            $emails[] = $individuRole->getIndividu()->getEmail();
-        }
+        $emailsActeurs      = $this->fetchEmailActeursDirects($these);
+        $emailsED           = $this->fetchEmailEcoleDoctorale($these);
+        $emailsUR           = $this->fetchEmailUniteRecherche($these);
+        $emails = array_merge($emailsActeurs, $emailsED, $emailsUR);
 
         $emails = array_filter($emails, function ($s) {
             return $s !== null;
@@ -564,19 +531,10 @@ class NotifierSoutenanceService extends NotifierService {
      */
     public function triggerStopperDemarcheSoutenance($these, $proposition) {
 
-        $emails = $this->fetchEmailActeursDirects($these);
-
-        /** @var IndividuRole $individuRole */
-        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
-        foreach ($individuRoles as $individuRole) {
-            $emails[] = $individuRole->getIndividu()->getEmail();
-        }
-
-        /** @var IndividuRole $individuRole */
-        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
-        foreach ($individuRoles as $individuRole) {
-            $emails[] = $individuRole->getIndividu()->getEmail();
-        }
+        $emailsActeurs      = $this->fetchEmailActeursDirects($these);
+        $emailsED           = $this->fetchEmailEcoleDoctorale($these);
+        $emailsUR           = $this->fetchEmailUniteRecherche($these);
+        $emails = array_merge($emailsActeurs, $emailsED, $emailsUR);
 
         $emails = array_filter($emails, function ($s) {
             return $s !== null;
