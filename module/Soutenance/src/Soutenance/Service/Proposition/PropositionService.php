@@ -15,10 +15,12 @@ use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\File\FileServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
+use DateInterval;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\QueryBuilder;
+use Exception;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
@@ -138,14 +140,21 @@ class PropositionService {
         return $result;
     }
 
-    public function create($proposition)
+    /**
+     * @param These $these
+     * @return Proposition
+     */
+    public function create(These $these)
     {
+        $proposition = new Proposition($these);
+        $proposition->setEtat($this->getPropositionEtatByCode(Etat::EN_COURS));
         $this->getEntityManager()->persist($proposition);
         try {
             $this->getEntityManager()->flush($proposition);
         } catch (OptimisticLockException $e) {
             throw new RuntimeException("Un erreur s'est produite lors de l'enregistrment en BD de la proposition de thèse !");
         }
+        return $proposition;
     }
 
     /**
@@ -513,5 +522,19 @@ class PropositionService {
         foreach ($encadrements as $encadrement) {
             $this->getMembreService()->createMembre($proposition, $encadrement);
         }
+    }
+
+    public function initialisationDateRetour(Proposition $proposition)
+    {
+        if ($proposition->getDate() === null) throw new RuntimeException("Aucune date de soutenance de renseignée !");
+        try {
+            $renduRapport = $proposition->getDate();
+            $deadline = $this->getParametreService()->getParametreByCode('AVIS_DEADLINE')->getValeur();
+            $renduRapport = $renduRapport->sub(new DateInterval('P'. $deadline.'D'));
+        } catch (Exception $e) {
+            throw new RuntimeException("Un problème a été rencontré lors du calcul de la date de rendu des rapport.");
+        }
+        $proposition->setRenduRapport($renduRapport);
+        $this->update($proposition);
     }
 }

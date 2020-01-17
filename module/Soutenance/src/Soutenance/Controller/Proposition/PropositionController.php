@@ -13,7 +13,6 @@ use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
-use Soutenance\Entity\Etat;
 use Soutenance\Entity\Justificatif;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Parametre;
@@ -70,11 +69,7 @@ class PropositionController extends AbstractController {
         $proposition = $this->getPropositionService()->findByThese($these);
 
         if (!$proposition) {
-            $proposition = new Proposition($these);
-            //TODO transferer l'etat dans la création
-            $proposition->setEtat($this->getPropositionService()->getPropositionEtatByCode(Etat::EN_COURS));
-            $this->getPropositionService()->create($proposition);
-
+            $proposition = $this->getPropositionService()->create($these);
             $this->getPropositionService()->addDirecteursAsMembres($proposition);
             return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
         }
@@ -113,16 +108,14 @@ class PropositionController extends AbstractController {
         ]);
     }
 
-    public function modifierDateLieuAction() {
+    public function modifierDateLieuAction()
+    {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
 
         /** @var DateLieuForm $form */
         $form = $this->getDateLieuForm();
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/modifier-date-lieu', ['these' => $these->getId()], [], true));
-
-        /** @var Proposition $proposition */
-
         $form->bind($proposition);
 
         /** @var Request $request */
@@ -186,12 +179,11 @@ class PropositionController extends AbstractController {
     public function effacerMembreAction()
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
         $membre = $this->getMembreService()->getRequestedMembre($this);
 
         if ($membre) {
             $this->getMembreService()->delete($membre);
-            $this->getPropositionService()->annulerValidations($proposition);
+            $this->getPropositionService()->annulerValidations($membre->getProposition());
         }
 
         return $this->redirect()->toRoute('soutenance/proposition',['these' => $these->getId()],[],true);

@@ -16,7 +16,6 @@ use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use DateInterval;
-use Exception;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
@@ -65,20 +64,8 @@ class PresoutenanceController extends AbstractController
         $proposition = $this->getPropositionService()->findByThese($these);
         $rapporteurs = $this->getPropositionService()->getRapporteurs($proposition);
 
-        /** Si la proposition ne possède pas encore de date de rendu de rapport alors la valeur par défaut est donnée */
         $renduRapport = $proposition->getRenduRapport();
-        if (!$renduRapport) {
-            if ($proposition->getDate() === null) throw new RuntimeException("Aucune date de soutenance de renseignée !");
-            try {
-                $renduRapport = $proposition->getDate();
-                $deadline = $this->getParametreService()->getParametreByCode('AVIS_DEADLINE')->getValeur();
-                $renduRapport = $renduRapport->sub(new DateInterval('P'. $deadline.'D'));
-            } catch (Exception $e) {
-                throw new RuntimeException("Un problème a été rencontré lors du calcul de la date de rendu des rapport.");
-            }
-            $proposition->setRenduRapport($renduRapport);
-            $this->getPropositionService()->update($proposition);
-        }
+        if (!$renduRapport) $this->getPropositionService()->initialisationDateRetour($proposition);
 
         /** Recupération des engagements d'impartialité  et des avis de soutenance */
         /** ==> clef: Membre->getActeur()->getIndividu()->getId() <== */
@@ -446,7 +433,6 @@ class PresoutenanceController extends AbstractController
         exit();
     }
 
-    //TODO recuperer les partie commune pour nettoyer dessous
     /**
      * Fonction calculant le nom du rapporteur : NOMUSUEL_MEMBREID
      * @param Membre $membre
