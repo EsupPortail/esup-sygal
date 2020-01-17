@@ -1,6 +1,11 @@
 Journal des modifications
 =========================
 
+1.4.0 (??/01/2020)
+------------------
+
+- Ajout d'un menu dépôt pour séparer les action liés au dépôt de la partie annuaire
+
 1.3.3 (18/12/2019)
 ------------------
 
