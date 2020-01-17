@@ -148,10 +148,10 @@ class TheseRechercheService
                 ['liveSearch' => true]
             ),
             TheseSelectFilter::NAME_financement           => new TheseSelectFilter(
-                "Origine financement",
+                "Origine<br>financement",
                 TheseSelectFilter::NAME_financement,
                 $optionsArray[TheseSelectFilter::NAME_financement],
-                ['width' => '125px', 'liveSearch' => true]
+                ['liveSearch' => true]
             ),
             TheseSelectFilter::NAME_anneePremiereInscription => new TheseSelectFilter(
                 "Année civile<br>1ère inscr.",
@@ -177,13 +177,13 @@ class TheseRechercheService
 //                "Discipline",
 //                TheseSelectFilter::NAME_discipline,
 //                $optionsArray[TheseSelectFilter::NAME_discipline],
-//                ['width' => '125px', 'liveSearch' => true]
+//                ['liveSearch' => true]
 //            ),
             TheseSelectFilter::NAME_domaineScientifique      => new TheseSelectFilter(
-                "Domaine scientifique",
+                "Domaine<br>scientifique",
                 TheseSelectFilter::NAME_domaineScientifique,
                 $optionsArray[TheseSelectFilter::NAME_domaineScientifique],
-                ['width' => '125px', 'liveSearch' => true]
+                ['liveSearch' => true]
             ),
             TheseTextFilter::NAME_text                       => new TheseTextFilter(
                 "Recherche de texte",
@@ -775,11 +775,17 @@ class TheseRechercheService
     private function optionify($value = null, $label = null)
     {
         if ($value instanceof Etablissement) {
-            return ['value' => $value->getStructure()->getCode(), 'label' => $value->getSigle()];
+            $subtext = $value->getLibelle();
+            if ($value->getStructure()->isFerme()) $subtext.= "&nbsp; <span class='label' style='color:darkred;'>FERME</span>";
+            return ['value' => $value->getStructure()->getCode(), 'label' => $subtext];
         } elseif ($value instanceof EcoleDoctorale) {
-            return ['value' => $value->getSourceCode(), 'label' => $value->getSigle(), 'subtext' => $value->getLibelle()];
+            $subtext = $value->getLibelle();
+            if ($value->getStructure()->isFerme()) $subtext.= "&nbsp; <span class='label' style='color:darkred;'>FERMEE</span>";
+            return ['value' => $value->getSourceCode(), 'label' => $value->getSigle(), 'subtext' => $subtext];
         } elseif ($value instanceof UniteRecherche) {
-            return ['value' => $value->getSourceCode(), 'label' => $value->getCode(), 'subtext' => $value->getLibelle()];
+            $subtext = $value->getLibelle();
+            if ($value->getStructure()->isFerme()) $subtext.= "&nbsp; <span class='label' style='color:darkred;'>FERMEE</span>";
+            return ['value' => $value->getSourceCode(), 'label' => $value->getCode(), 'subtext' => $subtext];
         } elseif ($value instanceof DomaineScientifique) {
             return ['value' => (string) $value->getId(), 'label' => $value->getLibelle()];
         } elseif ($value instanceof OrigineFinancement) {

@@ -437,12 +437,14 @@ class FichierTheseService extends BaseService
      * @param PdcData     $pdcData
      * @param PhpRenderer $renderer
      * @param string      $filepath
+     * @param boolean     $recto
      */
-    public function generatePageDeCouverture(PdcData $pdcData, PhpRenderer $renderer, $filepath = null)
+    public function generatePageDeCouverture(PdcData $pdcData, PhpRenderer $renderer, $filepath = null, $recto = true)
     {
         $exporter = new PageDeCouverturePdfExporter($renderer, 'A4');
         $exporter->setVars([
             'informations' => $pdcData,
+            'recto/verso' => $recto,
         ]);
         if ($filepath !== null) {
             $exporter->export($filepath, Pdf::DESTINATION_FILE);
@@ -568,7 +570,7 @@ class FichierTheseService extends BaseService
     {
         // generation de la couverture
         $filename = "sygal_couverture_" . $these->getId() . "_" . uniqid() . ".pdf";
-        $this->generatePageDeCouverture($pdcData, $this->renderer, $filename);
+        $this->generatePageDeCouverture($pdcData, $this->renderer, $filename, !$removeFirstPage);
 
         // recuperation de la bonne version du manuscript
         $manuscritFichier = current($this->getRepository()->fetchFichierTheses($these, NatureFichier::CODE_THESE_PDF, $versionFichier));

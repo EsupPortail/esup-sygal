@@ -57,6 +57,14 @@ $canAddRole = $canEdit;
                     <?php endforeach; ?>
                 </ul>
             </dd>
+            <dt> Statut :</dt>
+            <dd>
+                <?php if ($unite->getStructure()->isFerme()) : ?>
+                    <span class="label" style="background-color:darkred">Structure fermée</span>
+                <?php else : ?>
+                    <span class="label" style="background-color:darkgreen">Structure ouverte</span>
+                <?php endif; ?>
+            </dd>
         </dl>
     </div>
     <div class="col-md-4">
