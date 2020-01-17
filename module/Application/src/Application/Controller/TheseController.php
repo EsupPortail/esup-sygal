@@ -255,8 +255,8 @@ class TheseController extends AbstractController
 
         $utilisateurs = [];
         foreach ($these->getActeurs() as $acteur) {
-            $utilisateur = $this->utilisateurService->getRepository()->findByIndividu($acteur->getIndividu());
-            $utilisateurs[$acteur->getId()] = $utilisateur;
+            $utilisateursTrouves = $this->utilisateurService->getRepository()->findByIndividu($acteur->getIndividu()); // ok
+            $utilisateurs[$acteur->getId()] = $utilisateursTrouves;
         }
 
         //TODO JP remplacer dans modifierPersopassUrl();
