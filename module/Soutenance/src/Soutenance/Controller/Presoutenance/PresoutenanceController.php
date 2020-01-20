@@ -16,7 +16,6 @@ use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use DateInterval;
-use Exception;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
@@ -64,23 +63,11 @@ class PresoutenanceController extends AbstractController
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
         $rapporteurs = $this->getPropositionService()->getRapporteurs($proposition);
+        $nbRapporteurs = count($rapporteurs);
 
-        /** Si la proposition ne possède pas encore de date de rendu de rapport alors la valeur par défaut est donnée */
         $renduRapport = $proposition->getRenduRapport();
-        if (!$renduRapport) {
-            if ($proposition->getDate() === null) throw new RuntimeException("Aucune date de soutenance de renseignée !");
-            try {
-                $renduRapport = $proposition->getDate();
-                $deadline = $this->getParametreService()->getParametreByCode('AVIS_DEADLINE')->getValeur();
-                $renduRapport = $renduRapport->sub(new DateInterval('P'. $deadline.'D'));
-            } catch (Exception $e) {
-                throw new RuntimeException("Un problème a été rencontré lors du calcul de la date de rendu des rapport.");
-            }
-            $proposition->setRenduRapport($renduRapport);
-            $this->getPropositionService()->update($proposition);
-        }
+        if (!$renduRapport) $this->getPropositionService()->initialisationDateRetour($proposition);
 
-        /** Recupération des engagements d'impartialité  et des avis de soutenance */
         /** ==> clef: Membre->getActeur()->getIndividu()->getId() <== */
         $engagements = $this->getEngagementImpartialiteService()->getEngagmentsImpartialiteByThese($these);
         $avis = $this->getAvisService()->getAvisByThese($these);
@@ -94,8 +81,8 @@ class PresoutenanceController extends AbstractController
             'rapporteurs'           => $rapporteurs,
             'engagements'           => $engagements,
             'avis'                  => $avis,
-            'tousLesEngagements'    => count($engagements) === count($rapporteurs),
-            'tousLesAvis'           => count($avis) === count($rapporteurs),
+            'tousLesEngagements'    => count($engagements)  === $nbRapporteurs,
+            'tousLesAvis'           => count($avis)         === $nbRapporteurs,
             'urlFichierThese'       => $this->urlFichierThese(),
             'validationBDD'         => $validationBDD,
             'validationPDC'         => $validationPDC,
@@ -434,8 +421,8 @@ class PresoutenanceController extends AbstractController
         exit;
     }
 
-    public function notifierRetardRapportPresoutenanceAction() {
-
+    public function notifierRetardRapportPresoutenanceAction()
+    {
         $delai = new DateInterval('P15D');
         $membres = $this->getMembreService()->getRapporteursEnRetard($delai);
         $url = $this->url()->fromRoute('soutenance/index-rapporteur', [], ['force_canonical' => true], true);
@@ -446,7 +433,6 @@ class PresoutenanceController extends AbstractController
         exit();
     }
 
-    //TODO recuperer les partie commune pour nettoyer dessous
     /**
      * Fonction calculant le nom du rapporteur : NOMUSUEL_MEMBREID
      * @param Membre $membre

@@ -12,6 +12,7 @@ use Zend\Form\Element\Select;
 use Zend\Form\Element\Submit;
 use Zend\Form\Element\Text;
 use Zend\Form\Form;
+use Zend\InputFilter\Factory;
 use Zend\Validator\EmailAddress;
 
 class MembreForm extends Form {
@@ -56,7 +57,7 @@ class MembreForm extends Form {
             'name' => 'qualite',
             'type' => Select::class,
             'options' => [
-                'label' => 'Qualité* : ',
+                'label' => 'Qualité : ',
                 'label_attributes' => [
                     'class' => 'control-label',
                 ],
@@ -72,7 +73,6 @@ class MembreForm extends Form {
 
         $this->add(
             (new Text('etablissement'))
-//                ->setLabel("Université ou établissement d'enseignement de rattachement :")
                 ->setLabel("Université, établissement d'enseignement ou entreprise :")
         );
         $this->add(
@@ -101,14 +101,7 @@ class MembreForm extends Form {
             ->setAttribute('class', 'btn btn-primary')
         );
 
-//        $this->setInputFilter(
-//            $this->getInputFilterSpecification()
-//        );
-    }
-
-    public function getInputFilterSpecification()
-    {
-        return [
+        $this->setInputFilter((new Factory())->createInputFilter([
             'sexe' => [
                 'name' => 'sexe',
                 'required' => true,
@@ -124,9 +117,6 @@ class MembreForm extends Form {
             'email' => [
                 'name' => 'email',
                 'required' => true,
-                'filters' => [
-                    'name' => StringToLower::class,
-                ],
                 'validator' => [
                     'name' => EmailAddress::class,
                     'messages' => [
@@ -153,8 +143,8 @@ class MembreForm extends Form {
             'role' => [
                 'name' => 'role',
                 'required' => true,
-            ]
-
-        ];
+            ],
+        ]));
     }
+
 }

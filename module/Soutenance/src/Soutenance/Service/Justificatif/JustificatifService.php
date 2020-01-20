@@ -3,9 +3,12 @@
 namespace Soutenance\Service\Justificatif;
 
 use Application\Entity\Db\NatureFichier;
+use Application\Service\UserContextServiceAwareTrait;
+use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\QueryBuilder;
+use Exception;
 use Soutenance\Entity\Justificatif;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
@@ -15,6 +18,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 
 class JustificatifService {
     use EntityManagerAwareTrait;
+    use UserContextServiceAwareTrait;
 
     /**
      * @return QueryBuilder
@@ -27,21 +31,6 @@ class JustificatifService {
             ->addSelect('membre')->leftJoin('justificatif.membre', 'membre')
         ;
         return $qb;
-    }
-
-    /**
-     * @param string $champ
-     * @param string $order
-     * @return Justificatif[]
-     */
-    public function getJustificatifs($champ = 'id', $order = 'ASC')
-    {
-        $qb = $this->createQueryBuilder()
-            ->orderBy('justificatif.'. $champ, $order)
-        ;
-
-        $result = $qb->getQuery()->getResult();
-        return $result;
     }
 
     public function getJustificatif($id)
@@ -78,6 +67,18 @@ class JustificatifService {
     public function create($justificatif)
     {
         try {
+            $date = new DateTime();
+            $user = $this->userContextService->getIdentityDb();
+        } catch(Exception $e) {
+            throw new RuntimeException("Un problème est survenu lors de la récupération des données liées à l'historisation", 0 , $e);
+        }
+
+        $justificatif->setHistoCreateur($user);
+        $justificatif->setHistoCreation($date);
+        $justificatif->setHistoModificateur($user);
+        $justificatif->setHistoModification($date);
+
+        try {
             $this->getEntityManager()->persist($justificatif);
             $this->getEntityManager()->flush($justificatif);
         } catch (ORMException $e) {
@@ -92,6 +93,68 @@ class JustificatifService {
      */
     public function update($justificatif)
     {
+        try {
+            $date = new DateTime();
+            $user = $this->userContextService->getIdentityDb();
+        } catch(Exception $e) {
+            throw new RuntimeException("Un problème est survenu lors de la récupération des données liées à l'historisation", 0 , $e);
+        }
+
+        $justificatif->setHistoModificateur($user);
+        $justificatif->setHistoModification($date);
+
+        try {
+            $this->getEntityManager()->flush($justificatif);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Un problème est survenue lors de l'enregistrement en BDD.", $e);
+        }
+        return $justificatif;
+    }
+
+    /**
+     * @param Justificatif $justificatif
+     * @return Justificatif
+     */
+    public function historise($justificatif)
+    {
+        try {
+            $date = new DateTime();
+            $user = $this->userContextService->getIdentityDb();
+        } catch(Exception $e) {
+            throw new RuntimeException("Un problème est survenu lors de la récupération des données liées à l'historisation", 0 , $e);
+        }
+
+        $justificatif->setHistoModificateur($user);
+        $justificatif->setHistoModification($date);
+        $justificatif->setHistoDestructeur($user);
+        $justificatif->setHistoDestruction($date);
+
+        try {
+            $this->getEntityManager()->flush($justificatif);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Un problème est survenue lors de l'enregistrement en BDD.", $e);
+        }
+        return $justificatif;
+    }
+
+    /**
+     * @param Justificatif $justificatif
+     * @return Justificatif
+     */
+    public function restore($justificatif)
+    {
+        try {
+            $date = new DateTime();
+            $user = $this->userContextService->getIdentityDb();
+        } catch(Exception $e) {
+            throw new RuntimeException("Un problème est survenu lors de la récupération des données liées à l'historisation", 0 , $e);
+        }
+
+        $justificatif->setHistoModificateur($user);
+        $justificatif->setHistoModification($date);
+        $justificatif->setHistoDestructeur(null);
+        $justificatif->setHistoDestruction(null);
+
         try {
             $this->getEntityManager()->flush($justificatif);
         } catch (ORMException $e) {
@@ -123,6 +186,7 @@ class JustificatifService {
     public function generateListeJustificatif($proposition)
     {
         $justificatifs = [];
+        if ($proposition === null) return $justificatifs;
 
         /**
          * Justificatifs liés à la nature de la thèse ou de la soutenance :

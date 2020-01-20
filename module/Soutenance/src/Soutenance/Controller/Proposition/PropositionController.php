@@ -7,13 +7,13 @@ use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
+use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\VersionFichier;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
-use Soutenance\Entity\Etat;
 use Soutenance\Entity\Justificatif;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Parametre;
@@ -70,11 +70,7 @@ class PropositionController extends AbstractController {
         $proposition = $this->getPropositionService()->findByThese($these);
 
         if (!$proposition) {
-            $proposition = new Proposition($these);
-            //TODO transferer l'etat dans la création
-            $proposition->setEtat($this->getPropositionService()->getPropositionEtatByCode(Etat::EN_COURS));
-            $this->getPropositionService()->create($proposition);
-
+            $proposition = $this->getPropositionService()->create($these);
             $this->getPropositionService()->addDirecteursAsMembres($proposition);
             return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
         }
@@ -113,16 +109,14 @@ class PropositionController extends AbstractController {
         ]);
     }
 
-    public function modifierDateLieuAction() {
+    public function modifierDateLieuAction()
+    {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
 
         /** @var DateLieuForm $form */
         $form = $this->getDateLieuForm();
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/modifier-date-lieu', ['these' => $these->getId()], [], true));
-
-        /** @var Proposition $proposition */
-
         $form->bind($proposition);
 
         /** @var Request $request */
@@ -186,12 +180,11 @@ class PropositionController extends AbstractController {
     public function effacerMembreAction()
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
         $membre = $this->getMembreService()->getRequestedMembre($this);
 
         if ($membre) {
             $this->getMembreService()->delete($membre);
-            $this->getPropositionService()->annulerValidations($proposition);
+            $this->getPropositionService()->annulerValidations($membre->getProposition());
         }
 
         return $this->redirect()->toRoute('soutenance/proposition',['these' => $these->getId()],[],true);
@@ -421,6 +414,8 @@ class PropositionController extends AbstractController {
         /** Justificatifs attendus ---------------------------------------------------------------------------------- */
         $justificatifs = $this->getJustificatifService()->generateListeJustificatif($proposition);
 
+        $validationPDC = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PAGE_DE_COUVERTURE, $these);
+
         return new ViewModel([
             'these'             => $these,
             'proposition'       => $proposition,
@@ -429,6 +424,7 @@ class PropositionController extends AbstractController {
             'validations'       => ($proposition)?$this->getPropositionService()->getValidationSoutenance($these):[],
             'directeurs'        => $directeurs,
             'rapporteurs'       => $rapporteurs,
+            'validationPDC'     => $validationPDC,
         ]);
     }
 
@@ -510,5 +506,21 @@ class PropositionController extends AbstractController {
             $this->getPropositionService()->annulerValidations($proposition);
         }
         return $proposition;
+    }
+
+    public function suppressionAction() {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findByThese($these);
+
+        //detruire la  || historiser si on histo
+        $this->getPropositionService()->historise($proposition);
+
+        //historiser les validations
+        $validations = $this->getValidationService()->getRepository()->findValidationsByThese($these);
+        foreach ($validations as $validation) {
+            $this->getValidationService()->historise($validation);
+        }
+
+        return $this->redirect()->toRoute('soutenance', [], [], true);
     }
 }

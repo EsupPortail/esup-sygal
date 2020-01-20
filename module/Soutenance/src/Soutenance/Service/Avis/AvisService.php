@@ -157,8 +157,6 @@ class AvisService {
         return $result;
     }
 
-
-
     /**
      * @param These these
      * @return Avis[]
@@ -168,8 +166,8 @@ class AvisService {
         $qb =$this->createQueryBuilder()
             ->andWhere('1 = pasHistorise(avis)')
             ->andWhere('proposition.these = :these')
-            ->setParameter('these', $these);
-
+            ->setParameter('these', $these)
+        ;
         $result = $qb->getQuery()->getResult();
 
         $avis = [];
@@ -178,7 +176,6 @@ class AvisService {
             $avis[$entry->getRapporteur()->getIndividu()->getId()] = $entry;
         }
         return $avis;
-
     }
 
     /**

@@ -3,10 +3,12 @@
 namespace Soutenance\Service\Membre;
 
 use Application\Entity\Db\Acteur;
+use Application\Service\UserContextServiceAwareTrait;
 use DateInterval;
 use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Doctrine\ORM\QueryBuilder;
 use Exception;
 use Soutenance\Entity\Etat;
@@ -21,6 +23,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 class MembreService {
     use EntityManagerAwareTrait;
     use QualiteServiceAwareTrait;
+    use UserContextServiceAwareTrait;
 
     /**
      * @return QueryBuilder
@@ -69,6 +72,18 @@ class MembreService {
      */
     public function create($membre)
     {
+        try {
+            $date = new DateTime();
+            $user = $this->userContextService->getIdentityDb();
+        } catch(Exception $e) {
+            throw new RuntimeException("Un problème est survenu lors de la récupération des données liées à l'historisation", 0 , $e);
+        }
+
+        $membre->setHistoCreateur($user);
+        $membre->setHistoCreation($date);
+        $membre->setHistoModificateur($user);
+        $membre->setHistoModification($date);
+
         $this->getEntityManager()->persist($membre);
         try {
             $this->getEntityManager()->flush($membre);
@@ -81,11 +96,74 @@ class MembreService {
      * @param Membre $membre
      */
     public function update($membre) {
+
+        try {
+            $date = new DateTime();
+            $user = $this->userContextService->getIdentityDb();
+        } catch(Exception $e) {
+            throw new RuntimeException("Un problème est survenu lors de la récupération des données liées à l'historisation", 0 , $e);
+        }
+
+        $membre->setHistoModificateur($user);
+        $membre->setHistoModification($date);
+
         try {
             $this->getEntityManager()->flush($membre);
         } catch (OptimisticLockException $e) {
             throw new RuntimeException("Une erreur s'est produite lors de la mise à jour d'un membre de jury !");
         }
+    }
+
+    /**
+     * @param Membre $membre
+     * @return Membre
+     */
+    public function historise($membre)
+    {
+        try {
+            $date = new DateTime();
+            $user = $this->userContextService->getIdentityDb();
+        } catch(Exception $e) {
+            throw new RuntimeException("Un problème est survenu lors de la récupération des données liées à l'historisation", 0 , $e);
+        }
+
+        $membre->setHistoModificateur($user);
+        $membre->setHistoModification($date);
+        $membre->setHistoDestructeur($user);
+        $membre->setHistoDestruction($date);
+
+        try {
+            $this->getEntityManager()->flush($membre);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Un problème est survenue lors de l'enregistrement en BDD.", $e);
+        }
+        return $membre;
+    }
+
+    /**
+     * @param Membre $membre
+     * @return Membre
+     */
+    public function restore($membre)
+    {
+        try {
+            $date = new DateTime();
+            $user = $this->userContextService->getIdentityDb();
+        } catch(Exception $e) {
+            throw new RuntimeException("Un problème est survenu lors de la récupération des données liées à l'historisation", 0 , $e);
+        }
+
+        $membre->setHistoModificateur($user);
+        $membre->setHistoModification($date);
+        $membre->setHistoDestructeur(null);
+        $membre->setHistoDestruction(null);
+
+        try {
+            $this->getEntityManager()->flush($membre);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Un problème est survenue lors de l'enregistrement en BDD.", $e);
+        }
+        return $membre;
     }
 
     /**

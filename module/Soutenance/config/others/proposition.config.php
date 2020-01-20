@@ -128,6 +128,7 @@ return [
                     'controller' => PropositionController::class,
                     'action'     => [
                         'toggle-sursis',
+                        'suppression',
                     ],
                     'privileges' => PropositionPrivileges::PROPOSITION_SURSIS,
                 ],
@@ -171,6 +172,17 @@ return [
                                     'defaults' => [
                                         'controller' => PropositionController::class,
                                         'action'     => 'toggle-sursis',
+                                    ],
+                                ],
+                            ],
+                            'suppression' => [
+                                'type' => Literal::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/suppression',
+                                    'defaults' => [
+                                        'controller' => PropositionController::class,
+                                        'action'     => 'suppression',
                                     ],
                                 ],
                             ],

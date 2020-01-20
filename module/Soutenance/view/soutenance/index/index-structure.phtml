@@ -46,7 +46,8 @@ $canSuppression = ($role->getCode() === Role::CODE_ADMIN_TECH);
             <tr>
                 <td>
                     <?php if ($canVoirThese) : ?>
-                        <a href="<?php echo $this->url('these/identite', ['these' => $proposition->getThese()->getId()], [] ,true); ?>">
+                        <a  <?php /** @see \Application\Controller\TheseController::detailIdentiteAction() */ ?>
+                            href="<?php echo $this->url('these/identite', ['these' => $proposition->getThese()->getId()], [] ,true); ?>">
                     <?php endif; ?>
                         <?php echo $proposition->getThese()->getTitre(); ?>
                     <?php if ($canVoirThese) : ?>
@@ -68,20 +69,26 @@ $canSuppression = ($role->getCode() === Role::CODE_ADMIN_TECH);
                     </span>
                 </td>
                 <td>
-                    <a href="<?php echo $this->url('soutenance/proposition', ['these' => $proposition->getThese()->getId()], [], true); ?>"
+                    <a
+                        <?php /** @see \Soutenance\Controller\Proposition\PropositionController::propositionAction() */ ?>
+                        href="<?php echo $this->url('soutenance/proposition', ['these' => $proposition->getThese()->getId()], [], true); ?>"
                        title="Visualiser la proposition de soutenance"
                     >
                         Proposition
                     </a>
                     <br/>
-                    <a href="<?php echo $this->url('soutenance/presoutenance', ['these' => $proposition->getThese()->getId()], [], true); ?>"
+                    <a
+                        <?php /** @see \Soutenance\Controller\Presoutenance\PresoutenanceController::presoutenanceAction() */ ?>
+                        href="<?php echo $this->url('soutenance/presoutenance', ['these' => $proposition->getThese()->getId()], [], true); ?>"
                        title="Visualiser la préparation de la soutenance"
                     >
                         Présoutenance
                     </a>
                     <br/>
                     <?php if ($canSuppression) : ?>
-                    <a href="<?php echo $this->url('soutenance'); ?>"
+                    <a
+                        <?php /** @see \Soutenance\Controller\Proposition\PropositionController::suppressionAction() */ ?>
+                        href="<?php echo $this->url('soutenance/proposition/suppression', ['these' => $proposition->getThese()->getId()], [], true); ?>"
                        title="">
                         Suppression
                     </a>
