@@ -8,12 +8,14 @@
  * @var Membre[] $rapporteurs
  * @var boolean $jury
  * @var boolean $justificatif
+ * @var Validation $validationPDC
  */
 
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
+use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 
@@ -129,6 +131,39 @@ $this->headTitle('Avancement de la soutenance');
             Aucune proposition de soutenance de trouvée.
         </div>
     <?php endif; ?>
+</div>
+
+<div class="col-md-12">
+<h3> Validations des étapes initiales </h3>
+
+    <dl class="dl-horizontal">
+        <dt> Page de couverture </dt>
+        <dd>
+            <?php
+                if($validationPDC === null OR empty($validationPDC))  {
+                    echo '<span class="badge default"> En Attente </span>';
+                } else {
+                    echo '<span class="badge success"> Validé </span>';
+                }
+            ?>
+        </dd>
+        <dt> Feu vert </dt>
+        <dd>
+            <?php
+            switch($proposition->getEtat()->getCode()) {
+                case Etat::VALIDEE :
+                    echo '<span class="badge success"> Validé </span>';
+                    break;
+                case Etat::REJETEE :
+                    echo '<span class="badge danger"> Refusé </span>';
+                    break;
+                case Etat::EN_COURS :
+                    echo '<span class="badge default"> En Attente </span>';
+                    break;
+            }
+            ?>
+        </dd>
+    </dl>
 </div>
 
 <?php

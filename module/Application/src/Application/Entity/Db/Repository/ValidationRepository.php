@@ -52,5 +52,19 @@ class ValidationRepository extends DefaultEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @param string $code
+     * @param These  $these
+     * @return Validation[]
+     */
+    public function findValidationsByThese(These $these)
+    {
+        $qb = $this->createQueryBuilder('v')
+            ->where('t = :these')
+            ->andWhere('1 = pasHistorise(v)')
+            ->setParameter('these', $these)
+        ;
+        return $qb->getQuery()->getResult();
+    }
 
 }

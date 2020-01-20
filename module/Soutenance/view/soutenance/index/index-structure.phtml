@@ -81,7 +81,7 @@ $canSuppression = ($role->getCode() === Role::CODE_ADMIN_TECH);
                     </a>
                     <br/>
                     <?php if ($canSuppression) : ?>
-                    <a href="<?php echo $this->url('soutenance'); ?>"
+                    <a href="<?php echo $this->url('soutenance/proposition/suppression', ['these' => $proposition->getThese()->getId()], [], true); ?>"
                        title="">
                         Suppression
                     </a>

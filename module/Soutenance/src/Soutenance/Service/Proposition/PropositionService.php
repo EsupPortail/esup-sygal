@@ -126,6 +126,19 @@ class PropositionService {
         }
     }
 
+    /**
+     * @param Proposition $proposition
+     */
+    public function delete($proposition)
+    {
+        try {
+            $this->getEntityManager()->remove($proposition);
+            $this->getEntityManager()->flush($proposition);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Une erreur s'est produite lors de la mise à jour de la proposition de soutenance !");
+        }
+    }
+
     public function findMembre($idMembre)
     {
         $qb = $this->getEntityManager()->getRepository(Membre::class)->createQueryBuilder("membre")

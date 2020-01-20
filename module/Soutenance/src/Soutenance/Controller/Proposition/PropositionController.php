@@ -7,6 +7,7 @@ use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
+use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\VersionFichier;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
@@ -413,6 +414,8 @@ class PropositionController extends AbstractController {
         /** Justificatifs attendus ---------------------------------------------------------------------------------- */
         $justificatifs = $this->getJustificatifService()->generateListeJustificatif($proposition);
 
+        $validationPDC = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PAGE_DE_COUVERTURE, $these);
+
         return new ViewModel([
             'these'             => $these,
             'proposition'       => $proposition,
@@ -421,6 +424,7 @@ class PropositionController extends AbstractController {
             'validations'       => ($proposition)?$this->getPropositionService()->getValidationSoutenance($these):[],
             'directeurs'        => $directeurs,
             'rapporteurs'       => $rapporteurs,
+            'validationPDC'     => $validationPDC,
         ]);
     }
 
@@ -502,5 +506,21 @@ class PropositionController extends AbstractController {
             $this->getPropositionService()->annulerValidations($proposition);
         }
         return $proposition;
+    }
+
+    public function suppressionAction() {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findByThese($these);
+
+        //detruire la  || historiser si on histo
+        $this->getPropositionService()->delete($proposition);
+
+        //historiser les validations
+        $validations = $this->getValidationService()->getRepository()->findValidationsByThese($these);
+        foreach ($validations as $validation) {
+            $this->getValidationService()->historise($validation);
+        }
+
+        return $this->redirect()->toRoute('soutenance', [], [], true);
     }
 }
