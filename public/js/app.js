@@ -270,7 +270,7 @@ $.widget("unicaen.widgetAutorisationMiseEnLigne", {
             case "2": // oui immédiatement
                 this.getInputDivEmbargoDuree().hide(effect, {direction: "left"}).find(':input').prop('disabled', 'disabled');
                 this.getInputDivMotif().hide(effect, {direction: "up"}).find(':input').prop('disabled', 'disabled');
-                this.getInputDivIdOrcid().show(effect, {direction: "up"}).find(':input').removeProp('disabled');
+                this.getInputDivAuteur().show(effect, {direction: "up"}).find(':input').removeProp('disabled');
                 this.getExplicOuiImmediat().show();
                 this.getExplicOuiEmbargo().hide();
                 this.getExplicNon().hide();
@@ -278,7 +278,7 @@ $.widget("unicaen.widgetAutorisationMiseEnLigne", {
             case "1": // oui avec embargo
                 this.getInputDivEmbargoDuree().show(effect, {direction: "left"}).find(':input').removeProp('disabled');
                 this.getInputDivMotif().show(effect, {direction: "up"}).find(':input').removeProp('disabled');
-                this.getInputDivIdOrcid().show(effect, {direction: "up"}).find(':input').removeProp('disabled');
+                this.getInputDivAuteur().show(effect, {direction: "up"}).find(':input').removeProp('disabled');
                 this.getExplicOuiImmediat().hide();
                 this.getExplicOuiEmbargo().show();
                 this.getExplicNon().hide();
@@ -286,7 +286,7 @@ $.widget("unicaen.widgetAutorisationMiseEnLigne", {
             case "0": // non
                 this.getInputDivEmbargoDuree().hide(effect, {direction: "left"}).find(':input').prop('disabled', 'disabled');
                 this.getInputDivMotif().show(effect, {direction: "up"}).find(':input').removeProp('disabled');
-                this.getInputDivIdOrcid().hide(effect, {direction: "up"}).find(':input').prop('disabled', 'disabled');
+                this.getInputDivAuteur().hide(effect, {direction: "up"}).find(':input').prop('disabled', 'disabled');
                 this.getExplicOuiImmediat().hide();
                 this.getExplicOuiEmbargo().hide();
                 this.getExplicNon().show();
@@ -294,7 +294,7 @@ $.widget("unicaen.widgetAutorisationMiseEnLigne", {
             default:
                 this.getInputDivEmbargoDuree().hide();
                 this.getInputDivMotif().hide();
-                this.getInputDivIdOrcid().hide();
+                this.getInputDivAuteur().hide();
                 this.getExplicOuiImmediat().hide();
                 this.getExplicOuiEmbargo().hide();
                 this.getExplicNon().hide();
@@ -315,8 +315,8 @@ $.widget("unicaen.widgetAutorisationMiseEnLigne", {
     getInputDivMotif: function () {
         return this.element.find(".motif");
     },
-    getInputDivIdOrcid: function () {
-        return this.element.find(".idOrcid");
+    getInputDivAuteur: function () {
+        return this.element.find(".auteur");
     },
     getExplicOuiImmediat: function () {
         return this.element.find("#explicOuiImmediat");

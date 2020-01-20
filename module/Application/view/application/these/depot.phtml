@@ -57,13 +57,13 @@ $h1 = $versionCorrigee ? "Dépôt version corrigée" : "Dépôt de la thèse";
         </div>
     </div>
 
-    <!-------------------------------------- Attestations --------------------------------------->
-    <div id="attestationDiv" data-url="<?php echo $attestationUrl ?>">
+    <!-------------------------------------- Diffusion --------------------------------------->
+    <div id="diffusionDiv" data-url="<?php echo $diffusionUrl ?>">
         <!-- màj via ajax -->
     </div>
 
-    <!-------------------------------------- Diffusion --------------------------------------->
-    <div id="diffusionDiv" data-url="<?php echo $diffusionUrl ?>">
+    <!-------------------------------------- Attestations --------------------------------------->
+    <div id="attestationDiv" data-url="<?php echo $attestationUrl ?>">
         <!-- màj via ajax -->
     </div>
 
@@ -90,8 +90,8 @@ $h1 = $versionCorrigee ? "Dépôt version corrigée" : "Dépôt de la thèse";
         var theseDiv = $("#theseDiv");
         var annexesDiv = $("#annexesDiv");
 
-        var attestationDiv = $("#attestationDiv");
         var diffusionDiv = $("#diffusionDiv");
+        var attestationDiv = $("#attestationDiv");
 
         var nextStepDiv = $("#nextStepDiv");
 
@@ -158,8 +158,8 @@ $h1 = $versionCorrigee ? "Dépôt version corrigée" : "Dépôt de la thèse";
         // Au chargement de la page, on actualise les div
         runInCascade([
             fichiersLoader,
-            { func: attestationsLoader, effect: true },
             { func: diffusionLoader, effect: true },
+            { func: attestationsLoader, effect: true },
             refreshingNextStep
         ], self);
 
@@ -174,8 +174,8 @@ $h1 = $versionCorrigee ? "Dépôt version corrigée" : "Dépôt de la thèse";
         body.on(uploadEventFileUploaded, "#" + depotDivId + " .these.widget-uploader", function() {
             runInCascade([
                 annexesLoader,
-                { func: attestationsLoader, effect: true },
                 { func: diffusionLoader, effect: true },
+                { func: attestationsLoader, effect: true },
                 refreshingNextStep
             ], self);
         });
@@ -185,12 +185,22 @@ $h1 = $versionCorrigee ? "Dépôt version corrigée" : "Dépôt de la thèse";
                 annexesLoader,
                 function(done, effect) {
                     return function() {
-                        attestationDiv.hide();
                         diffusionDiv.hide();
+                        attestationDiv.hide();
                         nextStepDiv.hide();
                         if (done) done();
                     };
                 }
+            ], self);
+        });
+
+        // Diffusion enregistrée dans la modale
+        body.on("event-diffusion-modified", function (event) {
+            event.div.modal('hide'); // ferme la fenêtre modale
+            runInCascade([
+                { func: diffusionLoader, effect: false },
+                { func: attestationsLoader, effect: true },
+                refreshingNextStep
             ], self);
         });
 
@@ -200,16 +210,6 @@ $h1 = $versionCorrigee ? "Dépôt version corrigée" : "Dépôt de la thèse";
             event.div.modal('hide'); // ferme la fenêtre modale
             runInCascade([
                 { func: attestationsLoader, effect: false },
-                { func: diffusionLoader, effect: true },
-                refreshingNextStep
-            ], self);
-        });
-
-        // Diffusion enregistrée dans la modale
-        body.on("event-diffusion-modified", function (event) {
-            event.div.modal('hide'); // ferme la fenêtre modale
-            runInCascade([
-                { func: diffusionLoader, effect: false },
                 refreshingNextStep
             ], self);
         });

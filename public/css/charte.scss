@@ -1,0 +1,83 @@
+$navbarBackgroundColor: #006EAD;
+$navbarBackgroundColorActive: #004980;
+
+/**
+ * Charte Normandie Université
+ */
+
+body {
+  padding-bottom: 100px;
+}
+
+body.development .navbar-inverse,
+body.test .navbar-inverse {
+  background-image: none; //linear-gradient(to bottom, #660000 0px, #870a0a 100%);
+  background-color: $navbarBackgroundColor;
+  border-color: $navbarBackgroundColor;
+}
+
+body.development .navbar-inverse .navbar-nav .active a,
+body.test .navbar-inverse .navbar-nav .active a {
+  background-image: none; //linear-gradient(to bottom, #d22828 0px, #a41212 100%);
+  background-color: $navbarBackgroundColorActive;
+  border-color: $navbarBackgroundColorActive
+}
+
+.navbar-inverse .navbar-nav > li > a {
+  color: white;
+}
+.navbar-inverse .navbar-link {
+  color: white;
+}
+.navbar > .container .navbar-brand {
+  width: 120px;
+  background-image: url('/css/SyGAL_logo_Blanc03.png');
+  background-repeat: no-repeat;
+  background-size: 85%;
+  background-position: center 8px;
+  text-indent: -9999px;
+}
+
+.nav-pills > li > a {
+  border-radius: 20px;
+}
+
+#footer {
+  padding-top: 10px;
+  margin-bottom: 0;
+  background-color: $navbarBackgroundColor;
+}
+#footer ul {
+  width: 100%;
+}
+#footer ul li a {
+  color: white;
+}
+#footer ul li a.logo-etablissement {
+  height: 60px;
+}
+
+h1.app-name {
+  font-size: 130px;
+  background-image: url('/css/SyGAL_logo_Bleu02.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: right top;
+  text-indent: -9999px;
+}
+
+.scrollup {
+  bottom: 80px;
+}
+
+ul.menu-secondaire,
+ul.menu-information {
+  background: none;
+  border-radius: 18px;
+  padding: 2px;
+  box-shadow: 1px 1px 6px;
+}
+ul.menu-secondaire li a,
+ul.menu-information li a {
+  padding: 7px 10px;
+}

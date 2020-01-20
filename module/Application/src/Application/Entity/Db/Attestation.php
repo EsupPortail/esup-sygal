@@ -13,6 +13,11 @@ class Attestation implements HistoriqueAwareInterface
     use HistoriqueAwareTrait;
 
     /**
+     * @var bool
+     */
+    private $versionCorrigee = false;
+
+    /**
      * @var boolean
      */
     private $versionDeposeeEstVersionRef;
@@ -43,6 +48,25 @@ class Attestation implements HistoriqueAwareInterface
     /**
      * @return bool
      */
+    public function getVersionCorrigee(): bool
+    {
+        return $this->versionCorrigee;
+    }
+
+    /**
+     * @param bool $versionCorrigee
+     * @return Attestation
+     */
+    public function setVersionCorrigee(bool $versionCorrigee): Attestation
+    {
+        $this->versionCorrigee = $versionCorrigee;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
     public function isVersionDeposeeEstVersionRef()
     {
         return $this->versionDeposeeEstVersionRef;
@@ -60,23 +84,9 @@ class Attestation implements HistoriqueAwareInterface
     }
 
     /**
-     * Get isVersionDeposeeEstVersionRef
-     *
-     * @return string
+     * @return bool|null
      */
-    public function isVersionDeposeeEstVersionRefToString()
-    {
-        if (null === $this->isVersionDeposeeEstVersionRef()) {
-            return "";
-        }
-
-        return $this->isVersionDeposeeEstVersionRef() ? "Oui" : "Non";
-    }
-
-    /**
-     * @return bool
-     */
-    public function isExemplaireImprimeConformeAVersionDeposee()
+    public function getExemplaireImprimeConformeAVersionDeposee()
     {
         return $this->exemplaireImprimeConformeAVersionDeposee;
     }
@@ -90,20 +100,6 @@ class Attestation implements HistoriqueAwareInterface
         $this->exemplaireImprimeConformeAVersionDeposee = $exemplaireImprimeConformeAVersionDeposee;
 
         return $this;
-    }
-
-    /**
-     * Get isExemplaireImprimeConformeAVersionDeposee
-     *
-     * @return string
-     */
-    public function isExemplaireImprimeConformeAVersionDeposeeToString()
-    {
-        if (null === $this->isExemplaireImprimeConformeAVersionDeposee()) {
-            return "";
-        }
-
-        return $this->isExemplaireImprimeConformeAVersionDeposee() ? "Oui" : "Non";
     }
 
     /**
@@ -139,4 +135,6 @@ class Attestation implements HistoriqueAwareInterface
     {
         return $this->these;
     }
+
+
 }

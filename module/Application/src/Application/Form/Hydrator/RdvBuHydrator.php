@@ -4,13 +4,21 @@ namespace Application\Form\Hydrator;
 
 use Application\Entity\Db\Diffusion;
 use Application\Entity\Db\RdvBu;
+use Application\Entity\Db\VersionFichier;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\OptimisticLockException;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
+use UnicaenApp\Exception\RuntimeException;
 
+/**
+ * @property EntityManager $objectManager
+ *
+ * @author Unicaen
+ */
 class RdvBuHydrator extends DoctrineObject
 {
     use FichierTheseServiceAwareTrait;
-//    use EntityManagerAwareTrait;
 
     private function existeVersionArchivable(RdvBu $rdvBu)
     {
@@ -28,27 +36,17 @@ class RdvBuHydrator extends DoctrineObject
         $data = parent::extract($rdvBu);
         $data['versionArchivableFournie'] = $this->existeVersionArchivable($rdvBu);
 
-//        /** @var QueryBuilder $qb */
-//        $qb = $this->objectManager->getRepository(Diffusion::class)->createQueryBuilder("d")
-//            ->andWhere("d.theseId = :theseId")
-//            ->setParameter("theseId", $rdvBu->getThese()->getId());
-//        /** @var Diffusion $result */
-//        $result = $qb->getQuery()->getOneOrNullResult();
-
-        /** @var Diffusion $result */
-        $result = $this->objectManager->getRepository(Diffusion::class)->findOneBy(["these" => $rdvBu->getThese()]);
-
-
-        if ($result) $data['idOrcid'] = $result->getOrcid();
+        if ($diffusion = $this->getDiffusion($rdvBu)) {
+            $data['idOrcid'] = $diffusion->getOrcid();
+            $data['halId'] = $diffusion->getHalId();
+        }
 
         return $data;
     }
 
     /**
-     * Hydrate $object with the provided $data.
-     *
-     * @param  array $data
-     * @param  RdvBu $rdvBu
+     * @param array  $data
+     * @param object $rdvBu
      * @return RdvBu
      */
     public function hydrate(array $data, $rdvBu)
@@ -60,13 +58,29 @@ class RdvBuHydrator extends DoctrineObject
 
         /** @var RdvBu $object */
         $object = parent::hydrate($data, $rdvBu);
-        /** @var Diffusion $result */
-        $result = $this->objectManager->getRepository(Diffusion::class)->findOneBy(["these" => $rdvBu->getThese()]);
-        if ($result) {
-            $result->setOrcid($data['idOrcid']);
-            $this->objectManager->flush();
+
+        if ($diffusion = $this->getDiffusion($rdvBu)) {
+            $diffusion->setOrcid($data['idOrcid']);
+            $diffusion->setHalId($data['halId']);
+            try {
+                $this->objectManager->flush($diffusion);
+            } catch (OptimisticLockException $e) {
+                throw new RuntimeException("Impossible d'enregistrer la Diffusion", null, $e);
+            }
         }
 
         return $object;
+    }
+
+    /**
+     * @param RdvBu $rdvBu
+     * @return Diffusion|null
+     */
+    private function getDiffusion(RdvBu $rdvBu)
+    {
+        // le RDV BU ne concerne que le dépôt de la version initiale
+        $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
+
+        return $rdvBu->getThese()->getDiffusionForVersion($version);
     }
 }

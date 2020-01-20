@@ -6,12 +6,15 @@ use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Attestation;
 use Application\Entity\Db\Diffusion;
 use Application\Entity\Db\MetadonneeThese;
+use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\RdvBu;
 use Application\Entity\Db\Repository\TheseRepository;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\VersionFichier;
 use Application\Notification\ValidationRdvBuNotification;
+use Application\Rule\AutorisationDiffusionRule;
+use Application\Rule\SuppressionAttestationsRequiseRule;
 use Application\Service\BaseService;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
@@ -25,6 +28,7 @@ use Application\Service\Variable\VariableServiceAwareTrait;
 use Assert\Assertion;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\OptimisticLockException;
+use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Traits\MessageAwareInterface;
 use UnicaenAuth\Entity\Db\UserInterface;
@@ -116,70 +120,53 @@ class TheseService extends BaseService
     }
 
     /**
-     * Supprime l'Attestation (éventuelle) d'une These.
+     * Supprime définitivement l'éventuelle Attestation concernant une version de fichier.
      *
-     * @param These         $these Thèse concernée
-     * @param UserInterface $destructeur Auteur de l'historisation, le cas échéant
+     * @param These          $these Thèse concernée
+     * @param VersionFichier $version
      */
-    public function deleteAttestation(These $these, UserInterface $destructeur = null)
+    public function deleteAttestationForVersion(These $these, VersionFichier $version)
     {
-        $attestation = $these->getAttestation();
+        $attestation = $these->getAttestationForVersion($version);
         if ($attestation === null) {
             return;
         }
 
-        if ($destructeur) {
-            $attestation->historiser($destructeur);
-        } else {
-            $these->removeAttestation($attestation);
-            $this->entityManager->remove($attestation);
-        }
+        $these->removeAttestation($attestation);
+        $this->entityManager->remove($attestation);
 
         try {
             $this->entityManager->flush($attestation);
         } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement", null, $e);
+            throw new RuntimeException("Erreur rencontrée lors de la suppression", null, $e);
         }
     }
 
     /**
-     * @param These       $these
-     * @param Diffusion $mel
+     * @param These          $these
+     * @param Diffusion      $diffusion
+     * @param VersionFichier $version
      */
-    public function updateDiffusion(These $these, Diffusion $mel)
+    public function updateDiffusion(These $these, Diffusion $diffusion, VersionFichier $version)
     {
-        if (! $mel->getId()) {
-            $mel->setThese($these);
-            $these->addDiffusion($mel);
+        $isUpdate = $diffusion->getId() !== null;
 
-            $this->entityManager->persist($mel);
-        }
-
-        try {
-            $this->entityManager->flush($mel);
-        } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement", null, $e);
-        }
-    }
-
-    /**
-     * Supprime la Diffusion (éventuelle) d'une These.
-     *
-     * @param These         $these Thèse concernée
-     * @param UserInterface $destructeur Auteur de l'historisation, le cas échéant
-     */
-    public function deleteDiffusion(These $these, UserInterface $destructeur = null)
-    {
-        $diffusion = $these->getDiffusion();
-        if ($diffusion === null) {
-            return;
-        }
-
-        if ($destructeur) {
-            $diffusion->historiser($destructeur);
+        if ($isUpdate) {
+            // on teste si la réponse à l'autorisation de diffusion existante a changé de manière "importante"
+            // (auquel cas, il sera nécessaire de tester s'il faut supprimer ou pas les attestations)
+            $rule = new AutorisationDiffusionRule();
+            $rule->setDiffusion($diffusion);
+            $rule->execute();
+            $suppressionAttestationsAVerifier = $rule->computeChangementDeReponseImportant($this->entityManager);
         } else {
-            $these->removeDiffusion($diffusion);
-            $this->entityManager->remove($diffusion);
+            $suppressionAttestationsAVerifier = false;
+        }
+
+        if (! $isUpdate) {
+            $diffusion->setThese($these);
+            $these->addDiffusion($diffusion);
+
+            $this->entityManager->persist($diffusion);
         }
 
         try {
@@ -187,6 +174,81 @@ class TheseService extends BaseService
         } catch (OptimisticLockException $e) {
             throw new RuntimeException("Erreur rencontrée lors de l'enregistrement", null, $e);
         }
+
+        //
+        // Il peut être nécessaire de supprimer les "attestations" existantes en fonction des réponses
+        // à l'autorisation de diffusion.
+        //
+        if ($suppressionAttestationsAVerifier) {
+            $rule = new SuppressionAttestationsRequiseRule($these, $version);
+            $suppressionRequise = $rule->computeEstRequise();
+
+            if ($suppressionRequise) {
+                $this->deleteAttestationForVersion($these, $version);
+            }
+        }
+    }
+
+    /**
+     * Détermine d'après la réponse à l'autorisation de diffusion de la thèse si le flag de remise de
+     * l'exemplaire papier est pertinent ou non.
+     *
+     * @param These          $these
+     * @param VersionFichier $version
+     * @return boolean
+     */
+    public function isRemiseExemplairePapierRequise(These $these, VersionFichier $version)
+    {
+        $diffusion = $these->getDiffusionForVersion($version);
+
+        if ($diffusion === null) {
+            throw new LogicException("Appel de méthode prématuré : autorisation de diffusion introuvable pour la $version");
+        }
+
+        return $diffusion->isRemiseExemplairePapierRequise();
+    }
+
+    /**
+     * Détermine d'après la réponse à l'autorisation de diffusion de la thèse si le flag de remise de
+     * l'exemplaire papier est pertinent ou non.
+     *
+     * @param These $these
+     * @return boolean|null
+     */
+    public function isExemplPapierFourniPertinent(These $these)
+    {
+        // le RDV BU ne concerne que le dépôt de la version initiale
+        $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
+
+        $diffusion = $these->getDiffusionForVersion($version);
+
+        if ($diffusion === null) {
+            return false;
+        }
+
+        return $diffusion->isRemiseExemplairePapierRequise();
+    }
+
+    /**
+     * Détermine si les infos qui doivent être saisies pour le RDV BU l'ont été.
+     *
+     * @param These $these
+     * @return bool
+     */
+    public function isInfosBuSaisies(These $these)
+    {
+        $rdvBu = $these->getRdvBu();
+
+        if ($rdvBu === null) {
+            return false;
+        }
+
+        $exemplairePapierFourniPertinent = $this->isExemplPapierFourniPertinent($rdvBu->getThese());
+
+        return
+            (!$exemplairePapierFourniPertinent || $exemplairePapierFourniPertinent && $rdvBu->getExemplPapierFourni()) &&
+            $rdvBu->getConventionMelSignee() && $rdvBu->getMotsClesRameau() &&
+            $rdvBu->isVersionArchivableFournie();
     }
 
     /**
@@ -209,7 +271,7 @@ class TheseService extends BaseService
         }
 
         // si tout est renseigné, on valide automatiquement
-        if ($rdvBu->isInfosBuSaisies()) {
+        if ($this->isInfosBuSaisies($these)) {
             $this->validationService->validateRdvBu($these);
             $successMessage = "Validation enregistrée avec succès.";
 
@@ -316,11 +378,12 @@ class TheseService extends BaseService
             $acteurData->setDenomination($acteur->getIndividu()->getNomComplet(true, false, false, true, true));
             $acteurData->setQualite($acteur->getQualite());
 
+            $estMembre = !empty(array_filter($jury, function (Acteur $a) use ($acteur) {return $a->getIndividu() === $acteur->getIndividu();}));
+
             if (!$acteur->estPresidentJury()) {
                 $acteurData->setRole($acteur->getRole()->getLibelle());
 
                 //patch rapporteur non membre ...
-                $estMembre = !empty(array_filter($jury, function (Acteur $a) use ($acteur) {return $a->getIndividu() === $acteur->getIndividu();}));
                 if ($acteur->getRole()->getCode() === Role::CODE_RAPPORTEUR_JURY && !$estMembre) {
                     $acteurData->setRole("Rapporteur non membre du jury");
                 }
@@ -328,7 +391,8 @@ class TheseService extends BaseService
                 $acteurData->setRole(Role::LIBELLE_PRESIDENT);
             }
             if ($acteur->getEtablissement()) $acteurData->setEtablissement($acteur->getEtablissement()->getStructure()->getLibelle());
-            $pdcData->addActeurEnCouverture($acteurData);
+
+            if ($estMembre) $pdcData->addActeurEnCouverture($acteurData);
         }
 
         /** Directeurs de thèses */
@@ -388,5 +452,22 @@ EOS;
         } catch (DBALException $e) {
             throw new RuntimeException("Erreur rencontrée lors des updates en bdd.", null, $e);
         }
+    }
+
+    /**
+     * Si le fichier de la thèse originale est une version corrigée, on est dans le cadre d'un dépôt d'une version
+     * corrigée et cette fonction retourne true.
+     *
+     * @param These $these
+     * @return bool
+     */
+    public function existeVersionCorrigee(These $these)
+    {
+        $fichierTheses = $this->fichierTheseService->getRepository()->fetchFichierTheses(
+            $these,
+            NatureFichier::CODE_THESE_PDF,
+            VersionFichier::CODE_ORIG_CORR);
+
+        return !empty($fichierTheses);
     }
 }
