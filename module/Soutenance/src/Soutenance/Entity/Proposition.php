@@ -7,9 +7,11 @@ use DateInterval;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
+use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 
 class Proposition {
+    use HistoriqueAwareTrait;
 
     /** @var int */
     private $id;
@@ -351,7 +353,9 @@ class Proposition {
         /** @var Justificatif $justificatif */
         foreach ($this->justificatifs as $justificatif) {
             if (($membre === null OR $justificatif->getMembre() === $membre) AND
-                $justificatif->getFichier()->getFichier()->getNature()->getCode() === $nature) {
+                $justificatif->getFichier()->getFichier()->getNature()->getCode() === $nature AND
+                $justificatif->estNonHistorise()
+            ) {
                 return $justificatif;
             }
         }

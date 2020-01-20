@@ -6,6 +6,7 @@ use Application\Service\Acteur\ActeurService;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\File\FileService;
 use Application\Service\Notification\NotifierService;
+use Application\Service\UserContextService;
 use Application\Service\Variable\VariableService;
 use Doctrine\ORM\EntityManager;
 use Soutenance\Service\Membre\MembreService;
@@ -29,6 +30,7 @@ class PropositionServiceFactory
          * @var FileService $fileService
          * @var EtablissementService $etablissamentService
          * @var MembreService $membreService
+         * @var UserContextService $userContextService
          */
         $entityManager = $servicelocator->get('doctrine.entitymanager.orm_default');
         $acteurService = $servicelocator->get(ActeurService::class);
@@ -40,6 +42,7 @@ class PropositionServiceFactory
         $fileService = $servicelocator->get(FileService::class);
         $etablissamentService = $servicelocator->get(EtablissementService::class);
         $membreService = $servicelocator->get(MembreService::class);
+        $userContextService = $servicelocator->get('UserContextService');
 
         /** @var PropositionService $service */
         $service = new PropositionService();
@@ -53,6 +56,7 @@ class PropositionServiceFactory
         $service->setFileService($fileService);
         $service->setEtablissementService($etablissamentService);
         $service->setMembreService($membreService);
+        $service->setUserContextService($userContextService);
 
         return $service;
     }

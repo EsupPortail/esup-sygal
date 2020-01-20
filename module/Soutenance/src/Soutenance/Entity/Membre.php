@@ -4,9 +4,11 @@ namespace Soutenance\Entity;
 
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Individu;
+use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 
 class Membre {
+    use HistoriqueAwareTrait;
 
     const MEMBRE_JURY        = 'Membre';
     const RAPPORTEUR_JURY    = 'Rapporteur membre du jury';
