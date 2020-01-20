@@ -49,7 +49,7 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_CORRE
                 <li>
                     <?php echo $i = $validation->getIndividu() ?> n'a pas encore validé.
                     <?php if (! $i->getSupannId()): ?>
-                        <?php if ($utilisateurs[$i->getId()] === null) : ?>
+                        <?php if (empty($utilisateurs[$i->getId()])) : ?>
                             <?php
                             $message = sprintf(
                                 "Cette personne ne pourra pas utiliser l'application car il manque des informations la concernant dans %s (source code '%s').",

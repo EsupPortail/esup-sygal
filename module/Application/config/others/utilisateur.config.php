@@ -1,6 +1,7 @@
 <?php
 
 use Application\Controller\Factory\UtilisateurControllerFactory;
+use Application\Controller\UtilisateurController;
 use Application\Form\CreationUtilisateurForm;
 use Application\Form\CreationUtilisateurFromIndividuForm;
 use Application\Form\Factory\CreationUtilisateurFormFactory;
@@ -98,15 +99,6 @@ return [
                             'route'       => '/gerer-utilisateur/:individu',
                             'defaults'    => [
                                 'action' => 'gerer-utilisateur',
-                            ],
-                        ],
-                    ],
-                    'ajouter-pour-individu' => [
-                        'type'          => Segment::class,
-                        'options'       => [
-                            'route'       => '/ajouter-pour-individu/:individu',
-                            'defaults'    => [
-                                'action' => 'ajouterFromIndividu',
                             ],
                         ],
                     ],
