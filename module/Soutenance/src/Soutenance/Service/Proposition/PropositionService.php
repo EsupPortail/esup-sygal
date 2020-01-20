@@ -184,6 +184,7 @@ class PropositionService {
             ->addSelect('acteur')->leftJoin('membre.acteur', 'acteur')
             ->addSelect('justificatif')->leftJoin('proposition.justificatifs', 'justificatif')
             ->addSelect('avis')->leftJoin('proposition.avis', 'avis')
+            ->andWhere('1 = pasHistorise(proposition)')
             //->addSelect('validation')->leftJoin('proposition.validations', 'validation')
         ;
         return $qb;

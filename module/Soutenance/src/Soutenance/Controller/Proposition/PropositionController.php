@@ -513,7 +513,7 @@ class PropositionController extends AbstractController {
         $proposition = $this->getPropositionService()->findByThese($these);
 
         //detruire la  || historiser si on histo
-        $this->getPropositionService()->delete($proposition);
+        $this->getPropositionService()->historise($proposition);
 
         //historiser les validations
         $validations = $this->getValidationService()->getRepository()->findValidationsByThese($these);
