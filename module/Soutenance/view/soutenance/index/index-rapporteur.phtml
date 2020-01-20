@@ -50,7 +50,8 @@ $canAvis = true;
             <?php foreach ($theses as $these) : ?>
                 <tr>
                     <td>
-                        <a href="<?php echo $this->url('soutenance/index-rapporteur', ['these' => $these->getId()], [], true); ?>">
+                        <a  <?php /** @see \Soutenance\Controller\Index\IndexController::indexRapporteurAction()*/ ?>
+                            href="<?php echo $this->url('soutenance/index-rapporteur', ['these' => $these->getId()], [], true); ?>">
                             <?php echo $these->getTitre(); ?>
                         </a>
                     </td>
@@ -137,7 +138,9 @@ $canAvis = true;
             Afin de devenir rapporteur de la thèse de <?php echo $these->getDoctorant()->getIndividu(); ?>, vous devez signer
             un engagement d'impartialité.
 
-            <a href="<?php echo $this->url('soutenance/engagement-impartialite', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true); ?>"
+            <a
+                    <?php /** @see \Soutenance\Controller\EngagementImpartialite\EngagementImpartialiteController::engagementImpartialiteAction() */?>
+                    href="<?php echo $this->url('soutenance/engagement-impartialite', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true); ?>"
                class="btn btn-primary pull-right"
             >
                 <span class="glyphicon glyphicon-pencil"></span>
@@ -155,7 +158,9 @@ $canAvis = true;
         <?php if ($depot !== null) : ?>
             Vous pouvez télécharger la version électronique de la thèse via <?php echo $this->appInfos()->nom; ?>.
 
-            <a href="<?php echo $this->url("these/fusion", ["these" => $these->getId()], [], true); ?>"
+            <a
+                <?php /** @see \Application\Controller\TheseController::fusionAction() */ ?>
+                href="<?php echo $this->url("these/fusion", ["these" => $these->getId()], [], true); ?>"
                class="btn btn-primary pull-right"
             >
                 <span class="glyphicon glyphicon-download"></span>
@@ -197,7 +202,9 @@ $canAvis = true;
                             </dl>
 
 <!--                            <a href=" --><?php //echo $this->urlFichierThese->telechargerFichierThese($these, $avis->getFichier()); ?><!--" >-->
-                            <a href=" <?php echo $telecharger; ?>" >
+                            <a
+                                <?php /** @see TELECHARGEMENT FICHIER */ ?>
+                                href=" <?php echo $telecharger; ?>" >
                                 Prérapport de soutenance
                             </a>
                         </div>
@@ -207,7 +214,9 @@ $canAvis = true;
                 Afin de valider la soutenance de thèse de <?php echo $these->getDoctorant()->getIndividu(); ?>, vous devez rendre votre
                 avis de soutenance et votre prérapport de soutenance.
 
-                <a href="<?php echo $this->url('soutenance/avis-soutenance', ['these' => $these->getId(), 'rapporteur' => $membre->getId()], [], true); ?>"
+                <a
+                    <?php /** @see \Soutenance\Controller\Avis\AvisController::indexAction() */ ?>
+                    href="<?php echo $this->url('soutenance/avis-soutenance', ['these' => $these->getId(), 'rapporteur' => $membre->getId()], [], true); ?>"
                    class="btn btn-primary pull-right"
                 >
                     <span class="glyphicon glyphicon-pencil"></span>

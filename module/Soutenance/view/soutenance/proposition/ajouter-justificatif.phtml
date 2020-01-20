@@ -211,6 +211,7 @@ $explications[NatureFichier::CODE_DEMANDE_CONFIDENT] =
         if (value === "<?php echo NatureFichier::CODE_DELEGUATION_SIGNATURE; ?>")     label = "<?php echo NatureFichier::LABEL_DELEGUATION_SIGNATURE; ?>";
         if (value === "<?php echo NatureFichier::CODE_DEMANDE_LABEL; ?>")             label = "<?php echo NatureFichier::LABEL_DEMANDE_LABEL; ?>";
         if (value === "<?php echo NatureFichier::CODE_LANGUE_ANGLAISE; ?>")           label = "<?php echo NatureFichier::LABEL_LANGUE_ANGLAISE; ?>";
+        if (value === "<?php echo NatureFichier::CODE_DEMANDE_CONFIDENT; ?>")         label = "<?php echo NatureFichier::LABEL_DEMANDE_CONFIDENT; ?>";
         $('select[name="nature"]').append(new Option(label, value));
     }
     $( 'select[name="nature"]' ).trigger( "change" );

@@ -183,8 +183,8 @@ class PropositionController extends AbstractController {
         $membre = $this->getMembreService()->getRequestedMembre($this);
 
         if ($membre) {
-            $this->getMembreService()->delete($membre);
             $this->getPropositionService()->annulerValidations($membre->getProposition());
+            $this->getMembreService()->delete($membre);
         }
 
         return $this->redirect()->toRoute('soutenance/proposition',['these' => $these->getId()],[],true);

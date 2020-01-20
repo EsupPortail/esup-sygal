@@ -69,6 +69,7 @@ class MembreService {
 
     /**
      * @param Membre $membre
+     * @return Membre
      */
     public function create($membre)
     {
@@ -84,12 +85,13 @@ class MembreService {
         $membre->setHistoModificateur($user);
         $membre->setHistoModification($date);
 
-        $this->getEntityManager()->persist($membre);
         try {
+            $this->getEntityManager()->persist($membre);
             $this->getEntityManager()->flush($membre);
         } catch (OptimisticLockException $e) {
             throw new RuntimeException("Une erreur s'est produite lors de l'enregistrement d'un membre de jury !");
         }
+        return $membre;
     }
 
     /**

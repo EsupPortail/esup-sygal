@@ -163,7 +163,10 @@ $this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctora
         <nav aria-label="Etape suivante">
             <ul class="roadmap pagination">
             <li>
-                <a class="roadmap-step-link" href="<?php echo $this->url('soutenance/avis-soutenance', ['these' => $these->getId(), 'rapporteur' => $membre->getId()], [], true); ?>">
+                <a
+                        <?php /** @see \Soutenance\Controller\Avis\AvisController::indexAction()  */ ?>
+                        class="roadmap-step-link"
+                        href="<?php echo $this->url('soutenance/avis-soutenance', ['these' => $these->getId(), 'rapporteur' => $membre->getId()], [], true); ?>">
                     <span class="glyphicon glyphicon-circle-arrow-right"></span>
                         Avis de soutenance
                 </a>
