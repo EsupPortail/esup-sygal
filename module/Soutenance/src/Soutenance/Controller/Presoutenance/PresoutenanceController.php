@@ -63,11 +63,11 @@ class PresoutenanceController extends AbstractController
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
         $rapporteurs = $this->getPropositionService()->getRapporteurs($proposition);
+        $nbRapporteurs = count($rapporteurs);
 
         $renduRapport = $proposition->getRenduRapport();
         if (!$renduRapport) $this->getPropositionService()->initialisationDateRetour($proposition);
 
-        /** Recupération des engagements d'impartialité  et des avis de soutenance */
         /** ==> clef: Membre->getActeur()->getIndividu()->getId() <== */
         $engagements = $this->getEngagementImpartialiteService()->getEngagmentsImpartialiteByThese($these);
         $avis = $this->getAvisService()->getAvisByThese($these);
@@ -81,8 +81,8 @@ class PresoutenanceController extends AbstractController
             'rapporteurs'           => $rapporteurs,
             'engagements'           => $engagements,
             'avis'                  => $avis,
-            'tousLesEngagements'    => count($engagements) === count($rapporteurs),
-            'tousLesAvis'           => count($avis) === count($rapporteurs),
+            'tousLesEngagements'    => count($engagements)  === $nbRapporteurs,
+            'tousLesAvis'           => count($avis)         === $nbRapporteurs,
             'urlFichierThese'       => $this->urlFichierThese(),
             'validationBDD'         => $validationBDD,
             'validationPDC'         => $validationPDC,
@@ -421,8 +421,8 @@ class PresoutenanceController extends AbstractController
         exit;
     }
 
-    public function notifierRetardRapportPresoutenanceAction() {
-
+    public function notifierRetardRapportPresoutenanceAction()
+    {
         $delai = new DateInterval('P15D');
         $membres = $this->getMembreService()->getRapporteursEnRetard($delai);
         $url = $this->url()->fromRoute('soutenance/index-rapporteur', [], ['force_canonical' => true], true);
