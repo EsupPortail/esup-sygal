@@ -58,7 +58,7 @@ $these = $proposition->getThese();
                 <?php endif; ?>
 
                 <?php if($proposition->isLabelEuropeen()): ?>
-                    <div class="alert alert-sm alert-warning">
+                    <div class="alert alert-warning">
                         <span class="glyphicon glyphicon-warning-sign"> </span>
                         Afin de réaliser la demande de label européen, vous devez remplir le formulaire de demande suivant :
                         <a href="<?php echo $FORMULAIRE_DEMANDE_LABEL; ?>">formulaire de demande de label européen</a>.
@@ -102,7 +102,7 @@ $these = $proposition->getThese();
             <?php endif; ?>
 
             <?php if($proposition->isManuscritAnglais() || $proposition->isSoutenanceAnglais()): ?>
-                <div class="alert alert-sm alert-warning">
+                <div class="alert alert-warning">
                     <span class="glyphicon glyphicon-warning-sign"> </span>
                     Afin de réaliser la demande de rédaction ou de soutenance en anglais vous devez motiver votre demande via la demande suivante :
                     <a href="<?php echo $FORMULAIRE_DEMANDE_ANGLAIS; ?>>">demande de redaction ou de soutenance en anglais</a>.
@@ -137,7 +137,7 @@ $these = $proposition->getThese();
             <?php endif; ?>
 
             <?php if($proposition->getConfidentialite()): ?>
-                <div class="alert alert-sm alert-warning">
+                <div class="alert alert-warning">
                     <span class="glyphicon glyphicon-warning-sign"> </span>
                     Afin de réaliser de demande de confidentialité un accord doit au préalable être rempli :
                     <a href="<?php echo $FORMULAIRE_DEMANDE_CONFIDENTIALITE; ?>">demande d'accord de confidentialité</a>.

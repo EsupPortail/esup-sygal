@@ -612,3 +612,10 @@ a.action {
 .badge-error {
   background-color: #881f18;
 }
+
+
+div.alert-warning {
+  background-color: #faebcc;
+  color: #8a6d3b;
+  border-color: #8a6d3b;
+}

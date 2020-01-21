@@ -78,12 +78,21 @@ class PropositionController extends AbstractController {
         /** @var Utilisateur $currentUser */
         $currentUser = $this->userContextService->getDbUser();
         $currentIndividu = $currentUser->getIndividu();
+
         /** @var Role $currentRole */
         $currentRole = $this->userContextService->getSelectedIdentityRole();
+
+        /** Indicateurs --------------------------------------------------------------------------------------------- */
+        $indicateurs = $this->getPropositionService()->computeIndicateur($proposition);
+        $juryOk = $this->getPropositionService()->juryOk($proposition, $indicateurs);
+        $isOk = $this->getPropositionService()->isOk($proposition, $indicateurs);
 
         /** Justificatifs attendus ---------------------------------------------------------------------------------- */
         $justificatifs = $this->getJustificatifService()->generateListeJustificatif($proposition);
         $justificatifsOk = $this->getJustificatifService()->isJustificatifsOk($proposition, $justificatifs);
+
+        /** Adresse des formulaires --------------------------------------------------------------------------------- */
+        $parametres = $this->getParametreService()->getParametresAsArray();
 
         return new ViewModel([
             'these'             => $these,
@@ -93,18 +102,18 @@ class PropositionController extends AbstractController {
             'validations'       => $this->getPropositionService()->getValidationSoutenance($these),
             'validationActeur'  => $this->getPropositionService()->isValidated($these, $currentIndividu, $currentRole),
             'roleCode'          => $currentRole,
-            'indicateurs'       => $this->getPropositionService()->computeIndicateur($proposition),
-            'juryOk'            => $this->getPropositionService()->juryOk($proposition),
-            'isOk'              => $this->getPropositionService()->isOk($proposition),
             'urlFichierThese'   => $this->urlFichierThese(),
+            'indicateurs'       => $indicateurs,
+            'juryOk'            => $juryOk,
+            'isOk'              => $isOk,
             'justificatifs'     => $justificatifs,
             'justificatifsOk'   => $justificatifsOk,
 
-            'FORMULAIRE_DELOCALISATION'              => $this->getParametreService()->getParametreByCode(Parametre::CODE_FORMULAIRE_DELOCALISATION)->getValeur(),
-            'FORMULAIRE_DELEGUATION'                 => $this->getParametreService()->getParametreByCode(Parametre::CODE_FORMULAIRE_DELEGUATION)->getValeur(),
-            'FORMULAIRE_DEMANDE_LABEL'               => $this->getParametreService()->getParametreByCode(Parametre::CODE_FORMULAIRE_LABEL_EUROPEEN)->getValeur(),
-            'FORMULAIRE_DEMANDE_ANGLAIS'             => $this->getParametreService()->getParametreByCode(Parametre::CODE_FORMULAIRE_THESE_ANGLAIS)->getValeur(),
-            'FORMULAIRE_DEMANDE_CONFIDENTIALITE'     => $this->getParametreService()->getParametreByCode(Parametre::CODE_FORMULAIRE_CONFIDENTIALITE)->getValeur(),
+            'FORMULAIRE_DELOCALISATION'              => $parametres[Parametre::CODE_FORMULAIRE_DELOCALISATION],
+            'FORMULAIRE_DELEGUATION'                 => $parametres[Parametre::CODE_FORMULAIRE_DELEGUATION],
+            'FORMULAIRE_DEMANDE_LABEL'               => $parametres[Parametre::CODE_FORMULAIRE_LABEL_EUROPEEN],
+            'FORMULAIRE_DEMANDE_ANGLAIS'             => $parametres[Parametre::CODE_FORMULAIRE_THESE_ANGLAIS],
+            'FORMULAIRE_DEMANDE_CONFIDENTIALITE'     => $parametres[Parametre::CODE_FORMULAIRE_CONFIDENTIALITE],
 
         ]);
     }

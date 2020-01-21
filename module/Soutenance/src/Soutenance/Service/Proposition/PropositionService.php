@@ -369,22 +369,24 @@ class PropositionService {
 
     /**
      * @param Proposition $proposition
+     * @param array $indicateurs
      * @return boolean
      */
-    public function juryOk($proposition)
+    public function juryOk($proposition, $indicateurs = [])
     {
-        $indicateurs = $this->computeIndicateur($proposition);
+        if ($indicateurs === []) $indicateurs = $this->computeIndicateur($proposition);
         if (!$indicateurs["valide"]) return false;
         return true;
     }
 
     /**
      * @param Proposition $proposition
+     * @param array $indicateurs
      * @return boolean
      */
-    public function isOk($proposition)
+    public function isOk($proposition, $indicateurs = [])
     {
-        $indicateurs = $this->computeIndicateur($proposition);
+        if ($indicateurs === []) $indicateurs = $this->computeIndicateur($proposition);
         if (!$indicateurs["valide"]) return false;
         if(! $proposition->getDate() || ! $proposition->getLieu()) return false;
         return true;
