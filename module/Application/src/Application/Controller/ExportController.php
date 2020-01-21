@@ -79,6 +79,7 @@ class ExportController extends AbstractController
                 foreach ($domaines as $domaine) $liste[] = $domaine->getLibelle();
                 return implode(",", $liste);
             },
+
             //Dates
             'Date de première inscription'          => function (These $these) { return $these->getDatePremiereInscription(); },
             'Date de prévisionnel de soutenance'    => function (These $these) { return $these->getDatePrevisionSoutenance(); },
@@ -86,6 +87,11 @@ class ExportController extends AbstractController
             'Date de fin de confientialité'         => function (These $these) { return $these->getDateFinConfidentialite(); },
             'Date de dépôt version initiale'        => function (These $these) { $file = $these->hasVersionInitiale(); if ($file) return $file->getFichier()->getHistoCreation()->format('d/m/Y'); },
             'Date de dépôt version corigée'         => function (These $these) { $file = $these->hasVersionCorrigee(); if ($file) return $file->getFichier()->getHistoCreation()->format('d/m/Y'); },
+            'Durée en mois de la thèse'             => function (These $these) { if ($these->getDatePremiereInscription() !== null AND $these->getDateSoutenance() !== null)
+                return number_format(($these->getDateSoutenance())->diff($these->getDatePremiereInscription())->format('%a')/30.5, 2);
+            else return "";
+            },
+
             //Flags
             'Etat de la thèse'                      => function (These $these) { return $these->getEtatTheseToString();},
             'Autorisation à soutenir'               => function (These $these) { return $these->getSoutenanceAutorisee();},
