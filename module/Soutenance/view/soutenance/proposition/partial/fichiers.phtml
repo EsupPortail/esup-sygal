@@ -36,7 +36,8 @@ foreach ($proposition->getMembres() as $membre) {
 
         <?php if ($justificatifsOk === false) : ?>
             <div class="alert alert-warning pull-right">
-            Liste des justificatifs manquants :
+                <span class="glyphicon glyphicon-warning-sign"></span>
+                Liste des justificatifs manquants :
             <ul>
             <?php foreach ($justificatifs as $justificatif) : ?>
                 <?php if($justificatif['justificatif'] === null) : ?>
