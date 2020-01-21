@@ -85,6 +85,7 @@ class PropositionController extends AbstractController {
         /** Indicateurs --------------------------------------------------------------------------------------------- */
         $indicateurs = $this->getPropositionService()->computeIndicateur($proposition);
         $juryOk = $this->getPropositionService()->juryOk($proposition, $indicateurs);
+        if ($juryOk === false) $indicateurs["valide"] = false;
         $isOk = $this->getPropositionService()->isOk($proposition, $indicateurs);
 
         /** Justificatifs attendus ---------------------------------------------------------------------------------- */
