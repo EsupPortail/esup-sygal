@@ -4,12 +4,16 @@
  * @var Application\Entity\Db\These $these
  * @var Application\Entity\Db\Validation $validationBDD
  * @var Soutenance\Entity\Proposition $proposition
- * @var \Application\Entity\Db\Validation $validationPDC
+ * @var Validation $validationPDC
+ * @var Validation[] $engagements
+ * @var Avis[] $avis
  *
  * @see Soutenance\Controller\Presoutenance\PresoutenanceController::presoutenanceAction()
  */
 
 use Application\Constants;
+use Application\Entity\Db\Validation;
+use Soutenance\Entity\Avis;
 use Soutenance\Entity\Etat;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 
@@ -77,7 +81,9 @@ $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->get
                             Vous pouvez maintenant valider la page de couverture.
                         </div>
                         <div class="pull-right" style="margin-right: 2rem;">
-                            <a href="<?php echo $this->url('these/validation-page-de-couverture', ['these' => $these->getId()], [], true); ?>" class="btn btn-primary">
+                            <a
+                                    <?php /** @see \Application\Controller\TheseController::validationPageDeCouvertureAction() */ ?>
+                                    href="<?php echo $this->url('these/validation-page-de-couverture', ['these' => $these->getId()], [], true); ?>" class="btn btn-primary">
                                 Accéder à la validation de la PDC
                             </a>
                         </div>

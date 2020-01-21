@@ -20,7 +20,9 @@ $canAssocierMembreIndividu              = $this->isAllowed($these, Presoutenance
             </div>
             <div class="col-md-4">
                 <p>
-                    <a class="btn btn-default btn-sm"
+                    <a
+                        <?php /** @see  \Soutenance\Controller\Presoutenance\PresoutenanceController::presoutenanceAction() */ ?>
+                        class="btn btn-default btn-sm"
                        id="refresh-these-button"
                        href="<?php echo $this->urlThese()->refreshTheseUrl($these, $this->url('soutenance/presoutenance', ['these' => $these->getId()], [], true)); ?>"
                     ><span class="glyphicon glyphicon-import"></span> <strong>Mettre à jour</strong> la thèse à partir de

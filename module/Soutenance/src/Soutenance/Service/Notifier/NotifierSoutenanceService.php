@@ -16,6 +16,7 @@ use Notification\Service\NotifierService;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
+use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Entity\Db\RoleInterface;
@@ -23,6 +24,7 @@ use Zend\View\Helper\Url as UrlHelper;
 
 class NotifierSoutenanceService extends NotifierService {
     use ActeurServiceAwareTrait;
+    use MembreServiceAwareTrait;
     use RoleServiceAwareTrait;
     use VariableServiceAwareTrait;
 
@@ -83,6 +85,24 @@ class NotifierSoutenanceService extends NotifierService {
 
     /**
      * @param These $these
+     * @return string[]
+     */
+    protected function fetchEmailEncadrants(These $these) {
+        $emails = [];
+        $encadrants = $this->getActeurService()->getRepository()->findEncadrementThese($these);
+        foreach ($encadrants as $encadrant) {
+            $email = $encadrant->getIndividu()->getEmail();
+            if ($email === null) {
+                $membre = $this->getMembreService()->getMembreByActeur($encadrant);
+                if ($membre) $email = $membre->getEmail();
+            }
+            $emails[] = $email;
+        }
+        return $emails;
+    }
+
+    /**
+     * @param These $these
      * @return array
      */
     protected function fetchEmailActeursDirects(These $these)
@@ -90,9 +110,9 @@ class NotifierSoutenanceService extends NotifierService {
         $emails = [];
         $emails[] = $these->getDoctorant()->getIndividu()->getEmail();
 
-        $encadrants = $this->getActeurService()->getRepository()->findEncadrementThese($these);
+        $encadrants = $this->fetchEmailEncadrants($these);
         foreach ($encadrants as $encadrant) {
-            $emails[] = $encadrant->getIndividu()->getEmail();
+            $emails[] = $encadrant;
         }
         return $emails;
     }
@@ -126,8 +146,7 @@ class NotifierSoutenanceService extends NotifierService {
      */
     public function triggerValidationProposition($these, $validation)
     {
-        $emails = $these->getDirecteursTheseEmails();
-        $emails[] = $these->getDoctorant()->getIndividu()->getEmail();
+        $emails = $this->fetchEmailActeursDirects($these);
 
         $emails = array_filter($emails, function ($s) {
             return $s !== null;
@@ -439,7 +458,7 @@ class NotifierSoutenanceService extends NotifierService {
     public function triggerAvisFavorable($these, $avis, $url)
     {
         $emailBDD           = [ $this->fetchEmailBdd($these) ];
-        $emailsDirecteurs   = $these->getDirecteursTheseEmails();
+        $emailsDirecteurs   = $this->fetchEmailEncadrants($these);
         $emailsED           = $this->fetchEmailEcoleDoctorale($these);
         $emailsUR           = $this->fetchEmailUniteRecherche($these);
         $emails = array_merge($emailBDD, $emailsDirecteurs, $emailsED, $emailsUR);
@@ -469,7 +488,7 @@ class NotifierSoutenanceService extends NotifierService {
      */
     public function triggerAvisDefavorable($these, $avis, $url)
     {
-        $emailsDirecteurs   = $these->getDirecteursTheseEmails();
+        $emailsDirecteurs   = $this->fetchEmailEncadrants($these);
         $emailsED           = $this->fetchEmailEcoleDoctorale($these);
         $emailsUR           = $this->fetchEmailUniteRecherche($these);
         $emails = array_merge($emailsDirecteurs, $emailsED, $emailsUR);

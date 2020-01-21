@@ -2,13 +2,15 @@
 
 /**
  * @var int $deadline
- * @var \Soutenance\Entity\Proposition $proposition
- * @var \Application\Entity\Db\These $these
+ * @var Proposition $proposition
+ * @var These $these
  */
 
+use Application\Entity\Db\These;
+use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 
-$canEditDateRenduRapport                = $this->isAllowed($these, PresoutenancePrivileges::PRESOUTENANCE_DATE_RETOUR_MODIFICATION);
+$canEditDateRenduRapport = $this->isAllowed($these, PresoutenancePrivileges::PRESOUTENANCE_DATE_RETOUR_MODIFICATION);
 ?>
 
 <div class="box panel panel-info">

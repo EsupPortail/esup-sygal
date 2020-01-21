@@ -25,50 +25,11 @@ class MembreService {
     use QualiteServiceAwareTrait;
     use UserContextServiceAwareTrait;
 
-    /**
-     * @return QueryBuilder
-     */
-    public function createQueryBuilder()
-    {
-        $qb = $this->getEntityManager()->getRepository(Membre::class)->createQueryBuilder("membre")
-            ->addSelect('proposition')->join('membre.proposition', 'proposition')
-            ->addSelect('qualite')->join('membre.qualite', 'qualite')
-            ->addSelect('acteur')->leftJoin('membre.acteur', 'acteur')
-            ;
-        return $qb;
-    }
-
-    /**
-     * @param int $id
-     * @return Membre
-     */
-    public function find($id) {
-        $qb = $this->createQueryBuilder()
-            ->andWhere("membre.id = :id")
-            ->setParameter("id", $id)
-        ;
-        try {
-            $result = $qb->getQuery()->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("De multiples propositions identifiées [".$id."] ont été trouvées !");
-        }
-        return $result;
-    }
-
-    /**
-     * @param AbstractActionController $controller
-     * @param string $paramName
-     * @return Membre
-     */
-    public function getRequestedMembre($controller, $paramName = 'membre')
-    {
-        $id = $controller->params()->fromRoute($paramName);
-        $membre = $this->find($id);
-        return $membre;
-    }
+    /** GESTION DES ENTITES *******************************************************************************************/
 
     /**
      * @param Membre $membre
+     * @return Membre
      */
     public function create($membre)
     {
@@ -84,12 +45,13 @@ class MembreService {
         $membre->setHistoModificateur($user);
         $membre->setHistoModification($date);
 
-        $this->getEntityManager()->persist($membre);
         try {
+            $this->getEntityManager()->persist($membre);
             $this->getEntityManager()->flush($membre);
         } catch (OptimisticLockException $e) {
             throw new RuntimeException("Une erreur s'est produite lors de l'enregistrement d'un membre de jury !");
         }
+        return $membre;
     }
 
     /**
@@ -178,6 +140,50 @@ class MembreService {
         }
     }
 
+    /** REQUETES ******************************************************************************************************/
+
+    /**
+     * @return QueryBuilder
+     */
+    public function createQueryBuilder()
+    {
+        $qb = $this->getEntityManager()->getRepository(Membre::class)->createQueryBuilder("membre")
+            ->addSelect('proposition')->join('membre.proposition', 'proposition')
+            ->addSelect('qualite')->join('membre.qualite', 'qualite')
+            ->addSelect('acteur')->leftJoin('membre.acteur', 'acteur')
+            ;
+        return $qb;
+    }
+
+    /**
+     * @param int $id
+     * @return Membre
+     */
+    public function find($id) {
+        $qb = $this->createQueryBuilder()
+            ->andWhere("membre.id = :id")
+            ->setParameter("id", $id)
+        ;
+        try {
+            $result = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("De multiples propositions identifiées [".$id."] ont été trouvées !");
+        }
+        return $result;
+    }
+
+    /**
+     * @param AbstractActionController $controller
+     * @param string $paramName
+     * @return Membre
+     */
+    public function getRequestedMembre($controller, $paramName = 'membre')
+    {
+        $id = $controller->params()->fromRoute($paramName);
+        $membre = $this->find($id);
+        return $membre;
+    }
+
     /**
      * @param Proposition $proposition
      * @param Acteur $acteur
@@ -252,6 +258,24 @@ class MembreService {
         ;
 
         $result = $qb->getQuery()->getResult();
+        return $result;
+    }
+
+    /**
+     * @param Acteur $acteur
+     * @return Membre
+     */
+    public function getMembreByActeur(Acteur $acteur) {
+        $qb = $this->createQueryBuilder()
+            ->andWhere('membre.acteur = :acteur')
+            ->setParameter('acteur', $acteur)
+        ;
+
+        try {
+            $result = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Plusieurs Membre partagent le même Acteur [".$acteur->getId()."]", 0, $e);
+        }
         return $result;
     }
 }
