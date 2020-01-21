@@ -41,8 +41,8 @@ class EngagementImpartialiteController extends AbstractController
         $membre = $this->getMembreService()->getRequestedMembre($this);
 
         /** @var Validation $validation */
-        $validation = $this->getEngagementImpartialiteService()->getEngagementImpartialiteByMembre($membre);
-        if ($validation === null) $validation = $this->getEngagementImpartialiteService()->getRefusEngagementImpartialiteByMembre($membre);
+        $validation = $this->getEngagementImpartialiteService()->getEngagementImpartialiteByMembre($these, $membre);
+        if ($validation === null) $validation = $this->getEngagementImpartialiteService()->getRefusEngagementImpartialiteByMembre($these, $membre);
 
         return new ViewModel([
             'these' => $these,
@@ -64,7 +64,7 @@ class EngagementImpartialiteController extends AbstractController
         /** @var Membre $membre */
         foreach ($proposition->getMembres() as $membre) {
             if ($membre->getActeur() AND $membre->estRapporteur()) {
-                $validation = $this->getEngagementImpartialiteService()->getEngagementImpartialiteByMembre($membre);
+                $validation = $this->getEngagementImpartialiteService()->getEngagementImpartialiteByMembre($these, $membre);
                 if (!$validation) $this->getNotifierSoutenanceService()->triggerDemandeSignatureEngagementImpartialite($these, $proposition, $membre);
             }
         }
@@ -91,7 +91,7 @@ class EngagementImpartialiteController extends AbstractController
         $proposition = $this->getPropositionService()->findByThese($these);
         $membre = $this->getMembreService()->getRequestedMembre($this);
 
-        $this->getEngagementImpartialiteService()->createEngagementImpartialite($membre);
+        $this->getEngagementImpartialiteService()->create($membre, $these);
         $this->getNotifierSoutenanceService()->triggerSignatureEngagementImpartialite($these, $proposition, $membre);
         $this->getNotifierSoutenanceService()->triggerDemandeAvisSoutenance($these, $proposition, $membre);
 
@@ -104,7 +104,7 @@ class EngagementImpartialiteController extends AbstractController
         $proposition = $this->getPropositionService()->findByThese($these);
         $membre = $this->getMembreService()->getRequestedMembre($this);
 
-        $this->getEngagementImpartialiteService()->createRefusEngagementImpartialite($membre);
+        $this->getEngagementImpartialiteService()->createRefus($membre, $these);
         $this->getPropositionService()->annulerValidations($proposition);
         $this->getNotifierSoutenanceService()->triggerRefusEngagementImpartialite($these, $proposition, $membre);
 
@@ -119,7 +119,7 @@ class EngagementImpartialiteController extends AbstractController
         $membre = $this->getMembreService()->getRequestedMembre($this);
 
         /** @var Validation[] $validations */
-        $this->getEngagementImpartialiteService()->deleteEngagementImpartialite($membre);
+        $this->getEngagementImpartialiteService()->delete($membre);
         $this->getNotifierSoutenanceService()->triggerAnnulationEngagementImpartialite($these, $proposition, $membre);
 
         $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);

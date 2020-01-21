@@ -20,45 +20,7 @@ class JustificatifService {
     use EntityManagerAwareTrait;
     use UserContextServiceAwareTrait;
 
-    /**
-     * @return QueryBuilder
-     */
-    public function createQueryBuilder()
-    {
-        $qb = $this->getEntityManager()->getRepository(Justificatif::class)->createQueryBuilder('justificatif')
-            ->addSelect('proposition')->join('justificatif.proposition', 'proposition')
-            ->addSelect('fichier')->join('justificatif.fichier', 'fichier')
-            ->addSelect('membre')->leftJoin('justificatif.membre', 'membre')
-        ;
-        return $qb;
-    }
-
-    public function getJustificatif($id)
-    {
-        $qb = $this->createQueryBuilder()
-            ->andWhere('justificatif.id = :id')
-            ->setParameter('id', $id)
-        ;
-
-        try {
-            $result = $qb->getQuery()->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Plusieurs Justificatif partagent le même identifiant [".$id."].", $e);
-        }
-        return $result;
-    }
-
-    /**
-     * @param AbstractActionController $controller
-     * @param string $paramName
-     * @return Justificatif
-     */
-    public function getRequestedJustificatif($controller, $paramName = 'justificatif')
-    {
-        $id = $controller->params()->fromRoute($paramName);
-        $justificatif = $this->getJustificatif($id);
-        return $justificatif;
-    }
+    /** GESTION DES ENTITES *******************************************************************************************/
 
     /**
      * @param Justificatif $justificatif
@@ -178,6 +140,50 @@ class JustificatifService {
         }
         return $justificatif;
     }
+
+    /** REQUETES ******************************************************************************************************/
+
+    /**
+     * @return QueryBuilder
+     */
+    public function createQueryBuilder()
+    {
+        $qb = $this->getEntityManager()->getRepository(Justificatif::class)->createQueryBuilder('justificatif')
+            ->addSelect('proposition')->join('justificatif.proposition', 'proposition')
+            ->addSelect('fichier')->join('justificatif.fichier', 'fichier')
+            ->addSelect('membre')->leftJoin('justificatif.membre', 'membre')
+        ;
+        return $qb;
+    }
+
+    public function getJustificatif($id)
+    {
+        $qb = $this->createQueryBuilder()
+            ->andWhere('justificatif.id = :id')
+            ->setParameter('id', $id)
+        ;
+
+        try {
+            $result = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Plusieurs Justificatif partagent le même identifiant [".$id."].", $e);
+        }
+        return $result;
+    }
+
+    /**
+     * @param AbstractActionController $controller
+     * @param string $paramName
+     * @return Justificatif
+     */
+    public function getRequestedJustificatif($controller, $paramName = 'justificatif')
+    {
+        $id = $controller->params()->fromRoute($paramName);
+        $justificatif = $this->getJustificatif($id);
+        return $justificatif;
+    }
+
+
 
     /**
      * @param Proposition $proposition

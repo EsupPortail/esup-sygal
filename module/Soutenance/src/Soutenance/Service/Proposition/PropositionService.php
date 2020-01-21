@@ -47,6 +47,8 @@ class PropositionService {
     use MembreServiceAwareTrait;
     use UserContextServiceAwareTrait;
 
+    /** GESTION DES ENTITES *******************************************************************************************/
+
     /**
      * @param These $these
      * @return Proposition
@@ -164,8 +166,9 @@ class PropositionService {
         }
     }
 
+    /** REQUETES ******************************************************************************************************/
+
     /**
-     *
      * @return QueryBuilder
      */
     public function createQueryBuilder(/*$alias = 'proposition'*/)
@@ -224,34 +227,14 @@ class PropositionService {
         return $result;
     }
 
-
     /**
      * @return Proposition[]
      */
     public function findAll() {
-        $qb = $this->getEntityManager()->getRepository(Proposition::class)->createQueryBuilder("proposition")
-            ;
+        $qb = $this->createQueryBuilder();
         $result = $qb->getQuery()->getResult();
         return $result;
     }
-
-
-
-    public function findMembre($idMembre)
-    {
-        $qb = $this->getEntityManager()->getRepository(Membre::class)->createQueryBuilder("membre")
-            ->andWhere("membre.id = :id")
-            ->setParameter("id", $idMembre)
-        ;
-        try {
-            $result = $qb->getQuery()->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("De multiple membres sont associés à l'identifiant [".$idMembre."] !");
-        }
-        return $result;
-    }
-
-
 
     /**
      * @param Proposition $proposition
@@ -294,8 +277,6 @@ class PropositionService {
             $this->getValidationService()->historise($validationBDD);
             $this->getNotifierSoutenanceService()->triggerDevalidationProposition($validationBDD);
         }
-//        $proposition->setSurcis(false);
-//        $this->update($proposition);
     }
 
     /**
@@ -605,6 +586,7 @@ class PropositionService {
      * Les directeurs et co-directeurs sont des membres par défauts du jury d'une thèse. Cette fonction permet d'ajouter
      * ceux-ci à une proposition.
      * NB: La proposition doit être liée à une thèse.
+     * NB: Les directeurs et codirecteurs sans mail ne sont pas ajoutés automatiquement
      *
      * @param Proposition $proposition
      */
