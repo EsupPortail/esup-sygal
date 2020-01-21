@@ -131,7 +131,7 @@ $these = $proposition->getThese();
                     <td> <?php echo ($membre->getGenre()==='F')?"Madame":"Monsieur"; ?> </td>
                     <td> <?php echo $membre->getPrenom(); ?> </td>
                     <td> <?php echo $membre->getNom(); ?> </td>
-                    <td> <?php echo $membre->getEmail(); ?> </td>
+                    <td> <?php echo ($membre->getEmail() !== null)?$membre->getEmail():"<strong><span class='text-danger'><span class='glyphicon glyphicon-warning-sign'></span> AUCUN MAIL</span></strong>"; ?> </td>
                     <td> <?php echo ($membre->getQualite())?$membre->getQualite()->getLibelle():"Non définie"; ?> </td>
                     <td> <?php echo $membre->getRang(); ?> </td>
                     <td>

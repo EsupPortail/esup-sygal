@@ -102,7 +102,7 @@ create table SOUTENANCE_MEMBRE
     ETABLISSEMENT VARCHAR2(128) not null,
     ROLE_ID VARCHAR2(64) not null,
     EXTERIEUR VARCHAR2(3),
-    EMAIL VARCHAR2(256) default NULL not null,
+    EMAIL VARCHAR2(256) default NULL,
     ACTEUR_ID NUMBER constraint SOUTEMEMBRE_ACTEUR_FK references ACTEUR on delete cascade,
     VISIO NUMBER default 0 not null,
     NOM VARCHAR2(256),
