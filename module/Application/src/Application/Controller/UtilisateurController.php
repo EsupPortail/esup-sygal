@@ -157,49 +157,6 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     }
 
     /**
-     * @return ViewModel
-     */
-    public function ajouterFromIndividuAction()
-    {
-        /** @var Individu $individu */
-        $individuId = $this->params('individu');
-        $individu = $this->individuService->getRepository()->findOneBy(["id"=>$individuId]);
-        if ($individu === null) {
-            throw new RuntimeException("Individu introuvable avec cet id");
-        }
-
-        $utilisateur = $this->utilisateurService->getRepository()->findByIndividu($individu);
-        if ($utilisateur !== null) {
-            throw new RuntimeException("Il existe déjà un utilisateur lié à l'individu $individu.");
-        }
-
-        /** @var CreationUtilisateurFromIndividuForm $form */
-        $form = $this->getServiceLocator()->get('FormElementManager')->get(CreationUtilisateurFromIndividuForm::class);
-        $form->setIndividu($individu);
-
-        /** @var Request $request */
-        $request = $this->getRequest();
-        if ($request->isPost()) {
-            $data = $request->getPost();
-            $form->setData($data);
-            if ($form->isValid()) {
-                if (!empty($data['email'])) {
-                    $individu->setEmail($data['email']);
-                }
-                $utilisateur = $this->utilisateurService->createFromIndividuAndFormData($individu, $data->toArray());
-                $this->flashMessenger()->addSuccessMessage(
-                    "Utilisateur <strong>{$utilisateur->getUsername()}</strong> créé avec succès à partir de l'individu $individu.");
-                $this->redirect()->toRoute('utilisateur');
-            }
-        }
-
-        return new ViewModel([
-            'form' => $form,
-            'individu' => $individu,
-        ]);
-    }
-
-    /**
      * Usurpe l'identité d'un autre utilisateur.
      *
      * @return Response
@@ -414,9 +371,12 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     {
         $individu = $this->getIndividuService()->getRequestedIndividu($this);
         $acteurs = $this->acteurService->getRepository()->findActeursByIndividu($individu);
-        $utilisateur = $this->utilisateurService->getRepository()->findByIndividu($individu);
-        if ($utilisateur === null AND $individu->getEmail() !== null) $utilisateur = $this->utilisateurService->getRepository()->findByUsername($individu->getEmail());
-
+        $utilisateurs = $this->utilisateurService->getRepository()->findByIndividu($individu, $isLocal = true); // done
+        // NB: findByIndividu() avec $isLocal = true renverra 1 utilisateur au maximum
+        $utilisateur = $utilisateurs ? current($utilisateurs) : null;
+        if ($utilisateur === null AND $individu->getEmail() !== null) {
+            $utilisateur = $this->utilisateurService->getRepository()->findByUsername($individu->getEmail());
+        }
 
         return new ViewModel([
             'individu' => $individu,
@@ -428,9 +388,9 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     public function creerCompteLocalIndividuAction()
     {
         $individu = $this->getIndividuService()->getRequestedIndividu($this);
-        $utilisateur = $this->utilisateurService->getRepository()->findByIndividu($individu);
+        $utilisateurs = $this->utilisateurService->getRepository()->findByIndividu($individu); // done
 
-        if ($utilisateur === null) {
+        if (empty($utilisateurs)) {
             $user = $this->utilisateurService->createFromIndividu($individu, $individu->getEmail(), 'none');
             $this->userService->updateUserPasswordResetToken($user);
             $url = $this->url()->fromRoute('utilisateur/init-compte', ['token' => $user->getPasswordResetToken()], ['force_canonical' => true], true);
@@ -442,9 +402,12 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         return $this->redirect()->toRoute('utilisateur/gerer-utilisateur', ['individu' => $individu->getId()], [], true);
     }
 
-    public function resetPasswordAction() {
+    public function resetPasswordAction()
+    {
         $individu = $this->getIndividuService()->getRequestedIndividu($this);
-        $utilisateur = $this->utilisateurService->getRepository()->findByIndividu($individu);
+        $utilisateurs = $this->utilisateurService->getRepository()->findByIndividu($individu, $isLocal = true); // done
+        // NB: findByIndividu() avec $isLocal = true renverra 1 utilisateur au maximum
+        $utilisateur = $utilisateurs ? current($utilisateurs) : null;
 
         if ($utilisateur !== null) {
             $this->userService->updateUserPasswordResetToken($utilisateur);

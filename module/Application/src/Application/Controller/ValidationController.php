@@ -163,7 +163,7 @@ class ValidationController extends AbstractController
         /** @var Acteur $acteur */
         foreach ($these->getActeurs() as $acteur) {
             $individu = $acteur->getIndividu();
-            $utilisateurs[$individu->getId()] = $this->utilisateurService->getRepository()->findByIndividu($individu);
+            $utilisateurs[$individu->getId()] = $this->utilisateurService->getRepository()->findByIndividu($individu); // ok
         }
 
         $view = new ViewModel([
