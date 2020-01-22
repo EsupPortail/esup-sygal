@@ -15,6 +15,7 @@ Journal des modifications
 - Ajout d'un champ "Id HAL" dans le formulaire d'autorisation de diffusion.
 - Ajout d'un menu dépôt pour séparer les action liés au dépôt de la partie annuaire
 - La couverture est maintenant recto/verso lorsque la premiere page n'est pas retirée
+- Ajout de la colonne durée des thèses dans l'export
 
 1.3.3 (18/12/2019)
 ------------------
