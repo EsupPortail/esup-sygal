@@ -10,16 +10,14 @@ body {
 }
 
 body.development .navbar-inverse,
-body.test        .navbar-inverse,
-body.production  .navbar-inverse {
+body.test .navbar-inverse {
   background-image: none; //linear-gradient(to bottom, #660000 0px, #870a0a 100%);
   background-color: $navbarBackgroundColor;
   border-color: $navbarBackgroundColor;
 }
 
 body.development .navbar-inverse .navbar-nav .active a,
-body.test        .navbar-inverse .navbar-nav .active a,
-body.production  .navbar-inverse .navbar-nav .active a {
+body.test .navbar-inverse .navbar-nav .active a {
   background-image: none; //linear-gradient(to bottom, #d22828 0px, #a41212 100%);
   background-color: $navbarBackgroundColorActive;
   border-color: $navbarBackgroundColorActive
