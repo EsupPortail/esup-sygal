@@ -323,6 +323,16 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
             <dt>Années universitaires<br>d'inscription</dt>
             <dd><?php echo $these->getAnneesUnivInscriptionToString('<br>') ?: "(Non renseignée)" ?></dd>
 
+            <?php if ($these->getDateAbandon()): ?>
+            <dt>Date d'abandon</dt>
+            <dd><?php echo $these->getDateAbandonToString() ?></dd>
+            <?php endif ?>
+
+            <?php if ($these->getDateTransfert()): ?>
+            <dt>Date de transfert
+            <dd><?php echo $these->getDateTransfertToString() ?></dd>
+            <?php endif ?>
+
             <?php if ($these->getSoutenanceAutorisee()): ?>
                 <dt>Soutenance autorisée</dt>
                 <dd><?php echo $these->getSoutenanceAutorisee() === 'O' ? "Oui" : "Non" ?></dd>

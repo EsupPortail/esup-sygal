@@ -16,6 +16,8 @@
         <field name="datePrevisionSoutenance" type="datetime" column="DATE_PREV_SOUTENANCE" nullable="true"/>
         <field name="dateSoutenance" type="datetime" column="DATE_SOUTENANCE" nullable="true"/>
         <field name="dateFinConfidentialite" type="datetime" column="DATE_FIN_CONFID" nullable="true"/>
+        <field name="dateAbandon" type="datetime" column="DATE_ABANDON" nullable="true"/>
+        <field name="dateTransfert" type="datetime" column="DATE_TRANSFERT" nullable="true"/>
         <field name="codeUniteRecherche" type="string" column="COD_UNIT_RECH" length="50" nullable="true"/>
         <field name="libelleUniteRecherche" type="string" column="LIB_UNIT_RECH" length="200" nullable="true"/>
         <field name="correctionAutorisee" type="string" column="CORREC_AUTORISEE" nullable="true"/>

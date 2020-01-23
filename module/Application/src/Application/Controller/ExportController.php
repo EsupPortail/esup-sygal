@@ -81,6 +81,8 @@ class ExportController extends AbstractController
             },
             //Dates
             'Date de première inscription'          => function (These $these) { return $these->getDatePremiereInscription(); },
+            "Date d'abandon"                        => function (These $these) { return $these->getDateAbandon(); },
+            'Date de transfert'                     => function (These $these) { return $these->getDateTransfert(); },
             'Date de prévisionnel de soutenance'    => function (These $these) { return $these->getDatePrevisionSoutenance(); },
             'Date de soutenance'                    => function (These $these) { return $these->getDateSoutenance(); },
             'Date de fin de confientialité'         => function (These $these) { return $these->getDateFinConfidentialite(); },
