@@ -126,6 +126,16 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     protected $dateFinConfidentialite;
 
     /**
+     * @var DateTime|null
+     */
+    protected $dateAbandon;
+
+    /**
+     * @var DateTime|null
+     */
+    protected $dateTransfert;
+
+    /**
      * @var string
      */
     private $codeUniteRecherche;
@@ -447,6 +457,60 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function setDateFinConfidentialite(DateTime $dateFinConfidentialite = null)
     {
         $this->dateFinConfidentialite = $dateFinConfidentialite;
+
+        return $this;
+    }
+
+    /**
+     * @return DateTime|null
+     */
+    public function getDateAbandon()
+    {
+        return $this->dateAbandon;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDateAbandonToString(): string
+    {
+        return Util::formattedDate($this->getDateAbandon());
+    }
+
+    /**
+     * @param DateTime|null $dateAbandon
+     * @return These
+     */
+    public function setDateAbandon(DateTime $dateAbandon = null): These
+    {
+        $this->dateAbandon = $dateAbandon;
+
+        return $this;
+    }
+
+    /**
+     * @return DateTime|null
+     */
+    public function getDateTransfert()
+    {
+        return $this->dateTransfert;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDateTransfertToString(): string
+    {
+        return Util::formattedDate($this->getDateTransfert());
+    }
+
+    /**
+     * @param DateTime|null $dateTransfert
+     * @return These
+     */
+    public function setDateTransfert(DateTime $dateTransfert = null): These
+    {
+        $this->dateTransfert = $dateTransfert;
 
         return $this;
     }

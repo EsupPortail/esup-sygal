@@ -17,6 +17,8 @@
         <field name="datePremiereInsc"          type="date" column="DAT_DEB_THS" nullable="true"/>
         <field name="dateSoutenancePrev"        type="date" column="DAT_PREV_SOU" nullable="true"/>
         <field name="dateSoutenance"            type="date" column="DAT_SOU_THS" nullable="true"/>
+        <field name="dateAbandon"               type="date" column="DAT_ABANDON" nullable="true"/>
+        <field name="dateTransfert"             type="date" column="DAT_TRANSFERT_DEP" nullable="true"/>
 
         <field name="etatThese"                 type="string" column="ETA_THS" length="20" nullable="true"/>
         <field name="libDiscipline"             type="string" column="LIB_INT1_DIS" length="200" nullable="true"/>

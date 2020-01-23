@@ -1,10 +1,8 @@
 Journal des modifications
 =========================
 
-1.4.0 (??/01/2020)
+1.4.0 (23/01/2020)
 ------------------
-
-### Ajouts
 
 - La remise d'un exemplaire papier de la thèse n'est requise que si la diffusion est acceptée avec embargo ou refusée.
 - Inversion des étapes Diffusion et Attestations.
@@ -15,6 +13,8 @@ Journal des modifications
 - Ajout d'un champ "Id HAL" dans le formulaire d'autorisation de diffusion.
 - Ajout d'un menu dépôt pour séparer les action liés au dépôt de la partie annuaire
 - La couverture est maintenant recto/verso lorsque la premiere page n'est pas retirée
+- Ajout de la colonne durée des thèses dans l'export
+- Ajout des dates d'abandon et de transfert des thèses.
 
 1.3.3 (18/12/2019)
 ------------------
