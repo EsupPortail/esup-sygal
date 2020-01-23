@@ -2,7 +2,6 @@
 
 namespace Retraitement\Service;
 
-use Application\Service\FichierThese\FichierTheseService;
 use Application\Command\CommandInterface;
 use Zend\ServiceManager\Exception\InvalidArgumentException;
 use Zend\ServiceManager\FactoryInterface;
@@ -20,11 +19,13 @@ class RetraitementServiceFactory implements FactoryInterface
     {
         $command = $this->createCommand($serviceLocator);
 
-        $service = new RetraitementService($command);
-
-        return $service;
+        return new RetraitementService($command);
     }
 
+    /**
+     * @param ServiceLocatorInterface $serviceLocator
+     * @return CommandInterface
+     */
     private function createCommand(ServiceLocatorInterface $serviceLocator)
     {
         $config = $serviceLocator->get('config');
@@ -37,7 +38,7 @@ class RetraitementServiceFactory implements FactoryInterface
             throw new InvalidArgumentException("La classe spécifiée dans l'option de 'config sygal.retraitement.command.class' n'existe pas");
         }
 
-        /** @var \Application\Filter\Command\\Application\Command\CommandInterface $command */
+        /** @var CommandInterface $command */
         $command = new $commandClass;
 
         if (isset($config['sygal']['retraitement']['command']['options'])) {
