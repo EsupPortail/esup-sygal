@@ -5,7 +5,6 @@ namespace Application\Service\Structure;
 use Application\Command\ConvertCommand;
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
-use Application\Entity\Db\Source;
 use Application\Entity\Db\Structure;
 use Application\Entity\Db\StructureConcreteInterface;
 use Application\Entity\Db\StructureInterface;
@@ -25,7 +24,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 use Import\Service\Traits\SynchroServiceAwareTrait;
-use Retraitement\Exception\TimedOutCommandException;
+use Application\Command\Exception\TimedOutCommandException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
 use Webmozart\Assert\Assert;
@@ -635,9 +634,9 @@ class StructureService extends BaseService
             ->leftJoin('structure.structureSubstituante', 'substitutionTo')
             ->leftJoin('structure.structuresSubstituees', 'substitutionFrom')
             ->andWhere('substitutionTo.id IS NULL OR pasHistorise(substitutionTo) != 1');
-        if ($order) $qb->orderBy('structure.' . $order);
+        if ($order) $qb->orderBy(' structure.' . $order);
         else {
-            if ($type === TypeStructure::CODE_ECOLE_DOCTORALE) $qb->orderBy('structureConcrete.sourceCode');
+            if ($type === TypeStructure::CODE_ECOLE_DOCTORALE) $qb->orderBy('structure.ferme, structureConcrete.sourceCode');
         }
 
         $result = $qb->getQuery()->getResult();
@@ -889,7 +888,7 @@ class StructureService extends BaseService
                 ));
             }
         } catch (TimedOutCommandException $toce) {
-            throw $toce;
+            // n'arrive jamais car aucun timeout n'a été transmis à ConvertCommand
         }
         catch (RuntimeException $rte) {
             throw new RuntimeException(

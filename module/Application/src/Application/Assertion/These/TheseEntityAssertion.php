@@ -70,10 +70,9 @@ class TheseEntityAssertion extends GeneratedTheseEntityAssertion
         return !empty($validations);
     }
 
-
     protected function isInfosBuSaisies()
     {
-        return ($rdvBu = $this->these->getRdvBu()) && $rdvBu->isInfosBuSaisies();
+        return $this->theseService->isInfosBuSaisies($this->these);
     }
 
     protected function isExisteValidationRdvBu()

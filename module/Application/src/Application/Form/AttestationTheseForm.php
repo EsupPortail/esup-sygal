@@ -46,6 +46,16 @@ class AttestationTheseForm extends Form implements InputFilterProviderInterface
         return $this;
     }
 
+    private $disableExemplaireImprimeConformeAVersionDeposee = false;
+
+    /**
+     * @param bool $disable
+     */
+    public function disableExemplaireImprimeConformeAVersionDeposee(bool $disable = true)
+    {
+        $this->disableExemplaireImprimeConformeAVersionDeposee = $disable;
+    }
+
     /**
      * NB: hydrateur injecté par la factory
      */
@@ -118,14 +128,15 @@ class AttestationTheseForm extends Form implements InputFilterProviderInterface
             $attestation->getThese()->getCorrectionAutorisee() ? "corrigée" : ""
         ));
 
+        if ($this->disableExemplaireImprimeConformeAVersionDeposee) {
+            $this->remove('exemplaireImprimeConformeAVersionDeposee');
+        }
+
         return $this;
     }
 
     /**
-     * Should return an array specification compatible with
-     * {@link Zend\InputFilter\Factory::createInputFilter()}.
-     *
-     * @return array
+     * {@inheritDoc}
      */
     public function getInputFilterSpecification()
     {
@@ -142,7 +153,7 @@ class AttestationTheseForm extends Form implements InputFilterProviderInterface
                 ],
             ],
             $name = 'exemplaireImprimeConformeAVersionDeposee' => [
-                'required'   => true,
+                'required'   => ! $this->disableExemplaireImprimeConformeAVersionDeposee,
                 'validators' => [
                     [
                         'name'    => 'NotEmpty',

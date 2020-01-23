@@ -138,6 +138,7 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
             $results = $acteursFormatter->doFormat($acteurs->toArray());
             $previous = "";
             foreach ($results as $result) {
+                $aucunSupannIdDansIndividu = isset($result['alerte-supann-id']);
                 /** @var Acteur $acteur */
                 $acteur = $result["acteur"];
                 if ($previous != $result["role"]) {
@@ -159,8 +160,8 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                 if (isset($result["etablissement"]) && trim($result["etablissement"]) != "") {
                     $ligne[] = $result["etablissement"];
                 }
-                if ($acteur->estDirecteur() && isset($result['alerte-supann-id'])) {
-                    if ($utilisateurs[$acteur->getId()] === null) {
+                if ($acteur->estDirecteur() && $aucunSupannIdDansIndividu) {
+                    if (empty($utilisateurs[$acteur->getId()])) {
                         $ligne[] = sprintf('<span class="glyphicon glyphicon-warning-sign text-danger" title="%s"></span>',
                             $result['alerte-supann-id']);
                     } else {
@@ -321,6 +322,16 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
 
             <dt>Années universitaires<br>d'inscription</dt>
             <dd><?php echo $these->getAnneesUnivInscriptionToString('<br>') ?: "(Non renseignée)" ?></dd>
+
+            <?php if ($these->getDateAbandon()): ?>
+            <dt>Date d'abandon</dt>
+            <dd><?php echo $these->getDateAbandonToString() ?></dd>
+            <?php endif ?>
+
+            <?php if ($these->getDateTransfert()): ?>
+            <dt>Date de transfert
+            <dd><?php echo $these->getDateTransfertToString() ?></dd>
+            <?php endif ?>
 
             <?php if ($these->getSoutenanceAutorisee()): ?>
                 <dt>Soutenance autorisée</dt>

@@ -2,7 +2,7 @@
 
 namespace Application\Command;
 
-use Retraitement\Exception\TimedOutCommandException;
+use Application\Command\Exception\TimedOutCommandException;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 
@@ -44,6 +44,7 @@ abstract class AbstractCommand implements CommandInterface
 
     /**
      * @return string
+     * @throws TimedOutCommandException Si un timeout d'exécution a été défini et qu'il a expiré
      */
     public function execute()
     {
@@ -71,23 +72,6 @@ abstract class AbstractCommand implements CommandInterface
         $this->result = $output;
 
         return $output;
-    }
-
-    /**
-     * Exécute la commande avec une limite de temps d'exécution.
-     *
-     * @param string $timeoutValue Ex: '60s', '1m', '2h', '1d'. Cf. "man timeout".
-     * @return string
-     */
-    public function executeWithTimeout($timeoutValue = '20s')
-    {
-        if (!$this->commandLine) {
-            throw new LogicException("La ligne de commande n'a pas été générée, utilisez generate().");
-        }
-
-        $this->commandLine = "timeout --signal=HUP $timeoutValue " . $this->commandLine;
-
-        return $this->execute();
     }
 
     /**

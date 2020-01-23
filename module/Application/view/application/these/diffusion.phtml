@@ -1,8 +1,9 @@
 <?php
 
+use Application\Controller\TheseController;
+use Application\Entity\Db\Diffusion;
 use Application\Entity\Db\These;
 use Application\Entity\Db\VersionFichier;
-use Application\Entity\Db\WfEtape;
 use Application\Form\DiffusionTheseForm;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\View\Renderer\PhpRenderer;
@@ -10,14 +11,18 @@ use Application\View\Renderer\PhpRenderer;
 /**
  * @var                    $this PhpRenderer
  * @var These              $these
+ * @var VersionFichier     $version
+ * @var Diffusion          $diffusion
  * @var DiffusionTheseForm $form
  * @var array              $theseFichiersExpurgesItems
  * @var array              $annexesFichiersExpurgesItems
  * @var string             $modifierDiffusionUrl
  * @var string             $exporterConventionMelUrl
+ *
+ * @see TheseController::diffusionAction()
  */
 
-$privilege = ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_($these->getCorrectionAutorisee());
+$privilege = ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_($version);
 $canEdit = $this->isAllowed($these, $privilege);
 ?>
 
@@ -31,7 +36,7 @@ $canEdit = $this->isAllowed($these, $privilege);
         <?php if ($hasFichierThese): ?>
 
             <!-------------------------------------- Questionnaire --------------------------------------->
-            <?php if ($these->getDiffusion()): ?>
+            <?php if ($diffusion): ?>
                 <?php echo $this->partial('application/these/partial/diffusion') ?>
                 <?php if ($canEdit): ?>
                     <p><a href="<?php echo $modifierDiffusionUrl ?>"
@@ -47,7 +52,7 @@ $canEdit = $this->isAllowed($these, $privilege);
             <?php endif ?>
 
             <!-------------------------------------- Convention de mise en ligne --------------------------------------->
-            <?php if ($these->getDiffusion()): ?>
+            <?php if ($diffusion): ?>
                 <hr>
 
                 <h2>Convention de mise en ligne</h2>

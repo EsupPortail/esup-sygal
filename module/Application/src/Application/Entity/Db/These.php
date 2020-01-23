@@ -126,6 +126,16 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     protected $dateFinConfidentialite;
 
     /**
+     * @var DateTime|null
+     */
+    protected $dateAbandon;
+
+    /**
+     * @var DateTime|null
+     */
+    protected $dateTransfert;
+
+    /**
      * @var string
      */
     private $codeUniteRecherche;
@@ -447,6 +457,60 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function setDateFinConfidentialite(DateTime $dateFinConfidentialite = null)
     {
         $this->dateFinConfidentialite = $dateFinConfidentialite;
+
+        return $this;
+    }
+
+    /**
+     * @return DateTime|null
+     */
+    public function getDateAbandon()
+    {
+        return $this->dateAbandon;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDateAbandonToString(): string
+    {
+        return Util::formattedDate($this->getDateAbandon());
+    }
+
+    /**
+     * @param DateTime|null $dateAbandon
+     * @return These
+     */
+    public function setDateAbandon(DateTime $dateAbandon = null): These
+    {
+        $this->dateAbandon = $dateAbandon;
+
+        return $this;
+    }
+
+    /**
+     * @return DateTime|null
+     */
+    public function getDateTransfert()
+    {
+        return $this->dateTransfert;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDateTransfertToString(): string
+    {
+        return Util::formattedDate($this->getDateTransfert());
+    }
+
+    /**
+     * @param DateTime|null $dateTransfert
+     * @return These
+     */
+    public function setDateTransfert(DateTime $dateTransfert = null): These
+    {
+        $this->dateTransfert = $dateTransfert;
 
         return $this;
     }
@@ -794,6 +858,24 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
+     * Retourne l'éventuelle Attestation concernant la version de fichier spécifiée.
+     *
+     * @param VersionFichier $version
+     * @return Attestation|null
+     */
+    public function getAttestationForVersion(VersionFichier $version)
+    {
+        /** @var Attestation $attestation */
+        foreach ($this->attestations as $attestation) {
+            if ($version->estVersionCorrigee() === $attestation->getVersionCorrigee()) {
+                return $attestation;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * @param Attestation $attestation
      * @return $this
      */
@@ -814,29 +896,21 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
-     * @param bool $historisee
-     * @return Collection
-     */
-    public function getDiffusions($historisee = false)
-    {
-        $diffusions = $this->miseEnLignes;
-
-        $diffusions = $diffusions->filter(function(Diffusion $d) use ($historisee) {
-            return $historisee === null || !$historisee === $d->estNonHistorise();
-        });
-
-        return $diffusions;
-    }
-
-    /**
-     * Retourne l'éventuelle Diffusion de cette These.
+     * Retourne l'éventuelle Diffusion concernant la version de fichier spécifiée.
      *
-     * @param bool $historisee
+     * @param VersionFichier $version
      * @return Diffusion|null
      */
-    public function getDiffusion($historisee = false)
+    public function getDiffusionForVersion(VersionFichier $version)
     {
-        return $this->getDiffusions($historisee)->first() ?: null;
+        /** @var Diffusion $diffusion */
+        foreach ($this->miseEnLignes as $diffusion) {
+            if ($version->estVersionCorrigee() === $diffusion->getVersionCorrigee()) {
+                return $diffusion;
+            }
+        }
+
+        return null;
     }
 
     /**

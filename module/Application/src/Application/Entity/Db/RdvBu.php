@@ -36,9 +36,9 @@ class RdvBu implements HistoriqueAwareInterface
     private $versionArchivableFournie = false;
 
     /**
-     * @var boolean
+     * @var boolean|null
      */
-    private $exemplPapierFourni = false;
+    private $exemplPapierFourni;
 
     /**
      * @var string
@@ -91,18 +91,6 @@ class RdvBu implements HistoriqueAwareInterface
         }
 
         return $diff;
-    }
-
-    /**
-     * Détermine si les infos qui doivent être saisies pour le RDV BU l'ont été.
-     *
-     * @return bool
-     */
-    public function isInfosBuSaisies()
-    {
-        return
-            $this->getExemplPapierFourni() && $this->getConventionMelSignee() && $this->getMotsClesRameau() &&
-            $this->isVersionArchivableFournie();
     }
 
     /**
@@ -213,7 +201,7 @@ class RdvBu implements HistoriqueAwareInterface
     /**
      * Get exemplPapierFourni
      *
-     * @return boolean
+     * @return boolean|null
      */
     public function getExemplPapierFourni()
     {

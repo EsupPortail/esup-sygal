@@ -1,5 +1,6 @@
 <?php
 
+use Application\Entity\Db\Diffusion;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
 use Application\Provider\Privilege\ThesePrivileges;
@@ -8,6 +9,7 @@ use Application\View\Renderer\PhpRenderer;
 /**
  * @var                 $this PhpRenderer
  * @var These           $these
+ * @var Diffusion       $diffusion
  * @var bool            $estDoctorant
  * @var string          $modifierUrl
  * @var Validation|null $validation
@@ -27,13 +29,17 @@ $rdvBu = $these->getRdvBu();
 
 <div class="panel panel-info box">
     <div class="panel-heading">
-        <h2 class="first">Téléchargement de la version imprimable de votre thèse </h2>
+        <h2 class="first">Téléchargement de la version imprimable de votre thèse</h2>
     </div>
     <div class="panel-body">
 
         <p>
-        Avant de vous rendre au rendez-vous à la BU, vous devez imprimer un exemplaire papier de votre thèse.<br/>
-        Pour obtenir la version imprimable de votre thèse (avec page de couverture), veuillez cliquer sur le bouton ci-dessous.
+            <?php if ($diffusion->isRemiseExemplairePapierRequise()): ?>
+                Avant que la BU ne prenne contact avec vous, vous devez télécharger la thèse complète, c'est à dire le corps du mémoire auquel est ajoutée la page de couverture générée automatiquement par l'application.
+                Une fois la thèse complète téléchargée, assurez-vous que toutes les informations sur la page de couverture sont présentes et que la fusion n'a pas endommagé le mémoire.
+            <?php else: ?>
+                Vous pouvez obtenir la version imprimable de votre thèse (avec page de couverture) en cliquant sur le bouton ci-dessous.
+            <?php endif ?>
         </p>
 
 <!--        <div class="pull-right">-->

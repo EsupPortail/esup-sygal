@@ -5,7 +5,6 @@ namespace Application\Form;
 use Application\Entity\Db\RdvBu;
 use Application\Filter\MotsClesFilter;
 use Zend\Form\Element\Checkbox;
-use Zend\Form\Element\Radio;
 use Zend\Form\Element\Submit;
 use Zend\Form\Element\Textarea;
 use Zend\Form\Form;
@@ -15,6 +14,16 @@ class RdvBuTheseForm extends Form
 {
     const SEPARATEUR_MOTS_CLES_RAMEAU = RdvBu::SEPARATEUR_MOTS_CLES_RAMEAU;
     const SEPARATEUR_MOTS_CLES_RAMEAU_LIB = RdvBu::SEPARATEUR_MOTS_CLES_RAMEAU_LIB;
+
+    private $disableExemplPapierFourni = false;
+
+    /**
+     * @param bool $disable
+     */
+    public function disableExemplPapierFourni(bool $disable = true)
+    {
+        $this->disableExemplPapierFourni = $disable;
+    }
 
     /**
      * NB: hydrateur injecté par la factory
@@ -96,6 +105,17 @@ class RdvBuTheseForm extends Form
             ],
         ]);
 
+        $this->add([
+            'type'       => 'Text',
+            'name'       => 'halId',
+            'options'    => [
+                'label' => 'IdHAL (facultatif)',
+            ],
+            'attributes' => [
+                'title' => "",
+            ],
+        ]);
+
         $this->add((new Submit('submit'))
             ->setValue("Enregistrer")
             ->setAttribute('class', 'btn btn-primary')
@@ -132,10 +152,30 @@ class RdvBuTheseForm extends Form
                     new MotsClesFilter(['separator' => self::SEPARATEUR_MOTS_CLES_RAMEAU]),
                 ],
             ],
+            'idOrcid' => [
+                'name' => 'idOrcid',
+                'required' => false,
+            ],
+            'halId' => [
+                'name' => 'halId',
+                'required' => false,
+            ],
             'divers' => [
                 'name' => 'divers',
                 'required' => false,
             ],
         ]));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function prepare()
+    {
+        if ($this->disableExemplPapierFourni) {
+            $this->remove('exemplPapierFourni');
+        }
+
+        return parent::prepare();
     }
 }

@@ -4,7 +4,18 @@ Journal des modifications
 1.4.0 (??/01/2020)
 ------------------
 
+### Ajouts
+
+- La remise d'un exemplaire papier de la thèse n'est requise que si la diffusion est acceptée avec embargo ou refusée.
+- Inversion des étapes Diffusion et Attestations.
+- Modification des textes liés à l'autorisation de diffusion dans le formulaire et dans la convention PDF générée.
+- Convention de MEL : suppression du petit logo dans l'entête puisqu'il y en a déjà un sous le titre
+- Nouvelle charte de diffusion téléchargeable.
+- Ajout du flag "fermé" pour les structures et utilisations dans la recherche de thèses.
+- Ajout d'un champ "Id HAL" dans le formulaire d'autorisation de diffusion.
 - Ajout d'un menu dépôt pour séparer les action liés au dépôt de la partie annuaire
+- La couverture est maintenant recto/verso lorsque la premiere page n'est pas retirée
+- Ajout de la colonne durée des thèses dans l'export
 
 1.3.3 (18/12/2019)
 ------------------

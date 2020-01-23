@@ -23,11 +23,13 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
      * @var string $sigle
      * @var string $libelle
      * @var string $cheminLogo
+     * @var integer $cheminLogo
      */
     private     $id;
     protected   $sigle;
     protected   $libelle;
     protected   $cheminLogo;
+    protected   $ferme;
 
     /**
      * @var string
@@ -340,5 +342,21 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
     public function getResourceId()
     {
         return 'structure';
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFerme()
+    {
+        return $this->ferme === 1;
+    }
+
+    /**
+     * @param boolean $ferme
+     */
+    public function setFerme($ferme)
+    {
+        if (!$ferme) $this->ferme = 0; else $this->ferme = 1;
     }
 }
