@@ -1,15 +1,20 @@
 <?php
 
 /**
- * @var \Application\Entity\Db\These $these
- * @var \Soutenance\Entity\Proposition $proposition
- * @var \Soutenance\Entity\Membre[] $rapporteurs
- * @var \Application\Entity\Db\Validation[] $engagements
- * @var \Soutenance\Entity\Avis[] $avis
+ * @var These $these
+ * @var Proposition $proposition
+ * @var Membre[] $rapporteurs
+ * @var Validation[] $engagements
+ * @var Avis[] $avis
 
  */
 
 use Application\Constants;
+use Application\Entity\Db\These;
+use Application\Entity\Db\Validation;
+use Soutenance\Entity\Avis;
+use Soutenance\Entity\Membre;
+use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
 
 $canNotifierAvisSoutenance = $this->isAllowed(AvisSoutenancePrivileges::getResourceId(AvisSoutenancePrivileges::AVIS_NOTIFIER));
@@ -93,7 +98,9 @@ $tousLesAvis = count($rapporteurs) === count($avis) ;
                     <td>
                         <?php if ($acteur) : ?>
                             <?php if ($engagements[$acteur->getIndividu()->getId()] && $avis[$acteur->getIndividu()->getId()]) : ?>
-                                <a href=" <?php echo $this->urlFichierThese->telechargerFichierThese($these, $avis[$acteur->getIndividu()->getId()]->getFichier()); ?>" >
+                                <a
+                                    <?php /** @see TELECHARGER FICHIER */ ?>
+                                    href=" <?php echo $this->urlFichierThese->telechargerFichierThese($these, $avis[$acteur->getIndividu()->getId()]->getFichier()); ?>" >
                                     Rapport de pré-soutenance</a>
                             <?php endif ?>
                         <?php endif; ?>

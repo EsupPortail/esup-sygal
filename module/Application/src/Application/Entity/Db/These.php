@@ -1460,7 +1460,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
             if ($fichier->getHistoDestruction() === null
                 && $nature === NatureFichier::CODE_THESE_PDF
                 && $version === VersionFichier::CODE_ORIG)
-                    return $fichier;
+                    return $fichierThese;
         }
         return null;
     }

@@ -37,33 +37,33 @@ $explications[NatureFichier::CODE_DELOCALISATION_SOUTENANCE] =
     "<strong><span class='glyphicon glyphicon-info-sign'></span> Délocalisation de la soutenance</strong> <br/>".
     "Lorsque la soutenance se déroule à l'extérieur de l'établissement d'inscription il est nécessaire de fournir un justificatif de délocalisation de soutenance. <br/>" .
     "<u>NB:</u> Le formulaire de demande de délocalisation de la soutenance peut être téléchargé ici : ".
-    "<a href='"./*$this->url('informations/fichiers/telecharger', ['id' => 401], [], true)*/ $FORMULAIRE_DELOCALISATION ."'>formulaire de demande de délocalisation.</a></i>" .
+    "<a href='". $FORMULAIRE_DELOCALISATION ."'>formulaire de demande de délocalisation.</a></i>" .
     "</div>";
 $explications[NatureFichier::CODE_DELEGUATION_SIGNATURE] =
     "<div class='alert alert-warning'>" .
     "<strong><span class='glyphicon glyphicon-info-sign'></span> Délégation de signature</strong> <br/>".
     "Les membres du jury participant à la soutenance en visioconférence doivent au préalable remplir une demande de déléguation de signature <br/>" .
     "<u>NB:</u> Le formulaire de demande de délégation de signature peut être téléchargé ici : ".
-    "<a href='"./*$this->url('informations/fichiers/telecharger', ['id' => 381], [], true)*/ $FORMULAIRE_DELEGUATION ."'>formulaire de demande de délégation.</a></i>" .
+    "<a href='". $FORMULAIRE_DELEGUATION ."'>formulaire de demande de délégation.</a></i>" .
     "</div>";
 $explications[NatureFichier::CODE_DEMANDE_LABEL] =
     "<div class='alert alert-warning'>" .
     "<strong><span class='glyphicon glyphicon-info-sign'></span> Demande de label européen</strong> <br/>".
     "<u>NB:</u> La demande d'un label européen nécessite le retour du formulaire de demande de label européen qui peut être téléchargé ici : ".
-    "<a href='"./*$this->url('informations/fichiers/telecharger', ['id' => 402], [], true)*/ $FORMULAIRE_DEMANDE_LABEL ."'>formulaire de demande de label européen.</a></i>" .
+    "<a href='". $FORMULAIRE_DEMANDE_LABEL ."'>formulaire de demande de label européen.</a></i>" .
     "</div>";
 $explications[NatureFichier::CODE_LANGUE_ANGLAISE] =
     "<div class='alert alert-warning'>" .
     "<strong><span class='glyphicon glyphicon-info-sign'></span> Usage de la langue anglaise pour la rédaction du manuscrit ou la soutenance de la thèse</strong> <br/>".
     "L'usage de la langue anglaise pour la rédaction du manuscrit ou la soutenance de la thèse doit être motivé par un lettre justifiant la nécessité de l'usage de la langue anglaise. <br/>" .
     "<u>NB:</u> La demande de l'usage de la langue anglaise nécessite le retour du formulaire de demande de l'usage de la langue anglaise pour la rédaction du manuscrit ou la soutenance de la thèse qui peut être téléchargé ici : ".
-    "<a href='"./*$this->url('informations/fichiers/telecharger', ['id' => 403], [], true)*/ $FORMULAIRE_DEMANDE_ANGLAIS ."'>formulaire de l'usage de la langue anglaise pour la rédaction du manuscrit ou la soutenance de la thèse.</a></i>" .
+    "<a href='". $FORMULAIRE_DEMANDE_ANGLAIS ."'>formulaire de l'usage de la langue anglaise pour la rédaction du manuscrit ou la soutenance de la thèse.</a></i>" .
     "</div>";
 $explications[NatureFichier::CODE_DEMANDE_CONFIDENT] =
     "<div class='alert alert-warning'>" .
     "<strong><span class='glyphicon glyphicon-info-sign'></span> Demande de confidentialité</strong> <br/>".
     "<u>NB:</u> La demande de confidentialité nécessite le retour du formulaire de demande de label européen qui peut être téléchargé ici : ".
-    "<a href='"./*$this->url('informations/fichiers/telecharger', ['id' => 403], [], true)*/ $FORMULAIRE_DEMANDE_CONFIDENTIALITE ."'>formulaire de demande de confidentialité.</a></i>" .
+    "<a href='". $FORMULAIRE_DEMANDE_CONFIDENTIALITE ."'>formulaire de demande de confidentialité.</a></i>" .
     "</div>";
 ?>
 
@@ -79,6 +79,15 @@ $explications[NatureFichier::CODE_DEMANDE_CONFIDENT] =
 </style>
 
 <script>
+    let type = [];
+    let ltype = '';
+    <?php foreach ($justificatifs as $tuple) : ?>
+        <?php if ($tuple['justificatif'] === null) :?>
+            ltype = <?php echo "'".$tuple['type']."'"; ?>;
+            if (type.indexOf(ltype) === -1) type.push(ltype);
+        <?php endif; ?>
+    <?php endforeach; ?>
+
     // ID, NOM, HRD, EMERITAT
     let needVisio = [];
     let needHDR = [];
@@ -110,12 +119,22 @@ $explications[NatureFichier::CODE_DEMANDE_CONFIDENT] =
         <?php endif; ?>
     <?php endforeach; ?>
 
-    // console.log('HDR');
-    // console.log(needHDR);
-    // console.log('Emeritat');
-    // console.log(needEmeritat);
-    // console.log('Visio');
-    // console.log(needVisio);
+    // const CODE_JUSTIFICATIF_HDR = 'JUSTIFICATIF_HDR';
+    // const CODE_JUSTIFICATIF_EMERITAT = 'JUSTIFICATIF_EMERITAT';
+    // const CODE_DELOCALISATION_SOUTENANCE = 'DELOCALISATION_SOUTENANCE';
+    // const CODE_DELEGUATION_SIGNATURE = 'DELEGUATION_SIGNATURE';
+    // const CODE_DEMANDE_LABEL = 'DEMANDE_LABEL_EUROPEEN';
+    // const CODE_LANGUE_ANGLAISE = 'DEMANDE_LANGUE_ANGLAISE';
+    //
+    // const LABEL_JUSTIFICATIF_HDR = "Justificatif d'habilitation à diriger des recherches";
+    // const LABEL_JUSTIFICATIF_EMERITAT = "Justificatif d'émeritat";
+    // const LABEL_DELOCALISATION_SOUTENANCE = "Formulaire de délocalisation de soutenance";
+    // const LABEL_DELEGUATION_SIGNATURE = "Formulaire de délégation de signature du rapport de soutenance (visioconférence)";
+    // const LABEL_LANGUE_ANGLAISE = "Formulaire d'utilisation de la langue anglaise";
+    // const LABEL_DEMANDE_LABEL = "Formulaire de demande de label européen";
+
+
+
 
     $('select[name="membre"]').parent().hide();
     $('select[name="nature"]').change(function() {
@@ -178,6 +197,26 @@ $explications[NatureFichier::CODE_DEMANDE_CONFIDENT] =
                 break;
         }
     });
+
+    console.log(type);
+    $('select[name="nature"]').empty();
+    // $('select[name="nature"]').append(new Option("Choix d'un type de justificatif", ""));
+    let value = "";
+    let label = "";
+    for(let position = 0 ; position < type.length; position++)  {
+        value = type[position];
+        if (value === "<?php echo NatureFichier::CODE_JUSTIFICATIF_HDR; ?>")          label = "<?php echo NatureFichier::LABEL_JUSTIFICATIF_HDR; ?>";
+        if (value === "<?php echo NatureFichier::CODE_JUSTIFICATIF_EMERITAT; ?>")     label = "<?php echo NatureFichier::LABEL_JUSTIFICATIF_EMERITAT; ?>";
+        if (value === "<?php echo NatureFichier::CODE_DELOCALISATION_SOUTENANCE; ?>") label = "<?php echo NatureFichier::LABEL_DELOCALISATION_SOUTENANCE; ?>";
+        if (value === "<?php echo NatureFichier::CODE_DELEGUATION_SIGNATURE; ?>")     label = "<?php echo NatureFichier::LABEL_DELEGUATION_SIGNATURE; ?>";
+        if (value === "<?php echo NatureFichier::CODE_DEMANDE_LABEL; ?>")             label = "<?php echo NatureFichier::LABEL_DEMANDE_LABEL; ?>";
+        if (value === "<?php echo NatureFichier::CODE_LANGUE_ANGLAISE; ?>")           label = "<?php echo NatureFichier::LABEL_LANGUE_ANGLAISE; ?>";
+        if (value === "<?php echo NatureFichier::CODE_DEMANDE_CONFIDENT; ?>")         label = "<?php echo NatureFichier::LABEL_DEMANDE_CONFIDENT; ?>";
+        $('select[name="nature"]').append(new Option(label, value));
+    }
+    $( 'select[name="nature"]' ).trigger( "change" );
+
+
 </script>
 
 

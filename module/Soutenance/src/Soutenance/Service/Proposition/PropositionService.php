@@ -14,11 +14,15 @@ use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\File\FileServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
+use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
+use DateInterval;
+use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\QueryBuilder;
+use Exception;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
@@ -41,9 +45,130 @@ class PropositionService {
     use FileServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use MembreServiceAwareTrait;
+    use UserContextServiceAwareTrait;
+
+    /** GESTION DES ENTITES *******************************************************************************************/
 
     /**
-     *
+     * @param These $these
+     * @return Proposition
+     */
+    public function create(These $these)
+    {
+        $proposition = new Proposition($these);
+        $proposition->setEtat($this->getPropositionEtatByCode(Etat::EN_COURS));
+
+        try {
+            $date = new DateTime();
+            $user = $this->userContextService->getIdentityDb();
+        } catch(Exception $e) {
+            throw new RuntimeException("Un problème est survenu lors de la récupération des données liées à l'historisation", 0 , $e);
+        }
+
+        $proposition->setHistoCreateur($user);
+        $proposition->setHistoCreation($date);
+        $proposition->setHistoModificateur($user);
+        $proposition->setHistoModification($date);
+
+        try {
+            $this->getEntityManager()->persist($proposition);
+            $this->getEntityManager()->flush($proposition);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Un erreur s'est produite lors de l'enregistrment en BD de la proposition de thèse !");
+        }
+        return $proposition;
+    }
+
+    /**
+     * @param Proposition $proposition
+     */
+    public function update($proposition)
+    {
+        try {
+            $date = new DateTime();
+            $user = $this->userContextService->getIdentityDb();
+        } catch(Exception $e) {
+            throw new RuntimeException("Un problème est survenu lors de la récupération des données liées à l'historisation", 0 , $e);
+        }
+
+        $proposition->setHistoModificateur($user);
+        $proposition->setHistoModification($date);
+
+        try {
+            $this->getEntityManager()->flush($proposition);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Une erreur s'est produite lors de la mise à jour de la proposition de soutenance !");
+        }
+    }
+
+    /**
+     * @param Proposition $proposition
+     * @return Proposition
+     */
+    public function historise($proposition)
+    {
+        try {
+            $date = new DateTime();
+            $user = $this->userContextService->getIdentityDb();
+        } catch(Exception $e) {
+            throw new RuntimeException("Un problème est survenu lors de la récupération des données liées à l'historisation", 0 , $e);
+        }
+
+        $proposition->setHistoModificateur($user);
+        $proposition->setHistoModification($date);
+        $proposition->setHistoDestructeur($user);
+        $proposition->setHistoDestruction($date);
+
+        try {
+            $this->getEntityManager()->flush($proposition);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Un problème est survenue lors de l'enregistrement en BDD.", $e);
+        }
+        return $proposition;
+    }
+
+    /**
+     * @param Proposition $proposition
+     * @return Proposition
+     */
+    public function restore($proposition)
+    {
+        try {
+            $date = new DateTime();
+            $user = $this->userContextService->getIdentityDb();
+        } catch(Exception $e) {
+            throw new RuntimeException("Un problème est survenu lors de la récupération des données liées à l'historisation", 0 , $e);
+        }
+
+        $proposition->setHistoModificateur($user);
+        $proposition->setHistoModification($date);
+        $proposition->setHistoDestructeur(null);
+        $proposition->setHistoDestruction(null);
+
+        try {
+            $this->getEntityManager()->flush($proposition);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Un problème est survenue lors de l'enregistrement en BDD.", $e);
+        }
+        return $proposition;
+    }
+
+    /**
+     * @param Proposition $proposition
+     */
+    public function delete($proposition)
+    {
+        try {
+            $this->getEntityManager()->remove($proposition);
+            $this->getEntityManager()->flush($proposition);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Une erreur s'est produite lors de la mise à jour de la proposition de soutenance !");
+        }
+    }
+
+    /** REQUETES ******************************************************************************************************/
+
+    /**
      * @return QueryBuilder
      */
     public function createQueryBuilder(/*$alias = 'proposition'*/)
@@ -62,6 +187,7 @@ class PropositionService {
             ->addSelect('acteur')->leftJoin('membre.acteur', 'acteur')
             ->addSelect('justificatif')->leftJoin('proposition.justificatifs', 'justificatif')
             ->addSelect('avis')->leftJoin('proposition.avis', 'avis')
+            ->andWhere('1 = pasHistorise(proposition)')
             //->addSelect('validation')->leftJoin('proposition.validations', 'validation')
         ;
         return $qb;
@@ -101,51 +227,13 @@ class PropositionService {
         return $result;
     }
 
-
     /**
      * @return Proposition[]
      */
     public function findAll() {
-        $qb = $this->getEntityManager()->getRepository(Proposition::class)->createQueryBuilder("proposition")
-            ;
+        $qb = $this->createQueryBuilder();
         $result = $qb->getQuery()->getResult();
         return $result;
-    }
-
-    /**
-     * @param Proposition $proposition
-     */
-    public function update($proposition)
-    {
-        try {
-            $this->getEntityManager()->flush($proposition);
-        } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Une erreur s'est produite lors de la mise à jour de la proposition de soutenance !");
-        }
-    }
-
-    public function findMembre($idMembre)
-    {
-        $qb = $this->getEntityManager()->getRepository(Membre::class)->createQueryBuilder("membre")
-            ->andWhere("membre.id = :id")
-            ->setParameter("id", $idMembre)
-        ;
-        try {
-            $result = $qb->getQuery()->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("De multiple membres sont associés à l'identifiant [".$idMembre."] !");
-        }
-        return $result;
-    }
-
-    public function create($proposition)
-    {
-        $this->getEntityManager()->persist($proposition);
-        try {
-            $this->getEntityManager()->flush($proposition);
-        } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Un erreur s'est produite lors de l'enregistrment en BD de la proposition de thèse !");
-        }
     }
 
     /**
@@ -189,8 +277,6 @@ class PropositionService {
             $this->getValidationService()->historise($validationBDD);
             $this->getNotifierSoutenanceService()->triggerDevalidationProposition($validationBDD);
         }
-//        $proposition->setSurcis(false);
-//        $this->update($proposition);
     }
 
     /**
@@ -283,22 +369,32 @@ class PropositionService {
 
     /**
      * @param Proposition $proposition
+     * @param array $indicateurs
      * @return boolean
      */
-    public function juryOk($proposition)
+    public function juryOk($proposition, $indicateurs = [])
     {
-        $indicateurs = $this->computeIndicateur($proposition);
+        if ($indicateurs === []) $indicateurs = $this->computeIndicateur($proposition);
+        /** @var Membre $membre */
+        foreach ($proposition->getMembres() as $membre) {
+            $email = $membre->getEmail();
+            $res = ($membre->getEmail() === null);
+            if ($membre->getEmail() === null) {
+                return false;
+            }
+        }
         if (!$indicateurs["valide"]) return false;
         return true;
     }
 
     /**
      * @param Proposition $proposition
+     * @param array $indicateurs
      * @return boolean
      */
-    public function isOk($proposition)
+    public function isOk($proposition, $indicateurs = [])
     {
-        $indicateurs = $this->computeIndicateur($proposition);
+        if ($indicateurs === []) $indicateurs = $this->computeIndicateur($proposition);
         if (!$indicateurs["valide"]) return false;
         if(! $proposition->getDate() || ! $proposition->getLieu()) return false;
         return true;
@@ -500,6 +596,7 @@ class PropositionService {
      * Les directeurs et co-directeurs sont des membres par défauts du jury d'une thèse. Cette fonction permet d'ajouter
      * ceux-ci à une proposition.
      * NB: La proposition doit être liée à une thèse.
+     * NB: Les directeurs et codirecteurs sans mail ne sont pas ajoutés automatiquement
      *
      * @param Proposition $proposition
      */
@@ -513,5 +610,19 @@ class PropositionService {
         foreach ($encadrements as $encadrement) {
             $this->getMembreService()->createMembre($proposition, $encadrement);
         }
+    }
+
+    public function initialisationDateRetour(Proposition $proposition)
+    {
+        if ($proposition->getDate() === null) throw new RuntimeException("Aucune date de soutenance de renseignée !");
+        try {
+            $renduRapport = $proposition->getDate();
+            $deadline = $this->getParametreService()->getParametreByCode('AVIS_DEADLINE')->getValeur();
+            $renduRapport = $renduRapport->sub(new DateInterval('P'. $deadline.'D'));
+        } catch (Exception $e) {
+            throw new RuntimeException("Un problème a été rencontré lors du calcul de la date de rendu des rapport.");
+        }
+        $proposition->setRenduRapport($renduRapport);
+        $this->update($proposition);
     }
 }

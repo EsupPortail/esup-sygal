@@ -25,7 +25,7 @@ class AvisService {
      * @param Avis $avis
      * @return Avis
      */
-    public function create($avis)
+    public function create(Avis $avis)
     {
         /** @var Utilisateur $user */
         $user = $this->userContextService->getIdentityDb();
@@ -54,7 +54,7 @@ class AvisService {
      * @param Avis $avis
      * @return Avis
      */
-    public function update($avis)
+    public function update(Avis $avis)
     {
         /** @var Utilisateur $user */
         $user = $this->userContextService->getIdentityDb();
@@ -79,7 +79,7 @@ class AvisService {
     /**
      * @param Avis $avis
      */
-    public function delete($avis)
+    public function delete(Avis $avis)
     {
         $this->getEntityManager()->remove($avis);
         try {
@@ -93,7 +93,7 @@ class AvisService {
      * @param Avis $avis
      * @return Avis
      */
-    public function historiser($avis)
+    public function historiser(Avis $avis)
     {
         /** @var Utilisateur $user */
         $user = $this->userContextService->getIdentityDb();
@@ -157,19 +157,17 @@ class AvisService {
         return $result;
     }
 
-
-
     /**
-     * @param These these
+     * @param These $these
      * @return Avis[]
      */
-    public function getAvisByThese($these)
+    public function getAvisByThese(These $these)
     {
         $qb =$this->createQueryBuilder()
             ->andWhere('1 = pasHistorise(avis)')
             ->andWhere('proposition.these = :these')
-            ->setParameter('these', $these);
-
+            ->setParameter('these', $these)
+        ;
         $result = $qb->getQuery()->getResult();
 
         $avis = [];
@@ -178,14 +176,13 @@ class AvisService {
             $avis[$entry->getRapporteur()->getIndividu()->getId()] = $entry;
         }
         return $avis;
-
     }
 
     /**
      * @param Membre $membre
      * @return Avis
      */
-    public function getAvisByMembre($membre)
+    public function getAvisByMembre(Membre $membre)
     {
         if ($membre === null OR $membre->getActeur() === null) return null;
         $qb = $this->createQueryBuilder()

@@ -88,7 +88,7 @@ class IndexController extends AbstractController {
                 }
             }
 
-            $engagement = $this->getEngagementImpartialiteService()->getEngagementImpartialiteByMembre($membre);
+            $engagement = $this->getEngagementImpartialiteService()->getEngagementImpartialiteByMembre($these, $membre);
             $avis = $this->getAvisService()->getAvisByMembre($membre);
 
             return new ViewModel([

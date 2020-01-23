@@ -12,24 +12,35 @@ class UtilisateurRepository extends DefaultEntityRepository
     /**
      * Recherche les utilisateurs lié à un individu.
      *
-     * @param Individu $individu
-     * @return Utilisateur
+     * @param Individu  $individu
+     * @param bool|null $isLocal
+     * @return Utilisateur[]
      */
-    public function findByIndividu(Individu $individu)
+    public function findByIndividu(Individu $individu, $isLocal = null)
     {
         $qb = $this->createQueryBuilder('u')
             ->join('u.individu', 'i')
             ->where('i = :individu')
             ->setParameter('individu', $individu);
 
-        try {
-            $utilisateur = $qb->getQuery()->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
-            $utilisateurs = $qb->getQuery()->getResult();
-            throw new RuntimeException("Plusieurs (".count($utilisateurs).") Utilisateur partagent le même individu [".$individu->getId()."]", 0, $e);
+        if ($isLocal !== null) {
+            if ($isLocal) {
+                $qb->andWhere($qb->expr()->notIn('u.password', ['shib', 'ldap']));
+            } else {
+                $qb->andWhere($qb->expr()->in('u.password', ['shib', 'ldap']));
+            }
         }
 
-        return $utilisateur;
+        $utilisateurs = $qb->getQuery()->getResult();
+
+        if ($isLocal && count($utilisateurs) > 1) {
+            throw new RuntimeException(
+                "Plusieurs Utilisateur partagent le même individu " . $individu->getId() . " : " .
+                implode(', ', array_map(function (Utilisateur $u) { return $u->getId(); }, $utilisateurs))
+            );
+        }
+
+        return $utilisateurs;
     }
 
     /**

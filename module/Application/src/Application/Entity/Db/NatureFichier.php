@@ -33,6 +33,7 @@ class NatureFichier
     const LABEL_DELEGUATION_SIGNATURE = "Formulaire de délégation de signature du rapport de soutenance (visioconférence)";
     const LABEL_LANGUE_ANGLAISE = "Formulaire d'utilisation de la langue anglaise";
     const LABEL_DEMANDE_LABEL = "Formulaire de demande de label européen";
+    const LABEL_DEMANDE_CONFIDENT = "Formulaire de demande de confidentialité";
 
     /**
      * @var string

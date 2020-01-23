@@ -3,8 +3,10 @@
 namespace Soutenance\Entity;
 
 use Application\Entity\Db\FichierThese;
+use UnicaenApp\Entity\HistoriqueAwareTrait;
 
 class Justificatif {
+    use HistoriqueAwareTrait;
 
     /** @var integer */
     private $id;
