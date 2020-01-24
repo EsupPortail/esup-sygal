@@ -1,6 +1,14 @@
 Journal des modifications
 =========================
 
+1.4.1 (24/01/2020)
+------------------
+
+- Les dates d'insertion des données dans les tables `SYGAL_*` de chaque établissement sont désormais retournées 
+  par le web service ; cela permettra côté SyGAL de détecter un problème dans le CRONage du script de remplissage 
+  de ces tables.
+
+
 1.4.0 (23/01/2020)
 ------------------
 
