@@ -14,5 +14,6 @@
         <field name="libelleEtabTitreAcces" column="LIBELLE_ETB_TITRE_ACCES" nullable="true"/>
         <field name="codeDeptTitreAcces" column="CODE_DEPT_TITRE_ACCES" nullable="true"/>
         <field name="codePaysTitreAcces" column="CODE_PAYS_TITRE_ACCES" nullable="true"/>
+        <field name="sourceInsertDate" type="datetime" column="SOURCE_INSERT_DATE"/>
     </entity>
 </doctrine-mapping>

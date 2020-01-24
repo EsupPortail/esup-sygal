@@ -44,7 +44,7 @@ class DbService
     private $tableName;
 
     /**
-     * @var SQLGenerator
+     * @var DbServiceSQLGenerator
      */
     private $sqlGenerator;
 

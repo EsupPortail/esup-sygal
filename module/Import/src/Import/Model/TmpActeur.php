@@ -78,6 +78,11 @@ class TmpActeur
     private $id;
 
     /**
+     * @var \DateTime
+     */
+    private $sourceInsertDate;
+
+    /**
      * @return string
      */
     public function getIndividuId()

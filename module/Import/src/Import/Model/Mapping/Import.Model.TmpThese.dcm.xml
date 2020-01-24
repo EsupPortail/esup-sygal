@@ -30,5 +30,6 @@
         <field name="temAvenant"                type="string" column="TEM_AVENANT_COTUT" length="1" nullable="true"/>
         <field name="temSoutenanceAutorisee"    type="string" column="TEM_SOU_AUT_THS" length="1" nullable="true"/>
         <field name="sourceCode"                type="string" column="SOURCE_CODE"      length="64"     nullable="true"/>
+        <field name="sourceInsertDate" type="datetime" column="SOURCE_INSERT_DATE"/>
     </entity>
 </doctrine-mapping>

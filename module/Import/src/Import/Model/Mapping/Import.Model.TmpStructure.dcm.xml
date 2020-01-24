@@ -12,6 +12,6 @@
         <field name="libelle"           type="string"   column="LIBELLE"             length="128"   nullable="true"/>
         <field name="codePays"          type="string"   column="CODE_PAYS"           length="128"   nullable="true"/>
         <field name="libellePays"       type="string"   column="LIBELLE_PAYS"        length="128"   nullable="true"/>
-
+        <field name="sourceInsertDate" type="datetime" column="SOURCE_INSERT_DATE"/>
     </entity>
 </doctrine-mapping>
