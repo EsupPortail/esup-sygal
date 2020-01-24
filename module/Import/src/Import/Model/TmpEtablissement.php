@@ -32,6 +32,9 @@ class TmpEtablissement
      */
     private $id;
 
-
+    /**
+     * @var \DateTime
+     */
+    private $sourceInsertDate;
 }
 

@@ -61,5 +61,10 @@ class TmpTitreAcces
      * @var string
      */
     private $id;
+
+    /**
+     * @var \DateTime
+     */
+    private $sourceInsertDate;
 }
 

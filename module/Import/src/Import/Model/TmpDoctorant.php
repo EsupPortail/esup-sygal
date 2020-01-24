@@ -38,7 +38,12 @@ class TmpDoctorant
     private $id;
 
     /**
-     * @return string
+     * @var string
+     */
+    private $sourceInsertDate;
+
+    /**
+     * @return \DateTime
      */
     public function getIndividuId()
     {

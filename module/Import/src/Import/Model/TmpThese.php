@@ -123,12 +123,9 @@ class TmpThese
     private $id;
 
     /**
-     * @return string
+     * @var \DateTime
      */
-    public function getId()
-    {
-        return $this->id;
-    }
+    private $sourceInsertDate;
 
     /**
      * @return string
