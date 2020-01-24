@@ -10,6 +10,6 @@
         <field name="codOfi" length="8" column="COD_OFI"/>
         <field name="licOfi" length="10" column="LIC_OFI"/>
         <field name="libOfi" length="50" column="LIB_OFI"/>
-
+        <field name="sourceInsertDate" type="datetime" column="SOURCE_INSERT_DATE"/>
     </entity>
 </doctrine-mapping>

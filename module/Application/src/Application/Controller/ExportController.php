@@ -87,8 +87,8 @@ class ExportController extends AbstractController
             'Date de prévisionnel de soutenance'    => function (These $these) { return $these->getDatePrevisionSoutenance(); },
             'Date de soutenance'                    => function (These $these) { return $these->getDateSoutenance(); },
             'Date de fin de confientialité'         => function (These $these) { return $these->getDateFinConfidentialite(); },
-            'Date de dépôt version initiale'        => function (These $these) { $file = $these->hasVersionInitiale(); if ($file) return $file->getFichier()->getHistoCreation()->format('d/m/Y'); },
-            'Date de dépôt version corigée'         => function (These $these) { $file = $these->hasVersionCorrigee(); if ($file) return $file->getFichier()->getHistoCreation()->format('d/m/Y'); },
+            'Date de dépôt version initiale'        => function (These $these) { $file = $these->hasVersionInitiale(); if ($file) return $file->getFichier()->getHistoCreation()->format('d/m/Y'); return "";},
+            'Date de dépôt version corigée'         => function (These $these) { $file = $these->hasVersionCorrigee(); if ($file) return $file->getFichier()->getHistoCreation()->format('d/m/Y'); return "";},
             'Durée en mois de la thèse'             => function (These $these) { if ($these->getDatePremiereInscription() !== null AND $these->getDateSoutenance() !== null)
                 return number_format(($these->getDateSoutenance())->diff($these->getDatePremiereInscription())->format('%a')/30.5, 2);
             else return "";

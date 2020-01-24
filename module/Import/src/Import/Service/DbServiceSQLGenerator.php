@@ -93,6 +93,8 @@ class DbServiceSQLGenerator
                 return $this->prepareString($value);
             case 'date':
                 return $this->prepareDate($value);
+            case 'datetime':
+                return $this->prepareDatetime($value);
             default:
                 return $value;
         }
@@ -112,5 +114,16 @@ class DbServiceSQLGenerator
         $yyymmdd = explode(' ', $value->date)[0];
 
         return "TO_DATE('$yyymmdd', 'YYYY-MM-DD')";
+    }
+
+    private function prepareDatetime($value)
+    {
+        if ($value === null) {
+            return "NULL";
+        }
+
+        $yyymmddhhmiss = explode('.', $value->date)[0];
+
+        return "TO_DATE('$yyymmddhhmiss', 'YYYY-MM-DD HH24:MI:SS')";
     }
 }

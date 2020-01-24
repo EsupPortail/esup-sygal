@@ -37,6 +37,9 @@ class TmpRole
      */
     private $id;
 
-
+    /**
+     * @var \DateTime
+     */
+    private $sourceInsertDate;
 }
 

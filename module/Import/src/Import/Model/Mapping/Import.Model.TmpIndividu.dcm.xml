@@ -18,5 +18,6 @@
         <field name="dateNaissance" type="date" column="DAT_NAI_PER" nullable="true"/>
         <field name="nationalite" column="LIB_NAT" nullable="true"/>
         <field name="sourceCode" column="SOURCE_CODE" nullable="true"/>
+        <field name="sourceInsertDate" type="datetime" column="SOURCE_INSERT_DATE"/>
     </entity>
 </doctrine-mapping>
