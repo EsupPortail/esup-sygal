@@ -32,6 +32,9 @@ class TmpEcoleDoctorale
      */
     private $id;
 
-
+    /**
+     * @var \DateTime
+     */
+    private $sourceInsertDate;
 }
 

@@ -18,5 +18,6 @@
         <field name="temoinHDR"                 type="string"   column="TEM_HAB_RCH_PER"            length="1"      nullable="true"/>
         <field name="temoinRapport"             type="string"   column="TEM_RAP_RECU"               length="1"      nullable="true"/>
         <field name="sourceCode"                type="string"   column="SOURCE_CODE"                length="64"     nullable="true"/>
+        <field name="sourceInsertDate" type="datetime" column="SOURCE_INSERT_DATE"/>
     </entity>
 </doctrine-mapping>

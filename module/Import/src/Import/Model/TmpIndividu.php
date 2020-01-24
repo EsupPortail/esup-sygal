@@ -82,6 +82,9 @@ class TmpIndividu
      */
     private $id;
 
-
+    /**
+     * @var \DateTime
+     */
+    private $sourceInsertDate;
 }
 

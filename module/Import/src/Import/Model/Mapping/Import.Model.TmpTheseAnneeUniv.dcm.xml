@@ -12,5 +12,7 @@
         <field name="theseId" column="THESE_ID" nullable="true"/>
 
         <field name="anneeUniv" column="ANNEE_UNIV" nullable="true"/>
+
+        <field name="sourceInsertDate" type="datetime" column="SOURCE_INSERT_DATE"/>
     </entity>
 </doctrine-mapping>

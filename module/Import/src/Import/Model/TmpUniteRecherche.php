@@ -32,6 +32,9 @@ class TmpUniteRecherche
      */
     private $id;
 
-
+    /**
+     * @var \DateTime
+     */
+    private $sourceInsertDate;
 }
 
