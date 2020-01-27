@@ -545,20 +545,20 @@ class TheseRechercheService
 
     private function fetchUnitesRecherchesOptions()
     {
-        //$urs = $this->getStructureService()->getAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'libelle');
-        $all = $this->getStructureService()->getUnitesRechercheSelection();
+        $urs = $this->getStructureService()->getAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE);
+//        $all = $this->getStructureService()->getUnitesRechercheSelection();
 
         $options = [];
-//        foreach ($urs as $ur) {
-//            $options[] = $this->optionify($ur);
-//        }
-        foreach ($all as $a) {
-            $options[] = [
-                'value' =>      $a[4], //['sourceCode'],
-                'label' =>      $a[3], //['sigle'],
-                'subtext' =>    $a[2], //['libelle']
-            ];
+        foreach ($urs as $ur) {
+            $options[] = $this->optionify($ur);
         }
+//        foreach ($all as $a) {
+//            $options[] = [
+//                'value' =>      $a[4], //['sourceCode'],
+//                'label' =>      $a[3], //['sigle'],
+//                'subtext' =>    $a[2], //['libelle']
+//            ];
+//        }
 //        usort($options, function($a, $b) {
 //            return strcmp($a['label'], $b['label']);
 //        });
@@ -785,7 +785,7 @@ class TheseRechercheService
         } elseif ($value instanceof UniteRecherche) {
             $subtext = $value->getLibelle();
             if ($value->getStructure()->isFerme()) $subtext.= "&nbsp; <span class='label' style='color:darkred;'>FERMEE</span>";
-            return ['value' => $value->getSourceCode(), 'label' => $value->getCode(), 'subtext' => $subtext];
+            return ['value' => $value->getSourceCode(), 'label' => $value->getSigle(), 'subtext' => $subtext];
         } elseif ($value instanceof DomaineScientifique) {
             return ['value' => (string) $value->getId(), 'label' => $value->getLibelle()];
         } elseif ($value instanceof OrigineFinancement) {

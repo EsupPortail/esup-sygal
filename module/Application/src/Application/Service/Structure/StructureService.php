@@ -636,7 +636,7 @@ class StructureService extends BaseService
             ->andWhere('substitutionTo.id IS NULL OR pasHistorise(substitutionTo) != 1');
         if ($order) $qb->orderBy(' structure.' . $order);
         else {
-            if ($type === TypeStructure::CODE_ECOLE_DOCTORALE) $qb->orderBy('structure.ferme, structureConcrete.sourceCode');
+            if ($type === TypeStructure::CODE_ECOLE_DOCTORALE || $type === TypeStructure::CODE_UNITE_RECHERCHE) $qb->orderBy('structure.ferme, structureConcrete.sourceCode');
         }
 
         $result = $qb->getQuery()->getResult();
