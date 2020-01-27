@@ -84,7 +84,7 @@ class MetadonneeTheseForm extends Form implements InputFilterProviderInterface
             'type'       => 'Textarea',
             'name'       => $name = 'resume',
             'options'    => [
-                'label' => "Resumé en <u>français</u> (" . ($ml = $this->resumeMaxlength[$name]) . " caractères maximum, espaces compris)",
+                'label' => "Résumé en <u>français</u> (" . ($ml = $this->resumeMaxlength[$name]) . " caractères maximum, espaces compris)",
                 'label_options' => [
                     'disable_html_escape' => true,
                 ]
@@ -100,7 +100,7 @@ class MetadonneeTheseForm extends Form implements InputFilterProviderInterface
             'type'       => 'Textarea',
             'name'       => $name = 'resumeAnglais',
             'options'    => [
-                'label' => "Resumé en <u>anglais</u> (" . ($ml = $this->resumeMaxlength[$name]) . " caractères maximum, espaces compris)",
+                'label' => "Résumé en <u>anglais</u> (" . ($ml = $this->resumeMaxlength[$name]) . " caractères maximum, espaces compris)",
                 'label_options' => [
                     'disable_html_escape' => true,
                 ]
