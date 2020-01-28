@@ -484,32 +484,54 @@ ul.roadmap.pagination {
 
 /************* Menu *************/
 ul.menu-secondaire,
-ul.menu-information {
+ul.menu-information,
+ul.menu-actualites {
   background: #f5f5f5;
   border-radius: 4px;
   padding: 2px;
   box-shadow: 1px 1px 6px; }
   ul.menu-secondaire li,
-  ul.menu-information li {
+  ul.menu-information li,
+  ul.menu-actualites li {
     margin-top: 0; }
     ul.menu-secondaire li span.divider,
-    ul.menu-information li span.divider {
+    ul.menu-information li span.divider,
+    ul.menu-actualites li span.divider {
       display: block;
       height: 4px;
       border-top: solid 4px #e1e1e1; }
-    ul.menu-secondaire li a.roadmap,
-    ul.menu-information li a.roadmap {
-      font-weight: bold; }
-    ul.menu-secondaire li a.version-initiale.correction-attendue-,
-    ul.menu-information li a.version-initiale.correction-attendue- {
-      opacity: 1.0; }
-    ul.menu-secondaire li span.divider.version-initiale.correction-attendue-,
-    ul.menu-information li span.divider.version-initiale.correction-attendue- {
-      display: none; }
-    ul.menu-secondaire li a.version-initiale.correction-attendue-mineure, ul.menu-secondaire li a.version-initiale.correction-attendue-majeure,
-    ul.menu-information li a.version-initiale.correction-attendue-mineure,
-    ul.menu-information li a.version-initiale.correction-attendue-majeure {
-      opacity: 0.5; }
+
+ul.menu-secondaire li a.roadmap {
+  font-weight: bold; }
+ul.menu-secondaire li a.version-initiale.correction-attendue- {
+  opacity: 1.0; }
+ul.menu-secondaire li span.divider.version-initiale.correction-attendue- {
+  display: none; }
+ul.menu-secondaire li a.version-initiale.correction-attendue-mineure, ul.menu-secondaire li a.version-initiale.correction-attendue-majeure {
+  opacity: 0.5; }
+
+ul.menu-actualites {
+  margin-top: 2em; }
+  ul.menu-actualites li:first-child {
+    padding-top: 10px; }
+  ul.menu-actualites li {
+    padding: 0 1em 10px; }
+    ul.menu-actualites li span.label {
+      padding: 1px 2px;
+      font-size: 70%;
+      vertical-align: middle;
+      margin-right: 3px; }
+    ul.menu-actualites li h2 {
+      font-weight: lighter;
+      font-size: 90%;
+      margin: 0;
+      line-height: 120%; }
+    ul.menu-actualites li p.date {
+      margin: 0;
+      font-size: 70%; }
+    ul.menu-actualites li .fa {
+      font-size: 55%;
+      vertical-align: super; }
 
 div.menu-information-header {
   font-weight: bold;
