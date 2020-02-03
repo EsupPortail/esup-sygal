@@ -8,6 +8,7 @@
 
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Validation;
+use Soutenance\Entity\Etat;
 use Soutenance\Entity\Proposition;
 
 $these = $proposition->getThese();
@@ -61,7 +62,10 @@ $these = $proposition->getThese();
                 </ul>
             </div>
             <div class="pull-right">
-                <?php if ($canPresidence): ?>
+                <?php
+                    $validationMDD = null;
+                    if ($validations[Role::CODE_BDD]) { $validationMDD = current($validations[Role::CODE_BDD]); }
+                    if ($canPresidence AND $validationMDD === null): ?>
                     <p>
                         <a  <?php /** @see \Soutenance\Controller\Proposition\PropositionController::signaturePresidenceAction(); */ ?>
                             href="<?php echo $this->url('soutenance/proposition/signature-presidence', ['these' => $these->getId()], true); ?>"

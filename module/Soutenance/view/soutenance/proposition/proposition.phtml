@@ -3,8 +3,10 @@
 use Application\Controller\Plugin\UrlFichierThese;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Doctorant;
+use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
+use Soutenance\Entity\Etat;
 use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 
@@ -121,6 +123,35 @@ $this->headTitle("Proposition de soutenance");
         'canStructureValider' => $canStructureValider,
         'canPresidence' => $canPresidence,
     ]); ?>
+
+<?php
+    $validationMDD = null;
+    if ($validations[Role::CODE_BDD]) { $validationMDD = current($validations[Role::CODE_BDD]); }
+
+    if ($validationMDD AND $proposition->getEtat()->getCode() === Etat::EN_COURS AND $canPresidence): ?>
+    <div class="box panel panel-success">
+        <div class="panel-heading">
+            <h2 class="first"> Et ensuite ? </h2>
+        </div>
+        <div class="panel-body">
+
+            Vous pouvez maintenant procéder aux saisies des informations de préparation de la soutenance.
+            <nav aria-label="Etape suivante">
+                <ul class="roadmap pagination">
+                    <li>
+                        <a
+                            <?php /** @see \Soutenance\Controller\Avis\AvisController::indexAction()  */ ?>
+                                class="roadmap-step-link"
+                                href="<?php echo $this->url('soutenance/presoutenance', ['these' => $these->getId()], [], true); ?>">
+                            <span class="glyphicon glyphicon-circle-arrow-right"></span>
+                            Préparation de la soutenance
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+<?php endif; ?>
 
 <script>
     let navbar = 50 + 5;
