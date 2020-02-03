@@ -1169,11 +1169,12 @@ class TheseController extends AbstractController
     private function getAttestationTheseForm(VersionFichier $version)
     {
         $these = $this->requestedThese();
+        $diffusion = $these->getDiffusionForVersion($version);
 
         /** @var AttestationTheseForm $form */
         $form = $this->getServiceLocator()->get('formElementManager')->get('AttestationTheseForm');
 
-        if (! $these->getDiffusionForVersion($version)->isRemiseExemplairePapierRequise()) {
+        if ($diffusion && ! $diffusion->isRemiseExemplairePapierRequise()) {
             $form->disableExemplaireImprimeConformeAVersionDeposee();
         }
 
