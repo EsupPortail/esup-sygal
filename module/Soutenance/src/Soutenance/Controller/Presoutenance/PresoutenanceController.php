@@ -356,7 +356,7 @@ class PresoutenanceController extends AbstractController
             'these' => $these,
             'informations' => $pdcData,
         ]);
-        $exporter->export('export.pdf');
+        $exporter->export($these->getId() . '_proces_verbal.pdf');
         exit;
     }
 
@@ -378,7 +378,7 @@ class PresoutenanceController extends AbstractController
             'these' => $these,
             'informations' => $pdcData,
         ]);
-        $exporter->export('export.pdf');
+        $exporter->export($these->getId() . '_avis_soutenance.pdf');
         exit;
     }
 
@@ -417,7 +417,7 @@ class PresoutenanceController extends AbstractController
             'date' => $dateValidation,
             'ville' => $ville,
         ]);
-        $exporter->export('export.pdf');
+        $exporter->export($these->getId() . '_convocation.pdf');
         exit;
     }
 
