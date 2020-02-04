@@ -6,6 +6,7 @@ use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Financement;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
+use Application\Entity\Db\VersionFichier;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\These\TheseRechercheServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
@@ -21,6 +22,8 @@ class ExportController extends AbstractController
 
     public function csvAction()
     {
+
+
         $headers = [
             // Doctorant
             'Civilité'                              => function (These $these) { return $these->getDoctorant()->getIndividu()->getCivilite(); },
@@ -103,6 +106,25 @@ class ExportController extends AbstractController
             'Thèse format PDF'                      => function (These $these) { if ($these->hasMemoire())  return 'O'; else return 'N'; },
             'Annexe non PDF'                        => function (These $these) { if ($these->hasAnnexe())   return 'O'; else return 'N'; },
 
+            //Embargo et refus de diffusion
+            'Embargo'                               => function (These $these) {
+                $versionCorrigee = $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG_CORR);
+                $diffusionCorrigee = $these->getDiffusionForVersion($versionCorrigee);
+                if ($diffusionCorrigee !== null) return $diffusionCorrigee->getAutorisEmbargoDuree();
+
+                $versionInitiale = $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
+                $diffusionInitiale = $these->getDiffusionForVersion($versionInitiale);
+                if ($diffusionInitiale !== null) return $diffusionInitiale->getAutorisEmbargoDuree();
+            },
+            'Refus de diffusion' => function (These $these) {
+                $versionCorrigee = $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG_CORR);
+                $diffusionCorrigee = $these->getDiffusionForVersion($versionCorrigee);
+                if ($diffusionCorrigee !== null) return $diffusionCorrigee->getAutorisMotif();
+
+                $versionInitiale = $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
+                $diffusionInitiale = $these->getDiffusionForVersion($versionInitiale);
+                if ($diffusionInitiale !== null) return $diffusionInitiale->getAutorisMotif();
+            },
         ];
 
         $queryParams = $this->params()->fromQuery();
