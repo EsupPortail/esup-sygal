@@ -62,7 +62,8 @@ h1.app-name {
   bottom: 80px; }
 
 ul.menu-secondaire,
-ul.menu-information {
+ul.menu-information,
+ul.menu-actualites {
   background: none;
   border-radius: 18px;
   padding: 2px;
@@ -71,5 +72,8 @@ ul.menu-information {
 ul.menu-secondaire li a,
 ul.menu-information li a {
   padding: 7px 10px; }
+
+ul.menu-actualites {
+  box-shadow: 1px 1px 6px inset; }
 
 /*# sourceMappingURL=charte.css.map */

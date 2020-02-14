@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
 use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
@@ -1191,6 +1192,23 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function getDatePremiereInscription()
     {
         return $this->datePremiereInscription;
+    }
+
+    /**
+     * Calcule la durée de la thèse en mois.
+     *
+     * @return float
+     */
+    public function getDureeThese()
+    {
+        if (! $this->getDateSoutenance()) {
+            throw new LogicException("Aucune date de soutenance renseignée");
+        }
+        if (! $this->getDatePremiereInscription()) {
+            throw new LogicException("Aucune date de première inscription renseignée");
+        }
+
+        return $this->getDateSoutenance()->diff($this->getDatePremiereInscription())->format('%a') / 30.5;
     }
 
     /**
