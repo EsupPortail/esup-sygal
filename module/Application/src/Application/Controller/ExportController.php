@@ -11,6 +11,7 @@ use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\These\TheseRechercheServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
+use UnicaenApp\Exception\LogicException;
 use UnicaenApp\View\Model\CsvModel;
 
 class ExportController extends AbstractController
@@ -92,10 +93,7 @@ class ExportController extends AbstractController
             'Date de fin de confientialité'         => function (These $these) { return $these->getDateFinConfidentialite(); },
             'Date de dépôt version initiale'        => function (These $these) { $file = $these->hasVersionInitiale(); if ($file) return $file->getFichier()->getHistoCreation()->format('d/m/Y'); return "";},
             'Date de dépôt version corigée'         => function (These $these) { $file = $these->hasVersionCorrigee(); if ($file) return $file->getFichier()->getHistoCreation()->format('d/m/Y'); return "";},
-            'Durée en mois de la thèse'             => function (These $these) { if ($these->getDatePremiereInscription() !== null AND $these->getDateSoutenance() !== null)
-                return number_format(($these->getDateSoutenance())->diff($these->getDatePremiereInscription())->format('%a')/30.5, 2);
-            else return "";
-            },
+            'Durée en mois de la thèse'             => function (These $these) { try { return number_format($these->getDureeThese(), 2, ',', ''); } catch (LogicException $e) { return ""; } },
 
             //Flags
             'Etat de la thèse'                      => function (These $these) { return $these->getEtatTheseToString();},
