@@ -280,6 +280,7 @@ return array(
         'stylesheets'           => [
             '050_bootstrap-theme' => false,
             '100_charte' => '/css/charte.css',
+            '200_fa' => '/fontawesome-free-5.12.0-web/css/all.min.css',
         ],
         'printable_stylesheets' => [
         ],

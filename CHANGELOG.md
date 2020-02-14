@@ -1,6 +1,16 @@
 Journal des modifications
 =========================
 
+1.4.2 (14/02/2020)
+------------------
+
+- Extraction CSV des thèses : nouvelles colonnes concernant l'embargo et refus de diffusion ; 
+  virgule plutôt que point dans la durée de la thèse.
+- Page d'accueil : affichage des actualités issues du flux RSS fourni par la COMUE.
+- Filtrage de la liste des thèses : correction de l'affichage du filtre "Unité de recherche".
+- Corrections de textes sur la page RDV BU.
+
+
 1.4.1 (24/01/2020)
 ------------------
 
