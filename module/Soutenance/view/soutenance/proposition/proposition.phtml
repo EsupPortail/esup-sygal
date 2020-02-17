@@ -160,15 +160,63 @@ $this->headTitle("Proposition de soutenance");
         $("body").on({
             "edition-datelieu" : function (event) {
                 event.div.modal('hide');
-                window.location.reload();
-                let top = $('div#DATE_ET_LIEU').offset().top - navbar;
-                window.scrollTo(0,top);
+                $.ajax({
+                    type: "POST",
+                    url : "<?php echo $this->url('soutenance/proposition/generate-view-date-lieu', ["these" => $these->getId()], [], true); ?>",
+                    beforeSend:
+                        function () {
+                            $("div#BOXDIV_DATE_LIEU").html("<div class='alert alert-warning'> <span class='glyphicon glyphicon-warning-sign'></span> Rechargement de la vue associée à la date et lieu de soutenance.</div><br/>");
+                        },
+                    success:
+                        function(retour){
+                            let texte = "ok";
+                            $("div#BOXDIV_DATE_LIEU").html(retour);
+                        }
+                });
+
+                // window.location.reload();
+                // let top = $('div#DATE_ET_LIEU').offset().top - navbar;
+                // window.scrollTo(0,top);
             },
             "edition-membre" : function (event) {
                 event.div.modal('hide');
-                window.location.reload();
-                let top = $('div#COMPOSITION_JURY').offset().top - navbar;
-                window.scrollTo(0,top);
+                $.ajax({
+                    type: "POST",
+                    url : "<?php echo $this->url('soutenance/proposition/generate-view-jury', ["these" => $these->getId()], [], true); ?>",
+                    beforeSend:
+                        function () {
+                            $("div#BOXDIV_JURY").html("<div class='alert alert-warning'> <span class='glyphicon glyphicon-warning-sign'></span> Rechargement de la vue associée au jury.</div><br/>");
+                        },
+                    success:
+                        function(retour){
+                            let texte = "ok";
+                            $("div#BOXDIV_JURY").html(retour);
+                        }
+                });
+
+                // window.location.reload();
+                // let top = $('div#COMPOSITION_JURY').offset().top - navbar;
+                // window.scrollTo(0,top);
+            },
+            "edition-informations" : function (event) {
+                event.div.modal('hide');
+                $.ajax({
+                    type: "POST",
+                    url : "<?php echo $this->url('soutenance/proposition/generate-view-informations', ["these" => $these->getId()], [], true); ?>",
+                    beforeSend:
+                        function () {
+                            $("div#BOXDIV_INFORMATIONS").html("<div class='alert alert-warning'> <span class='glyphicon glyphicon-warning-sign'></span> Rechargement de la vue associée aux inforamtions.</div><br/>");
+                        },
+                    success:
+                        function(retour){
+                            let texte = "ok";
+                            $("div#BOXDIV_INFORMATIONS").html(retour);
+                        }
+                });
+
+                // window.location.reload();
+                // let top = $('div#COMPOSITION_JURY').offset().top - navbar;
+                // window.scrollTo(0,top);
             },
             "edition-confidentialite" : function (event) {
                 event.div.modal('hide');

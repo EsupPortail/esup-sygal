@@ -31,6 +31,7 @@ use Soutenance\Form\Membre\MembreForm;
 use Soutenance\Form\Membre\MembreFromAwareTrait;
 use Soutenance\Form\Refus\RefusForm;
 use Soutenance\Form\Refus\RefusFormAwareTrait;
+use Soutenance\Provider\Privilege\PropositionPrivileges;
 use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
@@ -117,6 +118,67 @@ class PropositionController extends AbstractController {
             'FORMULAIRE_DEMANDE_CONFIDENTIALITE'     => $parametres[Parametre::CODE_FORMULAIRE_CONFIDENTIALITE],
 
         ]);
+    }
+
+    public function generateViewDateLieuAction()
+    {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findByThese($these);
+        $parametres = $this->getParametreService()->getParametresAsArray();
+
+        $vm = new ViewModel();
+        $vm->setTerminal(true);
+        $vm->setVariables([
+           'these' => $these,
+           'proposition' => $proposition,
+           'FORMULAIRE_DELOCALISATION' => $parametres[Parametre::CODE_FORMULAIRE_DELOCALISATION],
+           'canModifier' => $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER)),
+        ]);
+        return $vm;
+    }
+
+    public function generateViewJuryAction()
+    {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findByThese($these);
+        $parametres = $this->getParametreService()->getParametresAsArray();
+
+        /** Indicateurs --------------------------------------------------------------------------------------------- */
+        $indicateurs = $this->getPropositionService()->computeIndicateur($proposition);
+        $juryOk = $this->getPropositionService()->juryOk($proposition, $indicateurs);
+        if ($juryOk === false) $indicateurs["valide"] = false;
+        $isOk = $this->getPropositionService()->isOk($proposition, $indicateurs);
+
+        $vm = new ViewModel();
+        $vm->setTerminal(true);
+        $vm->setVariables([
+            'these' => $these,
+            'proposition' => $proposition,
+            'FORMULAIRE_DELEGUATION' => $parametres[Parametre::CODE_FORMULAIRE_DELEGUATION],
+            'canModifier' => $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER)),
+            'indicateurs' => $indicateurs,
+        ]);
+        return $vm;
+    }
+
+    public function generateViewInformationsAction()
+    {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findByThese($these);
+        $parametres = $this->getParametreService()->getParametresAsArray();
+
+
+        $vm = new ViewModel();
+        $vm->setTerminal(true);
+        $vm->setVariables([
+            'these' => $these,
+            'proposition' => $proposition,
+            'FORMULAIRE_DEMANDE_LABEL' => $parametres[Parametre::CODE_FORMULAIRE_LABEL_EUROPEEN],
+            'FORMULAIRE_DEMANDE_ANGLAIS' => $parametres[Parametre::CODE_FORMULAIRE_THESE_ANGLAIS],
+            'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $parametres[Parametre::CODE_FORMULAIRE_CONFIDENTIALITE],
+            'canModifier' => $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER)),
+        ]);
+        return $vm;
     }
 
     public function modifierDateLieuAction()
