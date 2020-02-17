@@ -43,6 +43,27 @@ if ($membre->getIndividu()) $denomination = $membre->getIndividu()->getNomComple
 
 </style>
 
+<div style="width:25%; float:left; position:absolute; top: 20px; left: 20px">
+    <?php if ($informations->getLogoCOMUE() !== null): ?>
+        <img src="<?php echo $informations->getLogoCOMUE() ?>" />
+    <?php else : ?>
+        <span style='background-color:red;'>
+                Logo COMUE manquant
+            </span>
+    <?php endif; ?>
+</div>
+<div style="width:25%; float:right; position:absolute; top: 20px; right: 20px ">
+    <?php if ($informations->getLogoEtablissement() !== null): ?>
+        <img src="<?php echo $informations->getLogoEtablissement() ?>" />
+    <?php else : ?>
+        <span style='background-color:red;'>
+                Logo ETAB manquant
+        </span>
+    <?php endif; ?>
+</div>
+
+<br/>
+<br/>
 <br/>
 <br/>
 <br/>
@@ -50,12 +71,10 @@ if ($membre->getIndividu()) $denomination = $membre->getIndividu()->getNomComple
 
 <table>
     <tr>
-        <td width="70%"></td>
+        <td width="80%"></td>
         <td>
             À <?php echo $ville; ?>, le <?php echo $date->format('d/m/Y'); ?>
             <br/>
-            <br/>
-            <?php echo $denomination; ?> <br/>
 <!--            <span class="not-yet">ADRESSE ETABLISSEMENT RATTACHEMENT</span> <br/>-->
         </td>
     </tr>
@@ -67,7 +86,7 @@ if ($membre->getIndividu()) $denomination = $membre->getIndividu()->getNomComple
 <br/>
 
 <p>
-    <?php echo $civilite ?>, <br/>
+    <?php echo $civilite ?>  <?php echo $denomination; ?>, <br/>
 </p>
 
 Par décision en date du
@@ -79,8 +98,8 @@ Par décision en date du
         </span>
 <?php endif; ?>
 le chef de l'établissement <?php echo  $these->getEtablissement()->getLibelle(); ?> vous a désigné<?php if($civilite==="Madame") echo "e"; ?>
-pour participer au jury devant examiner les travaux de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(true); ?>
-en vue de l'obtention du diplôme : <br/>
+ pour participer au jury devant examiner les travaux de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(true); ?>
+ en vue de l'obtention du diplôme : <br/>
 Doctorat en <?php echo $these->getLibelleDiscipline(); ?>.
 </p>
 

@@ -667,6 +667,8 @@ class NotifierSoutenanceService extends NotifierService {
     {
         if ($email === null) throw new LogicException("Aucun mail n'est fourni pour l'envoi de la convocation.",0);
 
+        $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
+
         $notif = new Notification();
         $notif
             ->setSubject("Convocation pour la soutenance de thèse de  " . $doctorant->getNomComplet())
@@ -678,6 +680,7 @@ class NotifierSoutenanceService extends NotifierService {
                 'doctorant' => $doctorant,
                 'date' => $date,
                 'url' => $url,
+                'informations' => $pdcData,
             ]);
         $this->trigger($notif);
     }
