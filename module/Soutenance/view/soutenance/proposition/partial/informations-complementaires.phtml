@@ -13,6 +13,7 @@ use Soutenance\Entity\Proposition;
 $these = $proposition->getThese();
 ?>
 
+<div id="BOXDIV_INFORMATIONS">
 <div class="box panel panel-info">
     <div class="panel-heading">
         <h2>
@@ -50,7 +51,7 @@ $these = $proposition->getThese();
                     <a <?php /** @see \Soutenance\Controller\Proposition\PropositionController::labelEuropeenAction(); */ ?>
                        href="<?php echo $this->url('soutenance/proposition/label-europeen', ['these' => $these->getId()], [], true); ?>"
                        class="btn btn-primary action ajax-modal"
-                       data-event="edition-confidentialite"
+                       data-event="edition-informations"
                     >
                         <span class="glyphicon glyphicon-plus"></span>
                         Renseigner un label européen
@@ -94,7 +95,7 @@ $these = $proposition->getThese();
                 <a <?php /** @see \Soutenance\Controller\Proposition\PropositionController::anglaisAction(); */ ?>
                    href="<?php echo $this->url('soutenance/proposition/anglais', ['these' => $these->getId()], [], true); ?>"
                    class="btn btn-primary action ajax-modal"
-                   data-event="edition-confidentialite"
+                   data-event="edition-informations"
                 >
                     <span class="glyphicon glyphicon-plus"></span>
                     Renseigner thèse en anglais
@@ -129,7 +130,7 @@ $these = $proposition->getThese();
                 <a <?php /** @see \Soutenance\Controller\Proposition\PropositionController::confidentialiteAction(); */ ?>
                    href="<?php echo $this->url('soutenance/proposition/confidentialite', ['these' => $these->getId()], [], true); ?>"
                    class="btn btn-primary action ajax-modal"
-                   data-event="edition-confidentialite"
+                   data-event="edition-informations"
                 >
                     <span class="glyphicon glyphicon-plus"></span>
                     Renseigner une confidentialité
@@ -157,7 +158,7 @@ $these = $proposition->getThese();
                 <a <?php /** @see \Soutenance\Controller\Proposition\PropositionController::changementTitreAction(); */ ?>
                    href="<?php echo $this->url('soutenance/proposition/changement-titre', ['these' => $these->getId()], [], true); ?>"
                    class="btn btn-primary action ajax-modal"
-                   data-event="edition-confidentialite"
+                   data-event="edition-informations"
                 >
                     <span class="glyphicon glyphicon-plus"></span>
                     Modifier le titre de la thèse
@@ -165,4 +166,5 @@ $these = $proposition->getThese();
             <?php endif; ?>
         </div>
     </div>
+</div>
 </div>

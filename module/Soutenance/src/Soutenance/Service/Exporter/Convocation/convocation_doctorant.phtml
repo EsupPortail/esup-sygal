@@ -35,6 +35,25 @@ $civilite = ($these->getDoctorant()->getIndividu()->getCivilite() === 'M.')?"Mon
 
 </style>
 
+<div style="width:25%; float:left; position:absolute; top: 20px; left: 20px">
+    <?php if ($informations->getLogoCOMUE() !== null): ?>
+        <img src="<?php echo $informations->getLogoCOMUE() ?>" />
+    <?php else : ?>
+        <span style='background-color:red;'>
+                Logo COMUE manquant
+            </span>
+    <?php endif; ?>
+</div>
+<div style="width:25%; float:right; position:absolute; top: 20px; right: 20px ">
+    <?php if ($informations->getLogoEtablissement() !== null): ?>
+        <img src="<?php echo $informations->getLogoEtablissement() ?>" />
+    <?php else : ?>
+        <span style='background-color:red;'>
+                Logo ETAB manquant
+        </span>
+    <?php endif; ?>
+</div>
+
 <br/>
 <br/>
 <br/>
@@ -42,13 +61,11 @@ $civilite = ($these->getDoctorant()->getIndividu()->getCivilite() === 'M.')?"Mon
 
 <table>
     <tr>
-        <td width="70%"></td>
+        <td width="80%"></td>
         <td>
             À <?php echo $ville; ?>, le <?php echo $date->format('d/m/Y'); ?>
             <br/>
             <br/>
-            <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(true); ?> <br/>
-            <span class="not-yet">ADRESSE PERSONNELLE</span> <br/>
         </td>
     </tr>
 </table>
@@ -59,7 +76,7 @@ $civilite = ($these->getDoctorant()->getIndividu()->getCivilite() === 'M.')?"Mon
 <br/>
 
 <p>
-    <?php echo $civilite ?>, <br/>
+    <?php echo $civilite ?> <?php echo $these->getDoctorant()->getNomComplet(); ?>, <br/>
 </p>
 
     Par décision en date du

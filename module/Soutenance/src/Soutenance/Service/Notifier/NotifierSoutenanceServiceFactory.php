@@ -4,6 +4,7 @@ namespace Soutenance\Service\Notifier;
 
 use Application\Service\Acteur\ActeurService;
 use Application\Service\Role\RoleService;
+use Application\Service\These\TheseService;
 use Application\Service\Variable\VariableService;
 use Application\Service\Notification\NotificationFactory;
 use Notification\Service\NotifierServiceFactory;
@@ -31,11 +32,13 @@ class NotifierSoutenanceServiceFactory extends NotifierServiceFactory {
          * @var MembreService           $membreService
          * @var RoleService             $roleService
          * @var VariableService         $variableService
+         * @var TheseService            $theseService
          */
         $acteurService = $serviceLocator->get(ActeurService::class);
         $membreService = $serviceLocator->get(MembreService::class);
         $roleService = $serviceLocator->get('RoleService');
         $variableService = $serviceLocator->get('VariableService');
+        $theseService = $serviceLocator->get('TheseService');
 
         /** @var HttpViewManager|ConsoleViewManager $vm */
         $vm = $serviceLocator->get('ViewManager');
@@ -51,6 +54,7 @@ class NotifierSoutenanceServiceFactory extends NotifierServiceFactory {
         $service->setMembreService($membreService);
         $service->setRoleService($roleService);
         $service->setVariableService($variableService);
+        $service->setTheseService($theseService);
 
         return $service;
     }

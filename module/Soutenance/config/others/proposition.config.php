@@ -73,6 +73,9 @@ return [
                     'controller' => PropositionController::class,
                     'action'     => [
                         'proposition',
+                        'generate-view-date-lieu',
+                        'generate-view-jury',
+                        'generate-view-informations',
                     ],
                     'privileges' => PropositionPrivileges::PROPOSITION_VISUALISER,
                 ],
@@ -164,6 +167,39 @@ return [
                             ],
                         ],
                         'child_routes' => [
+                            'generate-view-date-lieu' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/generate-view-date-lieu',
+                                    'defaults' => [
+                                        'controller' => PropositionController::class,
+                                        'action'     => 'generate-view-date-lieu',
+                                    ],
+                                ],
+                            ],
+                            'generate-view-jury' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/generate-view-jury',
+                                    'defaults' => [
+                                        'controller' => PropositionController::class,
+                                        'action'     => 'generate-view-jury',
+                                    ],
+                                ],
+                            ],
+                            'generate-view-informations' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/generate-view-informations',
+                                    'defaults' => [
+                                        'controller' => PropositionController::class,
+                                        'action'     => 'generate-view-informations',
+                                    ],
+                                ],
+                            ],
                             'sursis' => [
                                 'type' => Literal::class,
                                 'may_terminate' => true,

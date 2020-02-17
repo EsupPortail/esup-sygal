@@ -24,9 +24,14 @@ use Soutenance\Entity\Proposition;
 
 $date = new DateTime();
 
-$civilite = "<span  style='background-color:red;'>Inconnu</span>";
-if ($membre->getIndividu()->getCivilite() === 'M.') $civilite = "Monsieur";
-if ($membre->getIndividu()->getCivilite() === 'Mme') $civilite = "Madame";
+$civilite = ($membre->getGenre() !== "H")?"Madame":"Monsieur";
+if ($membre->getIndividu()) {
+    if ($membre->getIndividu()->getCivilite() === 'M.') $civilite = "Monsieur";
+    if ($membre->getIndividu()->getCivilite() === 'Mme') $civilite = "Madame";
+}
+
+$denomination = $membre->getDenomination();
+if ($membre->getIndividu()) $denomination = $membre->getIndividu()->getNomComplet();
 
 ?>
 
@@ -38,6 +43,27 @@ if ($membre->getIndividu()->getCivilite() === 'Mme') $civilite = "Madame";
 
 </style>
 
+<div style="width:25%; float:left; position:absolute; top: 20px; left: 20px">
+    <?php if ($informations->getLogoCOMUE() !== null): ?>
+        <img src="<?php echo $informations->getLogoCOMUE() ?>" />
+    <?php else : ?>
+        <span style='background-color:red;'>
+                Logo COMUE manquant
+            </span>
+    <?php endif; ?>
+</div>
+<div style="width:25%; float:right; position:absolute; top: 20px; right: 20px ">
+    <?php if ($informations->getLogoEtablissement() !== null): ?>
+        <img src="<?php echo $informations->getLogoEtablissement() ?>" />
+    <?php else : ?>
+        <span style='background-color:red;'>
+                Logo ETAB manquant
+        </span>
+    <?php endif; ?>
+</div>
+
+<br/>
+<br/>
 <br/>
 <br/>
 <br/>
@@ -45,13 +71,11 @@ if ($membre->getIndividu()->getCivilite() === 'Mme') $civilite = "Madame";
 
 <table>
     <tr>
-        <td width="70%"></td>
+        <td width="80%"></td>
         <td>
             À <?php echo $ville; ?>, le <?php echo $date->format('d/m/Y'); ?>
             <br/>
-            <br/>
-            <?php echo $membre->getIndividu()->getNomComplet(true); ?> <br/>
-            <span class="not-yet">ADRESSE ETABLISSEMENT RATTACHEMENT</span> <br/>
+<!--            <span class="not-yet">ADRESSE ETABLISSEMENT RATTACHEMENT</span> <br/>-->
         </td>
     </tr>
 </table>
@@ -62,7 +86,7 @@ if ($membre->getIndividu()->getCivilite() === 'Mme') $civilite = "Madame";
 <br/>
 
 <p>
-    <?php echo $civilite ?>, <br/>
+    <?php echo $civilite ?>  <?php echo $denomination; ?>, <br/>
 </p>
 
 Par décision en date du
@@ -74,8 +98,8 @@ Par décision en date du
         </span>
 <?php endif; ?>
 le chef de l'établissement <?php echo  $these->getEtablissement()->getLibelle(); ?> vous a désigné<?php if($civilite==="Madame") echo "e"; ?>
-pour participer au jury devant examiner les travaux de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(true); ?>
-en vue de l'obtention du diplôme : <br/>
+ pour participer au jury devant examiner les travaux de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(true); ?>
+ en vue de l'obtention du diplôme : <br/>
 Doctorat en <?php echo $these->getLibelleDiscipline(); ?>.
 </p>
 

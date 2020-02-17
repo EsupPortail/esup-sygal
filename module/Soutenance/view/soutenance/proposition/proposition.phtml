@@ -3,8 +3,10 @@
 use Application\Controller\Plugin\UrlFichierThese;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Doctorant;
+use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
+use Soutenance\Entity\Etat;
 use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 
@@ -122,6 +124,35 @@ $this->headTitle("Proposition de soutenance");
         'canPresidence' => $canPresidence,
     ]); ?>
 
+<?php
+    $validationMDD = null;
+    if ($validations[Role::CODE_BDD]) { $validationMDD = current($validations[Role::CODE_BDD]); }
+
+    if ($validationMDD AND $proposition->getEtat()->getCode() === Etat::EN_COURS AND $canPresidence): ?>
+    <div class="box panel panel-success">
+        <div class="panel-heading">
+            <h2 class="first"> Et ensuite ? </h2>
+        </div>
+        <div class="panel-body">
+
+            Vous pouvez maintenant procéder aux saisies des informations de préparation de la soutenance.
+            <nav aria-label="Etape suivante">
+                <ul class="roadmap pagination">
+                    <li>
+                        <a
+                            <?php /** @see \Soutenance\Controller\Avis\AvisController::indexAction()  */ ?>
+                                class="roadmap-step-link"
+                                href="<?php echo $this->url('soutenance/presoutenance', ['these' => $these->getId()], [], true); ?>">
+                            <span class="glyphicon glyphicon-circle-arrow-right"></span>
+                            Préparation de la soutenance
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+<?php endif; ?>
+
 <script>
     let navbar = 50 + 5;
 
@@ -129,15 +160,63 @@ $this->headTitle("Proposition de soutenance");
         $("body").on({
             "edition-datelieu" : function (event) {
                 event.div.modal('hide');
-                window.location.reload();
-                let top = $('div#DATE_ET_LIEU').offset().top - navbar;
-                window.scrollTo(0,top);
+                $.ajax({
+                    type: "POST",
+                    url : "<?php echo $this->url('soutenance/proposition/generate-view-date-lieu', ["these" => $these->getId()], [], true); ?>",
+                    beforeSend:
+                        function () {
+                            $("div#BOXDIV_DATE_LIEU").html("<div class='alert alert-warning'> <span class='glyphicon glyphicon-warning-sign'></span> Rechargement de la vue associée à la date et lieu de soutenance.</div><br/>");
+                        },
+                    success:
+                        function(retour){
+                            let texte = "ok";
+                            $("div#BOXDIV_DATE_LIEU").html(retour);
+                        }
+                });
+
+                // window.location.reload();
+                // let top = $('div#DATE_ET_LIEU').offset().top - navbar;
+                // window.scrollTo(0,top);
             },
             "edition-membre" : function (event) {
                 event.div.modal('hide');
-                window.location.reload();
-                let top = $('div#COMPOSITION_JURY').offset().top - navbar;
-                window.scrollTo(0,top);
+                $.ajax({
+                    type: "POST",
+                    url : "<?php echo $this->url('soutenance/proposition/generate-view-jury', ["these" => $these->getId()], [], true); ?>",
+                    beforeSend:
+                        function () {
+                            $("div#BOXDIV_JURY").html("<div class='alert alert-warning'> <span class='glyphicon glyphicon-warning-sign'></span> Rechargement de la vue associée au jury.</div><br/>");
+                        },
+                    success:
+                        function(retour){
+                            let texte = "ok";
+                            $("div#BOXDIV_JURY").html(retour);
+                        }
+                });
+
+                // window.location.reload();
+                // let top = $('div#COMPOSITION_JURY').offset().top - navbar;
+                // window.scrollTo(0,top);
+            },
+            "edition-informations" : function (event) {
+                event.div.modal('hide');
+                $.ajax({
+                    type: "POST",
+                    url : "<?php echo $this->url('soutenance/proposition/generate-view-informations', ["these" => $these->getId()], [], true); ?>",
+                    beforeSend:
+                        function () {
+                            $("div#BOXDIV_INFORMATIONS").html("<div class='alert alert-warning'> <span class='glyphicon glyphicon-warning-sign'></span> Rechargement de la vue associée aux inforamtions.</div><br/>");
+                        },
+                    success:
+                        function(retour){
+                            let texte = "ok";
+                            $("div#BOXDIV_INFORMATIONS").html(retour);
+                        }
+                });
+
+                // window.location.reload();
+                // let top = $('div#COMPOSITION_JURY').offset().top - navbar;
+                // window.scrollTo(0,top);
             },
             "edition-confidentialite" : function (event) {
                 event.div.modal('hide');
