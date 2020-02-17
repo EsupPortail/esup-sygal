@@ -1,71 +1,19 @@
 <?php
 
-use Application\Entity\Db\Acteur;
 use Application\Entity\Db\These;
-use Application\Entity\Db\Validation;
-use Application\Service\FichierThese\PdcData;
-use Application\View\Renderer\PhpRenderer;
+use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 
 /**
- * @var PhpRenderer             $this
- * @var Proposition $proposition
- * @var Validation[] $validations
- * @var Validation $validation
- * @var array $logos
- * @var int $nbCodirecteur
- * @var PdcData                 $informations
  * @var These $these
- * @var DateTime $date
- * @var string $ville
- * @var Acteur $membre
- * @see
+ * @var Proposition $proposition
+ * @var Membre $membre
+ * @var string $url
  */
-
-$date = new DateTime();
-
 $civilite = ($membre->getGenre() !== "H")?"Madame":"Monsieur";
-if ($membre->getIndividu()) {
-    if ($membre->getIndividu()->getCivilite() === 'M.') $civilite = "Monsieur";
-    if ($membre->getIndividu()->getCivilite() === 'Mme') $civilite = "Madame";
-}
-
-$denomination = $membre->getDenomination();
-if ($membre->getIndividu()) $denomination = $membre->getIndividu()->getNomComplet();
+if ($membre->getIndividu()) $civilite = ($membre->getIndividu()->estUneFemme())?"Madame":"Monsieur";
 
 ?>
-
-<style>
-    .not-yet {
-        background-color: lightpink;
-        color: darkred;
-    }
-
-</style>
-
-<br/>
-<br/>
-<br/>
-<br/>
-
-<table>
-    <tr>
-        <td width="70%"></td>
-        <td>
-            À <?php echo $ville; ?>, le <?php echo $date->format('d/m/Y'); ?>
-            <br/>
-            <br/>
-            <?php echo $denomination; ?> <br/>
-<!--            <span class="not-yet">ADRESSE ETABLISSEMENT RATTACHEMENT</span> <br/>-->
-        </td>
-    </tr>
-</table>
-
-<br/>
-<br/>
-<br/>
-<br/>
-
 <p>
     <?php echo $civilite ?>, <br/>
 </p>
@@ -132,23 +80,4 @@ $texte_directeur = implode(" et ", $encadrement);
     Je vous prie d'agréer, <?php echo $civilite; ?>, l'expression de mes salutations distinguées.
 </p>
 
-<br/>
-<br/>
-<br/>
-<br/>
-
-<table>
-    <tr>
-        <td width="70%"></td>
-        <td>
-            À <?php echo $ville; ?>, le <?php echo $date->format('d/m/Y'); ?>
-            <br/>
-            <br/>
-            Le Responsable de la Direction Recherche et Innovation.<br/>
-            <span class="not-yet">NOM RESPONSABLE,</span> <br/>
-        </td>
-    </tr>
-</table>
-
-
-
+<p> P.S.: Vous pouvez obtenir une version imprimable de cette convocation à l'adresse suivante : <a href="<?php echo $url; ?>">convocation au format PDF</a> </p>

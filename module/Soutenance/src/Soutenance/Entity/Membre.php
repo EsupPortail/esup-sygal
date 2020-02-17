@@ -290,4 +290,14 @@ class Membre {
         $this->visio = $visio;
         return $this;
     }
+
+    public function isMembre() {
+        switch ($this->getRole()) {
+            case Membre::RAPPORTEUR_JURY :
+            case Membre::RAPPORTEUR_VISIO :
+            case Membre::MEMBRE_JURY :
+                return true;
+        }
+        return false;
+    }
 }

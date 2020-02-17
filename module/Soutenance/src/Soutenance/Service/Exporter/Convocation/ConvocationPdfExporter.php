@@ -51,4 +51,33 @@ class ConvocationPdfExporter extends PdfExporter
 
         return PdfExporter::export($filename, $destination, $memoryLimit);
     }
+
+    public function exportDoctorant($filename = null, $destination = self::DESTINATION_BROWSER, $memoryLimit = null)
+    {
+        /** @var These $these */
+        $these = $this->vars["these"];
+
+        $this->addBodyHtml('<style>' . file_get_contents(APPLICATION_DIR . '/public/css/page-unicaen.css') . '</style>');
+        $this->setHeaderScript('empty.phtml');
+        $this->setFooterScript('empty.phtml');
+
+        $this->addBodyScript('convocation_doctorant.phtml', false, $this->vars);
+
+        return PdfExporter::export($filename, $destination, $memoryLimit);
+    }
+
+    public function exportMembre(Membre $membre, $filename = null, $destination = self::DESTINATION_BROWSER, $memoryLimit = null)
+    {
+        /** @var These $these */
+        $these = $this->vars["these"];
+
+        $this->addBodyHtml('<style>' . file_get_contents(APPLICATION_DIR . '/public/css/page-unicaen.css') . '</style>');
+        $this->setHeaderScript('empty.phtml');
+        $this->setFooterScript('empty.phtml');
+
+        $this->vars["membre"] = $membre;
+        $this->addBodyScript('convocation_membre.phtml', false, $this->vars);
+
+        return PdfExporter::export($filename, $destination, $memoryLimit);
+    }
 }

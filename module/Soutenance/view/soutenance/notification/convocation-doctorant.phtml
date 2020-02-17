@@ -1,0 +1,69 @@
+<?php
+
+use Application\Entity\Db\Doctorant;
+use Application\Entity\Db\These;
+use Soutenance\Entity\Proposition;
+
+/**
+ * @var These $these
+ * @var Proposition $proposition
+ * @var Doctorant $doctorant
+ * @var string $url
+ */
+
+?>
+
+<p>
+Bonjour,
+</p>
+
+<p>
+Par décision en date du
+<?php if ($proposition->get): ?>
+    <?php echo $date->format('d/m/Y'); ?>,
+<?php else: ?>
+    <span style='background-color:red;'>
+                Date manquante
+        </span>
+<?php endif; ?>
+vous avez été autorisé<?php if($doctorant->getIndividu()->estUneFemme()==="Madame") echo "e"; ?> à présenter en soutenance
+vos travaux en vue de l'obtention du diplôme : <br/>
+Doctorat en <?php echo $these->getLibelleDiscipline(); ?>.
+</p>
+
+<p>
+    La soutenance aura lieu le
+    <?php if ($these->getDateSoutenance() !== null): ?>
+        <?php echo $these->getDateSoutenance()->format('d/m/Y à H:i'); ?>
+    <?php else : ?>
+        <span style='background-color:red;'>
+                Date manquante,
+        </span>
+    <?php endif; ?> à l'adresse suivante : <br/>
+    <?php if ($proposition->getAdresse() !== null): ?>
+        <?php echo $proposition->getAdresse(); ?>
+    <?php else : ?>
+        <span style='background-color:red;'>
+                    Adresse manquante
+            </span>
+        <br/>
+    <?php endif; ?>
+</p>
+
+<p>
+    La soutenance <?php if ($proposition && $proposition->isHuitClos() !== null): ?>
+        <?php if ($proposition->isHuitClos()) : ?>
+            se déroulera en huis clos.
+        <?php else : ?>
+            sera publique.
+        <?php endif ; ?>
+    <?php else: ?>
+        <span style='background-color:red;'> information sur l'aspect public manquante </span>
+    <?php endif; ?>
+</p>
+
+<p>
+    Nous vous prions d'agréer, <?php echo $civilite; ?>, l'expression de nos salutations distinguées.
+</p>
+
+<p> P.S.: Vous pouvez obtenir une version imprimable de cette convocation à l'adresse suivante : <a href="<?php echo $url; ?>">convocation au format PDF</a> </p>

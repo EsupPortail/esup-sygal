@@ -383,7 +383,7 @@ class PresoutenanceController extends AbstractController
     }
 
     /** Document pour la signature en présidence */
-    public function convocationAction()
+    public function convocationsAction()
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
@@ -418,6 +418,112 @@ class PresoutenanceController extends AbstractController
             'ville' => $ville,
         ]);
         $exporter->export($these->getId() . '_convocation.pdf');
+        exit;
+    }
+
+    public function convocationDoctorantAction()
+    {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findByThese($these);
+
+        /** @var PdcData $pdcData */
+        $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
+
+        /* @var $renderer PhpRenderer */
+        $renderer = $this->getServiceLocator()->get('view_renderer');
+
+        /** @var Validation[] $validationMDD */
+        $validationMDD = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
+        $dateValidation = (! empty($validationMDD))?current($validationMDD)->getHistoModification():null;
+
+        /** @var string $ville */
+        switch($these->getEtablissement()->getSigle()) {
+            case "UCN" : $ville = "Caen"; break;
+            case "URN" :
+            case "INSA" :
+                $ville = "Rouen"; break;
+            case "ULHN" : $ville = "Le Havre"; break;
+            default:
+                $ville = "Manquant";
+        }
+
+        $exporter = new ConvocationPdfExporter($renderer, 'A4');
+        $exporter->setVars([
+            'proposition' => $proposition,
+            'these' => $these,
+            'informations' => $pdcData,
+            'date' => $dateValidation,
+            'ville' => $ville,
+        ]);
+        $exporter->exportDoctorant($these->getId() . '_convocation.pdf');
+        exit;
+    }
+
+    public function convocationMembreAction()
+    {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findByThese($these);
+        $membre = $this->getMembreService()->getRequestedMembre($this);
+
+        /** @var PdcData $pdcData */
+        $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
+
+        /* @var $renderer PhpRenderer */
+        $renderer = $this->getServiceLocator()->get('view_renderer');
+
+        /** @var Validation[] $validationMDD */
+        $validationMDD = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
+        $dateValidation = (! empty($validationMDD))?current($validationMDD)->getHistoModification():null;
+
+        /** @var string $ville */
+        switch($these->getEtablissement()->getSigle()) {
+            case "UCN" : $ville = "Caen"; break;
+            case "URN" :
+            case "INSA" :
+                $ville = "Rouen"; break;
+            case "ULHN" : $ville = "Le Havre"; break;
+            default:
+                $ville = "Manquant";
+        }
+
+        $exporter = new ConvocationPdfExporter($renderer, 'A4');
+        $exporter->setVars([
+            'proposition' => $proposition,
+            'these' => $these,
+            'informations' => $pdcData,
+            'date' => $dateValidation,
+            'ville' => $ville,
+        ]);
+        $exporter->exportMembre($membre, $these->getId() . '_convocation.pdf');
+        exit;
+    }
+
+    public function envoyerConvocationAction()
+    {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findByThese($these);
+
+        /** @var Validation[] $validationMDD */
+        $validationMDD = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
+        $dateValidation = (! empty($validationMDD))?current($validationMDD)->getHistoModification():null;
+
+        //doctorant
+        $doctorant = $these->getDoctorant();
+        $email = $doctorant->getIndividu()->getEmail();
+        /** @see PresoutenanceController::convocationDoctorantAction() */
+        $url = $this->url()->fromRoute('soutenance/presoutenance/convocation-doctorant', ['proposition' => $proposition->getId()], ['force_canonical' => true], true);
+        $this->getNotifierSoutenanceService()->triggerEnvoiConvocationDoctorant($doctorant, $proposition, $dateValidation, $email, $url);
+
+        //membres
+        /** @var Membre $membre */
+        foreach ($proposition->getMembres() as $membre) {
+            if ($membre->isMembre()) {
+                $email = ($membre->getIndividu() AND $membre->getIndividu()->getEmail())?$membre->getIndividu()->getEmail():$membre->getEmail();
+                /** @see PresoutenanceController::convocationMembreAction() */
+                $url = $this->url()->fromRoute('soutenance/presoutenance/convocation-membre', ['proposition' => $proposition->getId(), 'membre' => $membre->getId()], ['force_canonical' => true], true);
+                $this->getNotifierSoutenanceService()->triggerEnvoiConvocationMembre($membre, $proposition, $dateValidation, $email, $url);
+            }
+        }
         exit;
     }
 

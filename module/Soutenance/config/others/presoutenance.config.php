@@ -13,8 +13,6 @@ use Soutenance\Form\AdresseSoutenance\AdresseSoutenanceHydrator;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportForm;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportFormFactory;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportHydrator;
-use Soutenance\Form\InitCompte\InitCompteForm;
-use Soutenance\Form\InitCompte\InitCompteFormFactory;
 use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
 use Soutenance\Provider\Privilege\EngagementImpartialitePrivileges;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
@@ -61,11 +59,20 @@ return [
                         'feu-vert',
                         'stopper-demarche',
                         'avis-soutenance',
-                        'convocation',
+                        'convocations',
                         'proces-verbal-soutenance',
                         'modifier-adresse',
+                        'envoyer-convocation',
                     ],
                     'privileges' => PresoutenancePrivileges::PRESOUTENANCE_DATE_RETOUR_MODIFICATION,
+                ],
+                [
+                    'controller' => PresoutenanceController::class,
+                    'action'     => [
+                        'convocation-doctorant',
+                        'convocation-membre',
+                    ],
+                    'roles' => [],
                 ],
                 [
                     'controller' => PresoutenanceController::class,
@@ -138,14 +145,47 @@ return [
                                     ],
                                 ],
                             ],
-                            'convocation' => [
+                            'convocations' => [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/convocation',
+                                    'route'    => '/convocations',
                                     'defaults' => [
                                         'controller' => PresoutenanceController::class,
-                                        'action'     => 'convocation',
+                                        'action'     => 'convocations',
+                                    ],
+                                ],
+                            ],
+                            'convocation-doctorant' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/convocation-doctorant',
+                                    'defaults' => [
+                                        'controller' => PresoutenanceController::class,
+                                        'action'     => 'convocation-doctorant',
+                                    ],
+                                ],
+                            ],
+                            'convocation-membre' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/convocation-membre/:membre',
+                                    'defaults' => [
+                                        'controller' => PresoutenanceController::class,
+                                        'action'     => 'convocation-membre',
+                                    ],
+                                ],
+                            ],
+                            'envoyer-convocation' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/envoyer-convocation',
+                                    'defaults' => [
+                                        'controller' => PresoutenanceController::class,
+                                        'action'     => 'envoyer-convocation',
                                     ],
                                 ],
                             ],

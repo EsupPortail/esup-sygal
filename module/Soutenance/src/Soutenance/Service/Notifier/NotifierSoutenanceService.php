@@ -2,6 +2,7 @@
 
 namespace Soutenance\Service\Notifier;
 
+use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\These;
@@ -9,8 +10,11 @@ use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Validation;
 use Application\Entity\Db\Variable;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
+use Application\Service\FichierThese\PdcData;
 use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
+use DateTime;
 use Notification\Notification;
 use Notification\Service\NotifierService;
 use Soutenance\Entity\Avis;
@@ -27,6 +31,7 @@ class NotifierSoutenanceService extends NotifierService {
     use MembreServiceAwareTrait;
     use RoleServiceAwareTrait;
     use VariableServiceAwareTrait;
+    use TheseServiceAwareTrait;
 
     /**
      * @var UrlHelper
@@ -649,6 +654,63 @@ class NotifierSoutenanceService extends NotifierService {
                 ]);
             $this->trigger($notif);
         }
+    }
+
+    /**
+     * @param Doctorant $doctorant
+     * @param Proposition $proposition
+     * @param DateTime $date
+     * @param string $email
+     * @param string $url
+     */
+    public function triggerEnvoiConvocationDoctorant(Doctorant $doctorant, Proposition $proposition, DateTime $date, $email, $url)
+    {
+        if ($email === null) throw new LogicException("Aucun mail n'est fourni pour l'envoi de la convocation.",0);
+
+        $notif = new Notification();
+        $notif
+            ->setSubject("Convocation pour la soutenance de thèse de  " . $doctorant->getNomComplet())
+            ->setTo($email)
+            ->setTemplatePath('soutenance/notification/convocation-doctorant')
+            ->setTemplateVariables([
+                'these' => $proposition->getThese(),
+                'proposition' => $proposition,
+                'doctorant' => $doctorant,
+                'date' => $date,
+                'url' => $url,
+            ]);
+        $this->trigger($notif);
+    }
+
+    /**
+     * @param Membre $membre
+     * @param Proposition $proposition
+     * @param DateTime $date
+     * @param string $email
+     * @param string $url
+     */
+    public function triggerEnvoiConvocationMembre(Membre $membre, Proposition $proposition, DateTime $date, $email, $url)
+    {
+        if ($email === null) throw new LogicException("Aucun mail n'est fourni pour l'envoi de la convocation.",0);
+
+        $doctorant = $proposition->getThese()->getDoctorant();
+        $these = $proposition->getThese();
+        $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
+
+        $notif = new Notification();
+        $notif
+            ->setSubject("Convocation pour la soutenance de thèse de  " . $doctorant->getNomComplet())
+            ->setTo($email)
+            ->setTemplatePath('soutenance/notification/convocation-membre')
+            ->setTemplateVariables([
+                'these' => $these,
+                'proposition' => $proposition,
+                'informations' => $pdcData,
+                'date' => $date,
+                'membre' => $membre,
+                'url' => $url,
+            ]);
+        $this->trigger($notif);
     }
 
 }
