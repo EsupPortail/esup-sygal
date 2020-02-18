@@ -139,8 +139,8 @@ $civilite = ($these->getDoctorant()->getIndividu()->getCivilite() === 'M.')?"Mon
             À <?php echo $ville; ?>, le <?php echo $date->format('d/m/Y'); ?>
             <br/>
             <br/>
-            Le Responsable de la Direction Recherche et Innovation.<br/>
-            <span class="not-yet">NOM RESPONSABLE,</span> <br/>
+            Visa de l'établissement d'inscription du doctorant,<br/>
+            <?php echo $these->getEtablissement()->getLibelle(); ?>
         </td>
     </tr>
 </table>
