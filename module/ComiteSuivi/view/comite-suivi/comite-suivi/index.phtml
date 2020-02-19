@@ -1,0 +1,136 @@
+<?php
+
+/**
+ * @var These $these
+ * @var ComiteSuivi[] $comites[]
+ */
+
+use Application\Entity\Db\These;
+use ComiteSuivi\Entity\Db\ComiteSuivi;
+
+$canAjouter = true;
+$canAfficher = true;
+$canModifier = true;
+$canHistoriser = true;
+$canSupprimer = true;
+
+?>
+
+<?php if ($these === null) : ?>
+
+    <h1 class="page-header">
+        Index de la gestion des comités de suivi
+    </h1>
+
+<?php else : ?>
+
+    <h1 class="page-header">
+        Comité de suivi de la thèse de
+<!--        <small>-->
+            <?php echo $this->partial('application/these/partial/titre') ?>
+<!--        </small>-->
+    </h1>
+
+    <div class="main">
+        <div class="row">
+
+            <div class="col-md-8">
+                <p class="lead">
+                    Le suivi de la thèse entraine chaque année un comité ...
+                </p>
+            </div>
+
+            <div class="col-md-4">
+                <?php if ($canAjouter): ?>
+                    <a
+                        <?php /** @see \ComiteSuivi\Controller\ComiteSuiviController::ajouterAction() */?>
+                        href="<?php echo $this->url('comite-suivi/ajouter', ['these' => $these->getId()], [], true); ?>"
+                       class="btn btn-primary ajax-modal"
+                       data-event="ajout-comite"
+                    >
+                            <span class="glyphicon glyphicon-plus"></span>
+                            Ajouter un comité de suivi
+                    </a>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <h2>
+            Liste des comité de suivi de thèse
+            <span class="badge"><?php echo count($comites); ?></span>
+        </h2>
+
+        <table class="table table-condensed">
+            <thead>
+                <tr>
+                    <th> Année de thèse </th>
+                    <th> Année scolaire </th>
+                    <th> Date du comité </th>
+                    <th> Nb. de membres </th>
+                    <th> Examinateurs </th>
+                    <th> Action </th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($comites as $comite) : ?>
+                    <tr>
+                        <td> <?php echo ($comite->getAnneeThese())?:"N.C."; ?></td>
+                        <td> <?php echo ($comite->getAnneeScolaire())?:"N.C."; ?></td>
+                        <td> <?php echo ($comite->getDateComite())?$comite->getDateComite()->format('d/m/Y'):"N.C."; ?></td>
+                        <td> <?php echo count($comite->getMembres()); ?></td>
+                        <td> </td>
+                        <td>
+                            <?php if ($canAfficher) : ?>
+                                <span class="glyphicon glyphicon-eye-open"></span>
+                            <?php endif; ?>
+                            <?php if ($canModifier) : ?>
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            <?php endif; ?>
+                            <?php if ($canHistoriser) : ?>
+                                <?php if ($comite->estNonHistorise()) : ?>
+                                    <a
+                                        <?php /** @see \ComiteSuivi\Controller\ComiteSuiviController::historiserAction() */?>
+                                        href="<?php echo $this->url('comite-suivi/historiser', ['these' => $comite->getThese()->getId(), 'comite-suivi' => $comite->getId()], [], true); ?>"
+                                        title="Historiser l'instance du comité"
+                                    >
+                                        <span class="glyphicon glyphicon-trash"></span>
+                                    </a>
+                                <?php else: ?>
+                                    <a
+                                        <?php /** @see \ComiteSuivi\Controller\ComiteSuiviController::restaurerAction() */?>
+                                        href="<?php echo $this->url('comite-suivi/restaurer', ['these' => $comite->getThese()->getId(), 'comite-suivi' => $comite->getId()], [], true); ?>"
+                                        title="Restaurer l'instance du comité"
+                                    >
+                                        <span class="glyphicon glyphicon-leaf"></span>
+                                    </a>
+                                <?php endif; ?>
+                            <?php endif; ?>
+                            <?php if ($canSupprimer) : ?>
+                                <a
+                                    <?php /** @see \ComiteSuivi\Controller\ComiteSuiviController::supprimerAction() */?>
+                                    href="<?php echo $this->url('comite-suivi/supprimer', ['these' => $comite->getThese()->getId(), 'comite-suivi' => $comite->getId()], [], true); ?>"
+                                    class="ajax-modal" data-event="modification"
+                                    title="Supprimer définitivement l'instance du comité"
+                                >
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                </a>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+
+
+
+<?php endif; ?>
+
+<script>
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+</script>

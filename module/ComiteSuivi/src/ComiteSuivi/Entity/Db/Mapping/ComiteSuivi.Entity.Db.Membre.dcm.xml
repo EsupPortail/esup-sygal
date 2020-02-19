@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="ComiteSuivi\Entity\Db\Membre" table="COMITE_MEMBRE">
+        <id name="id" type="integer" column="ID">
+            <generator strategy="SEQUENCE"/>
+        </id>
+
+        <many-to-one field="comite" target-entity="ComiteSuivi\Entity\Db\ComiteSuivi">
+            <join-columns>
+                <join-column name="COMITE_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
+        <many-to-one field="individu" target-entity="Application\Entity\Db\Individu">
+            <join-columns>
+                <join-column name="INDIVIDU_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
+        <many-to-one field="role" target-entity="Application\Entity\Db\Role">
+            <join-columns>
+                <join-column name="ROLE_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
+        <field name="prenom"                 type="string"   column="PRENOM"                     length="1024"     nullable="true"/>
+        <field name="nom"                    type="string"   column="NOM"                        length="1024"     nullable="true"/>
+        <field name="etablissement"          type="string"   column="ETABLISSEMENT"              length="1024"     nullable="true"/>
+        <field name="email"                  type="string"   column="EMAIL"                      length="1024"     nullable="true"/>
+
+        <!-- historisation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+        <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
+        <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
+        <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
+        <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
+            <join-columns>
+                <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
+            <join-columns>
+                <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur">
+            <join-columns>
+                <join-column name="HISTO_DESTRUCTEUR_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+    </entity>
+</doctrine-mapping>

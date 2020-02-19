@@ -21,6 +21,7 @@ $modules = [
     'Retraitement',
     'Notification',
     'Information',
+    'ComiteSuivi',
     'Application',
 ];
 if (php_sapi_name() === 'cli') {
