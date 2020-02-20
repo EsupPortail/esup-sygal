@@ -23,7 +23,7 @@ class ComiteSuivi {
     /** @var ArrayCollection (Membre) */
     private $membres;
     /** @var ArrayCollection (CompteRendu) */
-    private $compterendus;
+    private $comptesrendus;
 
     //$validations;
 
@@ -118,13 +118,18 @@ class ComiteSuivi {
     }
 
     /**
-     * @return array
+     * @return Membre[]
      */
     public function getMembres()
     {
         return $this->membres->toArray();
     }
 
-
-
+    /**
+     * @return CompteRendu[]
+     */
+    public function getComptesRendus()
+    {
+        return $this->comptesrendus->toArray();
+    }
 }

@@ -1,0 +1,26 @@
+<?php
+
+/**
+ * @var ComiteSuivi $comite
+ * @var Membre[] $examinateurs
+ */
+
+use ComiteSuivi\Entity\Db\ComiteSuivi;
+use ComiteSuivi\Entity\Db\Membre;
+
+?>
+
+<form action="<?php echo $this->url('compte-rendu/ajouter', ['comite-suivi' => $comite->getId()], [], true);?> " method="post">
+    <label for="examinateur">Examinateur rédigeant le compte-rendu </label>
+    <select class="selectpicker" name="examinateur" id="examinateur">
+        <option value="">Choisissez un examinateur ... </option>
+        <?php foreach ($examinateurs as $examinateur) : ?>
+            <option value="<?php echo $examinateur->getId(); ?>"><?php echo $examinateur->getDenomination(); ?></option>
+        <?php endforeach; ?>
+    </select>
+    <input type="submit"  class="btn btn-primary" value="Sélectionner"/>
+</form>
+
+<script>
+    $('select.selectpicker').selectpicker();
+</script>

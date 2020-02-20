@@ -1,0 +1,41 @@
+<?php
+
+/**
+ * @see \ComiteSuivi\Controller\CompteRenduController::modifierAction()
+ *
+ * @var ComiteSuivi $comite
+ * @var CompteRendu $compterendu
+ * @var CompteRenduForm $form
+ */
+
+use ComiteSuivi\Entity\Db\ComiteSuivi;
+use ComiteSuivi\Entity\Db\CompteRendu;
+use ComiteSuivi\Form\CompteRendu\CompteRenduForm;
+
+?>
+
+<?php echo $this->form($form); ?>
+
+<script>
+    $(document).ready(function() {
+        tinymce.remove();
+        tinymce.init({
+            selector: '.word',
+            toolbar: 'newdocument undo redo | bold italic | bullist numlist',
+            resize: true,
+            language: 'fr_FR',
+            plugins: 'lists',
+            statusbar: true,
+            browser_spellcheck: true,
+            branding: false,
+            menu: {},
+            body_id: 'motif',
+            setup: function (editor) {
+                editor.on("focusout", function () {
+                    //console.log(tinymce.get('description').getContent());
+                    $('textarea#description').val(tinymce.get('description').getContent());
+                });
+            }
+        });
+    });
+</script>

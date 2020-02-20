@@ -14,6 +14,9 @@ $canModifier = true;
 $canHistoriser = true;
 $canSupprimer = true;
 
+$titre = "Comités de suivi de thèse";
+if ($these) $titre .= " de ".$these->getDoctorant()->getIndividu()->getNomComplet();
+$this->headTitle($titre);
 ?>
 
 <?php if ($these === null) : ?>
@@ -25,10 +28,8 @@ $canSupprimer = true;
 <?php else : ?>
 
     <h1 class="page-header">
-        Comité de suivi de la thèse de
-<!--        <small>-->
-            <?php echo $this->partial('application/these/partial/titre') ?>
-<!--        </small>-->
+        Comités de suivi de la thèse de
+        <?php echo $this->partial('application/these/partial/titre') ?>
     </h1>
 
     <div class="main">
@@ -74,17 +75,30 @@ $canSupprimer = true;
             <tbody>
                 <?php foreach ($comites as $comite) : ?>
                     <tr>
-                        <td> <?php echo ($comite->getAnneeThese())?:"N.C."; ?></td>
+                        <td> <?php echo ($comite->getAnneeThese())?$this->anneeThese($comite->getAnneeThese()):"N.C."; ?></td>
                         <td> <?php echo ($comite->getAnneeScolaire())?:"N.C."; ?></td>
                         <td> <?php echo ($comite->getDateComite())?$comite->getDateComite()->format('d/m/Y'):"N.C."; ?></td>
                         <td> <?php echo count($comite->getMembres()); ?></td>
                         <td> </td>
                         <td>
                             <?php if ($canAfficher) : ?>
-                                <span class="glyphicon glyphicon-eye-open"></span>
+                                <a
+                                    <?php /** @see \ComiteSuivi\Controller\ComiteSuiviController::afficherAction() */?>
+                                        href="<?php echo $this->url('comite-suivi/afficher', ['these' => $comite->getThese()->getId(), 'comite-suivi' => $comite->getId()], [], true); ?>"
+                                        class="ajax-modal"
+                                        title="Historiser l'instance du comité"
+                                >
+                                    <span class="glyphicon glyphicon-eye-open"></span>
+                                </a>
                             <?php endif; ?>
                             <?php if ($canModifier) : ?>
-                                <span class="glyphicon glyphicon-pencil"></span>
+                                <a
+                                    <?php /** @see \ComiteSuivi\Controller\ComiteSuiviController::modifierAction() */?>
+                                        href="<?php echo $this->url('comite-suivi/modifier', ['these' => $comite->getThese()->getId(), 'comite-suivi' => $comite->getId()], [], true); ?>"
+                                        title="Historiser l'instance du comité"
+                                >
+                                    <span class="glyphicon glyphicon-pencil"></span>
+                                </a>
                             <?php endif; ?>
                             <?php if ($canHistoriser) : ?>
                                 <?php if ($comite->estNonHistorise()) : ?>

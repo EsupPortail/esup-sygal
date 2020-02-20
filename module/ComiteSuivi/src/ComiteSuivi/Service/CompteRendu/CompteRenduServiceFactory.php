@@ -1,17 +1,13 @@
 <?php
 
-namespace ComiteSuivi\Service\ComiteSuivi;
+namespace ComiteSuivi\Service\CompteRendu;
 
 use Application\Service\UserContextService;
 use Doctrine\ORM\EntityManager;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class ComiteSuiviServiceFactory {
+class CompteRenduServiceFactory {
 
-    /**
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return ComiteSuiviService
-     */
     public function __invoke(ServiceLocatorInterface $serviceLocator)
     {
         /**
@@ -21,11 +17,12 @@ class ComiteSuiviServiceFactory {
         $entityManager = $serviceLocator->get('doctrine.entitymanager.orm_default');
         $userContextService = $serviceLocator->get('authUserContext');
 
-        /** @var ComiteSuiviService $service */
-        $service = new ComiteSuiviService();
+        /** @var CompteRenduService $service */
+        $service = new CompteRenduService();
         $service->setEntityManager($entityManager);
         $service->setUserContextService($userContextService);
 
         return $service;
+
     }
 }

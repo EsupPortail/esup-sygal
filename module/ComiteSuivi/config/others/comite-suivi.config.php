@@ -10,6 +10,7 @@ use ComiteSuivi\Form\ComiteSuivi\ComiteSuiviHydrator;
 use ComiteSuivi\Form\ComiteSuivi\ComiteSuiviHydratorFactory;
 use ComiteSuivi\Service\ComiteSuivi\ComiteSuiviService;
 use ComiteSuivi\Service\ComiteSuivi\ComiteSuiviServiceFactory;
+use ComiteSuivi\View\Helper\AnneeTheseViewHelper;
 use UnicaenAuth\Guard\PrivilegeController;
 use Zend\Mvc\Router\Http\Literal;
 use Zend\Mvc\Router\Http\Segment;
@@ -28,6 +29,14 @@ return [
                         'restaurer',
                         'afficher',
                         'modifier',
+                        'modifier-infos',
+
+                        'ajouter-membre',
+                        'modifier-membre',
+                        'historiser-membre',
+                        'restaurer-membre',
+                        'supprimer-membre',
+                        'lier-membre',
                     ],
                     'privileges' => [
                         StructurePrivileges::STRUCTURE_CONSULTATION_SES_STRUCTURES,
@@ -79,6 +88,16 @@ return [
                             ],
                         ],
                     ],
+                    'modifier-infos' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'    => '/modifier-infos/:comite-suivi',
+                            'defaults' => [
+                                'controller'    => ComiteSuiviController::class,
+                                'action'        => 'modifier-infos',
+                            ],
+                        ],
+                    ],
                     'historiser' => [
                         'type'          => Segment::class,
                         'options'       => [
@@ -106,6 +125,66 @@ return [
                             'defaults' => [
                                 'controller'    => ComiteSuiviController::class,
                                 'action'        => 'supprimer',
+                            ],
+                        ],
+                    ],
+                    'ajouter-membre' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'    => '/ajouter-membre/:comite-suivi',
+                            'defaults' => [
+                                'controller'    => ComiteSuiviController::class,
+                                'action'        => 'ajouter-membre',
+                            ],
+                        ],
+                    ],
+                    'modifier-membre' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'    => '/modifier-membre/:membre',
+                            'defaults' => [
+                                'controller'    => ComiteSuiviController::class,
+                                'action'        => 'modifier-membre',
+                            ],
+                        ],
+                    ],
+                    'restaurer-membre' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'    => '/restaurer-membre/:membre',
+                            'defaults' => [
+                                'controller'    => ComiteSuiviController::class,
+                                'action'        => 'restaurer-membre',
+                            ],
+                        ],
+                    ],
+                    'historiser-membre' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'    => '/historiser-membre/:membre',
+                            'defaults' => [
+                                'controller'    => ComiteSuiviController::class,
+                                'action'        => 'historiser-membre',
+                            ],
+                        ],
+                    ],
+                    'supprimer-membre' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'    => '/supprimer-membre/:membre',
+                            'defaults' => [
+                                'controller'    => ComiteSuiviController::class,
+                                'action'        => 'supprimer-membre',
+                            ],
+                        ],
+                    ],
+                    'lier-membre' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'    => '/lier-membre/:membre',
+                            'defaults' => [
+                                'controller'    => ComiteSuiviController::class,
+                                'action'        => 'lier-membre',
                             ],
                         ],
                     ],
@@ -149,7 +228,9 @@ return [
         ],
     ],
     'view_helpers' => [
-        'invokables' => [],
+        'invokables' => [
+            'anneeThese' => AnneeTheseViewHelper::class,
+        ],
         'factories' => [],
     ],
 ];

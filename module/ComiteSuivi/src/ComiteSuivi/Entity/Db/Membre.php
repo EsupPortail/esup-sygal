@@ -88,7 +88,7 @@ class Membre {
     }
 
     /**
-     * @return string
+     * @return Role
      */
     public function getRole()
     {
@@ -96,7 +96,7 @@ class Membre {
     }
 
     /**
-     * @param string $role
+     * @param Role $role
      * @return Membre
      */
     public function setRole($role)
@@ -175,6 +175,11 @@ class Membre {
     {
         $this->email = $email;
         return $this;
+    }
+
+    public function getDenomination()
+    {
+        return $this->prenom." ".$this->nom;
     }
 
 }

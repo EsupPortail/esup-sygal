@@ -1,0 +1,212 @@
+<?php
+
+namespace ComiteSuivi\Service\Membre;
+
+use Application\Service\UserContextServiceAwareTrait;
+use ComiteSuivi\Entity\DateTimeTrait;
+use ComiteSuivi\Entity\Db\ComiteSuivi;
+use ComiteSuivi\Entity\Db\Membre;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\ORMException;
+use Doctrine\ORM\QueryBuilder;
+use UnicaenApp\Exception\RuntimeException;
+use UnicaenApp\Service\EntityManagerAwareTrait;
+use Zend\Mvc\Controller\AbstractActionController;
+
+class MembreService {
+    use EntityManagerAwareTrait;
+    use DateTimeTrait;
+    use UserContextServiceAwareTrait;
+
+    /** GESTION DES ENTITES *******************************************************************************************/
+
+    /**
+     * @param Membre $membre
+     * @return Membre
+     */
+    public function create(Membre $membre)
+    {
+        $date = $this->getDateTime();
+        $user = $this->userContextService->getIdentityDb();
+        $membre->setHistoCreateur($user);
+        $membre->setHistoCreation($date);
+        $membre->setHistoModificateur($user);
+        $membre->setHistoModification($date);
+
+        try {
+            $this->getEntityManager()->persist($membre);
+            $this->getEntityManager()->flush($membre);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Un problème est survenu lors de l'enregistrement en base.",0,$e);
+        }
+
+        return $membre;
+    }
+
+    /**
+     * @param Membre $membre
+     * @return Membre
+     */
+    public function update(Membre $membre)
+    {
+        $date = $this->getDateTime();
+        $user = $this->userContextService->getIdentityDb();
+        $membre->setHistoModificateur($user);
+        $membre->setHistoModification($date);
+
+        try {
+            $this->getEntityManager()->flush($membre);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Un problème est survenu lors de l'enregistrement en base.",0,$e);
+        }
+
+        return $membre;
+    }
+
+    /**
+     * @param Membre $membre
+     * @return Membre
+     */
+    public function historise(Membre $membre)
+    {
+        $date = $this->getDateTime();
+        $user = $this->userContextService->getIdentityDb();
+        $membre->setHistoDestructeur($user);
+        $membre->setHistoDestruction($date);
+
+        try {
+            $this->getEntityManager()->flush($membre);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Un problème est survenu lors de l'enregistrement en base.",0,$e);
+        }
+
+        return $membre;
+    }
+
+    /**
+     * @param Membre $membre
+     * @return Membre
+     */
+    public function restore(Membre $membre)
+    {
+        $membre->setHistoDestructeur(null);
+        $membre->setHistoDestruction(null);
+
+        try {
+            $this->getEntityManager()->persist($membre);
+            $this->getEntityManager()->flush($membre);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Un problème est survenu lors de l'enregistrement en base.",0,$e);
+        }
+
+        return $membre;
+    }
+
+    /**
+     * @param Membre $membre
+     * @return Membre
+     */
+    public function delete(Membre $membre)
+    {
+        try {
+            $this->getEntityManager()->remove($membre);
+            $this->getEntityManager()->flush($membre);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Un problème est survenu lors de l'enregistrement en base.",0,$e);
+        }
+
+        return $membre;
+    }
+
+    /** REQUETAGE *****************************************************************************************************/
+
+    /**
+     * @return QueryBuilder
+     */
+    public function createQueryBuilder() {
+        $qb = $this->getEntityManager()->getRepository(Membre::class)->createQueryBuilder('membre')
+            ->addSelect('comite')->join('membre.comite', 'comite')
+            ->addSelect('role')->join('membre.role', 'role')
+            ->addSelect('individu')->leftJoin('membre.individu', 'individu')
+        ;
+        return $qb;
+    }
+
+    /**
+     * @param string $champ
+     * @param string $ordre
+     * @return Membre[]
+     */
+    public function getMembres($champ = 'id', $ordre = 'ASC')
+    {
+        $qb = $this->createQueryBuilder()
+            ->orderBy('membre.' . $champ, $ordre)
+        ;
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
+
+    /**
+     * @param $id
+     * @return Membre
+     */
+    public function getMembre($id) {
+        $qb = $this->createQueryBuilder()
+            ->andWhere('membre.id = :id')
+            ->setParameter('id', $id)
+        ;
+
+        try {
+            $result = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException('Plusieurs Membre patagent le même id [".$id."]', 0, $e);
+        }
+        return $result;
+    }
+
+    /**
+     * @param AbstractActionController $controller
+     * @param string $param
+     * @return Membre
+     */
+    public function getRequestedMembre($controller, $param = 'membre')
+    {
+        $id = $controller->params()->fromRoute($param);
+        $result = $this->getMembre($id);
+        return $result;
+    }
+
+    /**
+     * @param ComiteSuivi $comite
+     * @return Membre[]
+     */
+    public function getExaminateurs(ComiteSuivi $comite)
+    {
+        $qb = $this->createQueryBuilder()
+            ->andWhere('membre.comite = :comite')
+            ->setParameter('comite', $comite)
+            ->andWhere('role.code = :examinateur')
+            ->setParameter('examinateur', Membre::ROLE_EXAMINATEUR_CODE)
+            ->andWhere('membre.histoDestruction IS NULL')
+            ->orderBy('membre.nom, membre.prenom', 'ASC')
+        ;
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
+
+    /**
+     * @param ComiteSuivi $comite
+     * @return array
+     */
+    public function getExaminateursAsOptions(ComiteSuivi $comite)
+    {
+        $examinateurs = $this->getExaminateurs($comite);
+        $array = [];
+        foreach ($examinateurs as $examinateur) {
+            $array[$examinateur->getId()] = $examinateur->getDenomination();
+        }
+        return $array;
+    }
+}

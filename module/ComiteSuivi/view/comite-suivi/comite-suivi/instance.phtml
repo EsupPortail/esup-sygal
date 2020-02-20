@@ -1,0 +1,296 @@
+<?php
+
+use Application\Entity\Db\These;
+use ComiteSuivi\Entity\Db\ComiteSuivi;
+use ComiteSuivi\Entity\Db\Membre;
+
+/**
+ * @var These $these
+ * @var ComiteSuivi $comite
+ * @var string $action
+ */
+
+$membres = $comite->getMembres();
+$comptesrendus = $comite->getComptesRendus();
+
+$canModifier = true;
+$canAjouterMembre = true;
+$canModifierMembre = true;
+$canHistoriserMembre = true;
+$canSupprimerMembre = true;
+$canLierMembre = true;
+
+$canAfficherCompteRendu= true;
+$canModifierCompteRendu= true;
+$canHistoriserCompteRendu= true;
+$canSupprimerCompteRendu= true;
+
+$canValider = true;
+
+?>
+
+<?php if($action === 'modifier'): ?>
+    <h1 class="page-header">
+        Comité de suivi de thèse pour la <?php echo strtolower($this->anneeThese($comite->getAnneeThese())); ?> de la thèse de
+        <?php echo $this->partial('application/these/partial/titre') ?>
+    </h1>
+<?php endif; ?>
+
+<div class="main">
+    <?php if($action === 'modifier'): ?>
+        <a  <?php /** @see \ComiteSuivi\Controller\ComiteSuiviController::afficherAction() */?>
+            href="<?php echo $this->url('comite-suivi', ['these' => $these->getId()], [], true); ?>"
+            class="btn btn-info action">
+            <span class="glyphicon glyphicon-chevron-left"></span> Retour aux comités
+        </a>
+    <?php endif; ?>
+
+    <!-- INFORMATIONS ------------------------------------------------------------------------------------------------->
+
+    <div class="row">
+        <div class="col-md-8">
+            <h2>
+                Informations sur le comité
+            </h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <dl class="dl-horizontal">
+                <dt> Date du comité</dt>
+                <dd>
+                    <?php if ($comite->getDateComite()): ?>
+                        <?php echo $comite->getDateComite()->format('d/m/y'); ?>
+                    <?php else : ?>
+                        Non communiquée
+                    <?php endif; ?>
+                </dd>
+                <dt> Année de thèse </dt>
+                <dd>
+                    <?php echo $this->anneeThese($comite->getAnneeThese()); ?>
+                </dd>
+                <dt> Année scolaire </dt>
+                <dd>
+                    <?php echo $comite->getAnneeScolaire(); ?>
+                </dd>
+                <dt> Validation de l'ED </dt>
+                <dd> <span style="color:darkred;">TODO</span> </dd>
+            </dl>
+        </div>
+        <div class="col-md-4">
+            <?php if($action === 'modifier' AND $canModifier): ?>
+                <a  <?php /** @see \ComiteSuivi\Controller\ComiteSuiviController::modifierInfosAction() */?>
+                    href="<?php echo $this->url('comite-suivi/modifier-infos',['these' => $these->getId(), 'comite-suivi' => $comite->getId()],[], true); ?>"
+                    class="btn btn-primary action ajax-modal"
+                    data-event="modification"
+                >
+                    <span class="glyphicon glyphicon-pencil"></span>
+                    Modifier les infos
+                </a>
+            <?php endif; ?>
+            <br/>
+            <br/>
+            <?php if ($action === 'modifier' AND $canValider): ?>
+                <a
+                    class="btn btn-success action">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    Valider le comité
+                </a>
+            <br/>
+                <a
+                    class="btn btn-danger action">
+                    <span class="glyphicon glyphicon-remove"></span>
+                    Refuser le comité
+                </a>
+            <?php endif; ?>
+        </div>
+    </div>
+
+<!-- COMPOSITION DU COMITE -------------------------------------------------------------------------------------------->
+
+    <div class="row">
+        <div class="col-md-8">
+            <h2>
+                Composition du comité de suivi de thèse
+                <span class="badge">
+                    <?php echo count($membres); ?>
+                </span>
+            </h2>
+        </div>
+        <div class="col-md-4">
+            <br/>
+            <?php if ($canAjouterMembre AND $action === 'modifier'): ?>
+                <a  <?php /** @see \ComiteSuivi\Controller\ComiteSuiviController::ajouterMembreAction() */?>
+                    href="<?php echo $this->url('comite-suivi/ajouter-membre',['these' => $these->getId(), 'comite-suivi' => $comite->getId()],[], true); ?>"
+                    class="btn btn-primary action ajax-modal"
+                    data-event="modification"
+                >
+                    <span class="glyphicon glyphicon-plus"></span>
+                    Ajouter un membre
+                </a>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <table class="table table-condensed">
+        <thead>
+        <tr>
+            <th>Prénom</th>
+            <th>Nom</th>
+            <th>Établissement</th>
+            <th>Rôle</th>
+            <th>Email</th>
+            <th>Lien SyGAL </th>
+            <?php if ($action === 'modifier') : ?>
+                <th>Action </th>
+            <?php endif; ?>
+        </tr>
+        </thead>
+
+        <tbody>
+        <?php foreach($membres as $membre): ?>
+            <tr>
+                <td> <?php echo $membre->getPrenom(); ?></td>
+                <td> <?php echo $membre->getNom(); ?></td>
+                <td> <?php echo $membre->getEtablissement(); ?></td>
+                <td> <?php echo $membre->getRole(); ?></td>
+                <td> <?php echo $membre->getEmail(); ?></td>
+                <td>
+                    <?php if ($membre->getIndividu()) : ?>
+                        <?php echo $membre->getIndividu()->getSourceCode(); ?>
+                    <?php else : ?>
+                        Aucun individu
+                    <?php endif; ?>
+                </td>
+                <?php if ($action === 'modifier') : ?>
+                    <td>
+                        <?php if ($canModifierMembre) : ?>
+                            <a  <?php /** @see \ComiteSuivi\Controller\ComiteSuiviController::modifierMembreAction() */?>
+                                    href="<?php echo $this->url('comite-suivi/modifier-membre',['these' => $these->getId(), 'comite-suivi' => $comite->getId(), 'membre' => $membre->getId()],[], true); ?>"
+                                    class="ajax-modal"
+                                    data-event="modification"
+                                    title="Modifier le membre du comité"
+                            ><span class="glyphicon glyphicon-pencil"></span></a>
+                        <?php endif; ?>
+                        L
+                        <?php if ($canHistoriserMembre): ?>
+                            <?php if ($membre->estNonHistorise()) : ?>
+                                <a  <?php /** @see \ComiteSuivi\Controller\ComiteSuiviController::historiserMembreAction() */?>
+                                    href="<?php echo $this->url('comite-suivi/historiser-membre',['these' => $these->getId(), 'comite-suivi' => $comite->getId(), 'membre' => $membre->getId()],[], true); ?>"
+                                    title="Historiser le membre du comité"
+                                ><span class="glyphicon glyphicon-trash"></span></a>
+                            <?php else: ?>
+                                <a  <?php /** @see \ComiteSuivi\Controller\ComiteSuiviController::restaurerMembreAction() */?>
+                                    href="<?php echo $this->url('comite-suivi/restaurer-membre',['these' => $these->getId(), 'comite-suivi' => $comite->getId(), 'membre' => $membre->getId()],[], true); ?>"
+                                    title="Restaurer le membre du comité"
+                                ><span class="glyphicon glyphicon-leaf"></span></a>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                        <?php if ($canSupprimerMembre): ?>
+                            <a  <?php /** @see \ComiteSuivi\Controller\ComiteSuiviController::supprimerMembreAction() */?>
+                                href="<?php echo $this->url('comite-suivi/supprimer-membre',['these' => $these->getId(), 'comite-suivi' => $comite->getId(), 'membre' => $membre->getId()],[], true); ?>"
+                                title="Supprimer définitivement le membre du comité"
+                            ><span class="glyphicon glyphicon-remove"></span></a>
+                        <?php endif; ?>
+                    </td>
+                <?php endif; ?>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+
+    <!-- COMPTE-RENDU ------------------------------------------------------------------------------------------------->
+
+    <div class="row">
+        <div class="col-md-8">
+            <h2>
+                Comptes-rendus
+                <span class="badge">
+            <?php echo count($comptesrendus); ?>
+        </span>
+            </h2>
+        </div>
+        <div class="col-md-4">
+            <br/>
+            <?php if ($canAjouterMembre AND $action === 'modifier'): ?>
+                <a  <?php /** @see \ComiteSuivi\Controller\CompteRenduController::ajouterAction() */?>
+                        href="<?php echo $this->url('compte-rendu/ajouter',['comite-suivi' => $comite->getId()],[], true); ?>"
+                        class="btn btn-primary action ajax-modal"
+                        data-event="modification"
+                >
+                    <span class="glyphicon glyphicon-plus"></span>
+                    Ajouter un compte-rendu
+                </a>
+            <?php endif; ?>
+        </div>
+    </div>
+
+
+    <?php if (empty($comptesrendus)): ?>
+        Aucun compte-rendu.
+    <?php else: ?>
+    <ul>
+        <?php foreach ($comptesrendus as $compterendu): ?>
+            <li>
+                <?php if ($canAfficherCompteRendu): ?>
+                    <a href="<?php echo $this->url('compte-rendu/afficher', ['compte-rendu' => $compterendu->getId()], [], true); ?>"
+                       target="_blank"
+                       title="Afficher le compte rendu de <?php echo $compterendu->getMembre()->getDenomination(); ?>"
+                    >
+                <?php endif; ?>
+                    Compte-rendu de <?php echo $compterendu->getMembre()->getDenomination(); ?>
+                <?php if ($canAfficherCompteRendu): ?>
+                    </a>
+                <?php endif; ?>
+                (Dernière modification <?php echo $compterendu->getHistoModification()->format('d/m/Y à H:i'); ?>)
+                <?php if ($action === 'modifier') : ?>
+                    <?php if($canModifierCompteRendu) : ?>
+                        <a  <?php /** @see \ComiteSuivi\Controller\CompteRenduController::modifierAction() */?>
+                            href="<?php echo $this->url('compte-rendu/modifier', ['compte-rendu' => $compterendu->getId()], [], true); ?>"
+                            title="Modifier le compte-rendu">
+                                <span class="glyphicon glyphicon-pencil"></span></a>
+                    <?php endif; ?>
+                    <?php if($canHistoriserCompteRendu) : ?>
+                        <?php if ($compterendu->estNonHistorise()) : ?>
+                            <a  <?php /** @see \ComiteSuivi\Controller\CompteRenduController::historiserAction() */?>
+                                href="<?php echo $this->url('compte-rendu/historiser', ['compte-rendu' => $compterendu->getId()], [], true); ?>"
+                                title="Historiser définitivement le compte-rendu">
+                                <span class="glyphicon glyphicon-trash"></span></a>
+                        <?php else: ?>
+                            <a  <?php /** @see \ComiteSuivi\Controller\CompteRenduController::restaureAction() */?>
+                                href="<?php echo $this->url('compte-rendu/restaurer', ['compte-rendu' => $compterendu->getId()], [], true); ?>"
+                                title="Restaurer définitivement le compte-rendu">
+                                <span class="glyphicon glyphicon-leaf"></span></a>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                    <?php if($canHistoriserCompteRendu) : ?>
+                        <a  <?php /** @see \ComiteSuivi\Controller\CompteRenduController::supprimerAction() */?>
+                            href="<?php echo $this->url('compte-rendu/modifier', ['compte-rendu' => $compterendu->getId()], [], true); ?>"
+                            title="Supprimer définitivement le compte-rendu">
+                                <span class="glyphicon glyphicon-remove"></span></a>
+                    <?php endif; ?>
+                <?php endif; ?>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+    <?php endif; ?>
+</div>
+
+<style>
+    .action {
+        width:20rem;
+        margin: 0.5rem;
+        padding: 0.5rem;
+    }
+</style>
+
+
+<script>
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+</script>

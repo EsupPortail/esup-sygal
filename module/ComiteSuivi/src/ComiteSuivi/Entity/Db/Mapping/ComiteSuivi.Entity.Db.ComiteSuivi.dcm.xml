@@ -14,6 +14,7 @@
         </many-to-one>
 
         <one-to-many field="membres" target-entity="ComiteSuivi\Entity\Db\Membre" mapped-by="comite"/>
+        <one-to-many field="comptesrendus" target-entity="ComiteSuivi\Entity\Db\CompteRendu" mapped-by="comite"/>
 
 
         <field name="dateComite"                type="datetime" column="DATE_COMITE"                                nullable="false"/>

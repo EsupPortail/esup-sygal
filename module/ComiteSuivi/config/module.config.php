@@ -74,4 +74,15 @@ return array(
             __DIR__ . '/../view',
         ],
     ],
+
+    'public_files' => [
+        'inline_scripts' => [
+            '114_' => 'vendor/bootstrap-select-1.13.2/dist/js/bootstrap-select.min.js',
+            '150_' => 'js/tinymce/js/tinymce/tinymce.js',
+        ],
+        'stylesheets' => [
+            '050_bootstrap-theme' => '',
+            '114_' => 'vendor/bootstrap-select-1.13.2/dist/css/bootstrap-select.min.css',
+        ],
+    ],
 );
