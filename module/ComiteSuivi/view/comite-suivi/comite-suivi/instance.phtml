@@ -2,7 +2,9 @@
 
 use Application\Entity\Db\These;
 use ComiteSuivi\Entity\Db\ComiteSuivi;
-use ComiteSuivi\Entity\Db\Membre;
+use ComiteSuivi\Provider\Privilege\ComiteSuiviPrivileges;
+use ComiteSuivi\Provider\Privilege\CompteRenduPrivileges;
+use ComiteSuivi\Provider\Privilege\MembrePrivileges;
 
 /**
  * @var These $these
@@ -13,19 +15,19 @@ use ComiteSuivi\Entity\Db\Membre;
 $membres = $comite->getMembres();
 $comptesrendus = $comite->getComptesRendus();
 
-$canModifier = true;
-$canAjouterMembre = true;
-$canModifierMembre = true;
-$canHistoriserMembre = true;
-$canSupprimerMembre = true;
-$canLierMembre = true;
+$canModifier                = $this->isAllowed(ComiteSuiviPrivileges::getResourceId(ComiteSuiviPrivileges::COMITESUIVI_AJOUTER));
+$canAjouterMembre           = $this->isAllowed(MembrePrivileges::getResourceId(MembrePrivileges::MEMBRE_AJOUTER));
+$canModifierMembre          = $this->isAllowed(MembrePrivileges::getResourceId(MembrePrivileges::MEMBRE_MODIFIER));
+$canHistoriserMembre        = $this->isAllowed(MembrePrivileges::getResourceId(MembrePrivileges::MEMBRE_HISTORISER));
+$canSupprimerMembre         = $this->isAllowed(MembrePrivileges::getResourceId(MembrePrivileges::MEMBRE_SUPPRIMER));;
+$canLierMembre              = $this->isAllowed(MembrePrivileges::getResourceId(MembrePrivileges::MEMBRE_LIER));
 
-$canAfficherCompteRendu= true;
-$canModifierCompteRendu= true;
-$canHistoriserCompteRendu= true;
-$canSupprimerCompteRendu= true;
+$canAfficherCompteRendu     = $this->isAllowed(CompteRenduPrivileges::getResourceId(CompteRenduPrivileges::COMPTERENDU_AFFICHER));
+$canModifierCompteRendu     = $this->isAllowed(CompteRenduPrivileges::getResourceId(CompteRenduPrivileges::COMPTERENDU_MODIFIER));
+$canHistoriserCompteRendu   = $this->isAllowed(CompteRenduPrivileges::getResourceId(CompteRenduPrivileges::COMPTERENDU_HISTORISER));
+$canSupprimerCompteRendu    = $this->isAllowed(CompteRenduPrivileges::getResourceId(CompteRenduPrivileges::COMPTERENDU_SUPPRIMER));
 
-$canValider = true;
+$canValider                 = $this->isAllowed(ComiteSuiviPrivileges::getResourceId(ComiteSuiviPrivileges::COMITESUIVI_VALIDER));
 
 ?>
 
@@ -173,7 +175,14 @@ $canValider = true;
                                     title="Modifier le membre du comité"
                             ><span class="glyphicon glyphicon-pencil"></span></a>
                         <?php endif; ?>
-                        L
+                        <?php if ($canLierMembre) : ?>
+                            <a  <?php /** @see \ComiteSuivi\Controller\ComiteSuiviController::lierMembreAction() */?>
+                                    href="<?php echo $this->url('comite-suivi/lier-membre',['these' => $these->getId(), 'comite-suivi' => $comite->getId(), 'membre' => $membre->getId()],[], true); ?>"
+                                    class="ajax-modal"
+                                    data-event="modification"
+                                    title="Lier le membre à un individu SyGAL"
+                            ><span class="glyphicon glyphicon-link"></span></a>
+                        <?php endif; ?>
                         <?php if ($canHistoriserMembre): ?>
                             <?php if ($membre->estNonHistorise()) : ?>
                                 <a  <?php /** @see \ComiteSuivi\Controller\ComiteSuiviController::historiserMembreAction() */?>

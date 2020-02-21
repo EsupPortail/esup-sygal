@@ -4,6 +4,7 @@ namespace ComiteSuivi\Controller;
 
 
 use Application\Entity\Db\These;
+use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use ComiteSuivi\Entity\DateTimeTrait;
 use ComiteSuivi\Entity\Db\ComiteSuivi;
@@ -16,8 +17,11 @@ use ComiteSuivi\Service\ComiteSuivi\ComiteSuiviServiceAwareTrait;
 use ComiteSuivi\Service\CompteRendu\CompteRenduServiceAwareTrait;
 use ComiteSuivi\Service\Membre\MembreServiceAwareTrait;
 use ComiteSuivi\View\Helper\AnneeTheseViewHelper;
+use Doctrine\ORM\ORMException;
+use UnicaenApp\Exception\RuntimeException;
 use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
 class ComiteSuiviController extends AbstractActionController {
@@ -25,6 +29,7 @@ class ComiteSuiviController extends AbstractActionController {
 
     use ComiteSuiviServiceAwareTrait;
     use CompteRenduServiceAwareTrait;
+    use IndividuServiceAwareTrait;
     use MembreServiceAwareTrait;
     use TheseServiceAwareTrait;
 
@@ -271,6 +276,40 @@ class ComiteSuiviController extends AbstractActionController {
         return $this->redirect()->toRoute('comite-suivi/modifier', ['these' => $membre->getComite()->getThese()->getId(), 'comite-suivi' => $membre->getComite()->getId()], [], true);
     }
 
+    public function lierMembreAction()
+    {
+        $membre = $this->getMembreService()->getRequestedMembre($this);
+        $comite = $membre->getComite();
 
+        /** @var Request $request */
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $individu = null;
+            if (isset($data['type']) AND $data['type'] === 'creation') {
+                $individu = $this->getMembreService()->createIndividuFromMembre($membre);
+                //TODO bouger cela une fois la fusion faite
+                try {
+                    $this->getIndividuService()->getEntityManager()->persist($individu);
+                    $this->getIndividuService()->getEntityManager()->flush($individu);
+                } catch (ORMException $e) {
+                    throw new RuntimeException("Un problème est survenue lors de l'enregistrement de l'individu.", 0, $e);
+                }
+            }
+            if (isset($data['type']) AND $data['type'] === 'importation') {
+                $individuId = isset($data['individu']['id'])?$data['individu']['id']:null;
+                $individu = $this->getIndividuService()->getRepository()->find($individuId);
+            }
+            $membre->setIndividu($individu);
+            $this->getMembreService()->update($membre);
+            exit();
+        }
+
+        return new ViewModel([
+            'title' => "Lien entre membre du comité et individu SyGAL",
+            'comite' => $comite,
+            'membre' => $membre,
+        ]);
+    }
 
 }

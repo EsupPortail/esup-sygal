@@ -20,8 +20,9 @@ use ComiteSuivi\Form\CompteRendu\CompteRenduForm;
     $(document).ready(function() {
         tinymce.remove();
         tinymce.init({
-            selector: '.word',
-            toolbar: 'newdocument undo redo | bold italic | bullist numlist',
+            selector: '#reponse',
+            toolbar: 'newdocument undo redo | formatselect bold italic | bullist numlist',
+            block_formats: 'Normal=p;Titre 1=h1;Titre 2=h2;Titre 3=h3',
             resize: true,
             language: 'fr_FR',
             plugins: 'lists',
@@ -32,8 +33,7 @@ use ComiteSuivi\Form\CompteRendu\CompteRenduForm;
             body_id: 'motif',
             setup: function (editor) {
                 editor.on("focusout", function () {
-                    //console.log(tinymce.get('description').getContent());
-                    $('textarea#description').val(tinymce.get('description').getContent());
+                    $('textarea#reponse').val(tinymce.get('reponse').getContent());
                 });
             }
         });

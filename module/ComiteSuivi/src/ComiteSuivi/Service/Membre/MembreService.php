@@ -2,6 +2,9 @@
 
 namespace ComiteSuivi\Service\Membre;
 
+use Application\Entity\Db\Individu;
+use Application\Entity\Db\Source;
+use Application\Service\Source\SourceServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use ComiteSuivi\Entity\DateTimeTrait;
 use ComiteSuivi\Entity\Db\ComiteSuivi;
@@ -16,6 +19,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 class MembreService {
     use EntityManagerAwareTrait;
     use DateTimeTrait;
+    use SourceServiceAwareTrait;
     use UserContextServiceAwareTrait;
 
     /** GESTION DES ENTITES *******************************************************************************************/
@@ -197,16 +201,24 @@ class MembreService {
     }
 
     /**
-     * @param ComiteSuivi $comite
-     * @return array
+     * @param Membre $membre
+     * @return Individu $individu
      */
-    public function getExaminateursAsOptions(ComiteSuivi $comite)
+    public function createIndividuFromMembre(Membre $membre)
     {
-        $examinateurs = $this->getExaminateurs($comite);
-        $array = [];
-        foreach ($examinateurs as $examinateur) {
-            $array[$examinateur->getId()] = $examinateur->getDenomination();
-        }
-        return $array;
+        $individu = new Individu();
+        $individu->setPrenom($membre->getPrenom());
+        $individu->setNomUsuel($membre->getNom());
+        $individu->setEmail($membre->getEmail());
+
+
+        /** @var Source $sygal */
+        $sygal = $this->sourceService->getRepository()->find(6);
+        $code = "SyGAL::" . uniqid();
+
+        $individu->setSource($sygal);
+        $individu->setSourceCode($code);
+
+        return $individu;
     }
 }

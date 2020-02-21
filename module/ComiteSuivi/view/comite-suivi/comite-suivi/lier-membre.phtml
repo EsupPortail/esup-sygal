@@ -1,0 +1,40 @@
+<?php
+
+use ComiteSuivi\Entity\Db\ComiteSuivi;
+use ComiteSuivi\Entity\Db\Membre;
+use UnicaenApp\Form\Element\SearchAndSelect;
+
+/**
+ * @var ComiteSuivi $comite
+ * @var Membre $membre
+ */
+
+$url = $this->url('comite-suivi/lier-membre', ['these' => $comite->getThese()->getId(), 'comite' => $comite->getId(), 'membre' => $membre->getId()], [], true);
+?>
+
+<div>
+    <form method="post" action="<?php echo $url; ?>">
+        <input type="hidden" name="type" value="importation">
+        <label for="individu">Recherche de l'individu :</label>
+        <?php
+        $sas = new SearchAndSelect('individu');
+        $sas->setAttribute('placeholder','Nom, prénom');
+        $sas->setAttribute('class', 'form-control individu-finder');
+        $sas->setAutocompleteSource($this->url('utilisateur/rechercher-individu', [], [], true));
+        echo $this->formControlGroup($sas, 'formSearchAndSelect');
+        ?>
+        <input type="submit" id="select-individu-btn" class="btn btn-primary" value="Sélection l'utilisateur"/>
+    </form>
+</div>
+
+<br/>
+<hr>
+<br/>
+
+<div>
+    <p> Si aucun individu ne correspond au membre, alors il est possible d'en créer à partir des informations renseignées. </p>
+    <form method="post" action="<?php echo $url; ?>">
+        <input type="hidden" name="type" value="importation">
+        <input type="submit" id="select-individu-btn" class="btn btn-primary" value="Générer nouvel utilisateur"/>
+    </form>
+</div>

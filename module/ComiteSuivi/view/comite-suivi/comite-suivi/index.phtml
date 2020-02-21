@@ -7,12 +7,13 @@
 
 use Application\Entity\Db\These;
 use ComiteSuivi\Entity\Db\ComiteSuivi;
+use ComiteSuivi\Provider\Privilege\ComiteSuiviPrivileges;
 
-$canAjouter = true;
-$canAfficher = true;
-$canModifier = true;
-$canHistoriser = true;
-$canSupprimer = true;
+$canAfficher    = $this->isAllowed(ComiteSuiviPrivileges::getResourceId(ComiteSuiviPrivileges::COMITESUIVI_AFFICHER));
+$canAjouter     = $this->isAllowed(ComiteSuiviPrivileges::getResourceId(ComiteSuiviPrivileges::COMITESUIVI_AJOUTER));
+$canModifier    = $this->isAllowed(ComiteSuiviPrivileges::getResourceId(ComiteSuiviPrivileges::COMITESUIVI_MODIFIER));
+$canHistoriser  = $this->isAllowed(ComiteSuiviPrivileges::getResourceId(ComiteSuiviPrivileges::COMITESUIVI_HISTORISER));
+$canSupprimer   = $this->isAllowed(ComiteSuiviPrivileges::getResourceId(ComiteSuiviPrivileges::COMITESUIVI_SUPPRIMER));
 
 $titre = "Comités de suivi de thèse";
 if ($these) $titre .= " de ".$these->getDoctorant()->getIndividu()->getNomComplet();
