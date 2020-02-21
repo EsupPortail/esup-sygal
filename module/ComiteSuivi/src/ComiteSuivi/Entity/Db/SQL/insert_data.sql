@@ -28,3 +28,7 @@ INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (2201, 200
 INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (2202, 2002, 'ComiteRapport_modifier', 'Modifier un rapport d''un comité', 300);
 INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (2203, 2002, 'ComiteRapport_historiser', 'Historiser un rapport d''un comité', 400);
 INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (2204, 2002, 'ComiteRapport_supprimer', 'Supprimer un rapport d''un comité', 500);
+
+INSERT INTO TYPE_VALIDATION (ID, CODE, LIBELLE) VALUES (14, 'FINALISATION_COMITE_SUIVI', 'Finalisation du comité de suivi de thèse');
+INSERT INTO TYPE_VALIDATION (ID, CODE, LIBELLE) VALUES (15, 'VALIDATION_COMITE_SUIVI', 'Validation du comité de suivi de thèse');
+drop index VALIDATION_UN;

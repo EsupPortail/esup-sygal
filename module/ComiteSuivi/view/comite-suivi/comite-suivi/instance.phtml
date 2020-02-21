@@ -14,12 +14,14 @@ use ComiteSuivi\Provider\Privilege\MembrePrivileges;
 
 $membres = $comite->getMembres();
 $comptesrendus = $comite->getComptesRendus();
+$finalisation = $comite->getFinalisation();
+$validation = $comite->getValidation();
 
 $canModifier                = $this->isAllowed(ComiteSuiviPrivileges::getResourceId(ComiteSuiviPrivileges::COMITESUIVI_AJOUTER));
 $canAjouterMembre           = $this->isAllowed(MembrePrivileges::getResourceId(MembrePrivileges::MEMBRE_AJOUTER));
 $canModifierMembre          = $this->isAllowed(MembrePrivileges::getResourceId(MembrePrivileges::MEMBRE_MODIFIER));
 $canHistoriserMembre        = $this->isAllowed(MembrePrivileges::getResourceId(MembrePrivileges::MEMBRE_HISTORISER));
-$canSupprimerMembre         = $this->isAllowed(MembrePrivileges::getResourceId(MembrePrivileges::MEMBRE_SUPPRIMER));;
+$canSupprimerMembre         = $this->isAllowed(MembrePrivileges::getResourceId(MembrePrivileges::MEMBRE_SUPPRIMER));
 $canLierMembre              = $this->isAllowed(MembrePrivileges::getResourceId(MembrePrivileges::MEMBRE_LIER));
 
 $canAfficherCompteRendu     = $this->isAllowed(CompteRenduPrivileges::getResourceId(CompteRenduPrivileges::COMPTERENDU_AFFICHER));
@@ -76,12 +78,32 @@ $canValider                 = $this->isAllowed(ComiteSuiviPrivileges::getResourc
                 <dd>
                     <?php echo $comite->getAnneeScolaire(); ?>
                 </dd>
+                <dt> Finalisation </dt>
+                <dd>
+                    <?php if ($finalisation !== null) : ?>
+                        <span style="color:darkgreen;" class="glyphicon glyphicon-ok"></span>
+                        Le <?php echo $finalisation->getHistoModification()->format('d/m/Y'); ?>
+                        par <?php echo $finalisation->getHistoModificateur()->getDisplayName(); ?>
+                    <?php else: ?>
+                        <span style="color:darkred;" class="glyphicon glyphicon-remove"></span>
+                        Non finalisé
+                    <?php endif; ?>
+                </dd>
                 <dt> Validation de l'ED </dt>
-                <dd> <span style="color:darkred;">TODO</span> </dd>
+                <dd>
+                    <?php if ($validation !== null) : ?>
+                        <span style="color:darkgreen;" class="glyphicon glyphicon-ok"></span>
+                        Le <?php echo $validation->getHistoModification()->format('d/m/Y'); ?>
+                        par <?php echo $validation->getHistoModificateur()->getDisplayName(); ?>
+                    <?php else: ?>
+                        <span style="color:darkred;" class="glyphicon glyphicon-remove"></span>
+                        Non validé
+                    <?php endif; ?>
+                </dd>
             </dl>
         </div>
         <div class="col-md-4">
-            <?php if($action === 'modifier' AND $canModifier): ?>
+            <?php if($action === 'modifier' AND $canModifier AND $finalisation === null): ?>
                 <a  <?php /** @see \ComiteSuivi\Controller\ComiteSuiviController::modifierInfosAction() */?>
                     href="<?php echo $this->url('comite-suivi/modifier-infos',['these' => $these->getId(), 'comite-suivi' => $comite->getId()],[], true); ?>"
                     class="btn btn-primary action ajax-modal"
@@ -93,19 +115,32 @@ $canValider                 = $this->isAllowed(ComiteSuiviPrivileges::getResourc
             <?php endif; ?>
             <br/>
             <br/>
-            <?php if ($action === 'modifier' AND $canValider): ?>
-                <a
+            <?php if ($finalisation !== null AND $validation === null) : ?>
+                <?php if ($action === 'modifier' AND $canValider): ?>
+                    <a  <?php /** @see \ComiteSuivi\Controller\ComiteSuiviController::validerAction() */?>
+                        href="<?php echo $this->url('comite-suivi/valider', ['these' => $these->getId(), 'comite-suivi' => $comite->getId()], [], true); ?>"
+                        class="btn btn-success action">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        Valider le comité
+                    </a>
+                    <br/>
+                    <a
+                            class="btn btn-danger action">
+                        <span class="glyphicon glyphicon-remove"></span>
+                        Refuser le comité
+                    </a>
+                <?php endif; ?>
+            <?php else : ?>
+                <?php if ($action === 'modifier' AND $canModifier AND $finalisation === null): ?>
+                <a  <?php /** @see \ComiteSuivi\Controller\ComiteSuiviController::finaliserAction() */?>
+                    href="<?php echo $this->url('comite-suivi/finaliser', ['these' => $these->getId(), 'comite-suivi' => $comite->getId()], [], true); ?>"
                     class="btn btn-success action">
                     <span class="glyphicon glyphicon-ok"></span>
-                    Valider le comité
+                    Finaliser le comité
                 </a>
-            <br/>
-                <a
-                    class="btn btn-danger action">
-                    <span class="glyphicon glyphicon-remove"></span>
-                    Refuser le comité
-                </a>
+                <br/>
             <?php endif; ?>
+        <?php endif; ?>
         </div>
     </div>
 
@@ -122,7 +157,7 @@ $canValider                 = $this->isAllowed(ComiteSuiviPrivileges::getResourc
         </div>
         <div class="col-md-4">
             <br/>
-            <?php if ($canAjouterMembre AND $action === 'modifier'): ?>
+            <?php if ($canAjouterMembre AND $action === 'modifier' AND $finalisation === null): ?>
                 <a  <?php /** @see \ComiteSuivi\Controller\ComiteSuiviController::ajouterMembreAction() */?>
                     href="<?php echo $this->url('comite-suivi/ajouter-membre',['these' => $these->getId(), 'comite-suivi' => $comite->getId()],[], true); ?>"
                     class="btn btn-primary action ajax-modal"
@@ -167,7 +202,7 @@ $canValider                 = $this->isAllowed(ComiteSuiviPrivileges::getResourc
                 </td>
                 <?php if ($action === 'modifier') : ?>
                     <td>
-                        <?php if ($canModifierMembre) : ?>
+                        <?php if ($canModifierMembre AND $finalisation === null) : ?>
                             <a  <?php /** @see \ComiteSuivi\Controller\ComiteSuiviController::modifierMembreAction() */?>
                                     href="<?php echo $this->url('comite-suivi/modifier-membre',['these' => $these->getId(), 'comite-suivi' => $comite->getId(), 'membre' => $membre->getId()],[], true); ?>"
                                     class="ajax-modal"
@@ -183,7 +218,7 @@ $canValider                 = $this->isAllowed(ComiteSuiviPrivileges::getResourc
                                     title="Lier le membre à un individu SyGAL"
                             ><span class="glyphicon glyphicon-link"></span></a>
                         <?php endif; ?>
-                        <?php if ($canHistoriserMembre): ?>
+                        <?php if ($canHistoriserMembre AND $finalisation === null): ?>
                             <?php if ($membre->estNonHistorise()) : ?>
                                 <a  <?php /** @see \ComiteSuivi\Controller\ComiteSuiviController::historiserMembreAction() */?>
                                     href="<?php echo $this->url('comite-suivi/historiser-membre',['these' => $these->getId(), 'comite-suivi' => $comite->getId(), 'membre' => $membre->getId()],[], true); ?>"
@@ -196,7 +231,7 @@ $canValider                 = $this->isAllowed(ComiteSuiviPrivileges::getResourc
                                 ><span class="glyphicon glyphicon-leaf"></span></a>
                             <?php endif; ?>
                         <?php endif; ?>
-                        <?php if ($canSupprimerMembre): ?>
+                        <?php if ($canSupprimerMembre AND $finalisation === null): ?>
                             <a  <?php /** @see \ComiteSuivi\Controller\ComiteSuiviController::supprimerMembreAction() */?>
                                 href="<?php echo $this->url('comite-suivi/supprimer-membre',['these' => $these->getId(), 'comite-suivi' => $comite->getId(), 'membre' => $membre->getId()],[], true); ?>"
                                 title="Supprimer définitivement le membre du comité"

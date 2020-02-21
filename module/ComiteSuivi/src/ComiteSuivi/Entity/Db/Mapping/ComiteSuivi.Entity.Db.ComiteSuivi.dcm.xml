@@ -13,13 +13,19 @@
             </join-columns>
         </many-to-one>
 
-        <one-to-many field="membres" target-entity="ComiteSuivi\Entity\Db\Membre" mapped-by="comite"/>
-        <one-to-many field="comptesrendus" target-entity="ComiteSuivi\Entity\Db\CompteRendu" mapped-by="comite"/>
-
-
         <field name="dateComite"                type="datetime" column="DATE_COMITE"                                nullable="false"/>
         <field name="anneeThese"                type="string"   column="ANNEE_THESE"                length="64"     nullable="false"/>
         <field name="anneeScolaire"             type="string"   column="ANNEE_SCOLAIRE"             length="64"     nullable="false"/>
+
+        <one-to-many field="membres" target-entity="ComiteSuivi\Entity\Db\Membre" mapped-by="comite"/>
+        <one-to-many field="comptesrendus" target-entity="ComiteSuivi\Entity\Db\CompteRendu" mapped-by="comite"/>
+
+        <one-to-one field="finalisation" target-entity="Application\Entity\Db\Validation">
+            <join-column name="FINALISATION_ID" referenced-column-name="ID" />
+        </one-to-one>
+        <one-to-one field="validation" target-entity="Application\Entity\Db\Validation">
+            <join-column name="VALIDATION_ID" referenced-column-name="ID" />
+        </one-to-one>
 
         <!-- historisation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
         <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>

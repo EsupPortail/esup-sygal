@@ -3,6 +3,7 @@
 namespace ComiteSuivi\Entity\Db;
 
 use Application\Entity\Db\These;
+use Application\Entity\Db\Validation;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
@@ -24,8 +25,10 @@ class ComiteSuivi {
     private $membres;
     /** @var ArrayCollection (CompteRendu) */
     private $comptesrendus;
-
-    //$validations;
+    /** @var Validation */
+    private $finalisation;
+    /** @var Validation */
+    private $validation;
 
     /**
      * @return int
@@ -132,4 +135,42 @@ class ComiteSuivi {
     {
         return $this->comptesrendus->toArray();
     }
+
+    /**
+     * @return Validation
+     */
+    public function getFinalisation()
+    {
+        return $this->finalisation;
+    }
+
+    /**
+     * @param Validation $finalisation
+     * @return ComiteSuivi
+     */
+    public function setFinalisation($finalisation)
+    {
+        $this->finalisation = $finalisation;
+        return $this;
+    }
+
+    /**
+     * @return Validation
+     */
+    public function getValidation()
+    {
+        return $this->validation;
+    }
+
+    /**
+     * @param Validation $validation
+     * @return ComiteSuivi
+     */
+    public function setValidation($validation)
+    {
+        $this->validation = $validation;
+        return $this;
+    }
+
+
 }

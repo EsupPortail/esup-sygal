@@ -6,9 +6,9 @@ namespace ComiteSuivi\Controller;
 use Application\Entity\Db\These;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
+use Application\Service\Validation\ValidationServiceAwareTrait;
 use ComiteSuivi\Entity\DateTimeTrait;
 use ComiteSuivi\Entity\Db\ComiteSuivi;
-use ComiteSuivi\Entity\Db\CompteRendu;
 use ComiteSuivi\Entity\Db\Membre;
 use ComiteSuivi\Form\ComiteSuivi\ComiteSuiviFormAwareTrait;
 use ComiteSuivi\Form\CompteRendu\CompteRenduFormAwareTrait;
@@ -21,7 +21,6 @@ use Doctrine\ORM\ORMException;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
 class ComiteSuiviController extends AbstractActionController {
@@ -32,6 +31,7 @@ class ComiteSuiviController extends AbstractActionController {
     use IndividuServiceAwareTrait;
     use MembreServiceAwareTrait;
     use TheseServiceAwareTrait;
+    use ValidationServiceAwareTrait;
 
     use ComiteSuiviFormAwareTrait;
     use CompteRenduFormAwareTrait;
@@ -194,6 +194,30 @@ class ComiteSuiviController extends AbstractActionController {
             ]);
         }
         return $vm;
+    }
+
+    public function finaliserAction()
+    {
+        $comite = $this->getComiteSuiviService()->getRequestedComiteSuivi($this);
+        $validation = $this->validationService->finaliseComiteSuivi($comite);
+        //TODO $this->getNotifierSoutenanceService()->triggerValidationProposition($these, $validation);
+
+        $comite->setFinalisation($validation);
+        $this->getComiteSuiviService()->update($comite);
+
+        return $this->redirect()->toRoute('comite-suivi/modifier', ['these' => $comite->getThese()->getId(), 'comite' => $comite->getId()], [], true);
+    }
+
+    public function validerAction()
+    {
+        $comite = $this->getComiteSuiviService()->getRequestedComiteSuivi($this);
+        $validation = $this->validationService->validateComiteSuivi($comite);
+        //TODO $this->getNotifierSoutenanceService()->triggerValidationProposition($these, $validation);
+
+        $comite->setValidation($validation);
+        $this->getComiteSuiviService()->update($comite);
+
+        return $this->redirect()->toRoute('comite-suivi/modifier', ['these' => $comite->getThese()->getId(), 'comite' => $comite->getId()], [], true);
     }
 
     /** PARTIE MEMBRE *************************************************************************************************/

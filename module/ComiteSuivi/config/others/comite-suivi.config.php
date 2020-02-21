@@ -30,6 +30,9 @@ return [
                         'afficher',
                         'modifier',
                         'modifier-infos',
+                        'finaliser',
+                        'valider',
+                        'refuser',
 
                         'ajouter-membre',
                         'modifier-membre',
@@ -185,6 +188,36 @@ return [
                             'defaults' => [
                                 'controller'    => ComiteSuiviController::class,
                                 'action'        => 'lier-membre',
+                            ],
+                        ],
+                    ],
+                    'finaliser' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'    => '/finaliser/:comite-suivi',
+                            'defaults' => [
+                                'controller'    => ComiteSuiviController::class,
+                                'action'        => 'finaliser',
+                            ],
+                        ],
+                    ],
+                    'valider' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'    => '/valider/:comite-suivi',
+                            'defaults' => [
+                                'controller'    => ComiteSuiviController::class,
+                                'action'        => 'valider',
+                            ],
+                        ],
+                    ],
+                    'refuser' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'    => '/refuser/:comite-suivi',
+                            'defaults' => [
+                                'controller'    => ComiteSuiviController::class,
+                                'action'        => 'refuser',
                             ],
                         ],
                     ],

@@ -4,6 +4,7 @@ namespace ComiteSuivi\Controller;
 
 use Application\Service\Individu\IndividuService;
 use Application\Service\These\TheseService;
+use Application\Service\Validation\ValidationService;
 use ComiteSuivi\Form\ComiteSuivi\ComiteSuiviForm;
 use ComiteSuivi\Form\CompteRendu\CompteRenduForm;
 use ComiteSuivi\Form\Membre\MembreForm;
@@ -26,12 +27,14 @@ class ComiteSuiviControllerFactory {
          * @var IndividuService $individuService
          * @var MembreService $membreService
          * @var TheseService $theseService
+         * @var ValidationService $validationService
          */
         $comiteSuiviService = $manager->getServiceLocator()->get(ComiteSuiviService::class);
         $compteRenduService = $manager->getServiceLocator()->get(CompteRenduService::class);
         $individuService = $manager->getServiceLocator()->get('IndividuService');
         $membreService = $manager->getServiceLocator()->get(MembreService::class);
         $theseService = $manager->getServiceLocator()->get('TheseService');
+        $validationService = $manager->getServiceLocator()->get('ValidationService');
 
         /**
          * @var ComiteSuiviForm $comiteSuiviForm
@@ -44,14 +47,18 @@ class ComiteSuiviControllerFactory {
 
         /** @var ComiteSuiviController $controller */
         $controller = new ComiteSuiviController();
+
         $controller->setComiteSuiviService($comiteSuiviService);
         $controller->setCompteRenduService($compteRenduService);
         $controller->setIndividuService($individuService);
         $controller->setMembreService($membreService);
         $controller->setTheseService($theseService);
+        $controller->setValidationService($validationService);
+
         $controller->setComiteSuiviForm($comiteSuiviForm);
         $controller->setCompteRenduForm($compteRenduForm);
         $controller->setMembreForm($membreForm);
+
         return $controller;
     }
 
