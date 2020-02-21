@@ -6,6 +6,7 @@ use Application\Service\Individu\IndividuService;
 use Application\Service\These\TheseService;
 use Application\Service\Validation\ValidationService;
 use ComiteSuivi\Form\ComiteSuivi\ComiteSuiviForm;
+use ComiteSuivi\Form\ComiteSuivi\RefusForm;
 use ComiteSuivi\Form\CompteRendu\CompteRenduForm;
 use ComiteSuivi\Form\Membre\MembreForm;
 use ComiteSuivi\Service\ComiteSuivi\ComiteSuiviService;
@@ -40,10 +41,12 @@ class ComiteSuiviControllerFactory {
          * @var ComiteSuiviForm $comiteSuiviForm
          * @var CompteRenduForm $compteRenduForm
          * @var MembreForm $membreForm
+         * @var RefusForm $refusForm
          */
         $comiteSuiviForm = $manager->getServiceLocator()->get('FormElementManager')->get(ComiteSuiviForm::class);
         $compteRenduForm = $manager->getServiceLocator()->get('FormElementManager')->get(CompteRenduForm::class);
         $membreForm = $manager->getServiceLocator()->get('FormElementManager')->get(MembreForm::class);
+        $refusForm = $manager->getServiceLocator()->get('FormElementManager')->get(RefusForm::class);
 
         /** @var ComiteSuiviController $controller */
         $controller = new ComiteSuiviController();
@@ -58,6 +61,7 @@ class ComiteSuiviControllerFactory {
         $controller->setComiteSuiviForm($comiteSuiviForm);
         $controller->setCompteRenduForm($compteRenduForm);
         $controller->setMembreForm($membreForm);
+        $controller->setRefusForm($refusForm);
 
         return $controller;
     }

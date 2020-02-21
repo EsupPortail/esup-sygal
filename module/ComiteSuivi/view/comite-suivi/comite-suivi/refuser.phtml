@@ -1,0 +1,39 @@
+<?php
+
+/**
+ * @see \ComiteSuivi\Controller\ComiteSuiviController::refuserAction()
+ *
+ * @var RefusForm $form
+ */
+
+use ComiteSuivi\Form\ComiteSuivi\RefusForm;
+
+?>
+
+<?php
+echo $this->form($form);
+?>
+
+<script>
+    $(document).ready(function() {
+        // tinymce.remove();
+        tinymce.init({
+            selector: '.motif',
+            toolbar: 'newdocument undo redo | bold italic | bullist',
+            resize: true,
+            language: 'fr_FR',
+            plugins: 'lists',
+            statusbar: true,
+            browser_spellcheck: true,
+            branding: false,
+            menu: {},
+            body_id: 'motif',
+            setup: function (editor) {
+                editor.on("focusout", function () {
+                    console.log(tinymce.get('motif').getContent());
+                    $('textarea#motif').val(tinymce.get('motif').getContent());
+                });
+            }
+        });
+    });
+</script>

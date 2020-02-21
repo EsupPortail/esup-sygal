@@ -11,6 +11,8 @@ use ComiteSuivi\Entity\DateTimeTrait;
 use ComiteSuivi\Entity\Db\ComiteSuivi;
 use ComiteSuivi\Entity\Db\Membre;
 use ComiteSuivi\Form\ComiteSuivi\ComiteSuiviFormAwareTrait;
+use ComiteSuivi\Form\ComiteSuivi\RefusForm;
+use ComiteSuivi\Form\ComiteSuivi\RefusFormAwareTrait;
 use ComiteSuivi\Form\CompteRendu\CompteRenduFormAwareTrait;
 use ComiteSuivi\Form\Membre\MembreFormAwareTrait;
 use ComiteSuivi\Service\ComiteSuivi\ComiteSuiviServiceAwareTrait;
@@ -36,6 +38,7 @@ class ComiteSuiviController extends AbstractActionController {
     use ComiteSuiviFormAwareTrait;
     use CompteRenduFormAwareTrait;
     use MembreFormAwareTrait;
+    use RefusFormAwareTrait;
 
     public function indexAction()
     {
@@ -219,6 +222,33 @@ class ComiteSuiviController extends AbstractActionController {
 
         return $this->redirect()->toRoute('comite-suivi/modifier', ['these' => $comite->getThese()->getId(), 'comite' => $comite->getId()], [], true);
     }
+
+    public function refuserAction() {
+        $comite = $this->getComiteSuiviService()->getRequestedComiteSuivi($this);
+
+        /** @var RefusForm $form */
+        $form = $this->getRefusForm();
+        $form->setAttribute('action', $this->url()->fromRoute('comite-suivi/refuser', ['these' => $comite->getThese()->getId(), 'comite' => $comite->getId()], [], true));
+
+        /** @var Request $request */
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            if ($data['motif'] !== null AND $data['motif'] !== '') {
+                $this->validationService->historiserValidation($comite->getFinalisation());
+                $comite->setFinalisation(null);
+                $this->getComiteSuiviService()->update($comite);
+                //TODO $this->getNotifierSoutenanceService()->triggerRefusPropositionSoutenance($these, $currentUser, $currentRole, $data['motif']);
+            }
+        }
+
+        return new ViewModel([
+            'title'             => "Motivation du refus du comité de suivi de thèse",
+            'form'              => $form,
+            'comite'            => $comite,
+        ]);
+    }
+
 
     /** PARTIE MEMBRE *************************************************************************************************/
 

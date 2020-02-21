@@ -125,7 +125,11 @@ $canValider                 = $this->isAllowed(ComiteSuiviPrivileges::getResourc
                     </a>
                     <br/>
                     <a
-                            class="btn btn-danger action">
+                        <?php /** @see \ComiteSuivi\Controller\ComiteSuiviController::refuserAction() */?>
+                        href="<?php echo $this->url('comite-suivi/refuser', ['these' => $these->getId(), 'comite-suivi' => $comite->getId()], [], true); ?>"
+                        class="btn btn-danger action ajax-modal"
+                        data-event="modification"
+                    >
                         <span class="glyphicon glyphicon-remove"></span>
                         Refuser le comité
                     </a>

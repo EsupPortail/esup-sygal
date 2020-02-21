@@ -8,6 +8,8 @@ use ComiteSuivi\Form\ComiteSuivi\ComiteSuiviForm;
 use ComiteSuivi\Form\ComiteSuivi\ComiteSuiviFormFactory;
 use ComiteSuivi\Form\ComiteSuivi\ComiteSuiviHydrator;
 use ComiteSuivi\Form\ComiteSuivi\ComiteSuiviHydratorFactory;
+use ComiteSuivi\Form\ComiteSuivi\RefusForm;
+use ComiteSuivi\Form\ComiteSuivi\RefusFormFactory;
 use ComiteSuivi\Service\ComiteSuivi\ComiteSuiviService;
 use ComiteSuivi\Service\ComiteSuivi\ComiteSuiviServiceFactory;
 use ComiteSuivi\View\Helper\AnneeTheseViewHelper;
@@ -253,6 +255,7 @@ return [
     'form_elements'   => [
         'factories' => [
             ComiteSuiviForm::class => ComiteSuiviFormFactory::class,
+            RefusForm::class => RefusFormFactory::class,
         ],
     ],
     'hydrators' => [
