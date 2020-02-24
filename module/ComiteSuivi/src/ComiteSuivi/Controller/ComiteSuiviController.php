@@ -369,7 +369,9 @@ class ComiteSuiviController extends AbstractActionController {
             $examinateur = $this->getRoleService()->getRepository()->findByCode(Membre::ROLE_EXAMINATEUR_CODE);
             $this->getRoleService()->addIndividuRole($individu,$examinateur);
 
+            $this->getNotifierService()->triggerNotifierExaminateur($comite, $membre);
             $utilisateurs = $this->utilisateurService->getRepository()->findByIndividu($individu);
+
             if (empty($utilisateurs)) {
                 $user = $this->utilisateurService->createFromIndividu($individu, $this->generateUsername($membre), 'none');
                 $this->userService->updateUserPasswordResetToken($user);

@@ -1,0 +1,36 @@
+<?php
+
+use Application\Entity\Db\Doctorant;
+use Application\View\Renderer\PhpRenderer;
+use ComiteSuivi\Entity\Db\ComiteSuivi;
+use ComiteSuivi\Entity\Db\Membre;
+
+/**
+ * @see \ComiteSuivi\Service\Notifier\NotifierService::triggerValidation()
+ * @var PhpRenderer $this
+ * @var ComiteSuivi $comite
+ * @var Doctorant $doctorant
+ * @var Membre $membre
+ */
+?>
+
+<?php
+$url = $this->url('comite-suivi/compte-rendu/ajouter', ['these' => $comite->getThese()->getId(), 'comite-suivi' => $comite->getId(), 'membre' => $membre->getId()], ['force_canonical'=>true], true);
+?>
+
+<p>
+    Bonjour,
+</p>
+<p>
+    Ceci est un mail envoyé automatiquement par l'application SyGAL.
+</p>
+
+<p>
+    Vous venez d'être désigné&middot;e comme examinateur du comité de suivi de thèse de <?php echo $doctorant->getIndividu()->getNomComplet(); ?>.
+    Une fois le comité passé vous pourrez rendre votre compte-rendu directement via SyGAL à l'adresse suivante :
+    <a href="<?php echo $url; ?>"></a>
+</p>
+
+<p>
+    Vous pouvez maintenant poursuivre les démarches associées au comité de suivi de thèse.
+</p>

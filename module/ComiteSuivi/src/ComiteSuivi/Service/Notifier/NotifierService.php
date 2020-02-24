@@ -7,6 +7,7 @@ use Application\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\Role\RoleServiceAwareTrait;
 use ComiteSuivi\Entity\Db\ComiteSuivi;
+use ComiteSuivi\Entity\Db\Membre;
 use Notification\Notification;
 use UnicaenApp\Exception\LogicException;
 
@@ -44,8 +45,8 @@ class NotifierService extends \Notification\Service\NotifierService {
     /**
      * @param ComiteSuivi $comite
      */
-    public function triggerFinalisation($comite) {
-
+    public function triggerFinalisation($comite)
+    {
         $these = $comite->getThese();
         $doctorant = $these->getDoctorant();
         $emails = $this->fetchEmailEcoleDoctorale($these);
@@ -66,8 +67,8 @@ class NotifierService extends \Notification\Service\NotifierService {
     /**
      * @param ComiteSuivi $comite
      */
-    public function triggerValidation($comite) {
-
+    public function triggerValidation($comite)
+    {
         $these = $comite->getThese();
         $ecole = $these->getEcoleDoctorale();
         $emails = $this->fetchEmailDoctorant($these);
@@ -139,6 +140,30 @@ class NotifierService extends \Notification\Service\NotifierService {
         }
     }
 
+    /**
+     * @param ComiteSuivi $comite
+     * @param Membre $membre
+     */
+    public function triggerNotifierExaminateur(ComiteSuivi $comite, Membre $membre)
+    {
+        $these = $comite->getThese();
+        $email = ($membre->getIndividu()->getEmail()?:$membre->getEmail());
+        $doctorant = $these->getDoctorant();
+
+        if (! empty($emails)) {
+            $notif = new Notification();
+            $notif
+                ->setSubject("Vous venez d'être désigné comme examinateur du comité de suivi de thèse de ".$doctorant->getIndividu()->getNomComplet().".")
+                ->setTo($email)
+                ->setTemplatePath('comite-suivi/notification/notifier-examinateur')
+                ->setTemplateVariables([
+                    'comite' => $comite,
+                    'doctorant' => $doctorant,
+                    'membre' => $membre,
+                ]);
+            $this->trigger($notif);
+        }
+    }
 
 
 }
