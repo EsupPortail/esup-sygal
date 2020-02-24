@@ -12,6 +12,7 @@ use Application\Service\Individu\IndividuServiceAwareInterface;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\UserContextServiceAwareInterface;
 use Application\Service\UserContextServiceAwareTrait;
+use ComiteSuivi\Entity\Db\ComiteSuivi;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Query\Expr\Join;
@@ -275,5 +276,60 @@ class ValidationService extends BaseService
         }
 
         return $v;
+    }
+
+    /**
+     * @param ComiteSuivi $comite
+     * @return Validation
+     */
+    public function finaliseComiteSuivi(ComiteSuivi $comite)
+    {
+        $individu = $this->userContextService->getIdentityIndividu();
+
+        $v = new Validation(
+            $this->getTypeValidation(TypeValidation::CODE_FINALISATION_COMITE),
+            $comite->getThese(),
+            $individu);
+
+        $this->entityManager->persist($v);
+        try {
+            $this->entityManager->flush($v);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur lors de l'enregistrement de la validation en bdd", null, $e);
+        }
+        return $v;
+    }
+
+    /**
+     * @param ComiteSuivi $comite
+     * @return Validation
+     */
+    public function validateComiteSuivi(ComiteSuivi $comite)
+    {
+        $individu = $this->userContextService->getIdentityIndividu();
+
+        $v = new Validation(
+            $this->getTypeValidation(TypeValidation::CODE_VALIDATION_COMITE),
+            $comite->getThese(),
+            $individu);
+
+        $this->entityManager->persist($v);
+        try {
+            $this->entityManager->flush($v);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Erreur lors de l'enregistrement de la validation en bdd", null, $e);
+        }
+        return $v;
+    }
+
+    public function historiserValidation(Validation $validation)
+    {
+        $validation->historiser();
+        try {
+            $this->getEntityManager()->flush($validation);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Un problème est survenu lors l'enregistrement",0,$e);
+        }
+        return $validation;
     }
 }

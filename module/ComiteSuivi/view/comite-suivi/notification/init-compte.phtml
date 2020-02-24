@@ -1,0 +1,34 @@
+<?php
+
+use Application\Entity\Db\These;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @see \ComiteSuivi\Service\Notifier\NotifierService::triggerInitialisationCompte()
+ *
+ * @var PhpRenderer $this
+ * @var These $these
+ * @var string $username
+ * @var string $url
+ */
+
+$doctorant = $these->getDoctorant()->getIndividu()->getNomComplet(false, false, false, true, false, true);
+$titre = $these->getTitre();
+?>
+
+<p>
+    Bonjour,
+</p>
+<p>
+    Vous venez d'être désigné comme examinateur pour lcomité de suivi de thèse de <strong><?php echo $doctorant; ?></strong> intitulée
+    <strong><?php echo $titre; ?></strong>. Afin de pouvoir vous connecter à l'application <strong> <?php echo $this->appInfos()->nom; ?> </strong>
+    et ainsi pouvoir rendre votre compte-rendu du comité, vous devez initialiser votre compte dans l'application.
+</p>
+<p>
+    Votre nom d'utilisateur est <strong><?php echo $username; ?></strong> . Celui-ci vous sera demandé dans le formulaire
+    d'initialisation que vous trouverez à l'adresse suivante : <br/>
+    <a href="<?php echo $url; ?>"><?php echo $url;?> </a>
+</p>
+
+
+

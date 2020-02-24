@@ -12,6 +12,8 @@ use ComiteSuivi\Form\ComiteSuivi\RefusForm;
 use ComiteSuivi\Form\ComiteSuivi\RefusFormFactory;
 use ComiteSuivi\Service\ComiteSuivi\ComiteSuiviService;
 use ComiteSuivi\Service\ComiteSuivi\ComiteSuiviServiceFactory;
+use ComiteSuivi\Service\Notifier\NotifierService;
+use ComiteSuivi\Service\Notifier\NotifierServiceFactory;
 use ComiteSuivi\View\Helper\AnneeTheseViewHelper;
 use UnicaenAuth\Guard\PrivilegeController;
 use Zend\Mvc\Router\Http\Literal;
@@ -244,7 +246,8 @@ return [
     ],
     'service_manager' => [
         'factories' => [
-            ComiteSuiviService::class => ComiteSuiviServiceFactory::class
+            ComiteSuiviService::class => ComiteSuiviServiceFactory::class,
+            NotifierService::class => NotifierServiceFactory::class,
         ],
     ],
     'controllers'     => [

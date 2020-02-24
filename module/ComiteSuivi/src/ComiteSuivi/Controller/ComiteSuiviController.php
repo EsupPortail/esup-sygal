@@ -3,9 +3,12 @@
 namespace ComiteSuivi\Controller;
 
 
+use Application\Entity\Db\Individu;
 use Application\Entity\Db\These;
 use Application\Service\Individu\IndividuServiceAwareTrait;
+use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
+use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use ComiteSuivi\Entity\DateTimeTrait;
 use ComiteSuivi\Entity\Db\ComiteSuivi;
@@ -18,9 +21,11 @@ use ComiteSuivi\Form\Membre\MembreFormAwareTrait;
 use ComiteSuivi\Service\ComiteSuivi\ComiteSuiviServiceAwareTrait;
 use ComiteSuivi\Service\CompteRendu\CompteRenduServiceAwareTrait;
 use ComiteSuivi\Service\Membre\MembreServiceAwareTrait;
+use ComiteSuivi\Service\Notifier\NotifierServiceAwareTrait;
 use ComiteSuivi\View\Helper\AnneeTheseViewHelper;
 use Doctrine\ORM\ORMException;
 use UnicaenApp\Exception\RuntimeException;
+use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
 use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
@@ -32,7 +37,11 @@ class ComiteSuiviController extends AbstractActionController {
     use CompteRenduServiceAwareTrait;
     use IndividuServiceAwareTrait;
     use MembreServiceAwareTrait;
+    use NotifierServiceAwareTrait;
+    use RoleServiceAwareTrait;
     use TheseServiceAwareTrait;
+    use UserServiceAwareTrait;
+    use UtilisateurServiceAwareTrait;
     use ValidationServiceAwareTrait;
 
     use ComiteSuiviFormAwareTrait;
@@ -203,7 +212,7 @@ class ComiteSuiviController extends AbstractActionController {
     {
         $comite = $this->getComiteSuiviService()->getRequestedComiteSuivi($this);
         $validation = $this->validationService->finaliseComiteSuivi($comite);
-        //TODO $this->getNotifierSoutenanceService()->triggerValidationProposition($these, $validation);
+        $this->getNotifierService()->triggerFinalisation($comite);
 
         $comite->setFinalisation($validation);
         $this->getComiteSuiviService()->update($comite);
@@ -215,7 +224,7 @@ class ComiteSuiviController extends AbstractActionController {
     {
         $comite = $this->getComiteSuiviService()->getRequestedComiteSuivi($this);
         $validation = $this->validationService->validateComiteSuivi($comite);
-        //TODO $this->getNotifierSoutenanceService()->triggerValidationProposition($these, $validation);
+        $this->getNotifierService()->triggerValidation($comite);
 
         $comite->setValidation($validation);
         $this->getComiteSuiviService()->update($comite);
@@ -238,7 +247,7 @@ class ComiteSuiviController extends AbstractActionController {
                 $this->validationService->historiserValidation($comite->getFinalisation());
                 $comite->setFinalisation(null);
                 $this->getComiteSuiviService()->update($comite);
-                //TODO $this->getNotifierSoutenanceService()->triggerRefusPropositionSoutenance($these, $currentUser, $currentRole, $data['motif']);
+                $this->getNotifierService()->triggerRefus($comite, $data['motif']);
             }
         }
 
@@ -352,10 +361,21 @@ class ComiteSuiviController extends AbstractActionController {
             }
             if (isset($data['type']) AND $data['type'] === 'importation') {
                 $individuId = isset($data['individu']['id'])?$data['individu']['id']:null;
+                /** @var Individu $individu */
                 $individu = $this->getIndividuService()->getRepository()->find($individuId);
             }
             $membre->setIndividu($individu);
             $this->getMembreService()->update($membre);
+            $examinateur = $this->getRoleService()->getRepository()->findByCode(Membre::ROLE_EXAMINATEUR_CODE);
+            $this->getRoleService()->addIndividuRole($individu,$examinateur);
+
+            $utilisateurs = $this->utilisateurService->getRepository()->findByIndividu($individu);
+            if (empty($utilisateurs)) {
+                $user = $this->utilisateurService->createFromIndividu($individu, $this->generateUsername($membre), 'none');
+                $this->userService->updateUserPasswordResetToken($user);
+                $url = $this->url()->fromRoute('utilisateur/init-compte', ['token' => $user->getPasswordResetToken()], ['force_canonical' => true], true);
+                $this->getNotifierService()->triggerInitialisationCompte($comite, $user, $url);
+            }
             exit();
         }
 
@@ -364,6 +384,16 @@ class ComiteSuiviController extends AbstractActionController {
             'comite' => $comite,
             'membre' => $membre,
         ]);
+    }
+
+    /**
+     * @param Membre $membre
+     * @return string
+     */
+    private function generateUsername(Membre $membre)
+    {
+        $result = $membre->getNom() . "_CST". $membre->getId();
+        return $result;
     }
 
 }
