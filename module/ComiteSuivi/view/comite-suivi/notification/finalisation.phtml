@@ -1,0 +1,34 @@
+<?php
+
+use Application\Entity\Db\Doctorant;
+use Application\View\Renderer\PhpRenderer;
+use ComiteSuivi\Entity\Db\ComiteSuivi;
+
+/**
+ * @see \ComiteSuivi\Service\Notifier\NotifierService::triggerFinalisation()
+ * @var PhpRenderer $this
+ * @var ComiteSuivi $comite
+ * @var Doctorant $doctorant
+ */
+?>
+
+<?php
+$url = $this->url('comite-suivi/modifier', ['these' => $comite->getThese()->getId(), 'comite-suivi' => $comite->getId()], ['force_canonical'=>true], true);
+?>
+
+<p>
+    Bonjour,
+</p>
+<p>
+    Ceci est un mail envoyé automatiquement par l'application SyGAL.
+</p>
+
+<p>
+    <?php echo $doctorant->getIndividu()->getNomComplet(); ?> vient de finaliser une proposition de comité de suivi de thèse
+    pour sa <?php echo strtolower($this->anneeThese($comite->getAnneeThese())); ?> de thèse.
+</p>
+
+<p>
+    Vous pouvez maintenant examiner cette proposition afin de valider celle-ci.
+    Vous pouvez accéder à cette proposition en utilisant le lien suivant : <a href="<?php echo $url; ?>">Comité de suivi de thèse</a>.
+</p>

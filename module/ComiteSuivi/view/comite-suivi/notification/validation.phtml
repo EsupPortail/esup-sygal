@@ -1,0 +1,33 @@
+<?php
+
+use Application\Entity\Db\EcoleDoctorale;
+use Application\View\Renderer\PhpRenderer;
+use ComiteSuivi\Entity\Db\ComiteSuivi;
+
+/**
+ * @see \ComiteSuivi\Service\Notifier\NotifierService::triggerValidation()
+ * @var PhpRenderer $this
+ * @var ComiteSuivi $comite
+ * @var EcoleDoctorale $ecole
+ */
+?>
+
+<?php
+$url = $this->url('comite-suivi/modifier', ['these' => $comite->getThese()->getId(), 'comite-suivi' => $comite->getId()], ['force_canonical'=>true], true);
+?>
+
+<p>
+    Bonjour,
+</p>
+<p>
+    Ceci est un mail envoyé automatiquement par l'application SyGAL.
+</p>
+
+<p>
+    Le comité de suivi de thèse de votre <?php echo strtolower($this->anneeThese($comite->getAnneeThese())); ?> de thèse
+    vient d'être validé par votre école doctorale (<?php echo $ecole->getSigle(); ?>).
+</p>
+
+<p>
+    Vous pouvez maintenant poursuivre les démarches associées au comité de suivi de thèse.
+</p>

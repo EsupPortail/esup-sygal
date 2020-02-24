@@ -3,6 +3,7 @@
 namespace ComiteSuivi\Controller;
 
 use Application\Service\Individu\IndividuService;
+use Application\Service\Role\RoleService;
 use Application\Service\These\TheseService;
 use Application\Service\Validation\ValidationService;
 use ComiteSuivi\Form\ComiteSuivi\ComiteSuiviForm;
@@ -12,6 +13,7 @@ use ComiteSuivi\Form\Membre\MembreForm;
 use ComiteSuivi\Service\ComiteSuivi\ComiteSuiviService;
 use ComiteSuivi\Service\CompteRendu\CompteRenduService;
 use ComiteSuivi\Service\Membre\MembreService;
+use ComiteSuivi\Service\Notifier\NotifierService;
 use Zend\Mvc\Controller\ControllerManager;
 
 class ComiteSuiviControllerFactory {
@@ -27,6 +29,8 @@ class ComiteSuiviControllerFactory {
          * @var CompteRenduService $compteRenduService
          * @var IndividuService $individuService
          * @var MembreService $membreService
+         * @var NotifierService $notifierService
+         * @var RoleService $roleService
          * @var TheseService $theseService
          * @var ValidationService $validationService
          */
@@ -34,6 +38,8 @@ class ComiteSuiviControllerFactory {
         $compteRenduService = $manager->getServiceLocator()->get(CompteRenduService::class);
         $individuService = $manager->getServiceLocator()->get('IndividuService');
         $membreService = $manager->getServiceLocator()->get(MembreService::class);
+        $notifierService = $manager->getServiceLocator()->get(NotifierService::class);
+        $roleService = $manager->getServiceLocator()->get('RoleService');
         $theseService = $manager->getServiceLocator()->get('TheseService');
         $validationService = $manager->getServiceLocator()->get('ValidationService');
 
@@ -55,6 +61,8 @@ class ComiteSuiviControllerFactory {
         $controller->setCompteRenduService($compteRenduService);
         $controller->setIndividuService($individuService);
         $controller->setMembreService($membreService);
+        $controller->setNotifierService($notifierService);
+        $controller->setRoleService($roleService);
         $controller->setTheseService($theseService);
         $controller->setValidationService($validationService);
 
