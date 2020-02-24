@@ -1,0 +1,34 @@
+<?php
+
+
+/**
+ * @var ComiteSuivi $comite
+ * @var Doctorant $doctorant
+ * @var CompteRendu $compterendu
+ */
+
+use Application\Entity\Db\Doctorant;
+use ComiteSuivi\Entity\Db\ComiteSuivi;
+use ComiteSuivi\Entity\Db\CompteRendu;
+
+?>
+
+<?php
+$url = $this->url('comite-suivi/modifier', ['these' => $comite->getThese()->getId(), 'comite-suivi' => $comite->getId()], ['force_canonical'=>true], true);
+?>
+
+<p>
+    Bonjour,
+</p>
+<p>
+    Ceci est un mail envoyé automatiquement par l'application SyGAL.
+</p>
+
+<p>
+    <?php echo $compterendu->getMembre()->getDenomination(); ?> veint de finaliser son compte-rendu du comité de suivi de la
+    <?php echo strtolower($this->anneeThese($comite->getAnneeThese())); ?> de la thèse de <?php echo $doctorant->getIndividu()->getNomComplet(); ?>.
+</p>
+
+<p>
+    Vous pouvez maintenant consulter ce compte-rendu via SyGAL : <a href="<?php echo $url; ?>">Comité de suivi de thèse</a>.
+</p>

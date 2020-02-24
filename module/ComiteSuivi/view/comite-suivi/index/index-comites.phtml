@@ -1,0 +1,89 @@
+<?php
+
+/**
+ * @see \ComiteSuivi\Controller\IndexController::indexAction()
+ * @var ComiteSuivi[] $comites
+ * @var string $anneeScolaire
+ */
+
+use ComiteSuivi\Entity\Db\ComiteSuivi;
+use ComiteSuivi\Entity\Db\Membre;
+use ComiteSuivi\Provider\Privilege\ComiteSuiviPrivileges;
+
+$this->headTitle('Index des comités de suivi de thèse');
+
+$canAfficherComite = $this->isAllowed(ComiteSuiviPrivileges::getResourceId(ComiteSuiviPrivileges::COMITESUIVI_AFFICHER));
+$canModifierComite = $this->isAllowed(ComiteSuiviPrivileges::getResourceId(ComiteSuiviPrivileges::COMITESUIVI_MODIFIER));
+
+?>
+
+<h1 class="page-header">
+    Index des comités de suivi de thèse
+</h1>
+
+<div class="main">
+    <table class="table table-condensed">
+        <thead>
+            <tr>
+                <th> Doctorant </th>
+                <th> Titre </th>
+                <th> Année de thèse </th>
+                <th> Année scolaire </th>
+                <th> Examinateurs </th>
+                <th> Action </th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach($comites as $comite) : ?>
+                <tr>
+                    <td> <?php echo $comite->getThese()->getDoctorant()->getIndividu()->getNomComplet(); ?> </td>
+                    <td>
+                        <?php
+                            $titre_ = $comite->getThese()->getTitre();
+                            if (strlen($titre_) > 50) {
+                                $titre = substr($titre_,0, 46) . " ...";
+                            }
+                            echo '<span title="' . $titre_.'">';
+                            echo $titre;
+                            echo '</span>';
+                        ?>
+                    </td>
+                    <td> <?php echo $this->anneeThese($comite->getAnneeThese()); ?> </td>
+                    <td> <?php echo $comite->getAnneeScolaire(); ?> </td>
+                    <td>
+                        <ul>
+                            <?php $membres = $comite->getMembres(); ?>
+                            <?php if(!empty($membres)) : ?>
+                                <?php foreach ($membres as $membre) : ?>
+                                    <?php if ($membre->getRole()->getCode() === Membre::ROLE_EXAMINATEUR_CODE) : ?>
+                                        <li> <?php echo $membre->getDenomination(); ?> </li>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+                            <?php else :?>
+                                Aucun
+                            <?php endif; ?>
+                        </ul>
+                    </td>
+                    <td>
+                        <?php if($canModifierComite): ?>
+                            <a  <?php /** @see \ComiteSuivi\Controller\ComiteSuiviController::modifierAction() */ ?>
+                                href="<?php echo $this->url('comite-suivi/afficher', ['these' => $comite->getThese()->getId(), 'comite-suivi' => $comite->getId()], [], true); ?>"
+                                class="ajax-modal"
+                                title="Afficher le comité de suivi"
+                            >
+                                <span class="glyphicon glyphicon-eye-open"></span></a>
+                        <?php endif; ?>
+                        <?php if($canModifierComite AND $comite->getAnneeScolaire() === $anneeScolaire): ?>
+                            <a  <?php /** @see \ComiteSuivi\Controller\ComiteSuiviController::modifierAction() */ ?>
+                                href="<?php echo $this->url('comite-suivi/modifier', ['these' => $comite->getThese()->getId(), 'comite-suivi' => $comite->getId()], [], true); ?>"
+                                title="Modifier le comite de suivi"
+                            >
+                                <span class="glyphicon glyphicon-pencil"></span></a>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
+

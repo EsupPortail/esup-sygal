@@ -2,11 +2,13 @@
 
 namespace ComiteSuivi\Controller;
 
+use ComiteSuivi\Entity\DateTimeTrait;
 use ComiteSuivi\Entity\Db\CompteRendu;
 use ComiteSuivi\Form\CompteRendu\CompteRenduFormAwareTrait;
 use ComiteSuivi\Service\ComiteSuivi\ComiteSuiviServiceAwareTrait;
 use ComiteSuivi\Service\CompteRendu\CompteRenduServiceAwareTrait;
 use ComiteSuivi\Service\Membre\MembreServiceAwareTrait;
+use ComiteSuivi\Service\Notifier\NotifierServiceAwareTrait;
 use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
@@ -15,7 +17,9 @@ class CompteRenduController extends AbstractActionController
 {
     use ComiteSuiviServiceAwareTrait;
     use CompteRenduServiceAwareTrait;
+    use DateTimeTrait;
     use MembreServiceAwareTrait;
+    use NotifierServiceAwareTrait;
 
     use CompteRenduFormAwareTrait;
 
@@ -109,6 +113,15 @@ class CompteRenduController extends AbstractActionController
     {
         $compterendu = $this->getCompteRenduService()->getRequestedCompteRendu($this);
         $this->getCompteRenduService()->delete($compterendu);
+        $this->redirect()->toRoute('comite-suivi', ['these' => $compterendu->getComite()->getThese()->getId(), 'comite-suivi' => $compterendu->getComite()->getId()], [], true);
+    }
+
+    public function finaliserAction()
+    {
+        $compterendu = $this->getCompteRenduService()->getRequestedCompteRendu($this);
+        $compterendu->setFinaliser($this->getDateTime());
+        $this->getCompteRenduService()->update($compterendu);
+        $this->getNotifierService()->triggerFinaliserCompteRendu($compterendu);
         $this->redirect()->toRoute('comite-suivi', ['these' => $compterendu->getComite()->getThese()->getId(), 'comite-suivi' => $compterendu->getComite()->getId()], [], true);
     }
 }

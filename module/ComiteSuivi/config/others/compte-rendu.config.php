@@ -25,6 +25,7 @@ return [
                         'historiser',
                         'restaurer',
                         'supprimer',
+                        'finaliser',
                     ],
                 ],
             ],
@@ -90,6 +91,16 @@ return [
                             ],
                         ],
                     ],
+                    'finaliser' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'    => '/finaliser/:compte-rendu',
+                            'defaults' => [
+                                'controller'    => CompteRenduController::class,
+                                'action'        => 'finaliser',
+                            ],
+                        ],
+                    ],
                     'supprimer' => [
                         'type'          => Segment::class,
                         'options'       => [
@@ -105,12 +116,7 @@ return [
         ],
     ],
 
-    'navigation'      => [
-        'default' => [
-            'home' => [
-            ],
-        ],
-    ],
+
     'service_manager' => [
         'factories' => [
             CompteRenduService::class =>  CompteRenduServiceFactory::class,

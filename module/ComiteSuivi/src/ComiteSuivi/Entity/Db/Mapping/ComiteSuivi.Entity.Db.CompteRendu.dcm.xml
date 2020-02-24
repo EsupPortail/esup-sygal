@@ -20,6 +20,7 @@
         </many-to-one>
 
         <field name="reponse"          type="string"   column="REPONSE"              length="1024"     nullable="true"/>
+        <field name="finaliser"        type="datetime" column="FINALISER"                              nullable="true"/>
 
         <!-- historisation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
         <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>

@@ -55,15 +55,15 @@ return [
     'router'          => [
         'routes' => [
             'comite-suivi' => [
-                'type'          => Segment::class,
-                'options'       => [
-                    'route'    => '/comite-suivi[/:these]',
-                    'defaults' => [
-                        'controller'    => ComiteSuiviController::class,
-                        'action'        => 'index',
-                    ],
-                ],
-                'may_terminate' => true,
+//                'type'          => Segment::class,
+//                'options'       => [
+//                    'route'    => '/comite-suivi[/:these]',
+//                    'defaults' => [
+//                        'controller'    => ComiteSuiviController::class,
+//                        'action'        => 'index',
+//                    ],
+//                ],
+//                'may_terminate' => true,
                 'child_routes'  => [
                     'ajouter' => [
                         'type'          => Literal::class,
@@ -230,20 +230,7 @@ return [
         ],
     ],
 
-    'navigation'      => [
-        'default' => [
-            'home' => [
-                'pages' => [
-                    'comite-suivi' => [
-                        'label'    => 'Comité de suivi',
-                        'route'    => 'comite-suivi',
-                        'resource' => SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_CONSULTATION_TOUTES_STRUCTURES),
-                        'order'    => 50,
-                    ],
-                ],
-            ],
-        ],
-    ],
+
     'service_manager' => [
         'factories' => [
             ComiteSuiviService::class => ComiteSuiviServiceFactory::class,

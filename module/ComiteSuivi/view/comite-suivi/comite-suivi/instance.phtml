@@ -281,6 +281,9 @@ $canValider                 = $this->isAllowed(ComiteSuiviPrivileges::getResourc
     <ul>
         <?php foreach ($comptesrendus as $compterendu): ?>
             <li>
+                <?php if ($compterendu->getFinaliser()) : ?>
+                    <span class="glyphicon glyphicon-ok" style="color:darkgreen;"></span>
+                <?php endif ;?>
                 <?php if ($canAfficherCompteRendu): ?>
                     <a href="<?php echo $this->url('compte-rendu/afficher', ['compte-rendu' => $compterendu->getId()], [], true); ?>"
                        target="_blank"
@@ -311,6 +314,12 @@ $canValider                 = $this->isAllowed(ComiteSuiviPrivileges::getResourc
                                 title="Restaurer définitivement le compte-rendu">
                                 <span class="glyphicon glyphicon-leaf"></span></a>
                         <?php endif; ?>
+                    <?php endif; ?>
+                    <?php if($canModifierCompteRendu) : ?>
+                        <a  <?php /** @see \ComiteSuivi\Controller\CompteRenduController::finaliserAction() */?>
+                                href="<?php echo $this->url('compte-rendu/finaliser', ['compte-rendu' => $compterendu->getId()], [], true); ?>"
+                                title="Finaliser le compte-rendu">
+                            <span class="glyphicon glyphicon-ok"></span></a>
                     <?php endif; ?>
                     <?php if($canHistoriserCompteRendu) : ?>
                         <a  <?php /** @see \ComiteSuivi\Controller\CompteRenduController::supprimerAction() */?>

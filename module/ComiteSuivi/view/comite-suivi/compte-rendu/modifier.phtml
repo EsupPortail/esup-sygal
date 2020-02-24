@@ -14,6 +14,13 @@ use ComiteSuivi\Form\CompteRendu\CompteRenduForm;
 
 ?>
 
+<div class="row">
+    <a href="<?php echo $this->url('comite-suivi/modifier', ['these' => $comite->getThese()->getId(), 'comite-suivi' => $comite->getId()], [], true); ?>" class="btn btn-info action">
+        <span class="glyphicon glyphicon-chevron-left"></span>
+        Retour vers le comité
+    </a>
+</div>
+
 <?php echo $this->form($form); ?>
 
 <script>

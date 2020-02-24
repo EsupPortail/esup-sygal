@@ -2,6 +2,7 @@
 
 namespace ComiteSuivi\Entity\Db;
 
+use DateTime;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
 class CompteRendu {
@@ -15,6 +16,8 @@ class CompteRendu {
     private $membre;
     /** @var string */
     private $reponse;
+    /** @var DateTime */
+    private $finaliser;
 
     /**
      * @return int
@@ -88,5 +91,22 @@ class CompteRendu {
         return $this;
     }
 
+    /**
+     * @return DateTime
+     */
+    public function getFinaliser()
+    {
+        return $this->finaliser;
+    }
+
+    /**
+     * @param DateTime $finaliser
+     * @return CompteRendu
+     */
+    public function setFinaliser($finaliser)
+    {
+        $this->finaliser = $finaliser;
+        return $this;
+    }
 
 }

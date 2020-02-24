@@ -7,6 +7,7 @@ use Application\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\Role\RoleServiceAwareTrait;
 use ComiteSuivi\Entity\Db\ComiteSuivi;
+use ComiteSuivi\Entity\Db\CompteRendu;
 use ComiteSuivi\Entity\Db\Membre;
 use Notification\Notification;
 use UnicaenApp\Exception\LogicException;
@@ -160,6 +161,31 @@ class NotifierService extends \Notification\Service\NotifierService {
                     'comite' => $comite,
                     'doctorant' => $doctorant,
                     'membre' => $membre,
+                ]);
+            $this->trigger($notif);
+        }
+    }
+
+    /**
+     * @param CompteRendu $compterendu
+     */
+    public function triggerFinaliserCompteRendu(CompteRendu $compterendu)
+    {
+        $comite = $compterendu->getComite();
+        $these = $comite->getThese();
+        $emails = $this->fetchEmailEcoleDoctorale($these);
+        $doctorant = $these->getDoctorant();
+
+        if (! empty($emails)) {
+            $notif = new Notification();
+            $notif
+                ->setSubject("Un compte-rendu vient d'être finaliser pour le  comité de suivi de thèse de ".$doctorant->getIndividu()->getNomComplet().".")
+                ->setTo($emails)
+                ->setTemplatePath('comite-suivi/notification/finaliser-compterendu')
+                ->setTemplateVariables([
+                    'comite' => $comite,
+                    'doctorant' => $doctorant,
+                    'compterendu' => $compterendu,
                 ]);
             $this->trigger($notif);
         }
