@@ -809,7 +809,7 @@ return [
             'home' => [
                 'pages' => [
                     'these' => [
-                        'order'    => -100,
+                        'order'    => -101,
                         'label'    => 'Thèses',
                         'route'    => 'these',
                         'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'index'),

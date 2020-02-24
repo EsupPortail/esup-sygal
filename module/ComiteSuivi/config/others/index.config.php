@@ -49,7 +49,7 @@ return [
                         'label'    => 'Comité de suivi',
                         'route'    => 'comite-suivi',
                         'resource' => PrivilegeController::getResourceId(\ComiteSuivi\Controller\ComiteSuiviController::class, 'index'),
-                        'order'    => 50,
+                        'order'    => -100,
                     ],
                 ],
             ],
