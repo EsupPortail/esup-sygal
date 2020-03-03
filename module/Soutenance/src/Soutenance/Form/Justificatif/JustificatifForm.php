@@ -30,6 +30,7 @@ class JustificatifForm extends Form {
                     NatureFichier::CODE_DEMANDE_LABEL => 'Demande de label européen',
                     NatureFichier::CODE_LANGUE_ANGLAISE => 'Demande de manuscrit ou soutenance en langue anglaise',
                     NatureFichier::CODE_DEMANDE_CONFIDENT => 'Demande de confidentialité',
+                    NatureFichier::CODE_AUTRES_JUSTIFICATIFS => 'Autre justificatif lié à la soutenance',
                 ],
                 'attributes' => [
                     'class' => 'bootstrap-selectpicker show-tick',
