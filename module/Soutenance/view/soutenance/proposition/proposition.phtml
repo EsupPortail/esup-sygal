@@ -179,24 +179,24 @@ $this->headTitle("Proposition de soutenance");
                 // window.scrollTo(0,top);
             },
             "edition-membre" : function (event) {
-                event.div.modal('hide');
-                $.ajax({
-                    type: "POST",
-                    url : "<?php echo $this->url('soutenance/proposition/generate-view-jury', ["these" => $these->getId()], [], true); ?>",
-                    beforeSend:
-                        function () {
-                            $("div#BOXDIV_JURY").html("<div class='alert alert-warning'> <span class='glyphicon glyphicon-warning-sign'></span> Rechargement de la vue associée au jury.</div><br/>");
-                        },
-                    success:
-                        function(retour){
-                            let texte = "ok";
-                            $("div#BOXDIV_JURY").html(retour);
-                        }
-                });
+                //event.div.modal('hide');
+                //$.ajax({
+                //    type: "POST",
+                //    url : "<?php //echo $this->url('soutenance/proposition/generate-view-jury', ["these" => $these->getId()], [], true); ?>//",
+                //    beforeSend:
+                //        function () {
+                //            $("div#BOXDIV_JURY").html("<div class='alert alert-warning'> <span class='glyphicon glyphicon-warning-sign'></span> Rechargement de la vue associée au jury.</div><br/>");
+                //        },
+                //    success:
+                //        function(retour){
+                //            let texte = "ok";
+                //            $("div#BOXDIV_JURY").html(retour);
+                //        }
+                //});
 
-                // window.location.reload();
-                // let top = $('div#COMPOSITION_JURY').offset().top - navbar;
-                // window.scrollTo(0,top);
+                window.location.reload();
+                let top = $('div#COMPOSITION_JURY').offset().top - navbar;
+                window.scrollTo(0,top);
             },
             "edition-informations" : function (event) {
                 event.div.modal('hide');
