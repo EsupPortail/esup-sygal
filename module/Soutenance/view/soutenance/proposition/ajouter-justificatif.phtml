@@ -214,6 +214,7 @@ $explications[NatureFichier::CODE_DEMANDE_CONFIDENT] =
         if (value === "<?php echo NatureFichier::CODE_DEMANDE_CONFIDENT; ?>")         label = "<?php echo NatureFichier::LABEL_DEMANDE_CONFIDENT; ?>";
         $('select[name="nature"]').append(new Option(label, value));
     }
+    $('select[name="nature"]').append(new Option("<?php echo NatureFichier::LABEL_AUTRES_JUSTIFICATIFS; ?>", "<?php echo NatureFichier::CODE_AUTRES_JUSTIFICATIFS; ?>"));
     $( 'select[name="nature"]' ).trigger( "change" );
 
 

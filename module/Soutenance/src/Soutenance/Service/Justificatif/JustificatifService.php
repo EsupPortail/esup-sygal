@@ -248,7 +248,7 @@ class JustificatifService {
                     'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_JUSTIFICATIF_HDR, $membre),
                 ];
             }
-            if ($membre->isExterieur() === 'oui' AND $membre->getQualite()->isEmeritat() === 'O') {
+            if ($membre->isExterieur() AND $membre->getQualite()->isEmeritat()) {
                 $justificatifs[] = [
                     'type' => NatureFichier::CODE_JUSTIFICATIF_EMERITAT,
                     'membre' => $membre,
