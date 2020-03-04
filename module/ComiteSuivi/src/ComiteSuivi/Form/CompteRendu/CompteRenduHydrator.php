@@ -2,9 +2,6 @@
 
 namespace ComiteSuivi\Form\CompteRendu;
 
-use Application\Entity\Db\These;
-use Application\Service\These\TheseServiceAwareTrait;
-use ComiteSuivi\Entity\Db\ComiteSuivi;
 use ComiteSuivi\Entity\Db\CompteRendu;
 use ComiteSuivi\Service\ComiteSuivi\ComiteSuiviServiceAwareTrait;
 use ComiteSuivi\Service\Membre\MembreServiceAwareTrait;

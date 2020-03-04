@@ -258,7 +258,6 @@ class ComiteSuiviController extends AbstractActionController {
         ]);
     }
 
-
     /** PARTIE MEMBRE *************************************************************************************************/
 
     public function ajouterMembreAction()

@@ -29,6 +29,5 @@ trait DateTimeTrait {
             return ($annee-1).'/'.$annee;
         }
         return ($annee).'/'.($annee+1);
-
     }
 }

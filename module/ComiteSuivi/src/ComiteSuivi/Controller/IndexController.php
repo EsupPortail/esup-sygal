@@ -54,7 +54,6 @@ class IndexController extends AbstractActionController {
                 }
                 $vm->setTemplate('comite-suivi/index/index-theses');
                 break;
-
         }
         $vm->setVariables([
             'comites' => $comites,
