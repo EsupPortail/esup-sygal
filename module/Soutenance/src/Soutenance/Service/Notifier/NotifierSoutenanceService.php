@@ -667,6 +667,7 @@ class NotifierSoutenanceService extends NotifierService {
     {
         if ($email === null) throw new LogicException("Aucun mail n'est fourni pour l'envoi de la convocation.",0);
 
+        $these = $proposition->getThese();
         $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
 
         $notif = new Notification();
