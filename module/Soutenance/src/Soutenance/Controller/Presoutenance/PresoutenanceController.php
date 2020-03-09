@@ -524,7 +524,7 @@ class PresoutenanceController extends AbstractController
                 $this->getNotifierSoutenanceService()->triggerEnvoiConvocationMembre($membre, $proposition, $dateValidation, $email, $url);
             }
         }
-        exit;
+        $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 
     public function notifierRetardRapportPresoutenanceAction()
