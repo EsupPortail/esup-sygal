@@ -15,6 +15,7 @@ use Soutenance\Entity\Proposition;
  * @var Avis[] $avis
  */
 
+$justification = true;
 ?>
 
 <p>
@@ -50,5 +51,27 @@ use Soutenance\Entity\Proposition;
     <?php endforeach; ?>
 </ul>
 
+
+<?php
+//    $emailsActeurs      = $this->fetchEmailActeursDirects($these);
+//    $emailsED           = $this->fetchEmailEcoleDoctorale($these);
+//    $emailsUR           = $this->fetchEmailUniteRecherche($these);
+?>
+
+<?php if ($justification) : ?>
+    <p>
+        Vous avez reçu ce mail car :
+    <ol>
+        <li> la maison du doctorat vient de donner son feu vert pour la soutenance </li>
+        <li> vous êtes soit :
+            <ul>
+                <li> un acteur direct de la thèse de <?php $these->getDoctorant()->getIndividu()->getNomComplet(); ?>, </li>
+                <li> un gestionnaire de l'école de doctorale gérant la thèse, </li>
+                <li> un gestionnaire de l'unité de recherche encadrant la thèse. </li>
+            </ul>
+        </li>
+    </ol>
+    </p>
+<?php endif; ?>
 
 

@@ -5,10 +5,14 @@ use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 
 /**
+ * @see \Soutenance\Service\Notifier\NotifierSoutenanceService::triggerAnnulationEngagementImpartialite()
  * @var These $these
  * @var Proposition $proposition
  * @var Membre $membre
  */
+
+$justification = true;
+
 ?>
 
 <p>
@@ -20,4 +24,12 @@ use Soutenance\Entity\Proposition;
     <strong><?php echo $these->getTitre(); ?></strong> vient d'être annulée.
 </p>
 
-
+<?php if ($justification) : ?>
+<p>
+    Vous avez reçu ce mail car :
+    <ol>
+        <li> vous avez signé l'engagement d'impartialité pour la thèse de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?>;  </li>
+        <li> la signature a été annulée. </li>
+    </ol>
+</p>
+<?php endif; ?>

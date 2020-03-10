@@ -10,6 +10,8 @@ use Application\View\Renderer\PhpRenderer;
  * @var Validation $validation
  * @var These $these
  */
+
+$justification = true;
 ?>
 
 <?php
@@ -39,3 +41,13 @@ $urlRetour = $this->url('soutenance/proposition', ['these' => $these->getId()], 
     NB : La proposition de soutenance sera envoyée automatiquement à votre unité de recherche puis à votre école doctorale,
     une fois que tous les intervenants directs auront validé celle-ci (c.-à-d. doctorant, directeur et co-directeur(s)).
 </p>
+
+<?php if ($justification) : ?>
+    <p>
+        Vous avez reçu ce mail car :
+    <ol>
+        <li> vous avez validé la proposition de soutenance de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?>;  </li>
+        <li> une modification de la proposition a été faite ou demandée. </li>
+    </ol>
+    </p>
+<?php endif; ?>

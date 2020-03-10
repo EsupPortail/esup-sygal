@@ -5,12 +5,14 @@ use Application\Entity\Db\These;
 use Soutenance\Entity\Proposition;
 
 /**
+ * @see \Soutenance\Service\Notifier\NotifierSoutenanceService::triggerEnvoiConvocationDoctorant()
  * @var These $these
  * @var Proposition $proposition
  * @var Doctorant $doctorant
  * @var string $url
  */
 
+$justification = true;
 ?>
 
 <p>
@@ -67,3 +69,13 @@ Doctorat en <?php echo $these->getLibelleDiscipline(); ?>.
 </p>
 
 <p> P.S.: Vous pouvez obtenir une version imprimable de cette convocation à l'adresse suivante : <a href="<?php echo $url; ?>">convocation au format PDF</a> </p>
+
+<?php if ($justification) : ?>
+    <p>
+        Vous avez reçu ce mail car :
+        <ol>
+            <li> votre proposition de soutenance a été validé par la maison du doctorat;  </li>
+            <li> vous êtes le doctorant associé à la proposition de soutenance.  </li>
+        </ol>
+    </p>
+<?php endif; ?>

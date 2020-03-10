@@ -13,6 +13,8 @@ use Application\View\Renderer\PhpRenderer;use Soutenance\Entity\Proposition;
  * @var Proposition $proposition
  * @var string $url
  */
+
+$justification = true;
 ?>
 
 <p>
@@ -28,4 +30,13 @@ use Application\View\Renderer\PhpRenderer;use Soutenance\Entity\Proposition;
 </p>
 
 
+<?php if ($justification) : ?>
+    <p>
+        Vous avez reçu ce mail car :
+    <ol>
+        <li> vous êtes un des rapporteurs de la thèse de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?>;</li>
+        <li> vous n'avez pas encore rendu votre rapport;</li>
+    </ol>
+    </p>
+<?php endif ; ?>
 

@@ -5,12 +5,15 @@ use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 
 /**
+ * @see \Soutenance\Service\Notifier\NotifierSoutenanceService::triggerDemandeAvisSoutenance()
  * @var These $these
  * @var Proposition $proposition
  * @var Membre $membre
  */
 
 $url = $this->url('soutenance/avis-soutenance', ['these' => $these->getId(), 'rapporteur' => $membre->getId()], ['force_canonical'=>true], true);
+
+$justification = true;
 ?>
 
 <p>
@@ -29,3 +32,13 @@ $url = $this->url('soutenance/avis-soutenance', ['these' => $these->getId(), 'ra
         <u>Rappel : </u> les rapports sont attendus pour le <?php echo $proposition->getRenduRapport()->format('d/m/Y'); ?>.
     </p>
 <?php endif;?>
+
+<?php if ($justification) : ?>
+    <p>
+        Vous avez reçu ce mail car :
+    <ol>
+        <li> vous avez déjà signé l'engagement d'impartialité pour la thèse de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?>;  </li>
+        <li> vous avez été désigné comme rapporteur de la thèse de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?>. </li>
+    </ol>
+    </p>
+<?php endif; ?>

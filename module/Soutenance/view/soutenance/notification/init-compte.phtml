@@ -14,6 +14,8 @@ use Application\View\Renderer\PhpRenderer;
 
 $doctorant = $these->getDoctorant()->getIndividu()->getNomComplet(false, false, false, true, false, true);
 $titre = $these->getTitre();
+
+$justification = true;
 ?>
 
 <p>
@@ -30,5 +32,10 @@ $titre = $these->getTitre();
     <a href="<?php echo $url; ?>"><?php echo $url;?> </a>
 </p>
 
+<?php if ($justification) : ?>
+    <p>
+        Vous recevez ce mail, car votre rôle dans la soutenance de thèse de <?php echo $doctorant; ?> nécessite un compte SyGAL.
+    </p>
+<?php endif; ?>
 
 

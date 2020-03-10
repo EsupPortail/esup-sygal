@@ -4,11 +4,14 @@ use Application\Entity\Db\These;
 use Application\View\Renderer\PhpRenderer;
 
 /**
+ * @see \Soutenance\Service\Notifier\NotifierSoutenanceService::triggerNotificationPropositionValidee()
  * @var PhpRenderer $this
  * @var These $these
  */
 
 $urlRetour = $this->url('soutenance/proposition', ['these' => $these->getId()], ['force_canonical'=>true], true);
+
+$justification = true;
 ?>
 
 <p>
@@ -36,3 +39,38 @@ $urlRetour = $this->url('soutenance/proposition', ['these' => $these->getId()], 
 <p> Pour examiner cette proposition merci de vous rendre dans l'application SyGAL :
     <a href="<?php echo $urlRetour;?>"> proposition de soutenance.</a> </p>
 
+<?php
+//$emails = $this->fetchEmailActeursDirects($these);
+?>
+<?php if ($justification) : ?>
+    <p>
+        Vous avez reçu ce mail car :
+    <ol>
+        <li> un des acteurs directs de la thèse de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?> vient de valider la proposition de soutenance  ;</li>
+        <li> vous êtes un des acteurs directs de la thèse de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?>.</li>
+    </ol>
+    </p>
+<?php endif; ?>
+
+<?php
+    // $emailsBDD      = [ $this->fetchEmailBdd($these) ];
+    // $emailsED       = $this->fetchEmailEcoleDoctorale($these);
+    // $emailsUR       = $this->fetchEmailUniteRecherche($these);
+    // $emailsActeurs  = $this->fetchEmailActeursDirects($these);
+?>
+<?php if ($justification) : ?>
+    <p>
+        Vous avez reçu ce mail car :
+    <ol>
+        <li> la proposition de soutenance vient d'être validée par tous les acteurs directs et toutes les structures concernées ; </li>
+        <li> vous êtes soit :
+            <ul>
+                <li> un des acteurs directs de la thèse de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?>,</li>
+                <li> un gestionnaire de l'école de doctorale gérant la thèse, </li>
+                <li> un gestionnaire de l'unité de recherche encadrant la thèse, </li>
+                <li> un gestionnaire du bureau des doctorat de l'établissement d'inscription du doctorant. </li>
+            </ul>
+        </li>
+    </ol>
+    </p>
+<?php endif ; ?>

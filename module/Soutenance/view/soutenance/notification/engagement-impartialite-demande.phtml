@@ -5,12 +5,15 @@ use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 
 /**
+ * @see \Soutenance\Service\Notifier\NotifierSoutenanceService::triggerDemandeSignatureEngagementImpartialite()
  * @var These $these
  * @var Proposition $proposition
  * @var Membre $membre
  */
 
 $urlRetour = $this->url('soutenance/engagement-impartialite', ['these' => $these->getId(), 'membre' => $membre->getId()], ['force_canonical'=>true], true);
+
+$justification = true;
 ?>
 
 
@@ -31,4 +34,12 @@ $urlRetour = $this->url('soutenance/engagement-impartialite', ['these' => $these
     <em>Pour changer de rôle, vous devez cliquer sur votre nom en haut à droite de l'application et sélectionner le rôle désiré.</em>
 </p>
 
-
+<?php if ($justification) : ?>
+    <p>
+        Vous avez reçu ce mail car :
+    <ol>
+        <li> vous avez été désigné rapporteur pour la thèse de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?>;  </li>
+        <li> la signature a été annulée. </li>
+    </ol>
+    </p>
+<?php endif; ?>
