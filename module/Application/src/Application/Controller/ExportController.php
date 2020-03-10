@@ -7,6 +7,7 @@ use Application\Entity\Db\Financement;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\VersionFichier;
+use Application\Filter\FinancementFormatter;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\These\TheseRechercheServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
@@ -23,8 +24,6 @@ class ExportController extends AbstractController
 
     public function csvAction()
     {
-
-
         $headers = [
             // Doctorant
             'Civilité'                              => function (These $these) { return $these->getDoctorant()->getIndividu()->getCivilite(); },
@@ -74,6 +73,13 @@ class ExportController extends AbstractController
                 /** @var Financement $financement */
                 foreach ($financements as $financement) $origines[] = $financement->getOrigineFinancement()->getLibelleLong();
                 return implode(",", $origines);
+            },
+            'Types du financement'                            => function (These $these) {
+                $financements = $these->getFinancements();
+                $types = [];
+                /** @var Financement $financement */
+                foreach ($financements as $financement) $types[] = $financement->getLibelleTypeFinancement();
+                return implode(",", array_filter($types));
             },
             //Domaine
             'Domaines scientifiques'                            => function (These $these) {
