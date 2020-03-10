@@ -8,6 +8,7 @@ use Application\View\Renderer\PhpRenderer;
 use UnicaenAuth\Entity\Db\RoleInterface;
 
 /**
+ * @see \Soutenance\Service\Notifier\NotifierSoutenanceService::triggerRefusPropositionSoutenance()
  * @var PhpRenderer $this
  * @var These $these
  * @var Individu $acteur
@@ -37,3 +38,15 @@ use UnicaenAuth\Entity\Db\RoleInterface;
     Suite à ce refus toutes les validations associées à cette proposition ont été annulées.
 </p>
 
+<?php
+    //$emails = $this->fetchEmailActeursDirects($these);
+?>
+<?php if ($justification) : ?>
+    <p>
+        Vous avez reçu ce mail car :
+    <ol>
+        <li> la proposition de soutenance de thèse de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?> a été refusée ;</li>
+        <li> vous êtes un des acteurs directs de la thèse.</li>
+    </ol>
+    </p>
+<?php endif; ?>

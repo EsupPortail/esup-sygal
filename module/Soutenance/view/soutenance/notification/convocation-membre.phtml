@@ -5,6 +5,7 @@ use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 
 /**
+ * @see \Soutenance\Service\Notifier\NotifierSoutenanceService::triggerEnvoiConvocationMembre()
  * @var These $these
  * @var Proposition $proposition
  * @var Membre $membre
@@ -13,6 +14,7 @@ use Soutenance\Entity\Proposition;
 $civilite = ($membre->getGenre() !== "H")?"Madame":"Monsieur";
 if ($membre->getIndividu()) $civilite = ($membre->getIndividu()->estUneFemme())?"Madame":"Monsieur";
 
+$justification = true;
 ?>
 <p>
     <?php echo $civilite ?>, <br/>
@@ -81,3 +83,23 @@ $texte_directeur = implode(" et ", $encadrement);
 </p>
 
 <p> P.S.: Vous pouvez obtenir une version imprimable de cette convocation à l'adresse suivante : <a href="<?php echo $url; ?>">convocation au format PDF</a> </p>
+
+<?php if ($justification) : ?>
+    <p>
+        Vous avez reçu ce mail car :
+    <ol>
+        <li> votre proposition de soutenance a été validé par la maison du doctorat;  </li>
+        <li> vous êtes le doctorant associé à la proposition de soutenance.  </li>
+    </ol>
+    </p>
+<?php endif; ?>
+
+<?php if ($justification) : ?>
+    <p>
+        Vous avez reçu ce mail car :
+    <ol>
+        <li> la proposition de soutenance de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?> a été validé;  </li>
+        <li> vous avez été désigné comme membre du jury pour la thèse de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?>. </li>
+    </ol>
+    </p>
+<?php endif; ?>

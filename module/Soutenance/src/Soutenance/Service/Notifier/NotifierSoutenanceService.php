@@ -186,6 +186,7 @@ class NotifierSoutenanceService extends NotifierService {
                 ->setTemplatePath('soutenance/notification/validation-structure')
                 ->setTemplateVariables([
                     'these' => $these,
+                    'type' => 'unité de recherche',
                 ]);
             $this->trigger($notif);
         }
@@ -207,6 +208,7 @@ class NotifierSoutenanceService extends NotifierService {
                 ->setTemplatePath('soutenance/notification/validation-structure')
                 ->setTemplateVariables([
                     'these' => $these,
+                    'type' => 'école doctorale',
                 ]);
             $this->trigger($notif);
         }
@@ -228,6 +230,7 @@ class NotifierSoutenanceService extends NotifierService {
                 ->setTemplatePath('soutenance/notification/validation-structure')
                 ->setTemplateVariables([
                     'these' => $these,
+                    'type' => 'maison du doctorat',
                 ]);
             $this->trigger($notif);
         }
