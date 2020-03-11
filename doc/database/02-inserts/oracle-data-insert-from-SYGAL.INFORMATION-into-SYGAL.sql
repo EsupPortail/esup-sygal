@@ -1,6 +1,6 @@
 set define off ;
 
-INSERT INTO /*SYGAL.*/INFORMATION (ID, TITRE, HISTO_CREATION, HISTO_CREATEUR_ID, HISTO_MODIFICATION, HISTO_MODIFICATEUR_ID, HISTO_DESTRUCTION, HISTO_DESTRUCTEUR_ID, CONTENU, PRIORITE, EST_VISIBLE) VALUES (61, 'Le doctorat', TO_DATE('2018-12-13 10:53:25', 'YYYY-MM-DD HH24:MI:SS'), 1/*SUBSTIT*/, TO_DATE('2019-12-05 16:07:14', 'YYYY-MM-DD HH24:MI:SS'), 1/*SUBSTIT*/, NULL, NULL, TO_CLOB('<h2>Normandie Universit&eacute;</h2>
+INSERT INTO /*SYGAL.*/INFORMATION (ID, TITRE, HISTO_CREATION, HISTO_CREATEUR_ID, HISTO_MODIFICATION, HISTO_MODIFICATEUR_ID, HISTO_DESTRUCTION, HISTO_DESTRUCTEUR_ID, CONTENU, PRIORITE, EST_VISIBLE) VALUES (61, 'Le doctorat', TO_DATE('2018-12-13 10:53:25', 'YYYY-MM-DD HH24:MI:SS'), 1/*SUBSTIT*/, TO_DATE('2020-03-06 10:25:33', 'YYYY-MM-DD HH24:MI:SS'), 1/*SUBSTIT*/, NULL, NULL, TO_CLOB('<h2>Normandie Universit&eacute;</h2>
 <p><a href="http://www.normandie-univ.fr">Normandie Universit&eacute;</a> est une <a href="https://fr.wikipedia.org/wiki/Communaut%C3%A9_d%27universit%C3%A9s_et_%C3%A9tablissements">communaut&eacute; d''universit&eacute;s et &eacute;tablissements</a> associant les &eacute;tablissements d&rsquo;enseignement sup&eacute;rieur et de recherche de la <a href="https://fr.wikipedia.org/wiki/R%C3%A9gion_Normandie">r&eacute;gion Normandie</a>. Le doctorat est devenu depuis 2015 une comp&eacute;tence propre de Normandie Universit&eacute; qui coordonne la politique doctorale en Normandie au nom de ses membres et associ&eacute;s. Pour cette raison, quel que soit l&rsquo;&eacute;tablissement d&rsquo;inscription, les doctorants re&ccedil;oivent apr&egrave;s leur soutenance le dipl&ocirc;me de docteur de Normandie Universit&eacute;.&nbsp;</p>
 <p>Normandie Universit&eacute; regroupe :</p>
 <ul>
@@ -182,8 +182,17 @@ INSERT INTO /*SYGAL.*/INFORMATION (ID, TITRE, HISTO_CREATION, HISTO_CREATEUR_ID,
 <li>Campus 2, Universit&eacute; de Caen Normandie&nbsp;:<a href="../fichiers/telecharger/2186"> B&acirc;timent Sciences 3</a>&nbsp;;</li>
 <li>Universit&eacute; Le Havre Normandie&nbsp;: <a href="../fichiers/telecharger/2187">DirVED</a>.</li>
 </ul>
-<h2>Le devenir des docteurs</h2>
-<p>Un suivi sur le devenir des docteurs normands est assur&eacute; par les observatoires des &eacute;tablissements qui interrogent r&eacute;guli&egrave;rement les docteurs sur leurs situations professionnelles 3 ans apr&egrave;s la soutenance de th&egrave;se. Les r&eacute;sultats de ces enqu&ecirc;tes disponibles &agrave;&nbsp;<a href="../fichiers/telecharger/2189">devenir des docteurs normands</a>.</p>
+<h2>L''insertion professionnelle des docteurs normands</h2>
+<p>Un suivi sur le devenir des docteurs normands est assur&eacute; par les observatoires des &eacute;tablissements qui interrogent r&eacute;guli&egrave;rement les docteurs sur leurs situations professionnelles 3 ans apr&egrave;s la soutenance de th&egrave;se. Les r&eacute;sultats de ces enqu&ecirc;tes men&eacute;es aupr&egrave;s des docteurs ayant soutenus entre 2009 et 2013 par domaine scientifique sont accessibles &agrave;:</p>
+<ul>
+<li><a href="../fichiers/telecharger/10716">devenir docteurs 2009-2013 en physique et sciences num&eacute;riques</a></li>
+<li><a href="../fichiers/telecharger/10717">devenir docteurs 2009-2013 en droit</a></li>
+<li><a href="../fichiers/telecharger/10715">devenir docteurs 2009-2013 en &eacute;conomie-gestion</a></li>
+<li><a href="../fichiers/telecharger/10718">devenir docteurs 2009-2013 en Humanit&eacute;s</a></li>
+<li><a href="../fichiers/telecharger/10719">devenir docteurs 2009-2013 en sciences humaines et sociales</a></li>
+<li><a href="../fichiers/telecharger/10714">devenir docteurs 2009-2013 en chimie</a></li>
+<li><a href="../fichiers/telecharger/10713">devenir docteurs 2009-2013 en biologie, sant&eacute; et environnement</a></li>
+</ul>
 <p>Egalement &agrave; votre disposition, le <a href="../fichiers/telecharger/2188">bilan de l''emploi des docteurs en 2018 en France</a>.</p>'), 100, 1) ;
 INSERT INTO /*SYGAL.*/INFORMATION (ID, TITRE, HISTO_CREATION, HISTO_CREATEUR_ID, HISTO_MODIFICATION, HISTO_MODIFICATEUR_ID, HISTO_DESTRUCTION, HISTO_DESTRUCTEUR_ID, CONTENU, PRIORITE, EST_VISIBLE) VALUES (81, 'Les Écoles Doctorales', TO_DATE('2018-12-13 17:59:40', 'YYYY-MM-DD HH24:MI:SS'), 1/*SUBSTIT*/, TO_DATE('2019-12-02 10:01:56', 'YYYY-MM-DD HH24:MI:SS'), 1/*SUBSTIT*/, NULL, NULL, TO_CLOB('<h2>&nbsp;</h2>
 <p>Les &Eacute;coles Doctorales ont &eacute;t&eacute; cr&eacute;&eacute;es au d&eacute;but des ann&eacute;es 90 avec pour mission l&rsquo;accompagnement des doctorants vers leur insertion professionnelle &agrave; l''issue de leur formation doctorale. Les &eacute;coles doctorales regroupent des doctorants d&rsquo;un m&ecirc;me domaine scientifique pouvant &ecirc;tre issus de plusieurs &eacute;tablissements.</p>
@@ -294,7 +303,7 @@ INSERT INTO /*SYGAL.*/INFORMATION (ID, TITRE, HISTO_CREATION, HISTO_CREATEUR_ID,
 <p>Tout doctorant souhaitant b&eacute;n&eacute;ficier d&rsquo;une p&eacute;riode de c&eacute;sure doit imp&eacute;rativement remplir un formulaire de <a title="demande de c&eacute;sure" href="../fichiers/telecharger/2193">demande d&rsquo;une p&eacute;riode de c&eacute;sure</a>.</p>
 <h2>&nbsp;</h2>
 <p>&nbsp;</p>'), 15, 1) ;
-INSERT INTO /*SYGAL.*/INFORMATION (ID, TITRE, HISTO_CREATION, HISTO_CREATEUR_ID, HISTO_MODIFICATION, HISTO_MODIFICATEUR_ID, HISTO_DESTRUCTION, HISTO_DESTRUCTEUR_ID, CONTENU, PRIORITE, EST_VISIBLE) VALUES (162, 'Guide d''utilisation de SyGAL', TO_DATE('2019-11-13 08:51:11', 'YYYY-MM-DD HH24:MI:SS'), 1/*SUBSTIT*/, TO_DATE('2020-01-25 11:40:18', 'YYYY-MM-DD HH24:MI:SS'), 1/*SUBSTIT*/, NULL, NULL, TO_CLOB('<p>L&rsquo;application SyGAL &laquo;&nbsp;Syst&egrave;me de Gestion et d&rsquo;Accompagnement doctoraL&nbsp;&raquo; vous permet de prendre connaissance de <strong>la politique doctorale en Normandie</strong> et donne acc&egrave;s <strong>&agrave; la liste des doctorants et docteurs normands</strong>. SyGAL offre &eacute;galement aux doctorants et leurs encadrants un outil interactif avec les services des p&ocirc;les doctoraux et les &Eacute;coles Doctorales en permettant une <strong>gestion d&eacute;mat&eacute;rialis&eacute;e des diff&eacute;rentes &eacute;tapes de la th&egrave;se</strong>.</p>
+INSERT INTO /*SYGAL.*/INFORMATION (ID, TITRE, HISTO_CREATION, HISTO_CREATEUR_ID, HISTO_MODIFICATION, HISTO_MODIFICATEUR_ID, HISTO_DESTRUCTION, HISTO_DESTRUCTEUR_ID, CONTENU, PRIORITE, EST_VISIBLE) VALUES (162, 'Guide d''utilisation de SyGAL', TO_DATE('2019-11-13 08:51:11', 'YYYY-MM-DD HH24:MI:SS'), 1/*SUBSTIT*/, TO_DATE('2020-03-10 14:41:44', 'YYYY-MM-DD HH24:MI:SS'), 1/*SUBSTIT*/, NULL, NULL, TO_CLOB('<p>L&rsquo;application SyGAL &laquo;&nbsp;Syst&egrave;me de Gestion et d&rsquo;Accompagnement doctoraL&nbsp;&raquo; vous permet de prendre connaissance de <strong>la politique doctorale en Normandie</strong> et donne acc&egrave;s <strong>&agrave; la liste des doctorants et docteurs normands</strong>. SyGAL offre &eacute;galement aux doctorants et leurs encadrants un outil interactif avec les services des p&ocirc;les doctoraux et les &Eacute;coles Doctorales en permettant une <strong>gestion d&eacute;mat&eacute;rialis&eacute;e des diff&eacute;rentes &eacute;tapes de la th&egrave;se</strong>.</p>
 <h2><strong>Se connecter &agrave; SyGAL&nbsp;</strong></h2>
 <ul>
 <li>en tapant le mot &laquo;&nbsp;SyGAL&nbsp;&raquo; sur un moteur de recherche ;</li>
@@ -321,7 +330,7 @@ INSERT INTO /*SYGAL.*/INFORMATION (ID, TITRE, HISTO_CREATION, HISTO_CREATEUR_ID,
 <li>un onglet de recherche par mot-cl&eacute; ;</li>
 <li>une fiche descriptive sur chaque th&egrave;se.</li>
 </ul>
-<p><strong>Attention, les donn&eacute;es ne sont compl&egrave;tes que pour les inscriptions post&eacute;rieures &agrave; 2014</strong>.&nbsp;</p>
+<p><strong>Attention, les donn&eacute;es ne sont compl&egrave;tes que pour les inscriptions post&eacute;rieures &agrave; septembre 2014</strong>.&nbsp;</p>
 <h2>Les acteurs de la formation doctorale</h2>
 <p>Selon votre statut, vous disposer de<strong> droits</strong> <strong>associ&eacute;s</strong> dans SyGAL :</p>
 <ul>
@@ -335,7 +344,7 @@ INSERT INTO /*SYGAL.*/INFORMATION (ID, TITRE, HISTO_CREATION, HISTO_CREATEUR_ID,
 </ul>
 <p><strong>SyGAL vous permet une extraction des donn&eacute;es</strong> <strong>relatives aux docteurs et doctorants que vous aurez s&eacute;lectionn&eacute;s </strong>(clicker sur<strong> "Exporter ces th&egrave;ses &nbsp;au format CSV</strong>" en fin de listing). Hormis les donn&eacute;es list&eacute;es ci-dessus, vous seront &eacute;galement indiqu&eacute;es les informations sur les dipl&ocirc;mes d''acc&egrave;s en th&egrave;se, les co-tutelles, la dur&eacute;e des th&egrave;ses et les dates d''abandon de th&egrave;se.</p>
 <p><strong>SyGAL vous propose une gestion d&eacute;mat&eacute;rialis&eacute;e des diff&eacute;rentes &eacute;tapes de la th&egrave;se</strong>. &Agrave; votre connexion, vous serez identifi&eacute;s et votre statut (doctorant, directeur de th&egrave;se, etc.) sera indiqu&eacute; sur la page d&rsquo;accueil &agrave; droite dans le bandeau sup&eacute;rieur.</p>
-<p><strong>Attention, vous pouvez &ecirc;tre identifi&eacute;s so')||TO_CLOB('us plusieurs statuts </strong>(par exemple directeur de laboratoire<strong> et </strong>directeur de th&egrave;se, etc.). Vous devrez s&eacute;lectionner dans le bandeau sup&eacute;rieur le statut correspondant &agrave; votre requ&ecirc;te.</p>
+<p><strong>Attention, vous pouvez &ecirc;tre identifi&e')||TO_CLOB('acute;s sous plusieurs statuts </strong>(par exemple directeur de laboratoire<strong> et </strong>directeur de th&egrave;se, etc.). Vous devrez s&eacute;lectionner dans le bandeau sup&eacute;rieur le statut correspondant &agrave; votre requ&ecirc;te.</p>
 <p>Pour le doctorant, il pourra lui &ecirc;tre demand&eacute;, &agrave; la premi&egrave;re connexion, un mel ou courriel personnel pour les contacts apr&egrave;s la soutenance. Ce mel ou courriel priv&eacute; n&rsquo;apparaitra pas sur sa page personnelle.</p>
 <p>En cliquant sur l''onglet "soutenance", les <strong>directeurs de th&egrave;se et de laboratoire peuvent acc&eacute;der aux demandes en cours des doctorants</strong> sous leur responsabilit&eacute;.</p>
 <h2><strong>Soutenance de th&egrave;se</strong></h2>
@@ -350,7 +359,7 @@ INSERT INTO /*SYGAL.*/INFORMATION (ID, TITRE, HISTO_CREATION, HISTO_CREATEUR_ID,
 <h3>Informations sur la th&egrave;se</h3>
 <p><strong>Indiquez le cas &eacute;ch&eacute;ant les informations suivantes&nbsp;:</strong></p>
 <ul>
-<li>label europ&eacute;en&nbsp;: si oui, cliquer sur &laquo;&nbsp;<em>demande de label europ&eacute;en</em>&nbsp;&raquo; ;</')||TO_CLOB('li>
+<li>label europ&eacute;en&nbsp;: si oui, cliquer sur &laquo;&nbsp;<em>demande de label europ&eacute;en</em>&nbsp;&')||TO_CLOB('raquo; ;</li>
 <li>th&egrave;se en anglais&nbsp;: en fonction de la demande, cliquer sur<em> &laquo;&nbsp;manuscrit r&eacute;dig&eacute; en anglais&nbsp;&raquo; et/ou &laquo;&nbsp;soutenance d&eacute;fendue en anglais&nbsp;&raquo; </em>;</li>
 <li>confidentialit&eacute; de la th&egrave;se&nbsp;: si oui, cliquer sur <em>&laquo;&nbsp;soutenance en huis clos&nbsp;&raquo; </em>;</li>
 <li>titre de th&egrave;se&nbsp;: indiquez le titre final de la th&egrave;se.</li>
@@ -384,7 +393,7 @@ INSERT INTO /*SYGAL.*/INFORMATION (ID, TITRE, HISTO_CREATION, HISTO_CREATEUR_ID,
 <p><strong>La composition du jury et les modalit&eacute;s de soutenance valid&eacute;es</strong>, le doctorant <strong>doit proc&eacute;der au d&eacute;p&ocirc;t de son manuscrit de th&egrave;se</strong><strong> &agrave; la biblioth&egrave;que universitaire</strong>&nbsp;au plus tard un mois avant la date de soutenance (voir chapitre suivant).</p>
 <h3><strong>Rapports de th&egrave;se</strong></h3>
 <p>Les rapporteurs re&ccedil;oivent par mel ou courriel <strong>une d&eacute;claration d&rsquo;impartialit&eacute;</strong> suivie de la demande <strong>du rapport de th&egrave;se</strong>.</p>
-<p>Les rapporteurs doivent transmettre <strong><em>via</em> le lien indiqu&eacute;</strong> leurs rapports &eacute;crits, dat&eacute;s et sign&eacute;s <strong>deux')||TO_CLOB(' semaines avant la date de soutenance</strong>. Le chef d&rsquo;&eacute;tablissement d&rsquo;inscription autorise ou non la soutenance au vu des rapports &eacute;crits. Une fois la soutenance autoris&eacute;e, les rapports et convocations sont transmis aux membres du jury. Le directeur de th&egrave;se re&ccedil;oit les documents de soutenance &agrave; faire compl&eacute;ter par le pr&eacute;sident du jury.</p>
+<p>Les rapporteurs doivent transmettre <strong><em>via</em> le lien indiqu&eacute;</strong> leurs rapports &eacute;crits, dat&eacute;s et sign&eacute;s <s')||TO_CLOB('trong>deux semaines avant la date de soutenance</strong>. Le chef d&rsquo;&eacute;tablissement d&rsquo;inscription autorise ou non la soutenance au vu des rapports &eacute;crits. Une fois la soutenance autoris&eacute;e, les rapports et convocations sont transmis aux membres du jury. Le directeur de th&egrave;se re&ccedil;oit les documents de soutenance &agrave; faire compl&eacute;ter par le pr&eacute;sident du jury.</p>
 <h3><strong>Soutenance de th&egrave;se</strong></h3>
 <p>Les membres du jury d&eacute;signent parmi eux un pr&eacute;sident qui doit &ecirc;tre n&eacute;cessairement <strong>un professeur ou assimil&eacute; &agrave; l&rsquo;exception du directeur de th&egrave;se</strong>. Un rapporteur peut pr&eacute;sider un jury de th&egrave;se.</p>
 <p>&Agrave; titre exceptionnel, et &agrave; l''exception de son pr&eacute;sident, les membres du jury peuvent participer &agrave; la soutenance <em>via</em> la visioconf&eacute;rence.</p>
