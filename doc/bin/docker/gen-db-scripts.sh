@@ -19,10 +19,10 @@
 
 SCHEMA=$1
 
-# fonction mettant en commentaire certains options de création de séquence dans le(s) fichier(s) spécifié(s)
+# fonction effaçant ou commentant certaines options de création de séquence dans le(s) fichier(s) spécifié(s)
 commentSeqOptionsInFile() {
     for f in $1; do
-        sed -i 's/\(START WITH [0-9]\+\)/\/*\1*\//ig; s/\(CACHE [0-9]\+\)/\/*\1*\//ig' ${f}
+        sed -i 's/\(START WITH [0-9]\+\)//ig; s/\(CACHE [0-9]\+\)/\/*\1*\//ig' ${f}
     done
 }
 # fonction remplaçant 'SYGAL.' par '/*SYGAL.*/' et '"SYGAL".' par '/*"SYGAL".*/' dans le(s) fichier(s) spécifié(s)
