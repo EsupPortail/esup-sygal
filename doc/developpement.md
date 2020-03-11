@@ -8,7 +8,14 @@ Prise en compte d'un nouveau champ provenant du web service
 
 Ex: un nouveau champ `ine` apparaît dans le service Doctorant.
 
-Marche à suivre :
+
+- Désactivez l'exécution périodique (cron) du script de remplissage des tables `SYGAL_*` 
+  à partir des vues `V_SYGAL_*`.  
+  Normalement, ça se joue sur le serveur où est installé le web service dans le fichier 
+  `/etc/cron.d/sygal-import-ws-cron`.
+
+- Désactivez si besoin l'import périodique *qui impacterait la base de données sur laquelle vous allez intervenir*.
+  Normalement, ça se passe sur le serveur de l'application dans le fichier `/etc/cron.d/sygal`.
 
 - En base de données :
 
@@ -19,10 +26,22 @@ Marche à suivre :
     - Corriger la vue `SRC_DOCTORANT` pour prendre en compte la nouvelle colonne `TMP_DOCTORANT.INE` et ainsi
       permettre la mise à jour de cette colonne dans la table finale `DOCTORANT`.
   
+- Dans les sources PHP :
+
+    - Mettre à jour le mapping `TmpDoctorant` dans le fichier  
+      `module/Import/src/Import/Model/Mapping/Import.Model.TmpDoctorant.dcm.xml` 
+      Puis ajouter la nouvelle propriété `$ine` dans la classe d'entité   
+      `module/Import/src/Import/Model/TmpDoctorant.php`
+      
+    - Mettre à jour le mapping `Doctorant` dans le fichier  
+      `module/Application/src/Application/Entity/Db/Mapping/Application.Entity.Db.Doctorant.dcm.xml` 
+      Puis ajouter la nouvelle propriété `$ine` ainsi que ses getter et setter associés dans la classe d'entité   
+      `module/Application/src/Application/Entity/Db/Doctorant.php`
+       
 - Dans l'interface graphique de l'application :
 
-    - Vérifier la version du web service (API) installé au sein de l'établissement de test en allant 
-      dans le menu "Import".
+    - Aller dans le menu "Import" pour vérifier la version du web service (API) interrogé par l'application
+      pour l'établissement concerné.
   
     - Aller dans le menu "Synchro" puis cliquer sur 
       "Mise à jour des vues différentielles et des procédures de mise à jour".
@@ -48,3 +67,5 @@ Marche à suivre :
       `docker-compose exec sygal php public/index.php synchronize --service=doctorant`
       
     - Vérifier que la colonne `INE` a bien été peuplée dans la table finale `DOCTORANT`.
+
+- Réactivez si besoin l'import périodique.

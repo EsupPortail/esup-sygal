@@ -1,6 +1,12 @@
 Journal des modifications
 =========================
 
+1.4.3 (11/03/2020)
+------------------
+
+- Import des types de financement de thèse.
+
+
 1.4.2 (14/02/2020)
 ------------------
 

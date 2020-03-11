@@ -30,6 +30,10 @@ class Financement {
     private $dateDebut;
     /** @var DateTime */
     private $dateFin;
+    /** @var string */
+    protected $codeTypeFinancement;
+    /** @var string */
+    protected $libelleTypeFinancement;
 
     /**
      * @return int
@@ -201,5 +205,41 @@ class Financement {
         return $this;
     }
 
+    /**
+     * @return string
+     */
+    public function getCodeTypeFinancement()
+    {
+        return $this->codeTypeFinancement;
+    }
 
+    /**
+     * @param string $codeTypeFinancement
+     * @return Financement
+     */
+    public function setCodeTypeFinancement($codeTypeFinancement): Financement
+    {
+        $this->codeTypeFinancement = $codeTypeFinancement;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLibelleTypeFinancement()
+    {
+        return $this->libelleTypeFinancement;
+    }
+
+    /**
+     * @param string $libelleTypeFinancement
+     * @return Financement
+     */
+    public function setLibelleTypeFinancement($libelleTypeFinancement): Financement
+    {
+        $this->libelleTypeFinancement = $libelleTypeFinancement;
+
+        return $this;
+    }
 }

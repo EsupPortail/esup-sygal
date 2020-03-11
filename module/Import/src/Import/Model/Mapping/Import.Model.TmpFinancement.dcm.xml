@@ -14,6 +14,9 @@
         <field name="quotiteFinancement" column="QUOTITE_FINANCEMENT" nullable="true"/>
         <field name="dateDebutFinancement" type="date" column="DATE_DEBUT_FINANCEMENT" nullable="true"/>
         <field name="dateFinFinancement" type="date" column="DATE_FIN_FINANCEMENT" nullable="true"/>
+        <field name="codeTypeFinancement" column="CODE_TYPE_FINANCEMENT" nullable="true"/>
+        <field name="libelleTypeFinancement" column="LIBELLE_TYPE_FINANCEMENT" nullable="true"/>
+
         <field name="sourceInsertDate" type="datetime" column="SOURCE_INSERT_DATE"/>
     </entity>
 </doctrine-mapping>
