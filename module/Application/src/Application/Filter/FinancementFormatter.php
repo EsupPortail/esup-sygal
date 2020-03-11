@@ -83,11 +83,25 @@ class FinancementFormatter {
                     if ($financement->getQuotiteFinancement())      $infos[] = $financement->getQuotiteFinancement();
                     if ($financement->getDateDebut())               $infos[] = $financement->getDateDebut()->format('d/m/Y');
                     if ($financement->getDateFin())                 $infos[] = $financement->getDateFin()->format('d/m/Y');
-                    $line = implode(", ", $infos);
+                    $infos[] = $this->formatTypeFinancement($financement);
+                    $line = implode(", ", array_filter($infos));
                     $output .= $line . "<br/>";
                     break;
             }
         }
         return $output;
+    }
+
+    /**
+     * @param Financement $financement
+     * @return string|null
+     */
+    public function formatTypeFinancement(Financement $financement)
+    {
+        if (! $financement->getLibelleTypeFinancement()) {
+            return null;
+        }
+
+        return sprintf("%s (%s)", $financement->getLibelleTypeFinancement(), $financement->getCodeTypeFinancement());
     }
 }
