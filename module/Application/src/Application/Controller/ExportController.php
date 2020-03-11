@@ -23,8 +23,6 @@ class ExportController extends AbstractController
 
     public function csvAction()
     {
-
-
         $headers = [
             // Doctorant
             'Civilité'                              => function (These $these) { return $these->getDoctorant()->getIndividu()->getCivilite(); },
@@ -81,6 +79,13 @@ class ExportController extends AbstractController
                 /** @var Financement $financement */
                 foreach ($financements as $financement) $origines[] = ($financement->getComplementFinancement())?:" - ";
                 return implode(",", $origines);
+            },
+            'Type du financement'                            => function (These $these) {
+                $financements = $these->getFinancements();
+                $types = [];
+                /** @var Financement $financement */
+                foreach ($financements as $financement) $types[] = $financement->getLibelleTypeFinancement();
+                return implode(",", array_filter($types));
             },
             //Domaine
             'Domaines scientifiques'                            => function (These $these) {
