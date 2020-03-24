@@ -40,6 +40,7 @@ class ExportControllerFactory
          */
         $sourceCodeHelper = $sl->get(SourceCodeStringHelper::class);
         $controller->setSourceCodeStringHelper($sourceCodeHelper);
+        $controller->generateArrays();
 
         return $controller;
     }

@@ -13,6 +13,9 @@ use Application\Service\These\TheseServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\View\Model\CsvModel;
+use Zend\Form\Form;
+use Zend\Http\Request;
+use Zend\View\Model\ViewModel;
 
 class ExportController extends AbstractController
 {
@@ -21,8 +24,12 @@ class ExportController extends AbstractController
     use FichierTheseServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
 
-    public function csvAction()
-    {
+    /** @var array */
+    private $keys;
+    /** @var array */
+    private $functors;
+
+    public function generateArrays() {
         $headers = [
             // Doctorant
             'Civilité'                              => function (These $these) { return $these->getDoctorant()->getIndividu()->getCivilite(); },
@@ -137,33 +144,81 @@ class ExportController extends AbstractController
             },
         ];
 
+        $this->keys = array_keys($headers);
+        $this->functors = $headers;
+    }
+
+    public function csvAction()
+    {
         $queryParams = $this->params()->fromQuery();
 
-        $this->theseRechercheService
-            ->createFilters()
-            ->createSorters()
-            ->processQueryParams($queryParams);
+        /** @var Request $request */
+        $request = $this->getRequest();
+        if ($request->isPost()) {
 
-        $qb = $this->theseRechercheService->createQueryBuilder();
-        $theses = $qb->getQuery()->getResult();
+            $data = $request->getPost();
+            $keys = [];
+            $functors = [];
+            foreach ($data as $key => $value) {
+                if ($value === "on") {
+                    $key_name = $this->keys[$key];
+                    $functor = $this->functors[$key_name];
 
-        $records = [];
-        for ($i = 0 ; $i < count($theses) ; $i++) {
-            $these = $theses[$i];
-            $record = [];
-            foreach($headers as $key => $fct) {
-                $record[] = $fct($these);
+                    $keys[] = $key_name;
+                    $functors[$key_name] = $functor;
+                }
             }
-            $records[] = $record;
+
+
+            $this->theseRechercheService
+                ->createFilters()
+                ->createSorters()
+                ->processQueryParams($queryParams);
+
+            $qb = $this->theseRechercheService->createQueryBuilder();
+            $theses = $qb->getQuery()->getResult();
+
+            $records = [];
+            for ($i = 0; $i < count($theses); $i++) {
+                $these = $theses[$i];
+                $record = [];
+                foreach ($functors as $key => $fct) {
+                    $record[] = $fct($these);
+                }
+                $records[] = $record;
+            }
+
+            $result = new CsvModel();
+            $result->setDelimiter(';');
+            $result->setEnclosure('"');
+            $result->setHeader($keys);
+            $result->setData($records);
+            $result->setFilename('export_theses.csv');
+            $content = $result->__toString();
+            $contentType = "text/csv";
+
+            header('Content-Description: File Transfer');
+            header('Content-Type: ' . $contentType);
+            header('Content-Disposition: attachment; filename="' . 'export_theses.csv' . '"');
+            header('Content-Transfer-Encoding: binary');
+            header('Content-Length: ' . strlen($content));
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Expires: 0');
+            header('Pragma: public');
+            echo $content;
+            exit;
+
+            //return $result;
         }
 
-        $result = new CsvModel();
-        $result->setDelimiter(';');
-        $result->setEnclosure('"');
-        $result->setHeader(array_keys($headers));
-        $result->setData($records);
-        $result->setFilename('export_theses.csv');
+        $vm = new ViewModel();
+        $vm->setTemplate('application/export/selection-colonne');
+        $vm->setVariables([
+           'title' => "Sélection des colonnes à exporter",
+           'keys' => $this->keys,
+           'queryParams' => $queryParams,
+        ]);
+        return $vm;
 
-        return $result;
     }
 }
