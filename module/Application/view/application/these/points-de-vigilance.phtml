@@ -23,7 +23,7 @@ use Application\Entity\Db\Repository\FichierTheseRepository;
 $recap = new \Application\Form\PointsDeVigilanceForm();
 ?>
 
-<?php $this->headTitle("Récapitulatif BU")->prepend($these->getDoctorant()->getNomUsuel()) ?>
+<?php $this->headTitle("Récapitulatif de la bibliothèque universitaire")->prepend($these->getDoctorant()->getNomUsuel()) ?>
 
 <h1 class="page-header">Points de vigilance
     <small><?php echo $this->partial('application/these/partial/titre') ?></small>

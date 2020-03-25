@@ -304,7 +304,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
      */
     public function createNotificationForRdvBuSaisiParDoctorant(These $these, $estLaPremiereSaisie)
     {
-        $subject = sprintf("%s Saisie des informations pour la prise de rendez-vous BU", $these->getLibelleDiscipline());
+        $subject = sprintf("%s Saisie des informations pour la prise de rendez-vous avec la bibliothèque universitaire", $these->getLibelleDiscipline());
         $to = $this->fetchEmailBu($these);
 
         $notif = $this->createNotification();
@@ -317,7 +317,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
                 'updating' => !$estLaPremiereSaisie,
             ]);
 
-        $infoMessage = sprintf("Un mail de notification vient d'être envoyé à la BU (%s).", $to);
+        $infoMessage = sprintf("Un mail de notification vient d'être envoyé à la bibliothèque universitaire (%s).", $to);
         $notif->setInfoMessages($infoMessage);
 
         return $notif;

@@ -665,7 +665,7 @@ class TheseController extends AbstractController
         $vm = new ViewModel([
             'these' => $these,
             'form'  => $form,
-            'title' => "Rendez-vous BU",
+            'title' => "Rendez-vous avec la bibliothèque universitaire",
             'pageCouvValidee' => $pageCouvValidee,
             'isExemplPapierFourniPertinent' => $isExemplPapierFourniPertinent,
         ]);
@@ -694,7 +694,7 @@ class TheseController extends AbstractController
                 WfEtape::CODE_DEPOT_VERSION_CORRIGEE_VALIDATION_DIRECTEUR,
             ], [
                 'message' => $isRemiseExemplairePapierRequise ?
-                    "Il ne reste plus qu'à fournir à la BU un exemplaire imprimé de la version corrigée pour valider le dépôt." :
+                    "Il ne reste plus qu'à fournir à la bibliothèque universitaire un exemplaire imprimé de la version corrigée pour valider le dépôt." :
                     null,
             ]),
             'hasVAC' => $hasVAC,
