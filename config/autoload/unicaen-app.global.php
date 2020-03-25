@@ -48,5 +48,27 @@ return [
                 'FILTER_STRUCTURE_CODE_ENTITE_PARENT'   => '(supannCodeEntiteParent=%s)',
             ],
         ],
+    ],
+
+    'navigation'   => [
+    // The DefaultNavigationFactory we configured uses 'default' as the sitemap key
+    'default' => [
+        // And finally, here is where we define our page hierarchy
+        'home' => [
+            'pages' => [
+                'contact'                  => [
+                    'label'    => _("Assistance"),
+                    'title'    => _("Assistance concernant l'application"),
+                    'route'    => 'contact',
+                    'class'    => 'contact',
+                    'visible'  => false,
+                    'footer'   => true, // propriété maison pour inclure cette page dans le menu de pied de page
+                    'sitemap'  => true, // propriété maison pour inclure cette page dans le plan
+                    'resource' => 'controller/UnicaenApp\Controller\Application:contact',
+                    'order'    => 1002,
+                ],
+            ],
+        ],
+    ],
     ]
 ];
