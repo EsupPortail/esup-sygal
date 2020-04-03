@@ -61,8 +61,8 @@ class These implements HistoriqueAwareInterface, ResourceInterface
         self::CORRECTION_AUTORISEE_FACULTATIVE => "Facultatives",
     ];
 
-    const CORRECTION_OBLIGATOIRE_INTERVAL = 'P2M';
-    const CORRECTION_FACULTATIVE_INTERVAL = 'P3M';
+    const CORRECTION_OBLIGATOIRE_INTERVAL = 'P3M';
+    const CORRECTION_FACULTATIVE_INTERVAL = 'P2M';
 
     const CORRECTION_AUTORISEE_FORCAGE_NON = null; // pas de forçage
     const CORRECTION_AUTORISEE_FORCAGE_AUCUNE = 'aucune'; // aucune correction autorisée
