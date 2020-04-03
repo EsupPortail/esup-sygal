@@ -508,15 +508,15 @@ class TheseRechercheService
 
     private function fetchEtablissementsOptions()
     {
-        $role = $this->getSelectedIdentityRole();
-
-        $privilege = StructurePrivileges::STRUCTURE_CONSULTATION_TOUTES_STRUCTURES;
-        $toutesStructuresAllowed = $this->authorizeService->isAllowed(StructurePrivileges::getResourceId($privilege));
-        if ($role && !$toutesStructuresAllowed) {
-            return [
-                $this->optionify($role->getStructure()->getEtablissement())
-            ];
-        }
+//        $role = $this->getSelectedIdentityRole();
+//
+//        $privilege = StructurePrivileges::STRUCTURE_CONSULTATION_TOUTES_STRUCTURES;
+//        $toutesStructuresAllowed = $this->authorizeService->isAllowed(StructurePrivileges::getResourceId($privilege));
+//        if ($role && !$toutesStructuresAllowed) {
+//            return [
+//                $this->optionify($role->getStructure()->getEtablissement())
+//            ];
+//        }
 
         $etablissements = $this->getEtablissementService()->getRepository()->findAllEtablissementsMembres();
 
