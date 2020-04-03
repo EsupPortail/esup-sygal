@@ -80,7 +80,7 @@ class ExportController extends AbstractController
                 foreach ($financements as $financement) $origines[] = ($financement->getComplementFinancement())?:" - ";
                 return implode(",", $origines);
             },
-            'Types du financement'                            => function (These $these) {
+            'Type du financement'                            => function (These $these) {
                 $financements = $these->getFinancements();
                 $types = [];
                 /** @var Financement $financement */
