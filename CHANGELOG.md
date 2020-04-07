@@ -1,6 +1,13 @@
 Journal des modifications
 =========================
 
+1.4.4 (03/04/2020)
+------------------
+
+- Correction des 2 délais à respecter pour le second dépôt qui étaient intervertis par erreur 
+  (nouvelles valeurs : 2 mois en cas de corrections facultatives attendues, 3 mois en cas de corrections obligatoires).
+
+
 1.4.3 (11/03/2020)
 ------------------
 
