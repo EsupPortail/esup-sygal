@@ -7,7 +7,7 @@
 
         <id name="id" type="integer" column="ID"/>
 
-        <many-to-one field="importObservResult" target-entity="Application\Entity\Db\ImportObservResult">
+        <many-to-one field="importObservResult" target-entity="Application\Entity\Db\ImportObservEtabResult">
             <join-columns>
                 <join-column name="IMPORT_OBSERV_RESULT_ID" referenced-column-name="ID"/>
             </join-columns>

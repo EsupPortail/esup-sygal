@@ -54,11 +54,6 @@ class ImportObserv
     private $description;
 
     /**
-     * @var bool
-     */
-    private $enabled;
-
-    /**
      * @return int
      */
     public function getId()
@@ -179,24 +174,4 @@ class ImportObserv
 
         return $this;
     }
-
-    /**
-     * @return bool
-     */
-    public function isEnabled()
-    {
-        return $this->enabled;
-    }
-
-    /**
-     * @param bool $enabled
-     * @return ImportObserv
-     */
-    public function setEnabled($enabled)
-    {
-        $this->enabled = $enabled;
-
-        return $this;
-    }
-
 }

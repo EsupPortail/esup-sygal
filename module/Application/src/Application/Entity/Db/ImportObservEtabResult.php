@@ -4,7 +4,7 @@ namespace Application\Entity\Db;
 
 use DateTime;
 
-class ImportObservResult
+class ImportObservEtabResult
 {
     /**
      * @var int
@@ -12,9 +12,9 @@ class ImportObservResult
     private $id;
 
     /**
-     * @var ImportObserv
+     * @var ImportObservEtab
      */
-    private $importObserv;
+    private $importObservEtab;
 
     /**
      * @var DateTime
@@ -37,19 +37,24 @@ class ImportObservResult
     private $dateNotif;
 
     /**
-     * @param ImportObserv $importObserv
-     * @return ImportObservResult
+     * @var bool
      */
-    public function setImportObserv($importObserv)
+    private $tooOld;
+
+    /**
+     * @param ImportObservEtab $importObservEtab
+     * @return ImportObservEtabResult
+     */
+    public function setImportObservEtab($importObservEtab)
     {
-        $this->importObserv = $importObserv;
+        $this->importObservEtab = $importObservEtab;
 
         return $this;
     }
 
     /**
      * @param DateTime $dateCreation
-     * @return ImportObservResult
+     * @return ImportObservEtabResult
      */
     public function setDateCreation($dateCreation)
     {
@@ -60,7 +65,7 @@ class ImportObservResult
 
     /**
      * @param string $sourceCode
-     * @return ImportObservResult
+     * @return ImportObservEtabResult
      */
     public function setSourceCode($sourceCode)
     {
@@ -71,7 +76,7 @@ class ImportObservResult
 
     /**
      * @param string $resultat
-     * @return ImportObservResult
+     * @return ImportObservEtabResult
      */
     public function setResultat($resultat)
     {
@@ -89,11 +94,11 @@ class ImportObservResult
     }
 
     /**
-     * @return ImportObserv
+     * @return ImportObservEtab
      */
-    public function getImportObserv()
+    public function getImportObservEtab()
     {
-        return $this->importObserv;
+        return $this->importObservEtab;
     }
 
     /**
@@ -125,7 +130,7 @@ class ImportObservResult
      */
     public function getResultatToString()
     {
-        switch ($this->getImportObserv()->getTableName()) {
+        switch ($this->getImportObservEtab()->getImportObserv()->getTableName()) {
             case 'THESE':
                 return $this->getResultatToStringForThese();
             default:
@@ -138,7 +143,7 @@ class ImportObservResult
      */
     private function getResultatToStringForThese()
     {
-        switch ($this->getImportObserv()->getColumnName()) {
+        switch ($this->getImportObservEtab()->getImportObserv()->getColumnName()) {
             case 'RESULTAT':
                 $values = explode('>', $this->getResultat());
                 $values[0] = $values[0] <> "" ? These::$resultatsLibellesLongs[$values[0]] : "Aucun";
@@ -164,7 +169,7 @@ class ImportObservResult
 
     /**
      * @param DateTime $dateNotif
-     * @return ImportObservResult
+     * @return ImportObservEtabResult
      */
     public function setDateNotif(DateTime $dateNotif = null)
     {
@@ -172,4 +177,23 @@ class ImportObservResult
 
         return $this;
     }
+
+    /**
+     * @return bool
+     */
+    public function isTooOld()
+    {
+        return $this->tooOld;
+    }
+
+    /**
+     * @param bool $tooOld
+     * @return ImportObservEtabResult
+     */
+    public function setTooOld($tooOld)
+    {
+        $this->tooOld = $tooOld;
+        return $this;
+    }
+
 }

@@ -1,9 +1,9 @@
 <?php
 
-namespace Import\Service\ImportObservResult;
+namespace Import\Service\ImportObservEtabResult;
 
-use Application\Entity\Db\ImportObservResult;
-use Application\Entity\Db\Repository\ImportObservResultRepository;
+use Application\Entity\Db\ImportObservEtabResult;
+use Application\Entity\Db\Repository\ImportObservEtabResultRepository;
 use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
 use Application\Service\Variable\VariableService;
@@ -14,7 +14,7 @@ use Zend\Log\Writer\Noop;
 use Zend\Log\Writer\Stream;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class ImportObservResultServiceFactory
+class ImportObservEtabResultServiceFactory
 {
     public function __invoke(ServiceLocatorInterface $sl)
     {
@@ -23,8 +23,8 @@ class ImportObservResultServiceFactory
          */
         $sourceCodeHelper = $sl->get(SourceCodeStringHelper::class);
 
-        /** @var ImportObservResultRepository $repo */
-        $repo = $sl->get('doctrine.entitymanager.orm_default')->getRepository(ImportObservResult::class);
+        /** @var ImportObservEtabResultRepository $repo */
+        $repo = $sl->get('doctrine.entitymanager.orm_default')->getRepository(ImportObservEtabResult::class);
         $repo->setSourceCodeStringHelper($sourceCodeHelper);
 
         /** @var TheseService $theseService */
@@ -36,7 +36,7 @@ class ImportObservResultServiceFactory
         /** @var VariableService $variableService */
         $variableService = $sl->get('VariableService');
 
-        $service = new ImportObservResultService();
+        $service = new ImportObservEtabResultService();
         $service->setRepository($repo);
         $service->setTheseService($theseService);
         $service->setNotifierService($notifierService);
