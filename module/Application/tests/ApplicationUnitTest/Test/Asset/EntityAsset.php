@@ -9,7 +9,8 @@ use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\ImportObserv;
-use Application\Entity\Db\ImportObservResult;
+use Application\Entity\Db\ImportObservEtab;
+use Application\Entity\Db\ImportObservEtabResult;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\MetadonneeThese;
 use Application\Entity\Db\NatureFichier;
@@ -230,11 +231,11 @@ class EntityAsset
         return $e;
     }
 
-    public static function newImportObservResult(ImportObserv $importObserv)
+    public static function newImportObservResult(ImportObservEtab $importObservEtab)
     {
-        $e = new ImportObservResult();
+        $e = new ImportObservEtabResult();
 
-        $e->setImportObserv($importObserv);
+        $e->setImportObservEtab($importObservEtab);
         $e->setDateNotif(null);
         $e->setSourceCode(uniqid());
         $e->setDateCreation(new \DateTime('yesterday'));
@@ -252,7 +253,6 @@ class EntityAsset
         $e->setDescription('Description');
         $e->setOperation('peu importe');
         $e->setToValue('peu importe');
-        $e->setEnabled(true);
 
         return $e;
     }

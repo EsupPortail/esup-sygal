@@ -15,6 +15,7 @@ services:
     volumes:
      - .:/app
      - /tmp:/tmp
+     - $HOME/.ssh:/root/.ssh
     working_dir: /app
     links:
     - "sygal-import-ws"

@@ -6,7 +6,7 @@ use Application\EventRouterReplacer;
 use Application\Service\These\TheseService;
 use Import\Controller\ImportObserverController;
 use Import\Service\ImportObserv\ImportObservService;
-use Import\Service\ImportObservResult\ImportObservResultService;
+use Import\Service\ImportObservEtabResult\ImportObservEtabResultService;
 use Zend\Mvc\Controller\ControllerManager;
 use Zend\Mvc\Router\Http\TreeRouteStack;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -17,7 +17,7 @@ class ImportObserverControllerFactory
      * Create service
      *
      * @param ControllerManager $controllerManager
-     * @return \Import\Controller\ImportObserverController
+     * @return ImportObserverController
      */
     public function __invoke(ControllerManager $controllerManager)
     {
@@ -30,30 +30,21 @@ class ImportObserverControllerFactory
         $routerReplacer = new EventRouterReplacer($httpRouter, $cliConfig);
 
         /** @var ImportObservService $importObservService */
-        $importObservService = $sl->get('ImportObservService');
+        $importObservService = $sl->get(ImportObservService::class);
+
+        /** @var ImportObservEtabResultService $importObservEtabResultService */
+        $importObservEtabResultService = $sl->get(ImportObservEtabResultService::class);
 
         /** @var TheseService $theseService */
         $theseService = $sl->get('TheseService');
 
         $controller = new ImportObserverController();
-        $controller->setImportObservService($importObservService);
         $controller->setEventRouterReplacer($routerReplacer);
-        $controller->setImportObservResultService($this->getImportObservResultService($sl));
+        $controller->setImportObservService($importObservService);
+        $controller->setImportObservEtabResultService($importObservEtabResultService);
         $controller->setTheseService($theseService);
 
         return $controller;
-    }
-
-    /**
-     * @param ServiceLocatorInterface $sl
-     * @return ImportObservResultService
-     */
-    private function getImportObservResultService(ServiceLocatorInterface $sl)
-    {
-        /** @var \Import\Service\ImportObservResult\ImportObservResultService $service */
-        $service = $sl->get('ImportObservResultService');
-
-        return $service;
     }
 
     /**

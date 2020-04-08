@@ -4,7 +4,8 @@ use Import\Controller\Factory\ImportObserverControllerFactory;
 use Import\Controller\Factory\SynchroControllerFactory;
 use Import\Controller\SynchroController;
 use Import\Service\ImportObserv\ImportObservService;
-use Import\Service\ImportObservResult\ImportObservResultServiceFactory;
+use Import\Service\ImportObservEtabResult\ImportObservEtabResultService;
+use Import\Service\ImportObservEtabResult\ImportObservEtabResultServiceFactory;
 use Import\Service\SchemaService;
 use UnicaenAuth\Guard\PrivilegeController;
 use Zend\Mvc\Router\Console\Simple;
@@ -132,14 +133,14 @@ return [
     'service_manager' => [
         'invokables' => [
             'UnicaenImport\Service\Schema' => SchemaService::class,
-            'ImportObservService'          => ImportObservService::class,
+            ImportObservService::class     => ImportObservService::class,
         ],
         'abstract_factories' => [
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
             'Zend\Log\LoggerAbstractServiceFactory',
         ],
         'factories' => [
-            'ImportObservResultService'    => ImportObservResultServiceFactory::class,
+            ImportObservEtabResultService::class => ImportObservEtabResultServiceFactory::class,
         ],
 
     ],

@@ -12,7 +12,7 @@ class ImportObservResultNotif
     private $id;
 
     /**
-     * @var ImportObservResult
+     * @var ImportObservEtabResult
      */
     private $importObservResult;
 
@@ -41,7 +41,7 @@ class ImportObservResultNotif
     }
 
     /**
-     * @return ImportObservResult
+     * @return ImportObservEtabResult
      */
     public function getImportObservResult()
     {

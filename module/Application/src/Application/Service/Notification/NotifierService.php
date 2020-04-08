@@ -4,7 +4,7 @@ namespace Application\Service\Notification;
 
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
-use Application\Entity\Db\ImportObservResult;
+use Application\Entity\Db\ImportObservEtabResult;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\MailConfirmation;
 use Application\Entity\Db\Role;
@@ -115,11 +115,11 @@ class NotifierService extends \Notification\Service\NotifierService
     }
 
     /**
-     * @param ImportObservResult $record
+     * @param ImportObservEtabResult $record
      * @param These              $these
      * @return CorrectionAttendueUpdatedNotification|null
      */
-    public function triggerCorrectionAttendue(ImportObservResult $record, These $these)
+    public function triggerCorrectionAttendue(ImportObservEtabResult $record, These $these)
     {
         // interrogation de la règle métier pour savoir comment agir...
         $rule = new NotificationDepotVersionCorrigeeAttenduRule();

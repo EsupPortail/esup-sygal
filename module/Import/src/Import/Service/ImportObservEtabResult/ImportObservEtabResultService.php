@@ -1,11 +1,11 @@
 <?php
 
-namespace Import\Service\ImportObservResult;
+namespace Import\Service\ImportObservEtabResult;
 
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\ImportObserv;
-use Application\Entity\Db\ImportObservResult;
-use Application\Entity\Db\Repository\ImportObservResultRepository;
+use Application\Entity\Db\ImportObservEtabResult;
+use Application\Entity\Db\Repository\ImportObservEtabResultRepository;
 use Application\Entity\Db\These;
 use Application\Rule\NotificationDepotVersionCorrigeeAttenduRule;
 use Application\Service\BaseService;
@@ -20,7 +20,7 @@ use Zend\Log\LoggerAwareTrait;
 /**
  * @author Unicaen
  */
-class ImportObservResultService extends BaseService
+class ImportObservEtabResultService extends BaseService
 {
     use TheseServiceAwareTrait;
     use NotifierServiceAwareTrait;
@@ -28,7 +28,7 @@ class ImportObservResultService extends BaseService
     use LoggerAwareTrait;
 
     /**
-     * @var ImportObservResultRepository
+     * @var ImportObservEtabResultRepository
      */
     private $repository;
 
@@ -46,10 +46,10 @@ class ImportObservResultService extends BaseService
     }
 
     /**
-     * @param ImportObservResultRepository $repository
+     * @param ImportObservEtabResultRepository $repository
      * @return static
      */
-    public function setRepository(ImportObservResultRepository $repository)
+    public function setRepository(ImportObservEtabResultRepository $repository)
     {
         $this->repository = $repository;
 
@@ -57,7 +57,7 @@ class ImportObservResultService extends BaseService
     }
 
     /**
-     * @return ImportObservResultRepository
+     * @return ImportObservEtabResultRepository
      */
     public function getRepository()
     {
@@ -83,7 +83,7 @@ class ImportObservResultService extends BaseService
      * @param These|null           $these
      * @return void
      */
-    public function handleImportObservResults(ImportObserv $importObserv, $etablissement, These $these = null)
+    public function handleImportObservEtabResults(ImportObserv $importObserv, $etablissement, These $these = null)
     {
         switch ($importObserv->getCode()) {
             case ImportObserv::CODE_RESULTAT_PASSE_A_ADMIS:
@@ -116,7 +116,7 @@ class ImportObservResultService extends BaseService
             "notifications au sujet des thèses dont le résultat est passé à \"admis\"",
             $etablissement));
 
-        $records = $this->repository->fetchImportObservResults($importObserv, $etablissement, $these);
+        $records = $this->repository->fetchImportObservEtabResults($importObserv, $etablissement, $these);
 
         $this->logger->info(sprintf("%d résultat(s) d'import trouvé(s) à traiter.", count($records)));
 
@@ -129,7 +129,7 @@ class ImportObservResultService extends BaseService
 
         // Si aucune donnée n'est retournée, c'est sans doute que les thèses concernées sont historisées, pas de notif.
         if (empty($data)) {
-            $this->logger->info("Finalement, rien à faire (source codes inexistants ou thèses concernées historisées.");
+            $this->logger->info("Finalement, rien à faire.");
 
             return;
         }
@@ -148,12 +148,12 @@ class ImportObservResultService extends BaseService
         try {
             $this->getEntityManager()->flush($records);
         } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Enregistrement des ImportObservResult impossible", null, $e);
+            throw new RuntimeException("Enregistrement des ImportObservEtabResult impossible", null, $e);
         }
     }
 
     /**
-     * @param ImportObservResult[] $records
+     * @param ImportObservEtabResult[] $records
      * @return array
      */
     private function prepareDataForResultatAdmis($records)
@@ -162,8 +162,19 @@ class ImportObservResultService extends BaseService
         $sourceCodes = [];
         $details = [];
         foreach ($records as $record) {
+            if ($record->isTooOld()) {
+                $this->logger->info(sprintf("Le ImportObservEtabResult %d de la thèse '%s' est écarté car TOO_OLD = 1.",
+                    $record->getId(),
+                    $record->getSourceCode()
+                ));
+                continue;
+            }
             $sourceCodes[] = $record->getSourceCode();
             $details[] = $record->getResultatToString();
+        }
+
+        if (empty($sourceCodes)) {
+            return [];
         }
 
         // Fetch thèses concernées
@@ -204,7 +215,7 @@ class ImportObservResultService extends BaseService
             $etablissement
         ));
 
-        $records = $this->repository->fetchImportObservResults($importObserv, $etablissement, $these);
+        $records = $this->repository->fetchImportObservEtabResults($importObserv, $etablissement, $these);
 
         $this->_handleImportObservResultsForCorrection($records);
     }
@@ -225,7 +236,7 @@ class ImportObservResultService extends BaseService
             $etablissement
         ));
 
-        $records = $this->repository->fetchImportObservResults($importObserv, $etablissement, $these);
+        $records = $this->repository->fetchImportObservEtabResults($importObserv, $etablissement, $these);
 
         $this->_handleImportObservResultsForCorrection($records);
     }
@@ -234,7 +245,7 @@ class ImportObservResultService extends BaseService
      * Traitement des résultats d'observation des changements lors de la synchro :
      * notifications au sujet des thèses pour lesquelles le témoin "correction autorisée" a changé.
      *
-     * @param ImportObservResult[] $records
+     * @param ImportObservEtabResult[] $records
      */
     private function _handleImportObservResultsForCorrection(array $records)
     {
@@ -255,8 +266,15 @@ class ImportObservResultService extends BaseService
                 $this->logger->info(sprintf("La thèse '%s' est écartée car elle est historisée.", $these->getSourceCode()));
                 continue;
             }
+            if ($record->isTooOld()) {
+                $this->logger->info(sprintf("Le ImportObservEtabResult %d de la thèse '%s' est écarté car TOO_OLD = 1.",
+                    $record->getId(),
+                    $record->getSourceCode()
+                ));
+                continue;
+            }
 
-            $these->setCorrectionAutorisee($record->getImportObserv()->getToValue()); // anticipation nécessaire !
+            $these->setCorrectionAutorisee($record->getImportObservEtab()->getImportObserv()->getToValue()); // anticipation nécessaire !
 
             // notification
             $notif = $this->notifierService->triggerCorrectionAttendue($record, $these);
@@ -276,7 +294,7 @@ class ImportObservResultService extends BaseService
         try {
             $this->getEntityManager()->flush($recordsToFlush);
         } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Enregistrement des ImportObservResult impossible", null, $e);
+            throw new RuntimeException("Enregistrement des ImportObservEtabResult impossible", null, $e);
         }
     }
 
