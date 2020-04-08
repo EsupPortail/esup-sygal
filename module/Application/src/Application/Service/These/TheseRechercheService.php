@@ -136,13 +136,13 @@ class TheseRechercheService
                 $optionsArray[TheseSelectFilter::NAME_etablissement]
             ),
             TheseSelectFilter::NAME_ecoleDoctorale           => new TheseSelectFilter(
-                "ED",
+                "École<br>doctorale",
                 TheseSelectFilter::NAME_ecoleDoctorale,
                 $optionsArray[TheseSelectFilter::NAME_ecoleDoctorale],
                 ['liveSearch' => true]
             ),
             TheseSelectFilter::NAME_uniteRecherche           => new TheseSelectFilter(
-                "UR",
+                "Unité de<br>recherche",
                 TheseSelectFilter::NAME_uniteRecherche,
                 $optionsArray[TheseSelectFilter::NAME_uniteRecherche],
                 ['liveSearch' => true]

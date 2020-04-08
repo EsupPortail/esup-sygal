@@ -13,7 +13,6 @@
         <field name="operation" type="string" column="OPERATION" nullable="false"/>
         <field name="toValue" type="string" column="TO_VALUE" nullable="true"/>
         <field name="description" type="string" column="DESCRIPTION" nullable="false"/>
-        <field name="enabled" type="boolean" column="ENABLED" nullable="false"/>
 
     </entity>
 </doctrine-mapping>

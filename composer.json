@@ -47,5 +47,11 @@
             "RetraitementTest\\":           "module/Retraitement/test/RetraitementTest",
             "ImportTest\\":                 "module/Import/tests/ImportTest"
         }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "mkdir -p cache/DoctrineORMModule/Proxy ; chmod -R 777 cache/DoctrineORMModule/Proxy",
+            "mkdir -p upload ; chmod -R 777 upload"
+        ]
     }
 }

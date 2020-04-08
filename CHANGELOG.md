@@ -1,6 +1,13 @@
 Journal des modifications
 =========================
 
+1.4.5 (08/04/2020)
+------------------
+
+- Correction du dysfonctionnement des notifications envoyées lors de certains événements sur les données importées 
+  (résultat d'une thèse passant à admis, corrections facultatives ou obligatoires attendues).
+
+
 1.4.4 (03/04/2020)
 ------------------
 

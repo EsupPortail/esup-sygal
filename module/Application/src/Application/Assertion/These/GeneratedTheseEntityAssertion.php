@@ -83,7 +83,7 @@ abstract class GeneratedTheseEntityAssertion
             /* line 8 */
             $this->linesTrace[] = '/* line 8 */';
             if ($this->isExisteValidationBU() /* test 15 */) {
-                $this->failureMessage = "Opération impossible dès lors que la BU a validé.";
+                $this->failureMessage = "Opération impossible dès lors que la bibliothèque universitaire a validé.";
                 return false;
             }
             /* line 9 */
@@ -122,7 +122,7 @@ abstract class GeneratedTheseEntityAssertion
             /* line 14 */
             $this->linesTrace[] = '/* line 14 */';
             if ($this->isExisteValidationBU() /* test 15 */) {
-                $this->failureMessage = "Opération impossible dès lors que la BU a validé.";
+                $this->failureMessage = "Opération impossible dès lors que la bibliothèque universitaire a validé.";
                 return false;
             }
             /* line 15 */
@@ -191,7 +191,7 @@ abstract class GeneratedTheseEntityAssertion
             /* line 25 */
             $this->linesTrace[] = '/* line 25 */';
             if ($this->isExisteValidationBU() /* test 15 */) {
-                $this->failureMessage = "La validation par la BU a été faite.";
+                $this->failureMessage = "La validation par la bibliothèque universitaire a été faite.";
                 return false;
             }
             /* line 26 */
@@ -242,13 +242,13 @@ abstract class GeneratedTheseEntityAssertion
             /* line 33 */
             $this->linesTrace[] = '/* line 33 */';
             if ($this->isExisteValidationBU() /* test 15 */) {
-                $this->failureMessage = "La validation par la BU a été faite.";
+                $this->failureMessage = "La validation par la bibliothèque universitaire a été faite.";
                 return false;
             }
             /* line 34 */
             $this->linesTrace[] = '/* line 34 */';
             if (! $this->isInfosBuSaisies() /* test 9 */) {
-                $this->failureMessage = "La BU n'a pas renseigné toutes informations requises.";
+                $this->failureMessage = "La bibliothèque universitaire n'a pas renseigné toutes informations requises.";
                 return false;
             }
             /* line 35 */

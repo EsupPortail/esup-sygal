@@ -9,7 +9,7 @@ use Application\EventRouterReplacerAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Assert\Assertion;
 use Import\Service\ImportObserv\ImportObservServiceAwareTrait;
-use Import\Service\ImportObservResult\ImportObservResultServiceAwareTrait;
+use Import\Service\ImportObservEtabResult\ImportObservEtabResultServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 
 /**
@@ -21,7 +21,7 @@ class ImportObserverController extends AbstractController
 {
     use ImportObservServiceAwareTrait;
     use EventRouterReplacerAwareTrait;
-    use ImportObservResultServiceAwareTrait;
+    use ImportObservEtabResultServiceAwareTrait;
     use TheseServiceAwareTrait;
 
     /**
@@ -70,7 +70,7 @@ class ImportObserverController extends AbstractController
                 throw new RuntimeException("Aucun enregistrement ImportObserv trouvé avec le code '$code'");
             }
 
-            $this->importObservResultService->handleImportObservResults($importObserv, $etablissement, $these);
+            $this->importObservEtabResultService->handleImportObservEtabResults($importObserv, $etablissement, $these);
         }
 
         $this->eventRouterReplacer->restoreEventRouter();

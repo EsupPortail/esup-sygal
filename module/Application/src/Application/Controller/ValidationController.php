@@ -130,7 +130,7 @@ class ValidationController extends AbstractController
         $viewModel = $this->confirm()->getViewModel();
 
         $viewModel->setVariables([
-            'title'  => "Validation à l'issue du rendez-vous BU",
+            'title'  => "Validation à l'issue du rendez-vous avec la bibliothèque universitaire",
             'these'  => $these,
             'action' => $action,
         ]);
