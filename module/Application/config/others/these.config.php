@@ -948,7 +948,7 @@ return [
                                 'visible' => 'Assertion\\These',
                             ],
                             'rdv-bu' => [
-                                'label'    => 'Rendez-vous BU',
+                                'label'    => 'Rendez-vous avec la bibliothèque universitaire',
                                 'route'    => 'these/rdv-bu',
                                 'withtarget' => true,
                                 'paramsInject' => [

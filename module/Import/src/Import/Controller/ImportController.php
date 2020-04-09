@@ -70,7 +70,7 @@ class ImportController extends AbstractActionController
             $error = $e->getMessage();
         } catch (ImportCallException $e) {
             $version = "Inconnue";
-            $error = $e->getMessage() . " : " . $e->getPrevious()->getMessage();
+            $error = $e->getMessage() . ($e->getPrevious() ? (" : " . $e->getPrevious()->getMessage()) : "");
         }
 
         return [
