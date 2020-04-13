@@ -5,10 +5,7 @@ namespace Application\View\Helper\Uploader;
 use Application\Controller\Plugin\Uploader\UploadedFileInterface;
 use Application\Controller\Plugin\Uploader\UploaderPlugin;
 use Application\Controller\Plugin\Uploader\UploadForm;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Zend\View\Helper\AbstractHelper;
-use Zend\View\HelperPluginManager;
 use Zend\View\Renderer\PhpRenderer;
 use Zend\View\Resolver\TemplatePathStack;
 
@@ -20,10 +17,8 @@ use Zend\View\Resolver\TemplatePathStack;
  * @author Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>
  * @see    UploaderPlugin
  */
-class UploaderHelper extends AbstractHelper implements ServiceLocatorAwareInterface
+class UploaderHelper extends AbstractHelper
 {
-    use ServiceLocatorAwareTrait;
-
     /**
      * URL de l'action permettant de déposer un nouveau fichier.
      * C'est l'URL à laquelle est POSTé le formulaire d'upload.
@@ -155,20 +150,22 @@ class UploaderHelper extends AbstractHelper implements ServiceLocatorAwareInterf
     protected $form;
 
     /**
+     * @param UploadForm $form
+     * @return UploaderHelper
+     */
+    public function setForm(UploadForm $form)
+    {
+        $this->form = $form;
+        return $this;
+    }
+
+    /**
      * Retourne le formulaire de dépôt de fichier, fourni par le plugin de contrôleur.
      *
      * @return UploadForm
      */
     public function getForm()
     {
-        if (null === $this->form) {
-            /** @var HelperPluginManager $pluginManager */
-            $pluginManager = $this->getServiceLocator();
-            /** @var UploaderPlugin $uploaderPlugin */
-            $uploaderPlugin = $pluginManager->getServiceLocator()->get('controller_plugin_manager')->get('Uploader');
-            $this->form = $uploaderPlugin->getForm();
-        }
-
         return $this->form;
     }
 }

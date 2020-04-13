@@ -3,22 +3,22 @@
 namespace Notification\Entity\Service;
 
 use Doctrine\ORM\EntityManager;
+use Interop\Container\ContainerInterface;
 use UnicaenApp\Service\MessageCollector;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 class NotifEntityServiceFactory
 {
     /**
-     * @param ServiceLocatorInterface $sl
+     * @param ContainerInterface $container
      * @return NotifEntityService
      */
-    public function __invoke(ServiceLocatorInterface $sl)
+    public function __invoke(ContainerInterface $container)
     {
         /** @var MessageCollector $messageCollector */
-        $messageCollector = $sl->get('MessageCollector');
+        $messageCollector = $container->get('MessageCollector');
 
         /** @var EntityManager $em */
-        $em = $sl->get(EntityManager::class);
+        $em = $container->get(EntityManager::class);
 
         $service = new NotifEntityService();
         $service->setEntityManager($em);

@@ -15,13 +15,25 @@ class MailConfirmationController extends AbstractController {
     use IndividuServiceAwareTrait;
 
     /** @var MailConfirmationService $mailConfirmationService */
-    public $mailConfirmationService;
+    private $mailConfirmationService;
 
     public function setMailConfirmationService(MailConfirmationService $service)
     {
         $this->mailConfirmationService = $service;
     }
 
+    /**
+     * @var MailConfirmationForm
+     */
+    private $mailConfirmationForm;
+
+    /**
+     * @param MailConfirmationForm $mailConfirmationForm
+     */
+    public function setMailConfirmationForm(MailConfirmationForm $mailConfirmationForm)
+    {
+        $this->mailConfirmationForm = $mailConfirmationForm;
+    }
 
     public function indexAction()
     {
@@ -35,7 +47,7 @@ class MailConfirmationController extends AbstractController {
         if ($request->isPost()) {
             //dès lors que l'on revient d'un post on affiche le formalaire de demande
             /** @var MailConfirmationForm $form */
-            $form = $this->getServiceLocator()->get('formElementManager')->get('MailConfirmationForm');
+            $form = $this->mailConfirmationForm;
 
             if ($id !== null) {
                 //edition d'une demande existante

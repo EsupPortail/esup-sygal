@@ -2,9 +2,8 @@
 
 namespace Application\Service\File;
 
+use Interop\Container\ContainerInterface;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\ServiceManager\ServiceLocatorInterface as ContainerInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 class FileServiceFactory
 {
@@ -24,7 +23,7 @@ class FileServiceFactory
     }
 
     /**
-     * @param ServiceLocatorInterface $container
+     * @param ContainerInterface $container
      * @return string
      */
     private function getRootDirectoryPath(ContainerInterface $container)

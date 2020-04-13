@@ -3,10 +3,8 @@
 namespace Application\Controller\Plugin\Uploader;
 
 use UnicaenApp\Util;
-use Zend\Form\FormElementManager;
+use Zend\Http\Request;
 use Zend\Mvc\Controller\Plugin\AbstractPlugin;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Zend\View\Model\JsonModel;
 
 /**
@@ -14,10 +12,8 @@ use Zend\View\Model\JsonModel;
  *
  * @author Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>
  */
-class UploaderPlugin extends AbstractPlugin implements ServiceLocatorAwareInterface
+class UploaderPlugin extends AbstractPlugin
 {
-    use ServiceLocatorAwareTrait;
-
     /**
      * Magic method.
      *
@@ -41,6 +37,7 @@ class UploaderPlugin extends AbstractPlugin implements ServiceLocatorAwareInterf
      */
     public function upload()
     {
+        /** @var Request $request */
         $request = $this->getController()->getRequest();
         $form    = $this->getForm();
 
@@ -97,18 +94,22 @@ class UploaderPlugin extends AbstractPlugin implements ServiceLocatorAwareInterf
     protected $form;
 
     /**
+     * @param UploadForm $form
+     * @return UploaderPlugin
+     */
+    public function setForm(UploadForm $form)
+    {
+        $this->form = $form;
+        return $this;
+    }
+
+    /**
      * Retourne le formulaire de dépôt de fichier.
      *
      * @return UploadForm
      */
     public function getForm()
     {
-        if (null === $this->form) {
-            /** @var FormElementManager $pluginManager */
-            $pluginManager = $this->getServiceLocator();
-            $this->form = $pluginManager->getServiceLocator()->get('form_element_manager')->get('UploadForm');
-        }
-
         return $this->form;
     }
 }

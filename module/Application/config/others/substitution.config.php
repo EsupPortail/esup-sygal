@@ -4,7 +4,7 @@ use Application\Controller\Factory\SubstitutionControllerFactory;
 use Application\Provider\Privilege\StructurePrivileges;
 use Application\Provider\Privilege\SubstitutionPrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
-use Zend\Mvc\Router\Http\Segment;
+use Zend\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [

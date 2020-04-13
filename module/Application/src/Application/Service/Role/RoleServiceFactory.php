@@ -4,20 +4,20 @@ namespace Application\Service\Role;
 
 use Application\Service\Source\SourceService;
 use Application\SourceCodeStringHelper;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 
 class RoleServiceFactory
 {
     /**
      * Create service
      *
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param ContainerInterface $container
      * @return RoleService
      */
-    public function __invoke(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container)
     {
         /** @var SourceService $sourceService */
-        $sourceService = $serviceLocator->get(SourceService::class);
+        $sourceService = $container->get(SourceService::class);
 
         $service = new RoleService();
         $service->setSourceService($sourceService);
@@ -25,7 +25,7 @@ class RoleServiceFactory
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper
          */
-        $sourceCodeHelper = $serviceLocator->get(SourceCodeStringHelper::class);
+        $sourceCodeHelper = $container->get(SourceCodeStringHelper::class);
         $service->setSourceCodeStringHelper($sourceCodeHelper);
 
         return $service;

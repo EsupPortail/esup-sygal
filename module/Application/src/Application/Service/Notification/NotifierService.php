@@ -26,7 +26,7 @@ use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Notification\Notification;
 use UnicaenApp\Exception\LogicException;
-use Zend\Mvc\Controller\Plugin\FlashMessenger;
+use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Zend\View\Helper\Url as UrlHelper;
 
 /**

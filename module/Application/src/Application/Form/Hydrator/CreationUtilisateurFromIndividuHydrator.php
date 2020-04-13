@@ -3,15 +3,14 @@
 namespace Application\Form\Hydrator;
 
 use Application\Entity\Db\CreationUtilisateurInfos;
-use Application\Entity\Db\Utilisateur;
-use Zend\Stdlib\Hydrator\HydratorInterface;
+use Zend\Hydrator\HydratorInterface;
 
 class CreationUtilisateurFromIndividuHydrator implements HydratorInterface
 {
     /**
      * @param array $data
      * @param CreationUtilisateurInfos $infos
-     * @return Utilisateur
+     * @return CreationUtilisateurInfos
      */
     public function hydrate(array $data, $infos) {
 

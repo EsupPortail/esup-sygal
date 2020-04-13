@@ -21,6 +21,19 @@ class ProfilController extends AbstractActionController {
     use ProfilServiceAwareTrait;
     use RoleServiceAwareTrait;
 
+    /**
+     * @var ProfilForm
+     */
+    private $profilForm;
+
+    /**
+     * @param ProfilForm $profilForm
+     */
+    public function setProfilForm(ProfilForm $profilForm)
+    {
+        $this->profilForm = $profilForm;
+    }
+
     public function indexAction()
     {
         $profils = $this->getProfilService()->getProfils();
@@ -41,7 +54,7 @@ class ProfilController extends AbstractActionController {
         else            $profil = new Profil();
 
         /** @var ProfilForm $form */
-        $form = $this->getServiceLocator()->get('FormElementManager')->get(ProfilForm::class);
+        $form = $this->profilForm;
         $form->setAttribute('action', $this->url()->fromRoute('profil/editer', ['profil' => $profil->getId()], [], true));
         $form->bind($profil);
 

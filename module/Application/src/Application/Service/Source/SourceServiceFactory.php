@@ -2,7 +2,7 @@
 
 namespace Application\Service\Source;
 
-use Zend\ServiceManager\ServiceLocatorInterface as ContainerInterface;
+use Interop\Container\ContainerInterface;
 
 /**
  * @author Unicaen

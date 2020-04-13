@@ -3,38 +3,21 @@
 namespace Application\Service\Url;
 
 use Application\RouteMatch;
+use Interop\Container\ContainerInterface;
 use Zend\Console\Console;
-use Zend\Mvc\Router\RouteStackInterface;
-use Zend\ServiceManager\AbstractFactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\Router\RouteStackInterface;
+use Zend\ServiceManager\Factory\AbstractFactoryInterface;
 
 class UrlServiceFactory implements AbstractFactoryInterface
 {
-    /**
-     * Determine if we can create a service with name
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @param                         $name
-     * @param                         $requestedName
-     * @return bool
-     */
-    public function canCreateServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
+    public function canCreate(ContainerInterface $container, $requestedName)
     {
         $requestedClass = $requestedName;
-        $isInNamespace = substr($requestedClass, 0, strlen(__NAMESPACE__)) === __NAMESPACE__;
 
-        return $isInNamespace;
+        return substr($requestedClass, 0, strlen(__NAMESPACE__)) === __NAMESPACE__;
     }
 
-    /**
-     * Create service with name
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @param                         $name
-     * @param                         $requestedName
-     * @return UrlService
-     */
-    public function createServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $class = $requestedName;
 
@@ -42,8 +25,8 @@ class UrlServiceFactory implements AbstractFactoryInterface
         $service = new $class();
 
         /** @var RouteStackInterface $router */
-        $router = $serviceLocator->get(Console::isConsole() ? 'HttpRouter' : 'Router');
-        $match = $serviceLocator->get('application')->getMvcEvent()->getRouteMatch();
+        $router = $container->get(Console::isConsole() ? 'HttpRouter' : 'Router');
+        $match = $container->get('application')->getMvcEvent()->getRouteMatch();
         if ($match instanceof RouteMatch) {
             $service->setRouteMatch($match);
         }

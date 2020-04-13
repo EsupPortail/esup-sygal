@@ -9,7 +9,7 @@ use Application\Service\Structure\StructureServiceFactory;
 use Application\View\Helper\StructureSubstitHelper;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
-use Zend\Mvc\Router\Http\Segment;
+use Zend\Router\Http\Segment;
 
 return [
 

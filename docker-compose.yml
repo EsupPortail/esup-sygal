@@ -5,7 +5,7 @@ services:
     container_name: sygal-container
     build:
       args:
-        PHP_VERSION: 7.0
+        PHP_VERSION: 7.3
       context: .
     ports:
      - "8000:80"

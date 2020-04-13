@@ -5,9 +5,9 @@ use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Import\Controller\ImportController;
 use Import\Service\CallService;
-use Zend\Mvc\Router\Console\Simple;
-use Zend\Mvc\Router\Http\Literal;
-use Zend\Mvc\Router\Http\Segment;
+use Zend\Mvc\Console\Router\Simple;
+use Zend\Router\Http\Literal;
+use Zend\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [

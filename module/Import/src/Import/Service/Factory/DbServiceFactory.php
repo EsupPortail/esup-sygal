@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityManager;
 use Import\Service\DbService;
 use Import\Service\DbServiceJSONHelper;
 use Import\Service\DbServiceSQLGenerator;
-use Zend\ServiceManager\ServiceLocatorInterface as ContainerInterface;
+use Interop\Container\ContainerInterface;
 
 class DbServiceFactory
 {

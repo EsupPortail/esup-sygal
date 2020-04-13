@@ -2,18 +2,18 @@
 
 namespace Application\Service\Individu;
 
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 
 trait IndividuServiceLocateTrait
 {
     /**
-     * @param ServiceLocatorInterface $sl
+     * @param ContainerInterface $container
      * @return IndividuService
      */
-    public function locateIndividuService(ServiceLocatorInterface $sl)
+    public function locateIndividuService(ContainerInterface $container)
     {
         /** @var IndividuService $service */
-        $service = $sl->get('IndividuService');
+        $service = $container->get('IndividuService');
 
         return $service;
     }

@@ -3,8 +3,8 @@
 namespace Application;
 
 use Zend\Mvc\MvcEvent;
-use Zend\Mvc\Router\Http\TreeRouteStack;
-use Zend\Mvc\Router\RouteStackInterface;
+use Zend\Router\Http\TreeRouteStack;
+use Zend\Router\RouteStackInterface;
 use Zend\Uri\Http as HttpUri;
 
 class EventRouterReplacer

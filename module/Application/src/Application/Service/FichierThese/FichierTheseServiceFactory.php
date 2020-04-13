@@ -10,21 +10,20 @@ use Application\Service\Notification\NotifierService;
 use Application\Service\ValiditeFichier\ValiditeFichierService;
 use Application\Service\VersionFichier\VersionFichierService;
 use Application\Validator\FichierCinesValidator;
+use Interop\Container\ContainerInterface;
 use Retraitement\Service\RetraitementService;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
-class FichierTheseServiceFactory implements FactoryInterface
+class FichierTheseServiceFactory
 {
     /**
      * Create service
      *
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param ContainerInterface $container
      * @return mixed
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container)
     {
-        $fichierCinesValidator = $this->createFichierCinesValidator($serviceLocator);
+        $fichierCinesValidator = $this->createFichierCinesValidator($container);
 
         /**
          * @var FichierService $fichierService
@@ -36,14 +35,14 @@ class FichierTheseServiceFactory implements FactoryInterface
          * @var NotifierService $notifierService
          * @var \Zend\View\Renderer\PhpRenderer $renderer
          */
-        $fichierService = $serviceLocator->get(FichierService::class);
-        $fileService = $serviceLocator->get(FileService::class);
-        $versionFichierService = $serviceLocator->get('VersionFichierService');
-        $validiteFichierService = $serviceLocator->get('ValiditeFichierService');
-        $retraitementService = $serviceLocator->get('RetraitementService');
-        $etablissementService = $serviceLocator->get('EtablissementService');
-        $notifierService = $serviceLocator->get(NotifierService::class);
-        $renderer = $serviceLocator->get('view_renderer');
+        $fichierService = $container->get(FichierService::class);
+        $fileService = $container->get(FileService::class);
+        $versionFichierService = $container->get('VersionFichierService');
+        $validiteFichierService = $container->get('ValiditeFichierService');
+        $retraitementService = $container->get('RetraitementService');
+        $etablissementService = $container->get('EtablissementService');
+        $notifierService = $container->get(NotifierService::class);
+        $renderer = $container->get('ViewRenderer');
 
         $service = new FichierTheseService();
 
@@ -60,10 +59,10 @@ class FichierTheseServiceFactory implements FactoryInterface
         return $service;
     }
 
-    private function createFichierCinesValidator(ServiceLocatorInterface $serviceLocator)
+    private function createFichierCinesValidator(ContainerInterface $container)
     {
         /** @var ValidationFichierCinesCommand $command */
-        $command = $serviceLocator->get('ValidationFichierCinesCommand');
+        $command = $container->get('ValidationFichierCinesCommand');
 
         $validator = new FichierCinesValidator();
         $validator->setCommand($command);

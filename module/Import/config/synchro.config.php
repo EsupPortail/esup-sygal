@@ -8,7 +8,7 @@ use Import\Service\ImportObservEtabResult\ImportObservEtabResultService;
 use Import\Service\ImportObservEtabResult\ImportObservEtabResultServiceFactory;
 use Import\Service\SchemaService;
 use UnicaenAuth\Guard\PrivilegeController;
-use Zend\Mvc\Router\Console\Simple;
+use Zend\Mvc\Console\Router\Simple;
 
 return [
     'bjyauthorize'    => [

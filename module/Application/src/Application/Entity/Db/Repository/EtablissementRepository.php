@@ -53,15 +53,15 @@ class EtablissementRepository extends DefaultEntityRepository
         return $entity;
     }
 
-    /**
-     * @param int $id
-     * @return null|Etablissement
-     */
-    public function find($id) {
-        /** @var Etablissement $etablissement */
-        $etablissement = $this->findOneBy(["id" => $id]);
-        return $etablissement;
-    }
+//    /**
+//     * @param int $id
+//     * @return null|Etablissement
+//     */
+//    public function find($id) {
+//        /** @var Etablissement $etablissement */
+//        $etablissement = $this->findOneBy(["id" => $id]);
+//        return $etablissement;
+//    }
 
     /**
      * @return Etablissement[]

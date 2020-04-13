@@ -10,8 +10,8 @@ use Application\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\UniteRecherche\UniteRechercheServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use Application\View\Helper\UniteRechercheHelper;
-use Zend\Mvc\Router\Http\Literal;
-use Zend\Mvc\Router\Http\Segment;
+use Zend\Router\Http\Literal;
+use Zend\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [

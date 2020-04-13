@@ -4,9 +4,10 @@ namespace Application\Form\Hydrator;
 
 use Application\Entity\Db\Profil;
 use Application\Service\Structure\StructureServiceAwareTrait;
-use Zend\Stdlib\Hydrator\HydratorInterface;
+use Zend\Hydrator\HydratorInterface;
 
-class ProfilHydrator implements HydratorInterface {
+class ProfilHydrator implements HydratorInterface
+{
     use StructureServiceAwareTrait;
 
     /**
@@ -36,6 +37,8 @@ class ProfilHydrator implements HydratorInterface {
 
         $type = $this->getStructureService()->getTypeStructureByCode($data['structure']);
         $object->setStructureType($type);
+
+        return $object;
     }
 
 }

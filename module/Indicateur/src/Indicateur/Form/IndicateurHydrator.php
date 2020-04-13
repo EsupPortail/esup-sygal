@@ -3,25 +3,23 @@
 namespace Indicateur\Form;
 
 use Indicateur\Model\Indicateur;
-use Zend\Stdlib\Hydrator\HydratorInterface;
+use Zend\Hydrator\HydratorInterface;
 
-class IndicateurHydrator implements HydratorInterface {
-
+class IndicateurHydrator implements HydratorInterface
+{
     /**
      * @param Indicateur $object
      * @return array
      */
     public function extract($object)
     {
-        $data = [
+        return [
             'libelle'       => $object->getLibelle(),
             'description'   => $object->getDescription(),
             'requete'       => $object->getRequete(),
             'displayAs'     => $object->getDisplayAs(),
             'class'         => $object->getClass(),
             ];
-
-        return $data;
     }
 
     /**
@@ -39,5 +37,4 @@ class IndicateurHydrator implements HydratorInterface {
 
         return $object;
     }
-
 }

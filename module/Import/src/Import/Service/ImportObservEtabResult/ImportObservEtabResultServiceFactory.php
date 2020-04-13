@@ -8,33 +8,33 @@ use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
 use Application\Service\Variable\VariableService;
 use Application\SourceCodeStringHelper;
+use Interop\Container\ContainerInterface;
 use Zend\Console\Request as ConsoleRequest;
 use Zend\Log\Logger;
 use Zend\Log\Writer\Noop;
 use Zend\Log\Writer\Stream;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 class ImportObservEtabResultServiceFactory
 {
-    public function __invoke(ServiceLocatorInterface $sl)
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper
          */
-        $sourceCodeHelper = $sl->get(SourceCodeStringHelper::class);
+        $sourceCodeHelper = $container->get(SourceCodeStringHelper::class);
 
         /** @var ImportObservEtabResultRepository $repo */
-        $repo = $sl->get('doctrine.entitymanager.orm_default')->getRepository(ImportObservEtabResult::class);
+        $repo = $container->get('doctrine.entitymanager.orm_default')->getRepository(ImportObservEtabResult::class);
         $repo->setSourceCodeStringHelper($sourceCodeHelper);
 
         /** @var TheseService $theseService */
-        $theseService = $sl->get('TheseService');
+        $theseService = $container->get('TheseService');
 
         /** @var NotifierService $notifierService */
-        $notifierService = $sl->get(NotifierService::class);
+        $notifierService = $container->get(NotifierService::class);
 
         /** @var VariableService $variableService */
-        $variableService = $sl->get('VariableService');
+        $variableService = $container->get('VariableService');
 
         $service = new ImportObservEtabResultService();
         $service->setRepository($repo);
@@ -42,7 +42,7 @@ class ImportObservEtabResultServiceFactory
         $service->setNotifierService($notifierService);
         $service->setVariableService($variableService);
 
-        if ($logger = $this->getLogger($sl)) {
+        if ($logger = $this->getLogger($container)) {
             $service->setLogger($logger);
         }
 
@@ -50,12 +50,12 @@ class ImportObservEtabResultServiceFactory
     }
 
     /**
-     * @param ServiceLocatorInterface $sl
+     * @param ContainerInterface $container
      * @return Logger
      */
-    private function getLogger(ServiceLocatorInterface $sl)
+    private function getLogger(ContainerInterface $container)
     {
-        if ($sl->get('request') instanceof ConsoleRequest) {
+        if ($container->get('request') instanceof ConsoleRequest) {
             $writer = new Stream('php://output');
         } else {
             $writer = new Noop();

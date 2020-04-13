@@ -48,7 +48,7 @@ class Module
 
         /** @var RouteMatchInjector $routeMatchInjector */
         $routeMatchInjector = $sm->get('RouteMatchInjector');
-        $eventManager->attachAggregate($routeMatchInjector);
+        $routeMatchInjector->attach($eventManager);
 
         /** @var UserAuthenticatedEventListener $listener */
         $listener = $sm->get('UserAuthenticatedEventListener');

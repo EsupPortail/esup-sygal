@@ -2,8 +2,8 @@
 
 namespace Notification\Service;
 
+use Interop\Container\ContainerInterface;
 use Notification\Entity\Service\NotifEntityService;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * @author Unicaen
@@ -18,13 +18,13 @@ class NotificationFactoryFactory
     /**
      * Create service.
      *
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param ContainerInterface $container
      * @return NotificationFactory
      */
-    public function __invoke(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container)
     {
         /** @var NotifEntityService $notifEntityService */
-        $notifEntityService = $serviceLocator->get(NotifEntityService::class);
+        $notifEntityService = $container->get(NotifEntityService::class);
 
         $class = $this->class;
 

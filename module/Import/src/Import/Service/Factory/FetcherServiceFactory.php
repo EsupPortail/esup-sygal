@@ -9,7 +9,7 @@ use Import\Service\CallService;
 use Import\Service\DbService;
 use Import\Service\FetcherService;
 use UnicaenApp\Exception\LogicException;
-use Zend\ServiceManager\ServiceLocatorInterface as ContainerInterface;
+use Interop\Container\ContainerInterface;
 
 class FetcherServiceFactory
 {
