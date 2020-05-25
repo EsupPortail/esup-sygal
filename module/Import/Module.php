@@ -2,7 +2,7 @@
 
 namespace Import;
 
-use Application\Entity\Db\ImportObserv;
+use Import\Model\ImportObserv;
 use Zend\Config\Factory as ConfigFactory;
 use Zend\Console\Adapter\AdapterInterface as Console;
 use Zend\Mvc\ModuleRouteListener;

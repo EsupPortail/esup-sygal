@@ -3,7 +3,7 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <entity name="Application\Entity\Db\ImportObserv" table="IMPORT_OBSERV">
+    <entity name="Import\Model\ImportObserv" table="IMPORT_OBSERV">
 
         <id name="id" type="integer" column="ID"/>
 
@@ -13,6 +13,10 @@
         <field name="operation" type="string" column="OPERATION" nullable="false"/>
         <field name="toValue" type="string" column="TO_VALUE" nullable="true"/>
         <field name="description" type="string" column="DESCRIPTION" nullable="false"/>
+        <field name="enabled" type="boolean" column="ENABLED"/>
+        <field name="filter" column="FILTER"/>
+
+<!--        <one-to-many target-entity="Application\Entity\Db\ImportObservEtab" mapped-by="importObserv" field="importObservEtab"/>-->
 
     </entity>
 </doctrine-mapping>

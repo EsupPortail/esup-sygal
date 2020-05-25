@@ -6,8 +6,8 @@ use Doctrine\Common\Collections\Collection;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenApp\Exception\LogicException;
-use UnicaenImport\Entity\Db\Interfaces\SourceAwareInterface;
-use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
+use UnicaenDbImport\Entity\Db\Interfaces\SourceAwareInterface;
+use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 
 /**

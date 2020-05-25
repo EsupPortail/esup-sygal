@@ -5,9 +5,9 @@ namespace Import\Controller\Factory;
 use Application\EventRouterReplacer;
 use Application\Service\These\TheseService;
 use Import\Controller\ImportObserverController;
-use Import\Service\ImportObserv\ImportObservService;
-use Import\Service\ImportObservEtabResult\ImportObservEtabResultService;
+use Import\Model\Service\ImportObservResultService;
 use Interop\Container\ContainerInterface;
+use UnicaenDbImport\Entity\Db\Service\ImportObserv\ImportObservService;
 use Zend\Router\Http\TreeRouteStack;
 
 class ImportObserverControllerFactory
@@ -29,8 +29,8 @@ class ImportObserverControllerFactory
         /** @var ImportObservService $importObservService */
         $importObservService = $container->get(ImportObservService::class);
 
-        /** @var ImportObservEtabResultService $importObservEtabResultService */
-        $importObservEtabResultService = $container->get(ImportObservEtabResultService::class);
+        /** @var \Import\Model\Service\ImportObservResultService $importObservResultEtabService */
+        $importObservResultEtabService = $container->get(ImportObservResultService::class);
 
         /** @var TheseService $theseService */
         $theseService = $container->get('TheseService');
@@ -38,7 +38,7 @@ class ImportObserverControllerFactory
         $controller = new ImportObserverController();
         $controller->setEventRouterReplacer($routerReplacer);
         $controller->setImportObservService($importObservService);
-        $controller->setImportObservEtabResultService($importObservEtabResultService);
+        $controller->setImportObservResultService($importObservResultEtabService);
         $controller->setTheseService($theseService);
 
         return $controller;

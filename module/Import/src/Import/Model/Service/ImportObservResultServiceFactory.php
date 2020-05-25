@@ -1,31 +1,28 @@
 <?php
 
-namespace Import\Service\ImportObservEtabResult;
+namespace Import\Model\Service;
 
-use Application\Entity\Db\ImportObservEtabResult;
-use Application\Entity\Db\Repository\ImportObservEtabResultRepository;
 use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
 use Application\Service\Variable\VariableService;
-use Application\SourceCodeStringHelper;
+use Doctrine\ORM\EntityManager;
+use Import\Model\Service\ImportObservResultService;
 use Interop\Container\ContainerInterface;
+use UnicaenDbImport\Config\Config;
 use Zend\Console\Request as ConsoleRequest;
 use Zend\Log\Logger;
 use Zend\Log\Writer\Noop;
 use Zend\Log\Writer\Stream;
 
-class ImportObservEtabResultServiceFactory
+class ImportObservResultServiceFactory
 {
     public function __invoke(ContainerInterface $container)
     {
-        /**
-         * @var SourceCodeStringHelper $sourceCodeHelper
-         */
-        $sourceCodeHelper = $container->get(SourceCodeStringHelper::class);
+        /** @var EntityManager $em */
+        $em = $container->get('doctrine.entitymanager.orm_default');
 
-        /** @var ImportObservEtabResultRepository $repo */
-        $repo = $container->get('doctrine.entitymanager.orm_default')->getRepository(ImportObservEtabResult::class);
-        $repo->setSourceCodeStringHelper($sourceCodeHelper);
+        /** @var Config $config */
+        $config = $container->get(Config::class);
 
         /** @var TheseService $theseService */
         $theseService = $container->get('TheseService');
@@ -36,8 +33,9 @@ class ImportObservEtabResultServiceFactory
         /** @var VariableService $variableService */
         $variableService = $container->get('VariableService');
 
-        $service = new ImportObservEtabResultService();
-        $service->setRepository($repo);
+        $service = new ImportObservResultService();
+        $service->setEntityManager($em);
+        $service->setEntityClass($config->getImportObservResultEntityClass());
         $service->setTheseService($theseService);
         $service->setNotifierService($notifierService);
         $service->setVariableService($variableService);

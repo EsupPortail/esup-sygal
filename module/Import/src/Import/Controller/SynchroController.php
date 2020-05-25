@@ -6,11 +6,11 @@ use Application\Controller\Plugin\Url\UrlThesePlugin;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Doctrine\ORM\EntityManager;
-use Import\Service\ImportObserv\ImportObservServiceAwareTrait;
 use Import\Service\ImportService;
 use Import\Service\SchemaService;
 use Import\Service\Traits\SynchroServiceAwareTrait;
 use Interop\Container\ContainerInterface;
+use UnicaenDbImport\Entity\Db\Service\ImportObserv\ImportObservServiceAwareTrait;
 use Zend\View\Model\ViewModel;
 
 /**

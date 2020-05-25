@@ -12,7 +12,7 @@ use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
-use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
+use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 
 /**
@@ -275,6 +275,16 @@ class These implements HistoriqueAwareInterface, ResourceInterface
         $this->rdvBus = new ArrayCollection();
         $this->anneesUnivInscription = new ArrayCollection();
         $this->anneesUniv1ereInscription = new ArrayCollection();
+    }
+
+    /**
+     * Get histoModification
+     *
+     * @return \DateTime
+     */
+    public function getHistoModification()
+    {
+        return $this->histoModification ?: $this->getHistoCreation();
     }
 
     /**

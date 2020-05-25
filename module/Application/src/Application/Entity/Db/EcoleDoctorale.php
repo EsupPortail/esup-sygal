@@ -2,10 +2,10 @@
 
 namespace Application\Entity\Db;
 
-use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
+use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
-use UnicaenImport\Entity\Db\Interfaces\SourceAwareInterface;
+use UnicaenDbImport\Entity\Db\Interfaces\SourceAwareInterface;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 
 /**

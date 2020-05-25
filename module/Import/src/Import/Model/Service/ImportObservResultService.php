@@ -1,14 +1,12 @@
 <?php
 
-namespace Import\Service\ImportObservEtabResult;
+namespace Import\Model\Service;
 
-use Application\Entity\Db\Etablissement;
-use Application\Entity\Db\ImportObserv;
-use Application\Entity\Db\ImportObservEtabResult;
-use Application\Entity\Db\Repository\ImportObservEtabResultRepository;
+use Application\Constants;
+use Import\Model\ImportObserv;
+use Import\Model\ImportObservResult;
 use Application\Entity\Db\These;
 use Application\Rule\NotificationDepotVersionCorrigeeAttenduRule;
-use Application\Service\BaseService;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
@@ -20,17 +18,12 @@ use Zend\Log\LoggerAwareTrait;
 /**
  * @author Unicaen
  */
-class ImportObservEtabResultService extends BaseService
+class ImportObservResultService extends \UnicaenDbImport\Entity\Db\Service\ImportObservResult\ImportObservResultService /** enc. @see \Application\Service\BaseService */
 {
     use TheseServiceAwareTrait;
     use NotifierServiceAwareTrait;
     use VariableServiceAwareTrait;
     use LoggerAwareTrait;
-
-    /**
-     * @var ImportObservEtabResultRepository
-     */
-    private $repository;
 
     /**
      * @var NotificationDepotVersionCorrigeeAttenduRule
@@ -43,25 +36,6 @@ class ImportObservEtabResultService extends BaseService
     public function __construct()
     {
         $this->setNotificationDepotVersionCorrigeeAttenduRule(new NotificationDepotVersionCorrigeeAttenduRule());
-    }
-
-    /**
-     * @param ImportObservEtabResultRepository $repository
-     * @return static
-     */
-    public function setRepository(ImportObservEtabResultRepository $repository)
-    {
-        $this->repository = $repository;
-
-        return $this;
-    }
-
-    /**
-     * @return ImportObservEtabResultRepository
-     */
-    public function getRepository()
-    {
-        return $this->repository;
     }
 
     /**
@@ -78,22 +52,21 @@ class ImportObservEtabResultService extends BaseService
     /**
      * Traitement des résultats d'observation des changements lors de la synchro.
      *
-     * @param ImportObserv         $importObserv  Observation voulue
-     * @param Etablissement|string $etablissement Etablissement concerné
-     * @param These|null           $these
+     * @param \Import\Model\ImportObserv $importObserv Observation concernée
+     * @param These|null $these
      * @return void
      */
-    public function handleImportObservEtabResults(ImportObserv $importObserv, $etablissement, These $these = null)
+    public function processImportObservForThese(ImportObserv $importObserv, These $these = null)
     {
         switch ($importObserv->getCode()) {
             case ImportObserv::CODE_RESULTAT_PASSE_A_ADMIS:
-                $this->handleImportObservResultsForResultatAdmis($importObserv, $etablissement, $these);
+                $this->processImportObservResultsForResultatAdmis($importObserv, $these);
                 break;
             case ImportObserv::CODE_CORRECTION_PASSE_A_FACULTATIVE:
-                $this->handleImportObservResultsForCorrectionFacultative($importObserv, $etablissement, $these);
+                $this->processImportObservResultsForCorrectionFacultative($importObserv, $these);
                 break;
             case ImportObserv::CODE_CORRECTION_PASSE_A_OBLIGATOIRE:
-                $this->handleImportObservResultsForCorrectionObligatoire($importObserv, $etablissement, $these);
+                $this->processImportObservResultsForCorrectionObligatoire($importObserv, $these);
                 break;
             default:
                 throw new RuntimeException("Cas non prévu!");
@@ -105,18 +78,18 @@ class ImportObservEtabResultService extends BaseService
      * Traitement des résultats d'observation des changements lors de la synchro :
      * notifications au sujet des thèses dont le résultat est passé à "admis".
      *
-     * @param ImportObserv         $importObserv
-     * @param Etablissement|string $etablissement
-     * @param These|null           $these
+     * @param ImportObserv $importObserv
+     * @param These|null $these
+     * @throws \Doctrine\ORM\ORMException
      */
-    private function handleImportObservResultsForResultatAdmis(ImportObserv $importObserv, $etablissement, These $these = null)
+    private function processImportObservResultsForResultatAdmis(ImportObserv $importObserv, These $these = null)
     {
         $this->logger->info(sprintf(
-            "# Traitement des résultats d'import de l'établissement '%s' : " .
-            "notifications au sujet des thèses dont le résultat est passé à \"admis\"",
-            $etablissement));
+            "# Traitement des résultats d'import : " .
+            "notifications au sujet des thèses dont le résultat est passé à \"admis\""
+        ));
 
-        $records = $this->repository->fetchImportObservEtabResults($importObserv, $etablissement, $these);
+        $records = $this->getRepository()->fetchImportObservResults($importObserv, $these);
 
         $this->logger->info(sprintf("%d résultat(s) d'import trouvé(s) à traiter.", count($records)));
 
@@ -148,29 +121,31 @@ class ImportObservEtabResultService extends BaseService
         try {
             $this->getEntityManager()->flush($records);
         } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Enregistrement des ImportObservEtabResult impossible", null, $e);
+            throw new RuntimeException("Enregistrement des ImportObservResultEtab impossible", null, $e);
         }
     }
 
     /**
-     * @param ImportObservEtabResult[] $records
+     * @param \Import\Model\ImportObservResult[] $importObservResults
      * @return array
      */
-    private function prepareDataForResultatAdmis($records)
+    private function prepareDataForResultatAdmis(array $importObservResults)
     {
         // Mise en forme des résultats d'observation
         $sourceCodes = [];
         $details = [];
-        foreach ($records as $record) {
-            if ($record->isTooOld()) {
-                $this->logger->info(sprintf("Le ImportObservEtabResult %d de la thèse '%s' est écarté car TOO_OLD = 1.",
-                    $record->getId(),
-                    $record->getSourceCode()
+        foreach ($importObservResults as $ior) {
+            if ($ior->isDateLimiteNotifDepassee()) {
+                $this->logger->info(sprintf(
+                    "Le ImportObservResult %d de la thèse '%s' est écarté car la date limite de notif est dépassée (%s).",
+                    $ior->getId(),
+                    $ior->getSourceCode(),
+                    $ior->getDateLimiteNotif()->format(Constants::DATETIME_FORMAT)
                 ));
                 continue;
             }
-            $sourceCodes[] = $record->getSourceCode();
-            $details[] = $record->getResultatToString();
+            $sourceCodes[] = $ior->getSourceCode();
+            $details[] = $ior->getResultatToString();
         }
 
         if (empty($sourceCodes)) {
@@ -183,6 +158,13 @@ class ImportObservEtabResultService extends BaseService
         $theses = $qb->getQuery()->getResult();
         /** @var These[] $theses */
 
+        $detailsToString = [
+            '>1' => "Résultat passé à 'Admis'",
+            '>0' => "Résultat passé à 'Non admis'",
+            '1>' => "Résultat effacé",
+            '0>' => "Résultat effacé",
+        ];
+
         // Mise en forme des données pour le template du mail
         $data = [];
         foreach ($theses as $index => $these) {
@@ -190,9 +172,11 @@ class ImportObservEtabResultService extends BaseService
                 $this->logger->info(sprintf("La thèse '%s' est écartée car elle est historisée.", $these->getSourceCode()));
                 continue;
             }
+            $detail = trim($details[$index]);
+            $detailToString = $detailsToString[$detail] ?? $detail;
             $data[] = [
                 'these'  => $these,
-                'detail' => $details[$index],
+                'detail' => $detailToString,
             ];
         }
 
@@ -203,98 +187,98 @@ class ImportObservEtabResultService extends BaseService
      * Traitement des résultats d'observation des changements lors de la synchro :
      * notifications au sujet des thèses pour lesquelles le témoin "correction autorisée" est passé à "facultative".
      *
-     * @param ImportObserv         $importObserv
-     * @param Etablissement|string $etablissement
-     * @param These|null           $these
+     * @param \Import\Model\ImportObserv $importObserv
+     * @param These|null $these
      */
-    private function handleImportObservResultsForCorrectionFacultative(ImportObserv $importObserv, $etablissement, These $these = null)
+    private function processImportObservResultsForCorrectionFacultative(ImportObserv $importObserv, These $these = null)
     {
         $this->logger->info(sprintf(
-            "# Traitement des résultats d'import de l'établissement '%s' : " .
-            "notifications au sujet des thèses pour lesquelles le témoin \"correction autorisée\" est passé à \"facultative\"",
-            $etablissement
+            "# Traitement des résultats d'import : " .
+            "notifications au sujet des thèses pour lesquelles le témoin \"correction autorisée\" est passé à \"facultative\""
         ));
 
-        $records = $this->repository->fetchImportObservEtabResults($importObserv, $etablissement, $these);
+        $records = $this->getRepository()->fetchImportObservResults($importObserv, $these);
 
-        $this->_handleImportObservResultsForCorrection($records);
+        $this->_processImportObservResultsForCorrection($records);
     }
 
     /**
      * Traitement des résultats d'observation des changements lors de la synchro :
      * notifications au sujet des thèses pour lesquelles le témoin "correction autorisée" est passé à "obligatoire".
      *
-     * @param ImportObserv         $importObserv
-     * @param Etablissement|string $etablissement
-     * @param These|null           $these
+     * @param ImportObserv $importObserv
+     * @param These|null $these
      */
-    private function handleImportObservResultsForCorrectionObligatoire(ImportObserv $importObserv, $etablissement, These $these = null)
+    private function processImportObservResultsForCorrectionObligatoire(ImportObserv $importObserv, These $these = null)
     {
         $this->logger->info(sprintf(
-            "# Traitement des résultats d'import de l'établissement '%s' : " .
-            "notifications au sujet des thèses pour lesquelles le témoin \"correction autorisée\" est passé à \"obligatoire\"",
-            $etablissement
+            "# Traitement des résultats d'import : " .
+            "notifications au sujet des thèses pour lesquelles le témoin \"correction autorisée\" est passé à \"obligatoire\""
         ));
 
-        $records = $this->repository->fetchImportObservEtabResults($importObserv, $etablissement, $these);
+        $records = $this->getRepository()->fetchImportObservResults($importObserv, $these);
 
-        $this->_handleImportObservResultsForCorrection($records);
+        $this->_processImportObservResultsForCorrection($records);
     }
 
     /**
      * Traitement des résultats d'observation des changements lors de la synchro :
      * notifications au sujet des thèses pour lesquelles le témoin "correction autorisée" a changé.
      *
-     * @param ImportObservEtabResult[] $records
+     * @param ImportObservResult[] $importObservResults
      */
-    private function _handleImportObservResultsForCorrection(array $records)
+    private function _processImportObservResultsForCorrection(array $importObservResults)
     {
-        if (!count($records)) {
+        if (!count($importObservResults)) {
             $this->logger->info("Aucun résultat d'import à traiter.");
 
             return;
         }
 
-        $this->logger->info(sprintf("%d résultat(s) d'import trouvé(s).", count($records)));
+        $this->logger->info(sprintf("%d résultat(s) d'import trouvé(s).", count($importObservResults)));
 
         $recordsToFlush = [];
 
-        foreach ($records as $record) {
+        foreach ($importObservResults as $ior) {
+            $this->logger->info(sprintf("- %s", $ior));
+
             /** @var These $these */
-            $these = $this->theseService->getRepository()->findOneBy(['sourceCode' => $record->getSourceCode()]);
+            $these = $this->theseService->getRepository()->findOneBy(['sourceCode' => $ior->getSourceCode()]);
             if (!$these->estNonHistorise()) {
                 $this->logger->info(sprintf("La thèse '%s' est écartée car elle est historisée.", $these->getSourceCode()));
                 continue;
             }
-            if ($record->isTooOld()) {
-                $this->logger->info(sprintf("Le ImportObservEtabResult %d de la thèse '%s' est écarté car TOO_OLD = 1.",
-                    $record->getId(),
-                    $record->getSourceCode()
+            if ($ior->isDateLimiteNotifDepassee()) {
+                $this->logger->info(sprintf(
+                    "Le ImportObservResult %d de la thèse '%s' est écarté car la date limite de notif est dépassée (%s).",
+                    $ior->getId(),
+                    $ior->getSourceCode(),
+                    $ior->getDateLimiteNotif()->format(Constants::DATETIME_FORMAT)
                 ));
                 continue;
             }
 
-            $these->setCorrectionAutorisee($record->getImportObservEtab()->getImportObserv()->getToValue()); // anticipation nécessaire !
+            $these->setCorrectionAutorisee($ior->getImportObserv()->getToValue()); // anticipation nécessaire !
 
             // notification
-            $notif = $this->notifierService->triggerCorrectionAttendue($record, $these);
+            $notif = $this->notifierService->triggerCorrectionAttendue($ior, $these, $message);
             if ($notif === null) {
-                $this->logger->info(sprintf("D'après les règles métiers, aucune notif n'est nécessaire pour la thèse '%s'.", $these->getSourceCode()));
+                $this->logger->info(sprintf("Aucune notif n'est nécessaire pour la thèse '%s'. ", $these->getSourceCode()) . $message);
                 continue; // si le service de notif renvoie null, aucune notif n'était nécessaire, on passe au suivant
             }
 
             $this->logAboutNotifications([$notif]);
 
             // Enregistrement de la date de dernière notification
-            $record->setDateNotif($notif->getSendDate());
+            $ior->setDateNotif($notif->getSendDate());
 
-            $recordsToFlush[] = $record;
+            $recordsToFlush[] = $ior;
         }
 
         try {
             $this->getEntityManager()->flush($recordsToFlush);
         } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Enregistrement des ImportObservEtabResult impossible", null, $e);
+            throw new RuntimeException("Enregistrement des ImportObservResult impossible", null, $e);
         }
     }
 
@@ -304,9 +288,7 @@ class ImportObservEtabResultService extends BaseService
     private function logAboutNotifications(array $notifs)
     {
         foreach ($notifs as $notif) {
-            $this->logger->info(
-                sprintf('Notification "%s" envoyée : %s.', $notif->getSubject(), implode(", ", $notif->getTo()), $notifs)
-            );
+            $this->logger->info("Notification envoyée : " . $notif);
         }
     }
 }
