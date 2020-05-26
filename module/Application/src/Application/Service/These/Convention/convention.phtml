@@ -1,6 +1,7 @@
 <?php
 
 use Application\Entity\Db\Diffusion;
+use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\These;
 use Application\Service\Message\DiffusionMessages;
 use Application\View\Renderer\PhpRenderer;
@@ -12,6 +13,9 @@ use Application\View\Renderer\PhpRenderer;
  * @var string      $libEtablissement
  * @var string      $libEtablissementA
  * @var string      $libEtablissementLe
+ *
+ * @var Etablissement $etablissement
+ * @var string $logo
  */
 ?>
 
@@ -31,7 +35,8 @@ use Application\View\Renderer\PhpRenderer;
 <div style="text-align: center; margin-bottom: 30px;">
     <h1>CONVENTION DE MISE EN LIGNE<br>D'UNE THÈSE SOUTENUE</h1>
 
-    <img src="var:logo" height="100px" alt="Logo de Normandie Université" />
+    <img src="<?php echo $logo; ?>" height="100px" alt="Logo de Normandie Université" />
+<!--    <img src="var:logo" height="100px" alt="Logo de Normandie Université" />-->
 </div>
 
 <p>

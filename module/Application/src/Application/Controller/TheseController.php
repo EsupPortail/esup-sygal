@@ -1342,14 +1342,18 @@ class TheseController extends AbstractController
         $libEtablissementLe = $letab;
         $libEtablissementDe = "de " . $letab;
 
-        //todo remplacer par celui de la comue si elle existe ...
-        $cheminLogo = $this->fileService->computeLogoFilePathForStructure($these->getEtablissement()->getStructure());
+        $etablissement = $this->etablissementService->fetchEtablissementComue();
+        if ($etablissement === null) $etablissement = $these->getEtablissement();
+        $cheminLogo = $this->fileService->computeLogoFilePathForStructure($etablissement);
 
         /* @var $renderer PhpRenderer */
         $renderer = $this->getServiceLocator()->get('view_renderer');
         $exporter = new ConventionPdfExporter($renderer, 'A4');
-        $exporter->setLogo(file_get_contents($cheminLogo));
+//        $exporter->setLogo(file_get_contents($cheminLogo));
         $exporter->setVars([
+            'test'               => "Ceci est un test",
+            'etablissement'      => $etablissement,
+            'logo'               => $cheminLogo,
             'these'              => $these,
             'diffusion'          => $diffusion,
             'attestation'        => $attestation,

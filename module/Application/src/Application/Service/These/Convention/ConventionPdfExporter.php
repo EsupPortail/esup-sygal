@@ -31,7 +31,7 @@ class ConventionPdfExporter extends PdfExporter
         $resolver = $renderer->resolver();
         $resolver->attach(new TemplatePathStack(['script_paths' => [__DIR__]]));
 
-        //$this->setLogo(file_get_contents(APPLICATION_DIR . '/public/logo_normandie_univ.jpg')); // 'var:logo' dans les phtml
+        $this->setLogo(file_get_contents(APPLICATION_DIR . '/public/logo_normandie_univ.jpg')); // 'var:logo' dans les phtml
         $this->setHeaderScript('partial/header-odd.phtml', 'O');  // pages paires
         $this->setHeaderScript('partial/header-even.phtml', 'E'); // pages impaires
         $this->setFooterScript('partial/footer.phtml');
