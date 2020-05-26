@@ -28,6 +28,7 @@ use Application\Form\RdvBuTheseForm;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\FichierThese\Exception\ValidationImpossibleException;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
+use Application\Service\File\FileServiceAwareTrait;
 use Application\Service\MailConfirmationServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
@@ -61,10 +62,12 @@ use Zend\Log\Logger;
 use Zend\Log\Writer\Noop;
 use Zend\Stdlib\ParametersInterface;
 use Zend\View\Model\ViewModel;
+use Zend\View\Renderer\PhpRenderer;
 
 class TheseController extends AbstractController
 {
     use FichierTheseServiceAwareTrait;
+    use FileServiceAwareTrait;
     use MessageCollectorAwareTrait;
     use NotifierServiceAwareTrait;
     use RoleServiceAwareTrait;
@@ -1339,8 +1342,13 @@ class TheseController extends AbstractController
         $libEtablissementLe = $letab;
         $libEtablissementDe = "de " . $letab;
 
-        $renderer = $this->getServiceLocator()->get('view_renderer'); /* @var $renderer \Zend\View\Renderer\PhpRenderer */
+        //todo remplacer par celui de la comue si elle existe ...
+        $cheminLogo = $this->fileService->computeLogoFilePathForStructure($these->getEtablissement()->getStructure());
+
+        /* @var $renderer PhpRenderer */
+        $renderer = $this->getServiceLocator()->get('view_renderer');
         $exporter = new ConventionPdfExporter($renderer, 'A4');
+        $exporter->setLogo(file_get_contents($cheminLogo));
         $exporter->setVars([
             'these'              => $these,
             'diffusion'          => $diffusion,
