@@ -56,10 +56,19 @@ $canAddRole = true;
     <div class="row">
         <div class="col-md-6">
             <dl>
-                <dt> Libelle : </dt>    <dd>    <?php echo $etablissement->getLibelle(); ?>     </dd>
-                <dt> Sigle : </dt>      <dd>    <?php echo $etablissement->getSigle() ?: "(Non renseigné)"; ?></dd>
-                <dt> Code : </dt>       <dd>    <?php echo $etablissement->getStructure()->getCode(); ?>        </dd>
-                <dt> Domaine : </dt>    <dd>    <?php echo $etablissement->getDomaine() ?: "(Non renseigné)"; ?></dd>
+                <dt> Libelle : </dt>                <dd>    <?php echo $etablissement->getLibelle(); ?>     </dd>
+                <dt> Sigle : </dt>                  <dd>    <?php echo $etablissement->getSigle() ?: "(Non renseigné)"; ?></dd>
+                <dt> Adresse : </dt>                <dd>    <?php echo $etablissement->getStructure()->getAdresse() ?: "(Non renseignée)"; ?></dd>
+                <dt> Téléphone : </dt>              <dd>    <?php echo $etablissement->getStructure()->getTelephone() ?: "(Non renseigné)"; ?></dd>
+                <dt> Fax : </dt>                    <dd>    <?php echo $etablissement->getStructure()->getFax() ?: "(Non renseigné)"; ?></dd>
+                <dt> Adresse électronique : </dt>   <dd>    <?php echo $etablissement->getStructure()->getEmail() ?: "(Non renseignée)"; ?></dd>
+                <dt> Site internet : </dt>          <dd>    <?php echo $etablissement->getStructure()->getSiteWeb() ?: "(Non renseigné)"; ?></dd>
+                <dt> Code : </dt>                   <dd>    <?php echo $etablissement->getStructure()->getCode(); ?>        </dd>
+                <dt> Domaine : </dt>                <dd>    <?php echo $etablissement->getDomaine() ?: "(Non renseigné)"; ?></dd>
+            </dl>
+        </div>
+        <div class="col-md-4">
+            <dl>
                 <dt> Statut : </dt>     <dd>
                     <?php if ($etablissement->estMembre()): ?>
                         <span class="label label-primary">Membre</span>
@@ -67,16 +76,15 @@ $canAddRole = true;
                     <?php if ($etablissement->estAssocie()): ?>
                         <span class="label label-info">Associé</span>
                     <?php endif ?>
+                    <?php if ($etablissement->estInscription()): ?>
+                        <span class="label label-warning">Inscription</span>
+                    <?php endif ?>
                     <?php if ($etablissement->getStructure()->isFerme()) : ?>
                         <span class="label" style="background-color:darkred">Structure fermée</span>
                     <?php else : ?>
                         <span class="label" style="background-color:darkgreen">Structure ouverte</span>
                     <?php endif; ?>
                 </dd>
-            </dl>
-        </div>
-        <div class="col-md-4">
-            <dl>
                 <dt>Logo :</dt>
                 <dd>
                     <img id="logo" style="max-width: 200px; max-height: 200px; background-color: white;"

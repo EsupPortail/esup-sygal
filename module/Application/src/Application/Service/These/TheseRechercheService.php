@@ -518,7 +518,7 @@ class TheseRechercheService
 //            ];
 //        }
 
-        $etablissements = $this->getEtablissementService()->getRepository()->findAllEtablissementsMembres();
+        $etablissements = $this->getEtablissementService()->getRepository()->findAllEtablissementsInscriptions();
 
         $options = [];
         foreach ($etablissements as $etablissement) {

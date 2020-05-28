@@ -1,0 +1,4 @@
+protected function _addFooter()
+protected function _addHeader()
+
+$scriptVars = array_merge($scriptVars, current($this->scriptVars));
