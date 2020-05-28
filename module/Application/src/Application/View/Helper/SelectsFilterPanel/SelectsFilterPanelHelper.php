@@ -2,6 +2,7 @@
 
 namespace Application\View\Helper\SelectsFilterPanel;
 
+use Application\Service\These\Filter\TheseSelectFilter;
 use Application\View\Renderer\PhpRenderer;
 use Zend\View\Helper\AbstractHelper;
 use Zend\View\Resolver\TemplatePathStack;
@@ -9,7 +10,7 @@ use Zend\View\Resolver\TemplatePathStack;
 class SelectsFilterPanelHelper extends AbstractHelper
 {
     /**
-     * @param \Application\Service\These\Filter\TheseSelectFilter[] $filters
+     * @param TheseSelectFilter[] $filters
      * @return string
      */
     function __invoke(array $filters)
@@ -34,6 +35,6 @@ class SelectsFilterPanelHelper extends AbstractHelper
     {
         return
             ($optionValue !== '' && ((isset($queryParams[$optionName]) && $queryParams[$optionName] === $optionValue))) ||
-            ($optionValue === '' && (!isset($queryParams[$optionName]) || !isset($queryParams[$optionName]) || $queryParams[$optionName] === ''));
+            ($optionValue === '' && (!isset($queryParams[$optionName]) || $queryParams[$optionName] === ''));
     }
 }

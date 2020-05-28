@@ -58,7 +58,7 @@ abstract class TheseFilter
      * @param array  $queryParams
      * @return string
      */
-    private function paramFromQueryParams(array $queryParams)
+    protected function paramFromQueryParams(array $queryParams)
     {
         $name = $this->getName();
 
@@ -116,7 +116,7 @@ abstract class TheseFilter
     }
 
     /**
-     * @return string
+     * @return string|string[]
      */
     public function getValue()
     {
