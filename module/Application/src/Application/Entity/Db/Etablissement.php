@@ -46,6 +46,11 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
     /**
      * @var bool
      */
+    protected $estInscription = false;
+
+    /**
+     * @var bool
+     */
     protected $estComue = false;
 
     /**
@@ -196,6 +201,24 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
     {
         $this->estAssocie = $estAssocie;
 
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function estInscription()
+    {
+        return $this->estInscription;
+    }
+
+    /**
+     * @param bool $estInscription
+     * @return Etablissement
+     */
+    public function setEstInscription($estInscription)
+    {
+        $this->estInscription = $estInscription;
         return $this;
     }
 

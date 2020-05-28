@@ -23,8 +23,14 @@ class EtablissementHydrator extends DoctrineObject
         $data['domaine'] = $etablissement->getDomaine();
         $data['estMembre'] = $etablissement->estMembre();
         $data['estAssocie'] = $etablissement->estAssocie();
+        $data['estInscription'] = $etablissement->estInscription();
         $data['cheminLogo'] = $etablissement->getCheminLogo();
         $data['estFerme'] = $etablissement->getStructure()->isFerme();
+        $data['adresse'] = $etablissement->getStructure()->getAdresse();
+        $data['telephone'] = $etablissement->getStructure()->getTelephone();
+        $data['fax'] = $etablissement->getStructure()->getFax();
+        $data['email'] = $etablissement->getStructure()->getEmail();
+        $data['siteWeb'] = $etablissement->getStructure()->getSiteWeb();
 
         return $data;
     }
@@ -45,8 +51,14 @@ class EtablissementHydrator extends DoctrineObject
         $object->setSigle($data['sigle']);
         $object->setDomaine($data['domaine']);
         $object->getStructure()->setCode($data['code']);
+        $object->getStructure()->setAdresse($data['adresse']);
+        $object->getStructure()->setTelephone($data['telephone']);
+        $object->getStructure()->setFax($data['fax']);
+        $object->getStructure()->setEmail($data['email']);
+        $object->getStructure()->setSiteWeb($data['siteWeb']);
         $object->setEstMembre($data['estMembre']);
         $object->setEstAssocie($data['estAssocie']);
+        $object->setEstInscription($data['estInscription']);
         $object->setCheminLogo($data['cheminLogo']);
         if (isset($data['estFerme']) AND $data['estFerme'] === "1") $object->getStructure()->setFerme(true); else $object->getStructure()->setFerme(false);
         return $object;
