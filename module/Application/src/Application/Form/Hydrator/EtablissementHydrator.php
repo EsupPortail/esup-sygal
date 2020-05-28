@@ -23,6 +23,7 @@ class EtablissementHydrator extends DoctrineObject
         $data['domaine'] = $etablissement->getDomaine();
         $data['estMembre'] = $etablissement->estMembre();
         $data['estAssocie'] = $etablissement->estAssocie();
+        $data['estInscription'] = $etablissement->estInscription();
         $data['cheminLogo'] = $etablissement->getCheminLogo();
         $data['estFerme'] = $etablissement->getStructure()->isFerme();
         $data['adresse'] = $etablissement->getStructure()->getAdresse();
@@ -57,6 +58,7 @@ class EtablissementHydrator extends DoctrineObject
         $object->getStructure()->setSiteWeb($data['siteWeb']);
         $object->setEstMembre($data['estMembre']);
         $object->setEstAssocie($data['estAssocie']);
+        $object->setEstInscription($data['estInscription']);
         $object->setCheminLogo($data['cheminLogo']);
         if (isset($data['estFerme']) AND $data['estFerme'] === "1") $object->getStructure()->setFerme(true); else $object->getStructure()->setFerme(false);
         return $object;
