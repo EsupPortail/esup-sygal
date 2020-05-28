@@ -5,6 +5,7 @@ namespace Application\Controller\Factory;
 use Application\Controller\TheseController;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\FichierThese\FichierTheseService;
+use Application\Service\File\FileService;
 use Application\Service\MailConfirmationService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\Role\RoleService;
@@ -44,6 +45,7 @@ class TheseControllerFactory
          * @var TheseRechercheService   $theseRechercheService
          * @var RoleService             $roleService
          * @var FichierTheseService     $fichierTheseService
+         * @var FileService             $fileService
          * @var WorkflowService         $workflowService
          * @var NotifierService         $notifierService
          * @var EtablissementService    $etablissementService
@@ -61,6 +63,7 @@ class TheseControllerFactory
         $roleService = $sl->get('RoleService');
         $uniteService = $sl->get('UniteRechercheService');
         $fichierTheseService = $sl->get('FichierTheseService');
+        $fileService = $sl->get(FileService::class);
         $workflowService = $sl->get('WorkflowService');
         $etablissementService = $sl->get('EtablissementService');
         $mailConfirmationService = $sl->get('MailConfirmationService');
@@ -78,6 +81,7 @@ class TheseControllerFactory
         $controller->setTheseRechercheService($theseRechercheService);
         $controller->setRoleService($roleService);
         $controller->setFichierTheseService($fichierTheseService);
+        $controller->setFileService($fileService);
         $controller->setWorkflowService($workflowService);
         $controller->setEtablissementService($etablissementService);
         $controller->setUniteRechercheService($uniteService);

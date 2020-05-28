@@ -217,4 +217,19 @@ class EtablissementRepository extends DefaultEntityRepository
 
         return  $qb->getQuery()->getResult();
     }
+
+    /**
+     * @return Etablissement[]
+     */
+    public function findAllEtablissementsInscriptions()
+    {
+        $qb = $this->createQueryBuilder("e")
+            ->addSelect("s")
+            ->join("e.structure", "s")
+            ->andWhere("e.estInscription = 1")
+            ->orderBy('s.libelle')
+        ;
+
+        return  $qb->getQuery()->getResult();
+    }
 }

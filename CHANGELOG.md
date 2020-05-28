@@ -1,6 +1,21 @@
 Journal des modifications
 =========================
 
+1.4.6 (29/05/2020)
+------------------
+
+- Ajout du drapeau "établissement d'inscription" et ajout des visualisations et interfaces pour gérer ce nouveau drapeau.
+- Restriction du filtre des établissements sur la partie annuaire aux établissements d'inscription.
+- Ajout dans structures des champs adresse, tel, fax, site web, email qui sont utilisables pour l'édition de document.
+- Utilisation des nouveaux champs dans la génération de la convention de MEL (requiert unicaen/app v1.3.19).
+- Amélioration de la recherche textuelle de thèses : ajout d'une liste déroulante permettant de sélectionner 
+  précisément sur quels critères porte la recherche : "Titre de la thèse", "Numéro étudiant de l'auteur", 
+  "Nom de l'auteur", "Prénom de l'auteur", "Nom du directeur ou co-directeur de thèse", 
+  "Code national de l'école doctorale concernée (ex: 181)", "Unité de recherche concernée (ex: umr6211)".
+- Correction d'un dysfonctionnement de la recherche textuelle sur les critères "numéro étudiant", "unité de recherche"
+  et "école doctorale".
+
+
 1.4.5 (08/04/2020)
 ------------------
 

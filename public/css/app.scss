@@ -546,6 +546,9 @@ div.filters {
     .filter-option, #search-input {
       font-size: $filterFontSize;
     }
+    .input-group-addon.filter {
+      padding: 4px;
+    }
   }
 }
 
@@ -877,11 +880,11 @@ ul.ui-autocomplete {
   //vertical-align: top;
 }
 .historisee::after {
-  @extend .histo::after;
+  @extend .histo, ::after;
   content: 'SUPPRIMÉE';
 }
 .historise::after {
-  @extend .histo::after;
+  @extend .histo, ::after;
   content: 'SUPPRIMÉ';
 }
 
