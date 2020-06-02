@@ -28,6 +28,7 @@ use Application\Form\RdvBuTheseForm;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\FichierThese\Exception\ValidationImpossibleException;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
+use Application\Service\File\FileServiceAwareTrait;
 use Application\Service\MailConfirmationServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
@@ -66,6 +67,7 @@ use Zend\View\Model\ViewModel;
 class TheseController extends AbstractController
 {
     use FichierTheseServiceAwareTrait;
+    use FileServiceAwareTrait;
     use MessageCollectorAwareTrait;
     use NotifierServiceAwareTrait;
     use RoleServiceAwareTrait;
@@ -1431,9 +1433,17 @@ class TheseController extends AbstractController
         $libEtablissementLe = $letab;
         $libEtablissementDe = "de " . $letab;
 
+        $etablissement = $this->etablissementService->fetchEtablissementComue();
+        if ($etablissement === null) {
+            $etablissement = $these->getEtablissement();
+        }
+        $cheminLogo = $this->fileService->computeLogoFilePathForStructure($etablissement);
+
         $renderer = $this->renderer;
         $exporter = new ConventionPdfExporter($renderer, 'A4');
         $exporter->setVars([
+            'etablissement'      => $etablissement,
+            'logo'               => $cheminLogo,
             'these'              => $these,
             'diffusion'          => $diffusion,
             'attestation'        => $attestation,

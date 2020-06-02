@@ -32,6 +32,20 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
     protected   $ferme;
 
     /**
+     * @var string $adresse
+     * @var string $telephone
+     * @var string $fax
+     * @var string $email
+     * @var string $siteWeb
+     */
+
+    protected $adresse;
+    protected $telephone;
+    protected $fax;
+    protected $email;
+    protected $siteWeb;
+
+    /**
      * @var string
      */
     protected $sourceCode;
@@ -358,5 +372,95 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
     public function setFerme($ferme)
     {
         if (!$ferme) $this->ferme = 0; else $this->ferme = 1;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAdresse()
+    {
+        return $this->adresse;
+    }
+
+    /**
+     * @param string $adresse
+     * @return Structure
+     */
+    public function setAdresse($adresse)
+    {
+        $this->adresse = $adresse;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTelephone()
+    {
+        return $this->telephone;
+    }
+
+    /**
+     * @param string $telephone
+     * @return Structure
+     */
+    public function setTelephone($telephone)
+    {
+        $this->telephone = $telephone;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFax()
+    {
+        return $this->fax;
+    }
+
+    /**
+     * @param string $fax
+     * @return Structure
+     */
+    public function setFax($fax)
+    {
+        $this->fax = $fax;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param string $email
+     * @return Structure
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSiteWeb()
+    {
+        return $this->siteWeb;
+    }
+
+    /**
+     * @param string $siteWeb
+     * @return Structure
+     */
+    public function setSiteWeb($siteWeb)
+    {
+        $this->siteWeb = $siteWeb;
+        return $this;
     }
 }

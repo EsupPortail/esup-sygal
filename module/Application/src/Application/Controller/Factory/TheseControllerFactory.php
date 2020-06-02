@@ -11,6 +11,7 @@ use Application\Form\RdvBuTheseDoctorantForm;
 use Application\Form\RdvBuTheseForm;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\FichierThese\FichierTheseService;
+use Application\Service\File\FileService;
 use Application\Service\MailConfirmationService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\Role\RoleService;
@@ -48,6 +49,7 @@ class TheseControllerFactory
          * @var TheseRechercheService   $theseRechercheService
          * @var RoleService             $roleService
          * @var FichierTheseService     $fichierTheseService
+         * @var FileService             $fileService
          * @var WorkflowService         $workflowService
          * @var NotifierService         $notifierService
          * @var EtablissementService    $etablissementService
@@ -65,6 +67,7 @@ class TheseControllerFactory
         $roleService = $container->get('RoleService');
         $uniteService = $container->get('UniteRechercheService');
         $fichierTheseService = $container->get('FichierTheseService');
+        $fileService = $container->get(FileService::class);
         $workflowService = $container->get('WorkflowService');
         $etablissementService = $container->get('EtablissementService');
         $mailConfirmationService = $container->get('MailConfirmationService');
@@ -101,6 +104,7 @@ class TheseControllerFactory
         $controller->setTheseRechercheService($theseRechercheService);
         $controller->setRoleService($roleService);
         $controller->setFichierTheseService($fichierTheseService);
+        $controller->setFileService($fileService);
         $controller->setWorkflowService($workflowService);
         $controller->setEtablissementService($etablissementService);
         $controller->setUniteRechercheService($uniteService);
