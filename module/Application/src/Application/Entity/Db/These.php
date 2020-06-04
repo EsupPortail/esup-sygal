@@ -868,6 +868,9 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     {
         /** @var Attestation $attestation */
         foreach ($this->attestations as $attestation) {
+            if ($attestation->estHistorise()) {
+                continue;
+            }
             if ($version->estVersionCorrigee() === $attestation->getVersionCorrigee()) {
                 return $attestation;
             }
@@ -906,6 +909,9 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     {
         /** @var Diffusion $diffusion */
         foreach ($this->miseEnLignes as $diffusion) {
+            if ($diffusion->estHistorise()) {
+                continue;
+            }
             if ($version->estVersionCorrigee() === $diffusion->getVersionCorrigee()) {
                 return $diffusion;
             }

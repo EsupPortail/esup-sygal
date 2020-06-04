@@ -29,7 +29,8 @@ $canEdit = $this->isAllowed($these, $privilege);
 <div class="box panel panel-info">
 
     <div class="panel-heading">
-        <h2 class="first">Autorisation de diffusion</h2>
+        <h2 class="first">Autorisation de diffusion
+            <?php if ($diffusion && $diffusion->estCreationAuto()): ?><span>(Rappel)</span><?php endif ?></h2>
     </div>
 
     <div class="panel-body">
@@ -52,7 +53,7 @@ $canEdit = $this->isAllowed($these, $privilege);
             <?php endif ?>
 
             <!-------------------------------------- Convention de mise en ligne --------------------------------------->
-            <?php if ($diffusion): ?>
+            <?php if ($diffusion && ! $diffusion->estCreationAuto()): ?>
                 <hr>
 
                 <h2>Convention de mise en ligne</h2>
