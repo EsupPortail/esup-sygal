@@ -1,6 +1,14 @@
 Journal des modifications
 =========================
 
+1.4.7 (04/06/2020)
+------------------
+
+- Lors du dépôt d'une version corrigée, l'autorisation de mise en ligne est reprise texto (dupliquée) du 1er dépôt,
+sauf si l'utilisateur possède le privilège "Saisie du formulaire d'autorisation de diffusion de la version corrigée", 
+auquel cas elle est redemandée à l'utilisateur.
+Idem pour les attestations et le privilège "Modification des attestations concernant la version corrigée".
+
 1.4.6 (29/05/2020)
 ------------------
 

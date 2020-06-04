@@ -59,6 +59,8 @@ class FichierTheseControllerFactory
         $controller->setValidationService($validationService);
         $controller->setEventRouterReplacer($eventRouterReplacer);
 
+        $theseService->attach($controller->getEventManager());
+
         return $controller;
     }
 
