@@ -6,9 +6,10 @@ use Interop\Container\ContainerInterface;
 
 class NavigationFactoryFactory
 {
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $navigation = new ApplicationNavigationFactory();
-        return $navigation->createService($container);
+
+        return $navigation($container, $requestedName, $options);
     }
 }
