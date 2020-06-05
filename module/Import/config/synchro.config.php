@@ -119,15 +119,15 @@ return [
         'default' => [
             'home' => [
                 'pages' => [
-                    'import' /* NE PAS MODIFIER CETTE CLÉ */ => [
-                        'label'    => 'Synchro',
-                        'pages'    => [
-                            'differentiel'               => [
-                                'route'       => 'import-index-new',
-                                'resource'    => PrivilegeController::getResourceId('Import\Controller\Import', 'index'),
-                            ],
-                        ],
-                    ],
+//                    'import' /* NE PAS MODIFIER CETTE CLÉ */ => [
+//                        'label'    => 'Synchro',
+//                        'pages'    => [
+//                            'differentiel'               => [
+//                                'route'       => 'import-index-new',
+//                                'resource'    => PrivilegeController::getResourceId('Import\Controller\Import', 'index'),
+//                            ],
+//                        ],
+//                    ],
                 ],
             ],
         ],
