@@ -21,7 +21,7 @@
         "unicaen/app":                   "^3.0",
         "unicaen/auth":                  "^3.0",
         "unicaen/bjy-authorize":         "^3.0",
-        "unicaen/db-import":             "^3.1",
+        "unicaen/db-import":             "dev-oracle_support",
         "unicaen/faq":                   "^3.0",
         "unicaen/ldap":                  "^3.0",
         "unicaen/oracle":                "^3.0",
