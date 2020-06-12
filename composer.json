@@ -50,7 +50,7 @@
     },
     "scripts": {
         "post-install-cmd": [
-            "mkdir -p cache/DoctrineORMModule/Proxy ; chmod -R 777 cache/DoctrineORMModule/Proxy",
+            "mkdir -p data/DoctrineORMModule/Proxy ; chmod -R 777 data/DoctrineORMModule/Proxy",
             "mkdir -p upload ; chmod -R 777 upload",
             "mkdir -p vendor/mpdf/mpdf/ttfontdata ; chmod -R 777 vendor/mpdf/mpdf/ttfontdata"
         ]
