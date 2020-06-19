@@ -9,6 +9,7 @@ sauf si l'utilisateur possède le privilège "Saisie du formulaire d'autorisatio
 auquel cas elle est redemandée à l'utilisateur.
 Idem pour les attestations et le privilège "Modification des attestations concernant la version corrigée".
 - Masquage du complément de financement dans la fiche d'identité de la thèse
+- Optimisation de l'export CSV des thèses
 
 1.4.6 (29/05/2020)
 ------------------
