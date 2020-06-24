@@ -4,8 +4,8 @@ namespace Soutenance;
 
 use Soutenance\Assertion\EngagementImpartialiteAssertion;
 use Soutenance\Assertion\EngagementImpartialiteAssertionFactory;
-use Soutenance\Controller\EngagementImpartialite\EngagementImpartialiteController;
-use Soutenance\Controller\EngagementImpartialite\EngagementImpartialiteControllerFactory;
+use Soutenance\Controller\EngagementImpartialiteController;
+use Soutenance\Controller\EngagementImpartialiteControllerFactory;
 use Soutenance\Provider\Privilege\EngagementImpartialitePrivileges;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteService;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceFactory;

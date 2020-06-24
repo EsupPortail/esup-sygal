@@ -2,8 +2,8 @@
 
 namespace Soutenance;
 
-use Soutenance\Controller\Index\IndexController;
-use Soutenance\Controller\Index\IndexControllerFactory;
+use Soutenance\Controller\IndexController;
+use Soutenance\Controller\IndexControllerFactory;
 use Soutenance\Provider\Privilege\IndexPrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
 use Zend\Mvc\Router\Http\Literal;

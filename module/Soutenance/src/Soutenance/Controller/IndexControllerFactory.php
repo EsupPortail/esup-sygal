@@ -1,6 +1,6 @@
 <?php
 
-namespace Soutenance\Controller\Index;
+namespace Soutenance\Controller;
 
 use Application\Service\Acteur\ActeurService;
 use Application\Service\These\TheseService;

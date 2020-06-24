@@ -1,6 +1,6 @@
 <?php
 
-namespace Soutenance\Controller\Qualite;
+namespace Soutenance\Controller;
 
 use BjyAuthorize\Exception\UnAuthorizedException;
 use Soutenance\Entity\Qualite;

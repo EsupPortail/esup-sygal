@@ -1,6 +1,6 @@
 <?php
 
-namespace Soutenance\Controller\Avis;
+namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\NatureFichier;

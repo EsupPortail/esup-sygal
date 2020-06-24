@@ -1,6 +1,6 @@
 <?php
 
-namespace Soutenance\Controller\Index;
+namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Role;

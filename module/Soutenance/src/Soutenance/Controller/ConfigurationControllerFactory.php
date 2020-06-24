@@ -1,6 +1,6 @@
 <?php
 
-namespace Soutenance\Controller\Configuration;
+namespace Soutenance\Controller;
 
 use Soutenance\Form\Configuration\ConfigurationForm;
 use Soutenance\Service\Parametre\ParametreService;

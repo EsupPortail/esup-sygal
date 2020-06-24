@@ -8,14 +8,14 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 class PropositionAssertionFactory {
 
-    public function __invoke(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ServiceLocatorInterface $container)
     {
         /**
          * @var UserContextService $userContext
          * @var ValidationService $validationService
          */
-        $userContext = $serviceLocator->get('UnicaenAuth\Service\UserContext');
-        $validationService = $serviceLocator->get('ValidationService');
+        $userContext = $container->get('UnicaenAuth\Service\UserContext');
+        $validationService = $container->get('ValidationService');
 
         /** @var  $assertion */
         $assertion = new PropositionAssertion();

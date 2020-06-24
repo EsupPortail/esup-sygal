@@ -1,6 +1,6 @@
 <?php
 
-namespace Soutenance\Controller\Proposition;
+namespace Soutenance\Controller;
 
 use Application\Service\Acteur\ActeurService;
 use Application\Service\FichierThese\FichierTheseService;

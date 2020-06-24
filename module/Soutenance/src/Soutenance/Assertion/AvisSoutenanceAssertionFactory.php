@@ -8,14 +8,14 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 class AvisSoutenanceAssertionFactory {
 
-    public function __invoke(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ServiceLocatorInterface $container)
     {
         /**
          * @var PropositionService $propositionService
          * @var UserContextService $userContext
          */
-        $propositionService = $serviceLocator->get(PropositionService::class);
-        $userContext = $serviceLocator->get('UnicaenAuth\Service\UserContext');
+        $propositionService = $container->get(PropositionService::class);
+        $userContext = $container->get('UnicaenAuth\Service\UserContext');
 
         /** @var  $assertion */
         $assertion = new AvisSoutenanceAssertion();

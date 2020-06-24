@@ -1,6 +1,6 @@
 <?php
 
-namespace Soutenance\Controller\Presoutenance;
+namespace Soutenance\Controller;
 
 
 use Application\Controller\AbstractController;

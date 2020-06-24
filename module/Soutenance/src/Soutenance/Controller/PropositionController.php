@@ -1,6 +1,6 @@
 <?php
 
-namespace Soutenance\Controller\Proposition;
+namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Acteur;

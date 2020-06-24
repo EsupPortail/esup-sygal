@@ -1,6 +1,6 @@
 <?php
 
-namespace Soutenance\Controller\EngagementImpartialite;
+namespace Soutenance\Controller;
 
 use Application\Service\Acteur\ActeurService;
 use Application\Service\Individu\IndividuService;

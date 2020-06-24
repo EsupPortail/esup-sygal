@@ -4,8 +4,8 @@ namespace Soutenance;
 
 use Soutenance\Assertion\AvisSoutenanceAssertion;
 use Soutenance\Assertion\AvisSoutenanceAssertionFactory;
-use Soutenance\Controller\Avis\AvisController;
-use Soutenance\Controller\Avis\AvisControllerFactory;
+use Soutenance\Controller\AvisController;
+use Soutenance\Controller\AvisControllerFactory;
 use Soutenance\Form\Avis\AvisForm;
 use Soutenance\Form\Avis\AvisFormFactory;
 use Soutenance\Form\Avis\AvisHydrator;

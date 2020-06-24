@@ -2,8 +2,8 @@
 
 namespace Soutenance;
 
-use Soutenance\Controller\Configuration\ConfigurationController;
-use Soutenance\Controller\Configuration\ConfigurationControllerFactory;
+use Soutenance\Controller\ConfigurationController;
+use Soutenance\Controller\ConfigurationControllerFactory;
 use Soutenance\Form\Configuration\ConfigurationForm;
 use Soutenance\Form\Configuration\ConfigurationFormFactory;
 use Soutenance\Provider\Privilege\QualitePrivileges;

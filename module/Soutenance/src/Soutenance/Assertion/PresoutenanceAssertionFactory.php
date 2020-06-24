@@ -7,12 +7,12 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 class PresoutenanceAssertionFactory {
 
-    public function __invoke(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ServiceLocatorInterface $container)
     {
         /**
          * @var UserContextService $userContext
          */
-        $userContext = $serviceLocator->get('UnicaenAuth\Service\UserContext');
+        $userContext = $container->get('UnicaenAuth\Service\UserContext');
 
         /** @var  $assertion */
         $assertion = new PresoutenanceAssertion();

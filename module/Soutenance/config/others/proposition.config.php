@@ -3,8 +3,8 @@
 namespace Soutenance;
 use Soutenance\Assertion\PropositionAssertion;
 use Soutenance\Assertion\PropositionAssertionFactory;
-use Soutenance\Controller\Proposition\PropositionController;
-use Soutenance\Controller\Proposition\PropositionControllerFactory;
+use Soutenance\Controller\PropositionController;
+use Soutenance\Controller\PropositionControllerFactory;
 use Soutenance\Form\Anglais\AnglaisForm;
 use Soutenance\Form\Anglais\AnglaisFormFactory;
 use Soutenance\Form\Anglais\AnglaisHydrator;

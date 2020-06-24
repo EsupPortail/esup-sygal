@@ -2,9 +2,9 @@
 
 namespace Soutenance;
 
-use Soutenance\Controller\Configuration\ConfigurationController;
-use Soutenance\Controller\Qualite\QualiteControllerFactory;
-use Soutenance\Controller\Qualite\QualiteController;
+use Soutenance\Controller\ConfigurationController;
+use Soutenance\Controller\QualiteControllerFactory;
+use Soutenance\Controller\QualiteController;
 use Soutenance\Form\QualiteEdition\QualiteEditionForm;
 use Soutenance\Form\QualiteEdition\QualiteEditionFormFactory;
 use Soutenance\Form\QualiteEdition\QualiteEditiontHydrator;

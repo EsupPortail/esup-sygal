@@ -1,6 +1,6 @@
 <?php
 
-namespace Soutenance\Controller\Configuration;
+namespace Soutenance\Controller;
 
 use phpDocumentor\Reflection\DocBlock\Tags\Param;
 use Soutenance\Entity\Parametre;

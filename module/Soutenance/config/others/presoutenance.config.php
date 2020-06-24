@@ -4,9 +4,9 @@ namespace Soutenance;
 
 use Soutenance\Assertion\PresoutenanceAssertion;
 use Soutenance\Assertion\PresoutenanceAssertionFactory;
-use Soutenance\Controller\EngagementImpartialite\EngagementImpartialiteController;
-use Soutenance\Controller\Presoutenance\PresoutenanceController;
-use Soutenance\Controller\Presoutenance\PresoutenanceControllerFactory;
+use Soutenance\Controller\EngagementImpartialiteController;
+use Soutenance\Controller\PresoutenanceController;
+use Soutenance\Controller\PresoutenanceControllerFactory;
 use Soutenance\Form\AdresseSoutenance\AdresseSoutenanceForm;
 use Soutenance\Form\AdresseSoutenance\AdresseSoutenanceFormFactory;
 use Soutenance\Form\AdresseSoutenance\AdresseSoutenanceHydrator;

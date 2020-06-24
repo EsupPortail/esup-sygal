@@ -1,6 +1,6 @@
 <?php
 
-namespace Soutenance\Controller\Qualite;
+namespace Soutenance\Controller;
 
 use Soutenance\Form\QualiteEdition\QualiteEditionForm;
 use Soutenance\Form\QualiteLibelleSupplementaire\QualiteLibelleSupplementaireForm;
