@@ -22,7 +22,6 @@ use Zend\View\Model\ViewModel;
  * Controlleur principale du module de gestion de la soutenance
  * @method boolean isAllowed($resource, $privilege = null)
  */
-
 class EngagementImpartialiteController extends AbstractController
 {
     use ActeurServiceAwareTrait;
@@ -63,7 +62,7 @@ class EngagementImpartialiteController extends AbstractController
 
         /** @var Membre $membre */
         foreach ($proposition->getMembres() as $membre) {
-            if ($membre->getActeur() AND $membre->estRapporteur()) {
+            if ($membre->getActeur() and $membre->estRapporteur()) {
                 $validation = $this->getEngagementImpartialiteService()->getEngagementImpartialiteByMembre($these, $membre);
                 if (!$validation) $this->getNotifierSoutenanceService()->triggerDemandeSignatureEngagementImpartialite($these, $proposition, $membre);
             }

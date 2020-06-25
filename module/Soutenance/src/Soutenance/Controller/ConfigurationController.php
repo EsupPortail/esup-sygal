@@ -2,7 +2,6 @@
 
 namespace Soutenance\Controller;
 
-use phpDocumentor\Reflection\DocBlock\Tags\Param;
 use Soutenance\Entity\Parametre;
 use Soutenance\Form\Configuration\ConfigurationForm;
 use Soutenance\Form\Configuration\ConfigurationFormAwareTrait;
@@ -11,7 +10,8 @@ use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
-class ConfigurationController extends  AbstractActionController {
+class ConfigurationController extends AbstractActionController
+{
     use ParametreServiceAwareTrait;
     use ConfigurationFormAwareTrait;
 
@@ -38,10 +38,9 @@ class ConfigurationController extends  AbstractActionController {
         ];
 
         foreach ($params as $param) {
-            $element = $form->get($param);
             $value = $this->getParametreService()->getParametreByCode($param);
 
-            if($value !== null) $form->get($param)->setValue($this->getParametreService()->getParametreByCode($param)->getValeur());
+            if ($value !== null) $form->get($param)->setValue($this->getParametreService()->getParametreByCode($param)->getValeur());
         }
 
         /** @var Request $request */
@@ -56,7 +55,6 @@ class ConfigurationController extends  AbstractActionController {
             }
             $this->redirect()->toRoute('configuration');
         }
-
 
 
         return new ViewModel([

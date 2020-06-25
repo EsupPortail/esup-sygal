@@ -14,7 +14,8 @@ use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAware
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Zend\View\Model\ViewModel;
 
-class IndexController extends AbstractController {
+class IndexController extends AbstractController
+{
     use ActeurServiceAwareTrait;
     use AvisServiceAwareTrait;
     use EngagementImpartialiteServiceAwareTrait;
@@ -82,7 +83,7 @@ class IndexController extends AbstractController {
             /** @var Membre[] $membres */
             $membres = $proposition->getMembres()->toArray();
             $membre = null;
-            foreach($membres as $membre_) {
+            foreach ($membres as $membre_) {
                 if ($membre_->getActeur() && $membre_->getActeur()->getIndividu() === $individu) {
                     $membre = $membre_;
                 }
@@ -98,7 +99,7 @@ class IndexController extends AbstractController {
                 'depot' => $these->hasVersionInitiale(),
                 'engagement' => $engagement,
                 'avis' => $avis,
-                'telecharger' => ($avis)?$this->urlFichierThese()->telechargerFichierThese($these, $avis->getFichier()):null,
+                'telecharger' => ($avis) ? $this->urlFichierThese()->telechargerFichierThese($these, $avis->getFichier()) : null,
             ]);
         } else {
             $acteurs = $this->getActeurService()->getRapporteurDansTheseEnCours($individu);
