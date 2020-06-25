@@ -3,15 +3,10 @@
 namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Entity\Db\NatureFichier;
-use Application\Entity\Db\VersionFichier;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
-use Application\Service\Fichier\FichierServiceAwareTrait;
-use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Proposition;
-use Soutenance\Filter\NomAvisFormatter;
 use Soutenance\Form\Avis\AvisForm;
 use Soutenance\Form\Avis\AvisFormAwareTrait;
 use Soutenance\Service\Avis\AvisServiceAwareTrait;
@@ -27,8 +22,6 @@ use Zend\View\Model\ViewModel;
 
 class AvisController extends AbstractController {
     use ActeurServiceAwareTrait;
-    use FichierServiceAwareTrait;
-    use FichierTheseServiceAwareTrait;
     use AvisServiceAwareTrait;
     use MembreServiceAwareTrait;
     use NotifierSoutenanceServiceAwareTrait;
@@ -71,13 +64,7 @@ class AvisController extends AbstractController {
 
             $form->setData($data);
             if ($form->isValid()) {
-
-                //todo faire une fonction dans AvisService ...
-                $nature = $this->fichierTheseService->fetchNatureFichier(NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE);
-                $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
-                $fichiers = $this->fichierService->createFichiersFromUpload($files, $nature, $version, new NomAvisFormatter($membre->getIndividu()));
-                $fichier = current($fichiers);
-
+                $fichier = $this->getAvisService()->createAvisFromUpload($files, $membre);
                 $validation = $this->getValidationService()->signerAvisSoutenance($these, $membre->getIndividu());
 
                 $avis = new Avis();
@@ -92,8 +79,6 @@ class AvisController extends AbstractController {
                 //test du rendu de tous les avis
                 $allAvis        = $this->getAvisService()->getAvisByThese($these);
                 $allRapporteurs = $this->getMembreService()->getRapporteursByProposition($proposition);
-
-
 
                 $url = null; //$this->urlFichierThese()->telechargerFichierThese($these, $avis->getFichier());
                 if ($avis->getAvis() === Avis::FAVORABLE) {

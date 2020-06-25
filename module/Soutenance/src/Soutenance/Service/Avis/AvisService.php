@@ -2,8 +2,12 @@
 
 namespace Soutenance\Service\Avis;
 
+use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
+use Application\Entity\Db\VersionFichier;
+use Application\Service\Fichier\FichierServiceAwareTrait;
+use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
@@ -12,12 +16,15 @@ use Doctrine\ORM\QueryBuilder;
 use Exception;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Membre;
+use Soutenance\Filter\NomAvisFormatter;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class AvisService {
     use EntityManagerAwareTrait;
     use UserContextServiceAwareTrait;
+    use FichierServiceAwareTrait;
+    use FichierTheseServiceAwareTrait;
 
     /** GESTION DES ENTITÉS *******************************************************************************************/
 
@@ -197,5 +204,14 @@ class AvisService {
         }
 
         return $result;
+    }
+
+    public function createAvisFromUpload($files, $membre) {
+        //todo faire une fonction dans AvisService ...
+        $nature = $this->fichierTheseService->fetchNatureFichier(NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE);
+        $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
+        $fichiers = $this->fichierService->createFichiersFromUpload($files, $nature, $version, new NomAvisFormatter($membre->getIndividu()));
+
+        return current($fichiers);
     }
 }
