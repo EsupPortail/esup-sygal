@@ -17,8 +17,8 @@ use Soutenance\Service\Notifier\NotifierSoutenanceService;
 use Soutenance\Service\Parametre\ParametreService;
 use Soutenance\Service\Proposition\PropositionService;
 use Soutenance\Service\Validation\ValidationService;
-use Zend\Mvc\Controller\ControllerManager;
 use UnicaenAuth\Service\User as UserService;
+use Zend\View\Renderer\PhpRenderer;
 
 class PresoutenanceControllerFactory
 {
@@ -64,6 +64,9 @@ class PresoutenanceControllerFactory
         $dateRenduRapportForm = $container->get('FormElementManager')->get(DateRenduRapportForm::class);
         $adresseSoutenanceForm = $container->get('FormElementManager')->get(AdresseSoutenanceForm::class);
 
+        /* @var $renderer PhpRenderer */
+        $renderer = $container->get('ViewRenderer');
+
         /** @var PresoutenanceController $controller */
         $controller = new PresoutenanceController();
         $controller->setPropositionService($propositionService);
@@ -82,6 +85,8 @@ class PresoutenanceControllerFactory
 
         $controller->setDateRenduRapportForm($dateRenduRapportForm);
         $controller->setAdresseSoutenanceForm($adresseSoutenanceForm);
+
+        $controller->setRenderer($renderer);
         return $controller;
     }
 }

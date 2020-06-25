@@ -26,18 +26,21 @@ use Soutenance\Service\Avis\AvisServiceAwareTrait;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;
 use Soutenance\Service\Exporter\AvisSoutenance\AvisSoutenancePdfExporter;
 use Soutenance\Service\Exporter\Convocation\ConvocationPdfExporter;
+use Soutenance\Service\Exporter\ProcesVerbal\ProcesVerbalSoutenancePdfExporter;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
 use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
-use Soutenance\Service\Exporter\ProcesVerbal\ProcesVerbalSoutenancePdfExporter;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
 use Zend\Http\Request;
+use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\PhpRenderer;
+
+/** @method FlashMessenger flashMessenger() */
 
 class PresoutenanceController extends AbstractController
 {
@@ -58,6 +61,17 @@ class PresoutenanceController extends AbstractController
     use DateRenduRapportFormAwareTrait;
     use AdresseSoutenanceFormAwareTrait;
 
+    /** @var PhpRenderer */
+    private $renderer;
+
+    /**
+     * @param PhpRenderer $renderer
+     */
+    public function setRenderer($renderer)
+    {
+        $this->renderer = $renderer;
+    }
+
     public function presoutenanceAction()
     {
         $these = $this->requestedThese();
@@ -72,20 +86,20 @@ class PresoutenanceController extends AbstractController
         $engagements = $this->getEngagementImpartialiteService()->getEngagmentsImpartialiteByThese($these);
         $avis = $this->getAvisService()->getAvisByThese($these);
 
-        $validationBDD = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these) ;
-        $validationPDC = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PAGE_DE_COUVERTURE, $these) ;
+        $validationBDD = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
+        $validationPDC = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PAGE_DE_COUVERTURE, $these);
 
         return new ViewModel([
-            'these'                 => $these,
-            'proposition'           => $proposition,
-            'rapporteurs'           => $rapporteurs,
-            'engagements'           => $engagements,
-            'avis'                  => $avis,
-            'tousLesEngagements'    => count($engagements)  === $nbRapporteurs,
-            'tousLesAvis'           => count($avis)         === $nbRapporteurs,
-            'urlFichierThese'       => $this->urlFichierThese(),
-            'validationBDD'         => $validationBDD,
-            'validationPDC'         => $validationPDC,
+            'these' => $these,
+            'proposition' => $proposition,
+            'rapporteurs' => $rapporteurs,
+            'engagements' => $engagements,
+            'avis' => $avis,
+            'tousLesEngagements' => count($engagements) === $nbRapporteurs,
+            'tousLesAvis' => count($avis) === $nbRapporteurs,
+            'urlFichierThese' => $this->urlFichierThese(),
+            'validationBDD' => $validationBDD,
+            'validationPDC' => $validationPDC,
 
             'deadline' => $this->getParametreService()->getParametreByCode('AVIS_DEADLINE')->getValeur(),
         ]);
@@ -114,8 +128,8 @@ class PresoutenanceController extends AbstractController
         $vm = new ViewModel();
         $vm->setTemplate('soutenance/default/default-form');
         $vm->setVariables([
-                'form' => $form,
-                'title' => 'Modification de la date de rendu des rapports',
+            'form' => $form,
+            'title' => 'Modification de la date de rendu des rapports',
         ]);
         return $vm;
     }
@@ -141,25 +155,28 @@ class PresoutenanceController extends AbstractController
          *  - qu'un Membre du jury     est Membre du jury.
          */
         $acteurs = $this->getActeurService()->getRepository()->findActeurByThese($these);
-        switch($membre->getRole()) {
+        switch ($membre->getRole()) {
             case Membre::RAPPORTEUR_JURY :
             case Membre::RAPPORTEUR_VISIO :
-                $acteurs = array_filter($acteurs, function(Acteur $a) {
-                    /** @var Profil  $profil */
+                $acteurs = array_filter($acteurs, function (Acteur $a) {
+                    /** @var Profil $profil */
                     $profil = ($a->getRole()->getProfils()->first());
-                    return $profil->getRoleCode() === 'R';});
+                    return $profil->getRoleCode() === 'R';
+                });
                 break;
             case Membre::RAPPORTEUR_ABSENT :
-                $acteurs = array_filter($acteurs, function(Acteur $a) {
-                    /** @var Profil  $profil */
+                $acteurs = array_filter($acteurs, function (Acteur $a) {
+                    /** @var Profil $profil */
                     $profil = ($a->getRole()->getProfils()->first());
-                    return $profil->getRoleCode() === 'R';});
+                    return $profil->getRoleCode() === 'R';
+                });
                 break;
             case Membre::MEMBRE_JURY :
-                $acteurs = array_filter($acteurs, function(Acteur $a) {
-                    /** @var Profil  $profil */
+                $acteurs = array_filter($acteurs, function (Acteur $a) {
+                    /** @var Profil $profil */
                     $profil = ($a->getRole()->getProfils()->first());
-                    return $profil->getRoleCode() === 'M';});
+                    return $profil->getRoleCode() === 'M';
+                });
                 break;
         }
 
@@ -190,7 +207,7 @@ class PresoutenanceController extends AbstractController
             $membre->setActeur($acteur);
             $this->getMembreService()->update($membre);
             //affectation du rôle
-            $this->getRoleService()->addIndividuRole($individu,$acteur->getRole());
+            $this->getRoleService()->addIndividuRole($individu, $acteur->getRole());
             //creation de l'utilisateur
             $utilisateurs = $this->utilisateurService->getRepository()->findByIndividu($individu);
             if (empty($utilisateurs)) {
@@ -202,7 +219,7 @@ class PresoutenanceController extends AbstractController
         }
 
         return new ViewModel([
-            'title' => "Association de ".$membre->getDenomination()." à un acteur SyGAL",
+            'title' => "Association de " . $membre->getDenomination() . " à un acteur SyGAL",
             'acteurs' => $acteurs_libres,
             'membre' => $membre,
             'these' => $these,
@@ -277,7 +294,8 @@ class PresoutenanceController extends AbstractController
         $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $avis->getThese()->getId()], [], true);
     }
 
-    public function feuVertAction() {
+    public function feuVertAction()
+    {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
 
@@ -285,7 +303,7 @@ class PresoutenanceController extends AbstractController
         $proposition->setEtat($etat);
         $this->getPropositionService()->update($proposition);
 
-        /** @var Avis[] $avis*/
+        /** @var Avis[] $avis */
         $avis = $this->getAvisService()->getAvisByThese($these);
 
         $this->getNotifierSoutenanceService()->triggerFeuVertSoutenance($these, $proposition, $avis);
@@ -296,7 +314,8 @@ class PresoutenanceController extends AbstractController
         $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 
-    public function stopperDemarcheAction() {
+    public function stopperDemarcheAction()
+    {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
 
@@ -312,7 +331,8 @@ class PresoutenanceController extends AbstractController
         $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 
-    public function modifierAdresseAction() {
+    public function modifierAdresseAction()
+    {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
 
@@ -347,10 +367,7 @@ class PresoutenanceController extends AbstractController
         /** @var PdcData $pdcData */
         $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
 
-        /* @var $renderer PhpRenderer */
-        $renderer = $this->getServiceLocator()->get('view_renderer');
-
-        $exporter = new ProcesVerbalSoutenancePdfExporter($renderer, 'A4');
+        $exporter = new ProcesVerbalSoutenancePdfExporter($this->renderer, 'A4');
         $exporter->setVars([
             'proposition' => $proposition,
             'these' => $these,
@@ -369,10 +386,7 @@ class PresoutenanceController extends AbstractController
         /** @var PdcData $pdcData */
         $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
 
-        /* @var $renderer PhpRenderer */
-        $renderer = $this->getServiceLocator()->get('view_renderer');
-
-        $exporter = new AvisSoutenancePdfExporter($renderer, 'A4');
+        $exporter = new AvisSoutenancePdfExporter($this->renderer, 'A4');
         $exporter->setVars([
             'proposition' => $proposition,
             'these' => $these,
@@ -391,25 +405,27 @@ class PresoutenanceController extends AbstractController
         /** @var PdcData $pdcData */
         $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
 
-        /* @var $renderer PhpRenderer */
-        $renderer = $this->getServiceLocator()->get('view_renderer');
-
         /** @var Validation[] $validationMDD */
         $validationMDD = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
-        $dateValidation = (! empty($validationMDD))?current($validationMDD)->getHistoModification():null;
+        $dateValidation = (!empty($validationMDD)) ? current($validationMDD)->getHistoModification() : null;
 
         /** @var string $ville */
-        switch($these->getEtablissement()->getSigle()) {
-            case "UCN" : $ville = "Caen"; break;
+        switch ($these->getEtablissement()->getSigle()) {
+            case "UCN" :
+                $ville = "Caen";
+                break;
             case "URN" :
             case "INSA" :
-                $ville = "Rouen"; break;
-            case "ULHN" : $ville = "Le Havre"; break;
+                $ville = "Rouen";
+                break;
+            case "ULHN" :
+                $ville = "Le Havre";
+                break;
             default:
                 $ville = "Manquant";
         }
 
-        $exporter = new ConvocationPdfExporter($renderer, 'A4');
+        $exporter = new ConvocationPdfExporter($this->renderer, 'A4');
         $exporter->setVars([
             'proposition' => $proposition,
             'these' => $these,
@@ -429,25 +445,27 @@ class PresoutenanceController extends AbstractController
         /** @var PdcData $pdcData */
         $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
 
-        /* @var $renderer PhpRenderer */
-        $renderer = $this->getServiceLocator()->get('view_renderer');
-
         /** @var Validation[] $validationMDD */
         $validationMDD = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
-        $dateValidation = (! empty($validationMDD))?current($validationMDD)->getHistoModification():null;
+        $dateValidation = (!empty($validationMDD)) ? current($validationMDD)->getHistoModification() : null;
 
         /** @var string $ville */
-        switch($these->getEtablissement()->getSigle()) {
-            case "UCN" : $ville = "Caen"; break;
+        switch ($these->getEtablissement()->getSigle()) {
+            case "UCN" :
+                $ville = "Caen";
+                break;
             case "URN" :
             case "INSA" :
-                $ville = "Rouen"; break;
-            case "ULHN" : $ville = "Le Havre"; break;
+                $ville = "Rouen";
+                break;
+            case "ULHN" :
+                $ville = "Le Havre";
+                break;
             default:
                 $ville = "Manquant";
         }
 
-        $exporter = new ConvocationPdfExporter($renderer, 'A4');
+        $exporter = new ConvocationPdfExporter($this->renderer, 'A4');
         $exporter->setVars([
             'proposition' => $proposition,
             'these' => $these,
@@ -468,25 +486,27 @@ class PresoutenanceController extends AbstractController
         /** @var PdcData $pdcData */
         $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
 
-        /* @var $renderer PhpRenderer */
-        $renderer = $this->getServiceLocator()->get('view_renderer');
-
         /** @var Validation[] $validationMDD */
         $validationMDD = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
-        $dateValidation = (! empty($validationMDD))?current($validationMDD)->getHistoModification():null;
+        $dateValidation = (!empty($validationMDD)) ? current($validationMDD)->getHistoModification() : null;
 
         /** @var string $ville */
-        switch($these->getEtablissement()->getSigle()) {
-            case "UCN" : $ville = "Caen"; break;
+        switch ($these->getEtablissement()->getSigle()) {
+            case "UCN" :
+                $ville = "Caen";
+                break;
             case "URN" :
             case "INSA" :
-                $ville = "Rouen"; break;
-            case "ULHN" : $ville = "Le Havre"; break;
+                $ville = "Rouen";
+                break;
+            case "ULHN" :
+                $ville = "Le Havre";
+                break;
             default:
                 $ville = "Manquant";
         }
 
-        $exporter = new ConvocationPdfExporter($renderer, 'A4');
+        $exporter = new ConvocationPdfExporter($this->renderer, 'A4');
         $exporter->setVars([
             'proposition' => $proposition,
             'these' => $these,
@@ -505,7 +525,7 @@ class PresoutenanceController extends AbstractController
 
         /** @var Validation[] $validationMDD */
         $validationMDD = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
-        $dateValidation = (! empty($validationMDD))?current($validationMDD)->getHistoModification():null;
+        $dateValidation = (!empty($validationMDD)) ? current($validationMDD)->getHistoModification() : null;
 
         //doctorant
         $doctorant = $these->getDoctorant();
@@ -518,7 +538,7 @@ class PresoutenanceController extends AbstractController
         /** @var Membre $membre */
         foreach ($proposition->getMembres() as $membre) {
             if ($membre->isMembre()) {
-                $email = ($membre->getIndividu() AND $membre->getIndividu()->getEmail())?$membre->getIndividu()->getEmail():$membre->getEmail();
+                $email = ($membre->getIndividu() and $membre->getIndividu()->getEmail()) ? $membre->getIndividu()->getEmail() : $membre->getEmail();
                 /** @see PresoutenanceController::convocationMembreAction() */
                 $url = $this->url()->fromRoute('soutenance/presoutenance/convocation-membre', ['proposition' => $proposition->getId(), 'membre' => $membre->getId()], ['force_canonical' => true], true);
                 $this->getNotifierSoutenanceService()->triggerEnvoiConvocationMembre($membre, $proposition, $dateValidation, $email, $url);
@@ -527,6 +547,7 @@ class PresoutenanceController extends AbstractController
         $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 
+    /** Route console ... */
     public function notifierRetardRapportPresoutenanceAction()
     {
         $delai = new DateInterval('P15D');
@@ -544,7 +565,8 @@ class PresoutenanceController extends AbstractController
      * @param Membre $membre
      * @return string
      */
-    private function generateUsername($membre) {
+    private function generateUsername($membre)
+    {
         $acteur = $membre->getActeur();
         if ($acteur === null) throw new LogicException("La génération du username est basée sur l'Individu qui est mamquant.");
         $nomusuel = strtolower($acteur->getIndividu()->getNomUsuel());

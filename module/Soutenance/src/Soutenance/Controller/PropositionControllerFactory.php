@@ -22,6 +22,7 @@ use Soutenance\Service\Parametre\ParametreService;
 use Soutenance\Service\Proposition\PropositionService;
 use Soutenance\Service\Validation\ValidationService;
 use Zend\Mvc\Controller\ControllerManager;
+use Zend\View\Renderer\PhpRenderer;
 
 class PropositionControllerFactory {
 
@@ -73,6 +74,9 @@ class PropositionControllerFactory {
         $changementTitreForm = $container->get('FormElementManager')->get(ChangementTitreForm::class);
         $justificatifForm = $container->get('FormElementManager')->get(JustificatifForm::class);
 
+        /* @var $renderer PhpRenderer */
+        $renderer = $container->get('ViewRenderer');
+
         /** @var PropositionController $controller */
         $controller = new PropositionController();
 
@@ -95,6 +99,8 @@ class PropositionControllerFactory {
         $controller->setRefusForm($refusForm);
         $controller->setChangementTitreForm($changementTitreForm);
         $controller->setJustificatifForm($justificatifForm);
+
+        $controller->setRenderer($renderer);
 
         return $controller;
     }
