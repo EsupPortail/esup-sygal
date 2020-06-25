@@ -5,7 +5,7 @@ namespace Application\Entity\Db;
 /**
  * Source
  */
-class Source
+class Source extends \UnicaenDbImport\Entity\Db\Source
 {
     /**
      * @var string
