@@ -374,6 +374,7 @@ class PropositionService {
      */
     public function juryOk($proposition, $indicateurs = [])
     {
+        if ($proposition === null) return false;
         if ($indicateurs === []) $indicateurs = $this->computeIndicateur($proposition);
         /** @var Membre $membre */
         foreach ($proposition->getMembres() as $membre) {
