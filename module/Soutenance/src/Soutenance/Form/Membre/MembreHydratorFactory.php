@@ -2,19 +2,17 @@
 
 namespace Soutenance\Form\Membre;
 
+use Interop\Container\ContainerInterface;
 use Soutenance\Service\Qualite\QualiteService;
-use Zend\Stdlib\Hydrator\HydratorPluginManager;
-
 
 class MembreHydratorFactory
 {
-    public function __invoke(HydratorPluginManager $hydratorPluginManager)
+    public function __invoke(ContainerInterface $container)
     {
-        $servicelocator = $hydratorPluginManager->getServiceLocator();
         /**
          * @var QualiteService $qualiteService
          */
-        $qualiteService = $servicelocator->get(QualiteService::class);
+        $qualiteService = $container->get(QualiteService::class);
 
         /** @var MembreForm $form */
         $hydrator = new MembreHydrator();

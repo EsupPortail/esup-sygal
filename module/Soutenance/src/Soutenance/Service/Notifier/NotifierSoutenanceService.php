@@ -10,7 +10,6 @@ use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Validation;
 use Application\Entity\Db\Variable;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
-use Application\Service\FichierThese\PdcData;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
@@ -26,7 +25,8 @@ use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Entity\Db\RoleInterface;
 use Zend\View\Helper\Url as UrlHelper;
 
-class NotifierSoutenanceService extends NotifierService {
+class NotifierSoutenanceService extends NotifierService
+{
     use ActeurServiceAwareTrait;
     use MembreServiceAwareTrait;
     use RoleServiceAwareTrait;
@@ -92,7 +92,8 @@ class NotifierSoutenanceService extends NotifierService {
      * @param These $these
      * @return string[]
      */
-    protected function fetchEmailEncadrants(These $these) {
+    protected function fetchEmailEncadrants(These $these)
+    {
         $emails = [];
         $encadrants = $this->getActeurService()->getRepository()->findEncadrementThese($these);
         foreach ($encadrants as $encadrant) {
@@ -123,10 +124,11 @@ class NotifierSoutenanceService extends NotifierService {
     }
 
     /**
-     * @see Application/view/soutenance/notification/devalidation.phtml
      * @param Validation $validation
+     * @see Application/view/soutenance/notification/devalidation.phtml
      */
-    public function triggerDevalidationProposition($validation) {
+    public function triggerDevalidationProposition($validation)
+    {
         $mail = $validation->getIndividu()->getEmail();
         $these = $validation->getThese();
 
@@ -145,9 +147,9 @@ class NotifierSoutenanceService extends NotifierService {
     }
 
     /**
-     * @see Application/view/soutenance/notification/validation-acteur.phtml
      * @param These $these
      * @param Validation $validation
+     * @see Application/view/soutenance/notification/validation-acteur.phtml
      */
     public function triggerValidationProposition($these, $validation)
     {
@@ -171,8 +173,8 @@ class NotifierSoutenanceService extends NotifierService {
     }
 
     /**
-     * @see Application/view/soutenance/notification/validation-structure.phtml
      * @param These $these
+     * @see Application/view/soutenance/notification/validation-structure.phtml
      */
     public function triggerNotificationUniteRechercheProposition($these)
     {
@@ -193,8 +195,8 @@ class NotifierSoutenanceService extends NotifierService {
     }
 
     /**
-     * @see Application/view/soutenance/notification/validation-structure.phtml
      * @param These $these
+     * @see Application/view/soutenance/notification/validation-structure.phtml
      */
     public function triggerNotificationEcoleDoctoraleProposition($these)
     {
@@ -215,8 +217,8 @@ class NotifierSoutenanceService extends NotifierService {
     }
 
     /**
-     * @see Application/view/soutenance/notification/validation-structure.phtml
      * @param These $these
+     * @see Application/view/soutenance/notification/validation-structure.phtml
      */
     public function triggerNotificationBureauDesDoctoratsProposition($these)
     {
@@ -239,10 +241,10 @@ class NotifierSoutenanceService extends NotifierService {
     /** @param These $these */
     public function triggerNotificationPropositionValidee($these)
     {
-        $emailsBDD      = [ $this->fetchEmailBdd($these) ];
-        $emailsED       = $this->fetchEmailEcoleDoctorale($these);
-        $emailsUR       = $this->fetchEmailUniteRecherche($these);
-        $emailsActeurs  = $this->fetchEmailActeursDirects($these);
+        $emailsBDD = [$this->fetchEmailBdd($these)];
+        $emailsED = $this->fetchEmailEcoleDoctorale($these);
+        $emailsUR = $this->fetchEmailUniteRecherche($these);
+        $emailsActeurs = $this->fetchEmailActeursDirects($these);
         $emails = array_merge($emailsBDD, $emailsED, $emailsUR, $emailsActeurs);
 
         $emails = array_filter($emails, function ($s) {
@@ -319,7 +321,7 @@ class NotifierSoutenanceService extends NotifierService {
      */
     public function triggerDemandeSignatureEngagementImpartialite($these, $proposition, $membre)
     {
-        $email   = $membre->getIndividu()->getEmail();
+        $email = $membre->getIndividu()->getEmail();
 
         if ($email !== null) {
             $notif = new Notification();
@@ -343,7 +345,7 @@ class NotifierSoutenanceService extends NotifierService {
      */
     public function triggerSignatureEngagementImpartialite($these, $proposition, $membre)
     {
-        $email   = $this->fetchEmailBdd($these);
+        $email = $this->fetchEmailBdd($these);
 
         if ($email !== null) {
             $notif = new Notification();
@@ -368,7 +370,7 @@ class NotifierSoutenanceService extends NotifierService {
     public function triggerRefusEngagementImpartialite($these, $proposition, $membre)
     {
 
-        $emails  = $this->fetchEmailActeursDirects($these);
+        $emails = $this->fetchEmailActeursDirects($these);
         $emails[] = $this->fetchEmailBdd($these);
 
         $emails = array_filter($emails, function ($s) {
@@ -397,7 +399,7 @@ class NotifierSoutenanceService extends NotifierService {
      */
     public function triggerAnnulationEngagementImpartialite($these, $proposition, $membre)
     {
-        $email   = $membre->getIndividu()->getEmail();
+        $email = $membre->getIndividu()->getEmail();
 
         if ($email) {
             $notif = new Notification();
@@ -421,7 +423,7 @@ class NotifierSoutenanceService extends NotifierService {
      */
     public function triggerDemandeAvisSoutenance($these, $proposition, $rapporteur)
     {
-        $email   = $rapporteur->getIndividu()->getEmail();
+        $email = $rapporteur->getIndividu()->getEmail();
 
         if ($email !== null) {
             $notif = new Notification();
@@ -465,10 +467,10 @@ class NotifierSoutenanceService extends NotifierService {
      */
     public function triggerAvisFavorable($these, $avis, $url)
     {
-        $emailBDD           = [ $this->fetchEmailBdd($these) ];
-        $emailsDirecteurs   = $this->fetchEmailEncadrants($these);
-        $emailsED           = $this->fetchEmailEcoleDoctorale($these);
-        $emailsUR           = $this->fetchEmailUniteRecherche($these);
+        $emailBDD = [$this->fetchEmailBdd($these)];
+        $emailsDirecteurs = $this->fetchEmailEncadrants($these);
+        $emailsED = $this->fetchEmailEcoleDoctorale($these);
+        $emailsUR = $this->fetchEmailUniteRecherche($these);
         $emails = array_merge($emailBDD, $emailsDirecteurs, $emailsED, $emailsUR);
 
         $emails = array_filter($emails, function ($s) {
@@ -489,6 +491,7 @@ class NotifierSoutenanceService extends NotifierService {
             $this->trigger($notif);
         }
     }
+
     /**
      * @param These $these
      * @param Avis $avis
@@ -496,9 +499,9 @@ class NotifierSoutenanceService extends NotifierService {
      */
     public function triggerAvisDefavorable($these, $avis, $url)
     {
-        $emailsDirecteurs   = $this->fetchEmailEncadrants($these);
-        $emailsED           = $this->fetchEmailEcoleDoctorale($these);
-        $emailsUR           = $this->fetchEmailUniteRecherche($these);
+        $emailsDirecteurs = $this->fetchEmailEncadrants($these);
+        $emailsED = $this->fetchEmailEcoleDoctorale($these);
+        $emailsUR = $this->fetchEmailUniteRecherche($these);
         $emails = array_merge($emailsDirecteurs, $emailsED, $emailsUR);
 
         $emails = array_filter($emails, function ($s) {
@@ -526,11 +529,12 @@ class NotifierSoutenanceService extends NotifierService {
      * @param Proposition $proposition
      * @param Avis[] $avis
      */
-    public function triggerFeuVertSoutenance($these, $proposition, $avis) {
+    public function triggerFeuVertSoutenance($these, $proposition, $avis)
+    {
 
-        $emailsActeurs      = $this->fetchEmailActeursDirects($these);
-        $emailsED           = $this->fetchEmailEcoleDoctorale($these);
-        $emailsUR           = $this->fetchEmailUniteRecherche($these);
+        $emailsActeurs = $this->fetchEmailActeursDirects($these);
+        $emailsED = $this->fetchEmailEcoleDoctorale($these);
+        $emailsUR = $this->fetchEmailUniteRecherche($these);
         $emails = array_merge($emailsActeurs, $emailsED, $emailsUR);
 
         $emails = array_filter($emails, function ($s) {
@@ -540,7 +544,7 @@ class NotifierSoutenanceService extends NotifierService {
         if (!empty($emails)) {
             $notif = new Notification();
             $notif
-                ->setSubject("La soutenance de ".$these->getDoctorant()->getIndividu()." a été accepté par la maison du doctorat de votre établissement.")
+                ->setSubject("La soutenance de " . $these->getDoctorant()->getIndividu() . " a été accepté par la maison du doctorat de votre établissement.")
                 ->setTo($emails)
                 ->setTemplatePath('soutenance/notification/feu-vert-soutenance')
                 ->setTemplateVariables([
@@ -556,11 +560,12 @@ class NotifierSoutenanceService extends NotifierService {
      * @param These $these
      * @param Proposition $proposition
      */
-    public function triggerStopperDemarcheSoutenance($these, $proposition) {
+    public function triggerStopperDemarcheSoutenance($these, $proposition)
+    {
 
-        $emailsActeurs      = $this->fetchEmailActeursDirects($these);
-        $emailsED           = $this->fetchEmailEcoleDoctorale($these);
-        $emailsUR           = $this->fetchEmailUniteRecherche($these);
+        $emailsActeurs = $this->fetchEmailActeursDirects($these);
+        $emailsED = $this->fetchEmailEcoleDoctorale($these);
+        $emailsUR = $this->fetchEmailUniteRecherche($these);
         $emails = array_merge($emailsActeurs, $emailsED, $emailsUR);
 
         $emails = array_filter($emails, function ($s) {
@@ -570,7 +575,7 @@ class NotifierSoutenanceService extends NotifierService {
         if (!empty($emails)) {
             $notif = new Notification();
             $notif
-                ->setSubject("Les démarches de soutenance de ".$these->getDoctorant()->getIndividu()." ont été stoppées par la maison du doctorats de votre établissement.")
+                ->setSubject("Les démarches de soutenance de " . $these->getDoctorant()->getIndividu() . " ont été stoppées par la maison du doctorats de votre établissement.")
                 ->setTo($emails)
                 ->setTemplatePath('soutenance/notification/stopper-demarche-soutenance')
                 ->setTemplateVariables([
@@ -586,7 +591,8 @@ class NotifierSoutenanceService extends NotifierService {
      * @param Utilisateur $utilisateur
      * @param string $url
      */
-    public function triggerInitialisationCompte($these, $utilisateur, $url) {
+    public function triggerInitialisationCompte($these, $utilisateur, $url)
+    {
 
         $email = $utilisateur->getEmail();
         if ($email === null) throw new LogicException("Aucun email de fourni !");
@@ -634,10 +640,10 @@ class NotifierSoutenanceService extends NotifierService {
      */
     public function triggerNotificationRapporteurRetard($membre, $url)
     {
-        if ($membre->getActeur() === null) throw new RuntimeException("Notification vers rapporteur [MembreId = ".$membre->getId()."] impossible car aucun acteur n'est lié.");
+        if ($membre->getActeur() === null) throw new RuntimeException("Notification vers rapporteur [MembreId = " . $membre->getId() . "] impossible car aucun acteur n'est lié.");
 
         $email = $membre->getIndividu()->getEmail();
-        if ($email === null) throw new RuntimeException("Notification vers rapporteur [MembreId = ".$membre->getId()."] impossible car aucun email est donné pour l'individu associé [IndividuId = ".$membre->getIndividu()->getId()."].");
+        if ($email === null) throw new RuntimeException("Notification vers rapporteur [MembreId = " . $membre->getId() . "] impossible car aucun email est donné pour l'individu associé [IndividuId = " . $membre->getIndividu()->getId() . "].");
 
 
         $these = $membre->getProposition()->getThese();
@@ -668,7 +674,7 @@ class NotifierSoutenanceService extends NotifierService {
      */
     public function triggerEnvoiConvocationDoctorant(Doctorant $doctorant, Proposition $proposition, DateTime $date, $email, $url)
     {
-        if ($email === null) throw new LogicException("Aucun mail n'est fourni pour l'envoi de la convocation.",0);
+        if ($email === null) throw new LogicException("Aucun mail n'est fourni pour l'envoi de la convocation.", 0);
 
         $these = $proposition->getThese();
         $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
@@ -698,7 +704,7 @@ class NotifierSoutenanceService extends NotifierService {
      */
     public function triggerEnvoiConvocationMembre(Membre $membre, Proposition $proposition, DateTime $date, $email, $url)
     {
-        if ($email === null) throw new LogicException("Aucun mail n'est fourni pour l'envoi de la convocation.",0);
+        if ($email === null) throw new LogicException("Aucun mail n'est fourni pour l'envoi de la convocation.", 0);
 
         $doctorant = $proposition->getThese()->getDoctorant();
         $these = $proposition->getThese();

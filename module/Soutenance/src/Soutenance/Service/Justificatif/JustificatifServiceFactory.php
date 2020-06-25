@@ -4,11 +4,12 @@ namespace Soutenance\Service\Justificatif;
 
 use Application\Service\UserContextService;
 use Doctrine\ORM\EntityManager;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 
-class JustificatifServiceFactory {
+class JustificatifServiceFactory
+{
 
-    public function __invoke(ServiceLocatorInterface $container)
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var EntityManager $entityManager

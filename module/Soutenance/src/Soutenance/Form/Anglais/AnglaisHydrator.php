@@ -3,7 +3,7 @@
 namespace Soutenance\Form\Anglais;
 
 use Soutenance\Entity\Proposition;
-use Zend\Stdlib\Hydrator\HydratorInterface;
+use Zend\Hydrator\HydratorInterface;
 
 class AnglaisHydrator implements HydratorInterface
 {

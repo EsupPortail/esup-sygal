@@ -6,7 +6,8 @@ use Zend\Form\Element\Checkbox;
 use Zend\Form\Element\Submit;
 use Zend\Form\Form;
 
-class AnglaisForm extends Form {
+class AnglaisForm extends Form
+{
 
     public function init()
     {

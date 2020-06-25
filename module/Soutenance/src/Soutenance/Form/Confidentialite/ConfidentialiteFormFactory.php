@@ -2,19 +2,18 @@
 
 namespace Soutenance\Form\Confidentialite;
 
-use Zend\Form\FormElementManager;
+use Interop\Container\ContainerInterface;
 
 class ConfidentialiteFormFactory
 {
-    public function __invoke(FormElementManager $formElementManager)
+    public function __invoke(ContainerInterface $container)
     {
-        $sl = $formElementManager->getServiceLocator();
+        /** @var ConfidentialiteHydrator $hydrator */
+        $hydrator = $container->get('HydratorManager')->get(ConfidentialiteHydrator::class);
 
         /** @var ConfidentialiteForm $form */
         $form = new ConfidentialiteForm();
-        $hydrator = $sl->get('HydratorManager')->get(ConfidentialiteHydrator::class);
         $form->setHydrator($hydrator);
-        $form->init();
 
         return $form;
     }

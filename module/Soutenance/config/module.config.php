@@ -20,13 +20,13 @@ use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 
 return array(
-    'bjyauthorize'    => [
+    'bjyauthorize' => [
         'resource_providers' => [
             'BjyAuthorize\Provider\Resource\Config' => [
                 'Acteur' => [],
             ],
         ],
-        'rule_providers'     => [
+        'rule_providers' => [
             PrivilegeRuleProvider::class => [
                 'allow' => [
                 ],
@@ -34,10 +34,10 @@ return array(
         ],
     ],
 
-    'doctrine'     => [
-        'driver'     => [
-            'orm_default'        => [
-                'class'   => MappingDriverChain::class,
+    'doctrine' => [
+        'driver' => [
+            'orm_default' => [
+                'class' => MappingDriverChain::class,
                 'drivers' => [
                     'Soutenance\Entity' => 'orm_default_xml_driver',
                 ],
@@ -50,27 +50,27 @@ return array(
                 ],
             ],
         ],
-        'connection'    => [
+        'connection' => [
             'orm_default' => [
                 'driver_class' => OCI8::class,
             ],
         ],
     ],
 
-    'navigation'      => [
+    'navigation' => [
         'default' => [
             'home' => [
                 'pages' => [
                     'soutenance' => [
-                        'order'    => -99,
-                        'label'    => 'Soutenance',
-                        'route'    => 'soutenance',
+                        'order' => -99,
+                        'label' => 'Soutenance',
+                        'route' => 'soutenance',
                         'resource' => PresoutenancePrivileges::getResourceId(PropositionPrivileges::PROPOSITION_VISUALISER),
                         'pages' => [
                             'proposition' => [
-                                'label'    => 'Proposition de soutenance',
-                                'route'    => 'soutenance/proposition',
-                                'order'    => 100,
+                                'label' => 'Proposition de soutenance',
+                                'route' => 'soutenance/proposition',
+                                'order' => 100,
                                 'resource' => PresoutenancePrivileges::getResourceId(PropositionPrivileges::PROPOSITION_VISUALISER),
                                 'withtarget' => true,
                                 'paramsInject' => [
@@ -78,9 +78,9 @@ return array(
                                 ],
                             ],
                             'presoutenance' => [
-                                'label'    => 'Préparation de la soutenance',
-                                'route'    => 'soutenance/presoutenance',
-                                'order'    => 200,
+                                'label' => 'Préparation de la soutenance',
+                                'route' => 'soutenance/presoutenance',
+                                'order' => 200,
                                 'resource' => PresoutenancePrivileges::getResourceId(PresoutenancePrivileges::PRESOUTENANCE_PRESOUTENANCE_VISUALISATION),
                                 'withtarget' => true,
                                 'paramsInject' => [
@@ -90,7 +90,7 @@ return array(
                             'engagement' => [
                                 'label' => 'Engagement d\'impartialité',
                                 'route' => 'soutenance/engagement-impartialite',
-                                'order'    => 300,
+                                'order' => 300,
                                 'resource' => PrivilegeController::getResourceId(EngagementImpartialiteController::class, 'engagement-impartialite'),
                                 'withtarget' => true,
                                 'paramsInject' => [
@@ -101,7 +101,7 @@ return array(
                             'avis' => [
                                 'label' => 'Avis de soutenance',
                                 'route' => 'soutenance/avis-soutenance',
-                                'order'    => 400,
+                                'order' => 400,
                                 'resource' => PrivilegeController::getResourceId(AvisController::class, 'index'),
                                 'withtarget' => true,
                                 'paramsInject' => [
@@ -112,7 +112,7 @@ return array(
                             'retard' => [
                                 'label' => 'Notifier attente de rapport',
                                 'route' => 'soutenance/notifier-retard-rapport-presoutenance',
-                                'order'    => 500,
+                                'order' => 500,
                                 'resource' => UtilisateurPrivileges::getResourceId(UtilisateurPrivileges::UTILISATEUR_MODIFICATION),
                             ],
                         ],

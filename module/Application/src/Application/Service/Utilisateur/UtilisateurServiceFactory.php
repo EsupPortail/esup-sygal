@@ -20,7 +20,7 @@ class UtilisateurServiceFactory
         /**
          * @var UserService $userService
          */
-        $userService = $serviceLocator->get('unicaen-auth_user_service');
+        $userService = $container->get('unicaen-auth_user_service');
 
         /**
          * @var UserService $userService

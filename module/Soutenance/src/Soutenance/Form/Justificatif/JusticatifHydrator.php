@@ -6,7 +6,7 @@ use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Soutenance\Entity\Justificatif;
 use Soutenance\Entity\Membre;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
-use Zend\Stdlib\Hydrator\HydratorInterface;
+use Zend\Hydrator\HydratorInterface;
 
 /**
  * NB : Fichier est un object "complexe" géré en dehors de l'hydrator directement dans les actions ...

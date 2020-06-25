@@ -2,15 +2,19 @@
 
 namespace Soutenance\Service\EngagementImpartialite;
 
+use Interop\Container\ContainerInterface;
 use Soutenance\Service\Validation\ValidationService;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
-class EngagementImpartialiteServiceFactory {
-
-    public function __invoke(ServiceLocatorInterface $serviceLocator)
+class EngagementImpartialiteServiceFactory
+{
+    /**
+     * @param ContainerInterface $container
+     * @return EngagementImpartialiteService
+     */
+    public function __invoke(ContainerInterface $container)
     {
         /** @var ValidationService $validationService */
-        $validationService = $serviceLocator->get(ValidationService::class);
+        $validationService = $container->get(ValidationService::class);
 
         /** @var EngagementImpartialiteService $service */
         $service = new EngagementImpartialiteService();

@@ -2,19 +2,22 @@
 
 namespace Soutenance\Form\Anglais;
 
-use Zend\Form\FormElementManager;
+use Interop\Container\ContainerInterface;
 
 class AnglaisFormFactory
 {
-    public function __invoke(FormElementManager $formElementManager)
+    /**
+     * @param ContainerInterface $container
+     * @return AnglaisForm
+     */
+    public function __invoke(ContainerInterface $container)
     {
-        $sl = $formElementManager->getServiceLocator();
+        /** @var AnglaisHydrator $hydrator */
+        $hydrator = $container->get('HydratorManager')->get(AnglaisHydrator::class);
 
         /** @var AnglaisForm $form */
         $form = new AnglaisForm();
-        $hydrator = $sl->get('HydratorManager')->get(AnglaisHydrator::class);
         $form->setHydrator($hydrator);
-        $form->init();
 
         return $form;
     }

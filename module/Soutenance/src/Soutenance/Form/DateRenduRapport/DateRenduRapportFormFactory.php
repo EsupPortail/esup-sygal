@@ -2,21 +2,23 @@
 
 namespace Soutenance\Form\DateRenduRapport;
 
-use Zend\Form\FormElementManager;
-
+use Interop\Container\ContainerInterface;
 
 class DateRenduRapportFormFactory
 {
-    public function __invoke(FormElementManager $formElementManager)
+    /**
+     * @param ContainerInterface $container
+     * @return DateRenduRapportForm
+     */
+    public function __invoke(ContainerInterface $container)
     {
-        $sl = $formElementManager->getServiceLocator();
+        /** @var DateRenduRapportHydrator $hydrator */
+        $hydrator = $container->get('HydratorManager')->get(DateRenduRapportHydrator::class);
 
         /** @var DateRenduRapportForm $form */
         $form = new DateRenduRapportForm();
-        $hydrator = $sl->get('HydratorManager')->get(DateRenduRapportHydrator::class);
         $form->setHydrator($hydrator);
-        $form->init();
-        
+
         return $form;
     }
 }

@@ -2,11 +2,16 @@
 
 namespace Soutenance\Form\Configuration;
 
-use Zend\Form\FormElementManager;
+use Interop\Container\ContainerInterface;
 
-class ConfigurationFormFactory {
+class ConfigurationFormFactory
+{
 
-    public function __invoke(FormElementManager $manager)
+    /**
+     * @param ContainerInterface $container
+     * @return ConfigurationForm
+     */
+    public function __invoke(ContainerInterface $container)
     {
         /** @var ConfigurationForm $form */
         $form = new ConfigurationForm();

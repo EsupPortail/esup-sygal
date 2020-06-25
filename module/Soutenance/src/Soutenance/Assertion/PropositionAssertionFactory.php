@@ -4,11 +4,15 @@ namespace Soutenance\Assertion;
 
 use Application\Service\UserContextService;
 use Application\Service\Validation\ValidationService;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 
 class PropositionAssertionFactory {
 
-    public function __invoke(ServiceLocatorInterface $container)
+    /**
+     * @param ContainerInterface $container
+     * @return PropositionAssertion
+     */
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var UserContextService $userContext

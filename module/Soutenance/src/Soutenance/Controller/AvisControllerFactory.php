@@ -6,6 +6,7 @@ use Application\Service\Acteur\ActeurService;
 use Application\Service\Fichier\FichierService;
 use Application\Service\FichierThese\FichierTheseService;
 use Application\Service\These\TheseService;
+use Interop\Container\ContainerInterface;
 use Soutenance\Form\Avis\AvisForm;
 use Soutenance\Service\Avis\AvisService;
 use Soutenance\Service\Membre\MembreService;
@@ -17,10 +18,10 @@ use Zend\Mvc\Controller\ControllerManager;
 class AvisControllerFactory
 {
     /**
-     * @param ControllerManager $manager
+     * @param ContainerInterface $manager
      * @return AvisController
      */
-    public function __invoke(ControllerManager $manager)
+    public function __invoke(ContainerInterface $manager)
     {
 
         /**

@@ -5,6 +5,7 @@ namespace Soutenance\Controller;
 use Application\Service\Acteur\ActeurService;
 use Application\Service\These\TheseService;
 use Application\Service\UserContextService;
+use Interop\Container\ContainerInterface;
 use Soutenance\Service\Avis\AvisService;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteService;
 use Soutenance\Service\Proposition\PropositionService;
@@ -12,7 +13,11 @@ use Zend\Mvc\Controller\ControllerManager;
 
 class IndexControllerFactory {
 
-    public function __invoke(ControllerManager $manager)
+    /**
+     * @param ContainerInterface $container
+     * @return IndexController
+     */
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var ActeurService $acteurService
@@ -22,13 +27,12 @@ class IndexControllerFactory {
          * @var TheseService $theseService
          * @var UserContextService $userContextService
          */
-        $acteurService          = $manager->getServiceLocator()->get(ActeurService::class);
-        $avisService            = $manager->getServiceLocator()->get(AvisService::class);
-        $engagementService      = $manager->getServiceLocator()->get(EngagementImpartialiteService::class);
-        $propositionService     = $manager->getServiceLocator()->get(PropositionService::class);
-        $theseService           = $manager->getServiceLocator()->get('TheseService');
-        $userContextService     = $manager->getServiceLocator()->get('UserContextService');
-
+        $acteurService          = $container->get(ActeurService::class);
+        $avisService            = $container->get(AvisService::class);
+        $engagementService      = $container->get(EngagementImpartialiteService::class);
+        $propositionService     = $container->get(PropositionService::class);
+        $theseService           = $container->get('TheseService');
+        $userContextService     = $container->get('UserContextService');
 
         /** @var IndexController $controller */
         $controller = new IndexController();

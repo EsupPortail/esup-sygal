@@ -4,7 +4,7 @@ namespace Soutenance\Form\Confidentialite;
 
 use DateTime;
 use Soutenance\Entity\Proposition;
-use Zend\Stdlib\Hydrator\HydratorInterface;
+use Zend\Hydrator\HydratorInterface;
 
 class ConfidentialiteHydrator implements HydratorInterface
 {

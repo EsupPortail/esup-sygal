@@ -4,18 +4,23 @@ namespace Soutenance\Service\QualiteLibelleSupplementaire;
 
 use Application\Service\UserContextService;
 use Doctrine\ORM\EntityManager;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 
-class QualiteLibelleSupplementaireServiceFactory {
+class QualiteLibelleSupplementaireServiceFactory
+{
 
-    public function __invoke(ServiceLocatorInterface $serviceLocator)
+    /**
+     * @param ContainerInterface $container
+     * @return QualiteLibelleSupplementaireService
+     */
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var EntityManager $entityManager
          * @var UserContextService $userContext
          */
-        $entityManager = $serviceLocator->get('doctrine.entitymanager.orm_default');
-        $userContext = $serviceLocator->get('UserContextService');
+        $entityManager = $container->get('doctrine.entitymanager.orm_default');
+        $userContext = $container->get('UserContextService');
 
         /**
          * @var QualiteLibelleSupplementaireService $service

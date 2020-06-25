@@ -3,11 +3,15 @@
 namespace Soutenance\Assertion;
 
 use Application\Service\UserContextService;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 
 class PresoutenanceAssertionFactory {
 
-    public function __invoke(ServiceLocatorInterface $container)
+    /**
+     * @param ContainerInterface $container
+     * @return PresoutenanceAssertion
+     */
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var UserContextService $userContext

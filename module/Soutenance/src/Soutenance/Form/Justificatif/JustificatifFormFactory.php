@@ -2,27 +2,25 @@
 
 namespace Soutenance\Form\Justificatif;
 
+use Interop\Container\ContainerInterface;
 use Soutenance\Service\Proposition\PropositionService;
-use Zend\Form\FormElementManager;
 
-class JustificatifFormFactory {
+class JustificatifFormFactory
+{
 
-    public function __invoke(FormElementManager $container)
+    public function __invoke(ContainerInterface $container)
     {
-        /**
-         * @var JusticatifHydrator $hydrator
-         */
-        $hydrator = $container->getServiceLocator()->get('HydratorManager')->get(JusticatifHydrator::class);
-
         /**
          * @var PropositionService $propositionService
          */
-        $propositionService = $container->getServiceLocator()->get(PropositionService::class);
+        $propositionService = $container->get(PropositionService::class);
+
+        /** @var JusticatifHydrator $hydrator */
+        $hydrator = $container->get('HydratorManager')->get(JusticatifHydrator::class);
 
         $form = new JustificatifForm();
         $form->setPropositionService($propositionService);
         $form->setHydrator($hydrator);
-        $form->init();
         return $form;
     }
 }

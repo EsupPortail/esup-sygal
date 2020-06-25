@@ -3,30 +3,30 @@
 namespace Soutenance\Form\Membre;
 
 use Doctrine\ORM\EntityManager;
+use Interop\Container\ContainerInterface;
 use Soutenance\Service\Qualite\QualiteService;
-use Zend\Form\FormElementManager;
 
 
 class MembreFormFactory
 {
-    public function __invoke(FormElementManager $formElementManager)
+    public function __invoke(ContainerInterface $container)
     {
-        $servicelocator = $formElementManager->getServiceLocator();
         /**
          * @var EntityManager $entityManager
          * @var QualiteService $qualiteService
          */
-        $entityManager = $servicelocator->get('doctrine.entitymanager.orm_default');
-        $qualiteService = $servicelocator->get(QualiteService::class);
+        $entityManager = $container->get('doctrine.entitymanager.orm_default');
+        $qualiteService = $container->get(QualiteService::class);
+
+        /** @var MembreHydrator $hydrator */
+        $hydrator = $container->get('HydratorManager')->get(MembreHydrator::class);
 
         /** @var MembreForm $form */
         $form = new MembreForm();
         $form->setEntityManager($entityManager);
         $form->setQualiteService($qualiteService);
-        $hydrator = $servicelocator->get('HydratorManager')->get(MembreHydrator::class);
         $form->setHydrator($hydrator);
-        $form->init();
-        
+
         return $form;
     }
 }

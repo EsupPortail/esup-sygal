@@ -7,6 +7,7 @@ use Application\Service\Individu\IndividuService;
 use Application\Service\Role\RoleService;
 use Application\Service\These\TheseService;
 use Application\Service\Utilisateur\UtilisateurService;
+use Interop\Container\ContainerInterface;
 use Soutenance\Form\AdresseSoutenance\AdresseSoutenanceForm;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportForm;
 use Soutenance\Service\Avis\AvisService;
@@ -22,10 +23,10 @@ use UnicaenAuth\Service\User as UserService;
 class PresoutenanceControllerFactory
 {
     /**
-     * @param ControllerManager $manager
+     * @param ContainerInterface $container
      * @return PresoutenanceController
      */
-    public function __invoke(ControllerManager $manager)
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var PropositionService $propositionService
@@ -42,26 +43,26 @@ class PresoutenanceControllerFactory
          * @var ParametreService $parametreService
          * @var EngagementImpartialiteService $engagementImpartialiteService
          */
-        $propositionService = $manager->getServiceLocator()->get(PropositionService::class);
-        $membreService = $manager->getServiceLocator()->get(MembreService::class);
-        $theseService = $manager->getServiceLocator()->get('TheseService');
-        $individuService = $manager->getServiceLocator()->get('IndividuService');
-        $acteurService = $manager->getServiceLocator()->get(ActeurService::class);
-        $notifierService = $manager->getServiceLocator()->get(NotifierSoutenanceService::class);
-        $validationService = $manager->getServiceLocator()->get(ValidationService::class);
-        $roleService = $manager->getServiceLocator()->get('RoleService');
-        $avisService = $manager->getServiceLocator()->get(AvisService::class);
-        $utilisateurService = $manager->getServiceLocator()->get('UtilisateurService');
-        $userService = $manager->getServiceLocator()->get('unicaen-auth_user_service');
-        $parametreService = $manager->getServiceLocator()->get(ParametreService::class);
-        $engagementImpartialiteService = $manager->getServiceLocator()->get(EngagementImpartialiteService::class);
+        $propositionService = $container->get(PropositionService::class);
+        $membreService = $container->get(MembreService::class);
+        $theseService = $container->get('TheseService');
+        $individuService = $container->get('IndividuService');
+        $acteurService = $container->get(ActeurService::class);
+        $notifierService = $container->get(NotifierSoutenanceService::class);
+        $validationService = $container->get(ValidationService::class);
+        $roleService = $container->get('RoleService');
+        $avisService = $container->get(AvisService::class);
+        $utilisateurService = $container->get('UtilisateurService');
+        $userService = $container->get('unicaen-auth_user_service');
+        $parametreService = $container->get(ParametreService::class);
+        $engagementImpartialiteService = $container->get(EngagementImpartialiteService::class);
 
         /**
          * @var DateRenduRapportForm $dateRenduRapportForm
          * @var AdresseSoutenanceForm $adresseSoutenanceForm
          */
-        $dateRenduRapportForm = $manager->getServiceLocator()->get('FormElementManager')->get(DateRenduRapportForm::class);
-        $adresseSoutenanceForm = $manager->getServiceLocator()->get('FormElementManager')->get(AdresseSoutenanceForm::class);
+        $dateRenduRapportForm = $container->get('FormElementManager')->get(DateRenduRapportForm::class);
+        $adresseSoutenanceForm = $container->get('FormElementManager')->get(AdresseSoutenanceForm::class);
 
         /** @var PresoutenanceController $controller */
         $controller = new PresoutenanceController();

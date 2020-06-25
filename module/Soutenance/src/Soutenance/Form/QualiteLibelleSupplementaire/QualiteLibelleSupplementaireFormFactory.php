@@ -2,18 +2,19 @@
 
 namespace Soutenance\Form\QualiteLibelleSupplementaire;
 
-use Zend\Form\FormElementManager;
+use Interop\Container\ContainerInterface;
 
-class QualiteLibelleSupplementaireFormFactory {
+class QualiteLibelleSupplementaireFormFactory
+{
 
     /**
-     * @param FormElementManager $manager
+     * @param ContainerInterface $container
      * @return QualiteLibelleSupplementaireForm
      */
-    public function __invoke(FormElementManager $manager)
+    public function __invoke(ContainerInterface $container)
     {
-        $sl = $manager->getServiceLocator();
-        $hydrator = $sl->get('HydratorManager')->get(QualiteLibelleSupplementaireHydrator::class);
+        /** @var QualiteLibelleSupplementaireHydrator $hydrator */
+        $hydrator = $container->get('HydratorManager')->get(QualiteLibelleSupplementaireHydrator::class);
 
         /** @var QualiteLibelleSupplementaireForm $form */
         $form = new QualiteLibelleSupplementaireForm();

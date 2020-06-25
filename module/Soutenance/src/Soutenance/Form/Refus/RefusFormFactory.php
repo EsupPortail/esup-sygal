@@ -2,18 +2,19 @@
 
 namespace Soutenance\Form\Refus;
 
-use Zend\Form\FormElementManager;
-
+use Interop\Container\ContainerInterface;
 
 class RefusFormFactory
 {
-    public function __invoke(FormElementManager $formElementManager)
+    /**
+     * @param ContainerInterface $container
+     * @return RefusForm
+     */
+    public function __invoke(ContainerInterface $container)
     {
         /** @var RefusForm $form */
         $form = new RefusForm();
 
-        $form->init();
-        
         return $form;
     }
 }

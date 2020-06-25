@@ -11,7 +11,8 @@ use Zend\Form\Element\Submit;
 use Zend\Form\Form;
 use Zend\InputFilter\Factory;
 
-class ConfidentialiteForm extends Form {
+class ConfidentialiteForm extends Form
+{
 
     public function init()
     {

@@ -1,6 +1,7 @@
 <?php
 
 namespace Soutenance;
+
 use Soutenance\Assertion\PropositionAssertion;
 use Soutenance\Assertion\PropositionAssertionFactory;
 use Soutenance\Controller\PropositionController;
@@ -38,17 +39,17 @@ use Soutenance\Service\Proposition\PropositionServiceFactory;
 use Soutenance\View\Helper\JustificatifViewHelper;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
-use Zend\Mvc\Router\Http\Literal;
-use Zend\Mvc\Router\Http\Segment;
+use Zend\Router\Http\Literal;
+use Zend\Router\Http\Segment;
 
 return [
-    'bjyauthorize'    => [
+    'bjyauthorize' => [
         'resource_providers' => [
             'BjyAuthorize\Provider\Resource\Config' => [
                 'Acteur' => [],
             ],
         ],
-        'rule_providers'     => [
+        'rule_providers' => [
             PrivilegeRuleProvider::class => [
                 'allow' => [
                     [
@@ -61,8 +62,8 @@ return [
                             PropositionPrivileges::PROPOSITION_VALIDER_BDD,
                             PropositionPrivileges::PROPOSITION_PRESIDENCE,
                         ],
-                        'resources'  => ['These'],
-                        'assertion'  => PropositionAssertion::class,
+                        'resources' => ['These'],
+                        'assertion' => PropositionAssertion::class,
                     ],
                 ],
             ],
@@ -71,7 +72,7 @@ return [
             PrivilegeController::class => [
                 [
                     'controller' => PropositionController::class,
-                    'action'     => [
+                    'action' => [
                         'proposition',
                         'generate-view-date-lieu',
                         'generate-view-jury',
@@ -81,7 +82,7 @@ return [
                 ],
                 [
                     'controller' => PropositionController::class,
-                    'action'     => [
+                    'action' => [
                         'modifier-date-lieu',
                         'modifier-membre',
                         'effacer-membre',
@@ -96,14 +97,14 @@ return [
                 ],
                 [
                     'controller' => PropositionController::class,
-                    'action'     => [
+                    'action' => [
                         'valider-acteur',
                     ],
                     'privileges' => PropositionPrivileges::PROPOSITION_VALIDER_ACTEUR,
                 ],
                 [
                     'controller' => PropositionController::class,
-                    'action'     => [
+                    'action' => [
                         'valider-structure',
                         'refuser-structure',
                     ],
@@ -115,21 +116,21 @@ return [
                 ],
                 [
                     'controller' => PropositionController::class,
-                    'action'     => [
+                    'action' => [
                         'signature-presidence',
                     ],
                     'privileges' => PropositionPrivileges::PROPOSITION_PRESIDENCE,
                 ],
                 [
                     'controller' => PropositionController::class,
-                    'action'     => [
+                    'action' => [
                         'avancement',
                     ],
                     'privileges' => PropositionPrivileges::PROPOSITION_VISUALISER,
                 ],
                 [
                     'controller' => PropositionController::class,
-                    'action'     => [
+                    'action' => [
                         'toggle-sursis',
                         'suppression',
                     ],
@@ -149,10 +150,10 @@ return [
                         'type' => Segment::class,
                         'may_terminate' => true,
                         'options' => [
-                            'route'    => '/avancement/:these',
+                            'route' => '/avancement/:these',
                             'defaults' => [
                                 'controller' => PropositionController::class,
-                                'action'     => 'avancement',
+                                'action' => 'avancement',
                             ],
                         ],
                     ],
@@ -160,10 +161,10 @@ return [
                         'type' => Segment::class,
                         'may_terminate' => true,
                         'options' => [
-                            'route'    => '/proposition/:these',
+                            'route' => '/proposition/:these',
                             'defaults' => [
                                 'controller' => PropositionController::class,
-                                'action'     => 'proposition',
+                                'action' => 'proposition',
                             ],
                         ],
                         'child_routes' => [
@@ -171,10 +172,10 @@ return [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/generate-view-date-lieu',
+                                    'route' => '/generate-view-date-lieu',
                                     'defaults' => [
                                         'controller' => PropositionController::class,
-                                        'action'     => 'generate-view-date-lieu',
+                                        'action' => 'generate-view-date-lieu',
                                     ],
                                 ],
                             ],
@@ -182,10 +183,10 @@ return [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/generate-view-jury',
+                                    'route' => '/generate-view-jury',
                                     'defaults' => [
                                         'controller' => PropositionController::class,
-                                        'action'     => 'generate-view-jury',
+                                        'action' => 'generate-view-jury',
                                     ],
                                 ],
                             ],
@@ -193,10 +194,10 @@ return [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/generate-view-informations',
+                                    'route' => '/generate-view-informations',
                                     'defaults' => [
                                         'controller' => PropositionController::class,
-                                        'action'     => 'generate-view-informations',
+                                        'action' => 'generate-view-informations',
                                     ],
                                 ],
                             ],
@@ -204,10 +205,10 @@ return [
                                 'type' => Literal::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/sursis',
+                                    'route' => '/sursis',
                                     'defaults' => [
                                         'controller' => PropositionController::class,
-                                        'action'     => 'toggle-sursis',
+                                        'action' => 'toggle-sursis',
                                     ],
                                 ],
                             ],
@@ -215,10 +216,10 @@ return [
                                 'type' => Literal::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/suppression',
+                                    'route' => '/suppression',
                                     'defaults' => [
                                         'controller' => PropositionController::class,
-                                        'action'     => 'suppression',
+                                        'action' => 'suppression',
                                     ],
                                 ],
                             ],
@@ -226,10 +227,10 @@ return [
                                 'type' => Literal::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/modifier-date-lieu',
+                                    'route' => '/modifier-date-lieu',
                                     'defaults' => [
                                         'controller' => PropositionController::class,
-                                        'action'     => 'modifier-date-lieu',
+                                        'action' => 'modifier-date-lieu',
                                     ],
                                 ],
                             ],
@@ -237,10 +238,10 @@ return [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/modifier-membre[/:membre]',
+                                    'route' => '/modifier-membre[/:membre]',
                                     'defaults' => [
                                         'controller' => PropositionController::class,
-                                        'action'     => 'modifier-membre',
+                                        'action' => 'modifier-membre',
                                     ],
                                 ],
                             ],
@@ -248,10 +249,10 @@ return [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/effacer-membre/:membre',
+                                    'route' => '/effacer-membre/:membre',
                                     'defaults' => [
                                         'controller' => PropositionController::class,
-                                        'action'     => 'effacer-membre',
+                                        'action' => 'effacer-membre',
                                     ],
                                 ],
                             ],
@@ -259,10 +260,10 @@ return [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/label-europeen',
+                                    'route' => '/label-europeen',
                                     'defaults' => [
                                         'controller' => PropositionController::class,
-                                        'action'     => 'label-europeen',
+                                        'action' => 'label-europeen',
                                     ],
                                 ],
                             ],
@@ -270,10 +271,10 @@ return [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/anglais',
+                                    'route' => '/anglais',
                                     'defaults' => [
                                         'controller' => PropositionController::class,
-                                        'action'     => 'anglais',
+                                        'action' => 'anglais',
                                     ],
                                 ],
                             ],
@@ -281,10 +282,10 @@ return [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/confidentialite',
+                                    'route' => '/confidentialite',
                                     'defaults' => [
                                         'controller' => PropositionController::class,
-                                        'action'     => 'confidentialite',
+                                        'action' => 'confidentialite',
                                     ],
                                 ],
                             ],
@@ -292,10 +293,10 @@ return [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/changement-titre',
+                                    'route' => '/changement-titre',
                                     'defaults' => [
                                         'controller' => PropositionController::class,
-                                        'action'     => 'changement-titre',
+                                        'action' => 'changement-titre',
                                     ],
                                 ],
                             ],
@@ -303,10 +304,10 @@ return [
                                 'type' => Literal::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/ajouter-justificatif',
+                                    'route' => '/ajouter-justificatif',
                                     'defaults' => [
                                         'controller' => PropositionController::class,
-                                        'action'     => 'ajouter-justificatif',
+                                        'action' => 'ajouter-justificatif',
                                     ],
                                 ],
                             ],
@@ -314,10 +315,10 @@ return [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/retirer-justificatif/:justificatif',
+                                    'route' => '/retirer-justificatif/:justificatif',
                                     'defaults' => [
                                         'controller' => PropositionController::class,
-                                        'action'     => 'retirer-justificatif',
+                                        'action' => 'retirer-justificatif',
                                     ],
                                 ],
                             ],
@@ -325,10 +326,10 @@ return [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/valider',
+                                    'route' => '/valider',
                                     'defaults' => [
                                         'controller' => PropositionController::class,
-                                        'action'     => 'valider-acteur',
+                                        'action' => 'valider-acteur',
                                     ],
                                 ],
                             ],
@@ -336,10 +337,10 @@ return [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/valider-structure',
+                                    'route' => '/valider-structure',
                                     'defaults' => [
                                         'controller' => PropositionController::class,
-                                        'action'     => 'valider-structure',
+                                        'action' => 'valider-structure',
                                     ],
                                 ],
                             ],
@@ -347,10 +348,10 @@ return [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/refuser-PropositionController',
+                                    'route' => '/refuser-PropositionController',
                                     'defaults' => [
                                         'controller' => PropositionController::class,
-                                        'action'     => 'refuser-structure',
+                                        'action' => 'refuser-structure',
                                     ],
                                 ],
                             ],
@@ -358,10 +359,10 @@ return [
                                 'type' => Literal::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/signature-presidence',
+                                    'route' => '/signature-presidence',
                                     'defaults' => [
                                         'controller' => PropositionController::class,
-                                        'action'     => 'signature-presidence',
+                                        'action' => 'signature-presidence',
                                     ],
                                 ],
                             ],
@@ -392,7 +393,7 @@ return [
             DateLieuForm::class => DateLieuFormFactory::class,
             MembreForm::class => MembreFormFactory::class,
             LabelEuropeenForm::class => LabelEuropeenFormFactory::class,
-            ConfidentialiteForm::class=> ConfidentialiteFormFactory::class,
+            ConfidentialiteForm::class => ConfidentialiteFormFactory::class,
             RefusForm::class => RefusFormFactory::class,
             JustificatifForm::class => JustificatifFormFactory::class,
         ],

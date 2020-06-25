@@ -3,11 +3,15 @@
 namespace Soutenance\Assertion;
 
 use Application\Service\UserContextService;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 
 class EngagementImpartialiteAssertionFactory {
 
-    public function __invoke(ServiceLocatorInterface $container)
+    /**
+     * @param ContainerInterface $container
+     * @return EngagementImpartialiteAssertion
+     */
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var UserContextService $userContext

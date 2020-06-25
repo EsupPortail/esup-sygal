@@ -3,19 +3,23 @@
 namespace Soutenance\Form\Justificatif;
 
 use Application\Service\FichierThese\FichierTheseService;
+use Interop\Container\ContainerInterface;
 use Soutenance\Service\Membre\MembreService;
-use Zend\Stdlib\Hydrator\HydratorPluginManager;
 
 class JustificatifHydratorFactory {
 
-    public function __invoke(HydratorPluginManager $container)
+    /**
+     * @param ContainerInterface $container
+     * @return JusticatifHydrator
+     */
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var FichierTheseService $fichierTheseService
          * @var MembreService $membreService
          */
-        $fichierTheseService = $container->getServiceLocator()->get(FichierTheseService::class);
-        $membreService = $container->getServiceLocator()->get(MembreService::class);
+        $fichierTheseService = $container->get(FichierTheseService::class);
+        $membreService = $container->get(MembreService::class);
 
         $hydrator = new JusticatifHydrator();
         $hydrator->setFichierTheseService($fichierTheseService);

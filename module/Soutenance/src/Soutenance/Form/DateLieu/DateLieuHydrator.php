@@ -4,7 +4,7 @@ namespace Soutenance\Form\DateLieu;
 
 use DateTime;
 use Soutenance\Entity\Proposition;
-use Zend\Stdlib\Hydrator\HydratorInterface;
+use Zend\Hydrator\HydratorInterface;
 
 class DateLieuHydrator implements HydratorInterface
 {

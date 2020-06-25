@@ -2,7 +2,8 @@
 
 namespace Soutenance\Form\Avis;
 
-trait AvisFormAwareTrait {
+trait AvisFormAwareTrait
+{
 
     /** @var AvisForm */
     private $avisForm;

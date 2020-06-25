@@ -3,16 +3,21 @@
 namespace Soutenance\Service\Qualite;
 
 use Doctrine\ORM\EntityManager;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Psr\Container\ContainerInterface;
 
-class QualiteServiceFactory {
+class QualiteServiceFactory
+{
 
-    public function __invoke(ServiceLocatorInterface $serviceLocator)
+    /**
+     * @param ContainerInterface $container
+     * @return QualiteService
+     */
+    public function __invoke(ContainerInterface $container)
     {
-         /**
-          * @var EntityManager $entityManager
-          */
-         $entityManager = $serviceLocator->get('doctrine.entitymanager.orm_default');
+        /**
+         * @var EntityManager $entityManager
+         */
+        $entityManager = $container->get('doctrine.entitymanager.orm_default');
 
         /** @var QualiteService $service */
         $service = new QualiteService();

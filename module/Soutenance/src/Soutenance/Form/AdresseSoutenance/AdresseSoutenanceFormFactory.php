@@ -2,17 +2,18 @@
 
 namespace Soutenance\Form\AdresseSoutenance;
 
-use Zend\Form\FormElementManager;
+use Interop\Container\ContainerInterface;
 
 class AdresseSoutenanceFormFactory {
+
     /**
-     * @param FormElementManager $manager
+     * @param ContainerInterface $container
      * @return AdresseSoutenanceForm
      */
-    public function __invoke(FormElementManager $manager)
+    public function __invoke(ContainerInterface $container)
     {
         /** @var AdresseSoutenanceHydrator $hydrator */
-        $hydrator = $manager->getServiceLocator()->get('HydratorManager')->get(AdresseSoutenanceHydrator::class);
+        $hydrator = $container->get('HydratorManager')->get(AdresseSoutenanceHydrator::class);
 
         /** @var AdresseSoutenanceForm $form */
         $form = new AdresseSoutenanceForm();

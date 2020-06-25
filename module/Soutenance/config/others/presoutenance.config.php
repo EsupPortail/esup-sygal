@@ -18,17 +18,17 @@ use Soutenance\Provider\Privilege\EngagementImpartialitePrivileges;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
-use Zend\Mvc\Router\Http\Literal;
-use Zend\Mvc\Router\Http\Segment;
+use Zend\Router\Http\Literal;
+use Zend\Router\Http\Segment;
 
 return [
-    'bjyauthorize'    => [
+    'bjyauthorize' => [
         'resource_providers' => [
             'BjyAuthorize\Provider\Resource\Config' => [
                 'Acteur' => [],
             ],
         ],
-        'rule_providers'     => [
+        'rule_providers' => [
             PrivilegeRuleProvider::class => [
                 'allow' => [
                     [
@@ -37,8 +37,8 @@ return [
                             PresoutenancePrivileges::PRESOUTENANCE_DATE_RETOUR_MODIFICATION,
                             PresoutenancePrivileges::PRESOUTENANCE_PRESOUTENANCE_VISUALISATION,
                         ],
-                        'resources'  => ['These'],
-                        'assertion'  => PresoutenanceAssertion::class,
+                        'resources' => ['These'],
+                        'assertion' => PresoutenanceAssertion::class,
                     ],
                 ],
             ],
@@ -47,14 +47,14 @@ return [
             PrivilegeController::class => [
                 [
                     'controller' => PresoutenanceController::class,
-                    'action'     => [
+                    'action' => [
                         'presoutenance',
                     ],
                     'privileges' => PresoutenancePrivileges::PRESOUTENANCE_PRESOUTENANCE_VISUALISATION,
                 ],
                 [
                     'controller' => PresoutenanceController::class,
-                    'action'     => [
+                    'action' => [
                         'date-rendu-rapport',
                         'feu-vert',
                         'stopper-demarche',
@@ -68,7 +68,7 @@ return [
                 ],
                 [
                     'controller' => PresoutenanceController::class,
-                    'action'     => [
+                    'action' => [
                         'convocation-doctorant',
                         'convocation-membre',
                     ],
@@ -76,7 +76,7 @@ return [
                 ],
                 [
                     'controller' => PresoutenanceController::class,
-                    'action'     => [
+                    'action' => [
                         'associer-jury',
                         'deassocier-jury',
                     ],
@@ -84,21 +84,21 @@ return [
                 ],
                 [
                     'controller' => PresoutenanceController::class,
-                    'action'     => [
+                    'action' => [
                         'notifier-demande-avis-soutenance',
                     ],
                     'privileges' => EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_NOTIFIER,
                 ],
                 [
                     'controller' => PresoutenanceController::class,
-                    'action'     => [
+                    'action' => [
                         'revoquer-avis-soutenance'
                     ],
                     'privileges' => AvisSoutenancePrivileges::AVIS_ANNULER,
                 ],
                 [
                     'controller' => PresoutenanceController::class,
-                    'action'     => [
+                    'action' => [
                         'notifier-retard-rapport-presoutenance'
                     ],
                     'roles' => 'guest',
@@ -116,10 +116,10 @@ return [
                         'type' => Literal::class,
                         'may_terminate' => true,
                         'options' => [
-                            'route'    => '/notifier-retard-rapport-presoutenance',
+                            'route' => '/notifier-retard-rapport-presoutenance',
                             'defaults' => [
                                 'controller' => PresoutenanceController::class,
-                                'action'     => 'notifier-retard-rapport-presoutenance',
+                                'action' => 'notifier-retard-rapport-presoutenance',
                             ],
                         ],
                     ],
@@ -127,10 +127,10 @@ return [
                         'type' => Segment::class,
                         'may_terminate' => true,
                         'options' => [
-                            'route'    => '/presoutenance/:these',
+                            'route' => '/presoutenance/:these',
                             'defaults' => [
                                 'controller' => PresoutenanceController::class,
-                                'action'     => 'presoutenance',
+                                'action' => 'presoutenance',
                             ],
                         ],
                         'child_routes' => [
@@ -138,10 +138,10 @@ return [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/avis-soutenance',
+                                    'route' => '/avis-soutenance',
                                     'defaults' => [
                                         'controller' => PresoutenanceController::class,
-                                        'action'     => 'avis-soutenance',
+                                        'action' => 'avis-soutenance',
                                     ],
                                 ],
                             ],
@@ -149,10 +149,10 @@ return [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/convocations',
+                                    'route' => '/convocations',
                                     'defaults' => [
                                         'controller' => PresoutenanceController::class,
-                                        'action'     => 'convocations',
+                                        'action' => 'convocations',
                                     ],
                                 ],
                             ],
@@ -160,10 +160,10 @@ return [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/convocation-doctorant',
+                                    'route' => '/convocation-doctorant',
                                     'defaults' => [
                                         'controller' => PresoutenanceController::class,
-                                        'action'     => 'convocation-doctorant',
+                                        'action' => 'convocation-doctorant',
                                     ],
                                 ],
                             ],
@@ -171,10 +171,10 @@ return [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/convocation-membre/:membre',
+                                    'route' => '/convocation-membre/:membre',
                                     'defaults' => [
                                         'controller' => PresoutenanceController::class,
-                                        'action'     => 'convocation-membre',
+                                        'action' => 'convocation-membre',
                                     ],
                                 ],
                             ],
@@ -182,10 +182,10 @@ return [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/envoyer-convocation',
+                                    'route' => '/envoyer-convocation',
                                     'defaults' => [
                                         'controller' => PresoutenanceController::class,
-                                        'action'     => 'envoyer-convocation',
+                                        'action' => 'envoyer-convocation',
                                     ],
                                 ],
                             ],
@@ -193,10 +193,10 @@ return [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/proces-verbal-soutenance',
+                                    'route' => '/proces-verbal-soutenance',
                                     'defaults' => [
                                         'controller' => PresoutenanceController::class,
-                                        'action'     => 'proces-verbal-soutenance',
+                                        'action' => 'proces-verbal-soutenance',
                                     ],
                                 ],
                             ],
@@ -204,10 +204,10 @@ return [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/date-rendu-rapport',
+                                    'route' => '/date-rendu-rapport',
                                     'defaults' => [
                                         'controller' => PresoutenanceController::class,
-                                        'action'     => 'date-rendu-rapport',
+                                        'action' => 'date-rendu-rapport',
                                     ],
                                 ],
                             ],
@@ -215,10 +215,10 @@ return [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/notifier-engagement-impartialite',
+                                    'route' => '/notifier-engagement-impartialite',
                                     'defaults' => [
                                         'controller' => EngagementImpartialiteController::class,
-                                        'action'     => 'notifier-rapporteurs-engagement-impartialite',
+                                        'action' => 'notifier-rapporteurs-engagement-impartialite',
                                     ],
                                 ],
                             ],
@@ -226,10 +226,10 @@ return [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/associer-jury/:membre',
+                                    'route' => '/associer-jury/:membre',
                                     'defaults' => [
                                         'controller' => PresoutenanceController::class,
-                                        'action'     => 'associer-jury',
+                                        'action' => 'associer-jury',
                                     ],
                                 ],
                             ],
@@ -237,10 +237,10 @@ return [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/deassocier-jury/:membre',
+                                    'route' => '/deassocier-jury/:membre',
                                     'defaults' => [
                                         'controller' => PresoutenanceController::class,
-                                        'action'     => 'deassocier-jury',
+                                        'action' => 'deassocier-jury',
                                     ],
                                 ],
                             ],
@@ -248,10 +248,10 @@ return [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/notifier-demande-avis-soutenance[/:membre]',
+                                    'route' => '/notifier-demande-avis-soutenance[/:membre]',
                                     'defaults' => [
                                         'controller' => PresoutenanceController::class,
-                                        'action'     => 'notifier-demande-avis-soutenance',
+                                        'action' => 'notifier-demande-avis-soutenance',
                                     ],
                                 ],
                             ],
@@ -259,10 +259,10 @@ return [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/revoquer-avis-soutenance/:avis',
+                                    'route' => '/revoquer-avis-soutenance/:avis',
                                     'defaults' => [
                                         'controller' => PresoutenanceController::class,
-                                        'action'     => 'revoquer-avis-soutenance',
+                                        'action' => 'revoquer-avis-soutenance',
                                     ],
                                 ],
                             ],
@@ -270,10 +270,10 @@ return [
                                 'type' => Literal::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/feu-vert',
+                                    'route' => '/feu-vert',
                                     'defaults' => [
                                         'controller' => PresoutenanceController::class,
-                                        'action'     => 'feu-vert',
+                                        'action' => 'feu-vert',
                                     ],
                                 ],
                             ],
@@ -281,10 +281,10 @@ return [
                                 'type' => Literal::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/stopper-demarche',
+                                    'route' => '/stopper-demarche',
                                     'defaults' => [
                                         'controller' => PresoutenanceController::class,
-                                        'action'     => 'stopper-demarche',
+                                        'action' => 'stopper-demarche',
                                     ],
                                 ],
                             ],
@@ -292,10 +292,10 @@ return [
                                 'type' => Literal::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/modifier-adresse',
+                                    'route' => '/modifier-adresse',
                                     'defaults' => [
                                         'controller' => PresoutenanceController::class,
-                                        'action'     => 'modifier-adresse',
+                                        'action' => 'modifier-adresse',
                                     ],
                                 ],
                             ],

@@ -6,30 +6,30 @@ use Soutenance\Controller\IndexController;
 use Soutenance\Controller\IndexControllerFactory;
 use Soutenance\Provider\Privilege\IndexPrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
-use Zend\Mvc\Router\Http\Literal;
-use Zend\Mvc\Router\Http\Segment;
+use Zend\Router\Http\Literal;
+use Zend\Router\Http\Segment;
 
 return array(
-    'bjyauthorize'    => [
+    'bjyauthorize' => [
         'guards' => [
             PrivilegeController::class => [
                 [
                     'controller' => IndexController::class,
-                    'action'     => [
+                    'action' => [
                         'index',
                     ],
                     'privileges' => IndexPrivileges::INDEX_GLOBAL,
                 ],
                 [
                     'controller' => IndexController::class,
-                    'action'     => [
+                    'action' => [
                         'index-acteur',
                     ],
                     'privileges' => IndexPrivileges::INDEX_ACTEUR,
                 ],
                 [
                     'controller' => IndexController::class,
-                    'action'     => [
+                    'action' => [
                         'index-rapporteur',
                     ],
                     'roles' => [],
@@ -37,7 +37,7 @@ return array(
                 ],
                 [
                     'controller' => IndexController::class,
-                    'action'     => [
+                    'action' => [
                         'index-structure',
                     ],
                     'privileges' => IndexPrivileges::INDEX_STRUCTURE,
@@ -52,10 +52,10 @@ return array(
                 'type' => Literal::class,
                 'may_terminate' => true,
                 'options' => [
-                    'route'    => '/soutenance',
+                    'route' => '/soutenance',
                     'defaults' => [
                         'controller' => IndexController::class,
-                        'action'     => 'index',
+                        'action' => 'index',
                     ],
                 ],
                 'child_routes' => [
@@ -63,10 +63,10 @@ return array(
                         'type' => Literal::class,
                         'may_terminate' => true,
                         'options' => [
-                            'route'    => '/index-structure',
+                            'route' => '/index-structure',
                             'defaults' => [
                                 'controller' => IndexController::class,
-                                'action'     => 'index-structure',
+                                'action' => 'index-structure',
                             ],
                         ],
                     ],
@@ -74,10 +74,10 @@ return array(
                         'type' => Segment::class,
                         'may_terminate' => true,
                         'options' => [
-                            'route'    => '/index-rapporteur[/:these]',
+                            'route' => '/index-rapporteur[/:these]',
                             'defaults' => [
                                 'controller' => IndexController::class,
-                                'action'     => 'index-rapporteur',
+                                'action' => 'index-rapporteur',
                             ],
                         ],
                     ],
@@ -85,10 +85,10 @@ return array(
                         'type' => Literal::class,
                         'may_terminate' => true,
                         'options' => [
-                            'route'    => '/index-acteur',
+                            'route' => '/index-acteur',
                             'defaults' => [
                                 'controller' => IndexController::class,
-                                'action'     => 'index-acteur',
+                                'action' => 'index-acteur',
                             ],
                         ],
                     ],

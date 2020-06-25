@@ -2,20 +2,19 @@
 
 namespace Soutenance\Form\QualiteEdition;
 
-use Zend\Form\FormElementManager;
+use Interop\Container\ContainerInterface;
 
 class QualiteEditionFormFactory
 {
-    public function __invoke(FormElementManager $formElementManager)
+    public function __invoke(ContainerInterface $container)
     {
-        $sl = $formElementManager->getServiceLocator();
+        /** @var QualiteEditiontHydrator $hydrator */
+        $hydrator = $container->get('HydratorManager')->get(QualiteEditiontHydrator::class);
 
         /** @var QualiteEditionForm $form */
         $form = new QualiteEditionForm();
-        $hydrator = $sl->get('HydratorManager')->get(QualiteEditiontHydrator::class);
         $form->setHydrator($hydrator);
-        $form->init();
-        
+
         return $form;
     }
 }

@@ -3,12 +3,16 @@
 namespace Soutenance\Assertion;
 
 use Application\Service\UserContextService;
+use Interop\Container\ContainerInterface;
 use Soutenance\Service\Proposition\PropositionService;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 class AvisSoutenanceAssertionFactory {
 
-    public function __invoke(ServiceLocatorInterface $container)
+    /**
+     * @param ContainerInterface $container
+     * @return AvisSoutenanceAssertion
+     */
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var PropositionService $propositionService

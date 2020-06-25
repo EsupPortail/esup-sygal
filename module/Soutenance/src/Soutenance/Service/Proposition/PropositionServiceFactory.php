@@ -1,6 +1,6 @@
 <?php
 
-namespace  Soutenance\Service\Proposition;
+namespace Soutenance\Service\Proposition;
 
 use Application\Service\Acteur\ActeurService;
 use Application\Service\Etablissement\EtablissementService;
@@ -9,15 +9,19 @@ use Application\Service\Notification\NotifierService;
 use Application\Service\UserContextService;
 use Application\Service\Variable\VariableService;
 use Doctrine\ORM\EntityManager;
+use Interop\Container\ContainerInterface;
 use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Notifier\NotifierSoutenanceService;
 use Soutenance\Service\Parametre\ParametreService;
 use Soutenance\Service\Validation\ValidationService;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 class PropositionServiceFactory
 {
-    public function __invoke(ServiceLocatorInterface $servicelocator)
+    /**
+     * @param ContainerInterface $container
+     * @return PropositionService
+     */
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var EntityManager $entityManager
@@ -32,17 +36,17 @@ class PropositionServiceFactory
          * @var MembreService $membreService
          * @var UserContextService $userContextService
          */
-        $entityManager = $servicelocator->get('doctrine.entitymanager.orm_default');
-        $acteurService = $servicelocator->get(ActeurService::class);
-        $validationService = $servicelocator->get(ValidationService::class);
-        $notifierService = $servicelocator->get(NotifierService::class);
-        $notifierSoutenanceService = $servicelocator->get(NotifierSoutenanceService::class);
-        $parametreService = $servicelocator->get(ParametreService::class);
-        $variableService = $servicelocator->get('VariableService');
-        $fileService = $servicelocator->get(FileService::class);
-        $etablissamentService = $servicelocator->get(EtablissementService::class);
-        $membreService = $servicelocator->get(MembreService::class);
-        $userContextService = $servicelocator->get('UserContextService');
+        $entityManager = $container->get('doctrine.entitymanager.orm_default');
+        $acteurService = $container->get(ActeurService::class);
+        $validationService = $container->get(ValidationService::class);
+        $notifierService = $container->get(NotifierService::class);
+        $notifierSoutenanceService = $container->get(NotifierSoutenanceService::class);
+        $parametreService = $container->get(ParametreService::class);
+        $variableService = $container->get('VariableService');
+        $fileService = $container->get(FileService::class);
+        $etablissamentService = $container->get(EtablissementService::class);
+        $membreService = $container->get(MembreService::class);
+        $userContextService = $container->get('UserContextService');
 
         /** @var PropositionService $service */
         $service = new PropositionService();

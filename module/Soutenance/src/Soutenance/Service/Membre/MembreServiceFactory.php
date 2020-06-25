@@ -1,24 +1,24 @@
 <?php
 
-namespace  Soutenance\Service\Membre;
+namespace Soutenance\Service\Membre;
 
 use Application\Service\UserContextService;
 use Doctrine\ORM\EntityManager;
+use Interop\Container\ContainerInterface;
 use Soutenance\Service\Qualite\QualiteService;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 class MembreServiceFactory
 {
-    public function __invoke(ServiceLocatorInterface $servicelocator)
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var EntityManager $entityManager
          * @var UserContextService $userContextService
          * @var QualiteService $qualiteService
          */
-        $entityManager = $servicelocator->get('doctrine.entitymanager.orm_default');
-        $userContextService = $servicelocator->get('UserContextService');
-        $qualiteService = $servicelocator->get(QualiteService::class);
+        $entityManager = $container->get('doctrine.entitymanager.orm_default');
+        $userContextService = $container->get('UserContextService');
+        $qualiteService = $container->get(QualiteService::class);
 
         /** @var MembreService $service */
         $service = new MembreService();

@@ -2,8 +2,8 @@
 
 namespace Soutenance\Form\Anglais;
 
-trait AnglaisFormAwareTrait {
-
+trait AnglaisFormAwareTrait
+{
     /** @var AnglaisForm $anglaisForm */
     private $anglaisForm;
 

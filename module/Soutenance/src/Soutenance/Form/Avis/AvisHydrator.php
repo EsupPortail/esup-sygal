@@ -3,7 +3,7 @@
 namespace Soutenance\Form\Avis;
 
 use Soutenance\Entity\Avis;
-use Zend\Stdlib\Hydrator\HydratorInterface;
+use Zend\Hydrator\HydratorInterface;
 
 class AvisHydrator implements HydratorInterface {
 

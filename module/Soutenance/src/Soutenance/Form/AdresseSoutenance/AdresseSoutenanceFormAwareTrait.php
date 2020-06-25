@@ -2,7 +2,8 @@
 
 namespace Soutenance\Form\AdresseSoutenance;
 
-trait AdresseSoutenanceFormAwareTrait {
+trait AdresseSoutenanceFormAwareTrait
+{
 
     /** @var AdresseSoutenanceForm */
     private $adresseSoutenanceForm;

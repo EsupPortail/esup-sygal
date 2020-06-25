@@ -2,19 +2,23 @@
 
 namespace Soutenance\Controller;
 
+use Interop\Container\ContainerInterface;
 use Soutenance\Form\Configuration\ConfigurationForm;
 use Soutenance\Service\Parametre\ParametreService;
-use Zend\Mvc\Controller\ControllerManager;
 
 class ConfigurationControllerFactory {
 
-    public function __invoke(ControllerManager $manager)
+    /**
+     * @param ContainerInterface $container
+     * @return ConfigurationController
+     */
+    public function __invoke(ContainerInterface $container)
     {
         /** @var ParametreService $parametreService */
-        $parametreService = $manager->getServiceLocator()->get(ParametreService::class);
+        $parametreService = $container->get(ParametreService::class);
 
         /** @var ConfigurationForm $configurationForm */
-        $configurationForm = $manager->getServiceLocator()->get('FormElementManager')->get(ConfigurationForm::class);
+        $configurationForm = $container->get('FormElementManager')->get(ConfigurationForm::class);
 
         /** @var ConfigurationController $controller */
         $controller = new ConfigurationController();

@@ -4,7 +4,7 @@ namespace Soutenance\Form\DateRenduRapport;
 
 use DateTime;
 use Soutenance\Entity\Proposition;
-use Zend\Stdlib\Hydrator\HydratorInterface;
+use Zend\Hydrator\HydratorInterface;
 
 class DateRenduRapportHydrator implements HydratorInterface
 {
@@ -29,7 +29,6 @@ class DateRenduRapportHydrator implements HydratorInterface
 
         $data = [];
         $data['date']       = $proposition->getRenduRapport();
-
 
         return $data;
     }

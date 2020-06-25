@@ -2,6 +2,7 @@
 
 namespace Soutenance\Controller;
 
+use Interop\Container\ContainerInterface;
 use Soutenance\Form\QualiteEdition\QualiteEditionForm;
 use Soutenance\Form\QualiteLibelleSupplementaire\QualiteLibelleSupplementaireForm;
 use Soutenance\Service\Qualite\QualiteService;
@@ -11,25 +12,25 @@ use Zend\Mvc\Controller\ControllerManager;
 class QualiteControllerFactory
 {
     /**
-     * @param ControllerManager $manager
+     * @param ContainerInterface $container
      * @return QualiteController
      */
-    public function __invoke(ControllerManager $manager)
+    public function __invoke(ContainerInterface $container)
     {
 
         /**
          * @var QualiteService $qualiteService
          * @var QualiteLibelleSupplementaireService $qualiteLibelleSupplementaireService
          */
-        $qualiteService = $manager->getServiceLocator()->get(QualiteService::class);
-        $qualiteLibelleSupplementaireService = $manager->getServiceLocator()->get(QualiteLibelleSupplementaireService::class);
+        $qualiteService = $container->get(QualiteService::class);
+        $qualiteLibelleSupplementaireService = $container->get(QualiteLibelleSupplementaireService::class);
 
         /**
          * @var QualiteEditionForm $qualiteEditionForm
          * @var QualiteLibelleSupplementaireForm $qualiteLibelleSupplementaireForm
          */
-        $qualiteEditionForm = $manager->getServiceLocator()->get('FormElementManager')->get(QualiteEditionForm::class);
-        $qualiteLibelleSupplementaireForm = $manager->getServiceLocator()->get('FormElementManager')->get(QualiteLibelleSupplementaireForm::class);
+        $qualiteEditionForm = $container->get('FormElementManager')->get(QualiteEditionForm::class);
+        $qualiteLibelleSupplementaireForm = $container->get('FormElementManager')->get(QualiteLibelleSupplementaireForm::class);
 
         /** @var QualiteController $controller */
         $controller = new QualiteController();

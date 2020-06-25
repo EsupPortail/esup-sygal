@@ -5,6 +5,7 @@ namespace Soutenance\Controller;
 use Application\Service\Acteur\ActeurService;
 use Application\Service\Individu\IndividuService;
 use Application\Service\These\TheseService;
+use Interop\Container\ContainerInterface;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteService;
 use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Notifier\NotifierSoutenanceService;
@@ -15,12 +16,11 @@ use Zend\Mvc\Controller\ControllerManager;
 class EngagementImpartialiteControllerFactory
 {
     /**
-     * @param ControllerManager $manager
+     * @param ContainerInterface $container
      * @return EngagementImpartialiteController
      */
-    public function __invoke(ControllerManager $manager)
+    public function __invoke(ContainerInterface $container)
     {
-
         /**
          * @var ActeurService $acteurService
          * @var PropositionService $propositionService
@@ -31,14 +31,14 @@ class EngagementImpartialiteControllerFactory
          * @var NotifierSoutenanceService $notifierService
          * @var EngagementImpartialiteService $engagementImpartialiteService
          */
-        $acteurService                  = $manager->getServiceLocator()->get(ActeurService::class);
-        $propositionService             = $manager->getServiceLocator()->get(PropositionService::class);
-        $membreService                  = $manager->getServiceLocator()->get(MembreService::class);
-        $theseService                   = $manager->getServiceLocator()->get('TheseService');
-        $validationService              = $manager->getServiceLocator()->get(ValidationService::class);
-        $individuService                = $manager->getServiceLocator()->get('IndividuService');
-        $notifierService                = $manager->getServiceLocator()->get(NotifierSoutenanceService::class);
-        $engagementImpartialiteService  = $manager->getServiceLocator()->get(EngagementImpartialiteService::class);
+        $acteurService                  = $container->get(ActeurService::class);
+        $propositionService             = $container->get(PropositionService::class);
+        $membreService                  = $container->get(MembreService::class);
+        $theseService                   = $container->get('TheseService');
+        $validationService              = $container->get(ValidationService::class);
+        $individuService                = $container->get('IndividuService');
+        $notifierService                = $container->get(NotifierSoutenanceService::class);
+        $engagementImpartialiteService  = $container->get(EngagementImpartialiteService::class);
 
         /** @var EngagementImpartialiteController $controller */
         $controller = new EngagementImpartialiteController();

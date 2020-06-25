@@ -11,16 +11,16 @@ use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteService;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
-use Zend\Mvc\Router\Http\Segment;
+use Zend\Router\Http\Segment;
 
 return array(
-    'bjyauthorize'    => [
+    'bjyauthorize' => [
         'resource_providers' => [
             'BjyAuthorize\Provider\Resource\Config' => [
                 'Acteur' => [],
             ],
         ],
-        'rule_providers'     => [
+        'rule_providers' => [
             PrivilegeRuleProvider::class => [
                 'allow' => [
                     [
@@ -30,8 +30,8 @@ return array(
                             EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_NOTIFIER,
                             EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_VISUALISER,
                         ],
-                        'resources'  => ['These'],
-                        'assertion'  => EngagementImpartialiteAssertion::class,
+                        'resources' => ['These'],
+                        'assertion' => EngagementImpartialiteAssertion::class,
                     ],
                 ],
             ],
@@ -40,14 +40,14 @@ return array(
             PrivilegeController::class => [
                 [
                     'controller' => EngagementImpartialiteController::class,
-                    'action'     => [
+                    'action' => [
                         'engagement-impartialite',
                     ],
                     'privileges' => EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_VISUALISER,
                 ],
                 [
                     'controller' => EngagementImpartialiteController::class,
-                    'action'     => [
+                    'action' => [
                         'notifier-rapporteurs-engagement-impartialite',
                         'notifier-engagement-impartialite',
                     ],
@@ -55,7 +55,7 @@ return array(
                 ],
                 [
                     'controller' => EngagementImpartialiteController::class,
-                    'action'     => [
+                    'action' => [
                         'signer-engagement-impartialite',
                         'refuser-engagement-impartialite',
                     ],
@@ -63,7 +63,7 @@ return array(
                 ],
                 [
                     'controller' => EngagementImpartialiteController::class,
-                    'action'     => [
+                    'action' => [
                         'annuler-engagement-impartialite',
                     ],
                     'privileges' => EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_ANNULER,
@@ -80,10 +80,10 @@ return array(
                         'type' => Segment::class,
                         'may_terminate' => true,
                         'options' => [
-                            'route'    => '/engagement-impartialite/:these/:membre',
+                            'route' => '/engagement-impartialite/:these/:membre',
                             'defaults' => [
                                 'controller' => EngagementImpartialiteController::class,
-                                'action'     => 'engagement-impartialite',
+                                'action' => 'engagement-impartialite',
                             ],
                         ],
                         'child_routes' => [
@@ -91,10 +91,10 @@ return array(
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/notifier',
+                                    'route' => '/notifier',
                                     'defaults' => [
                                         'controller' => EngagementImpartialiteController::class,
-                                        'action'     => 'notifier-engagement-impartialite',
+                                        'action' => 'notifier-engagement-impartialite',
                                     ],
                                 ],
                             ],
@@ -102,10 +102,10 @@ return array(
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/signer',
+                                    'route' => '/signer',
                                     'defaults' => [
                                         'controller' => EngagementImpartialiteController::class,
-                                        'action'     => 'signer-engagement-impartialite',
+                                        'action' => 'signer-engagement-impartialite',
                                     ],
                                 ],
                             ],
@@ -113,10 +113,10 @@ return array(
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/refuser',
+                                    'route' => '/refuser',
                                     'defaults' => [
                                         'controller' => EngagementImpartialiteController::class,
-                                        'action'     => 'refuser-engagement-impartialite',
+                                        'action' => 'refuser-engagement-impartialite',
                                     ],
                                 ],
                             ],
@@ -124,10 +124,10 @@ return array(
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/annuler',
+                                    'route' => '/annuler',
                                     'defaults' => [
                                         'controller' => EngagementImpartialiteController::class,
-                                        'action'     => 'annuler-engagement-impartialite',
+                                        'action' => 'annuler-engagement-impartialite',
                                     ],
                                 ],
                             ],

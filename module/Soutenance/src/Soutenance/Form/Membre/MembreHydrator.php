@@ -4,7 +4,7 @@ namespace Soutenance\Form\Membre;
 
 use Soutenance\Entity\Membre;
 use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
-use Zend\Stdlib\Hydrator\HydratorInterface;
+use Zend\Hydrator\HydratorInterface;
 
 class MembreHydrator implements HydratorInterface
 {

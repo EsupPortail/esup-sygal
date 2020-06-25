@@ -2,19 +2,23 @@
 
 namespace Soutenance\Form\Avis;
 
+use Interop\Container\ContainerInterface;
 use Zend\Form\FormElementManager;
 
 class AvisFormFactory
 {
-    public function __invoke(FormElementManager $formElementManager)
+    /**
+     * @param ContainerInterface $container
+     * @return AvisForm
+     */
+    public function __invoke(ContainerInterface $container)
     {
-        $sl = $formElementManager->getServiceLocator();
+        /** @var AvisHydrator $hydrator */
+        $hydrator = $container->get('HydratorManager')->get(AvisHydrator::class);
 
         /** @var AvisForm $form */
         $form = new AvisForm();
-        $hydrator = $sl->get('HydratorManager')->get(AvisHydrator::class);
         $form->setHydrator($hydrator);
-        $form->init();
 
         return $form;
     }

@@ -6,6 +6,7 @@ use Application\Service\Acteur\ActeurService;
 use Application\Service\FichierThese\FichierTheseService;
 use Application\Service\These\TheseService;
 use Application\Service\UserContextService;
+use Interop\Container\ContainerInterface;
 use Soutenance\Form\Anglais\AnglaisForm;
 use Soutenance\Form\ChangementTitre\ChangementTitreForm;
 use Soutenance\Form\Confidentialite\ConfidentialiteForm;
@@ -24,7 +25,11 @@ use Zend\Mvc\Controller\ControllerManager;
 
 class PropositionControllerFactory {
 
-    public function __invoke(ControllerManager $manager)
+    /**
+     * @param ContainerInterface $container
+     * @return PropositionController
+     */
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var ActeurService $acteurService
@@ -38,16 +43,16 @@ class PropositionControllerFactory {
          * @var JustificatifService $justificatifService
          * @var ParametreService $parametreService
          */
-        $acteurService = $manager->getServiceLocator()->get(ActeurService::class);
-        $membreService = $manager->getServiceLocator()->get(MembreService::class);
-        $notificationSoutenanceService = $manager->getServiceLocator()->get(NotifierSoutenanceService::class);
-        $propositionService = $manager->getServiceLocator()->get(PropositionService::class);
-        $theseService = $manager->getServiceLocator()->get('TheseService');
-        $userContextService = $manager->getServiceLocator()->get('UserContextService');
-        $validationService = $manager->getServiceLocator()->get(ValidationService::class);
-        $fichierTheseService = $manager->getServiceLocator()->get(FichierTheseService::class);
-        $justificatifService = $manager->getServiceLocator()->get(JustificatifService::class);
-        $parametreService = $manager->getServiceLocator()->get(ParametreService::class);
+        $acteurService = $container->get(ActeurService::class);
+        $membreService = $container->get(MembreService::class);
+        $notificationSoutenanceService = $container->get(NotifierSoutenanceService::class);
+        $propositionService = $container->get(PropositionService::class);
+        $theseService = $container->get('TheseService');
+        $userContextService = $container->get('UserContextService');
+        $validationService = $container->get(ValidationService::class);
+        $fichierTheseService = $container->get(FichierTheseService::class);
+        $justificatifService = $container->get(JustificatifService::class);
+        $parametreService = $container->get(ParametreService::class);
 
         /**
          * @var DateLieuForm $dateLieuForm
@@ -59,14 +64,14 @@ class PropositionControllerFactory {
          * @var ChangementTitreForm $changementTitreForm
          * @var JustificatifForm $justificatifForm
          */
-        $dateLieuForm = $manager->getServiceLocator()->get('FormElementManager')->get(DateLieuForm::class);
-        $membreForm = $manager->getServiceLocator()->get('FormElementManager')->get(MembreForm::class);
-        $labelEuropeenForm = $manager->getServiceLocator()->get('FormElementManager')->get(LabelEuropeenForm::class);
-        $anglaisForm = $manager->getServiceLocator()->get('FormElementManager')->get(AnglaisForm::class);
-        $confidentialiteForm = $manager->getServiceLocator()->get('FormElementManager')->get(ConfidentialiteForm::class);
-        $refusForm = $manager->getServiceLocator()->get('FormElementManager')->get(RefusForm::class);
-        $changementTitreForm = $manager->getServiceLocator()->get('FormElementManager')->get(ChangementTitreForm::class);
-        $justificatifForm = $manager->getServiceLocator()->get('FormElementManager')->get(JustificatifForm::class);
+        $dateLieuForm = $container->get('FormElementManager')->get(DateLieuForm::class);
+        $membreForm = $container->get('FormElementManager')->get(MembreForm::class);
+        $labelEuropeenForm = $container->get('FormElementManager')->get(LabelEuropeenForm::class);
+        $anglaisForm = $container->get('FormElementManager')->get(AnglaisForm::class);
+        $confidentialiteForm = $container->get('FormElementManager')->get(ConfidentialiteForm::class);
+        $refusForm = $container->get('FormElementManager')->get(RefusForm::class);
+        $changementTitreForm = $container->get('FormElementManager')->get(ChangementTitreForm::class);
+        $justificatifForm = $container->get('FormElementManager')->get(JustificatifForm::class);
 
         /** @var PropositionController $controller */
         $controller = new PropositionController();

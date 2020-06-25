@@ -1,18 +1,18 @@
 <?php
 
-namespace  Soutenance\Service\Parametre;
+namespace Soutenance\Service\Parametre;
 
 use Doctrine\ORM\EntityManager;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 
 class ParametreServiceFactory
 {
-    public function __invoke(ServiceLocatorInterface $servicelocator)
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var EntityManager $entityManager
          */
-        $entityManager = $servicelocator->get('doctrine.entitymanager.orm_default');
+        $entityManager = $container->get('doctrine.entitymanager.orm_default');
 
         /** @var ParametreService $service */
         $service = new ParametreService();

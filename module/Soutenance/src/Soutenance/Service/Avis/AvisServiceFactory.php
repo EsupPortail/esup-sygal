@@ -1,21 +1,25 @@
 <?php
 
-namespace  Soutenance\Service\Avis;
+namespace Soutenance\Service\Avis;
 
 use Application\Service\UserContextService;
 use Doctrine\ORM\EntityManager;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 
 class AvisServiceFactory
 {
-    public function __invoke(ServiceLocatorInterface $servicelocator)
+    /**
+     * @param ContainerInterface $container
+     * @return AvisService
+     */
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var EntityManager $entityManager
          * @var UserContextService $userContextService
          */
-        $entityManager = $servicelocator->get('doctrine.entitymanager.orm_default');
-        $userContextService = $servicelocator->get('UserContextService');
+        $entityManager = $container->get('doctrine.entitymanager.orm_default');
+        $userContextService = $container->get('UserContextService');
 
         /** @var AvisService $service */
         $service = new AvisService();

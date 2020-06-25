@@ -14,17 +14,17 @@ use Soutenance\Service\Avis\AvisService;
 use Soutenance\Service\Avis\AvisServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
-use Zend\Mvc\Router\Http\Literal;
-use Zend\Mvc\Router\Http\Segment;
+use Zend\Router\Http\Literal;
+use Zend\Router\Http\Segment;
 
 return array(
-    'bjyauthorize'    => [
+    'bjyauthorize' => [
         'resource_providers' => [
             'BjyAuthorize\Provider\Resource\Config' => [
                 'Acteur' => [],
             ],
         ],
-        'rule_providers'     => [
+        'rule_providers' => [
             PrivilegeRuleProvider::class => [
                 'allow' => [
                     [
@@ -33,7 +33,7 @@ return array(
                             AvisSoutenancePrivileges::AVIS_MODIFIER,
                             AvisSoutenancePrivileges::AVIS_ANNULER,
                         ],
-                        'resources'  => ['Acteur'],
+                        'resources' => ['Acteur'],
                         'assertion' => AvisSoutenanceAssertion::class,
                     ],
                 ],
@@ -43,7 +43,7 @@ return array(
             PrivilegeController::class => [
                 [
                     'controller' => AvisController::class,
-                    'action'     => [
+                    'action' => [
                         'index',
                         'afficher',
                     ],
@@ -51,7 +51,7 @@ return array(
                 ],
                 [
                     'controller' => AvisController::class,
-                    'action'     => [
+                    'action' => [
                         'annuler',
                     ],
                     'privileges' => AvisSoutenancePrivileges::AVIS_ANNULER,
@@ -68,10 +68,10 @@ return array(
                         'type' => Segment::class,
                         'may_terminate' => true,
                         'options' => [
-                            'route'    => '/avis-soutenance/:these/:rapporteur',
+                            'route' => '/avis-soutenance/:these/:rapporteur',
                             'defaults' => [
                                 'controller' => AvisController::class,
-                                'action'     => 'index',
+                                'action' => 'index',
                             ],
                         ],
                         'child_routes' => [
@@ -79,10 +79,10 @@ return array(
                                 'type' => Literal::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/afficher',
+                                    'route' => '/afficher',
                                     'defaults' => [
                                         'controller' => AvisController::class,
-                                        'action'     => 'afficher',
+                                        'action' => 'afficher',
                                     ],
                                 ],
                             ],
@@ -90,10 +90,10 @@ return array(
                                 'type' => Literal::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/annuler',
+                                    'route' => '/annuler',
                                     'defaults' => [
                                         'controller' => AvisController::class,
-                                        'action'     => 'annuler',
+                                        'action' => 'annuler',
                                     ],
                                 ],
                             ],

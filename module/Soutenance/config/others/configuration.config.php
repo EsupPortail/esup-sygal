@@ -10,15 +10,15 @@ use Soutenance\Provider\Privilege\QualitePrivileges;
 use Soutenance\Service\Parametre\ParametreService;
 use Soutenance\Service\Parametre\ParametreServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
-use Zend\Mvc\Router\Http\Literal;
+use Zend\Router\Http\Literal;
 
 return array(
-    'bjyauthorize'    => [
+    'bjyauthorize' => [
         'guards' => [
             PrivilegeController::class => [
                 [
                     'controller' => ConfigurationController::class,
-                    'action'     => [
+                    'action' => [
                         'index',
                     ],
                     'privileges' => QualitePrivileges::SOUTENANCE_QUALITE_MODIFIER,
@@ -34,26 +34,26 @@ return array(
                 'type' => Literal::class,
                 'may_terminate' => true,
                 'options' => [
-                    'route'    => '/configuration',
+                    'route' => '/configuration',
                     'defaults' => [
                         'controller' => ConfigurationController::class,
-                        'action'     => 'index',
+                        'action' => 'index',
                     ],
                 ],
             ],
         ],
     ],
 
-    'navigation'      => [
+    'navigation' => [
         'default' => [
             'home' => [
                 'pages' => [
                     'admin' => [
                         'pages' => [
                             'qualite' => [
-                                'label'    => 'Qualités des membres',
-                                'route'    => 'qualite',
-                                'order'    => 1000,
+                                'label' => 'Qualités des membres',
+                                'route' => 'qualite',
+                                'order' => 1000,
                                 'resource' => QualitePrivileges::getResourceId(QualitePrivileges::SOUTENANCE_QUALITE_VISUALISER),
                             ],
                         ],

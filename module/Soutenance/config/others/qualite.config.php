@@ -3,8 +3,8 @@
 namespace Soutenance;
 
 use Soutenance\Controller\ConfigurationController;
-use Soutenance\Controller\QualiteControllerFactory;
 use Soutenance\Controller\QualiteController;
+use Soutenance\Controller\QualiteControllerFactory;
 use Soutenance\Form\QualiteEdition\QualiteEditionForm;
 use Soutenance\Form\QualiteEdition\QualiteEditionFormFactory;
 use Soutenance\Form\QualiteEdition\QualiteEditiontHydrator;
@@ -17,23 +17,23 @@ use Soutenance\Service\Qualite\QualiteServiceFactory;
 use Soutenance\Service\QualiteLibelleSupplementaire\QualiteLibelleSupplementaireService;
 use Soutenance\Service\QualiteLibelleSupplementaire\QualiteLibelleSupplementaireServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
-use Zend\Mvc\Router\Http\Literal;
-use Zend\Mvc\Router\Http\Segment;
+use Zend\Router\Http\Literal;
+use Zend\Router\Http\Segment;
 
 return array(
-    'bjyauthorize'    => [
+    'bjyauthorize' => [
         'guards' => [
             PrivilegeController::class => [
                 [
                     'controller' => QualiteController::class,
-                    'action'     => [
+                    'action' => [
                         'index',
                     ],
                     'privileges' => QualitePrivileges::SOUTENANCE_QUALITE_VISUALISER,
                 ],
                 [
                     'controller' => QualiteController::class,
-                    'action'     => [
+                    'action' => [
                         'editer',
                         'effacer',
                         'ajouter-libelle-supplementaire',
@@ -43,7 +43,7 @@ return array(
                 ],
                 [
                     'controller' => ConfigurationController::class,
-                    'action'     => [
+                    'action' => [
                         'index',
                     ],
                     'privileges' => QualitePrivileges::SOUTENANCE_QUALITE_MODIFIER,
@@ -59,10 +59,10 @@ return array(
                 'type' => Literal::class,
                 'may_terminate' => true,
                 'options' => [
-                    'route'    => '/qualite',
+                    'route' => '/qualite',
                     'defaults' => [
                         'controller' => QualiteController::class,
-                        'action'     => 'index',
+                        'action' => 'index',
                     ],
                 ],
                 'child_routes' => [
@@ -70,10 +70,10 @@ return array(
                         'type' => Segment::class,
                         'may_terminate' => true,
                         'options' => [
-                            'route'    => '/editer[/:qualite]',
+                            'route' => '/editer[/:qualite]',
                             'defaults' => [
                                 'controller' => QualiteController::class,
-                                'action'     => 'editer',
+                                'action' => 'editer',
                             ],
                         ],
                     ],
@@ -81,10 +81,10 @@ return array(
                         'type' => Segment::class,
                         'may_terminate' => true,
                         'options' => [
-                            'route'    => '/effacer/:qualite',
+                            'route' => '/effacer/:qualite',
                             'defaults' => [
                                 'controller' => QualiteController::class,
-                                'action'     => 'effacer',
+                                'action' => 'effacer',
                             ],
                         ],
                     ],
@@ -92,10 +92,10 @@ return array(
                         'type' => Segment::class,
                         'may_terminate' => true,
                         'options' => [
-                            'route'    => '/ajouter-libelle-supplementaire/:qualite',
+                            'route' => '/ajouter-libelle-supplementaire/:qualite',
                             'defaults' => [
                                 'controller' => QualiteController::class,
-                                'action'     => 'ajouter-libelle-supplementaire',
+                                'action' => 'ajouter-libelle-supplementaire',
                             ],
                         ],
                     ],
@@ -103,10 +103,10 @@ return array(
                         'type' => Segment::class,
                         'may_terminate' => true,
                         'options' => [
-                            'route'    => '/retirer-libelle-supplementaire/:libelle',
+                            'route' => '/retirer-libelle-supplementaire/:libelle',
                             'defaults' => [
                                 'controller' => QualiteController::class,
-                                'action'     => 'retirer-libelle-supplementaire',
+                                'action' => 'retirer-libelle-supplementaire',
                             ],
                         ],
                     ],
@@ -115,16 +115,16 @@ return array(
         ],
     ],
 
-    'navigation'      => [
+    'navigation' => [
         'default' => [
             'home' => [
                 'pages' => [
                     'admin' => [
                         'pages' => [
                             'configuration' => [
-                                'label'    => 'Paramétrage du module de soutenance',
-                                'route'    => 'configuration',
-                                'order'    => 2000,
+                                'label' => 'Paramétrage du module de soutenance',
+                                'route' => 'configuration',
+                                'order' => 2000,
                                 'resource' => QualitePrivileges::getResourceId(QualitePrivileges::SOUTENANCE_QUALITE_VISUALISER),
                             ],
                         ],
