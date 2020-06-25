@@ -465,7 +465,7 @@ class NotifierSoutenanceService extends NotifierService
      * @param Avis $avis
      * @param string $url
      */
-    public function triggerAvisFavorable($these, $avis, $url)
+    public function triggerAvisFavorable($these, $avis, $url = null)
     {
         $emailBDD = [$this->fetchEmailBdd($these)];
         $emailsDirecteurs = $this->fetchEmailEncadrants($these);
@@ -497,7 +497,7 @@ class NotifierSoutenanceService extends NotifierService
      * @param Avis $avis
      * @param string $url
      */
-    public function triggerAvisDefavorable($these, $avis, $url)
+    public function triggerAvisDefavorable($these, $avis, $url = null)
     {
         $emailsDirecteurs = $this->fetchEmailEncadrants($these);
         $emailsED = $this->fetchEmailEcoleDoctorale($these);

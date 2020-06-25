@@ -45,6 +45,8 @@ use Zend\Http\Request;
 use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\PhpRenderer;
 
+/** @method boolean isAllowed($resource, $privilege = null) */
+
 class PropositionController extends AbstractController
 {
     use ActeurServiceAwareTrait;
@@ -159,7 +161,7 @@ class PropositionController extends AbstractController
         $indicateurs = $this->getPropositionService()->computeIndicateur($proposition);
         $juryOk = $this->getPropositionService()->juryOk($proposition, $indicateurs);
         if ($juryOk === false) $indicateurs["valide"] = false;
-        $isOk = $this->getPropositionService()->isOk($proposition, $indicateurs);
+        //$isOk = $this->getPropositionService()->isOk($proposition, $indicateurs);
 
         $vm = new ViewModel();
         $vm->setTerminal(true);

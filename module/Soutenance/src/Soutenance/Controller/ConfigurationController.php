@@ -56,7 +56,6 @@ class ConfigurationController extends AbstractActionController
             $this->redirect()->toRoute('configuration');
         }
 
-
         return new ViewModel([
             'form' => $form,
         ]);

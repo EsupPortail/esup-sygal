@@ -19,8 +19,8 @@ use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Zend\View\Model\ViewModel;
 
 /** @method FlashMessenger flashMessenger() */
-
-class AvisController extends AbstractController {
+class AvisController extends AbstractController
+{
     use ActeurServiceAwareTrait;
     use AvisServiceAwareTrait;
     use MembreServiceAwareTrait;
@@ -67,6 +67,7 @@ class AvisController extends AbstractController {
                 $fichier = $this->getAvisService()->createAvisFromUpload($files, $membre);
                 $validation = $this->getValidationService()->signerAvisSoutenance($these, $membre->getIndividu());
 
+                /** TODO revoir hydration :: pense à ajouter le fichier à postériori */
                 $avis = new Avis();
                 $avis->setProposition($proposition);
                 $avis->setMembre($membre);
@@ -76,18 +77,22 @@ class AvisController extends AbstractController {
                 $avis->setMotif($data['motif']);
                 $this->getAvisService()->create($avis);
 
-                //test du rendu de tous les avis
-                $allAvis        = $this->getAvisService()->getAvisByThese($these);
+                /**
+                 * N.B. :  Après un dépôt penser à vérifier :
+                 *   - peu importe l'avis il faut notifier à chaque dépot d'un avis ;
+                 *   - si tous les avis sont déposés penser à notifier le bureau des doctorats.
+                 */
+                $allAvis = $this->getAvisService()->getAvisByThese($these);
                 $allRapporteurs = $this->getMembreService()->getRapporteursByProposition($proposition);
 
-                $url = null; //$this->urlFichierThese()->telechargerFichierThese($these, $avis->getFichier());
                 if ($avis->getAvis() === Avis::FAVORABLE) {
-                    $this->getNotifierSoutenanceService()->triggerAvisFavorable($these, $avis, $url);
+                    $this->getNotifierSoutenanceService()->triggerAvisFavorable($these, $avis);
                 }
                 if ($avis->getAvis() === Avis::DEFAVORABLE) {
-                    $this->getNotifierSoutenanceService()->triggerAvisDefavorable($these, $avis, $url);
+                    $this->getNotifierSoutenanceService()->triggerAvisDefavorable($these, $avis);
                 }
 
+                /** TODO ajouter un prédicat dans thèse ou soutenance ??? */
                 if (count($allAvis) === count($allRapporteurs)) {
                     $this->getNotifierSoutenanceService()->triggerAvisRendus($these);
                 }
@@ -102,10 +107,12 @@ class AvisController extends AbstractController {
         ]);
     }
 
-    public function afficherAction() {
+    public function afficherAction()
+    {
         $these = $this->requestedThese();
         $membre = $this->getMembreService()->getRequestedMembre($this, 'rapporteur');
         $rapporteur = $membre->getActeur();
+
         /** @var Avis $avis */
         $avis = $this->getAvisService()->getAvisByMembre($membre);
 
@@ -117,7 +124,8 @@ class AvisController extends AbstractController {
         ]);
     }
 
-    public function annulerAction() {
+    public function annulerAction()
+    {
         $these = $this->requestedThese();
         $membre = $this->getMembreService()->getRequestedMembre($this, 'rapporteur');
         /** @var Avis $avis */

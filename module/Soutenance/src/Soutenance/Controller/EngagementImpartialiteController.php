@@ -5,33 +5,27 @@ namespace Soutenance\Controller;
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Validation;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
-use Application\Service\Individu\IndividuServiceAwareTrait;
-use Application\Service\These\TheseServiceAwareTrait;
 use Soutenance\Entity\Membre;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
-use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use Zend\View\Model\ViewModel;
 
 /**
  * Class SoutenanceController
  * @package Soutenance\Controller
- *
- * Controlleur principale du module de gestion de la soutenance
- * @method boolean isAllowed($resource, $privilege = null)
  */
+
+/** @method boolean isAllowed($resource, $privilege = null) */
+
 class EngagementImpartialiteController extends AbstractController
 {
     use ActeurServiceAwareTrait;
     use EngagementImpartialiteServiceAwareTrait;
-    use IndividuServiceAwareTrait;
     use MembreServiceAwareTrait;
     use NotifierSoutenanceServiceAwareTrait;
     use PropositionServiceAwareTrait;
-    use TheseServiceAwareTrait;
-    use ValidatationServiceAwareTrait;
 
     public function engagementImpartialiteAction()
     {

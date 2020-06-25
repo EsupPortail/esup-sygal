@@ -90,7 +90,7 @@ $canAnnuler = $this->isAllowed(AvisSoutenancePrivileges::getResourceId(AvisSoute
 <?php if ($canAnnuler) : ?>
     <a
         <?php /** @see \Soutenance\Controller\AvisController::annulerAction() */ ?>
-        href="<?php echo $this->url('soutenance/avis-soutenance/annuler', ['these' => $these->getId(), 'rapporteur' => 541], [] , true); ?>"
+        href="<?php echo $this->url('soutenance/avis-soutenance/annuler', ['these' => $these->getId(), 'rapporteur' => $rapporteur->getId()], [] , true); ?>"
         class="btn btn-danger">
         <span class="glyphicon glyphicon-remove"></span>
         Annuler l'avis de soutance

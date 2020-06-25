@@ -2,9 +2,9 @@
 
 namespace Soutenance\Controller;
 
-
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Acteur;
+use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Profil;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Utilisateur;
@@ -61,6 +61,7 @@ class PresoutenanceController extends AbstractController
     use DateRenduRapportFormAwareTrait;
     use AdresseSoutenanceFormAwareTrait;
 
+    /** TODO rendererAwareTrait ??? */
     /** @var PhpRenderer */
     private $renderer;
 
@@ -396,6 +397,31 @@ class PresoutenanceController extends AbstractController
         exit;
     }
 
+    /** TODO devrait être une variable VILLE_ETABLISSEMENT */
+    /**
+     * @param Etablissement $etablissement
+     * @return string
+     */
+    private function getVille(Etablissement $etablissement)
+    {
+        $ville = null;
+        switch ($etablissement->getSigle()) {
+            case "UCN" :
+                $ville = "Caen";
+                break;
+            case "URN" :
+            case "INSA" :
+                $ville = "Rouen";
+                break;
+            case "ULHN" :
+                $ville = "Le Havre";
+                break;
+            default:
+                $ville = "Manquant";
+        }
+        return $ville;
+    }
+
     /** Document pour la signature en présidence */
     public function convocationsAction()
     {
@@ -410,20 +436,7 @@ class PresoutenanceController extends AbstractController
         $dateValidation = (!empty($validationMDD)) ? current($validationMDD)->getHistoModification() : null;
 
         /** @var string $ville */
-        switch ($these->getEtablissement()->getSigle()) {
-            case "UCN" :
-                $ville = "Caen";
-                break;
-            case "URN" :
-            case "INSA" :
-                $ville = "Rouen";
-                break;
-            case "ULHN" :
-                $ville = "Le Havre";
-                break;
-            default:
-                $ville = "Manquant";
-        }
+        $ville = $this->getVille($these->getEtablissement());
 
         $exporter = new ConvocationPdfExporter($this->renderer, 'A4');
         $exporter->setVars([
@@ -450,20 +463,7 @@ class PresoutenanceController extends AbstractController
         $dateValidation = (!empty($validationMDD)) ? current($validationMDD)->getHistoModification() : null;
 
         /** @var string $ville */
-        switch ($these->getEtablissement()->getSigle()) {
-            case "UCN" :
-                $ville = "Caen";
-                break;
-            case "URN" :
-            case "INSA" :
-                $ville = "Rouen";
-                break;
-            case "ULHN" :
-                $ville = "Le Havre";
-                break;
-            default:
-                $ville = "Manquant";
-        }
+        $ville = $this->getVille($these->getEtablissement());
 
         $exporter = new ConvocationPdfExporter($this->renderer, 'A4');
         $exporter->setVars([
@@ -491,20 +491,7 @@ class PresoutenanceController extends AbstractController
         $dateValidation = (!empty($validationMDD)) ? current($validationMDD)->getHistoModification() : null;
 
         /** @var string $ville */
-        switch ($these->getEtablissement()->getSigle()) {
-            case "UCN" :
-                $ville = "Caen";
-                break;
-            case "URN" :
-            case "INSA" :
-                $ville = "Rouen";
-                break;
-            case "ULHN" :
-                $ville = "Le Havre";
-                break;
-            default:
-                $ville = "Manquant";
-        }
+        $ville = $this->getVille($these->getEtablissement());
 
         $exporter = new ConvocationPdfExporter($this->renderer, 'A4');
         $exporter->setVars([
