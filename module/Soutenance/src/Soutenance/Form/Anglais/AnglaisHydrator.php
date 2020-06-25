@@ -14,7 +14,7 @@ class AnglaisHydrator implements HydratorInterface
      */
     public function hydrate(array $data, $proposition) {
 
-        $proposition->setManuscritAnglais($data['manuscrit']);
+//        $proposition->setManuscritAnglais($data['manuscrit']);
         $proposition->setSoutenanceAnglais($data['soutenance']);
 
         return $proposition;
@@ -27,7 +27,7 @@ class AnglaisHydrator implements HydratorInterface
     public function extract($proposition) {
 
         $data = [
-            'manuscrit' => $proposition->isManuscritAnglais(),
+//            'manuscrit' => $proposition->isManuscritAnglais(),
             'soutenance' => $proposition->isSoutenanceAnglais(),
         ];
 

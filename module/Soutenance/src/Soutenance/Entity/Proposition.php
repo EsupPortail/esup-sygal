@@ -39,7 +39,7 @@ class Proposition {
     /** @var boolean */
     private $labelEuropeen;
     /** @var boolean */
-    private $manuscritAnglais;
+//    private $manuscritAnglais;
     /** @var boolean */
     private $soutenanceAnglais;
     /** @var string */
@@ -68,7 +68,7 @@ class Proposition {
         $this->membres = new ArrayCollection();
         $this->setThese($these);
         $this->setLabelEuropeen(false);
-        $this->setManuscritAnglais(false);
+//        $this->setManuscritAnglais(false);
         $this->setSoutenanceAnglais(false);
         $this->setHuitClos(false);
         $this->setExterieur(false);
@@ -247,23 +247,23 @@ class Proposition {
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isManuscritAnglais()
-    {
-        return $this->manuscritAnglais;
-    }
-
-    /**
-     * @param bool $manuscritAnglais
-     * @return Proposition
-     */
-    public function setManuscritAnglais($manuscritAnglais)
-    {
-        $this->manuscritAnglais = $manuscritAnglais;
-        return $this;
-    }
+//    /**
+//     * @return bool
+//     */
+//    public function isManuscritAnglais()
+//    {
+//        return $this->manuscritAnglais;
+//    }
+//
+//    /**
+//     * @param bool $manuscritAnglais
+//     * @return Proposition
+//     */
+//    public function setManuscritAnglais($manuscritAnglais)
+//    {
+//        $this->manuscritAnglais = $manuscritAnglais;
+//        return $this;
+//    }
 
     /**
      * @return bool

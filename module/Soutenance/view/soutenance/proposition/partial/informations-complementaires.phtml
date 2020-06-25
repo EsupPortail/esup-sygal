@@ -72,12 +72,12 @@ $these = $proposition->getThese();
             <dl>
                 <dt>Thèse en anglais </dt>
 
-                <?php if ($proposition->isManuscritAnglais() || $proposition->isSoutenanceAnglais()) : ?>
-                    <?php if ($proposition->isManuscritAnglais()) : ?>
-                        <dd>
-                            Manuscrit en anglais
-                        </dd>
-                    <?php endif; ?>
+                <?php if (/*$proposition->isManuscritAnglais() ||*/ $proposition->isSoutenanceAnglais()) : ?>
+<!--                    --><?php //if ($proposition->isManuscritAnglais()) : ?>
+<!--                        <dd>-->
+<!--                            Manuscrit en anglais-->
+<!--                        </dd>-->
+<!--                    --><?php //endif; ?>
                     <?php if ($proposition->isSoutenanceAnglais()) : ?>
                         <dd>
                             Soutenance en anglais
@@ -102,13 +102,13 @@ $these = $proposition->getThese();
                 </a>
             <?php endif; ?>
 
-            <?php if($proposition->isManuscritAnglais() || $proposition->isSoutenanceAnglais()): ?>
-                <div class="alert alert-warning">
-                    <span class="glyphicon glyphicon-warning-sign"> </span>
-                    Afin de réaliser la demande de rédaction ou de soutenance en anglais vous devez motiver votre demande via la demande suivante :
-                    <a href="<?php echo $FORMULAIRE_DEMANDE_ANGLAIS; ?>>">demande de redaction ou de soutenance en anglais</a>.
-                </div>
-            <?php endif; ?>
+<!--            --><?php //if($proposition->isManuscritAnglais() || $proposition->isSoutenanceAnglais()): ?>
+<!--                <div class="alert alert-warning">-->
+<!--                    <span class="glyphicon glyphicon-warning-sign"> </span>-->
+<!--                    Afin de réaliser la demande de rédaction ou de soutenance en anglais vous devez motiver votre demande via la demande suivante :-->
+<!--                    <a href="--><?php //echo $FORMULAIRE_DEMANDE_ANGLAIS; ?><!--">demande de redaction ou de soutenance en anglais</a>.-->
+<!--                </div>-->
+<!--            --><?php //endif; ?>
         </div>
 
         <div class="col-md-8">

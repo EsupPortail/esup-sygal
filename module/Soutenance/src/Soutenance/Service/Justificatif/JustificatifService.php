@@ -219,12 +219,12 @@ class JustificatifService {
                 'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_DEMANDE_CONFIDENT, null),
             ];
         }
-        if ($proposition->isManuscritAnglais() OR $proposition->isSoutenanceAnglais()) {
-            $justificatifs[] = [
-                'type' => NatureFichier::CODE_LANGUE_ANGLAISE,
-                'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_LANGUE_ANGLAISE, null),
-            ];
-        }
+//        if (  $proposition->isManuscritAnglais() OR $proposition->isSoutenanceAnglais()) {
+//            $justificatifs[] = [
+//                'type' => NatureFichier::CODE_LANGUE_ANGLAISE,
+//                'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_LANGUE_ANGLAISE, null),
+//            ];
+//        }
 
         /**
          * Justificatifs liés aux membres du jury :
