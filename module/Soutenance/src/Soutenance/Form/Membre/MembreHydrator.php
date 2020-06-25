@@ -9,6 +9,7 @@ use Zend\Hydrator\HydratorInterface;
 class MembreHydrator implements HydratorInterface
 {
     use QualiteServiceAwareTrait;
+
     /**
      * @param array $data
      * @param Membre $membre
@@ -38,7 +39,7 @@ class MembreHydrator implements HydratorInterface
         $data['sexe']               = $membre->getGenre();
         $data['prenom']             = $membre->getPrenom();
         $data['nom']                = $membre->getNom();
-        $data['qualite']            = $membre->getQualite();
+        $data['qualite']            = $membre->getQualite()->getId();
         $data['etablissement']      = $membre->getEtablissement();
         $data['exterieur']          = $membre->getExterieur();
         $data['visio']              = $membre->isVisio();
