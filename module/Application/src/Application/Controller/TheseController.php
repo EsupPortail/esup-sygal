@@ -2,6 +2,7 @@
 
 namespace Application\Controller;
 
+use Application\Command\Exception\TimedOutCommandException;
 use Application\Entity\Db\Attestation;
 use Application\Entity\Db\Diffusion;
 use Application\Entity\Db\FichierThese;
@@ -24,11 +25,10 @@ use Application\Form\MetadonneeTheseForm;
 use Application\Form\PointsDeVigilanceForm;
 use Application\Form\RdvBuTheseDoctorantForm;
 use Application\Form\RdvBuTheseForm;
-use Application\Rule\AutorisationDiffusionRule;
-use Application\Rule\SuppressionAttestationsRequiseRule;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\FichierThese\Exception\ValidationImpossibleException;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
+use Application\Service\File\FileServiceAwareTrait;
 use Application\Service\MailConfirmationServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
@@ -44,11 +44,11 @@ use Application\Service\Variable\VariableServiceAwareTrait;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\Service\Workflow\WorkflowServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
+use Zend\View\Renderer\PhpRenderer;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
 use Import\Service\Traits\ImportServiceAwareTrait;
-use Retraitement\Exception\TimedOutCommandException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenApp\Service\MessageCollectorAwareTrait;
@@ -67,6 +67,7 @@ use Zend\View\Model\ViewModel;
 class TheseController extends AbstractController
 {
     use FichierTheseServiceAwareTrait;
+    use FileServiceAwareTrait;
     use MessageCollectorAwareTrait;
     use NotifierServiceAwareTrait;
     use RoleServiceAwareTrait;
@@ -87,6 +88,97 @@ class TheseController extends AbstractController
     use UtilisateurServiceAwareTrait;
 
     private $timeoutRetraitement;
+
+    /**
+     * @var RdvBuTheseForm
+     */
+    private $rdvBuTheseDoctorantForm;
+
+    /**
+     * @var RdvBuTheseDoctorantForm
+     */
+    private $rdvBuTheseForm;
+
+    /**
+     * @var AttestationTheseForm
+     */
+    private $attestationTheseForm;
+
+    /**
+     * @var DiffusionTheseForm
+     */
+    private $diffusionTheseForm;
+
+    /**
+     * @var MetadonneeTheseForm
+     */
+    private $metadonneeTheseForm;
+
+    /**
+     * @var PointsDeVigilanceForm
+     */
+    private $pointsDeVigilanceForm;
+
+    /**
+     * @var PhpRenderer
+     */
+    private $renderer;
+
+    /**
+     * @param RdvBuTheseDoctorantForm $rdvBuTheseDoctorantForm
+     */
+    public function setRdvBuTheseDoctorantForm(RdvBuTheseDoctorantForm $rdvBuTheseDoctorantForm)
+    {
+        $this->rdvBuTheseDoctorantForm = $rdvBuTheseDoctorantForm;
+    }
+
+    /**
+     * @param RdvBuTheseForm $rdvBuTheseForm
+     */
+    public function setRdvBuTheseForm(RdvBuTheseForm $rdvBuTheseForm)
+    {
+        $this->rdvBuTheseForm = $rdvBuTheseForm;
+    }
+
+    /**
+     * @param AttestationTheseForm $attestationTheseForm
+     */
+    public function setAttestationTheseForm(AttestationTheseForm $attestationTheseForm)
+    {
+        $this->attestationTheseForm = $attestationTheseForm;
+    }
+
+    /**
+     * @param DiffusionTheseForm $diffusionTheseForm
+     */
+    public function setDiffusionTheseForm(DiffusionTheseForm $diffusionTheseForm)
+    {
+        $this->diffusionTheseForm = $diffusionTheseForm;
+    }
+
+    /**
+     * @param MetadonneeTheseForm $metadonneeTheseForm
+     */
+    public function setMetadonneeTheseForm(MetadonneeTheseForm $metadonneeTheseForm)
+    {
+        $this->metadonneeTheseForm = $metadonneeTheseForm;
+    }
+
+    /**
+     * @param PointsDeVigilanceForm $pointsDeVigilanceForm
+     */
+    public function setPointsDeVigilanceForm(PointsDeVigilanceForm $pointsDeVigilanceForm)
+    {
+        $this->pointsDeVigilanceForm = $pointsDeVigilanceForm;
+    }
+
+    /**
+     * @param PhpRenderer $renderer
+     */
+    public function setRenderer(PhpRenderer $renderer)
+    {
+        $this->renderer = $renderer;
+    }
 
     /**
      * @return ViewModel|Response
@@ -497,6 +589,7 @@ class TheseController extends AbstractController
     {
         $estDoctorant = (bool) $this->userContextService->getSelectedRoleDoctorant();
         $these = $this->requestedThese();
+        $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
         $asynchronous = $this->params()->fromRoute('asynchronous');
 
         $versionArchivable = $this->fichierTheseService->getRepository()->getVersionArchivable($these);
@@ -506,8 +599,11 @@ class TheseController extends AbstractController
         $validationsPdc = $this->validationService->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PAGE_DE_COUVERTURE, $these);
         $pageCouvValidee = !empty($validationsPdc);
 
+        $isExemplPapierFourniPertinent = $this->theseService->isExemplPapierFourniPertinent($these);
+
         $view = new ViewModel([
             'these'        => $these,
+            'diffusion'    => $these->getDiffusionForVersion($version),
             'estDoctorant' => $estDoctorant,
             'modifierUrl'  => $this->urlThese()->modifierRdvBuUrl($these),
             'validerUrl'   => $this->urlThese()->validerRdvBuUrl($these),
@@ -523,6 +619,7 @@ class TheseController extends AbstractController
             'hasVD' => $hasVD,
             'pageCouvValidee' => $pageCouvValidee,
             'asynchronous' => $asynchronous,
+            'isExemplPapierFourniPertinent' => $isExemplPapierFourniPertinent,
 
         ]);
 
@@ -620,10 +717,10 @@ class TheseController extends AbstractController
         $rdvBu->setVersionArchivableFournie($this->fichierTheseService->getRepository()->existeVersionArchivable($these));
 
         /** @var RdvBuTheseForm|RdvBuTheseDoctorantForm $form */
-        $form = $this->getServiceLocator()->get('formElementManager')->get($estDoctorant ? 'RdvBuTheseDoctorantForm' : 'RdvBuTheseForm');
+        $form = $estDoctorant ? $this->rdvBuTheseDoctorantForm : $this->rdvBuTheseForm;
         $form->bind($rdvBu);
 
-        if (! $this->theseService->isExemplPapierFourniPertinent($these)) {
+        if ($form instanceof RdvBuTheseForm && ! $this->theseService->isExemplPapierFourniPertinent($these)) {
             $form->disableExemplPapierFourni();
         }
 
@@ -662,7 +759,7 @@ class TheseController extends AbstractController
         $vm = new ViewModel([
             'these' => $these,
             'form'  => $form,
-            'title' => "Rendez-vous BU",
+            'title' => "Rendez-vous avec la bibliothèque universitaire",
             'pageCouvValidee' => $pageCouvValidee,
             'isExemplPapierFourniPertinent' => $isExemplPapierFourniPertinent,
         ]);
@@ -691,7 +788,7 @@ class TheseController extends AbstractController
                 WfEtape::CODE_DEPOT_VERSION_CORRIGEE_VALIDATION_DIRECTEUR,
             ], [
                 'message' => $isRemiseExemplairePapierRequise ?
-                    "Il ne reste plus qu'à fournir à la BU un exemplaire imprimé de la version corrigée pour valider le dépôt." :
+                    "Il ne reste plus qu'à fournir à la bibliothèque universitaire un exemplaire imprimé de la version corrigée pour valider le dépôt." :
                     null,
             ]),
             'hasVAC' => $hasVAC,
@@ -806,8 +903,6 @@ class TheseController extends AbstractController
                 } catch (TimedOutCommandException $toce) {
                     // relancer le retraitement en tâche de fond
                     $this->fichierTheseService->creerFichierTheseRetraiteAsync($fichierVersionOriginale);
-                } catch (RuntimeException $re) {
-                    // erreur prévue
                 }
             }
             return $this->redirect()->toRoute(null, [], ['query'=>$this->params()->fromQuery()], true);
@@ -1168,11 +1263,12 @@ class TheseController extends AbstractController
     private function getAttestationTheseForm(VersionFichier $version)
     {
         $these = $this->requestedThese();
+        $diffusion = $these->getDiffusionForVersion($version);
 
         /** @var AttestationTheseForm $form */
-        $form = $this->getServiceLocator()->get('formElementManager')->get('AttestationTheseForm');
+        $form = $this->attestationTheseForm;
 
-        if (! $these->getDiffusionForVersion($version)->isRemiseExemplairePapierRequise()) {
+        if ($diffusion && ! $diffusion->isRemiseExemplairePapierRequise()) {
             $form->disableExemplaireImprimeConformeAVersionDeposee();
         }
 
@@ -1203,7 +1299,7 @@ class TheseController extends AbstractController
         }
 
         /** @var DiffusionTheseForm $form */
-        $form = $this->getServiceLocator()->get('formElementManager')->get('DiffusionTheseForm');
+        $form = $this->diffusionTheseForm;
 
         $versionExpurgee = $version->estVersionCorrigee() ? VersionFichier::CODE_DIFF_CORR : VersionFichier::CODE_DIFF;
         $theseFichiersExpurges = $this->fichierTheseService->getRepository()->fetchFichierTheses($these, NatureFichier::CODE_THESE_PDF, $versionExpurgee, false);
@@ -1308,7 +1404,7 @@ class TheseController extends AbstractController
         $these = $this->requestedThese();
 
         /** @var DiffusionTheseForm $form */
-        $form = $this->getServiceLocator()->get('formElementManager')->get('DiffusionTheseForm');
+        $form = $this->diffusionTheseForm;
         $form->setVersionFichier($version);
 
         return $form;
@@ -1322,12 +1418,11 @@ class TheseController extends AbstractController
         $attestation = $these->getAttestationForVersion($version);
 
         /** @var DiffusionTheseForm $form */
-        $form = $this->getServiceLocator()->get('formElementManager')->get('DiffusionTheseForm');
+        $form = $this->diffusionTheseForm;
 
         $codes = [
             Variable::CODE_ETB_LIB,
             Variable::CODE_ETB_ART_ETB_LIB,
-            Variable::CODE_TRIBUNAL_COMPETENT,
         ];
         $dateObs = $these->getDateSoutenance() ?: $these->getDatePrevisionSoutenance();
         $variableRepo = $this->variableService->getRepository();
@@ -1337,11 +1432,18 @@ class TheseController extends AbstractController
         $libEtablissementA = "à " . $letab;
         $libEtablissementLe = $letab;
         $libEtablissementDe = "de " . $letab;
-        $libTribunal = lcfirst($vars[Variable::CODE_TRIBUNAL_COMPETENT]->getValeur());
 
-        $renderer = $this->getServiceLocator()->get('view_renderer'); /* @var $renderer \Zend\View\Renderer\PhpRenderer */
+        $etablissement = $this->etablissementService->fetchEtablissementComue();
+        if ($etablissement === null) {
+            $etablissement = $these->getEtablissement();
+        }
+        $cheminLogo = $this->fileService->computeLogoFilePathForStructure($etablissement);
+
+        $renderer = $this->renderer;
         $exporter = new ConventionPdfExporter($renderer, 'A4');
         $exporter->setVars([
+            'etablissement'      => $etablissement,
+            'logo'               => $cheminLogo,
             'these'              => $these,
             'diffusion'          => $diffusion,
             'attestation'        => $attestation,
@@ -1350,7 +1452,6 @@ class TheseController extends AbstractController
             'libEtablissementA'  => $libEtablissementA,
             'libEtablissementLe' => $libEtablissementLe,
             'libEtablissementDe' => $libEtablissementDe,
-            'libTribunal'        => $libTribunal,
         ]);
         $exporter->export('export.pdf');
         exit;
@@ -1394,7 +1495,7 @@ class TheseController extends AbstractController
         $these = $this->requestedThese();
 
         /** @var MetadonneeTheseForm $form */
-        $form = $this->getServiceLocator()->get('formElementManager')->get('MetadonneeTheseForm');
+        $form = $this->metadonneeTheseForm;
 
         $description = $these->getMetadonnee();
 
@@ -1496,7 +1597,7 @@ class TheseController extends AbstractController
         $form = null;
         if ($rdvBu !== null) {
             /** @var PointsDeVigilanceForm $form */
-            $form = $this->getServiceLocator()->get('formElementManager')->get('PointsDeVigilanceForm');
+            $form = $this->pointsDeVigilanceForm;
             $form->bind($rdvBu);
 
             if ($this->getRequest()->isPost()) {
@@ -1567,7 +1668,7 @@ class TheseController extends AbstractController
         $pdcData = $this->theseService->fetchInformationsPageDeCouverture($these);
 
         try {
-            // Un timeout peut être appliqué au lancement du  script de retraitement.
+            // Un timeout peut être appliqué au lancement du  script.
             // Si ce timout est atteint, l'exécution du script est interrompue
             // et une exception TimedOutCommandException est levée.
             $timeout = $this->timeoutRetraitement;
@@ -1576,10 +1677,8 @@ class TheseController extends AbstractController
             $destinataires = [ $this->userContextService->getIdentityDb()->getEmail() ] ;
             // relancer le retraitement en tâche de fond
             $this->fichierTheseService->fusionneFichierTheseAsync($these, $versionFichier, $removal, $destinataires);
+
             return $this->redirect()->toRoute('these/rdv-bu', ['these' => $these->getId(), 'asynchronous' => 1], [], true);
-            exit();
-        } catch (RuntimeException $re) {
-            // erreur prévue
         }
 
         /** Retourner un PDF ...  */

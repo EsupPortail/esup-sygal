@@ -36,5 +36,10 @@ class TmpTheseAnneeUniv
      * @var string
      */
     private $anneeUniv;
+
+    /**
+     * @var \DateTime
+     */
+    private $sourceInsertDate;
 }
 

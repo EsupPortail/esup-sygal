@@ -6,6 +6,7 @@ use UnicaenApp\Service\EntityManagerAwareInterface;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
+use Zend\EventManager\ListenerAggregateTrait;
 use Zend\Mvc\MvcEvent;
 
 /**
@@ -15,19 +16,13 @@ use Zend\Mvc\MvcEvent;
  */
 class RouteMatchInjector implements ListenerAggregateInterface, EntityManagerAwareInterface
 {
+    use ListenerAggregateTrait;
     use EntityManagerAwareTrait;
 
     /**
-     * Attach one or more listeners
-     *
-     * Implementors may add an optional $priority argument; the EventManager
-     * implementation will pass this to the aggregate.
-     *
-     * @param EventManagerInterface $events
-     *
-     * @return void
+     * @inheritDoc
      */
-    public function attach(EventManagerInterface $events)
+    public function attach(EventManagerInterface $events, $priority = 1)
     {
         $events->attach(MvcEvent::EVENT_ROUTE, [$this, 'injectRouteMatch'], 1);
     }
@@ -45,17 +40,5 @@ class RouteMatchInjector implements ListenerAggregateInterface, EntityManagerAwa
         $routeMatch->setEntityManager($this->getEntityManager());
 
         $e->setRouteMatch($routeMatch);
-    }
-
-    /**
-     * Detach all previously attached listeners
-     *
-     * @param EventManagerInterface $events
-     *
-     * @return void
-     */
-    public function detach(EventManagerInterface $events)
-    {
-        $events->detach($this);
     }
 }

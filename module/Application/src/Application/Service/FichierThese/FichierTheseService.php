@@ -26,7 +26,7 @@ use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\Validator\Exception\CinesErrorException;
 use Application\Validator\FichierCinesValidator;
 use Doctrine\ORM\OptimisticLockException;
-use Retraitement\Exception\TimedOutCommandException;
+use Application\Command\Exception\TimedOutCommandException;
 use Retraitement\Service\RetraitementServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
@@ -286,6 +286,7 @@ class FichierTheseService extends BaseService
      * @param FichierThese $fichierThese Fichier à retraiter
      * @param string       $timeout      Timeout éventuel à appliquer au lancement du script de retraitement.
      * @return FichierThese Fichier retraité
+     * @throws TimedOutCommandException
      */
     public function creerFichierTheseRetraite(FichierThese $fichierThese, $timeout = null)
     {
@@ -437,12 +438,14 @@ class FichierTheseService extends BaseService
      * @param PdcData     $pdcData
      * @param PhpRenderer $renderer
      * @param string      $filepath
+     * @param boolean     $recto
      */
-    public function generatePageDeCouverture(PdcData $pdcData, PhpRenderer $renderer, $filepath = null)
+    public function generatePageDeCouverture(PdcData $pdcData, PhpRenderer $renderer, $filepath = null, $recto = true)
     {
         $exporter = new PageDeCouverturePdfExporter($renderer, 'A4');
         $exporter->setVars([
             'informations' => $pdcData,
+            'recto/verso' => $recto,
         ]);
         if ($filepath !== null) {
             $exporter->export($filepath, Pdf::DESTINATION_FILE);
@@ -507,6 +510,7 @@ class FichierTheseService extends BaseService
      * @param bool    $removeFirstPage
      * @param int     $timeout
      * @return string
+     * @throws TimedOutCommandException
      */
     public function fusionnerPdcEtThese(These $these, PdcData $pdcData, $versionFichier, $removeFirstPage = false, $timeout = 0)
     {
@@ -530,9 +534,6 @@ class FichierTheseService extends BaseService
                     implode(PHP_EOL, $command->getResult())
                 ));
             }
-        }
-        catch (TimedOutCommandException $toce) {
-            throw $toce;
         }
         catch (RuntimeException $rte) {
             throw new RuntimeException(
@@ -568,11 +569,16 @@ class FichierTheseService extends BaseService
     {
         // generation de la couverture
         $filename = "sygal_couverture_" . $these->getId() . "_" . uniqid() . ".pdf";
-        $this->generatePageDeCouverture($pdcData, $this->renderer, $filename);
+        $this->generatePageDeCouverture($pdcData, $this->renderer, $filename, !$removeFirstPage);
 
         // recuperation de la bonne version du manuscript
         $manuscritFichier = current($this->getRepository()->fetchFichierTheses($these, NatureFichier::CODE_THESE_PDF, $versionFichier));
         $manuscritChemin = $this->fichierService->computeDestinationFilePathForFichier($manuscritFichier->getFichier());
+
+        if (!is_readable($manuscritChemin)) {
+            throw new RuntimeException(
+                "Le fichier suivant n'existe pas ou n'est pas accessible sur le serveur : " . $manuscritChemin);
+        }
 
         $inputFiles = [
             'couverture' => sys_get_temp_dir() . '/' . $filename,

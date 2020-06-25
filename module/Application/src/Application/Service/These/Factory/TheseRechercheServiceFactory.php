@@ -14,18 +14,18 @@ use Application\Service\TheseAnneeUniv\TheseAnneeUnivService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\UserContextService;
 use Application\SourceCodeStringHelper;
+use Interop\Container\ContainerInterface;
 use UnicaenAuth\Service\AuthorizeService;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 class TheseRechercheServiceFactory
 {
     /**
      * Create service
      *
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param ContainerInterface $container
      * @return TheseRechercheService
      */
-    public function __invoke(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var TheseService $theseService
@@ -40,17 +40,17 @@ class TheseRechercheServiceFactory
          * @var AuthorizeService $authorizeService
          * @var TheseAnneeUnivService $theseAnneeUnivService
          */
-        $theseService = $serviceLocator->get('TheseService');
-        $userContextService = $serviceLocator->get('UserContextService');
-        $ecoleDoctoraleService = $serviceLocator->get('EcoleDoctoraleService');
-        $uniteService = $serviceLocator->get('UniteRechercheService');
-        $etablissementService = $serviceLocator->get('EtablissementService');
-        $sourceService = $serviceLocator->get('SourceService');
-        $structureService = $serviceLocator->get(StructureService::class);
-        $domaineService = $serviceLocator->get(DomaineScientifiqueService::class);
-        $financementService = $serviceLocator->get(FinancementService::class);
-        $authorizeService = $serviceLocator->get('BjyAuthorize\Service\Authorize');
-        $theseAnneeUnivService = $serviceLocator->get(TheseAnneeUnivService::class);
+        $theseService = $container->get('TheseService');
+        $userContextService = $container->get('UserContextService');
+        $ecoleDoctoraleService = $container->get('EcoleDoctoraleService');
+        $uniteService = $container->get('UniteRechercheService');
+        $etablissementService = $container->get('EtablissementService');
+        $sourceService = $container->get('SourceService');
+        $structureService = $container->get(StructureService::class);
+        $domaineService = $container->get(DomaineScientifiqueService::class);
+        $financementService = $container->get(FinancementService::class);
+        $authorizeService = $container->get('BjyAuthorize\Service\Authorize');
+        $theseAnneeUnivService = $container->get(TheseAnneeUnivService::class);
 
         $service = new TheseRechercheService();
         $service->setTheseService($theseService);
@@ -68,7 +68,7 @@ class TheseRechercheServiceFactory
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper
          */
-        $sourceCodeHelper = $serviceLocator->get(SourceCodeStringHelper::class);
+        $sourceCodeHelper = $container->get(SourceCodeStringHelper::class);
         $service->setSourceCodeStringHelper($sourceCodeHelper);
 
         return $service;

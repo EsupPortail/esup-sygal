@@ -3,6 +3,7 @@
 use Application\Assertion\AssertionAbstractFactory;
 use Application\Cache\MemcachedFactory;
 use Application\Controller\Factory\IndexControllerFactory;
+use Application\Controller\Plugin\Uploader\UploaderPluginFactory;
 use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\Event\UserAuthenticatedEventListenerFactory;
 use Application\Event\UserRoleSelectedEventListener;
@@ -19,10 +20,15 @@ use Application\Service\UserContextServiceFactory;
 use Application\SourceCodeStringHelper;
 use Application\SourceCodeStringHelperFactory;
 use Application\View\Helper\EscapeTextHelper;
+use Application\View\Helper\Sortable;
+use Application\View\Helper\SortableHelperFactory;
+use Application\View\Helper\Uploader\UploaderHelper;
+use Application\View\Helper\Uploader\UploaderHelperFactory;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use UnicaenApp\Service\EntityManagerAwareInitializer;
+use Zend\Navigation\Navigation;
 
 return array(
     'bjyauthorize' => [
@@ -96,7 +102,7 @@ return array(
                 ],
             ],
             'contact'          => [
-//                'type'     => 'Zend\Mvc\Router\Http\Literal',
+//                'type'     => 'Zend\Router\Http\Literal',
                 'options'  => [
 //                    'route'    => '/contact',
                     'defaults' => [
@@ -191,7 +197,7 @@ return array(
             'UserRoleSelectedEventListener' => UserRoleSelectedEventListener::class,
         ),
         'factories' => array(
-            'navigation'                     => NavigationFactoryFactory::class,
+            Navigation::class => NavigationFactoryFactory::class,
             'UnicaenAuth\Service\UserContext' => UserContextServiceFactory::class,
             'UserAuthenticatedEventListener' => UserAuthenticatedEventListenerFactory::class,
             'Sygal\Memcached'                => MemcachedFactory::class,
@@ -227,10 +233,10 @@ return array(
     ],
     'controller_plugins' => [
         'invokables' => [
-            'uploader'              => 'Application\Controller\Plugin\Uploader\UploaderPlugin',
         ],
         'factories' => [
             'forward'  => 'Application\Controller\Plugin\ForwardFactory',
+            'uploader' => UploaderPluginFactory::class,
         ],
         'initializers' => [
             EntityManagerAwareInitializer::class,
@@ -246,18 +252,22 @@ return array(
     ),
     'view_helpers' => array(
         'invokables' => array(
-            'sortable'    => 'Application\View\Helper\Sortable',
-            'Uploader'    => 'Application\View\Helper\Uploader\UploaderHelper',
             'filterPanel' => 'Application\View\Helper\FilterPanel\FilterPanelHelper',
             'selectsFilterPanel' => \Application\View\Helper\SelectsFilterPanel\SelectsFilterPanelHelper::class,
             'escapeText'  => EscapeTextHelper::class,
         ),
         'factories' => array(
             'languageSelector'          => 'Application\View\Helper\LanguageSelectorHelperFactory',
+            Sortable::class => SortableHelperFactory::class,
+            UploaderHelper::class => UploaderHelperFactory::class,
         ),
+        'aliases' => [
+            'sortable' => Sortable::class,
+            'uploader' => UploaderHelper::class,
+        ],
         'initializers' => [
             ServiceAwareInitializer::class,
-        ]
+        ],
     ),
     'form_elements'   => [
         'invokables'   => [
@@ -280,6 +290,7 @@ return array(
         'stylesheets'           => [
             '050_bootstrap-theme' => false,
             '100_charte' => '/css/charte.css',
+            '200_fa' => '/fontawesome-free-5.12.0-web/css/all.min.css',
         ],
         'printable_stylesheets' => [
         ],

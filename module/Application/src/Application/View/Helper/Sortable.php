@@ -3,8 +3,6 @@
 namespace Application\View\Helper;
 
 use Zend\Http\Request;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Zend\Uri\Http;
 use Zend\View\Helper\AbstractHelper;
 
@@ -14,10 +12,8 @@ use Zend\View\Helper\AbstractHelper;
  *
  * @see $this->url();
  */
-class Sortable extends AbstractHelper implements ServiceLocatorAwareInterface
+class Sortable extends AbstractHelper
 {
-    use ServiceLocatorAwareTrait;
-
     const ASC  = 'asc';
     const DESC = 'desc';
 
@@ -42,6 +38,21 @@ class Sortable extends AbstractHelper implements ServiceLocatorAwareInterface
     private $params;
 
     /**
+     * @var Request
+     */
+    private $request;
+
+    /**
+     * @param Request $request
+     * @return Sortable
+     */
+    public function setRequest(Request $request)
+    {
+        $this->request = $request;
+        return $this;
+    }
+
+    /**
      * Méthode d'invocation directe de l'aide de vue.
      *
      * @param string $sort Nom du critère de tri. Ex: "libelle", "nomUsuel".
@@ -49,14 +60,7 @@ class Sortable extends AbstractHelper implements ServiceLocatorAwareInterface
      */
     public function __invoke($sort)
     {
-        /** @var \Zend\View\HelperPluginManager $pluginManager */
-        $pluginManager = $this->getServiceLocator();
-        $serviceManager = $pluginManager->getServiceLocator();
-
-        /** @var Request $request */
-        $request = $serviceManager->get('request');
-
-        $this->targetUrl = clone $request->getUri();
+        $this->targetUrl = clone $this->request->getUri();
 
         $params = $this->targetUrl->getQueryAsArray();
 

@@ -19,14 +19,26 @@ $fcg = $this->formControlGroup();
 ?>
 
 <?php echo $this->form()->openTag($form->prepare()->setAttribute('class', 'etablissement')) ?>
-<?php echo $this->formHidden($form->get('id')) ?>
-<?php echo $fcg($form->get('libelle')) ?>
-<?php echo $fcg($form->get('sigle')) ?>
-<?php echo $fcg($form->get('code')) ?>
-<?php echo $fcg($form->get('domaine')) ?>
-<?php echo $fcg($form->get('estMembre')) ?>
-<?php echo $fcg($form->get('estAssocie')) ?>
 
+<div class="row">
+    <div class="col-md-6">
+        <?php echo $this->formHidden($form->get('id')) ?>
+        <?php echo $fcg($form->get('libelle')) ?>
+        <?php echo $fcg($form->get('sigle')) ?>
+        <?php echo $fcg($form->get('adresse')) ?>
+        <?php echo $fcg($form->get('telephone')) ?>
+        <?php echo $fcg($form->get('fax')) ?>
+        <?php echo $fcg($form->get('email')) ?>
+        <?php echo $fcg($form->get('siteWeb')) ?>
+        <?php echo $fcg($form->get('code')) ?>
+        <?php echo $fcg($form->get('domaine')) ?>
+    </div>
+    <div class="col-md-6">
+        <label class="control-label">Étiquettes associées :</label>
+        <?php echo $fcg($form->get('estMembre')) ?>
+        <?php echo $fcg($form->get('estAssocie')) ?>
+        <?php echo $fcg($form->get('estInscription')) ?>
+        <?php echo $fcg($form->get('estFerme')) ?>
     <div id="logo-div">
         <?php
         /** @var \Zend\Form\Element\File $logoFile */
@@ -76,8 +88,9 @@ $fcg = $this->formControlGroup();
                 </ul>
             </small>
         </div>
-
     </div>
+    </div>
+</div>
 <?php echo $this->formElement($form->get('submit')) ?>
 <?php echo $this->form()->closeTag() ?>
 

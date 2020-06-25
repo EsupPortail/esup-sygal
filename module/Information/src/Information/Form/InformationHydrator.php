@@ -2,9 +2,8 @@
 
 namespace Information\Form;
 
-
 use Information\Entity\Db\Information;
-use Zend\Stdlib\Hydrator\HydratorInterface;
+use Zend\Hydrator\HydratorInterface;
 
 class InformationHydrator implements HydratorInterface
 {
@@ -33,6 +32,7 @@ class InformationHydrator implements HydratorInterface
         $object->setContenu($data['contenu']);
         $object->setPriorite($data['priorite']);
         $object->setVisible( ($data['visible'] == 1)?true:false);
+
         return $object;
     }
 

@@ -4,17 +4,15 @@ namespace Application\Form\Factory;
 
 use Application\Form\CreationUtilisateurFromIndividuForm;
 use Application\Form\Hydrator\CreationUtilisateurFromIndividuHydrator;
-use Zend\Form\FormElementManager;
+use Interop\Container\ContainerInterface;
 
 class CreationUtilisateurFromIndividuFormFactory
 {
-    public function __invoke(FormElementManager $formElementManager)
+    public function __invoke(ContainerInterface $container)
     {
-        $sl = $formElementManager->getServiceLocator();
-
         $form = new CreationUtilisateurFromIndividuForm();
 
-        $hydrator = $sl->get('HydratorManager')->get(CreationUtilisateurFromIndividuHydrator::class);
+        $hydrator = $container->get('HydratorManager')->get(CreationUtilisateurFromIndividuHydrator::class);
         $form->setHydrator($hydrator);
         $form->init();
         

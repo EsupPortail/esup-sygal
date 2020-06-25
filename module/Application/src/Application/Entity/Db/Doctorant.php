@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use LogicException;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
-use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
+use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 
 /**

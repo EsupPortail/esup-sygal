@@ -3,14 +3,14 @@
 namespace Application\Controller\Plugin\Url;
 
 use Application\Service\Url\UrlTheseService;
-use Zend\Mvc\Controller\PluginManager;
+use Interop\Container\ContainerInterface;
 
 class UrlThesePluginFactory
 {
-    public function __invoke(PluginManager $helperPluginManager)
+    public function __invoke(ContainerInterface $container)
     {
         /** @var UrlTheseService $urlService */
-        $urlService = $helperPluginManager->getServiceLocator()->get(UrlTheseService::class);
+        $urlService = $container->get(UrlTheseService::class);
 
         $service = new UrlThesePlugin();
         $service->setUrlTheseService($urlService);

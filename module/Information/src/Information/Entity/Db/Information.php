@@ -37,6 +37,15 @@ class Information implements HistoriqueAwareInterface
         return $this->id;
     }
 
+    /**
+     * Get histoModification
+     *
+     * @return \DateTime
+     */
+    public function getHistoModification()
+    {
+        return $this->histoModification ?: $this->getHistoCreation();
+    }
 
     /**
      * @return string

@@ -4,7 +4,7 @@ namespace Application\Entity\Db;
 
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
-use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
+use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 
 /**
  * Variable
@@ -21,7 +21,6 @@ class Variable implements HistoriqueAwareInterface
     const CODE_ETB_LIB                       = 'ETB_LIB';           // Ex: "Université de Caen Normandie"
     const CODE_ETB_LIB_TIT_RESP              = 'ETB_LIB_TIT_RESP';  // Ex: "Le Président"
     const CODE_ETB_LIB_NOM_RESP              = 'ETB_LIB_NOM_RESP';  // Ex: "Pierre Denise"
-    const CODE_TRIBUNAL_COMPETENT            = 'TRIBUNAL_COMPETENT';  // Ex: "Trinbunal administratif de Caen"
 
     /**
      * @var string

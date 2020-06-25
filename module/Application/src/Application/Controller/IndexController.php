@@ -18,6 +18,19 @@ class IndexController extends AbstractController
     use EtablissementServiceAwareTrait;
     use TheseServiceAwareTrait;
 
+    /**
+     * @var AuthenticationServiceInterface
+     */
+    private $authenticationService;
+
+    /**
+     * @param AuthenticationServiceInterface $authenticationService
+     */
+    public function setAuthenticationService(AuthenticationServiceInterface $authenticationService): void
+    {
+        $this->authenticationService = $authenticationService;
+    }
+
     public function pretty_print(array $array, $level = 0) {
         foreach($array as $key => $value) {
             for ($i = 0 ; $i < $level ; ++$i) print "&nbsp;|&nbsp;";
@@ -35,10 +48,6 @@ class IndexController extends AbstractController
 
     public function indexAction()
     {
-
-//        $config = ($this->getServiceLocator()->get('config'));
-//        $this->pretty_print($config);
-
         /**
          * NB (2019/03/20) : désactiver pour donner l'accès à toutes les thèses pour les rôles doctorant et directeur/co-directeur
          */
@@ -107,7 +116,7 @@ EOS
              */
             if (count($theses) === 0) {
                 /** @var AuthenticationServiceInterface $authenticationService */
-                $authenticationService = $this->getServiceLocator()->get('Zend\\Authentication\\AuthenticationService');
+                $authenticationService = $this->authenticationService;
                 $authenticationService->clearIdentity();
                 $this->flashMessenger()->addErrorMessage(
                     "Aucune thèse n'a été trouvée vous concernant, vous ne pouvez pas utiliser cette application.");

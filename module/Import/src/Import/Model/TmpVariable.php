@@ -52,6 +52,9 @@ class TmpVariable
      */
     private $id;
 
-
+    /**
+     * @var \DateTime
+     */
+    private $sourceInsertDate;
 }
 

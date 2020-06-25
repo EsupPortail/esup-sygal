@@ -4,14 +4,14 @@ namespace Application\Service\Individu;
 
 use Application\Service\Utilisateur\UtilisateurService;
 use Application\SourceCodeStringHelper;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 
 class IndividuServiceFactory
 {
-    public function __invoke(ServiceLocatorInterface $sl)
+    public function __invoke(ContainerInterface $container)
     {
         /** @var UtilisateurService $utilisateurService */
-        $utilisateurService = $sl->get('UtilisateurService');
+        $utilisateurService = $container->get('UtilisateurService');
 
         $service = new IndividuService();
         $service->setUtilisateurService($utilisateurService);
@@ -19,7 +19,7 @@ class IndividuServiceFactory
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper
          */
-        $sourceCodeHelper = $sl->get(SourceCodeStringHelper::class);
+        $sourceCodeHelper = $container->get(SourceCodeStringHelper::class);
         $service->setSourceCodeStringHelper($sourceCodeHelper);
 
         return $service;

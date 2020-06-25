@@ -10,17 +10,17 @@ use Application\Service\These\TheseService;
 use Application\Service\UserContextService;
 use Application\Service\Validation\ValidationService;
 use Application\Service\Variable\VariableService;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 
 class TheseServiceFactory
 {
     /**
      * Create service
      *
-     * @param ServiceLocatorInterface $serviveManager
+     * @param ContainerInterface $container
      * @return TheseService
      */
-    public function __invoke(ServiceLocatorInterface $serviveManager)
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var ValidationService   $validationService
@@ -29,17 +29,17 @@ class TheseServiceFactory
          * @var VariableService     $variableService
          * @var UserContextService  $userContextService
          */
-        $validationService = $serviveManager->get('ValidationService');
-        $notifierService = $serviveManager->get(NotifierService::class);
-        $fichierTheseService = $serviveManager->get('FichierTheseService');
-        $variableService = $serviveManager->get('VariableService');
-        $userContextService = $serviveManager->get('UserContextService');
+        $validationService = $container->get('ValidationService');
+        $notifierService = $container->get(NotifierService::class);
+        $fichierTheseService = $container->get('FichierTheseService');
+        $variableService = $container->get('VariableService');
+        $userContextService = $container->get('UserContextService');
 
         /** @var EtablissementService $etablissementService */
-        $etablissementService = $serviveManager->get(EtablissementService::class);
+        $etablissementService = $container->get(EtablissementService::class);
 
         /** @var FileService $fileService */
-        $fileService = $serviveManager->get(FileService::class);
+        $fileService = $container->get(FileService::class);
 
         $service = new TheseService();
         $service->setValidationService($validationService);

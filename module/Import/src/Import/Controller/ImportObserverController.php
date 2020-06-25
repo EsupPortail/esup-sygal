@@ -3,14 +3,14 @@
 namespace Import\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Entity\Db\ImportObserv;
+use Import\Model\ImportObserv;
 use Application\Entity\Db\These;
 use Application\EventRouterReplacerAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Assert\Assertion;
-use Import\Service\ImportObserv\ImportObservServiceAwareTrait;
-use Import\Service\ImportObservResult\ImportObservResultServiceAwareTrait;
+use Import\Model\Service\ImportObservResultServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
+use UnicaenDbImport\Entity\Db\Service\ImportObserv\ImportObservServiceAwareTrait;
 
 /**
  *
@@ -41,7 +41,6 @@ class ImportObserverController extends AbstractController
      */
     public function processObservedImportResultsAction()
     {
-        $etablissement = $this->params('etablissement');
         $codeImportObserv = $this->params('import-observ');
         $sourceCodeThese = $this->params('source-code');
 
@@ -64,13 +63,13 @@ class ImportObserverController extends AbstractController
         $this->eventRouterReplacer->replaceEventRouter($this->getEvent());
 
         foreach ($codes as $code) {
-            /** @var ImportObserv|null $importObserv */
+            /** @var \Import\Model\ImportObserv|null $importObserv */
             $importObserv = $this->importObservService->getRepository()->findOneBy(['code' => $code]);
             if ($importObserv === null) {
                 throw new RuntimeException("Aucun enregistrement ImportObserv trouvé avec le code '$code'");
             }
 
-            $this->importObservResultService->handleImportObservResults($importObserv, $etablissement, $these);
+            $this->importObservResultService->processImportObservForThese($importObserv, $these);
         }
 
         $this->eventRouterReplacer->restoreEventRouter();

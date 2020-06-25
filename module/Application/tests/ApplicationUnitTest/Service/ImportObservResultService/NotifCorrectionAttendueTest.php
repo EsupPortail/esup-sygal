@@ -2,11 +2,11 @@
 
 namespace ApplicationUnitTest\Service\ImportObservResultService;
 
-use Application\Entity\Db\ImportObservResult;
-use Application\Entity\Db\Repository\ImportObservResultRepository;
+use Application\Entity\Db\ImportObservResultEtab;
+use Import\Model\Repository\ImportObservResultRepository;
 use Application\Entity\Db\These;
 use Application\Rule\NotificationDepotVersionCorrigeeAttenduRule;
-use Import\Service\ImportObservResult\ImportObservResultService;
+use Import\Model\Service\ImportObservResultService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
 use ApplicationUnitTest\Test\Asset\EntityAsset;
@@ -19,7 +19,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
     use MockProviderAwareTrait;
 
     /**
-     * @var \Import\Service\ImportObservResult\ImportObservResultService
+     * @var \Import\Model\Service\ImportObservResultService
      */
     protected $service;
 
@@ -189,7 +189,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
      * Crée un résultat d'observation montrant que le flag "correction attendue" vient de passer à 'facultative' ou 'obligatoire'.
      *
      * @param string $typeCorrectionAttendue 'facultative' ou 'obligatoire'
-     * @return ImportObservResult
+     * @return ImportObservResultEtab
      */
     protected function createImportObservResult($typeCorrectionAttendue)
     {
@@ -197,16 +197,16 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param ImportObservResult $record
-     * @return \Import\Service\ImportObservResult\ImportObservResultService
+     * @param ImportObservResultEtab $record
+     * @return \Import\Model\Service\ImportObservResultService
      */
-    protected function _init_test_pour_correction_attendue(ImportObservResult $record)
+    protected function _init_test_pour_correction_attendue(ImportObservResultEtab $record)
     {
         $em = $this->mp()->entityManagerMock();
         $theseService = $this->createTheseServiceMock();
         $this->notificationServiceMock = $this->createNotifierServiceMock();
 
-        /** @var PHPUnit_Framework_MockObject_MockObject|ImportObservResultRepository $repository */
+        /** @var PHPUnit_Framework_MockObject_MockObject|\Import\Model\Repository\ImportObservResultRepository $repository */
         $repository = $this->mp()->entityRepositoryMock(ImportObservResultRepository::class);
         $repository
             ->method('fetchImportObservResultsForCorrectionFacultative')

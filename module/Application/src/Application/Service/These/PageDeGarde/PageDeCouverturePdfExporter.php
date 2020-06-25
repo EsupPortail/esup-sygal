@@ -31,6 +31,9 @@ class PageDeCouverturePdfExporter extends PdfExporter
         $this->setHeaderScript('empty.phtml');
         $this->setFooterScript('empty.phtml');
         $this->addBodyScript('pagedecouverture.phtml', false, $this->vars);
+        if (isset($this->vars['recto/verso']) AND $this->vars['recto/verso'] === true) {
+            $this->addBodyScript('empty.phtml', true, $this->vars);
+        }
         return PdfExporter::export($filename, $destination, $memoryLimit);
     }
 }

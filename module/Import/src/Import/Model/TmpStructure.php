@@ -52,6 +52,9 @@ class TmpStructure
      */
     private $id;
 
-
+    /**
+     * @var \DateTime
+     */
+    private $sourceInsertDate;
 }
 

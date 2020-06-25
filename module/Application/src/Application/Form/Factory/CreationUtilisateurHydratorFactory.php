@@ -4,16 +4,12 @@
 namespace Application\Form\Factory;
 
 use Application\Form\Hydrator\CreationUtilisateurHydrator;
-use Zend\Stdlib\Hydrator\HydratorPluginManager;
+use Interop\Container\ContainerInterface;
 
 class CreationUtilisateurHydratorFactory
 {
-
-    public function __invoke(HydratorPluginManager $serviceLocator)
+    public function __invoke(ContainerInterface $container)
     {
-        $parentLocator = $serviceLocator->getServiceLocator();
-        //$parentLocator->get('doctrine.entitymanager.orm_default')
-        $hydrator = new CreationUtilisateurHydrator();
-        return $hydrator;
+        return new CreationUtilisateurHydrator();
     }
 }

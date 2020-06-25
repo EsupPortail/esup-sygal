@@ -12,6 +12,7 @@ use Assert\Assertion;
 use Doctrine\ORM\EntityManager;
 use Import\Exception\CallException as ImportCallException;
 use Import\Service\Traits\ImportServiceAwareTrait;
+use Interop\Container\ContainerInterface;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -30,9 +31,22 @@ class ImportController extends AbstractActionController
     use SourceCodeStringHelperAwareTrait;
 
     /**
+     * @var ContainerInterface
+     */
+    private $container;
+
+    /**
      * @var array $config [ 'CODE_ETABLISSEMENT' => [...] ]
      */
     protected $config;
+
+    /**
+     * @param ContainerInterface $container
+     */
+    public function setContainer(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
 
     /**
      * @param array $config
@@ -70,7 +84,7 @@ class ImportController extends AbstractActionController
             $error = $e->getMessage();
         } catch (ImportCallException $e) {
             $version = "Inconnue";
-            $error = $e->getMessage() . " : " . $e->getPrevious()->getMessage();
+            $error = $e->getMessage() . ($e->getPrevious() ? (" : " . $e->getPrevious()->getMessage()) : "");
         }
 
         return [
@@ -248,7 +262,7 @@ class ImportController extends AbstractActionController
         $etablissement = $this->fetchEtablissementByCodeStructure($codeStructure);
 
         /** @var EntityManager $entityManager */
-        $entityManager = $this->getServiceLocator()->get("doctrine.entitymanager.$emName");
+        $entityManager = $this->container->get("doctrine.entitymanager.$emName");
 
         $_deb = microtime(true);
         $this->importService->setEntityManager($entityManager);
@@ -279,7 +293,7 @@ class ImportController extends AbstractActionController
         $this->setLoggerStream('php://output', $verbose);
 
         /** @var EntityManager $entityManager */
-        $entityManager = $this->getServiceLocator()->get("doctrine.entitymanager.$emName");
+        $entityManager = $this->container->get("doctrine.entitymanager.$emName");
 
         $_deb = microtime(true);
         $this->importService->setEntityManager($entityManager);
@@ -305,7 +319,7 @@ class ImportController extends AbstractActionController
         $this->setLoggerStream('php://output', $verbose);
 
         /** @var EntityManager $entityManager */
-        $entityManager = $this->getServiceLocator()->get("doctrine.entitymanager.$emName");
+        $entityManager = $this->container->get("doctrine.entitymanager.$emName");
 
         $_deb = microtime(true);
         $this->importService->setEntityManager($entityManager);

@@ -278,7 +278,7 @@ abstract class StructureConcreteController extends AbstractController
         $structureId = $this->params()->fromRoute("structure");
         $this->supprimerLogoStructure();
 
-        return $this->redirect()->toRoute($this->routeName, [], ['query' => ['selected' => $structureId], "fragment" => $structureId], true);
+        return $this->redirect()->toRoute($this->routeName."/information", [], ['query' => ['selected' => $structureId], "fragment" => $structureId], true);
     }
 
     /**

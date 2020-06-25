@@ -17,6 +17,8 @@
         <field name="datePremiereInsc"          type="date" column="DAT_DEB_THS" nullable="true"/>
         <field name="dateSoutenancePrev"        type="date" column="DAT_PREV_SOU" nullable="true"/>
         <field name="dateSoutenance"            type="date" column="DAT_SOU_THS" nullable="true"/>
+        <field name="dateAbandon"               type="date" column="DAT_ABANDON" nullable="true"/>
+        <field name="dateTransfert"             type="date" column="DAT_TRANSFERT_DEP" nullable="true"/>
 
         <field name="etatThese"                 type="string" column="ETA_THS" length="20" nullable="true"/>
         <field name="libDiscipline"             type="string" column="LIB_INT1_DIS" length="200" nullable="true"/>
@@ -28,5 +30,6 @@
         <field name="temAvenant"                type="string" column="TEM_AVENANT_COTUT" length="1" nullable="true"/>
         <field name="temSoutenanceAutorisee"    type="string" column="TEM_SOU_AUT_THS" length="1" nullable="true"/>
         <field name="sourceCode"                type="string" column="SOURCE_CODE"      length="64"     nullable="true"/>
+        <field name="sourceInsertDate" type="datetime" column="SOURCE_INSERT_DATE"/>
     </entity>
 </doctrine-mapping>

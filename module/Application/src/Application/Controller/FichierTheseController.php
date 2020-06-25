@@ -2,9 +2,9 @@
 
 namespace Application\Controller;
 
+use Application\Command\Exception\TimedOutCommandException;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\FichierThese;
-use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
 use Application\Entity\Db\VersionFichier;
 use Application\EventRouterReplacerAwareTrait;
@@ -20,6 +20,7 @@ use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\View\Helper\Sortable;
+use Zend\View\Renderer\PhpRenderer;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
@@ -41,6 +42,19 @@ class FichierTheseController extends AbstractController
     use IndividuServiceAwareTrait;
     use ValidationServiceAwareTrait;
     use EventRouterReplacerAwareTrait;
+
+    /**
+     * @var PhpRenderer
+     */
+    private $renderer;
+
+    /**
+     * @param PhpRenderer $renderer
+     */
+    public function setRenderer(PhpRenderer $renderer)
+    {
+        $this->renderer = $renderer;
+    }
 
     public function deposesAction()
     {
@@ -395,7 +409,7 @@ class FichierTheseController extends AbstractController
         }
 
         $filename = uniqid() . '.pdf';
-        $renderer = $this->getServiceLocator()->get('view_renderer'); /* @var $renderer \Zend\View\Renderer\PhpRenderer */
+        $renderer = $this->renderer;
         $pdcData = $this->theseService->fetchInformationsPageDeCouverture($these);
         $this->fichierTheseService->generatePageDeCouverture($pdcData, $renderer, $filename);
 
@@ -445,7 +459,11 @@ class FichierTheseController extends AbstractController
         }
 
         $pdcData = $this->theseService->fetchInformationsPageDeCouverture($these);
-        $outputFilePath = $this->fichierTheseService->fusionnerPdcEtThese($these, $pdcData, $versionFichier, $removeFirstPage);
+        try {
+            $outputFilePath = $this->fichierTheseService->fusionnerPdcEtThese($these, $pdcData, $versionFichier, $removeFirstPage);
+        } catch (TimedOutCommandException $e) {
+            // n'arrive jamais car aucun timeout n'a été spécifié lors de l'appel à fusionnerPdcEtThese()
+        }
 
         $this->eventRouterReplacer->replaceEventRouter($this->getEvent());
 

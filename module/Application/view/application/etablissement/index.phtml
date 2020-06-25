@@ -72,12 +72,18 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
                 <td>
                     <a href="<?php echo $this->url('etablissement/information', ['structure' => $etablissement->getStructure()->getId()], [], true); ?>">
                         <?php echo $etablissement->getLibelle(); ?>
+                        <?php if ($etablissement->getStructure()->isFerme()) : ?>
+                            &nbsp;<span class="label" style="background-color: darkred">Structure fermée</span>
+                        <?php endif; ?>
                     </a>
                     <?php if ($etablissement->estMembre()): ?>
                         <span class="label label-primary">Membre</span>
                     <?php endif ?>
                     <?php if ($etablissement->estAssocie()): ?>
                         <span class="label label-info">Associé</span>
+                    <?php endif ?>
+                    <?php if ($etablissement->estInscription()): ?>
+                        <span class="label label-warning">Inscription</span>
                     <?php endif ?>
                 </td>
                 <td>

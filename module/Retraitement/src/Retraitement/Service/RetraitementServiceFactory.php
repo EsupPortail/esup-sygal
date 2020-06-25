@@ -2,32 +2,32 @@
 
 namespace Retraitement\Service;
 
-use Application\Service\FichierThese\FichierTheseService;
 use Application\Command\CommandInterface;
+use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Exception\InvalidArgumentException;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
-class RetraitementServiceFactory implements FactoryInterface
+class RetraitementServiceFactory
 {
     /**
      * Create service
      *
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param ContainerInterface $container
      * @return RetraitementService
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container)
     {
-        $command = $this->createCommand($serviceLocator);
+        $command = $this->createCommand($container);
 
-        $service = new RetraitementService($command);
-
-        return $service;
+        return new RetraitementService($command);
     }
 
-    private function createCommand(ServiceLocatorInterface $serviceLocator)
+    /**
+     * @param ContainerInterface $container
+     * @return CommandInterface
+     */
+    private function createCommand(ContainerInterface $container)
     {
-        $config = $serviceLocator->get('config');
+        $config = $container->get('config');
 
         if (!isset($config['sygal']['retraitement']['command']['class'])) {
             throw new InvalidArgumentException("Option de config 'sygal.retraitement.command.class' introuvable");
@@ -37,7 +37,7 @@ class RetraitementServiceFactory implements FactoryInterface
             throw new InvalidArgumentException("La classe spécifiée dans l'option de 'config sygal.retraitement.command.class' n'existe pas");
         }
 
-        /** @var \Application\Filter\Command\\Application\Command\CommandInterface $command */
+        /** @var CommandInterface $command */
         $command = new $commandClass;
 
         if (isset($config['sygal']['retraitement']['command']['options'])) {

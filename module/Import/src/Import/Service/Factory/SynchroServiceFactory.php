@@ -4,7 +4,7 @@ namespace Import\Service\Factory;
 
 use Doctrine\ORM\EntityManager;
 use Import\Service\SynchroService;
-use Zend\ServiceManager\ServiceLocatorInterface as ContainerInterface;
+use Interop\Container\ContainerInterface;
 
 class SynchroServiceFactory
 {

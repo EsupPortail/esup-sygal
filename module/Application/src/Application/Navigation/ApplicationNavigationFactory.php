@@ -3,12 +3,7 @@
 namespace Application\Navigation;
 
 use Application\Entity\Db\These;
-use Zend\Http\Request;
-use Zend\Mvc\Router\RouteStackInterface as Router;
-use Zend\Mvc\Router\RouteMatch;
-use Zend\Navigation\Service\DefaultNavigationFactory;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
+use Zend\Router\RouteMatch;
 
 /**
  * Factory de navigation prenant en charge :

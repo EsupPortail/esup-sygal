@@ -10,14 +10,16 @@ body {
 }
 
 body.development .navbar-inverse,
-body.test .navbar-inverse {
+body.test        .navbar-inverse,
+body.production  .navbar-inverse {
   background-image: none; //linear-gradient(to bottom, #660000 0px, #870a0a 100%);
   background-color: $navbarBackgroundColor;
   border-color: $navbarBackgroundColor;
 }
 
 body.development .navbar-inverse .navbar-nav .active a,
-body.test .navbar-inverse .navbar-nav .active a {
+body.test        .navbar-inverse .navbar-nav .active a,
+body.production  .navbar-inverse .navbar-nav .active a {
   background-image: none; //linear-gradient(to bottom, #d22828 0px, #a41212 100%);
   background-color: $navbarBackgroundColorActive;
   border-color: $navbarBackgroundColorActive
@@ -71,7 +73,8 @@ h1.app-name {
 }
 
 ul.menu-secondaire,
-ul.menu-information {
+ul.menu-information,
+ul.menu-actualites {
   background: none;
   border-radius: 18px;
   padding: 2px;
@@ -80,4 +83,8 @@ ul.menu-information {
 ul.menu-secondaire li a,
 ul.menu-information li a {
   padding: 7px 10px;
+}
+
+ul.menu-actualites {
+  box-shadow: 1px 1px 6px inset;
 }

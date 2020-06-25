@@ -1,5 +1,6 @@
 <?php
 
+use Application\Entity\Db\Diffusion;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
 use Application\Provider\Privilege\ThesePrivileges;
@@ -8,6 +9,7 @@ use Application\View\Renderer\PhpRenderer;
 /**
  * @var                 $this PhpRenderer
  * @var These           $these
+ * @var Diffusion       $diffusion
  * @var bool            $estDoctorant
  * @var string          $modifierUrl
  * @var Validation|null $validation
@@ -19,21 +21,25 @@ $canEdit = $this->isAllowed($these, ThesePrivileges::THESE_SAISIE_RDV_BU);
 $rdvBu = $these->getRdvBu();
 ?>
 
-<?php $this->headTitle("Rendez-vous BU")->prepend($these->getDoctorant()->getNomUsuel()) ?>
+<?php $this->headTitle("Rendez-vous avec la bibliothèque universitaire")->prepend($these->getDoctorant()->getNomUsuel()) ?>
 
-<h1 class="page-header">Rendez-vous BU
+<h1 class="page-header">Rendez-vous avec la bibliothèque universitaire
     <small><?php echo $this->partial('application/these/partial/titre') ?></small>
 </h1>
 
 <div class="panel panel-info box">
     <div class="panel-heading">
-        <h2 class="first">Téléchargement de la version imprimable de votre thèse </h2>
+        <h2 class="first">Téléchargement de la version imprimable de votre thèse</h2>
     </div>
     <div class="panel-body">
 
         <p>
-        Avant de vous rendre au rendez-vous à la BU, vous devez imprimer un exemplaire papier de votre thèse.<br/>
-        Pour obtenir la version imprimable de votre thèse (avec page de couverture), veuillez cliquer sur le bouton ci-dessous.
+            <?php if ($diffusion->isRemiseExemplairePapierRequise()): ?>
+                Suite à votre choix de mise en ligne, vous devez imprimer un exemplaire papier de votre thèse et le rapporter lors du Rendez-vous à la bibliothèque universitaire.
+                Pour obtenir la version imprimable de votre thèse (avec page de couverture), veuillez cliquer sur le bouton ci-dessous.
+            <?php else: ?>
+                Si vous souhaitez obtenir une version complète de votre thèse (avec page de couverture), cliquez sur le bouton ci-dessous.
+            <?php endif ?>
         </p>
 
 <!--        <div class="pull-right">-->
@@ -72,7 +78,7 @@ $rdvBu = $these->getRdvBu();
                 <a href="<?php echo $modifierUrl ?>"
                    class="btn btn-primary text-center ajax-modal"
                    data-event="event-rdv-bu-modified"><span
-                        class="glyphicon glyphicon-pencil"></span> Compléter les informations nécessaires à la prise de rendez-vous avec la BU</a>
+                        class="glyphicon glyphicon-pencil"></span> Compléter les informations nécessaires à la prise de rendez-vous avec la bibliothèque universitaire</a>
             <?php endif ?>
 
         <?php endif ?>
@@ -81,13 +87,13 @@ $rdvBu = $these->getRdvBu();
 
 <div class="panel panel-info box">
     <div class="panel-heading">
-        <h2 class="first">BU</h2>
+        <h2 class="first">Bibliothèque universitaire</h2>
     </div>
     <div class="panel-body">
         <?php if ($rdvBu): ?>
             <?php echo $this->partial('application/these/partial/rdv-bu') ?>
         <?php else: ?>
-            <p>La BU n'a pas encore completé les informations concernant votre rendez-vous avec elle.</p>
+            <p>La bibliothèque universitaire n'a pas encore completé les informations concernant votre rendez-vous avec elle.</p>
         <?php endif ?>
     </div>
 </div>

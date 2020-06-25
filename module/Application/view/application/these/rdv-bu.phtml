@@ -1,17 +1,19 @@
 <?php
 
+use Application\Controller\TheseController;
+use Application\Entity\Db\Diffusion;
+use Application\Entity\Db\Repository\FichierTheseRepository;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
-use Application\Entity\Db\WfEtape;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\Provider\Privilege\ValidationPrivileges;
 use Application\View\Renderer\PhpRenderer;
 use UnicaenApp\Service\MessageCollector;
-use Application\Entity\Db\Repository\FichierTheseRepository;
 
 /**
  * @var PhpRenderer            $this
  * @var These                  $these
+ * @var Diffusion              $diffusion
  * @var bool                   $estDoctorant
  * @var string                 $modifierUrl
  * @var string                 $validerUrl
@@ -21,6 +23,8 @@ use Application\Entity\Db\Repository\FichierTheseRepository;
  * @var string                 $nextStepUrl
  * @var FichierTheseRepository $fichierRepository
  * @var boolean                $asynchronous
+ *
+ * @see TheseController::detailRdvBuAction()
  */
 
 $canEdit = $this->isAllowed($these, ThesePrivileges::THESE_SAISIE_RDV_BU);
@@ -30,22 +34,26 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::THESE_VALIDATION
 $rdvBu = $these->getRdvBu();
 ?>
 
-<?php $this->headTitle("Rendez-vous BU")->prepend($these->getDoctorant()->getNomUsuel()) ?>
+<?php $this->headTitle("Rendez-vous avec la bibliothèque universitaire")->prepend($these->getDoctorant()->getNomUsuel()) ?>
 
-<h1 class="page-header">Rendez-vous BU
+<h1 class="page-header">Rendez-vous avec la bibliothèque universitaire
     <small><?php echo $this->partial('application/these/partial/titre') ?></small>
 </h1>
 
 <div class="panel panel-info box">
     <div class="panel-heading">
-        <h2 class="first">Téléchargement de la thèse avec page de couverture</h2>
+        <h2 class="first">Téléchargement de la version imprimable de votre thèse</h2>
     </div>
     <div class="panel-body">
         <p>
-            Avant que la BU ne prenne contact avec vous, vous devez télécharger la thèse complète, c'est à dire le corps du mémoire auquel est ajoutée la page de couverture générée automatiquement par l'application.
-            Une fois la thèse complète téléchargée, assurez-vous que toutes les informations sur la page de couverture sont présentes et que la fusion n'a pas endommagé le mémoire.
+        <?php if ($diffusion->isRemiseExemplairePapierRequise()): ?>
+            Suite à votre choix de mise en ligne, vous devez imprimer un exemplaire papier de votre thèse et le rapporter lors du Rendez-vous à la BU.
+            Pour obtenir la version imprimable de votre thèse (avec page de couverture), veuillez cliquer sur le bouton ci-dessous.
+        <?php else: ?>
+            Si vous souhaitez obtenir une version complète de votre thèse (avec page de couverture), cliquez sur le bouton ci-dessous.
+        <?php endif ?>
         </p>
-        <div class="checkbox">
+        <div class="checkbox checkbox-sm">
             <label for="removal">
                 <input type="checkbox" id="removal"/>
                 <span class="checkbox-label">La 1ère page du corps du mémoire est une page de couverture fournie par le doctorant et je veux retirer cette 1ère page.</span>
@@ -83,7 +91,7 @@ alert("Le traitement peut prendre plusieurs minutes. \n\n" +
 
 <div class="panel panel-info box">
     <div class="panel-heading">
-        <h2 class="first">Rendez-vous BU</h2>
+        <h2 class="first">Rendez-vous avec la bibliothèque universitaire</h2>
     </div>
     <div class="panel-body">
         <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNamespace('RdvBu/*'); ?>
@@ -99,7 +107,7 @@ alert("Le traitement peut prendre plusieurs minutes. \n\n" +
                     </dl>
                 </div>
                 <div class="col-md-8">
-                    <h2 class="first">BU</h2>
+                    <h2 class="first">Bibliothèque universitaire</h2>
                     <?php echo $this->partial('application/these/partial/rdv-bu') ?>
                 </div>
             </div>
@@ -109,7 +117,7 @@ alert("Le traitement peut prendre plusieurs minutes. \n\n" +
                    data-event="event-rdv-bu-modified"><span class="glyphicon glyphicon-pencil"></span> Modifier</a>
             <?php endif ?>
         <?php else: ?>
-            <p>Vous n'avez pas encore completé les informations concernant le rendez-vous à la BU.</p>
+            <p>Vous n'avez pas encore completé les informations concernant le rendez-vous à la bibliothèque universitaire.</p>
             <?php if ($canEdit): ?>
                 <a href="<?php echo $modifierUrl ?>"
                    class="btn btn-primary ajax-modal"

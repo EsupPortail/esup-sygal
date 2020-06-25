@@ -9,7 +9,7 @@ use Application\Service\Source\SourceService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use Application\SourceCodeStringHelper;
 use Import\Service\SynchroService;
-use Zend\ServiceManager\ServiceLocatorInterface as ContainerInterface;
+use Interop\Container\ContainerInterface;
 
 /**
  * @author Unicaen

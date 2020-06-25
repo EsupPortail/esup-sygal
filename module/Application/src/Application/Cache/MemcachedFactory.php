@@ -2,12 +2,11 @@
 
 namespace Application\Cache;
 
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 
-class MemcachedFactory implements FactoryInterface
+class MemcachedFactory
 {
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container)
     {
         $memcached = new \Memcached();
         $memcached->addServer('memcache_host', 11211);

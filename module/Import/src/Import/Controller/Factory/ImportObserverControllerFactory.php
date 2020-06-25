@@ -5,64 +5,52 @@ namespace Import\Controller\Factory;
 use Application\EventRouterReplacer;
 use Application\Service\These\TheseService;
 use Import\Controller\ImportObserverController;
-use Import\Service\ImportObserv\ImportObservService;
-use Import\Service\ImportObservResult\ImportObservResultService;
-use Zend\Mvc\Controller\ControllerManager;
-use Zend\Mvc\Router\Http\TreeRouteStack;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Import\Model\Service\ImportObservResultService;
+use Interop\Container\ContainerInterface;
+use UnicaenDbImport\Entity\Db\Service\ImportObserv\ImportObservService;
+use Zend\Router\Http\TreeRouteStack;
 
 class ImportObserverControllerFactory
 {
     /**
      * Create service
      *
-     * @param ControllerManager $controllerManager
-     * @return \Import\Controller\ImportObserverController
+     * @param ContainerInterface $container
+     * @return ImportObserverController
      */
-    public function __invoke(ControllerManager $controllerManager)
+    public function __invoke(ContainerInterface $container)
     {
-        $sl = $controllerManager->getServiceLocator();
-
         /** @var TreeRouteStack $httpRouter */
-        $httpRouter = $sl->get('HttpRouter');
-        $cliConfig = $this->getCliConfig($sl);
+        $httpRouter = $container->get('HttpRouter');
+        $cliConfig = $this->getCliConfig($container);
 
         $routerReplacer = new EventRouterReplacer($httpRouter, $cliConfig);
 
         /** @var ImportObservService $importObservService */
-        $importObservService = $sl->get('ImportObservService');
+        $importObservService = $container->get(ImportObservService::class);
+
+        /** @var \Import\Model\Service\ImportObservResultService $importObservResultEtabService */
+        $importObservResultEtabService = $container->get(ImportObservResultService::class);
 
         /** @var TheseService $theseService */
-        $theseService = $sl->get('TheseService');
+        $theseService = $container->get('TheseService');
 
         $controller = new ImportObserverController();
-        $controller->setImportObservService($importObservService);
         $controller->setEventRouterReplacer($routerReplacer);
-        $controller->setImportObservResultService($this->getImportObservResultService($sl));
+        $controller->setImportObservService($importObservService);
+        $controller->setImportObservResultService($importObservResultEtabService);
         $controller->setTheseService($theseService);
 
         return $controller;
     }
 
     /**
-     * @param ServiceLocatorInterface $sl
-     * @return ImportObservResultService
-     */
-    private function getImportObservResultService(ServiceLocatorInterface $sl)
-    {
-        /** @var \Import\Service\ImportObservResult\ImportObservResultService $service */
-        $service = $sl->get('ImportObservResultService');
-
-        return $service;
-    }
-
-    /**
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param ContainerInterface $container
      * @return array
      */
-    private function getCliConfig(ServiceLocatorInterface $serviceLocator)
+    private function getCliConfig(ContainerInterface $container)
     {
-        $config = $serviceLocator->get('Config');
+        $config = $container->get('Config');
 
         return [
             'domain' => isset($config['cli_config']['domain']) ? $config['cli_config']['domain'] : null,

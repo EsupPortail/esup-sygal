@@ -2,6 +2,7 @@
 
 namespace Application\Command;
 
+use Application\Command\Exception\TimedOutCommandException;
 use UnicaenApp\Exception\RuntimeException;
 
 interface CommandInterface
@@ -37,6 +38,7 @@ interface CommandInterface
 
     /**
      * @return string
+     * @throws TimedOutCommandException Si un timeout d'exécution a été défini et qu'il a expiré
      */
     public function execute();
 

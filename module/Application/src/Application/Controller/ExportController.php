@@ -6,10 +6,12 @@ use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Financement;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
+use Application\Entity\Db\VersionFichier;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\These\TheseRechercheServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
+use UnicaenApp\Exception\LogicException;
 use UnicaenApp\View\Model\CsvModel;
 
 class ExportController extends AbstractController
@@ -71,6 +73,20 @@ class ExportController extends AbstractController
                 foreach ($financements as $financement) $origines[] = $financement->getOrigineFinancement()->getLibelleLong();
                 return implode(",", $origines);
             },
+            'Complément sur les financements'                            => function (These $these) {
+                $financements = $these->getFinancements();
+                $origines = [];
+                /** @var Financement $financement */
+                foreach ($financements as $financement) $origines[] = ($financement->getComplementFinancement())?:" - ";
+                return implode(",", $origines);
+            },
+            'Type du financement'                            => function (These $these) {
+                $financements = $these->getFinancements();
+                $types = [];
+                /** @var Financement $financement */
+                foreach ($financements as $financement) $types[] = $financement->getLibelleTypeFinancement();
+                return implode(",", array_filter($types));
+            },
             //Domaine
             'Domaines scientifiques'                            => function (These $these) {
                 $domaines = ($these->getUniteRecherche())?($these->getUniteRecherche())->getDomaines():[];
@@ -79,13 +95,18 @@ class ExportController extends AbstractController
                 foreach ($domaines as $domaine) $liste[] = $domaine->getLibelle();
                 return implode(",", $liste);
             },
+
             //Dates
             'Date de première inscription'          => function (These $these) { return $these->getDatePremiereInscription(); },
+            "Date d'abandon"                        => function (These $these) { return $these->getDateAbandon(); },
+            'Date de transfert'                     => function (These $these) { return $these->getDateTransfert(); },
             'Date de prévisionnel de soutenance'    => function (These $these) { return $these->getDatePrevisionSoutenance(); },
             'Date de soutenance'                    => function (These $these) { return $these->getDateSoutenance(); },
             'Date de fin de confientialité'         => function (These $these) { return $these->getDateFinConfidentialite(); },
-            'Date de dépôt version initiale'        => function (These $these) { $file = $these->hasVersionInitiale(); if ($file) return $file->getFichier()->getHistoCreation()->format('d/m/Y'); },
-            'Date de dépôt version corigée'         => function (These $these) { $file = $these->hasVersionCorrigee(); if ($file) return $file->getFichier()->getHistoCreation()->format('d/m/Y'); },
+            'Date de dépôt version initiale'        => function (These $these) { $file = $these->hasVersionInitiale(); if ($file) return $file->getFichier()->getHistoCreation()->format('d/m/Y'); return "";},
+            'Date de dépôt version corigée'         => function (These $these) { $file = $these->hasVersionCorrigee(); if ($file) return $file->getFichier()->getHistoCreation()->format('d/m/Y'); return "";},
+            'Durée en mois de la thèse'             => function (These $these) { try { return number_format($these->getDureeThese(), 2, ',', ''); } catch (LogicException $e) { return ""; } },
+
             //Flags
             'Etat de la thèse'                      => function (These $these) { return $these->getEtatTheseToString();},
             'Autorisation à soutenir'               => function (These $these) { return $these->getSoutenanceAutorisee();},
@@ -95,6 +116,25 @@ class ExportController extends AbstractController
             'Thèse format PDF'                      => function (These $these) { if ($these->hasMemoire())  return 'O'; else return 'N'; },
             'Annexe non PDF'                        => function (These $these) { if ($these->hasAnnexe())   return 'O'; else return 'N'; },
 
+            //Embargo et refus de diffusion
+            'Embargo'                               => function (These $these) {
+                $versionCorrigee = $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG_CORR);
+                $diffusionCorrigee = $these->getDiffusionForVersion($versionCorrigee);
+                if ($diffusionCorrigee !== null) return $diffusionCorrigee->getAutorisEmbargoDuree();
+
+                $versionInitiale = $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
+                $diffusionInitiale = $these->getDiffusionForVersion($versionInitiale);
+                if ($diffusionInitiale !== null) return $diffusionInitiale->getAutorisEmbargoDuree();
+            },
+            'Refus de diffusion' => function (These $these) {
+                $versionCorrigee = $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG_CORR);
+                $diffusionCorrigee = $these->getDiffusionForVersion($versionCorrigee);
+                if ($diffusionCorrigee !== null) return $diffusionCorrigee->getAutorisMotif();
+
+                $versionInitiale = $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
+                $diffusionInitiale = $these->getDiffusionForVersion($versionInitiale);
+                if ($diffusionInitiale !== null) return $diffusionInitiale->getAutorisMotif();
+            },
         ];
 
         $queryParams = $this->params()->fromQuery();

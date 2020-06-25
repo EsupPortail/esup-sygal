@@ -12,16 +12,16 @@ use UnicaenApp\Exception\RuntimeException;
 class RoleRepository extends DefaultEntityRepository
 {
 
-    /**
-     * @param int $id
-     * @return Role
-     */
-    public function find($id) {
-
-        /** @var Role $role */
-        $role = $this->findOneBy(["id" => $id]);
-        return $role;
-    }
+//    /**
+//     * @param int $id
+//     * @return Role
+//     */
+//    public function find($id) {
+//
+//        /** @var Role $role */
+//        $role = $this->findOneBy(["id" => $id]);
+//        return $role;
+//    }
 
     /**
      * @param string $roleCode

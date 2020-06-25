@@ -9,9 +9,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
-use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
+use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 
 /**
@@ -60,8 +61,8 @@ class These implements HistoriqueAwareInterface, ResourceInterface
         self::CORRECTION_AUTORISEE_FACULTATIVE => "Facultatives",
     ];
 
-    const CORRECTION_OBLIGATOIRE_INTERVAL = 'P2M';
-    const CORRECTION_FACULTATIVE_INTERVAL = 'P3M';
+    const CORRECTION_OBLIGATOIRE_INTERVAL = 'P3M';
+    const CORRECTION_FACULTATIVE_INTERVAL = 'P2M';
 
     const CORRECTION_AUTORISEE_FORCAGE_NON = null; // pas de forçage
     const CORRECTION_AUTORISEE_FORCAGE_AUCUNE = 'aucune'; // aucune correction autorisée
@@ -124,6 +125,16 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      * @var DateTime
      */
     protected $dateFinConfidentialite;
+
+    /**
+     * @var DateTime|null
+     */
+    protected $dateAbandon;
+
+    /**
+     * @var DateTime|null
+     */
+    protected $dateTransfert;
 
     /**
      * @var string
@@ -264,6 +275,16 @@ class These implements HistoriqueAwareInterface, ResourceInterface
         $this->rdvBus = new ArrayCollection();
         $this->anneesUnivInscription = new ArrayCollection();
         $this->anneesUniv1ereInscription = new ArrayCollection();
+    }
+
+    /**
+     * Get histoModification
+     *
+     * @return \DateTime
+     */
+    public function getHistoModification()
+    {
+        return $this->histoModification ?: $this->getHistoCreation();
     }
 
     /**
@@ -447,6 +468,60 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function setDateFinConfidentialite(DateTime $dateFinConfidentialite = null)
     {
         $this->dateFinConfidentialite = $dateFinConfidentialite;
+
+        return $this;
+    }
+
+    /**
+     * @return DateTime|null
+     */
+    public function getDateAbandon()
+    {
+        return $this->dateAbandon;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDateAbandonToString(): string
+    {
+        return Util::formattedDate($this->getDateAbandon());
+    }
+
+    /**
+     * @param DateTime|null $dateAbandon
+     * @return These
+     */
+    public function setDateAbandon(DateTime $dateAbandon = null): These
+    {
+        $this->dateAbandon = $dateAbandon;
+
+        return $this;
+    }
+
+    /**
+     * @return DateTime|null
+     */
+    public function getDateTransfert()
+    {
+        return $this->dateTransfert;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDateTransfertToString(): string
+    {
+        return Util::formattedDate($this->getDateTransfert());
+    }
+
+    /**
+     * @param DateTime|null $dateTransfert
+     * @return These
+     */
+    public function setDateTransfert(DateTime $dateTransfert = null): These
+    {
+        $this->dateTransfert = $dateTransfert;
 
         return $this;
     }
@@ -1127,6 +1202,23 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function getDatePremiereInscription()
     {
         return $this->datePremiereInscription;
+    }
+
+    /**
+     * Calcule la durée de la thèse en mois.
+     *
+     * @return float
+     */
+    public function getDureeThese()
+    {
+        if (! $this->getDateSoutenance()) {
+            throw new LogicException("Aucune date de soutenance renseignée");
+        }
+        if (! $this->getDatePremiereInscription()) {
+            throw new LogicException("Aucune date de première inscription renseignée");
+        }
+
+        return $this->getDateSoutenance()->diff($this->getDatePremiereInscription())->format('%a') / 30.5;
     }
 
     /**

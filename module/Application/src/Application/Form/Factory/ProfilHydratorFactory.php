@@ -4,14 +4,14 @@ namespace Application\Form\Factory;
 
 use Application\Form\Hydrator\ProfilHydrator;
 use Application\Service\Structure\StructureService;
-use Zend\Stdlib\Hydrator\HydratorPluginManager;
+use Interop\Container\ContainerInterface;
 
 class ProfilHydratorFactory {
 
-    public function __invoke (HydratorPluginManager $serviceLocator)
+    public function __invoke(ContainerInterface $container)
     {
         /** @var StructureService $structureService */
-        $structureService = $serviceLocator->getServiceLocator()->get(StructureService::class);
+        $structureService = $container->get(StructureService::class);
 
         /** @var ProfilHydrator $hydrator */
         $hydrator = new ProfilHydrator();

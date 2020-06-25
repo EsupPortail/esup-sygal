@@ -5,27 +5,26 @@ namespace Application\Service\Fichier;
 use Application\Service\File\FileService;
 use Application\Service\NatureFichier\NatureFichierService;
 use Application\Service\VersionFichier\VersionFichierService;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 
-class FichierServiceFactory implements FactoryInterface
+class FichierServiceFactory
 {
     /**
      * Create service
      *
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param ContainerInterface $container
      * @return FichierService
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var FileService $fileService
          * @var VersionFichierService $versionFichierService
          * @var NatureFichierService $natureFichierService
          */
-        $fileService = $serviceLocator->get(FileService::class);
-        $versionFichierService = $serviceLocator->get('VersionFichierService');
-        $natureFichierService = $serviceLocator->get('NatureFichierService');
+        $fileService = $container->get(FileService::class);
+        $versionFichierService = $container->get('VersionFichierService');
+        $natureFichierService = $container->get('NatureFichierService');
 
         $service = new FichierService();
 

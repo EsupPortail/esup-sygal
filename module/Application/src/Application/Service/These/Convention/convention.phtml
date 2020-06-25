@@ -1,16 +1,21 @@
 <?php
 
+use Application\Entity\Db\Diffusion;
+use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\These;
+use Application\Service\Message\DiffusionMessages;
 use Application\View\Renderer\PhpRenderer;
 
 /**
  * @var PhpRenderer $this
  * @var These       $these
+ * @var Diffusion   $diffusion
  * @var string      $libEtablissement
  * @var string      $libEtablissementA
  * @var string      $libEtablissementLe
- * @var string      $libEtablissementDe
- * @var string      $libTribunal
+ *
+ * @var Etablissement $etablissement
+ * @var string $logo
  */
 ?>
 
@@ -30,7 +35,8 @@ use Application\View\Renderer\PhpRenderer;
 <div style="text-align: center; margin-bottom: 30px;">
     <h1>CONVENTION DE MISE EN LIGNE<br>D'UNE THÈSE SOUTENUE</h1>
 
-    <img src="var:logo" height="100px" alt="Logo de Normandie Université" />
+    <img src="<?php echo $logo; ?>" height="100px" alt="Logo de Normandie Université" />
+<!--    <img src="var:logo" height="100px" alt="Logo de Normandie Université" />-->
 </div>
 
 <p>
@@ -75,12 +81,7 @@ use Application\View\Renderer\PhpRenderer;
 
 <div>
     <p>
-        La thèse est disponible en version imprimée au service de documentation <?php echo $libEtablissementDe ?> et
-        en PDF pour l'esemble de la communauté universitaire (en intranet ou dans le cadre du Prêt Entre Bibliothèques).
-    </p>
-    <p>
-        La loi applicable à cette présente convention est la loi française. Le tribunal compétent pour juger de tout
-        contentieux lié au présent contrat est <?php echo $libTribunal ?>.
+        <?php echo $this->message()->render(DiffusionMessages::AUTORIS_MISE_EN_LIGNE_LAIUS, [], $diffusion) ?>
     </p>
 </div>
 

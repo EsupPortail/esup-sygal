@@ -6,10 +6,11 @@ use Application\Controller\Plugin\Url\UrlThesePlugin;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Doctrine\ORM\EntityManager;
-use Import\Service\ImportObserv\ImportObservServiceAwareTrait;
 use Import\Service\ImportService;
 use Import\Service\SchemaService;
 use Import\Service\Traits\SynchroServiceAwareTrait;
+use Interop\Container\ContainerInterface;
+use UnicaenDbImport\Entity\Db\Service\ImportObserv\ImportObservServiceAwareTrait;
 use Zend\View\Model\ViewModel;
 
 /**
@@ -25,6 +26,19 @@ class SynchroController extends \UnicaenImport\Controller\ImportController
     use SynchroServiceAwareTrait;
 
     const NOTIF_UPDATE_THESE_RESULTAT = 'UPDATE--THESE--RESULTAT'; // format 'UPDATE--{NOM_DE_TABLE}--{NOM_DE_COLONNE}'
+
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+
+    /**
+     * @param ContainerInterface $container
+     */
+    public function setContainer(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
 
     public function indexAction()
     {
@@ -50,7 +64,7 @@ class SynchroController extends \UnicaenImport\Controller\ImportController
         $emName = $this->params('em', 'orm_default');
 
         /** @var EntityManager $entityManager */
-        $entityManager = $this->getServiceLocator()->get("doctrine.entitymanager.$emName");
+        $entityManager = $this->container->get("doctrine.entitymanager.$emName");
 
         $_deb = microtime(true);
         $this->synchroService->setEntityManager($entityManager);
@@ -74,7 +88,7 @@ class SynchroController extends \UnicaenImport\Controller\ImportController
         $emName = $this->params('em', 'orm_default');
 
         /** @var EntityManager $entityManager */
-        $entityManager = $this->getServiceLocator()->get("doctrine.entitymanager.$emName");
+        $entityManager = $this->container->get("doctrine.entitymanager.$emName");
 
         $services = ImportService::SERVICES;
         foreach ($services as $service) {

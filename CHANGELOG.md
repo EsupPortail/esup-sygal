@@ -1,10 +1,73 @@
 Journal des modifications
 =========================
 
-1.4.0 (??/01/2020)
+1.4.6 (29/05/2020)
 ------------------
 
+- Ajout du drapeau "établissement d'inscription" et ajout des visualisations et interfaces pour gérer ce nouveau drapeau.
+- Restriction du filtre des établissements sur la partie annuaire aux établissements d'inscription.
+- Ajout dans structures des champs adresse, tel, fax, site web, email qui sont utilisables pour l'édition de document.
+- Utilisation des nouveaux champs dans la génération de la convention de MEL (requiert unicaen/app v1.3.19).
+- Amélioration de la recherche textuelle de thèses : ajout d'une liste déroulante permettant de sélectionner 
+  précisément sur quels critères porte la recherche : "Titre de la thèse", "Numéro étudiant de l'auteur", 
+  "Nom de l'auteur", "Prénom de l'auteur", "Nom du directeur ou co-directeur de thèse", 
+  "Code national de l'école doctorale concernée (ex: 181)", "Unité de recherche concernée (ex: umr6211)".
+- Correction d'un dysfonctionnement de la recherche textuelle sur les critères "numéro étudiant", "unité de recherche"
+  et "école doctorale".
+
+
+1.4.5 (08/04/2020)
+------------------
+
+- Correction du dysfonctionnement des notifications envoyées lors de certains événements sur les données importées 
+  (résultat d'une thèse passant à admis, corrections facultatives ou obligatoires attendues).
+
+
+1.4.4 (03/04/2020)
+------------------
+
+- Correction des 2 délais à respecter pour le second dépôt qui étaient intervertis par erreur 
+  (nouvelles valeurs : 2 mois en cas de corrections facultatives attendues, 3 mois en cas de corrections obligatoires).
+
+
+1.4.3 (11/03/2020)
+------------------
+
+- Import des types de financement de thèse.
+
+
+1.4.2 (14/02/2020)
+------------------
+
+- Extraction CSV des thèses : nouvelles colonnes concernant l'embargo et refus de diffusion ; 
+  virgule plutôt que point dans la durée de la thèse.
+- Page d'accueil : affichage des actualités issues du flux RSS fourni par la COMUE.
+- Filtrage de la liste des thèses : correction de l'affichage du filtre "Unité de recherche".
+- Corrections de textes sur la page RDV BU.
+
+
+1.4.1 (24/01/2020)
+------------------
+
+- Les dates d'insertion des données dans les tables `SYGAL_*` de chaque établissement sont désormais retournées 
+  par le web service ; cela permettra côté SyGAL de détecter un problème dans le CRONage du script de remplissage 
+  de ces tables.
+
+
+1.4.0 (23/01/2020)
+------------------
+
+- La remise d'un exemplaire papier de la thèse n'est requise que si la diffusion est acceptée avec embargo ou refusée.
+- Inversion des étapes Diffusion et Attestations.
+- Modification des textes liés à l'autorisation de diffusion dans le formulaire et dans la convention PDF générée.
+- Convention de MEL : suppression du petit logo dans l'entête puisqu'il y en a déjà un sous le titre
+- Nouvelle charte de diffusion téléchargeable.
+- Ajout du flag "fermé" pour les structures et utilisations dans la recherche de thèses.
+- Ajout d'un champ "Id HAL" dans le formulaire d'autorisation de diffusion.
 - Ajout d'un menu dépôt pour séparer les action liés au dépôt de la partie annuaire
+- La couverture est maintenant recto/verso lorsque la premiere page n'est pas retirée
+- Ajout de la colonne durée des thèses dans l'export
+- Ajout des dates d'abandon et de transfert des thèses.
 
 1.3.3 (18/12/2019)
 ------------------

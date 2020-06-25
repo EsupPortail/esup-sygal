@@ -2,14 +2,14 @@
 
 namespace Application\Command;
 
+use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Exception\InvalidArgumentException;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 class CheckWSValidationFichierCinesCommandFactory
 {
-    function __invoke(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container)
     {
-        $config = $serviceLocator->get('config');
+        $config = $container->get('config');
         if (!isset($config['sygal']['archivabilite']['check_ws_script_path'])) {
             throw new InvalidArgumentException("Option de config sygal.archivabilite.check_ws_script_path introuvable");
         }

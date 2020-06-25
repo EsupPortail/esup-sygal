@@ -21,7 +21,7 @@ $ecole = $form->getObject();
 $isNew = $ecole->getId() === null;
 $estSubstituante = $ecole->getStructure()->estStructureSubstituante();
 $fcg = $this->formControlGroup();
-$this->headTitle("Modification de l'ED ".$ecole->getStructure()->getCode());
+$this->headTitle("Modification de l'école doctorale ".$ecole->getStructure()->getCode());
 
 $editable = $isNew || $estSubstituante;
 $form->get('libelle')->setAttribute('readonly', !$editable);
@@ -31,9 +31,9 @@ $form->get('code')->setAttribute('readonly', !$editable);
 
 <h1 class="page-header">
     <?php if ($isNew): ?>
-        Création d'une nouvelle ED
+        Création d'une nouvelle école doctorale
     <?php else: ?>
-        Modification de l'ED &laquo; <?php echo $ecole->getLibelle(); ?> &raquo;
+        Modification de l'école doctorale &laquo; <?php echo $ecole->getLibelle(); ?> &raquo;
     <?php endif ?>
 </h1>
 
@@ -45,6 +45,7 @@ $form->get('code')->setAttribute('readonly', !$editable);
         <?php echo $fcg($form->get('libelle')) ?>
         <?php echo $fcg($form->get('sigle')) ?>
         <?php echo $fcg($form->get('code')) ?>
+        <?php echo $fcg($form->get('estFerme')) ?>
     </div>
 
     <div id="logo-div" class="col-md-6">

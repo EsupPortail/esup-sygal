@@ -546,6 +546,9 @@ div.filters {
     .filter-option, #search-input {
       font-size: $filterFontSize;
     }
+    .input-group-addon.filter {
+      padding: 4px;
+    }
   }
 }
 
@@ -633,7 +636,15 @@ p.autoris-diffusion-motif {
     margin-left: 5px;
   }
 }
-
+.checkbox-sm {
+  input[type="checkbox"] {
+    transform : scale(0.9);
+  }
+  .checkbox-label {
+    margin-left: 2px;
+    font-size: 90%;
+  }
+}
 
 form.form-retraiter {
   margin: 4px 0 15px 0;
@@ -754,7 +765,8 @@ ul.roadmap.pagination {
 /************* Menu *************/
 
 ul.menu-secondaire,
-ul.menu-information {
+ul.menu-information,
+ul.menu-actualites {
   background: #f5f5f5;
   border-radius: 4px;
   padding: 2px;
@@ -769,7 +781,10 @@ ul.menu-information {
       border-top: solid 4px #e1e1e1;
       //margin: 5px 0 5px;
     }
-
+  }
+}
+ul.menu-secondaire {
+  li {
     a.roadmap {
       font-weight: bold;
     }
@@ -784,6 +799,35 @@ ul.menu-information {
     }
     a.version-initiale.correction-attendue-mineure, a.version-initiale.correction-attendue-majeure {
       opacity: 0.5; // opacité réduite lorsqu'une correction est attendue
+    }
+  }
+}
+ul.menu-actualites {
+  margin-top: 2em;
+  li:first-child {
+    padding-top: 10px;
+  }
+  li {
+    padding: 0 1em 10px;
+    span.label {
+      padding: 1px 2px;
+      font-size: 70%;
+      vertical-align: middle;
+      margin-right: 3px;
+    }
+    h2 {
+      font-weight: lighter;
+      font-size: 90%;
+      margin: 0;
+      line-height: 120%;
+    }
+    p.date {
+      margin: 0;
+      font-size: 70%;
+    }
+    .fa {
+      font-size: 55%;
+      vertical-align: super;
     }
   }
 }
@@ -836,11 +880,11 @@ ul.ui-autocomplete {
   //vertical-align: top;
 }
 .historisee::after {
-  @extend .histo::after;
+  @extend .histo, ::after;
   content: 'SUPPRIMÉE';
 }
 .historise::after {
-  @extend .histo::after;
+  @extend .histo, ::after;
   content: 'SUPPRIMÉ';
 }
 

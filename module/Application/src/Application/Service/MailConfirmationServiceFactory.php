@@ -3,23 +3,20 @@
 namespace Application\Service;
 
 use Doctrine\ORM\EntityManager;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 
-
-class MailConfirmationServiceFactory implements FactoryInterface
+class MailConfirmationServiceFactory
 {
     /**
      * Create service
      *
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param ContainerInterface $container
      * @return MailConfirmationService
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container)
     {
-
         /** @var EntityManager $entityManager */
-        $entityManager = $serviceLocator->get('doctrine.entitymanager.orm_default');
+        $entityManager = $container->get('doctrine.entitymanager.orm_default');
 
         /** @var MailConfirmationService $service */
         $service = new MailConfirmationService();

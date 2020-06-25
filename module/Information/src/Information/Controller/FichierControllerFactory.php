@@ -3,23 +3,28 @@
 namespace  Information\Controller;
 
 use Application\Service\Fichier\FichierService;
+use Information\Form\FichierForm;
 use Information\Service\InformationFichierService;
-use Zend\Mvc\Controller\ControllerManager;
+use Interop\Container\ContainerInterface;
 
 class FichierControllerFactory {
 
-    public function __invoke(ControllerManager $manager)
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var FichierService            $fichierService
          * @var InformationFichierService $informationFichierService
          */
-        $fichierService = $manager->getServiceLocator()->get(FichierService::class);
-        $informationFichierService = $manager->getServiceLocator()->get(InformationFichierService::class);
+        $fichierService = $container->get(FichierService::class);
+        $informationFichierService = $container->get(InformationFichierService::class);
+
+        /** @var FichierForm $fichierForm */
+        $fichierForm = $container->get('FormElementManager')->get(FichierForm::class);
 
         $controller = new FichierController();
         $controller->setFichierService($fichierService);
         $controller->setInformationFichierService($informationFichierService);
+        $controller->setFichierForm($fichierForm);
 
         return $controller;
     }

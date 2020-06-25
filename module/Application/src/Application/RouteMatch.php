@@ -14,7 +14,7 @@ use Application\Entity\Db\UniteRecherche;
 use Application\Entity\Db\Utilisateur;
 use Doctrine\ORM\EntityRepository;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\Mvc\Router\RouteMatch as BaseRouteMatch;
+use Zend\Router\RouteMatch as BaseRouteMatch;
 
 /**
  * Ce RouteMatch fournit des accesseurs métiers traduisant en entités ses paramètres éventuels

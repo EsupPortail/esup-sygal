@@ -31,14 +31,14 @@ $canEdit =  $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionP
 ?>
 
 <?php if ($canView): ?>
-    <div class="panel panel-info">
+    <div class="box panel panel-info">
         <div class="panel-heading">
-            <h3>
+            <h2>
                 <?php echo $libelle; ?>
                 <span class="badge">
                     <?php echo count($structures); ?>
                 </span>
-            </h3>
+            </h2>
 
         </div>
         <div class="panel-body">

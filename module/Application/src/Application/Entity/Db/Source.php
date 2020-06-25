@@ -2,12 +2,10 @@
 
 namespace Application\Entity\Db;
 
-use UnicaenImport\Entity\Db\Interfaces\SourceInterface;
-
 /**
  * Source
  */
-class Source implements SourceInterface
+class Source
 {
     /**
      * @var string
