@@ -39,7 +39,7 @@ class MembreHydrator implements HydratorInterface
         $data['sexe']               = $membre->getGenre();
         $data['prenom']             = $membre->getPrenom();
         $data['nom']                = $membre->getNom();
-        $data['qualite']            = $membre->getQualite()->getId();
+        $data['qualite']            = ($membre->getQualite())?$membre->getQualite()->getId():null;
         $data['etablissement']      = $membre->getEtablissement();
         $data['exterieur']          = $membre->getExterieur();
         $data['visio']              = $membre->isVisio();
