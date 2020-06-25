@@ -60,12 +60,12 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     /**
      * @var AuthenticationService
      */
-    private $authenticationService;
+    protected $authenticationService;
 
     /**
      * @var ShibService
      */
-    private $shibService;
+    protected $shibService;
 
     /**
      * @var CreationUtilisateurForm
@@ -163,12 +163,12 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
                 $label = $row['NOM_USUEL'] . ' ' . $prenoms;
                 $extra = $row['EMAIL'] ?: $row['SOURCE_CODE'];
                 $result[] = array(
-                    'id'    => $row['ID'], // identifiant unique de l'item
+                    'id' => $row['ID'], // identifiant unique de l'item
                     'label' => $label,     // libellé de l'item
                     'extra' => $extra,     // infos complémentaires (facultatives) sur l'item
                 );
             }
-            usort($result, function($a, $b) {
+            usort($result, function ($a, $b) {
                 return strcmp($a['label'], $b['label']);
             });
 
@@ -215,12 +215,12 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     public function usurperIdentiteAction()
     {
         $request = $this->getRequest();
-        if (! $request instanceof Request) {
+        if (!$request instanceof Request) {
             exit(1);
         }
 
         $newIdentity = $request->getQuery('identity', $request->getPost('identity'));
-        if (! $newIdentity) {
+        if (!$newIdentity) {
             return $this->redirect()->toRoute('home');
         }
 
@@ -228,15 +228,14 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         $authenticationService = $this->authenticationService;
 
         $currentIdentity = $authenticationService->getIdentity();
-        if (! $currentIdentity || ! is_array($currentIdentity)) {
+        if (!$currentIdentity || !is_array($currentIdentity)) {
             return $this->redirect()->toRoute('home');
         }
 
         if (isset($currentIdentity['shib'])) {
             /** @var ShibUser $currentIdentity */
             $currentIdentity = $currentIdentity['shib'];
-        }
-        elseif (isset($currentIdentity['ldap'])) {
+        } elseif (isset($currentIdentity['ldap'])) {
             /** @var People $currentIdentity */
             $currentIdentity = $currentIdentity['ldap'];
         } else {
@@ -246,7 +245,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         // seuls les logins spécifiés dans la config sont habilités à usurper des identités
         /** @var ModuleOptions $options */
         $options = $this->authModuleOptions;
-        if (! in_array($currentIdentity->getUsername(), $options->getUsurpationAllowedUsernames())) {
+        if (!in_array($currentIdentity->getUsername(), $options->getUsurpationAllowedUsernames())) {
             throw new LogicException("Usurpation non autorisée");
         }
 
@@ -272,27 +271,26 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     public function usurperIndividuAction()
     {
         $request = $this->getRequest();
-        if (! $request instanceof Request) {
+        if (!$request instanceof Request) {
             exit(1);
         }
 
         $individuId = $request->getPost('individu');
-        if (! $individuId) {
+        if (!$individuId) {
             return $this->redirect()->toRoute('home');
         }
 
         /** @var AuthenticationService $authenticationService */
         $authenticationService = $this->authenticationService;
         $currentIdentity = $authenticationService->getIdentity();
-        if (! $currentIdentity || ! is_array($currentIdentity)) {
+        if (!$currentIdentity || !is_array($currentIdentity)) {
             return $this->redirect()->toRoute('home');
         }
 
         if (isset($currentIdentity['shib'])) {
             /** @var ShibUser $currentIdentity */
             $currentIdentity = $currentIdentity['shib'];
-        }
-        elseif (isset($currentIdentity['ldap'])) {
+        } elseif (isset($currentIdentity['ldap'])) {
             /** @var People $currentIdentity */
             $currentIdentity = $currentIdentity['ldap'];
         } else {
@@ -302,7 +300,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         // seuls les logins spécifiés dans la config sont habilités à usurper des identités
         /** @var ModuleOptions $options */
         $options = $this->authModuleOptions;
-        if (! in_array($currentIdentity->getUsername(), $options->getUsurpationAllowedUsernames())) {
+        if (!in_array($currentIdentity->getUsername(), $options->getUsurpationAllowedUsernames())) {
             throw new LogicException("Usurpation non autorisée");
         }
 
@@ -425,7 +423,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         $utilisateurs = $this->utilisateurService->getRepository()->findByIndividu($individu, $isLocal = true); // done
         // NB: findByIndividu() avec $isLocal = true renverra 1 utilisateur au maximum
         $utilisateur = $utilisateurs ? current($utilisateurs) : null;
-        if ($utilisateur === null AND $individu->getEmail() !== null) {
+        if ($utilisateur === null and $individu->getEmail() !== null) {
             $utilisateur = $this->utilisateurService->getRepository()->findByUsername($individu->getEmail());
         }
 
@@ -471,14 +469,15 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         return $this->redirect()->toRoute('utilisateur/gerer-utilisateur', ['individu' => $individu->getId()], [], true);
     }
 
-    public function initCompteAction() {
+    public function initCompteAction()
+    {
         $token = $this->params()->fromRoute('token');
         $utilisateur = $this->utilisateurService->getRepository()->findByToken($token);
 
         /** @var InitCompteForm $form */
         $form = $this->getInitCompteForm();
         $form->setUsername($utilisateur->getUsername());
-        $form->setAttribute('action', $this->url()->fromRoute('utilisateur/init-compte', [ 'token' => $token ], [] , true));
+        $form->setAttribute('action', $this->url()->fromRoute('utilisateur/init-compte', ['token' => $token], [], true));
         $form->bind(new Utilisateur());
 
         /** @var Request $request */
