@@ -8,7 +8,7 @@
  * @var Validation[] $engagements
  * @var Avis[] $avis
  *
- * @see Soutenance\Controller\Presoutenance\PresoutenanceController::presoutenanceAction()
+ * @see Soutenance\Controller\PresoutenanceController::presoutenanceAction()
  */
 
 use Application\Constants;
@@ -101,7 +101,7 @@ $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->get
     <?php if($proposition->getEtat()->getCode() === Etat::EN_COURS) :?>
             <?php if ($tousLesAvis) : ?>
             <?php if ($canFeuVert) : ?>
-                <?php /** @see \Soutenance\Controller\Presoutenance\PresoutenanceController::feuVertAction() */ ?>
+                <?php /** @see \Soutenance\Controller\PresoutenanceController::feuVertAction() */ ?>
                 <a href="<?php echo $this->url('soutenance/presoutenance/feu-vert', ['these' => $these->getId()], [], true); ?>"
                     class="btn btn-success action"
                 >
@@ -116,7 +116,7 @@ $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->get
         <?php endif; ?>
 
         <?php if ($canFeuVert) : ?>
-            <?php /** @see \Soutenance\Controller\Presoutenance\PresoutenanceController::stopperDemarcheAction() */ ?>
+            <?php /** @see \Soutenance\Controller\PresoutenanceController::stopperDemarcheAction() */ ?>
             <a href="<?php echo $this->url('soutenance/presoutenance/stopper-demarche', ['these' => $these->getId()], [], true); ?>"
                class="btn btn-danger action"
             >
@@ -160,7 +160,7 @@ $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->get
                 <br/>
                 <br/>
                 <a
-                        <?php /** @see \Soutenance\Controller\Presoutenance\PresoutenanceController::modifierAdresseAction() */ ?>
+                        <?php /** @see \Soutenance\Controller\PresoutenanceController::modifierAdresseAction() */ ?>
                         href="<?php echo $this->url('soutenance/presoutenance/modifier-adresse', ['these' => $these->getId()], [] ,true); ?>"
                         class="btn btn-primary action ajax-modal" data-event="modification-adresse">
                     <span class="glyphicon glyphicon-pencil"></span>
@@ -172,7 +172,7 @@ $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->get
                 <br/><br/>
 
             <p>
-                <a  <?php /** @see \Soutenance\Controller\Presoutenance\PresoutenanceController::procesVerbalSoutenanceAction() */ ?>
+                <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::procesVerbalSoutenanceAction() */ ?>
                         href="<?php echo $this->url('soutenance/presoutenance/proces-verbal-soutenance', ['these' => $these->getId()], [], true); ?>"
                         class="btn btn-primary action"
                         target="_blank"
@@ -180,7 +180,7 @@ $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->get
                     <span class="glyphicon glyphicon-list-alt"></span>Générer le procès verbal
                 </a>
 
-                <a  <?php /** @see \Soutenance\Controller\Presoutenance\PresoutenanceController::avisSoutenanceAction() */ ?>
+                <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::avisSoutenanceAction() */ ?>
                         href="<?php echo $this->url('soutenance/presoutenance/avis-soutenance', ['these' => $these->getId()], [], true); ?>"
                         class="btn btn-primary action"
                         target="_blank"
@@ -188,14 +188,14 @@ $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->get
                     <span class="glyphicon glyphicon-list-alt"></span>Générer l'avis de soutenance
                 </a>
 
-                <a  <?php /** @see \Soutenance\Controller\Presoutenance\PresoutenanceController::convocationsAction() */ ?>
+                <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::convocationsAction() */ ?>
                         href="<?php echo $this->url('soutenance/presoutenance/convocations', ['these' => $these->getId()], [], true); ?>"
                         class="btn btn-primary action"
                         target="_blank"
                 >
                     <span class="glyphicon glyphicon-list-alt"></span>Générer les convocations
                 </a>
-                <a  <?php /** @see \Soutenance\Controller\Presoutenance\PresoutenanceController::envoyerConvocationAction() */ ?>
+                <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::envoyerConvocationAction() */ ?>
                         href="<?php echo $this->url('soutenance/presoutenance/envoyer-convocation', ['these' => $these->getId()], [], true); ?>"
                         class="btn btn-info action"
                 >

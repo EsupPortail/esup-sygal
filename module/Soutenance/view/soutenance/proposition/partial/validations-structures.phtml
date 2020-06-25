@@ -8,7 +8,6 @@
 
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Validation;
-use Soutenance\Entity\Etat;
 use Soutenance\Entity\Proposition;
 
 $these = $proposition->getThese();
@@ -67,7 +66,7 @@ $these = $proposition->getThese();
                     if ($validations[Role::CODE_BDD]) { $validationMDD = current($validations[Role::CODE_BDD]); }
                     if ($canPresidence AND $validationMDD === null): ?>
                     <p>
-                        <a  <?php /** @see \Soutenance\Controller\Proposition\PropositionController::signaturePresidenceAction(); */ ?>
+                        <a  <?php /** @see \Soutenance\Controller\PropositionController::signaturePresidenceAction(); */ ?>
                             href="<?php echo $this->url('soutenance/proposition/signature-presidence', ['these' => $these->getId()], true); ?>"
                             class="btn btn-primary action"
                             target="_blank"
@@ -78,7 +77,7 @@ $these = $proposition->getThese();
                 <?php endif; ?>
                 <?php if ($canStructureValider): ?>
                     <p>
-                        <a <?php /** @see \Soutenance\Controller\Proposition\PropositionController::validerStructureAction(); */ ?>
+                        <a <?php /** @see \Soutenance\Controller\PropositionController::validerStructureAction(); */ ?>
                            href="<?php echo $this->url('soutenance/proposition/valider-structure', ['these' => $these->getId()], [], true); ?>"
                            class="btn btn-success action">
                             <span class="glyphicon glyphicon-ok"></span> Valider la proposition de soutenance
@@ -86,7 +85,7 @@ $these = $proposition->getThese();
                     </p>
                     <p>
                         <a
-                            <?php /** @see \Soutenance\Controller\Proposition\PropositionController::refuserStructureAction(); */ ?>
+                            <?php /** @see \Soutenance\Controller\PropositionController::refuserStructureAction(); */ ?>
                             href="<?php echo $this->url('soutenance/proposition/refuser-structure', ['these' => $these->getId()], [], true); ?>"
                             class="btn btn-danger action ajax-modal"
                             data-event="refus-proposition">

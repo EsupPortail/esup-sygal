@@ -1,12 +1,13 @@
 <?php
 
 /**
- * @var \Soutenance\Entity\Proposition $proposition
- * @var \Application\Entity\Db\These $these
+ * @var Proposition $proposition
+ * @var These $these
  */
 
-use Application\Constants;
+use Application\Entity\Db\These;
 use Soutenance\Entity\Membre;
+use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 
 $canAssocierMembreIndividu              = $this->isAllowed($these, PresoutenancePrivileges::PRESOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU);
@@ -21,7 +22,7 @@ $canAssocierMembreIndividu              = $this->isAllowed($these, Presoutenance
             <div class="col-md-4">
                 <p>
                     <a
-                        <?php /** @see  \Soutenance\Controller\Presoutenance\PresoutenanceController::presoutenanceAction() */ ?>
+                        <?php /** @see  \Soutenance\Controller\PresoutenanceController::presoutenanceAction() */ ?>
                         class="btn btn-default btn-sm"
                        id="refresh-these-button"
                        href="<?php echo $this->urlThese()->refreshTheseUrl($these, $this->url('soutenance/presoutenance', ['these' => $these->getId()], [], true)); ?>"
@@ -67,7 +68,7 @@ $canAssocierMembreIndividu              = $this->isAllowed($these, Presoutenance
                         <?php if($canAssocierMembreIndividu): ?>
                             <?php if ($membre->estRapporteur()) : ?>
                                 <?php if (! $membre->getActeur()): ?>
-                                    <a  <?php /** @see \Soutenance\Controller\Presoutenance\PresoutenanceController::associerJuryAction() */ ?>
+                                    <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::associerJuryAction() */ ?>
                                         href="<?php echo $this->url('soutenance/presoutenance/associer-jury', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true); ?>"
                                         class="ajax-modal"
                                         data-event="modification-date-rendu-rapport"
@@ -75,7 +76,7 @@ $canAssocierMembreIndividu              = $this->isAllowed($these, Presoutenance
                                         <span class="glyphicon glyphicon-link" title="Associer un individu SyGAL à un membre de jury"></span>
                                     </a>
                                 <?php else: ?>
-                                    <a  <?php /** @see \Soutenance\Controller\Presoutenance\PresoutenanceController::deassocierJuryAction() */ ?>
+                                    <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::deassocierJuryAction() */ ?>
                                         href="<?php echo $this->url('soutenance/presoutenance/deassocier-jury', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true); ?>"
                                     >
                                         <span class="glyphicon glyphicon-remove" title="Casser l'association d'un individu SyGAL à un membre de jury"></span>

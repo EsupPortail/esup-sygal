@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @see \Soutenance\Controller\Index\IndexController::indexRapporteurAction()
+ * @see \Soutenance\Controller\IndexController::indexRapporteurAction()
  *
  * @var Proposition $proposition
  * @var These[] $theses
@@ -50,7 +50,7 @@ $canAvis = true;
             <?php foreach ($theses as $these) : ?>
                 <tr>
                     <td>
-                        <a  <?php /** @see \Soutenance\Controller\Index\IndexController::indexRapporteurAction()*/ ?>
+                        <a  <?php /** @see \Soutenance\Controller\IndexController::indexRapporteurAction()*/ ?>
                             href="<?php echo $this->url('soutenance/index-rapporteur', ['these' => $these->getId()], [], true); ?>">
                             <?php echo $these->getTitre(); ?>
                         </a>
@@ -139,7 +139,7 @@ $canAvis = true;
             un engagement d'impartialité.
 
             <a
-                    <?php /** @see \Soutenance\Controller\EngagementImpartialite\EngagementImpartialiteController::engagementImpartialiteAction() */?>
+                    <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::engagementImpartialiteAction() */?>
                     href="<?php echo $this->url('soutenance/engagement-impartialite', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true); ?>"
                class="btn btn-primary pull-right"
             >
@@ -215,7 +215,7 @@ $canAvis = true;
                 avis de soutenance et votre prérapport de soutenance.
 
                 <a
-                    <?php /** @see \Soutenance\Controller\Avis\AvisController::indexAction() */ ?>
+                    <?php /** @see \Soutenance\Controller\AvisController::indexAction() */ ?>
                     href="<?php echo $this->url('soutenance/avis-soutenance', ['these' => $these->getId(), 'rapporteur' => $membre->getId()], [], true); ?>"
                    class="btn btn-primary pull-right"
                 >

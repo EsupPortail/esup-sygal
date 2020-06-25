@@ -7,7 +7,7 @@ use Soutenance\Entity\Avis;
 use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
 
 /**
- * @see \Soutenance\Controller\Avis\AvisController::afficherAction()
+ * @see \Soutenance\Controller\AvisController::afficherAction()
  *
  * @var These $these
  * @var Acteur $rapporteur
@@ -89,7 +89,7 @@ $canAnnuler = $this->isAllowed(AvisSoutenancePrivileges::getResourceId(AvisSoute
 
 <?php if ($canAnnuler) : ?>
     <a
-        <?php /** @see \Soutenance\Controller\Avis\AvisController::annulerAction() */ ?>
+        <?php /** @see \Soutenance\Controller\AvisController::annulerAction() */ ?>
         href="<?php echo $this->url('soutenance/avis-soutenance/annuler', ['these' => $these->getId(), 'rapporteur' => 541], [] , true); ?>"
         class="btn btn-danger">
         <span class="glyphicon glyphicon-remove"></span>

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @see \Soutenance\Controller\Index\IndexController::indexStructureAction()
+ * @see \Soutenance\Controller\IndexController::indexStructureAction()
  * @var Proposition[] $propositions
  * @var Role $role
  */
@@ -70,7 +70,7 @@ $canSuppression = ($role->getCode() === Role::CODE_ADMIN_TECH);
                 </td>
                 <td>
                     <a
-                        <?php /** @see \Soutenance\Controller\Proposition\PropositionController::propositionAction() */ ?>
+                        <?php /** @see \Soutenance\Controller\PropositionController::propositionAction() */ ?>
                         href="<?php echo $this->url('soutenance/proposition', ['these' => $proposition->getThese()->getId()], [], true); ?>"
                        title="Visualiser la proposition de soutenance"
                     >
@@ -78,7 +78,7 @@ $canSuppression = ($role->getCode() === Role::CODE_ADMIN_TECH);
                     </a>
                     <br/>
                     <a
-                        <?php /** @see \Soutenance\Controller\Presoutenance\PresoutenanceController::presoutenanceAction() */ ?>
+                        <?php /** @see \Soutenance\Controller\PresoutenanceController::presoutenanceAction() */ ?>
                         href="<?php echo $this->url('soutenance/presoutenance', ['these' => $proposition->getThese()->getId()], [], true); ?>"
                        title="Visualiser la préparation de la soutenance"
                     >
@@ -87,7 +87,7 @@ $canSuppression = ($role->getCode() === Role::CODE_ADMIN_TECH);
                     <br/>
                     <?php if ($canSuppression) : ?>
                     <a
-                        <?php /** @see \Soutenance\Controller\Proposition\PropositionController::suppressionAction() */ ?>
+                        <?php /** @see \Soutenance\Controller\PropositionController::suppressionAction() */ ?>
                         href="<?php echo $this->url('soutenance/proposition/suppression', ['these' => $proposition->getThese()->getId()], [], true); ?>"
                        title="">
                         Suppression

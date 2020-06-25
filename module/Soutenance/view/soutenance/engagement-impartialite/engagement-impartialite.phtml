@@ -1,6 +1,6 @@
 <?php
 /**
- * @see \Soutenance\Controller\EngagementImpartialite\EngagementImpartialiteController::engagementImpartialiteAction()
+ * @see \Soutenance\Controller\EngagementImpartialiteController::engagementImpartialiteAction()
  *
  * @var These $these
  * @var Proposition $proposition
@@ -103,7 +103,7 @@ $this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctora
         <?php if ($canSign): ?>
         <p>
             <span style="text-align: center">
-            <a      <?php /** @see \Soutenance\Controller\EngagementImpartialite\EngagementImpartialiteController::signerEngagementImpartialiteAction()  */ ?>
+            <a      <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::signerEngagementImpartialiteAction()  */ ?>
                     href="<?php echo $urlSigner;  ?>"
                     class="btn btn-success" style="width:80%;">
                 <span class="glyphicon glyphicon-thumbs-up"></span>
@@ -112,7 +112,7 @@ $this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctora
                 <br/>
                 <br/>
 
-            <a      <?php /** @see \Soutenance\Controller\EngagementImpartialite\EngagementImpartialiteController::refuserEngagementImpartialiteAction()  */ ?>
+            <a      <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::refuserEngagementImpartialiteAction()  */ ?>
                     href="<?php echo $urlRefuser;  ?>" class="btn btn-danger" style="width:80%;">
                 <span class="glyphicon glyphicon-thumbs-down"></span>
                 Je ne peux pas signer l'engagement d'impartialité</a>
@@ -164,7 +164,7 @@ $this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctora
             <ul class="roadmap pagination">
             <li>
                 <a
-                        <?php /** @see \Soutenance\Controller\Avis\AvisController::indexAction()  */ ?>
+                        <?php /** @see \Soutenance\Controller\AvisController::indexAction()  */ ?>
                         class="roadmap-step-link"
                         href="<?php echo $this->url('soutenance/avis-soutenance', ['these' => $these->getId(), 'rapporteur' => $membre->getId()], [], true); ?>">
                     <span class="glyphicon glyphicon-circle-arrow-right"></span>

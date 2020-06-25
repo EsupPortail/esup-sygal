@@ -57,7 +57,7 @@ $these = $proposition->getThese();
             <div class="col-md-4">
                 <div class="pull-right">
                     <?php if ($canModifier) : ?>
-                        <a  <?php /**  @see \Soutenance\Controller\Proposition\PropositionController::modifierDateLieuAction() */ ?>
+                        <a  <?php /**  @see \Soutenance\Controller\PropositionController::modifierDateLieuAction() */ ?>
                             href="<?php echo $this->url('soutenance/proposition/modifier-date-lieu', ['these' => $these->getId()], [], true); ?>"
                             class="btn btn-primary action ajax-modal"
                             data-event="edition-datelieu"

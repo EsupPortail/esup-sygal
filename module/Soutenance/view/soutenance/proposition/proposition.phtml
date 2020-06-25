@@ -11,7 +11,7 @@ use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 
 /**
- * @see \Soutenance\Controller\Proposition\PropositionController::propositionAction()
+ * @see \Soutenance\Controller\PropositionController::propositionAction()
  *
  * @var These $these
  * @var Proposition $proposition
@@ -140,7 +140,7 @@ $this->headTitle("Proposition de soutenance");
                 <ul class="roadmap pagination">
                     <li>
                         <a
-                            <?php /** @see \Soutenance\Controller\Avis\AvisController::indexAction()  */ ?>
+                            <?php /** @see \Soutenance\Controller\AvisController::indexAction()  */ ?>
                                 class="roadmap-step-link"
                                 href="<?php echo $this->url('soutenance/presoutenance', ['these' => $these->getId()], [], true); ?>">
                             <span class="glyphicon glyphicon-circle-arrow-right"></span>

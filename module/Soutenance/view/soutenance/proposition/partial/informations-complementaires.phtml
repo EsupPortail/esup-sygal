@@ -48,7 +48,7 @@ $these = $proposition->getThese();
 
             <div class="col-md-4">
                 <?php if ($canModifier) : ?>
-                    <a <?php /** @see \Soutenance\Controller\Proposition\PropositionController::labelEuropeenAction(); */ ?>
+                    <a <?php /** @see \Soutenance\Controller\PropositionController::labelEuropeenAction(); */ ?>
                        href="<?php echo $this->url('soutenance/proposition/label-europeen', ['these' => $these->getId()], [], true); ?>"
                        class="btn btn-primary action ajax-modal"
                        data-event="edition-informations"
@@ -92,7 +92,7 @@ $these = $proposition->getThese();
 
         <div class="col-md-4">
             <?php if ($canModifier) : ?>
-                <a <?php /** @see \Soutenance\Controller\Proposition\PropositionController::anglaisAction(); */ ?>
+                <a <?php /** @see \Soutenance\Controller\PropositionController::anglaisAction(); */ ?>
                    href="<?php echo $this->url('soutenance/proposition/anglais', ['these' => $these->getId()], [], true); ?>"
                    class="btn btn-primary action ajax-modal"
                    data-event="edition-informations"
@@ -127,7 +127,7 @@ $these = $proposition->getThese();
 
         <div class="col-md-4">
             <?php if ($canModifier) : ?>
-                <a <?php /** @see \Soutenance\Controller\Proposition\PropositionController::confidentialiteAction(); */ ?>
+                <a <?php /** @see \Soutenance\Controller\PropositionController::confidentialiteAction(); */ ?>
                    href="<?php echo $this->url('soutenance/proposition/confidentialite', ['these' => $these->getId()], [], true); ?>"
                    class="btn btn-primary action ajax-modal"
                    data-event="edition-informations"
@@ -155,7 +155,7 @@ $these = $proposition->getThese();
 
         <div class="col-md-4">
             <?php if ($canModifier) : ?>
-                <a <?php /** @see \Soutenance\Controller\Proposition\PropositionController::changementTitreAction(); */ ?>
+                <a <?php /** @see \Soutenance\Controller\PropositionController::changementTitreAction(); */ ?>
                    href="<?php echo $this->url('soutenance/proposition/changement-titre', ['these' => $these->getId()], [], true); ?>"
                    class="btn btn-primary action ajax-modal"
                    data-event="edition-informations"

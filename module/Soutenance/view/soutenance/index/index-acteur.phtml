@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @see \Soutenance\Controller\Index\IndexController::indexActeurAction()
+ * @see \Soutenance\Controller\IndexController::indexActeurAction()
  *
  * @var These[] $theses
  */
@@ -62,7 +62,7 @@ $canVisualiser = $this->isAllowed(EngagementImpartialitePrivileges::getResourceI
                 <?php foreach($theses as $theseLink) : ?>
                     <li class="complete">
                         <a
-                            <?php /** @see \Soutenance\Controller\Proposition\PropositionController::propositionAction() */ ?>
+                            <?php /** @see \Soutenance\Controller\PropositionController::propositionAction() */ ?>
                             href="<?php echo $this->url('soutenance/proposition', ['these' => $theseLink->getId()], [], true); ?>">
                             <span class="badge"><?php echo $theseLink->getDoctorant(); ?></span>
                             <?php
@@ -101,7 +101,7 @@ $canVisualiser = $this->isAllowed(EngagementImpartialitePrivileges::getResourceI
             <ul class="dropdown-menu">
                 <?php foreach($theses as $theseLink) : ?>
                     <li class="complete">
-                        <a  <?php /** @see \Soutenance\Controller\Proposition\PropositionController::avancementAction() */ ?>
+                        <a  <?php /** @see \Soutenance\Controller\PropositionController::avancementAction() */ ?>
                             href="<?php echo $this->url('soutenance/avancement', ['these' => $theseLink->getId()], [], true); ?>">
                             <span class="badge"><?php echo $theseLink->getDoctorant(); ?></span>
                             <?php

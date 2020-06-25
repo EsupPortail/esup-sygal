@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @see \Soutenance\Controller\Qualite\QualiteController::indexAction()
+ * @see \Soutenance\Controller\QualiteController::indexAction()
  *
  * @var Qualite[] $qualites
  */
@@ -11,8 +11,8 @@ use Soutenance\Entity\QualiteLibelleSupplementaire;
 use Soutenance\Provider\Privilege\QualitePrivileges;
 
 
-$canEdit = $this->isAllowed(QualitePrivileges::getResourceId(QualitePrivileges::SOUTENANCE_QUALITE_MODIFIER));;
-$canDelete = $this->isAllowed(QualitePrivileges::getResourceId(QualitePrivileges::SOUTENANCE_QUALITE_MODIFIER));;
+$canEdit = $this->isAllowed(QualitePrivileges::getResourceId(QualitePrivileges::SOUTENANCE_QUALITE_MODIFIER));
+$canDelete = $this->isAllowed(QualitePrivileges::getResourceId(QualitePrivileges::SOUTENANCE_QUALITE_MODIFIER));
 ?>
 
 <?php $this->headTitle("Qualités des membres de jury"); ?>
@@ -23,7 +23,7 @@ $canDelete = $this->isAllowed(QualitePrivileges::getResourceId(QualitePrivileges
 
 
 <a
-    <?php /** @see \Soutenance\Controller\Qualite\QualiteController::editerAction() */ ?>
+    <?php /** @see \Soutenance\Controller\QualiteController::editerAction() */ ?>
    class="ajax-modal btn btn-primary"
    data-event="edition-qualite"
    href="<?php echo $this->url('qualite/editer', [], [], true); ?>">
@@ -63,7 +63,7 @@ $canDelete = $this->isAllowed(QualitePrivileges::getResourceId(QualitePrivileges
                         <br/>
                         >>> <?php echo $sup->getLibelle(); ?>
                         <?php if ($canEdit) : ?>
-                            <a <?php /** @see \Soutenance\Controller\Qualite\QualiteController::retirerLibelleSupplementaireAction() */ ?>
+                            <a <?php /** @see \Soutenance\Controller\QualiteController::retirerLibelleSupplementaireAction() */ ?>
                                href="<?php echo $this->url('qualite/retirer-libelle-supplementaire', ['libelle' => $sup->getId()], [], true); ?>">
                             <span class="glyphicon glyphicon-minus" title="Retirer le libellé supplémentaire"></span></a>
                         <?php endif; ?>
@@ -89,7 +89,7 @@ $canDelete = $this->isAllowed(QualitePrivileges::getResourceId(QualitePrivileges
             <td>
                 <?php if($canEdit): ?>
                     <a
-                        <?php /** @see \Soutenance\Controller\Qualite\QualiteController::editerAction() */ ?>
+                        <?php /** @see \Soutenance\Controller\QualiteController::editerAction() */ ?>
                         class="ajax-modal"
                        data-event="edition-qualite"
                        href="<?php echo $this->url('qualite/editer', ['qualite' => $qualite->getId()], [], true); ?>">
@@ -97,7 +97,7 @@ $canDelete = $this->isAllowed(QualitePrivileges::getResourceId(QualitePrivileges
                     </a>
                 <?php endif; ?>
                 <?php if($canEdit): ?>
-                    <a  <?php /** @see \Soutenance\Controller\Qualite\QualiteController::ajouterLibelleSupplementaireAction() */ ?>
+                    <a  <?php /** @see \Soutenance\Controller\QualiteController::ajouterLibelleSupplementaireAction() */ ?>
                         class="ajax-modal"
                         data-event="edition-qualite"
                         href="<?php echo $this->url('qualite/ajouter-libelle-supplementaire', ['qualite' => $qualite->getId()], [], true); ?>">
@@ -106,7 +106,7 @@ $canDelete = $this->isAllowed(QualitePrivileges::getResourceId(QualitePrivileges
                 <?php endif; ?>
                 <?php if($canDelete): ?>
                     <a
-                        <?php /** @see \Soutenance\Controller\Qualite\QualiteController::effacerAction() */ ?>
+                        <?php /** @see \Soutenance\Controller\QualiteController::effacerAction() */ ?>
                         href="<?php echo $this->url('qualite/effacer', ['qualite' => $qualite->getId()], [], true); ?>">
                         <span class="glyphicon glyphicon-trash"></span>
                     </a>

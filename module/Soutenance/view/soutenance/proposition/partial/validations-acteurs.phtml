@@ -78,7 +78,7 @@ $these = $proposition->getThese();
                     <?php if ($canValiderActeur) : ?>
                         <?php if ($proposition->isDelaiOk() OR $proposition->hasSursis()) : ?>
                             <a
-                                <?php /** @see \Soutenance\Controller\Proposition\PropositionController::validerActeurAction(); */ ?>
+                                <?php /** @see \Soutenance\Controller\PropositionController::validerActeurAction(); */ ?>
                                 href="<?php echo $this->url('soutenance/proposition/valider', ['these' => $these->getId()], [], true); ?>"
                                 class="btn btn-success action ">
                                 <span class="glyphicon glyphicon-ok"></span> Valider la proposition de soutenance
@@ -103,7 +103,7 @@ $these = $proposition->getThese();
 
             <?php if ($canSursis) : ?>
                 <div class="col-md-6" >
-                    <?php /** @see \Soutenance\Controller\Proposition\PropositionController::toggleSursisAction() */ ?>
+                    <?php /** @see \Soutenance\Controller\PropositionController::toggleSursisAction() */ ?>
                     <a href="<?php echo $this->url('soutenance/proposition/sursis', ['these' => $these->getId()], [], true); ?>" class="btn btn-primary action pull-right">
                         <?php if (!$proposition->hasSursis()) : ?>
                             <span class="glyphicon glyphicon-plus-sign"></span>
