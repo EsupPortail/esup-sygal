@@ -2,6 +2,7 @@
 
 namespace Soutenance\Controller;
 
+use Application\Controller\AbstractController;
 use BjyAuthorize\Exception\UnAuthorizedException;
 use Soutenance\Entity\Qualite;
 use Soutenance\Entity\QualiteLibelleSupplementaire;
@@ -12,14 +13,9 @@ use Soutenance\Provider\Privilege\QualitePrivileges;
 use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
 use Soutenance\Service\QualiteLibelleSupplementaire\QualiteLibelleSupplementaireServiceAwareTrait;
 use Zend\Http\Request;
-use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
-/**
- * @method boolean isAllowed($resource, $privilege = null)
- */
-
-class QualiteController extends AbstractActionController
+class QualiteController extends AbstractController
 {
     use QualiteServiceAwareTrait;
     use QualiteLibelleSupplementaireServiceAwareTrait;

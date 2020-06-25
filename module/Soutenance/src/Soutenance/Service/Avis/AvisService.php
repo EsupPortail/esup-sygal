@@ -2,21 +2,21 @@
 
 namespace Soutenance\Service\Avis;
 
+use Application\Entity\DateTimeAwareTrait;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
-use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\VersionFichier;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Doctrine\ORM\QueryBuilder;
-use Exception;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Membre;
 use Soutenance\Filter\NomAvisFormatter;
+use UnicaenApp\Entity\UserInterface;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
@@ -25,6 +25,7 @@ class AvisService {
     use UserContextServiceAwareTrait;
     use FichierServiceAwareTrait;
     use FichierTheseServiceAwareTrait;
+    use DateTimeAwareTrait;
 
     /** GESTION DES ENTITÉS *******************************************************************************************/
 
@@ -34,23 +35,22 @@ class AvisService {
      */
     public function create(Avis $avis)
     {
-        /** @var Utilisateur $user */
+        /**
+         * @var UserInterface $user
+         * @var DateTime $date
+         */
         $user = $this->userContextService->getIdentityDb();
-        /** @var DateTime $date */
-        try {
-            $date = new DateTime();
-        } catch (Exception $e) {
-            throw new RuntimeException("Un problème s'est produit lors de la récupération de la date");
-        }
+        $date = $this->getDateTime();
+
         $avis->setHistoCreation($date);
         $avis->setHistoCreateur($user);
         $avis->setHistoModification($date);
         $avis->setHistoModificateur($user);
 
-        $this->getEntityManager()->persist($avis);
         try {
+            $this->getEntityManager()->persist($avis);
             $this->getEntityManager()->flush($avis);
-        } catch (OptimisticLockException $e) {
+        } catch (ORMException $e) {
             throw new RuntimeException('Un problème est survenu lors de la création de l\'avis', $e);
         }
 
@@ -63,20 +63,19 @@ class AvisService {
      */
     public function update(Avis $avis)
     {
-        /** @var Utilisateur $user */
+        /**
+         * @var UserInterface $user
+         * @var DateTime $date
+         */
         $user = $this->userContextService->getIdentityDb();
-        /** @var DateTime $date */
-        try {
-            $date = new DateTime();
-        } catch (Exception $e) {
-            throw new RuntimeException("Un problème s'est produit lors de la récupération de la date");
-        }
+        $date = $this->getDateTime();
+
         $avis->setHistoModification($date);
         $avis->setHistoModificateur($user);
 
         try {
             $this->getEntityManager()->flush($avis);
-        } catch (OptimisticLockException $e) {
+        } catch (ORMException $e) {
             throw new RuntimeException('Un problème est survenu lors de la mise à jour de l\'avis', $e);
         }
 
@@ -88,10 +87,10 @@ class AvisService {
      */
     public function delete(Avis $avis)
     {
-        $this->getEntityManager()->remove($avis);
         try {
+            $this->getEntityManager()->remove($avis);
             $this->getEntityManager()->flush();
-        } catch (OptimisticLockException $e) {
+        } catch (ORMException $e) {
             throw new RuntimeException('Un problème est survenu lors de l\'effacement de l\'avis', $e);
         }
     }
@@ -102,14 +101,12 @@ class AvisService {
      */
     public function historiser(Avis $avis)
     {
-        /** @var Utilisateur $user */
+        /**
+         * @var UserInterface $user
+         * @var DateTime $date
+         */
         $user = $this->userContextService->getIdentityDb();
-        /** @var DateTime $date */
-        try {
-            $date = new DateTime();
-        } catch (Exception $e) {
-            throw new RuntimeException("Un problème s'est produit lors de la récupération de la date");
-        }
+        $date = $this->getDateTime();
 
         $avis->getValidation()->setHistoDestruction($date);
         $avis->getValidation()->setHistoDestructeur($user);
@@ -122,7 +119,7 @@ class AvisService {
             $this->getEntityManager()->flush($avis->getValidation());
             $this->getEntityManager()->flush($avis->getFichier());
             $this->getEntityManager()->flush($avis);
-        } catch (OptimisticLockException $e) {
+        } catch (ORMException $e) {
             throw new RuntimeException("Un problème s'est produit lors de l'historisation de l'avis (id:".$avis->getId().").");
         }
 

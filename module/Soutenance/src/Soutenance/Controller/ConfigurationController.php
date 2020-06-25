@@ -20,7 +20,7 @@ class ConfigurationController extends AbstractActionController
         /** @var ConfigurationForm $form */
         $form = $this->getConfigurationForm();
 
-        //todo faire une fonction dans le service ...
+        //todo faire une fonction dans le service ... formulaire avec une collection
         $params = [
             Parametre::CODE_AVIS_DEADLINE,
             Parametre::CODE_JURY_SIZE_MIN,

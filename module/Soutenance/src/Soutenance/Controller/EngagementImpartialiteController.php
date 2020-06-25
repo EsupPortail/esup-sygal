@@ -17,8 +17,6 @@ use Zend\View\Model\ViewModel;
  * @package Soutenance\Controller
  */
 
-/** @method boolean isAllowed($resource, $privilege = null) */
-
 class EngagementImpartialiteController extends AbstractController
 {
     use ActeurServiceAwareTrait;

@@ -15,10 +15,8 @@ use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use Zend\Http\Request;
-use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Zend\View\Model\ViewModel;
 
-/** @method FlashMessenger flashMessenger() */
 class AvisController extends AbstractController
 {
     use ActeurServiceAwareTrait;
