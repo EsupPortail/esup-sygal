@@ -79,7 +79,8 @@ class FichierController extends AbstractController
             return $this->redirect()->toUrl($this->urlFichier()->listerFichiersCommuns());
         }
 
-        $this->fichierService->createFichiersFromUpload($result, NatureFichier::CODE_COMMUNS);
+        $fichiers = $this->fichierService->createFichiersFromUpload($result, NatureFichier::CODE_COMMUNS);
+        $this->fichierService->saveFichiers($fichiers);
 
         return $this->redirect()->toUrl($this->urlFichier()->listerFichiersCommuns());
     }

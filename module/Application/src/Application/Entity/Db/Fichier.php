@@ -59,6 +59,15 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     private $description;
 
     /**
+     * Chemin éventuel de ce fichier.
+     *
+     * NB: Aucune colonne n'est mappée à cette propriété.
+     *
+     * @var string
+     */
+    private $path;
+
+    /**
      * Contenu binaire de ce fichier.
      *
      * NB: utile uniquement pour le plugin Uploader.
@@ -98,11 +107,28 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
      */
     public function __toString()
     {
-        $string = sprintf("%s - Fichier '%s'",
+        return sprintf("%s - Fichier '%s'",
                 $this->getTypeMime(),
                 $this->getNom());
-        
-        return $string;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
+
+    /**
+     * @param string $path
+     * @return Fichier
+     */
+    public function setPath($path)
+    {
+        $this->path = $path;
+
+        return $this;
     }
 
     /**

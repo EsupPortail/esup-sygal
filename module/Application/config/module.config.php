@@ -277,6 +277,9 @@ return array(
             '062_uploader' => "/js/jquery.fileupload.js",
             '063_uploader' => "/js/unicaen.uploader.widget.js",
         ],
+        'inline_scripts' => [
+            '070_bootstrap-confirmation' => 'vendor/bootstrap-confirmation-2.4.4/bootstrap-confirmation.min.js',
+        ],
         'stylesheets'           => [
             '050_bootstrap-theme' => false,
             '100_charte' => '/css/charte.css',

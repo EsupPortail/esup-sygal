@@ -5,6 +5,7 @@ namespace Application\Service\Fichier;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\VersionFichier;
+use Application\Filter\AbstractNomFichierFormatter;
 use Application\Filter\NomFichierFormatter;
 use Application\Service\BaseService;
 use Application\Service\File\FileServiceAwareTrait;
@@ -24,6 +25,27 @@ class FichierService extends BaseService
     use ValiditeFichierServiceAwareTrait;
 
     /**
+     * @var AbstractNomFichierFormatter
+     */
+    protected $nomFichierFormatter;
+
+    /**
+     * @param AbstractNomFichierFormatter $nomFichierFormatter
+     */
+    public function setNomFichierFormatter(AbstractNomFichierFormatter $nomFichierFormatter)
+    {
+        $this->nomFichierFormatter = $nomFichierFormatter;
+    }
+
+    /**
+     * FichierService constructor.
+     */
+    public function __construct()
+    {
+        $this->nomFichierFormatter = new NomFichierFormatter();
+    }
+
+    /**
      * @return EntityRepository
      */
     public function getRepository()
@@ -35,7 +57,7 @@ class FichierService extends BaseService
     }
 
     /**
-     * Crée des fichiers en base de données, à partir des données résultant d'un upload de fichiers.
+     * Instancie des fichiers, à partir des données résultant d'un upload de fichiers.
      *
      * Formats attendus pour les données d'upload :
      * <pre>
@@ -68,11 +90,11 @@ class FichierService extends BaseService
      * ]
      * </pre>
      *
-     * @param array                      $uploadResult Données résultant d'un upload de fichiers
-     * @param string|NatureFichier       $nature       Nature de fichier, ou son code
-     * @param string|VersionFichier|null $version      Version de fichier, ou son code.
+     * @param array $uploadResult Données résultant d'un upload de fichiers
+     * @param string|NatureFichier $nature Nature de fichier, ou son code
+     * @param string|VersionFichier|null $version Version de fichier, ou son code.
      *                                                 Si null, ce sera VersionFichier::CODE_ORIG
-     * @return Fichier[] Fichiers créés
+     * @return Fichier[] Fichiers instanciés
      */
     public function createFichiersFromUpload(array $uploadResult, $nature, $version = null)
     {
@@ -95,8 +117,6 @@ class FichierService extends BaseService
             $files = [$files];
         }
 
-        $nomFichierFormatter = new NomFichierFormatter();
-
         foreach ((array)$files as $file) {
             $path = $file['tmp_name'];
             $nomFichier = $file['name'];
@@ -114,21 +134,36 @@ class FichierService extends BaseService
                 ->setTypeMime($typeFichier)
                 ->setNomOriginal($nomFichier)
                 ->setTaille($tailleFichier)
-                ->setNom($nomFichierFormatter->filter($fichier));
+                ->setPath($path); // non mappé en BDD mais utilisé dans {@link moveUploadedFileForFichier}
 
-            $this->moveUploadedFileForFichier($fichier, $path);
-
-            $this->entityManager->persist($fichier);
-            try {
-                $this->entityManager->flush($fichier);
-            } catch (OptimisticLockException $e) {
-                throw new RuntimeException("Erreur rencontrée lors de l'enregistrement du Fichier", null, $e);
-            }
+            $nom = $this->nomFichierFormatter->filter($fichier); // en dernier car le formatter exploite des propriétés de l'entité
+            $fichier->setNom($nom);
 
             $fichiers[] = $fichier;
         }
 
         return $fichiers;
+    }
+
+    /**
+     * Enregistre en base de données les Fichiers spécifiés, et déplace les fichiers physiques associés au bon endroit.
+     *
+     * @param Fichier[] $fichiers
+     */
+    public function saveFichiers(array $fichiers)
+    {
+        $this->entityManager->beginTransaction();
+        try {
+            foreach ($fichiers as $fichier) {
+                $this->entityManager->persist($fichier);
+                $this->entityManager->flush($fichier);
+                $this->moveUploadedFileForFichier($fichier);
+            }
+            $this->entityManager->commit();
+        } catch (\Exception $e) {
+            $this->entityManager->rollback();
+            throw new RuntimeException("Erreur survenue lors de l'enregistrement des fichiers, rollback!", 0, $e);
+        }
     }
 
     /**
@@ -223,10 +258,11 @@ class FichierService extends BaseService
 
     /**
      * @param Fichier $fichier
-     * @param string  $fromPath
      */
-    public function moveUploadedFileForFichier(Fichier $fichier, $fromPath)
+    public function moveUploadedFileForFichier(Fichier $fichier)
     {
+        $fromPath = $fichier->getPath();
+
         // création si besoin du dossier destination
         $this->createDestinationDirectoryPathForFichier($fichier);
 
@@ -239,5 +275,7 @@ class FichierService extends BaseService
         if ($res === false) {
             throw new RuntimeException("Erreur lors du déplacement du fichier temporaire uploadé de $fromPath vers $newPath");
         }
+
+        $fichier->setPath($newPath);
     }
 }

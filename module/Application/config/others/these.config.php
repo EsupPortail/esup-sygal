@@ -4,6 +4,7 @@ use Application\Controller\Factory\TheseConsoleControllerFactory;
 use Application\Controller\Factory\TheseControllerFactory;
 use Application\Controller\Factory\TheseObserverControllerFactory;
 use Application\Controller\Plugin\Url\UrlThesePluginFactory;
+use Application\Controller\RapportAnnuelController;
 use Application\Controller\TheseConsoleController;
 use Application\Controller\TheseController;
 use Application\Entity\Db\Diffusion;
@@ -881,6 +882,19 @@ return [
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'detail-fichiers'),
                                 'etape' => WfEtape::CODE_DEPOT_VERSION_ORIGINALE,
                                 'visible' => 'Assertion\\These',
+                            ],
+                            'rapport-annuel' => [
+                                'id'       => 'rapport-annuel',
+                                'label'    => 'Rapports annuels',
+                                'route'    => 'rapport-annuel/lister',
+                                'withtarget' => true,
+                                'paramsInject' => [
+                                    'these',
+                                ],
+                                'icon' => 'glyphicon glyphicon-duplicate',
+                                'resource' => PrivilegeController::getResourceId(RapportAnnuelController::class, 'lister'),
+//                                'etape' => null,
+//                                'visible' => 'Assertion\\These',
                             ],
 
                             'divider-these' => [
