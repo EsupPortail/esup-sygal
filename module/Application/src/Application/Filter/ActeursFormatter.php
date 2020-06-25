@@ -7,9 +7,6 @@ use Zend\View\Helper\HtmlList;
 use Zend\Filter\AbstractFilter;
 use Zend\View\Renderer\PhpRenderer;
 
-//TODO JP 22/11/2017 doFormat need to be able to use Collection, These and array of Acteur
-// add the transformation in doFormat
-
 /** --- Class ActeursFormatteur ---
  * @var bool $asUl                      returned data type as unordered list (html)
  * @var bool $asSeparated               returned data type as separated value
@@ -66,7 +63,6 @@ class ActeursFormatter extends AbstractFilter {
     }
 
     /** Set the returned data type to separated value format and set the separator
-     * @param string $separator (default = ", ")
      * @return $this
      */
     public function asArray()
@@ -104,7 +100,7 @@ class ActeursFormatter extends AbstractFilter {
 
     /** Format n array of acteurs
      * @param Acteur[] $acteurs
-     * @return formated set of acteurs
+     * @return string
      */
     public function doFormat($acteurs)
     {
@@ -131,7 +127,7 @@ class ActeursFormatter extends AbstractFilter {
 
     /** This function format an array of acteurs as a unordered list
      * @param Acteur[] $acteurs
-     * @return an unordered list
+     * @return string
      */
     private function doFormatUnorderedList($acteurs) {
         $acteurs = array_map([$this, 'htmlifyActeur'], $acteurs);
@@ -143,7 +139,7 @@ class ActeursFormatter extends AbstractFilter {
 
     /** This function format an array of acteurs as Separated Values object
      * @param  Acteur[] $acteurs
-     * @return Separated Values object
+     * @return string Separated Values object
      */
     private function doFormatSeparated($acteurs) {
         $acteurs = array_map([$this, 'htmlifyActeur'], $acteurs);
@@ -202,7 +198,8 @@ class ActeursFormatter extends AbstractFilter {
     }
 
     /** Set the displayed keys
-     * @param Array $params of keys [role, complement, qualite, etablissement] and boolean
+     * @param array $params of keys [role, complement, qualite, etablissement] and boolean
+     * @return ActeursFormatter
      */
     public function paramFilter(array $params) {
         foreach ($params as $key => $value) {
@@ -223,14 +220,12 @@ class ActeursFormatter extends AbstractFilter {
         return $this;
     }
 
-
     public function filter($acteurs) {
 
         $results = [];
 
         /** @var Acteur $acteur */
         foreach($acteurs as $acteur) {
-
             $keep = true;
             if ($keep && $this->contrainteRole != null && $acteur->getRole()->getCode() != $this->contrainteRole) $keep = false;
             if ($keep && $this->contrainteRoleLibelle != null && $acteur->getRole()->getLibelle() != $this->contrainteRoleLibelle) $keep = false;
