@@ -72,9 +72,13 @@ use Zend\Paginator\Paginator;
                 <?php echo $fichier->getNomOriginal() ?>
             </td>
             <td>
-                <?php $urlTelecharger = $canDownload ? $urlFichierPlugin->telechargerPermanentFichier($fichier) : null; ?>
-                <a href="<?php echo $urlTelecharger ?>"
-                   title="Téléchargement à l'aide de l'id permanent <?php echo $idp = $fichier->getIdPermanent() ?>"><?php echo $idp ?></a>
+                <?php if ($idp = $fichier->getIdPermanent()): ?>
+                    <?php $urlTelecharger = $canDownload ? $urlFichierPlugin->telechargerPermanentFichier($fichier) : null; ?>
+                    <code class="small"><a href="<?php echo $urlTelecharger ?>"
+                       title="Téléchargement à l'aide de l'id permanent <?php echo $idp ?>"><?php echo $idp ?></a></code>
+                <?php else: ?>
+                    Aucun id permanent
+                <?php endif ?>
             </td>
             <td>
                 <?php echo $fichier->getHistoCreateur() ?>
