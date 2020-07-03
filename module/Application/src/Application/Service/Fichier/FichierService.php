@@ -5,6 +5,7 @@ namespace Application\Service\Fichier;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\VersionFichier;
+use Application\Filter\AbstractNomFichierFormatter;
 use Application\Filter\NomFichierFormatter;
 use Application\Service\BaseService;
 use Application\Service\File\FileServiceAwareTrait;
@@ -15,7 +16,8 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Exception;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\Filter\FilterInterface;
+use Zend\Mime\Mime;
+use ZipArchive;
 
 class FichierService extends BaseService
 {
@@ -23,6 +25,27 @@ class FichierService extends BaseService
     use NatureFichierServiceAwareTrait;
     use VersionFichierServiceAwareTrait;
     use ValiditeFichierServiceAwareTrait;
+
+    /**
+     * @var AbstractNomFichierFormatter
+     */
+    protected $nomFichierFormatter;
+
+    /**
+     * @param AbstractNomFichierFormatter $nomFichierFormatter
+     */
+    public function setNomFichierFormatter(AbstractNomFichierFormatter $nomFichierFormatter)
+    {
+        $this->nomFichierFormatter = $nomFichierFormatter;
+    }
+
+    /**
+     * FichierService constructor.
+     */
+    public function __construct()
+    {
+        $this->nomFichierFormatter = new NomFichierFormatter();
+    }
 
     /**
      * @return EntityRepository
@@ -36,7 +59,7 @@ class FichierService extends BaseService
     }
 
     /**
-     * Crée des fichiers en base de données, à partir des données résultant d'un upload de fichiers.
+     * Instancie des fichiers, à partir des données résultant d'un upload de fichiers.
      *
      * Formats attendus pour les données d'upload :
      * <pre>
@@ -69,14 +92,13 @@ class FichierService extends BaseService
      * ]
      * </pre>
      *
-     * @param array                      $uploadResult Données résultant d'un upload de fichiers
-     * @param string|NatureFichier       $nature       Nature de fichier, ou son code
-     * @param string|VersionFichier|null $version      Version de fichier, ou son code.
+     * @param array $uploadResult Données résultant d'un upload de fichiers
+     * @param string|NatureFichier $nature Nature de fichier, ou son code
+     * @param string|VersionFichier|null $version Version de fichier, ou son code.
      *                                                 Si null, ce sera VersionFichier::CODE_ORIG
-     * @param FilterInterface|null       $nomFichierFormatter
-     * @return Fichier[] Fichiers créés
+     * @return Fichier[] Fichiers instanciés
      */
-    public function createFichiersFromUpload(array $uploadResult, $nature, $version = null, FilterInterface $nomFichierFormatter = null)
+    public function createFichiersFromUpload(array $uploadResult, $nature, $version = null)
     {
         $fichiers = [];
         $files = $uploadResult['files'];
@@ -97,10 +119,6 @@ class FichierService extends BaseService
             $files = [$files];
         }
 
-        if ($nomFichierFormatter === null) {
-            $nomFichierFormatter = new NomFichierFormatter();
-        }
-
         foreach ((array)$files as $file) {
             $path = $file['tmp_name'];
             $nomFichier = $file['name'];
@@ -118,21 +136,36 @@ class FichierService extends BaseService
                 ->setTypeMime($typeFichier)
                 ->setNomOriginal($nomFichier)
                 ->setTaille($tailleFichier)
-                ->setNom($nomFichierFormatter->filter($fichier));
+                ->setPath($path); // non mappé en BDD mais utilisé dans {@link moveUploadedFileForFichier}
 
-            $this->moveUploadedFileForFichier($fichier, $path);
-
-            $this->entityManager->persist($fichier);
-            try {
-                $this->entityManager->flush($fichier);
-            } catch (OptimisticLockException $e) {
-                throw new RuntimeException("Erreur rencontrée lors de l'enregistrement du Fichier", null, $e);
-            }
+            $nom = $this->nomFichierFormatter->filter($fichier); // en dernier car le formatter exploite des propriétés de l'entité
+            $fichier->setNom($nom);
 
             $fichiers[] = $fichier;
         }
 
         return $fichiers;
+    }
+
+    /**
+     * Enregistre en base de données les Fichiers spécifiés, et déplace les fichiers physiques associés au bon endroit.
+     *
+     * @param Fichier[] $fichiers
+     */
+    public function saveFichiers(array $fichiers)
+    {
+        $this->entityManager->beginTransaction();
+        try {
+            foreach ($fichiers as $fichier) {
+                $this->entityManager->persist($fichier);
+                $this->entityManager->flush($fichier);
+                $this->moveUploadedFileForFichier($fichier);
+            }
+            $this->entityManager->commit();
+        } catch (\Exception $e) {
+            $this->entityManager->rollback();
+            throw new RuntimeException("Erreur survenue lors de l'enregistrement des fichiers, rollback!", 0, $e);
+        }
     }
 
     /**
@@ -227,10 +260,11 @@ class FichierService extends BaseService
 
     /**
      * @param Fichier $fichier
-     * @param string  $fromPath
      */
-    public function moveUploadedFileForFichier(Fichier $fichier, $fromPath)
+    public function moveUploadedFileForFichier(Fichier $fichier)
     {
+        $fromPath = $fichier->getPath();
+
         // création si besoin du dossier destination
         $this->createDestinationDirectoryPathForFichier($fichier);
 
@@ -243,5 +277,61 @@ class FichierService extends BaseService
         if ($res === false) {
             throw new RuntimeException("Erreur lors du déplacement du fichier temporaire uploadé de $fromPath vers $newPath");
         }
+
+        $fichier->setPath($newPath);
+    }
+
+    /**
+     * Compression des fichiers physiques de plusieurs Fichier en une archive .zip puis création d'un Fichier temporaire
+     * "pointant" vers cette archive.
+     *
+     * NB: c'est une entité Fichier qui est retournée pour une raison de praticité, elle n'a pas du tout vocation à
+     * être persistée.
+     *
+     * @param Fichier[] $fichiers
+     * @return Fichier
+     */
+    public function compresserFichiers(array $fichiers)
+    {
+        $archiveFilepath = sys_get_temp_dir() . '/' . uniqid('sygal_rapports_') . '.zip';
+
+        $archive = new ZipArchive();
+        if ($archive->open($archiveFilepath, ZipArchive::CREATE) !== TRUE) {
+            throw new RuntimeException("Impossible de créer l'archive " . $archiveFilepath);
+        }
+        foreach ($fichiers as $fichier) {
+            $filePath = $this->computeDestinationFilePathForFichier($fichier);
+            $archive->addFile($filePath, $fichier->getPath());
+        }
+        $archive->close();
+
+        $fichier = Fichier::fromFilepath($archiveFilepath);
+        $fichier->setNom("sygal_rapports_annuels.zip");
+
+        return $fichier;
+    }
+
+    /**
+     * Téléchargement d'un Fichier.
+     *
+     * @param Fichier $fichier
+     */
+    public function telechargerFichier(Fichier $fichier)
+    {
+        $contenu     = $fichier->getContenu();
+        $content     = is_resource($contenu) ? stream_get_contents($contenu) : $contenu;
+        $contentType = $fichier->getTypeMime() ?: 'application/octet-stream';
+
+        header('Content-Description: File Transfer');
+        header('Content-Type: ' . $contentType);
+        header('Content-Disposition: attachment; filename="' . $fichier->getNom() . '"');
+        header('Content-Transfer-Encoding: binary');
+        header('Content-Length: ' . strlen($content));
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Expires: 0');
+        header('Pragma: public');
+
+        echo $content;
+        exit;
     }
 }

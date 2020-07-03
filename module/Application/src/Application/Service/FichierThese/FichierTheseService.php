@@ -169,7 +169,7 @@ class FichierTheseService extends BaseService
             // à faire en dernier car le formatter exploite des propriétés du FichierThese
             $fichier->setNom($nomFichierFormatter->filter($fichierThese));
 
-            $this->fichierService->moveUploadedFileForFichier($fichierThese->getFichier(), $path);
+            $this->fichierService->moveUploadedFileForFichier($fichier);
 
             $this->entityManager->persist($fichier);
             $this->entityManager->persist($fichierThese);
@@ -460,31 +460,12 @@ class FichierTheseService extends BaseService
      * @param string   $fileContent
      * @param int|null $cacheMaxAge En secondes, ex: 60*60*24 = 86400 s = 1 jour
      * @return Response
+     *
+     * @deprecated Appeler directement FileService::createResponseForFileContent()
      */
     public function createResponseForFileContent(Response $response, $fileContent, $cacheMaxAge = null)
     {
-        $response->setContent($fileContent);
-
-        $headers = $response->getHeaders();
-        $headers
-            ->addHeaderLine('Content-Transfer-Encoding', "binary")
-            ->addHeaderLine('Content-Type', "image/png")
-            ->addHeaderLine('Content-length', strlen($fileContent));
-
-        if ($cacheMaxAge === null) {
-            $headers
-                ->addHeaderLine('Cache-Control', "no-cache, no-store, must-revalidate")
-                ->addHeaderLine('Pragma', 'no-cache');
-        }
-        else {
-            // autorisation de la mise en cache de l'image par le client
-            $headers
-                ->addHeaderLine('Cache-Control', "private, max-age=$cacheMaxAge")
-                ->addHeaderLine('Pragma', 'private')// tout sauf 'no-cache'
-                ->addHeaderLine('Expires', gmdate('D, d M Y H:i:s \G\M\T', time() + $cacheMaxAge));
-        }
-
-        return $response;
+        return $this->fileService->createResponseForFileContent($response, $fileContent, $cacheMaxAge);
     }
 
     /**
