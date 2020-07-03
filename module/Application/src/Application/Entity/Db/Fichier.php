@@ -31,6 +31,11 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     /**
      * @var string
      */
+    private $idPermanent;
+
+    /**
+     * @var string
+     */
     private $uuid;
 
     /**
@@ -98,6 +103,28 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     {
         $this->uuid = Uuid::uuid4()->toString();
         $this->validites = new ArrayCollection();
+    }
+
+    /**
+     * Instancie un Fichier à partir d'un chemin de fichier physique.
+     *
+     * @param string $filepath
+     * @return static
+     */
+    static public function fromFilepath($filepath)
+    {
+        $content = file_get_contents($filepath);
+
+        $fichier = new static;
+        $fichier
+            ->setNom(basename($filepath))
+            ->setNomOriginal(basename($filepath))
+            ->setTaille(strlen($content))
+            ->setPath($filepath)
+            ->setTypeMime(mime_content_type($filepath))
+            ->setContenuFichierData($content);
+
+        return $fichier;
     }
 
     /**
@@ -246,6 +273,25 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIdPermanent()
+    {
+        return $this->idPermanent;
+    }
+
+    /**
+     * @param string $idPermanent
+     * @return Fichier
+     */
+    public function setIdPermanent($idPermanent)
+    {
+        $this->idPermanent = $idPermanent;
+
+        return $this;
     }
 
     /**

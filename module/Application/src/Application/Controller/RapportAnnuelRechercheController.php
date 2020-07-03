@@ -2,19 +2,28 @@
 
 namespace Application\Controller;
 
+use Application\Entity\Db\RapportAnnuel;
 use Application\Search\Controller\SearchControllerInterface;
-use Application\Search\Controller\SearchControllerTrait;
+use Application\Search\Controller\SearchControllerPlugin;
+use Application\Search\SearchServiceAwareTrait;
+use Application\Service\Fichier\FichierServiceAwareTrait;
+use Application\Service\RapportAnnuel\RapportAnnuelSearchService;
 use Zend\Http\Response;
+use Zend\Paginator\Paginator as ZendPaginator;
 use Zend\View\Model\ViewModel;
 
 /**
  * Class RapportAnnuelRechercheController
- *
- * @package Application\Controller
  */
 class RapportAnnuelRechercheController extends AbstractController implements SearchControllerInterface
 {
-    use SearchControllerTrait;
+    use SearchServiceAwareTrait;
+    use FichierServiceAwareTrait;
+
+    /**
+     * @var RapportAnnuelSearchService
+     */
+    protected $searchService;
 
     /**
      * @return ViewModel|Response
@@ -23,30 +32,65 @@ class RapportAnnuelRechercheController extends AbstractController implements Sea
     {
         $text = $this->params()->fromQuery('text');
 
-        $paginator = $this->initSearch();
+        $result = $this->getSearchPluginController()->search();
+        if ($result instanceof Response) {
+            return $result;
+        }
+        /** @var ZendPaginator $paginator */
+        $paginator = $result;
 
         return new ViewModel([
-            'items' => $paginator,
+            'paginator' => $paginator,
             'text' => $text,
         ]);
     }
 
-    public function rechercherAction()
+    /**
+     * @return ViewModel
+     */
+    public function filtersAction()
     {
-        $prg = $this->postRedirectGet();
-        if ($prg instanceof \Zend\Http\PhpEnvironment\Response) {
-            return $prg;
+        $filters = $this->getSearchPluginController()->filters();
+
+        return new ViewModel([
+            'filters' => $filters,
+            'message' => "coucou!",
+        ]);
+    }
+
+    /**
+     * @return void|Response
+     */
+    public function telechargerZipAction()
+    {
+        $result = $this->getSearchPluginController()->search();
+        if ($result instanceof Response) {
+            return $result; // théoriquement, on ne devrait pas arriver ici.
+        }
+        /** @var ZendPaginator $paginator */
+        $paginator = $result;
+
+        $fichiers = [];
+        /** @var RapportAnnuel $rapportAnnuel */
+        foreach ($paginator as $rapportAnnuel) {
+            $fichier = $rapportAnnuel->getFichier();
+            $fichier->setPath($rapportAnnuel->generateInternalPathForZipArchive());
+            $fichiers[] = $rapportAnnuel->getFichier();
         }
 
-        $queryParams = $this->params()->fromQuery();
+        $fichierZip = $this->fichierService->compresserFichiers($fichiers);
+        $this->fichierService->telechargerFichier($fichierZip);
+    }
 
-        if (is_array($prg)) {
-            if (isset($queryParams['page'])) {
-                unset($queryParams['page']);
-            }
-            $queryParams['text'] = $prg['text'];
-        }
+    /**
+     * @return SearchControllerPlugin
+     */
+    protected function getSearchPluginController()
+    {
+        /** @var SearchControllerPlugin $searchControllerPlugin */
+        $searchControllerPlugin = $this->getPluginManager()->get('searchControllerPlugin');
+        $searchControllerPlugin->setSearchService($this->searchService);
 
-        return $this->redirect()->toRoute('these', [], ['query' => $queryParams]);
+        return $searchControllerPlugin;
     }
 }

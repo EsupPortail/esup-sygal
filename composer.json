@@ -17,6 +17,7 @@
         "ext-imagick":                   "*",
         "ext-readline":                  "*",
         "ext-gettext":                   "*",
+        "ext-zip":                       "*",
         "unicaen/app":                   "^1.3",
         "unicaen/auth":                  "^1.3",
         "unicaen/faq":                   "^1.0",

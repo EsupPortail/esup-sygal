@@ -85,7 +85,7 @@ class RapportAnnuelForm extends Form implements InputFilterProviderInterface
             'name' => 'estFinal',
             'type' => Checkbox::class,
             'options' => [
-                'label' => "Il s'agit du rapport final.",
+                'label' => "Il s'agit du rapport de fin de thèse.",
             ],
             'attributes' => [
                 'id' => 'estFinal',
@@ -98,7 +98,7 @@ class RapportAnnuelForm extends Form implements InputFilterProviderInterface
             'type' => Submit::class,
             'name' => 'submit',
             'attributes' => [
-                'value' => 'Valider',
+                'value' => 'Téléverser',
             ],
         ]);
 

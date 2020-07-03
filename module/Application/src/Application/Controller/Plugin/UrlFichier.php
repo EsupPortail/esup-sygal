@@ -18,6 +18,20 @@ class UrlFichier extends UrlPlugin
         ], [], true);
     }
 
+    public function telechargerPermanentFichier(Fichier $fichier)
+    {
+        return $this->fromRoute('fichier/telecharger-permanent', [
+            'idPermanent' => $fichier->getIdPermanent(),
+        ], [], true);
+    }
+
+    public function telechargerPermanentId($idPermanent)
+    {
+        return $this->fromRoute('fichier/telecharger-permanent', [
+            'idPermanent' => $idPermanent,
+        ], [], true);
+    }
+
     public function supprimerFichier(Fichier $fichier)
     {
         return $this->fromRoute('fichier/supprimer', [

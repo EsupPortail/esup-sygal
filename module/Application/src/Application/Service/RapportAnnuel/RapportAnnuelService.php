@@ -139,4 +139,23 @@ class RapportAnnuelService extends BaseService
             throw new RuntimeException("Erreur survenue lors de la suppression des rapports annuels, rollback!", 0, $e);
         }
     }
+
+    /**
+     * @param bool $cacheable
+     * @return array
+     */
+    public function findDistinctAnnees($cacheable = false)
+    {
+        $qb = $this->getRepository()->createQueryBuilder('ra');
+        $qb
+            ->distinct()
+            ->select("ra.anneeUniv")
+            ->orderBy("ra.anneeUniv", 'desc');
+
+        $qb->setCacheable($cacheable);
+
+        return array_map(function($value) {
+            return current($value);
+        }, $qb->getQuery()->getScalarResult());
+    }
 }

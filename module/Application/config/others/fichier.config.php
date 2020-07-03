@@ -49,7 +49,6 @@ return [
                     ],
                     'privileges' => FichierPrivileges::FICHIER_COMMUN_TELECHARGER,
                 ],
-
                 [
                     'controller' => 'Application\Controller\Fichier',
                     'action'     => [
@@ -58,6 +57,13 @@ return [
                     'privileges' => [
                         FichierPrivileges::FICHIER_COMMUN_TELECHARGER,
                     ],
+                ],
+                [
+                    'controller' => 'Application\Controller\Fichier',
+                    'action'     => [
+                        'telecharger-permanent',
+                    ],
+                    'roles' => [],
                 ],
                 [
                     'controller' => 'Application\Controller\Fichier',
@@ -79,8 +85,7 @@ return [
                 'options'       => [
                     'route' => '/[:language/]fichier',
                     'defaults'      => [
-                        '__NAMESPACE__' => 'Application\Controller',
-                        'controller' => 'FichierThese',
+                        'controller' => 'Application\Controller\Fichier',
                         'language'   => 'fr_FR',
                     ],
                 ],
@@ -94,8 +99,16 @@ return [
                                 'fichier' => '[a-zA-Z0-9-]+',
                             ],
                             'defaults'      => [
-                                'controller' => 'Fichier',
                                 'action' => 'telecharger',
+                            ],
+                        ],
+                    ],
+                    'telecharger-permanent' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route' => '/telecharger/permanent/:idPermanent',
+                            'defaults'      => [
+                                'action' => 'telecharger-permanent',
                             ],
                         ],
                     ],
@@ -107,27 +120,24 @@ return [
                                 'fichier' => '[a-zA-Z0-9-]+',
                             ],
                             'defaults'      => [
-                                'controller' => 'Fichier',
                                 'action' => 'supprimer',
                             ],
                         ],
                     ],
                     'televerser-fichiers-communs' => [
-                        'type'          => 'Segment',
+                        'type'          => 'Literal',
                         'options'       => [
                             'route' => '/televerser-fichiers-communs',
                             'defaults'      => [
-                                'controller' => 'Fichier',
                                 'action' => 'televerser-fichiers-communs',
                             ],
                         ],
                     ],
                     'lister-fichiers-communs' => [
-                        'type'          => 'Segment',
+                        'type'          => 'Literal',
                         'options'       => [
                             'route' => '/lister-fichiers-communs',
                             'defaults'      => [
-                                'controller' => 'Fichier',
                                 'action' => 'lister-fichiers-communs',
                             ],
                         ],

@@ -12,6 +12,7 @@ use BjyAuthorize\Exception\UnAuthorizedException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
+use UnicaenApp\Exception\RuntimeException;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
@@ -88,6 +89,22 @@ class FichierController extends AbstractController
     public function telechargerAction()
     {
         $fichier = $this->requestFichier();
+
+        // injection préalable du contenu du fichier pour pouvoir utiliser le plugin Uploader
+        $contenuFichier = $this->fichierService->fetchContenuFichier($fichier);
+        $fichier->setContenuFichierData($contenuFichier);
+
+        $this->uploader()->download($fichier);
+    }
+
+    public function telechargerPermanentAction()
+    {
+        $idPermanent = $this->params()->fromRoute('idPermanent');
+        /** @var Fichier|null $fichier */
+        $fichier = $this->fichierService->getRepository()->findOneBy(['idPermanent' => $idPermanent]);
+        if( $fichier === null) {
+            throw new RuntimeException("Fichier introuvable");
+        }
 
         // injection préalable du contenu du fichier pour pouvoir utiliser le plugin Uploader
         $contenuFichier = $this->fichierService->fetchContenuFichier($fichier);

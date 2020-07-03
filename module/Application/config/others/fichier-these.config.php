@@ -43,7 +43,7 @@ return [
                     'action'     => [
                         'apercevoir-page-de-couverture',
                     ],
-                    'role' => ThesePrivileges::THESE_TELECHARGEMENT_FICHIER,
+                    'privileges' => ThesePrivileges::THESE_TELECHARGEMENT_FICHIER,
                 ],
                 [
                     'controller' => 'Application\Controller\FichierThese',
@@ -85,15 +85,14 @@ return [
                 'options'       => [
                     'route' => '/[:language/]fichier',
                     'defaults'      => [
-                        '__NAMESPACE__' => 'Application\Controller',
-                        'controller' => 'FichierThese',
+                        'controller' => 'Application\Controller\FichierThese',
                         'language'   => 'fr_FR',
                     ],
                 ],
                 'may_terminate' => false,
                 'child_routes'  => [
                     'deposes' => [
-                        'type'          => 'Segment',
+                        'type'          => 'Literal',
                         'options'       => [
                             'route' => '/deposes',
                             'defaults'      => [
@@ -108,11 +107,14 @@ return [
                             'constraints'   => [
                                 'these' => '\d+',
                             ],
+                            'defaults' => [
+                                'controller' => 'Application\Controller\FichierThese', // indispensable ! :-?
+                            ],
                         ],
                         'may_terminate' => false,
                         'child_routes'  => [
                             'lister-fichiers'     => [
-                                'type'     => 'Segment',
+                                'type'     => 'Literal',
                                 'options'  => [
                                     'route' => '/lister-fichiers',
                                     'defaults' => [
@@ -122,7 +124,7 @@ return [
                                 ],
                             ],
                             'televerser'  => [
-                                'type'     => 'Segment',
+                                'type'     => 'Literal',
                                 'options'  => [
                                     'route' => '/televerser',
                                     'defaults' => [
@@ -157,7 +159,7 @@ return [
                                 ],
                             ],
                             'apercevoir-page-de-couverture' => [
-                                'type'        => 'Segment',
+                                'type'        => 'Literal',
                                 'options'     => [
                                     'route' => '/apercevoir-page-de-couverture',
                                     'defaults'    => [
@@ -215,12 +217,6 @@ return [
                         'pages' => [
                             'fichiers-deposes' => [
                                 'label'    => 'Fichiers de thèses',
-                                'route'    => 'fichier/deposes',
-                                'order'    => 100,
-                                'resource' => PrivilegeController::getResourceId('Application\Controller\FichierThese', 'deposes'),
-                            ],
-                            'rapport-annuel' => [
-                                'label'    => 'Rapport annuel',
                                 'route'    => 'fichier/deposes',
                                 'order'    => 100,
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\FichierThese', 'deposes'),

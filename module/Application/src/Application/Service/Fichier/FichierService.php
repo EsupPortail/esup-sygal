@@ -16,6 +16,8 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Exception;
 use UnicaenApp\Exception\RuntimeException;
+use Zend\Mime\Mime;
+use ZipArchive;
 
 class FichierService extends BaseService
 {
@@ -277,5 +279,59 @@ class FichierService extends BaseService
         }
 
         $fichier->setPath($newPath);
+    }
+
+    /**
+     * Compression des fichiers physiques de plusieurs Fichier en une archive .zip puis création d'un Fichier temporaire
+     * "pointant" vers cette archive.
+     *
+     * NB: c'est une entité Fichier qui est retournée pour une raison de praticité, elle n'a pas du tout vocation à
+     * être persistée.
+     *
+     * @param Fichier[] $fichiers
+     * @return Fichier
+     */
+    public function compresserFichiers(array $fichiers)
+    {
+        $archiveFilepath = sys_get_temp_dir() . '/' . uniqid('sygal_rapports_') . '.zip';
+
+        $archive = new ZipArchive();
+        if ($archive->open($archiveFilepath, ZipArchive::CREATE) !== TRUE) {
+            throw new RuntimeException("Impossible de créer l'archive " . $archiveFilepath);
+        }
+        foreach ($fichiers as $fichier) {
+            $filePath = $this->computeDestinationFilePathForFichier($fichier);
+            $archive->addFile($filePath, $fichier->getPath());
+        }
+        $archive->close();
+
+        $fichier = Fichier::fromFilepath($archiveFilepath);
+        $fichier->setNom("sygal_rapports_annuels.zip");
+
+        return $fichier;
+    }
+
+    /**
+     * Téléchargement d'un Fichier.
+     *
+     * @param Fichier $fichier
+     */
+    public function telechargerFichier(Fichier $fichier)
+    {
+        $contenu     = $fichier->getContenu();
+        $content     = is_resource($contenu) ? stream_get_contents($contenu) : $contenu;
+        $contentType = $fichier->getTypeMime() ?: 'application/octet-stream';
+
+        header('Content-Description: File Transfer');
+        header('Content-Type: ' . $contentType);
+        header('Content-Disposition: attachment; filename="' . $fichier->getNom() . '"');
+        header('Content-Transfer-Encoding: binary');
+        header('Content-Length: ' . strlen($content));
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Expires: 0');
+        header('Pragma: public');
+
+        echo $content;
+        exit;
     }
 }

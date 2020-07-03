@@ -8,7 +8,6 @@ use Application\Filter\IdifyFilter;
 use Application\Filter\IdifyFilterAwareTrait;
 use Application\Form\RapportAnnuelForm;
 use Application\Service\Fichier\FichierServiceAwareTrait;
-use Application\Service\FichierThese\Exception\DepotImpossibleException;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\RapportAnnuel\RapportAnnuelServiceAwareTrait;
@@ -17,9 +16,7 @@ use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Doctrine\ORM\NoResultException;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\Form\Element\Hidden;
 use Zend\Http\Response;
-use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
 class RapportAnnuelController extends AbstractController
@@ -50,18 +47,9 @@ class RapportAnnuelController extends AbstractController
     }
 
     /**
-     * @return ViewModel
-     */
-    public function rechercherAction()
-    {
-
-
-    }
-
-    /**
      * @return Response|ViewModel
      */
-    public function listerAction()
+    public function consulterAction()
     {
         $these = $this->requestedThese();
         $rapportsAnnuels = $this->rapportAnnuelService->findRapportsAnnuelsForThese($these);
@@ -109,18 +97,23 @@ class RapportAnnuelController extends AbstractController
 
                     ]
                 );
-
-//                // on notifie de BdD
-//                // todo: déplacer ceci dans un service écoutant l'événement "fichier de thèse téléversé" déclenché ci-dessus
-//                $notif = $this->notifierService->getNotificationFactory()->createNotificationForFichierTeleverse($these);
-//                $notif
-//                    ->setSubject("Dépôt d'un rapport annuel")
-//                    ->setTemplatePath('application/these/mail/notif-depot-rapport-annuel');
-//                $this->notifierService->trigger($notif);
             }
         }
 
-        return $this->redirect()->toRoute('rapport-annuel/lister', ['these' => IdifyFilter::id($these)]);
+        return $this->redirect()->toRoute('rapport-annuel/consulter', ['these' => IdifyFilter::id($these)]);
+    }
+
+    /**
+     * Téléchargement d'un rapport annuel.
+     */
+    public function telechargerAction()
+    {
+        $rapportAnnuel = $this->requestRapportAnnuel();
+
+        return $this->forward()->dispatch('Application\Controller\Fichier', [
+            'action' => 'telecharger',
+            'fichier' => IdifyFilter::id($rapportAnnuel->getFichier()),
+        ]);
     }
 
     /**
@@ -133,7 +126,7 @@ class RapportAnnuelController extends AbstractController
 
         $this->rapportAnnuelService->deleteRapportAnnuel($rapportAnnuel);
 
-        return $this->redirect()->toRoute('rapport-annuel/lister', ['these' => IdifyFilter::id($these)]);
+        return $this->redirect()->toRoute('rapport-annuel/consulter', ['these' => IdifyFilter::id($these)]);
     }
 
     /**

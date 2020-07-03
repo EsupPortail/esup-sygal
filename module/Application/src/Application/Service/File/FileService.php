@@ -2,6 +2,7 @@
 
 namespace Application\Service\File;
 
+use Application\Controller\Plugin\Uploader\UploadedFileInterface;
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Fichier;
@@ -221,5 +222,30 @@ class FileService
         }
 
         return $response;
+    }
+
+    /**
+     * Crée la réponse permettant au client de télécharger un fichier quelconque.
+     *
+     * @param string $filepath Chemin vers le fichier à envoyer au client
+     *
+     * TODO: à tester !
+     */
+    public function downloadFile($filepath)
+    {
+        $content = file_get_contents($filepath);
+        $contentType = mime_content_type($filepath) ?: 'application/octet-stream';
+
+        header('Content-Description: File Transfer');
+        header('Content-Type: ' . $contentType);
+        header('Content-Disposition: attachment; filename="' . basename($filepath) . '"');
+        header('Content-Transfer-Encoding: binary');
+        header('Content-Length: ' . strlen($content));
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Expires: 0');
+        header('Pragma: public');
+
+        echo $content;
+        exit;
     }
 }

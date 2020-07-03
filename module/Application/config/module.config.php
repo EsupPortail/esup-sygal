@@ -1,5 +1,7 @@
 <?php
 
+namespace Application;
+
 use Application\Assertion\AssertionAbstractFactory;
 use Application\Cache\MemcachedFactory;
 use Application\Controller\Factory\IndexControllerFactory;
@@ -8,7 +10,8 @@ use Application\Event\UserAuthenticatedEventListenerFactory;
 use Application\Event\UserRoleSelectedEventListener;
 use Application\Form\Factory\EcoleDoctoraleFormFactory;
 use Application\Navigation\NavigationFactoryFactory;
-use Application\RouteMatchInjector;
+use Application\Search\Filter\Provider\SearchFilterProviderService;
+use Application\Search\Filter\Provider\SearchFilterProviderServiceFactory;
 use Application\Service\AuthorizeServiceAwareInitializer;
 use Application\Service\Role\RoleService;
 use Application\Service\Role\RoleServiceFactory;
@@ -16,8 +19,6 @@ use Application\Service\ServiceAwareInitializer;
 use Application\Service\Url\UrlServiceFactory;
 use Application\Service\UserContextServiceAwareInitializer;
 use Application\Service\UserContextServiceFactory;
-use Application\SourceCodeStringHelper;
-use Application\SourceCodeStringHelperFactory;
 use Application\View\Helper\EscapeTextHelper;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
@@ -197,6 +198,7 @@ return array(
             'Sygal\Memcached'                => MemcachedFactory::class,
             'RoleService' => RoleServiceFactory::class,
             SourceCodeStringHelper::class => SourceCodeStringHelperFactory::class,
+            SearchFilterProviderService::class => SearchFilterProviderServiceFactory::class,
         ),
         'abstract_factories' => [
             AssertionAbstractFactory::class,
