@@ -9,9 +9,10 @@ class TheseAnneeUnivRepository extends DefaultEntityRepository
 {
     /**
      * @param Etablissement|null $etablissement
+     * @param bool $cacheable
      * @return int[]
      */
-    public function fetchDistinctAnneesUniv1ereInscription(Etablissement $etablissement = null)
+    public function fetchDistinctAnneesUniv1ereInscription(Etablissement $etablissement = null, $cacheable = false)
     {
         $qb = $this->createQueryBuilder('t');
         $qb
@@ -26,10 +27,10 @@ class TheseAnneeUnivRepository extends DefaultEntityRepository
                 ->setParameter('etablissement', $etablissement);
         }
 
-        $results = array_map(function($value) {
+        $qb->setCacheable($cacheable);
+
+        return array_map(function($value) {
             return current($value);
         }, $qb->getQuery()->getScalarResult());
-
-        return $results;
     }
 }

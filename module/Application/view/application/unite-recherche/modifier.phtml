@@ -316,12 +316,6 @@ $form->get('code')->setAttribute('readonly', !$editable);
     });
 </script>
 
-<?php
-$this->headLink()->appendStylesheet("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.min.css");
-$this->inlineScript()->appendFile("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js");
-$this->inlineScript()->appendFile("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/i18n/defaults-fr_FR.min.js");
-?>
-
 <script>
     $(function() {
         $("#domaines").refresh();

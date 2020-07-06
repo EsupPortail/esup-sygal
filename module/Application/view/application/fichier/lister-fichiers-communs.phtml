@@ -49,7 +49,9 @@ use Zend\Paginator\Paginator;
                 <?php echo $this->translate("Fichier"); ?></a> <?php echo $s->icon() ?></th>
         <th><a href="<?php echo $s = $this->sortable('f.nomOriginal'); ?>">
                 <?php echo $this->translate("Nom original"); ?></a> <?php echo $s->icon() ?></th>
-        <th><a href="<?php echo $s = $this->sortable('i.nomUsuel+i.prenom1'); ?>">
+        <th><a href="<?php echo $s = $this->sortable('f.nomOriginal'); ?>">
+                <?php echo $this->translate("Id permanent"); ?></a> <?php echo $s->icon() ?></th>
+        <th><a href="<?php echo $s = $this->sortable('f.permanentId'); ?>">
                 <?php echo $this->translate("Téléversé par"); ?></a> <?php echo $s->icon() ?></th>
         <th><a href="<?php echo $s = $this->sortable('f.histoCreation'); ?>">
                 <?php echo $this->translate("Téléversé le"); ?></a> <?php echo $s->icon() ?></th>
@@ -68,6 +70,15 @@ use Zend\Paginator\Paginator;
             </td>
             <td>
                 <?php echo $fichier->getNomOriginal() ?>
+            </td>
+            <td>
+                <?php if ($idp = $fichier->getIdPermanent()): ?>
+                    <?php $urlTelecharger = $canDownload ? $urlFichierPlugin->telechargerPermanentFichier($fichier) : null; ?>
+                    <code class="small"><a href="<?php echo $urlTelecharger ?>"
+                       title="Téléchargement à l'aide de l'id permanent <?php echo $idp ?>"><?php echo $idp ?></a></code>
+                <?php else: ?>
+                    Aucun id permanent
+                <?php endif ?>
             </td>
             <td>
                 <?php echo $fichier->getHistoCreateur() ?>
