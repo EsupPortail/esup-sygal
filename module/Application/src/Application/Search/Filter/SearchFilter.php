@@ -198,11 +198,12 @@ abstract class SearchFilter implements SearchFilterInterface
 
     /**
      * @param array $attributes
+     * @param bool $overwrite
      * @return self
      */
-    public function setAttributes($attributes)
+    public function setAttributes(array $attributes, $overwrite = false)
     {
-        $this->attributes = $attributes;
+        $this->attributes = $overwrite ? $attributes : array_merge($this->attributes, $attributes);
 
         return $this;
     }
