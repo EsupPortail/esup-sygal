@@ -61,7 +61,8 @@ interface SearchFilterInterface
 
     /**
      * @param array $attributes
+     * @param bool $overwrite
      * @return self
      */
-    public function setAttributes($attributes);
+    public function setAttributes(array $attributes, $overwrite = false);
 }

@@ -280,12 +280,15 @@ return array(
             '063_uploader' => "/js/unicaen.uploader.widget.js",
         ],
         'inline_scripts' => [
-            '070_bootstrap-confirmation' => 'vendor/bootstrap-confirmation-2.4.4/bootstrap-confirmation.min.js',
+            '070_bootstrap-select' => '/vendor/bootstrap-select-1.13.18/js/bootstrap-select.min.js',
+            '070_bootstrap-select-fr' => '/vendor/bootstrap-select-1.13.18/js/i18n/defaults-fr_FR.js',
+            '081_bootstrap-confirmation' => '/vendor/bootstrap-confirmation.min.js',
         ],
         'stylesheets'           => [
             '050_bootstrap-theme' => false,
             '100_charte' => '/css/charte.css',
             '200_fa' => '/fontawesome-free-5.12.0-web/css/all.min.css',
+            '300_bs' => '/vendor/bootstrap-select-1.13.18/css/bootstrap-select.min.css',
         ],
         'printable_stylesheets' => [
         ],
