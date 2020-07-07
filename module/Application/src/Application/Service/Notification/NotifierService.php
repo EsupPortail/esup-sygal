@@ -336,13 +336,12 @@ class NotifierService extends \Notification\Service\NotifierService
      */
     public function triggerLogoAbsentEtablissement(Etablissement $etablissement)
     {
-
         //Récupération des mails des personnes ayant le rôle d'administrateur technique
         $mails = [];
         $role = $this->getRoleService()->getRepository()->findByCode(Role::CODE_ADMIN_TECH);
-        $irs = $this->getIndividuService()->getRepository()->findByRole($role);
-        foreach($irs as $ir) {
-            $mails[] = $ir->getIndividu()->getEmail();
+        $individus = $this->getIndividuService()->getRepository()->findByRole($role);
+        foreach($individus as $i) {
+            $mails[] = $i->getEmail();
         }
 
         $libelle = $etablissement->getLibelle();
@@ -536,5 +535,37 @@ class NotifierService extends \Notification\Service\NotifierService
         }
     }
 
+    /**
+     * @param string[] $to
+     * @param string $liste
+     * @param string[] $individusSansAdresse
+     */
+    public function triggerAbonnesListeDiffusionSansAdresse(array $to, $liste, array $individusSansAdresse)
+    {
+        $to = array_unique(array_filter($to));
 
+        $notif = $this->createNotificationForAbonnesListeDiffusionSansAdresse($to, $liste, $individusSansAdresse);
+        $this->trigger($notif);
+    }
+
+    /**
+     * @param string[] $to
+     * @param string $liste
+     * @param string[] $individusSansAdresse
+     * @return Notification
+     */
+    private function createNotificationForAbonnesListeDiffusionSansAdresse(array $to, $liste, array $individusSansAdresse)
+    {
+        $notif = new Notification();
+        $notif
+            ->setSubject("Abonnés de liste de diffusion sans adresse mail")
+            ->setTo($to)
+            ->setTemplatePath('application/liste-diffusion/mail/notif-abonnes-sans-adresse')
+            ->setTemplateVariables([
+                'liste' => $liste,
+                'individusSansAdresse' => $individusSansAdresse,
+            ]);
+
+        return $notif;
+    }
 }

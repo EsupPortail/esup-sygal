@@ -9,6 +9,11 @@ sauf si l'utilisateur possède le privilège "Saisie du formulaire d'autorisatio
 auquel cas elle est redemandée à l'utilisateur.
 Idem pour les attestations et le privilège "Modification des attestations concernant la version corrigée".
 - Masquage du complément de financement dans la fiche d'identité de la thèse
+- Optimisation de l'export CSV des thèses
+- Pages de téléversement et de recherche des rapports annuels.
+- Correction d'un bug dans la recherche de thèses par nom du doctorant.
+- Possibilité d'attribuer un "identifiant permanent" à un fichier (ex: 'RAPPORT_ANNUEL_MODELE') facilitant l'intégration
+  de lien de téléchargement de ce fichier dans une page.
 
 1.4.6 (29/05/2020)
 ------------------

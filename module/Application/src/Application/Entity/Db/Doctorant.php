@@ -3,6 +3,7 @@
 namespace Application\Entity\Db;
 
 use Application\Entity\Db\Interfaces\DoctorantInterface;
+use Application\Entity\Db\Interfaces\IndividuAwareInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use LogicException;
@@ -14,7 +15,7 @@ use Zend\Permissions\Acl\Resource\ResourceInterface;
 /**
  * Doctorant
  */
-class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, ResourceInterface
+class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, ResourceInterface, IndividuAwareInterface
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
@@ -38,6 +39,11 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
      * @var Collection
      */
     private $complements;
+
+    /**
+     * @var Collection
+     */
+    private $theses;
 
     /**
      * @var Etablissement
@@ -71,6 +77,7 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
     public function __construct()
     {
         $this->complements = new ArrayCollection();
+        $this->theses = new ArrayCollection();
     }
 
     /**
@@ -375,7 +382,7 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
      * @param Individu $individu
      * @return Doctorant
      */
-    public function setIndividu($individu)
+    public function setIndividu(Individu $individu = null)
     {
         $this->individu = $individu;
 
@@ -405,6 +412,14 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
         $this->complements->add($complement);
 
         return $this;
+    }
+
+    /**
+     * @return These[]
+     */
+    public function getTheses()
+    {
+        return $this->theses->toArray();
     }
 
     /**
