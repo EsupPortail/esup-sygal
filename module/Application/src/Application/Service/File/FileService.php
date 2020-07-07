@@ -236,9 +236,21 @@ class FileService
         $content = file_get_contents($filepath);
         $contentType = mime_content_type($filepath) ?: 'application/octet-stream';
 
+        $this->downloadFileFromContent($content, $filepath, $contentType);
+    }
+
+    /**
+     * Crée la réponse permettant au client de télécharger un fichier dont on fournit le contenu brut.
+     *
+     * @param string $content Contenu brut à envoyer au client sous la forme d'un fichier
+     * @param string $filename Nom proposé au client sous lequel enregistrer le fichier
+     * @param string $contentType Type MIME du fichier retourné au client, 'text/plain' par défaut
+     */
+    public function downloadFileFromContent($content, $filename, $contentType = 'text/plain')
+    {
         header('Content-Description: File Transfer');
         header('Content-Type: ' . $contentType);
-        header('Content-Disposition: attachment; filename="' . basename($filepath) . '"');
+        header('Content-Disposition: attachment; filename="' . basename($filename) . '"');
         header('Content-Transfer-Encoding: binary');
         header('Content-Length: ' . strlen($content));
         header('Cache-Control: must-revalidate, post-check=0, pre-check=0');

@@ -32,6 +32,44 @@ return [
             // Valeurs possibles: '30s', '1m', etc. (cf. "man timeout").
             'timeout' => '20s',
         ],
+        'liste-diffusion' => [
+            'listes' => [
+                'ed591.doctorants.insa@normandie-univ.fr',
+                'ed591.doctorants.ucn@normandie-univ.fr',
+                'ed591.doctorants.ulhn@normandie-univ.fr',
+                'ed591.doctorants.urn@normandie-univ.fr',
+                'ed591.doctorants@normandie-univ.fr',
+                'ed591.dirtheses@normandie-univ.fr',
+
+                'ed497.doctorants.insa@normandie-univ.fr',
+                'ed497.doctorants.ucn@normandie-univ.fr',
+                'ed497.doctorants.ulhn@normandie-univ.fr',
+                'ed497.doctorants.urn@normandie-univ.fr',
+                'ed497.doctorants@normandie-univ.fr',
+                'ed497.dirtheses@normandie-univ.fr',
+
+                'ed508.doctorants.insa@normandie-univ.fr',
+                'ed508.doctorants.ucn@normandie-univ.fr',
+                'ed508.doctorants.ulhn@normandie-univ.fr',
+                'ed508.doctorants.urn@normandie-univ.fr',
+                'ed508.doctorants@normandie-univ.fr',
+                'ed591.dirtheses@normandie-univ.fr',
+
+                'ed556.doctorants.insa@normandie-univ.fr',
+                'ed556.doctorants.ucn@normandie-univ.fr',
+                'ed556.doctorants.ulhn@normandie-univ.fr',
+                'ed556.doctorants.urn@normandie-univ.fr',
+                'ed556.doctorants@normandie-univ.fr',
+                'ed556.dirtheses@normandie-univ.fr',
+
+                'ed558.doctorants.insa@normandie-univ.fr',
+                'ed558.doctorants.ucn@normandie-univ.fr',
+                'ed558.doctorants.ulhn@normandie-univ.fr',
+                'ed558.doctorants.urn@normandie-univ.fr',
+                'ed558.doctorants@normandie-univ.fr',
+                'ed558.dirtheses@normandie-univ.fr',
+            ],
+        ],
     ],
     // Options pour le service de notification par mail
     'notification' => [

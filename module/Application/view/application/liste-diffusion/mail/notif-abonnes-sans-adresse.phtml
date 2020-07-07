@@ -1,0 +1,33 @@
+<?php
+
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var string $liste
+ * @var string[][] $individusSansAdresse
+ */
+
+?>
+
+<p>
+    Bonjour,
+</p>
+<p>
+    Ceci est un mail envoyé automatiquement par l'application <?php echo $this->appInfos()->nom ?>.
+</p>
+<p>
+    Vous êtes informé-e que des personnes sensées être abonnées à la liste de diffusion <?php echo $liste ?>
+    n'ont pas d'adresse mail connue de l'application.
+</p>
+<p>
+    Ces personnes ne peuvent donc pas recevoir les messages envoyés sur cette liste de diffusion.
+</p>
+<p>
+    Voici les personnes en question :
+</p>
+<ul>
+    <?php foreach ($individusSansAdresse as $individu): ?>
+    <li><?php echo $individu ?></li>
+    <?php endforeach ?>
+</ul>
