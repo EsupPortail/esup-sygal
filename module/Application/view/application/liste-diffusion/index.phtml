@@ -1,0 +1,43 @@
+<?php
+
+namespace Application;
+
+/**
+ * @var string[] $listes
+ */
+?>
+
+<?php $this->headTitle($this->translate("Listes de diffusion")) ?>
+
+<h1 class="page-header first">
+    <?php echo $this->translate("Listes de diffusion") ?>
+    <span class="badge"><?php echo count($listes); ?></span>
+</h1>
+
+<p class="lead">
+    Voici les listes de diffusion pour lesquelles l'application fournit des URL permettant à Sympa d'obtenir
+    la liste des abonnés.
+</p>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
+
+<div class="row">
+    <div class="col-md-6">
+        <table class="table table-bordered table-condensed table-hover">
+            <thead>
+            <tr>
+                <th>Nom/adresse</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($listes as $liste): ?>
+                <tr>
+                    <td>
+                        <code><a href="<?php echo $url = $this->url('liste-diffusion/liste', ['liste' => $liste]) ?>"><?php echo $liste ?></a></code>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
