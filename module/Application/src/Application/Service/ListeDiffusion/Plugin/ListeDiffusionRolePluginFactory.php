@@ -1,17 +1,15 @@
 <?php
 
-namespace Application\Service\ListeDiffusion;
+namespace Application\Service\ListeDiffusion\Plugin;
 
 use Application\Service\Individu\IndividuService;
-use Application\Service\ListeDiffusion\Plugin\ListeDiffusionRolePlugin;
-use Application\Service\ListeDiffusion\Plugin\ListeDiffusionStructurePlugin;
 use Zend\ServiceManager\ServiceLocatorInterface as ContainerInterface;
 
-class ListeDiffusionServiceFactory
+class ListeDiffusionRolePluginFactory
 {
     public function __invoke(ContainerInterface $container)
     {
-        $service = new ListeDiffusionService();
+        $service = new ListeDiffusionRolePlugin();
 
         $config = $container->get('Config');
         $service->setConfig($config['sygal']['liste-diffusion'] ?? []);
@@ -21,12 +19,6 @@ class ListeDiffusionServiceFactory
          */
         $individuService = $container->get('IndividuService');
         $service->setIndividuService($individuService);
-
-        $plugins = [
-            $container->get(ListeDiffusionStructurePlugin::class),
-            $container->get(ListeDiffusionRolePlugin::class),
-        ];
-        $service->setListeDiffusionServicePlugins($plugins);
 
         return $service;
     }

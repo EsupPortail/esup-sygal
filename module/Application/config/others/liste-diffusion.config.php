@@ -6,6 +6,12 @@ use Application\Controller\Factory\ListeDiffusionControllerFactory;
 use Application\Controller\ListeDiffusionController;
 use Application\Service\ListeDiffusion\ListeDiffusionService;
 use Application\Service\ListeDiffusion\ListeDiffusionServiceFactory;
+use Application\Service\ListeDiffusion\Plugin\ListeDiffusionRolePlugin;
+use Application\Service\ListeDiffusion\ListeDiffusionRoleServiceFactory;
+use Application\Service\ListeDiffusion\Plugin\ListeDiffusionRolePluginFactory;
+use Application\Service\ListeDiffusion\Plugin\ListeDiffusionStructurePlugin;
+use Application\Service\ListeDiffusion\ListeDiffusionStructureServiceFactory;
+use Application\Service\ListeDiffusion\Plugin\ListeDiffusionStructurePluginFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use Zend\Mvc\Router\Http\Literal;
 use Zend\Mvc\Router\Http\Segment;
@@ -85,6 +91,8 @@ return [
     'service_manager' => [
         'factories' => [
             ListeDiffusionService::class => ListeDiffusionServiceFactory::class,
+            ListeDiffusionStructurePlugin::class => ListeDiffusionStructurePluginFactory::class,
+            ListeDiffusionRolePlugin::class => ListeDiffusionRolePluginFactory::class,
         ],
     ],
     'controllers' => [

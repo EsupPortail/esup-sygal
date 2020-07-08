@@ -98,8 +98,18 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
      */
     private $mailsConfirmations;
 
-    public function __construct() {
+    /**
+     * @var ArrayCollection
+     */
+    private $utilisateurs;
+
+    /**
+     * Individu constructor.
+     */
+    public function __construct()
+    {
         $this->mailsConfirmations = new ArrayCollection();
+        $this->utilisateurs = new ArrayCollection();
     }
     /**
      * @return string
@@ -186,6 +196,22 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
     public function getEmail()
     {
         return $this->email;
+    }
+
+    /**
+     * Retourne l'adresse mail de l'éventuel (permier) utilisateur correspondant à cet individu.
+     *
+     * @return string
+     */
+    public function getEmailUtilisateur()
+    {
+        foreach ($this->getUtilisateurs() as $utilisateur) {
+            if ($email = $utilisateur->getEmail()) {
+                return $email;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -468,5 +494,13 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
             }
         }
         return null;
+    }
+
+    /**
+     * @return Utilisateur[]
+     */
+    public function getUtilisateurs()
+    {
+        return $this->utilisateurs->toArray();
     }
 }

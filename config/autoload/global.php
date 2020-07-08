@@ -34,6 +34,8 @@ return [
         ],
         'liste-diffusion' => [
             'listes' => [
+                'sygal.role.admin_tech@normandie-univ.fr',
+
                 'ed591.doctorants.insa@normandie-univ.fr',
                 'ed591.doctorants.ucn@normandie-univ.fr',
                 'ed591.doctorants.ulhn@normandie-univ.fr',

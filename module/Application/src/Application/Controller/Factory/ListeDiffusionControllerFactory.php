@@ -3,11 +3,10 @@
 namespace Application\Controller\Factory;
 
 use Application\Controller\ListeDiffusionController;
-use Application\Service\Etablissement\EtablissementService;
 use Application\Service\File\FileService;
+use Application\Service\Individu\IndividuService;
 use Application\Service\ListeDiffusion\ListeDiffusionService;
 use Application\Service\Notification\NotifierService;
-use Application\Service\Notification\NotifierServiceAwareTrait;
 use Zend\ServiceManager\ServiceLocatorInterface as ContainerInterface;
 
 class ListeDiffusionControllerFactory
@@ -19,16 +18,16 @@ class ListeDiffusionControllerFactory
         $controller = new ListeDiffusionController();
 
         /**
-         * @var EtablissementService $etablissementService
+         * @var ListeDiffusionService $individuService
          */
-        $etablissementService = $container->get(EtablissementService::class);
-        $controller->setEtablissementService($etablissementService);
+        $individuService = $container->get(ListeDiffusionService::class);
+        $controller->setListeDiffusionService($individuService);
 
         /**
-         * @var ListeDiffusionService $listeDiffusionService
+         * @var IndividuService $individuService
          */
-        $listeDiffusionService = $container->get(ListeDiffusionService::class);
-        $controller->setListeDiffusionService($listeDiffusionService);
+        $individuService = $container->get('IndividuService');
+        $controller->setIndividuService($individuService);
 
         /**
          * @var FileService $fileService

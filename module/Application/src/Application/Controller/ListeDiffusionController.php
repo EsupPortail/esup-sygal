@@ -2,11 +2,10 @@
 
 namespace Application\Controller;
 
-use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
-use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Application\Entity\Db\Role;
 use Application\Service\File\FileServiceAwareTrait;
-use Application\Service\ListeDiffusion\ListeDiffusionService;
+use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\ListeDiffusion\ListeDiffusionServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Webmozart\Assert\Assert;
@@ -15,30 +14,9 @@ use Zend\View\Model\ViewModel;
 class ListeDiffusionController extends AbstractController
 {
     use ListeDiffusionServiceAwareTrait;
-    use EtablissementServiceAwareTrait;
+    use IndividuServiceAwareTrait;
     use FileServiceAwareTrait;
     use NotifierServiceAwareTrait;
-
-    /**
-     * Numéro national de l'ED concernée.
-     *
-     * @var string
-     */
-    protected $ecoleDoctorale;
-
-    /**
-     * Etablissement concerné éventuel.
-     *
-     * @var Etablissement
-     */
-    protected $etablissement = null;
-
-    /**
-     * Valeur parmi {@see ListeDiffusionService::CIBLES}.
-     *
-     * @var string
-     */
-    protected $cible;
 
     /**
      * Adresse complète de la liste de diffusion, ex :
@@ -74,6 +52,12 @@ class ListeDiffusionController extends AbstractController
     {
         $this->loadRequestParams();
 
+        $listesDeclarees = $this->listeDiffusionService->fetchListesDiffusion();
+        Assert::inArray($this->liste, $listesDeclarees, "Liste spécifiée non déclarée.");
+
+        $this->listeDiffusionService->setListe($this->liste);
+        $this->listeDiffusionService->init();
+
         $this->listeDiffusionService->createMemberIncludeFileContent();
         $memberIndividusAvecAdresse = $this->listeDiffusionService->getIndividusAvecAdresse();
         $memberIndividusSansAdresse = $this->listeDiffusionService->getIndividusSansAdresse();
@@ -92,26 +76,6 @@ class ListeDiffusionController extends AbstractController
     }
 
     /**
-     * @return ViewModel
-     */
-    public function memberIncludeAction()
-    {
-        $this->loadRequestParams();
-
-        $this->listeDiffusionService->createMemberIncludeFileContent();
-
-        return new ViewModel([
-            'liste' => $this->liste,
-            'individusAvecAdresse' => $this->listeDiffusionService->getIndividusAvecAdresse()
-        ]);
-    }
-
-    public function ownerIncludeAction()
-    {
-
-    }
-    
-    /**
      * Dépouillage des paramètres de la requête.
      *
      * Les paramètres de routage acceptés sont les suivants :
@@ -120,33 +84,6 @@ class ListeDiffusionController extends AbstractController
     private function loadRequestParams()
     {
         $this->liste = $this->getRequestedListe(); // ex: 'ed591.doctorants.insa@normandie-univ.fr'
-
-        $listeElements = explode('@', $this->liste)[0]; // ex: 'ed591.doctorants.insa'
-        $listeElements = explode('.', $listeElements); // ex: ['ed591', 'doctorants', 'insa']
-        $ecoleDoctorale = array_shift($listeElements); // ex: 'ed591'
-        $cible = array_shift($listeElements); // ex: 'doctorants'
-        $etablissement = array_shift($listeElements); // ex: 'insa'
-
-        Assert::notNull($ecoleDoctorale, "Aucun code ED spécifié.");
-        Assert::regex($ecoleDoctorale, '/^(ed)\d+$/', "L'ED doit être spécifiée au format 'ed9999'");
-
-        Assert::notNull($cible, "Aucune cible spécifiée.");
-
-        $this->ecoleDoctorale = substr($ecoleDoctorale, 2);
-        $this->cible = $cible;
-        $this->etablissement = $etablissement;
-        if ($etablissement !== null) {
-            $this->etablissement = $this->etablissementService->getRepository()->findOneBySourceCode(strtoupper($etablissement));
-        }
-        // NB : on ne fetche pas l'ED dans la base de données car plusieurs enregistrements peuvent exister dans la
-        //      table des ED pour un même code national. Ce code est exploiter plus tard au moment de la recherche
-        //      des abonnés à une liste de diffusion.
-
-       $this->listeDiffusionService
-            ->setListe($this->liste)
-            ->setEcoleDoctorale($this->ecoleDoctorale)
-            ->setCible($this->cible)
-            ->setEtablissement($this->etablissement);
     }
 
     /**
@@ -157,6 +94,9 @@ class ListeDiffusionController extends AbstractController
     public function generateMemberIncludeAction()
     {
         $this->loadRequestParams();
+
+        $this->listeDiffusionService->setListe($this->liste);
+        $this->listeDiffusionService->init();
 
         $content = $this->listeDiffusionService->createMemberIncludeFileContent();
         $this->handleMemberIncludeNotFoundEmails();
@@ -174,6 +114,9 @@ class ListeDiffusionController extends AbstractController
     {
         $this->loadRequestParams();
 
+        $this->listeDiffusionService->setListe($this->liste);
+        $this->listeDiffusionService->init();
+
         $content = $this->listeDiffusionService->createOwnerIncludeFileContent();
         $this->handleOwnerIncludeNotFoundEmails();
 
@@ -189,8 +132,7 @@ class ListeDiffusionController extends AbstractController
         $individusSansAdresse = $this->listeDiffusionService->getIndividusSansAdresse();
 
         // Solution retenue : Envoi d'une notif aux propriétaires de la liste.
-        $individus = $this->listeDiffusionService->fetchOwners();
-        $ownerEmails = array_map(function(Individu $i) { return $i->getEmail(); }, $individus);
+        $ownerEmails = $this->fetchAdminTechEmails();
         $this->notifierService->triggerAbonnesListeDiffusionSansAdresse($ownerEmails, $this->liste, $individusSansAdresse);
     }
 
@@ -211,5 +153,15 @@ class ListeDiffusionController extends AbstractController
         Assert::notNull($liste, "Aucune liste spécifiée.");
 
         return $liste;
+    }
+
+    /**
+     * @return string[]
+     */
+    private function fetchAdminTechEmails()
+    {
+        $individus = $this->individuService->getRepository()->findByRole(Role::CODE_ADMIN_TECH);
+
+        return array_map(function(Individu $i) { return $i->getEmailUtilisateur(); }, $individus);
     }
 }

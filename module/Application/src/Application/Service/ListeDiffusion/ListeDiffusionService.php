@@ -2,60 +2,32 @@
 
 namespace Application\Service\ListeDiffusion;
 
-use Application\Entity\Db\Acteur;
-use Application\Entity\Db\Doctorant;
-use Application\Entity\Db\EcoleDoctorale;
-use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Interfaces\IndividuAwareInterface;
 use Application\Entity\Db\Role;
-use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\BaseService;
-use Application\Service\Doctorant\DoctorantServiceAwareTrait;
-use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
+use Application\Service\ListeDiffusion\Plugin\ListeDiffusionPluginInterface;
 use UnicaenApp\Exception\LogicException;
-use Webmozart\Assert\Assert;
 
 class ListeDiffusionService extends BaseService
 {
-    use ActeurServiceAwareTrait;
-    use DoctorantServiceAwareTrait;
     use IndividuServiceAwareTrait;
-    use EcoleDoctoraleServiceAwareTrait;
 
-    const CIBLE_DOCTORANT = 'doctorants';
-    const CIBLE_DIR_THESE = 'dirtheses';
-    const CIBLES = [
-        self::CIBLE_DOCTORANT,
-        self::CIBLE_DIR_THESE,
-    ];
+    /**
+     * @var ListeDiffusionPluginInterface[]
+     */
+    protected $listeDiffusionServicePlugins = [];
+
+    /**
+     * @var ListeDiffusionPluginInterface
+     */
+    protected $listeDiffusionServicePluginForListe;
 
     /**
      * @var string[]
      */
     protected $config = [];
-
-    /**
-     * Numéro national de l'ED concernée.
-     *
-     * @var string
-     */
-    protected $ecoleDoctorale;
-
-    /**
-     * Etablissement concerné *éventuel*.
-     *
-     * @var Etablissement
-     */
-    protected $etablissement = null;
-
-    /**
-     * Valeur parmi {@see ListeDiffusionService::CIBLES}.
-     *
-     * @var string
-     */
-    protected $cible;
 
     /**
      * Nom de la liste de diffusion.
@@ -75,14 +47,15 @@ class ListeDiffusionService extends BaseService
     protected $liste;
 
     /**
-     * @var Individu[]
+     * @param ListeDiffusionPluginInterface[] $listeDiffusionServicePlugins
+     * @return self
      */
-    protected $individusAvecAdresse = [];
+    public function setListeDiffusionServicePlugins(array $listeDiffusionServicePlugins)
+    {
+        $this->listeDiffusionServicePlugins = $listeDiffusionServicePlugins;
 
-    /**
-     * @var Individu[]
-     */
-    protected $individusSansAdresse = [];
+        return $this;
+    }
 
     /**
      * @inheritDoc
@@ -115,54 +88,24 @@ class ListeDiffusionService extends BaseService
     }
 
     /**
-     * @param EcoleDoctorale|string $ecoleDoctorale
-     * @return self
+     * @return ListeDiffusionPluginInterface|null
      */
-    public function setEcoleDoctorale($ecoleDoctorale)
+    protected function getListeDiffusionServicePluginForListe()
     {
-        $this->ecoleDoctorale = $ecoleDoctorale;
+        if ($this->listeDiffusionServicePluginForListe === null) {
+            foreach ($this->listeDiffusionServicePlugins as $plugin) {
+                $plugin->setListe($this->liste);
+                if ($plugin->canHandleListe()) {
+                    $this->listeDiffusionServicePluginForListe = $plugin;
+                    break;
+                }
+            }
+            if ($this->listeDiffusionServicePluginForListe === null) {
+                throw new \InvalidArgumentException("Oups, aucun plugin compétent trouvé !");
+            }
+        }
 
-        return $this;
-    }
-
-    /**
-     * @param Etablissement|null $etablissement
-     * @return self
-     */
-    public function setEtablissement(Etablissement $etablissement = null)
-    {
-        $this->etablissement = $etablissement;
-
-        return $this;
-    }
-
-    /**
-     * @param string $cible
-     * @return self
-     */
-    public function setCible($cible)
-    {
-        Assert::inArray($cible, self::CIBLES, "Cible %s spécifiée inconnue.");
-
-        $this->cible = $cible;
-
-        return $this;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getIndividusAvecAdresse()
-    {
-        return $this->individusAvecAdresse;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getIndividusSansAdresse()
-    {
-        return $this->individusSansAdresse;
+        return $this->listeDiffusionServicePluginForListe;
     }
 
     /**
@@ -174,109 +117,49 @@ class ListeDiffusionService extends BaseService
     }
 
     /**
-     * Génération du contenu du fichier attendu par Sympa pour obtenir les ABONNÉS d'une liste de diffusion.
      *
-     * Le contenu retourné contient une adresse électronique par ligne.
+     */
+    public function init()
+    {
+        $listeDiffusionServicePluginForListe = $this->getListeDiffusionServicePluginForListe();
+        $listeDiffusionServicePluginForListe->setListe($this->liste);
+        $listeDiffusionServicePluginForListe->init();
+    }
+
+    /**
+     * Génération du contenu du fichier attendu par Sympa pour obtenir les ABONNÉS d'une liste de diffusion.
      *
      * @return string
      */
     public function createMemberIncludeFileContent()
     {
-        switch ($this->cible) {
-            case self::CIBLE_DIR_THESE:
-                $entities = $this->fetchActeursDirecteursTheses();
-                break;
-            case self::CIBLE_DOCTORANT:
-                $entities = $this->fetchDoctorants();
-                break;
-            default:
-                $entities = [];
-        }
-        $this->extractEmailsFromEntities($entities);
-
-        return $this->createFileContent();
+        return $this->getListeDiffusionServicePluginForListe()->createMemberIncludeFileContent();
     }
 
     /**
      * Génération du contenu du fichier attendu par Sympa pour obtenir les PROPRIÉTAIRES d'une liste de diffusion.
      *
-     * Le contenu retourné contient une adresse électronique par ligne.
-     *
      * @return string
      */
     public function createOwnerIncludeFileContent()
     {
-        $entities = $this->fetchOwners();
-        $this->extractEmailsFromEntities($entities);
-
-        return $this->createFileContent();
+        return $this->getListeDiffusionServicePluginForListe()->createOwnerIncludeFileContent();
     }
 
     /**
-     * @return string
+     * @return string[] [mail => nom individu]
      */
-    protected function createFileContent()
+    public function getIndividusAvecAdresse()
     {
-        $adresses = array_unique($this->individusAvecAdresse);
-
-        $lines = [];
-        foreach ($adresses as $adresse => $nom) {
-            $lines[] = $adresse . ' ' . $nom;
-        }
-        sort($lines);
-
-        return implode(PHP_EOL, $lines);
+        return $this->getListeDiffusionServicePluginForListe()->getIndividusAvecAdresse();
     }
 
     /**
-     * @return Acteur[]
+     * @return string[] [id individu => nom individu]
      */
-    private function fetchActeursDirecteursTheses()
+    public function getIndividusSansAdresse()
     {
-        return $this->acteurService->getRepository()->findActeursWithRoleAndEcoleDoctAndEtab(
-            Role::CODE_DIRECTEUR_THESE,
-            $this->ecoleDoctorale,
-            $this->etablissement
-        );
-    }
-
-    /**
-     * @return Doctorant[]
-     */
-    private function fetchDoctorants()
-    {
-        return $this->doctorantService->getRepository()->findByEtabAndEcoleDoct(
-            $this->ecoleDoctorale,
-            $this->etablissement
-        );
-    }
-
-    /**
-     * @return Individu[]
-     */
-    public function fetchOwners()
-    {
-        return $this->individuService->getRepository()->findByRole(Role::CODE_ADMIN_TECH);
-    }
-
-    /**
-     * @param IndividuAwareInterface[]|Individu[] $entities
-     */
-    private function extractEmailsFromEntities(array $entities)
-    {
-        $adresses = [];
-        $individusSansAdresse = [];
-        foreach ($entities as $entity) {
-            $individu = $entity instanceof IndividuAwareInterface ? $entity->getIndividu() : $entity;
-            if ($email = trim($individu->getEmail() ?: $individu->getMailContact())) {
-                $adresses[$email] = $individu->getNomComplet();
-            } else {
-                $individusSansAdresse[$individu->getId()] = $individu->getNomComplet();
-            }
-        }
-
-        $this->individusAvecAdresse = array_unique(array_filter($adresses));
-        $this->individusSansAdresse = array_unique(array_filter($individusSansAdresse));
+        return $this->getListeDiffusionServicePluginForListe()->getIndividusSansAdresse();
     }
 
     /**
@@ -285,11 +168,8 @@ class ListeDiffusionService extends BaseService
      */
     public function generateResultFileName($prefix)
     {
-        return sprintf('%sinclude_%s_%s_%s.inc',
-            $prefix,
-            $this->ecoleDoctorale,
-            $this->cible,
-            $this->etablissement ? $this->etablissement->getCode() : 'etabs'
+        return sprintf('%sinclude.inc',
+            $prefix
         );
     }
 }
