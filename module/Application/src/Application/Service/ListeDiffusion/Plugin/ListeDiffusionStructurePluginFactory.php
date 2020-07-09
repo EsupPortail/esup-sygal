@@ -15,7 +15,7 @@ class ListeDiffusionStructurePluginFactory
         $service = new ListeDiffusionStructurePlugin();
 
         $config = $container->get('Config');
-        $service->setConfig($config['sygal']['liste-diffusion'] ?? []);
+        $service->setConfig($config['liste-diffusion'] ?? []);
 
         /**
          * @var ActeurService $acteurService

@@ -14,7 +14,7 @@ class ListeDiffusionServiceFactory
         $service = new ListeDiffusionService();
 
         $config = $container->get('Config');
-        $service->setConfig($config['sygal']['liste-diffusion'] ?? []);
+        $service->setConfig($config['liste-diffusion'] ?? []);
 
         /**
          * @var IndividuService $individuService
