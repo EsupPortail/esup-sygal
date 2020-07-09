@@ -2,9 +2,6 @@
 
 namespace Application\Service\ListeDiffusion;
 
-use Application\Entity\Db\Individu;
-use Application\Entity\Db\Interfaces\IndividuAwareInterface;
-use Application\Entity\Db\Role;
 use Application\Service\BaseService;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\ListeDiffusion\Plugin\ListeDiffusionPluginInterface;

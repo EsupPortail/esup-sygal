@@ -59,14 +59,10 @@ abstract class ListeDiffusionAbstractPlugin implements ListeDiffusionPluginInter
 
     /**
      * @param string[] $config
-     * @return self
-     * @deprecated inuUtile a priori
      */
     public function setConfig(array $config)
     {
         $this->config = $config;
-
-        return $this;
     }
 
     /**
@@ -97,11 +93,12 @@ abstract class ListeDiffusionAbstractPlugin implements ListeDiffusionPluginInter
     }
 
     /**
-     * @return Individu[]
+     * @return Individu[]|string[]
      */
     public function fetchProprietaires()
     {
-        return $this->individuService->getRepository()->findByRole(Role::CODE_ADMIN_TECH);
+        //return $this->individuService->getRepository()->findByRole(Role::CODE_ADMIN_TECH);
+        return (array) $this->config['proprietaires'] ?? [];
     }
 
     /**
@@ -121,18 +118,25 @@ abstract class ListeDiffusionAbstractPlugin implements ListeDiffusionPluginInter
     }
 
     /**
-     * @param IndividuAwareInterface[]|Individu[] $entities
+     * @param IndividuAwareInterface[]|Individu[]|string[] $entities
      */
     protected function extractEmailsFromEntities(array $entities)
     {
         $adresses = [];
         $individusSansAdresse = [];
-        foreach ($entities as $entity) {
-            $individu = $entity instanceof IndividuAwareInterface ? $entity->getIndividu() : $entity;
-            if ($email = trim($this->extractEmailFromIndividu($individu))) {
-                $adresses[$email] = $individu->getNomComplet();
+        foreach ($entities as $key => $entity) {
+            if (is_string($entity)) {
+                $email = trim($key);
+                $nom = $entity;
             } else {
-                $individusSansAdresse[$individu->getId()] = $individu->getNomComplet();
+                $individu = $entity instanceof IndividuAwareInterface ? $entity->getIndividu() : $entity;
+                $email = trim($this->extractEmailFromIndividu($individu));
+                $nom = $individu->getNomComplet();
+            }
+            if ($email) {
+                $adresses[$email] = $nom;
+            } else {
+                $individusSansAdresse[$nom] = $nom;
             }
         }
 
