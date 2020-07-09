@@ -12,7 +12,7 @@ class ListeDiffusionRolePluginFactory
         $service = new ListeDiffusionRolePlugin();
 
         $config = $container->get('Config');
-        $service->setConfig($config['sygal']['liste-diffusion'] ?? []);
+        $service->setConfig($config['liste-diffusion'] ?? []);
 
         /**
          * @var IndividuService $individuService

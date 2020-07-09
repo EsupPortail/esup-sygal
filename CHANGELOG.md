@@ -14,6 +14,8 @@ Idem pour les attestations et le privilège "Modification des attestations conce
 - Correction d'un bug dans la recherche de thèses par nom du doctorant.
 - Possibilité d'attribuer un "identifiant permanent" à un fichier (ex: 'RAPPORT_ANNUEL_MODELE') facilitant l'intégration
   de lien de téléchargement de ce fichier dans une page.
+- Listes de diffusion dynamique Sympa alimentées par SyGAL : pages de consultation des listes de diffusion déclarées
+  dans la config ; une URL pour fournir les abonnés, une autre pour fournir les propriétaires.
 
 1.4.6 (29/05/2020)
 ------------------

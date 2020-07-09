@@ -4,13 +4,12 @@ namespace Application;
 
 use Application\Controller\Factory\ListeDiffusionControllerFactory;
 use Application\Controller\ListeDiffusionController;
+use Application\Provider\Privilege\ListeDiffusionPrivileges;
 use Application\Service\ListeDiffusion\ListeDiffusionService;
 use Application\Service\ListeDiffusion\ListeDiffusionServiceFactory;
 use Application\Service\ListeDiffusion\Plugin\ListeDiffusionRolePlugin;
-use Application\Service\ListeDiffusion\ListeDiffusionRoleServiceFactory;
 use Application\Service\ListeDiffusion\Plugin\ListeDiffusionRolePluginFactory;
 use Application\Service\ListeDiffusion\Plugin\ListeDiffusionStructurePlugin;
-use Application\Service\ListeDiffusion\ListeDiffusionStructureServiceFactory;
 use Application\Service\ListeDiffusion\Plugin\ListeDiffusionStructurePluginFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use Zend\Mvc\Router\Http\Literal;
@@ -24,11 +23,23 @@ return [
                     'controller' => ListeDiffusionController::class,
                     'action' => [
                         'index',
+                    ],
+                    'privileges' => ListeDiffusionPrivileges::LISTE_DIFFUSION_LISTER,
+                ],
+                [
+                    'controller' => ListeDiffusionController::class,
+                    'action' => [
                         'consulter',
+                    ],
+                    'privileges' => ListeDiffusionPrivileges::LISTE_DIFFUSION_CONSULTER,
+                ],
+                [
+                    'controller' => ListeDiffusionController::class,
+                    'action' => [
                         'generate-member-include',
                         'generate-owner-include',
                     ],
-                    'roles' => [],
+                    'roles' => [], // doit être accessible librement
                 ],
             ],
         ],
@@ -65,7 +76,7 @@ return [
                             'generate-member-include' => [
                                 'type' => Literal::class,
                                 'options' => [
-                                    'route' => '/generate-member-include',
+                                    'route' => '/95c66625fe1e45a41e4a51d3f786210ab0a47479/generate-member-include/',
                                     'defaults' => [
                                         /** @see ListeDiffusionController::generateMemberIncludeAction() */
                                         'action' => 'generate-member-include',
@@ -75,7 +86,7 @@ return [
                             'generate-owner-include' => [
                                 'type' => Literal::class,
                                 'options' => [
-                                    'route' => '/generate-owner-include',
+                                    'route' => '/ef35998526851f484a027478ef9b7e936a0366e5/generate-owner-include',
                                     'defaults' => [
                                         /** @see ListeDiffusionController::generateOwnerIncludeAction() */
                                         'action' => 'generate-owner-include',

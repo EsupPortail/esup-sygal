@@ -8,13 +8,11 @@ interface ListeDiffusionPluginInterface
 {
     /**
      * @param string[] $config
-     * @return self
      */
     public function setConfig(array $config);
 
     /**
      * @param string $liste
-     * @return self
      */
     public function setListe($liste);
 
