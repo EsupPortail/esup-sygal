@@ -99,7 +99,7 @@ class ListeDiffusionController extends AbstractController
         $this->listeDiffusionService->init();
 
         $content = $this->listeDiffusionService->createMemberIncludeFileContent();
-        $this->handleMemberIncludeNotFoundEmails();
+        //$this->handleMemberIncludeNotFoundEmails(); // PAS POSSIBLE : Sympa interroge toutes les heures !
 
         $filename = $this->listeDiffusionService->generateResultFileName('member');
         $this->fileService->downloadFileFromContent($content, $filename);
@@ -118,7 +118,6 @@ class ListeDiffusionController extends AbstractController
         $this->listeDiffusionService->init();
 
         $content = $this->listeDiffusionService->createOwnerIncludeFileContent();
-        $this->handleOwnerIncludeNotFoundEmails();
 
         $filename = $this->listeDiffusionService->generateResultFileName('owner');
         $this->fileService->downloadFileFromContent($content, $filename);
@@ -130,10 +129,19 @@ class ListeDiffusionController extends AbstractController
     private function handleMemberIncludeNotFoundEmails()
     {
         $individusSansAdresse = $this->listeDiffusionService->getIndividusSansAdresse();
+        if (empty($individusSansAdresse)) {
+            return;
+        }
 
-        // Solution retenue : Envoi d'une notif aux propriétaires de la liste.
-        $ownerEmails = $this->fetchAdminTechEmails();
-        $this->notifierService->triggerAbonnesListeDiffusionSansAdresse($ownerEmails, $this->liste, $individusSansAdresse);
+        $individusAvecAdresse = $this->listeDiffusionService->getIndividusAvecAdresse();
+
+        // Envoi d'une notif aux admin tech
+        $to = $this->fetchAdminTechEmails();
+        $this->notifierService->triggerAbonnesListeDiffusionSansAdresse(
+            $to,
+            $this->liste,
+            $individusAvecAdresse,
+            $individusSansAdresse);
     }
 
     /**

@@ -11,7 +11,6 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\UniteRecherche;
 use Application\Entity\Db\Utilisateur;
-use Application\Entity\Db\ValiditeFichier;
 use Application\Entity\Db\Variable;
 use Application\Notification\CorrectionAttendueUpdatedNotification;
 use Application\Notification\ResultatTheseAdmisNotification;
@@ -538,23 +537,37 @@ class NotifierService extends \Notification\Service\NotifierService
     /**
      * @param string[] $to
      * @param string $liste
+     * @param string[] $individusAvecAdresse
      * @param string[] $individusSansAdresse
      */
-    public function triggerAbonnesListeDiffusionSansAdresse(array $to, $liste, array $individusSansAdresse)
+    public function triggerAbonnesListeDiffusionSansAdresse(
+        array $to,
+        $liste,
+        array $individusAvecAdresse,
+        array $individusSansAdresse)
     {
         $to = array_unique(array_filter($to));
 
-        $notif = $this->createNotificationForAbonnesListeDiffusionSansAdresse($to, $liste, $individusSansAdresse);
+        $notif = $this->createNotificationForAbonnesListeDiffusionSansAdresse(
+            $to,
+            $liste,
+            $individusAvecAdresse,
+            $individusSansAdresse);
         $this->trigger($notif);
     }
 
     /**
      * @param string[] $to
      * @param string $liste
+     * @param string[] $individusAvecAdresse
      * @param string[] $individusSansAdresse
      * @return Notification
      */
-    private function createNotificationForAbonnesListeDiffusionSansAdresse(array $to, $liste, array $individusSansAdresse)
+    private function createNotificationForAbonnesListeDiffusionSansAdresse(
+        array $to,
+        $liste,
+        array $individusAvecAdresse,
+        array $individusSansAdresse)
     {
         $notif = new Notification();
         $notif
@@ -563,6 +576,7 @@ class NotifierService extends \Notification\Service\NotifierService
             ->setTemplatePath('application/liste-diffusion/mail/notif-abonnes-sans-adresse')
             ->setTemplateVariables([
                 'liste' => $liste,
+                'individusAvecAdresse' => $individusAvecAdresse,
                 'individusSansAdresse' => $individusSansAdresse,
             ]);
 
