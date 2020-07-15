@@ -5,7 +5,8 @@ use Application\View\Renderer\PhpRenderer;
 /**
  * @var PhpRenderer $this
  * @var string $liste
- * @var string[][] $individusSansAdresse
+ * @var string[] $individusAvecAdresse
+ * @var string[] $individusSansAdresse
  */
 
 ?>
@@ -14,7 +15,7 @@ use Application\View\Renderer\PhpRenderer;
     Bonjour,
 </p>
 <p>
-    Ceci est un mail envoyé automatiquement par l'application <?php echo $this->appInfos()->nom ?>.
+    Ceci est un mail envoyé automatiquement par l'application <?php echo $app = $this->appInfos()->nom ?>.
 </p>
 <p>
     Vous êtes informé-e que des personnes sensées être abonnées à la liste de diffusion <?php echo $liste ?>
@@ -31,3 +32,15 @@ use Application\View\Renderer\PhpRenderer;
     <li><?php echo $individu ?></li>
     <?php endforeach ?>
 </ul>
+<p>
+    Pour info, voici les personnes pour lesquelles <?php echo $app ?> dispose d'une adresse mail :
+</p>
+<ul>
+    <?php foreach ($individusAvecAdresse as $individu): ?>
+        <li><?php echo $individu ?></li>
+    <?php endforeach ?>
+</ul>
+<p>
+    Pour visualiser ces informations dans <?php echo $app ?>, cliquez sur
+    <a href="<?php echo $url = $this->url('liste-diffusion/liste', ['liste' => $liste], ['force_canonical' => true]) ?>">ce lien</a>.
+</p>
