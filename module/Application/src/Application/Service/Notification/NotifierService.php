@@ -11,7 +11,6 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\UniteRecherche;
 use Application\Entity\Db\Utilisateur;
-use Application\Entity\Db\ValiditeFichier;
 use Application\Entity\Db\Variable;
 use Application\Notification\CorrectionAttendueUpdatedNotification;
 use Application\Notification\ResultatTheseAdmisNotification;
@@ -336,13 +335,12 @@ class NotifierService extends \Notification\Service\NotifierService
      */
     public function triggerLogoAbsentEtablissement(Etablissement $etablissement)
     {
-
         //Récupération des mails des personnes ayant le rôle d'administrateur technique
         $mails = [];
         $role = $this->getRoleService()->getRepository()->findByCode(Role::CODE_ADMIN_TECH);
-        $irs = $this->getIndividuService()->getRepository()->findByRole($role);
-        foreach($irs as $ir) {
-            $mails[] = $ir->getIndividu()->getEmail();
+        $individus = $this->getIndividuService()->getRepository()->findByRole($role);
+        foreach($individus as $i) {
+            $mails[] = $i->getEmail();
         }
 
         $libelle = $etablissement->getLibelle();
@@ -536,6 +534,52 @@ class NotifierService extends \Notification\Service\NotifierService
         }
     }
 
+    /**
+     * @param string[] $to
+     * @param string $liste
+     * @param string[] $individusAvecAdresse
+     * @param string[] $individusSansAdresse
+     */
+    public function triggerAbonnesListeDiffusionSansAdresse(
+        array $to,
+        $liste,
+        array $individusAvecAdresse,
+        array $individusSansAdresse)
+    {
+        $to = array_unique(array_filter($to));
 
+        $notif = $this->createNotificationForAbonnesListeDiffusionSansAdresse(
+            $to,
+            $liste,
+            $individusAvecAdresse,
+            $individusSansAdresse);
+        $this->trigger($notif);
+    }
 
+    /**
+     * @param string[] $to
+     * @param string $liste
+     * @param string[] $individusAvecAdresse
+     * @param string[] $individusSansAdresse
+     * @return Notification
+     */
+    private function createNotificationForAbonnesListeDiffusionSansAdresse(
+        array $to,
+        $liste,
+        array $individusAvecAdresse,
+        array $individusSansAdresse)
+    {
+        $notif = new Notification();
+        $notif
+            ->setSubject("Abonnés de liste de diffusion sans adresse mail")
+            ->setTo($to)
+            ->setTemplatePath('application/liste-diffusion/mail/notif-abonnes-sans-adresse')
+            ->setTemplateVariables([
+                'liste' => $liste,
+                'individusAvecAdresse' => $individusAvecAdresse,
+                'individusSansAdresse' => $individusSansAdresse,
+            ]);
+
+        return $notif;
+    }
 }

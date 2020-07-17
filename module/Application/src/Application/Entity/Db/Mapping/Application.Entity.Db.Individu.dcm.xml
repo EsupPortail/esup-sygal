@@ -22,6 +22,7 @@
         <field name="sourceCode" column="SOURCE_CODE" nullable="true"/>
 
         <one-to-many target-entity="Application\Entity\Db\MailConfirmation" mapped-by="individu" field="mailsConfirmations"/>
+        <one-to-many target-entity="Application\Entity\Db\Utilisateur" mapped-by="individu" field="utilisateurs"/>
 
         <field name="histoCreation" type="datetime" column="HISTO_CREATION"/>
         <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
