@@ -3,11 +3,19 @@
 
 use Zend\Feed\Reader\Entry\Rss;
 use Zend\Feed\Reader\Reader;
+use Zend\Http\Client\Adapter\Exception\RuntimeException;
 
 $url = "https://www.normandie-univ.fr/adminsite/webservices/export_rss.jsp?objet=actualite&TYPE_EVENEMENT=3ZZ125GT&THEMATIQUE=3WKWANK3&TRI_DATE=DATE_ASC&TYPE_FLUX_FEED=rss_2.0&DESCRIPTION=FluxSyGAL";
-$channel = Reader::import($url);
+$exception = null;
+try {
+    $channel = Reader::import($url);
+} catch (RuntimeException $e) {
+    $channel = null;
+    $exception = $e;
+}
 ?>
 <ul class="menu-actualites nav nav-pills nav-stacked">
+    <?php if ($channel !== null): ?>
     <?php foreach (array_reverse(iterator_to_array($channel)) as $item): /** @var Rss $item */ ?>
         <li>
             <h2>
@@ -18,4 +26,7 @@ $channel = Reader::import($url);
             <p class="date"><?php echo $item->getDateCreated()->format('d/m/Y H:i') ?></p>
         </li>
     <?php endforeach ?>
+    <?php else: ?>
+        <li><?php echo $exception->getMessage() ?></li>
+    <?php endif ?>
 </ul>
