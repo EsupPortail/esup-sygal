@@ -10,6 +10,7 @@ use Application\Service\These\TheseService;
 use Application\Service\UserContextService;
 use Application\Service\Validation\ValidationService;
 use Application\Service\Variable\VariableService;
+use UnicaenAuth\Service\AuthorizeService;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 class TheseServiceFactory
@@ -28,12 +29,14 @@ class TheseServiceFactory
          * @var FichierTheseService $fichierTheseService
          * @var VariableService     $variableService
          * @var UserContextService  $userContextService
+         * @var AuthorizeService    $authorizeService
          */
         $validationService = $serviveManager->get('ValidationService');
         $notifierService = $serviveManager->get(NotifierService::class);
         $fichierTheseService = $serviveManager->get('FichierTheseService');
         $variableService = $serviveManager->get('VariableService');
         $userContextService = $serviveManager->get('UserContextService');
+        $authorizeService = $serviveManager->get('BjyAuthorize\Service\Authorize');
 
         /** @var EtablissementService $etablissementService */
         $etablissementService = $serviveManager->get(EtablissementService::class);
@@ -49,6 +52,7 @@ class TheseServiceFactory
         $service->setUserContextService($userContextService);
         $service->setEtablissementService($etablissementService);
         $service->setFileService($fileService);
+        $service->setAuthorizeService($authorizeService);
 
         return $service;
     }

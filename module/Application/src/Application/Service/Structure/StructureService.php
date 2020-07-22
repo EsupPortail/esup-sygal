@@ -624,7 +624,7 @@ class StructureService extends BaseService
      * @param string $order
      * @return StructureConcreteInterface[]
      */
-    public function getAllStructuresAffichablesByType($type, $order = null)
+    public function getAllStructuresAffichablesByType($type, $order = null, $cacheable = false)
     {
         $qb = $this->getEntityManager()->getRepository($this->getEntityByType($type))->createQueryBuilder('structureConcrete')
             ->addSelect('structure')
@@ -634,14 +634,20 @@ class StructureService extends BaseService
             ->leftJoin('structure.structureSubstituante', 'substitutionTo')
             ->leftJoin('structure.structuresSubstituees', 'substitutionFrom')
             ->andWhere('substitutionTo.id IS NULL OR pasHistorise(substitutionTo) != 1');
-        if ($order) $qb->orderBy(' structure.' . $order);
+        if ($order) {
+            $qb->orderBy(' structure.' . $order);
+        }
         else {
-            if ($type === TypeStructure::CODE_ECOLE_DOCTORALE || $type === TypeStructure::CODE_UNITE_RECHERCHE) $qb->orderBy('structure.ferme, structureConcrete.sourceCode');
+            if ($type === TypeStructure::CODE_ECOLE_DOCTORALE || $type === TypeStructure::CODE_UNITE_RECHERCHE) {
+                $qb->orderBy('structure.ferme, structureConcrete.sourceCode');
+            }
+        }
+        $qb->setCacheable($cacheable);
+        if ($cacheable) {
+            $qb->setCacheRegion($qb->getCacheRegion() . '_' . $type . '_' . $order);
         }
 
-        $result = $qb->getQuery()->getResult();
-
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 
     /** Les structures non substituées

@@ -17,6 +17,7 @@
         "ext-imagick":                   "*",
         "ext-readline":                  "*",
         "ext-gettext":                   "*",
+        "ext-zip":                       "*",
         "unicaen/app":                   "^1.3",
         "unicaen/auth":                  "^1.3",
         "unicaen/faq":                   "^1.0",
@@ -50,8 +51,9 @@
     },
     "scripts": {
         "post-install-cmd": [
-            "mkdir -p cache/DoctrineORMModule/Proxy ; chmod -R 777 cache/DoctrineORMModule/Proxy",
-            "mkdir -p upload ; chmod -R 777 upload"
+            "mkdir -p data/DoctrineORMModule/Proxy ; chmod -R 777 data/DoctrineORMModule/Proxy",
+            "mkdir -p upload ; chmod -R 777 upload",
+            "mkdir -p vendor/mpdf/mpdf/ttfontdata ; chmod -R 777 vendor/mpdf/mpdf/ttfontdata"
         ]
     }
 }

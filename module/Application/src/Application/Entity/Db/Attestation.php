@@ -33,6 +33,11 @@ class Attestation implements HistoriqueAwareInterface
     private $id;
 
     /**
+     * @var boolean
+     */
+    private $creationAuto = false;
+
+    /**
      * @var These
      */
     private $these;
@@ -110,6 +115,25 @@ class Attestation implements HistoriqueAwareInterface
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return bool
+     */
+    public function estCreationAuto()
+    {
+        return $this->creationAuto;
+    }
+
+    /**
+     * @param bool $creationAuto
+     * @return Diffusion
+     */
+    public function setCreationAuto($creationAuto)
+    {
+        $this->creationAuto = (bool) $creationAuto;
+
+        return $this;
     }
 
     /**

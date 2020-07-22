@@ -26,9 +26,9 @@ class SelectsFilterPanelHelper extends AbstractHelper
     /**
      * Retourne true si, d'après les valeurs des paramètres GET, l'<option> d'un <select> est sélectionnée.
      *
-     * @param string $optionName  Name de l'<option>
-     * @param string $optionValue Valeur de l'<option>
-     * @param array  $queryParams valeurs des paramètres GET
+     * @param string   $optionName  Name de l'<option>
+     * @param mixed    $optionValue Valeur de l'<option>
+     * @param string[] $queryParams valeurs des paramètres GET
      * @return bool
      */
     static public function isSelectOptionActive($optionName, $optionValue, $queryParams)

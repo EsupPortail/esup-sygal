@@ -788,4 +788,9 @@ span.sas-highlight {
   margin-top: 0;
 }
 
+.bs-searchbox input {
+  padding: 2px 3px;
+  height: auto;
+}
+
 /*# sourceMappingURL=app.css.map */
