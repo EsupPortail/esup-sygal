@@ -12,6 +12,7 @@ Idem pour les attestations et le privilège "Modification des attestations conce
 - Optimisation de l'export CSV des thèses
 - Pages de téléversement et de recherche des rapports annuels.
 - Correction d'un bug dans la recherche de thèses par nom du doctorant.
+- Correction d'un bug dans le package Oracle APP_IMPORT qui ne filtrait pas les thèses selon l'établissement spécifié.
 - Possibilité d'attribuer un "identifiant permanent" à un fichier (ex: 'RAPPORT_ANNUEL_MODELE') facilitant l'intégration
   de lien de téléchargement de ce fichier dans une page.
 - Listes de diffusion dynamique Sympa alimentées par SyGAL : pages de consultation des listes de diffusion déclarées
