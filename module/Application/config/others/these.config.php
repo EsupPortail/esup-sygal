@@ -1,9 +1,12 @@
 <?php
 
+namespace Application;
+
 use Application\Controller\Factory\TheseConsoleControllerFactory;
 use Application\Controller\Factory\TheseControllerFactory;
 use Application\Controller\Factory\TheseObserverControllerFactory;
 use Application\Controller\Plugin\Url\UrlThesePluginFactory;
+use Application\Controller\RapportAnnuelController;
 use Application\Controller\TheseConsoleController;
 use Application\Controller\TheseController;
 use Application\Entity\Db\Diffusion;
@@ -19,6 +22,7 @@ use Application\Form\Factory\RdvBuHydratorFactory;
 use Application\Form\Factory\RdvBuTheseDoctorantFormFactory;
 use Application\Form\Factory\RdvBuTheseFormFactory;
 use Application\Provider\Privilege\DoctorantPrivileges;
+use Application\Provider\Privilege\RapportAnnuelPrivileges;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\Service\Acteur\ActeurService;
 use Application\Service\Financement\FinancementService;
@@ -28,6 +32,7 @@ use Application\Service\ServiceAwareInitializer;
 use Application\Service\These\Factory\TheseObserverServiceFactory;
 use Application\Service\These\Factory\TheseRechercheServiceFactory;
 use Application\Service\These\Factory\TheseServiceFactory;
+use Application\Service\These\TheseRechercheService;
 use Application\Service\TheseAnneeUniv\TheseAnneeUnivService;
 use Application\Service\TheseAnneeUniv\TheseAnneeUnivServiceFactory;
 use Application\View\Helper\Url\UrlTheseHelperFactory;
@@ -882,6 +887,18 @@ return [
                                 'etape' => WfEtape::CODE_DEPOT_VERSION_ORIGINALE,
                                 'visible' => 'Assertion\\These',
                             ],
+                            'rapport-annuel' => [
+                                'id'       => 'these-rapport-annuel',
+                                'label'    => 'Rapports annuels',
+                                'route'    => 'rapport-annuel/consulter',
+                                'withtarget' => true,
+                                'paramsInject' => [
+                                    'these',
+                                ],
+                                'icon' => 'glyphicon glyphicon-duplicate',
+                                'resource' => PrivilegeController::getResourceId(RapportAnnuelController::class, 'consulter'),
+                                'privilege' => RapportAnnuelPrivileges::RAPPORT_ANNUEL_CONSULTER,
+                            ],
 
                             'divider-these' => [
                                 'label'    => null,
@@ -1081,6 +1098,9 @@ return [
             FinancementService::class      => FinancementServiceFactory::class,
             TheseAnneeUnivService::class   => TheseAnneeUnivServiceFactory::class,
         ],
+        'aliases' => [
+            TheseRechercheService::class => 'TheseRechercheService',
+        ]
     ],
     'controllers'     => [
         'invokables' => [

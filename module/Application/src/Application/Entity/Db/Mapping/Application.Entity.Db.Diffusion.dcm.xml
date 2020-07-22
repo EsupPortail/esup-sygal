@@ -18,6 +18,7 @@
         <field name="orcid" type="string" column="ORCID" length="200" nullable="true"/>
         <field name="halId" type="string" column="HAL_ID" length="100" nullable="true"/>
         <field name="nnt" type="string" column="NNT" length="200" nullable="true"/>
+        <field name="creationAuto" type="boolean" column="CREATION_AUTO"/>
 
         <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
         <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>

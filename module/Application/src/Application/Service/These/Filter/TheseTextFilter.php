@@ -14,6 +14,14 @@ class TheseTextFilter extends TheseFilter
     const NAME_text = 'text';
     const NAME_criteria = 'textCriteria';
 
+    const CRITERIA_titre = 'titre';
+    const CRITERIA_numero_doctorant = 'doctorant-numero';
+    const CRITERIA_nom_doctorant = 'doctorant-nom';
+    const CRITERIA_prenom_doctorant = 'doctorant-prenom';
+    const CRITERIA_nom_directeur = 'directeur-nom';
+    const CRITERIA_code_ed = 'code-ed';
+    const CRITERIA_code_ur = 'code_ur';
+
     /**
      * Critères possibles sur lesquels faire porter la recherche sur texte libre.
      *
@@ -21,13 +29,13 @@ class TheseTextFilter extends TheseFilter
      *             le script de la vue matérialisée MV_RECHERCHE_THESE sollicitée pour la recherche.
      */
     const CRITERIA = [
-        'titre' => "Titre de la thèse",
-        'numero-doctorant' => "Numéro étudiant du doctorant",
-        'nom-doctorant' => "Nom d'usage ou patronymique du doctorant",
-        'prenom-doctorant' => "Prénom du doctorant",
-        'nom-directeur' => "Nom d'usage ou patronymique du directeur ou co-directeur de thèse",
-        'code-ed' => "Code national de l'école doctorale concernée (ex: 181)",
-        'code-ur' => "Unité de recherche concernée (ex: umr6211)",
+        self::CRITERIA_titre => "Titre de la thèse",
+        self::CRITERIA_numero_doctorant => "Numéro étudiant du doctorant",
+        self::CRITERIA_nom_doctorant => "Nom d'usage ou patronymique du doctorant",
+        self::CRITERIA_prenom_doctorant => "Prénom du doctorant",
+        self::CRITERIA_nom_directeur => "Nom d'usage ou patronymique du directeur ou co-directeur de thèse",
+        self::CRITERIA_code_ed => "Code national de l'école doctorale concernée (ex: 181)",
+        self::CRITERIA_code_ur => "Unité de recherche concernée (ex: umr6211)",
     ];
 
     /**

@@ -2,6 +2,7 @@
 
 namespace Application\Entity\Db;
 
+use Application\Entity\Db\Interfaces\IndividuAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
@@ -20,7 +21,7 @@ use Zend\Permissions\Acl\Resource\ResourceInterface;
  * @var string   $etalissement          l'étabilissement d'attachement de l'acteur (p.e. Université de Caen Normandie,
  *      ...)
  */
-class Acteur implements HistoriqueAwareInterface, ResourceInterface
+class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuAwareInterface
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
@@ -223,7 +224,7 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface
      * @param Individu $individu
      * @return self
      */
-    public function setIndividu($individu)
+    public function setIndividu(Individu $individu = null)
     {
         $this->individu = $individu;
 

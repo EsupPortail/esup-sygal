@@ -42,6 +42,8 @@ class FichierTheseController extends AbstractController
     use ValidationServiceAwareTrait;
     use EventRouterReplacerAwareTrait;
 
+    const FICHIER_THESE_TELEVERSE = 'FICHIER_THESE_DEPOSE';
+
     public function deposesAction()
     {
         /**
@@ -252,13 +254,24 @@ class FichierTheseController extends AbstractController
                 }
             }
 
+            // déclenchement d'un événement "fichier de thèse téléversé"
+            $this->events->trigger(
+                self::FICHIER_THESE_TELEVERSE,
+                $these, [
+                    'nature' => $nature,
+                    'version' => $version,
+                ]
+            );
+
             // si une thèse est déposée, on notifie de BdD
+            // todo: déplacer ceci dans un service écoutant l'événement "fichier de thèse téléversé" déclenché ci-dessus
             if ($nature->estThesePdf()) {
                 $notif = $this->notifierService->getNotificationFactory()->createNotificationForTheseTeleversee($these, $version);
                 $this->notifierService->trigger($notif);
             }
 
             // si un rapport de soutenance est déposé, on notifie de BdD
+            // todo: déplacer ceci dans un service écoutant l'événement "fichier de thèse téléversé" déclenché ci-dessus
             if ($nature->estRapportSoutenance()) {
                 $notif = $this->notifierService->getNotificationFactory()->createNotificationForFichierTeleverse($these);
                 $notif

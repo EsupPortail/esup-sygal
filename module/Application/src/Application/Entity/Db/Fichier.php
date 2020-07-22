@@ -31,6 +31,11 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     /**
      * @var string
      */
+    private $idPermanent;
+
+    /**
+     * @var string
+     */
     private $uuid;
 
     /**
@@ -57,6 +62,15 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
      * @var string
      */
     private $description;
+
+    /**
+     * Chemin éventuel de ce fichier.
+     *
+     * NB: Aucune colonne n'est mappée à cette propriété.
+     *
+     * @var string
+     */
+    private $path;
 
     /**
      * Contenu binaire de ce fichier.
@@ -92,17 +106,56 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     }
 
     /**
+     * Instancie un Fichier à partir d'un chemin de fichier physique.
+     *
+     * @param string $filepath
+     * @return static
+     */
+    static public function fromFilepath($filepath)
+    {
+        $content = file_get_contents($filepath);
+
+        $fichier = new static;
+        $fichier
+            ->setNom(basename($filepath))
+            ->setNomOriginal(basename($filepath))
+            ->setTaille(strlen($content))
+            ->setPath($filepath)
+            ->setTypeMime(mime_content_type($filepath))
+            ->setContenuFichierData($content);
+
+        return $fichier;
+    }
+
+    /**
      * Représentation littérale de cet objet.
      * 
      * @return string
      */
     public function __toString()
     {
-        $string = sprintf("%s - Fichier '%s'",
+        return sprintf("%s - Fichier '%s'",
                 $this->getTypeMime(),
                 $this->getNom());
-        
-        return $string;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
+
+    /**
+     * @param string $path
+     * @return Fichier
+     */
+    public function setPath($path)
+    {
+        $this->path = $path;
+
+        return $this;
     }
 
     /**
@@ -220,6 +273,25 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIdPermanent()
+    {
+        return $this->idPermanent;
+    }
+
+    /**
+     * @param string $idPermanent
+     * @return Fichier
+     */
+    public function setIdPermanent($idPermanent)
+    {
+        $this->idPermanent = $idPermanent;
+
+        return $this;
     }
 
     /**

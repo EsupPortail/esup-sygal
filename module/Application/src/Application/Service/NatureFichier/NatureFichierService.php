@@ -15,4 +15,16 @@ class NatureFichierService extends BaseService
     {
         return $this->entityManager->getRepository(NatureFichier::class);
     }
+
+    /**
+     * @param $code
+     * @return null|NatureFichier
+     */
+    public function fetchNatureFichierByCode($code)
+    {
+        /** @var NatureFichier $nature */
+        $nature = $this->getRepository()->findOneBy(['code' => $code]);
+
+        return $nature;
+    }
 }

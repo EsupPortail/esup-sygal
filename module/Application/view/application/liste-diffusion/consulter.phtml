@@ -1,0 +1,135 @@
+<?php
+
+namespace Application;
+
+/**
+ * @var string $liste
+ * @var string[] $memberIndividusAvecAdresse
+ * @var string[] $memberIndividusSansAdresse
+ * @var string[] $ownerIndividusAvecAdresse
+ * @var string[] $ownerIndividusSansAdresse
+ */
+?>
+
+<?php $this->headTitle($this->translate("Liste de diffusion")) ?>
+
+<h1 class="page-header first">
+    <?php echo $this->translate("Liste ") ?> <code><?php echo $liste ?></code>
+</h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
+
+<h2>Abonnés <span class="badge badge-default"><?php echo count($memberIndividusAvecAdresse) ?></span></h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <?php if (count($memberIndividusAvecAdresse)): ?>
+            <table class="table table-bordered table-condensed table-hover">
+                <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Adresse</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($memberIndividusAvecAdresse as $email => $nom): ?>
+                    <tr>
+                        <td><?php echo $nom ?></td>
+                        <td><?php echo $email ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <p>Aucun.</p>
+        <?php endif ?>
+    </div>
+</div>
+
+<a href="<?php echo $url = $this->url('liste-diffusion/liste/generate-member-include', ['liste' => $liste], ['force_canonical' => true]) ?>">
+    URL member_include pour Sympa
+</a>
+
+<h2>Abonnés potentiels sans adresse connue
+    <span class="badge badge-default"><?php echo count($memberIndividusSansAdresse) ?></span></h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <?php if (count($memberIndividusSansAdresse)): ?>
+            <table class="table table-bordered table-condensed table-hover">
+                <thead>
+                <tr>
+                    <th>Nom</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($memberIndividusSansAdresse as $nom): ?>
+                    <tr>
+                        <td><?php echo $nom ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <p>Aucun.</p>
+        <?php endif ?>
+    </div>
+</div>
+
+
+<h2>Propriétaires <span class="badge badge-default"><?php echo count($ownerIndividusAvecAdresse) ?></span></h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <?php if (count($ownerIndividusAvecAdresse)): ?>
+            <table class="table table-bordered table-condensed table-hover">
+                <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Adresse</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($ownerIndividusAvecAdresse as $email => $nom): ?>
+                    <tr>
+                        <td><?php echo $nom ?></td>
+                        <td><?php echo $email ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <p>Aucun.</p>
+        <?php endif ?>
+    </div>
+</div>
+
+<a href="<?php echo $url = $this->url('liste-diffusion/liste/generate-owner-include', ['liste' => $liste], ['force_canonical' => true]) ?>">
+    URL owner_include pour Sympa
+</a>
+
+<h2>Propriétaires potentiels sans adresse électronique connue
+    <span class="badge badge-default"><?php echo count($ownerIndividusSansAdresse) ?></span></h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <?php if (count($ownerIndividusSansAdresse)): ?>
+            <table class="table table-bordered table-condensed table-hover">
+                <thead>
+                <tr>
+                    <th>Nom</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($ownerIndividusSansAdresse as $id => $nom): ?>
+                    <tr>
+                        <td><?php echo $nom ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <p>Aucun.</p>
+        <?php endif ?>
+    </div>
+</div>

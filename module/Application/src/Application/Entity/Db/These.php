@@ -252,6 +252,11 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     private $anneesUniv1ereInscription;
 
     /**
+     * @var ArrayCollection
+     */
+    private $rapportsAnnuels;
+
+    /**
      * @return TitreApogeeFilter
      */
     public function getTitreFilter()
@@ -275,6 +280,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
         $this->rdvBus = new ArrayCollection();
         $this->anneesUnivInscription = new ArrayCollection();
         $this->anneesUniv1ereInscription = new ArrayCollection();
+        $this->rapportsAnnuels = new ArrayCollection();
     }
 
     /**
@@ -868,6 +874,9 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     {
         /** @var Attestation $attestation */
         foreach ($this->attestations as $attestation) {
+            if ($attestation->estHistorise()) {
+                continue;
+            }
             if ($version->estVersionCorrigee() === $attestation->getVersionCorrigee()) {
                 return $attestation;
             }
@@ -906,6 +915,9 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     {
         /** @var Diffusion $diffusion */
         foreach ($this->miseEnLignes as $diffusion) {
+            if ($diffusion->estHistorise()) {
+                continue;
+            }
             if ($version->estVersionCorrigee() === $diffusion->getVersionCorrigee()) {
                 return $diffusion;
             }
@@ -1314,6 +1326,36 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     {
         // NB: le mapping de VTheseAnneeUnivFirst est un copier-coller de TheseAnneeUniv
         return $this->anneesUniv1ereInscription->first();
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getRapportsAnnuels()
+    {
+        return $this->rapportsAnnuels;
+    }
+
+    /**
+     * @param RapportAnnuel $rapportAnnuel
+     * @return self
+     */
+    public function addRapportAnnuel(RapportAnnuel $rapportAnnuel)
+    {
+        $this->rapportsAnnuels->add($rapportAnnuel);
+
+        return $this;
+    }
+
+    /**
+     * @param RapportAnnuel $rapportAnnuel
+     * @return self
+     */
+    public function removeRapportAnnuel(RapportAnnuel $rapportAnnuel)
+    {
+        $this->rapportsAnnuels->removeElement($rapportAnnuel);
+
+        return $this;
     }
 
     /**
