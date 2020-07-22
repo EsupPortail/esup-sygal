@@ -50,8 +50,14 @@
     },
     "scripts": {
         "post-install-cmd": [
-            "mkdir -p cache/DoctrineORMModule/Proxy ; chmod -R 777 cache/DoctrineORMModule/Proxy",
-            "mkdir -p upload ; chmod -R 777 upload"
+            "mkdir -p vendor/mpdf/mpdf/ttfontdata && chmod -R 777 vendor/mpdf/mpdf/ttfontdata",
+            "mkdir -p data/cache && chmod -R 777 data/cache && rm -rf data/cache/*",
+            "mkdir -p data/DoctrineModule/cache && chmod -R 777 data/DoctrineModule/cache && rm -rf data/DoctrineModule/cache/*",
+            "mkdir -p data/DoctrineORMModule/Proxy && chmod -R 777 data/DoctrineORMModule/Proxy && rm -rf data/DoctrineORMModule/Proxy/*",
+            "vendor/bin/doctrine-module orm:clear-cache:query &",
+            "vendor/bin/doctrine-module orm:clear-cache:metadata &",
+            "vendor/bin/doctrine-module orm:clear-cache:result &",
+            "vendor/bin/doctrine-module orm:generate-proxies &"
         ]
     }
 }
