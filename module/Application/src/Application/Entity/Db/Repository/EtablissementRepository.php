@@ -219,9 +219,10 @@ class EtablissementRepository extends DefaultEntityRepository
     }
 
     /**
+     * @param bool $cacheable
      * @return Etablissement[]
      */
-    public function findAllEtablissementsInscriptions()
+    public function findAllEtablissementsInscriptions($cacheable = false)
     {
         $qb = $this->createQueryBuilder("e")
             ->addSelect("s")
@@ -229,6 +230,8 @@ class EtablissementRepository extends DefaultEntityRepository
             ->andWhere("e.estInscription = 1")
             ->orderBy('s.libelle')
         ;
+
+        $qb->setCacheable($cacheable);
 
         return  $qb->getQuery()->getResult();
     }

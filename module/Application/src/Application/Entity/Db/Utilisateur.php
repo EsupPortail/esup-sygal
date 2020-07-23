@@ -2,6 +2,7 @@
 
 namespace Application\Entity\Db;
 
+use Application\Entity\Db\Interfaces\IndividuAwareInterface;
 use BjyAuthorize\Provider\Role\ProviderInterface;
 use UnicaenApp\Entity\UserInterface;
 use UnicaenAuth\Entity\Db\AbstractUser;
@@ -11,7 +12,7 @@ use UnicaenAuth\Entity\Db\AbstractUser;
  *
  * NB: hérite de AbstractUser uniquement pour pouvoir utiliser HistoriqueListener.
  */
-class Utilisateur extends AbstractUser implements UserInterface, ProviderInterface
+class Utilisateur extends AbstractUser implements UserInterface, ProviderInterface, IndividuAwareInterface
 {
     const APP_UTILISATEUR_ID = 1; // indispensable à UnicaenImport !
     const APP_UTILISATEUR_USERNAME = 'sygal-app';

@@ -1,6 +1,23 @@
 Journal des modifications
 =========================
 
+1.4.7 (04/06/2020)
+------------------
+
+- Lors du dépôt d'une version corrigée, l'autorisation de mise en ligne est reprise texto (dupliquée) du 1er dépôt,
+sauf si l'utilisateur possède le privilège "Saisie du formulaire d'autorisation de diffusion de la version corrigée", 
+auquel cas elle est redemandée à l'utilisateur.
+Idem pour les attestations et le privilège "Modification des attestations concernant la version corrigée".
+- Masquage du complément de financement dans la fiche d'identité de la thèse
+- Optimisation de l'export CSV des thèses
+- Pages de téléversement et de recherche des rapports annuels.
+- Correction d'un bug dans la recherche de thèses par nom du doctorant.
+- Correction d'un bug dans le package Oracle APP_IMPORT qui ne filtrait pas les thèses selon l'établissement spécifié.
+- Possibilité d'attribuer un "identifiant permanent" à un fichier (ex: 'RAPPORT_ANNUEL_MODELE') facilitant l'intégration
+  de lien de téléchargement de ce fichier dans une page.
+- Listes de diffusion dynamique Sympa alimentées par SyGAL : pages de consultation des listes de diffusion déclarées
+  dans la config ; une URL pour fournir les abonnés, une autre pour fournir les propriétaires.
+
 1.4.6 (29/05/2020)
 ------------------
 

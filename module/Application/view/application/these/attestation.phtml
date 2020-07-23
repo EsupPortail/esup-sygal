@@ -26,7 +26,8 @@ $canEdit = $this->isAllowed($these, $privilege);
 <div class="box panel panel-info">
 
     <div class="panel-heading">
-        <h2>Attestation</h2>
+        <h2>Attestation
+            <?php if ($attestation && $attestation->estCreationAuto()): ?><span>(Rappel)</span><?php endif ?></h2>
     </div>
 
     <div class="panel-body">

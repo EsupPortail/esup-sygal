@@ -10,6 +10,7 @@ use Application\Service\These\TheseService;
 use Application\Service\UserContextService;
 use Application\Service\Validation\ValidationService;
 use Application\Service\Variable\VariableService;
+use UnicaenAuth\Service\AuthorizeService;
 use Interop\Container\ContainerInterface;
 
 class TheseServiceFactory
@@ -28,12 +29,14 @@ class TheseServiceFactory
          * @var FichierTheseService $fichierTheseService
          * @var VariableService     $variableService
          * @var UserContextService  $userContextService
+         * @var AuthorizeService    $authorizeService
          */
         $validationService = $container->get('ValidationService');
         $notifierService = $container->get(NotifierService::class);
         $fichierTheseService = $container->get('FichierTheseService');
         $variableService = $container->get('VariableService');
         $userContextService = $container->get('UserContextService');
+        $authorizeService = $container->get('BjyAuthorize\Service\Authorize');
 
         /** @var EtablissementService $etablissementService */
         $etablissementService = $container->get(EtablissementService::class);
@@ -49,6 +52,7 @@ class TheseServiceFactory
         $service->setUserContextService($userContextService);
         $service->setEtablissementService($etablissementService);
         $service->setFileService($fileService);
+        $service->setAuthorizeService($authorizeService);
 
         return $service;
     }

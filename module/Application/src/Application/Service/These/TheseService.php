@@ -2,6 +2,7 @@
 
 namespace Application\Service\These;
 
+use Application\Controller\FichierTheseController;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Attestation;
 use Application\Entity\Db\Diffusion;
@@ -13,8 +14,10 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\VersionFichier;
 use Application\Notification\ValidationRdvBuNotification;
+use Application\Provider\Privilege\ThesePrivileges;
 use Application\Rule\AutorisationDiffusionRule;
 use Application\Rule\SuppressionAttestationsRequiseRule;
+use Application\Service\AuthorizeServiceAwareTrait;
 use Application\Service\BaseService;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
@@ -31,10 +34,14 @@ use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Traits\MessageAwareInterface;
-use UnicaenAuth\Entity\Db\UserInterface;
+use Zend\EventManager\Event;
+use Zend\EventManager\EventManagerInterface;
+use Zend\EventManager\ListenerAggregateInterface;
+use Zend\EventManager\ListenerAggregateTrait;
 
-class TheseService extends BaseService
+class TheseService extends BaseService implements ListenerAggregateInterface
 {
+    use ListenerAggregateTrait;
     use ValidationServiceAwareTrait;
     use NotifierServiceAwareTrait;
     use FichierTheseServiceAwareTrait;
@@ -42,6 +49,16 @@ class TheseService extends BaseService
     use UserContextServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use FileServiceAwareTrait;
+    use AuthorizeServiceAwareTrait;
+
+    /**
+     * @inheritDoc
+     */
+    public function attach(EventManagerInterface $events, $priority = 1)
+    {
+        // réaction à l'événement de dépôt d'un fichier de thèse
+        $events->attach(FichierTheseController::FICHIER_THESE_TELEVERSE, [$this, 'onFichierTheseTeleverse']);
+    }
 
     /**
      * @return TheseRepository
@@ -100,6 +117,68 @@ class TheseService extends BaseService
     }
 
     /**
+     * @param Event $event
+     */
+    public function onFichierTheseTeleverse(Event $event)
+    {
+        /** @var These $these */
+        /** @var VersionFichier $version */
+        /** @var NatureFichier $nature */
+        $these = $event->getTarget();
+        $version = $event->getParam('version');
+
+        if ($version->estVersionOriginale() && $version->estVersionCorrigee()) {
+            $this->onFichierTheseTeleverseVersionCorrigee($these);
+        }
+    }
+
+    /**
+     * Lors du dépôt d'une version originale corrigée, il peut être nécessaire de créer automatiquement Diffusion et Attestation,
+     * selon les privilèges accordés au rôle de l'utilisateur.
+     *
+     * @param These $these
+     */
+    private function onFichierTheseTeleverseVersionCorrigee(These $these)
+    {
+        $versionCorr = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG_CORR);
+        // Création automatique d'une Diffusion pour la version corrigée si l'utilisateur n'a pas le privilège d'en saisir une.
+        $privilege = ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_($versionCorr);
+        if (! $this->authorizeService->isAllowed($these, $privilege)) {
+            $this->createDiffusionVersionCorrigee($these);
+        }
+        // Création automatique d'une Attestation pour la version corrigée si l'utilisateur n'a pas le privilège d'en saisir une.
+        $privilege = ThesePrivileges::THESE_SAISIE_ATTESTATIONS_($versionCorr);
+        if (! $this->authorizeService->isAllowed($these, $privilege)) {
+            $this->createAttestationVersionCorrigee($these);
+        }
+    }
+
+    /**
+     * Création automatique d'une Attestation pour la version corrigée, identique à celle du 1er dépôt.
+     *
+     * @param These $these
+     */
+    public function createAttestationVersionCorrigee(These $these)
+    {
+        $versionOrig = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
+        $attestationOrig = $these->getAttestationForVersion($versionOrig);
+        if ($attestationOrig === null) {
+            throw new LogicException("Aucune Attestation trouvée pour le 1er dépôt");
+        }
+
+        $versionCorr = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG_CORR);
+        $attestationCorr = $these->getAttestationForVersion($versionCorr);
+        if ($attestationCorr !== null) {
+            return; // Attestation existante
+        }
+
+        $attestationCorr = clone $attestationOrig;
+        $attestationCorr->setVersionCorrigee(true);
+        $attestationCorr->setCreationAuto(true);
+        $this->updateAttestation($these, $attestationCorr);
+    }
+
+    /**
      * @param These       $these
      * @param Attestation $attestation
      */
@@ -140,6 +219,31 @@ class TheseService extends BaseService
         } catch (OptimisticLockException $e) {
             throw new RuntimeException("Erreur rencontrée lors de la suppression", null, $e);
         }
+    }
+
+    /**
+     * Création automatique d'une Diffusion pour la version corrigée, identique à celle du 1er dépôt.
+     *
+     * @param These $these
+     */
+    public function createDiffusionVersionCorrigee(These $these)
+    {
+        $versionOrig = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
+        $diffusionOrig = $these->getDiffusionForVersion($versionOrig);
+        if ($diffusionOrig === null) {
+            throw new LogicException("Aucune Diffusion trouvée pour le 1er dépôt");
+        }
+
+        $versionCorr = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG_CORR);
+        $diffusionCorr = $these->getDiffusionForVersion($versionCorr);
+        if ($diffusionCorr !== null) {
+            return; // Diffusion existante
+        }
+
+        $diffusionCorr = clone $diffusionOrig;
+        $diffusionCorr->setVersionCorrigee(true);
+        $diffusionCorr->setCreationAuto(true);
+        $this->updateDiffusion($these, $diffusionCorr, $versionOrig);
     }
 
     /**

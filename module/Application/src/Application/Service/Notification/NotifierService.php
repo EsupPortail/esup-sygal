@@ -384,4 +384,53 @@ class NotifierService extends \Notification\Service\NotifierService
             $this->trigger($notif);
         }
     }
+
+    /**
+     * @param string[] $to
+     * @param string $liste
+     * @param string[] $individusAvecAdresse
+     * @param string[] $individusSansAdresse
+     */
+    public function triggerAbonnesListeDiffusionSansAdresse(
+        array $to,
+        $liste,
+        array $individusAvecAdresse,
+        array $individusSansAdresse)
+    {
+        $to = array_unique(array_filter($to));
+
+        $notif = $this->createNotificationForAbonnesListeDiffusionSansAdresse(
+            $to,
+            $liste,
+            $individusAvecAdresse,
+            $individusSansAdresse);
+        $this->trigger($notif);
+    }
+
+    /**
+     * @param string[] $to
+     * @param string $liste
+     * @param string[] $individusAvecAdresse
+     * @param string[] $individusSansAdresse
+     * @return Notification
+     */
+    private function createNotificationForAbonnesListeDiffusionSansAdresse(
+        array $to,
+        $liste,
+        array $individusAvecAdresse,
+        array $individusSansAdresse)
+    {
+        $notif = new Notification();
+        $notif
+            ->setSubject("Abonnés de liste de diffusion sans adresse mail")
+            ->setTo($to)
+            ->setTemplatePath('application/liste-diffusion/mail/notif-abonnes-sans-adresse')
+            ->setTemplateVariables([
+                'liste' => $liste,
+                'individusAvecAdresse' => $individusAvecAdresse,
+                'individusSansAdresse' => $individusSansAdresse,
+            ]);
+
+        return $notif;
+    }
 }

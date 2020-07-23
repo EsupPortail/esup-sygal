@@ -48,6 +48,14 @@ class TheseRechercheService
     use SourceCodeStringHelperAwareTrait;
     use TheseAnneeUnivServiceAwareTrait;
 
+    const CRITERIA_titre = TheseTextFilter::CRITERIA_titre;
+    const CRITERIA_numero_doctorant = TheseTextFilter::CRITERIA_numero_doctorant;
+    const CRITERIA_nom_doctorant = TheseTextFilter::CRITERIA_nom_doctorant;
+    const CRITERIA_prenom_doctorant = TheseTextFilter::CRITERIA_prenom_doctorant;
+    const CRITERIA_nom_directeur = TheseTextFilter::CRITERIA_nom_directeur;
+    const CRITERIA_code_ed = TheseTextFilter::CRITERIA_code_ed;
+    const CRITERIA_code_ur = TheseTextFilter::CRITERIA_code_ur;
+
     /**
      * @var bool
      */
@@ -453,11 +461,11 @@ class TheseRechercheService
      *
      * Le contenu de la colonne MV_RECHERCHE_THESE.HAYSTACK suit le format suivant :
      * <pre>
-     * code-ed{...} code-ur{...} titre{...} numero-doctorant{...} nom-doctorant{...} prenom-doctorant{...} nom-directeur{...}
+     * code-ed{...} code-ur{...} titre{...} doctorant-numero{...} doctorant-nom{...} doctorant-prenom{...} directeur-nom{...}
      * </pre>
      * Exemple :
      * <pre>
-     * code-ed{591} code-ur{umr6614} titre{bivalve dreissena polymorpha} numero-doctorant{85982906} nom-doctorant{hochon hochon} prenom-doctorant{paule} nom-directeur{terieur}
+     * code-ed{591} code-ur{umr6614} titre{bivalve dreissena polymorpha} doctorant-numero{85982906} doctorant-nom{hochon hochon} doctorant-prenom{paule} directeur-nom{terieur}
      * </pre>
      *
      * L'expression régulière utilisée est donc de la forme suivante :
@@ -466,13 +474,13 @@ class TheseRechercheService
      * </pre>
      * Exemple :
      * <pre>
-     * (nom-doctorant|nom-directeur)\{[^{]*hochon[^}]*\}
+     * (doctorant-nom|directeur-nom)\{[^{]*hochon[^}]*\}
      * </pre>
      *
      * Lorsque le texte recherché est "hochon" par exemple, la requête SQL générée est la suivante :
      * <pre>
      *      SELECT * FROM MV_RECHERCHE_THESE MV WHERE rownum <= 100 AND (
-     *          REGEXP_LIKE(haystack, q'[(nom-doctorant|nom-directeur)\{[^{]*hochon[^}]*\}]', 'i')
+     *          REGEXP_LIKE(haystack, q'[(doctorant-nom|directeur-nom)\{[^{]*hochon[^}]*\}]', 'i')
      *      )
      * </pre>
      *
@@ -480,18 +488,18 @@ class TheseRechercheService
      * la requête SQL générée est la suivante :
      * <pre>
      *      SELECT * FROM MV_RECHERCHE_THESE MV WHERE rownum <= 100 AND (
-     *          REGEXP_LIKE(haystack, q'[(nom-doctorant|nom-directeur)\{[^{]*hochon[^}]*\}]', 'i') OR
-     *          REGEXP_LIKE(haystack, q'[(nom-doctorant|nom-directeur)\{[^{]*bivalve[^}]*\}]', 'i')
+     *          REGEXP_LIKE(haystack, q'[(doctorant-nom|directeur-nom)\{[^{]*hochon[^}]*\}]', 'i') OR
+     *          REGEXP_LIKE(haystack, q'[(doctorant-nom|directeur-nom)\{[^{]*bivalve[^}]*\}]', 'i')
      *      )
      * </pre>
      *
      * @param string  $text Texte recherché. Ex: "hochon", "hochon bivalve"
-     * @param string[] $criteria Critères sur lesquels porte la recherche. EX: ['nom-doctorant', 'nom-directeur']
+     * @param string[] $criteria Critères sur lesquels porte la recherche. EX: ['doctorant-nom', 'directeur-nom']
      * @param integer $limit
      *
      * @return array [<CODE_THESE> => ['code' => <CODE_THESE>, 'code-doctorant' => <CODE_DOCTORANT>]]
      */
-    public function rechercherThese($text, array $criteria, $limit = 100)
+    public function rechercherThese($text, array $criteria, $limit = 1000)
     {
         if (strlen($text) < 2) return [];
 
@@ -505,8 +513,10 @@ class TheseRechercheService
 
         $orc = [];
         foreach ($words as $word) {
-            // regexp : (<critere>|<critere>)\{[^{]*<terme>[^}]*\}
-            $regexp = '(' . implode('|', $criteria) . ')' . "\{[^{]*" . $word . "[^}]*\}";
+            // le caractère '*' est autorisé pour signifier "n'importe quel caractère répété 0 ou N fois"
+            $word = str_replace('*', '.*', $word);
+            // regexp : (<critere>|<critere>)\{[^}]*<terme>.*\}
+            $regexp = '(' . implode('|', $criteria) . ')' . "\{[^}]*" . $word . ".*\}";
             $orc[] = "    REGEXP_LIKE(haystack, q'[" . $regexp . "]', 'i')"; // la syntaxe q'[]' dispense de doubler les '
         }
         $orc = implode(' OR ' . PHP_EOL, $orc);

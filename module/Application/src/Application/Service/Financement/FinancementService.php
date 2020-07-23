@@ -5,20 +5,25 @@ namespace Application\Service\Financement;
 use Application\Entity\Db\OrigineFinancement;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
-class FinancementService {
+class FinancementService
+{
     use EntityManagerAwareTrait;
 
     /**
      * @param string $order
+     * @param bool $cacheable
      * @return OrigineFinancement[]
      */
-    public function getOriginesFinancements($order = null)
+    public function getOriginesFinancements($order = null, $cacheable = false)
     {
         $qb = $this->getEntityManager()->getRepository(OrigineFinancement::class)->createQueryBuilder('origine');
 
-        if ($order) $qb = $qb->orderBy('origine.' . $order);
+        if ($order) {
+            $qb = $qb->orderBy('origine.' . $order);
+        }
 
-        $result = $qb->getQuery()->getResult();
-        return $result;
+        $qb->setCacheable($cacheable);
+
+        return $qb->getQuery()->getResult();
     }
 }

@@ -61,6 +61,8 @@ class FichierTheseControllerFactory
         $controller->setEventRouterReplacer($eventRouterReplacer);
         $controller->setRenderer($renderer);
 
+        $theseService->attach($controller->getEventManager());
+
         return $controller;
     }
 

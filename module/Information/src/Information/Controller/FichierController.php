@@ -51,11 +51,12 @@ class FichierController extends AbstractActionController
             $file = $request->getFiles()->toArray();
             if ($file['chemin'] !== null && $file['chemin']['tmp_name'] !== "") {
 
-                $this->fichierService->createFichiersFromUpload(
+                $fichiers = $this->fichierService->createFichiersFromUpload(
                     $uploadData = ['files' => $file['chemin']],
                     NatureFichier::CODE_DIVERS,
                     VersionFichier::CODE_ORIG
                 );
+                $this->fichierService->saveFichiers($fichiers);
 
                 return $this->redirect()->toRoute("informations/fichiers");
             }
