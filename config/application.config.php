@@ -39,9 +39,6 @@ $modules = ['Zend\Cache',
     'Information',
     'Application',
 ];
-if (php_sapi_name() === 'cli') {
-    unset($modules['BjyAuthorize']);
-}
 
 $devModules =  [
     'ZendDeveloperTools',
