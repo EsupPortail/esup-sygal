@@ -10,8 +10,8 @@ return [
         'app_infos' => [
             'nom'     => "SyGAL",
             'desc'    => "SYstème de Gestion et d'Accompagnement doctoraL",
-            //'version' => cf. 'version.global.php'
-            //'date'    => cf. 'version.global.php'
+            'version' => '?', // surchargée dans un autre fichier de config (ex: 'config/autoload/auto.version.local.php')
+            'date'    => '?', // idem
             'contact' => [
                 'mail' => "assistance-sygal@unicaen.fr",
                 //'tel' => "01 02 03 04 05",

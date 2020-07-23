@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 
 #
-# Script d'installation des pré-requis de l'application POUR LA PROD.
+# Script d'installation des pré-requis de l'application *POUR LE DEV*.
 #
 # Usages :
-#   ./install.sh
+#   ./install-dev.sh
 
 CURDIR=$(cd `dirname $0` && pwd)
 
 cd ${CURDIR}
 
 # Composer install
-composer install --no-dev --no-suggest --prefer-dist --optimize-autoloader && \
+composer install --prefer-dist --no-suggest && \
 
 # Génération du fichier de version
 echo "" && \
@@ -20,5 +20,5 @@ echo "Génération du fichier de version..." && \
 
 # Répertoire pour l'upload de fichiers
 mkdir -p upload && \
-  chown -R www-data:root upload && \
-  chmod -R 770 upload
+chown -R www-data:root upload && \
+chmod -R 770 upload
