@@ -41,6 +41,14 @@ return [
                     ],
                     'roles' => [],
                 ],
+                [
+                    'controller' => 'UnicaenDbImport\Controller\Console',
+                    'action'     => [
+                        'runImport',
+                        'runSynchro',
+                    ],
+                    'roles' => [],
+                ],
             ],
         ],
     ],
