@@ -3510,11 +3510,11 @@
         },
         {
             "name": "unicaen/bjy-authorize",
-            "version": "3.0.4",
+            "version": "3.0.5",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/bjy-authorize.git",
-                "reference": "d5c730a87147e8401547629ea1568df4c7d3fe76"
+                "reference": "758a75536a6a70587f8b14cef20e85b7ca504d25"
             },
             "require": {
                 "doctrine/common": "^2.7",
@@ -3567,7 +3567,7 @@
                 "zf2",
                 "zfc-user"
             ],
-            "time": "2019-11-29T14:57:21+00:00"
+            "time": "2020-07-23T13:45:05+00:00"
         },
         {
             "name": "unicaen/code",
