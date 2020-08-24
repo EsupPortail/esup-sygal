@@ -7,7 +7,7 @@
     </id>
 
     <field name="uuid" length="40" column="UUID" />
-    <field name="idPermanent" column="ID_PERMANENT" nullable="true"/>
+<!--    <field name="idPermanent" column="ID_PERMANENT" nullable="true"/>-->
     <field name="nom" column="NOM"/>
     <field name="nomOriginal" column="NOM_ORIGINAL"/>
     <field name="taille" type="integer" column="TAILLE"/>
