@@ -1,6 +1,12 @@
 Journal des modifications
 =========================
 
+1.4.8 (01/09/2020)
+------------------
+
+- Correction du nom de colonne ID_PERMANENT erroné dans le mapping de l'entité Fichier.
+- Correction du path manquant pour l'upload.
+
 1.4.7 (04/06/2020)
 ------------------
 
