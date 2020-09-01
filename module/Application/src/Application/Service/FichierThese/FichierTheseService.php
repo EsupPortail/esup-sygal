@@ -158,7 +158,9 @@ class FichierTheseService extends BaseService
                 ->setVersion($version)
                 ->setTypeMime($typeFichier)
                 ->setNomOriginal($nomFichier)
-                ->setTaille($tailleFichier);
+                ->setTaille($tailleFichier)
+                ->setPath($path)
+            ;
 
             $fichierThese = new FichierThese();
             $fichierThese
