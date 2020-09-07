@@ -1,6 +1,11 @@
 Journal des modifications
 =========================
 
+1.4.9 (07/09/2020)
+------------------
+
+- Changement de catégorie pour les privilèges associés aux pages d'information
+
 1.4.8 (01/09/2020)
 ------------------
 
