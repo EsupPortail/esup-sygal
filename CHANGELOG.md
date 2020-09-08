@@ -5,6 +5,7 @@ Journal des modifications
 ------------------
 
 - Changement de catégorie pour les privilèges associés aux pages d'information
+- Ajout d'une configuration pour le fil d'actualité.
 
 1.4.8 (01/09/2020)
 ------------------
