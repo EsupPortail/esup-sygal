@@ -6,6 +6,7 @@ Journal des modifications
 
 - Changement de catégorie pour les privilèges associés aux pages d'information
 - Ajout d'une configuration pour le fil d'actualité.
+- Ajout du champ IdREF pour toutes les structures et modification de l'affichage/saisie des informations.
 
 1.4.8 (01/09/2020)
 ------------------

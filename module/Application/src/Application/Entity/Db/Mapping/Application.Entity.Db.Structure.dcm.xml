@@ -18,6 +18,7 @@
         <field name="fax"        type="string" column="FAX"         length="256"  nullable="true"/>
         <field name="email"      type="string" column="EMAIL"       length="256"  nullable="true"/>
         <field name="siteWeb"    type="string" column="SITE_WEB"    length="256"  nullable="true"/>
+        <field name="idRef"      type="string" column="ID_REF"      length="1024" nullable="true"/>
 
         <many-to-one field="typeStructure" target-entity="Application\Entity\Db\TypeStructure">
             <join-columns>
