@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0cc2e87e0afc6f179b5863288e0b949b",
+    "content-hash": "568e80a67a9b631e170c9feaacb2a64c",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -3597,11 +3597,11 @@
         },
         {
             "name": "unicaen/db-import",
-            "version": "dev-oracle_support",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/db-import.git",
-                "reference": "fdaffa54414017a60706802a40890ea39ee08a6c"
+                "reference": "fb59a4c060cc33d0af0613439fff94f5afcb0759"
             },
             "require": {
                 "beberlei/assert": "^2.7",
@@ -3631,7 +3631,7 @@
                 }
             },
             "description": "Module d'import entre bases de données",
-            "time": "2020-06-18T11:19:05+00:00"
+            "time": "2020-09-02T07:58:19+00:00"
         },
         {
             "name": "unicaen/faq",
@@ -7157,6 +7157,7 @@
             "keywords": [
                 "tokenizer"
             ],
+            "abandoned": true,
             "time": "2017-11-27T05:48:46+00:00"
         },
         {
