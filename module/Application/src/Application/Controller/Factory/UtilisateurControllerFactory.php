@@ -84,6 +84,7 @@ class UtilisateurControllerFactory
         $controller->setNotifierService($notifierService);
         $controller->setEntityManager($entityManager);
         $controller->setUserContextService($userContextService);
+        $controller->setServiceUserContext($userContextService);
         $controller->setUserService($userService);
         $controller->setShibService($shibService);
         $controller->setAuthenticationService($authenticationService);
