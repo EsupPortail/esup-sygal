@@ -34,6 +34,8 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
     const CODE_ED = 'ED';
     const CODE_UR = 'UR';
 
+    const ROLE_ID_USER = 'user'; // ROLE_ID du rôle correspondant à un utilisateur authentifié avec succès.
+
     // @todo NB: maintenant il y le code étab concaténé au "role_id"
     const ROLE_ID_DOCTORANT = "Doctorant";
     const ROLE_ID_BUREAU_DES_DOCTORATS = "Maison du doctorat";
