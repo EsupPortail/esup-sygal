@@ -130,7 +130,6 @@ return [
                         'roadmap',
                         'generate',
                         'fusion',
-                        'validation-page-de-couverture',
                     ],
                     'privileges' => [
                         ThesePrivileges::THESE_CONSULTATION_FICHE,
@@ -177,6 +176,16 @@ return [
                         'depot-avenant-conv-mise-en-ligne',
                     ],
                     'privileges' => ThesePrivileges::THESE_FICHIER_DIVERS_CONSULTER,
+                    'assertion'  => 'Assertion\\These',
+                ],
+                [
+                    'controller' => 'Application\Controller\These',
+                    'action'     => [
+                        'validation-page-de-couverture',
+                    ],
+                    'privileges' => [
+                        ThesePrivileges::THESE_CONSULTATION_PAGE_COUVERTURE,
+                    ],
                     'assertion'  => 'Assertion\\These',
                 ],
                 [
