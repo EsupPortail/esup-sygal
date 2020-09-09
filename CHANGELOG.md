@@ -1,6 +1,12 @@
 Journal des modifications
 =========================
 
+2.0.0
+------------------
+
+- Passage à Zend Framework 3 et PHP 7.4.
+- Nouveau rôle 'Authentifié(e)' permettant d'ajuster les privilèges d'un simple utilisateur authentifié.
+
 1.4.8 (01/09/2020)
 ------------------
 
