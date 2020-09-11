@@ -5,11 +5,10 @@ services:
     container_name: sygal-container
     build:
       args:
-        PHP_VERSION: 7.4
+        PHP_VERSION: 7.3
       context: .
     ports:
-     - "8000:80"
-     - "443:443"
+     - "8003:443"
     volumes:
      - .:/app
      - /tmp:/tmp
