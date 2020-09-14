@@ -1,6 +1,15 @@
 Journal des modifications
 =========================
 
+1.4.9 (08/09/2020)
+------------------
+
+- Changement de catégorie pour les privilèges associés aux pages d'information.
+- Ajout d'une configuration pour le fil d'actualité.
+- Ajout du champ IdREF pour toutes les structures et modification de l'affichage/saisie des informations.
+- Changement de l'affichage des structures fermées dans le filtre des thèses.
+- Nouveau message "Dépôt terminé" au doctorant sur la page Rendez-vous BU.
+
 1.4.8 (01/09/2020)
 ------------------
 

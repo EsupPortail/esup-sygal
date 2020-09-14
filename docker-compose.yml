@@ -1,19 +1,18 @@
 version: '2.2'
 
 services:
-  sygal:
-    container_name: sygal-container
+  sygal-zf2:
+    container_name: sygal-zf2-container
     build:
       args:
         PHP_VERSION: 7.0
       context: .
     ports:
-     - "8000:80"
-     - "443:443"
+      - "8002:443"
     volumes:
-     - .:/app
-     - /tmp:/tmp
-     - $HOME/.ssh:/root/.ssh
+      - .:/app
+      - /tmp:/tmp
+      - $HOME/.ssh:/root/.ssh
     working_dir: /app
     network_mode: bridge
 
