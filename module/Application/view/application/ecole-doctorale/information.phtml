@@ -38,6 +38,14 @@ $canAddRole = $canEdit;
                 <dd>    <?php echo $ecole->getSigle(); ?>       </dd>
                 <dt> Code :</dt>
                 <dd>    <?php echo $ecole->getStructure()->getCode(); ?>        </dd>
+                <dt> Id REF :</dt>
+                <dd>
+                    <?php if ($ecole->getStructure()->getIdRef() !== null AND trim($ecole->getStructure()->getIdRef()) !== "") : ?>
+                        <?php echo $ecole->getStructure()->getIdRef(); ?>
+                    <?php else : ?>
+                        (Non renseigné)
+                    <?php endif; ?>
+                </dd>
                 <dt> Statut :</dt>
                 <dd>
                     <?php if ($ecole->getStructure()->isFerme()) : ?>

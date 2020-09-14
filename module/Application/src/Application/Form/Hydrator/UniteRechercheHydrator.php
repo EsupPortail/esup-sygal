@@ -22,6 +22,7 @@ class UniteRechercheHydrator extends DoctrineObject
         $data['cheminLogo'] = $ur->getCheminLogo();
         $data['RNSR'] = $ur->getRNSR();
         $data['estFerme'] = $ur->getStructure()->isFerme();
+        $data['id_ref'] = $ur->getStructure()->getIdRef();
 
         return $data;
     }
@@ -43,6 +44,7 @@ class UniteRechercheHydrator extends DoctrineObject
         $object->setSigle($data['sigle']);
         $object->setCheminLogo($data['cheminLogo']);
         $object->setRNSR($data['RNSR']);
+        $object->getStructure()->setIdRef($data['id_ref']);
         if (isset($data['estFerme']) AND $data['estFerme'] === "1") $object->getStructure()->setFerme(true); else $object->getStructure()->setFerme(false);
 
         return $object;

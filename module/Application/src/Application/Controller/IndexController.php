@@ -35,8 +35,7 @@ class IndexController extends AbstractController
 
     public function indexAction()
     {
-
-//        $config = ($this->getServiceLocator()->get('config'));
+          $config = ($this->getServiceLocator()->get('config'));
 //        $this->pretty_print($config);
 
         /**
@@ -55,9 +54,15 @@ class IndexController extends AbstractController
             return $response;
         }
 
+//        $activite = $config['actualite'];
+//        $url = $config['actualite']['url'];
+//        $actif = $config['actualite']['actif'];
+
         $vm = new ViewModel([
             'role' => $this->userContextService->getSelectedIdentityRole(),
             'estDoctorant' => (bool) $this->userContextService->getIdentityDoctorant(),
+            'url' => $config['actualite']['flux'],
+            'actif' => $config['actualite']['actif'],
         ]);
 
         if ($response instanceof ViewModel) {
