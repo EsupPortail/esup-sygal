@@ -1,21 +1,30 @@
 
 <?php
 
+/**
+ * @var string $url
+ * @var boolean $actif
+ **/
+
 use Zend\Feed\Reader\Entry\Rss;
 use Zend\Feed\Reader\Reader;
 
-$url = "https://www.normandie-univ.fr/adminsite/webservices/export_rss.jsp?objet=actualite&TYPE_EVENEMENT=3ZZ125GT&THEMATIQUE=3WKWANK3&TRI_DATE=DATE_ASC&TYPE_FLUX_FEED=rss_2.0&DESCRIPTION=FluxSyGAL";
-$channel = Reader::import($url);
+
 ?>
 <ul class="menu-actualites nav nav-pills nav-stacked">
-    <?php foreach (array_reverse(iterator_to_array($channel)) as $item): /** @var Rss $item */ ?>
-        <li>
-            <h2>
-                <span class="label label-info">Actualité</span>
-                <a target="_blank" title="Cliquez pour ouvrir dans un nouvel onglet"
-                   href="<?php echo $item->getLink() ?>"><?php echo $item->getTitle() ?> <i class="fa fa-external-link-alt"></i></a>
-            </h2>
-            <p class="date"><?php echo $item->getDateCreated()->format('d/m/Y H:i') ?></p>
-        </li>
-    <?php endforeach ?>
+    <?php if ($actif) : ?>
+        <?php $channel = Reader::import($url); ?>
+        <?php foreach (array_reverse(iterator_to_array($channel)) as $item): /** @var Rss $item */ ?>
+            <li>
+                <h2>
+                    <span class="label label-info">Actualité</span>
+                    <a target="_blank" title="Cliquez pour ouvrir dans un nouvel onglet"
+                       href="<?php echo $item->getLink() ?>"><?php echo $item->getTitle() ?> <i class="fa fa-external-link-alt"></i></a>
+                </h2>
+                <p class="date"><?php echo $item->getDateCreated()->format('d/m/Y H:i') ?></p>
+            </li>
+        <?php endforeach ?>
+    <?php else : ?>
+        Le fil d'actualité est désactivé
+    <?php endif; ?>
 </ul>

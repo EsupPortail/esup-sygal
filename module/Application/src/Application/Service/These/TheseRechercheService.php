@@ -827,15 +827,15 @@ EOS;
     {
         if ($value instanceof Etablissement) {
             $subtext = $value->getLibelle();
-            if ($value->getStructure()->isFerme()) $subtext.= "&nbsp; <span class='label' style='color:darkred;'>FERME</span>";
+            if ($value->getStructure()->isFerme()) $subtext.= "&nbsp; FERME";
             return ['value' => $value->getStructure()->getCode(), 'label' => $subtext];
         } elseif ($value instanceof EcoleDoctorale) {
             $subtext = $value->getLibelle();
-            if ($value->getStructure()->isFerme()) $subtext.= "&nbsp; <span class='label' style='color:darkred;'>FERMEE</span>";
+            if ($value->getStructure()->isFerme()) $subtext.= "&nbsp; FERMEE";
             return ['value' => $value->getSourceCode(), 'label' => $value->getSigle(), 'subtext' => $subtext];
         } elseif ($value instanceof UniteRecherche) {
             $subtext = $value->getLibelle();
-            if ($value->getStructure()->isFerme()) $subtext.= "&nbsp; <span class='label' style='color:darkred;'>FERMEE</span>";
+            if ($value->getStructure()->isFerme()) $subtext.= "&nbsp; FERMEE";
             return ['value' => $value->getSourceCode(), 'label' => $value->getSigle(), 'subtext' => $subtext];
         } elseif ($value instanceof DomaineScientifique) {
             return ['value' => (string) $value->getId(), 'label' => $value->getLibelle()];
