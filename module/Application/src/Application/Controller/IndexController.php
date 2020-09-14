@@ -3,6 +3,7 @@
 namespace Application\Controller;
 
 use Application\Entity\Db\Variable;
+use Application\Service\Actualite\ActualiteServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
@@ -17,6 +18,7 @@ class IndexController extends AbstractController
     use VariableServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use TheseServiceAwareTrait;
+    use ActualiteServiceAwareTrait;
 
     /**
      * @var AuthenticationServiceInterface
@@ -67,6 +69,7 @@ class IndexController extends AbstractController
         $vm = new ViewModel([
             'role' => $this->userContextService->getSelectedIdentityRole(),
             'estDoctorant' => (bool) $this->userContextService->getIdentityDoctorant(),
+            'url' => $this->actualiteService->isActif() ? $this->actualiteService->getUrl() : null,
         ]);
 
         if ($response instanceof ViewModel) {

@@ -31,6 +31,7 @@ class EtablissementHydrator extends DoctrineObject
         $data['fax'] = $etablissement->getStructure()->getFax();
         $data['email'] = $etablissement->getStructure()->getEmail();
         $data['siteWeb'] = $etablissement->getStructure()->getSiteWeb();
+        $data['id_ref'] = $etablissement->getStructure()->getIdRef();
 
         return $data;
     }
@@ -56,6 +57,7 @@ class EtablissementHydrator extends DoctrineObject
         $object->getStructure()->setFax($data['fax']);
         $object->getStructure()->setEmail($data['email']);
         $object->getStructure()->setSiteWeb($data['siteWeb']);
+        $object->getStructure()->setIdRef($data['id_ref']);
         $object->setEstMembre($data['estMembre']);
         $object->setEstAssocie($data['estAssocie']);
         $object->setEstInscription($data['estInscription']);

@@ -3,6 +3,7 @@
 namespace Application\Controller\Factory;
 
 use Application\Controller\IndexController;
+use Application\Service\Actualite\ActualiteService;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\These\TheseService;
 use Application\Service\Variable\VariableService;
@@ -42,6 +43,10 @@ class IndexControllerFactory
         /** @var AuthenticationServiceInterface $authenticationService */
         $authenticationService = $container->get('Zend\\Authentication\\AuthenticationService');
         $controller->setAuthenticationService($authenticationService);
+
+        /** @var ActualiteService $actualiteService */
+        $actualiteService = $container->get(ActualiteService::class);
+        $controller->setActualiteService($actualiteService);
         
         return $controller;
     }
