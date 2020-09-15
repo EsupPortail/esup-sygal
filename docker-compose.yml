@@ -7,6 +7,10 @@ services:
       args:
         PHP_VERSION: 7.3
       context: .
+    environment:
+      - http_proxy
+      - https_proxy
+      - no_proxy
     ports:
      - "8003:443"
     volumes:
