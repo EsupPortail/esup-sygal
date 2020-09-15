@@ -10,8 +10,9 @@ use Application\Service\These\TheseService;
 use Application\Service\UserContextService;
 use Application\Service\Validation\ValidationService;
 use Application\Service\Variable\VariableService;
-use UnicaenAuth\Service\AuthorizeService;
 use Interop\Container\ContainerInterface;
+use UnicaenAuth\Service\AuthorizeService;
+use Webmozart\Assert\Assert;
 
 class TheseServiceFactory
 {
@@ -54,6 +55,22 @@ class TheseServiceFactory
         $service->setFileService($fileService);
         $service->setAuthorizeService($authorizeService);
 
+        $this->injectConfig($service, $container);
+
         return $service;
+    }
+
+    private function injectConfig(TheseService $service, ContainerInterface $container)
+    {
+        $config = $container->get('Config');
+        Assert::keyExists($config, 'sygal');
+        Assert::keyExists($config['sygal'], 'depot_version_corrigee');
+
+        $configDepotVersionCorrigee = $config['sygal']['depot_version_corrigee'];
+        Assert::keyExists($configDepotVersionCorrigee, 'resaisir_autorisation_diffusion');
+        Assert::keyExists($configDepotVersionCorrigee, 'resaisir_attestations');
+
+        $service->setResaisirAutorisationDiffusionVersionCorrigee($configDepotVersionCorrigee['resaisir_autorisation_diffusion']);
+        $service->setResaisirAttestationsVersionCorrigee($configDepotVersionCorrigee['resaisir_attestations']);
     }
 }
