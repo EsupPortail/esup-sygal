@@ -240,6 +240,9 @@ return array(
             'forward'  => 'Application\Controller\Plugin\ForwardFactory',
             'uploader' => UploaderPluginFactory::class,
         ],
+        'aliases' => [
+            'Uploader' => 'uploader',
+        ],
         'initializers' => [
             EntityManagerAwareInitializer::class,
         ],

@@ -29,7 +29,7 @@ class MailConfirmationControllerFactory
         $individuService = $container->get('IndividuService');
 
         /** @var MailConfirmationForm $mailConfirmationForm */
-        $mailConfirmationForm = $container->get('formElementManager')->get('MailConfirmationForm');
+        $mailConfirmationForm = $container->get('FormElementManager')->get('MailConfirmationForm');
 
         $controller = new MailConfirmationController();
         $controller->setMailConfirmationService($mailConfirmationService);
