@@ -20,6 +20,21 @@ services:
     working_dir: /app
     network_mode: bridge
 
+  sygal-zf2:
+    container_name: sygal-zf2-container
+    build:
+      args:
+        PHP_VERSION: 7.0
+      context: .
+    ports:
+      - "8002:443"
+    volumes:
+      - .:/app
+      - /tmp:/tmp
+      - $HOME/.ssh:/root/.ssh
+    working_dir: /app
+    network_mode: bridge
+
   sygal-import-ws:
     container_name: sygal-import-ws-container
     build:
