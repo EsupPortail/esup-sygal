@@ -65,7 +65,6 @@ class AvisController extends AbstractController
                 $fichier = $this->getAvisService()->createAvisFromUpload($files, $membre);
                 $validation = $this->getValidationService()->signerAvisSoutenance($these, $membre->getIndividu());
 
-                /** TODO revoir hydration :: pense à ajouter le fichier à postériori */
                 $avis = new Avis();
                 $avis->setProposition($proposition);
                 $avis->setMembre($membre);

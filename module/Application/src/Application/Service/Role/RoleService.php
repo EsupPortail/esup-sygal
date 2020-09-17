@@ -280,7 +280,7 @@ class RoleService extends BaseService
         $role->setCode($code);
         $role->setLibelle($libelle);
         $role->setSourceCode($sourceCode);
-//        $role->setSource($appSource);
+        $role->setSource($appSource);
         $role->setRoleId($libelle . " " . $appSource->getCode());
         $role->setAttributionAutomatique(false);
         $role->setTheseDependant(false);
