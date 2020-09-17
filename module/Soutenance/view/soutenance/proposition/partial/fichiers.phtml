@@ -1,0 +1,99 @@
+<?php
+
+/**
+ * @var Proposition $proposition
+ * @var array $justificatifs
+ * @var bool $justificatifsOk
+ * @var UrlFichierThese $urlFichierThese
+ * @var bool $canModifier
+ */
+
+use Application\Controller\Plugin\UrlFichierThese;
+use Application\Entity\Db\NatureFichier;
+use Soutenance\Entity\Justificatif;
+use Soutenance\Entity\Membre;
+use Soutenance\Entity\Proposition;
+
+
+$these = $proposition->getThese();
+$hasVisio = false;
+foreach ($proposition->getMembres() as $membre) {
+    if ($membre->isVisio()) $hasVisio = true;
+}
+?>
+
+<div class="box panel <?php echo ($justificatifsOk)?"panel-success":"panel-danger";?>">
+    <div class="panel-heading">
+        <h2> Fichiers associés à la proposition</h2>
+    </div>
+    <div class="panel-body">
+
+        <?php if ($canModifier) : ?>
+            <a href="<?php echo $this->url('soutenance/proposition/ajouter-justificatif', [ 'these' => $these->getId()], [], true); ?>" class="btn btn-primary">
+                Téléversement d'un justificatif
+            </a>
+        <?php endif; ?>
+
+        <?php if ($justificatifsOk === false) : ?>
+            <div class="alert alert-warning pull-right">
+                <span class="glyphicon glyphicon-warning-sign"></span>
+                Liste des justificatifs manquants :
+            <ul>
+            <?php foreach ($justificatifs as $justificatif) : ?>
+                <?php if($justificatif['justificatif'] === null) : ?>
+                    <li>
+                        <?php echo $justificatif['type'] ?>
+                        <?php if (isset($justificatif['membre'])) : ?>
+                            -
+                            <?php
+                                /** @var Membre $membre */
+                                $membre = $justificatif['membre'];
+                                echo $membre->getDenomination();
+                            ?>
+                        <?php endif; ?>
+                    </li>
+                <?php endif; ?>
+            <?php endforeach; ?>
+            </ul>
+            </div>
+        <?php endif; ?>
+
+        <?php
+        $justificatifs = $proposition->getJustificatifs();
+
+        $typesJustificatif = [
+            NatureFichier::CODE_JUSTIFICATIF_HDR => NatureFichier::LABEL_JUSTIFICATIF_HDR,
+            NatureFichier::CODE_JUSTIFICATIF_EMERITAT => NatureFichier::LABEL_JUSTIFICATIF_EMERITAT,
+            NatureFichier::CODE_DELOCALISATION_SOUTENANCE => NatureFichier::LABEL_DELOCALISATION_SOUTENANCE,
+            NatureFichier::CODE_DELEGUATION_SIGNATURE => NatureFichier::LABEL_DELEGUATION_SIGNATURE,
+            NatureFichier::CODE_LANGUE_ANGLAISE => NatureFichier::LABEL_LANGUE_ANGLAISE,
+            NatureFichier::CODE_DEMANDE_LABEL => NatureFichier::LABEL_DEMANDE_LABEL,
+            NatureFichier::CODE_AUTRES_JUSTIFICATIFS => NatureFichier::LABEL_AUTRES_JUSTIFICATIFS,
+        ];
+        ?>
+
+        <?php foreach ($typesJustificatif as $code => $label): ?>
+            <?php $liste = array_filter($proposition->getJustificatifs(), function(Justificatif $j) use ($code) {return $j->getFichier()->getFichier()->getNature()->getCode() === $code; }); ?>
+            <?php if (!empty($liste)) : ?>
+            <h4>
+                <?php echo $label; ?>
+                <span class="badge"><?php echo count($liste); ?></span>
+            </h4>
+                <ul>
+                <?php /** @var Justificatif $justificatif */
+                foreach($liste as $justificatif) : ?>
+                    <li>
+                        <?php echo $this->justificatif()->render($justificatif, $urlFichierThese, ['court' => true]); ?>
+                        <?php if ($canModifier) : ?>
+                            <?php /** @see \Soutenance\Controller\PropositionController::retirerJustificatifAction() */ ?>
+                            <a href="<?php echo $this->url('soutenance/proposition/retirer-justificatif', ['these'=>$these->getId(), 'justificatif'=>$justificatif->getId()], [], true); ?>">
+                                <span style='color:darkred;' class="glyphicon glyphicon-remove" title="Supprimer le justificatif"></span>
+                            </a>
+                        <?php endif; ?>
+                    </li>
+                <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
+        <?php endforeach; ?>
+    </div>
+</div>

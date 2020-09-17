@@ -79,5 +79,4 @@ class UtilisateurRepository extends DefaultEntityRepository
         }
         return $result;
     }
-
 }

@@ -1,0 +1,44 @@
+<?php
+
+use Application\Entity\Db\These;
+use Soutenance\Entity\Membre;
+use Soutenance\Entity\Proposition;
+
+/**
+ * @see \Soutenance\Service\Notifier\NotifierSoutenanceService::triggerDemandeAvisSoutenance()
+ * @var These $these
+ * @var Proposition $proposition
+ * @var Membre $membre
+ */
+
+$url = $this->url('soutenance/avis-soutenance', ['these' => $these->getId(), 'rapporteur' => $membre->getId()], ['force_canonical'=>true], true);
+
+$justification = true;
+?>
+
+<p>
+    Bonjour,
+</p>
+<p>
+    Vous pouvez commencer à examiner les travaux de <strong><?php echo $these->getDoctorant()->getNomComplet(); ?></strong>,
+    thèse ayant pour titre <strong><?php echo $these->getTitre(); ?></strong>.
+    Par la suite, vous devez établir un rapport incluant votre avis sur la soutenance et votre signature au moins 14 jours avant la date de soutenance.
+</p>
+<p>
+    Une fois votre rapport de pré-soutenance établi, vous devez le déposer sur la plateforme SyGal à l’adresse suivante : <a href="<?php echo $url; ?>">dépôt de l'avis de soutenance</a>.
+</p>
+<?php if($proposition->getRenduRapport()) : ?>
+    <p>
+        <u>Rappel : </u> les rapports sont attendus pour le <?php echo $proposition->getRenduRapport()->format('d/m/Y'); ?>.
+    </p>
+<?php endif;?>
+
+<?php if ($justification) : ?>
+    <p>
+        Vous avez reçu ce mail car :
+    <ol>
+        <li> vous avez déjà signé l'engagement d'impartialité pour la thèse de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?>;  </li>
+        <li> vous avez été désigné comme rapporteur de la thèse de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?>. </li>
+    </ol>
+    </p>
+<?php endif; ?>

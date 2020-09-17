@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="Soutenance\Entity\Qualite" table="SOUTENANCE_QUALITE">
+        <id name="id" type="integer" column="ID">
+            <generator strategy="SEQUENCE"/>
+        </id>
+
+        <field name="libelle"           type="string"       length="128"        column="LIBELLE"        nullable="false"/>
+        <field name="rang"              type="string"       length="1"          column="RANG"           nullable="false"/>
+        <field name="hdr"               type="string"       length="1"          column="HDR"            nullable="false"/>
+        <field name="emeritat"          type="string"       length="1"          column="EMERITAT"       nullable="false"/>
+
+        <one-to-many field="libellesSupplementaires" target-entity="Soutenance\Entity\QualiteLibelleSupplementaire" mapped-by="qualite"/>
+    </entity>
+</doctrine-mapping>

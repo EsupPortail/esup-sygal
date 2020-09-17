@@ -1,0 +1,178 @@
+<?php
+/**
+ * @see \Soutenance\Controller\EngagementImpartialiteController::engagementImpartialiteAction()
+ *
+ * @var These $these
+ * @var Proposition $proposition
+ * @var Membre $membre
+ * @var Validation $validation
+ * @var Acteur[] $encadrants
+ * @var string $urlSigner
+ * @var string $urlRefuser
+ * @var string $urlAnnuler
+ */
+
+use Application\Entity\Db\Acteur;
+use Application\Entity\Db\These;
+use Application\Entity\Db\TypeValidation;
+use Application\Entity\Db\Validation;
+use Soutenance\Entity\Membre;
+use Soutenance\Entity\Proposition;
+use Soutenance\Provider\Privilege\EngagementImpartialitePrivileges;
+
+/**
+ * La validation CODE_ENGAGEMENT_IMPARTIALITE fait office de signature électronique de l'engagement d'impartilité. Par
+ * conséquent :
+ *  - seul le rapporteur connecté peut valider ce formulaire car elle l'engage lui personnellement ;
+ *  - seule la maison du doctorat de l'établissement d'encadrement peut invalider cette signature.
+ */
+$canSign = $this->isAllowed($these, EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_SIGNER);
+$canAnnuler = $this->isAllowed($these, EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_ANNULER);
+
+$doctorantNom = $these->getDoctorant()->getIndividu();
+
+$this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctorantNom);
+?>
+
+<h1 class="page-header">
+    Engagement d'impartialité portant sur la thèse de  <?php echo $doctorantNom; ?>
+</h1>
+
+<p>
+    Engagement d'impartialité en rapport à la thèse suivante :
+</p>
+
+<div>
+    <div class="box panel panel-info">
+        <div class="panel-heading">
+            <h2 class="first"> Information sur la thèse</h2>
+        </div>
+        <div class="panel-body">
+            <dl class="dl-horizontal">
+                <dt> Titre </dt>
+                <dd> <?php echo $these->getTitre(); ?> </dd>
+                <dt> Doctorant </dt>
+                <dd> <?php echo $doctorantNom; ?> </dd>
+                <dt> Encadrement </dt>
+                <dd>
+                    <?php foreach ($encadrants as $encadrant): ?>
+                        <?php
+                        /** @var Acteur $encadrant */
+                        echo $encadrant->getIndividu();
+                        ?>
+                        <br/>
+                    <?php endforeach; ?>
+                <dt> Discipline </dt>
+                <dd> <?php echo $these->getLibelleDiscipline(); ?> </dd>
+                <dt> Date de la soutenance </dt>
+                <dd> <?php echo $proposition->getDate()->format("d/m/Y"); ?> </dd>
+                <dt> Lieu de la soutenance </dt>
+                <dd> <?php echo $proposition->getLieu(); ?> </dd>
+            </dl>
+
+        </div>
+    </div>
+</div>
+
+<p>
+    En signant cet engagment d'impartialité, je, sous-signé <strong><?php echo $membre->getIndividu(); ?></strong>,
+    atteste ne pas avoir de lien personnel ou familial avec le doctorant ou son directeur de thèse, ne pas avoir pris
+    part aux travaux de la thèse et ne pas avoir de publication cosignée avec le doctorant dans les cinq dernières
+    années et ne pas avoir participer au comité de suivi de la thèse de <?php echo $these->getDoctorant()->getIndividu(); ?>.
+</p>
+
+<div class="row">
+    <div class="col-md-4">
+    <?php if ($validation): ?>
+<!--        --><?php //if ($canAnnuler): ?>
+<!--            <p>-->
+<!--                <center>-->
+<!--                <a href="--><?php //echo $urlAnnuler; ?><!--" class="btn btn-danger">-->
+<!--                    <span class="glyphicon glyphicon-thumbs-up"></span>-->
+<!--                    Annulation de la signature</a>-->
+<!--                </center>-->
+<!--            </p>-->
+<!--        --><?php //else: ?>
+<!--        <div class="panel panel-danger">-->
+<!--            <div class="panel-heading">-->
+<!--                Vous n'êtes pas habilité à annuler une signature d'engagement d'impartialité.-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        --><?php //endif; ?>
+    <?php else: ?>
+        <?php if ($canSign): ?>
+        <p>
+            <span style="text-align: center">
+            <a      <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::signerEngagementImpartialiteAction()  */ ?>
+                    href="<?php echo $urlSigner;  ?>"
+                    class="btn btn-success" style="width:80%;">
+                <span class="glyphicon glyphicon-thumbs-up"></span>
+                Je signe l'engagement d'impartialité</a>
+
+                <br/>
+                <br/>
+
+            <a      <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::refuserEngagementImpartialiteAction()  */ ?>
+                    href="<?php echo $urlRefuser;  ?>" class="btn btn-danger" style="width:80%;">
+                <span class="glyphicon glyphicon-thumbs-down"></span>
+                Je ne peux pas signer l'engagement d'impartialité</a>
+            </span>
+
+        </p>
+        <?php else: ?>
+        <div class="panel panel-danger">
+            <div class="panel-heading">
+                Vous n'êtes pas habilité à signer cet engagement d'impartialité.
+            </div>
+        </div>
+        <?php endif; ?>
+    <?php endif; ?>
+    </div>
+    <div class="col-md-8">
+        <!-- affichage -->
+        <?php if ($validation): ?>
+        <div class="panel
+            <?php  if ($validation && $validation->getTypeValidation()->getCode() === TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE): ?>
+                panel-success
+            <?php else : ?>
+                panel-danger
+            <?php endif; ?>
+        ">
+            <div class="panel-heading">
+                <?php echo $this->validation($validation) ?>
+            </div>
+        </div>
+        <?php else: ?>
+            <div class="panel panel-warning">
+                <div class="panel-heading">
+                    Aucune signature.
+                </div>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>
+
+<?php if ($validation && $validation->getTypeValidation()->getCode() === TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE): ?>
+<div class="box panel panel-success">
+    <div class="panel-heading">
+        <h2 class="first"> Et ensuite ? </h2>
+    </div>
+    <div class="panel-body">
+
+        Vous pouvez maintenant accéder à la partie de remise de votre avis de soutenance et dépôt du pré-rapport de soutenance.
+        <nav aria-label="Etape suivante">
+            <ul class="roadmap pagination">
+            <li>
+                <a
+                        <?php /** @see \Soutenance\Controller\AvisController::indexAction()  */ ?>
+                        class="roadmap-step-link"
+                        href="<?php echo $this->url('soutenance/avis-soutenance', ['these' => $these->getId(), 'rapporteur' => $membre->getId()], [], true); ?>">
+                    <span class="glyphicon glyphicon-circle-arrow-right"></span>
+                        Avis de soutenance
+                </a>
+            </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+<?php endif; ?>

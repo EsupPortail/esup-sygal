@@ -1,0 +1,99 @@
+<?php
+/**
+ * @var Proposition $proposition
+ * @var Validation[][] $validations
+ * @var boolean $canStructureValider
+ * @var boolean $canPresidence
+ */
+
+use Application\Entity\Db\Role;
+use Application\Entity\Db\Validation;
+use Soutenance\Entity\Proposition;
+
+$these = $proposition->getThese();
+
+?>
+
+<div class="box panel panel-info">
+    <div class="panel-heading">
+        <h2> Validation par les structures encadrant la thèse </h2>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-8">
+                <h4>
+                    Liste des validations
+                </h4>
+                <ul>
+                    <li>
+                        <?php echo $these->getUniteRecherche()->getLibelle(); ?>  (Unité de recherche) <br/>
+                        <?php if ($validations[Role::CODE_UR]) : ?>
+                            <?php $validation = current($validations[Role::CODE_UR]); ?>
+                            <span class="badge badge-success"> Validée</span>
+                            Le <?php echo $validation->getHistoModification()->format('d/m/Y à H:i'); ?>
+                            par <?php echo $validation->getIndividu(); ?>
+                        <?php else: ?>
+                            <span class="badge badge-default"> Aucune validation</span>
+                        <?php endif; ?>
+                    </li>
+                    <li>
+                        <?php echo $these->getEcoleDoctorale()->getLibelle(); ?>  (École doctorale) <br/>
+                        <?php if ($validations[Role::CODE_ED]) : ?>
+                            <?php $validation = current($validations[Role::CODE_ED]); ?>
+                            <span class="badge badge-success"> Validée</span>
+                            Le <?php echo $validation->getHistoModification()->format('d/m/Y à H:i'); ?>
+                            par <?php echo $validation->getIndividu(); ?>
+                        <?php else: ?>
+                            <span class="badge badge-default"> Aucune validation</span>
+                        <?php endif; ?>
+                    </li>
+                    <li>
+                        <?php echo $these->getEtablissement()->getLibelle(); ?>  (Maison du doctorat) <br/>
+                        <?php if ($validations[Role::CODE_BDD]) : ?>
+                            <?php $validation = current($validations[Role::CODE_BDD]); ?>
+                            <span class="badge badge-success"> Validée</span>
+                            Le <?php echo $validation->getHistoModification()->format('d/m/Y à H:i'); ?>
+                            par <?php echo $validation->getIndividu(); ?>
+                        <?php else: ?>
+                            <span class="badge badge-default"> Aucune validation</span>
+                        <?php endif; ?>
+                    </li>
+                </ul>
+            </div>
+            <div class="pull-right">
+                <?php
+                    $validationMDD = null;
+                    if ($validations[Role::CODE_BDD]) { $validationMDD = current($validations[Role::CODE_BDD]); }
+                    if ($canPresidence AND $validationMDD === null): ?>
+                    <p>
+                        <a  <?php /** @see \Soutenance\Controller\PropositionController::signaturePresidenceAction(); */ ?>
+                            href="<?php echo $this->url('soutenance/proposition/signature-presidence', ['these' => $these->getId()], true); ?>"
+                            class="btn btn-primary action"
+                            target="_blank"
+                        >
+                            <span class="glyphicon glyphicon-list-alt"></span>Générer document pour signature
+                        </a>
+                    </p>
+                <?php endif; ?>
+                <?php if ($canStructureValider): ?>
+                    <p>
+                        <a <?php /** @see \Soutenance\Controller\PropositionController::validerStructureAction(); */ ?>
+                           href="<?php echo $this->url('soutenance/proposition/valider-structure', ['these' => $these->getId()], [], true); ?>"
+                           class="btn btn-success action">
+                            <span class="glyphicon glyphicon-ok"></span> Valider la proposition de soutenance
+                        </a>
+                    </p>
+                    <p>
+                        <a
+                            <?php /** @see \Soutenance\Controller\PropositionController::refuserStructureAction(); */ ?>
+                            href="<?php echo $this->url('soutenance/proposition/refuser-structure', ['these' => $these->getId()], [], true); ?>"
+                            class="btn btn-danger action ajax-modal"
+                            data-event="refus-proposition">
+                            <span class="glyphicon glyphicon-remove"></span> Refuser la proposition de soutenance
+                        </a>
+                    </p>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>

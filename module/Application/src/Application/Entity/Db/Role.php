@@ -30,6 +30,7 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
     const CODE_MEMBRE_JURY = 'M';
     const CODE_PRESIDENT_JURY = 'P';
     const CODE_RAPPORTEUR_JURY = 'R';
+    const CODE_RAPPORTEUR_ABSENT = 'A';
     const CODE_CO_ENCADRANT = 'B';
     const CODE_ED = 'ED';
     const CODE_UR = 'UR';
@@ -42,6 +43,8 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
     const ROLE_ID_ECOLE_DOCT = "École doctorale";
     const ROLE_ID_UNITE_RECH = "Unité de recherche";
     const LIBELLE_PRESIDENT = "Président du jury";
+    const CODE_OBSERVATEUR = "Observateur";
+
 
     /**
      * @var string
