@@ -52,8 +52,6 @@ create table SOUTENANCE_ETAT
 )
 ;
 
-create unique index SOUTENANCE_ETAT_ID_UINDEX on SOUTENANCE_ETAT (ID);
-
 create sequence SOUTENANCE_ETAT_ID_SEQ;
 
 -------------------------------------------------------------------------------
@@ -69,8 +67,6 @@ create table SOUTENANCE_CONFIGURATION
 );
 
 create unique index CONFIGURATION_CODE_UINDEX on SOUTENANCE_CONFIGURATION (CODE);
-
-create sequence SOUTENANCE_CONFIGURATION_ID_SEQ;
 
 -------------------------------------------------------------------------------
 --- PROPOSITION [4/8 => 5/8]

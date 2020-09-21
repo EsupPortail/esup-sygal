@@ -498,6 +498,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
 
         return new ViewModel([
             'form' => $form,
+            'utilisateur' => $utilisateur,
         ]);
     }
 
