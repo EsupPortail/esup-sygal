@@ -51,6 +51,7 @@
     },
     "scripts": {
         "post-install-cmd": [
+            "cp -r vendor/unicaen/app/public/unicaen public/",
             "mkdir -p vendor/mpdf/mpdf/ttfontdata && chmod -R 777 vendor/mpdf/mpdf/ttfontdata",
             "mkdir -p data/cache && chmod -R 777 data/cache && rm -rf data/cache/*",
             "mkdir -p data/DoctrineModule/cache && chmod -R 777 data/DoctrineModule/cache && rm -rf data/DoctrineModule/cache/*",
