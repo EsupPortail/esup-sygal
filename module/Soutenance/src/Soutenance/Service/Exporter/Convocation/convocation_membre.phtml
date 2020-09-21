@@ -24,13 +24,13 @@ use Soutenance\Entity\Proposition;
 
 $date = new DateTime();
 
-$civilite = ($membre->getGenre() !== "H")?"Madame":"Monsieur";
+//$civilite = ($membre->getGenre() !== "H")?"Madame":"Monsieur";
 if ($membre->getIndividu()) {
     if ($membre->getIndividu()->getCivilite() === 'M.') $civilite = "Monsieur";
     if ($membre->getIndividu()->getCivilite() === 'Mme') $civilite = "Madame";
 }
 
-$denomination = $membre->getDenomination();
+//$denomination = $membre->getDenomination();
 if ($membre->getIndividu()) $denomination = $membre->getIndividu()->getNomComplet();
 
 ?>
