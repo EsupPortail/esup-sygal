@@ -2,7 +2,10 @@
 
 namespace Soutenance\Entity;
 
+use UnicaenApp\Entity\HistoriqueAwareTrait;
+
 class Etat {
+    use HistoriqueAwareTrait;
 
     const EN_COURS = 'EN_COURS';
     const VALIDEE = 'VALIDEE';
