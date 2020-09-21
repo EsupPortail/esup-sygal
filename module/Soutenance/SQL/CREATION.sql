@@ -1,6 +1,6 @@
--------------------------------------------------------------------------------
---- QUALITE [0/8 => 2/8]
--------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------------
+-- QUALITE [0/8 => 2/8]
+-- -----------------------------------------------------------------------------
 
 create table SOUTENANCE_QUALITE
 (
@@ -8,8 +8,15 @@ create table SOUTENANCE_QUALITE
     LIBELLE VARCHAR2(128) not null,
     RANG VARCHAR2(1) not null,
     HDR VARCHAR2(1) not null,
-    EMERITAT VARCHAR2(1) not null
-);
+    EMERITAT VARCHAR2(1) not null,
+    HISTO_CREATION DATE not null,
+    HISTO_CREATEUR_ID NUMBER not null constraint SQUALITE_UTILISATEUR_ID_FK_1 references UTILISATEUR,
+    HISTO_MODIFICATION DATE not null,
+    HISTO_MODIFICATEUR_ID NUMBER not null constraint SQUALITE_UTILISATEUR_ID_FK_2 references UTILISATEUR,
+    HISTO_DESTRUCTION DATE,
+    HISTO_DESTRUCTEUR_ID NUMBER constraint SQUALITE_UTILISATEUR_ID_FK_3 references UTILISATEUR
+)
+;
 
 create table SOUTENANCE_QUALITE_SUP
 (
@@ -27,16 +34,23 @@ create table SOUTENANCE_QUALITE_SUP
 create sequence SOUTENANCE_QUALITE_ID_SEQ;
 create sequence SOUTENANCE_QUALITE_SUP_ID_SEQ;
 
--------------------------------------------------------------------------------
---- ETAT [2/8 => 3/8]
--------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------------
+-- ETAT [2/8 => 3/8]
+-- -----------------------------------------------------------------------------
 
 create table SOUTENANCE_ETAT
 (
     ID NUMBER not null primary key,
     CODE VARCHAR2(63) not null,
-    LIBELLE VARCHAR2(255) not null
-);
+    LIBELLE VARCHAR2(255) not null,
+    HISTO_CREATION DATE not null,
+    HISTO_CREATEUR_ID NUMBER not null,
+    HISTO_MODIFICATION DATE not null,
+    HISTO_MODIFICATEUR_ID NUMBER not null,
+    HISTO_DESTRUCTION DATE,
+    HISTO_DESTRUCTEUR_ID NUMBER
+)
+;
 
 create unique index SOUTENANCE_ETAT_ID_UINDEX on SOUTENANCE_ETAT (ID);
 
