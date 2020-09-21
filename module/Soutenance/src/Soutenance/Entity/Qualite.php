@@ -3,9 +3,12 @@
 namespace Soutenance\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use UnicaenApp\Entity\HistoriqueAwareTrait;
 
 class Qualite
 {
+    use HistoriqueAwareTrait;
+
     const ID_INCONNUE = 0;
 
     /** @var int */

@@ -51,7 +51,7 @@ class QualiteController extends AbstractController
         $idQualite = $this->params()->fromRoute('qualite');
         $qualite = null;
         if ($idQualite !== null) {
-            $qualite = $this->getQualiteService()->getQualiteById($idQualite);
+            $qualite = $this->getQualiteService()->getQualite($idQualite);
         } else {
             $qualite = new Qualite();
         }
@@ -68,9 +68,9 @@ class QualiteController extends AbstractController
             $form->setData($data);
             if ($form->isValid()) {
                 if ($idQualite) {
-                    $this->getQualiteService()->updateQualite($qualite);
+                    $this->getQualiteService()->update($qualite);
                 } else {
-                    $this->getQualiteService()->createQualite($qualite);
+                    $this->getQualiteService()->create($qualite);
                 }
             }
         }
@@ -93,9 +93,9 @@ class QualiteController extends AbstractController
 
         /** @var Qualite $qualite */
         $idQualite = $this->params()->fromRoute('qualite');
-        $qualite = $this->getQualiteService()->getQualiteById($idQualite);
+        $qualite = $this->getQualiteService()->getQualite($idQualite);
 
-        $this->getQualiteService()->removeQualite($qualite);
+        $this->getQualiteService()->delete($qualite);
 
         $this->redirect()->toRoute('qualite', [], [], true);
     }

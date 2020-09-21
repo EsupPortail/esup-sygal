@@ -20,7 +20,7 @@ class MembreHydrator implements HydratorInterface
         $membre->setGenre($data['sexe']);
         $membre->setPrenom($data['prenom']);
         $membre->setNom($data['nom']);
-        $membre->setQualite($this->getQualiteService()->getQualiteById($data['qualite']));
+        $membre->setQualite($this->getQualiteService()->getQualite($data['qualite']));
         $membre->setEtablissement($data['etablissement']);
         $membre->setExterieur($data['exterieur']);
         $membre->setVisio($data['visio']);

@@ -190,7 +190,7 @@ class MembreService {
      */
     public function createMembre($proposition, $acteur) {
         //Qualité par défaut
-        $inconnue = $this->getQualiteService()->getQualiteById(Qualite::ID_INCONNUE);
+        $inconnue = $this->getQualiteService()->getQualite(Qualite::ID_INCONNUE);
 
         $membre = new Membre();
         $membre->setProposition($proposition);
