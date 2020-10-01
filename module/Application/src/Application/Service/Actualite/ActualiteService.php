@@ -10,6 +10,11 @@ class ActualiteService
     private $actif = false;
 
     /**
+     * @var bool
+     */
+    private $offre = false;
+
+    /**
      * @var string|null
      */
     private $url;
@@ -29,6 +34,24 @@ class ActualiteService
     public function setActif(bool $actif = true): ActualiteService
     {
         $this->actif = $actif;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOffre(): bool
+    {
+        return $this->offre;
+    }
+
+    /**
+     * @param bool $offre
+     * @return ActualiteService
+     */
+    public function setOffre(bool $offre = true): ActualiteService
+    {
+        $this->offre = $offre;
         return $this;
     }
 

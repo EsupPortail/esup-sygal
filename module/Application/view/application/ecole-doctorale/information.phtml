@@ -46,6 +46,15 @@ $canAddRole = $canEdit;
                         (Non renseigné)
                     <?php endif; ?>
                 </dd>
+                <dt> Thème :</dt>
+                <dd> <?php echo ($ecole->getTheme())?:"(Non renseigné)"; ?></dd>
+                <dt> Lien vers l'offre des thèses :</dt>
+                <dd>
+                    <?php if ($ecole->getOffreThese()) : ?>
+                        <a href="<?php echo $ecole->getOffreThese(); ?>"><?php echo $ecole->getOffreThese(); ?></a>
+                    <?php else: ?>
+                        (Non renseigné)
+                    <?php endif; ?>
                 <dt> Statut :</dt>
                 <dd>
                     <?php if ($ecole->getStructure()->isFerme()) : ?>

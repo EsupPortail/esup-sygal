@@ -1,0 +1,26 @@
+<?php
+
+/**
+ * @var array $offre
+ **/
+
+
+?>
+<ul class="menu-actualites nav nav-pills nav-stacked" style="padding: 1rem;">
+    <strong>Offre de thèses</strong>
+
+    <ul>
+        <?php foreach ($offre as $theme => $lien) : ?>
+            <li>
+                <?php if ($lien) : ?>
+                    <a href="<?php echo $lien; ?>" title="Lien vers l'offre des thèses du thème <?php echo $theme; ?>">
+                <?php endif; ?>
+                <?php echo $theme; ?>
+                <?php if ($lien) : ?>
+                    </a>
+                <?php endif; ?>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+
+</ul>
