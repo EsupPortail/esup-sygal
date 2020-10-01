@@ -11,6 +11,7 @@
         <field name="contenu"   column="CONTENU"        type="string"   length="10000"  nullable="false"/>
         <field name="priorite"  column="PRIORITE"       type="integer"                  nullable="false"/>
         <field name="visible"   column="EST_VISIBLE"    type="boolean"                  nullable="false"/>
+        <field name="langue"    column="LANGUE_ID"      type="string" length="64"       nullable="false"/>
 
         <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
         <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>

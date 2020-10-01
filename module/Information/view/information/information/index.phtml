@@ -46,6 +46,7 @@ $canFichier = $this->isAllowed(FichierPrivileges::getResourceId(FichierPrivilege
     <thead>
         <tr>
             <th> Id </th>
+            <th> Langue </th>
             <th> Titre </th>
             <th> Priorité </th>
             <th> Visible </th>
@@ -58,6 +59,7 @@ $canFichier = $this->isAllowed(FichierPrivileges::getResourceId(FichierPrivilege
         <?php foreach($informations as $information) : ?>
             <tr>
                 <td> <?php echo $information->getId(); ?> </td>
+                <td> <?php echo $information->getLangue(); ?> </td>
                 <td> <?php echo $information->getTitre(); ?> </td>
                 <td> <?php echo $information->getPriorite(); ?> </td>
                 <td> <?php echo $information->isVisible(); ?> </td>

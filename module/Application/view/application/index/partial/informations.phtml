@@ -1,0 +1,57 @@
+<?php
+
+/**
+ * @var Information[] $informations
+ **/
+
+use Information\Entity\Db\Information;
+
+
+?>
+<ul class="menu-actualites nav nav-pills nav-stacked" style="padding: 1rem;">
+
+    <span class="langue" id="FR">FR</span> |
+    <span class="langue" id="EN">EN</span>
+
+    <ul class="nav nav-pills nav-stacked informations">
+        <?php foreach ($informations as $information) : ?>
+        <li class="<?php echo $information->getLangue(); ?>">
+            <a href="<?php echo $this->url('informations/afficher', ['id' => $information->getId()], [], true); ?>">
+            <?php echo $information->getTitre(); ?>
+            </a>
+        </li>
+
+        <?php endforeach; ?>
+    </ul>
+</ul>
+
+<style>
+    .selected {
+        font-weight: bold;
+        color: #0a3783;
+    }
+
+    .langue {
+        cursor: pointer;
+    }
+</style>
+
+<script>
+    function showBonneLangue(langue) {
+        $('ul.informations li').hide();
+        $('span.langue').removeClass('selected');
+        $('ul.informations li.' + langue).show();
+        $('span.langue#' + langue).addClass('selected');
+    }
+
+    showBonneLangue('FR');
+
+    $(function() {
+        $('span.langue').on('click', function(event) {
+            let langue = $(this).attr('id');
+            // $('ul.informations li').hide();
+            // $('ul.informations li.' + langue).show();
+            showBonneLangue(langue);
+        });
+    });
+</script>
