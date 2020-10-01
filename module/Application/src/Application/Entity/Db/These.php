@@ -1569,26 +1569,32 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     {
         /** @var FichierThese $fichier */
         foreach ($this->fichierTheses as $fichier) {
-            if ($fichier->getFichier()->getNature()->getCode() === NatureFichier::CODE_FICHIER_NON_PDF) return true;
+            if ($fichier->getFichier()->getNature() === NatureFichier::CODE_FICHIER_NON_PDF) return true;
         }
         return false;
     }
 
     public function hasMemoire()
     {
+        /** @var FichierThese $fichier */
         foreach ($this->fichierTheses as $fichier) {
-            if ($fichier->getFichier()->getNature()->getCode() === NatureFichier::CODE_THESE_PDF) return true;
+            if ($fichier->getFichier()->getNature() === NatureFichier::CODE_THESE_PDF) return true;
         }
         return false;
     }
 
     public function hasVersionInitiale() {
+
         /** @var FichierThese $fichier */
-        foreach ($this->fichierTheses as $fichier) {
-            if ($fichier->getFichier()->getHistoDestruction() === null
-                && $fichier->getFichier()->getNature()->getCode() === NatureFichier::CODE_THESE_PDF
-                && $fichier->getFichier()->getVersion()->getCode() === VersionFichier::CODE_ORIG)
-                    return $fichier;
+        foreach ($this->fichierTheses as $fichierThese) {
+            /** @var Fichier $fichier */
+            $fichier = $fichierThese->getFichier();
+            $nature = $fichier->getNature()->getCode();
+            $version = $fichier->getVersion()->getCode();
+            if ($fichier->getHistoDestruction() === null
+                && $nature === NatureFichier::CODE_THESE_PDF
+                && $version === VersionFichier::CODE_ORIG)
+                    return $fichierThese;
         }
         return null;
     }
@@ -1597,8 +1603,8 @@ class These implements HistoriqueAwareInterface, ResourceInterface
         /** @var FichierThese $fichier */
         foreach ($this->fichierTheses as $fichier) {
             if ($fichier->getFichier()->getHistoDestruction() === null
-                && $fichier->getFichier()->getNature()->getCode() === NatureFichier::CODE_THESE_PDF
-                && $fichier->getFichier()->getVersion()->getCode() === VersionFichier::CODE_ORIG_CORR)
+                && $fichier->getFichier()->getNature() === NatureFichier::CODE_THESE_PDF
+                && $fichier->getFichier()->getVersion() === VersionFichier::CODE_ORIG_CORR)
                     return $fichier;
         }
         return null;
