@@ -35,6 +35,22 @@ class RoleRepository extends DefaultEntityRepository
     }
 
     /**
+     * @param string[] $rolesCodes
+     * @return Role[]
+     */
+    public function findByCodes(array $rolesCodes)
+    {
+        /** @var Role $role */
+        $qb = $this->createQueryBuilder('r');
+        $qb
+            ->andWhere($qb->expr()->in('r.code', $rolesCodes))
+            ->leftJoin('r.structure', 's')
+            ->orderBy('r.libelle, s.libelle');
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
      * @param string|Etablissement $etablissement
      * @return Role
      */

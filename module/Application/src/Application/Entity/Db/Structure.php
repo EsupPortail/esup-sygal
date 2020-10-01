@@ -231,10 +231,13 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
 
     /**
      * @param string $libelle
+     * @return Structure
      */
     public function setLibelle($libelle)
     {
         $this->libelle = $libelle;
+
+        return $this;
     }
 
     /**

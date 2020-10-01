@@ -107,17 +107,23 @@ class IndividuRepository extends DefaultEntityRepository
      */
     public function findByRole($role)
     {
-        if ($role instanceof Role) {
-            $role = $role->getCode();
-        }
-
         $repo = $this->getEntityManager()->getRepository(IndividuRole::class);
         $qb = $repo->createQueryBuilder("ir")
             ->addSelect('r, i')
-            ->join('ir.role', 'r', Join::WITH, 'r.code = :code')->setParameter('code', $role)
             ->join('ir.individu', 'i')
             ->addOrderBy('i.nomUsuel')
             ->addOrderBy('i.prenom1');
+
+        if ($role instanceof Role) {
+            $qb
+                ->join('ir.role', 'r', Join::WITH, 'r = :role')
+                ->setParameter('role', $role);
+        } else {
+            $qb
+                ->join('ir.role', 'r', Join::WITH, 'r.code = :code')
+                ->setParameter('code', $role);
+        }
+
 
         /** @var IndividuRole[] $res */
         $res = $qb->getQuery()->execute();

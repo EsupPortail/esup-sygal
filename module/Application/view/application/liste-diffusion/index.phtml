@@ -2,42 +2,201 @@
 
 namespace Application;
 
+use Application\Controller\ListeDiffusionController;
+use Application\Entity\Db\EcoleDoctorale;
+use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\ListeDiffusion;
+use Application\Entity\Db\Role;
+use SplObjectStorage;
+
 /**
- * @var string[] $listes
+ * @var string $codeEtablissement
+ * @var SplObjectStorage $dataByEtablissement
+ * @var ListeDiffusion[] $listesDiffusionActives
+ * @var string[] $adressesListesActivesMaisInexistanteDansGenerees
+ * @var string $urlSympa
+ *
+ * @see ListeDiffusionController::indexAction()
  */
+
+$adressesListesActives = array_map(function (ListeDiffusion $liste) {
+    return $liste->getAdresse();
+}, $listesDiffusionActives);
 ?>
 
 <?php $this->headTitle($this->translate("Listes de diffusion")) ?>
 
 <h1 class="page-header first">
     <?php echo $this->translate("Listes de diffusion") ?>
-    <span class="badge"><?php echo count($listes); ?></span>
+    <span class="badge"><?php //echo count($listes); ?></span>
 </h1>
 
 <p class="lead">
-    Voici les listes de diffusion pour lesquelles l'application fournit des URL permettant à Sympa d'obtenir
-    la liste des abonnés.
+    Voici les adresses de listes de diffusion pour lesquelles l'application est capable de fournir les abonnés et
+    les propriétaires à l'application <a href="<?php echo $urlSympa ?>">Sympa</a>. <br>
+    <span class="text-warning">
+        NB: Pour pouvoir envoyer des messages sur une liste, vous devez vous assurer qu'elle
+        est correctement configurée dans l'application Sympa.
+    </span>
 </p>
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
 
-<div class="row">
-    <div class="col-md-6">
-        <table class="table table-bordered table-condensed table-hover">
-            <thead>
-            <tr>
-                <th>Nom/adresse</th>
-            </tr>
-            </thead>
-            <tbody>
-            <?php foreach ($listes as $liste): ?>
-                <tr>
-                    <td>
-                        <code><a href="<?php echo $url = $this->url('liste-diffusion/liste', ['liste' => $liste]) ?>"><?php echo $liste ?></a></code>
-                    </td>
-                </tr>
+<ul class="nav nav-tabs" role="tablist">
+    <?php /** @var Etablissement $etablissement */
+    foreach ($dataByEtablissement as $etablissement):
+    ?>
+    <li role="presentation"
+        class="<?php echo $codeEtablissement === ($code = $etablissement->getCode()) ? 'active' : '' ?>">
+        <a href="<?php echo $this->url('liste-diffusion', [], ['query' => ['etablissement' => $code]]) ?>"
+           role="tab"><h2><?php echo $code ?></h2></a>
+    </li>
+    <?php endforeach; ?>
+
+    <?php if ($adressesListesActivesMaisInexistanteDansGenerees): ?>
+
+        <li role="presentation" class="pull-right">
+            <a href="#anomalies"
+               role="tab"
+               aria-controls="anomalies"
+               data-toggle="tab"
+               class="text-danger"><span class="glyphicon glyphicon-alert"></span> Anomalies</a>
+        </li>
+
+    <?php endif ?>
+
+    <li role="presentation" class="pull-right">
+        <a href="#operations"
+           role="tab"
+           aria-controls="operations"
+           data-toggle="tab">Operations</a>
+    </li>
+</ul>
+
+<div class="tab-content">
+
+    <?php /** @var Etablissement $etablissement */
+    foreach ($dataByEtablissement as $etablissement):
+    ?>
+        <?php
+        /** @var SplObjectStorage $dataByRole */
+        $dataByRole = $dataByEtablissement[$etablissement];
+        ?>
+        <div role="tabpanel" class="tab-pane" id="<?php echo $etablissement->getCode() ?>">
+
+            <p>
+                Si vous voulez que <?php echo $this->appInfos()->nom ?> puisse fournir les abonnés et
+                les propriétaires d'une liste de diffusion à l'application Sympa, vous devez activer ici l'adresse
+                correspondante en la cochant, puis appuyer sur le bouton "Enregistrer".
+            </p>
+            <p>
+                Pour chaque adresse validée, un lien "Détails" apparaît vous permettant d'en savoir plus sur l'adresse
+                en question.
+            </p>
+
+            <form action="" method="post">
+
+            <?php
+            /** @var Role $role */
+            foreach ($dataByRole as $role):
+            ?>
+                <?php
+                /** @var SplObjectStorage $dataByEd */
+                $dataByEd = $dataByRole[$role];
+                ?>
+                <h3><?php echo $etablissement->estToutEtablissementConfondu() ? $role->getLibelle() : $role ?></h3>
+                <ul>
+                    <?php if ($dataByEd instanceof SplObjectStorage): ?>
+                        <?php
+                        /** @var EcoleDoctorale $ed */
+                        foreach ($dataByEd as $ed):
+                        ?>
+                            <?php
+                            /** @var array $data */
+                            $data = $dataByEd[$ed];
+                            $name = $data['name'];
+                            $checked = in_array($name, $adressesListesActives);
+                            $link = $checked ? $data['link'] : null; // lien "Détails" dispo seulement si liste active.
+                            $enabled = $data['enabled'];
+                            ?>
+                            <li>
+                                <?php echo $this->partial(
+                                        'application/liste-diffusion/partial/liste-item',
+                                        ['name' => $name, 'link' => $link, 'enabled' => $enabled, 'checked' => $checked]) ?>
+                            </li>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <?php
+                        /** @var array $data */
+                        $data = $dataByEd;
+                        $name = $data['name'];
+                        $link = $data['link'];
+                        $enabled = $data['enabled'];
+                        $checked = in_array($name, $adressesListesActives);
+                        ?>
+                        <li>
+                            <?php echo $this->partial(
+                                'application/liste-diffusion/partial/liste-item',
+                                ['name' => $name, 'link' => $link, 'enabled' => $enabled, 'checked' => $checked]) ?>
+                        </li>
+                    <?php endif ?>
+                </ul>
             <?php endforeach; ?>
-            </tbody>
-        </table>
+
+            <input type="hidden" name="etablissement" value="<?php echo $etablissement ? $etablissement->getSourceCode() : 'Tous' ?>">
+            <input type="submit" value="Enregistrer" class="btn btn-primary">
+
+            </form>
+        </div>
+    <?php endforeach; ?>
+
+    <div role="tabpanel" class="tab-pane" id="operations">
+
+        <a href="<?php echo $this->url('liste-diffusion/export-tableau') ?>"
+           class="btn btn-default"><span class="glyphicon glyphicon-export"></span> Exporter tableau pour Sympa</a>
+
     </div>
+
+    <?php if ($adressesListesActivesMaisInexistanteDansGenerees): ?>
+
+        <div role="tabpanel" class="tab-pane" id="anomalies">
+            <h3>Anomalies rencontrées</h3>
+            <p class="text-danger">
+                Les adresses suivantes ont été trouvées dans la base de données mais leur format ne correspond plus aux
+                adresses que l'application est en mesure de gérer. La cause peut être par exemple un changement dans le
+                nom d'une ED. <br>
+            </p>
+            <p class="text-danger">
+                Après avoir supprimé les éventuelles listes de diffusion correspondantes dans le logiciel
+                <a href="<?php echo $urlSympa ?>">Sympa</a>, vous pourrez demander à ce que ces adresses soient supprimées
+                de la base de données de <?php echo $this->appInfos()->nom ?>.
+            </p>
+            <ul>
+                <?php foreach ($adressesListesActivesMaisInexistanteDansGenerees as $adresse): ?>
+                <li>
+                    <?php echo $this->partial(
+                        'application/liste-diffusion/partial/liste-item',
+                        ['name' => $adresse, 'link' => null, 'enabled' => false, 'checked' => true]) ?>
+                </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+
+    <?php endif ?>
+
 </div>
+
+
+<script>
+    $(function() {
+        var needle = "etablissement=";
+        var url = window.location.href;
+        var found = url.indexOf(needle);
+        if (found !== -1) {
+            var activeTab = url.substring(url.indexOf(needle) + needle.length);
+            $(".tab-pane").removeClass("active in");
+            $("#" + activeTab).addClass("active in");
+            $('a[href="#' + activeTab + '"]').tab('show');
+        }
+    });
+</script>

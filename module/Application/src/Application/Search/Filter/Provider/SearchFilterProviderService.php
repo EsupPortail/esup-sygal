@@ -375,7 +375,7 @@ class SearchFilterProviderService
 
     private function fetchEcolesDoctoralesValueOptions()
     {
-        $eds = $this->structureService->getAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle', true);
+        $eds = $this->structureService->getAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle', true, true);
 
         $options = [];
         $options[] = $this->valueOptionEmpty("Toutes");
