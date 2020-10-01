@@ -2,17 +2,18 @@
 
 namespace Indicateur\Form;
 
-use Zend\Form\FormElementManager;
+use Interop\Container\ContainerInterface;
 
-class IndicateurFormFactory {
-
-    public function __invoke(FormElementManager $formElementManager)
+class IndicateurFormFactory
+{
+    public function __invoke(ContainerInterface $container)
     {
         $form = new IndicateurForm();
         $form->init();
 
-        $hydrator = $formElementManager->getServiceLocator()->get('HydratorManager')->get(IndicateurHydrator::class);
+        $hydrator = $container->get('HydratorManager')->get(IndicateurHydrator::class);
         $form->setHydrator($hydrator);
+
         return $form;
     }
 

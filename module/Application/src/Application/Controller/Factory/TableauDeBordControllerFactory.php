@@ -6,29 +6,27 @@ use Application\Controller\TableauDeBordController;
 use Application\Service\AnomalieService;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Source\SourceService;
-use Zend\Mvc\Controller\ControllerManager;
+use Interop\Container\ContainerInterface;
 
 class TableauDeBordControllerFactory
 {
     /**
      * Create service
      *
-     * @param ControllerManager $controllerManager
+     * @param ContainerInterface $container
      * @return TableauDeBordController
      */
-    public function __invoke(ControllerManager $controllerManager)
+    public function __invoke(ContainerInterface $container)
     {
-        $sl = $controllerManager->getServiceLocator();
-
         /** @var SourceService $sourceService */
-        $sourceService = $sl->get(SourceService::class);
+        $sourceService = $container->get(SourceService::class);
 
         /**
          * @var AnomalieService $anomalieService
          * @var EtablissementService $etablissementService
          */
-        $anomalieService= $sl->get(AnomalieService::class);
-        $etablissementService= $sl->get('EtablissementService');
+        $anomalieService= $container->get(AnomalieService::class);
+        $etablissementService= $container->get('EtablissementService');
 
         $controller = new TableauDeBordController();
         $controller->setAnomalieService($anomalieService);

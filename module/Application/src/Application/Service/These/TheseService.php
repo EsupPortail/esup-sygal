@@ -52,9 +52,57 @@ class TheseService extends BaseService implements ListenerAggregateInterface
     use AuthorizeServiceAwareTrait;
 
     /**
-     * @param EventManagerInterface $events
+     * Resaisir l'autorisation de diffusion ? Sinon celle saisie au 1er dépôt est reprise/dupliquée.
+     * @var bool
      */
-    public function attach(EventManagerInterface $events)
+    private $resaisirAutorisationDiffusionVersionCorrigee = false;
+
+    /**
+     * Resaisir les attestations ? Sinon celles saisies au 1er dépôt sont reprises/dupliquées.
+     * @var bool
+     */
+    private $resaisirAttestationsVersionCorrigee = false;
+
+    /**
+     * @param bool $resaisirAutorisationDiffusionVersionCorrigee
+     * @return TheseService
+     */
+    public function setResaisirAutorisationDiffusionVersionCorrigee(bool $resaisirAutorisationDiffusionVersionCorrigee): TheseService
+    {
+        $this->resaisirAutorisationDiffusionVersionCorrigee = $resaisirAutorisationDiffusionVersionCorrigee;
+        return $this;
+    }
+
+    /**
+     * @param bool $resaisirAttestationsVersionCorrigee
+     * @return TheseService
+     */
+    public function setResaisirAttestationsVersionCorrigee(bool $resaisirAttestationsVersionCorrigee): TheseService
+    {
+        $this->resaisirAttestationsVersionCorrigee = $resaisirAttestationsVersionCorrigee;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getResaisirAutorisationDiffusionVersionCorrigee(): bool
+    {
+        return $this->resaisirAutorisationDiffusionVersionCorrigee;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getResaisirAttestationsVersionCorrigee(): bool
+    {
+        return $this->resaisirAttestationsVersionCorrigee;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function attach(EventManagerInterface $events, $priority = 1)
     {
         // réaction à l'événement de dépôt d'un fichier de thèse
         $events->attach(FichierTheseController::FICHIER_THESE_TELEVERSE, [$this, 'onFichierTheseTeleverse']);
@@ -133,22 +181,19 @@ class TheseService extends BaseService implements ListenerAggregateInterface
     }
 
     /**
-     * Lors du dépôt d'une version originale corrigée, il peut être nécessaire de créer automatiquement Diffusion et Attestation,
-     * selon les privilèges accordés au rôle de l'utilisateur.
+     * Lors du dépôt d'une version originale corrigée, selon la config de l'appli, il peut être nécessaire de créer
+     * automatiquement Diffusion et Attestation.
      *
      * @param These $these
      */
     private function onFichierTheseTeleverseVersionCorrigee(These $these)
     {
-        $versionCorr = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG_CORR);
         // Création automatique d'une Diffusion pour la version corrigée si l'utilisateur n'a pas le privilège d'en saisir une.
-        $privilege = ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_($versionCorr);
-        if (! $this->authorizeService->isAllowed($these, $privilege)) {
+        if (! $this->resaisirAutorisationDiffusionVersionCorrigee) {
             $this->createDiffusionVersionCorrigee($these);
         }
         // Création automatique d'une Attestation pour la version corrigée si l'utilisateur n'a pas le privilège d'en saisir une.
-        $privilege = ThesePrivileges::THESE_SAISIE_ATTESTATIONS_($versionCorr);
-        if (! $this->authorizeService->isAllowed($these, $privilege)) {
+        if (! $this->resaisirAttestationsVersionCorrigee) {
             $this->createAttestationVersionCorrigee($these);
         }
     }
@@ -403,10 +448,22 @@ class TheseService extends BaseService implements ListenerAggregateInterface
     {
         $pdcData = new PdcData();
 
+
+        if ($these->getDateSoutenance() !== null) {
+            $mois = (int) $these->getDateSoutenance()->format('m');
+            $annee = (int) $these->getDateSoutenance()->format('Y');
+
+            $anneeUniversitaire = null;
+            if ($mois > 9)  $anneeUniversitaire = $annee . "/" . ($annee + 1);
+            else            $anneeUniversitaire = ($annee - 1) . "/" . $annee;
+            $pdcData->setAnneeUniversitaire($anneeUniversitaire);
+        }
+
         /** informations générales */
         $pdcData->setTitre($these->getTitre());
         $pdcData->setSpecialite($these->getLibelleDiscipline());
         if ($these->getEtablissement()) $pdcData->setEtablissement($these->getEtablissement()->getLibelle());
+        if ($these->getEcoleDoctorale()) $pdcData->setEtablissement($these->getEtablissement()->getLibelle());
         if ($these->getDoctorant()) {
             $pdcData->setDoctorant($these->getDoctorant()->getIndividu()->getNomComplet(false, false, false, true, true, true));
         }
@@ -419,8 +476,6 @@ class TheseService extends BaseService implements ListenerAggregateInterface
             $pdcData->setCotutuelleLibelle($these->getLibelleEtabCotutelle());
             if ($these->getLibellePaysCotutelle()) $pdcData->setCotutuellePays($these->getLibellePaysCotutelle());
         }
-
-
 
         /** Jury de thèses */
         $acteurs = $these->getActeurs()->toArray();
@@ -499,6 +554,7 @@ class TheseService extends BaseService implements ListenerAggregateInterface
         }
         $pdcData->setListing(implode(" et ", $nomination) . ", ");
         if ($these->getUniteRecherche()) $pdcData->setUniteRecherche($these->getUniteRecherche()->getStructure()->getLibelle());
+        if ($these->getEcoleDoctorale()) $pdcData->setEcoleDoctorale($these->getEcoleDoctorale()->getStructure()->getLibelle());
 
         // chemins vers les logos
         if ($comue = $this->etablissementService->fetchEtablissementComue()) {

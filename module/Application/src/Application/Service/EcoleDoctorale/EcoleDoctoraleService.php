@@ -121,6 +121,26 @@ class EcoleDoctoraleService extends BaseService
         return $ecole;
     }
 
+    public function getOffre()
+    {
+        $ecoles = $this->getEntityManager()->getRepository(EcoleDoctorale::class)->createQueryBuilder('ecole')
+            ->addSelect('structure')->join('ecole.structure','structure')
+            ->andWhere('ecole.histoDestruction IS NULL')
+            ->andWhere('structure.ferme = :false')
+            ->andWhere('ecole.theme IS NOT NULL')
+            ->setParameter('false', 0)
+            ->orderBy('ecole.theme', 'asc')
+        ;
+
+        /** @var EcoleDoctorale[] $result */
+        $result = $ecoles->getQuery()->getResult();
+        $array = [];
+        foreach ($result as $item) {
+            $array[$item->getTheme()] = $item->getOffreThese();
+        }
+        return $array;
+    }
+
     private function persist(EcoleDoctorale $ecole)
     {
         $this->getEntityManager()->persist($ecole);

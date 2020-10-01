@@ -2,10 +2,10 @@
 
 namespace Notification\Service;
 
+use Interop\Container\ContainerInterface;
 use Notification\Entity\Service\NotifEntityService;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Service\Mailer\MailerService;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * @author Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>
@@ -17,25 +17,25 @@ class NotifierServiceFactory
     /**
      * Create service.
      *
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param ContainerInterface $container
      * @return NotifierService
      */
-    public function __invoke(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container)
     {
         $notifierServiceClass = $this->notifierServiceClass;
 
         $notificationFactory = new NotificationFactory();
 
         /** @var MailerService $mailerService */
-        $mailerService = $serviceLocator->get(MailerService::class);
+        $mailerService = $container->get(MailerService::class);
 
         /** @var NotifEntityService $notifEntityService */
-        $notifEntityService = $serviceLocator->get(NotifEntityService::class);
+        $notifEntityService = $container->get(NotifEntityService::class);
 
         /** @var NotificationRenderingService $notificationRenderer */
-        $notificationRenderer = $serviceLocator->get(NotificationRenderingService::class);
+        $notificationRenderer = $container->get(NotificationRenderingService::class);
 
-        $options = $this->getOptions($serviceLocator);
+        $options = $this->getOptions($container);
 
         /** @var NotifierService $service */
         $service = new $notifierServiceClass($notificationRenderer);
@@ -48,12 +48,12 @@ class NotifierServiceFactory
     }
 
     /**
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param ContainerInterface $container
      * @return array
      */
-    private function getOptions(ServiceLocatorInterface $serviceLocator)
+    private function getOptions(ContainerInterface $container)
     {
-        $config = $serviceLocator->get('config');
+        $config = $container->get('config');
 
         if (! array_key_exists($key = 'notification', $config)) {
             throw new LogicException(

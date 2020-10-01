@@ -2,9 +2,9 @@
 
 namespace Notification\Service;
 
-use Zend\Mvc\View\Console\ViewManager as ConsoleViewManager;
+use Interop\Container\ContainerInterface;
+use Zend\Mvc\Console\View\ViewManager as ConsoleViewManager;
 use Zend\Mvc\View\Http\ViewManager as HttpViewManager;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * @author Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>
@@ -14,17 +14,16 @@ class NotificationRenderingServiceFactory
     /**
      * Create service.
      *
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param ContainerInterface $container
      * @return NotificationRenderingService
      */
-    public function __invoke(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container)
     {
-        /** @var HttpViewManager|ConsoleViewManager $viewManager */
-        $viewManager = $serviceLocator->get('ViewManager');
-        $viewRenderer = $viewManager->getRenderer();
+//        /** @var HttpViewManager|ConsoleViewManager $viewManager */
+//        $viewManager = $container->get('ViewManager');
+//        $viewRenderer = $viewManager->getRenderer();
+        $viewRenderer = $container->get('ViewRenderer');
 
-        $notificationRenderer = new NotificationRenderingService($viewRenderer);
-
-        return $notificationRenderer;
+        return new NotificationRenderingService($viewRenderer);
     }
 }

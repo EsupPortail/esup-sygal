@@ -2,7 +2,7 @@
 
 namespace ImportTest\Functional;
 
-use Application\Entity\Db\ImportObserv;
+use Import\Model\ImportObserv;
 use Application\Entity\Db\These;
 use ApplicationUnitTest\Controller\AbstractControllerTestCase;
 use Doctrine\DBAL\DBALException;
@@ -200,7 +200,7 @@ EOS;
         // Vérification que les thèses apparaissent bien dans la vue diff.
         $sql = <<<EOS
 select id, SOURCE_CODE, IMPORT_ACTION, CORREC_AUTORISEE, RESULTAT, U_CORREC_AUTORISEE, U_RESULTAT
-from v_diff_these
+from V_DIFF_THESE_sav
 where source_code = '$sourceCode'
 EOS;
         try {

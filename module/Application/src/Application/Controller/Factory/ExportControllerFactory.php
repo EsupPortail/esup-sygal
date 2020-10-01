@@ -7,28 +7,26 @@ use Application\Service\FichierThese\FichierTheseService;
 use Application\Service\These\TheseRechercheService;
 use Application\Service\These\TheseService;
 use Application\SourceCodeStringHelper;
-use Zend\Mvc\Controller\ControllerManager;
+use Interop\Container\ContainerInterface;
 
 class ExportControllerFactory
 {
     /**
      * Create service
      *
-     * @param ControllerManager $controllerManager
+     * @param ContainerInterface $container
      * @return ExportController
      */
-    public function __invoke(ControllerManager $controllerManager)
+    public function __invoke(ContainerInterface $container)
     {
-        $sl = $controllerManager->getServiceLocator();
-
         /**
          * @var FichierTheseService   $fichierTheseService
          * @var TheseService          $theseService
          * @var TheseRechercheService $theseRechercheService
          */
-        $fichierTheseService = $sl->get('FichierTheseService');
-        $theseService = $sl->get('TheseService');
-        $theseRechercheService = $sl->get('TheseRechercheService');
+        $fichierTheseService = $container->get('FichierTheseService');
+        $theseService = $container->get('TheseService');
+        $theseRechercheService = $container->get('TheseRechercheService');
 
         $controller = new ExportController();
         $controller->setFichierTheseService($fichierTheseService);
@@ -38,7 +36,7 @@ class ExportControllerFactory
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper
          */
-        $sourceCodeHelper = $sl->get(SourceCodeStringHelper::class);
+        $sourceCodeHelper = $container->get(SourceCodeStringHelper::class);
         $controller->setSourceCodeStringHelper($sourceCodeHelper);
 
         return $controller;

@@ -46,6 +46,16 @@ class EcoleDoctoraleForm extends Form
             ->setLabel("IdREF :")
         );
 
+        $this->add((
+        new Text('theme'))
+            ->setLabel("Thème :")
+        );
+
+        $this->add((
+        new Text('offre-these'))
+            ->setLabel("Lien vers l'offre de thèse :")
+        );
+
         $this->add(
             (new Checkbox('estFerme'))
                 ->setLabel("École doctorale fermée")

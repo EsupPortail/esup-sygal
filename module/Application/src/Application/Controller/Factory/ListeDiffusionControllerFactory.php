@@ -7,14 +7,12 @@ use Application\Service\File\FileService;
 use Application\Service\Individu\IndividuService;
 use Application\Service\ListeDiffusion\ListeDiffusionService;
 use Application\Service\Notification\NotifierService;
-use Zend\ServiceManager\ServiceLocatorInterface as ContainerInterface;
+use Interop\Container\ContainerInterface;
 
 class ListeDiffusionControllerFactory
 {
     public function __invoke(ContainerInterface $container)
     {
-        $container = $container->getServiceLocator();
-
         $controller = new ListeDiffusionController();
 
         /**

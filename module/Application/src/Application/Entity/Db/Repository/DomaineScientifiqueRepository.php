@@ -7,16 +7,16 @@ use Application\Entity\Db\DomaineScientifique;
 class DomaineScientifiqueRepository extends DefaultEntityRepository
 {
 
-    /**
-     * @param int $id
-     * @return DomaineScientifique
-     */
-    public function find($id) {
-
-        /** @var DomaineScientifique $domaine */
-        $domaine = $this->findOneBy(["id" => $id]);
-        return $domaine;
-    }
+//    /**
+//     * @param int $id
+//     * @return DomaineScientifique
+//     */
+//    public function find($id) {
+//
+//        /** @var DomaineScientifique $domaine */
+//        $domaine = $this->findOneBy(["id" => $id]);
+//        return $domaine;
+//    }
 
     /**
      * @return DomaineScientifique[]

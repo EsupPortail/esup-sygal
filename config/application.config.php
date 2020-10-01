@@ -2,30 +2,44 @@
 
 $env = getenv('APPLICATION_ENV') ?: 'production';
 
-$modules = [
-    'ZfcBase',
+$modules = ['Zend\Cache',
+    'Zend\Filter',
+    'Zend\Form',
+    'Zend\Hydrator',
+    'Zend\I18n',
+    'Zend\InputFilter',
+    'Zend\Log',
+    'Zend\Mail',
+    'Zend\Mvc\Console',
+    'Zend\Mvc\I18n',
+    'Zend\Mvc\Plugin\FilePrg',
+    'Zend\Mvc\Plugin\FlashMessenger',
+    'Zend\Mvc\Plugin\Identity',
+    'Zend\Mvc\Plugin\Prg',
+    'Zend\Navigation',
+    'Zend\Paginator',
+    'Zend\Router',
+    'Zend\Session',
+    'Zend\Validator',
+
     'DoctrineModule',
     'DoctrineORMModule',
     'ZfcUser',
-    'ZfcUserDoctrineORM',
     'BjyAuthorize' => 'BjyAuthorize',
     'UnicaenApp',
     'UnicaenAuth',
     'UnicaenLdap',
     'UnicaenOracle',
-    'UnicaenImport',
+    'UnicaenDbImport',
     'UnicaenFaq',
-    'UnicaenLeocarte',
     'Import',
     'Indicateur',
     'Retraitement',
+    'Soutenance',
     'Notification',
     'Information',
     'Application',
 ];
-if (php_sapi_name() === 'cli') {
-    unset($modules['BjyAuthorize']);
-}
 
 $devModules =  [
     'ZendDeveloperTools',

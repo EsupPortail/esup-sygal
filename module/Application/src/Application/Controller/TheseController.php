@@ -44,6 +44,7 @@ use Application\Service\Variable\VariableServiceAwareTrait;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\Service\Workflow\WorkflowServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
+use Zend\View\Renderer\PhpRenderer;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
@@ -62,7 +63,6 @@ use Zend\Log\Logger;
 use Zend\Log\Writer\Noop;
 use Zend\Stdlib\ParametersInterface;
 use Zend\View\Model\ViewModel;
-use Zend\View\Renderer\PhpRenderer;
 
 class TheseController extends AbstractController
 {
@@ -88,6 +88,97 @@ class TheseController extends AbstractController
     use UtilisateurServiceAwareTrait;
 
     private $timeoutRetraitement;
+
+    /**
+     * @var RdvBuTheseForm
+     */
+    private $rdvBuTheseDoctorantForm;
+
+    /**
+     * @var RdvBuTheseDoctorantForm
+     */
+    private $rdvBuTheseForm;
+
+    /**
+     * @var AttestationTheseForm
+     */
+    private $attestationTheseForm;
+
+    /**
+     * @var DiffusionTheseForm
+     */
+    private $diffusionTheseForm;
+
+    /**
+     * @var MetadonneeTheseForm
+     */
+    private $metadonneeTheseForm;
+
+    /**
+     * @var PointsDeVigilanceForm
+     */
+    private $pointsDeVigilanceForm;
+
+    /**
+     * @var PhpRenderer
+     */
+    private $renderer;
+
+    /**
+     * @param RdvBuTheseDoctorantForm $rdvBuTheseDoctorantForm
+     */
+    public function setRdvBuTheseDoctorantForm(RdvBuTheseDoctorantForm $rdvBuTheseDoctorantForm)
+    {
+        $this->rdvBuTheseDoctorantForm = $rdvBuTheseDoctorantForm;
+    }
+
+    /**
+     * @param RdvBuTheseForm $rdvBuTheseForm
+     */
+    public function setRdvBuTheseForm(RdvBuTheseForm $rdvBuTheseForm)
+    {
+        $this->rdvBuTheseForm = $rdvBuTheseForm;
+    }
+
+    /**
+     * @param AttestationTheseForm $attestationTheseForm
+     */
+    public function setAttestationTheseForm(AttestationTheseForm $attestationTheseForm)
+    {
+        $this->attestationTheseForm = $attestationTheseForm;
+    }
+
+    /**
+     * @param DiffusionTheseForm $diffusionTheseForm
+     */
+    public function setDiffusionTheseForm(DiffusionTheseForm $diffusionTheseForm)
+    {
+        $this->diffusionTheseForm = $diffusionTheseForm;
+    }
+
+    /**
+     * @param MetadonneeTheseForm $metadonneeTheseForm
+     */
+    public function setMetadonneeTheseForm(MetadonneeTheseForm $metadonneeTheseForm)
+    {
+        $this->metadonneeTheseForm = $metadonneeTheseForm;
+    }
+
+    /**
+     * @param PointsDeVigilanceForm $pointsDeVigilanceForm
+     */
+    public function setPointsDeVigilanceForm(PointsDeVigilanceForm $pointsDeVigilanceForm)
+    {
+        $this->pointsDeVigilanceForm = $pointsDeVigilanceForm;
+    }
+
+    /**
+     * @param PhpRenderer $renderer
+     */
+    public function setRenderer(PhpRenderer $renderer)
+    {
+        $this->renderer = $renderer;
+    }
 
     /**
      * @return ViewModel|Response
@@ -626,7 +717,7 @@ class TheseController extends AbstractController
         $rdvBu->setVersionArchivableFournie($this->fichierTheseService->getRepository()->existeVersionArchivable($these));
 
         /** @var RdvBuTheseForm|RdvBuTheseDoctorantForm $form */
-        $form = $this->getServiceLocator()->get('formElementManager')->get($estDoctorant ? 'RdvBuTheseDoctorantForm' : 'RdvBuTheseForm');
+        $form = $estDoctorant ? $this->rdvBuTheseDoctorantForm : $this->rdvBuTheseForm;
         $form->bind($rdvBu);
 
         if ($form instanceof RdvBuTheseForm && ! $this->theseService->isExemplPapierFourniPertinent($these)) {
@@ -1118,6 +1209,7 @@ class TheseController extends AbstractController
             'form'                   => $this->getAttestationTheseForm($version), // les labels des cases à cocher sont affichés
             'modifierAttestationUrl' => $this->urlThese()->modifierAttestationUrl($these, $version),
             'hasFichierThese'        => $hasFichierThese,
+            'resaisirAttestationsVersionCorrigee' => $this->theseService->getResaisirAttestationsVersionCorrigee(),
         ]);
         $view->setTemplate('application/these/attestation');
 
@@ -1175,7 +1267,7 @@ class TheseController extends AbstractController
         $diffusion = $these->getDiffusionForVersion($version);
 
         /** @var AttestationTheseForm $form */
-        $form = $this->getServiceLocator()->get('formElementManager')->get('AttestationTheseForm');
+        $form = $this->attestationTheseForm;
 
         if ($diffusion && ! $diffusion->isRemiseExemplairePapierRequise()) {
             $form->disableExemplaireImprimeConformeAVersionDeposee();
@@ -1208,7 +1300,7 @@ class TheseController extends AbstractController
         }
 
         /** @var DiffusionTheseForm $form */
-        $form = $this->getServiceLocator()->get('formElementManager')->get('DiffusionTheseForm');
+        $form = $this->diffusionTheseForm;
 
         $versionExpurgee = $version->estVersionCorrigee() ? VersionFichier::CODE_DIFF_CORR : VersionFichier::CODE_DIFF;
         $theseFichiersExpurges = $this->fichierTheseService->getRepository()->fetchFichierTheses($these, NatureFichier::CODE_THESE_PDF, $versionExpurgee, false);
@@ -1241,6 +1333,7 @@ class TheseController extends AbstractController
             'modifierDiffusionUrl'         => $this->urlThese()->modifierDiffusionUrl($these, $version),
             'exporterConventionMelUrl'     => $this->urlThese()->exporterConventionMiseEnLigneUrl($these, $version),
             'hasFichierThese'              => $hasFichierThese,
+            'resaisirAutorisationDiffusionVersionCorrigee' => $this->theseService->getResaisirAutorisationDiffusionVersionCorrigee(),
         ]);
         $view->setTemplate('application/these/diffusion');
 
@@ -1313,7 +1406,7 @@ class TheseController extends AbstractController
         $these = $this->requestedThese();
 
         /** @var DiffusionTheseForm $form */
-        $form = $this->getServiceLocator()->get('formElementManager')->get('DiffusionTheseForm');
+        $form = $this->diffusionTheseForm;
         $form->setVersionFichier($version);
 
         return $form;
@@ -1327,7 +1420,7 @@ class TheseController extends AbstractController
         $attestation = $these->getAttestationForVersion($version);
 
         /** @var DiffusionTheseForm $form */
-        $form = $this->getServiceLocator()->get('formElementManager')->get('DiffusionTheseForm');
+        $form = $this->diffusionTheseForm;
 
         $codes = [
             Variable::CODE_ETB_LIB,
@@ -1343,15 +1436,14 @@ class TheseController extends AbstractController
         $libEtablissementDe = "de " . $letab;
 
         $etablissement = $this->etablissementService->fetchEtablissementComue();
-        if ($etablissement === null) $etablissement = $these->getEtablissement();
+        if ($etablissement === null) {
+            $etablissement = $these->getEtablissement();
+        }
         $cheminLogo = $this->fileService->computeLogoFilePathForStructure($etablissement);
 
-        /* @var $renderer PhpRenderer */
-        $renderer = $this->getServiceLocator()->get('view_renderer');
+        $renderer = $this->renderer;
         $exporter = new ConventionPdfExporter($renderer, 'A4');
-//        $exporter->setLogo(file_get_contents($cheminLogo));
         $exporter->setVars([
-            'test'               => "Ceci est un test",
             'etablissement'      => $etablissement,
             'logo'               => $cheminLogo,
             'these'              => $these,
@@ -1405,7 +1497,7 @@ class TheseController extends AbstractController
         $these = $this->requestedThese();
 
         /** @var MetadonneeTheseForm $form */
-        $form = $this->getServiceLocator()->get('formElementManager')->get('MetadonneeTheseForm');
+        $form = $this->metadonneeTheseForm;
 
         $description = $these->getMetadonnee();
 
@@ -1507,7 +1599,7 @@ class TheseController extends AbstractController
         $form = null;
         if ($rdvBu !== null) {
             /** @var PointsDeVigilanceForm $form */
-            $form = $this->getServiceLocator()->get('formElementManager')->get('PointsDeVigilanceForm');
+            $form = $this->pointsDeVigilanceForm;
             $form->bind($rdvBu);
 
             if ($this->getRequest()->isPost()) {

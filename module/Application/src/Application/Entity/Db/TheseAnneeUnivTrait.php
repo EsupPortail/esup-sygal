@@ -3,7 +3,7 @@
 namespace Application\Entity\Db;
 
 use UnicaenApp\Entity\HistoriqueAwareTrait;
-use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
+use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 
 trait TheseAnneeUnivTrait
 {

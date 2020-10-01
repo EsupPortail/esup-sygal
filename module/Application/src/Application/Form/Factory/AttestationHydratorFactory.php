@@ -3,18 +3,12 @@
 namespace Application\Form\Factory;
 
 use Application\Form\Hydrator\AttestationHydrator;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 
-class AttestationHydratorFactory implements FactoryInterface
+class AttestationHydratorFactory
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container)
     {
-        $parentLocator = $serviceLocator->getServiceLocator();
-
-        return new AttestationHydrator($parentLocator->get('doctrine.entitymanager.orm_default'));
+        return new AttestationHydrator($container->get('doctrine.entitymanager.orm_default'));
     }
 }

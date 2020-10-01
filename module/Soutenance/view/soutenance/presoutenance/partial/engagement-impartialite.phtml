@@ -1,0 +1,169 @@
+<?php
+
+/**
+ * @var Proposition $proposition
+ * @var These $these
+ * @var Membre[] $rapporteurs
+ * @var Validation[] $engagements
+ */
+
+use Application\Constants;
+use Application\Entity\Db\These;
+use Application\Entity\Db\Validation;
+use Soutenance\Entity\Membre;
+use Soutenance\Entity\Proposition;
+use Soutenance\Provider\Privilege\EngagementImpartialitePrivileges;
+
+$tousLesRapporteurs = true;
+foreach ($rapporteurs as $rapporteur) {
+    if ($rapporteur->getActeur() === null) {
+        $tousLesRapporteurs = false;
+        break;
+    }
+}
+$tousLesEngagements = count($rapporteurs) === count($engagements) ;
+
+$canNotifierEngagementImpartialite      = $this->isAllowed($these, EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_NOTIFIER);
+$canRevoquerEngagementImpartialite     = $this->isAllowed($these, EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_ANNULER);
+
+?>
+
+<div class="box panel panel-info">
+    <div class="panel-heading">
+        <h2> Engagements d'impartialité</h2>
+    </div>
+    <div class="panel-body">
+
+        <p class="lead">
+            Afin de devenir officiellement rapporteur de cette thèse les futurs rapporteurs doivent signer un engagement
+            d'impartialité.
+        </p>
+
+        <table class="table table-extra-condensed">
+            <thead>
+            <tr>
+                <th> Rapporteur </th>
+                <th> Signé </th>
+                <th> Actions </th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php
+            foreach ($rapporteurs as $rapporteur) : ?>
+
+                <?php
+                    $acteur       = $rapporteur->getActeur();
+                    $engagement     = ($acteur)?$engagements[$rapporteur->getIndividu()->getId()]:null;
+                ?>
+
+                <tr>
+                    <!-- Affichage du nom du rapporteur --------------------------------------------------------------->
+                    <td>
+                        <?php if ($acteur !== null) : ?>
+                            <?php echo $acteur->getIndividu(); ?>
+                        <?php else : ?>
+                            <span class="text-danger">
+                                <?php echo $rapporteur->getDenomination(); ?>
+                            </span>
+                        <?php endif; ?>
+                    </td>
+
+                    <!-- Signature ------------------------------------------------------------------------------------>
+                    <td>
+                        <?php if ($acteur !== null) : ?>
+                            <?php if ($acteur->getIndividu()->getEmail() !== null) : ?>
+                                <?php if ($engagement !== null): ?>
+                                    <?php
+                                        echo $engagement->getHistoCreation()->format(Constants::DATETIME_FORMAT);
+                                    ?>
+                                <?php else: ?>
+                                    <span class="text-warning">
+                                        <i> Non signé </i>
+                                    </span>
+                                <?php endif; ?>
+                            <?php else : ?>
+                                <span class="text-danger">
+                                <span class="glyphicon glyphicon-warning-sign"></span>
+                                <i> Aucun email de trouvé</i>
+                                <span class="glyphicon glyphicon-warning-sign"></span>
+                            </span>
+                            <?php endif; ?>
+                        <?php else: ?>
+                            <span class="text-danger">
+                                <span class="glyphicon glyphicon-warning-sign"></span>
+                                <i> N'est pas un individu SyGAL</i>
+                                <span class="glyphicon glyphicon-warning-sign"></span>
+                            </span>
+                        <?php endif; ?>
+                    </td>
+
+                    <!-- Actions -------------------------------------------------------------------------------------->
+                    <td>
+                        <?php if ($acteur !== null AND $acteur->getIndividu()->getEmail() !== null) : ?>
+
+                            <?php if($canNotifierEngagementImpartialite) : ?>
+                                <?php if ($engagement) : ?>
+                                    <span class="glyphicon glyphicon-send" title="Notifier le rapporteur" style="color:lightgray;"></span>
+                                <?php else: ?>
+                                    <a
+                                        <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::notifierEngagementImpartialiteAction() */ ?>
+                                        href="<?php echo $this->url('soutenance/engagement-impartialite/notifier', ['these' => $these->getId(), 'proposition' => $proposition->getId(), 'membre' => $rapporteur->getId()], [], true);?>">
+                                        <span class="glyphicon glyphicon-send" title="Notifier le rapporteur"></span>
+                                    </a>
+                                <?php endif; ?>
+                            <?php endif; ?>
+
+                            <?php if($canRevoquerEngagementImpartialite) : ?>
+                                <?php if ($engagement) : ?>
+                                    <a  <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::annulerEngagementImpartialiteAction() */ ?>
+                                        href="<?php echo $this->url('soutenance/engagement-impartialite/annuler', ['these' => $these->getId(), 'membre' => $rapporteur->getId()], [], true); ?>">
+                                        <span class="glyphicon glyphicon-remove"    title="Révoquer l'engagement d'impartialité"></span>
+                                    </a>
+                                <?php else: ?>
+                                    <span class="glyphicon glyphicon-remove"  style="color:lightgray;"  title="Révoquer l'engagement d'impartialité"></span>
+                                <?php endif; ?>
+                            <?php endif; ?>
+
+                        <?php else : ?>
+
+                            <?php if($canNotifierEngagementImpartialite) : ?>
+                                <span class="glyphicon glyphicon-send"      style="color:lightgray;" title="Notifier le rapporteur"></span>
+                            <?php endif; ?>
+
+                            <?php if($canRevoquerEngagementImpartialite) : ?>
+                                <span class="glyphicon glyphicon-remove"    style="color:lightgray;" title="Révoquer l'engagement d'impartialité"></span>
+                            <?php endif; ?>
+
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+
+        <div class="row">
+            <div class="col-md-4">
+                <?php if($canNotifierEngagementImpartialite): ?>
+                    <a
+                        <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::notifierRapporteursEngagementImpartialiteAction() */ ?>
+                        href="<?php echo $this->url('soutenance/presoutenance/notifier-engagement-impartialite', ['these' => $these->getId(), 'proposition' => $proposition->getId()], [], true);?>"
+                       class="btn btn-info <?php echo ($tousLesRapporteurs)?'':'disabled'; ?>">
+                        <span class="glyphicon glyphicon-send"></span> Envoyer les notifications aux rapporteurs
+                    </a>
+                <?php endif; ?>
+            </div>
+
+            <div class="col-md-8">
+                <?php if (!$tousLesEngagements) : ?>
+                    <div class="panel panel-warning">
+                        <div class="panel-heading">
+                            <span class="glyphicon glyphicon-warning-sign"></span>
+                            Tous les rapporteurs n'ont pas encore signé leur engagement d'impartialité.
+                        </div>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+
+    </div>
+</div>

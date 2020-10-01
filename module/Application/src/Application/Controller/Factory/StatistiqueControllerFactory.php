@@ -8,13 +8,12 @@ use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Structure\StructureService;
 use Application\Service\These\TheseService;
 use Application\Service\UniteRecherche\UniteRechercheService;
-use Zend\Mvc\Controller\ControllerManager;
+use Interop\Container\ContainerInterface;
 
 class StatistiqueControllerFactory
 {
-    public function __invoke(ControllerManager $controllerManager)
+    public function __invoke(ContainerInterface $container)
     {
-        $sl = $controllerManager->getServiceLocator();
         /**
          * @var TheseService $theseService
          * @var EcoleDoctoraleService $ecoleService
@@ -22,11 +21,11 @@ class StatistiqueControllerFactory
          * @var UniteRechercheService $uniteService
          * @var StructureService $structureService
          */
-        $theseService = $sl->get('TheseService');
-        $ecoleService = $sl->get('EcoleDoctoraleService');
-        $etabService  = $sl->get('EtablissementService');
-        $uniteService = $sl->get('UniteRechercheService');
-        $structureService = $sl->get(StructureService::class);
+        $theseService = $container->get('TheseService');
+        $ecoleService = $container->get('EcoleDoctoraleService');
+        $etabService  = $container->get('EtablissementService');
+        $uniteService = $container->get('UniteRechercheService');
+        $structureService = $container->get(StructureService::class);
 
         $controller = new StatistiqueController();
         $controller->setTheseService($theseService);
@@ -34,6 +33,7 @@ class StatistiqueControllerFactory
         $controller->setEtablissementService($etabService);
         $controller->setUniteRechercheService($uniteService);
         $controller->setStructureService($structureService);
+
         return $controller;
     }
 }

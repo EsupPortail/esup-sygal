@@ -4,17 +4,14 @@ namespace Application\Controller;
 
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\MailConfirmation;
-use Application\Entity\Db\Variable;
-use Application\Filter\DbExceptionFormatter;
+use Application\Form\MailConfirmationForm;
 use Application\RouteMatch;
 use Application\Service\Doctorant\DoctorantServiceAwareTrait;
 use Application\Service\MailConfirmationService;
 use Application\Service\Variable\VariableServiceAwareTrait;
-use Doctrine\DBAL\DBALException;
 use UnicaenAuth\Authentication\Adapter\Ldap as LdapAuthAdapter;
 use Zend\Form\Form;
 use Zend\InputFilter\Factory;
-use Zend\Stdlib\ParametersInterface;
 use Zend\View\Model\ViewModel;
 
 class DoctorantController extends AbstractController
@@ -25,9 +22,38 @@ class DoctorantController extends AbstractController
     /** @var MailConfirmationService $mailConfirmationService */
     private $mailConfirmationService;
 
+    /**
+     * @var MailConfirmationForm
+     */
+    private $mailConfirmationForm;
+
+    /**
+     * @var LdapAuthAdapter
+     */
+    private $ldapAuthAdapter;
+
+    /**
+     * @param MailConfirmationService $mailConfirmationService
+     */
     public function setMailConfirmationService(MailConfirmationService $mailConfirmationService)
     {
         $this->mailConfirmationService = $mailConfirmationService;
+    }
+
+    /**
+     * @param MailConfirmationForm $mailConfirmationForm
+     */
+    public function setMailConfirmationForm(MailConfirmationForm $mailConfirmationForm)
+    {
+        $this->mailConfirmationForm = $mailConfirmationForm;
+    }
+
+    /**
+     * @param LdapAuthAdapter $ldapAuthAdapter
+     */
+    public function setLdapAuthAdapter(LdapAuthAdapter $ldapAuthAdapter)
+    {
+        $this->ldapAuthAdapter = $ldapAuthAdapter;
     }
 
     public function modifierPersopassAction()
@@ -42,17 +68,11 @@ class DoctorantController extends AbstractController
             return $viewmodel;
         }
 
-
         $mailConfirmation = $this->mailConfirmationService->getDemandeEnCoursByIndividu($doctorant->getIndividu());
 
         //Si on a déjà une demande en attente
         $back = $this->params()->fromRoute('back');
 
-//        var_dump($mailConfirmation->getIndividu()->__toString());
-//        var_dump($mailConfirmation->getEmail());
-//        var_dump($mailConfirmation->getCode());
-//        var_dump($mailConfirmation->getEtat());
-//        var_dump($back);
         if ($mailConfirmation !== null && ($back == 0 || $back === null)) {
             $viewmodel = new ViewModel([
                 'doctorant' => $doctorant,
@@ -82,7 +102,7 @@ class DoctorantController extends AbstractController
             }
         }
 
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('MailConfirmationForm');
+        $form = $this->mailConfirmationForm;
         $form->setAttribute('action', $this->url()->fromRoute('doctorant/modifier-persopass', [], [], true));
 
         $form->bind($mailConfirmation);
@@ -104,7 +124,7 @@ class DoctorantController extends AbstractController
     private function validatePersopass($identity, $credential)
     {
         /** @var LdapAuthAdapter $authAdapter */
-        $authAdapter = $this->getServiceLocator()->get('UnicaenAuth\Authentication\Adapter\Ldap');
+        $authAdapter = $this->ldapAuthAdapter;
 
         $success = $authAdapter->authenticateUsername($identity, $credential);
         if (! $success) {

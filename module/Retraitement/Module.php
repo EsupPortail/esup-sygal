@@ -2,15 +2,10 @@
 
 namespace Retraitement;
 
-use Application\Event\UserAuthenticatedEventListener;
-use Application\Event\UserRoleSelectedEventListener;
-use Zend\Http\Request as HttpRequest;
+use Zend\Console\Adapter\AdapterInterface as Console;
 use Zend\ModuleManager\Feature\ConsoleUsageProviderInterface;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
-use Zend\Stdlib\Glob;
-use Zend\Config\Factory as ConfigFactory;
-use Zend\Console\Adapter\AdapterInterface as Console;
 
 class Module implements ConsoleUsageProviderInterface
 {
@@ -21,21 +16,6 @@ class Module implements ConsoleUsageProviderInterface
         $eventManager = $application->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
-
-
-//        $sm = $application->getServiceManager();
-//
-//        /** @var RouteMatchInjector $routeMatchInjector */
-//        $routeMatchInjector = $sm->get('RouteMatchInjector');
-//        $eventManager->attachAggregate($routeMatchInjector);
-//
-//        /** @var UserAuthenticatedEventListener $listener */
-//        $listener = $sm->get('UserAuthenticatedEventListener');
-//        $listener->attach($eventManager);
-//
-//        /** @var UserRoleSelectedEventListener $listener */
-//        $listener = $sm->get('UserRoleSelectedEventListener');
-//        $listener->attach($eventManager);
     }
 
     public function getConfig()

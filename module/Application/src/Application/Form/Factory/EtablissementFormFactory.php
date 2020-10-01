@@ -4,16 +4,14 @@ namespace Application\Form\Factory;
 
 use Application\Form\EtablissementForm;
 use Application\Form\Hydrator\EtablissementHydrator;
-use Zend\Form\FormElementManager;
+use Interop\Container\ContainerInterface;
 
 class EtablissementFormFactory
 {
-    public function __invoke(FormElementManager $formElementManager)
+    public function __invoke(ContainerInterface $container)
     {
-        $sl = $formElementManager->getServiceLocator();
-
         /** @var EtablissementHydrator $hydrator */
-        $hydrator = $sl->get('HydratorManager')->get('EtablissementHydrator');
+        $hydrator = $container->get('HydratorManager')->get('EtablissementHydrator');
 
         $form = new EtablissementForm();
         $form->setHydrator($hydrator);

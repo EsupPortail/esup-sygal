@@ -2,17 +2,14 @@
 
 namespace Application\View\Helper;
 
+use Interop\Container\ContainerInterface;
 
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
-
-class LanguageSelectorHelperFactory implements FactoryInterface {
-
-    public function createService(ServiceLocatorInterface $helperPluginManager)
+class LanguageSelectorHelperFactory
+{
+    public function __invoke(ContainerInterface $container)
     {
-        $config = $helperPluginManager->getServiceLocator()->get('config');
+        $config = $container->get('config');
 
         return new LanguageSelectorHelper($config['languages']['language-list']);
     }
-
 }

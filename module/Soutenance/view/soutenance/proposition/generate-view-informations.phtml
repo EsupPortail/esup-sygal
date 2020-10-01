@@ -1,0 +1,24 @@
+<?php
+
+use Soutenance\Entity\Proposition;
+
+/**
+ * @see \Soutenance\Controller\PropositionController::generateViewDateLieuAction()
+ *
+ * @var Proposition $proposition
+ * @var boolean $canModifier
+ * @var string $FORMULAIRE_DEMANDE_LABEL
+ * @var string $FORMULAIRE_DEMANDE_ANGLAIS
+ * @var string $FORMULAIRE_DEMANDE_CONFIDENTIALITE
+ */
+
+?>
+
+<?php
+echo $this->partial('partial/informations-complementaires', [
+    'proposition' => $proposition,
+    'canModifier' => $canModifier,
+    'FORMULAIRE_DEMANDE_LABEL' => $FORMULAIRE_DEMANDE_LABEL,
+    'FORMULAIRE_DEMANDE_ANGLAIS' => $FORMULAIRE_DEMANDE_ANGLAIS,
+    'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $FORMULAIRE_DEMANDE_CONFIDENTIALITE]);
+?>

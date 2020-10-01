@@ -133,6 +133,18 @@ class EtablissementService extends BaseService
         return $etablissement;
     }
 
+    public function getEtablissementAsOptions()
+    {
+        $qb = $this->getEntityManager()->getRepository(Etablissement::class)->createQueryBuilder('etablissement')
+            ->addSelect('structure')->join('etablissement.structure', 'structure')
+            ->orderBy('structure.libelle', 'ASC');
+        $etablissements = $qb->getQuery()->getResult();
+        $result = [];
+        /** @var Etablissement $etablissement */
+        foreach ($etablissements as $etablissement) $result[$etablissement->getId()] = $etablissement->getLibelle();
+        return $result;
+    }
+
     private function persist(Etablissement $etablissement)
     {
         $this->getEntityManager()->persist($etablissement);

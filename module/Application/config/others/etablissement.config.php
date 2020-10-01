@@ -9,8 +9,8 @@ use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Etablissement\EtablissementServiceFactory;
 use Application\View\Helper\EtablissementHelper;
 use UnicaenAuth\Guard\PrivilegeController;
-use Zend\Mvc\Router\Http\Literal;
-use Zend\Mvc\Router\Http\Segment;
+use Zend\Router\Http\Literal;
+use Zend\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [

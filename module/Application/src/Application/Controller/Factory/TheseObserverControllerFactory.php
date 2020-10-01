@@ -5,29 +5,26 @@ namespace Application\Controller\Factory;
 use Application\Controller\TheseObserverController;
 use Application\EventRouterReplacer;
 use Application\Service\These\TheseObserverService;
-use Zend\Mvc\Controller\ControllerManager;
-use Zend\Mvc\Router\Http\TreeRouteStack;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\Router\Http\TreeRouteStack;
 
 class TheseObserverControllerFactory
 {
     /**
      * Create service
      *
-     * @param ControllerManager $controllerManager
+     * @param ContainerInterface $container
      * @return TheseObserverController
      */
-    public function __invoke(ControllerManager $controllerManager)
+    public function __invoke(ContainerInterface $container)
     {
-        $sl = $controllerManager->getServiceLocator();
-
         /** @var TreeRouteStack $httpRouter */
-        $httpRouter = $sl->get('HttpRouter');
-        $cliConfig = $this->getCliConfig($sl);
+        $httpRouter = $container->get('HttpRouter');
+        $cliConfig = $this->getCliConfig($container);
         $routerReplacer = new EventRouterReplacer($httpRouter, $cliConfig);
 
         /** @var TheseObserverService $theseObserverService */
-        $theseObserverService = $controllerManager->getServiceLocator()->get('TheseObserverService');
+        $theseObserverService = $container->get('TheseObserverService');
 
         $controller = new TheseObserverController();
         $controller->setEventRouterReplacer($routerReplacer);
@@ -37,12 +34,12 @@ class TheseObserverControllerFactory
     }
 
     /**
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param ContainerInterface $container
      * @return array
      */
-    private function getCliConfig(ServiceLocatorInterface $serviceLocator)
+    private function getCliConfig(ContainerInterface $container)
     {
-        $config = $serviceLocator->get('Config');
+        $config = $container->get('Config');
 
         return [
             'domain' => isset($config['cli_config']['domain']) ? $config['cli_config']['domain'] : null,

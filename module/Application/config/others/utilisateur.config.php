@@ -18,8 +18,8 @@ use Application\Service\Individu\IndividuServiceFactory;
 use Application\Service\Utilisateur\UtilisateurServiceFactory;
 use Application\View\Helper\IndividuUsurpationHelperFactory;
 use UnicaenAuth\Guard\PrivilegeController;
-use Zend\Mvc\Router\Http\Literal;
-use Zend\Mvc\Router\Http\Segment;
+use Zend\Router\Http\Literal;
+use Zend\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [

@@ -3,12 +3,11 @@
 use Import\Controller\Factory\ImportObserverControllerFactory;
 use Import\Controller\Factory\SynchroControllerFactory;
 use Import\Controller\SynchroController;
-use Import\Service\ImportObserv\ImportObservService;
-use Import\Service\ImportObservEtabResult\ImportObservEtabResultService;
-use Import\Service\ImportObservEtabResult\ImportObservEtabResultServiceFactory;
+use Import\Model\Service\ImportObservResultService;
+use Import\Model\Service\ImportObservResultServiceFactory;
 use Import\Service\SchemaService;
 use UnicaenAuth\Guard\PrivilegeController;
-use Zend\Mvc\Router\Console\Simple;
+use Zend\Mvc\Console\Router\Simple;
 
 return [
     'bjyauthorize'    => [
@@ -26,19 +25,27 @@ return [
                     'action'     => [
                         'index',
                     ],
-                    'privileges' => UnicaenImport\Provider\Privilege\Privileges::IMPORT_ECARTS,
+//                    'privileges' => UnicaenImport\Provider\Privilege\Privileges::IMPORT_ECARTS,
                 ],
                 [
                     'controller' => SynchroController::class,
                     'action'     => [
                         'update-views-and-packages',
                     ],
-                    'privileges' => UnicaenImport\Provider\Privilege\Privileges::IMPORT_MAJ,
+//                    'privileges' => UnicaenImport\Provider\Privilege\Privileges::IMPORT_MAJ,
                 ],
                 [
                     'controller' => 'Application\Controller\ImportNotification',
                     'action'     => [
                         'process-observed-import-results',
+                    ],
+                    'roles' => [],
+                ],
+                [
+                    'controller' => 'UnicaenDbImport\Controller\Console',
+                    'action'     => [
+                        'runImport',
+                        'runSynchro',
                     ],
                     'roles' => [],
                 ],
@@ -72,6 +79,9 @@ return [
                     'options' => [
                         'route'    => 'process-observed-import-results --etablissement= [--import-observ=] [--source-code=] [--force]',
                         'defaults' => [
+                            /**
+                             * @see \Import\Controller\ImportObserverController::processObservedImportResultsAction()
+                             */
                             'controller' => 'Application\Controller\ImportNotification',
                             'action'     => 'process-observed-import-results',
                         ],
@@ -117,15 +127,15 @@ return [
         'default' => [
             'home' => [
                 'pages' => [
-                    'import' /* NE PAS MODIFIER CETTE CLÉ */ => [
-                        'label'    => 'Synchro',
-                        'pages'    => [
-                            'differentiel'               => [
-                                'route'       => 'import-index-new',
-                                'resource'    => PrivilegeController::getResourceId('Import\Controller\Import', 'index'),
-                            ],
-                        ],
-                    ],
+//                    'import' /* NE PAS MODIFIER CETTE CLÉ */ => [
+//                        'label'    => 'Synchro',
+//                        'pages'    => [
+//                            'differentiel'               => [
+//                                'route'       => 'import-index-new',
+//                                'resource'    => PrivilegeController::getResourceId('Import\Controller\Import', 'index'),
+//                            ],
+//                        ],
+//                    ],
                 ],
             ],
         ],
@@ -133,16 +143,14 @@ return [
     'service_manager' => [
         'invokables' => [
             'UnicaenImport\Service\Schema' => SchemaService::class,
-            ImportObservService::class     => ImportObservService::class,
         ],
         'abstract_factories' => [
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
             'Zend\Log\LoggerAbstractServiceFactory',
         ],
         'factories' => [
-            ImportObservEtabResultService::class => ImportObservEtabResultServiceFactory::class,
+            ImportObservResultService::class => ImportObservResultServiceFactory::class,
         ],
-
     ],
     'controllers' => [
         'factories' => [

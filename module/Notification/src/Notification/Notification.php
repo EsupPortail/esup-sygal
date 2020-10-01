@@ -78,6 +78,14 @@ class Notification
     }
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->subject . " => " . ($this->to ? implode(", ", $this->to) : "Aucun destinataire") . ".";
+    }
+
+    /**
      * Éventuelle initialisation, préparation, etc. nécessaires avant de pouvoir envoyer la notification.
      */
     public function prepare()

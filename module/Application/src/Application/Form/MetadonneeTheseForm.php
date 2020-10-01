@@ -183,10 +183,10 @@ class MetadonneeTheseForm extends Form implements InputFilterProviderInterface
                 'required' => true,
                 'validators' => [
                     array(
-                        'name' => 'not_empty',
+                        'name' => 'NotEmpty',
                     ),
                     array(
-                        'name' => 'string_length',
+                        'name' => 'StringLength',
                         'options' => array(
                             'max' => $this->resumeMaxlength[$name]
                         ),
@@ -197,10 +197,10 @@ class MetadonneeTheseForm extends Form implements InputFilterProviderInterface
                 'required' => true,
                 'validators' => [
                     array(
-                        'name' => 'not_empty',
+                        'name' => 'NotEmpty',
                     ),
                     array(
-                        'name' => 'string_length',
+                        'name' => 'StringLength',
                         'options' => array(
                             'max' => $this->resumeMaxlength[$name]
                         ),

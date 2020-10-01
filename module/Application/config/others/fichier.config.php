@@ -11,6 +11,8 @@ use Application\Controller\Plugin\UrlFichier;
 use Application\Provider\Privilege\FichierPrivileges;
 use Application\Service\Fichier\FichierService;
 use Application\Service\Fichier\FichierServiceFactory;
+use Application\Service\FichierThese\FichierTheseService;
+use Application\Service\FichierThese\FichierTheseServiceFactory;
 use Application\Service\File\FileService;
 use Application\Service\File\FileServiceFactory;
 use Application\Service\NatureFichier\NatureFichierService;
@@ -173,9 +175,14 @@ return [
         'factories' => [
             FileService::class => FileServiceFactory::class,
             FichierService::class => FichierServiceFactory::class,
+            FichierTheseService::class => FichierTheseServiceFactory::class,
             'ValidationFichierCinesCommand' => ValidationFichierCinesCommandFactory::class,
             'CheckWSValidationFichierCinesCommand' => CheckWSValidationFichierCinesCommandFactory::class,
         ],
+        'aliases' => [
+            'FichierService' => FichierService::class,
+            'FichierTheseService' => FichierTheseService::class,
+        ]
     ],
     'controllers' => [
         'factories' => [

@@ -12,6 +12,19 @@ use Zend\View\Model\ViewModel;
 class InformationController extends AbstractActionController {
     use InformationServiceAwareTrait;
 
+    /**
+     * @var InformationForm
+     */
+    private $informationForm;
+
+    /**
+     * @param InformationForm $informationForm
+     */
+    public function setInformationForm(InformationForm $informationForm): void
+    {
+        $this->informationForm = $informationForm;
+    }
+
     public function indexAction()
     {
         $informations = $this->getInformationService()->getInformations();
@@ -36,7 +49,7 @@ class InformationController extends AbstractActionController {
         $information = new Information();
 
         /** @var InformationForm $form */
-        $form = $this->getServiceLocator()->get('FormElementManager')->get(InformationForm::class);
+        $form = $this->informationForm;
         $form->bind($information);
 
         /** @var Request $request */
@@ -61,7 +74,7 @@ class InformationController extends AbstractActionController {
         $information    = $this->getInformationService()->getInformation($informationId);
 
         /** @var InformationForm $form */
-        $form = $this->getServiceLocator()->get('FormElementManager')->get(InformationForm::class);
+        $form = $this->informationForm;
         $form->bind($information);
 
         /** @var Request $request */

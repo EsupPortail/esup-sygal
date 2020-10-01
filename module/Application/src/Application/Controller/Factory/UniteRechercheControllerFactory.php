@@ -11,7 +11,7 @@ use Application\Service\Role\RoleService;
 use Application\Service\Structure\StructureService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use Application\SourceCodeStringHelper;
-use Zend\Mvc\Controller\ControllerManager;
+use Interop\Container\ContainerInterface;
 
 class UniteRechercheControllerFactory
 {
@@ -20,15 +20,13 @@ class UniteRechercheControllerFactory
     /**
      * Create service
      *
-     * @param ControllerManager $controllerManager
+     * @param ContainerInterface $container
      * @return UniteRechercheController
      */
-    public function __invoke(ControllerManager $controllerManager)
+    public function __invoke(ContainerInterface $container)
     {
-        $sl = $controllerManager->getServiceLocator();
-
         /** @var UniteRechercheForm $form */
-        $form = $sl->get('FormElementManager')->get('UniteRechercheForm');
+        $form = $container->get('FormElementManager')->get('UniteRechercheForm');
 
         /**
          * @var UniteRechercheService $uniteRechercheService
@@ -37,15 +35,15 @@ class UniteRechercheControllerFactory
          * @var StructureService $structureService
          * @var DomaineScientifiqueService $domaineService
          */
-        $uniteRechercheService = $sl->get('UniteRechercheService');
-        $roleService = $sl->get('RoleService');
-        $structureService = $sl->get(StructureService::class);
-        $domaineService = $sl->get(DomaineScientifiqueService::class);
+        $uniteRechercheService = $container->get('UniteRechercheService');
+        $roleService = $container->get('RoleService');
+        $structureService = $container->get(StructureService::class);
+        $domaineService = $container->get(DomaineScientifiqueService::class);
 
         $controller = new UniteRechercheController();
         $controller->setUniteRechercheService($uniteRechercheService);
         $controller->setRoleService($roleService);
-        $controller->setEtablissementService($this->locateEtablissementService($sl));
+        $controller->setEtablissementService($this->locateEtablissementService($container));
         $controller->setDomaineScientifiqueService($domaineService);
         $controller->setStructureService($structureService);
         $controller->setStructureForm($form);
@@ -53,7 +51,7 @@ class UniteRechercheControllerFactory
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper
          */
-        $sourceCodeHelper = $sl->get(SourceCodeStringHelper::class);
+        $sourceCodeHelper = $container->get(SourceCodeStringHelper::class);
         $controller->setSourceCodeStringHelper($sourceCodeHelper);
 
         return $controller;

@@ -11,25 +11,24 @@ use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
 use Application\Service\Validation\ValidationService;
 use Application\Service\VersionFichier\VersionFichierService;
-use Zend\Mvc\Controller\ControllerManager;
-use Zend\Mvc\Router\Http\TreeRouteStack;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\EventManager\EventManager;
+use Zend\View\Renderer\PhpRenderer;
+use Interop\Container\ContainerInterface;
+use Zend\Router\Http\TreeRouteStack;
 
 class FichierTheseControllerFactory
 {
     /**
      * Create service
      *
-     * @param ControllerManager $controllerManager
+     * @param ContainerInterface $container
      * @return FichierTheseController
      */
-    public function __invoke(ControllerManager $controllerManager)
+    public function __invoke(ContainerInterface $container)
     {
-        $serviceLocator = $controllerManager->getServiceLocator();
-
         /** @var TreeRouteStack $httpRouter */
-        $httpRouter = $serviceLocator->get('HttpRouter');
-        $cliConfig = $this->getCliConfig($serviceLocator);
+        $httpRouter = $container->get('HttpRouter');
+        $cliConfig = $this->getCliConfig($container);
 
         /**
          * @var TheseService          $theseService
@@ -39,15 +38,20 @@ class FichierTheseControllerFactory
          * @var NotifierService       $notificationService
          * @var IndividuService       $individuService
          * @var ValidationService     $validationService
+         * @var EventManager          $eventManager
          */
-        $theseService = $serviceLocator->get('TheseService');
-        $fichierService = $serviceLocator->get(FichierService::class);
-        $fichierTheseService = $serviceLocator->get('FichierTheseService');
-        $versionFichierService = $serviceLocator->get('VersionFichierService');
-        $notificationService = $serviceLocator->get(NotifierService::class);
-        $individuService = $serviceLocator->get('IndividuService');
-        $validationService = $serviceLocator->get('ValidationService');
+        $theseService = $container->get('TheseService');
+        $fichierService = $container->get(FichierService::class);
+        $fichierTheseService = $container->get('FichierTheseService');
+        $versionFichierService = $container->get('VersionFichierService');
+        $notificationService = $container->get(NotifierService::class);
+        $individuService = $container->get('IndividuService');
+        $validationService = $container->get('ValidationService');
         $eventRouterReplacer = new EventRouterReplacer($httpRouter, $cliConfig);
+        $eventManager = $container->get('EventManager');
+
+        /* @var $renderer PhpRenderer */
+        $renderer = $container->get('ViewRenderer');
 
         $controller = new FichierTheseController();
         $controller->setTheseService($theseService);
@@ -58,19 +62,21 @@ class FichierTheseControllerFactory
         $controller->setIndividuService($individuService);
         $controller->setValidationService($validationService);
         $controller->setEventRouterReplacer($eventRouterReplacer);
+        $controller->setRenderer($renderer);
+        $controller->setEventManager($eventManager);
 
-        $theseService->attach($controller->getEventManager());
+        $theseService->attach($eventManager);
 
         return $controller;
     }
 
     /**
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param ContainerInterface $container
      * @return array
      */
-    private function getCliConfig(ServiceLocatorInterface $serviceLocator)
+    private function getCliConfig(ContainerInterface $container)
     {
-        $config = $serviceLocator->get('Config');
+        $config = $container->get('Config');
 
         return [
             'domain' => isset($config['cli_config']['domain']) ? $config['cli_config']['domain'] : null,

@@ -9,20 +9,18 @@ use Application\Service\Structure\StructureService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use Application\SourceCodeStringHelper;
 use Doctrine\ORM\EntityManager;
-use Zend\Mvc\Controller\ControllerManager;
+use Interop\Container\ContainerInterface;
 
 class SubstitutionControllerFactory
 {
     /**
      * Create service
      *
-     * @param ControllerManager $controllerManager
+     * @param ContainerInterface $container
      * @return SubstitutionController
      */
-    public function __invoke(ControllerManager $controllerManager)
+    public function __invoke(ContainerInterface $container)
     {
-        $sl = $controllerManager->getServiceLocator();
-
         /**
          * @var EntityManager $entityManager
          * @var EtablissementService $etablissementService
@@ -30,11 +28,11 @@ class SubstitutionControllerFactory
          * @var EcoleDoctoraleService $ecoleService
          * @var UniteRechercheService $uniteService
          */
-        $entityManager = $sl->get('doctrine.entitymanager.orm_default');
-        $etablissementService = $sl->get('EtablissementService');
-        $ecoleService = $sl->get('EcoleDoctoraleService');
-        $uniteService = $sl->get('UniteRechercheService');
-        $structureService = $sl->get('StructureService');
+        $entityManager = $container->get('doctrine.entitymanager.orm_default');
+        $etablissementService = $container->get('EtablissementService');
+        $ecoleService = $container->get('EcoleDoctoraleService');
+        $uniteService = $container->get('UniteRechercheService');
+        $structureService = $container->get('StructureService');
 
         $controller = new SubstitutionController();
         $controller->setEntityManager($entityManager);
@@ -46,7 +44,7 @@ class SubstitutionControllerFactory
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper
          */
-        $sourceCodeHelper = $sl->get(SourceCodeStringHelper::class);
+        $sourceCodeHelper = $container->get(SourceCodeStringHelper::class);
         $controller->setSourceCodeStringHelper($sourceCodeHelper);
 
         return $controller;

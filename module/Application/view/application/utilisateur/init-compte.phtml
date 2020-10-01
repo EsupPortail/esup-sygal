@@ -4,9 +4,11 @@
  * @see \Application\Controller\UtilisateurController::initCompteAction()
  *
  * @var InitCompteForm $form
+ * @var Utilisateur $utilisateur
  */
 
 
+use Application\Entity\Db\Utilisateur;
 use Application\Form\InitCompteForm;
 
 $this->headTitle("Initialisation du compte");
@@ -16,32 +18,49 @@ $this->headTitle("Initialisation du compte");
     Initialisation du compte
 </h1>
 
+<?php if ($utilisateur !== null) : ?>
+
+    <?php echo $this->form()->openTag($form); ?>
+
+    <div class="alert alert-info">
+        <span class="glyphicon glyphicon-info-sign"></span>
+        Le nom d'utilisateur vous a été transmis dans le courrier électronique qui contenait l'adresse pour accéder à cette page.
+    </div>
+
+    <?php echo $this->formControlGroup($form->get('username')); ?>
+
+    <div class="alert alert-info">
+        <span class="glyphicon glyphicon-info-sign"></span>
+        Le mot de passe doit :
+        <ul>
+            <li> être d'une longueur minimale de 8 caractères ; </li>
+            <li> posséder des caractères en majuscule et en minuscule  ; </li>
+            <li> posséder au moins un chiffre  ; </li>
+            <li> posséder au moins un caractère spécial (parmi '!', '@', '#', '$', '%', '^', '&', '*', '_').</li>
+        </ul>
+    </div>
+
+    <?php echo $this->formControlGroup($form->get('password1')); ?>
+    <?php echo $this->formControlGroup($form->get('password2')); ?>
+
+    <?php echo $this->formControlGroup($form->get('bouton')); ?>
 
 
-<?php echo $this->form()->openTag($form); ?>
+    <?php echo $this->form()->closeTag(); ?>
+<?php else : ?>
 
-<div class="alert alert-info">
-    <span class="glyphicon glyphicon-info-sign"></span>
-    Le nom d'utilisateur vous a été transmis dans le courrier électronique qui contenait l'adresse pour accéder à cette page.
+<div class="alert alert-danger">
+    <p class="lead">
+        <span class="glyphicon glyphicon-warning-sign"></span> Aucun utilisateur ne correspond à ce jeton d'identification.
+    </p>
+
+    <p>
+    Ceci peut se produire si :
+        <ul>
+            <li> le jeton est incorrecte, </li>
+            <li> le compte est déjà initialisé, </li>
+            <li> le compte a été effacé.</li>
+        </ul>
+    </p>
 </div>
-
-<?php echo $this->formControlGroup($form->get('username')); ?>
-
-<div class="alert alert-info">
-    <span class="glyphicon glyphicon-info-sign"></span>
-    Le mot de passe doit :
-    <ul>
-        <li> être d'une longueur minimale de 8 caractères ; </li>
-        <li> posséder des caractères en majuscule et en minuscule  ; </li>
-        <li> posséder au moins un chiffre  ; </li>
-        <li> posséder au moins un caractère spécial (parmi '!', '@', '#', '$', '%', '^', '&', '*', '_').</li>
-    </ul>
-</div>
-
-<?php echo $this->formControlGroup($form->get('password1')); ?>
-<?php echo $this->formControlGroup($form->get('password2')); ?>
-
-<?php echo $this->formControlGroup($form->get('bouton')); ?>
-
-
-<?php echo $this->form()->closeTag(); ?>
+<?php endif; ?>

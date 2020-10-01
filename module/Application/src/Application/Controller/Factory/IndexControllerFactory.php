@@ -3,27 +3,28 @@
 namespace Application\Controller\Factory;
 
 use Application\Controller\IndexController;
+use Application\Service\Actualite\ActualiteService;
+use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\These\TheseService;
 use Application\Service\Variable\VariableService;
-use Zend\Mvc\Controller\ControllerManager;
+use Interop\Container\ContainerInterface;
+use Zend\Authentication\AuthenticationServiceInterface;
 
 class IndexControllerFactory
 {
     /**
      * Create service
      *
-     * @param ControllerManager $controllerManager
+     * @param ContainerInterface $container
      * @return IndexController
      */
-    public function __invoke(ControllerManager $controllerManager)
+    public function __invoke(ContainerInterface $container)
     {
-        $sl = $controllerManager->getServiceLocator();
-
         /**
          * @var TheseService $theseService
          */
-        $theseService = $sl->get('TheseService');
+        $theseService = $container->get('TheseService');
 
         $controller = new IndexController();
         $controller->setTheseService($theseService);
@@ -31,15 +32,29 @@ class IndexControllerFactory
         /**
          * @var EtablissementService $etablissementService
          */
-        $etablissementService = $sl->get('EtablissementService');
+        $etablissementService = $container->get('EtablissementService');
         $controller->setEtablissementService($etablissementService);
+
+        /**
+         * @var EcoleDoctoraleService $ecoleDoctoraleService
+         */
+        $ecoleDoctoraleService = $container->get(EcoleDoctoraleService::class);
+        $controller->setEcoleDoctoraleService($ecoleDoctoraleService);
 
         /**
          * @var VariableService $variableService
          */
-        $variableService = $sl->get('VariableService');
+        $variableService = $container->get('VariableService');
         $controller->setVariableService($variableService);
 
+        /** @var AuthenticationServiceInterface $authenticationService */
+        $authenticationService = $container->get('Zend\\Authentication\\AuthenticationService');
+        $controller->setAuthenticationService($authenticationService);
+
+        /** @var ActualiteService $actualiteService */
+        $actualiteService = $container->get(ActualiteService::class);
+        $controller->setActualiteService($actualiteService);
+        
         return $controller;
     }
 }

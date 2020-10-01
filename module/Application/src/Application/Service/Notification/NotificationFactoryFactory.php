@@ -5,10 +5,10 @@ namespace Application\Service\Notification;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\Variable\VariableService;
+use Interop\Container\ContainerInterface;
 use UnicaenApp\Options\ModuleOptions;
-use Zend\Mvc\View\Console\ViewManager as ConsoleViewManager;
+use Zend\Mvc\Console\View\ViewManager as ConsoleViewManager;
 use Zend\Mvc\View\Http\ViewManager as HttpViewManager;
-use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\View\Helper\Url as UrlHelper;
 
 /**
@@ -24,30 +24,31 @@ class NotificationFactoryFactory extends \Notification\Service\NotificationFacto
     /**
      * Create service.
      *
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param ContainerInterface $container
      * @return NotificationFactory
      */
-    public function __invoke(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container)
     {
         /** @var NotificationFactory $factory */
-        $factory = parent::__invoke($serviceLocator);
+        $factory = parent::__invoke($container);
 
         /**
          * @var VariableService       $variableService
          * @var EcoleDoctoraleService $ecoleDoctoraleService
          * @var UniteRechercheService $uniteRechercheService
          */
-        $variableService = $serviceLocator->get('VariableService');
-        $ecoleDoctoraleService = $serviceLocator->get('EcoleDoctoraleService');
-        $uniteRechercheService = $serviceLocator->get('UniteRechercheService');
+        $variableService = $container->get('VariableService');
+        $ecoleDoctoraleService = $container->get('EcoleDoctoraleService');
+        $uniteRechercheService = $container->get('UniteRechercheService');
 
         /** @var HttpViewManager|ConsoleViewManager $vm */
-        $vm = $serviceLocator->get('ViewManager');
+        $vm = $container->get('ViewManager');
         /** @var UrlHelper $urlHelper */
-        $urlHelper = $vm->getHelperManager()->get('Url');
+//        $urlHelper = $vm->getHelperManager()->get('Url');
+        $urlHelper = $container->get('ViewHelperManager')->get('Url');
 
         /* @var ModuleOptions $moduleOptions */
-        $moduleOptions = $serviceLocator->get('unicaen-app_module_options');
+        $moduleOptions = $container->get('unicaen-app_module_options');
 
         $factory->setVariableService($variableService);
         $factory->setEcoleDoctoraleService($ecoleDoctoraleService);

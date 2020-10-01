@@ -7,8 +7,8 @@ use Application\Filter\NomCompletFormatter;
 use Doctrine\Common\Collections\ArrayCollection;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
-use UnicaenImport\Entity\Db\Interfaces\SourceAwareInterface;
-use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
+use UnicaenDbImport\Entity\Db\Interfaces\SourceAwareInterface;
+use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 
 /**
  * Individu
@@ -111,6 +111,17 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
         $this->mailsConfirmations = new ArrayCollection();
         $this->utilisateurs = new ArrayCollection();
     }
+
+    /**
+     * Get histoModification
+     *
+     * @return \DateTime
+     */
+    public function getHistoModification()
+    {
+        return $this->histoModification ?: $this->getHistoCreation();
+    }
+
     /**
      * @return string
      * @see supannId

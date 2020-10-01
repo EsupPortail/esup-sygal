@@ -4,16 +4,14 @@ namespace Application\Form\Factory;
 
 use Application\Form\InitCompteForm;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
-use Zend\Form\FormElementManager;
+use Interop\Container\ContainerInterface;
 
 class InitCompteFormFactory {
 
-    public function __invoke(FormElementManager $manager)
+    public function __invoke(ContainerInterface $container)
     {
-        $sl = $manager->getServiceLocator();
-
         /** @var DoctrineObject $hydrator */
-        $hydrator = $sl->get('HydratorManager')->get('DoctrineModule\Stdlib\Hydrator\DoctrineObject');
+        $hydrator = $container->get('HydratorManager')->get('DoctrineModule\Stdlib\Hydrator\DoctrineObject');
 
         /** @var InitCompteForm $form */
         $form = new InitCompteForm();

@@ -2,7 +2,7 @@
 
 namespace Application\Search\Controller;
 
-use Zend\ServiceManager\ServiceLocatorInterface as ContainerInterface;
+use Interop\Container\ContainerInterface;
 
 class SearchControllerPluginFactory
 {

@@ -6,7 +6,7 @@ use Application\Service\Acteur\ActeurService;
 use Application\Service\Doctorant\DoctorantService;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Individu\IndividuService;
-use Zend\ServiceManager\ServiceLocatorInterface as ContainerInterface;
+use Interop\Container\ContainerInterface;
 
 class ListeDiffusionStructurePluginFactory
 {

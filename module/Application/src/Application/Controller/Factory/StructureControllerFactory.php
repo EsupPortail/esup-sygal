@@ -9,20 +9,18 @@ use Application\Service\Individu\IndividuService;
 use Application\Service\Role\RoleService;
 use Application\Service\Structure\StructureService;
 use Application\Service\UniteRecherche\UniteRechercheService;
-use Zend\Mvc\Controller\ControllerManager;
+use Interop\Container\ContainerInterface;
 
 class StructureControllerFactory
 {
     /**
      * Create service
      *
-     * @param ControllerManager $controllerManager
+     * @param ContainerInterface $container
      * @return StructureController
      */
-    public function __invoke(ControllerManager $controllerManager)
+    public function __invoke(ContainerInterface $container)
     {
-        $sl = $controllerManager->getServiceLocator();
-
         /**
          * @var IndividuService $individuService
          * @var RoleService $roleService
@@ -32,12 +30,12 @@ class StructureControllerFactory
          * @var EtablissementService $etablissementService
          */
 
-        $individuService = $sl->get('IndividuService');
-        $roleService = $sl->get('RoleService');
-        $structureService = $sl->get('StructureService');
-        $ecoleService = $sl->get('EcoleDoctoraleService');
-        $uniteService = $sl->get('UniteRechercheService');
-        $etablissementService = $sl->get('EtablissementService');
+        $individuService = $container->get('IndividuService');
+        $roleService = $container->get('RoleService');
+        $structureService = $container->get('StructureService');
+        $ecoleService = $container->get('EcoleDoctoraleService');
+        $uniteService = $container->get('UniteRechercheService');
+        $etablissementService = $container->get('EtablissementService');
 
         $controller = new StructureController();
         $controller->setIndividuService($individuService);

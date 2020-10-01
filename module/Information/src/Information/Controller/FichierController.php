@@ -26,10 +26,23 @@ class FichierController extends AbstractActionController
     use InformationFichierServiceAwareTrait;
     use FichierServiceAwareTrait;
 
+    /**
+     * @var FichierForm
+     */
+    private $fichierForm;
+
+    /**
+     * @param FichierForm $fichierForm
+     */
+    public function setFichierForm(FichierForm $fichierForm)
+    {
+        $this->fichierForm = $fichierForm;
+    }
+
     public function indexAction()
     {
         /** @var FichierForm $form */
-        $form = $this->getServiceLocator()->get('FormElementManager')->get(FichierForm::class);
+        $form = $this->fichierForm;
         $form->setAttribute('action', $this->url()->fromRoute("informations/fichiers", [], [], true));
 
         /** @var Request $request */

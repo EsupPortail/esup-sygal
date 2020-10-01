@@ -4,27 +4,25 @@ namespace Application\Controller\Factory;
 
 use Application\Controller\TheseConsoleController;
 use Application\Service\These\TheseService;
+use Interop\Container\ContainerInterface;
 use Zend\Log\Logger;
 use Zend\Log\LoggerInterface;
 use Zend\Log\Writer\Stream;
-use Zend\Mvc\Controller\ControllerManager;
 
 class TheseConsoleControllerFactory
 {
     /**
      * Create service
      *
-     * @param ControllerManager $controllerManager
+     * @param ContainerInterface $container
      * @return TheseConsoleController
      */
-    public function __invoke(ControllerManager $controllerManager)
+    public function __invoke(ContainerInterface $container)
     {
-        $sl = $controllerManager->getServiceLocator();
-
         /**
          * @var TheseService $theseService
          */
-        $theseService = $sl->get('TheseService');
+        $theseService = $container->get('TheseService');
 
         $controller = new TheseConsoleController();
         $controller->setTheseService($theseService);

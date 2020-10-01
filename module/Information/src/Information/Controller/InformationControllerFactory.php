@@ -2,21 +2,26 @@
 
 namespace Information\Controller;
 
-use Information\Controller\InformationController;
+use Information\Form\InformationForm;
 use Information\Service\InformationService;
-use Zend\Mvc\Controller\ControllerManager;
+use Interop\Container\ContainerInterface;
 
 class InformationControllerFactory {
 
-    public function __invoke(ControllerManager $controllerManager)
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var InformationService $infromationService
          */
-        $infromationService = $controllerManager->getServiceLocator()->get(InformationService::class);
+        $infromationService = $container->get(InformationService::class);
+
+        /** @var InformationForm $informationForm */
+        $informationForm = $container->get('FormElementManager')->get(InformationForm::class);
 
         $controller = new InformationController();
         $controller->setInformationService($infromationService);
+        $controller->setInformationForm($informationForm);
+
         return $controller;
     }
 }

@@ -8,17 +8,17 @@ use Application\Service\Role\RoleService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Validation\ValidationService;
 use Application\Service\Variable\VariableService;
-use Zend\Mvc\Controller\ControllerManager;
+use Interop\Container\ContainerInterface;
 
 class ValidationControllerFactory
 {
     /**
      * Create service
      *
-     * @param ControllerManager $controllerManager
+     * @param ContainerInterface $container
      * @return ValidationController
      */
-    public function __invoke(ControllerManager $controllerManager)
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var ValidationService $validationService
@@ -27,11 +27,11 @@ class ValidationControllerFactory
          * @var VariableService $variableService
          * @var UtilisateurService $utilisateurService
          */
-        $validationService = $controllerManager->getServiceLocator()->get('ValidationService');
-        $notifierService = $controllerManager->getServiceLocator()->get(NotifierService::class);
-        $roleService = $controllerManager->getServiceLocator()->get('RoleService');
-        $variableService = $controllerManager->getServiceLocator()->get('VariableService');
-        $utilisateurService = $controllerManager->getServiceLocator()->get('UtilisateurService');
+        $validationService = $container->get('ValidationService');
+        $notifierService = $container->get(NotifierService::class);
+        $roleService = $container->get('RoleService');
+        $variableService = $container->get('VariableService');
+        $utilisateurService = $container->get('UtilisateurService');
 
         $controller = new ValidationController();
         $controller->setValidationService($validationService);

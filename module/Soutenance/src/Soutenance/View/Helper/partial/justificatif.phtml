@@ -1,0 +1,39 @@
+<?php
+
+/**
+ * @var Justificatif $justificatif
+ * @var UrlFichierThese $urlFichierThese
+ * @var array $options
+ */
+
+use Application\Controller\Plugin\UrlFichierThese;
+use Soutenance\Entity\Justificatif;
+
+$these = $justificatif->getProposition()->getThese();
+$fichierThese = $justificatif->getFichier();
+$fichier = $justificatif->getFichier()->getFichier();
+$membre = $justificatif->getMembre();
+
+?>
+
+<?php
+    $label = "";
+    if (isset($options['court']) && $options['court'] === true) {
+        $label = "Justificatif ";
+    } else {
+        $label = $fichier->getNature()->getLibelle();
+    }
+    if($membre !== null) {
+        $label .= " pour ";
+        $label .= "<strong>";
+        $label .= "<span class='glyphicon glyphicon-user'></span>";
+        $label .= $membre->getDenomination();
+        $label .= "</strong>";
+    }
+?>
+
+<a href="<?php echo $urlFichierThese->telechargerFichierThese($these, $fichierThese); ?>">
+    <?php echo $label; ?>
+</a>
+    (<?php echo $fichier->getHistoCreateur()->getDisplayName(); ?> - <?php echo $fichier->getHistoCreation()->format("d/m/Y à H:i"); ?>)
+

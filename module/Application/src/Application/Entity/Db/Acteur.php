@@ -5,7 +5,7 @@ namespace Application\Entity\Db;
 use Application\Entity\Db\Interfaces\IndividuAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
-use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
+use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 
 /**
@@ -111,6 +111,15 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuAwa
         return $this->getRole()->getCode() === Role::CODE_RAPPORTEUR_JURY;
     }
 
+    /**
+     * Prédicat testant cet un acteur est un rapporteur absent de thèse.
+     *
+     * @return bool
+     */
+    public function estRapporteurAbsent()
+    {
+        return $this->getRole()->getCode() === Role::CODE_RAPPORTEUR_ABSENT;
+    }
 
     /**
      * Prédicat testant cet un acteur est un rapporteur de thèse.

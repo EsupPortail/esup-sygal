@@ -63,6 +63,16 @@ class Validation implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
+     * Get histoModification
+     *
+     * @return \DateTime
+     */
+    public function getHistoModification()
+    {
+        return $this->histoModification ?: $this->getHistoCreation();
+    }
+
+    /**
      * Get id
      *
      * @return integer

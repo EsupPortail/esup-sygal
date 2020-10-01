@@ -1,0 +1,56 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * Script à utiliser pour créer le fichier de config locale contenant
+ * la date et version courante de l'application.
+ *
+ * Le chemin du fichier de config créé est par défaut
+ * 'config/autoload/auto.version.local.php'.
+ *
+ * Usage:  ./create-version-config-file [<path>]
+ * Ex:     ./create-version-config-file 'config/autoload/auto.version.local.php'
+ */
+
+require 'vendor/autoload.php';
+
+use Zend\Config\Writer\PhpArray;
+
+const DEFAULT_FILE_PATH = 'config/autoload/auto.version.local.php';
+const VERSION_CMD = 'git describe';
+const DATE_CMD = 'git log --pretty="format:%ad" --date=format:"%d/%m/%Y %H:%M:%S" -1';
+
+$configFilepath = isset($argv[1]) ? $argv[1] : null;
+if ($configFilepath === null) {
+    $configFilepath = DEFAULT_FILE_PATH;
+}
+
+$version = exec(VERSION_CMD);
+if (!$version) {
+    echo ":-( Impossible de déterminer automatiquement la version." . PHP_EOL;
+    exit(1);
+}
+$date = exec(DATE_CMD);
+if (!$date) {
+    echo ":-( Impossible de déterminer automatiquement la date." . PHP_EOL;
+    exit(1);
+}
+
+$config = [
+    'unicaen-app' => [
+        'app_infos' => [
+            'version' => $version,
+            'date' => $date,
+        ],
+    ],
+    'comment' => sprintf("Fichier généré le %s avec le script '%s'.", date('d/m/Y à H:i:s'), basename(__FILE__))
+];
+
+$phpArray = new PhpArray();
+$phpArray
+    ->setUseBracketArraySyntax(true)
+    ->toFile($configFilepath, $config);
+
+echo "Fichier de config créé : $configFilepath" . PHP_EOL;
+echo "  Version inscrite : $version" . PHP_EOL;
+echo "  Date inscrite :    $date" . PHP_EOL;

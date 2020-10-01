@@ -3,8 +3,8 @@
 namespace Application\Service\RapportAnnuel;
 
 use Application\Search\Filter\Provider\SearchFilterProviderService;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface as ContainerInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 class RapportAnnuelSearchServiceFactory implements FactoryInterface
 {
@@ -12,9 +12,11 @@ class RapportAnnuelSearchServiceFactory implements FactoryInterface
      * Create service
      *
      * @param ContainerInterface $container
+     * @param string $requestedName
+     * @param array|null $options
      * @return RapportAnnuelSearchService
      */
-    public function createService(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         /**
          * @var RapportAnnuelService $rapportAnnuelService

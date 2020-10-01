@@ -9,7 +9,7 @@ use Application\Service\RapportAnnuel\RapportAnnuelService;
 use Application\Service\Structure\StructureService;
 use Application\Service\These\TheseRechercheService;
 use Application\Service\TheseAnneeUniv\TheseAnneeUnivService;
-use Zend\ServiceManager\ServiceLocatorInterface as ContainerInterface;
+use Interop\Container\ContainerInterface;
 
 class SearchFilterProviderServiceFactory
 {
