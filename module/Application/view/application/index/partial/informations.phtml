@@ -2,33 +2,46 @@
 
 /**
  * @var Information[] $informations
+ * @var InformationLangue[] $langues
  **/
 
+$langues = [];
+foreach ($informations as $information) $langues[$information->getLangue()->getId()] = $information->getLangue();
+
 use Information\Entity\Db\Information;
+use Information\Entity\Db\InformationLangue;
 
 
 ?>
-<ul class="menu-actualites nav nav-pills nav-stacked" style="padding: 1rem;">
 
-    <span class="langue" id="FR">FR</span> |
-    <span class="langue" id="EN">EN</span>
+    <ul class="nav nav-pills nav-stacked menu-secondaire informations">
+        <?php foreach ($langues as $langue) : ?>
+            <span class="flag langue" id="<?php echo $langue->getId(); ?>">
+            <img src="<?php echo $langue->getDrapeau(); ?>" style="width: 30px;">
+        </span>
+        <?php endforeach; ?>
 
-    <ul class="nav nav-pills nav-stacked informations">
         <?php foreach ($informations as $information) : ?>
-        <li class="<?php echo $information->getLangue(); ?>">
+        <li class="<?php echo $information->getLangue()->getId(); ?>">
             <a href="<?php echo $this->url('informations/afficher', ['id' => $information->getId()], [], true); ?>">
             <?php echo $information->getTitre(); ?>
             </a>
         </li>
-
         <?php endforeach; ?>
     </ul>
-</ul>
 
 <style>
     .selected {
         font-weight: bold;
-        color: #0a3783;
+        border: 3px solid #337ab7;
+        background: #337ab7;
+
+    }
+
+    .flag {
+        height: 30px;
+        display: inline-block;
+        margin: 5px;
     }
 
     .langue {

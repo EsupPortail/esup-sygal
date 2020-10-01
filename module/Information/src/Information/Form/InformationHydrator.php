@@ -3,10 +3,13 @@
 namespace Information\Form;
 
 use Information\Entity\Db\Information;
+use Information\Service\InformationLangue\InformationLangueerviceAwareTrait;
 use Zend\Hydrator\HydratorInterface;
 
 class InformationHydrator implements HydratorInterface
 {
+    use InformationLangueerviceAwareTrait;
+
     /**
      * @param Information $object
      * @return array
@@ -18,6 +21,7 @@ class InformationHydrator implements HydratorInterface
             'contenu' => $object->getContenu(),
             'priorite' => $object->getPriorite(),
             'visible' => $object->isVisible(),
+            'langue' => $object->getLangue()->getId(),
         ];
     }
 
@@ -28,10 +32,13 @@ class InformationHydrator implements HydratorInterface
      */
     public function hydrate(array $data, $object)
     {
+        $langue = $this->getInformationLangueService()->getLangue($data['langue']);
+
         $object->setTitre($data['titre']);
         $object->setContenu($data['contenu']);
         $object->setPriorite($data['priorite']);
         $object->setVisible( ($data['visible'] == 1)?true:false);
+        $object->setLangue( $langue);
 
         return $object;
     }

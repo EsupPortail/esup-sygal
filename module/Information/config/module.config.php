@@ -3,15 +3,19 @@
 use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\Provider\Privilege\FichierPrivileges;
 use Information\Controller\FichierController;
+use Information\Controller\FichierControllerFactory;
 use Information\Controller\InformationController;
 use Information\Controller\InformationControllerFactory;
 use Information\Form\FichierForm;
 use Information\Form\InformationForm;
 use Information\Form\InformationFormFactory;
 use Information\Form\InformationHydrator;
+use Information\Form\InformationHydratorFactory;
 use Information\Provider\Privilege\InformationPrivileges;
 use Information\Service\InformationFichierService;
 use Information\Service\InformationFichierServiceFactory;
+use Information\Service\InformationLangue\InformationLangueService;
+use Information\Service\InformationLangue\InformationLangueServiceFactory;
 use Information\Service\InformationService;
 use Information\Service\InformationServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
@@ -279,13 +283,14 @@ return [
         'factories' => [
             InformationService::class => InformationServiceFactory::class,
             InformationFichierService::class => InformationFichierServiceFactory::class,
+            InformationLangueService::class => InformationLangueServiceFactory::class
         ],
     ],
 
     'controllers' => [
         'factories' => [
             InformationController::class => InformationControllerFactory::class,
-            FichierController::class => \Information\Controller\FichierControllerFactory::class,
+            FichierController::class => FichierControllerFactory::class,
         ],
     ],
     'form_elements'   => [
@@ -297,8 +302,8 @@ return [
         ],
     ],
     'hydrators' => [
-        'invokables' => [
-            InformationHydrator::class => InformationHydrator::class
+        'factories' => [
+            InformationHydrator::class => InformationHydratorFactory::class
         ]
     ],
     'view_manager' => [
