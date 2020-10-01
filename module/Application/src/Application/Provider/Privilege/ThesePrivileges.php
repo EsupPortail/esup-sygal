@@ -33,6 +33,11 @@ class ThesePrivileges extends Privileges
     const THESE_SAISIE_CORREC_AUTORISEE_FORCEE      = 'these-saisie-correc-autorisee-forcee';
 
     /**
+     * Page de couverture
+     */
+    const THESE_CONSULTATION_PAGE_COUVERTURE        = 'these-consultation-page-couverture';
+
+    /**
      * Dépôt de fichiers liés à une thèse
      */
     const THESE_DEPOT_VERSION_INITIALE              = 'these-depot-version-initiale';

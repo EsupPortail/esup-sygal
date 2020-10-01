@@ -1,6 +1,14 @@
 Journal des modifications
 =========================
 
+2.0.0
+------------------
+
+- Passage à Zend Framework 3 et PHP 7.3 (gain de performances).
+- Listes de diffusion Sympa : page d'activation/désactivation des listes pour lesquelles SyGAL peut fournir
+  les abonnés et les proopriétaires via une URL. 
+- Nouveau rôle 'Authentifié(e)' permettant d'ajuster les privilèges d'un simple utilisateur authentifié.
+
 1.4.9 (08/09/2020)
 ------------------
 
