@@ -4,6 +4,7 @@ namespace Application\Controller\Factory;
 
 use Application\Controller\IndexController;
 use Application\Service\Actualite\ActualiteService;
+use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\These\TheseService;
 use Application\Service\Variable\VariableService;
@@ -33,6 +34,12 @@ class IndexControllerFactory
          */
         $etablissementService = $container->get('EtablissementService');
         $controller->setEtablissementService($etablissementService);
+
+        /**
+         * @var EcoleDoctoraleService $ecoleDoctoraleService
+         */
+        $ecoleDoctoraleService = $container->get(EcoleDoctoraleService::class);
+        $controller->setEcoleDoctoraleService($ecoleDoctoraleService);
 
         /**
          * @var VariableService $variableService

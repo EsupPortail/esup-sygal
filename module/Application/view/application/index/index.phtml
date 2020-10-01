@@ -3,6 +3,7 @@
  * @var PhpRenderer $this
  * @var Role        $role Rôle courant
  * @var bool        $estDoctorant
+ * @var array       $offre
  */
 
 use Application\Entity\Db\Role;
@@ -34,6 +35,10 @@ echo $this->messenger()
             ?>
 
             <?php echo $this->partial('application/index/partial/actualites') ?>
+
+            <?php if($offre) : ?>
+                <?php echo $this->partial('application/index/partial/sujet-de-these', ['offre' => $offre]) ?>
+            <?php endif; ?>
     </div>
 
     <div id="content" class="jumbotron col-xs-12 col-md-10">
