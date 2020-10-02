@@ -3,8 +3,7 @@
 namespace Application\Service\ListeDiffusion;
 
 use Application\Service\Individu\IndividuService;
-use Application\Service\ListeDiffusion\Plugin\ListeDiffusionRolePlugin;
-use Application\Service\ListeDiffusion\Plugin\ListeDiffusionStructurePlugin;
+use Application\Service\ListeDiffusion\Handler\ListeDiffusionHandler;
 use Interop\Container\ContainerInterface;
 
 class ListeDiffusionServiceFactory
@@ -21,12 +20,9 @@ class ListeDiffusionServiceFactory
          */
         $individuService = $container->get('IndividuService');
         $service->setIndividuService($individuService);
-
-        $plugins = [
-            $container->get(ListeDiffusionStructurePlugin::class),
-            $container->get(ListeDiffusionRolePlugin::class),
-        ];
-        $service->setListeDiffusionServicePlugins($plugins);
+        $service->setAvailableHandlers([
+            $container->get(ListeDiffusionHandler::class),
+        ]);
 
         return $service;
     }

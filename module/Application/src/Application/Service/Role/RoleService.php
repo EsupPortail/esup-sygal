@@ -44,6 +44,19 @@ class RoleService extends BaseService
         return $repo;
     }
 
+    /**
+     * @param string $code
+     * @param Structure $structure
+     * @return Role|null
+     */
+    public function findOneByCodeAndStructure(string $code, Structure $structure)
+    {
+        /** @var Role|null $role */
+        $role = $this->getRepository()->findOneBy(['code' => $code, 'structure' => $structure]);
+
+        return $role;
+    }
+
     public function getRolesByStructure(Structure $structure)
     {
         $repo = $this->entityManager->getRepository(Role::class);

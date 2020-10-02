@@ -1,10 +1,11 @@
 <?php
 
+use Application\Entity\Db\ListeDiffusion;
 use Application\View\Renderer\PhpRenderer;
 
 /**
  * @var PhpRenderer $this
- * @var string $liste
+ * @var ListeDiffusion $liste
  * @var string[] $individusAvecAdresse
  * @var string[] $individusSansAdresse
  */
@@ -42,5 +43,5 @@ use Application\View\Renderer\PhpRenderer;
 </ul>
 <p>
     Pour visualiser ces informations dans <?php echo $app ?>, cliquez sur
-    <a href="<?php echo $url = $this->url('liste-diffusion/liste', ['liste' => $liste], ['force_canonical' => true]) ?>">ce lien</a>.
+    <a href="<?php echo $url = $this->url('liste-diffusion/liste', ['adresse' => $liste->getAdresse()], ['force_canonical' => true]) ?>">ce lien</a>.
 </p>

@@ -620,11 +620,13 @@ class StructureService extends BaseService
     /**
      * Les structures non substituées
      *
-     * @param string $type
-     * @param string $order
+     * @param string $type Ex: {@see TypeStructure::CODE_ECOLE_DOCTORALE}
+     * @param string|null $order Ex: 'libelle'
+     * @param bool $includeFermees
+     * @param bool $cacheable
      * @return StructureConcreteInterface[]
      */
-    public function getAllStructuresAffichablesByType($type, $order = null, $cacheable = false)
+    public function getAllStructuresAffichablesByType($type, $order = null, $includeFermees = true, $cacheable = false)
     {
         $qb = $this->getEntityManager()->getRepository($this->getEntityByType($type))->createQueryBuilder('structureConcrete')
             ->addSelect('structure')
@@ -642,6 +644,10 @@ class StructureService extends BaseService
                 $qb->orderBy('structure.ferme, structureConcrete.sourceCode');
             }
         }
+        if (! $includeFermees) {
+            $qb->andWhere('structure.ferme = 0');
+        }
+
         $qb->setCacheable($cacheable);
         if ($cacheable) {
             $qb->setCacheRegion($qb->getCacheRegion() . '_' . $type . '_' . $order);

@@ -2,24 +2,32 @@
 
 namespace Application\Service\ListeDiffusion;
 
+use Application\Entity\Db\EcoleDoctorale;
+use Application\Entity\Db\ListeDiffusion;
+use Application\Entity\Db\Role;
+use Application\Entity\Db\Structure;
 use Application\Service\BaseService;
 use Application\Service\Individu\IndividuServiceAwareTrait;
-use Application\Service\ListeDiffusion\Plugin\ListeDiffusionPluginInterface;
-use UnicaenApp\Exception\LogicException;
+use Application\Service\ListeDiffusion\Address\ListeDiffusionAddressGenerator;
+use Application\Service\ListeDiffusion\Handler\ListeDiffusionHandlerInterface;
+use Doctrine\ORM\ORMException;
+use InvalidArgumentException;
+use Webmozart\Assert\Assert;
+use Zend\Mvc\Controller\Plugin\Url;
 
 class ListeDiffusionService extends BaseService
 {
     use IndividuServiceAwareTrait;
 
     /**
-     * @var ListeDiffusionPluginInterface[]
+     * @var ListeDiffusionHandlerInterface[]
      */
-    protected $listeDiffusionServicePlugins = [];
+    protected $availableHandlers = [];
 
     /**
-     * @var ListeDiffusionPluginInterface
+     * @var ListeDiffusionHandlerInterface
      */
-    protected $listeDiffusionServicePluginForListe;
+    protected $handler;
 
     /**
      * @var string[]
@@ -39,17 +47,17 @@ class ListeDiffusionService extends BaseService
      * - 'doctorants' est la "cible" ;
      * - 'insa' est le source_code unique de l'établissement en minuscules.
      *
-     * @var string
+     * @var ListeDiffusion
      */
     protected $liste;
 
     /**
-     * @param ListeDiffusionPluginInterface[] $listeDiffusionServicePlugins
+     * @param ListeDiffusionHandlerInterface[] $handlers
      * @return self
      */
-    public function setListeDiffusionServicePlugins(array $listeDiffusionServicePlugins)
+    public function setAvailableHandlers(array $handlers)
     {
-        $this->listeDiffusionServicePlugins = $listeDiffusionServicePlugins;
+        $this->availableHandlers = $handlers;
 
         return $this;
     }
@@ -59,7 +67,7 @@ class ListeDiffusionService extends BaseService
      */
     public function getRepository()
     {
-        throw new LogicException("Non pertinent !");
+        return $this->entityManager->getRepository(ListeDiffusion::class);
     }
 
     /**
@@ -74,10 +82,10 @@ class ListeDiffusionService extends BaseService
     }
 
     /**
-     * @param string $liste
+     * @param ListeDiffusion $liste
      * @return self
      */
-    public function setListe($liste)
+    public function setListe(ListeDiffusion $liste)
     {
         $this->liste = $liste;
 
@@ -85,42 +93,73 @@ class ListeDiffusionService extends BaseService
     }
 
     /**
-     * @return ListeDiffusionPluginInterface|null
+     * @return string
      */
-    protected function getListeDiffusionServicePluginForListe()
+    public function getEmailDomain()
     {
-        if ($this->listeDiffusionServicePluginForListe === null) {
-            foreach ($this->listeDiffusionServicePlugins as $plugin) {
-                $plugin->setListe($this->liste);
-                if ($plugin->canHandleListe()) {
-                    $this->listeDiffusionServicePluginForListe = $plugin;
-                    break;
-                }
-            }
-            if ($this->listeDiffusionServicePluginForListe === null) {
-                throw new \InvalidArgumentException("Oups, aucun plugin compétent trouvé !");
+        return $this->config['email_domain'];
+    }
+
+    /**
+     * @return string
+     */
+    public function getUrlSympa()
+    {
+        return $this->config['sympa']['url'];
+    }
+
+    /**
+     * @param ListeDiffusion $listeDiffusion
+     * @return ListeDiffusionHandlerInterface
+     */
+    private function pickHandlerForListe(ListeDiffusion $listeDiffusion)
+    {
+        foreach ($this->availableHandlers as $handler) {
+            $handler->setListeDiffusion($listeDiffusion);
+            if ($handler->canHandleListeDiffusion()) {
+                return $handler;
             }
         }
-
-        return $this->listeDiffusionServicePluginForListe;
+        throw new InvalidArgumentException("Oups, aucun handler compétent trouvé !");
     }
 
     /**
-     * @return string[]
+     * @return ListeDiffusion[]
      */
-    public function fetchListesDiffusion()
+    public function fetchListesDiffusionActives()
     {
-        return (array) $this->config['listes'] ?? [];
+        return $this->getRepository()->findAll();
     }
 
     /**
-     *
+     * Initialisation ind
      */
     public function init()
     {
-        $listeDiffusionServicePluginForListe = $this->getListeDiffusionServicePluginForListe();
-        $listeDiffusionServicePluginForListe->setListe($this->liste);
-        $listeDiffusionServicePluginForListe->init();
+        Assert::notNull($this->liste, "La liste cible doit être spécifiée avant d'appeler " . __METHOD__);
+        $this->handler = $this->pickHandlerForListe($this->liste);
+        $this->handler->init();
+    }
+
+    /**
+     * @param EcoleDoctorale|null $ed
+     * @param Role|null $role
+     * @param Structure|null $etablissement
+     * @return ListeDiffusionAddressGenerator
+     */
+    public function createNameGenerator(EcoleDoctorale $ed = null, Role $role = null, Structure $etablissement = null)
+    {
+        $ng = new ListeDiffusionAddressGenerator();
+        $ng->setEcoleDoctorale($ed);
+        $ng->setRole($role);
+        $ng->setEtablissementAsStructure($etablissement);
+
+        return $ng;
+    }
+
+    private function checkHandler()
+    {
+        Assert::notNull($this->handler, "Aucun handler courant, avez-vous appelé init() auparavant ?");
     }
 
     /**
@@ -130,7 +169,9 @@ class ListeDiffusionService extends BaseService
      */
     public function createMemberIncludeFileContent()
     {
-        return $this->getListeDiffusionServicePluginForListe()->createMemberIncludeFileContent();
+        $this->checkHandler();
+
+        return $this->handler->createMemberIncludeFileContent();
     }
 
     /**
@@ -140,7 +181,9 @@ class ListeDiffusionService extends BaseService
      */
     public function createOwnerIncludeFileContent()
     {
-        return $this->getListeDiffusionServicePluginForListe()->createOwnerIncludeFileContent();
+        $this->checkHandler();
+
+        return $this->handler->createOwnerIncludeFileContent();
     }
 
     /**
@@ -148,7 +191,9 @@ class ListeDiffusionService extends BaseService
      */
     public function getIndividusAvecAdresse()
     {
-        return $this->getListeDiffusionServicePluginForListe()->getIndividusAvecAdresse();
+        $this->checkHandler();
+
+        return $this->handler->getIndividusAvecAdresse();
     }
 
     /**
@@ -156,17 +201,117 @@ class ListeDiffusionService extends BaseService
      */
     public function getIndividusSansAdresse()
     {
-        return $this->getListeDiffusionServicePluginForListe()->getIndividusSansAdresse();
+        $this->checkHandler();
+
+        return $this->handler->getIndividusSansAdresse();
     }
 
     /**
      * @param string $prefix
      * @return string
      */
-    public function generateResultFileName($prefix)
+    public function generateResultFileName(string $prefix)
     {
-        return sprintf('%sinclude.inc',
-            $prefix
-        );
+        $this->checkHandler();
+
+        return $this->handler->generateResultFileName($prefix);
+    }
+
+    /**
+     * @param string $adresse
+     * @return ListeDiffusion|null
+     */
+    public function findListeDiffusionByAdresse(string $adresse)
+    {
+        /** @var ListeDiffusion $liste */
+        $liste = $this->getRepository()->findOneBy(['adresse' => $adresse]);
+
+        return $liste;
+    }
+
+    /**
+     * @param string[] $adresses
+     * @return int
+     */
+    public function deleteListesDiffusions(array $adresses)
+    {
+        /** @var ListeDiffusion $liste */
+        $qb = $this->getRepository()->createQueryBuilder('ld');
+        $qb
+            ->delete(null, 'ld')
+            ->where($qb->expr()->in('ld.adresse', $adresses));
+
+        return $qb->getQuery()->execute();
+    }
+
+    /**
+     * @param array $data
+     * @return ListeDiffusion
+     */
+    public function createListeDiffusion(array $data)
+    {
+        $adresse = $data['adresse'];
+        $enabled = $data['enabled']  ?? true;
+
+        $liste = new ListeDiffusion();
+        $liste
+            ->setAdresse($adresse)
+            ->setEnabled($enabled);
+
+        return $liste;
+    }
+
+    /**
+     * @param ListeDiffusion $listeDiffusion
+     * @param array $data
+     */
+    public function updateListeDiffusion(ListeDiffusion $listeDiffusion, array $data)
+    {
+        $adresse = $data['adresse'];
+        $enabled = $data['enabled']  ?? true;
+
+        $listeDiffusion
+            ->setAdresse($adresse)
+            ->setEnabled($enabled);
+    }
+
+    /**
+     * @param ListeDiffusion[] $listes
+     * @throws ORMException
+     */
+    public function saveListesDiffusions(array $listes)
+    {
+        foreach ($listes as $liste) {
+            if ($liste->getId() === null) {
+                $this->entityManager->persist($liste);
+            }
+        }
+        $this->entityManager->flush($listes);
+    }
+
+    /**
+     * @param Url $urlPlugin
+     * @return array
+     */
+    public function createDataForCsvExport(Url $urlPlugin)
+    {
+        $data = [];
+        $data[] = [
+            "Liste",
+            "URL Membres",
+            "URL Propriétaires",
+        ];
+        $listesDiffusionActives = $this->fetchListesDiffusionActives();
+        foreach ($listesDiffusionActives as $listeDiffusion) {
+            $data[] = [
+                $listeDiffusion->getAdresse(),
+                $urlPlugin->fromRoute('liste-diffusion/liste/generate-member-include',
+                    ['adresse' => $listeDiffusion->getAdresse()], ['force_canonical' => true]),
+                $urlPlugin->fromRoute('liste-diffusion/liste/generate-owner-include',
+                    ['adresse' => $listeDiffusion->getAdresse()], ['force_canonical' => true]) ,
+            ];
+        }
+
+        return $data;
     }
 }
