@@ -96,9 +96,9 @@ class IdentityProvider implements ProviderInterface, ChainableProvider
 
         $this->roles = array_merge(
             [$roleAuthentifie],
-//            $this->getRolesFromActeur(),
+            $this->getRolesFromActeur(),
             $this->getRolesFromIndividuRole(),
-//            $this->getRolesFromDoctorant()
+            $this->getRolesFromDoctorant()
         );
 
 // Lignes mises en commentaire car revient à considérer le rôle "BdD UCN" identique au rôle "BdD URN" !
