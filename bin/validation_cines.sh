@@ -8,9 +8,6 @@
 #   2/ l'URL du web service, FACULTATIF ("https://facile.cines.fr/xml", par défaut).
 ##########################################################################################
 
-export http_proxy=proxy.unicaen.fr:3128
-export https_proxy=proxy.unicaen.fr:3128
-
 DEFAULT_URL="https://facile.cines.fr/xml"
 
 ARGS=`getopt -o "f:u:m:" -l "file:,url:,maxtime:" -n "getopt.sh" -- "$@"`
