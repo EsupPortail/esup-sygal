@@ -10,7 +10,7 @@ return [
         'import_observ_result_entity_class' => ImportObservResult::class,
 
         'connections' => [
-            // Cf. `./unicaen-db-import.local.php`
+            // Cf. config locale
         ],
 
         //
