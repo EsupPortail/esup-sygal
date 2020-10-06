@@ -5,6 +5,7 @@ Journal des modifications
 ------------------
 
 - Passage à Zend Framework 3 et PHP 7.3 (gain de performances).
+- Utilisation d'un nouveau package unicaen/db-import pour la synchro.
 - Listes de diffusion Sympa : page d'activation/désactivation des listes pour lesquelles SyGAL peut fournir
   les abonnés et les proopriétaires via une URL. 
 - Nouveau rôle 'Authentifié(e)' permettant d'ajuster les privilèges d'un simple utilisateur authentifié.
