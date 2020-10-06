@@ -46,45 +46,7 @@ return [
         // Imports.
         //
         'imports' => [
-            [
-                //
-                // Nom unique de l'import.
-                //
-                'name' => "IMPORT_PAYS",
-                //
-                // Configuration de la source de données à importer :
-                // - 'name'               : nom unique de la source
-                // - 'connection'         : identifiant de la connexion à la bdd source (cf. clé 'connections' plus haut)
-                // - 'table'              : nom de la table source contenant les données à importer
-                // - 'select'             : select SQL de mise en forme des données source à importer (NB: antinomique avec 'table')
-                // - 'source_code_column' : nom de la colonne dans la table/vue source contenant l'identifiant unique
-                //
-                'source' => [
-                    'name'               => 'UCN::apogee',
-                    'select'             => "select CODE_PAYS, LIBELLE_COURT, LIBELLE_LONG, CODE_ISO2, CODE_ISO3, CODE_ISO_NUM, DATE_OUVERTURE, DATE_FERMETURE FROM PAYS",
-                    'connection'         => 'octopus',
-                    'source_code_column' => 'CODE_PAYS',
-                ],
-                //
-                // Configuration de la destination des données importées :
-                // - 'name'               : nom unique de la destination
-                // - 'connection'         : identifiant de la connexion à la bdd destination (cf. clé 'connections' plus haut)
-                // - 'table'              : nom de la table destination vers laquelle les données sont importées
-                // - 'source_code_column' : nom de la colonne dans la table destination contenant l'identifiant unique
-                //
-                'destination' => [
-                    'name'               => 'app',
-                    'table'              => 'TMP_PAYS',
-                    'connection'         => 'default',
-                    'source_code_column' => 'CODE_PAYS',
-                    //
-                    // Forçage éventuel du nom de la séquence permettant de générer les valeurs dans la colonne ID (clé primaire).
-                    // En l'absence de forçage, aucune séquence ne sera utilisée et la colonne devra avoir un type auto-incrémenté
-                    // pour que l'insertion de données fonctionne.
-                    //
-                    'id_sequence' => false,
-                ],
-            ],
+
         ],
 
         //
