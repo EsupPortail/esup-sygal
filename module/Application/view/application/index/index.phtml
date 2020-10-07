@@ -3,10 +3,13 @@
  * @var PhpRenderer $this
  * @var Role        $role Rôle courant
  * @var bool        $estDoctorant
+ * @var array       $offre
+ * @var Information[]       $informations
  */
 
 use Application\Entity\Db\Role;
 use Application\View\Renderer\PhpRenderer;
+use Information\Entity\Db\Information;
 
 $appName = $this->appInfos()->nom;
 $subtitle = $this->appInfos()->desc;
@@ -22,18 +25,21 @@ echo $this->messenger()
 <div class="row">
 
     <div id="sidebar" class="col-xs-12 col-md-2" role="navigation">
-<!--        <div class="menu-information-header">-->
-<!--            <ul class="nav nav-pills nav-stacked"><li>Informations générales</li></ul>-->
-<!--        </div>-->
             <?php
-               echo $this->navigation()->menu('Zend\Navigation\Information')
-                  ->setUlClass('nav nav-pills nav-stacked menu-information')
-                  ->setMinDepth(1)
-                  ->setMaxDepth(1)
-                  ->render();
+//               echo $this->navigation()->menu('Zend\Navigation\Information')
+//                  ->setUlClass('nav nav-pills nav-stacked menu-information')
+//                  ->setMinDepth(1)
+//                  ->setMaxDepth(1)
+//                  ->render();
             ?>
 
+            <?php echo $this->partial('application/index/partial/informations', ['informations' => $informations]) ?>
+
             <?php echo $this->partial('application/index/partial/actualites') ?>
+
+            <?php if($offre) : ?>
+                <?php echo $this->partial('application/index/partial/sujet-de-these', ['offre' => $offre]) ?>
+            <?php endif; ?>
     </div>
 
     <div id="content" class="jumbotron col-xs-12 col-md-10">

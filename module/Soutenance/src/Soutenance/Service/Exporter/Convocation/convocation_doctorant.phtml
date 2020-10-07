@@ -1,0 +1,149 @@
+<?php
+
+use Application\Entity\Db\Acteur;
+use Application\Entity\Db\These;
+use Application\Entity\Db\Validation;
+use Application\Service\FichierThese\PdcData;
+use Application\View\Renderer\PhpRenderer;
+use Soutenance\Entity\Proposition;
+
+/**
+ * @var PhpRenderer             $this
+ * @var Proposition $proposition
+ * @var Validation[] $validations
+ * @var Validation $validation
+ * @var array $logos
+ * @var int $nbCodirecteur
+ * @var PdcData                 $informations
+ * @var These $these
+ * @var DateTime $date
+ * @var string $ville
+ * @see
+ */
+
+$date = new DateTime();
+
+$civilite = ($these->getDoctorant()->getIndividu()->getCivilite() === 'M.')?"Monsieur":"Madame";
+
+?>
+
+<style>
+    .not-yet {
+        background-color: lightpink;
+        color: darkred;
+    }
+
+</style>
+
+<div style="width:25%; float:left; position:absolute; top: 20px; left: 20px">
+    <?php if ($informations->getLogoCOMUE() !== null): ?>
+        <img src="<?php echo $informations->getLogoCOMUE() ?>" />
+    <?php else : ?>
+        <span style='background-color:red;'>
+                Logo COMUE manquant
+            </span>
+    <?php endif; ?>
+</div>
+<div style="width:25%; float:right; position:absolute; top: 20px; right: 20px ">
+    <?php if ($informations->getLogoEtablissement() !== null): ?>
+        <img src="<?php echo $informations->getLogoEtablissement() ?>" />
+    <?php else : ?>
+        <span style='background-color:red;'>
+                Logo ETAB manquant
+        </span>
+    <?php endif; ?>
+</div>
+
+<br/>
+<br/>
+<br/>
+<br/>
+
+<table>
+    <tr>
+        <td width="80%"></td>
+        <td>
+            À <?php echo $ville; ?>, le <?php echo $date->format('d/m/Y'); ?>
+            <br/>
+            <br/>
+        </td>
+    </tr>
+</table>
+
+<br/>
+<br/>
+<br/>
+<br/>
+
+<p>
+    <?php echo $civilite ?> <?php echo $these->getDoctorant()->getNomComplet(); ?>, <br/>
+</p>
+
+    Par décision en date du
+    <?php if ($date): ?>
+        <?php echo $date->format('d/m/Y'); ?>,
+    <?php else: ?>
+        <span style='background-color:red;'>
+                Date manquante
+        </span>
+    <?php endif; ?>
+    vous avez été autorisé<?php if($civilite==="Madame") echo "e"; ?> à présenter en soutenance
+    vos travaux en vue de l'obtention du diplôme : <br/>
+    Doctorat en <?php echo $these->getLibelleDiscipline(); ?>.
+</p>
+
+<p>
+    La soutenance aura lieu le
+    <?php if ($informations->getDate() !== null): ?>
+        <?php echo $informations->getDate(); ?>
+    <?php else : ?>
+        <span style='background-color:red;'>
+                Date manquante,
+        </span>
+    <?php endif; ?> à l'adresse suivante : <br/>
+    <?php if ($proposition->getAdresse() !== null): ?>
+        <?php echo $proposition->getAdresse(); ?>
+    <?php else : ?>
+        <span style='background-color:red;'>
+                    Adresse manquante
+            </span>
+        <br/>
+    <?php endif; ?>
+</p>
+
+<p>
+    La soutenance <?php if ($proposition && $proposition->isHuitClos() !== null): ?>
+        <?php if ($proposition->isHuitClos()) : ?>
+            se déroulera en huis clos.
+        <?php else : ?>
+            sera publique.
+        <?php endif ; ?>
+    <?php else: ?>
+        <span style='background-color:red;'> information sur l'aspect public manquante </span>
+    <?php endif; ?>
+</p>
+
+<p>
+    Je vous prie d'agréer, <?php echo $civilite; ?>, l'expression de mes salutations distinguées.
+</p>
+
+<br/>
+<br/>
+<br/>
+<br/>
+
+<table>
+    <tr>
+        <td width="70%"></td>
+        <td>
+            À <?php echo $ville; ?>, le <?php echo $date->format('d/m/Y'); ?>
+            <br/>
+            <br/>
+            Visa de l'établissement d'inscription du doctorant,<br/>
+            <?php echo $these->getEtablissement()->getLibelle(); ?>
+        </td>
+    </tr>
+</table>
+
+
+

@@ -794,3 +794,38 @@ span.sas-highlight {
 }
 
 /*# sourceMappingURL=app.css.map */
+
+/********** SOUTENANCE ****************/
+
+span.badge.EN_COURS {
+  background-color: darkorange;
+}
+
+span.badge.VALIDEE {
+  background-color: darkgreen;
+}
+
+span.badge.REJETEE {
+  background-color: darkred;
+}
+
+a.action {
+  padding:0.5rem;
+  margin:0.40rem;
+  width: 20em;
+}
+
+.badge-success {
+  background-color: #468847;
+}
+
+.badge-error {
+  background-color: #881f18;
+}
+
+
+div.alert-warning {
+  background-color: #faebcc;
+  color: #8a6d3b;
+  border-color: #8a6d3b;
+}

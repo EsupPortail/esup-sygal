@@ -5,6 +5,7 @@ use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\View\Renderer\PhpRenderer;
+use UnicaenApp\View\Helper\Messenger;
 
 /**
  * @var                 $this PhpRenderer
@@ -67,6 +68,10 @@ $rdvBu = $these->getRdvBu();
                 <dt>Disponibilités :</dt>
                 <dd><?php echo $this->escapeText()->render($rdvBu->getDispoDoctorant()) ?: "(Non renseignées)" ?></dd>
             </dl>
+            <?php if (! $validation): ?>
+                <?php echo $this->messenger()->setMessage(
+                    "Votre dépôt est terminé, la BU va prendre contact avec vous pour finaliser la procédure.", Messenger::INFO) ?>
+            <?php endif ?>
         <?php endif ?>
         <?php if ($canEdit): ?>
             <?php if ($rdvBu): ?>

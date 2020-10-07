@@ -1,0 +1,35 @@
+<?php
+
+use Application\Entity\Db\These;
+use Soutenance\Entity\Membre;
+use Soutenance\Entity\Proposition;
+
+/**
+ * @see \Soutenance\Service\Notifier\NotifierSoutenanceService::triggerSignatureEngagementImpartialite()
+ * @var These $these
+ * @var Proposition $proposition
+ * @var Membre $membre
+ */
+
+$justification = true;
+?>
+
+<p>
+    Bonjour,
+</p>
+<p>
+    <strong><?php echo $membre->getIndividu(); ?></strong> vient de signer l'engagement d'impartialité de la thèse de
+    <strong><?php echo $these->getDoctorant()->getNomComplet(); ?></strong> intitulée
+    <strong><?php echo $these->getTitre(); ?></strong>.
+</p>
+
+<?php if ($justification) : ?>
+    <p>
+        Vous avez reçu ce mail car :
+    <ol>
+        <li> le rapporteur <?php echo $membre->getIndividu()->getNomComplet() ?> vient de signer l'engagement d'impartialité;  </li>
+        <li> vous êtes un gestionnaire de la maison du doctorat de l'établissement d'inscription du doctorant . </li>
+    </ol>
+    </p>
+<?php endif; ?>
+

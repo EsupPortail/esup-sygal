@@ -3,9 +3,12 @@
 namespace Application\Controller;
 
 use Application\Entity\Db\Variable;
+use Application\Service\Actualite\ActualiteServiceAwareTrait;
+use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
+use Information\Service\InformationServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\Http\Response;
@@ -15,8 +18,11 @@ use Zend\View\Model\ViewModel;
 class IndexController extends AbstractController
 {
     use VariableServiceAwareTrait;
+    use EcoleDoctoraleServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use TheseServiceAwareTrait;
+    use ActualiteServiceAwareTrait;
+    use InformationServiceAwareTrait;
 
     /**
      * @var AuthenticationServiceInterface
@@ -42,7 +48,6 @@ class IndexController extends AbstractController
                 print $value;
                 print "<br/>";
             }
-
         }
     }
 
@@ -67,6 +72,9 @@ class IndexController extends AbstractController
         $vm = new ViewModel([
             'role' => $this->userContextService->getSelectedIdentityRole(),
             'estDoctorant' => (bool) $this->userContextService->getIdentityDoctorant(),
+            'url' => $this->actualiteService->isActif() ? $this->actualiteService->getUrl() : null,
+            'offre' => $this->actualiteService->isOffre() ? $this->getEcoleDoctoraleService()->getOffre() : null,
+            'informations' => $this->informationService->getInformations(true),
         ]);
 
         if ($response instanceof ViewModel) {

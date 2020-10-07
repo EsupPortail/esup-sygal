@@ -34,9 +34,10 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
     /**
      * @var string $adresse
      * @var string $telephone
-     * @var string $fax
-     * @var string $email
-     * @var string $siteWeb
+     * @var string $fax
+     * @var string $email
+     * @var string $siteWeb
+     * @var string $idRef
      */
 
     protected $adresse;
@@ -44,6 +45,7 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
     protected $fax;
     protected $email;
     protected $siteWeb;
+    protected $idRef;
 
     /**
      * @var string
@@ -463,4 +465,21 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
         $this->siteWeb = $siteWeb;
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getIdRef()
+    {
+        return $this->idRef;
+    }
+
+    /**
+     * @param mixed $idRef
+     */
+    public function setIdRef($idRef)
+    {
+        $this->idRef = $idRef;
+    }
+
 }

@@ -473,6 +473,10 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     {
         $token = $this->params()->fromRoute('token');
         $utilisateur = $this->utilisateurService->getRepository()->findByToken($token);
+        if ($utilisateur === null) {
+            return new ViewModel([
+            ]);
+        }
 
         /** @var InitCompteForm $form */
         $form = $this->getInitCompteForm();
@@ -494,6 +498,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
 
         return new ViewModel([
             'form' => $form,
+            'utilisateur' => $utilisateur,
         ]);
     }
 

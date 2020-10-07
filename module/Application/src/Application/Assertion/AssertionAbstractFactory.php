@@ -95,6 +95,7 @@ class AssertionAbstractFactory implements AbstractFactoryInterface
         $baseAssertion->setPageAssertion($pageAssertion);
         $baseAssertion->setMvcEvent($mvcEvent);
         $baseAssertion->setServiceMessageCollector($messageCollector);
+        $baseAssertion->setServiceAuthorize($authorizeService);
 
 //        $logger = new Logger();
 //        $logger->addWriter(new \Zend\Log\Writer\Stream('/tmp/TheseEntityAssertion.log'));

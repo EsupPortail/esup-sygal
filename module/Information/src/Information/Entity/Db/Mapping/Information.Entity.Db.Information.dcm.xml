@@ -12,6 +12,12 @@
         <field name="priorite"  column="PRIORITE"       type="integer"                  nullable="false"/>
         <field name="visible"   column="EST_VISIBLE"    type="boolean"                  nullable="false"/>
 
+        <many-to-one field="langue" target-entity="Information\Entity\Db\InformationLangue">
+            <join-columns>
+                <join-column name="LANGUE_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
         <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
         <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
         <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>

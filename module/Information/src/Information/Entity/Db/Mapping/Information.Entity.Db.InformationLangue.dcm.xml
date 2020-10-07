@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="Information\Entity\Db\InformationLangue" table="INFORMATION_LANGUE">
+
+
+        <id name="id" type="string" length="64" column="ID">
+        </id>
+
+        <field name="libelle"     column="LIBELLE"          type="string"   length="256"       nullable="false"/>
+        <field name="drapeau"     column="DRAPEAU"          type="string"   length="1000000"   nullable="false"/>
+
+    </entity>
+</doctrine-mapping>

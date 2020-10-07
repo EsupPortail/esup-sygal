@@ -22,7 +22,7 @@
         "unicaen/app":                   "^3.0",
         "unicaen/auth":                  "^3.0",
         "unicaen/bjy-authorize":         "^3.0",
-        "unicaen/db-import":             "dev-oracle_support",
+        "unicaen/db-import":             "dev-master",
         "unicaen/faq":                   "^3.0",
         "unicaen/ldap":                  "^3.0",
         "unicaen/oracle":                "^3.0",
@@ -51,6 +51,7 @@
     },
     "scripts": {
         "post-install-cmd": [
+            "cp -r vendor/unicaen/app/public/unicaen public/",
             "mkdir -p vendor/mpdf/mpdf/ttfontdata && chmod -R 777 vendor/mpdf/mpdf/ttfontdata",
             "mkdir -p data/cache && chmod -R 777 data/cache && rm -rf data/cache/*",
             "mkdir -p data/DoctrineModule/cache && chmod -R 777 data/DoctrineModule/cache && rm -rf data/DoctrineModule/cache/*",

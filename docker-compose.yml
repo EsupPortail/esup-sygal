@@ -7,13 +7,31 @@ services:
       args:
         PHP_VERSION: 7.3
       context: .
+    environment:
+      - http_proxy
+      - https_proxy
+      - no_proxy
     ports:
-     - "8000:80"
-     - "443:443"
+     - "8003:443"
     volumes:
      - .:/app
      - /tmp:/tmp
      - $HOME/.ssh:/root/.ssh
+    working_dir: /app
+    network_mode: bridge
+
+  sygal-zf2:
+    container_name: sygal-zf2-container
+    build:
+      args:
+        PHP_VERSION: 7.0
+      context: .
+    ports:
+      - "8002:443"
+    volumes:
+      - .:/app
+      - /tmp:/tmp
+      - $HOME/.ssh:/root/.ssh
     working_dir: /app
     network_mode: bridge
 
