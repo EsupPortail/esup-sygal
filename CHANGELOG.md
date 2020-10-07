@@ -8,7 +8,11 @@ Journal des modifications
 - Utilisation d'un nouveau package unicaen/db-import pour la synchro.
 - Listes de diffusion Sympa : page d'activation/désactivation des listes pour lesquelles SyGAL peut fournir
   les abonnés et les proopriétaires via une URL. 
-- Nouveau rôle 'Authentifié(e)' permettant d'ajuster les privilèges d'un simple utilisateur authentifié.
+- Nouveau rôle 'Authentifié(e)' permettant d'ajuster les privilèges d'un simple utilisateur authentifié. 
+- Ajout des champs Thèmes et Lien pour les offres de thèses des ED
+- Ajout du menu secondaire offre de thèse
+- Refonte de la gestion du menu secondaire principal pour tenir compte correctement de l'affichage
+- Ajout de la gestion multilingue du menu secondaire principal
 
 1.4.9 (08/09/2020)
 ------------------

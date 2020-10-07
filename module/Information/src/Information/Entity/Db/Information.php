@@ -28,6 +28,8 @@ class Information implements HistoriqueAwareInterface
     private $priorite;
     /** @var boolean */
     private $visible;
+    /** @var InformationLangue */
+    private $langue;
 
     /**
      * @return int
@@ -118,6 +120,23 @@ class Information implements HistoriqueAwareInterface
         $this->visible = $visible;
         return $this;
     }
+
+    /**
+     * @return InformationLangue
+     */
+    public function getLangue(): InformationLangue
+    {
+        return $this->langue;
+    }
+
+    /**
+     * @param InformationLangue $langue
+     */
+    public function setLangue(InformationLangue $langue): void
+    {
+        $this->langue = $langue;
+    }
+
 
 
 }
