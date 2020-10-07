@@ -32,6 +32,15 @@ class EcoleDoctorale implements StructureConcreteInterface, HistoriqueAwareInter
     protected $structure;
 
     /**
+     * @var string
+     */
+    protected $theme;
+
+    /**
+     * @var string
+     */
+    protected $offreThese;
+    /**
      * EcoleDoctorale constructor.
      */
     public function __construct()
@@ -164,4 +173,42 @@ class EcoleDoctorale implements StructureConcreteInterface, HistoriqueAwareInter
     {
         return $this->structure;
     }
+
+    /**
+     * @return string
+     */
+    public function getTheme()
+    {
+        return $this->theme;
+    }
+
+    /**
+     * @param string $theme
+     * @return EcoleDoctorale
+     */
+    public function setTheme($theme)
+    {
+        $this->theme = $theme;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOffreThese()
+    {
+        return $this->offreThese;
+    }
+
+    /**
+     * @param string $offreThese
+     * @return EcoleDoctorale
+     */
+    public function setOffreThese($offreThese)
+    {
+        $this->offreThese = $offreThese;
+        return $this;
+    }
+
+
 }

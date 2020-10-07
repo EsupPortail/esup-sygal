@@ -1,0 +1,106 @@
+<?php
+
+/**
+ * @see \Soutenance\Controller\IndexController::indexStructureAction()
+ * @var Proposition[] $propositions
+ * @var Role $role
+ */
+
+use Application\Entity\Db\Role;
+use Application\Provider\Privilege\ThesePrivileges;
+use Soutenance\Entity\Proposition;
+
+$canVoirThese = $this->isAllowed(ThesePrivileges::getResourceId(ThesePrivileges::THESE_CONSULTATION_FICHE));
+$canSuppression = ($role->getCode() === Role::CODE_ADMIN_TECH);
+?>
+
+<h1 class="page-header">
+    Index des propositions en cours
+    <span class="badge">
+        <?php echo count($propositions); ?>
+    </span>
+</h1>
+
+<table class="table table-condensed">
+    <thead>
+        <tr>
+            <th class="title-column">
+                These
+            </th>
+            <th>
+                Doctorant
+            </th>
+            <th>
+                Direction
+            </th>
+            <th>
+                État
+            </th>
+            <th>
+                Actions
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($propositions as $proposition) : ?>
+            <tr>
+                <td>
+                    <?php if ($canVoirThese) : ?>
+                        <a  <?php /** @see \Application\Controller\TheseController::detailIdentiteAction() */ ?>
+                            href="<?php echo $this->url('these/identite', ['these' => $proposition->getThese()->getId()], [] ,true); ?>">
+                    <?php endif; ?>
+                        <?php echo $proposition->getThese()->getTitre(); ?>
+                    <?php if ($canVoirThese) : ?>
+                        </a>
+                    <?php endif; ?>
+                </td>
+                <td> <?php echo $proposition->getThese()->getDoctorant()->getIndividu(); ?> </td>
+                <td>
+                    <?php foreach ($proposition->getThese()->getEncadrements() as $encadrement) : ?>
+                        <?php if ($encadrement->getRole()->getCode() !== Role::CODE_DIRECTEUR_THESE) echo "<i>"; ?>
+                        <?php echo $encadrement->getIndividu() ; ?>
+                        <?php if ($encadrement->getRole()->getCode() !== Role::CODE_DIRECTEUR_THESE) echo "</i>"; ?>
+                        <br/>
+                    <?php endforeach; ?>
+                </td>
+                <td>
+                    <span class="badge <?php echo $proposition->getEtat()->getCode(); ?>">
+                        <?php echo $proposition->getEtat()->getLibelle(); ?>
+                    </span>
+                </td>
+                <td>
+                    <a
+                        <?php /** @see \Soutenance\Controller\PropositionController::propositionAction() */ ?>
+                        href="<?php echo $this->url('soutenance/proposition', ['these' => $proposition->getThese()->getId()], [], true); ?>"
+                       title="Visualiser la proposition de soutenance"
+                    >
+                        Proposition
+                    </a>
+                    <br/>
+                    <a
+                        <?php /** @see \Soutenance\Controller\PresoutenanceController::presoutenanceAction() */ ?>
+                        href="<?php echo $this->url('soutenance/presoutenance', ['these' => $proposition->getThese()->getId()], [], true); ?>"
+                       title="Visualiser la préparation de la soutenance"
+                    >
+                        Présoutenance
+                    </a>
+                    <br/>
+                    <?php if ($canSuppression) : ?>
+                    <a
+                        <?php /** @see \Soutenance\Controller\PropositionController::suppressionAction() */ ?>
+                        href="<?php echo $this->url('soutenance/proposition/suppression', ['these' => $proposition->getThese()->getId()], [], true); ?>"
+                       title="">
+                        Suppression
+                    </a>
+                    <?php endif; ?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+
+<style>
+    th.title-column {
+        width:80rem;
+    }
+</style>

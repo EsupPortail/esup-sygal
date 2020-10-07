@@ -1,0 +1,45 @@
+<?php
+
+/**
+ * @see \Soutenance\Controller\ConfigurationController::indexAction()
+ *
+ * @var ConfigurationForm $form
+ */
+
+use Soutenance\Entity\Parametre;
+use Soutenance\Form\Configuration\ConfigurationForm;
+
+?>
+
+<h1 class="page-header">
+    Configuration du module de soutenance
+</h1>
+
+<?php echo $this->form()->openTag($form) ?>
+<div class="row">
+<div class="col-md-6">
+    <h2>Composition du jury</h2>
+    <?php echo $this->formControlGroup($form->get(Parametre::CODE_JURY_SIZE_MIN)); ?>
+    <?php echo $this->formControlGroup($form->get(Parametre::CODE_JURY_SIZE_MAX)); ?>
+    <?php echo $this->formControlGroup($form->get(Parametre::CODE_JURY_RAPPORTEUR_SIZE_MIN)); ?>
+    <?php echo $this->formControlGroup($form->get(Parametre::CODE_JURY_EXTERIEUR_RATIO_MIN)); ?>
+    <?php echo $this->formControlGroup($form->get(Parametre::CODE_JURY_RANGA_RATIO_MIN)); ?>
+    <?php echo $this->formControlGroup($form->get(Parametre::CODE_JURY_PARITE_RATIO_MIN)); ?>
+</div>
+<div class="col-md-6">
+    <h2>Formulaires associés à la soutenance</h2>
+    <?php echo $this->formControlGroup($form->get(Parametre::CODE_FORMULAIRE_DELOCALISATION)); ?>
+    <?php echo $this->formControlGroup($form->get(Parametre::CODE_FORMULAIRE_DELEGUATION)); ?>
+    <?php echo $this->formControlGroup($form->get(Parametre::CODE_FORMULAIRE_LABEL_EUROPEEN)); ?>
+    <?php echo $this->formControlGroup($form->get(Parametre::CODE_FORMULAIRE_THESE_ANGLAIS)); ?>
+    <?php echo $this->formControlGroup($form->get(Parametre::CODE_FORMULAIRE_CONFIDENTIALITE)); ?>
+</div>
+</div>
+<h2> Autres paramètres </h2>
+<?php echo $this->formControlGroup($form->get(Parametre::CODE_AVIS_DEADLINE)); ?>
+<?php echo $this->formControlGroup($form->get('submit')); ?>
+<?php echo $this->form()->closeTag(); ?>
+
+<?php
+//echo $this->form($form);
+?>

@@ -21,7 +21,9 @@ $liveSearch = isset($paramAttributes['liveSearch']) ? (bool)$paramAttributes['li
         class="filter selectpicker show-menu-arrow"
         name="<?php echo $paramName ?>"
         data-live-search="<?php echo $liveSearch ? 'true' : 'false' ?>"
-        data-width="<?php echo $width ?>">
+        data-width="<?php echo $width ?>"
+        data-html="true"
+>
 
 <?php foreach ($filter->getOptions() as $data): ?>
 
@@ -31,7 +33,11 @@ $liveSearch = isset($paramAttributes['liveSearch']) ? (bool)$paramAttributes['li
     $subtext = isset($data['subtext']) ? $data['subtext'] : '';
     $isActive = SelectsFilterPanelHelper::isSelectOptionActive($paramName, $value, $queryParams);
     ?>
-    <option value="<?php echo $value ?>" <?php echo $isActive ? 'selected' : '' ?> data-subtext="<?php echo $subtext ?>">
+    <option value="<?php echo $value ?>" <?php echo $isActive ? 'selected' : '' ?>
+            <?php if (strpos($subtext,'FERME',0) !== false) : ?>
+                style="background: #ea9e9e; "
+            <?php endif; ?>
+            data-subtext="<?php echo $subtext ?>">
         <?php echo $label ?>
     </option>
 

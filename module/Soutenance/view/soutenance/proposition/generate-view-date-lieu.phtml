@@ -1,0 +1,20 @@
+<?php
+
+use Soutenance\Entity\Proposition;
+
+/**
+ * @see \Soutenance\Controller\PropositionController::generateViewDateLieuAction()
+ *
+ * @var Proposition $proposition
+ * @var boolean $canModifier
+ * @var string $FORMULAIRE_DELOCALISATION
+ */
+
+?>
+
+<?php
+echo $this->partial('partial/date-et-lieu', [
+    'proposition' => $proposition,
+    'canModifier' => $canModifier,
+    'FORMULAIRE_DELOCALISATION' => $FORMULAIRE_DELOCALISATION]);
+?>

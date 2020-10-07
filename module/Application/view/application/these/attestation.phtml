@@ -15,12 +15,16 @@ use Application\View\Renderer\PhpRenderer;
  * @var Attestation          $attestation
  * @var AttestationTheseForm $form
  * @var string               $modifierAttestationUrl
+ * @var bool                 $resaisirAttestationsVersionCorrigee
  *
  * @see TheseController::attestationAction()
  */
 
 $privilege = ThesePrivileges::THESE_SAISIE_ATTESTATIONS_($version);
 $canEdit = $this->isAllowed($these, $privilege);
+if ($version->estVersionCorrigee() && ! $resaisirAttestationsVersionCorrigee) {
+    $canEdit = false;
+}
 ?>
 
 <div class="box panel panel-info">

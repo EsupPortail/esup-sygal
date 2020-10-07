@@ -1,0 +1,226 @@
+<?php
+
+/**
+ * @var Application\Entity\Db\These $these
+ * @var Application\Entity\Db\Validation $validationBDD
+ * @var Soutenance\Entity\Proposition $proposition
+ * @var Validation $validationPDC
+ * @var Validation[] $engagements
+ * @var Avis[] $avis
+ *
+ * @see Soutenance\Controller\PresoutenanceController::presoutenanceAction()
+ */
+
+use Application\Constants;
+use Application\Entity\Db\Validation;
+use Soutenance\Entity\Avis;
+use Soutenance\Entity\Etat;
+use Soutenance\Provider\Privilege\PresoutenancePrivileges;
+
+$tousLesAvis = count($rapporteurs) === count($avis) ;
+$canFeuVert = $this->isAllowed(PresoutenancePrivileges::getResourceId(PresoutenancePrivileges::PRESOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU));
+$this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->getIndividu());
+?>
+
+<h1 class="page-header">
+    Préparation de la soutenance
+    <small><?php echo $this->partial('application/these/partial/titre') ?></small>
+</h1>
+
+<?php
+    $messenger = $this->messenger();
+    echo $this->messenger()->addMessagesFromFlashMessenger();
+?>
+
+<?php if ($validationBDD) : ?>
+    <?php if ($proposition->getNouveauTitre() !== null) : ?>
+    <div class="box panel panel-warning">
+        <div class="panel-heading">
+            <h2>Changement de titre</h2>
+        </div>
+        <div class="panel-body">
+            <?php echo $proposition->getNouveauTitre(); ?>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- DATE DE RENDU DE RAPPORT ----------------------------------------------------------------------------------------->
+    <?php echo $this->partial('soutenance/presoutenance/partial/date-de-retour'); ?>
+
+    <!-- MEMBRES DU JURY ET PERSOPASS ------------------------------------------------------------------------------------->
+    <?php echo $this->partial('soutenance/presoutenance/partial/association-jury'); ?>
+
+    <!-- ENGAGEMENT IMPARTIALITE------------------------------------------------------------------------------------------->
+    <?php echo $this->partial('soutenance/presoutenance/partial/engagement-impartialite'); ?>
+
+    <div class="box panel panel-info">
+        <div class="panel-heading">
+            <h2>Validation de la page de couverture</h2>
+        </div>
+        <div class="panel-body">
+            <?php
+                $ok_rapporteurs = false;
+                $tousLesRapporteurs = true;
+                foreach ($rapporteurs as $rapporteur) {
+                    if ($rapporteur->getActeur() === null) {
+                        $tousLesRapporteurs = false;
+                        break;
+                    }
+            }
+            $tousLesEngagements = count($rapporteurs) === count($engagements) ;
+            ?>
+            <?php if ($tousLesEngagements) : ?>
+                <?php if (current($validationPDC) !== null AND current($validationPDC) !== false) : ?>
+                    La page de couverture a été validée le
+                    <?php echo current($validationPDC)->getHistoModification()->format(Constants::DATETIME_FORMAT); ?>
+                    par
+                    <?php echo current($validationPDC)->getHistoModificateur()->getDisplayName(); ?>.
+                <?php else : ?>
+                    <div class="row">
+                        <div class="col-md-8">
+                            Vous pouvez maintenant valider la page de couverture.
+                        </div>
+                        <div class="pull-right" style="margin-right: 2rem;">
+                            <a
+                                    <?php /** @see \Application\Controller\TheseController::validationPageDeCouvertureAction() */ ?>
+                                    href="<?php echo $this->url('these/validation-page-de-couverture', ['these' => $these->getId()], [], true); ?>" class="btn btn-primary">
+                                Accéder à la validation de la PDC
+                            </a>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            <?php else : ?>
+                    Tous les engagments d'impartialité n'ont pas encore été signés.
+            <?php endif; ?>
+        </div>
+    </div>
+    <!-- AVIS SOUTENANCE -------------------------------------------------------------------------------------------------->
+    <?php echo $this->partial('soutenance/presoutenance/partial/avis-soutenance'); ?>
+
+    <!-- FEU VERT --------------------------------------------------------------------------------------------------------->
+    <?php if($proposition->getEtat()->getCode() === Etat::EN_COURS) :?>
+            <?php if ($tousLesAvis) : ?>
+            <?php if ($canFeuVert) : ?>
+                <?php /** @see \Soutenance\Controller\PresoutenanceController::feuVertAction() */ ?>
+                <a href="<?php echo $this->url('soutenance/presoutenance/feu-vert', ['these' => $these->getId()], [], true); ?>"
+                    class="btn btn-success action"
+                >
+                    <span class="glyphicon glyphicon-thumbs-up"></span>
+                    Donner le feu vert
+                </a>
+            <?php endif; ?>
+        <?php else : ?>
+            <p class="lead">
+                Vous ne pouvez commencer les démarches de présouteances qu'une fois toutes les validations obtenues.
+            </p>
+        <?php endif; ?>
+
+        <?php if ($canFeuVert) : ?>
+            <?php /** @see \Soutenance\Controller\PresoutenanceController::stopperDemarcheAction() */ ?>
+            <a href="<?php echo $this->url('soutenance/presoutenance/stopper-demarche', ['these' => $these->getId()], [], true); ?>"
+               class="btn btn-danger action"
+            >
+                <span class="glyphicon glyphicon-thumbs-down"></span>
+                Stopper les démarches
+            </a>
+        <?php endif; ?>
+    <?php else :?>
+        <span style="font-size: 24pt">
+        <span class="badge <?php echo $proposition->getEtat()->getCode(); ?>" style="font-size: 24pt">
+            <?php echo $proposition->getEtat()->getLibelle(); ?>
+        </span>
+        </span>
+
+    <?php endif; ?>
+
+    <?php if ($proposition->getEtat()->getCode() === Etat::VALIDEE) : ?>
+
+    <br/><br/>
+
+    <div class="panel panel-info box">
+        <div class="panel-heading">
+            <h2>Génération des documents associés à la soutenance</h2>
+        </div>
+        <div class="panel-body">
+
+            <div class="row">
+            <div class="col-md-8">
+            <?php if ($proposition->getAdresse() === null) : ?>
+                        <p class="lead">
+                        L'adresse exacte de la soutenance est nécessaire pour la génération des documents.
+                        Veuillez renseigner celle-ci.
+                        </p>
+            <?php else : ?>
+                <p class="lead">Adresse exacte de la soutenance : </p>
+                <?php echo $proposition->getAdresse(); ?>
+            <?php endif; ?>
+            </div>
+
+            <div class="pull-right">
+                <br/>
+                <br/>
+                <a
+                        <?php /** @see \Soutenance\Controller\PresoutenanceController::modifierAdresseAction() */ ?>
+                        href="<?php echo $this->url('soutenance/presoutenance/modifier-adresse', ['these' => $these->getId()], [] ,true); ?>"
+                        class="btn btn-primary action ajax-modal" data-event="modification-adresse">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                    Modifier l'adresse
+                </a>
+            </div>
+            </div>
+
+                <br/><br/>
+
+            <p>
+                <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::procesVerbalSoutenanceAction() */ ?>
+                        href="<?php echo $this->url('soutenance/presoutenance/proces-verbal-soutenance', ['these' => $these->getId()], [], true); ?>"
+                        class="btn btn-primary action"
+                        target="_blank"
+                >
+                    <span class="glyphicon glyphicon-list-alt"></span>Générer le procès verbal
+                </a>
+
+                <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::avisSoutenanceAction() */ ?>
+                        href="<?php echo $this->url('soutenance/presoutenance/avis-soutenance', ['these' => $these->getId()], [], true); ?>"
+                        class="btn btn-primary action"
+                        target="_blank"
+                >
+                    <span class="glyphicon glyphicon-list-alt"></span>Générer l'avis de soutenance
+                </a>
+
+                <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::convocationsAction() */ ?>
+                        href="<?php echo $this->url('soutenance/presoutenance/convocations', ['these' => $these->getId()], [], true); ?>"
+                        class="btn btn-primary action"
+                        target="_blank"
+                >
+                    <span class="glyphicon glyphicon-list-alt"></span>Générer les convocations
+                </a>
+                <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::envoyerConvocationAction() */ ?>
+                        href="<?php echo $this->url('soutenance/presoutenance/envoyer-convocation', ['these' => $these->getId()], [], true); ?>"
+                        class="btn btn-info action"
+                >
+                    <span class="glyphicon glyphicon-send"></span>Envoyer les convocations
+                </a>
+            </p>
+        </div>
+    </div>
+    <?php endif; ?>
+
+<?php endif; ?>
+
+
+<script>
+    $(function() {
+        $("body").on("modification-date-rendu-rapport", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+
+    $(function() {
+        $("body").on("modification-adresse", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+</script>

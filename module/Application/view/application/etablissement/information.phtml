@@ -64,6 +64,14 @@ $canAddRole = true;
                 <dt> Adresse électronique : </dt>   <dd>    <?php echo $etablissement->getStructure()->getEmail() ?: "(Non renseignée)"; ?></dd>
                 <dt> Site internet : </dt>          <dd>    <?php echo $etablissement->getStructure()->getSiteWeb() ?: "(Non renseigné)"; ?></dd>
                 <dt> Code : </dt>                   <dd>    <?php echo $etablissement->getStructure()->getCode(); ?>        </dd>
+                <dt> Id REF: </dt>
+                <dd>
+                    <?php if ($etablissement->getStructure()->getIdRef() !== null AND trim($etablissement->getStructure()->getIdRef()) !== "") : ?>
+                        <?php echo $etablissement->getStructure()->getIdRef(); ?>
+                    <?php else : ?>
+                        (Non renseigné)
+                    <?php endif; ?>
+                </dd>
                 <dt> Domaine : </dt>                <dd>    <?php echo $etablissement->getDomaine() ?: "(Non renseigné)"; ?></dd>
             </dl>
         </div>

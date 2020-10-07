@@ -1209,6 +1209,7 @@ class TheseController extends AbstractController
             'form'                   => $this->getAttestationTheseForm($version), // les labels des cases à cocher sont affichés
             'modifierAttestationUrl' => $this->urlThese()->modifierAttestationUrl($these, $version),
             'hasFichierThese'        => $hasFichierThese,
+            'resaisirAttestationsVersionCorrigee' => $this->theseService->getResaisirAttestationsVersionCorrigee(),
         ]);
         $view->setTemplate('application/these/attestation');
 
@@ -1332,6 +1333,7 @@ class TheseController extends AbstractController
             'modifierDiffusionUrl'         => $this->urlThese()->modifierDiffusionUrl($these, $version),
             'exporterConventionMelUrl'     => $this->urlThese()->exporterConventionMiseEnLigneUrl($these, $version),
             'hasFichierThese'              => $hasFichierThese,
+            'resaisirAutorisationDiffusionVersionCorrigee' => $this->theseService->getResaisirAutorisationDiffusionVersionCorrigee(),
         ]);
         $view->setTemplate('application/these/diffusion');
 

@@ -16,6 +16,12 @@ class UtilisateurServiceFactory
      */
     public function __invoke(ContainerInterface $container)
     {
+
+        /**
+         * @var UserService $userService
+         */
+        $userService = $container->get('unicaen-auth_user_service');
+
         /**
          * @var UserService $userService
          */

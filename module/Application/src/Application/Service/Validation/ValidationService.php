@@ -2,6 +2,7 @@
 
 namespace Application\Service\Validation;
 
+use Application\Entity\Db\Individu;
 use Application\Entity\Db\Repository\ValidationRepository;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;

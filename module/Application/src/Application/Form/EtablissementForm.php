@@ -46,6 +46,11 @@ class EtablissementForm extends Form
         );
 
         $this->add((
+        new Text('id_ref'))
+            ->setLabel("IdREF :")
+        );
+
+        $this->add((
         new Text('adresse'))
             ->setLabel("Adresse (sur une ligne) :")
         );
@@ -111,6 +116,10 @@ class EtablissementForm extends Form
         $this->setInputFilter((new Factory())->createInputFilter([
             'sigle' => [
                 'name' => 'Sigle',
+                'required' => false,
+            ],
+            'id_ref' => [
+                'name' => 'id_ref',
                 'required' => false,
             ],
             'code' => [

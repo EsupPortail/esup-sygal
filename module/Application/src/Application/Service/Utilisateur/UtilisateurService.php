@@ -12,6 +12,7 @@ use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\RuntimeException;
+use UnicaenAuth\Entity\Db\User;
 use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
 use UnicaenLdap\Entity\People;
 use Zend\Crypt\Password\Bcrypt;
@@ -212,6 +213,19 @@ class UtilisateurService extends BaseService
     }
 
     /**
+     * Fonction utilisée lors de la déassociation d'un utilisateur/individu et un membre d'un jury de thèse
+     * @param Utilisateur $utilisateur
+     */
+    public function supprimerUtilisateur(Utilisateur $utilisateur) {
+        try {
+            $this->getEntityManager()->remove($utilisateur);
+            $this->getEntityManager()->flush($utilisateur);
+        } catch (OptimisticLockException $e) {
+            throw new RuntimeException("Impossible d'enregistrer l'utilisateur", null, $e);
+        }
+    }
+
+    /**
      * @param Utilisateur $utilisateur
      * @param string $password
      * @return Utilisateur
@@ -234,5 +248,4 @@ class UtilisateurService extends BaseService
 
         return $utilisateur;
     }
-
 }

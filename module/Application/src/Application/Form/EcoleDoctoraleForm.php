@@ -40,6 +40,22 @@ class EcoleDoctoraleForm extends Form
                 new Text('code'))
                     ->setLabel("Code :")
         );
+
+        $this->add((
+        new Text('id_ref'))
+            ->setLabel("IdREF :")
+        );
+
+        $this->add((
+        new Text('theme'))
+            ->setLabel("Thème :")
+        );
+
+        $this->add((
+        new Text('offre-these'))
+            ->setLabel("Lien vers l'offre de thèse :")
+        );
+
         $this->add(
             (new Checkbox('estFerme'))
                 ->setLabel("École doctorale fermée")
@@ -72,7 +88,11 @@ class EcoleDoctoraleForm extends Form
             'libelle' => [
                 'name' => 'libelle',
                 'required' => true,
-        ],
+            ],
+            'id_ref' => [
+                'name' => 'id_ref',
+                'required' => false,
+            ],
             'code' => [
                 'name' => 'code',
                 'required' => true,

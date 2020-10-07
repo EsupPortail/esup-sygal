@@ -1,0 +1,45 @@
+<?php
+
+use Application\Entity\Db\These;
+use Soutenance\Entity\Membre;
+use Soutenance\Entity\Proposition;
+
+/**
+ * @see \Soutenance\Service\Notifier\NotifierSoutenanceService::triggerDemandeSignatureEngagementImpartialite()
+ * @var These $these
+ * @var Proposition $proposition
+ * @var Membre $membre
+ */
+
+$urlRetour = $this->url('soutenance/engagement-impartialite', ['these' => $these->getId(), 'membre' => $membre->getId()], ['force_canonical'=>true], true);
+
+$justification = true;
+?>
+
+
+<p>
+    Bonjour,
+</p>
+<p>
+    Afin de pouvoir devenir rapporteur de la thèse de <strong><?php echo $these->getDoctorant()->getIndividu(); ?></strong> intitulée
+    <strong><?php echo $these->getTitre(); ?></strong>, il est nécessaire de signer électroniquement l'engagement d'impartialité dans
+    l'application SyGAL : <a href="<?php echo $urlRetour; ?>">engagement d'impartialité</a>.
+</p>
+<p>
+    Pour vous connecter à l'application, utilisez la connexion via la fédération d'identité et les identifiants communiqués dans un courrier précédent.
+</p>
+<p>
+    <u><strong>Important</strong></u> :
+    Seul les rapporteurs peuvent signer cet engagement, pensez à vous connecter en tant que rapporteur. <br/>
+    <em>Pour changer de rôle, vous devez cliquer sur votre nom en haut à droite de l'application et sélectionner le rôle désiré.</em>
+</p>
+
+<?php if ($justification) : ?>
+    <p>
+        Vous avez reçu ce mail car :
+    <ol>
+        <li> vous avez été désigné rapporteur pour la thèse de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?>;  </li>
+        <li> la signature a été annulée. </li>
+    </ol>
+    </p>
+<?php endif; ?>

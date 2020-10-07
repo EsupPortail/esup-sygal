@@ -3,9 +3,12 @@
 namespace Application\Controller\Factory;
 
 use Application\Controller\IndexController;
+use Application\Service\Actualite\ActualiteService;
+use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\These\TheseService;
 use Application\Service\Variable\VariableService;
+use Information\Service\InformationService;
 use Interop\Container\ContainerInterface;
 use Zend\Authentication\AuthenticationServiceInterface;
 
@@ -34,6 +37,18 @@ class IndexControllerFactory
         $controller->setEtablissementService($etablissementService);
 
         /**
+         * @var EcoleDoctoraleService $ecoleDoctoraleService
+         */
+        $ecoleDoctoraleService = $container->get(EcoleDoctoraleService::class);
+        $controller->setEcoleDoctoraleService($ecoleDoctoraleService);
+
+        /**
+         * @var InformationService $informationService
+         */
+        $informationService = $container->get(InformationService::class);
+        $controller->setInformationService($informationService);
+
+        /**
          * @var VariableService $variableService
          */
         $variableService = $container->get('VariableService');
@@ -42,6 +57,10 @@ class IndexControllerFactory
         /** @var AuthenticationServiceInterface $authenticationService */
         $authenticationService = $container->get('Zend\\Authentication\\AuthenticationService');
         $controller->setAuthenticationService($authenticationService);
+
+        /** @var ActualiteService $actualiteService */
+        $actualiteService = $container->get(ActualiteService::class);
+        $controller->setActualiteService($actualiteService);
         
         return $controller;
     }

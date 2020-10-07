@@ -1,0 +1,231 @@
+<?php
+
+use Application\Controller\Plugin\UrlFichierThese;
+use Application\Entity\Db\Acteur;
+use Application\Entity\Db\Doctorant;
+use Application\Entity\Db\Role;
+use Application\Entity\Db\These;
+use Application\Entity\Db\Validation;
+use Soutenance\Entity\Etat;
+use Soutenance\Entity\Proposition;
+use Soutenance\Provider\Privilege\PropositionPrivileges;
+
+/**
+ * @see \Soutenance\Controller\PropositionController::propositionAction()
+ *
+ * @var These $these
+ * @var Proposition $proposition
+ * @var Validation[] $validations
+ * @var Doctorant $doctorant
+ * @var Acteur[] $directeurs
+ * @var array $indicateurs
+ * @var boolean $isOk
+ * @var boolean $juryOk
+ * @var UrlFichierThese $urlFichierThese,
+ * @var array $justificatifs,
+ * @var boolean $justificatifsOk,
+ * @var boolean $validationActeur
+ *
+ * @var $FORMULAIRE_DELOCALISATION
+ * @var $FORMULAIRE_DELEGUATION
+ * @var $FORMULAIRE_DEMANDE_LABEL
+ * @var $FORMULAIRE_DEMANDE_ANGLAIS
+ * @var $FORMULAIRE_DEMANDE_CONFIDENTIALITE
+ */
+
+$canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER);
+
+$this->headTitle("Proposition de soutenance");
+?>
+
+<h1 class="page-header">
+    Proposition de soutenance
+    <small><?php echo $this->partial('application/these/partial/titre') ?></small>
+</h1>
+
+<p class="lead">
+    Afin d'être validée et traitée par l'école doctorale, la proposition de soutenance doit être validée par tous les
+    intervenants immédiats de la thèse (c'est-à-dire doctorant, directeur et co-directeur).
+</p>
+<div class="alert alert-warning">
+    <span class="glyphicon glyphicon-warning-sign"></span>
+    En cas de modifications de la proposition, toutes validations seront annulées et la proposition devra être à nouveau être validée.
+</div>
+
+<br/><br/>
+
+<div id="DATE_ET_LIEU"></div>
+<?php
+    echo $this->partial('partial/date-et-lieu', [
+        'proposition' => $proposition,
+        'canModifier' => $canModifier,
+        'FORMULAIRE_DELOCALISATION' => $FORMULAIRE_DELOCALISATION]);
+?>
+
+<div id="COMPOSITION_JURY"></div>
+<?php
+    echo $this->partial('partial/composition-jury', [
+        'proposition' => $proposition,
+        'indicateurs' => $indicateurs,
+        'canModifier' => $canModifier,
+        'FORMULAIRE_DELEGUATION' => $FORMULAIRE_DELEGUATION]);
+?>
+
+
+<div id="INFORMATION"></div>
+<?php
+    echo $this->partial('partial/informations-complementaires', [
+        'proposition' => $proposition,
+        'canModifier' => $canModifier,
+        'FORMULAIRE_DEMANDE_LABEL' => $FORMULAIRE_DEMANDE_LABEL,
+        'FORMULAIRE_DEMANDE_ANGLAIS' => $FORMULAIRE_DEMANDE_ANGLAIS,
+        'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $FORMULAIRE_DEMANDE_CONFIDENTIALITE]);
+?>
+
+<div id="JUSTIFICATIF"></div>
+<?php echo $this->partial('partial/fichiers', [
+        'proposition' => $proposition,
+        'canModifier' => $canModifier,
+        'justificatifs' => $justificatifs,
+        'justificatifsOk' => $justificatifsOk,
+        'urlFichierThese' => $urlFichierThese,
+]); ?>
+
+<br/><br/>
+
+<div id="VALIDATION"></div>
+<?php
+    $canValiderActeur = $isOk && $justificatifsOk && $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_ACTEUR);
+    $canSursis = $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_SURSIS));
+
+    echo $this->partial('partial/validations-acteurs', [
+        'proposition' => $proposition,
+        'validations' => $validations,
+        'canValiderActeur' => $canValiderActeur,
+        'canSursis' => $canSursis,
+
+        'isOk' => $isOk,
+        'doctorant' => $doctorant,
+        'directeurs' => $directeurs,
+        'validationActeur' => $validationActeur,
+
+    ]); ?>
+
+<?php
+    $canStructureValider = $isOk && $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_UR) ||
+        $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_ED) ||
+        $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_BDD);
+    $canPresidence = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_PRESIDENCE);
+
+    echo $this->partial('partial/validations-structures', [
+        'proposition' => $proposition,
+        'validations' => $validations,
+        'canStructureValider' => $canStructureValider,
+        'canPresidence' => $canPresidence,
+    ]); ?>
+
+<?php
+    $validationMDD = null;
+    if ($validations[Role::CODE_BDD]) { $validationMDD = current($validations[Role::CODE_BDD]); }
+
+    if ($validationMDD AND $proposition->getEtat()->getCode() === Etat::EN_COURS AND $canPresidence): ?>
+    <div class="box panel panel-success">
+        <div class="panel-heading">
+            <h2 class="first"> Et ensuite ? </h2>
+        </div>
+        <div class="panel-body">
+
+            Vous pouvez maintenant procéder aux saisies des informations de préparation de la soutenance.
+            <nav aria-label="Etape suivante">
+                <ul class="roadmap pagination">
+                    <li>
+                        <a
+                            <?php /** @see \Soutenance\Controller\AvisController::indexAction()  */ ?>
+                                class="roadmap-step-link"
+                                href="<?php echo $this->url('soutenance/presoutenance', ['these' => $these->getId()], [], true); ?>">
+                            <span class="glyphicon glyphicon-circle-arrow-right"></span>
+                            Préparation de la soutenance
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+<?php endif; ?>
+
+<script>
+    let navbar = 50 + 5;
+
+    $(function() {
+        $("body").on({
+            "edition-datelieu" : function (event) {
+                event.div.modal('hide');
+                $.ajax({
+                    type: "POST",
+                    url : "<?php echo $this->url('soutenance/proposition/generate-view-date-lieu', ["these" => $these->getId()], [], true); ?>",
+                    beforeSend:
+                        function () {
+                            $("div#BOXDIV_DATE_LIEU").html("<div class='alert alert-warning'> <span class='glyphicon glyphicon-warning-sign'></span> Rechargement de la vue associée à la date et lieu de soutenance.</div><br/>");
+                        },
+                    success:
+                        function(retour){
+                            let texte = "ok";
+                            $("div#BOXDIV_DATE_LIEU").html(retour);
+                        }
+                });
+
+                // window.location.reload();
+                // let top = $('div#DATE_ET_LIEU').offset().top - navbar;
+                // window.scrollTo(0,top);
+            },
+            "edition-membre" : function (event) {
+                event.div.modal('hide');
+                //$.ajax({
+                //    type: "POST",
+                //    url : "<?php //echo $this->url('soutenance/proposition/generate-view-jury', ["these" => $these->getId()], [], true); ?>//",
+                //    beforeSend:
+                //        function () {
+                //            $("div#BOXDIV_JURY").html("<div class='alert alert-warning'> <span class='glyphicon glyphicon-warning-sign'></span> Rechargement de la vue associée au jury.</div><br/>");
+                //        },
+                //    success:
+                //        function(retour){
+                //            let texte = "ok";
+                //            $("div#BOXDIV_JURY").html(retour);
+                //        }
+                //});
+
+                window.location.reload();
+                let top = $('div#COMPOSITION_JURY').offset().top - navbar;
+                window.scrollTo(0,top);
+            },
+            "edition-informations" : function (event) {
+                event.div.modal('hide');
+                //$.ajax({
+                //    type: "POST",
+                //    url : "<?php //echo $this->url('soutenance/proposition/generate-view-informations', ["these" => $these->getId()], [], true); ?>//",
+                //    beforeSend:
+                //        function () {
+                //            $("div#BOXDIV_INFORMATIONS").html("<div class='alert alert-warning'> <span class='glyphicon glyphicon-warning-sign'></span> Rechargement de la vue associée aux inforamtions.</div><br/>");
+                //        },
+                //    success:
+                //        function(retour){
+                //            let texte = "ok";
+                //            $("div#BOXDIV_INFORMATIONS").html(retour);
+                //        }
+                //});
+
+                window.location.reload();
+                let top = $('div#BOXDIV_INFORMATIONS').offset().top - navbar;
+                window.scrollTo(0,top);
+            },
+            "edition-confidentialite" : function (event) {
+                event.div.modal('hide');
+                window.location.reload();
+            },
+            "refus-proposition" : function (event) {
+                event.div.modal('hide');
+                window.location.reload();
+            },
+        });
+    });
+</script>
