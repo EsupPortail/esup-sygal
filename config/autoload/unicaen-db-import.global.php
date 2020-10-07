@@ -54,7 +54,7 @@ return [
         //
         'synchros' => [
             [
-                'name' => 'SYNCHRO_STRUCTURE',
+                'name' => 'structure',
                 'source' => [
                     'name'               => 'app',
                     'table'              => 'SRC_STRUCTURE',
@@ -72,7 +72,7 @@ return [
                 ],
             ],
             [
-                'name' => 'SYNCHRO_ETABLISSEMENT',
+                'name' => 'etablissement',
                 'source' => [
                     'name'               => 'app',
                     'table'              => 'SRC_ETABLISSEMENT',
@@ -90,7 +90,7 @@ return [
                 ],
             ],
             [
-                'name' => 'SYNCHRO_ECOLE_DOCT',
+                'name' => 'ecole-doctorale',
                 'source' => [
                     'name'               => 'app',
                     'table'              => 'SRC_ECOLE_DOCT',
@@ -108,7 +108,7 @@ return [
                 ],
             ],
             [
-                'name' => 'SYNCHRO_UNITE_RECH',
+                'name' => 'unite-recherche',
                 'source' => [
                     'name'               => 'app',
                     'table'              => 'SRC_UNITE_RECH',
@@ -126,7 +126,7 @@ return [
                 ],
             ],
             [
-                'name' => 'SYNCHRO_INDIVIDU',
+                'name' => 'individu',
                 'source' => [
                     'name'               => 'app',
                     'table'              => 'SRC_INDIVIDU',
@@ -144,7 +144,7 @@ return [
                 ],
             ],
             [
-                'name' => 'SYNCHRO_DOCTORANT',
+                'name' => 'doctorant',
                 'source' => [
                     'name'               => 'app',
                     'table'              => 'SRC_DOCTORANT',
@@ -162,7 +162,7 @@ return [
                 ],
             ],
             [
-                'name' => 'SYNCHRO_THESE',
+                'name' => 'these',
                 'source' => [
                     'name'               => 'app',
                     'table'              => 'SRC_THESE',
@@ -180,7 +180,7 @@ return [
                 ],
             ],
             [
-                'name' => 'SYNCHRO_THESE_ANNEE_UNIV',
+                'name' => 'these-annee-univ',
                 'source' => [
                     'name'               => 'app',
                     'table'              => 'SRC_THESE_ANNEE_UNIV',
@@ -198,7 +198,7 @@ return [
                 ],
             ],
             [
-                'name' => 'SYNCHRO_ROLE',
+                'name' => 'role',
                 'source' => [
                     'name'               => 'app',
                     'table'              => 'SRC_ROLE',
@@ -216,7 +216,7 @@ return [
                 ],
             ],
             [
-                'name' => 'SYNCHRO_ACTEUR',
+                'name' => 'acteur',
                 'source' => [
                     'name'               => 'app',
                     'table'              => 'SRC_ACTEUR',
@@ -234,7 +234,7 @@ return [
                 ],
             ],
             [
-                'name' => 'SYNCHRO_FINANCEMENT',
+                'name' => 'financement',
                 'source' => [
                     'name'               => 'app',
                     'table'              => 'SRC_FINANCEMENT',
@@ -252,7 +252,7 @@ return [
                 ],
             ],
             [
-                'name' => 'SYNCHRO_TITRE_ACCES',
+                'name' => 'titre-acces',
                 'source' => [
                     'name'               => 'app',
                     'table'              => 'SRC_TITRE_ACCES',
@@ -270,7 +270,7 @@ return [
                 ],
             ],
             [
-                'name' => 'SYNCHRO_VARIABLE',
+                'name' => 'variable',
                 'source' => [
                     'name'               => 'app',
                     'table'              => 'SRC_VARIABLE',
