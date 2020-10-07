@@ -203,6 +203,17 @@ div.jumbotron p,
 div.jumbotron ul li {
   font-size: 120%;
 }
+div.jumbotron {
+  p.connected-as {
+    color: #a94442;
+    font-size: 24px;
+    font-weight: 400;
+
+    span.role {
+      font-weight: 600;
+    }
+  }
+}
 
 p.appname-subtitle {
   margin: {

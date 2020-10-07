@@ -69,11 +69,9 @@ echo $this->messenger()
             </p>
         <?php else: ?>
             <?php if (!$estDoctorant): ?>
-                <p class="text-success">
-                    <strong>
-                        <?php echo $this->translate("Vous êtes connecté-e en tant que"); ?>
-                        &laquo; <?php echo ($role)?:"utilisateur authentifié"; ?> &raquo;.
-                    </strong>
+                <p class="connected-as">
+                    <?php echo $this->translate("Vous êtes connecté·e en tant que"); ?>
+                    &laquo; <span class="role"><?php echo ($role)?:"utilisateur authentifié"; ?></span> &raquo;.
                 </p>
                 <ul class="roadmap pagination">
                     <li>
