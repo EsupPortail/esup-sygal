@@ -80,7 +80,7 @@ $canAvis = true;
 
 <div class="box panel panel-info">
     <div class="panel-heading">
-        <h2> Récapitulatif de la proposition de soutenance </h2>
+        <h2> Proposition de jury / Jury Proposal </h2>
     </div>
     <div class="panel-body">
         <?php if ($proposition !== null) : ?>
@@ -118,7 +118,7 @@ $canAvis = true;
 
 <div class="box panel panel-info">
     <div class="panel-heading">
-        <h2> Signature de l'engagement d'impartialité </h2>
+        <h2> Engagement d'impartialité / Impartiality Commitement </h2>
     </div>
     <div class="panel-body">
         <?php if ($engagement !== null) : ?>
@@ -135,8 +135,8 @@ $canAvis = true;
                 </div>
             </div>
         <?php else : ?>
-            Afin de devenir rapporteur de la thèse de <?php echo $these->getDoctorant()->getIndividu(); ?>, vous devez signer
-            un engagement d'impartialité.
+            Pour être enregistré comme rapporteur de thèse, vous devez l'engagement d'impartialité. <br/>
+            To be registered as external referee you must sign the impartiality commitment
 
             <a
                     <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::engagementImpartialiteAction() */?>
@@ -144,7 +144,7 @@ $canAvis = true;
                class="btn btn-primary pull-right"
             >
                 <span class="glyphicon glyphicon-pencil"></span>
-                Signature de l'engagement-impartialité
+                Signer / Sign
             </a>
         <?php endif; ?>
     </div>
@@ -177,7 +177,7 @@ $canAvis = true;
 
 <div class="box panel <?php echo ($engagement !== null)?"panel-info":"panel-warning"; ?>">
     <div class="panel-heading">
-        <h2> Avis de soutenance </h2>
+        <h2> Avis de soutenance / Notification on the PhD defense </h2>
     </div>
     <div class="panel-body">
     <?php if ($engagement !== null) : ?>
