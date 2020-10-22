@@ -8,6 +8,7 @@ use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
+use Information\Service\InformationServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\Http\Response;
@@ -21,6 +22,7 @@ class IndexController extends AbstractController
     use EtablissementServiceAwareTrait;
     use TheseServiceAwareTrait;
     use ActualiteServiceAwareTrait;
+    use InformationServiceAwareTrait;
 
     /**
      * @var AuthenticationServiceInterface
@@ -72,6 +74,7 @@ class IndexController extends AbstractController
             'estDoctorant' => (bool) $this->userContextService->getIdentityDoctorant(),
             'url' => $this->actualiteService->isActif() ? $this->actualiteService->getUrl() : null,
             'offre' => $this->actualiteService->isOffre() ? $this->getEcoleDoctoraleService()->getOffre() : null,
+            'informations' => $this->informationService->getInformations(true),
         ]);
 
         if ($response instanceof ViewModel) {

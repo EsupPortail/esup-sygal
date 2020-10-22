@@ -3,10 +3,14 @@
 namespace Application\Controller\Factory;
 
 use Application\Controller\ListeDiffusionController;
+use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
+use Application\Service\Etablissement\EtablissementService;
 use Application\Service\File\FileService;
 use Application\Service\Individu\IndividuService;
 use Application\Service\ListeDiffusion\ListeDiffusionService;
 use Application\Service\Notification\NotifierService;
+use Application\Service\Role\RoleService;
+use Application\Service\Structure\StructureService;
 use Interop\Container\ContainerInterface;
 
 class ListeDiffusionControllerFactory
@@ -38,6 +42,30 @@ class ListeDiffusionControllerFactory
          */
         $notifierService = $container->get(NotifierService::class);
         $controller->setNotifierService($notifierService);
+
+        /**
+         * @var RoleService $roleService
+         */
+        $roleService = $container->get(RoleService::class);
+        $controller->setRoleService($roleService);
+
+        /**
+         * @var EtablissementService $etablissementService
+         */
+        $etablissementService = $container->get(EtablissementService::class);
+        $controller->setEtablissementService($etablissementService);
+
+        /**
+         * @var StructureService $structureService
+         */
+        $structureService = $container->get(StructureService::class);
+        $controller->setStructureService($structureService);
+
+        /**
+         * @var EtablissementService $etablissementService
+         */
+        $ecoleDoctoraleService = $container->get(EcoleDoctoraleService::class);
+        $controller->setEcoleDoctoraleService($ecoleDoctoraleService);
 
         return $controller;
     }

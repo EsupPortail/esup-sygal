@@ -16,6 +16,8 @@ class EcoleDoctorale implements StructureConcreteInterface, HistoriqueAwareInter
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
 
+    const CODE_TOUTE_ECOLE_DOCTORALE_CONFONDUE = 'TOUTE_ED';
+
     /**
      * @var integer
      */
@@ -210,5 +212,13 @@ class EcoleDoctorale implements StructureConcreteInterface, HistoriqueAwareInter
         return $this;
     }
 
-
+    /**
+     * Teste si cette école doctorale est la pseudo-école doctorale "Toute école doctorale confondue".
+     *
+     * @return bool
+     */
+    public function estTouteEcoleDoctoraleConfondue()
+    {
+        return $this->getStructure()->getCode() === self::CODE_TOUTE_ECOLE_DOCTORALE_CONFONDUE;
+    }
 }

@@ -16,6 +16,7 @@ use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use BjyAuthorize\Provider\Identity\ProviderInterface;
+use UnicaenAuth\Acl\NamedRole;
 use UnicaenAuth\Provider\Identity\ChainableProvider;
 use UnicaenAuth\Provider\Identity\ChainEvent;
 use Zend\Authentication\AuthenticationService;
@@ -91,10 +92,14 @@ class IdentityProvider implements ProviderInterface, ChainableProvider
             return [];
         }
 
-        $this->roles = array_merge([],
+        $roleAuthentifie = $this->roleService->getRepository()->findByCode('user')/*->setLibelle("coucou")*/;
+
+        $this->roles = array_merge(
+            [$roleAuthentifie],
             $this->getRolesFromActeur(),
             $this->getRolesFromIndividuRole(),
-            $this->getRolesFromDoctorant());
+            $this->getRolesFromDoctorant()
+        );
 
 // Lignes mises en commentaire car revient à considérer le rôle "BdD UCN" identique au rôle "BdD URN" !
 // La question est: pourquoi avoir fait ça ?

@@ -6,6 +6,7 @@ use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Repository\EcoleDoctoraleRepository;
+use Application\Entity\Db\Structure;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\BaseService;
@@ -139,6 +140,23 @@ class EcoleDoctoraleService extends BaseService
             $array[$item->getTheme()] = $item->getOffreThese();
         }
         return $array;
+    }
+
+    /**
+     * Instancie une pseudo-école doctorale "Toute école doctorale confondue" utile dans les vues.
+     *
+     * @return EcoleDoctorale
+     */
+    public function createTouteEcoleDoctoraleConfondue()
+    {
+        $structure = new Structure();
+        $structure
+            ->setCode(EcoleDoctorale::CODE_TOUTE_ECOLE_DOCTORALE_CONFONDUE)
+            ->setLibelle("Toute école doctorale confondue");
+        $ed = new EcoleDoctorale();
+        $ed->setStructure($structure);
+
+        return $ed;
     }
 
     private function persist(EcoleDoctorale $ecole)

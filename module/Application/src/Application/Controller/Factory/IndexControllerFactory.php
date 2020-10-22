@@ -8,6 +8,7 @@ use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\These\TheseService;
 use Application\Service\Variable\VariableService;
+use Information\Service\InformationService;
 use Interop\Container\ContainerInterface;
 use Zend\Authentication\AuthenticationServiceInterface;
 
@@ -40,6 +41,12 @@ class IndexControllerFactory
          */
         $ecoleDoctoraleService = $container->get(EcoleDoctoraleService::class);
         $controller->setEcoleDoctoraleService($ecoleDoctoraleService);
+
+        /**
+         * @var InformationService $informationService
+         */
+        $informationService = $container->get(InformationService::class);
+        $controller->setInformationService($informationService);
 
         /**
          * @var VariableService $variableService

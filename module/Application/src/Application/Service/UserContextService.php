@@ -3,13 +3,12 @@
 namespace Application\Service;
 
 use Application\Authentication\Storage\AppStorage;
-use Application\Entity\Db\These;
-use Application\Entity\UserWrapper;
 use Application\Entity\Db\Doctorant;
-use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
+use Application\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
+use Application\Entity\UserWrapper;
 use Application\Entity\UserWrapperFactory;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
@@ -24,6 +23,19 @@ class UserContextService extends BaseUserContextService
     use IndividuServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
+
+    /**
+     * @inheritDoc
+     */
+    public function getSelectableIdentityRoles()
+    {
+        return array_filter($this->getIdentityRoles(), function($r) {
+            if ($r instanceof RoleInterface && $r->getRoleId() === Role::ROLE_ID_USER) {
+                return false;
+            }
+            return true;
+        });
+    }
 
     /**
      * @return Role|RoleInterface|null

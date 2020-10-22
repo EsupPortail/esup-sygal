@@ -70,22 +70,17 @@ class ActeurRepository extends DefaultEntityRepository
 
     /**
      * @param Role|string $role Rôle, ou code du rôle (ex: {@see Role::CODE_DIRECTEUR_THESE})
-     * @param EcoleDoctorale|string $ecoleDoctorale ED ou code structure de l'ED
      * @param Etablissement|null $etablissement Etablissement éventuel
      * @param string $etatThese Par défaut {@see These::ETAT_EN_COURS]
      * @return Acteur[]
      */
-    public function findActeursWithRoleAndEcoleDoctAndEtab(
+    public function findActeursByRoleAndEtab(
         $role,
-        $ecoleDoctorale,
         Etablissement $etablissement = null,
         $etatThese = These::ETAT_EN_COURS)
     {
         if ($role instanceof Role) {
             $role = $role->getCode();
-        }
-        if ($ecoleDoctorale instanceof EcoleDoctorale) {
-            $ecoleDoctorale = $ecoleDoctorale->getStructure()->getCode();
         }
 
         $qb = $this->createQueryBuilder('a')
@@ -94,11 +89,59 @@ class ActeurRepository extends DefaultEntityRepository
             ->join('a.role', 'r', Join::WITH, 'r.code = :role')->setParameter('role', $role)
             ->join('a.these', 't', Join::WITH, 't.etatThese = :etat')->setParameter('etat', $etatThese)
             ->join('t.ecoleDoctorale', 'ed')
-            ->join('ed.structure', 's', Join::WITH, 's.code = :code')->setParameter('code', $ecoleDoctorale)
+            ->join('ed.structure', 's')
             ->andWhere('1 =  pasHistorise(a)')
             ->addOrderBy('i.nomUsuel')
             ->addOrderBy('i.prenom1')
         ;
+
+        if ($etablissement !== null) {
+            $qb->join('t.etablissement', 'e', Join::WITH, 'e = :etab')->setParameter('etab', $etablissement);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param Role|string $role Rôle, ou code du rôle (ex: {@see Role::CODE_DIRECTEUR_THESE})
+     * @param Etablissement|null $etablissement Etablissement éventuel
+     * @param EcoleDoctorale|string|array|null $ecoleDoctorale {@see EcoleDoctorale}, code structure de l'ED, ou ['s.sigle' => 'ED 591 NBISE'] par ex.
+     * @param string $etatThese Par défaut {@see These::ETAT_EN_COURS]
+     * @return Acteur[]
+     */
+    public function findActeursByRole(
+        $role,
+        Etablissement $etablissement = null,
+        $ecoleDoctorale = null,
+        $etatThese = These::ETAT_EN_COURS)
+    {
+        if ($role instanceof Role) {
+            $role = $role->getCode();
+        }
+
+        $qb = $this->createQueryBuilder('a')
+            ->addSelect('i')
+            ->join('a.individu', 'i')
+            ->join('a.role', 'r', Join::WITH, 'r.code = :role')->setParameter('role', $role)
+            ->join('a.these', 't', Join::WITH, 't.etatThese = :etat')->setParameter('etat', $etatThese)
+            ->join('t.ecoleDoctorale', 'ed')
+            ->join('ed.structure', 's')
+            ->andWhere('1 =  pasHistorise(a)')
+            ->addOrderBy('i.nomUsuel')
+            ->addOrderBy('i.prenom1')
+        ;
+
+        if ($ecoleDoctorale !== null) {
+            if ($ecoleDoctorale instanceof EcoleDoctorale) {
+                $qb->andWhere('ed = :ed');
+            } elseif (is_array($ecoleDoctorale)) {
+                $qb->andWhere(key($ecoleDoctorale) . ' = :ed');
+                $ecoleDoctorale = current($ecoleDoctorale);
+            } else {
+                $qb->andWhere('s.code = :ed');
+            }
+            $qb->setParameter('ed', $ecoleDoctorale);
+        }
 
         if ($etablissement !== null) {
             $qb->join('t.etablissement', 'e', Join::WITH, 'e = :etab')->setParameter('etab', $etablissement);
