@@ -16,7 +16,7 @@ $urlRetour = $this->url('soutenance/engagement-impartialite', ['these' => $these
 $justification = true;
 ?>
 
-
+<p><em>-- Version française----------------------------------------------------</em></p>
 <p>
     Bonjour,
 </p>
@@ -26,12 +26,31 @@ $justification = true;
     l'application SyGAL : <a href="<?php echo $urlRetour; ?>">engagement d'impartialité</a>.
 </p>
 <p>
-    Pour vous connecter à l'application, utilisez la connexion via la fédération d'identité et les identifiants communiqués dans un courrier précédent.
+    Vous accéderez ainsi à une page "index de la soutenance" listant les membres du jury.
+    Cliquez ensuite sur "accès à l’engagement d’impartialité".
+    Puis après avoir pris connaissance des conditions relatives à cet engagement, vous pourrez signer ou non cet engagement d’impartialité.
+    Si vous signez, vous pourrez alors télécharger le PDF du manuscrit de thèse.
 </p>
 <p>
-    <u><strong>Important</strong></u> :
-    Seul les rapporteurs peuvent signer cet engagement, pensez à vous connecter en tant que rapporteur. <br/>
-    <em>Pour changer de rôle, vous devez cliquer sur votre nom en haut à droite de l'application et sélectionner le rôle désiré.</em>
+    Cordialement,
+</p>
+
+<p><em>-- English version -----------------------------------------------------</em></p>
+<p>
+    Dear Mrs/Mr,
+</p>
+<p>
+    Before being officially registered as an external referee for the PhD thesis presented by <strong><?php echo $these->getDoctorant()->getIndividu(); ?></strong> entitled
+    <strong><?php echo $these->getTitre(); ?></strong>, you have to sign the "impartiality commitment" available at  <a href="<?php echo $urlRetour; ?>">impartiality commitment</a>.
+</p>
+<p>
+    You will then be connected to a web page entitled "index of the PhD defense" listing the PhD jury members.
+    Click then on "access to the impartiality commitment".
+    Then, after reading the requirements regarding the impartiality commitment of an external referee, you sign it or not.
+    If you sign it, you will be able to download the PDF version of the PhD manuscript.
+</p>
+<p>
+    Best regards,
 </p>
 
 <?php if ($justification) : ?>
