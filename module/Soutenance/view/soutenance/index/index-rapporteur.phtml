@@ -155,23 +155,26 @@ $canAvis = true;
         <h2> Téléchargement de la thèse </h2>
     </div>
     <div class="panel-body">
-        <?php if ($depot !== null) : ?>
-            Vous pouvez télécharger la version électronique de la thèse via <?php echo $this->appInfos()->nom; ?>.
-
-            <a
-                <?php /** @see \Application\Controller\TheseController::fusionAction() */ ?>
-                href="<?php echo $this->url("these/fusion", ["these" => $these->getId()], [], true); ?>"
-               class="btn btn-primary pull-right"
-            >
-                <span class="glyphicon glyphicon-download"></span>
-                Télécharger la thèse
-            </a>
+        <?php if ($engagement === null) : ?>
+            <span class="glyphicon glyphicon-warning-sign"></span> Vous ne pourrez télécharger la version électronique de la thèse qu'après avoir signé l'engagement d'impartialité.
         <?php else : ?>
-            <span class="glyphicon glyphicon-warning-sign"></span>
-            La thèse de <?php echo $these->getDoctorant()->getIndividu(); ?> n'a pas encore été déposée dans <?php echo $this->appInfos()->nom; ?>.
-            Une fois le dépôt réalisé vous pourrez télécharger celle-ci via cette page.
-        <?php endif; ?>
+            <?php if ($depot !== null) : ?>
+                Vous pouvez télécharger la version électronique de la thèse via <?php echo $this->appInfos()->nom; ?>.
 
+                <a
+                    <?php /** @see \Application\Controller\TheseController::fusionAction() */ ?>
+                    href="<?php echo $this->url("these/fusion", ["these" => $these->getId()], [], true); ?>"
+                   class="btn btn-primary pull-right"
+                >
+                    <span class="glyphicon glyphicon-download"></span>
+                    Télécharger la thèse
+                </a>
+            <?php else : ?>
+                <span class="glyphicon glyphicon-warning-sign"></span>
+                La thèse de <?php echo $these->getDoctorant()->getIndividu(); ?> n'a pas encore été déposée dans <?php echo $this->appInfos()->nom; ?>.
+                Une fois le dépôt réalisé vous pourrez télécharger celle-ci via cette page.
+            <?php endif; ?>
+        <?php endif; ?>
     </div>
 </div>
 
