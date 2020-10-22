@@ -34,7 +34,7 @@ class InitCompteForm extends Form
             'type' => Text::class,
             'name' => 'username',
             'options' => [
-                'label' => "Nom d'utilisateur* :",
+                'label' => "Nom d'utilisateur / Username * :",
             ],
             'attributes' => [
                 'id' => 'username',
@@ -45,7 +45,7 @@ class InitCompteForm extends Form
             'type' => Password::class,
             'name' => 'password1',
             'options' => [
-                'label' => "Mot de passe* :",
+                'label' => "Mot de passe / Password * :",
             ],
             'attributes' => [
                 'id' => 'password1',
@@ -56,7 +56,7 @@ class InitCompteForm extends Form
             'type' => Password::class,
             'name' => 'password2',
             'options' => [
-                'label' => "Vérification du mot de passe* :",
+                'label' => "Vérification du mot de passe / Password confirmation * :",
             ],
             'attributes' => [
                 'id' => 'password2',
@@ -67,7 +67,7 @@ class InitCompteForm extends Form
             'type' => Button::class,
             'name' => 'bouton',
             'options' => [
-                'label' => '<i class="fas fa-save"></i> Enregistrer',
+                'label' => '<i class="fas fa-save"></i> Enregistrer / Save',
                 'label_options' => [
                     'disable_html_escape' => true,
                 ],
@@ -85,7 +85,7 @@ class InitCompteForm extends Form
                     'name' => Callback::class,
                     'options' => [
                         'messages' => [
-                            Callback::INVALID_VALUE => "Ce nom d'utilisateur ne correspond pas à celui attendu.",
+                            Callback::INVALID_VALUE => "Ce nom d'utilisateur ne correspond pas à celui attendu / This username doesn't match with the given one.",
                         ],
                         'callback' => function ($value) {
                             return ($value === $this->username);
@@ -102,7 +102,7 @@ class InitCompteForm extends Form
                         'options' => [
                             'pattern' => '/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*_])(?=.{8,})/',
                             'messages' => [
-                                Regex::NOT_MATCH => "Le mot de passe choisi ne respecte pas les consignes de sécurité.",
+                                Regex::NOT_MATCH => "Le mot de passe choisi ne respecte pas les consignes de sécurité / This password is not consistent with the security constraints.",
                             ],
                         ],
                     ],],

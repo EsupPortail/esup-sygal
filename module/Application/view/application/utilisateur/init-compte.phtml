@@ -15,7 +15,7 @@ $this->headTitle("Initialisation du compte");
 ?>
 
 <h1 class="page-header">
-    Initialisation du compte
+    Initialisation du compte / Account setup
 </h1>
 
 <?php if ($utilisateur !== null) : ?>
@@ -29,18 +29,33 @@ $this->headTitle("Initialisation du compte");
 
     <?php echo $this->formControlGroup($form->get('username')); ?>
 
+    <?php echo $this->formControlGroup($form->get('password1')); ?>
+
     <div class="alert alert-info">
-        <span class="glyphicon glyphicon-info-sign"></span>
-        Le mot de passe doit :
-        <ul>
-            <li> être d'une longueur minimale de 8 caractères ; </li>
-            <li> posséder des caractères en majuscule et en minuscule  ; </li>
-            <li> posséder au moins un chiffre  ; </li>
-            <li> posséder au moins un caractère spécial (parmi '!', '@', '#', '$', '%', '^', '&', '*', '_').</li>
-        </ul>
+        <div class="row">
+            <div class="col-md-6">
+                <span class="glyphicon glyphicon-info-sign"></span>
+                Le mot de passe doit :
+                <ul>
+                    <li> être d'une longueur minimale de 8 caractères ; </li>
+                    <li> posséder des caractères en majuscule et en minuscule  ; </li>
+                    <li> posséder au moins un chiffre  ; </li>
+                    <li> posséder au moins un caractère spécial (parmi '!', '@', '#', '$', '%', '^', '&', '*', '_').</li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <span class="glyphicon glyphicon-info-sign"></span>
+                The password should contain :
+                <ul>
+                    <li> at least 8 characters ; </li>
+                    <li> at least one lowercase character and at least one uppercase character ; </li>
+                    <li> at least one digit  ; </li>
+                    <li> at least one special character (among '!', '@', '#', '$', '%', '^', '&', '*', '_').</li>
+                </ul>
+            </div>
+        </div>
     </div>
 
-    <?php echo $this->formControlGroup($form->get('password1')); ?>
     <?php echo $this->formControlGroup($form->get('password2')); ?>
 
     <?php echo $this->formControlGroup($form->get('bouton')); ?>
