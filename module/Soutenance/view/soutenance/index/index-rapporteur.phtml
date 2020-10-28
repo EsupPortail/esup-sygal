@@ -135,7 +135,7 @@ $canAvis = true;
                 </div>
             </div>
         <?php else : ?>
-            Pour être enregistré comme rapporteur de thèse, vous devez l'engagement d'impartialité. <br/>
+            Pour être enregistré comme rapporteur de thèse, vous devez signer l'engagement d'impartialité. <br/>
             To be registered as external referee you must sign the impartiality commitment
 
             <a
@@ -144,7 +144,8 @@ $canAvis = true;
                class="btn btn-primary pull-right"
             >
                 <span class="glyphicon glyphicon-pencil"></span>
-                Signer / Sign
+<!--                Signer / Sign-->
+                Accès à l'engagement d'impartialité / Access to the impartiality commitment
             </a>
         <?php endif; ?>
     </div>
@@ -152,7 +153,7 @@ $canAvis = true;
 
 <div class="box panel <?php echo ($depot !== null)?"panel-info":"panel-warning"; ?>">
     <div class="panel-heading">
-        <h2> Téléchargement de la thèse / Download of the manuscrit </h2>
+        <h2> Téléchargement de la thèse / Downloading the manuscrit </h2>
     </div>
     <div class="panel-body">
         <?php if ($engagement === null) : ?>
@@ -167,7 +168,7 @@ $canAvis = true;
                    class="btn btn-primary pull-right"
                 >
                     <span class="glyphicon glyphicon-download"></span>
-                    Télécharger la thèse / Download of the manuscrit
+                    Télécharger la thèse / Downloading manuscrit
                 </a>
             <?php else : ?>
                 <span class="glyphicon glyphicon-warning-sign"></span>
