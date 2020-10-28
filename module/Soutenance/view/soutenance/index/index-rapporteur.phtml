@@ -30,7 +30,7 @@ $canAvis = true;
 <?php /** Plusieurs thèses ont été trouvées, le rapporteurs doit alors sélectionner celle sur laquelle il veut travailler */ ?>
 <?php if (isset($theses)) : ?>
     <h1 class="page-header">
-        Index des soutenances
+        Index des soutenances / Index of the PhD defense
     </h1>
 
     <p class="lead">
@@ -74,7 +74,7 @@ $canAvis = true;
 
 
 <h1 class="page-header">
-    Index de la soutenance
+    Index de la soutenance / Index of the PhD defense
     <small><?php echo $this->partial('application/these/partial/titre') ?></small>
 </h1>
 
@@ -152,7 +152,7 @@ $canAvis = true;
 
 <div class="box panel <?php echo ($depot !== null)?"panel-info":"panel-warning"; ?>">
     <div class="panel-heading">
-        <h2> Téléchargement de la thèse </h2>
+        <h2> Téléchargement de la thèse / Download of the manuscrit </h2>
     </div>
     <div class="panel-body">
         <?php if ($engagement === null) : ?>
@@ -167,7 +167,7 @@ $canAvis = true;
                    class="btn btn-primary pull-right"
                 >
                     <span class="glyphicon glyphicon-download"></span>
-                    Télécharger la thèse
+                    Télécharger la thèse / Download of the manuscrit
                 </a>
             <?php else : ?>
                 <span class="glyphicon glyphicon-warning-sign"></span>
@@ -223,7 +223,7 @@ $canAvis = true;
                    class="btn btn-primary pull-right"
                 >
                     <span class="glyphicon glyphicon-pencil"></span>
-                    Rendre l'avis de soutenance
+                    Rendre l'avis de soutenance / Give our report
                 </a>
 
             <?php endif; ?>
