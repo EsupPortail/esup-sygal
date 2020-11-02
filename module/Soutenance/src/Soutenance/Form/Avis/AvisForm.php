@@ -18,7 +18,7 @@ class AvisForm extends Form {
             'type' => Radio::class,
             'name' => 'avis',
             'options' => [
-                'label' => 'Avis :',
+                'label' => 'Avis / Notification :',
                 'value_options' => [
                     'Favorable' => 'Favorable / I agree',
                     'Défavorable' => 'Défavorable / I disagree',
@@ -44,7 +44,7 @@ class AvisForm extends Form {
             'type' => File::class,
             'name' => 'rapport',
             'options' => [
-                'label' => 'Déposez le rapport de soutenance / Download the PhD report',
+                'label' => 'Déposez le rapport de soutenance / Upload the PhD report',
             ],
         ]);
         //SUBMIT
