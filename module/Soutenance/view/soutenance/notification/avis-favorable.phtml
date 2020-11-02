@@ -1,0 +1,78 @@
+<?php
+
+use Application\Constants;
+use Application\Entity\Db\These;
+use Application\View\Renderer\PhpRenderer;
+use Soutenance\Entity\Avis;
+use Soutenance\Entity\Proposition;
+
+/**
+ * @see \Soutenance\Service\Notifier\NotifierSoutenanceService::triggerAvisFavorable()
+ *
+ * @var PhpRenderer $this
+ * @var These $these
+ * @var Proposition $proposition
+ * @var Avis $avis
+ */
+
+$justification = true;
+
+?>
+
+<p>
+    Bonjour,
+</p>
+<p>
+    Le rapporteur <strong><?php echo $avis->getRapporteur()->getIndividu()->getNomComplet(); ?></strong> vient de rendre
+    un avis favorable pour la these de <strong> <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?> </strong>
+    intitulée <strong><?php echo $these->getTitre(); ?></strong>.
+</p>
+<p>
+    Vous pouvez consulter le rapport de pré-soutenance en utilisant le lien suivant :
+</p>
+<ul>
+    <li>
+        <?php echo  $avis->getRapporteur(); ?>
+        :
+        <?php $url_ = $this->url('fichier/these/telecharger', [
+            'these'      => $these->getId(),
+            'fichier'    => $avis->getFichier()->getUuid(),
+            'fichierNom' => $avis->getFichier()->getNom(),
+        ], [
+            'force_canonical'=>true
+        ],true);
+        ?>
+
+        <a href="<?php echo $url_; ?>">
+            rapport de pré-soutenance
+        </a>
+    </li>
+</ul>
+
+<?php
+//$emailBDD           = [ $this->fetchEmailBdd($these) ];
+//$emailsDirecteurs   = $this->fetchEmailEncadrants($these);
+//$emailsED           = $this->fetchEmailEcoleDoctorale($these);
+//$emailsUR           = $this->fetchEmailUniteRecherche($these);
+?>
+
+<?php if ($justification) : ?>
+    <p>
+        Vous avez reçu ce mail car :
+    <ol>
+        <li> un avis favorable a été rendu par un rapporteur ; </li>
+        <li> vous êtes soit :
+            <ul>
+                <li> un gestionnaire de la maison du doctorat de l'établissement d'inscription du doctorant ; </li>
+                <li> un gestionnaire de l'école doctorale gérant la thèse de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?> ; </li>
+                <li> un gestionnaire de l'unité de recherche accueillant la thèse de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?> ; </li>
+                <li> le directeur de thèse ou un des codirecteur de la thèse de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?>. </li>
+            </ul>
+        </li>
+    </ol>
+    </p>
+<?php endif; ?>
+
+
+
+

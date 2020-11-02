@@ -6,7 +6,7 @@ use Application\Service\Etablissement\EtablissementServiceLocateTrait;
 use Application\Service\Individu\IndividuServiceLocateTrait;
 use Application\Service\UserContextService;
 use Application\Service\Utilisateur\UtilisateurServiceLocateTrait;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 
 class UserAuthenticatedEventListenerFactory
 {
@@ -14,18 +14,18 @@ class UserAuthenticatedEventListenerFactory
     use EtablissementServiceLocateTrait;
     use UtilisateurServiceLocateTrait;
 
-    public function __invoke(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container)
     {
         /** @var UserContextService $userContextService */
-        $userContextService = $serviceLocator->get('AuthUserContext');
-        $individuService = $this->locateIndividuService($serviceLocator);
-        $etablissementService = $this->locateEtablissementService($serviceLocator);
+        $userContextService = $container->get('AuthUserContext');
+        $individuService = $this->locateIndividuService($container);
+        $etablissementService = $this->locateEtablissementService($container);
 
         $listener = new UserAuthenticatedEventListener();
         $listener->setAuthUserContextService($userContextService);
         $listener->setIndividuService($individuService);
         $listener->setEtablissementService($etablissementService);
-        $listener->setUtilisateurService($this->locateUtilisateurService($serviceLocator));
+        $listener->setUtilisateurService($this->locateUtilisateurService($container));
 
         return $listener;
     }

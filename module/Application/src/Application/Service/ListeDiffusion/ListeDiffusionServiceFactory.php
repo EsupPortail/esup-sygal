@@ -5,7 +5,7 @@ namespace Application\Service\ListeDiffusion;
 use Application\Service\Individu\IndividuService;
 use Application\Service\ListeDiffusion\Plugin\ListeDiffusionRolePlugin;
 use Application\Service\ListeDiffusion\Plugin\ListeDiffusionStructurePlugin;
-use Zend\ServiceManager\ServiceLocatorInterface as ContainerInterface;
+use Interop\Container\ContainerInterface;
 
 class ListeDiffusionServiceFactory
 {

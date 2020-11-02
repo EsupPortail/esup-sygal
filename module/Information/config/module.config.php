@@ -3,20 +3,24 @@
 use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\Provider\Privilege\FichierPrivileges;
 use Information\Controller\FichierController;
+use Information\Controller\FichierControllerFactory;
 use Information\Controller\InformationController;
 use Information\Controller\InformationControllerFactory;
 use Information\Form\FichierForm;
 use Information\Form\InformationForm;
 use Information\Form\InformationFormFactory;
 use Information\Form\InformationHydrator;
+use Information\Form\InformationHydratorFactory;
 use Information\Provider\Privilege\InformationPrivileges;
 use Information\Service\InformationFichierService;
 use Information\Service\InformationFichierServiceFactory;
+use Information\Service\InformationLangue\InformationLangueService;
+use Information\Service\InformationLangue\InformationLangueServiceFactory;
 use Information\Service\InformationService;
 use Information\Service\InformationServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
-use Zend\Mvc\Router\Http\Literal;
-use Zend\Mvc\Router\Http\Segment;
+use Zend\Router\Http\Literal;
+use Zend\Router\Http\Segment;
 use Zend\Navigation\Service\NavigationAbstractServiceFactory;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
@@ -240,36 +244,36 @@ return [
             ],
         ],
         'information' => [
-            'accueil' => [
-                'label' => 'Accueil',
-                'route' => 'home',
-                'pages' => [
-                    'doctorat' => [
-                        'label' => 'Le doctorat',
-                        'route' => 'informations/afficher',
-                        'params' => ['id' => 61],
-                        'title' => "Informations sur le doctorat et sa gestion"
-                    ],
-                    'ecoles-doctorales' => [
-                        'label' => 'Les Ecoles Doctorales',
-                        'route' => 'informations/afficher',
-                        'params' => ['id' => 81],
-                        'title' => "Informations sur les Ecoles Doctorales et le Collège des Ecoles doctorales"
-                    ],
-                    'guide-these' => [
-                        'label' => 'Guide de la thèse',
-                        'route' => 'informations/afficher',
-                        'params' => ['id' => 82],
-                        'title' => "Informations sur le déroulement de la thèse et formulaires administratifs à l’intention du doctorant et de ses encadrants"
-                    ],
-                    'guide-utilisation' => [
-                        'label' => 'Guide d\'utilisation',
-                        'route' => 'informations/afficher',
-                        'params' => ['id' => 162],
-                        'title' => "Guide d'utilisation de l'application SyGAL",
-                    ],
-                ],
-            ],
+//            'accueil' => [
+//                'label' => 'Accueil',
+//                'route' => 'home',
+//                'pages' => [
+//                    'doctorat' => [
+//                        'label' => 'Le doctorat',
+//                        'route' => 'informations/afficher',
+//                        'params' => ['id' => 61],
+//                        'title' => "Informations sur le doctorat et sa gestion"
+//                    ],
+//                    'ecoles-doctorales' => [
+//                        'label' => 'Les Ecoles Doctorales',
+//                        'route' => 'informations/afficher',
+//                        'params' => ['id' => 81],
+//                        'title' => "Informations sur les Ecoles Doctorales et le Collège des Ecoles doctorales"
+//                    ],
+//                    'guide-these' => [
+//                        'label' => 'Guide de la thèse',
+//                        'route' => 'informations/afficher',
+//                        'params' => ['id' => 82],
+//                        'title' => "Informations sur le déroulement de la thèse et formulaires administratifs à l’intention du doctorant et de ses encadrants"
+//                    ],
+//                    'guide-utilisation' => [
+//                        'label' => 'Guide d\'utilisation',
+//                        'route' => 'informations/afficher',
+//                        'params' => ['id' => 162],
+//                        'title' => "Guide d'utilisation de l'application SyGAL",
+//                    ],
+//                ],
+//            ],
         ],
     ],
     'service_manager' => [
@@ -279,13 +283,14 @@ return [
         'factories' => [
             InformationService::class => InformationServiceFactory::class,
             InformationFichierService::class => InformationFichierServiceFactory::class,
+            InformationLangueService::class => InformationLangueServiceFactory::class
         ],
     ],
 
     'controllers' => [
         'factories' => [
             InformationController::class => InformationControllerFactory::class,
-            FichierController::class => \Information\Controller\FichierControllerFactory::class,
+            FichierController::class => FichierControllerFactory::class,
         ],
     ],
     'form_elements'   => [
@@ -297,8 +302,8 @@ return [
         ],
     ],
     'hydrators' => [
-        'invokables' => [
-            InformationHydrator::class => InformationHydrator::class
+        'factories' => [
+            InformationHydrator::class => InformationHydratorFactory::class
         ]
     ],
     'view_manager' => [

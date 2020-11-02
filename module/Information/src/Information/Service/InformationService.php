@@ -14,13 +14,17 @@ class InformationService {
     use UserContextServiceAwareTrait;
 
     /**
+     * @param bool $visibleOnly
      * @return Information[]
      */
-    public function getInformations()
+    public function getInformations(bool $visibleOnly = false)
     {
         $qb = $this->getEntityManager()->getRepository(Information::class)->createQueryBuilder('information')
             ->orderBy('information.priorite', 'DESC')
         ;
+
+        if ($visibleOnly)
+            $qb = $qb->andWhere('information.visible = :true')->setParameter('true', $visibleOnly);
 
         $result = $qb->getQuery()->getResult();
         return $result;

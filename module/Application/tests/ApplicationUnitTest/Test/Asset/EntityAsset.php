@@ -8,7 +8,7 @@ use Application\Entity\Db\Diffusion;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\FichierThese;
-use Application\Entity\Db\ImportObserv;
+use Import\Model\ImportObserv;
 use Application\Entity\Db\ImportObservEtab;
 use Application\Entity\Db\ImportObservEtabResult;
 use Application\Entity\Db\Individu;

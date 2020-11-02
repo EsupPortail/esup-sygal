@@ -3,7 +3,7 @@
 namespace Application\Service\ListeDiffusion\Plugin;
 
 use Application\Service\Individu\IndividuService;
-use Zend\ServiceManager\ServiceLocatorInterface as ContainerInterface;
+use Interop\Container\ContainerInterface;
 
 class ListeDiffusionRolePluginFactory
 {

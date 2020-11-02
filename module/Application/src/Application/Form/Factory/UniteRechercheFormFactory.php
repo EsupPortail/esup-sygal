@@ -4,16 +4,14 @@ namespace Application\Form\Factory;
 
 use Application\Form\Hydrator\UniteRechercheHydrator;
 use Application\Form\UniteRechercheForm;
-use Zend\Form\FormElementManager;
+use Interop\Container\ContainerInterface;
 
 class UniteRechercheFormFactory
 {
-    public function __invoke(FormElementManager $formElementManager)
+    public function __invoke(ContainerInterface $container)
     {
-        $sl = $formElementManager->getServiceLocator();
-
         /** @var UniteRechercheHydrator $hydrator */
-        $hydrator = $sl->get('HydratorManager')->get('UniteRechercheHydrator');
+        $hydrator = $container->get('HydratorManager')->get('UniteRechercheHydrator');
 
         $form = new UniteRechercheForm();
         $form->setHydrator($hydrator);

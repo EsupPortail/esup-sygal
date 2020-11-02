@@ -7,7 +7,7 @@ use Application\RouteMatch;
 use Traversable;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\Mvc\ModuleRouteListener;
-use Zend\Mvc\Router\RouteStackInterface;
+use Zend\Router\RouteStackInterface;
 
 abstract class UrlService
 {

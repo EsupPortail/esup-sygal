@@ -32,6 +32,13 @@ return [
             // Valeurs possibles: '30s', '1m', etc. (cf. "man timeout").
             'timeout' => '20s',
         ],
+        // Options concernant le dépôt de la version corrigée
+        'depot_version_corrigee' => [
+            // Resaisir l'autorisation de diffusion ? Sinon celle saisie au 1er dépôt est reprise/dupliquée.
+            'resaisir_autorisation_diffusion' => true,
+            // Resaisir les attestations ? Sinon celles saisies au 1er dépôt sont reprises/dupliquées.
+            'resaisir_attestations' => true,
+        ],
     ],
     // Options pour le service de notification par mail
     'notification' => [

@@ -6,31 +6,30 @@ use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
 use Import\Controller\SynchroController;
 use Import\Service\SynchroService;
-use Zend\Mvc\Controller\ControllerManager;
+use Interop\Container\ContainerInterface;
 
 class SynchroControllerFactory
 {
     /**
      * Create service
      *
-     * @param ControllerManager $controllerManager
+     * @param ContainerInterface $container
      * @return SynchroController
      */
-    public function __invoke(ControllerManager $controllerManager)
+    public function __invoke(ContainerInterface $container)
     {
-        $sl = $controllerManager->getServiceLocator();
-
         /**
          * @var TheseService $theseService
          * @var NotifierService $notifierService
          */
-        $theseService = $sl->get('TheseService');
-        $notifierService = $sl->get(NotifierService::class);
+        $theseService = $container->get('TheseService');
+        $notifierService = $container->get(NotifierService::class);
 
         /** @var SynchroService $synchroService */
-        $synchroService = $sl->get(SynchroService::class);
+        $synchroService = $container->get(SynchroService::class);
 
         $controller = new SynchroController();
+        $controller->setContainer($container);
         $controller->setSynchroService($synchroService);
         $controller->setTheseService($theseService);
         $controller->setNotifierService($notifierService);

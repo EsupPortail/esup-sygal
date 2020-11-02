@@ -3,7 +3,7 @@
 namespace Application;
 
 use UnicaenApp\Exception\RuntimeException;
-use Zend\ServiceManager\ServiceLocatorInterface as ContainerInterface;
+use Interop\Container\ContainerInterface;
 
 class SourceCodeStringHelperFactory
 {

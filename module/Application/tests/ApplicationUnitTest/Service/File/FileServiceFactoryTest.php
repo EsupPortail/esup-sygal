@@ -1,17 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: gauthierb
- * Date: 2018-12-02
- * Time: 20:23
- */
 
 namespace ApplicationUnitTest\Service\File;
 
 use Application\Service\File\FileService;
 use Application\Service\File\FileServiceFactory;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\ServiceManager\ServiceLocatorInterface as ContainerInterface;
+use Interop\Container\ContainerInterface;
 
 class FileServiceFactoryTest extends \PHPUnit_Framework_TestCase
 {

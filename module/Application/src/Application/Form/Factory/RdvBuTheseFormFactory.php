@@ -4,16 +4,14 @@ namespace Application\Form\Factory;
 
 use Application\Form\Hydrator\RdvBuHydrator;
 use Application\Form\RdvBuTheseForm;
-use Zend\Form\FormElementManager;
+use Interop\Container\ContainerInterface;
 
 class RdvBuTheseFormFactory
 {
-    public function __invoke(FormElementManager $formElementManager)
+    public function __invoke(ContainerInterface $container)
     {
-        $sl = $formElementManager->getServiceLocator();
-
         /** @var RdvBuHydrator $hydrator */
-        $hydrator = $sl->get('HydratorManager')->get('RdvBuHydrator');
+        $hydrator = $container->get('HydratorManager')->get('RdvBuHydrator');
 
         $form = new RdvBuTheseForm();
         $form->setHydrator($hydrator);

@@ -5,7 +5,7 @@ namespace Application\Controller\Traits;
 use Application\Entity\Db\StructureConcreteInterface;
 use Application\Service\Structure\StructureService;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\Mvc\Controller\Plugin\FlashMessenger;
+use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Zend\Mvc\Controller\Plugin\Params;
 
 /**

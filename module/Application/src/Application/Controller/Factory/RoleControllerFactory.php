@@ -5,23 +5,22 @@ namespace Application\Controller\Factory;
 use Application\Controller\RoleController;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Role\RoleService;
-use Zend\Mvc\Controller\ControllerManager;
+use Interop\Container\ContainerInterface;
 
 class RoleControllerFactory
 {
-
     /**
-     * @param ControllerManager $controllerManager
+     * @param ContainerInterface $container
      * @return RoleController
      */
-    public function __invoke(ControllerManager $controllerManager)
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var RoleService $roleService
          * @var EtablissementService $etablissementService
          */
-        $roleService = $controllerManager->getServiceLocator()->get('RoleService');
-        $etablissementService = $controllerManager->getServiceLocator()->get(EtablissementService::class);
+        $roleService = $container->get('RoleService');
+        $etablissementService = $container->get(EtablissementService::class);
 
         $controller = new RoleController();
         $controller->setRoleService($roleService);

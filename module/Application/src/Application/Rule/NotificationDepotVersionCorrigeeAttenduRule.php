@@ -89,7 +89,7 @@ class NotificationDepotVersionCorrigeeAttenduRule implements RuleInterface
         if ($dateButoir === null) {
             $this->dateProchaineNotif = null;
             $this->estPremiereNotif = $this->dateDerniereNotif === null;
-            $this->addMessage("Notification non applicable, il n'y a aucune date butoir.");
+            $this->addMessage("Non applicable, date butoir indéterminée (date de soutenance inconnue ou correction non attendue).");
             return $this;
         }
 
@@ -107,7 +107,7 @@ class NotificationDepotVersionCorrigeeAttenduRule implements RuleInterface
         if ($this->dateDerniereNotif === null) {
             $this->dateProchaineNotif = $this->dateAujourdhui;
             $this->estPremiereNotif = true;
-            $this->addMessage("Première notification à faire immédiatement.");
+            $this->addMessage("Première notification.");
             return $this;
         }
 

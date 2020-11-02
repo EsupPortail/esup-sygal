@@ -4016,7 +4016,7 @@ END APP_WORKFLOW;
     TYPE r_cursor IS REF CURSOR;
     sql_query CLOB;
     diff_cur r_cursor;
-    diff_row V_DIFF_THESE%ROWTYPE;
+    diff_row V_DIFF_THESE_sav%ROWTYPE;
   BEGIN
     sql_query := 'SELECT V_DIFF_THESE.* FROM V_DIFF_THESE ' || get_sql_criterion('THESE',SQL_CRITERION);
     OPEN diff_cur FOR sql_query;

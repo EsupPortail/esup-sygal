@@ -3,9 +3,12 @@
 namespace Application\Controller;
 
 use Application\Entity\Db\Variable;
+use Application\Service\Actualite\ActualiteServiceAwareTrait;
+use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
+use Information\Service\InformationServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\Http\Response;
@@ -15,8 +18,24 @@ use Zend\View\Model\ViewModel;
 class IndexController extends AbstractController
 {
     use VariableServiceAwareTrait;
+    use EcoleDoctoraleServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use TheseServiceAwareTrait;
+    use ActualiteServiceAwareTrait;
+    use InformationServiceAwareTrait;
+
+    /**
+     * @var AuthenticationServiceInterface
+     */
+    private $authenticationService;
+
+    /**
+     * @param AuthenticationServiceInterface $authenticationService
+     */
+    public function setAuthenticationService(AuthenticationServiceInterface $authenticationService): void
+    {
+        $this->authenticationService = $authenticationService;
+    }
 
     public function pretty_print(array $array, $level = 0) {
         foreach($array as $key => $value) {
@@ -29,15 +48,11 @@ class IndexController extends AbstractController
                 print $value;
                 print "<br/>";
             }
-
         }
     }
 
     public function indexAction()
     {
-          $config = ($this->getServiceLocator()->get('config'));
-//        $this->pretty_print($config);
-
         /**
          * NB (2019/03/20) : désactiver pour donner l'accès à toutes les thèses pour les rôles doctorant et directeur/co-directeur
          */
@@ -54,15 +69,12 @@ class IndexController extends AbstractController
             return $response;
         }
 
-//        $activite = $config['actualite'];
-//        $url = $config['actualite']['url'];
-//        $actif = $config['actualite']['actif'];
-
         $vm = new ViewModel([
             'role' => $this->userContextService->getSelectedIdentityRole(),
             'estDoctorant' => (bool) $this->userContextService->getIdentityDoctorant(),
-            'url' => $config['actualite']['flux'],
-            'actif' => $config['actualite']['actif'],
+            'url' => $this->actualiteService->isActif() ? $this->actualiteService->getUrl() : null,
+            'offre' => $this->actualiteService->isOffre() ? $this->getEcoleDoctoraleService()->getOffre() : null,
+            'informations' => $this->informationService->getInformations(true),
         ]);
 
         if ($response instanceof ViewModel) {
@@ -112,7 +124,7 @@ EOS
              */
             if (count($theses) === 0) {
                 /** @var AuthenticationServiceInterface $authenticationService */
-                $authenticationService = $this->getServiceLocator()->get('Zend\\Authentication\\AuthenticationService');
+                $authenticationService = $this->authenticationService;
                 $authenticationService->clearIdentity();
                 $this->flashMessenger()->addErrorMessage(
                     "Aucune thèse n'a été trouvée vous concernant, vous ne pouvez pas utiliser cette application.");

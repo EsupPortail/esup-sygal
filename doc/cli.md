@@ -50,44 +50,25 @@ des commandes présentées ici.
 
 On parle ici de lancer l'import d'un service précis.
 
-Par exemple, pour lancer l'import des variables de l'UCN, mais sans lancer la synchro des tables définitives :
+Par exemple, pour lancer l'import des variables de l'UCN :
     
     $ php public/index.php import --service=variable --etablissement=UCN --synchronize=0
-
-Pour lancer en plus la synchro après l'interrogation du WS, mettre `--synchronize=1`.
 
 #### `import-all`
 
 Cette commande lance l'import de tous les services.
 
-Par exemple, pour lancer l'import complet des données de l'UCN, sans lancer la synchro des tables définitives :
+Par exemple, pour lancer l'import complet des données de l'UCN :
     
     $ php public/index.php import-all --etablissement=UCN --synchronize=0
-
-Pour que la synchro se fasse après l'interrogation du WS, mettre `--synchronize=1`.
 
 
 ### Commandes de synchro
 
-On parle ici de synchroniser les données des tables définitives de l'application avec celles des tables 
-temporaires `TMP_*`. 
-
-Même s'il s'agit de tables, on raisonne tout de même en service. Par exemple, la synchronisation de la table des 
-unités de recherches (`UNITE_RECH`) se fait en spécifiant le code de service `unite-recherche`.
-
-Dans ces commandes, il n'est pas possible de spécifier un établissement précis.
-
-#### `synchronize`
-
-Cette commande lance la synchro d'une table définitive `TABLE` à partir de la table temporaire `TMP_TABLE`
-correspondante.
-
 Par exemple, pour lancer la synchro des variables :
     
-    $ php public/index.php synchronize --service=variable
+    $ php public/index.php run synchro --name SYNCHRO_VARIABLE
+    
+Cette commande lance toutes les synchros :
 
-#### `synchronize-all`
-
-Cette commande lance la synchro de toutes les tables définitives :
-
-    $ php public/index.php synchronize-all
+    $ php public/index.php run synchro --all

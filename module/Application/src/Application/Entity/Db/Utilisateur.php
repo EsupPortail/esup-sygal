@@ -4,8 +4,8 @@ namespace Application\Entity\Db;
 
 use Application\Entity\Db\Interfaces\IndividuAwareInterface;
 use BjyAuthorize\Provider\Role\ProviderInterface;
+use UnicaenApp\Entity\UserInterface;
 use UnicaenAuth\Entity\Db\AbstractUser;
-use ZfcUser\Entity\UserInterface;
 
 /**
  * Classe Utilisateur.

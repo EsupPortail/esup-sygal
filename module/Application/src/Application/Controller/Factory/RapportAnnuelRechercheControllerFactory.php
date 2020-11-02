@@ -5,14 +5,12 @@ namespace Application\Controller\Factory;
 use Application\Controller\RapportAnnuelRechercheController;
 use Application\Service\Fichier\FichierService;
 use Application\Service\RapportAnnuel\RapportAnnuelSearchService;
-use Zend\ServiceManager\ServiceLocatorInterface as ContainerInterface;
+use Interop\Container\ContainerInterface;
 
 class RapportAnnuelRechercheControllerFactory
 {
     public function __invoke(ContainerInterface $container)
     {
-        $container = $container->getServiceLocator();
-
         /**
          * @var RapportAnnuelSearchService $searchService
          * @var FichierService $fichierService

@@ -475,6 +475,16 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     }
 
     /**
+     * Get histoModification
+     *
+     * @return \DateTime
+     */
+    public function getHistoModification()
+    {
+        return $this->histoModification ?: $this->getHistoCreation();
+    }
+
+    /**
      * Returns the string identifier of the Resource
      *
      * @return string

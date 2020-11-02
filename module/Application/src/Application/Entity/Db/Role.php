@@ -6,8 +6,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenAuth\Entity\Db\AbstractRole;
-use UnicaenImport\Entity\Db\Interfaces\SourceAwareInterface;
-use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
+use UnicaenDbImport\Entity\Db\Interfaces\SourceAwareInterface;
+use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 
 /**
  * An entity that represents a role.
@@ -30,9 +30,12 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
     const CODE_MEMBRE_JURY = 'M';
     const CODE_PRESIDENT_JURY = 'P';
     const CODE_RAPPORTEUR_JURY = 'R';
+    const CODE_RAPPORTEUR_ABSENT = 'A';
     const CODE_CO_ENCADRANT = 'B';
     const CODE_ED = 'ED';
     const CODE_UR = 'UR';
+
+    const ROLE_ID_USER = 'user'; // ROLE_ID du rôle correspondant à un utilisateur authentifié avec succès.
 
     // @todo NB: maintenant il y le code étab concaténé au "role_id"
     const ROLE_ID_DOCTORANT = "Doctorant";
@@ -42,6 +45,8 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
     const ROLE_ID_ECOLE_DOCT = "École doctorale";
     const ROLE_ID_UNITE_RECH = "Unité de recherche";
     const LIBELLE_PRESIDENT = "Président du jury";
+    const CODE_OBSERVATEUR = "Observateur";
+
 
     /**
      * @var string

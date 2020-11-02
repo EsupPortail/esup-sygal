@@ -12,8 +12,8 @@ use Application\Service\ListeDiffusion\Plugin\ListeDiffusionRolePluginFactory;
 use Application\Service\ListeDiffusion\Plugin\ListeDiffusionStructurePlugin;
 use Application\Service\ListeDiffusion\Plugin\ListeDiffusionStructurePluginFactory;
 use UnicaenAuth\Guard\PrivilegeController;
-use Zend\Mvc\Router\Http\Literal;
-use Zend\Mvc\Router\Http\Segment;
+use Zend\Router\Http\Literal;
+use Zend\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [

@@ -4,8 +4,8 @@ namespace Application\Entity\Db;
 
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
-use UnicaenImport\Entity\Db\Interfaces\SourceAwareInterface;
-use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
+use UnicaenDbImport\Entity\Db\Interfaces\SourceAwareInterface;
+use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 
 /**
  * Etablissement

@@ -6,7 +6,6 @@ use Application\Entity\Db\Individu;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\Utilisateur;
 use Application\Form\CreationUtilisateurForm;
-use Application\Form\CreationUtilisateurFromIndividuForm;
 use Application\Form\InitCompteForm;
 use Application\Form\InitCompteFormAwareTrait;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
@@ -52,6 +51,58 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     use UserServiceAwareTrait;
 
     use InitCompteFormAwareTrait;
+
+    /**
+     * @var ModuleOptions
+     */
+    private $authModuleOptions;
+
+    /**
+     * @var AuthenticationService
+     */
+    protected $authenticationService;
+
+    /**
+     * @var ShibService
+     */
+    protected $shibService;
+
+    /**
+     * @var CreationUtilisateurForm
+     */
+    private $creationUtilisateurForm;
+
+    /**
+     * @param ModuleOptions $authModuleOptions
+     */
+    public function setAuthModuleOptions(ModuleOptions $authModuleOptions)
+    {
+        $this->authModuleOptions = $authModuleOptions;
+    }
+
+    /**
+     * @param AuthenticationService $authenticationService
+     */
+    public function setAuthenticationService(AuthenticationService $authenticationService)
+    {
+        $this->authenticationService = $authenticationService;
+    }
+
+    /**
+     * @param ShibService $shibService
+     */
+    public function setShibService(ShibService $shibService)
+    {
+        $this->shibService = $shibService;
+    }
+
+    /**
+     * @param CreationUtilisateurForm $creationUtilisateurForm
+     */
+    public function setCreationUtilisateurForm(CreationUtilisateurForm $creationUtilisateurForm)
+    {
+        $this->creationUtilisateurForm = $creationUtilisateurForm;
+    }
 
     /**
      * NOTA BENE : il s'agit des individus et non des utilisateurs car ils sont ceux qui portent les rôles
@@ -112,12 +163,12 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
                 $label = $row['NOM_USUEL'] . ' ' . $prenoms;
                 $extra = $row['EMAIL'] ?: $row['SOURCE_CODE'];
                 $result[] = array(
-                    'id'    => $row['ID'], // identifiant unique de l'item
+                    'id' => $row['ID'], // identifiant unique de l'item
                     'label' => $label,     // libellé de l'item
                     'extra' => $extra,     // infos complémentaires (facultatives) sur l'item
                 );
             }
-            usort($result, function($a, $b) {
+            usort($result, function ($a, $b) {
                 return strcmp($a['label'], $b['label']);
             });
 
@@ -132,7 +183,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     public function ajouterAction()
     {
         /** @var CreationUtilisateurForm $form */
-        $form = $this->getServiceLocator()->get('FormElementManager')->get(CreationUtilisateurForm::class);
+        $form = $this->creationUtilisateurForm;
 //        $infos = new CreationUtilisateurInfos();
 //        $form->bind($infos);
 
@@ -164,28 +215,27 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     public function usurperIdentiteAction()
     {
         $request = $this->getRequest();
-        if (! $request instanceof Request) {
+        if (!$request instanceof Request) {
             exit(1);
         }
 
         $newIdentity = $request->getQuery('identity', $request->getPost('identity'));
-        if (! $newIdentity) {
+        if (!$newIdentity) {
             return $this->redirect()->toRoute('home');
         }
 
         /** @var AuthenticationService $authenticationService */
-        $authenticationService = $this->getServiceLocator()->get(AuthenticationService::class);
+        $authenticationService = $this->authenticationService;
 
         $currentIdentity = $authenticationService->getIdentity();
-        if (! $currentIdentity || ! is_array($currentIdentity)) {
+        if (!$currentIdentity || !is_array($currentIdentity)) {
             return $this->redirect()->toRoute('home');
         }
 
         if (isset($currentIdentity['shib'])) {
             /** @var ShibUser $currentIdentity */
             $currentIdentity = $currentIdentity['shib'];
-        }
-        elseif (isset($currentIdentity['ldap'])) {
+        } elseif (isset($currentIdentity['ldap'])) {
             /** @var People $currentIdentity */
             $currentIdentity = $currentIdentity['ldap'];
         } else {
@@ -194,8 +244,8 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
 
         // seuls les logins spécifiés dans la config sont habilités à usurper des identités
         /** @var ModuleOptions $options */
-        $options = $this->getServiceLocator()->get('unicaen-auth_module_options');
-        if (! in_array($currentIdentity->getUsername(), $options->getUsurpationAllowedUsernames())) {
+        $options = $this->authModuleOptions;
+        if (!in_array($currentIdentity->getUsername(), $options->getUsurpationAllowedUsernames())) {
             throw new LogicException("Usurpation non autorisée");
         }
 
@@ -204,7 +254,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             $fromShibUser = $currentIdentity;
             $toShibUser = $this->createShibUserFromUtilisateurUsername($newIdentity);
             /** @var ShibService $shibService */
-            $shibService = $this->getServiceLocator()->get(ShibService::class);
+            $shibService = $this->shibService;
             $shibService->activateUsurpation($fromShibUser, $toShibUser);
         }
 
@@ -221,27 +271,26 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     public function usurperIndividuAction()
     {
         $request = $this->getRequest();
-        if (! $request instanceof Request) {
+        if (!$request instanceof Request) {
             exit(1);
         }
 
         $individuId = $request->getPost('individu');
-        if (! $individuId) {
+        if (!$individuId) {
             return $this->redirect()->toRoute('home');
         }
 
         /** @var AuthenticationService $authenticationService */
-        $authenticationService = $this->getServiceLocator()->get(AuthenticationService::class);
+        $authenticationService = $this->authenticationService;
         $currentIdentity = $authenticationService->getIdentity();
-        if (! $currentIdentity || ! is_array($currentIdentity)) {
+        if (!$currentIdentity || !is_array($currentIdentity)) {
             return $this->redirect()->toRoute('home');
         }
 
         if (isset($currentIdentity['shib'])) {
             /** @var ShibUser $currentIdentity */
             $currentIdentity = $currentIdentity['shib'];
-        }
-        elseif (isset($currentIdentity['ldap'])) {
+        } elseif (isset($currentIdentity['ldap'])) {
             /** @var People $currentIdentity */
             $currentIdentity = $currentIdentity['ldap'];
         } else {
@@ -250,8 +299,8 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
 
         // seuls les logins spécifiés dans la config sont habilités à usurper des identités
         /** @var ModuleOptions $options */
-        $options = $this->getServiceLocator()->get('unicaen-auth_module_options');
-        if (! in_array($currentIdentity->getUsername(), $options->getUsurpationAllowedUsernames())) {
+        $options = $this->authModuleOptions;
+        if (!in_array($currentIdentity->getUsername(), $options->getUsurpationAllowedUsernames())) {
             throw new LogicException("Usurpation non autorisée");
         }
 
@@ -272,7 +321,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             $fromShibUser = $currentIdentity;
             $toShibUser = $this->createShibUserFromUtilisateur($utilisateur);
             /** @var ShibService $shibService */
-            $shibService = $this->getServiceLocator()->get(ShibService::class);
+            $shibService = $this->shibService;
             $shibService->activateUsurpation($fromShibUser, $toShibUser);
         }
 
@@ -317,7 +366,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     public function createShibUserFromUtilisateurUsername($username)
     {
         /** @var UtilisateurService $utilisateurService */
-        $utilisateurService = $this->getServiceLocator()->get('UtilisateurService');
+        $utilisateurService = $this->utilisateurService;
 
         /** @var Utilisateur $utilisateur */
         $utilisateur = $utilisateurService->getRepository()->findOneBy(['username' => $username]);
@@ -374,7 +423,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         $utilisateurs = $this->utilisateurService->getRepository()->findByIndividu($individu, $isLocal = true); // done
         // NB: findByIndividu() avec $isLocal = true renverra 1 utilisateur au maximum
         $utilisateur = $utilisateurs ? current($utilisateurs) : null;
-        if ($utilisateur === null AND $individu->getEmail() !== null) {
+        if ($utilisateur === null and $individu->getEmail() !== null) {
             $utilisateur = $this->utilisateurService->getRepository()->findByUsername($individu->getEmail());
         }
 
@@ -420,14 +469,19 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         return $this->redirect()->toRoute('utilisateur/gerer-utilisateur', ['individu' => $individu->getId()], [], true);
     }
 
-    public function initCompteAction() {
+    public function initCompteAction()
+    {
         $token = $this->params()->fromRoute('token');
         $utilisateur = $this->utilisateurService->getRepository()->findByToken($token);
+        if ($utilisateur === null) {
+            return new ViewModel([
+            ]);
+        }
 
         /** @var InitCompteForm $form */
         $form = $this->getInitCompteForm();
         $form->setUsername($utilisateur->getUsername());
-        $form->setAttribute('action', $this->url()->fromRoute('utilisateur/init-compte', [ 'token' => $token ], [] , true));
+        $form->setAttribute('action', $this->url()->fromRoute('utilisateur/init-compte', ['token' => $token], [], true));
         $form->bind(new Utilisateur());
 
         /** @var Request $request */
@@ -444,6 +498,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
 
         return new ViewModel([
             'form' => $form,
+            'utilisateur' => $utilisateur,
         ]);
     }
 

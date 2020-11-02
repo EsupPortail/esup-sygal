@@ -1,0 +1,42 @@
+<?php
+
+use Application\Entity\Db\Doctorant;
+use Application\Entity\Db\These;
+use Application\View\Renderer\PhpRenderer;use Soutenance\Entity\Proposition;
+
+/**
+ * @see \Soutenance\Service\Notifier\NotifierSoutenanceService::triggerNotificationRapporteurRetard()
+ *
+ * @var PhpRenderer $this
+ * @var These $these
+ * @var Doctorant $doctorant
+ * @var Proposition $proposition
+ * @var string $url
+ */
+
+$justification = true;
+?>
+
+<p>
+    Bonjour,
+</p>
+<p>
+    Vous venez d'être désigné comme rapporteur pour la thèse de <strong><?php echo $doctorant->getNomComplet(); ?></strong> intitulée
+    <strong><?php echo $these->getTitre(); ?></strong>. Ce courrier électronique a pour but de vous rappelez que vous devez rendre
+    votre avis de soutenance pour la date du <?php echo $proposition->getRenduRapport()->format('d/m/Y'); ?>.
+
+    Pour rendre votre avis, connectez-vous à l'application <strong> <?php echo $this->appInfos()->nom; ?> </strong> en utilisant
+    l'adresse suivante : <a href="<?php echo $url; ?>"><?php echo $url;?> </a>.
+</p>
+
+
+<?php if ($justification) : ?>
+    <p>
+        Vous avez reçu ce mail car :
+    <ol>
+        <li> vous êtes un des rapporteurs de la thèse de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?>;</li>
+        <li> vous n'avez pas encore rendu votre rapport;</li>
+    </ol>
+    </p>
+<?php endif ; ?>
+

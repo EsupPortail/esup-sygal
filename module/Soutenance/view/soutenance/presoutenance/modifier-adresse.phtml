@@ -1,0 +1,40 @@
+<?php
+
+/**
+ * @see \Soutenance\Controller\PresoutenanceController::modifierAdresseAction();
+ *
+ * @var These $these
+ * @var RefusForm $form
+ */
+
+use Application\Entity\Db\These;
+use Soutenance\Form\Refus\RefusForm;
+?>
+
+<?php
+    echo $this->form($form);
+?>
+
+<script>
+    $(document).ready(function() {
+        // tinymce.remove();
+        tinymce.init({
+            selector: '.motif',
+            toolbar: 'newdocument undo redo | bold italic',
+            resize: true,
+            language: 'fr_FR',
+            plugins: 'lists',
+            statusbar: true,
+            browser_spellcheck: true,
+            branding: false,
+            menu: {},
+            body_id: 'adresse',
+            setup: function (editor) {
+                editor.on("focusout", function () {
+                    console.log(tinymce.get('adresse').getContent());
+                    $('textarea#adresse').val(tinymce.get('adresse').getContent());
+                });
+            }
+        });
+    });
+</script>

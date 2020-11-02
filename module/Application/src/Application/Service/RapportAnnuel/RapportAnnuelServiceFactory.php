@@ -9,9 +9,9 @@ use Application\Service\NatureFichier\NatureFichierService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\ValiditeFichier\ValiditeFichierService;
 use Application\Service\VersionFichier\VersionFichierService;
+use Interop\Container\ContainerInterface;
 use Retraitement\Service\RetraitementService;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface as ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 class RapportAnnuelServiceFactory implements FactoryInterface
 {
@@ -19,9 +19,11 @@ class RapportAnnuelServiceFactory implements FactoryInterface
      * Create service
      *
      * @param ContainerInterface $container
+     * @param string $requestedName
+     * @param array|null $options
      * @return RapportAnnuelService
      */
-    public function createService(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         /**
          * @var FichierService $fichierService

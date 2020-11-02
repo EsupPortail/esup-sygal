@@ -4,22 +4,20 @@ namespace Application\Controller\Factory;
 
 use Application\Controller\FichierController;
 use Application\Service\Fichier\FichierService;
-use Zend\Mvc\Controller\ControllerManager;
+use Interop\Container\ContainerInterface;
 
 class FichierControllerFactory
 {
     /**
      * Create service
      *
-     * @param ControllerManager $controllerManager
+     * @param ContainerInterface $container
      * @return FichierController
      */
-    public function __invoke(ControllerManager $controllerManager)
+    public function __invoke(ContainerInterface $container)
     {
-        $sl = $controllerManager->getServiceLocator();
-
         /** @var FichierService $fichierService */
-        $fichierService = $sl->get(FichierService::class);
+        $fichierService = $container->get(FichierService::class);
 
         $service = new FichierController();
         $service->setFichierService($fichierService);

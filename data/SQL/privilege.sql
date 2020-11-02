@@ -12,33 +12,60 @@ insert into PRIVILEGE(ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE)
   from CATEGORIE_PRIVILEGE cp where cp.CODE = 'ecole-doctorale';
 
 --
--- Ajout de PROFIL_PRIVILEGE.
+-- Accord de privilèges à des profils.
 --
 INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
-with data(categ, priv) as (
-    select 'fichier-divers',  'televerser'  from dual union
-    select 'fichier-divers',  'telecharger' from dual
-)
-select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
-from data
-         join PROFIL on profil.ROLE_ID in ('ADMIN_TECH')
-         join CATEGORIE_PRIVILEGE cp on cp.CODE = data.categ
-         join PRIVILEGE p on p.CATEGORIE_ID = cp.id and p.code = data.priv
-/
+    with data(categ, priv) as (
+        select 'these', 'consultation-page-couverture' from dual /*union
+        select 'xxxxx', 'xxx' from dual*/
+    )
+    select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
+    from data
+    join PROFIL on profil.ROLE_ID in (
+        'ADMIN_TECH',
+        'BDD', 'BU',
+        'D', 'DOCTORANT', 'K', 'M', 'R',
+        'ED', 'UR'
+    )
+    join CATEGORIE_PRIVILEGE cp on cp.CODE = data.categ
+    join PRIVILEGE p on p.CATEGORIE_ID = cp.id and p.code = data.priv
+    where not exists (
+        select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id
+    ) ;
 
 --
--- Ajout les privilèges manquant au rôle 'ADMIN_TECH' grâce au profil 'ADMIN_TECH'.
+-- Affectation de profils à des rôles.
+-- NB: penser à créer ensuite les ROLE_PRIVILEGE.
+--
+insert into PROFIL_TO_ROLE (PROFIL_ID, ROLE_ID)
+    with data(PROFIL_CODE, ROLE_ROLE_ID) as (
+        select 'BDD', 'Maison du doctorat UCN' from dual union
+        select 'BDD', 'Maison du doctorat URN' from dual union
+        select 'BDD', 'Maison du doctorat ULHN' from dual union
+        select 'BDD', 'Maison du doctorat INSA' from dual
+    )
+    select pr.id, r.id
+    from data
+    join PROFIL pr on pr.ROLE_ID = data.PROFIL_CODE
+    join role r on r.ROLE_ID = data.ROLE_ROLE_ID
+    where not exists (
+        select * from PROFIL_TO_ROLE where PROFIL_ID = pr.id and ROLE_ID = r.id
+    ) ;
+
+--
+-- Attribution automatique des privilèges aux rôles, d'après ce qui est spécifié dans :
+--   - PROFIL_TO_ROLE (profils appliqués à chaque rôle) et
+--   - PROFIL_PRIVILEGE (privilèges accordés à chaque profil).
 --
 insert into ROLE_PRIVILEGE (ROLE_ID, PRIVILEGE_ID)
-    SELECT r.id as ROLE_ID, p.ID as PRIVILEGE_ID
-    from PROFIL_PRIVILEGE pp
-    join profil on PROFIL.ID = pp.PROFIL_ID and profil.ROLE_ID = 'ADMIN_TECH'
-    join PRIVILEGE p on p.id = pp.PRIVILEGE_ID
-    join CATEGORIE_PRIVILEGE cp on cp.id = p.CATEGORIE_ID --and cp.CODE = 'fichier-divers'
-    join role r on r.CODE = PROFIL.ROLE_ID
-    where not exists (
-      select * from ROLE_PRIVILEGE rp where rp.ROLE_ID = r.id and rp.PRIVILEGE_ID = p.id
-    );
+select p2r.ROLE_ID, pp.PRIVILEGE_ID
+from PROFIL_TO_ROLE p2r
+join profil pr on pr.id = p2r.PROFIL_ID
+join PROFIL_PRIVILEGE pp on pp.PROFIL_ID = pr.id
+where not exists (
+    select * from role_privilege where role_id = p2r.role_id and privilege_id = pp.privilege_id
+)
+;
 
 
 --

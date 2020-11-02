@@ -9,8 +9,8 @@ use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceFactory;
 use Application\View\Helper\EcoleDoctoraleHelper;
 use UnicaenAuth\Guard\PrivilegeController;
-use Zend\Mvc\Router\Http\Literal;
-use Zend\Mvc\Router\Http\Segment;
+use Zend\Router\Http\Literal;
+use Zend\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [

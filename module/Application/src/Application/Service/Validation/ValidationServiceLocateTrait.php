@@ -2,18 +2,18 @@
 
 namespace Application\Service\Validation;
 
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 
 trait ValidationServiceLocateTrait
 {
     /**
-     * @param ServiceLocatorInterface $sl
+     * @param ContainerInterface $container
      * @return ValidationService
      */
-    public function locateValidationService(ServiceLocatorInterface $sl)
+    public function locateValidationService(ContainerInterface $container)
     {
         /** @var ValidationService $service */
-        $service = $sl->get('ValidationService');
+        $service = $container->get('ValidationService');
 
         return $service;
     }

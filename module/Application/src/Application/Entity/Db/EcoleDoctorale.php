@@ -2,10 +2,10 @@
 
 namespace Application\Entity\Db;
 
-use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
+use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
-use UnicaenImport\Entity\Db\Interfaces\SourceAwareInterface;
+use UnicaenDbImport\Entity\Db\Interfaces\SourceAwareInterface;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 
 /**
@@ -31,6 +31,15 @@ class EcoleDoctorale implements StructureConcreteInterface, HistoriqueAwareInter
      */
     protected $structure;
 
+    /**
+     * @var string
+     */
+    protected $theme;
+
+    /**
+     * @var string
+     */
+    protected $offreThese;
     /**
      * EcoleDoctorale constructor.
      */
@@ -164,4 +173,42 @@ class EcoleDoctorale implements StructureConcreteInterface, HistoriqueAwareInter
     {
         return $this->structure;
     }
+
+    /**
+     * @return string
+     */
+    public function getTheme()
+    {
+        return $this->theme;
+    }
+
+    /**
+     * @param string $theme
+     * @return EcoleDoctorale
+     */
+    public function setTheme($theme)
+    {
+        $this->theme = $theme;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOffreThese()
+    {
+        return $this->offreThese;
+    }
+
+    /**
+     * @param string $offreThese
+     * @return EcoleDoctorale
+     */
+    public function setOffreThese($offreThese)
+    {
+        $this->offreThese = $offreThese;
+        return $this;
+    }
+
+
 }

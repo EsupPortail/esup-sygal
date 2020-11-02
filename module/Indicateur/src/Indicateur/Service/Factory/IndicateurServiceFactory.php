@@ -2,30 +2,24 @@
 
 namespace Indicateur\Service\Factory;
 
-use Application\Service\FichierThese\FichierTheseService;
-use Application\Service\Notification\NotifierService;
-use Application\Service\These\TheseService;
-use Application\Service\UserContextService;
-use Application\Service\Validation\ValidationService;
-use Application\Service\Variable\VariableService;
 use Doctrine\ORM\EntityManager;
 use Indicateur\Service\IndicateurService;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 
 class IndicateurServiceFactory
 {
     /**
      * Create service
      *
-     * @param ServiceLocatorInterface $serviveManager
+     * @param ContainerInterface $container
      * @return IndicateurService
      */
-    public function __invoke(ServiceLocatorInterface $serviveManager)
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var EntityManager $entityManager
          */
-        $entityManager = $serviveManager->get('doctrine.entitymanager.orm_default');
+        $entityManager = $container->get('doctrine.entitymanager.orm_default');
 
         $service = new IndicateurService();
         $service->setEntityManager($entityManager);

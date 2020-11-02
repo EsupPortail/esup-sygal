@@ -8,16 +8,17 @@ use Application\Service\Individu\IndividuService;
 use Application\Service\Structure\StructureService;
 use Application\Service\These\TheseService;
 use Indicateur\Controller\IndicateurController;
+use Indicateur\Form\IndicateurForm;
 use Indicateur\Service\IndicateurService;
-use Zend\Mvc\Controller\ControllerManager;
+use Interop\Container\ContainerInterface;
 
 class IndicateurControllerFactory
 {
     /**
-     * @param ControllerManager $controllerManager
+     * @param ContainerInterface $container
      * @return IndicateurController
      */
-    public function __invoke(ControllerManager $controllerManager)
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var IndividuService $individuService
@@ -27,12 +28,15 @@ class IndicateurControllerFactory
          * @var StructureService $structureService
          * @var IndicateurService $indicateurService
          */
-        $individuService = $controllerManager->getServiceLocator()->get('IndividuService');
-        $theseService = $controllerManager->getServiceLocator()->get('TheseService');
-        $anomalieService = $controllerManager->getServiceLocator()->get(AnomalieService::class);
-        $etablissementService = $controllerManager->getServiceLocator()->get('EtablissementService');
-        $indicateurService = $controllerManager->getServiceLocator()->get(IndicateurService::class);
-        $structureService = $controllerManager->getServiceLocator()->get(StructureService::class);
+        $individuService = $container->get('IndividuService');
+        $theseService = $container->get('TheseService');
+        $anomalieService = $container->get(AnomalieService::class);
+        $etablissementService = $container->get('EtablissementService');
+        $indicateurService = $container->get(IndicateurService::class);
+        $structureService = $container->get(StructureService::class);
+
+        /** @var  IndicateurForm $indicateurForm */
+        $indicateurForm = $container->get('FormElementManager')->get(IndicateurForm::class);
 
         $controller = new IndicateurController();
         $controller->setIndividuService($individuService);
@@ -41,6 +45,7 @@ class IndicateurControllerFactory
         $controller->setEtablissementService($etablissementService);
         $controller->setIndicateurService($indicateurService);
         $controller->setStructureService($structureService);
+        $controller->setIndicateurForm($indicateurForm);
 
         return $controller;
     }

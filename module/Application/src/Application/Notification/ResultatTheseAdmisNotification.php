@@ -9,7 +9,26 @@ class ResultatTheseAdmisNotification extends Notification
 {
     use TheseAwareTrait;
 
-    protected $templatePath = 'application/import/mail/notif-resultat-admis-doctorant';
+    protected $templatePath = 'application/these/mail/notif-resultat-admis-doctorant';
+
+    /**
+     * @var bool
+     */
+    protected $emailDoctorantAbsent;
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        $toString = parent::__toString();
+
+        if ($this->emailDoctorantAbsent) {
+            $toString .= " NB: aucun email trouvé pour le doctorant.";
+        }
+
+        return $toString;
+    }
 
     /**
      * @return static
@@ -18,10 +37,10 @@ class ResultatTheseAdmisNotification extends Notification
     {
         $to = $this->these->getDoctorant()->getEmailPro() ?: $this->these->getDoctorant()->getEmail();
 
-        $emailDoctorantAbsent = false;
+        $this->emailDoctorantAbsent = false;
         if (! $to) {
             // lorsque le doctorant n'a pas d'email, envoi au BDD (+ petit message d'alerte dans le mail)
-            $emailDoctorantAbsent = true;
+            $this->emailDoctorantAbsent = true;
             $to = $this->emailBdd;
         }
 
@@ -32,7 +51,7 @@ class ResultatTheseAdmisNotification extends Notification
             'these' => $this->these,
             'contact' => $this->emailBdd,
             'doctorant' => $this->these->getDoctorant(),
-            'emailDoctorantAbsent' => $emailDoctorantAbsent,
+            'emailDoctorantAbsent' => $this->emailDoctorantAbsent,
         ]);
 
         return $this;
@@ -52,5 +71,13 @@ class ResultatTheseAdmisNotification extends Notification
         $this->emailBdd = $emailBdd;
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEmailDoctorantAbsent()
+    {
+        return $this->emailDoctorantAbsent;
     }
 }

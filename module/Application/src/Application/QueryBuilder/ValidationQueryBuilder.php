@@ -16,8 +16,9 @@ class ValidationQueryBuilder extends DefaultQueryBuilder
     public function initWithDefault()
     {
         $this
-            ->addSelect("t, tv")
+            ->addSelect("t, tv, i")
             ->join("$this->rootAlias.these", "t")
+            ->join("$this->rootAlias.individu", "i")
             ->join("$this->rootAlias.typeValidation", 'tv')
         ;
 

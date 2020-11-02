@@ -10,20 +10,18 @@ use Application\Service\Notification\NotifierService;
 use Application\Service\RapportAnnuel\RapportAnnuelService;
 use Application\Service\These\TheseService;
 use Application\Service\VersionFichier\VersionFichierService;
-use Zend\Mvc\Controller\ControllerManager;
+use Interop\Container\ContainerInterface;
 
 class RapportAnnuelControllerFactory
 {
     /**
      * Create service
      *
-     * @param ControllerManager $controllerManager
+     * @param ContainerInterface $container
      * @return RapportAnnuelController
      */
-    public function __invoke(ControllerManager $controllerManager)
+    public function __invoke(ContainerInterface $container)
     {
-        $serviceLocator = $controllerManager->getServiceLocator();
-
         /**
          * @var TheseService          $theseService
          * @var FichierService        $fichierService
@@ -33,13 +31,13 @@ class RapportAnnuelControllerFactory
          * @var IndividuService       $individuService
          * @var RapportAnnuelForm     $rapportAnnuelForm
          */
-        $theseService = $serviceLocator->get('TheseService');
-        $fichierService = $serviceLocator->get(FichierService::class);
-        $rapportAnnuelService = $serviceLocator->get(RapportAnnuelService::class);
-        $versionFichierService = $serviceLocator->get('VersionFichierService');
-        $notificationService = $serviceLocator->get(NotifierService::class);
-        $individuService = $serviceLocator->get('IndividuService');
-        $rapportAnnuelForm = $serviceLocator->get('FormElementManager')->get(RapportAnnuelForm::class);
+        $theseService = $container->get('TheseService');
+        $fichierService = $container->get(FichierService::class);
+        $rapportAnnuelService = $container->get(RapportAnnuelService::class);
+        $versionFichierService = $container->get('VersionFichierService');
+        $notificationService = $container->get(NotifierService::class);
+        $individuService = $container->get('IndividuService');
+        $rapportAnnuelForm = $container->get('FormElementManager')->get(RapportAnnuelForm::class);
 
         $controller = new RapportAnnuelController();
         $controller->setTheseService($theseService);

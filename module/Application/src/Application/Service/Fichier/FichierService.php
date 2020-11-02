@@ -13,10 +13,9 @@ use Application\Service\NatureFichier\NatureFichierServiceAwareTrait;
 use Application\Service\ValiditeFichier\ValiditeFichierServiceAwareTrait;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\OptimisticLockException;
 use Exception;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\Mime\Mime;
+use Zend\Filter\FilterInterface;
 use ZipArchive;
 
 class FichierService extends BaseService
@@ -96,9 +95,10 @@ class FichierService extends BaseService
      * @param string|NatureFichier $nature Nature de fichier, ou son code
      * @param string|VersionFichier|null $version Version de fichier, ou son code.
      *                                                 Si null, ce sera VersionFichier::CODE_ORIG
+     * @param FilterInterface|null       $nomFichierFormatter
      * @return Fichier[] Fichiers instanciés
      */
-    public function createFichiersFromUpload(array $uploadResult, $nature, $version = null)
+    public function createFichiersFromUpload(array $uploadResult, $nature, $version = null, FilterInterface $nomFichierFormatter = null)
     {
         $fichiers = [];
         $files = $uploadResult['files'];
@@ -117,6 +117,10 @@ class FichierService extends BaseService
         // normalisation au cas où il n'y a qu'un fichier
         if (isset($files['name'])) {
             $files = [$files];
+        }
+
+        if ($nomFichierFormatter === null) {
+            $nomFichierFormatter = new NomFichierFormatter();
         }
 
         foreach ((array)$files as $file) {

@@ -4,20 +4,20 @@ namespace Application\Service\UniteRecherche;
 
 use Application\Service\Role\RoleService;
 use Application\SourceCodeStringHelper;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 
 class UniteRechercheServiceFactory
 {
     /**
      * Create service
      *
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param ContainerInterface $container
      * @return UniteRechercheService
      */
-    public function __invoke(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container)
     {
         /** @var RoleService $roleService */
-        $roleService = $serviceLocator->get('RoleService');
+        $roleService = $container->get('RoleService');
 
         $service = new UniteRechercheService();
         $service->setRoleService($roleService);
@@ -25,7 +25,7 @@ class UniteRechercheServiceFactory
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper
          */
-        $sourceCodeHelper = $serviceLocator->get(SourceCodeStringHelper::class);
+        $sourceCodeHelper = $container->get(SourceCodeStringHelper::class);
         $service->setSourceCodeStringHelper($sourceCodeHelper);
 
         return $service;

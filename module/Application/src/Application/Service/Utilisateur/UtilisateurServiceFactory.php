@@ -3,31 +3,36 @@
 namespace Application\Service\Utilisateur;
 
 use Application\SourceCodeStringHelper;
-use UnicaenAuth\Entity\Db\User as UserService;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use UnicaenAuth\Service\User as UserService;
 
 class UtilisateurServiceFactory
 {
     /**
      * Create service
      *
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param ContainerInterface $container
      * @return UtilisateurService
      */
-    public function __invoke(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container)
     {
+
         /**
          * @var UserService $userService
          */
-        $userService = $serviceLocator->get('unicaen-auth_user_service');
+        $userService = $container->get('unicaen-auth_user_service');
 
+        /**
+         * @var UserService $userService
+         */
+        $userService = $container->get('unicaen-auth_user_service');
 
         $service = new UtilisateurService();
 
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper
          */
-        $sourceCodeHelper = $serviceLocator->get(SourceCodeStringHelper::class);
+        $sourceCodeHelper = $container->get(SourceCodeStringHelper::class);
         $service->setSourceCodeStringHelper($sourceCodeHelper);
         $service->setUserService($userService);
 

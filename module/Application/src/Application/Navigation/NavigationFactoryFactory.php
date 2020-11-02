@@ -2,14 +2,14 @@
 
 namespace Application\Navigation;
 
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
- 
-class NavigationFactoryFactory implements FactoryInterface
+use Interop\Container\ContainerInterface;
+
+class NavigationFactoryFactory
 {
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $navigation = new ApplicationNavigationFactory();
-        return $navigation->createService($serviceLocator);
+
+        return $navigation($container, $requestedName, $options);
     }
 }

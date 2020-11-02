@@ -18,6 +18,7 @@ use UnicaenApp\Controller\Plugin\ConfirmPlugin;
 use UnicaenApp\Controller\Plugin\Mail;
 use Zend\Http\Request as HttpRequest;
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use ZfcUser\Controller\Plugin\ZfcUserAuthentication;
 
 /**
@@ -26,7 +27,7 @@ use ZfcUser\Controller\Plugin\ZfcUserAuthentication;
  * @method ZfcUserAuthentication zfcUserAuthentication()
  * @method HttpRequest getRequest()
  * @method UploaderPlugin uploader()
- * @method boolean isAllowed($resource, $privilege)
+ * @method boolean isAllowed($resource, $privilege = null)
  * @method UrlThesePlugin urlThese()
  * @method UrlDoctorant urlDoctorant()
  * @method UrlFichier urlFichier()
@@ -34,6 +35,7 @@ use ZfcUser\Controller\Plugin\ZfcUserAuthentication;
  * @method UrlWorkflow urlWorkflow()
  * @method Mail mail()
  * @method ConfirmPlugin confirm()
+ * @method FlashMessenger flashMessenger()
  */
 class AbstractController extends AbstractActionController
     implements UserContextServiceAwareInterface
