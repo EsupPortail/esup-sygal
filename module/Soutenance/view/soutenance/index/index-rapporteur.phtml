@@ -30,7 +30,7 @@ $canAvis = true;
 <?php /** Plusieurs thèses ont été trouvées, le rapporteurs doit alors sélectionner celle sur laquelle il veut travailler */ ?>
 <?php if (isset($theses)) : ?>
     <h1 class="page-header">
-        Index des soutenances
+        Index des soutenances / Index of the PhD defense
     </h1>
 
     <p class="lead">
@@ -74,13 +74,13 @@ $canAvis = true;
 
 
 <h1 class="page-header">
-    Index de la soutenance
+    Index de la soutenance / Index of the PhD defense
     <small><?php echo $this->partial('application/these/partial/titre') ?></small>
 </h1>
 
 <div class="box panel panel-info">
     <div class="panel-heading">
-        <h2> Récapitulatif de la proposition de soutenance </h2>
+        <h2> Proposition de jury / Jury Proposal </h2>
     </div>
     <div class="panel-body">
         <?php if ($proposition !== null) : ?>
@@ -118,7 +118,7 @@ $canAvis = true;
 
 <div class="box panel panel-info">
     <div class="panel-heading">
-        <h2> Signature de l'engagement d'impartialité </h2>
+        <h2> Engagement d'impartialité / Impartiality Commitement </h2>
     </div>
     <div class="panel-body">
         <?php if ($engagement !== null) : ?>
@@ -135,8 +135,8 @@ $canAvis = true;
                 </div>
             </div>
         <?php else : ?>
-            Afin de devenir rapporteur de la thèse de <?php echo $these->getDoctorant()->getIndividu(); ?>, vous devez signer
-            un engagement d'impartialité.
+            Pour être enregistré comme rapporteur de thèse, vous devez signer l'engagement d'impartialité. <br/>
+            To be registered as external referee you must sign the impartiality commitment
 
             <a
                     <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::engagementImpartialiteAction() */?>
@@ -144,7 +144,8 @@ $canAvis = true;
                class="btn btn-primary pull-right"
             >
                 <span class="glyphicon glyphicon-pencil"></span>
-                Signature de l'engagement-impartialité
+<!--                Signer / Sign-->
+                Accès à l'engagement d'impartialité / Access to the impartiality commitment
             </a>
         <?php endif; ?>
     </div>
@@ -152,32 +153,35 @@ $canAvis = true;
 
 <div class="box panel <?php echo ($depot !== null)?"panel-info":"panel-warning"; ?>">
     <div class="panel-heading">
-        <h2> Téléchargement de la thèse </h2>
+        <h2> Téléchargement de la thèse / Downloading the manuscrit </h2>
     </div>
     <div class="panel-body">
-        <?php if ($depot !== null) : ?>
-            Vous pouvez télécharger la version électronique de la thèse via <?php echo $this->appInfos()->nom; ?>.
-
-            <a
-                <?php /** @see \Application\Controller\TheseController::fusionAction() */ ?>
-                href="<?php echo $this->url("these/fusion", ["these" => $these->getId()], [], true); ?>"
-               class="btn btn-primary pull-right"
-            >
-                <span class="glyphicon glyphicon-download"></span>
-                Télécharger la thèse
-            </a>
+        <?php if ($engagement === null) : ?>
+            <span class="glyphicon glyphicon-warning-sign"></span> Vous ne pourrez télécharger la version électronique de la thèse qu'après avoir signé l'engagement d'impartialité.
         <?php else : ?>
-            <span class="glyphicon glyphicon-warning-sign"></span>
-            La thèse de <?php echo $these->getDoctorant()->getIndividu(); ?> n'a pas encore été déposée dans <?php echo $this->appInfos()->nom; ?>.
-            Une fois le dépôt réalisé vous pourrez télécharger celle-ci via cette page.
-        <?php endif; ?>
+            <?php if ($depot !== null) : ?>
+                Vous pouvez télécharger la version électronique de la thèse via <?php echo $this->appInfos()->nom; ?>.
 
+                <a
+                    <?php /** @see \Application\Controller\TheseController::fusionAction() */ ?>
+                    href="<?php echo $this->url("these/fusion", ["these" => $these->getId()], [], true); ?>"
+                   class="btn btn-primary pull-right"
+                >
+                    <span class="glyphicon glyphicon-download"></span>
+                    Télécharger la thèse / Downloading manuscrit
+                </a>
+            <?php else : ?>
+                <span class="glyphicon glyphicon-warning-sign"></span>
+                La thèse de <?php echo $these->getDoctorant()->getIndividu(); ?> n'a pas encore été déposée dans <?php echo $this->appInfos()->nom; ?>.
+                Une fois le dépôt réalisé vous pourrez télécharger celle-ci via cette page.
+            <?php endif; ?>
+        <?php endif; ?>
     </div>
 </div>
 
 <div class="box panel <?php echo ($engagement !== null)?"panel-info":"panel-warning"; ?>">
     <div class="panel-heading">
-        <h2> Avis de soutenance </h2>
+        <h2> Avis de soutenance / Notification on the PhD defense </h2>
     </div>
     <div class="panel-body">
     <?php if ($engagement !== null) : ?>
@@ -220,7 +224,7 @@ $canAvis = true;
                    class="btn btn-primary pull-right"
                 >
                     <span class="glyphicon glyphicon-pencil"></span>
-                    Rendre l'avis de soutenance
+                    Rendre l'avis de soutenance / Give our report
                 </a>
 
             <?php endif; ?>

@@ -2,18 +2,19 @@
 
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\These;
+use Soutenance\Form\Avis\AvisForm;
 use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
 
 /**
  * @see \Soutenance\Controller\AvisController::indexAction()
- *
+ * @var AvisForm $form
  * @var These $these
  * @var Acteur $rapporteur
  */
 
 $denominationDoctorant = $these->getDoctorant()->getIndividu()->__toString();
 $denominationRapporteur = $rapporteur->__toString();
-$titrePage = "Avis sur la soutenance de la thèse de ".$denominationDoctorant;
+$titrePage = "Avis sur la soutenance de la thèse de ".$denominationDoctorant . " / Notification on the PhD defense ";
 $this->headTitle($titrePage);
 
 $canEdit = $this->isAllowed($rapporteur, AvisSoutenancePrivileges::AVIS_MODIFIER);
@@ -25,17 +26,18 @@ $canEdit = $this->isAllowed($rapporteur, AvisSoutenancePrivileges::AVIS_MODIFIER
     <?php echo $titrePage; ?>
 </h1>
 
-<p class="lead">
-    En cas d’avis favorable, si vous souhaitez néanmoins que des modifications soient apportées à la thèse, elles seront
-    transmises au jury qui peut demander à l’issu de la soutenance l'introduction de corrections dans la thèse.
-</p>
+<!--<p class="lead">-->
+<!--    En cas d’avis favorable, si vous souhaitez néanmoins que des modifications soient apportées à la thèse, elles seront-->
+<!--    transmises au jury qui peut demander à l’issu de la soutenance l'introduction de corrections dans la thèse.-->
+<!--</p>-->
 
 <?php echo $this->messenger()->addMessagesFromFlashMessenger(); ?>
 
 <?php if ($canEdit) : ?>
     <div class="panel panel-info">
         <div class="panel-heading">
-            <h2> Dépot du prérapport de soutenance et de l'avis de soutenance </h2>
+            <h2> Avis sur la soutenance et dépôt du pré-rapport de soutenance /
+                Notification on the PhD defense and uploading of the PhD report </h2>
         </div>
         <div class="panel-body">
 

@@ -18,10 +18,10 @@ class AvisForm extends Form {
             'type' => Radio::class,
             'name' => 'avis',
             'options' => [
-                'label' => 'Avis :',
+                'label' => 'Avis / Notification :',
                 'value_options' => [
-                    'Favorable' => 'Favorable',
-                    'Défavorable' => 'Défavorable',
+                    'Favorable' => 'Favorable / I agree',
+                    'Défavorable' => 'Défavorable / I disagree',
                 ],
                 'attributes' => [
                     'class' => 'radio-inline',
@@ -33,7 +33,7 @@ class AvisForm extends Form {
             'type' => Textarea::class,
             'name' => 'motif',
             'options' => [
-                'label' => "Motif de refus :",
+                'label' => "Motif de refus /  Reason for rejection :",
             ],
             'attributes' => [
                 'id' => 'motif',
@@ -44,7 +44,7 @@ class AvisForm extends Form {
             'type' => File::class,
             'name' => 'rapport',
             'options' => [
-                'label' => 'Rapport de présoutenance :',
+                'label' => 'Déposez le rapport de soutenance / Upload the PhD report',
             ],
         ]);
         //SUBMIT
@@ -52,7 +52,7 @@ class AvisForm extends Form {
             'type' => Button::class,
             'name' => 'enregistrer',
             'options' => [
-                'label' => 'Valider votre avis de soutenance',
+                'label' => 'Validation',
                 'label_options' => [
                     'disable_html_escape' => true,
                 ],

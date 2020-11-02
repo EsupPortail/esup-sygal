@@ -35,7 +35,7 @@ $this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctora
 ?>
 
 <h1 class="page-header">
-    Engagement d'impartialité portant sur la thèse de  <?php echo $doctorantNom; ?>
+    Engagement d'impartialité / Impartiality commitment
 </h1>
 
 <p>
@@ -45,15 +45,15 @@ $this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctora
 <div>
     <div class="box panel panel-info">
         <div class="panel-heading">
-            <h2 class="first"> Information sur la thèse</h2>
+            <h2 class="first"> Information sur la thèse / Information about the PhD thesis </h2>
         </div>
         <div class="panel-body">
             <dl class="dl-horizontal">
-                <dt> Titre </dt>
+                <dt> Titre / Title </dt>
                 <dd> <?php echo $these->getTitre(); ?> </dd>
-                <dt> Doctorant </dt>
+                <dt> Doctorant / PhD Student</dt>
                 <dd> <?php echo $doctorantNom; ?> </dd>
-                <dt> Encadrement </dt>
+                <dt> Directeur(s) / Supervisor(s) </dt>
                 <dd>
                     <?php foreach ($encadrants as $encadrant): ?>
                         <?php
@@ -80,7 +80,12 @@ $this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctora
     part aux travaux de la thèse et ne pas avoir de publication cosignée avec le doctorant dans les cinq dernières
     années et ne pas avoir participer au comité de suivi de la thèse de <?php echo $these->getDoctorant()->getIndividu(); ?>.
 </p>
+    By signing, I certify that I have no personal or family connection with the doctoral student or his/her PhD supervisor
+    and that I have not taken part in the work of the thesis and not co-authored  publications with the doctoral student for
+    the last five years.
+    <p>
 
+</p>
 <div class="row">
     <div class="col-md-4">
     <?php if ($validation): ?>
@@ -107,7 +112,7 @@ $this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctora
                     href="<?php echo $urlSigner;  ?>"
                     class="btn btn-success" style="width:80%;">
                 <span class="glyphicon glyphicon-thumbs-up"></span>
-                Je signe l'engagement d'impartialité</a>
+                Je signe / I agree </a>
 
                 <br/>
                 <br/>
@@ -115,7 +120,7 @@ $this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctora
             <a      <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::refuserEngagementImpartialiteAction()  */ ?>
                     href="<?php echo $urlRefuser;  ?>" class="btn btn-danger" style="width:80%;">
                 <span class="glyphicon glyphicon-thumbs-down"></span>
-                Je ne peux pas signer l'engagement d'impartialité</a>
+                Je ne signe pas / I disagree </a>
             </span>
 
         </p>
