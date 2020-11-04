@@ -1,5 +1,12 @@
 Journal des modifications
 =========================
+
+2.0.1
+-----
+- Changement de stratégie pour générer le fichier de config contenant les numéro et date de version
+- Correction plantage lorsque les données d'identité sont de type Utilisateur
+- Retour du fichier config/autoload/version.global.php abandonné (la version ne peut pas être déduite par git pour l'instant)
+
 2.0.0
 ------------------
 
