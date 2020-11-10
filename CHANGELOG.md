@@ -1,8 +1,20 @@
 Journal des modifications
 =========================
 
+2.1.0
+-----
+- Listes de diffusion Sympa : page d'activation/désactivation des listes pour lesquelles SyGAL peut fournir
+  les abonnés et les propriétaires via une URL. 
+- Correction des ACL d'accès aux lignes de commandes du module unicaen/oracle.  
+
+2.0.1
+-----
+- Changement de stratégie pour générer le fichier de config contenant les numéro et date de version
+- Correction plantage lorsque les données d'identité sont de type Utilisateur
+- Retour du fichier config/autoload/version.global.php abandonné (la version ne peut pas être déduite par git pour l'instant)
+
 2.0.0
-------------------
+-----
 
 - Passage à Zend Framework 3 et PHP 7.3 (gain de performances).
 - Utilisation d'un nouveau package unicaen/db-import pour la synchro.

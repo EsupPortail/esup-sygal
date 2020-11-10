@@ -112,7 +112,7 @@ class UserWrapper implements UserInterface
                 return $this->userData->getEduPersonPrincipalName();
 
             case $this->userData instanceof Utilisateur:
-                throw new DomainException("Non applicable!");
+                throw new DomainException("Les données d'identité de type Utilisateur ne sont pas supportées");
 
             case $this->userData instanceof ShibUser:
                 return $this->userData->getEppn();

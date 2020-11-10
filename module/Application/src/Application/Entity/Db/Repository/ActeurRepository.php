@@ -10,6 +10,7 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 use UnicaenApp\Exception\RuntimeException;
 
 class ActeurRepository extends DefaultEntityRepository
