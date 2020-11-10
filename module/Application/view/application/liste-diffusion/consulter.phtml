@@ -2,8 +2,10 @@
 
 namespace Application;
 
+use Application\Entity\Db\ListeDiffusion;
+
 /**
- * @var string $liste
+ * @var ListeDiffusion $liste
  * @var string[] $memberIndividusAvecAdresse
  * @var string[] $memberIndividusSansAdresse
  * @var string[] $ownerIndividusAvecAdresse
@@ -16,6 +18,10 @@ namespace Application;
 <h1 class="page-header first">
     <?php echo $this->translate("Liste ") ?> <code><?php echo $liste ?></code>
 </h1>
+
+<a href="<?php echo $url = $this->url('liste-diffusion') ?>">
+    Retour à l'index
+</a>
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
 
@@ -46,7 +52,8 @@ namespace Application;
     </div>
 </div>
 
-<a href="<?php echo $url = $this->url('liste-diffusion/liste/generate-member-include', ['liste' => $liste], ['force_canonical' => true]) ?>">
+<a href="<?php echo $url = $this->url('liste-diffusion/liste/generate-member-include',
+    ['adresse' => $liste->getAdresse()], ['force_canonical' => true]) ?>">
     URL member_include pour Sympa
 </a>
 
@@ -104,7 +111,8 @@ namespace Application;
     </div>
 </div>
 
-<a href="<?php echo $url = $this->url('liste-diffusion/liste/generate-owner-include', ['liste' => $liste], ['force_canonical' => true]) ?>">
+<a href="<?php echo $url = $this->url('liste-diffusion/liste/generate-owner-include',
+    ['adresse' => $liste], ['force_canonical' => true]) ?>">
     URL owner_include pour Sympa
 </a>
 

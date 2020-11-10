@@ -1,0 +1,38 @@
+<?php
+/**
+ * @var string $name
+ * @var string $link
+ * @var bool $checked
+ * @var bool $enabled
+ */
+?>
+
+<input type="hidden"
+       value="0"
+       name="listes[<?php echo $name ?>]"
+       id="<?php echo $name ?>">
+
+<?php if ($enabled): ?>
+    <label for="listes[<?php echo $name ?>]">
+        <input type="checkbox"
+               <?php echo $checked ? 'checked' : '' ?>
+               class="liste-checkbox"
+               value="1"
+               name="listes[<?php echo $name ?>]"
+               id="<?php echo $name ?>">
+        <?php echo $name ?>
+    </label>
+<?php else: ?>
+    <label>
+        <input type="checkbox"
+               <?php echo $checked ? 'checked' : '' ?>
+               disabled>
+    </label>
+    <em class="text-danger"><?php echo $name ?></em>
+<?php endif ?>
+
+<?php if ($link): ?>
+    <a href="<?php echo $link ?>"
+       class="liste-link"
+       style="<?php echo $checked ? '' : 'display:none' ?>">Détails</a>
+<?php endif ?>

@@ -7,10 +7,12 @@ use Application\Controller\ListeDiffusionController;
 use Application\Provider\Privilege\ListeDiffusionPrivileges;
 use Application\Service\ListeDiffusion\ListeDiffusionService;
 use Application\Service\ListeDiffusion\ListeDiffusionServiceFactory;
-use Application\Service\ListeDiffusion\Plugin\ListeDiffusionRolePlugin;
-use Application\Service\ListeDiffusion\Plugin\ListeDiffusionRolePluginFactory;
-use Application\Service\ListeDiffusion\Plugin\ListeDiffusionStructurePlugin;
-use Application\Service\ListeDiffusion\Plugin\ListeDiffusionStructurePluginFactory;
+use Application\Service\ListeDiffusion\Plugin\Structure\ListeDiffusionEcoleDoctoralePlugin;
+use Application\Service\ListeDiffusion\Plugin\Structure\ListeDiffusionEcoleDoctoralePluginFactory;
+use Application\Service\ListeDiffusion\Handler\ListeDiffusionHandler;
+use Application\Service\ListeDiffusion\Handler\ListeDiffusionHandlerFactory;
+use Application\Service\ListeDiffusion\Plugin\Structure\ListeDiffusionUniteRecherchePlugin;
+use Application\Service\ListeDiffusion\Plugin\Structure\ListeDiffusionUniteRecherchePluginFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use Zend\Router\Http\Literal;
 use Zend\Router\Http\Segment;
@@ -30,6 +32,7 @@ return [
                     'controller' => ListeDiffusionController::class,
                     'action' => [
                         'consulter',
+                        'exporter-tableau',
                     ],
                     'privileges' => ListeDiffusionPrivileges::LISTE_DIFFUSION_CONSULTER,
                 ],
@@ -60,11 +63,11 @@ return [
                     'liste' => [
                         'type' => Segment::class,
                         'options' => [
-                            'route' => '/:liste',
+                            'route' => '/:adresse',
                             // exemple: /consulter/ed591.doctorants.ucn@normandie-univ.fr
                             // exemple: /consulter/ed591.doctorants@normandie-univ.fr
                             'constraints' => [
-                                'liste' => '[a-zA-Z0-9-_.@]+',
+                                'adresse' => '[a-zA-Z0-9-_.@]+',
                             ],
                             'defaults' => [
                                 /** @see ListeDiffusionController::consulterAction() */
@@ -95,6 +98,34 @@ return [
                             ],
                         ],
                     ],
+                    'export-tableau' => [
+                        'type' => Literal::class,
+                        'options' => [
+                            'route' => '/exporter-tableau',
+                            'defaults' => [
+                                /** @see ListeDiffusionController::exporterTableauAction() */
+                                'action' => 'exporter-tableau',
+                            ],
+                        ],
+                    ]
+                ],
+            ],
+        ],
+    ],
+    'navigation' => [
+        'default' => [
+            'home' => [
+                'pages' => [
+                    'admin' => [
+                        'pages' => [
+                            'liste-diffusion' => [
+                                'label'    => 'Listes de diffusion',
+                                'route'    => 'liste-diffusion',
+                                'icon'     => 'glyphicon glyphicon-enveloppe',
+                                'resource' => PrivilegeController::getResourceId(ListeDiffusionController::class, 'index'),
+                            ],
+                        ],
+                    ],
                 ],
             ],
         ],
@@ -102,8 +133,7 @@ return [
     'service_manager' => [
         'factories' => [
             ListeDiffusionService::class => ListeDiffusionServiceFactory::class,
-            ListeDiffusionStructurePlugin::class => ListeDiffusionStructurePluginFactory::class,
-            ListeDiffusionRolePlugin::class => ListeDiffusionRolePluginFactory::class,
+            ListeDiffusionHandler::class => ListeDiffusionHandlerFactory::class,
         ],
     ],
     'controllers' => [
