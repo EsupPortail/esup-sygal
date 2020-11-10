@@ -1,8 +1,10 @@
 <?php
 
-namespace Application\Service\ListeDiffusion\Plugin;
+namespace Application\Service\ListeDiffusion\Handler;
 
-interface ListeDiffusionPluginInterface
+use Application\Entity\Db\ListeDiffusion;
+
+interface ListeDiffusionHandlerInterface
 {
     /**
      * Spécifie la config.
@@ -14,16 +16,16 @@ interface ListeDiffusionPluginInterface
     /**
      * Spécifie la liste concernée.
      *
-     * @param string $liste
+     * @param ListeDiffusion $listeDiffusion
      */
-    public function setListe($liste);
+    public function setListeDiffusion(ListeDiffusion $listeDiffusion);
 
     /**
      * Retourne <code>true</code> si ce plugin sait prendre en charge la liste courante.
      *
      * @return bool
      */
-    public function canHandleListe();
+    public function canHandleListeDiffusion();
 
     /**
      * Initialisation OBLIGATOIRE.
@@ -64,5 +66,5 @@ interface ListeDiffusionPluginInterface
      * @param string $prefix
      * @return string
      */
-    public function generateResultFileName($prefix);
+    public function generateResultFileName(string $prefix);
 }

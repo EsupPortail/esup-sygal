@@ -17,6 +17,8 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
 
     const SOURCE_CODE_ETABLISSEMENT_INCONNU = 'ETAB_INCONNU';
 
+    const CODE_TOUT_ETABLISSEMENT_CONFONDU = 'Tous';
+
     protected $id;
     protected $domaine;
     protected $theses;
@@ -298,5 +300,15 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
     public function getRoles()
     {
         return $this->roles;
+    }
+
+    /**
+     * Teste si cet établissement est le pseudo-établissement "Tout établissement confondu".
+     *
+     * @return bool
+     */
+    public function estToutEtablissementConfondu()
+    {
+        return $this->getCode() === self::CODE_TOUT_ETABLISSEMENT_CONFONDU;
     }
 }

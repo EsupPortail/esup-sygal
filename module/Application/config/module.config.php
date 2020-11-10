@@ -39,6 +39,18 @@ return array(
                 ['controller' => 'UnicaenApp\Controller\Application', 'action' => 'contact', 'roles' => ['user']],
                 ['controller' => 'Application\Controller\Index', 'action' => 'contact', 'roles' => ['user']],
             ],
+            \UnicaenAuth\Guard\PrivilegeController::class => [
+                [
+                    'controller' => \UnicaenOracle\Controller\IndexController::class,
+                    'action'     => [
+                        'generateScriptForSchemaClearingConsole',
+                        'generateScriptForSchemaCreationConsole',
+                        'generateScriptForRefConstraintsCreationConsole',
+                        'generateScriptsForDataInsertsConsole',
+                    ],
+                    'roles' => [], // pas d'authentification requise
+                ],
+            ],
         ],
     ],
     'doctrine'     => [
