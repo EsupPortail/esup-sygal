@@ -277,8 +277,9 @@ class TheseController extends AbstractController
         $role = $this->userContextService->getSelectedIdentityRole();
         $user = $this->userContextService->getIdentityDb();
 
+        $codeRole = $role ? $role->getCode() : null;
         $theses = [];
-        switch ($role->getCode()) {
+        switch ($codeRole) {
             case Role::CODE_DOCTORANT :
                 $theses = $this->getTheseService()->getRepository()->findTheseByDoctorant($user->getIndividu());
                 break;
