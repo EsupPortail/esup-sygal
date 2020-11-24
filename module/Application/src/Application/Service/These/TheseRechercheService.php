@@ -320,7 +320,7 @@ class TheseRechercheService
         if ($sort === null || $sort === '') {
             $queryParams = array_merge($queryParams, [
                 'sort' => TheseSorter::NAME_datePremiereInscription,
-                'direction' => Sortable::ASC
+                'direction' => Sortable::DESC
             ]);
             $updated = true;
         }

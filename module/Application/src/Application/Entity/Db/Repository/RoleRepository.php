@@ -78,6 +78,10 @@ class RoleRepository extends DefaultEntityRepository
         return $role;
     }
 
+    /**
+     * @param $individu
+     * @return Role[]
+     */
     public function findAllByIndividu($individu)
     {
         $qb = $this->getEntityManager()->getRepository(IndividuRole::class)->createQueryBuilder("ir")
