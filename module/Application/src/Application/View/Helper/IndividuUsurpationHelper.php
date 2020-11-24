@@ -3,11 +3,8 @@
 namespace Application\View\Helper;
 
 use Application\Entity\Db\Individu;
-use UnicaenApp\Form\View\Helper\FormControlGroup;
 use UnicaenAuth\Options\ModuleOptions;
 use UnicaenAuth\View\Helper\UserAbstract;
-use Zend\Form\Element\Hidden;
-use Zend\Form\Element\Submit;
 use Zend\Form\Form;
 use Zend\Form\View\Helper\Form as FormHelper;
 use Zend\Form\View\Helper\FormElement;
@@ -31,9 +28,9 @@ class IndividuUsurpationHelper extends UserAbstract
     protected $moduleOptions;
 
     /**
-     * @var string
+     * @var Form
      */
-    private $url;
+    private $form;
 
     /**
      * @var Individu
@@ -66,51 +63,39 @@ class IndividuUsurpationHelper extends UserAbstract
             return '';
         }
 
+        $this->form->get('individu')->setValue($this->individu->getId());
+        $this->form->get('submit')->setAttribute('title', "Usurper l'identité de " . $this->individu);
+
         /** @var FormHelper $formHelper */
         $formHelper = $this->view->plugin('form');
         /** @var FormElement $formElementHelper */
         $formElementHelper = $this->view->plugin('formElement');
 
-        $form = new Form('individu-usurpation-form');
-        $form->setAttributes([
-            'class'  => 'individu-usurpation-form',
-            'action' => $this->url,
-        ]);
-
-        $hidden = null;
-        $hidden = new Hidden('individu');
-        $hidden->setValue($this->individu->getId());
-        $hidden->setAttributes([
-            'id' => 'individu-usurpation-hidden',
-        ]);
-
-        $submit = new Submit('submit');
-        $submit->setValue("Usurper");
-        $submit->setAttributes([
-            'class' => 'individu-usurpation-submit btn btn-danger btn-xs',
-            'title' => "Usurper l'identité de " . $this->individu,
-        ]);
-
         $html = '';
-        $html .= $formHelper->openTag($form);
-        $html .= $formElementHelper->__invoke($hidden);
-        $html .= $formElementHelper->__invoke($submit);
+        $html .= $formHelper->openTag($this->form);
+        $html .= $formElementHelper->__invoke($this->form->get('individu'));
+        $html .= $formElementHelper->__invoke($this->form->get('submit'));
         $html .= $formHelper->closeTag();
 
         return $html;
     }
 
     /**
-     * Spécifie l'URL à laquelle sont POSTées les données du formulaire.
-     *
-     * @param string $url
-     * @return $this
+     * @param Form $form
+     * @return IndividuUsurpationHelper
      */
-    public function setUrl($url)
+    public function setForm(Form $form): IndividuUsurpationHelper
     {
-        $this->url = $url;
-
+        $this->form = $form;
         return $this;
+    }
+
+    /**
+     * @return Form
+     */
+    public function getForm(): Form
+    {
+        return $this->form;
     }
 
     /**
@@ -119,7 +104,7 @@ class IndividuUsurpationHelper extends UserAbstract
      * @param Individu $individu
      * @return self
      */
-    public function setIndividu($individu)
+    public function setIndividu(Individu $individu)
     {
         $this->individu = $individu;
 

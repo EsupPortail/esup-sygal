@@ -94,6 +94,11 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
     private $id;
 
     /**
+     * @var ArrayCollection
+     */
+    private $roles;
+
+    /**
      * @var ArrayCollection (mailContact)
      */
     private $mailsConfirmations;
@@ -108,6 +113,7 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
      */
     public function __construct()
     {
+        $this->roles = new ArrayCollection();
         $this->mailsConfirmations = new ArrayCollection();
         $this->utilisateurs = new ArrayCollection();
     }
@@ -490,6 +496,36 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return Role[]
+     */
+    public function getRoles()
+    {
+        return $this->roles->toArray();
+    }
+
+    /**
+     * @param Role $role
+     * @return self
+     */
+    public function addRole(Role $role)
+    {
+        $this->roles->add($role);
+
+        return $this;
+    }
+
+    /**
+     * @param Role $role
+     * @return self
+     */
+    public function removeRole(Role $role)
+    {
+        $this->roles->removeElement($role);
+
+        return $this;
     }
 
     /** @return string */

@@ -357,10 +357,16 @@ class RoleService extends BaseService
         }
     }
 
-    public function getRoles()
+    /**
+     * @return Role[]
+     */
+    public function findAllRoles()
     {
-        $result = $this->getEntityManager()->getRepository(Role::class)->findAll();
-        return $result;
+        $qb = $this->getRepository()->createQueryBuilder('r')
+            ->addSelect('s')
+            ->leftJoin('r.structure', 's');
+
+        return $qb->getQuery()->getResult();
     }
 
 //    /**

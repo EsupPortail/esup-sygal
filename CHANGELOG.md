@@ -1,6 +1,14 @@
 Journal des modifications
 =========================
 
+2.1.1
+-----
+- Liste des thèses : tri par date de 1ere inscription décroissante
+- Page Utilisateur : accélération du chargement et ajout d'un bouton pour usurper
+- Accueil de la partie dépôt : le rôle sélectionné est null quand l'utilisateur n'a aucun rôle
+- Correction mineure sur les traductions dans le module de soutenance
+- Suppression d'un terme 'SoDoct' oublié
+
 2.1.0
 -----
 - Listes de diffusion Sympa : page d'activation/désactivation des listes pour lesquelles SyGAL peut fournir
