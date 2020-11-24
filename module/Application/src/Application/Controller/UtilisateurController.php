@@ -20,6 +20,7 @@ use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
+use Doctrine\ORM\Query\Expr;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -109,6 +110,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
      */
     public function indexAction()
     {
+        /** @var Individu $individu */
         $individu = null;
         $roles = null;
 
@@ -126,13 +128,18 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         $rolesAffectes = [];
         if ($individuId !== null) {
             $individu = $this->individuService->getRepository()->find($individuId);
-            $rolesAffectes = $this->roleService->getRepository()->findAllByIndividu($individu);
+            $rolesAffectes = $individu->getRoles();
         }
 
-        $roles = $this->roleService->getRoles();
-        $etablissements = $this->getStructureService()->getAllStructuresAffichablesByType(TypeStructure::CODE_ETABLISSEMENT, 'libelle');
-        $unites = $this->getStructureService()->getAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'libelle');
-        $ecoles = $this->getStructureService()->getAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle');
+        $roles = $this->roleService->findAllRoles();
+
+        // établissements : pour l'instant les rôles ne concernent que des établissements d'inscription donc on flitre
+        $etablissementsQb = $this->structureService->getAllStructuresAffichablesByTypeQb(TypeStructure::CODE_ETABLISSEMENT, 'libelle', true);
+        $etablissementsQb->join('structure.etablissement', 'etab', Expr\Join::WITH, 'etab.estInscription = 1');
+        $etablissements = $etablissementsQb->getQuery()->execute();
+
+        $unites = $this->structureService->getAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'libelle', true, true);
+        $ecoles = $this->structureService->getAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle', true, true);
 
         return new ViewModel([
             'individu' => $individu,

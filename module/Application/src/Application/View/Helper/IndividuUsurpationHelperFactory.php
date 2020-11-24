@@ -5,6 +5,9 @@ namespace Application\View\Helper;
 use Interop\Container\ContainerInterface;
 use UnicaenAuth\Options\ModuleOptions;
 use UnicaenAuth\Service\UserContext;
+use Zend\Form\Element\Hidden;
+use Zend\Form\Element\Submit;
+use Zend\Form\Form;
 use Zend\View\Helper\Url;
 use Zend\View\HelperPluginManager;
 
@@ -34,9 +37,40 @@ class IndividuUsurpationHelperFactory
             $moduleOptions->getUsurpationAllowedUsernames());
 
         $helper = new IndividuUsurpationHelper($userContextService);
-        $helper->setUrl($url);
+        $helper->setForm($this->createForm($url));
         $helper->setUsurpationEnabled($usurpationAllowed);
 
         return $helper;
+    }
+
+    /**
+     * @param string $url
+     * @return Form
+     */
+    private function createForm(string $url)
+    {
+        $form = new Form('individu-usurpation-form');
+        $form->setAttributes([
+            'class'  => 'individu-usurpation-form',
+            'action' => $url,
+        ]);
+
+        $hidden = null;
+        $hidden = new Hidden('individu');
+        $hidden->setAttributes([
+            'id' => 'individu-usurpation-hidden',
+        ]);
+
+        $submit = new Submit('submit');
+        $submit->setValue("Usurper");
+        $submit->setAttributes([
+            'class' => 'individu-usurpation-submit btn btn-danger btn-xs',
+            'title' => "Usurper" /*. " l'identité de " . $individu*/,
+        ]);
+
+        $form->add($hidden);
+        $form->add($submit);
+
+        return $form;
     }
 }
