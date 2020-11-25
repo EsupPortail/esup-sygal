@@ -34,6 +34,8 @@ $canEditPersopass = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_MODI
 $canEditPersopass = $canEditPersopass && (!$estDoctorant || !$these->getDoctorant()->getPersopass());
 $persopassModifiedEvent = 'persopass-modified-event';
 $canCreate = $this->isAllowed(UtilisateurPrivileges::getResourceId(UtilisateurPrivileges::UTILISATEUR_CREATE_FROM_INDIVIDU));
+$canAjouterCoEncarant = true;
+
 
 $canEditForcageCorrectionAutorisee = $this->isAllowed($these, ThesePrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE);
 
@@ -172,6 +174,8 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                             $this->url('utilisateur/gerer-utilisateur', ['individu' => $acteur->getIndividu()->getId()], [], true));
                     }
                 }
+
+
                 $ligne = implode(" &ndash; ", $ligne);
                 echo $ligne;
 
@@ -183,10 +187,29 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                     echo $individuUsurpationHelper();
                 }
 
+                if ($canAjouterCoEncarant AND $acteur->estCoEncadrant()) {
+                    echo " &nbsp;";
+                    echo "<span class='glyphicon glyphicon-eye-open' title='Voir historique de co-encadrement'></span>";
+                    echo " &nbsp; <a href='".$this->url('these/retirer-co-encadrant', ['these' => $these->getId(), 'co-encadrant' => $acteur->getId()], [], true) ."'>";
+                    echo "<span class='glyphicon glyphicon-minus' title='Retirer le co-encadrant'></span>";
+                    echo "</a>";
+                }
+
                 echo "<br/>";
             }
             ?>
 
+            <?php if ($canAjouterCoEncarant) : ?>
+                <dd>
+                    <a
+                        class="btn btn-primary ajax-modal" data-event="modification"
+                        href="<?php echo $this->url('these/ajouter-co-encadrant', ['these' => $these->getId()], [], true); ?>"
+                    >
+                        <span class="glyphicon glyphicon-plus"></span>
+                        Ajouter un co-encadrant
+                    </a>
+                </dd>
+            <?php endif; ?>
             <dt>
                 <?php echo $this->translate("Établissement <br/> d'inscription"); ?>
             </dt>
@@ -406,6 +429,13 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
 
 
 <script>
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+
     $(function () {
         var body = $("body");
         var self = this;

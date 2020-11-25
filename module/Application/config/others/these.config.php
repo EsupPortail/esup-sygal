@@ -21,10 +21,10 @@ use Application\Form\Factory\PointsDeVigilanceHydratorFactory;
 use Application\Form\Factory\RdvBuHydratorFactory;
 use Application\Form\Factory\RdvBuTheseDoctorantFormFactory;
 use Application\Form\Factory\RdvBuTheseFormFactory;
-use Application\Provider\Privilege\DoctorantPrivileges;
 use Application\Provider\Privilege\RapportAnnuelPrivileges;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\Service\Acteur\ActeurService;
+use Application\Service\Acteur\ActeurServiceFactory;
 use Application\Service\Financement\FinancementService;
 use Application\Service\Financement\FinancementServiceFactory;
 use Application\Service\Message\DiffusionMessages;
@@ -38,6 +38,7 @@ use Application\Service\TheseAnneeUniv\TheseAnneeUnivServiceFactory;
 use Application\View\Helper\Url\UrlTheseHelperFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use Zend\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [
@@ -99,6 +100,14 @@ return [
                         'detail-identite',
                         'rechercher',
                         'depot-accueil'
+                    ],
+                    'roles' => 'user',
+                ],
+                [
+                    'controller' => 'Application\Controller\These',
+                    'action'     => [
+                        'ajouter-co-encadrant',
+                        'retirer-co-encadrant',
                     ],
                     'roles' => 'user',
                 ],
@@ -380,6 +389,30 @@ return [
                             ],
                             'defaults'    => [
                                 'action' => 'detail-identite',
+                            ],
+                        ],
+                    ],
+                    'ajouter-co-encadrant' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/ajouter-co-encadrant/:these',
+                            'constraints' => [
+                                'these' => '\d+',
+                            ],
+                            'defaults'    => [
+                                'action' => 'ajouter-co-encadrant',
+                            ],
+                        ],
+                    ],
+                    'retirer-co-encadrant' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/retirer-co-encadrant/:these/:co-encadrant',
+                            'constraints' => [
+                                'these' => '\d+',
+                            ],
+                            'defaults'    => [
+                                'action' => 'retirer-co-encadrant',
                             ],
                         ],
                     ],
@@ -1097,10 +1130,8 @@ return [
         )
     ),
     'service_manager' => [
-        'invokables' => array(
-            ActeurService::class => ActeurService::class,
-        ),
         'factories' => [
+            ActeurService::class           => ActeurServiceFactory::class,
             'TheseService'                 => TheseServiceFactory::class,
             'TheseRechercheService'        => TheseRechercheServiceFactory::class,
             'TheseObserverService'         => TheseObserverServiceFactory::class,

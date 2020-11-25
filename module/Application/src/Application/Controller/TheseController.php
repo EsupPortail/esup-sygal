@@ -3,6 +3,7 @@
 namespace Application\Controller;
 
 use Application\Command\Exception\TimedOutCommandException;
+use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Attestation;
 use Application\Entity\Db\Diffusion;
 use Application\Entity\Db\FichierThese;
@@ -25,10 +26,13 @@ use Application\Form\MetadonneeTheseForm;
 use Application\Form\PointsDeVigilanceForm;
 use Application\Form\RdvBuTheseDoctorantForm;
 use Application\Form\RdvBuTheseForm;
+use Application\Form\RechercherCoEncadrantFormAwareTrait;
+use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\FichierThese\Exception\ValidationImpossibleException;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\File\FileServiceAwareTrait;
+use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\MailConfirmationServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
@@ -44,7 +48,6 @@ use Application\Service\Variable\VariableServiceAwareTrait;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\Service\Workflow\WorkflowServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
-use Zend\View\Renderer\PhpRenderer;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
@@ -63,11 +66,14 @@ use Zend\Log\Logger;
 use Zend\Log\Writer\Noop;
 use Zend\Stdlib\ParametersInterface;
 use Zend\View\Model\ViewModel;
+use Zend\View\Renderer\PhpRenderer;
 
 class TheseController extends AbstractController
 {
+    use ActeurServiceAwareTrait;
     use FichierTheseServiceAwareTrait;
     use FileServiceAwareTrait;
+    use IndividuServiceAwareTrait;
     use MessageCollectorAwareTrait;
     use NotifierServiceAwareTrait;
     use RoleServiceAwareTrait;
@@ -86,6 +92,7 @@ class TheseController extends AbstractController
     use VariableServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
     use UtilisateurServiceAwareTrait;
+    use RechercherCoEncadrantFormAwareTrait;
 
     private $timeoutRetraitement;
 
@@ -1699,5 +1706,43 @@ class TheseController extends AbstractController
 
         echo $content;
         exit;
+    }
+
+    public function ajouterCoEncadrantAction()
+    {
+        $these = $this->requestedThese();
+
+        $form = $this->getRechercherCoEncadrantForm();
+        $form->setAttribute('action', $this->url()->fromRoute('these/ajouter-co-encadrant', [], [], true));
+        $form->setUrlCoEncadrant($this->url()->fromRoute('utilisateur/rechercher-individu', [], [], true));
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+
+            if (isset($data['co-encadrant']['id'])) {
+                /** @var Individu $individu */
+                $individu = $this->getIndividuService()->getRepository()->find($data['co-encadrant']['id']);
+                $this->getActeurService()->ajouterCoEncradrant($these, $individu);
+            }
+        }
+
+        return new ViewModel([
+            'title' => "Ajout d'un co-encadrant pour la thèse de ". $these->getDoctorant()->getIndividu()->getPrenom() . " " . $these->getDoctorant()->getIndividu()->getNomUsuel(),
+            'form' => $form,
+        ]);
+    }
+
+    public function retirerCoEncadrantAction()
+    {
+        $these = $this->requestedThese();
+        $acteurId = $this->params()->fromRoute('co-encadrant');
+
+        /** @var Acteur $acteur */
+        $acteur = $this->getActeurService()->getRepository()->find($acteurId);
+        if ($acteur !== null AND $acteur->getThese() === $these) $this->getActeurService()->delete($acteur);
+
+        $this->redirect()->toRoute('these/identite', ['these' => $these->getId()], [], true);
+
     }
 }

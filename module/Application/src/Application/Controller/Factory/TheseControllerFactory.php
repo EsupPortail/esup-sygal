@@ -9,9 +9,12 @@ use Application\Form\MetadonneeTheseForm;
 use Application\Form\PointsDeVigilanceForm;
 use Application\Form\RdvBuTheseDoctorantForm;
 use Application\Form\RdvBuTheseForm;
+use Application\Form\RechercherCoEncadrantForm;
+use Application\Service\Acteur\ActeurService;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\FichierThese\FichierTheseService;
 use Application\Service\File\FileService;
+use Application\Service\Individu\IndividuService;
 use Application\Service\MailConfirmationService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\Role\RoleService;
@@ -58,6 +61,8 @@ class TheseControllerFactory
          * @var EntityManager           $entityManager
          * @var ImportService           $importService
          * @var UtilisateurService      $utilisateurService
+         * @var ActeurService           $acteurService
+         * @var IndividuService         $indivdiService
          */
         $variableService = $container->get('VariableService');
         $validationService = $container->get('ValidationService');
@@ -75,6 +80,8 @@ class TheseControllerFactory
         $notifierService = $container->get(NotifierService::class);
         $importService = $container->get('ImportService');
         $utilisateurService = $container->get('UtilisateurService');
+        $acteurService = $container->get(ActeurService::class);
+        $individuService = $container->get('IndividuService');
 
         /**
          * @var RdvBuTheseDoctorantForm $rdvBuTheseDoctorantForm
@@ -89,8 +96,12 @@ class TheseControllerFactory
         $diffusionTheseForm = $container->get('FormElementManager')->get('DiffusionTheseForm');
         /** @var MetadonneeTheseForm $metadonneeTheseForm */
         $metadonneeTheseForm = $container->get('FormElementManager')->get('MetadonneeTheseForm');
-        /** @var PointsDeVigilanceForm $pointsDeVigilanceForm */
+        /**
+         * @var PointsDeVigilanceForm $pointsDeVigilanceForm
+         * @var RechercherCoEncadrantForm $rechercherCoEncadrantForm
+         */
         $pointsDeVigilanceForm = $container->get('FormElementManager')->get('PointsDeVigilanceForm');
+        $rechercherCoEncadrantForm = $container->get('FormElementManager')->get(RechercherCoEncadrantForm::class);
 
         /* @var $renderer PhpRenderer */
         $renderer = $container->get('ViewRenderer');
@@ -109,6 +120,8 @@ class TheseControllerFactory
         $controller->setEtablissementService($etablissementService);
         $controller->setUniteRechercheService($uniteService);
         $controller->setMailConfirmationService($mailConfirmationService);
+        $controller->setActeurService($acteurService);
+        $controller->setIndividuService($individuService);
         $controller->setEntityManager($entityManager);
         $controller->setNotifierService($notifierService);
         $controller->setImportService($importService);
@@ -119,6 +132,7 @@ class TheseControllerFactory
         $controller->setDiffusionTheseForm($diffusionTheseForm);
         $controller->setMetadonneeTheseForm($metadonneeTheseForm);
         $controller->setPointsDeVigilanceForm($pointsDeVigilanceForm);
+        $controller->setRechercherCoEncadrantForm($rechercherCoEncadrantForm);
         $controller->setRenderer($renderer);
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper
