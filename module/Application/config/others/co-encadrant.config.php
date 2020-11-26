@@ -6,6 +6,8 @@ use Application\Controller\CoEncadrantController;
 use Application\Controller\Factory\CoEncadrantControllerFactory;
 use Application\Form\Factory\RechercherCoEncadrantFormFactory;
 use Application\Form\RechercherCoEncadrantForm;
+use Application\Service\CoEncadrant\CoEncadrantService;
+use Application\Service\CoEncadrant\CoEncadrantServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use Zend\Router\Http\Literal;
 use Zend\Router\Http\Segment;
@@ -19,6 +21,7 @@ return [
                     'action'     => [
                         'index',
                         'historique',
+                        'rechercher-co-encadrant',
                         'ajouter-co-encadrant',
                         'retirer-co-encadrant',
                     ],
@@ -49,6 +52,16 @@ return [
                             'defaults' => [
                                 'controller'    => CoEncadrantController::class,
                                 'action'        => 'historique',
+                            ],
+                        ],
+                    ],
+                    'rechercher-co-encadrant' => [
+                        'type'          => Literal::class,
+                        'options'       => [
+                            'route'    => '/rechercher-co-encadrant',
+                            'defaults' => [
+                                'controller'    => CoEncadrantController::class,
+                                'action'        => 'rechercher-co-encadrant',
                             ],
                         ],
                     ],
@@ -112,6 +125,11 @@ return [
     'form_elements' => [
         'factories' => [
             RechercherCoEncadrantForm::class => RechercherCoEncadrantFormFactory::class,
+        ],
+    ],
+    'service_manager' => [
+        'factories' => [
+            CoEncadrantService::class => CoEncadrantServiceFactory::class,
         ],
     ],
 ];

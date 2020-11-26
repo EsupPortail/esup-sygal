@@ -188,11 +188,10 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                 }
 
                 if ($canAjouterCoEncarant AND $acteur->estCoEncadrant()) {
-                    echo " &nbsp;";
-                    echo "<span class='glyphicon glyphicon-eye-open' title='Voir historique de co-encadrement'></span>";
-                    echo " &nbsp; <a href='".$this->url('these/retirer-co-encadrant', ['these' => $these->getId(), 'co-encadrant' => $acteur->getId()], [], true) ."'>";
-                    echo "<span class='glyphicon glyphicon-minus' title='Retirer le co-encadrant'></span>";
-                    echo "</a>";
+                    echo " &nbsp; <a href='".$this->url('co-encadrant/historique', ['co-encadrant' => $acteur->getId()], [], true) ."'>";
+                    echo "<span class='glyphicon glyphicon-eye-open' title='Voir historique de co-encadrement'></span></a>";
+                    echo " <a href='".$this->url('these/retirer-co-encadrant', ['these' => $these->getId(), 'co-encadrant' => $acteur->getId()], [], true) ."'>";
+                    echo "<span class='glyphicon glyphicon-remove' title='Retirer le co-encadrant'></span></a>";
                 }
 
                 echo "<br/>";

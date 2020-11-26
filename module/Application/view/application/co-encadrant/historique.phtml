@@ -3,17 +3,34 @@
 /**
  * @see \Application\Controller\CoEncadrantController::historiqueAction()
  * @var Acteur $coencadrant
+ * @var These[] $encours
+ * @var These[] $closes
  */
 
 use Application\Entity\Db\Acteur;
+use Application\Entity\Db\These;
 
-$this->headTitle('Historique de co-encadrement de ...');
+$denomination = $coencadrant->getIndividu()->getPrenom1() . " " . $coencadrant->getIndividu()->getNomUsuel();
+
+$this->headTitle('Historique de co-encadrement de ' . $denomination);
 ?>
 
 <h1 class="page-header">
-    Historique de co-encadrement de ...
+    Historique de co-encadrement de <?php echo $denomination; ?>
 </h1>
 
 <div class="main">
-    ...
+    <h2> Thèses en cours
+        <span class="badge"> <?php echo count($encours); ?></span>
+    </h2>
+
+    <?php echo $this->partial('partial/table-these', ['theses' => $encours]); ?>
+
+    <h2>
+        Thèses closes
+        <span class="badge"> <?php echo count($closes); ?></span>
+    </h2>
+
+    <?php echo $this->partial('partial/table-these', ['theses' => $closes]); ?>
+
 </div>

@@ -214,6 +214,27 @@ class TheseRepository extends DefaultEntityRepository
         return $result;
     }
 
+    /**
+     * @param Individu $individu
+     * @return These[]
+     */
+    public function fetchThesesByCoEncadrant($individu)
+    {
+        $qb = $this->createQueryBuilder('t')
+            ->join('t.acteurs', 'a')
+            ->join('a.role', 'r')
+            ->andWhere('r.code = :coencadrant')
+            ->setParameter('coencadrant', Role::CODE_CO_ENCADRANT)
+            ->andWhere('a.individu = :individu')
+            ->setParameter('individu', $individu)
+            ->andWhere('1 = pasHistorise(t)')
+            ->orderBy('t.datePremiereInscription', 'ASC')
+        ;
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
+
 
 
 }
