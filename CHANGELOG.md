@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+2.1.2 (en cours)
+-----
+- Ajout de la gestion des co-encadrants
+
 2.1.1
 -----
 - Liste des thèses : tri par date de 1ere inscription décroissante

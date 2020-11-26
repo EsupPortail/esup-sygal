@@ -106,14 +106,6 @@ return [
                 [
                     'controller' => 'Application\Controller\These',
                     'action'     => [
-                        'ajouter-co-encadrant',
-                        'retirer-co-encadrant',
-                    ],
-                    'roles' => 'user',
-                ],
-                [
-                    'controller' => 'Application\Controller\These',
-                    'action'     => [
                         'detail-depot-divers',
                         /* @see TheseController::detailDepotDiversAction() */
                     ],
@@ -389,30 +381,6 @@ return [
                             ],
                             'defaults'    => [
                                 'action' => 'detail-identite',
-                            ],
-                        ],
-                    ],
-                    'ajouter-co-encadrant' => [
-                        'type'          => Segment::class,
-                        'options'       => [
-                            'route'       => '/ajouter-co-encadrant/:these',
-                            'constraints' => [
-                                'these' => '\d+',
-                            ],
-                            'defaults'    => [
-                                'action' => 'ajouter-co-encadrant',
-                            ],
-                        ],
-                    ],
-                    'retirer-co-encadrant' => [
-                        'type'          => Segment::class,
-                        'options'       => [
-                            'route'       => '/retirer-co-encadrant/:these/:co-encadrant',
-                            'constraints' => [
-                                'these' => '\d+',
-                            ],
-                            'defaults'    => [
-                                'action' => 'retirer-co-encadrant',
                             ],
                         ],
                     ],

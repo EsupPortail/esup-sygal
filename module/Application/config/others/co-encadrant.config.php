@@ -6,6 +6,7 @@ use Application\Controller\CoEncadrantController;
 use Application\Controller\Factory\CoEncadrantControllerFactory;
 use Application\Form\Factory\RechercherCoEncadrantFormFactory;
 use Application\Form\RechercherCoEncadrantForm;
+use Application\Provider\Privilege\CoEncadrantPrivileges;
 use Application\Service\CoEncadrant\CoEncadrantService;
 use Application\Service\CoEncadrant\CoEncadrantServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
@@ -22,11 +23,20 @@ return [
                         'index',
                         'historique',
                         'rechercher-co-encadrant',
+                    ],
+                    'privileges' => [
+                        CoEncadrantPrivileges::COENCADRANT_AFFICHER,
+                    ],
+                ],
+                [
+                    'controller' => CoEncadrantController::class,
+                    'action'     => [
                         'ajouter-co-encadrant',
                         'retirer-co-encadrant',
                     ],
-//                    'privileges' => [],
-                    'roles' => [],
+                    'privileges' => [
+                        CoEncadrantPrivileges::COENCADRANT_GERER,
+                    ],
                 ],
             ],
         ],
@@ -68,7 +78,7 @@ return [
                     'ajouter-co-encadrant' => [
                         'type'          => Segment::class,
                         'options'       => [
-                            'route'    => '/ajouter-co-encadrant/:these/:co-encadrant',
+                            'route'    => '/ajouter-co-encadrant/:these',
                             'defaults' => [
                                 'controller'    => CoEncadrantController::class,
                                 'action'        => 'ajouter-co-encadrant',

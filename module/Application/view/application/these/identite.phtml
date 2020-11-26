@@ -8,6 +8,7 @@ use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Validation;
 use Application\Filter\ActeursFormatter;
 use Application\Filter\FinancementFormatter;
+use Application\Provider\Privilege\CoEncadrantPrivileges;
 use Application\Provider\Privilege\DoctorantPrivileges;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\Provider\Privilege\UtilisateurPrivileges;
@@ -34,7 +35,9 @@ $canEditPersopass = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_MODI
 $canEditPersopass = $canEditPersopass && (!$estDoctorant || !$these->getDoctorant()->getPersopass());
 $persopassModifiedEvent = 'persopass-modified-event';
 $canCreate = $this->isAllowed(UtilisateurPrivileges::getResourceId(UtilisateurPrivileges::UTILISATEUR_CREATE_FROM_INDIVIDU));
-$canAjouterCoEncarant = true;
+
+$canCoEncadrantAfficher = $this->isAllowed(CoEncadrantPrivileges::getResourceId(CoEncadrantPrivileges::COENCADRANT_AFFICHER));
+$canCoEncadrantGerer    = $this->isAllowed(CoEncadrantPrivileges::getResourceId(CoEncadrantPrivileges::COENCADRANT_GERER));
 
 
 $canEditForcageCorrectionAutorisee = $this->isAllowed($these, ThesePrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE);
@@ -187,10 +190,14 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                     echo $individuUsurpationHelper();
                 }
 
-                if ($canAjouterCoEncarant AND $acteur->estCoEncadrant()) {
-                    echo " &nbsp; <a href='".$this->url('co-encadrant/historique', ['co-encadrant' => $acteur->getId()], [], true) ."'>";
+                echo " &nbsp;";
+
+                if ($canCoEncadrantAfficher AND $acteur->estCoEncadrant()) {
+                    echo " <a href='".$this->url('co-encadrant/historique', ['co-encadrant' => $acteur->getId()], [], true) ."'>";
                     echo "<span class='glyphicon glyphicon-eye-open' title='Voir historique de co-encadrement'></span></a>";
-                    echo " <a href='".$this->url('these/retirer-co-encadrant', ['these' => $these->getId(), 'co-encadrant' => $acteur->getId()], [], true) ."'>";
+                }
+                if ($canCoEncadrantGerer AND $acteur->estCoEncadrant()) {
+                    echo " <a href='".$this->url('co-encadrant/retirer-co-encadrant', ['these' => $these->getId(), 'co-encadrant' => $acteur->getId()], [], true) ."'>";
                     echo "<span class='glyphicon glyphicon-remove' title='Retirer le co-encadrant'></span></a>";
                 }
 
@@ -198,11 +205,11 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
             }
             ?>
 
-            <?php if ($canAjouterCoEncarant) : ?>
+            <?php if ($canCoEncadrantGerer) : ?>
                 <dd>
-                    <a
+                    <a  <?php /**  @see CoEncadrantController::ajouterCoEncadrantAction() */ ?>
                         class="btn btn-primary ajax-modal" data-event="modification"
-                        href="<?php echo $this->url('these/ajouter-co-encadrant', ['these' => $these->getId()], [], true); ?>"
+                        href="<?php echo $this->url('co-encadrant/ajouter-co-encadrant', ['these' => $these->getId()], [], true); ?>"
                     >
                         <span class="glyphicon glyphicon-plus"></span>
                         Ajouter un co-encadrant
