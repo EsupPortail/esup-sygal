@@ -3,15 +3,21 @@
 namespace Application\Controller;
 
 use Application\Entity\Db\Acteur;
+use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\These;
+use Application\Entity\Db\UniteRecherche;
 use Application\Form\RechercherCoEncadrantFormAwareTrait;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\CoEncadrant\CoEncadrantServiceAwareTrait;
 use Application\Service\CoEncadrant\Exporter\JustificatifCoencadrements\JustificatifCoencadrementPdfExporter;
+use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\File\FileServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
+use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
+use DateTime;
+use UnicaenApp\View\Model\CsvModel;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
@@ -24,6 +30,9 @@ class CoEncadrantController extends AbstractActionController {
     use FileServiceAwareTrait;
     use TheseServiceAwareTrait;
     use RechercherCoEncadrantFormAwareTrait;
+    use EcoleDoctoraleServiceAwareTrait;
+    use UniteRechercheServiceAwareTrait;
+
 
     /** @var PhpRenderer */
     private $renderer;
@@ -159,5 +168,40 @@ class CoEncadrantController extends AbstractActionController {
             'logos' => $logos,
         ]);
         $export->export('justificatif_coencadrement_' . $coencadrant->getIndividu()->getId() . ".pdf");
+    }
+
+    public function genererExportCsvAction()
+    {
+        $structureType = $this->params()->fromRoute('structure-type');
+        $structureId = $this->params()->fromRoute('structure-id');
+
+        /** @var EcoleDoctorale|UniteRecherche $structure */
+        $structure = null;
+        if ($structureType === 'ecole-doctorale') $structure = $this->getEcoleDoctoraleService()->getRepository()->find($structureId);
+        if ($structureType === 'unite-recherche') $structure = $this->getUniteRechercheService()->getRepository()->find($structureId);
+
+        $listing = $this->getCoEncadrantService()->getCoEncadrantsByStructureConcrete($structure);
+
+        //export
+        $headers = ['Co-endrants', 'Nombre d\'encadrements actuels', 'Listing'];
+        $records = [];
+        foreach ($listing as $item) {
+            $entry = [];
+            $entry['Co-endrants'] = $item['co-encadrant']->getIndividu()->getPrenom1() . " " . $item['co-encadrant']->getIndividu()->getNomUsuel();
+            $entry['Nombre d\'encadrements actuels'] = count($item['theses']);
+            $entry['Listing'] = implode(';',
+                array_map(function(These $t) {return $t->getDoctorant()->getIndividu()->getPrenom1() . " " . $t->getDoctorant()->getIndividu()->getNomUsuel();}, $item['theses'])
+            );
+            $records[] = $entry;
+        }
+        $filename = (new DateTime())->format('Ymd-His') . '_coencadrants-' . $structure->getSigle() . 'csv';
+        $CSV = new CsvModel();
+        $CSV->setDelimiter(';');
+        $CSV->setEnclosure('"');
+        $CSV->setHeader($headers);
+        $CSV->setData($records);
+        $CSV->setFilename($filename);
+
+        return $CSV;
     }
 }

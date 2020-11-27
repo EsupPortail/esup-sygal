@@ -151,11 +151,22 @@ $canCoencadrantAfficher = $this->isAllowed(CoEncadrantPrivileges::getResourceId(
     <span class="badge"> <?php echo count($coencadrants); ?> </span>
 </h2>
 
+<?php /** @see \Application\Controller\CoEncadrantController::genererExportCsvAction() */ ?>
+<a href="<?php echo $this->url('co-encadrant/generer-export-csv', ['structure-type' => 'ecole-doctorale', 'structure-id' => $ecole->getId()], [], true); ?>"
+   class="btn btn-primary"
+>
+    <span class="glyphicon glyphicon-export"></span>
+    Générer l'export CSV des co-encadrants
+</a>
+
+<br/>
+<br/>
+
 <ul>
 <?php foreach ($coencadrants as $coencadrant) : ?>
     <?php
         $acteur = $coencadrant['co-encadrant'];
-        $count = $coencadrant['count'];
+        $count = count($coencadrant['theses']);
     ?>
     <li>
         <?php echo $acteur->getIndividu()->getPrenom1(); ?>

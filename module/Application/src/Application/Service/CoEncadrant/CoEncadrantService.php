@@ -73,19 +73,33 @@ class CoEncadrantService {
     }
 
     /**
-     * @param EcoleDoctorale $ecole
-     * @param boolean $encours
-     * @return Acteur[]
+     * @param EcoleDoctorale|UniteRecherche $structure
+     * @param bool $encours
+     * @return array
      */
-    public function getCoEncadrantsByEcodeDoctorale(EcoleDoctorale $ecole, $encours = true)
+    public function getCoEncadrantsByStructureConcrete($structure, $encours = true)
     {
         $qb = $this->createQueryBuilder()
             ->addSelect('these')->join('acteur.these', 'these')
-            ->andWhere('these.ecoleDoctorale = :ecole')
-            ->setParameter('ecole', $ecole)
             ->andWhere('1 = pasHistorise(these)')
             ->andWhere('1 = pasHistorise(acteur)')
         ;
+
+        $structureOk = false;
+        if ($structure instanceof EcoleDoctorale) {
+            $qb = $qb->andWhere('these.ecoleDoctorale = :structure');
+            $structureOk = true;
+        }
+        if ($structure instanceof UniteRecherche) {
+            $qb = $qb->andWhere('these.uniteRecherche = :structure');
+            $structureOk = true;
+        }
+
+        if ($structureOk === false OR $structure === null) {
+            throw new RuntimeException('Pas de structure concrete de trouvée');
+        }
+        $qb = $qb->setParameter('structure', $structure);
+
         if ($encours) {
             $qb = $qb->andWhere('these.etatThese = :encours')
                 ->setParameter('encours', These::ETAT_EN_COURS)
@@ -97,37 +111,7 @@ class CoEncadrantService {
         $grouped = [];
         foreach ($result as $acteur) {
             $grouped[$acteur->getIndividu()->getId()]['co-encadrant'] = $acteur;
-            $grouped[$acteur->getIndividu()->getId()]['count']++;
-        }
-        return $grouped;
-    }
-
-    /**
-     * @param UniteRecherche $unite
-     * @param boolean $encours
-     * @return Acteur[]
-     */
-    public function getCoEncadrantsByUniteRecherche(UniteRecherche $unite, $encours = true)
-    {
-        $qb = $this->createQueryBuilder()
-            ->addSelect('these')->join('acteur.these', 'these')
-            ->andWhere('these.uniteRecherche = :unite')
-            ->setParameter('unite', $unite)
-            ->andWhere('1 = pasHistorise(these)')
-            ->andWhere('1 = pasHistorise(acteur)')
-        ;
-        if ($encours) {
-            $qb = $qb->andWhere('these.etatThese = :encours')
-                ->setParameter('encours', These::ETAT_EN_COURS)
-            ;
-        }
-        $result = $qb->getQuery()->getResult();
-
-        //todo integer dans la requete
-        $grouped = [];
-        foreach ($result as $acteur) {
-            $grouped[$acteur->getIndividu()->getId()]['co-encadrant'] = $acteur;
-            $grouped[$acteur->getIndividu()->getId()]['count']++;
+            $grouped[$acteur->getIndividu()->getId()]['theses'][] = $acteur->getThese();
         }
         return $grouped;
     }

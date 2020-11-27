@@ -48,7 +48,7 @@ class EcoleDoctoraleController extends StructureConcreteController
     {
         $id = $this->params()->fromRoute('structure');
         $structureConcrete = $this->getStructureConcreteService()->getRepository()->findByStructureId($id);
-        $coencadrants = $this->getCoEncadrantService()->getCoEncadrantsByEcodeDoctorale($structureConcrete);
+        $coencadrants = $this->getCoEncadrantService()->getCoEncadrantsByStructureConcrete($structureConcrete);
 
         $viewModel = parent::informationAction();
 

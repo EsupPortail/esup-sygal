@@ -24,6 +24,7 @@ return [
                         'historique',
                         'rechercher-co-encadrant',
                         'generer-justificatif-coencadrements',
+                        'generer-export-csv',
                     ],
                     'privileges' => [
                         CoEncadrantPrivileges::COENCADRANT_AFFICHER,
@@ -73,6 +74,16 @@ return [
                             'defaults' => [
                                 'controller'    => CoEncadrantController::class,
                                 'action'        => 'generer-justificatif-coencadrements',
+                            ],
+                        ],
+                    ],
+                    'generer-export-csv' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'    => '/generer-export-csv/:structure-type/:structure-id',
+                            'defaults' => [
+                                'controller'    => CoEncadrantController::class,
+                                'action'        => 'generer-export-csv',
                             ],
                         ],
                     ],
