@@ -22,6 +22,7 @@ $canEdit = ($this->isAllowed(StructurePrivileges::getResourceId(StructurePrivile
 $canAddRole = $canEdit;
 
 $canCoencadrantAfficher = $this->isAllowed(CoEncadrantPrivileges::getResourceId(CoEncadrantPrivileges::COENCADRANT_AFFICHER));
+$canCoencadrantExport = $this->isAllowed(CoEncadrantPrivileges::getResourceId(CoEncadrantPrivileges::COENCADRANT_AFFICHER));
 
 ?>
 
@@ -151,13 +152,15 @@ $canCoencadrantAfficher = $this->isAllowed(CoEncadrantPrivileges::getResourceId(
     <span class="badge"> <?php echo count($coencadrants); ?> </span>
 </h2>
 
-<?php /** @see \Application\Controller\CoEncadrantController::genererExportCsvAction() */ ?>
-<a href="<?php echo $this->url('co-encadrant/generer-export-csv', ['structure-type' => 'ecole-doctorale', 'structure-id' => $ecole->getId()], [], true); ?>"
-   class="btn btn-primary"
->
-    <span class="glyphicon glyphicon-export"></span>
-    Générer l'export CSV des co-encadrants
-</a>
+<?php if($canCoencadrantExport) : ?>
+    <?php /** @see \Application\Controller\CoEncadrantController::genererExportCsvAction() */ ?>
+    <a href="<?php echo $this->url('co-encadrant/generer-export-csv', ['structure-type' => 'ecole-doctorale', 'structure-id' => $ecole->getId()], [], true); ?>"
+       class="btn btn-primary"
+    >
+        <span class="glyphicon glyphicon-export"></span>
+        Générer l'export CSV des co-encadrants
+    </a>
+<?php endif; ?>
 
 <br/>
 <br/>

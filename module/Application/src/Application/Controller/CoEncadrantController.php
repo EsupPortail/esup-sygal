@@ -187,14 +187,14 @@ class CoEncadrantController extends AbstractActionController {
         $records = [];
         foreach ($listing as $item) {
             $entry = [];
-            $entry['Co-endrants'] = $item['co-encadrant']->getIndividu()->getPrenom1() . " " . $item['co-encadrant']->getIndividu()->getNomUsuel();
+            $entry['Co-endrant'] = $item['co-encadrant']->getIndividu()->getPrenom1() . " " . $item['co-encadrant']->getIndividu()->getNomUsuel();
             $entry['Nombre d\'encadrements actuels'] = count($item['theses']);
             $entry['Listing'] = implode(';',
                 array_map(function(These $t) {return $t->getDoctorant()->getIndividu()->getPrenom1() . " " . $t->getDoctorant()->getIndividu()->getNomUsuel();}, $item['theses'])
             );
             $records[] = $entry;
         }
-        $filename = (new DateTime())->format('Ymd-His') . '_coencadrants-' . $structure->getSigle() . 'csv';
+        $filename = (new DateTime())->format('Ymd-His') . '_coencadrants-' . str_replace(' ','_',$structure->getSigle()) . '.csv';
         $CSV = new CsvModel();
         $CSV->setDelimiter(';');
         $CSV->setEnclosure('"');
