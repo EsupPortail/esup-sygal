@@ -20,6 +20,11 @@ $this->headTitle('Historique de co-encadrement de ' . $denomination);
 </h1>
 
 <div class="main">
+
+    <a href="<?php echo $this->url('co-encadrant/generer-justificatif-coencadrements', ['co-encadrant' => $coencadrant->getId()], [], true); ?>" class="btn btn-primary">
+        Générer justificatif
+    </a>
+
     <h2> Thèses en cours
         <span class="badge"> <?php echo count($encours); ?></span>
     </h2>

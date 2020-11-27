@@ -6,10 +6,13 @@
  * @var array          $roleListing     (string => int)
  * @var array          $individuListing (string => string[])
  * @var string         $logoContent
+ * @var Acteur[]       $coencadrants
  */
 
+use Application\Entity\Db\Acteur;
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\TypeStructure;
+use Application\Provider\Privilege\CoEncadrantPrivileges;
 use Application\Provider\Privilege\StructurePrivileges;
 
 $this->headTitle("École Doctorale '{$ecole->getStructure()->getCode()}'");
@@ -17,6 +20,9 @@ $this->headTitle("École Doctorale '{$ecole->getStructure()->getCode()}'");
 $canEdit = ($this->isAllowed(StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES))) ||
     ($this->isAllowed($ecole->getStructure(), StructurePrivileges::STRUCTURE_MODIFICATION_SES_STRUCTURES));
 $canAddRole = $canEdit;
+
+$canCoencadrantAfficher = $this->isAllowed(CoEncadrantPrivileges::getResourceId(CoEncadrantPrivileges::COENCADRANT_AFFICHER));
+
 ?>
 
 <h1 class="page-header">
@@ -139,3 +145,26 @@ $canAddRole = $canEdit;
        class="btn btn-primary action"><span class="glyphicon glyphicon-pencil"></span> Modifier l'école doctorale
     </a>
 <?php endif; ?>
+
+<h2>
+    Co-encadrants
+    <span class="badge"> <?php echo count($coencadrants); ?> </span>
+</h2>
+
+<ul>
+<?php foreach ($coencadrants as $coencadrant) : ?>
+    <?php
+        $acteur = $coencadrant['co-encadrant'];
+        $count = $coencadrant['count'];
+    ?>
+    <li>
+        <?php echo $acteur->getIndividu()->getPrenom1(); ?>
+        <?php echo $acteur->getIndividu()->getNomUsuel(); ?>
+        (<?php echo $count; ?> co-encadrement<?php if ($count > 1) echo "s"; ?> en cours.)
+        <?php if ($canCoencadrantAfficher) : ?>
+            <a href="<?php echo $this->url('co-encadrant/historique', ['co-encadrant' => $acteur->getId()],[], true); ?>">
+                <span class="glyphicon glyphicon-eye-open" title="Accéder à l'historique de co-encadrement"></span></a>
+        <?php endif; ?>
+    </li>
+<?php endforeach; ?>
+</ul>

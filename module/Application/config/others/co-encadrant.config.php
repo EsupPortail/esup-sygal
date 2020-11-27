@@ -23,6 +23,7 @@ return [
                         'index',
                         'historique',
                         'rechercher-co-encadrant',
+                        'generer-justificatif-coencadrements',
                     ],
                     'privileges' => [
                         CoEncadrantPrivileges::COENCADRANT_AFFICHER,
@@ -62,6 +63,16 @@ return [
                             'defaults' => [
                                 'controller'    => CoEncadrantController::class,
                                 'action'        => 'historique',
+                            ],
+                        ],
+                    ],
+                    'generer-justificatif-coencadrements' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'    => '/generer-justificatif-coencadrements/:co-encadrant',
+                            'defaults' => [
+                                'controller'    => CoEncadrantController::class,
+                                'action'        => 'generer-justificatif-coencadrements',
                             ],
                         ],
                     ],

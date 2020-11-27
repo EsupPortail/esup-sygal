@@ -8,18 +8,33 @@ use Application\Entity\Db\These;
 use Application\Form\RechercherCoEncadrantFormAwareTrait;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\CoEncadrant\CoEncadrantServiceAwareTrait;
+use Application\Service\CoEncadrant\Exporter\JustificatifCoencadrements\JustificatifCoencadrementPdfExporter;
+use Application\Service\File\FileServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
+use Zend\View\Renderer\PhpRenderer;
 
 class CoEncadrantController extends AbstractActionController {
     use ActeurServiceAwareTrait;
     use CoEncadrantServiceAwareTrait;
     use IndividuServiceAwareTrait;
+    use FileServiceAwareTrait;
     use TheseServiceAwareTrait;
     use RechercherCoEncadrantFormAwareTrait;
+
+    /** @var PhpRenderer */
+    private $renderer;
+
+    /**
+     * @param PhpRenderer $renderer
+     */
+    public function setRenderer($renderer)
+    {
+        $this->renderer = $renderer;
+    }
 
     public function indexAction()
     {
@@ -66,27 +81,6 @@ class CoEncadrantController extends AbstractActionController {
         exit;
     }
 
-    public function historiqueAction()
-    {
-        $coencadrant = $this->getCoEncadrantService()->getRequestedCoEncadrant($this);
-        $theses = $this->getTheseService()->getRepository()->fetchThesesByCoEncadrant($coencadrant->getIndividu());
-
-        $encours = []; $closes = [];
-        foreach ($theses as $these) {
-            if ($these->getEtatThese() === These::ETAT_EN_COURS) {
-                $encours[] = $these;
-            } else {
-                $closes[] = $these;
-            }
-        }
-
-        return new ViewModel([
-            'coencadrant' => $coencadrant,
-            'encours' => $encours,
-            'closes' => $closes,
-        ]);
-    }
-
     public function ajouterCoEncadrantAction()
     {
         /** @var These $these */
@@ -94,7 +88,7 @@ class CoEncadrantController extends AbstractActionController {
         $these = $this->getTheseService()->getRepository()->find($theseId);
 
         $form = $this->getRechercherCoEncadrantForm();
-        $form->setAttribute('action', $this->url()->fromRoute('these/ajouter-co-encadrant', [], [], true));
+        $form->setAttribute('action', $this->url()->fromRoute('co-encadrant/ajouter-co-encadrant', [], [], true));
         $form->setUrlCoEncadrant($this->url()->fromRoute('utilisateur/rechercher-individu', [], [], true));
 
         $request = $this->getRequest();
@@ -126,6 +120,44 @@ class CoEncadrantController extends AbstractActionController {
         if ($acteur !== null AND $acteur->getThese() === $these) $this->getActeurService()->delete($acteur);
 
         $this->redirect()->toRoute('these/identite', ['these' => $these->getId()], [], true);
+    }
 
+    public function historiqueAction()
+    {
+        $coencadrant = $this->getCoEncadrantService()->getRequestedCoEncadrant($this);
+        $theses = $this->getTheseService()->getRepository()->fetchThesesByCoEncadrant($coencadrant->getIndividu());
+
+        $encours = []; $closes = [];
+        foreach ($theses as $these) {
+            if ($these->getEtatThese() === These::ETAT_EN_COURS) {
+                $encours[] = $these;
+            } else {
+                $closes[] = $these;
+            }
+        }
+
+        return new ViewModel([
+            'coencadrant' => $coencadrant,
+            'encours' => $encours,
+            'closes' => $closes,
+        ]);
+    }
+
+    public function genererJustificatifCoencadrementsAction()
+    {
+        $coencadrant = $this->getCoEncadrantService()->getRequestedCoEncadrant($this);
+        $theses = $this->getTheseService()->getRepository()->fetchThesesByCoEncadrant($coencadrant->getIndividu());
+
+        $logos = [];
+        $logos['etablissement'] = $this->fileService->computeLogoFilePathForStructure($coencadrant->getEtablissement());
+
+        //exporter
+        $export = new JustificatifCoencadrementPdfExporter($this->renderer, 'A4');
+        $export->setVars([
+            'coencadrant' => $coencadrant,
+            'theses' => $theses,
+            'logos' => $logos,
+        ]);
+        $export->export('justificatif_coencadrement_' . $coencadrant->getIndividu()->getId() . ".pdf");
     }
 }
