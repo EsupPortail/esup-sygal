@@ -3,7 +3,10 @@ Journal des modifications
 
 2.1.2 (en cours)
 -----
-- Ajout de la gestion des co-encadrants
+- Gestion des co-encadrants (ajout et retrait)
+- Listing (et export) des co-encadrants sur les EDs et URs
+- Ajout à l'export de l'annuaire des co-encadrants
+- Onglets dans les pages d'information des structures
 
 2.1.1
 -----
