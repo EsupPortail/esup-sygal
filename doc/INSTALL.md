@@ -180,7 +180,7 @@ Cela permet d'accéder aux pages de gestion des droits d'accès.
 
 ```php
     'unicaen-auth' => [
-        'shibboleth' => [
+        'shib' => [
             'simulate' => [
                 'HTTP_EPPN'           => $eppn = 'premierf@univ.fr',
                 'HTTP_SUPANNEMPID'    => '00012345',
