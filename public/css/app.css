@@ -166,6 +166,12 @@ span.ballot-box {
   font-size: 18px;
   margin-right: 10px; }
 
+#menu-acces-rapide {
+  left: -10000px; }
+
+#menu-acces-rapide:focus {
+  left: auto; }
+
 div#sidebar {
   margin-bottom: 30px; }
   div#sidebar .glyphicon {
@@ -623,5 +629,34 @@ span.sas-highlight {
 .bs-searchbox input {
   padding: 2px 3px;
   height: auto; }
+
+.div-connexion {
+  width: 60%;
+  text-align: center;
+  margin: auto auto 30px; }
+  .div-connexion .page-header {
+    font-size: 40px;
+    margin-top: 30px;
+    text-align: center; }
+  .div-connexion .nav.nav-tabs li {
+    font-size: 110%;
+    font-weight: bold; }
+  .div-connexion .tab-content {
+    padding-top: 25px; }
+  .div-connexion .connect-description {
+    margin-bottom: 25px;
+    font-weight: 450; }
+  .div-connexion .connect-identity, .div-connexion .connect-credentials {
+    width: 75%;
+    max-width: 250px;
+    margin: auto; }
+  .div-connexion .connect-submit {
+    margin-top: 20px; }
+  .div-connexion .messenger {
+    width: auto;
+    max-width: 350px;
+    font-weight: bold;
+    padding: 10px;
+    margin: 20px auto; }
 
 /*# sourceMappingURL=app.css.map */

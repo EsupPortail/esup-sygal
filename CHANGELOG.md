@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+2.1.2
+-----
+- Page de connexion scindée par type de'authentification activée.
+
 2.1.1
 -----
 - Liste des thèses : tri par date de 1ere inscription décroissante
