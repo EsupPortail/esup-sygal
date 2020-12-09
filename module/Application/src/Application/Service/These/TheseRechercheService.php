@@ -501,6 +501,8 @@ class TheseRechercheService
      */
     public function rechercherThese($text, array $criteria, $limit = 1000)
     {
+        $text = trim($text);
+
         if (strlen($text) < 2) return [];
 
         if ($unknown = array_diff($criteria, array_keys(TheseTextFilter::CRITERIA))) {
