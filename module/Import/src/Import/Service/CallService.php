@@ -174,7 +174,7 @@ class CallService
         $json = json_decode($body);
         if ($json === null) {
             // NULL is returned if the json cannot be decoded or if the encoded data is deeper than the recursion limit.
-            throw CallException::invalidJSONResponse($uri, (string)$body);
+            throw CallException::invalidJSONResponse($uri, htmlentities((string)$body));
         }
 
         return $json;
