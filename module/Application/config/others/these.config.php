@@ -49,16 +49,16 @@ return [
         'rule_providers'     => [
             PrivilegeRuleProvider::class => [
                 'allow' => [
+                    //
+                    // Privilèges concernant la ressource These *NON* SOUMIS À ASSERTION.
+                    //
                     [
-                        //
-                        // Privilèges concernant la ressource These *NON* SOUMIS À ASSERTION.
-                        //
-                        [
-                            'privileges' => [
-                                ThesePrivileges::THESE_REFRESH,
-                            ],
-                            'resources'  => ['These'],
+                        'privileges' => [
+                            ThesePrivileges::THESE_REFRESH,
                         ],
+                        'resources'  => ['These'],
+                    ],
+                    [
                         //
                         // Privilèges concernant la ressource These SOUMIS À ASSERTION.
                         //
