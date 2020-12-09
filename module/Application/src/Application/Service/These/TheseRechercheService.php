@@ -11,7 +11,6 @@ use Application\Entity\Db\TheseAnneeUniv;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
 use Application\Entity\UserWrapperFactory;
-use Application\Provider\Privilege\StructurePrivileges;
 use Application\QueryBuilder\TheseQueryBuilder;
 use Application\Service\AuthorizeServiceAwareTrait;
 use Application\Service\DomaineScientifiqueServiceAwareTrait;
@@ -32,6 +31,7 @@ use Doctrine\ORM\Query\Expr\Join;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
+use Webmozart\Assert\Assert;
 
 class TheseRechercheService
 {
@@ -296,12 +296,12 @@ class TheseRechercheService
         }
 
         // Si aucun critère n'est sélectionné pour le champ de recherche texte, cela revient à les sélectionner tous
-        $name = TheseTextFilter::NAME_criteria;
-        $criteria = $this->paramFromQueryParams($name, $queryParams); // NB: null <=> filtre absent
-        if ($criteria === null) {
-            $queryParams = array_merge($queryParams, [$name => array_keys(TheseTextFilter::CRITERIA)]);
-            $updated = true;
-        }
+//        $name = TheseTextFilter::NAME_criteria;
+//        $criteria = $this->paramFromQueryParams($name, $queryParams); // NB: null <=> filtre absent
+//        if ($criteria === null) {
+//            $queryParams = array_merge($queryParams, [$name => array_keys(TheseTextFilter::CRITERIA)]);
+//            $updated = true;
+//        }
 
         return $updated;
     }
@@ -364,8 +364,8 @@ class TheseRechercheService
          */
         $value = $this->getFilterValueByName(TheseTextFilter::NAME_text);
         $text = $value['text'];
-        $criteria = $value['criteria'];
-        if ($text !== null && strlen($text) > 1) {
+        $criteria = $value['criteria']; // NB: aucun critère spécifié => texte pas pris en compte.
+        if ($text !== null && strlen($text) > 1 && !empty($criteria)) {
             $results = $this->rechercherThese($text, $criteria);
             $sourceCodes = array_unique(array_keys($results));
             if ($sourceCodes) {
@@ -501,6 +501,8 @@ class TheseRechercheService
      */
     public function rechercherThese($text, array $criteria, $limit = 1000)
     {
+        Assert::notEmpty($criteria, "Un tableau de critère vide n'est pas acceptée");
+
         $text = trim($text);
 
         if (strlen($text) < 2) return [];
@@ -517,14 +519,22 @@ class TheseRechercheService
         foreach ($words as $word) {
             // le caractère '*' est autorisé pour signifier "n'importe quel caractère répété 0 ou N fois"
             $word = str_replace('*', '.*', $word);
-            // regexp : (<critere>|<critere>)\{[^}]*<terme>.*\}
-            $regexp = '(' . implode('|', $criteria) . ')' . "\{[^}]*" . $word . ".*\}";
+            if (count($criteria) === count(TheseTextFilter::CRITERIA)) {
+                // si tous les critères possibles sont spécifiés, on peut simplifier la regexp :
+                // regexp : \{[^}]*<terme>.*\}
+                $regexp = "\{[^}]*" . $word . ".*\}";
+            } else {
+                // regexp : (<critere>|<critere>)\{[^}]*<terme>.*\}
+                $regexp = '(' . implode('|', $criteria) . ')' . "\{[^}]*" . $word . ".*\}";
+            }
             $orc[] = "    REGEXP_LIKE(haystack, q'[" . $regexp . "]', 'i')"; // la syntaxe q'[]' dispense de doubler les '
         }
         $orc = implode(' OR ' . PHP_EOL, $orc);
 
         $sql = <<<EOS
-SELECT * FROM MV_RECHERCHE_THESE MV WHERE rownum <= $limit AND (
+SELECT distinct CODE_THESE, CODE_DOCTORANT, CODE_ECOLE_DOCT, to_char(HAYSTACK) HAYSTACK 
+FROM MV_RECHERCHE_THESE MV 
+WHERE rownum <= $limit AND (
 $orc
 )
 EOS;
