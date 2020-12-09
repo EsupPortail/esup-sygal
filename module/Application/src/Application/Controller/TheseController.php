@@ -343,8 +343,10 @@ class TheseController extends AbstractController
         }
 
         $unite = $these->getUniteRecherche();
-        $rattachements = null;
-        if ($unite !== null) $rattachements = $this->getUniteRechercheService()->findEtablissementRattachement($unite);
+        $rattachements = [];
+        if ($unite !== null) {
+            $rattachements = $this->getUniteRechercheService()->findEtablissementRattachement($unite);
+        }
 
         $utilisateurs = [];
         foreach ($these->getActeurs() as $acteur) {
