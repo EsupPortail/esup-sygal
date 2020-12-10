@@ -98,7 +98,7 @@ class CoEncadrantController extends AbstractActionController {
 
         $form = $this->getRechercherCoEncadrantForm();
         $form->setAttribute('action', $this->url()->fromRoute('co-encadrant/ajouter-co-encadrant', [], [], true));
-        $form->setUrlCoEncadrant($this->url()->fromRoute('utilisateur/rechercher-individu', [], [], true));
+        $form->setUrlCoEncadrant($this->url()->fromRoute('utilisateur/rechercher-individu', [], ["query" => ['type' => Individu::TYPE_ACTEUR]], true));
 
         $request = $this->getRequest();
         if ($request->isPost()) {

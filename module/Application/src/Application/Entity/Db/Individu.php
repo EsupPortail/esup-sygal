@@ -21,6 +21,9 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
     const CIVILITE_M = 'M.';
     const CIVILITE_MME = 'Mme';
 
+    const TYPE_ACTEUR = 'acteur';
+    const TYPE_DOCTORANT = 'doctorant';
+
     /**
      * Identifiant qui correspond en fait au :
      * - supannEmpId (pour les acteurs) ou au
@@ -107,6 +110,11 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
      * @var ArrayCollection
      */
     private $utilisateurs;
+
+    /**
+     * @var string
+     */
+    private $type;
 
     /**
      * Individu constructor.
@@ -550,4 +558,24 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
     {
         return $this->utilisateurs->toArray();
     }
+
+    /**
+     * @return string
+     */
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     * @return Individu
+     */
+    public function setType(string $type): Individu
+    {
+        $this->type = $type;
+        return $this;
+    }
+
+
 }
