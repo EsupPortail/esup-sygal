@@ -808,14 +808,19 @@ ul.menu-secondaire {
     }
 
     // Les items de menus concernant le dépôt de la version initiale sont mis en retrait
-    // lorsque qu'une correction est attendue.
+    // lorsqu'une correction est attendue.
     a.version-initiale.correction-attendue- {
       opacity: 1.0; // opacité normale lorsqu'aucune correction n'est attendue
     }
     span.divider.version-initiale.correction-attendue- {
-      display: none; // masquage du séparateur entre dépôt version initiale etdépôt version corrigée
+      display: none; // masquage du séparateur entre dépôt version initiale et dépôt version corrigée
     }
-    a.version-initiale.correction-attendue-mineure, a.version-initiale.correction-attendue-majeure {
+    span.divider.version-initiale.correction-effectuee-O {
+      display: inherit; // forçage du séparateur si les corrections ont été effectuées
+    }
+    a.version-initiale.correction-attendue-facultative,
+    a.version-initiale.correction-attendue-obligatoire,
+    a.version-initiale.correction-effectuee-O {
       opacity: 0.5; // opacité réduite lorsqu'une correction est attendue
     }
   }

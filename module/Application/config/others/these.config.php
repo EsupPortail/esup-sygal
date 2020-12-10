@@ -941,7 +941,7 @@ return [
                                 'paramsInject' => [
                                     'these',
                                 ],
-                                'class' => 'version-initiale correction-attendue-{correctionAutorisee}',
+                                'class' => 'version-initiale correction-attendue-{correctionAutorisee} correction-effectuee-{correctionEffectuee}',
                                 'icon' => 'glyphicon glyphicon-file',
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'detail-fichiers'),
                                 'etape' => WfEtape::CODE_DEPOT_VERSION_ORIGINALE,
@@ -954,7 +954,7 @@ return [
                                 'paramsInject' => [
                                     'these',
                                 ],
-                                'class' => 'version-initiale correction-attendue-{correctionAutorisee}',
+                                'class' => 'version-initiale correction-attendue-{correctionAutorisee} correction-effectuee-{correctionEffectuee}',
                                 'icon' => 'glyphicon glyphicon-list-alt',
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'detail-description'),
                                 'etape' => WfEtape::CODE_SIGNALEMENT_THESE,
@@ -967,7 +967,7 @@ return [
                                 'paramsInject' => [
                                     'these',
                                 ],
-                                'class' => 'version-initiale correction-attendue-{correctionAutorisee}',
+                                'class' => 'version-initiale correction-attendue-{correctionAutorisee} correction-effectuee-{correctionEffectuee}',
                                 'icon' => 'glyphicon glyphicon-folder-open',
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'detail-archivage'),
                                 'etape' => WfEtape::CODE_ARCHIVABILITE_VERSION_ORIGINALE,
@@ -980,7 +980,7 @@ return [
                                 'paramsInject' => [
                                     'these',
                                 ],
-                                'class' => 'version-initiale correction-attendue-{correctionAutorisee}',
+                                'class' => 'version-initiale correction-attendue-{correctionAutorisee} correction-effectuee-{correctionEffectuee}',
                                 'icon' => 'glyphicon glyphicon-calendar',
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'detail-rdv-bu'),
                                 'etape' => WfEtape::CODE_RDV_BU_SAISIE_DOCTORANT,
@@ -994,7 +994,7 @@ return [
                                 'paramsInject' => [
                                     'these',
                                 ],
-                                'class' => 'divider version-initiale correction-attendue-{correctionAutorisee}',
+                                'class' => 'divider version-initiale correction-attendue-{correctionAutorisee} correction-effectuee-{correctionEffectuee}',
                             ],
 
                             'depot-corrigee' => [

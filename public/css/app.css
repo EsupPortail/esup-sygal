@@ -522,7 +522,11 @@ ul.menu-secondaire li a.version-initiale.correction-attendue- {
   opacity: 1.0; }
 ul.menu-secondaire li span.divider.version-initiale.correction-attendue- {
   display: none; }
-ul.menu-secondaire li a.version-initiale.correction-attendue-mineure, ul.menu-secondaire li a.version-initiale.correction-attendue-majeure {
+ul.menu-secondaire li span.divider.version-initiale.correction-effectuee-O {
+  display: inherit; }
+ul.menu-secondaire li a.version-initiale.correction-attendue-facultative,
+ul.menu-secondaire li a.version-initiale.correction-attendue-obligatoire,
+ul.menu-secondaire li a.version-initiale.correction-effectuee-O {
   opacity: 0.5; }
 
 ul.menu-actualites {
