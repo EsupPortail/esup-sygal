@@ -3,6 +3,10 @@ Journal des modifications
 
 2.1.2
 -----
+- Gestion des co-encadrants (ajout et retrait)
+- Listing (et export) des co-encadrants sur les EDs et URs
+- Ajout à l'export de l'annuaire des co-encadrants
+- Onglets dans les pages d'information des structures
 - Page de connexion scindée par type d'authentification activée.
 - Import du témoin "corrections effectuées" de chaque thèse.
 - Pages de dépôt de la version corrigée : visibles dès lors que le témoin "corrections effectuées" est à Oui.

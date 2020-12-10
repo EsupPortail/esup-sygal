@@ -4,6 +4,7 @@ namespace Application\Controller;
 
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
+use Application\Service\CoEncadrant\CoEncadrantServiceAwareTrait;
 use Application\Service\DomaineScientifiqueServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheService;
@@ -14,6 +15,7 @@ use Zend\View\Model\ViewModel;
 
 class UniteRechercheController extends StructureConcreteController
 {
+    use CoEncadrantServiceAwareTrait;
     use UniteRechercheServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use DomaineScientifiqueServiceAwareTrait;
@@ -51,6 +53,10 @@ class UniteRechercheController extends StructureConcreteController
      */
     public function informationAction()
     {
+        $id = $this->params()->fromRoute('structure');
+        $structureConcrete = $this->getStructureConcreteService()->getRepository()->findByStructureId($id);
+        $coencadrants = $this->getCoEncadrantService()->getCoEncadrantsByStructureConcrete($structureConcrete);
+
         $viewModel = parent::informationAction();
 
         $unite = $viewModel->getVariable('structure');
@@ -60,6 +66,7 @@ class UniteRechercheController extends StructureConcreteController
         $viewModel->setVariables([
             'unite'                       => $unite,
             'etablissementsRattachements' => $etablissementsRattachements,
+            'coencadrants'                => $coencadrants,
         ]);
 
         return $viewModel;

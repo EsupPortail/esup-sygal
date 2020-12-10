@@ -54,6 +54,13 @@ class ExportController extends AbstractController
                 foreach ($directeurs as $directeur) $noms[] = $directeur->getIndividu()->getNomComplet();
                 return implode(",", $noms);
             },
+            'Co-encadrants'                            => function ($variables) {
+                $acteurs = $variables['co-encadrants'];
+                $noms = [];
+                /** @var Acteur $acteurs */
+                foreach ($acteurs as $directeur) $noms[] = $directeur->getIndividu()->getNomComplet();
+                return implode(",", $noms);
+            },
             //Structures
             'Etablissement'                         => function ($variables) { return $variables['etablissement']->getLibelle(); },
             'Ecole Doctorale Code'                  => function ($variables) { return ($variables['ecole doctorale'])?$variables['ecole doctorale']->getStructure()->getCode():null; },
@@ -170,6 +177,7 @@ class ExportController extends AbstractController
                     'doctorant' => $these->getDoctorant(),
                     'directeurs' => $these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE),
                     'co-directeurs' => $these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE),
+                    'co-encadrants' => $these->getActeursByRoleCode(Role::CODE_CO_ENCADRANT),
                     'etablissement' => $these->getEtablissement(),
                     'ecole doctorale' => $these->getEcoleDoctorale(),
                     'unite de recherche' => $these->getUniteRecherche(),

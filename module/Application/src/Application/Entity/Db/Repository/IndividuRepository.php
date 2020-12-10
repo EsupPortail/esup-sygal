@@ -72,7 +72,7 @@ class IndividuRepository extends DefaultEntityRepository
             "WHERE i.HISTO_DESTRUCTION IS NULL AND rownum <= %d";
         if ($type !== null) {
             $sqlTemplate .= " AND i.type = '%s'";
-            $sql = sprintf($sqlTemplate, $type, (int)$limit);
+            $sql = sprintf($sqlTemplate, (int)$limit, $type);
             $tmp = null;
         } else {
             $sql = sprintf($sqlTemplate, (int)$limit);

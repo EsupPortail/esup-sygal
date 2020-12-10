@@ -9,6 +9,7 @@
         </id>
 
         <field name="supannId" column="SUPANN_ID" nullable="true"/>
+        <field name="type" column="TYPE" nullable="false"/>
         <field name="civilite" column="CIVILITE" nullable="true"/>
         <field name="dateNaissance" type="datetime" column="DATE_NAISSANCE"/>
         <field name="nationalite" column="NATIONALITE" nullable="true"/>
