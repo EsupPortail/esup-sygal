@@ -21,10 +21,10 @@ use Application\Form\Factory\PointsDeVigilanceHydratorFactory;
 use Application\Form\Factory\RdvBuHydratorFactory;
 use Application\Form\Factory\RdvBuTheseDoctorantFormFactory;
 use Application\Form\Factory\RdvBuTheseFormFactory;
-use Application\Provider\Privilege\DoctorantPrivileges;
 use Application\Provider\Privilege\RapportAnnuelPrivileges;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\Service\Acteur\ActeurService;
+use Application\Service\Acteur\ActeurServiceFactory;
 use Application\Service\Financement\FinancementService;
 use Application\Service\Financement\FinancementServiceFactory;
 use Application\Service\Message\DiffusionMessages;
@@ -38,6 +38,7 @@ use Application\Service\TheseAnneeUniv\TheseAnneeUnivServiceFactory;
 use Application\View\Helper\Url\UrlTheseHelperFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use Zend\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [
@@ -1097,10 +1098,8 @@ return [
         )
     ),
     'service_manager' => [
-        'invokables' => array(
-            ActeurService::class => ActeurService::class,
-        ),
         'factories' => [
+            ActeurService::class           => ActeurServiceFactory::class,
             'TheseService'                 => TheseServiceFactory::class,
             'TheseRechercheService'        => TheseRechercheServiceFactory::class,
             'TheseObserverService'         => TheseObserverServiceFactory::class,

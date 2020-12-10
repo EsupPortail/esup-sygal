@@ -100,6 +100,13 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuAwa
             ]
         );
     }
+    public function estCoEncadrant()
+    {
+        return in_array($this->getRole()->getCode(), [
+                Role::CODE_CO_ENCADRANT,
+            ]
+        );
+    }
 
     /**
      * Prédicat testant cet un acteur est un rapporteur de thèse.

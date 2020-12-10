@@ -4,6 +4,10 @@ Journal des modifications
 2.1.2
 -----
 - Page de connexion scindée par type de'authentification activée.
+- Gestion des co-encadrants (ajout et retrait)
+- Listing (et export) des co-encadrants sur les EDs et URs
+- Ajout à l'export de l'annuaire des co-encadrants
+- Onglets dans les pages d'information des structures
 
 2.1.1
 -----
