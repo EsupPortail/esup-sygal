@@ -1,0 +1,41 @@
+{
+    "name": "unicaen/deploy",
+    "description": "Déploiement d'application Unicaen",
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://gest.unicaen.fr/packagist"
+        }
+    ],
+    "require": {
+        "unicaen/app":           "^3.0",
+        "unicaen/auth":          "^3.0",
+        "unicaen/bjy-authorize": "^3.0"
+    },
+    "require-dev": {
+        "zendframework/zend-test":              "^3.2",
+        "phpunit/phpunit":                      ">=3.7",
+        "zendframework/zend-developer-tools":   ">=1.0"
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "cp -r vendor/unicaen/app/public/unicaen public/",
+            "mkdir -p data/cache && chmod -R 777 data/cache && rm -rf data/cache/*",
+            "mkdir -p data/DoctrineModule/cache && chmod -R 777 data/DoctrineModule/cache && rm -rf data/DoctrineModule/cache/*",
+            "mkdir -p data/DoctrineORMModule/Proxy && chmod -R 777 data/DoctrineORMModule/Proxy && rm -rf data/DoctrineORMModule/Proxy/*"
+        ]
+    },
+    "autoload": {
+        "psr-4": {
+            "UnicaenDeploy\\": "module/UnicaenDeploy/src"
+        },
+        "files": [
+            "module/UnicaenDeploy/Module.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "UnicaenDeployTest\\": "module/UnicaenDeploy/test"
+        }
+    }
+}

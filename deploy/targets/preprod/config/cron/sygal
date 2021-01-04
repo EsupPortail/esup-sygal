@@ -1,0 +1,25 @@
+MAILTO=bertrand.gauthier@unicaen.fr
+
+#
+# Application SyGAL.
+#
+
+APP_DIR=/var/www/sygal
+
+##### Traitements en fonction des résultats de l'import #####
+0 7-20 * * 1-5 root /usr/bin/php $APP_DIR/public/index.php process-observed-import-results --etablissement=UCN >>/tmp/sygal-process-observed-import-results.log 2>&1
+# (du lundi au vendredi, chaque heure de 7h à 20h)
+
+##### Test du WS de validation de fichier du CINES #####
+#0 *    * * *   root cd $APP_DIR/data/cron && bash ./test-cines-ws.bash 1> /tmp/sygal-test-cines-ws.log 2>> /tmp/sygal-test-cines-ws.error.log
+# (toutes les heures)
+
+##### Import des données des établissements #####
+*/20 7-19 * * 1-5 root ETAB=UCN  $APP_DIR/bin/run-import.sh >>/tmp/cron-sygal-import-ws-UCN.log  2>&1
+*/20 7-19 * * 1-5 root ETAB=ULHN $APP_DIR/bin/run-import.sh >>/tmp/cron-sygal-import-ws-ULHN.log 2>&1
+*/20 7-19 * * 1-5 root ETAB=URN  $APP_DIR/bin/run-import.sh >>/tmp/cron-sygal-import-ws-URN.log  2>&1
+*/20 7-19 * * 1-5 root ETAB=INSA $APP_DIR/bin/run-import.sh >>/tmp/cron-sygal-import-ws-INSA.log 2>&1
+
+##### Ménage dans /tmp #####
+0 4 * * * root bash $APP_DIR/bin/purge_temp_files.sh 1> /tmp/sygal_purge_temp_files.sh.log 2>&1
+## (tous les jours à 4h du mat')

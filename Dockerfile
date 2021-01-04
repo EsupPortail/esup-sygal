@@ -17,6 +17,10 @@ RUN apt-get update -qq && \
         php${PHP_VERSION}-imagick \
         imagemagick
 
+## Installation de packages requis.
+RUN apt-get install -y \
+        php${PHP_VERSION}-ssh2
+
 # Nettoyage
 RUN apt-get autoremove -y && apt-get clean && rm -rf /tmp/* /var/tmp/*
 

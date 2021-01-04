@@ -39,6 +39,7 @@ $modules = ['Zend\Cache',
     'Notification',
     'Information',
     'Application',
+    'UnicaenDeploy',
 ];
 
 $devModules =  [

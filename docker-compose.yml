@@ -3,8 +3,8 @@ version: '2.2'
 services:
   sygal:
     container_name: sygal-container
-    depends_on:
-      - sygal-import-ws
+#    depends_on:
+#      - sygal-import-ws
     build:
       args:
         PHP_VERSION: 7.3
@@ -20,8 +20,9 @@ services:
      - /tmp:/tmp
      - $HOME/.ssh:/root/.ssh
     working_dir: /app
-    networks:
-      - sygalnet
+    network_mode: bridge
+#    networks:
+#      - sygalnet
 
   sygal-import-ws:
     container_name: sygal-import-ws-container
@@ -35,9 +36,10 @@ services:
     volumes:
      - ../sygal-import-ws:/app
     working_dir: /app
-    networks:
-      - sygalnet
+    network_mode: bridge
+#    networks:
+#      - sygalnet
 
-networks:
-  sygalnet:
-    driver: bridge
+#networks:
+#  sygalnet:
+#    driver: bridge

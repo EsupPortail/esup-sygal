@@ -18,6 +18,7 @@
         "ext-intl":                      "*",
         "ext-readline":                  "*",
         "ext-gettext":                   "*",
+        "ext-ssh2":                      "*",
         "ext-zip":                       "*",
         "unicaen/app":                   "^3.0",
         "unicaen/auth":                  "dev-release-3.1.0",
@@ -59,7 +60,8 @@
             "vendor/bin/doctrine-module orm:clear-cache:query &",
             "vendor/bin/doctrine-module orm:clear-cache:metadata &",
             "vendor/bin/doctrine-module orm:clear-cache:result &",
-            "vendor/bin/doctrine-module orm:generate-proxies &"
+            "vendor/bin/doctrine-module orm:generate-proxies &",
+            "./create-version-config-file --file /tmp/version.php --number $(git describe) --date $(git log --pretty='format:%ad' --date=format:'%d/%m/%Y %H:%M:%S' -1)"
         ]
     }
 }
