@@ -544,7 +544,7 @@ class NotifierSoutenanceService extends NotifierService
         if (!empty($emails)) {
             $notif = new Notification();
             $notif
-                ->setSubject("La soutenance de " . $these->getDoctorant()->getIndividu() . " a été accepté par la maison du doctorat de votre établissement.")
+                ->setSubject("La soutenance de " . $these->getDoctorant()->getIndividu() . " a été accepté par votre établissement.")
                 ->setTo($emails)
                 ->setTemplatePath('soutenance/notification/feu-vert-soutenance')
                 ->setTemplateVariables([

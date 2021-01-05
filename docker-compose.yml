@@ -2,19 +2,16 @@ version: '2.2'
 
 services:
   sygal:
-    container_name: sygal-container
+    image: sygal-image-php7.3
+    container_name: sygal-container-php7.3
     depends_on:
       - sygal-import-ws
-    build:
-      args:
-        PHP_VERSION: 7.3
-      context: .
     environment:
       - http_proxy
       - https_proxy
       - no_proxy
     ports:
-     - "8003:443"
+      - "8003:443"
     volumes:
      - .:/app
      - /tmp:/tmp
@@ -24,13 +21,13 @@ services:
       - sygalnet
 
   sygal-import-ws:
-    container_name: sygal-import-ws-container
-    build:
-      context: ../sygal-import-ws
-      args:
-        PHP_VERSION: 7.0
+    image: sygal-import-ws-image-php7.0
+    container_name: sygal-import-ws-container-php7.0
+    environment:
+      - http_proxy
+      - https_proxy
+      - no_proxy
     ports:
-     - "8080:80"
      - "8443:443"
     volumes:
      - ../sygal-import-ws:/app

@@ -55,7 +55,7 @@ class UniteRechercheController extends StructureConcreteController
     {
         $id = $this->params()->fromRoute('structure');
         $structureConcrete = $this->getStructureConcreteService()->getRepository()->findByStructureId($id);
-        $coencadrants = $this->getCoEncadrantService()->getCoEncadrantsByStructureConcrete($structureConcrete);
+        $coencadrants = $this->getCoEncadrantService()->getCoEncadrantsByStructureConcrete($structureConcrete, false);
 
         $viewModel = parent::informationAction();
 

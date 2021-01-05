@@ -218,7 +218,7 @@ $canCoencadrantExport = $this->isAllowed(CoEncadrantPrivileges::getResourceId(Co
                 <li>
                     <?php echo $acteur->getIndividu()->getPrenom1(); ?>
                     <?php echo $acteur->getIndividu()->getNomUsuel(); ?>
-                    (<?php echo $count; ?> co-encadrement<?php if ($count > 1) echo "s"; ?> en cours.)
+                    (<?php echo $count; ?> co-encadrement<?php if ($count > 1) echo "s"; ?>.)
                     <?php if ($canCoencadrantAfficher) : ?>
                         <a href="<?php echo $this->url('co-encadrant/historique', ['co-encadrant' => $acteur->getId()],[], true); ?>">
                             <span class="glyphicon glyphicon-eye-open" title="Accéder à l'historique de co-encadrement"></span></a>
