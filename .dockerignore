@@ -1,3 +1,0 @@
-# On exclue tout car on utilisera un montage de volume lors du "docker run" pour déployer nos sources.
-# Seul le fichier "apache.conf" est inclus dans le contexte.
-vendor
