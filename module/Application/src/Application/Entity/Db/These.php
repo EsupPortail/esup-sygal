@@ -159,6 +159,11 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * @var string
      */
+    private $correctionEffectuee;
+
+    /**
+     * @var string
+     */
     private $libelleEtabCotutelle;
 
     /**
@@ -698,6 +703,24 @@ class These implements HistoriqueAwareInterface, ResourceInterface
 
         $this->correctionAutoriseeForcee = $correctionAutoriseeForcee;
 
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCorrectionEffectuee()
+    {
+        return $this->correctionEffectuee;
+    }
+
+    /**
+     * @param string $correctionEffectuee
+     * @return These
+     */
+    public function setCorrectionEffectuee(string $correctionEffectuee)
+    {
+        $this->correctionEffectuee = $correctionEffectuee;
         return $this;
     }
 

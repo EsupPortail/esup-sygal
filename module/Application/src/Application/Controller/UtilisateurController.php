@@ -161,6 +161,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
      */
     public function rechercherIndividuAction($type = null)
     {
+        $type = $this->params()->fromQuery('type');
         if (($term = $this->params()->fromQuery('term'))) {
             $rows = $this->individuService->getRepository()->findByText($term, $type);
             $result = [];

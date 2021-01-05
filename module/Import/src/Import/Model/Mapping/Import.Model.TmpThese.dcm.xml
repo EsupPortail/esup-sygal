@@ -26,6 +26,7 @@
         <field name="libPaysCotut"              type="string" column="LIB_PAYS_COTUT" length="40" nullable="true"/>
 
         <field name="correctionAutorisee"       type="string" column="CORRECTION_POSSIBLE" length="30" nullable="true"/>
+        <field name="correctionEffectuee"       type="string" column="CORRECTION_EFFECTUEE" length="30" nullable="false"/>
         <field name="resultat"                  type="string" column="COD_NEG_TRE" length="1" nullable="true"/>
         <field name="temAvenant"                type="string" column="TEM_AVENANT_COTUT" length="1" nullable="true"/>
         <field name="temSoutenanceAutorisee"    type="string" column="TEM_SOU_AUT_THS" length="1" nullable="true"/>
