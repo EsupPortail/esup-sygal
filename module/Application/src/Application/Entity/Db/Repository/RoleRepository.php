@@ -113,4 +113,26 @@ class RoleRepository extends DefaultEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    /**
+     * @param string $code
+     * @param Etablissement $etablissement
+     * @return Role
+     */
+    public function findByCodeAndEtablissement(string $code, Etablissement $etablissement)
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->andWhere('r.structure = :structure')
+            ->setParameter('structure', $etablissement->getStructure())
+            ->andWhere('r.code = :code')
+            ->setParameter('code', $code)
+            ->andWhere('1 = pasHistorise(r)')
+        ;
+        try {
+            $result = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException('Plusieurs Role partagent le même code ['.$code.'] et le même établissement ['.$etablissement->getCode().']');
+        }
+        return $result;
+    }
 }

@@ -20,7 +20,7 @@
         "ext-gettext":                   "*",
         "ext-zip":                       "*",
         "unicaen/app":                   "^3.0",
-        "unicaen/auth":                  "^3.0",
+        "unicaen/auth":                  "dev-release-3.1.0",
         "unicaen/bjy-authorize":         "^3.0",
         "unicaen/db-import":             "dev-master",
         "unicaen/faq":                   "^3.0",

@@ -221,14 +221,4 @@ class EcoleDoctorale implements StructureConcreteInterface, HistoriqueAwareInter
         $this->offreThese = $offreThese;
         return $this;
     }
-
-    /**
-     * Teste si cette école doctorale est la pseudo-école doctorale "Toute école doctorale confondue".
-     *
-     * @return bool
-     */
-    public function estTouteEcoleDoctoraleConfondue()
-    {
-        return $this->getStructure()->getCode() === self::CODE_TOUTE_ECOLE_DOCTORALE_CONFONDUE;
-    }
 }

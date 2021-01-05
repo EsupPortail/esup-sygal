@@ -1,6 +1,23 @@
 Journal des modifications
 =========================
 
+2.1.2
+-----
+- Gestion des co-encadrants (ajout et retrait)
+- Listing (et export) des co-encadrants sur les EDs et URs
+- Ajout à l'export de l'annuaire des co-encadrants
+- Onglets dans les pages d'information des structures
+- Page de connexion scindée par type d'authentification activée.
+- Import du témoin "corrections effectuées" de chaque thèse.
+- Pages de dépôt de la version corrigée : visibles dès lors que le témoin "corrections effectuées" est à Oui.
+- Amélioration du temps de réponse de la recherche textuelle de thèses.
+- Retour du bouton d'import forcé de thèse qui avait disparu à cause d'une erreur de config.
+- Mise en retrait des items de menus concernant le dépôt de la version initiale en cas de corrections attendues ou effectuées.
+- Correction de l'affichage du message en cas d'erreur d'authentification locale. 
+- Correction d'un dysfonctionnement dans la recherche textuelle de thèses.
+- Correction d'un dysfonctionnement dans le tri des thèses par date de 1ère inscription.
+- Correction d'un dysfonctionnement dans l'affichage des établissements de rattachement lorsque la thèse n'est liée à aucune UR.
+
 2.1.1
 -----
 - Liste des thèses : tri par date de 1ere inscription décroissante

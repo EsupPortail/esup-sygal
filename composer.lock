@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "568e80a67a9b631e170c9feaacb2a64c",
+    "content-hash": "80fc03fbdf5cc5d01f9bde726dbf6253",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -1325,6 +1325,7 @@
                 "reflection",
                 "static"
             ],
+            "abandoned": "roave/better-reflection",
             "time": "2020-03-27T11:06:43+00:00"
         },
         {
@@ -3480,11 +3481,11 @@
         },
         {
             "name": "unicaen/auth",
-            "version": "3.0.11",
+            "version": "dev-release-3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/auth.git",
-                "reference": "2dbfeb9eef8a0f0bafb056c54395b394a3671953"
+                "reference": "1b40f6431ee2f145c52ba73cd8992b46dfa29612"
             },
             "require": {
                 "jasig/phpcas": "^1.3",
@@ -3506,7 +3507,7 @@
                 ]
             },
             "description": "Module d'authentification pour les applications Unicaen",
-            "time": "2020-10-07T10:53:38+00:00"
+            "time": "2020-11-24T11:18:48+00:00"
         },
         {
             "name": "unicaen/bjy-authorize",
@@ -8037,6 +8038,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "unicaen/auth": 20,
         "unicaen/db-import": 20
     },
     "prefer-stable": false,

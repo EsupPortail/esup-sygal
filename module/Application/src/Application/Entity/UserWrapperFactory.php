@@ -23,7 +23,7 @@ class UserWrapperFactory
      * Instancie à partir des données issues d'un StorageChainEvent, si possible.
      *
      * @param StorageChainEvent $event
-     * @return UserWrapper
+     * @return UserWrapper|null
      */
     public function createInstanceFromStorageChainEvent(StorageChainEvent $event)
     {
@@ -36,6 +36,10 @@ class UserWrapperFactory
         }
 
         $userData = $this->extractUserDataFromArray($contents);
+        if ($userData === null) {
+            return null;
+        }
+
         $individu = $this->extractIndividuFromArray($contents);
 
         $inst->setUserData($userData);

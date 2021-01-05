@@ -260,6 +260,13 @@ span.ballot-box {
   margin-right: 10px;
 }
 
+#menu-acces-rapide {
+  left: -10000px;
+}
+#menu-acces-rapide:focus {
+  left: auto;
+}
+
 div#sidebar {
   margin-bottom: 30px;
   .glyphicon {
@@ -801,14 +808,19 @@ ul.menu-secondaire {
     }
 
     // Les items de menus concernant le dépôt de la version initiale sont mis en retrait
-    // lorsque qu'une correction est attendue.
+    // lorsqu'une correction est attendue.
     a.version-initiale.correction-attendue- {
       opacity: 1.0; // opacité normale lorsqu'aucune correction n'est attendue
     }
     span.divider.version-initiale.correction-attendue- {
-      display: none; // masquage du séparateur entre dépôt version initiale etdépôt version corrigée
+      display: none; // masquage du séparateur entre dépôt version initiale et dépôt version corrigée
     }
-    a.version-initiale.correction-attendue-mineure, a.version-initiale.correction-attendue-majeure {
+    span.divider.version-initiale.correction-effectuee-O {
+      display: inherit; // forçage du séparateur si les corrections ont été effectuées
+    }
+    a.version-initiale.correction-attendue-facultative,
+    a.version-initiale.correction-attendue-obligatoire,
+    a.version-initiale.correction-effectuee-O {
       opacity: 0.5; // opacité réduite lorsqu'une correction est attendue
     }
   }
@@ -970,5 +982,45 @@ span.sas-highlight {
   input {
     padding: 2px 3px;
     height: auto;
+  }
+}
+
+
+.div-connexion {
+  width: 60%;
+  text-align: center;
+  margin: auto auto 30px;
+  .page-header {
+    font-size: 40px;
+    margin-top: 30px;
+    text-align: center;
+  }
+  .nav.nav-tabs {
+    li {
+      font-size: 110%;
+      font-weight: bold;
+    }
+  }
+  .tab-content {
+    padding-top: 25px;
+  }
+  .connect-description {
+    margin-bottom: 25px;
+    font-weight: 450;
+  }
+  .connect-identity, .connect-credentials {
+    width: 75%;
+    max-width: 250px;
+    margin: auto;
+  }
+  .connect-submit {
+    margin-top: 20px;
+  }
+  .messenger {
+    width: auto;
+    max-width: 350px;
+    font-weight: bold;
+    padding: 10px;
+    margin: 20px auto;
   }
 }

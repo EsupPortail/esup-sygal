@@ -9,9 +9,11 @@ use Application\Form\MetadonneeTheseForm;
 use Application\Form\PointsDeVigilanceForm;
 use Application\Form\RdvBuTheseDoctorantForm;
 use Application\Form\RdvBuTheseForm;
+use Application\Service\Acteur\ActeurService;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\FichierThese\FichierTheseService;
 use Application\Service\File\FileService;
+use Application\Service\Individu\IndividuService;
 use Application\Service\MailConfirmationService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\Role\RoleService;
@@ -58,6 +60,8 @@ class TheseControllerFactory
          * @var EntityManager           $entityManager
          * @var ImportService           $importService
          * @var UtilisateurService      $utilisateurService
+         * @var ActeurService           $acteurService
+         * @var IndividuService         $indivdiService
          */
         $variableService = $container->get('VariableService');
         $validationService = $container->get('ValidationService');
@@ -83,13 +87,15 @@ class TheseControllerFactory
         $rdvBuTheseDoctorantForm = $container->get('FormElementManager')->get('RdvBuTheseDoctorantForm');
         $rdvBuTheseForm = $container->get('FormElementManager')->get('RdvBuTheseForm');
 
-        /** @var AttestationTheseForm $attestationTheseForm */
+        /**
+         * @var AttestationTheseForm $attestationTheseForm
+         * @var DiffusionTheseForm $diffusionTheseForm
+         * @var MetadonneeTheseForm $metadonneeTheseForm
+         * @var PointsDeVigilanceForm $pointsDeVigilanceForm
+         */
         $attestationTheseForm = $container->get('FormElementManager')->get('AttestationTheseForm');
-        /** @var DiffusionTheseForm $diffusionTheseForm */
         $diffusionTheseForm = $container->get('FormElementManager')->get('DiffusionTheseForm');
-        /** @var MetadonneeTheseForm $metadonneeTheseForm */
         $metadonneeTheseForm = $container->get('FormElementManager')->get('MetadonneeTheseForm');
-        /** @var PointsDeVigilanceForm $pointsDeVigilanceForm */
         $pointsDeVigilanceForm = $container->get('FormElementManager')->get('PointsDeVigilanceForm');
 
         /* @var $renderer PhpRenderer */
