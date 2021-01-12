@@ -57,11 +57,12 @@ class ValidationService extends BaseService
 
     /**
      * @param These $these
+     * @param Individu $createur
      * @return Validation
      */
-    public function validateRdvBu(These $these)
+    public function validateRdvBu(These $these, Individu $createur)
     {
-        $v = new Validation($this->getTypeValidation(TypeValidation::CODE_RDV_BU), $these);
+        $v = new Validation($this->getTypeValidation(TypeValidation::CODE_RDV_BU), $these, $createur);
 
         $this->entityManager->persist($v);
         $this->entityManager->flush($v);
