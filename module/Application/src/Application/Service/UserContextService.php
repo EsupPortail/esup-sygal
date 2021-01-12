@@ -24,24 +24,6 @@ class UserContextService extends BaseUserContextService
     use EtablissementServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
 
-    /**
-     * @var RoleInterface
-     */
-    protected $selectedIdentityRole;
-
-    /**
-     * @return Role|RoleInterface|null
-     */
-    public function getSelectedIdentityRole()
-    {
-        if ($this->selectedIdentityRole === null) {
-            $role = parent::getSelectedIdentityRole();
-            $this->selectedIdentityRole = $this->roleAsEntity($role);
-        }
-
-        return $this->selectedIdentityRole;
-    }
-
     private $roleAsEntityCache = [];
 
     /**

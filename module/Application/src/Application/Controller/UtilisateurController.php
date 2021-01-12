@@ -333,7 +333,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             $shibService->activateUsurpation($fromShibUser, $toShibUser);
         }
 
-        $authenticationService->getStorage()->write($individuId);
+        $authenticationService->getStorage()->write($utilisateur->getId());
 
         return $this->redirect()->toRoute('home');
     }
