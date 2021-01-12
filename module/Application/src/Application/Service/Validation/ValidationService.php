@@ -85,7 +85,7 @@ class ValidationService extends BaseService
 
         if (!$v) {
             throw new RuntimeException(
-                sprintf("Aucune validation de type '%s' trouvée pour la thèse %s", TypeValidation::CODE_RDV_BU, $these));
+                sprintf("Aucune validation de type '%s' trouvée pour la thèse %s", TypeValidation::CODE_RDV_BU, $these->getId()));
         }
 
         $v->historiser();
