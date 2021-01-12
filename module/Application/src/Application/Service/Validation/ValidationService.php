@@ -57,11 +57,12 @@ class ValidationService extends BaseService
 
     /**
      * @param These $these
+     * @param Individu $createur
      * @return Validation
      */
-    public function validateRdvBu(These $these)
+    public function validateRdvBu(These $these, Individu $createur)
     {
-        $v = new Validation($this->getTypeValidation(TypeValidation::CODE_RDV_BU), $these);
+        $v = new Validation($this->getTypeValidation(TypeValidation::CODE_RDV_BU), $these, $createur);
 
         $this->entityManager->persist($v);
         $this->entityManager->flush($v);
@@ -85,7 +86,7 @@ class ValidationService extends BaseService
 
         if (!$v) {
             throw new RuntimeException(
-                sprintf("Aucune validation de type '%s' trouvée pour la thèse %s", TypeValidation::CODE_RDV_BU, $these));
+                sprintf("Aucune validation de type '%s' trouvée pour la thèse %s", TypeValidation::CODE_RDV_BU, $these->getId()));
         }
 
         $v->historiser();
