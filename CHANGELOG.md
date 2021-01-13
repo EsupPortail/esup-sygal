@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+2.1.4
+-----
+- Rétablissement du rafraîchissement de MV_RECHERCHE_THESE après chaque import.
+
 2.1.3
 -----
 - Réparation de l'usurpation d'un individu.
