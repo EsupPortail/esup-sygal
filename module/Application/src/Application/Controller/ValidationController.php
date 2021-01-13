@@ -99,7 +99,7 @@ class ValidationController extends AbstractController
             $notification->setThese($these);
 
             if ($action === 'valider') {
-                $this->validationService->validateRdvBu($these);
+                $this->validationService->validateRdvBu($these, $this->userContextService->getIdentityIndividu());
                 $successMessage = "Validation enregistrée avec succès.";
 
                 // notification (doctorant: à la 1ere validation seulement)

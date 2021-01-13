@@ -421,7 +421,7 @@ class TheseService extends BaseService implements ListenerAggregateInterface
 
         // si tout est renseigné, on valide automatiquement
         if ($this->isInfosBuSaisies($these)) {
-            $this->validationService->validateRdvBu($these);
+            $this->validationService->validateRdvBu($these, $this->userContextService->getIdentityIndividu());
             $successMessage = "Validation enregistrée avec succès.";
 
             // notification BDD et BU + doctorant (à la 1ere validation seulement)

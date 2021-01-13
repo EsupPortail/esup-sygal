@@ -1,6 +1,13 @@
 Journal des modifications
 =========================
 
+2.1.3
+-----
+- Réparation de l'usurpation d'un individu.
+- Validation RDV BU : l'individu n'était pas injecté dans la Validation.
+- Correction bug dans le message 'aucune validation trouvée' : affichage de l'id de la thèse.
+- Correction bug de rémanence du rôle précédemment sélectionné dans UserContextService.
+
 2.1.2
 -----
 - Gestion des co-encadrants (ajout et retrait)

@@ -28,6 +28,7 @@ use Application\View\Helper\Uploader\UploaderHelperFactory;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
+use UnicaenApp\Controller\ConsoleController;
 use UnicaenApp\Service\EntityManagerAwareInitializer;
 use Zend\Navigation\Navigation;
 
@@ -38,6 +39,8 @@ return array(
                 // la page Contact requiert une authentification car l'adresse d'assistance dépend de l'utilisateur
                 ['controller' => 'UnicaenApp\Controller\Application', 'action' => 'contact', 'roles' => ['user']],
                 ['controller' => 'Application\Controller\Index', 'action' => 'contact', 'roles' => ['user']],
+                ['controller' => ConsoleController::class, 'action' => 'runSQLScript', 'roles' => []],
+                ['controller' => ConsoleController::class, 'action' => 'runSQLQuery', 'roles' => []],
             ],
             \UnicaenAuth\Guard\PrivilegeController::class => [
                 [
