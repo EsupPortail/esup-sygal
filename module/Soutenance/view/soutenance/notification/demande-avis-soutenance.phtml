@@ -47,15 +47,14 @@ $justification = true;
     Then, you must give your opinion about the PhD thesis and upload your signed PhD report at least 14 days before the date of the PhD defense at : <a href="<?php echo $url; ?>">upload of your report</a>.
 </p>
 <p>
-    Si votre avis est négatif, pourriez-vous indiquer brièvement les raisons de ce choix puis déposer votre rapport.
+    In case of a negative opinion, please indicate briefly the main reasons for the rejection and upload your signed PhD report.
 </p>
 <?php if($proposition->getRenduRapport()) : ?>
     <p>
-        <u>Rappel : </u> le rapport est attendu pour le <?php echo $proposition->getRenduRapport()->format('d/m/Y'); ?>.
+        Keep in mind that your report must be uploaded before <?php echo $proposition->getRenduRapport()->format('d/m/Y'); ?>.
     </p>
 <?php endif;?>
-<p>
-    Cordialement,
+est regards,
 </p>
 
 <?php if ($justification) : ?>

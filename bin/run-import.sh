@@ -42,3 +42,6 @@ else
   /usr/bin/php ${APP_DIR}/public/index.php import --etablissement=${ETAB} --service=${SERVICE} --synchronize=0 && \
   /usr/bin/php ${APP_DIR}/public/index.php run synchro --name=${SERVICE}
 fi
+
+# Refresh de la vue matérialisée utilisée pour la recherche des thèses
+/usr/bin/php ${APP_DIR}/public/index.php run-sql-query --sql="begin DBMS_MVIEW.REFRESH('MV_RECHERCHE_THESE'); end;"
