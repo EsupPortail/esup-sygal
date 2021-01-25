@@ -86,18 +86,18 @@ $canChangePrivilege = true;
         <?php if ($previous != $privilege->getCategorie()): ?>
             <tr>
                 <?php $previous = $privilege->getCategorie(); ?>
-                <td class="categorie" colspan="<?php echo (1 + count($profils)); ?>"> <?php echo $previous; ?> </td>
-
+                <td class="categorie" colspan="<?php echo (1 + count($profils)); ?>"><span title="<?php echo $previous->getCode() ?>"><?php echo $previous ?></span></td>
             </tr>
         <?php endif; ?>
-        <tr>
-            <th> <?php echo $privilege; ?> </th>
+        <tr data-legend="<?php echo $privilege->getLibelle() ?>">
+            <th><span title="<?php echo $privilege->getCode() ?>"><?php echo $privilege ?></span></th>
             <?php foreach ($profils as $profil) : ?>
-                <td class="<?php echo ($profil->getStructureType())?$profil->getStructureType()->getCode():"aucun"; ?>" id="<?php echo $privilege->getId(); ?>_<?php echo $profil->getId();?>">
+                <td class="<?php echo ($profil->getStructureType())?$profil->getStructureType()->getCode():"aucun"; ?>" id="<?php echo $privilege->getId(); ?>_<?php echo $profil->getId();?>"
+                    data-legend="<?php echo $profil->getLibelle() ?>">
                     <?php if ($profil->hasPrivilege($privilege)) : ?>
-                        <span class="glyphicon glyphicon-ok text-success" title="Cliquer pour retirer le privilège [<?php echo $privilege->getLibelle(); ?>] pour le profil [<?php echo $profil->getLibelle(); ?>]"></span>
+                        <span class="glyphicon glyphicon-ok text-success checkable" title="Cliquer pour retirer le privilège"></span>
                     <?php else: ?>
-                        <span class="glyphicon glyphicon-remove text-danger" title="Cliquer pour ajouter le privilège [<?php echo $privilege->getLibelle(); ?>] pour le profil [<?php echo $profil->getLibelle(); ?>]"></span>
+                        <span class="glyphicon glyphicon-remove text-danger checkable" title="Cliquer pour ajouter le privilège"></span>
                     <?php endif; ?>
                 </td>
             <?php endforeach; ?>
@@ -127,6 +127,10 @@ $canChangePrivilege = true;
         background-color: #dcffe9;
     }
 
+    span.checkable {
+        cursor: pointer;
+    }
+
 </style>
 
 <script>
@@ -135,8 +139,17 @@ $canChangePrivilege = true;
             event.div.modal('hide');
             window.location.reload();
         });
+        $(".checkable").each(function() {
+            installTooltipOnCheckable($(this));
+        });
     });
 
+    function installTooltipOnCheckable($checkable) {
+        var profil = $checkable.parent("td").data("legend");
+        var privilege = $checkable.parent("td").parent("tr").data("legend");
+        var title = $checkable.attr("title") + " <strong>" + privilege + "</strong><br>au profil<br><strong>" + profil + "</strong>";
+        $checkable.attr("title", title).tooltip({trigger: "hover", html: true, placement: "bottom"});
+    }
 
     $(document).ready(function() {
         $("td").click(function() {
@@ -147,12 +160,12 @@ $canChangePrivilege = true;
                 return;
             }
 
-            var id = $(this).attr("id");
+            var $td = $(this);
+            var id = $td.attr("id");
             var splits = id.split("_");
             var role = splits[1];
             var privilege = splits[0];
             var url = "modifier-profil-privilege/" + role + "/" + privilege;
-            // alert("click => R="+ role + " P="+privilege + "\n" + url);
 
             $.ajax({
                 type: "POST",
@@ -163,9 +176,10 @@ $canChangePrivilege = true;
                     },
                 success:
                     function(retour){
-                        if (retour["value"] == 1) texte = "<span class='glyphicon glyphicon-ok text-success'></span>";
-                        else var texte = "<span class='glyphicon glyphicon-remove text-danger'></span>";
-                        document.getElementById(id).innerHTML = texte;
+                        if (retour["value"] == 1) texte = "<span class='glyphicon glyphicon-ok text-success checkable' title='Cliquer pour retirer le privilège'></span>";
+                        else var texte = "<span class='glyphicon glyphicon-remove text-danger checkable' title='Cliquer pour ajouter le privilège'></span>";
+                        $td.html(texte);
+                        installTooltipOnCheckable($td.find(".checkable"))
                     }
             });
         });
