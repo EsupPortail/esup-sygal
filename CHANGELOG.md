@@ -1,6 +1,11 @@
 Journal des modifications
 =========================
 
+2.1.5
+-----
+- Recherche textuelle de thèses : rétablissement du cochage par défaut de tous les critères.
+- Résolution du problème de plantage lorsque le flux des actualités est erroné.
+
 2.1.4
 -----
 - Rétablissement du rafraîchissement de MV_RECHERCHE_THESE après chaque import.
