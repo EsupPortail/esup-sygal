@@ -3,6 +3,7 @@
 namespace Application\Entity\Db;
 
 use Application\Entity\Db\Interfaces\IndividuAwareInterface;
+use Soutenance\Entity\Membre;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
@@ -25,6 +26,8 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuAwa
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
+
+    const PRESIDENT_DU_JURY = "Président du jury";
 
     /**
      * @var integer
@@ -50,6 +53,11 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuAwa
      * @var Individu
      */
     private $individu;
+
+    /**
+     * @var Membre
+     */
+    private $membre;
 
     /**
      * @var Role
@@ -323,5 +331,11 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuAwa
         return 'Acteur';
     }
 
-
+    /**
+     * @return Membre|null
+     */
+    public function getMembre(): ?Membre
+    {
+        return $this->membre;
+    }
 }

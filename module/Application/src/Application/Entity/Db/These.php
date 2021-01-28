@@ -262,6 +262,11 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     private $rapportsAnnuels;
 
     /**
+     * @var ArrayCollection
+     */
+    private $propositions;
+
+    /**
      * @return TitreApogeeFilter
      */
     public function getTitreFilter()
@@ -286,6 +291,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
         $this->anneesUnivInscription = new ArrayCollection();
         $this->anneesUniv1ereInscription = new ArrayCollection();
         $this->rapportsAnnuels = new ArrayCollection();
+        $this->propositions = new ArrayCollection();
     }
 
     /**
@@ -1437,6 +1443,38 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
+     * Retourne les mails des directeurs de thèse.
+     *
+     * @param Individu[] $individusSansMail Liste des individus sans mail, format: "Paul Hochon" => Individu
+     * @return array
+     */
+    public function getPresidentJuryEmail(array &$individusSansMail = [])
+    {
+        $emails = [];
+        /** @var Acteur[] $membres */
+        $membres = $this->getActeursByRoleCode(Role::CODE_MEMBRE_JURY)->toArray();
+        /** @var Acteur[] $rapporteurs */
+        $rapporteurs = $this->getActeursByRoleCode(Role::CODE_RAPPORTEUR_JURY)->toArray();
+        $acteurs = array_merge($membres, $rapporteurs);
+
+        /** @var Acteur $acteur */
+        foreach ($acteurs as $acteur) {
+            if ($acteur->getLibelleRoleComplement() === 'Président du jury') {
+                $email = $acteur->getIndividu()->getEmail();
+
+                $name = (string)$acteur->getIndividu();
+                if (!$email) {
+                    $individusSansMail[$name] = $acteur->getIndividu();
+                } else {
+                    $emails[$email] = $name;
+                }
+            }
+        }
+
+        return $emails;
+    }
+
+    /**
      * @return DateTime|null
      */
     public function getDateNotificationDepotVersionCorrigeeAttendu()
@@ -1650,6 +1688,35 @@ class These implements HistoriqueAwareInterface, ResourceInterface
         }
 
         return $acteurs;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPropositions()
+    {
+        return $this->propositions;
+    }
+
+    /**
+     * @param mixed $propositions
+     * @return These
+     */
+    public function setPropositions($propositions)
+    {
+        $this->propositions = $propositions;
+        return $this;
+    }
+
+    public function getPresidentJury()
+    {
+        /** @var Acteur $acteur */
+        foreach ($this->getActeurs() as $acteur) {
+            if ($acteur->estNonHistorise() AND $acteur->getLibelleRoleComplement() === Acteur::PRESIDENT_DU_JURY) {
+                return $acteur;
+            }
+        }
+        return null;
     }
 
 }

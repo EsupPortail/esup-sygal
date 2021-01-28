@@ -14,7 +14,6 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\VersionFichier;
 use Application\Notification\ValidationRdvBuNotification;
-use Application\Provider\Privilege\ThesePrivileges;
 use Application\Rule\AutorisationDiffusionRule;
 use Application\Rule\SuppressionAttestationsRequiseRule;
 use Application\Service\AuthorizeServiceAwareTrait;
@@ -26,6 +25,7 @@ use Application\Service\FichierThese\PdcData;
 use Application\Service\File\FileServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
+use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Assert\Assertion;
@@ -34,10 +34,12 @@ use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Traits\MessageAwareInterface;
+use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 use Zend\EventManager\ListenerAggregateTrait;
+use Zend\Mvc\Controller\AbstractActionController;
 
 class TheseService extends BaseService implements ListenerAggregateInterface
 {
@@ -47,6 +49,8 @@ class TheseService extends BaseService implements ListenerAggregateInterface
     use FichierTheseServiceAwareTrait;
     use VariableServiceAwareTrait;
     use UserContextServiceAwareTrait;
+    use UserServiceAwareTrait;
+    use UtilisateurServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use FileServiceAwareTrait;
     use AuthorizeServiceAwareTrait;
@@ -618,5 +622,63 @@ EOS;
             VersionFichier::CODE_ORIG_CORR);
 
         return !empty($fichierTheses);
+    }
+
+    /**
+     * @param AbstractActionController $controller
+     * @param string $param
+     * @return These
+     */
+    public function getRequestedThese(AbstractActionController $controller, string $param='these')
+    {
+        $id = $controller->params()->fromRoute($param);
+
+        /** @var These $these */
+        $these = $this->getRepository()->find($id);
+        return $these;
+    }
+
+    /**
+     * @param These $these
+     * @param AbstractActionController|null $controller
+     */
+    public function notifierCorrectionsApportees(These $these, AbstractActionController $controller = null)
+    {
+        $president = $these->getPresidentJury();
+        if ($president === null) {
+            throw new RuntimeException("Aucun président du jury pour la thèse [".$these->getId()."]");
+        }
+
+        //Recherche de l'utilisateur  associé à l'individu
+        $individu = $president->getIndividu();
+        $utilisateurs = $this->getUtilisateurService()->getRepository()->findByIndividu($individu);
+
+        // Notification direct de l'utilisateur déjà existant
+        if (!empty($utilisateurs)) {
+            $this->getNotifierService()->triggerValidationDepotTheseCorrigee($these);
+            if ($controller) $controller->flashMessenger()->addSuccessMessage("Notification des corrections faite à <strong>".current($utilisateurs)->getEmail()."</strong>");
+        }
+        else {
+            // Recupération du "meilleur" email
+            $email = null;
+            if ($email === null and $president->getIndividu() !== null and $president->getIndividu()->getEmail()) $email = $president->getIndividu()->getEmail();
+            if ($email === null and $president->getMembre() !== null and $president->getMembre()->getEmail()) $email = $president->getMembre()->getEmail();
+
+            if ($email) {
+                // Creation du compte local puis notification (si mail)
+                $individu->setEmail($email);
+                $username = ($individu->getNomUsuel() ?: $individu->getNomPatronymique()) . "_" . $president->getId();
+                $user = $this->utilisateurService->createFromIndividu($individu, $username, 'none');
+                $token = $this->getUserService()->updateUserPasswordResetToken($user);
+                $url = $controller->url()->fromRoute('utilisateur/init-compte', ['token' => $token], ['force_canonical' => true], true);
+                $this->getNotifierService()->triggerInitialisationCompte($user, $url);
+                $this->getNotifierService()->triggerValidationDepotTheseCorrigee($these);
+                if ($controller) $controller->flashMessenger()->addSuccessMessage("Création de compte initialisée et notification des corrections faite à <strong>" . $email . "</strong>");
+            } else {
+                // Echec (si aucun mail, faudra le renseigner dans un membre fictif par exemple)
+                $this->getNotifierService()->triggerPasDeMailPresidentJury($these, $president);
+                if ($controller) $controller->flashMessenger()->addErrorMessage("Aucune action de réalisée car aucun email de trouvé.");
+            }
+        }
     }
 }

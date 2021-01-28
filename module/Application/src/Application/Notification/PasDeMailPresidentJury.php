@@ -2,15 +2,16 @@
 
 namespace Application\Notification;
 
+use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Interfaces\TheseAwareTrait;
 use Notification\Notification;
 
-class ValidationDepotTheseCorrigeeNotification extends Notification
+class PasDeMailPresidentJury extends Notification
 {
     use TheseAwareTrait;
 
-    protected $templatePath = 'application/notification/mail/notif-validation-depot-these-corrigee';
+    protected $templatePath = 'application/notification/mail/notif-pas-de-mail-president-jury';
 
     /**
      * @return static
@@ -19,14 +20,12 @@ class ValidationDepotTheseCorrigeeNotification extends Notification
     {
         /** @var Individu[] $unknownMails */
         $unknownMails = [];
-//        $to = $this->these->getDirecteursTheseEmails($unknownMails);
-        $to = $this->these->getPresidentJuryEmail($unknownMails);
-        $cc = $this->emailBdd;
+        $to = $this->emailBdd;
+        $cc = null;
 
         $infoMessage = sprintf(
-            "Un mail de notification vient d'être envoyé au(x) directeur(s) de thèse (%s) avec copie à la Maison du doctorat (%s)",
+            "Un mail de notification vient d'être envoyé à la Maison du doctorat (%s)",
             $to,
-            $cc
         );
 
         $errorMessage = null;
@@ -42,11 +41,13 @@ class ValidationDepotTheseCorrigeeNotification extends Notification
         }
 
         $this
-            ->setSubject("Validation du dépôt de la thèse corrigée")
+            ->setSubject("Pas de mail pour le président du jury de la thèse " . $this->these->getId())
             ->setTo($to)
             ->setCc($cc)
             ->setTemplateVariables([
                 'message' => $errorMessage,
+                'these' => $this->these,
+                'president' => $this->president,
             ]);
 
         $this->setInfoMessages($infoMessage);
@@ -69,7 +70,24 @@ class ValidationDepotTheseCorrigeeNotification extends Notification
     public function setEmailBdd($emailBdd)
     {
         $this->emailBdd = $emailBdd;
-
         return $this;
     }
+
+    /**
+     * @var Acteur
+     */
+    protected $president;
+
+    /**
+     * @param Acteur $president
+     * @return PasDeMailPresidentJury
+     */
+    public function setPresident(Acteur $president)
+    {
+        $this->president = $president;
+        return $this;
+    }
+
+
+
 }
