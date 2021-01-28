@@ -369,9 +369,9 @@ class NotifierService extends \Notification\Service\NotifierService
 
     /**
      * @param Utilisateur $utilisateur
-     * @param string $url
+     * @param string $token
      */
-    public function triggerInitialisationCompte($utilisateur, $url) {
+    public function triggerInitialisationCompte(Utilisateur $utilisateur, string $token) {
 
         $email = $utilisateur->getEmail();
         if ($email === null) throw new LogicException("Aucun email de fourni !");
@@ -387,7 +387,7 @@ class NotifierService extends \Notification\Service\NotifierService
                 ->setTemplatePath('application/utilisateur/mail/init-compte')
                 ->setTemplateVariables([
                     'username' => $utilisateur->getUsername(),
-                    'url' => $url,
+                    'url' => $this->urlHelper->__invoke('utilisateur/init-compte', ['token' => $token], ['force_canonical' => true], true),
                 ]);
             $this->trigger($notif);
         }

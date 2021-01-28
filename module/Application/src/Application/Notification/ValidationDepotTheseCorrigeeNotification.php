@@ -19,7 +19,6 @@ class ValidationDepotTheseCorrigeeNotification extends Notification
     {
         /** @var Individu[] $unknownMails */
         $unknownMails = [];
-//        $to = $this->these->getDirecteursTheseEmails($unknownMails);
         $to = $this->these->getPresidentJuryEmail($unknownMails);
         $cc = $this->emailBdd;
 

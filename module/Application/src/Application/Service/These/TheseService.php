@@ -640,9 +640,9 @@ EOS;
 
     /**
      * @param These $these
-     * @param AbstractActionController|null $controller
+     * @return array
      */
-    public function notifierCorrectionsApportees(These $these, AbstractActionController $controller = null)
+    public function notifierCorrectionsApportees(These $these)
     {
         $president = $these->getPresidentJury();
         if ($president === null) {
@@ -656,7 +656,7 @@ EOS;
         // Notification direct de l'utilisateur déjà existant
         if (!empty($utilisateurs)) {
             $this->getNotifierService()->triggerValidationDepotTheseCorrigee($these);
-            if ($controller) $controller->flashMessenger()->addSuccessMessage("Notification des corrections faite à <strong>".current($utilisateurs)->getEmail()."</strong>");
+            return ['success', "Notification des corrections faite à <strong>".current($utilisateurs)->getEmail()."</strong>"];
         }
         else {
             // Recupération du "meilleur" email
@@ -670,14 +670,13 @@ EOS;
                 $username = ($individu->getNomUsuel() ?: $individu->getNomPatronymique()) . "_" . $president->getId();
                 $user = $this->utilisateurService->createFromIndividu($individu, $username, 'none');
                 $token = $this->getUserService()->updateUserPasswordResetToken($user);
-                $url = $controller->url()->fromRoute('utilisateur/init-compte', ['token' => $token], ['force_canonical' => true], true);
-                $this->getNotifierService()->triggerInitialisationCompte($user, $url);
+                $this->getNotifierService()->triggerInitialisationCompte($user, $token);
                 $this->getNotifierService()->triggerValidationDepotTheseCorrigee($these);
-                if ($controller) $controller->flashMessenger()->addSuccessMessage("Création de compte initialisée et notification des corrections faite à <strong>" . $email . "</strong>");
+                return ['success', "Création de compte initialisée et notification des corrections faite à <strong>" . $email . "</strong>"];
             } else {
                 // Echec (si aucun mail, faudra le renseigner dans un membre fictif par exemple)
                 $this->getNotifierService()->triggerPasDeMailPresidentJury($these, $president);
-                if ($controller) $controller->flashMessenger()->addErrorMessage("Aucune action de réalisée car aucun email de trouvé.");
+                return ['error', "Aucune action de réalisée car aucun email de trouvé."];
             }
         }
     }

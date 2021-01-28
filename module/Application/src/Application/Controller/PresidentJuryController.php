@@ -37,7 +37,10 @@ class PresidentJuryController extends AbstractActionController {
         $president = $this->getActeurService()->getRequestedActeur($this, 'president');
         $these = $president->getThese();
 
-        $this->getTheseService()->notifierCorrectionsApportees($these, $this);
+        $message = $this->getTheseService()->notifierCorrectionsApportees($these);
+        if ($message[0] === 'success') $this->flashMessenger()->addSuccessMessage($message[1]);
+        if ($message[0] === 'error')   $this->flashMessenger()->addErrorMessage($message[1]);
+
 
         return $this->redirect()->toRoute('president-jury', [], [], true);
     }
