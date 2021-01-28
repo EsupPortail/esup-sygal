@@ -9,7 +9,7 @@ use Application\Provider\Privilege\PresidentJuryPrivileges;
  * @var Acteur[] $presidents
  */
 
-$this->headTitle("Gestion des présidents du jury");
+$this->headTitle("Gestion des comptes associés aux présidents du jury");
 
 
 function afficherActeur(Acteur $a) {
@@ -127,7 +127,7 @@ $canNotifierPresident     = $this->isAllowed(PresidentJuryPrivileges::getResourc
 ?>
 
 <h1 class="page-header">
-    Gestion des présidents du jury
+    Gestion des comptes associés aux présidents du jury
 </h1>
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
@@ -143,7 +143,7 @@ $canNotifierPresident     = $this->isAllowed(PresidentJuryPrivileges::getResourc
                 <th> Membre<br/>Mail</th>
                 <th> These </th>
                 <th> Correction </th>
-                <th> Effectuées </th>
+                <th> Version<br/>corrigée </th>
                 <th> Validation </th>
                 <th> Action </th>
             </tr>
@@ -155,47 +155,54 @@ $canNotifierPresident     = $this->isAllowed(PresidentJuryPrivileges::getResourc
                 ?>
                 <tr>
                     <td> <?php echo afficherActeur($president); ?> </td>
-                    <td> <?php echo afficherUtilisateur($president); ?> </td>
-                    <td> <?php echo afficherMailIndividu($president); ?> </td>
-                    <td> <?php echo afficherMailMembre($president) ; ?> </td>
+                    <td> <center><?php echo afficherUtilisateur($president); ?> </center></td>
+                    <td> <center><?php echo afficherMailIndividu($president); ?> </center></td>
+                    <td> <center><?php echo afficherMailMembre($president) ; ?> </center></td>
                     <td> <?php echo afficherThese($president, $this); ?> </td>
                     <td> <?php echo afficherCorrection($president); ?> </td>
-                    <td> <?php echo afficherCorrectionEffectuees($president); ?> </td>
+                    <td> <center><?php echo afficherCorrectionEffectuees($president); ?> </center></td>
                     <td> <?php echo afficherValidations($president); ?> </td>
                     <td>
-                        <?php if ($canModifierMailPresident) : ?>
-                            <?php if (empty($utilisateurs)) : ?>
+                        <?php $validations = $president->getThese()->getValidations('CORRECTION_THESE')->toArray(); ?>
+                        <?php if (empty($validations)) : ?>
+                            <?php if ($canModifierMailPresident) : ?>
+                                <?php if (empty($utilisateurs)) : ?>
 
-                                <!--  // Si aucun membre de  soutenance on peut ajouter un membre factisse pour porter l'information ne remontant pas du SI -->
-                                <?php if ($president->getMembre() === null) : ?>
-                                    <a href="<?php echo $this->url('president-jury/ajouter-mail', ['president' => $president->getId()], [], true); ?>"
-                                       class="ajax-modal" data-event="modification"
-                                    >
-                                        <span class="glyphicon glyphicon-plus"></span> </a>
-                                <?php else :?>
-
-                                    <!-- // Si membre factisse alors on peut le supprimer pour eventuellement le modifier -->
-                                    <?php if ($president->getMembre()->getProposition()->getId() === 0) : ?>
-                                        <a href="<?php echo $this->url('president-jury/supprimer-mail', ['president' => $president->getId()], [], true); ?>"
+                                    <!--  // Si aucun membre de  soutenance on peut ajouter un membre factisse pour porter l'information ne remontant pas du SI -->
+                                    <?php if ($president->getMembre() === null) : ?>
+                                        <a href="<?php echo $this->url('president-jury/ajouter-mail', ['president' => $president->getId()], [], true); ?>"
+                                           class="ajax-modal" data-event="modification"
+                                           title="Ajout d'un email pour le président du jury"
                                         >
-                                            <span class="glyphicon glyphicon-trash"></span> </a>
-                                    <?php else : ?>
-                                        <span class="glyphicon glyphicon-plus" style="color:white;"></span>
+                                            <span class="glyphicon glyphicon-plus"></span> </a>
+                                    <?php else :?>
+
+                                        <!-- // Si membre factisse alors on peut le supprimer pour eventuellement le modifier -->
+                                        <?php if ($president->getMembre()->getProposition()->getId() === 0) : ?>
+                                            <a href="<?php echo $this->url('president-jury/supprimer-mail', ['president' => $president->getId()], [], true); ?>"
+                                               title="Suppression de l'email ajouté manuellement pour le président du jury"
+                                            >
+                                                <span class="glyphicon glyphicon-trash"></span> </a>
+                                        <?php else : ?>
+                                            <span class="glyphicon glyphicon-plus" style="color:white;"></span>
+                                        <?php endif;?>
+
                                     <?php endif;?>
-
+                                <?php else:?>
+                                    <span class="glyphicon glyphicon-plus" style="color:white;"></span>
                                 <?php endif;?>
-                            <?php else:?>
-                                <span class="glyphicon glyphicon-plus" style="color:white;"></span>
-                            <?php endif;?>
-                        <?php endif; ?>
+                            <?php endif; ?>
 
-                        <?php if ($canNotifierPresident) : ?>
-                            <?php if (($president->getIndividu() AND $president->getIndividu()->getEmail()) OR ($president->getMembre() AND $president->getMembre()->getEmail())) : ?>
-                                <a href="<?php echo $this->url('president-jury/notifier-correction', ['president' => $president->getId()], [], true); ?>">
-                                    <span class="glyphicon glyphicon-send"></span>
-                                </a>
-                            <?php else : ?>
-                                <span class="glyphicon glyphicon-send" style="color:white;"></span>
+                            <?php if ($canNotifierPresident) : ?>
+                                <?php if (($president->getIndividu() AND $president->getIndividu()->getEmail()) OR ($president->getMembre() AND $president->getMembre()->getEmail())) : ?>
+                                    <a href="<?php echo $this->url('president-jury/notifier-correction', ['president' => $president->getId()], [], true); ?>"
+                                       title="Création du compte & notification du président du jury"
+                                    >
+                                        <span class="glyphicon glyphicon-send"></span>
+                                    </a>
+                                <?php else : ?>
+                                    <span class="glyphicon glyphicon-send" style="color:white;"></span>
+                                <?php endif; ?>
                             <?php endif; ?>
                         <?php endif; ?>
                     </td>
