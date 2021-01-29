@@ -504,6 +504,7 @@ class TheseService extends BaseService implements ListenerAggregateInterface
             return $a->estPresidentJury();
         });
 
+        $rapporteurs = array_diff($rapporteurs, $president);
         $membres = array_diff($acteurs, $rapporteurs, $directeurs, $codirecteurs, $president);
         $pdcData->setMembres($membres);
 
