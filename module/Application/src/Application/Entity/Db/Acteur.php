@@ -27,8 +27,6 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuAwa
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
 
-    const PRESIDENT_DU_JURY = "Président du jury";
-
     /**
      * @var integer
      */
@@ -143,7 +141,7 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuAwa
      */
     public function estPresidentJury()
     {
-        return ($this->getRole()->getCode() === Role::CODE_PRESIDENT_JURY || $this->getLibelleRoleComplement() === Role::LIBELLE_PRESIDENT);
+        return ($this->getRole()->getCode() === Role::CODE_PRESIDENT_JURY);
     }
 
     /**

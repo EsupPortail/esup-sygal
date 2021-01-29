@@ -1459,7 +1459,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
 
         /** @var Acteur $acteur */
         foreach ($acteurs as $acteur) {
-            if ($acteur->getLibelleRoleComplement() === 'Président du jury') {
+            if ($acteur->getRole()->getCode() === Role::CODE_PRESIDENT_JURY) {
                 $email = $acteur->getIndividu()->getEmail();
 
                 $name = (string)$acteur->getIndividu();
@@ -1712,7 +1712,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     {
         /** @var Acteur $acteur */
         foreach ($this->getActeurs() as $acteur) {
-            if ($acteur->estNonHistorise() AND $acteur->getLibelleRoleComplement() === Acteur::PRESIDENT_DU_JURY) {
+            if ($acteur->estNonHistorise() AND $acteur->getRole()->getCode() === Role::CODE_PRESIDENT_JURY) {
                 return $acteur;
             }
         }
