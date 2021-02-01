@@ -7,6 +7,7 @@ Journal des modifications
 - Recherche textuelle de thèses : rétablissement du cochage par défaut de tous les critères.
 - Résolution du problème de plantage lorsque le flux des actualités est erroné.
 - Interface de gestion des comptes locaux pour les présidents de jury.
+- Test d'archivabilité : possibilité de configurer le passage par un proxy.
 
 2.1.4
 -----
