@@ -2,6 +2,7 @@
 
 namespace Application\Service\Notification;
 
+use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\MailConfirmation;
 use Application\Entity\Db\Role;
@@ -9,6 +10,7 @@ use Application\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Variable;
 use Application\Notification\CorrectionAttendueUpdatedNotification;
+use Application\Notification\PasDeMailPresidentJury;
 use Application\Notification\ResultatTheseAdmisNotification;
 use Application\Notification\ResultatTheseModifieNotification;
 use Application\Notification\ValidationDepotTheseCorrigeeNotification;
@@ -202,6 +204,38 @@ class NotifierService extends \Notification\Service\NotifierService
     }
 
     /**
+     * Notification par mail des directeurs de thèse pour les inviter à valider les corrections.
+     *
+     * @param These $these
+     * @param Acteur|null $president
+     */
+    public function triggerPasDeMailPresidentJury(These $these, ?Acteur $president)
+    {
+        // envoi de mail aux directeurs de thèse
+        $notif = new PasDeMailPresidentJury();
+        $notif
+            ->setThese($these)
+            ->setEmailBdd($this->fetchEmailBdd($these))
+            ->setPresident($president)
+            ->setTemplateVariables([
+                'these' => $these,
+                'president' => $president,
+            ]);
+
+        $this->trigger($notif);
+
+        $infoMessages = $notif->getInfoMessages();
+        $this->messageContainer->setMessages([
+            'info' => $infoMessages[0],
+        ]);
+        if ($errorMessages = $notif->getWarningMessages()) {
+            $this->messageContainer->addMessages([
+                'danger' => $errorMessages[0],
+            ]);
+        }
+    }
+
+    /**
      * @param Notification $notif
      * @param These        $these
      */
@@ -236,7 +270,7 @@ class NotifierService extends \Notification\Service\NotifierService
 
         $this->trigger($notif);
 
-        $infoMessage = sprintf("Un mail de notification vient d'être envoyé à votre doctorant (%s)", $to);
+        $infoMessage = sprintf("Un mail de notification vient d'être envoyé au doctorant (%s)", $to);
         if ($this->messageContainer->getMessage()) {
             $new_message = "<ul><li>" . $this->messageContainer->getMessage() . "</li><li>" . $infoMessage . "</li></ul>";
             $this->messageContainer->setMessage($new_message, 'info');
@@ -335,9 +369,9 @@ class NotifierService extends \Notification\Service\NotifierService
 
     /**
      * @param Utilisateur $utilisateur
-     * @param string $url
+     * @param string $token
      */
-    public function triggerInitialisationCompte($utilisateur, $url) {
+    public function triggerInitialisationCompte(Utilisateur $utilisateur, string $token) {
 
         $email = $utilisateur->getEmail();
         if ($email === null) throw new LogicException("Aucun email de fourni !");
@@ -353,7 +387,7 @@ class NotifierService extends \Notification\Service\NotifierService
                 ->setTemplatePath('application/utilisateur/mail/init-compte')
                 ->setTemplateVariables([
                     'username' => $utilisateur->getUsername(),
-                    'url' => $url,
+                    'url' => $this->urlHelper->__invoke('utilisateur/init-compte', ['token' => $token], ['force_canonical' => true], true),
                 ]);
             $this->trigger($notif);
         }

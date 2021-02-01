@@ -96,6 +96,7 @@ return [
                         'options'       => [
                             'route' => '/deposes',
                             'defaults'      => [
+                                'controller' => 'Application\Controller\FichierThese', // indispensable ! :-?
                                 'action' => 'deposes',
                             ],
                         ],

@@ -98,6 +98,7 @@
         </many-to-one>
 
         <one-to-many target-entity="Application\Entity\Db\Financement" field="financements" mapped-by="these"/>
+        <one-to-many target-entity="Soutenance\Entity\Proposition" field="propositions" mapped-by="these"/>
 
     </entity>
 </doctrine-mapping>

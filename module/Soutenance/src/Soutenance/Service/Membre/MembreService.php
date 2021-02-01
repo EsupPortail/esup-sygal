@@ -3,6 +3,7 @@
 namespace Soutenance\Service\Membre;
 
 use Application\Entity\Db\Acteur;
+use Application\Entity\Db\Etablissement;
 use Application\Service\UserContextServiceAwareTrait;
 use DateInterval;
 use DateTime;
@@ -277,5 +278,22 @@ class MembreService {
             throw new RuntimeException("Plusieurs Membre partagent le même Acteur [".$acteur->getId()."]", 0, $e);
         }
         return $result;
+    }
+
+    public function createDummyMembre()
+    {
+        /** @var Proposition $proposition : la proposition est une porposition bidon  */
+        $proposition = $this->getEntityManager()->getRepository(Proposition::class)->find(0);
+        /** @var Qualite $qualite : la qualite 'Qualité inconnue' */
+        $qualite = $this->getEntityManager()->getRepository(Qualite::class)->find(0);
+
+        $membre = new Membre();
+        $membre->setProposition($proposition);
+        $membre->setGenre("-");
+        $membre->setQualite($qualite);
+        $membre->setEtablissement("FAUX ETABLISSEMENT");
+        $membre->setRole(Membre::MEMBRE_JURY);
+        $membre->setVisio(false);
+        return $membre;
     }
 }
