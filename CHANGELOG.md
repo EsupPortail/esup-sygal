@@ -8,6 +8,7 @@ Journal des modifications
 - Résolution du problème de plantage lorsque le flux des actualités est erroné.
 - Interface de gestion des comptes locaux pour les présidents de jury.
 - Test d'archivabilité : possibilité de configurer le passage par un proxy.
+- Correction de l'import forcé de thèse : utilisation du unicaen/db-import pour synchroniser après l'import des données.
 
 2.1.4
 -----
