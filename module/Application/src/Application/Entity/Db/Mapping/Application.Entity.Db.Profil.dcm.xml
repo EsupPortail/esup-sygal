@@ -11,6 +11,7 @@
         <field name="libelle" type="string" column="LIBELLE" length="100" nullable="false"/>
         <field name="roleCode" type="string" column="ROLE_ID" length="64" nullable="false"/>
         <field name="description" type="string" column="DESCRIPTION" length="1024" nullable="true"/>
+        <field name="ordre" type="integer" column="ORDRE" nullable="true"/>
 
         <many-to-one field="structureType" target-entity="Application\Entity\Db\TypeStructure">
             <join-columns>

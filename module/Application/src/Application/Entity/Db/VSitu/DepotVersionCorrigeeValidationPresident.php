@@ -3,9 +3,9 @@
 namespace Application\Entity\Db\VSitu;
 
 /**
- * DepotVersionCorrigeeValidationDirecteur
+ * DepotVersionCorrigeeValidationPresident
  */
-class DepotVersionCorrigeeValidationDirecteur
+class DepotVersionCorrigeeValidationPresident
 {
     /**
      * @var boolean
@@ -33,7 +33,7 @@ class DepotVersionCorrigeeValidationDirecteur
      *
      * @param boolean $valide
      *
-     * @return DepotVersionCorrigeeValidationDirecteur
+     * @return DepotVersionCorrigeeValidationPresident
      */
     public function setValide($valide)
     {
@@ -57,7 +57,7 @@ class DepotVersionCorrigeeValidationDirecteur
      *
      * @param integer $id
      *
-     * @return DepotVersionCorrigeeValidationDirecteur
+     * @return DepotVersionCorrigeeValidationPresident
      */
     public function setId($id)
     {
@@ -81,7 +81,7 @@ class DepotVersionCorrigeeValidationDirecteur
      *
      * @param \Application\Entity\Db\These $these
      *
-     * @return DepotVersionCorrigeeValidationDirecteur
+     * @return DepotVersionCorrigeeValidationPresident
      */
     public function setThese(\Application\Entity\Db\These $these = null)
     {
@@ -105,7 +105,7 @@ class DepotVersionCorrigeeValidationDirecteur
      *
      * @param \Application\Entity\Db\Individu $individu
      *
-     * @return DepotVersionCorrigeeValidationDirecteur
+     * @return DepotVersionCorrigeeValidationPresident
      */
     public function setIndividu(\Application\Entity\Db\Individu $individu = null)
     {

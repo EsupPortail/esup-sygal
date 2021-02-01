@@ -3,8 +3,10 @@
 use Application\Entity\Db\These;
 
 /**
+ * @see \Application\Service\Notification\NotifierService::triggerValidationDepotTheseCorrigee()
  * @var These  $these
  * @var string $message
+ * @var string $url
  */
 ?>
 
@@ -16,11 +18,17 @@ use Application\Entity\Db\These;
 </p>
 <p>
     Vous êtes informé-e que <?php echo $these->getDoctorant() ?> a déposé une version corrigée de sa thèse
-    et que votre validation est attendue.
+    et en tant que Président du jury de cette thèse votre validation est attendue.
 </p>
 <p>
-    Cliquez <a href="<?php echo $this->url('these/depot-version-corrigee', ['these' => $these->getId()], ['force_canonical' => true]) ?>">ici</a>
-    pour accéder à l'application <?php echo $this->appInfos()->nom ?>.
+    Cliquez <a href="<?php echo $url ?>">ici</a> pour accéder à l'application <?php echo $this->appInfos()->nom ?> et
+    valider le second dépôt du manuscrit (téléchargeable sur cette même page).
+</p>
+
+<p>
+    Si vous n'avez pas de compte dans l'application <?php echo $this->appInfos()->nom ?>,
+    un second mail viens de vous être envoyé afin d'initialiser celui-ci. <br/>
+    Si c'est le cas, veuillez initialiser celui-ci et revenir sur le lien ci-dessus.
 </p>
 
 <?php if (isset($message)): ?>
