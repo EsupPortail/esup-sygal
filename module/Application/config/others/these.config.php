@@ -33,6 +33,7 @@ use Application\Service\These\Factory\TheseObserverServiceFactory;
 use Application\Service\These\Factory\TheseRechercheServiceFactory;
 use Application\Service\These\Factory\TheseServiceFactory;
 use Application\Service\These\TheseRechercheService;
+use Application\Service\These\TheseService;
 use Application\Service\TheseAnneeUniv\TheseAnneeUnivService;
 use Application\Service\TheseAnneeUniv\TheseAnneeUnivServiceFactory;
 use Application\View\Helper\Url\UrlTheseHelperFactory;
@@ -1108,6 +1109,7 @@ return [
         ],
         'aliases' => [
             TheseRechercheService::class => 'TheseRechercheService',
+            TheseService::class => 'TheseService',
         ]
     ],
     'controllers'     => [

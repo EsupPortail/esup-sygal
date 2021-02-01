@@ -15,6 +15,7 @@ use Application\SourceCodeStringHelperAwareTrait;
 use DateTime;
 use Doctrine\ORM\ORMException;
 use UnicaenApp\Exception\RuntimeException;
+use Zend\Mvc\Controller\AbstractActionController;
 
 class ActeurService extends BaseService
 {
@@ -94,6 +95,25 @@ class ActeurService extends BaseService
      * @param Acteur $acteur
      * @return Acteur
      */
+    public function update(Acteur $acteur)
+    {
+        try {
+            $date = new DateTime();
+            $user = $this->userContextService->getIdentityDb();
+            $acteur->setHistoModification($date);
+            $acteur->setHistoModificateur($user);
+            $this->getEntityManager()->flush($acteur);
+        } catch(ORMException $e) {
+            throw new RuntimeException("Un problème est survenue lors de l'enregistrement en base d'un acteur");
+        }
+
+        return $acteur;
+    }
+
+    /**
+     * @param Acteur $acteur
+     * @return Acteur
+     */
     public function delete(Acteur $acteur)
     {
         try {
@@ -106,6 +126,18 @@ class ActeurService extends BaseService
         return $acteur;
     }
 
+    /**
+     * @param AbstractActionController $controller
+     * @param string $param
+     * @return Acteur
+     */
+    public function getRequestedActeur(AbstractActionController $controller, string $param='acteur')
+    {
+        $id = $controller->params()->fromRoute($param);
+        /** @var Acteur $acteur */
+        $acteur = $this->getRepository()->find($id);
+        return $acteur;
+    }
 
 
 }

@@ -5,6 +5,8 @@ Journal des modifications
 -----
 - Recherche textuelle de thèses : rétablissement du cochage par défaut de tous les critères.
 - Résolution du problème de plantage lorsque le flux des actualités est erroné.
+- Validation des corrections desormais réalisée par le président du jury.
+- Interface de gestion des comptes locaux pour les présidents de jury.
 
 2.1.4
 -----

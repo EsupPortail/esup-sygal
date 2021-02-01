@@ -1113,6 +1113,7 @@ class TheseController extends AbstractController
                     // création automatique d'une validation du dépôt de la version corrigée (par le doctorant)
                     if ($validite->getEstValide() && $version->estVersionCorrigee()) {
                         $this->validationService->validateDepotTheseCorrigee($these);
+                        $this->theseService->notifierCorrectionsApportees($these);
 
                         // envoi de mail aux directeurs de thèse
                         $this->notifierService->triggerValidationDepotTheseCorrigee($these);
@@ -1535,6 +1536,7 @@ class TheseController extends AbstractController
                 $this->fichierTheseService->updateConformiteFichierTheseRetraitee($these, $conforme);
                 if ($conforme && $versionArchivage->estVersionCorrigee()) {
                     $this->validationService->validateDepotTheseCorrigee($these);
+                    $this->theseService->notifierCorrectionsApportees($these);
 
                     // notification des directeurs de thèse
                     $this->notifierService->triggerValidationDepotTheseCorrigee($these);

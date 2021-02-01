@@ -58,5 +58,7 @@
                 <join-column name="HISTO_DESTRUCTEUR_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
+
+        <one-to-one field="membre" target-entity="Soutenance\Entity\Membre" mapped-by="acteur"/>
     </entity>
 </doctrine-mapping>

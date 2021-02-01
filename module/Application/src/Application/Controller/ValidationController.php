@@ -194,7 +194,7 @@ class ValidationController extends AbstractController
                 $successMessage = "Validation enregistrée avec succès.";
 
                 // notification des directeurs de thèse
-                $this->notifierService->triggerValidationDepotTheseCorrigee($these);
+                $this->theseService->notifierCorrectionsApportees($these);
             }
             elseif ($action === 'devalider') {
                 $validation = $this->validationService->unvalidateDepotTheseCorrigee($these);

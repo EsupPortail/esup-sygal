@@ -59,8 +59,7 @@ class ActeurRepository extends DefaultEntityRepository
             ->andWhere('a.these = :these')
             ->setParameter('individu', $individuId)
             ->setParameter('these', $these)
-            ->orderBy('a.id', 'DESC')
-        ;
+            ->orderBy('a.id', 'DESC');
 
         $acteurs = $qb->getQuery()->getResult();
         return current($acteurs);
@@ -74,8 +73,7 @@ class ActeurRepository extends DefaultEntityRepository
     {
         $qb = $this->createQueryBuilder('acteur')
             ->andWhere('acteur.these = :these')
-            ->setParameter('these', $these->getId())
-        ;
+            ->setParameter('these', $these->getId());
 
         $result = $qb->getQuery()->getResult();
         return $result;
@@ -94,14 +92,13 @@ class ActeurRepository extends DefaultEntityRepository
             ->andWhere('a.role = :role')
             ->setParameter('individu', $individu)
             ->setParameter('role', $role)
-            ->orderBy('a.id', 'DESC')
-        ;
+            ->orderBy('a.id', 'DESC');
 
         $acteur = null;
         try {
             $acteur = $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Un problème s'est produit lors de la récupération de l'acteur.",$e);
+            throw new RuntimeException("Un problème s'est produit lors de la récupération de l'acteur.", $e);
         }
         return $acteur;
     }
@@ -122,8 +119,7 @@ class ActeurRepository extends DefaultEntityRepository
             ->setParameter('code', $code)
             ->andWhere('acteur.these = :these')
             ->setParameter('these', $these)
-            ->andWhere('1 = pasHistorise(acteur)')
-        ;
+            ->andWhere('1 = pasHistorise(acteur)');
 
         $result = $qb->getQuery()->getResult();
         return $result;
@@ -143,13 +139,11 @@ class ActeurRepository extends DefaultEntityRepository
             ->setParameter('codirecteur', Role::CODE_CODIRECTEUR_THESE)
             ->andWhere('acteur.these = :these')
             ->setParameter('these', $these)
-            ->andWhere('1 = pasHistorise(acteur)')
-        ;
+            ->andWhere('1 = pasHistorise(acteur)');
 
         $result = $qb->getQuery()->getResult();
         return $result;
     }
-
 
 
     /**
@@ -163,8 +157,7 @@ class ActeurRepository extends DefaultEntityRepository
             ->andWhere('1 =  pasHistorise(acteur)')
             ->andWhere('acteur.individu = :individu')
             ->setParameter('individu', $individu)
-            ->orderBy('these.id', 'ASC')
-            ;
+            ->orderBy('these.id', 'ASC');
 
         $result = $qb->getQuery()->getResult();
         return $result;
@@ -194,8 +187,7 @@ class ActeurRepository extends DefaultEntityRepository
             ->join('ed.structure', 's')
             ->andWhere('1 =  pasHistorise(a)')
             ->addOrderBy('i.nomUsuel')
-            ->addOrderBy('i.prenom1')
-        ;
+            ->addOrderBy('i.prenom1');
 
         if ($etablissement !== null) {
             $qb->join('t.etablissement', 'e', Join::WITH, 'e = :etab')->setParameter('etab', $etablissement);
@@ -230,8 +222,7 @@ class ActeurRepository extends DefaultEntityRepository
             ->join('ed.structure', 's')
             ->andWhere('1 =  pasHistorise(a)')
             ->addOrderBy('i.nomUsuel')
-            ->addOrderBy('i.prenom1')
-        ;
+            ->addOrderBy('i.prenom1');
 
         if ($ecoleDoctorale !== null) {
             if ($ecoleDoctorale instanceof EcoleDoctorale) {
@@ -251,4 +242,72 @@ class ActeurRepository extends DefaultEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    /** Recupération des présidents de jurys **************************************************************************/
+
+    /**
+     * @return Acteur[]
+     */
+    public function fetchPresidentDuJury()
+    {
+        $qb = $this->createQueryBuilder('a')
+            ->addSelect('i')->join('a.individu', 'i')
+            ->addSelect('t')->join('t.these', 't')
+            ->andWhere('a.complement = :president')
+            ->setParameter('president', 'Président du jury')
+            ->andWhere('1 =  pasHistorise(a)')
+            ->andWhere('1 =  pasHistorise(i)')
+            ->andWhere('1 =  pasHistorise(t)');
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
+
+    /**
+     * @return Acteur[]
+     */
+    public function fetchPresidentDuJuryTheseAvecCorrection()
+    {
+        $qb = $this->createQueryBuilder('a')
+            ->addSelect('i')->join('a.individu', 'i')
+            ->addSelect('t')->join('a.these', 't')
+            ->andWhere('a.libelleRoleComplement = :president')
+            ->addSelect('u')->leftJoin('i.utilisateurs', 'u')
+            ->setParameter('president', 'Président du jury')
+            ->andWhere("t.correctionAutorisee IS NOT NULL OR t.correctionAutoriseeForcee IS NOT NULL")
+            ->andWhere("t.correctionAutoriseeForcee IS NULL OR t.correctionAutoriseeForcee <> 'aucune'")
+            ->andWhere('1 =  pasHistorise(a)')
+            ->andWhere('1 =  pasHistorise(i)')
+            ->andWhere('1 =  pasHistorise(t)')
+            ->orderBy('t.dateSoutenance', 'DESC')
+            //->orderBy('t.id', 'ASC')
+        ;
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
+
+//    /**
+//     * @return Acteur[]
+//     */
+//    public function fetchPresidentDuJuryTheseAvecCorrectionSansUtilisateur()
+//    {
+//        $qb = $this->createQueryBuilder('a')
+//            ->addSelect('i')->join('a.individu', 'i')
+//            ->addSelect('t')->join('a.these', 't')
+//            ->addSelect('u')->join('i.utilisateurs', 'u')
+//            ->andWhere('a.libelleRoleComplement = :president')
+//            ->setParameter('president', 'Président du jury')
+//            ->andWhere('t.correctionAutorisee IS NOT NULL')
+//            ->andWhere('1 =  pasHistorise(a)')
+//            ->andWhere('1 =  pasHistorise(i)')
+//            ->andWhere('1 =  pasHistorise(t)')
+//            ->groupBy('a')
+//            ->having('count(u) = 0')
+//        ;
+//
+//        $result = $qb->getQuery()->getResult();
+//        return $result;
+//    }
+
 }
