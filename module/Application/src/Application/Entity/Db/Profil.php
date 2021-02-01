@@ -16,6 +16,8 @@ class Profil
     protected $roleCode;
     /** @var string $description */
     protected $description;
+    /** @var integer $ordre */
+    private $ordre;
     /** @var ArrayCollection */
     protected $privileges;
     /** @var ArrayCollection */
@@ -123,6 +125,23 @@ class Profil
         return $this;
     }
 
+    /**
+     * @return int
+     */
+    public function getOrdre()
+    {
+        return $this->ordre;
+    }
+
+    /**
+     * @param int $ordre
+     * @return Profil
+     */
+    public function setOrdre(int $ordre)
+    {
+        $this->ordre = $ordre;
+        return $this;
+    }
 
     /**
      * @param Privilege $privilege

@@ -4,8 +4,6 @@ services:
   sygal:
     image: sygal-image-php7.3
     container_name: sygal-container-php7.3
-    depends_on:
-      - sygal-import-ws
     environment:
       - http_proxy
       - https_proxy
@@ -31,6 +29,7 @@ services:
      - "8443:443"
     volumes:
      - ../sygal-import-ws:/app
+     - /tmp:/tmp
     working_dir: /app
     networks:
       - sygalnet

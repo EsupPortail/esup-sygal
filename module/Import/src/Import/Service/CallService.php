@@ -10,8 +10,8 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ServerException;
-use UnicaenApp\Exception\RuntimeException;
 use Import\Exception\CallException;
+use UnicaenApp\Exception\RuntimeException;
 use Zend\Http\Response;
 use Zend\Log\LoggerAwareTrait;
 
@@ -96,6 +96,9 @@ class CallService
         }
         if (array_key_exists('timeout', $config)) {
             $this->config['timeout'] = $config['timeout'];
+        }
+        if (array_key_exists('connect_timeout', $config)) {
+            $this->config['connect_timeout'] = $config['connect_timeout'];
         }
         if (array_key_exists('proxy', $config)) {
             $this->config['proxy'] = $config['proxy'];

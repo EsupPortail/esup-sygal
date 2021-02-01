@@ -1,7 +1,6 @@
 <?php
 
 use Application\Controller\Factory\UtilisateurControllerFactory;
-use Application\Controller\UtilisateurController;
 use Application\Form\CreationUtilisateurForm;
 use Application\Form\CreationUtilisateurFromIndividuForm;
 use Application\Form\Factory\CreationUtilisateurFormFactory;
@@ -15,6 +14,7 @@ use Application\Form\Validator\NewEmailValidator;
 use Application\Form\Validator\PasswordValidator;
 use Application\Provider\Privilege\UtilisateurPrivileges;
 use Application\Service\Individu\IndividuServiceFactory;
+use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Utilisateur\UtilisateurServiceFactory;
 use Application\View\Helper\IndividuUsurpationHelperFactory;
 use UnicaenAuth\Guard\PrivilegeController;
@@ -64,6 +64,13 @@ return [
                         'init-compte',
                     ],
                     'roles' => [],
+                ],
+                [
+                    'controller' => 'Application\Controller\Utilisateur',
+                    'action'     => [
+                        'appariemment',
+                    ],
+                    'roles' => ['user'],
                 ],
             ],
         ],
@@ -126,6 +133,15 @@ return [
                             'route'       => '/init-compte/:token',
                             'defaults'    => [
                                 'action' => 'init-compte',
+                            ],
+                        ],
+                    ],
+                    'appariemment' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/appariemment/:these/:individu',
+                            'defaults'    => [
+                                'action' => 'appariemment',
                             ],
                         ],
                     ],
@@ -203,6 +219,9 @@ return [
             'IndividuService' => IndividuServiceFactory::class,
             'UtilisateurService' => UtilisateurServiceFactory::class,
         ],
+        'aliases' => [
+            UtilisateurService::class => 'UtilisateurService'
+        ]
     ],
     'controllers'     => [
         'invokables' => [

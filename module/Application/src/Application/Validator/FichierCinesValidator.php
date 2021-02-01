@@ -23,6 +23,17 @@ class FichierCinesValidator extends AbstractValidator
     protected $command;
 
     /**
+     * FichierCinesValidator constructor.
+     * @param null $options
+     */
+    public function __construct($options = null)
+    {
+        parent::__construct($options);
+
+        $this->setOptions(['maxtime' => null]);
+    }
+
+    /**
      * @param ValidationFichierCinesCommand $command
      * @return $this
      */
@@ -38,9 +49,11 @@ class FichierCinesValidator extends AbstractValidator
      * @return bool
      * @throws CinesErrorException
      */
-    public function isValid($filepath)
+    public function isValid($filepath): bool
     {
-        $this->command->execute($filepath);
+        $maxExecutionTime = $this->getOption('maxtime');
+
+        $this->command->execute($filepath, null, $maxExecutionTime);
 
         $result = $this->command->getArrayResult();
 

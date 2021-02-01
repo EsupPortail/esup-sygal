@@ -16,4 +16,14 @@ trait NotifierServiceAwareTrait
     {
         $this->notifierService = $notifierService;
     }
+
+    /**
+     * @return NotifierService
+     */
+    public function getNotifierService(): NotifierService
+    {
+        return $this->notifierService;
+    }
+
+
 }

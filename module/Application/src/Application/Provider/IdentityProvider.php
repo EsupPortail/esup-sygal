@@ -7,6 +7,7 @@ use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Entity\UserWrapper;
 use Application\Entity\UserWrapperFactory;
+use Application\Service\Acteur\ActeurService;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Doctorant\DoctorantServiceAwareTrait;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
@@ -114,28 +115,17 @@ class IdentityProvider implements ProviderInterface, ChainableProvider
      *
      * @return Role[]
      */
-    private function getRolesFromActeur()
+    private function getRolesFromActeur(): array
     {
-        // peut-être disposons-nous de l'Individu (cas d'une authentification locale)
-        $individu = $this->userWrapper->getIndividu();
+        $acteurs = $this->acteurService->findAllActeursByUser($this->userWrapper);
 
-        if ($individu !== null) {
-            $sourceCode = $individu->getSourceCode();
-            $acteurs = $this->acteurService->getRepository()->findBySourceCodeIndividu($sourceCode);
-        } else {
-            $id = $this->userWrapper->getSupannId();
-            $pattern = $this->sourceCodeStringHelper->generateSearchPatternForAnyPrefix($id);
-            $acteurs = $this->acteurService->getRepository()->findBySourceCodeIndividuPattern($pattern);
-        }
+        $acteursDirecteurThese = $this->acteurService->filterActeursDirecteurThese($acteurs);
+        $acteursPresidentJury = $this->acteurService->filterActeursPresidentJury($acteurs);
 
-        // pour l'instant on ne considère pas tous les types d'acteur
-        $acteurs = array_filter($acteurs, function(Acteur $a) {
-            return $a->getRole()->getCode() === Role::CODE_DIRECTEUR_THESE;
-        });
-
-        return array_map(function(Acteur $a) {
-            return $a->getRole();
-        }, $acteurs);
+        return array_map(
+            function(Acteur $a) { return $a->getRole(); },
+            array_merge($acteursDirecteurThese, $acteursPresidentJury)
+        );
     }
 
     /**

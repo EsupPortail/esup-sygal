@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3a51d31db90be242c222ffe94a97e843",
+    "content-hash": "9a32749766400559d0b7f87218c03e2b",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -3395,11 +3395,11 @@
         },
         {
             "name": "unicaen/auth",
-            "version": "3.1.0",
+            "version": "3.1.1",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/auth.git",
-                "reference": "793d1c76ae8990ba787437685da91d1e2476cef9"
+                "reference": "effca5ffd8d95173867c682dde70b523b0656c1e"
             },
             "require": {
                 "jasig/phpcas": "^1.3",
@@ -3421,7 +3421,7 @@
                 ]
             },
             "description": "Module d'authentification pour les applications Unicaen",
-            "time": "2021-01-12T09:21:09+00:00"
+            "time": "2021-02-01T11:10:43+00:00"
         },
         {
             "name": "unicaen/bjy-authorize",
@@ -3512,11 +3512,11 @@
         },
         {
             "name": "unicaen/db-import",
-            "version": "dev-master",
+            "version": "3.1.1",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/db-import.git",
-                "reference": "00c0d05799f8e2edcbf9989b36a43f787ba26c5e"
+                "reference": "87a2150a5bc845f5c242db5c18eb526a37fd5281"
             },
             "require": {
                 "beberlei/assert": "^2.7",
@@ -3546,7 +3546,7 @@
                 }
             },
             "description": "Module d'import entre bases de données",
-            "time": "2020-09-07T11:56:55+00:00"
+            "time": "2021-02-01T14:49:44+00:00"
         },
         {
             "name": "unicaen/faq",
@@ -3646,12 +3646,12 @@
             "version": "1.9.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/webmozart/assert.git",
+                "url": "https://github.com/webmozarts/assert.git",
                 "reference": "bafc69caeb4d49c39fd0779086c03a3738cbb389"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozart/assert/zipball/bafc69caeb4d49c39fd0779086c03a3738cbb389",
+                "url": "https://api.github.com/repos/webmozarts/assert/zipball/bafc69caeb4d49c39fd0779086c03a3738cbb389",
                 "reference": "bafc69caeb4d49c39fd0779086c03a3738cbb389",
                 "shasum": ""
             },
@@ -7954,18 +7954,18 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "unicaen/db-import": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
+        "ext-curl": "*",
+        "ext-dom": "*",
         "ext-fileinfo": "*",
-        "ext-json": "*",
+        "ext-gettext": "*",
         "ext-imagick": "*",
         "ext-intl": "*",
+        "ext-json": "*",
         "ext-readline": "*",
-        "ext-gettext": "*",
         "ext-zip": "*"
     },
     "platform-dev": [],
