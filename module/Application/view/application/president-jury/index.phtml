@@ -132,12 +132,39 @@ $canNotifierPresident     = $this->isAllowed(PresidentJuryPrivileges::getResourc
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
 
+     <p>
+         Dans le tableau ci-dessous vous retrouvez la liste des président de jury remonté dans SyGAL pour les thèses en attente de correction.
+     </p>
+
+    <p>
+        Pour chaque président, on retourve les indications suivantes :
+        <ul>
+        <li> <strong>Dénomination du président</strong> : le nom usuel + premier prénom du président </li>
+        <li> <strong>Utilisateur</strong> : le fait qu'un président a un compte connu dans SYGAL (au survol on a le username et le mail associé) </li>
+        <li> <strong>Individu Mail</strong> : le fait qu'un mail est connu pour l'individu associé (au survol on a l'id et le mail associé)</li>
+        <li> <strong>Membre Mail</strong> : le fait qu'un mail est connu pour un membre de soutenance associé (au survol on a l'id et le mail associé)</li>
+        <li> <strong>Thèse</strong> : un lien vers la thèse concernée</li>
+        <li> <strong>Correction</strong> : le type de correction</li>
+        <li> <strong>Version corrigée</strong> : le fait que la version corrigée a été déposée (et est archivable)</li>
+        <li> <strong>Validation</strong> : le fait qu'une validation de la version corrigée a été faite</li>
+        </ul>
+    </p>
+
+    <p>
+        Les actions associées sont :
+        <ul>
+            <li> <span class="glyphicon glyphicon-plus"></span> ajouter manuellement un mail pour pouvoir créer un compte</li>
+            <li> <span class="glyphicon glyphicon-trash"></span> supprimer le mail renseigné manuellement</li>
+            <li> <span class="glyphicon glyphicon-send"></span> création d'un compte (si nécessaire) puis notification du président</li>
+        </ul>
+    </p>
+
 
 <div class="main">
     <table id="president-jury" class="table table-condensed" >
         <thead>
             <tr>
-                <th> Acteur </th>
+                <th> Dénomination du président </th>
                 <th> Utilisateur </th>
                 <th> Individu<br/>Mail</th>
                 <th> Membre<br/>Mail</th>
