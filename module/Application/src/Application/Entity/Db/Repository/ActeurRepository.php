@@ -28,6 +28,7 @@ class ActeurRepository extends DefaultEntityRepository
             ->addSelect('r')
             ->join('a.individu', 'i', Join::WITH, 'i.sourceCode = :sourceCode')
             ->join('a.role', 'r')
+            ->andWhere('pasHistorise(a) = 1')
             ->setParameter('sourceCode', $sourceCodeIndividu);
 
         return $qb->getQuery()->getResult();
@@ -271,11 +272,11 @@ class ActeurRepository extends DefaultEntityRepository
         $qb = $this->createQueryBuilder('a')
             ->addSelect('i')->join('a.individu', 'i')
             ->addSelect('t')->join('a.these', 't')
-            ->andWhere('a.libelleRoleComplement = :president')
+            ->addSelect('r')->join('a.role', 'r')
+            ->andWhere('r.code = :president')
+            ->setParameter('president', Role::CODE_PRESIDENT_JURY)
             ->addSelect('u')->leftJoin('i.utilisateurs', 'u')
-            ->setParameter('president', 'Président du jury')
-            ->andWhere("t.correctionAutorisee IS NOT NULL OR t.correctionAutoriseeForcee IS NOT NULL")
-            ->andWhere("t.correctionAutoriseeForcee IS NULL OR t.correctionAutoriseeForcee <> 'aucune'")
+            ->andWhere("t.correctionAutorisee is not null or t.correctionAutoriseeForcee is not null")
             ->andWhere('1 =  pasHistorise(a)')
             ->andWhere('1 =  pasHistorise(i)')
             ->andWhere('1 =  pasHistorise(t)')

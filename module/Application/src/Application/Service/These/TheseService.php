@@ -670,7 +670,7 @@ EOS;
                 $individu->setEmail($email);
                 $username = ($individu->getNomUsuel() ?: $individu->getNomPatronymique()) . "_" . $president->getId();
                 $user = $this->utilisateurService->createFromIndividu($individu, $username, 'none');
-                $token = $this->getUserService()->updateUserPasswordResetToken($user);
+                $token = $this->userService->updateUserPasswordResetToken($user);
                 $this->getNotifierService()->triggerInitialisationCompte($user, $token);
                 $this->getNotifierService()->triggerValidationDepotTheseCorrigee($these);
                 return ['success', "Création de compte initialisée et notification des corrections faite à <strong>" . $email . "</strong>"];

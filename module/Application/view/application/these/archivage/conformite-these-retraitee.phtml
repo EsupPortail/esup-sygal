@@ -60,6 +60,14 @@ const CERTIF_CONFORME_MODIFIED_EVENT = "CERTIF_CONFORME_MODIFIED_EVENT";
                     Après vérification, indiquez si vous le validez pour archivage.
                 </p>
 
+            <?php else: ?>
+
+                <?php
+                $msgCollector = $this->messageCollector(\Application\Assertion\BaseAssertion::class);
+                $msgCollector->getMessengerHelper()->setContainerClassesToAdd('alert-danger');
+                echo $msgCollector->render();
+                ?>
+
             <?php endif ?>
 
             <?php if ($canEdit): ?>
