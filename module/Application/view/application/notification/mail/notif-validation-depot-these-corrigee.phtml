@@ -6,6 +6,7 @@ use Application\Entity\Db\These;
  * @see \Application\Service\Notification\NotifierService::triggerValidationDepotTheseCorrigee()
  * @var These  $these
  * @var string $message
+ * @var string $url
  */
 ?>
 
@@ -20,7 +21,7 @@ use Application\Entity\Db\These;
     et que votre validation est attendue.
 </p>
 <p>
-    Cliquez <a href="<?php echo $this->url('these/depot-version-corrigee', ['these' => $these->getId()], ['force_canonical' => true]) ?>">ici</a>
+    Cliquez <a href="<?php echo $url ?>">ici</a>
     pour accéder à l'application <?php echo $this->appInfos()->nom ?>.
 </p>
 

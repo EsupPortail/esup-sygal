@@ -7,6 +7,7 @@ use Application\Entity\Db\Individu;
 use Application\Entity\Db\Repository\ActeurRepository;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
+use Application\Entity\UserWrapper;
 use Application\Service\BaseService;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
@@ -33,6 +34,49 @@ class ActeurService extends BaseService
         $repo = $this->entityManager->getRepository(Acteur::class);
 
         return $repo;
+    }
+
+    /**
+     * @param UserWrapper $userWrapper
+     * @return Acteur[]
+     */
+    public function findAllActeursByUser(UserWrapper $userWrapper): array
+    {
+        // Si l'on dispose directement d'un Individu (cas d'une authentification locale), c'est facile.
+        $individu = $userWrapper->getIndividu();
+        if ($individu !== null) {
+            $sourceCode = $individu->getSourceCode();
+
+            return $this->getRepository()->findBySourceCodeIndividu($sourceCode);
+        }
+
+        // Sinon, recherche de l'individu dans ACTEUR par SOURCE_CODE de la forme '*::{SUPANN_ID}'.
+        $id = $userWrapper->getSupannId();
+        $pattern = $this->sourceCodeStringHelper->generateSearchPatternForAnyPrefix($id);
+
+        return $this->getRepository()->findBySourceCodeIndividuPattern($pattern);
+    }
+
+    /**
+     * @param Acteur[] $acteurs
+     * @return Acteur[]
+     */
+    public function filterActeursPresidentJury(array $acteurs): array
+    {
+        return array_filter($acteurs, function(Acteur $a) {
+            return $a->getRole()->getCode() === Role::CODE_PRESIDENT_JURY;
+        });
+    }
+
+    /**
+     * @param Acteur[] $acteurs
+     * @return Acteur[]
+     */
+    public function filterActeursDirecteurThese(array $acteurs): array
+    {
+        return array_filter($acteurs, function(Acteur $a) {
+            return $a->getRole()->getCode() === Role::CODE_DIRECTEUR_THESE;
+        });
     }
 
     /**

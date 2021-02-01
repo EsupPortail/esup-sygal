@@ -11,7 +11,7 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\VersionFichier;
-use Application\Entity\Db\VSitu\DepotVersionCorrigeeValidationDirecteur;
+use Application\Entity\Db\VSitu\DepotVersionCorrigeeValidationPresident;
 use Application\Service\FichierThese\FichierTheseServiceAwareInterface;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareInterface;
@@ -111,7 +111,6 @@ class TheseEntityAssertion extends GeneratedTheseEntityAssertion
         $individu = $this->userContextService->getIdentityIndividu();
         $this->assertTrue($individu !== null);
         $found = false;
-        /** @var DepotVersionCorrigeeValidationDirecteur $result */
         foreach ($results as $result) {
             if ($result->getIndividu()->getId() === $individu->getId()) {
                 $found = true;

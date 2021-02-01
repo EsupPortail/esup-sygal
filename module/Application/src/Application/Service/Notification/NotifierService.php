@@ -270,7 +270,7 @@ class NotifierService extends \Notification\Service\NotifierService
 
         $this->trigger($notif);
 
-        $infoMessage = sprintf("Un mail de notification vient d'être envoyé à votre doctorant (%s)", $to);
+        $infoMessage = sprintf("Un mail de notification vient d'être envoyé au doctorant (%s)", $to);
         if ($this->messageContainer->getMessage()) {
             $new_message = "<ul><li>" . $this->messageContainer->getMessage() . "</li><li>" . $infoMessage . "</li></ul>";
             $this->messageContainer->setMessage($new_message, 'info');
