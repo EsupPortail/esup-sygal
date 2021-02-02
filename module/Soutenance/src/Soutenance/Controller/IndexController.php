@@ -6,7 +6,10 @@ use Application\Controller\AbstractController;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
+use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
+use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
+use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Soutenance\Entity\Membre;
 use Soutenance\Service\Avis\AvisServiceAwareTrait;
@@ -22,6 +25,10 @@ class IndexController extends AbstractController
     use PropositionServiceAwareTrait;
     use TheseServiceAwareTrait;
     use UserContextServiceAwareTrait;
+
+    use EtablissementServiceAwareTrait;
+    use EcoleDoctoraleServiceAwareTrait;
+    use UniteRechercheServiceAwareTrait;
 
     /**
      * Cette action a pour but de dispatcher vers l'index correspondant au rôle sélectionné
@@ -122,9 +129,24 @@ class IndexController extends AbstractController
         $role = $this->userContextService->getSelectedIdentityRole();
         $propositions = $this->getPropositionService()->getPropositionsByRole($role);
 
+        $etablissementId = $this->params()->fromQuery('etablissement');
+        $ecoleDoctoraleId = $this->params()->fromQuery('ecoledoctorale');
+        $uniteRechercheId = $this->params()->fromQuery('uniterecherche');
+
+        if ($etablissementId != '') $propositions = array_filter($propositions, function($proposition) use ($etablissementId) { return $proposition->getThese()->getEtablissement()->getId() == $etablissementId; });
+        if ($ecoleDoctoraleId != '') $propositions = array_filter($propositions, function($proposition) use ($ecoleDoctoraleId) { return $proposition->getThese()->getEcoleDoctorale()->getId() == $ecoleDoctoraleId; });
+        if ($uniteRechercheId != '') $propositions = array_filter($propositions, function($proposition) use ($uniteRechercheId) { return $proposition->getThese()->getUniteRecherche()->getId() == $uniteRechercheId; });
+
         return new ViewModel([
             'propositions' => $propositions,
             'role' => $role,
+
+            'etablissementId' => $etablissementId,
+            'ecoleDoctoraleId' => $ecoleDoctoraleId,
+            'uniteRechercheId' => $uniteRechercheId,
+            'etablissements' => $this->getEtablissementService()->getRepository()->findAllEtablissementsMembres(),
+            'ecoles' => $this->getEcoleDoctoraleService()->getRepository()->findAll(true),
+            'unites' => $this->getUniteRechercheService()->getRepository()->findAll(true),
         ]);
     }
 }

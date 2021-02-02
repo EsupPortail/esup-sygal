@@ -4,9 +4,18 @@
  * @see \Soutenance\Controller\IndexController::indexStructureAction()
  * @var Proposition[] $propositions
  * @var Role $role
+ * @var Etablissement[] $etablissements
+ * @var EcoleDoctorale[] $ecoles
+ * @var UniteRecherche[] $unites
+ * @var integer $etablissementId
+ * @var integer $ecoleDoctoraleId
+ * @var integer $uniteRechercheId
  */
 
+use Application\Entity\Db\EcoleDoctorale;
+use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Role;
+use Application\Entity\Db\UniteRecherche;
 use Application\Provider\Privilege\ThesePrivileges;
 use Soutenance\Entity\Proposition;
 
@@ -21,6 +30,10 @@ $canSuppression = ($role->getCode() === Role::CODE_ADMIN_TECH);
     </span>
 </h1>
 
+<?php echo $this->partial('partial/filtre-proposition',
+    ['etablissements' => $etablissements, 'ecoles' => $ecoles, 'unites' => $unites,
+     'etablissementId' => $etablissementId, 'ecoleDoctoraleId' => $ecoleDoctoraleId, 'uniteRechercheId' => $uniteRechercheId ]); ?>
+
 <table class="table table-condensed">
     <thead>
         <tr>
@@ -32,6 +45,9 @@ $canSuppression = ($role->getCode() === Role::CODE_ADMIN_TECH);
             </th>
             <th>
                 Direction
+            </th>
+            <th>
+                Structures
             </th>
             <th>
                 État
@@ -62,6 +78,23 @@ $canSuppression = ($role->getCode() === Role::CODE_ADMIN_TECH);
                         <?php if ($encadrement->getRole()->getCode() !== Role::CODE_DIRECTEUR_THESE) echo "</i>"; ?>
                         <br/>
                     <?php endforeach; ?>
+                </td>
+                <td>
+                    <span class="structure etablissement"
+                          title="Établissement : <?php echo $proposition->getThese()->getEtablissement()->getLibelle(); ?> (<?php echo $proposition->getThese()->getEtablissement()->getCode(); ?>)"
+                    >
+                        <?php echo $proposition->getThese()->getEtablissement()->getLibelle(); ?>
+                    </span> <br/>
+                    <span class="structure ecole-doctorale"
+                          title="École doctorale : <?php echo $proposition->getThese()->getEcoleDoctorale()->getLibelle(); ?> (<?php echo $proposition->getThese()->getEcoleDoctorale()->getSigle(); ?>)"
+                    >
+                        <?php echo $proposition->getThese()->getEcoleDoctorale()->getLibelle(); ?>
+                    </span> <br/>
+                    <span class="structure unite-recherche"
+                          title="Unité de recherche : <?php echo $proposition->getThese()->getUniteRecherche()->getLibelle(); ?> (<?php echo $proposition->getThese()->getUniteRecherche()->getSigle(); ?>)"
+                    >
+                        <?php echo $proposition->getThese()->getUniteRecherche()->getLibelle(); ?>
+                    </span>
                 </td>
                 <td>
                     <span class="badge <?php echo $proposition->getEtat()->getCode(); ?>">
@@ -101,6 +134,23 @@ $canSuppression = ($role->getCode() === Role::CODE_ADMIN_TECH);
 
 <style>
     th.title-column {
-        width:80rem;
+        width:70rem;
+    }
+
+    span.structure {
+        display: inline-block;
+        margin-bottom: 0.5rem;
+        /*font-weight: 500;*/
+    }
+    span.etablissement {
+        /*color:darkred;*/
+    }
+
+    span.ecole-doctorale {
+        /*color:darkblue;*/
+    }
+
+    span.unite-recherche {
+        /*color:darkgreen;*/
     }
 </style>
