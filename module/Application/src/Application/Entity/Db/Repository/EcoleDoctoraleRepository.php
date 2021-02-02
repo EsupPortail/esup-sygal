@@ -10,9 +10,10 @@ use UnicaenApp\Exception\RuntimeException;
 class EcoleDoctoraleRepository extends DefaultEntityRepository
 {
     /**
+     * @param bool $ouverte
      * @return EcoleDoctorale[]
      */
-    public function findAll()
+    public function findAll(bool $ouverte = false)
     {
         $qb = $this->createQueryBuilder("ed");
         $qb
@@ -22,6 +23,13 @@ class EcoleDoctoraleRepository extends DefaultEntityRepository
             ->addSelect("str, sub, typ")
             ->orderBy("str.libelle");
 
+        if ($ouverte) {
+            $qb = $qb->andWhere('str.ferme = 0')
+                ->leftJoin('str.structureSubstituante', 'substitutionTo')
+                ->andWhere('substitutionTo IS NULL')
+                ->orderBy('str.sigle')
+            ;
+        }
         $ecoles = $qb->getQuery()->getResult();
 
         return $ecoles;

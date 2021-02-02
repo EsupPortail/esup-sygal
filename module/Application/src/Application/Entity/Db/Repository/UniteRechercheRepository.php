@@ -10,9 +10,10 @@ class UniteRechercheRepository extends DefaultEntityRepository
 {
 
     /**
+     * @param bool $ouverte
      * @return UniteRecherche[]
      */
-    public function findAll()
+    public function findAll(bool $ouverte = false)
     {
         /** @var UniteRecherche[] $unites */
         $qb = $this->getEntityManager()->getRepository(UniteRecherche::class)->createQueryBuilder("ur");
@@ -23,6 +24,13 @@ class UniteRechercheRepository extends DefaultEntityRepository
             ->addSelect("str, sub, typ")
             ->orderBy("str.libelle");
 
+        if ($ouverte) {
+            $qb = $qb->andWhere('str.ferme = 0')
+                ->leftJoin('str.structureSubstituante', 'substitutionTo')
+                ->andWhere('substitutionTo IS NULL')
+                ->orderBy('str.sigle')
+            ;
+        }
         $unites = $qb->getQuery()->getResult();
 
         return $unites;
