@@ -17,6 +17,7 @@ use Application\Service\Individu\IndividuServiceFactory;
 use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Utilisateur\UtilisateurServiceFactory;
 use Application\View\Helper\IndividuUsurpationHelperFactory;
+use Application\View\Helper\RoleHelper;
 use UnicaenAuth\Guard\PrivilegeController;
 use Zend\Router\Http\Literal;
 use Zend\Router\Http\Segment;
@@ -251,6 +252,9 @@ return [
         ],
     ],
     'view_helpers'  => [
+        'invokables' => [
+            'role' => RoleHelper::class,
+        ],
         'factories'  => [
             'individuUsurpation' => IndividuUsurpationHelperFactory::class,
         ],

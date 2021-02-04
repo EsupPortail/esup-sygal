@@ -7,6 +7,7 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\UniteRecherche;
 use Application\Provider\Privilege\UtilisateurPrivileges;
 use Application\View\Helper\IndividuUsurpationHelper;
+use Application\View\Helper\RoleHelper;
 use Application\View\Renderer\PhpRenderer;
 use UnicaenApp\Form\Element\SearchAndSelect;
 use UnicaenAuth\Provider\Privilege\Privileges;
@@ -188,6 +189,7 @@ function generateSelect($structures, $id, $roles = null)
 function generateRoleAffecte($individu, $roles, $rolesAffectes, $canModifier=false)
 {
     $texte = "";
+    $VH = new RoleHelper();
     foreach ($roles as $role) {
         $texte .= '<div id="affecte_' . $role->getId() . '"';
         if (is_array($rolesAffectes) && array_search($role, $rolesAffectes) === false) $texte .= ' style="display:none;" ';
@@ -195,7 +197,7 @@ function generateRoleAffecte($individu, $roles, $rolesAffectes, $canModifier=fal
         if ($canModifier) {
             $texte .= '<span class="remove-role glyphicon glyphicon-remove text-danger" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
         }
-        $texte .= $role->getRoleId();
+        $texte .= $VH->render($role);
         $texte .= '</div>';
     }
     return $texte;
