@@ -10,7 +10,8 @@ Journal des modifications
 - Test d'archivabilité : possibilité de configurer le passage par un proxy.
 - Correction de l'import forcé de thèse : utilisation du unicaen/db-import pour synchroniser après l'import des données.
 - Ajout d'un filtre pour l'index des propositions de soutenance (index-structure)
-
+- Page Assistance : affichage d'infos techniques utiles ; infos incluses automatiquement dans le corps du mail lorsqu'on clique sur l'adresse mail d'assistance.
+  
 2.1.4
 -----
 - Rétablissement du rafraîchissement de MV_RECHERCHE_THESE après chaque import.
