@@ -1,0 +1,66 @@
+<?php
+namespace Application;
+
+use Application\Entity\Db\Individu;
+use Application\Entity\Db\Role;
+use Application\Entity\Db\Utilisateur;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var Individu|null $individu
+ * @var Utilisateur|null $utilisateur
+ * @var Role|null $role
+ * @var Role[] $roles
+ * @var bool $html
+ */
+?>
+
+<?php
+$html = isset($html) ? $html : true;
+$roleFormatter = function (Role $role) { return sprintf("'%s', id=%s", $role, $role->getId()); };
+?>
+
+<?php if ($html): ?>
+
+    <dl class="debug-infos">
+        <dt>Informations techniques utiles :</dt>
+        <dd>
+            <dl>
+                <?php if ($utilisateur !== null): ?>
+                    <dt>Utilisateur :</dt>
+                    <dd><?php echo sprintf("username='%s', id=%s", $utilisateur->getUsername(), $utilisateur->getId()) ?></dd>
+                <?php endif ?>
+                <?php if ($individu !== null): ?>
+                    <dt>Individu :</dt>
+                    <dd><?php echo sprintf("id=%s, supannId='%s', type='%s'", $individu->getId(), $individu->getSupannId(), $individu->getType()) ?></dd>
+                <?php endif ?>
+                <?php if ($role !== null): ?>
+                    <dt>Rôle :</dt>
+                    <dd><?php echo $roleFormatter($role) ?></dd>
+                <?php endif ?>
+                <?php if ($roles !== null): ?>
+                    <dt>Rôles :</dt>
+                    <dd><?php echo implode('<br>', array_map($roleFormatter, $roles)) ?></dd>
+                <?php endif ?>
+            </dl>
+        </dd>
+    </dl>
+
+<?php else: ?>
+
+Informations techniques utiles :<?php echo PHP_EOL ?>
+<?php if ($utilisateur !== null): ?>
+    - Utilisateur : <?php echo sprintf("username='%s', id=%s", $utilisateur->getUsername(), $utilisateur->getId()) ?><?php echo PHP_EOL ?>
+<?php endif ?>
+<?php if ($individu !== null): ?>
+    - Individu : <?php echo sprintf("id=%s, supannId='%s', type='%s'", $individu->getId(), $individu->getSupannId(), $individu->getType()) ?><?php echo PHP_EOL ?>
+<?php endif ?>
+<?php if ($role !== null): ?>
+    - Rôle : <?php echo $roleFormatter($role) ?><?php echo PHP_EOL ?>
+<?php endif ?>
+<?php if ($roles !== null): ?>
+    - Rôles : <?php echo implode(' ; ', array_map($roleFormatter, $roles)) ?><?php echo PHP_EOL ?>
+<?php endif ?>
+
+<?php endif ?>

@@ -217,6 +217,10 @@ EOS
         return [
             'etablissement' => $etablissement,
             'contact' => $contact,
+            'individu' => $this->userContextService->getIdentityIndividu(),
+            'utilisateur' => $this->userContextService->getIdentityDb(),
+            'role' => $this->userContextService->getSelectedIdentityRole(),
+            'roles' => $this->userContextService->getSelectableIdentityRoles(),
         ];
     }
 }

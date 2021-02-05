@@ -663,4 +663,8 @@ span.sas-highlight {
     padding: 10px;
     margin: 20px auto; }
 
+.debug-infos {
+  font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
+  font-size: 90%; }
+
 /*# sourceMappingURL=app.css.map */
