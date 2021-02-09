@@ -11,6 +11,7 @@ Journal des modifications
 - Correction de l'import forcé de thèse : utilisation du unicaen/db-import pour synchroniser après l'import des données.
 - Ajout d'un filtre pour l'index des propositions de soutenance (index-structure)
 - Page Assistance : affichage d'infos techniques utiles ; infos incluses automatiquement dans le corps du mail lorsqu'on clique sur l'adresse mail d'assistance.
+- Refonte de la page des utilisateurs (liste filtrable, détails utilisateurs, individus liés)
   
 2.1.4
 -----
