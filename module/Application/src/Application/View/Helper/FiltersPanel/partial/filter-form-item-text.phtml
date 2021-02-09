@@ -1,16 +1,16 @@
 <?php
 
-use Application\Service\These\Filter\TheseSelectFilter;
-use Application\View\Helper\SelectsFilterPanel\SelectsFilterPanelHelper;
+use Application\Search\Filter\TextSearchFilter;
 use Application\View\Renderer\PhpRenderer;
 
 /**
- * @var PhpRenderer                                         $this
- * @var \Application\Service\These\Filter\TheseSelectFilter $filter
- * @var array                                               $queryParams
+ * @var PhpRenderer $this
+ * @var TextSearchFilter $filter
+ * @var array $queryParams
  */
 
 $paramAttributes = $filter->getAttributes();
+$title = $paramAttributes['title'] ?: null;
 $width = isset($paramAttributes['width']) ? $paramAttributes['width'] : 'fit';
 $liveSearch = isset($paramAttributes['liveSearch']) ? (bool)$paramAttributes['liveSearch'] : false;
 ?>
@@ -22,14 +22,15 @@ $liveSearch = isset($paramAttributes['liveSearch']) ? (bool)$paramAttributes['li
         <input type="search"
                value="<?php echo $filter->getValue(); ?>"
                name="<?php echo $filter->getName(); ?>"
+               title="<?php echo $title ?>"
                class="form-control filter"
                id="search-input"
-               placeholder="<?php echo $this->translate("Entrez 2 caractères au moins...");?>">
+               placeholder="<?php echo $this->translate("Entrez 2 caractères au moins..."); ?>">
     </div>
 </div>
 
 <script>
-    $(function() {
-        $("#search-input").popover({html: true, trigger: "hover", placement: "bottom"});
+    $(function () {
+        $("#search-input").tooltip({html: true, trigger: "hover", placement: "bottom"});
     });
 </script>

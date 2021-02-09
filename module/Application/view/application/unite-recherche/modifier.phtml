@@ -6,7 +6,7 @@ use Application\Entity\Db\EtablissementRattachement;
 use Application\Entity\Db\UniteRecherche;
 use Application\Form\UniteRechercheForm;
 use Application\View\Helper\SelectHelper;
-use Application\View\Helper\SelectsFilterPanel\SelectsFilterPanelHelper;
+use Application\View\Helper\FiltersPanel\FiltersPanelHelper;
 use Application\View\Renderer\PhpRenderer;
 
 /**
@@ -179,7 +179,7 @@ $form->get('code')->setAttribute('readonly', !$editable);
                 $value = $data['value'];
                 $label = $data['label'];
                 $subtext = isset($data['subtext']) ? $data['subtext'] : '';
-                $isActive = SelectsFilterPanelHelper::isSelectOptionActive($paramName, $value, $queryParams);
+                $isActive = FiltersPanelHelper::isSelectOptionActive($paramName, $value, $queryParams);
                 ?>
                 <option value="<?php echo $value ?>" <?php echo $isActive ? 'selected' : '' ?> data-subtext="<?php echo $subtext ?>">
                     <?php echo $label ?>
@@ -262,7 +262,7 @@ $form->get('code')->setAttribute('readonly', !$editable);
                 $value = $data['value'];
                 $label = $data['label'];
                 $subtext = isset($data['subtext']) ? $data['subtext'] : '';
-                $isActive = SelectsFilterPanelHelper::isSelectOptionActive($paramName, $value, $queryParams);
+                $isActive = FiltersPanelHelper::isSelectOptionActive($paramName, $value, $queryParams);
                 ?>
                 <option value="<?php echo $value ?>" <?php echo $isActive ? 'selected' : '' ?> data-subtext="<?php echo $subtext ?>">
                     <?php echo $label ?>

@@ -48,7 +48,7 @@ abstract class SearchFilter implements SearchFilterInterface
      * @param string $label
      * @param string $name
      */
-    public function __construct($label, $name)
+    public function __construct(string $label, string $name)
     {
         $this
             ->setLabel($label)
@@ -59,7 +59,7 @@ abstract class SearchFilter implements SearchFilterInterface
      * @param callable $applyToQueryBuilderCallable
      * @return self
      */
-    public function setApplyToQueryBuilderCallable($applyToQueryBuilderCallable)
+    public function setApplyToQueryBuilderCallable(callable $applyToQueryBuilderCallable): self
     {
         if (! is_callable($applyToQueryBuilderCallable)) {
             throw new RuntimeException("Callable spécifié invalide !");
@@ -84,7 +84,7 @@ abstract class SearchFilter implements SearchFilterInterface
      * @param array  $queryParams
      * @return string
      */
-    protected function paramFromQueryParams(array $queryParams)
+    protected function paramFromQueryParams(array $queryParams): ?string
     {
         $name = $this->getName();
 
@@ -108,6 +108,10 @@ abstract class SearchFilter implements SearchFilterInterface
             return;
         }
 
+        if ($this->applyToQueryBuilderCallable === null) {
+            throw new RuntimeException("Aucun callable spécifié");
+        }
+
         $applyToQueryBuilder = $this->applyToQueryBuilderCallable;
         $applyToQueryBuilder($this, $qb);
     }
@@ -115,7 +119,7 @@ abstract class SearchFilter implements SearchFilterInterface
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -124,7 +128,7 @@ abstract class SearchFilter implements SearchFilterInterface
      * @param string $name
      * @return self
      */
-    public function setName($name)
+    public function setName(string $name): self
     {
         $this->name = $name;
 
@@ -134,7 +138,7 @@ abstract class SearchFilter implements SearchFilterInterface
     /**
      * @return string
      */
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->label;
     }
@@ -143,7 +147,7 @@ abstract class SearchFilter implements SearchFilterInterface
      * @param string $label
      * @return self
      */
-    public function setLabel($label)
+    public function setLabel(string $label): self
     {
         $this->label = $label;
 
@@ -162,7 +166,7 @@ abstract class SearchFilter implements SearchFilterInterface
      * @param string|null $value
      * @return self
      */
-    public function setValue($value = null)
+    public function setValue($value = null): self
     {
         $this->value = $value;
 
@@ -172,16 +176,16 @@ abstract class SearchFilter implements SearchFilterInterface
     /**
      * @return string
      */
-    public function getDefaultValue()
+    public function getDefaultValue(): ?string
     {
         return $this->defaultValue;
     }
 
     /**
-     * @param string $defaultValue
+     * @param string|null $defaultValue
      * @return self
      */
-    public function setDefaultValue($defaultValue)
+    public function setDefaultValue(string $defaultValue = null): self
     {
         $this->defaultValue = $defaultValue;
 
@@ -191,7 +195,7 @@ abstract class SearchFilter implements SearchFilterInterface
     /**
      * @return array
      */
-    public function getAttributes()
+    public function getAttributes(): array
     {
         return $this->attributes;
     }
@@ -201,7 +205,7 @@ abstract class SearchFilter implements SearchFilterInterface
      * @param bool $overwrite
      * @return self
      */
-    public function setAttributes(array $attributes, $overwrite = false)
+    public function setAttributes(array $attributes, $overwrite = false): self
     {
         $this->attributes = $overwrite ? $attributes : array_merge($this->attributes, $attributes);
 

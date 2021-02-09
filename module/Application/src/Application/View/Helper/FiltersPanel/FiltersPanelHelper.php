@@ -1,19 +1,20 @@
 <?php
 
-namespace Application\View\Helper\SelectsFilterPanel;
+namespace Application\View\Helper\FiltersPanel;
 
-use Application\Service\These\Filter\TheseSelectFilter;
+use Application\Search\Filter\SearchFilter;
+use Application\Search\Filter\SelectSearchFilter;
 use Application\View\Renderer\PhpRenderer;
 use Zend\View\Helper\AbstractHelper;
 use Zend\View\Resolver\TemplatePathStack;
 
-class SelectsFilterPanelHelper extends AbstractHelper
+class FiltersPanelHelper extends AbstractHelper
 {
     /**
-     * @param TheseSelectFilter[] $filters
+     * @param SearchFilter[] $filters
      * @return string
      */
-    function __invoke(array $filters)
+    function __invoke(array $filters): string
     {
         /** @var PhpRenderer $view */
         $view = $this->getView();
@@ -30,6 +31,7 @@ class SelectsFilterPanelHelper extends AbstractHelper
      * @param mixed    $optionValue Valeur de l'<option>
      * @param string[] $queryParams valeurs des paramètres GET
      * @return bool
+     * @deprecated Utiliser à la place {@see SelectSearchFilter::isSelectOptionActive()}
      */
     static public function isSelectOptionActive($optionName, $optionValue, $queryParams)
     {

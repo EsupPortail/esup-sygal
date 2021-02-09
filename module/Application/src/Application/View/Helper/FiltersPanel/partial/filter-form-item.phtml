@@ -1,5 +1,6 @@
 <?php
 
+use Application\Search\Filter\CheckboxSearchFilter;
 use Application\Search\Filter\SearchFilter;
 use Application\Search\Filter\SelectSearchFilter;
 use Application\Service\These\Filter\TheseSelectFilter;
@@ -16,6 +17,8 @@ use Application\View\Renderer\PhpRenderer;
 
 <?php if ($filter instanceof SelectSearchFilter OR $filter instanceof TheseSelectFilter): ?>
     <?php echo $this->partial('filter-form-item-select') ?>
+<?php elseif ($filter instanceof CheckboxSearchFilter): ?>
+    <?php echo $this->partial('filter-form-item-checkbox') ?>
 <?php elseif ($filter instanceof SearchFilter): ?>
     <?php echo $this->partial('filter-form-item-text') ?>
 <?php elseif ($filter instanceof TheseTextFilter): ?>

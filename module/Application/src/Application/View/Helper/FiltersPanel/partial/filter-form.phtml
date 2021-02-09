@@ -1,27 +1,11 @@
 <?php
 
+use Application\Search\Filter\SearchFilter;
 use Application\View\Renderer\PhpRenderer;
 
 /**
- * @var PhpRenderer                                           $this
- * @var \Application\Service\These\Filter\TheseSelectFilter[] $filters
- * Exemple :
- * [
- * "État" => [
-        * 'paramName' => 'etatThese',
-        * 'paramConfig' => [
-            * ['value' => '', 'label' => "Tous"],
-            * ['value' => $v = These::ETAT_EN_COURS, 'label' => These::$etatsLibelles[$v]],
-            * ['value' => $v = These::ETAT_ABANDONNEE, 'label' => These::$etatsLibelles[$v]],
-            * ['value' => $v = These::ETAT_SOUTENUE, 'label' => These::$etatsLibelles[$v]],
-        * ],
-        * 'paramAttributes' => [
-            * 'width' => '200px',
-            * 'liveSearch' => true,
-        * ],
-    * ],
- * ]
- *
+ * @var PhpRenderer $this
+ * @var SearchFilter[] $filters
  */
 
 $queryParams = $this->queryParams();
@@ -53,7 +37,7 @@ $queryParams = $this->queryParams();
                 <button type="button"
                         name="reset"
                         class="btn btn-default"
-                        onclick="$('form :input.filter').val(''); $('form .selectpicker.filter').selectpicker('deselectAll').selectpicker('render');"
+                        onclick="resetForm()"
                         title="<?php echo $this->translate("Vider le formulaire");?>" >
                     <span class="glyphicon glyphicon-erase"></span>
                 </button>
@@ -70,9 +54,26 @@ $queryParams = $this->queryParams();
 
 
 <script>
-    $(".selectpicker").selectpicker();
+    var $form;
+    var $selectpickers;
 
-    $(".filters form").submit(function() {
-        $("body").addClass('wait');
-    })
+    $(function() {
+        $form = $("form.filters");
+        $form.submit(function() {
+            $("body").addClass('wait');
+        });
+
+        $selectpickers = $form.find(".selectpicker");
+        if ($selectpickers.length) {
+            $selectpickers.selectpicker();
+        }
+    });
+    function resetForm() {
+        $form
+            .find(":input.filter").val('').attr("checked", false).end()
+            .find(":input[type=checkbox].filter").attr("checked", false).end()
+        if ($selectpickers.length) {
+            $selectpickers.selectpicker('deselectAll').selectpicker('render').end();
+        }
+    }
 </script>

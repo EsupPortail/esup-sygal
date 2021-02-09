@@ -206,4 +206,20 @@ class TheseSelectFilter extends TheseFilter
 
         return $this;
     }
+
+    /**
+     * Retourne true si, d'après les valeurs des paramètres GET, l'option de ce filtre select est sélectionnée.
+     *
+     * @param mixed $optionValue Valeur de l'option
+     * @param string[] $queryParams valeurs des paramètres GET
+     * @return bool
+     */
+    public function isSelectOptionActive($optionValue, array $queryParams): bool
+    {
+        $optionName = $this->getName();
+
+        return
+            ($optionValue !== '' && ((isset($queryParams[$optionName]) && $queryParams[$optionName] === $optionValue))) ||
+            ($optionValue === '' && (!isset($queryParams[$optionName]) || $queryParams[$optionName] === ''));
+    }
 }
