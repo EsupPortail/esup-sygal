@@ -2,24 +2,21 @@
 
 namespace Application\Search\Controller;
 
-use Application\Controller\AbstractController;
 use Application\Search\Filter\SearchFilter;
-use Application\Search\SearchServiceAwareTrait;
+use Application\Search\SearchServiceInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
 use Zend\Http\Response;
+use Zend\Mvc\Controller\AbstractController;
 use Zend\Mvc\Controller\Plugin\AbstractPlugin;
+use Zend\Mvc\Exception\DomainException;
 use Zend\Paginator\Paginator as ZendPaginator;
 
 /**
  * Class SearchControllerPlugin
- *
- * @method AbstractController getController()
  */
 class SearchControllerPlugin extends AbstractPlugin
 {
-    use SearchServiceAwareTrait;
-
     /**
      * @return Response|ZendPaginator
      */
@@ -27,22 +24,23 @@ class SearchControllerPlugin extends AbstractPlugin
     {
         $queryParams = $this->getController()->params()->fromQuery();
 
-        $this->searchService->init();
+        $searchService = $this->getSearchService();
+        $searchService->init();
 
         // Application des filtres et tris par défaut, puis redirection éventuelle
-        $filtersUpdated = $this->searchService->updateQueryParamsWithDefaultFilters($queryParams);
-        $sortersUpdated = $this->searchService->updateQueryParamsWithDefaultSorters($queryParams);
+        $filtersUpdated = $searchService->updateQueryParamsWithDefaultFilters($queryParams);
+        $sortersUpdated = $searchService->updateQueryParamsWithDefaultSorters($queryParams);
         if ($filtersUpdated || $sortersUpdated) {
             return $this->getController()->redirect()->toRoute(null, [], ['query' => $queryParams], true);
         }
 
-        $this->searchService
+        $searchService
             ->initFiltersWithUnpopulatedOptions()
 //            ->createSorters()
             ->processQueryParams($queryParams);
 
         /** Configuration du paginator **/
-        $qb = $this->searchService->getQueryBuilder();
+        $qb = $searchService->getQueryBuilder();
         $maxi = $this->getController()->params()->fromQuery('maxi', 50);
         $page = $this->getController()->params()->fromQuery('page', 1);
         $paginator = new ZendPaginator(new DoctrinePaginator(new Paginator($qb, true)));
@@ -57,15 +55,38 @@ class SearchControllerPlugin extends AbstractPlugin
     /**
      * @return SearchFilter[]
      */
-    public function filters()
+    public function filters(): array
     {
         $queryParams = $this->getController()->params()->fromQuery();
 
-        $this->searchService->init();
-        $this->searchService
+        $searchService = $this->getSearchService();
+        $searchService->init();
+        $searchService
             ->initFilters()
             ->processQueryParams($queryParams);
 
-        return $this->searchService->getFilters();
+        return $searchService->getFilters();
     }
+
+    /**
+     * @return SearchControllerInterface|AbstractController
+     */
+    public function getController()
+    {
+        $controller = parent::getController();
+        if (! $controller || ! $controller instanceof SearchControllerInterface) {
+            throw new DomainException('Ce plugin nécessite que le contrôleur implémente ' . SearchControllerInterface::class);
+        }
+
+        return $controller;
+    }
+
+    /**
+     * @return SearchServiceInterface
+     */
+    protected function getSearchService(): SearchServiceInterface
+    {
+        return $this->getController()->getSearchService();
+    }
+
 }

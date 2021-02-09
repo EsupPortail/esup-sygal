@@ -24,24 +24,22 @@ interface SearchFilterInterface
     /**
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * @param string $name
-     * @return self
      */
-    public function setName($name);
+    public function setName(string $name);
 
     /**
      * @return string
      */
-    public function getLabel();
+    public function getLabel(): string;
 
     /**
      * @param string $label
-     * @return self
      */
-    public function setLabel($label);
+    public function setLabel(string $label);
 
     /**
      * @return string|string[]
@@ -50,19 +48,17 @@ interface SearchFilterInterface
 
     /**
      * @param string|null $value
-     * @return self
      */
     public function setValue($value = null);
 
     /**
      * @return array
      */
-    public function getAttributes();
+    public function getAttributes(): array;
 
     /**
      * @param array $attributes
      * @param bool $overwrite
-     * @return self
      */
     public function setAttributes(array $attributes, $overwrite = false);
 }

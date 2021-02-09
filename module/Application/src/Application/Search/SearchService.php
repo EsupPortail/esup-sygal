@@ -38,7 +38,7 @@ abstract class SearchService implements SearchServiceInterface
      * @param SearchFilter $filter
      * @return self
      */
-    public function addFilter(SearchFilter $filter)
+    public function addFilter(SearchFilter $filter): self
     {
         $this->filters[$filter->getName()] = $filter;
 
@@ -49,7 +49,7 @@ abstract class SearchService implements SearchServiceInterface
      * @param SearchFilter[] $filters
      * @return self
      */
-    public function addFilters(array $filters)
+    public function addFilters(array $filters): self
     {
         foreach ($filters as $filter) {
             $this->addFilter($filter);
@@ -62,7 +62,7 @@ abstract class SearchService implements SearchServiceInterface
      * @param SearchSorter $sorter
      * @return self
      */
-    public function addSorter(SearchSorter $sorter)
+    public function addSorter(SearchSorter $sorter): self
     {
         $this->sorters[$sorter->getName()] = $sorter;
 
@@ -77,7 +77,7 @@ abstract class SearchService implements SearchServiceInterface
      * @param SearchSorter[] $sorters
      * @return self
      */
-    public function addSorters(array $sorters)
+    public function addSorters(array $sorters): self
     {
         foreach ($sorters as $sorter) {
             $this->addSorter($sorter);
@@ -89,7 +89,7 @@ abstract class SearchService implements SearchServiceInterface
     /**
      * @return self
      */
-    public function initFiltersWithUnpopulatedOptions()
+    public function initFiltersWithUnpopulatedOptions(): self
     {
         $filterValueOptions = [];
         foreach ($this->filters as $filterName => $filter) {
@@ -108,7 +108,7 @@ abstract class SearchService implements SearchServiceInterface
      *
      * @return SearchFilter[]
      */
-    public function getFilters()
+    public function getFilters(): array
     {
         return $this->filters;
     }
@@ -116,7 +116,7 @@ abstract class SearchService implements SearchServiceInterface
     /**
      * @return self
      */
-    public function initFilters()
+    public function initFilters(): self
     {
 //        if (! $this->unpopulatedOptions/* && ! empty($this->filters)*/) {
 //            return $this;
@@ -142,7 +142,7 @@ abstract class SearchService implements SearchServiceInterface
      * @param SelectSearchFilter $filter
      * @return array
      */
-    abstract protected function fetchValueOptionsForSelectFilter(SelectSearchFilter $filter);
+    abstract protected function fetchValueOptionsForSelectFilter(SelectSearchFilter $filter): array;
 
     /**
      * @param array $valueOptions
@@ -162,7 +162,7 @@ abstract class SearchService implements SearchServiceInterface
      * @param array $queryParams
      * @return self
      */
-    public function processQueryParams(array $queryParams)
+    public function processQueryParams(array $queryParams): self
     {
         foreach ($this->filters as $filter) {
             $filter->processQueryParams($queryParams);
@@ -178,7 +178,7 @@ abstract class SearchService implements SearchServiceInterface
      * @param $name
      * @return string|null
      */
-    public function getFilterValueByName($name)
+    public function getFilterValueByName($name): ?string
     {
         if (isset($this->filters[$name])) {
             return $this->filters[$name]->getValue();
@@ -189,10 +189,10 @@ abstract class SearchService implements SearchServiceInterface
 
     /**
      * @param string $name
-     * @param array  $queryParams
+     * @param array $queryParams
      * @return string
      */
-    private function paramFromQueryParams($name, array $queryParams)
+    private function paramFromQueryParams(string $name, array $queryParams): ?string
     {
         if (! array_key_exists($name, $queryParams)) {
             // null <=> paramètre absent
@@ -208,7 +208,7 @@ abstract class SearchService implements SearchServiceInterface
      * @param array $queryParams
      * @return bool
      */
-    public function updateQueryParamsWithDefaultFilters(array &$queryParams)
+    public function updateQueryParamsWithDefaultFilters(array &$queryParams): bool
     {
         $updated = false;
 
@@ -231,7 +231,7 @@ abstract class SearchService implements SearchServiceInterface
      * @param array $queryParams
      * @return bool
      */
-    public function updateQueryParamsWithDefaultSorters(array &$queryParams)
+    public function updateQueryParamsWithDefaultSorters(array &$queryParams): bool
     {
         if ($this->defaultSorter === null) {
             return false;
@@ -256,7 +256,7 @@ abstract class SearchService implements SearchServiceInterface
     /**
      * @return QueryBuilder
      */
-    public function getQueryBuilder()
+    public function getQueryBuilder(): QueryBuilder
     {
         $qb = $this->createQueryBuilder();
 
@@ -274,5 +274,5 @@ abstract class SearchService implements SearchServiceInterface
     /**
      * @return QueryBuilder
      */
-    abstract protected function createQueryBuilder();
+    abstract protected function createQueryBuilder(): QueryBuilder;
 }

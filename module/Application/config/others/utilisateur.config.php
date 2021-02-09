@@ -1,5 +1,7 @@
 <?php
 
+namespace Application;
+
 use Application\Controller\Factory\UtilisateurControllerFactory;
 use Application\Form\CreationUtilisateurForm;
 use Application\Form\CreationUtilisateurFromIndividuForm;
@@ -14,6 +16,8 @@ use Application\Form\Validator\NewEmailValidator;
 use Application\Form\Validator\PasswordValidator;
 use Application\Provider\Privilege\UtilisateurPrivileges;
 use Application\Service\Individu\IndividuServiceFactory;
+use Application\Service\Utilisateur\UtilisateurSearchService;
+use Application\Service\Utilisateur\UtilisateurSearchServiceFactory;
 use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Utilisateur\UtilisateurServiceFactory;
 use Application\View\Helper\IndividuUsurpationHelperFactory;
@@ -35,6 +39,7 @@ return [
                     'controller' => 'Application\Controller\Utilisateur',
                     'action'     => [
                         'index',
+                        'voir',
                         'rechercher-people',
                         'rechercher-individu',
                     ],
@@ -92,6 +97,15 @@ return [
                 ],
                 'may_terminate' => true,
                 'child_routes'  => [
+                    'voir' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/voir/:utilisateur',
+                            'defaults'    => [
+                                'action' => 'voir',
+                            ],
+                        ],
+                    ],
                     'ajouter' => [
                         'type'          => Literal::class,
                         'options'       => [
@@ -197,15 +211,20 @@ return [
                                 'label'    => 'Utilisateurs',
                                 'route'    => 'utilisateur',
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\Utilisateur', 'index'),
-
+                                'icon'     => 'fa fa-users',
                                 'order'    => 60,
-                            ],
-                            'creation' => [
-                                'label'    => "Création d'utilisateur",
-                                'route'    => 'utilisateur/ajouter',
-                                'resource' => PrivilegeController::getResourceId('Application\Controller\Utilisateur', 'ajouter'),
-
-                                'order'    => 50,
+                                'pages' => [
+                                    'voir' => [
+                                        'label'    => "Détails",
+                                        'route'    => 'utilisateur/voir',
+                                        'resource' => PrivilegeController::getResourceId('Application\Controller\Utilisateur', 'index'),
+                                    ],
+                                    'creation' => [
+                                        'label'    => "Création",
+                                        'route'    => 'utilisateur/ajouter',
+                                        'resource' => PrivilegeController::getResourceId('Application\Controller\Utilisateur', 'ajouter'),
+                                    ],
+                                ],
                             ],
                         ],
                     ],
@@ -219,6 +238,7 @@ return [
         'factories' => [
             'IndividuService' => IndividuServiceFactory::class,
             'UtilisateurService' => UtilisateurServiceFactory::class,
+            UtilisateurSearchService::class => UtilisateurSearchServiceFactory::class,
         ],
         'aliases' => [
             UtilisateurService::class => 'UtilisateurService'
