@@ -510,6 +510,8 @@ td.acteurs {
 div.filters {
   $filterFontSize: 11px;
 
+  max-width: 80%;
+
   table {
     td,
     th {
@@ -964,14 +966,11 @@ span.sas-highlight {
 
 
 .user-usurpation-form {
-  margin-top: 30px;
-  padding-top: 10px;
-  border-top: 1px lightgrey dotted;
   .form-group {
     float: left;
     margin-right: 5px;
   }
-  .btn {
+  .user-usurpation-submit {
     margin-top: 0;
   }
 }

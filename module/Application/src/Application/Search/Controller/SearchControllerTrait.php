@@ -2,29 +2,30 @@
 
 namespace Application\Search\Controller;
 
-use Application\Search\SearchServiceInterface;
+use Application\Search\Filter\SearchFilter;
+use Application\Search\SearchServiceAwareTrait;
 use Zend\Http\Response;
+use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Paginator\Paginator as ZendPaginator;
 use Zend\View\Model\ViewModel;
 
 /**
  * Trait SearchControllerTrait
- *
- * @method SearchControllerPlugin searchControllerPlugin()
  */
 trait SearchControllerTrait
 {
-    /**
-     * @var SearchServiceInterface
-     */
-    protected $searchService;
+    use SearchServiceAwareTrait;
 
     /**
-     * @param SearchServiceInterface $searchService
+     * @return ViewModel
      */
-    public function setSearchService(SearchServiceInterface $searchService)
+    public function filtersAction(): ViewModel
     {
-        $this->searchService = $searchService;
+        $filters = $this->filters();
+
+        return new ViewModel([
+            'filters' => $filters,
+        ]);
     }
 
     /**
@@ -32,25 +33,27 @@ trait SearchControllerTrait
      */
     public function search()
     {
-        $searchControllerPlugin = $this->searchControllerPlugin();
-        $searchControllerPlugin->setSearchService($this->searchService);
-
-        return $searchControllerPlugin->search();
+        return $this->getSearchPluginController()->search();
     }
 
     /**
-     * @return ViewModel
+     * @return SearchFilter[]
      */
-    public function filtersAction()
+    public function filters(): array
     {
-        $queryParams = $this->params()->fromQuery();
+        return $this->getSearchPluginController()->filters();
+    }
 
-        $this->searchService
-            ->initFilters()
-            ->processQueryParams($queryParams);
+    /**
+     * @return SearchControllerPlugin
+     */
+    protected function getSearchPluginController(): SearchControllerPlugin
+    {
+        /** @var AbstractActionController $that */
+        $that = $this;
+        /** @var SearchControllerPlugin $searchControllerPlugin */
+        $searchControllerPlugin = $that->getPluginManager()->get('searchControllerPlugin');
 
-        return new ViewModel([
-            'filters' => $this->searchService->getFilters(),
-        ]);
+        return $searchControllerPlugin;
     }
 }
