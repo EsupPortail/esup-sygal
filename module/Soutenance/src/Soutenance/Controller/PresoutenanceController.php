@@ -213,6 +213,7 @@ class PresoutenanceController extends AbstractController
             $utilisateurs = $this->utilisateurService->getRepository()->findByIndividu($individu);
             if (empty($utilisateurs)) {
                 $user = $this->utilisateurService->createFromIndividu($individu, $this->generateUsername($membre), 'none');
+                $user->setEmail($membre->getEmail());
                 $this->userService->updateUserPasswordResetToken($user);
                 $url = $this->url()->fromRoute('utilisateur/init-compte', ['token' => $user->getPasswordResetToken()], ['force_canonical' => true], true);
                 $this->getNotifierSoutenanceService()->triggerInitialisationCompte($these, $user, $url);
