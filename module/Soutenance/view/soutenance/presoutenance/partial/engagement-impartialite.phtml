@@ -71,7 +71,7 @@ $canRevoquerEngagementImpartialite     = $this->isAllowed($these, EngagementImpa
                     <!-- Signature ------------------------------------------------------------------------------------>
                     <td>
                         <?php if ($acteur !== null) : ?>
-                            <?php if ($acteur->getIndividu()->getEmail() !== null) : ?>
+                            <?php if ($acteur->getMembre()->getEmail() !== null) : ?>
                                 <?php if ($engagement !== null): ?>
                                     <?php
                                         echo $engagement->getHistoCreation()->format(Constants::DATETIME_FORMAT);
@@ -99,7 +99,7 @@ $canRevoquerEngagementImpartialite     = $this->isAllowed($these, EngagementImpa
 
                     <!-- Actions -------------------------------------------------------------------------------------->
                     <td>
-                        <?php if ($acteur !== null AND $acteur->getIndividu()->getEmail() !== null) : ?>
+                        <?php if ($acteur !== null AND $acteur->getMembre()->getEmail() !== null) : ?>
 
                             <?php if($canNotifierEngagementImpartialite) : ?>
                                 <?php if ($engagement) : ?>
@@ -108,7 +108,7 @@ $canRevoquerEngagementImpartialite     = $this->isAllowed($these, EngagementImpa
                                     <a
                                         <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::notifierEngagementImpartialiteAction() */ ?>
                                         href="<?php echo $this->url('soutenance/engagement-impartialite/notifier', ['these' => $these->getId(), 'proposition' => $proposition->getId(), 'membre' => $rapporteur->getId()], [], true);?>">
-                                        <span class="glyphicon glyphicon-send" title="Notifier le rapporteur"></span>
+                                        <span class="glyphicon glyphicon-send" title="Notifier le rapporteur '<?php echo $acteur->getMembre()->getEmail(); ?>'"></span>
                                     </a>
                                 <?php endif; ?>
                             <?php endif; ?>
