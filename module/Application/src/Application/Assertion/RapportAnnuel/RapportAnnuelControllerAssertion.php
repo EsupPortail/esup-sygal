@@ -23,7 +23,7 @@ class RapportAnnuelControllerAssertion extends ControllerAssertion
      */
     public function setContext(array $context)
     {
-        $this->rapportAnnuel = $context['rapportAnnuel'];
+        $this->rapportAnnuel = $context['rapportAnnuel'] ?? null;
     }
 
     /**
