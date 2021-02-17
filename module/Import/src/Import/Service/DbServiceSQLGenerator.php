@@ -102,6 +102,10 @@ class DbServiceSQLGenerator
 
     private function prepareString($value)
     {
+        if ($value === null) {
+            return 'NULL';
+        }
+
         return $this->databasePlatform->quoteStringLiteral($value);
     }
 
