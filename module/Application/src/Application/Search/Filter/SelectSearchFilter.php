@@ -2,31 +2,13 @@
 
 namespace Application\Search\Filter;
 
-use Application\Search\Filter\SearchFilter;
-use Doctrine\ORM\Query\Expr\Join;
-use Doctrine\ORM\QueryBuilder;
-use UnicaenApp\Exception\LogicException;
-use UnicaenApp\Exception\RuntimeException;
-
 /**
- * Représente un filtre de thèses, de type liste déroulante.
+ * Représente un filtre, de type liste déroulante.
  *
  * @author Unicaen
  */
 class SelectSearchFilter extends SearchFilter
 {
-    /*const NAME_etablissement = 'etablissement';
-    const NAME_etatThese = 'etatThese';
-    const NAME_ecoleDoctorale = 'ecoleDoctorale';
-    const NAME_uniteRecherche = 'uniteRecherche';
-    const NAME_anneePremiereInscription = 'anneePremiereInscription';
-    const NAME_anneeUniv1ereInscription = 'anneeUniv1ereInscription';
-    const NAME_anneeUnivInscription = 'anneeUnivInscription';
-    const NAME_anneeSoutenance = 'anneeSoutenance';
-    const NAME_discipline = 'discipline';
-    const NAME_domaineScientifique = 'domaineScientifique';
-    const NAME_financement = 'financement';*/
-
     /**
      * @var string[]
      */
@@ -46,7 +28,7 @@ class SelectSearchFilter extends SearchFilter
      * @param array $attributes
      * @param string $defaultValue
      */
-    public function __construct($label, $name, array $options, array $attributes = [], $defaultValue = null)
+    public function __construct(string $label, string $name, array $options, array $attributes = [], $defaultValue = null)
     {
         parent::__construct($label, $name);
 
@@ -59,7 +41,7 @@ class SelectSearchFilter extends SearchFilter
     /**
      * @return array
      */
-    public function getOptions()
+    public function getOptions(): array
     {
         return $this->options;
     }
@@ -68,7 +50,7 @@ class SelectSearchFilter extends SearchFilter
      * @param array $options
      * @return self
      */
-    public function setOptions($options)
+    public function setOptions(array $options): self
     {
         $this->options = $options;
 
@@ -78,7 +60,7 @@ class SelectSearchFilter extends SearchFilter
     /**
      * @return string
      */
-    public function getEmptyOptionLabel()
+    public function getEmptyOptionLabel(): string
     {
         return $this->emptyOptionLabel;
     }
@@ -87,10 +69,26 @@ class SelectSearchFilter extends SearchFilter
      * @param string $emptyOptionLabel
      * @return SelectSearchFilter
      */
-    public function setEmptyOptionLabel($emptyOptionLabel)
+    public function setEmptyOptionLabel(string $emptyOptionLabel): self
     {
         $this->emptyOptionLabel = $emptyOptionLabel;
 
         return $this;
+    }
+
+    /**
+     * Retourne true si, d'après les valeurs des paramètres GET, l'option de ce filtre select est sélectionnée.
+     *
+     * @param mixed $optionValue Valeur de l'option
+     * @param string[] $queryParams valeurs des paramètres GET
+     * @return bool
+     */
+    public function isSelectOptionActive($optionValue, array $queryParams): bool
+    {
+        $optionName = $this->getName();
+
+        return
+            ($optionValue !== '' && ((isset($queryParams[$optionName]) && $queryParams[$optionName] === $optionValue))) ||
+            ($optionValue === '' && (!isset($queryParams[$optionName]) || $queryParams[$optionName] === ''));
     }
 }

@@ -4,10 +4,8 @@ namespace Application\Controller;
 
 use Application\Entity\Db\RapportAnnuel;
 use Application\Search\Controller\SearchControllerInterface;
-use Application\Search\Controller\SearchControllerPlugin;
-use Application\Search\SearchServiceAwareTrait;
+use Application\Search\Controller\SearchControllerTrait;
 use Application\Service\Fichier\FichierServiceAwareTrait;
-use Application\Service\RapportAnnuel\RapportAnnuelSearchService;
 use Zend\Http\Response;
 use Zend\Paginator\Paginator as ZendPaginator;
 use Zend\View\Model\ViewModel;
@@ -17,13 +15,8 @@ use Zend\View\Model\ViewModel;
  */
 class RapportAnnuelRechercheController extends AbstractController implements SearchControllerInterface
 {
-    use SearchServiceAwareTrait;
+    use SearchControllerTrait;
     use FichierServiceAwareTrait;
-
-    /**
-     * @var RapportAnnuelSearchService
-     */
-    protected $searchService;
 
     /**
      * @return ViewModel|Response
@@ -32,7 +25,7 @@ class RapportAnnuelRechercheController extends AbstractController implements Sea
     {
         $text = $this->params()->fromQuery('text');
 
-        $result = $this->getSearchPluginController()->search();
+        $result = $this->search();
         if ($result instanceof Response) {
             return $result;
         }
@@ -48,9 +41,9 @@ class RapportAnnuelRechercheController extends AbstractController implements Sea
     /**
      * @return ViewModel
      */
-    public function filtersAction()
+    public function filtersAction(): ViewModel
     {
-        $filters = $this->getSearchPluginController()->filters();
+        $filters = $this->filters();
 
         return new ViewModel([
             'filters' => $filters,
@@ -61,9 +54,9 @@ class RapportAnnuelRechercheController extends AbstractController implements Sea
     /**
      * @return void|Response
      */
-    public function telechargerZipAction()
+    public function telechargerZipAction(): Response
     {
-        $result = $this->getSearchPluginController()->search();
+        $result = $this->search();
         if ($result instanceof Response) {
             return $result; // théoriquement, on ne devrait pas arriver ici.
         }
@@ -80,17 +73,5 @@ class RapportAnnuelRechercheController extends AbstractController implements Sea
 
         $fichierZip = $this->fichierService->compresserFichiers($fichiers);
         $this->fichierService->telechargerFichier($fichierZip);
-    }
-
-    /**
-     * @return SearchControllerPlugin
-     */
-    protected function getSearchPluginController()
-    {
-        /** @var SearchControllerPlugin $searchControllerPlugin */
-        $searchControllerPlugin = $this->getPluginManager()->get('searchControllerPlugin');
-        $searchControllerPlugin->setSearchService($this->searchService);
-
-        return $searchControllerPlugin;
     }
 }

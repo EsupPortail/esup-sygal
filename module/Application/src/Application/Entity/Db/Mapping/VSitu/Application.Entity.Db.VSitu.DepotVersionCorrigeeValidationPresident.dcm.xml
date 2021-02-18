@@ -6,7 +6,7 @@
     <entity name="Application\Entity\Db\VSitu\DepotVersionCorrigeeValidationPresident"
             table="V_SITU_DEPOT_VC_VALID_PRES">
 
-        <id name="id" type="integer" column="ID"/>
+        <id name="id" type="string" column="ID"/>
 
         <field name="valide" type="boolean" column="VALIDE" nullable="false"/>
 

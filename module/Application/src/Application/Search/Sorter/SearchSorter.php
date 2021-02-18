@@ -50,7 +50,7 @@ class SearchSorter
      * @param string $name
      * @param bool $isDefault
      */
-    public function __construct($label, $name, $isDefault = false)
+    public function __construct(string $label, string $name, $isDefault = false)
     {
         $this
             ->setLabel($label)
@@ -59,10 +59,12 @@ class SearchSorter
     }
 
     /**
-     * @param callable $applyToQueryBuilderCallable
+     * Spécifie le callable qui sera appelé pour appliquer le filtre au query builder.
+     *
+     * @param callable $applyToQueryBuilderCallable function(SearchFilter $filter, QueryBuilder $qb)
      * @return self
      */
-    public function setApplyToQueryBuilderCallable($applyToQueryBuilderCallable)
+    public function setApplyToQueryBuilderCallable(callable $applyToQueryBuilderCallable): self
     {
         if (! is_callable($applyToQueryBuilderCallable)) {
             throw new RuntimeException("Callable spécifié invalide !");
@@ -102,7 +104,7 @@ class SearchSorter
      * @param array  $queryParams
      * @return string
      */
-    private function paramFromQueryParams($name, array $queryParams)
+    private function paramFromQueryParams($name, array $queryParams): ?string
     {
         if (! array_key_exists($name, $queryParams)) {
             // null <=> paramètre absent
@@ -123,6 +125,14 @@ class SearchSorter
             return;
         }
 
+        if ($this->applyToQueryBuilderCallable === null) {
+            // tentative de tri par défaut
+            $this->applyToQueryBuilderCallable = function(SearchSorter $sorter, QueryBuilder $qb) {
+                $alias = current($qb->getRootAliases());
+                $qb->addOrderBy(sprintf("%s.%s", $alias, $sorter->getName()), $sorter->getDirection());
+            };
+        }
+
         $applyToQueryBuilder = $this->applyToQueryBuilderCallable;
         $applyToQueryBuilder($this, $qb);
     }
@@ -130,7 +140,7 @@ class SearchSorter
     /**
      * @return string
      */
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->label;
     }
@@ -139,7 +149,7 @@ class SearchSorter
      * @param string $label
      * @return self
      */
-    public function setLabel($label)
+    public function setLabel(string $label): self
     {
         $this->label = $label;
 
@@ -149,7 +159,7 @@ class SearchSorter
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -158,7 +168,7 @@ class SearchSorter
      * @param string $name
      * @return self
      */
-    public function setName($name)
+    public function setName(string $name): SearchSorter
     {
         $this->name = $name;
 
@@ -168,7 +178,7 @@ class SearchSorter
     /**
      * @return bool
      */
-    public function isEnabled()
+    public function isEnabled(): bool
     {
         return $this->enabled;
     }
@@ -177,7 +187,7 @@ class SearchSorter
      * @param bool $enabled
      * @return self
      */
-    public function setEnabled($enabled)
+    public function setEnabled(bool $enabled): self
     {
         $this->enabled = $enabled;
 
@@ -187,7 +197,7 @@ class SearchSorter
     /**
      * @return string
      */
-    public function getDirection()
+    public function getDirection(): string
     {
         return $this->direction;
     }
@@ -196,7 +206,7 @@ class SearchSorter
      * @param string $direction
      * @return self
      */
-    public function setDirection($direction)
+    public function setDirection(string $direction): self
     {
         $this->direction = $direction;
 
@@ -206,7 +216,7 @@ class SearchSorter
     /**
      * @return bool
      */
-    public function isDefault()
+    public function isDefault(): bool
     {
         return $this->isDefault;
     }
@@ -215,7 +225,7 @@ class SearchSorter
      * @param bool $isDefault
      * @return self
      */
-    public function setIsDefault($isDefault = true)
+    public function setIsDefault($isDefault = true): self
     {
         $this->isDefault = $isDefault;
 

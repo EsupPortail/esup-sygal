@@ -14,6 +14,7 @@ use Application\Service\Role\RoleService;
 use Application\Service\Structure\StructureService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\UserContextService;
+use Application\Service\Utilisateur\UtilisateurSearchService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Application\SourceCodeStringHelper;
 use Doctrine\ORM\EntityManager;
@@ -42,6 +43,7 @@ class UtilisateurControllerFactory
          * @var NotifierService $notifierService
          * @var UserContextService $userContextService
          * @var UserService $userService
+         * @var UtilisateurSearchService $utilisateurSearchService
          */
         $acteurService = $container->get(ActeurService::class);
         $roleService = $container->get('RoleService');
@@ -54,6 +56,7 @@ class UtilisateurControllerFactory
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $userContextService = $container->get(UserContext::class);
         $userService = $container->get('unicaen-auth_user_service');
+        $utilisateurSearchService = $container->get(UtilisateurSearchService::class);
 
         /**
          * @var InitCompteForm $initCompteForm
@@ -90,7 +93,9 @@ class UtilisateurControllerFactory
         $controller->setAuthenticationService($authenticationService);
         $controller->setInitCompteForm($initCompteForm);
         $controller->setCreationUtilisateurForm($creationUtilisateurForm);
+        $controller->setOptions($authModuleOptions); // requis
         $controller->setAuthModuleOptions($authModuleOptions);
+        $controller->setSearchService($utilisateurSearchService);
 
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper
