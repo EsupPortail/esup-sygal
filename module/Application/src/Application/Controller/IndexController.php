@@ -2,7 +2,10 @@
 
 namespace Application\Controller;
 
+use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\Role;
 use Application\Entity\Db\Variable;
+use Application\Entity\UserWrapper;
 use Application\Exception\DomainException;
 use Application\Service\Actualite\ActualiteServiceAwareTrait;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
@@ -194,16 +197,7 @@ EOS
             return $this->redirect()->toRoute('home');
         }
 
-        $individu = $this->userContextService->getIdentityDoctorant();
-        if ($individu !== null) {
-            $etablissement = $individu->getEtablissement();
-        } else {
-            $etablissement = $this->etablissementService->getRepository()->findOneForUserWrapper($userWrapper);
-        }
-        if ($etablissement === null) {
-            throw new RuntimeException(
-                "Anomalie: établissement introuvable pour l'utilisateur '{$userWrapper->getUsername()}'.");
-        }
+        $etablissement = $this->findEtablissementUtilisateur($userWrapper);
 
         $repo = $this->variableService->getRepository();
         $variable = $repo->findByCodeAndEtab(Variable::CODE_EMAIL_ASSISTANCE, $etablissement);
@@ -228,5 +222,25 @@ EOS
             'role' => $this->userContextService->getSelectedIdentityRole(),
             'roles' => $this->userContextService->getSelectableIdentityRoles(),
         ];
+    }
+
+    /**
+     * @param UserWrapper $userWrapper
+     * @return Etablissement
+     */
+    protected function findEtablissementUtilisateur(UserWrapper $userWrapper): Etablissement
+    {
+        $individu = $this->userContextService->getIdentityDoctorant();
+        if ($individu !== null) {
+            return $individu->getEtablissement();
+        }
+
+        /** @var Role $role */
+        $role = $this->userContextService->getSelectedIdentityRole();
+        if ($role !== null && $structure = $role->getStructure()) {
+            return $this->etablissementService->getRepository()->findByStructureId($structure->getId());
+        }
+
+        return $this->etablissementService->getRepository()->findOneForUserWrapper($userWrapper);
     }
 }
