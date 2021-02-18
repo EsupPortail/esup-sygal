@@ -20,7 +20,7 @@ trait SearchServiceAwareTrait
     /**
      * @return SearchServiceInterface
      */
-    public function getSearchService()
+    public function getSearchService(): SearchServiceInterface
     {
         return $this->searchService;
     }

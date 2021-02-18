@@ -15,27 +15,27 @@ interface SearchServiceInterface
      * @param array $queryParams
      * @return bool
      */
-    public function updateQueryParamsWithDefaultFilters(array &$queryParams);
+    public function updateQueryParamsWithDefaultFilters(array &$queryParams): bool;
 
     /**
      * @param array $queryParams
      * @return bool
      */
-    public function updateQueryParamsWithDefaultSorters(array &$queryParams);
+    public function updateQueryParamsWithDefaultSorters(array &$queryParams): bool;
 
     /**
-     * @return self
+     * @return mixed
      */
     public function initFiltersWithUnpopulatedOptions();
 
     /**
-     * @return self
+     * @return mixed
      */
     public function initFilters();
 
     /**
      * @param array $queryParams
-     * @return self
+     * @return mixed
      */
     public function processQueryParams(array $queryParams);
 
@@ -43,10 +43,10 @@ interface SearchServiceInterface
      * @param $name
      * @return string|null
      */
-    public function getFilterValueByName($name);
+    public function getFilterValueByName($name): ?string;
 
     /**
      * @return SearchFilter[]
      */
-    public function getFilters();
+    public function getFilters(): array;
 }

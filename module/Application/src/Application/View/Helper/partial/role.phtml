@@ -1,0 +1,15 @@
+<?php
+
+use Application\Entity\Db\Role;
+
+/**
+ * @var Role $role
+ */
+
+?>
+
+<?php echo $role->getLibelle(); ?>
+<?php if ($role->getStructure()) : ?>
+    <?php echo $role->getStructure()->getSigle(); ?>
+<?php endif; ?>
+

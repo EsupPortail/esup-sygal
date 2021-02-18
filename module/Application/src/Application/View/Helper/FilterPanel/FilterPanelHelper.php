@@ -2,10 +2,16 @@
 
 namespace Application\View\Helper\FilterPanel;
 
+use Application\View\Helper\FiltersPanel\FiltersPanelHelper;
 use Application\View\Renderer\PhpRenderer;
 use Zend\View\Helper\AbstractHelper;
 use Zend\View\Resolver\TemplatePathStack;
 
+/**
+ * Class FilterPanelHelper
+ * @package Application\View\Helper\FilterPanel
+ * @deprecated Utiliser à la place {@see FiltersPanelHelper}
+ */
 class FilterPanelHelper extends AbstractHelper
 {
     /**

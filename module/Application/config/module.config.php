@@ -21,6 +21,7 @@ use Application\Service\Url\UrlServiceFactory;
 use Application\Service\UserContextServiceAwareInitializer;
 use Application\Service\UserContextServiceFactory;
 use Application\View\Helper\EscapeTextHelper;
+use Application\View\Helper\FiltersPanel\FiltersPanelHelper;
 use Application\View\Helper\Sortable;
 use Application\View\Helper\SortableHelperFactory;
 use Application\View\Helper\Uploader\UploaderHelper;
@@ -273,7 +274,8 @@ return array(
     'view_helpers' => array(
         'invokables' => array(
             'filterPanel' => 'Application\View\Helper\FilterPanel\FilterPanelHelper',
-            'selectsFilterPanel' => \Application\View\Helper\SelectsFilterPanel\SelectsFilterPanelHelper::class,
+            'selectsFilterPanel' => FiltersPanelHelper::class,
+            'filtersPanel' => FiltersPanelHelper::class,
             'escapeText'  => EscapeTextHelper::class,
         ),
         'factories' => array(

@@ -1,0 +1,90 @@
+<?php
+/**
+* @var Etablissement[] $etablissements
+* @var EcoleDoctorale[] $ecoles
+* @var UniteRecherche[] $unites
+* @var integer $etablissementId
+* @var integer $ecoleDoctoraleId
+* @var integer $uniteRechercheId
+*/
+
+use Application\Entity\Db\EcoleDoctorale;
+use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\UniteRecherche;
+
+?>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <span class="glyphicon glyphicon-filter"></span> Filtrage des propositions de soutenance
+    </div>
+    <div class="panel-body">
+        <form class='form-inline' method="get" action="">
+                <div class="form-group">
+                <label for="etablissement">Établissement d'inscription : </label>
+                <select id="etablissement" name="etablissement" class="selectpicker" data-live-search="true">
+                    <option value="">Tous les établissements </option>
+                    <?php foreach ($etablissements as $etablissement) : ?>
+                        <option value="<?php echo $etablissement->getId(); ?>" <?php if ($etablissement->getId() == $etablissementId) echo " selected "; ?>>
+                            <?php echo $etablissement->getLibelle(); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                </div>
+                <div class="form-group">
+                    <label for="ecoledoctorale">École doctorale : </label>
+                    <select id="ecoledoctorale" name="ecoledoctorale" class="selectpicker" data-live-search="true">
+                        <option value="">Toutes les écoles doctorales </option>
+                        <?php foreach ($ecoles as $ecole) : ?>
+                            <option value="<?php echo $ecole->getId(); ?>" <?php if ($ecole->getId() == $ecoleDoctoraleId) echo " selected "; ?>>
+                                <?php echo $ecole->getSigle(); ?> :
+                                <?php echo $ecole->getLibelle(); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="uniterecherche">Unité de recherche : </label>
+                    <select id="uniterecherche" name="uniterecherche" class="selectpicker" data-live-search="true">
+                        <option value="">Toutes les unités de recherche </option>
+                        <?php foreach ($unites as $unite) : ?>
+                            <option value="<?php echo $unite->getId(); ?>" <?php if ($unite->getId() == $uniteRechercheId) echo " selected "; ?>>
+                                <?php echo $unite->getSigle(); ?> :
+                                <?php echo $unite->getLibelle(); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            <div class="form-inline">
+
+                <button class="btn btn-primary action">
+                    Appliquer
+                </button>
+
+                <span id="RAZ" class="btn btn-primary action">
+                    RAZ
+                </span>
+
+            </div>
+
+    </form>
+    </div>
+</div>
+
+<style>
+    label {
+        display: block;
+    }
+
+    .form-inline {
+        display: inline-block;
+    }
+</style>
+
+<script>
+    $(function() {
+        $("span#RAZ").on("click", function(e) {
+           window.location="?etablissement=&ecoledoctorale=&uniterecherche=";
+        });
+    });
+</script>

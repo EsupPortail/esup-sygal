@@ -1,21 +1,54 @@
 <?php
 
+namespace Application;
+
 use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\Individu;
+use Application\Entity\Db\Role;
+use Application\Entity\Db\Utilisateur;
+use Application\View\Renderer\PhpRenderer;
 
 /**
+ * @var PhpRenderer $this
  * @var Etablissement $etablissement
  * @var string $contact
+ * @var Individu|null $individu
+ * @var Utilisateur|null $utilisateur
+ * @var Role|null $role
+ * @var Role[] $roles
+ * @see \Application\Controller\IndexController::contactAction()
  */
+
+$mailBody =
+    "Bonjour,".PHP_EOL.PHP_EOL .
+    "[Description précise de votre problème]".PHP_EOL.PHP_EOL.PHP_EOL .
+    '------------------------------------------------------------'.PHP_EOL .
+    trim($this->partial('application/index/partial/debug-infos', [
+        'individu' => $individu,
+        'utilisateur' => $utilisateur,
+        'role' => $role,
+        'roles' => $roles,
+        'html' => false,
+    ]));
 ?>
 
 <?php $this->headTitle()->append($title = "Contact") ?>
 
 <h1 class="page-header"><?php echo $this->translate($title); ?></h1>
 
-<dl>
-    <dt>Adresse d'assistance - <?php echo $etablissement ?></dt>
-    <dd>
-        <a href="mailto:<?php echo $contact ?>"
-           title="<?php echo $this->translate("Envoyer un mail à cette adresse") ?>"><?php echo $contact ?></a>
-    </dd>
-</dl>
+<div class="row">
+    <div class="col-md-7">
+        <dl>
+            <dt>Adresse d'assistance - <?php echo $etablissement ?></dt>
+            <dd>
+                <?php
+                ?>
+                <a href="mailto:<?php echo trim($contact) ?>?body=<?php echo urlencode($mailBody) ?>"
+                   title="<?php echo $this->translate("Envoyer un mail à cette adresse") ?>"><?php echo $contact ?></a>
+            </dd>
+        </dl>
+    </div>
+    <div class="col-md-5">
+        <?php echo $this->partial('application/index/partial/debug-infos') ?>
+    </div>
+</div>

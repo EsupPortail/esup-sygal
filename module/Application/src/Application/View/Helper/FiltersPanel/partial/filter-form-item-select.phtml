@@ -1,12 +1,11 @@
 <?php
 
-use Application\Service\These\Filter\TheseSelectFilter;
-use Application\View\Helper\SelectsFilterPanel\SelectsFilterPanelHelper;
+use Application\Search\Filter\SelectSearchFilter;
 use Application\View\Renderer\PhpRenderer;
 
 /**
  * @var PhpRenderer       $this
- * @var TheseSelectFilter $filter
+ * @var SelectSearchFilter $filter
  * @var array             $queryParams
  */
 
@@ -31,7 +30,7 @@ $liveSearch = isset($paramAttributes['liveSearch']) ? (bool)$paramAttributes['li
     $value = $data['value'];
     $label = $data['label'];
     $subtext = isset($data['subtext']) ? $data['subtext'] : '';
-    $isActive = SelectsFilterPanelHelper::isSelectOptionActive($paramName, $value, $queryParams);
+    $isActive = $filter->isSelectOptionActive($value, $queryParams);
     ?>
     <option value="<?php echo $value ?>" <?php echo $isActive ? 'selected' : '' ?>
             <?php if (strpos($subtext,'FERME',0) !== false) : ?>
