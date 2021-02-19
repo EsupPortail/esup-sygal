@@ -16,17 +16,18 @@ class ConfidentialiteForm extends Form
 
     public function init()
     {
-        $refDate = new DateTime();
-        $maxDate = $refDate->add(new DateInterval('P10Y'));
+        $minDate = new DateTime();
+        $maxDate = new DateTime();
+        $maxDate->add(new DateInterval('P10Y'));
 
         $this->add([
-            'type' => Date::class,
+            'type' => \Zend\Form\Element\Date::class,
             'name' => 'date',
             'options' => [
                 'label' => "Date de fin de confidentialité :",
             ],
             'attributes' => [
-                'min' => $refDate->format('Y-m-d'),
+                'min' => $minDate->format('Y-m-d'),
                 'max' => $maxDate->format('Y-m-d'),
             ]
         ]);

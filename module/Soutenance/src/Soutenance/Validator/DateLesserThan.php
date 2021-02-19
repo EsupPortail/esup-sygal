@@ -142,16 +142,15 @@ class DateLesserThan extends AbstractValidator
      */
     public function isValid($value)
     {
-        $date = (\DateTime::createFromFormat("d/m/Y", $value))->format('Y-m-d');
         $max = $this->max;
 
         if ($this->inclusive) {
-            if (! ($date < $max)) {
+            if (! ($value < $max)) {
                 $this->error(self::NOT_LESSER_INCLUSIVE);
                 return false;
             }
         } else {
-            if (! ($date <= $max)) {
+            if (! ($value <= $max)) {
                 $this->error(self::NOT_LESSER);
                 return false;
             }
