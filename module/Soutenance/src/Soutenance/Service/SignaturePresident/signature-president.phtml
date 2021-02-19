@@ -62,6 +62,8 @@ use Soutenance\Entity\Proposition;
 
     table.composition td{
         border-bottom:solid 1px gray;
+        /*margin-right: 0.5rem;*/
+        padding-right: 0.5rem;
     }
 
     table.composition tbody tr {
@@ -111,6 +113,8 @@ use Soutenance\Entity\Proposition;
 
 <br/>
 <br/>
+<br/>
+<br/>
 
 <h2> Récapitulatif de la thèse et soutenance </h2>
 
@@ -153,6 +157,7 @@ use Soutenance\Entity\Proposition;
         <tr>
             <th> Dénomination </th>
             <th> Qualité </th>
+            <th> Rôle </th>
             <th> Établissement/Organisme d'affectation </th>
             <th> Visio </th>
         </tr>
@@ -163,6 +168,19 @@ use Soutenance\Entity\Proposition;
             <tr>
                 <td> <?php echo $membre->getDenomination(); ?> </td>
                 <td> <?php echo ($membre->getQualite())?$membre->getQualite()->getLibelle():"Non définie"; ?> </td>
+                <td>
+                    <?php if ($membre->estRapporteur()) : ?>
+                        Rapporteur
+                    <?php else : ?>
+                        Membre du jury
+                    <?php endif; ?>
+                    <?php if ($membre->estDirecteur()) : ?>
+                        <br/> Directeur de thèse
+                    <?php endif; ?>
+                    <?php if ($membre->estCoDirecteur()) : ?>
+                        <br/> Co-directeur de thèse
+                    <?php endif; ?>
+                </td>
                 <td> <?php echo $membre->getEtablissement(); ?> </td>
                 <td> <?php echo ($membre->isVisio())?"Oui":"Non"; ?></td>
             </tr>
