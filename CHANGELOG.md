@@ -9,6 +9,7 @@ Journal des modifications
 - Financement : masquage possible de certaines origines de financement (ex : handicap).
 - Financement : la visibilité des origines masquées peut être forcée grâce à un privilège.
 - Interdiction de supprimer un fichier possédant un id permanent.
+- Masquage possible de certaines origines de financement (ex : handicap).
 - [FIX] Usurpation d'un compte local en BDD
 - [FIX] Plantage de la page Assistance en cas d'authentification locale BDD
 - [FIX] Injection manquante de la source SYGAL dans la création manuelle d'un utilisateur local (identifiant = adresse mail)
