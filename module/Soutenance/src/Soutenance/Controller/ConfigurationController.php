@@ -35,6 +35,8 @@ class ConfigurationController extends AbstractActionController
             Parametre::CODE_FORMULAIRE_THESE_ANGLAIS,
             Parametre::CODE_FORMULAIRE_LABEL_EUROPEEN,
             Parametre::CODE_FORMULAIRE_CONFIDENTIALITE,
+
+            Parametre::CODE_DIRECTEUR_INTERVENTION,
         ];
 
         foreach ($params as $param) {

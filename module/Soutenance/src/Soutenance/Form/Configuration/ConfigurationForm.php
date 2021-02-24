@@ -164,6 +164,19 @@ class ConfigurationForm extends Form {
             ]
         );
 
+        $this->add(
+            [
+                'type' => Text::class,
+                'name' => Parametre::CODE_DIRECTEUR_INTERVENTION,
+                'options' => [
+                    'label' => "Durée permettant aux directeurs d'intervenir [-j jour:+j jour] : ",
+                ],
+                'attributes' => [
+                    'id' => Parametre::CODE_DIRECTEUR_INTERVENTION,
+                ],
+            ]
+        );
+
         $this->add((new Submit('submit'))
             ->setValue("Enregister")
             ->setAttribute('class', 'btn btn-primary')

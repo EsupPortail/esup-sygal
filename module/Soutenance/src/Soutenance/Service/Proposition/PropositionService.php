@@ -33,6 +33,7 @@ use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
+use Zend\Mvc\Controller\AbstractActionController;
 
 class PropositionService {
     use EntityManagerAwareTrait;
@@ -53,7 +54,7 @@ class PropositionService {
      * @param These $these
      * @return Proposition
      */
-    public function create(These $these)
+    public function create(These $these) : Proposition
     {
         $proposition = new Proposition($these);
         $proposition->setEtat($this->getPropositionEtatByCode(Etat::EN_COURS));
@@ -81,8 +82,9 @@ class PropositionService {
 
     /**
      * @param Proposition $proposition
+     * @return Proposition
      */
-    public function update($proposition)
+    public function update(Proposition $proposition) : Proposition
     {
         try {
             $date = new DateTime();
@@ -99,6 +101,7 @@ class PropositionService {
         } catch (OptimisticLockException $e) {
             throw new RuntimeException("Une erreur s'est produite lors de la mise à jour de la proposition de soutenance !");
         }
+        return $proposition;
     }
 
     /**
@@ -210,6 +213,17 @@ class PropositionService {
         return $result;
     }
 
+    /**
+     * @param AbstractActionController $controller
+     * @param string $param
+     * @return Proposition|null
+     */
+    public function getRequestedProposition(AbstractActionController $controller, string $param = 'proposition') : ?Proposition
+    {
+        $id = $controller->params()->fromRoute($param);
+        $result = $this->find($id);
+        return $result;
+    }
     /**
      * @param These $these
      * @return Proposition

@@ -4,32 +4,23 @@ namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Acteur;
-use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Utilisateur;
-use Application\Entity\Db\VersionFichier;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
-use Soutenance\Entity\Justificatif;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Parametre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Form\Anglais\AnglaisFormAwareTrait;
 use Soutenance\Form\ChangementTitre\ChangementTitreFormAwareTrait;
-use Soutenance\Form\Confidentialite\ConfidentialiteForm;
 use Soutenance\Form\Confidentialite\ConfidentialiteFormAwareTrait;
-use Soutenance\Form\DateLieu\DateLieuForm;
 use Soutenance\Form\DateLieu\DateLieuFormAwareTrait;
-use Soutenance\Form\Justificatif\JustificatifFormAwareTrait;
-use Soutenance\Form\LabelEuropeen\LabelEuropeenForm;
 use Soutenance\Form\LabelEuropeen\LabelEuropeenFormAwareTrait;
-use Soutenance\Form\Membre\MembreForm;
 use Soutenance\Form\Membre\MembreFromAwareTrait;
-use Soutenance\Form\Refus\RefusForm;
 use Soutenance\Form\Refus\RefusFormAwareTrait;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
@@ -40,13 +31,13 @@ use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Soutenance\Service\SignaturePresident\SiganturePresidentPdfExporter;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
+use UnicaenAuth\Entity\Db\RoleInterface;
 use Zend\Form\Form;
 use Zend\Http\Request;
 use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\PhpRenderer;
 
 /** @method boolean isAllowed($resource, $privilege = null) */
-
 class PropositionController extends AbstractController
 {
     use ActeurServiceAwareTrait;
@@ -66,7 +57,6 @@ class PropositionController extends AbstractController
     use ConfidentialiteFormAwareTrait;
     use RefusFormAwareTrait;
     use ChangementTitreFormAwareTrait;
-    use JustificatifFormAwareTrait;
 
     /** @var PhpRenderer */
     private $renderer;
@@ -74,7 +64,7 @@ class PropositionController extends AbstractController
     /**
      * @param PhpRenderer $renderer
      */
-    public function setRenderer($renderer)
+    public function setRenderer(PhpRenderer $renderer)
     {
         $this->renderer = $renderer;
     }
@@ -200,12 +190,10 @@ class PropositionController extends AbstractController
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
 
-        /** @var DateLieuForm $form */
         $form = $this->getDateLieuForm();
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/modifier-date-lieu', ['these' => $these->getId()], [], true));
         $form->bind($proposition);
 
-        /** @var Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
             $this->updateAndUnvalidate($request, $form, $proposition);
@@ -225,7 +213,6 @@ class PropositionController extends AbstractController
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
 
-        /** @var MembreForm $form */
         $form = $this->getMembreForm();
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/modifier-membre', ['these' => $these->getId()], [], true));
 
@@ -238,7 +225,6 @@ class PropositionController extends AbstractController
         }
         $form->bind($membre);
 
-        /** @var Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
@@ -280,12 +266,10 @@ class PropositionController extends AbstractController
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
 
-        /** @var LabelEuropeenForm $form */
         $form = $this->getLabelEuropeenForm();
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/label-europeen', ['these' => $these->getId()], [], true));
         $form->bind($proposition);
 
-        /** @var Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
             $this->updateAndUnvalidate($request, $form, $proposition);
@@ -305,12 +289,10 @@ class PropositionController extends AbstractController
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
 
-        /** @var LabelEuropeenForm $form */
         $form = $this->getAnglaisForm();
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/anglais', ['these' => $these->getId()], [], true));
         $form->bind($proposition);
 
-        /** @var Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
             $this->updateAndUnvalidate($request, $form, $proposition);
@@ -330,12 +312,10 @@ class PropositionController extends AbstractController
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
 
-        /** @var ConfidentialiteForm $form */
         $form = $this->getConfidentialiteForm();
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/confidentialite', ['these' => $these->getId()], [], true));
         $form->bind($proposition);
 
-        /** @var Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
             $this->updateAndUnvalidate($request, $form, $proposition);
@@ -355,12 +335,10 @@ class PropositionController extends AbstractController
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
 
-        /** @var ConfidentialiteForm $form */
         $form = $this->getChangementTitreForm();
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/changement-titre', ['these' => $these->getId()], [], true));
         $form->bind($proposition);
 
-        /** @var Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
             $this->updateAndUnvalidate($request, $form, $proposition);
@@ -382,7 +360,6 @@ class PropositionController extends AbstractController
         $validation = $this->getValidationService()->validatePropositionSoutenance($these);
         $this->getNotifierSoutenanceService()->triggerValidationProposition($these, $validation);
 
-        /** @var Doctorant $doctorant */
         $doctorant = $these->getDoctorant();
 
         /** @var Acteur[] $acteurs */
@@ -430,7 +407,6 @@ class PropositionController extends AbstractController
                 break;
             default :
                 throw new RuntimeException("Le role [" . $role->getCode() . "] ne peut pas valider cette proposition.");
-                break;
         }
 
         return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
@@ -442,17 +418,16 @@ class PropositionController extends AbstractController
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
 
-        /** @var RefusForm $form */
         $form = $this->getRefusForm();
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/refuser-structure', ['these' => $these->getId()], [], true));
 
-        /** @var Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
             if ($data['motif'] !== null) {
                 $this->getPropositionService()->annulerValidations($proposition);
                 $currentUser = $this->userContextService->getIdentityIndividu();
+                /** @var RoleInterface $currentRole */
                 $currentRole = $this->userContextService->getSelectedIdentityRole();
                 $this->getNotifierSoutenanceService()->triggerRefusPropositionSoutenance($these, $currentUser, $currentRole, $data['motif']);
             }
@@ -474,7 +449,6 @@ class PropositionController extends AbstractController
         $codirecteurs = $this->getActeurService()->getRepository()->findActeursByTheseAndRole($these, Role::CODE_CODIRECTEUR_THESE);
 
 
-
         $exporter = new SiganturePresidentPdfExporter($this->renderer, 'A4');
         $exporter->setVars([
             'proposition' => $proposition,
@@ -492,7 +466,6 @@ class PropositionController extends AbstractController
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
 
-        /** @var Acteur[] $directeurs */
         $directeurs = $this->getActeurService()->getRepository()->findEncadrementThese($these);
 
         /** @var Membre[] $rapporteurs */
@@ -513,61 +486,6 @@ class PropositionController extends AbstractController
             'rapporteurs' => $rapporteurs,
             'validationPDC' => $validationPDC,
         ]);
-    }
-
-    public function ajouterJustificatifAction()
-    {
-
-        $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
-
-        $justificatif = new Justificatif();
-        $justificatif->setProposition($proposition);
-        $form = $this->getJustificatifForm();
-        $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/ajouter-justificatif', ['these' => $these->getId()], [], true));
-        $form->bind($justificatif);
-        $form->init();
-
-        /** @var Request $request */
-        $request = $this->getRequest();
-        if ($request->isPost()) {
-            $data = $request->getPost();
-            $files = ['files' => $request->getFiles()->toArray()];
-
-            $form->setData($data);
-            if ($form->isValid()) {
-                $nature = $this->fichierTheseService->fetchNatureFichier($data['nature']);
-                $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
-                $fichiers = $this->fichierTheseService->createFichierThesesFromUpload($these, $files, $nature, $version);
-                $justificatif->setFichier($fichiers[0]);
-                $this->getJustificatifService()->create($justificatif);
-                return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
-            }
-        }
-
-        $justificatifs = $this->getJustificatifService()->generateListeJustificatif($proposition);
-
-        return new ViewModel([
-            'these' => $these,
-            'form' => $form,
-            'justificatifs' => $justificatifs,
-
-            'FORMULAIRE_DELOCALISATION' => $this->getParametreService()->getParametreByCode(Parametre::CODE_FORMULAIRE_DELOCALISATION)->getValeur(),
-            'FORMULAIRE_DELEGUATION' => $this->getParametreService()->getParametreByCode(Parametre::CODE_FORMULAIRE_DELEGUATION)->getValeur(),
-            'FORMULAIRE_DEMANDE_LABEL' => $this->getParametreService()->getParametreByCode(Parametre::CODE_FORMULAIRE_LABEL_EUROPEEN)->getValeur(),
-            'FORMULAIRE_DEMANDE_ANGLAIS' => $this->getParametreService()->getParametreByCode(Parametre::CODE_FORMULAIRE_THESE_ANGLAIS)->getValeur(),
-            'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $this->getParametreService()->getParametreByCode(Parametre::CODE_FORMULAIRE_CONFIDENTIALITE)->getValeur(),
-        ]);
-    }
-
-    public function retirerJustificatifAction()
-    {
-
-        $these = $this->requestedThese();
-        $justifcatif = $this->getJustificatifService()->getRequestedJustificatif($this);
-        $this->getJustificatifService()->delete($justifcatif);
-
-        return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
     }
 
     public function toggleSursisAction()

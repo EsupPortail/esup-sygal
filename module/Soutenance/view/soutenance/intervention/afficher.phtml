@@ -1,0 +1,165 @@
+<?php
+
+use Application\Entity\Db\NatureFichier;
+use Application\Entity\Db\These;
+use Soutenance\Entity\Intervention;
+use Soutenance\Entity\Membre;
+use Soutenance\Entity\Proposition;
+use Soutenance\Provider\Privilege\InterventionPrivileges;
+
+/**
+ * @see \Soutenance\Controller\InterventionController::afficherAction()
+ * @var These $these
+ * @var Intervention $distanciel
+ * @var Proposition $proposition
+ * @var array $justificatifs
+ * @var string $urlFichierThese;
+ * @var string $FORMULAIRE_DELEGUATION
+ */
+
+$this->headTitle("Intervention sur la soutenance de thèse de " . $these->getDoctorant()->getIndividu()->getNomComplet(false, false, false, true));
+
+
+function getJustificatif(array $justificatifs, string $type, Membre $membre) {
+    foreach ($justificatifs as $justificatif) {
+        if ($justificatif['type'] === $type AND $justificatif['membre'] === $membre) return $justificatif['justificatif'];
+    }
+    return null;
+}
+
+
+$canAfficher = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_AFFICHER);
+$canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MODIFIER);
+
+//var_dump([
+//    'canAfficher' => $canAfficher,
+//    'canModifier' => $canModifier,
+//]);
+?>
+
+<h1 class="page-header">
+    Intervention sur la soutenance de thèse de <?php echo  $these->getDoctorant()->getIndividu()->getNomComplet(false, false, false, true); ?>
+</h1>
+
+<?php if (!$canAfficher) : ?>
+    <div class="alert alert-danger">
+        <p class="lead">
+            Vous n'êtes pas habilité&middot;e à afficher la liste des interventions sur la soutenance de la thèse de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(false, false, false, true); ?>
+        </p>
+    </div>
+<?php else : ?>
+    <?php
+    $classe_distanciel = 'panel-warning';
+    if ($distanciel !== null) {
+        $classe_distanciel = 'panel-success';
+        foreach ($proposition->getMembres() as $membre) {
+            if (getJustificatif($justificatifs, NatureFichier::CODE_DELEGUATION_SIGNATURE, $membre) === null) {
+                $classe_distanciel = 'panel-danger';
+                break;
+            }
+        }
+    }
+    ?>
+    <div class="panel <?php echo $classe_distanciel; ?>">
+        <div class="panel-heading">
+            Déclaration du président du jury en distanciel
+        </div>
+        <div class="panel-body">
+
+            <?php if ($distanciel !== null) : ?>
+                <?php /** IL EXISTE UNE DECLARATATION DE DISTANCIEL POUR LE PRESIDENT  *****************************/ ?>
+
+                <?php /** DECLARATION ******************************************************************/ ?>
+                <div class="row">
+                    <div class="col-md-8">
+                        Déclaration que le président du jury sera en distanciel
+                        faite le <?php echo $distanciel->getHistoCreation()->format('d/m/Y'); ?>
+                        par <?php echo $distanciel->getHistoCreateur()->getDisplayName(); ?>.
+                    </div>
+                    <?php if ($canModifier) : ?>
+                        <div class="pull-right" style="margin-right: 1rem;">
+                            <a      <?php /** @see \Soutenance\Controller\InterventionController::togglePresidentDistancielAction() */?>
+                                    href="<?php echo $this->url('soutenance/intervention/toggle-president-distanciel', ['these' => $these->getId()], [], true); ?>" class="btn btn-primary action">
+                                <span class="glyphicon glyphicon-minus"></span> Président en distanciel
+                            </a>
+                        </div>
+                    <?php endif; ?>
+                </div>
+
+                <br/>
+
+                <?php /** LISTE DES JUSTIFICATIFS ******************************************************************/ ?>
+                <div>
+                    Liste des déléguations designatures :
+                    <ul>
+                    <?php foreach ($proposition->getMembres() as $membre) : ?>
+                        <?php $justificatif = getJustificatif($justificatifs, NatureFichier::CODE_DELEGUATION_SIGNATURE, $membre); ?>
+                        <li>
+                            <?php if ($justificatif !== null) : ?>
+                                <?php echo $this->justificatif()->render($justificatif, $urlFichierThese, ['court' => true]); ?>
+                                <?php if ($canModifier) : ?>
+                                    <a      <?php /** @see \Soutenance\Controller\JustificatifController::retirerAction() */?>
+                                            href="<?php echo $this->url("soutenance/justificatif/retirer", ["justificatif" => $justificatif->getId()], ["query" => ["retour" => $this->url('soutenance/intervention/afficher', ["these" => $these->getId()], [], true)]], true); ?>"
+                                    >
+                                    <span class="glyphicon glyphicon-trash"></span></a>
+                                <?php endif; ?>
+                            <?php else : ?>
+                                <span class="text text-danger">Déléguation de signature manquante pour <strong style="font-variant:small-caps;"><?php echo $membre->getDenomination(); ?></strong></span>
+                                <?php if ($canModifier) : ?>
+                                    <a      <?php /** @see \Soutenance\Controller\JustificatifController::ajouterAction() */?>
+                                            href="<?php echo $this->url("soutenance/justificatif/ajouter", ["proposition" => $proposition->getId(), "nature" => NatureFichier::CODE_DELEGUATION_SIGNATURE, "membre" => $membre->getId()], [], true); ?>"
+                                            class="btn btn-xs btn-primary ajax-modal" data-event='modification' style="margin: 1px;">
+                                    <span class="glyphicon glyphicon-upload"></span> Déposer le justificatif </a>
+                                <?php endif; ?>
+                            <?php endif; ?>
+
+                        </li>
+                    <?php endforeach; ?>
+                    </ul>
+                </div>
+
+                <br/>
+
+                <?php /** LIEN VERS LE FORMULAIRE DOC **************************************************************/ ?>
+                <div class="alert alert-info">
+                    Vous pouvez télécharger les formulaires de déléguation grâce au lien suivant :
+                    <strong><u>
+                    <a href="<?php echo $FORMULAIRE_DELEGUATION; ?>">
+                        formulaire de demande de déléguation
+                    </a>
+                    </u></strong>.
+                </div>
+
+            <?php else: ?>
+
+                <?php /** AUCUNE DECLARATATION DE DISTANCIEL POUR LE PRESIDENT  ************************************/ ?>
+                <div class="row">
+                    <div class="col-md-8">
+                        Vous pouvez déclarer ici que le président du jury examinera la soutenance en distanciel.
+                    </div>
+                    <?php if ($canModifier) : ?>
+                    <div class="pull-right" style="margin-right: 1rem;">
+                        <a      <?php /** @see \Soutenance\Controller\InterventionController::togglePresidentDistancielAction() */?>
+                                href="<?php echo $this->url('soutenance/intervention/toggle-president-distanciel', ['these' => $these->getId()], [], true); ?>" class="btn btn-primary action">
+                            <span class="glyphicon glyphicon-plus"></span> Président en distanciel
+                        </a>
+                    </div>
+                    <?php endif; ?>
+                </div>
+
+                <div class="alert alert-warning">
+                    <span class="glyphicon glyphicon-warning-sign"></span> Si le Président du jury est en distanciel tous les membres du jury devront remplir une déléguation de signature.
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+<?php endif; ?>
+
+<script>
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+</script>
