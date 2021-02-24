@@ -29,7 +29,8 @@ foreach ($proposition->getMembres() as $membre) {
     <div class="panel-body">
 
         <?php if ($canModifier) : ?>
-            <a href="<?php echo $this->url('soutenance/proposition/ajouter-justificatif', [ 'these' => $these->getId()], [], true); ?>" class="btn btn-primary">
+            <a href="<?php echo $this->url('soutenance/justificatif/ajouter-justificatif', [ 'these' => $these->getId()], [], true); ?>"
+               class="btn btn-primary ajax-modal" data-event="modification">
                 Téléversement d'un justificatif
             </a>
         <?php endif; ?>
@@ -100,3 +101,13 @@ foreach ($proposition->getMembres() as $membre) {
         <?php endforeach; ?>
     </div>
 </div>
+
+
+<script>
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+</script>

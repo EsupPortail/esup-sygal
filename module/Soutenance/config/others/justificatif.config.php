@@ -45,6 +45,7 @@ return [
                     'controller' => JustificatifController::class,
                     'action' => [
                         'ajouter',
+                        'ajouter-justificatif',
                     ],
                     'privileges' => JustificatifPrivileges::JUSTIFICATIF_AJOUTER,
                 ],
@@ -87,6 +88,16 @@ return [
                                     'defaults' => [
                                         'controller' => JustificatifController::class,
                                         'action' => 'retirer',
+                                    ],
+                                ],
+                            ],
+                            'ajouter-justificatif' => [
+                                'type' => Segment::class,
+                                'options' => [
+                                    'route' => '/ajouter-justificatif/:these',
+                                    'defaults' => [
+                                        'controller' => JustificatifController::class,
+                                        'action' => 'ajouter-justificatif',
                                     ],
                                 ],
                             ],

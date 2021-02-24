@@ -83,7 +83,6 @@ return [
                         'anglais',
                         'confidentialite',
                         'changement-titre',
-                        'ajouter-justificatif',
                     ],
                     'privileges' => PropositionPrivileges::PROPOSITION_MODIFIER,
                 ],
@@ -289,17 +288,6 @@ return [
                                     'defaults' => [
                                         'controller' => PropositionController::class,
                                         'action' => 'changement-titre',
-                                    ],
-                                ],
-                            ],
-                            'ajouter-justificatif' => [
-                                'type' => Literal::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route' => '/ajouter-justificatif',
-                                    'defaults' => [
-                                        'controller' => PropositionController::class,
-                                        'action' => 'ajouter-justificatif',
                                     ],
                                 ],
                             ],

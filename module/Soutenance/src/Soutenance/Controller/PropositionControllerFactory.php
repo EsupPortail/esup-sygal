@@ -24,7 +24,8 @@ use Soutenance\Service\Validation\ValidationService;
 use Zend\Mvc\Controller\ControllerManager;
 use Zend\View\Renderer\PhpRenderer;
 
-class PropositionControllerFactory {
+class PropositionControllerFactory
+{
 
     /**
      * @param ContainerInterface $container
@@ -63,7 +64,6 @@ class PropositionControllerFactory {
          * @var ConfidentialiteForm $confidentialiteForm
          * @var RefusForm $refusForm
          * @var ChangementTitreForm $changementTitreForm
-         * @var JustificatifForm $justificatifForm
          */
         $dateLieuForm = $container->get('FormElementManager')->get(DateLieuForm::class);
         $membreForm = $container->get('FormElementManager')->get(MembreForm::class);
@@ -72,7 +72,6 @@ class PropositionControllerFactory {
         $confidentialiteForm = $container->get('FormElementManager')->get(ConfidentialiteForm::class);
         $refusForm = $container->get('FormElementManager')->get(RefusForm::class);
         $changementTitreForm = $container->get('FormElementManager')->get(ChangementTitreForm::class);
-        $justificatifForm = $container->get('FormElementManager')->get(JustificatifForm::class);
 
         /* @var $renderer PhpRenderer */
         $renderer = $container->get('ViewRenderer');
@@ -98,7 +97,6 @@ class PropositionControllerFactory {
         $controller->setConfidentialiteForm($confidentialiteForm);
         $controller->setRefusForm($refusForm);
         $controller->setChangementTitreForm($changementTitreForm);
-        $controller->setJustificatifForm($justificatifForm);
 
         $controller->setRenderer($renderer);
 

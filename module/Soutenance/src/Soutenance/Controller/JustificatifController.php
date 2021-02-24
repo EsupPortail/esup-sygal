@@ -66,4 +66,52 @@ class JustificatifController extends AbstractController {
 
         return $this->redirect()->toUrl($retour);
     }
+
+    public function ajouterJustificatifAction()
+    {
+
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findByThese($these);
+
+        $justificatif = new Justificatif();
+        $justificatif->setProposition($proposition);
+        $form = $this->getJustificatifForm();
+        $form->setAttribute('action', $this->url()->fromRoute('soutenance/justificatif/ajouter-justificatif', ['these' => $these->getId()], [], true));
+        $form->bind($justificatif);
+        $form->init();
+
+        /** @var Request $request */
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $files = ['files' => $request->getFiles()->toArray()];
+
+            $form->setData($data);
+            if ($form->isValid()) {
+                $nature = $this->fichierTheseService->fetchNatureFichier($data['nature']);
+                $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
+                $fichiers = $this->fichierTheseService->createFichierThesesFromUpload($these, $files, $nature, $version);
+                $justificatif->setFichier($fichiers[0]);
+                $this->getJustificatifService()->create($justificatif);
+//                return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
+            }
+        }
+
+        $justificatifs = $this->getJustificatifService()->generateListeJustificatif($proposition);
+
+        $vm =  new ViewModel([
+            'title' => "Téléversement d'un justificatif",
+            'these' => $these,
+            'form' => $form,
+            'justificatifs' => $justificatifs,
+
+            'FORMULAIRE_DELOCALISATION' => $this->getParametreService()->getParametreByCode(Parametre::CODE_FORMULAIRE_DELOCALISATION)->getValeur(),
+            'FORMULAIRE_DELEGUATION' => $this->getParametreService()->getParametreByCode(Parametre::CODE_FORMULAIRE_DELEGUATION)->getValeur(),
+            'FORMULAIRE_DEMANDE_LABEL' => $this->getParametreService()->getParametreByCode(Parametre::CODE_FORMULAIRE_LABEL_EUROPEEN)->getValeur(),
+            'FORMULAIRE_DEMANDE_ANGLAIS' => $this->getParametreService()->getParametreByCode(Parametre::CODE_FORMULAIRE_THESE_ANGLAIS)->getValeur(),
+            'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $this->getParametreService()->getParametreByCode(Parametre::CODE_FORMULAIRE_CONFIDENTIALITE)->getValeur(),
+        ]);
+//        $vm->setTemplate('soutenance/default/default-form');
+        return $vm;
+    }
 }
