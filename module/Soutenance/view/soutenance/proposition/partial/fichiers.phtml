@@ -59,8 +59,6 @@ foreach ($proposition->getMembres() as $membre) {
         <?php endif; ?>
 
         <?php
-        $justificatifs = $proposition->getJustificatifs();
-
         $typesJustificatif = [
             NatureFichier::CODE_JUSTIFICATIF_HDR => NatureFichier::LABEL_JUSTIFICATIF_HDR,
             NatureFichier::CODE_JUSTIFICATIF_EMERITAT => NatureFichier::LABEL_JUSTIFICATIF_EMERITAT,
@@ -74,7 +72,7 @@ foreach ($proposition->getMembres() as $membre) {
         ?>
 
         <?php foreach ($typesJustificatif as $code => $label): ?>
-            <?php $liste = array_filter($proposition->getJustificatifs(), function(Justificatif $j) use ($code) {return $j->getFichier()->getFichier()->getNature()->getCode() === $code; }); ?>
+            <?php $liste = array_filter($justificatifs, function($j) use ($code) {return ($j["type"] === $code AND $j["justificatif"] !== null);}); ?>
             <?php if (!empty($liste)) : ?>
             <h4>
                 <?php echo $label; ?>
@@ -84,10 +82,14 @@ foreach ($proposition->getMembres() as $membre) {
                 <?php /** @var Justificatif $justificatif */
                 foreach($liste as $justificatif) : ?>
                     <li>
-                        <?php echo $this->justificatif()->render($justificatif, $urlFichierThese, ['court' => true]); ?>
+                        <?php echo $this->justificatif()->render($justificatif['justificatif'], $urlFichierThese, ['court' => true]); ?>
                         <?php if ($canModifier) : ?>
-                            <?php /** @see \Soutenance\Controller\PropositionController::retirerJustificatifAction() */ ?>
-                            <a href="<?php echo $this->url('soutenance/proposition/retirer-justificatif', ['these'=>$these->getId(), 'justificatif'=>$justificatif->getId()], [], true); ?>">
+                            <?php /** @see \Soutenance\Controller\JustificatifController::retirerAction() */ ?>
+                            <?php $retour = $this->url('soutenance/proposition', ['these' => $these->getId()],['force_canonical' => true ], true); ?>
+                            <a href="<?php echo $this->url('soutenance/justificatif/retirer',
+                                    ['justificatif'=>$justificatif['justificatif']->getId()],
+                                    ["query" => ["retour" => $retour]],
+                                    true); ?>">
                                 <span style='color:darkred;' class="glyphicon glyphicon-remove" title="Supprimer le justificatif"></span>
                             </a>
                         <?php endif; ?>

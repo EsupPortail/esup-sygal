@@ -560,16 +560,6 @@ class PropositionController extends AbstractController
         ]);
     }
 
-    public function retirerJustificatifAction()
-    {
-
-        $these = $this->requestedThese();
-        $justifcatif = $this->getJustificatifService()->getRequestedJustificatif($this);
-        $this->getJustificatifService()->delete($justifcatif);
-
-        return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
-    }
-
     public function toggleSursisAction()
     {
         $these = $this->requestedThese();
