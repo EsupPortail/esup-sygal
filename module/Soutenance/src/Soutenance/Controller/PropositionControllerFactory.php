@@ -3,15 +3,12 @@
 namespace Soutenance\Controller;
 
 use Application\Service\Acteur\ActeurService;
-use Application\Service\FichierThese\FichierTheseService;
-use Application\Service\These\TheseService;
 use Application\Service\UserContextService;
 use Interop\Container\ContainerInterface;
 use Soutenance\Form\Anglais\AnglaisForm;
 use Soutenance\Form\ChangementTitre\ChangementTitreForm;
 use Soutenance\Form\Confidentialite\ConfidentialiteForm;
 use Soutenance\Form\DateLieu\DateLieuForm;
-use Soutenance\Form\Justificatif\JustificatifForm;
 use Soutenance\Form\LabelEuropeen\LabelEuropeenForm;
 use Soutenance\Form\Membre\MembreForm;
 use Soutenance\Form\Refus\RefusForm;
@@ -21,7 +18,6 @@ use Soutenance\Service\Notifier\NotifierSoutenanceService;
 use Soutenance\Service\Parametre\ParametreService;
 use Soutenance\Service\Proposition\PropositionService;
 use Soutenance\Service\Validation\ValidationService;
-use Zend\Mvc\Controller\ControllerManager;
 use Zend\View\Renderer\PhpRenderer;
 
 class PropositionControllerFactory
@@ -38,10 +34,8 @@ class PropositionControllerFactory
          * @var MembreService $membreService
          * @var NotifierSoutenanceService $notificationSoutenanceService
          * @var PropositionService $propositionService
-         * @var TheseService $theseService
          * @var UserContextService $userContextService
          * @var ValidationService $validationService
-         * @var FichierTheseService $fichierTheseService
          * @var JustificatifService $justificatifService
          * @var ParametreService $parametreService
          */
@@ -49,10 +43,8 @@ class PropositionControllerFactory
         $membreService = $container->get(MembreService::class);
         $notificationSoutenanceService = $container->get(NotifierSoutenanceService::class);
         $propositionService = $container->get(PropositionService::class);
-        $theseService = $container->get('TheseService');
         $userContextService = $container->get('UserContextService');
         $validationService = $container->get(ValidationService::class);
-        $fichierTheseService = $container->get(FichierTheseService::class);
         $justificatifService = $container->get(JustificatifService::class);
         $parametreService = $container->get(ParametreService::class);
 
@@ -76,17 +68,14 @@ class PropositionControllerFactory
         /* @var $renderer PhpRenderer */
         $renderer = $container->get('ViewRenderer');
 
-        /** @var PropositionController $controller */
         $controller = new PropositionController();
 
         $controller->setActeurService($acteurService);
         $controller->setMembreService($membreService);
         $controller->setNotifierSoutenanceService($notificationSoutenanceService);
         $controller->setPropositionService($propositionService);
-        $controller->setTheseService($theseService);
         $controller->setUserContextService($userContextService);
         $controller->setValidationService($validationService);
-        $controller->setFichierTheseService($fichierTheseService);
         $controller->setJustificatifService($justificatifService);
         $controller->setParametreService($parametreService);
 
