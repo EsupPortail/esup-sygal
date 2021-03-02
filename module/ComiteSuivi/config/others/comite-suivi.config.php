@@ -56,7 +56,7 @@ return [
             'comite-suivi' => [
 //                'type'          => Segment::class,
 //                'options'       => [
-//                    'route'    => '/comite-suivi[/:these]',
+//                    'route'    => '/comite-suivi/index/:these',
 //                    'defaults' => [
 //                        'controller'    => ComiteSuiviController::class,
 //                        'action'        => 'index',
@@ -64,10 +64,20 @@ return [
 //                ],
 //                'may_terminate' => true,
                 'child_routes'  => [
-                    'ajouter' => [
-                        'type'          => Literal::class,
+                    'index' => [
+                        'type'          => Segment::class,
                         'options'       => [
-                            'route'    => '/ajouter',
+                            'route'    => '/index/:these',
+                            'defaults' => [
+                                'controller'    => ComiteSuiviController::class,
+                                'action'        => 'index',
+                            ],
+                        ],
+                    ],
+                    'ajouter' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'    => '/ajouter/:these',
                             'defaults' => [
                                 'controller'    => ComiteSuiviController::class,
                                 'action'        => 'ajouter',

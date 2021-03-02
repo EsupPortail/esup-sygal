@@ -28,6 +28,7 @@ class NatureFichier
     const CODE_DEMANDE_LABEL = 'DEMANDE_LABEL_EUROPEEN';
     const CODE_LANGUE_ANGLAISE = 'DEMANDE_LANGUE_ANGLAISE';
     const CODE_AUTRES_JUSTIFICATIFS = 'AUTRES_JUSTIFICATIFS';
+    const CODE_COMPTE_RENDU_COMITE_SUIVI = 'COMPTE_RENDU_COMITE_SUIVI';
 
     const LABEL_JUSTIFICATIF_HDR = "Justificatif d'habilitation à diriger des recherches";
     const LABEL_JUSTIFICATIF_EMERITAT = "Justificatif d'émeritat";
@@ -37,6 +38,7 @@ class NatureFichier
     const LABEL_DEMANDE_LABEL = "Formulaire de demande de label européen";
     const LABEL_DEMANDE_CONFIDENT = "Formulaire de demande de confidentialité";
     const LABEL_AUTRES_JUSTIFICATIFS = "Autres justificatifs concernant la soutenance";
+    const LABEL_COMPTE_RENDU_COMITE_SUIVI = "Compte rendu d'un comité de suivi de thèse";
 
     /**
      * @var string

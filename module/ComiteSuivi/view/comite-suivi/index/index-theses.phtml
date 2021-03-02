@@ -3,6 +3,7 @@
 /**
  * @var ComiteSuivi[] $comites
  * @var string $anneeScolaire
+ * @var These $these
  */
 
 use Application\Entity\Db\These;
@@ -24,7 +25,6 @@ $canModifierComite = $this->isAllowed(ComiteSuiviPrivileges::getResourceId(Comit
     <?php /** @var ComiteSuivi[] $comiteArray */ ?>
     <?php foreach ($comites as $theseId => $comiteArray) : ?>
         <?php $comite_ = current($comiteArray); ?>
-        <?php /** @var These $these */ $these = $comite_->getThese(); ?>
 
         <h2>
             <?php echo $these->getTitre(); ?>

@@ -25,9 +25,17 @@ use ComiteSuivi\Entity\Db\CompteRendu;
         par <em><?php echo $compterendu->getHistoModificateur()->getDisplayName(); ?></em>.
     </p>
 
-    <h2>
-        Compte-rendu
-    </h2>
+    <?php if ($compterendu->getFichier() !== null) : ?>
+        <h2>
+            Compte-rendu
+        </h2>
 
-    <?php echo $compterendu->getReponse(); ?>
+        <a
+            <?php /** @see TELECHARGER FICHIER */ ?>
+                href=" <?php echo $this->urlFichierThese->telechargerFichierThese($these, $compterendu->getFichier()); ?>" >
+            <?php echo $compterendu->getFichier()->getNom(); ?>
+        </a>
+    <?php else: ?>
+        Aucun compte-rendu
+    <?php endif; ?>
 </div>

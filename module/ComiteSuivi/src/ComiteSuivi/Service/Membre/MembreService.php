@@ -153,10 +153,10 @@ class MembreService {
     }
 
     /**
-     * @param $id
+     * @param int|null $id
      * @return Membre|null
      */
-    public function getMembre(int $id) : ?Membre
+    public function getMembre(?int $id) : ?Membre
     {
         $qb = $this->createQueryBuilder()
             ->andWhere('membre.id = :id')

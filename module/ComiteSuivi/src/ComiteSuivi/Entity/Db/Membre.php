@@ -106,9 +106,9 @@ class Membre {
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPrenom() : string
+    public function getPrenom() : ?string
     {
         return $this->prenom;
     }

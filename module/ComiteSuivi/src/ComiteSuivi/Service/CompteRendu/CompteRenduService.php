@@ -2,14 +2,20 @@
 
 namespace ComiteSuivi\Service\CompteRendu;
 
+use Application\Entity\Db\NatureFichier;
+use Application\Entity\Db\VersionFichier;
+use Application\Service\Fichier\FichierServiceAwareTrait;
+use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use ComiteSuivi\Entity\DateTimeTrait;
 use ComiteSuivi\Entity\Db\ComiteSuivi;
 use ComiteSuivi\Entity\Db\CompteRendu;
 use ComiteSuivi\Entity\Db\Membre;
+use ComiteSuivi\Filter\NomCompteRenduFormatter;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\QueryBuilder;
+use Soutenance\Filter\NomAvisFormatter;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Zend\Mvc\Controller\AbstractActionController;
@@ -19,6 +25,8 @@ class CompteRenduService
     use EntityManagerAwareTrait;
     use DateTimeTrait;
     use UserContextServiceAwareTrait;
+    use FichierTheseServiceAwareTrait;
+    use FichierServiceAwareTrait;
 
     /** GESTION DES ENTITES *******************************************************************************************/
 
@@ -186,5 +194,15 @@ class CompteRenduService
             throw new RuntimeException("Plusieurs CompteRendu partagent le même comite [".$comite->getId()."]et le examinateur [".$examinateur->getId()."]", 0, $e);
         }
         return $result;
+    }
+
+    public function createCompteRenduFromUpload(array $files, ?Membre $membre)
+    {
+        $nature = $this->fichierTheseService->fetchNatureFichier(NatureFichier::CODE_COMPTE_RENDU_COMITE_SUIVI);
+        $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
+        $fichiers = $this->fichierService->createFichiersFromUpload($files, $nature, $version, new NomCompteRenduFormatter($membre));
+        $this->fichierService->saveFichiers($fichiers);
+
+        return current($fichiers);
     }
 }

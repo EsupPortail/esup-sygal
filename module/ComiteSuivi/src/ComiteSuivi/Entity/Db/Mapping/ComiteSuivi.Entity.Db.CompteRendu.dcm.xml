@@ -19,7 +19,11 @@
             </join-columns>
         </many-to-one>
 
-        <field name="reponse"          type="string"   column="REPONSE"              length="1024"     nullable="true"/>
+        <one-to-one field="fichier" target-entity="Application\Entity\Db\Fichier">
+            <join-columns>
+                <join-column name="FICHIER_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </one-to-one>
         <field name="finaliser"        type="datetime" column="FINALISER"                              nullable="true"/>
 
         <!-- historisation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->

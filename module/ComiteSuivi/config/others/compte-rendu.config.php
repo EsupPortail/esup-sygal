@@ -43,7 +43,7 @@ return [
                     'ajouter' => [
                         'type'          => Segment::class,
                         'options'       => [
-                            'route'    => '/ajouter/:comite-suivi[/:membre]',
+                            'route'    => '/ajouter/:comite-suivi',
                             'defaults' => [
                                 'controller'    => CompteRenduController::class,
                                 'action'        => 'ajouter',

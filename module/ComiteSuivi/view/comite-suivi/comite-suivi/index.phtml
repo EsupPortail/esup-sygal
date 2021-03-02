@@ -48,8 +48,8 @@ $this->headTitle($titre);
                     <a
                         <?php /** @see \ComiteSuivi\Controller\ComiteSuiviController::ajouterAction() */?>
                         href="<?php echo $this->url('comite-suivi/ajouter', ['these' => $these->getId()], [], true); ?>"
-                       class="btn btn-primary ajax-modal"
-                       data-event="ajout-comite"
+                        class="btn btn-primary ajax-modal"
+                        data-event="modification"
                     >
                             <span class="glyphicon glyphicon-plus"></span>
                             Ajouter un comité de suivi

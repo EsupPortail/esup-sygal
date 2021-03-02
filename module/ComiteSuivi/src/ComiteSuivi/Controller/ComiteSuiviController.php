@@ -68,9 +68,7 @@ class ComiteSuiviController extends AbstractActionController {
 
     public function ajouterAction()
     {
-        /** @var These $these */
-        $theseId = $this->params()->fromRoute('these');
-        $these = $this->getTheseService()->getRepository()->find($theseId);
+        $these = $this->getTheseService()->getRequestedThese($this);
 
         $comites = $this->getComiteSuiviService()->getComitesSuivisByThese($these);
         $max = 1;
@@ -84,7 +82,7 @@ class ComiteSuiviController extends AbstractActionController {
         $comite->setAnneeThese($max+1);
 
         $form = $this->getComiteSuiviForm();
-        $form->setAttribute('action', $this->url()->fromRoute('comite-suivi/ajouter', [], [], true));
+        $form->setAttribute('action', $this->url()->fromRoute('comite-suivi/ajouter', ['these' => $these->getId()], [], true));
         $form->bind($comite);
 
         /** @var Request $request */
@@ -94,7 +92,6 @@ class ComiteSuiviController extends AbstractActionController {
             $form->setData($data);
             if ($form->isValid()) {
                 $this->getComiteSuiviService()->create($comite);
-                exit();
             }
         }
 

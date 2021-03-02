@@ -4,6 +4,7 @@ namespace ComiteSuivi\Form\ComiteSuivi;
 
 use ComiteSuivi\Entity\DateTimeTrait;
 use Zend\Form\Element\Button;
+use Zend\Form\Element\DateTime;
 use Zend\Form\Element\Hidden;
 use Zend\Form\Element\Select;
 use Zend\Form\Form;
@@ -58,6 +59,18 @@ class ComiteSuiviForm extends Form {
                 'id' => 'annee_scolaire',
             ],
         ]);
+        //date
+        $this->add([
+            'name' => 'date_comite',
+            'type' => DateTime::class,
+            'options' => [
+                'label' => 'Date du comité * : ',
+                'format' => 'd/m/Y',
+            ],
+            'attributes' => [
+                'id' => 'date_comite',
+            ],
+        ]);
         //submit
         $this->add([
             'type' => Button::class,
@@ -79,6 +92,9 @@ class ComiteSuiviForm extends Form {
                 'required' => true,
             ],
             'annee_scolaire' => [
+                'required' => true,
+            ],
+            'date_comite' => [
                 'required' => true,
             ],
         ]));

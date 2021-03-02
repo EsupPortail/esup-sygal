@@ -23,6 +23,24 @@ class IndexController extends AbstractActionController {
         $role = $this->userContextService->getSelectedIdentityRole();
         $individu = $this->userContextService->getIdentityDb()->getIndividu();
 
+        // Si une these est fournie alors on retourne la liste des comites de suivis de celle-ci
+        $these = $this->getTheseService()->getRequestedThese($this);
+        if ($these) {
+            $comites[$these->getId()] = $this->getComiteSuiviService()->getComitesSuivisByThese($these);
+
+            $vm = new ViewModel([
+                    'these' => $these,
+                    'comites' => $comites,
+                    'role' => $role,
+                    'individu' => $individu,
+                    'anneeScolaire' => $this->getAnneeScolaire(),
+            ]);
+            $vm->setTemplate('comite-suivi/index/index-theses');
+            return $vm;
+        }
+
+
+
         $vm = new ViewModel();
         $vm->setTemplate('comite-suivi/index/index-non-autorise');
         $comites = [];
@@ -56,6 +74,7 @@ class IndexController extends AbstractActionController {
                 break;
         }
         $vm->setVariables([
+            'these' => $these,
             'comites' => $comites,
             'role' => $role,
             'individu' => $individu,

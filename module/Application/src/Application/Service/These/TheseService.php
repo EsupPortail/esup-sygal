@@ -628,12 +628,12 @@ EOS;
     /**
      * @param AbstractActionController $controller
      * @param string $param
-     * @return These
+     * @return These|null
      */
     public function getRequestedThese(AbstractActionController $controller, string $param='these')
     {
         $id = $controller->params()->fromRoute($param);
-
+        if ($id === null) return null;
         /** @var These $these */
         $these = $this->getRepository()->find($id);
         return $these;

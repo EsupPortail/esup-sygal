@@ -2,6 +2,7 @@
 
 namespace ComiteSuivi\Entity\Db;
 
+use Application\Entity\Db\Fichier;
 use DateTime;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
@@ -14,8 +15,8 @@ class CompteRendu {
     private $comite;
     /** @var Membre */
     private $membre;
-    /** @var string */
-    private $reponse;
+    /** @var Fichier */
+    private $fichier;
     /** @var DateTime */
     private $finaliser;
 
@@ -74,20 +75,20 @@ class CompteRendu {
     }
 
     /**
-     * @return string|null
+     * @return Fichier|null
      */
-    public function getReponse() : ?string
+    public function getFichier(): ?Fichier
     {
-        return $this->reponse;
+        return $this->fichier;
     }
 
     /**
-     * @param string|null $reponse
+     * @param Fichier|null $fichier
      * @return CompteRendu
      */
-    public function setReponse(?string $reponse) : CompteRendu
+    public function setFichier(?Fichier $fichier): CompteRendu
     {
-        $this->reponse = $reponse;
+        $this->fichier = $fichier;
         return $this;
     }
 

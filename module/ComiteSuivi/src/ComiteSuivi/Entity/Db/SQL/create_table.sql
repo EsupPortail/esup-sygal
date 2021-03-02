@@ -33,9 +33,6 @@ create table COMITE_SUIVI
 )
 /
 
-
-;
-
 create table COMITE_MEMBRE
 (
     ID NUMBER not null
@@ -80,12 +77,15 @@ create table COMITE_RAPPORT
     COMITE_ID NUMBER not null
         constraint COMITERAPPORT_COMITE_FK
             references COMITE_SUIVI
-            on delete cascade,
+                on delete cascade,
     MEMBRE_ID NUMBER not null
         constraint COMITERAPPORT_MEMBRE_FK
             references COMITE_MEMBRE
-            on delete cascade,
-    REPONSE VARCHAR2(2048),
+                on delete cascade,
+    FICHIER_ID NUMBER
+        constraint COMITE_RAPPORT_FICHIER_ID_FK
+            references FICHIER
+                on delete set null,
     HISTO_CREATION DATE not null,
     HISTO_CREATEUR_ID NUMBER not null
         constraint COMITERAPPORT_CREATEUR_FK
@@ -97,7 +97,8 @@ create table COMITE_RAPPORT
     HISTO_DESTRUCTION DATE,
     HISTO_DESTRUCTEUR_ID NUMBER
         constraint COMITERAPPORT_DESTRUCTEUR_FK
-            references UTILISATEUR
+            references UTILISATEUR,
+    FINALISER DATE
 )
 ;
 

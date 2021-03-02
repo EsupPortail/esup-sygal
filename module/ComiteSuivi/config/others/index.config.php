@@ -5,6 +5,7 @@ use ComiteSuivi\Controller\IndexController;
 use ComiteSuivi\Controller\IndexControllerFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use Zend\Router\Http\Literal;
+use Zend\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [
@@ -22,7 +23,7 @@ return [
     'router'          => [
         'routes' => [
             'comite-suivi' => [
-                'type'          => Literal::class,
+                'type'          => Segment::class,
                 'options'       => [
                     'route'    => '/comite-suivi',
                     'defaults' => [

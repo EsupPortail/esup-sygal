@@ -8,7 +8,6 @@ use ComiteSuivi\Service\Membre\MembreServiceAwareTrait;
 use Zend\Hydrator\HydratorInterface;
 
 class CompteRenduHydrator implements HydratorInterface {
-    use ComiteSuiviServiceAwareTrait;
     use MembreServiceAwareTrait;
 
     /**
@@ -18,9 +17,8 @@ class CompteRenduHydrator implements HydratorInterface {
     public function extract($object)
     {
         $data = [
-            'comite' => ($object->getComite())?$object->getComite()->getId():null,
             'examinateur' => ($object->getMembre())?$object->getMembre()->getId():null,
-            'reponse' => $object->getReponse(),
+//            'reponse' => $object->getReponse(),
         ];
         return $data;
     }
@@ -32,12 +30,10 @@ class CompteRenduHydrator implements HydratorInterface {
      */
     public function hydrate(array $data, $object)
     {
-        $comite = isset($data['comite'])?$this->getComiteSuiviService()->getComiteSuivi($data['comite']):null;
         $membre = isset($data['examinateur'])?$this->getMembreService()->getMembre($data['examinateur']):null;
 
-        $object->setComite($comite);
         $object->setMembre($membre);
-        $object->setReponse($data['reponse']);
+//        $object->setReponse($data['reponse']);
 
         return $object;
     }

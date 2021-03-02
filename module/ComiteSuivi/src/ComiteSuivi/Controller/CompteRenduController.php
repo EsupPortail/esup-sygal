@@ -11,7 +11,12 @@ use ComiteSuivi\Service\Membre\MembreServiceAwareTrait;
 use ComiteSuivi\Service\Notifier\NotifierServiceAwareTrait;
 use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Zend\View\Model\ViewModel;
+
+/**
+ * @method FlashMessenger flashMessenger()
+ */
 
 class CompteRenduController extends AbstractActionController
 {
@@ -30,43 +35,54 @@ class CompteRenduController extends AbstractActionController
             'compterendu' => $compterendu,
             'comite' => $compterendu->getComite(),
             'these' => $compterendu->getComite()->getThese(),
+            'urlFichierThese' => $this->urlFichierThese(),
         ]);
     }
 
     public function ajouterAction()
     {
         $comite = $this->getComiteSuiviService()->getRequestedComiteSuivi($this);
-        $membre = $this->getMembreService()->getRequestedMembre($this);
+        $these = $comite->getThese();
 
-        if ($membre === null) {
+        $compterendu= new CompteRendu();
+        $compterendu->setComite($comite);
 
-            /** @var Request $request */
-            $request = $this->getRequest();
-            if ($request->isPost()) {
-                $data = $request->getPost();
-                $examinateurId = $data['examinateur'];
-                $membre = $this->getMembreService()->getMembre($examinateurId);
-            }
+        $form = $this->getCompteRenduForm();
+        $form->setAttribute('action', $this->url()->fromRoute('compte-rendu/ajouter', ['comite-suivi' => $comite->getId()], [], true));
+        $form->bind($compterendu);
 
-            if ($membre === null) {
-                $examinateurs = $this->getMembreService()->getExaminateurs($comite);
-                return new ViewModel([
-                    'title' => "Sélection d'un examinateur",
-                    'comite' => $comite,
-                    'examinateurs' => $examinateurs,
-                ]);
+        $examinateurs = $this->getMembreService()->getExaminateurs($comite);
+        $options = [];
+        foreach ($examinateurs as $membre) $options[$membre->getId()] = $membre->getDenomination();
+        $form->get('examinateur')->setValueOptions($options);
+        $form->get('fichier')->setValue(null);
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $files = ['files' => $request->getFiles()->toArray()];
+            if ($files['files']['compte_rendu']['size'] === 0) {
+                $this->flashMessenger()->addErrorMessage("Pas de prérapport de soutenance !");
+                //$this->redirect()->toRoute('comite-suivi/modifier', ['comite-suivi' => $comite->getId()]);
+            } else {
+                $data['fichier'] = true;
+                $form->setData($data);
+                if ($form->isValid()) {
+                    $fichier = $this->getCompteRenduService()->createCompteRenduFromUpload($files, $compterendu->getMembre());
+                    $compterendu->setFichier($fichier);
+                    $this->getCompteRenduService()->create($compterendu);
+                }
             }
         }
 
-        $compterendu = $this->getCompteRenduService()->getCompteRenduByComiteAndExaminateur($comite, $membre);
-        if ($compterendu === null) {
-            $compterendu = new CompteRendu();
-            $compterendu->setComite($comite);
-            $compterendu->setMembre($membre);
-            $this->getCompteRenduService()->create($compterendu);
-        }
-
-        return $this->redirect()->toRoute('compte-rendu/modifier', ['comite-suivi' => $comite->getId(), 'compte-rendu' => $compterendu->getId()], [], true);
+        $vm = new ViewModel([
+            'compterendu' => $compterendu,
+            'comite' => $comite,
+            'these' => $these,
+            'form' => $form,
+        ]);
+        $vm->setTemplate('comite-suivi/default/default-form');
+        return $vm;
     }
 
     public function modifierAction()
@@ -87,12 +103,14 @@ class CompteRenduController extends AbstractActionController
             }
         }
 
-        return new ViewModel([
+        $vm = new ViewModel([
             'compterendu' => $compterendu,
             'comite' => $compterendu->getComite(),
             'these' => $compterendu->getComite()->getThese(),
             'form' => $form,
         ]);
+        $vm->setTemplate('comite-suivi/default/default-form');
+        return $vm;
     }
 
     public function historiserAction()

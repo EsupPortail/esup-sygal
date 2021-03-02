@@ -5,9 +5,10 @@ namespace ComiteSuivi\Form\CompteRendu;
 use ComiteSuivi\Entity\DateTimeTrait;
 use ComiteSuivi\Service\Membre\MembreServiceAwareTrait;
 use Zend\Form\Element\Button;
+use Zend\Form\Element\File;
 use Zend\Form\Element\Hidden;
 use Zend\Form\Element\Select;
-use Zend\Form\Element\Textarea;
+//use Zend\Form\Element\Textarea;
 use Zend\Form\Form;
 use Zend\InputFilter\Factory;
 
@@ -17,9 +18,9 @@ class CompteRenduForm extends Form {
 
     public function init()
     {
-        //these (hidden)
+        //fichier (hidden)
         $this->add([
-            'name' => 'comite',
+            'name' => 'fichier',
             'type' => Hidden::class,
         ]);
         //année de thèse
@@ -32,28 +33,34 @@ class CompteRenduForm extends Form {
                     'class' => 'control-label',
                 ],
                 'empty_option' => "Choisissez un examinateur ...",
-                'value_options' => [
-                    3  => "Paule Hochon",
-                ],
+                'value_options' => [],
             ],
             'attributes' => [
                 'id' => 'examinateur',
             ],
         ]);
-        //année scolaire
+        //RAPPORT
         $this->add([
-            'name' => 'reponse',
-            'type' => Textarea::class,
+            'type' => File::class,
+            'name' => 'compte_rendu',
             'options' => [
-                'label' => 'Compte-Rendu * : ',
-                'label_attributes' => [
-                    'class' => 'control-label word',
-                ],
-            ],
-            'attributes' => [
-                'id' => 'reponse',
+                'label' => 'Déposez le compte-rendu',
             ],
         ]);
+        //Ancien système ou le rapport était taper dans l'application ... a voir
+//        $this->add([
+//            'name' => 'reponse',
+//            'type' => Textarea::class,
+//            'options' => [
+//                'label' => 'Compte-Rendu * : ',
+//                'label_attributes' => [
+//                    'class' => 'control-label word',
+//                ],
+//            ],
+//            'attributes' => [
+//                'id' => 'reponse',
+//            ],
+//        ]);
         //submit
         $this->add([
             'type' => Button::class,
@@ -71,14 +78,14 @@ class CompteRenduForm extends Form {
         ]);
 
         $this->setInputFilter((new Factory())->createInputFilter([
-            'comite' => [
+            'fichier' => [
                 'required' => true,
             ],
             'examinateur' => [
                 'required' => true,
             ],
-            'reponse' => [
-                'required' => true,
+            'compte_rendu' => [
+                'required' => false,
             ],
         ]));
     }
